@@ -258,14 +258,17 @@ inline int FlagPhase::render(int lod) const
   
   // FIXME!
   if (bryjen) {
-    glBegin(GL_QUAD_STRIP) {
+    printf("lod(%i) count(%i) \n", lod, count);
+    glBegin(GL_QUAD_STRIP); {
       for (int i = 0; i < count; i++) {
         const GLushort index = indices[lod][i];
+        printf(" %i", index);
         glTexCoord2fv(txcds[index]);
         glNormal3fv(norms[index]);
         glVertex3fv(verts[index]);
       }
     }
+    printf("\n");
     glEnd();
   }
   else {
@@ -300,7 +303,7 @@ inline int FlagPhase::renderShadow(int lod) const
 
   // FIXME!
   if (bryjen) {
-    glBegin(GL_QUAD_STRIP) {
+    glBegin(GL_QUAD_STRIP); {
       for (int i = 0; i < count; i++) {
         const GLushort index = indices[lod][i];
         glVertex3fv(verts[index]);
