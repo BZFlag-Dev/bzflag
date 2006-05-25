@@ -52,11 +52,6 @@ inline void RenderNode::addTriangleCount(int count)
   return;
 }
 
-// do not tally unless debugging (for now)
-#ifndef DEBUG_RENDERING
-#  define addTriangleCount(x)
-#endif
-
 
 class RenderNodeList {
   public:
