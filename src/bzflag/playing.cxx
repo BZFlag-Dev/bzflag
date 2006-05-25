@@ -1780,7 +1780,7 @@ static void handleGetWorld ( void* msg, uint16_t len )
 		markOld(worldCachePath);
 }
 
-static void handleTimeUpdate ( void* msg, uint16_t len )
+static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
 {
 	int32_t timeLeft;
 	msg = nboUnpackInt(msg, timeLeft);
@@ -1801,7 +1801,7 @@ static void handleTimeUpdate ( void* msg, uint16_t len )
 		hud->setAlert(0, "Game Paused", 10.0f, true);
 }
 
-static void handleScoreOver ( void *msg, uint16_t len )
+static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 {
 	// unpack packet
 	PlayerId id;
@@ -1845,7 +1845,7 @@ static void handleScoreOver ( void *msg, uint16_t len )
 #endif
 }
 
-static void handleAddPlayer ( void	*msg, uint16_t len, bool &checkScores )
+static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
 {
 	PlayerId id;
 	msg = nboUnpackUByte(msg, id);
@@ -1867,7 +1867,7 @@ static void handleAddPlayer ( void	*msg, uint16_t len, bool &checkScores )
 	}
 }
 
-static void handleRemovePlayer ( void	*msg, uint16_t len, bool &checkScores )
+static void handleRemovePlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
 {
 	PlayerId id;
 	msg = nboUnpackUByte(msg, id);
@@ -1876,7 +1876,7 @@ static void handleRemovePlayer ( void	*msg, uint16_t len, bool &checkScores )
 		checkScores = true;
 }
 
-static void handleFlagUpdate ( void	*msg, uint16_t len )
+static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
 {
 	uint16_t count;
 	uint16_t flagIndex;
@@ -1889,7 +1889,7 @@ static void handleFlagUpdate ( void	*msg, uint16_t len )
 	}
 }
 
-static void handleTeamUpdate ( void	*msg, uint16_t len, bool &checkScores )
+static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
 {
 	uint8_t  numTeams;
 	uint16_t team;
@@ -1904,7 +1904,7 @@ static void handleTeamUpdate ( void	*msg, uint16_t len, bool &checkScores )
 	checkScores = true;
 }
 
-static void handleAliveMessage ( void	*msg, uint16_t len )
+static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
 {
 	PlayerId id;
 	float pos[3], forward;
@@ -1969,7 +1969,7 @@ static void handleAliveMessage ( void	*msg, uint16_t len )
 	}
 }
 
-static void handleAutoPilot ( void *msg, uint16_t len )
+static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
 {
 	PlayerId id;
 	msg = nboUnpackUByte(msg, id);
@@ -1985,7 +1985,7 @@ static void handleAutoPilot ( void *msg, uint16_t len )
 	addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
 
-static void handleKilledMessage ( void *msg, uint16_t len, bool human, bool &checkScores )
+static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool &checkScores )
 {
 	PlayerId victim, killer;
 	FlagType* flagType;
@@ -2207,7 +2207,7 @@ static void handleKilledMessage ( void *msg, uint16_t len, bool human, bool &che
 	checkScores = true;
 }
 
-static void handleGrabFlag ( void *msg, uint16_t len )
+static void handleGrabFlag ( void *msg, uint16_t /*len*/ )
 {
 	PlayerId id;
 	uint16_t flagIndex;
@@ -2256,7 +2256,7 @@ static void handleGrabFlag ( void *msg, uint16_t len )
 	addMessage(tank, message);
 }
 
-static void handleDropFlag ( void *msg, uint16_t len)
+static void handleDropFlag ( void *msg, uint16_t /*len*/)
 {
 	PlayerId id;
 	uint16_t flagIndex;
