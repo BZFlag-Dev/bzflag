@@ -1692,6 +1692,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, rabbitIndex);
+	// swap mode
+	buf = nboPackUByte(bufStart, 0);
+
     directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
   }
 
@@ -1938,7 +1941,9 @@ static void anointNewRabbit(int killerId = NoPlayer)
       rabbitData->player.setTeam(RabbitTeam);
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, rabbitIndex);
-      broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+	  // swap mode
+	  buf = nboPackUByte(bufStart, 0);
+    broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
     }
   } else {
     DEBUG3("no other than old rabbit to choose from, rabbitIndex is %d\n",

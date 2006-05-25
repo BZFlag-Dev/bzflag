@@ -1626,7 +1626,9 @@ static bool saveRabbitState()
     char bufStart[MaxPacketLen];
     void *buf;
     buf = nboPackUByte(bufStart, rabbitIndex);
-    routePacket(MsgNewRabbit, (char*)buf - (char*)bufStart, bufStart,
+	// swap state
+	buf = nboPackUByte(bufStart, 0);
+   routePacket(MsgNewRabbit, (char*)buf - (char*)bufStart, bufStart,
 	       StatePacket);
   }
   return true;

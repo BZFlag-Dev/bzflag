@@ -2272,6 +2272,191 @@ static void handleDropFlag ( void *msg, uint16_t /*len*/)
 	handleFlagDropped(tank);
 }
 
+static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
+{
+	PlayerId id;
+	uint16_t flagIndex, team;
+	msg = nboUnpackUByte(msg, id);
+	msg = nboUnpackUShort(msg, flagIndex);
+	msg = nboUnpackUShort(msg, team);
+	Player* capturer = lookupPlayer(id);
+
+	if (flagIndex >= world->getMaxFlags())
+		return;
+
+	Flag capturedFlag = world->getFlag(int(flagIndex));
+
+	if (capturedFlag.type == Flags::Null)
+		return;
+
+	int capturedTeam = capturedFlag.type->flagTeam;
+
+	// player no longer has flag
+	if (capturer)
+	{
+		capturer->setFlag(Flags::Null);
+		if (capturer == myTank)
+			updateFlag(Flags::Null);
+
+		// add message
+		if (int(capturer->getTeam()) == capturedTeam) 
+		{
+			std::string message("took my flag into ");
+			message += Team::getName(TeamColor(team));
+			message += " territory";
+			addMessage(capturer, message);
+			if (capturer == myTank)
+			{
+				hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
+				playLocalSound( SFX_KILL_TEAM );
+				if (myTank->isAutoPilot()) 
+				{
+					char meaculpa[MessageLen];
+					memset(meaculpa, 0, MessageLen);
+					strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+					serverLink->sendMessage(myTank->getTeam(), meaculpa);
+				}
+			}
+		}
+		else
+		{
+			std::string message("captured ");
+			message += Team::getName(TeamColor(capturedTeam));
+			message += "'s flag";
+			addMessage(capturer, message);
+		}
+	}
+
+	// play sound -- if my team is same as captured flag then my team lost,
+	// but if I'm on the same team as the capturer then my team won.
+	if (capturedTeam == int(myTank->getTeam()))
+		playLocalSound(SFX_LOSE);
+	else if (capturer && capturer->getTeam() == myTank->getTeam())
+		playLocalSound(SFX_CAPTURE);
+
+
+	// blow up if my team flag captured
+	if (capturedTeam == int(myTank->getTeam()))
+		gotBlowedUp(myTank, GotCaptured, id);
+
+#ifdef ROBOT
+	//kill all my robots if they are on the captured team
+	for (int r = 0; r < numRobots; r++)
+	{
+		if (robots[r] && robots[r]->getTeam() == capturedTeam) 
+			gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+	}
+#endif
+
+	// everybody who's alive on capture team will be blowing up
+	// but we're not going to get an individual notification for
+	// each of them, so add an explosion for each now.  don't
+	// include me, though;  I already blew myself up.
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		if (player[i] && player[i]->isAlive() && player[i]->getTeam() == capturedTeam)
+		{
+			const float* pos = player[i]->getPosition();
+			playWorldSound(SFX_EXPLOSION, pos, false);
+			float explodePos[3];
+			explodePos[0] = pos[0];
+			explodePos[1] = pos[1];
+			explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
+			addTankExplosion(explodePos);
+
+			EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle());
+		}
+	}
+
+	checkScores = true;
+}
+
+static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
+{
+	PlayerId id;
+	msg = nboUnpackUByte(msg, id);
+	Player *rabbit = lookupPlayer(id);
+
+	// new mode option,
+	unsigned char mode;
+	msg = nboUnpackUByte(msg, mode);
+
+	// mode 0 == swap the current rabbit with this rabbit
+	// mode 1 == add this person as a rabbit
+	// mode 2 == remove this person from the rabbit list
+
+	if (mode == 0)	// we don't need to mod the hunters if we aren't swaping
+	{
+		for (int i = 0; i < curMaxPlayers; i++) 
+		{
+			if (player[i])
+				player[i]->setHunted(false);
+			if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
+				player[i]->changeTeam(HunterTeam);
+		}
+	}
+
+	if (rabbit != NULL)
+	{
+		if (mode != 2)
+		{
+			rabbit->changeTeam(RabbitTeam);
+
+			if (rabbit == myTank)
+			{
+				wasRabbit = true;
+				if (myTank->isPaused())
+					serverLink->sendNewRabbit();
+				else 
+				{
+					if (mode == 0)
+						hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+					else
+						hud->setAlert(0, "You are now a rabbit.", 10.0f, false);
+
+					playLocalSound(SFX_HUNT_SELECT);
+				}
+				scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
+			}
+			else if (myTank->getTeam() != ObserverTeam) 
+			{
+				myTank->changeTeam(HunterTeam);
+
+				if (myTank->isPaused() || myTank->isAlive())
+					wasRabbit = false;
+
+				rabbit->setHunted(true);
+				scoreboard->setHuntState(ScoreboardRenderer::HUNT_ENABLED);
+			}
+
+			if (mode == 0)
+				addMessage(rabbit, "is now the rabbit", 3, true);
+			else
+				addMessage(rabbit, "is now a rabbit", 3, true);
+		}
+		else
+		{
+			rabbit->changeTeam(HunterTeam);
+			if (rabbit == myTank)
+				hud->setAlert(0, "You are no longer a rabbit.", 10.0f, false);
+
+			addMessage(rabbit, "is no longer a rabbit", 3, true);
+		}
+	}
+
+#ifdef ROBOT
+	for (int r = 0; r < numRobots; r++)
+	{
+		if (robots[r])
+		{
+			if (robots[r]->getId() == id)
+				robots[r]->changeTeam(RabbitTeam);
+			else
+				robots[r]->changeTeam(HunterTeam);
+		}
+	}
+#endif
+}
 
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
@@ -2378,143 +2563,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 		handleDropFlag(msg,len);
 		break;
 
-    case MsgCaptureFlag: {
-      PlayerId id;
-      uint16_t flagIndex, team;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = nboUnpackUShort(msg, team);
-      Player* capturer = lookupPlayer(id);
-      if (flagIndex >= world->getMaxFlags())
-	break;
-      Flag capturedFlag = world->getFlag(int(flagIndex));
-      if (capturedFlag.type == Flags::Null)
-	break;
-      int capturedTeam = capturedFlag.type->flagTeam;
+    case MsgCaptureFlag:
+		handleCaptureFlag(msg,len,checkScores);
+		break;
 
-      // player no longer has flag
-      if (capturer) {
-	capturer->setFlag(Flags::Null);
-	if (capturer == myTank) {
-	  updateFlag(Flags::Null);
-	}
-
-	// add message
-	if (int(capturer->getTeam()) == capturedTeam) {
-	  std::string message("took my flag into ");
-	  message += Team::getName(TeamColor(team));
-	  message += " territory";
-	  addMessage(capturer, message);
-	  if (capturer == myTank) {
-	    hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
-	    playLocalSound( SFX_KILL_TEAM );
-	    if (myTank->isAutoPilot()) {
-	      char meaculpa[MessageLen];
-	      memset(meaculpa, 0, MessageLen);
-	      strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
-	      serverLink->sendMessage(myTank->getTeam(), meaculpa);
-	    }
-	  }
-	} else {
-	  std::string message("captured ");
-	  message += Team::getName(TeamColor(capturedTeam));
-	  message += "'s flag";
-	  addMessage(capturer, message);
-	}
-      }
-
-      // play sound -- if my team is same as captured flag then my team lost,
-      // but if I'm on the same team as the capturer then my team won.
-      if (capturedTeam == int(myTank->getTeam()))
-	playLocalSound(SFX_LOSE);
-      else if (capturer && capturer->getTeam() == myTank->getTeam())
-	playLocalSound(SFX_CAPTURE);
-
-
-      // blow up if my team flag captured
-      if (capturedTeam == int(myTank->getTeam())) {
-	gotBlowedUp(myTank, GotCaptured, id);
-      }
-
-#ifdef ROBOT
-      //kill all my robots if they are on the captured team
-      for (int r = 0; r < numRobots; r++) {
-	if (robots[r] && robots[r]->getTeam() == capturedTeam) {
-	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-	}
-      }
-#endif
-
-      // everybody who's alive on capture team will be blowing up
-      // but we're not going to get an individual notification for
-      // each of them, so add an explosion for each now.  don't
-      // include me, though;  I already blew myself up.
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i] &&
-	    player[i]->isAlive() &&
-	    player[i]->getTeam() == capturedTeam) {
-	  const float* pos = player[i]->getPosition();
-	  playWorldSound(SFX_EXPLOSION, pos, false);
-	  float explodePos[3];
-	  explodePos[0] = pos[0];
-	  explodePos[1] = pos[1];
-	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
-	  addTankExplosion(explodePos);
-
-	  EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle());
-	}
-      }
-
-      checkScores = true;
-      break;
-    }
-
-    case MsgNewRabbit: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
-      Player *rabbit = lookupPlayer(id);
-
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i])
-	  player[i]->setHunted(false);
-	if (i != id && player[i] && player[i]->getTeam() != RogueTeam
-	    && player[i]->getTeam() != ObserverTeam) {
-	  player[i]->changeTeam(HunterTeam);
-	}
-      }
-
-      if (rabbit != NULL) {
-	rabbit->changeTeam(RabbitTeam);
-	if (rabbit == myTank) {
-	  wasRabbit = true;
-	  if (myTank->isPaused())
-	    serverLink->sendNewRabbit();
-	  else {
-	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
-	    playLocalSound(SFX_HUNT_SELECT);
-	  }
-	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
-	} else if (myTank->getTeam() != ObserverTeam) {
-	  myTank->changeTeam(HunterTeam);
-	  if (myTank->isPaused() || myTank->isAlive())
-	    wasRabbit = false;
-	  rabbit->setHunted(true);
-	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_ENABLED);
-	}
-
-	addMessage(rabbit, "is now the rabbit", 3, true);
-      }
-
-#ifdef ROBOT
-      for (int r = 0; r < numRobots; r++)
-	if (robots[r])
-	  if (robots[r]->getId() == id)
-	    robots[r]->changeTeam(RabbitTeam);
-	  else
-	    robots[r]->changeTeam(HunterTeam);
-#endif
-      break;
-    }
+    case MsgNewRabbit:
+		handleNewRabbit(msg,len);
+		break;
 
     case MsgShotBegin: {
       FiringInfo firingInfo;
