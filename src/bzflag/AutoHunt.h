@@ -18,11 +18,22 @@
 
 
 namespace AutoHunt {
+
   void update();
-  int getMaxLevel();
-  int getRadarLevel();
+
   const char* getColorString(int level);
-  const float* getColorVector(int level);
+
+  int getChevronCount(int level);
+  float getChevronSpace(int level);
+  float getChevronDelta(int level);
+  float getChevronInnerAlpha(int level);
+  float getChevronOuterAlpha(int level);
+  float getBlinkPeriod(int level);
+  float getInnerBlinkThreshold(int level); // tank square
+  float getOuterBlinkThreshold(int level); // corner chevrons
+  // NOTE: (blink thresholds)
+  //       0 -> always blink color 
+  //       1 -> always normal color
 }
 
 

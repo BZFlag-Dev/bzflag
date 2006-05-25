@@ -14,12 +14,38 @@
 // contained in the BZDB "autohunt" variable. The format
 // is as follows:
 //
-//   set autohunt G:CL?L:ST?GM:RATIO:LEADER
+//   set autohunt MIN<500#4:MAX<50#8:ST?GM:CL<300#9
 //
-//   G:       always hunt a player with the Genocide flag
-//   CL?L:    if the local player has Cloak, hunt players with Laser 
-//   RATIO:   if an enemy player has more kills then deaths on you, hunt them
-//   LEADER:  hunt the enemy with the best score
+//   TOKEN1[<float][#level][:TOKEN2 [:TOKEN3...]]
+//
+//   Parsing Control:
+//     *var:    replace with the string in BZDB variable 'var'
+//   Flag Type Control:
+//     GM:      always hunt a player with the Guided Missile flag
+//     CL?L:    if the local player has Cloak, hunt players with Laser 
+//   Specific Triggers:
+//     TKS:     if a friend has exceeded the teamkill ratio
+//     RATIO:   if an enemy player has more kills then deaths on you, hunt them
+//     LEADER:  hunt the enemy with the best score
+//   Range Control:
+//     RESET:   reset range settings
+//     SET:     set all levels to value
+//     MIN:     set range minimum level and its value
+//     MAX:     set range maximum level and its value
+//   Display Control:
+//     COUNT:   chevron count
+//     SPACE:   chevron space
+//     DELTA:   chevron expansion rate
+//     IALPHA:  chevron inner translucency
+//     OALPHA:  chevron outer translucency
+//     PERIOD:  chevron blink period
+//     IBLINK:  tank square blink threshold
+//     OBLINK:  chevron marker blink threshold
+
+// NOTES:
+// - try using textures instead of chevron patterns
+// - assign AutoHuntMarker objects instead of 'int' levels
+//   (float importance values vs. proximity)
 
 #include "common.h"
 
@@ -75,16 +101,51 @@ class HuntRange {
 
 
 // static data
+static const int LevelCount = 10; // level 0 is a dud
+
 static FlagPairMap FlagPairs;
 static HuntInfo TkHuntInfo;
 static HuntInfo RatioHuntInfo;
-static HuntInfo LeaderHuntInfo;
-static int MaxLevel = 0;
-static int RadarLevel = 1;
+static HuntInfo LeaderHuntInfo; 
+
+static int   ChevronCounts[LevelCount];
+static float ChevronSpaces[LevelCount];
+static float ChevronDeltas[LevelCount];
+static float ChevronInnerAlphas[LevelCount];
+static float ChevronOuterAlphas[LevelCount];
+static float BlinkPeriods[LevelCount];
+static float InnerBlinkThresholds[LevelCount];
+static float OuterBlinkThresholds[LevelCount];
+
+const struct {
+  int chevronCount;
+  float chevronSpace;
+  float chevronDelta;
+  float chevronInnerAlpha;
+  float chevronOuterAlpha;
+  float blinkPeriod;
+  float innerBlinkThreshold;
+  float outerBlinkThreshold;
+} DisplayStyles[LevelCount] = {
+  { 0,  2.5f, 0.0f,  0.75f, 0.25f,  1.00f,  1.0f, 0.5f }, // 0
+  { 0,  2.5f, 0.0f,  0.75f, 0.25f,  0.75f,  1.0f, 0.5f }, // 1
+  { 0,  2.5f, 0.0f,  0.75f, 0.25f,  0.70f,  1.0f, 0.5f }, // 2
+  { 0,  2.5f, 0.0f,  0.75f, 0.25f,  0.65f,  1.0f, 0.5f }, // 3
+  { 1,  2.5f, 1.0f,  0.75f, 0.25f,  0.60f,  1.0f, 0.5f }, // 4
+  { 1,  2.5f, 0.0f,  0.75f, 0.25f,  0.55f,  1.0f, 0.5f }, // 5
+  { 2,  2.5f, 1.0f,  0.75f, 0.25f,  0.50f,  1.0f, 0.5f }, // 6
+  { 2,  2.5f, 0.0f,  0.75f, 0.25f,  0.45f,  1.0f, 0.5f }, // 7
+  { 3,  2.5f, 1.0f,  0.75f, 0.25f,  0.40f,  1.0f, 0.5f }, // 8
+  { 3,  2.5f, 0.0f,  0.75f, 0.25f,  0.35f,  1.0f, 0.5f }  // 9
+};
+
 
 // static functions
+static void resetArrays();
 static std::string getExpandedString(const std::string& varname);
 static void parse(const std::string& msg);
+static void copyToIntArray(int array[LevelCount], const HuntInfo& hi);
+static void copyToFloatArray(float array[LevelCount], const HuntInfo& hi);
 static void huntPlayers();
 static void clearPlayers();
 static void setupHuntInfoRange(HuntInfo&, const HuntRange&);
@@ -94,7 +155,26 @@ static bool isEnemy(const Player*);
 static bool isBeatingMe(const Player*);
 static bool isTeamKiller(const Player* p, float ratio);
 static Player* findEnemyLeader();
-static void printMaps();
+static void printConfig();
+
+
+/******************************************************************************/
+
+static void resetArrays()
+{
+  for (int i = 0; i < LevelCount; i++) {
+    ChevronCounts[i] = DisplayStyles[i].chevronCount;
+    ChevronSpaces[i] = DisplayStyles[i].chevronSpace;
+    ChevronDeltas[i] = DisplayStyles[i].chevronDelta;
+    ChevronInnerAlphas[i] = DisplayStyles[i].chevronInnerAlpha;
+    ChevronOuterAlphas[i] = DisplayStyles[i].chevronOuterAlpha;
+    BlinkPeriods[i] = DisplayStyles[i].blinkPeriod;
+    InnerBlinkThresholds[i] = DisplayStyles[i].innerBlinkThreshold;
+    OuterBlinkThresholds[i] = DisplayStyles[i].outerBlinkThreshold;
+  }
+
+  return;
+}
 
 
 /******************************************************************************/
@@ -102,14 +182,21 @@ static void printMaps();
 static void parse(const std::string& cmd)
 {
   std::vector<std::string> errors;
-
   HuntRange range;
+  HuntInfo ChevronCountHuntInfo;
+  HuntInfo ChevronSpaceHuntInfo;
+  HuntInfo ChevronDeltaHuntInfo;
+  HuntInfo ChevronInnerAlphaHuntInfo;
+  HuntInfo ChevronOuterAlphaHuntInfo;
+  HuntInfo BlinkPeriodHuntInfo;
+  HuntInfo InnerBlinkHuntInfo;
+  HuntInfo OuterBlinkHuntInfo;
+
+  resetArrays();
   FlagPairs.clear();
   TkHuntInfo.coords.clear();
   RatioHuntInfo.coords.clear();
   LeaderHuntInfo.coords.clear();
-  RadarLevel = 1;
-
 
   DEBUG3("AutoHunt: %s\n", cmd.c_str());
   std::vector<std::string> tokens = TextUtils::tokenize(cmd, ":");
@@ -157,10 +244,91 @@ static void parse(const std::string& cmd)
         continue;
       }
     }
-    
-    if (token == "RADARLEVEL") {
-      RadarLevel = level;
-      DEBUG3("(radarLevel/%i/%f)\n", RadarLevel, proximity);
+
+    // Display Properties    
+    if (token == "COUNT") {
+      if (useRange) {
+        setupHuntInfoRange(ChevronCountHuntInfo, range);
+        DEBUG3("(count/range)\n");
+      } else {
+        ChevronCountHuntInfo.coords[level] = proximity;
+        DEBUG3("(count/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "SPACE") {
+      if (useRange) {
+        setupHuntInfoRange(ChevronSpaceHuntInfo, range);
+        DEBUG3("(space/range)\n");
+      } else {
+        ChevronSpaceHuntInfo.coords[level] = proximity;
+        DEBUG3("(space/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "DELTA") {
+      if (useRange) {
+        setupHuntInfoRange(ChevronDeltaHuntInfo, range);
+        DEBUG3("(delta/range)\n");
+      } else {
+        ChevronDeltaHuntInfo.coords[level] = proximity;
+        DEBUG3("(delta/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "IALPHA") {
+      if (useRange) {
+        setupHuntInfoRange(ChevronInnerAlphaHuntInfo, range);
+        DEBUG3("(ialpha/range)\n");
+      } else {
+        ChevronInnerAlphaHuntInfo.coords[level] = proximity;
+        DEBUG3("(ialpha/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "OALPHA") {
+      if (useRange) {
+        setupHuntInfoRange(ChevronOuterAlphaHuntInfo, range);
+        DEBUG3("(oalpha/range)\n");
+      } else {
+        ChevronOuterAlphaHuntInfo.coords[level] = proximity;
+        DEBUG3("(oalpha/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "PERIOD") {
+      if (useRange) {
+        setupHuntInfoRange(BlinkPeriodHuntInfo, range);
+        DEBUG3("(period/range)\n");
+      } else {
+        BlinkPeriodHuntInfo.coords[level] = proximity;
+        DEBUG3("(period/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "IBLINK") {
+      if (useRange) {
+        setupHuntInfoRange(InnerBlinkHuntInfo, range);
+        DEBUG3("(iblink/range)\n");
+      } else {
+        InnerBlinkHuntInfo.coords[level] = proximity;
+        DEBUG3("(iblink/%i/%f)\n", level, proximity);
+      }
+    }
+    else if (token == "OBLINK") {
+      if (useRange) {
+        setupHuntInfoRange(OuterBlinkHuntInfo, range);
+        DEBUG3("(oblink/range)\n");
+      } else {
+        OuterBlinkHuntInfo.coords[level] = proximity;
+        DEBUG3("(oblink/%i/%f)\n", level, proximity);
+      }
+    }
+    // Range Control
+    else if (token == "SET") {
+      range.minLevel = 0;
+      range.maxLevel = LevelCount - 1;
+      range.minProximity = proximity;
+      range.maxProximity = proximity;
+      DEBUG3("(range set/%f)\n", proximity);
+    }
+    else if (token == "RESET") {
+      range.reset();
+      DEBUG3("(range reset)\n");
     }
     else if (token == "MIN") {
       range.minLevel = level;
@@ -172,17 +340,14 @@ static void parse(const std::string& cmd)
       range.maxProximity = proximity;
       DEBUG3("(range max/%i/%f)\n", level, proximity);
     }
-    else if (token == "RESET") {
-      range.reset();
-      DEBUG3("(range reset)\n");
-    }
-    else if (token == "TK") {
+    // Specific trigger types
+    else if (token == "TKS") {
       if (useRange) {
         setupHuntInfoRange(TkHuntInfo, range);
-        DEBUG3("(tk/range)\n");
+        DEBUG3("(TKs/range)\n");
       } else {
         TkHuntInfo.coords[level] = proximity;
-        DEBUG3("(tk/%i/%f)\n", level, proximity);
+        DEBUG3("(TKs/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "RATIO") {
@@ -203,6 +368,7 @@ static void parse(const std::string& cmd)
         DEBUG3("(leader/%i/%f)\n", level, proximity);
       }
     }
+    // Flag trigger types
     else {
       std::vector<std::string> flags = TextUtils::tokenize(token, "?");
       if (flags.size() == 1) {
@@ -260,6 +426,16 @@ static void parse(const std::string& cmd)
     }
   }
 
+  // copy the hunt info maps into the arrays  
+  copyToIntArray(ChevronCounts, ChevronCountHuntInfo);
+  copyToFloatArray(ChevronSpaces, ChevronSpaceHuntInfo);
+  copyToFloatArray(ChevronDeltas, ChevronDeltaHuntInfo);
+  copyToFloatArray(ChevronInnerAlphas, ChevronInnerAlphaHuntInfo);
+  copyToFloatArray(ChevronOuterAlphas, ChevronOuterAlphaHuntInfo);
+  copyToFloatArray(BlinkPeriods, BlinkPeriodHuntInfo);
+  copyToFloatArray(InnerBlinkThresholds, InnerBlinkHuntInfo);
+  copyToFloatArray(OuterBlinkThresholds, OuterBlinkHuntInfo);
+
   return;
 }
 
@@ -290,12 +466,42 @@ static void setupHuntInfoRange(HuntInfo& hi, const HuntRange& hr)
 
 /******************************************************************************/
 
-static void printMaps()
+static void copyToIntArray(int array[LevelCount], const HuntInfo& hi)
+{
+  std::map<int, float>::const_iterator it;
+  for (it = hi.coords.begin(); it != hi.coords.end(); it++) {
+    const int level = it->first;
+    if ((level >= 0) && (level < LevelCount)) {
+      array[level] = (int)it->second;
+    }
+  }
+}
+
+
+/******************************************************************************/
+
+static void copyToFloatArray(float array[LevelCount], const HuntInfo& hi)
+{
+  std::map<int, float>::const_iterator it;
+  for (it = hi.coords.begin(); it != hi.coords.end(); it++) {
+    const int level = it->first;
+    if ((level >= 0) && (level < LevelCount)) {
+      array[level] = it->second;
+    }
+  }
+}
+
+
+/******************************************************************************/
+
+static void printConfig()
 {
   if (debugLevel < 3) {
     return;
   }
 
+  DEBUG3("AutoHunt Config:\n");
+  DEBUG3("---------------:\n");
   std::map<int, float>::const_iterator cit;
   FlagPairMap::const_iterator it;
   for (it = FlagPairs.begin(); it != FlagPairs.end(); it++) {
@@ -327,6 +533,18 @@ static void printMaps()
   const HuntInfo& lhi = RatioHuntInfo;
   for (cit = lhi.coords.begin(); cit != lhi.coords.end(); cit++) {
     DEBUG3("  level: %i, dist: %f\n", cit->first, cit->second);
+  }
+  DEBUG3("Styles:    count space delta ialpha oalpha period iblink oblink\n");
+  for (int i = 1; i < LevelCount; i++) {
+    DEBUG3("  level %i:   %i  %5.2f %5.2f %5.2f %6.2f %6.2f %6.2f %6.2f\n", i,
+           DisplayStyles[i].chevronCount,
+           DisplayStyles[i].chevronSpace,
+           DisplayStyles[i].chevronDelta,
+           DisplayStyles[i].chevronInnerAlpha,
+           DisplayStyles[i].chevronOuterAlpha,
+           DisplayStyles[i].blinkPeriod,
+           DisplayStyles[i].innerBlinkThreshold,
+           DisplayStyles[i].outerBlinkThreshold);
   }
 
   return;
@@ -479,8 +697,6 @@ static int getHuntInfoLevel(const HuntInfo& hi, float dist)
 
 static void huntPlayers()
 {
-  MaxLevel = 0;
-
   World* world = World::getWorld();
   if (world == NULL) {
     return;
@@ -567,11 +783,6 @@ static void huntPlayers()
         p->setAutoHuntLevel(level);
       }
     }
-
-    // update MaxLevel
-    if (p->getAutoHuntLevel() > MaxLevel) {
-      MaxLevel = p->getAutoHuntLevel();
-    }
   }
 
   // set the autohunt status based on score leadership
@@ -582,10 +793,6 @@ static void huntPlayers()
       const int level = getHuntInfoLevel(LeaderHuntInfo, dist);
       if (level > leader->getAutoHuntLevel()) {
         leader->setAutoHuntLevel(level);
-        // update MaxLevel
-        if (level > MaxLevel) {
-          MaxLevel = level;
-        }
       }
     }
   }
@@ -633,20 +840,18 @@ static std::string getExpandedString(const std::string& varname)
 void AutoHunt::update()
 {
   static std::string active = "";
-
+  
   std::string current = getExpandedString("autohunt");
   if ((current.size() == 0) && (active.size() == 0)) {
     return;
   }
-
-  MaxLevel = 0;
 
   clearPlayers();
 
   if (active != current) {
     active = current;
     parse(active);
-    printMaps(); // for debugging
+    printConfig(); // for debugging
   }
 
   huntPlayers();
@@ -676,17 +881,97 @@ const char* AutoHunt::getColorString(int level)
 
 /******************************************************************************/
 
-int AutoHunt::getMaxLevel()
+int AutoHunt::getChevronCount(int level)
 {
-  return MaxLevel;
+  if ((level >= 0) && (level < LevelCount)) {
+    return ChevronCounts[level];
+  } else {
+    return 0;
+  }
 }
 
 
 /******************************************************************************/
 
-int AutoHunt::getRadarLevel()
+float AutoHunt::getChevronSpace(int level)
 {
-  return RadarLevel;
+  if ((level >= 0) && (level < LevelCount)) {
+    return ChevronSpaces[level];
+  } else {
+    return 1.0f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getChevronDelta(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return ChevronDeltas[level];
+  } else {
+    return 1.0f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getChevronInnerAlpha(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return ChevronInnerAlphas[level];
+  } else {
+    return 1.0f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getChevronOuterAlpha(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return ChevronOuterAlphas[level];
+  } else {
+    return 1.0f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getBlinkPeriod(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return BlinkPeriods[level];
+  } else {
+    return 0.5f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getInnerBlinkThreshold(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return InnerBlinkThresholds[level];
+  } else {
+    return 0.5f;
+  }
+}
+
+
+/******************************************************************************/
+
+float AutoHunt::getOuterBlinkThreshold(int level)
+{
+  if ((level >= 0) && (level < LevelCount)) {
+    return OuterBlinkThresholds[level];
+  } else {
+    return 0.5f;
+  }
 }
 
 

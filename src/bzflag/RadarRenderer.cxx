@@ -164,7 +164,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   glVertex2f(0.0f, +hbSize);
   glVertex2f(-hbSize, 0.0f);
   glEnd();
-  
+
   // draw the AutoHunt indicator
   if (!colorblind) {
     drawHuntLevel(player, size, hbSize);
@@ -213,45 +213,39 @@ void RadarRenderer::drawHuntLevel(const Player* player,
                                   float tankSize, float heightBoxSize)
 {
   const int huntLevel = player->getAutoHuntLevel();
-  if (huntLevel < 4) {
+  const int chevrons = AutoHunt::getChevronCount(huntLevel);
+  if (chevrons < 1) {
     return;
   }
 
-  const float hlf = (float)huntLevel;
-  const float hlr = (hlf - 1.0f) / 8.0f; // 0 to 1
-
-//    glLineWidth(1.0f + (hlr * 2.0f));
-
-  if (!smooth) {
-    glEnable(GL_BLEND);
-  }
-
-  bool blink = false;  
-  if (huntLevel > 6) {
-    const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
-    const float thresh = 0.5f;
-    const float rate = (1.0f / (1.0f + hlr));
-    blink = fmodf((float)diffTime, rate) > (rate * thresh);
-  }
+  // setup the color
   float color[4];
+  const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+  const float period = AutoHunt::getBlinkPeriod(huntLevel);
+  const float thresh = AutoHunt::getOuterBlinkThreshold(huntLevel);
+  const bool blink = fmodf((float)diffTime, period) > (period * thresh);
   if (blink) {
-    color[0] = 0.0f;
-    color[1] = 0.8f;
-    color[2] = 0.9f;
+    color[0] = 0.5f;
+    color[1] = 0.5f;
+    color[2] = 0.5f;
   } else {
     color[0] = 1.0f;
     color[1] = 1.0f;
     color[2] = 1.0f;
   }
-
-  // vary the translucency
-  color[3] = 0.25f + (hlr * 0.75f);
-
-  glColor4fv(color);
+  // translucency range
+  const float innerAlpha = AutoHunt::getChevronInnerAlpha(huntLevel);
+  const float outerAlpha = AutoHunt::getChevronOuterAlpha(huntLevel);
+  color[3] = innerAlpha;
+  const float alphaRange = innerAlpha - outerAlpha;
+  float alphaDelta = 0.0f;
+  if (chevrons > 1) {
+    alphaDelta = alphaRange / (float)(chevrons - 1);
+  }
   
   // setup the geometry
   float s = (float)M_SQRT1_2 * heightBoxSize;
-  const float spacing = ps * 2.5f;
+  const float spacing = ps * AutoHunt::getChevronSpace(huntLevel);
   const float check1 = spacing * 2.0f;
   if (s < check1) {
     s = check1;
@@ -261,49 +255,41 @@ void RadarRenderer::drawHuntLevel(const Player* player,
     s = check2;
   }
   const float gap = 0.4f;
-  float b = s * (1.0f - gap);
+  float c = s * (1.0f - gap);
 
-  // draw the corners
-  int sets = 1;
-  if (huntLevel > 5) { sets = 2; }
-  if (huntLevel > 7) { sets = 3; }
-
-  float bDelta = spacing; // setup for X patter, 0 for square pattern
-  if ((huntLevel == 7) || (huntLevel == 9)) { bDelta = 0.0f; }
+  const float cDelta = spacing * AutoHunt::getChevronDelta(huntLevel);
   
-  const float alphaDelta = color[3] * ((1.0f - 0.25f) / (float)sets);
-  
-  int i = 1;
-  while (true) {
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(+s, +b);
-    glVertex2f(+s, +s);
-    glVertex2f(+b, +s);
-    glEnd();
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-s, -b);
-    glVertex2f(-s, -s);
-    glVertex2f(-b, -s);
-    glEnd();
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-b, +s);
-    glVertex2f(-s, +s);
-    glVertex2f(-s, +b);
-    glEnd();
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(+b, -s);
-    glVertex2f(+s, -s);
-    glVertex2f(+s, -b);
-    glEnd();
+  if (!smooth) {
+    glEnable(GL_BLEND);
+  }
 
-    if (i >= sets) {
-      break;
-    }
-    i++;
-    s += spacing;
-    b += bDelta;
-    color[3] -= alphaDelta;
+  // draw the chevrons
+  for (int i = 0; i < chevrons; i++) {
     glColor4fv(color);
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(+s, +c);
+    glVertex2f(+s, +s);
+    glVertex2f(+c, +s);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(-s, -c);
+    glVertex2f(-s, -s);
+    glVertex2f(-c, -s);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(-c, +s);
+    glVertex2f(-s, +s);
+    glVertex2f(-s, +c);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(+c, -s);
+    glVertex2f(+s, -s);
+    glVertex2f(+s, -c);
+    glEnd();
+    // setup for the next pass
+    s += spacing;
+    c += cDelta;
+    color[3] -= alphaDelta;
   }
 
   if (!smooth) {
@@ -702,7 +688,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // used for blinking tanks
     const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
-    
+
     // draw other tanks (and any flags on them)
     // note about flag drawing.  each line segment is drawn twice
     // (once in each direction);  this degrades the antialiasing
@@ -751,19 +737,27 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
 
       // If this tank is hunted flash it on the radar
-      int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();  
+      int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();
       if ((huntLevel > 0) && !colorblind) {
-        const float hlf = (float)huntLevel;
-        const float thresh = 0.5f; // + ((9.0f - hlf) / 20.0f);
-        const float rate = (6.0f / (9.0f + hlf));
-        const bool blink = fmodf((float)diffTime, rate) > (rate * thresh);
-        const float blinkColor[3] = {0.0f, 0.8f, 0.9f};
+        float period = 0.40f;
+        float thresh = 0.75f;
+        if (!player->isHunted()) {
+          period = AutoHunt::getBlinkPeriod(huntLevel);
+          thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
+        }
+        const bool blink = fmodf((float)diffTime, period) > (period * thresh);
         if (blink) {
-          glColor3fv(blinkColor);
+          const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f}; 
+          const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
+          if (player->getTeam() == GreenTeam) {
+            glColor3fv(greenBlinkColor);
+          } else {
+            glColor3fv(normalBlinkColor);
+          }
         } else {
           glColor3fv(Team::getRadarColor(player->getTeam()));
         }
-      } 
+      }
 
       drawTank(player, observer);
     }
