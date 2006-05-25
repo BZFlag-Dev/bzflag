@@ -43,8 +43,6 @@ static const int maxFlagVerts = 2 * (maxFlagQuads + 1);
 static bool geoPole = false;	// draw the pole as quads
 static bool realFlag = false;	// don't use billboarding
 
-static bool bryjen = false;	// FIXME
-
 static const GLfloat Unit = 0.8f;
 static const GLfloat Width = 1.5f * Unit;
 static const GLfloat Height = Unit;
@@ -255,39 +253,19 @@ inline int FlagPhase::render(int lod) const
   }
 
   const int count = elementCounts[lod];
-  
-  // FIXME!
-  if (bryjen) {
-    printf("lod(%i) count(%i) \n", lod, count);
-    glBegin(GL_QUAD_STRIP); {
-      for (int i = 0; i < count; i++) {
-        const GLushort index = indices[lod][i];
-        printf(" %i", index);
-        glTexCoord2fv(txcds[index]);
-        glNormal3fv(norms[index]);
-        glVertex3fv(verts[index]);
-      }
-    }
-    printf("\n");
-    glEnd();
-  }
-  else {
-    
-    glVertexPointer(3, GL_FLOAT, 0, verts);
-    glNormalPointer(GL_FLOAT, 0, norms);
-    glTexCoordPointer(2, GL_FLOAT, 0, txcds);
+  glVertexPointer(3, GL_FLOAT, 0, verts);
+  glNormalPointer(GL_FLOAT, 0, norms);
+  glTexCoordPointer(2, GL_FLOAT, 0, txcds);
 
-  #ifdef HAVE_GLEW
-    if (GLEW_EXT_draw_range_elements) {
-      glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-    } else {
-  #endif
-      glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
-  #ifdef HAVE_GLEW
-    }
-  #endif
-
+#ifdef HAVE_GLEW
+  if (GLEW_EXT_draw_range_elements) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
+#endif
+    glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+#ifdef HAVE_GLEW
   }
+#endif
 
   return count;
 }
@@ -300,32 +278,17 @@ inline int FlagPhase::renderShadow(int lod) const
   }
 
   const int count = elementCounts[lod];
+  glVertexPointer(3, GL_FLOAT, 0, verts);
 
-  // FIXME!
-  if (bryjen) {
-    glBegin(GL_QUAD_STRIP); {
-      for (int i = 0; i < count; i++) {
-        const GLushort index = indices[lod][i];
-        glVertex3fv(verts[index]);
-      }
-    }
-    glEnd();
+#ifdef HAVE_GLEW
+  if (GLEW_EXT_draw_range_elements) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
+#endif
+    glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+#ifdef HAVE_GLEW
   }
-  else {
-    
-    glVertexPointer(3, GL_FLOAT, 0, verts);
-
-  #ifdef HAVE_GLEW
-    if (GLEW_EXT_draw_range_elements) {
-      glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-    } else {
-  #endif
-      glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
-  #ifdef HAVE_GLEW
-    }
-  #endif
-  
-  }
+#endif
 
   return count;
 }
@@ -511,7 +474,6 @@ void FlagSceneNode::setTimeStep(float dt)
 {
   // this is stupid
   FlagPhase::setTimeStep(dt);
-  bryjen = BZDB.isTrue("bryjen");
   return;
 }
 
