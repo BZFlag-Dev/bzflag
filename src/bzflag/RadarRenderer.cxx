@@ -223,7 +223,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
   const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
   const float period = AutoHunt::getBlinkPeriod(huntLevel);
   const float thresh = AutoHunt::getOuterBlinkThreshold(huntLevel);
-  const bool blink = fmodf((float)diffTime, period) > (period * thresh);
+  const bool blink = fmodf((float)diffTime, period) < (period * thresh);
   if (blink) {
     color[0] = 0.5f;
     color[1] = 0.5f;
@@ -740,12 +740,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();
       if ((huntLevel > 0) && !colorblind) {
         float period = 0.40f;
-        float thresh = 0.75f;
+        float thresh = 0.25f;
         if (!player->isHunted()) {
           period = AutoHunt::getBlinkPeriod(huntLevel);
           thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
         }
-        const bool blink = fmodf((float)diffTime, period) > (period * thresh);
+        const bool blink = fmodf((float)diffTime, period) < (period * thresh);
         if (blink) {
           const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f}; 
           const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};

@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef  AUTOHUNT_H
+#define  AUTOHUNT_H
 
 #include "common.h"
 
@@ -23,7 +25,7 @@ namespace AutoHunt {
 
   const char* getColorString(int level);
 
-  int getChevronCount(int level);
+  int   getChevronCount(int level);
   float getChevronSpace(int level);
   float getChevronDelta(int level);
   float getChevronInnerAlpha(int level);
@@ -36,6 +38,8 @@ namespace AutoHunt {
   //       1 -> always normal color
 }
 
+
+#endif // AUTOHUNT_H
 
 // Local Variables: ***
 // mode:C++ ***
