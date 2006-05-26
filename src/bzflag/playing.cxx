@@ -2466,12 +2466,12 @@ static void handleSetTeam ( void *msg, uint16_t len )
 	PlayerId id;
 	msg = nboUnpackUByte(msg, id);
 	
-	TeamColor	team;
+	uint8_t team;
 	msg = nboUnpackUByte(msg, team);
 
-	Player *player = lookupPlayer(id);
+	Player *p = lookupPlayer(id);
 
-	player->changeTeam(team);
+	p->changeTeam((TeamColor)team);
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
