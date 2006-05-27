@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="bzflag"
 	ProjectGUID="{5000550B-DA03-4872-9975-1AA7EE3A40AF}"
+	RootNamespace="bzflag"
 	>
 	<Platforms>
 		<Platform
@@ -1539,6 +1540,10 @@
 			>
 			<File
 				RelativePath="..\..\src\bzflag\ActionBinding.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\AutoHunt.cxx"
 				>
 			</File>
 			<File
@@ -6730,6 +6735,10 @@
 			>
 			<File
 				RelativePath="..\..\src\bzflag\AudioMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\AutoHunt.h"
 				>
 			</File>
 			<File
