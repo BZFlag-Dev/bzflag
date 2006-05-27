@@ -41,6 +41,32 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 {
   int channel = -1;
 
+  if (strcasecmp ("variable", cmd) == 0) {
+    std::string varName;
+    if (input >> varName) {
+      color->setVariableName(varName);
+      return true;
+    } else {
+      std::cout << "missing variable name" << std::endl;
+      return false;
+    }
+  }
+  else if (strcasecmp ("varTiming", cmd) == 0) {
+    float varTiming;
+    if (input >> varTiming) {
+      color->setVariableTiming(varTiming);
+      return true;
+    } else {
+      std::cout << "missing variable timing" << std::endl;
+      return false;
+    }
+  }
+  else if (strcasecmp ("varUseAlpha", cmd) == 0) {
+    color->setVariableUseAlpha(true);
+    return true;
+  }
+  
+  
   if (strcasecmp ("red", cmd) == 0) {
     channel = 0;
   }

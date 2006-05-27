@@ -20,6 +20,8 @@
 #include <vector>
 #include <iostream>
 
+/* common interface headers */
+#include "TimeKeeper.h"
 
 typedef struct sequenceList {
   float period;
@@ -50,8 +52,13 @@ class DynamicColor {
       colorMid = 1,
       colorMax = 2
     };
-
+    
     bool setName(const std::string& name);
+
+    void setVariableName(const std::string& name);
+    void setVariableTiming(float seconds);
+    void setVariableUseAlpha(bool);
+
     void setLimits(int channel, float min, float max);
     void setSequence(int channel, float period, float offset,
 		     std::vector<char>& list);
@@ -77,6 +84,17 @@ class DynamicColor {
 
     std::string name;
     float color[4];
+    
+    std::string varName;
+    bool varUseAlpha;
+    float varTiming;
+
+    bool varInit;
+    float varOldColor[4];
+    float varNewColor[4];
+    bool varTransition;
+    std::string varOldExpr;
+    TimeKeeper varLastChange;
 
     typedef struct {
       float minValue, maxValue;

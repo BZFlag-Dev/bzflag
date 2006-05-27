@@ -17,10 +17,14 @@
 #include <math.h>
 #include <string.h>
 #include <vector>
+#include <string.h>
 
 /* common implementation headers */
 #include "GameTime.h"
 #include "Pack.h"
+#include "TimeKeeper.h"
+#include "ParseColor.h"
+#include "StateDatabase.h"
 
 
 // this applies to all function periods
@@ -179,6 +183,18 @@ DynamicColor::DynamicColor()
   possibleAlpha = false;
   name = "";
 
+  varName = "";
+  varUseAlpha = false;
+  varTiming = 0.1f;
+
+  const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  varOldExpr = "";
+  varInit = true;
+  varTransition = false;
+  memcpy(varOldColor, white, sizeof(float[4]));
+  memcpy(varNewColor, white, sizeof(float[4]));
+  varLastChange = TimeKeeper::getSunGenesisTime();
+            
   return;
 }
 
@@ -196,6 +212,12 @@ DynamicColor::~DynamicColor()
 
 void DynamicColor::finalize()
 {
+  // variables take priority
+  if (varName.size() > 0) {
+    possibleAlpha = varUseAlpha;
+    return; // nothing else matters
+  }
+
   // sanitize the sequence value, and check for alpha middle values
   bool noAlphaSeqMid = true;
   for (int c = 0; c < 4; c++) {
@@ -229,7 +251,6 @@ void DynamicColor::finalize()
       possibleAlpha = false;
     }
     else {
-
       // check for the common case
       if ((p.sinusoids.size() == 0) &&
 	  (p.clampUps.size() == 0) &&
@@ -270,6 +291,27 @@ const std::string& DynamicColor::getName() const
 }
 
 
+void DynamicColor::setVariableName(const std::string& vName)
+{
+  varName = vName;
+  return;
+}
+
+
+void DynamicColor::setVariableTiming(float seconds)
+{
+  varTiming = (seconds < 0.1f) ? 0.1f : seconds;
+  return;
+}
+
+
+void DynamicColor::setVariableUseAlpha(bool value)
+{
+  varUseAlpha = value;
+  return;
+}
+
+            
 void DynamicColor::setLimits(int channel, float min, float max)
 {
   if (min < 0.0f) {
@@ -360,6 +402,46 @@ void DynamicColor::addClampDown(int channel, const float clampDown[3])
 
 void DynamicColor::update (double t)
 {
+  // variables take priority
+  if (varName.size() > 0) {
+    // process the variable value
+    const std::string expr = BZDB.get(varName);
+    if (varInit) {
+      varInit = false;
+      varOldExpr = expr;
+      varTransition = false;
+      parseColorString(expr, color);
+      memcpy(varOldColor, color, sizeof(float[4]));
+      memcpy(varNewColor, color, sizeof(float[4]));
+    }
+    else if (expr != varOldExpr) {
+      varOldExpr = expr;
+      varTransition = true;
+      varLastChange = TimeKeeper::getTick();
+      memcpy(varOldColor, varNewColor, sizeof(float[4]));
+      parseColorString(expr, varNewColor);
+    }
+
+    // setup the color value
+    const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
+    if (diffTime < varTiming) {
+      const float newScale = diffTime / varTiming;
+      const float oldScale = 1.0f - newScale;
+      color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
+      color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
+      color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
+      color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
+    }
+    else if (varTransition) {
+      // make sure the final color is set exactly
+      varTransition = false;
+      memcpy(color, varNewColor, sizeof(float[4]));
+    }
+    
+    return; // nothing else matters
+  }
+  
+  // update by color channel
   for (int c = 0; c < 4; c++) {
     const ChannelParams& channel = channels[c];
     unsigned int i;
@@ -461,6 +543,10 @@ void * DynamicColor::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
+  buf = nboPackStdString(buf, varName);
+  buf = nboPackUByte(buf, varUseAlpha ? 1 : 0);
+  buf = nboPackFloat(buf, varTiming);
+
   for (int c = 0; c < 4; c++) {
     const ChannelParams& p = channels[c];
     unsigned int i;
@@ -508,6 +594,12 @@ void * DynamicColor::pack(void *buf) const
 void * DynamicColor::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
+
+  uint8_t u8;
+  buf = nboUnpackStdString(buf, varName);
+  buf = nboUnpackUByte(buf, u8);
+  varUseAlpha = (bool)u8;
+  buf = nboUnpackFloat(buf, varTiming);
 
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
@@ -567,7 +659,11 @@ void * DynamicColor::unpack(void *buf)
 
 int DynamicColor::packSize() const
 {
-  int fullSize = nboStdStringPackSize(name);
+  int fullSize = 0;
+  fullSize += nboStdStringPackSize(name);
+  fullSize += nboStdStringPackSize(varName);
+  fullSize += sizeof(uint8_t); // varUseAlpha
+  fullSize += sizeof(float); // varTiming
   for (int c = 0; c < 4; c++) {
     fullSize += sizeof(float) * 2; // the limits
     fullSize += sizeof(uint32_t);
@@ -595,6 +691,16 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
+  }
+  
+  if (varName.size() > 0) {
+    out << indent << "  variable " << varName << std::endl;
+    if (varUseAlpha) {
+      out << indent << "  varUseAlpha " << varName << std::endl;
+    }
+    if (varTiming > 0.0f) {
+      out << indent << "  varTimng " << varTiming << std::endl;
+    }
   }
 
   for (int c = 0; c < 4; c++) {
