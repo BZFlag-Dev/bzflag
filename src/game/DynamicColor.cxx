@@ -636,7 +636,7 @@ void * DynamicColor::unpack(void *buf)
   uint8_t u8;
   buf = nboUnpackStdString(buf, varName);
   buf = nboUnpackUByte(buf, u8);
-  varUseAlpha = (bool)u8;
+  varUseAlpha = (u8 != 0);
   buf = nboUnpackFloat(buf, varTiming);
 
   for (int c = 0; c < 4; c++) {
