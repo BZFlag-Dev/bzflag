@@ -185,7 +185,7 @@ DynamicColor::DynamicColor()
 
   varName = "";
   varUseAlpha = false;
-  varTiming = 0.001f;
+  varTiming = 0.0f;
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varOldExpr = "";
@@ -300,7 +300,7 @@ void DynamicColor::setVariableName(const std::string& vName)
 
 void DynamicColor::setVariableTiming(float seconds)
 {
-  varTiming = (seconds < 0.001f) ? 0.001f : seconds;
+  varTiming = seconds;
   return;
 }
 
@@ -425,7 +425,7 @@ void DynamicColor::update (double t)
     // setup the color value
     const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
     if (diffTime < varTiming) {
-      const float newScale = diffTime / varTiming;
+      const float newScale = (varTiming > 0.0f) ? (diffTime / varTiming) : 1.0f;
       const float oldScale = 1.0f - newScale;
       color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
       color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
@@ -699,7 +699,7 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
       out << indent << "  varUseAlpha " << varName << std::endl;
     }
     if (varTiming > 0.0f) {
-      out << indent << "  varTimng " << varTiming << std::endl;
+      out << indent << "  varTiming " << varTiming << std::endl;
     }
   }
 
