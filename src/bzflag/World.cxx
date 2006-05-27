@@ -978,7 +978,11 @@ static void writeBZDBvar (const std::string& name, void *userData)
     if (BZDB.get(name).find(' ') != std::string::npos) {
       qmark = '"';
     }
-    out << indent << "  -set " << name << " "
+    std::string set = "  -set ";
+    if (BZDB.getDefault(name) == "") {
+      set = "  -setforced ";
+    }
+    out << indent << set << name << " "
 		  << qmark << BZDB.get(name) << qmark << std::endl;
   }
   return;
