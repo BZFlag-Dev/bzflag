@@ -25,6 +25,7 @@
 
 /* local interface headers */
 class HUDuiControl;
+class HUDuiElement;
 class HUDuiDefaultKey;
 
 /**
@@ -53,8 +54,11 @@ class HUDDialog {
 
 
   protected:
-    const std::vector<HUDuiControl*>&	getControls() const { return list; }
-    std::vector<HUDuiControl*>&		getControls() { return list; }
+    const std::vector<HUDuiControl*>&	getControls() const { return controlList; }
+    std::vector<HUDuiControl*>&		getControls() { return controlList; }
+
+    const std::vector<HUDuiElement*>&	getElements() const { return renderList; }
+    std::vector<HUDuiElement*>&		getElements() { return renderList; }
 
     int				getHeight() const { return height; }
     int				getWidth() const { return width; }
@@ -63,7 +67,15 @@ class HUDDialog {
     int				height, width;
 
   private:
-    std::vector<HUDuiControl*>	list;
+    /* renderList contains elements which are to be rendered only
+     *  and may not be manipulated by the user.
+     * controlList contains elements which can potentially be 
+     *  interacted with and hold focus if included in the correct
+     *  range in initNavigation.
+     * The union of the lists contains all elements on the dialog.
+     */
+    std::vector<HUDuiElement*>	renderList;
+    std::vector<HUDuiControl*>	controlList;
     HUDuiControl*		focus;
 };
 

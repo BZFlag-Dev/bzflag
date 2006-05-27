@@ -26,6 +26,8 @@
 #include "HUDuiList.h"
 #include "playing.h"
 #include "HUDui.h"
+#include "SceneRenderer.h"
+#include "BzfDisplay.h"
 
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {

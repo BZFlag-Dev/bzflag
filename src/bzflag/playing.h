@@ -26,11 +26,11 @@
 /* common headers */
 #include "StartupInfo.h"
 #include "AutoCompleter.h"
+#include "Address.h"
 
 /* local headers */
 #include "MainWindow.h"
 #include "ControlPanel.h"
-#include "HUDRenderer.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -48,6 +48,7 @@ class MainWindow;
 class SceneRenderer;
 class Player;
 class ServerLink;
+class HUDRenderer;
 
 BzfDisplay*		getDisplay();
 MainWindow*		getMainWindow();

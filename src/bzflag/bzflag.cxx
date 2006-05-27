@@ -42,6 +42,7 @@
 #include "BzfMedia.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
+#include "BzfDisplay.h"
 #include "CommandManager.h"
 #include "CommandsStandard.h"
 #include "ConfigFileManager.h"
@@ -75,6 +76,7 @@
 #include "playing.h"
 #include "sound.h"
 #include "playing.h"
+#include "SceneRenderer.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"

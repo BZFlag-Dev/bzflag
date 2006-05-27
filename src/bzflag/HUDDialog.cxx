@@ -14,6 +14,7 @@
 #include "HUDDialog.h"
 
 // local interface headers
+#include "HUDuiElement.h"
 #include "HUDuiControl.h"
 
 HUDDialog::HUDDialog() : focus(NULL)
@@ -23,17 +24,26 @@ HUDDialog::HUDDialog() : focus(NULL)
 
 HUDDialog::~HUDDialog()
 {
-  // delete all controls left on list
-  const int count = (const int)list.size();
-  for (int i = 0; i < count; i++)
-    delete list[i];
+  // delete all elements left on lists
+  int count = (int)controlList.size();
+  int i;
+  for (i = 0; i < count; i++)
+    delete controlList[i];
+  count = (int)renderList.size();
+  for (i = 0; i < count; i++)
+    delete renderList[i];
 }
 
 void			HUDDialog::render()
 {
-  const int count = (const int)list.size();
+  // render all elements on the dialog
+  int count = (int)controlList.size();
+  int i;
   for (int i = 0; i < count; i++)
-    list[i]->render();
+    controlList[i]->render();
+  count = (int)renderList.size();
+  for (i = 0; i < count; i++)
+    renderList[i]->render();
 }
 
 void			HUDDialog::resize(int _width, int _height)

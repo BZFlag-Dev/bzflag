@@ -26,6 +26,7 @@
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 #include "ScoreboardRenderer.h"
+#include "SceneRenderer.h"
 #include "playing.h"
 
 GUIOptionsMenu::GUIOptionsMenu()

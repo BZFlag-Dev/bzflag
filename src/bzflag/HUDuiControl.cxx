@@ -10,17 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// interface header
+// interface headers
 #include "HUDuiControl.h"
 
 // system headers
 #include <iostream>
 
 // common implementation headers
-#include "BundleMgr.h"
-#include "Bundle.h"
 #include "TextureManager.h"
-#include "FontManager.h"
 
 // local implementation headers
 #include "HUDui.h"
@@ -31,22 +28,13 @@
 //
 
 // init static members
-const GLfloat		HUDuiControl::dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
-const GLfloat		HUDuiControl::moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
-const GLfloat		HUDuiControl::textColor[3] = { 1.0f, 1.0f, 1.0f };
 OpenGLGState*		HUDuiControl::gstate = NULL;
-int		HUDuiControl::arrow = -1;
+int			HUDuiControl::arrow = -1;
 int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true),
-				fontFace(-1), fontSize(11),
-				x(0.0f), y(0.0f),
-				width(1.0f), height(1.0f),
-				fontHeight(11.0f),
-				desiredLabelWidth(0.0f),
-				trueLabelWidth(0.0f),
 				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
@@ -80,26 +68,6 @@ HUDuiControl::~HUDuiControl()
   }
 }
 
-float			HUDuiControl::getLabelWidth() const
-{
-  return desiredLabelWidth;
-}
-
-std::string		HUDuiControl::getLabel() const
-{
-  return BundleMgr::getCurrentBundle()->getLocalString(label);
-}
-
-int			HUDuiControl::getFontFace() const
-{
-  return fontFace;
-}
-
-float			HUDuiControl::getFontSize() const
-{
-  return fontSize;
-}
-
 HUDuiControl*		HUDuiControl::getPrev() const
 {
   return prev;
@@ -120,45 +88,6 @@ void*			HUDuiControl::getUserData() const
   return userData;
 }
 
-void			HUDuiControl::setPosition(float _x, float _y)
-{
-  x = _x;
-  y = _y;
-}
-
-void			HUDuiControl::setSize(float _width, float _height)
-{
-  width = _width;
-  height = _height;
-}
-
-void			HUDuiControl::setLabelWidth(float labelWidth)
-{
-  desiredLabelWidth = labelWidth;
-}
-
-void			HUDuiControl::setLabel(const std::string& _label)
-{
-
-  label = _label;
-  if (fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
-  }
-}
-
-void			HUDuiControl::setFontFace(int _fontFace)
-{
-  fontFace = _fontFace;
-  onSetFont();
-}
-
-void			HUDuiControl::setFontSize(float size)
-{
-  fontSize = size;
-  onSetFont();
-}
-
 void			HUDuiControl::setPrev(HUDuiControl* _prev)
 {
   if (!_prev) prev = this;
@@ -175,18 +104,6 @@ void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
 {
   cb = _cb;
   userData = _ud;
-}
-
-void			HUDuiControl::onSetFont()
-{
-  if (fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStrHeight(fontFace, fontSize, getLabel());
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
-  } else {
-    fontHeight = 11.0f;
-    trueLabelWidth = 0.0f;
-  }
 }
 
 bool			HUDuiControl::hasFocus() const
@@ -215,6 +132,9 @@ void			HUDuiControl::renderFocus()
 
   TextureManager &tm = TextureManager::instance();
   const ImageInfo &info = tm.getInfo(arrow);
+
+  const float x = getX();
+  const float y = getY();
 
   if (gstate->isTextured()) { // assumes there are w/h frames of animation h x h in each image
     float imageSize = (float)info.y;
@@ -268,23 +188,11 @@ void			HUDuiControl::renderFocus()
   }
 }
 
-void			HUDuiControl::renderLabel()
-{
-  std::string theLabel = getLabel();
-  if (theLabel.length() > 0 && fontFace >= 0) {
-    FontManager &fm = FontManager::instance();
-    const float dx = (desiredLabelWidth > trueLabelWidth)
-      ? desiredLabelWidth : trueLabelWidth;
-    fm.drawString(x - dx, y, 0, fontFace, fontSize, theLabel);
-  }
-}
-
 void			HUDuiControl::render()
 {
   if (hasFocus() && showingFocus) renderFocus();
   glColor3fv(hasFocus() ? textColor : dimTextColor);
-  renderLabel();
-  doRender();
+  HUDuiElement::render();
 }
 
 

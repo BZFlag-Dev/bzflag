@@ -3860,6 +3860,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiElement.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDuiLabel.cxx"
 					>
 					<FileConfiguration
@@ -6843,6 +6847,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiDefaultKey.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiElement.h"
 				>
 			</File>
 			<File
