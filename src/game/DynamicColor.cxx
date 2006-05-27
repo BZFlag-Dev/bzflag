@@ -418,7 +418,7 @@ void DynamicColor::update (double t)
       varOldExpr = expr;
       varTransition = true;
       varLastChange = TimeKeeper::getTick();
-      memcpy(varOldColor, varNewColor, sizeof(float[4]));
+      memcpy(varOldColor, color, sizeof(float[4]));
       parseColorString(expr, varNewColor);
     }
 
