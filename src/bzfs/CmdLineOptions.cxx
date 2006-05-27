@@ -970,7 +970,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       name = argv[i];
       if (!BZDB.isSet(name)) {
 	std::cerr << "Unknown BZDB variable: " << name << std::endl;
-	exit (1);
+	exit(1);
       }
       i++;
       value = argv[i];
@@ -982,6 +982,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       name = argv[i];
       i++;
       value = argv[i];
+      const bool exists = BZDB.isSet(name);
+      if (exists) {
+	std::cerr << "-setforced: " << name << " already exists" << std::endl;
+      } else {
+        addBzfsCallback(name, NULL);
+      }
       BZDB.set(name, value);
       DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
     } else if (strcmp(argv[i], "-sl") == 0) {

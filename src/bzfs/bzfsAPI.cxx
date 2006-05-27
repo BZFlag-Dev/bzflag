@@ -2597,7 +2597,7 @@ BZF_API void bz_removeRabbit( int player )
 	sendRabbitUpdate(playerIndex,2);
 }
 
-BZF_API void bz_changeTeam( int player, bz_eTeamType team )
+BZF_API void bz_changeTeam( int player, bz_eTeamType _team )
 {
 	if (player < 0)
 		return;
@@ -2608,7 +2608,7 @@ BZF_API void bz_changeTeam( int player, bz_eTeamType team )
 	if (!playerRec)
 		return;
 
-	TeamColor realTeam = convertTeam(team);
+	TeamColor realTeam = convertTeam(_team);
 	playerRec->player.setTeam(realTeam);
 
 	sendSetTeam(playerIndex,realTeam);

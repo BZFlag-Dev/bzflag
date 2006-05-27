@@ -724,13 +724,13 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 	broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
 }
 
-void sendSetTeam ( int playerIndex, int team )
+void sendSetTeam ( int playerIndex, int _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
 
 	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUByte(bufStart, team);
-	broadcastMessage(MsgSetTeam, (char*)buf-(char*)bufStart, bufStart);
+	buf = nboPackUByte(bufStart, _team);
+	broadcastMessage(MsgSetTeam, (char*)buf - (char*)bufStart, bufStart);
 }
 
 

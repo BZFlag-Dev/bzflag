@@ -275,6 +275,16 @@ static void onGlobalChanged(const std::string& name, void*)
 }
 
 
+//
+// provides external access to onGlobalChanged
+//
+void addBzfsCallback(const std::string& name, void* data)
+{
+  BZDB.addCallback(name, onGlobalChanged, data);
+  return;
+}
+
+
 static void sendUDPupdate(NetHandler *handler)
 {
   // confirm inbound UDP with a TCP message

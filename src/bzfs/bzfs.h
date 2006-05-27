@@ -51,32 +51,33 @@ extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code, int len, const void *msg);
-extern int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg);
+extern int   directMessage(NetHandler *handler, uint16_t code, int len, const void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
-extern void       zapFlagByPlayer(int playerIndex);
-extern void       resetFlag(FlagInfo &flag);
-extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
-extern void       publicize();
+extern void  zapFlagByPlayer(int playerIndex);
+extern void  resetFlag(FlagInfo &flag);
+extern void  dropFlag(FlagInfo& flag, const float dropPos[3]);
+extern void  publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
-void checkGameOn ( void );
-PlayerId getNewPlayerID ( void );
-bool validPlayerCallsign ( int playerIndex );
-void addPlayer(int playerIndex, GameKeeper::Player *playerData);
-void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
-bool worldStateChanging ( void );
-void searchFlag(GameKeeper::Player &playerData);
-void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
-void playerAlive(int playerIndex);
-void pwriteBroadcast(const void *b, int l, int mask);
-int pwrite(NetHandler *handler, const void *b, int l);
-int lookupPlayer(const PlayerId& id);
-void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
-void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
-void captureFlag(int playerIndex, TeamColor teamCaptured);
-bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
-bool allowTeams ( void );
+extern void checkGameOn ( void );
+extern PlayerId getNewPlayerID ( void );
+extern bool validPlayerCallsign ( int playerIndex );
+extern void addPlayer(int playerIndex, GameKeeper::Player *playerData);
+extern void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
+extern bool worldStateChanging ( void );
+extern void searchFlag(GameKeeper::Player &playerData);
+extern void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
+extern void playerAlive(int playerIndex);
+extern void pwriteBroadcast(const void *b, int l, int mask);
+extern int  pwrite(NetHandler *handler, const void *b, int l);
+extern int  lookupPlayer(const PlayerId& id);
+extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
+extern void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
+extern void captureFlag(int playerIndex, TeamColor teamCaptured);
+extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
+extern bool allowTeams ( void );
+extern void addBzfsCallback(const std::string& name, void* data);
 
 typedef struct CheatProtectionOptions
 {
@@ -124,10 +125,10 @@ extern bool dontWait;
 extern float maxWorldHeight;
 
 
-void pauseCountdown ( const char *pausedBy );
-void resumeCountdown ( const char *resumedBy );
-void resetTeamScores ( void );
-void startCountdown ( int delay, float limit, const char *buyWho );
+extern void pauseCountdown ( const char *pausedBy );
+extern void resumeCountdown ( const char *resumedBy );
+extern void resetTeamScores ( void );
+extern void startCountdown ( int delay, float limit, const char *buyWho );
 
 #endif
 // Local Variables: ***
