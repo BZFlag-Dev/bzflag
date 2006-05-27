@@ -185,7 +185,7 @@ DynamicColor::DynamicColor()
 
   varName = "";
   varUseAlpha = false;
-  varTiming = 0.1f;
+  varTiming = 0.001f;
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varOldExpr = "";
@@ -300,7 +300,7 @@ void DynamicColor::setVariableName(const std::string& vName)
 
 void DynamicColor::setVariableTiming(float seconds)
 {
-  varTiming = (seconds < 0.1f) ? 0.1f : seconds;
+  varTiming = (seconds < 0.001f) ? 0.001f : seconds;
   return;
 }
 
