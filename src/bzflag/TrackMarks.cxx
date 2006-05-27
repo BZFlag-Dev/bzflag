@@ -613,7 +613,7 @@ void TrackMarks::renderObstacleTracks()
 
   // draw treads
 #ifdef FANCY_TREADMARKS
-  glDepthFunc(GL_LEQUAL);
+  //glDepthFunc(GL_LEQUAL);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(-1.0f, -1.0f);
 #endif // FANCY_TREADMARKS
@@ -622,7 +622,7 @@ void TrackMarks::renderObstacleTracks()
     drawTreads(*ptr);
   }
 #ifdef FANCY_TREADMARKS
-  glDepthFunc(GL_LESS);
+  //glDepthFunc(GL_LEQUAL);
   glDisable(GL_POLYGON_OFFSET_FILL);
 #endif // FANCY_TREADMARKS
 

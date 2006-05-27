@@ -1264,6 +1264,7 @@ void OpenGLGState::initContext()
 void OpenGLGState::initGLState()
 {
   // initialize GL state to what we expect
+  glDepthFunc(GL_LEQUAL);
   glDisable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glDisable(GL_LIGHTING);

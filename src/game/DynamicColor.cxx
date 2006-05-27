@@ -185,7 +185,7 @@ DynamicColor::DynamicColor()
 
   varName = "";
   varUseAlpha = false;
-  varTiming = 0.0f;
+  varTiming = 1.0f;
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varInit = false;
@@ -711,7 +711,7 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
     if (varUseAlpha) {
       out << indent << "  varUseAlpha " << varName << std::endl;
     }
-    if (varTiming > 0.0f) {
+    if (varTiming != 1.0f) {
       out << indent << "  varTiming " << varTiming << std::endl;
     }
   }
