@@ -96,6 +96,7 @@ class DynamicColor {
 
     bool varInit;
     bool varTransition;
+    float varTimingTmp;
     float varOldColor[4];
     float varNewColor[4];
     TimeKeeper varLastChange;

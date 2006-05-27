@@ -16,8 +16,9 @@
 /* system implementation headers */
 #include <math.h>
 #include <string.h>
-#include <vector>
 #include <string.h>
+#include <stdlib.h>
+#include <vector>
 
 /* common implementation headers */
 #include "GameTime.h"
@@ -189,6 +190,7 @@ DynamicColor::DynamicColor()
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varInit = false;
+  varTimingTmp = varTiming;
   varTransition = false;
   memcpy(varOldColor, white, sizeof(float[4]));
   memcpy(varNewColor, white, sizeof(float[4]));
@@ -411,10 +413,28 @@ void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
 
 void DynamicColor::updateVariable()
 {
+  // setup the basics
   varTransition = true;
   varLastChange = TimeKeeper::getTick();
   memcpy(varOldColor, color, sizeof(float[4]));
-  parseColorString(BZDB.get(varName), varNewColor);
+  std::string expr = BZDB.get(varName);
+
+  // parse the optional delay timing
+  std::string::size_type atpos = expr.find_first_of('@');
+  if (atpos == std::string::npos) {
+    varTimingTmp = varTiming;
+  }
+  else {
+    char* end;
+    const char* start = expr.c_str() + atpos + 1;
+    varTimingTmp = (float)strtod(start, &end);
+    if (end == start) {
+      varTimingTmp = varTiming; // conversion failed
+    }
+    expr.resize(atpos); // strip everything after '@'
+  }
+
+  parseColorString(expr, varNewColor);
   return;
 }
 
@@ -427,7 +447,12 @@ void DynamicColor::update (double t)
     if (!varInit) {
       varInit = true;
       varTransition = false;
-      parseColorString(BZDB.get(varName), color);
+      std::string expr = BZDB.get(varName);
+      std::string::size_type atpos = expr.find_first_of('@');
+      if (atpos != std::string::npos) {
+        expr.resize(atpos);
+      }
+      parseColorString(expr, color);
       memcpy(varOldColor, color, sizeof(float[4]));
       memcpy(varNewColor, color, sizeof(float[4]));
       BZDB.addCallback(varName, bzdbCallback, this);
@@ -436,8 +461,8 @@ void DynamicColor::update (double t)
     // setup the color value
     if (varTransition) {
       const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
-      if (diffTime < varTiming) {
-        const float newScale = (varTiming > 0.0f) ? (diffTime / varTiming) : 1.0f;
+      if (diffTime < varTimingTmp) {
+        const float newScale = (varTimingTmp > 0.0f) ? (diffTime / varTimingTmp) : 1.0f;
         const float oldScale = 1.0f - newScale;
         color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
         color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
