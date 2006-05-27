@@ -42,6 +42,7 @@ typedef struct {
   float width;
 } clampParams;
 
+
 class DynamicColor {
   public:
     DynamicColor();
@@ -80,6 +81,10 @@ class DynamicColor {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
+    void updateVariable();
+    static void bzdbCallback(const std::string& varName, void* data);
+    
+  private:
     static const float minPeriod;
 
     std::string name;
@@ -90,10 +95,9 @@ class DynamicColor {
     float varTiming;
 
     bool varInit;
+    bool varTransition;
     float varOldColor[4];
     float varNewColor[4];
-    bool varTransition;
-    std::string varOldExpr;
     TimeKeeper varLastChange;
 
     typedef struct {

@@ -188,8 +188,7 @@ DynamicColor::DynamicColor()
   varTiming = 0.0f;
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  varOldExpr = "";
-  varInit = true;
+  varInit = false;
   varTransition = false;
   memcpy(varOldColor, white, sizeof(float[4]));
   memcpy(varNewColor, white, sizeof(float[4]));
@@ -201,10 +200,13 @@ DynamicColor::DynamicColor()
 
 DynamicColor::~DynamicColor()
 {
-  // sanitize the sequence value
+  // free the sequence values
   for (int c = 0; c < 4; c++) {
     sequenceParams& seq = channels[c].sequence;
     delete[] seq.list;
+  }
+  if (varInit) {
+    BZDB.removeCallback(varName, bzdbCallback, this);
   }
   return;
 }
@@ -400,42 +402,53 @@ void DynamicColor::addClampDown(int channel, const float clampDown[3])
 }
 
 
+void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
+{
+  ((DynamicColor*)data)->updateVariable();
+  return;
+}
+
+
+void DynamicColor::updateVariable()
+{
+  varTransition = true;
+  varLastChange = TimeKeeper::getTick();
+  memcpy(varOldColor, color, sizeof(float[4]));
+  parseColorString(BZDB.get(varName), varNewColor);
+  return;
+}
+
+
 void DynamicColor::update (double t)
 {
   // variables take priority
   if (varName.size() > 0) {
     // process the variable value
-    const std::string expr = BZDB.get(varName);
-    if (varInit) {
-      varInit = false;
-      varOldExpr = expr;
+    if (!varInit) {
+      varInit = true;
       varTransition = false;
-      parseColorString(expr, color);
+      parseColorString(BZDB.get(varName), color);
       memcpy(varOldColor, color, sizeof(float[4]));
       memcpy(varNewColor, color, sizeof(float[4]));
-    }
-    else if (expr != varOldExpr) {
-      varOldExpr = expr;
-      varTransition = true;
-      varLastChange = TimeKeeper::getTick();
-      memcpy(varOldColor, color, sizeof(float[4]));
-      parseColorString(expr, varNewColor);
+      BZDB.addCallback(varName, bzdbCallback, this);
     }
 
     // setup the color value
-    const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
-    if (diffTime < varTiming) {
-      const float newScale = (varTiming > 0.0f) ? (diffTime / varTiming) : 1.0f;
-      const float oldScale = 1.0f - newScale;
-      color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
-      color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
-      color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
-      color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
-    }
-    else if (varTransition) {
-      // make sure the final color is set exactly
-      varTransition = false;
-      memcpy(color, varNewColor, sizeof(float[4]));
+    if (varTransition) {
+      const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
+      if (diffTime < varTiming) {
+        const float newScale = (varTiming > 0.0f) ? (diffTime / varTiming) : 1.0f;
+        const float oldScale = 1.0f - newScale;
+        color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
+        color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
+        color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
+        color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
+      }
+      else {
+        // make sure the final color is set exactly
+        varTransition = false;
+        memcpy(color, varNewColor, sizeof(float[4]));
+      }
     }
     
     return; // nothing else matters
