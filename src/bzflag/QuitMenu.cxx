@@ -19,6 +19,7 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDuiLabel.h"
+#include "HUDuiFrame.h"
 
 
 bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
@@ -55,6 +56,14 @@ QuitMenu::QuitMenu()
   listHUD.push_back(label);
 
   initNavigation(listHUD, 1, 1);
+
+  // frame
+  std::vector<HUDuiElement*>& listEle = getElements();
+  HUDuiFrame* frame = new HUDuiFrame;
+  float red[4] = {1.0f, 0.2f, 0.2f, 1.0f};
+  frame->setColor(red);
+  frame->setLineWidth(2.0f);
+  listEle.push_back(frame);
 }
 
 QuitMenu::~QuitMenu()
@@ -94,6 +103,16 @@ void QuitMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width - labelWidth);
   y = (float)_height - 3.5f * fontHeight;
   label->setPosition(x, y);
+
+  // frame
+  std::vector<HUDuiElement*>& listEle = getElements();
+  HUDuiFrame* frame = (HUDuiFrame*)listEle[0];
+
+  const float gapSize = fm.getStrHeight(fontFace, fontSize, "99");
+  frame->setFontFace(fontFace);
+  frame->setFontSize(0.0f);
+  frame->setPosition(x - gapSize, y + 1.5f * fontHeight);
+  frame->setSize(labelWidth + 2.0f * gapSize, fontHeight * 2.0f);
 }
 
 

@@ -74,6 +74,8 @@ bzflag_SOURCES =			\
 	HUDuiControl.h			\
 	HUDuiElement.cxx		\
 	HUDuiElement.h			\
+	HUDuiFrame.cxx			\
+	HUDuiFrame.h			\
 	HUDuiDefaultKey.cxx		\
 	HUDuiDefaultKey.h		\
 	HUDuiLabel.cxx			\

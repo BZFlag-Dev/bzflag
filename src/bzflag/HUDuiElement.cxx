@@ -33,7 +33,8 @@ HUDuiElement::HUDuiElement() : fontFace(-1), fontSize(11),
 				width(1.0f), height(1.0f),
 				fontHeight(11.0f),
 				desiredLabelWidth(0.0f),
-				trueLabelWidth(0.0f)
+				trueLabelWidth(0.0f),
+				skipRenderLabel(false)
 {
   // nothing really to do here
 }
@@ -127,7 +128,7 @@ void			HUDuiElement::renderLabel()
 
 void			HUDuiElement::render()
 {
-  renderLabel();
+  if (!skipRenderLabel) renderLabel();
   doRender();
 }
 
