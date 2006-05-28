@@ -39,7 +39,7 @@ void			HUDDialog::render()
   // render all elements on the dialog
   int count = (int)controlList.size();
   int i;
-  for (int i = 0; i < count; i++)
+  for (i = 0; i < count; i++)
     controlList[i]->render();
   count = (int)renderList.size();
   for (i = 0; i < count; i++)

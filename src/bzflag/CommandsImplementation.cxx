@@ -234,7 +234,7 @@ bool CommandList::operator() (const char * /*cmdLine*/)
 
 static void printBindHelp()
 {
-  addMessage(NULL, "usage: /bind <event> <press> <action>");
+  addMessage(NULL, "usage: /bind <event> [<press> [<action>]]");
   addMessage(NULL, "   event:   ex: \"Shift+Page Up\"");
   addMessage(NULL, "   press:   up, down, or both");
   addMessage(NULL, "   action:  ex: \"scrollpanel up 3\"");
@@ -244,37 +244,60 @@ bool BindCommand::operator() (const char *commandLine)
 {
   std::string params = commandLine + commandName.size();
   std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
-  if (tokens.size() != 3) {
+  if ((tokens.size() < 1) || (tokens.size() > 3)) {
     printBindHelp();
     return true;
   }
+
   BzfKeyEvent ev;
   if (!KEYMGR.stringToKeyEvent(tokens[0], ev)) {
     printBindHelp();
     addMessage(NULL, "could not find the key");
     return true;
   }
-  bool press, both = false;
-  if (tokens[1] == "up") {
-    press = true;
-  } else if (tokens[1] == "down") {
-    press = false;
-  } else if (tokens[1] == "both") {
-    both = true;
-  } else {
-    printBindHelp();
-    addMessage(NULL, "bad <press> type");
-    return true;
+
+  if (tokens.size() >= 2) {
+    bool press;
+    bool both = false;
+    if (tokens[1] == "up") {
+      press = false;
+    } else if (tokens[1] == "down") {
+      press = true;
+    } else if (tokens[1] == "both") {
+      both = true;
+    } else {
+      printBindHelp();
+      addMessage(NULL, "bad <press> type");
+      return true;
+    }
+    
+    if (both) {
+      KEYMGR.unbind(ev, true);
+      KEYMGR.unbind(ev, false);
+      if (tokens.size() == 3) {
+        KEYMGR.bind(ev, true, tokens[2]);
+        KEYMGR.bind(ev, false, tokens[2]);
+      }
+    } else {
+      KEYMGR.unbind(ev, press);
+      if (tokens.size() == 3) {
+        KEYMGR.bind(ev, press, tokens[2]);
+      }
+    }
   }
-  
-  if (both) {
-    KEYMGR.unbind(ev, true);
-    KEYMGR.bind(ev, true, tokens[2]);
-    KEYMGR.unbind(ev, false);
-    KEYMGR.bind(ev, false, tokens[2]);
-  } else {
-    KEYMGR.unbind(ev, press);
-    KEYMGR.bind(ev, press, tokens[2]);
+  else {
+    // print the current binding
+    std::string msg;
+    msg = "binding:  \"";
+    msg += tokens[0];
+    msg += "\" down ";
+    msg += KEYMGR.get(ev, true);
+    addMessage(NULL, msg.c_str());
+    msg = "binding:  \"";
+    msg += tokens[0];
+    msg += "\" up   ";
+    msg += KEYMGR.get(ev, false);
+    addMessage(NULL, msg.c_str());
   }
   
   return true;

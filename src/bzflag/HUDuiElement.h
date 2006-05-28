@@ -66,10 +66,10 @@ class HUDuiElement {
     float		fontHeight;
 
   private:
-    int			fontFace;
-    float		fontSize;
-    float		x, y;
-    float		width, height;
+    int			elementFontFace;
+    float		elementFontSize;
+    float		elementX, elementY;
+    float		elementWidth, elementHeight;
     float		desiredLabelWidth, trueLabelWidth;
     std::string		label;
 };
@@ -81,25 +81,25 @@ class HUDuiElement {
 inline
 float			HUDuiElement::getX() const
 {
-  return x;
+  return elementX;
 }
 
 inline
 float			HUDuiElement::getY() const
 {
-  return y;
+  return elementY;
 }
 
 inline
 float			HUDuiElement::getWidth() const
 {
-  return width;
+  return elementWidth;
 }
 
 inline
 float			HUDuiElement::getHeight() const
 {
-  return height;
+  return elementHeight;
 }
 
 #endif // __HUDUICONTROL_H__

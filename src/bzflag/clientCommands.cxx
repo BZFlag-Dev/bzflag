@@ -185,7 +185,7 @@ const struct CommandListItem commandList[] = {
 #ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
-  { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
+  { "time",	&cmdTime,	"time {forward|backward|<seconds>}:  adjust the current time" },
   { "roam",	&cmdRoam,	"roam {zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
@@ -837,14 +837,21 @@ static std::string cmdTime(const std::string&,
 {
   // FIXME - time should be moved into BZDB
   if (args.size() != 1)
-    return "usage: time {forward|backward}";
+    return "usage: time {forward|backward|<seconds>}";
   if (args[0] == "forward") {
     clockAdjust += 5.0f * 60.0f;
   } else if (args[0] == "backward") {
     clockAdjust -= 5.0f * 60.0f;
   } else {
-    return "usage: time {forward|backward}";
-  }
+    float seconds;
+    char* end;
+    seconds = (float)strtod(args[0].c_str(), &end);
+    if (end != args[0].c_str()) {
+      clockAdjust += seconds;
+    } else {
+      return "usage: time {forward|backward|<seconds>}";
+    }
+  }  
   return std::string();
 }
 
