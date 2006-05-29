@@ -25,7 +25,8 @@
 // HUDuiFrame
 //
 
-HUDuiFrame::HUDuiFrame() : lineWidth(1.0f)
+HUDuiFrame::HUDuiFrame() : lineWidth(1.0f),
+			   style(RectangleStyle)
 {
   color[0] = 1.0f;
   color[1] = 1.0f;
@@ -37,6 +38,30 @@ HUDuiFrame::HUDuiFrame() : lineWidth(1.0f)
 HUDuiFrame::~HUDuiFrame()
 {
 }
+
+void HUDuiFrame::drawArc(float x, float y, float r, int sides,
+			 float atAngle, float arcAngle)
+{
+  // sanity
+  if (sides <= 0)
+     sides = 1;
+
+  float i = arcAngle / sides;
+
+  glPushMatrix();
+
+  // center
+  glTranslatef(x, y, 0);
+
+  // draw
+  glBegin(GL_LINE_STRIP);
+    for (float a = atAngle; a - (atAngle + arcAngle) < 0.001f; a += i) {
+      glVertex2f(r * cos(a), r * sin(a));
+    }
+  glEnd();
+
+  glPopMatrix();
+ }
 
 void			HUDuiFrame::doRender()
 {
@@ -56,28 +81,67 @@ void			HUDuiFrame::doRender()
   const float frameX = x - labelGap;
   const float frameWidth = labelGap * 2 + width;
 
+  // set up appearance
   OpenGLGState::resetState();  // fixme: shouldn't be needed
   glLineWidth(lineWidth);
   glColor4fv(color);
-  glBegin(GL_LINES);
-    glVertex2f(frameX, frameY);
-    glVertex2f(frameX, frameY - height);
 
-    glVertex2f(frameX, frameY - height);
-    glVertex2f(frameX + frameWidth, frameY - height);
+  // render frame
+  switch (style) {
+    case RectangleStyle:
+      {
+	glBegin(GL_LINES);
+	  glVertex2f(frameX, frameY);
+	  glVertex2f(frameX, frameY - height);
 
-    glVertex2f(frameX + frameWidth, frameY - height);
-    glVertex2f(frameX + frameWidth, frameY);
+	  glVertex2f(frameX, frameY - height);
+	  glVertex2f(frameX + frameWidth, frameY - height);
 
-    if (width > labelWidth + labelGap) {
-      glVertex2f(frameX + frameWidth, frameY);
-      glVertex2f(frameX + labelWidth + labelGap, frameY);
+	  glVertex2f(frameX + frameWidth, frameY - height);
+	  glVertex2f(frameX + frameWidth, frameY);
 
-      glVertex2f(frameX, frameY);
-      glVertex2f(frameX + labelGap, frameY);
-    }
-  glEnd();
+	  if (width > labelWidth + labelGap) {
+	    glVertex2f(frameX + frameWidth, frameY);
+	    glVertex2f(frameX + labelWidth + labelGap, frameY);
 
+	    glVertex2f(frameX, frameY);
+	    glVertex2f(frameX + labelGap, frameY);
+	  }
+	glEnd();
+      }
+      break;
+    case RoundedRectStyle:
+      {
+	glBegin(GL_LINES);
+	  glVertex2f(frameX, frameY - labelGap);
+	  glVertex2f(frameX, frameY - height + labelGap);
+
+	  glVertex2f(frameX + labelGap, frameY - height);
+	  glVertex2f(frameX + frameWidth - labelGap, frameY - height);
+
+	  glVertex2f(frameX + frameWidth, frameY - height + labelGap);
+	  glVertex2f(frameX + frameWidth, frameY - labelGap);
+
+	  if (width > labelWidth + labelGap) {
+	    glVertex2f(frameX + frameWidth - labelGap, frameY);
+	    glVertex2f(frameX + labelWidth + labelGap, frameY);
+	  }
+	glEnd();
+	
+	const float ninety = (float) M_PI / 2.0f;
+	drawArc(frameX + frameWidth - labelGap, frameY - labelGap, labelGap, 20,
+		0, ninety);
+	drawArc(frameX + labelGap, frameY - labelGap, labelGap, 20,
+		ninety, ninety);
+	drawArc(frameX + labelGap, frameY - height + labelGap, labelGap, 20,
+		2*ninety, ninety);
+	drawArc(frameX + frameWidth - labelGap, frameY - height + labelGap, labelGap, 20,
+		3*ninety, ninety);
+      }
+      break;
+  }
+
+  // render label
   fm.drawString(x, y, 0, fontFace, fontSize, getLabel());
 }
 

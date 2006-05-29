@@ -32,8 +32,16 @@ class HUDuiFrame : public HUDuiElement {
 			HUDuiFrame();
     virtual		~HUDuiFrame();
 
+    enum FrameType {
+      RectangleStyle,
+      RoundedRectStyle
+    };
+
     void		setColor(float color[4]);
     const float*	getColor() const;
+
+    void		setStyle(FrameType style);
+    FrameType		getStyle() const;
 
     void		setLineWidth(float width);
     float		getLineWidth() const;
@@ -42,8 +50,12 @@ class HUDuiFrame : public HUDuiElement {
     void		doRender();
 
   private:
+    void		drawArc(float x, float y, float r, int sides,
+				float atAngle, float thruAngle);
+
     float lineWidth;
     float color[4];
+    FrameType style;
 };
 
 inline void HUDuiFrame::setColor(float _color[4])
@@ -67,6 +79,16 @@ inline void HUDuiFrame::setLineWidth(float _width)
 inline float HUDuiFrame::getLineWidth() const
 {
   return lineWidth;
+}
+
+inline void HUDuiFrame::setStyle(FrameType _style)
+{
+  style = _style;
+}
+
+inline HUDuiFrame::FrameType HUDuiFrame::getStyle() const
+{
+  return style;
 }
 
 #endif // __HUDUIFRAME_H__

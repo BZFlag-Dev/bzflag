@@ -63,6 +63,7 @@ QuitMenu::QuitMenu()
   float red[4] = {1.0f, 0.2f, 0.2f, 1.0f};
   frame->setColor(red);
   frame->setLineWidth(2.0f);
+  frame->setStyle(HUDuiFrame::RoundedRectStyle);
   listEle.push_back(frame);
 }
 
@@ -110,7 +111,7 @@ void QuitMenu::resize(int _width, int _height)
 
   const float gapSize = fm.getStrHeight(fontFace, fontSize, "99");
   frame->setFontFace(fontFace);
-  frame->setFontSize(0.0f);
+  frame->setFontSize(smallFontSize);
   frame->setPosition(x - gapSize, y + 1.5f * fontHeight);
   frame->setSize(labelWidth + 2.0f * gapSize, fontHeight * 2.0f);
 }
