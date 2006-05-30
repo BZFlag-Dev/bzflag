@@ -28,10 +28,10 @@ CustomLink::CustomLink()
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
   std::string to_string;
-  if (strcmp(cmd, "from") == 0) {
+  if (strcasecmp(cmd, "from") == 0) {
     input >> from;
   }
-  else if (strcmp(cmd, "to") == 0) {
+  else if (strcasecmp(cmd, "to") == 0) {
     input >> to;
   }
   else {

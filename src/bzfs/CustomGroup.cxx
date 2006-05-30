@@ -44,7 +44,7 @@ CustomGroup::~CustomGroup()
 
 bool CustomGroup::read(const char *cmd, std::istream& input) {
 
-  if (strcmp(cmd, "team") == 0) {
+  if (strcasecmp(cmd, "team") == 0) {
     int team;
     if (!(input >> team) || (team < 0) || (team >= CtfTeams)) {
       std::cout << "bad team specification" << std::endl;

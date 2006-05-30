@@ -78,7 +78,7 @@ void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
 
 bool CustomZone::read(const char *cmd, std::istream& input)
 {
-  if (strcmp(cmd, "flag") == 0) {
+  if (strcasecmp(cmd, "flag") == 0) {
     std::string args, flag;
 
     std::getline(input, args);
@@ -133,7 +133,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       return false;
     }
   }
-  else if (strcmp(cmd, "zoneflag") == 0) {
+  else if (strcasecmp(cmd, "zoneflag") == 0) {
     std::string args, flag;
     std::getline(input, args);
     std::istringstream parms(args);
@@ -177,13 +177,14 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     }
     input.putback('\n');
   }
-  else if ((strcmp(cmd, "team") == 0) || (strcmp(cmd, "safety") == 0)) {
+  else if ((strcasecmp(cmd, "team") == 0) ||
+           (strcasecmp(cmd, "safety") == 0)) {
     std::string args;
     std::getline(input, args);
     std::istringstream  parms(args);
 
     int color;
-    const bool safety = (strcmp(cmd, "safety") == 0);
+    const bool safety = (strcasecmp(cmd, "safety") == 0);
 
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {

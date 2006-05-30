@@ -35,9 +35,9 @@ CustomGate::CustomGate(const char* _telename)
 
 bool CustomGate::read(const char *cmd, std::istream& input)
 {
-  if (strcmp(cmd, "border") == 0)
+  if (strcasecmp(cmd, "border") == 0)
     input >> border;
-  else if (strcmp(cmd, "horizontal") == 0)
+  else if (strcasecmp(cmd, "horizontal") == 0)
     horizontal = true;
   else
     return WorldFileObstacle::read(cmd, input);

@@ -225,7 +225,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 
     // read first token but do not skip newlines
     readToken(buffer, sizeof(buffer));
-    if (strcmp(buffer, "") == 0) {
+    if (buffer[0] == '\0') {
       // ignore blank line
     } else if (buffer[0] == '#') {
       // ignore comment
