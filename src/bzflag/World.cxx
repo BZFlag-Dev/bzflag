@@ -667,10 +667,28 @@ void		World::makeLinkMaterial()
 
 void			World::initFlag(int index)
 {
-  // set color of flag (opaque)
+  // set the color
   const float* color = flags[index].type->getColor();
-  flagNodes[index]->setColor(color[0], color[1], color[2]);
+  flagNodes[index]->setColor(color[0], color[1], color[2], 1.0f);
 
+  // set the texture
+  int texID = -1;
+  const TeamColor flagTeam = flags[index].type->flagTeam;
+  if (flagTeam != NoTeam) {
+    TextureManager &tm = TextureManager::instance();
+    const std::string flagTextureName =
+      Team::getImagePrefix(flagTeam) + "flag";
+    texID = tm.getTextureID(flagTextureName.c_str());
+    if (texID >= 0) {
+      flagNodes[index]->setTexture(texID);
+      flagNodes[index]->setUseColor(false);
+    }
+  }
+  if (texID < 0) {
+    flagNodes[index]->setTexture(World::flagTexture);
+    flagNodes[index]->setUseColor(true);
+  }
+  
   // if coming or going then position warp
   Flag& flag = flags[index];
   if (flag.status == FlagComing || flag.status == FlagGoing) {
@@ -708,10 +726,14 @@ void			World::updateWind(float /*dt*/)
 
 void			World::updateFlag(int index, float dt)
 {
-  if (!flagNodes) return;
-  const GLfloat* color = flagNodes[index]->getColor();
-  GLfloat alpha = color[3];
+  if (!flagNodes) {
+    return;
+  }
+  
   Flag& flag = flags[index];
+  FlagSceneNode* flagNode = flagNodes[index];
+  const GLfloat* color = flagNode->getColor();
+  GLfloat alpha = color[3];
 
   switch (flag.status) {
     default:
@@ -821,16 +843,17 @@ void			World::updateFlag(int index, float dt)
   }
 
   // update alpha if changed
-  if (alpha != color[3])
-    flagNodes[index]->setColor(color[0], color[1], color[2], alpha);
+  if (alpha != color[3]) {
+    flagNode->setAlpha(alpha);
+  }
 
   // move flag scene node
-  flagNodes[index]->move(flags[index].position);
+  flagNode->move(flags[index].position);
 
   // setup the flag angle
   if (flag.status != FlagOnTank) {
-    flagNodes[index]->setWind(wind, dt);
-    flagNodes[index]->setFlat(false);
+    flagNode->setWind(wind, dt);
+    flagNode->setFlat(false);
   }
   else {
     const Player* flagPlayer = NULL;
@@ -849,8 +872,8 @@ void			World::updateFlag(int index, float dt)
     }
     if (flagPlayer != NULL) {
       if (flag.type == Flags::Narrow) {
-	flagNodes[index]->setAngle(flagPlayer->getAngle());
-	flagNodes[index]->setFlat(true);
+	flagNode->setAngle(flagPlayer->getAngle());
+	flagNode->setFlat(true);
       } else {
 	float myWind[3];
 	getWind(myWind, flagPlayer->getPosition());
@@ -860,15 +883,16 @@ void			World::updateFlag(int index, float dt)
 	if (flagPlayer->isFalling()) {
 	  myWind[2] -= vel[2];
 	}
-	flagNodes[index]->setWind(myWind, dt);
-	flagNodes[index]->setFlat(false);
+	flagNode->setWind(myWind, dt);
+	flagNode->setFlat(false);
       }
     } else {
-      flagNodes[index]->setWind(wind, dt); // assumes homogeneous wind
-      flagNodes[index]->setFlat(false);
+      flagNode->setWind(wind, dt); // assumes homogeneous wind
+      flagNode->setFlat(false);
     }
   }
 }
+
 
 void			World::addFlags(SceneDatabase* scene, bool seerView)
 {
@@ -925,14 +949,14 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     {"telefront",	"telelink.png",		{1.0f, 0.0f, 0.0f, 0.5f}},
     {"teleback",	"telelink.png",		{0.0f, 1.0f, 0.0f, 0.5f}},
     {"telerim",		"caution.png",		{1.0f, 1.0f, 0.0f, 0.5f}},
-    {"basetop_team1",	"red\basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basewall_team1",	"red\basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basetop_team2",	"green\basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basewall_team2",	"green\basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basetop_team3",	"blue\basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team3",	"blue\basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basetop_team4",	"purple\basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team4",	"purple\basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+    {"basetop_team1",	"red/basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basewall_team1",	"red/basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basetop_team2",	"green/basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basewall_team2",	"green/basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basetop_team3",	"blue/basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team3",	"blue/basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basetop_team4",	"purple/basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team4",	"purple/basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
   };
   const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
   BzMaterial mat;

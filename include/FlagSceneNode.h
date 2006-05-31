@@ -43,9 +43,11 @@ class FlagSceneNode : public SceneNode {
     void setWind(const GLfloat wind[3], float dt);
     void setFlat(bool flat);
 
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void setAlpha(GLfloat);
     void setColor(const GLfloat* rgba);
-    void setTexture(const int);
+    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setTexture(int);
+    void setUseColor(bool);
     const GLfloat* getColor() const { return color; }
 
     void addRenderNodes(SceneRenderer&); // also computes the LOD
@@ -88,11 +90,18 @@ class FlagSceneNode : public SceneNode {
     bool		flat;
     bool		translucent;
     bool		texturing;
+
     GLfloat		angle;
     GLfloat		tilt;
     GLfloat		hscl;
-    GLfloat		color[4];
+
+    GLfloat*		color;
+    GLfloat		realColor[4];
+    GLfloat		whiteColor[4];
+    bool		useColor;
+
     OpenGLGState	gstate;
+
     FlagRenderNode	renderNode;
 
     static const int	minPoleLOD;

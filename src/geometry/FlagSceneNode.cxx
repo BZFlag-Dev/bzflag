@@ -456,7 +456,12 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
   flat = false;
   translucent = false;
   texturing = false;
+  useColor = true;
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
+  whiteColor[0] = 1.0f;
+  whiteColor[1] = 1.0f;
+  whiteColor[2] = 1.0f;
+  color = realColor;
   setCenter(pos);
   setRadius(6.0f * Unit * Unit);
 
@@ -546,29 +551,47 @@ void FlagSceneNode::setFlat(bool value)
 }
 
 
+void FlagSceneNode::setUseColor(bool value)
+{
+  useColor = value;
+  return;
+}
+
+
+void FlagSceneNode::setAlpha(GLfloat a)
+{
+  realColor[3] = a;
+  whiteColor[3] = a;
+  translucent = (a != 1.0f);
+  return;
+}
+
+
 void FlagSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
-  translucent = (color[3] != 1.0f);
+  realColor[0] = r;
+  realColor[1] = g;
+  realColor[2] = b;
+  realColor[3] = a;
+  whiteColor[3] = a;
+  translucent = (a != 1.0f);
   return;
 }
 
 
 void FlagSceneNode::setColor(const GLfloat* rgba)
 {
-  color[0] = rgba[0];
-  color[1] = rgba[1];
-  color[2] = rgba[2];
-  color[3] = rgba[3];
-  translucent = (color[3] != 1.0f);
+  realColor[0] = rgba[0];
+  realColor[1] = rgba[1];
+  realColor[2] = rgba[2];
+  realColor[3] = rgba[3];
+  whiteColor[3] = rgba[3];
+  translucent = (rgba[3] != 1.0f);
   return;
 }
 
 
-void FlagSceneNode::setTexture(const int texture)
+void FlagSceneNode::setTexture(int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
@@ -584,9 +607,19 @@ void FlagSceneNode::notifyStyleChange()
   geoPole = (quality >= _MEDIUM_QUALITY);
   realFlag = (quality >= _EXPERIMENTAL_QUALITY);
 
-  texturing = BZDBCache::texture && BZDBCache::blend;
+  texturing = BZDBCache::texture && BZDBCache::blend; // FIXME -- alphatresh'ed
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
+  
+  if (texturing) {
+    if (useColor) {
+      color = realColor;
+    } else {
+      color = whiteColor;
+    }
+  } else {
+    color = realColor;
+  }
 
   if (translucent) {
     if (BZDBCache::blend) {

@@ -1559,7 +1559,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
       } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius,
 					     BZDBCache::tankHeight));
       antidoteFlag = new FlagSceneNode(flagAntidotePos);
-      antidoteFlag->setColor(1.0f, 1.0f, 0.0f);
+      antidoteFlag->setColor(1.0f, 1.0f, 0.0f, 1.0f); // yellow
       World::setFlagTexture(antidoteFlag);
     }
   } else {
