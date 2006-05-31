@@ -942,21 +942,21 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     float color[4];
   } MatProps;
   const MatProps defaultMats[] = {
-    {"std_ground",	"std_ground.png",	{0.5f, 0.5f, 0.5f, 1.0f}},
-    {"boxtop",		"roof.png",		{1.0f, 1.0f, 0.9f, 1.0f}},
-    {"boxwall",		"boxwall.png",		{1.0f, 0.9f, 0.8f, 1.0f}},
-    {"pyrwall",		"pyrwall.png",		{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"telefront",	"telelink.png",		{1.0f, 0.0f, 0.0f, 0.5f}},
-    {"teleback",	"telelink.png",		{0.0f, 1.0f, 0.0f, 0.5f}},
-    {"telerim",		"caution.png",		{1.0f, 1.0f, 0.0f, 0.5f}},
-    {"basetop_team1",	"red/basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basewall_team1",	"red/basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basetop_team2",	"green/basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basewall_team2",	"green/basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basetop_team3",	"blue/basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team3",	"blue/basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basetop_team4",	"purple/basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team4",	"purple/basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+    {"std_ground",	"std_ground.png",		{0.5f, 0.5f, 0.5f, 1.0f}},
+    {"boxtop",		"roof.png",			{1.0f, 1.0f, 0.9f, 1.0f}},
+    {"boxwall",		"boxwall.png",			{1.0f, 0.9f, 0.8f, 1.0f}},
+    {"pyrwall",		"pyrwall.png",			{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"telefront",	"telelink.png",			{1.0f, 0.0f, 0.0f, 0.5f}},
+    {"teleback",	"telelink.png",			{0.0f, 1.0f, 0.0f, 0.5f}},
+    {"telerim",		"caution.png",			{1.0f, 1.0f, 0.0f, 0.5f}},
+    {"basetop_team1",	"skins/red/basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basewall_team1",	"skins/red/basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
+    {"basetop_team2",	"skins/green/basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basewall_team2",	"skins/green/basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
+    {"basetop_team3",	"skins/blue/basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team3",	"skins/blue/basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
+    {"basetop_team4",	"skins/purple/basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
+    {"basewall_team4",	"skins/purple/basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
   };
   const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
   BzMaterial mat;
