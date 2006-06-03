@@ -73,11 +73,14 @@ AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
 
-AC_PATH_PROG(CCACHE, ccache)
+AC_ARG_ENABLE(ccachetest, [  --disable-ccachetest    don't try to use ccache])
+if test x$enable_ccachetest != xno; then
+  AC_PATH_PROG(CCACHE, ccache)
+fi
 if test "$CCACHE"
 then
-  CC="ccache $CC"
-  CXX="ccache $CXX"
+  CC="$CCACHE $CC"
+  CXX="$CCACHE $CXX"
 fi
 
 AC_CHECK_TOOL(WINDRES, windres, :)
@@ -602,13 +605,13 @@ case $host_os in
 	         # silly hack, should be a proper configure compiler option test
 	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mtune=k8";
-		 fi		    
+		 fi
 	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
 	       else
 	         # silly hack, should be a proper configure compiler option test
 	         if test x$host_cpu = xx86_64; then
 		   CPPFLAGS="$CPPFLAGS -mcpu=k8";
-		 fi		    
+		 fi
 	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
 	       fi;;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;

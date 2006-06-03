@@ -19,9 +19,9 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	./configure --prefix=/usr --enable-debug
 else
 	case "$(DEB_BUILD_ARCH)" in \
-		i386) ./configure --prefix=/usr --host=i486-pc-linux-gnu ;; \
-		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --prefix=/usr ;; \
-		*) ./configure --prefix=/usr ;; \
+		i386) ./configure --disable-ccachetest --prefix=/usr --host=i486-pc-linux-gnu ;; \
+		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --disable-ccachetest --prefix=/usr ;; \
+		*) ./configure --disable-ccachetest --prefix=/usr ;; \
 	esac
 endif
 
