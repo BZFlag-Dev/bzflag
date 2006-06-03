@@ -22,6 +22,7 @@
 // common headers
 #include "bzfio.h"
 #include "bzglob.h"
+#include "TextUtils.h"
 #include "FileManager.h"
 #include "DirectoryNames.h"
 
@@ -176,7 +177,9 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
     if ((p.type == allow) || (p.type == deny)) {
       // simple globbing
       for (unsigned int s = 0; s < strings.size(); s++) {
-	if (glob_match(p.pattern, strings[s])) {
+        const std::string upperString = TextUtils::toupper(strings[s]);
+        const std::string upperPattern = TextUtils::toupper(p.pattern);
+        if (glob_match(upperPattern, upperString)) {
 	  if (p.type == allow) {
 	    return true;
 	  }
