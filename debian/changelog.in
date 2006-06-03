@@ -3,23 +3,29 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.8.20060515) unstable; urgency=medium
+
+  * work around broken amd64 compiler (Closes: #323815)
+  * upstream release - see ChangeLog
+ -- Tim Riker <Tim@Rikers.org>  Mon, 15 May 2006 16:35:37 +0000
+
 bzflag (2.0.6.20060412-1) unstable; urgency=medium
 
-   * Changes from Non-maintainer upload (Closes: #346644, #347986)
-   * remove GPL adns depend
-   * replace RSA md5 code (Closes: #345837, #343551)
-   * GNU/kFreeBSD patch (Closes: #341145)
-   * rebuild should fix amd64 compiler trouble (Closes: #323815)
-   * upstream release - see ChangeLog (Closes: #345245)
+  * Changes from Non-maintainer upload (Closes: #346644, #347986)
+  * remove GPL adns depend
+  * replace RSA md5 code (Closes: #345837, #343551)
+  * GNU/kFreeBSD patch (Closes: #341145)
+  * rebuild should fix amd64 compiler trouble (Closes: #323815)
+  * upstream release - see ChangeLog (Closes: #345245)
  -- Tim Riker <Tim@Rikers.org>  Wed, 12 Apr 2006 04:09:40 +0000
 
 bzflag (2.0.4.20051017-0.1) unstable; urgency=low
 
-   * Non-maintainer upload.
-   * Remove Build-Dependency on xlibs-dev (Closes: #346644).
-   * Remove Build-Dependency on libcurl-dev.
-   * Not a native package. Fix it. (Closes: #347986).
-   * Updated DH_COMPAT to 4.
+  * Non-maintainer upload.
+  * Remove Build-Dependency on xlibs-dev (Closes: #346644).
+  * Remove Build-Dependency on libcurl-dev.
+  * Not a native package. Fix it. (Closes: #347986).
+  * Updated DH_COMPAT to 4.
 
  -- Amaya Rodrigo Sastre <amaya@debian.org>  Sun, 22 Jan 2006 21:28:47 +0100
 
