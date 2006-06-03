@@ -1,7 +1,7 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.1.6
+BZFlag 2.1.x
 ------------
 
 * Fixed cross-platform and 64-bit network protocol bug - Andrew McNabb
@@ -33,9 +33,12 @@ BZFlag 2.1.6
 * bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
 
-BZFlag 2.0.7
-------------
+BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
+----------------------------------------------------
 
+* Add a plugin to record matches - Jeff Myers
+* Add an option to send out a UDP heartbeat message for observers behind flakey
+  routers - Jeff Myers
 * Replaced admin message sound - Sean Morrison
 * Client and server now close http connections correctly - Daniel Remenak
 * Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
