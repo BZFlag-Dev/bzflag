@@ -3,6 +3,16 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.8.20060605) unstable; urgency=medium
+
+  * work around broken autoconf prefix handling (Closes: #370304)
+ -- Tim Riker <Tim@Rikers.org>  Mon, 05 Jun 2006 22:22:43 +0000
+
+bzflag (2.0.8.20060603) unstable; urgency=medium
+
+  * work around broken ccache installs on buildd servers
+ -- Tim Riker <Tim@Rikers.org>  Sat, 03 Jun 2006 00:37:11 +0000
+
 bzflag (2.0.8.20060515) unstable; urgency=medium
 
   * work around broken amd64 compiler (Closes: #323815)
