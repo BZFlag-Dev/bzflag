@@ -9,23 +9,52 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __CUSTOMBOX_H__
-#define __CUSTOMBOX_H__
+
+#ifndef __CUSTOM_BOX_H__
+#define __CUSTOM_BOX_H__
 
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local implementation headers */
+/* local interface headers */
 #include "WorldInfo.h"
+
+/* common interface headers */
+#include "BzMaterial.h"
 
 
 class CustomBox : public WorldFileObstacle {
   public:
     CustomBox();
+    ~CustomBox();
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
+
+  private:
+    enum {
+      XP = 0,
+      XN,
+      YP,
+      YN,
+      ZP,
+      ZN,
+      FaceCount
+    };
+    
+    bool isOldBox;
+    
+    int phydrv[FaceCount];
+    float texsize[FaceCount][2];
+    float texoffset[FaceCount][2];
+    bool drivethrough[FaceCount];
+    bool shootthrough[FaceCount];
+    BzMaterial materials[FaceCount];
+
+    static const char* faceNames[FaceCount];
 };
 
-#endif  /* __CUSTOMBOX_H__ */
+
+#endif  /* __CUSTOM_BOX_H__ */
 
 // Local variables: ***
 // mode: C++ ***

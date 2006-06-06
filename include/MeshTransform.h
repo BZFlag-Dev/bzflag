@@ -49,6 +49,8 @@ class MeshTransform {
     void addSpin(const float degrees, const float normal[3]);
     void addReference(int transform);
 
+    bool isEmpty() const { return (transforms.size() <= 0); }
+    
     bool isValid();
     void finalize();
 
