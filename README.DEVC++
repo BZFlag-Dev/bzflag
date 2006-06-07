@@ -92,6 +92,18 @@ rather than launching the project file itself (double-clicking the project file'
 Explorer, on Windows), it will fail to create a makefile and therefore cannot compile.
 This bug may not happen all the time, but it is present.
 
+==Building with GLEW=
+To build with GLEW, as to enable the anisotropic effect, first download the latest .ZIP of
+GLEW source code from http://sourceforge.net/project/showfiles.php?group_id=67586. Unzip it anywhere
+and place the Dev-C++ project titled "libglew_dll.dev", found in the BZFlag Dev-C++ directory, into
+the "/build/vc6/" directory in the unzipped GLEW source directory. Open the project up, and compile.
+Move the file in the same directory titled "libglew.a" into your MinGW32/GCC "/lib/" directory
+(if you are unsure where this is, it is probably in your Dev-C++/CodeBlocks folder).
+Also move the .h files found in "/include/GL/" in the main GLEW directory to the folder titled "GL" in your
+MinGW32/GCC "/include/" directory (therefore, making the full directory name "/include/GL/"). Now, go back
+to the GLEW "/build/vc6/" directory and take "glew.dll" and "libglew.def" and place them in your PATH directories.
+If you are unsure of somewhere in your PATH variable, place them in C:\WINDOWS. Compile BZFlag.
+
 ==Linker cannot find "-lsdlmain"==
 If you get this error, you need to replace your SDL files with the ones downloadable from
 http://libsdl.org/ *Note: the libSDL package downloadable from the Dev-C++/CodeBlocks update window will not fix this.

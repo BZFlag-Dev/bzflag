@@ -19,6 +19,10 @@
 
 #define AUTOUPGRADE 1
 
+//undefine following if you don't have GLEW; disables anisotropic effect
+//see paragraph labeled "Building with GLEW" in README.DEVCPP for GLEW installation instructions
+#define HAVE_GLEW
+
 #if defined(WIN32) && !defined(_WIN32)
 #   define _WIN32
 #endif
