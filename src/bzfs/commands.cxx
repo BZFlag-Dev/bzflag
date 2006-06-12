@@ -2911,6 +2911,7 @@ bool RecordCommand::operator() (const char	 *message,
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
     if (*buf == '\0') {
       Record::sendHelp (t);
+      return true;
     }
 
     // get the filename
