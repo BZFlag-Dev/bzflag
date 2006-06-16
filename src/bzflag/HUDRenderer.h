@@ -101,7 +101,7 @@ protected:
   void		renderAlerts(void);
   void		renderStatus(void);
   void		renderCracks();
-  void		renderClasicCracks();
+  void		renderClassicCracks();
   void		renderHighResCracks();
   void		renderOptions(SceneRenderer&);
   void		renderCompose(SceneRenderer&);

@@ -3350,13 +3350,7 @@ void			addShotExplosion(const float* pos)
 
 void			addShotPuff(const float* pos, float azimuth, float elevation)
 {
-  bool useClasicPuff  = false;
-
   if (BZDB.evalInt("gmPuffEffect") == 1) {
-    useClasicPuff = true;
-  }
-
-  if (useClasicPuff) {
     addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
     return;
   }

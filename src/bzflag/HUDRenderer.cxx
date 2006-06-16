@@ -790,7 +790,7 @@ void			HUDRenderer::renderStatus(void)
 	    World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
-	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), myTank->getFlagShakingTime());
+	  sprintf(buffer, "%.1f", myTank->getFlagShakingTime());
 	} else {
 	  statusColor = greenColor;
 	  strcat(buffer, bdl->getLocalString("Ready").c_str());
@@ -894,60 +894,59 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
 void			HUDRenderer::renderCracks()
 {
-	if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY )
-		renderHighResCracks();
-	else
-		renderClasicCracks();
+  if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY )
+    renderHighResCracks();
+  else
+    renderClassicCracks();
 }
 
 void			HUDRenderer::renderHighResCracks()
 {
-	double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
-	if (delta > 1.0)
-		delta = 1.0;
-	int maxLevels = (int) (HUDCrackLevels * delta);
+  double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
+  if (delta > 1.0)
+    delta = 1.0;
+  int maxLevels = (int) (HUDCrackLevels * delta);
 
-	glEnable(GL_BLEND);
-	glPushMatrix();
-	glTranslatef(GLfloat(window.getWidth() >> 1), GLfloat(window.getViewHeight() >> 1), -0.02f);
-	
-	glLineWidth(5.0);
-	hudColor4f(1.0f, 1.0f, 1.0f,0.25f);
-	for (int i = 0; i < HUDNumCracks; i++)
-	{
-		glLineWidth(5.0);
-		glBegin(GL_LINES);
-			glVertex3f(cracks[i][0][0],cracks[i][0][1],0);
-			glVertex3f(cracks[i][1][0],cracks[i][1][1],0);
-		glEnd();
+  glEnable(GL_BLEND);
+  glPushMatrix();
+  glTranslatef(GLfloat(window.getWidth() >> 1), GLfloat(window.getViewHeight() >> 1), -0.02f);
+  
+  glLineWidth(5.0);
+  hudColor4f(1.0f, 1.0f, 1.0f,0.25f);
+  for (int i = 0; i < HUDNumCracks; i++)
+  {
+    glLineWidth(5.0);
+    glBegin(GL_LINES);
+      glVertex3f(cracks[i][0][0],cracks[i][0][1],0);
+      glVertex3f(cracks[i][1][0],cracks[i][1][1],0);
+    glEnd();
 
-		glLineWidth(2.0);
-		glBegin(GL_LINES);
-			glVertex3f(cracks[i][0][0],cracks[i][0][1],0.01f);
-			glVertex3f(cracks[i][1][0],cracks[i][1][1],0.01f);
-		glEnd();
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+      glVertex3f(cracks[i][0][0],cracks[i][0][1],0.01f);
+      glVertex3f(cracks[i][1][0],cracks[i][1][1],0.01f);
+    glEnd();
 
-		glLineWidth(5.0);
-		for (int j = 0; j < maxLevels-1; j++) {
-			int num = 1 << j;
-			for (int k = 0; k < num; k++)
-			{
-				glBegin(GL_LINES);
-					glVertex2fv(cracks[i][num + k]);
-					glVertex2fv(cracks[i][2 * (num + k)]);
-					glVertex2fv(cracks[i][num + k]);
-					glVertex2fv(cracks[i][2 * (num + k) + 1]);
-				glEnd();
-			}
-		}
-	}
+    glLineWidth(5.0);
+    for (int j = 0; j < maxLevels-1; j++) {
+      int num = 1 << j;
+      for (int k = 0; k < num; k++) {
+        glBegin(GL_LINES);
+          glVertex2fv(cracks[i][num + k]);
+          glVertex2fv(cracks[i][2 * (num + k)]);
+          glVertex2fv(cracks[i][num + k]);
+          glVertex2fv(cracks[i][2 * (num + k) + 1]);
+        glEnd();
+      }
+    }
+  }
 
-	glLineWidth(1.0);
-	glPopMatrix();
-	glDisable(GL_BLEND);
+  glLineWidth(1.0);
+  glPopMatrix();
+  glDisable(GL_BLEND);
 }
 
-void			HUDRenderer::renderClasicCracks()
+void			HUDRenderer::renderClassicCracks()
 {
   double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
   if (delta > 1.0)
