@@ -6970,6 +6970,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\roaming.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\RobotPlayer.h"
 				>
 			</File>

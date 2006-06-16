@@ -42,7 +42,7 @@ public:
   ~QuitMenu();
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  void execute() { CommandsStandard::quit(); }
+  void execute();
   void resize(int width, int height);
 
 private:

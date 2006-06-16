@@ -15,11 +15,21 @@
 
 /* common implementation headers */
 #include "FontManager.h"
+#include "StateDatabase.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
+#include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
+#include "HUDuiList.h"
 #include "HUDuiFrame.h"
+#include "HUDui.h"
+#include "ConfigFileManager.h"
+#include "clientConfig.h"
+
+/* from bzflag.cxx */
+extern void dumpResources();
+extern std::string alternateConfig;
 
 
 bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
@@ -47,21 +57,30 @@ QuitMenu::QuitMenu()
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
-  label->setString("Enter to quit, Esc to resume");
+  label->setString("Yes, quit");
   listHUD.push_back(label);
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
-  label->setString("Really quit?");
+  label->setString("No, return to game");
   listHUD.push_back(label);
 
-  initNavigation(listHUD, 1, 1);
+  HUDuiList* list;
+  list = new HUDuiList;
+  list->setFontFace(MainMenu::getFontFace());
+  list->setLabel("Save Settings?");
+  std::vector<std::string>& listList = list->getList();
+  listList.push_back("No");
+  listList.push_back("Yes");
+  list->setIndex(BZDB.evalInt("saveSettings"));
+  listHUD.push_back(list);
+
+  initNavigation(listHUD, 0, 2);
 
   // frame
   std::vector<HUDuiElement*>& listEle = getElements();
   HUDuiFrame* frame = new HUDuiFrame;
-  float red[4] = {1.0f, 0.2f, 0.2f, 1.0f};
-  frame->setColor(red);
+  frame->setLabel("Really Quit?");
   frame->setLineWidth(2.0f);
   frame->setStyle(HUDuiFrame::RoundedRectStyle);
   listEle.push_back(frame);
@@ -76,7 +95,7 @@ void QuitMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
 
   // use a big font
-  float fontSize = (float)_height / 15.0f;
+  float fontSize = (float)_height / 25.0f;
   float smallFontSize = (float)_height / 54.0f;
   float x, y;
   FontManager &fm = FontManager::instance();
@@ -88,22 +107,26 @@ void QuitMenu::resize(int _width, int _height)
 
   // get stuff
   std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
 
-  // help message
-  label->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
-  x = 0.5f * ((float)_width - stringWidth);
-  y = (float)_height - fontHeight - 1.5f * smallFontHeight;
+  // yes
+  HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
+  label->setFontSize(fontSize);
+  x = _width / 4.0f;
+  y = (float)_height - 5.25f * fontHeight;
   label->setPosition(x, y);
 
-  // quit message
+  // no
   label = (HUDuiLabel*)listHUD[1];
   label->setFontSize(fontSize);
-  const float labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
-  x = 0.5f * ((float)_width - labelWidth);
-  y = (float)_height - 3.5f * fontHeight;
+  y = (float)_height - 6.5f * fontHeight;
   label->setPosition(x, y);
+
+  // save settings
+  HUDuiList* list = (HUDuiList*)listHUD[2];
+  list->setFontSize(smallFontSize);
+  const float stringWidth = fm.getStrLength(fontFace, smallFontSize, list->getLabel() + "99");
+  y = (float)_height - 7.25f * fontHeight;
+  list->setPosition(x + stringWidth, y);
 
   // frame
   std::vector<HUDuiElement*>& listEle = getElements();
@@ -112,8 +135,33 @@ void QuitMenu::resize(int _width, int _height)
   const float gapSize = fm.getStrHeight(fontFace, fontSize, "99");
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
-  frame->setPosition(x - gapSize, y + 1.5f * fontHeight);
-  frame->setSize(labelWidth + 2.0f * gapSize, fontHeight * 2.0f);
+  frame->setPosition(x - gapSize, (float)_height - 4.0f * fontHeight);
+  frame->setSize(0.5f * getWidth() + 2.0f * gapSize, fontHeight * 4.0f);
+}
+
+void QuitMenu::execute()
+{
+  HUDuiControl* _focus = HUDui::getFocus();
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  if (_focus == listHUD[0]) { // yes
+    const bool permanentSave = BZDB.isTrue("saveSettings");
+    const bool tempSave = (((HUDuiList*)listHUD[2])->getIndex() != 0);
+    if (tempSave && !permanentSave) {
+      // save this time, but not usually
+      dumpResources();
+      if (alternateConfig == "") {
+	CFGMGR.write(getCurrentConfigFileName());
+      } else {
+        CFGMGR.write(alternateConfig);
+      }
+    } else if (permanentSave && !tempSave) {
+      // save usually, but not this time
+      BZDB.setBool("saveSettings", false);
+    }
+    CommandsStandard::quit();
+  } else if (_focus == listHUD[1]) { //no
+    HUDDialogStack::get()->pop();
+  }
 }
 
 
