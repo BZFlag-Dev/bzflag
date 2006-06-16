@@ -906,6 +906,12 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiElement.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiFrame.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDuiLabel.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1769,6 +1775,12 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiDefaultKey.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiElement.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiFrame.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiLabel.h">
