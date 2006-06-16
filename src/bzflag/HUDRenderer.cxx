@@ -42,7 +42,6 @@ std::string		HUDRenderer::headingLabel[36];
 std::string		HUDRenderer::restartLabelFormat("Press %s to start");
 std::string		HUDRenderer::resumeLabel("Press Pause to resume");
 std::string		HUDRenderer::autoPilotLabel("AutoPilot on");
-std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
 std::string		HUDRenderer::gameOverLabel("GAME OVER");
 
 HUDRenderer::HUDRenderer(const BzfDisplay* _display,
@@ -192,7 +191,6 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
   restartLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, restartLabel);
   resumeLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, resumeLabel);
-  cancelDestructLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, cancelDestructLabel);
   gameOverLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, gameOverLabel);
   autoPilotWidth = fm.getStrLength(bigFontFace, bigFontSize, autoPilotLabel);
 }

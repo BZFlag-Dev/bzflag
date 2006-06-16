@@ -725,12 +725,11 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
 	  drop->roofTop =
 	    RoofTops::getTopHeight (drop->pos[0], drop->pos[1], drop->pos[2]);
 	  // clamp the rain to the valid rain range.
-	  if ( rainSpeed > 0)
-	  {
-		  if ( drop->roofTop < rainEndZ )
-			  drop->roofTop = rainEndZ;
-		  else if ( drop->roofTop > rainEndZ )
-			  drop->roofTop = rainEndZ;
+	  if (rainSpeed > 0) {
+	    if (drop->roofTop < rainEndZ)
+	      drop->roofTop = rainEndZ;
+	    else if (drop->roofTop > rainEndZ)
+	      drop->roofTop = rainEndZ;
 	  }
 	} else {
 	  drop->roofTop = rainEndZ;
@@ -755,12 +754,11 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
 	  newDrop.roofTop =
 	    RoofTops::getTopHeight (newDrop.pos[0], newDrop.pos[1], newDrop.pos[2]);
 	  // clamp the rain to the valid rain range.
-	  if ( rainSpeed > 0)
-	  {
-		  if ( newDrop.roofTop < rainEndZ )
-			newDrop.roofTop = rainEndZ;
-		  else if ( newDrop.roofTop > rainEndZ )
-			  newDrop.roofTop = rainEndZ;
+	  if (rainSpeed > 0) {
+	    if (drop->roofTop < rainEndZ)
+	      drop->roofTop = rainEndZ;
+	    else if (drop->roofTop > rainEndZ)
+	      drop->roofTop = rainEndZ;
 	  }
 	} else {
 	  newDrop.roofTop = rainEndZ;

@@ -179,7 +179,6 @@ private:
   float		restartLabelWidth;
   float		resumeLabelWidth;
   float		autoPilotWidth;
-  float		cancelDestructLabelWidth;
   float		gameOverLabelWidth;
   float		huntArrowWidth;
   float		huntedArrowWidth;
@@ -215,7 +214,6 @@ private:
   static std::string	headingLabel[36];
   static std::string	restartLabelFormat;
   static std::string	resumeLabel;
-  static std::string	cancelDestructLabel;
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
   bool			dater;
