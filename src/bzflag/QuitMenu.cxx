@@ -103,7 +103,6 @@ void QuitMenu::resize(int _width, int _height)
 
   // heights
   const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
-  const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
 
   // get stuff
   std::vector<HUDuiControl*>& listHUD = getControls();
