@@ -20,6 +20,7 @@
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "FontManager.h"
+#include "BZDBCache.h"
 
 //
 // HUDuiFrame
@@ -86,6 +87,12 @@ void			HUDuiFrame::doRender()
   glLineWidth(lineWidth);
   glColor4fv(color);
 
+  const bool antialias = BZDBCache::blend && BZDBCache::smooth;
+  if (antialias) {
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+  }
+
   // render frame
   switch (style) {
     case RectangleStyle:
@@ -139,6 +146,11 @@ void			HUDuiFrame::doRender()
 		3*ninety, ninety);
       }
       break;
+  }
+
+  if (antialias) {
+    glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
   }
 
   // render label
