@@ -9,6 +9,7 @@ libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
 	BZDBCache.cxx			\
+	BZDBLocal.cxx			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	CommandManager.cxx		\
