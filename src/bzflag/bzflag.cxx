@@ -38,6 +38,7 @@
 /* common headers */
 #include "Address.h"
 #include "BZDBCache.h"
+#include "BZDBLocal.h"
 #include "BundleMgr.h"
 #include "BzfMedia.h"
 #include "BzfVisual.h"
@@ -669,8 +670,10 @@ int			main(int argc, char** argv)
     BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
     BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
-
+  
   BZDBCache::init();
+  BZDBLOCAL.init();
+  
   Flags::init();
 
   if (getenv("BZFLAGID")) {
