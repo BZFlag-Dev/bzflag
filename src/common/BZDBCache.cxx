@@ -19,71 +19,74 @@
 // interface header
 #include "BZDBCache.h"
 
-bool  BZDBCache::displayMainFlags;
-bool  BZDBCache::blend;
-bool  BZDBCache::texture;
-bool  BZDBCache::shadows;
-bool  BZDBCache::stencilShadows;
-bool  BZDBCache::zbuffer;
-bool  BZDBCache::tesselation;
-bool  BZDBCache::lighting;
-bool  BZDBCache::smooth;
-bool  BZDBCache::colorful;
-bool  BZDBCache::animatedTreads;
-bool  BZDBCache::leadingShotLine;
-int   BZDBCache::radarStyle;
-float BZDBCache::radarTankPixels;
-int   BZDBCache::linedRadarShots;
-int   BZDBCache::sizedRadarShots;
-int   BZDBCache::flagChunks;
-float BZDBCache::pulseRate;
-float BZDBCache::pulseDepth;
-bool  BZDBCache::showCollisionGrid;
-bool  BZDBCache::showCullingGrid;
+BZDBCache::Bool  BZDBCache::displayMainFlags;
+BZDBCache::Bool  BZDBCache::blend;
+BZDBCache::Bool  BZDBCache::texture;
+BZDBCache::Bool  BZDBCache::shadows;
+BZDBCache::Bool  BZDBCache::stencilShadows;
+BZDBCache::Bool  BZDBCache::zbuffer;
+BZDBCache::Bool  BZDBCache::tesselation;
+BZDBCache::Bool  BZDBCache::lighting;
+BZDBCache::Bool  BZDBCache::smooth;
+BZDBCache::Bool  BZDBCache::colorful;
+BZDBCache::Bool  BZDBCache::animatedTreads;
+BZDBCache::Bool  BZDBCache::leadingShotLine;
+BZDBCache::Int   BZDBCache::radarStyle;
+BZDBCache::Float BZDBCache::radarTankPixels;
+BZDBCache::Float BZDBCache::linedRadarShots;
+BZDBCache::Float BZDBCache::sizedRadarShots;
+BZDBCache::Int   BZDBCache::flagChunks;
+BZDBCache::Float BZDBCache::pulseRate;
+BZDBCache::Float BZDBCache::pulseDepth;
+BZDBCache::Bool  BZDBCache::showCollisionGrid;
+BZDBCache::Bool  BZDBCache::showCullingGrid;
 
-bool BZDBCache::drawCelestial;
-bool BZDBCache::drawClouds;
-bool BZDBCache::drawGround;
-bool BZDBCache::drawGroundLights;
-bool BZDBCache::drawMountains;
-bool BZDBCache::drawSky;
+BZDBCache::Bool  BZDBCache::drawCelestial;
+BZDBCache::Bool  BZDBCache::drawClouds;
+BZDBCache::Bool  BZDBCache::drawGround;
+BZDBCache::Bool  BZDBCache::drawGroundLights;
+BZDBCache::Bool  BZDBCache::drawMountains;
+BZDBCache::Bool  BZDBCache::drawSky;
 
-float BZDBCache::worldSize;
-float BZDBCache::radarLimit;
-float BZDBCache::gravity;
-float BZDBCache::tankWidth;
-float BZDBCache::tankLength;
-float BZDBCache::tankHeight;
-float BZDBCache::tankSpeed;
-float BZDBCache::tankRadius;
-float BZDBCache::flagRadius;
-float BZDBCache::flagPoleSize;
-float BZDBCache::flagPoleWidth;
-float BZDBCache::maxLOD;
+BZDBCache::Float BZDBCache::worldSize;
+BZDBCache::Float BZDBCache::radarLimit;
+BZDBCache::Float BZDBCache::gravity;
+BZDBCache::Float BZDBCache::tankWidth;
+BZDBCache::Float BZDBCache::tankLength;
+BZDBCache::Float BZDBCache::tankHeight;
+BZDBCache::Float BZDBCache::tankSpeed;
+BZDBCache::Float BZDBCache::tankRadius;
+BZDBCache::Float BZDBCache::flagRadius;
+BZDBCache::Float BZDBCache::flagPoleSize;
+BZDBCache::Float BZDBCache::flagPoleWidth;
+BZDBCache::Float BZDBCache::maxLOD;
 
-float BZDBCache::hudGUIBorderOpacityFactor;
+BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
-static float getGoodPosValue (float oldVal, const std::string var )
+
+static float getGoodPosValue(float oldVal, const std::string var)
 {
-	float newVal = BZDB.eval(var);
-	if (isnan(newVal) || newVal <= 0.0f)	// it's bad
-	{
-		BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
-		return oldVal;
-	}
-	return newVal;
+  float newVal = BZDB.eval(var);
+  if (isnan(newVal) || newVal <= 0.0f)  // it's bad
+  {
+    BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
+    return oldVal;
+  }
+  return newVal;
 }
 
-static float getGoodNonZeroValue (float oldVal, const std::string var )
+
+static float getGoodNonZeroValue(float oldVal, const std::string var)
 {
-	float newVal = BZDB.eval(var);
-	if (isnan(newVal) || newVal == 0.0f)	// it's bad
-	{
-		BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
-			return oldVal;
-	}
-	return newVal;
+  float newVal = BZDB.eval(var);
+  if (isnan(newVal) || newVal == 0.0f)  // it's bad
+  {
+    BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
+    return oldVal;
+  }
+  return newVal;
 }
+
 
 void BZDBCache::init()
 {
@@ -151,6 +154,7 @@ void BZDBCache::init()
   update();
 }
 
+
 void BZDBCache::clientCallback(const std::string& name, void *)
 {
   if (name == "blend")
@@ -192,8 +196,9 @@ void BZDBCache::clientCallback(const std::string& name, void *)
   else if (name == "showCullingGrid")
     showCullingGrid = BZDB.isTrue("showCullingGrid");
   else if (name == "hudGUIBorderOpacityFactor")
-	hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
+    hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
 }
+
 
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
@@ -251,10 +256,12 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
 }
 
-void BZDBCache::update() {
+
+void BZDBCache::update()
+{
   tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-  linedRadarShots = static_cast<int>(BZDB.eval("linedradarshots"));
-  sizedRadarShots = static_cast<int>(BZDB.eval("sizedradarshots"));
+  linedRadarShots = BZDB.eval("linedradarshots");
+  sizedRadarShots = BZDB.eval("sizedradarshots");
 }
 
 

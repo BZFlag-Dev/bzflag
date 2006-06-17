@@ -10,71 +10,92 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZDBCACHE_H
-#define	BZDBCACHE_H
+#ifndef BZDBCACHE_H
+#define BZDBCACHE_H
 
 // implementation headers
 #include "StateDatabase.h"
 
 class BZDBCache
 {
-public:
-	static void init();
+  public:
+    static void init();
 
-	static bool  displayMainFlags;
-	static bool  blend;
-	static bool  texture;
-	static bool  shadows;
-	static bool  stencilShadows;
-	static bool  zbuffer;
-	static bool  tesselation;
-	static bool  lighting;
-	static bool  smooth;
-	static bool  colorful;
-	static int   flagChunks;
-	static bool  animatedTreads;
-	static int   radarStyle;
-	static float radarTankPixels;
-	static bool  leadingShotLine;
-	static int   linedRadarShots;
-	static int   sizedRadarShots;
-	static float pulseRate;
-	static float pulseDepth;
-	static bool  showCollisionGrid;
-	static bool  showCullingGrid;
+    // prohibit external write access    
+    template <class T>
+    class ReadOnly {
+      friend class BZDBCache;
+      public:
+        inline operator T() const { return data; }
+      private:
+        ReadOnly() {}
+        ReadOnly& operator=(const T& value) { data = value; return *this; }
+      private:
+        ReadOnly(const ReadOnly&);
+        ReadOnly& operator=(const ReadOnly&);
+      private:
+        T data;
+    };
 
-	static bool drawCelestial;
-	static bool drawClouds;
-	static bool drawGround;
-	static bool drawGroundLights;
-	static bool drawMountains;
-	static bool drawSky;
+    // our basics types
+    typedef ReadOnly<int>   Int;
+    typedef ReadOnly<bool>  Bool;
+    typedef ReadOnly<float> Float;
+      
+    static Bool  displayMainFlags;
+    static Bool  blend;
+    static Bool  texture;
+    static Bool  shadows;
+    static Bool  stencilShadows;
+    static Bool  zbuffer;
+    static Bool  tesselation;
+    static Bool  lighting;
+    static Bool  smooth;
+    static Bool  colorful;
+    static Int   flagChunks;
+    static Bool  animatedTreads;
+    static Int   radarStyle;
+    static Float radarTankPixels;
+    static Bool  leadingShotLine;
+    static Float linedRadarShots;
+    static Float sizedRadarShots;
+    static Float pulseRate;
+    static Float pulseDepth;
+    static Bool  showCollisionGrid;
+    static Bool  showCullingGrid;
 
-	static float maxLOD;
-	static float worldSize;
-	static float radarLimit;
-	static float gravity;
-	static float tankWidth;
-	static float tankLength;
-	static float tankHeight;
-	static float tankSpeed;
-	static float tankRadius;
-	static float flagRadius;
-	static float flagPoleSize;
-	static float flagPoleWidth;
+    static Bool drawCelestial;
+    static Bool drawClouds;
+    static Bool drawGround;
+    static Bool drawGroundLights;
+    static Bool drawMountains;
+    static Bool drawSky;
 
-	static float hudGUIBorderOpacityFactor;
+    static Float maxLOD;
+    static Float worldSize;
+    static Float radarLimit;
+    static Float gravity;
+    static Float tankWidth;
+    static Float tankLength;
+    static Float tankHeight;
+    static Float tankSpeed;
+    static Float tankRadius;
+    static Float flagRadius;
+    static Float flagPoleSize;
+    static Float flagPoleWidth;
 
-public:
-  /** public method to update cached variable
-      has to be called at best opportunity
-      (e.g. at beginnig of main loop)
-   */
-  static void update();
+    static Float hudGUIBorderOpacityFactor;
 
-private:
-	static void clientCallback(const std::string &name, void *);
-	static void serverCallback(const std::string &name, void *);
+  public:
+    /** public method to update cached variable
+        has to be called at best opportunity
+        (e.g. at beginnig of main loop)
+    */
+    static void update();
+
+  private:
+    static void clientCallback(const std::string &name, void *);
+    static void serverCallback(const std::string &name, void *);
 };
 
 #endif
