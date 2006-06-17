@@ -27,52 +27,54 @@
 
 /******************************************************************************/
 //
-// BZDBLocalBool
+// BZDBbool
 //
 
-BZDBLocalBool::BZDBLocalBool(const std::string& _name, bool defVal) :
-                             BZDBLocal(_name), data(defVal)
+BZDBbool::BZDBbool(const std::string& _name, bool defVal, bool save)
+                   : BZDBLocal(_name, save), data(defVal)
 {
   BZDBLocalManager::manager.addEntry(this);
+  DEBUG3("Added BZDBbool(%s) callback\n", name.c_str());
   return;
 }
 
 
-BZDBLocalBool::~BZDBLocalBool()
+BZDBbool::~BZDBbool()
 {
   return;
 }
 
 
-void BZDBLocalBool::callback()
+void BZDBbool::callback()
 {
   data = BZDB.isTrue(name);
-  DEBUG4("BZDBLocalBool(%s) = %s\n", name.c_str(), data ? "true" : "false");
+  DEBUG4("BZDBbool(%s) = %s\n", name.c_str(), data ? "true" : "false");
   return;
 }
 
 
-void BZDBLocalBool::staticCallback(const std::string& /*name*/, void* data)
+void BZDBbool::staticCallback(const std::string& /*name*/, void* data)
 {
-  ((BZDBLocalBool*)data)->callback();
+  ((BZDBbool*)data)->callback();
   return;
 }
 
 
-void BZDBLocalBool::addCallbacks()
+void BZDBbool::addCallbacks()
 {
   if (BZDB.isSet(name)) {
-    fprintf(stderr, "BZDBLocalBool duplicate \"%s\".\n", name.c_str());
+    fprintf(stderr, "BZDBbool duplicate \"%s\".\n", name.c_str());
     exit(1);
   }
   BZDB.setBool(name, data);
   BZDB.setDefault(name, BZDB.get(name));
+  BZDB.setPersistent(name, saveOnExit);
   BZDB.addCallback(name, staticCallback, this);
   return;
 }
 
     
-void BZDBLocalBool::removeCallbacks()
+void BZDBbool::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
@@ -81,73 +83,75 @@ void BZDBLocalBool::removeCallbacks()
     
 /******************************************************************************/
 //
-// BZDBLocalInt
+// BZDBint
 //
 
-BZDBLocalInt::BZDBLocalInt(const std::string& _name, int defVal,
-                           int _min, int _max, bool _neverZero) :
-                           BZDBLocal(_name), data(defVal),
-                           min(_min), max(_max), neverZero(_neverZero)
+BZDBint::BZDBint(const std::string& _name, int defVal,
+                 int _min, int _max, bool _neverZero, bool save)
+                 : BZDBLocal(_name, save), data(defVal),
+                   min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
+  DEBUG3("Added BZDBint(%s) callback\n", name.c_str());
   return;
 }
 
 
-BZDBLocalInt::~BZDBLocalInt()
+BZDBint::~BZDBint()
 {
   return;
 }
 
 
-void BZDBLocalInt::callback()
+void BZDBint::callback()
 {
   int tmp = BZDB.evalInt(name);
 
   if ((min != INT_MIN) && (tmp < min)) {
-    DEBUG3("BZDBLocalInt(%s) min: %f < %f\n", name.c_str(), tmp, min);
+    DEBUG3("BZDBint(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
   }
 
   if ((max != INT_MAX) && (tmp > max)) {
-    DEBUG3("BZDBLocalInt(%s) max: %f > %f\n", name.c_str(), tmp, max);
+    DEBUG3("BZDBint(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
   }
 
   if (neverZero && (tmp == 0)) {
-    DEBUG3("BZDBLocalInt(%s) neverZero\n", name.c_str());
+    DEBUG3("BZDBint(%s) neverZero\n", name.c_str());
     return; // bail out
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBLocalInt(%s) = %i\n", name.c_str(), data);
+  DEBUG4("BZDBint(%s) = %i\n", name.c_str(), data);
 
   return;
 }
 
 
-void BZDBLocalInt::staticCallback(const std::string& /*name*/, void* data)
+void BZDBint::staticCallback(const std::string& /*name*/, void* data)
 {
-  ((BZDBLocalInt*)data)->callback();
+  ((BZDBint*)data)->callback();
   return;
 }
 
 
-void BZDBLocalInt::addCallbacks()
+void BZDBint::addCallbacks()
 {
   if (BZDB.isSet(name)) {
-    fprintf(stderr, "BZDBLocalInt duplicate \"%s\".\n", name.c_str());
+    fprintf(stderr, "BZDBint duplicate \"%s\".\n", name.c_str());
     exit(1);
   }
   BZDB.setInt(name, data);
   BZDB.setDefault(name, BZDB.get(name));
+  BZDB.setPersistent(name, saveOnExit);
   BZDB.addCallback(name, staticCallback, this);
   return;
 }
 
     
-void BZDBLocalInt::removeCallbacks()
+void BZDBint::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
@@ -156,73 +160,76 @@ void BZDBLocalInt::removeCallbacks()
     
 /******************************************************************************/
 //
-// BZDBLocalFloat
+// BZDBfloat
 //
 
-BZDBLocalFloat::BZDBLocalFloat(const std::string& _name, float defVal,
-                               float _min, float _max, bool _neverZero) :
-                               BZDBLocal(_name), data(defVal),
-                               min(_min), max(_max), neverZero(_neverZero)
+BZDBfloat::BZDBfloat(const std::string& _name, float defVal,
+                     float _min, float _max,
+                     bool _neverZero, bool save)
+                     : BZDBLocal(_name, save), data(defVal),
+                       min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
+  DEBUG3("Added BZDBfloat(%s) callback\n", name.c_str());
   return;
 }
 
 
-BZDBLocalFloat::~BZDBLocalFloat()
+BZDBfloat::~BZDBfloat()
 {
   return;
 }
 
 
-void BZDBLocalFloat::callback()
+void BZDBfloat::callback()
 {
   float tmp = BZDB.eval(name);
 
   if ((min != -MAXFLOAT) && (tmp < min)) {
-    DEBUG3("BZDBLocalFloat(%s) min: %f < %f\n", name.c_str(), tmp, min);
+    DEBUG3("BZDBfloat(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
   }
 
   if ((max != +MAXFLOAT) && (tmp > max)) {
-    DEBUG3("BZDBLocalFloat(%s) max: %f > %f\n", name.c_str(), tmp, max);
+    DEBUG3("BZDBfloat(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
   }
 
   if (neverZero && (tmp == 0.0f)) {
-    DEBUG3("BZDBLocalFloat(%s) neverZero\n", name.c_str());
+    DEBUG3("BZDBfloat(%s) neverZero\n", name.c_str());
     return; // bail out
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBLocalFloat(%s) = %f\n", name.c_str(), data);
+  DEBUG4("BZDBfloat(%s) = %f\n", name.c_str(), data);
 
   return;
 }
 
 
-void BZDBLocalFloat::staticCallback(const std::string& /*name*/, void* data)
+void BZDBfloat::staticCallback(const std::string& /*name*/, void* data)
 {
-  ((BZDBLocalFloat*)data)->callback();
+  ((BZDBfloat*)data)->callback();
   return;
 }
 
 
-void BZDBLocalFloat::addCallbacks()
+void BZDBfloat::addCallbacks()
 {
   if (BZDB.isSet(name)) {
-    fprintf(stderr, "BZDBLocalFloat duplicate \"%s\".\n", name.c_str());
+    fprintf(stderr, "BZDBfloat duplicate \"%s\".\n", name.c_str());
     exit(1);
   }
   BZDB.setFloat(name, data);
   BZDB.setDefault(name, BZDB.get(name));
+  BZDB.setPersistent(name, saveOnExit);
   BZDB.addCallback(name, staticCallback, this);
   return;
 }
 
     
-void BZDBLocalFloat::removeCallbacks()
+void BZDBfloat::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
@@ -231,65 +238,66 @@ void BZDBLocalFloat::removeCallbacks()
     
 /******************************************************************************/
 //
-// BZDBLocalColor
+// BZDBcolor
 //
 
-BZDBLocalColor::BZDBLocalColor(const std::string& _name,
-                               float r, float g, float b, float a,
-                               bool _neverAlpha) :
-                               BZDBLocal(_name), neverAlpha(_neverAlpha)
+BZDBcolor::BZDBcolor(const std::string& _name,
+                     float r, float g, float b, float a,
+                     bool _neverAlpha, bool save)
+                     : BZDBLocal(_name, save), neverAlpha(_neverAlpha)
 {
   data[0] = r;
   data[1] = g;
   data[2] = b;
   data[3] = a;
   BZDBLocalManager::manager.addEntry(this);
+  DEBUG3("Added BZDBcolor(%s) callback\n", name.c_str());
   return;
 }
 
 
-BZDBLocalColor::~BZDBLocalColor()
+BZDBcolor::~BZDBcolor()
 {
   return;
 }
 
 
-void BZDBLocalColor::callback()
+void BZDBcolor::callback()
 {
   const std::string& expr = BZDB.get(name);
   float color[4];
   
   if (!parseColorString(expr, color)) {
-    DEBUG3("BZDBLocalColor(%s) bad string: %s\n", name.c_str(), expr.c_str());
+    DEBUG3("BZDBcolor(%s) bad string: %s\n", name.c_str(), expr.c_str());
     return;
   }
 
   if (neverAlpha && (color[3] < 1.0f)) {
-    DEBUG3("BZDBLocalColor(%s) made opaque: %f\n", name.c_str(), color[3]);
+    DEBUG3("BZDBcolor(%s) made opaque: %f\n", name.c_str(), color[3]);
     color[3] = 1.0f;
   }
 
   // set the new value
   memcpy(data, color, sizeof(float[4]));
 
-  DEBUG4("BZDBLocalColor(%s) = %f, %f, %f, %f\n", name.c_str(),
+  DEBUG4("BZDBcolor(%s) = %f, %f, %f, %f\n", name.c_str(),
          data[0], data[1], data[2], data[3]);
 
   return;
 }
 
 
-void BZDBLocalColor::staticCallback(const std::string& /*name*/, void* data)
+void BZDBcolor::staticCallback(const std::string& /*name*/, void* data)
 {
-  ((BZDBLocalColor*)data)->callback();
+  ((BZDBcolor*)data)->callback();
   return;
 }
 
 
-void BZDBLocalColor::addCallbacks()
+void BZDBcolor::addCallbacks()
 {
   if (BZDB.isSet(name)) {
-    fprintf(stderr, "BZDBLocalColor duplicate \"%s\".\n", name.c_str());
+    fprintf(stderr, "BZDBcolor duplicate \"%s\".\n", name.c_str());
     exit(1);
   }
 
@@ -297,12 +305,13 @@ void BZDBLocalColor::addCallbacks()
   snprintf(buf, 256, " %f %f %f %f", data[0], data[1], data[2], data[3]);
   BZDB.set(name, buf);
   BZDB.setDefault(name, BZDB.get(name));
+  BZDB.setPersistent(name, saveOnExit);
   BZDB.addCallback(name, staticCallback, this);
   return;
 }
 
     
-void BZDBLocalColor::removeCallbacks()
+void BZDBcolor::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
@@ -311,64 +320,66 @@ void BZDBLocalColor::removeCallbacks()
     
 /******************************************************************************/
 //
-// BZDBLocalString
+// BZDBstring
 //
 
-BZDBLocalString::BZDBLocalString(const std::string& _name,
-                                 const std::string& defVal, bool _neverEmpty) :
-                                 BZDBLocal(_name),
-                                 data(defVal), neverEmpty(_neverEmpty)
+BZDBstring::BZDBstring(const std::string& _name, const std::string& defVal,
+                       bool _neverEmpty, bool save)
+                       : BZDBLocal(_name, save),
+                         data(defVal), neverEmpty(_neverEmpty)
 {
   BZDBLocalManager::manager.addEntry(this);
+  DEBUG3("Added BZDBstring(%s) callback\n", name.c_str());
   return;
 }
 
 
-BZDBLocalString::~BZDBLocalString()
+BZDBstring::~BZDBstring()
 {
   return;
 }
 
 
-void BZDBLocalString::callback()
+void BZDBstring::callback()
 {
   const std::string& tmp = BZDB.get(name);
   
   if (neverEmpty && (tmp.size() <= 0)) {
-    DEBUG3("BZDBLocalString(%s) empty string: %s\n", name.c_str(), tmp.c_str());
+    DEBUG3("BZDBstring(%s) empty string: %s\n", name.c_str(), tmp.c_str());
     return;
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBLocalString(%s) = %s\n", name.c_str(), data.c_str());
+  DEBUG4("BZDBstring(%s) = %s\n", name.c_str(), data.c_str());
 
   return;
 }
 
 
-void BZDBLocalString::staticCallback(const std::string& /*name*/, void* data)
+void BZDBstring::staticCallback(const std::string& /*name*/, void* data)
 {
-  ((BZDBLocalString*)data)->callback();
+  ((BZDBstring*)data)->callback();
   return;
 }
 
 
-void BZDBLocalString::addCallbacks()
+void BZDBstring::addCallbacks()
 {
   if (BZDB.isSet(name)) {
-    fprintf(stderr, "BZDBLocalString duplicate \"%s\".\n", name.c_str());
+    fprintf(stderr, "BZDBstring duplicate \"%s\".\n", name.c_str());
     exit(1);
   }
 
   BZDB.set(name, data);
   BZDB.setDefault(name, BZDB.get(name));
+  BZDB.setPersistent(name, saveOnExit);
   BZDB.addCallback(name, staticCallback, this);
   return;
 }
 
     
-void BZDBLocalString::removeCallbacks()
+void BZDBstring::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;

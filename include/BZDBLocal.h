@@ -22,14 +22,25 @@
 #include "StateDatabase.h"
 
 
-class BZDBLocalInt;
-class BZDBLocalBool;
-class BZDBLocalFloat;
-class BZDBLocalColor;
-class BZDBLocalString;
+class BZDBint;
+class BZDBbool;
+class BZDBfloat;
+class BZDBcolor;
+class BZDBstring;
+
+
+// Utility Macros (... requires at least the default parameter)
+#define BZDB_INT(name, ...)    BZDBint    name(#name, __VA_ARGS__)
+#define BZDB_BOOL(name, ...)   BZDBbool   name(#name, __VA_ARGS__)
+#define BZDB_FLOAT(name, ...)  BZDBfloat  name(#name, __VA_ARGS__)
+#define BZDB_COLOR(name, ...)  BZDBcolor  name(#name, __VA_ARGS__)
+#define BZDB_STRING(name, ...) BZDBstring name(#name, __VA_ARGS__)
 
 
 /******************************************************************************/
+//
+// Defaults to "saving-on-exit"
+//
 
 class BZDBLocal {
 
@@ -39,22 +50,24 @@ class BZDBLocal {
     inline const std::string& getName() const { return name; }
     
   protected:
-    BZDBLocal(const std::string& _name) : name(_name) {}
+    BZDBLocal(const std::string& _name, bool save)
+             : name(_name), saveOnExit(save) {}
     virtual ~BZDBLocal() { return; }
     virtual void addCallbacks() = 0;
     virtual void removeCallbacks() = 0;
     
   protected:
     std::string name;
+    bool saveOnExit;
 };
 
 
 /******************************************************************************/
 
-class BZDBLocalBool : public BZDBLocal {
+class BZDBbool : public BZDBLocal {
   public:
-    BZDBLocalBool(const std::string& name, bool defVal);
-    ~BZDBLocalBool();
+    BZDBbool(const std::string& name, bool defVal,  bool saveOnExit = true);
+    ~BZDBbool();
 
     void addCallbacks();
     void removeCallbacks();
@@ -62,8 +75,8 @@ class BZDBLocalBool : public BZDBLocal {
     inline operator bool() const { return data; };
 
   private:
-    BZDBLocalBool(const BZDBLocalBool&);
-    BZDBLocalBool& operator=(const BZDBLocalBool&);
+    BZDBbool(const BZDBbool&);
+    BZDBbool& operator=(const BZDBbool&);
     
     void callback();
     static void staticCallback(const std::string& name, void* data);
@@ -75,13 +88,12 @@ class BZDBLocalBool : public BZDBLocal {
 
 /******************************************************************************/
 
-class BZDBLocalInt : public BZDBLocal {
+class BZDBint : public BZDBLocal {
   public:
-    BZDBLocalInt(const std::string& name, int defVal,
-                 int min = INT_MIN,
-                 int max = INT_MAX,
-                 bool neverZero = false);
-    ~BZDBLocalInt();
+    BZDBint(const std::string& name, int defVal,
+            int min = INT_MIN, int max = INT_MAX,
+            bool neverZero = false, bool saveOnExit = true);
+    ~BZDBint();
 
     void addCallbacks();
     void removeCallbacks();
@@ -93,8 +105,8 @@ class BZDBLocalInt : public BZDBLocal {
     inline bool  getNeverZero() const { return neverZero; }
 
   private:
-    BZDBLocalInt(const BZDBLocalInt&);
-    BZDBLocalInt& operator=(const BZDBLocalInt&);
+    BZDBint(const BZDBint&);
+    BZDBint& operator=(const BZDBint&);
     
     void callback();
     static void staticCallback(const std::string& name, void* data);
@@ -109,13 +121,12 @@ class BZDBLocalInt : public BZDBLocal {
 
 /******************************************************************************/
 
-class BZDBLocalFloat : public BZDBLocal {
+class BZDBfloat : public BZDBLocal {
   public:
-    BZDBLocalFloat(const std::string& name, float defVal,
-                   float min = -MAXFLOAT,
-                   float max = +MAXFLOAT,
-                   bool neverZero = false);
-    ~BZDBLocalFloat();
+    BZDBfloat(const std::string& name, float defVal,
+              float min = -MAXFLOAT, float max = +MAXFLOAT,
+              bool neverZero = false, bool saveOnExit = true);
+    ~BZDBfloat();
 
     void addCallbacks();
     void removeCallbacks();
@@ -127,8 +138,8 @@ class BZDBLocalFloat : public BZDBLocal {
     inline bool  getNeverZero() const { return neverZero; }
 
   private:
-    BZDBLocalFloat(const BZDBLocalFloat&);
-    BZDBLocalFloat& operator=(const BZDBLocalFloat&);
+    BZDBfloat(const BZDBfloat&);
+    BZDBfloat& operator=(const BZDBfloat&);
     
     void callback();
     static void staticCallback(const std::string& name, void* data);
@@ -143,12 +154,12 @@ class BZDBLocalFloat : public BZDBLocal {
 
 /******************************************************************************/
 
-class BZDBLocalColor : public BZDBLocal {
+class BZDBcolor : public BZDBLocal {
   public:
-    BZDBLocalColor(const std::string& name,
-                   float r, float g, float b, float a,
-                   bool neverAlpha = false);
-    ~BZDBLocalColor();
+    BZDBcolor(const std::string& name,
+              float r, float g, float b, float a,
+              bool neverAlpha = false, bool saveOnExit = true);
+    ~BZDBcolor();
 
     void addCallbacks();
     void removeCallbacks();
@@ -158,8 +169,8 @@ class BZDBLocalColor : public BZDBLocal {
     inline bool getNeverAlpha() const { return neverAlpha; }
 
   private:
-    BZDBLocalColor(const BZDBLocalColor&);
-    BZDBLocalColor& operator=(const BZDBLocalColor&);
+    BZDBcolor(const BZDBcolor&);
+    BZDBcolor& operator=(const BZDBcolor&);
     
     void callback();
     static void staticCallback(const std::string& name, void* data);
@@ -172,12 +183,11 @@ class BZDBLocalColor : public BZDBLocal {
 
 /******************************************************************************/
 
-class BZDBLocalString : public BZDBLocal {
+class BZDBstring : public BZDBLocal {
   public:
-    BZDBLocalString(const std::string& name,
-                    const std::string& defVal,
-                    bool neverEmpty = false);
-    ~BZDBLocalString();
+    BZDBstring(const std::string& name, const std::string& defVal,
+               bool neverEmpty = false, bool saveOnExit = true);
+    ~BZDBstring();
 
     void addCallbacks();
     void removeCallbacks();
@@ -187,8 +197,8 @@ class BZDBLocalString : public BZDBLocal {
     inline bool getNeverEmpty() const { return neverEmpty; }
     
   private:
-    BZDBLocalString(const BZDBLocalString&);
-    BZDBLocalString& operator=(const BZDBLocalString&);
+    BZDBstring(const BZDBstring&);
+    BZDBstring& operator=(const BZDBstring&);
     
     void callback();
     static void staticCallback(const std::string& name, void* data);
