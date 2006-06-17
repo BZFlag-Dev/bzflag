@@ -18,7 +18,6 @@
 // system headers
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include <string>
 
 // common headers
