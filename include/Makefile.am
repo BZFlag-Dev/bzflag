@@ -10,6 +10,7 @@ noinst_HEADERS =			\
 	BoxSceneNodeGenerator.h		\
 	BSPSceneDatabase.h		\
 	BZDBCache.h			\
+	BZDBLocal.h			\
 	BaseBuilding.h			\
 	BaseResources.h			\
 	BillboardSceneNode.h		\
