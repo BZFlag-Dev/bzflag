@@ -25,6 +25,13 @@
 #include "ParseColor.h"
 
 
+// Function Prototypes
+// -------------------
+static void safeSetInt(const std::string& name, int value);
+static void safeSetFloat(const std::string& name, float value);
+static void safeSetString(const std::string& name, const std::string&value);
+
+
 /******************************************************************************/
 //
 // BZDBbool
@@ -107,14 +114,16 @@ void BZDBint::callback()
 {
   int tmp = BZDB.evalInt(name);
 
-  if ((min != INT_MIN) && (tmp < min)) {
+  if (tmp < min) {
     DEBUG3("BZDBint(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
+    safeSetInt(name, tmp);
   }
 
-  if ((max != INT_MAX) && (tmp > max)) {
+  if (tmp > max) {
     DEBUG3("BZDBint(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
+    safeSetInt(name, tmp);
   }
 
   if (neverZero && (tmp == 0)) {
@@ -185,14 +194,16 @@ void BZDBfloat::callback()
 {
   float tmp = BZDB.eval(name);
 
-  if ((min != -MAXFLOAT) && (tmp < min)) {
+  if (tmp < min) {
     DEBUG3("BZDBfloat(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
+    safeSetFloat(name, tmp);
   }
 
-  if ((max != +MAXFLOAT) && (tmp > max)) {
+  if (tmp > max) {
     DEBUG3("BZDBfloat(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
+    safeSetFloat(name, tmp);
   }
 
   if (neverZero && (tmp == 0.0f)) {
@@ -275,6 +286,9 @@ void BZDBcolor::callback()
   if (neverAlpha && (color[3] < 1.0f)) {
     DEBUG3("BZDBcolor(%s) made opaque: %f\n", name.c_str(), color[3]);
     color[3] = 1.0f;
+    char buf[256];
+    snprintf(buf, 256, " %f %f %f %f", color[0], color[1], color[2], color[3]);
+    safeSetString(name, buf);
   }
 
   // set the new value
@@ -346,6 +360,7 @@ void BZDBstring::callback()
   
   if (neverEmpty && (tmp.size() <= 0)) {
     DEBUG3("BZDBstring(%s) empty string: %s\n", name.c_str(), tmp.c_str());
+    safeSetString(name, tmp);
     return;
   }
 
@@ -388,7 +403,7 @@ void BZDBstring::removeCallbacks()
     
 /******************************************************************************/
 
-BZDBLocalManager::BZDBLocalManager BZDBLocalManager::manager;
+BZDBLocalManager BZDBLocalManager::manager;
 
 
 static std::vector<BZDBLocal*>& getEntryVector()
@@ -433,6 +448,44 @@ void BZDBLocalManager::kill()
   std::vector<BZDBLocal*>& entries = getEntryVector();
   for (unsigned int i = 0; i < entries.size(); i++) {
     entries[i]->removeCallbacks();
+  }
+  return;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool Inside = false;
+
+static void safeSetInt(const std::string& name, int value)
+{
+  if (!Inside) {
+    Inside = true;
+    BZDB.setInt(name, value);
+    Inside = false;
+  }
+  return;
+}
+
+
+static void safeSetFloat(const std::string& name, float value)
+{
+  if (!Inside) {
+    Inside = true;
+    BZDB.setFloat(name, value);
+    Inside = false;
+  }
+  return;
+}
+
+
+static void safeSetString(const std::string& name, const std::string&value)
+{
+  if (!Inside) {
+    Inside = true;
+    BZDB.set(name, value);
+    Inside = false;
   }
   return;
 }
