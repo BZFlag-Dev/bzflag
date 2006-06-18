@@ -30,11 +30,11 @@ class BZDBstring;
 
 
 // Utility Macros (... requires at least the default parameter)
-#define BZDB_INT(name, ...)    BZDBint    name(#name, __VA_ARGS__)
+/*#define BZDB_INT(name, ...)    BZDBint    name(#name, __VA_ARGS__)
 #define BZDB_BOOL(name, ...)   BZDBbool   name(#name, __VA_ARGS__)
 #define BZDB_FLOAT(name, ...)  BZDBfloat  name(#name, __VA_ARGS__)
 #define BZDB_COLOR(name, ...)  BZDBcolor  name(#name, __VA_ARGS__)
-#define BZDB_STRING(name, ...) BZDBstring name(#name, __VA_ARGS__)
+#define BZDB_STRING(name, ...) BZDBstring name(#name, __VA_ARGS__) */
 
 
 /******************************************************************************/
