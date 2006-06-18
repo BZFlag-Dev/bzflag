@@ -528,6 +528,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BZDBLocal.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzfio.cxx">
 			</File>
 			<File
@@ -1491,6 +1494,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\BZDBCache.h">
+			</File>
+			<File
+				RelativePath="..\..\include\BZDBLocal.h">
 			</File>
 			<File
 				RelativePath="..\..\include\bzfio.h">
