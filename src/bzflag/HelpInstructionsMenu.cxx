@@ -17,16 +17,64 @@
 #include <vector>
 #include <string>
 
+/* local implementation headers */
+#include "FontManager.h"
+#include "HUDuiControl.h"
+#include "HUDuiLabel.h"
+
 HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::string> text) 
   : HelpMenu(title)
 {
   // add controls
   std::vector<HUDuiControl*>& listHUD = getControls();
+  listHUD.push_back(createLabel(""));
   
   std::vector<std::string>::iterator it;
   for (it = text.begin(); it != text.end(); ++it)
   {
     listHUD.push_back(createLabel((*it).c_str()));
+  }
+}
+
+void HelpInstructionsMenu::resize(int _width, int _height)
+{
+  HelpMenu::resize(_width, _height);
+
+  // find good font size
+  FontManager &fm = FontManager::instance();
+  float fontSize = (float)_height / 100.0f; // guaranteed to be too small
+  const float workingWidth = _width - 2 * getLeftSide(_width, _height);
+
+  // find the longest localized string
+  float longestLength = 0;
+  std::string longestString = "";
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  int fontFace = listHUD[2]->getFontFace();
+  const int count = (const int)listHUD.size();
+  for (int i = 2; i < count; ++i) {
+    float thisLength = fm.getStrLength(fontFace, fontSize, ((HUDuiLabel*)listHUD[i])->getString());
+    if (thisLength > longestLength)
+    {
+      longestLength = thisLength;
+      longestString = ((HUDuiLabel*)listHUD[i])->getString();
+    }
+  }
+
+  // make the longest fit perfectly in the working width, and use that font size
+  for (fontSize = ((float)_height / 100.0f); longestLength < workingWidth; ++fontSize)
+  {
+    longestLength = fm.getStrLength(fontFace, fontSize, longestString);
+  }
+  --fontSize;
+
+  // reposition instruction text
+  const float h = fm.getStrHeight(fontFace, fontSize, " ");
+  const float x = getLeftSide(_width, _height);
+  float y = listHUD[2]->getY();
+  for (int i = 2; i < count; ++i) {
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
+    y -= 1.0f * h;
   }
 }
 

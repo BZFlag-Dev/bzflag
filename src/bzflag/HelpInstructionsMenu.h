@@ -23,6 +23,8 @@ public:
   HelpInstructionsMenu(const char* title, std::vector<std::string> text);
   ~HelpInstructionsMenu() { }
 
+  void resize(int width, int height);
+
 private:
   // no default constructor
   HelpInstructionsMenu();
