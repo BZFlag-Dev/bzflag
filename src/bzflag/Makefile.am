@@ -61,13 +61,13 @@ bzflag_SOURCES =			\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
 	HelpCreditsMenu.cxx		\
-	HelpCreditsMenu.cxx		\
+	HelpCreditsMenu.h		\
 	HelpFlagsMenu.cxx		\
-	HelpFlagsMenu.cxx		\
+	HelpFlagsMenu.h			\
 	HelpInstructionsMenu.cxx	\
-	HelpInstructionsMenu.cxx	\
+	HelpInstructionsMenu.h		\
 	HelpKeymapMenu.cxx		\
-	HelpKeymapMenu.cxx		\
+	HelpKeymapMenu.h		\
 	HelpMenu.cxx			\
 	HelpMenu.h			\
 	HUDDialog.cxx			\
