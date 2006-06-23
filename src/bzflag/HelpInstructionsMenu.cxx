@@ -42,7 +42,7 @@ void HelpInstructionsMenu::resize(int _width, int _height)
 
   // find good font size
   FontManager &fm = FontManager::instance();
-  float fontSize = (float)_height / 100.0f; // guaranteed to be too small
+  float fontSize = _height / 5.0f; // guaranteed to be too big
   const float workingWidth = _width - 2 * getLeftSide(_width, _height);
 
   // find the longest localized string
@@ -61,11 +61,10 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   }
 
   // make the longest fit perfectly in the working width, and use that font size
-  for (fontSize = ((float)_height / 100.0f); longestLength < workingWidth; ++fontSize)
+  for (fontSize = ((float)_height / 5.0f); longestLength > workingWidth; --fontSize)
   {
     longestLength = fm.getStrLength(fontFace, fontSize, longestString);
   }
-  --fontSize;
 
   // reposition instruction text
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
