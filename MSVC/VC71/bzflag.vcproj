@@ -1626,6 +1626,18 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\GUIOptionsMenu.cxx">
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HelpCreditsMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HelpFlagsMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HelpInstructionsMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HelpKeymapMenu.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HelpMenu.cxx">
 				</File>
 				<File
@@ -1754,6 +1766,18 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\GUIOptionsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HelpCreditsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HelpFlagsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HelpInstructionsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HelpKeymapMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HelpMenu.h">
