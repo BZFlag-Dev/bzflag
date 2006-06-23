@@ -60,6 +60,14 @@ bzflag_SOURCES =			\
 	GuidedMissleStrategy.h		\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
+	HelpCreditsMenu.cxx		\
+	HelpCreditsMenu.cxx		\
+	HelpFlagsMenu.cxx		\
+	HelpFlagsMenu.cxx		\
+	HelpInstructionsMenu.cxx	\
+	HelpInstructionsMenu.cxx	\
+	HelpKeymapMenu.cxx		\
+	HelpKeymapMenu.cxx		\
 	HelpMenu.cxx			\
 	HelpMenu.h			\
 	HUDDialog.cxx			\

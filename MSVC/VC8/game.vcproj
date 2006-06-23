@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="game"
 	ProjectGUID="{B2B95537-A4CE-4510-96A6-00F7B7303922}"
+	RootNamespace="game"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -1235,10 +1236,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
