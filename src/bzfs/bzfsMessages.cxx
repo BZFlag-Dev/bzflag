@@ -439,12 +439,16 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = nboPackUByte(bufStart, 1);
 		buf = aboutPlayerData->packAdminInfo(buf);
+	}
+
+	if (toPlayer)
+	{
 		if (!toPlayerData->playerHandler)
 			directMessage(toPlayer, MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart);
-		
-		if (record)
-			Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
 	}
+		
+	if (record)
+		Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
 }
 
 // network only messages
