@@ -587,6 +587,122 @@ static void createCacheSignature ()
   return;
 }
 
+bool checkTimeBomb ( void )
+{
+	// check time bomb
+	if (timeBombBoom()) 
+	{
+		printFatalError("This release expired on %s. \n"
+			"Please upgrade to the latest release. \n"
+			"Exiting.", timeBombString());
+		bail(0);
+		return true;
+	}
+	return false;
+}
+
+void setupBZDB ( void )
+{
+	// set default DB entries
+	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) 
+	{
+		assert(globalDBItems[gi].name != NULL);
+		if (globalDBItems[gi].value != NULL) 
+		{
+			BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
+			BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+		}
+		BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+		BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
+	}
+
+	BZDBCache::init();
+}
+
+void setupConfigs ( void )
+{
+	// read resources
+	if (alternateConfig != "") {
+		if (CFGMGR.read(alternateConfig)) {
+			startupInfo.hasConfiguration = true;
+		}
+	}
+
+	if (!startupInfo.hasConfiguration) {
+		findConfigFile();
+		if (CFGMGR.read(getCurrentConfigFileName())) {
+			startupInfo.hasConfiguration = true;
+			updateConfigFile();
+		}
+	}
+
+	if (startupInfo.hasConfiguration)
+		ActionBinding::instance().getFromBindings();
+	else
+		ActionBinding::instance().resetBindings();    // bind default keys
+
+	ServerListCache::get()->loadCache();
+
+	// restore some configuration (command line overrides these)
+	if (startupInfo.hasConfiguration) {
+		if (BZDB.isSet("callsign")) {
+			strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
+				sizeof(startupInfo.callsign) - 1);
+			startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+		}
+		if (BZDB.isSet("password")) {
+			strncpy(startupInfo.password, BZDB.get("password").c_str(),
+				sizeof(startupInfo.password) - 1);
+			startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+		}
+
+		if (BZDB.isSet("team")) {
+			std::string value = BZDB.get("team");
+			startupInfo.team = Team::getTeam(value);
+		}
+		if (BZDB.isSet("server")) {
+			strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
+				sizeof(startupInfo.serverName) - 1);
+			startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
+		}
+		if (BZDB.isSet("port")) {
+			startupInfo.serverPort = atoi(BZDB.get("port").c_str());
+		}
+
+		// check for reassigned team colors
+		if (BZDB.isSet("roguecolor"))
+			setTeamColor(RogueTeam, BZDB.get("roguecolor"));
+		if (BZDB.isSet("redcolor"))
+			setTeamColor(RedTeam, BZDB.get("redcolor"));
+		if (BZDB.isSet("greencolor"))
+			setTeamColor(GreenTeam, BZDB.get("greencolor"));
+		if (BZDB.isSet("bluecolor"))
+			setTeamColor(BlueTeam, BZDB.get("bluecolor"));
+		if (BZDB.isSet("purplecolor"))
+			setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
+
+		// check for reassigned radar colors
+		if (BZDB.isSet("rogueradar"))
+			setRadarColor(RogueTeam, BZDB.get("rogueradar"));
+		if (BZDB.isSet("redradar"))
+			setRadarColor(RedTeam, BZDB.get("redradar"));
+		if (BZDB.isSet("greenradar"))
+			setRadarColor(GreenTeam, BZDB.get("greenradar"));
+		if (BZDB.isSet("blueradar"))
+			setRadarColor(BlueTeam, BZDB.get("blueradar"));
+		if (BZDB.isSet("purpleradar"))
+			setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
+
+		// ignore window name in config file (it's used internally)
+		BZDB.unset("_window");
+		BZDB.unset("_multisample");
+
+		// however, if the "__window" setting is enabled, let it through
+		if (BZDB.isSet("__window"))
+			if (BZDB.isTrue("__window"))
+				BZDB.set("_window", "1");
+	}
+}
 
 //
 // main()
@@ -626,32 +742,16 @@ int			main(int argc, char** argv)
 
   //init_packetcompression();
 
-  // check time bomb
-  if (timeBombBoom()) {
-    printFatalError("This release expired on %s. \n"
-		"Please upgrade to the latest release. \n"
-		"Exiting.", timeBombString());
-	bail(0);
-    exit(0);
-  }
+  if (checkTimeBomb())
+	  return 0;
 
   createCacheSignature();
 
   // initialize global objects and classes
   bzfsrand((unsigned int)time(0));
 
-    // set default DB entries
-  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
-    assert(globalDBItems[gi].name != NULL);
-    if (globalDBItems[gi].value != NULL) {
-      BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
-      BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
-    }
-    BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
-    BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-  }
+  setupBZDB();
 
-  BZDBCache::init();
   Flags::init();
 
   if (getenv("BZFLAGID")) {
@@ -680,89 +780,7 @@ int			main(int argc, char** argv)
   // has been loaded to allow for command line overrides
   parseConfigName(argc, argv);
 
-  // read resources
-  if (alternateConfig != "") {
-    if (CFGMGR.read(alternateConfig)) {
-      startupInfo.hasConfiguration = true;
-    }
-  }
-  if (!startupInfo.hasConfiguration) {
-    findConfigFile();
-    if (CFGMGR.read(getCurrentConfigFileName())) {
-      startupInfo.hasConfiguration = true;
-      updateConfigFile();
-    }
-  }
-
-  if (startupInfo.hasConfiguration)
-    ActionBinding::instance().getFromBindings();
-  else
-    // bind default keys
-    ActionBinding::instance().resetBindings();
-
-  ServerListCache::get()->loadCache();
-
-  // restore some configuration (command line overrides these)
-  if (startupInfo.hasConfiguration) {
-    if (BZDB.isSet("callsign")) {
-      strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
-					sizeof(startupInfo.callsign) - 1);
-      startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-    }
-    if (BZDB.isSet("password")) {
-      strncpy(startupInfo.password, BZDB.get("password").c_str(),
-					sizeof(startupInfo.password) - 1);
-      startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-    }
-
-    if (BZDB.isSet("team")) {
-      std::string value = BZDB.get("team");
-      startupInfo.team = Team::getTeam(value);
-    }
-    if (BZDB.isSet("server")) {
-      strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
-					sizeof(startupInfo.serverName) - 1);
-      startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
-    }
-    if (BZDB.isSet("port")) {
-      startupInfo.serverPort = atoi(BZDB.get("port").c_str());
-    }
-
-    // check for reassigned team colors
-    if (BZDB.isSet("roguecolor"))
-      setTeamColor(RogueTeam, BZDB.get("roguecolor"));
-    if (BZDB.isSet("redcolor"))
-      setTeamColor(RedTeam, BZDB.get("redcolor"));
-    if (BZDB.isSet("greencolor"))
-      setTeamColor(GreenTeam, BZDB.get("greencolor"));
-    if (BZDB.isSet("bluecolor"))
-      setTeamColor(BlueTeam, BZDB.get("bluecolor"));
-    if (BZDB.isSet("purplecolor"))
-      setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
-
-    // check for reassigned radar colors
-    if (BZDB.isSet("rogueradar"))
-      setRadarColor(RogueTeam, BZDB.get("rogueradar"));
-    if (BZDB.isSet("redradar"))
-      setRadarColor(RedTeam, BZDB.get("redradar"));
-    if (BZDB.isSet("greenradar"))
-      setRadarColor(GreenTeam, BZDB.get("greenradar"));
-    if (BZDB.isSet("blueradar"))
-      setRadarColor(BlueTeam, BZDB.get("blueradar"));
-    if (BZDB.isSet("purpleradar"))
-      setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
-
-
-    // ignore window name in config file (it's used internally)
-    BZDB.unset("_window");
-    BZDB.unset("_multisample");
-
-
-    // however, if the "__window" setting is enabled, let it through
-    if (BZDB.isSet("__window"))
-      if (BZDB.isTrue("__window"))
-        BZDB.set("_window", "1");
-  }
+  setupConfigs();
 
   // use UDP? yes
   startupInfo.useUDPconnection=true;
