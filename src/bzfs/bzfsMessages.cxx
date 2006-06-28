@@ -441,7 +441,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		buf = aboutPlayerData->packAdminInfo(buf);
 	}
 
-	if (toPlayer)
+	if (toPlayerData)
 	{
 		if (!toPlayerData->playerHandler)
 			directMessage(toPlayer, MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart);
