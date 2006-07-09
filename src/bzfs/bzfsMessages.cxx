@@ -609,7 +609,7 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = bufStart;
 	setGeneralMessageInfo(&buf,code,len);
-	buf  = nboPackUByte(buf, playerData->getIndex());
+	buf = nboPackUByte(buf, playerData->getIndex());
 	buf = nboPackFloat(buf, playerData->stateTimeStamp);
 	buf = playerData->lastState.pack(buf,code);
 
@@ -724,7 +724,7 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 	void *buf, *bufStart = getDirectMessageBuffer();
 
 	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUByte(bufStart, mode);
+	buf = nboPackUByte(buf, mode);
 	broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
 }
 
@@ -733,16 +733,15 @@ void sendSetTeam ( int playerIndex, int _team )
 	void *buf, *bufStart = getDirectMessageBuffer();
 
 	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUByte(bufStart, _team);
+	buf = nboPackUByte(buf, _team);
 	broadcastMessage(MsgSetTeam, (char*)buf - (char*)bufStart, bufStart);
 }
-
 
 // utils to build new packets
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {
 	*buffer = nboPackUShort(*buffer, len);
-	*buffer= nboPackUShort(*buffer, code);
+	*buffer = nboPackUShort(*buffer, code);
 }
 
 //messages sent TO the server
