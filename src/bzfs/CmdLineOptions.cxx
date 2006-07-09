@@ -1087,32 +1087,33 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if (strchr(argv[i], ':')) {
-				std::vector<std::string> endTime = TextUtils::tokenize(argv[i], std::string(":"));
-				{
-					unsigned int sizer = endTime.size();
-					while (sizer != 3) {
-						endTime.push_back("00");
-						++sizer;
-					}
-					if (sizer > 3) {
-						std::cerr << "too many arguments to -time\n";
-						usage(argv[0]);
-					}
-				}
-				time_t tnow = time(0);
-				struct tm *now = localtime(&tnow);
-				unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
-										 cmdHour = atoi(endTime[0].c_str()),
-										 cmdMin = atoi(endTime[1].c_str()), cmdSec = atoi(endTime[2].c_str());
-				unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
-											secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
-				if (secsToday > secsTill) //if the requested time has already past
-					options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
-				else
-					options.timeLimit = (float)(secsTill - secsToday);
-			}
-			else
+	std::vector<std::string> endTime = TextUtils::tokenize(argv[i], std::string(":"));
+	{
+	  unsigned int sizer = endTime.size();
+	  while (sizer != 3) {
+	    endTime.push_back("00");
+	    ++sizer;
+	  }
+	  if (sizer > 3) {
+	    std::cerr << "too many arguments to -time\n";
+	    usage(argv[0]);
+	  }
+	}
+	time_t tnow = time(0);
+	struct tm *now = localtime(&tnow);
+	unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
+	  cmdHour = atoi(endTime[0].c_str()), 
+	  cmdMin = atoi(endTime[1].c_str()),
+	  cmdSec = atoi(endTime[2].c_str());
+	unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
+	  secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
+	if (secsToday > secsTill) //if the requested time has already past
+	  options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
+	else
+	  options.timeLimit = (float)(secsTill - secsToday);
+      } else {
       	options.timeLimit = (float)atof(argv[i]);
+      }
       if (options.timeLimit <= 0.0f) {
 	// league matches are 30 min
 	options.timeLimit = 1800.0f;
