@@ -3126,7 +3126,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		break;
 
     case MsgCaptureFlag:	// player has captured a flag
-		handleFlagCaputre(playerData,buf);
+		handleFlagCapture(playerData,buf);
 		break;
 
     // shot fired

@@ -303,7 +303,7 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 	sendPlayerMessage(playerData, dstPlayer, message);
 }
 
-void handleFlagCaputre ( GameKeeper::Player *playerData, void* buffer)
+void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer)
 {
 	// data: team whose territory flag was brought to
 	uint16_t _team;
