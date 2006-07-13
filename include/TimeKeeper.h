@@ -47,17 +47,20 @@ public:
   TimeKeeper&		operator+=(double);
   TimeKeeper&		operator+=(const TimeKeeper&);
 
-	// make a TimeKeeper with seconds = NULL act like unset
-	// Fixme: must this be defined here? didn't work for me outside the class
-	inline operator void*()
-	{
-		if (seconds > 0.0)
-			return this;
-		else
-			return NULL;
-	}
+  // make a TimeKeeper with seconds = NULL act like unset
+  // Fixme: must this be defined here? didn't work for me outside the class
+  inline operator void*()
+  {
+    if (seconds > 0.0)
+      return this;
+    else
+      return NULL;
+   }
 
-  /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
+  /** Returns how many seconds have elapsed since epoch, Jan 1, 1970.
+    * On windows this will actually be how many seconds have elapsed 
+    * since bootup, so don't rely on the value for anything but 
+    * deltas.  If real times are needed use TimeKeeper::localTime */
   double       getSeconds(void) const;
 
   /** returns a timekeeper representing the current time */
