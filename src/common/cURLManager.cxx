@@ -506,7 +506,7 @@ bool ResourceGetter::itemExists ( trResourceItem &item )
 
 void ResourceGetter::getResource ( void )
 {
-	while ( resources.size() || itemExists(resources[0]) )
+	while ( resources.size() && itemExists(resources[0]) )
 		resources.erase(resources.begin());
 
 	if ( !resources.size() )

@@ -1051,7 +1051,8 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 		resType = eSound;
 
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, (short)resType);
+	buf = nboPackUShort(bufStart, 1); // the count
+	buf = nboPackUShort(buf, (short)resType);
 	buf = nboPackUShort(buf, (unsigned short)strlen(URL));
 	buf = nboPackString(buf, URL,strlen(URL));
 
