@@ -185,7 +185,7 @@ static const char*	soundFiles[] = {
  * producer/consumer shared arena
  */
 
-static std::vector<AudioSamples>	soundSamples;
+static std::vector<AudioSamples*>	soundSamples;
 
 static std::map<std::string, int> customSamples;
 
@@ -337,8 +337,8 @@ static bool		allocAudioSamples()
     // read it
     int numFrames, rate;
     float* samples = PlatformFactory::getMedia()->readSound(soundFiles[i], numFrames, rate);
-		AudioSamples newSample;
-    if (samples && resampleAudio(samples, numFrames, rate, &newSample))
+		AudioSamples *newSample = new AudioSamples;
+    if (samples && resampleAudio(samples, numFrames, rate, newSample))
       anyFile = true;
 		soundSamples.push_back(newSample);
     delete[] samples;
@@ -349,8 +349,10 @@ static bool		allocAudioSamples()
 
 static void		freeAudioSamples(void)
 {
-	// do nothing.
-	// the samples are self freeing now
+	for ( unsigned int i = 0; i < soundSamples.size(); i++ )
+		delete(soundSamples[i]);
+
+	soundSamples.clear();
 }
 
 static int		resampleAudio(const float* in,
@@ -462,7 +464,7 @@ void			playWorldSound(int soundCode, const float pos[3],
   }
   SoundCommand s;
   if ((int)soundSamples.size() <= soundCode) return;
-  if (soundSamples[soundCode].length == 0) return;
+  if (soundSamples[soundCode]->length == 0) return;
   s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
   s.code = soundCode;
   s.data[0] = pos[0];
@@ -479,7 +481,7 @@ void			playLocalSound(int soundCode)
   }
   SoundCommand s;
   if ((int)soundSamples.size() <= soundCode) return;
-  if (soundSamples[soundCode].length == 0) return;
+  if (soundSamples[soundCode]->length == 0) return;
   s.cmd = SQC_LOCAL_SFX;
   s.code = soundCode;
   s.data[0] = 0.0f;
@@ -498,8 +500,8 @@ void			playLocalSound(std::string sound)
 	{
 		int numFrames, rate;
 		float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate);
-		AudioSamples newSample;
-		if (samples && resampleAudio(samples, numFrames, rate, &newSample))
+		AudioSamples *newSample = new AudioSamples;
+		if (samples && resampleAudio(samples, numFrames, rate, newSample))
 		{
 			soundSamples.push_back(newSample);
 			soundCode = (int)soundSamples.size()-1;
@@ -522,7 +524,7 @@ void			playFixedSound(int soundCode,
   }
   SoundCommand s;
   if ((int)soundSamples.size() <= soundCode) return;
-  if (soundSamples[soundCode].length == 0) return;
+  if (soundSamples[soundCode]->length == 0) return;
   s.cmd = SQC_FIXED_SFX;
   s.code = soundCode;
   s.data[0] = x;
@@ -1120,7 +1122,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = &soundSamples[cmd.code];
+	  event->samples = soundSamples[cmd.code];
 	  event->ptr = 0;
 	  event->flags = 0;
 	  event->time = curTime;
@@ -1142,7 +1144,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = &soundSamples[cmd.code];
+	  event->samples = soundSamples[cmd.code];
 	  event->ptrFracLeft = 0.0;
 	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_WORLD | SEF_IGNORING;
@@ -1163,7 +1165,7 @@ static bool		audioInnerLoop()
 	  if (i == MaxEvents) break;
 	  event = events + i;
 
-	  event->samples = &soundSamples[cmd.code];
+	  event->samples = soundSamples[cmd.code];
 	  event->ptrFracLeft = 0.0;
 	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_FIXED | SEF_WORLD;
