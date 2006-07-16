@@ -3077,6 +3077,11 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	  return;
 
   switch (code) {
+
+	case MsgCapBits:
+		handeCapBits(buf,len,playerData);
+		break;
+
     case MsgEnter:     // player joining
 		handleClientEnter(&buf,playerData);
 		break;
@@ -3754,8 +3759,6 @@ int main(int argc, char **argv)
   parse(argc, argv, *clOptions);
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
 
-  // no more defaults
-  BZDB.setSaveDefault(false);
 
   if (clOptions->bzdbVars.length() > 0) {
     DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
@@ -3766,6 +3769,9 @@ int main(int argc, char **argv)
       DEBUG1("WARNING: unable to load the variable file\n");
     }
   }
+
+  // no more defaults
+  BZDB.setSaveDefault(false);
 
 #ifdef _USE_BZ_API
   // see if we are going to load any plugins

@@ -53,6 +53,18 @@ public:
   bool       running;
 };
 
+class PlayerCaps
+{
+public:
+	bool	canDownloadResources;
+	bool	canPlayRemoteSounds;
+	
+	PlayerCaps ( void )
+	{
+		canPlayRemoteSounds = false;
+		canDownloadResources = false;
+	}
+};
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -161,6 +173,8 @@ public:
     Score	      score;
     // Authentication
     Authentication    authentication;
+	// cabailitys
+	PlayerCaps			caps;
 
     // logic class for server side players
     bz_ServerSidePlayerHandler	*playerHandler;		

@@ -1057,10 +1057,20 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 	buf = nboPackString(buf, URL,strlen(URL));
 
 	if (playerID == BZ_ALLUSERS)
-		broadcastMessage(MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+	{
+		for (int i = 0; i < curMaxPlayers; i++)
+		{
+			GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+			if (p && p->caps.canDownloadResources)
+				directMessage(i,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+		}
+	}
 	else
-		directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
-
+	{
+		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+		if (player && player->caps.canDownloadResources)
+			directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+	}
 	return true;
 }
 
@@ -1848,6 +1858,22 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 		broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
 	else
 		directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+
+	if (playerID == BZ_ALLUSERS)
+	{
+		for (int i = 0; i < curMaxPlayers; i++)
+		{
+			GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+			if (p && p->caps.canPlayRemoteSounds)
+				directMessage(i,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+		}
+	}
+	else
+	{
+		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+		if (player && player->caps.canPlayRemoteSounds)
+			directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+	}
 
 	return true;
 }

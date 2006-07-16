@@ -17,6 +17,22 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 
+void handeCapBits ( void* buf, uint16_t len, GameKeeper::Player *playerData )
+{
+	if (!playerData)
+		return;
+
+	unsigned char bits[2] = {0};
+
+	if (len >= 1)
+		buf = nboUnpackUByte(buf,bits[0]);
+	if (len >= 2)
+		buf = nboUnpackUByte(buf,bits[1]);
+
+	playerData->caps.canDownloadResources = bits[0] != 0;
+	playerData->caps.canPlayRemoteSounds = bits[1] != 0;
+}
+
 void handleClientEnter(void **buf, GameKeeper::Player *playerData)
 {
 	if (!playerData)

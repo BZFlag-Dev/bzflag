@@ -569,6 +569,17 @@ if (packetStream) {
 }
   return 1;
 }
+void ServerLink::sendCaps(bool downloads, bool sounds )
+{
+	if (state != Okay) return;
+	char msg[2] = {0};
+	void* buf = msg;
+
+	buf = nboPackUByte(buf, downloads ? 1 : 0);
+	buf = nboPackUByte(buf, sounds ? 1 : 0);
+
+	send(MsgEnter, (uint16_t)((char*)buf - msg), msg);
+}
 
 void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
 			   const char* name, const char* email,

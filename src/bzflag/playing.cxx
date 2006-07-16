@@ -4891,6 +4891,8 @@ static void joinInternetGame2()
     myTank->setTeam(HunterTeam);
 
   // tell server we want to join
+  bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
+  serverLink->sendCaps(true,!noSounds);
   serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
