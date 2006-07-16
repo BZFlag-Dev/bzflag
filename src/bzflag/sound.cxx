@@ -67,6 +67,7 @@ public:
   float*		mono;		/* avg of channels for world sfx */
   float*		monoRaw;	/* mono with silence before & after */
   double		duration;	/* time to play sound */
+  std::string	file;
 };
 
 
@@ -137,7 +138,7 @@ static void		audioLoop(void*);
 static bool		allocAudioSamples();
 static void		freeAudioSamples(void);
 static int		resampleAudio(const float* in,
-				int frames, int rate, AudioSamples* out);
+				int frames, int rate, AudioSamples* out, const char *name);
 
 
 /*
@@ -338,7 +339,7 @@ static bool		allocAudioSamples()
     int numFrames, rate;
     float* samples = PlatformFactory::getMedia()->readSound(soundFiles[i], numFrames, rate);
 		AudioSamples newSample;
-    if (samples && resampleAudio(samples, numFrames, rate, &newSample))
+    if (samples && resampleAudio(samples, numFrames, rate, &newSample,soundFiles[i]))
       anyFile = true;
 		soundSamples.push_back(newSample);
     delete[] samples;
@@ -354,7 +355,7 @@ static void		freeAudioSamples(void)
 }
 
 static int		resampleAudio(const float* in,
-				int frames, int rate, AudioSamples* out)
+				int frames, int rate, AudioSamples* out, const char* name)
 {
   // attenuation on all sounds
   static const float GlobalAtten = 0.5f;
@@ -377,6 +378,7 @@ static int		resampleAudio(const float* in,
 		   (float)PlatformFactory::getMedia()->getAudioOutputRate());
 
   // fill in samples structure
+  out->file = name;
   out->length = 2 * frames;
   out->mlength = out->length >> 1;
   out->dmlength = double(out->mlength - 1);
@@ -499,7 +501,7 @@ void			playLocalSound(std::string sound)
 		int numFrames, rate;
 		float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate);
 		AudioSamples newSample;
-		if (samples && resampleAudio(samples, numFrames, rate, &newSample))
+		if (samples && resampleAudio(samples, numFrames, rate, &newSample,sound.c_str()))
 		{
 			soundSamples.push_back(newSample);
 			soundCode = (int)soundSamples.size()-1;
