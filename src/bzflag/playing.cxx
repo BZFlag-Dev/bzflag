@@ -1677,7 +1677,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  buffer[stringLen] = '\0';
 	  item.URL = buffer;
 
-	  item.filePath = PlatformFactory::getMedia ()->getMediaDirectory ();
+	  item.filePath = PlatformFactory::getMedia ()->getMediaDirectory() + DirectorySeparator;
 	  std::vector < std::string > temp =
 	    TextUtils::tokenize (item.URL, std::string ("/"));
 
