@@ -73,6 +73,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class SoundCommand : public ServerCommand {
+public:
+  SoundCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class ServerQueryCommand : public ServerCommand {
 public:
   ServerQueryCommand();
@@ -421,6 +429,7 @@ public:
 };
 
 static MsgCommand	  msgCommand;
+static SoundCommand	  soundCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
 static QuitCommand	  quitCommand;
@@ -472,6 +481,8 @@ CmdList::CmdList()			 : ServerCommand("/?",
   "- display the list of server-side commands") {}
 MsgCommand::MsgCommand()		 : ServerCommand("/msg",
   "<nick> text - Send text message to nick") {}
+SoundCommand::SoundCommand()		 : ServerCommand("/sound",
+  "<soundname> - Tell connected clients to play a sound") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
   "- show the server version") {}
 PartCommand::PartCommand()		 : ServerCommand("/part",
@@ -887,6 +898,35 @@ bool MsgCommand::operator() (const char	 *message,
 
   // send the message
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
+  return true;
+}
+
+
+bool SoundCommand::operator() (const char	 *message,
+			       GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to play sounds (SETALL)");
+    return true;
+  }
+
+  const char* c = message + commandName.size();
+  while (*c && isspace(*c)) { c++; } // eat whitespace
+  int len = strlen(c);
+  
+  if (len <= 0) {
+    sendMessage(ServerPlayer, t, "Missing sound file name");
+    return true;
+  }
+
+  void* bufStart = getDirectMessageBuffer();
+  void* buf = bufStart;
+  buf = nboPackUShort(buf, LocalCustomSound);
+  buf = nboPackUShort(buf, len);
+  buf = nboPackString(buf, c, len);
+  directMessage(t, MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+  
   return true;
 }
 
