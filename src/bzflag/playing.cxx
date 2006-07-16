@@ -39,6 +39,7 @@
 #include "BZDBCache.h"
 #include "BzfMedia.h"
 #include "bzsignal.h"
+#include "CacheManager.h"
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
@@ -1636,23 +1637,29 @@ static void handleResourceFetch (void* msg)
 		buffer[stringLen] = '\0';
 		item.URL = buffer;
 
-		item.filePath = PlatformFactory::getMedia ()->getMediaDirectory() + DirectorySeparator;
-		std::vector < std::string > temp =
-			TextUtils::tokenize (item.URL, std::string ("/"));
+    if (!CACHEMGR.isCacheFileType(item.URL)) {
+      continue; // not a supported URL type
+    }
 
-		item.fileName = temp[temp.size () - 1];
-		item.filePath += item.fileName;
+		item.filePath = CACHEMGR.getLocalName(item.URL);
+
+		std::vector < std::string > temp =
+		  TextUtils::tokenize (item.URL, std::string ("\\/"));
+		item.fileName = temp[temp.size () - 1]; // unused?
 
 		std::string hostname;
 		parseHostname (item.URL, hostname);
 		if (authorizedServer (hostname))
 		{
 			if (!resourceDownloader)
+			{
 				resourceDownloader = new ResourceGetter;
+      }
 			resourceDownloader->addResource (item);
 		}
 	}
 }
+
 
 static void handleCustomSound ( void *msg )
 {
@@ -1673,9 +1680,15 @@ static void handleCustomSound ( void *msg )
 	buffer[stringLen] = '\0';
 	soundName = buffer;
 
-	if (soundType == LocalCustomSound)
-		playLocalSound (soundName);
+	if (soundType == LocalCustomSound) {
+    if (CACHEMGR.isCacheFileType(soundName)) {
+      playLocalSound(CACHEMGR.getLocalName(soundName));
+    } else {
+      playLocalSound(soundName);
+    }
+  }
 }
+
 
 static void handleSuperKill ( void *msg )
 {
