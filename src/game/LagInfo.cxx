@@ -128,6 +128,8 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
   } else {
     warn = false;
     kick = false;
+    jittwarn = false;
+    jittkick = false;
   }
   return;
 }
