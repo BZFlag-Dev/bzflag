@@ -67,12 +67,6 @@ class DumpCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
-class ClientQueryCommand : LocalCommand {
-  public:
-    ClientQueryCommand();
-    bool operator() (const char *commandLine);
-};
-
 class HighlightCommand : LocalCommand {
   public:
     HighlightCommand();
@@ -134,7 +128,6 @@ static BindCommand	  bindCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static DumpCommand	  dumpCommand;
-static ClientQueryCommand clientQueryCommand;
 static HighlightCommand   highlightCommand;
 static SetCommand	  setCommand;
 static DiffCommand	  diffCommand;
@@ -161,7 +154,6 @@ SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :		LocalCommand("/set") {}
 SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
 UnsilenceCommand::UnsilenceCommand() :	LocalCommand("/unsilence") {}
-ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY") {}
 
 
 // the meat of the matter
@@ -348,17 +340,6 @@ bool DumpCommand::operator() (const char *)
   return true;
 }
 
-
-bool ClientQueryCommand::operator() (const char *commandLine)
-{
-  if (strlen(commandLine) != 11)
-    return false;
-  char messageBuffer[MessageLen];
-  memset(messageBuffer, 0, MessageLen);
-  strncpy(messageBuffer, "/clientquery", MessageLen);
-  serverLink->sendMessage(msgDestination, messageBuffer);
-  return true;
-}
 
 
 bool HighlightCommand::operator() (const char *commandLine)

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="platform"
 	ProjectGUID="{12408598-00B6-487F-8F99-61B1300A15AF}"
+	RootNamespace="platform"
 	>
 	<Platforms>
 		<Platform
