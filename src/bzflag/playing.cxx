@@ -6098,10 +6098,10 @@ static void		playingLoop()
         unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
         if (hat_direction != old_direction[j]) {
           int mask = 1;
-          for (int i = j; i < 4; ++i, mask <<= 1) {
+          for (int k = j; k < 4; ++k, mask <<= 1) {
             if (((old_direction[j] ^ hat_direction) & mask) != 0) {
               BzfKeyEvent ev;
-              ev.button = hatswitch_map[j * 4 + i];
+              ev.button = hatswitch_map[j * 4 + k];
               ev.ascii = 0;
               ev.shift = 0;
               doKey(ev, (hat_direction & mask) != 0);
