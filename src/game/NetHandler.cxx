@@ -16,11 +16,14 @@
 // system headers
 #include <errno.h>
 
-const int udpBufSize = 128000;
+// Are these size/limits reasonable?
+const int udpBufSize = 128*1024;
+const int tcpBufLimit = 64*1024;
 
 bool NetHandler::pendingUDP = false;
 TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
 std::list<NetHandler*> NetHandler::netConnections;
+
 
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
@@ -314,8 +317,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
 
       // if the buffer is getting too big then drop the player.  chances
       // are the network is down or too unreliable to that player.
-      // FIXME -- is 20kB too big?  too small?
-      if (newCapacity >= 20 * 1024) {
+      if (newCapacity >= tcpBufLimit) {
 	netConnections.remove(this);
 	return -2;
       }
