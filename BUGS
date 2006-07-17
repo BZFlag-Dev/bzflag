@@ -3,8 +3,6 @@ recent bugs
 
 - client side bots make the client get disconected (read error)
 
-- OO stopped working recently 
-
 - idbans do not respect the antiban permission
 
 - idbans report the wrong time remaining on a idbanlist
