@@ -1478,7 +1478,7 @@ public:
   virtual void teamUpdate(int count, bz_TeamInfoRecord **teamList);
   virtual void handycapUpdate(int count,
 			      bz_HandycapUpdateRecord **handycapList);
-  virtual void playeIPUpdate(int player, const char *ipAddress);
+  virtual void playerIPUpdate(int player, const char *ipAddress);
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);
   virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
