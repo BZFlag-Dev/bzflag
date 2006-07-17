@@ -681,6 +681,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BZDBLocal.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\bzflag.cxx"
 				>
 				<FileConfiguration
@@ -3113,6 +3117,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\BaseLocalPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\BZDBLocal.h"
 				>
 			</File>
 			<File
