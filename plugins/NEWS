@@ -3,7 +3,7 @@
 
 BZFlag 2.1.x
 ------------
-* monkey see, monkey doo doo
+* Added bz_fireWorldGM api function, for firing a locked-on GM - Matthew Marshall
 
 
 BZFlag 2.0.8
