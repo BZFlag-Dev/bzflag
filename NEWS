@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Allow the use of joystick pov hats/dpads - Stephan Hradek, Daniel Remenak
 * Removed deprecated CLIENTQUERY command.  Use /clientquery - Daniel Remenak
 * Fixed cross-platform and 64-bit network protocol bug - Andrew McNabb
 * Added a NSIS script for Dev-C++ builds - UL_Approved
