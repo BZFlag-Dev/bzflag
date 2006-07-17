@@ -1,0 +1,22 @@
+			     BZFlag Plugins Release Notes
+			     ============================
+
+BZFlag 2.1.x
+------------
+* monkey see, monkey doo doo
+
+
+BZFlag 2.0.8
+------------
+* Add a plugin to record matches - Jeff Myers
+
+
+BZFlag 2.0.6
+------------
+* Added new logDetail plugin - Bernt Hansen
+
+
+BZFlag 2.0.4
+------------
+
+* initial server-side plugin system implementation - Jeff Meyers
