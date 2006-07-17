@@ -331,16 +331,17 @@ static void		parse(int argc, char** argv)
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
-	  checkArgc(i, argc, argv[i]);
-	  int w, h, x, y, count;
-	  char xs = '+', ys = '+';
-	  if (strcmp(argv[i], "default") != 0 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) || (xs != '-' && xs != '+') || (ys != '-' && ys != '+')))
-	  {
-			printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
-			usage();
-		}
-		BZDB.set("geometry", argv[i]);
-    }else if (strcmp(argv[i], "-date") == 0) {
+      if (i + 1 < argc) {
+        checkArgc(i, argc, argv[i]);
+        int w, h, x, y, count;
+        char xs = '+', ys = '+';
+        if (strcmp(argv[i], "default") != 0 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) || (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
+          printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
+	  usage();
+        }
+        BZDB.set("geometry", argv[i]);
+      }
+    } else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
       int month, day, year;
       // FIXME: should use iso yyyy.mm.dd format
