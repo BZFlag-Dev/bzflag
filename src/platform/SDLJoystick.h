@@ -31,6 +31,8 @@ class SDLJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
+    unsigned int	getHatswitch(int switchno) const;
+    unsigned int	getJoyDeviceNumHats() const;
     void	setXAxis(const std::string axis);
     void	setYAxis(const std::string axis);
 

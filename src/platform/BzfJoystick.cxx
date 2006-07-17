@@ -69,6 +69,16 @@ void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
   list.push_back("default");
 }
 
+unsigned int		    BzfJoystick::getHatswitch(int switchno) const
+{
+  return 0;
+}
+
+unsigned int		    BzfJoystick::getJoyDeviceNumHats() const
+{
+  return 0;
+}
+
 bool		    BzfJoystick::ffHasRumble() const
 {
   return false;

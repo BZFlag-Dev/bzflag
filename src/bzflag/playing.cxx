@@ -6055,6 +6055,10 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Button_10,
 	BzfKeyEvent::BZ_Button_11,
 	BzfKeyEvent::BZ_Button_12,
+	BzfKeyEvent::BZ_Button_13,
+	BzfKeyEvent::BZ_Button_14,
+	BzfKeyEvent::BZ_Button_15,
+	BzfKeyEvent::BZ_Button_16,
       };
 
       static unsigned long old_buttons = 0;
@@ -6071,6 +6075,41 @@ static void		playingLoop()
 	  }
 	}
       old_buttons = new_buttons;
+      
+      static const BzfKeyEvent::Button hatswitch_map[] = {
+	BzfKeyEvent::BZ_Hatswitch_1_up,
+	BzfKeyEvent::BZ_Hatswitch_1_right,
+	BzfKeyEvent::BZ_Hatswitch_1_down,
+	BzfKeyEvent::BZ_Hatswitch_1_left,
+	BzfKeyEvent::BZ_Hatswitch_2_up,
+	BzfKeyEvent::BZ_Hatswitch_2_right,
+	BzfKeyEvent::BZ_Hatswitch_2_down,
+	BzfKeyEvent::BZ_Hatswitch_2_left,
+      };
+
+      static unsigned int old_direction[] = {
+        0, // BZ_Hatswitch_1
+        0, // BZ_Hatswitch_2
+      };
+      // How many are there really
+      int hatswitch_count = 
+	  std::min(mainWindow->getJoyDeviceNumHats(), countof(old_direction));
+      for (int j = 0; j < hatswitch_count; j++) {
+        unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
+        if (hat_direction != old_direction[j]) {
+          int mask = 1;
+          for (int i = j; i < 4; ++i, mask <<= 1) {
+            if (((old_direction[j] ^ hat_direction) & mask) != 0) {
+              BzfKeyEvent ev;
+              ev.button = hatswitch_map[j * 4 + i];
+              ev.ascii = 0;
+              ev.shift = 0;
+              doKey(ev, (hat_direction & mask) != 0);
+            }
+          }
+          old_direction[j] = hat_direction;
+        }
+      }
     }
 
     mainWindow->getWindow()->yieldCurrent();

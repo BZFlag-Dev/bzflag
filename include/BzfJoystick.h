@@ -40,6 +40,8 @@ class BzfJoystick {
      ** are assumed to be default X and Y axes, respectively.
      **/
     virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
+    virtual unsigned int	getJoyDeviceNumHats() const;
+    virtual unsigned int	getHatswitch(int switchno) const;
     virtual void	setXAxis(const std::string axis);
     virtual void	setYAxis(const std::string axis);
 

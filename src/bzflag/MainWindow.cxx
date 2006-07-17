@@ -257,6 +257,16 @@ unsigned long		  MainWindow::getJoyButtonSet() const
   return joystick->getJoyButtons();
 }
 
+unsigned int		  MainWindow::getJoyHatswitch(int switchno) const
+{
+  return joystick->getHatswitch(switchno);
+}
+
+unsigned int		  MainWindow::getJoyDeviceNumHats() const
+{
+  return joystick->getJoyDeviceNumHats();
+}
+
 void		    MainWindow::getJoyDevices(std::vector<std::string>
 						  &list) const
 {

@@ -150,6 +150,18 @@ void		    SDLJoystick::setYAxis(const std::string axis)
   yAxis = atoi(axis.c_str());
 }
 
+unsigned int	SDLJoystick::getHatswitch(int switchno) const
+{
+  if (!joystickID) return 0;
+  return SDL_JoystickGetHat(joystickID, switchno);
+}
+
+unsigned int	SDLJoystick::getJoyDeviceNumHats() const
+{
+  if (!joystickID) return 0;
+  return SDL_JoystickNumHats(joystickID);
+}
+
 #endif
 
 // Local Variables: ***

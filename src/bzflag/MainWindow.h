@@ -83,8 +83,10 @@ class MainWindow {
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& jx, int& jy) const;
     unsigned long	getJoyButtonSet() const;
+    unsigned int	getJoyHatswitch(int switchno) const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;
+    unsigned int	getJoyDeviceNumHats() const;
     void		setJoyXAxis(const std::string axis);
     void		setJoyYAxis(const std::string axis);
     void		initJoystick(std::string &joystickName);
