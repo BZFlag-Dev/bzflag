@@ -184,6 +184,8 @@ int bz_pwrite(NetHandler *handler, const void *b, int l)
   } else if (result == -2) {
     dropHandler(handler, "send queue too big");
   }
+  if (result < 0)
+    result = -1;
   return result;
 }
 
