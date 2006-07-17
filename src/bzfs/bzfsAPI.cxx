@@ -1009,6 +1009,29 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt) == realShotID;
 }
 
+BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt)
+{
+  const char* flagType = "GM";
+
+  if (!pos || !flagType)
+    return false;
+
+  FlagTypeMap &flagMap = FlagType::getFlagMap();
+  if (flagMap.find(std::string(flagType)) == flagMap.end())
+    return false;
+
+  FlagType *flag = flagMap.find(std::string(flagType))->second;
+
+  PlayerId player = ServerPlayer;
+
+  int shotID =  world->getWorldWeapons().getNewWorldShotID();
+
+  fireWorldGM(flag,targetPlayerID, lifetime,player,pos,tilt,direction,
+              shotID, dt);
+
+  return shotID;
+}
+
 // time API
 BZF_API double bz_getCurrentTime ( void )
 {
@@ -1278,7 +1301,7 @@ BZF_API std::vector<std::string> bz_getReports( void )
   }
 
   std::string line;
-	
+
   while (std::getline(ifs, line)) {
     buffers.push_back(line);
   }
@@ -1464,7 +1487,7 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 				dropFlag(currentFlag, gkPlayer->lastState.pos);// drop team flags
 			else
 				resetFlag(currentFlag);// reset non-team flags
-		}		
+		}
 		// setup bzfs' state
 		fi->grab(gkPlayer->getIndex());
 		gkPlayer->player.setFlag(fi->getIndex());
