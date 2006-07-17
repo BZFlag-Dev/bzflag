@@ -980,6 +980,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt );
+BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt);
 
 // time API
 BZF_API double bz_getCurrentTime ( void );
@@ -1152,7 +1153,7 @@ BZF_API bool bz_removeCustomMapObject ( const char* object );
 
 
 // info about the world
-typedef enum 
+typedef enum
 {
 	eNullObject,
 	eSolidObject,
@@ -1181,7 +1182,7 @@ public:
 	float maxBBox[3];
 	float minBBox[3];
 
-	void update ( void ); 
+	void update ( void );
 
 	class		dataBlob;
 	dataBlob	*data;
@@ -1339,7 +1340,7 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
 // server side player API
 
-typedef struct 
+typedef struct
 {
 	int index;
 	char type[2];
@@ -1354,7 +1355,7 @@ typedef struct
 	float initialVelocity;
 }bz_FlagUpdateRecord;
 
-typedef struct 
+typedef struct
 {
 	int wins;
 	int losses;
@@ -1368,7 +1369,7 @@ typedef enum
 	eObserverPlayer
 }bz_ePlayerType;
 
-typedef struct 
+typedef struct
 {
 	int index;
 	bz_ePlayerType type;
@@ -1378,7 +1379,7 @@ typedef struct
 	char			email[128];
 }bz_PlayerInfoUpdateRecord;
 
-typedef struct 
+typedef struct
 {
 	int id;
 	int size;
@@ -1402,7 +1403,7 @@ typedef enum
 	eRejectIDBanned
 }bz_eRejectCodes;
 
-typedef struct 
+typedef struct
 {
 	int player;
 	int handycap;
@@ -1419,7 +1420,7 @@ typedef enum
 
 typedef struct bz_PlayerUpdateState
 {
-	bz_ePlayerStatus	status;	
+	bz_ePlayerStatus	status;
 	bool				falling;
 	bool				corssingWall;
 	float				pos[3];			// position of tank
@@ -1441,7 +1442,7 @@ typedef struct bz_PlayerUpdateState
 	}
 }bz_PlayerUpdateState;
 
-typedef enum 
+typedef enum
 {
 	eGotKilled,
 	eGotShot,
@@ -1477,7 +1478,7 @@ public:
   virtual void teamUpdate(int count, bz_TeamInfoRecord **teamList);
   virtual void handycapUpdate(int count,
 			      bz_HandycapUpdateRecord **handycapList);
-  virtual void playerIPUpdate(int player, const char *ipAddress);
+  virtual void playeIPUpdate(int player, const char *ipAddress);
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);
   virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);

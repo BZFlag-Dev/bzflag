@@ -66,7 +66,49 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   return shotID;
 }
 
+static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
+        lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
+        float dt)
+{
 
+    void *buf, *bufStart = getDirectMessageBuffer();
+
+    FiringInfo firingInfo;
+    firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
+    firingInfo.flagType = type;
+    firingInfo.lifetime = lifetime;
+    firingInfo.shot.player = player;
+    memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+    const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+    const float tiltFactor = cosf(tilt);
+    firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
+    firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
+    firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
+    firingInfo.shot.id = shotID;
+    firingInfo.shot.dt = dt;
+
+    firingInfo.shot.team = RogueTeam;
+
+    buf = firingInfo.pack(bufStart);
+
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+        broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
+                         bufStart);
+    }
+
+    // Target the gm.
+    // construct and send packet
+
+    char packet[ShotUpdatePLen + PlayerIdPLen];
+    buf = (void*)packet;
+    buf = firingInfo.shot.pack(buf);
+    buf = nboPackUByte(buf, targetPlayerID);
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+        broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
+    }
+
+    return shotID;
+}
 
 WorldWeapons::WorldWeapons()
 : worldShotId(0)
@@ -257,6 +299,13 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 			  pos, tilt, direction, shotID, dt);
 }
 
+int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
+                PlayerId player, float *pos, float tilt, float direction, int
+                shotID, float dt)
+{
+    return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
+                           direction, shotID, dt);
+}
 
 // Local Variables: ***
 // mode: C++ ***
