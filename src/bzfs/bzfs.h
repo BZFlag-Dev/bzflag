@@ -94,7 +94,7 @@ typedef struct _CheatProtectionOptions
 {
   bool doHeightChecks;
   bool doSpeedChecks;
-  CheatProtectionOptions()
+  _CheatProtectionOptions()
   {
     doHeightChecks = true;
     doSpeedChecks = true;
