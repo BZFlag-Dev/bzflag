@@ -6837,6 +6837,10 @@ void			startPlaying(BzfDisplay* _display,
     tmpString = ColorStrings[YellowColor];
     tmpString += bzfcopyright;
     controlPanel->addMessage(tmpString);
+    // print license
+    tmpString = ColorStrings[CyanColor];
+    tmpString += "Distributed under the terms of the LGPL";
+    controlPanel->addMessage(tmpString);
     // print author
     tmpString = ColorStrings[GreenColor];
     tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
