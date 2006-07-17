@@ -578,7 +578,7 @@ void ServerLink::sendCaps(bool downloads, bool sounds )
 	buf = nboPackUByte(buf, downloads ? 1 : 0);
 	buf = nboPackUByte(buf, sounds ? 1 : 0);
 
-	send(MsgEnter, (uint16_t)((char*)buf - msg), msg);
+	send(MsgCapBits, (uint16_t)((char*)buf - msg), msg);
 }
 
 void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
