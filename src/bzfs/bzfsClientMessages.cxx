@@ -136,7 +136,7 @@ void handleWorldChunk( NetHandler *handler, void *buf )
 void handleWorldSettings( NetHandler *handler )
 {
 	if(handler)
-		pwrite(handler, worldSettings, 4 + WorldSettingsSize);
+		bz_pwrite(handler, worldSettings, 4 + WorldSettingsSize);
 }
 
 void handleWorldHash( NetHandler *handler )
