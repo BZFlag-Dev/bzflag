@@ -1,0 +1,9 @@
+LIBRARY	soundTest
+DESCRIPTION  'soundTest Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+
+bz_GetVersion
+bz_Load
+bz_Unload
