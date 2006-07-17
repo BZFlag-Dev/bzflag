@@ -428,9 +428,9 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		if (toPlayerData->playerHandler)
 		{
 			if (!aboutPlayerData->netHandler)
-				toPlayerData->playerHandler->playeIPUpdate (aboutPlayer,"local.player");
+				toPlayerData->playerHandler->playerIPUpdate (aboutPlayer,"local.player");
 			else
-				toPlayerData->playerHandler->playeIPUpdate (aboutPlayer,aboutPlayerData->netHandler->getTargetIP());
+				toPlayerData->playerHandler->playerIPUpdate (aboutPlayer,aboutPlayerData->netHandler->getTargetIP());
 		}
 	}
 	

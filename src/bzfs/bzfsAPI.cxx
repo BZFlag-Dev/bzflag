@@ -2397,7 +2397,7 @@ void bz_ServerSidePlayerHandler::handycapUpdate(int, bz_HandycapUpdateRecord**)
 {
 }
 
-void bz_ServerSidePlayerHandler::playeIPUpdate(int, const char*)
+void bz_ServerSidePlayerHandler::playerIPUpdate(int, const char*)
 {
 }
 
