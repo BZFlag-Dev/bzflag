@@ -176,7 +176,7 @@ static void dropHandler(NetHandler *handler, const char *reason)
   delete handler;
 }
 
-int pwrite(NetHandler *handler, const void *b, int l)
+int bz_pwrite(NetHandler *handler, const void *b, int l)
 {
   int result = handler->pwrite(b, l);
   if (result == -1) {
@@ -224,7 +224,7 @@ int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
   void *buf = bufStart;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
-  return pwrite(handler, bufStart, len + 4);
+  return bz_pwrite(handler, bufStart, len + 4);
 }
 
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
@@ -693,7 +693,7 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
     PlayerInfo& pi = playerData->player;
 
     if (i != index && pi.isPlaying() && playerData->netHandler) {
-      pwrite(playerData->netHandler, rawbuf, len + 4);
+      bz_pwrite(playerData->netHandler, rawbuf, len + 4);
     }
   }
 }
