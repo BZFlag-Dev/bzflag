@@ -47,6 +47,7 @@ private:
   HUDuiControl*	effectsOptions;
   HUDuiControl*	cacheOptions;
   HUDuiControl*	saveWorld;
+  HUDuiControl* saveSettings;
   HUDuiControl*	inputSetting;
   HUDuiControl*	audioSetting;
   HUDuiControl*	displaySetting;

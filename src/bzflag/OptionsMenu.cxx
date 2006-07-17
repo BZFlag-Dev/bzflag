@@ -21,6 +21,9 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "HUDui.h"
+#include "clientConfig.h"
+#include "ConfigFileManager.h"
+#include "bzflag.h"
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 			     cacheMenu(NULL), saveWorldMenu(NULL),
@@ -72,7 +75,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Save Settings:");
+  option->setLabel("Auto Save Settings:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
   options->push_back(std::string("No"));
@@ -94,6 +97,11 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   saveWorld = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save World");
+  listHUD.push_back(label);
+
+  saveWorld = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("Save Settings Now");
   listHUD.push_back(label);
 
   initNavigation(listHUD, 1, (int)listHUD.size()-1);
@@ -125,6 +133,13 @@ void OptionsMenu::execute()
   } else if (_focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
+  } else if (_focus == saveSettings) {
+    // save resources
+    dumpResources();	 
+    if (alternateConfig == "")
+      CFGMGR.write(getCurrentConfigFileName()); 	 
+    else 	 
+      CFGMGR.write(alternateConfig);
   } else if (_focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);
