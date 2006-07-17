@@ -435,7 +435,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 	}
 	
 	void *buf, *bufStart = getDirectMessageBuffer();
-	if (toPlayer || record)
+	if (toPlayerData || record)
 	{
 		buf = nboPackUByte(bufStart, 1);
 		buf = aboutPlayerData->packAdminInfo(buf);
