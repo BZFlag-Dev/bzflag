@@ -11,24 +11,25 @@
  */
 #ifndef __BZFS_H__
 #define __BZFS_H__
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
-// to dump score info to stdout
-#define PRINTSCORE to include code to dump score info to stdout
-#define SERVERLOGINMSG true
+
 #include "common.h"
-// must be before network.h because that defines a close() macro which
-// messes up fstreams.	luckily, we don't need to call the close() method
-// on any fstream.
+
+// fstream must be before network.h because that defines a close()
+// macro which messes up fstreams. luckily, we don't need to call the
+// close() method on any fstream.
+#ifdef _MSC_VER
+#  pragma warning( 4 : 4786 )
+#endif
 #include <fstream>
 
 // must be before windows.h
 #include "network.h"
+
 // common interface headers
 #include "Address.h"
 #include "Flag.h"
 #include "Ping.h"
+
 // bzfs specific headers
 #include "TeamBases.h"
 #include "CmdLineOptions.h"
@@ -36,6 +37,13 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 #include "RejoinList.h"
+
+
+// to dump score info to stdout
+#define PRINTSCORE to include code to dump score info to stdout
+#define SERVERLOGINMSG true
+
+
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
 			const char *message);
@@ -77,16 +85,21 @@ extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
 extern bool allowTeams ( void );
 extern void addBzfsCallback(const std::string& name, void* data);
 
-typedef struct CheatProtectionOptions
+extern void pauseCountdown ( const char *pausedBy );
+extern void resumeCountdown ( const char *resumedBy );
+extern void resetTeamScores ( void );
+extern void startCountdown ( int delay, float limit, const char *buyWho );
+
+typedef struct _CheatProtectionOptions
 {
-	bool doHeightChecks;
-	bool doSpeedChecks;
-	CheatProtectionOptions()
-	{
-		doHeightChecks = true;
-		doSpeedChecks = true;
-	}
-}CheatProtectionOptions;
+  bool doHeightChecks;
+  bool doSpeedChecks;
+  CheatProtectionOptions()
+  {
+    doHeightChecks = true;
+    doSpeedChecks = true;
+  }
+} CheatProtectionOptions;
 extern CheatProtectionOptions	cheatProtectionOptions;
 
 // initialize permission groups
@@ -118,17 +131,14 @@ extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
 extern bool        worldWasSentToAPlayer;
 extern RejoinList  rejoinList;
-// this should not be hangin out here
+
+// FIXME - this should not be hangin out here
 extern bool dontWait;
 extern float maxWorldHeight;
 
 
-extern void pauseCountdown ( const char *pausedBy );
-extern void resumeCountdown ( const char *resumedBy );
-extern void resetTeamScores ( void );
-extern void startCountdown ( int delay, float limit, const char *buyWho );
+#endif /* __BZFS_H__ */
 
-#endif
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -136,25 +146,3 @@ extern void startCountdown ( int delay, float limit, const char *buyWho );
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
