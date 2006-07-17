@@ -1001,6 +1001,7 @@ AC_CONFIG_FILES([
 	plugins/recordmatch/Makefile
 	plugins/serverSideBotSample/Makefile
 	plugins/shockwaveDeath/Makefile
+	plugins/soundTest/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile
 	src/Makefile

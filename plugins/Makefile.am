@@ -14,6 +14,7 @@ SUBDIRS = \
 	shockwaveDeath \
 	HoldTheFlag \
 	nagware \
+	soundTest \
 	recordmatch
 
 DIST_SUBDIRS = \
