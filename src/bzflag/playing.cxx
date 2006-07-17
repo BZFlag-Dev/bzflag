@@ -6092,8 +6092,8 @@ static void		playingLoop()
         0, // BZ_Hatswitch_2
       };
       // How many are there really
-      int hatswitch_count = 
-	  std::min(mainWindow->getJoyDeviceNumHats(), countof(old_direction));
+      int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(),
+			             (unsigned int)countof(old_direction));
       for (int j = 0; j < hatswitch_count; j++) {
         unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
         if (hat_direction != old_direction[j]) {
