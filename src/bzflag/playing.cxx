@@ -5934,6 +5934,415 @@ static void		updateDestructCountdown(float dt)
   return;
 }
 
+void getAFastToken ( void )
+{
+	// get token if we need to (have a password but no token)
+	if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) 
+	{
+		ServerList* serverList = new ServerList;
+		serverList->startServerPings(&startupInfo);
+		// wait no more than 10 seconds for a token
+		for (int j = 0; j < 40; j++)
+		{
+			serverList->checkEchos(getStartupInfo());
+			cURLManager::perform();
+			if (startupInfo.token[0] != '\0')
+				break;
+			TimeKeeper::sleep(0.25f);
+		}
+		delete serverList;
+	}
+
+	// don't let the bad token specifier slip through to the server,
+	// just erase it
+	if (strcmp(startupInfo.token, "badtoken") == 0)
+		startupInfo.token[0] = '\0';
+}
+
+void handlePendingJoins ( void )
+{
+	// try to join a game if requested.  do this *before* handling
+	// events so we do a redraw after the request is posted and
+	// before we actually try to join.
+	if (!joinRequested)
+		return;
+
+	// if already connected to a game then first sign off
+	if (myTank)
+		leaveGame();
+
+	getAFastToken();
+
+	ares.queryHost(startupInfo.serverName);
+	waitingDNS = true;
+
+	// don't try again
+	joinRequested = false;
+}
+
+bool dnsLookupDone ( struct in_addr &inAddress )
+{
+	if (!waitingDNS) 
+		return false;
+
+	fd_set readers, writers;
+	int nfds = -1;
+	struct timeval timeout;
+	timeout.tv_sec  = 0;
+	timeout.tv_usec = 0;
+	FD_ZERO(&readers);
+	FD_ZERO(&writers);
+	ares.setFd(&readers, &writers, nfds);
+	nfds = select(nfds + 1, (fd_set*)&readers, (fd_set*)&writers, 0, &timeout);
+	ares.process(&readers, &writers);
+
+	AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
+	if (status == AresHandler::Failed) 
+	{
+		HUDDialogStack::get()->setFailedMessage("Server not found");
+		waitingDNS = false;
+	}
+	else if (status == AresHandler::HbNSucceeded)
+	{
+		waitingDNS = false;
+		return true;
+	}
+	return false;
+}
+
+void handleJoyStick ( void )
+{
+	if (!mainWindow->haveJoystick())
+		return;
+
+	static const BzfKeyEvent::Button button_map[] = {	BzfKeyEvent::BZ_Button_1,
+														BzfKeyEvent::BZ_Button_2,
+														BzfKeyEvent::BZ_Button_3,
+														BzfKeyEvent::BZ_Button_4,
+														BzfKeyEvent::BZ_Button_5,
+														BzfKeyEvent::BZ_Button_6,
+														BzfKeyEvent::BZ_Button_7,
+														BzfKeyEvent::BZ_Button_8,
+														BzfKeyEvent::BZ_Button_9,
+														BzfKeyEvent::BZ_Button_10,
+														BzfKeyEvent::BZ_Button_11,
+														BzfKeyEvent::BZ_Button_12,
+														BzfKeyEvent::BZ_Button_13,
+														BzfKeyEvent::BZ_Button_14,
+														BzfKeyEvent::BZ_Button_15,
+														BzfKeyEvent::BZ_Button_16};
+
+	static unsigned long old_buttons = 0;
+	const int button_count = countof(button_map);
+	unsigned long new_buttons = mainWindow->getJoyButtonSet();
+	if (old_buttons != new_buttons)
+	{
+		for (int j = 0; j < button_count; j++)
+		{
+			if ((old_buttons & (1<<j)) != (new_buttons & (1<<j)))
+			{
+				BzfKeyEvent ev;
+				ev.button = button_map[j];
+				ev.ascii = 0;
+				ev.shift = 0;
+				doKey(ev, (new_buttons & (1<<j)) != 0);
+			}
+		}
+	}
+
+	old_buttons = new_buttons;
+
+	static const BzfKeyEvent::Button hatswitch_map[] = {	BzfKeyEvent::BZ_Hatswitch_1_up,
+															BzfKeyEvent::BZ_Hatswitch_1_right,
+															BzfKeyEvent::BZ_Hatswitch_1_down,
+															BzfKeyEvent::BZ_Hatswitch_1_left,
+															BzfKeyEvent::BZ_Hatswitch_2_up,
+															BzfKeyEvent::BZ_Hatswitch_2_right,
+															BzfKeyEvent::BZ_Hatswitch_2_down,
+															BzfKeyEvent::BZ_Hatswitch_2_left};
+
+	static unsigned int old_direction[] = {	0, 0};	// BZ_Hatswitch_1 and BZ_Hatswitch_2
+
+	// How many are there really
+	int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(), (unsigned int)countof(old_direction));
+
+	for (int j = 0; j < hatswitch_count; j++) 
+	{
+		unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
+		if (hat_direction != old_direction[j])
+		{
+			int mask = 1;
+			for (int k = j; k < 4; ++k, mask <<= 1)
+			{
+				if (((old_direction[j] ^ hat_direction) & mask) != 0) 
+				{
+					BzfKeyEvent ev;
+					ev.button = hatswitch_map[j * 4 + k];
+					ev.ascii = 0;
+					ev.shift = 0;
+					doKey(ev, (hat_direction & mask) != 0);
+				}
+			}
+			old_direction[j] = hat_direction;
+		}
+	}
+}
+
+void updateTimeOfDay ( const float dt )
+{
+	// update time of day -- update sun and sky every few seconds
+	float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
+	if (syncTime < 0.0f)
+	{
+		if (!BZDB.isSet("fixedTime"))
+			epochOffset += (double)dt;
+
+		epochOffset += (double)(50.0f * dt * clockAdjust);
+	}
+	else
+	{
+		epochOffset = (double)syncTime;
+		lastEpochOffset += (double)dt;
+	}
+	if (fabs(epochOffset - lastEpochOffset) >= 4.0)
+	{
+		updateDaylight(epochOffset, *sceneRenderer);
+		lastEpochOffset = epochOffset;
+	}
+}
+
+void checkForServerBail ( void )
+{
+	// if server died then leave the game (note that this may cause
+	// further server errors but that's okay).
+	if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup))
+	{
+		// if we haven't reported the death yet then do so now
+		if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
+			printError("Server has unexpectedly disconnected");
+		leaveGame();
+	}
+}
+
+void updateVideoFormatTimer ( const float dt )
+{
+	// update test video format timer
+	if (testVideoFormatTimer > 0.0f)
+	{
+		testVideoFormatTimer -= dt;
+		if (testVideoFormatTimer <= 0.0f)
+		{
+			testVideoFormatTimer = 0.0f;
+			setVideoFormat(testVideoPrevFormat);
+		}
+	}
+}
+
+void updateShots ( const float dt )
+{
+	// update other tank's shots
+	for (int i = 0; i < curMaxPlayers; i++) 
+	{
+		if (player[i])
+			player[i]->updateShots(dt);
+	}
+
+	// update servers shots
+	const World *_world = World::getWorld();
+	if (_world) 
+		_world->getWorldWeapons()->updateShots(dt);
+}
+
+void moveRoamingCamera ( const float dt )
+{
+	// move roaming camera
+	if (!ROAM.isRoaming())
+		return;
+
+	setupRoamingCamera(dt);
+	ROAM.buildRoamingLabel();
+}
+
+void doMotion ( const float dt )
+{
+	// do dead reckoning on remote players
+	for (int i = 0; i < curMaxPlayers; i++) 
+	{
+		if (player[i]) 
+		{
+			const bool wasNotResponding = player[i]->isNotResponding();
+			player[i]->doDeadReckoning();
+			const bool isNotResponding = player[i]->isNotResponding();
+
+			if (!wasNotResponding && isNotResponding) 
+				addMessage(player[i], "not responding");
+			else if (wasNotResponding && !isNotResponding) 
+				addMessage(player[i], "okay");
+		}
+	}
+
+	// do motion
+	if (myTank) 
+	{
+		if (myTank->isAlive() && !myTank->isPaused())
+		{
+			doMotion();
+			if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED) 
+				setHuntTarget(); //spot hunt target
+
+			if (myTank->getTeam() != ObserverTeam && ((fireButton && myTank->getFlag() == Flags::MachineGun) || (myTank->getFlag() == Flags::TriggerHappy)))
+				myTank->fireShot();
+		}
+		else
+		{
+			int mx, my;
+			mainWindow->getMousePosition(mx, my);
+		}
+		myTank->update();
+	}
+}
+
+void updateTimes ( const float dt )
+{
+	updateTimeOfDay(dt);
+	updateVideoFormatTimer(dt);
+
+	// update the countdowns
+	updatePauseCountdown(dt);
+	updateDestructCountdown(dt);
+}
+
+void updatePostions ( const float dt )
+{
+	// notify if input changed
+	if ((myTank != NULL) && (myTank->queryInputChange() == true)) 
+		controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
+
+	moveRoamingCamera(dt);
+
+	updateShots(dt);
+
+	// update track marks  (before any tanks are moved)
+	TrackMarks::update(dt);
+
+	doMotion(dt);
+
+#ifdef ROBOT
+	if (entered)
+		updateRobots(dt);
+#endif
+}
+
+void checkEnvironment ( const float dt )
+{
+	// update the wind
+	if (world) 
+		world->updateWind(dt);
+
+	// check for flags and hits
+	checkEnvironment();
+
+#ifdef ROBOT
+	if (entered)
+		checkEnvironmentForRobots();
+#endif
+
+}
+
+void updateTanks ( const float dt )
+{
+	// adjust properties based on flags (dimensions, cloaking, etc...)
+	if (myTank) 
+		myTank->updateTank(dt, true);
+
+	for (int i = 0; i < curMaxPlayers; i++) 
+	{
+		if (player[i])
+			player[i]->updateTank(dt, false);
+	}
+}
+
+void updateWorldEffects ( const float dt )
+{
+	// reposition flags
+	updateFlags(dt);
+
+	// update explosion animations
+	updateExplosions(dt);
+
+	// update mesh animations
+	if (world) 
+		world->updateAnimations(dt);
+}
+
+void doUpdates ( const float dt )
+{
+	updateTimes(dt);
+	updatePostions(dt);
+	checkEnvironment(dt);
+	updateTanks(dt);
+	updateWorldEffects(dt);
+
+	// update AutoHunt
+	AutoHunt::update();
+}
+
+void doNetworkStuff ( void )
+{
+	// send my data
+	if (myTank && myTank->isDeadReckoningWrong() && (myTank->getTeam() != ObserverTeam))
+		serverLink->sendPlayerUpdate(myTank);      // also calls setDeadReckoning()
+
+#ifdef ROBOT
+	if (entered)
+		sendRobotUpdates();
+#endif
+
+	cURLManager::perform();
+}
+
+bool checkForCompleteDownloads ( void )
+{
+	// check if we are waiting for initial texture downloading
+	if (!Downloads::requestFinalized())
+		return false;
+
+	// downloading is terminated. go!
+	Downloads::finalizeDownloads();
+	if (downloadingInitialTexture)
+	{
+		downloadingInitialTexture = false;
+		return true;
+	}
+	else 
+		setSceneDatabase();
+
+	return false;
+}
+
+void doEnergySaver ( void )
+{
+	// limit the fps to save battery life by minimizing cpu usage
+	if (!BZDB.isTrue("saveEnergy"))
+		return;
+
+	static TimeKeeper lastTime = TimeKeeper::getCurrent();
+	const float fpsLimit = BZDB.eval("fpsLimit");
+
+	if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) 
+	{
+		const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+		if (elapsed > 0.0f)
+		{
+			const float period = (1.0f / fpsLimit);
+			const float remaining = (period - elapsed);
+
+			if (remaining > 0.0f) 
+				TimeKeeper::sleep(remaining);
+		}
+	}
+	lastTime = TimeKeeper::getCurrent();
+}
 
 //
 // main playing loop
@@ -5941,8 +6350,6 @@ static void		updateDestructCountdown(float dt)
 
 static void		playingLoop()
 {
-  int i;
-
   mainWindow->setZoomFactor(getZoomFactor());
   if (BZDB.isTrue("fakecursor"))
     mainWindow->getWindow()->hideMouse();
@@ -5954,8 +6361,8 @@ static void		playingLoop()
   worldDownLoader = new WorldDownLoader;
 
   // main loop
-  while (!CommandsStandard::isQuit()) {
-
+  while (!CommandsStandard::isQuit())
+  {
     BZDBCache::update();
 
     // set this step game time
@@ -5968,307 +6375,39 @@ static void		playingLoop()
 
     mainWindow->getWindow()->yieldCurrent();
 
-    // handle incoming packets
-    doMessages();
+    doMessages();    // handle incoming packets
 
-    // see if the world collision grid needs to be updated
-    if (world) {
-      world->checkCollisionManager();
-    }
+    if (world)
+      world->checkCollisionManager();    // see if the world collision grid needs to be updated
 
     mainWindow->getWindow()->yieldCurrent();
 
-    // try to join a game if requested.  do this *before* handling
-    // events so we do a redraw after the request is posted and
-    // before we actually try to join.
-    if (joinRequested) {
-      // if already connected to a game then first sign off
-      if (myTank) leaveGame();
+	handlePendingJoins();
 
-      // get token if we need to (have a password but no token)
-      if ((startupInfo.token[0] == '\0')
-	  && (startupInfo.password[0] != '\0')) {
-	ServerList* serverList = new ServerList;
-	serverList->startServerPings(&startupInfo);
-	// wait no more than 10 seconds for a token
-	for (int j = 0; j < 40; j++) {
-	  serverList->checkEchos(getStartupInfo());
-	  cURLManager::perform();
-	  if (startupInfo.token[0] != '\0') break;
-	  TimeKeeper::sleep(0.25f);
-	}
-	delete serverList;
-      }
-      // don't let the bad token specifier slip through to the server,
-      // just erase it
-      if (strcmp(startupInfo.token, "badtoken") == 0)
-	startupInfo.token[0] = '\0';
-
-      ares.queryHost(startupInfo.serverName);
-      waitingDNS = true;
-
-      // don't try again
-      joinRequested = false;
-    }
-
-    if (waitingDNS) {
-      fd_set readers, writers;
-      int nfds = -1;
-      struct timeval timeout;
-      timeout.tv_sec  = 0;
-      timeout.tv_usec = 0;
-      FD_ZERO(&readers);
-      FD_ZERO(&writers);
-      ares.setFd(&readers, &writers, nfds);
-      nfds = select(nfds + 1, (fd_set*)&readers, (fd_set*)&writers, 0,
-		    &timeout);
-      ares.process(&readers, &writers);
-
-      struct in_addr inAddress;
-      AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-      if (status == AresHandler::Failed) {
-	HUDDialogStack::get()->setFailedMessage("Server not found");
-	waitingDNS = false;
-      } else if (status == AresHandler::HbNSucceeded) {
-	// now try connecting
-	joinInternetGame(&inAddress);
-	waitingDNS = false;
-      }
-    }
-    mainWindow->getWindow()->yieldCurrent();
+	struct in_addr inAddress;
+	if (dnsLookupDone(inAddress))
+		joinInternetGame(&inAddress);
+ 
+	mainWindow->getWindow()->yieldCurrent();
 
     // handle pending events for some small fraction of time
     clockAdjust = 0.0f;
     processInputEvents(0.1f);
 
-    if (mainWindow->haveJoystick()) {
-      static const BzfKeyEvent::Button button_map[] = {
-	BzfKeyEvent::BZ_Button_1,
-	BzfKeyEvent::BZ_Button_2,
-	BzfKeyEvent::BZ_Button_3,
-	BzfKeyEvent::BZ_Button_4,
-	BzfKeyEvent::BZ_Button_5,
-	BzfKeyEvent::BZ_Button_6,
-	BzfKeyEvent::BZ_Button_7,
-	BzfKeyEvent::BZ_Button_8,
-	BzfKeyEvent::BZ_Button_9,
-	BzfKeyEvent::BZ_Button_10,
-	BzfKeyEvent::BZ_Button_11,
-	BzfKeyEvent::BZ_Button_12,
-	BzfKeyEvent::BZ_Button_13,
-	BzfKeyEvent::BZ_Button_14,
-	BzfKeyEvent::BZ_Button_15,
-	BzfKeyEvent::BZ_Button_16,
-      };
+	handleJoyStick();
 
-      static unsigned long old_buttons = 0;
-      const int button_count = countof(button_map);
-      unsigned long new_buttons = mainWindow->getJoyButtonSet();
-      if (old_buttons != new_buttons)
-	for (int j = 0; j < button_count; j++) {
-	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
-	    BzfKeyEvent ev;
-	    ev.button = button_map[j];
-	    ev.ascii = 0;
-	    ev.shift = 0;
-	    doKey(ev, (new_buttons & (1<<j)) != 0);
-	  }
-	}
-      old_buttons = new_buttons;
-      
-      static const BzfKeyEvent::Button hatswitch_map[] = {
-	BzfKeyEvent::BZ_Hatswitch_1_up,
-	BzfKeyEvent::BZ_Hatswitch_1_right,
-	BzfKeyEvent::BZ_Hatswitch_1_down,
-	BzfKeyEvent::BZ_Hatswitch_1_left,
-	BzfKeyEvent::BZ_Hatswitch_2_up,
-	BzfKeyEvent::BZ_Hatswitch_2_right,
-	BzfKeyEvent::BZ_Hatswitch_2_down,
-	BzfKeyEvent::BZ_Hatswitch_2_left,
-      };
+	mainWindow->getWindow()->yieldCurrent();
 
-      static unsigned int old_direction[] = {
-        0, // BZ_Hatswitch_1
-        0, // BZ_Hatswitch_2
-      };
-      // How many are there really
-      int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(),
-			             (unsigned int)countof(old_direction));
-      for (int j = 0; j < hatswitch_count; j++) {
-        unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
-        if (hat_direction != old_direction[j]) {
-          int mask = 1;
-          for (int k = j; k < 4; ++k, mask <<= 1) {
-            if (((old_direction[j] ^ hat_direction) & mask) != 0) {
-              BzfKeyEvent ev;
-              ev.button = hatswitch_map[j * 4 + k];
-              ev.ascii = 0;
-              ev.shift = 0;
-              doKey(ev, (hat_direction & mask) != 0);
-            }
-          }
-          old_direction[j] = hat_direction;
-        }
-      }
-    }
+    callPlayingCallbacks();    // invoke callbacks
 
     mainWindow->getWindow()->yieldCurrent();
 
-    // invoke callbacks
-    callPlayingCallbacks();
-
-    mainWindow->getWindow()->yieldCurrent();
-
-    // quick out
-    if (CommandsStandard::isQuit()) {
+    if (CommandsStandard::isQuit())     // quick out
       break;
-    }
 
-    // if server died then leave the game (note that this may cause
-    // further server errors but that's okay).
-    if (serverError ||
-	(serverLink && serverLink->getState() == ServerLink::Hungup)) {
-      // if we haven't reported the death yet then do so now
-      if (serverDied ||
-	  (serverLink && serverLink->getState() == ServerLink::Hungup)) {
-	printError("Server has unexpectedly disconnected");
-      }
-      leaveGame();
-    }
-
-    // update time of day -- update sun and sky every few seconds
-    float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
-    if (syncTime < 0.0f) {
-      if (!BZDB.isSet("fixedTime")) {
-	epochOffset += (double)dt;
-      }
-      epochOffset += (double)(50.0f * dt * clockAdjust);
-    } else {
-      epochOffset = (double)syncTime;
-      lastEpochOffset += (double)dt;
-    }
-    if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
-      updateDaylight(epochOffset, *sceneRenderer);
-      lastEpochOffset = epochOffset;
-    }
-
-    // update the wind
-    if (world) {
-      world->updateWind(dt);
-    }
-
-    // move roaming camera
-    if (ROAM.isRoaming()) {
-      setupRoamingCamera(dt);
-      ROAM.buildRoamingLabel();
-    }
-
-    // update test video format timer
-    if (testVideoFormatTimer > 0.0f) {
-      testVideoFormatTimer -= dt;
-      if (testVideoFormatTimer <= 0.0f) {
-	testVideoFormatTimer = 0.0f;
-	setVideoFormat(testVideoPrevFormat);
-      }
-    }
-
-    // update the countdowns
-    updatePauseCountdown(dt);
-    updateDestructCountdown(dt);
-
-    // notify if input changed
-    if ((myTank != NULL) && (myTank->queryInputChange() == true)) {
-      controlPanel->addMessage(
-			       LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
-    }
-
-    // update other tank's shots
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	player[i]->updateShots(dt);
-      }
-    }
-
-    // update servers shots
-    const World *_world = World::getWorld();
-    if (_world) {
-      _world->getWorldWeapons()->updateShots(dt);
-    }
-
-    // update track marks  (before any tanks are moved)
-    TrackMarks::update(dt);
-
-    // do dead reckoning on remote players
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	const bool wasNotResponding = player[i]->isNotResponding();
-	player[i]->doDeadReckoning();
-	const bool isNotResponding = player[i]->isNotResponding();
-	if (!wasNotResponding && isNotResponding) {
-	  addMessage(player[i], "not responding");
-	} else if (wasNotResponding && !isNotResponding) {
-	  addMessage(player[i], "okay");
-	}
-      }
-    }
-
-    // do motion
-    if (myTank) {
-      if (myTank->isAlive() && !myTank->isPaused()) {
-	doMotion();
-	if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED) {
-	  setHuntTarget(); //spot hunt target
-	}
-	if (myTank->getTeam() != ObserverTeam &&
-	    ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
-	     (myTank->getFlag() == Flags::TriggerHappy))) {
-	  myTank->fireShot();
-	}
-      } else {
-	int mx, my;
-	mainWindow->getMousePosition(mx, my);
-      }
-      myTank->update();
-    }
-
-#ifdef ROBOT
-    if (entered) {
-      updateRobots(dt);
-    }
-#endif
-
-    // check for flags and hits
-    checkEnvironment();
-
-#ifdef ROBOT
-    if (entered) {
-      checkEnvironmentForRobots();
-    }
-#endif
-
-    // adjust properties based on flags (dimensions, cloaking, etc...)
-    if (myTank) {
-      myTank->updateTank(dt, true);
-    }
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	player[i]->updateTank(dt, false);
-      }
-    }
-
-    // reposition flags
-    updateFlags(dt);
-
-    // update explosion animations
-    updateExplosions(dt);
-
-    // update mesh animations
-    if (world) {
-      world->updateAnimations(dt);
-    }
-
-    // update AutoHunt
-    AutoHunt::update();
+    checkForServerBail();
+	
+	doUpdates(dt);
 
     // prep the HUD
     prepareTheHUD();
@@ -6279,52 +6418,16 @@ static void		playingLoop()
     // play the sounds
     updateSound();
 
-    // send my data
-    if (myTank && myTank->isDeadReckoningWrong() &&
-	(myTank->getTeam() != ObserverTeam)) {
-      // also calls setDeadReckoning()
-      serverLink->sendPlayerUpdate(myTank);
-    }
+	doNetworkStuff();
 
-#ifdef ROBOT
-    if (entered) {
-      sendRobotUpdates();
-    }
-#endif
+	if (checkForCompleteDownloads())
+		joinInternetGame2(); // we did the inital downloads, so we should join
 
-    cURLManager::perform();
+	doEnergySaver();
 
-    // check if we are waiting for initial texture downloading
-    if (Downloads::requestFinalized()) {
-      // downloading is terminated. go!
-      Downloads::finalizeDownloads();
-      if (downloadingInitialTexture) {
-	joinInternetGame2();
-	downloadingInitialTexture = false;
-      } else {
-	setSceneDatabase();
-      }
-    }
-
-    // limit the fps to save battery life by minimizing cpu usage
-    if (BZDB.isTrue("saveEnergy")) {
-      static TimeKeeper lastTime = TimeKeeper::getCurrent();
-      const float fpsLimit = BZDB.eval("fpsLimit");
-      if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) {
-	const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-	if (elapsed > 0.0f) {
-	  const float period = (1.0f / fpsLimit);
-	  const float remaining = (period - elapsed);
-	  if (remaining > 0.0f) {
-	    TimeKeeper::sleep(remaining);
-	  }
-	}
-      }
-      lastTime = TimeKeeper::getCurrent();
-    } // end energy saver check
-
-    if (serverLink)
+	if (serverLink)
       serverLink->flush();
+
   } // end main client loop
 
 
