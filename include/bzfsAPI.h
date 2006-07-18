@@ -78,6 +78,7 @@ typedef enum
 	bz_eShotFiredEvent,
 	bz_eAnointRabbitEvent,
 	bz_eNewRabbitEvent,
+	bz_eReloadEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -870,7 +871,20 @@ public:
 	int newRabbit;
 };
 
+class bz_ReloadEventData_V1 : public bz_EventData
+{
+public:
+	bz_ReloadEventData_V1() : bz_EventData()
+	{
+		eventType = bz_eReloadEvent;
+		playerID = -1;
+	}
 
+	virtual ~bz_ReloadEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	int playerID;
+};
 // event handler callback
 class bz_EventHandler
 {

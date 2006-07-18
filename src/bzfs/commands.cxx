@@ -2231,6 +2231,12 @@ bool ReloadCommand::operator() (const char	 *,
       removePlayer(i, "/ban");
     }
   }
+
+  bz_ReloadEventData_V1 data;
+  data.playerID = t;
+
+  worldEventManager.callEvents(bz_eReloadEvent,&data);
+
   return true;
 }
 
