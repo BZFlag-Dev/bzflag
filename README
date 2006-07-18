@@ -1,27 +1,6 @@
-
 			    BZFlag 2.0.7
 			 http://BZFlag.org/
 		Copyright (c) 1993 - 2006 Tim Riker
-
-Maintainer
-==========
-
-Tim Riker <Tim@Rikers.org>
-http://rikers.org/
-
-Original Author
-===============
-
-Chris Schoeneman
-475 Hawthorne Av
-Palo Alto, CA 94301
-crs23@bigfoot.com
-
-See the AUTHORS file for more authorship details.
-
-
-Introduction
-============
 
 BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
 capture the Flag game.  At its heart, the game is a 3D first person
@@ -30,9 +9,32 @@ was originally written for SGI computers running Irix, but now runs
 and is actively maintained on Windows, Linux, Mac OS X, BSD, Solaris,
 and other platforms.  The game is distributed under the LGPL license.
 
-This is the BZFlag README file.  It includes simple build
-instructions, user community references, other information for BZFlag
-development, and a manifest of the source code layout.
+This is the BZFlag README file.  This file includes introductory build
+instructions, user community interaction references, information for
+getting involved in BZFlag development, a manifest of the source code
+layout, basic usage expectations, contact information, and more.
+
+
+Table of Contents
+=================
+    Introduction
+    Table of Contents
+    Obtaining BZFlag
+    Compiling and Installation
+	Short Version
+	Long Version
+    Communication
+	Internet Relay Chat
+	Mailing Lists
+	Bulletin Boards
+	Wiki
+    Bug Reports and Support
+    Providing Contributions
+    Source Tree Organization
+    Frequently Asked Questions
+    Notes on "CHEAT" servers and network abuse
+    Project History and Contributions
+    Contact
 
 
 Obtaining BZFlag
@@ -281,27 +283,6 @@ communication forum and ongoing discussion arena for the game's
 development.
 
 
-Contributions
-=============
-
-Patches should be entered into the BZFlag patch tracking system at:
-
-http://sourceforge.net/tracker/?group_id=3248&atid=303248
-
-Patches are preferred in the unified diff format.  From a CVS
-checkout, a unified diff patch file may be created as follows:
-
-  % cvs diff -u > patch.diff
-
-If you like, you may also send mail to either the BZFlag development
-mailing list or to Tim@Rikers.org (the development mailing list is
-preferred) to discuss contributions to the official BZFlag source
-code.  Contributions are gladly accepted for modifications that do not
-affect the core gameplay.  Interacting with the other developers in
-the IRC channel is recommended for any changes which will affect
-gameplay.
-
-
 Bug Reports and Support
 =======================
 
@@ -323,12 +304,25 @@ Alternatively, the IRC channel, discussion forums, and mailing lists
 are also viable avenues for resolving issues.
 
 
-Contributors
-============
+Providing Contributions
+=======================
 
-BZFlag has a long history of development and considerable community
-involvement since it became an Open Source project.  See the AUTHORS
-file for more details.
+Patches should be entered into the BZFlag patch tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=303248
+
+Patches are preferred in the unified diff format.  From a CVS
+checkout, a unified diff patch file may be created as follows:
+
+  % cvs diff -u > patch.diff
+
+If you like, you may also send mail to either the BZFlag development
+mailing list or to Tim@Rikers.org (the development mailing list is
+preferred) to discuss contributions to the official BZFlag source
+code.  Contributions are gladly accepted for modifications that do not
+affect the core gameplay.  Interacting with the other developers in
+the IRC channel is recommended for any changes which will affect
+gameplay.
 
 
 Source Tree Organization
@@ -385,8 +379,8 @@ places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
 
-Miscellaneous
-=============
+Frequently Asked Questions
+==========================
 
 UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 
@@ -410,15 +404,78 @@ b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
    desktop firewalls set them up to let UDP port 17200 to 17220 through.
 
 
-Notes on "CHEAT" servers
-=============
-While the license for bzflag allows users to run any server modification
-that they wish, or to modify the code in any way. We ask that people do not
-publish or host "cheat" type clients or servers that ruin the game for people.
-We understand the desire to expand and modify the game and it's sources, so we
-ask that anyone wishing to run a game that uses modified code or logic on
-a different network protocol then the current public release. This will let
-moded games be played, and prevent moded clients from being used on public un-moded
-games. The bzflag project administrators reserve the right to remove public listing
-of any game servers that do not follow this rule. We also reserve the right to
-remove any global accounts or access to public services at any time.
+Notes on "CHEAT" servers and network abuse
+==========================================
+
+While the license for BZFlag certainly allows users to run any server
+modification that they wish or to modify the code in any way, we ask
+that people do not publish or host "cheat" clients or servers to the
+general public for use.  We also expect that users will abide by basic
+usage guidelines of reasonable and tolerable behavior that are not
+detrimental to the game's heritage of a fun gaming environment for
+all.
+
+We understand the desire to expand, modify, and improve the game and
+its sources including the ability to test out new features publicly.
+These modified clients and servers generally provide some advantage
+over unmodified clients and are generally discouraged for widespread
+use.  As such, we ask that anyone wishing to host or otherwise
+participate in a game that involves a modified client or server to
+register under a different network protocol than the current public
+release by modifying BZ_PROTO_VERSION in the src/date/buildDate.cxx
+file.  This will let modified games be played and prevent modified
+clients from being used on public unmodified servers.
+
+Any individuals that are found to be contributing to abuse of the
+public services being provided may be subject to bans or other access
+restrictions.  Abuse generally consists of any disruption to one of
+BZFlag's network services including denial of service attacks,
+spamming of BZFlag web sites or servers, disruptive gameplay on
+multiple public servers, intrusion attempts, password sniffing, or any
+other behavior that is deemed inappropriate.
+
+The BZFlag project administrators reserve the right to remove public
+listings of any game servers for any reason whatsoever, including
+removal of servers or banning of individuals that do not follow this
+request.  Similarly, the BZFlag project administrators also reserve
+the right to limit access or otherwise block any players from public
+service access at any time.  These actions may include the suspension
+or removal of global accounts and limiting access to the web site
+services including web site services, list server access, bulletin
+board forum access, and any league resources.
+
+In general, the entire network is provided by the community for the
+community as an entirely volunteer and contributed effort.  We ask
+that all players recognize and respect the time, effort, and resources
+involved and that we're all generally here to have a good time.
+
+
+Project History and Contributions
+=================================
+
+BZFlag was primarily originally authored by Chris Schoeneman
+<crs23@bigfoot.com> in the early 1990's.  After several years of
+development, Chris turned over copyright and maintainership of the
+game to Tim Riker.
+
+BZFlag continues today to be maintained and developed by the Open
+Source community under Tim's maintainership with contributions coming
+in from all over the world.  See the AUTHORS file for more details on
+contributions to the project.
+
+
+Contact
+=======
+
+Any of the core developers listed in the AUTHORS file are generally
+receptive to being contacted for most matters relating to the game.
+Internet Relay Chat (IRC) or e-mail is generally the expected method
+of interaction with IRC being generally preferred.  The project
+maintainer is available for most legal matters, public relations, and
+project development matters as well:
+
+Tim Riker <Tim@Rikers.org>
+http://rikers.org/
+
+Happy Shooting!
+The BZFlag Development Team
