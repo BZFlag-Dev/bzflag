@@ -533,7 +533,7 @@ public:
 	{
 		eventType = bz_eGetWorldEvent;
 		generated = false;
-		ctf = false;
+		openFFA = rabbit = ctf = false;
 		time = 0.0;
 	}
 	virtual ~bz_GetWorldEventData_V1(){};
@@ -541,6 +541,8 @@ public:
 
 	bool generated;
 	bool ctf;
+	bool rabbit;
+	bool openFFA;
 
 	bz_ApiString	worldFile;
 

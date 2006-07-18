@@ -56,7 +56,7 @@ typedef std::map<FlagType*,bool> FlagOptionMap;
 struct CmdLineOptions
 {
   CmdLineOptions()
-  : wksPort(ServerPort), gameStyle(TeamFFAGameStyle),
+  : wksPort(ServerPort), gameType(eTeamFFA), gameOptions(0),
     rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
@@ -99,7 +99,8 @@ struct CmdLineOptions
   }
 
   int			wksPort;
-  int			gameStyle;
+  GameType		gameType;
+  int			gameOptions;
   int			rabbitSelection;
   int			msgTimer;
   int			spamWarnMax;

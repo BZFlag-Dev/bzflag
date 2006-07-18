@@ -235,34 +235,35 @@ void ServerMenu::setSelected(int index)
       HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
       if (base + i < (int)serverList.size()) {
 	const ServerItem &server = serverList.getServers()[base + i];
-	const short gameStyle = server.ping.gameStyle;
+	const short gameType = server.ping.gameType;
+	const short gameOptions = server.ping.gameOptions;
 	std::string fullLabel;
 	if (BZDB.isTrue("listIcons")) {
 	  // game mode
 	  if ((server.ping.observerMax == 16) &&
 	      (server.ping.maxPlayers == 200)) {
 	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-	  } else if (gameStyle & ClassicCTFGameStyle) {
+	  } else if (gameType == eClassicCTF) {
 	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
-	  } else if (gameStyle & RabbitChaseGameStyle) {
+	  } else if (gameType == eRabbitChase) {
 	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
 	  } else {
 	    fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
 	  }
 	  // jumping?
-	  if (gameStyle & JumpingGameStyle) {
+	  if (gameOptions & JumpingGameStyle) {
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
 	  } else {
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
 	  }
 	  // superflags ?
-	  if (gameStyle & SuperFlagGameStyle) {
+	  if (gameOptions & SuperFlagGameStyle) {
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
 	  } else {
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
 	  }
 	  // ricochet?
-	  if (gameStyle & RicochetGameStyle) {
+	  if (gameOptions & RicochetGameStyle) {
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R";
 	  } else {
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R";
@@ -296,8 +297,8 @@ void ServerMenu::setSelected(int index)
 	else {
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
 	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
-	  const float gf = gameStyle & JumpingGameStyle ? 1.0f : 0.0f;
-	  const float bf = gameStyle & ClassicCTFGameStyle ? 1.0f : 0.0f;
+	  const float gf = gameOptions & JumpingGameStyle ? 1.0f : 0.0f;
+	  const float bf = (gameType == eClassicCTF) ? 1.0f : 0.0f;
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
@@ -427,26 +428,26 @@ void ServerMenu::pick()
   else
     ((HUDuiLabel*)listHUD[8])->setString("{1} Shots", &args );
 
-  if (ping.gameStyle & ClassicCTFGameStyle)
+  if (ping.gameType == eClassicCTF)
     ((HUDuiLabel*)listHUD[9])->setString("Classic Capture-the-Flag");
-  else if (ping.gameStyle & RabbitChaseGameStyle)
+  else if (ping.gameType == eRabbitChase)
     ((HUDuiLabel*)listHUD[9])->setString("Rabbit Chase");
-  else if (ping.gameStyle & OpenFFAGameStyle)
+  else if (ping.gameType == eOpenFFA)
 	  ((HUDuiLabel*)listHUD[9])->setString("Open (Teamless) Free-For-All");
   else
     ((HUDuiLabel*)listHUD[9])->setString("Team Free-For-All");
 
-  if (ping.gameStyle & SuperFlagGameStyle)
+  if (ping.gameOptions & SuperFlagGameStyle)
     ((HUDuiLabel*)listHUD[10])->setString("Super Flags");
   else
     ((HUDuiLabel*)listHUD[10])->setString("");
 
-  if (ping.gameStyle & AntidoteGameStyle)
+  if (ping.gameOptions & AntidoteGameStyle)
     ((HUDuiLabel*)listHUD[11])->setString("Antidote Flags");
   else
     ((HUDuiLabel*)listHUD[11])->setString("");
 
-  if ((ping.gameStyle & ShakableGameStyle) && ping.shakeTimeout != 0) {
+  if ((ping.gameOptions & ShakableGameStyle) && ping.shakeTimeout != 0) {
     std::vector<std::string> dropArgs;
     sprintf(buf, "%.1f", 0.1f * float(ping.shakeTimeout));
     dropArgs.push_back(buf);
@@ -460,7 +461,7 @@ void ServerMenu::pick()
   else
     ((HUDuiLabel*)listHUD[13])->setString("");
 
-  if ((ping.gameStyle & ShakableGameStyle) && ping.shakeWins != 0) {
+  if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
     std::vector<std::string> dropArgs;
     sprintf(buf, "%d", ping.shakeWins);
     dropArgs.push_back(buf);
@@ -475,17 +476,17 @@ void ServerMenu::pick()
   else
     ((HUDuiLabel*)listHUD[13])->setString("");
 
-  if (ping.gameStyle & JumpingGameStyle)
+  if (ping.gameOptions & JumpingGameStyle)
     ((HUDuiLabel*)listHUD[14])->setString("Jumping");
   else
     ((HUDuiLabel*)listHUD[14])->setString("");
 
-  if (ping.gameStyle & RicochetGameStyle)
+  if (ping.gameOptions & RicochetGameStyle)
     ((HUDuiLabel*)listHUD[15])->setString("Ricochet");
   else
     ((HUDuiLabel*)listHUD[15])->setString("");
 
-  if (ping.gameStyle & HandicapGameStyle)
+  if (ping.gameOptions & HandicapGameStyle)
     ((HUDuiLabel*)listHUD[16])->setString("Handicap");
   else
     ((HUDuiLabel*)listHUD[16])->setString("");

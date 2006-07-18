@@ -338,7 +338,7 @@ void sendHandycapInfoUpdate(int playerID)
     return;
 
   GameKeeper::Player *otherData;
-  if (clOptions->gameStyle & HandicapGameStyle) {
+  if (clOptions->gameOptions & HandicapGameStyle) {
     if (playerData->playerHandler) {
       std::vector<bz_HandycapUpdateRecord*> handyList;
       for (int i = 0; i < curMaxPlayers; i++) {

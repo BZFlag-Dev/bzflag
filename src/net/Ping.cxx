@@ -34,7 +34,7 @@
 
 const int		PingPacket::PacketSize = ServerIdPLen + 52;
 
-PingPacket::PingPacket() : gameStyle(TeamFFAGameStyle),
+PingPacket::PingPacket() : gameOptions(0), gameType(eTeamFFA),
 				maxShots(1),
 				shakeWins(0),
 				shakeTimeout(0),
@@ -171,7 +171,8 @@ void*			PingPacket::unpack(void* buf, char* version)
   buf = nboUnpackString(buf, version, 8);
   buf = serverId.unpack(buf);
   buf = sourceAddr.unpack(buf);
-  buf = nboUnpackUShort(buf, gameStyle);
+  buf = nboUnpackUShort(buf, gameType);
+  buf = nboUnpackUShort(buf, gameOptions);
   buf = nboUnpackUShort(buf, maxShots);
   buf = nboUnpackUShort(buf, shakeWins);
   buf = nboUnpackUShort(buf, shakeTimeout);
@@ -199,7 +200,8 @@ void*			PingPacket::pack(void* buf, const char* version) const
   buf = nboPackString(buf, version, 8);
   buf = serverId.pack(buf);
   buf = sourceAddr.pack(buf);
-  buf = nboPackUShort(buf, gameStyle);
+  buf = nboPackUShort(buf, gameType);
+  buf = nboPackUShort(buf, gameOptions);
   buf = nboPackUShort(buf, maxShots);
   buf = nboPackUShort(buf, shakeWins);
   buf = nboPackUShort(buf, shakeTimeout);	// 1/10ths of second
@@ -224,7 +226,8 @@ void*			PingPacket::pack(void* buf, const char* version) const
 
 void			PingPacket::packHex(char* buf) const
 {
-  buf = packHex16(buf, gameStyle);
+  buf = packHex16(buf, gameType);
+  buf = packHex16(buf, gameOptions);
   buf = packHex16(buf, maxShots);
   buf = packHex16(buf, shakeWins);
   buf = packHex16(buf, shakeTimeout);
@@ -249,7 +252,8 @@ void			PingPacket::packHex(char* buf) const
 
 void			PingPacket::unpackHex(char* buf)
 {
-  buf = unpackHex16(buf, gameStyle);
+  buf = unpackHex16(buf, gameType);
+  buf = unpackHex16(buf, gameOptions);
   buf = unpackHex16(buf, maxShots);
   buf = unpackHex16(buf, shakeWins);
   buf = unpackHex16(buf, shakeTimeout);

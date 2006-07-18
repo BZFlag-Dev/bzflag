@@ -147,8 +147,9 @@ class World {
     void		freeMeshDrawMgrs();
 
   private:
-    short		gameStyle;
-    int			maxPlayers;
+    short		gameType;
+	short		gameOptions;
+	int			maxPlayers;
     int			curMaxPlayers;
     int			maxShots;
     int			maxFlags;
@@ -197,53 +198,53 @@ class World {
 
 inline 	bool	World::allowTeams() const
 {
-	return (gameStyle & short(OpenFFAGameStyle)) == 0;
+	return gameType != eOpenFFA;
 }
 
 
 inline bool		World::allowTeamFlags() const
 {
-  return (gameStyle & short(ClassicCTFGameStyle)) != 0;
+  return gameType == eClassicCTF;
 }
 
 inline bool		World::allowSuperFlags() const
 {
-  return (gameStyle & short(SuperFlagGameStyle)) != 0;
+  return (gameOptions & short(SuperFlagGameStyle)) != 0;
 }
 
 inline bool		World::allowJumping() const
 {
-  return (gameStyle & short(JumpingGameStyle)) != 0;
+  return (gameOptions & short(JumpingGameStyle)) != 0;
 }
 
 inline bool		World::allShotsRicochet() const
 {
-  return (gameStyle & short(RicochetGameStyle)) != 0;
+  return (gameOptions & short(RicochetGameStyle)) != 0;
 }
 
 inline bool		World::allowAntidote() const
 {
-  return (gameStyle & short(AntidoteGameStyle)) != 0;
+  return (gameOptions & short(AntidoteGameStyle)) != 0;
 }
 
 inline bool		World::allowShakeTimeout() const
 {
-  return (gameStyle & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
+  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
 }
 
 inline bool		World::allowShakeWins() const
 {
-  return (gameStyle & short(ShakableGameStyle)) != 0 && shakeWins != 0;
+  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeWins != 0;
 }
 
 inline bool		World::allowRabbit() const
 {
-  return (gameStyle & short(RabbitChaseGameStyle)) != 0;
+  return gameType == eRabbitChase;
 }
 
 inline bool		World::allowHandicap() const
 {
-  return (gameStyle & short(HandicapGameStyle)) != 0;
+  return (gameOptions & short(HandicapGameStyle)) != 0;
 }
 
 inline float		World::getWaterLevel() const

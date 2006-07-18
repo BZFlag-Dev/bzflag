@@ -76,19 +76,22 @@ const int		MinY = 192;
 const int		NoMotionSize =	10;		// no motion zone size
 const int		MaxMotionSize = 37;		// motion zone size
 
+typedef enum GameType
+{
+	eTeamFFA,		// normal teamed FFA
+	eClassicCTF,	// your normal CTF
+	eOpenFFA,		// teamless FFA
+	eRabbitChase	// hunt the rabbit mode
+};
 // game styles
-enum GameStyle {
-  TeamFFAGameStyle =	 0x0000, // team free-for-all
-  ClassicCTFGameStyle =	 0x0001, // capture the flag
+enum GameOptions {
   SuperFlagGameStyle =	 0x0002, // superflags allowed
-  OpenFFAGameStyle =	 0x0004, // Teamless free-for-all
   JumpingGameStyle =	 0x0008, // jumping allowed
   InertiaGameStyle =	 0x0010, // momentum for all
   RicochetGameStyle =	 0x0020, // all shots ricochet
   ShakableGameStyle =	 0x0040, // can drop bad flags
   AntidoteGameStyle =	 0x0080, // anti-bad flags
   HandicapGameStyle =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
-  RabbitChaseGameStyle = 0x0200  // rabbit chase
   // add here before reusing old ones above
 };
 

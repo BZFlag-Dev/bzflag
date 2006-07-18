@@ -170,7 +170,7 @@ void* WorldBuilder::unpack(void* buf)
   world->links.doLinking();
 
   // make the team bases
-  if (world->gameStyle & ClassicCTFGameStyle) {
+  if (world->gameType == eClassicCTF) {
     const ObstacleList& bases = OBSTACLEMGR.getBases();
     for (i = 0; i < bases.size(); i++) {
       const BaseBuilding* base = (const BaseBuilding*) bases[i];
@@ -203,13 +203,15 @@ void* WorldBuilder::unpack(void* buf)
 void* WorldBuilder::unpackGameSettings(void* buf)
 {
   // read style
-  uint16_t gameStyle, maxPlayers, maxShots, maxFlags;
+  uint16_t gameType, gameOptions, maxPlayers, maxShots, maxFlags;
 
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
   BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", worldSize));
-  buf = nboUnpackUShort(buf, gameStyle);
-  setGameStyle(short(gameStyle));
+  buf = nboUnpackUShort(buf, gameType);
+  setGameType(short(gameType));
+  buf = nboUnpackUShort(buf, gameOptions);
+  setGameOptions(short(gameOptions));
   buf = nboUnpackUShort(buf, maxPlayers);
   setMaxPlayers(int(maxPlayers));
   buf = nboUnpackUShort(buf, maxShots);
@@ -275,10 +277,14 @@ World* WorldBuilder::peekWorld()
   return world;
 }
 
-
-void WorldBuilder::setGameStyle(short gameStyle)
+void WorldBuilder::setGameType(short gameType)
 {
-  world->gameStyle = gameStyle;
+	world->gameType = gameType;
+}
+
+void WorldBuilder::setGameOptions(short gameOptions)
+{
+	world->gameOptions = gameOptions;
 }
 
 void WorldBuilder::setMaxPlayers(int maxPlayers)

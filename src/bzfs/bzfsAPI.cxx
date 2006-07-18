@@ -1460,7 +1460,7 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
 	// get the spawn position
 	SpawnPosition* spawnPosition = new SpawnPosition(playeID,
 		(!clOptions->respawnOnBuildings) || (player->player.isBot()),
-		clOptions->gameStyle & ClassicCTFGameStyle);
+		clOptions->gameType == eClassicCTF);
 
 	pos[0] = spawnPosition->getX();
 	pos[1] = spawnPosition->getY();
