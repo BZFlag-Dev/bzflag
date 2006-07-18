@@ -942,3 +942,8 @@ BZFlag 1.7c release 1
 ---------------------
 
 preliminary open source release.
+
+
+---
+See the cvs log for more detailed information on BZFlag changes.
+NEWS items should be formated to column 80, one per line, no tabs.

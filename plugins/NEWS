@@ -20,3 +20,8 @@ BZFlag 2.0.4
 ------------
 
 * initial server-side plugin system implementation - Jeff Meyers
+
+
+---
+See the cvs log for more detailed information on the BZFlag Plugins.
+NEWS items should be formated to column 80, one per line, no tabs.
