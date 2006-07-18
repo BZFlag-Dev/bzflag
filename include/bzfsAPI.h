@@ -60,7 +60,7 @@ typedef enum
 	bz_eGetAutoTeamEvent,
 	bz_eAllowPlayer,
 	bz_eTickEvent,
-	bz_eGenerateWorldEvent,
+	bz_eGetWorldEvent,
 	bz_eGetPlayerInfoEvent,
 	bz_eAllowSpawn,
 	bz_eListServerUpdateEvent,
@@ -526,21 +526,23 @@ public:
 	double time;
 };
 
-class BZF_API bz_GenerateWorldEventData_V1 : public bz_EventData
+class BZF_API bz_GetWorldEventData_V1 : public bz_EventData
 {
 public:
-	bz_GenerateWorldEventData_V1() : bz_EventData()
+	bz_GetWorldEventData_V1() : bz_EventData()
 	{
-		eventType = bz_eGenerateWorldEvent;
-		handled = false;
+		eventType = bz_eGetWorldEvent;
+		generated = false;
 		ctf = false;
 		time = 0.0;
 	}
-	virtual ~bz_GenerateWorldEventData_V1(){};
+	virtual ~bz_GetWorldEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
-	bool handled;
+	bool generated;
 	bool ctf;
+
+	bz_ApiString	worldFile;
 
 	double time;
 };

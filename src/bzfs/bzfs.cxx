@@ -711,6 +711,16 @@ static bool defineWorld()
     delete[] worldDatabase;
   }
 
+  bz_GetWorldEventData_V1	worldData;
+  worldData.ctf  = clOptions->gameStyle & ClassicCTFGameStyle;
+  worldData.time = TimeKeeper::getCurrent().getSeconds();
+
+  world = new WorldInfo;
+  worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
+
+  if (!worldData.generated && worldData.worldFile.size())
+	  clOptions->worldFile = worldData.worldFile.c_str();
+
   // make world and add buildings
   if (clOptions->worldFile != "") {
     BZWReader* reader = new BZWReader(clOptions->worldFile);
@@ -729,13 +739,7 @@ static bool defineWorld()
     }
   } else {
     // check and see if anyone wants to define the world from an event
-    bz_GenerateWorldEventData_V1	worldData;
-    worldData.ctf  = clOptions->gameStyle & ClassicCTFGameStyle;
-    worldData.time = TimeKeeper::getCurrent().getSeconds();
-
-    world = new WorldInfo;
-    worldEventManager.callEvents(bz_eGenerateWorldEvent, &worldData);
-    if (!worldData.handled) {
+    if (!worldData.generated) {
       delete world;
       if (clOptions->gameStyle & ClassicCTFGameStyle)
 	world = defineTeamWorld();
