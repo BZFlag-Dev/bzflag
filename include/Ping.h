@@ -24,8 +24,8 @@
 #include "multicast.h"
 
 
-// 4 uint16's and 13 uint8's hex encoded
-static const int	PingPacketHexPackedSize = 4 * 7 + 2 * 13;
+// 8 uint16's and 13 uint8's hex encoded
+static const int	PingPacketHexPackedSize = 4 * 8 + 2 * 13;
 
 
 /** PingPacket:
