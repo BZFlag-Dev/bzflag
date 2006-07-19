@@ -6163,7 +6163,7 @@ void moveRoamingCamera ( const float dt )
 	ROAM.buildRoamingLabel();
 }
 
-void doMotion ( const float dt )
+void doTankMotions ( const float dt )
 {
 	// do dead reckoning on remote players
 	for (int i = 0; i < curMaxPlayers; i++) 
@@ -6225,7 +6225,7 @@ void updatePostions ( const float dt )
 	// update track marks  (before any tanks are moved)
 	TrackMarks::update(dt);
 
-	doMotion(dt);
+	doTankMotions(dt);
 
 #ifdef ROBOT
 	if (entered)
