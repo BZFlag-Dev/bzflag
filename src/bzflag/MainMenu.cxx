@@ -27,7 +27,7 @@
 #endif
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
-#include "HUDuiTextureLabel.h"
+#include "HUDuiImage.h"
 #include "playing.h"
 #include "HUDui.h"
 
@@ -44,7 +44,7 @@ void	  MainMenu::createControls()
   TextureManager &tm = TextureManager::instance();
   std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiControl* label;
-  HUDuiTextureLabel* textureLabel;
+  HUDuiImage* textureLabel;
 
   // clear controls
   for (unsigned int i = 0; i < listHUD.size(); i++)
@@ -55,11 +55,10 @@ void	  MainMenu::createControls()
   int title = tm.getTextureID("title");
 
   // add controls
-  textureLabel = new HUDuiTextureLabel;
-  textureLabel->setFontFace(getFontFace());
+  std::vector<HUDuiElement*>& listEle = getElements();
+  textureLabel = new HUDuiImage;
   textureLabel->setTexture(title);
-  textureLabel->setString("BZFlag");
-  listHUD.push_back(textureLabel);
+  listEle.push_back(textureLabel);
 
   label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
   listHUD.push_back(label);
@@ -90,7 +89,7 @@ void	  MainMenu::createControls()
   listHUD.push_back(quit);
 
   resize(HUDDialog::getWidth(), HUDDialog::getHeight());
-  initNavigation(listHUD, 2, (int)listHUD.size() - 1);
+  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
 
   // set focus back at the top in case the item we had selected does not exist anymore
   listHUD[2]->setFocus();
@@ -164,27 +163,29 @@ void			MainMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
 
   // use a big font
-  const float titleFontSize = (float)_height / 8.0f;
+  const float titleSize = (float)_height / 8.0f;
   const float tinyFontSize = (float)_height / 54.0f;
   const float fontSize = (float)_height / 22.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-  title->setFontSize(titleFontSize);
+  std::vector<HUDuiElement*>& listEle = getElements();
+  HUDuiImage* title = (HUDuiImage*)listEle[0];
+  title->setSize((float)_width, titleSize);
   // scale appropriately to center properly
   TextureManager &tm = TextureManager::instance();
-  float texHeight = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).y;
-  float texWidth = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).x;
-  float titleWidth = (texWidth / texHeight) * titleFontSize;
+  float texHeight = (float)tm.getInfo(title->getTexture()).y;
+  float texWidth = (float)tm.getInfo(title->getTexture()).x;
+  float titleWidth = (texWidth / texHeight) * titleSize;
+  title->setSize(titleWidth, titleSize);
   float x = 0.5f * ((float)_width - titleWidth);
-  float y = (float)_height - titleFontSize * 1.25f;
+  float y = (float)_height - titleSize * 1.25f;
   title->setPosition(x, y);
 
   // reposition instructions
-  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
+  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiLabel* hint = (HUDuiLabel*)listHUD[0];
   hint->setFontSize(tinyFontSize);
   const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
   y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
@@ -197,7 +198,7 @@ void			MainMenu::resize(int _width, int _height)
 		      ((HUDuiLabel*)listHUD[2])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
-  for (int i = 2; i < count; i++) {
+  for (int i = 1; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);

@@ -80,18 +80,18 @@ bzflag_SOURCES =			\
 	HUDui.h				\
 	HUDuiControl.cxx		\
 	HUDuiControl.h			\
+	HUDuiDefaultKey.cxx		\
+	HUDuiDefaultKey.h		\
 	HUDuiElement.cxx		\
 	HUDuiElement.h			\
 	HUDuiFrame.cxx			\
 	HUDuiFrame.h			\
-	HUDuiDefaultKey.cxx		\
-	HUDuiDefaultKey.h		\
+	HUDuiImage.cxx			\
+	HUDuiImage.h			\
 	HUDuiLabel.cxx			\
 	HUDuiLabel.h			\
 	HUDuiList.cxx			\
 	HUDuiList.h			\
-	HUDuiTextureLabel.cxx		\
-	HUDuiTextureLabel.h		\
 	HUDuiTypeIn.cxx			\
 	HUDuiTypeIn.h			\
 	JoinMenu.cxx			\

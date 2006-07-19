@@ -87,11 +87,10 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   setTeam(info->team);
   listHUD.push_back(team);
 
-  teamIcon = new HUDuiTextureLabel;
-  teamIcon->setFontFace(fontFace);
-  teamIcon->setString(" ");
+  std::vector<HUDuiElement*>& listEle = getElements();
+  teamIcon = new HUDuiImage;
   updateTeamTexture();
-  listHUD.push_back(teamIcon);
+  listEle.push_back(teamIcon);
 
   server = new HUDuiTypeIn;
   server->setFontFace(fontFace);
@@ -132,10 +131,6 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   listHUD.push_back(failedMessage);
 
   initNavigation(listHUD, 1, (int)listHUD.size() - 3);
-
-  // cut teamIcon out of the nav loop
-  team->setNext(server);
-  server->setPrev(team);
 }
 
 JoinMenu::~JoinMenu()
@@ -288,7 +283,8 @@ void JoinMenu::updateTeamTexture()
   teamIcon->setTexture(id);
 
   // make it big enough
-  teamIcon->setFontSize(team->getFontSize() * 1.5f);
+  const float iconSize = team->getFontSize() * 1.5f;
+  teamIcon->setSize(iconSize, iconSize);
 
   // put it at the end of the text
   Bundle *bdl = BundleMgr::getCurrentBundle();
@@ -328,9 +324,8 @@ void JoinMenu::resize(int _width, int _height)
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if (i != 5)
-      y -= 1.0f * h;
-    if (i <= 2 || i == 9) y -= 0.5f * h;
+    y -= 1.0f * h;
+    if (i <= 2 || i == 8) y -= 0.5f * h;
   }
 
   updateTeamTexture();

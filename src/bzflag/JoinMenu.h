@@ -29,7 +29,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "HUDuiTypeIn.h"
-#include "HUDuiTextureLabel.h"
+#include "HUDuiImage.h"
 
 class ServerStartMenu;
 class ServerMenu;
@@ -61,7 +61,7 @@ class JoinMenu : public HUDDialog {
     HUDuiTypeIn*	password;
     HUDuiTypeIn*	email;
     HUDuiList*		team;
-    HUDuiTextureLabel*  teamIcon;
+    HUDuiImage*		teamIcon;
     HUDuiTypeIn*	server;
     HUDuiTypeIn*	port;
     HUDuiLabel*		status;

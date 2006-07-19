@@ -11,21 +11,21 @@
  */
 
 /*
- * HUDuiTextureLabel:
- *	User interface classes and functions for the heads-up display's textured
- *  label controls.
+ * HUDuiImage:
+ *	User interface classes and functions for the heads-up display's
+ * independent images.
  */
 
-#ifndef	__HUDUITEXTURELABEL_H__
-#define	__HUDUITEXTURELABEL_H__
+#ifndef	__HUDUIIMAGE_H__
+#define	__HUDUIIMAGE_H__
 
-#include "HUDuiLabel.h"
+#include "HUDuiElement.h"
 #include "OpenGLGState.h"
 
-class HUDuiTextureLabel : public HUDuiLabel {
+class HUDuiImage : public HUDuiElement {
   public:
-			HUDuiTextureLabel();
-			~HUDuiTextureLabel();
+			HUDuiImage();
+			~HUDuiImage();
 
     void		setTexture(const int);
     int			getTexture();
@@ -35,14 +35,14 @@ class HUDuiTextureLabel : public HUDuiLabel {
 
   private:
     OpenGLGState	gstate;
-    int		texture;
+    int			texture;
 };
 
-inline int HUDuiTextureLabel::getTexture() {
+inline int HUDuiImage::getTexture() {
   return texture;
 }
 
-#endif // __HUDUITEXTURELABEL_H__
+#endif // __HUDUIIMAGE_H__
 
 // Local Variables: ***
 // mode: C++ ***
