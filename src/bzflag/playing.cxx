@@ -1953,7 +1953,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
 				{
 					robots[r]->restart(pos,forward);
 					setRobotTarget(robots[r]);
-					return;
+					break;
 				}
 			}
 #endif
