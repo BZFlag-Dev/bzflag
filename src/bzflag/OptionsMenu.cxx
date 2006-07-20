@@ -99,7 +99,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setLabel("Save World");
   listHUD.push_back(label);
 
-  saveWorld = label = new HUDuiLabel;
+  saveSettings = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save Settings Now");
   listHUD.push_back(label);
