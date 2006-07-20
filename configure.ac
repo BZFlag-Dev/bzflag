@@ -985,25 +985,6 @@ AC_CONFIG_FILES([
 	package/rpm/Makefile
 	package/win32/Makefile
 	package/win32/nsis/Makefile
-	plugins/HoldTheFlag/Makefile
-	plugins/Makefile
-	plugins/RogueGenocide/Makefile
-	plugins/SAMPLE_PLUGIN/Makefile
-	plugins/airspawn/Makefile
-	plugins/chathistory/Makefile
-	plugins/doc/Makefile
-	plugins/hiddenAdmin/Makefile
-	plugins/killall/Makefile
-	plugins/logDetail/Makefile
-	plugins/m4/Makefile
-	plugins/nagware/Makefile
-	plugins/playHistoryTracker/Makefile
-	plugins/python/Makefile
-	plugins/recordmatch/Makefile
-	plugins/serverSideBotSample/Makefile
-	plugins/shockwaveDeath/Makefile
-	plugins/soundTest/Makefile
-	plugins/vc71/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
