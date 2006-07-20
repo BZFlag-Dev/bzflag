@@ -1009,7 +1009,7 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
 	case eRabbitTeam:
 	case eHunterTeam:
 	case eObservers:
-		return bz_sendTextMessage(from,250-(int)to,message);
+		return bz_sendTextMessage(from,250-(int)convertTeam(to),message);
 
 	case eAdministrators:
 		return bz_sendTextMessage(from,AdminPlayers,message);
@@ -1386,6 +1386,34 @@ BZF_API bool bz_setLagWarn( int lagwarn )
 	clOptions->lagwarnthresh = (float) (lagwarn / 1000.0);
 	LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
 	return true;
+}
+
+BZF_API bool bz_setTimeLimit( float timeLimit )
+{
+	if (timeLimit <= 0.0f)
+		return false;
+	clOptions->timeLimit = timeLimit;
+	return true;
+}
+
+BZF_API float bz_getTimeLimit( void )
+{
+	return clOptions->timeLimit;
+}
+
+BZF_API bool bz_isTimeManualStart( void )
+{
+	return clOptions->timeManualStart;
+}
+
+BZF_API bool bz_isCountDownActive( void )
+{
+	return countdownActive;
+}
+
+BZF_API bool bz_isCountDownInProgress( void )
+{
+	return countdownDelay > 0;
 }
 
 BZF_API bool bz_pollVeto( void )

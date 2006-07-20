@@ -1050,6 +1050,15 @@ BZF_API bz_APIStringList* bz_getReports( void );
 BZF_API int bz_getLagWarn( void );
 BZF_API bool bz_setLagWarn( int lagwarn );
 
+// timelimit
+BZF_API bool bz_setTimeLimit( float timeLimit );
+BZF_API float bz_getTimeLimit( void );
+BZF_API bool bz_isTimeManualStart( void );
+
+// countdown
+BZF_API bool bz_isCountDownActive( void );
+BZF_API bool bz_isCountDownInProgress( void );
+
 // polls
 BZF_API bool bz_pollVeto( void );
 
