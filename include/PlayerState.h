@@ -59,7 +59,7 @@ class PlayerState
 
 
     PlayerState();
-    void*	pack(void*, uint16_t& code);
+    void*	pack(void*, uint16_t& code, bool increment = true);
     void*	unpack(void*, uint16_t code);
 
     long	order;		// packet ordering

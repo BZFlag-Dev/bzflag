@@ -61,9 +61,10 @@ static float clampedValue(float input, float max)
 }
 
 
-void*	PlayerState::pack(void* buf, uint16_t& code)
+void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
 {
-  order++;
+	if (increment)
+		order++;
 
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
