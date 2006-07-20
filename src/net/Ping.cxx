@@ -34,7 +34,7 @@
 
 const int		PingPacket::PacketSize = ServerIdPLen + 52;
 
-PingPacket::PingPacket() : gameOptions(0), gameType(eTeamFFA),
+PingPacket::PingPacket() : gameType(eTeamFFA), gameOptions(0),
 				maxShots(1),
 				shakeWins(0),
 				shakeTimeout(0),
