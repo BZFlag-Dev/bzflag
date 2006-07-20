@@ -1322,20 +1322,46 @@ BZF_API bool bz_setLagWarn( int lagwarn ) {
 	return true;
 }
 
-BZF_API bool bz_pollVeto( void ) {
-	/* make sure that there is a poll arbiter */
-	if (BZDB.isEmpty("poll")) {
+BZF_API bool bz_setTimeLimit( float timeLimit )
+{
+	if (timeLimit <= 0.0f)
 		return false;
-	}
+	clOptions->timeLimit = timeLimit;
+	return true;
+}
+
+BZF_API float bz_getTimeLimit( void )
+{
+	return clOptions->timeLimit;
+}
+
+BZF_API bool bz_isTimeManualStart( void )
+{
+	return clOptions->timeManualStart;
+}
+
+BZF_API bool bz_isCountDownActive( void )
+{
+	 return countdownActive;
+}
+
+BZF_API bool bz_isCountDownInProgress( void )
+{
+	return countdownDelay > 0;
+}
+
+BZF_API bool bz_pollVeto( void )
+{
+	/* make sure that there is a poll arbiter */
+	if (BZDB.isEmpty("poll")) 
+		return false;
 
 	// only need to do this once
 	static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
 	/* make sure there is an unexpired poll */
-	if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+	if ((arbiter != NULL) && !arbiter->knowsPoll())
 		return false;
-	}
-
 	/* poof */
 	arbiter->forgetPoll();
 
