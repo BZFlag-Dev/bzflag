@@ -199,11 +199,14 @@ AC_CONFIG_FILES([
 	hiddenAdmin/Makefile
 	killall/Makefile
 	logDetail/Makefile
-	recordmatch/Makefile
+	m4/Makefile
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	python/Makefile
+	recordmatch/Makefile
+	serverSideBotSample/Makefile
 	shockwaveDeath/Makefile
+	soundTest/Makefile
 	vc71/Makefile
 ])
 

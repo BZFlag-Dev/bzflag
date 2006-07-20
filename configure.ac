@@ -995,6 +995,7 @@ AC_CONFIG_FILES([
 	plugins/hiddenAdmin/Makefile
 	plugins/killall/Makefile
 	plugins/logDetail/Makefile
+	plugins/m4/Makefile
 	plugins/nagware/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
