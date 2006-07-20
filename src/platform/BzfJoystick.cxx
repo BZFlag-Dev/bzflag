@@ -69,7 +69,7 @@ void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
   list.push_back("default");
 }
 
-unsigned int		    BzfJoystick::getHatswitch(int switchno) const
+unsigned int		    BzfJoystick::getHatswitch(int /*switchno*/) const
 {
   return 0;
 }

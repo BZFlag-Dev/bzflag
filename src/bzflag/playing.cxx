@@ -6163,7 +6163,7 @@ void moveRoamingCamera ( const float dt )
 	ROAM.buildRoamingLabel();
 }
 
-void doTankMotions ( const float dt )
+void doTankMotions ( const float /*dt*/ )
 {
 	// do dead reckoning on remote players
 	for (int i = 0; i < curMaxPlayers; i++) 
