@@ -928,7 +928,9 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
 	case eRabbitTeam:
 	case eHunterTeam:
 	case eObservers:
-		return bz_sendTextMessage(from,250-(int)to,message);
+		return bz_sendTextMessage(from,250-(int)convertTeam(to),message);
+
+		
 
 	case eAdministrators:
 		return bz_sendTextMessage(from,AdminPlayers,message);
@@ -2082,6 +2084,14 @@ BZF_API bool bz_startRecBuf( void )
 		return false;
 
 	return Record::start(ServerPlayer);
+}
+
+BZF_API bool bz_stopRecBuf( void )
+{
+	if (!Record::enabled())
+		return false;
+
+	return Record::stop(ServerPlayer);
 }
 
 BZF_API const char *bz_format(const char* fmt, ...)
