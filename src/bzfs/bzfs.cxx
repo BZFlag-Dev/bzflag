@@ -151,6 +151,7 @@ bool       worldWasSentToAPlayer   = false;
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
+static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 int getCurMaxPlayers()
 {
@@ -886,7 +887,6 @@ TeamColor whoseBase(float x, float y, float z)
 }
 
 
-#ifdef PRINTSCORE
 static void dumpScore()
 {
   if (!clOptions->printScore) {
@@ -902,9 +902,6 @@ static void dumpScore()
   GameKeeper::Player::dumpScore();
   std::cout << "#end\n";
 }
-#endif
-
-static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 static PlayerId getNewPlayer(NetHandler *netHandler)
 {
@@ -1765,9 +1762,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // tell the list server the new number of players
   listServerLink->queueMessage(ListServerLink::ADD);
 
-#ifdef PRINTSCORE
   dumpScore();
-#endif
+
   char message[MessageLen] = {0};
 
 #ifdef SERVERLOGINMSG
@@ -2582,9 +2578,9 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
       }
       sendTeamUpdateMessageBroadcast(int(victim->getTeam()), killerTeam);
     }
-#ifdef PRINTSCORE
+
     dumpScore();
-#endif
+
     if (winningTeam != (int)NoTeam)
       checkTeamScore(killerIndex, winningTeam);
   }
@@ -2818,9 +2814,9 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   }
   team[teamIndex].team.lost++;
   sendTeamUpdateMessageBroadcast(winningTeam, teamIndex);
-#ifdef PRINTSCORE
+
   dumpScore();
-#endif
+
   if (winningTeam != (int)NoTeam)
     checkTeamScore(playerIndex, winningTeam);
 }

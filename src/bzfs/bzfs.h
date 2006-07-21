@@ -40,7 +40,6 @@
 
 
 // to dump score info to stdout
-#define PRINTSCORE to include code to dump score info to stdout
 #define SERVERLOGINMSG true
 
 

@@ -95,9 +95,7 @@ const char *usageString =
 "[-passwd <password>] "
 "[-pidfile <filename>] "
 "[-poll <variable>=<value>]"
-#ifdef PRINTSCORE
 "[-printscore] "
-#endif
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -191,9 +189,7 @@ const char *extraUsageString =
 "\t-passwd: specify a <password> for operator commands\n"
 "\t-pidfile: write the process id into <filename> on startup\n"
 "\t-poll: configure several aspects of the in-game polling system\n"
-#ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
-#endif
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
@@ -868,11 +864,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	std::cerr << "unknown variable for -poll, skipping";
       }
-#ifdef PRINTSCORE
     } else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
       options.printScore = true;
-#endif
     } else if (strcmp(argv[i], "-public") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.publicizeServer = true;
