@@ -1,8 +1,5 @@
 bin_PROGRAMS = bzfs
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
-
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
@@ -81,14 +78,14 @@ bzfs_SOURCES = \
 	DropGeometry.h \
 	EntryZones.cxx \
 	EntryZones.h \
-	Filter.cxx	\
-	Filter.h	\
-	FlagHistory.cxx	\
-	FlagHistory.h	\
+	Filter.cxx \
+	Filter.h \
+	FlagHistory.cxx \
+	FlagHistory.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
-	GameKeeper.cxx	\
-	GameKeeper.h	\
+	GameKeeper.cxx \
+	GameKeeper.h \
 	ListServerConnection.cxx \
 	ListServerConnection.h \
 	MasterBanList.cxx \
@@ -103,12 +100,12 @@ bzfs_SOURCES = \
 	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
-	Score.h	\
-	Score.cxx	\
-	ServerCommand.cxx		\
-	ServerCommand.h			\
-	SpawnPolicy.cxx	\
-	SpawnPolicy.h	\
+	Score.h \
+	Score.cxx \
+	ServerCommand.cxx \
+	ServerCommand.h \
+	SpawnPolicy.cxx \
+	SpawnPolicy.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \
@@ -132,8 +129,7 @@ bzfs_SOURCES = \
 	bzfs.h
 
 if BUILD_REGEX
-REGEX = \
-	../regex/libregex.la
+REGEX = ../regex/libregex.la
 endif
 
 if BUILDZLIB
@@ -155,6 +151,9 @@ LDADD = \
 	../common/libCommon.la		\
 	$(CARESLIB)			\
 	$(REGEX)			\
-	$(ZLIB)			\
+	$(ZLIB)				\
 	$(KRB5_LIBS)			\
 	../date/libDate.la
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
