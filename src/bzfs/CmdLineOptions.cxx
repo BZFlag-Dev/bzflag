@@ -1137,7 +1137,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
       if (i+1 != argc) {
-	if (strcasecmp(argv[i+1], "micros") == 0) {
+	if (TextUtils::compare_nocase(argv[i+1], "micros") == 0) {
 	  options.timestampMicros = true;
 	  i++;
 	}

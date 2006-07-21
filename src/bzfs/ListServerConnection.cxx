@@ -151,7 +151,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  for (int i = 0; i < curMaxPlayers; i++) {
 	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((gkp != NULL) &&
-		(strcasecmp(gkp->player.getCallSign(), nick.c_str()) == 0)) {
+		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0)) {
 	      gkp->setBzIdentifier(bzId);
 	      DEBUG3("Set player (%s [%i]) bzId to (%s)\n",
 		     nick.c_str(), i, bzId.c_str());
@@ -197,7 +197,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	for (int i = 0; i < curMaxPlayers; i++) {
 	  GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
 	  if ((gkp != NULL) &&
-	      (strcasecmp(gkp->player.getCallSign(), callsign) == 0)) {
+	      (TextUtils::compare_nocase(gkp->player.getCallSign(), callsign) == 0)) {
 	    gkp->setBzIdentifier(bzId);
 	    DEBUG3("Set player (%s [%i]) bzId to (%s)\n", callsign, i, bzId.c_str());
 	    break;

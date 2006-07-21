@@ -254,7 +254,7 @@ bool GameKeeper::Player::loadEnterData(uint16_t &rejectCode,
       continue;
     if (otherData->closed)
       continue;
-    if (!strcasecmp(otherData->player.getCallSign(), player.getCallSign())) {
+    if (!TextUtils::compare_nocase(otherData->player.getCallSign(), player.getCallSign())) {
       rejectCode   = RejectRepeatCallsign;
       strcpy(rejectMsg, "The callsign specified is already in use.");
       return false;

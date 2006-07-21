@@ -1500,7 +1500,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	= GameKeeper::Player::getPlayerByIndex(i);
       if (!otherPlayer)
 	continue;
-      if (strcasecmp(otherPlayer->player.getCallSign(),
+      if (TextUtils::compare_nocase(otherPlayer->player.getCallSign(),
 		     playerData->player.getCallSign()) == 0) {
 	sendMessage(ServerPlayer, i ,
 		    "Another client has demonstrated ownership of your "
