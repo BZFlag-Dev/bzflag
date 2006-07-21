@@ -285,6 +285,7 @@ AC_CHECK_HEADERS( \
 	bstring.h \
 	inttypes.h \
 	linux/input.h \
+	process.h \
 	stdint.h \
 	sys/param.h \
 	sys/types.h \
