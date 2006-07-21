@@ -256,7 +256,7 @@ const char *extraUsageString =
 static void printVersion()
 {
   std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
-    ") http://BZFlag.org/\n";
+    ") http://BZFlag.org/" << std::endl;
   std::cout << bzfcopyright << std::endl;
   std::cout.flush();
 }
@@ -264,7 +264,7 @@ static void printVersion()
 static void usage(const char *pname)
 {
   printVersion();
-  std::cerr << "\nUsage: " << pname << ' ' << usageString << std::endl;
+  std::cerr << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
   exit(1);
 }
 
@@ -272,8 +272,8 @@ static void extraUsage(const char *pname)
 {
   char buffer[64];
   printVersion();
-  std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
-  std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
+  std::cout << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
+  std::cout << std::endl << extraUsageString << std::endl << "Flag codes:" << std::endl;
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
     sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
     std::cout << buffer;
@@ -285,11 +285,11 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
 {
   if ((i+count) >= argc) {
     if (count > 1) {
-      std::cerr << count << " argument(s) expected for " << option << '\n';
+      std::cerr << count << " argument(s) expected for " << option << std::endl;
     } else if (type != NULL) {
-      std::cerr << type << " argument expected for " << option << '\n';
+      std::cerr << type << " argument expected for " << option << std::endl;
     } else {
-      std::cerr << "argument expected for " << option << '\n';
+      std::cerr << "argument expected for " << option << std::endl;
     }
     usage("bzfs");
   }
@@ -300,7 +300,7 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
 static void checkFromWorldFile (const char *option, bool fromWorldFile)
 {
   if (fromWorldFile) {
-    std::cerr << "option \"" << option << "\" cannot be set within a world file" << '\n';
+    std::cerr << "option \"" << option << "\" cannot be set within a world file" << std::endl;
     usage("bzfs");
   }
 }
@@ -324,7 +324,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       }
     }
     if (commaCount != 5) {
-      std::cout << "improper player count list\n";
+      std::cout << "improper player count list" << std::endl;
       return false;
     }
 
@@ -390,7 +390,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     char *tail;
     long count = strtol(argv, &tail, 10);
     if (argv == tail) {
-      std::cout << "improper player count\n";
+      std::cout << "improper player count" << std::endl;
       return false;
     }
     if (count < 1) {
@@ -475,7 +475,7 @@ static char **parseWorldOptions (const char *file, int &ac)
     confStrm.getline(buffer,1024);
 
     if (!confStrm.good()) {
-      std::cerr << "world file not found\n";
+      std::cerr << "world file not found" << std::endl;
       usage("bzfs");
     }
 
@@ -1013,11 +1013,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-spamtime") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.msgTimer = atoi(argv[i]);
-      std::cerr << "using spam time of " << options.msgTimer << "\n";
+      std::cerr << "using spam time of " << options.msgTimer << std::endl;
     } else if (strcmp(argv[i], "-spamwarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.spamWarnMax = atoi(argv[i]);
-      std::cerr << "using spam warn amount of " << options.spamWarnMax << "\n";
+      std::cerr << "using spam warn amount of " << options.spamWarnMax << std::endl;
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);
@@ -1095,7 +1095,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	    ++sizer;
 	  }
 	  if (sizer > 3) {
-	    std::cerr << "too many arguments to -time\n";
+	    std::cerr << "too many arguments to -time" << std::endl;
 	    usage(argv[0]);
 	  }
 	}
