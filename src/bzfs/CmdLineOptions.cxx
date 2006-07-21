@@ -19,7 +19,6 @@
  */
 #include "CmdLineOptions.h"
 
-
 // implementation-specific bzflag headers
 #include "version.h"
 #include "Team.h"
@@ -47,9 +46,6 @@
 #include "Permissions.h"
 #include "EntryZones.h"
 
-
-// import from TextUtils for convenience
-using TextUtils::compare_nocase;
 
 const char *usageString =
 "[-admsg <text>] "
@@ -857,17 +853,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	usage(argv[0]);
       }
 
-      if (compare_nocase(args[0], "bantime") == 0) {
+      if (TextUtils::compare_nocase(args[0], "bantime") == 0) {
 	options.banTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (compare_nocase(args[0], "vetotime") == 0) {
+      } else if (TextUtils::compare_nocase(args[0], "vetotime") == 0) {
 	options.vetoTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (compare_nocase(args[0], "votepercentage") == 0) {
+      } else if (TextUtils::compare_nocase(args[0], "votepercentage") == 0) {
 	options.votePercentage = (float)atof(args[1].c_str());
-      } else if (compare_nocase(args[0], "voterepeattime") == 0) {
+      } else if (TextUtils::compare_nocase(args[0], "voterepeattime") == 0) {
 	options.voteRepeatTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (compare_nocase(args[0], "votesrequired") == 0) {
+      } else if (TextUtils::compare_nocase(args[0], "votesrequired") == 0) {
 	options.votesRequired = (unsigned short int)atoi(args[1].c_str());
-      } else if (compare_nocase(args[0], "votetime") == 0) {
+      } else if (TextUtils::compare_nocase(args[0], "votetime") == 0) {
 	options.voteTime = (unsigned short int)atoi(args[1].c_str());
       } else {
 	std::cerr << "unknown variable for -poll, skipping";
