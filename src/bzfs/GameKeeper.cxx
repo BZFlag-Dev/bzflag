@@ -128,7 +128,7 @@ void GameKeeper::Player::dumpScore()
 {
   Player *playerData;
 
-  std::cout << "\n#players\n";
+  std::cout << std::endl << "#players" << std::endl;
   int p;
   for (p = 0; p < PlayerSlot; p++)
     if ((playerData = playerList[p]) && !playerData->closed

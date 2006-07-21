@@ -266,7 +266,7 @@ WorldInfo *defineTeamWorld()
     const bool redGreen = haveRed || haveGreen;
     const bool bluePurple = haveBlue || havePurple;
     if (!redGreen && !bluePurple) {
-      std::cerr << "need some teams, use -mp\n";
+      std::cerr << "need some teams, use -mp" << std::endl;
       exit(20);
     }
     const float *redPosition = bases[RedTeam].getBasePosition(0);
