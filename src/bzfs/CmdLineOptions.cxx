@@ -11,7 +11,7 @@
  */
 
 #ifdef _MSC_VER
-#pragma warning(4:4786)
+#  pragma warning(4:4786)
 #endif
 
 /* this should be the only header necessary except for headers specific
@@ -31,12 +31,12 @@
 #include <set>
 
 // for -pidfile option
-#ifdef _WIN32
-#include <process.h>
-#include "time.h"
+#ifdef HAVE_PROCESS_H
+#  include <process.h>
+#  include "time.h"
 #else
-#include <sys/types.h>
-#include <unistd.h>
+#  include <sys/types.h>
+#  include <unistd.h>
 #endif
 
 // implementation-specific bzfs-specific headers
@@ -830,7 +830,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       unsigned int pid = 0;
 	  checkArgc(1, i, argc, argv[i]);
       FILE *fp = fopen(argv[i], "wt");
-#ifndef _WIN32
+#ifndef HAVE_PROCESS_H
       pid = getpid();
 #else
       pid = _getpid();
