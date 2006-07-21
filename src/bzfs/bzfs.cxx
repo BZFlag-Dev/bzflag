@@ -900,7 +900,7 @@ static void dumpScore()
     std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' << Team::getName(TeamColor(i));
   }
   GameKeeper::Player::dumpScore();
-  std::cout << "#end\n";
+  std::cout << "#end" << std::endl;
 }
 
 static PlayerId getNewPlayer(NetHandler *netHandler)
@@ -1880,7 +1880,7 @@ void resetFlag(FlagInfo &flag)
       }
     }
     if (i == 10000) {
-      std::cerr << "Unable to position flags on this world.\n";
+      std::cerr << "Unable to position flags on this world." << std::endl;
     }
   }
 
@@ -3708,14 +3708,14 @@ int main(int argc, char **argv)
 
   // check time bomb
   if (timeBombBoom()) {
-    std::cerr << "This release expired on " << timeBombString() << ".\n";
-    std::cerr << "Please upgrade to the latest release.\n";
+    std::cerr << "This release expired on " << timeBombString() << "." << std::endl;
+    std::cerr << "Please upgrade to the latest release." << std::endl;
     exit(0);
   }
 
   // print expiration date
   if (timeBombString()) {
-    std::cerr << "This release will expire on " << timeBombString() << ".\n";
+    std::cerr << "This release will expire on " << timeBombString() << "." << std::endl;
     std::cerr << "Version " << getAppVersion() << std::endl;
   }
 
