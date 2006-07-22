@@ -2477,6 +2477,14 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
+  // If a plugin changed the killer, we need to update the data.
+  if (dieEvent.killerID != killerIndex) {
+    killerIndex = dieEvent.killerID;
+    if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
+      killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
+    killer = realPlayer(killerIndex) ? &killerData->player : 0;
+  }
+
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
   if (killer) {
