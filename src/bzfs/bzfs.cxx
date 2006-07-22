@@ -544,7 +544,7 @@ void resumeCountdown ( const char *resumedBy )
 void resetTeamScores ( void )
 {
 	// reset team scores
-	for (int i = RedTeam; i <= PurpleTeam; i++) 
+	for (int i = RedTeam; i <= PurpleTeam; i++)
 	{
 		team[i].team.lost = team[i].team.won = 0;
 	}
@@ -1177,7 +1177,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
 
-  // Should cut the message 
+  // Should cut the message
   if (msglen > MessageLen) {
     DEBUG1("WARNING: Network message being sent is too long! "
 	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
@@ -2469,6 +2469,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   dieEvent.playerID = victimIndex;
   dieEvent.team = convertTeam(victim->getTeam());
   dieEvent.killerID = killerIndex;
+  dieEvent.shotID = shotIndex;
   if (killer)
     dieEvent.killerTeam = convertTeam(killer->getTeam());
   dieEvent.flagKilledWith = flagType->flagAbbv;
@@ -4993,13 +4994,13 @@ int main(int argc, char **argv)
 			else
 			{
 				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
-				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) 
+				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked)))
 					DEBUG1("Poll set taking action: no action taken, variable cannot be set\n");
 				else
 				{
 					DEBUG1("Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
 					BZDB.set(args[0], args[1], StateDatabase::Server);
-				}	
+				}
 			}
 	      }
 		  else if (action == "reset")

@@ -342,6 +342,7 @@ public:
 	int killerID;
 	bz_eTeamType killerTeam;
 	bzApiString flagKilledWith;
+        int shotID;
 
 	float pos[3];
 	float rot;
