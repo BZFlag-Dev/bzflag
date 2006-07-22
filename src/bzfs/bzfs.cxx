@@ -450,7 +450,7 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
     if (Record::enabled())
       sendAdminInfoMessage(playerIndex,-1,true);
   } else {
-    int i = 0; 
+    int i = 0;
     for (i = 0; i < curMaxPlayers; ++i) {
       playerData = GameKeeper::Player::getPlayerByIndex(i);
 
@@ -489,7 +489,7 @@ void resumeCountdown ( const char *resumedBy )
 void resetTeamScores ( void )
 {
 	// reset team scores
-	for (int i = RedTeam; i <= PurpleTeam; i++) 
+	for (int i = RedTeam; i <= PurpleTeam; i++)
 	{
 		team[i].team.lost = team[i].team.won = 0;
 	}
@@ -1200,7 +1200,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (message[0] == '/' && message[1] == '/')
     msg = &message[1];
 
-  // Should cut the message 
+  // Should cut the message
   if (msglen > MessageLen) {
     DEBUG1("WARNING: Network message being sent is too long! "
 	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
@@ -1235,7 +1235,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   sendTextMessage(dstPlayer, playerIndex, msg, msglen);
 
   if (Record::enabled() && !(dstPlayer == AllPlayers)) // don't record twice
-  { 
+  {
     sendTextMessage(-1, playerIndex, msg, msglen, true);
   }
 }
@@ -1466,7 +1466,7 @@ bool validPlayerCallsign ( int playerIndex )
 	{
 		int filterIndex = 0;
 		Filter::Action filterAction = filter.check(*playerData, filterIndex);
-		if (filterAction == Filter::DROP) 
+		if (filterAction == Filter::DROP)
 		{
 			rejectPlayer(playerIndex, RejectBadCallsign, "Unacceptable Callsign");
 			return false;
@@ -1952,14 +1952,14 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
   if (rabbitIndex == NoPlayer)
     rabbitIndex = GameKeeper::Player::anointRabbit(oldRabbit);
-	
+
   // pass the rabbits to the API let it mod it if it wants
   bz_AnointRabbitEventData_V1	anoitData;
   anoitData.newRabbit = rabbitIndex;
   if (anoitData.newRabbit == NoPlayer)
 	  anoitData.newRabbit = -1;
   anoitData.swap = true;
-  
+
   worldEventManager.callEvents(bz_eAnointRabbitEvent,&anoitData);
 
   if (anoitData.newRabbit != oldRabbit)
@@ -1968,7 +1968,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
     if (oldRabbitData && anoitData.swap)
       oldRabbitData->player.wasARabbit();
 
-    if (anoitData.newRabbit != -1) 
+    if (anoitData.newRabbit != -1)
 	{
 		GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(anoitData.newRabbit);
 		rabbitData->player.setTeam(RabbitTeam);
@@ -1981,7 +1981,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 	newRabbitData.newRabbit = anoitData.newRabbit;
 	worldEventManager.callEvents(bz_eNewRabbitEvent,&newRabbitData);
   }
-  else 
+  else
   {
     DEBUG3("no other than old rabbit to choose from, rabbitIndex is %d\n",
 	   rabbitIndex);
@@ -2121,7 +2121,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     }
 
 	sendRemovePlayerMessage(playerIndex);
- 
+
     // decrease team size
     int teamNum = int(playerData->player.getTeam());
     --team[teamNum].team.size;
@@ -2466,7 +2466,7 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
 	if (clOptions->maxPlayerScore != 0 && killer && killer->score.reached())
 	{
 		sendScoreOverMessage(killer->getIndex(), NoTeam);
-		
+
 		gameOver = true;
 		if (clOptions->oneGameOnly)
 		{
@@ -2510,6 +2510,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 	dieEvent.playerID = victimIndex;
 	dieEvent.team = convertTeam(victim->getTeam());
 	dieEvent.killerID = killerIndex;
+        dieEvent.shotID = shotIndex;
 
 	if (killer)
 		dieEvent.killerTeam = convertTeam(killer->getTeam());
@@ -3101,16 +3102,16 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     case MsgEnter:     // player joining
 		handleClientEnter(&buf,playerData);
 		break;
-  
+
     case MsgExit:    // player closing connection
 		handleClientExit(playerData);
 		break;
 
-    case MsgSetVar: 
+    case MsgSetVar:
 		handleSetVar(handler);
 		break;
 
-    case MsgNegotiateFlags: 
+    case MsgNegotiateFlags:
 		handleFlagNegotiation(handler,&buf,len);
 		break;
 
@@ -3122,7 +3123,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleWorldSettings(handler);
 		break;
 
-    case MsgWantWHash: 
+    case MsgWantWHash:
 		handleWorldHash(handler);
 		break;
 
@@ -3219,7 +3220,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     }
 
     // player sending a message
-    case MsgMessage: 
+    case MsgMessage:
 		handlePlayerMessage(playerData,buf);
 		break;
 
@@ -3329,7 +3330,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     // player is sending his position/speed (bulk data)
     case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: 
+    case MsgPlayerUpdateSmall:
 	 handlePlayerUpdate(&buf,code,playerData,rawbuf,len);
 	 break;
 
@@ -4515,13 +4516,13 @@ int main(int argc, char **argv)
 			else
 			{
 				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
-				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) 
+				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked)))
 					DEBUG1("Poll set taking action: no action taken, variable cannot be set\n");
 				else
 				{
 					DEBUG1("Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
 					BZDB.set(args[0], args[1], StateDatabase::Server);
-				}	
+				}
 			}
 	      }
 		  else if (action == "reset")
@@ -4805,7 +4806,7 @@ int main(int argc, char **argv)
 bool worldStateChanging ( void )
 {
 	TimeKeeper now = TimeKeeper::getCurrent();
-	return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f; 
+	return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f;
 }
 
 // Local Variables: ***
