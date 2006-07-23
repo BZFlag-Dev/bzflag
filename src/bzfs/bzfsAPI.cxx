@@ -717,6 +717,9 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 
 	playerRecord->verified = player->accessInfo.isVerified();
 
+        playerRecord->spawned = player->player.isAlive();
+        playerRecord->lag = player->lagInfo.getLag();
+
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
 	playerRecord->teamKills = player->score.getTKs();
