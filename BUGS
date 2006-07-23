@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- Any banlist changes erase the masterban entries if a banfile is present
+
 - client side bots make the client get disconected (read error)
 
 - idbans do not respect the antiban permission
