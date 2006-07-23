@@ -649,6 +649,9 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 
 	playerRecord->verified = player->accessInfo.isVerified();
 
+        playerRecord->spawned = player->player.isAlive();
+        playerRecord->lag = player->lagInfo.getLag();
+
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
 	playerRecord->teamKills = player->score.getTKs();
@@ -930,7 +933,7 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
 	case eObservers:
 		return bz_sendTextMessage(from,250-(int)convertTeam(to),message);
 
-		
+
 
 	case eAdministrators:
 		return bz_sendTextMessage(from,AdminPlayers,message);
@@ -1353,7 +1356,7 @@ BZF_API bool bz_isCountDownInProgress( void )
 BZF_API bool bz_pollVeto( void )
 {
 	/* make sure that there is a poll arbiter */
-	if (BZDB.isEmpty("poll")) 
+	if (BZDB.isEmpty("poll"))
 		return false;
 
 	// only need to do this once
