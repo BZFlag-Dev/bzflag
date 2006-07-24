@@ -1644,6 +1644,9 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\HUDDialogStack.cxx">
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiImage.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\InputMenu.cxx">
 				</File>
 				<File
@@ -1805,6 +1808,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiFrame.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiImage.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiLabel.h">
