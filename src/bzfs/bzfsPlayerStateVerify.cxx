@@ -128,6 +128,45 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	return true;
 }
 
+bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
+{
+	// make sure the player only pauses after the waiting time for pause is over
+	// we don not want cheaters that have instant pause
+
+	// if smooth the pause using the players lag, so server side pause and players own view are nearly identical
+	if   ((TimeKeeper::getCurrent() - playerData->player.pauseRequestTime) >= 5.0f
+		&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
+		&& playerData->player.isPaused()==false)
+	{
+		// if they are in an unallowed state, stop pausing them, otherwise pause them
+		if (state.status & PlayerState::CrossingWall || state.status & PlayerState::Falling
+			|| (state.status & PlayerState::Alive) == false)
+        {
+			playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+		} else {
+			uint8_t pause;
+			void *buf = getDirectMessageBuffer();
+			nboUnpackUByte(buf, pause);
+			pausePlayer(playerData->player.getPlayerIndex(), true);
+		}
+	}
+
+	// we need some inaccuracy here that was previously computed into pauseRequestTime
+    // lag will cause all players to pause sooner than 5 seconds
+    if ((TimeKeeper::getCurrent() - playerData->player.pauseRequestTime) < 5.0f
+		&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
+        && state.status & PlayerState::Paused)
+    {
+		// we have one of those players all love
+		DEBUG1("Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(), playerData->getIndex());
+		sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
+		removePlayer(playerData->getIndex(), "Paused too fast");
+		return false;
+	}
+
+	return true;
+}
+
 bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {
 	if (cheatProtectionOptions.doHeightChecks)
@@ -183,6 +222,9 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 			return false;
 
 		if (!doSpeedChecks(playerData,state))
+			return false;
+
+		if (!doPauseChecks(playerData,state))
 			return false;
 	}
 	return true;

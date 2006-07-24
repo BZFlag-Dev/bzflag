@@ -1450,7 +1450,7 @@ typedef struct bz_PlayerUpdateState
 {
 	bz_ePlayerStatus	status;
 	bool				falling;
-	bool				corssingWall;
+	bool				crossingWall;
 	float				pos[3];			// position of tank
 	float				velocity[3];	// velocity of tank
 	float				rotation;		// orientation of tank
@@ -1461,7 +1461,7 @@ typedef struct bz_PlayerUpdateState
 	{
 		status = eAlive;
 		falling = false;
-		corssingWall = false;
+		crossingWall = false;
 		pos[0] = pos[1] = pos[2] = 0;
 		velocity[0] = velocity[1] = velocity[2] = 0;
 		rotation = 0;

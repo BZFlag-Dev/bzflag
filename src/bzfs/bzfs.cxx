@@ -1989,7 +1989,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 }
 
 
-static void pausePlayer(int playerIndex, bool paused = true)
+void pausePlayer(int playerIndex, bool paused = true)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2812,6 +2812,8 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     p->player.setDead();
     p->player.setRestartOnBase(true);
     zapFlagByPlayer(i);
+    // stop pausing attempts as you can not pause when being dead
+    p->player.pauseRequestTime = TimeKeeper::getNullTime();
   }
 
   // update score (rogues can't capture flags)
@@ -3148,7 +3150,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		break;
 
     case MsgKilled: // player declaring self destroyed
-		handlePlayerKilled(playerData,buf);
+        // stop pausing attempts as you can not pause when being dead
+        playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+        handlePlayerKilled(playerData,buf);
 		break;
 
     case MsgDropFlag:    // player requesting to drop flag
@@ -3210,6 +3214,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
 	  playerKilled(hitPlayer, shooterPlayer, GotShot, shot,
 		       firingInfo.flagType, false, false);
+	  // stop pausing attempts as you can not pause when being dead
+      playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
       }
       break;
     }
@@ -3291,9 +3297,27 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     }
 
     case MsgPause: {
-      uint8_t pause;
-      nboUnpackUByte(buf, pause);
-      pausePlayer(playerID, pause != 0);
+      if (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0){
+		// player wants to unpause
+        playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+		uint8_t pause;
+		nboUnpackUByte(buf, pause);
+		pausePlayer(playerID, pause != 0);
+    } else {
+		// player wants to pause
+        playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
+
+        // adjust pauseRequestTime according to players lag to avoid kicking innocent players
+        int pauseRequestLag = playerData->lagInfo.getLag();
+        if (pauseRequestLag < 100) {
+            pauseRequestLag = 250;
+        }
+        else {
+            pauseRequestLag *= 2;
+        }
+        playerData->player.pauseRequestTime += ((double)(- pauseRequestLag) / 1000.0);
+
+    };
       break;
     }
 

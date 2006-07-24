@@ -875,7 +875,7 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &player
 		apiState.status = eTeleporting;
 
 	apiState.falling = (playerState.status & PlayerState::Falling) != 0;
-	apiState.corssingWall = (playerState.status & PlayerState::CrossingWall) != 0;
+	apiState.crossingWall = (playerState.status & PlayerState::CrossingWall) != 0;
 	apiState.phydrv = (playerState.status & PlayerState::OnDriver) ? playerState.phydrv : -1;
 	apiState.rotation = playerState.azimuth;
 	apiState.angVel = playerState.angVel;
@@ -908,7 +908,7 @@ void APIStateToplayerState ( PlayerState &playerState, bz_PlayerUpdateState &api
 	if (apiState.falling)
 		playerState.status |=  PlayerState::Falling;
 
-	if (apiState.corssingWall)
+	if (apiState.crossingWall)
 		playerState.status |=  PlayerState::CrossingWall;
 
 	if (apiState.phydrv != -1)

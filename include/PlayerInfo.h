@@ -110,6 +110,8 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
+  TimeKeeper	pauseRequestTime;	// time used to determine whether a player pauses too fast
+
   PlayerReplayState getReplayState();
   static void setCurrentTime(TimeKeeper tm);
   static void setFilterParameters(bool	callSignFiltering,

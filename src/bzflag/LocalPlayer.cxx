@@ -1162,7 +1162,7 @@ void			LocalPlayer::setPause(bool pause)
   if (isAlive()) {
     if (pause && !isPaused()) {
       setStatus(getStatus() | short(PlayerState::Paused));
-      server->sendPaused(true);
+      // sendPaused is done in clientCommands
     }
     else if (!pause && isPaused()) {
       setStatus(getStatus() & ~short(PlayerState::Paused));

@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "PlayerInfo.h"
+#include "TimeKeeper.h"
 
 /* system implementation headers */
 #include <errno.h>
@@ -39,6 +40,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+  pauseRequestTime = TimeKeeper::getNullTime();
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,

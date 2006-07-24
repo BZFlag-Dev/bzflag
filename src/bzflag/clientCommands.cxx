@@ -385,6 +385,7 @@ static std::string cmdPause(const std::string&,
     return "usage: pause";
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+  ServerLink	*server = ServerLink::getServer();
   if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
@@ -401,10 +402,12 @@ static std::string cmdPause(const std::string&,
       if (shouldGrabMouse())
 	mainWindow->grabMouse();
 
+
     } else if (pauseCountdown > 0.0f) {
       // player aborted pause
       pauseCountdown = 0.0f;
       hud->setAlert(1, "Pause cancelled", 1.5f, true);
+      server->sendPaused(false);
 
     } else if (myTank->getLocation() == LocalPlayer::InBuilding) {
       // custom message when trying to pause while in a building
@@ -423,6 +426,8 @@ static std::string cmdPause(const std::string&,
     } else {
       // update the pause alert message
       pauseCountdown = 5.0f;
+      server->sendPaused(true);
+
       char msgBuf[40];
       sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
       hud->setAlert(1, msgBuf, 1.0f, false);
