@@ -109,6 +109,8 @@ int debugLevel = 0;
 float maxWorldHeight = 0.0f;
 CheatProtectionOptions	cheatProtectionOptions;
 
+bool		   publiclyDisconected = false;
+
 char hexDigest[50];
 
 TimeKeeper gameStartTime;

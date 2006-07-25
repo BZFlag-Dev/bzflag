@@ -30,6 +30,7 @@
 #include "Protocol.h"
 #include "TextUtils.h"
 
+#include "bzfs.h"
 
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
@@ -242,6 +243,19 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
 	isAllowed = true;
     }
   }
+
+  if (publiclyDisconected)
+  {
+	  PlayerAccessMap::iterator group = groupAccess.find("DISCONNECTED");
+	  if (group != groupAccess.end())
+	  {
+		  if (group->second.explicitDenys.test(right))
+			  return false;
+		  else if (group->second.explicitAllows.test(right))
+			  isAllowed = true;
+	  }
+  }
+
   return isAllowed;
 }
 

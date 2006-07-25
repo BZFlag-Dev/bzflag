@@ -131,6 +131,7 @@ extern float	   pluginMaxWait;
 extern bool        isIdentifyFlagIn;
 extern bool        worldWasSentToAPlayer;
 extern RejoinList  rejoinList;
+extern bool		   publiclyDisconected;
 
 // FIXME - this should not be hangin out here
 extern bool dontWait;
