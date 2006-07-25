@@ -97,7 +97,7 @@ ListServerLink::~ListServerLink()
 
 void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
-  publiclyDisconected = !good;
+  publiclyDisconnected = !good;
   queuedRequest = false;
   if (good && (length < 2048)) {
     char buf[2048];
