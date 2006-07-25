@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -W_@@_
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdlmain -lsdl -lcurl -lares -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglew_@@_
 Libs=..\Dev-C++
-UnitCount=456
+UnitCount=455
 Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -2698,16 +2698,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit278]
-FileName=..\src\scene\Octree.cxx
-CompileCpp=1
-Folder=Source Files/scene
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit279]
 FileName=..\src\game\VotingArbiter.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -2717,8 +2707,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit279]
+FileName=..\src\game\Frustum.cxx
+CompileCpp=1
+Folder=Source Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit281]
-FileName=..\src\game\Intersect.cxx
+FileName=..\src\game\LagInfo.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -2728,7 +2728,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit282]
-FileName=..\src\game\LagInfo.cxx
+FileName=..\src\game\NetHandler.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -2768,7 +2768,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit276]
-FileName=..\src\game\CollisionManager.cxx
+FileName=..\src\game\Ray.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -2778,7 +2778,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit283]
-FileName=..\src\game\NetHandler.cxx
+FileName=..\src\game\PlayerInfo.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -2788,16 +2788,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit287]
-FileName=..\src\regex\regerror.c
-CompileCpp=0
-Folder=Source Files/regex
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit288]
 FileName=..\src\regex\regexec.c
 CompileCpp=0
 Folder=Source Files/regex
@@ -2807,7 +2797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit289]
+[Unit288]
 FileName=..\src\regex\regfree.c
 CompileCpp=0
 Folder=Source Files/regex
@@ -2817,7 +2807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit290]
+[Unit289]
 FileName=..\src\regex\utils.h
 CompileCpp=0
 Folder=Header Files/regex
@@ -2827,7 +2817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit291]
+[Unit290]
 FileName=..\src\regex\cclass.h
 CompileCpp=0
 Folder=Header Files/regex
@@ -2837,7 +2827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit292]
+[Unit291]
 FileName=..\src\regex\cname.h
 CompileCpp=0
 Folder=Header Files/regex
@@ -2847,7 +2837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit293]
+[Unit292]
 FileName=..\src\regex\regex2.h
 CompileCpp=0
 Folder=Header Files/regex
@@ -2857,7 +2847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit294]
+[Unit293]
 FileName=..\src\scene\Occluder.cxx
 CompileCpp=1
 Folder=Source Files/scene
@@ -2867,7 +2857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit295]
+[Unit294]
 FileName=..\src\platform\SDLPlatformFactory.cxx
 CompileCpp=1
 Folder=Source Files/platform
@@ -2877,7 +2867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit296]
+[Unit295]
 FileName=..\src\platform\SDLDisplay.cxx
 CompileCpp=1
 Folder=Source Files/platform
@@ -2887,7 +2877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit297]
+[Unit296]
 FileName=..\src\platform\SDLJoystick.cxx
 CompileCpp=1
 Folder=Source Files/platform
@@ -2897,7 +2887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit298]
+[Unit297]
 FileName=..\src\platform\SDLMedia.cxx
 CompileCpp=1
 Folder=Source Files/platform
@@ -2907,7 +2897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit299]
+[Unit298]
 FileName=..\src\obstacle\TetraBuilding.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -2917,7 +2907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit300]
+[Unit299]
 FileName=..\include\bzfSDL.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -2927,8 +2917,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit302]
-FileName=..\src\bzflag\ShotStatsDefaultKey.cxx
+[Unit300]
+FileName=..\src\bzflag\ShotStats.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -2937,7 +2927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit303]
+[Unit302]
 FileName=..\src\bzflag\ShotStatistics.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -2947,17 +2937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit305]
-FileName=..\src\obstacle\MeshFace.cxx
-CompileCpp=1
-Folder=Source Files/obstacle
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit304]
+[Unit303]
 FileName=..\src\geometry\MeshPolySceneNode.cxx
 CompileCpp=1
 Folder=Source Files/geometry
@@ -2967,7 +2947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit306]
+[Unit305]
 FileName=..\src\obstacle\MeshObstacle.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -2977,7 +2957,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit307]
+[Unit304]
+FileName=..\src\obstacle\MeshFace.cxx
+CompileCpp=1
+Folder=Source Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit306]
 FileName=..\src\obstacle\MeshSceneNodeGenerator.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -2987,7 +2977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit308]
+[Unit307]
 FileName=..\src\game\DynamicColor.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -2997,27 +2987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit310]
-FileName=..\include\WallSceneNode.h
-CompileCpp=1
-Folder=Header Files/geometry
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit311]
-FileName=..\src\bzflag\ForceFeedback.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit309]
+[Unit308]
 FileName=..\src\game\TextureMatrix.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -3027,7 +2997,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit312]
+[Unit310]
+FileName=..\src\bzflag\ForceFeedback.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit311]
 FileName=..\src\bzflag\motd.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3037,10 +3017,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit313]
+[Unit309]
+FileName=..\include\WallSceneNode.h
+CompileCpp=1
+Folder=Header Files/geometry
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit312]
 FileName=..\src\bzflag\ClientAuthentication.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit313]
+FileName=..\src\bzflag\LoginMenu.cxx
+CompileCpp=1
+Folder=Source Files/bzflag/menus
 Compile=1
 Link=1
 Priority=1000
@@ -3068,17 +3068,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit275]
-FileName=..\src\bzflag\HUDuiTextureLabel.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit277]
-FileName=..\src\game\Ray.cxx
+FileName=..\src\game\CollisionManager.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -3087,17 +3077,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit315]
-FileName=..\src\geometry\AnimatedTreads.cxx
+[Unit277]
+FileName=..\src\scene\Octree.cxx
 CompileCpp=1
-Folder=Source Files/geometry
+Folder=Source Files/scene
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit316]
+[Unit315]
 FileName=..\src\geometry\TankGeometryMgr.cxx
 CompileCpp=1
 Folder=Source Files/geometry
@@ -3107,7 +3097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit317]
+[Unit316]
 FileName=..\src\common\TextUtils.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -3117,7 +3107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit318]
+[Unit317]
 FileName=..\src\common\AutoCompleter.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -3127,7 +3117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit319]
+[Unit318]
 FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -3137,7 +3127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit320]
+[Unit319]
 FileName=..\src\obstacle\SphereObstacle.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -3147,7 +3137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit321]
+[Unit320]
 FileName=..\src\obstacle\ArcObstacle.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -3157,7 +3147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit322]
+[Unit321]
 FileName=..\src\obstacle\ConeObstacle.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -3167,7 +3157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit323]
+[Unit322]
 FileName=..\src\geometry\MeshFragSceneNode.cxx
 CompileCpp=1
 Folder=Source Files/geometry
@@ -3177,7 +3167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit324]
+[Unit323]
 FileName=..\src\game\PhysicsDriver.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -3187,7 +3177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit325]
+[Unit324]
 FileName=..\src\bzflag\WeatherRenderer.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -3197,7 +3187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit326]
+[Unit325]
 FileName=..\src\bzflag\WeatherRenderer.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -3207,10 +3197,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit327]
+[Unit326]
 FileName=..\src\common\ParseColor.cxx
 CompileCpp=1
 Folder=Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit327]
+FileName=..\src\bzflag\TrackMarks.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -3228,76 +3228,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit330]
-FileName=..\src\geometry\EighthDimShellNode.cxx
-CompileCpp=1
-Folder=Source Files/geometry
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit328]
-FileName=..\src\bzflag\TrackMarks.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit334]
-FileName=..\include\VotingArbiter.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit335]
-FileName=..\include\BzMaterial.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit336]
-FileName=..\include\CollisionManager.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit338]
-FileName=..\include\DirectoryNames.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit339]
-FileName=..\include\DynamicColor.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit331]
 FileName=..\src\bzflag\EffectsMenu.cxx
 CompileCpp=1
 Folder=Source Files/bzflag/menus
@@ -3307,10 +3237,80 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit332]
+[Unit328]
+FileName=..\src\bzflag\RoofTops.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit334]
+FileName=..\include\BzMaterial.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit335]
+FileName=..\include\CollisionManager.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit336]
+FileName=..\include\CommandsStandard.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit338]
+FileName=..\include\DynamicColor.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit339]
+FileName=..\include\Frustum.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit331]
 FileName=..\include\FontManager.h
 CompileCpp=1
 Folder=Header Files/3d
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit332]
+FileName=..\include\AutoCompleter.h
+CompileCpp=1
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3338,7 +3338,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit280]
-FileName=..\src\game\Frustum.cxx
+FileName=..\src\game\Intersect.cxx
 CompileCpp=1
 Folder=Source Files/game
 Compile=1
@@ -3348,7 +3348,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit286]
-FileName=..\src\regex\regcomp.c
+FileName=..\src\regex\regerror.c
 CompileCpp=0
 Folder=Source Files/regex
 Compile=1
@@ -3358,7 +3358,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit301]
-FileName=..\src\bzflag\ShotStats.cxx
+FileName=..\src\bzflag\ShotStatsDefaultKey.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -3368,16 +3368,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit284]
-FileName=..\src\game\PlayerInfo.cxx
-CompileCpp=1
-Folder=Source Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit285]
 FileName=bzflag.rc
 CompileCpp=1
 Folder=Resource Files
@@ -3387,10 +3377,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit285]
+FileName=..\src\regex\regcomp.c
+CompileCpp=0
+Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit314]
-FileName=..\src\bzflag\LoginMenu.cxx
+FileName=..\src\geometry\AnimatedTreads.cxx
 CompileCpp=1
-Folder=Source Files/bzflag/menus
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000
@@ -3408,9 +3408,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit329]
-FileName=..\src\bzflag\RoofTops.cxx
+FileName=..\src\geometry\EighthDimShellNode.cxx
 CompileCpp=1
-Folder=Source Files/bzflag
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000
@@ -3418,9 +3418,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit333]
-FileName=..\include\AutoCompleter.h
+FileName=..\include\VotingArbiter.h
 CompileCpp=1
-Folder=Header Files/common
+Folder=Header Files/game
 Compile=1
 Link=1
 Priority=1000
@@ -3428,7 +3428,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit337]
-FileName=..\include\CommandsStandard.h
+FileName=..\include\DirectoryNames.h
 CompileCpp=1
 Folder=Header Files/game
 Compile=1
@@ -3438,16 +3438,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit340]
-FileName=..\include\Frustum.h
-CompileCpp=1
-Folder=Header Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit341]
 FileName=..\include\LagInfo.h
 CompileCpp=1
 Folder=Header Files/game
@@ -3457,7 +3447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit342]
+[Unit341]
 FileName=..\include\NetHandler.h
 CompileCpp=1
 Folder=Header Files/game
@@ -3467,7 +3457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit343]
+[Unit342]
 FileName=..\include\PhysicsDriver.h
 CompileCpp=1
 Folder=Header Files/game
@@ -3477,7 +3467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit344]
+[Unit343]
 FileName=..\include\PlayerInfo.h
 CompileCpp=1
 Folder=Header Files/game
@@ -3487,7 +3477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit345]
+[Unit344]
 FileName=..\include\TextureMatrix.h
 CompileCpp=1
 Folder=Header Files/game
@@ -3497,7 +3487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit346]
+[Unit345]
 FileName=..\include\MeshPolySceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3507,7 +3497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit347]
+[Unit346]
 FileName=..\include\MeshFragSceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3517,7 +3507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit348]
+[Unit347]
 FileName=..\include\PolyWallSceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3527,7 +3517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit349]
+[Unit348]
 FileName=..\include\PTSceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3537,7 +3527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit350]
+[Unit349]
 FileName=..\include\TetraBuilding.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3547,7 +3537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit351]
+[Unit350]
 FileName=..\include\TankGeometryMgr.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3557,7 +3547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit352]
+[Unit351]
 FileName=..\include\TracerSceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3567,7 +3557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit353]
+[Unit352]
 FileName=..\include\TriWallSceneNode.h
 CompileCpp=1
 Folder=Header Files/geometry
@@ -3577,7 +3567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit354]
+[Unit353]
 FileName=..\src\mediafile\WaveAudioFile.h
 CompileCpp=1
 Folder=Header Files/mediafile
@@ -3587,7 +3577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit355]
+[Unit354]
 FileName=..\src\mediafile\AudioFile.h
 CompileCpp=1
 Folder=Header Files/mediafile
@@ -3597,7 +3587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit356]
+[Unit355]
 FileName=..\src\mediafile\ImageFile.h
 CompileCpp=1
 Folder=Header Files/mediafile
@@ -3607,7 +3597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit357]
+[Unit356]
 FileName=..\src\mediafile\PNGImageFile.h
 CompileCpp=1
 Folder=Header Files/mediafile
@@ -3617,7 +3607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit358]
+[Unit357]
 FileName=..\src\mediafile\SGIImageFile.h
 CompileCpp=1
 Folder=Header Files/mediafile
@@ -3627,7 +3617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit359]
+[Unit358]
 FileName=..\include\network.h
 CompileCpp=1
 Folder=Header Files/net
@@ -3637,7 +3627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit360]
+[Unit359]
 FileName=..\include\WallSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3647,7 +3637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit361]
+[Unit360]
 FileName=..\include\ArcObstacle.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3657,7 +3647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit362]
+[Unit361]
 FileName=..\include\BaseSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3667,7 +3657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit363]
+[Unit362]
 FileName=..\include\BoxSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3677,7 +3667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit364]
+[Unit363]
 FileName=..\include\ConeObstacle.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3687,7 +3677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit365]
+[Unit364]
 FileName=..\include\EmptySceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3697,7 +3687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit366]
+[Unit365]
 FileName=..\include\MeshFace.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3707,7 +3697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit367]
+[Unit366]
 FileName=..\include\MeshObstacle.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3717,7 +3707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit368]
+[Unit367]
 FileName=..\include\MeshSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3727,7 +3717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit369]
+[Unit368]
 FileName=..\include\ObstacleSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3737,7 +3727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit370]
+[Unit369]
 FileName=..\include\PyramidSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3747,7 +3737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit371]
+[Unit370]
 FileName=..\include\SphereObstacle.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3757,7 +3747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit372]
+[Unit371]
 FileName=..\include\TeleporterSceneNodeGenerator.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -3767,7 +3757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit373]
+[Unit372]
 FileName=..\include\BzfJoystick.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -3777,7 +3767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit374]
+[Unit373]
 FileName=..\src\platform\SDLPlatformFactory.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -3787,7 +3777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit375]
+[Unit374]
 FileName=..\src\platform\SDLDisplay.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -3797,7 +3787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit376]
+[Unit375]
 FileName=..\src\platform\SDLJoystick.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -3807,7 +3797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit377]
+[Unit376]
 FileName=..\src\platform\SDLMedia.h
 CompileCpp=1
 Folder=Header Files/platform
@@ -3817,7 +3807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit378]
+[Unit377]
 FileName=..\include\win32.h
 CompileCpp=1
 Folder=Header Files/common
@@ -3827,7 +3817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit379]
+[Unit378]
 FileName=..\src\scene\Octree.h
 CompileCpp=1
 Folder=Header Files/scene
@@ -3837,7 +3827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit380]
+[Unit379]
 FileName=..\src\scene\Occluder.h
 CompileCpp=1
 Folder=Header Files/scene
@@ -3847,7 +3837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit381]
+[Unit380]
 FileName=..\src\bzflag\ServerStartMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3857,7 +3847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit382]
+[Unit381]
 FileName=..\src\bzflag\AudioMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3867,7 +3857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit383]
+[Unit382]
 FileName=..\src\bzflag\DisplayMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3877,7 +3867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit384]
+[Unit383]
 FileName=..\src\bzflag\EffectsMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3887,7 +3877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit385]
+[Unit384]
 FileName=..\src\bzflag\FormatMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3897,7 +3887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit386]
+[Unit385]
 FileName=..\src\bzflag\GUIOptionsMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3907,7 +3897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit387]
+[Unit386]
 FileName=..\src\bzflag\HelpMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3917,7 +3907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit388]
+[Unit387]
 FileName=..\src\bzflag\InputMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3927,7 +3917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit389]
+[Unit388]
 FileName=..\src\bzflag\JoinMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3937,7 +3927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit390]
+[Unit389]
 FileName=..\src\bzflag\KeyboardMapMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3947,7 +3937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit391]
+[Unit390]
 FileName=..\src\bzflag\LoginMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3957,7 +3947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit392]
+[Unit391]
 FileName=..\src\bzflag\MainMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3967,7 +3957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit393]
+[Unit392]
 FileName=..\src\bzflag\OptionsMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3977,7 +3967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit394]
+[Unit393]
 FileName=..\src\bzflag\QuickKeysMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3987,7 +3977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit395]
+[Unit394]
 FileName=..\src\bzflag\QuitMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -3997,7 +3987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit396]
+[Unit395]
 FileName=..\src\bzflag\SaveWorldMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -4007,7 +3997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit397]
+[Unit396]
 FileName=..\src\bzflag\ServerMenu.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -4017,7 +4007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit398]
+[Unit397]
 FileName=..\src\bzflag\HUDuiTypeIn.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4027,7 +4017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit399]
+[Unit398]
 FileName=..\src\bzflag\HUDDialogStack.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -4037,7 +4027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit400]
+[Unit399]
 FileName=..\src\bzflag\HUDuiControl.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4047,7 +4037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit401]
+[Unit400]
 FileName=..\src\bzflag\HUDuiDefaultKey.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4057,7 +4047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit402]
+[Unit401]
 FileName=..\src\bzflag\HUDuiLabel.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4067,7 +4057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit403]
+[Unit402]
 FileName=..\src\bzflag\HUDuiList.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4077,17 +4067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit404]
-FileName=..\src\bzflag\HUDuiTextureLabel.h
-CompileCpp=1
-Folder=Header Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit405]
+[Unit403]
 FileName=..\src\bzflag\MenuDefaultKey.h
 CompileCpp=1
 Folder=Header Files/bzflag/menus
@@ -4097,7 +4077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit406]
+[Unit404]
 FileName=..\src\bzflag\ShotStatsDefaultKey.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4107,7 +4087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit407]
+[Unit405]
 FileName=..\src\bzflag\ShotStatistics.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4117,7 +4097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit408]
+[Unit406]
 FileName=..\src\bzflag\ShotStats.h
 CompileCpp=1
 Folder=Header Files/bzflag
@@ -4127,7 +4107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit409]
+[Unit407]
 FileName=..\include\MeshTransform.h
 CompileCpp=1
 Folder=Header Files/game
@@ -4137,7 +4117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit410]
+[Unit408]
 FileName=..\src\game\MeshTransform.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4147,7 +4127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit411]
+[Unit409]
 FileName=..\include\version.h
 CompileCpp=1
 Folder=Header Files/common
@@ -4157,7 +4137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit412]
+[Unit410]
 FileName=..\src\obstacle\ObstacleList.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -4167,7 +4147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit413]
+[Unit411]
 FileName=..\include\ObstacleList.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -4177,7 +4157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit414]
+[Unit412]
 FileName=..\src\obstacle\ObstacleMgr.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -4187,7 +4167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit415]
+[Unit413]
 FileName=..\include\ObstacleMgr.h
 CompileCpp=1
 Folder=Header Files/obstacle
@@ -4197,7 +4177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit416]
+[Unit414]
 FileName=..\src\obstacle\ObstacleModifier.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -4207,7 +4187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit417]
+[Unit415]
 FileName=..\src\game\ServerListCache.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4217,7 +4197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit418]
+[Unit416]
 FileName=..\src\game\ServerList.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4227,7 +4207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit419]
+[Unit417]
 FileName=..\src\game\StartupInfo.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4237,7 +4217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit420]
+[Unit418]
 FileName=..\src\game\ServerItem.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4247,7 +4227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit421]
+[Unit419]
 FileName=..\src\bzflag\EntryZone.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4257,7 +4237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit422]
+[Unit420]
 FileName=..\src\bzflag\Weapon.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4267,7 +4247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit423]
+[Unit421]
 FileName=..\src\game\LinkManager.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4277,7 +4257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit424]
+[Unit422]
 FileName=..\src\bzflag\Plan.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4287,7 +4267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit425]
+[Unit423]
 FileName=..\src\3D\ImageFont.cxx
 CompileCpp=1
 Folder=Source Files/3d
@@ -4297,7 +4277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit426]
+[Unit424]
 FileName=..\src\3D\BitmapFont.cxx
 CompileCpp=1
 Folder=Source Files/3d
@@ -4307,7 +4287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit427]
+[Unit425]
 FileName=..\src\bzflag\Downloads.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4317,7 +4297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit428]
+[Unit426]
 FileName=..\src\common\AccessList.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -4327,7 +4307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit429]
+[Unit427]
 FileName=..\src\common\bzglob.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -4337,7 +4317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit430]
+[Unit428]
 FileName=..\src\bzflag\CacheMenu.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4347,7 +4327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit431]
+[Unit429]
 FileName=..\src\game\CacheManager.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4357,7 +4337,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit433]
+[Unit430]
+FileName=..\src\net\AresHandler.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit431]
 FileName=..\src\common\cURLManager.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4367,17 +4357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit434]
-FileName=..\src\game\MsgStrings.cxx
-CompileCpp=1
-Folder=Source Files/game
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit435]
+[Unit433]
 FileName=..\src\bzflag\ScoreboardRenderer.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4387,7 +4367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit436]
+[Unit434]
 FileName=..\src\bzflag\effectsRenderer.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4397,7 +4377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit437]
+[Unit435]
 FileName=..\src\bzflag\LocalCommand.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4407,7 +4387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit438]
+[Unit436]
 FileName=..\src\bzflag\clientConfig.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4417,7 +4397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit439]
+[Unit437]
 FileName=..\src\obstacle\Triangulate.cxx
 CompileCpp=1
 Folder=Source Files/obstacle
@@ -4427,7 +4407,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit441]
+[Unit438]
+FileName=..\src\obstacle\MeshDrawInfo.cxx
+CompileCpp=1
+Folder=Source Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit439]
 FileName=..\src\common\GameTime.cxx
 CompileCpp=1
 Folder=Source Files/common
@@ -4437,27 +4427,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit441]
+FileName=..\src\geometry\MeshDrawMgr.cxx
+CompileCpp=1
+Folder=Source Files/geometry
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit444]
-FileName=..\src\geometry\MeshRenderNode.cxx
-CompileCpp=1
-Folder=Source Files/geometry
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit445]
-FileName=..\src\geometry\OccluderSceneNode.cxx
-CompileCpp=1
-Folder=Source Files/geometry
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit446]
 FileName=..\src\bzflag\defaultBZDB.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4467,7 +4447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit447]
+[Unit445]
 FileName=..\src\bzflag\Roaming.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4477,7 +4457,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit449]
+[Unit446]
+FileName=..\src\bzflag\NewVersionMenu.cxx
+CompileCpp=1
+Folder=Source Files/bzflag/menus
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit447]
 FileName=config.h
 CompileCpp=1
 Folder=Header Files
@@ -4487,17 +4477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit450]
-FileName=..\src\bzflag\HUDuiElement.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit451]
+[Unit449]
 FileName=..\src\bzflag\AutoHunt.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4507,7 +4487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit452]
+[Unit450]
 FileName=..\src\bzflag\HUDuiFrame.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4517,7 +4497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit453]
+[Unit451]
 FileName=..\src\bzflag\HelpCreditsMenu.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4527,7 +4507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit454]
+[Unit452]
 FileName=..\src\bzflag\HelpFlagsMenu.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
@@ -4537,8 +4517,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit455]
+[Unit453]
 FileName=..\src\bzflag\HelpInstructionsMenu.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit454]
+FileName=..\src\bzflag\HelpKeymapMenu.cxx
+CompileCpp=1
+Folder=Source Files/bzflag
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit455]
+FileName=..\src\bzflag\HUDuiImage.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -4598,9 +4598,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit448]
-FileName=..\src\bzflag\NewVersionMenu.cxx
+FileName=..\src\bzflag\HUDuiElement.cxx
 CompileCpp=1
-Folder=Source Files/bzflag/menus
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -4628,9 +4628,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit440]
-FileName=..\src\obstacle\MeshDrawInfo.cxx
+FileName=..\src\geometry\MeshSceneNode.cxx
 CompileCpp=1
-Folder=Source Files/obstacle
+Folder=Source Files/geometry
 Compile=1
 Link=1
 Priority=1000
@@ -4728,9 +4728,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit432]
-FileName=..\src\net\AresHandler.cxx
+FileName=..\src\game\MsgStrings.cxx
 CompileCpp=1
-Folder=Source Files/bzflag
+Folder=Source Files/game
 Compile=1
 Link=1
 Priority=1000
@@ -4738,7 +4738,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit442]
-FileName=..\src\geometry\MeshSceneNode.cxx
+FileName=..\src\geometry\MeshRenderNode.cxx
 CompileCpp=1
 Folder=Source Files/geometry
 Compile=1
@@ -4748,7 +4748,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit443]
-FileName=..\src\geometry\MeshDrawMgr.cxx
+FileName=..\src\geometry\OccluderSceneNode.cxx
 CompileCpp=1
 Folder=Source Files/geometry
 Compile=1
