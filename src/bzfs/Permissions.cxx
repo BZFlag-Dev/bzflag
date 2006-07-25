@@ -244,7 +244,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
     }
   }
 
-  if (publiclyDisconected)
+  if (publiclyDisconnected)
   {
 	  PlayerAccessMap::iterator group = groupAccess.find(std::string("DISCONNECTED"));
 	  if (group != groupAccess.end())
