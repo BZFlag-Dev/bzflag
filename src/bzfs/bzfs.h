@@ -107,6 +107,7 @@ extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 
+extern bool		  publiclyDisconected;
 
 void pauseCountdown ( const char *pausedBy );
 void resumeCountdown ( const char *resumedBy );

@@ -148,6 +148,9 @@ static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
+bool		  publiclyDisconected = false;
+
+
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 static void dropAssignedFlag(int playerIndex);

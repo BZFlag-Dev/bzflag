@@ -49,6 +49,8 @@ ListServerLink::ListServerLink(std::string listServerURL,
   setDNSCachingTime(-1);
   setTimeout(10);
 
+  publiclyDisconected = false;
+
   if (clOptions->pingInterface != "")
     setInterface(clOptions->pingInterface);
 
@@ -94,6 +96,8 @@ ListServerLink::~ListServerLink()
 
 void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
+	publiclyDisconected = !good;
+
   queuedRequest = false;
   if (good && (length < 2048)) {
     char buf[2048];
