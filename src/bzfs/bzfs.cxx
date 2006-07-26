@@ -1999,7 +1999,7 @@ void pausePlayer(int playerIndex, bool paused = true)
     return;
 
   playerData->player.setPaused(paused);
-  if (clOptions->gameType & eRabbitChase) {
+  if (clOptions->gameType == eRabbitChase) {
     if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();
     } else if (!paused && (rabbitIndex == NoPlayer)) {
@@ -2160,7 +2160,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     listServerLink->queueMessage(ListServerLink::ADD);
   }
 
-  if (clOptions->gameType & eRabbitChase)
+  if (clOptions->gameType == eRabbitChase)
     if (playerIndex == rabbitIndex)
       anointNewRabbit();
 
