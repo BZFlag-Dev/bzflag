@@ -1749,7 +1749,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    if (clOptions->gameType & eClassicCTF) {
+    if (clOptions->gameType == eClassicCTF) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
       if (flagid >= 0 && !FlagInfo::get(flagid)->exist()) {
 	// reset those flags
