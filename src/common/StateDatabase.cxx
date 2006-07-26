@@ -965,6 +965,8 @@ float StateDatabase::evaluate(Expression e) const
 	break;
     }
   }
+  if (!evaluationStack.size())
+	  return 0; // yeah we are screwed. TODO, don't let us get this far
   return (float)evaluationStack.top().getNumber();
 }
 
