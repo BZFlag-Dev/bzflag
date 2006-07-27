@@ -45,6 +45,7 @@
 #include "BZWError.h"
 #include "Permissions.h"
 #include "EntryZones.h"
+#include "SpawnPolicyFactory.h"
 
 
 const char *usageString =
@@ -118,6 +119,7 @@ const char *usageString =
 "[-sl <id> <num>] "
 "[-spamtime <time>] "
 "[-spamwarn <warnAmt>] "
+"[-spawnPolicy <policy>] "
 "[-speedtol <tolerance>] "
 "[-srvmsg <text>] "
 "[-st <time>] "
@@ -215,6 +217,7 @@ const char *extraUsageString =
 "\t\tmessages sent that are alike\n"
 "\t-spamwarn <warnAmt>: warn a spammer that sends messages before\n"
 "\t\tspamtime times out <warnAmt> many times\n"
+"\t-spawnPolicy specifies <policy> to use for spawning players\n"
 "\t-speedtol: multiplier of normal speed for auto kick (default=1.25)\n"
 "\t\tshould not be less than 1.0\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
@@ -1018,6 +1021,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.spamWarnMax = atoi(argv[i]);
       std::cerr << "using spam warn amount of " << options.spamWarnMax << std::endl;
+    } else if (TextUtils::compare_nocase(argv[i], "-spawnPolicy") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      bool validPolicy = SpawnPolicyFactory::IsValid(argv[i]);
+      if (validPolicy) {
+	SpawnPolicyFactory::SetDefault(argv[i]);
+	std::cerr << "using " << argv[i] << " spawn policy" << std::endl;
+      } else {
+	std::cerr << "unknown spawn policy specified [" << argv[i] << "]" << std::endl;
+	std::cerr << std::endl << "Available Policies" << std::endl << "------------------" << std::endl;
+	SpawnPolicyFactory::PrintList(std::cerr);
+	std::cerr << std::endl;
+	usage(argv[0]);
+      }
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);
