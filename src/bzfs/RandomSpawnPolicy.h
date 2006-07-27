@@ -29,6 +29,10 @@ public:
   RandomSpawnPolicy();
   virtual ~RandomSpawnPolicy();
 
+  virtual const char *Name() {
+    return "Random";
+  }
+
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
 };
