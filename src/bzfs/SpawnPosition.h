@@ -34,7 +34,7 @@ public:
   /** used to override the default spawn policy.  call this before
    *  creating SpawnPosition objects.
    */
-  static void setSpawnPolicy(SpawnPolicy* policy);
+  static void SetSpawnPolicy(SpawnPolicy* policy);
 
   float getX() const;
   float getY() const;
