@@ -470,6 +470,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
 			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
+  World *world = World::getWorld();
 
   // setup the radar range
   float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
@@ -590,7 +591,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   // only draw if there's a local player and a world
-  else if (myTank) {
+  else if (myTank && world) {
 
     colorblind = (myTank->getFlag() == Flags::Colorblindness);
 
@@ -675,7 +676,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
 
     //draw world weapon shots
-    WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
+    WorldPlayer *worldWeapons = world->getWorldWeapons();
     maxShots = worldWeapons->getMaxShots();
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = worldWeapons->getShot(i);
@@ -765,7 +766,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     bool coloredShot = BZDB.isTrue("coloredradarshots");
     // draw other tanks' shells
     bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
-    maxShots = World::getWorld()->getMaxShots();
+    maxShots = world->getMaxShots();
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world->getPlayer(i);
       if (!player) continue;

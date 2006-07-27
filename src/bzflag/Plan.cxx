@@ -44,6 +44,10 @@ void Plan::execute(float &, float &)
 {
 	float pos[3];
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	World *world = World::getWorld();
+	if (!myTank || !world) {
+	  return;
+	}
 	memcpy(pos, myTank->getPosition(), sizeof(pos));
 	if (pos[2] < 0.0f)
 		pos[2] = 0.01f;
@@ -56,7 +60,7 @@ void Plan::execute(float &, float &)
 
 	if (myTank->getFlag() == Flags::ShockWave) {
 		TimeKeeper now = TimeKeeper::getTick();
-		if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+		if (now - lastShot >= (1.0f / world->getMaxShots())) {
 			bool hasSWTarget = false;
 			for (int t = 0; t < curMaxPlayers; t++) {
 				if (t != myTank->getId() && player[t] &&
@@ -93,9 +97,9 @@ void Plan::execute(float &, float &)
 		}
 	} else {
 		TimeKeeper now = TimeKeeper::getTick();
-		if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+		if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
-			float errorLimit = World::getWorld()->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+			float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
 			float closeErrorLimit = errorLimit * 2.0f;
 
 			for (int t = 0; t < curMaxPlayers; t++) {
@@ -148,6 +152,10 @@ void Plan::execute(float &, float &)
 bool Plan::avoidBullet(float &rotation, float &speed)
 {
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	World *world = World::getWorld();
+	if (!myTank || !world) {
+	  return false;
+	}
 	const float *pos = myTank->getPosition();
 
 	if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
@@ -167,7 +175,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 	float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
 	float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-	if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+	if (((world->allowJumping() || (myTank->getFlag()) == Flags::Jumping
 	|| (myTank->getFlag()) == Flags::Wings))
 	&& (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
 	&& (myTank->getFlag() != Flags::NoJumping)) {
@@ -208,6 +216,10 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 ShotPath *Plan::findWorstBullet(float &minDistance)
 {
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
+	World *world = World::getWorld();
+	if (!myTank || !world) {
+	  return;
+	}
 	const float *pos = myTank->getPosition();
 	ShotPath *minPath = NULL;
 
@@ -255,7 +267,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	}
 
 	float oldDistance = minDistance;
-	WorldPlayer *wp = World::getWorld()->getWorldWeapons();
+	WorldPlayer *wp = world->getWorldWeapons();
 	for (int w = 0; w < wp->getMaxShots(); w++) {
 		ShotPath* shot = wp->getShot(w);
 		if (!shot || shot->isExpired())

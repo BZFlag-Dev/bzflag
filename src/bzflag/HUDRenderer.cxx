@@ -693,7 +693,8 @@ void			HUDRenderer::renderAlerts(void)
 void			HUDRenderer::renderStatus(void)
 {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (!myTank || !World::getWorld()) return;
+  World *world = World::getWorld();
+  if (!myTank || !world) return;
 
   Bundle *bdl = BundleMgr::getCurrentBundle();
 
@@ -785,7 +786,7 @@ void			HUDRenderer::renderStatus(void)
 
       case LocalPlayer::Ready:
 	if (flag != Flags::Null && flag->endurance == FlagSticky &&
-	    World::getWorld()->allowShakeTimeout()) {
+	    world->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
 	  sprintf(buffer, "%.1f", myTank->getFlagShakingTime());
@@ -797,7 +798,7 @@ void			HUDRenderer::renderStatus(void)
 
       case LocalPlayer::Loading:
 
-    if (World::getWorld()->getMaxShots() != 0) {
+    if (world->getMaxShots() != 0) {
 	  statusColor = redColor;
 	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
 	}
@@ -826,9 +827,13 @@ void			HUDRenderer::renderStatus(void)
 
 int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 {
-  RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
-  RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
-  if (World::getWorld()->allowRabbit())
+  World *world = World::getWorld();
+  if (!world) {
+    return 0;
+  }
+  RemotePlayer* a = world->getPlayer(*(int*)_a);
+  RemotePlayer* b = world->getPlayer(*(int*)_b);
+  if (world->allowRabbit())
     return b->getRabbitScore() - a->getRabbitScore();
   else
     return b->getScore() - a->getScore();
@@ -836,8 +841,12 @@ int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 
 int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 {
-  Team* c = World::getWorld()->getTeams()+*(int*)_c;
-  Team* d = World::getWorld()->getTeams()+*(int*)_d;
+  World *world = World::getWorld();
+  if (!world) {
+    return 0;
+  }
+  Team* c = world->getTeams()+*(int*)_c;
+  Team* d = world->getTeams()+*(int*)_d;
 
   return (d->won-d->lost) - (c->won-c->lost);
 }
@@ -845,7 +854,10 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
-  if (!World::getWorld()) return;
+  World *world = World::getWorld();
+  if (!world) {
+    return 0;
+  }
 
   int offset = window.getViewHeight() - window.getHeight();
 
@@ -862,7 +874,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   }
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    RemotePlayer *pl = World::getWorld()->getPlayer(i);
+    RemotePlayer *pl = world->getPlayer(i);
     if (pl && pl->isAlive()) {
       const char *name = pl->getCallSign();
       double x, y, z;

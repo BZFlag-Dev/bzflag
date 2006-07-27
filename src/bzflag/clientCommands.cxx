@@ -590,16 +590,13 @@ static std::string cmdSend(const std::string&,
     msgDestination = AllPlayers;
     composePrompt = "Send to all: ";
   } else if (args[0] == "team") {
-	if (World::getWorld()->allowTeams())
-	{
-		msgDestination = TeamToPlayerId(myTank->getTeam());
-		composePrompt = "Send to teammates: ";
-	}
-	else
-	{
-		msgDestination = AllPlayers;
-		composePrompt = "Send to all: ";
-	}
+    if (World::getWorld() && World::getWorld()->allowTeams()) {
+      msgDestination = TeamToPlayerId(myTank->getTeam());
+      composePrompt = "Send to teammates: ";
+    } else {
+      msgDestination = AllPlayers;
+      composePrompt = "Send to all: ";
+    }
   } else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
     if (!nemesis)
@@ -978,7 +975,7 @@ static std::string cmdHunt(const std::string&,
 {
   if (args.size() != 0)
     return "usage: hunt";
-   hud->getScoreboard()->huntKeyEvent (false);
+  hud->getScoreboard()->huntKeyEvent (false);
   return std::string();
 }
 
@@ -987,7 +984,7 @@ static std::string cmdAddHunt(const std::string&,
 {
   if (args.size() != 0)
     return "usage: addhunt";
-   hud->getScoreboard()->huntKeyEvent (true);
+  hud->getScoreboard()->huntKeyEvent (true);
   return std::string();
 }
 

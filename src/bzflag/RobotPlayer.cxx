@@ -112,7 +112,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
   projpos[0] = tx; projpos[1] = ty; projpos[2] = tz;
 
   // projected pos in building -> use current pos
-  if (World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight)) {
+  if (World::getWorld() && World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight)) {
     projpos[0] = targ->getPosition()[0];
     projpos[1] = targ->getPosition()[1];
     projpos[2] = targ->getPosition()[2];
@@ -127,6 +127,11 @@ void			RobotPlayer::doUpdate(float dt)
   float tankRadius = BZDBCache::tankRadius;
   const float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
   const float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+
+  World *world = World::getWorld();
+  if (!world) {
+    return;
+  }
 
   // fire shot if any available
   timerForShot  -= dt;
@@ -170,11 +175,11 @@ void			RobotPlayer::doUpdate(float dt)
       {
 	shoot=true;
 	// try to not aim at teammates
-	for (int i=0; i <= World::getWorld()->getCurMaxPlayers(); i++)
+	for (int i=0; i <= world->getCurMaxPlayers(); i++)
 	{
 	  Player *p = 0;
-	  if (i < World::getWorld()->getCurMaxPlayers())
-	    p = World::getWorld()->getPlayer(i);
+	  if (i < world->getCurMaxPlayers())
+	    p = world->getPlayer(i);
 	  else
 	    p = LocalPlayer::getMyTank();
 	  if (!p || p->getId() == getId() || validTeamTarget(p) ||

@@ -60,15 +60,15 @@ HUDuiDefaultKey* SaveWorldMenu::getDefaultKey()
 
 void SaveWorldMenu::execute()
 {
-  World *pWorld = World::getWorld();
-  if (pWorld == NULL) {
+  World *world = World::getWorld();
+  if (world == NULL) {
     status->setString("No world loaded to save");
   } else {
     std::string fullname;
     BZDB.set("saveAsMeshes", "0");
     BZDB.set("saveFlatFile", "0");
     BZDB.set("saveAsOBJ",    "0");
-    if (World::getWorld()->writeWorld(filename->getString(), fullname)) {
+    if (world->writeWorld(filename->getString(), fullname)) {
       std::string newLabel = "World Saved: ";
       newLabel += fullname;
       status->setString(newLabel);

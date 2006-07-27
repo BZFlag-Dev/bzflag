@@ -68,26 +68,37 @@ int lookupPlayerIndex(PlayerId id)
 
 Player* getPlayerByIndex(int index)
 {
-  if (index == -2)
+  if (index == -2) {
     return LocalPlayer::getMyTank();
-  if (index == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
-  if (index == -1 || index >= curMaxPlayers)
+  }
+  if (index == ServerPlayer) {
+    World *world = World::getWorld();
+    if (!world) {
+      return NULL;
+    }
+    return world->getWorldWeapons();
+  }
+  if (index == -1 || index >= curMaxPlayers) {
     return NULL;
+  }
   return player[index];
 }
 
 Player* getPlayerByName(const char* name)
 {
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0) {
       return player[i];
+    }
+  }
   World *world = World::getWorld();
-  if (!world)
+  if (!world) {
     return NULL;
+  }
   WorldPlayer *worldWeapons = world->getWorldWeapons();
-  if (strcmp(worldWeapons->getCallSign(), name) == 0)
+  if (strcmp(worldWeapons->getCallSign(), name) == 0) {
     return worldWeapons;
+  }
   return NULL;
 }
 

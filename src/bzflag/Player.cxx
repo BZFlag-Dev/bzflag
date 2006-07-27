@@ -521,19 +521,24 @@ bool Player::hitObstacleResizing()
 
   // check walls
   const World* world = World::getWorld();
-  if (world) {
-    const ObstacleList& walls = OBSTACLEMGR.getWalls();
-    for (unsigned int i = 0; i < walls.size(); i++) {
-      const WallObstacle* wall = (const WallObstacle*) walls[i];
-      if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
-	return true;
-      }
+  if (!world) {
+    return false;
+  }
+
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  for (unsigned int i = 0; i < walls.size(); i++) {
+    const WallObstacle* wall = (const WallObstacle*) walls[i];
+    if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+      return true;
     }
   }
 
   // check everything else
   const ObsList* olist =
     COLLISIONMGR.boxTest(getPosition(), getAngle(), dims[0], dims[1], dims[2]);
+  if (!olist) {
+    return false;
+  }
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
@@ -572,8 +577,12 @@ void Player::updateTranslucency(float dt)
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
   }
   else {
+    World *world = World::getWorld();
+    if (!world) {
+      return;
+    }
     teleporterProximity =
-      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+      world->getProximity(state.pos, BZDBCache::tankRadius);
     teleAlpha = (1.0f - (0.75f * teleporterProximity));
 
     if (alpha == 0.0f) {
@@ -801,6 +810,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     return; // don't draw anything
   }
 
+  World *world = World::getWorld();
+  if (!world) {
+    return; /* no world, shouldn't add to scene */
+  }
+
   // place the tank
   tankNode->move(state.pos, forward);
 
@@ -861,15 +875,15 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       GLfloat plane[4];
       const GLfloat a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle =
-	World::getWorld()->hitBuilding(state.pos, a,
-				       dimensions[0], dimensions[1],
-				       dimensions[2]);
+	world->hitBuilding(state.pos, a,
+			   dimensions[0], dimensions[1],
+			   dimensions[2]);
       if (obstacle && obstacle->isCrossing(state.pos, a,
 					   dimensions[0], dimensions[1],
 					   dimensions[2], plane) ||
-	  World::getWorld()->crossingTeleporter(state.pos, a,
-						dimensions[0], dimensions[1],
-						dimensions[2], plane)) {
+	  world->crossingTeleporter(state.pos, a,
+				    dimensions[0], dimensions[1],
+				    dimensions[2], plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
 	  tankIDLNode->move(plane);
@@ -1020,7 +1034,8 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
     return false;
   }
 
-  return !World::getWorld()->allowRabbit();
+  World *world = World::getWorld();
+  return (world && !world->allowRabbit());
 }
 
 

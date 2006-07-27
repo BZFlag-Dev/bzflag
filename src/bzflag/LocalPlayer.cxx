@@ -61,7 +61,11 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   deathPhyDrv(-1)
 {
   // initialize shots array to no shots fired
-  const int numShots = World::getWorld()->getMaxShots();
+  World *world = World::getWorld();
+  int numShots = 0;
+  if (world) {
+    numShots = world->getMaxShots();
+  }
   shots.resize(numShots);
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
@@ -71,7 +75,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   } else {
     setInputMethod(BZDB.get("activeInputDevice"));
   }
-
+  
   stuckStartTime = TimeKeeper::getSunExplodeTime();
 }
 
@@ -141,7 +145,8 @@ void			LocalPlayer::doUpdate(float dt)
     target = NULL;
 
   // drop bad flag if timeout has expired
-  if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
+  World *world = World::getWorld();
+  if (!isPaused() && dt > 0.0f && world && world->allowShakeTimeout() &&
       getFlag() != Flags::Null && getFlag()->endurance == FlagSticky &&
       flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
@@ -248,6 +253,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
   float newAngVel = 0.0f;
 
   clearRemoteSounds();
+  World *world = World::getWorld();
+  if (!world) {
+    return; /* no world, no motion */
+  }
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
   if (isTeleporting() &&
@@ -449,7 +458,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       newVelocity[0] = movementMax * normalStuck[0];
       newVelocity[1] = movementMax * normalStuck[1];
-      if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)) &&
+      if ((world->allowJumping() || (getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)) &&
 	  (getFlag() != Flags::NoJumping))
 	newVelocity[2] = movementMax * normalStuck[2];
       else
@@ -643,7 +652,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     } else {
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
     }
-  } else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
+  } else if (world->crossingTeleporter( newPos, newAzimuth,
 		      0.5f * BZDBCache::tankLength,
 		      0.5f * BZDBCache::tankWidth,
 		      BZDBCache::tankHeight, crossingPlane)) {
@@ -667,7 +676,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (!isAlive()) {
     teleporter = NULL;
   } else {
-    teleporter = World::getWorld()->crossesTeleporter(oldPosition, newPos, face);
+    teleporter = world->crossesTeleporter(oldPosition, newPos, face);
   }
 
   if (teleporter) {
@@ -679,12 +688,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
     } else {
       // teleport
-      const int source = World::getWorld()->getTeleporter(teleporter, face);
-      int targetTele = World::getWorld()->getTeleportTarget(source);
+      const int source = world->getTeleporter(teleporter, face);
+      int targetTele = world->getTeleportTarget(source);
 
       int outFace;
-      const Teleporter* outPort =
-	World::getWorld()->getTeleporter(targetTele, outFace);
+      const Teleporter* outPort = world->getTeleporter(targetTele, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
 			      newPos, newVelocity, newAzimuth,
 			      newPos, newVelocity, &newAzimuth);
@@ -855,8 +863,11 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
-  const Obstacle* obstacle =
-    World::getWorld()->hitBuilding(p, a, dims[0], dims[1], dims[2]);
+  World *world = World::getWorld();
+  if (!world) {
+    return NULL;
+  }
+  const Obstacle* obstacle = world->hitBuilding(p, a, dims[0], dims[1], dims[2]);
 
   expel = (obstacle != NULL);
   if (expel && phased)
@@ -873,8 +884,11 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
   const float* dims = getDimensions();
-  const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
+  World *world = World::getWorld();
+  if (!world) {
+    return NULL;
+  }
+  const Obstacle* obstacle = world->hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
 
   expel = (obstacle != NULL);
   if (expel && phased)
@@ -969,7 +983,11 @@ void LocalPlayer::collectInsideBuildings()
 
 float			LocalPlayer::getReloadTime() const
 {
-  const int numShots = World::getWorld()->getMaxShots();
+  World *world = World::getWorld();
+  if (!world) {
+    return 0.0f;
+  }
+  const int numShots = world->getMaxShots();
   if (numShots <= 0) {
     return 0.0f;
   }
@@ -1315,6 +1333,10 @@ void			LocalPlayer::setJumpPressed(bool value)
 void			LocalPlayer::doJump()
 {
   FlagType* flag = getFlag();
+  World *world = World::getWorld();
+  if (!world) {
+    return;
+  }
 
   // can't jump while burrowed
   if (getPosition()[2] < 0.0f) {
@@ -1334,7 +1356,7 @@ void			LocalPlayer::doJump()
       return;
     wingsFlapCount--;
   } else if ((flag != Flags::Bouncy) &&
-	     ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
+	     ((flag != Flags::Jumping && !world->allowJumping()) ||
 	      (flag == Flags::NoJumping))) {
     return;
   }
@@ -1535,19 +1557,23 @@ bool			LocalPlayer::checkHit(const Player* source,
 void			LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);
+  World *world = World::getWorld();
+  if (!world) {
+    return;
+  }
 
   float worldSize = BZDBCache::worldSize;
   // if it's bad then reset countdowns and set antidote flag
   if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky) {
-    if (World::getWorld()->allowShakeTimeout())
-      flagShakingTime = World::getWorld()->getFlagShakeTimeout();
-    if (World::getWorld()->allowShakeWins())
-      flagShakingWins = World::getWorld()->getFlagShakeWins();
-    if (World::getWorld()->allowAntidote()) {
+    if (world->allowShakeTimeout())
+      flagShakingTime = world->getFlagShakeTimeout();
+    if (world->allowShakeWins())
+      flagShakingWins = world->getFlagShakeWins();
+    if (world->allowAntidote()) {
       float tankRadius = BZDBCache::tankRadius;
       float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
       do {
-	if (World::getWorld()->allowTeamFlags()) {
+	if (world->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
@@ -1556,7 +1582,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
 	  flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
-      } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius,
+      } while (world->inBuilding(flagAntidotePos, tankRadius,
 					     BZDBCache::tankHeight));
       antidoteFlag = new FlagSceneNode(flagAntidotePos);
       antidoteFlag->setColor(1.0f, 1.0f, 0.0f, 1.0f); // yellow
@@ -1575,7 +1601,11 @@ void			LocalPlayer::changeScore(short deltaWins,
 						 short deltaTks)
 {
   Player::changeScore(deltaWins, deltaLosses, deltaTks);
-  if (deltaWins > 0 && World::getWorld()->allowShakeWins() &&
+  World *world = World::getWorld();
+  if (!world) {
+    return;
+  }
+  if (deltaWins > 0 && world->allowShakeWins() &&
       flagShakingWins > 0) {
     flagShakingWins -= deltaWins;
     if (flagShakingWins <= 0) {

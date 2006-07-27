@@ -22,10 +22,15 @@ RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
 			   const PlayerType _type) :
   Player(_id, _team, _name, _email, _type)
 {
-  numShots = World::getWorld()->getMaxShots();
+  if (World::getWorld()) {
+    numShots = World::getWorld()->getMaxShots();
+  } else {
+    numShots = 0;
+  }
   shots.resize(numShots);
-  for (int i = 0; i < numShots; i++)
+  for (int i = 0; i < numShots; i++) {
     shots[i] = NULL;
+  }
 }
 
 RemotePlayer::~RemotePlayer()

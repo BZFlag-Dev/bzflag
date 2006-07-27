@@ -370,11 +370,14 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   const float    *v	 = shotPath.getVelocity();
   TimeKeeper      startTime = shotPath.getStartTime();
   float timeLeft	    = shotPath.getLifetime();
-  float	   minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
-    / hypotf(v[0], hypotf(v[1], v[2]));
+  float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
+  World *world = World::getWorld();
+  if (!world) {
+    return NULL; /* no world, no shots */
+  }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop && World::getWorld()->allShotsRicochet()) {
+  if (e == Stop && world->allShotsRicochet()) {
     e = Reflect;
   }
 
@@ -458,12 +461,11 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     } else if (teleporter) {
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
-      int source = World::getWorld()->getTeleporter(teleporter, face);
-      int target = World::getWorld()->getTeleportTarget(source, seed);
+      int source = world->getTeleporter(teleporter, face);
+      int target = world->getTeleportTarget(source, seed);
 
       int outFace;
-      const Teleporter* outTeleporter =
-			  World::getWorld()->getTeleporter(target, outFace);
+      const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
       o[0] += t * d[0];
       o[1] += t * d[1];
       o[2] += t * d[2];
