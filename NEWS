@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Fixed potential crash during server join - Alfredo Tupone, Sean Morrison
 * Added new truely 'Random' server-side spawn policy - Sean Morrison
 * Added server-side spawn policies, new -spawnPolicy bzfs option - Sean Morrison
 * Allow the use of joystick pov hats/dpads - Stephan Hradek, Daniel Remenak
