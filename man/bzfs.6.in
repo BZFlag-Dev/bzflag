@@ -83,6 +83,7 @@ bzfs \- BZFlag game server
 [\fB\-sl \fIid num\fR]
 [\fB\-spamtime \fItime\fR]
 [\fB\-spamwarn \fIwarnLimit\fR]
+[\fB\-spawnPolicy \fIpolicy\fR]
 [\fB\-speedtol \fIfactor\fR]
 [\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
@@ -439,6 +440,13 @@ Minimum time between player chat messages that are alike.
 .TP 
 \fB\-spamwarn \fIwarnLimit\fR
 Number of warnings a player/spammer gets, who  violates \-spamtime.
+.TP 
+\fB\-spawnPolicy \fIpolicy\fR
+Specify a particular spawn policy.  The 'default' policy is a
+relatively safe spawn location hopefully out of imminent danger and
+away from the outer edges/corners of the game map.  Changing the spawn
+policy can make players spawn in ways considerly different from this
+default behavior.
 .TP 
 \fB\-speedtol \fIfactor\fR
 Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplier.
