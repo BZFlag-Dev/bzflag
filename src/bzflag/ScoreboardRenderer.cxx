@@ -205,6 +205,7 @@ void    ScoreboardRenderer::exitSelectState (void){
 void	ScoreboardRenderer::render(bool forceDisplay)
 {
   FontManager &fm = FontManager::instance();
+
   if (dim) {
     fm.setOpacity(dimFactor);
   }
@@ -216,10 +217,10 @@ void	ScoreboardRenderer::render(bool forceDisplay)
     if (getHuntState() == HUNT_SELECTING){      // 'S' pressed while selecting ...
       exitSelectState ();
     }
-	if (BZDB.isTrue("alwaysShowTeamScores") && World::getWorld()->allowTeams()){
+    World *world = World::getWorld();
+    if (world && BZDB.isTrue("alwaysShowTeamScores") && world->allowTeams()){
       OpenGLGState::resetState();
-      renderTeamScores(winWidth, winY,
-	    FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+      renderTeamScores(winWidth, winY, FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
     }
   }
 
@@ -231,8 +232,12 @@ void	ScoreboardRenderer::render(bool forceDisplay)
 
 int ScoreboardRenderer::teamScoreCompare(const void* _c, const void* _d)
 {
-  Team* c = World::getWorld()->getTeams()+*(int*)_c;
-  Team* d = World::getWorld()->getTeams()+*(int*)_d;
+  World *world = World::getWorld();
+  if (!world) {
+    return 0;
+  }
+  Team* c = world->getTeams()+*(int*)_c;
+  Team* d = world->getTeams()+*(int*)_d;
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
@@ -317,9 +322,11 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   int i;
   float xn, xl;
   std::string label;
+  World *world = World::getWorld();
 
-  if (World::getWorld()->allowRabbit())
+  if (!world || world->allowRabbit()) {
     return;
+  }
 
   Bundle *bdl = BundleMgr::getCurrentBundle();
   FontManager &fm = FontManager::instance();
@@ -331,7 +338,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
 
   for (i = RedTeam; i < NumTeams; i++) {
     if (!Team::isColorTeam(TeamColor(i))) continue;
-    const Team* team = World::getWorld()->getTeams() + i;
+    const Team* team = world->getTeams() + i;
     if (team->size == 0) continue;
     teams[teamCount++] = i;
   }
@@ -340,7 +347,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
 
   char score[44];
   for (i = 0 ; i < teamCount; i++){
-    Team& team = World::getWorld()->getTeam(teams[i]);
+    Team& team = world->getTeam(teams[i]);
     sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
@@ -352,15 +359,22 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
 // not used yet - new feature coming
 void			ScoreboardRenderer::renderCtfFlags (){
   int i;
-  RemotePlayer* player;
-  const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
-  char flagColor[200];
+  RemotePlayer* player = NULL;
+  char flagColor[200] = {0};
+  World *world = World::getWorld();
 
+  /* no world yet, nothing to render */
+  if (!world) {
+    return;
+  }
+
+  const int curMaxPlayers = world->getCurMaxPlayers();
   FontManager &fm = FontManager::instance();
   const float x = winX;
   const float y = winY;
   const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
   float y0 = y - dy;
+
 
   hudColor3fv(messageColor);
   fm.drawString(x, y, 0, minorFontFace, minorFontSize, "Team Flags");
@@ -368,7 +382,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
   fm.setDimFactor(dimFactor);
 
   for (i=0; i < curMaxPlayers; i++) {
-    if ((player = World::getWorld()->getPlayer(i))) {
+    if ((player = world->getPlayer(i))) {
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
@@ -390,8 +404,11 @@ void			ScoreboardRenderer::renderCtfFlags (){
 void     ScoreboardRenderer::clearHuntedTanks ()
 {
   World *world = World::getWorld();
-  if (!world)
+
+  if (!world) {
     return;
+  }
+
   const int curMaxPlayers = world->getCurMaxPlayers();
   Player *p;
   for (int i=0; i<curMaxPlayers; i++) {
@@ -511,8 +528,10 @@ void			ScoreboardRenderer::renderScoreboard(void)
 
   delete[] players;
 
-  if (World::getWorld()->allowTeams())
-	renderTeamScores(winWidth, y0, dy);
+  World *world = World::getWorld();
+  if (world && world->allowTeams()) {
+    renderTeamScores(winWidth, y0, dy);
+  }
 }
 
 
@@ -541,7 +560,8 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     }
   }
 
-  if (World::getWorld()->allowRabbit()) {
+  World *world = World::getWorld();
+  if (world && world->allowRabbit()) {
     sprintf(score, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
@@ -767,8 +787,9 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
 
-  if (!myTank || !world)
+  if (!myTank || !world) {
     return NULL;
+  }
 
   const int curMaxPlayers = world->getCurMaxPlayers() +1;
   int i,j;
