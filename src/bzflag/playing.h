@@ -50,6 +50,7 @@ class Player;
 class ServerLink;
 class HUDRenderer;
 
+void			initPlaying();
 BzfDisplay*		getDisplay();
 MainWindow*		getMainWindow();
 SceneRenderer*		getSceneRenderer();
@@ -114,6 +115,23 @@ extern float	    pauseCountdown;
 extern float	    clockAdjust;
 extern float	    roamDZoom;
 extern bool	     roamButton;
+
+typedef struct 
+{
+	bool b3rdPerson;
+	float cameraOffsetXY;
+	float cameraOffsetOffsetZ;
+	float targetMultiplyer;
+	float nearTargetDistance;
+	float nearTargetSize;
+	float farTargetDistance;
+	float farTargetSize;
+
+	void load ( void );
+	void clear ( void );
+}ThirdPersonVars;
+
+extern ThirdPersonVars thirdPersonVars;
 
 #endif // BZF_PLAYING_H
 

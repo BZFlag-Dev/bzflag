@@ -172,6 +172,16 @@ DefaultDBItem	defaultDBItems[] = {
   { "hideEmails",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "emailDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
 
+  // 3rdPerson Camera
+  { "3rdPersonCam",				"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamXYOffset",		"10.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamZOffset",		"2.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamTargetMult",	"50.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonNearTargetSize",	"1.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonNearTargetDistance",	"40.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonFarTargetSize",	"1.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonFarTargetDistance",	"180.0",			true,	StateDatabase::ReadWrite,	NULL },
+
   // last screenshot
   { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL }
 };

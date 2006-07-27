@@ -212,6 +212,27 @@ static AresHandler      ares;
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
+ThirdPersonVars thirdPersonVars;
+
+void ThirdPersonVars::load ( void )
+{
+	b3rdPerson = BZDB.isTrue(std::string("3rdPersonCam"));
+	cameraOffsetXY = BZDB.eval(std::string("3rdPersonCamXYOffset"));
+	cameraOffsetOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
+	targetMultiplyer = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+
+	nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
+	nearTargetSize = BZDB.eval(std::string("3rdPersonNearTargetSize"));
+	farTargetDistance = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
+	farTargetSize = BZDB.eval(std::string("3rdPersonFarTargetSize"));
+}
+
+void ThirdPersonVars::clear ( void )
+{
+	b3rdPerson = false;
+}
+
+
 // access silencePlayers from bzflag.cxx
 std::vector<std::string>& getSilenceList()
 {
@@ -481,6 +502,8 @@ void			joinGame()
     joiningGame = false;
   }
   joinRequested = true;
+
+  thirdPersonVars.load();
 }
 
 //
@@ -4599,6 +4622,7 @@ static void resetServerVar(const std::string& name, void*)
 
 void		leaveGame()
 {
+  thirdPersonVars.clear();
   entered = false;
   joiningGame = false;
 
@@ -5186,7 +5210,17 @@ void drawFrame(const float dt)
     targetPoint[1] = eyePoint[1] + myTankDir[1];
     targetPoint[2] = eyePoint[2] + myTankDir[2];
 
-    if (devDriving || ROAM.isRoaming()) {
+	if ( myTank && thirdPersonVars.b3rdPerson )
+	{
+		targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
+		targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
+		targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
+
+		eyePoint[0] -= myTankDir[0] * thirdPersonVars.cameraOffsetXY;
+		eyePoint[1] -= myTankDir[1] * thirdPersonVars.cameraOffsetXY;
+		eyePoint[2] += muzzleHeight * thirdPersonVars.cameraOffsetOffsetZ;
+	}
+	else if (devDriving || ROAM.isRoaming()) {
       hud->setAltitude(-1.0f);
       float roamViewAngle;
       const Roaming::RoamingCamera* roam = ROAM.getCamera();
