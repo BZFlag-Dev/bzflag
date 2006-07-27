@@ -738,9 +738,9 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     return true;
   }
 
-  char buffer[256];
+  char buffer[256] = {0};
   std::string fullname;
-  if (World::getWorld()->writeWorld(filename, fullname)) {
+  if (world->writeWorld(filename, fullname)) {
     snprintf(buffer, 256, "World saved:  %s %s%s%s", fullname.c_str(),
 	     meshprims ? " [meshprims]" : "",
 	     ungrouped ? " [ungrouped]" : "",

@@ -124,8 +124,14 @@ static ShotPath *findWorstBullet(float &minDistance)
       }
     }
   }
+
+  World *world = World::getWorld();
+  if (!world) {
+    return NULL;
+  }
+
   float oldDistance = minDistance;
-  WorldPlayer *wp = World::getWorld()->getWorldWeapons();
+  WorldPlayer *wp = world->getWorldWeapons();
   for (int w = 0; w < wp->getMaxShots(); w++) {
     ShotPath* shot = wp->getShot(w);
     if (!shot || shot->isExpired())
@@ -170,24 +176,29 @@ static bool avoidDeathFall(float &/*rotation*/, float &speed)
   pos1[2] += 10.0f * BZDBCache::tankHeight;
   float azimuth = myTank->getAngle();
   if (speed < 0.0f)
-	  azimuth = fmodf(float(azimuth + M_PI), float(2.0 * M_PI));
+    azimuth = fmodf(float(azimuth + M_PI), float(2.0 * M_PI));
   else
-	  azimuth = fmodf(float(azimuth), float(2.0 * M_PI));
+    azimuth = fmodf(float(azimuth), float(2.0 * M_PI));
 
   pos2[0] += 8.0f * BZDBCache::tankHeight * cosf(azimuth);
   pos2[1] += 8.0f * BZDBCache::tankHeight * sinf(azimuth);
   pos2[2] += 0.01f;
 
+  World *world = World::getWorld();
+  if (!world) {
+    return false;
+  }
+
   float collisionPt[3];
   if (TargetingUtils::getFirstCollisionPoint( pos1, pos2, collisionPt )) {
-	  if (collisionPt[2] < 0.0f)
-		  collisionPt[2] = 0.0f;
-	  if (collisionPt[2] < World::getWorld()->getWaterLevel()) {
-		  speed = 0.0f;
-		  return true;
-	  }
+    if (collisionPt[2] < 0.0f)
+      collisionPt[2] = 0.0f;
+    if (collisionPt[2] < world->getWaterLevel()) {
+      speed = 0.0f;
+      return true;
+    }
   } else if (collisionPt[2] < (pos2[2] - 1.0f)) {
-	  speed *= 0.5f;
+    speed *= 0.5f;
   }
 
   return false;
@@ -196,6 +207,10 @@ static bool avoidDeathFall(float &/*rotation*/, float &speed)
 static bool avoidBullet(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return false;
+  }
+
   const float *pos = myTank->getPosition();
 
   if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
@@ -215,7 +230,12 @@ static bool avoidBullet(float &rotation, float &speed)
   float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
   float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-  if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
+  World *world = World::getWorld();
+  if (!world) {
+    return false;
+  }
+
+  if (((world->allowJumping() || (myTank->getFlag()) == Flags::Jumping
    || (myTank->getFlag()) == Flags::Wings))
    && (minDistance < ( std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
@@ -322,8 +342,13 @@ static RemotePlayer *findBestTarget()
 	  (myTank->getFlag() == Flags::Laser))
 	continue;
 
+      World *world = World::getWorld();
+      if (!world) {
+	return NULL;
+      }
+
       //perform a draft that has us chase the proposed opponent if they have our flag
-      if (World::getWorld()->allowTeamFlags() &&
+      if (world->allowTeamFlags() &&
 	  (myTank->getTeam() == RedTeam && player[t]->getFlag() == Flags::RedTeam) ||
 	  (myTank->getTeam() == GreenTeam && player[t]->getFlag() == Flags::GreenTeam) ||
 	  (myTank->getTeam() == BlueTeam && player[t]->getFlag() == Flags::BlueTeam) ||
@@ -455,17 +480,27 @@ static bool chasePlayer(float &rotation, float &speed)
 static bool lookForFlag(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  float pos[3];
+  if (!myTank) {
+    return false;
+  }
 
-  memcpy( pos, myTank->getPosition(), sizeof( pos ));
-  if (pos[2] < 0.0f)
-    pos[2] = 0.0f;
-  World *world = World::getWorld();
+  float pos[3];
   int closestFlag = -1;
 
-  if ((myTank->getFlag() != Flags::Null)
-      && (isFlagUseful(myTank->getFlag())))
+  memcpy( pos, myTank->getPosition(), sizeof( pos ));
+  if (pos[2] < 0.0f) {
+    pos[2] = 0.0f;
+  }
+
+  World *world = World::getWorld();
+  if (!world) {
     return false;
+  }
+
+  if ((myTank->getFlag() != Flags::Null)
+      && (isFlagUseful(myTank->getFlag()))) {
+    return false;
+  }
 
   float minDist = Infinity;
 	int teamFlag = -1;
@@ -522,8 +557,11 @@ static bool navigate(float &rotation, float &speed)
     return true;
   }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos[3];
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return false;
+  }
 
   memcpy(pos, myTank->getPosition(), sizeof(pos));
   if (pos[2] < 0.0f)
@@ -546,6 +584,10 @@ static bool navigate(float &rotation, float &speed)
   }
   if (myTank->getFlag()->flagTeam != NoTeam) {
     World *world = World::getWorld();
+    if (!world) {
+      return false;
+    }
+
     const float *temp = world->getBase(myTank->getTeam());
     if (temp == NULL) {
       serverLink->sendDropFlag(myTank->getPosition());
@@ -581,10 +623,18 @@ static bool fireAtTank()
   static TimeKeeper lastShot;
   float pos[3];
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return false;
+  }
+
   memcpy(pos, myTank->getPosition(), sizeof(pos));
   if (pos[2] < 0.0f)
     pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
+  World *world = World::getWorld();
+  if (!world) {
+    return false;
+  }
 
   float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
   pos[2] += myTank->getMuzzleHeight();
@@ -593,7 +643,7 @@ static bool fireAtTank()
 
   if (myTank->getFlag() == Flags::ShockWave) {
     TimeKeeper now = TimeKeeper::getTick();
-    if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+    if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
 	if (t != myTank->getId() && player[t] &&
@@ -629,9 +679,9 @@ static bool fireAtTank()
     }
   } else {
     TimeKeeper now = TimeKeeper::getTick();
-    if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+    if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
-      float errorLimit = World::getWorld()->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+      float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {

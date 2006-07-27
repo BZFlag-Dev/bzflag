@@ -252,18 +252,21 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
   const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
 
+  World *world = World::getWorld();
+  if (!world) {
+    return -1.0f;
+  }
+
   // check in reverse order to see what we hit first
   if (teleporter) {
     // entered teleporter -- teleport it
     unsigned int seed = getPath().getShotId();
-    int source = World::getWorld()->getTeleporter(teleporter, face);
-    int target = World::getWorld()->getTeleportTarget(source, seed);
+    int source = world->getTeleporter(teleporter, face);
+    int target = world->getTeleportTarget(source, seed);
 
     int outFace;
-    const Teleporter* outTeleporter =
-      World::getWorld()->getTeleporter(target, outFace);
-    teleporter->getPointWRT(*outTeleporter, face, outFace,
-			    nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
+    const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
+    teleporter->getPointWRT(*outTeleporter, face, outFace, nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
     return t / shotSpeed;
   } else if (building) {
     // expire on next update
