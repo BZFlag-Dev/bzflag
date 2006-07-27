@@ -74,6 +74,10 @@ bzfs_SOURCES = \
 	CustomWorld.h \
 	CustomZone.cxx \
 	CustomZone.h \
+	DangerousSpawnPolicy.cxx \
+	DangerousSpawnPolicy.h \
+	DefaultSpawnPolicy.cxx \
+	DefaultSpawnPolicy.h \
 	DropGeometry.cxx \
 	DropGeometry.h \
 	EntryZones.cxx \
@@ -106,6 +110,8 @@ bzfs_SOURCES = \
 	ServerCommand.h \
 	SpawnPolicy.cxx \
 	SpawnPolicy.h \
+	SpawnPolicyFactory.cxx \
+	SpawnPolicyFactory.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \
