@@ -220,13 +220,17 @@ void			RobotPlayer::doUpdateMotion(float dt)
     float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
     float tankSpeed = BZDBCache::tankSpeed;
 
+    World *world = World::getWorld();
+    if (!world) {
+      return;
+    }
 
     // basically a clone of Roger's evasive code
-    for (int t=0; t <= World::getWorld()->getCurMaxPlayers(); t++)
+    for (int t=0; t <= world->getCurMaxPlayers(); t++)
     {
       Player *p = 0;
-      if (t < World::getWorld()->getCurMaxPlayers())
-	p = World::getWorld()->getPlayer(t);
+      if (t < world->getCurMaxPlayers())
+	p = world->getPlayer(t);
       else
 	p = LocalPlayer::getMyTank();
       if (!p || p->getId() == getId())
