@@ -16,6 +16,7 @@
 /* bzfs-specific implementation headers */
 #include "DefaultSpawnPolicy.h"
 #include "RandomSpawnPolicy.h"
+#include "DangerousSpawnPolicy.h"
 
 
 // initialize to an "unset" policy
@@ -89,6 +90,7 @@ SpawnPolicyFactory::Init()
   if (!_initialized) {
     RegisterPolicy<DefaultSpawnPolicy>();
     RegisterPolicy<RandomSpawnPolicy>();
+    RegisterPolicy<DangerousSpawnPolicy>();
     _initialized = true;
   }
 }
