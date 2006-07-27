@@ -4,6 +4,8 @@
 BZFlag 2.1.x
 ------------
 
+* Added new truely 'Random' server-side spawn policy - Sean Morrison
+* Added server-side spawn policies, new -spawnPolicy bzfs option - Sean Morrison
 * Allow the use of joystick pov hats/dpads - Stephan Hradek, Daniel Remenak
 * Removed deprecated CLIENTQUERY command.  Use /clientquery - Daniel Remenak
 * Fixed cross-platform and 64-bit network protocol bug - Andrew McNabb
