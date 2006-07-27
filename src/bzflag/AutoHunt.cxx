@@ -556,11 +556,11 @@ static void printConfig()
 static Player* findEnemyLeader()
 {
   World* world = World::getWorld();
-  if (world == NULL) {
+  if (!world) {
     return NULL;
   }
   Player** players = (Player**)world->getPlayers();
-  if (players == NULL) {
+  if (!players) {
     return NULL;
   }
   const int maxPlayers = world->getCurMaxPlayers();
@@ -569,7 +569,7 @@ static Player* findEnemyLeader()
   Player* leader = NULL;
   for (int i = 0; i < maxPlayers; i++) {
     Player* p = players[i];
-    if ((p != NULL) && isEnemy(p)) {
+    if (p && isEnemy(p)) {
       const int pScore = p->getScore();
       if (pScore > maxScore) {
         leader = p;
@@ -589,7 +589,7 @@ static Player* findEnemyLeader()
 static bool isEnemy(const Player* p)
 {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if ((myTank == NULL) || (p == NULL)) {
+  if (!myTank || !p) {
     return false;
   }
 
@@ -615,10 +615,7 @@ static bool isEnemy(const Player* p)
 
 static bool isBeatingMe(const Player* p)
 {
-  if (p == NULL) {
-    return false;
-  }
-  if (p->getLocalLosses() > p->getLocalWins()) {
+  if (p && (p->getLocalLosses() > p->getLocalWins())) {
     return true;
   }
   return false;
@@ -644,11 +641,11 @@ static bool isTeamKiller(const Player* p, float tkRatio)
 static void clearPlayers()
 {
   World* world = World::getWorld();
-  if (world == NULL) {
+  if (!world) {
     return;
   }
   Player** players = (Player**)world->getPlayers();
-  if (players == NULL) {
+  if (!players) {
     return;
   }
   const int maxPlayers = world->getCurMaxPlayers();
@@ -656,7 +653,7 @@ static void clearPlayers()
   // clear the autohunt status
   for (int i = 0; i < maxPlayers; i++) {
     Player* p = players[i];
-    if (p != NULL) {
+    if (p) {
       p->setAutoHuntLevel(0);
     }
   }
@@ -698,17 +695,17 @@ static int getHuntInfoLevel(const HuntInfo& hi, float dist)
 static void huntPlayers()
 {
   World* world = World::getWorld();
-  if (world == NULL) {
+  if (!world) {
     return;
   }
   Player** players = (Player**)world->getPlayers();
-  if (players == NULL) {
+  if (!players) {
     return;
   }
   const int maxPlayers = world->getCurMaxPlayers();
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (myTank == NULL) {
+  if (!myTank) {
     return;
   }
   const bool observer = (myTank->getTeam() == ObserverTeam);
@@ -733,7 +730,7 @@ static void huntPlayers()
   for (int i = 0; i < maxPlayers; i++) {
 
     Player* p = players[i];
-    if (p == NULL) {
+    if (!p) {
       continue;
     }
     const bool myEnemy = isEnemy(p);
@@ -756,7 +753,7 @@ static void huntPlayers()
         }
       }
       // paired flag type
-      if (myEnemy && (pairedMap != NULL)) {
+      if (myEnemy && pairedMap) {
         FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
         if (pit != pairedMap->end()) {
           const HuntInfo& hi = pit->second;
@@ -788,7 +785,7 @@ static void huntPlayers()
   // set the autohunt status based on score leadership
   if (LeaderHuntInfo.active()) {
     Player* leader = findEnemyLeader();
-    if (leader != NULL) {
+    if (leader) {
       const float dist = distBetweenPlayers(myTank, leader);
       const int level = getHuntInfoLevel(LeaderHuntInfo, dist);
       if (level > leader->getAutoHuntLevel()) {
