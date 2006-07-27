@@ -39,10 +39,11 @@ public:
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
-  
-private:  
+
+protected:
   float enemyProximityCheck(float &enemyAngle) const;
 
+private:  
   /* temp, internal use */
   TeamColor   team;
   float       testPos[3];
