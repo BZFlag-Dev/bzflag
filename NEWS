@@ -14,7 +14,7 @@ BZFlag 2.1.x
 * Added a NSIS script for Dev-C++ builds - UL_Approved
 * Researched and updated BZFlag contributors documentation - Sean Morrison
 * Message sounds consistently don't play when from self - Sean Morrison
-* Input fixes and improvements (see ChangeLog) - Daniel Remenak, Workaphobia
+* Input fixes and improvements (see ChangeLog) - Daniel Remenak, Jon Brandvein
 * Flag hiding work even when Identity flag is on - Alfredo Tupone
 * Flag grabbing & identifying made server side - Alfredo Tupone
 * Jitter Kick - Thomas Stauer
