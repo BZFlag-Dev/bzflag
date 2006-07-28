@@ -30,7 +30,10 @@ SpawnPolicyFactory::PolicyRegister SpawnPolicyFactory::_policies;
 
 SpawnPolicy *
 SpawnPolicyFactory::DefaultPolicy() {
-  return SpawnPolicyFactory::Policy(SpawnPolicyFactory::_defaultPolicy);
+  SpawnPolicy *policy = SpawnPolicyFactory::Policy(SpawnPolicyFactory::_defaultPolicy);
+  if (!policy) {
+    return new DefaultSpawnPolicy();
+  }
 }
 
 SpawnPolicy *
