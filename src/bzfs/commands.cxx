@@ -11,7 +11,7 @@
  */
 
 #ifdef _MSC_VER
-#pragma warning( 4:4786)
+#  pragma warning( 4:4786)
 #endif
 
 // interface header
@@ -24,14 +24,14 @@
 #include <string>
 #include <sstream>
 #ifdef HAVE_CSTDIO
-#include <cstdio>
+#  include <cstdio>
 #else
-#include <stdio.h>
+#  include <stdio.h>
 #endif
 #ifdef HAVE_CSTRING
-#include <cstring>
+#  include <cstring>
 #else
-#include <string.h>
+#  include <string.h>
 #endif
 #include <time.h>
 #include <ctype.h>
@@ -57,11 +57,12 @@
 
 
 #if defined(_WIN32)
-#define popen _popen
-#define pclose _pclose
+#  define popen _popen
+#  define pclose _pclose
 #endif
 
 #include "PlayerInfo.h"
+
 
 tmCustomSlashCommandMap	customCommands;
 
