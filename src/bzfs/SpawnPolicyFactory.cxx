@@ -31,6 +31,8 @@ SpawnPolicyFactory::PolicyRegister SpawnPolicyFactory::_policies;
 SpawnPolicy *
 SpawnPolicyFactory::DefaultPolicy() {
   SpawnPolicy *policy = SpawnPolicyFactory::Policy(SpawnPolicyFactory::_defaultPolicy);
+
+  /* failsafe, just so we don't ever return NULL on this call */
   if (!policy) {
     return new DefaultSpawnPolicy();
   }
@@ -39,12 +41,16 @@ SpawnPolicyFactory::DefaultPolicy() {
 SpawnPolicy *
 SpawnPolicyFactory::Policy(std::string policy) {
   std::string lcPolicy = TextUtils::tolower(policy);
+  if (lcPolicy == "") {
+    lcPolicy = "default";
+  }
   Init();
   PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
   if (policyEntry != _policies.end()) {
     return policyEntry->second;
   }
   
+  /* may return NULL if policy isn't something recognized */
   return (SpawnPolicy *)NULL;
 }
 
@@ -56,6 +62,9 @@ SpawnPolicyFactory::SetDefault(std::string policy) {
 bool
 SpawnPolicyFactory::IsValid(std::string policy) {
   std::string lcPolicy = TextUtils::tolower(policy);
+  if (lcPolicy == "") {
+    lcPolicy = "default";
+  }
   Init();
   PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
   if (policyEntry != _policies.end()) {
