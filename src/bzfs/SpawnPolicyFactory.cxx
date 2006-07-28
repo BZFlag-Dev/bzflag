@@ -25,6 +25,9 @@ std::string SpawnPolicyFactory::_defaultPolicy = std::string("");
 // recognized policies
 SpawnPolicyFactory::PolicyRegister SpawnPolicyFactory::_policies;
 
+// register the policies
+static bool _policiesInitialized = SpawnPolicyFactory::Init();
+
 
 /* public */
 
@@ -35,9 +38,8 @@ SpawnPolicyFactory::DefaultPolicy() {
   /* failsafe, just so we don't ever return NULL on this call */
   if (!policy) {
     return new DefaultSpawnPolicy();
-  } else {
-    return policy;
   }
+  return policy;
 }
 
 SpawnPolicy *
@@ -46,7 +48,6 @@ SpawnPolicyFactory::Policy(std::string policy) {
   if (lcPolicy == "") {
     lcPolicy = "default";
   }
-  Init();
   PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
   if (policyEntry != _policies.end()) {
     return policyEntry->second;
@@ -67,7 +68,6 @@ SpawnPolicyFactory::IsValid(std::string policy) {
   if (lcPolicy == "") {
     lcPolicy = "default";
   }
-  Init();
   PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
   if (policyEntry != _policies.end()) {
     // found it
@@ -78,7 +78,6 @@ SpawnPolicyFactory::IsValid(std::string policy) {
 
 void
 SpawnPolicyFactory::PrintList(std::ostream &stream) {
-  Init();
   PolicyRegister::const_iterator policyEntry = _policies.begin();
   while (policyEntry != _policies.end()) {
     stream << policyEntry->second->Name() << std::endl;
@@ -97,7 +96,7 @@ SpawnPolicyFactory::~SpawnPolicyFactory()
 {
 }
 
-void
+bool
 SpawnPolicyFactory::Init()
 {
   static bool _initialized = false;
@@ -107,6 +106,7 @@ SpawnPolicyFactory::Init()
     RegisterPolicy<DangerousSpawnPolicy>();
     _initialized = true;
   }
+  return _initialized;
 }
 
 

@@ -47,12 +47,12 @@ public:
   template <class _PolicyType>
   static bool RegisterPolicy();
 
+  /** here is where all of the policies are actually registered */
+  static bool Init();
+
 private:
   SpawnPolicyFactory();
   ~SpawnPolicyFactory();
-
-  /** here is where all of the policies are actually registered */
-  static void Init();
 
   static std::string _defaultPolicy;
 
