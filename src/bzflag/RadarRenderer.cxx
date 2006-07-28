@@ -470,7 +470,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
 			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
 
   // setup the radar range
   float radarRange = BZDB.eval("displayRadarRange") * radarLimit;

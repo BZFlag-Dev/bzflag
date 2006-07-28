@@ -14,12 +14,12 @@
 #include "playerAvatarManager.h"
 
 
-TankSceneNode* getTankSceneNode ( int playerID, const float pos[3], const float forward[3] )
+TankSceneNode* getTankSceneNode ( int /*playerID*/, const float pos[3], const float forward[3] )
 {
 	return new TankSceneNode(pos,forward);
 }
 
-TankIDLSceneNode* getTankIDLSceneNode ( int playerID, TankSceneNode *tankNode )
+TankIDLSceneNode* getTankIDLSceneNode ( int /*playerID*/, TankSceneNode *tankNode )
 {
 	return new TankIDLSceneNode(tankNode);
 }

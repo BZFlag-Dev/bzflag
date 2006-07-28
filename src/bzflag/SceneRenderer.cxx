@@ -1076,7 +1076,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   return;
 }
 
-void draw3rdPersonTarget ( SceneRenderer* renderer )
+void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
 {
 	LocalPlayer* myTank = LocalPlayer::getMyTank();
 
