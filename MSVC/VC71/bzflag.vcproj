@@ -1238,6 +1238,16 @@ copy debug\*.pdb ..\..\*.pdb
 				<File
 					RelativePath="..\..\src\bzflag\WeatherRenderer.cxx">
 				</File>
+				<Filter
+					Name="avatars"
+					Filter="">
+					<File
+						RelativePath="..\..\src\bzflag\playerAvatarManager.cxx">
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\playerAvatarManager.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="game"

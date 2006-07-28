@@ -14,7 +14,7 @@
 #include "Player.h"
 
 // common interface headers
-#include "TankSceneNode.h"
+#include "playerAvatarManager.h"
 #include "SceneRenderer.h"
 #include "SphereSceneNode.h"
 #include "OpenGLMaterial.h"
@@ -95,8 +95,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
   if (id != ServerPlayer) {
     // make scene nodes
-    tankNode = new TankSceneNode(state.pos, forward);
-    tankIDLNode = new TankIDLSceneNode(tankNode);
+    tankNode = getTankSceneNode(id,state.pos, forward);
+    tankIDLNode = getTankIDLSceneNode(id,tankNode);
     changeTeam(team);
     const float sphereRad = (1.5f * BZDBCache::tankRadius);
     if (RENDERER.useQuality() >= _HIGH_QUALITY) {

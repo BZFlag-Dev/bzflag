@@ -118,6 +118,8 @@ bzflag_SOURCES =			\
 	OptionsMenu.h			\
 	Player.cxx			\
 	Player.h			\
+	playerAvatarManager.cxx			\
+	playerAvatarManager.h			\
 	Plan.cxx			\
 	Plan.h			\
 	QuickKeysMenu.cxx		\

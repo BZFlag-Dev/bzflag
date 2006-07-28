@@ -27,12 +27,12 @@ class TankSceneNode;
 class TankIDLSceneNode : public SceneNode {
   public:
 			TankIDLSceneNode(const TankSceneNode*);
-			~TankIDLSceneNode();
+			virtual ~TankIDLSceneNode();
 
-    void		move(const GLfloat plane[4]);
+    virtual void		move(const GLfloat plane[4]);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    virtual void		notifyStyleChange();
+   virtual  void		addRenderNodes(SceneRenderer&);
   // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
   // following declaration isn't public it generates an error when trying
   // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
@@ -56,7 +56,7 @@ class TankIDLSceneNode : public SceneNode {
     };
     friend class IDLRenderNode;
 
-  private:
+  protected:
     const TankSceneNode	*tank;
     GLfloat		plane[4];
     OpenGLGState	gstate;
@@ -69,44 +69,44 @@ class TankSceneNode : public SceneNode {
   public:
 			TankSceneNode(const GLfloat pos[3],
 					const GLfloat forward[3]);
-			~TankSceneNode();
+			virtual ~TankSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    virtual void		move(const GLfloat pos[3], const GLfloat forward[3]);
 
-    void		setColor(GLfloat r, GLfloat g,
+    virtual void		setColor(GLfloat r, GLfloat g,
 				 GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setMaterial(const OpenGLMaterial&);
-    void		setTexture(const int);
-    void		setJumpJetsTexture(const int);
+    virtual void		setColor(const GLfloat* rgba);
+    virtual void		setMaterial(const OpenGLMaterial&);
+    virtual void		setTexture(const int);
+    virtual void		setJumpJetsTexture(const int);
 
-    void		setNormal();
-    void		setObese();
-    void		setTiny();
-    void		setNarrow();
-    void		setThief();
-    void		setDimensions(const float size[3]);
+    virtual void		setNormal();
+    virtual void		setObese();
+    virtual void		setTiny();
+    virtual void		setNarrow();
+    virtual void		setThief();
+    virtual void		setDimensions(const float size[3]);
 
-    void		setClipPlane(const GLfloat* plane);
-    void		setExplodeFraction(float t);
-    void		setJumpJets(float scale);
+    virtual void		setClipPlane(const GLfloat* plane);
+    virtual void		setExplodeFraction(float t);
+    virtual void		setJumpJets(float scale);
 
-    void		setInTheCockpit(bool value);
-    void		setOnlyShadows(bool value);
+    virtual void		setInTheCockpit(bool value);
+    virtual void		setOnlyShadows(bool value);
 
-    void		rebuildExplosion();
-    void		addTreadOffsets(float left, float right);
+    virtual void		rebuildExplosion();
+    virtual void		addTreadOffsets(float left, float right);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    virtual void		notifyStyleChange();
+    virtual void		addRenderNodes(SceneRenderer&);
+    virtual void		addShadowNodes(SceneRenderer&);
 
-    bool		cullShadow(int planeCount,
+    virtual bool		cullShadow(int planeCount,
 				   const float (*planes)[4]) const;
 
-    void		addLight(SceneRenderer&);
+    virtual void		addLight(SceneRenderer&);
 
-    void		renderRadar();
+    virtual void		renderRadar();
 
     static void		setMaxLOD(int maxLevel);
 
@@ -154,7 +154,7 @@ class TankSceneNode : public SceneNode {
     };
     friend class TankRenderNode;
 
-  private:
+  protected:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
     float		dimensions[3]; // tank dimensions
