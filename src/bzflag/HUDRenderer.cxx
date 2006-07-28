@@ -856,7 +856,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
   World *world = World::getWorld();
   if (!world) {
-    return 0;
+    return;
   }
 
   int offset = window.getViewHeight() - window.getHeight();

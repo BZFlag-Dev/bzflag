@@ -218,7 +218,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	LocalPlayer *myTank = LocalPlayer::getMyTank();
 	World *world = World::getWorld();
 	if (!myTank || !world) {
-	  return;
+	  return NULL;
 	}
 	const float *pos = myTank->getPosition();
 	ShotPath *minPath = NULL;

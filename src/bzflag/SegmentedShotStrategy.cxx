@@ -373,7 +373,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
   World *world = World::getWorld();
   if (!world) {
-    return NULL; /* no world, no shots */
+    return; /* no world, no shots */
   }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
