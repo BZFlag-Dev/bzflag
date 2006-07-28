@@ -18,6 +18,7 @@
 /* implementation headers */
 #include "SpawnPolicyFactory.h"
 
+
 /* no policy by default, constructor will set if unset */
 SpawnPolicy *SpawnPosition::policy = (SpawnPolicy*)0;
 
@@ -26,7 +27,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 {
   /* if a spawn policy hasn't been set yet, just go with the default */
   if (!SpawnPosition::policy) {
-    SpawnPosition::policy = SpawnPolicyFactory::DefaultPolicy();
+    SetSpawnPolicy(SpawnPolicyFactory::DefaultPolicy());
   }
 
   SpawnPosition::policy->getPosition(pos, playerId, onGroundOnly, notNearEdges);
@@ -44,6 +45,7 @@ void SpawnPosition::SetSpawnPolicy(SpawnPolicy *_policy)
   }
   SpawnPosition::policy = _policy;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***
