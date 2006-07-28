@@ -35,6 +35,8 @@ SpawnPolicyFactory::DefaultPolicy() {
   /* failsafe, just so we don't ever return NULL on this call */
   if (!policy) {
     return new DefaultSpawnPolicy();
+  } else {
+    return policy;
   }
 }
 
