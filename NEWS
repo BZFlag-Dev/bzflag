@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Callsign bans are now handled case-insensitively - Sean Morrison
 * Added 'Dangerous' server-side spawn policy - Sean Morrison
 * Fixed potential crash during server join - Alfredo Tupone, Sean Morrison
 * Added new truely 'Random' server-side spawn policy - Sean Morrison

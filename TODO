@@ -98,9 +98,6 @@ THESE ARE LOWER PRIORITY
 * instead of kicking laggy players, they should be made observers
   unless there are no observer slots left (then kick).
 
-* ban both the player's name in addition to their IP case insensitively.
-  (at least on a poll ban) (might not be relevant with central login)
-
 * keep track of the last messages sent by a player in the last N
   seconds and auto-silence them if they spam any specific message
   within that time frame.
