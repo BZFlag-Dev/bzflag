@@ -248,7 +248,7 @@ bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
     return true;
   }
   for (idBanList_t::iterator it = idBanList.begin(); it != idBanList.end(); ++it) {
-    if (strcmp(id, it->idpat.c_str()) == 0) {
+    if (TextUtils::compare_nocase(id, it->idpat.c_str()) == 0) {
       if (info)
 	*info = *it;
       return false;
