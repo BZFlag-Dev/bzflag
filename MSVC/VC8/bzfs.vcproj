@@ -2566,14 +2566,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\SpawnPolicy.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\SpawnPosition.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\TeamBases.cxx"
 				>
 			</File>
@@ -4599,6 +4591,34 @@
 					</FileConfiguration>
 				</File>
 			</Filter>
+			<Filter
+				Name="spawn"
+				>
+				<File
+					RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\RandomSpawnPolicy.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\SpawnPolicy.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\SpawnPolicyFactory.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzfs\SpawnPosition.cxx"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -4713,6 +4733,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\DropGeometry.h"
 				>
 			</File>
@@ -4761,6 +4789,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\RandomSpawnPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.h"
 				>
 			</File>
@@ -4778,6 +4810,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPolicy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicyFactory.h"
 				>
 			</File>
 			<File
