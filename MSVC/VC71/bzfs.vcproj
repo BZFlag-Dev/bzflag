@@ -430,6 +430,18 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\DropGeometry.cxx">
 			</File>
 			<File
@@ -575,6 +587,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPolicy.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicyFactory.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx">
@@ -1243,6 +1258,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPolicy.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\SpawnPolicyFactory.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.h">
