@@ -2522,6 +2522,22 @@ static void handleSetTeam ( void *msg, uint16_t len )
   p->changeTeam((TeamColor)team);
 }
 
+static void handleNearFlag ( void *msg, uint16_t len )
+{
+	float pos[3];
+	std::string flagName;
+	msg = nboUnpackVector(msg, pos);
+	msg = nboUnpackStdString(msg, flagName);
+
+	std::string fullMessage = "Closest Flag: " + flagName;
+	addMessage(NULL, ColorStrings[YellowColor]+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
+
+	if (myTank)
+	{
+		hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
+	}
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
 {
@@ -2530,9 +2546,12 @@ static void		handleServerMessage(bool human, uint16_t code,
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code)
-    {
+  {
+	case MsgNearFlag:
+		handleNearFlag(msg,len);
+	break;
 
-      case MsgSetTeam:
+    case MsgSetTeam:
 	handleSetTeam(msg,len);
 	break;
 

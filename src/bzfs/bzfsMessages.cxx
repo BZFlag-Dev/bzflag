@@ -451,6 +451,17 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
 }
 
+
+void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
+{
+	if (!type)
+		return;
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackVector(bufStart, pos);
+	buf = nboPackStdString(buf, std::string(type->flagName));
+	directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
+}
+
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {

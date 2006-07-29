@@ -2649,12 +2649,11 @@ void searchFlag(GameKeeper::Player &playerData)
   }
   FlagInfo &flag = *FlagInfo::get(closestFlag);
   if (id) {
-    if (closestFlag != playerData.getLastIdFlag()) {
-      std::string message("Closest Flag: ");
-      message += flag.flag.type->flagName;
-      sendMessage(ServerPlayer, playerIndex, message.c_str());
-      playerData.setLastIdFlag(closestFlag);
-    }
+    if (closestFlag != playerData.getLastIdFlag()) 
+	{
+		sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
+		playerData.setLastIdFlag(closestFlag);
+	}
   } else {
     // okay, player can have it
     flag.grab(playerIndex);
