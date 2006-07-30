@@ -47,7 +47,8 @@ class PlayerState
       OnDriver =	(1 << 7),	// tank is on a physics driver
       UserInputs =	(1 << 8),	// user speed and angvel are sent
       JumpJets =	(1 << 9),	// tank has jump jets on
-      PlaySound =	(1 << 10)	// play one or more sounds
+      PlaySound =	(1 << 10),	// play one or more sounds
+      PhantomZoned =	(1 << 11)	// tank is phantom-zoned
     };
 
     enum PStatusSounds {
