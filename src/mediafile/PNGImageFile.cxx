@@ -216,8 +216,8 @@ bool					PNGImageFile::read(void* buffer)
       err = inflate(&zStream, Z_SYNC_FLUSH);
     }
 
-    if ((err != Z_STREAM_END) && (err != Z_OK)) {
-      DEBUG3("PNGImageFile: Z_STREAM error\n");
+    if ((err != Z_STREAM_END) && (err != Z_OK) && (zStream.avail_in != 0)) {
+      DEBUG3("PNGImageFile: Z_STREAM error: %d\n", err);
       delete c;
       return false;
     }
