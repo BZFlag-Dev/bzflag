@@ -1291,6 +1291,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(false);
 
   // draw flag help
@@ -1364,6 +1365,7 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(true);
 
   // draw times
@@ -1436,6 +1438,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(false);
 
   // show tank labels
