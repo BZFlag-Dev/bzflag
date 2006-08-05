@@ -772,22 +772,23 @@ void			HUDRenderer::renderStatus(void)
 		  float vertSpeed = vel[2];
 		  float rotSpeed = fabs(target->getAngularVelocity());
 
+		  float drawY = y-1.5f*h;
 		  // draw header
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, "Target Info");
-		  fm.drawString(x, y-float(1.5*h), 0, majorFontFace, majorFontSize, "Target Info");
+		  fm.drawString(x, drawY, 0, majorFontFace, majorFontSize, "Target Info");
 
+		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.5f;
 		  sprintf(buffer,"Liniar Speed:%5.2f",linSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(2.0*h), 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(2.5*h), 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(3*h), 0, minorFontFace, minorFontSize, buffer);
-
+		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
 	  }
   }
 
