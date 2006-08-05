@@ -21,7 +21,9 @@
 #else
 #include <netinet/in.h>
 #include <arpa/nameser.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <string.h>
@@ -51,7 +53,7 @@ int ares_expand_string(const unsigned char *encoded,
 
   encoded++;
 
-  *s = malloc(len+1);
+  *s = (unsigned char*)malloc(len+1);
   if (*s == NULL)
     return ARES_ENOMEM;
   q = *s;

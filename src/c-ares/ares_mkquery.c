@@ -21,7 +21,9 @@
 #else
 #include <netinet/in.h>
 #include <arpa/nameser.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <stdlib.h>
@@ -101,7 +103,7 @@ int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
     len++;
 
   *buflen = len + HFIXEDSZ + QFIXEDSZ;
-  *buf = malloc(*buflen);
+  *buf = (unsigned char *)malloc(*buflen);
   if (!*buf)
       return ARES_ENOMEM;
 

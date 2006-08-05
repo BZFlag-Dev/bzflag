@@ -23,7 +23,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <stdlib.h>
@@ -122,16 +124,16 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
   if (status == ARES_SUCCESS)
     {
       /* We got our answer.  Allocate memory to build the host entry. */
-      hostent = malloc(sizeof(struct hostent));
+      hostent = (struct hostent *)malloc(sizeof(struct hostent));
       if (hostent)
 	{
-	  hostent->h_addr_list = malloc(2 * sizeof(char *));
+	  hostent->h_addr_list = (char **)malloc(2 * sizeof(char *));
 	  if (hostent->h_addr_list)
 	    {
-	      hostent->h_addr_list[0] = malloc(addrlen);
+	      hostent->h_addr_list[0] = (char *)malloc(addrlen);
 	      if (hostent->h_addr_list[0])
 		{
-		  hostent->h_aliases = malloc(sizeof (char *));
+		  hostent->h_aliases = (char **)malloc(sizeof (char *));
 		  if (hostent->h_aliases)
 		    {
 		      /* Fill in the hostent and return successfully. */

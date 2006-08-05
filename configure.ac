@@ -190,6 +190,7 @@ AC_CHECK_HEADERS( \
 	SDL/SDL.h \
 	X11/Xlib.h \
 	bstring.h \
+	arpa/nameser_compat.h \
 	linux/input.h \
 	stdint.h \
 	sys/param.h \
@@ -197,6 +198,7 @@ AC_CHECK_HEADERS( \
 	values.h \
 	dsound.h \
 )
+# nameser_compat.h used by src/c-ares
 
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)

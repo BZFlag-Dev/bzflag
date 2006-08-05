@@ -89,7 +89,7 @@ int ares__get_hostent(FILE *fp, struct hostent **host)
 	}
 
       /* Allocate memory for the host structure. */
-      hostent = malloc(sizeof(struct hostent));
+      hostent = (struct hostent *)malloc(sizeof(struct hostent));
       if (!hostent)
 	break;
       hostent->h_aliases = NULL;
@@ -97,13 +97,13 @@ int ares__get_hostent(FILE *fp, struct hostent **host)
       hostent->h_name = strdup(canonical);
       if (!hostent->h_name)
 	break;
-      hostent->h_addr_list = malloc(2 * sizeof(char *));
+      hostent->h_addr_list = (char **)malloc(2 * sizeof(char *));
       if (!hostent->h_addr_list)
 	break;
-      hostent->h_addr_list[0] = malloc(sizeof(struct in_addr));
+      hostent->h_addr_list[0] = (char *)malloc(sizeof(struct in_addr));
       if (!hostent->h_addr_list[0])
 	break;
-      hostent->h_aliases = malloc((naliases + 1) * sizeof(char *));
+      hostent->h_aliases = (char **)malloc((naliases + 1) * sizeof(char *));
       if (!hostent->h_aliases)
 	break;
 
@@ -119,7 +119,7 @@ int ares__get_hostent(FILE *fp, struct hostent **host)
 	      q = p;
 	      while (*q && !isspace((unsigned char)*q))
 		q++;
-	      hostent->h_aliases[naliases] = malloc(q - p + 1);
+	      hostent->h_aliases[naliases] = (char *)malloc(q - p + 1);
 	      if (hostent->h_aliases[naliases] == NULL)
 		break;
 	      memcpy(hostent->h_aliases[naliases], p, q - p);

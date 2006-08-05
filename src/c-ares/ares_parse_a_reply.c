@@ -24,7 +24,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <stdlib.h>
@@ -71,13 +73,13 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
   aptr += len + QFIXEDSZ;
 
   /* Allocate addresses and aliases; ancount gives an upper bound for both. */
-  addrs = malloc(ancount * sizeof(struct in_addr));
+  addrs = (struct in_addr *)malloc(ancount * sizeof(struct in_addr));
   if (!addrs)
     {
       free(hostname);
       return ARES_ENOMEM;
     }
-  aliases = malloc((ancount + 1) * sizeof(char *));
+  aliases = (char **)malloc((ancount + 1) * sizeof(char *));
   if (!aliases)
     {
       free(hostname);
@@ -144,10 +146,10 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
     {
       /* We got our answer.  Allocate memory to build the host entry. */
       aliases[naliases] = NULL;
-      hostent = malloc(sizeof(struct hostent));
+      hostent = (struct hostent *)malloc(sizeof(struct hostent));
       if (hostent)
 	{
-	  hostent->h_addr_list = malloc((naddrs + 1) * sizeof(char *));
+	  hostent->h_addr_list = (char**)malloc((naddrs + 1) * sizeof(char *));
 	  if (hostent->h_addr_list)
 	    {
 	      /* Fill in the hostent and return successfully. */

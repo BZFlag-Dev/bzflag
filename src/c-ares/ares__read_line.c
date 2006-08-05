@@ -36,7 +36,7 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize)
 
   if (*buf == NULL)
     {
-      *buf = malloc(128);
+      *buf = (char *)malloc(128);
       if (!*buf)
 	return ARES_ENOMEM;
       *bufsize = 128;
@@ -55,7 +55,7 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize)
       offset = len;
 
       /* Allocate more space. */
-      newbuf = realloc(*buf, *bufsize * 2);
+      newbuf = (char *)realloc(*buf, *bufsize * 2);
       if (!newbuf)
 	return ARES_ENOMEM;
       *buf = newbuf;

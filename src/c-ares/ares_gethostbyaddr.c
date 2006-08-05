@@ -23,7 +23,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/nameser.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
+#endif
 #endif
 
 #include <stdio.h>
@@ -65,7 +67,7 @@ void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
       return;
     }
 
-  aquery = malloc(sizeof(struct addr_query));
+  aquery = (struct addr_query *)malloc(sizeof(struct addr_query));
   if (!aquery)
     {
       callback(arg, ARES_ENOMEM, NULL);
