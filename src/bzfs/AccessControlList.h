@@ -269,6 +269,14 @@ private:
       and removes those who have. */
   void expire();
 
+  /** This function removes bans dependent on their origin
+      (local or from master list) **/
+  void purge(bool master);
+
+  /** This function purges all local bans
+      so the local banfile can be reloaded **/
+  void purgeLocals(void);
+
   typedef std::vector<BanInfo> banList_t;
   banList_t banList;
 
