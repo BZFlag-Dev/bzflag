@@ -1968,7 +1968,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
 		   || (tank != ROAM.getTargetTank())))
 	      || BZDB.isTrue("enableLocalSpawnEffect")) {
-	    if (myTank->getFlag() != Flags::Colorblindness) {
+	    if (myTank->getFlag() == Flags::Colorblindness) {
 			static float cbColor[4] = {1,1,1,1};
 	      EFFECTS.addSpawnEffect(cbColor, pos);
 	    } else {
