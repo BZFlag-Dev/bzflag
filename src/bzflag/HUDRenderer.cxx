@@ -778,7 +778,7 @@ void			HUDRenderer::renderStatus(void)
 		  fm.drawString(x, drawY, 0, majorFontFace, majorFontSize, "Target Info");
 
 		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.5f;
-		  sprintf(buffer,"Liniar Speed:%5.2f",linSpeed);
+		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
