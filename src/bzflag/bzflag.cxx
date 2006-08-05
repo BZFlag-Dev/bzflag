@@ -304,8 +304,6 @@ static void		parse(int argc, char** argv)
       noAudio = true;
     } else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
-	} else if (strcmp(argv[i], "-observerinfo") == 0) {
-		BZDB.set("showVelocities", "1");
 #ifdef ROBOT
     } else if (strcmp(argv[i], "-solo") == 0) {
       checkArgc(i, argc, argv[i]);
