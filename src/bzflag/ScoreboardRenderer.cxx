@@ -54,7 +54,8 @@ ScoreboardRenderer::ScoreboardRenderer() :
 				huntPositionEvent(0),
 				huntState(HUNT_NONE),
 	huntAddMode(false),
-	numHunted(0)
+	numHunted(0),
+	teamScoreYVal(0.0f)
 {
   // initialize message color (white)
   messageColor[0] = 1.0f;
@@ -307,6 +308,9 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   int i;
   float xn, xl;
   std::string label;
+
+  if (teamScoreYVal > 0.0)
+	  y = teamScoreYVal;
 
   if (World::getWorld()->allowRabbit())
     return;

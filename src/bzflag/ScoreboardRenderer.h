@@ -66,6 +66,8 @@ public:
   static const int SORT_MYRATIO = 6;
   static const int SORT_MAXNUM = SORT_MYRATIO;
 
+  void setTeamScoreY ( float val ){teamScoreYVal = val;}
+
 protected:
   void		hudColor3fv(const GLfloat*);
   void		renderTeamScores (float y, float x, float dy);
@@ -92,6 +94,8 @@ private:
   float winY;
   float winWidth;
   float winHeight;
+
+  float teamScoreYVal;
 
   GLfloat	messageColor[3];
   int		  minorFontFace;

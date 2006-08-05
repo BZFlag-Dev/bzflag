@@ -772,12 +772,12 @@ void			HUDRenderer::renderStatus(void)
 		  float vertSpeed = vel[2];
 		  float rotSpeed = fabs(target->getAngularVelocity());
 
-		  float drawY = y-1.5f*h;
+		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
+		  float drawY = y-smallZHeight;
 		  // draw header
-		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, "Target Info");
-		  fm.drawString(x, drawY, 0, majorFontFace, majorFontSize, "Target Info");
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
+		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
-		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.5f;
 		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
@@ -789,8 +789,15 @@ void			HUDRenderer::renderStatus(void)
 		  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+
+		  scoreboard->setTeamScoreY(drawY-smallZHeight*4.0f);
 	  }
+	  else
+		  scoreboard->setTeamScoreY(0);
   }
+  else
+	  scoreboard->setTeamScoreY(0);
+
 
   // print status top-center
   static const GLfloat redColor[3] = { 1.0f, 0.0f, 0.0f };
