@@ -449,6 +449,9 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
 bool AccessControlList::load() {
 
+  // clear all local bans
+  purgeLocals();
+
   if (banFile.size() == 0)
     return true;
 
@@ -457,9 +460,6 @@ bool AccessControlList::load() {
   if (!is.good())
     // file does not exist, but that's OK, we'll create it later if needed
     return true;
-
-  // clear all current bans
-  banList.clear();
 
   // try to read ban entries
   std::string ipAddress, hostpat, bzId, bannedBy, reason, tmp;
@@ -673,30 +673,43 @@ void AccessControlList::save() {
 }
 
 
-void AccessControlList::purgeMasters(void) {
-  // remove any bans from the master server
+void AccessControlList::purge(bool master) {
+  // selectively remove bans, depending on their origin
+  // (local or from master list)
   banList_t::iterator	bItr = banList.begin();
   while (bItr != banList.end()){
-    if (bItr->fromMaster)
+    if (bItr->fromMaster == master)
       bItr = banList.erase(bItr);
     else
       bItr++;
   }
   hostBanList_t::iterator	hItr = hostBanList.begin();
   while (hItr != hostBanList.end()) {
-    if (hItr->fromMaster)
+    if (hItr->fromMaster == master)
       hItr = hostBanList.erase(hItr);
     else
       hItr++;
   }
   idBanList_t::iterator	iItr = idBanList.begin();
   while (iItr != idBanList.end()) {
-    if (iItr->fromMaster) {
+    if (iItr->fromMaster == master) {
       iItr = idBanList.erase(iItr);
     } else {
       iItr++;
     }
   }
+}
+
+
+void AccessControlList::purgeLocals(void) {
+  // remove any local bans
+  AccessControlList::purge(false);
+}
+
+
+void AccessControlList::purgeMasters(void) {
+  // remove any bans from the master server
+  AccessControlList::purge(true);
 }
 
 
