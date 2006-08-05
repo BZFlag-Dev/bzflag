@@ -760,6 +760,37 @@ void			HUDRenderer::renderStatus(void)
     y += float(1.5*h);
   }
 
+  if (roaming && BZDB.isTrue("showVelocities"))
+  {
+	  Player *target = ROAM.getTargetTank();
+	  if (target)
+	  {
+		  float vel[3] = {0};
+		  memcpy(vel,target->getVelocity(),sizeof(float)*3);
+
+		  float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
+		  float vertSpeed = vel[2];
+		  float rotSpeed = fabs(target->getAngularVelocity());
+
+		  // draw header
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, "Target Info");
+		  fm.drawString(x, y-float(1.5*h), 0, majorFontFace, majorFontSize, "Target Info");
+
+		  sprintf(buffer,"Liniar Speed:%5.2f",linSpeed);
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+		  fm.drawString(x, y-float(2.0*h), 0, minorFontFace, minorFontSize, buffer);
+
+		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+		  fm.drawString(x, y-float(2.5*h), 0, minorFontFace, minorFontSize, buffer);
+
+		  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+		  fm.drawString(x, y-float(3*h), 0, minorFontFace, minorFontSize, buffer);
+
+	  }
+  }
+
   // print status top-center
   static const GLfloat redColor[3] = { 1.0f, 0.0f, 0.0f };
   static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };
