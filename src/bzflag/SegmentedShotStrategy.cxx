@@ -313,8 +313,8 @@ void			SegmentedShotStrategy::addShot(
 void			SegmentedShotStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = BZDBCache::linedRadarShots;
-  const int size   = BZDBCache::sizedRadarShots;
+  const int length = (int)BZDBCache::linedRadarShots;
+  const int size   = (int)BZDBCache::sizedRadarShots;
 
   float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
 
