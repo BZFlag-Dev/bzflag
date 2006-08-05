@@ -184,6 +184,8 @@ public:
 
   void setZpos (float z);
 
+  float getMaxSpeed ( void ) const;
+
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);

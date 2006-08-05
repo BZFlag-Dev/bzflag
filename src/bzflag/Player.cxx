@@ -188,6 +188,18 @@ float Player::getRadius() const
   return (dimensionsScale[0] * BZDBCache::tankRadius);
 }
 
+float Player::getMaxSpeed ( void ) const
+{
+	// BURROW and AGILITY will not be taken into account
+	const FlagType* flag = getFlag();
+	float maxSpeed = BZDBCache::tankSpeed;
+	if (flag == Flags::Velocity) {
+		maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	} else if (flag == Flags::Thief) {
+		maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	}
+	return maxSpeed;
+}
 
 void Player::getMuzzle(float* m) const
 {
