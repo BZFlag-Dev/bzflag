@@ -86,6 +86,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "showCollisionGrid",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "showVelocities",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
