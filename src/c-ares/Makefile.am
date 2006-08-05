@@ -3,8 +3,7 @@ noinst_LTLIBRARIES = libcares.la
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
-AM_CFLAGS = @CONF_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 
 libcares_la_LDFLAGS = -static
