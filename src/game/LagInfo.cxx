@@ -111,7 +111,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
       kick = false;
     }
 
-    // warn players from time to time whose lag is > jitterthreshold (-lagwarn)
+    // warn players from time to time whose jitter is > jitterthreshold (-jitterwarn)
     if (!info->isObserver() && (jitterthreshold > 0)
 	&& jitteravg > jitterthreshold
         && jittercount - jitterlastwarn > 2 * jitterwarncount) {
