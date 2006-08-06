@@ -230,7 +230,7 @@ float Player::getMuzzleHeight() const
 void Player::move(const float* _pos, float _azimuth)
 {
 	// update the speed of the state
-	float currentTime = TimeKeeper::getCurrent().getSeconds();
+	float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
 	if ( state.lastUpdateTime >= 0 )
 	{
 		float delta = currentTime - state.lastUpdateTime;
