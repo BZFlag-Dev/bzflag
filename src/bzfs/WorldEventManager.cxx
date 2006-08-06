@@ -10,16 +10,16 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-/* bzflag special common - 1st one */
-#include "common.h"
-
-#include <iostream>
-#include <string>
-
+/* interface header */
 #include "WorldEventManager.h"
 
+/* system implementation headers */
+#include <string>
+
+/* common implementation headers */
 #include "global.h"
 #include "bzfsAPI.h"
+
 
 extern bz_eTeamType convertTeam ( TeamColor team );
 extern TeamColor convertTeam( bz_eTeamType team );

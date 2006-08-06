@@ -13,9 +13,6 @@
 // interface headers
 #include "HUDuiImage.h"
 
-// system headers
-#include <iostream>
-
 // common implementation headers
 #include "bzfgl.h"
 #include "TextureManager.h"

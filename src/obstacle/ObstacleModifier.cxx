@@ -10,9 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
-// implementation header
+// interface header
 #include "ObstacleModifier.h"
 
 // system headers
@@ -20,7 +18,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <iostream>
 
 // common headers
 #include "ObstacleMgr.h"

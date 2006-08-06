@@ -21,10 +21,16 @@
 #ifndef WORLD_EVENT_MANAGER_H
 #define	WORLD_EVENT_MANAGER_H
 
+/* the venerable common header */
+#include "common.h"
+
+/* interface system headers */
 #include <map>
 #include <vector>
 
+/* common interface headers */
 #include "bzfsAPI.h"
+
 
 typedef std::vector<bz_EventHandler*> tvEventList;
 typedef std::map<bz_eEventType, tvEventList> tmEventTypeList;

@@ -13,9 +13,6 @@
 // interface headers
 #include "HUDuiControl.h"
 
-// system headers
-#include <iostream>
-
 // common implementation headers
 #include "TextureManager.h"
 

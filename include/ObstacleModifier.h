@@ -13,8 +13,12 @@
 #ifndef	BZF_OBSTACLE_MODIFIER_H
 #define	BZF_OBSTACLE_MODIFIER_H
 
-// common headers
+// the common header
+#include "common.h"
+
+/* common interface headers */
 #include "BzMaterial.h"
+
 
 class Obstacle;
 class GroupInstance;
