@@ -75,6 +75,7 @@ public:
   float		getAngle() const;
   const float*	getForward() const;
   const float*	getVelocity() const;
+  
   float		getAngularVelocity() const;
   int		getPhysicsDriver() const;
   int		getDeathPhysicsDriver() const;
@@ -89,6 +90,10 @@ public:
   float		getLocalNormalizedScore() const;
   short		getScore() const;
   const float*	getDimensions() const;
+
+  const float*	getAperantVelocity() const;
+  const float	getLastUpdateTime() const;
+
 
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const
@@ -390,6 +395,16 @@ inline const float*	Player::getForward() const
 inline const float*	Player::getVelocity() const
 {
   return state.velocity;
+}
+
+inline const float*	Player::getAperantVelocity() const
+{
+	return state.aperantVelocity;
+}
+
+inline const float	Player::getLastUpdateTime() const
+{
+	return state.lastUpdateTime;
 }
 
 inline float		Player::getAngularVelocity() const

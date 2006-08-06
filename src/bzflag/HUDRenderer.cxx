@@ -768,9 +768,13 @@ void			HUDRenderer::renderStatus(void)
 		  float vel[3] = {0};
 		  memcpy(vel,target->getVelocity(),sizeof(float)*3);
 
+		  float aperantVel[3] = {0};
+		  memcpy(aperantVel,target->getAperantVelocity(),sizeof(float)*3);
+
 		  float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
 		  float vertSpeed = vel[2];
 		  float rotSpeed = fabs(target->getAngularVelocity());
+		  float aperantLinSpeed = sqrt(aperantVel[0]*aperantVel[0]+aperantVel[1]*aperantVel[1]);
 
 		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
 		  float drawY = y-smallZHeight;
@@ -779,10 +783,16 @@ void			HUDRenderer::renderStatus(void)
 		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
 		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
+		  if (BZDB.evalInt("showVelocities") > 1)
+			  sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,aperantLinSpeed);
+
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
+		  if (BZDB.evalInt("showVelocities") > 1)
+			  sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,aperantVel[2]);
+
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
