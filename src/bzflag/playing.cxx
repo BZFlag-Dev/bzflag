@@ -2525,7 +2525,7 @@ static void handleSetTeam ( void *msg, uint16_t len )
   p->changeTeam((TeamColor)team);
 }
 
-static void handleNearFlag ( void *msg, uint16_t len )
+static void handleNearFlag ( void *msg, uint16_t /*len*/ )
 {
 	float pos[3];
 	std::string flagName;
