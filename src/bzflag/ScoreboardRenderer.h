@@ -69,6 +69,9 @@ public:
     SortTypeCount
   };
 
+  void setTeamScoreY ( float val ){teamScoreYVal = val;}
+  void setRoaming ( bool val ){roaming = val;}
+
 protected:
   void		hudColor3fv(const GLfloat*);
   void		renderTeamScores (float y, float x, float dy);
@@ -95,6 +98,9 @@ private:
   float winY;
   float winWidth;
   float winHeight;
+
+  float teamScoreYVal;
+  bool	roaming;
 
   GLfloat	messageColor[3];
   int		minorFontFace;

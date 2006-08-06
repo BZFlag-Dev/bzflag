@@ -771,23 +771,32 @@ void			HUDRenderer::renderStatus(void)
 		  float vertSpeed = vel[2];
 		  float rotSpeed = fabs(target->getAngularVelocity());
 
+		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
+		  float drawY = y-smallZHeight;
 		  // draw header
-		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, "Target Info");
-		  fm.drawString(x, y-float(1.5*h), 0, majorFontFace, majorFontSize, "Target Info");
+		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
+		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
-		  sprintf(buffer,"Liniar Speed:%5.2f",linSpeed);
+		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(2.0*h), 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(2.5*h), 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, y-float(3*h), 0, minorFontFace, minorFontSize, buffer);
-	  }
+		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+
+		  scoreboard->setTeamScoreY(drawY-smallZHeight*4.5f);
+	  }	
+	  else
+		scoreboard->setTeamScoreY(0);
+
   }
+  else
+	scoreboard->setTeamScoreY(0);
 
   // print status top-center
   static const GLfloat redColor[3] = { 1.0f, 0.0f, 0.0f };
@@ -1346,6 +1355,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(false);
 
   // draw flag help
@@ -1419,6 +1429,7 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(true);
 
   // draw times
@@ -1491,6 +1502,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
+  scoreboard->setRoaming(roaming);
   scoreboard->render(false);
 
   // show tank labels
