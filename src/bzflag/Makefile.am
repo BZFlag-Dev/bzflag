@@ -31,23 +31,19 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
-	clientConfig.cxx			\
-	clientConfig.h			\
 	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
-	defaultBZDB.h			\
-	defaultBZDB.cxx			\
+	CrackedGlass.cxx		\
+	CrackedGlass.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\
 	Downloads.h			\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
-	effectsRenderer.cxx			\
-	effectsRenderer.h			\
 	EntryZone.cxx			\
 	EntryZone.h			\
 	FlashClock.cxx			\
@@ -56,20 +52,10 @@ bzflag_SOURCES =			\
 	ForceFeedback.h			\
 	FormatMenu.cxx			\
 	FormatMenu.h			\
-	GuidedMissleStrategy.cxx	\
-	GuidedMissleStrategy.h		\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
-	HelpCreditsMenu.cxx		\
-	HelpCreditsMenu.h		\
-	HelpFlagsMenu.cxx		\
-	HelpFlagsMenu.h			\
-	HelpInstructionsMenu.cxx	\
-	HelpInstructionsMenu.h		\
-	HelpKeymapMenu.cxx		\
-	HelpKeymapMenu.h		\
-	HelpMenu.cxx			\
-	HelpMenu.h			\
+	GuidedMissleStrategy.cxx	\
+	GuidedMissleStrategy.h		\
 	HUDDialog.cxx			\
 	HUDDialog.h			\
 	HUDDialogStack.cxx		\
@@ -94,10 +80,20 @@ bzflag_SOURCES =			\
 	HUDuiList.h			\
 	HUDuiTypeIn.cxx			\
 	HUDuiTypeIn.h			\
-	JoinMenu.cxx			\
-	JoinMenu.h			\
+	HelpCreditsMenu.cxx		\
+	HelpCreditsMenu.h		\
+	HelpFlagsMenu.cxx		\
+	HelpFlagsMenu.h			\
+	HelpInstructionsMenu.cxx	\
+	HelpInstructionsMenu.h		\
+	HelpKeymapMenu.cxx		\
+	HelpKeymapMenu.h		\
+	HelpMenu.cxx			\
+	HelpMenu.h			\
 	InputMenu.cxx			\
 	InputMenu.h			\
+	JoinMenu.cxx			\
+	JoinMenu.h			\
 	KeyboardMapMenu.cxx		\
 	KeyboardMapMenu.h		\
 	LocalCommand.cxx		\
@@ -108,20 +104,16 @@ bzflag_SOURCES =			\
 	MainMenu.h			\
 	MainWindow.cxx			\
 	MainWindow.h			\
-	MenuDefaultKey.h		\
 	MenuDefaultKey.cxx		\
-	motd.h				\
-	motd.cxx			\
+	MenuDefaultKey.h		\
 	NewVersionMenu.cxx		\
 	NewVersionMenu.h		\
 	OptionsMenu.cxx			\
 	OptionsMenu.h			\
+	Plan.cxx			\
+	Plan.h				\
 	Player.cxx			\
 	Player.h			\
-	playerAvatarManager.cxx			\
-	playerAvatarManager.h			\
-	Plan.cxx			\
-	Plan.h			\
 	QuickKeysMenu.cxx		\
 	QuickKeysMenu.h			\
 	QuitMenu.cxx			\
@@ -165,12 +157,12 @@ bzflag_SOURCES =			\
 	ShotPath.h			\
 	ShotPathSegment.cxx		\
 	ShotPathSegment.h		\
+	ShotStatistics.cxx		\
+	ShotStatistics.h		\
 	ShotStats.cxx			\
 	ShotStats.h			\
 	ShotStatsDefaultKey.cxx		\
 	ShotStatsDefaultKey.h		\
-	ShotStatistics.h		\
-	ShotStatistics.cxx		\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\
@@ -181,8 +173,8 @@ bzflag_SOURCES =			\
 	TrackMarks.h			\
 	Weapon.cxx			\
 	Weapon.h			\
-	WeatherRenderer.h		\
 	WeatherRenderer.cxx		\
+	WeatherRenderer.h		\
 	World.cxx			\
 	World.h				\
 	WorldBuilder.cxx		\
@@ -194,9 +186,19 @@ bzflag_SOURCES =			\
 	callbacks.cxx			\
 	callbacks.h			\
 	clientCommands.cxx		\
+	clientConfig.cxx		\
+	clientConfig.h			\
 	commands.h			\
 	daylight.cxx			\
 	daylight.h			\
+	defaultBZDB.cxx			\
+	defaultBZDB.h			\
+	effectsRenderer.cxx		\
+	effectsRenderer.h		\
+	motd.cxx			\
+	motd.h				\
+	playerAvatarManager.cxx		\
+	playerAvatarManager.h		\
 	playing.cxx			\
 	playing.h			\
 	sound.cxx			\
