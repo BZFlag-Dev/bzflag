@@ -30,6 +30,9 @@ public:
   /** Getting lag value (in milliseconds)
   */
   int	getLag() const;
+  /** Getting jitter value (in milliseconds)
+  */
+  int	getJitter() const;
   /** Get the floating point value of the lag (in seconds)
   */
   float	getLagAvg() const;
@@ -38,7 +41,8 @@ public:
   void	getLagStats(char* msg, bool isAdmin) const;
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
-  int	updatePingLag(void *buf, bool &warn, bool &kick);
+  void	updatePingLag(void *buf, bool &warn, bool &kick,
+		      bool &jittwarn, bool &jittkick);
   void	updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
@@ -49,6 +53,7 @@ public:
   /** set the threshold for warning/kicking
    */
   static void setThreshold(float _threshold, float _max);
+  static void setJitterThreshold(float _jitterthreshold, float _max);
 private:
   PlayerInfo *info;
   // lag measurement
@@ -61,6 +66,9 @@ private:
   int	 lagcount;
   int	 laglastwarn;
   int	 lagwarncount;
+  int	 jittercount;
+  int	 jitterlastwarn;
+  int	 jitterwarncount;
   bool	pingpending;
   TimeKeeper  nextping;
   TimeKeeper  lastping;
@@ -71,7 +79,9 @@ private:
   float       lasttimestamp;
 
   static float threshold;
+  static float jitterthreshold;
   static float max;
+  static float jittermax;
 };
 
 #endif
