@@ -15,6 +15,7 @@
 #include "ErrorHandler.h"
 
 // system headers
+#include <iostream>
 #include <stdio.h>
 #include <stdarg.h>
 #include <vector>

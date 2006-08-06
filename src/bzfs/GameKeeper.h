@@ -17,10 +17,11 @@
 #include "common.h"
 
 // system headers
+#include <iostream>
 #include <vector>
 #include <string>
 #if defined(USE_THREADS)
-#include <pthread.h>
+#  include <pthread.h>
 #endif
 
 // common interface headers
@@ -40,6 +41,7 @@
 #include "Authentication.h"
 #include "messages.h"
 #include "ShotUpdate.h"
+
 
 struct FiringInfo;
 class ShotInfo {

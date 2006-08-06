@@ -16,6 +16,10 @@
 // implementation wrapers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
+#ifndef _USE_BZ_API
+#  include <iostream>
+#endif
+
 #include "bzfs.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"

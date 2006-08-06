@@ -21,6 +21,7 @@
 #include "WorldGenerators.h"
 
 // system headers
+#include <iostream>
 #include <math.h>
 
 // common headers
@@ -33,6 +34,7 @@
 #include "CustomZone.h"
 #include "CmdLineOptions.h"
 #include "bzfs.h"
+
 
 WorldInfo *defineRandomWorld()
 {
