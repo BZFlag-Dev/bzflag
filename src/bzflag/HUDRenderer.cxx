@@ -940,8 +940,6 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
 		if (roaming && BZDB.isTrue("showVelocities")) 
 		{
-			;
-
 			float vel[3] = {0};
 			memcpy(vel,pl->getVelocity(),sizeof(float)*3);
 			std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
