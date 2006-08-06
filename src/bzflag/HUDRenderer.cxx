@@ -801,7 +801,6 @@ void			HUDRenderer::renderStatus(void)
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
 
-
 		  float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
 		  float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
