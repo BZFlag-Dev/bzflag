@@ -2960,6 +2960,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\CrackedGlass.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\daylight.cxx"
 					>
 					<FileConfiguration
@@ -6653,6 +6657,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\CrackedGlass.h"
 				>
 			</File>
 			<File
