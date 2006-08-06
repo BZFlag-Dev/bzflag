@@ -56,17 +56,17 @@ int ScoreboardRenderer::sortMode = 0;
 bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
 ScoreboardRenderer::ScoreboardRenderer() :
-				winWidth (0.0),
-				dim(false),
-				huntIndicator(false),
-				huntPosition(0),
-				huntSelectEvent(false),
-				huntPositionEvent(0),
-				huntState(HUNT_NONE),
-	huntAddMode(false),
-	numHunted(0),
-	teamScoreYVal(0.0f),
-	roaming(false)
+  winWidth (0.0),
+  teamScoreYVal(0.0f),
+  roaming(false),
+  dim(false),
+  huntIndicator(false),
+  huntPosition(0),
+  huntSelectEvent(false),
+  huntPositionEvent(0),
+  huntState(HUNT_NONE),
+  huntAddMode(false),
+  numHunted(0)
 {
   // initialize message color (white)
   messageColor[0] = 1.0f;
@@ -79,7 +79,7 @@ ScoreboardRenderer::ScoreboardRenderer() :
 
 /*  Set window size and location to be used to render the scoreboard.
  *  Values are relative to .... when render() is invoked.
-*/
+ */
 void  ScoreboardRenderer::setWindowSize (float x, float y, float width, float height)
 {
   winX = x;
@@ -132,23 +132,23 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
-  case 0: { // auto
-    const float s = height / 72.0f;
-    minorFontSize = floorf(s);
-    break;
-  }
-  case 1: // tiny
-    minorFontSize = 6;
-    break;
-  case 2: // small
-    minorFontSize = 8;
-    break;
-  case 3: // medium
-    minorFontSize = 12;
-    break;
-  case 4: // big
-    minorFontSize = 16;
-    break;
+    case 0: { // auto
+      const float s = height / 72.0f;
+      minorFontSize = floorf(s);
+      break;
+    }
+    case 1: // tiny
+      minorFontSize = 6;
+      break;
+    case 2: // small
+      minorFontSize = 8;
+      break;
+    case 3: // medium
+      minorFontSize = 12;
+      break;
+    case 4: // big
+      minorFontSize = 16;
+      break;
   }
 
   huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "->");
@@ -313,8 +313,8 @@ int			ScoreboardRenderer::getHuntState() const
 // invoked when joining a server
 void ScoreboardRenderer::huntReset()
 {
-    huntState = HUNT_NONE;
-    numHunted = 0;
+  huntState = HUNT_NONE;
+  numHunted = 0;
 }
 
 void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
@@ -388,7 +388,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
-	      std::string playerInfo = ColorStrings[flagd->flagTeam];
+	std::string playerInfo = ColorStrings[flagd->flagTeam];
 	sprintf (flagColor, "%-12s", flagd->flagName);
 	playerInfo += flagColor;
 	playerInfo += ColorStrings[teamIndex];
@@ -486,15 +486,15 @@ void			ScoreboardRenderer::renderScoreboard(void)
 	if (!huntAddMode)
 	  clearHuntedTanks ();
 	if (huntAddMode && players[huntPosition]->isHunted()) {   // UNselect
-	      players[huntPosition]->setHunted(false);
+	  players[huntPosition]->setHunted(false);
 	  if (--numHunted != 0)
-		playLocalSound(SFX_HUNT_SELECT);
+	    playLocalSound(SFX_HUNT_SELECT);
 	} else {						  // else select
-	      players[huntPosition]->setHunted(true);
+	  players[huntPosition]->setHunted(true);
 	  if (++numHunted == 1)
-		playLocalSound(SFX_HUNT);
+	    playLocalSound(SFX_HUNT);
 	  else
-		playLocalSound(SFX_HUNT_SELECT);
+	    playLocalSound(SFX_HUNT_SELECT);
 	}
 	huntState = HUNT_ENABLED;
       }
@@ -548,8 +548,8 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 
 
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
-			    float x1, float x2, float x3, float xs, float y, 
-                            int emailLen, bool huntCursor)
+							    float x1, float x2, float x3, float xs, float y, 
+							    int emailLen, bool huntCursor)
 {
   // score
   char score[40], kills[40];
@@ -625,24 +625,24 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   if (roaming && BZDB.isTrue("showVelocities"))
-  {
-	  float vel[3] = {0};
-	  memcpy(vel,player->getVelocity(),sizeof(float)*3);
+    {
+      float vel[3] = {0};
+      memcpy(vel,player->getVelocity(),sizeof(float)*3);
 
-	  float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
+      float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
 
-	  float badFactor = 1.5f;
-	  if (linSpeed > player->getMaxSpeed()*badFactor)
-		  playerInfo += ColorStrings[RedColor];
-	  if (linSpeed > player->getMaxSpeed())
-		  playerInfo += ColorStrings[YellowColor];
-	  else if (linSpeed < 0.0001f)
-		  playerInfo += ColorStrings[GreyColor];
-	  else
-		  playerInfo += ColorStrings[WhiteColor];
-	  playerInfo += TextUtils::format("%5.2f",linSpeed);
-	  playerInfo += teamColor;
-  }
+      float badFactor = 1.5f;
+      if (linSpeed > player->getMaxSpeed()*badFactor)
+	playerInfo += ColorStrings[RedColor];
+      if (linSpeed > player->getMaxSpeed())
+	playerInfo += ColorStrings[YellowColor];
+      else if (linSpeed < 0.0001f)
+	playerInfo += ColorStrings[GreyColor];
+      else
+	playerInfo += ColorStrings[WhiteColor];
+      playerInfo += TextUtils::format("%5.2f",linSpeed);
+      playerInfo += teamColor;
+    }
   // callsign
   playerInfo += player->getCallSign();
 
@@ -659,10 +659,10 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     // color special flags
     if (BZDBCache::colorful) {
       if ((flagd == Flags::ShockWave)
-      ||  (flagd == Flags::Genocide)
-      ||  (flagd == Flags::Laser)
-      ||  (flagd == Flags::GuidedMissile)) {
-	      playerInfo += ColorStrings[WhiteColor];
+	  ||  (flagd == Flags::Genocide)
+	  ||  (flagd == Flags::Laser)
+	  ||  (flagd == Flags::GuidedMissile)) {
+	playerInfo += ColorStrings[WhiteColor];
       } else if (flagd->flagTeam != NoTeam) {
 	// use team color for team flags
 	playerInfo += ColorStrings[flagd->flagTeam];
