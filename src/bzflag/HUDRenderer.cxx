@@ -790,7 +790,7 @@ void			HUDRenderer::renderStatus(void)
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
 
-		  scoreboard->setTeamScoreY(drawY-smallZHeight*4.0f);
+		  scoreboard->setTeamScoreY(drawY-smallZHeight*4.5f);
 	  }
 	  else
 		  scoreboard->setTeamScoreY(0);
