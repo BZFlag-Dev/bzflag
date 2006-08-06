@@ -108,7 +108,12 @@ inline std::string Roaming::getRoamingLabel(void) const {
 }
 
 inline Player* Roaming::getTargetTank() const {
-  return getPlayerByIndex(targetWinner);
+	if ((getMode() == roamViewFollow)
+		|| (getMode() == roamViewFP)
+		|| (getMode() == roamViewTrack))
+		return getPlayerByIndex(targetWinner);
+	else
+		return NULL;
 }
 
 inline Flag* Roaming::getTargetFlag() const {
