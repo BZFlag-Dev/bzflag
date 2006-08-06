@@ -60,7 +60,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
     newpos[1] = info.shot.pos[1] - (front * f[1]);
     newpos[2] = info.shot.pos[2] - BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   }
-  shotStatistics.recordFire(info.flagType);
+  shotStatistics.recordFire(info.flagType,f,info.shot.vel);
   // FIXME - with dynamic dimensions, this may not be a good idea
   //	 (flag each shot with a 'default dimensions' state?)
   move(newpos, getAngle());

@@ -59,7 +59,6 @@ public:
 
   Location	getLocation() const;
   FiringStatus	getFiringStatus() const;
-  float		getReloadTime() const;
   float		getFlagShakingTime() const;
   int		getFlagShakingWins() const;
   const float*	getAntidoteLocation() const;
@@ -74,12 +73,14 @@ public:
   void		setPause(bool = true);
   void		activateAutoPilot(bool = true);
   bool		fireShot();
-  void		forceReload(float time = 0.0f);
   void		explodeTank();
   void		doJump();
   void		setJump();
   void		setJumpPressed(bool value);
   void		setTarget(const Player*);
+
+  float		getReloadTime() const;
+
 
   void		setNemesis(const Player*);
   const Player*	getNemesis() const;
@@ -142,7 +143,6 @@ private:
 private:
   Location	location;
   FiringStatus	firingStatus;
-  TimeKeeper	jamTime;
   TimeKeeper	bounceTime;
   TimeKeeper	agilityTime;
   float		flagShakingTime;

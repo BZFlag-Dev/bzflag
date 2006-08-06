@@ -226,6 +226,11 @@ float Player::getMuzzleHeight() const
   return (dimensionsScale[2] * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 }
 
+void Player::forceReload(float time)
+{
+	jamTime = TimeKeeper::getCurrent();
+	jamTime+= time;
+}
 
 void Player::move(const float* _pos, float _azimuth)
 {

@@ -191,6 +191,8 @@ public:
 
   float getMaxSpeed ( void ) const;
 
+  void forceReload(float time);
+
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);
@@ -199,6 +201,7 @@ protected:
   // shot statistics
   ShotStatistics	shotStatistics;
   const Obstacle* lastObstacle; // last obstacle touched
+  TimeKeeper	jamTime;
 
 private:
   // return true if the shot had to be terminated or false if it
@@ -217,6 +220,7 @@ private:
   void updateJumpJets(float dt);
   void updateTrackMarks();
   bool hitObstacleResizing();
+
 
 private:
   // data not communicated with other players
