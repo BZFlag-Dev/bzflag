@@ -103,7 +103,8 @@ GUIOptionsMenu::GUIOptionsMenu()
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
-  option->update();
+  options->push_back(std::string("On With Apparant Speeds"));
+ option->update();
   listHUD.push_back(option);
 
   // set Radar Translucency

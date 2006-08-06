@@ -28,6 +28,7 @@
 #include "HUDui.h"
 #include "Roaming.h"
 #include "playing.h"
+#include "TextUtils.h"
 
 
 //
@@ -767,9 +768,13 @@ void			HUDRenderer::renderStatus(void)
 		  float vel[3] = {0};
 		  memcpy(vel,target->getVelocity(),sizeof(float)*3);
 
+		  float aperantVel[3] = {0};
+		  memcpy(aperantVel,target->getAperantVelocity(),sizeof(float)*3);
+
 		  float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
 		  float vertSpeed = vel[2];
 		  float rotSpeed = fabs(target->getAngularVelocity());
+		  float aperantLinSpeed = sqrt(aperantVel[0]*aperantVel[0]+aperantVel[1]*aperantVel[1]);
 
 		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
 		  float drawY = y-smallZHeight;
@@ -778,10 +783,16 @@ void			HUDRenderer::renderStatus(void)
 		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
 		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
+		  if (BZDB.evalInt("showVelocities") > 1)
+			  sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,aperantLinSpeed);
+		 
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
 		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
+		  if (BZDB.evalInt("showVelocities") > 1)
+			  sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,aperantVel[2]);
+		 
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
@@ -919,7 +930,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
-		 pl->getPosition()[2], model, proj, view, &x, &y, &z);
+		 pl->getMuzzleHeight()+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*2, model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
 	FontManager &fm = FontManager::instance();
 	fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
@@ -935,8 +946,18 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 			float(y) + offset -
 			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, fname)),
 			0, labelsFontFace, labelsFontSize, fname);
-	}
-      }
+		}
+		if (roaming && BZDB.isTrue("showVelocities")) 
+		{
+			float vel[3] = {0};
+			memcpy(vel,pl->getVelocity(),sizeof(float)*3);
+			std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
+			fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, speedStr.c_str()) / 2.0f,
+				float(y) + offset -
+				(3.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, speedStr.c_str())),
+				0, labelsFontFace, labelsFontSize, speedStr.c_str());
+		}
+	  }
     }
   }
 }
