@@ -55,8 +55,8 @@ public:
   HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
 
-  int			getNoMotionSize() const;
-  int			getMaxMotionSize() const;
+  int		getNoMotionSize() const;
+  int		getMaxMotionSize() const;
 
   void		setColor(float r, float g, float b);
   void		setPlaying(bool playing);
@@ -100,18 +100,23 @@ protected:
   void		hudSColor3fv(const GLfloat*);
   void		renderAlerts(void);
   void		renderStatus(void);
-  void		renderCracks();
-  void		renderClassicCracks();
-  void		renderHighResCracks();
+  void		renderCracks(void);
+  void		renderClassicCracks(void);
+  void		renderHighResCracks(void);
   void		renderOptions(SceneRenderer&);
   void		renderCompose(SceneRenderer&);
   void		renderBox(SceneRenderer&);
   void		renderTankLabels(SceneRenderer&);
+  void		renderTimes(void);
+  void		renderShots(const Player*);
+
   void		renderPlaying(SceneRenderer&);
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
-  void		renderTimes(void);
-  void		renderShots(const Player*);
+
+  /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
+   */
+  void		renderUpdate(SceneRenderer&);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;

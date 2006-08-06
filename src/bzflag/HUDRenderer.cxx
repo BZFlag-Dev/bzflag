@@ -1309,7 +1309,36 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   }
 }
 
-void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
+
+void HUDRenderer::renderUpdate(SceneRenderer& renderer)
+{
+
+  // draw cracks
+  if (showCracks)
+    renderCracks();
+
+  // draw status line
+  renderStatus();
+
+  // draw alert messages
+  renderAlerts();
+
+  // show player scoreboard
+  scoreboard->setRoaming(roaming);
+  scoreboard->render(false);
+
+  // draw times
+  renderTimes();
+
+  // draw message composition
+  if (showCompose)
+    renderCompose(renderer);
+
+  rerurn;
+}
+
+
+void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = window.getWidth();
@@ -1344,19 +1373,8 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     renderShots(myTank);
   }
 
-  // draw cracks
-  if (showCracks)
-    renderCracks();
-
-  // draw status line
-  renderStatus();
-
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
-  scoreboard->setRoaming(roaming);
-  scoreboard->render(false);
+  // update the display
+  renderUpdate(renderer);
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1383,13 +1401,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 		    bigFontSize, autoPilotLabel);
     }
   }
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
 
   // draw targeting box
   renderBox(renderer);
@@ -1418,26 +1429,13 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
-  // draw cracks
-  if (showCracks)
-    renderCracks();
+  // draw shot reload status
+  if (BZDB.isTrue("displayReloadTimer")) {
+    renderShots(myTank);
+  }
 
-  // draw status line
-  renderStatus();
-
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
-  scoreboard->setRoaming(roaming);
-  scoreboard->render(true);
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
+  // update display
+  renderUpdate(renderer);
 
   // tell player what to do to start/resume playing
   LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -1498,22 +1496,13 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
     renderShots(ROAM.getTargetTank());
   }
 
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
-  scoreboard->setRoaming(roaming);
-  scoreboard->render(false);
+  // update the display
+  renderUpdate(renderer);
 
   // show tank labels
-  if (BZDB.isTrue("displayLabels")) renderTankLabels(renderer);
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
+  if (BZDB.isTrue("displayLabels")) {
+    renderTankLabels(renderer);
+  }
 
   // display game over
   if (myTank && globalClock.isOn()) {
@@ -1524,8 +1513,6 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 		    bigFontFace, bigFontSize, gameOverLabel);
     }
   }
-
-  renderStatus();
 
   // draw targeting box
   if (altitude != -1.0f)
