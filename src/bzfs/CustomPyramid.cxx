@@ -16,9 +16,10 @@
 #include "CustomPyramid.h"
 
 /* system headers */
-#include <math.h>
+#include <iostream>
 #include <sstream>
 #include <vector>
+#include <math.h>
 
 /* common implementation headers */
 #include "PyramidBuilding.h"

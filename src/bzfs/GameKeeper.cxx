@@ -14,6 +14,7 @@
 #include "GameKeeper.h"
 
 /* system headers */
+#include <iostream>
 #include <vector>
 #include <string>
 

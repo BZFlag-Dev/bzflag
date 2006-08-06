@@ -16,6 +16,7 @@
 #include "CustomSphere.h"
 
 /* system headers */
+#include <iostream>
 #include <sstream>
 #include <vector>
 

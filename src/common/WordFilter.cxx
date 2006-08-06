@@ -14,6 +14,7 @@
 #include "WordFilter.h"
 
 // system headers
+#include <iostream>
 #include <ctype.h>
 #include <string>
 

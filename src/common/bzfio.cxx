@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
+/* interface header */
 #include "bzfio.h"
-#include "common.h"
 
-#include <stdarg.h>
 /* system implementation headers */
+#include <iostream>
+#include <stdarg.h>
 #include <time.h>
 #include <string>
 #ifdef HAVE_UNISTD_H
@@ -30,6 +30,7 @@
 #else /* !defined(_WIN32) */
 #  include <mmsystem.h>
 #endif
+
 
 static bool doTimestamp = false;
 static bool doMicros = false;

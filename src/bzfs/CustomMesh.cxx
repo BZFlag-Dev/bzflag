@@ -15,6 +15,9 @@
 /* interface header */
 #include "CustomMesh.h"
 
+/* system implementation headers */
+#include <iostream>
+
 /* bzfs implementation headers */
 #include "CustomMeshFace.h"
 #include "ParseMaterial.h"

@@ -10,11 +10,17 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// bzflag global header
+/* interface header */
 #include "bzfsPlayerStateVerify.h"
+
+/* system implementation headers */
+#include <iostream>
+#include <assert.h>
+
+/* common implementation headers */
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include <assert.h>
+
 
 bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {

@@ -15,6 +15,7 @@
 #include "ParseMaterial.h"
 
 /* system headers */
+#include <iostream>
 #include <sstream>
 
 /* common implementation headers */

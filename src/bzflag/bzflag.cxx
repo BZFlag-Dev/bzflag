@@ -14,6 +14,7 @@
 #include "bzflag.h"
 
 /* system headers */
+#include <iostream>
 #include <assert.h>
 #include <ctype.h>
 #include <fstream>

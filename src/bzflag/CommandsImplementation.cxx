@@ -14,6 +14,7 @@
 #include "common.h"
 
 // system implementation headers
+#include <iostream>
 #include <math.h>
 #include <ctype.h>
 

@@ -15,6 +15,9 @@
 /* interface header */
 #include "CustomTetra.h"
 
+/* system implementation headers */
+#include <iostream>
+
 /* common implementation headers */
 #include "TetraBuilding.h"
 #include "TextureMatrix.h"

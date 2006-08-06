@@ -16,6 +16,7 @@
 #include "CustomDynamicColor.h"
 
 /* system implementation headers */
+#include <iostream>
 #include <sstream>
 #include <vector>
 

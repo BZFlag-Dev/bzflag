@@ -14,6 +14,7 @@
 #include "bzfs.h"
 
 // implementation-specific system headers
+#include <iostream>
 #include <algorithm>
 #include <assert.h>
 #include <errno.h>

@@ -14,6 +14,7 @@
 #include "CustomGroup.h"
 
 /* system headers */
+#include <iostream>
 #include <sstream>
 #include <string>
 

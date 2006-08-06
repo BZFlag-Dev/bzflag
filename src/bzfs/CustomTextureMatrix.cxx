@@ -16,6 +16,7 @@
 #include "CustomTextureMatrix.h"
 
 /* system implementation headers */
+#include <iostream>
 #include <math.h>
 
 /* common implementation headers */

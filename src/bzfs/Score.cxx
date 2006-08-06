@@ -13,8 +13,12 @@
 /* interface header */
 #include "Score.h"
 
+/* system implementation headers */
+#include <iostream>
+
 // bzflag library headers
 #include "Pack.h"
+
 
 float Score::tkKickRatio = 3.0;
 int   Score::score       = 999;

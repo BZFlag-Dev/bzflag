@@ -14,6 +14,7 @@
 #include "CommandsStandard.h"
 
 /* system implementation headers */
+#include <iostream>
 #include <stdio.h>
 #include <ctype.h>
 #include <string>

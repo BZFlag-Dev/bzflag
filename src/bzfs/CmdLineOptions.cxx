@@ -19,16 +19,17 @@
  */
 #include "CmdLineOptions.h"
 
-// implementation-specific bzflag headers
+/* system implementation headers */
+#include <iostream>
+#include <vector>  /* FIXME implementation specific header for global that should eventually go away */
+#include <set>
+
+/* implementation-specific bzflag headers */
 #include "version.h"
 #include "Team.h"
 #include "TextUtils.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
-
-/* FIXME implementation specific header for global that should eventually go away */
-#include <vector>
-#include <set>
 
 // for -pidfile option
 #ifdef HAVE_PROCESS_H

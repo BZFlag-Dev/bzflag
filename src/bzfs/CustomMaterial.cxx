@@ -16,6 +16,7 @@
 #include "CustomMaterial.h"
 
 /* system implementation headers */
+#include <iostream>
 #include <sstream>
 
 /* bzfs implementation headers */

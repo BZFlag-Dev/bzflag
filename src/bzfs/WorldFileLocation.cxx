@@ -14,13 +14,18 @@
 #pragma warning( 4: 4786 )
 #endif
 #include "common.h"
-#include "Pack.h"
+
+/* system implementation headers */
+#include <iostream>
 #include <math.h>
 #include <sstream>
 
+/* common implementation headers */
+#include "Pack.h"
 #include "WorldFileObject.h"
 #include "WorldFileLocation.h"
 #include "MeshTransform.h"
+
 
 WorldFileLocation::WorldFileLocation()
 {

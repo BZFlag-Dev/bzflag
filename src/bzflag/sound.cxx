@@ -14,6 +14,7 @@
 #include "sound.h"
 
 // system headers
+#include <iostream>
 #include <vector>
 #include <map>
 

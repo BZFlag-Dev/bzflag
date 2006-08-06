@@ -10,18 +10,27 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "BzfMedia.h"
-#include "TimeKeeper.h"
-#ifndef HAVE_SDL
-#include "wave.h"
-#endif
-#include "MediaFile.h"
+
+/* system implementation headers */
+#include <iostream>
 #include <string.h>
 #include <string>
 #include <stdio.h>
 
-BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) { }
-BzfMedia::~BzfMedia() { }
+/* common implementation headers */
+#include "TimeKeeper.h"
+#ifndef HAVE_SDL
+#  include "wave.h"
+#endif
+#include "MediaFile.h"
+
+
+BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {
+}
+BzfMedia::~BzfMedia() {
+}
 
 double			BzfMedia::stopwatch(bool start)
 {

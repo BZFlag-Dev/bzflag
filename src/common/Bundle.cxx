@@ -18,12 +18,14 @@
 #include "Bundle.h"
 
 // system headers
+#include <iostream>
 #include <fstream>
 #include <stdio.h>
 
 // local implementation headers
 #include "StateDatabase.h"
 #include "AnsiCodes.h"
+
 
 Bundle::Bundle(const Bundle *pBundle)
 {

@@ -17,6 +17,7 @@
 #include "ControlPanel.h"
 
 /* system headers */
+#include <iostream>
 #include <assert.h>
 #include <time.h>
 
