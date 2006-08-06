@@ -75,7 +75,7 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
   double cos = acos(dot);
   double radToDeg = 180.0/3.1415;
 
-  lastShotDeviation = cos*radToDeg;
+  lastShotDeviation = (float)(cos*radToDeg);
 }
 
 void ShotStatistics::recordHit(FlagType* flag)

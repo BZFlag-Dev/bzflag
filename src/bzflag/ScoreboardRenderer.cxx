@@ -619,7 +619,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 		  playerInfo += ColorStrings[GreyColor];
 	  else
 		  playerInfo += ColorStrings[WhiteColor];
-	  playerInfo += TextUtils::format("%5.2f",linSpeed);
+	  playerInfo += TextUtils::format("%5.2f ",linSpeed);
 	  playerInfo += teamColor;
   }
   // callsign
