@@ -2935,6 +2935,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 	shotEvent.pos[0] = firingInfo.shot.pos[0];
 	shotEvent.pos[1] = firingInfo.shot.pos[1];
 	shotEvent.pos[2] = firingInfo.shot.pos[2];
+	shotEvent.player = (int)player;
 
 	shotEvent.type = firingInfo.flagType->flagAbbv;
 

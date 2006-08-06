@@ -842,6 +842,7 @@ public:
 	bool		changed;
 	float		pos[3];
 	bz_ApiString	type;
+	int				player;
 };
 
 class bz_AnointRabbitEventData_V1 : public bz_EventData
