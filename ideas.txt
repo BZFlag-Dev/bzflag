@@ -40,10 +40,6 @@ Add options to make all walls "bouncy" when you hit them.
 
 Make the outer walls have a thickness.
 
-Make the laser be round.
-
-Move all current experimental effects into "high", make all new effects be experimental.
-
 Simplify texture menu (High, med, low)
 
 Get radar updates from messages, not player pos ( allows server to change how radar works ).
