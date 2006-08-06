@@ -48,8 +48,11 @@ public:
   FlagType*   getBestFlag() const;
 
   // tally functions
-  void	      recordFire(FlagType* flag);
+  void	      recordFire(FlagType* flag, const float *pVec, const float *shotVec);
   void	      recordHit(FlagType* flag);
+
+  double getLastShotTimeDelta ( void ) const {return lastShotTimeDelta;}
+  double getLastShotDeviation ( void ) const {return lastShotDeviation;}
 
 private:
   int	      normalFired;
@@ -64,6 +67,11 @@ private:
   int	      shockWaveHit;
   int	      thiefFired;
   int	      thiefHit;
+
+  double	  lastShotTimeDelta;
+  double	  lastShotTime;
+
+  float		  lastShotDeviation;
 };
 
 

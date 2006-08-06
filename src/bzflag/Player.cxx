@@ -1483,7 +1483,7 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
     delete shots[shotNum];
 
   shots[shotNum] = shot;
-  shotStatistics.recordFire(info.flagType);
+  shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 }
 
 void Player::setHandicap(float _handicap)
