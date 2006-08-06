@@ -68,6 +68,7 @@ public:
       kill,
       lagStats,
       lagwarn,
+      jitterwarn,
       listPerms,
       masterBan,
       mute,

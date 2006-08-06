@@ -171,6 +171,22 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class JitterWarnCommand : ServerCommand {
+public:
+  JitterWarnCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class JitterDropCommand : ServerCommand {
+public:
+  JitterDropCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class LagStatCommand : ServerCommand {
 public:
   LagStatCommand();
@@ -453,6 +469,8 @@ static CountdownCommand   countdownCommand;
 static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
+static JitterWarnCommand  jitterWarnCommand;
+static JitterDropCommand  jitterDropCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static IdleTimeCommand    idleTimeCommand;
@@ -519,7 +537,11 @@ FlagCommand::FlagCommand()		 : ServerCommand("/flag",
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
   "[milliseconds] - display or set the maximum allowed lag time") {}
 LagDropCommand::LagDropCommand()	 : ServerCommand("/lagdrop",
-  "[count] - display or set the number of warings before a player is kicked") {}
+  "[count] - display or set the number of lag warings before a player is kicked") {}
+JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
+  "[milliseconds] - display or set the maximum allowed jitter time") {}
+JitterDropCommand::JitterDropCommand()	 : ServerCommand("/jitterdrop",
+  "[count] - display or set the number of jitter warings before a player is kicked") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
@@ -1527,6 +1549,62 @@ bool LagDropCommand::operator() (const char      *message,
     snprintf(reply, MessageLen, "lagdrop is set to %d", clOptions->maxlagwarn);
   }
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
+  sendMessage(ServerPlayer, t, reply);
+  return true;
+}
+
+
+bool JitterWarnCommand::operator() (const char	 *message,
+				    GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::jitterwarn)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the jitterwarn command");
+    return true;
+  }
+  
+  char reply[MessageLen] = {0};
+
+  if (message[11] == ' ') {
+    const char *maxjit = message + 12;
+    clOptions->jitterwarnthresh = (float) (atoi(maxjit) / 1000.0);
+    snprintf(reply, MessageLen, "jitterwarn is now %d ms",
+	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
+  } else {
+    snprintf(reply, MessageLen, "jitterwarn is set to %d ms",
+	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
+  }
+  LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
+			      (float)clOptions->maxjitterwarn);
+  sendMessage(ServerPlayer, t, reply);
+  return true;
+}
+
+
+bool JitterDropCommand::operator() (const char	 *message,
+				    GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::jitterwarn)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the jitterdrop command");
+    return true;
+  }
+
+  char reply[MessageLen] = {0};
+
+  if (message[11] == ' ') {
+    const char *maxwarn = message + 12;
+    clOptions->maxjitterwarn = atoi(maxwarn);
+    snprintf(reply, MessageLen, "jitterdrop is now %d",
+	     clOptions->maxjitterwarn);
+  } else {
+    snprintf(reply, MessageLen, "jitterdrop is set to %d",
+	     clOptions->maxjitterwarn);
+  }
+  LagInfo::setThreshold(clOptions->jitterwarnthresh,
+			(float)clOptions->maxjitterwarn);
   sendMessage(ServerPlayer, t, reply);
   return true;
 }

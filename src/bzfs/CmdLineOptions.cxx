@@ -81,6 +81,8 @@ const char *usageString =
 "[-helpmsg <file> <name>] "
 "[-i interface] "
 "[-j] "
+"[-jitterdrop <num>] "
+"[-jitterwarn <time/ms>] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-loadplugin <pluginname,commandline>] "
@@ -175,6 +177,8 @@ const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
+"\t-jitterdrop: drop player after this many jitter warnings\n]"
+"\t-jitterwarn: jitter warning threshhold time [ms]\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-loadplugin: load the specified plugin with the specified commandline\n"
@@ -740,6 +744,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-handicap") == 0) {
       // allow handicap advantage
       options.gameStyle |= int(HandicapGameStyle);
+    } else if (strcmp(argv[i], "-jitterdrop") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.maxjitterwarn = atoi(argv[i]);        
+    } else if (strcmp(argv[i], "-jitterwarn") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.jitterwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-lagdrop") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.maxlagwarn = atoi(argv[i]);
