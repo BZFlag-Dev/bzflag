@@ -27,14 +27,14 @@ private:
   static const int NUM_CRACKLEVELS = 4;
 
 public:
-  CrackedGlass();
-  ~CrackedGlass();
-
   static void InitCracks(int maxMotionSize = 100);
   
   static void Render(SceneRenderer& renderer);
 
 protected:
+  CrackedGlass(); /* unused */
+  ~CrackedGlass(); /* unused */
+
   static void RenderClassicCracks(SceneRenderer& renderer);
   static void RenderHighResCracks(SceneRenderer& renderer);
 
