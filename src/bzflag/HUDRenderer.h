@@ -23,20 +23,17 @@
 #include "TimeKeeper.h"
 #include "HUDuiTypeIn.h"
 #include "Flag.h"
+#include "SceneRenderer.h"
 
 /* local interface headers */
 #include "FlashClock.h"
 #include "MainWindow.h"
 #include "BzfDisplay.h"
-#include "SceneRenderer.h"
 #include "Player.h"
 #include "ScoreboardRenderer.h"
 
 
 const int		MaxAlerts = 3;
-const int		HUDNumCracks = 8;
-const int		HUDCrackLevels = 4;
-
 
 class HUDMarker {
 public:
@@ -66,6 +63,7 @@ public:
   void		setHeading(float angle);
   void		setAltitude(float altitude);
   void		setAltitudeTape(bool = true);
+  void		setCracks(bool = true);
   void		setFPS(float fps);
   void		setDrawTime(float drawTimeInseconds);
   void		setFrameTriangleCount(int tpf);
@@ -73,8 +71,6 @@ public:
   void		setAlert(int num, const char* string, float duration,
 			 bool warning = false);
   void		setFlagHelp(FlagType* desc, float duration);
-  void		initCracks();
-  void		setCracks(bool showCracks);
   void		addMarker(float heading, const float *color);
   void		setRestartKeyLabel(const std::string&);
   void		setTimeLeft(uint32_t timeLeftInSeconds);
@@ -100,9 +96,6 @@ protected:
   void		hudSColor3fv(const GLfloat*);
   void		renderAlerts(void);
   void		renderStatus(void);
-  void		renderCracks(void);
-  void		renderClassicCracks(void);
-  void		renderHighResCracks(void);
   void		renderOptions(SceneRenderer&);
   void		renderCompose(SceneRenderer&);
   void		renderBox(SceneRenderer&);
@@ -118,7 +111,6 @@ protected:
    */
   void		renderUpdate(SceneRenderer&);
 
-  void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;
 
 private:
@@ -205,9 +197,6 @@ private:
 
   bool		showOptions;
   bool		showCompose;
-
-  GLfloat		cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
-  TimeKeeper		crackStartTime;
   bool		showCracks;
 
   MarkerList		markers;
