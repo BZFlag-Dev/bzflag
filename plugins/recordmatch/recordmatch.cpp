@@ -65,6 +65,8 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 			
 			bz_saveRecBuf(recFile.c_str(),0);
 			bz_stopRecBuf();
+
+			started = false;
 		}
 		break;
 	default:
