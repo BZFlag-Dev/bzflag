@@ -3,6 +3,7 @@
 
 BZFlag 2.1.x
 ------------
+* changed format of recorded match filenames - uso
 * Added bz_fireWorldGM function, for firing a locked-on GM - Matthew Marshall
 * Added shotID to bz_PlayerDieEventData_V1 - Matthew Marshall
 * Added support for changing the killer in a PlayerDieEvent - Matthew Marshall
