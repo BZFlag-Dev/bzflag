@@ -19,8 +19,6 @@
 #include <queue>
 
 
-using std::queue;
-
 class MacMedia : public BzfMedia {
   public:
     MacMedia();
@@ -68,7 +66,7 @@ class MacMedia : public BzfMedia {
 
     int num_samples;
 
-    queue<char*> command_queue;
+    std::queue<char*> command_queue;
 };
 
 #endif // BZF_MACMEDIA_H
