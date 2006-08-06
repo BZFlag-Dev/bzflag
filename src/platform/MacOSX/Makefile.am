@@ -18,14 +18,16 @@ libMac_la_SOURCES =			\
 	MacWindow.h			\
 	SDLMain.h
 
+if HAVE_SDL
 libMac_la_LIBADD = SDLMain.lo
-
 all: SDLMain.lo
+endif
 
 SDLMain.lo:
 	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
-AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
+AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in
 
