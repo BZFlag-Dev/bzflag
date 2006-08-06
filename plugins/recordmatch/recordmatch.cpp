@@ -49,7 +49,9 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 			bz_getLocaltime(&time);
 
 			char temp[512];
-			sprintf(temp,"%d%d%d-%d%d%d.rec",time.month,time.day,time.year,time.hour,time.minute,time.second);
+			sprintf(temp,"match-%d%02d%02d-%02d%02d%02d.rec",
+				time.year,time.month,time.day,
+				time.hour,time.minute,time.second);
 
 			filename = temp;
 		}
