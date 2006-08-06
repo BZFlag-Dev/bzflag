@@ -1334,7 +1334,7 @@ void HUDRenderer::renderUpdate(SceneRenderer& renderer)
   if (showCompose)
     renderCompose(renderer);
 
-  rerurn;
+  return;
 }
 
 
@@ -1428,11 +1428,6 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-
-  // draw shot reload status
-  if (BZDB.isTrue("displayReloadTimer")) {
-    renderShots(myTank);
-  }
 
   // update display
   renderUpdate(renderer);
