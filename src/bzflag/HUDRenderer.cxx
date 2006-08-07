@@ -783,9 +783,13 @@ void			HUDRenderer::renderStatus(void)
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
 		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
-		  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
+		  std::string label = "Linear Speed:";
+		  if ( rotSpeed > target->getMaxSpeed() )
+			  label += "!";
+
+		  sprintf(buffer,"%s%5.2f",label.c_str(),linSpeed);
 		  if (BZDB.evalInt("showVelocities") > 1)
-			  sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,aperantLinSpeed);
+			  sprintf(buffer,"%s%5.2f(%5.2f)",label.c_str(),linSpeed,aperantLinSpeed);
 
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
@@ -797,14 +801,17 @@ void			HUDRenderer::renderStatus(void)
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
-		  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
+		  label = "Angular Speed:";
+		  if ( rotSpeed > BZDB.eval(StateDatabase::BZDB_TANKANGVEL))
+			  label += "!";
+		  sprintf(buffer,"$s%5.2f",label.c_str(),rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
 
 		  float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
 		  float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
-		  sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
+		  sprintf(buffer,"Last Shot Info, Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
 
