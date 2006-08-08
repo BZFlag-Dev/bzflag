@@ -804,14 +804,14 @@ void			HUDRenderer::renderStatus(void)
 		  label = "Angular Speed:";
 		  if ( rotSpeed > BZDB.eval(StateDatabase::BZDB_TANKANGVEL))
 			  label += "!";
-		  sprintf(buffer,"$s%5.2f",label.c_str(),rotSpeed);
+		  sprintf(buffer,"%s%5.2f",label.c_str(),rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
 
 		  float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
 		  float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
-		  sprintf(buffer,"Last Shot Info, Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
+		  sprintf(buffer,"Last Shot Info  Time:%6.4f  Deviation:%6.3f", shotTime, shotDeviation);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
 
