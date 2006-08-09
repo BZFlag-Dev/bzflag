@@ -9,7 +9,7 @@ CppCompiler=-DINSIDE_BZ=1 -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS 
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lcurl -lares -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=..\Dev-C++
-UnitCount=221
+UnitCount=225
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/net","Source Files/obstacle","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -2218,9 +2218,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit222]
-FileName=..\src\c-ares\ares__read_line.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzfs\SpawnPolicyFactory.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2228,9 +2228,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit223]
-FileName=..\src\c-ares\ares_cancel.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzfs\DangerousSpawnPolicy.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2238,9 +2238,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit224]
-FileName=..\src\c-ares\ares_destroy.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzfs\DefaultSpawnPolicy.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
@@ -2248,9 +2248,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit225]
-FileName=..\src\c-ares\ares_expand_name.c
-CompileCpp=0
-Folder=Source Files/c-ares
+FileName=..\src\bzfs\RandomSpawnPolicy.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
