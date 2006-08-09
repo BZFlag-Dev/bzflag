@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "DirectoryNames.h"
+#include "TextUtils.h"
 
 /* implementation system headers */
 #ifndef _WIN32
@@ -45,7 +46,8 @@ std::string configDir(bool set, const char *str)
 
 void			setCustomConfigDir(const char *str)
 {
-  configDir(1, str);
+  std::string temp = TextUtils::replace_all(std::string(str),std::string("\""),std::string(""));
+  configDir(1, temp.c_str());
 }
 
 
