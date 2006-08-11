@@ -59,7 +59,6 @@ public:
 
   Location	getLocation() const;
   FiringStatus	getFiringStatus() const;
-  float		getReloadTime() const;
   float		getFlagShakingTime() const;
   int		getFlagShakingWins() const;
   const float*	getAntidoteLocation() const;
@@ -138,7 +137,6 @@ private:
 private:
   Location	location;
   FiringStatus	firingStatus;
-  TimeKeeper	jamTime;
   TimeKeeper	bounceTime;
   TimeKeeper	agilityTime;
   float		flagShakingTime;

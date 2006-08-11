@@ -176,6 +176,48 @@ float Player::getNormalizedScore() const
   return ((float)wins - losses) / ((wins+losses>20) ? wins+losses : 20);
 }
 
+float			Player::getReloadTime() const
+{
+	World *world = World::getWorld();
+	if (!world) {
+		return 0.0f;
+	}
+	const int numShots = world->getMaxShots();
+	if (numShots <= 0) {
+		return 0.0f;
+	}
+
+	float time = float(jamTime - TimeKeeper::getCurrent());
+	if (time > 0.0f) {
+		return time;
+	}
+
+	// look for an empty slot
+	int i;
+	for (i = 0; i < numShots; i++) {
+		if (!shots[i]) {
+			return 0.0f;
+		}
+	}
+
+	// look for the shot fired least recently
+	float minTime = float(shots[0]->getReloadTime() -
+		(shots[0]->getCurrentTime() - shots[0]->getStartTime()));
+	for (i = 1; i < numShots; i++) {
+		const float t = float(shots[i]->getReloadTime() -
+			(shots[i]->getCurrentTime() - shots[i]->getStartTime()));
+		if (t < minTime) {
+			minTime = t;
+		}
+	}
+
+	if (minTime < 0.0f) {
+		minTime = 0.0f;
+	}
+
+	return minTime;
+}
+
 float Player::getLocalNormalizedScore() const
 {
   return ((float)localWins - localLosses)

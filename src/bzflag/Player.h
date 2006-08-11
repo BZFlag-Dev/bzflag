@@ -74,6 +74,8 @@ public:
   short		getScore() const;
   const float*	getDimensions() const;
 
+  float			Player::getReloadTime() const;
+
   const float*	getAperantVelocity() const;
   const float	getLastUpdateTime() const;
 
@@ -188,6 +190,7 @@ protected:
 
   std::vector<ShotPath*> shots;
   float                  handicap;
+  TimeKeeper	jamTime;
 
 private:
   // return true if the shot had to be terminated or false if it
