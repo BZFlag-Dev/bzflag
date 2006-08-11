@@ -74,7 +74,7 @@ public:
   short		getScore() const;
   const float*	getDimensions() const;
 
-  float			Player::getReloadTime() const;
+  float		getReloadTime() const;
 
   const float*	getAperantVelocity() const;
   const float	getLastUpdateTime() const;
