@@ -72,7 +72,6 @@ public:
   void		setPause(bool = true);
   void		activateAutoPilot(bool = true);
   bool		fireShot();
-  void		forceReload(float time = 0.0f);
   void		explodeTank();
   void		doJump();
   void		setJump();

@@ -176,6 +176,12 @@ float Player::getNormalizedScore() const
   return ((float)wins - losses) / ((wins+losses>20) ? wins+losses : 20);
 }
 
+void Player::forceReload(float time)
+{
+	jamTime = TimeKeeper::getCurrent();
+	jamTime+= time;
+}
+
 float			Player::getReloadTime() const
 {
 	World *world = World::getWorld();

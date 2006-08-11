@@ -1223,12 +1223,6 @@ bool			LocalPlayer::fireShot()
 }
 
 
-void LocalPlayer::forceReload(float time)
-{
-  jamTime = TimeKeeper::getCurrent();
-  jamTime+= time;
-}
-
 
 bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 {

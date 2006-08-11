@@ -111,6 +111,8 @@ public:
   void		spawnEffect();
   void		fireJumpJets();
 
+  void		forceReload(float time = 0.0f);
+
   bool		isAlive() const;
   bool		isPaused() const;
   bool		isFalling() const;
