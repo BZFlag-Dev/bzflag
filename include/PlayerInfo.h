@@ -110,6 +110,7 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
+  int	pauseRequestLag;
   TimeKeeper	pauseRequestTime;	// time used to determine whether a player pauses too fast
 
   PlayerReplayState getReplayState();

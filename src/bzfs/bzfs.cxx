@@ -3301,25 +3301,22 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     case MsgPause: {
       if (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0){
-		// player wants to unpause
-        playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-		uint8_t pause;
-		nboUnpackUByte(buf, pause);
-		pausePlayer(playerID, pause != 0);
+	// player wants to unpause
+	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+	pausePlayer(playerID, false);
     } else {
-		// player wants to pause
+	// player wants to pause
         playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
 
         // adjust pauseRequestTime according to players lag to avoid kicking innocent players
-        int pauseRequestLag = playerData->lagInfo.getLag();
-        if (pauseRequestLag < 100) {
-            pauseRequestLag = 250;
+        int requestLag = playerData->lagInfo.getLag();
+        if (requestLag < 100) {
+            requestLag = 250;
         }
         else {
-            pauseRequestLag *= 2;
+            requestLag *= 2;
         }
-        playerData->player.pauseRequestTime += ((double)(- pauseRequestLag) / 1000.0);
-
+	playerData->player.pauseRequestLag = requestLag;
     };
       break;
     }

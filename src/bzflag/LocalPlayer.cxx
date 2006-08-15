@@ -763,6 +763,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
   else if (location == InAir || location == InBuilding) {
     setStatus(getStatus() | short(PlayerState::Falling));
   }
+  
+  // set InBuilding status
+  if (location == InBuilding) {
+    setStatus(getStatus() | PlayerState::InBuilding);
+  } else {
+    setStatus(getStatus() & ~PlayerState::InBuilding);
+  }
 
   // set UserInput status (determines how animated treads are drawn)
   const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(getPhysicsDriver());

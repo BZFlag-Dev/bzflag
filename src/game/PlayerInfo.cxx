@@ -40,6 +40,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+  pauseRequestLag = 0;
   pauseRequestTime = TimeKeeper::getNullTime();
 }
 

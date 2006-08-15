@@ -48,7 +48,8 @@ class PlayerState
       UserInputs =	(1 << 8),	// user speed and angvel are sent
       JumpJets =	(1 << 9),	// tank has jump jets on
       PlaySound =	(1 << 10),	// play one or more sounds
-      PhantomZoned =	(1 << 11)	// tank is phantom-zoned
+      PhantomZoned =	(1 << 11),	// tank is phantom-zoned
+      InBuilding =	(1 << 12)	// tank inside a building
     };
 
     enum PStatusSounds {

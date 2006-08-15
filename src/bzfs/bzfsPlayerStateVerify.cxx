@@ -137,37 +137,34 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
 bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {
 	// make sure the player only pauses after the waiting time for pause is over
-	// we don not want cheaters that have instant pause
+	// we need some inaccuracy here that is computed using pauseRequestTime and pauseRequestLag
+	// lag will cause all players to pause sooner than 5 seconds
+	if (state.status & PlayerState::Paused) {
+		TimeKeeper pauseDelay = playerData->player.pauseRequestTime;
+		pauseDelay += (- playerData->player.pauseRequestLag / 1000.0);
 
-	// if smooth the pause using the players lag, so server side pause and players own view are nearly identical
-	if   ((TimeKeeper::getCurrent() - playerData->player.pauseRequestTime) >= 5.0f
-		&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
-		&& playerData->player.isPaused()==false)
-	{
-		// if they are in an unallowed state, stop pausing them, otherwise pause them
-		if (state.status & PlayerState::CrossingWall || state.status & PlayerState::Falling
-			|| (state.status & PlayerState::Alive) == false)
-        {
-			playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+		if ((TimeKeeper::getCurrent() - pauseDelay) < 5.0f
+			&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)) {
+			// we have one of those players all love
+			DEBUG1("Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
+			playerData->getIndex());
+			sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
+			removePlayer(playerData->getIndex(), "Paused too fast");
+			return false;
 		} else {
-			uint8_t pause;
-			void *buf = getDirectMessageBuffer();
-			nboUnpackUByte(buf, pause);
 			pausePlayer(playerData->player.getPlayerIndex(), true);
 		}
-	}
 
-	// we need some inaccuracy here that was previously computed into pauseRequestTime
-    // lag will cause all players to pause sooner than 5 seconds
-    if ((TimeKeeper::getCurrent() - playerData->player.pauseRequestTime) < 5.0f
-		&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
-        && state.status & PlayerState::Paused)
-    {
-		// we have one of those players all love
-		DEBUG1("Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(), playerData->getIndex());
-		sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
-		removePlayer(playerData->getIndex(), "Paused too fast");
-		return false;
+		// kick the players when they do not pause within allowed situations
+		if ((state.status & PlayerState::InBuilding) || (state.status & PlayerState::PhantomZoned) 
+			|| (state.status & PlayerState::Alive) == false) {
+			// the player did pause while being a wall or in air
+			DEBUG1("Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
+			playerData->getIndex());
+			sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused in unallowed state.");
+			removePlayer(playerData->getIndex(), "Paused in unallowed state");
+			return false;
+		}
 	}
 
 	return true;

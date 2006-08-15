@@ -5921,22 +5921,27 @@ static void		updatePauseCountdown(float dt)
        * later for being in places we shouldn't without holding the
        * right flags.
        */
+      ServerLink	*server = ServerLink::getServer();
       if (myTank->getLocation() == LocalPlayer::InBuilding) {
 	// custom message when trying to pause while in a building
 	// (could get stuck on un-pause if flag is taken/lost)
+	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
 
       } else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
 	// custom message when trying to pause when jumping/falling
+	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
 
       } else if (myTank->getLocation() != LocalPlayer::OnGround &&
 		 myTank->getLocation() != LocalPlayer::OnBuilding) {
 	// catch-all message when trying to pause when you should not
+	server->sendPaused(false);
 	hud->setAlert(1, "Unable to pause right now", 1.0f, false);
 
       } else if (myTank->isPhantomZoned()) {
 	// custom message when trying to pause while zoned
+	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause when you are in the phantom zone", 1.0f, false);
 
       } else {
