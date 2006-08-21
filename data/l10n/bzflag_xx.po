@@ -25,61 +25,586 @@
 # If you don't know a translation for a phrase, just comment out the msgid and msgstr for that entry
 # Use the pound # character to comment a line out
 
-msgid "Join Game"
-msgstr ""
-
 msgid "xx"
 msgstr "Translation Base"
 
 msgid "translator"
-msgstr "Dave Brosius"
+msgstr "Translator Name"
 
-msgid "Find Server"
-msgstr ""
-
-msgid "Connect"
-msgstr ""
-
-msgid "Callsign:"
-msgstr ""
-
-msgid "Team:"
-msgstr ""
-
-msgid "Server:"
-msgstr ""
-
-msgid "Port:"
-msgstr ""
-
-msgid "Start Server"
-msgstr ""
-
-msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
-msgstr ""
-
-msgid "Options"
-msgstr ""
-
-msgid "Help"
-msgstr ""
-
-msgid "Quit"
-msgstr ""
-
-#msgid "on"
-#msgstr ""
-
-msgid "Dithering:"
-msgstr ""
-
-#msgid "off"
-#msgstr ""
+#############
+## GENERAL ##
+#############
 
 msgid "Off"
 msgstr ""
 
 msgid "On"
+msgstr ""
+
+msgid "Unavailable"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Fast"
+msgstr ""
+
+msgid "Best"
+msgstr ""
+
+msgid "NOTE: "
+msgstr ""
+
+msgid "Page {1} of {2}"
+msgstr ""
+
+msgid "Auto"
+msgstr ""
+
+msgid "Pause/Resume:"
+msgstr ""
+
+msgid "Slow Keyboard Motion:"
+msgstr ""
+
+msgid "<not mapped>"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Failed... unknown error (%d)."
+msgstr ""
+
+msgid "Silenced All Msgs"
+msgstr ""
+
+msgid " or "
+msgstr ""
+
+##################
+## INPUT EVENTS ##
+##################
+
+msgid "Left Mouse"
+msgstr ""
+
+msgid "Right Mouse"
+msgstr ""
+
+msgid "Middle Mouse"
+msgstr ""
+
+msgid "Space"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Enter"
+msgstr ""
+
+msgid "Return"
+msgstr ""
+
+msgid "Up Arrow"
+msgstr ""
+
+msgid "Down Arrow"
+msgstr ""
+
+msgid "Left Arrow"
+msgstr ""
+
+msgid "Right Arrow"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Tab"
+msgstr ""
+
+#################
+## SUPER FLAGS ##
+#################
+
+msgid "High Speed"
+msgstr ""
+
+msgid "high speed (+V)"
+msgstr ""
+
+msgid "Tank moves faster.  Outrun bad guys."
+msgstr ""
+
+msgid "Quick Turn"
+msgstr ""
+
+msgid "Quick Turn (+QT)"
+msgstr ""
+
+msgid "Tank turns faster.  Good for dodging."
+msgstr ""
+
+msgid "Oscillation Overthruster"
+msgstr ""
+
+msgid "Oscillation Overthruster (+OO)"
+msgstr ""
+
+msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgstr ""
+
+msgid "Rapid Fire"
+msgstr ""
+
+msgid "rapid Fire (+F)"
+msgstr ""
+
+msgid "Shoots more often.  Shells go faster but not as far."
+msgstr ""
+
+msgid "Machine Gun"
+msgstr ""
+
+msgid "Machine Gun (+MG)"
+msgstr ""
+
+msgid "Very fast reload and very short range."
+msgstr ""
+
+msgid "Guided Missile"
+msgstr ""
+
+msgid "Guided Missile (+GM)"
+msgstr ""
+
+msgid "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+msgstr ""
+
+msgid "Laser"
+msgstr ""
+
+msgid "Laser (+L)"
+msgstr ""
+
+msgid "Shoots a laser.  Infinite speed and range but long reload time."
+msgstr ""
+
+msgid "Ricochet"
+msgstr ""
+
+msgid "Ricochet (+R)"
+msgstr ""
+
+msgid "Shots bounce off walls.  Don't shoot yourself!"
+msgstr ""
+
+msgid "Super Bullet"
+msgstr ""
+
+msgid "Super Bullet (+SB)"
+msgstr ""
+
+msgid "Shoots through buildings.  Can kill Phantom Zone."
+msgstr ""
+
+msgid "Invisible Bullet"
+msgstr ""
+
+msgid "Invisible Bullet (+IB)"
+msgstr ""
+
+msgid "Your shots don't appear on other radars.  Can still see them out window."
+msgstr ""
+
+msgid "Stealth"
+msgstr ""
+
+msgid "STealth (+ST)"
+msgstr ""
+
+msgid "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+msgstr ""
+
+msgid "Tiny"
+msgstr ""
+
+msgid "Tiny (+T)"
+msgstr ""
+
+msgid "Tank is small and can get through small openings.  Very hard to hit."
+msgstr ""
+
+msgid "Narrow"
+msgstr ""
+
+msgid "Narrow (+N)"
+msgstr ""
+
+msgid "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+msgstr ""
+
+msgid "Shield"
+msgstr ""
+
+msgid "SHield (+SH)"
+msgstr ""
+
+msgid "Getting hit only drops flag.  Flag flies an extra-long time."
+msgstr ""
+
+msgid "Steamroller"
+msgstr ""
+
+msgid "SteamRoller (+SR)"
+msgstr ""
+
+msgid "Destroys tanks you touch but you have to get really close."
+msgstr ""
+
+msgid "Shock Wave"
+msgstr ""
+
+msgid "Shock Wave (+SW)"
+msgstr ""
+
+msgid "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+msgstr ""
+
+msgid "Phantom Zone"
+msgstr ""
+
+msgid "Phantom Zone (+PZ)"
+msgstr ""
+
+msgid "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."
+msgstr ""
+
+msgid "Genocide"
+msgstr ""
+
+msgid "Genocide (+G)"
+msgstr ""
+
+msgid "Killing one tank kills that tank's whole team."
+msgstr ""
+
+msgid "Jumping"
+msgstr ""
+
+msgid "JumPing (+JP)"
+msgstr ""
+
+msgid "Tank can jump.  Use Tab key.  Can't steer in the air."
+msgstr ""
+
+msgid "Identify"
+msgstr ""
+
+msgid "IDentify (+ID)"
+msgstr ""
+
+msgid "Identifies type of nearest flag."
+msgstr ""
+
+msgid "Cloaking"
+msgstr ""
+
+msgid "CLoaking (+CL)"
+msgstr ""
+
+msgid "Makes your tank invisible out-the-window.  Still visible on radar."
+msgstr ""
+
+msgid "Useless"
+msgstr ""
+
+msgid "USeless (+US)"
+msgstr ""
+
+msgid "You have found the useless flag. Use it wisely."
+msgstr ""
+
+msgid "Masquerade"
+msgstr ""
+
+msgid "MasQuerade (+MQ)"
+msgstr ""
+
+msgid "In opponent's hud, you appear as a teammate."
+msgstr ""
+
+msgid "Seer"
+msgstr ""
+
+msgid "SEer (+SE)"
+msgstr ""
+
+msgid "See stealthed, cloaked and masquerading tanks as normal."
+msgstr ""
+
+msgid "Thief"
+msgstr ""
+
+msgid "THief (+TH)"
+msgstr ""
+
+msgid "Steal flags.  Small and fast but can't kill."
+msgstr ""
+
+msgid "Burrow"
+msgstr ""
+
+msgid "BUrrow (+BU)"
+msgstr ""
+
+msgid "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"
+msgstr ""
+
+msgid "Wings"
+msgstr ""
+
+msgid "WinGs (+WG)"
+msgstr ""
+
+msgid "Tank can drive in air."
+msgstr ""
+
+msgid "Agility"
+msgstr ""
+
+msgid "Agility (+A)"
+msgstr ""
+
+msgid "Tank is quick and nimble making it easier to dodge."
+msgstr ""
+
+msgid "ReverseControls"
+msgstr ""
+
+msgid "ReverseControls (-RC)"
+msgstr ""
+
+msgid "Tank driving controls are reversed."
+msgstr ""
+
+msgid "Colorblindness"
+msgstr ""
+
+msgid "ColorBlindness (-CB)"
+msgstr ""
+
+msgid "Can't tell team colors.  Don't shoot teammates!"
+msgstr ""
+
+msgid "Obesity"
+msgstr ""
+
+msgid "Obesity (-O)"
+msgstr ""
+
+msgid "Tank becomes very large.  Can't fit through teleporters."
+msgstr ""
+
+msgid "Left Turn Only"
+msgstr ""
+
+msgid "Left Turn only (-LT)"
+msgstr ""
+
+msgid "Can't turn right."
+msgstr ""
+
+msgid "Right Turn Only"
+msgstr ""
+
+msgid "Right Turn only (-RT)"
+msgstr ""
+
+msgid "Can't turn left."
+msgstr ""
+
+msgid "Forward Only"
+msgstr ""
+
+msgid "Forward Only (-FO)"
+msgstr ""
+
+msgid "Can't drive in reverse."
+msgstr ""
+
+msgid "ReverseOnly"
+msgstr ""
+
+msgid "ReverseOnly (-RO)"
+msgstr ""
+
+msgid "Can't drive forward."
+msgstr ""
+
+msgid "Momentum"
+msgstr ""
+
+msgid "Momentum (-M)"
+msgstr ""
+
+msgid "Tank has inertia.  Acceleration is limited."
+msgstr ""
+
+msgid "Blindness"
+msgstr ""
+
+msgid "Blindness (-B)"
+msgstr ""
+
+msgid "Can't see out window.  Radar still works."
+msgstr ""
+
+msgid "Jamming"
+msgstr ""
+
+msgid "JaMming (-JM)"
+msgstr ""
+
+msgid "Radar doesn't work.  Can still see."
+msgstr ""
+
+msgid "Wide Angle"
+msgstr ""
+
+msgid "Wide Angle (-WA)"
+msgstr ""
+
+msgid "Fish-eye lens distorts view."
+msgstr ""
+
+msgid "No Jumping"
+msgstr ""
+
+msgid "No Jumping (-NJ)"
+msgstr ""
+
+msgid "Tank can't jump."
+msgstr ""
+
+msgid "Trigger Happy"
+msgstr ""
+
+msgid "TRigger happy (-TR)"
+msgstr ""
+
+msgid "Tank can't stop firing."
+msgstr ""
+
+msgid "Bouncy"
+msgstr ""
+
+msgid "BouncY (-BY)"
+msgstr ""
+
+msgid "Tank can't stop bouncing."
+msgstr ""
+
+####################
+## AUDIO SETTINGS ##
+####################
+
+msgid "Audio Settings"
+msgstr ""
+
+msgid "Sound Volume:"
+msgstr ""
+
+msgid "Driver:"
+msgstr ""
+
+msgid "Device:"
+msgstr ""
+
+msgid "Remote Sounds:"
+msgstr ""
+
+####################
+## CACHE SETTINGS ##
+####################
+
+msgid "Cache Settings"
+msgstr ""
+
+msgid "Server List Cache:"
+msgstr ""
+
+msgid "Off / Backup Mode"
+msgstr ""
+
+msgid "5 Minutes"
+msgstr ""
+
+msgid "15 Minutes"
+msgstr ""
+
+msgid "30 Minutes"
+msgstr ""
+
+msgid "1 Hour"
+msgstr ""
+
+msgid "5 Hours"
+msgstr ""
+
+msgid "15 Hours"
+msgstr ""
+
+msgid "1 day"
+msgstr ""
+
+msgid "15 days"
+msgstr ""
+
+msgid "30 days"
+msgstr ""
+
+msgid "Clear Server List Cache"
+msgstr ""
+
+msgid "Cache Size (MB):"
+msgstr ""
+
+msgid "Clear Download Cache"
+msgstr ""
+
+msgid "Automatic Downloads:"
+msgstr ""
+
+msgid "Connection Updates:"
+msgstr ""
+
+msgid "Update Downloads"
+msgstr ""
+
+msgid "Updating Downloads"
+msgstr ""
+
+msgid "Download Cache Cleared"
+msgstr ""
+
+msgid "Server List Cache Cleared"
+msgstr ""
+
+######################
+## DISPLAY SETTINGS ##
+######################
+
+msgid "Display Settings"
+msgstr ""
+
+msgid "Dithering:"
 msgstr ""
 
 msgid "Blending:"
@@ -112,6 +637,9 @@ msgstr ""
 msgid "Linear Mipmap Linear"
 msgstr ""
 
+msgid "Anisotropic:"
+msgstr ""
+
 msgid "Quality:"
 msgstr ""
 
@@ -124,79 +652,220 @@ msgstr ""
 msgid "High"
 msgstr ""
 
+msgid "Experimental"
+msgstr ""
+
 msgid "Shadows:"
 msgstr ""
 
-msgid "Depth Buffer:"
+msgid "Stipple"
 msgstr ""
 
-msgid "Not available"
+msgid "Stencil"
 msgstr ""
 
-msgid "Change Video Format"
+msgid "Hidden Line:"
+msgstr ""
+
+msgid "Wireframe:"
+msgstr ""
+
+msgid "Depth Complexity:"
+msgstr ""
+
+msgid "Culling Tree:"
+msgstr ""
+
+msgid "Collision Tree:"
 msgstr ""
 
 msgid "Brightness:"
 msgstr ""
 
-msgid "Sound Volume:"
+msgid "Energy Saver:"
 msgstr ""
 
-#msgid "Off / Backup Mode"
-#msgstr ""
-
-#msgid "5 Minutes"
-#msgstr ""
-
-#msgid "15 Minutes"
-#msgstr ""
-
-#msgid "30 Minutes"
-#msgstr ""
-
-#msgid "1 Hour"
-#msgstr ""
-
-#msgid "5 Hours"
-#msgstr ""
-
-#msgid "15 Hours"
-#msgstr ""
-
-#msgid "1 day"
-#msgstr ""
-
-#msgid "15 days"
-#msgstr ""
-
-#msgid "30 days"
-#msgstr ""
-
-msgid "UDP network connection:"
+msgid "Change Video Format"
 msgstr ""
 
-#msgid "Server List Cache:"
-#msgstr ""
-
-#msgid "Clear Server List Cache"
-#msgstr ""
-
-msgid "Change Key Mapping"
+msgid "Video Format"
 msgstr ""
 
-msgid "GUI Options"
+msgid "Current Format:"
 msgstr ""
 
-msgid "Enhanced radar:"
+msgid "<switching not available>"
 msgstr ""
 
-msgid "Controlpanel & Score FontSize:"
+msgid "Press Enter to select and T to test a format. Esc to exit."
 msgstr ""
 
-msgid "normal"
+msgid "<unloadable>"
 msgstr ""
 
-msgid "bigger"
+###############
+## DOWNLOADS ##
+###############
+
+msgid "downloading: "
+msgstr ""
+
+msgid "Downloading texture (%d of %d): %d KB"
+msgstr ""
+
+msgid "not downloading: "
+msgstr ""
+
+msgid "download access is controlled by "
+msgstr ""
+
+msgid "local denial: "
+msgstr ""
+
+######################
+## EFFECTS SETTINGS ##
+######################
+
+msgid "Effects Settings"
+msgstr ""
+
+msgid "Rain:"
+msgstr ""
+
+msgid "Mirror:"
+msgstr ""
+
+msgid "Fog:"
+msgstr ""
+
+msgid "Nice"
+msgstr ""
+
+msgid "Display Treads:"
+msgstr ""
+
+msgid "Animated Treads:"
+msgstr ""
+
+msgid "Covered"
+msgstr ""
+
+msgid "Exposed"
+msgstr ""
+
+msgid "Track Marks:"
+msgstr ""
+
+msgid "Track Mark Culling:"
+msgstr ""
+
+msgid "Fancy Effects:"
+msgstr ""
+
+msgid "Spawn Effect:"
+msgstr ""
+
+msgid "Local Spawn Effect:"
+msgstr ""
+
+msgid "Same as spawns"
+msgstr ""
+
+msgid "Death Effect:"
+msgstr ""
+
+msgid "Shot Fired Effect:"
+msgstr ""
+
+msgid "Local Shot Effect:"
+msgstr ""
+
+msgid "Same as shots"
+msgstr ""
+
+msgid "Use Velocity on Shot Effects:"
+msgstr ""
+
+msgid "Landing Effect:"
+msgstr ""
+
+msgid "GM Smoke Effect:"
+msgstr ""
+
+msgid "GM Effect Timing:"
+msgstr ""
+
+msgid "  Ricocet Effect:"
+msgstr ""
+
+msgid "  Teleport Shot Effect:"
+msgstr ""
+
+msgid "Blossom"
+msgstr ""
+
+msgid "Cone"
+msgstr ""
+
+msgid "Rings"
+msgstr ""
+
+msgid "Smoke Rings"
+msgstr ""
+
+msgid "Muzzle Flash"
+msgstr ""
+
+msgid "Smoke and Flash"
+msgstr ""
+
+msgid "Classic Puff"
+msgstr ""
+
+msgid "Shock Cone"
+msgstr ""
+
+msgid "We Got Death Star"
+msgstr ""
+
+msgid "Dirt Flash"
+msgstr ""
+
+msgid "Ring"
+msgstr ""
+
+msgid "IDL"
+msgstr ""
+
+##################
+## GUI SETTINGS ##
+##################
+
+msgid "GUI Settings"
+msgstr ""
+
+msgid "Radar Style:"
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
+msgid "Fast Sorted"
+msgstr ""
+
+msgid "Enhanced"
+msgstr ""
+
+msgid "Scoreboard Sort:"
+msgstr ""
+
+msgid "Always Show Team Scores:"
+msgstr ""
+
+msgid "Scoreboard Font Size:"
+msgstr ""
+
+msgid "ControlPanel Font Size:"
 msgstr ""
 
 msgid "Radar & Panel Opacity:"
@@ -208,20 +877,87 @@ msgstr ""
 msgid "Radar Shot Length:"
 msgstr ""
 
+msgid "Radar Shot Size:"
+msgstr ""
+
+msgid "Radar Shot Line:"
+msgstr ""
+
+msgid "Lagging"
+msgstr ""
+
+msgid "Leading"
+msgstr ""
+
 msgid "Radar & Panel Size:"
 msgstr ""
 
 msgid "Mouse Box Size:"
 msgstr ""
 
-#msgid "Control panel coloring:"
-#msgstr ""
+msgid "Locale:"
+msgstr ""
 
-#msgid "Underline color:"
-#msgstr ""
+msgid "Control panel tabs:"
+msgstr ""
 
-#msgid "Killer Highlight:"
-#msgstr ""
+msgid "Left"
+msgstr ""
+
+msgid "Right"
+msgstr ""
+
+msgid "Control panel coloring:"
+msgstr ""
+
+msgid "Underline color:"
+msgstr ""
+
+msgid "Cyan"
+msgstr ""
+
+msgid "Grey"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Killer Highlight:"
+msgstr ""
+
+msgid "Pulsating"
+msgstr ""
+
+msgid "Underline"
+msgstr ""
+
+msgid "Pulsation Rate:"
+msgstr ""
+
+msgid "Pulsation Depth:"
+msgstr ""
+
+msgid "Time / Date Display:"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
+msgid "date"
+msgstr ""
+
+msgid "both"
+msgstr ""
+
+msgid "Reload timer on HUD:"
+msgstr ""
+
+msgid "Email Display Length:"
+msgstr ""
+
+###############
+## HELP MENU ##
+###############
 
 msgid "Page Down for next page"
 msgstr ""
@@ -229,713 +965,116 @@ msgstr ""
 msgid "Page Up for previous page"
 msgstr ""
 
-msgid "Rogue"
-msgstr ""
-
-msgid "Red Team"
-msgstr ""
-
-msgid "Green Team"
-msgstr ""
-
-msgid "Blue Team"
-msgstr ""
-
-msgid "Purple Team"
-msgstr ""
-
-msgid "Enter to quit, Esc to resume"
-msgstr ""
-
-msgid "Really quit?"
-msgstr ""
-
-msgid "Video Format"
-msgstr ""
-
-msgid "Current Format:"
-msgstr ""
-
-msgid "Key Mapping"
-msgstr ""
-
-msgid "Reset Defaults"
-msgstr ""
-
-msgid "Fire shot:"
-msgstr ""
-
-msgid "Drop flag:"
-msgstr ""
-
-msgid "Identify/Lock On:"
-msgstr ""
-
-msgid "Radar Short:"
-msgstr ""
-
-msgid "Radar Medium:"
-msgstr ""
-
-msgid "Radar Long:"
-msgstr ""
-
-msgid "Send to All:"
-msgstr ""
-
-msgid "Send to Teammates:"
-msgstr ""
-
-msgid "Send to Nemesis:"
-msgstr ""
-
-msgid "Send to Recipient:"
-msgstr ""
-
-msgid "Jump:"
-msgstr ""
-
-msgid "Binoculars:"
-msgstr ""
-
-msgid "Toggle Score:"
-msgstr ""
-
-msgid "Tank Labels:"
-msgstr ""
-
-msgid "Flag Help:"
-msgstr ""
-
-msgid "Time Forward:"
-msgstr ""
-
-msgid "Time Backward:"
-msgstr ""
-
-msgid "Pause/Resume:"
-msgstr ""
-
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
-
-msgid "SelfDestruct/Cancel:"
-msgstr ""
-
-msgid "Fast Quit:"
-msgstr ""
-
-msgid "Scroll Backward:"
-msgstr ""
-
-msgid "Scroll Forward:"
-msgstr ""
-
-msgid "Slow Keyboard Motion:"
-msgstr ""
-
-msgid "loading {1}"
-msgstr ""
-
-msgid "controls tank motion"
-msgstr ""
-
-msgid "Mouse Position:"
-msgstr ""
-
-msgid "fires shot"
-msgstr ""
-
-msgid "drops flag (if not bad)"
-msgstr ""
-
-msgid "identifies player (locks on GM)"
-msgstr ""
-
-msgid "jump (if allowed)"
-msgstr ""
-
-msgid "short radar range"
-msgstr ""
-
-msgid "medium radar range"
-msgstr ""
-
-msgid "long radar range"
-msgstr ""
-
-msgid "toggle binoculars"
-msgstr ""
-
-msgid "toggle heads-up flag help"
-msgstr ""
-
-msgid "send message to teammates"
-msgstr ""
-
-msgid "send message to everybody"
-msgstr ""
-
-msgid "send message to nemesis"
-msgstr ""
-
-msgid "send message to recipient"
-msgstr ""
-
-msgid "toggle score sheet"
-msgstr ""
-
-msgid "toggle tank labels"
-msgstr ""
-
-msgid "set time of day backward"
-msgstr ""
-
-msgid "set time of day forward"
-msgstr ""
-
-msgid "pause/resume"
-msgstr ""
-
-msgid "self Destruct/Cancel"
-msgstr ""
-
-msgid "quit"
-msgstr ""
-
-msgid "scroll message log backward"
-msgstr ""
-
-msgid "scroll message log forward"
-msgstr ""
-
-#msgid "Slow Keyboard Motion"
-#msgstr ""
-
-#msgid "Toggle Radar Flags"
-#msgstr ""
-
-#msgid "Toggle Main Flags"
-#msgstr ""
-
-#msgid "Silence/UnSilence"
-#msgstr ""
-
-#msgid "Server Admin"
-#msgstr ""
-
-#msgid "Hunt"
-#msgstr ""
-
-#msgid "autopilot enabled"
-#msgstr ""
-
-#msgid "autopilot disabled"
-#msgstr ""
-
-msgid "show/dismiss menu"
-msgstr ""
-
-msgid "Esc:"
-msgstr ""
-
-msgid "Maintainer:"
-msgstr ""
-
-msgid "Original Author:"
-msgstr ""
-
-msgid "Code Contributors:"
-msgstr ""
-
-msgid "Tank Models:"
-msgstr ""
-
-msgid "Special Thanks:"
-msgstr ""
-
-msgid "Send:"
-msgstr ""
-
-msgid "Servers"
-msgstr ""
-
-msgid "Players"
-msgstr ""
-
-msgid "Red"
-msgstr ""
-
-msgid "Green"
-msgstr ""
-
-msgid "Blue"
-msgstr ""
-
-msgid "Purple"
-msgstr ""
-
 msgid "Controls"
+msgstr ""
+
+msgid "Mouse Position"
+msgstr ""
+
+msgid "Controls Tank Position:"
+msgstr ""
+
+msgid "Fires Shot:"
+msgstr ""
+
+msgid "Drops Flag (if not bad):"
+msgstr ""
+
+msgid "Identifies Player (locks on GM):"
+msgstr ""
+
+msgid "Short Radar Range:"
+msgstr ""
+
+msgid "Medium Radar Range:"
+msgstr ""
+
+msgid "Long Radar Range:"
+msgstr ""
+
+msgid "Send Message to Everybody:"
+msgstr ""
+
+msgid "Send Message to Teammates:"
+msgstr ""
+
+msgid "Send Message to Nemesis:"
+msgstr ""
+
+msgid "Send Message to Recipient:"
+msgstr ""
+
+msgid "Jump (if allowed):"
+msgstr ""
+
+msgid "Toggle Binoculars:"
+msgstr ""
+
+msgid "Toggle Score Sheet:"
+msgstr ""
+
+msgid "Toggle Tank Labels:"
+msgstr ""
+
+msgid "Toggle Heads-up Flag Help:"
+msgstr ""
+
+msgid "Set Time of Day Backward:"
+msgstr ""
+
+msgid "Set Time of Day Forward:"
+msgstr ""
+
+msgid "Self destruct/Cancel:"
+msgstr ""
+
+msgid "Quit:"
+msgstr ""
+
+msgid "Scroll Message Log Backward:"
+msgstr ""
+
+msgid "Scroll Message Log Forward:"
+msgstr ""
+
+msgid "Toggle Radar Flags:"
+msgstr ""
+
+msgid "Toggle Main Flags:"
+msgstr ""
+
+msgid "Silence/UnSilence:"
+msgstr ""
+
+msgid "Server Admin:"
+msgstr ""
+
+msgid "Hunt:"
+msgstr ""
+
+msgid "Auto Pilot:"
+msgstr ""
+
+msgid "Main Message Tab:"
+msgstr ""
+
+msgid "Chat Message Tab:"
+msgstr ""
+
+msgid "Server Message Tab:"
+msgstr ""
+
+msgid "Misc Message Tab:"
+msgstr ""
+
+msgid "Esc"
+msgstr ""
+
+msgid "Show/Dismiss menu:"
 msgstr ""
 
 msgid "General"
 msgstr ""
-
-msgid "Environment"
-msgstr ""
-
-msgid "Flags I"
-msgstr ""
-
-msgid "Flags II"
-msgstr ""
-
-msgid "Flags III"
-msgstr ""
-
-msgid "Readouts I"
-msgstr ""
-
-msgid "Readouts II"
-msgstr ""
-
-msgid "Credits"
-msgstr ""
-
-msgid "Press Enter to select and T to test a format. Esc to exit."
-msgstr ""
-
-msgid "Free-style"
-msgstr ""
-
-msgid "Capture-the-Flag"
-msgstr ""
-
-#msgid "Rabbit Chase"
-#msgstr ""
-
-msgid "Super Flags"
-msgstr ""
-
-msgid "Antidote Flags"
-msgstr ""
-
-msgid "Trying..."
-msgstr ""
-
-msgid "Press %s to start"
-msgstr ""
-
-msgid "Dead"
-msgstr ""
-
-#msgid "%.1f"
-#msgstr ""
-
-msgid "Ready"
-msgstr ""
-
-msgid "Reloaded in %.1f"
-msgstr ""
-
-msgid "Sealed"
-msgstr ""
-
-msgid "Zoned"
-msgstr ""
-
-#msgid "You are now the rabbit."
-#msgstr ""
-
-msgid "Servers found: {1}"
-msgstr ""
-
-msgid "{1} Shot"
-msgstr ""
-
-msgid "{1} Shots"
-msgstr ""
-
-msgid "{1} sec To Drop Bad Flag"
-msgstr ""
-
-msgid "{1} secs To Drop Bad Flag"
-msgstr ""
-
-msgid "{1} Win Drops Bad Flag"
-msgstr ""
-
-msgid "{1} Wins Drops Bad Flag"
-msgstr ""
-
-msgid "Time limit: {1}"
-msgstr ""
-
-msgid "Max team score: {1}"
-msgstr ""
-
-msgid "Max player score: {1}"
-msgstr ""
-
-msgid "Page {1} of {2}"
-msgstr ""
-
-msgid "openBroadcast: No udp service {1}"
-msgstr ""
-
-msgid "joystick '{1}' not supported..."
-msgstr ""
-
-#msgid "Server did send endpoint information, UDP connection up"
-#msgstr ""
-
-msgid "Ignoring Finder argument '{1}'"
-msgstr ""
-
-msgid "Can't open list server: {1}"
-msgstr ""
-
-msgid "Server sent downlink endpoint information, port {1}"
-msgstr ""
-
-msgid "Communication error joining game [Wrong Code {1}]."
-msgstr ""
-
-#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
-#msgstr ""
-
-msgid "Configuration file:  Error on line {1}: Stream failure"
-msgstr ""
-
-msgid "Configuration file:  Error on line {1}: Line too long"
-msgstr ""
-
-msgid "Network: Created local UDP downlink port {1}"
-msgstr ""
-
-#msgid "msgid "
-#msgstr ""
-
-msgid "More Info: [{1}:{2}:{3}]"
-msgstr ""
-
-msgid "cannot load texture: {1}"
-msgstr ""
-
-msgid "Connection failed."
-msgstr ""
-
-msgid "Server forced a disconnect"
-msgstr ""
-
-msgid "Rogues not allowed.  Try another team."
-msgstr ""
-
-msgid "This team is full.  Try another team."
-msgstr ""
-
-msgid "This game is full.  Try again later."
-msgstr ""
-
-msgid "Game is full or over.  Try again later."
-msgstr ""
-
-msgid "Error connecting to server."
-msgstr ""
-
-msgid "Error downloading world database"
-msgstr ""
-
-#msgid "Score"
-#msgstr ""
-
-#msgid "Kills"
-#msgstr ""
-
-#msgid "Team Score"
-#msgstr ""
-
-#msgid "Player"
-#msgstr ""
-
-#msgid "Locale:"
-#msgstr ""
-
-# Super Flags
-
-msgid "High Speed"
-msgstr ""
-
-msgid "Quick Turn"
-msgstr ""
-
-msgid "Oscillation Overthruster"
-msgstr ""
-
-msgid "Rapid Fire"
-msgstr ""
-
-msgid "Machine Gun"
-msgstr ""
-
-msgid "Guided Missile"
-msgstr ""
-
-msgid "Laser"
-msgstr ""
-
-msgid "Ricochet"
-msgstr ""
-
-msgid "Super Bullet"
-msgstr ""
-
-msgid "Invisible Bullet"
-msgstr ""
-
-msgid "Stealth"
-msgstr ""
-
-msgid "Tiny"
-msgstr ""
-
-msgid "Narrow"
-msgstr ""
-
-msgid "Shield"
-msgstr ""
-
-msgid "Steamroller"
-msgstr ""
-
-msgid "Shock Wave"
-msgstr ""
-
-msgid "Phantom Zone"
-msgstr ""
-
-msgid "Genocide"
-msgstr ""
-
-msgid "Jumping"
-msgstr ""
-
-msgid "Identify"
-msgstr ""
-
-msgid "Cloaking"
-msgstr ""
-
-msgid "Colorblindness"
-msgstr ""
-
-msgid "Obesity"
-msgstr ""
-
-msgid "Left Turn Only"
-msgstr ""
-
-msgid "Right Turn Only"
-msgstr ""
-
-msgid "Momentum"
-msgstr ""
-
-msgid "Blindness"
-msgstr ""
-
-msgid "Jamming"
-msgstr ""
-
-msgid "Wide Angle"
-msgstr ""
-
-# Flag help
-
-msgid "You have no flag."
-msgstr ""
-
-msgid "Your team's flag:  prevent other teams from capturing it!"
-msgstr ""
-
-#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
-#msgstr ""
-
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
-
-#msgid "Useless"
-#msgstr ""
-
-#msgid "Thief"
-#msgstr ""
-
-#msgid "Masquerade"
-#msgstr ""
-
-#msgid "Seer"
-#msgstr ""
-
-#msgid "Burrow"
-#msgstr ""
-
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
-
-#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
-#msgstr ""
-
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-#msgstr ""
-
-#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-#msgstr ""
-
-#msgid "Machine Gun (MG):  Very fast reload and very short range."
-#msgstr ""
-
-#msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-#msgstr ""
-
-#msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
-#msgstr ""
-
-#msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
-#msgstr ""
-
-#msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
-#msgstr ""
-
-#msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
-#msgstr ""
-
-#msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
-
-#msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
-#msgstr ""
-
-#msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-#msgstr ""
-
-#msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-#msgstr ""
-
-#msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
-#msgstr ""
-
-#msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-#msgstr ""
-
-#msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-#msgstr ""
-
-#msgid "Genocide (G):  Killing one tank kills that tank's whole team."
-#msgstr ""
-
-#msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-#msgstr ""
-
-#msgid "IDentify (ID):  Identifies type of nearest flag."
-#msgstr ""
-
-#msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-#msgstr ""
-
-msgid "Opponent's team flag:  take it to your base to capture it!"
-msgstr ""
-
-msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
-msgstr ""
-
-msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
-msgstr ""
-
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
-msgstr ""
-
-msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
-msgstr ""
-
-msgid "Machine Gun (+MG):  Very fast reload and very short range."
-msgstr ""
-
-msgid "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-msgstr ""
-
-msgid "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."
-msgstr ""
-
-msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"
-msgstr ""
-
-msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
-msgstr ""
-
-msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
-msgstr ""
-
-#msgid "Stealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-#msgstr ""
-
-msgid "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-msgstr ""
-
-msgid "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit."
-msgstr ""
-
-msgid "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-msgstr ""
-
-msgid "SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-msgstr ""
-
-msgid "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."
-msgstr ""
-
-msgid "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-msgstr ""
-
-msgid "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-msgstr ""
-
-msgid "Genocide (+G):  Killing one tank kills that tank's whole team."
-msgstr ""
-
-msgid "JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
-msgstr ""
-
-msgid "IDentify (+ID):  Identifies type of nearest flag."
-msgstr ""
-
-msgid "CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-msgstr ""
-
-msgid "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"
-msgstr ""
-
-msgid "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters."
-msgstr ""
-
-msgid "left turn only (- <-):  Can't turn right."
-msgstr ""
-
-msgid "right turn only (- ->):  Can't turn left."
-msgstr ""
-
-msgid "Momentum (-M):  Tank has inertia.  Acceleration is limited."
-msgstr ""
-
-msgid "Blindness (-B):  Can't see out window.  Radar still works."
-msgstr ""
-
-msgid "JaMming (-JM):  Radar doesn't work.  Can still see."
-msgstr ""
-
-msgid "Wide Angle (-WA):  Fish-eye lens distorts view."
-msgstr ""
-
-#Help 2 Strings
 
 msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
 msgstr ""
@@ -955,13 +1094,16 @@ msgstr ""
 msgid "teammates and they don't have a team score."
 msgstr ""
 
-msgid "There are two styles of play, determined by the server configuration:  capture-"
+msgid "There are three styles of play, determined by the server configuration:  capture-"
 msgstr ""
 
-msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
+msgid "the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"
 msgstr ""
 
-msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
+msgid "highest score by shooting opponents.  The object in rabbit chase is to be the highest score"
+msgstr ""
+
+msgid "so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"
 msgstr ""
 
 msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
@@ -988,7 +1130,8 @@ msgstr ""
 msgid "your team but not for the enemy team."
 msgstr ""
 
-#Help 3 Strings
+msgid "Environment"
+msgstr ""
 
 msgid "The world environment contains an outer wall and several buildings."
 msgstr ""
@@ -1038,7 +1181,8 @@ msgstr ""
 msgid "self destructive;  shooting a laser at one is invariably fatal."
 msgstr ""
 
-# Help 4 Strings
+msgid "Flags"
+msgstr ""
 
 msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
 msgstr ""
@@ -1088,192 +1232,20 @@ msgstr ""
 msgid "Antidote flags are yellow and only appear when you have a bad flag."
 msgstr ""
 
-# Help 5 Strings
+msgid "Good Flags"
+msgstr ""
 
 msgid "Good Flags:"
 msgstr ""
 
-msgid "boosts top speed"
-msgstr ""
-
-msgid "High Speed (V)"
-msgstr ""
-
-msgid "boosts turn rate"
-msgstr ""
-
-msgid "Quick Turn (A)"
-msgstr ""
-
-msgid "can drive through buildings"
-msgstr ""
-
-msgid "Oscillation Overthruster (OO)"
-msgstr ""
-
-msgid "faster shots more often"
-msgstr ""
-
-msgid "Rapid Fire (F)"
-msgstr ""
-
-msgid "very fast reload, very short range"
-msgstr ""
-
-msgid "Machine Gun (MG)"
-msgstr ""
-
-msgid "shots guide themselves (right mouse locks on)"
-msgstr ""
-
-msgid "Guided Missile (GM)"
-msgstr ""
-
-msgid "infinite shot speed and range, long reload time"
-msgstr ""
-
-msgid "Laser (L)"
-msgstr ""
-
-msgid "shots ricochet"
-msgstr ""
-
-msgid "Ricochet (R)"
-msgstr ""
-
-msgid "shoots through buildings"
-msgstr ""
-
-msgid "Super Bullet (SB)"
-msgstr ""
-
-msgid "tank invisible on enemy radar"
-msgstr ""
-
-msgid "Stealth (ST)"
-msgstr ")"
-
-msgid "tank invisible out the window"
-msgstr ""
-
-msgid "Cloaking (CL)"
-msgstr ""
-
-msgid "shots invisible on radar"
-msgstr ""
-
-msgid "Invisible Bullet (IB)"
-msgstr ""
-
-msgid "tank becomes smaller"
-msgstr ""
-
-msgid "Tiny (T)"
-msgstr ""
-
-msgid "tank becomes paper thin"
-msgstr ""
-
-msgid "Narrow (N)"
-msgstr ""
-
-msgid "getting hit just drops the flag"
-msgstr ""
-
-msgid "Shield (SH)"
-msgstr ""
-
-msgid "destroy tanks by touching them"
-msgstr ""
-
-msgid "Steamroller (SR)"
-msgstr ""
-
-msgid "expanding spherical shell of destruction"
-msgstr ""
-
-msgid "Shock Wave (SW)"
-msgstr ""
-
-# Help 6 Strings
-
-
-msgid "teleport to enter/leave zone"
-msgstr ""
-
-msgid "Phantom Zone (PZ)"
-msgstr ""
-
-msgid "destroys player and all player's teammates"
-msgstr ""
-
-msgid "Genocide (G)"
-msgstr ""
-
-msgid "allows tank to jump"
-msgstr ""
-
-msgid "Jumping (JP)"
-msgstr ""
-
-msgid "shows type of nearest superflag"
-msgstr ""
-
-msgid "Identify (ID)"
+msgid "Bad Flags"
 msgstr ""
 
 msgid "Bad Flags:"
 msgstr ""
 
-msgid "can't identify tanks"
+msgid "Readouts I"
 msgstr ""
-
-msgid "Colorblindness (CB)"
-msgstr ""
-
-msgid "makes tank very large"
-msgstr ""
-
-msgid "Obesity (O)"
-msgstr ""
-
-msgid "tank can't turn right"
-msgstr ""
-
-msgid "Left Turn Only (<-)"
-msgstr ""
-
-msgid "tank can't turn left"
-msgstr ""
-
-msgid "Right Turn Only (->)"
-msgstr ")"
-
-msgid "tank has lots of momentum"
-msgstr ""
-
-msgid "Momentum (M)"
-msgstr ""
-
-msgid "can't see out the window"
-msgstr ""
-
-msgid "Blindness (B)"
-msgstr ""
-
-msgid "can't see anything on radar"
-msgstr ""
-
-msgid "Jamming (JM)"
-msgstr ""
-
-msgid "fish eye view out the window"
-msgstr ""
-
-msgid "Wide Angle (WA)"
-msgstr ""
-
-# Help 7 Strings
 
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
 msgstr ""
@@ -1293,402 +1265,14 @@ msgstr ""
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
 msgstr ""
 
-#msgid "Toggle Radar Flags:"
-#msgstr ""
-
-#msgid "Toggle Main Flags:"
-#msgstr ""
-
-#msgid "Silience/UnSilence"
-#msgstr ""
-
-#msgid "Silience/UnSilence Key:"
-#msgstr ""
-
-#msgid "Server Command Key:"
-#msgstr ""
-
-#msgid "self destruct/cancel"
-#msgstr ""
-
-# Start serveru
-# Start server
-#msgid "yes"
-#msgstr ""
-
-#msgid "no"
-#msgstr ""
-
-#msgid "Style:"
-#msgstr ""
-
-#msgid "Free for All"
-#msgstr ""
-
-#msgid "Capture the Flag"
-#msgstr ""
-
-#msgid "Max Players:"
-#msgstr ""
-
-#msgid "Max Shots:"
-#msgstr ""
-
-#msgid "Teleporters:"
-#msgstr ""
-
-#msgid "Ricochet:"
-#msgstr ""
-
-#msgid "Jumping:"
-#msgstr ""
-
-#msgid "Superflags:"
-#msgstr ""
-
-#msgid "all flags"
-#msgstr ""
-
-#msgid "good flags only"
-#msgstr ""
-
-#msgid "Max Superflags:"
-#msgstr ""
-
-#msgid "Bad Flag Antidote:"
-#msgstr ""
-
-#msgid "Bad Flag Time Limit:"
-#msgstr ""
-
-#msgid "no limit"
-#msgstr ""
-
-#msgid "15 seconds"
-#msgstr ""
-
-#msgid "30 seconds"
-#msgstr ""
-
-#msgid "60 seconds"
-#msgstr ""
-
-#msgid "180 seconds"
-#msgstr ""
-
-#msgid "Bad Flag Win Limit:"
-#msgstr ""
-
-#msgid "drop after 1 win"
-#msgstr ""
-
-#msgid "drop after 2 wins"
-#msgstr ""
-
-#msgid "drop after 3 wins"
-#msgstr ""
-
-#msgid "Server Visibility:"
-#msgstr ""
-
-#msgid "local host only (ttl=0)"
-#msgstr ""
-
-#msgid "subnet only (ttl=1)"
-#msgstr ""
-
-#msgid "local area (ttl=8)"
-#msgstr ""
-
-#msgid "site (ttl=32)"
-#msgstr ""
-
-#msgid "organization (ttl=64)"
-#msgstr ""
-
-#msgid "continent (ttl=128)"
-#msgstr ""
-
-#msgid "world (ttl=255)"
-#msgstr ""
-
-#msgid "Game Over:"
-#msgstr ""
-
-#msgid "never"
-#msgstr ""
-
-#msgid "after 5 minutes"
-#msgstr ""
-
-#msgid "after 15 minutes"
-#msgstr ""
-
-#msgid "after 60 minutes"
-#msgstr ""
-
-#msgid "after 3 hours"
-#msgstr ""
-
-#msgid "when a player gets +3"
-#msgstr ""
-
-#msgid "when a player gets +10"
-#msgstr ""
-
-#msgid "when a player gets +25"
-#msgstr ""
-
-#msgid "when a team gets +3"
-#msgstr ""
-
-#msgid "when a team gets +10"
-#msgstr ""
-
-#msgid "when a team gets +25"
-#msgstr ""
-
-#msgid "when a team gets +100"
-#msgstr ""
-
-#msgid "Server Reset:"
-#msgstr ""
-
-#msgid "no, quit after game"
-#msgstr ""
-
-#msgid "yes, reset for more games"
-#msgstr ""
-
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr ""
 
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr ""
 
-#msgid "cyan"
-#msgstr ""
-
-#msgid "grey"
-#msgstr ""
-
-#msgid "text"
-#msgstr ""
-
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr ""
-
-#msgid "None"
-#msgstr ""
-
-#msgid "Pulsating"
-#msgstr ""
-
-#msgid "Underline"
-#msgstr ""
-
-# Identifikace vlajek
-# Flags identification
-#msgid "Closest Flag: High Speed"
-#msgstr ""
-
-#msgid "Closest Flag: Quick Turn"
-#msgstr ""
-
-#msgid "Closest Flag: Oscillation Overthurster"
-#msgstr ""
-
-#msgid "Closest Flag: Rapid Fire"
-#msgstr ""
-
-#msgid "Closest Flag: Machine Gun"
-#msgstr ""
-
-#msgid "Closest Flag: Guided Missile"
-#msgstr ""
-
-#msgid "Closest Flag: Laser"
-#msgstr ""
-
-#msgid "Closest Flag: Ricochet"
-#msgstr ""
-
-#msgid "Closest Flag: Super Bullet"
-#msgstr ""
-
-#msgid "Closest Flag: Stealth"
-#msgstr ""
-
-#msgid "Closest Flag: Cloaking"
-#msgstr ""
-
-#msgid "Closest Flag: Invisible Bullet"
-#msgstr ""
-
-#msgid "Closest Flag: Tiny"
-#msgstr ""
-
-#msgid "Closest Flag: Narrow"
-#msgstr ""
-
-#msgid "Closest Flag: Shield"
-#msgstr ""
-
-#msgid "Closest Flag: Steamroller"
-#msgstr ""
-
-#msgid "Closest Flag: Shock Wave"
-#msgstr ""
-
-#msgid "Closest Flag: Phantom Zone"
-#msgstr ""
-
-#msgid "Closest Flag: Genocide"
-#msgstr ""
-
-#msgid "Closest Flag: Jumping"
-#msgstr ""
-
-#msgid "Closest Flag: Identify"
-#msgstr ""
-
-#msgid "Closest Flag: Colorblindness"
-#msgstr ""
-
-#msgid "Closest Flag: Obesity"
-#msgstr ""
-
-#msgid "Closest Flag: Left Turn Only"
-#msgstr ""
-
-#msgid "Closest Flag: Right Turn Only"
-#msgstr ""
-
-#msgid "Closest Flag: Momentum"
-#msgstr ""
-
-#msgid "Closest Flag: Blindness"
-#msgstr ""
-
-#msgid "Closest Flag: Jamming"
-#msgstr ""
-
-#msgid "Closest Flag: Wide Angle"
-#msgstr ""
-
-# Ostatni
-# Other
-#msgid "Server started."
-#msgstr ""
-
-#msgid "Shot myself"
-#msgstr ""
-
-# !!! Hlaseni nize nelze prelozit :-(
-# !!! Messages below cannot be translated :-(
-
-# Informace o vlajce, kterou sebrali hraci
-# Informations about flags grabbed by opponents
-#msgid "grabbed High Speed flag"
-#msgstr ""
-
-#msgid "grabbed Quick Turn flag"
-#msgstr ""
-
-#msgid "grabbed Oscillation Overthurster flag"
-#msgstr ""
-
-#msgid "grabbed Rapid Fire flag"
-#msgstr ""
-
-#msgid "grabbed Machine Gun flag"
-#msgstr ""
-
-#msgid "grabbed Guided Missile flag"
-#msgstr ""
-
-#msgid "grabbed Laser flag"
-#msgstr ""
-
-#msgid "grabbed Ricochet flag"
-#msgstr ""
-
-#msgid "grabbed Super Bullet flag"
-#msgstr ""
-
-#msgid "grabbed Stealth flag"
-#msgstr ""
-
-#msgid "grabbed Cloaking flag"
-#msgstr ""
-
-#msgid "grabbed Invisible Bullet flag"
-#msgstr ""
-
-#msgid "grabbed Tiny flag"
-#msgstr ""
-
-#msgid "grabbed Narrow flag"
-#msgstr ""
-
-#msgid "grabbed Shield flag"
-#msgstr ""
-
-#msgid "grabbed Steamroller flag"
-#msgstr ""
-
-#msgid "grabbed Shock Wave flag"
-#msgstr ""
-
-#msgid "grabbed Phantom Zone flag"
-#msgstr ""
-
-#msgid "grabbed Genocide flag"
-#msgstr ""
-
-#msgid "grabbed Jumping flag"
-#msgstr ""
-
-#msgid "grabbed Identify flag"
-#msgstr ""
-
-#msgid "rabbed Colorblindness flag"
-#msgstr ""
-
-#msgid "grabbed Obesity flag"
-#msgstr ""
-
-#msgid "grabbed Left Turn Only flag"
-#msgstr ""
-
-#msgid "grabbed Right Turn Only flag"
-#msgstr ""
-
-#msgid "grabbed Momentum flag"
-#msgstr ""
-
-#msgid "grabbed Blindness flag"
-#msgstr ""
-
-#msgid "grabbed Jamming flag"
-#msgstr ""
-
-#msgid "grabbed Wide Angle flag"
-#msgstr ""
-
-# Ostatni hlasky, ktere nelze prelozit
-# Other messages that cannot be translated
-#msgid "Pausing in"
-#msgstr ""
-
-#msgid "Press Pause to resume"
-#msgstr ""
-
-#msgid "Got shot by "
-#msgstr ""
-
-#msgid "got skewred by "
-#msgstr ""
 
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
 msgstr ""
@@ -1714,8 +1298,8 @@ msgstr ""
 msgid "The distance away from the small box determines the speed."
 msgstr ""
 
-# Help 8 Strings
-
+msgid "Readouts II"
+msgstr ""
 
 msgid "Above the larger box is a tape showing your current heading.  North is"
 msgstr ""
@@ -1762,28 +1346,1602 @@ msgstr ""
 msgid "Other informational messages may occasionally flash on the HUD."
 msgstr ""
 
-# BZFS Messages
-
-msgid "You are now an administrator!"
+msgid "Credits"
 msgstr ""
 
-msgid "Wrong Password!"
+msgid "Maintainer:"
 msgstr ""
 
-msgid "unknown command"
+msgid "Original Author:"
 msgstr ""
 
-msgid "Countdown started."
+msgid "Code Contributors:"
 msgstr ""
 
-msgid "IP pattern added to banlist"
+msgid "Tank Models:"
 msgstr ""
 
-msgid "malformed address"
+msgid "Special Thanks:"
 msgstr ""
 
-msgid "removed IP pattern"
+msgid "BZFlag Home Page:"
 msgstr ""
 
-msgid "Teams"
+msgid "Copyright (c) 1993 - 2006"
+msgstr ""
+
+####################
+## HUD RENDERERER ##
+####################
+
+# Translated input events are not working here
+msgid "Press %s to start"
+msgstr ""
+
+msgid "Press Pause to resume"
+msgstr ""
+
+msgid "AutoPilot on"
+msgstr ""
+
+msgid "Press Destruct to cancel"
+msgstr ""
+
+msgid "GAME OVER"
+msgstr ""
+
+msgid "Send:"
+msgstr ""
+
+msgid "Dead"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Reloaded in %.1f"
+msgstr ""
+
+msgid "Sealed"
+msgstr ""
+
+msgid "Zoned"
+msgstr ""
+
+msgid "FPS: %d"
+msgstr ""
+
+msgid "rtris: %i"
+msgstr ""
+
+msgid "tris: %i"
+msgstr ""
+
+msgid "time: %dms"
+msgstr ""
+
+###############
+## JOIN MENU ##
+###############
+
+msgid "Join Game"
+msgstr ""
+
+msgid "Find Server"
+msgstr ""
+
+msgid "Connect"
+msgstr ""
+
+msgid "Callsign:"
+msgstr ""
+
+msgid "Password:"
+msgstr ""
+
+msgid "Team:"
+msgstr ""
+
+msgid "Rogue"
+msgstr ""
+
+msgid "Observer"
+msgstr ""
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Red Team"
+msgstr ""
+
+msgid "Blue Team"
+msgstr ""
+
+msgid "Green Team"
+msgstr ""
+
+msgid "Purple Team"
+msgstr ""
+
+msgid "Server:"
+msgstr ""
+
+msgid "Port:"
+msgstr ""
+
+msgid "Email:"
+msgstr ""
+
+msgid "Start Server"
+msgstr ""
+
+msgid "You must enter a callsign."
+msgstr ""
+
+msgid "You must enter a server."
+msgstr ""
+
+msgid "Port is invalid.  Try %d."
+msgstr ""
+
+msgid "Trying..."
+msgstr ""
+
+####################
+## INPUT SETTINGS ##
+####################
+
+msgid "Input Settings"
+msgstr ""
+
+msgid "Change Key Mapping"
+msgstr ""
+
+msgid "Joystick device:"
+msgstr ""
+
+msgid "Active input device:"
+msgstr ""
+
+msgid "Force feedback:"
+msgstr ""
+
+msgid "Rumble"
+msgstr ""
+
+msgid "Directional"
+msgstr ""
+
+msgid "Joystick X Axis:"
+msgstr ""
+
+msgid "Joystick Y Axis:"
+msgstr ""
+
+msgid "Confine mouse:"
+msgstr ""
+
+msgid "Jump while typing:"
+msgstr ""
+
+msgid "Keyboard"
+msgstr ""
+
+msgid "Mouse"
+msgstr ""
+
+msgid "Joystick"
+msgstr ""
+
+msgid "Unnamed Device"
+msgstr ""
+
+#######################
+## KEYBOARD MAP MENU ##
+#######################
+
+msgid "Key Mapping"
+msgstr ""
+
+msgid "Use up/down arrows to navigate, enter key to enter edit mode"
+msgstr ""
+
+msgid "Reset Defaults"
+msgstr ""
+
+msgid "Fire shot:"
+msgstr ""
+
+msgid "Drop flag:"
+msgstr ""
+
+msgid "Identify/Lock On:"
+msgstr ""
+
+msgid "Radar Short:"
+msgstr ""
+
+msgid "Radar Medium:"
+msgstr ""
+
+msgid "Radar Long:"
+msgstr ""
+
+msgid "Send to All:"
+msgstr ""
+
+msgid "Send to Teammates:"
+msgstr ""
+
+msgid "Send to Nemesis:"
+msgstr ""
+
+msgid "Send to Recipient:"
+msgstr ""
+
+msgid "Send to Admin:"
+msgstr ""
+
+msgid "Jump:"
+msgstr ""
+
+msgid "Binoculars:"
+msgstr ""
+
+msgid "Toggle Score:"
+msgstr ""
+
+msgid "Toggle Radar:"
+msgstr ""
+
+msgid "Toggle Console:"
+msgstr ""
+
+msgid "Tank Labels:"
+msgstr ""
+
+msgid "Flag Help:"
+msgstr ""
+
+msgid "Time Forward:"
+msgstr ""
+
+msgid "Time Backward:"
+msgstr ""
+
+msgid "Self Destruct/Cancel:"
+msgstr ""
+
+msgid "Fast Quit:"
+msgstr ""
+
+msgid "Scroll Backward:"
+msgstr ""
+
+msgid "Scroll Forward:"
+msgstr ""
+
+msgid "Scroll Bottom:"
+msgstr ""
+
+msgid "Toggle Flags On Radar:"
+msgstr ""
+
+msgid "Toggle Flags On Field:"
+msgstr ""
+
+msgid "Silence/UnSilence Key:"
+msgstr ""
+
+msgid "Server Command Key:"
+msgstr ""
+
+msgid "Hunt Key:"
+msgstr ""
+
+msgid "Add/Modify Hunt Key:"
+msgstr ""
+
+msgid "AutoPilot Key: "
+msgstr ""
+
+msgid "Main Message Tab: "
+msgstr ""
+
+msgid "Chat Message Tab: "
+msgstr ""
+
+msgid "Server Message Tab: "
+msgstr ""
+
+msgid "Misc Message Tab: "
+msgstr ""
+
+msgid "Forward Key: "
+msgstr ""
+
+msgid "Reverse Key: "
+msgstr ""
+
+msgid "Left Key: "
+msgstr ""
+
+msgid "Right Key: "
+msgstr ""
+
+msgid "Restart:"
+msgstr ""
+
+msgid "Iconify:"
+msgstr ""
+
+msgid "Fullscreen:"
+msgstr ""
+
+msgid "Define Quick Keys"
+msgstr ""
+
+msgid "Notice: depending on platform not all keys might work"
+msgstr ""
+
+msgid "Send to All"
+msgstr ""
+
+msgid "Send to Team"
+msgstr ""
+
+###############
+## MAIN MENU ##
+###############
+
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Username:"
+msgstr ""
+
+msgid "Save Settings"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Leave Game"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "Enter to quit, Esc to resume"
+msgstr ""
+
+msgid "Really quit?"
+msgstr ""
+
+#############
+## OPTIONS ##
+#############
+
+msgid "Options"
+msgstr ""
+
+msgid "Save Settings:"
+msgstr ""
+
+msgid "On Exit"
+msgstr ""
+
+msgid "Save identity:"
+msgstr ""
+
+msgid "Username only"
+msgstr ""
+
+msgid "Username and password"
+msgstr ""
+
+msgid "Save World"
+msgstr ""
+
+msgid "File Name:"
+msgstr ""
+
+msgid "No world loaded to save"
+msgstr ""
+
+msgid "World Saved: "
+msgstr ""
+
+msgid "Error Saving: "
+msgstr ""
+
+######################################
+## MESSAGE OF THE DAY & NEW VERSION ##
+######################################
+
+msgid "MOTD contains unexpected data"
+msgstr ""
+
+msgid "<not available>"
+msgstr ""
+
+msgid "Message of the day: "
+msgstr ""
+
+msgid "A new version of BZFlag has been released!"
+msgstr ""
+
+msgid "Would you like to upgrade now?"
+msgstr ""
+
+msgid "(Download and install: "
+msgstr ""
+
+msgid "Yes!"
+msgstr ""
+
+msgid "Not yet"
+msgstr ""
+
+msgid "Please upgrade as soon as possible."
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Downloading update: %d/%d KB"
+msgstr ""
+
+msgid "Failed... can't find upgrade installer."
+msgstr ""
+
+msgid "Failed... not enough memory."
+msgstr ""
+
+msgid "Failed... installer is not executable."
+msgstr ""
+
+msgid "Failed to start upgrade installer (%s) - error %d.\n"
+msgstr ""
+
+msgid "Installer started."
+msgstr ""
+
+msgid "Download Failed!"
+msgstr ""
+
+msgid "Downloading update: 8888/8888 KB"
+msgstr ""
+
+#############
+## ROAMING ##
+#############
+
+msgid "Roaming::changeTarget() no world, switching to free roaming\n"
+msgstr ""
+
+msgid "Rabbit "
+msgstr ""
+
+msgid "Tracking "
+msgstr ""
+
+msgid "Following "
+msgstr ""
+
+msgid "Driving with "
+msgstr ""
+
+msgid " Flag"
+msgstr ""
+
+msgid "Roaming"
+msgstr ""
+
+#################
+## SCORE BOARD ##
+#################
+
+msgid "Score"
+msgstr ""
+
+msgid " Kills"
+msgstr ""
+
+msgid "Player"
+msgstr ""
+
+msgid "[Score]"
+msgstr ""
+
+msgid "[Normalized Score]"
+msgstr ""
+
+msgid "[Callsign]"
+msgstr ""
+
+msgid "[Team Kills]"
+msgstr ""
+
+msgid "[TK ratio]"
+msgstr ""
+
+msgid "[Team]"
+msgstr ""
+
+msgid "[1on1]"
+msgstr ""
+
+msgid "Hunt->"
+msgstr ""
+
+msgid "Team Score"
+msgstr ""
+
+msgid "Team Flags"
+msgstr ""
+
+msgid "playerInfo: %s\n"
+msgstr ""
+
+msgid "TK Leader "
+msgstr ""
+
+msgid "TK Ratio Leader "
+msgstr ""
+
+msgid "Leader "
+msgstr ""
+
+#####################
+## SERVER COMMANDS ##
+#####################
+
+msgid "Kick -> "
+msgstr ""
+
+msgid "Kill -> "
+msgstr ""
+
+msgid "Set players group "
+msgstr ""
+
+msgid "Remove player from group "
+msgstr ""
+
+msgid "Ghost player [enter your pass] "
+msgstr ""
+
+msgid "Show player's groups "
+msgstr ""
+
+msgid "Kick :"
+msgstr ""
+
+msgid "Kill :"
+msgstr ""
+
+msgid "Ban :"
+msgstr ""
+
+msgid "Set player's group :"
+msgstr ""
+
+msgid "Remove player from group :"
+msgstr ""
+
+msgid "Ghost :"
+msgstr ""
+
+msgid "Show players group :"
+msgstr ""
+
+msgid "Unban :"
+msgstr ""
+
+msgid "Show ban list"
+msgstr ""
+
+msgid "Show player list"
+msgstr ""
+
+msgid "Reset Flags"
+msgstr ""
+
+msgid "Reset Unused Flags"
+msgstr ""
+
+msgid "Remove Flags"
+msgstr ""
+
+msgid "End Game"
+msgstr ""
+
+msgid "Restart Countdown:"
+msgstr ""
+
+msgid "Show Flag Info"
+msgstr ""
+
+msgid "Shut Down Server"
+msgstr ""
+
+msgid "Disconnect all Players"
+msgstr ""
+
+msgid "Lag Warning threshold:"
+msgstr ""
+
+msgid "Maximum lag warnings:"
+msgstr ""
+
+msgid "Idle Stats"
+msgstr ""
+
+msgid "Client Version Query"
+msgstr ""
+1
+msgid "Lag / Ping Stats"
+msgstr ""
+
+msgid "Flag History"
+msgstr ""
+
+msgid "Admin Password:"
+msgstr ""
+
+msgid "Send Report to Server:"
+msgstr ""
+
+msgid "Register your nick [enter pass]:"
+msgstr ""
+
+msgid "Login [enter pass]:"
+msgstr ""
+
+msgid "Set your password [enter pass]:"
+msgstr ""
+
+msgid "List Groups"
+msgstr ""
+
+msgid "List Permissions"
+msgstr ""
+
+msgid "Vote:"
+msgstr ""
+
+msgid "Call a Poll:"
+msgstr ""
+
+msgid "Cancel a Poll"
+msgstr ""
+
+#################
+## SERVER LINK ##
+#################
+
+msgid "Remote %s\n"
+msgstr ""
+
+msgid "Connected Event"
+msgstr ""
+
+msgid "Server version: '%8s'"
+msgstr ""
+
+msgid "Server network statistics:\n"
+msgstr ""
+
+msgid "  elapsed time    : %f\n"
+msgstr ""
+
+msgid "  bytes sent      : %d (%f/sec)\n"
+msgstr ""
+
+msgid "  packets sent    : %d (%f/sec)\n"
+msgstr ""
+
+msgid "  bytes/packet    : %f\n"
+msgstr ""
+
+msgid "  bytes recieved  : %d (%f/sec)\n"
+msgstr ""
+
+msgid "  packets received: %d (%f/sec)\n"
+msgstr ""
+
+msgid "<** UDP Packet Code %x Len %x\n"
+msgstr ""
+
+msgid "Fallback to normal TCP receive"
+msgstr ""
+
+msgid "Communication error joining game [No immediate respose]."
+msgstr ""
+
+msgid "Server forced disconnection."
+msgstr ""
+
+msgid "Error: getsockname() failed, cannot get TCP port?"
+msgstr ""
+
+msgid "Network: Created local UDP downlink port {1}"
+msgstr ""
+
+msgid "Error: Unable to set NonBlocking for UDP receive socket"
+msgstr ""
+
+msgid "Server got our UDP, using UDP to server"
+msgstr ""
+
+msgid "Got server's UDP packet back, server using UDP"
+msgstr ""
+
+msgid "Sent authentication ticket to server : \n"
+msgstr ""
+
+msgid "Servers"
+msgstr ""
+
+#######################
+## SERVER START MENU ##
+#######################
+
+msgid "Players"
+msgstr ""
+
+msgid "Red"
+msgstr ""
+
+msgid "Green"
+msgstr ""
+
+msgid "Blue"
+msgstr ""
+
+msgid "Purple"
+msgstr ""
+
+msgid "Observers"
+msgstr ""
+
+msgid "Find Servers:"
+msgstr ""
+
+msgid "Press '/' to search"
+msgstr ""
+
+msgid "Using filter:"
+msgstr ""
+
+msgid "{1} Shot"
+msgstr ""
+
+msgid "{1} Shots"
+msgstr ""
+
+msgid "Capture-the-Flag"
+msgstr ""
+
+msgid "Rabbit Chase"
+msgstr ""
+
+msgid "Free-style"
+msgstr ""
+
+msgid "Super Flags"
+msgstr ""
+
+msgid "Antidote Flags"
+msgstr ""
+
+msgid "{1} sec To Drop Bad Flag"
+msgstr ""
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr ""
+
+msgid "{1} Win Drops Bad Flag"
+msgstr ""
+
+msgid "{1} Wins Drops Bad Flag"
+msgstr ""
+
+msgid "Handicap"
+msgstr ""
+
+msgid "Time limit: {1}"
+msgstr ""
+
+msgid "Max team score: {1}"
+msgstr ""
+
+msgid "Max player score: {1}"
+msgstr ""
+
+msgid "Searching"
+msgstr ""
+
+msgid "Servers found: {1}/{2}"
+msgstr ""
+
+msgid "Style:"
+msgstr ""
+
+msgid "Capture the Flag"
+msgstr ""
+
+msgid "Free for All"
+msgstr ""
+
+msgid "Rabbit Hunt (Random Selection)"
+msgstr ""
+
+msgid "Rabbit Hunt (Score-based Selection)"
+msgstr ""
+
+msgid "Rabbit Hunt (Killer Selection)"
+msgstr ""
+
+msgid "Max Players:"
+msgstr ""
+
+msgid "Max Shots:"
+msgstr ""
+
+msgid "Teleporters:"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "Ricochet:"
+msgstr ""
+
+msgid "Jumping:"
+msgstr ""
+
+msgid "Handicap:"
+msgstr ""
+
+msgid "Superflags:"
+msgstr ""
+
+msgid "good flags only"
+msgstr ""
+
+msgid "all flags"
+msgstr ""
+
+msgid "Max Superflags:"
+msgstr ""
+
+msgid "Bad Flag Antidote:"
+msgstr ""
+
+msgid "Bad Flag Time Limit:"
+msgstr ""
+
+msgid "no limit"
+msgstr ""
+
+msgid "15 seconds"
+msgstr ""
+
+msgid "30 seconds"
+msgstr ""
+
+msgid "60 seconds"
+msgstr ""
+
+msgid "180 seconds"
+msgstr ""
+
+msgid "Bad Flag Win Limit:"
+msgstr ""
+
+msgid "drop after 1 win"
+msgstr ""
+
+msgid "drop after 2 wins"
+msgstr ""
+
+msgid "drop after 3 wins"
+msgstr ""
+
+msgid "Game Over:"
+msgstr ""
+
+msgid "never"
+msgstr ""
+
+msgid "after 5 minutes"
+msgstr ""
+
+msgid "after 15 minutes"
+msgstr ""
+
+msgid "after 60 minutes"
+msgstr ""
+
+msgid "after 3 hours"
+msgstr ""
+
+msgid "when a player gets +3"
+msgstr ""
+
+msgid "when a player gets +10"
+msgstr ""
+
+msgid "when a player gets +25"
+msgstr ""
+
+msgid "when a team gets +3"
+msgstr ""
+
+msgid "when a team gets +10"
+msgstr ""
+
+msgid "when a team gets +25"
+msgstr ""
+
+msgid "when a team gets +100"
+msgstr ""
+
+msgid "Server Reset:"
+msgstr ""
+
+msgid "no, quit after game"
+msgstr ""
+
+msgid "yes, reset for more games"
+msgstr ""
+
+msgid "World Map:"
+msgstr ""
+
+msgid "random map"
+msgstr ""
+
+msgid "directory"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Failed... can't find server program."
+msgstr ""
+
+msgid "Failed... server program is not executable."
+msgstr ""
+
+msgid "Failed to start server (%s) - error %d.\n"
+msgstr ""
+
+msgid "Server started."
+msgstr ""
+
+msgid "Failed... cannot fork."
+msgstr ""
+
+msgid "Failed (exit = %i)."
+msgstr ""
+
+msgid "Failed (signal = %i)."
+msgstr ""
+
+msgid "Failed."
+msgstr ""
+
+msgid "localhost"
+msgstr ""
+
+################
+## STATISTICS ##
+################
+
+msgid "Shot Statistics"
+msgstr ""
+
+msgid "Shots Hit/Fired"
+msgstr ""
+
+msgid "Super"
+msgstr ""
+
+msgid "Shock"
+msgstr ""
+
+msgid "Fave."
+msgstr ""
+
+msgid "Hit%"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Norm"
+msgstr ""
+
+msgid "GM"
+msgstr ""
+
+msgid "Laser"
+msgstr ""
+
+msgid "Bullet"
+msgstr ""
+
+msgid "Wave"
+msgstr ""
+
+msgid "Thief"
+msgstr ""
+
+msgid "Flag"
+msgstr ""
+
+#################
+## SILENCE KEY ##
+#################
+
+msgid "Silenced "
+msgstr ""
+
+msgid "Unsilenced "
+msgstr ""
+
+msgid "Unblocked Msgs"
+msgstr ""
+
+msgid " Does not exist"
+msgstr ""
+
+msgid "Silence -->"
+msgstr ""
+
+msgid "Un"
+msgstr ""
+
+######################
+## PLAYING MESSAGES ##
+######################
+
+msgid "world weapon"
+msgstr ""
+
+msgid "Got shot by "
+msgstr ""
+
+msgid "Got flattened by "
+msgstr ""
+
+msgid "Team flag was captured by "
+msgstr ""
+
+msgid "Teammate hit with Genocide by "
+msgstr ""
+
+msgid "Tank Self Destructed"
+msgstr ""
+
+msgid "Tank Rusted"
+msgstr ""
+
+msgid "Flags on field hidden, to show them "
+msgstr ""
+
+msgid " bind a key to Toggle Flags on Field"
+msgstr ""
+
+msgid "Flags on radar hidden, to show them "
+msgstr ""
+
+msgid " bind a key to Toggle Flags on Radar"
+msgstr ""
+
+msgid "To toggle the radar "
+msgstr ""
+
+msgid " bind a key to Toggle Radar"
+msgstr ""
+
+msgid "To toggle the console "
+msgstr ""
+
+msgid " bind a key to Toggle Console"
+msgstr ""
+
+msgid "ZSceneDatabase processed in %.3f seconds.\n"
+msgstr ""
+
+msgid "BSPSceneDatabase processed in %.3f seconds.\n"
+msgstr ""
+
+msgid "Download stopped by user action"
+msgstr ""
+
+msgid "The tank's motion is now frozen! ... Press Shift+` to unfreeze"
+msgstr ""
+
+msgid "Resumed"
+msgstr ""
+
+msgid "There does not appear to be any key bound to enter the game"
+msgstr ""
+
+msgid "Invalid player identification (%d)"
+msgstr ""
+
+msgid "WARNING: invalid player identification when adding player with id "
+msgstr ""
+
+msgid "Server error when adding player, player already added"
+msgstr ""
+
+msgid "WARNING: player already exists at location with id "
+msgstr ""
+
+msgid "joining as "
+msgstr ""
+
+msgid "an observer"
+msgstr ""
+
+msgid "a tank"
+msgstr ""
+
+msgid "a robot tank"
+msgstr ""
+
+msgid "an unknown type"
+msgstr ""
+
+msgid "IPINFO: "
+msgstr ""
+
+msgid "\t from: "
+msgstr ""
+
+msgid "signing off"
+msgstr ""
+
+msgid " from "
+msgstr ""
+
+msgid "(leave)"
+msgstr ""
+
+msgid "World cache files disappeared.  Join canceled"
+msgstr ""
+
+msgid "Loading world into memory..."
+msgstr ""
+
+msgid "Error loading cached world.  Join canceled"
+msgstr ""
+
+msgid "Verifying world integrity..."
+msgstr ""
+
+msgid "Error on md5. Removing offending file."
+msgstr ""
+
+msgid "Preparing world..."
+msgstr ""
+
+msgid "Error unpacking world database. Join canceled."
+msgstr ""
+
+msgid "Downloading files..."
+msgstr ""
+
+msgid "Loading world from "
+msgstr ""
+
+msgid "Download from URL failed"
+msgstr ""
+
+msgid "Problem writing cache"
+msgstr ""
+
+msgid "Downloading World..."
+msgstr ""
+
+msgid "Flags not supported by this client: {1}"
+msgstr ""
+
+msgid "Downloading World (%2d%% complete/%d kb remaining)..."
+msgstr ""
+
+msgid "Server forced a disconnect"
+msgstr ""
+
+msgid "Requesting World Hash..."
+msgstr ""
+
+msgid "Time Expired"
+msgstr ""
+
+msgid "Game Paused"
+msgstr ""
+
+msgid "[unknown player]"
+msgstr ""
+
+msgid " won the game"
+msgstr ""
+
+msgid "Roger taking controls"
+msgstr ""
+
+msgid "Roger releasing controls"
+msgstr ""
+
+msgid "Don't kill teammates!!!"
+msgstr ""
+
+msgid "sorry, i'm just a silly machine"
+msgstr ""
+
+msgid "blew myself up"
+msgstr ""
+
+msgid "destroyed by the server"
+msgstr ""
+
+msgid "destroyed by a (GHOST)"
+msgstr ""
+
+msgid "fell in the water"
+msgstr ""
+
+msgid "Unknown Deadly Obstacle"
+msgstr ""
+
+msgid "teammate "
+msgstr ""
+
+msgid "was fried by "
+msgstr ""
+
+msgid "'s laser"
+msgstr ""
+
+msgid "was destroyed by "
+msgstr ""
+
+msgid "'s guided missile"
+msgstr ""
+
+msgid "felt the effects of "
+msgstr ""
+
+msgid "'s shockwave"
+msgstr ""
+
+msgid "didn't see "
+msgstr ""
+
+msgid "'s bullet"
+msgstr ""
+
+msgid "was turned into swiss cheese by "
+msgstr ""
+
+msgid "'s machine gun"
+msgstr ""
+
+msgid "got skewered by "
+msgstr ""
+
+msgid "'s super bullet"
+msgstr ""
+
+msgid "killed by "
+msgstr ""
+
+msgid "Flag Alert!!!"
+msgstr ""
+
+msgid "Team Grab!!!"
+msgstr ""
+
+msgid "grabbed "
+msgstr ""
+
+msgid " flag"
+msgstr ""
+
+msgid "took my flag into "
+msgstr ""
+
+msgid " territory"
+msgstr ""
+
+msgid "Don't capture your own flag!!!"
+msgstr ""
+
+msgid "captured "
+msgstr ""
+
+msgid "'s flag"
+msgstr ""
+
+msgid "You are now the rabbit."
+msgstr ""
+
+msgid "is now the rabbit"
+msgstr ""
+
+msgid "SERVER"
+msgstr ""
+
+msgid "(UNKNOWN)"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "Ignored Msg"
+msgstr ""
+
+msgid "Identify with /identify"
+msgstr ""
+
+msgid "Autoidentifying with password stored for "
+msgstr ""
+
+msgid "[Admin] "
+msgstr ""
+
+msgid "[to "
+msgstr ""
+
+msgid "[Team] "
+msgstr ""
+
+msgid "(join)"
+msgstr ""
+
+msgid "Paused"
+msgstr ""
+
+msgid "locked on me"
+msgstr ""
+
+msgid "Server communication error"
+msgstr ""
+
+msgid "dropped "
+msgstr ""
+
+msgid " stole "
+msgstr ""
+
+msgid "Killed by unknown obstacle"
+msgstr ""
+
+msgid "Invalid reason"
+msgstr ""
+1
+msgid "Shot myself"
+msgstr ""
+
+msgid "Killed by the server"
+msgstr ""
+
+msgid "Hunter"
+msgstr ""
+
+msgid " with "
+msgstr ""
+
+msgid "Closest Flag: "
+msgstr ""
+
+msgid "Locked on "
+msgstr ""
+
+msgid ") with "
+msgstr ""
+
+msgid "Looking at a tank"
+msgstr ""
+
+msgid "Looking at "
+msgstr ""
+
+msgid "SPOTTED: "
+msgstr ""
+
+msgid "%s team was unavailable, you were joined "
+msgstr ""
+
+msgid "as an Observer"
+msgstr ""
+
+msgid "to the %s"
+msgstr ""
+
+msgid "You were joined as an observer"
+msgstr ""
+
+msgid "You joined the %s"
+msgstr ""
+
+msgid "You joined as a %s"
+msgstr ""
+
+msgid "cleanWorldCache: removed %s\n"
+msgstr ""
+
+msgid "id "
+msgstr ""
+
+msgid "id test %p %p %p %8.8x %8.8x\n"
+msgstr ""
+
+msgid "Server not found"
+msgstr ""
+
+msgid "Server Access Denied Locally"
+msgstr ""
+
+msgid "server access is controlled by "
+msgstr ""
+
+msgid "Memory error"
+msgstr ""
+
+msgid "Incompatible server version XXXXXXXX"
+msgstr ""
+
+msgid "You have been banned from this server"
+msgstr ""
+
+msgid "You have been banned from this server:"
+msgstr ""
+
+msgid "Game is full or over.  Try again later."
+msgstr ""
+
+msgid "Error connecting to server."
+msgstr ""
+
+msgid "Cannot connect to full version server."
+msgstr ""
+
+msgid "Internal error connecting to server (error code %d)."
+msgstr ""
+
+msgid "No UDP connection, see Options to enable."
+msgstr ""
+
+msgid "Connection Established..."
+msgstr ""
+
+msgid "Entering game..."
+msgstr ""
+
+msgid "Disabled stencilShadows for interlaced mode"
+msgstr ""
+
+msgid "Can't pause while inside a building"
+msgstr ""
+
+msgid "Can't pause when you are in the air"
+msgstr ""
+
+msgid "Unable to pause right now"
+msgstr ""
+
+msgid "Can't pause when you are in the phantom zone"
+msgstr ""
+
+msgid "Pausing in %d"
+msgstr ""
+
+msgid "Self Destructing in %d"
+msgstr ""
+
+msgid "Server has unexpectedly disconnected"
+msgstr ""
+
+msgid " movement"
+msgstr ""
+
+msgid "not responding"
+msgstr ""
+
+msgid "okay"
+msgstr ""
+
+msgid "  lowest quality"
+msgstr ""
+
+msgid "  lowest quality with texture"
+msgstr ""
+
+msgid "  full quality"
+msgstr ""
+
+msgid "  medium quality"
+msgstr ""
+
+msgid "  low quality"
+msgstr ""
+
+msgid "  nearest texturing"
+msgstr ""
+
+msgid "  no texturing"
+msgstr ""
+
+msgid "  no blending"
+msgstr ""
+
+msgid "  no smoothing"
+msgstr ""
+
+msgid "  no lighting"
+msgstr ""
+
+msgid "  no dithering"
+msgstr ""
+
+msgid "testing performance;  please wait..."
+msgstr ""
+
+msgid "BZFlag version:   %s\n"
+msgstr ""
+
+msgid "BZFlag protocol:  %s\n"
+msgstr ""
+
+msgid "OpenGL vendor:    %s\n"
+msgstr ""
+
+msgid "OpenGL version:   %s\n"
+msgstr ""
+
+msgid "OpenGL renderer:  %s\n"
+msgstr ""
+
+msgid "Depth Buffer:     %i bitplanes\n"
+msgstr ""
+
+msgid "Running on Windows %s%d.%d %s\n"
+msgstr ""
+
+msgid "NT "
+msgstr ""
+
+msgid "This release will expire on %s"
+msgstr ""
+
+msgid "BZFlag version: "
+msgstr ""
+
+msgid "Author: Chris Schoeneman <crs23@bigfoot.com>"
+msgstr ""
+
+msgid "Maintainer: Tim Riker <Tim@Rikers.org>"
+msgstr ""
+
+msgid "Audio Driver: "
+msgstr ""
+
+msgid "OpenGL Driver: "
+msgstr ""
+
+msgid " Silenced"
 msgstr ""
