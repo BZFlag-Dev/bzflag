@@ -268,10 +268,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {
     if (location == Dead || isPaused()) {
-      // can't move if paused or dead -- set dt to zero instead of
-      // clearing velocity and newAngVel for when we resume (if paused)
-      dt = 0.0f;
-      newAngVel = oldAngVel;
+      // can't move if paused or dead -- don't move the player
+      // skip location computation as it's not needed
+      setAngularVelocity(0.0f);
+      return;
     } else if (location == Exploding) {
       // see if explosing time has expired
       if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {

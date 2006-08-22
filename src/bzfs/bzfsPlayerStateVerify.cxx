@@ -157,7 +157,7 @@ bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
 		// kick the players when they do not pause within allowed situations
 		if ((state.status & PlayerState::InBuilding) || (state.status & PlayerState::PhantomZoned) 
-			|| (state.status & PlayerState::Alive) == false) {
+			|| (state.status & PlayerState::Falling) || (state.status & PlayerState::Alive) == false) {
 			// the player did pause while being a wall or in air
 			DEBUG1("Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
 			playerData->getIndex());
