@@ -57,10 +57,8 @@ class SDLMedia : public BzfMedia {
   private:
     bool		audioReady;
     int			audioOutputRate;
-    int			audioBufferSize;
 
-    short*		outputBuffer;
-    int		 sampleToSend;  // next sample to send on outputBuffer
+    bool                outputBufferEmpty;
 
     Uint32		stopwatchTime;
 
@@ -68,6 +66,7 @@ class SDLMedia : public BzfMedia {
     int		 cmdFill;	// from 0 to cmdFill
 
     bool		(*userCallback)(void);
+    SDL_AudioCVT        convert;
 };
 
 #endif // BZF_SDLMEDIA_H
