@@ -32,6 +32,7 @@ CustomWorld::CustomWorld()
 
 bool CustomWorld::read(const char *cmd, std::istream& input)
 {
+  BZDB.setSaveDefault(true);
   if (strcasecmp(cmd, "size") == 0) {
     input >> _size;
     _size *= 2.0;
@@ -46,6 +47,7 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
   } else {
     return WorldFileObject::read(cmd, input);
   }
+  BZDB.setSaveDefault(false);
   return true;
 }
 
