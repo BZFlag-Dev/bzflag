@@ -88,6 +88,7 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
+#include <sstream>
 
 //#include "messages.h"
 
@@ -3406,7 +3407,45 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
 static void		checkEnvironment()
 {
-  if (!myTank || myTank->getTeam() == ObserverTeam) return;
+  if (!myTank) return;
+  if (myTank->getTeam() == ObserverTeam) {
+#if defined(LOCAL_COLLISIONDETECT)
+    // Check for an observed tanks hit.
+    Player *target = ROAM.getTargetTank();
+    const ShotPath* hit = NULL;
+    FlagType* flagd;
+    float minTime = Infinity;
+    int i;
+
+    if (BZDB.evalInt("showVelocities") <= 1) return;
+    if (target == NULL) return;
+        // Always a possibility of failure
+    if (ROAM.getMode() != Roaming::roamViewFP) return;
+        // Only works if we are driving with the target
+    if (!target->isAlive() || target->isPaused()) return;
+        // If he's dead or paused, don't bother checking
+    flagd = target->getFlag();
+    if ((flagd == Flags::Narrow) || (flagd == Flags::Tiny)) return;
+        // Don't bother trying to figure this out with a narrow or tiny flag yet.
+    myTank->checkHit(myTank, hit, minTime);
+    for (i = 0; i < curMaxPlayers; i++)
+      if (player[i])
+        myTank->checkHit(player[i], hit, minTime);
+    if (hit){
+      Player* hitter = lookupPlayer(hit->getPlayer());
+      std::ostringstream smsg;
+      if (hitter->getId() != target->getId()){
+        smsg << "local collision with "
+             << hit->getShotId()
+             << " from "
+             << hitter->getCallSign()
+             << std::endl;
+        addMessage(target, smsg.str());
+      }
+    }
+#endif
+    return;
+  }
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
@@ -4275,7 +4314,7 @@ static void cleanWorldCache()
     if (directory) {
       struct dirent* contents;
       struct stat statbuf;
-      time_t oldestTime;
+      time_t oldestTime = 0;
       while ((contents = readdir(directory))) {
 	const std::string filename = contents->d_name;
 	const std::string fullname = worldPath + filename;
