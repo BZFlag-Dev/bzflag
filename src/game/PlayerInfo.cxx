@@ -42,6 +42,8 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(clientVersion, 0, VersionLen);
   pauseRequestLag = 0;
   pauseRequestTime = TimeKeeper::getNullTime();
+  jumpStartPos = 0.0f;
+  allowedHeightAtJumpStart = -1.0f;
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,

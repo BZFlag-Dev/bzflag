@@ -112,6 +112,8 @@ public:
   void	updateIdleTime();
   int	pauseRequestLag;
   TimeKeeper	pauseRequestTime;	// time used to determine whether a player pauses too fast
+  float	jumpStartPos;
+  float	allowedHeightAtJumpStart;
 
   PlayerReplayState getReplayState();
   static void setCurrentTime(TimeKeeper tm);
