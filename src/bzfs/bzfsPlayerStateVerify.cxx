@@ -190,17 +190,17 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	static const float heightFudge = 1.10f; /* 10% */
 
 	int pFlag = playerData->player.getFlag();
-	bool WG = false;
+	bool hasWings = false;
 
 	if (pFlag >= 0)
 	{
 		FlagInfo &flag = *FlagInfo::get(pFlag);
 		if (flag.flag.type == Flags::Wings) {
-			WG = true;
+			hasWings = true;
 		} 
 	}
 
-	if (WG) {
+	if (hasWings) {
 		wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
 		wingsMaxHeight *= wingsMaxHeight;
 		wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
