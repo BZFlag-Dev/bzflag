@@ -54,9 +54,9 @@ ScoreboardRenderer::ScoreboardRenderer() :
 				huntPositionEvent(0),
 				huntState(HUNT_NONE),
 	huntAddMode(false),
-	numHunted(0),
 	teamScoreYVal(0.0f),
-	roaming(false)
+	roaming(false),
+	numHunted(0)
 {
   // initialize message color (white)
   messageColor[0] = 1.0f;
