@@ -498,21 +498,21 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
     makeupper(word);
 
     // do we have an operator? check for a leading, non alphabetic character
-    char first = NULL;
+    char first = '\0';
     if (!TextUtils::isAlphabetic(word[0])) {
       first = word[0];
       word.erase(0,1);
     }
 
     // Operators are not allowed for userdb
-    if (!info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL){
+    if (!info.groupState.test(PlayerAccessInfo::isGroup) && first != '\0'){
       DEBUG1("userdb: illegal permission string, operators are not allowed in userdb\n");
       return;
     }
 
     // if we have an operator, lets handle it
     // operators are only allowed for groups, they make no sense for userdb
-    if (info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL) {
+    if (info.groupState.test(PlayerAccessInfo::isGroup) && first != '\0') {
       switch (first) {
 	case '*': {
 	  // referenced group
