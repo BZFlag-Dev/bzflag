@@ -413,7 +413,7 @@ bool KillCommand::operator() (const char	 *message,
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
 	snprintf(killmessage, MessageLen, "%s is protected from being killed.",
 		 p->player.getCallSign());
-	sendMessage(ServerPlayer, i, killmessage);
+	sendMessage(ServerPlayer, t, killmessage);
 	return true;
       }
     }
