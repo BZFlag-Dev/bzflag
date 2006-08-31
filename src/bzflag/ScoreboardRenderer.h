@@ -127,8 +127,8 @@ private:
   bool		huntSelectEvent;
   int		huntPositionEvent;
   int     huntState;
-  bool    huntAddMode;    // valid only if state == SELECTING
   int     numHunted;
+  bool    huntAddMode;    // valid only if state == SELECTING
 };
 
 
