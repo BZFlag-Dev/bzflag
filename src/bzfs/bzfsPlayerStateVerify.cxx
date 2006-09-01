@@ -174,9 +174,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	float normalGravity = BZDBCache::gravity;
-	
-	// All tanks are flying away
-	if ((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) {
+
+	// All tanks with wings are flying away or they do without a flag
+	if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
 		return true;
 	}
 
@@ -211,7 +211,12 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		normalMaxHeight /= (-normalGravity * 2.0f);
 	}
 
-	// use either the WG height or the usual height
+	// _wingsGravity is set to a positive value
+	if (wingsMaxHeight < 0) {
+		wingsMaxHeight = MAXFLOAT;
+	}
+
+	// use either the wings height or the usual height
 	float maxHeight;
 	if (wingsMaxHeight > normalMaxHeight) {
 		maxHeight = wingsMaxHeight;
@@ -220,22 +225,41 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	}
 
 	if (playerData->player.allowedHeightAtJumpStart > 0.0f && !(state.status & PlayerState::Falling)) {
-	    playerData->player.allowedHeightAtJumpStart = 0.0f;
+		playerData->player.allowedHeightAtJumpStart = 0.0f;
 	}
 
-	if ((playerData->player.allowedHeightAtJumpStart == 0.0f) && !(state.status & PlayerState::Falling)) {
-	    playerData->player.allowedHeightAtJumpStart = maxHeight;
+	if ((playerData->player.allowedHeightAtJumpStart <= 0.0f) && !(state.status & PlayerState::Falling)) {
+		playerData->player.allowedHeightAtJumpStart = maxHeight;
+	}
+
+	// Don't kick players if the world param is still changing
+	if (worldStateChanging()) {
+		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
+	}
+
+	// currently we don't know how height the teleporter is so skip the check
+	if ((state.status & PlayerState::Falling) && (state.status & PlayerState::Teleporting)) {
+		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
 
 	// if one of the values changed while the player was in air
 	// use the higher allowed one in case we did not get a
 	// new update from him yet
-	if (playerData->player.allowedHeightAtJumpStart > maxHeight) 
+	if (playerData->player.allowedHeightAtJumpStart > maxHeight) {
 		maxHeight = playerData->player.allowedHeightAtJumpStart;
+	}
+
+	if ((normalGravity < -25.0f) && !(playerData->player.allowedHeightAtJumpStart == MAXFLOAT)) {
+		maxHeight += 1.0f;
+	}
 
 	// final adjustments
-	maxHeight *= heightFudge;
-	maxHeight += playerData->player.jumpStartPos;
+	if (playerData->player.allowedHeightAtJumpStart == MAXFLOAT) {
+		maxHeight = MAXFLOAT;
+	} else {
+		maxHeight *= heightFudge;
+		maxHeight += playerData->player.jumpStartPos;
+	}
 
 	if (state.pos[2] > maxHeight) {
 		DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
@@ -249,13 +273,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
 bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 {
-	// Don't kick players if the world param is still changing,
+	// Don't kick players if the world param is still changing
 	if (!worldStateChanging())
 	{
-		// see if the player is too high
-		if (!doHeightChecks(playerData,state))
-			return false;
-
 		if (!doBoundsChecks(playerData,state))
 			return false;
 
@@ -265,6 +285,10 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 		if (!doPauseChecks(playerData,state))
 			return false;
 	}
+
+	// see if the player is too high
+	if (!doHeightChecks(playerData,state))
+		return false;
 	return true;
 }
 
