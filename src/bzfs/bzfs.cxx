@@ -3524,6 +3524,7 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
   if (args.size() == 1) {
     if (args[0] == "*") {
       BZDB.iterate(resetAllCallback,NULL);
+      lastWorldParmChange = TimeKeeper::getCurrent();
       return "all variables reset";
     } else if (BZDB.isSet(args[0])) {
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
