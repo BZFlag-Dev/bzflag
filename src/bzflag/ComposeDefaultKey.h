@@ -17,6 +17,7 @@
 
 /* system interface headers */
 #include <deque>
+#include <string>
 
 /* common interface headers */
 #include "BzfEvent.h"
