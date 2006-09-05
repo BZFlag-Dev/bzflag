@@ -126,6 +126,7 @@ public:
     // Last known position, vel, etc
     PlayerState       lastState;
     float	      stateTimeStamp;
+	float		  serverTimeStamp;
     // GameTime update
     float	      gameTimeRate;
     TimeKeeper	      gameTimeNext;

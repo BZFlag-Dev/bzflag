@@ -3869,25 +3869,58 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    }
 
 	    // allow a 10% tolerance level for speed if -speedtol is not sane
-	    if (doSpeedChecks) {
-	      float realtol = 1.1f;
-	      if (speedTolerance > 1.0f)
-		realtol = speedTolerance;
-	      maxPlanarSpeedSqr *= realtol;
-	      if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-		if (logOnly) {
-		  DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		  playerData->player.getCallSign(), t,
-		  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		} else {
-		  DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-			 playerData->player.getCallSign(), t,
-			 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-		  removePlayer(t, "too fast");
-		}
-		break;
-	      }
+	    if (doSpeedChecks)
+		{
+			float realtol = 1.1f;
+			if (speedTolerance > 1.0f)
+				realtol = speedTolerance;
+			maxPlanarSpeedSqr *= realtol;
+			if (curPlanarSpeedSqr > maxPlanarSpeedSqr) 
+			{
+				if (logOnly)
+				{
+					DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+					playerData->player.getCallSign(), t,
+					sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+				} 
+				else
+				{
+					DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+						playerData->player.getCallSign(), t,
+						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+					removePlayer(t, "too fast");
+				}
+				break;
+			}
+
+			// check the distance to see if they went WAY too far
+
+			float timeDelta = (float)now.getSeconds() - playerData->serverTimeStamp; // max time since last update
+			float maxDist = sqrt(maxPlanarSpeedSqr) * timeDelta; // the maximum distance they could have moved ( assume 0 lag )
+			
+			float movementDelta[2];
+			movementDelta[0] = state.pos[0]-playerData->lastState.pos[0];
+			movementDelta[1] = state.pos[1]-playerData->lastState.pos[1];
+
+			float realDist = sqrt(movementDelta[0]*movementDelta[0] + movementDelta[1]*movementDelta[1]);
+			if ( realDist > (maxDist * 1.1f))
+			{
+				if (logOnly)
+				{
+					DEBUG1("Logging Player %s [%d] tank too large a movement (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+						playerData->player.getCallSign(), t,
+						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+				} 
+				else
+				{
+					DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
+						playerData->player.getCallSign(), t,
+						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+					removePlayer(t, "too fast");
+				}
+			}
 	    }
 	  }
 	}

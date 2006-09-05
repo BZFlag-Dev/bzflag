@@ -342,6 +342,7 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
 
 void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
 {
+  serverTimeStamp = TimeKeeper::getCurrent().getSeconds();
   memcpy(lastState.pos, pos, sizeof(float) * 3);
   lastState.azimuth = azimuth;
   // Set Speeds to 0 too
