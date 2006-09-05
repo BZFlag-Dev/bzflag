@@ -291,6 +291,19 @@ bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 			}
 		}
 	}
+
+	if (publiclyDisconected)
+	{
+		PlayerAccessMap::iterator group = groupAccess.find(std::string("DISCONNECTED"));
+		if (group != groupAccess.end())
+		{
+			for(unsigned int i = 0; i < group->second.customPerms.size(); i++)
+			{
+				if ( perm == TextUtils::toupper(group->second.customPerms[i]) )
+					return true;
+			}
+		}
+	}
 	return false;
 }
 
