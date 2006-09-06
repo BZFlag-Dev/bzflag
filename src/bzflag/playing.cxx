@@ -854,11 +854,11 @@ static void		doMotion()
 	rotation *= 0.5f;
       }
     } else if (mx < -noMotionSize) {
-      rotation = float(-mx - noMotionSize) / float(maxMotionSize);
+      rotation = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (rotation > 1.0f)
 	rotation = 1.0f;
     } else if (mx > noMotionSize) {
-      rotation = -float(mx - noMotionSize) / float(maxMotionSize);
+      rotation = -float(mx - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (rotation < -1.0f)
 	rotation = -1.0f;
     }
@@ -873,11 +873,11 @@ static void		doMotion()
 	speed *= 0.5f;
       }
     } else if (my < -noMotionSize) {
-      speed = float(-my - noMotionSize) / float(maxMotionSize);
+      speed = float(-my - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (speed > 1.0f)
 	speed = 1.0f;
     } else if (my > noMotionSize) {
-      speed = -float(my - noMotionSize) / float(maxMotionSize);
+      speed = -float(my - noMotionSize) / float(maxMotionSize - noMotionSize);
       if (speed < -0.5f)
 	speed = -0.5f;
     } else {
