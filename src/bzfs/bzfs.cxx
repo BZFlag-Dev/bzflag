@@ -3862,8 +3862,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    // but don't actually kick
             // don't kick if the player is paused, because problems if have V
 		float smallTol = 0.001f;
-	    if ((fabs(playerData->lastState.pos[2]-state.pos[2]) < smallTol)
-	    ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])< smallTol)
+	    if ((fabs(playerData->lastState.pos[2]-state.pos[2]) > smallTol)
+	    ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])> smallTol)
 	    ||  ((state.status & PlayerState::Alive) == 0)
 	    ||  (playerData->player.isPaused())) {
 	      logOnly = true;
@@ -3907,20 +3907,11 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 			float realDist = sqrt(movementDelta[0]*movementDelta[0] + movementDelta[1]*movementDelta[1]);
 			if ( realDist > (maxDist * 1.1f))
 			{
-				if (logOnly)
-				{
-					DEBUG1("Logging Player %s [%d] tank too large a movement (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-						playerData->player.getCallSign(), t,
-						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-				} 
-				else
-				{
-					DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
-						playerData->player.getCallSign(), t,
-						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-					removePlayer(t, "too fast");
-				}
+				DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
+					playerData->player.getCallSign(), t,
+					sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+				sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+				removePlayer(t, "too fast");
 			}
 	    }
 	  }
