@@ -3861,8 +3861,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    // seem to be problematic. If this happens, just log it for now,
 	    // but don't actually kick
             // don't kick if the player is paused, because problems if have V
-	    if ((playerData->lastState.pos[2] != state.pos[2])
-	    ||  (playerData->lastState.velocity[2] != state.velocity[2])
+		float smallTol = 0.001f;
+	    if ((fabs(playerData->lastState.pos[2]-state.pos[2]) < smallTol)
+	    ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])< smallTol)
 	    ||  ((state.status & PlayerState::Alive) == 0)
 	    ||  (playerData->player.isPaused())) {
 	      logOnly = true;
