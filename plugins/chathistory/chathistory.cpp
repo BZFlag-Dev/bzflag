@@ -205,7 +205,7 @@ bool LastChatCommand::handle ( int playerID, bz_ApiString _command, bz_ApiString
 
   if ( command == "list")
   {
-    std::vector<std::string> params = tokenize(message,std::string(" "),1,false);
+    std::vector<std::string> params = tokenize(message,std::string(" "),0,true);
     if ( params.size() <2)
     {
       bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /last <NUMBER OF LINES> <CALLSIGN>");
@@ -216,7 +216,8 @@ bool LastChatCommand::handle ( int playerID, bz_ApiString _command, bz_ApiString
     if ( numLines == 0 )
       numLines = 5;
 
-    std::map<std::string,tvChatHistory>::iterator itr = chatHistories.find(tolower(params[1]));
+	std::string callsign = params[1];
+    std::map<std::string,tvChatHistory>::iterator itr = chatHistories.find(tolower(callsign));
 
     if ( itr == chatHistories.end() || !itr->second.size())
     {
@@ -229,12 +230,12 @@ bool LastChatCommand::handle ( int playerID, bz_ApiString _command, bz_ApiString
     if ( history.size() < numLines )
       numLines = (unsigned int )history.size();
 
-    bz_sendTextMessage(BZ_SERVER,playerID,format("Last %d message for %s",numLines,params[1].c_str()).c_str());
+    bz_sendTextMessage(BZ_SERVER,playerID,format("Last %d message for %s",numLines,callsign.c_str()).c_str());
 
     for ( unsigned int i = 0; i < numLines-1; i++ )
     {
       std::string chatItem = history[history.size()-i];
-      bz_sendTextMessage(BZ_SERVER,playerID,format("%d<%s> %s",i,params[1].c_str(),chatItem.c_str()).c_str());
+      bz_sendTextMessage(BZ_SERVER,playerID,format("%d<%s> %s",i,callsign.c_str(),chatItem.c_str()).c_str());
     }
 
     return true;
