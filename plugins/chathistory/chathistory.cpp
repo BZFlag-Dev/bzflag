@@ -205,7 +205,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 
   if ( command == "list")
   {
-    std::vector<std::string> params = tokenize(message,std::string(" "),1,false);
+    std::vector<std::string> params = tokenize(message,std::string(" "),0,true);
     if ( params.size() <2)
     {
       bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /last <NUMBER OF LINES> <CALLSIGN>");
