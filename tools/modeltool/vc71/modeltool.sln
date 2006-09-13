@@ -4,7 +4,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcpr
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\win32\VC71\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\MSVC\VC71\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
