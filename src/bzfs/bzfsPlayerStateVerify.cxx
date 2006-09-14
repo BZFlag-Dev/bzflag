@@ -236,6 +236,11 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	if (worldStateChanging()) {
 		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
+	
+	// Don't kick players that are spawning in the air
+	if ((state.status & PlayerState::Falling) && (!(playerData->lastState.status & PlayerState::Alive))) {
+		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
+	}
 
 	// currently we don't know how height the teleporter is so skip the check
 	if ((state.status & PlayerState::Falling) && (state.status & PlayerState::Teleporting)) {
