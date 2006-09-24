@@ -105,7 +105,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 	&& lagcount - laglastwarn > 2 * lagwarncount) {
       laglastwarn = lagcount;
       warn = true;
-      kick = (lagwarncount++ > max);
+      kick = (++lagwarncount > max);
     } else {
       warn = false;
       kick = false;
