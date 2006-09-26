@@ -20,6 +20,8 @@
 /* system implementation headers */
 #include <fstream>
 
+/* common headers */
+#include "TextUtils.h"
 
 /******************************************************************************/
 
@@ -36,8 +38,8 @@ TextChunk::TextChunk(const std::string& _fileName, int _maxLines, int _maxLineLe
 {
   fileName = _fileName;
   maxLines = _maxLines;
-  maxLineLength = _maxLineLength;
-  theVector = parse(_maxLines);
+  maxLineLength = _maxLineLength < 0 ? std::string::npos : _maxLineLength;
+  theVector = parse();
   return;
 }
 
@@ -50,68 +52,50 @@ TextChunk::TextChunk(const TextChunk& tc)
 }
 
 
-#define PARSE_BUFSIZE 4096 
-StringVector TextChunk::parse(const int _max_lines)
+StringVector TextChunk::parse()
 {
   StringVector strings;
-  char buffer[PARSE_BUFSIZE] = {0};
-  std::ifstream in;
-  int long_lines_encountered = 0;
-  int maxMsg = maxLineLength < 0 ? PARSE_BUFSIZE : maxLineLength < PARSE_BUFSIZE ? maxLineLength : PARSE_BUFSIZE;
+  std::ifstream in(fileName.c_str());
 
-  in.open(fileName.c_str());
-
-  if (!in || !in.is_open()) {
-    snprintf(buffer, maxMsg, "WARNING: unable to open %s", fileName.c_str());
-    strings.push_back(buffer);
+  if (!in) {
+    strings.push_back(TextUtils::format("WARNING: unable to open %s", fileName.c_str()));
     return strings;
   }
 
-  for(int i = 0; in.good() && !in.eof() && (in.peek() != std::char_traits<char>::eof()); i++) {
+  // read at most maxLines lines
+  int long_lines_encountered = 0;
+  int linecount = 0;
+  std::string line;
 
-    // pull a line from the file
-    in.getline(buffer, PARSE_BUFSIZE);
-    
-    if (in.fail()) {
-      if (in.gcount() == PARSE_BUFSIZE-1) {
-	snprintf(buffer, maxMsg, "WARNING: File %s contains line(s) longer than %d characters", fileName.c_str(), PARSE_BUFSIZE-1);
-	strings.push_back(buffer);
-	break;
-      } else {
-	snprintf(buffer, maxMsg, "WARNING: Encountered an error while reading %s", fileName.c_str());
-	strings.push_back(buffer);
-	break;
-      }
-    }
+  while (getline(in, line)) {
 
-    if (strlen(buffer) > (size_t) maxMsg - 1) {
-      // line is too long, say something when we're done
-      long_lines_encountered++;
-    }
-    buffer[maxMsg - 1] = '\0';  // terminate/clamp all lines with/to maxLineLength 
-    strings.push_back(buffer);
-    
-    if ((_max_lines > 0) && (i >= _max_lines)) {
-      snprintf(buffer, maxMsg, "WARNING: %s has more than %d lines, truncated.", fileName.c_str(), _max_lines);
-      strings.push_back(buffer);
+    // read at most maxLines lines (-1 = no limit)
+    if (maxLines > 0 && linecount == maxLines) {
+      strings.push_back(TextUtils::format("WARNING: %s has more than %d lines, truncated.", fileName.c_str(), maxLines));
       break;
     }
-  } // end parsing for loop
 
-  if (long_lines_encountered) {
-    // at least one long line was encountered
-    snprintf(buffer, maxMsg, "WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxMsg - 1);
-    strings.push_back(buffer);
+    // truncate long lines
+    if (line.size() > maxLineLength) {
+      line.erase(maxLineLength);
+      long_lines_encountered++;
+    }
+
+    strings.push_back(line);
+    linecount++;
   }
 
-  in.close();
+  // warn about long lines
+  if (long_lines_encountered)
+    strings.push_back(TextUtils::format("WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxLineLength));
 
   return strings;
 }
 
+
 bool TextChunk::reload()
 {
-  StringVector newVec = parse(maxLines);
+  StringVector newVec = parse();
   if (newVec.size() > 0) {
     theVector = newVec;
   }

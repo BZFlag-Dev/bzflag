@@ -36,12 +36,12 @@ public:
   bool reload();
 
 private:
-  StringVector parse(const int _max_lines = -1);
+  StringVector parse();
 
 private:
   std::string fileName;
   int maxLines;
-  int maxLineLength;
+  std::string::size_type maxLineLength;
   StringVector theVector;
 };
 
