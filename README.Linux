@@ -6,18 +6,15 @@ including the Internet.  BZFlag is free and open source;  please
 read the file COPYING in the bzflag-<version> directory off the
 standard doc directory (probably /usr/share/doc).
 
-Both software and hardware rendering is supported.  Note that
-software rendering is very slow -- this will not be fixed.
-Hardware rendering is through whatever hardware OpenGL support
-you have.  Matrox G200 and G400 cards are known to work, as
-are 3Dfx based boards.  Note that 3Dfx passthrough card users
-must use the `-3dfx' option to enable the 3Dfx card.  The usual
-glide access rules apply for 3Dfx users:  if you don't use
-/dev/3dfx you'll need to run bzflag as root.
-
-Most users will use Mesa for OpenGL support.  Mesa is available
-from www.mesa3d.org.  The glide libraries for 3Dfx users are
-available from www.3dfx.com.
+Both hardware and software rendering is supported. Hardware 
+rendering is highly recommended, as software rendering is very 
+slow. Hardware rendering is provided by the OpenGL drivers for 
+your video card. ATI and NVIDIA are the primary chipsets for video
+cards in use today. Many Linux distributions to not ship with 
+video drivers that properly support hardware acceleration on
+modern cards. Both ATI and NVIDIA provide Linux drivers for many
+architectures on there websites. In general they provide greater
+performance then the default drivers in many distributions.
 
 More information about bzflag is available in the man pages for
 bzflag, bzfs, and bzadmin.  Also check:
@@ -47,9 +44,11 @@ Known issues:
     link from libGL to libMesaGL and from libGLU to libMesaGLU.
 
   * if rendering is very slow on your hardware, try turning off
-    some rendering options.  in particular, turn off shadows
-    and smoothing as some hardware doesn't accelerate the
-    necessary OpenGL operations.
+    some rendering options.  if you are using software rendering,
+    turn off textures and shadows and lower your resolution, as 
+    they cause the largest load on the CPU. If you are using
+    hardware rendering, make sure you have current video drivers
+    for your video card's chipset.
 
   * some sound drivers don't support the SNDCTL_DSP_SETFORMAT
     ioctl.  in this case bzflag uses SNDCTL_DSP_POST to flush
