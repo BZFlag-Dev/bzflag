@@ -22,7 +22,7 @@ DIST_SUBDIRS = \
 	serverSideBotSample \
 	doc \
 	m4 \
-	vc71
+	MSVC
 
 EXTRA_DIST = \
 	AUTHORS \
