@@ -47,7 +47,7 @@
 ;Interface Settings
 
   ;Icons
-  !define MUI_ICON ..\..\..\win32\bzflag.ico
+  !define MUI_ICON ..\..\..\MSVC\bzflag.ico
   !define MUI_UNICON uninstall.ico
 
   ;Bitmaps
