@@ -93,6 +93,21 @@ const char*		Team::getName(TeamColor team) // const
   }
 }
 
+const char*		Team::getShortName(TeamColor team)
+{
+  switch (team) {
+  case RogueTeam: return "rogue";
+  case RedTeam: return "red";
+  case GreenTeam: return "green";
+  case BlueTeam: return "blue";
+  case PurpleTeam: return "purple";
+  case ObserverTeam: return "observer";
+  case RabbitTeam: return "rabbit";
+  case HunterTeam: return "hunter";
+  default: return "none";
+  }
+}
+
 TeamColor	Team::getTeam(const std::string name) // const
 {
   if (name == Team::getName(AutomaticTeam)) {
