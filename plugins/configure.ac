@@ -207,7 +207,6 @@ AC_CONFIG_FILES([
 	serverSideBotSample/Makefile
 	shockwaveDeath/Makefile
 	soundTest/Makefile
-	vc71/Makefile
 ])
 
 AC_OUTPUT
