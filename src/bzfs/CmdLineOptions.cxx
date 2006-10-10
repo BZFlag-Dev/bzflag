@@ -71,6 +71,7 @@ const char *usageString =
 "[-filterCallsigns] "
 "[-filterChat] "
 "[-filterSimple] "
+"[-freezeTag] "
 "[-g] "
 "[-gndtex <texture name>] "
 "[-groupdb <group file>] "
@@ -165,6 +166,7 @@ const char *extraUsageString =
 "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
 "\t-filterChat: filter chat messages\n"
 "\t-filterSimple: perform simple exact matches with the bad word list\n"
+"\t-freezeTag: collisions freeze the player who is farther from home base\n"
 "\t-g: serve one game and then exit\n"
 "\t-gndtex: specify ground texture\n"
 "\t-groupdb: file to read for group permissions\n"
@@ -701,6 +703,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.filterChat = true;
     } else if (strcmp(argv[i], "-filterSimple") == 0) {
       options.filterSimple = true;
+    } else if (strcmp(argv[i], "-freezeTag") == 0) {
+      options.gameOptions |= int(FreezeTagGameStyle);
     } else if (strcmp(argv[i], "-g") == 0) {
       options.oneGameOnly = true;
     } else if (strcmp(argv[i], "-gndtex") == 0) {

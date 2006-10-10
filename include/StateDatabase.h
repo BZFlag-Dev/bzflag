@@ -215,10 +215,12 @@ public:
   static const std::string	BZDB_BURROWANGULARAD;
   static const std::string	BZDB_COLDETDEPTH;
   static const std::string	BZDB_COLDETELEMENTS;
+  static const std::string	BZDB_COLLISIONLIMIT;
   static const std::string	BZDB_CULLDEPTH;
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
+  static const std::string	BZDB_DMZWIDTH;
   static const std::string	BZDB_DRAWCELESTIAL;
   static const std::string	BZDB_DRAWCLOUDS;
   static const std::string	BZDB_DRAWGROUND;
@@ -238,6 +240,7 @@ public:
   static const std::string	BZDB_FOGSTART;
   static const std::string	BZDB_FOGEND;
   static const std::string	BZDB_FOGCOLOR;
+  static const std::string	BZDB_FREEZETAGRADIUS;
   static const std::string	BZDB_GMACTIVATIONTIME;
   static const std::string	BZDB_GMADLIFE;
   static const std::string	BZDB_GMTURNANGLE;

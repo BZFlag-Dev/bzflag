@@ -102,6 +102,8 @@ class ServerLink {
     void		sendNewRabbit();
     void		sendPaused(bool paused);
     void                sendNewPlayer();
+    void		sendCollide(const PlayerId playerId,
+				    const PlayerId otherId, const float *pos);
 
     void		sendExit();
     void		sendAutoPilot(bool autopilot);

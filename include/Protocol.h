@@ -63,10 +63,12 @@ const uint16_t		MsgNull = 0x0000;
 const uint16_t		MsgAccept = 0x6163;				// 'ac'
 const uint16_t		MsgAdminInfo = 0x6169;			// 'ai'
 const uint16_t		MsgAlive = 0x616c;				// 'al'
+const uint16_t		MsgAllow = 0x696f;			// 'ao'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAutoPilot = 0x6175;			// 'au'
 const uint16_t		MsgCapBits = 0x6362;			// 'cb'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
+const uint16_t          MsgCollide = 0x636f;                    // 'co'
 const uint16_t		MsgCustomSound = 0x6373;		// 'cs'
 const uint16_t		MsgCacheURL = 0x6375;			// 'cu'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
@@ -259,6 +261,10 @@ player to server messages:
 			-->
   MsgNegotiateFlags     -->flagCount/[flagabbv]
   MsgPause		-->true or false
+  MsgCollide            player has collided with another player
+			--> id, collidee-id, position
+			<== MsgAllow if sending player should freeze
+						  
 
 server to player messages:
   MsgSuperKill		player must disconnect from server
@@ -314,6 +320,7 @@ server to player messages:
   MsgNewRabbit		a new rabbit has been anointed
 			<== id
   MsgPause		<== id/true or false
+  MsgAllow		<== id, movement (bool), shooting (bool)
 */
 
 #endif // BZF_PROTOCOL_H

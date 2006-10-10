@@ -810,6 +810,19 @@ void ServerLink::sendExit()
   send(MsgExit, sizeof(msg), msg);
 }
 
+void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
+			      const float *pos)
+{
+  char msg[14];
+
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(playerId));
+  buf = nboPackUByte(buf, uint8_t(otherId));
+  buf = nboPackVector(buf, pos);
+
+  send(MsgCollide, sizeof(msg), msg);
+}
+
 void			ServerLink::sendAutoPilot(bool autopilot)
 {
   char msg[2];

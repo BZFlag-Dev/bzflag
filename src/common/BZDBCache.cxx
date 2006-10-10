@@ -62,6 +62,10 @@ float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;
 
+float BZDBCache::freezeTagRadius;
+float BZDBCache::collisionLimit;
+float BZDBCache::dmzWidth;
+
 float BZDBCache::hudGUIBorderOpacityFactor;
 
 static float getGoodPosValue (float oldVal, const std::string var )
@@ -149,6 +153,10 @@ void BZDBCache::init()
   flagRadius = getGoodPosValue(flagRadius,StateDatabase::BZDB_FLAGRADIUS);
   flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
   flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
+
+  freezeTagRadius = getGoodPosValue(freezeTagRadius,StateDatabase::BZDB_FREEZETAGRADIUS);
+  collisionLimit = getGoodPosValue(freezeTagRadius,StateDatabase::BZDB_COLLISIONLIMIT);
+  dmzWidth = getGoodPosValue(dmzWidth,StateDatabase::BZDB_DMZWIDTH);
 
   update();
 }

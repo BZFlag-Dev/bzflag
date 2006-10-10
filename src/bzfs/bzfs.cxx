@@ -2367,6 +2367,10 @@ void playerAlive(int playerIndex)
 
   sendMessageAlive(playerIndex,playerData->lastState.pos,playerData->lastState.azimuth);
 
+  playerData->player.setAllowMovement(true);
+  playerData->player.setAllowShooting(true);
+  sendMessageAllow(playerIndex, true, true);
+
   // call any events for a playerspawn
   bz_PlayerSpawnEventData_V1	spawnEvent;
   spawnEvent.playerID = playerIndex;
@@ -3164,6 +3168,10 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     case MsgCaptureFlag:	// player has captured a flag
 		handleFlagCapture(playerData,buf);
+		break;
+
+    case MsgCollide:		// two players have collided
+		handleCollide(playerData,buf);
 		break;
 
     // shot fired

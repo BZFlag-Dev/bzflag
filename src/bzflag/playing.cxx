@@ -2036,6 +2036,44 @@ static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
   addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
 
+static void handleAllow ( void *msg, uint16_t /*len*/ )
+{
+  PlayerId id;
+  msg = nboUnpackUByte(msg, id);
+
+  uint8_t allowMovement;
+  nboUnpackUByte(msg, allowMovement);
+
+  uint8_t allowShooting;
+  nboUnpackUByte(msg, allowShooting);
+
+  Player* tank = NULL;
+  if (myTank && myTank->getId() == id) {
+    tank = myTank;
+    myTank->setDesiredSpeed(0.0);
+    myTank->setDesiredAngVel(0.0);
+  } else {
+#ifdef ROBOT
+    for (int i = 0; i < MAX_ROBOTS; i++) {
+      if (robots[i] && robots[i]->getId() == id) {
+	tank = robots[i];
+	robots[i]->setDesiredSpeed(0.0);
+	robots[i]->setDesiredAngVel(0.0);
+      }
+    }
+#endif
+    if (!tank) {
+      tank = lookupPlayer(id);
+    }
+  }
+  if (!tank) return;
+
+  tank->setAllowMovement(allowMovement != 0);
+  tank->setAllowShooting(allowShooting != 0);
+  addMessage(tank, allowMovement ? "Movement allowed" : "Movement forbidden");
+  addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
+}
+
 static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool &checkScores )
 {
   PlayerId victim, killer;
@@ -2641,6 +2679,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       case MsgAutoPilot: 
 	handleAutoPilot(msg,len);
 	break;;
+
+      case MsgAllow:
+	handleAllow(msg,len);
+	break;
 
       case MsgKilled:
 	handleKilledMessage(msg,len,human,checkScores);
@@ -3765,6 +3807,24 @@ static void		checkEnvironment()
 
   // Check Server Shots
   myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
+
+  // Check if I've been tagged (freeze tag).  Note that we alternate the
+  // direction that we go through the list to avoid a pathological case.
+  static int upwards = 1;
+  for (i = 0; i < curMaxPlayers; i ++) {
+    int tankid;
+    if (upwards) {
+      tankid = i;
+    } else {
+      tankid = curMaxPlayers - 1 - i;
+    }
+
+    if (player[tankid]) {
+      myTank->checkCollision(player[tankid]);
+    }
+  }
+  // swap direction for next time:
+  upwards = upwards ? 0 : 1;
 
   // used later
   float waterLevel = World::getWorld()->getWaterLevel();

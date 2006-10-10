@@ -121,6 +121,8 @@ public:
   bool		isExploding() const;
   bool		isPhantomZoned() const;
   bool		isCrossingWall() const;
+  bool		canMove() const;
+  bool		canShoot() const;
   bool		isNotResponding() const;
   void		resetNotResponding();
   bool		isHunted() const;
@@ -162,6 +164,8 @@ public:
   void          setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
+  void		setAllowMovement(bool allow);
+  void		setAllowShooting(bool allow);
   void		setTeleport(const TimeKeeper&, short from, short to);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
@@ -267,6 +271,8 @@ private:
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
+  bool			allowMovement;		// frozen motion
+  bool			allowShooting;		// frozen shooting
 
   // score of local player against this player
   short			localWins;		// local player won this many
@@ -527,6 +533,18 @@ inline bool		Player::isCrossingWall() const
   return (state.status & short(PlayerState::CrossingWall)) != 0;
 }
 
+inline bool		Player::canMove() const
+{
+  //return (state.status & short(PlayerState::AllowMovement)) != 0;
+  return allowMovement;
+}
+
+inline bool		Player::canShoot() const
+{
+  //return (state.status & short(PlayerState::AllowShooting)) != 0;
+  return allowShooting;
+}
+
 inline bool		Player::isNotResponding() const
 {
   return notResponding;
@@ -595,6 +613,16 @@ inline bool		Player::hasPlayerList() const
 inline void		Player::setPlayerList(bool _playerList)
 {
   playerList = _playerList;
+}
+
+inline void		Player::setAllowMovement(bool allow)
+{
+  allowMovement = allow;
+}
+
+inline void		Player::setAllowShooting(bool allow)
+{
+  allowShooting = allow;
 }
 
 inline void*		Player::pack(void* buf, uint16_t& code)

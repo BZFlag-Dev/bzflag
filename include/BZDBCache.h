@@ -64,6 +64,10 @@ public:
 	static float flagPoleSize;
 	static float flagPoleWidth;
 
+	static float freezeTagRadius;
+	static float collisionLimit;
+	static float dmzWidth;
+
 	static float hudGUIBorderOpacityFactor;
 
 public:

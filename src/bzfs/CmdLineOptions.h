@@ -200,6 +200,9 @@ struct CmdLineOptions
   std::string	   cacheURL;
   std::string	   cacheOut;
 
+  /* freezetag options */
+  bool			freezeTag;
+
   // plugins
   typedef struct
   {

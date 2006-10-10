@@ -75,6 +75,10 @@ public:
   void	setDead();
   bool	isPaused() const;
   bool	isAutoPilot() const;
+  bool  canMove() const;
+  bool  canShoot() const;
+  void  setAllowMovement(bool allow);
+  void  setAllowShooting(bool allow);
   bool	isBot() const;
   bool	isHuman() const;
   bool  isChat() const;
@@ -171,6 +175,8 @@ private:
 
   TimeKeeper lastFlagDropTime;
 
+  bool allowMovement;
+  bool allowShooting;
 
   // spam prevention
   std::string lastMsgSent;
@@ -251,6 +257,26 @@ inline bool PlayerInfo::isAlive() const {
 
 inline bool PlayerInfo::isPaused() const {
   return paused;
+}
+
+inline bool		PlayerInfo::canMove() const
+{
+  return allowMovement;
+}
+
+inline bool		PlayerInfo::canShoot() const
+{
+  return allowShooting;
+}
+
+inline void		PlayerInfo::setAllowMovement(bool allow)
+{
+  allowMovement = allow;
+}
+
+inline void		PlayerInfo::setAllowShooting(bool allow)
+{
+  allowShooting = allow;
 }
 
 inline bool PlayerInfo::isAutoPilot() const {

@@ -87,6 +87,7 @@ public:
   void		restart(const float* pos, float azimuth);
   bool		checkHit(const Player* source, const ShotPath*& hit,
 			 float& minTime) const;
+  bool		checkCollision(const Player* otherTank);
   void		setFlag(FlagType*);
   void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
@@ -165,6 +166,7 @@ private:
   int		deathPhyDrv;	// physics driver that caused death
   std::vector<const Obstacle*> insideBuildings;
   TimeKeeper	stuckStartTime;
+  TimeKeeper	lastCollisionTime;
 };
 
 

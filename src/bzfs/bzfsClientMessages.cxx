@@ -328,6 +328,90 @@ void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer)
 	captureFlag(playerData->getIndex(), TeamColor(_team));
 }
 
+const float *closestBase( TeamColor color, float *position )
+{
+  float bestdist = Infinity;
+  const float *bestbase = NULL;
+
+  if (bases.find(color) == bases.end()) {
+    return NULL;
+  }
+
+  TeamBases &teamBases = bases[color];
+  int count = teamBases.size();
+  for (int i=0; i<count; i++) {
+    const float *basepos = teamBases.getBasePosition(i);
+    float dx = position[0] - basepos[0];
+    float dy = position[1] - basepos[1];
+    float dist = sqrt(dx * dx + dy * dy);
+
+    if (dist < bestdist) {
+      bestbase = basepos;
+      bestdist = dist;
+    }
+  }
+
+  return bestbase;
+}
+
+void handleCollide ( GameKeeper::Player *playerData, void* buffer)
+{
+  if (!playerData) {
+    std::cerr << "Invalid MsgCollide (no such player)\n";
+    return;
+  }
+
+  if (clOptions->gameOptions & FreezeTagGameStyle) {
+    TeamColor playerTeam = playerData->player.getTeam();
+
+    PlayerId otherPlayer;
+    buffer = nboUnpackUByte(buffer, otherPlayer);
+    GameKeeper::Player *otherData =
+	  GameKeeper::Player::getPlayerByIndex(otherPlayer);
+    TeamColor otherTeam = otherData->player.getTeam();
+
+    float collpos[3];
+    buffer = nboUnpackVector(buffer, collpos);
+
+    if (playerTeam == otherTeam) {
+      // unfreeze
+      if (!playerData->player.canShoot() || !playerData->player.canMove()) {
+	sendMessageAllow(playerData->getIndex(), true, true);
+	playerData->player.setAllowShooting(true);
+	playerData->player.setAllowMovement(true);
+      }
+    } else {
+      float dx, dy, dist, angle, cos_angle;
+      const float *playerBase = closestBase(playerTeam, collpos);
+      const float *otherBase = closestBase(otherTeam, collpos);
+
+      angle = atan2f(otherBase[1] - playerBase[1],
+		otherBase[0] - playerBase[0]);
+      cos_angle = fabs(cosf(angle));
+
+      dx = collpos[0] - playerBase[0];
+      dy = collpos[1] - playerBase[1];
+      dist = sqrt(dx * dx + dy * dy);
+      float playerDist = dist * cos_angle;
+
+      dx = collpos[0] - otherBase[0];
+      dy = collpos[1] - otherBase[1];
+      dist = sqrt(dx * dx + dy * dy);
+      float otherDist = dist * cos_angle;
+
+      if (playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) {
+	// freeze
+	if (playerData->player.canShoot() || playerData->player.canMove()) {
+	  sendMessageAllow(playerData->getIndex(), false, false);
+	  playerData->player.setAllowMovement(false);
+	  playerData->player.setAllowShooting(false);
+	}
+      }
+
+    }
+  }
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

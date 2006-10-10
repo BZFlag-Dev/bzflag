@@ -612,6 +612,17 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 	}
 }
 
+void sendMessageAllow ( int playerID, bool allowMovement, bool allowShooting )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerID);
+	buf = nboPackUByte(buf, allowMovement);
+	buf = nboPackUByte(buf, allowShooting);
+	broadcastMessage(MsgAllow, (char*)buf - (char*)bufStart, bufStart);
+
+	// Please note that non-network players do not currently receive the message.
+}
+
 bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 {
 	// pack up the data and send it to the net players
@@ -786,6 +797,7 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
 		case MsgNewRabbit:
 		case MsgPlayerUpdate:
 		case MsgPlayerUpdateSmall: 
+		case MsgCollide: 
 			uint8_t id;
 			*buffer  = nboUnpackUByte(*buffer, id);
 			playerID = id;

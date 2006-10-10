@@ -1059,6 +1059,12 @@ void			LocalPlayer::setTeam(TeamColor _team)
 void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
+
+  // If we aren't allowed to move, then the desired speed is 0.
+  if (!canMove()) {
+    fracOfMaxSpeed = 0.0;
+  }
+
   // can't go faster forward than at top speed, and backward at half speed
   if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
   else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
@@ -1113,6 +1119,11 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
   FlagType* flag = getFlag();
+
+  // If we aren't allowed to move, then the desired angular velocity is 0.
+  if (!canMove()) {
+    fracOfMaxAngVel = 0.0;
+  }
 
   // limit turn speed to maximum
   if (fracOfMaxAngVel > 1.0f) fracOfMaxAngVel = 1.0f;
@@ -1171,6 +1182,9 @@ void			LocalPlayer::activateAutoPilot(bool autopilot)
 bool			LocalPlayer::fireShot()
 {
   if (! (firingStatus == Ready || firingStatus == Zoned))
+    return false;
+
+  if (! canShoot())
     return false;
 
   // find an empty slot
@@ -1513,6 +1527,34 @@ bool			LocalPlayer::checkHit(const Player* source,
     minTime = t;
   }
   return goodHit;
+}
+
+bool		LocalPlayer::checkCollision(const Player* otherTank)
+{
+  if (!otherTank) return false;
+
+  TimeKeeper current = TimeKeeper::getTick();
+  // Don't flood the network with MsgCollide
+  if (current - lastCollisionTime < BZDBCache::collisionLimit) {
+    return false;
+  }
+
+  const float *myPosition = getPosition();
+  const float *otherPosition = otherTank->getPosition();
+
+  float dx = otherPosition[0] - myPosition[0];
+  float dy = otherPosition[1] - myPosition[1];
+
+  float dist = sqrt(dx * dx + dy * dy);
+  float radius = BZDBCache::freezeTagRadius;
+
+  if (dist < radius) {
+    server->sendCollide(getId(), otherTank->getId(), myPosition);
+    lastCollisionTime = current;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void			LocalPlayer::setFlag(FlagType* flag)
