@@ -93,7 +93,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(email, _email, EmailLen);
   email[EmailLen-1] = '\0';
 
-  if (id != ServerPlayer) {
+  if (id != ServerPlayer && !headless) {
     // make scene nodes
     tankNode = getTankSceneNode(id,state.pos, forward);
     tankIDLNode = getTankIDLSceneNode(id,tankNode);
@@ -140,7 +140,7 @@ Player::~Player()
     if (shots[i])
       delete shots[i];
 
-  if (id != ServerPlayer) {
+  if (id != ServerPlayer && !headless) {
     delete tankIDLNode;
     delete tankNode;
     delete pausedSphere;
@@ -424,7 +424,9 @@ void Player::changeTeam(TeamColor _team)
   team = _team;
 
   // set the scene node
-  setVisualTeam(team);
+  if (!headless) {
+    setVisualTeam(team);
+  }
 }
 
 
@@ -440,9 +442,11 @@ void Player::setExplode(const TimeKeeper& t)
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
-  tankNode->rebuildExplosion();
-  // setup the flag effect to revert to normal
-  updateFlagEffect(Flags::Null);
+  if (!headless) {
+    tankNode->rebuildExplosion();
+    // setup the flag effect to revert to normal
+    updateFlagEffect(Flags::Null);
+  }
 }
 
 
@@ -1329,7 +1333,7 @@ void Player::doDeadReckoning()
   }
 
   // setup remote players' landing sounds and graphics, and jumping sounds
-  if (isAlive()) {
+  if (isAlive() && !headless) {
     // the importance level of the remote sounds
     const bool soundImportance = false;
     const bool localSound = (ROAM.isRoaming()

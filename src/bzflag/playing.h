@@ -116,6 +116,11 @@ extern float	    clockAdjust;
 extern float	    roamDZoom;
 extern bool	     roamButton;
 
+/* Any code surrounded by "if (!headless)" is unsafely assuming that it's
+ * operating in a context where graphics and sound are available.
+ */
+extern bool		headless;
+
 typedef struct 
 {
 	bool b3rdPerson;

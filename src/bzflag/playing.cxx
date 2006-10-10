@@ -107,6 +107,7 @@ static SceneRenderer*	sceneRenderer = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
+bool			headless = false;
 static ScoreboardRenderer*		scoreboard = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;

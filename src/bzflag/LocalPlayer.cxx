@@ -28,6 +28,7 @@
 #include "sound.h"
 #include "ForceFeedback.h"
 #include "effectsRenderer.h"
+#include "playing.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -74,6 +75,10 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
     inputMethod = Mouse;
   } else {
     setInputMethod(BZDB.get("activeInputDevice"));
+  }
+
+  if (headless) {
+    gettingSound = false;
   }
   
   stuckStartTime = TimeKeeper::getSunExplodeTime();
@@ -245,7 +250,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   newVelocity[2] = oldVelocity[2];
   float newAngVel = 0.0f;
 
-  clearRemoteSounds();
+  if (!headless) {
+    clearRemoteSounds();
+  }
   World *world = World::getWorld();
   if (!world) {
     return; /* no world, no motion */
@@ -740,7 +747,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if (justLanded) {
     setLandingSpeed(oldVelocity[2]);
-    EFFECTS.addLandEffect(getColor(),newPos,getAngle());
+    if (!headless) {
+      EFFECTS.addLandEffect(getColor(),newPos,getAngle());
+    }
   }
   if (gettingSound) {
     const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());

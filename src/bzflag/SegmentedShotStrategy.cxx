@@ -50,33 +50,37 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   }
 
   // initialize scene nodes
-  boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
+  if (!headless) {
+    boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
 
-  const float* c = Team::getRadarColor(team);
-  if (faint) {
-    boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
-    boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-  } else {
-    boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
+    const float* c = Team::getRadarColor(team);
+    if (faint) {
+      boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
+      boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
+    } else {
+      boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
+    }
+
+    TextureManager &tm = TextureManager::instance();
+    std::string imageName = Team::getImagePrefix(team);
+    if (useSuperTexture)
+      imageName += BZDB.get("superPrefix");
+    imageName += BZDB.get("boltTexture");
+
+    boltSceneNode->phasingShot = useSuperTexture;
+
+    int texture = tm.getTextureID(imageName.c_str());
+    if (texture >= 0)
+      boltSceneNode->setTexture(texture);
   }
-
-  TextureManager &tm = TextureManager::instance();
-  std::string imageName = Team::getImagePrefix(team);
-  if (useSuperTexture)
-    imageName += BZDB.get("superPrefix");
-  imageName += BZDB.get("boltTexture");
-
-  boltSceneNode->phasingShot = useSuperTexture;
-
-  int texture = tm.getTextureID(imageName.c_str());
-  if (texture >= 0)
-    boltSceneNode->setTexture(texture);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
 {
   // free scene nodes
-  delete boltSceneNode;
+  if (!headless) {
+    delete boltSceneNode;
+  }
 }
 
 void			SegmentedShotStrategy::update(float dt)
