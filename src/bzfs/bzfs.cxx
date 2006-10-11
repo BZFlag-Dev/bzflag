@@ -2660,16 +2660,20 @@ void searchFlag(GameKeeper::Player &playerData)
 		playerData.setLastIdFlag(closestFlag);
 	}
   } else {
-    // okay, player can have it
-    flag.grab(playerIndex);
-    playerData.player.setFlag(flag.getIndex());
+    TeamColor flagteam = flag.flag.type->flagTeam;
+    TeamColor playerteam = playerData.player.getTeam();
+    if (BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG) || flagteam != playerteam) {
+      // okay, player can have it
+      flag.grab(playerIndex);
+      playerData.player.setFlag(flag.getIndex());
 
-    // send MsgGrabFlag
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = flag.pack(buf);
-    broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
-    playerData.flagHistory.add(flag.flag.type);
+      // send MsgGrabFlag
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, playerIndex);
+      buf = flag.pack(buf);
+      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+      playerData.flagHistory.add(flag.flag.type);
+    }
   }
 }
 

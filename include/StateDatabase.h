@@ -244,6 +244,7 @@ public:
   static const std::string	BZDB_GMACTIVATIONTIME;
   static const std::string	BZDB_GMADLIFE;
   static const std::string	BZDB_GMTURNANGLE;
+  static const std::string	BZDB_GRABOWNFLAG;
   static const std::string	BZDB_GRAVITY;
   static const std::string	BZDB_FRICTION;
   static const std::string	BZDB_HANDICAPSCOREDIFF;
