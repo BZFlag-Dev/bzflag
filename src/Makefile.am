@@ -28,6 +28,12 @@ else
 BZADMIN_DIR =
 endif
 
+if BZROBOTS_INCLUDED
+BZROBOTS_DIR = bzrobots
+else
+BZROBOTS_DIR =
+endif
+
 SUBDIRS = \
 	${CARES_DIR}	\
 	3D \
@@ -45,7 +51,8 @@ SUBDIRS = \
 	date \
 	bzfs \
 	${BZFLAG_DIR}	\
-	${BZADMIN_DIR}
+	${BZADMIN_DIR} \
+	${BZROBOTS_DIR}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

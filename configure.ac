@@ -127,6 +127,9 @@ fi
 # do we want bzadmin?
 AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
 
+# do we want bzrobots?
+AC_ARG_ENABLE(bzrobots, [  --enable-bzrobots       build bzrobots client])
+
 # build a binary set to stop functioning after some date
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
 if test x$enable_timebomb = xyes; then
@@ -918,6 +921,21 @@ else
   AM_CONDITIONAL(CLIENT_INCLUDED, false)
 fi
 
+# if the bzrobots was enabled, make sure we have GL
+if test x$enable_bzrobots == xyes; then
+  if test "$ac_cv_search_gluScaleImage" = no; then
+    AC_MSG_WARN(
+    [BZRobots build has been requested, but GL is not fully available (missing gl.h)
+     ... disabling bzrobots generation])
+    AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
+    enable_bzrobots=no
+  else
+    AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
+  fi
+else
+  AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
+fi
+
 # if bzadmin was enabled, make sure we have curses.
 if test x$enable_bzadmin != xno; then
     if test "x$CURSES_LIB" = x; then
@@ -991,6 +1009,7 @@ AC_CONFIG_FILES([
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
 	src/bzfs/Makefile
+	src/bzrobots/Makefile
 	src/c-ares/Makefile
 	src/common/Makefile
 	src/date/Makefile
@@ -1055,4 +1074,9 @@ if test "x$enable_client" = "xno"; then
        AC_MSG_RESULT([     no bzflag client binary!])
 else
        AC_MSG_RESULT([     bzflag client])
+fi
+if test "x$enable_bzrobots" = "xyes"; then
+       AC_MSG_RESULT([     bzrobots])
+else
+       AC_MSG_RESULT([     no bzrobots binary])
 fi
