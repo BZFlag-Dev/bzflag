@@ -385,6 +385,10 @@ void handleCollide ( GameKeeper::Player *playerData, void* buffer)
       const float *playerBase = closestBase(playerTeam, collpos);
       const float *otherBase = closestBase(otherTeam, collpos);
 
+      if (!playerBase || !otherBase) {
+	return;
+      }
+
       angle = atan2f(otherBase[1] - playerBase[1],
 		otherBase[0] - playerBase[0]);
       cos_angle = fabs(cosf(angle));

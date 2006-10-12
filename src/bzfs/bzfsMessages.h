@@ -32,6 +32,7 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );
+void sendMessageAllow ( int recipID, int playerID, bool allowMovement, bool allowShooting );
 void sendMessageAllow ( int playerID, bool allowMovement, bool allowShooting );
 bool sendPlayerStateMessage ( GameKeeper::Player *playerData, bool shortState);
 void sendPlayerKilledMessage (int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);

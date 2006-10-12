@@ -165,6 +165,8 @@ void sendExistingPlayerUpdates ( int newPlayer )
 			if (sendPlayerUpdateDirect(playerData->netHandler,otherData) < 0)
 				break;
 		}
+		sendMessageAllow(newPlayer, i, otherData->player.canMove(),
+				  otherData->player.canShoot());
 	}
 }
 
@@ -610,6 +612,15 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 		if (otherData && otherData->playerHandler)
 			otherData->playerHandler->playerSpawned(playerID,pos,rot);
 	}
+}
+
+void sendMessageAllow ( int recipID, int playerID, bool allowMovement, bool allowShooting )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerID);
+	buf = nboPackUByte(buf, allowMovement);
+	buf = nboPackUByte(buf, allowShooting);
+	directMessage(recipID, MsgAllow, (char*)buf - (char*)bufStart, bufStart);
 }
 
 void sendMessageAllow ( int playerID, bool allowMovement, bool allowShooting )
