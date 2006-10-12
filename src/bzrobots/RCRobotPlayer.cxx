@@ -50,8 +50,10 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
     if (!BZDB.isTrue("hoverbot")) {
       setDesiredSpeed(speed);
     } else {
-      setDesiredAccelX(accelx);
-      setDesiredAccelY(accely);
+      // Hoverbot isn't part of BZFlag.  This is commented out at least until
+      // we discuss it:
+      //setDesiredAccelX(accelx);
+      //setDesiredAccelY(accely);
     }
     setDesiredAngVel(angularvel);
   }
