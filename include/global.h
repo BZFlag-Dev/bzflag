@@ -86,6 +86,7 @@ typedef enum GameType
 // game styles
 enum GameOptions {
   SuperFlagGameStyle =	 0x0002, // superflags allowed
+  NoTeamKills		 =   0x0004, // teams can't kill each other
   JumpingGameStyle =	 0x0008, // jumping allowed
   InertiaGameStyle =	 0x0010, // momentum for all
   RicochetGameStyle =	 0x0020, // all shots ricochet

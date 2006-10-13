@@ -55,6 +55,7 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
+[\fB\-noTeamKills\fR]
 [\fB\-offa\fR]
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
@@ -294,6 +295,9 @@ declared the winner and the game is over.
 .TP 
 .B \-noMasterBanlist
 Server will not attempt to load the master ban list from the internet.
+.TP 
+.B \-noTeamKills
+Players on the same team are immune to each other's shots. Rogue is excepted.
 .TP 
 .B \-offa
 Enables the Open\-Free\-for\-All style game. This is a teamless mode, similar to 

@@ -45,6 +45,7 @@ class World {
 			~World();
 
     bool		allowTeamFlags() const;
+	bool		allowTeamKills() const;
     bool		allowSuperFlags() const;
     bool		allowJumping() const;
     bool		allShotsRicochet() const;
@@ -205,6 +206,11 @@ inline 	bool	World::allowTeams() const
 inline bool		World::allowTeamFlags() const
 {
   return gameType == eClassicCTF;
+}
+
+inline bool		World::allowTeamKills() const
+{
+	return (gameOptions & short(NoTeamKills)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const
