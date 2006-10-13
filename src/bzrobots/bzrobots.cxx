@@ -226,8 +226,6 @@ static void		parse(int argc, char** argv)
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-    } else if (strcmp(argv[i], "-hoverbot") == 0) {
-      BZDB.set("hoverbot", "1");
     } else if (strcmp(argv[i], "-posnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcPosNoise", argv[i]);

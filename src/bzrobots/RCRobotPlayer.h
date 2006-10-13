@@ -47,7 +47,7 @@ class RCRobotPlayer : public RobotPlayer {
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
     RCLink*		agent;
-    float		speed, angularvel, accelx, accely;
+    float		speed, angularvel;
     bool		shoot;
 };
 

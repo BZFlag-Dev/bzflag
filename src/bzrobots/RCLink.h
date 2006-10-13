@@ -36,8 +36,6 @@ typedef enum {
 		    HelloRequest,
 		    Speed,
 		    AngularVel,
-		    AccelX,
-		    AccelY,
 		    Shoot,
 		    TeamListRequest,
 		    BasesListRequest,
@@ -63,7 +61,7 @@ class RCRequest {
 			void sendack(RCLink *link);
 			void sendfail(RCLink *link);
 
-			float speed_level, angularvel_level, accelx_level, accely_level;
+			float speed_level, angularvel_level;
 			bool fail;
 			char *failstr;
 

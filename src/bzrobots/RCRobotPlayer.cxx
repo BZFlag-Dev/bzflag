@@ -32,8 +32,6 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
 				agent(_agent),
 				speed(0.0),
 				angularvel(0.0),
-				accelx(0.0),
-				accely(0.0),
 				shoot(false)
 {
 }
@@ -47,14 +45,7 @@ void			RCRobotPlayer::doUpdate(float dt)
 void			RCRobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
-    if (!BZDB.isTrue("hoverbot")) {
-      setDesiredSpeed(speed);
-    } else {
-      // Hoverbot isn't part of BZFlag.  This is commented out at least until
-      // we discuss it:
-      //setDesiredAccelX(accelx);
-      //setDesiredAccelY(accely);
-    }
+    setDesiredSpeed(speed);
     setDesiredAngVel(angularvel);
   }
   LocalPlayer::doUpdateMotion(dt);
@@ -75,35 +66,13 @@ void			RCRobotPlayer::processrequest(RCRequest* req,
 {
   switch (req->get_request_type()) {
     case Speed:
-      if (!BZDB.isTrue("hoverbot")) {
-	speed = req->speed_level;
-	link->respond("ok\n");
-      } else {
-	link->respond("fail speed not allowed (hoverbot-only)\n");
-      }
+      speed = req->speed_level;
+      link->respond("ok\n");
       break;
 
     case AngularVel:
       angularvel = req->angularvel_level;
       link->respond("ok\n");
-      break;
-
-    case AccelX:
-      if (BZDB.isTrue("hoverbot")) {
-	accelx = req->accelx_level;
-	link->respond("ok\n");
-      } else {
-	link->respond("fail accelx not allowed (not a hoverbot)\n");
-      }
-      break;
-
-    case AccelY:
-      if (BZDB.isTrue("hoverbot")) {
-	accely = req->accely_level;
-	link->respond("ok\n");
-      } else {
-	link->respond("fail accely not allowed (not a hoverbot)\n");
-      }
       break;
 
     case Shoot:

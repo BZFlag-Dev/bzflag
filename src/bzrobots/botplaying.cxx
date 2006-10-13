@@ -2595,7 +2595,7 @@ static void		sendConstList()
 
   rcLink->respondf("constant team %s\n", Team::getShortName(startupInfo.team));
   rcLink->respondf("constant worldsize %f\n", BZDBCache::worldSize);
-  rcLink->respondf("constant hoverbot %s\n", BZDB.get("hoverbot").c_str());
+  rcLink->respond("constant hoverbot 0\n");
 
   rcLink->respond("end\n");
 }
@@ -2616,8 +2616,6 @@ static void		doBotRequests()
     switch (req->get_request_type()) {
       case Speed:
       case AngularVel:
-      case AccelX:
-      case AccelY:
       case Shoot:
 	tankindex = req->get_robotindex();
 	if (tankindex == -1) {

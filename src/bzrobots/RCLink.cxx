@@ -457,48 +457,6 @@ RCRequest::RCRequest(int argc, char **argv) :
     } else if (angularvel_level < -1.0) {
       angularvel_level = -1.0;
     }
-  } else if (strcasecmp(argv[0], "accelx") == 0 && argc == 3) {
-    request_type = AccelX;
-
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-    accelx_level = strtof(argv[2], &endptr);
-    if (endptr == argv[2]) {
-      fail = true;
-      failstr = "Invalid parameter for angular velocity.";
-    }
-    if (accelx_level > 1.0) {
-      accelx_level = 1.0;
-    } else if (accelx_level < -1.0) {
-      accelx_level = -1.0;
-    }
-  } else if (strcasecmp(argv[0], "accely") == 0 && argc == 3) {
-    request_type = AccelY;
-
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-    accely_level = strtof(argv[2], &endptr);
-    if (endptr == argv[2]) {
-      fail = true;
-      failstr = "Invalid parameter for angular velocity.";
-    }
-    if (accely_level > 1.0) {
-      accely_level = 1.0;
-    } else if (accely_level < -1.0) {
-      accely_level = -1.0;
-    }
   } else if (strcasecmp(argv[0], "shoot") == 0 && argc == 2) {
     request_type = Shoot;
 
@@ -541,12 +499,6 @@ void RCRequest::sendack(RCLink *link)
       break;
     case AngularVel:
       link->respondf("ack %f angvel %d %f\n", elapsed, get_robotindex(), angularvel_level);
-      break;
-    case AccelX:
-      link->respondf("ack %f accelx %d %f\n", elapsed, get_robotindex(), accelx_level);
-      break;
-    case AccelY:
-      link->respondf("ack %f accelx %d %f\n", elapsed, get_robotindex(), accelx_level);
       break;
     case Shoot:
       link->respondf("ack %f shoot %d\n", elapsed, get_robotindex());
