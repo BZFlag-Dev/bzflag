@@ -16,6 +16,18 @@ BZ_GET_PLUGIN_VERSION
 
 #define MAX_PLAYERID 255
 
+#ifdef _WIN32
+
+#ifndef strcasecmp
+#  define strcasecmp _stricmp
+#endif
+
+#ifndef strncasecmp
+#  define strncasecmp _strnicmp
+#endif
+
+#endif 
+
 
 typedef struct {
   bool isValid;
