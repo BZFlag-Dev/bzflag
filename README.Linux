@@ -59,6 +59,8 @@ Having sound problems? If you're using ALSA for sound, you may get
 better performance to use "hw:0" instead of "plughw:0" or "default"
 for audio by specifying "hw:0" under the Options->Audio->Device menu
 in the game.  This seems to be due to a bug in the SDL audio mixer.
+If you're using Debian, you may also have positive results replacing
+libsdl1.2debian-alsa with libsdl1.2debian-all via apt.
 
 Submit bug reports and comments on the SourceForge site
 http://sourceforge.net/projects/bzflag/
