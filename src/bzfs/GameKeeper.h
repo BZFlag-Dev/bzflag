@@ -225,7 +225,10 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
 
 #if defined(USE_THREADS)
-inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
+inline void GameKeeper::Player::handleTcpPacket(fd_set *) 
+{
+return;
+}
 #endif
 
 inline void GameKeeper::Player::passTCPMutex()
