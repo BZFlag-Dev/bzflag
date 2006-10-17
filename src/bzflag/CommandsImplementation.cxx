@@ -301,8 +301,13 @@ bool SilenceCommand::operator() (const char *commandLine)
 {
   Player *loudmouth = getPlayerByName(commandLine + 9);
   if (loudmouth) {
-    silencePlayers.push_back(commandLine + 8);
-    std::string silenceMessage = "Silenced ";
+    silencePlayers.push_back(commandLine + 9);
+    std::string silenceMessage = "Silenced";
+    silenceMessage += (commandLine + 8);
+    addMessage(NULL, silenceMessage);
+  }
+  else {
+    std::string silenceMessage = "no such callsign:";
     silenceMessage += (commandLine + 8);
     addMessage(NULL, silenceMessage);
   }
