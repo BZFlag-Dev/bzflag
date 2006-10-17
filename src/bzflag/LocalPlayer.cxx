@@ -1492,7 +1492,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     if (source == this && ((shot->getFlag() == Flags::ShockWave) || (shot->getFlag() == Flags::Thief))) continue;
 
 	// if no team kills, shots of my team can't kill me
-	if ( shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
+	if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
 		 continue;
 
     // short circuit test if shot can't possibly hit.
