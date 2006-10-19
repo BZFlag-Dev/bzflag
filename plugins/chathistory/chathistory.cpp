@@ -188,7 +188,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-
 bool LastChatCommand::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
   std::string command = _command.c_str();
