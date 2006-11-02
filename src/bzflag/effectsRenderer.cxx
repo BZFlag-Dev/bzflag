@@ -898,6 +898,63 @@ bool StdLandEffect::update ( float time )
   // if not update all those fun times
   if ( BasicEffect::update(time))
     return true;
+ 
+  radius += deltaTime * 3.5f;
+  return false;
+}
+
+void StdLandEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	glTranslatef(position[0],position[1],position[2]);
+
+	ringState.setState();
+
+	color[0] = 1;
+	color[1] = 1;
+	color[2] = 1;
+
+	glColor4f(color[0],color[1],color[2],1.0f-(age/lifetime));
+	glDepthMask(0);
+
+	drawRingXY(radius,0.5f + age,0.05f*radius,0.0f,0.9f);
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+//******************StdGMPuffEffect****************
+StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("blend_flash",false);
+	lifetime = 6.5f;
+	radius = 0.125f;
+
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+}
+
+StdGMPuffEffect::~StdGMPuffEffect()
+{
+}
+
+bool StdGMPuffEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
 
   radius += deltaTime*0.5f;
   return false;
