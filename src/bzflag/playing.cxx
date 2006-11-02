@@ -3408,42 +3408,43 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 static void		checkEnvironment()
 {
   if (!myTank) return;
-  if (myTank->getTeam() == ObserverTeam) {
-#if defined(LOCAL_COLLISIONDETECT)
-    // Check for an observed tanks hit.
-    Player *target = ROAM.getTargetTank();
-    const ShotPath* hit = NULL;
-    FlagType* flagd;
-    float minTime = Infinity;
-    int i;
+  if (myTank->getTeam() == ObserverTeam ) {
+    if (BZDB.evalInt("showVelocities") > 2)
+	{
+		// Check for an observed tanks hit.
+		Player *target = ROAM.getTargetTank();
+		const ShotPath* hit = NULL;
+		FlagType* flagd;
+		float minTime = Infinity;
+		int i;
 
-    if (BZDB.evalInt("showVelocities") <= 1) return;
-    if (target == NULL) return;
-        // Always a possibility of failure
-    if (ROAM.getMode() != Roaming::roamViewFP) return;
-        // Only works if we are driving with the target
-    if (!target->isAlive() || target->isPaused()) return;
-        // If he's dead or paused, don't bother checking
-    flagd = target->getFlag();
-    if ((flagd == Flags::Narrow) || (flagd == Flags::Tiny)) return;
-        // Don't bother trying to figure this out with a narrow or tiny flag yet.
-    myTank->checkHit(myTank, hit, minTime);
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i])
-        myTank->checkHit(player[i], hit, minTime);
-    if (hit){
-      Player* hitter = lookupPlayer(hit->getPlayer());
-      std::ostringstream smsg;
-      if (hitter->getId() != target->getId()){
-        smsg << "local collision with "
-             << hit->getShotId()
-             << " from "
-             << hitter->getCallSign()
-             << std::endl;
-        addMessage(target, smsg.str());
-      }
-    }
-#endif
+		if (BZDB.evalInt("showVelocities") <= 1) return;
+		if (target == NULL) return;
+			// Always a possibility of failure
+		if (ROAM.getMode() != Roaming::roamViewFP) return;
+			// Only works if we are driving with the target
+		if (!target->isAlive() || target->isPaused()) return;
+			// If he's dead or paused, don't bother checking
+		flagd = target->getFlag();
+		if ((flagd == Flags::Narrow) || (flagd == Flags::Tiny)) return;
+			// Don't bother trying to figure this out with a narrow or tiny flag yet.
+		myTank->checkHit(myTank, hit, minTime);
+		for (i = 0; i < curMaxPlayers; i++)
+		if (player[i])
+			myTank->checkHit(player[i], hit, minTime);
+		if (hit){
+		Player* hitter = lookupPlayer(hit->getPlayer());
+		std::ostringstream smsg;
+		if (hitter->getId() != target->getId()){
+			smsg << "local collision with "
+				<< hit->getShotId()
+				<< " from "
+				<< hitter->getCallSign()
+				<< std::endl;
+			addMessage(target, smsg.str());
+		}
+		}
+	}
     return;
   }
 
