@@ -103,6 +103,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   options->push_back(std::string("On With Apparent Speeds"));
+  options->push_back(std::string("Full"));
   option->update();
   listHUD.push_back(option);
 
