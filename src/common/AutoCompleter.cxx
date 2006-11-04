@@ -186,6 +186,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/idlestats");
   registerWord("/jitterdrop");
   registerWord("/jitterwarn");
+  registerWord("/packetlossdrop");
+  registerWord("/packetlosswarn");
   registerWord("/kick ");
   registerWord("/kill ");
   registerWord("/lagdrop");

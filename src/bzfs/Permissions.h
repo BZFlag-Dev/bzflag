@@ -68,6 +68,7 @@ public:
       lagStats,
       lagwarn,
       jitterwarn,
+      packetlosswarn,
       listPerms,
       masterBan,
       modCount,

@@ -84,6 +84,8 @@ const char *usageString =
 "[-lagwarn <time/ms>] "
 "[-jitterdrop <num>] "
 "[-jitterwarn <time/ms>] "
+"[-packetlossdrop <num>] "
+"[-packetlosswarn <%>] "
 "[-loadplugin <pluginname,commandline>] "
 "[-masterBanURL <URL>]"
 "[-maxidle <time/s>] "
@@ -175,10 +177,12 @@ const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
-"\t-jitterdrop: drop player after this many jitter warnings\n"
-"\t-jitterwarn: jitter warning threshhold time [ms]\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
+"\t-jitterdrop: drop player after this many jitter warnings\n"
+"\t-jitterwarn: jitter warning threshhold time [ms]\n"
+"\t-packetlossdrop: drop player after this many packetloss warnings\n"
+"\t-packetlosswarn: packetloss warning threshold [%]\n"
 "\t-loadplugin: load the specified plugin with the specified commandline\n"
 "\t\tstring\n"
 "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
@@ -750,6 +754,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-jitterwarn") == 0) {
         checkArgc(1, i, argc, argv[i]);
         options.jitterwarnthresh = atoi(argv[i])/1000.0f;
+    } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
+        checkArgc(1, i, argc, argv[i]);
+        options.maxpacketlosswarn = atoi(argv[i]);
+    } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
+        checkArgc(1, i, argc, argv[i]);
+        options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-loadplugin") == 0) {
       checkArgc(1, i, argc, argv[i]);
       std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);

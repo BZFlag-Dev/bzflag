@@ -15,14 +15,17 @@
 
 float LagInfo::threshold = 0.0;
 float LagInfo::jitterthreshold = 0.0;
+float LagInfo::lossthreshold = 0.0;
 float LagInfo::max       = 0.0;
 float LagInfo::jittermax       = 0.0;
+float LagInfo::lossmax       = 0.0;
 
 LagInfo::LagInfo(PlayerInfo *_info)
   : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
     jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
-    jittercount(0), jitterlastwarn(0), jitterwarncount(0), pingpending(false),
-    pingseqno(0), pingssent(0), lasttimestamp(0.0f) {
+    jittercount(0), jitterlastwarn(0), jitterwarncount(0), losscount(0),
+    losslastwarn(0), losswarncount(0), pingpending(false), pingseqno(0),
+    pingssent(0), lasttimestamp(0.0f) {
 }
 
 void LagInfo::reset()
@@ -40,6 +43,11 @@ int LagInfo::getLag() const
 int LagInfo::getJitter() const
 {
   return int(jitteravg * 1000);
+}
+
+int LagInfo::getLoss() const
+{
+  return int(lostavg * 100);
 }
 
 float LagInfo::getLagAvg() const
@@ -65,6 +73,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
   int numchars;
   if (isAdmin)
     numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(), 
+    
           TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
   else
     numchars = sprintf(msg, "%-24.24s: %3d", 
@@ -81,7 +90,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 
 // update absolute latency based on LagPing messages
 void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
-			    bool &jittkick) {
+			    bool &jittkick, bool &plosswarn, bool &plosskick) {
   uint16_t _pingseqno;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
@@ -91,6 +100,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     lagalpha = lagalpha / (0.9f + lagalpha);
     lagcount++;
     jittercount++;
+    losscount++;
 
     // if lag has been good for some time, forget old warnings
     if (lagavg < threshold && lagcount - laglastwarn >= 20)
@@ -99,6 +109,10 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // if jitter has been good for some time, forget old warnings
     if (jitteravg < jitterthreshold && jittercount - jitterlastwarn >= 20)
       jitterwarncount = 0;
+
+    // if loss has been good for some time, forget old warnings
+    if (lostavg < lossthreshold && losscount - losslastwarn >=20)
+      losswarncount = 0;
 
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
@@ -122,6 +136,19 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
       jittwarn = false;
       jittkick = false;
     }
+
+    // warn players from time to time whose packetloss is > lossthreshold (-packetlosswarn)
+    if (!info->isObserver() && (lossthreshold > 0)
+	&& lostavg > lossthreshold
+        && losscount - losslastwarn > 2 * losswarncount) {
+      losslastwarn = losscount;
+      plosswarn = true;
+      plosskick = (++losswarncount > lossmax);
+    } else {
+      plosswarn = false;
+      plosskick = false;
+    }
+
     lostavg     = lostavg * (1 - lostalpha);
     lostalpha   = lostalpha / (0.99f + lostalpha);
     pingpending = false;
@@ -130,6 +157,8 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     kick = false;
     jittwarn = false;
     jittkick = false;
+    plosswarn = false;
+    plosskick = false;
   }
   return;
 }
@@ -199,6 +228,12 @@ void LagInfo::setThreshold(float _threshold, float _max) {
 void LagInfo::setJitterThreshold(float _jitterthreshold, float _jittermax) {
   jitterthreshold = _jitterthreshold;
   jittermax       = _jittermax;
+}
+
+
+void LagInfo::setPacketLossThreshold(float _lossthreshold, float _lossmax) {
+  lossthreshold = _lossthreshold * 10;
+  lossmax       = _lossmax;
 }
 
 // Local Variables: ***

@@ -3051,6 +3051,21 @@ static void jitterKick(int playerIndex)
   removePlayer(playerIndex, "jitter", true);
 }
 
+static void packetLossKick(int playerIndex)
+{
+  char message[MessageLen];
+  sprintf(message,
+	  "You have been kicked due to excessive packetloss (you have been warned %d times).",
+	  clOptions->maxpacketlosswarn);
+  sendMessage(ServerPlayer, playerIndex, message);
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  snprintf(message, MessageLen,"Packetlosskick: %s",
+	   playerData->player.getCallSign());
+  sendMessage(ServerPlayer, AdminPlayers, message);
+  removePlayer(playerIndex, "packetloss", true);
+}
+
 
 static void adjustTolerances()
 {
@@ -3106,7 +3121,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   if (udp && isUDPAtackMessage(code))
 	  DEBUG1("Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
-
   GameKeeper::Player *playerData = NULL;
 
   int playerID = 0;
@@ -3345,8 +3359,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgLagPing: {
-      bool warn, kick, jittwarn, jittkick;
-      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick);
+      bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
+      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3363,6 +3377,15 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	sendMessage(ServerPlayer, playerID, message);
 	if (jittkick)
 	  jitterKick(playerID);
+      }
+      if (plosswarn) {
+	char message[MessageLen];
+	sprintf(message,
+		"*** Server Warning: your packetloss is too high (%d%%) ***",
+		playerData->lagInfo.getLoss());
+	sendMessage(ServerPlayer, playerID, message);
+	if (plosskick)
+	  packetLossKick(playerID);
       }
       break;
     }
@@ -3885,6 +3908,11 @@ int main(int argc, char **argv)
   // loading jitter thresholds
   LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
 			      (float)clOptions->maxjitterwarn);
+
+  // loading packetloss thresholds
+  LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh,
+			      (float)clOptions->maxpacketlosswarn);
+
 
   // loading player callsign/email filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,

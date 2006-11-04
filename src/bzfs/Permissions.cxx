@@ -382,6 +382,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::lagStats: return "lagStats";
     case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::jitterwarn: return "jitterwarn";
+    case PlayerAccessInfo::packetlosswarn: return "packetlosswarn";
     case PlayerAccessInfo::listPerms: return "listPerms";
     case PlayerAccessInfo::masterBan: return "masterban";
     case PlayerAccessInfo::modCount: return "modCount";
@@ -448,6 +449,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "JITTERWARN") return PlayerAccessInfo::jitterwarn;
+  if (name == "PACKETLOSSWARN") return PlayerAccessInfo::packetlosswarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
   if (name == "MASTERBAN") return PlayerAccessInfo::masterBan;
   if (name == "MODCOUNT") return PlayerAccessInfo::modCount;

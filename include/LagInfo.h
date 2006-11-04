@@ -33,6 +33,9 @@ public:
   /** Getting jitter value (in milliseconds)
   */
   int	getJitter() const;
+  /** Getting packetloss value (in percent)
+  */
+  int	getLoss() const;
   /** Get the floating point value of the lag (in seconds)
   */
   float	getLagAvg() const;
@@ -42,7 +45,8 @@ public:
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
   void	updatePingLag(void *buf, bool &warn, bool &kick,
-		      bool &jittwarn, bool &jittkick);
+		      bool &jittwarn, bool &jittkick,
+		      bool &plosswarn, bool &plosskick);
   void	updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
@@ -54,6 +58,7 @@ public:
    */
   static void setThreshold(float _threshold, float _max);
   static void setJitterThreshold(float _jitterthreshold, float _max);
+  static void setPacketLossThreshold(float _packetlossthreshold, float _max);
 private:
   PlayerInfo *info;
   // lag measurement
@@ -69,6 +74,9 @@ private:
   int    jittercount;
   int    jitterlastwarn;
   int    jitterwarncount;
+  int    losscount;
+  int    losslastwarn;
+  int    losswarncount;
   bool	pingpending;
   TimeKeeper  nextping;
   TimeKeeper  lastping;
@@ -80,8 +88,10 @@ private:
 
   static float threshold;
   static float jitterthreshold;
+  static float lossthreshold;
   static float max;
   static float jittermax;
+  static float lossmax;
 };
 
 #endif
