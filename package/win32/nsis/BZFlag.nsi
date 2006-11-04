@@ -210,6 +210,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     SetOutPath $INSTDIR
     ; Put file there
     File ..\..\..\src\bzfs\bzfs.exe
+    File ..\..\..\misc\bzfs.conf
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
