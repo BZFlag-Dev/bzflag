@@ -58,6 +58,8 @@ bzfs \- BZFlag game server
 [\fB\-noTeamKills\fR]
 [\fB\-offa\fR]
 [\fB\-p \fIport\fR]
+[\fB\-packetlossdrop \fIwarn\-count\fR]
+[\fB\-packetlosswarn \fR\fIpercent\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-pidfile \fIfilename\fR]
@@ -306,6 +308,12 @@ the classic deathmatch in other games.
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB\-help\fR to print the default port, or use \fB\-d\fR debug printing.
+.TP 
+\fB\-packetlossdrop \fIwarn\-count\fR
+Kicks players after \fIwarn\-count\fR packetloss warnings.
+.TP 
+\fB\-packetlosswarn \fIpercent\fR
+Send warnings to players that have more more than \fIpercent\fR loss.
 .TP 
 \fB\-passdb \fIfile\fR
 Load passwords from file
