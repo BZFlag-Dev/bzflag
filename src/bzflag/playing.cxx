@@ -3446,7 +3446,7 @@ static void		checkEnvironment()
 				<< std::endl;
 			addMessage(target, smsg.str());
 
-			if (target->hitMap.find(hit->getShotId()) == target->hitMap.end())
+			if (target && target->hitMap.find(hit->getShotId()) == target->hitMap.end())
 				target->computedHits++;
 
 			target->hitMap[hit->getShotId()] = true;
