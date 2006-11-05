@@ -129,14 +129,15 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 
   Player* tracked = NULL;
   if (!devDriving) {
-	  if (world) {
-		  tracked = world->getPlayer(targetWinner);
-	  }
+    if (world) {
+      tracked = world->getPlayer(targetWinner);
+    }
   } else {
-	  tracked = LocalPlayer::getMyTank();
+    tracked = LocalPlayer::getMyTank();
   }
 
-  tracked->reportedHits = tracked->computedHits = 0;
+  if (tracked)
+    tracked->reportedHits = tracked->computedHits = 0;
 }
 
 void Roaming::buildRoamingLabel(void) {
