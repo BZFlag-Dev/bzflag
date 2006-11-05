@@ -126,6 +126,17 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     view = roamViewFree;
 
   buildRoamingLabel();
+
+  Player* tracked = NULL;
+  if (!devDriving) {
+	  if (world) {
+		  tracked = world->getPlayer(targetWinner);
+	  }
+  } else {
+	  tracked = LocalPlayer::getMyTank();
+  }
+
+  tracked->reportedHits = tracked->computedHits = 0;
 }
 
 void Roaming::buildRoamingLabel(void) {

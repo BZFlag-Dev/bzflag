@@ -2024,6 +2024,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
       Player* victimPlayer = lookupPlayer(victim);
       Player* killerPlayer = lookupPlayer(killer);
+
+	  if (victimPlayer)
+		  victimPlayer->reportedHits++;
 #ifdef ROBOT
       if (victimPlayer == myTank) {
 	// uh oh, i'm dead
@@ -3442,6 +3445,11 @@ static void		checkEnvironment()
 				<< hitter->getCallSign()
 				<< std::endl;
 			addMessage(target, smsg.str());
+
+			if (target->hitMap.find(hit->getShotId()) == target->hitMap.end())
+				target->computedHits++;
+
+			target->hitMap[hit->getShotId()] = true;
 		}
 		}
 	}

@@ -193,6 +193,9 @@ public:
 
   void forceReload(float time);
 
+  int reportedHits;
+  int computedHits;
+  std::map<int,bool>	hitMap;
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);

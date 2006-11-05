@@ -815,7 +815,18 @@ void			HUDRenderer::renderStatus(void)
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 		  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
 
-		  scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
+		  float offset = 4.0f;
+		  if (BZDB.evalInt("showVelocities") > 2)
+		  {
+			  offset += 1.0f;
+			  sprintf(buffer,"ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits,(float)target->reportedHits/(float)target->computedHits);
+			  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+			  fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer);
+		  }
+
+		  offset += 1.5f;
+
+		  scoreboard->setTeamScoreY(drawY-smallZHeight*offset);
 	  }
 	  else
 		  scoreboard->setTeamScoreY(0);

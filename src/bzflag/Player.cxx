@@ -83,6 +83,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
 
+  reportedHits = 0;
+  computedHits = 0;
+
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
