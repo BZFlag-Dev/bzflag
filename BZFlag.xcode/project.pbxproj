@@ -170,7 +170,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# ./autogen.sh 2>&1\n# ./configure --without-regex 2>&1\n\nmake -j2\nretcode=$?\n\n[ -f src/bzflag/bzflag ] && strip src/bzflag/bzflag\n[ -f src/bzfs/bzfs ] && strip src/bzfs/bzfs\n[ -f src/bzadmin/bzadmin ] && strip src/bzadmin/bzadmin\n\nexit $?\n";
+			shellScript = "./autogen.sh 2>&1\n./configure 2>&1\n\nmake -j2\n\nexit $?\n";
 		};
 		1492F4DA079630A30008E0BD = {
 			buildActionMask = 2147483647;
