@@ -69,7 +69,7 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 			// If player is moving vertically, or not alive the speed checks
 			// seem to be problematic. If this happens, just log it for now,
 			// but don't actually kick
-			if ((playerData->lastState.pos[2] != state.pos[2]) ||  (playerData->lastState.velocity[2] != state.velocity[2]) || ((state.status & PlayerState::Alive) == 0)) 
+			if ((playerData->lastState.pos[2] != state.pos[2]) || (playerData->lastState.velocity[2] != state.velocity[2]) || ((state.status & PlayerState::Alive) == 0))
 				logOnly = true;
 
 			// allow a 10% tolerance level for speed if -speedtol is not sane
@@ -84,7 +84,7 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 				{
 					if (logOnly)
 						DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-					else 
+					else
 					{
 						DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 						sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player tank is moving too fast.");
@@ -106,7 +106,7 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	bool InBounds = true;
 	float worldSize = BZDBCache::worldSize;
 
-	if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) 
+	if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge))
 	{
 		std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
 		InBounds = false;
@@ -117,7 +117,7 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	}
 
 	static const float burrowFudge = 1.0f; /* linear distance */
-	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) 
+	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge)
 	{
 		std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
 		InBounds = false;
@@ -156,7 +156,7 @@ bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		}
 
 		// kick the players when they do not pause within allowed situations
-		if ((state.status & PlayerState::InBuilding) || (state.status & PlayerState::PhantomZoned) 
+		if ((state.status & PlayerState::InBuilding) || (state.status & PlayerState::PhantomZoned)
 			|| (state.status & PlayerState::Falling) || (state.status & PlayerState::Alive) == false) {
 			// the player did pause while being a wall or in air
 			DEBUG1("Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
@@ -174,6 +174,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	float normalGravity = BZDBCache::gravity;
+	float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
 
 	// All tanks with wings are flying away or they do without a flag
 	if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
@@ -182,29 +183,37 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
 	float normalMaxHeight = 0.0f;
 	float wingsMaxHeight = 0.0f;
+	float lgMaxHeight = 0.0f;
 
 	if (!(state.status & PlayerState::Falling) || (playerData->player.allowedHeightAtJumpStart < 0)) {
 		playerData->player.jumpStartPos = state.pos[2];
 	}
-	
+
 	static const float heightFudge = 1.10f; /* 10% */
 
 	int pFlag = playerData->player.getFlag();
 	bool hasWings = false;
+	bool hasLG = false;
 
 	if (pFlag >= 0)
 	{
 		FlagInfo &flag = *FlagInfo::get(pFlag);
 		if (flag.flag.type == Flags::Wings) {
 			hasWings = true;
-		} 
+		} else if (flag.flag.type == Flags::LowGravity) {
+		    hasLG = true;
+		}
 	}
 
 	if (hasWings) {
 		wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
 		wingsMaxHeight *= wingsMaxHeight;
-		wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
+		wingsMaxHeight *= BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 		wingsMaxHeight /= (-wingsGravity * 2.0f);
+	} else if (hasLG) {
+		lgMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY) * lgGravity / normalGravity;
+		lgMaxHeight *= lgMaxHeight;
+		lgMaxHeight /= (-normalGravity * 2.0f);;
 	} else {
 		normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 		normalMaxHeight *= normalMaxHeight;
@@ -216,10 +225,14 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		wingsMaxHeight = MAXFLOAT;
 	}
 
-	// use either the wings height or the usual height
+	// use either the wings height, the usual height or the low gravity height
 	float maxHeight;
-	if (wingsMaxHeight > normalMaxHeight) {
-		maxHeight = wingsMaxHeight;
+	if (wingsMaxHeight > normalMaxHeight || lgMaxHeight > normalMaxHeight) {
+	    if (lgMaxHeight > wingsMaxHeight) {
+            maxHeight = lgMaxHeight;
+	    } else {
+	        maxHeight = wingsMaxHeight;
+	    }
 	} else {
 		maxHeight = normalMaxHeight;
 	}
@@ -236,7 +249,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	if (worldStateChanging()) {
 		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
-	
+
 	// Don't kick players that are spawning in the air
 	if ((state.status & PlayerState::Falling) && (!(playerData->lastState.status & PlayerState::Alive))) {
 		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;

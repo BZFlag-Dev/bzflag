@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Low gravity flag - Thomas Stauer
 * Packetloss Kick - Thomas Stauer
 * Fixed global banlist reload bug when using local bans - uso
 * Callsign bans are now handled case-insensitively - Sean Morrison

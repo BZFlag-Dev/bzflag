@@ -80,7 +80,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   if (headless) {
     gettingSound = false;
   }
-  
+
   stuckStartTime = TimeKeeper::getSunExplodeTime();
 }
 
@@ -772,7 +772,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   else if (location == InAir || location == InBuilding) {
     setStatus(getStatus() | short(PlayerState::Falling));
   }
-  
+
   // set InBuilding status
   if (location == InBuilding) {
     setStatus(getStatus() | PlayerState::InBuilding);
@@ -1344,6 +1344,9 @@ void			LocalPlayer::doJump()
   newVelocity[1] = oldVelocity[1];
   if (flag == Flags::Wings) {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+  } else if (flag == Flags::LowGravity) {
+    newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY) * ( BZDB.eval(StateDatabase::BZDB_LGGRAVITY)
+    / BZDB.eval(StateDatabase::BZDB_GRAVITY));
   } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);

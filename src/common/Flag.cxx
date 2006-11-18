@@ -80,6 +80,7 @@ namespace Flags {
   FlagType *ReverseControls;
   FlagType *Bouncy;
   FlagType *Agility;
+  FlagType *LowGravity;
 
   void init()
   {
@@ -149,6 +150,8 @@ namespace Flags {
 					    "Tank can drive in air.");
     Agility	= new FlagType( "Agility", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
 					    "Tank is quick and nimble making it easier to dodge.");
+    LowGravity	= new FlagType( "Low Gravity", "LG", FlagUnstable, NormalShot, FlagGood, NoTeam,
+					    "The gravity is reduced. Tank jumps higher.");
     ReverseControls	= new FlagType( "ReverseControls", "RC", FlagSticky, NormalShot, FlagBad, NoTeam,
 					    "Tank driving controls are reversed.");
     Colorblindness	= new FlagType( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,

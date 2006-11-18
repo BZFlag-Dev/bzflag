@@ -139,6 +139,7 @@ const std::string StateDatabase::BZDB_LASERADVEL	= std::string("_laserAdVel");
 const std::string StateDatabase::BZDB_LASERADRATE	= std::string("_laserAdRate");
 const std::string StateDatabase::BZDB_LASERADLIFE	= std::string("_laserAdLife");
 const std::string StateDatabase::BZDB_LATITUDE		= std::string("_latitude");
+const std::string StateDatabase::BZDB_LGGRAVITY		= std::string("_lgGravity");
 const std::string StateDatabase::BZDB_LOCKONANGLE	= std::string("_lockOnAngle");
 const std::string StateDatabase::BZDB_LONGITUDE		= std::string("_longitude");
 const std::string StateDatabase::BZDB_LRADRATE		= std::string("_lRAdRate");

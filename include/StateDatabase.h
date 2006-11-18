@@ -259,6 +259,7 @@ public:
   static const std::string	BZDB_LASERADRATE;
   static const std::string	BZDB_LASERADLIFE;
   static const std::string	BZDB_LATITUDE;
+  static const std::string	BZDB_LGGRAVITY;
   static const std::string	BZDB_LOCKONANGLE;
   static const std::string	BZDB_LONGITUDE;
   static const std::string	BZDB_LRADRATE;
