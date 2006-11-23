@@ -41,7 +41,7 @@ private:
 private:
   std::string fileName;
   int maxLines;
-  std::string::size_type maxLineLength;
+  int maxLineLength;
   StringVector theVector;
 };
 
