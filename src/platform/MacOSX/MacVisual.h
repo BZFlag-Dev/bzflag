@@ -19,7 +19,6 @@
 
 #include "bzfgl.h"
 #include "BzfVisual.h"
-#include "MacVisual.h"
 #include "MacDisplay.h"
 
 #include <vector>
@@ -44,7 +43,7 @@ class MacVisual : public BzfVisual {
     void setMultisample(int minSamples);
 
     bool build();
-    AGLPixelFormat get() const { return pixel_format; }
+  //    AGLPixelFormat get() const { return pixel_format; }
 
     void reset() { attributes.clear(); }
     void addAttribute1(GLint attribute);
