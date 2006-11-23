@@ -67,7 +67,7 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 	}
 }
 
-bz_eTeamType convertTeam ( TeamColor _team )
+bz_eTeamType convertTeam ( int _team )
 {
 	switch (_team)
 	{
@@ -92,7 +92,7 @@ bz_eTeamType convertTeam ( TeamColor _team )
 	}
 }
 
-TeamColor convertTeam( bz_eTeamType _team )
+int convertTeam( bz_eTeamType _team )
 {
 	if (_team > eObservers)
 		return NoTeam;

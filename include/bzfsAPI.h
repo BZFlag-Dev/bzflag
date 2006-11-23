@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include "global.h"
+
 
 #ifdef _WIN32
 	#ifdef INSIDE_BZ
@@ -1170,6 +1172,9 @@ BZF_API void bz_gameOver(int,int = -1);
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
+
+bz_eTeamType convertTeam ( int team );
+int convertTeam( bz_eTeamType team );
 
 #endif //_BZFS_API_H_
 

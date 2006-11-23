@@ -1598,7 +1598,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-  playerData->player.setTeam(convertTeam(autoTeamData.team));
+  playerData->player.setTeam((TeamColor)convertTeam((int)autoTeamData.team));
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
 
   // count current number of players and players+observers

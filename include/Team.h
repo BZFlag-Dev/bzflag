@@ -53,6 +53,7 @@ struct Team {
 	static float	hunterRadarColor[3];
 };
 
+
 #endif // BZF_TEAM_H
 
 // Local Variables: ***
