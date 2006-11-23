@@ -133,6 +133,7 @@ bool MacVisual::build() {
   for (unsigned int i = 0; i < attributes.size(); i++)
     attrib[i] = attributes[i];
 
+#if 0
   if (pixel_format == NULL) {
     pixel_format = aglChoosePixelFormat(NULL, 0, attrib);
     delete attrib;
@@ -142,6 +143,8 @@ bool MacVisual::build() {
     pixel_format = aglChoosePixelFormat(NULL, 0, attrib);
     delete attrib;
   }
+#endif
+
   return true;
 }
 

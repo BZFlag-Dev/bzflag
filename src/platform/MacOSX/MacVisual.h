@@ -45,7 +45,7 @@ class MacVisual : public BzfVisual {
     void setMultisample(int minSamples);
 
     bool build();
-    AGLPixelFormat get() const { return pixel_format; }
+  //    AGLPixelFormat get() const { return pixel_format; }
 
     void reset() { attributes.clear(); }
     void addAttribute1(GLint attribute);
