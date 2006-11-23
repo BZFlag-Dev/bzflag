@@ -33,10 +33,10 @@
 /* local implementation headers */
 #include "bzfs.h"
 
+const int ListServerLink::NotConnected = -1;
+
 extern bz_eTeamType convertTeam ( TeamColor team );
 extern TeamColor convertTeam( bz_eTeamType team );
-
-const int ListServerLink::NotConnected = -1;
 
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
@@ -51,6 +51,8 @@ ListServerLink::ListServerLink(std::string listServerURL,
   setUserAgent(bzfsUserAgent);
   setDNSCachingTime(-1);
   setTimeout(10);
+
+  publiclyDisconnected = false;
 
   if (clOptions->pingInterface != "")
     setInterface(clOptions->pingInterface);
@@ -98,6 +100,7 @@ ListServerLink::~ListServerLink()
 void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
   publiclyDisconnected = !good;
+
   queuedRequest = false;
   if (good && (length < 2048)) {
     char buf[2048];
@@ -127,7 +130,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       // this is a reply to an authentication request ?
       bool  authReply  = false;
 
-      char *callsign = '\0';
+      char *callsign = (char *)NULL;
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
 	callsign = base + strlen(tokGoodIdentifier);
 	registered = true;
@@ -161,59 +164,18 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  }
 	}
       }
-/*
-	char* start = base + strlen(bzIdentifier);
-	// skip leading white
-	while ((*start != '\0') && isspace(*start)) start++;
-	const bool useQuotes = (*start == '"');
-	if (useQuotes) start++; // ditch the '"'
-	char* end = start;
-	// skip until the end of the id
-	if (useQuotes) {
-	  while ((*end != '\0') && (*end != '"')) end++;
-	} else {
-	  while ((*end != '\0') && !isspace(*end)) end++;
-	}
-	if ((*end != '\0') && (useQuotes && (*end != '"'))) {
-	  if (useQuotes) {
-	    callsign = end + 1;
-	    end--; // ditch the '"'
-	  } else {
-	    callsign = end;
-	  }
-	  // skip leading white
-	  while ((*callsign != '\0') && isspace(*callsign)) callsign++;
-	  if (*callsign != '\0') {
-	    bzId = start;
-	    bzId = bzId.substr(end - start);
-	    if ((bzId.size() > 0) && (strlen(callsign) > 0)) {
-	      bzIdInfo = true;
-	    }
-	  }
-	}
-      }
 
-      if (bzIdInfo == true) {
-	DEBUG3("Got BZID: %s", base);
-	for (int i = 0; i < curMaxPlayers; i++) {
-	  GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-	  if ((gkp != NULL) &&
-	      (TextUtils::compare_nocase(gkp->player.getCallSign(), callsign) == 0)) {
-	    gkp->setBzIdentifier(bzId);
-	    DEBUG3("Set player (%s [%i]) bzId to (%s)\n", callsign, i, bzId.c_str());
-	    break;
-	  }
-	}
-      }
-*/
       if (authReply) {
 	DEBUG3("Got: %s", base);
-	char *group = '\0';
+	char *group = (char *)NULL;
+
 	// Isolate callsign from groups
 	if (verified) {
 	  group = callsign;
-	  while (*group && (*group != ':')) group++;
-	  while (*group && (*group == ':')) *group++ = 0;
+	  if (group) {
+	    while (*group && (*group != ':')) group++;
+	    while (*group && (*group == ':')) *group++ = 0;
+	  }
 	}
 	GameKeeper::Player *playerData = NULL;
 	int playerIndex;
@@ -235,8 +197,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    // of the same name and the local account is not marked as
 	    // being the same as the global account
 	    if (!playerData->accessInfo.hasRealPassword()
-		|| playerData->accessInfo.getUserInfo(callsign)
-		.hasGroup("LOCAL.GLOBAL")) {
+		|| playerData->accessInfo.getUserInfo(callsign).hasGroup("LOCAL.GLOBAL")) {
 	      if (!playerData->accessInfo.isRegistered())
 		// Create an entry on the user database even if
 		// authentication wenk ko. Make the "isRegistered"
@@ -245,32 +206,32 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	      if (verified) {
 		playerData->_LSAState = GameKeeper::Player::verified;
 		playerData->accessInfo.setPermissionRights();
-		while (*group) {
+		while (group && *group) {
 		  char *nextgroup = group;
-		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		  if (nextgroup) {
+		    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+		    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		  }
 		  playerData->accessInfo.addGroup(group);
 		  group = nextgroup;
 		}
 		playerData->authentication.global(true);
-		sendMessage(ServerPlayer, playerIndex,
-			    "Global login approved!");
+		sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	      } else {
 		playerData->_LSAState = GameKeeper::Player::failed;
-		sendMessage(ServerPlayer, playerIndex,
-			    "Global login rejected, bad token.");
+		sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
 	      }
 	    } else {
 	      playerData->_LSAState = GameKeeper::Player::failed;
-	      sendMessage(ServerPlayer, playerIndex, "Global login rejected.");
+	      sendMessage(ServerPlayer, playerIndex, "Global login rejected. This callsign is registered locally on this server.");
+	      sendMessage(ServerPlayer, playerIndex, "If the local account is yours, /identify, /deregister and reconnnect, or ask an admin for the LOCAL.GLOBAL group.");
+	      sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin to deregister it so that you may use your global callsign.");
 	    }
 	  } else {
 	    playerData->_LSAState = GameKeeper::Player::notRequired;
 	    if (!playerData->player.isBot()) {
-	      sendMessage(ServerPlayer, playerIndex,
-			  "This callsign is not registered.");
-	      sendMessage(ServerPlayer, playerIndex,
-			  "You can register it at http://my.bzflag.org/bb/");
+	      sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
+	      sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
 	    }
 	  }
 	  playerData->player.clearToken();
