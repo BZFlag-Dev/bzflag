@@ -19,11 +19,9 @@
 
 #include "bzfgl.h"
 #include "BzfVisual.h"
-#include "MacVisual.h"
 #include "MacDisplay.h"
 
 #include <vector>
-using std::vector;
 
 #include <Carbon/Carbon.h>
 #include <AGL/agl.h>
@@ -60,7 +58,7 @@ class MacVisual : public BzfVisual {
     const MacDisplay *display;
     // attributes we would like for our pixel format
     // last attribute must be AGL_NONE
-    vector<GLint>       attributes;
+    std::vector<GLint>       attributes;
     AGLPixelFormat      pixel_format;
 };
 
