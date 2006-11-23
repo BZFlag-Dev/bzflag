@@ -38,7 +38,7 @@ TextChunk::TextChunk(const std::string& _fileName, int _maxLines, int _maxLineLe
 {
   fileName = _fileName;
   maxLines = _maxLines;
-  maxLineLength = _maxLineLength < 0 ? std::string::npos : _maxLineLength;
+  maxLineLength = _maxLineLength < 0 ? (int)std::string::npos : _maxLineLength;
   theVector = parse();
   return;
 }
@@ -76,7 +76,7 @@ StringVector TextChunk::parse()
     }
 
     // truncate long lines
-    if (line.size() > maxLineLength) {
+    if ((int)line.size() > maxLineLength) {
       line.erase(maxLineLength);
       long_lines_encountered++;
     }
