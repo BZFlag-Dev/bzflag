@@ -208,12 +208,15 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 */
       if (authReply) {
 	DEBUG3("Got: %s", base);
-	char *group;
+	char *group = (char *)NULL;
+
 	// Isolate callsign from groups
 	if (verified) {
 	  group = callsign;
-	  while (*group && (*group != ':')) group++;
-	  while (*group && (*group == ':')) *group++ = 0;
+	  if (group) {
+	    while (*group && (*group != ':')) group++;
+	    while (*group && (*group == ':')) *group++ = 0;
+	  }
 	}
 	GameKeeper::Player *playerData = NULL;
 	int playerIndex;
@@ -245,10 +248,12 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	      if (verified) {
 		playerData->_LSAState = GameKeeper::Player::verified;
 		playerData->accessInfo.setPermissionRights();
-		while (*group) {
+		while (group && *group) {
 		  char *nextgroup = group;
-		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		  if (nextgroup) {
+		    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+		    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		  }
 		  playerData->accessInfo.addGroup(group);
 		  group = nextgroup;
 		}
