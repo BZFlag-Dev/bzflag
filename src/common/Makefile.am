@@ -6,6 +6,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libCommon_la_LDFLAGS = -static
+libCommon_la_LIBADD =
 libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
