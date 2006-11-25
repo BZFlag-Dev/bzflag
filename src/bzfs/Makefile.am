@@ -152,6 +152,8 @@ endif
 
 LDADD = \
 	../obstacle/libObstacle.la	\
+	../3D/lib3D.la			\
+	../geometry/libGeometry.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../common/libCommon.la		\
