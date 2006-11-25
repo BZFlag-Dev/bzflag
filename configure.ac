@@ -921,6 +921,9 @@ else
   AM_CONDITIONAL(CLIENT_INCLUDED, false)
 fi
 
+# stub it for now, enable the server
+AM_CONDITIONAL(SERVER_INCLUDED, true)
+
 # if the bzrobots was enabled, make sure we have GL
 if test x$enable_bzrobots == xyes; then
   if test "$ac_cv_search_gluScaleImage" = no; then
