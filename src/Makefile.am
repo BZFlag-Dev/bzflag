@@ -22,6 +22,12 @@ else
 BZFLAG_DIR =
 endif
 
+if SERVER_INCLUDED
+BZFS_DIR = bzfs
+else
+BZFS_DIR =
+endif
+
 if BZADMIN_INCLUDED
 BZADMIN_DIR = bzadmin
 else
@@ -34,25 +40,26 @@ else
 BZROBOTS_DIR =
 endif
 
+# the order matters greatly here
 SUBDIRS = \
 	${CARES_DIR}	\
-	3D \
 	${REGEX_DIR} \
+	${ZLIB_DIR} \
+	date \
 	common \
+	mediafile \
+	ogl \
+	3D \
 	net \
 	game \
 	geometry \
 	obstacle \
-	${ZLIB_DIR} \
-	ogl \
 	scene \
 	platform \
-	mediafile \
-	date \
-	bzfs \
-	${BZFLAG_DIR}	\
+	${BZFS_DIR} \
 	${BZADMIN_DIR} \
-	${BZROBOTS_DIR}
+	${BZROBOTS_DIR} \
+	${BZFLAG_DIR}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
