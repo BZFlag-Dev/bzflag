@@ -8,6 +8,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libObstacle_la_LDFLAGS = -static
+libObstacle_la_LIBADD = \
+	$(top_builddir)/src/3D/lib3D.la \
+	$(top_builddir)/src/common/libCommon.la
 
 if CLIENT_INCLUDED
 libObstacle_la_SOURCES =		\
