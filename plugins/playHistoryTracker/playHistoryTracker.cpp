@@ -1,12 +1,15 @@
 // playHistoryTracker.cpp : Defines the entry point for the DLL application.
 //
 
-
+/* interface header */
 #include "bzfsAPI.h"
+
+/* system headers */
 #include <string>
 #include <map>
 
 BZ_GET_PLUGIN_VERSION
+
 
 // event handler callback
 
@@ -107,15 +110,28 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
       {
 	trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
 	std::string message;
-	if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-	  message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
-	if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-	  message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
-	if ( record.spreeTotal >= 20 )
-	  message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
-
-	if (message.size())
-	{
+	if ( record.spreeTotal >= 5 && record.spreeTotal < 10 ) {
+	  if ( record.callsign == killerCallSign ) {
+            message = record.callsign + std::string(" stopped their rampage all by themself");
+	  } else {
+	    message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
+	  }
+	}
+	if ( record.spreeTotal >= 10 && record.spreeTotal < 20 ) {
+	  if ( record.callsign == killerCallSign ) {
+            message = record.callsign + std::string(" stopped their own killing spree");
+	  } else {
+	    message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
+	  }
+	}
+	if ( record.spreeTotal >= 20 ) {
+	  if ( record.callsign == killerCallSign ) {
+            message = record.callsign + std::string(" dethroned themselves from an otherwise seemingly unstoppable reign");
+	  } else {
+	    message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
+	  }
+	}
+	if (message.size()) {
 	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
 	  soundToPlay = "spree4";
 	}
