@@ -295,11 +295,11 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
 {
   if ((i+count) >= argc) {
     if (count > 1) {
-      std::cerr << count << " argument(s) expected for " << option << std::endl;
+      std::cerr << "ERROR: " << count << " argument(s) expected for " << option << std::endl;
     } else if (type != NULL) {
-      std::cerr << type << " argument expected for " << option << std::endl;
+      std::cerr << "ERROR: " << type << " argument expected for " << option << std::endl;
     } else {
-      std::cerr << "argument expected for " << option << std::endl;
+      std::cerr << "ERROR: argument expected for " << option << std::endl;
     }
     usage("bzfs");
   }
@@ -310,7 +310,7 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
 static void checkFromWorldFile (const char *option, bool fromWorldFile)
 {
   if (fromWorldFile) {
-    std::cerr << "option \"" << option << "\" cannot be set within a world file" << std::endl;
+    std::cerr << "ERROR: option [" << option << "] cannot be set within a world file" << std::endl;
     usage("bzfs");
   }
 }
@@ -485,7 +485,7 @@ static char **parseWorldOptions (const char *file, int &ac)
     confStrm.getline(buffer,1024);
 
     if (!confStrm.good()) {
-      std::cerr << "world file not found" << std::endl;
+      std::cerr << "ERROR: world file [" << file << "] not found" << std::endl;
       usage("bzfs");
     }
 
@@ -574,7 +574,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.acl.setBanFile(argv[i]);
       if (!options.acl.load()) {
-	std::cerr << "could not load banfile \"" << argv[i] << "\"" << std::endl;
+	std::cerr << "ERROR: could not load banfile [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       }
     } 
@@ -640,7 +640,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       char *scan;
       for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
       if (*scan != '\0') {
-	std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
+	std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       }
       debugLevel += count;
@@ -659,7 +659,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
+	  std::cerr << "ERROR: invalid flag [" << argv[i] << "]" << std::endl;
 	  usage(argv[0]);
 	}
 	options.flagDisallowed[fDesc] = true;
@@ -690,7 +690,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
+	  std::cerr << "ERROR: invalid flag [" << argv[i] << "]" << std::endl;
 	  usage(argv[0]);
 	} else if (fDesc->flagTeam != NoTeam) {
 	  options.numTeamFlags[fDesc->flagTeam] += rptCnt;
@@ -728,7 +728,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       checkArgc(2, i, argc, argv[i]);
       if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
-	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
+	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       }
       i++;
@@ -776,6 +776,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	} else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       checkArgc(1, i, argc, argv[i]);
+      // FIXME: lame var hacking
       if (playerCountArg == 0)
 	playerCountArg = i;
       else
@@ -866,7 +867,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
       std::vector<std::string> args = TextUtils::tokenize(argv[i], std::string("="), 2, true);
       if (args.size() != 2) {
-	std::cerr << "expected -poll variable=value" << std::endl;
+	std::cerr << "ERROR: expected -poll variable=value" << std::endl;
 	usage(argv[0]);
       }
 
@@ -883,7 +884,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else if (TextUtils::compare_nocase(args[0], "votetime") == 0) {
 	options.voteTime = (unsigned short int)atoi(args[1].c_str());
       } else {
-	std::cerr << "unknown variable for -poll, skipping";
+	std::cerr << "ERROR: unknown variable for -poll, skipping";
       }
     } else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
@@ -988,7 +989,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       name = argv[i];
       if (!BZDB.isSet(name)) {
-	std::cerr << "Unknown BZDB variable: " << name << std::endl;
+	std::cerr << "ERROR: unknown BZDB variable specified [" << name << "]" << std::endl;
 	exit(1);
       }
       i++;
@@ -1014,7 +1015,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
       if (fDesc == Flags::Null) {
-	std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
+	std::cerr << "ERROR: invalid flag [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       } else {
 	i++;
@@ -1026,7 +1027,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	    x = 1;
 	  }
 	} else {
-	  std::cerr << "invalid shot limit \"" << argv[i] << "\"" << std::endl;
+	  std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
 	  usage(argv[0]);
 	}
 	options.flagLimit[fDesc] = x;
@@ -1041,14 +1042,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::cerr << "using spam warn amount of " << options.spamWarnMax << std::endl;
     } else if (TextUtils::compare_nocase(argv[i], "-spawnPolicy") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      bool validPolicy = SpawnPolicyFactory::IsValid(argv[i]);
+      bool validPolicy = SPAWNPOLICY.IsRegistered(argv[i]);
       if (validPolicy) {
-	SpawnPolicyFactory::SetDefault(argv[i]);
+	SPAWNPOLICY.setDefault(argv[i]);
 	std::cerr << "using " << argv[i] << " spawn policy" << std::endl;
       } else {
-	std::cerr << "unknown spawn policy specified [" << argv[i] << "]" << std::endl;
+	std::cerr << "ERROR: unknown spawn policy specified [" << argv[i] << "]" << std::endl;
 	std::cerr << std::endl << "Available Policies" << std::endl << "------------------" << std::endl;
-	SpawnPolicyFactory::PrintList(std::cerr);
+	SPAWNPOLICY.Print(std::cerr);
 	std::cerr << std::endl;
 	usage(argv[0]);
       }
@@ -1129,7 +1130,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	    ++sizer;
 	  }
 	  if (sizer > 3) {
-	    std::cerr << "too many arguments to -time" << std::endl;
+	    std::cerr << "ERROR: too many arguments to -time" << std::endl;
 	    usage(argv[0]);
 	  }
 	}
@@ -1205,9 +1206,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
-      std::cerr << "using world size of \"" << BZDBCache::worldSize << "\"" << std::endl;
+      std::cerr << "using world size of [" << BZDBCache::worldSize << "]" << std::endl;
     } else {
-      std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
+      std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
       usage(argv[0]);
     }
   }
@@ -1215,10 +1216,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
   if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options)) {
+    std::cerr << "ERROR: unable to parse the player count (check -mp option)" << std::endl;
     usage(argv[0]);
   }
-  if ((playerCountArg2 > 0)
-      && !parsePlayerCount(argv[playerCountArg2], options)) {
+  if ((playerCountArg2 > 0) && !parsePlayerCount(argv[playerCountArg2], options)) {
+    std::cerr << "ERROR: unable to parse the player count (check -mp option)" << std::endl;
     usage(argv[0]);
   }
 
@@ -1278,7 +1280,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
   if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
-    std::cerr << "flags on boxes requires jumping" << std::endl;
+    std::cerr << "ERROR: flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
   }
 
