@@ -1058,6 +1058,9 @@
 				RelativePath="..\..\include\EighthDPyrSceneNode.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Factory.h">
+			</File>
+			<File
 				RelativePath="..\..\include\FlagSceneNode.h">
 			</File>
 			<File
