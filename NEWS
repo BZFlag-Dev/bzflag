@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Modified bzfs error messages on startup - Sean Morrison
 * Low gravity flag - Felix Monninger, Thomas Stauer
 * Packetloss Kick - Thomas Stauer
 * Fixed global banlist reload bug when using local bans - uso
