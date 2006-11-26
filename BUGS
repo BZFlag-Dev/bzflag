@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- if there is a network connection (e.g. a lan) yet no external
+  access, the client hangs hard in cURLManager.cxx:291 and later in
+  some odd corrupted stack space elsewhere.  this was with CURL 7.13.1
+  (default Mac libcurl).  simple workaround is to invoke client with
+  -list http://localhost (even if no local server is running) to avoid
+  the hang on resolving.
+
 - Any banlist changes erase the masterban entries if a banfile is present
 
 - client side bots make the client get disconnected (read error)
