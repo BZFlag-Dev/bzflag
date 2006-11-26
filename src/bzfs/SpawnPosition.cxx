@@ -25,9 +25,9 @@ SpawnPolicy *SpawnPosition::policy = (SpawnPolicy*)0;
 
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 {
-  /* if a spawn policy hasn't been set yet, just go with the default */
+  /* if a spawn policy hasn't been set yet, just go with a default policy */
   if (!SpawnPosition::policy) {
-    SetSpawnPolicy(SpawnPolicyFactory::DefaultPolicy());
+    SetSpawnPolicy(SPAWNPOLICY.Policy());
   }
 
   SpawnPosition::policy->getPosition(pos, playerId, onGroundOnly, notNearEdges);

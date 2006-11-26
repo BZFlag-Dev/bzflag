@@ -16,65 +16,43 @@
 #include "common.h"
 
 /* system headers */
-#include <iostream>
 #include <string>
-#include <map>
 
 /* common interface headers */
+#include "Factory.h"
+#include "Singleton.h"
 #include "TextUtils.h"
 
 /* bzfs-specific interface headers */
 #include "SpawnPolicy.h"
 
 
+/** convenience handle on the singleton instance */
+#define SPAWNPOLICY (SpawnPolicyFactory::instance())
+
+
 /** a SpawnPolicyFactory has all of the available spawn policies
- * registered and is used to create an instance of one of the
- * policies.
+ * registered and is used to create instances of the policies.
  */
-class SpawnPolicyFactory
+class SpawnPolicyFactory : public Singleton<SpawnPolicyFactory>,
+			   public Factory<SpawnPolicy, std::string>
 {
 
 public:
-  typedef std::map<std::string, SpawnPolicy *> PolicyRegister;
+  SpawnPolicy *Policy(std::string s = std::string(""));
 
-  static SpawnPolicy *DefaultPolicy();
-  static SpawnPolicy *Policy(std::string);
-  static void SetDefault(std::string);
+  void setDefault(std::string);
 
-  static bool IsValid(std::string policy);
-  static void PrintList(std::ostream &stream);
-
-  template <class _PolicyType>
-  static bool RegisterPolicy();
-
-  /** here is where all of the policies are actually registered */
-  static bool Init();
+protected:
+  friend class Singleton<SpawnPolicyFactory>;
 
 private:
   SpawnPolicyFactory();
   ~SpawnPolicyFactory();
 
-  static std::string _defaultPolicy;
-
-  /** registration map of available policy types */
-  static PolicyRegister _policies;
-
+  std::string _defaultPolicy;
 };
 
-
-template <class _PolicyType>
-bool SpawnPolicyFactory::RegisterPolicy() {
-  _PolicyType *t = new _PolicyType();
-  std::string name = TextUtils::tolower(t->Name());
-  PolicyRegister::const_iterator policyEntry = _policies.find(name);
-  if (policyEntry != _policies.end()) {
-    std::cerr << "ERROR: The [" << t->Name() << "] spawn policy is already registered" << std::endl;
-    return false;
-  }
-  _policies[name] = t;
-  return true;
-}
-  
 
 #endif  /*__SPAWNPOLICYFACTORY_H__ */
 

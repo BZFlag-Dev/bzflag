@@ -19,70 +19,41 @@
 #include "DangerousSpawnPolicy.h"
 
 
-// initialize to an "unset" policy
-std::string SpawnPolicyFactory::_defaultPolicy = std::string("");
+// initialize the singleton
+template <>
+SpawnPolicyFactory* Singleton<SpawnPolicyFactory>::_instance = (SpawnPolicyFactory*)0;
 
-// recognized policies
-SpawnPolicyFactory::PolicyRegister SpawnPolicyFactory::_policies;
-
-// register the policies
-static bool _policiesInitialized = SpawnPolicyFactory::Init();
+// register the available policies
+static bool _init();
+static bool _policiesInitialized = _init();
 
 
 /* public */
 
 SpawnPolicy *
-SpawnPolicyFactory::DefaultPolicy() {
-  SpawnPolicy *policy = SpawnPolicyFactory::Policy(SpawnPolicyFactory::_defaultPolicy);
-
-  /* failsafe, just so we don't ever return NULL on this call */
-  if (!policy) {
-    return new DefaultSpawnPolicy();
-  }
-  return policy;
-}
-
-SpawnPolicy *
-SpawnPolicyFactory::Policy(std::string policy) {
+SpawnPolicyFactory::Policy(std::string policy)
+{
   std::string lcPolicy = TextUtils::tolower(policy);
+
+  /* empty indicates request for default */
   if (lcPolicy == "") {
-    lcPolicy = "default";
+    SpawnPolicy *policy = SpawnPolicyFactory::Policy(_defaultPolicy);
+
+    /* failsafe, just so we don't ever return NULL on the default */
+    if (!policy) {
+      return new DefaultSpawnPolicy();
+    }
+    return policy;
   }
-  PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
-  if (policyEntry != _policies.end()) {
-    return policyEntry->second;
-  }
-  
+
   /* may return NULL if policy isn't something recognized */
-  return (SpawnPolicy *)NULL;
+  return SPAWNPOLICY.Create(lcPolicy.c_str());
 }
 
 void
-SpawnPolicyFactory::SetDefault(std::string policy) {
+SpawnPolicyFactory::setDefault(std::string policy)
+{
   _defaultPolicy = policy;
-}
-
-bool
-SpawnPolicyFactory::IsValid(std::string policy) {
-  std::string lcPolicy = TextUtils::tolower(policy);
-  if (lcPolicy == "") {
-    lcPolicy = "default";
-  }
-  PolicyRegister::const_iterator policyEntry = _policies.find(lcPolicy);
-  if (policyEntry != _policies.end()) {
-    // found it
-    return true;
-  }
-  return false;
-}
-
-void
-SpawnPolicyFactory::PrintList(std::ostream &stream) {
-  PolicyRegister::const_iterator policyEntry = _policies.begin();
-  while (policyEntry != _policies.end()) {
-    stream << policyEntry->second->Name() << std::endl;
-    policyEntry++;
-  }
 }
 
 
@@ -96,14 +67,15 @@ SpawnPolicyFactory::~SpawnPolicyFactory()
 {
 }
 
-bool
-SpawnPolicyFactory::Init()
+/* register all the available known policies */
+static bool
+_init()
 {
   static bool _initialized = false;
   if (!_initialized) {
-    RegisterPolicy<DefaultSpawnPolicy>();
-    RegisterPolicy<RandomSpawnPolicy>();
-    RegisterPolicy<DangerousSpawnPolicy>();
+    SPAWNPOLICY.Register<DefaultSpawnPolicy>("default");
+    SPAWNPOLICY.Register<RandomSpawnPolicy>("random");
+    SPAWNPOLICY.Register<DangerousSpawnPolicy>("dangerous");
     _initialized = true;
   }
   return _initialized;
