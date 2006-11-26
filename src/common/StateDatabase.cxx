@@ -120,6 +120,7 @@ const std::string StateDatabase::BZDB_FOGDENSITY	= std::string("_fogDensity");
 const std::string StateDatabase::BZDB_FOGSTART		= std::string("_fogStart");
 const std::string StateDatabase::BZDB_FOGEND		= std::string("_fogEnd");
 const std::string StateDatabase::BZDB_FOGCOLOR		= std::string("_fogColor");
+const std::string StateDatabase::BZDB_FOGENFORCE	= std::string("_fogEnforce");
 const std::string StateDatabase::BZDB_GRABOWNFLAG	= std::string("_grabOwnFlag");
 const std::string StateDatabase::BZDB_FREEZETAGRADIUS	= std::string("_freezeTagRadius");
 const std::string StateDatabase::BZDB_FRICTION		= std::string("_friction");

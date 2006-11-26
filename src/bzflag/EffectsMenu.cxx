@@ -362,7 +362,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'F': {
-      BZDB.setInt("fogEffect", list->getIndex());
+      if (BZDB.eval(StateDatabase::BZDB_FOGENFORCE) == 1) {
+	BZDB.setInt("fogEffect", (list->getIndex() < 1) ? 1 : list->getIndex());
+      } else {
+	BZDB.setInt("fogEffect", list->getIndex());
+      }
       break;
     }
     case 'T': {

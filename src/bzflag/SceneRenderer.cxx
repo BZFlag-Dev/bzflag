@@ -1201,7 +1201,7 @@ static bool setupMapFog()
 {
   std::string fogModeStr;
   if ((BZDB.get(StateDatabase::BZDB_FOGMODE) == "none") ||
-      !BZDB.isTrue("fogEffect")) {
+      (!BZDB.isTrue("fogEffect") && !BZDB.isTrue("_fogEnforce"))) {
     glDisable(GL_FOG);
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
