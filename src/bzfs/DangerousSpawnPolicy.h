@@ -13,9 +13,7 @@
 #ifndef __DANGEROUSSPAWNPOLICY_H__
 #define __DANGEROUSSPAWNPOLICY_H__
 
-#include "common.h"
-
-/* common interface headers */
+/* interface header */
 #include "DefaultSpawnPolicy.h"
 
 

@@ -13,12 +13,7 @@
 #ifndef __RANDOMSPAWNPOLICY_H__
 #define __RANDOMSPAWNPOLICY_H__
 
-#include "common.h"
-
-/* system interfacer headers */
-#include <string>
-
-/* common interface headers */
+/* interface header */
 #include "SpawnPolicy.h"
 
 
