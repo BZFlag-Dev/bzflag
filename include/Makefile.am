@@ -43,6 +43,7 @@ noinst_HEADERS =			\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
 	Extents.h			\
+	Factory.h			\
 	FileManager.h			\
 	FontManager.h			\
 	Flag.h				\
