@@ -28,13 +28,13 @@
  */
 class DefaultSpawnPolicy : public SpawnPolicy
 {
-
 public:
   DefaultSpawnPolicy();
   virtual ~DefaultSpawnPolicy();
 
-  virtual const char *Name() {
-    return "Default";
+  virtual const char *Name() const {
+    static char *name = "Default";
+    return name;
   }
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
@@ -47,7 +47,6 @@ private:
   /* temp, internal use */
   TeamColor   team;
   float       testPos[3];
-  
 };
 
 #endif  /*__DEFAULTSPAWNPOLICY_H__ */

@@ -24,13 +24,13 @@
  */
 class DangerousSpawnPolicy : public DefaultSpawnPolicy 
 {
-
 public:
   DangerousSpawnPolicy();
   virtual ~DangerousSpawnPolicy();
 
-  virtual const char *Name() {
-    return "Dangerous";
+  virtual const char *Name() const {
+    static char *name = "Dangerous";
+    return name;
   }
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);

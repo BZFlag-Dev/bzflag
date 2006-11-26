@@ -24,12 +24,11 @@
  */
 class SpawnPolicy
 {
-
 public:
   SpawnPolicy();
   virtual ~SpawnPolicy();
 
-  virtual const char *Name() = 0;
+  virtual const char *Name() const = 0;
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges) = 0;
   virtual void getAzimuth(float &azimuth) = 0;
@@ -38,7 +37,6 @@ protected:
   virtual bool isFacing(const float *selfPos, const float *enemyPos, const float enemyAzimuth, const float deviation) const;
   virtual float distanceFrom(const float *pos, const float *farPos) const;
   virtual bool isImminentlyDangerous(const float *selfPos) const;
-
 };
 
 #endif  /*__SPAWNPOLICY_H__ */

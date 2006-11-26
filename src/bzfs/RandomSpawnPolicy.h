@@ -15,6 +15,9 @@
 
 #include "common.h"
 
+/* system interfacer headers */
+#include <string>
+
 /* common interface headers */
 #include "SpawnPolicy.h"
 
@@ -24,13 +27,13 @@
  */
 class RandomSpawnPolicy : public SpawnPolicy 
 {
-
 public:
   RandomSpawnPolicy();
   virtual ~RandomSpawnPolicy();
 
-  virtual const char *Name() {
-    return "Random";
+  virtual const char *Name() const {
+    static char *name = "Random";
+    return name;
   }
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
