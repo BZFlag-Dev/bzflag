@@ -50,9 +50,6 @@ recent bugs
 - do all Riva128 systems require "noMeshClusers"? Is there a 
   workaround to make vertex array work on those cards?
 
-- Mac OS X client sometimes (50/50) seems to now start to a black
-  screen (only the console tab tabs render).  must be recent..
-
 - Too many flags caused "drop, unresponsive with 16687 bytes queued"
   (+f good{40} was the breaking point, linux, local bzfs server)
   admittedly, an unreasonable number of flags
