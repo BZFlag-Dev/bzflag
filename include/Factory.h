@@ -32,92 +32,92 @@ template <typename BaseType, typename UniqueTypeID>
 class Factory
 {
 protected:
-    typedef BaseType* (*Manufacture)();
+  typedef BaseType* (*Manufacture)();
 
-    /** manufacturing member function for generating objects of some
-     *  given BaseType compatible type
-     */
-    template <typename ObjectType>
-    static BaseType *CreateObject()
-    {
-	std::cout << "Creating a new object" << std::endl;
-	return new ObjectType();
-    }
+  /** manufacturing member function for generating objects of some
+   *  given BaseType compatible type
+   */
+  template <typename ObjectType>
+  static BaseType *CreateObject()
+  {
+    std::cout << "Creating a new object" << std::endl;
+    return new ObjectType();
+  }
 
 public:
-    typedef typename std::map<UniqueTypeID, Manufacture>::iterator iterator;
-    typedef typename std::map<UniqueTypeID, Manufacture>::const_iterator const_iterator;
+  typedef typename std::map<UniqueTypeID, Manufacture>::iterator iterator;
+  typedef typename std::map<UniqueTypeID, Manufacture>::const_iterator const_iterator;
 
-    /**
-     * register some object type with the factory providing some unique
-     * key to differentiate.  the object will generally be a class that
-     * extends from a provided base class type.
-     */
-    template <typename ObjectType>
-    bool Register(UniqueTypeID id) {
-	// re-registering simply replaces previous
-	objectFactories[id] = &CreateObject<ObjectType>;
+  /**
+   * register some object type with the factory providing some unique
+   * key to differentiate.  the object will generally be a class that
+   * extends from a provided base class type.
+   */
+  template <typename ObjectType>
+  bool Register(UniqueTypeID id) {
+    // re-registering simply replaces previous
+    objectFactories[id] = &CreateObject<ObjectType>;
+    return true;
+  }
+
+  /** return truthfully whether the object is already registered
+   */
+  bool IsRegistered(UniqueTypeID id) const {
+    if (objectFactories.size() > 0) {
+      const_iterator objectEntry = objectFactories.find(id);
+      if (objectEntry != objectFactories.end()) {
 	return true;
+      }
     }
+    return false;
+  }
 
-    /** return truthfully whether the object is already registered
-     */
-    bool IsRegistered(UniqueTypeID id) const {
-	if (objectFactories.size() > 0) {
-	    const_iterator objectEntry = objectFactories.find(id);
-	    if (objectEntry != objectFactories.end()) {
-		return true;
-	    }
-	}
-	return false;
+  /**
+   * print the stored type identifiers. assumes << operator is
+   * defined. usually some string identifier.
+   */
+  void Print(std::ostream &stream) const {
+    if (objectFactories.size() > 0) {
+      const_iterator objectEntry = objectFactories.begin();
+      while (objectEntry != objectFactories.end()) {
+	stream << (*objectEntry).first << std::endl;
+	objectEntry++;
+      }
     }
+  }
 
-    /**
-     * print the stored type identifiers. assumes << operator is
-     * defined. usually some string identifier.
-     */
-    void Print(std::ostream &stream) const {
-	if (objectFactories.size() > 0) {
-	    const_iterator objectEntry = objectFactories.begin();
-	    while (objectEntry != objectFactories.end()) {
-		stream << (*objectEntry).first << std::endl;
-		objectEntry++;
-	    }
-	}
-    }
+  /**
+   * have the factory generate a "default" object, the first object
+   * type registered.
+   */
+  BaseType *Create() {
+    iterator entry = objectFactories.begin();
+    return ((*entry).second)();
+  }
 
-    /**
-     * have the factory generate a "default" object, the first object
-     * type registered.
-     */
-    BaseType *Create() {
-	iterator entry = objectFactories.begin();
-	return ((*entry).second)();
+  /**
+   * have the factory generate an object of some requested type.
+   */
+  BaseType *Create(UniqueTypeID id) {
+    if (objectFactories.size() > 0) {
+      iterator objectEntry = objectFactories.find(id);
+      if (objectEntry != objectFactories.end()) {
+	return ((*objectEntry).second)();
+      }
     }
-
-    /**
-     * have the factory generate an object of some requested type.
-     */
-    BaseType *Create(UniqueTypeID id) {
-	if (objectFactories.size() > 0) {
-	    iterator objectEntry = objectFactories.find(id);
-	    if (objectEntry != objectFactories.end()) {
-		return ((*objectEntry).second)();
-	    }
-	}
-	return NULL;
-    }
+    return NULL;
+  }
 
 protected:
 
-    /** registration map of available object types */
-    std::map<UniqueTypeID, Manufacture> objectFactories;
+  /** registration map of available object types */
+  std::map<UniqueTypeID, Manufacture> objectFactories;
 
-    /* don't allow this class to be directly instantiated */
-    Factory() {
-    }
-    virtual ~Factory() {
-    }
+  /* don't allow this class to be directly instantiated */
+  Factory() {
+  }
+  virtual ~Factory() {
+  }
 };
 
 
@@ -127,7 +127,7 @@ protected:
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
-// c-basic-offset: 4 ***
+// c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=4 tabstop=8
