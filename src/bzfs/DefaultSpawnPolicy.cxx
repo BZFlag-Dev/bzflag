@@ -27,6 +27,7 @@
 
 DefaultSpawnPolicy::DefaultSpawnPolicy()
 {
+  testPos[0] = testPos[1] = testPos[2] = 0.0f;
 }
 
 DefaultSpawnPolicy::~DefaultSpawnPolicy()
