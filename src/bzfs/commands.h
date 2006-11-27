@@ -13,13 +13,19 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-// implementation-specific bzflag headers
-#include "GameKeeper.h"
+/* common header */
+#include "common.h"
 
-#include "TextUtils.h"
+/* system headers */
 #include <string>
 #include <map>
+
+/* common headers */
 #include "bzfsAPI.h"
+#include "GameKeeper.h"
+#include "TextUtils.h"
+
+/* bzfs-specific headers */
 #include "ServerCommand.h"
 
 
