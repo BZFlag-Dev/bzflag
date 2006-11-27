@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#  pragma warning( 4:4786)
-#endif
-
 // interface header
 #include "commands.h"
 
@@ -48,20 +44,13 @@
 #include "version.h"
 #include "bzfsMessages.h"
 #include "WorldEventManager.h"
+#include "PlayerInfo.h"
 
 // local implementation headers
 #include "FlagHistory.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
-
-
-#if defined(_WIN32)
-#  define popen _popen
-#  define pclose _pclose
-#endif
-
-#include "PlayerInfo.h"
 
 
 tmCustomSlashCommandMap	customCommands;
