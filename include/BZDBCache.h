@@ -36,6 +36,7 @@ public:
 	static int   radarStyle;
 	static float radarTankPixels;
 	static bool  leadingShotLine;
+	static bool  showShotGuide;
 	static int   linedRadarShots;
 	static int   sizedRadarShots;
 	static float pulseRate;

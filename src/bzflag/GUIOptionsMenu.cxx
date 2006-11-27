@@ -156,6 +156,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // radar shot guide on/off
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Radar Shot Guide:");
+  option->setCallback(callback, (void*)"G");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
+
   // set radar size
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -356,6 +367,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("sizedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showShotGuide ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
@@ -443,6 +455,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'F':
       BZDB.set("leadingShotLine", list->getIndex() ? "1" : "0");
+      break;
+
+    case 'G':
+      BZDB.set("showShotGuide", list->getIndex() ? "1" : "0");
       break;
 
     case 'R':

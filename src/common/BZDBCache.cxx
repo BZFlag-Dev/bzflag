@@ -31,6 +31,7 @@ bool  BZDBCache::smooth;
 bool  BZDBCache::colorful;
 bool  BZDBCache::animatedTreads;
 bool  BZDBCache::leadingShotLine;
+bool  BZDBCache::showShotGuide;
 int   BZDBCache::radarStyle;
 float BZDBCache::radarTankPixels;
 int   BZDBCache::linedRadarShots;
@@ -107,6 +108,7 @@ void BZDBCache::init()
   BZDB.addCallback("colorful", clientCallback, NULL);
   BZDB.addCallback("animatedTreads", clientCallback, NULL);
   BZDB.addCallback("leadingShotLine", clientCallback, NULL);
+  BZDB.addCallback("showShotGuide", clientCallback, NULL);
   BZDB.addCallback("flagChunks", clientCallback, NULL);
   BZDB.addCallback("pulseRate", clientCallback, NULL);
   BZDB.addCallback("pulseDepth", clientCallback, NULL);
@@ -191,6 +193,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     animatedTreads = BZDB.isTrue("animatedTreads");
   else if (name == "leadingShotLine")
     leadingShotLine = BZDB.isTrue("leadingShotLine");
+  else if (name == "showShotGuide")
+    showShotGuide = BZDB.isTrue("showShotGuide");
   else if (name == "flagChunks")
     flagChunks = BZDB.evalInt("flagChunks");
   else if (name == "pulseRate")

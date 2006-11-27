@@ -82,6 +82,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
   { "remoteSounds",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "leadingShotLine",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "showShotGuide",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveIdentity",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCollisionGrid",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },

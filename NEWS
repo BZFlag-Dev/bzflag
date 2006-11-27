@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Added optional direction shot line to radar - Skeeve
 * Added optional server-side fog enforcement - mike_s_
 * Modified bzfs error messages on startup - Sean Morrison
 * Low gravity flag - Felix Monninger, Thomas Stauer
