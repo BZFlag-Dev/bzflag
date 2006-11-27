@@ -371,6 +371,7 @@ case $host_os in
      *) linux=false;;
 esac
 AM_CONDITIONAL(LINUX, $linux)
+AM_CONDITIONAL(HPUX, test x$host_os = xhpux)
 AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
 AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
 AM_CONDITIONAL(PPC,   test x$host_vendor = xppc)

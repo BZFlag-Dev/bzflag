@@ -189,6 +189,22 @@ libPlatform_la_SOURCES =			\
 	WinMedia.h
 endif
 
+if HPUX
+libPlatform_la_SOURCES =			\
+	PlatformFactory.cxx			\
+	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
+	BzfVisual.cxx				\
+	BzfWindow.cxx				\
+	BzfMedia.cxx				\
+	HPUXMedia.cxx				\
+	HPUXMedia.h				\
+	HPUXPlatformFactory.cxx			\
+	HPUXPlatformFactory.h			\
+	wave.cxx				\
+	wave.h
+endif
+
 EXTRA_libPlatform_la_SOURCES =		\
 	BeOSPlatformFactory.cxx		\
 	BeOSPlatformFactory.h		\
@@ -201,6 +217,10 @@ EXTRA_libPlatform_la_SOURCES =		\
 	BeOSWindow2.cxx			\
 	BeOSMedia.cxx			\
 	BeOSMedia.h			\
+	HPUXMedia.cxx			\
+	HPUXMedia.h			\
+	HPUXPlatformFactory.cxx		\
+	HPUXPlatformFactory.h		\
 	LinuxPlatformFactory.cxx	\
 	LinuxPlatformFactory.h		\
 	LinuxDisplay.cxx		\
