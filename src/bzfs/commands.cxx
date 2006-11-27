@@ -1743,19 +1743,26 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
   for (int i = 0; i < j; i++) {
     player = sortedPlayer[i];
 
-    std::string attrstr = "(";
-    if (player->accessInfo.isRegistered())
-      attrstr += "Reg/";
-    if (player->accessInfo.isVerified())
-      attrstr += "Ver/";
+    std::string attrstr = std::string("");
     if (player->accessInfo.isAdmin())
-      attrstr += "Adm/";
+      attrstr += "Admin/";
+    if (player->accessInfo.isRegistered())
+      attrstr += "Registered/";
+    if (player->accessInfo.isVerified())
+      attrstr += "Verified/";
     if (player->player.isBot())
       attrstr += "Bot/";
-    if (attrstr == "(")
-      attrstr += "Anon)";
-    else
-      attrstr[attrstr.length()-1] = ')';
+    if (player->player.isAutoPilot())
+      attrstr += "Roger/";
+    if (player->player.isChat())
+      attrstr += "Chat/";
+
+    if (attrstr == "")
+      attrstr += "Anonymous";
+    } else {
+      // trim off trailing slash
+      attrstr.erase(attrstr.length()-1);
+    }
     
     std::string emailstr = "(";
     emailstr += player->player.getEMail();
@@ -1764,7 +1771,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
     else
       emailstr += ")";
     
-    reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t%s",
+    reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t(%s)",
                               player->score.getWins() - player->score.getLosses(),
                               player->score.getWins(),
                               player->score.getLosses(),
