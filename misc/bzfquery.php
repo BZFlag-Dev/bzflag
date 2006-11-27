@@ -310,16 +310,16 @@ function bzfdump($server)
       }
       echo"\n";
       $playerType = array(0 => "tank", 1 => "observer", 2 => "robot tank");
-      for ($player = 0; $player < $server['numPlayers']; $player++)
+      while (list(, $player) = each($server['player']))
       {
-        echo"player " . $server['player'][$player]['sign'] . "
-          (" . $teamName[$server['player'][$player]['team']] . " team) is a
-          " . $playerType[$server['player'][$player]['type']] . ":\n";
-        echo"  score: " . ($server['player'][$player]['won'] -
-          $server['player'][$player]['lost']) . "
-          (" . $server['player'][$player]['won'] . " wins,
-          " . $server['player'][$player]['lost'] . " losses)\n";
-        echo"  " . $server['player'][$player]['email'] . "\n";
+        echo"player " . $player['sign'] . "
+          (" . $teamName[$player['team']] . " team) is a
+          " . $playerType[$player['type']] . ":\n";
+        echo"  score: " . ($player['won'] -
+          $player['lost']) . "
+          (" . $player['won'] . " wins,
+          " . $player['lost'] . " losses)\n";
+        echo"  " . $player['email'] . "\n";
       }
       break;
 
@@ -375,16 +375,16 @@ function bzfdump($server)
       }
       echo"\n";
       $playerType = array(0 => "tank", 1 => "observer", 2 => "robot tank");
-      for ($player = 0; $player < $server['numPlayers']; $player++)
+      while (list(, $player) = each($server['player']))
       {
-        echo"player " . $server['player'][$player]['sign'] . "
-          (" . $teamName[$server['player'][$player]['team']] . " team) is a
-          " . $playerType[$server['player'][$player]['type']] . ":\n";
-        echo"  score: " . ($server['player'][$player]['won'] -
-          $server['player'][$player]['lost']) . "
-          (" . $server['player'][$player]['won'] . " wins,
-          " . $server['player'][$player]['lost'] . " losses)\n";
-        echo"  " . $server['player'][$player]['email'] . "\n";
+        echo"player " . $player['sign'] . "
+          (" . $teamName[$player['team']] . " team) is a
+          " . $playerType[$player['type']] . ":\n";
+        echo"  score: " . ($player['won'] -
+          $player['lost']) . "
+          (" . $player['won'] . " wins,
+          " . $player['lost'] . " losses)\n";
+        echo"  " . $player['email'] . "\n";
       }
       break;
   }
