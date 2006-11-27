@@ -34,21 +34,27 @@ SpawnPolicy *
 SpawnPolicyFactory::Policy(std::string policy)
 {
   std::string lcPolicy = TextUtils::tolower(policy);
+  SpawnPolicy *p = (SpawnPolicy*)NULL;
 
   /* empty indicates request for default */
   if (lcPolicy == "") {
-    SpawnPolicy *policy = SpawnPolicyFactory::Policy(_defaultPolicy);
-
-    /* failsafe, just so we don't ever return NULL on the default */
-    if (!policy) {
-      return new DefaultSpawnPolicy();
+    if (_defaultPolicy == "") {
+      _defaultPolicy = DefaultSpawnPolicy::Name();
     }
-    return policy;
+    lcPolicy = _defaultPolicy;
   }
 
   /* may return NULL if policy isn't something recognized */
-  return SPAWNPOLICY.Create(lcPolicy.c_str());
+  p = SPAWNPOLICY.Create(lcPolicy.c_str());
+
+  /* failsafe, just so we don't ever return NULL */
+  if (!p) {
+    return new DefaultSpawnPolicy();
+  }
+
+  return p;
 }
+
 
 void
 SpawnPolicyFactory::setDefault(std::string policy)
