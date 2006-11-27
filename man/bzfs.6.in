@@ -653,6 +653,17 @@ captain_macgyver 155 +\- 0ms  12% lost/ooo
 .ft R
 
 .TP 
+.B /gamestats
+Lists player and game statistics. Example:
+.ft CW
+.nf 
+.ne 3
+8 (9-1)[0] bzg Red Team (Registered/Roger)
+5 (8-3)[0] jpa01 Green Team (Bot)
+0 (0-0)[0] jpa Observer (Admin/Registered/Verified)
+.ft R
+
+.TP 
 .B /me \fIaction\fR
 
 This command displays an "action" that is conveyed to another player.  It allows
