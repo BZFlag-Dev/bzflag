@@ -26,7 +26,6 @@ endif
 
 bzrobots_SOURCES =			\
 	bzrobots.cxx			\
-	bzrobots.h			\
 	botplaying.cxx			\
 	RCLink.cxx			\
 	RCLink.h			\
