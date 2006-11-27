@@ -6,7 +6,7 @@ BZFlag 2.1.x
 
 * initial native HPUX platform support - Thomas Matelich
 * Added optional direction shot line to radar - Stephan Hradek
-* Added optional server-side fog enforcement - mike_s_
+* Added optional server-side fog enforcement - Michael Sheppard
 * Modified bzfs error messages on startup - Sean Morrison
 * Low gravity flag - Felix Monninger, Thomas Stauer
 * Packetloss Kick - Thomas Stauer
