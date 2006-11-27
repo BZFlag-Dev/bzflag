@@ -3,7 +3,7 @@
 
 BZFlag 2.1.x
 ------------
-* updated playerHistoryTracker killspree messages - Linuxx0r/fmonninger
+* updated playerHistoryTracker killspree messages - Felix Monninger
 * changed format of recorded match filenames - uso
 * Added bz_fireWorldGM function, for firing a locked-on GM - Matthew Marshall
 * Added shotID to bz_PlayerDieEventData_V1 - Matthew Marshall
