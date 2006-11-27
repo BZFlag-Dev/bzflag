@@ -16,7 +16,7 @@
 /* system implementation headers */
 #include <iostream>
 
-// bzflag library headers
+/* common implementation headers */
 #include "Pack.h"
 
 
@@ -27,11 +27,11 @@ bool  Score::randomRanking = false;
 Score::Score(): wins(0), losses(0), tks(0) {
 }
 
-void Score::dump() {
+void Score::dump() const {
   std::cout << wins << '-' << losses;
 }
 
-float Score::ranking() {
+float Score::ranking() const {
   if (randomRanking)
     return (float)bzfrand();
 
@@ -45,7 +45,7 @@ float Score::ranking() {
   return average * penalty;
 }
 
-bool Score::isTK() {
+bool Score::isTK() const {
   // arbitrary 3
   return (tks >= 3) && (tkKickRatio > 0)
     && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
@@ -63,15 +63,11 @@ void Score::kill() {
   wins++;
 }
 
-void *Score::pack(void *buf) {
+void *Score::pack(void *buf) const {
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
   return buf;
-}
-
-bool Score::reached() {
-  return wins - losses >= score;
 }
 
 void Score::setTeamKillRatio(int _tkKickRatio) {
@@ -84,10 +80,6 @@ void Score::setWinLimit(int _score) {
 
 void Score::setRandomRanking() {
   randomRanking = true;
-}
-
-int Score::getHandicap() {
-  return losses - wins;
 }
 
 // Local Variables: ***
