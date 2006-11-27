@@ -1,0 +1,34 @@
+Obviously, there may be other dependencies on other people systems since I already
+do development.  I have the latest OpenGL development packages, gmake, and used
+gcc 3.2.3
+
+
+1) Had to get 
+   * libcurl - http://gatekeep.cs.utah.edu/hppd/hpux/Networking/WWW/curl-7.14.0/
+      - had to put quotes around the test for curl_version:   if test "x$ok" != "x0"; then
+   * libidn - http://hpux.cs.utah.edu/hppd/hpux/Misc/libidn-0.5.18/
+   * libssl - http://hpux.cs.utah.edu/hppd/hpux/Languages/openssl-0.9.8a/
+   * libtool - http://hpux.cs.utah.edu/hppd/hpux/Gnu/libtool-1.5.14/
+   
+2) OpenGL
+   * cd /usr/local/include; ln -s /opt/graphics/OpenGL/include/GL .
+   * cd X11; ln -s /opt/graphics/OpenGL/include/X11/GLw .
+   * cd /usr/local/lib; for FILE in `ls /opt/graphics/OpenGL/lib/libGL*` do ln -s $FILE .; done
+   * in configure, s|-framework OpenGL|-lGL /path/to/hpglinterface.o|g
+   * in configure, s/<OpenGl/<GL/g
+   
+3) source code changes:
+    * src/net/multicast.cxx:223: recvfrom takes an int* instead of socklen_t*.  Removed the cast to socklen_t*
+    * src/net/network.cxx:31: added  || defined(__hpux) for the hstrerror define
+    * src/bzflag/ServerLink.cxx
+       - line 162: change socklen_t to int
+       - lines 419 and 740: remove (socklen_t*)
+       
+4) put in the platform stuff
+
+3) in the base bz dir: 
+   * sh autogen.sh
+   * CFLAGS=-DNO_PLT_CALLS CPPFLAGS=-DNO_PLT_CALLS ./configure
+      - Hope to see bzflag client being built
+   * gmake -j3
+   
