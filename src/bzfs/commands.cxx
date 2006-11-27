@@ -220,6 +220,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class GameStatsCommand : public ServerCommand {
+public:
+  GameStatsCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class FlagHistoryCommand : public ServerCommand {
 public:
   FlagHistoryCommand();
@@ -460,6 +468,7 @@ static PacketLossWarnCommand  packetLossWarnCommand;
 static PacketLossDropCommand  packetLossDropCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
+static GameStatsCommand   gameStatsCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
@@ -533,6 +542,8 @@ LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
+GameStatsCommand::GameStatsCommand()     : ServerCommand("/gamestats",
+  "- display game statistics for each player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
 IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
@@ -1083,6 +1094,12 @@ bool GameOverCommand::operator() (const char	 *,
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 
   return true;
+}
+
+/* private function used by the gamestats command to compare scores */
+static bool scoreCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
+{
+  return (a->score.getWins() - a->score.getLosses()) > (b->score.getWins() - b->score.getLosses());
 }
 
 
@@ -1703,6 +1720,72 @@ bool IdleStatCommand::operator() (const char	 *,
     reply = otherData->player.getIdleStat();
     if (reply != "")
       sendMessage(ServerPlayer, t, reply.c_str());
+  }
+  return true;
+}
+
+
+bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+
+  /*
+  Clients can get this info anyway..
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::gameStats)) {
+      sendMessage(ServerPlayer, t, "You do not have permission to run the gamestats command");
+      return false;
+    }
+  */
+  
+  GameKeeper::Player *player;
+  GameKeeper::Player *sortedPlayer[256];
+  std::string reply;
+  
+  int i = 0, j = 0;
+  for (i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p != NULL) {
+      sortedPlayer[j++] = p;
+    }
+  }
+  
+  std::sort(sortedPlayer, sortedPlayer + j, scoreCompare);
+
+  for (int i = 0; i < j; i++) {
+    player = sortedPlayer[i];
+
+    std::string attrstr = "(";
+    if (player->accessInfo.isRegistered())
+      attrstr += "Reg/";
+    if (player->accessInfo.isVerified())
+      attrstr += "Ver/";
+    if (player->accessInfo.isAdmin())
+      attrstr += "Adm/";
+    if (player->player.isBot())
+      attrstr += "Bot/";
+    if (attrstr == "(")
+      attrstr += "Anon)";
+    else
+      attrstr[attrstr.length()-1] = ')';
+    
+    std::string emailstr = "(";
+    emailstr += player->player.getEMail();
+    if (emailstr == "(")
+      emailstr = "";
+    else
+      emailstr += ")";
+    
+    reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t%s",
+                              player->score.getWins() - player->score.getLosses(),
+                              player->score.getWins(),
+                              player->score.getLosses(),
+                              player->score.getTKs(),
+                              player->player.getCallSign(),
+                              emailstr.c_str(),
+                              Team::getName(player->player.getTeam()),
+                              attrstr.c_str());
+    
+    sendMessage(ServerPlayer, t, reply.c_str());
   }
   return true;
 }
