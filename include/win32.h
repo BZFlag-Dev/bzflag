@@ -68,6 +68,8 @@ typedef unsigned int	uint32_t;
 #  pragma warning(disable: 4355)
 
 // missing functions
+#  define popen		_popen
+#  define pclose	_pclose
 #  define snprintf	_snprintf
 
 #  define PATH_MAX	MAX_PATH
