@@ -12,16 +12,16 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_bzrobots_SOURCES = \
-	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
+	../bzflag/ClientAuthentication.cxx	\
+	../bzflag/ClientAuthentication.h	\
+	../bzflag/LoginMenu.cxx			\
+	../bzflag/LoginMenu.h
 
 if HAVE_KRB5
-KRB5 =	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
+KRB5 =	../bzflag/ClientAuthentication.cxx	\
+	../bzflag/ClientAuthentication.h	\
+	../bzflag/LoginMenu.cxx			\
+	../bzflag/LoginMenu.h
 endif
 
 bzrobots_SOURCES =			\
@@ -32,14 +32,14 @@ bzrobots_SOURCES =			\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
 	../bzflag/ActionBinding.cxx		\
-	../bzflag/ActionBinding.h			\
+	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\
 	../bzflag/AudioMenu.h			\
 	../bzflag/AutoHunt.cxx			\
 	../bzflag/AutoHunt.h			\
 	../bzflag/AutoPilot.cxx			\
 	../bzflag/AutoPilot.h			\
-	../bzflag/BackgroundRenderer.cxx		\
+	../bzflag/BackgroundRenderer.cxx	\
 	../bzflag/BackgroundRenderer.h		\
 	../bzflag/BaseLocalPlayer.cxx		\
 	../bzflag/BaseLocalPlayer.h		\
@@ -49,57 +49,57 @@ bzrobots_SOURCES =			\
 	../bzflag/ComposeDefaultKey.cxx		\
 	../bzflag/ComposeDefaultKey.h		\
 	../bzflag/ControlPanel.cxx		\
-	../bzflag/ControlPanel.h			\
+	../bzflag/ControlPanel.h		\
 	../bzflag/CrackedGlass.cxx		\
-	../bzflag/CrackedGlass.h			\
-	../bzflag/DisplayMenu.cxx			\
+	../bzflag/CrackedGlass.h		\
+	../bzflag/DisplayMenu.cxx		\
 	../bzflag/DisplayMenu.h			\
 	../bzflag/Downloads.cxx			\
 	../bzflag/Downloads.h			\
-	../bzflag/EffectsMenu.cxx			\
+	../bzflag/EffectsMenu.cxx		\
 	../bzflag/EffectsMenu.h			\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
-	../bzflag/FlashClock.cxx			\
+	../bzflag/FlashClock.cxx		\
 	../bzflag/FlashClock.h			\
 	../bzflag/ForceFeedback.cxx		\
-	../bzflag/ForceFeedback.h			\
-	../bzflag/FormatMenu.cxx			\
+	../bzflag/ForceFeedback.h		\
+	../bzflag/FormatMenu.cxx		\
 	../bzflag/FormatMenu.h			\
 	../bzflag/GUIOptionsMenu.cxx		\
 	../bzflag/GUIOptionsMenu.h		\
 	../bzflag/GuidedMissleStrategy.cxx	\
-	../bzflag/GuidedMissleStrategy.h		\
+	../bzflag/GuidedMissleStrategy.h	\
 	../bzflag/HUDDialog.cxx			\
 	../bzflag/HUDDialog.h			\
 	../bzflag/HUDDialogStack.cxx		\
 	../bzflag/HUDDialogStack.h		\
-	../bzflag/HUDRenderer.cxx			\
+	../bzflag/HUDRenderer.cxx		\
 	../bzflag/HUDRenderer.h			\
 	../bzflag/HUDui.cxx			\
-	../bzflag/HUDui.h				\
+	../bzflag/HUDui.h			\
 	../bzflag/HUDuiControl.cxx		\
-	../bzflag/HUDuiControl.h			\
+	../bzflag/HUDuiControl.h		\
 	../bzflag/HUDuiDefaultKey.cxx		\
 	../bzflag/HUDuiDefaultKey.h		\
 	../bzflag/HUDuiElement.cxx		\
-	../bzflag/HUDuiElement.h			\
-	../bzflag/HUDuiFrame.cxx			\
+	../bzflag/HUDuiElement.h		\
+	../bzflag/HUDuiFrame.cxx		\
 	../bzflag/HUDuiFrame.h			\
-	../bzflag/HUDuiImage.cxx			\
+	../bzflag/HUDuiImage.cxx		\
 	../bzflag/HUDuiImage.h			\
-	../bzflag/HUDuiLabel.cxx			\
+	../bzflag/HUDuiLabel.cxx		\
 	../bzflag/HUDuiLabel.h			\
 	../bzflag/HUDuiList.cxx			\
 	../bzflag/HUDuiList.h			\
-	../bzflag/HUDuiTypeIn.cxx			\
+	../bzflag/HUDuiTypeIn.cxx		\
 	../bzflag/HUDuiTypeIn.h			\
 	../bzflag/HelpCreditsMenu.cxx		\
 	../bzflag/HelpCreditsMenu.h		\
 	../bzflag/HelpFlagsMenu.cxx		\
-	../bzflag/HelpFlagsMenu.h			\
+	../bzflag/HelpFlagsMenu.h		\
 	../bzflag/HelpInstructionsMenu.cxx	\
-	../bzflag/HelpInstructionsMenu.h		\
+	../bzflag/HelpInstructionsMenu.h	\
 	../bzflag/HelpKeymapMenu.cxx		\
 	../bzflag/HelpKeymapMenu.h		\
 	../bzflag/HelpMenu.cxx			\
@@ -111,57 +111,57 @@ bzrobots_SOURCES =			\
 	../bzflag/KeyboardMapMenu.cxx		\
 	../bzflag/KeyboardMapMenu.h		\
 	../bzflag/LocalCommand.cxx		\
-	../bzflag/LocalCommand.h			\
-	../bzflag/LocalPlayer.cxx			\
+	../bzflag/LocalCommand.h		\
+	../bzflag/LocalPlayer.cxx		\
 	../bzflag/LocalPlayer.h			\
 	../bzflag/MainMenu.cxx			\
 	../bzflag/MainMenu.h			\
-	../bzflag/MainWindow.cxx			\
+	../bzflag/MainWindow.cxx		\
 	../bzflag/MainWindow.h			\
 	../bzflag/MenuDefaultKey.cxx		\
 	../bzflag/MenuDefaultKey.h		\
 	../bzflag/NewVersionMenu.cxx		\
 	../bzflag/NewVersionMenu.h		\
-	../bzflag/OptionsMenu.cxx			\
+	../bzflag/OptionsMenu.cxx		\
 	../bzflag/OptionsMenu.h			\
 	../bzflag/Plan.cxx			\
-	../bzflag/Plan.h				\
+	../bzflag/Plan.h			\
 	../bzflag/Player.cxx			\
 	../bzflag/Player.h			\
 	../bzflag/QuickKeysMenu.cxx		\
-	../bzflag/QuickKeysMenu.h			\
+	../bzflag/QuickKeysMenu.h		\
 	../bzflag/QuitMenu.cxx			\
 	../bzflag/QuitMenu.h			\
 	../bzflag/RadarRenderer.cxx		\
-	../bzflag/RadarRenderer.h			\
+	../bzflag/RadarRenderer.h		\
 	../bzflag/Region.cxx			\
 	../bzflag/Region.h			\
-	../bzflag/RegionPriorityQueue.cxx		\
+	../bzflag/RegionPriorityQueue.cxx	\
 	../bzflag/RegionPriorityQueue.h		\
 	../bzflag/RemotePlayer.cxx		\
-	../bzflag/RemotePlayer.h			\
+	../bzflag/RemotePlayer.h		\
 	../bzflag/Roaming.cxx			\
 	../bzflag/Roaming.h			\
-	../bzflag/RobotPlayer.cxx			\
+	../bzflag/RobotPlayer.cxx		\
 	../bzflag/RobotPlayer.h			\
 	../bzflag/RoofTops.cxx			\
 	../bzflag/RoofTops.h			\
 	../bzflag/Roster.cxx			\
 	../bzflag/Roster.h			\
 	../bzflag/SaveWorldMenu.cxx		\
-	../bzflag/SaveWorldMenu.h			\
+	../bzflag/SaveWorldMenu.h		\
 	../bzflag/SceneBuilder.cxx		\
-	../bzflag/SceneBuilder.h			\
+	../bzflag/SceneBuilder.h		\
 	../bzflag/SceneRenderer.cxx		\
-	../bzflag/ScoreboardRenderer.cxx		\
+	../bzflag/ScoreboardRenderer.cxx	\
 	../bzflag/ScoreboardRenderer.h		\
 	../bzflag/SegmentedShotStrategy.cxx	\
-	../bzflag/SegmentedShotStrategy.h		\
+	../bzflag/SegmentedShotStrategy.h	\
 	../bzflag/ServerCommandKey.cxx		\
 	../bzflag/ServerCommandKey.h		\
-	../bzflag/ServerLink.cxx			\
+	../bzflag/ServerLink.cxx		\
 	../bzflag/ServerLink.h			\
-	../bzflag/ServerMenu.cxx			\
+	../bzflag/ServerMenu.cxx		\
 	../bzflag/ServerMenu.h			\
 	../bzflag/ServerStartMenu.cxx		\
 	../bzflag/ServerStartMenu.h		\
@@ -175,47 +175,47 @@ bzrobots_SOURCES =			\
 	../bzflag/ShotStatistics.h		\
 	../bzflag/ShotStats.cxx			\
 	../bzflag/ShotStats.h			\
-	../bzflag/ShotStatsDefaultKey.cxx		\
+	../bzflag/ShotStatsDefaultKey.cxx	\
 	../bzflag/ShotStatsDefaultKey.h		\
 	../bzflag/ShotStrategy.cxx		\
-	../bzflag/ShotStrategy.h			\
+	../bzflag/ShotStrategy.h		\
 	../bzflag/SilenceDefaultKey.cxx		\
 	../bzflag/SilenceDefaultKey.h		\
 	../bzflag/TargetingUtils.cxx		\
 	../bzflag/TargetingUtils.h		\
-	../bzflag/TrackMarks.cxx			\
+	../bzflag/TrackMarks.cxx		\
 	../bzflag/TrackMarks.h			\
 	../bzflag/Weapon.cxx			\
 	../bzflag/Weapon.h			\
 	../bzflag/WeatherRenderer.cxx		\
 	../bzflag/WeatherRenderer.h		\
 	../bzflag/World.cxx			\
-	../bzflag/World.h				\
+	../bzflag/World.h			\
 	../bzflag/WorldBuilder.cxx		\
-	../bzflag/WorldBuilder.h			\
-	../bzflag/WorldPlayer.cxx			\
+	../bzflag/WorldBuilder.h		\
+	../bzflag/WorldPlayer.cxx		\
 	../bzflag/WorldPlayer.h			\
 	../bzflag/callbacks.cxx			\
 	../bzflag/callbacks.h			\
 	../bzflag/clientCommands.cxx		\
 	../bzflag/clientConfig.cxx		\
-	../bzflag/clientConfig.h			\
+	../bzflag/clientConfig.h		\
 	../bzflag/commands.h			\
 	../bzflag/daylight.cxx			\
 	../bzflag/daylight.h			\
-	../bzflag/defaultBZDB.cxx			\
+	../bzflag/defaultBZDB.cxx		\
 	../bzflag/defaultBZDB.h			\
 	../bzflag/effectsRenderer.cxx		\
 	../bzflag/effectsRenderer.h		\
 	../bzflag/motd.cxx			\
-	../bzflag/motd.h				\
-	../bzflag/playerAvatarManager.cxx		\
+	../bzflag/motd.h			\
+	../bzflag/playerAvatarManager.cxx	\
 	../bzflag/playerAvatarManager.h		\
 	../bzflag/playing.h			\
 	../bzflag/sound.cxx			\
-	../bzflag/sound.h				\
+	../bzflag/sound.h			\
 	../bzflag/stars.cxx			\
-	../bzflag/stars.h				\
+	../bzflag/stars.h			\
 	$(KRB5)
 
 
