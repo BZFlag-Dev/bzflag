@@ -39,7 +39,8 @@ SpawnPolicyFactory::Policy(std::string policy)
   /* empty indicates request for default */
   if (lcPolicy == "") {
     if (_defaultPolicy == "") {
-      _defaultPolicy = DefaultSpawnPolicy::Name();
+      DefaultSpawnPolicy dsp;
+      _defaultPolicy = dsp.Name();
     }
     lcPolicy = _defaultPolicy;
   }
