@@ -31,7 +31,6 @@ EXTRA_DIST = \
 	INSTALL \
 	NEWS \
 	README \
-	api_notes \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
