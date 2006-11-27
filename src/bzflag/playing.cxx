@@ -2267,13 +2267,21 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
     {
       // blow up if killer has genocide flag and i'm on same team as victim
       // (and we're not rogues, unless in rabbit mode)
-      if (human && killerPlayer && victimPlayer && victimPlayer != myTank && (victimPlayer->getTeam() == myTank->getTeam()) && (myTank->getTeam() != RogueTeam) && shotId >= 0)
+      if (human && killerPlayer && victimPlayer &&
+	  victimPlayer != myTank &&
+	  (victimPlayer->getTeam() == myTank->getTeam()) &&
+	  (myTank->getTeam() != RogueTeam) &&
+	  (shotId >= 0))
 	{
 	  // now see if shot was fired with a GenocideFlag
 	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
 
-	  if (shot && shot->getFlag() == Flags::Genocide)
+	  //but make sure that if we are not allowing teamkills, the victim was not a suicide
+	  if (shot && shot->getFlag() == Flags::Genocide &&
+	      (killerPlayer != victimPlayer || World::getWorld()->allowTeamKills())) {
+	    // go boom
 	    gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
+	  }
 	}
     }
 
