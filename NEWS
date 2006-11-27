@@ -4,7 +4,7 @@
 BZFlag 2.1.x
 ------------
 
-* added a new /gamestats command - jpa, Sean Morrison
+* added a new /gamestats command - Petteri Aimonen, Sean Morrison
 * player accounting bug fix to bzfquery - Geoffrey Sneddon
 * initial native HPUX platform support - Thomas Matelich
 * Added optional direction shot line to radar - Stephan Hradek
