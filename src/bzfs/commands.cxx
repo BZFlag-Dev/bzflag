@@ -1757,7 +1757,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
     if (player->player.isChat())
       attrstr += "Chat/";
 
-    if (attrstr == "")
+    if (attrstr == "") {
       attrstr += "Anonymous";
     } else {
       // trim off trailing slash
