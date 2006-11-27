@@ -53,6 +53,7 @@
 #include "bzfs.h"
 
 
+
 tmCustomSlashCommandMap	customCommands;
 
 class MsgCommand : public ServerCommand {
@@ -747,7 +748,7 @@ bool PartCommand::operator() (const char *message,
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      return true;
+      return false;
     }
     byeStatement = message + 6;
   }
@@ -778,7 +779,7 @@ bool QuitCommand::operator() (const char *message,
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Unknown command [%s]", message);
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      return true;
+      return false;
     }
     byeStatement = message + 6;
   }
@@ -1721,7 +1722,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
     Clients can get this info anyway..
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::gameStats)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the gamestats command");
-    return false;
+    return true;
     }
   */
   
@@ -1918,7 +1919,6 @@ bool ReportCommand::operator() (const char *message,
 
 
 
-// return false if topic not found
 static bool sendHelpTopic (int sendSlot, const char *helpTopic)
 {
   bool foundChunk = false;
@@ -1935,6 +1935,7 @@ static bool sendHelpTopic (int sendSlot, const char *helpTopic)
       }
     }
   }
+  // return false if topic not found
   return false;
 }
 

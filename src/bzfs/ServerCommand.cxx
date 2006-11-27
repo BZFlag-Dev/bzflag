@@ -44,6 +44,8 @@ bool ServerCommand::execute(const char	 *commandLine,
     = commandMap.find(TextUtils::tolower(commandToken));
   if (it == commandMap.end())
     return false;
+
+  /* run the actual command */
   return (*(it->second))(commandLine, playerData);
 }
 
