@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* player accounting bug fix to bzfquery - Geoffrey Sneddon
 * initial native HPUX platform support - Thomas Matelich
 * Added optional direction shot line to radar - Stephan Hradek
 * Added optional server-side fog enforcement - Michael Sheppard
