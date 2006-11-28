@@ -332,8 +332,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       width = pFont->getStrLength(scale, &tmpText[startSend], len);
       glPushMatrix();
       glTranslatef(x, y, z);
-      GLboolean depthMask;
-      glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
@@ -358,7 +356,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glEnable(GL_TEXTURE_2D);
 	}
       }
-      glDepthMask(depthMask);
+      glDepthMask(BZDBCache.zbuffer);
       glPopMatrix();
       // x transform for next substr
       x += width;
