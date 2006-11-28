@@ -19,9 +19,9 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \
-	serverSideBotSample \
 	doc \
 	m4 \
+	serverSideBotSample \
 	MSVC
 
 EXTRA_DIST = \

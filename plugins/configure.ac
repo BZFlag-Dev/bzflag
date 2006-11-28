@@ -189,8 +189,10 @@ dnl *** Configure Makefiles and output ***
 dnl **************************************
 
 AC_CONFIG_FILES([
-	Makefile
 	HoldTheFlag/Makefile
+	MSVC/Makefile
+	MSVC/VC71/Makefile
+	Makefile
 	RogueGenocide/Makefile
 	SAMPLE_PLUGIN/Makefile
 	airspawn/Makefile
