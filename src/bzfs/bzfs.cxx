@@ -4362,7 +4362,7 @@ int main(int argc, char **argv)
       } // end check if second has elapsed
     } // end check if countdown delay is active
 
-    // player see the announce of resuming the countdown
+    // players see the announce of resuming the countdown
     if (countdownResumeDelay >= 0) {
       static TimeKeeper timePrevious = tm;
       if (readySetGo == -1)
@@ -4375,9 +4375,6 @@ int main(int argc, char **argv)
 	  readySetGo = -1; // reset back to "unset"
 	    clOptions->countdownPaused = false;
 	    sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
-	  // fire off a game start event
-
-	    //sonstwas
 	} else {
 	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("%i...", readySetGo).c_str());
 	  --readySetGo;
