@@ -45,7 +45,7 @@ fonts_DATA = \
 
 EXTRA_DIST = \
 	$(fonts_DATA) \
-	readme
+	README
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
