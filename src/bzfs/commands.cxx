@@ -193,17 +193,17 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LagStatCommand : public ServerCommand {
+class LagStatsCommand : public ServerCommand {
 public:
-  LagStatCommand();
+  LagStatsCommand();
 
   virtual bool operator() (const char *commandLine,
 			   GameKeeper::Player *playerData);
 };
 
-class IdleStatCommand : public ServerCommand {
+class IdleStatsCommand : public ServerCommand {
 public:
-  IdleStatCommand();
+  IdleStatsCommand();
 
   virtual bool operator() (const char *commandLine,
 			   GameKeeper::Player *playerData);
@@ -455,8 +455,8 @@ static JitterWarnCommand  jitterWarnCommand;
 static JitterDropCommand  jitterDropCommand;
 static PacketLossWarnCommand  packetLossWarnCommand;
 static PacketLossDropCommand  packetLossDropCommand;
-static LagStatCommand     lagStatCommand;
-static IdleStatCommand    idleStatCommand;
+static LagStatsCommand     lagStatsCommand;
+static IdleStatsCommand    idleStatsCommand;
 static GameStatsCommand   gameStatsCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
@@ -527,9 +527,9 @@ PacketLossWarnCommand::PacketLossWarnCommand()	 : ServerCommand("/packetlosswarn
 								 "<%> - change the maximum allowed packetloss") {}
 PacketLossDropCommand::PacketLossDropCommand()	 : ServerCommand("/packetlossdrop",
 								 "<count> - display or set the number of packetloss warnings before a player is kicked") {}
-LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
+LagStatsCommand::LagStatsCommand()	 : ServerCommand("/lagstats",
 							 "- list network delays, jitter and number of lost resp. out of order packets by player") {}
-IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
+IdleStatsCommand::IdleStatsCommand()       : ServerCommand("/idlestats",
 							 "- display the idle time in seconds for each player") {}
 GameStatsCommand::GameStatsCommand()     : ServerCommand("/gamestats",
 							 "- display game statistics for each player") {}
@@ -1661,7 +1661,7 @@ bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
   return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
-bool LagStatCommand::operator() (const char *,
+bool LagStatsCommand::operator() (const char *,
 				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
@@ -1691,7 +1691,7 @@ bool LagStatCommand::operator() (const char *,
 }
 
 
-bool IdleStatCommand::operator() (const char *,
+bool IdleStatsCommand::operator() (const char *,
 				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
