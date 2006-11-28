@@ -118,6 +118,7 @@ TimeKeeper gameStartTime;
 TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
+int countdownResumeDelay = -1;
 
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
@@ -482,11 +483,23 @@ void resumeCountdown ( const char *resumedBy )
 	if (!clOptions->countdownPaused)
 		return;
 
-	clOptions->countdownPaused = false;
-	if (resumedBy)
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
-	else
-		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+	countdownResumeDelay = BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
+
+	if (countdownResumeDelay <= 0) {
+	    // resume instantly
+	    clOptions->countdownPaused = false;
+
+	    if (resumedBy)
+ 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+	    else
+ 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+	} else {
+	    // resume after number of seconds in countdownResumeDelay
+	    if (resumedBy)
+ 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
+	    else
+ 		sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+	}
 }
 
 void resetTeamScores ( void )
@@ -4348,6 +4361,30 @@ int main(int argc, char **argv)
 	}
       } // end check if second has elapsed
     } // end check if countdown delay is active
+
+    // player see the announce of resuming the countdown
+    if (countdownResumeDelay >= 0) {
+      static TimeKeeper timePrevious = tm;
+      if (readySetGo == -1)
+	readySetGo = countdownResumeDelay;
+
+      if (tm - timePrevious > 1.0f) {
+	timePrevious = tm;
+	if (readySetGo == 0) {
+	  countdownResumeDelay = -1; // reset back to "unset"
+	  readySetGo = -1; // reset back to "unset"
+	    clOptions->countdownPaused = false;
+	    sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+	  // fire off a game start event
+
+	    //sonstwas
+	} else {
+	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("%i...", readySetGo).c_str());
+	  --readySetGo;
+	}
+      } // end check if second has elapsed
+    } // end check if countdown resuming delay is active
+
 
     // see if game time ran out or if we are paused
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {

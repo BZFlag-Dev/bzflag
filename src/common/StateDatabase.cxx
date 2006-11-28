@@ -96,6 +96,7 @@ const std::string StateDatabase::BZDB_BURROWANGULARAD   = std::string("_burrowAn
 const std::string StateDatabase::BZDB_COLDETDEPTH       = std::string("_coldetDepth");
 const std::string StateDatabase::BZDB_COLDETELEMENTS    = std::string("_coldetElements");
 const std::string StateDatabase::BZDB_COLLISIONLIMIT	= std::string("_collisionLimit");
+const std::string StateDatabase::BZDB_COUNTDOWNRESDELAY	= std::string("_countdownResumeDelay");
 const std::string StateDatabase::BZDB_CULLDEPTH		= std::string("_cullDepth");
 const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElements");
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
