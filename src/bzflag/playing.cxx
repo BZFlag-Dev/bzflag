@@ -2005,9 +2005,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
 	case MsgPause: {
-		if (!myTank || myTank->getTeam() != ObserverTeam || BZDB.evalInt("showVelocities") < 1 )
-			break;
-
 		PlayerId id;
 		msg = nboUnpackUByte(msg, id);
 		uint8_t Pause;
@@ -2017,15 +2014,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 			break;
 
 		tank->setPausedMessageState(Pause);
-		std::string	text = ColorStrings[PulsatingColor] + TextUtils::format("*****%s has ",tank->getCallSign());
-		if (Pause)
-			text += "paused*****";
-		else
-			text += "unpaused*****";
-
-		if (controlPanel)
-			controlPanel->addMessage(text, 3);
-
+		addMessage(tank, Pause ? "has paused" : "has unpaused" );
 		break;
 	}
 
