@@ -1333,7 +1333,7 @@ static bool removePlayer (PlayerId id)
     return false;
   }
 
-  Player* p = player[playerIndex];
+  Player* p = getPlayerByIndex(playerIndex);
 
   Address addr;
   std::string msg = "signing off";
@@ -2725,7 +2725,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	} else {
 	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = getPlayerByIndex(i);
 	  else
 	    DEBUG1("Received handicap update for unknown player!\n");
 	}
@@ -2766,7 +2766,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	} else {
 	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = getPlayerByIndex(i);
 	  else
 	    DEBUG1("Recieved score update for unknown player!\n");
 	}

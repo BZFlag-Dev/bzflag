@@ -42,6 +42,14 @@ Player* lookupPlayer(PlayerId id)
       return NULL;
   }
 
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++) {
+    if (robots[i]->getId() == id) {
+      return robots[i];
+    }
+  }
+#endif
+
   if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
     return player[id];
 
@@ -58,6 +66,14 @@ int lookupPlayerIndex(PlayerId id)
 
   if (id == ServerPlayer)
     return ServerPlayer;
+
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++) {
+    if (robots[i]->getId() == id) {
+      return id;
+    }
+  }
+#endif
 
   if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
     return id;
@@ -81,6 +97,13 @@ Player* getPlayerByIndex(int index)
   if (index == -1 || index >= curMaxPlayers) {
     return NULL;
   }
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++) {
+    if (robots[i]->getId() == index) {
+      return robots[i];
+    }
+  }
+#endif
   return player[index];
 }
 
@@ -91,6 +114,13 @@ Player* getPlayerByName(const char* name)
       return player[i];
     }
   }
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++) {
+    if (strcmp( robots[i]->getCallSign(), name ) == 0) {
+      return robots[i];
+    }
+  }
+#endif
   World *world = World::getWorld();
   if (!world) {
     return NULL;

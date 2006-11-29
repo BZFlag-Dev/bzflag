@@ -583,7 +583,7 @@ static bool removePlayer (PlayerId id)
     return false;
   }
 
-  Player* p = player[playerIndex];
+  Player* p = getPlayerByIndex(playerIndex);
 
   Address addr;
   std::string msg = "signing off";
@@ -1053,7 +1053,10 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
 	      if (robots[r] && robots[r]->getId() == playerIndex) 
 		{
 		  robots[r]->restart(pos,forward);
-		  setRobotTarget(robots[r]);
+		  if (!rcLink)
+		    {
+		      setRobotTarget(robots[r]);
+		    }
 		  break;
 		}
 	    }
@@ -1064,7 +1067,6 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
       tank->setVelocity(zero);
       tank->setAngularVelocity(0.0f);
       tank->setDeadReckoning();
-      tank->spawnEffect();
     }
 }
 
@@ -1515,7 +1517,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  Player *sPlayer = NULL;
 	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = getPlayerByIndex(i);
 	  else
 	    DEBUG1("Received handicap update for unknown player!\n");
 	  if (sPlayer) {
@@ -1552,7 +1554,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  Player *sPlayer = NULL;
 	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = getPlayerByIndex(i);
 	  else
 	    DEBUG1("Recieved score update for unknown player!\n");
 	  if (sPlayer)
@@ -1723,6 +1725,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (rcLink) {
 	  robots[i] = new RCRobotPlayer(id, callsign, serverLink,
 				      rcLink, startupInfo.email);
+	  fprintf(stderr, "new tank; type: %d\n", robots[i]->getPlayerType());
 	} else {
 	  robots[i] = new RobotPlayer(id, callsign, serverLink,
 				      startupInfo.email);
@@ -2152,7 +2155,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   float minTime = Infinity;
   int i;
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i] && player[i]->getId() != tank->getId()) {
+    if (player[i]) {
       tank->checkHit(player[i], hit, minTime);
     }
   }
