@@ -19,6 +19,10 @@
 #include <string>
 #include <vector>
 
+/* DO NOT INCLUDE ANY OTHER HEADERS IN THIS FILE */
+/* PLUGINS NEED TO BE BUILT WITHOUT THE BZ SOURCE TREE */
+/* JUST THIS ONE FILE */
+
 #ifdef _WIN32
 	#ifdef INSIDE_BZ
 		#define BZF_API __declspec( dllexport )
