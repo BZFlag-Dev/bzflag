@@ -3895,23 +3895,31 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				break;
 			}
 
-			// check the distance to see if they went WAY too far
+			bool doDistChecks = false;
 
-			float timeDelta = (float)now.getSeconds() - playerData->serverTimeStamp; // max time since last update
-			float maxDist = sqrt(maxPlanarSpeedSqr) * timeDelta; // the maximum distance they could have moved ( assume 0 lag )
-			
-			float movementDelta[2];
-			movementDelta[0] = state.pos[0]-playerData->lastState.pos[0];
-			movementDelta[1] = state.pos[1]-playerData->lastState.pos[1];
+			if (OBSTACLEMGR.getTeles().size() == 0)
+				doDistChecks = true;
 
-			float realDist = sqrt(movementDelta[0]*movementDelta[0] + movementDelta[1]*movementDelta[1]);
-			if ( realDist > (maxDist * 1.1f))
+			if (doDistChecks)
 			{
-				DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
-					playerData->player.getCallSign(), t,
-					sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-				sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
-				removePlayer(t, "too fast");
+				// check the distance to see if they went WAY too far
+
+				float timeDelta = (float)now.getSeconds() - playerData->serverTimeStamp; // max time since last update
+				float maxDist = sqrt(maxPlanarSpeedSqr) * timeDelta; // the maximum distance they could have moved ( assume 0 lag )
+				
+				float movementDelta[2];
+				movementDelta[0] = state.pos[0]-playerData->lastState.pos[0];
+				movementDelta[1] = state.pos[1]-playerData->lastState.pos[1];
+
+				float realDist = sqrt(movementDelta[0]*movementDelta[0] + movementDelta[1]*movementDelta[1]);
+				if ( realDist > (maxDist * 1.1f))
+				{
+					DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
+						playerData->player.getCallSign(), t,
+						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+					removePlayer(t, "too fast");
+				}
 			}
 	    }
 	  }
