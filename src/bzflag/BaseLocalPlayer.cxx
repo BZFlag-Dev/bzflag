@@ -18,8 +18,9 @@
 
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
-				 const char* name, const char* _email) :
-  Player(_id, RogueTeam, name, _email, TankPlayer),
+				 const char* name, const char* _email,
+				 const PlayerType _type) :
+  Player(_id, RogueTeam, name, _email, _type),
   lastTime(TimeKeeper::getTick()),
   salt(0)
 {

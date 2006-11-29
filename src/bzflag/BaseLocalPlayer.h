@@ -27,7 +27,8 @@
 
 class BaseLocalPlayer : public Player {
  public:
-  BaseLocalPlayer(const PlayerId&, const char* name, const char* email);
+  BaseLocalPlayer(const PlayerId&, const char* name, const char* email,
+		  const PlayerType type);
   ~BaseLocalPlayer();
 
   void update();
