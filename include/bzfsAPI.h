@@ -19,8 +19,9 @@
 #include <string>
 #include <vector>
 
-#include "global.h"
-
+/* DO NOT INCLUDE ANY OTHER HEADERS IN THIS FILE */
+/* PLUGINS NEED TO BE BUILT WITHOUT THE BZ SOURCE TREE */
+/* JUST THIS ONE FILE */
 
 #ifdef _WIN32
 	#ifdef INSIDE_BZ
