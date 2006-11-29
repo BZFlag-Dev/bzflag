@@ -52,6 +52,7 @@
 // common implementation headers
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
+#include "CollisionManager.h"
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
 #include "GameTime.h"
@@ -3899,6 +3900,27 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
 			if (OBSTACLEMGR.getTeles().size() == 0)
 				doDistChecks = true;
+			else
+			{
+				doDistChecks = true;
+				float fudge = 2.0f;
+				float height = BZDBCache::tankHeight * fudge;
+				float radius = BZDBCache::tankRadius * fudge;
+
+				if (height < Epsilon) {
+					height = Epsilon;
+				}
+
+				// check everything but walls
+				const ObsList* olist = COLLISIONMGR.cylinderTest (playerData->lastState.pos, radius, height);
+				for (int i = 0; i < olist->count; i++) {
+					const Obstacle* obs = olist->list[i];
+					if (strcmp(obs->getType(),"Teleporter") == 0 &&  obs->inCylinder(playerData->lastState.pos, radius, height)) {
+						doDistChecks = false;
+						break;
+					}
+				}
+			}
 
 			if (doDistChecks)
 			{
