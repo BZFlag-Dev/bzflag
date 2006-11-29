@@ -71,7 +71,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   offset(0.0),
   deadReckoningState(0),
   oldStatus(0),
-  oldZSpeed(0.0f)
+  oldZSpeed(0.0f),
+  pauseMessageState(false)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);

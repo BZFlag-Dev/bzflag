@@ -2004,6 +2004,30 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+	case MsgPause: {
+		if (!myTank || myTank->getTeam() != ObserverTeam || BZDB.evalInt("showVelocities") < 1 )
+			break;
+
+		PlayerId id;
+		msg = nboUnpackUByte(msg, id);
+		uint8_t Pause;
+		nboUnpackUByte(msg, Pause);
+		Player* tank = lookupPlayer(id);
+		if (!tank)
+			break;
+
+		tank->setPausedMessageState(Pause);
+		std::string	text = ColorStrings[PulsatingColor] + TextUtils::format("*****%s has ",tank->getCallSign());
+		if (Pause)
+			text += "paused*****";
+		else
+			text += "unpaused*****";
+
+		if (controlPanel)
+			controlPanel->addMessage(text, 3);
+
+		break;
+	}
 
     case MsgKilled: {
       PlayerId victim, killer;

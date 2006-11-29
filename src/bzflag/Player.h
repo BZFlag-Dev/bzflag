@@ -150,6 +150,9 @@ public:
   bool		hasPlayerList() const;
   void		setPlayerList(bool = true);
 
+  bool		getPausedMessageState ( void ) const;
+  void		setPausedMessageState ( bool set ) { pauseMessageState = set;}
+
   bool		validTeamTarget(const Player *possibleTarget) const;
 
   // returns true iff dead reckoning is too different from the
@@ -205,6 +208,9 @@ protected:
   ShotStatistics	shotStatistics;
   const Obstacle* lastObstacle; // last obstacle touched
   TimeKeeper	jamTime;
+
+  // pause message
+  bool pauseMessageState;
 
 private:
   // return true if the shot had to be terminated or false if it
@@ -497,6 +503,11 @@ inline bool		Player::isAlive() const
 inline bool		Player::isPaused() const
 {
   return (state.status & short(PlayerState::Paused)) != 0;
+}
+
+inline bool Player::getPausedMessageState ( void ) const
+{ 
+	return pauseMessageState;
 }
 
 inline bool		Player::isAutoPilot() const
