@@ -2014,6 +2014,7 @@ static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
 static void handleAllow ( void *msg, uint16_t /*len*/ )
 {
   PlayerId id;
+  LocalPlayer *localtank = NULL;
   msg = nboUnpackUByte(msg, id);
 
   uint8_t allowMovement;
@@ -2024,16 +2025,12 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
 
   Player* tank = NULL;
   if (myTank && myTank->getId() == id) {
-    tank = myTank;
-    myTank->setDesiredSpeed(0.0);
-    myTank->setDesiredAngVel(0.0);
+    tank = localtank = myTank;
   } else {
 #ifdef ROBOT
     for (int i = 0; i < MAX_ROBOTS; i++) {
       if (robots[i] && robots[i]->getId() == id) {
-	tank = robots[i];
-	robots[i]->setDesiredSpeed(0.0);
-	robots[i]->setDesiredAngVel(0.0);
+	tank = localtank = robots[i];
       }
     }
 #endif
@@ -2042,6 +2039,15 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
     }
   }
   if (!tank) return;
+
+  if (localtank) {
+    localtank->setDesiredSpeed(0.0);
+    localtank->setDesiredAngVel(0.0);
+    // drop any team flag we may have, as would happen if we paused
+    const FlagType* flagd = localtank->getFlag();
+    if (flagd->flagTeam != NoTeam)
+      serverLink->sendDropFlag(localtank->getPosition());
+  }
 
   tank->setAllowMovement(allowMovement != 0);
   tank->setAllowShooting(allowShooting != 0);
