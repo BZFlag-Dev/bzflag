@@ -9,7 +9,7 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -W_@@_
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdlmain -lsdl -lcurl -lares -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lglew_@@_
 Libs=..\Dev-C++
-UnitCount=458
+UnitCount=459
 Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -4578,7 +4578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit459]
-FileName=..\src\bzflag\ScoreboardRenderer.cxx
+FileName=..\src\bzflag\defaultBZDB.cxx
 CompileCpp=1
 Folder=Source Files/bzflag
 Compile=1
@@ -4766,3 +4766,4 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+
