@@ -356,7 +356,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glEnable(GL_TEXTURE_2D);
 	}
       }
-      glDepthMask(BZDBCache.zbuffer);
+      glDepthMask(BZDBCache::zbuffer);
       glPopMatrix();
       // x transform for next substr
       x += width;
