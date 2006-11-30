@@ -75,8 +75,11 @@ public:
 			vec[1] = pos[1]-yMax;
 			vec[2] = pos[2]-zMax;
 
-			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
 			if ( dist > rad)
+				return false;
+
+			if ( pos[2] > zMax || pos[2] < zMin )
 				return false;
 
 		}
@@ -127,13 +130,14 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 				newZone.zMin = (float)atof(nubs->get(5).c_str());
 				newZone.zMax = (float)atof(nubs->get(6).c_str());
 			}
-			else if ( key == "RAD" && nubs->size() > 5)
+			else if ( key == "CYLINDER" && nubs->size() > 5)
 			{
 				newZone.box = false;
-				newZone.rad = (float)atof(nubs->get(4).c_str());
+				newZone.rad = (float)atof(nubs->get(5).c_str());
 				newZone.xMax =(float)atof(nubs->get(1).c_str());
 				newZone.yMax =(float)atof(nubs->get(2).c_str());
-				newZone.zMax =(float)atof(nubs->get(3).c_str());
+				newZone.zMin =(float)atof(nubs->get(3).c_str());
+				newZone.zMax =(float)atof(nubs->get(4).c_str());
 		}
 			else if ( key == "FLAG" && nubs->size() > 1)
 			{
