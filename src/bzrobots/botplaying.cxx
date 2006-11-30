@@ -2182,8 +2182,11 @@ static void		checkEnvironment(RobotPlayer* tank)
       tankid = curMaxPlayers - 1 - i;
     }
 
-    if (player[tankid] && tankid != tank->getId()) {
-      tank->checkCollision(player[tankid]);
+    Player *othertank = lookupPlayer(tankid);
+
+    if (othertank && othertank->getTeam() != ObserverTeam &&
+	tankid != tank->getId()) {
+      tank->checkCollision(othertank);
     }
   }
   // swap direction for next time:
