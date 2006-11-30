@@ -773,6 +773,21 @@ BZF_API  bool bz_freePlayerRecord( bz_PlayerRecord *playerRecord )
 	return true;
 }
 
+BZF_API const char* bz_getPlayerFlag( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return NULL;
+
+	FlagInfo* flagInfo = FlagInfo::get(player->player.getFlag());
+	if (!flagInfo)
+		return NULL;
+
+	return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
+}
+
+
 BZF_API bool bz_setPlayerWins (int playerId, int wins)
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
