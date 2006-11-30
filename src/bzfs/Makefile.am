@@ -16,6 +16,8 @@ bzfs_SOURCES = \
 	AccessControlList.h \
 	Authentication.cxx \
 	Authentication.h \
+	AutoAllowTimer.cxx \
+	AutoAllowTimer.h \
 	BanCommands.cxx \
 	bzfsAPI.cxx \
 	bzfsChatVerify.h \

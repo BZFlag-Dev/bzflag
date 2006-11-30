@@ -42,6 +42,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(clientVersion, 0, VersionLen);
   pauseRequestLag = 0;
   pauseRequestTime = TimeKeeper::getNullTime();
+  allowChangeTime = TimeKeeper::getNullTime();
   jumpStartPos = 0.0f;
   allowedHeightAtJumpStart = -1.0f;
 }

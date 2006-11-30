@@ -51,6 +51,7 @@
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
 #include "bzfsPlayerStateVerify.h"
+#include "AutoAllowTimer.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -4114,6 +4115,12 @@ int main(int argc, char **argv)
   // eek, nobody can spawn!!
   if (!serverAllowsSpawn)
     std::cout << "WARNING: No players have the SPAWN permission!" << std::endl;
+
+  // if requested, make it so AllowMovement and AllowShooting eventually
+  // get reenabled automatically
+  if (BZDB.eval(StateDatabase::BZDB_AUTOALLOWTIME) > 0) {
+    bz_registerEvent(bz_eTickEvent, new AutoAllowTimerTickHandler);
+  }
 
   if (clOptions->startRecording) {
     Record::start(ServerPlayer);
