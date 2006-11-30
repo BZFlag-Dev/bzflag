@@ -3735,23 +3735,21 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       // observer updates are not relayed
       if (playerData->player.isObserver()) {
-	// skip all of the checks
-	playerData->setPlayerState(state, timestamp);
+		// skip all of the checks
+		playerData->setPlayerState(state, timestamp);
+		break;
+		}
+	// tell the API that they moved.
 
-		// tell the API that they moved.
-
-		bz_PlayerUpdateEventData eventData;
-		memcpy(eventData.pos,state.pos,sizeof(float)*3);
-		memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
-		eventData.angVel = state.angVel;
-		eventData.azimuth = state.azimuth;
-		eventData.phydrv = state.phydrv;
-		eventData.time = TimeKeeper::getCurrent().getSeconds();
-		eventData.playerID = id;
-		worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
-
-	break;
-      }
+	bz_PlayerUpdateEventData eventData;
+	memcpy(eventData.pos,state.pos,sizeof(float)*3);
+	memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
+	eventData.angVel = state.angVel;
+	eventData.azimuth = state.azimuth;
+	eventData.phydrv = state.phydrv;
+	eventData.time = TimeKeeper::getCurrent().getSeconds();
+	eventData.playerID = id;
+	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
       // silently drop old packet
       if (state.order <= playerData->lastState.order) {
