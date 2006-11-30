@@ -483,7 +483,7 @@ void resumeCountdown ( const char *resumedBy )
 	if (!clOptions->countdownPaused)
 		return;
 
-	countdownResumeDelay = BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
+	countdownResumeDelay = BZDB.evalInt(StateDatabase::BZDB_COUNTDOWNRESDELAY);
 
 	if (countdownResumeDelay <= 0) {
 	    // resume instantly
