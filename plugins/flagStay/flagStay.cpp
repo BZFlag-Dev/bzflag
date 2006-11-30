@@ -179,14 +179,14 @@ void EventHandler::process ( bz_EventData *eventData )
 		break;
 	}
 
-	bz_PlayerRecord *player = bz_getPlayerByIndex(playerID);
-	if (!player)
+	const char* flagAbrev = bz_getPlayerFlag(playerID);
+	if (!flagAbrev)
 		return;
 
 	// check and see if a zone cares about the current flag
 	for ( unsigned int i = 0; i < zoneList.size(); i++ )
 	{
-		if ( zoneList[i].checkFlag(player->currentFlag.c_str()) )
+		if ( zoneList[i].checkFlag(flagAbrev) )
 		{
 			if ( !zoneList[i].pointIn(pos) )	// they have taken the flag out of a zone, pop it.
 			{
@@ -197,7 +197,6 @@ void EventHandler::process ( bz_EventData *eventData )
 			}
 		}
 	}
-	bz_freePlayerRecord(player);
 }
 
 
