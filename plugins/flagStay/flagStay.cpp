@@ -55,6 +55,7 @@ public:
 	float xMax,xMin,yMax,yMin,zMax,zMin;
 	float rad;
 
+	std::string message;
 	bool pointIn ( float pos[3] )
 	{
 		if ( box )
@@ -138,11 +139,15 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 				newZone.yMax =(float)atof(nubs->get(2).c_str());
 				newZone.zMin =(float)atof(nubs->get(3).c_str());
 				newZone.zMax =(float)atof(nubs->get(4).c_str());
-		}
+			}
 			else if ( key == "FLAG" && nubs->size() > 1)
 			{
 				std::string flag = nubs->get(1).c_str();
 				newZone.flagList.push_back(flag);
+			}
+			else if ( key == "MESSAGE" && nubs->size() > 1 )
+			{
+				newZone.message = nubs->get(1).c_str();
 			}
 		}
 		bz_deleteStringList(nubs);
@@ -187,6 +192,8 @@ void EventHandler::process ( bz_EventData *eventData )
 			if ( !zoneList[i].pointIn(pos) )	// they have taken the flag out of a zone, pop it.
 			{
 				bz_removePlayerFlag(playerID);
+				if (zoneList[i].message.size())
+					bz_sendTextMessage(BZ_SERVER,playerID,zoneList[i].message.c_str());
 				i = (unsigned int)zoneList.size();	// finish out
 			}
 		}
