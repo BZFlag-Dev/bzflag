@@ -2999,6 +2999,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	shotEvent.pos[0] = shot.pos[0];
 	shotEvent.pos[1] = shot.pos[1];
 	shotEvent.pos[2] = shot.pos[2];
+	shotEvent.playerID = shooter.getPlayerIndex();
 
 	shotEvent.type = firingInfo.flagType->flagAbbv;
 
@@ -3746,6 +3747,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 		eventData.azimuth = state.azimuth;
 		eventData.phydrv = state.phydrv;
 		eventData.time = TimeKeeper::getCurrent().getSeconds();
+		eventData.playerID = id;
 		worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
 	break;

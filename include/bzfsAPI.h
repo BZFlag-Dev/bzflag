@@ -800,6 +800,7 @@ public:
 		eventType = bz_eShotFiredEvent;
 		pos[0] = pos[1] = pos[2] = 0;
 		changed = false;
+		playerID = -1;
 	}
 
 	virtual ~bz_ShotFiredEventData(){};
@@ -807,6 +808,7 @@ public:
 	bool		changed;
 	float		pos[3];
 	bzApiString	type;
+	int			playerID;
 };
 
 class bz_PlayerUpdateEventData : public bz_EventData
@@ -820,6 +822,7 @@ public:
 		azimuth = angVel = 0.0f;
 		phydrv = 0;
 		time = 0;
+		playerID = -1;
 	}
 
 	virtual ~bz_PlayerUpdateEventData(){};
@@ -829,6 +832,7 @@ public:
 	float	azimuth;	
 	float	angVel;
 	int		phydrv;		
+	int		playerID;
 
 	double time;
 };
