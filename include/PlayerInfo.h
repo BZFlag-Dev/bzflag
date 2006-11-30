@@ -129,6 +129,7 @@ public:
   unsigned short int trackerID();
   static TimeKeeper now;
   int endShotCredit;
+  TimeKeeper allowChangeTime;
 
   PlayerType getType( void ) {return type;}
 
@@ -272,11 +273,13 @@ inline bool		PlayerInfo::canShoot() const
 inline void		PlayerInfo::setAllowMovement(bool allow)
 {
   allowMovement = allow;
+  allowChangeTime = now;
 }
 
 inline void		PlayerInfo::setAllowShooting(bool allow)
 {
   allowShooting = allow;
+  allowChangeTime = now;
 }
 
 inline bool PlayerInfo::isAutoPilot() const {
