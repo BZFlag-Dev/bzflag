@@ -150,10 +150,10 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 				newZone.message = nubs->get(1).c_str();
 			}
 		}
-		bz_deleteStringList(nubs);
 
-		zoneList.push_back(newZone);
 	}
+	bz_deleteStringList(nubs);
+	zoneList.push_back(newZone);
 	return true;
 }
 
