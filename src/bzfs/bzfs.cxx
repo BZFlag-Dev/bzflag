@@ -57,6 +57,7 @@
 #include "AnsiCodes.h"
 #include "GameTime.h"
 #include "bzfsAPI.h"
+#include "Teleporter.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef _USE_BZ_API
@@ -3735,6 +3736,18 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (playerData->player.isObserver()) {
 	// skip all of the checks
 	playerData->setPlayerState(state, timestamp);
+
+		// tell the API that they moved.
+
+		bz_PlayerUpdateEventData eventData;
+		memcpy(eventData.pos,state.pos,sizeof(float)*3);
+		memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
+		eventData.angVel = state.angVel;
+		eventData.azimuth = state.azimuth;
+		eventData.phydrv = state.phydrv;
+		eventData.time = TimeKeeper::getCurrent().getSeconds();
+		worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
+
 	break;
       }
 
@@ -3902,6 +3915,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				doDistChecks = true;
 			else
 			{
+				if (state.status & PlayerState::Teleporting)
+					doDistChecks = true;
+				/*
 				doDistChecks = true;
 				float fudge = 2.0f;
 				float height = BZDBCache::tankHeight * fudge;
@@ -3915,11 +3931,11 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				const ObsList* olist = COLLISIONMGR.cylinderTest (playerData->lastState.pos, radius, height);
 				for (int i = 0; i < olist->count; i++) {
 					const Obstacle* obs = olist->list[i];
-					if (strcmp(obs->getType(),"Teleporter") == 0 &&  obs->inCylinder(playerData->lastState.pos, radius, height)) {
+					if ( obs->getType() == Teleporter::getClassName() && obs->inCylinder(playerData->lastState.pos, radius, height)) {
 						doDistChecks = false;
 						break;
 					}
-				}
+				} */
 			}
 
 			if (doDistChecks)

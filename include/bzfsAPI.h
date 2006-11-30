@@ -79,6 +79,7 @@ typedef enum
 	bz_ePlayerAuthEvent,
 	bz_eServerMsgEvent,
 	bz_eShotFiredEvent,
+	bz_ePlayerUpdateEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -806,6 +807,30 @@ public:
 	bool		changed;
 	float		pos[3];
 	bzApiString	type;
+};
+
+class bz_PlayerUpdateEventData : public bz_EventData
+{
+public:
+	bz_PlayerUpdateEventData()
+	{
+		eventType = bz_ePlayerUpdateEvent;
+		pos[0] = pos[1] = pos[2] = 0;
+		velocity[0] = velocity[1] = velocity[2] = 0;
+		azimuth = angVel = 0.0f;
+		phydrv = 0;
+		time = 0;
+	}
+
+	virtual ~bz_PlayerUpdateEventData(){};
+
+	float	pos[3];
+	float	velocity[3];
+	float	azimuth;	
+	float	angVel;
+	int		phydrv;		
+
+	double time;
 };
 
 
