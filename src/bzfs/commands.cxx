@@ -1740,7 +1740,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
   
   std::sort(sortedPlayer, sortedPlayer + j, scoreCompare);
 
-  for (int i = 0; i < j; i++) {
+  for (i = 0; i < j; i++) {
     player = sortedPlayer[i];
 
     std::string attrstr = std::string("");
