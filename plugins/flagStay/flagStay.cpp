@@ -183,19 +183,27 @@ void EventHandler::process ( bz_EventData *eventData )
 	if (!flagAbrev)
 		return;
 
+	std::vector<FlagStayZone*> validZones;
+
 	// check and see if a zone cares about the current flag
 	for ( unsigned int i = 0; i < zoneList.size(); i++ )
 	{
 		if ( zoneList[i].checkFlag(flagAbrev) )
-		{
-			if ( !zoneList[i].pointIn(pos) )	// they have taken the flag out of a zone, pop it.
-			{
-				bz_removePlayerFlag(playerID);
-				if (zoneList[i].message.size())
-					bz_sendTextMessage(BZ_SERVER,playerID,zoneList[i].message.c_str());
-				i = (unsigned int)zoneList.size();	// finish out
-			}
-		}
+			validZones.push_back(&zoneList[i]);
+	}
+	
+	bool insideOne = false;
+	for ( unsigned int i = 0; i < validZones.size(); i++ )
+	{
+		if ( validZones[i]->pointIn(pos) )	// they have taken the flag out of a zone, pop it.
+			insideOne = true;
+	}
+
+	if (!insideOne)
+	{
+		bz_removePlayerFlag(playerID);
+		if (zoneList[i].message.size())
+			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[i].message.c_str());
 	}
 }
 
