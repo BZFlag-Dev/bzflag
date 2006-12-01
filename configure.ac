@@ -838,6 +838,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/SAMPLE_PLUGIN/Makefile
 	plugins/airspawn/Makefile
 	plugins/chathistory/Makefile
+	plugins/flagStay/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/killall/Makefile
 	plugins/logDetail/Makefile

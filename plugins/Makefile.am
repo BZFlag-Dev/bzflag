@@ -3,6 +3,7 @@ SUBDIRS = \
 	SAMPLE_PLUGIN \
 	airspawn \
 	chathistory \
+	flagStay \
 	hiddenAdmin \
 	killall \
 	logDetail \
