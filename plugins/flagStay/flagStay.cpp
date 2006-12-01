@@ -216,7 +216,7 @@ void EventHandler::process ( bz_EventData *eventData )
 
 		bz_removePlayerFlag(playerID);
 		if (lastZone != -1 && zoneList[lastZone].message.size())
-			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[i].message.c_str());
+			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[lastZone].message.c_str());
 	}
 }
 
