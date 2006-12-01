@@ -1618,6 +1618,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\AutoAllowTimer.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\BanCommands.cxx"
 				>
 			</File>
@@ -4630,6 +4634,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Authentication.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\AutoAllowTimer.h"
 				>
 			</File>
 			<File
