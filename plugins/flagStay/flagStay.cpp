@@ -198,22 +198,23 @@ void EventHandler::process ( bz_EventData *eventData )
 			validZones.push_back(&zoneList[i]);
 	}
 	
+        // Check each zone for this flag to see if we are in one
 	bool insideOne = false;
 	for ( unsigned int i = 0; i < validZones.size(); i++ )
 	{
-		if ( validZones[i]->pointIn(pos) )	// they have taken the flag out of a zone, pop it.
+		if ( validZones[i]->pointIn(pos) )
 		{
 			insideOne = true;
 			playeIDToZoneMap[playerID] = i;
 		}
 	}
 
-	if (!insideOne)
+        // if they have taken the flag out of a zone, pop it.
+	if (!insideOne && validZones.size() > 0)
 	{
 		int lastZone = -1;
-		if ( playeIDToZoneMap.find(playerID) !=playeIDToZoneMap.end() )
+		if ( playeIDToZoneMap.find(playerID) != playeIDToZoneMap.end() )
 			lastZone = playeIDToZoneMap[playerID];
-
 		bz_removePlayerFlag(playerID);
 		if (lastZone != -1 && zoneList[lastZone].message.size())
 			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[lastZone].message.c_str());
