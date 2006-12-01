@@ -473,6 +473,7 @@ void pauseCountdown ( const char *pausedBy )
 		return;
 
 	clOptions->countdownPaused = true;
+	countdownResumeDelay = -1; // reset back to "unset"
 	if (pausedBy)
 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
 	else
@@ -484,12 +485,11 @@ void resumeCountdown ( const char *resumedBy )
 	if (!clOptions->countdownPaused)
 		return;
 
+	clOptions->countdownPaused = false;
 	countdownResumeDelay = BZDB.evalInt(StateDatabase::BZDB_COUNTDOWNRESDELAY);
 
 	if (countdownResumeDelay <= 0) {
 	    // resume instantly
-	    clOptions->countdownPaused = false;
-
 	    if (resumedBy)
  		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
 	    else
@@ -4187,7 +4187,7 @@ int main(int argc, char **argv)
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
 
-    if (countdownDelay >= 0) {
+    if ((countdownDelay >= 0) || (countdownResumeDelay >= 0)) {
       // 3 seconds too slow for match countdowns
       waitTime = 0.5f;
     } else if (countdownActive && clOptions->timeLimit > 0.0f) {
@@ -4301,6 +4301,7 @@ int main(int argc, char **argv)
 	if (readySetGo == 0) {
 	  sendMessage(ServerPlayer, AllPlayers, "The match has started!...Good Luck Teams!");
 	  countdownDelay = -1; // reset back to "unset"
+	  countdownResumeDelay = -1; // reset back to "unset"
 	  readySetGo = -1; // reset back to "unset"
 	  countdownActive = true;
 	  gameOver = false;
@@ -4370,21 +4371,16 @@ int main(int argc, char **argv)
     } // end check if countdown delay is active
 
     // players see the announce of resuming the countdown
-    if (countdownResumeDelay >= 0) {
+    if (countdownResumeDelay > 0) {
       static TimeKeeper timePrevious = tm;
-      if (readySetGo == -1)
-	readySetGo = countdownResumeDelay;
-
       if (tm - timePrevious > 1.0f) {
 	timePrevious = tm;
-	if (readySetGo == 0) {
+	if (gameOver) {
 	  countdownResumeDelay = -1; // reset back to "unset"
-	  readySetGo = -1; // reset back to "unset"
-	    clOptions->countdownPaused = false;
-	    sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
 	} else {
-	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("%i...", readySetGo).c_str());
-	  --readySetGo;
+	  sendMessage(ServerPlayer, AllPlayers,
+		      TextUtils::format("%i...", countdownResumeDelay).c_str());
+	  --countdownResumeDelay;
 	}
       } // end check if second has elapsed
     } // end check if countdown resuming delay is active
@@ -4417,7 +4413,8 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
+      if (countdownActive && !clOptions->countdownPaused
+	  && (countdownResumeDelay < 0) && countdownPauseStart) {
 	// resumed
 	gameStartTime += (tm - countdownPauseStart);
 	countdownPauseStart = TimeKeeper::getNullTime ();
