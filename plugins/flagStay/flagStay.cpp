@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 #include <string>
 #include <vector>
+#include <map>
 #include <math.h>
 
 BZ_GET_PLUGIN_VERSION
@@ -156,6 +157,8 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 	return true;
 }
 
+std::map<int,int>	playeIDToZoneMap;
+
 void EventHandler::process ( bz_EventData *eventData )
 {
 	float pos[3] = {0};
@@ -177,6 +180,9 @@ void EventHandler::process ( bz_EventData *eventData )
 		pos[2] = ((bz_ShotFiredEventData*)eventData)->pos[2];
 		playerID = ((bz_ShotFiredEventData*)eventData)->playerID;
 		break;
+
+	default:
+		return;
 	}
 
 	const char* flagAbrev = bz_getPlayerFlag(playerID);
@@ -196,13 +202,20 @@ void EventHandler::process ( bz_EventData *eventData )
 	for ( unsigned int i = 0; i < validZones.size(); i++ )
 	{
 		if ( validZones[i]->pointIn(pos) )	// they have taken the flag out of a zone, pop it.
+		{
 			insideOne = true;
+			playeIDToZoneMap[playerID] = i;
+		}
 	}
 
 	if (!insideOne)
 	{
+		int lastZone = -1;
+		if ( playeIDToZoneMap.find(playerID) !=playeIDToZoneMap.end() )
+			lastZone = playeIDToZoneMap[playerID];
+
 		bz_removePlayerFlag(playerID);
-		if (zoneList[i].message.size())
+		if (lastZone != -1 && zoneList[lastZone].message.size())
 			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[i].message.c_str());
 	}
 }
