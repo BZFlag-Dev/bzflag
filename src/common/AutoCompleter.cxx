@@ -160,6 +160,7 @@ void DefaultCompleter::setDefaults()
   words.clear();
   registerWord("/ban ");
   registerWord("/banlist");
+  registerWord("/calc ");
   registerWord("/checkip ");
   registerWord("/countdown");
   registerWord("/clientquery");
