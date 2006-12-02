@@ -620,12 +620,6 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 	  else
 		  playerInfo += ColorStrings[WhiteColor];
 	  playerInfo += TextUtils::format("%5.2f ",linSpeed);
-
-	  if (player->getPausedMessageState())
-	  {
-		  playerInfo += ColorStrings[RedColor];
-		  playerInfo += " P ";
-	  }
 	  playerInfo += teamColor;
 
   }
