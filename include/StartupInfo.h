@@ -40,8 +40,6 @@ public:
   char email[EmailLen];
   std::string listServerURL;
   int listServerPort;
-  bool joystick;
-  std::string joystickName;
 };
 
 

@@ -31,8 +31,6 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
   strcpy(callsign, "");
   strcpy(password, "");
   strcpy(email, "default");
-  joystickName = "joystick";
-  joystick = false;
 }
 
 StartupInfo::~StartupInfo()
@@ -49,8 +47,6 @@ StartupInfo::~StartupInfo()
   memset(email, 0, EmailLen);
   listServerURL = "";
   listServerPort = 0;
-  joystick = false;
-  joystickName = "";
 }
 
 // Local Variables: ***
