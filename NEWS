@@ -7,6 +7,7 @@ BZFlag 2.1.x
 * Fixed map line ending parse bug for flag zones - Jeff Myers
 * Add client statistics output option - Daniel Remenak
 * Add full support for Xfire on Windows - Daniel Remenak
+* added a new /calc command, in-game calculator - Ian Agar
 * added a new /gamestats command - Petteri Aimonen, Sean Morrison
 * player accounting bug fix to bzfquery - Geoffrey Sneddon
 * initial native HPUX platform support - Thomas Matelich
