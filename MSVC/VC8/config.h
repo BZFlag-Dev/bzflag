@@ -36,6 +36,9 @@
 /* Enabling Robots */
 #define ROBOT 1
 
+/* Extended support for the Xfire client */
+#define USE_XFIRE 1
+
 /* Enabling Snapping */
 #define SNAPPING 1
 

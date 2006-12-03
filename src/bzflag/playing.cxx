@@ -69,6 +69,7 @@
 #include "daylight.h"
 #include "Downloads.h"
 #include "effectsRenderer.h"
+#include "ExportInformation.h"
 #include "FlashClock.h"
 #include "ForceFeedback.h"
 #include "LocalPlayer.h"
@@ -2776,8 +2777,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  else
 	    DEBUG1("Recieved score update for unknown player!\n");
 	}
-	if (sPlayer)
+	if (sPlayer) {
+	  if (sPlayer == myTank) {
+	      ExportInformation &ei = ExportInformation::instance();
+	      ei.setInformation("Score", TextUtils::format("%d (%d-%d) [%d]", wins - losses, wins, losses, tks),
+		    ExportInformation::eitPlayerStatistics, ExportInformation::eipPrivate);
+	  }
 	  sPlayer->changeScore(wins, losses, tks);
+	}
       }
       break;
     }
@@ -4866,10 +4873,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
 #endif
 
   // use parallel UDP if desired and using server relay
-  if (startupInfo.useUDPconnection)
-    serverLink->sendUDPlinkRequest();
-  else
-    printError("No UDP connection, see Options to enable.");
+  serverLink->sendUDPlinkRequest();
 
   HUDDialogStack::get()->setFailedMessage("Connection Established...");
 
@@ -4943,6 +4947,13 @@ static void joinInternetGame2()
 			myTank->getEmailAddress(),
 			startupInfo.token);
   startupInfo.token[0] = '\0';
+
+  ExportInformation &ei = ExportInformation::instance();
+  ei.setInformation("Callsign", myTank->getCallSign(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
+  ei.setInformation("Team", Team::getName(myTank->getTeam()), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
+  ei.setInformation("Email String", myTank->getEmailAddress(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
+  ei.setInformation("Server", TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
+		    ExportInformation::eitServerInfo, ExportInformation::eipStandard);
 
   // hopefully it worked!  pop all the menus.
   HUDDialogStack* stack = HUDDialogStack::get();
@@ -6343,6 +6354,8 @@ void doUpdates ( const float dt )
   checkEnvironment(dt);
   updateTanks(dt);
   updateWorldEffects(dt);
+
+  ExportInformation::instance().sendPulse();
 
   // update AutoHunt
   AutoHunt::update();

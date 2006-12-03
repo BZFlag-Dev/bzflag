@@ -32,7 +32,6 @@ public:
   bool autoConnect;
   char serverName[80];
   int serverPort;
-  bool useUDPconnection;
   TeamColor team;
   char callsign[CallSignLen];
   char password[PasswordLen];

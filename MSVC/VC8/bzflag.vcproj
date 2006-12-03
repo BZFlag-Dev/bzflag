@@ -2001,6 +2001,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ExportInformation.cxx"
+				>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Detect64BitPortabilityProblems="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\FlashClock.cxx"
 				>
 			</File>
@@ -2654,6 +2666,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Weapon.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\XfireGameClient.cpp"
 				>
 			</File>
 			<Filter
@@ -6688,6 +6704,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ExportInformation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\FlashClock.h"
 				>
 			</File>
@@ -7001,6 +7021,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\WorldPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\XfireGameClient.h"
 				>
 			</File>
 		</Filter>

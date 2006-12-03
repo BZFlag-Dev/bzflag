@@ -302,6 +302,7 @@ Section "Uninstall"
   ;remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}"
   DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}"
+  DeleteRegKey HKCU "Software\BZFlag"
 
   ; remove files
   Delete $INSTDIR\*.*

@@ -1956,6 +1956,14 @@
 			<File
 				RelativePath="..\..\src\platform\EvdevJoystick.cxx"
 				>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\platform\PlatformFactory.cxx"
@@ -2110,6 +2118,14 @@
 			<File
 				RelativePath="..\..\src\platform\SDLJoystick.cxx"
 				>
+				<FileConfiguration
+					Name="Debug_pdcurses|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\platform\wave.cxx"

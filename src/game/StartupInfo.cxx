@@ -39,7 +39,6 @@ StartupInfo::~StartupInfo()
   autoConnect = false;
   memset(serverName, 0, 80);
   serverPort = -1;
-  useUDPconnection = false;
   team = NoTeam;
   memset(callsign, 0, CallSignLen);
   memset(password, 0, PasswordLen);

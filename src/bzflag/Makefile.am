@@ -46,6 +46,8 @@ bzflag_SOURCES =			\
 	EffectsMenu.h			\
 	EntryZone.cxx			\
 	EntryZone.h			\
+	ExportInformation.cxx		\
+	ExportInformation.h		\
 	FlashClock.cxx			\
 	FlashClock.h			\
 	ForceFeedback.cxx		\
@@ -181,6 +183,8 @@ bzflag_SOURCES =			\
 	WorldBuilder.h			\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
+	XfireGameClient.cpp		\
+	XfireGameClient.h		\
 	bzflag.cxx			\
 	bzflag.h			\
 	callbacks.cxx			\

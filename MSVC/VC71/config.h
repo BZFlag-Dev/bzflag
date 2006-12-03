@@ -34,6 +34,9 @@
 /* Enabling Snapping */
 #define SNAPPING 1
 
+/* Extended support for the Xfire client */
+#define USE_XFIRE 1
+
 /* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 

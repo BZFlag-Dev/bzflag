@@ -93,7 +93,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "listIcons",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "maxTextureSize",		"512",			true,	StateDatabase::ReadWrite,	NULL },
+  { "maxTextureSize",		"1024",			true,	StateDatabase::ReadWrite,	NULL },
   { "lodScale",			"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxFlagLOD",		"8",			true,	StateDatabase::ReadWrite,	NULL },
@@ -184,8 +184,21 @@ DefaultDBItem	defaultDBItems[] = {
   { "3rdPersonFarTargetSize",	"1.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "3rdPersonFarTargetDistance",	"180.0",			true,	StateDatabase::ReadWrite,	NULL },
 
+#ifdef USE_XFIRE
+  /* Xfire support
+   * 0: Disable: prevent Xfire from detecting that BZFlag is running
+   * 1: Private: do NOT send player-specific information (callsign, team, score...)
+   * 2: Full: send all available information (to friends only)
+   */
+  { "xfireCommunicationLevel",	"2",		true,	StateDatabase::ReadWrite,	NULL },
+#endif
+  // seconds between pulses to textOutput (0 is disabled)
+  { "statsOutputFrequency",	"0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "statsOutputFilename",	"",		true,	StateDatabase::ReadWrite,	NULL },
+
   // last screenshot
   { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL }
+
 };
 
 

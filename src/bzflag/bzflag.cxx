@@ -72,6 +72,7 @@
 
 /* local headers */
 #include "ActionBinding.h"
+#include "ExportInformation.h"
 #include "ServerStartMenu.h"
 #include "callbacks.h"
 #include "playing.h"
@@ -747,6 +748,33 @@ int			main(int argc, char** argv)
   if (checkTimeBomb())
 	  return 0;
 
+#if defined(_WIN32)
+  if (!headless) {
+    /* write HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath with the
+     * current path.  this lets Xfire know that this bzflag.exe running from
+     * here really is bzflag, not some imposter.
+     * since it may be useful to someone else, it's not protected by USE_XFIRE
+     */
+
+    // get our path
+    char temppath[MAX_PATH], temppath2[MAX_PATH];
+    char tempdrive[10];
+    GetModuleFileName(NULL, temppath, MAX_PATH);
+    // strip filename/extension
+    _splitpath(temppath, tempdrive, temppath2, NULL, NULL);
+    _makepath(temppath, tempdrive, temppath2, NULL, NULL);
+
+    // write the registry key in question
+    HKEY key = NULL;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
+        0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL, 
+	&key, NULL) == ERROR_SUCCESS) {
+      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
+		   (DWORD)strlen(temppath));
+    }
+  }
+#endif
+
   createCacheSignature();
 
   // initialize global objects and classes
@@ -784,8 +812,9 @@ int			main(int argc, char** argv)
 
   setupConfigs();
 
-  // use UDP? yes
-  startupInfo.useUDPconnection=true;
+  // let ExportInformation clients know our version
+  ExportInformation &ei = ExportInformation::instance();
+  ei.setInformation("Client Version", getAppVersion(), ExportInformation::eitPlayerInfo, ExportInformation::eipStandard);
 
   // parse arguments
   parse(argc, argv);
@@ -1300,6 +1329,18 @@ int			main(int argc, char** argv)
   delete platformFactory;
   delete bm;
   Flags::kill();
+
+#if defined(_WIN32)
+  {
+    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it 
+     * exists */
+    HKEY key = NULL;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
+	0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
+      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
+    }
+  }
+#endif
 
 #ifdef _WIN32
   // clean up
