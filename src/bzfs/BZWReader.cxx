@@ -363,6 +363,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  thisline += buffer;
 	}
 
+	thisline = TextUtils::replace_all(thisline,std::string("\r"),std::string(""));
+	thisline = TextUtils::replace_all(thisline,std::string("\n"),std::string(""));
 	customLines.push_back(thisline);
       }
 
