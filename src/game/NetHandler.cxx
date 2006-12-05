@@ -16,6 +16,9 @@
 // system headers
 #include <errno.h>
 
+#include "bzfsAPI.h"
+#include "WorldEventManager.h"
+
 const int udpBufSize = 128000;
 
 bool NetHandler::pendingUDP = false;
@@ -179,6 +182,16 @@ than %s:%d\n",
 #ifdef NETWORK_STATS
     netPlayer[id]->countMessage(code, len, 0);
 #endif
+
+	// let any listeners know we got net data
+	bz_NetTransferEventData eventData;
+	eventData.eventType = bz_eNetDataReceveEvent;
+	eventData.send = false;
+	eventData.udp = true;
+	eventData.iSize = len;
+	eventData.data = (unsigned char*)buf;
+	worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+
     if (code == MsgUDPLinkEstablished) {
       netPlayer[id]->udpout = true;
       DEBUG2("Player %s [%d] outbound UDP up\n",
@@ -387,6 +400,8 @@ int NetHandler::pwrite(const void *b, int l) {
   countMessage(code, len, 1);
 #endif
 
+  bool useUDP = false;
+
   // Check if UDP Link is used instead of TCP, if so jump into udpSend
   if (udpout) {
     // only send bulk messages by UDP
@@ -398,13 +413,22 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgGMUpdate:
     case MsgLagPing:
     case MsgGameTime:
-      udpSend(b, l);
-      return 0;
+		useUDP = true;
+		break;
     }
   }
 
-  // always sent MsgUDPLinkRequest over udp with udpSend
-  if (code == MsgUDPLinkRequest) {
+  // let any listeners know we got net data
+  bz_NetTransferEventData eventData;
+  eventData.eventType = bz_eNetDataReceveEvent;
+  eventData.send = true;
+  eventData.udp = useUDP;
+  eventData.iSize = l;
+  eventData.data = (unsigned char*)b;
+  worldEventManager.callEvents(bz_eNetDataSendEvent,&eventData);
+
+  // always sent UDP messages and MsgUDPLinkRequest over udp with udpSend
+  if (useUDP || code == MsgUDPLinkRequest) {
     udpSend(b, l);
     return 0;
   }
@@ -454,6 +478,16 @@ RxStatus NetHandler::tcpReceive() {
 #ifdef NETWORK_STATS
   countMessage(code, len, 0);
 #endif
+
+  // let any listeners know we got net data
+  bz_NetTransferEventData eventData;
+  eventData.eventType = bz_eNetDataReceveEvent;
+  eventData.send = false;
+  eventData.udp = false;
+  eventData.iSize = len;
+  eventData.data = (unsigned char*)buf;
+  worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+
   if (code == MsgUDPLinkEstablished) {
     udpout = true;
     DEBUG2("Player %s [%d] outbound UDP up\n", info->getCallSign(),

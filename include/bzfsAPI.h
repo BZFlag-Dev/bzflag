@@ -80,6 +80,8 @@ typedef enum
 	bz_eServerMsgEvent,
 	bz_eShotFiredEvent,
 	bz_ePlayerUpdateEvent,
+	bz_eNetDataSendEvent,
+	bz_eNetDataReceveEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -835,6 +837,32 @@ public:
 	int		playerID;
 
 	double time;
+};
+
+class bz_NetTransferEventData : public bz_EventData
+{
+public:
+	bz_NetTransferEventData()
+	{
+		eventType = bz_eNetDataReceveEvent;
+		send = false;
+		udp = false;
+		iSize = 0;
+		data = NULL;
+
+		time = 0;
+	}
+
+	virtual ~bz_NetTransferEventData(){};
+
+	bool send;
+	bool udp;
+	unsigned int iSize;
+
+	double time;
+
+	// DON'T CHANGE THIS!!!
+	unsigned char* data;
 };
 
 
