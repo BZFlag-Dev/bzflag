@@ -46,6 +46,7 @@ int		Player::tankTexture = -1;
 Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
   lastObstacle(NULL),
+  pauseMessageState(false),
   notResponding(false),
   hunted(false),
   id(_id),
@@ -71,8 +72,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   offset(0.0),
   deadReckoningState(0),
   oldStatus(0),
-  oldZSpeed(0.0f),
-  pauseMessageState(false)
+  oldZSpeed(0.0f)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
