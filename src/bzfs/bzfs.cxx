@@ -2436,9 +2436,13 @@ bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim,
 	if ((victim->getIndex() != killer->getIndex()) && teamkill)
 	{
 		killer->score.tK();
+		char message[MessageLen];
+		if (clOptions->tkAnnounce) {
+		        snprintf(message, MessageLen, "Team kill: %s killed %s", killer->player.getCallSign(), victim->player.getCallSign());
+		        sendMessage(ServerPlayer, AdminPlayers, message);
+		}
 		if (killer->score.isTK())
 		{
-			char message[MessageLen];
 			strcpy(message, "You have been automatically kicked for team killing" );
 			sendMessage(ServerPlayer, killer->getIndex(), message);
 			snprintf(message, MessageLen, "Player %s removed: team killing", killer->player.getCallSign());

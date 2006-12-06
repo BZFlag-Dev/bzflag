@@ -135,6 +135,7 @@ const char *usageString =
 "[-time {<seconds>|endTime}] "
 "[-timemanual] "
 "[-tk] "
+"[-tkannounce] "
 "[-tkkr <percent>] "
 "[-ts [micros]] "
 "[-userdb <user permissions file>] "
@@ -237,6 +238,7 @@ const char *extraUsageString =
 "\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
 "\t-timemanual: countdown for timed games is started with /countdown\n"
 "\t-tk: player does not die when killing a teammate\n"
+"\t-tkannounce: announces team kills to the admin channel\n"
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
 "\t-ts [micros]: timestamp all console output, [micros] to include\n"
 "\t\tmicroseconds\n"
@@ -964,6 +966,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-reportpipe") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.reportPipe = argv[i];
+    } else if (strcmp(argv[i], "-tkannounce") == 0) {
+      options.tkAnnounce = true;
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!" << std::endl;
       options.requireUDP = true;

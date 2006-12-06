@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Add -tkannounce server option - Bernt Hansen
 * Fixed map line ending parse bug for flag zones - Jeff Myers
 * Add client statistics output option - Daniel Remenak
 * Add full support for Xfire on Windows - Daniel Remenak

@@ -97,6 +97,7 @@ bzfs \- BZFlag game server
 [\fB\-time {\fItime\-limit\fR|\fIending-time\fR}]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
+[\fB\-tkannounce\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-trackplayhistory\fR]
 [\fB\-ts [\fImicros\fR]]
@@ -503,7 +504,10 @@ using the \fI/countdown\fR command. This is useful for matches.
 .B \-tk
 Changes the default behavior where a player dies when he kills a teammate.
 When using this option, he will just get a \-1 score penalty for the kill but
-not be killed in game.
+not be killed in game..
+.TP 
+.B \-tkannounce
+Announces team kills on the admin channel.
 .TP 
 \fB\-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than

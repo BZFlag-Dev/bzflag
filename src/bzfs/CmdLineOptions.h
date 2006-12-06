@@ -75,7 +75,7 @@ struct CmdLineOptions
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
     publicizeServer(false), replayServer(false), startRecording(false),
-    timestampLog(false), timestampMicros(false),
+    timestampLog(false), timestampMicros(false), tkAnnounce(false),
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
@@ -163,6 +163,7 @@ struct CmdLineOptions
   bool			timestampLog;
   bool			timestampMicros;
   bool			countdownPaused;
+  bool			tkAnnounce;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
