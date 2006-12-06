@@ -158,6 +158,23 @@ static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
+// loging to the API
+class APILogingCallback : public LogingCallback
+{
+public:
+	void log ( int level, const char* message )
+	{
+		bz_LogingEventData data;
+		data.level = level;
+		data.message = message;
+		data.time = TimeKeeper::getCurrent().getSeconds();
+
+		worldEventManager.callEvents(bz_eLogingEvent,&data);
+	}
+};
+
+APILogingCallback apiLogingCallback;
+
 int getCurMaxPlayers()
 {
   return curMaxPlayers;
@@ -865,14 +882,14 @@ static bool defineWorld()
   std::string digest = md5.hexdigest();
   strcat(hexDigest, digest.c_str());
   TimeKeeper endTime = TimeKeeper::getCurrent();
-  DEBUG3("MD5 generation: %.3f seconds\n", endTime - startTime);
+  logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
 
   // water levels probably require flags on buildings
   const float waterLevel = world->getWaterLevel();
   if (!clOptions->flagsOnBuildings && (waterLevel > 0.0f)) {
     clOptions->flagsOnBuildings = true;
     clOptions->respawnOnBuildings = true;
-    DEBUG1("WARNING: enabling flag and tank spawns on buildings due to waterLevel\n");
+    logDebugMessage(1,"WARNING: enabling flag and tank spawns on buildings due to waterLevel\n");
   }
 
   // reset other stuff
@@ -988,13 +1005,13 @@ static void acceptClient()
   playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
 
   if (playerIndex < maxPlayerId) {
-    DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
+    logDebugMessage(1,"Player [%d] accept() from %s:%d on %i\n", playerIndex,
 	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
   } else { // full? reject by closing socket
-    DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
+    logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
     // send back 0xff before closing
@@ -1184,7 +1201,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 
   // Should cut the message
   if (msglen > MessageLen) {
-    DEBUG1("WARNING: Network message being sent is too long! "
+    logDebugMessage(1,"WARNING: Network message being sent is too long! "
 	   "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
   }
@@ -1619,8 +1636,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     float waitTime = rejoinList.waitTime (playerIndex);
     if (waitTime > 0.0f) {
       char buffer[MessageLen];
-      DEBUG2 ("Player %s [%d] rejoin wait of %.1f seconds\n",
-	      playerData->player.getCallSign(), playerIndex, waitTime);
+      logDebugMessage(2,"Player %s [%d] rejoin wait of %.1f seconds\n",playerData->player.getCallSign(), playerIndex, waitTime);
       snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
       sendMessage(ServerPlayer, playerIndex, buffer);
       //      removePlayer(playerIndex, "rejoining too quickly");
@@ -1964,7 +1980,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
     rabbitIndex = GameKeeper::Player::anointRabbit(oldRabbit);
 
   if (rabbitIndex != oldRabbit) {
-    DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
+    logDebugMessage(3,"rabbitIndex is set to %d\n", rabbitIndex);
     if (oldRabbitData) {
       oldRabbitData->player.wasARabbit();
     }
@@ -1977,7 +1993,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
       broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
     }
   } else {
-    DEBUG3("no other than old rabbit to choose from, rabbitIndex is %d\n",
+    logDebugMessage(3,"no other than old rabbit to choose from, rabbitIndex is %d\n",
 	   rabbitIndex);
   }
 }
@@ -2095,7 +2111,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   // status message
   std::string timeStamp = TimeKeeper::timestamp();
-  DEBUG1("Player %s [%d] removed at %s: %s\n",
+  logDebugMessage(1,"Player %s [%d] removed at %s: %s\n",
 	 playerData->player.getCallSign(),
 	 playerIndex, timeStamp.c_str(), reason);
   bool wasPlaying = playerData->player.isPlaying();
@@ -2635,7 +2651,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
   if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
-       DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+       logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
     playerData->player.getCallSign(), playerIndex,
     tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
@@ -2785,14 +2801,14 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 			       playerData->lastState.pos[2]);
     if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
-      DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
+      logDebugMessage(1,"Player %s [%d] might have sent MsgCaptureFlag for taking their own "
 	     "flag onto their own base\n",
 	     playerData->player.getCallSign(), playerIndex);
       //return; //sanity check
     }
     if ((teamIndex != playerData->player.getTeam() &&
 	 base != playerData->player.getTeam())) {
-      DEBUG1("Player %s [%d] (%s) might have tried to capture %s flag without "
+      logDebugMessage(1,"Player %s [%d] (%s) might have tried to capture %s flag without "
 	     "reaching their own base. (Player position: %f %f %f)\n",
 	     playerData->player.getCallSign(), playerIndex,
 	     Team::getName(playerData->player.getTeam()),
@@ -2872,7 +2888,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify playerId
   if (shot.player != playerIndex) {
-    DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
+    logDebugMessage(2,"Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
 	   playerIndex);
     return;
   }
@@ -2904,19 +2920,19 @@ static void shotFired(int playerIndex, void *buf, int len)
     // probably a cheater using wrong shots.. exception for thief since they steal someone elses
     if (firingInfo.flagType != Flags::Thief) {
       // bye bye supposed cheater
-      DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
+      logDebugMessage(1,"Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
       sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
       removePlayer(playerIndex, "Player shot mismatch");
     }
 
-    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
+    logDebugMessage(2,"Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
 	   playerIndex, fireFlag.c_str(), holdFlag.c_str());
     return;
   }
 
   // verify shot number
   if ((shot.id & 0xff) > clOptions->maxShots - 1) {
-    DEBUG2("Player %s [%d] shot id out of range %d %d\n",
+    logDebugMessage(2,"Player %s [%d] shot id out of range %d %d\n",
 	   shooter.getCallSign(),
 	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
     return;
@@ -2954,7 +2970,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
-    DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n",
+    logDebugMessage(2,"Player %s [%d] shot lifetime mismatch %f %f\n",
 	   shooter.getCallSign(),
 	   playerIndex, firingInfo.lifetime, lifetime);
     return;
@@ -2963,7 +2979,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (doSpeedChecks) {
     // verify velocity
     if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
-      DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
+      logDebugMessage(2,"Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
 	     playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
 	     shotSpeed);
       return;
@@ -2985,7 +3001,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     float delta = dx*dx + dy*dy + dz*dz;
     if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
 		(maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
-      DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
+      logDebugMessage(2,"Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	      shooter.getCallSign(), playerIndex,
 	      shot.pos[0], shot.pos[1], shot.pos[2],
 	      last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
@@ -3086,13 +3102,13 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver() || p.isPaused()) {
     if (p.isPaused()) {
       char buffer[MessageLen];
-      DEBUG1("Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
+      logDebugMessage(1,"Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
       removePlayer(t, buffer);
     } else {
-      DEBUG1("Player %s tried to %s as an observer\n", p.getCallSign(), action);
+      logDebugMessage(1,"Player %s tried to %s as an observer\n", p.getCallSign(), action);
     }
     return true;
   }
@@ -3162,10 +3178,10 @@ static void adjustTolerances()
   if (disableSpeedChecks) {
     doSpeedChecks = false;
     speedTolerance = MAXFLOAT;
-    DEBUG1("Warning: disabling speed checking due to physics drivers\n");
+    logDebugMessage(1,"Warning: disabling speed checking due to physics drivers\n");
   }
   if (disableHeightChecks) {
-    DEBUG1("Warning: disabling height checking due to physics drivers\n");
+    logDebugMessage(1,"Warning: disabling height checking due to physics drivers\n");
   }
 
   return;
@@ -3194,7 +3210,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
       if (player.getSpamWarns() > clOptions->spamWarnMax
 	  || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	DEBUG2("Kicking player %s [%d] for spamming too much: "
+	logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
 	       "2 messages sent within %fs after %d warnings",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
@@ -3244,7 +3260,7 @@ bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
      */
     if (badChars > 5) {
       sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      DEBUG2("Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars",
+      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars",
 	     player.getCallSign(), t, badChars, totalChars);
       removePlayer(t, "garbage");
 
@@ -3287,7 +3303,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgUDPLinkEstablished:
       break;
     default:
-      DEBUG1("Player [%d] sent packet type (%x) via udp, "
+      logDebugMessage(1,"Player [%d] sent packet type (%x) via udp, "
 	     "possible attack from %s\n",
 	     t, code, handler->getTargetIP());
       return;
@@ -3305,7 +3321,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       playerData->accessInfo.setName(playerData->player.getCallSign());
       std::string timeStamp = TimeKeeper::timestamp();
-      DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+      logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
 	     playerData->player.getCallSign(),
 	     t, handler->getTargetIP(), timeStamp.c_str(),
 	     playerData->player.getToken());
@@ -3519,7 +3535,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if ((endShotLimit > 0) && (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
 	char testmessage[MessageLen];
 	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
-	DEBUG1("endShot Detection: %s\n", testmessage);
+	logDebugMessage(1,"endShot Detection: %s\n", testmessage);
 	sendMessage(ServerPlayer, AdminPlayers, testmessage);
 	sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
 	removePlayer(t, "EndShot");
@@ -3560,21 +3576,21 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       message[MessageLen - 1] = '\0';
       playerData->player.hasSent();
       if (dstPlayer == AllPlayers) {
-	DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),
+	logDebugMessage(1,"Player %s [%d] -> All: %s\n", playerData->player.getCallSign(),
 	       t, message);
       } else if (dstPlayer == AdminPlayers) {
-	DEBUG1("Player %s [%d] -> Admin: %s\n",
+	logDebugMessage(1,"Player %s [%d] -> Admin: %s\n",
 	       playerData->player.getCallSign(), t, message);
       } else if (dstPlayer > LastRealPlayer) {
-	DEBUG1("Player %s [%d] -> Team: %s\n",
+	logDebugMessage(1,"Player %s [%d] -> Team: %s\n",
 	       playerData->player.getCallSign(), t, message);
       } else {
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
 	if (p != NULL) {
-	  DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",
+	  logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",
 	       playerData->player.getCallSign(), t, p->player.getCallSign(), dstPlayer, message);
 	} else {
-	      DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
+	      logDebugMessage(1,"Player %s [%d] -> Player Unknown [%d]: %s\n",
 	       playerData->player.getCallSign(), t, dstPlayer, message);
 	}
       }
@@ -3625,7 +3641,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       buf = nboUnpackUByte(buf, from);
       if (from != t) {
-	DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
+	logDebugMessage(1,"Kicking Player %s [%d] Player trying to transfer flag\n",
 	       playerData->player.getCallSign(), t);
 	removePlayer(t, "Player shot mismatch");
 	break;
@@ -3791,7 +3807,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    maxHeight += maxWorldHeight;
 
 	    if (state.pos[2] > maxHeight) {
-	      DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+	      logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
 		     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
 	      sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
 	      removePlayer(t, "too high");
@@ -3822,7 +3838,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	// kick em cus they are most likely cheating or using a buggy client
 	if (!InBounds)
 	{
-	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
+	  logDebugMessage(1,"Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
 		 playerData->player.getCallSign(), t,
 		 state.pos[0], state.pos[1], state.pos[2]);
 	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
@@ -3894,13 +3910,13 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 			{
 				if (logOnly)
 				{
-					DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+					logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 					playerData->player.getCallSign(), t,
 					sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 				} 
 				else
 				{
-					DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+					logDebugMessage(1,"Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 						playerData->player.getCallSign(), t,
 						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
@@ -3952,7 +3968,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				float realDist = sqrt(movementDelta[0]*movementDelta[0] + movementDelta[1]*movementDelta[1]);
 				if ( realDist > (maxDist * 1.1f))
 				{
-					DEBUG1("Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
+					logDebugMessage(1,"Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
 						playerData->player.getCallSign(), t,
 						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
@@ -4005,7 +4021,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
     // unknown msg type
     default:
-      DEBUG1("Player [%d] sent unknown packet type (%x), possible attack from %s\n",
+      logDebugMessage(1,"Player [%d] sent unknown packet type (%x), possible attack from %s\n",
 	     t, code, handler->getTargetIP());
   }
 }
@@ -4170,7 +4186,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
       removePlayer(p, "idling");
-      DEBUG1("Kicked player %s [%d] for idling (thresh = %f)\n",
+      logDebugMessage(1,"Kicked player %s [%d] for idling (thresh = %f)\n",
              playerData.player.getCallSign(), p, clOptions->idlekickthresh);
       return;
     }
@@ -4327,6 +4343,8 @@ int main(int argc, char **argv)
   int nfound;
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
+  logingCallback = &apiLogingCallback;
+
 #ifndef _WIN32
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
@@ -4353,12 +4371,12 @@ int main(int argc, char **argv)
     static const int major = 2, minor = 2;
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-      DEBUG2("Failed to initialize Winsock.  Terminating.\n");
+      logDebugMessage(2,"Failed to initialize Winsock.  Terminating.\n");
       return 1;
     }
     if (LOBYTE(wsaData.wVersion) != major ||
 	HIBYTE(wsaData.wVersion) != minor) {
-      DEBUG2("Version mismatch in Winsock;"
+      logDebugMessage(2,"Version mismatch in Winsock;"
 	  "  got %d.%d, expected %d.%d.  Terminating.\n",
 	  (int)LOBYTE(wsaData.wVersion),
 	  (int)HIBYTE(wsaData.wVersion),
@@ -4407,12 +4425,12 @@ int main(int argc, char **argv)
   BZDB.setSaveDefault(false);
 
   if (clOptions->bzdbVars.length() > 0) {
-    DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
+    logDebugMessage(1,"Loading variables from %s\n", clOptions->bzdbVars.c_str());
     bool success = CFGMGR.read(clOptions->bzdbVars);
     if (success) {
-      DEBUG1("Successfully loaded variable(s)\n");
+      logDebugMessage(1,"Successfully loaded variable(s)\n");
     } else {
-      DEBUG1("WARNING: unable to load the variable file\n");
+      logDebugMessage(1,"WARNING: unable to load the variable file\n");
     }
   }
 
@@ -4427,7 +4445,7 @@ int main(int argc, char **argv)
 		    clOptions->pluginList[plugin].command)) {
       std::string text = "WARNING: unable to load the plugin; ";
       text += clOptions->pluginList[plugin].plugin + "\n";
-      DEBUG0(text.c_str());
+      logDebugMessage(0,text.c_str());
     }
   }
 #endif
@@ -4509,14 +4527,14 @@ int main(int argc, char **argv)
     if (clOptions->filterChat || clOptions->filterCallsigns) {
       if (debugLevel >= 1) {
 	unsigned int count;
-	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
+	logDebugMessage(1,"Loading %s\n", clOptions->filterFilename.c_str());
 	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
-	DEBUG1("Loaded %u words\n", count);
+	logDebugMessage(1,"Loaded %u words\n", count);
       } else {
 	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
       }
     } else {
-      DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
+      logDebugMessage(1,"Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
   }
 
@@ -4531,13 +4549,13 @@ int main(int argc, char **argv)
       new VotingArbiter(clOptions->voteTime, clOptions->vetoTime,
 			clOptions->votesRequired, clOptions->votePercentage,
 			clOptions->voteRepeatTime);
-    DEBUG1("There is a voting arbiter with the following settings:\n");
-    DEBUG1("\tvote time is %d seconds\n", clOptions->voteTime);
-    DEBUG1("\tveto time is %d seconds\n", clOptions->vetoTime);
-    DEBUG1("\tvotes required are %d\n", clOptions->votesRequired);
-    DEBUG1("\tvote percentage necessary is %f\n", clOptions->votePercentage);
-    DEBUG1("\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
-    DEBUG1("\tavailable voters is initially set to %d\n", maxPlayers);
+    logDebugMessage(1,"There is a voting arbiter with the following settings:\n");
+    logDebugMessage(1,"\tvote time is %d seconds\n", clOptions->voteTime);
+    logDebugMessage(1,"\tveto time is %d seconds\n", clOptions->vetoTime);
+    logDebugMessage(1,"\tvotes required are %d\n", clOptions->votesRequired);
+    logDebugMessage(1,"\tvote percentage necessary is %f\n", clOptions->votePercentage);
+    logDebugMessage(1,"\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
+    logDebugMessage(1,"\tavailable voters is initially set to %d\n", maxPlayers);
 
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxPlayers);
@@ -4562,10 +4580,10 @@ int main(int argc, char **argv)
 
   /* print debug information about how the server is running */
   if (clOptions->publicizeServer) {
-    DEBUG1("Running a public server with the following settings:\n");
-    DEBUG1("\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
+    logDebugMessage(1,"Running a public server with the following settings:\n");
+    logDebugMessage(1,"\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
   } else {
-    DEBUG1("Running a private server with the following settings:\n");
+    logDebugMessage(1,"Running a private server with the following settings:\n");
   }
 
   // get the master ban list
@@ -4575,7 +4593,7 @@ int main(int argc, char **argv)
     for (it = clOptions->masterBanListURL.begin();
 	 it != clOptions->masterBanListURL.end(); it++) {
       clOptions->acl.merge(banList.get(it->c_str()));
-      DEBUG1("Loaded master ban list from %s\n", it->c_str());
+      logDebugMessage(1,"Loaded master ban list from %s\n", it->c_str());
     }
   }
 
@@ -4584,9 +4602,9 @@ int main(int argc, char **argv)
   if (clOptions->rabbitSelection == RandomRabbitSelection)
     Score::setRandomRanking();
   // print networking info
-  DEBUG1("\tlistening on %s:%i\n",
+  logDebugMessage(1,"\tlistening on %s:%i\n",
       serverAddress.getDotNotation().c_str(), clOptions->wksPort);
-  DEBUG1("\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
+  logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
@@ -4782,7 +4800,7 @@ int main(int argc, char **argv)
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
     nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
-    //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+    //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
@@ -5101,22 +5119,22 @@ int main(int argc, char **argv)
 		  {
 			std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
 			if ( args.size() < 2 )
-				DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).\n", (args.size() > 0 ? args[0].c_str() : "No parameters."));
+				logDebugMessage(1,"Poll set taking action: no action taken, not enough parameters (%s).\n", (args.size() > 0 ? args[0].c_str() : "No parameters."));
 			else
 			{
 				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
 				if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked)))
-					DEBUG1("Poll set taking action: no action taken, variable cannot be set\n");
+					logDebugMessage(1,"Poll set taking action: no action taken, variable cannot be set\n");
 				else
 				{
-					DEBUG1("Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
+					logDebugMessage(1,"Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
 					BZDB.set(args[0], args[1], StateDatabase::Server);
 				}
 			}
 	      }
 		  else if (action == "reset")
 		  {
-		DEBUG1("Poll flagreset taking action: resetting unused flags.\n");
+		logDebugMessage(1,"Poll flagreset taking action: resetting unused flags.\n");
 		for (int f = 0; f < numFlags; f++) {
 		  FlagInfo &flag = *FlagInfo::get(f);
 		  if (flag.player == -1)
@@ -5196,7 +5214,7 @@ int main(int argc, char **argv)
 	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
 	      FlagInfo &flag = *FlagInfo::get(flagid + n);
 	      if (flag.exist() && flag.player == -1) {
-		DEBUG1("Flag timeout for team %d\n", i);
+		logDebugMessage(1,"Flag timeout for team %d\n", i);
 		zapFlag(flag);
 	      }
 	    }
@@ -5242,7 +5260,7 @@ int main(int argc, char **argv)
 
     // check messages
     if (nfound > 0) {
-      //DEBUG1("chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+      //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
       if (FD_ISSET(wksSocket, &read_set))
 	acceptClient();
@@ -5277,7 +5295,7 @@ int main(int argc, char **argv)
 
 	    // don't spend more than 250ms receiving udp
 	    if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	      DEBUG2("Too much UDP traffic, will hope to catch up later\n");
+	      logDebugMessage(2,"Too much UDP traffic, will hope to catch up later\n");
 	      break;
 	    }
 	  }
@@ -5337,7 +5355,7 @@ int main(int argc, char **argv)
 #endif
 
   // print uptime
-  DEBUG1("Shutting down server: uptime %s\n",
+  logDebugMessage(1,"Shutting down server: uptime %s\n",
     TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());
 
   GameKeeper::Player::freeTCPMutex();

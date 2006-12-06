@@ -312,7 +312,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	// FIXME - check for recursion
 	//       - better filename handling ("", spaces, and / vs. \\)
 	//       - make relative names work from the base file location
-	DEBUG1 ("%s: (line %i): including \"%s\"\n",
+	logDebugMessage(1,"%s: (line %i): including \"%s\"\n",
 		location.c_str(), line, incName.c_str());
 	BZWReader incFile(incName);
 	std::vector<WorldFileObject*> incWlist;

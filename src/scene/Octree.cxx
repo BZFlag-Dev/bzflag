@@ -164,18 +164,18 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
   totalElements = 0;
   root->tallyStats();
 
-  DEBUG2 ("Octree scene nodes = %i\n", listSize);
+  logDebugMessage(2,"Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
-    DEBUG2 ("  grid extent[%i] = %f, %f\n", i, extents.mins[i],
+    logDebugMessage(2,"  grid extent[%i] = %f, %f\n", i, extents.mins[i],
 					       extents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
-    DEBUG2 ("  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
+    logDebugMessage(2,"  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
 						 visualExtents.maxs[i]);
   }
-  DEBUG2 ("Octree leaf nodes  = %i\n", leafNodes);
-  DEBUG2 ("Octree total nodes = %i\n", totalNodes);
-  DEBUG2 ("Octree total elements = %i\n", totalElements);
+  logDebugMessage(2,"Octree leaf nodes  = %i\n", leafNodes);
+  logDebugMessage(2,"Octree total nodes = %i\n", totalNodes);
+  logDebugMessage(2,"Octree total elements = %i\n", totalElements);
 
   return;
 }
@@ -381,7 +381,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     resizeCell();
-    //DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);
+    //logDebugMessage(4, ("LEAF NODE: depth = %d, items = %i\n", depth, count);
     return;
   }
 
@@ -402,7 +402,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
     list = NULL;
   }
 
-  //DEBUG4 ("BRANCH NODE: depth = %d, squeezed = %i\n", depth, childCount);
+  //logDebugMessage(4, ("BRANCH NODE: depth = %d, squeezed = %i\n", depth, childCount);
 
   return;
 }

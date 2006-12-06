@@ -112,12 +112,12 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       else {
 	FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
 	if (f == Flags::Null) {
-	  DEBUG1("WARNING: bad flag type: %s\n", flag.c_str());
+	  logDebugMessage(1,"WARNING: bad flag type: %s\n", flag.c_str());
 	  input.putback('\n');
 	  return false;
 	}
 	if (f->endurance == FlagNormal) {
-	  DEBUG1("WARNING: you probably want a safety: %s\n", flag.c_str());
+	  logDebugMessage(1,"WARNING: you probably want a safety: %s\n", flag.c_str());
 	  input.putback('\n');
 	  return false;
 	}
@@ -170,7 +170,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	addZoneFlagCount(f, count);
       }
       else {
-	DEBUG1("WARNING: bad zoneflag type: %s\n", flag.c_str());
+	logDebugMessage(1,"WARNING: bad zoneflag type: %s\n", flag.c_str());
 	input.putback('\n');
 	return false;
       }

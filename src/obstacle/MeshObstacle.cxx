@@ -619,7 +619,7 @@ int MeshObstacle::packSize() const
     fullSize += sizeof(fvec2);
 
     if (debugLevel >= 4) {
-      DEBUG0("DrawInfo packSize = %i, align = %i, full = %i\n",
+      logDebugMessage(0,"DrawInfo packSize = %i, align = %i, full = %i\n",
 	     drawInfoPackSize,
 	     align * ((drawInfoPackSize + (align - 1)) / align),
 	     align * ((drawInfoPackSize + (align - 1)) / align) + sizeof(fvec2));
@@ -681,8 +681,8 @@ void *MeshObstacle::pack(void *buf) const
     buf = nboPackInt(buf, fullLength + sizeof(fvec2));
     buf = nboPackInt(buf, 0); // for alignment to fvec2
 
-    DEBUG4("DrawInfo packing: length = %i, missing = %i\n", length, missing);
-    DEBUG4("  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
+    logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
+    logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
 	   texcoordCount, fakeTxcdCount, fullLength + sizeof(fvec2));
   }
 
@@ -820,7 +820,7 @@ void *MeshObstacle::unpack(void *buf)
 	  }
 	}
 
-	DEBUG4("DrawInfo unpacking: fakeTxcds = %i, realTxcds = %i\n",
+	logDebugMessage(4,"DrawInfo unpacking: fakeTxcds = %i, realTxcds = %i\n",
 	       fakeTxcds, texcoordCount);
       }
     }

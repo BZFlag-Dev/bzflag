@@ -21,7 +21,7 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "bzfio.h" // for DEBUG3()
+#include "bzfio.h" // for logDebugMessage(3,)
 #include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
@@ -1171,7 +1171,7 @@ void OpenGLGState::init()
   // setup the GLEW library
 #ifdef HAVE_GLEW
   if (glewInit() != GLEW_OK) {
-    DEBUG0("GLEW initialization failed");
+    logDebugMessage(0,"GLEW initialization failed");
   }
 #endif
 
@@ -1192,7 +1192,7 @@ void OpenGLGState::registerContextInitializer(
 		     void* userData)
 {
   if ((freeCallback == NULL) || (initCallback == NULL)) {
-    DEBUG3("registerContextInitializer() error\n");
+    logDebugMessage(3,"registerContextInitializer() error\n");
     return;
   }
   new ContextInitializer(freeCallback, initCallback, userData);
@@ -1207,7 +1207,7 @@ void OpenGLGState::unregisterContextInitializer(
   ContextInitializer* ci =
     ContextInitializer::find(freeCallback, initCallback, userData);
   if (ci == NULL) {
-    DEBUG3("unregisterContextInitializer() error\n");
+    logDebugMessage(3,"unregisterContextInitializer() error\n");
   }
   delete ci;
 }
@@ -1216,21 +1216,21 @@ void OpenGLGState::unregisterContextInitializer(
 void OpenGLGState::initContext()
 {
   if (!haveGLContext()) {
-    DEBUG3("OpenGLGState::initContext(), no context\n");
+    logDebugMessage(3,"OpenGLGState::initContext(), no context\n");
     return;
   }
 
   // setup the GLEW library
 #ifdef HAVE_GLEW
   if (glewInit() != GLEW_OK) {
-    DEBUG0("GLEW initialization failed");
+    logDebugMessage(0,"GLEW initialization failed");
   }
 #endif
 
   // call all of the freeing functions first
-  DEBUG3("ContextInitializer::executeFreeFuncs() start\n");
+  logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
-  DEBUG3("ContextInitializer::executeFreeFuncs() end\n");
+  logDebugMessage(3,"ContextInitializer::executeFreeFuncs() end\n");
 
   // initialize GL state
   initGLState();
@@ -1239,9 +1239,9 @@ void OpenGLGState::initContext()
   resetState();
 
   // call all initializers
-  DEBUG3("ContextInitializer::executeInitFuncs() start\n");
+  logDebugMessage(3,"ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
-  DEBUG3("ContextInitializer::executeInitFuncs() end\n");
+  logDebugMessage(3,"ContextInitializer::executeInitFuncs() end\n");
 
   // initialize the GL state again in case one of the initializers
   // messed it up.
@@ -1455,7 +1455,7 @@ GLuint bzGenLists(GLsizei count)
     contextFreeError ("bzGenLists() is having issues");
   }
   GLuint base = glGenLists(count);
-  //DEBUG4("genList = %i (%i)\n", (int)base, (int)count);
+  //logDebugMessage(4,"genList = %i (%i)\n", (int)base, (int)count);
   return base;
 }
 
@@ -1468,7 +1468,7 @@ void bzDeleteLists(GLuint base, GLsizei count)
   if (OpenGLGState::haveGLContext()) {
     glDeleteLists(base, count);
   } else {
-    DEBUG4 ("bzDeleteLists(), no context\n");
+    logDebugMessage(4,"bzDeleteLists(), no context\n");
   }
   return;
 }
@@ -1492,7 +1492,7 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   if (OpenGLGState::haveGLContext()) {
     glDeleteTextures(count, textures);
   } else {
-    DEBUG4 ("bzDeleteTextures(), no context\n");
+    logDebugMessage(4,"bzDeleteTextures(), no context\n");
   }
   return;
 }
@@ -1564,7 +1564,7 @@ void bzMatrixMode(GLenum mode)
   }
   matrixMode = mode;
   glMatrixMode(mode);
-  DEBUG3 ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
+  logDebugMessage(3, ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
 }
 
 #endif // DEBUG_GL_MATRIX_STACKS

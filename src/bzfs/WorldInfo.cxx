@@ -561,10 +561,10 @@ int WorldInfo::packDatabase()
   database = gzDB;
   delete[] oldDB;
 
-  DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n",
+  logDebugMessage(1,"Map size: uncompressed = %i, compressed = %i\n",
 	   uncompressedSize, databaseSize);
 
-  DEBUG3("Compression: %.3f seconds\n", endTime - startTime);
+  logDebugMessage(3,"Compression: %.3f seconds\n", endTime - startTime);
 
   return 1;
 }

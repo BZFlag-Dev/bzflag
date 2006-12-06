@@ -82,6 +82,7 @@ typedef enum
 	bz_ePlayerUpdateEvent,
 	bz_eNetDataSendEvent,
 	bz_eNetDataReceveEvent,
+	bz_eLogingEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -863,6 +864,23 @@ public:
 
 	// DON'T CHANGE THIS!!!
 	unsigned char* data;
+};
+
+class bz_LogingEventData : public bz_EventData
+{
+public:
+	bz_LogingEventData()
+	{
+		eventType = bz_eLogingEvent;
+		level = 0;
+		time = 0;
+	}
+
+	virtual ~bz_LogingEventData(){};
+
+	double time;
+	int level;
+	bzApiString message;
 };
 
 

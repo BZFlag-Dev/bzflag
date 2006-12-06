@@ -1237,9 +1237,7 @@ BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
 {
 	if (!message)
 		return;
-
-	if (debugLevel >= _debugLevel)
-		formatDebug("%s\n",message);
+	logDebugMessage(_debugLevel,"%s\n",message);
 }
 
 BZF_API void bz_debugMessagef ( int _debugLevel, const char* fmt, ... )

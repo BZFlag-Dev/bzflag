@@ -128,7 +128,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
 	    pos[0] = testPos[0];
 	    pos[1] = testPos[1];
 	    pos[2] = maxHeight;
-	    DEBUG1("Warning: SpawnPolicy ran out of time, just dropping the sucker in\n");
+	    logDebugMessage(1,"Warning: SpawnPolicy ran out of time, just dropping the sucker in\n");
 	  }
 	  break;
 	}

@@ -41,7 +41,7 @@ BZDBbool::BZDBbool(const std::string& _name, bool defVal, bool save)
                    : BZDBLocal(_name, save), data(defVal)
 {
   BZDBLocalManager::manager.addEntry(this);
-  DEBUG3("Added BZDBbool(%s) callback\n", name.c_str());
+  logDebugMessage(3,"Added BZDBbool(%s) callback\n", name.c_str());
   return;
 }
 
@@ -55,7 +55,7 @@ BZDBbool::~BZDBbool()
 void BZDBbool::callback()
 {
   data = BZDB.isTrue(name);
-  DEBUG4("BZDBbool(%s) = %s\n", name.c_str(), data ? "true" : "false");
+  logDebugMessage(4,"BZDBbool(%s) = %s\n", name.c_str(), data ? "true" : "false");
   return;
 }
 
@@ -99,7 +99,7 @@ BZDBint::BZDBint(const std::string& _name, int defVal,
                    min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
-  DEBUG3("Added BZDBint(%s) callback\n", name.c_str());
+  logDebugMessage(3,"Added BZDBint(%s) callback\n", name.c_str());
   return;
 }
 
@@ -115,25 +115,25 @@ void BZDBint::callback()
   int tmp = BZDB.evalInt(name);
 
   if (tmp < min) {
-    DEBUG3("BZDBint(%s) min: %f < %f\n", name.c_str(), tmp, min);
+    logDebugMessage(3,"BZDBint(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
     safeSetInt(name, tmp);
   }
 
   if (tmp > max) {
-    DEBUG3("BZDBint(%s) max: %f > %f\n", name.c_str(), tmp, max);
+    logDebugMessage(3,"BZDBint(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
     safeSetInt(name, tmp);
   }
 
   if (neverZero && (tmp == 0)) {
-    DEBUG3("BZDBint(%s) neverZero\n", name.c_str());
+    logDebugMessage(3,"BZDBint(%s) neverZero\n", name.c_str());
     return; // bail out
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBint(%s) = %i\n", name.c_str(), data);
+  logDebugMessage(4,"BZDBint(%s) = %i\n", name.c_str(), data);
 
   return;
 }
@@ -179,7 +179,7 @@ BZDBfloat::BZDBfloat(const std::string& _name, float defVal,
                        min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
-  DEBUG3("Added BZDBfloat(%s) callback\n", name.c_str());
+  logDebugMessage(3,"Added BZDBfloat(%s) callback\n", name.c_str());
   return;
 }
 
@@ -195,25 +195,25 @@ void BZDBfloat::callback()
   float tmp = BZDB.eval(name);
 
   if (tmp < min) {
-    DEBUG3("BZDBfloat(%s) min: %f < %f\n", name.c_str(), tmp, min);
+    logDebugMessage(3,"BZDBfloat(%s) min: %f < %f\n", name.c_str(), tmp, min);
     tmp = min; // clamp to min
     safeSetFloat(name, tmp);
   }
 
   if (tmp > max) {
-    DEBUG3("BZDBfloat(%s) max: %f > %f\n", name.c_str(), tmp, max);
+    logDebugMessage(3,"BZDBfloat(%s) max: %f > %f\n", name.c_str(), tmp, max);
     tmp = max; // clamp to max
     safeSetFloat(name, tmp);
   }
 
   if (neverZero && (tmp == 0.0f)) {
-    DEBUG3("BZDBfloat(%s) neverZero\n", name.c_str());
+    logDebugMessage(3,"BZDBfloat(%s) neverZero\n", name.c_str());
     return; // bail out
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBfloat(%s) = %f\n", name.c_str(), data);
+  logDebugMessage(4,"BZDBfloat(%s) = %f\n", name.c_str(), data);
 
   return;
 }
@@ -262,7 +262,7 @@ BZDBcolor::BZDBcolor(const std::string& _name,
   data[2] = b;
   data[3] = a;
   BZDBLocalManager::manager.addEntry(this);
-  DEBUG3("Added BZDBcolor(%s) callback\n", name.c_str());
+  logDebugMessage(3,"Added BZDBcolor(%s) callback\n", name.c_str());
   return;
 }
 
@@ -279,12 +279,12 @@ void BZDBcolor::callback()
   float color[4];
   
   if (!parseColorString(expr, color)) {
-    DEBUG3("BZDBcolor(%s) bad string: %s\n", name.c_str(), expr.c_str());
+    logDebugMessage(3,"BZDBcolor(%s) bad string: %s\n", name.c_str(), expr.c_str());
     return;
   }
 
   if (neverAlpha && (color[3] < 1.0f)) {
-    DEBUG3("BZDBcolor(%s) made opaque: %f\n", name.c_str(), color[3]);
+    logDebugMessage(3,"BZDBcolor(%s) made opaque: %f\n", name.c_str(), color[3]);
     color[3] = 1.0f;
     char buf[256];
     snprintf(buf, 256, " %f %f %f %f", color[0], color[1], color[2], color[3]);
@@ -294,7 +294,7 @@ void BZDBcolor::callback()
   // set the new value
   memcpy(data, color, sizeof(float[4]));
 
-  DEBUG4("BZDBcolor(%s) = %f, %f, %f, %f\n", name.c_str(),
+  logDebugMessage(4,"BZDBcolor(%s) = %f, %f, %f, %f\n", name.c_str(),
          data[0], data[1], data[2], data[3]);
 
   return;
@@ -343,7 +343,7 @@ BZDBstring::BZDBstring(const std::string& _name, const std::string& defVal,
                          data(defVal), neverEmpty(_neverEmpty)
 {
   BZDBLocalManager::manager.addEntry(this);
-  DEBUG3("Added BZDBstring(%s) callback\n", name.c_str());
+  logDebugMessage(3,"Added BZDBstring(%s) callback\n", name.c_str());
   return;
 }
 
@@ -359,14 +359,14 @@ void BZDBstring::callback()
   const std::string& tmp = BZDB.get(name);
   
   if (neverEmpty && (tmp.size() <= 0)) {
-    DEBUG3("BZDBstring(%s) empty string: %s\n", name.c_str(), tmp.c_str());
+    logDebugMessage(3,"BZDBstring(%s) empty string: %s\n", name.c_str(), tmp.c_str());
     safeSetString(name, tmp);
     return;
   }
 
   data = tmp; // set the new value
 
-  DEBUG4("BZDBstring(%s) = %s\n", name.c_str(), data.c_str());
+  logDebugMessage(4,"BZDBstring(%s) = %s\n", name.c_str(), data.c_str());
 
   return;
 }

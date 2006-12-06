@@ -998,7 +998,7 @@ bool MasterBanCommand::operator() (const char	 *message,
   int t = playerData->getIndex();
   std::string callsign = std::string(playerData->player.getCallSign());
 
-  DEBUG2("\"%s\" has requested masterban: %s\n", callsign.c_str(), message);
+  logDebugMessage(2,"\"%s\" has requested masterban: %s\n", callsign.c_str(), message);
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::masterBan)) {
     sendMessage(ServerPlayer, t,
@@ -1007,7 +1007,7 @@ bool MasterBanCommand::operator() (const char	 *message,
     return true;
   }
 
-  DEBUG3("Player has permission to run /masterban\n");
+  logDebugMessage(3,"Player has permission to run /masterban\n");
 
   if (!clOptions->publicizeServer) {
     sendMessage(ServerPlayer, t,
@@ -1066,7 +1066,7 @@ bool MasterBanCommand::operator() (const char	 *message,
 	std::string reloadmsg
 	  = TextUtils::format("Loaded %d master bans from %s", banCount,
 			      i->c_str());
-	DEBUG1("%s\n", reloadmsg.c_str());
+	logDebugMessage(1,"%s\n", reloadmsg.c_str());
 	sendMessage(ServerPlayer, t, reloadmsg.c_str());
       }
 

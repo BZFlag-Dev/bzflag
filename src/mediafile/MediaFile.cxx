@@ -151,14 +151,14 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
       !checkExt(filename, ".jpeg", name) &&
       !checkExt(filename, ".tif", name) &&
       !checkExt(filename, ".tiff", name)) {
-    DEBUG3("SDL_image: could not find %s\n", filename.c_str());
+    logDebugMessage(3,"SDL_image: could not find %s\n", filename.c_str());
     return NULL;
   }
 
   SDL_Surface* surface;
   surface = IMG_Load(name.c_str());
   if (surface == NULL) {
-    DEBUG3("SDL_image: could not load %s\n", name.c_str());
+    logDebugMessage(3,"SDL_image: could not load %s\n", name.c_str());
     return NULL;
   }
 
@@ -188,7 +188,7 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 
   // bail if the conversion failed
   if (rgba == NULL) {
-    DEBUG3("SDL_Image: rgba conversion failed: %s: %dx%d %dbpp\n",
+    logDebugMessage(3,"SDL_Image: rgba conversion failed: %s: %dx%d %dbpp\n",
            name.c_str(), origWidth, origHeight, origBpp);
     return NULL;
   }
@@ -208,7 +208,7 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
            rowlen);
   }
 
-  DEBUG3("SDL_Image: loaded %s: %dx%d %dbpp\n",
+  logDebugMessage(3,"SDL_Image: loaded %s: %dx%d %dbpp\n",
          name.c_str(), origWidth, origHeight, origBpp);
 
   SDL_FreeSurface(rgba);

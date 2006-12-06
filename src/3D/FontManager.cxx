@@ -177,7 +177,7 @@ void FontManager::loadAll(std::string directory)
 
 	  fontFaces[faceID][pFont->getSize()] = pFont;
 	} else {
-	  DEBUG4("Font Texture load failed: %s\n", file.getOSName().c_str());
+	  logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
 	  delete(pFont);
 	}
       }
@@ -197,20 +197,20 @@ int FontManager::getFaceID(std::string faceName)
   int faceID = 0;
   if (faceItr == faceNames.end()) {
     // see if there is a default
-    DEBUG4("Requested font %s not found, trying Default\n", faceName.c_str());
+    logDebugMessage(4,"Requested font %s not found, trying Default\n", faceName.c_str());
     faceName = "DEFAULT";
     faceItr = faceNames.find(faceName);
     if (faceItr == faceNames.end()) {
       // see if we have arial
-      DEBUG4("Requested font %s not found, trying Arial\n", faceName.c_str());
+      logDebugMessage(4,"Requested font %s not found, trying Arial\n", faceName.c_str());
       faceName = "ARIAL";
       faceItr = faceNames.find(faceName);
       if (faceItr == faceNames.end()) {
 	// hell we are outta luck, you just get the first one
-	DEBUG4("Requested font %s not found, trying first-loaded\n", faceName.c_str());
+	logDebugMessage(4,"Requested font %s not found, trying first-loaded\n", faceName.c_str());
 	faceItr = faceNames.begin();
 	if (faceItr == faceNames.end()) {
-	  DEBUG2("No fonts loaded\n");
+	  logDebugMessage(2,"No fonts loaded\n");
 	  return -1;	// we must have NO fonts, so you are screwed no matter what
 	}
       }
@@ -228,7 +228,7 @@ int FontManager::getNumFaces(void)
 const char* FontManager::getFaceName(int faceID)
 {
   if ((faceID < 0) || (faceID > getNumFaces())) {
-    DEBUG2("Trying to fetch name for invalid Font Face ID %d\n", faceID);
+    logDebugMessage(2,"Trying to fetch name for invalid Font Face ID %d\n", faceID);
     return NULL;
   }
 
@@ -242,14 +242,14 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
 
   if ((faceID < 0) || (faceID > getNumFaces())) {
-    DEBUG2("Trying to draw with invalid Font Face ID %d\n", faceID);
+    logDebugMessage(2,"Trying to draw with invalid Font Face ID %d\n", faceID);
     return;
   }
 
   ImageFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
-    DEBUG2("Could not find applicable font size for rendering; font face ID %d, "
+    logDebugMessage(2,"Could not find applicable font size for rendering; font face ID %d, "
 	   "requested size %f\n", faceID, size);
     return;
   }
@@ -418,7 +418,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	} else if (tmpText == ANSI_STR_NO_PULSATE) {
 	  pulsating = false;
 	} else {
-	  DEBUG2("ANSI Code %s not supported\n", tmpText.c_str());
+	  logDebugMessage(2,"ANSI Code %s not supported\n", tmpText.c_str());
 	}
       }
     }
@@ -452,14 +452,14 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
     return 0.0f;
 
   if ((faceID < 0) || (faceID > getNumFaces())) {
-    DEBUG2("Trying to find length of string for invalid Font Face ID %d\n", faceID);
+    logDebugMessage(2,"Trying to find length of string for invalid Font Face ID %d\n", faceID);
     return 0.0f;
   }
 
   ImageFont* pFont = getClosestRealSize(faceID, size, size);
 
   if (!pFont) {
-    DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
+    logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
 	   "requested size %f\n", faceID, size);
     return 0.0f;
   }
@@ -538,7 +538,7 @@ ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, flo
   if (!canScale || desiredSize < 14.0f) {
     // get the next biggest font size from requested
     if (!font) {
-      DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
+      logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
 	     "requested size %f\n", faceID, desiredSize);
       return NULL;
     }

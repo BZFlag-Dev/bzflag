@@ -103,15 +103,15 @@ void MeshFace::finalize()
 
   if (maxCrossSqr < +1.0e-20f) {
 
-    DEBUG1("invalid mesh face (%f)", maxCrossSqr);
+    logDebugMessage(1,"invalid mesh face (%f)", maxCrossSqr);
     if ((debugLevel >= 3) && (mesh != NULL)) {
-      DEBUG0(":");
+      logDebugMessage(0,":");
       for (i = 0; i < vertexCount; i++) {
-	DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
-    DEBUG1("\n");
+    logDebugMessage(1,"\n");
 
     vertexCount = 0;
     return;
@@ -135,15 +135,15 @@ void MeshFace::finalize()
     const float d = vec3dot(c, plane);
     if (d <= 0.0f) {
 
-      DEBUG1("non-convex mesh face (%f)", d);
+      logDebugMessage(1,"non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-	DEBUG0(":");
+	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
-      DEBUG1("\n");
+      logDebugMessage(1,"\n");
 
       vertexCount = 0;
       return;
@@ -154,15 +154,15 @@ void MeshFace::finalize()
   for (v = 0; v < vertexCount; v++) {
     const float cross = vec3dot(vertices[v], plane);
     if (fabsf(cross + plane[3]) > 1.0e-3) {
-      DEBUG1("non-planar mesh face (%f)", cross + plane[3]);
+      logDebugMessage(1,"non-planar mesh face (%f)", cross + plane[3]);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-	DEBUG0(":");
+	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  DEBUG0(" %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
-      DEBUG1("\n");
+      logDebugMessage(1,"\n");
 
       vertexCount = 0;
       return;

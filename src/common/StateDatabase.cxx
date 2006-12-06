@@ -64,7 +64,7 @@ void	_debugLookups(const std::string &name)
     for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       if (-it2->first / interval < 1.0f)
 	break;
-      DEBUG1("%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
+      logDebugMessage(1,"%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
     }
     last = now;
   }
