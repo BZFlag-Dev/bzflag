@@ -254,6 +254,7 @@ public:
   static const std::string	BZDB_HANDICAPVELAD;
   static const std::string	BZDB_HANDICAPANGAD;
   static const std::string	BZDB_HANDICAPSHOTAD;
+  static const std::string	BZDB_HEIGHTCHECKTOL;
   static const std::string	BZDB_IDENTIFYRANGE;
   static const std::string	BZDB_INERTIALINEAR;
   static const std::string	BZDB_INERTIAANGULAR;

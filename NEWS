@@ -4,6 +4,8 @@
 BZFlag 2.1.x
 ------------
 
+* Added a new optional height check - Thomas Stauer
+* Added optional delay before the countdown gets resumed - Thomas Stauer
 * Add -tkannounce server option - Bernt Hansen
 * Fixed map line ending parse bug for flag zones - Jeff Myers
 * Add client statistics output option - Daniel Remenak

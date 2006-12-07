@@ -74,6 +74,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_handicapVelAd",		"2.0",				false, StateDatabase::Locked},
   { "_handicapAngAd",		"1.5",				false, StateDatabase::Locked},
   { "_handicapShotAd",		"1.75",				false, StateDatabase::Locked},
+  { "_heightCheckTolerance",		"1.55",				false, StateDatabase::Locked},
   { "_identifyRange",		"50.0",				false, StateDatabase::Locked},
   { "_inertiaLinear",		"50.0",				false, StateDatabase::Locked},
   { "_inertiaAngular",		"38.0",				false, StateDatabase::Locked},

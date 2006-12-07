@@ -134,6 +134,7 @@ const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF = std::string("_handicap
 const std::string StateDatabase::BZDB_HANDICAPVELAD	= std::string("_handicapVelAd");
 const std::string StateDatabase::BZDB_HANDICAPANGAD	= std::string("_handicapAngAd");
 const std::string StateDatabase::BZDB_HANDICAPSHOTAD	= std::string("_handicapShotAd");
+const std::string StateDatabase::BZDB_HEIGHTCHECKTOL	= std::string("_heightCheckTolerance");
 const std::string StateDatabase::BZDB_IDENTIFYRANGE	= std::string("_identifyRange");
 const std::string StateDatabase::BZDB_INERTIALINEAR	= std::string("_inertiaLinear");
 const std::string StateDatabase::BZDB_INERTIAANGULAR	= std::string("_inertiaAngular");

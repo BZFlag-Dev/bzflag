@@ -189,8 +189,11 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		playerData->player.jumpStartPos = state.pos[2];
 	}
 
-	static const float heightFudge = 1.10f; /* 10% */
-
+	float heightFudge = BZDB.eval(StateDatabase::BZDB_HEIGHTCHECKTOL);
+	if (heightFudge < 1.0f) {
+		// Skip the check because the server owners disabled it
+		return true;
+	}
 	int pFlag = playerData->player.getFlag();
 	bool hasWings = false;
 	bool hasLG = false;
