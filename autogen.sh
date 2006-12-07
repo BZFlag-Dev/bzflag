@@ -57,9 +57,6 @@
 #
 ######################################################################
 
-# set to the name of this project
-SUITE="BZFlag"
-
 # set to minimum acceptible version of autoconf
 AUTOCONF_MAJOR_VERSION=2
 AUTOCONF_MINOR_VERSION=52
@@ -167,8 +164,11 @@ done
 #####################
 
 # sanity check before recursions potentially begin
-if [ ! "x$0" = "x$AUTOGEN_SH" ] ; then
-    echo "INTERNAL ERROR: dirname/basename inconsistency: $0 != $AUTOGEN_SH"
+if [ ! -f "$AUTOGEN_SH" ] ; then
+    echo "INTERNAL ERROR: $AUTOGEN_SH does not exist"
+    if [ ! "x$0" = "x$AUTOGEN_SH" ] ; then
+	echo "INTERNAL ERROR: dirname/basename inconsistency: $0 != $AUTOGEN_SH"
+    fi
     exit 1
 fi
 
@@ -250,6 +250,38 @@ if [ "x$HELP" = "xyes" ] ; then
 fi
 
 
+#############################
+# look for a configure file #
+#############################
+if [ "x$CONFIGURE" = "x" ] ; then
+    CONFIGURE=/dev/null
+    if test -f configure.ac ; then
+	CONFIGURE=configure.ac
+    elif test -f configure.in ; then
+	CONFIGURE=configure.in
+    fi
+else
+    $ECHO "Using CONFIGURE environment variable override: $CONFIGURE"
+fi
+
+
+####################
+# get project name #
+####################
+if [ "x$PROJECT" = "x" ] ; then
+    PROJECT="`grep AC_INIT $CONFIGURE | grep -v '.*#.*AC_INIT' | tail -${TAIL_N}1 | sed 's/^[ 	]*AC_INIT(\([^,)]*\).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+    if [ "x$PROJECT" = "x" ] ; then
+	PROJECT="project"
+    else
+	$VERBOSE_ECHO "Detected project name: $PROJECT"
+    fi
+else
+    $ECHO "Using PROJECT environment variable override: $PROJECT"
+fi
+$ECHO "Preparing the $PROJECT build system...please wait"
+$ECHO
+
+
 ##########################
 # autoconf version check #
 ##########################
@@ -295,7 +327,7 @@ else
 fi
 if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
-    $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
+    $ECHO "ERROR:  To prepare the ${PROJECT} build system from scratch,"
     $ECHO "        at least version $AUTOCONF_MAJOR_VERSION.$AUTOCONF_MINOR_VERSION.$AUTOCONF_PATCH_VERSION of GNU Autoconf must be installed."
     $ECHO
     $ECHO "$NAME_OF_AUTOGEN_SH does not need to be run on the same machine that will"
@@ -360,7 +392,7 @@ else
 fi
 if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
-    $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
+    $ECHO "ERROR:  To prepare the ${PROJECT} build system from scratch,"
     $ECHO "        at least version $AUTOMAKE_MAJOR_VERSION.$AUTOMAKE_MINOR_VERSION.$AUTOMAKE_PATCH_VERSION of GNU Automake must be installed."
     $ECHO
     $ECHO "$NAME_OF_AUTOGEN_SH does not need to be run on the same machine that will"
@@ -506,7 +538,7 @@ else
 fi
 if [ "x$_report_error" = "xyes" ] ; then
     $ECHO
-    $ECHO "ERROR:  To prepare the ${SUITE} build system from scratch,"
+    $ECHO "ERROR:  To prepare the ${PROJECT} build system from scratch,"
     $ECHO "        at least version $LIBTOOL_MAJOR_VERSION.$LIBTOOL_MINOR_VERSION.$LIBTOOL_PATCH_VERSION of GNU Libtool must be installed."
     $ECHO
     $ECHO "$NAME_OF_AUTOGEN_SH does not need to be run on the same machine that will"
@@ -568,16 +600,9 @@ initialize ( ) {
     #####################
     # detect an aux dir #
     #####################
-    _configure_file=/dev/null
-    if test -f configure.ac ; then
-	_configure_file=configure.ac
-    elif test -f configure.in ; then
-	_configure_file=configure.in
-    fi
-
     _aux_dir=.
     if test "x$HAVE_SED" = "xyes" ; then
-	_aux_dir="`grep AC_CONFIG_AUX_DIR $_configure_file | grep -v '.*#.*AC_CONFIG_AUX_DIR' | tail -${TAIL_N}1 | sed 's/^[ 	]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+	_aux_dir="`grep AC_CONFIG_AUX_DIR $CONFIGURE | grep -v '.*#.*AC_CONFIG_AUX_DIR' | tail -${TAIL_N}1 | sed 's/^[ 	]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
 	if test ! -d "$_aux_dir" ; then
 	    _aux_dir=.
 	else
@@ -589,7 +614,7 @@ initialize ( ) {
     ################################
     # detect a recursive configure #
     ################################
-    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $_configure_file | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $CONFIGURE | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
     CONFIG_SUBDIRS=""
     for dir in $_det_config_subdirs ; do
 	if test -d "$dir" ; then
@@ -747,6 +772,17 @@ manual_autogen ( ) {
     $ECHO
     $ECHO $ECHO_N "Preparing build ... $ECHO_C"
 
+    if ! test -f configure.in -o -f configure.ac ; then
+	$ECHO
+	$ECHO
+	$ECHO "A configure.ac or configure.in file could not be located implying"
+	$ECHO "that the GNU Build System is at least not used in this directory.  In"
+	$ECHO "any case, there is nothing to do here without one of those files."
+	$ECHO
+	$ECHO "ERROR: No configure.in or configure.ac file found."
+	exit 1
+    fi
+
     $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS"
     aclocal_output="`$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS 2>&1`"
     ret=$?
@@ -803,9 +839,9 @@ manual_autogen ( ) {
 	configure_ac_changed="no"
 	configure_ac_backupd="no"
 	if test "x$HAVE_SED" = "xyes" ; then
-	    if test ! -f configure.ac.backup ; then
-		$VERBOSE_ECHO cp $_configure_file configure.ac.backup
-		cp $_configure_file configure.ac.backup
+	    if test ! -f ${CONFIGURE}.backup ; then
+		$VERBOSE_ECHO cp $CONFIGURE ${CONFIGURE}.backup
+		cp $CONFIGURE ${CONFIGURE}.backup
 		configure_ac_backupd="yes"
 	    fi
 
@@ -826,23 +862,23 @@ manual_autogen ( ) {
 		fi
 	    fi
 
-	    if [ -w $_configure_file ] ; then
+	    if [ -w $CONFIGURE ] ; then
 		for feature in $macros_to_search ; do
-		    $VERBOSE_ECHO "Searching for $feature in $_configure_file with sed"
-		    sed "s/^\($feature.*\)$/dnl \1/g" < $_configure_file > configure.ac.sed
-		    if [ ! "x`cat $_configure_file`" = "x`cat configure.ac.sed`" ] ; then
-			$VERBOSE_ECHO cp configure.ac.sed $_configure_file
-			cp configure.ac.sed $_configure_file
+		    $VERBOSE_ECHO "Searching for $feature in $CONFIGURE with sed"
+		    sed "s/^\($feature.*\)$/dnl \1/g" < $CONFIGURE > ${CONFIGURE}.sed
+		    if [ ! "x`cat $CONFIGURE`" = "x`cat ${CONFIGURE}.sed`" ] ; then
+			$VERBOSE_ECHO cp ${CONFIGURE}.sed $CONFIGURE
+			cp ${CONFIGURE}.sed $CONFIGURE
 			if [ "x$configure_ac_changed" = "xno" ] ; then
 			    configure_ac_changed="$feature"
 			else
 			    configure_ac_changed="$feature $configure_ac_changed"
 			fi
 		    fi
-		    rm -f configure.ac.sed
+		    rm -f ${CONFIGURE}.sed
 		done
 	    else
-		$VERBOSE_ECHO "$_configure_file is not writable so not attempting to edit"
+		$VERBOSE_ECHO "$CONFIGURE is not writable so not attempting to edit"
 	    fi
 	fi
 	$VERBOSE_ECHO
@@ -854,11 +890,11 @@ manual_autogen ( ) {
 	if [ ! $ret = 0 ] ; then
 
 	    # failed so restore the backup
-	    if test -f configure.ac.backup ; then
+	    if test -f ${CONFIGURE}.backup ; then
 		# make sure we made the backup file
 		if test "x$configure_ac_backupd" = "xyes" ; then
-		    $VERBOSE_ECHO cp configure.ac.backup $_configure_file
-		    cp configure.ac.backup $_configure_file
+		    $VERBOSE_ECHO cp ${CONFIGURE}.backup $CONFIGURE
+		    cp ${CONFIGURE}.backup $CONFIGURE
 		fi
 	    fi
 
@@ -877,14 +913,14 @@ EOF
 
 	    if [ ! "x$configure_ac_changed" = "xno" ] ; then
 		$ECHO
-		$ECHO "Warning:  Unsupported macros were found and removed from $_configure_file"
+		$ECHO "Warning:  Unsupported macros were found and removed from $CONFIGURE"
 		$ECHO
-		$ECHO "The $_configure_file file was edited in an attempt to successfully run"
+		$ECHO "The $CONFIGURE file was edited in an attempt to successfully run"
 		$ECHO "autoconf by commenting out the unsupported macros.  Since you are"
 		$ECHO "reading this, autoconf succeeded after the edits were made.  The"
-		$ECHO "original $_configure_file is saved as configure.ac.backup but you should"
+		$ECHO "original $CONFIGURE is saved as ${CONFIGURE}.backup but you should"
 		$ECHO "consider either increasing the minimum version of autoconf required"
-		$ECHO "by this script or removing the following macros from $_configure_file:"
+		$ECHO "by this script or removing the following macros from ${CONFIGURE}:"
 		$ECHO
 		$ECHO "$configure_ac_changed"
 		$ECHO
@@ -1003,7 +1039,7 @@ done
 cd "$_prev_path"
 $ECHO "done"
 $ECHO
-$ECHO "The $SUITE build system is now prepared.  To build here, run:"
+$ECHO "The $PROJECT build system is now prepared.  To build here, run:"
 $ECHO "  $PATH_TO_AUTOGEN/configure"
 $ECHO "  make"
 
