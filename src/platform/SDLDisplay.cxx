@@ -530,6 +530,10 @@ bool SDLDisplay::createWindow() {
     OpenGLGState::initContext();
     return true;
   }
+
+//   /* Enable vsync */
+//   long sync = 1;
+//   CGLSetParameter (ctx, kCGLCPSwapInterval, &sync);
 }
 
 void SDLDisplay::setFullscreen(bool on) {
