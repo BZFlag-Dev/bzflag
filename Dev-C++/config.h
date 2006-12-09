@@ -38,6 +38,8 @@
 
 #define _USE_BZ_API 1
 
+#define USE_XFIRE //support for XFire
+
 /* Building regex */
 #define BUILD_REGEX 1
 
