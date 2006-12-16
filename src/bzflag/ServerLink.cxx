@@ -796,6 +796,14 @@ void			ServerLink::sendPaused(bool paused)
   send(MsgPause, sizeof(msg), msg);
 }
 
+void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
+{
+	char msg[2];
+	void* buf = msg;
+	buf = nboPackUByte(buf, tag);
+	send(MsgWhatTimeIsIt, 1, msg);
+}
+
 void ServerLink::sendNewPlayer()
 {
   send(MsgNewPlayer, 0, NULL);

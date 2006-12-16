@@ -89,7 +89,7 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
-
+#include "SyncClock.h"
 //#include "messages.h"
 
 #ifdef HAVE_KRB5
@@ -2514,6 +2514,16 @@ static void handleNearFlag ( void *msg, uint16_t /*len*/ )
   }
 }
 
+static void handleWhatTimeIsIt(void *msg, uint16_t /*len*/ )
+{
+	float time = -1;
+	unsigned char tag = 0;
+
+	msg = nboUnpackUByte(msg, tag);
+	msg = nboUnpackFloat(msg, time);
+	syncedClock.timeMessage(tag,time);
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
 {
@@ -2522,6 +2532,11 @@ static void		handleServerMessage(bool human, uint16_t code,
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
+
+	case MsgWhatTimeIsIt:
+	  handleWhatTimeIsIt(msg,len);
+	  break;
+
     case MsgNearFlag:
       handleNearFlag(msg,len);
       break;
@@ -6451,6 +6466,9 @@ static void		playingLoop()
 
       doMessages();    // handle incoming packets
 
+	  // have the synced clock do anything it has to do
+	  syncedClock.update(serverLink);
+
       if (world)
 	world->checkCollisionManager();    // see if the world collision grid needs to be updated
 
@@ -6498,6 +6516,7 @@ static void		playingLoop()
 	joinInternetGame2(); // we did the inital downloads, so we should join
 
       doEnergySaver();
+
 
       if (serverLink)
 	serverLink->flush();

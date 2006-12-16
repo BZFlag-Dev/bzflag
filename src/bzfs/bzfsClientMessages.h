@@ -16,6 +16,7 @@
 #include "global.h"
 #include "bzfs.h"
 
+void handleWhatTimeMessage( NetHandler *handler, void* buf, uint16_t len );
 void handeCapBits ( void*, uint16_t len, GameKeeper::Player *playerData );
 void handleClientEnter ( void **buf, GameKeeper::Player *playerData );
 void handleClientExit ( GameKeeper::Player *playerData );

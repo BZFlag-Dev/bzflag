@@ -3165,6 +3165,10 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code) {
 
+	case MsgWhatTimeIsIt:
+		handleWhatTimeMessage(handler,buf,len);
+		break;
+
 	case MsgCapBits:
 		handeCapBits(buf,len,playerData);
 		break;

@@ -112,6 +112,8 @@ class ServerLink {
     void                sendLagPing(char pingRequest[]);
     void		sendUDPlinkRequest();
 
+	void		sendWhatTimeIsIt ( unsigned char tag );
+
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
     void		enableOutboundUDP();

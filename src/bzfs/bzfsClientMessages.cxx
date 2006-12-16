@@ -17,6 +17,32 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 
+
+void handleWhatTimeMessage( NetHandler *handler, void* buf, uint16_t len )
+{
+	// the client wants to know what time we think it is.
+	// he may have sent us a tag to ID the ping with ( for packet loss )
+	// so we send that back to them with the time.
+	// this is so the client can try and get a decent guess 
+	// at what our time is, and timestamp stuff with a real server
+	// time, so everyone can go and compensate for some lag.
+	unsigned char tag = 0;
+	if (len >= 1)
+		buf = nboUnpackUByte(buf,tag);
+
+	float time = (float)TimeKeeper::getCurrent().getSeconds();
+
+	logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
+
+	/* Pack a message with the list of missing flags */
+	void *bufStart;
+	void *buf2 = bufStart = getDirectMessageBuffer();
+	buf2 = nboPackUByte(bufStart,tag);
+	buf2 = nboPackFloat(buf2,time);
+
+	directMessage(handler, MsgWhatTimeIsIt, (char*)buf2-(char*)bufStart, bufStart);
+}
+
 void handeCapBits ( void* buf, uint16_t len, GameKeeper::Player *playerData )
 {
 	if (!playerData)
