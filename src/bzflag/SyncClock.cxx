@@ -31,7 +31,11 @@ void ServerSyncedClock::update ( ServerLink *link )
 	{
 		// send a pingout
 		if (!link)
+		{
+			// make sure that when we DO have a link we will update first thing
+			lastPingTime = -pingInterval*2;
 			return;
+		}
 
 		link->sendWhatTimeIsIt(++lastPingTag);
 		outstandingPings[lastPingTag] = current;
