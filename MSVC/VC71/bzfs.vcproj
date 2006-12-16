@@ -319,6 +319,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\Authentication.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\AutoAllowTimer.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\BanCommands.cxx">
 			</File>
 			<File
@@ -1129,6 +1132,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Authentication.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\AutoAllowTimer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfs.h">

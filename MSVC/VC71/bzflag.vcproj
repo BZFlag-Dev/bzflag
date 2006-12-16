@@ -429,6 +429,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\EntryZone.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ExportInformation.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\FlashClock.cxx">
 			</File>
 			<File
@@ -610,6 +613,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Weapon.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\XfireGameClient.cpp">
 			</File>
 			<Filter
 				Name="drawing"
@@ -1736,6 +1742,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\EntryZone.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ExportInformation.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\FlashClock.h">
 			</File>
 			<File
@@ -1968,6 +1977,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\WorldPlayer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\XfireGameClient.h">
 			</File>
 		</Filter>
 		<Filter
