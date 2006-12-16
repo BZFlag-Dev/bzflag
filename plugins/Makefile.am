@@ -7,6 +7,7 @@ SUBDIRS = \
 	airspawn \
 	chathistory \
 	hiddenAdmin \
+	flagStay \
 	killall \
 	logDetail \
 	playHistoryTracker \
