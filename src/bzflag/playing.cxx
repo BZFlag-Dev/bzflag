@@ -416,9 +416,9 @@ void			setSceneDatabase()
 
   // print debugging info
   if (BZDBCache::zbuffer) {
-    DEBUG2("ZSceneDatabase processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2,"ZSceneDatabase processed in %.3f seconds.\n", elapsed);
   } else {
-    DEBUG2("BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2,"BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
 
   // set the scene
@@ -2734,7 +2734,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (i >= 0)
 	    sPlayer = getPlayerByIndex(i);
 	  else
-	    DEBUG1("Received handicap update for unknown player!\n");
+	    logDebugMessage(1,"Received handicap update for unknown player!\n");
 	}
 	if (sPlayer) {
 	  // a relative score of -50 points will provide maximum handicap
@@ -2775,7 +2775,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (i >= 0)
 	    sPlayer = getPlayerByIndex(i);
 	  else
-	    DEBUG1("Recieved score update for unknown player!\n");
+	    logDebugMessage(1,"Recieved score update for unknown player!\n");
 	}
 	if (sPlayer) {
 	  if (sPlayer == myTank) {
@@ -3173,7 +3173,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (!robots[i])
 	  break;
       if (i >= MAX_ROBOTS) {
-	DEBUG1("Too much bots requested\n");
+	logDebugMessage(1,"Too much bots requested\n");
 	break;
       }
       char callsign[CallSignLen];
@@ -4546,7 +4546,7 @@ static void cleanWorldCache()
     }
 
     // remove the oldest file
-    DEBUG1("cleanWorldCache: removed %s\n", oldestFile);
+    logDebugMessage(1,"cleanWorldCache: removed %s\n", oldestFile);
     remove((worldPath + oldestFile).c_str());
     free(oldestFile);
     totalSize -= oldestSize;
@@ -6998,20 +6998,20 @@ void			startPlaying(BzfDisplay* _display,
   // print debugging info
   {
     // Application version
-    DEBUG1("BZFlag version:   %s\n", getAppVersion());
+    logDebugMessage(1,"BZFlag version:   %s\n", getAppVersion());
 
     // Protocol version
-    DEBUG1("BZFlag protocol:  %s\n", getProtocolVersion());
+    logDebugMessage(1,"BZFlag protocol:  %s\n", getProtocolVersion());
 
     // OpenGL Driver Information
-    DEBUG1("OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
-    DEBUG1("OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
-    DEBUG1("OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
+    logDebugMessage(1,"OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
+    logDebugMessage(1,"OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
+    logDebugMessage(1,"OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
     GLint zDepth;
     glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    DEBUG1("Depth Buffer:     %i bitplanes\n", zDepth);
+    logDebugMessage(1,"Depth Buffer:     %i bitplanes\n", zDepth);
   }
 
   // windows version can be very helpful in debug logs
@@ -7021,7 +7021,7 @@ void			startPlaying(BzfDisplay* _display,
     ZeroMemory(&info, sizeof(OSVERSIONINFO));
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
-    DEBUG1("Running on Windows %s%d.%d %s\n",
+    logDebugMessage(1,"Running on Windows %s%d.%d %s\n",
 	   (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
 	   info.dwMajorVersion, info.dwMinorVersion,
 	   info.szCSDVersion);

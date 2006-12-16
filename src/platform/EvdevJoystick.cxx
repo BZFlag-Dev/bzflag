@@ -95,19 +95,19 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
     /* if we can't open read/write, try just read...if it's not ff it'll work anyhow */
     if (!fd) {
       fd = open(info.filename.c_str(), O_RDONLY);
-      if (fd) DEBUG4("Opened event device %s as read-only.\n", info.filename.c_str());
+      if (fd) logDebugMessage(4,"Opened event device %s as read-only.\n", info.filename.c_str());
     } else {
-      DEBUG4("Opened event device %s as read-write.\n", info.filename.c_str());
+      logDebugMessage(4,"Opened event device %s as read-write.\n", info.filename.c_str());
     }
     /* no good, can't open it */
     if (!fd) {
-      DEBUG4("Can't open event device %s.  Check permissions.\n", info.filename.c_str());
+      logDebugMessage(4,"Can't open event device %s.  Check permissions.\n", info.filename.c_str());
       continue;
     }
 
     /* Does it look like a joystick? */
     if (!(collectJoystickBits(fd, info) && isJoystick(info))) {
-      DEBUG4("Device %s doesn't seem to be a joystick.  Skipping.\n", info.filename.c_str());
+      logDebugMessage(4,"Device %s doesn't seem to be a joystick.  Skipping.\n", info.filename.c_str());
       close(fd);
       continue;
     }

@@ -312,16 +312,16 @@ if (packetStream) {
 
 #if defined(NETWORK_STATS)
   const float dt = float(TimeKeeper::getCurrent() - startTime);
-  DEBUG1("Server network statistics:\n");
-  DEBUG1("  elapsed time    : %f\n", dt);
-  DEBUG1("  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-  DEBUG1("  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+  logDebugMessage(1,"Server network statistics:\n");
+  logDebugMessage(1,"  elapsed time    : %f\n", dt);
+  logDebugMessage(1,"  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+  logDebugMessage(1,"  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
   if (packetsSent != 0)
-    DEBUG1("  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-  DEBUG1("  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-  DEBUG1("  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+    logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+  logDebugMessage(1,"  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+  logDebugMessage(1,"  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
   if (packetsReceived != 0)
-    DEBUG1("  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+    logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 
@@ -939,7 +939,7 @@ void ServerLink::sendKerberosTicket(const char      *principal,
   char msg[MaxPacketLen];
   void* buf = msg;
 
-  DEBUG3("Sent authentication ticket to server : \n");
+  logDebugMessage(3,"Sent authentication ticket to server : \n");
 
   buf = nboPackUByte(buf, uint8_t(getId()));
   buf = nboPackString(buf, principal,  strlen(principal));

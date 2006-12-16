@@ -572,7 +572,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 				 const ObstacleModifier& obsMod) const
 {
   if (active) {
-    DEBUG1("warning: avoided recursion, groupdef \"%s\"\n", name.c_str());
+    logDebugMessage(1,"warning: avoided recursion, groupdef \"%s\"\n", name.c_str());
     return; // avoid recursion
   }
 
@@ -655,7 +655,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       depthName = tmpDepthName;
     }
     else {
-      DEBUG1("warning: group definition \"%s\" is missing\n",
+      logDebugMessage(1,"warning: group definition \"%s\" is missing\n",
 	     group->getGroupDef().c_str());
     }
   }
@@ -736,7 +736,7 @@ void GroupDefinition::deleteInvalidObstacles()
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];
       if (!obs->isValid()) {
-	DEBUG1("Deleted invalid %s obstacle\n", obs->getType());
+	logDebugMessage(1,"Deleted invalid %s obstacle\n", obs->getType());
 	delete obs;
 	list.remove(i);
 	i--; // don't miss the substitute

@@ -120,7 +120,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       // if no newline then no more complete replies
       if (*scan != '\r' && *scan != '\n') break;
       while (*scan && (*scan == '\r' || *scan == '\n')) *scan++ = '\0';
-      DEBUG4("Got line: \"%s\"\n", base);
+      logDebugMessage(4,"Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
 
       // is player globally registered ?
@@ -147,17 +147,17 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	std::string line = base;
 	std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
 	if (args.size() < 3) {
-	  DEBUG3("Bad BZID string: %s\n", line.c_str());
+	  logDebugMessage(3,"Bad BZID string: %s\n", line.c_str());
 	} else {
 	  const std::string& bzId = args[1];
 	  const std::string& nick = args[2];
-	  DEBUG4("Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
+	  logDebugMessage(4,"Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
 	  for (int i = 0; i < curMaxPlayers; i++) {
 	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((gkp != NULL) &&
 		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0)) {
 	      gkp->setBzIdentifier(bzId);
-	      DEBUG3("Set player (%s [%i]) bzId to (%s)\n",
+	      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",
 		     nick.c_str(), i, bzId.c_str());
 	      break;
 	    }
@@ -166,7 +166,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       }
 
       if (authReply) {
-	DEBUG3("Got: %s", base);
+	logDebugMessage(3,"Got: %s", base);
 	char *group = (char *)NULL;
 
 	// Isolate callsign from groups
@@ -189,7 +189,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 					 callsign))
 	    break;
 	}
-	DEBUG3("[%d]\n", playerIndex);
+	logDebugMessage(3,"[%d]\n", playerIndex);
 
 	if (playerIndex < curMaxPlayers) {
 	  if (registered) {
@@ -268,14 +268,14 @@ void ListServerLink::queueMessage(MessageType type)
   if (!queuedRequest)
     sendQueuedMessages();
   else
-    DEBUG3("There is a message already queued to the list server: not sending this one yet.\n");
+    logDebugMessage(3,"There is a message already queued to the list server: not sending this one yet.\n");
 }
 
 void ListServerLink::sendQueuedMessages()
 {
   queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
-    DEBUG3("Queuing ADD message to list server\n");
+    logDebugMessage(3,"Queuing ADD message to list server\n");
 
     bz_ListServerUpdateEvent_V1	updateEvent;
     updateEvent.address = publicizeAddress;
@@ -287,7 +287,7 @@ void ListServerLink::sendQueuedMessages()
     addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
-    DEBUG3("Queuing REMOVE message to list server\n");
+    logDebugMessage(3,"Queuing REMOVE message to list server\n");
     removeMe(publicizeAddress);
   }
   nextMessageType = ListServerLink::NONE;

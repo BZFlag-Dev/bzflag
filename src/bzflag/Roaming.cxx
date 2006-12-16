@@ -70,7 +70,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 
   World* world = World::getWorld();
   if (!world) {
-    DEBUG4("Roaming::changeTarget() no world, switching to free roaming\n");
+    logDebugMessage(4,"Roaming::changeTarget() no world, switching to free roaming\n");
     view = roamViewFree;
     buildRoamingLabel();
     return;

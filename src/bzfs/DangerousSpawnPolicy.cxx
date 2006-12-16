@@ -119,7 +119,7 @@ void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGround
 	    pos[0] = testPos[0];
 	    pos[1] = testPos[1];
 	    pos[2] = maxHeight;
-	    DEBUG1("Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
+	    logDebugMessage(1,"Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
 	  }
 	  break;
 	}

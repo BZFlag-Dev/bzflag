@@ -901,7 +901,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
-		 pl->getPosition()[2]+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*3, model, proj, view, &x, &y, &z);
+		 pl->getPosition()[2]/*+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
 	FontManager &fm = FontManager::instance();
 	fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,

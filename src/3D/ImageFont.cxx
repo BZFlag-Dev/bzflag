@@ -72,7 +72,7 @@ bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfil
     retval = atoi(tmpBuf.c_str()+expsize+1);
     return true;
   } else {
-    DEBUG2("Unexpected line in font metrics file %s, line %d (expected %s)\n",
+    logDebugMessage(2,"Unexpected line in font metrics file %s, line %d (expected %s)\n",
       file.getFileName().c_str(), line, expectedLeft.c_str());
     return false;
   }
@@ -97,12 +97,12 @@ bool readLetter(OSFile &file, char expected)
 	tmpBuf[expsize+2]==expected) {
       return true;
     } else {
-      DEBUG2("Unexpected character: %s, in font metrics file %s, line %d (expected \"%c\").\n",
+      logDebugMessage(2,"Unexpected character: %s, in font metrics file %s, line %d (expected \"%c\").\n",
 	     tmpBuf.c_str()+expsize, file.getFileName().c_str(), line, expected);
       return false;
     }
   } else {
-    DEBUG2("Unexpected line in font metrics file %s, line %d (expected %s)\n",
+    logDebugMessage(2,"Unexpected line in font metrics file %s, line %d (expected %s)\n",
       file.getFileName().c_str(), line, expectedLeft.c_str());
     return false;
   }
@@ -118,7 +118,7 @@ bool ImageFont::load(OSFile &file)
   texture = file.getFileName();
   std::string::size_type underscore = texture.rfind('_');
   if (underscore == std::string::npos) {
-    DEBUG1("Unexpected font file name: %s, no _size found\n", file.getStdName().c_str());
+    logDebugMessage(1,"Unexpected font file name: %s, no _size found\n", file.getStdName().c_str());
     return false;
   }
   faceName = texture.substr(0, underscore);
@@ -134,7 +134,7 @@ bool ImageFont::load(OSFile &file)
 
   // clamp the maximum char count
   if (numberOfCharacters > MAX_TEXTURE_FONT_CHARS) {
-    DEBUG1("Too many characters (%i) in %s.\n",
+    logDebugMessage(1,"Too many characters (%i) in %s.\n",
 	   numberOfCharacters, file.getFileName().c_str());
     numberOfCharacters = MAX_TEXTURE_FONT_CHARS;
   }

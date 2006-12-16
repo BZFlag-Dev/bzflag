@@ -999,7 +999,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       i++;
       value = argv[i];
       BZDB.set(name, value);
-      DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
     } else if (strcmp(argv[i], "-setforced") == 0) {
       const char *name, *value;
       checkArgc(2, i, argc, argv[i]);
@@ -1013,7 +1013,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         addBzfsCallback(name, NULL);
       }
       BZDB.set(name, value);
-      DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
     } else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
       checkArgc(2, i, argc, argv[i]);
@@ -1510,24 +1510,24 @@ void finalizeParsing(int /*argc*/, char **argv,
 
 
   // debugging
-  DEBUG1("type: %d\n", options.gameType);
+  logDebugMessage(1,"type: %d\n", options.gameType);
   if (options.gameType == eClassicCTF)
-    DEBUG1("  capture the flag\n");
+    logDebugMessage(1,"  capture the flag\n");
   if (options.gameType == eRabbitChase)
-    DEBUG1("  rabbit chase\n");
+    logDebugMessage(1,"  rabbit chase\n");
  
-  DEBUG1("options: %c\n", options.gameOptions);
+  logDebugMessage(1,"options: %c\n", options.gameOptions);
 if (options.gameOptions & int(SuperFlagGameStyle))
-    DEBUG1("  super flags allowed\n");
+    logDebugMessage(1,"  super flags allowed\n");
   if (options.gameOptions & int(JumpingGameStyle))
-    DEBUG1("  jumping allowed\n");
+    logDebugMessage(1,"  jumping allowed\n");
   if (options.gameOptions & int(RicochetGameStyle))
-    DEBUG1("  all shots ricochet\n");
+    logDebugMessage(1,"  all shots ricochet\n");
   if (options.gameOptions & int(ShakableGameStyle))
-    DEBUG1("  shakable bad flags: timeout=%f, wins=%i\n",
+    logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
 	   0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameOptions & int(AntidoteGameStyle))
-    DEBUG1("  antidote flags\n");
+    logDebugMessage(1,"  antidote flags\n");
 
   return;
 }

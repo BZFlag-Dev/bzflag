@@ -1289,7 +1289,7 @@ bool Player::isDeadReckoningWrong() const
 
   float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
-    DEBUG4 ("state.azimuth = %f, predictedAzimuth = %f\n",
+    logDebugMessage(4,"state.azimuth = %f, predictedAzimuth = %f\n",
 	    state.azimuth, predictedAzimuth);
     return true;
   }

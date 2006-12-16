@@ -53,7 +53,7 @@ void handleClientEnter(void **buf, GameKeeper::Player *playerData)
 	if ( playerData->netHandler )
 		playerIP = playerData->netHandler->getTargetIP();
 
-	DEBUG1("Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+	logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
 		playerData->player.getCallSign(),
 		playerData->getIndex(), playerIP.c_str(), timeStamp.c_str(),
 		playerData->player.getToken());
@@ -288,19 +288,19 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 	playerData->player.hasSent();
 	if (dstPlayer == AllPlayers) 
 	{
-		DEBUG1("Player %s [%d] -> All: %s\n", playerData->player.getCallSign(), playerData->getIndex(), message);
+		logDebugMessage(1,"Player %s [%d] -> All: %s\n", playerData->player.getCallSign(), playerData->getIndex(), message);
 	}
 	else
 	{
 		if (dstPlayer == AdminPlayers)
 		{
-			DEBUG1("Player %s [%d] -> Admin: %s\n",playerData->player.getCallSign(), playerData->getIndex(), message);
+			logDebugMessage(1,"Player %s [%d] -> Admin: %s\n",playerData->player.getCallSign(), playerData->getIndex(), message);
 		}
 		else
 		{
 			if (dstPlayer > LastRealPlayer)
 			{
-				DEBUG1("Player %s [%d] -> Team: %s\n",playerData->player.getCallSign(),
+				logDebugMessage(1,"Player %s [%d] -> Team: %s\n",playerData->player.getCallSign(),
 				       playerData->getIndex(), message);
 			}
 			else
@@ -308,12 +308,12 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 				GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
 				if (p != NULL)
 				{
-					DEBUG1("Player %s [%d] -> Player %s [%d]: %s\n",playerData->player.getCallSign(),
+					logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",playerData->player.getCallSign(),
 					       playerData->getIndex(), p->player.getCallSign(), dstPlayer, message);
 				}
 				else
 				{
-					DEBUG1("Player %s [%d] -> Player Unknown [%d]: %s\n",
+					logDebugMessage(1,"Player %s [%d] -> Player Unknown [%d]: %s\n",
 					       playerData->player.getCallSign(), playerData->getIndex(), dstPlayer, message);
 				}
 			}

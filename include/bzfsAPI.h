@@ -954,6 +954,23 @@ public:
 	unsigned char* data;
 };
 
+class bz_LogingEventData_V1 : public bz_EventData
+{
+public:
+	bz_LogingEventData_V1()
+	{
+		eventType = bz_eLogingEvent;
+		level = 0;
+		time = 0;
+	}
+
+	virtual ~bz_LogingEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	double time;
+	int level;
+	bz_ApiString message;
+};
 
 // event handler callback
 class bz_EventHandler

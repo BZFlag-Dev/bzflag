@@ -166,7 +166,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 	clientVersion[VersionLen - 1] = '\0';
 	cleanEMail();
 
-	DEBUG2("Player %s [%d] sent version string: %s\n",
+	logDebugMessage(2,"Player %s [%d] sent version string: %s\n",
 		callSign, playerIndex, clientVersion);
 
 	// spoof filter holds "SERVER" for robust name comparisons
@@ -175,7 +175,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 	}
 
 	if (!isCallSignReadable()) {
-		DEBUG2("rejecting unreadable callsign: %s\n", callSign);
+		logDebugMessage(2,"rejecting unreadable callsign: %s\n", callSign);
 		rejectCode   = RejectBadCallsign;
 		strcpy(rejectMsg, errorString.c_str());
 		return false;
@@ -187,7 +187,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 		return false;
 	}
 	if (!isEMailReadable()) {
-		DEBUG2("rejecting unreadable player email: %s (%s)\n", callSign, email);
+		logDebugMessage(2,"rejecting unreadable player email: %s (%s)\n", callSign, email);
 		rejectCode   = RejectBadEmail;
 		strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
 		return false;
@@ -195,7 +195,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 
 	// make sure the callsign is not obscene/filtered
 	if (callSignFiltering) {
-		DEBUG2("checking callsign: %s\n",callSign);
+		logDebugMessage(2,"checking callsign: %s\n",callSign);
 
 		char cs[CallSignLen];
 		memcpy(cs, callSign, sizeof(char) * CallSignLen);
@@ -209,7 +209,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 
 	// make sure the email is not obscene/filtered
 	if (callSignFiltering) {
-		DEBUG2("checking email: %s\n", email);
+		logDebugMessage(2,"checking email: %s\n", email);
 		char em[EmailLen];
 		memcpy(em, email, sizeof(char) * EmailLen);
 		if (filterData->filter(em, simpleFiltering)) {

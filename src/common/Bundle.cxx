@@ -138,7 +138,7 @@ std::string Bundle::getLocalString(const std::string &key) const
 	unmapped.insert( key );
     std::string stripped = stripAnsiCodes (key);
 	std::string debugStr = "Unmapped Locale String: " + stripped + "\n";
-	DEBUG1("%s", debugStr.c_str());
+	logDebugMessage(1,"%s", debugStr.c_str());
       }
     }
     return key;

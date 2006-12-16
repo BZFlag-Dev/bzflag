@@ -115,7 +115,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	{
 		if (getPluginVersion(hLib) > BZ_API_VERSION)
 		{
-			DEBUG1("Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
+			logDebugMessage(1,"Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
 			return false;
 		}
@@ -125,7 +125,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 			if (lpProc)
 			{
 				lpProc(config.c_str());
-				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
+				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
 
 				trPluginRecord pluginRecord;
 				pluginRecord.handle = hLib;
@@ -135,7 +135,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 			}
 			else
 			{
-				DEBUG1("Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
+				logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
 				FreeLibrary(hLib);
 				return false;
 			}
@@ -143,7 +143,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	}
 	else
 	{
-		DEBUG1("Plugin:%s not found\n",plugin.c_str());
+		logDebugMessage(1,"Plugin:%s not found\n",plugin.c_str());
 		return false;
 	}
 }
@@ -158,7 +158,7 @@ void unload1Plugin ( int iPluginID )
 	if (lpProc)
 		lpProc();
 	else
-		DEBUG1("Plugin does not contain bz_UnLoad method\n");
+		logDebugMessage(1,"Plugin does not contain bz_UnLoad method\n");
 
 	FreeLibrary(plugin.handle);
 	plugin.handle = NULL;
@@ -187,7 +187,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	if (hLib)
 	{
 		if (dlsym(hLib, "bz_Load") == NULL) {
-			DEBUG1("Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+			logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
 			return false;
 		}
@@ -195,7 +195,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		int version = getPluginVersion(hLib);
 		if (version < BZ_API_VERSION)
 		{
-			DEBUG1("Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
+			logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
 			dlclose(hLib);
 			return false;
 		}
@@ -205,7 +205,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 			if (lpProc)
 			{
 				(*lpProc)(config.c_str());
-				DEBUG1("Plugin:%s loaded\n",plugin.c_str());
+				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
 				trPluginRecord pluginRecord;
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
@@ -216,11 +216,11 @@ bool load1Plugin ( std::string plugin, std::string config )
 	}
 	else
 	{
-		DEBUG1("Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
+		logDebugMessage(1,"Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
 		return false;
 	}
 
-	DEBUG1("If you see this, there is something terribly wrong.\n");
+	logDebugMessage(1,"If you see this, there is something terribly wrong.\n");
 	return false;
 }
 
@@ -233,7 +233,7 @@ void unload1Plugin ( int iPluginID )
 	if (lpProc)
 		(*lpProc)();
 	else
-		DEBUG1("Plugin does not contain bz_UnLoad method, error %s\n",dlerror());
+		logDebugMessage(1,"Plugin does not contain bz_UnLoad method, error %s\n",dlerror());
 
 	dlclose(plugin.handle);
 	plugin.handle = NULL;

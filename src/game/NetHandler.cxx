@@ -116,7 +116,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // Error receiving data (or no data)
     if (udpLen < 0)
       return -1;
-    DEBUG4("uread() len %d from %s:%d on %i\n",
+    logDebugMessage(4,"uread() len %d from %s:%d on %i\n",
 	   udpLen,
 	   inet_ntoa(lastUDPRxaddr.sin_addr),
 	   ntohs(lastUDPRxaddr.sin_port),
@@ -162,16 +162,16 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
       return 0;
     } 
     // no match, discard packet
-    DEBUG2("uread() discard packet! %s:%d choices p(l) h:p",
+    logDebugMessage(2,"uread() discard packet! %s:%d choices p(l) h:p",
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
     for (it = netConnections.begin(); it != netConnections.end(); it++)
       if (!(*it)->closed) {
-	DEBUG3("(%d-%d) %s:%d", (*it)->udpin,
+	logDebugMessage(3,"(%d-%d) %s:%d", (*it)->udpin,
 	       (*it)->udpout,
 	       inet_ntoa((*it)->uaddr.sin_addr),
 	       ntohs((*it)->uaddr.sin_port));
     }
-    DEBUG2("\n");
+    logDebugMessage(2,"\n");
     return -1;
   }
 #ifdef NETWORK_STATS
@@ -591,21 +591,21 @@ void NetHandler::dumpMessageStats() {
   if (!messageExchanged)
     return;
 
-  DEBUG1("Player connect time: %f\n", now - time);
+  logDebugMessage(1,"Player connect time: %f\n", now - time);
 
   for (direction = 0; direction <= 1; direction++) {
     total = 0;
-    DEBUG1("Player messages %s:", direction ? "out" : "in");
+    logDebugMessage(1,"Player messages %s:", direction ? "out" : "in");
 
     for (MessageCountMap::iterator i = msg[direction].begin();
 	 i != msg[direction].end(); i++) {
-      DEBUG1(" %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
+      logDebugMessage(1," %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
 	     i->second.count, i->second.maxSize);
       total += i->second.count;
     }
 
-    DEBUG1(" total:%u(%u) ", total, msgBytes[direction]);
-    DEBUG1("max msgs/bytes per second: %u/%u\n",
+    logDebugMessage(1," total:%u(%u) ", total, msgBytes[direction]);
+    logDebugMessage(1,"max msgs/bytes per second: %u/%u\n",
 	perSecondMaxMsg[direction],
 	perSecondMaxBytes[direction]);
   }
@@ -616,7 +616,7 @@ void NetHandler::dumpMessageStats() {
 void NetHandler::udpSend(const void *b, size_t l) {
 #ifdef TESTLINK
   if ((random()%LINKQUALITY) == 0) {
-    DEBUG1("Drop Packet due to Test\n");
+    logDebugMessage(1,"Drop Packet due to Test\n");
     return;
   }
 #endif

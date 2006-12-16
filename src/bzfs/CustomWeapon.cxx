@@ -106,7 +106,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
       return true;
     }
-    DEBUG4("Adding world weapon triggered '%s'\n", triggerName.c_str());
+    logDebugMessage(4,"Adding world weapon triggered '%s'\n", triggerName.c_str());
   }
   else if (strcasecmp(cmd, "eventteam") == 0) {
     input >> eventTeam;

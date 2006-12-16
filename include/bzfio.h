@@ -20,7 +20,17 @@
 #include "common.h"
 
 void setDebugTimestamp (bool enable, bool doMicros);
-void formatDebug(const char* fmt, ...);
+void logDebugMessage(int level, const char* fmt, ...);
+
+class LogingCallback
+{
+public:
+	virtual ~LogingCallback(){};
+
+	virtual void log ( int level, const char* message ) = 0;
+};
+
+extern LogingCallback	*logingCallback;
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)

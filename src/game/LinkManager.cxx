@@ -133,11 +133,11 @@ void LinkManager::doLinking()
     bool broken = false;
     if (srcNumbers.size() <= 0) {
       broken = true;
-      DEBUG1("broken link src: %s\n", link.src.c_str());
+      logDebugMessage(1,"broken link src: %s\n", link.src.c_str());
     }
     if (dstNumbers.size() <= 0) {
       broken = true;
-      DEBUG1("broken link dst: %s\n", link.dst.c_str());
+      logDebugMessage(1,"broken link dst: %s\n", link.dst.c_str());
     }
     if (broken) {
       continue;
@@ -166,19 +166,19 @@ void LinkManager::doLinking()
   if (debugLevel >= 4) {
     for (i = 0; i < teles.size(); i++) {
       Teleporter* tele = (Teleporter*) teles[i];
-      DEBUG0("TELE(%i): %s\n", i, tele->getName().c_str());
+      logDebugMessage(0,"TELE(%i): %s\n", i, tele->getName().c_str());
     }
     for (i = 0; i < linkNames.size(); i++) {
       LinkNameSet& link = linkNames[i];
-      DEBUG0("LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
+      logDebugMessage(0,"LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
     }
     for (i = 0; i < linkNumbers.size(); i++) {
-      DEBUG0("SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
+      logDebugMessage(0,"SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
       for (unsigned int j = 0; j < linkNumbers[i].dsts.size(); j++) {
 	int dst = linkNumbers[i].dsts[j];
-	DEBUG0(" %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
+	logDebugMessage(0," %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
       }
-      DEBUG0("\n");
+      logDebugMessage(0,"\n");
     }
   }
 

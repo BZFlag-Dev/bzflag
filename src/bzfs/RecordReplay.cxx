@@ -339,7 +339,7 @@ bool Record::setDirectory(const char *dirname)
 
   if (!makeDirExist(RecordDir.c_str())) {
     // they've been warned, leave it at that
-    DEBUG1 ("Could not open or create -recdir directory: %s\n",
+    logDebugMessage(1,"Could not open or create -recdir directory: %s\n",
 	    RecordDir.c_str());
     return false;
   }
@@ -498,7 +498,7 @@ bool Record::saveBuffer(int playerIndex, const char *filename, int seconds)
 
   // setup the beginning position for the recording
   if (seconds != 0) {
-    DEBUG3 ("Record: saving %i seconds to %s\n", seconds, name.c_str());
+    logDebugMessage(3,"Record: saving %i seconds to %s\n", seconds, name.c_str());
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
     RRtime usecs = (RRtime)seconds * (RRtime)1000000;
@@ -603,11 +603,11 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     RRpacket *p = newPacket(mode, code, len, data);
     p->timestamp = getRRtime();
     addHeadPacket(&RecordBuf, p);
-    DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p->mode, p->len, msgString(p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
-      DEBUG4 ("routePacket: deleting until State Update\n");
+      logDebugMessage(4,"routePacket: deleting until State Update\n");
       while (((p = delTailPacket(&RecordBuf)) != NULL) &&
 	     (p->mode != UpdatePacket)) {
 	delete[] p->data;
@@ -620,7 +620,7 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     p.timestamp = getRRtime();
     initPacket(mode, code, len, data, &p);
     savePacket(&p, RecordFile);
-    DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p.mode, p.len, msgString(p.code), p.data);
   }
 
@@ -1257,7 +1257,7 @@ bool Replay::sendPackets()
       return false;
     }
 
-    DEBUG4 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4,"sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p->mode, p->len, msgString(p->code), p->data);
 
     if (p->mode != HiddenPacket) {
@@ -1306,7 +1306,7 @@ bool Replay::sendPackets()
       } // for loop
     } // if (p->mode != HiddenPacket)
     else {
-      DEBUG4 ("  skipping hidden packet\n");
+      logDebugMessage(4,"  skipping hidden packet\n");
     }
 
     p = nextPacket();
@@ -1906,7 +1906,7 @@ static RRpacket *loadPacket(FILE *f)
     }
   }
 
-  DEBUG4 ("loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+  logDebugMessage(4,"loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	  (int)p->mode, p->len, msgString(p->code), p->data);
 
   return p;
@@ -2129,15 +2129,15 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   // do the worldDatabase or flagTypes need to be replaced?
   bool replaced = false;
   if (replaceFlagTypes(h)) {
-    DEBUG1 ("Replay: replaced flags\n");
+    logDebugMessage(1,"Replay: replaced flags\n");
     replaced = true;
   }
   if (replaceSettings(h)) {
-    DEBUG1 ("Replay: replaced settings\n");
+    logDebugMessage(1,"Replay: replaced settings\n");
     replaced = true;
   }
   if (replaceWorldDatabase(h)) {
-    DEBUG1 ("Replay: replaced world database\n");
+    logDebugMessage(1,"Replay: replaced world database\n");
     replaced = true;
   }
 
@@ -2264,7 +2264,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
 
   if (replace) {
     // replace the flags
-    DEBUG3 ("Replay: replacing Flag Types\n");
+    logDebugMessage(3,"Replay: replacing Flag Types\n");
     clOptions->numExtraFlags = 0;
     for (it = FlagType::getFlagMap().begin();
 	 it != FlagType::getFlagMap().end(); ++it) {
@@ -2314,7 +2314,7 @@ static bool replaceWorldDatabase(ReplayHeader *h)
       (memcmp(h->world, worldDatabase, h->worldSize) != 0)) {
     // they don't match, replace the world
 
-    DEBUG3 ("Replay: replacing World Database\n");
+    logDebugMessage(3,"Replay: replacing World Database\n");
 
     char *oldWorld = worldDatabase;
     worldDatabase = h->world;

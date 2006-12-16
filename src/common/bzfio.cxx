@@ -31,6 +31,7 @@
 #  include <mmsystem.h>
 #endif
 
+LogingCallback	*logingCallback = NULL;
 
 static bool doTimestamp = false;
 static bool doMicros = false;
@@ -66,25 +67,29 @@ static char *timestamp (char *buf, bool micros)
   return buf;
 }
 
-
-void formatDebug(const char* fmt, ...)
+void logDebugMessage(int level, const char* fmt, ...)
 {
-  if (debugLevel >= 1) {
-    char buffer[8192];
-    char tsbuf[26];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(buffer, 8192, fmt, args);
-    va_end(args);
-    #if defined(_MSC_VER)
-      if (doTimestamp)
-	W32_DEBUG_TRACE(timestamp (tsbuf, false));
-      W32_DEBUG_TRACE(buffer);
-    #else
-      if (doTimestamp)
-	std::cout << timestamp (tsbuf, doMicros);
-      std::cout << buffer;
-    #endif
-  }
+	char buffer[8192];
+	char tsbuf[26];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(buffer, 8192, fmt, args);
+	va_end(args);
+
+	if (debugLevel >= level || level == 0)
+	{
+#if defined(_MSC_VER)
+		if (doTimestamp)
+			W32_DEBUG_TRACE(timestamp (tsbuf, false));
+		W32_DEBUG_TRACE(buffer);
+#else
+		if (doTimestamp)
+			std::cout << timestamp (tsbuf, doMicros);
+		std::cout << buffer;
+#endif
+	}
+
+	if (logingCallback)
+		logingCallback->log(level,buffer);
 }
 

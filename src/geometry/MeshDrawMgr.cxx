@@ -43,7 +43,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
     fflush(stdout);
     return;
   } else {
-    DEBUG4("MeshDrawMgr: initializing\n");
+    logDebugMessage(4,"MeshDrawMgr: initializing\n");
     fflush(stdout);
   }
 
@@ -72,7 +72,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
 
 MeshDrawMgr::~MeshDrawMgr()
 {
-  DEBUG4("MeshDrawMgr: killing\n");
+  logDebugMessage(4,"MeshDrawMgr: killing\n");
 
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
   freeLists();
@@ -202,7 +202,7 @@ void MeshDrawMgr::makeLists()
     }
     errCount++; // avoid a possible spin-lock?
     if (errCount > 666) {
-      DEBUG1("MeshDrawMgr::makeLists() glError: %i\n", error);
+      logDebugMessage(1,"MeshDrawMgr::makeLists() glError: %i\n", error);
       return; // don't make the lists, something is borked
     }
   };
@@ -216,7 +216,7 @@ void MeshDrawMgr::makeLists()
     glEndList();
     error = glGetError();
     if (error != GL_NO_ERROR) {
-      DEBUG1("MeshDrawMgr::makeLists() unloadList: %i\n", error);
+      logDebugMessage(1,"MeshDrawMgr::makeLists() unloadList: %i\n", error);
       unloadList = INVALID_GL_LIST_ID;
     }
   }
@@ -244,11 +244,11 @@ void MeshDrawMgr::makeLists()
 
 	error = glGetError();
 	if (error != GL_NO_ERROR) {
-	  DEBUG1("MeshDrawMgr::makeLists() %i/%i glError: %i\n",
+	  logDebugMessage(1,"MeshDrawMgr::makeLists() %i/%i glError: %i\n",
 		 lod, set, error);
 	  lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
 	} else {
-	  DEBUG3("MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
+	  logDebugMessage(3,"MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
 	}
       }
     }

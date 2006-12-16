@@ -81,7 +81,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 	LONGLONG oldqpcfreq = qpcFrequency;
 	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
 	if (qpcFrequency != oldqpcfreq)
-	  DEBUG4("Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+	  logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",
 		 (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
@@ -104,7 +104,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 
     // should only get into here once on app start
     if (!sane) {
-      DEBUG1("Sanity check failure in TimeKeeper::getCurrent()\n");
+      logDebugMessage(1,"Sanity check failure in TimeKeeper::getCurrent()\n");
     }
     sane = false;
 
@@ -112,11 +112,11 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
       qpcFrequency	= freq.QuadPart;
-      DEBUG4("Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
+      logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
     } else {
-      DEBUG1("QueryPerformanceFrequency failed with error %d\n", GetLastError());
+      logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
 
       // make sure we're at our best timer resolution possible
       timeBeginPeriod(1);

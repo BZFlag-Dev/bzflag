@@ -408,13 +408,13 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
       && now < shotsInfo[id].expireTime) {
-    DEBUG2("Player %s [%d] shot id %d duplicated\n",
+    logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }
   // verify shot number
   if (id > maxShots - 1) {
-    DEBUG2("Player %s [%d] shot id %d out of range %d\n",
+    logDebugMessage(2,"Player %s [%d] shot id %d out of range %d\n",
 	   player.getCallSign(), playerIndex, id, maxShots);
     return false;
   }
@@ -451,12 +451,12 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
       || now >= shotsInfo[id].expireTime) {
-    DEBUG2("Player %s [%d] trying to stop the unexistent shot id %d\n",
+    logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }
   if (shotsInfo[id].salt != salt) {
-    DEBUG2("Player %s [%d] trying to stop a mismatched shot id %d\n",
+    logDebugMessage(2,"Player %s [%d] trying to stop a mismatched shot id %d\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }
@@ -472,12 +472,12 @@ bool GameKeeper::Player::updateShot(int id, int salt)
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
       || now >= shotsInfo[id].expireTime) {
-    DEBUG2("Player %s [%d] trying to update an unexistent shot id %d\n",
+    logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }
   if (shotsInfo[id].salt != salt) {
-    DEBUG2("Player %s [%d] trying to update a mismatched shot id %d\n",
+    logDebugMessage(2,"Player %s [%d] trying to update a mismatched shot id %d\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }
@@ -485,7 +485,7 @@ bool GameKeeper::Player::updateShot(int id, int salt)
     return false;
   // only GM can be updated
   if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
-    DEBUG2("Player %s [%d] trying to update a non GM shot id %d\n",
+    logDebugMessage(2,"Player %s [%d] trying to update a non GM shot id %d\n",
 	   player.getCallSign(), playerIndex, id);
     return false;
   }

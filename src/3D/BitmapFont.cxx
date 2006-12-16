@@ -44,7 +44,7 @@ BitmapFont::~BitmapFont()
 void BitmapFont::build(void)
 {
   if (texture.size() < 1) {
-    DEBUG2("Font %s does not have an associated texture name, not loading\n", texture.c_str());
+    logDebugMessage(2,"Font %s does not have an associated texture name, not loading\n", texture.c_str());
     return;
   }
 
@@ -127,7 +127,7 @@ void BitmapFont::drawString(float scale, GLfloat color[4], const char *str,
 {
   // BitmapFont cannot scale, should never be asked to
   if (scale != 1.0f) {
-    DEBUG1("ERROR: BitmapFont should not be asked to scale!\n");
+    logDebugMessage(1,"ERROR: BitmapFont should not be asked to scale!\n");
     assert(scale == 1.0f);
   }
 

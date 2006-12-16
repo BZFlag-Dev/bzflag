@@ -78,7 +78,7 @@ TextureManager::~TextureManager()
 int TextureManager::getTextureID( const char* name, bool reportFail )
 {
   if (!name) {
-    DEBUG2("Could not get texture ID; no provided name\n");
+    logDebugMessage(2,"Could not get texture ID; no provided name\n");
     return -1;
   }
 
@@ -97,7 +97,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
 
     OpenGLTexture *image = loadTexture(texInfo, reportFail);
     if (!image) {
-      DEBUG2("Image not found or unloadable: %s\n", name);
+      logDebugMessage(2,"Image not found or unloadable: %s\n", name);
       return -1;
     }
     return addTexture(name, image);
@@ -132,7 +132,7 @@ bool TextureManager::removeTexture(const std::string& name)
   textureIDs.erase(info.id);
   textureNames.erase(name);
 
-  DEBUG2("TextureManager::removed: %s\n", name.c_str());
+  logDebugMessage(2,"TextureManager::removed: %s\n", name.c_str());
 
   return true;
 }
@@ -187,7 +187,7 @@ bool TextureManager::bind ( int id )
 {
   TextureIDMap::iterator it = textureIDs.find(id);
   if (it == textureIDs.end()) {
-    DEBUG1("Unable to bind texture (by id): %d\n", id);
+    logDebugMessage(1,"Unable to bind texture (by id): %d\n", id);
     return false;
   }
 
@@ -205,7 +205,7 @@ bool TextureManager::bind ( const char* name )
 
   TextureNameMap::iterator it = textureNames.find(nameStr);
   if (it == textureNames.end()) {
-    DEBUG1("Unable to bind texture (by name): %s\n", name);
+    logDebugMessage(1,"Unable to bind texture (by name): %s\n", name);
     return false;
   }
 
@@ -241,7 +241,7 @@ void TextureManager::setMaxFilter(std::string filter)
       return;
     }
   }
-  DEBUG1 ("setMaxFilter(): bad filter = %s\n", filter.c_str());
+  logDebugMessage(1,"setMaxFilter(): bad filter = %s\n", filter.c_str());
 }
 
 
@@ -311,7 +311,7 @@ bool TextureManager::getColorAverages(int texId, float rgba[4],
 {
   TextureIDMap::const_iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    DEBUG1("getColorAverages: Unable to find texture (by id): %d\n", texId);
+    logDebugMessage(1,"getColorAverages: Unable to find texture (by id): %d\n", texId);
     return false;
   }
   return it->second->texture->getColorAverages(rgba, factorAlpha);
@@ -327,7 +327,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   // this is why IDs are way better than objects for this stuff
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
-   DEBUG3("Texture %s already exists, overwriting\n", name);
+   logDebugMessage(3,"Texture %s already exists, overwriting\n", name);
    textureIDs.erase(it->second.id);
    delete it->second.texture;
   }
@@ -342,7 +342,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   textureNames[name] = info;
   textureIDs[info.id] = &textureNames[name];
 
-  DEBUG4("Added texture %s: id %d\n", name, info.id);
+  logDebugMessage(4,"Added texture %s: id %d\n", name, info.id);
 
   return info.id;
 }
@@ -381,7 +381,7 @@ void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter)
 {
   TextureIDMap::iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    DEBUG1("setTextureFilter() Couldn't find texid: %i\n", texId);
+    logDebugMessage(1,"setTextureFilter() Couldn't find texid: %i\n", texId);
     return;
   }
 
@@ -397,7 +397,7 @@ OpenGLTexture::Filter TextureManager::getTextureFilter(int texId)
 {
   TextureIDMap::iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    DEBUG1("getTextureFilter() Couldn't find texid: %i\n", texId);
+    logDebugMessage(1,"getTextureFilter() Couldn't find texid: %i\n", texId);
     return OpenGLTexture::Max;
   }
   ImageInfo& image = *(it->second);
