@@ -685,12 +685,14 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     playerInfo += "[auto]";
 
 #if DEBUG_SHOWRATIOS
-  if (sortMode == SortNormalized)
-    stringAppendNormalized (&playerInfo, player->getNormalizedScore());
-  else if (sortMode == SortMyRatio)
-    stringAppendNormalized (&playerInfo, player->getLocalNormalizedScore());
-  else if (sortMode == SortTkRatio)
-    stringAppendNormalized (&playerInfo, player->getTKRatio());
+  if (player->getTeam() != ObserverTeam) {
+    if (sortMode == SortNormalized)
+      stringAppendNormalized (&playerInfo, player->getNormalizedScore());
+    else if (sortMode == SortMyRatio)
+      stringAppendNormalized (&playerInfo, player->getLocalNormalizedScore());
+    else if (sortMode == SortTkRatio)
+      stringAppendNormalized (&playerInfo, player->getTKRatio());
+  }
 #endif
 
   FontManager &fm = FontManager::instance();
