@@ -173,7 +173,6 @@ public:
   void*		pack(void*, uint16_t& code);
   void*		unpack(void*, uint16_t code);
 
-  void		setDeadReckoning();
   void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
@@ -627,7 +626,7 @@ inline void		Player::setAllowShooting(bool allow)
 
 inline void*		Player::pack(void* buf, uint16_t& code)
 {
-  setDeadReckoning();
+  setDeadReckoning(-1);
   return state.pack(buf, code);
 }
 

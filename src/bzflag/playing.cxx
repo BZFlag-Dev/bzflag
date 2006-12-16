@@ -1987,7 +1987,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
     tank->move(pos, forward);
     tank->setVelocity(zero);
     tank->setAngularVelocity(0.0f);
-    tank->setDeadReckoning();
+    tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
     tank->spawnEffect();
     if (tank == myTank) 
       myTank->setSpawning(false);
@@ -3223,41 +3223,51 @@ static void		handleServerMessage(bool human, uint16_t code,
 // player message handling
 //
 
-static void		handlePlayerMessage(uint16_t code, uint16_t,
+static void handleMovementUpdate ( uint16_t code, uint16_t, void* msg )
+{
+	float timestamp;
+	PlayerId id;
+	int32_t order;
+	void *buf = msg;
+
+	buf = nboUnpackUByte(buf, id);
+	buf = nboUnpackFloat(buf, timestamp);
+
+	Player* tank = lookupPlayer(id);
+	if (!tank || tank == myTank)
+		return;
+
+	nboUnpackInt(buf, order); // peek! don't update the msg pointer
+	if (order <= tank->getOrder())
+		return;
+	short oldStatus = tank->getStatus();
+
+	tank->unpack(msg, code );
+	short newStatus = tank->getStatus();
+
+	if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
+		addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
+
+	if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) 
+	{
+		// player has started exploding and we haven't gotten killed
+		// message yet -- set explosion now, play sound later (when we
+		// get killed message).  status is already !Alive so make player
+		// alive again, then call setExplode to kill him.
+		tank->setStatus(newStatus | short(PlayerState::Alive));
+		tank->setExplode(TimeKeeper::getTick());
+		// ROBOT -- play explosion now
+	}
+}
+
+static void		handlePlayerMessage(uint16_t code, uint16_t len,
 					    void* msg)
 {
   switch (code) {
     case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      float timestamp; // could be used to enhance deadreckoning, but isn't for now
-      PlayerId id;
-      int32_t order;
-      void *buf = msg;
-      buf = nboUnpackUByte(buf, id);
-      buf = nboUnpackFloat(buf, timestamp);
-      Player* tank = lookupPlayer(id);
-      if (!tank || tank == myTank) break;
-      nboUnpackInt(buf, order); // peek! don't update the msg pointer
-      if (order <= tank->getOrder()) break;
-      short oldStatus = tank->getStatus();
-      tank->unpack(msg, code);
-      short newStatus = tank->getStatus();
-      if ((oldStatus & short(PlayerState::Paused)) !=
-	  (newStatus & short(PlayerState::Paused)))
-	addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
-		   "Paused" : "Resumed");
-      if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
-	  (newStatus & short(PlayerState::Exploding)) != 0) {
-	// player has started exploding and we haven't gotten killed
-	// message yet -- set explosion now, play sound later (when we
-	// get killed message).  status is already !Alive so make player
-	// alive again, then call setExplode to kill him.
-	tank->setStatus(newStatus | short(PlayerState::Alive));
-	tank->setExplode(TimeKeeper::getTick());
-	// ROBOT -- play explosion now
-      }
+    case MsgPlayerUpdateSmall: 
+		handleMovementUpdate(code,len,msg);
       break;
-    }
 
     case MsgGMUpdate: {
       ShotUpdate shot;

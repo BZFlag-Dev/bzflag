@@ -891,6 +891,7 @@ bool isUDPAtackMessage ( uint16_t &code )
 		case MsgUDPLinkRequest:
 		case MsgUDPLinkEstablished:
 		case MsgHit:
+		case MsgWhatTimeIsIt:
 			return false;
 	}
 	return true;

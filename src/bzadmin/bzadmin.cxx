@@ -40,7 +40,7 @@
 int debugLevel = 0;
 
 #ifdef _WIN32
-void Player::setDeadReckoning()
+void Player::setDeadReckoning( float timestamp )
 {
 }
 #endif

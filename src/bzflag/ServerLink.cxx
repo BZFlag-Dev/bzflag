@@ -42,6 +42,8 @@
 #endif
 #include "TimeKeeper.h"
 
+#include "SyncClock.h"
+
 #ifndef BUILDING_BZADMIN
 // bzflag local implementation headers
 #include "playing.h"
@@ -383,6 +385,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
       case MsgGMUpdate:
       case MsgUDPLinkRequest:
       case MsgUDPLinkEstablished:
+	  case MsgWhatTimeIsIt:
 	needForSpeed=true;
 	break;
     }
@@ -691,12 +694,12 @@ void			ServerLink::sendKilled(const PlayerId victim,
   send(MsgKilled, (uint16_t)((char*)buf - (char*)msg), msg);
 }
 
-void			ServerLink::sendPlayerUpdate(Player* player)
+void			ServerLink::sendPlayerUpdate(Player* player )
 {
   char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
   // dead reckoning use that
-  const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
+  const float timeStamp = (float)syncedClock.GetServerSeconds();
   void* buf = msg;
   uint16_t code;
   buf = nboPackUByte(buf, player->getId());

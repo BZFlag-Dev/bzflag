@@ -34,6 +34,8 @@
 #include "effectsRenderer.h"
 #include "Roaming.h"
 
+#include "SyncClock.h"
+
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
 
@@ -80,7 +82,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setVelocity(zero);
   setAngularVelocity(0.0f);
   setPhysicsDriver(-1);
-  setDeadReckoning();
+  setDeadReckoning((float)syncedClock.GetServerSeconds());
   setRelativeMotion();
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
@@ -1393,48 +1395,52 @@ void Player::doDeadReckoning()
 const int   DRStateStable      = 100;
 const float maxToleratedJitter = 1.0f;
 
-void Player::setDeadReckoning(float)
+void Player::setDeadReckoning(float timestamp )
 {
   // set the current state
-  setDeadReckoning();
+	inputTime = TimeKeeper::getTick();
 
-  setRelativeMotion();
+	// how long ago was the pos valid
 
-  return;
-}
+	double currentServerTime = syncedClock.GetServerSeconds();
 
+	if (timestamp < 0)
+		timestamp = (float)currentServerTime;
+	double delta = currentServerTime - timestamp;
+	if ( delta < 0 )
+		delta = 0;
 
-void Player::setDeadReckoning()
-{
-  inputTime = TimeKeeper::getTick();
+	inputPos[0] += inputVel[0] * (float)delta;
+	inputPos[1] += inputVel[1] * (float)delta;
+	inputPos[2] += inputVel[2] * (float)delta;
 
-  // copy stuff for dead reckoning
-  inputStatus = state.status;
-  inputAzimuth = state.azimuth;
-  inputAngVel = state.angVel;
-  memcpy(inputPos, state.pos, sizeof(float[3]));
-  memcpy(inputVel, state.velocity, sizeof(float[3]));
-  inputPhyDrv = state.phydrv;
+	// copy stuff for dead reckoning
+	inputStatus = state.status;
+	inputAzimuth = state.azimuth;
+	inputAngVel = state.angVel;
+	memcpy(inputPos, state.pos, sizeof(float[3]));
+	memcpy(inputVel, state.velocity, sizeof(float[3]));
+	inputPhyDrv = state.phydrv;
 
-  //
-  // pre-calculate some stuff for dead reckoning
-  //
+	//
+	// pre-calculate some stuff for dead reckoning
+	//
 
-  // the relative motion information (with respect to the physics drivers)
-  calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
+	// the relative motion information (with respect to the physics drivers)
+	calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
 
-  // setup the turning parameters
-  inputTurning = false;
-  if (fabsf(inputRelAngVel) > 0.001f) {
-    inputTurning = true;
-    const float radius = (inputRelSpeed / inputRelAngVel);
-    inputTurnVector[0] = +sinf(inputAzimuth) * radius;
-    inputTurnVector[1] = -cosf(inputAzimuth) * radius;
-    inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
-    inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
-  }
+	// setup the turning parameters
+	inputTurning = false;
+	if (fabsf(inputRelAngVel) > 0.001f) {
+		inputTurning = true;
+		const float radius = (inputRelSpeed / inputRelAngVel);
+		inputTurnVector[0] = +sinf(inputAzimuth) * radius;
+		inputTurnVector[1] = -cosf(inputAzimuth) * radius;
+		inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
+		inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
+	}
 
-  return;
+	setRelativeMotion ();
 }
 
 
