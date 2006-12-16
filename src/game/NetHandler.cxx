@@ -16,6 +16,9 @@
 // system headers
 #include <errno.h>
 
+#include "bzfsAPI.h"
+#include "WorldEventManager.h"
+
 // Are these size/limits reasonable?
 const int udpBufSize = 128*1024;
 const int tcpBufLimit = 64*1024;
@@ -174,6 +177,16 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 #ifdef NETWORK_STATS
   (*netHandler)->countMessage(code, len, 0);
 #endif
+
+  // let any listeners know we got net data
+  bz_NetTransferEventData_V1 eventData;
+  eventData.eventType = bz_eNetDataReceveEvent;
+  eventData.send = false;
+  eventData.udp = true;
+  eventData.iSize = len;
+  eventData.data = (unsigned char*)buf;
+  worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+
   if (code == MsgUDPLinkEstablished) {
     (*netHandler)->udpout = true;
   }
@@ -372,6 +385,7 @@ int NetHandler::pwrite(const void *b, int l) {
   countMessage(code, len, 1);
 #endif
 
+  bool useUDP = false;
   // Check if UDP Link is used instead of TCP, if so jump into udpSend
   if (udpout) {
     // only send bulk messages by UDP
@@ -383,13 +397,22 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgGMUpdate:
     case MsgLagPing:
     case MsgGameTime:
-      udpSend(b, l);
-      return 0;
+      useUDP = true;
+	  break;
     }
   }
 
+  // let any listeners know we got net data
+  bz_NetTransferEventData_V1 eventData;
+  eventData.eventType = bz_eNetDataReceveEvent;
+  eventData.send = true;
+  eventData.udp = useUDP;
+  eventData.iSize = l;
+  eventData.data = (unsigned char*)b;
+  worldEventManager.callEvents(bz_eNetDataSendEvent,&eventData);
+
   // always sent MsgUDPLinkRequest over udp with udpSend
-  if (code == MsgUDPLinkRequest) {
+  if (useUDP || code == MsgUDPLinkRequest) {
     udpSend(b, l);
     return 0;
   }
@@ -438,6 +461,16 @@ RxStatus NetHandler::tcpReceive() {
 #ifdef NETWORK_STATS
   countMessage(code, len, 0);
 #endif
+
+  // let any listeners know we got net data
+  bz_NetTransferEventData_V1 eventData;
+  eventData.eventType = bz_eNetDataReceveEvent;
+  eventData.send = false;
+  eventData.udp = false;
+  eventData.iSize = len;
+  eventData.data = (unsigned char*)buf;
+  worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+
   if (code == MsgUDPLinkEstablished) {
     udpout = true;
   }

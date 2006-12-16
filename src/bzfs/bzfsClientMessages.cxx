@@ -235,6 +235,17 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 		return true;
 	}
 
+	bz_PlayerUpdateEventData_V1 eventData;
+	memcpy(eventData.pos,state.pos,sizeof(float)*3);
+	memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
+	eventData.angVel = state.angVel;
+	eventData.azimuth = state.azimuth;
+	eventData.phydrv = state.phydrv;
+	eventData.time = TimeKeeper::getCurrent().getSeconds();
+	eventData.player = playerData->getIndex();
+	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
+
+
 	// silently drop old packet
 	if (state.order <= playerData->lastState.order)
 		return true;

@@ -2387,7 +2387,7 @@ bool ReloadCommand::operator() (const char *,
   }
 
   bz_ReloadEventData_V1 data;
-  data.playerID = t;
+  data.player = t;
 
   worldEventManager.callEvents(bz_eReloadEvent,&data);
 

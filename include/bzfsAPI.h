@@ -83,6 +83,10 @@ typedef enum
 	bz_eAnointRabbitEvent,
 	bz_eNewRabbitEvent,
 	bz_eReloadEvent,
+	bz_ePlayerUpdateEvent,
+	bz_eNetDataSendEvent,
+	bz_eNetDataReceveEvent,
+	bz_eLogingEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -887,14 +891,70 @@ public:
 	bz_ReloadEventData_V1() : bz_EventData()
 	{
 		eventType = bz_eReloadEvent;
-		playerID = -1;
+		player = -1;
 	}
 
 	virtual ~bz_ReloadEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
-	int playerID;
+	int player;
 };
+
+class bz_PlayerUpdateEventData_V1 : public bz_EventData
+{
+public:
+	bz_PlayerUpdateEventData_V1()
+	{
+		eventType = bz_ePlayerUpdateEvent;
+		pos[0] = pos[1] = pos[2] = 0;
+		velocity[0] = velocity[1] = velocity[2] = 0;
+		azimuth = angVel = 0.0f;
+		phydrv = 0;
+		time = 0;
+		player = -1;
+	}
+
+	virtual ~bz_PlayerUpdateEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	float	pos[3];
+	float	velocity[3];
+	float	azimuth;	
+	float	angVel;
+	int		phydrv;		
+	int		player;
+
+	double time;
+};
+
+class bz_NetTransferEventData_V1 : public bz_EventData
+{
+public:
+	bz_NetTransferEventData_V1()
+	{
+		eventType = bz_eNetDataReceveEvent;
+		send = false;
+		udp = false;
+		iSize = 0;
+		data = NULL;
+
+		time = 0;
+	}
+
+	virtual ~bz_NetTransferEventData_V1(){};
+	virtual void update (){bz_EventData::update();}
+
+	bool send;
+	bool udp;
+	unsigned int iSize;
+
+	double time;
+
+	// DON'T CHANGE THIS!!!
+	unsigned char* data;
+};
+
+
 // event handler callback
 class bz_EventHandler
 {
@@ -919,6 +979,8 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
+
+BZF_API const char* bz_getPlayerFlag( int playerID );
 
 class BZF_API bz_BasePlayerRecord
 {
