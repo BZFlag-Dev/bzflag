@@ -602,7 +602,7 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	CPPFLAGS="$CPPFLAGS -Wall -W -Wshadow"
+	CPPFLAGS="$CPPFLAGS -Wall -W"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
@@ -670,7 +670,7 @@ if test x$enable_debug = xyes; then
    CXXFLAGS="$CXXFLAGS -O0";
    case $host_os in
      linux*|cygwin|mingw32*)
-	CPPFLAGS="$CPPFLAGS -Werror";
+	CPPFLAGS="$CPPFLAGS -Werror -Wshadow";
 	CXXFLAGS="$CXXFLAGS -Wno-deprecated -fsigned-char";
 	if test x$enable_profiling = xyes; then
 	  CFLAGS="$CFLAGS -pg";
