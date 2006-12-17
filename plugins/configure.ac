@@ -199,6 +199,7 @@ AC_CONFIG_FILES([
 	chathistory/Makefile
 	doc/Makefile
 	hiddenAdmin/Makefile
+	flagStay/Makefile
 	killall/Makefile
 	logDetail/Makefile
 	m4/Makefile
@@ -227,6 +228,7 @@ AC_MSG_RESULT([  SAMPLE_PLUGIN - Example Plugin])
 AC_MSG_RESULT([  airspawn - Always spawn in the air])
 AC_MSG_RESULT([  chathistory - Saves a transcript of chat to a file])
 AC_MSG_RESULT([  hiddenAdmin - Allows admins to be invisible])
+AC_MSG_RESULT([  flagStay - Drops flags if the player leave the zone])
 AC_MSG_RESULT([  killall - Simple means to kill everyone on demand])
 AC_MSG_RESULT([  logDetail - Extensive logging support])
 AC_MSG_RESULT([  nagware - Annoy users until they register])
