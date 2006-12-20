@@ -3317,6 +3317,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgEnter:
 	  case MsgQueryGame:
 	  case MsgQueryPlayers:
+	  case MsgWantWHash:
+	  case MsgNegotiateFlags:
+	  case MsgGetWorld:
 		  break;
 
 	  default:
