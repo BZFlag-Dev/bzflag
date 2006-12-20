@@ -42,6 +42,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   clientVersionMajor = -1;
   clientVersionMinor = -1;
   clientVersionRevision = -1;
+  validEnter = false;
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
@@ -186,6 +187,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     strcpy(token, "NONE");
   }
 
+  validEnter = true;
   return true;
 }
 

@@ -107,6 +107,7 @@ public:
   bool	hasStartedToNotRespond();
   void	hasSent();
   bool	hasPlayedEarly();
+  bool	hasSentEnter() {return validEnter;}
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
@@ -155,6 +156,9 @@ private:
   bool wasRabbit;
   // flag index player has
   int flag;
+
+  // has the player sent an enter
+  bool validEnter;
 
   TimeKeeper lastFlagDropTime;
 

@@ -3310,6 +3310,22 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     }
   }
 
+  if(!playerData->player.hasSentEnter())
+  {
+	  switch (code)
+	  {
+	  case MsgEnter:
+	  case MsgQueryGame:
+	  case MsgQueryPlayers:
+		  break;
+
+	  default:
+		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; %d\n",handler->getHostname(),code);
+		  rejectPlayer(t, RejectBadRequest, "invalid request");
+		  return;
+	  }
+  }
+
   switch (code) {
     // player joining
     case MsgEnter: {
