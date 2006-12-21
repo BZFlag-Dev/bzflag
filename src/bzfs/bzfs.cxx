@@ -3322,6 +3322,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgGetWorld:
 	  case MsgUDPLinkRequest:
 	  case MsgUDPLinkEstablished:
+	  case MsgWantSettings:
 		  break;
 
 	  default:
