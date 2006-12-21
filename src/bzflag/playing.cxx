@@ -1758,7 +1758,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
       serverLink->send(MsgWantSettings, 0, NULL);
-	  serverLink->send(MsgAutoPilot,0,NULL);
       break;
     }
 
