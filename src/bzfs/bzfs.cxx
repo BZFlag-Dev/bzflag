@@ -3958,6 +3958,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
 				if ( !(state.status & PlayerState::Alive))
 					doDistChecks = false;
+
+				if ( playerData->player.isAutoPilot() )
+					doDistChecks = false;
 				/*
 				doDistChecks = true;
 				float fudge = 2.0f;
