@@ -13,6 +13,7 @@ SUBDIRS = \
 	HoldTheFlag \
 	nagware \
 	vocaliser \
+	torBlock \
 	recordmatch 
 
 DIST_SUBDIRS = \
