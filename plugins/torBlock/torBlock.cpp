@@ -248,6 +248,9 @@ void Handler::process ( bz_EventData *eventData )
 		case bz_eTickEvent:
 			updateTorList();
 			break;
+
+		default:
+			break;
 	}
 }
 
