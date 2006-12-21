@@ -3984,6 +3984,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				// check the distance to see if they went WAY too far
 
 				float timeDelta = (float)now.getSeconds() - playerData->serverTimeStamp; // max time since last update
+				if (timeDelta < 0.5f)
+					timeDelta = 0.5f;
 				float maxDist = sqrt(maxPlanarSpeedSqr) * timeDelta; // the maximum distance they could have moved ( assume 0 lag )
 				
 				float movementDelta[2];
