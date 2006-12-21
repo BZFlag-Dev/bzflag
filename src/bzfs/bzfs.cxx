@@ -3320,6 +3320,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgWantWHash:
 	  case MsgNegotiateFlags:
 	  case MsgGetWorld:
+	  case MsgUDPLinkRequest:
+	  case MsgUDPLinkEstablished:
 		  break;
 
 	  default:
