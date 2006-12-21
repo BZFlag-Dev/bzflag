@@ -187,6 +187,21 @@ public:
 	}
 };
 
+
+class mySlashCommand : public bz_CustomSlashCommandHandler
+{
+public:
+	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params )
+	{
+		bz_sendTextMessage(BZ_SERVER,playerID,"torBlock List");
+		for ( unsigned int i = 0; i < exitNodes.size(); i++ )
+			bz_sendTextMessage(BZ_SERVER,playerID,exitNodes[i].c_str());
+
+		return true;
+	}
+};
+
+mySlashCommand mySlash;
 MyURLHandler myURL;
 
 void updateTorList ( void )
@@ -213,13 +228,14 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 	bz_debugMessage(4,"torBlock plugin loaded");
 	bz_registerEvent(bz_eAllowPlayer,&handler);
 	bz_registerEvent(bz_eTickEvent,&handler);
-
+	bz_registerCustomSlashCommand("torlist",&mySlash);
 	lastUpdateTime = -updateInterval * 2;
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
+	bz_removeCustomSlashCommand("torlist");
 	bz_removeEvent(bz_eTickEvent,&handler);
 	bz_removeEvent(bz_eAllowPlayer,&handler);
 	bz_debugMessage(4,"torBlock plugin unloaded");
