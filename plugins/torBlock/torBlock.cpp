@@ -179,7 +179,7 @@ public:
 			{
 				if ( tokes[i].size() )
 				{
-					std::vector<std::string> chunks = tokenize(std::string(str),std::string(" "),0,false);
+					std::vector<std::string> chunks = tokenize(tokes[i],std::string(" "),0,false);
 
 					if ( chunks.size() > 1 )
 					{
