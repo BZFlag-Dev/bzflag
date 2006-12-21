@@ -151,13 +151,18 @@ Handler handler;
 class MyURLHandler: public bz_URLHandler
 {
 public:
+	std::string page;
 	virtual void done ( const char* URL, void * data, unsigned int size, bool complete )
 	{
 		char *str = (char*)malloc(size+1);
 		memcpy(str,data,size);
 		str[size] = 0;
 
-		std::vector<std::string> tokes = tokenize(std::string(str),std::string("\n"),0,false);
+		page += str;
+		if (!complete)
+			return;
+
+		std::vector<std::string> tokes = tokenize(page,std::string("\n"),0,false);
 
 		bool gotKey = false;
 		for (unsigned int i = 0; i < tokes.size(); i++ )
@@ -209,6 +214,7 @@ void updateTorList ( void )
 	if ( bz_getCurrentTime() - lastUpdateTime >= updateInterval)
 	{
 		lastUpdateTime = bz_getCurrentTime();
+		myURL.page.clear();
 		bz_addURLJob(torMasterList.c_str(),&myURL);
 	}
 }
