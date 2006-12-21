@@ -3955,6 +3955,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 			{
 				if (!(state.status & PlayerState::Teleporting))
 					doDistChecks = true;
+
+				if ( !(state.status & PlayerState::Alive))
+					doDistChecks = false;
 				/*
 				doDistChecks = true;
 				float fudge = 2.0f;
