@@ -136,7 +136,7 @@ BZ_GET_PLUGIN_VERSION
 std::string torMasterList("http://belegost.mit.edu/tor/status/authority");
 
 double lastUpdateTime = -99999.0;
-double updateInterval = 60.0;
+double updateInterval = 3600.0;
 
 std::vector<std::string>	exitNodes;
 
