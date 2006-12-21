@@ -3992,7 +3992,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 				{
 					logDebugMessage(1,"Kicking Player %s [%d] tank too large a movement update (tank: %f, allowed: %f)\n",
 						playerData->player.getCallSign(), t,
-						sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+						realDist, maxDist);
 					sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
 					removePlayer(t, "too fast");
 				}
