@@ -115,7 +115,7 @@ extern int	     numFlags;
 extern bool	    countdownActive;
 extern int	     countdownDelay;
 extern TimeKeeper      countdownPauseStart;
-extern int	     countdownResumeDelay;
+extern int	     countdownResumeTime;
 extern char	    hexDigest[50];
 extern WorldInfo      *world;
 extern char	   *worldDatabase;
