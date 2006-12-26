@@ -3776,6 +3776,8 @@ void initGroups()
   info.groupState.reset();
   info.explicitAllows[PlayerAccessInfo::poll] = true;
   info.explicitAllows[PlayerAccessInfo::vote] = true;
+  // do not add pollSet permission here because it is easy to abuse and
+  // most server owners don't want that perm given to verified
   info.explicitAllows[PlayerAccessInfo::pollBan] = true;
   info.explicitAllows[PlayerAccessInfo::pollKick] = true;
   info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
