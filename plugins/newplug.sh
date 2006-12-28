@@ -28,7 +28,7 @@ fi
 find $1 -type f -exec perl -pi -e "s/$SAMPLE_PLUGIN/$1/g" '{}' \;
 
 # rename files
-for file in $1/*$SAMPLE_PLUGIN* ;do
+for file in $1/*$SAMPLE_PLUGIN* $1/.deps/*$SAMPLE_PLUGIN* ;do
  mv $file ${file//$SAMPLE_PLUGIN/$1}
 done
 
