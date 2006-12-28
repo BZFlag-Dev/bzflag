@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* increased joystick button support to 32 buttons - Markus
 * Added a new optional height check - Thomas Stauer
 * Added optional delay before the countdown gets resumed - Thomas Stauer
 * Add -tkannounce server option - Bernt Hansen
