@@ -192,17 +192,38 @@ unsigned long WinJoystick::getJoyButtons()
 
   unsigned long retbuts = joyInfo.dwButtons;
   unsigned long buttons = 0;
-  if (retbuts & JOY_BUTTON1)  buttons = buttons | 0x00001;
-  if (retbuts & JOY_BUTTON2)  buttons = buttons | 0x00002;
-  if (retbuts & JOY_BUTTON3)  buttons = buttons | 0x00004;
-  if (retbuts & JOY_BUTTON4)  buttons = buttons | 0x00008;
-  if (retbuts & JOY_BUTTON5)  buttons = buttons | 0x00010;
-  if (retbuts & JOY_BUTTON6)  buttons = buttons | 0x00020;
-  if (retbuts & JOY_BUTTON7)  buttons = buttons | 0x00040;
-  if (retbuts & JOY_BUTTON8)  buttons = buttons | 0x00080;
-  if (retbuts & JOY_BUTTON9)  buttons = buttons | 0x00100;
-  if (retbuts & JOY_BUTTON10) buttons = buttons | 0x00200;
-
+  if (retbuts & JOY_BUTTON1)  buttons = buttons | 0x00000001;
+  if (retbuts & JOY_BUTTON2)  buttons = buttons | 0x00000002;
+  if (retbuts & JOY_BUTTON3)  buttons = buttons | 0x00000004;
+  if (retbuts & JOY_BUTTON4)  buttons = buttons | 0x00000008;
+  if (retbuts & JOY_BUTTON5)  buttons = buttons | 0x00000010;
+  if (retbuts & JOY_BUTTON6)  buttons = buttons | 0x00000020;
+  if (retbuts & JOY_BUTTON7)  buttons = buttons | 0x00000040;
+  if (retbuts & JOY_BUTTON8)  buttons = buttons | 0x00000080;
+  if (retbuts & JOY_BUTTON9)  buttons = buttons | 0x00000100;
+  if (retbuts & JOY_BUTTON10) buttons = buttons | 0x00000200;
+  if (retbuts & JOY_BUTTON11) buttons = buttons | 0x00000400;
+  if (retbuts & JOY_BUTTON12) buttons = buttons | 0x00000800;
+  if (retbuts & JOY_BUTTON13) buttons = buttons | 0x00001000;
+  if (retbuts & JOY_BUTTON14) buttons = buttons | 0x00002000;
+  if (retbuts & JOY_BUTTON15) buttons = buttons | 0x00004000;
+  if (retbuts & JOY_BUTTON16) buttons = buttons | 0x00008000;
+  if (retbuts & JOY_BUTTON17) buttons = buttons | 0x00010000;
+  if (retbuts & JOY_BUTTON18) buttons = buttons | 0x00020000;
+  if (retbuts & JOY_BUTTON19) buttons = buttons | 0x00040000;
+  if (retbuts & JOY_BUTTON20) buttons = buttons | 0x00080000;
+  if (retbuts & JOY_BUTTON21) buttons = buttons | 0x00100000;
+  if (retbuts & JOY_BUTTON22) buttons = buttons | 0x00200000;
+  if (retbuts & JOY_BUTTON23) buttons = buttons | 0x00400000;
+  if (retbuts & JOY_BUTTON24) buttons = buttons | 0x00800000;
+  if (retbuts & JOY_BUTTON25) buttons = buttons | 0x01000000;
+  if (retbuts & JOY_BUTTON26) buttons = buttons | 0x02000000;
+  if (retbuts & JOY_BUTTON27) buttons = buttons | 0x04000000;
+  if (retbuts & JOY_BUTTON28) buttons = buttons | 0x08000000;
+  if (retbuts & JOY_BUTTON29) buttons = buttons | 0x10000000;
+  if (retbuts & JOY_BUTTON30) buttons = buttons | 0x20000000;
+  if (retbuts & JOY_BUTTON31) buttons = buttons | 0x40000000;
+  if (retbuts & JOY_BUTTON32) buttons = buttons | 0x80000000;
   return buttons;
 }
 

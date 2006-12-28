@@ -6127,7 +6127,25 @@ void handleJoyStick ( void )
 							BzfKeyEvent::BZ_Button_13,
 							BzfKeyEvent::BZ_Button_14,
 							BzfKeyEvent::BZ_Button_15,
-							BzfKeyEvent::BZ_Button_16};
+							BzfKeyEvent::BZ_Button_16,
+							BzfKeyEvent::BZ_Button_16,
+							BzfKeyEvent::BZ_Button_17,
+							BzfKeyEvent::BZ_Button_18,
+							BzfKeyEvent::BZ_Button_19,
+							BzfKeyEvent::BZ_Button_20,
+							BzfKeyEvent::BZ_Button_21,
+							BzfKeyEvent::BZ_Button_22,
+							BzfKeyEvent::BZ_Button_23,
+							BzfKeyEvent::BZ_Button_24,
+							BzfKeyEvent::BZ_Button_25,
+							BzfKeyEvent::BZ_Button_26,
+							BzfKeyEvent::BZ_Button_27,
+							BzfKeyEvent::BZ_Button_28,
+							BzfKeyEvent::BZ_Button_29,
+							BzfKeyEvent::BZ_Button_30,
+							BzfKeyEvent::BZ_Button_31,
+							BzfKeyEvent::BZ_Button_32
+  };
 
   static unsigned long old_buttons = 0;
   const int button_count = countof(button_map);
