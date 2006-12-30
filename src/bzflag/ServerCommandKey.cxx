@@ -26,9 +26,12 @@ const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, Id
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
  */
-ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(35), numNonAdminModes(8)
+ServerCommandKey::ServerCommandKey()
+  : mode(nonAdminModes[0])
+  , startIndex(-1)
+  , numModes(35)		//brittle... no good portable way to deal with this
+  , numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) )
 {
-  return;
 }
 
 void			ServerCommandKey::nonAdminInit()
@@ -66,115 +69,182 @@ void			ServerCommandKey::updatePrompt()
     // make sure we actually have a tank
     return;
   }
-  const Player * recipient = myTank->getRecipient();
-  if (mode >= Kick && mode <= Ghost) { // more complicated modes here
-    if (recipient) {
 
-      switch (mode) {
-      case Kick:
+  bool allowEdit = true;  // default to true, only need to indicate which are false  
+  const Player *recipient = myTank->getRecipient();
+
+  switch (mode) {
+    case Kick:
+      if (recipient) {
 	composePrompt = "Kick -> ";
-	composePrompt = composePrompt + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case BanIp: case Ban1: case Ban2: case Ban3:
+	composePrompt += recipient->getCallSign();
+	composePrompt += " :";
+      } else {
+	composePrompt = "Kick :";
+      }
+      break;
+    case Kill:
+      if (recipient) {
+	composePrompt = "Kill -> ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += " :";
+      } else {
+	composePrompt = "Kill :";
+      }
+      break;
+    case BanIp:
+    case Ban1:
+    case Ban2:
+    case Ban3:
+      if (recipient) {
 	// Set the prompt and enable editing/composing --> allows to enter ban time
 	/* FIXME FIXME FIXME
 	 * temporarily breaking bans for playerid->ubyte
 	 banPattern = makePattern(recipient->id.serverHost);
 	 composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
-	 hud->setComposing(composePrompt, true);
 	*/
-	break;
-
-	  case Kill:
-    composePrompt = "Kill -> ";
-	composePrompt = composePrompt + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-    break;
-
-      case Setgroup: composePrompt = "Set players group ";
-	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Removegroup: composePrompt = "Remove player from group ";
-	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Ghost: composePrompt = "Ghost player [enter your pass] ";
-	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Showgroup: composePrompt = "Show player's groups ";
-	composePrompt = composePrompt +  " -> " + recipient->getCallSign();
-	hud->setComposing(composePrompt, false);
-	break;
-      default: /* shouldn't happen */ break;
+	return; // remove this when the above is fixed
+      } else {
+	composePrompt = "Ban :";
       }
-
-    } else { // no recipient -- we are in editing mode -- kick or ban
-
-      switch (mode) {
-      case Kick:
-	hud->setComposing("Kick :", true);
-	break;
-	  case Kill:
-	hud->setComposing("Kill :", true);
-	break;
-      case BanIp: case Ban1: case Ban2: case Ban3:
-	hud->setComposing("Ban :", true);
-	break;
-      case Setgroup: composePrompt = "Set player's group :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Removegroup: composePrompt = "Remove player from group :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Ghost: composePrompt = "Ghost :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Showgroup: composePrompt = "Show players group :";
-	hud->setComposing(composePrompt, true);
-	break;
-      default: /* shouldn't happen */ break;
+      break;
+    case Showgroup:
+      if (recipient) {
+	composePrompt = "Show player's groups -> ";
+	composePrompt += recipient->getCallSign();
+	allowEdit = false;
+      } else {
+	composePrompt = "Show player's group :";
       }
-
-    }
-
-  } else { // not kick or ban stuff -- should be less complicated
-
-    switch (mode) {
-    case Unban: hud->setComposing("Unban :", true); break;
-    case Banlist: hud->setComposing("Show ban list", false); break;
-    case Playerlist: hud->setComposing("Show player list", false); break;
-    case FlagReset: hud->setComposing("Reset Flags", false); break;
-    case FlagUnusedReset: hud->setComposing("Reset Unused Flags", false); break;
-    case FlagUp: hud->setComposing("Remove Flags", false); break;
-    case GameOver: hud->setComposing("End Game", false); break;
-    case CountDown: hud->setComposing("Restart Countdown:", true); break;
-    case FlagShow: hud->setComposing("Show Flag Info", false); break;
-    case Shutdown: hud->setComposing("Shut Down Server", false); break;
-    case SuperKill: hud->setComposing("Disconnect all Players", false); break;
-    case LagWarn: hud->setComposing("Lag Warning threshold:", true); break;
-    case LagDrop: hud->setComposing("Maximum lag warnings:", true); break;
-    case IdleStats: hud->setComposing("Idle Stats", false); break;
-    case ClientQuery: hud->setComposing("Client Version Query", false); break;
-    case LagStats: hud->setComposing("Lag / Ping Stats", false); break;
-    case FlagHistory: hud->setComposing("Flag History", false); break;
-    case Password: hud->setComposing("Admin Password:", true); break;
-    case Report: hud->setComposing("Send Report to Server:", true); break;
-    case Register: hud->setComposing("Register your nick [enter pass]:", true); break;
-    case Identify: hud->setComposing("Login [enter pass]:", true); break;
-    case Setpass: hud->setComposing("Set your password [enter pass]:", true); break;
-    case Grouplist: hud->setComposing("List Groups", false); break;
-    case Groupperms: hud->setComposing("List Permissions", false); break;
-    case Vote: hud->setComposing("Vote:", true); break;
-    case Poll: hud->setComposing("Call a Poll:", true); break;
-    case Veto: hud->setComposing("Cancel a Poll", false); break;
-    default: /* shouldn't happen */ break;
-    }
-
+      break;
+    case Setgroup:
+      if (recipient) {
+	composePrompt = "Set player's group -> ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += " :";
+      } else {
+	composePrompt = "Set player's group :";
+      }
+      break;
+    case Removegroup:
+      if (recipient) {
+	composePrompt = "Remove player from group -> ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += " :";
+      } else {
+	composePrompt = "Remove player from group :";
+      }
+      break;
+    case Ghost:
+      if (recipient) {
+	composePrompt = "Ghost player [enter your pass] -> ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += " :";
+      } else {
+	composePrompt = "Ghost :";
+      }
+      break;
+    case Unban:
+      composePrompt = "Unban :";
+      break;
+    case Banlist:
+      composePrompt = "Show ban list";
+      allowEdit = false;
+      break;
+    case Playerlist:
+      composePrompt = "Show player list";
+      allowEdit = false;
+      break;
+    case FlagReset:
+      composePrompt = "Reset Flags";
+      allowEdit = false;
+      break;
+    case FlagUnusedReset:
+      composePrompt = "Reset Unused Flags";
+      allowEdit = false;
+      break;
+    case FlagUp:
+      composePrompt = "Remove Flags";
+      allowEdit = false;
+      break;
+    case FlagShow:
+      composePrompt = "Show Flag Info";
+      allowEdit = false;
+      break;
+    case FlagHistory:
+      composePrompt = "Flag History";
+      allowEdit = false;
+      break;
+    case IdleStats:
+      composePrompt = "Idle Stats";
+      allowEdit = false;
+      break;
+    case ClientQuery:
+      composePrompt = "Client Version Query";
+      allowEdit = false;
+      break;
+    case LagStats:
+      composePrompt = "Lag / Ping Stats";
+      allowEdit = false;
+      break;
+    case Report:
+      composePrompt = "Send Report to Server:";
+      break;
+    case LagWarn:
+      composePrompt = "Lag Warning threshold:";
+      break;
+    case LagDrop:
+      composePrompt = "Maximum lag warnings:";
+      break;
+    case GameOver:
+      composePrompt = "End Game";
+      allowEdit = false;
+      break;
+    case CountDown:
+      composePrompt = "Restart Countdown:";
+      break;
+    case SuperKill:
+      composePrompt = "Disconnect all Players";
+      allowEdit = false;
+      break;
+    case Shutdown:
+      composePrompt = "Shut Down Server";
+      allowEdit = false;
+      break;
+    case Register:
+    case Identify:
+      break; // these were missing prior to the refactor
+    case Setpass:
+      composePrompt = "Set your password [enter pass]:";
+      break;
+    case Grouplist:
+      composePrompt = "List Groups";
+      allowEdit = false;
+      break;
+    case Groupperms:
+      composePrompt = "List Permissions";
+      allowEdit = false;
+      break;
+    case Vote:
+      composePrompt = "Vote:";
+      break;
+    case Poll:
+      composePrompt = "Call a Poll:";
+      break;
+    case Veto:
+      composePrompt = "Cancel a Poll";
+      allowEdit = false;
+      break;
+    case Password:
+      composePrompt = "Admin Password:";
+      break;
+    default:
+      // Because of the type-safety of the enum, this should never happen
+      // (unless someone adds a new mode without updating this case statement)
+      return;
   }
 
+  hud->setComposing(composePrompt, allowEdit);
 }
 
 // return the right ban pattern 123.32.12.* for example depending on the
@@ -188,16 +258,16 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
   if (dotChunks.size() != 4) return "";
 
   switch (mode) {
-  case BanIp:
-    return dots;
-  case Ban1:
-    return dotChunks[0] + "." + dotChunks[1] + "." + dotChunks[2] + ".*";
-  case Ban2:
-    return dotChunks[0] + "." + dotChunks[1] + ".*.*";
-  case Ban3:
-    return dotChunks[0] + ".*.*.*";
-  default:
-    break;
+    case BanIp:
+      return dots;
+    case Ban1:
+      return dotChunks[0] + "." + dotChunks[1] + "." + dotChunks[2] + ".*";
+    case Ban2:
+      return dotChunks[0] + "." + dotChunks[1] + ".*.*";
+    case Ban3:
+      return dotChunks[0] + ".*.*.*";
+    default:
+      break;
   }
 
   return "";
@@ -221,19 +291,19 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.ascii) {
-  case 3:	// ^C
-  case 27:	// escape
-  // case 127:   // delete
-    sendIt = false;			// finished composing -- don't send
-    break;
+    case 3:	// ^C
+    case 27:	// escape
+      // case 127:   // delete
+      sendIt = false;			// finished composing -- don't send
+      break;
 
-  case 4:	// ^D
-  case 13:	// return
-    sendIt = true;
-    break;
+    case 4:	// ^D
+    case 13:	// return
+      sendIt = true;
+      break;
 
-  default:
-    return false;
+    default:
+      return false;
   }
 
   if (sendIt) {
@@ -248,67 +318,67 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
 	switch (mode) {
 
-	case Kick:
-	  // escape the name
-	  name = TextUtils::replace_all(name, "\\", "\\\\");
-	  name = TextUtils::replace_all(name, "\"", "\\\"");
-	  sendMsg="/kick \"" + name + "\"";
-	  if (message != "") sendMsg = sendMsg + " " + message;
-	  break;
+	  case Kick:
+	    // escape the name
+	    name = TextUtils::replace_all(name, "\\", "\\\\");
+	    name = TextUtils::replace_all(name, "\"", "\\\"");
+	    sendMsg="/kick \"" + name + "\"";
+	    if (message != "") sendMsg = sendMsg + " " + message;
+	    break;
 
-	case Kill:
-	  // escape the name
-	  name = TextUtils::replace_all(name, "\\", "\\\\");
-	  name = TextUtils::replace_all(name, "\"", "\\\"");
-	  sendMsg="/kill \"" + name + "\"";
-	  if (message != "") sendMsg = sendMsg + " " + message;
-	  break;
+	  case Kill:
+	    // escape the name
+	    name = TextUtils::replace_all(name, "\\", "\\\\");
+	    name = TextUtils::replace_all(name, "\"", "\\\"");
+	    sendMsg="/kill \"" + name + "\"";
+	    if (message != "") sendMsg = sendMsg + " " + message;
+	    break;
 
-	case BanIp: case Ban1: case Ban2: case Ban3:
+	  case BanIp: case Ban1: case Ban2: case Ban3:
 
-	  /* FIXME FIXME FIXME
-	   * temporarily break ban-by-name for playerid->ubyte
-	   banPattern = makePattern(troll->id.serverHost);
-	   sendMsg="/ban " + banPattern;
+	    /* FIXME FIXME FIXME
+	     * temporarily break ban-by-name for playerid->ubyte
+	     banPattern = makePattern(troll->id.serverHost);
+	     sendMsg="/ban " + banPattern;
 
-	   if (message != ""){ // add ban length if something is there
+	     if (message != ""){ // add ban length if something is there
 	     sendMsg = sendMsg + " " + message;
-	   }
-	  */
-	  break;
+	     }
+	    */
+	    break;
 
-	case Setgroup:
-	  sendMsg = "/setgroup";
-	  sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	  break;
-	case Removegroup:
-	  sendMsg = "/removegroup";
-	  sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	  break;
-	case Ghost:
-	  sendMsg = "/ghost";
-	  sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	  break;
-	case Showgroup:
-	  sendMsg = "/showgroup";
-	  sendMsg = sendMsg + " \"" + name + "\"";
-	  break;
+	  case Setgroup:
+	    sendMsg = "/setgroup";
+	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
+	    break;
+	  case Removegroup:
+	    sendMsg = "/removegroup";
+	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
+	    break;
+	  case Ghost:
+	    sendMsg = "/ghost";
+	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
+	    break;
+	  case Showgroup:
+	    sendMsg = "/showgroup";
+	    sendMsg = sendMsg + " \"" + name + "\"";
+	    break;
 
-	default: /* shouldn't happen */ break;
+	  default: /* shouldn't happen */ break;
 
 	}
 
       } else { // no recipient -- editing mode
 
 	switch (mode) {
-	case Kick: sendMsg = "/kick"; break;
-	case Kill: sendMsg = "/kill"; break;
-	case BanIp: sendMsg = "/ban"; break;
-	case Setgroup: sendMsg = "/setgroup"; break;
-	case Removegroup: sendMsg = "/removegroup"; break;
-	case Ghost: sendMsg = "/ghost"; break;
-	case Showgroup: sendMsg = "/showgroup"; break;
-	default: /* shouldn't happen */ break;
+	  case Kick: sendMsg = "/kick"; break;
+	  case Kill: sendMsg = "/kill"; break;
+	  case BanIp: sendMsg = "/ban"; break;
+	  case Setgroup: sendMsg = "/setgroup"; break;
+	  case Removegroup: sendMsg = "/removegroup"; break;
+	  case Ghost: sendMsg = "/ghost"; break;
+	  case Showgroup: sendMsg = "/showgroup"; break;
+	  default: /* shouldn't happen */ break;
 	}
 
 	if (message != "") sendMsg = sendMsg + " " + message;
@@ -316,33 +386,33 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       }
     } else { // handle less complicated messages
       switch (mode) {
-      case Unban: sendMsg = "/unban " + message; break;
-      case Banlist: sendMsg = "/banlist";  break;
-      case Playerlist: sendMsg = "/playerlist";  break;
-      case FlagReset: sendMsg = "/flag reset"; break;
-      case FlagUnusedReset: sendMsg = "/flag reset unused"; break;
-      case FlagUp: sendMsg = "/flag up"; break;
-      case GameOver: sendMsg = "/gameover"; break;
-      case CountDown: sendMsg = "/countdown " + message; break;
-      case FlagShow: sendMsg = "/flag show"; break;
-      case Shutdown: sendMsg = "/shutdownserver"; break;
-      case SuperKill: sendMsg = "/superkill"; break;
-      case LagWarn: sendMsg = "/lagwarn " + message; break;
-      case LagDrop: sendMsg = "/lagdrop " + message; break;
-      case IdleStats: sendMsg = "/idlestats"; break;
-      case LagStats: sendMsg = "/lagstats"; break;
-      case ClientQuery: sendMsg = "/clientquery"; break;
-      case FlagHistory: sendMsg = "/flaghistory"; break;
-      case Password: sendMsg = "/password "+ message; break;
-      case Report: sendMsg = "/report "+ message; break;
-      case Identify: sendMsg = "/identify "+ message; break;
-      case Setpass: sendMsg = "/setpass "+ message; break;
-      case Grouplist: sendMsg = "/grouplist"; break;
-      case Groupperms: sendMsg = "/groupperms"; break;
-      case Vote: sendMsg = "/vote " + message; break;
-      case Poll: sendMsg = "/poll " + message; break;
-      case Veto: sendMsg = "/veto " + message; break;
-      default: /* shouldn't happen */ break;
+	case Unban: sendMsg = "/unban " + message; break;
+	case Banlist: sendMsg = "/banlist";  break;
+	case Playerlist: sendMsg = "/playerlist";  break;
+	case FlagReset: sendMsg = "/flag reset"; break;
+	case FlagUnusedReset: sendMsg = "/flag reset unused"; break;
+	case FlagUp: sendMsg = "/flag up"; break;
+	case GameOver: sendMsg = "/gameover"; break;
+	case CountDown: sendMsg = "/countdown " + message; break;
+	case FlagShow: sendMsg = "/flag show"; break;
+	case Shutdown: sendMsg = "/shutdownserver"; break;
+	case SuperKill: sendMsg = "/superkill"; break;
+	case LagWarn: sendMsg = "/lagwarn " + message; break;
+	case LagDrop: sendMsg = "/lagdrop " + message; break;
+	case IdleStats: sendMsg = "/idlestats"; break;
+	case LagStats: sendMsg = "/lagstats"; break;
+	case ClientQuery: sendMsg = "/clientquery"; break;
+	case FlagHistory: sendMsg = "/flaghistory"; break;
+	case Password: sendMsg = "/password "+ message; break;
+	case Report: sendMsg = "/report "+ message; break;
+	case Identify: sendMsg = "/identify "+ message; break;
+	case Setpass: sendMsg = "/setpass "+ message; break;
+	case Grouplist: sendMsg = "/grouplist"; break;
+	case Groupperms: sendMsg = "/groupperms"; break;
+	case Vote: sendMsg = "/vote " + message; break;
+	case Poll: sendMsg = "/poll " + message; break;
+	case Veto: sendMsg = "/veto " + message; break;
+	default: /* shouldn't happen */ break;
       }
 
     }
