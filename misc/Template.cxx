@@ -10,29 +10,33 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// Template.cxx
-//   A short description of the module's function
-
-
-#include "common.h"
-
 // interface header
 #include "Template.h"
 
-// system headers
+// system implementation headers
 
-// common headers
+// common implementation headers
 
-// local headers
+// local implementation headers
 
+// static initializations & declarations
+
+
+Template::Template()
+{
+}
+
+Template::~Template()
+{
+}
 
 
 /*
  * Local Variables: ***
- * mode:C++ ***
+ * mode: C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */

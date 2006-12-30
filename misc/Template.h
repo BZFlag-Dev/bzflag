@@ -10,32 +10,39 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-//  Template.h
-//    A short description of the module's function
+#ifndef __TEMPLATE_H__
+#define __TEMPLATE_H__
 
-#ifndef TEMPLATE_H
-	#define TEMPLATE_H
+// common header must be included before any system headers
+#include "common.h"
 
+// system interface headers
 
-	#include "common.h"
+// common interface headers
 
-// system headers
-
-// common headers
-
-// local headers
+// local interface headers
 
 
+/**
+ * a Template class is just an example.  New classes should include a
+ * brief description of the functionality and purpose of whatever
+ * class is being implemented in doxygen format.
+ */
+class Template
+{
+public:
+  Template();
+  ~Template();
+};
 
-#endif // TEMPLATE_H
-
+#endif  // __TEMPLATE_H__
 
 /*
  * Local Variables: ***
- * mode:C++ ***
+ * mode: C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
  * End: ***
  * ex: shiftwidth=2 tabstop=8
-  */
+ */
