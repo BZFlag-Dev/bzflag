@@ -502,12 +502,12 @@ void resumeCountdown ( const char *resumedBy )
 	if (!clOptions->countdownPaused)
 		return;
 
-	countdownResumeTime = BZDB.evalInt(StateDatabase::BZDB_COUNTDOWNRESTIME);
 	clOptions->countdownPaused = false;
+	countdownResumeTime = BZDB.evalInt(StateDatabase::BZDB_COUNTDOWNRESTIME);
 
 	if (countdownResumeTime <= 0) {
 	    // resume instantly
-	    countdownResumeTime = -3; // set to resume instantly
+	    countdownResumeTime = -1; // reset back to "unset"
 
 	    if (resumedBy)
  		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
@@ -4407,14 +4407,14 @@ int main(int argc, char **argv)
 	timePrevious = tm;
 	if (gameOver) {
 	  countdownResumeTime = -1; // reset back to "unset"
+	} else if (countdownResumeTime == 0) {
+	  countdownResumeTime = -1; // reset back to "unset"
+	  clOptions->countdownPaused = false;
+	  sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
 	} else {
-	  if (countdownResumeTime > 0) {
-	    sendMessage(ServerPlayer, AllPlayers,
+	  sendMessage(ServerPlayer, AllPlayers,
 		      TextUtils::format("%i...", countdownResumeTime).c_str());
-	    --countdownResumeTime;
-	  } else {
-	    countdownResumeTime = -2; //show the countdown is being resumed
-	  }
+	  --countdownResumeTime;
 	}
       } // end check if second has elapsed
     } // end check if countdown resuming delay is active
@@ -4447,11 +4447,9 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if ((countdownResumeTime == -2) || (countdownResumeTime == -3)) {
+      if (countdownActive && !clOptions->countdownPaused
+	  && (countdownResumeTime < 0) && countdownPauseStart) {
 	// resumed
-	if (countdownResumeTime == -2)
-	    sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
-	countdownResumeTime = -1; // reset back to "unset"
 	gameStartTime += (tm - countdownPauseStart);
 	countdownPauseStart = TimeKeeper::getNullTime ();
 	newTimeElapsed = (float)(tm - gameStartTime);
@@ -4463,7 +4461,7 @@ int main(int argc, char **argv)
 
       if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f ||
 					 clOptions->addedTime != 0.0f)
-	  && !clOptions->countdownPaused) {
+	  && !clOptions->countdownPaused && (countdownResumeTime < 0)) {
 	// send update every 30 seconds, when the game is over, or when time adjusted
 	if (clOptions->addedTime != 0.0f) {
 		(timeLeft + clOptions->addedTime <= 0.0f) ? timeLeft = 0.0f : clOptions->timeLimit += clOptions->addedTime;
