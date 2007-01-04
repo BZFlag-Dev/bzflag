@@ -695,8 +695,10 @@ static std::string cmdScreenshot(const std::string&,
     // pause to prevent dt from accumulating until done screenshotting
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     bool temp_paused = false;
-    if (myTank && !myTank->isPaused()) {
-      myTank->setPause(true);
+    if (myTank && !myTank->isPaused())
+	{
+      myTank->setDeadStop();
+	  serverLink->sendPlayerUpdate(myTank);
       temp_paused = true;
     }
 
@@ -823,12 +825,15 @@ static std::string cmdScreenshot(const std::string&,
     controlPanel->addMessage(notify);
 
     // unpause to prevent dt from accumulating until done screenshotting
-    if (temp_paused) {
-      myTank->setPause(false);
+    if (myTank && temp_paused)
+	{
+		// do a micro update to prevent DT overuns
+		myTank->update(0.001f);
+		myTank->setDeadStop();
+		serverLink->sendPlayerUpdate(myTank);
     }
     // update the display regardless of pausing
     drawFrame(0.0f);
-
   }
   return std::string();
 }

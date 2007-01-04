@@ -43,7 +43,7 @@ int BaseLocalPlayer::getSalt()
   return salt << 8;
 }
 
-void BaseLocalPlayer::update()
+void BaseLocalPlayer::update( float inputDT )
 {
   // save last position
   const float* oldPosition = getPosition();
@@ -54,6 +54,10 @@ void BaseLocalPlayer::update()
   // update by time step
   float dt = float(TimeKeeper::getTick() - lastTime);
   lastTime = TimeKeeper::getTick();
+
+  if (inputDT > 0)
+	  dt = inputDT;
+
   if (dt < 0.001f) dt = 0.001f;
   doUpdateMotion(dt);
 

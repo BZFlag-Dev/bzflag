@@ -79,6 +79,8 @@ public:
   void		setJumpPressed(bool value);
   void		setTarget(const Player*);
 
+  void		setDeadStop ( void  );
+
   void		setNemesis(const Player*);
   const Player*	getNemesis() const;
 

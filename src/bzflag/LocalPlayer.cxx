@@ -1153,6 +1153,14 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   return;
 }
 
+void		LocalPlayer::setDeadStop ( void  )
+{
+	float allStop[3] = {0,0,0};
+
+	setVelocity(allStop);
+	setAngularVelocity(0.0);
+}
+
 
 void			LocalPlayer::setPause(bool pause)
 {
