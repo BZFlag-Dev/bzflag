@@ -61,10 +61,9 @@ void BaseLocalPlayer::update( float inputDT )
   if (dt < 0.001f)
 	  dt = 0.001f;
 
-  float fullDT = dt;
   float dtLimit = 0.1f;
-  float doneDT = fullDT;
-  if ( fullDT > dtLimit )
+  float doneDT = dt;
+  if ( dt > dtLimit )
   {
 	  dt = dtLimit;
 	  doneDT -= dtLimit;
