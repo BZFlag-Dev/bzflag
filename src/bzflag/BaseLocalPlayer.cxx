@@ -67,7 +67,7 @@ void BaseLocalPlayer::update( float inputDT )
   if ( fullDT > dtLimit )
   {
 	  dt = dtLimit;
-	  doneDT-= dtLimit;
+	  doneDT -= dtLimit;
   }
 
   while (doneDT > 0)
@@ -107,7 +107,7 @@ void BaseLocalPlayer::update( float inputDT )
 	doUpdate(dt);
 
 	// subtract another chunk
-	doneDT =- dtLimit;
+	doneDT -= dtLimit;
 	if ( doneDT < dtLimit)	// if we only have a nubby left, don't do a full dt.
 		dt = doneDT;
   }
