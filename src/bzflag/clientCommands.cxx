@@ -697,8 +697,8 @@ static std::string cmdScreenshot(const std::string&,
     bool temp_paused = false;
     if (myTank && !myTank->isPaused())
 	{
-      myTank->setDeadStop();
-	  serverLink->sendPlayerUpdate(myTank);
+    //  myTank->setDeadStop();
+	//  serverLink->sendPlayerUpdate(myTank);
       temp_paused = true;
     }
 
@@ -828,9 +828,9 @@ static std::string cmdScreenshot(const std::string&,
     if (myTank && temp_paused)
 	{
 		// do a micro update to prevent DT overuns
-		myTank->update(0.001f);
-		myTank->setDeadStop();
-		serverLink->sendPlayerUpdate(myTank);
+	//  myTank->update(0.001f);
+	//	myTank->setDeadStop();
+	//	serverLink->sendPlayerUpdate(myTank);
     }
     // update the display regardless of pausing
     drawFrame(0.0f);
