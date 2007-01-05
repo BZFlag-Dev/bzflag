@@ -16,6 +16,7 @@
 /* common implementation headers */
 #include "BZDBCache.h"
 
+#include "playing.h"
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
 				 const char* name, const char* _email,
@@ -58,10 +59,10 @@ void BaseLocalPlayer::update( float inputDT )
   if (inputDT > 0)
 	  dt = inputDT;
 
-  if (dt < 0.001f)
-	  dt = 0.001f;
+  if (dt < MIN_DT_LIMIT)
+	  dt = MIN_DT_LIMIT;
 
-  float dtLimit = 0.1f;
+  float dtLimit = MAX_DT_LIMIT;
   float doneDT = dt;
   if ( dt > dtLimit )
   {

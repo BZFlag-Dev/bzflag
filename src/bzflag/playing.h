@@ -32,6 +32,9 @@
 #include "MainWindow.h"
 #include "ControlPanel.h"
 
+#define MAX_DT_LIMIT 0.1f
+#define MIN_DT_LIMIT 0.001f
+
 #define MAX_MESSAGE_HISTORY (20)
 
 typedef void		(*JoinGameCallback)(bool success, void* data);

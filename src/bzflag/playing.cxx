@@ -6392,11 +6392,29 @@ void updateWorldEffects ( const float dt )
 
 void doUpdates ( const float dt )
 {
-  updateTimes(dt);
-  updatePostions(dt);
-  checkEnvironment(dt);
-  updateTanks(dt);
-  updateWorldEffects(dt);
+  float doneDT = dt;
+  float dtLimit = MAX_DT_LIMIT;
+  float realDT = dt;
+
+  if ( doneDT > dtLimit )
+  {
+	  realDT = dtLimit;
+	  doneDT -= dtLimit;
+  }
+
+  while ( dtLimit > 0 )
+  {
+	updateTimes(realDT);
+	updatePostions(realDT);
+	checkEnvironment(realDT);
+	updateTanks(realDT);
+	updateWorldEffects(realDT);
+
+	doneDT -= dtLimit;
+	
+	if ( doneDT < dtLimit)	// if we only have a nubby left, don't do a full dt.
+		realDT = doneDT;
+  }
 
   ExportInformation::instance().sendPulse();
 
