@@ -34,8 +34,12 @@ DIST_SUBDIRS = \
 
 documentationdir = $(datadir)/doc/bzflag
 documentation_DATA = \
+	AUTHORS \
 	BUGS \
+	COPYING \
+	ChangeLog \
 	DEVINFO \
+	NEWS \
 	README \
 	README.BeOS \
 	README.DEVC++ \
@@ -48,14 +52,20 @@ documentation_DATA = \
 	README.SOLARIS \
 	README.UNIX \
 	README.WINDOWS \
-	README.XMINGW
+	README.XMINGW \
+	TODO
 
 EXTRA_DIST = \
 	$(documentation_DATA) \
 	autogen.sh \
 	bzflag.info \
+	bzflag.info.in \
 	bzflag.lsm \
+	bzflag.lsm.in \
 	bzflag.spec \
+	bzflag.spec.in \
+	ideas.txt
+	INSTALL \
 	PORTING \
 	RELNOTES
 
