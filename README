@@ -328,22 +328,25 @@ gameplay.
 Source Tree Organization
 ========================
 
-After unpacking a source distribution, you should have the following
-files in the new 'bzflag' directory:
+After unpacking a source distribution, you should have at least the
+following files in the new 'bzflag' directory:
 
   README	- this file
   README.*	- platform specific details
+  AUTHORS	- project contributors
   BUGS		- a list of known bugs
-  BZFlag.xcode  - Mac OS X XCode project
-  ChangeLog	- source code changes since previous release
+  BZFlag.xcode/	- Mac OS X XCode project
   COPYING	- the license for BZFlag
-  NEWS		- history of visible changes for each release
+  ChangeLog	- source code changes since previous release
   DEVINFO       - information for developers
+  Dev-C++/	- Dev-C++ project files
+  NEWS		- history of visible changes for each release
   PORTING	- a guide for porting BZFlag
   TODO		- incomplete list of things to do
+  autogen.sh	- build system preparation script
+  configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
   debian/	- debian apt files
-  Dev-C++/	- Dev-C++ project files
   doc/		- partial documentation in doxygen format
   include/	- include headers for libraries
   man/		- man pages
@@ -354,7 +357,9 @@ files in the new 'bzflag' directory:
     bzadmin/      - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
     bzfs/	  - bzfs app source code (game server)
+    bzrobots/	  - bzrobots app source code (headless game client)
     common/	  - general purpose classes
+    date/         - unified version and build date stamping for apps
     game/	  - game library used by both the server and client(s)
     geometry/	  - geometry rendering classes
     mediafile/	  - classes for reading resources
@@ -364,7 +369,7 @@ files in the new 'bzflag' directory:
     platform/	  - platform dependent code
       MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
-    zlib/	  - compression library
+    world/	  - game world objects library
   tools/	- various helper utilities
   win32/	- stuff for building on the Windows platform
 
