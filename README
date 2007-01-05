@@ -340,7 +340,6 @@ files in the new 'bzflag' directory:
   NEWS		- history of visible changes for each release
   DEVINFO       - information for developers
   PORTING	- a guide for porting BZFlag
-  RELNOTES	- placeholder - see NEWS
   TODO		- incomplete list of things to do
   data/		- data files (sounds, images, etc.)
   debian/	- debian apt files

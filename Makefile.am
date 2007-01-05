@@ -66,8 +66,7 @@ EXTRA_DIST = \
 	bzflag.spec.in \
 	ideas.txt
 	INSTALL \
-	PORTING \
-	RELNOTES
+	PORTING
 
 MAINTAINERCLEANFILES = \
 	configure \
