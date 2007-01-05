@@ -1595,20 +1595,55 @@ pedar sag               # fa - (lit.) your father is a dog
 
 
 # Polish
+chuj                    # pl - dick
 coorva                  # pl - fuck
 dupek                   # pl - asshole
+dzifka                  # pl - whore (light)
+dzivka                  # pl - whore (light)
 dziwka                  # pl - whore (light)
+fiucie                  # pl - dick
+fiut                    # pl - dick
 gowno                   # pl - shit
 huj                     # pl - dick
+jeba                    # pl - fuck
+jebac                   # pl - to fuck
+jebak                   # pl - to fuck
+jeban                   # pl - to fuck
+jebniet                 # pl - fucked, fucked up
+jebniety                # pl - fucked, fucked up
+kurva                   # pl - whore (hard)
 kurwa                   # pl - whore (hard), fig. "oh shit!"
+kurwiszon               # pl - son of a bitch
+kutas                   # pl - dick
+ochujales               # pl - fucking crazy
+peezda                  # pl - pussy
 pierdol	      	      	# pl - fuck
 pierdolec               # pl - fucker
+pizda                   # pl - pussy
+pizde                   # pl - pussy
+pizdo                   # pl - pussy
+pizdy                   # pl - pussy
+pojeb                   # pl - fucker
+pojeban                 # pl - fucked up
 pojebany                # pl - fucked up
+qrva                    # pl - whore
+qrwa                    # pl - whore
+skurwysysn              # pl - son of a bitch
 spieprzaj               # pl - piss off
+spierdala               # pl - fuck off
 spierdalaj              # pl - fuck off
+ssij mi pale            # pl - suck my dick
+swiniojebca             # pl - pigfucker
+wpierdal                # pl - kick their ass
+wpierdala		# pl - eat something vulgar
+wpierdalac		# pl - eat something vulgar
+wypierdala              # pl - fuck off
+wypierdala              # pl - fuck off
+wypierdalaj             # pl - fuck off
+zajebicie               # pl - "fucking awesome"
 zajebiste               # pl - "fucking awesome"
 zapierdol	      	# pl - fuck
-zapierdole	      	# pl - fuck
+zapierdole	      	# pl - fuck (going to fuck something up)
 
 
 # Portuguese
