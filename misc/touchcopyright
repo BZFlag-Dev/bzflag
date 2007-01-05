@@ -1,9 +1,9 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993 - 2006 Tim Riker
-OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2006'
+# Copyright (c) 1993 - 2007 Tim Riker
+OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
 # NOTE: update just this line and then run the script
-NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2006'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
 #
 # update copyright in all files
 #
