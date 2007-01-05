@@ -1,13 +1,11 @@
+#
+# Build BZFlag
+#
+
 bin_PROGRAMS = bzflag
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
-
-EXTRA_bzflag_SOURCES = \
-	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
+AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CURL_CFLAGS@ @CONF_CPPFLAGS@ @X_CFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_KRB5
 KRB5 =	ClientAuthentication.cxx	\
@@ -213,6 +211,11 @@ bzflag_SOURCES =			\
 	stars.h				\
 	$(KRB5)
 
+EXTRA_bzflag_SOURCES = \
+	ClientAuthentication.cxx	\
+	ClientAuthentication.h		\
+	LoginMenu.cxx			\
+	LoginMenu.h
 
 if WIN32
 RESOURCE = bzflag.res
@@ -267,10 +270,9 @@ LDADD =	\
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CURL_CFLAGS@ \
-@CONF_CPPFLAGS@ @X_CFLAGS@
-AM_CXXFLAGS = @CONF_CXXFLAGS@
-
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \
 	-O coff
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

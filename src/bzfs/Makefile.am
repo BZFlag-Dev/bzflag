@@ -1,3 +1,7 @@
+#
+# Build BZFS
+#
+
 bin_PROGRAMS = bzfs
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ @CONF_CPPFLAGS@
