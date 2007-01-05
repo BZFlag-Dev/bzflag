@@ -6402,7 +6402,7 @@ void doUpdates ( const float dt )
 	  doneDT -= dtLimit;
   }
 
-  while ( dtLimit > 0 )
+  while ( doneDT > 0 )
   {
 	updateTimes(realDT);
 	updatePostions(realDT);
