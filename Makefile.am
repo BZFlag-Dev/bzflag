@@ -40,6 +40,7 @@ EXTRA_DIST = \
 	bzflag.spec \
 	DEVINFO \
 	PORTING \
+	README \
 	README.BeOS \
 	README.DEVC++ \
 	README.HPUX \
