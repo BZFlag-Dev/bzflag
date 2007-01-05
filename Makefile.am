@@ -32,14 +32,10 @@ DIST_SUBDIRS = \
 	tools \
 	BZFlag.xcode
 
-EXTRA_DIST = \
-	autogen.sh \
+documentationdir = $(datadir)/doc/bzflag
+documentation_DATA = \
 	BUGS \
-	bzflag.info \
-	bzflag.lsm \
-	bzflag.spec \
 	DEVINFO \
-	PORTING \
 	README \
 	README.BeOS \
 	README.DEVC++ \
@@ -52,7 +48,15 @@ EXTRA_DIST = \
 	README.SOLARIS \
 	README.UNIX \
 	README.WINDOWS \
-	README.XMINGW	\
+	README.XMINGW
+
+EXTRA_DIST = \
+	$(documentation_DATA) \
+	autogen.sh \
+	bzflag.info \
+	bzflag.lsm \
+	bzflag.spec \
+	PORTING \
 	RELNOTES
 
 MAINTAINERCLEANFILES = \
