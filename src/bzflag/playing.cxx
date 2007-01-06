@@ -1212,10 +1212,9 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   // sanity check
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
-    std::
-      cerr <<
+    std::cerr <<
       "WARNING: invalid player identification when adding player with id "
-	   << i << std::endl;
+	      << i << std::endl;
     return NULL;
   }
 
