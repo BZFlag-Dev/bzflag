@@ -94,7 +94,7 @@ interface header if there is one, or common.h otherwise, system
 headers, common implementation headers, and then local implementation
 headers.
 
- Adhering to this order will avoid nasty
+Adhering to this order will avoid nasty
 ordering dependencies and makes it easy to change things down the road.
 
 Ideally, there should be one class per file.  There are, of course,
@@ -230,6 +230,19 @@ least will be buildable, before and after the commit.
 (CVS does not enforce atomic changes)
 Try to separate big commit, involving multiple functionality changes,
 in smaller coherent chunk; in case of bug, they can be simply undone.
+
+Creating Patches
+----------------
+If you do not have CVS commit access, create a patch for submission to 
+sourceforge using the following command:
+
+% cvs diff -u > mypatchname.diff
+
+If your patch results in the deletion of existing files, update the patch
+like this:
+
+% diff -u src/bzfs/thisfile.cxx /dev/null >> mypatchname.diff
+
 
 Testing
 =======
