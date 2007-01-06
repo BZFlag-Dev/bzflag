@@ -40,7 +40,7 @@ namespace {
    * nicknames.
    */
   inline std::string quote(std::string const& name) {
-    return TextUtils::format("\"%s\"", name);
+    return TextUtils::format("\"%s\"", name.c_str());
   }
   
   /**
