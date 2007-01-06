@@ -21,21 +21,26 @@
 #include "HUDui.h"
 
 namespace {
-  // This method escapes quotes and slashes that may be in a callsign.
-  // It is currently a separate method, because the original code didn't apply
-  // this escaping logic in all cases. However, it is likely that ALL callsigns
-  // should be escaped, in which case, this code should be incoporated as part
-  // of quote() below
+  /** 
+   * This method escapes quotes and slashes that may be in a callsign.
+   * It is currently a separate method, because the original code
+   * didn't apply this escaping logic in all cases. However, it is
+   * likely that ALL callsigns should be escaped, in which case, this
+   * code should be incoporated as part of quote() below
+   */
   inline std::string escape(std::string const& name) {
     std::string result = TextUtils::replace_all(name, "\\", "\\\\");
     result = TextUtils::replace_all(result, "\"", "\\\"");
     return result;
   }
   
-  // This method is purposely more verbose than required, in part due to a
-  // difference of style, and in part because performance doesn't matter here
-  // However, the encapsulation of this function is useful, in case escaping
-  // embedded quotes and slashes are required for ALL uses of nicknames
+  /**
+   * This method is purposely more verbose than required, in part due
+   * to a difference of style, and in part because performance doesn't
+   * matter here However, the encapsulation of this function is
+   * useful, in case escaping embedded quotes and slashes are required
+   * for ALL uses of nicknames
+   */
   inline std::string quote(std::string const& name) {
     std::string result("\"");
     result += name;
@@ -43,9 +48,12 @@ namespace {
     return result;
   }
   
-  // This method is syntactic sugar to prevent these lines of code from being
-  // repeated 32 times. On the other hand, the main reason for this is because
-  // of the condition, which is of questionable utility
+  /**
+   * This method is syntactic sugar to prevent these lines of code
+   * from being repeated 32 times. On the other hand, the main reason
+   * for this is because of the condition, which is of questionable
+   * utility
+   */
   inline void append_if(std::string& dest, std::string const& source) {
     if ( ! source.empty() ) {
       dest += " ";
@@ -57,13 +65,14 @@ namespace {
 
 const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};
 
-/* FIXME - note the important numModes and numNonAdminModes values inited here
- * when new commands are added, the indices need to be adjusted here.
+/* FIXME - note the important numModes and numNonAdminModes values
+ * inited here when new commands are added, the indices need to be
+ * adjusted here.
  */
 ServerCommandKey::ServerCommandKey()
   : mode(nonAdminModes[0])
   , startIndex(-1)
-  , numModes(35)		//brittle... no good portable way to deal with this
+  , numModes(35)	//brittle... no good portable way to deal with this
   , numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) )
 {
 }
