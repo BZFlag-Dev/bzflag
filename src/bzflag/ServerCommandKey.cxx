@@ -20,6 +20,40 @@
 #include "playing.h"
 #include "HUDui.h"
 
+namespace {
+  // This method escapes quotes and slashes that may be in a callsign.
+  // It is currently a separate method, because the original code didn't apply
+  // this escaping logic in all cases. However, it is likely that ALL callsigns
+  // should be escaped, in which case, this code should be incoporated as part
+  // of quote() below
+  inline std::string escape(std::string const& name) {
+    std::string result = TextUtils::replace_all(name, "\\", "\\\\");
+    result = TextUtils::replace_all(result, "\"", "\\\"");
+    return result;
+  }
+  
+  // This method is purposely more verbose than required, in part due to a
+  // difference of style, and in part because performance doesn't matter here
+  // However, the encapsulation of this function is useful, in case escaping
+  // embedded quotes and slashes are required for ALL uses of nicknames
+  inline std::string quote(std::string const& name) {
+    std::string result("\"");
+    result += name;
+    result += "\"";
+    return result;
+  }
+  
+  // This method is syntactic sugar to prevent these lines of code from being
+  // repeated 32 times. On the other hand, the main reason for this is because
+  // of the condition, which is of questionable utility
+  inline void append_if(std::string& dest, std::string const& source) {
+    if ( ! source.empty() ) {
+      dest += " ";
+      dest += source;
+    }
+  }
+}
+
 
 const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};
 
@@ -308,115 +342,106 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
   if (sendIt) {
     std::string message = hud->getComposeString();
-    std::string banPattern, sendMsg, displayMsg, name;
+    std::string sendMsg, displayMsg, name;
 
     const Player * troll = myTank->getRecipient();
-    if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
-      if (troll) { // cases where we select recipient with keys
-
-	name = troll->getCallSign();
-
-	switch (mode) {
-
-	  case Kick:
-	    // escape the name
-	    name = TextUtils::replace_all(name, "\\", "\\\\");
-	    name = TextUtils::replace_all(name, "\"", "\\\"");
-	    sendMsg="/kick \"" + name + "\"";
-	    if (message != "") sendMsg = sendMsg + " " + message;
-	    break;
-
-	  case Kill:
-	    // escape the name
-	    name = TextUtils::replace_all(name, "\\", "\\\\");
-	    name = TextUtils::replace_all(name, "\"", "\\\"");
-	    sendMsg="/kill \"" + name + "\"";
-	    if (message != "") sendMsg = sendMsg + " " + message;
-	    break;
-
-	  case BanIp: case Ban1: case Ban2: case Ban3:
-
-	    /* FIXME FIXME FIXME
-	     * temporarily break ban-by-name for playerid->ubyte
-	     banPattern = makePattern(troll->id.serverHost);
-	     sendMsg="/ban " + banPattern;
-
-	     if (message != ""){ // add ban length if something is there
-	     sendMsg = sendMsg + " " + message;
-	     }
-	    */
-	    break;
-
-	  case Setgroup:
-	    sendMsg = "/setgroup";
-	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	    break;
-	  case Removegroup:
-	    sendMsg = "/removegroup";
-	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	    break;
-	  case Ghost:
-	    sendMsg = "/ghost";
-	    sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	    break;
-	  case Showgroup:
-	    sendMsg = "/showgroup";
-	    sendMsg = sendMsg + " \"" + name + "\"";
-	    break;
-
-	  default: /* shouldn't happen */ break;
-
-	}
-
-      } else { // no recipient -- editing mode
-
-	switch (mode) {
-	  case Kick: sendMsg = "/kick"; break;
-	  case Kill: sendMsg = "/kill"; break;
-	  case BanIp: sendMsg = "/ban"; break;
-	  case Setgroup: sendMsg = "/setgroup"; break;
-	  case Removegroup: sendMsg = "/removegroup"; break;
-	  case Ghost: sendMsg = "/ghost"; break;
-	  case Showgroup: sendMsg = "/showgroup"; break;
-	  default: /* shouldn't happen */ break;
-	}
-
-	if (message != "") sendMsg = sendMsg + " " + message;
-
+    if (troll) name = troll->getCallSign();
+    
+    switch (mode) {
+    case Kick:
+      sendMsg = "/kick ";
+      if (troll) {
+	// escape the name
+	sendMsg += quote( escape(name) );
+	append_if(sendMsg, message);
       }
-    } else { // handle less complicated messages
-      switch (mode) {
-	case Unban: sendMsg = "/unban " + message; break;
-	case Banlist: sendMsg = "/banlist";  break;
-	case Playerlist: sendMsg = "/playerlist";  break;
-	case FlagReset: sendMsg = "/flag reset"; break;
-	case FlagUnusedReset: sendMsg = "/flag reset unused"; break;
-	case FlagUp: sendMsg = "/flag up"; break;
-	case GameOver: sendMsg = "/gameover"; break;
-	case CountDown: sendMsg = "/countdown " + message; break;
-	case FlagShow: sendMsg = "/flag show"; break;
-	case Shutdown: sendMsg = "/shutdownserver"; break;
-	case SuperKill: sendMsg = "/superkill"; break;
-	case LagWarn: sendMsg = "/lagwarn " + message; break;
-	case LagDrop: sendMsg = "/lagdrop " + message; break;
-	case IdleStats: sendMsg = "/idlestats"; break;
-	case LagStats: sendMsg = "/lagstats"; break;
-	case ClientQuery: sendMsg = "/clientquery"; break;
-	case FlagHistory: sendMsg = "/flaghistory"; break;
-	case Password: sendMsg = "/password "+ message; break;
-	case Report: sendMsg = "/report "+ message; break;
-	case Identify: sendMsg = "/identify "+ message; break;
-	case Setpass: sendMsg = "/setpass "+ message; break;
-	case Grouplist: sendMsg = "/grouplist"; break;
-	case Groupperms: sendMsg = "/groupperms"; break;
-	case Vote: sendMsg = "/vote " + message; break;
-	case Poll: sendMsg = "/poll " + message; break;
-	case Veto: sendMsg = "/veto " + message; break;
-	default: /* shouldn't happen */ break;
+      break;
+      
+    case Kill:
+      sendMsg = "/kill ";
+      if (troll) {
+	// escape the name
+	sendMsg += quote( escape(name) );
+	append_if(sendMsg, message);
       }
+      break;
+      
+    // The previous version did not define actions for Ban1-Ban3 when in
+    // editing mode, but this seems reasonable. An explanation of why this is
+    // (intentionally) broken is warranted
+   case BanIp: case Ban1: case Ban2: case Ban3:
+      sendMsg = "/ban ";
+      if (troll) {
+	/* FIXME FIXME FIXME
+	 * temporarily break ban-by-name for playerid->ubyte
+	std::string banPattern = makePattern(troll->id.serverHost);
+	sendMsg.append(" ").append(banPattern);
+	 */
+	sendMsg=""; break; // hack to keep this broken (why?)
+      }
+      // Note that this seems broken, if a recipient was specified (?!)
+      append_if(sendMsg, message);
+      break;
+      
+    case Showgroup:
+      sendMsg = "/showgroup ";
+      if (troll) {
+        sendMsg += quote(name);
+      } else {
+        append_if(sendMsg, message);
+      }
+      break;
+      
+    case Setgroup:
+      sendMsg = "/setgroup ";
+      if (troll) sendMsg += quote(name);
+      append_if(sendMsg, message);
+      break;
 
+    case Removegroup:
+      sendMsg = "/removegroup ";
+      if (troll) sendMsg += quote(name);
+      append_if(sendMsg, message);
+      break;
+
+    case Ghost:
+      sendMsg = "/ghost ";
+      if (troll) sendMsg += quote(name);
+      append_if(sendMsg, message);
+      break;
+
+    case Unban: sendMsg = "/unban " + message; break;
+    case Banlist: sendMsg = "/banlist";  break;
+    case Playerlist: sendMsg = "/playerlist";  break;
+    case FlagReset: sendMsg = "/flag reset"; break;
+    case FlagUnusedReset: sendMsg = "/flag reset unused"; break;
+    case FlagUp: sendMsg = "/flag up"; break;
+    case FlagShow: sendMsg = "/flag show"; break;
+    case FlagHistory: sendMsg = "/flaghistory"; break;
+    case IdleStats: sendMsg = "/idlestats"; break;
+    case ClientQuery: sendMsg = "/clientquery"; break;
+    case LagStats: sendMsg = "/lagstats"; break;
+    case Report: sendMsg = "/report " + message; break;
+    case LagWarn: sendMsg = "/lagwarn " + message; break;
+    case LagDrop: sendMsg = "/lagdrop " + message; break;    
+    case GameOver: sendMsg = "/gameover"; break;
+    case CountDown: sendMsg = "/countdown " + message; break;
+    case SuperKill: sendMsg = "/superkill"; break;
+    case Shutdown: sendMsg = "/shutdownserver"; break;
+    case Register:
+      // This was missing (but is due to be removed shortly)
+      break;
+    case Identify: sendMsg = "/identify "+ message; break;
+    case Setpass: sendMsg = "/setpass " + message; break;
+    case Grouplist: sendMsg = "/grouplist"; break;
+    case Groupperms: sendMsg = "/groupperms"; break;
+    case Vote: sendMsg = "/vote " + message; break;
+    case Poll: sendMsg = "/poll " + message; break;
+    case Veto: sendMsg = "/veto " + message; break;
+    case Password: sendMsg = "/password " + message; break;
+    default: /* shouldn't happen */ break;
     }
-
+    
     // send the message on its way if it isn't empty
     if (sendMsg != "") {
       displayMsg = "-> \"" + sendMsg + "\"";
