@@ -34,10 +34,6 @@ ShotPath::ShotPath(const FiringInfo& info) :
 				expiring(false),
 				expired(false)
 {
-  // eek!  a giant switch statement, how un-object-oriented!
-  // each flag should be a flyweight object derived from a
-  // base Flag class with a virtual makeShotStrategy() member.
-  // just remember -- it's only a game.
   if (firingInfo.flagType->flagShot == NormalShot)
     strategy = new NormalShotStrategy(this);
   else {
