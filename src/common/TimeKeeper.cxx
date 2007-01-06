@@ -177,6 +177,17 @@ const char *TimeKeeper::timestamp(void) // const
   return buffer;
 }
 
+/** returns a short string of the local time */
+//static
+std::string    
+TimeKeeper::shortTimeStamp(void) {
+  time_t tnow = time(0);
+  struct tm *now = localtime(&tnow);
+  
+  std::string result( TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min, 10) );
+  return result;
+}
+
 void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
 {
 	time_t tnow = time(0);

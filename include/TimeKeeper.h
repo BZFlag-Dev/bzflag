@@ -87,6 +87,9 @@ public:
 
   /** returns a string of the local time */
   static const char		*timestamp(void);
+  
+  /** returns a short string of the local time */
+  static std::string    shortTimeStamp(void);
 
   static void localTime( int &day);
 
