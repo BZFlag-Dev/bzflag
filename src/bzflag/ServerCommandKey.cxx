@@ -141,8 +141,7 @@ void			ServerCommandKey::updatePrompt()
     case Ban3:
       if (recipient) {
 	// Set the prompt and enable editing/composing --> allows to enter ban time
-	/* FIXME FIXME FIXME
-	 * temporarily breaking bans for playerid->ubyte
+	/* FIXME: temporarily breaking bans for playerid->ubyte
 	 banPattern = makePattern(recipient->id.serverHost);
 	 composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
 	*/
@@ -282,16 +281,18 @@ void			ServerCommandKey::updatePrompt()
       composePrompt = "Admin Password:";
       break;
     default:
-      // Because of the type-safety of the enum, this should never happen
-      // (unless someone adds a new mode without updating this case statement)
-      return;
+      // Because of the type-safety of the enum, this should never
+      // happen (unless someone adds a new mode without updating this
+      // case statement)
+      composePrompt = TextUtils::format("ERROR: Someone forgot to update a ServerCommandKey switch [mode == %d]:", mode);
+      break;
   }
 
   hud->setComposing(composePrompt, allowEdit);
 }
 
-// return the right ban pattern 123.32.12.* for example depending on the
-// mode of the class. Returns an empty string on errors.
+// return the right ban pattern 123.32.12.* for example depending on
+// the mode of the class. Returns an empty string on errors.
 std::string		ServerCommandKey::makePattern(const InAddr& address)
 {
   const char * c = inet_ntoa(address);
@@ -375,14 +376,13 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       }
       break;
       
-    // The previous version did not define actions for Ban1-Ban3 when in
-    // editing mode, but this seems reasonable. An explanation of why this is
+    // The previous version did not define actions for Ban1-Ban3 when
+    // in editing mode, but this seems reasonable.  why this is
     // (intentionally) broken is warranted
    case BanIp: case Ban1: case Ban2: case Ban3:
       sendMsg = "/ban ";
       if (troll) {
-	/* FIXME FIXME FIXME
-	 * temporarily break ban-by-name for playerid->ubyte
+	/* FIXME: temporarily break ban-by-name for playerid->ubyte
 	std::string banPattern = makePattern(troll->id.serverHost);
 	sendMsg.append(" ").append(banPattern);
 	 */
