@@ -35,17 +35,12 @@ namespace {
   }
   
   /**
-   * This method is purposely more verbose than required, in part due
-   * to a difference of style, and in part because performance doesn't
-   * matter here However, the encapsulation of this function is
-   * useful, in case escaping embedded quotes and slashes are required
-   * for ALL uses of nicknames
+   * The encapsulation of this function is useful where escaping
+   * embedded quotes and slashes are required for ALL uses of
+   * nicknames.
    */
   inline std::string quote(std::string const& name) {
-    std::string result("\"");
-    result += name;
-    result += "\"";
-    return result;
+    return TextUtils::format("\"%s\"", name);
   }
   
   /**
