@@ -222,26 +222,49 @@ non-conformant code should follow the non-conformant code's style if
 following the rules would cause an ugly mess.
 
 
-CVS commit
-=======
+Committing to CVS
+=================
 
 Make atomic changes in a way that a system will be working, or at
-least will be buildable, before and after the commit.
-(CVS does not enforce atomic changes)
-Try to separate big commit, involving multiple functionality changes,
-in smaller coherent chunk; in case of bug, they can be simply undone.
+least will be buildable, before and after committing a set of changes.
+CVS does not enforce atomic changes, so it's up to the developers to
+ensure that the commits being made are logically grouped and that
+commit comments are relevant to the changes being committed.
 
-Creating Patches
-----------------
-If you do not have CVS commit access, create a patch for submission to 
-sourceforge using the following command:
+Try to separate out bigger commits into smaller ones.  In particular,
+if a change involves multiple functionality changes, the commit should
+be broken up into smaller coherent chunks.  This way if a bug or other
+issue with a particular commit is later encountered, the change can be
+more easily isolated and undone or fixed.
 
-% cvs diff -u > mypatchname.diff
+Making Patches
+--------------
 
-If your patch results in the deletion of existing files, update the patch
-like this:
+If you do not have CVS commit access and would like to propose a
+change for inclusion, you should create a patch.  Patches should be
+submitted to the Sourceforge project site patches tracker at:
 
-% diff -u src/bzfs/thisfile.cxx /dev/null >> mypatchname.diff
+https://sourceforge.net/tracker/?func=add&group_id=3248&atid=303248
+
+You can create a patch for submission to Sourceforge from a CVS source
+checkout using the following command:
+
+cvs diff -u > my_patch_name.diff
+
+If your patch results in the deletion of existing files, you can
+annotate that deletion by adding it to the patch like this:
+
+diff -u src/bzfs/somefile.cxx /dev/null >> my_patch_name.diff
+
+If your patch requires the addition of new files, simply include these
+new files individually or in a tarball as part of the patch submission.
+
+In general, patches should be relatively small succint changes that
+can be readily reviewed, tested, and applied.  Patches that are
+difficult to review, test, or apply will likely not be accepted.  That
+said, creating useful patches that have been discussed with the
+existing developers is one of the more immediate means to become a
+developer for BZFlag yourself.
 
 
 Testing
