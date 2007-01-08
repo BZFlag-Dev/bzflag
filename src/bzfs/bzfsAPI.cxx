@@ -2220,6 +2220,17 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 	startCountdown(delay,limit,byWho);
 }
 
+BZF_API	bz_eGameType bz_getGameType ( void  )
+{
+	if (clOptions->gameStyle & TeamFlagGameStyle)
+		return eCTFGame;
+	else if (clOptions->gameStyle & RabbitChaseGameStyle)
+		return eRabbitGame;
+
+	return eFFAGame;
+}
+
+
 
 // Local Variables: ***
 // mode:C++ ***

@@ -170,6 +170,13 @@ typedef enum
 #define BZ_BZDBPERM_SERVER	2
 #define BZ_BZDBPERM_CLIENT	3
 
+typedef enum
+{
+	eFFAGame= 0,
+	eCTFGame,
+	eRabbitGame
+}bz_eGameType;
+
 //utility classes
 class BZF_API bzApiString
 {
@@ -1253,6 +1260,9 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
 bz_eTeamType convertTeam ( int team );
 int convertTeam( bz_eTeamType team );
+
+// game type info
+BZF_API	bz_eGameType bz_getGameType ( void  );
 
 #endif //_BZFS_API_H_
 
