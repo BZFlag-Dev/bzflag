@@ -175,6 +175,14 @@ typedef enum
 #define BZ_BZDBPERM_SERVER	2
 #define BZ_BZDBPERM_CLIENT	3
 
+typedef enum
+{
+	eTeamFFAGame = 0,
+	eClassicCTFGame,
+	eRabbitGame,
+	eOpenFFAGame
+}bz_eGameType;
+
 //utility classes
 class BZF_API bz_ApiString
 {
@@ -1450,6 +1458,9 @@ BZF_API void bz_changeTeam( int player, bz_eTeamType team );
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
+// game info
+BZF_API bz_eTeamType bz_getGameType( void );
+
 // server side player API
 
 typedef struct
@@ -1614,6 +1625,8 @@ protected:
 //              this message will be removed when the code is complete.
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
 BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler ); // you have to pass in the handler to ensure you "own" the player
+
+
 
 #endif //_BZFS_API_H_
 

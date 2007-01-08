@@ -2421,6 +2421,18 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+BZF_API bz_eTeamType bz_getGameType( void )
+{
+	if (clOptions->gameType == eClassicCTF )
+		return eClassicCTFGame;
+	else if (clOptions->gameType == eRabbitChase )
+		return eRabbitGame;
+	else if (clOptions->gameType == eOpenFFA )
+		return eOpenFFAGame;
+
+	return eTeamFFAGame;
+}
+
 // server side bot API
 void bz_ServerSidePlayerHandler::playerRemoved(int)
 {
