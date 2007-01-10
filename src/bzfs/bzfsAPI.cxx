@@ -2421,7 +2421,7 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
 	return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
-BZF_API bz_eTeamType bz_getGameType( void )
+BZF_API bz_eGameType bz_getGameType( void )
 {
 	if (clOptions->gameType == eClassicCTF )
 		return eClassicCTFGame;

@@ -1459,7 +1459,7 @@ BZF_API void bz_changeTeam( int player, bz_eTeamType team );
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
 // game info
-BZF_API bz_eTeamType bz_getGameType( void );
+BZF_API bz_eGameType bz_getGameType( void );
 
 // server side player API
 
