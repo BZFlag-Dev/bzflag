@@ -1063,10 +1063,10 @@ BZF_API float bz_getMaxWaitTime ( void )
 	return pluginMaxWait;
 }
 
-BZF_API void bz_setMaxWaitTime ( float time )
+BZF_API void bz_setMaxWaitTime ( float maxTime )
 {
-	if ( pluginMaxWait > time)
-		pluginMaxWait = time;
+	if ( pluginMaxWait > maxTime)
+		pluginMaxWait = maxTime;
 }
 
 BZF_API void bz_getLocaltime ( bz_localTime	*ts )

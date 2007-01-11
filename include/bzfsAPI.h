@@ -997,7 +997,7 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
 // time API
 BZF_API double bz_getCurrentTime ( void );
 BZF_API float bz_getMaxWaitTime ( void );
-BZF_API void bz_setMaxWaitTime ( float time );
+BZF_API void bz_setMaxWaitTime ( float maxTime );
 
 typedef struct
 {
