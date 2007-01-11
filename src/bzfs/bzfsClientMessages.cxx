@@ -267,7 +267,7 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	eventData.angVel = state.angVel;
 	eventData.azimuth = state.azimuth;
 	eventData.phydrv = state.phydrv;
-	eventData.time = TimeKeeper::getCurrent().getSeconds();
+	eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 	eventData.player = playerData->getIndex();
 	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 

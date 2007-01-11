@@ -1147,10 +1147,10 @@ BZF_API float bz_getMaxWaitTime ( void )
 	return pluginMaxWait;
 }
 
-BZF_API void bz_setMaxWaitTime ( float time )
+BZF_API void bz_setMaxWaitTime ( float maxTime )
 {
-	if ( pluginMaxWait > time)
-		pluginMaxWait = time;
+	if ( pluginMaxWait > maxTime)
+		pluginMaxWait = maxTime;
 }
 
 BZF_API void bz_getLocaltime ( bz_localTime	*ts )
@@ -1360,7 +1360,7 @@ BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify )
 	return true;
 }
 
-BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason )
+BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int durration, const char* reason )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	if (!player || !reason || !ip)
@@ -1369,7 +1369,7 @@ BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const cha
 	// reload the banlist in case anyone else has added
 	clOptions->acl.load();
 
-	if (clOptions->acl.ban(ip, player->player.getCallSign(), time,reason))
+	if (clOptions->acl.ban(ip, player->player.getCallSign(), durration,reason))
 		clOptions->acl.save();
 	else
 		return false;
