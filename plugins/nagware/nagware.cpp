@@ -297,7 +297,7 @@ void Nagware::process ( bz_EventData *eventData )
     bz_debugMessagef(4, "+++ nagware: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
     bz_BasePlayerRecord *pr;
     pr = bz_getPlayerByIndex ( joinData->playerID );
-    listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->time);
+    listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->eventTime);
     bz_freePlayerRecord (pr);
 
   // player PART
@@ -309,20 +309,20 @@ void Nagware::process ( bz_EventData *eventData )
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
-    MatchStartTime = msgData->time;
+    bz_debugMessagef(4, "+++ nagware: Game START (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
+    MatchStartTime = msgData->eventTime;
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+    bz_debugMessagef(4, "+++ nagware: Game END (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     MatchStartTime = 0.0f;
     // can determine length of match, and adjust event times if needed.
 
   // tick
   } else if (eventData->eventType == bz_eTickEvent) {
     bz_TickEventData_V1 *msgData = (bz_TickEventData_V1*)eventData;
-    tickEvent (msgData->time);
+    tickEvent (msgData->eventTime);
 
   }
 }

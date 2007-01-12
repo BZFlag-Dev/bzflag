@@ -305,13 +305,13 @@ bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     htfStartGame ();
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     htfEndGame ();
   }
 }

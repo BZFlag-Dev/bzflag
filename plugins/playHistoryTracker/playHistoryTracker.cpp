@@ -137,8 +137,8 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 	}
 
 	record.spreeTotal = 0;
-	record.startTime = deathRecord->time;
-	record.lastUpdateTime = deathRecord->time;
+	record.startTime = deathRecord->eventTime;
+	record.lastUpdateTime = deathRecord->eventTime;
 
       }
 
@@ -148,7 +148,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
       {
 	trPlayerHistoryRecord	&record = playerList.find(deathRecord->killerID)->second;
 	record.spreeTotal++;
-	record.lastUpdateTime = deathRecord->time;
+	record.lastUpdateTime = deathRecord->eventTime;
 
 	std::string message;
 
@@ -201,7 +201,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
       playerRecord.playerID = (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID;
       playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->callsign.c_str();
       playerRecord.spreeTotal = 0;
-      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->time;
+      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->eventTime;
       playerRecord.startTime = playerRecord.lastUpdateTime;
 
       playerList[(( bz_PlayerJoinPartEventData_V1*)eventData)->playerID] = playerRecord;
