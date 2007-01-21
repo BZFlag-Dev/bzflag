@@ -87,6 +87,7 @@ typedef enum
 	bz_eNetDataSendEvent,
 	bz_eNetDataReceveEvent,
 	bz_eLogingEvent,
+        bz_eFlagTransferredEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -979,6 +980,33 @@ public:
 	int level;
 	bz_ApiString message;
 };
+
+class bz_FlagTransferredEventData : public bz_EventData
+{
+public:
+  enum Action {
+    ContinueSteal = 0,
+    CancelSteal = 1,
+    DropThief = 2 
+  };
+
+  bz_FlagTransferredEventData()
+  {
+    eventType = bz_eFlagTransferredEvent;
+    fromPlayerID = 0;
+    toPlayerID = 0;
+    flagType = NULL;
+    action = ContinueSteal;
+  }
+  
+  virtual ~bz_FlagTransferredEventData(){};
+
+  int fromPlayerID;
+  int toPlayerID;
+  const char *flagType;
+  enum Action action;
+};
+
 
 // event handler callback
 class bz_EventHandler

@@ -3337,22 +3337,35 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (!toData)
 	return;
 
-      int oFlagIndex = toData->player.getFlag();
-      if (oFlagIndex >= 0)
-	zapFlag (*FlagInfo::get(oFlagIndex));
+      bz_FlagTransferredEventData eventData;
 
-      void *obufStart = getDirectMessageBuffer();
-      void *obuf = nboPackUByte(obufStart, from);
-      obuf = nboPackUByte(obuf, to);
-      FlagInfo &flag = *FlagInfo::get(flagIndex);
-      flag.flag.owner = to;
-      flag.player = to;
-      toData->player.resetFlag();
-      toData->player.setFlag(flagIndex);
-      fromData->player.resetFlag();
-      obuf = flag.pack(obuf);
-      broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
-		       obufStart);
+      eventData.fromPlayerID = fromData->player.getPlayerIndex();
+      eventData.toPlayerID = toData->player.getPlayerIndex();
+      eventData.flagType = NULL;
+      eventData.action = eventData.ContinueSteal;
+
+      worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
+
+      if (eventData.action != eventData.CancelSteal) {
+        int oFlagIndex = toData->player.getFlag();
+        if (oFlagIndex >= 0)
+          zapFlag (*FlagInfo::get(oFlagIndex));
+      }
+
+      if (eventData.action == eventData.ContinueSteal) {
+        void *obufStart = getDirectMessageBuffer();
+        void *obuf = nboPackUByte(obufStart, from);
+        obuf = nboPackUByte(obuf, to);
+        FlagInfo &flag = *FlagInfo::get(flagIndex);
+        flag.flag.owner = to;
+        flag.player = to;
+        toData->player.resetFlag();
+        toData->player.setFlag(flagIndex);
+        fromData->player.resetFlag();
+        obuf = flag.pack(obuf);
+        broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
+                         obufStart);
+      }
       break;
     }
 
