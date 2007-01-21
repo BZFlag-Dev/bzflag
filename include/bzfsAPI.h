@@ -981,7 +981,7 @@ public:
 	bz_ApiString message;
 };
 
-class bz_FlagTransferredEventData : public bz_EventData
+class bz_FlagTransferredEventData_V1 : public bz_EventData
 {
 public:
   enum Action {
@@ -990,7 +990,7 @@ public:
     DropThief = 2 
   };
 
-  bz_FlagTransferredEventData()
+  bz_FlagTransferredEventData_V1()
   {
     eventType = bz_eFlagTransferredEvent;
     fromPlayerID = 0;
@@ -999,7 +999,7 @@ public:
     action = ContinueSteal;
   }
   
-  virtual ~bz_FlagTransferredEventData(){};
+  virtual ~bz_FlagTransferredEventData_V1(){};
 
   int fromPlayerID;
   int toPlayerID;

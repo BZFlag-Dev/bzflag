@@ -3337,7 +3337,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       if (!toData)
 	return;
 
-      bz_FlagTransferredEventData eventData;
+      bz_FlagTransferredEventData_V1 eventData;
 
       eventData.fromPlayerID = fromData->player.getPlayerIndex();
       eventData.toPlayerID = toData->player.getPlayerIndex();
