@@ -195,6 +195,7 @@ AC_CONFIG_FILES([
 	Makefile
 	RogueGenocide/Makefile
 	SAMPLE_PLUGIN/Makefile
+	thiefControl/Makefile
 	airspawn/Makefile
 	chathistory/Makefile
 	doc/Makefile
