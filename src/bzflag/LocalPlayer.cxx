@@ -82,7 +82,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
     gettingSound = false;
   }
 
-  stuckStartTime = TimeKeeper::getSunExplodeTime();
+  stuckStartTime = TimeKeeper::getNullTime();
 }
 
 LocalPlayer::~LocalPlayer()
