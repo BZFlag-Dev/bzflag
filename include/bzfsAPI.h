@@ -1057,6 +1057,7 @@ public:
 		wins = 0;
 		losses = 0;
 		version = 1;
+                bzID = "";
 	};
 
 	~bz_BasePlayerRecord(){};
@@ -1085,6 +1086,7 @@ public:
 	bool spawned;
 	bool verified;
 	bool globalUser;
+        bz_ApiString bzID;
 	bool admin;
 	bool op;
 	bz_APIStringList groups;
