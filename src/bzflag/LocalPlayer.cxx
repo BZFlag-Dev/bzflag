@@ -428,7 +428,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     location = OnGround;
 
     // anti-stuck code is useful only when alive
-    // then only any 100 frames while stuck, take an action
+    // then only any 0.5 seconds while stuck, take an action
 
     // try to see if we are stuck on a building
     obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth,
@@ -438,8 +438,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // just got stuck?
       if (!stuck) {
 	stuckStartTime = TimeKeeper::getCurrent();
+	stuck = true;
       }
-      stuck = true;
     } else {
       // weee, we're free
       stuckStartTime = TimeKeeper::getNullTime();
@@ -447,8 +447,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // unstick if stuck for more than a half a second
-    if (obstacle && stuck && TimeKeeper::getCurrent() - stuckStartTime > 0.5) {
-      stuckStartTime = TimeKeeper::getSunExplodeTime();
+    if (obstacle && stuck && (TimeKeeper::getCurrent() - stuckStartTime > 0.5)) {
+      // reset stuckStartTime in order to have this if-construct being executed
+      // more than 1 time as often more iterations are needed to get unstuck
+      stuckStartTime = TimeKeeper::getCurrent();
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
       float delta = dt > 0.1f ? 0.1f : dt;
