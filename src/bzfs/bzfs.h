@@ -90,6 +90,9 @@ extern void resumeCountdown ( const char *resumedBy );
 extern void resetTeamScores ( void );
 extern void startCountdown ( int delay, float limit, const char *buyWho );
 
+bool defineWorld ( void );
+bool saveWorldCache ( const char* fileName = NULL );
+
 typedef struct _CheatProtectionOptions
 {
   bool doHeightChecks;

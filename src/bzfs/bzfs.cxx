@@ -738,7 +738,7 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
 }
 
 
-static bool defineWorld()
+bool defineWorld ( void )
 {
   // clean up old database
   if (world) {
@@ -749,8 +749,10 @@ static bool defineWorld()
   }
 
   bz_GetWorldEventData_V1	worldData;
-  worldData.ctf  = clOptions->gameType == eClassicCTF;
+  worldData.ctf = clOptions->gameType == eClassicCTF;
   worldData.eventTime = TimeKeeper::getCurrent().getSeconds();
+  worldData.rabbit = clOptions->gameType == eRabbitChase;
+  worldData.worldFile = clOptions->worldFile;
 
   world = new WorldInfo;
   worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
@@ -771,8 +773,8 @@ static bool defineWorld()
   }
 
   // make world and add buildings
-  if (clOptions->worldFile != "") {
-    BZWReader* reader = new BZWReader(clOptions->worldFile);
+  if (clOptions->worldFile) {
+	  BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
 
@@ -884,10 +886,13 @@ static bool defineWorld()
   return true;
 }
 
-static bool saveWorldCache()
+bool saveWorldCache ( const char* fileName )
 {
   FILE* file;
-  file = fopen (clOptions->cacheOut.c_str(), "wb");
+  if (fileName)
+	file = fopen (fileName, "wb");
+  else
+	file = fopen (clOptions->cacheOut.c_str(), "wb");
   if (file == NULL) {
     return false;
   }

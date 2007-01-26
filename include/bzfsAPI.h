@@ -87,7 +87,7 @@ typedef enum
 	bz_eNetDataSendEvent,
 	bz_eNetDataReceveEvent,
 	bz_eLogingEvent,
-        bz_eFlagTransferredEvent,
+    bz_eFlagTransferredEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1290,6 +1290,9 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
 BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays );
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
+BZF_API void bz_setClientWorldDowloadURL( const char* URL );
+BZF_API const bz_ApiString bz_getClientWorldDowloadURL( void );
+BZF_API bool bz_saveWorldCacheFile( const char* file );
 
 // custom map objects
 
@@ -1483,6 +1486,7 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 
 // server control
 BZF_API void bz_shutdown();
+BZF_API bool bz_restart ( void );
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
 
