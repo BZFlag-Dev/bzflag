@@ -803,11 +803,8 @@ BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
 
 	for (int i = 0; i < curMaxPlayers; i++)
 	{
-		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-		if ((p == NULL))
-			continue;
-
-		playerList->push_back(i);
+		if (GameKeeper::Player::getPlayerByIndex(i))
+			playerList->push_back(i);
 	}
 	return playerList->size() > 0;
 }
@@ -818,11 +815,8 @@ BZF_API bz_APIIntList *bz_getPlayerIndexList ( void )
 
 	for (int i = 0; i < curMaxPlayers; i++)
 	{
-		GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-		if ((p == NULL))
-			continue;
-
-		playerList->push_back(i);
+		if ( GameKeeper::Player::getPlayerByIndex(i))
+			playerList->push_back(i);
 	}
 	return playerList;
 }
@@ -1667,6 +1661,65 @@ BZF_API void bz_resetFlags ( bool onlyUnused )
 			resetFlag(flag);
 		}
 	}
+}
+
+BZF_API unsigned int bz_getNumFlags( void )
+{
+	return numFlags;
+}
+
+BZF_API const bz_ApiString bz_getName( int flag )
+{
+	FlagInfo *pFlag = FlagInfo::get(flag);
+	if (!pFlag)
+		return bz_ApiString("");
+
+	return bz_ApiString(pFlag->flag.type->flagAbbv);
+}
+
+BZF_API bool bz_resetFlag ( int flag )
+{
+	FlagInfo *pFlag = FlagInfo::get(flag);
+	if(!pFlag)
+		return false;
+
+	// if somone has it, drop it
+	if (pFlag->player != -1)
+		sendDrop(*pFlag);
+
+	resetFlag(*pFlag);
+
+	return true;
+}
+
+BZF_API int bz_flagPlayer ( int flag )
+{
+	FlagInfo *pFlag = FlagInfo::get(flag);
+	if(!pFlag)
+		return -1;
+
+	return pFlag->player;
+}
+
+BZF_API bool bz_getFlagPosition ( int flag, float* pos )
+{
+	FlagInfo *pFlag = FlagInfo::get(flag);
+	if(!pFlag || !pos)
+		return false;
+
+	if (pFlag->player != -1)
+	{
+		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(pFlag->player);
+
+		if (!player)
+			return false;
+
+		memcpy(pos,player->lastState.pos,sizeof(float)*3);
+	}
+	else
+		memcpy(pos,pFlag->flag.position,sizeof(float)*3);
+
+	return true;
 }
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
