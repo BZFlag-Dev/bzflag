@@ -773,7 +773,7 @@ bool defineWorld ( void )
   }
 
   // make world and add buildings
-  if (clOptions->worldFile) {
+  if (clOptions->worldFile.size()) {
 	  BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
