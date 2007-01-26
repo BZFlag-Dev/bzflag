@@ -43,6 +43,8 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 #include "WorldInfo.h"
+#include "VotingArbiter.h"
+
 
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
@@ -79,6 +81,8 @@ extern void       resetFlag(FlagInfo &flag);
 extern void       dropFlag(FlagInfo& flag, const float dropPos[3]);
 extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
+bool defineWorld ( void );
+bool saveWorldCache( const char* file = NULL );
 
 // initialize permission groups
 extern void initGroups();
@@ -108,6 +112,8 @@ extern float	   pluginWorldHeight;
 extern float	   pluginMaxWait;
 
 extern bool		  publiclyDisconected;
+
+extern VotingArbiter *votingarbiter;
 
 void pauseCountdown ( const char *pausedBy );
 void resumeCountdown ( const char *resumedBy );

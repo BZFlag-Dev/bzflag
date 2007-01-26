@@ -63,7 +63,7 @@ typedef enum
 	bz_eGetAutoTeamEvent,
 	bz_eAllowPlayer,
 	bz_eTickEvent,
-	bz_eGenerateWorldEvent,
+	bz_eGetWorldEvent,
 	bz_eGetPlayerInfoEvent,
 	bz_eAllowSpawn,
 	bz_eListServerUpdateEvent,
@@ -527,17 +527,22 @@ class bz_GenerateWorldEventData : public bz_EventData
 public:
 	bz_GenerateWorldEventData()
 	{
-		eventType = bz_eGenerateWorldEvent;
-		handled = false;
-		ctf = false;
-		time = 0.0;
+		eventType = bz_eGetWorldEvent;
+		generated = false;
+		openFFA = rabbit = ctf = false;
+		eventTime = 0.0;
+
 	}
 	virtual ~bz_GenerateWorldEventData(){};
-
-	bool handled;
+	
+	bool generated;
 	bool ctf;
+	bool rabbit;
+	bool openFFA;
 
-	double time;
+	bzApiString	worldFile;
+
+	double eventTime;
 };
 
 class bz_GetPlayerInfoEventData : public bz_EventData
@@ -1075,7 +1080,7 @@ public:
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
-BZF_API bool bz_removeCustomSlashCommand ( const char* command );
+BZF_API bool bz_removeCustomSlashCogmmand ( const char* command );
 
 // spawning
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
@@ -1162,6 +1167,10 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
 BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bzAPIFloatList &delays );
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
+BZF_API void bz_setClientWorldDowloadURL( const char* URL );
+BZF_API const bzApiString bz_getClientWorldDowloadURL( void );
+BZF_API bool bz_saveWorldCacheFile( const char* file );
+
 
 // custom map objects
 
@@ -1263,6 +1272,7 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
+BZF_API bool bz_restart ( void );
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

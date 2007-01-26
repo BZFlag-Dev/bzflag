@@ -23,7 +23,6 @@
 
 // implementation-specific bzflag headers
 #include "NetHandler.h"
-#include "VotingArbiter.h"
 #include "version.h"
 #include "md5.h"
 #include "BZDBCache.h"
@@ -63,6 +62,8 @@
 #ifdef _USE_BZ_API
 #include "bzfsPlugins.h"
 #endif
+
+VotingArbiter *votingarbiter = NULL;
 
 // pass through the SELECT loop
 static bool dontWait = true;
@@ -781,7 +782,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
 }
 
 
-static bool defineWorld()
+bool defineWorld ( void )
 {
   // clean up old database
   if (world) {
@@ -791,9 +792,31 @@ static bool defineWorld()
     delete[] worldDatabase;
   }
 
+  bz_GenerateWorldEventData	worldData;
+  worldData.ctf  = (clOptions->gameStyle & TeamFlagGameStyle)!= 0;
+  worldData.rabbit = (clOptions->gameStyle & RabbitChaseGameStyle)!= 0;
+  worldData.worldFile = clOptions->worldFile;
+  worldData.eventTime = TimeKeeper::getCurrent().getSeconds();
+  worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
+
+  if (!worldData.generated && worldData.worldFile.size())
+	  clOptions->worldFile = worldData.worldFile.c_str();
+	 
+	clOptions->gameStyle &= ~TeamFlagGameStyle;
+	clOptions->gameStyle &= ~RabbitChaseGameStyle;
+	clOptions->gameStyle &= ~PlainGameStyle;
+
+	if (worldData.ctf)
+		clOptions->gameStyle |= TeamFlagGameStyle;
+	else if (worldData.rabbit)
+		clOptions->gameStyle |= RabbitChaseGameStyle;
+	else
+		clOptions->gameStyle |= PlainGameStyle;
+
+
   // make world and add buildings
-  if (clOptions->worldFile != "") {
-    BZWReader* reader = new BZWReader(clOptions->worldFile);
+  if (worldData.worldFile.size()) {
+	  BZWReader* reader = new BZWReader(std::string(worldData.worldFile.c_str()));
     world = reader->defineWorldFromFile();
     delete reader;
 
@@ -809,19 +832,18 @@ static bool defineWorld()
     }
   } else {
     // check and see if anyone wants to define the world from an event
-    bz_GenerateWorldEventData	worldData;
-    worldData.ctf  = clOptions->gameStyle & TeamFlagGameStyle;
-    worldData.time = TimeKeeper::getCurrent().getSeconds();
 
     world = new WorldInfo;
-    worldEventManager.callEvents(bz_eGenerateWorldEvent, &worldData);
-    if (!worldData.handled) {
+    if (!worldData.generated)	// if the plugin didn't make a world, make one
+	{
       delete world;
       if (clOptions->gameStyle & TeamFlagGameStyle)
-	world = defineTeamWorld();
+		world = defineTeamWorld();
       else
-	world = defineRandomWorld();
-    } else {
+		world = defineRandomWorld();
+    }
+	else 
+	{
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0)
 	worldSize = pluginWorldSize;
@@ -907,10 +929,13 @@ static bool defineWorld()
   return true;
 }
 
-static bool saveWorldCache()
+bool saveWorldCache( const char* fileName )
 {
   FILE* file;
-  file = fopen (clOptions->cacheOut.c_str(), "wb");
+  if (fileName)
+	  file = fopen (fileName, "wb");
+  else
+	 file = fopen (clOptions->cacheOut.c_str(), "wb");
   if (file == NULL) {
     return false;
   }
@@ -4371,7 +4396,7 @@ void initGroups()
 int main(int argc, char **argv)
 {
   int nfound;
-  VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
+  votingarbiter = (VotingArbiter *)NULL;
 
   logingCallback = &apiLogingCallback;
 

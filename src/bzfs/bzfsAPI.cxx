@@ -1749,6 +1749,30 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 	return true;
 }
 
+BZF_API void bz_setClientWorldDowloadURL( const char* URL )
+{
+	clOptions->cacheURL.clear();
+	if(URL)
+		clOptions->cacheURL = URL;
+}
+
+BZF_API const bzApiString bz_getClientWorldDowloadURL( void )
+{
+	bzApiString URL;
+	if (clOptions->cacheURL.size())
+		URL = clOptions->cacheURL;
+	return URL;
+}
+
+BZF_API bool bz_saveWorldCacheFile( const char* file )
+{
+	if (!file)
+		return false;
+	return saveWorldCache(file);
+}
+
+
+
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
 	if (!object || !handler)
@@ -2244,9 +2268,48 @@ BZF_API const char *bz_tolower(const char* val )
 }
 
 // server control
-BZF_API void bz_shutdown()
+BZF_API void bz_shutdown ( void )
 {
 	shutdownCommand(NULL,NULL);
+}
+
+BZF_API bool bz_restart ( void )
+{
+	if (clOptions->replayServer)
+		return false;
+
+	// close out the game, and begin anew
+	// tell players to quit
+	for (int i = 0; i < curMaxPlayers; i++)
+		removePlayer(i,"Server Reset");
+
+	delete world;
+	world = NULL;
+	delete[] worldDatabase;
+	worldDatabase = NULL;
+
+	gameOver = false;
+
+	if (clOptions->timeManualStart)
+	{
+		countdownActive = false;
+		countdownPauseStart = TimeKeeper::getNullTime();
+		clOptions->countdownPaused = false;
+	}
+
+	bz_stopRecBuf();
+
+	// start up all new and stuff
+	if (!defineWorld())
+	{
+		shutdownCommand(NULL,NULL);
+		return false;
+	}
+
+	for (int i = 0; i < numFlags; i++)
+		FlagInfo &flag = *FlagInfo::get(i);
+
+	return true;
 }
 
 BZF_API void bz_superkill()
