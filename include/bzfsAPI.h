@@ -976,7 +976,10 @@ public:
 	int teamKills;
 };
 
-BZF_API bool bz_setPlayerOperator (int playerId);
+BZF_API bool bz_setPlayerOperator ( int playerId );
+
+// team info
+BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );
 
 // groups API
 BZF_API bzAPIStringList* bz_getGroupList ( void );
