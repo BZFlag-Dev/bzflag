@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# thanx!
-#
-# removed a trailing space from your post. ;-)
 # unexpand works for leading space but not later in the lines.
 # adding --all will convert 2 spaces to a tab inside a string
 # if they are aligned correctly. That's a Bad Thing.
@@ -18,11 +15,9 @@
 # unexpand -t 8 -a file > file2  (then do some moving)
 #
 # That program takes the tab positions into account.
-# I don't know how standard it is (it is in the debian
-# coreutils package if that's any indication), but I
-# would suggest having the script simply bail on that
-# conversion if it isn't present.
-
+#
+# unexpand has been around since the 3.0 BSD specification and is part
+# of the POSIX standard.  Pretty prevalent.
 
 # Note: this script will not alter any files that already
 # meet the BZFlag whitespace usage guidelines.
@@ -46,9 +41,10 @@
 
 
 # cleanup whitespace issues
-# could use new sed, but not everybody has that yet
+# could use new (gnu) sed, but not everybody has that
 # sed -i -e 's/search/replace/g' filename1 ...
 # perl -pi -e 's/search/replace/g;' filename1 ...
+# perl -0777 -pi -e 's/search_multi_line/replace/g' file ...
 # grep them first to not touch the file date/time
 
 #temp=$$.tmp
