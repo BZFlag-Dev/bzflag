@@ -1080,7 +1080,7 @@ public:
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
-BZF_API bool bz_removeCustomSlashCogmmand ( const char* command );
+BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning
 BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
