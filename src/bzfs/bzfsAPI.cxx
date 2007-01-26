@@ -867,8 +867,23 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
 	return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
 }
 
+BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
+{
+	switch(team)
+	{
+		case eRogueTeam:
+		case eBlueTeam:
+		case eRedTeam:
+		case eGreenTeam:
+		case ePurpleTeam:
+		case eObservers:
+			return clOptions->maxTeam[convertTeam(team)];
+	}
 
-BZF_API bool bz_setPlayerWins (int playerId, int wins)
+	return 0;
+}
+
+BZF_API bool bz_setPlayerWins ( int playerId, int wins )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
 

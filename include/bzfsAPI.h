@@ -1098,7 +1098,10 @@ public:
 	int teamKills;
 };
 
-BZF_API bool bz_setPlayerOperator (int playerId);
+BZF_API bool bz_setPlayerOperator ( int playerId );
+
+// team info
+BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );
 
 // player score
 BZF_API bool bz_setPlayerWins (int playerId, int wins);
