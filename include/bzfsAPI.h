@@ -1085,6 +1085,12 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 BZF_API bool bz_removePlayerFlag ( int playeID );
 BZF_API void bz_resetFlags ( bool onlyUnused );
 
+BZF_API unsigned int bz_getNumFlags( void );
+BZF_API const bzApiString bz_getName( int flag );
+BZF_API bool bz_resetFlag ( int flag );
+BZF_API int bz_flagPlayer ( int flag );
+BZF_API bool bz_getFlagPosition ( int flag, float* pos );
+
 // world
 typedef struct
 {
