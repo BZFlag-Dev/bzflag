@@ -125,8 +125,12 @@ public:
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
 
+	void	   getPlayerCurrentPosRot(float pos[3], float &rot);
+
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
+
+	// to handle updating current postions;
 
     // When is the player's next GameTime?
     const TimeKeeper&	getNextGameTime() const;
@@ -165,7 +169,18 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float	      stateTimeStamp;
+    float				stateTimeStamp;
+
+	void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
+	float				currentPos[3];
+	float				curentVel[3];
+	float				currentRot;
+	float				currentAngVel;
+
+	PlayerState			getCurrentStateAsState ( void );
+
+	void*	packCurrentState (void* buf, uint16_t& code, bool increment);
+	
     // GameTime update
     float	      gameTimeRate;
     TimeKeeper	      gameTimeNext;

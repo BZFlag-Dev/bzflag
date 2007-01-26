@@ -179,14 +179,14 @@ float DefaultSpawnPolicy::enemyProximityCheck(float &enemyAngle) const
       continue;
     if (playerData->player.isAlive()
 	&& areFoes(playerData->player.getTeam(), team)) {
-      float *enemyPos = playerData->lastState.pos;
+      float *enemyPos = playerData->currentPos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
 	float x = enemyPos[0] - testPos[0];
 	float y = enemyPos[1] - testPos[1];
 	float distSq = x * x + y * y;
 	if (distSq < worstDist) {
 	  worstDist  = distSq;
-	  enemyAngle = playerData->lastState.azimuth;
+	  enemyAngle = playerData->currentRot;
 	  noEnemy    = false;
 	}
       }

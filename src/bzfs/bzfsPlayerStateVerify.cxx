@@ -316,7 +316,7 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
 {
 	bool foundACheat = false;
-	TeamColor base = whoseBase(playerData->lastState.pos[0], playerData->lastState.pos[1], playerData->lastState.pos[2]);
+	TeamColor base = whoseBase(playerData->currentPos[0], playerData->currentPos[1], playerData->currentPos[2]);
 	if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam()))
 	{
 		logDebugMessage(1,"Player %s [%d] might have sent MsgCaptureFlag for taking their own "
@@ -332,8 +332,8 @@ bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
 				playerData->player.getCallSign(), playerData->getIndex(),
 				Team::getName(playerData->player.getTeam()),
 				Team::getName((TeamColor)teamIndex),
-				playerData->lastState.pos[0], playerData->lastState.pos[1],
-				playerData->lastState.pos[2]);
+				playerData->currentPos[0], playerData->currentPos[1],
+				playerData->currentPos[2]);
 		foundACheat = true;
 	}
 

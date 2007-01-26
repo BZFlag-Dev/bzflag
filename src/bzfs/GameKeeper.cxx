@@ -63,6 +63,11 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
 #endif
   _LSAState = start;
   bzIdentifier = "";
+
+ currentPos[0] = currentPos[1] = currentPos[2] = 0;
+ curentVel[0] = curentVel[1] = curentVel[2] = 0;
+ currentRot = 0;
+ currentAngVel =0;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
@@ -86,6 +91,11 @@ needThisHostbanChecked(false), idFlag(-1)
 #endif
 	_LSAState = start;
 	bzIdentifier = "";
+
+	currentPos[0] = currentPos[1] = currentPos[2] = 0;
+	curentVel[0] = curentVel[1] = curentVel[2] = 0;
+	currentRot = 0;
+	currentAngVel =0;
 }
 
 GameKeeper::Player::~Player()
@@ -376,7 +386,9 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
   // Set Speeds to 0 too
   memset(lastState.velocity, 0, sizeof(float) * 3);
   lastState.angVel = 0.0f;
-  stateTimeStamp   = 0.0f;
+  stateTimeStamp   = (float)TimeKeeper::getCurrent().getSeconds();
+
+  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
 
   // player is alive.
   player.setAlive();
@@ -389,6 +401,8 @@ void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
   player.updateIdleTime();
   lastState      = state;
   stateTimeStamp = timestamp;
+
+  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
 }
 
 void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
@@ -396,6 +410,51 @@ void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
   memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
 }
+
+void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
+{
+	doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+
+	memcpy(pos, currentPos, sizeof(float) * 3);
+	rot = currentRot;
+}
+
+void GameKeeper::Player::doPlayerDR ( float time )
+{
+	float delta = time - stateTimeStamp;
+	
+	currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
+	currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
+	currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
+	if ( currentPos[2] < 0 )
+		currentPos[2] = 0;	// burrow depth maybe?
+
+	currentRot = lastState.azimuth + (lastState.angVel * delta);
+
+	// clamp us to +- 180, makes math easy
+	while (currentRot > 180.0)
+		currentRot -= 180.0;
+
+	while (currentRot < -180.0)
+		currentRot += 180.0;
+}
+
+PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
+{
+	PlayerState	newState = lastState;
+	doPlayerDR();
+
+	memcpy(newState.pos, currentPos, sizeof(float) * 3);
+	newState.azimuth = currentRot;
+
+	return newState;
+}
+
+void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool increment)
+{
+	return getCurrentStateAsState().pack(buf,code,increment);
+}
+
 
 int GameKeeper::Player::maxShots = 0;
 void GameKeeper::Player::setMaxShots(int _maxShots)

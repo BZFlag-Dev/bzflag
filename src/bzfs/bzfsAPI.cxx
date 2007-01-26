@@ -695,9 +695,8 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 	if (!player)
 		return false;
 
-	memcpy(playerRecord->pos, player->lastState.pos, sizeof(float) * 3);
-
-	playerRecord->rot = player->lastState.azimuth;
+	memcpy(playerRecord->pos, player->currentPos, sizeof(float) * 3);
+	playerRecord->rot = player->currentRot;
 
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
@@ -1626,7 +1625,7 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 		{
 			FlagInfo& currentFlag = *FlagInfo::get(flagId);
 			if (currentFlag.flag.type->flagTeam != NoTeam)
-				dropFlag(currentFlag, gkPlayer->lastState.pos);// drop team flags
+				dropFlag(currentFlag, gkPlayer->currentPos);// drop team flags
 			else
 				resetFlag(currentFlag);// reset non-team flags
 		}
@@ -1729,7 +1728,7 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
 		if (!player)
 			return false;
 
-		memcpy(pos,player->lastState.pos,sizeof(float)*3);
+		memcpy(pos,player->currentPos,sizeof(float)*3);
 	}
 	else
 		memcpy(pos,pFlag->flag.position,sizeof(float)*3);

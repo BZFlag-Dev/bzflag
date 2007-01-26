@@ -601,8 +601,8 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerID);
-	buf = nboPackVector(buf, playerData->lastState.pos);
-	buf = nboPackFloat(buf, playerData->lastState.azimuth);
+	buf = nboPackVector(buf, pos);
+	buf = nboPackFloat(buf, rot);
 	broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
 	// now do everyone who dosn't have network
@@ -636,6 +636,8 @@ void sendMessageAllow ( int playerID, bool allowMovement, bool allowShooting )
 
 bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 {
+	playerData->doPlayerDR();
+
 	// pack up the data and send it to the net players
 	uint16_t len = PlayerUpdatePLenMax;	// this len is dumb, it shoudl be the REAl len of the packet
 	uint16_t code = shortState ? MsgPlayerUpdateSmall : MsgPlayerUpdate;
@@ -644,14 +646,14 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 	setGeneralMessageInfo(&buf,code,len);
 	buf = nboPackUByte(buf, playerData->getIndex());
 	buf = nboPackFloat(buf, playerData->stateTimeStamp);
-	buf = playerData->lastState.pack(buf,code,false);	// don't increment the order cus this is just a relay
+	buf = playerData->packCurrentState(buf,code,false);	// don't increment the order cus this is just a relay
 
 	// send the packet to everyone else who is playing and NOT a server side bot
 	relayPlayerPacket(playerData->getIndex(), len, bufStart, code);
 
 	// bots need love too
 	bz_PlayerUpdateState	apiState;
-	playerStateToAPIState(apiState,playerData->lastState);
+	playerStateToAPIState(apiState,playerData->getCurrentStateAsState());
 	// now do everyone who dosn't have network
 	for (int i = 0; i < curMaxPlayers; i++)
 	{

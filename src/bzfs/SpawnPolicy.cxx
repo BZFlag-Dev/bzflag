@@ -84,8 +84,8 @@ SpawnPolicy::isImminentlyDangerous(const float *selfPos) const
     if (!playerData)
       continue;
     if (playerData->player.isAlive()) {
-      float *enemyPos   = playerData->lastState.pos;
-      float  enemyAngle = playerData->lastState.azimuth;
+      float *enemyPos   = playerData->currentPos;
+      float  enemyAngle = playerData->currentRot;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
 	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());

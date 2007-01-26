@@ -2088,7 +2088,7 @@ void zapFlagByPlayer(int playerIndex)
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
-    dropPlayerFlag(*playerData, playerData->lastState.pos);
+    dropPlayerFlag(*playerData, playerData->currentPos);
   } else {
     zapFlag(flag);
   }
@@ -2403,7 +2403,7 @@ void playerAlive(int playerIndex)
   // update last position immediately
   playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
-  sendMessageAlive(playerIndex,playerData->lastState.pos,playerData->lastState.azimuth);
+  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
 
   playerData->player.setAllowMovement(true);
   playerData->player.setAllowShooting(true);
@@ -2414,7 +2414,7 @@ void playerAlive(int playerIndex)
   spawnEvent.playerID = playerIndex;
   spawnEvent.team = convertTeam(playerData->player.getTeam());
 
-  playerData->getPlayerState(spawnEvent.pos, spawnEvent.rot);
+  playerData->getPlayerCurrentPosRot(spawnEvent.pos, spawnEvent.rot);
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
@@ -2565,7 +2565,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 		dieEvent.killerTeam = convertTeam(killer->getTeam());
 
 	dieEvent.flagKilledWith = flagType->flagAbbv;
-	victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
+	victimData->getPlayerCurrentPosRot(dieEvent.pos, dieEvent.rot);
 
 	worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
@@ -2663,7 +2663,7 @@ void searchFlag(GameKeeper::Player &playerData)
 
   const PlayerId playerIndex = playerData.getIndex();
 
-  const float *tpos   = playerData.lastState.pos;
+  const float *tpos   = playerData.currentPos;
   float       radius2 = radius * radius;
 
   int closestFlag = -1;
@@ -2850,7 +2850,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCapped = convertTeam((TeamColor)teamIndex);
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
-  playerData->getPlayerState(eventData.pos, eventData.rot);
+  playerData->getPlayerCurrentPosRot(eventData.pos, eventData.rot);
   eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
@@ -2967,7 +2967,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 	  // also handle case where limit was set to 0
 	  float lastPos [3];
 	  for (int i = 0; i < 3; i ++){
-	    lastPos[i] = playerData->lastState.pos[i];
+	    lastPos[i] = playerData->currentPos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
 	  dropPlayerFlag(*playerData, lastPos);
@@ -3726,7 +3726,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     // if player is holding a flag, drop it
     for (int j = 0; j < numFlags; j++) {
       if (FlagInfo::get(j)->player == p) {
-	dropPlayerFlag(playerData, playerData.lastState.pos);
+	dropPlayerFlag(playerData, playerData.currentPos);
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;
@@ -3818,6 +3818,16 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
+void updatePlayerPositions ( void )
+{
+	double now = TimeKeeper::getCurrent().getSeconds();
+	for (int i = 0; i < curMaxPlayers; i++)
+	{ 
+		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
+		 if (player)
+			 player->doPlayerDR((float)now);
+	}
+}
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
@@ -4209,6 +4219,8 @@ int main(int argc, char **argv)
 	bz_TickEventData_V1	tickData;
 	tickData.eventTime = TimeKeeper::getCurrent().getSeconds();
 	worldEventManager.callEvents(bz_eTickEvent,&tickData);
+
+	updatePlayerPositions();
 
     // see if the octree needs to be reloaded
     world->checkCollisionManager();

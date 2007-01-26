@@ -1460,7 +1460,7 @@ bool FlagCommand::operator() (const char *message,
         FlagInfo& currentFlag = *FlagInfo::get(flagId);
         if (currentFlag.flag.type->flagTeam != NoTeam) {
           // drop team flags
-          dropFlag(currentFlag, gkPlayer->lastState.pos);
+          dropFlag(currentFlag, gkPlayer->currentPos);
         } else {
           // reset non-team flags
           resetFlag(currentFlag);
