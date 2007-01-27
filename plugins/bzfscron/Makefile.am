@@ -14,8 +14,8 @@ EXTRA_DIST = \
 	README.txt \
 	crontab \
 	bzfscron.def \
-	bzfscron.sln \
-	bzfscron.vcproj
+	bzfscron.vc8.sln \
+	bzfscron.vc8.vcproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
