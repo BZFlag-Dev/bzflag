@@ -208,7 +208,7 @@ void CronPlayer::playerRejected(bz_eRejectCodes code, const char *reason)
   bz_debugMessage(1, temp.c_str());
 }
 
-void CronPlayer::sendCommand(std::string &message)
+void CronPlayer::sendCommand(std::string message)
 {
   sendChatMessage(message.c_str());
 }

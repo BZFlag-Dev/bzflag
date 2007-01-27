@@ -22,7 +22,7 @@ public:
   CronPlayer(); // c'tor
   void added(int player);
   void playerRejected(bz_eRejectCodes code, const char *reason);
-  void sendCommand(std::string& message); // expose inherited protected member sendChatMessage
+  void sendCommand(std::string message); // expose inherited protected member sendChatMessage
 };
 
 class CronManager : public bz_EventHandler {
