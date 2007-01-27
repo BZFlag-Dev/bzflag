@@ -21,18 +21,33 @@ public:
 			bz_PlayerSpawnEventData_V1 *data = (bz_PlayerSpawnEventData_V1*)eventData;
 			bz_setPlayerShotType(data->playerID,eShockWaveShot);
 		}
+
+		if (eventData->eventType == bz_eFlagDroppedEvent)
+		{
+			bz_FlagDroppedEvenData_V1 *data = (bz_FlagDroppedEvenData_V1*)eventData;
+			bz_setPlayerShotType(data->playerID,eShockWaveShot);
+		}
+		
 	}
 };
 
+Handler handler;
+
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"ShockwaveArena plugin loaded");
+	bz_registerEvent(bz_eFlagGrabbedEvent,&handler);
+	bz_registerEvent(bz_ePlayerSpawnEvent,&handler);
+	bz_registerEvent(bz_eFlagDroppedEvent,&handler);
+	bz_debugMessage(4,"ShockwaveArena plugin loaded");
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  bz_debugMessage(4,"ShockwaveArena plugin unloaded");
+	bz_removeEvent(bz_eFlagGrabbedEvent,&handler);
+	bz_removeEvent(bz_ePlayerSpawnEvent,&handler);
+	bz_removeEvent(bz_eFlagDroppedEvent,&handler);
+	bz_debugMessage(4,"ShockwaveArena plugin unloaded");
   return 0;
 }
 
