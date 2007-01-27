@@ -89,7 +89,7 @@ typedef enum
 	bz_eLogingEvent,
     bz_eFlagTransferredEvent,
 	bz_eFlagGrabbedEvent,
-	bz_eFlagDropedEvent,
+	bz_eFlagDroppedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1050,19 +1050,19 @@ public:
 	float	position[3];
 };
 
-class bz_FlagDropedEvenData_V1 : public bz_EventData
+class bz_FlagDroppedEvenData_V1 : public bz_EventData
 {
 public:
 
-	bz_FlagDropedEvenData_V1()
+	bz_FlagDroppedEvenData_V1()
 	{
-		eventType = bz_eFlagDropedEvent;
+		eventType = bz_eFlagDroppedEvent;
 		playerID = -1;
 		flagID = -1;
 		position[0] = position[1] = position[2] = 0;
 	}
 
-	virtual ~bz_FlagDropedEvenData_V1(){};
+	virtual ~bz_FlagDroppedEvenData_V1(){};
 
 	int playerID;
 	int flagID;

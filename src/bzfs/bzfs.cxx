@@ -2807,15 +2807,14 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
   playerData.efectiveShotType = StandardShot;
 
-  bz_FlagDropedEvenData_V1 data;
+  bz_FlagDroppedEvenData_V1 data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
   data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
   memcpy(data.position, dropPos, sizeof(float)*3);
 
-  worldEventManager.callEvents(bz_eFlagDropedEvent,&data);
+  worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 }
-
 
 void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
