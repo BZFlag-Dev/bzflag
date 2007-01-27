@@ -2688,10 +2688,10 @@ void bz_ServerSidePlayerHandler::sendChatMessage ( const char* text, int targetP
 	if (!player || !text)
 		return;
 
-	PlayerId dstPlayer = targetPlayer == BZ_ALLUSERS ? AllPlayers : targetPlayer;
-
-	if (dstPlayer > LastRealPlayer)
+	if (targetPlayer > LastRealPlayer)
 		return;
+
+	PlayerId dstPlayer = targetPlayer == BZ_ALLUSERS ? AllPlayers : targetPlayer;
 
 	sendPlayerMessage(player,dstPlayer, text);
 }
