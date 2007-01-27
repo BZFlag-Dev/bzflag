@@ -2657,6 +2657,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\SyncClock.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\TargetingUtils.cxx"
 				>
 			</File>
@@ -6981,6 +6985,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\stars.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\SyncClock.h"
 				>
 			</File>
 			<File
