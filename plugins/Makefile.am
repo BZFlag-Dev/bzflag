@@ -17,6 +17,7 @@ SUBDIRS = \
 	HoldTheFlag \
 	nagware \
 	soundTest \
+	ShockwaveArena \
 	recordmatch
 
 DIST_SUBDIRS = \
