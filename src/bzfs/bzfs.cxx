@@ -2995,8 +2995,6 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 		} // end is limit
 	} // end of player has flag
 
-	bool repack = false;
-
 	// ask the API if it wants to modify this shot
 	bz_ShotFiredEventData_V1 shotEvent;
 
@@ -3009,18 +3007,10 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 
 	worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
 
-	if (shotEvent.changed)
-	{
-		firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
-		repack = true;
-	}
-
-	// repack if changed
-	if (repack)
-		firingInfo.pack(buf);
+	// we always repack in the shot
+	bufTmp = firingInfo.pack(bufTmp);
 
 	relayMessage(MsgShotBegin, len, buf);
-
 }
 
 static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)

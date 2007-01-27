@@ -2686,6 +2686,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUByte(msg, shooterid);
       msg = nboUnpackUShort(msg, id);
 
+	  msg = firingInfo.unpack(msg);
+
       firingInfo.shot.player = shooterid;
       firingInfo.shot.id     = id;
 
@@ -3741,138 +3743,141 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
 static void		checkEnvironment()
 {
-  if (!myTank || myTank->getTeam() == ObserverTeam) return;
+	if (!myTank || myTank->getTeam() == ObserverTeam)
+		return;
 
-  // skip this if i'm dead or paused
-  if (!myTank->isAlive() || myTank->isPaused()) return;
+	// skip this if i'm dead or paused
+	if (!myTank->isAlive() || myTank->isPaused())
+		return;
 
-  FlagType* flagd = myTank->getFlag();
-  if (flagd->flagTeam != NoTeam) {
-    // have I captured a flag?
-    TeamColor base = world->whoseBase(myTank->getPosition());
-    TeamColor team = myTank->getTeam();
-    if ((base != NoTeam) &&
-	(flagd->flagTeam == team && base != team) ||
-	(flagd->flagTeam != team && base == team))
-      serverLink->sendCaptureFlag(base);
-  } else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
-				      myTank->getLocation() == LocalPlayer::OnBuilding)) {
-    // Don't grab too fast
-    static TimeKeeper lastGrabSent;
-    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
-      // grab any and all flags i'm driving over
-      const float* tpos = myTank->getPosition();
-      const float radius = myTank->getRadius();
-      const float radius2 = (radius + BZDBCache::flagRadius)
-	* (radius + BZDBCache::flagRadius);
-      for (int i = 0; i < numFlags; i++) {
-	if (world->getFlag(i).type == Flags::Null
-	    || world->getFlag(i).status != FlagOnGround)
-	  continue;
-	const float* fpos = world->getFlag(i).position;
-	if ((fabs(tpos[2] - fpos[2]) < 0.1f)
-	    && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
-	  serverLink->sendPlayerUpdate(myTank);
-	  lastGrabSent=TimeKeeper::getTick();
+	FlagType* flagd = myTank->getFlag();
+
+	if (flagd->flagTeam != NoTeam) 
+	{
+		// have I captured a flag?
+		TeamColor base = world->whoseBase(myTank->getPosition());
+		TeamColor team = myTank->getTeam();
+		if ((base != NoTeam) && (flagd->flagTeam == team && base != team) || (flagd->flagTeam != team && base == team))
+			serverLink->sendCaptureFlag(base);
 	}
-      }
-    }
-  }
+	else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding))
+	{
+		// Don't grab too fast
+		static TimeKeeper lastGrabSent;
+		if (TimeKeeper::getTick()-lastGrabSent > 0.2)
+		{
+			// grab any and all flags i'm driving over
+			const float* tpos = myTank->getPosition();
+			const float radius = myTank->getRadius();
+			const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
+			for (int i = 0; i < numFlags; i++)
+			{
+				if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
+					continue;
 
-  // see if i've been shot
-  const ShotPath* hit = NULL;
-  float minTime = Infinity;
-
-  myTank->checkHit(myTank, hit, minTime);
-  int i;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (player[i])
-      myTank->checkHit(player[i], hit, minTime);
-
-  // Check Server Shots
-  myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
-
-  // Check if I've been tagged (freeze tag).  Note that we alternate the
-  // direction that we go through the list to avoid a pathological case.
-  static int upwards = 1;
-  for (i = 0; i < curMaxPlayers; i ++) {
-    int tankid;
-    if (upwards) {
-      tankid = i;
-    } else {
-      tankid = curMaxPlayers - 1 - i;
-    }
-
-    if (player[tankid]) {
-      myTank->checkCollision(player[tankid]);
-    }
-  }
-  // swap direction for next time:
-  upwards = upwards ? 0 : 1;
-
-  // used later
-  float waterLevel = World::getWorld()->getWaterLevel();
-
-  if (hit) {
-    // i got shot!  terminate the shot that hit me and blow up.
-    // force shot to terminate locally immediately (no server round trip);
-    // this is to ensure that we don't get shot again by the same shot
-    // after dropping our shield flag.
-    if (hit->isStoppedByHit())
-      serverLink->sendHit(myTank->getId(), hit->getPlayer(), hit->getShotId());
-
-    FlagType* killerFlag = hit->getFlag();
-    bool stopShot;
-
-    if (killerFlag == Flags::Thief) {
-      if (myTank->getFlag() != Flags::Null) {
-	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
-      }
-      stopShot = true;
-    }
-    else {
-      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
-    }
-
-    if (stopShot || hit->isStoppedByHit()) {
-      Player* hitter = lookupPlayer(hit->getPlayer());
-      if (hitter) hitter->endShot(hit->getShotId());
-    }
-  }
-  // if not dead yet, see if i'm sitting on death
-  else if (myTank->getDeathPhysicsDriver() >= 0) {
-    gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL,
-		myTank->getDeathPhysicsDriver());
-  }
-  // if not dead yet, see if i've dropped below the death level
-  else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel)) {
-    gotBlowedUp(myTank, WaterDeath, ServerPlayer);
-  }
-  // if not dead yet, see if i got run over by the steamroller
-  else {
-    const float* myPos = myTank->getPosition();
-    const float myRadius = myTank->getRadius();
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((myPos[2] < 0.0f) && player[i]->isAlive() &&
-	    !player[i]->isPhantomZoned()))) {
-	const float* pos = player[i]->getPosition();
-	if (pos[2] < 0.0f) continue;
-	if (!myTank->isPhantomZoned()) {
-	  const float radius = myRadius +
-	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-			  myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
-	  }
+				const float* fpos = world->getFlag(i).position;
+				if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2))
+				{
+					serverLink->sendPlayerUpdate(myTank);
+					lastGrabSent=TimeKeeper::getTick();
+				}
+			}
+		}
 	}
-      }
-    }
-  }
+
+	// see if i've been shot
+	const ShotPath* hit = NULL;
+	float minTime = Infinity;
+
+	myTank->checkHit(myTank, hit, minTime);
+	int i;
+	for (i = 0; i < curMaxPlayers; i++)
+	{
+		if (player[i])
+			myTank->checkHit(player[i], hit, minTime);
+	}
+
+	// Check Server Shots
+	myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
+
+	// Check if I've been tagged (freeze tag).  Note that we alternate the
+	// direction that we go through the list to avoid a pathological case.
+	static int upwards = 1;
+	for (i = 0; i < curMaxPlayers; i ++)
+	{
+		int tankid;
+		if (upwards)
+			tankid = i;
+		else 
+			tankid = curMaxPlayers - 1 - i;
+
+		if (player[tankid])
+			myTank->checkCollision(player[tankid]);
+	}
+
+	// swap direction for next time:
+	upwards = upwards ? 0 : 1;
+
+	// used later
+	float waterLevel = World::getWorld()->getWaterLevel();
+
+	if (hit)
+	{
+		// i got shot!  terminate the shot that hit me and blow up.
+		// force shot to terminate locally immediately (no server round trip);
+		// this is to ensure that we don't get shot again by the same shot
+		// after dropping our shield flag.
+		if (hit->isStoppedByHit())
+			serverLink->sendHit(myTank->getId(), hit->getPlayer(), hit->getShotId());
+
+		FlagType* killerFlag = hit->getFlag();
+		bool stopShot;
+
+		if (killerFlag == Flags::Thief) 
+		{
+			if (myTank->getFlag() != Flags::Null)
+				serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+			stopShot = true;
+		}
+		else
+			stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
+
+		if (stopShot || hit->isStoppedByHit())
+		{
+			Player* hitter = lookupPlayer(hit->getPlayer());
+			if (hitter)
+				hitter->endShot(hit->getShotId());
+		}
+		else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
+			gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
+		else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
+			gotBlowedUp(myTank, WaterDeath, ServerPlayer);
+		else  // if not dead yet, see if i got run over by the steamroller
+		{
+			const float* myPos = myTank->getPosition();
+			const float myRadius = myTank->getRadius();
+			for (i = 0; i < curMaxPlayers; i++) 
+			{
+				if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((myPos[2] < 0.0f) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
+				{
+					const float* pos = player[i]->getPosition();
+					if (pos[2] < 0.0f)
+						continue;
+
+					if (!myTank->isPhantomZoned())
+					{
+						const float radius = myRadius +
+						BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+						const float distSquared =
+						hypotf(hypotf(myPos[0] - pos[0],
+						myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+						if (distSquared < radius)
+							gotBlowedUp(myTank, GotRunOver, player[i]->getId());
+					}
+				}
+			}
+		}
+	}
 }
 
 

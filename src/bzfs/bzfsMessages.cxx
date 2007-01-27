@@ -718,7 +718,7 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 	setGeneralMessageInfo(&buf,code,len);
 	buf = nboPackUByte(buf, playerData->getIndex());
 	buf = nboPackFloat(buf, playerData->stateTimeStamp);
-	buf = playerData->packCurrentState(buf,code,false);	// don't increment the order cus this is just a relay
+	buf = playerData->lastState.pack(buf,code,false);	// don't increment the order cus this is just a relay
 
 	// send the packet to everyone else who is playing and NOT a server side bot
 	relayPlayerPacket(playerData->getIndex(), len, bufStart, code);
