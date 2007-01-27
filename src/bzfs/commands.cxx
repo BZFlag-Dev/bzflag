@@ -1854,7 +1854,11 @@ bool PlayerListCommand::operator() (const char *,
   for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
-      otherData->netHandler->getPlayerList(hostInfo);
+      if (otherData->netHandler) {
+	otherData->netHandler->getPlayerList(hostInfo);
+      } else if (otherData->playerHandler) {
+	strcpy(hostInfo, "server-side player");
+      }
       sprintf(reply, "[%d]%-16s: %s",
 	      i, otherData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
