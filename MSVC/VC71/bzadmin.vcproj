@@ -540,6 +540,9 @@ copy ..\..\src\bzadmin\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\SyncClock.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzadmin\UIMap.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -608,6 +611,9 @@ copy ..\..\src\bzadmin\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\StdOutUI.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\SyncClock.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\UIMap.h">
