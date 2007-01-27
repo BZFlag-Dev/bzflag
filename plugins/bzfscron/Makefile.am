@@ -1,14 +1,16 @@
 lib_LTLIBRARIES = bzfscron.la
 
-logDetail_la_SOURCES = \
+bzfscron_la_SOURCES = \
 	bzfscron.cpp \
 	bzfscron.h \
 	croncommand.cpp \
 	croncommand.h \
 	CronJob.cpp \
-	CronJob.h
+	CronJob.h \
+	TextUtils.cxx \
+	TextUtils.h
 
-logDetail_la_LDFLAGS = -module -avoid-version
+bzfscron_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
 	README.txt \
