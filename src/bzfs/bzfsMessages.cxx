@@ -418,7 +418,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 	GameKeeper::Player *toPlayerData = NULL;
 
 	aboutPlayerData = GameKeeper::Player::getPlayerByIndex(aboutPlayer);
-	if (!aboutPlayerData)
+	if (!aboutPlayerData || !aboutPlayerData->netHandler)
 		return;
 
 	if (!record)
