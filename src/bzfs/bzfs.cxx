@@ -2664,7 +2664,7 @@ void searchFlag(GameKeeper::Player &playerData)
 
   const PlayerId playerIndex = playerData.getIndex();
 
-  const float *tpos   = playerData.currentPos;
+  const float *tpos   = playerData.lastState.pos;
   float       radius2 = radius * radius;
 
   int closestFlag = -1;
