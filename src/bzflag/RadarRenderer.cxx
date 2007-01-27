@@ -109,7 +109,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
 {
   glPushMatrix();
 
-  const float* pos = player->getPosition();  
+  const float* pos = player->getPosition();
 
   // 'ps' is pixel scale, setup in render()
   const float tankRadius = BZDBCache::tankRadius;
@@ -210,7 +210,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
 
 
 void RadarRenderer::drawHuntLevel(const Player* player,
-                                  float tankSize, float heightBoxSize)
+				  float tankSize, float heightBoxSize)
 {
   const int huntLevel = player->getAutoHuntLevel();
   const int chevrons = AutoHunt::getChevronCount(huntLevel);
@@ -242,7 +242,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
   if (chevrons > 1) {
     alphaDelta = alphaRange / (float)(chevrons - 1);
   }
-  
+
   // setup the geometry
   float s = (float)M_SQRT1_2 * heightBoxSize;
   const float spacing = ps * AutoHunt::getChevronSpace(huntLevel);
@@ -258,7 +258,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
   float c = s * (1.0f - gap);
 
   const float cDelta = spacing * AutoHunt::getChevronDelta(huntLevel);
-  
+
   if (!smooth) {
     glEnable(GL_BLEND);
   }
@@ -438,7 +438,7 @@ static bool checkDrawFlags()
   const FlagType* ft = myTank->getFlag();
   if ((ft == Flags::Null)     ||
       (ft == Flags::Identify) ||
-      (ft->flagQuality == FlagBad)) { 
+      (ft->flagQuality == FlagBad)) {
     return true;
   }
   return false;
@@ -747,31 +747,31 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	dimmedcolor[2] = color[2] * dimfactor;
 	glColor3fv(dimmedcolor);
       } else {
-        const TeamColor team = colorblind ? RogueTeam : player->getTeam();
+	const TeamColor team = colorblind ? RogueTeam : player->getTeam();
 	glColor3fv(Team::getRadarColor(team));
       }
 
       // If this tank is hunted flash it on the radar
       int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();
       if ((huntLevel > 0) && !colorblind) {
-        float period = 0.40f;
-        float thresh = 0.25f;
-        if (!player->isHunted()) {
-          period = AutoHunt::getBlinkPeriod(huntLevel);
-          thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
-        }
-        const bool blink = fmodf((float)diffTime, period) < (period * thresh);
-        if (blink) {
-          const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f}; 
-          const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
-          if (player->getTeam() == GreenTeam) {
-            glColor3fv(greenBlinkColor);
-          } else {
-            glColor3fv(normalBlinkColor);
-          }
-        } else {
-          glColor3fv(Team::getRadarColor(player->getTeam()));
-        }
+	float period = 0.40f;
+	float thresh = 0.25f;
+	if (!player->isHunted()) {
+	  period = AutoHunt::getBlinkPeriod(huntLevel);
+	  thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
+	}
+	const bool blink = fmodf((float)diffTime, period) < (period * thresh);
+	if (blink) {
+	  const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f};
+	  const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
+	  if (player->getTeam() == GreenTeam) {
+	    glColor3fv(greenBlinkColor);
+	  } else {
+	    glColor3fv(normalBlinkColor);
+	  }
+	} else {
+	  glColor3fv(Team::getRadarColor(player->getTeam()));
+	}
       }
 
       drawTank(player, observer);
@@ -792,9 +792,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	  if (coloredShot) {
 	    if (colorblind) {
 	      shotcolor = Team::getRadarColor(RogueTeam);
-            } else {
+	    } else {
 	      shotcolor = Team::getRadarColor(player->getTeam());
-            }
+	    }
 	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
 	  } else {
 	    glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
@@ -1350,4 +1350,3 @@ int RadarRenderer::getFrameTriangleCount() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

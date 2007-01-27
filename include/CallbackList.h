@@ -133,4 +133,3 @@ void			CallbackList<F>::doIterate(Callback callback,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

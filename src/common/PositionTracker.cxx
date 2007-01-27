@@ -362,7 +362,6 @@ unsigned short int PositionTracker::trackedCount(std::string group) const
 }
 
 
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

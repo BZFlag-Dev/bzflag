@@ -139,4 +139,3 @@ inline void RenderNodeGStateList::append(RenderNode* node,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

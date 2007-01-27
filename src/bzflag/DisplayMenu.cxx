@@ -112,9 +112,9 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     if (maxAnisotropy > 1) {
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
-        char buffer[16];
-        snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
-        options->push_back(std::string(buffer));
+	char buffer[16];
+	snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
+	options->push_back(std::string(buffer));
       }
     } else {
       options->push_back(std::string("Unavailable"));
@@ -124,7 +124,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   }
 #else
   options->push_back(std::string("Unavailable"));
-#endif  
+#endif
   option->update();
   listHUD.push_back(option);
 

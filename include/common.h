@@ -208,7 +208,7 @@ typedef unsigned char	uint8_t;
        template<typename Tp>
        inline int isnan(Tp f)
        {
-         return (f!=f);
+	 return (f!=f);
        }
 #    else
 #      define isnan(f) ((f) != (f))

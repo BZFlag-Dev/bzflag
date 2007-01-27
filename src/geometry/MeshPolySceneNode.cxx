@@ -760,4 +760,3 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

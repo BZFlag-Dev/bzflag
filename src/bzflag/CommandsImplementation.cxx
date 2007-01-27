@@ -271,18 +271,18 @@ bool BindCommand::operator() (const char *commandLine)
       addMessage(NULL, "bad <press> type");
       return true;
     }
-    
+
     if (both) {
       KEYMGR.unbind(ev, true);
       KEYMGR.unbind(ev, false);
       if (tokens.size() == 3) {
-        KEYMGR.bind(ev, true, tokens[2]);
-        KEYMGR.bind(ev, false, tokens[2]);
+	KEYMGR.bind(ev, true, tokens[2]);
+	KEYMGR.bind(ev, false, tokens[2]);
       }
     } else {
       KEYMGR.unbind(ev, press);
       if (tokens.size() == 3) {
-        KEYMGR.bind(ev, press, tokens[2]);
+	KEYMGR.bind(ev, press, tokens[2]);
       }
     }
   }
@@ -300,7 +300,7 @@ bool BindCommand::operator() (const char *commandLine)
     msg += KEYMGR.get(ev, false);
     addMessage(NULL, msg.c_str());
   }
-  
+
   return true;
 }
 
@@ -353,7 +353,6 @@ bool DumpCommand::operator() (const char *)
   addMessage(NULL, "Dumped all BZDB values to stdout");
   return true;
 }
-
 
 
 bool HighlightCommand::operator() (const char *commandLine)

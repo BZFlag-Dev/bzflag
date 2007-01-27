@@ -55,4 +55,3 @@ long	OAFTell(void* datasource);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

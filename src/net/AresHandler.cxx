@@ -17,7 +17,6 @@
 #include <errno.h>
 
 
-
 AresHandler::AresHandler() : hostname(NULL), status(None)
 {
   // clear the host address

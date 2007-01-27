@@ -36,7 +36,7 @@
 // FIXME - had to remove the LOD'ed spherical pole and cylindrical pole cap
 
 
-static const int maxFlagLOD   = (maxFlagLODs - 1); 
+static const int maxFlagLOD   = (maxFlagLODs - 1);
 static const int maxFlagQuads = (1 << maxFlagLOD);
 static const int maxFlagVerts = 2 * (maxFlagQuads + 1);
 
@@ -72,7 +72,7 @@ class FlagPhase {
 
     void updateMaxLOD(int);
 
-  private: 
+  private:
     FlagPhase();
     ~FlagPhase();
 
@@ -182,10 +182,10 @@ void FlagPhase::makeIndices()
     while (skip > 1) {
       int pos = skip / 2;
       while (pos <= quads) {
-        indices[i][pos*2] = (element * 2);
-        indices[i][pos*2+1] = (element * 2) + 1;
-        element++;
-        pos = pos + skip;
+	indices[i][pos*2] = (element * 2);
+	indices[i][pos*2+1] = (element * 2) + 1;
+	element++;
+	pos = pos + skip;
       }
       skip = skip / 2;
     }
@@ -193,7 +193,7 @@ void FlagPhase::makeIndices()
     quads *= 2;
   }
 
-  return; 
+  return;
 }
 
 
@@ -368,7 +368,7 @@ void FlagPhase::update(float dt)
     txcds[ib][1] = 0.0f;
   }
 
-  // generate the lighting normals  
+  // generate the lighting normals
   if (realFlag && BZDBCache::lighting) {
     fvec3  upEdges[maxFlagQuads + 1];
     fvec3 topEdges[maxFlagQuads + 1];
@@ -400,13 +400,13 @@ void FlagPhase::update(float dt)
       const float tlen = sqrtf(vec3dot(na, na));
       const int it = lookup[i*2];
       if (tlen > 0.0f) {
-        norms[it][0] = na[0] / tlen;
-        norms[it][1] = na[1] / tlen;
-        norms[it][2] = na[2] / tlen;
+	norms[it][0] = na[0] / tlen;
+	norms[it][1] = na[1] / tlen;
+	norms[it][2] = na[2] / tlen;
       } else {
-        norms[it][0] = 0.0f;
-        norms[it][1] = -1.0f;
-        norms[it][2] = 0.0f;
+	norms[it][0] = 0.0f;
+	norms[it][1] = -1.0f;
+	norms[it][2] = 0.0f;
       }
       vec3cross(n0, botEdges[i-1], upEdges[i]);
       vec3cross(n1, botEdges[i], upEdges[i]);
@@ -414,13 +414,13 @@ void FlagPhase::update(float dt)
       const float blen = sqrtf(vec3dot(na, na));
       const int ib = lookup[i*2+1];
       if (blen > 0.0f) {
-        norms[ib][0] = na[0] / blen;
-        norms[ib][1] = na[1] / blen;
-        norms[ib][2] = na[2] / blen;
+	norms[ib][0] = na[0] / blen;
+	norms[ib][1] = na[1] / blen;
+	norms[ib][2] = na[2] / blen;
       } else {
-        norms[ib][0] = 0.0f;
-        norms[ib][1] = -1.0f;
-        norms[ib][2] = 0.0f;
+	norms[ib][0] = 0.0f;
+	norms[ib][1] = -1.0f;
+	norms[ib][2] = 0.0f;
       }
     }
   }
@@ -610,7 +610,7 @@ void FlagSceneNode::notifyStyleChange()
   texturing = BZDBCache::texture && BZDBCache::blend; // FIXME -- alphatresh'ed
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  
+
   if (texturing) {
     if (useColor) {
       color = realColor;
@@ -671,7 +671,7 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
-  int i;  
+  int i;
   for (i = 0; i < maxFlagLOD; i++) {
     if (lpp > lodLengths[i]) {
       return i;
@@ -693,7 +693,7 @@ inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
-  int i;  
+  int i;
   for (i = 0; i < maxFlagLOD; i++) {
     if (lpp > lodLengths[i]) {
       return i;
@@ -767,7 +767,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
   const float sqrt1_2 = 0.70710678f;
   const float sqrt1_3 = 0.57735027f;
 
-  // the pole base      
+  // the pole base
   if (!isShadow) {
     glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color[3]); // blue
   }
@@ -799,7 +799,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
   glEnd();
   addTriangleCount(10);
 
-  // the pole cap      
+  // the pole cap
   if (!isShadow) {
     glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color[3]); // yellow
     if (lighting) {
@@ -905,13 +905,13 @@ void FlagSceneNode::FlagRenderNode::render()
 
       // the flag
       if (!isShadow) {
-        glEnable(GL_NORMALIZE);
-        glShadeModel(GL_SMOOTH);
-        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
       }
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       if (flat) {
-        glScalef(1.0f, 0.0f, 1.0f); // flatten along Y axis
+	glScalef(1.0f, 0.0f, 1.0f); // flatten along Y axis
       }
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
@@ -924,34 +924,34 @@ void FlagSceneNode::FlagRenderNode::render()
       glPushMatrix();
       glMultMatrixf(shear);
       if (!isShadow) {
-        addTriangleCount(phase->render(lod));
+	addTriangleCount(phase->render(lod));
       } else {
-        addTriangleCount(phase->renderShadow(lod));
+	addTriangleCount(phase->renderShadow(lod));
       }
       glPopMatrix();
 
       if (!isShadow) {
-        glDisable(GL_NORMALIZE);
-        glShadeModel(GL_FLAT);
-        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-        if (texturing) {
-          glDisable(GL_TEXTURE_2D);
-        }
+	glDisable(GL_NORMALIZE);
+	glShadeModel(GL_FLAT);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+	if (texturing) {
+	  glDisable(GL_TEXTURE_2D);
+	}
       }
 
       // draw the pole, if close enough
       if (lod >= minPoleLOD) {
-        renderFancyPole();
+	renderFancyPole();
       }
     }
     else {
       if (!flat) {
-        RENDERER.getViewFrustum().executeBillboard();
-        if (!isShadow) {
-          addTriangleCount(phase->render(lod));
-        } else {
-          addTriangleCount(phase->renderShadow(lod));
-        }
+	RENDERER.getViewFrustum().executeBillboard();
+	if (!isShadow) {
+	  addTriangleCount(phase->render(lod));
+	} else {
+	  addTriangleCount(phase->renderShadow(lod));
+	}
       }
       else {
 	glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
@@ -966,16 +966,16 @@ void FlagSceneNode::FlagRenderNode::render()
 	  glVertex3f(Width, base + Height, 0.0f);
 	  glTexCoord2f(0.0f, 1.0f);
 	  glVertex3f(0.0f, base + Height, 0.0f);
-        }
+	}
 	glEnd();
 	addTriangleCount(2);
       }
 
       if (!isShadow) {
-        glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
-        if (texturing) {
-          glDisable(GL_TEXTURE_2D);
-        }
+	glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
+	if (texturing) {
+	  glDisable(GL_TEXTURE_2D);
+	}
       }
 
       if (geoPole) {
@@ -1019,7 +1019,7 @@ void FlagSceneNode::FlagRenderNode::renderShadow()
   isShadow = true;
   render();
   isShadow = false;
-  return;  
+  return;
 }
 
 
@@ -1030,4 +1030,3 @@ void FlagSceneNode::FlagRenderNode::renderShadow()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -134,7 +134,7 @@ void			HUDuiFrame::doRender()
 	    glVertex2f(frameX + labelWidth + labelGap, frameY);
 	  }
 	glEnd();
-	
+
 	const float ninety = (float) M_PI / 2.0f;
 	drawArc(frameX + frameWidth - labelGap, frameY - labelGap, labelGap, 20,
 		0, ninety);
@@ -165,4 +165,3 @@ void			HUDuiFrame::doRender()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

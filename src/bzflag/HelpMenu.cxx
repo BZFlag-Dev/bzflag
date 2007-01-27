@@ -296,7 +296,6 @@ static std::vector<std::string> GetReadoutsIIText()
 }
 
 
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

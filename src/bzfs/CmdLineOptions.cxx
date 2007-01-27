@@ -318,7 +318,6 @@ static void checkFromWorldFile (const char *option, bool fromWorldFile)
 }
 
 
-
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
   /* either a single number or 5 or 6 optional numbers separated by
@@ -579,11 +578,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "ERROR: could not load banfile [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       }
-    } 
-	else if (strcmp(argv[i], "-c") == 0) 
+    }
+	else if (strcmp(argv[i], "-c") == 0)
 	{
       // capture the flag style
-      if (options.gameType == eRabbitChase) 
+      if (options.gameType == eRabbitChase)
 	  {
 		std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 		std::cerr << "Capture the flag assumed" << std::endl;
@@ -613,7 +612,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.numAllowedFlags = 0;
 
     }
-	else if (strcmp(argv[i], "-cr") == 0) 
+	else if (strcmp(argv[i], "-cr") == 0)
 	{
       // CTF with random world
       options.randomCTF = true;
@@ -624,7 +623,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 		std::cerr << "Capture the flag assumed" << std::endl;
       }
 	  options.gameType = eClassicCTF;
-    } 
+    }
 	else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
@@ -751,17 +750,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.lagwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-jitterdrop") == 0) {
-        checkArgc(1, i, argc, argv[i]);
-        options.maxjitterwarn = atoi(argv[i]);        
+	checkArgc(1, i, argc, argv[i]);
+	options.maxjitterwarn = atoi(argv[i]);
     } else if (strcmp(argv[i], "-jitterwarn") == 0) {
-        checkArgc(1, i, argc, argv[i]);
-        options.jitterwarnthresh = atoi(argv[i])/1000.0f;
+	checkArgc(1, i, argc, argv[i]);
+	options.jitterwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
-        checkArgc(1, i, argc, argv[i]);
-        options.maxpacketlosswarn = atoi(argv[i]);
+	checkArgc(1, i, argc, argv[i]);
+	options.maxpacketlosswarn = atoi(argv[i]);
     } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
-        checkArgc(1, i, argc, argv[i]);
-        options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
+	checkArgc(1, i, argc, argv[i]);
+	options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-loadplugin") == 0) {
       checkArgc(1, i, argc, argv[i]);
       std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
@@ -925,7 +924,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-rabbit") == 0)
 	{
       // rabbit chase style
-      if (options.gameType == eClassicCTF) 
+      if (options.gameType == eClassicCTF)
 	  {
 		std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
 		std::cerr << "Rabbit Chase assumed" << std::endl;;
@@ -1010,7 +1009,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (exists) {
 	std::cerr << "-setforced: " << name << " already exists" << std::endl;
       } else {
-        addBzfsCallback(name, NULL);
+	addBzfsCallback(name, NULL);
       }
       BZDB.set(name, value);
       logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
@@ -1109,7 +1108,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	} else if (strcmp(argv[i], "-offa") == 0)
 	{
 		// capture the flag style
-		if (options.gameType == eRabbitChase || options.gameType == eClassicCTF) 
+		if (options.gameType == eRabbitChase || options.gameType == eClassicCTF)
 		{
 			std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
 			std::cerr << "Open Free-for-all assumed" << std::endl;
@@ -1141,7 +1140,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	time_t tnow = time(0);
 	struct tm *now = localtime(&tnow);
 	unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
-	  cmdHour = atoi(endTime[0].c_str()), 
+	  cmdHour = atoi(endTime[0].c_str()),
 	  cmdMin = atoi(endTime[1].c_str()),
 	  cmdSec = atoi(endTime[2].c_str());
 	unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
@@ -1151,7 +1150,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	else
 	  options.timeLimit = (float)(secsTill - secsToday);
       } else {
-      	options.timeLimit = (float)atof(argv[i]);
+	options.timeLimit = (float)atof(argv[i]);
       }
       if (options.timeLimit <= 0.0f) {
 	// league matches are 30 min
@@ -1515,7 +1514,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     logDebugMessage(1,"  capture the flag\n");
   if (options.gameType == eRabbitChase)
     logDebugMessage(1,"  rabbit chase\n");
- 
+
   logDebugMessage(1,"options: %c\n", options.gameOptions);
 if (options.gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");
@@ -1546,7 +1545,6 @@ bool checkCommaList (const char *list, int maxlen){
       return true;
   return false;
 }
-
 
 
 // Local Variables: ***

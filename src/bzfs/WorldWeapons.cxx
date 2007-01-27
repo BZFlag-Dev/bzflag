@@ -67,8 +67,8 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 }
 
 static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
-        lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
-        float dt)
+	lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
+	float dt)
 {
 
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -92,8 +92,8 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     buf = firingInfo.pack(bufStart);
 
     if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-        broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
-                         bufStart);
+	broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
+			 bufStart);
     }
 
     // Target the gm.
@@ -104,7 +104,7 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     buf = firingInfo.shot.pack(buf);
     buf = nboPackUByte(buf, targetPlayerID);
     if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-        broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
+	broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
     }
 
     return shotID;
@@ -300,11 +300,11 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 }
 
 int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
-                PlayerId player, float *pos, float tilt, float direction, int
-                shotID, float dt)
+		PlayerId player, float *pos, float tilt, float direction, int
+		shotID, float dt)
 {
     return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-                           direction, shotID, dt);
+			   direction, shotID, dt);
 }
 
 // Local Variables: ***

@@ -623,4 +623,3 @@ bool WallSceneNode::inAxisBox (const Extents& /*exts*/) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

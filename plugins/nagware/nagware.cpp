@@ -72,7 +72,6 @@ class Nagware : public bz_EventHandler, public bz_CustomSlashCommandHandler
 Nagware nagware;        // 'my' instance
 
 
-
 bool readConfig (char *filename, NagConfig *cfg, int playerID);
 
 
@@ -87,29 +86,29 @@ void updatePlayerNextEvent (int playerID, double now){
   unsigned int idx;
   double playerTime =  now - Players[playerID].joinTime;
   double repeat;
-  
+
   if (!Players[playerID].isValid || Players[playerID].isVerified)
     return;
 
   Players[playerID].nextEventTime = -1;
   if (Config.nagMsgs.size() == 0)
     return;
-  
+
   for (idx=0; idx<Config.nagMsgs.size(); idx++){
     if (Config.nagMsgs[idx]->time > playerTime){
       if (idx > 0 && (repeat = nextRepeat (playerTime, Config.nagMsgs[idx-1])) > 0
       && repeat < Config.nagMsgs[idx]->time){
-        Players[playerID].nextEventTime = Players[playerID].joinTime + repeat;
-        Players[playerID].nextEventMsg = Config.nagMsgs[idx-1];
+	Players[playerID].nextEventTime = Players[playerID].joinTime + repeat;
+	Players[playerID].nextEventMsg = Config.nagMsgs[idx-1];
       } else {
-        Players[playerID].nextEventTime = Players[playerID].joinTime + Config.nagMsgs[idx]->time;
-        Players[playerID].nextEventMsg = Config.nagMsgs[idx];
+	Players[playerID].nextEventTime = Players[playerID].joinTime + Config.nagMsgs[idx]->time;
+	Players[playerID].nextEventMsg = Config.nagMsgs[idx];
       }
       break;
     }
-  } 
+  }
 
-  if (Players[playerID].nextEventTime < 0 
+  if (Players[playerID].nextEventTime < 0
   &&  (repeat = nextRepeat (playerTime, Config.nagMsgs[Config.nagMsgs.size()-1])) > 0){
     Players[playerID].nextEventTime = Players[playerID].joinTime + repeat;
     Players[playerID].nextEventMsg = Config.nagMsgs[Config.nagMsgs.size()-1];
@@ -120,7 +119,7 @@ void updatePlayerNextEvent (int playerID, double now){
 void sendNagMessage (int who, std::string *msg ){
   std::string fullMsg = *msg + Config.msgSuffix;
   unsigned int idx=0, x;
-  
+
   while ((x = fullMsg.find("\\n", idx)) != std::string::npos){
     bz_sendTextMessage(BZ_SERVER, who, fullMsg.substr(idx, x-idx).c_str());
     idx = x+2;
@@ -134,25 +133,24 @@ void tickEvent (float time)
   int x;
   if (time < NextEventTime || !NagEnabled || MatchStartTime!=0.0)
     return;
-    
+
   for (x=0; x<=MaxUsedID; x++){
     if (Players[x].isValid && !Players[x].isVerified && Players[x].nextEventTime>=0 && time>Players[x].nextEventTime){
       sendNagMessage(x, &Players[x].nextEventMsg->msg);
-      updatePlayerNextEvent (x, time);    
+      updatePlayerNextEvent (x, time);
     }
-  }  
+  }
   if (Config.kickMsg->time>0  && NumPlayers>=Config.minPlayers){  // kick someone !
     double kicktime = Config.kickMsg->time;
     for (x=0; x<=MaxUsedID; x++)
       if (Players[x].isValid && !Players[x].isVerified && time>(Players[x].joinTime+kicktime)){
-        bz_kickUser (x, Config.kickMsg->msg.c_str(), true);
-        break;
+	bz_kickUser (x, Config.kickMsg->msg.c_str(), true);
+	break;
       }
   }
-    
+
   NextEventTime = time + (float)EVENT_FREQUENCY;
 }
-
 
 
 void dispNagMsg (int who, char *label, MsgEnt *m){
@@ -169,17 +167,16 @@ void dispNagMsg (int who, char *label, MsgEnt *m){
 }
 
 
-
 void nagShowConfig (int who)
 {
   unsigned int x;
-  
+
   bz_sendTextMessage(BZ_SERVER, who, "nagware plugin configuration .........");
   bz_sendTextMessagef(BZ_SERVER, who, "perm name: %s", Config.permName);
   bz_sendTextMessagef(BZ_SERVER, who, "min players: %d", Config.minPlayers);
    if (Config.enableObs)
     bz_sendTextMessage(BZ_SERVER, who, "Observer kick is ENABLED");
-  else      
+  else
     bz_sendTextMessage(BZ_SERVER, who, "Observer kick is DISABLED");
   if (Config.msgSuffix.size() > 0 )
     bz_sendTextMessagef(BZ_SERVER, who, "message suffix: %s", Config.msgSuffix.c_str());
@@ -189,7 +186,7 @@ void nagShowConfig (int who)
     dispNagMsg (who, "kick", Config.kickMsg);
   if (NagEnabled)
     bz_sendTextMessage(BZ_SERVER, who, "(plugin is currently ENabled)");
-  else      
+  else
     bz_sendTextMessage(BZ_SERVER, who, "(plugin is currently DISabled)");
 }
 
@@ -206,7 +203,7 @@ void nagList (int who)
   int numUnverified = 0;
   int x, timeOn;
   double now = bz_getCurrentTime();
-  
+
   bz_sendTextMessage (BZ_SERVER, who, "Callsign (unverified)    Time ON");
   for (x=0; x<=MaxUsedID; x++){
     if (Players[x].isValid && !Players[x].isVerified){
@@ -224,7 +221,7 @@ void nagReload (int who)
 {
   if ( readConfig (ConfigFilename, &Config, who) ){
     bz_sendTextMessage(BZ_SERVER, who, "nagware config error, plugin disabled.");
-    NagEnabled = false;  
+    NagEnabled = false;
   } else {
     bz_sendTextMessage(BZ_SERVER, who, "nagware config reloaded.");
     // RECALC all player nextevents ...
@@ -232,10 +229,9 @@ void nagReload (int who)
     int x;
     for (x=0; x<MaxUsedID; x++)
       if (Players[x].isValid && !Players[x].isVerified)
-        updatePlayerNextEvent (x, now);
+	updatePlayerNextEvent (x, now);
   }
 }
-
 
 
 bool listAdd (int playerID, const char *callsign, bz_eTeamType team, bool verified, double time)
@@ -362,8 +358,6 @@ bool Nagware::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStrin
 }
 
 
-
-
 /*
  * Plugin load and unload...
 */
@@ -390,7 +384,7 @@ bool parseCommandLine (const char *cmdLine)
   strncpy (ConfigFilename, cmdLine, 255);
   if (readConfig(ConfigFilename, &Config, -1)){
     bz_debugMessage (0, "+++ nagware plugin config file error, plugin NOT loaded");
-    return true;  
+    return true;
   }
   return false;
 }
@@ -399,7 +393,7 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
 {
   bz_BasePlayerRecord *playerRecord;
   double now = bz_getCurrentTime();
-  
+
   if (parseCommandLine (cmdLine))
     return -1;
 
@@ -439,7 +433,6 @@ BZF_PLUGIN_CALL int bz_Unload (void)
 }
 
 
-
 /*
  * Read Configuration file...
 */
@@ -461,7 +454,7 @@ char *strtrim (char *s){
   while (*s == ' ')
     ++s;
   p = strlen(s) + s -1;
-  while ( ((c=*p)==' ' || c=='\n') && p>s) 
+  while ( ((c=*p)==' ' || c=='\n') && p>s)
     *p--='\0';
   return s;
 }
@@ -469,7 +462,7 @@ char *strtrim (char *s){
 MsgEnt * parseCfgMessage(const char *m){
   char *p;
   int time, repeat=0;
-  
+
   if ((p = strchr (m, ' ')) == NULL)
     return NULL;
   *p = '\0';
@@ -500,7 +493,7 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
   int lineNum=0;
   char line[1026];
   char *p, *key, *val;
-    
+
   if (cfile == NULL){
     sprintf (line, "+++ Error opening nagware config file (%s)", filename);
     bz_debugMessagef(0, line);
@@ -514,10 +507,10 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
   cfg->enableObs = false;
   cfg->minPlayers = 0;
   cfg->msgSuffix = "";
-  cfg->nagMsgs.clear();    
+  cfg->nagMsgs.clear();
 
   while ( fgets (line, 1024, cfile) != NULL ){
-    ++lineNum;  
+    ++lineNum;
     if (line[0]=='#' || strlen(line)<2)
       continue;
 
@@ -525,29 +518,29 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
       return configError ("no '='", lineNum, playerID, cfile);
     *p = '\0';
     key = strtrim (line);
-    val = strtrim (++p);      
-  
+    val = strtrim (++p);
+
     if (!strcasecmp (key, "permname")){
-      strncpy (cfg->permName, val, 30);    
-    } else if (!strcasecmp (key, "kickobs")){ 
+      strncpy (cfg->permName, val, 30);
+    } else if (!strcasecmp (key, "kickobs")){
       if ( !strcasecmp(val, "yes") || !strcasecmp(val, "true") )
-        cfg->enableObs = true;
+	cfg->enableObs = true;
       else
-        cfg->enableObs = false;
-    } else if (!strcasecmp (key, "minplayers")){ 
+	cfg->enableObs = false;
+    } else if (!strcasecmp (key, "minplayers")){
       if (sscanf (val, "%d", &cfg->minPlayers)!=1 || cfg->minPlayers<1 || cfg->minPlayers>100)
-        return configError ("Invalid minplayers value", lineNum, playerID, cfile); 
-    } else if (!strcasecmp (key, "messagesuffix")){ 
+	return configError ("Invalid minplayers value", lineNum, playerID, cfile);
+    } else if (!strcasecmp (key, "messagesuffix")){
       cfg->msgSuffix = std::string (val);
-    } else if (!strcasecmp (key, "message")){ 
+    } else if (!strcasecmp (key, "message")){
       if ((md = parseCfgMessage (val)) == NULL)
-        return configError ("Invalid message format", lineNum, playerID, cfile); 
+	return configError ("Invalid message format", lineNum, playerID, cfile);
       cfg->nagMsgs.push_back (md);
-    } else if (!strcasecmp (key, "kickmessage")){ 
+    } else if (!strcasecmp (key, "kickmessage")){
       if ((md = parseCfgMessage (val)) == NULL)
-        return configError ("Invalid kick message format", lineNum, playerID, cfile); 
+	return configError ("Invalid kick message format", lineNum, playerID, cfile);
       cfg->kickMsg = md;
-    } else { 
+    } else {
       return configError ("unknown tag", lineNum, playerID, cfile);
     }
   }
@@ -567,4 +560,3 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

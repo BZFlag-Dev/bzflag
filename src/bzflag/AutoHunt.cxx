@@ -22,7 +22,7 @@
 //     *var:    replace with the string in BZDB variable 'var'
 //   Flag Type Control:
 //     GM:      always hunt a player with the Guided Missile flag
-//     CL?L:    if the local player has Cloak, hunt players with Laser 
+//     CL?L:    if the local player has Cloak, hunt players with Laser
 //   Specific Triggers:
 //     TKS:     if a friend has exceeded the teamkill ratio
 //     RATIO:   if an enemy player has more kills then deaths on you, hunt them
@@ -106,7 +106,7 @@ static const int LevelCount = 10; // level 0 is a dud
 static FlagPairMap FlagPairs;
 static HuntInfo TkHuntInfo;
 static HuntInfo RatioHuntInfo;
-static HuntInfo LeaderHuntInfo; 
+static HuntInfo LeaderHuntInfo;
 
 static int   ChevronCounts[LevelCount];
 static float ChevronSpaces[LevelCount];
@@ -206,22 +206,22 @@ static void parse(const std::string& cmd)
     logDebugMessage(2,"  Token: %-10s", token.c_str());
 
     bool useRange = true;
-    
+
     // parse the level
     int level = 1;
     const int len = (int)token.size();
     if (len >= 2) {
       if (token[len - 2] == '#') {
-        int number = token[len - 1] - '0';
-        if ((number >= 0) && (number <= 9)) {
-          level = number;
-          token.resize(len - 2);
-          useRange = false;
-        } else {
-          errors.push_back(tokens[i]);
-          logDebugMessage(2,"Error parsing level\n");
-          continue;
-        }
+	int number = token[len - 1] - '0';
+	if ((number >= 0) && (number <= 9)) {
+	  level = number;
+	  token.resize(len - 2);
+	  useRange = false;
+	} else {
+	  errors.push_back(tokens[i]);
+	  logDebugMessage(2,"Error parsing level\n");
+	  continue;
+	}
       }
     }
     if (level <= 0) {
@@ -236,86 +236,86 @@ static void parse(const std::string& cmd)
       const char* start = token.c_str() + lessThen + 1;
       proximity = (float)strtod(start, &end);
       if (end != start) {
-        token.resize(lessThen);
-        useRange = false;
+	token.resize(lessThen);
+	useRange = false;
       } else {
-        errors.push_back(tokens[i]);
-        logDebugMessage(2,"Error parsing proximity\n");
-        continue;
+	errors.push_back(tokens[i]);
+	logDebugMessage(2,"Error parsing proximity\n");
+	continue;
       }
     }
 
-    // Display Properties    
+    // Display Properties
     if (token == "COUNT") {
       if (useRange) {
-        setupHuntInfoRange(ChevronCountHuntInfo, range);
-        logDebugMessage(2,"(count/range)\n");
+	setupHuntInfoRange(ChevronCountHuntInfo, range);
+	logDebugMessage(2,"(count/range)\n");
       } else {
-        ChevronCountHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(count/%i/%f)\n", level, proximity);
+	ChevronCountHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(count/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "SPACE") {
       if (useRange) {
-        setupHuntInfoRange(ChevronSpaceHuntInfo, range);
-        logDebugMessage(2,"(space/range)\n");
+	setupHuntInfoRange(ChevronSpaceHuntInfo, range);
+	logDebugMessage(2,"(space/range)\n");
       } else {
-        ChevronSpaceHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(space/%i/%f)\n", level, proximity);
+	ChevronSpaceHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(space/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "DELTA") {
       if (useRange) {
-        setupHuntInfoRange(ChevronDeltaHuntInfo, range);
-        logDebugMessage(2,"(delta/range)\n");
+	setupHuntInfoRange(ChevronDeltaHuntInfo, range);
+	logDebugMessage(2,"(delta/range)\n");
       } else {
-        ChevronDeltaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(delta/%i/%f)\n", level, proximity);
+	ChevronDeltaHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(delta/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "IALPHA") {
       if (useRange) {
-        setupHuntInfoRange(ChevronInnerAlphaHuntInfo, range);
-        logDebugMessage(2,"(ialpha/range)\n");
+	setupHuntInfoRange(ChevronInnerAlphaHuntInfo, range);
+	logDebugMessage(2,"(ialpha/range)\n");
       } else {
-        ChevronInnerAlphaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(ialpha/%i/%f)\n", level, proximity);
+	ChevronInnerAlphaHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(ialpha/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "OALPHA") {
       if (useRange) {
-        setupHuntInfoRange(ChevronOuterAlphaHuntInfo, range);
-        logDebugMessage(2,"(oalpha/range)\n");
+	setupHuntInfoRange(ChevronOuterAlphaHuntInfo, range);
+	logDebugMessage(2,"(oalpha/range)\n");
       } else {
-        ChevronOuterAlphaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(oalpha/%i/%f)\n", level, proximity);
+	ChevronOuterAlphaHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(oalpha/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "PERIOD") {
       if (useRange) {
-        setupHuntInfoRange(BlinkPeriodHuntInfo, range);
-        logDebugMessage(2,"(period/range)\n");
+	setupHuntInfoRange(BlinkPeriodHuntInfo, range);
+	logDebugMessage(2,"(period/range)\n");
       } else {
-        BlinkPeriodHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(period/%i/%f)\n", level, proximity);
+	BlinkPeriodHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(period/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "IBLINK") {
       if (useRange) {
-        setupHuntInfoRange(InnerBlinkHuntInfo, range);
-        logDebugMessage(2,"(iblink/range)\n");
+	setupHuntInfoRange(InnerBlinkHuntInfo, range);
+	logDebugMessage(2,"(iblink/range)\n");
       } else {
-        InnerBlinkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(iblink/%i/%f)\n", level, proximity);
+	InnerBlinkHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(iblink/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "OBLINK") {
       if (useRange) {
-        setupHuntInfoRange(OuterBlinkHuntInfo, range);
-        logDebugMessage(2,"(oblink/range)\n");
+	setupHuntInfoRange(OuterBlinkHuntInfo, range);
+	logDebugMessage(2,"(oblink/range)\n");
       } else {
-        OuterBlinkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(oblink/%i/%f)\n", level, proximity);
+	OuterBlinkHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(oblink/%i/%f)\n", level, proximity);
       }
     }
     // Range Control
@@ -343,74 +343,74 @@ static void parse(const std::string& cmd)
     // Specific trigger types
     else if (token == "TKS") {
       if (useRange) {
-        setupHuntInfoRange(TkHuntInfo, range);
-        logDebugMessage(2,"(TKs/range)\n");
+	setupHuntInfoRange(TkHuntInfo, range);
+	logDebugMessage(2,"(TKs/range)\n");
       } else {
-        TkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(TKs/%i/%f)\n", level, proximity);
+	TkHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(TKs/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "RATIO") {
       if (useRange) {
-        setupHuntInfoRange(RatioHuntInfo, range);
-        logDebugMessage(2,"(ratio/range)\n");
+	setupHuntInfoRange(RatioHuntInfo, range);
+	logDebugMessage(2,"(ratio/range)\n");
       } else {
-        RatioHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(ratio/%i/%f)\n", level, proximity);
+	RatioHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(ratio/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "LEADER") {
       if (useRange) {
-        setupHuntInfoRange(LeaderHuntInfo, range);
-        logDebugMessage(2,"(leader/range)\n");
+	setupHuntInfoRange(LeaderHuntInfo, range);
+	logDebugMessage(2,"(leader/range)\n");
       } else {
-        LeaderHuntInfo.coords[level] = proximity;
-        logDebugMessage(2,"(leader/%i/%f)\n", level, proximity);
+	LeaderHuntInfo.coords[level] = proximity;
+	logDebugMessage(2,"(leader/%i/%f)\n", level, proximity);
       }
     }
     // Flag trigger types
     else {
       std::vector<std::string> flags = TextUtils::tokenize(token, "?");
       if (flags.size() == 1) {
-        // SoloFlags
-        FlagType* ft = Flag::getDescFromAbbreviation(flags[0].c_str());
-        if (ft != Flags::Null) {
-          FlagHuntInfoMap& fhi = FlagPairs[Flags::Null]; // reserved for solos
-          HuntInfo& hi = fhi[ft];
-          if (useRange) {
-            setupHuntInfoRange(hi, range);
-            logDebugMessage(2,"(soloFlag/range)\n");
-          } else {
-            hi.coords[level] = proximity;
-            logDebugMessage(2,"(soloFlag/%i/%f)\n", level, proximity);
-          }
-        } else {
-          errors.push_back(tokens[i]);
-          logDebugMessage(2,"Error parsing solo flag type\n");
-        }
+	// SoloFlags
+	FlagType* ft = Flag::getDescFromAbbreviation(flags[0].c_str());
+	if (ft != Flags::Null) {
+	  FlagHuntInfoMap& fhi = FlagPairs[Flags::Null]; // reserved for solos
+	  HuntInfo& hi = fhi[ft];
+	  if (useRange) {
+	    setupHuntInfoRange(hi, range);
+	    logDebugMessage(2,"(soloFlag/range)\n");
+	  } else {
+	    hi.coords[level] = proximity;
+	    logDebugMessage(2,"(soloFlag/%i/%f)\n", level, proximity);
+	  }
+	} else {
+	  errors.push_back(tokens[i]);
+	  logDebugMessage(2,"Error parsing solo flag type\n");
+	}
       }
       else if (flags.size() == 2) {
-        // FlagPairs
-        FlagType* ft0 = Flag::getDescFromAbbreviation(flags[0].c_str());
-        FlagType* ft1 = Flag::getDescFromAbbreviation(flags[1].c_str());
-        if ((ft0 != Flags::Null) && (ft1 != Flags::Null)) {
-          FlagHuntInfoMap& fhi = FlagPairs[ft0];
-          HuntInfo& hi = fhi[ft1];
-          if (useRange) {
-            setupHuntInfoRange(hi, range);
-            logDebugMessage(2,"(flagPair/range)\n");
-          } else {
-            hi.coords[level] = proximity;
-            logDebugMessage(2,"(flagPair/%i/%f)\n", level, proximity);
-          }
-        } else {
-          errors.push_back(tokens[i]);
-          logDebugMessage(2,"Error parsing flag pair type\n");
-        }
+	// FlagPairs
+	FlagType* ft0 = Flag::getDescFromAbbreviation(flags[0].c_str());
+	FlagType* ft1 = Flag::getDescFromAbbreviation(flags[1].c_str());
+	if ((ft0 != Flags::Null) && (ft1 != Flags::Null)) {
+	  FlagHuntInfoMap& fhi = FlagPairs[ft0];
+	  HuntInfo& hi = fhi[ft1];
+	  if (useRange) {
+	    setupHuntInfoRange(hi, range);
+	    logDebugMessage(2,"(flagPair/range)\n");
+	  } else {
+	    hi.coords[level] = proximity;
+	    logDebugMessage(2,"(flagPair/%i/%f)\n", level, proximity);
+	  }
+	} else {
+	  errors.push_back(tokens[i]);
+	  logDebugMessage(2,"Error parsing flag pair type\n");
+	}
       }
       else {
-        errors.push_back(tokens[i]);
-        logDebugMessage(2,"Error parsing token type\n");
+	errors.push_back(tokens[i]);
+	logDebugMessage(2,"Error parsing token type\n");
       }
     }
   }
@@ -426,7 +426,7 @@ static void parse(const std::string& cmd)
     }
   }
 
-  // copy the hunt info maps into the arrays  
+  // copy the hunt info maps into the arrays
   copyToIntArray(ChevronCounts, ChevronCountHuntInfo);
   copyToFloatArray(ChevronSpaces, ChevronSpaceHuntInfo);
   copyToFloatArray(ChevronDeltas, ChevronDeltaHuntInfo);
@@ -512,7 +512,7 @@ static void printConfig()
       logDebugMessage(2,"    %s\n", fhim_it->first->flagAbbv);
       const HuntInfo& hi = fhim_it->second;
       for (cit = hi.coords.begin(); cit != hi.coords.end(); cit++) {
-        logDebugMessage(2,"      level: %i, dist: %f\n", cit->first, cit->second);
+	logDebugMessage(2,"      level: %i, dist: %f\n", cit->first, cit->second);
       }
     }
   }
@@ -537,14 +537,14 @@ static void printConfig()
   logDebugMessage(2,"Styles:    count space delta ialpha oalpha period iblink oblink\n");
   for (int i = 1; i < LevelCount; i++) {
     logDebugMessage(2,"  level %i:   %i  %5.2f %5.2f %5.2f %6.2f %6.2f %6.2f %6.2f\n", i,
-           ChevronCounts[i],
-           ChevronSpaces[i],
-           ChevronDeltas[i],
-           ChevronInnerAlphas[i],
-           ChevronOuterAlphas[i],
-           BlinkPeriods[i],
-           InnerBlinkThresholds[i],
-           OuterBlinkThresholds[i]);
+	   ChevronCounts[i],
+	   ChevronSpaces[i],
+	   ChevronDeltas[i],
+	   ChevronInnerAlphas[i],
+	   ChevronOuterAlphas[i],
+	   BlinkPeriods[i],
+	   InnerBlinkThresholds[i],
+	   OuterBlinkThresholds[i]);
   }
 
   return;
@@ -572,8 +572,8 @@ static Player* findEnemyLeader()
     if (p && isEnemy(p)) {
       const int pScore = p->getScore();
       if (pScore > maxScore) {
-        leader = p;
-        maxScore = pScore;
+	leader = p;
+	maxScore = pScore;
       }
     }
   }
@@ -628,16 +628,16 @@ static bool isTeamKiller(const Player* p, float tkRatio)
 {
   if (tkRatio > 0.0) {
     if (((p->getWins() > 0) && (p->getTKRatio() > tkRatio)) ||
-        ((p->getWins() == 0) && (p->getTeamKills() >= 3))) {
+	((p->getWins() == 0) && (p->getTeamKills() >= 3))) {
       return true;
     }
   }
   return false;
 }
-                            
+
 
 /******************************************************************************/
-                            
+
 static void clearPlayers()
 {
   World* world = World::getWorld();
@@ -709,7 +709,7 @@ static void huntPlayers()
     return;
   }
   const bool observer = (myTank->getTeam() == ObserverTeam);
-  
+
   // for detecting team killers
   const float tkWarnRatio = BZDB.eval("tkwarnratio");
 
@@ -743,25 +743,25 @@ static void huntPlayers()
     if (ft != Flags::Null) {
       // solo flag type
       if (myEnemy || observer) {
-        FlagHuntInfoMap::const_iterator sit = soloMap.find(ft);
-        if (sit != soloMap.end()) {
-          const HuntInfo& hi = sit->second;
-          const int level = getHuntInfoLevel(hi, dist);
-          if (level > p->getAutoHuntLevel()) {
-            p->setAutoHuntLevel(level);
-          }
-        }
+	FlagHuntInfoMap::const_iterator sit = soloMap.find(ft);
+	if (sit != soloMap.end()) {
+	  const HuntInfo& hi = sit->second;
+	  const int level = getHuntInfoLevel(hi, dist);
+	  if (level > p->getAutoHuntLevel()) {
+	    p->setAutoHuntLevel(level);
+	  }
+	}
       }
       // paired flag type
       if (myEnemy && pairedMap) {
-        FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
-        if (pit != pairedMap->end()) {
-          const HuntInfo& hi = pit->second;
-          const int level = getHuntInfoLevel(hi, dist);
-          if (level > p->getAutoHuntLevel()) {
-            p->setAutoHuntLevel(level);
-          }
-        }
+	FlagHuntInfoMap::const_iterator pit = pairedMap->find(ft);
+	if (pit != pairedMap->end()) {
+	  const HuntInfo& hi = pit->second;
+	  const int level = getHuntInfoLevel(hi, dist);
+	  if (level > p->getAutoHuntLevel()) {
+	    p->setAutoHuntLevel(level);
+	  }
+	}
       }
     }
 
@@ -769,7 +769,7 @@ static void huntPlayers()
     if (myEnemy && RatioHuntInfo.active() && isBeatingMe(p)) {
       const int level = getHuntInfoLevel(RatioHuntInfo, dist);
       if (level > p->getAutoHuntLevel()) {
-        p->setAutoHuntLevel(level);
+	p->setAutoHuntLevel(level);
       }
     }
 
@@ -777,7 +777,7 @@ static void huntPlayers()
     if (!myEnemy && TkHuntInfo.active() && isTeamKiller(p, tkWarnRatio)) {
       const int level = getHuntInfoLevel(TkHuntInfo, dist);
       if (level > p->getAutoHuntLevel()) {
-        p->setAutoHuntLevel(level);
+	p->setAutoHuntLevel(level);
       }
     }
   }
@@ -789,7 +789,7 @@ static void huntPlayers()
       const float dist = distBetweenPlayers(myTank, leader);
       const int level = getHuntInfoLevel(LeaderHuntInfo, dist);
       if (level > leader->getAutoHuntLevel()) {
-        leader->setAutoHuntLevel(level);
+	leader->setAutoHuntLevel(level);
       }
     }
   }
@@ -837,7 +837,7 @@ static std::string getExpandedString(const std::string& varname)
 void AutoHunt::update()
 {
   static std::string active = "";
-  
+
   std::string current = getExpandedString("autohunt");
   if ((current.size() == 0) && (active.size() == 0)) {
     return;
@@ -981,4 +981,3 @@ float AutoHunt::getOuterBlinkThreshold(int level)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

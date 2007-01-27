@@ -25,7 +25,6 @@
 #endif
 
 
-
 //
 // PNGImageFile
 //
@@ -485,8 +484,6 @@ PNGRGB::PNGRGB(unsigned char r, unsigned char g, unsigned char b)
 }
 
 
-
-
 /*
 PNGPalette::PNGPalette(int nc)
 
@@ -632,4 +629,3 @@ unsigned char *PNGChunk::getData()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

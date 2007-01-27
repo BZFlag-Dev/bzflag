@@ -510,15 +510,15 @@ void resumeCountdown ( const char *resumedBy )
 	    countdownResumeTime = -1; // reset back to "unset"
 
 	    if (resumedBy)
- 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
 	    else
- 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
 	} else {
 	    // resume after number of seconds in countdownResumeTime
 	    if (resumedBy)
- 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
 	    else
- 		sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+		sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
 	}
 }
 
@@ -1254,19 +1254,19 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     bz_ServerMsgEventData_V1 serverMsgData;
     switch (dstPlayer) {
       case AdminPlayers:
-        serverMsgData.to = BZ_NULLUSER;
-        serverMsgData.team = eAdministrators;
-        break;
+	serverMsgData.to = BZ_NULLUSER;
+	serverMsgData.team = eAdministrators;
+	break;
       case AllPlayers:
-        serverMsgData.to = BZ_ALLUSERS;
-        break;
+	serverMsgData.to = BZ_ALLUSERS;
+	break;
       default:
-        if (dstPlayer <= LastRealPlayer) {
-          serverMsgData.to = dstPlayer;
-        } else {
-          serverMsgData.to = BZ_NULLUSER;
-          serverMsgData.team = convertTeam(TeamColor(250 - dstPlayer));	// FIXME this teamcolor <-> player id conversion is in several files now
-        }
+	if (dstPlayer <= LastRealPlayer) {
+	  serverMsgData.to = dstPlayer;
+	} else {
+	  serverMsgData.to = BZ_NULLUSER;
+	  serverMsgData.team = convertTeam(TeamColor(250 - dstPlayer));	// FIXME this teamcolor <-> player id conversion is in several files now
+	}
     }
     serverMsgData.message = message;
     serverMsgData.eventTime = TimeKeeper::getCurrent().getSeconds();
@@ -2463,8 +2463,8 @@ bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim,
 		killer->score.tK();
 		char message[MessageLen];
 		if (clOptions->tkAnnounce) {
-		        snprintf(message, MessageLen, "Team kill: %s killed %s", killer->player.getCallSign(), victim->player.getCallSign());
-		        sendMessage(ServerPlayer, AdminPlayers, message);
+			snprintf(message, MessageLen, "Team kill: %s killed %s", killer->player.getCallSign(), victim->player.getCallSign());
+			sendMessage(ServerPlayer, AdminPlayers, message);
 		}
 		if (killer->score.isTK())
 		{
@@ -2560,7 +2560,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 	dieEvent.playerID = victimIndex;
 	dieEvent.team = convertTeam(victim->getTeam());
 	dieEvent.killerID = killerIndex;
-        dieEvent.shotID = shotIndex;
+	dieEvent.shotID = shotIndex;
 
 	if (killer)
 		dieEvent.killerTeam = convertTeam(killer->getTeam());
@@ -2570,13 +2570,13 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
 	worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
-        // If a plugin changed the killer, we need to update the data.
-        if (dieEvent.killerID != killerIndex) {
-          killerIndex = dieEvent.killerID;
-          if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
-            killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
-          killer = realPlayer(killerIndex) ? &killerData->player : 0;
-        }
+	// If a plugin changed the killer, we need to update the data.
+	if (dieEvent.killerID != killerIndex) {
+	  killerIndex = dieEvent.killerID;
+	  if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
+	    killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
+	  killer = realPlayer(killerIndex) ? &killerData->player : 0;
+	}
 
 	sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
 
@@ -2698,7 +2698,7 @@ void searchFlag(GameKeeper::Player &playerData)
   FlagInfo &flag = *FlagInfo::get(closestFlag);
   if (id)
   {
-    if (closestFlag != playerData.getLastIdFlag()) 
+    if (closestFlag != playerData.getLastIdFlag())
 	{
 		sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
 		playerData.setLastIdFlag(closestFlag);
@@ -2948,12 +2948,12 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 		return;
 
 	char message[MessageLen];
-	if (shooter.haveFlag()) 
+	if (shooter.haveFlag())
 	{
 		fInfo.numShots++; // increase the # shots fired
 		int limit = clOptions->flagLimit[fInfo.flag.type];
 		if (limit != -1)
-		{ 
+		{
 			// if there is a limit for players flag
 			int shotsLeft = limit -  fInfo.numShots;
 
@@ -2970,9 +2970,9 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 
 					sendMessage(ServerPlayer, playerIndex, message);
 				}
-			} 
+			}
 			else
-			{ 
+			{
 				// no shots left
 				if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
 				{
@@ -2987,7 +2987,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 					dropPlayerFlag(*playerData, lastPos);
 				}
 				else
-				{ 
+				{
 					// more shots fired than allowed
 					// do nothing for now -- could return and not allow shot
 				}
@@ -3238,9 +3238,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		break;
 
     case MsgKilled: // player declaring self destroyed
-        // stop pausing attempts as you can not pause when being dead
-        playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-        handlePlayerKilled(playerData,buf);
+	// stop pausing attempts as you can not pause when being dead
+	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+	handlePlayerKilled(playerData,buf);
 		break;
 
     case MsgDropFlag:    // player requesting to drop flag
@@ -3352,16 +3352,16 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	pausePlayer(playerID, false);
     } else {
 	// player wants to pause
-        playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
+	playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
 
-        // adjust pauseRequestTime according to players lag to avoid kicking innocent players
-        int requestLag = playerData->lagInfo.getLag();
-        if (requestLag < 100) {
-            requestLag = 250;
-        }
-        else {
-            requestLag *= 2;
-        }
+	// adjust pauseRequestTime according to players lag to avoid kicking innocent players
+	int requestLag = playerData->lagInfo.getLag();
+	if (requestLag < 100) {
+	    requestLag = 250;
+	}
+	else {
+	    requestLag *= 2;
+	}
 	playerData->player.pauseRequestLag = requestLag;
     };
       break;
@@ -3606,7 +3606,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   // kick idle players
   if (clOptions->idlekickthresh > 0) {
     if ((!playerData.accessInfo.hasPerm(PlayerAccessInfo::antikick)) &&
-        (playerData.player.isTooMuchIdling(clOptions->idlekickthresh))) {
+	(playerData.player.isTooMuchIdling(clOptions->idlekickthresh))) {
       char message[MessageLen]
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
@@ -3783,7 +3783,7 @@ void updatePlayerPositions ( void )
 {
 	double now = TimeKeeper::getCurrent().getSeconds();
 	for (int i = 0; i < curMaxPlayers; i++)
-	{ 
+	{
 		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
 		 if (player)
 			 player->doPlayerDR((float)now);
@@ -4123,7 +4123,7 @@ int main(int argc, char **argv)
   // hmm, no groups have it.  check all registered users...
   if (!serverAllowsSpawn) {
     for (PlayerAccessMap::iterator user = userDatabase.begin();
-         user != userDatabase.end(); ++user) {
+	 user != userDatabase.end(); ++user) {
     if (  !user->second.explicitDenys.test(PlayerAccessInfo::spawn)
 	&& user->second.explicitAllows.test(PlayerAccessInfo::spawn)) {
 	serverAllowsSpawn = true;
@@ -4458,7 +4458,7 @@ int main(int argc, char **argv)
 		(timeLeft + clOptions->addedTime <= 0.0f) ? timeLeft = 0.0f : clOptions->timeLimit += clOptions->addedTime;
 		if (timeLeft > 0.0f) timeLeft += clOptions->addedTime;
 		//inform visitors about the change
-  	sendMessage(ServerPlayer, AllPlayers,
+	sendMessage(ServerPlayer, AllPlayers,
 								TextUtils::format("Adjusting the countdown by %f seconds",
 								clOptions->addedTime).c_str());
 		clOptions->addedTime = 0.0f; //reset

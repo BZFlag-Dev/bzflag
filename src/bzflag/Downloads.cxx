@@ -32,7 +32,6 @@ static int currentTex = 0;
 static int runs = 0;
 
 
-
 // FIXME - someone write a better explanation
 static const char DownloadContent[] =
   "#\n"

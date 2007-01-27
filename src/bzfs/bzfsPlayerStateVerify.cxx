@@ -232,9 +232,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	float maxHeight;
 	if (wingsMaxHeight > normalMaxHeight || lgMaxHeight > normalMaxHeight) {
 	    if (lgMaxHeight > wingsMaxHeight) {
-            maxHeight = lgMaxHeight;
+	    maxHeight = lgMaxHeight;
 	    } else {
-	        maxHeight = wingsMaxHeight;
+		maxHeight = wingsMaxHeight;
 	    }
 	} else {
 		maxHeight = normalMaxHeight;

@@ -1357,4 +1357,3 @@ const int		WinDisplay::buttonMap[] = {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

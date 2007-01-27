@@ -360,7 +360,7 @@ void ServerLink::flush()
       r = 0;
     }
 #endif
-  
+
 #if defined(NETWORK_STATS)
     bytesSent += r;
     packetsSent++;

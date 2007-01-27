@@ -415,7 +415,6 @@ bool			PyramidBuilding::isFlatTop() const
 }
 
 
-
 void* PyramidBuilding::pack(void* buf) const
 {
   buf = nboPackVector(buf, pos);
@@ -586,4 +585,3 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -60,4 +60,3 @@ void			Ray::getPoint(float t, float p[3]) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

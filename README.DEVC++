@@ -9,7 +9,7 @@ is quite easy. **NOTE: Building on Linux is, for the most part, supported. Howev
 
     Dev-C++: http://sf.net/projects/dev-cpp
 		CodeBlocks: http://www.codeblocks.org/downloads.shtml
-		
+
 	 Download releases that come with GCC/MinGW32.
 
 2. Download the latest version of SDL, available from:
@@ -109,7 +109,7 @@ If you get this error, you need to replace your SDL files with the ones download
 http://libsdl.org/ *Note: the libSDL package downloadable from the Dev-C++/CodeBlocks update window will not fix this.
 
 ==The linker gives errors about undefined references to cURL functions==
-You need to complete step 
+You need to complete step
 
 =="xx" in Makefile==
 If you get an error regarding building "target 'xx'" and it references the makefile, go to
@@ -156,7 +156,7 @@ Dev-C++:
 
 CodeBlocks:
 		*http://www.codeblocks.org
-	
+
 MinGW32:
     *http://www.mingw.org
     *http://sf.net/projects/mingw32

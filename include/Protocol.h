@@ -266,7 +266,7 @@ player to server messages:
   MsgCollide            player has collided with another player
 			--> id, collidee-id, position
 			<== MsgAllow if sending player should freeze
-						  
+
 
 server to player messages:
   MsgSuperKill		player must disconnect from server

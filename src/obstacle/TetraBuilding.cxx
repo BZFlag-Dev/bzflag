@@ -277,8 +277,6 @@ bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
 }
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Packing stuff
@@ -503,4 +501,3 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

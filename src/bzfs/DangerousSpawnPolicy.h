@@ -20,7 +20,7 @@
 /** a DangerousSpawnPolicy is a SpawnPolicy that just generates a mostly
  *  dangerous (yet hopefully still valid) position and drops you there.
  */
-class DangerousSpawnPolicy : public DefaultSpawnPolicy 
+class DangerousSpawnPolicy : public DefaultSpawnPolicy
 {
 public:
   DangerousSpawnPolicy();

@@ -119,4 +119,3 @@ bool					BeOSDisplay::doSetResolution(int index)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

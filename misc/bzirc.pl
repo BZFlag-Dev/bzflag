@@ -15,7 +15,6 @@
 # cpan> install POE::Component::IRC
 
 
-
 #FIXME: Why not make this available as a bzfs command? something like /irc irc.freenode.net #bzflag Hello world!
 use strict;
 use IPC::Open2;

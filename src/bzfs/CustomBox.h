@@ -40,9 +40,9 @@ class CustomBox : public WorldFileObstacle {
       ZN,
       FaceCount
     };
-    
+
     bool isOldBox;
-    
+
     int phydrv[FaceCount];
     float texsize[FaceCount][2];
     float texoffset[FaceCount][2];

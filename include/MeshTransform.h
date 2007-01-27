@@ -50,7 +50,7 @@ class MeshTransform {
     void addReference(int transform);
 
     bool isEmpty() const { return (transforms.size() <= 0); }
-    
+
     bool isValid();
     void finalize();
 
@@ -153,4 +153,3 @@ extern MeshTransformManager TRANSFORMMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

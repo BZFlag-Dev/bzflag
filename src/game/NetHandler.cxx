@@ -123,7 +123,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 	   udpSocket);
   }
   if ((udpLen - udpRead) < 4) {
-    // No space for header :-( 
+    // No space for header :-(
     udpLen  = 0;
     udpRead = 0;
     return -1;
@@ -134,7 +134,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   if ((udpLen - udpRead) < len + 4) {
-    // No space for data :-( 
+    // No space for data :-(
     udpLen  = 0;
     udpRead = 0;
     return -1;
@@ -160,7 +160,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   if (!*netHandler) {
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       return 0;
-    } 
+    }
     // no match, discard packet
     logDebugMessage(2,"uread() discard packet! %s:%d choices p(l) h:p",
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));

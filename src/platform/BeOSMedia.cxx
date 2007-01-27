@@ -546,7 +546,6 @@ double					BeOSMedia::stopwatch(bool start)
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -554,4 +553,3 @@ double					BeOSMedia::stopwatch(bool start)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

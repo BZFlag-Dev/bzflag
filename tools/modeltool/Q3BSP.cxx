@@ -602,4 +602,3 @@ void Quake3Level::extractLightmaps(void) const
 	*/
 	}
 }
-

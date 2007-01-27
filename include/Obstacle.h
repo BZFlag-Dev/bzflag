@@ -234,7 +234,6 @@ class Obstacle {
   static const float maxExtent;
 
 
-
  protected:
   /** This function checks if a moving horizontal rectangle will hit a
       box-shaped obstacle, and if it does, computes the obstacle's normal
@@ -392,4 +391,3 @@ inline void Obstacle::resetObjCounter()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

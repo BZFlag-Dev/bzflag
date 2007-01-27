@@ -392,7 +392,6 @@ std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes ( void )
 }
 
 
-
 //****************** effects base class*******************************
 BasicEffect::BasicEffect()
 {
@@ -898,7 +897,7 @@ bool StdLandEffect::update ( float time )
   // if not update all those fun times
   if ( BasicEffect::update(time))
     return true;
- 
+
   radius += deltaTime * 3.5f;
   return false;
 }
@@ -1256,7 +1255,7 @@ static void drawRingZ (float innerRad, float outerRad, float innerUV, float oute
 
     glTexCoord2f(thisU,outerUV);
     glVertex3f(0,thisposR2[1],clampedZ(thisposR2[0],ZOffset));
-	
+
     glTexCoord2f(nextU,outerUV);
     glVertex3f(0,nextPosR2[1],clampedZ(nextPosR2[0],ZOffset));
 
@@ -1342,4 +1341,3 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

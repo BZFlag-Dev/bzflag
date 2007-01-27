@@ -15,7 +15,6 @@ Plugin command Line:
   Example:   -loadplugin HoldTheFlag,team=green
 
 
-
 In-game commands:
 =================
   /htf:       displays the current scores
@@ -31,5 +30,3 @@ Matches:
   a player captures a flag, and a winner will be declared at the end
   of the match. An '*' after a player's score indicates the player who
   made the last capture. This is used to break a tie.
-
-

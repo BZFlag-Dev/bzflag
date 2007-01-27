@@ -424,7 +424,7 @@ void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
 void GameKeeper::Player::doPlayerDR ( float time )
 {
 	float delta = time - stateTimeStamp;
-	
+
 	currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
 	currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
 	currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
@@ -525,7 +525,7 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
     return false;
   shotsInfo[id].running = false;
   firingInfo = shotsInfo[id].firingInfo;
-  return true;  
+  return true;
 }
 
 bool GameKeeper::Player::updateShot(int id, int salt)

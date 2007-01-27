@@ -6,11 +6,11 @@ including the Internet.  BZFlag is free and open source;  please
 read the file COPYING in the bzflag-<version> directory off the
 standard doc directory (probably /usr/share/doc).
 
-Both hardware and software rendering is supported. Hardware 
-rendering is highly recommended, as software rendering is very 
-slow. Hardware rendering is provided by the OpenGL drivers for 
+Both hardware and software rendering is supported. Hardware
+rendering is highly recommended, as software rendering is very
+slow. Hardware rendering is provided by the OpenGL drivers for
 your video card. ATI and NVIDIA are the primary chipsets for video
-cards in use today. Many Linux distributions to not ship with 
+cards in use today. Many Linux distributions to not ship with
 video drivers that properly support hardware acceleration on
 modern cards. Both ATI and NVIDIA provide Linux drivers for many
 architectures on there websites. In general they provide greater
@@ -45,7 +45,7 @@ Known issues:
 
   * if rendering is very slow on your hardware, try turning off
     some rendering options.  if you are using software rendering,
-    turn off textures and shadows and lower your resolution, as 
+    turn off textures and shadows and lower your resolution, as
     they cause the largest load on the CPU. If you are using
     hardware rendering, make sure you have current video drivers
     for your video card's chipset.

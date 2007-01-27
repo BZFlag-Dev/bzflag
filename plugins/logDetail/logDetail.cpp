@@ -283,7 +283,7 @@ void logDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
       bz_freePlayerRecord( player );
     }
   }
-  
+
   //
   // Display number of players, callsign, and email string in the following format:
   //
@@ -332,4 +332,3 @@ void logDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

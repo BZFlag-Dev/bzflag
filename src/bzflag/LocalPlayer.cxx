@@ -1277,7 +1277,6 @@ bool			LocalPlayer::fireShot()
 }
 
 
-
 bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 {
   const int index = ident & 255;
@@ -1703,4 +1702,3 @@ void LocalPlayer::setKey(int button, bool pressed) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

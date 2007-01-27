@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Timer Strategies encapsulate Timers such as the games countown 
+/* Timer Strategies encapsulate Timers such as the games countown
    mechanisms with their actions.
    TODO:
    - CountdownStrategy - multi purpose, derives from BaseTimerStrategy
@@ -18,7 +18,7 @@
    derived from GameTimerStrategy:
    - GameCountdownStrategy
    - ManualCountdownStarterStrategy
-   - ManualCountdownStrategy  
+   - ManualCountdownStrategy
    - implement all this ;)
 */
 
@@ -35,14 +35,14 @@ class BaseTimerStrategy {
 public:
   BaseTimerStrategy (const float duration);
   BaseTimerStrategy (const TimeKeeper endTime);
-  
+
   virtual ~BaseTimerStrategy() {};
- 
+
   virtual bool pause(const float delay = 0.0f);
   virtual bool resume(const float delay = 0.0f);
-  
+
   virtual BaseTimerStrategy* action(TimeKeeper& tm) = 0;
-  
+
 private:
   void update();
   TimeKeeper startTime;
@@ -57,7 +57,7 @@ public:
   GameTimerStrategy (const TimeKeeper endTime) : BaseTimerStrategy(endTime) {};
 
   virtual ~BaseTimerStrategy() {};
-	  
+
 private:
   float getTimeLeft();
 
@@ -73,7 +73,7 @@ public:
   GameCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
   GameCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~GameCountdownStrategy() {};
-  
+
   BaseTimerStrategy* action(TimeKeeper& tm);
 }
 
@@ -82,7 +82,7 @@ public:
   ManualCountdownStarterStrategy (const float duration) : GameTimerStrategy(duration) {};
   ManualCountdownStarterStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStarterStrategy() {};
-  
+
   BaseTimerStrategy* action(TimeKeeper& tm);
 }
 
@@ -91,7 +91,7 @@ public:
   ManualCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
   ManualCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStrategy() {};
-  
+
   BaseTimerStrategy* action(TimeKeeper& tm);
 }
 #endif /* _TIMERSTRATEGY_H */

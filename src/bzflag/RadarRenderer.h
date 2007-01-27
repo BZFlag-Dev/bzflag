@@ -67,7 +67,7 @@ class RadarRenderer {
     void		drawTank(const Player* player, bool allowFancy);
     void		drawFancyTank(const Player* player);
     void		drawHuntLevel(const Player* player,
-                                      float tankSize, float heightBoxSize);
+				      float tankSize, float heightBoxSize);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);
 
@@ -126,4 +126,3 @@ inline int		RadarRenderer::getHeight() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

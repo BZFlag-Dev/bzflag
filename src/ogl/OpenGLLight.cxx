@@ -345,4 +345,3 @@ void OpenGLLight::initContext(void* /*self*/)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

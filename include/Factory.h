@@ -121,7 +121,6 @@ protected:
 };
 
 
-
 #endif /* __FACTORY_H__ */
 
 // Local Variables: ***

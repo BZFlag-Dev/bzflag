@@ -91,7 +91,7 @@ void			HUDuiElement::setLabel(const std::string& _label)
   if (elementFontFace >= 0) {
     FontManager &fm = FontManager::instance();
     trueLabelWidth = fm.getStrLength(elementFontFace,
-                                     elementFontSize, getLabel() + "99");
+				     elementFontSize, getLabel() + "99");
   }
 }
 
@@ -127,7 +127,7 @@ void			HUDuiElement::renderLabel()
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
     fm.drawString(elementX - dx, elementY, 0,
-                  elementFontFace, elementFontSize, theLabel);
+		  elementFontFace, elementFontSize, theLabel);
   }
 }
 
@@ -145,4 +145,3 @@ void			HUDuiElement::render()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

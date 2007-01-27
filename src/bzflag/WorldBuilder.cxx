@@ -337,4 +337,3 @@ void WorldBuilder::setBase(TeamColor team,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

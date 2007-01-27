@@ -689,7 +689,7 @@ void			World::initFlag(int index)
     flagNodes[index]->setTexture(World::flagTexture);
     flagNodes[index]->setUseColor(true);
   }
-  
+
   // if coming or going then position warp
   Flag& flag = flags[index];
   if (flag.status == FlagComing || flag.status == FlagGoing) {
@@ -730,7 +730,7 @@ void			World::updateFlag(int index, float dt)
   if (!flagNodes) {
     return;
   }
-  
+
   Flag& flag = flags[index];
   FlagSceneNode* flagNode = flagNodes[index];
   const GLfloat* color = flagNode->getColor();
@@ -864,11 +864,11 @@ void			World::updateFlag(int index, float dt)
     }
     else {
       for (int i = 0; i < curMaxPlayers; i++) {
-        const Player* p = players[i];
-        if (p && p->getId() == flag.owner) {
-          flagPlayer = p;
-          break;
-        }
+	const Player* p = players[i];
+	if (p && p->getId() == flag.owner) {
+	  flagPlayer = p;
+	  break;
+	}
       }
     }
     if (flagPlayer != NULL) {

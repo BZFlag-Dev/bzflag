@@ -151,7 +151,7 @@ void QuitMenu::execute()
       if (alternateConfig == "") {
 	CFGMGR.write(getCurrentConfigFileName());
       } else {
-        CFGMGR.write(alternateConfig);
+	CFGMGR.write(alternateConfig);
       }
     } else if (permanentSave && !tempSave) {
       // save usually, but not this time

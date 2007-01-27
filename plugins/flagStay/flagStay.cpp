@@ -117,7 +117,7 @@ bool FlagStayZoneHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *
 
 		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
-		
+
 		if ( nubs->size() > 0)
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
@@ -197,8 +197,8 @@ void EventHandler::process ( bz_EventData *eventData )
 		if ( zoneList[i].checkFlag(flagAbrev) )
 			validZones.push_back(&zoneList[i]);
 	}
-	
-        // Check each zone for this flag to see if we are in one
+
+	// Check each zone for this flag to see if we are in one
 	bool insideOne = false;
 	for ( unsigned int i = 0; i < validZones.size(); i++ )
 	{
@@ -209,7 +209,7 @@ void EventHandler::process ( bz_EventData *eventData )
 		}
 	}
 
-        // if they have taken the flag out of a zone, pop it.
+	// if they have taken the flag out of a zone, pop it.
 	if (!insideOne && validZones.size() > 0)
 	{
 		int lastZone = -1;
@@ -222,7 +222,6 @@ void EventHandler::process ( bz_EventData *eventData )
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -230,4 +229,3 @@ void EventHandler::process ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

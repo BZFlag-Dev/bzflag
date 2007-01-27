@@ -32,4 +32,3 @@ void MasterBanList::finalization(char *cURLdata, unsigned int length,
   if (good)
     data = std::string(cURLdata, length);
 }
-

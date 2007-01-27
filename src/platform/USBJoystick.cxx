@@ -217,4 +217,3 @@ void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

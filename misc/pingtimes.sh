@@ -16,7 +16,6 @@ echo
 echo "Processing BEGINS ..."
 
 
-
 echo -n "... testing tempfile usage ..."
 tempfile="/tmp/pingtimes.sh.$RANDOM.$$"
 touch "$tempfile"
@@ -80,11 +79,11 @@ for server in $servers ; do
     server_name="`echo $server | sed 's/\(.*\):.*/\1/'`"
     ping_result="`ping -q -c 2 $server_name`"
     if [ $? != 0 ] ; then
-        echo " NOT okay"
+	echo " NOT okay"
 	echo "WARNING: $server seems to be unresponsive"
     else
 
-      	if test "`echo $ping_result | awk '{print $18}'`" = "100%" ; then
+	if test "`echo $ping_result | awk '{print $18}'`" = "100%" ; then
 		echo " NOT okay"
 		echo "WARNING: $server seems to be unresponsive"
 	else

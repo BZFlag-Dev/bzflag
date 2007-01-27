@@ -17,7 +17,6 @@
 #include <vector>
 
 
-
 /** This class will try to complete strings to registered words. */
 class AutoCompleter {
   public:

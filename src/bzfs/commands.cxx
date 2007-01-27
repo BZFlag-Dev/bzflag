@@ -53,7 +53,6 @@
 #include "bzfs.h"
 
 
-
 tmCustomSlashCommandMap	customCommands;
 
 class MsgCommand : public ServerCommand {
@@ -588,7 +587,6 @@ public:
 };
 
 
-
 bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 {
   int i;
@@ -698,9 +696,9 @@ bool CmdHelp::operator() (const char *message,
 	  master.resize(i);
 	  if (master == commandToken)
 	    {
-	      if (matching > 1 || listOnly) 
+	      if (matching > 1 || listOnly)
 		sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
-	      else 
+	      else
 		{
 		  std::string commandLine = it->first + (message + i + 1);
 		  return (*(it->second))(commandLine.c_str(), playerData);
@@ -1109,7 +1107,7 @@ bool CountdownCommand::operator() (const char * message,
   }
 
   // if the timelimit is not set .. don't countdown
-  if (clOptions->timeLimit > 1.0f) 
+  if (clOptions->timeLimit > 1.0f)
     {
       std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
 
@@ -1183,7 +1181,7 @@ bool CountdownCommand::operator() (const char * message,
 
       startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
     }
-  else 
+  else
     {
       sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
       sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
@@ -1446,43 +1444,43 @@ bool FlagCommand::operator() (const char *message,
     if (gkPlayer && fi) {
       // do not give flags to dead players
       if (!gkPlayer->player.isAlive()) {
-        char buffer[MessageLen];
-        snprintf(buffer, MessageLen,
-                 "/flag give: player (%s) is not alive",
-                 gkPlayer->player.getCallSign());
-        sendMessage(ServerPlayer, t, buffer);
-        return true;
+	char buffer[MessageLen];
+	snprintf(buffer, MessageLen,
+		 "/flag give: player (%s) is not alive",
+		 gkPlayer->player.getCallSign());
+	sendMessage(ServerPlayer, t, buffer);
+	return true;
       }
 
       // deal with the player's current flag
       const int flagId = gkPlayer->player.getFlag();
       if (flagId >= 0) {
-        FlagInfo& currentFlag = *FlagInfo::get(flagId);
-        if (currentFlag.flag.type->flagTeam != NoTeam) {
-          // drop team flags
-          dropFlag(currentFlag, gkPlayer->currentPos);
-        } else {
-          // reset non-team flags
-          resetFlag(currentFlag);
-        }
+	FlagInfo& currentFlag = *FlagInfo::get(flagId);
+	if (currentFlag.flag.type->flagTeam != NoTeam) {
+	  // drop team flags
+	  dropFlag(currentFlag, gkPlayer->currentPos);
+	} else {
+	  // reset non-team flags
+	  resetFlag(currentFlag);
+	}
       }
-      
+
       // deal with the flag's current player (for forced gives)
       if (fi->player >= 0) {
-        GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
-        if (fPlayer) {
-          void *bufStart = getDirectMessageBuffer();
-          void *buf = nboPackUByte(bufStart, fi->player);
-          buf = fi->pack(buf);
-          broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
-        }
-        fPlayer->player.setFlag(-1);
+	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
+	if (fPlayer) {
+	  void *bufStart = getDirectMessageBuffer();
+	  void *buf = nboPackUByte(bufStart, fi->player);
+	  buf = fi->pack(buf);
+	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+	}
+	fPlayer->player.setFlag(-1);
       }
-      
+
       // setup bzfs' state
       fi->grab(gkPlayer->getIndex());
       gkPlayer->player.setFlag(fi->getIndex());
-      
+
       // send MsgGrabFlag
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, gkPlayer->getIndex());
@@ -1538,7 +1536,7 @@ bool JitterWarnCommand::operator() (const char  *message,
 		"You do not have permission to run the jitterwarn command");
     return true;
   }
-  
+
   char reply[MessageLen] = {0};
   if (message[11] == ' ') {
     const char *maxlag = message + 12;
@@ -1564,7 +1562,7 @@ bool PacketLossWarnCommand::operator() (const char  *message,
 		"You do not have permission to run the packetlosswarn command");
     return true;
   }
-  
+
   char reply[MessageLen] = {0};
   if (message[15] == ' ') {
     const char *maxlag = message + 16;
@@ -1582,7 +1580,7 @@ bool PacketLossWarnCommand::operator() (const char  *message,
 }
 
 bool LagDropCommand::operator() (const char      *message,
-                                 GameKeeper::Player *playerData)
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
@@ -1613,7 +1611,7 @@ bool JitterDropCommand::operator() (const char  *message,
 		"You do not have permission to run the jitterdrop command");
     return true;
   }
-  
+
   char reply[MessageLen] = {0};
   if (message[11] == ' ') {
     const char *maxwarn = message + 12;
@@ -1637,7 +1635,7 @@ bool PacketLossDropCommand::operator() (const char  *message,
 		"You do not have permission to run the packetlossdrop command");
     return true;
   }
-  
+
   char reply[MessageLen] = {0};
   if (message[15] == ' ') {
     const char *maxwarn = message + 16;
@@ -1725,11 +1723,11 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
     return true;
     }
   */
-  
+
   GameKeeper::Player *player;
   GameKeeper::Player *sortedPlayer[256];
   std::string reply;
-  
+
   int i = 0, j = 0;
   for (i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
@@ -1737,7 +1735,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
       sortedPlayer[j++] = p;
     }
   }
-  
+
   std::sort(sortedPlayer, sortedPlayer + j, scoreCompare);
 
   for (i = 0; i < j; i++) {
@@ -1763,24 +1761,24 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
       // trim off trailing slash
       attrstr.erase(attrstr.length()-1);
     }
-    
+
     std::string emailstr = "(";
     emailstr += player->player.getEMail();
     if (emailstr == "(")
       emailstr = "";
     else
       emailstr += ")";
-    
+
     reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t(%s)",
-                              player->score.getWins() - player->score.getLosses(),
-                              player->score.getWins(),
-                              player->score.getLosses(),
-                              player->score.getTKs(),
-                              player->player.getCallSign(),
-                              emailstr.c_str(),
-                              Team::getName(player->player.getTeam()),
-                              attrstr.c_str());
-    
+			      player->score.getWins() - player->score.getLosses(),
+			      player->score.getWins(),
+			      player->score.getLosses(),
+			      player->score.getTKs(),
+			      player->player.getCallSign(),
+			      emailstr.c_str(),
+			      Team::getName(player->player.getTeam()),
+			      attrstr.c_str());
+
     sendMessage(ServerPlayer, t, reply.c_str());
   }
   return true;
@@ -1923,7 +1921,6 @@ bool ReportCommand::operator() (const char *message,
 
   return true;
 }
-
 
 
 static bool sendHelpTopic (int sendSlot, const char *helpTopic)
@@ -3231,7 +3228,7 @@ bool ModCountCommand::operator() (const char	*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-	
+
   std::string messageText = &message[9];
 
   // skip any leading whitespace
@@ -3250,10 +3247,10 @@ bool ModCountCommand::operator() (const char	*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-  
+
   messageText.erase(0, --messageStart);
   clOptions->addedTime += (float)atof((messageText.c_str())); //remember to add the time
-  
+
   if (countdownDelay > 0) { //we are currently counting down to start
     char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, the countdown will be adjusted by %f when the match starts",
@@ -3261,7 +3258,7 @@ bool ModCountCommand::operator() (const char	*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-  
+
   return true;
 }
 

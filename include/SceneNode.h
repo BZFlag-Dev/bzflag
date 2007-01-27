@@ -142,7 +142,6 @@ class SceneNode {
     SceneNode&		operator=(const SceneNode&);
 
 
-
 #ifndef __MINGW32__
     static void __stdcall	noColor3f(GLfloat, GLfloat, GLfloat);
     static void __stdcall	noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -248,4 +247,3 @@ class GLfloat3Array {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

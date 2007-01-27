@@ -921,4 +921,3 @@ bool WeatherRenderer::dbItemSet(const char *name)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

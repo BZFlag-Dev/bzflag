@@ -21,4 +21,3 @@ MAINTAINERCLEANFILES = \
 
 LDADD = \
 	$(top_srcdir)/src/common/libCommon.la
-

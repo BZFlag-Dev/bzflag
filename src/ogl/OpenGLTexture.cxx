@@ -274,7 +274,7 @@ void OpenGLTexture::setFilter(Filter _filter)
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
-#ifdef HAVE_GLEW  
+#ifdef HAVE_GLEW
   if (GLEW_EXT_texture_filter_anisotropic) {
     GLint aniso = BZDB.evalInt("aniso");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
@@ -444,4 +444,3 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

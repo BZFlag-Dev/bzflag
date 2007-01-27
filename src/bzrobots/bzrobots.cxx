@@ -371,7 +371,7 @@ static void createCacheSignature ()
 bool checkTimeBomb ( void )
 {
 	// check time bomb
-	if (timeBombBoom()) 
+	if (timeBombBoom())
 	{
 		printFatalError("This release expired on %s. \n"
 			"Please upgrade to the latest release. \n"
@@ -385,10 +385,10 @@ bool checkTimeBomb ( void )
 void setupBZDB ( void )
 {
 	// set default DB entries
-	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) 
+	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi)
 	{
 		assert(globalDBItems[gi].name != NULL);
-		if (globalDBItems[gi].value != NULL) 
+		if (globalDBItems[gi].value != NULL)
 		{
 			BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
 			BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);

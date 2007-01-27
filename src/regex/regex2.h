@@ -102,8 +102,6 @@ typedef long sopno;
 #define	OEOW	0xa0000000 /* (20L<<OPSHIFT)	_* end word	-			*/
 
 
-
-
 /*
  * Structure for [] character-set representation.  Character sets are
  * done as bit vectors, grouped 8 to a byte vector for compactness.

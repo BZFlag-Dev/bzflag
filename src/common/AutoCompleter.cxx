@@ -149,7 +149,6 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
 }
 
 
-
 DefaultCompleter::DefaultCompleter()
 {
   setDefaults();

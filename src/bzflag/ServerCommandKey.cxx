@@ -21,7 +21,7 @@
 #include "HUDui.h"
 
 namespace {
-  /** 
+  /**
    * This method escapes quotes and slashes that may be in a callsign.
    * It is currently a separate method, because the original code
    * didn't apply this escaping logic in all cases. However, it is
@@ -33,7 +33,7 @@ namespace {
     result = TextUtils::replace_all(result, "\"", "\\\"");
     return result;
   }
-  
+
   /**
    * The encapsulation of this function is useful where escaping
    * embedded quotes and slashes are required for ALL uses of
@@ -42,7 +42,7 @@ namespace {
   inline std::string quote(std::string const& name) {
     return TextUtils::format("\"%s\"", name.c_str());
   }
-  
+
   /**
    * This method is syntactic sugar to prevent these lines of code
    * from being repeated 32 times. On the other hand, the main reason
@@ -108,7 +108,7 @@ void			ServerCommandKey::updatePrompt()
     return;
   }
 
-  bool allowEdit = true;  // default to true, only need to indicate which are false  
+  bool allowEdit = true;  // default to true, only need to indicate which are false
   const Player *recipient = myTank->getRecipient();
 
   switch (mode) {
@@ -351,7 +351,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
     const Player * troll = myTank->getRecipient();
     if (troll) name = troll->getCallSign();
-    
+
     switch (mode) {
     case Kick:
       sendMsg = "/kick ";
@@ -361,7 +361,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	append_if(sendMsg, message);
       }
       break;
-      
+
     case Kill:
       sendMsg = "/kill ";
       if (troll) {
@@ -370,7 +370,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	append_if(sendMsg, message);
       }
       break;
-      
+
     // The previous version did not define actions for Ban1-Ban3 when
     // in editing mode, but this seems reasonable.  why this is
     // (intentionally) broken is warranted
@@ -386,16 +386,16 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       // Note that this seems broken, if a recipient was specified (?!)
       append_if(sendMsg, message);
       break;
-      
+
     case Showgroup:
       sendMsg = "/showgroup ";
       if (troll) {
-        sendMsg += quote(name);
+	sendMsg += quote(name);
       } else {
-        append_if(sendMsg, message);
+	append_if(sendMsg, message);
       }
       break;
-      
+
     case Setgroup:
       sendMsg = "/setgroup ";
       if (troll) sendMsg += quote(name);
@@ -427,7 +427,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     case LagStats: sendMsg = "/lagstats"; break;
     case Report: sendMsg = "/report " + message; break;
     case LagWarn: sendMsg = "/lagwarn " + message; break;
-    case LagDrop: sendMsg = "/lagdrop " + message; break;    
+    case LagDrop: sendMsg = "/lagdrop " + message; break;
     case GameOver: sendMsg = "/gameover"; break;
     case CountDown: sendMsg = "/countdown " + message; break;
     case SuperKill: sendMsg = "/superkill"; break;
@@ -445,7 +445,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     case Password: sendMsg = "/password " + message; break;
     default: /* shouldn't happen */ break;
     }
-    
+
     // send the message on its way if it isn't empty
     if (sendMsg != "") {
       displayMsg = "-> \"" + sendMsg + "\"";

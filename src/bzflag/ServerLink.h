@@ -144,7 +144,7 @@ class ServerLink {
   bool oldNeedForSpeed;
   int  previousFill;
   char txbuf[MaxPacketLen];
-  
+
 };
 
 #define SEND 1
@@ -183,4 +183,3 @@ inline const char*	ServerLink::getVersion() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -84,7 +84,7 @@ CrackedGlass::RenderHighResCracks(SceneRenderer& renderer)
   glEnable(GL_BLEND);
   glPushMatrix();
   glTranslatef(GLfloat(window.getWidth() >> 1), GLfloat(window.getViewHeight() >> 1), -0.02f);
-  
+
   glLineWidth(5.0);
   glColor4f(1.0f, 1.0f, 1.0f,0.25f);
   for (int i = 0; i < NUM_CRACKS; i++) {

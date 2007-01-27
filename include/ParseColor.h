@@ -32,4 +32,3 @@ extern bool parseColorStream(std::istream& input, float color[4]);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

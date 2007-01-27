@@ -209,11 +209,11 @@ AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
     CURL_LIBS=`curl-config --libs`
     if test "x$build_vendor" = "xapple" ; then
       if test -f /usr/bin/libcurl.a ; then
-        # prefer to link static
-        CURL_LIBS=/usr/bin/libcurl.a
+	# prefer to link static
+	CURL_LIBS=/usr/bin/libcurl.a
       else
-        # mac os x curl-config outputs erroneous -arch i386 in libs
-        CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
+	# mac os x curl-config outputs erroneous -arch i386 in libs
+	CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
       fi
     fi
   else
@@ -258,7 +258,6 @@ if test "x$BUILDCARES" = "xyes" ; then
       AC_MSG_WARN([Consider installing an updated library at system level])
       AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
 fi
-
 
 
 dnl *************************
@@ -364,7 +363,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
 if test x$ac_ff_effect_directional = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
 fi
-AC_MSG_RESULT([$ac_ff_effect_directional]) 
+AC_MSG_RESULT([$ac_ff_effect_directional])
 
 case $host_os in
      linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*) linux=true;;
@@ -424,8 +423,8 @@ AM_CONDITIONAL(MACOS, $macos)
 case $host_os in
    irix*)
 	CONFIG=irix-mips3;
-        AC_SUBST(CONFIG)
-        ;;
+	AC_SUBST(CONFIG)
+	;;
 esac
 
 CONF_CPPFLAGS=
@@ -433,7 +432,7 @@ CONF_CFLAGS=
 CONF_CXXFLAGS=
 
 AC_PATH_XTRA
-CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS" 
+CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 
 case $host_os in
@@ -524,7 +523,7 @@ for ac_lib in opengl32 GL GL2; do
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
 				  [[glBegin(GL_POINTS)]])],
 		 [ac_cv_search_glBegin="-l$ac_lib"
-                  break],[])
+		  break],[])
 done
 if test "$ac_cv_search_glBegin" != no; then
   GLIBS="$ac_cv_search_glBegin $GLIBS"
@@ -557,8 +556,8 @@ tmpLIBS=$LIBS
 GLEW_LIBS="-lGLEW"
 LIBS=$GLEW_LIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-                                [[glewInit()]])],
-               [glew_check="yes"], [glew_check="no"])
+				[[glewInit()]])],
+	       [glew_check="yes"], [glew_check="no"])
 if test $glew_check = "yes"; then
   AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
 else
@@ -584,7 +583,7 @@ case $host_os in
   IDirectInput7* directInput;
   HINSTANCE hinst = GetModuleHandle(NULL);
   HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION,
-                    IID_IDirectInput7, (void**)&directInput, NULL);
+		    IID_IDirectInput7, (void**)&directInput, NULL);
   ]])],[],[AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
   ;;
 esac
@@ -639,8 +638,8 @@ tmpLIBS=$LIBS
 SDL_IMAGE_LIBS="-lSDL_image"
 LIBS=$SDL_IMAGE_LIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
-                                [[IMG_Load(NULL)]])],
-               [sdl_image_check="yes"], [sdl_image_check="no"])
+				[[IMG_Load(NULL)]])],
+	       [sdl_image_check="yes"], [sdl_image_check="no"])
 if test $sdl_image_check = "yes"; then
   AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
 else
@@ -693,15 +692,15 @@ case $host_os in
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
-	         FLAGS=-mtune
+		 FLAGS=-mtune
 	       else
-	         FLAGS=-march
-	       fi	
+		 FLAGS=-march
+	       fi
 	       # silly hack, should be a proper configure compiler option test
 	       if test x$host_cpu = xx86_64; then
-	         FLAGS="$FLAGS=k8"
+		 FLAGS="$FLAGS=k8"
 	       else
-	         FLAGS="$FLAGS=$host_cpu"
+		 FLAGS="$FLAGS=$host_cpu"
 	       fi
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
@@ -716,8 +715,8 @@ case $host_os in
 	#if test x$no_sdl = xyes; then
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
-        FLAGS="-Wall -W -mcpu=$host_cpu"
-        CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	FLAGS="-Wall -W -mcpu=$host_cpu"
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
      mingw32*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
@@ -726,8 +725,8 @@ case $host_os in
 	  FLAGS="$FLAGS -mtune=$host_cpu"
 	else
 	  FLAGS="$FLAGS -march=$host_cpu"
-	fi	
-        CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	fi
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
@@ -739,11 +738,11 @@ case $host_os in
 	elif $sun_gcc; then
 	   FLAGS="-fpermissive"
 	fi
-        CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      macos|darwin*)
-        FLAGS="-pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import"
-        CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	FLAGS="-pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import"
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      irix)
 	FLAGS="-Wall";
@@ -752,7 +751,7 @@ case $host_os in
 	else
 	   FLAGS="FLAGS -march=mips2";
 	fi
-        CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      beos*)
 	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
@@ -767,7 +766,7 @@ if test x$enable_debug = xyes; then
    CXXFLAGS="$CXXFLAGS -O0";
    case $host_os in
      linux*|cygwin|mingw32*)
-        CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	CONF_CFLAGS="$CONF_CFLAGS -Werror"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
 	if test x$enable_profiling = xyes; then
 	  CONF_CFLAGS="$CONF_CFLAGS -pg"
@@ -779,7 +778,7 @@ if test x$enable_debug = xyes; then
 	  CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
 	fi;;
      beos)
-        CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	CONF_CFLAGS="$CONF_CFLAGS -Werror"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror";;
     esac;
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
@@ -832,7 +831,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],
 	       [search_paths_first_flag_works=no])
 AC_MSG_RESULT($search_paths_first_flag_works)
 if test "x$search_paths_first_flag_works" = "xno" ; then
-        LDFLAGS="$PRELDFLAGS"
+	LDFLAGS="$PRELDFLAGS"
 fi
 
 dnl ***************************

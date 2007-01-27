@@ -12,4 +12,3 @@
 void readOBJ ( CModel &model, std::string file );
 
 #endif //_WAVEFRONT_OBJ_H_
-

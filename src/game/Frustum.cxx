@@ -334,4 +334,3 @@ void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

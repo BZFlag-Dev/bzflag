@@ -539,4 +539,3 @@ Plan *CaptureFlagPlan::createSubPlan()
 {
 	return NULL;
 }
-

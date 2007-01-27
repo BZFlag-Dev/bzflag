@@ -44,7 +44,7 @@ void			HUDuiList::setIndex(int _index)
 {
   if (_index < 0)
     index = 0;
-  else if (_index >= (int)list.size()) 
+  else if (_index >= (int)list.size())
     index = (int)list.size() - 1;
   else
     index = _index;
@@ -163,4 +163,3 @@ void			HUDuiList::doRender()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -28,9 +28,9 @@
 	#include <sys/time.h>
 	#include <unistd.h>
 typedef int64_t s64;
-#else 
+#else
 typedef __int64 s64;
-#endif 
+#endif
 
 // common headers
 #include "common.h"

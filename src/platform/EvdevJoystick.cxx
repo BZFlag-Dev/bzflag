@@ -38,7 +38,6 @@
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
 
 
-
 bool	     EvdevJoystick::isEvdevAvailable()
 {
   /* Test whether this driver should be used without actually

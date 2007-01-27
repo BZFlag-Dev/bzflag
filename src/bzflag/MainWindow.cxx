@@ -300,4 +300,3 @@ void			MainWindow::initJoystick(std::string &joystickName) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

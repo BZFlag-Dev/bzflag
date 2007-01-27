@@ -300,7 +300,7 @@ void Player::move(const float* _pos, float _azimuth)
 		state.aperantVelocity[2] = (_pos[2]-state.pos[2])/delta;
 	}
 	state.lastUpdateTime = currentTime;
-	
+
 	// assumes _forward is normalized
   state.pos[0] = _pos[0];
   state.pos[1] = _pos[1];

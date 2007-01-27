@@ -522,7 +522,6 @@ bool Teleporter::getHitNormal(const float* pos1, float azimuth1,
 }
 
 
-
 void* Teleporter::pack(void* buf) const
 {
   buf = nboPackStdString(buf, name);
@@ -697,4 +696,3 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) cons
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

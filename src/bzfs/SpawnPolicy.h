@@ -32,7 +32,7 @@ public:
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges) = 0;
   virtual void getAzimuth(float &azimuth) = 0;
-  
+
 protected:
   virtual bool isFacing(const float *selfPos, const float *enemyPos, const float enemyAzimuth, const float deviation) const;
   virtual float distanceFrom(const float *pos, const float *farPos) const;

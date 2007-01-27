@@ -165,7 +165,6 @@ ServerMenu::ServerMenu() : defaultKey(this),
 }
 
 
-
 void ServerMenu::addLabel(const char* msg, const char* _label)
 {
   HUDuiLabel* label = new HUDuiLabel;

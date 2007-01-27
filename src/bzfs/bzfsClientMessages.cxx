@@ -23,7 +23,7 @@ void handleWhatTimeMessage( NetHandler *handler, void* buf, uint16_t len )
 	// the client wants to know what time we think it is.
 	// he may have sent us a tag to ID the ping with ( for packet loss )
 	// so we send that back to them with the time.
-	// this is so the client can try and get a decent guess 
+	// this is so the client can try and get a decent guess
 	// at what our time is, and timestamp stuff with a real server
 	// time, so everyone can go and compensate for some lag.
 	unsigned char tag = 0;
@@ -312,7 +312,7 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 	message[MessageLen - 1] = '\0';
 
 	playerData->player.hasSent();
-	if (dstPlayer == AllPlayers) 
+	if (dstPlayer == AllPlayers)
 	{
 		logDebugMessage(1,"Player %s [%d] -> All: %s\n", playerData->player.getCallSign(), playerData->getIndex(), message);
 	}

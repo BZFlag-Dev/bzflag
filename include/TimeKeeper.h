@@ -58,8 +58,8 @@ public:
    }
 
   /** Returns how many seconds have elapsed since epoch, Jan 1, 1970.
-    * On windows this will actually be how many seconds have elapsed 
-    * since bootup, so don't rely on the value for anything but 
+    * On windows this will actually be how many seconds have elapsed
+    * since bootup, so don't rely on the value for anything but
     * deltas.  If real times are needed use TimeKeeper::localTime */
   double       getSeconds(void) const;
 
@@ -87,7 +87,7 @@ public:
 
   /** returns a string of the local time */
   static const char		*timestamp(void);
-  
+
   /** returns a short string of the local time */
   static std::string    shortTimeStamp(void);
 

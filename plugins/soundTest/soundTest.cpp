@@ -36,7 +36,7 @@ bool SoundCommand::handle ( int playerID, bz_ApiString command, bz_ApiString mes
 		return true;
 	}
 
-	if (message.size() <= 0) 
+	if (message.size() <= 0)
 	{
 		bz_sendTextMessage(BZ_SERVER, playerID, "Missing sound file name");
 		return true;
@@ -54,4 +54,3 @@ bool SoundCommand::handle ( int playerID, bz_ApiString command, bz_ApiString mes
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

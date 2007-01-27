@@ -295,4 +295,3 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -10,7 +10,6 @@ Usage: man2html < program.man > program.html
  */
 
 
-
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>

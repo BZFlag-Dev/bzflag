@@ -62,7 +62,7 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 			if (!started)
 				break;
 			std::string recFile = path + filename;
-			
+
 			bz_saveRecBuf(recFile.c_str(),0);
 			bz_stopRecBuf();
 
@@ -79,4 +79,3 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

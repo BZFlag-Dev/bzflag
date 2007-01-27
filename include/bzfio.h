@@ -44,7 +44,6 @@ extern LogingCallback	*logingCallback;
 #endif
 
 
-
 /*
  * Local Variables: ***
  * mode:C++ ***
@@ -54,4 +53,3 @@ extern LogingCallback	*logingCallback;
  * End: ***
  * ex: shiftwidth=2 tabstop=8
  */
-

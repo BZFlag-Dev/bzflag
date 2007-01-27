@@ -238,7 +238,7 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 	broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart, false);
 
 	bz_TeamInfoRecord	**teams = NULL;
-	
+
 	int teamCount = 0;
 
 	if (teamIndex1 == -1)
@@ -435,7 +435,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 				toPlayerData->playerHandler->playerIPUpdate (aboutPlayer,aboutPlayerData->netHandler->getTargetIP());
 		}
 	}
-	
+
 	void *buf, *bufStart = getDirectMessageBuffer();
 	if (toPlayerData || record)
 	{
@@ -448,7 +448,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		if (!toPlayerData->playerHandler)
 			directMessage(toPlayer, MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart);
 	}
-		
+
 	if (record)
 		Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
 }
@@ -593,7 +593,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   bool broadcast = false;
   bool toGroup   = false;
   GameKeeper::Player *destPlayerData = NULL;
-  
+
   if (destPlayer == AllPlayers) {
     broadcast = true;
   } else {
@@ -602,7 +602,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
     } else {
       destPlayerData = GameKeeper::Player::getPlayerByIndex(destPlayer);
     }
-  } 
+  }
 
   if (!destPlayerData && (!broadcast && !toGroup && !recordOnly))
     return;
@@ -614,7 +614,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   if (destPlayerData && destPlayerData->playerHandler && !recordOnly) {
     destPlayerData->playerHandler->textMessage(destPlayer, sourcePlayer, localtext);
   }
-	
+
   if (recordOnly || (destPlayerData && !destPlayerData->playerHandler)
       || broadcast || toGroup) {
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -628,40 +628,40 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
       Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
     } else {
       if (!broadcast && !toGroup) {
-        directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
-        directMessage(destPlayer, MsgMessage, (len + 2), bufStart);
+	directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
+	directMessage(destPlayer, MsgMessage, (len + 2), bufStart);
       } else {
-        if (broadcast) {
-          broadcastMessage(MsgMessage, (len + 2), bufStart);
+	if (broadcast) {
+	  broadcastMessage(MsgMessage, (len + 2), bufStart);
 
-          // now do everyone who isn't a net player
-          for (int i = 0; i < curMaxPlayers; i++) {
-            GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-            if (otherData && otherData->playerHandler) {
-              otherData->playerHandler->textMessage(destPlayer, sourcePlayer, localtext);
-            }
-          }
-        } else {
-          if (toGroup) {
-            if (destPlayer == AdminPlayers) {
-              directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
-              std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
-              for (unsigned int i = 0; i < admins.size(); ++i) {
-                if (admins[i] != sourcePlayer) {
-                  directMessage(admins[i], MsgMessage, (len + 2), bufStart);
-                }
-              }
-            } else { // to a team
-              TeamColor destTeam = TeamColor(250 - destPlayer);	// FIXME this teamcolor <-> player id conversion is in several files now
-              for (int i = 0; i < curMaxPlayers; i++) {
-                GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-                if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam)) {
-                  directMessage(i, MsgMessage, (len + 2), bufStart);
-                }
-              }
-            }
-          }
-        }
+	  // now do everyone who isn't a net player
+	  for (int i = 0; i < curMaxPlayers; i++) {
+	    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+	    if (otherData && otherData->playerHandler) {
+	      otherData->playerHandler->textMessage(destPlayer, sourcePlayer, localtext);
+	    }
+	  }
+	} else {
+	  if (toGroup) {
+	    if (destPlayer == AdminPlayers) {
+	      directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
+	      std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
+	      for (unsigned int i = 0; i < admins.size(); ++i) {
+		if (admins[i] != sourcePlayer) {
+		  directMessage(admins[i], MsgMessage, (len + 2), bufStart);
+		}
+	      }
+	    } else { // to a team
+	      TeamColor destTeam = TeamColor(250 - destPlayer);	// FIXME this teamcolor <-> player id conversion is in several files now
+	      for (int i = 0; i < curMaxPlayers; i++) {
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam)) {
+		  directMessage(i, MsgMessage, (len + 2), bufStart);
+		}
+	      }
+	    }
+	  }
+	}
       }
     }
   }
@@ -881,8 +881,8 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
 		case MsgKrbTicket:
 		case MsgNewRabbit:
 		case MsgPlayerUpdate:
-		case MsgPlayerUpdateSmall: 
-		case MsgCollide: 
+		case MsgPlayerUpdateSmall:
+		case MsgCollide:
 			uint8_t id;
 			*buffer  = nboUnpackUByte(*buffer, id);
 			playerID = id;

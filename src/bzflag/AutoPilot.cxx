@@ -771,5 +771,3 @@ void	doAutoPilot(float &rotation, float &speed)
 
   fireAtTank();
 }
-
-

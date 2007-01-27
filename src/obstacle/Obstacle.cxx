@@ -265,6 +265,3 @@ Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-
-

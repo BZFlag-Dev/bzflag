@@ -390,7 +390,7 @@ public:
 	int killerID;
 	bz_eTeamType killerTeam;
 	bz_ApiString flagKilledWith;
-        int shotID;
+	int shotID;
 
 	float pos[3];
 	float rot;
@@ -947,9 +947,9 @@ public:
 
 	float	pos[3];
 	float	velocity[3];
-	float	azimuth;	
+	float	azimuth;
 	float	angVel;
-	int		phydrv;		
+	int		phydrv;
 	int		player;
 
 	double eventTime;
@@ -1006,7 +1006,7 @@ public:
   enum Action {
     ContinueSteal = 0,
     CancelSteal = 1,
-    DropThief = 2 
+    DropThief = 2
   };
 
   bz_FlagTransferredEventData_V1()
@@ -1017,7 +1017,7 @@ public:
     flagType = NULL;
     action = ContinueSteal;
   }
-  
+
   virtual ~bz_FlagTransferredEventData_V1(){};
 
   int fromPlayerID;
@@ -1119,7 +1119,7 @@ public:
 		wins = 0;
 		losses = 0;
 		version = 1;
-                bzID = "";
+		bzID = "";
 	};
 
 	~bz_BasePlayerRecord(){};
@@ -1148,7 +1148,7 @@ public:
 	bool spawned;
 	bool verified;
 	bool globalUser;
-        bz_ApiString bzID;
+	bz_ApiString bzID;
 	bool admin;
 	bool op;
 	bz_APIStringList groups;
@@ -1735,7 +1735,6 @@ protected:
 //              this message will be removed when the code is complete.
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
 BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler ); // you have to pass in the handler to ensure you "own" the player
-
 
 
 #endif //_BZFS_API_H_

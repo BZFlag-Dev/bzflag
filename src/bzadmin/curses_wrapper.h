@@ -34,7 +34,6 @@
 #endif // ncurses
 
 
-
 // curses on Solaris
 #if (defined(HAVE_CURSES_H) && !defined(WIN32))
 #define NOMACROS
@@ -67,7 +66,6 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #define waddstr(W, C) cr_waddstr(W, C)
 
 #endif // curses
-
 
 
 // assume pdcurses on Windows without ncurses, or if we have xcurses.h
@@ -168,7 +166,6 @@ inline void use_default_colors() {
 }
 
 #endif // pdcurses
-
 
 
 #endif

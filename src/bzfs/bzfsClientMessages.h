@@ -34,7 +34,7 @@ void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer);
 void handleCollide ( GameKeeper::Player *playerData, void* buffer);
 void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer);
 
-// util functions 
+// util functions
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);
 
 // using from bzfs

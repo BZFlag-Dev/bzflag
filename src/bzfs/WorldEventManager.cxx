@@ -109,7 +109,6 @@ int WorldEventManager::getEventCount ( bz_eEventType eventType)
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

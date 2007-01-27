@@ -72,12 +72,12 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 
   int numchars;
   if (isAdmin)
-    numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(), 
-    
-          TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
+    numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(),
+
+	  TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
   else
-    numchars = sprintf(msg, "%-24.24s: %3d", 
-          TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
+    numchars = sprintf(msg, "%-24.24s: %3d",
+	  TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
 
   if (info->isObserver()) {
     sprintf(msg+numchars, "ms");
@@ -128,7 +128,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // warn players from time to time whose jitter is > jitterthreshold (-jitterwarn)
     if (!info->isObserver() && (jitterthreshold > 0)
 	&& jitteravg > jitterthreshold
-        && jittercount - jitterlastwarn > 2 * jitterwarncount) {
+	&& jittercount - jitterlastwarn > 2 * jitterwarncount) {
       jitterlastwarn = jittercount;
       jittwarn = true;
       jittkick = (++jitterwarncount > jittermax);
@@ -140,7 +140,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // warn players from time to time whose packetloss is > lossthreshold (-packetlosswarn)
     if (!info->isObserver() && (lossthreshold > 0)
 	&& lostavg > lossthreshold
-        && losscount - losslastwarn > 2 * losswarncount) {
+	&& losscount - losslastwarn > 2 * losswarncount) {
       losslastwarn = losscount;
       plosswarn = true;
       plosskick = (++losswarncount > lossmax);

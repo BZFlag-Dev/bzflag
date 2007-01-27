@@ -25,7 +25,6 @@
 #include <iostream>
 
 
-
 class BzMaterial;
 typedef std::set<const BzMaterial*> MaterialSet;
 typedef std::map<const BzMaterial*,
@@ -247,4 +246,3 @@ extern BzMaterialManager MATERIALMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

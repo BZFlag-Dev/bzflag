@@ -227,7 +227,6 @@ void generateObjects( std::ofstream &bzw, std::vector<BZObject *> objects, Matri
 }
 
 
-
 void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 {
 	enum { FREE, IN_TRANSFORM, IN_BOX, IN_PYRAMID, IN_MATRIX, IN_POSITION0, IN_POSITION1, IN_POSITION2, IN_SIZE0, IN_SIZE1, IN_SIZE2, IN_ROTATION,

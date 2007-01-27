@@ -70,7 +70,6 @@ class LinkManager {
 };
 
 
-
 #endif // BZF_LINK_MANAGER_H
 
 // Local Variables: ***
@@ -80,4 +79,3 @@ class LinkManager {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

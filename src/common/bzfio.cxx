@@ -92,4 +92,3 @@ void logDebugMessage(int level, const char* fmt, ...)
 	if (logingCallback)
 		logingCallback->log(level,buffer);
 }
-

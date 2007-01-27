@@ -104,7 +104,6 @@ int			debugLevel = 0;
 static BzfDisplay*	display = NULL;
 
 
-
 #ifdef ROBOT
 // ROBOT -- tidy up
 int numRobotTanks = 0;
@@ -334,14 +333,14 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
       if (i + 1 < argc) {
-        checkArgc(i, argc, argv[i]);
-        int w, h, x, y, count;
-        char xs = '+', ys = '+';
-        if (strcmp(argv[i], "default") != 0 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) || (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
-          printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
+	checkArgc(i, argc, argv[i]);
+	int w, h, x, y, count;
+	char xs = '+', ys = '+';
+	if (strcmp(argv[i], "default") != 0 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) || (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
+	  printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
 	  usage();
-        }
-        BZDB.set("geometry", argv[i]);
+	}
+	BZDB.set("geometry", argv[i]);
       }
     } else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -593,7 +592,7 @@ static void createCacheSignature ()
 bool checkTimeBomb ( void )
 {
 	// check time bomb
-	if (timeBombBoom()) 
+	if (timeBombBoom())
 	{
 		printFatalError("This release expired on %s. \n"
 			"Please upgrade to the latest release. \n"
@@ -607,10 +606,10 @@ bool checkTimeBomb ( void )
 void setupBZDB ( void )
 {
 	// set default DB entries
-	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) 
+	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi)
 	{
 		assert(globalDBItems[gi].name != NULL);
-		if (globalDBItems[gi].value != NULL) 
+		if (globalDBItems[gi].value != NULL)
 		{
 			BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
 			BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
@@ -766,8 +765,8 @@ int			main(int argc, char** argv)
 
     // write the registry key in question
     HKEY key = NULL;
-    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
-        0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL, 
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
+	0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
 	&key, NULL) == ERROR_SUCCESS) {
       RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
 		   (DWORD)strlen(temppath));
@@ -1332,10 +1331,10 @@ int			main(int argc, char** argv)
 
 #if defined(_WIN32)
   {
-    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it 
+    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it
      * exists */
     HKEY key = NULL;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
 	0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
       RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
     }

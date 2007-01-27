@@ -34,7 +34,7 @@ namespace AutoHunt {
   float getInnerBlinkThreshold(int level); // tank square
   float getOuterBlinkThreshold(int level); // corner chevrons
   // NOTE: (blink thresholds)
-  //       0 -> always blink color 
+  //       0 -> always blink color
   //       1 -> always normal color
 }
 
@@ -48,4 +48,3 @@ namespace AutoHunt {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

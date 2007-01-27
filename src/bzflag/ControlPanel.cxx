@@ -704,10 +704,10 @@ void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
       offset = offset * maxLines;
     }
   }
-  
+
   // offset = offset from whence (offset of 0 is the bottom/most recent)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
-  
+
   switch (whence) {
     case 0:
       if (offset < (int)messages[messageMode].size())

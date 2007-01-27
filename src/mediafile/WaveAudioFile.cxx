@@ -172,4 +172,3 @@ bool		WaveAudioFile::findChunk(const char* tag, uint32_t* length)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

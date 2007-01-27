@@ -456,5 +456,3 @@ void CMesh::reindex ( void )
 	normals = temp_normals;
 	texCoords = temp_texCoords;
 }
-
-

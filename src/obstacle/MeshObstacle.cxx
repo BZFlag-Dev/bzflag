@@ -1023,4 +1023,3 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

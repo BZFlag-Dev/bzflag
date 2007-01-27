@@ -224,7 +224,6 @@ class WordFilter
 };
 
 
-
 /** utility method performs an actual replacement of
  * characters in an input character ray within a specified
  * range.

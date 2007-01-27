@@ -183,4 +183,3 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

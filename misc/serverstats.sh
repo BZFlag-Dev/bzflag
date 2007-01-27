@@ -92,7 +92,7 @@ for server in $servers ; do
 
 	sleep $sleeptime
 	server_version="`tail -1 $tempfile | grep "BZFlag server" | awk '{print $4}'`"
- 	if [ ! "x$server_version" = "x" ] ; then
+	if [ ! "x$server_version" = "x" ] ; then
 	    break
 	fi
     done

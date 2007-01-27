@@ -120,4 +120,3 @@ void		    BzfJoystick::setYAxis(const std::string)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

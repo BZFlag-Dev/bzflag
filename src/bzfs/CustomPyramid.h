@@ -39,11 +39,11 @@ class CustomPyramid : public WorldFileObstacle {
       ZN,
       FaceCount
     };
-    
+
     bool isOldPyramid;
-    
+
     bool flipz;
-    
+
     int phydrv[FaceCount];
     float texsize[FaceCount][2];
     float texoffset[FaceCount][2];

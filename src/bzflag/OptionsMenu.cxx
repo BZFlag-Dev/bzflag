@@ -135,10 +135,10 @@ void OptionsMenu::execute()
     HUDDialogStack::get()->push(saveWorldMenu);
   } else if (_focus == saveSettings) {
     // save resources
-    dumpResources();	 
+    dumpResources();
     if (alternateConfig == "")
-      CFGMGR.write(getCurrentConfigFileName()); 	 
-    else 	 
+      CFGMGR.write(getCurrentConfigFileName());
+    else
       CFGMGR.write(alternateConfig);
   } else if (_focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;

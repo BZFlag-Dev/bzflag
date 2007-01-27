@@ -518,7 +518,7 @@ void			playLocalSound(std::string sound)
 		{
 		  delete newSample;
 		}
-		
+
 		delete[] samples;
 	}
 	else
@@ -1259,4 +1259,3 @@ void			updateSound()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

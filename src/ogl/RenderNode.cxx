@@ -166,4 +166,3 @@ void RenderNodeGStateList::sort(const GLfloat* e)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

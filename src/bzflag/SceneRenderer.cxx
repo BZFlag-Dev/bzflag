@@ -691,7 +691,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 {
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-  
+
   setWireframe(BZDB.isTrue("wireframe"));
 
   triangleCount = 0;

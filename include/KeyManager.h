@@ -32,7 +32,6 @@
 #define KEYMGR (KeyManager::instance())
 
 
-
 class KeyManager : public Singleton<KeyManager> {
 public:
   typedef void (*IterateCallback)(const std::string& name, bool press,
@@ -116,4 +115,3 @@ extern const char*		defaultBindings[];
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

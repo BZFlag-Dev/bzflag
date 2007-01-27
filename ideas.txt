@@ -9,7 +9,7 @@ Look into taking the hard coded strings out of the software and pulling them fro
 
 Add Player Setup menu item.
 	Move Call sign, password to this new menu
- 	Add Preferences for preferred FFA color and CTF/TeamFFA team.
+	Add Preferences for preferred FFA color and CTF/TeamFFA team.
 	Show the tank for each choice (little spinner)
 	Let them save these settings in user profiles.
 
@@ -19,7 +19,7 @@ Save the state of the current player's "first"
 	On First TeamFFA show them the rules
 	On First CTF show them the rules
 	On First Team kill tell them it's bad
-	On First Sever list tell them about servers	
+	On First Sever list tell them about servers
 	Etc...
 
 Put the registration requirements of the game into the game mode ( open, limited, reg only )
@@ -113,16 +113,3 @@ Death effect sucks, make use torus, and add more flashes. Maybe different effect
 Ring spawn effect sucks, add a "digital" type cylinder around the tank
 
 Let effects set tank spawn to grow, fade, or pop.
-
-
-
-
-
-
-
-
-
-
-
-
-

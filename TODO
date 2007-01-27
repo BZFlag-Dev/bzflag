@@ -6,7 +6,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
   or just say it's global or nothing
-  
+
 * /ghost should be removed, we should auto ghost people when the login
   with global auth
 
@@ -38,7 +38,7 @@ THESE ARE LOWER PRIORITY
 
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
-         [this was done with the -advertise bzfs option in 2.0.5]
+	 [this was done with the -advertise bzfs option in 2.0.5]
   - add option for public-servers to not use global logins?
     (if no passdb, then they only use global logins ie: no /register)
 
@@ -253,7 +253,6 @@ THESE ARE LOWER PRIORITY
   very cool, but very low priority.
 
 
-
 THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * flags should all be nullflags from client view until
@@ -321,7 +320,7 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
   tank should send an "I am hit by <killer> <shot Number>" and server kill the
   sending tank and send and endShot broadcast.
 
-* Shot should be preceded by a PlayerUpdateMsg. So we can get the time, speed 
+* Shot should be preceded by a PlayerUpdateMsg. So we can get the time, speed
   & position of shot start. This can fix unalignment in time between shot and
   shooting tank.
 
@@ -337,13 +336,13 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 
 * Make the server list page have multiple tabs to seperate games out by , game type, bandwith, players, shots, quality,
   and other factors.
-  
+
 * Create a system where server operators can apply to be come "prefered" servers if they meet a set of requirements.
-  These requirements should include, being a global registration server, use of the master ban list, allowing the 
+  These requirements should include, being a global registration server, use of the master ban list, allowing the
   global admin team to admin the server, use of a standard language filter file, and bandwith and uptime requirements.
   In exchange these servers are listed on the default "prefered" servers tab in game. This provides a set of servers
   for new users to start in, and where everyone follows a default set of rules.
-  
+
 * Create a tab for local servers ( lan games )
 
 * Create a tab for user defined "favorate" servers ( bookmarks ).
@@ -351,7 +350,7 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 * Create some sort of server "rating" system like the movies use, to let players know what to expect.
   Provide some way to overide and controll it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
-  
+
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.

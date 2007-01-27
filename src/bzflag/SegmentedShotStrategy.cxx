@@ -43,7 +43,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-           (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
+	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
   } else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;

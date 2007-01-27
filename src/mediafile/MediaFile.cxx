@@ -69,11 +69,11 @@ static bool fileExists (const std::string& name)
   }
   return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
 #endif
-}  
+}
 
 
 static bool checkExt(const std::string& base, const char* ext,
-                     std::string& result)
+		     std::string& result)
 {
 #ifndef _WIN32
   const std::string sep = "/";
@@ -84,7 +84,7 @@ static bool checkExt(const std::string& base, const char* ext,
   result = base;
   result += ext;
   const std::string filename = result;
-  
+
   const bool relative = !FILEMGR.isAbsolute(filename);
 
   if (relative) {
@@ -98,7 +98,7 @@ static bool checkExt(const std::string& base, const char* ext,
     result = "data" + sep + filename;
     if (fileExists(result)) return true;
   }
-  
+
   // try current directory (or absolute path)
   result = filename;
   if (fileExists(result)) return true;
@@ -119,7 +119,7 @@ static bool checkExt(const std::string& base, const char* ext,
 
 // From the header...
 // - Use delete[] to release the returned image.
-// - Returns NULL on failure. 
+// - Returns NULL on failure.
 // - Images are stored RGBA, left to right, bottom to top.
 
 unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
@@ -136,8 +136,8 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 
   // try looking in different directories and appending
   // supported extensions to find the source image file
-  std::string name;      
-  if (!checkExt(filename, "",     name) && 
+  std::string name;
+  if (!checkExt(filename, "",     name) &&
       !checkExt(filename, ".png", name) &&
       !checkExt(filename, ".gif", name) &&
       !checkExt(filename, ".bmp", name) &&
@@ -182,14 +182,14 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
   ((unsigned char*)&fmt.Gmask)[1] = 0xff;
   ((unsigned char*)&fmt.Bmask)[2] = 0xff;
   ((unsigned char*)&fmt.Amask)[3] = 0xff;
-  
+
   SDL_Surface* rgba = SDL_ConvertSurface(surface, &fmt, SDL_SWSURFACE);
   SDL_FreeSurface(surface);
 
   // bail if the conversion failed
   if (rgba == NULL) {
     logDebugMessage(3,"SDL_Image: rgba conversion failed: %s: %dx%d %dbpp\n",
-           name.c_str(), origWidth, origHeight, origBpp);
+	   name.c_str(), origWidth, origHeight, origBpp);
     return NULL;
   }
 
@@ -204,12 +204,12 @@ unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
   const unsigned char* source = (unsigned char*) rgba->pixels;
   for (int i = 0; i < rgba->h; i++) {
     memcpy(image + (rowlen * i),
-           source + (rowlen * (rgba->h - 1 - i)),
-           rowlen);
+	   source + (rowlen * (rgba->h - 1 - i)),
+	   rowlen);
   }
 
   logDebugMessage(3,"SDL_Image: loaded %s: %dx%d %dbpp\n",
-         name.c_str(), origWidth, origHeight, origBpp);
+	 name.c_str(), origWidth, origHeight, origBpp);
 
   SDL_FreeSurface(rgba);
 
@@ -341,7 +341,7 @@ unsigned char*		MediaFile::readImage(
   if (CACHEMGR.isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
   }
-  
+
 #ifdef WIN32
   // cheat and make sure the file is a windows file path
   ConvertPath(filename);
@@ -524,4 +524,3 @@ float*		MediaFile::readSound(
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

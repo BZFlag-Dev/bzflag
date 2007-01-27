@@ -32,4 +32,3 @@ TankIDLSceneNode* getTankIDLSceneNode ( int /*playerID*/, TankSceneNode *tankNod
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

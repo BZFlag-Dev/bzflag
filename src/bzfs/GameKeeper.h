@@ -60,7 +60,7 @@ class PlayerCaps
 public:
 	bool	canDownloadResources;
 	bool	canPlayRemoteSounds;
-	
+
 	PlayerCaps ( void )
 	{
 		canPlayRemoteSounds = false;
@@ -145,7 +145,7 @@ public:
     // To handle Identify
     void           setLastIdFlag(int _idFlag);
     int            getLastIdFlag();
-    
+
     enum LSAState
       {
 	start,
@@ -182,7 +182,7 @@ public:
 	PlayerState			getCurrentStateAsState ( void );
 
 	void*	packCurrentState (void* buf, uint16_t& code, bool increment);
-	
+
     // GameTime update
     float	      gameTimeRate;
     TimeKeeper	      gameTimeNext;
@@ -196,7 +196,7 @@ public:
 	PlayerCaps			caps;
 
     // logic class for server side players
-    bz_ServerSidePlayerHandler	*playerHandler;		
+    bz_ServerSidePlayerHandler	*playerHandler;
 
   private:
     static Player    *playerList[PlayerSlot];
@@ -242,7 +242,7 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
 
 #if defined(USE_THREADS)
-inline void GameKeeper::Player::handleTcpPacket(fd_set *) 
+inline void GameKeeper::Player::handleTcpPacket(fd_set *)
 {
 return;
 }

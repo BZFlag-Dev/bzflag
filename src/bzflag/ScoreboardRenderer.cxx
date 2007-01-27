@@ -91,7 +91,6 @@ void  ScoreboardRenderer::setWindowSize (float x, float y, float width, float he
 }
 
 
-
 ScoreboardRenderer::~ScoreboardRenderer()
 {
   // no destruction needed
@@ -190,8 +189,6 @@ void			ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 }
 
 
-
-
 void    ScoreboardRenderer::exitSelectState (void){
   playLocalSound(SFX_HUNT_SELECT);
   if (numHunted > 0) {
@@ -200,8 +197,6 @@ void    ScoreboardRenderer::exitSelectState (void){
     setHuntState(HUNT_NONE);
   }
 }
-
-
 
 
 void	ScoreboardRenderer::render(bool forceDisplay)
@@ -421,7 +416,6 @@ void     ScoreboardRenderer::clearHuntedTanks ()
 }
 
 
-
 void			ScoreboardRenderer::renderScoreboard(void)
 {
   int i=0;
@@ -537,7 +531,6 @@ void			ScoreboardRenderer::renderScoreboard(void)
 }
 
 
-
 void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 {
   char fmtbuf[10];
@@ -546,9 +539,8 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 }
 
 
-
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
-							    float x1, float x2, float x3, float xs, float y, 
+							    float x1, float x2, float x3, float xs, float y,
 							    int emailLen, bool huntCursor)
 {
   // score
@@ -726,13 +718,13 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace, minorFontSize,
 		  huntStr.c_str());
   }
-  
+
   if (huntCursor && huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "@>";
     fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace, minorFontSize,
-                  huntStr.c_str());
+		  huntStr.c_str());
   }
 
   if (huntCursor && !huntAddMode) {
@@ -740,7 +732,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "->";
     fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace, minorFontSize,
-                  huntStr.c_str());
+		  huntStr.c_str());
   }
 }
 
@@ -874,14 +866,14 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
 	  sorter[i].i1 = p->isHunted() ? 10 : huntLevel;
 	  sorter[i].i2 = p->getScore();
 	  break;
-        }
+	}
 	default: {
 	  if (world->allowRabbit())
 	    sorter[i].i1 = p->getRabbitScore();
 	  else
 	    sorter[i].i1 = p->getScore();
 	  sorter[i].i2 = 0;
-        }
+	}
       }
     }
     if (sortType == SortCallsign)

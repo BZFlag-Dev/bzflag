@@ -195,7 +195,7 @@ DynamicColor::DynamicColor()
   memcpy(varOldColor, white, sizeof(float[4]));
   memcpy(varNewColor, white, sizeof(float[4]));
   varLastChange = TimeKeeper::getSunGenesisTime();
-            
+
   return;
 }
 
@@ -315,7 +315,7 @@ void DynamicColor::setVariableUseAlpha(bool value)
   return;
 }
 
-            
+
 void DynamicColor::setLimits(int channel, float min, float max)
 {
   if (min < 0.0f) {
@@ -450,7 +450,7 @@ void DynamicColor::update (double t)
       std::string expr = BZDB.get(varName);
       std::string::size_type atpos = expr.find_first_of('@');
       if (atpos != std::string::npos) {
-        expr.resize(atpos);
+	expr.resize(atpos);
       }
       parseColorString(expr, color);
       memcpy(varOldColor, color, sizeof(float[4]));
@@ -462,23 +462,23 @@ void DynamicColor::update (double t)
     if (varTransition) {
       const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
       if (diffTime < varTimingTmp) {
-        const float newScale = (varTimingTmp > 0.0f) ? (diffTime / varTimingTmp) : 1.0f;
-        const float oldScale = 1.0f - newScale;
-        color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
-        color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
-        color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
-        color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
+	const float newScale = (varTimingTmp > 0.0f) ? (diffTime / varTimingTmp) : 1.0f;
+	const float oldScale = 1.0f - newScale;
+	color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
+	color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
+	color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
+	color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
       }
       else {
-        // make sure the final color is set exactly
-        varTransition = false;
-        memcpy(color, varNewColor, sizeof(float[4]));
+	// make sure the final color is set exactly
+	varTransition = false;
+	memcpy(color, varNewColor, sizeof(float[4]));
       }
     }
-    
+
     return; // nothing else matters
   }
-  
+
   // update by color channel
   for (int c = 0; c < 4; c++) {
     const ChannelParams& channel = channels[c];
@@ -730,7 +730,7 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
   }
-  
+
   if (varName.size() > 0) {
     out << indent << "  variable " << varName << std::endl;
     if (varUseAlpha) {
@@ -787,4 +787,3 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

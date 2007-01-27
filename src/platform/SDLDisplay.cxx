@@ -560,7 +560,7 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
     width  = base_width;
     height = base_height;
   }
-  
+
   /* sanity checks */
   if (width <= 0) {
     modeIndex = -1;

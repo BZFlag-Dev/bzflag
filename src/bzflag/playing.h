@@ -124,7 +124,7 @@ extern bool	     roamButton;
  */
 extern bool		headless;
 
-typedef struct 
+typedef struct
 {
 	bool b3rdPerson;
 	float cameraOffsetXY;
@@ -150,4 +150,3 @@ extern ThirdPersonVars thirdPersonVars;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -152,9 +152,9 @@ with or without installing:
   % src/bzflag/bzflag
 
 BZFlag looks for data files in a path defined during compile, in ./data/ ,
-or in the previously specified data path only.  As part of the tarball/cvs 
-checkout, the base data library is located in <installed-locale>/bzflag/data. 
-This means that to test in a working directory you need to tell bzflag 
+or in the previously specified data path only.  As part of the tarball/cvs
+checkout, the base data library is located in <installed-locale>/bzflag/data.
+This means that to test in a working directory you need to tell bzflag
 where to find these files if there is not a 'data' directory in your current
 directory.  This can be done with a symlink:
 
@@ -404,7 +404,7 @@ a) you are behind a NAT router that is not forwarding UDP traffic to
 
 b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
    that is blocking incoming UDP traffic. Please reconfigure or disable
-   your firewall(extreme solution) for the game, for more intelligent 
+   your firewall(extreme solution) for the game, for more intelligent
    desktop firewalls set them up to let UDP port 17200 to 17220 through.
 
 

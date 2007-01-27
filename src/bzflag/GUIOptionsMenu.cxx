@@ -95,7 +95,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
-  // set observer info 
+  // set observer info
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Extended Observer Info:");
@@ -393,7 +393,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 : 0);
     if (BZDB.isTrue("hideEmails"))
       ((HUDuiList*)listHUD[i++])->setIndex(0);
-    else                                         
+    else
       ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("emailDispLen") / 4);
   }
 }

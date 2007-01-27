@@ -133,7 +133,6 @@ ScoreboardRenderer *HUDRenderer::getScoreboard ()
 }
 
 
-
 void			HUDRenderer::resizeCallback(void* self)
 {
   ((HUDRenderer*)self)->resize(false);
@@ -749,14 +748,14 @@ void			HUDRenderer::renderStatus(void)
 	  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
 	  if (BZDB.evalInt("showVelocities") > 1)
 	    sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,aperantLinSpeed);
-		 
+
 	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 	  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
 	  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
 	  if (BZDB.evalInt("showVelocities") > 1)
 	    sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,aperantVel[2]);
-		 
+
 	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
 	  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
 
@@ -772,7 +771,7 @@ void			HUDRenderer::renderStatus(void)
 	  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
 
 	  scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
-	}	
+	}
       else
 	scoreboard->setTeamScoreY(0);
 
@@ -918,7 +917,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, fname)),
 			0, labelsFontFace, labelsFontSize, fname);
 	}
-	if (roaming && BZDB.isTrue("showVelocities")) 
+	if (roaming && BZDB.isTrue("showVelocities"))
 	  {
 	    float vel[3] = {0};
 	    memcpy(vel,pl->getVelocity(),sizeof(float)*3);
@@ -1434,7 +1433,6 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   // restore graphics state
   glPopMatrix();
 }
-
 
 
 static int compare_float (const void* a, const void* b)

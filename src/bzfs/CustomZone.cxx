@@ -178,7 +178,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     input.putback('\n');
   }
   else if ((strcasecmp(cmd, "team") == 0) ||
-           (strcasecmp(cmd, "safety") == 0)) {
+	   (strcasecmp(cmd, "safety") == 0)) {
     std::string args;
     std::getline(input, args);
     std::istringstream  parms(args);

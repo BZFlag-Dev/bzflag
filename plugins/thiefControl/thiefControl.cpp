@@ -38,7 +38,7 @@ void thiefControl::process( bz_EventData *eventData )
   if (eventData) {
     switch (eventData->eventType) {
     case bz_eFlagTransferredEvent:
-      
+
       if (playerFrom && playerTo) {
 	if ((playerTo->team != eRogueTeam || bz_getGameType() == eRabbitGame) && playerFrom->team == playerTo->team) {
 	  data->action = data->DropThief;
@@ -59,4 +59,3 @@ void thiefControl::process( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -60,7 +60,6 @@ BOOL CTextToolDoc::OnNewDocument()
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolDoc serialization
 
@@ -101,4 +100,3 @@ void CTextToolDoc::Dump(CDumpContext& dc) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

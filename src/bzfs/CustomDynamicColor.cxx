@@ -66,8 +66,8 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     color->setVariableUseAlpha(true);
     return true;
   }
-  
-  
+
+
   if (strcasecmp ("red", cmd) == 0) {
     channel = 0;
   }

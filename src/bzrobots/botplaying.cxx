@@ -362,7 +362,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       const PlayerId pid = _player->getId();
       if (pid < 200) {
 	int color = _player->getTeam();
-        if (color < 0 || (color > 4 && color != HunterTeam)) {
+	if (color < 0 || (color > 4 && color != HunterTeam)) {
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
 	}
@@ -436,7 +436,6 @@ static void		updateHighScores()
     return;
   }
 }
-
 
 
 //
@@ -902,7 +901,7 @@ static void handleGetWorld ( void* msg, uint16_t len )
   uint32_t bytesLeft;
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
-  if (!last) 
+  if (!last)
     {
       char message[MaxPacketLen];
       // ask for next chunk
@@ -932,8 +931,8 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
 	if (robots[i])
 	  robots[i]->explodeTank();
 #endif
-    } 
-  else if (timeLeft < 0) 
+    }
+  else if (timeLeft < 0)
     hud->setAlert(0, "Game Paused", 10.0f, true);
 }
 
@@ -948,7 +947,7 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 
   // make a message
   std::string msg2;
-  if (team == (uint16_t)NoTeam) 
+  if (team == (uint16_t)NoTeam)
     {
       // a player won
       if (player)
@@ -961,7 +960,7 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
       else
 	msg2 = "[unknown player]";
     }
-  else 
+  else
     msg2 = Team::getName(TeamColor(team));		// a team won
 
   msg2 += " won the game";
@@ -1010,7 +1009,7 @@ static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
   uint16_t count;
   uint16_t flagIndex;
   msg = nboUnpackUShort(msg, count);
-  for (int i = 0; i < count; i++) 
+  for (int i = 0; i < count; i++)
     {
       msg = nboUnpackUShort(msg, flagIndex);
       msg = world->getFlag(int(flagIndex)).unpack(msg);
@@ -1042,15 +1041,15 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
-  if ((playerIndex >= 0) || (playerIndex == -2)) 
+  if ((playerIndex >= 0) || (playerIndex == -2))
     {
       static const float zero[3] = { 0.0f, 0.0f, 0.0f };
       Player* tank = getPlayerByIndex(playerIndex);
-      if (tank->getPlayerType() == ComputerPlayer) 
+      if (tank->getPlayerType() == ComputerPlayer)
 	{
-	  for (int r = 0; r < numRobots; r++) 
+	  for (int r = 0; r < numRobots; r++)
 	    {
-	      if (robots[r] && robots[r]->getId() == playerIndex) 
+	      if (robots[r] && robots[r]->getId() == playerIndex)
 		{
 		  robots[r]->restart(pos,forward);
 		  if (!rcLink)
@@ -1159,7 +1158,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   if (killerLocal)
     {
       // local player did it
-      if (shotId >= 0) 
+      if (shotId >= 0)
 	killerLocal->endShot(shotId, true);				// terminate the shot
     }
 
@@ -1215,7 +1214,7 @@ static void handleDropFlag ( void *msg, uint16_t /*len*/)
   msg = world->getFlag(int(flagIndex)).unpack(msg);
 
   Player* tank = lookupPlayer(id);
-  if (!tank) 
+  if (!tank)
     return;
 
   handleFlagDropped(tank);
@@ -1246,7 +1245,7 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
       capturer->setFlag(Flags::Null);
 
       // add message
-      if (int(capturer->getTeam()) == capturedTeam) 
+      if (int(capturer->getTeam()) == capturedTeam)
 	{
 	  std::string message("took my flag into ");
 	  message += Team::getName(TeamColor(team));
@@ -1266,7 +1265,7 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
   //kill all my robots if they are on the captured team
   for (int r = 0; r < numRobots; r++)
     {
-      if (robots[r] && robots[r]->getTeam() == capturedTeam) 
+      if (robots[r] && robots[r]->getTeam() == capturedTeam)
 	gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
     }
 #endif
@@ -1290,7 +1289,7 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
 
   if (mode == 0)	// we don't need to mod the hunters if we aren't swaping
     {
-      for (int i = 0; i < curMaxPlayers; i++) 
+      for (int i = 0; i < curMaxPlayers; i++)
 	{
 	  if (player[i])
 	    player[i]->setHunted(false);
@@ -1338,7 +1337,7 @@ static void handleSetTeam ( void *msg, uint16_t len )
 
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
-	
+
   uint8_t team;
   msg = nboUnpackUByte(msg, team);
 
@@ -1378,14 +1377,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
 	break;
 
-      case MsgSuperKill: 
+      case MsgSuperKill:
 	handleSuperKill(msg);
 	break;
 
       case MsgAccept:
 	break;
 
-      case MsgReject: 
+      case MsgReject:
 	handleRejectMessage(msg);
 	break;
 
@@ -1434,15 +1433,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	handleFlagUpdate(msg,len);
 	break;
 
-      case MsgTeamUpdate: 
+      case MsgTeamUpdate:
 	handleTeamUpdate(msg,len,checkScores);
 	break;
 
-      case MsgAlive: 
+      case MsgAlive:
 	handleAliveMessage(msg,len);
 	break;;
 
-      case MsgAutoPilot: 
+      case MsgAutoPilot:
 	handleAutoPilot(msg,len);
 	break;;
 
@@ -3143,7 +3142,7 @@ static void joinInternetGame2()
 void getAFastToken ( void )
 {
   // get token if we need to (have a password but no token)
-  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) 
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
     {
       ServerList* serverList = new ServerList;
       serverList->startServerPings(&startupInfo);
@@ -3188,7 +3187,7 @@ void handlePendingJoins ( void )
 
 bool dnsLookupDone ( struct in_addr &inAddress )
 {
-  if (!waitingDNS) 
+  if (!waitingDNS)
     return false;
 
   fd_set readers, writers;
@@ -3203,7 +3202,7 @@ bool dnsLookupDone ( struct in_addr &inAddress )
   ares.process(&readers, &writers);
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-  if (status == AresHandler::Failed) 
+  if (status == AresHandler::Failed)
     {
       printError("Server not found.");
       waitingDNS = false;
@@ -3232,7 +3231,7 @@ void checkForServerBail ( void )
 void updateShots ( const float dt )
 {
   // update other tank's shots
-  for (int i = 0; i < curMaxPlayers; i++) 
+  for (int i = 0; i < curMaxPlayers; i++)
     {
       if (player[i])
 	player[i]->updateShots(dt);
@@ -3240,24 +3239,24 @@ void updateShots ( const float dt )
 
   // update servers shots
   const World *_world = World::getWorld();
-  if (_world) 
+  if (_world)
     _world->getWorldWeapons()->updateShots(dt);
 }
 
 void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
-  for (int i = 0; i < curMaxPlayers; i++) 
+  for (int i = 0; i < curMaxPlayers; i++)
     {
-      if (player[i]) 
+      if (player[i])
 	{
 	  const bool wasNotResponding = player[i]->isNotResponding();
 	  player[i]->doDeadReckoning();
 	  const bool isNotResponding = player[i]->isNotResponding();
 
-	  if (!wasNotResponding && isNotResponding) 
+	  if (!wasNotResponding && isNotResponding)
 	    addMessage(player[i], "not responding");
-	  else if (wasNotResponding && !isNotResponding) 
+	  else if (wasNotResponding && !isNotResponding)
 	    addMessage(player[i], "okay");
 	}
     }
@@ -3301,7 +3300,7 @@ void doEnergySaver ( void )
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   const float fpsLimit = BZDB.eval("fpsLimit");
 
-  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) 
+  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit))
     {
       const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
       if (elapsed > 0.0f)
@@ -3309,7 +3308,7 @@ void doEnergySaver ( void )
 	  const float period = (1.0f / fpsLimit);
 	  const float remaining = (period - elapsed);
 
-	  if (remaining > 0.0f) 
+	  if (remaining > 0.0f)
 	    TimeKeeper::sleep(remaining);
 	}
     }
@@ -3350,7 +3349,7 @@ static void		playingLoop()
       struct in_addr inAddress;
       if (dnsLookupDone(inAddress))
 	joinInternetGame(&inAddress);
- 
+
       // Communicate with remote agent if necessary
       if (rcLink) {
 	rcLink->tryAccept();
@@ -3364,7 +3363,7 @@ static void		playingLoop()
 	break;
 
       checkForServerBail();
-	
+
       doUpdates(dt);
 
       doNetworkStuff();

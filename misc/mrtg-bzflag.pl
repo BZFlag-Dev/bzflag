@@ -78,7 +78,7 @@ for my $line (@lines) {
       + hex($blueSize) + hex($purpleSize) + hex($observerSize);
   if (($#ARGV == 0) && ($serverport eq $ARGV[0])) {
     my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
-        + hex($blueMax) + hex($purpleMax) + hex($observerMax);
+	+ hex($blueMax) + hex($purpleMax) + hex($observerMax);
     $playerMax = hex($maxPlayers) if (hex($maxPlayers) < $playerMax);
     print("$playerSize\n$playerMax\nunknown uptime\nplayers on $ARGV[0]\n");
     exit(0);

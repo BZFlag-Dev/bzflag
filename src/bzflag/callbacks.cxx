@@ -52,4 +52,3 @@ void setDepthBuffer(const std::string& name, void*)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

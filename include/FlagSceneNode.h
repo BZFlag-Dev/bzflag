@@ -30,7 +30,7 @@ class FlagPhase;
 class FlagSceneNode : public SceneNode {
 
   friend class FlagRenderNode;
-  
+
   public:
     FlagSceneNode(const GLfloat pos[3]);
     ~FlagSceneNode();
@@ -54,39 +54,39 @@ class FlagSceneNode : public SceneNode {
     void addShadowNodes(SceneRenderer&);
 
     void notifyStyleChange();
-    
+
     bool cullShadow(int planeCount, const float (*planes)[4]) const;
-    
+
   protected:
     class FlagRenderNode : public RenderNode {
       public:
-        FlagRenderNode(const FlagSceneNode*);
-        ~FlagRenderNode();
+	FlagRenderNode(const FlagSceneNode*);
+	~FlagRenderNode();
 
-        void render();
-        void renderShadow();
+	void render();
+	void renderShadow();
 
-        const GLfloat* getPosition() const { return sceneNode->getSphere(); }
-
-      private:
-        void renderFancyPole();
+	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
 
       private:
-        const FlagSceneNode* sceneNode;
-        bool isShadow;
+	void renderFancyPole();
+
+      private:
+	const FlagSceneNode* sceneNode;
+	bool isShadow;
     };
 
 
   private:
     int calcLOD(const SceneRenderer&);
     int calcShadowLOD(const SceneRenderer&);
-		
+
   private:
     FlagPhase*		phase;
 
     int			lod;
     int			shadowLOD;
-    
+
     bool		flat;
     bool		translucent;
     bool		texturing;
@@ -117,4 +117,3 @@ class FlagSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

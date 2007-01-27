@@ -804,7 +804,7 @@ static void		doMotion()
     } else if (BZDB.isTrue("allowInputChange")) {
       // if we aren't using the joystick, but it's moving, start using it
       if ((jx < -100) || (jx > 100) || (jy < -100) || (jy > 100)) {
-        myTank->setInputMethod(LocalPlayer::Joystick);
+	myTank->setInputMethod(LocalPlayer::Joystick);
       }
     }
   }
@@ -1005,7 +1005,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       const PlayerId pid = _player->getId();
       if (pid < 200) {
 	int color = _player->getTeam();
-        if (color < 0 || (color > 4 && color != HunterTeam)) {
+	if (color < 0 || (color > 4 && color != HunterTeam)) {
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
 	}
@@ -1988,7 +1988,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
     tank->setAngularVelocity(0.0f);
     tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
     tank->spawnEffect();
-    if (tank == myTank) 
+    if (tank == myTank)
       myTank->setSpawning(false);
 
     playSound(SFX_POP, pos, true, isViewTank(tank));
@@ -2098,7 +2098,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
     const bool localView = isViewTank(victimPlayer);
     if (reason == GotRunOver)
       playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
-    else 
+    else
       playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
 
     float explodePos[3];
@@ -2112,7 +2112,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
 
   if (killerLocal) {
     // local player did it
-    if (shotId >= 0) 
+    if (shotId >= 0)
       killerLocal->endShot(shotId, true);				// terminate the shot
 
     if (victimPlayer && killerLocal != victimPlayer) {
@@ -2316,7 +2316,7 @@ static void handleDropFlag ( void *msg, uint16_t /*len*/)
   msg = world->getFlag(int(flagIndex)).unpack(msg);
 
   Player* tank = lookupPlayer(id);
-  if (!tank) 
+  if (!tank)
     return;
 
   handleFlagDropped(tank);
@@ -2496,7 +2496,7 @@ static void handleSetTeam ( void *msg, uint16_t len )
 
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
-	
+
   uint8_t team;
   msg = nboUnpackUByte(msg, team);
 
@@ -2585,14 +2585,14 @@ static void		handleServerMessage(bool human, uint16_t code,
       serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
       break;
 
-    case MsgSuperKill: 
+    case MsgSuperKill:
       handleSuperKill(msg);
       break;
 
     case MsgAccept:
       break;
 
-    case MsgReject: 
+    case MsgReject:
       handleRejectMessage(msg);
       break;
 
@@ -2641,15 +2641,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       handleFlagUpdate(msg,len);
       break;
 
-    case MsgTeamUpdate: 
+    case MsgTeamUpdate:
       handleTeamUpdate(msg,len,checkScores);
       break;
 
-    case MsgAlive: 
+    case MsgAlive:
       handleAliveMessage(msg,len);
       break;;
 
-    case MsgAutoPilot: 
+    case MsgAutoPilot:
       handleAutoPilot(msg,len);
       break;;
 
@@ -2996,7 +2996,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  // don't play sounds for messages from self
 	  playSound = false;
 	}
-	
+
 	// direct message to or from me
 	if (dstPlayer) {
 	  // talking to myself? that's strange
@@ -3272,7 +3272,7 @@ static void handleMovementUpdate ( uint16_t code, uint16_t, void* msg )
 	if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
 		addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
 
-	if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) 
+	if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0)
 	{
 		// player has started exploding and we haven't gotten killed
 		// message yet -- set explosion now, play sound later (when we
@@ -3289,7 +3289,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t len,
 {
   switch (code) {
     case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: 
+    case MsgPlayerUpdateSmall:
 		handleMovementUpdate(code,len,msg);
       break;
 
@@ -6063,7 +6063,7 @@ static void		updateDestructCountdown(float dt)
 void getAFastToken ( void )
 {
   // get token if we need to (have a password but no token)
-  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) 
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
     {
       ServerList* serverList = new ServerList;
       serverList->startServerPings(&startupInfo);
@@ -6108,7 +6108,7 @@ void handlePendingJoins ( void )
 
 bool dnsLookupDone ( struct in_addr &inAddress )
 {
-  if (!waitingDNS) 
+  if (!waitingDNS)
     return false;
 
   fd_set readers, writers;
@@ -6123,7 +6123,7 @@ bool dnsLookupDone ( struct in_addr &inAddress )
   ares.process(&readers, &writers);
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-  if (status == AresHandler::Failed) 
+  if (status == AresHandler::Failed)
     {
       HUDDialogStack::get()->setFailedMessage("Server not found");
       waitingDNS = false;
@@ -6210,7 +6210,7 @@ void handleJoyStick ( void )
   // How many are there really
   int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(), (unsigned int)countof(old_direction));
 
-  for (int j = 0; j < hatswitch_count; j++) 
+  for (int j = 0; j < hatswitch_count; j++)
     {
       unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
       if (hat_direction != old_direction[j])
@@ -6218,7 +6218,7 @@ void handleJoyStick ( void )
 	  int mask = 1;
 	  for (int k = j; k < 4; ++k, mask <<= 1)
 	    {
-	      if (((old_direction[j] ^ hat_direction) & mask) != 0) 
+	      if (((old_direction[j] ^ hat_direction) & mask) != 0)
 		{
 		  BzfKeyEvent ev;
 		  ev.button = hatswitch_map[j * 4 + k];
@@ -6285,7 +6285,7 @@ void updateVideoFormatTimer ( const float dt )
 void updateShots ( const float dt )
 {
   // update other tank's shots
-  for (int i = 0; i < curMaxPlayers; i++) 
+  for (int i = 0; i < curMaxPlayers; i++)
     {
       if (player[i])
 	player[i]->updateShots(dt);
@@ -6293,7 +6293,7 @@ void updateShots ( const float dt )
 
   // update servers shots
   const World *_world = World::getWorld();
-  if (_world) 
+  if (_world)
     _world->getWorldWeapons()->updateShots(dt);
 }
 
@@ -6310,28 +6310,28 @@ void moveRoamingCamera ( const float dt )
 void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
-  for (int i = 0; i < curMaxPlayers; i++) 
+  for (int i = 0; i < curMaxPlayers; i++)
     {
-      if (player[i]) 
+      if (player[i])
 	{
 	  const bool wasNotResponding = player[i]->isNotResponding();
 	  player[i]->doDeadReckoning();
 	  const bool isNotResponding = player[i]->isNotResponding();
 
-	  if (!wasNotResponding && isNotResponding) 
+	  if (!wasNotResponding && isNotResponding)
 	    addMessage(player[i], "not responding");
-	  else if (wasNotResponding && !isNotResponding) 
+	  else if (wasNotResponding && !isNotResponding)
 	    addMessage(player[i], "okay");
 	}
     }
 
   // do motion
-  if (myTank) 
+  if (myTank)
     {
       if (myTank->isAlive() && !myTank->isPaused())
 	{
 	  doMotion();
-	  if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED) 
+	  if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
 	    setHuntTarget(); //spot hunt target
 
 	  if (myTank->getTeam() != ObserverTeam && ((fireButton && myTank->getFlag() == Flags::MachineGun) || (myTank->getFlag() == Flags::TriggerHappy)))
@@ -6359,7 +6359,7 @@ void updateTimes ( const float dt )
 void updatePostions ( const float dt )
 {
   // notify if input changed
-  if ((myTank != NULL) && (myTank->queryInputChange() == true)) 
+  if ((myTank != NULL) && (myTank->queryInputChange() == true))
     controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
 
   moveRoamingCamera(dt);
@@ -6380,7 +6380,7 @@ void updatePostions ( const float dt )
 void checkEnvironment ( const float dt )
 {
   // update the wind
-  if (world) 
+  if (world)
     world->updateWind(dt);
 
   // check for flags and hits
@@ -6396,10 +6396,10 @@ void checkEnvironment ( const float dt )
 void updateTanks ( const float dt )
 {
   // adjust properties based on flags (dimensions, cloaking, etc...)
-  if (myTank) 
+  if (myTank)
     myTank->updateTank(dt, true);
 
-  for (int i = 0; i < curMaxPlayers; i++) 
+  for (int i = 0; i < curMaxPlayers; i++)
     {
       if (player[i])
 	player[i]->updateTank(dt, false);
@@ -6415,7 +6415,7 @@ void updateWorldEffects ( const float dt )
   updateExplosions(dt);
 
   // update mesh animations
-  if (world) 
+  if (world)
     world->updateAnimations(dt);
 }
 
@@ -6440,7 +6440,7 @@ void doUpdates ( const float dt )
 	updateWorldEffects(realDT);
 
 	doneDT -= dtLimit;
-	
+
 	if ( doneDT < dtLimit)	// if we only have a nubby left, don't do a full dt.
 		realDT = doneDT;
   }
@@ -6478,7 +6478,7 @@ bool checkForCompleteDownloads ( void )
       downloadingInitialTexture = false;
       return true;
     }
-  else 
+  else
     setSceneDatabase();
 
   return false;
@@ -6493,7 +6493,7 @@ void doEnergySaver ( void )
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   const float fpsLimit = BZDB.eval("fpsLimit");
 
-  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) 
+  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit))
     {
       const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
       if (elapsed > 0.0f)
@@ -6501,7 +6501,7 @@ void doEnergySaver ( void )
 	  const float period = (1.0f / fpsLimit);
 	  const float remaining = (period - elapsed);
 
-	  if (remaining > 0.0f) 
+	  if (remaining > 0.0f)
 	    TimeKeeper::sleep(remaining);
 	}
     }
@@ -6554,7 +6554,7 @@ static void		playingLoop()
       struct in_addr inAddress;
       if (dnsLookupDone(inAddress))
 	joinInternetGame(&inAddress);
- 
+
       mainWindow->getWindow()->yieldCurrent();
 
       // handle pending events for some small fraction of time
@@ -6573,7 +6573,7 @@ static void		playingLoop()
 	break;
 
       checkForServerBail();
-	
+
       doUpdates(dt);
 
       // prep the HUD

@@ -87,4 +87,3 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

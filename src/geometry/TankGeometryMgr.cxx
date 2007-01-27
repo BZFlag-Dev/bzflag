@@ -403,4 +403,3 @@ void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

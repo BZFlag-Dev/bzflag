@@ -96,7 +96,6 @@ void*  PlayerAddMessage::pack ( void* buf )
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

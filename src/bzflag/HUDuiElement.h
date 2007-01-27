@@ -12,7 +12,7 @@
 
 /*
  * HUDuiElement:
- *	User interface class and functions for a visual noninteractive 
+ *	User interface class and functions for a visual noninteractive
  *	UI element.
  */
 

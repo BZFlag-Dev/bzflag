@@ -197,7 +197,6 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -205,4 +204,3 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

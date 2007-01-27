@@ -230,4 +230,3 @@ inline void MeshObstacle::setName(const std::string& str)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

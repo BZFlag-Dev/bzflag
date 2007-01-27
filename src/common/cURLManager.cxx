@@ -522,7 +522,6 @@ void ResourceGetter::getResource ( void )
 }
 
 
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -179,11 +179,11 @@ const char *TimeKeeper::timestamp(void) // const
 
 /** returns a short string of the local time */
 //static
-std::string    
+std::string
 TimeKeeper::shortTimeStamp(void) {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
-  
+
   std::string result( TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min, 10) );
   return result;
 }

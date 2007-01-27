@@ -64,14 +64,14 @@ apply the patch to /opt/xmingw/bin/curl-config:
 @@ -120,9 +120,9 @@
 
      --cflags)
-                if test "X${prefix}/include" = "X/usr/include"; then
+		if test "X${prefix}/include" = "X/usr/include"; then
 -          echo ""
 +          echo "-DBUILDING_LIBCURL"
-         else
+	 else
 -          echo "-I${prefix}/include"
 +          echo "-I${prefix}/include -DBUILDING_LIBCURL"
-         fi
-                ;;
+	 fi
+		;;
 
 Last operations require /opt/xmingw being writeable
 

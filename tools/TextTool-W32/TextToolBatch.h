@@ -38,4 +38,3 @@ private:
   unsigned int position;
   std::vector<BatchItem> items;
 };
-

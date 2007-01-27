@@ -56,7 +56,6 @@ class Octree {
 };
 
 
-
 class OctreeNode {
 
   public:

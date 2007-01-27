@@ -25,8 +25,8 @@
 
 /* ExportInformation: encapsulates information made available for export to
  * other programs.
- * Each program to which we export information should have an appropriately 
- * compile-time protected member method implementing the data serialization 
+ * Each program to which we export information should have an appropriately
+ * compile-time protected member method implementing the data serialization
  * and transmission protocols for said program.  Initialization may be done
  * in this class' c'tor, and cleanup in its d'tor. */
 

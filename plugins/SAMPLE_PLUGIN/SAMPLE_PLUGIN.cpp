@@ -24,4 +24,3 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

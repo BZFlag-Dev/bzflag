@@ -53,7 +53,7 @@ class DynamicColor {
       colorMid = 1,
       colorMax = 2
     };
-    
+
     bool setName(const std::string& name);
 
     void setVariableName(const std::string& name);
@@ -83,13 +83,13 @@ class DynamicColor {
   private:
     void updateVariable();
     static void bzdbCallback(const std::string& varName, void* data);
-    
+
   private:
     static const float minPeriod;
 
     std::string name;
     float color[4];
-    
+
     std::string varName;
     bool varUseAlpha;
     float varTiming;
@@ -157,4 +157,3 @@ extern DynamicColorManager DYNCOLORMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

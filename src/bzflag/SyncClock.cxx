@@ -48,7 +48,7 @@ void ServerSyncedClock::timeMessage ( unsigned char tag, float time )
 {
 	double sentTime = -1;
 	double current = TimeKeeper::getCurrent().getSeconds();
-	
+
 	if (outstandingPings.find(tag) == outstandingPings.end())
 		return;
 	sentTime = outstandingPings[tag];
@@ -68,5 +68,3 @@ double ServerSyncedClock::GetServerSeconds( void )
 {
 	return TimeKeeper::getCurrent().getSeconds() + serverTimeOffset;
 }
-
-

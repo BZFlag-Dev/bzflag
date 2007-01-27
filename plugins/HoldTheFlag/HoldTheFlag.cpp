@@ -26,7 +26,7 @@ BZ_GET_PLUGIN_VERSION
 #  define strncasecmp _strnicmp
 #endif
 
-#endif 
+#endif
 
 
 typedef struct {
@@ -60,7 +60,6 @@ private:
 };
 
 HTFscore htfScore;
-
 
 
 bz_eTeamType HTFscore::colorNameToDef (const char *color)
@@ -145,8 +144,6 @@ int sort_compare (const void *_p1, const void *_p2){
 }
 
 
-
-
 void dispScores (int who)
 {
   int sortList[MAX_PLAYERID+1];	 // do HtfPlayer *   !!
@@ -164,8 +161,8 @@ void dispScores (int who)
   for (int i=0; i<MAX_PLAYERID; i++){
     if (Players[i].isValid) {
       if (Players[i].capNum > lastCapnum){
-        playerLastCapped = i;
-        lastCapnum = Players[i].capNum;
+	playerLastCapped = i;
+	lastCapnum = Players[i].capNum;
       }
       sortList[x++] = i;
     }
@@ -196,11 +193,11 @@ void htfCapture (int who)
 {
   if (!htfEnabled)
     return;
-    
+
 #if DO_FLAG_RESET
   bz_resetFlags ( false );
-#endif    
-    
+#endif
+
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
   ++Players[who].score;
   Players[who].capNum = nextCapNum++;
@@ -270,9 +267,6 @@ void htfEnable (bool onoff, int who)
 }
 
 
-
-
-
 // handle events
 void HTFscore::process ( bz_EventData *eventData )
 {
@@ -317,7 +311,6 @@ bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->eventTime, ms
 }
 
 
-
 bool checkPerms (int playerID, char *htfCmd, const char *permName)
 {
   if (bz_hasPerm (playerID, permName))
@@ -325,7 +318,6 @@ bool checkPerms (int playerID, char *htfCmd, const char *permName)
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "you need \"%s\" permission to do /htf %s", permName, htfCmd);
   return false;
 }
-
 
 
 // handle /htf command
@@ -432,4 +424,3 @@ BZF_PLUGIN_CALL int bz_Unload (void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

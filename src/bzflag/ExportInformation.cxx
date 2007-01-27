@@ -48,7 +48,7 @@ ExportInformation::~ExportInformation()
   // Nothing needed here yet
 }
 
-// BZFlag will call this function when necessary to keep the 
+// BZFlag will call this function when necessary to keep the
 // information contained in our private map up to date
 void ExportInformation::setInformation(const std::string key, const std::string value, const eiType type, const eiPrivacy privacy)
 {
@@ -66,7 +66,7 @@ void ExportInformation::setInformation(const std::string key, const std::string 
 
 /* Each program to which we export should have a member function here.
  * The member function will be called every frame.
- * It should keep a static TimeKeeper around and export no more frequently 
+ * It should keep a static TimeKeeper around and export no more frequently
  * than is necessary, especially if exporting is expensive.
  * It should serialize and transmit whatever data the author feels is necessary.
  * Please be considerate of the privacy values. */
@@ -102,7 +102,7 @@ void ExportInformation::sendXfirePulse()
 
   // privacy
   eiPrivacy reqPrivacy;
-  if (BZDB.evalInt("xfireCommunicationLevel") >= 2) 
+  if (BZDB.evalInt("xfireCommunicationLevel") >= 2)
     reqPrivacy = eipPrivate;
   else
     reqPrivacy = eipStandard;

@@ -46,7 +46,7 @@ The header uses a symbol name that is not valid with the C++ compiler:
 cc-1084 CC: ERROR File = /usr/include/curses.h, Line = 611
   The indicated declaration has an invalid combination of type specifiers.
 
-                syncok(WINDOW *, int bool),
+		syncok(WINDOW *, int bool),
 
 The relatively simple work around involves actually editing the
 curses.h file.  Copy the /usr/include/curses.h file to the bzflag
@@ -56,4 +56,3 @@ Save the file, and restart make and the build should succeed.  Best of
 luck.
 
 See the generic install instructions in README for more details.
-

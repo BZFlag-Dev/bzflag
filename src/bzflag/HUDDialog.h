@@ -52,7 +52,6 @@ class HUDDialog {
     void			initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
 
 
-
   protected:
     const std::vector<HUDuiControl*>&	getControls() const { return controlList; }
     std::vector<HUDuiControl*>&		getControls() { return controlList; }
@@ -69,7 +68,7 @@ class HUDDialog {
   private:
     /* renderList contains elements which are to be rendered only
      *  and may not be manipulated by the user.
-     * controlList contains elements which can potentially be 
+     * controlList contains elements which can potentially be
      *  interacted with and hold focus if included in the correct
      *  range in initNavigation.
      * The union of the lists contains all elements on the dialog.
@@ -89,4 +88,3 @@ class HUDDialog {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

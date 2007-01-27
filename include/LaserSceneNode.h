@@ -32,7 +32,7 @@ class LaserSceneNode : public SceneNode {
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
-	
+
 	void		setColor ( GLfloat r, GLfloat g, GLfloat b );
 	void		setCenterColor ( GLfloat r, GLfloat g, GLfloat b );
 	void		setFirst ( void ) {first = true;}
@@ -72,4 +72,3 @@ class LaserSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

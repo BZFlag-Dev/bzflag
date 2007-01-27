@@ -28,7 +28,7 @@ private:
 
 public:
   static void InitCracks(int maxMotionSize = 100);
-  
+
   static void Render(SceneRenderer& renderer);
 
 protected:

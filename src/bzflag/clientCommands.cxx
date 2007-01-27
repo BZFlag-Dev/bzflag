@@ -566,7 +566,7 @@ static std::string cmdMessagePanel(const std::string&,
     mode = 3;
   else
     return "usage: messagepanel {all|chat|server|misc}";
-    
+
   controlPanel->setMessagesMode(mode);
 
   if (!BZDB.isTrue("displayConsole")) {
@@ -647,7 +647,7 @@ static std::string cmdScreenshot(const std::string&,
   std::string filename = getScreenShotDirName();
   const std::string prefix = "bzfi";
   const std::string ext = ".png";
-  // if this is the first shot we've taken, scan the directory 
+  // if this is the first shot we've taken, scan the directory
   // and start numbering with the first available
   if (snap == 0) {
     std::string pattern = filename + prefix + "*" + ext;
@@ -858,7 +858,7 @@ static std::string cmdTime(const std::string&,
     } else {
       return "usage: time {forward|backward|<seconds>}";
     }
-  }  
+  }
   return std::string();
 }
 

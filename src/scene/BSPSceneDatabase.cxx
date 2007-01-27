@@ -33,7 +33,6 @@ void BSPSceneDatabase::renderRadarNodes(const ViewFrustum&)
 }
 
 
-
 BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
 				dynamic(_dynamic),
 				count(0),
@@ -507,4 +506,3 @@ void BSPSceneDatabase::drawCuller()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

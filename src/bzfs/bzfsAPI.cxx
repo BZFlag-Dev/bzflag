@@ -94,7 +94,7 @@ bz_eTeamType convertTeam ( TeamColor _team )
 	case RabbitTeam:
 		return eRabbitTeam;
     case HunterTeam:
-        return eHunterTeam;
+	return eHunterTeam;
 	case AutomaticTeam:
 		return eAutomaticTeam;
 
@@ -720,8 +720,8 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 
 	playerRecord->verified = player->accessInfo.isVerified();
 
-        playerRecord->spawned = player->player.isAlive();
-        playerRecord->lag = player->lagInfo.getLag();
+	playerRecord->spawned = player->player.isAlive();
+	playerRecord->lag = player->lagInfo.getLag();
 
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
@@ -832,7 +832,7 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 	playerRecord->callsign = player->player.getCallSign();
 	playerRecord->email =  player->player.getEMail();
 	playerRecord->playerID = index;
-        playerRecord->bzID = player->getBzIdentifier();
+	playerRecord->bzID = player->getBzIdentifier();
 	playerRecord->team = convertTeam(player->player.getTeam());
 
 	playerRecord->spawned = player->player.isAlive();
@@ -1137,11 +1137,11 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
     const char* flagType = "GM";
 
     if (!pos || !flagType)
-        return false;
+	return false;
 
     FlagTypeMap &flagMap = FlagType::getFlagMap();
     if (flagMap.find(std::string(flagType)) == flagMap.end())
-        return false;
+	return false;
 
     FlagType *flag = flagMap.find(std::string(flagType))->second;
 
@@ -2852,7 +2852,6 @@ BZF_API void bz_changeTeam( int player, bz_eTeamType _team )
 
 	sendSetTeam(playerIndex,realTeam);
 }
-
 
 
 // Local Variables: ***

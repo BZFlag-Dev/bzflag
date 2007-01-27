@@ -112,21 +112,21 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 	std::string message;
 	if ( record.spreeTotal >= 5 && record.spreeTotal < 10 ) {
 	  if ( record.callsign == killerCallSign ) {
-            message = record.callsign + std::string(" stopped their rampage all by themself");
+	    message = record.callsign + std::string(" stopped their rampage all by themself");
 	  } else {
 	    message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
 	  }
 	}
 	if ( record.spreeTotal >= 10 && record.spreeTotal < 20 ) {
 	  if ( record.callsign == killerCallSign ) {
-            message = record.callsign + std::string(" stopped their own killing spree");
+	    message = record.callsign + std::string(" stopped their own killing spree");
 	  } else {
 	    message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
 	  }
 	}
 	if ( record.spreeTotal >= 20 ) {
 	  if ( record.callsign == killerCallSign ) {
-            message = record.callsign + std::string(" dethroned themselves from an otherwise seemingly unstoppable reign");
+	    message = record.callsign + std::string(" dethroned themselves from an otherwise seemingly unstoppable reign");
 	  } else {
 	    message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
 	  }
@@ -225,4 +225,3 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

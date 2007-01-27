@@ -472,7 +472,6 @@ std::string WordFilter::alphabeticSetFromCharacter(const char c) const
 }
 
 
-
 std::string WordFilter::expressionFromString(const std::string &word) const
 {
   /* create the regular expression description */
@@ -637,7 +636,6 @@ WordFilter::WordFilter(const WordFilter& _filter)
     filters[i] = _filter.filters[i];
   }
 }
-
 
 
 /** destructor releases the compiled bad words */
@@ -885,4 +883,3 @@ unsigned long int WordFilter::wordCount(void) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

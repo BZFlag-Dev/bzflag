@@ -155,20 +155,20 @@ code serves for examples but some rules:
       like the statement except for functions where it aligns with the
       open brace.  for example:
 
-        void foo()
-        {
-          for (;;) {
-            if (expr) {
-            }
-          }
-        }
+	void foo()
+	{
+	  for (;;) {
+	    if (expr) {
+	    }
+	  }
+	}
 
   3)  an else clause goes on the same line (there are many unacceptable
       alternatives):
 
-        if (expr) {
-        } else {
-        }
+	if (expr) {
+	} else {
+	}
 	*note that old code had the else on the next line,
 	 please clean this up wherever you may find it*
 
@@ -194,20 +194,20 @@ code serves for examples but some rules:
       underscores except a leading underscore in a method parameter
       name is allowed to make it different from a member variable.
 
-        #define FOO bar
-        class MyClass {
-        public:
-            void        addStuff(int addMe, int _y) { y = addMe + y; }
+	#define FOO bar
+	class MyClass {
+	public:
+	    void        addStuff(int addMe, int _y) { y = addMe + y; }
 
-        private:
-            int         y;
-        };
+	private:
+	    int         y;
+	};
 
   8)  put spaces after statements followed by expressions and spaces
       around operators.  for example:
-        if (a == b)
+	if (a == b)
       not
-        if(a==b)
+	if(a==b)
 
   9)  Do not leave old commented code hanging around and do not submit
       patches with "// Added by foo on xx" comments. This is what

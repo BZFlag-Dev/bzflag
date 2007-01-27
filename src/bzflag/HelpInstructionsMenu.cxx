@@ -22,13 +22,13 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 
-HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::string> text) 
+HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::string> text)
   : HelpMenu(title)
 {
   // add controls
   std::vector<HUDuiControl*>& listHUD = getControls();
   listHUD.push_back(createLabel(""));
-  
+
   std::vector<std::string>::iterator it;
   for (it = text.begin(); it != text.end(); ++it)
   {

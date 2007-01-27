@@ -14,4 +14,3 @@
 const char *ares_version(int *version);
 
 #endif
-

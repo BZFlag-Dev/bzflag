@@ -22,8 +22,8 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 1.0f, 0.0f, 1.0f },   // purple
 				{ 0.0f, 1.0f, 1.0f },   // observer
 				{ 1.0f, 1.0f, 1.0f },   // rabbit
-                                { 1.0f, 0.5f, 0.0f }	// hunter orange
-                        };
+				{ 1.0f, 0.5f, 0.0f }	// hunter orange
+			};
 float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 0.0f },	// rogue
 				{ 1.0f, 0.15f, 0.15f }, // red
@@ -32,7 +32,7 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 0.4f, 1.0f },	// purple
 				{ 0.0f, 1.0f, 1.0f },	// observer
 				{ 1.0f, 1.0f, 1.0f },   // rabbit
-                                { 1.0f, 0.5f, 0.0f }	// hunter orange
+				{ 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
 
 Team::Team()
@@ -166,4 +166,3 @@ void			Team::setColors(TeamColor team,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -177,9 +177,9 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
     if ((p.type == allow) || (p.type == deny)) {
       // simple globbing
       for (unsigned int s = 0; s < strings.size(); s++) {
-        const std::string upperString = TextUtils::toupper(strings[s]);
-        const std::string upperPattern = TextUtils::toupper(p.pattern);
-        if (glob_match(upperPattern, upperString)) {
+	const std::string upperString = TextUtils::toupper(strings[s]);
+	const std::string upperPattern = TextUtils::toupper(p.pattern);
+	if (glob_match(upperPattern, upperString)) {
 	  if (p.type == allow) {
 	    return true;
 	  }

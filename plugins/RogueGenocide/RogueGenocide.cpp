@@ -59,7 +59,7 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
 	break;
       // option to disallow rogues getting points for shooting themselves
       if ( noSuicide && dieData->killerID == dieData->playerID )
-        break;
+	break;
 
       // if the tank killed was a rogue, kill all rogues.
       bz_APIIntList	*playerList = bz_newIntList();
@@ -100,4 +100,3 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

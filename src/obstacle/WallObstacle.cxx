@@ -127,7 +127,6 @@ bool			WallObstacle::getHitNormal(
 }
 
 
-
 void* WallObstacle::pack(void* buf) const
 {
   buf = nboPackVector(buf, pos);
@@ -177,4 +176,3 @@ void WallObstacle::print(std::ostream& /*out*/,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

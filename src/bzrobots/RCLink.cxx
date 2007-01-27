@@ -99,7 +99,7 @@ bool RCLink::respond(char* message)
   }
 
   int messagelen = strlen(message);
-  
+
   if (send_amount + messagelen > RC_LINK_SENDBUFLEN) {
     fprintf(stderr, "RCLink: setting output_overflow\n");
     output_overflow = true;
@@ -575,7 +575,6 @@ void RCRequest::append(RCRequest *newreq)
     next->append(newreq);
   }
 }
-
 
 
 // Local Variables: ***

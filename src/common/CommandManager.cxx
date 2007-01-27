@@ -204,4 +204,3 @@ const char*			CommandManager::skipWhitespace(const char* string)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

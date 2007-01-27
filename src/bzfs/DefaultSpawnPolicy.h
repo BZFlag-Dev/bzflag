@@ -43,7 +43,7 @@ public:
 protected:
   float enemyProximityCheck(float &enemyAngle) const;
 
-private:  
+private:
   /* temp, internal use */
   TeamColor   team;
   float       testPos[3];

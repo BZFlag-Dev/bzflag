@@ -303,4 +303,3 @@ inline void AccessControlList::setBanFile(const std::string& filename) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -66,4 +66,3 @@ int ares_expand_string(const unsigned char *encoded,
 
   return ARES_SUCCESS;
 }
-
