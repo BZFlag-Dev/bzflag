@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="ShockwaveArena"
+	Name="weaponArena"
 	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ShockwaveArena_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;weaponArena_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -33,14 +33,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="bzfs.lib"
-				OutputFile="$(OutDir)/ShockwaveArena.dll"
+				OutputFile="$(OutDir)/weaponArena.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../src/bzfs/debug/"
-				ModuleDefinitionFile="ShockwaveArena.def"
+				ModuleDefinitionFile="weaponArena.def"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/ShockwaveArena.pdb"
+				ProgramDatabaseFile="$(OutDir)/weaponArena.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/ShockwaveArena.lib"
+				ImportLibrary="$(OutDir)/weaponArena.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ShockwaveArena_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;weaponArena_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -84,16 +84,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="bzfs.lib"
-				OutputFile="$(OutDir)/ShockwaveArena.dll"
+				OutputFile="$(OutDir)/weaponArena.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../src/bzfs/"
-				ModuleDefinitionFile="ShockwaveArena.def"
+				ModuleDefinitionFile="weaponArena.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/ShockwaveArena.lib"
+				ImportLibrary="$(OutDir)/weaponArena.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -140,10 +140,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\ShockwaveArena.cpp">
+				RelativePath=".\weaponArena.cpp">
 			</File>
 			<File
-				RelativePath=".\ShockwaveArena.def">
+				RelativePath=".\weaponArena.def">
 			</File>
 		</Filter>
 		<Filter
