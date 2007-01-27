@@ -31,7 +31,11 @@
 	#endif
 	#define BZF_PLUGIN_CALL
 	#ifndef strcasecmp
+	    #if defined(_MSC_VER) && (_MSC_VER >= 1400)
+		#define strcasecmp _stricmp
+	    #else
 		#define strcasecmp stricmp
+	    #endif
 	#endif
 #else
 	#define BZF_API
