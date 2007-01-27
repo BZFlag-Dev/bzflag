@@ -976,7 +976,7 @@ bool isUDPAtackMessage ( uint16_t &code )
 	return true;
 }
 
-void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &playerState )
+void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState )
 {
 	apiState.status = eAlive;
 	if (playerState.status & PlayerState::DeadStatus)
@@ -997,7 +997,7 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &player
 	memcpy(apiState.velocity,playerState.velocity,sizeof(float)*3);
 }
 
-void APIStateToplayerState ( PlayerState &playerState, bz_PlayerUpdateState &apiState )
+void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState )
 {
 	playerState.status = 0;
 	switch(apiState.status)

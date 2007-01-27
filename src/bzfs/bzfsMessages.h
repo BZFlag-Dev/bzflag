@@ -84,8 +84,8 @@ private:
 
 // utilitys
 bool isUDPAtackMessage ( uint16_t &code );
-void playerStateToAPIState ( bz_PlayerUpdateState &apiState, PlayerState &playerState );
-void APIStateToplayerState ( PlayerState &playerState, bz_PlayerUpdateState &apiState );
+void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
+void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
 
 #endif //_BZFS_MESSAGES_H_
 
