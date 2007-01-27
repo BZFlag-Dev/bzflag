@@ -2046,7 +2046,10 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
     // drop any team flag we may have, as would happen if we paused
     const FlagType* flagd = localtank->getFlag();
     if (flagd->flagTeam != NoTeam)
+	{
       serverLink->sendDropFlag(localtank->getPosition());
+	  localtank->setShotType(StandardShot);
+	}
   }
 
   tank->setAllowMovement(allowMovement != 0);
@@ -2080,6 +2083,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
     // uh oh, i'm dead
     if (myTank->isAlive()) {
       serverLink->sendDropFlag(myTank->getPosition());
+	  myTank->setShotType(StandardShot);
       handleMyTankKilled(reason);
     }
   }
@@ -2531,9 +2535,6 @@ static void handleSetShotType(void *msg, uint16_t /*len*/ )
 	PlayerId id;
 	msg = nboUnpackUByte(msg, id);
 	
-	int flag;
-	msg = nboUnpackInt(msg, flag);
-
 	unsigned char shotType = 0;
 	msg = nboUnpackUByte(msg, shotType);
 
@@ -3543,6 +3544,7 @@ static void *handleMsgSetVars(void *msg)
 
 void handleFlagDropped(Player* tank)
 {
+	tank->setShotType(StandardShot);
   // skip it if player doesn't actually have a flag
   if (tank->getFlag() == Flags::Null) return;
 
@@ -3619,6 +3621,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // tell other players I've dropped my flag
     serverLink->sendDropFlag(tank->getPosition());
+	tank->setShotType(StandardShot);
 
     // drop it
     handleFlagDropped(tank);
@@ -5995,7 +5998,10 @@ static void		updatePauseCountdown(float dt)
 	// okay, now we pause.  first drop any team flag we may have.
 	const FlagType* flagd = myTank->getFlag();
 	if (flagd->flagTeam != NoTeam)
+	{
 	  serverLink->sendDropFlag(myTank->getPosition());
+	  myTank->setShotType(StandardShot);
+	}
 
 	if (World::getWorld() && World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam)) {
 	  serverLink->sendNewRabbit();

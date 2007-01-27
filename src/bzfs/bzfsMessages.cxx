@@ -523,10 +523,6 @@ void sendSetShotType ( int playerIndex, ShotType type )
 	if (!playerData)
 		return;
 
-	FlagInfo *flag = FlagInfo::get(playerData->player.getFlag());
-	if (!flag)
-		return;
-
 	if (type == playerData->efectiveShotType )
 		return; // it's the same as what they have
 
@@ -534,7 +530,6 @@ void sendSetShotType ( int playerIndex, ShotType type )
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackInt(buf,flag->getIndex());
 	buf = nboPackUByte(buf,type);
 
 	broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);

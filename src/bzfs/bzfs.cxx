@@ -2805,6 +2805,15 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   if (flagIndex < 0)
     return;
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
+  playerData.efectiveShotType = StandardShot;
+
+  bz_FlagDropedEvenData_V1 data;
+  data.playerID = playerData.getIndex();
+  data.flagID = flagIndex;
+  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
+  memcpy(data.position, dropPos, sizeof(float)*3);
+
+  worldEventManager.callEvents(bz_eFlagDropedEvent,&data);
 }
 
 

@@ -121,6 +121,7 @@ void			LocalPlayer::doUpdate(float dt)
     }
     if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
       server->sendDropFlag(getPosition());
+	  setShotType(StandardShot);
       setStatus(getStatus() & ~PlayerState::FlagActive);
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
@@ -160,6 +161,8 @@ void			LocalPlayer::doUpdate(float dt)
     if (flagShakingTime <= 0.0f) {
       flagShakingTime = 0.0f;
       server->sendDropFlag(getPosition());
+	  setShotType(StandardShot);
+
     }
   }
 }
@@ -839,6 +842,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     const float twoRads = getRadius() + BZDBCache::flagRadius;
     if (dist < (twoRads * twoRads)) {
       server->sendDropFlag(getPosition());
+	  setShotType(StandardShot);
     }
   }
 
@@ -1452,10 +1456,14 @@ void			LocalPlayer::doMomentum(float dt,
     : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
 
   // limit linear acceleration
-  if (linearAcc > 0.0f) {
+  if (linearAcc > 0.0f) 
+  {
     const float acc = (speed - lastSpeed) / dt;
-    if (acc > 20.0f * linearAcc) speed = lastSpeed + dt * 20.0f*linearAcc;
-    else if (acc < -20.0f * linearAcc) speed = lastSpeed - dt * 20.0f*linearAcc;
+
+    if (acc > 20.0f * linearAcc)
+		speed = lastSpeed + dt * 20.0f*linearAcc;
+    else if (acc < -20.0f * linearAcc)
+		speed = lastSpeed - dt * 20.0f*linearAcc;
   }
 
   // limit angular acceleration
@@ -1643,6 +1651,7 @@ void			LocalPlayer::changeScore(short deltaWins,
     if (flagShakingWins <= 0) {
       flagShakingWins = 0;
       server->sendDropFlag(getPosition());
+	  setShotType(StandardShot);
     }
   }
 }
