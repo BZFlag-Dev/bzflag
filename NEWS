@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Added bzfscron plugin to execute commands on time intervals - Daniel Remenak
 * Removed original BSD advertising clause from 3rd party code - Sean Morrison
 * Polish language filter updates - harry666t
 * increased joystick button support to 32 buttons - Markus

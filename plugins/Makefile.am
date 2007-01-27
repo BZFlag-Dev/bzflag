@@ -18,7 +18,8 @@ SUBDIRS = \
 	nagware \
 	soundTest \
 	weaponArena \
-	recordmatch
+	recordmatch \
+	bzfscron
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \

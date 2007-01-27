@@ -192,8 +192,8 @@ public:
     Score	      score;
     // Authentication
     Authentication    authentication;
-	// cabailitys
-	PlayerCaps			caps;
+    // Capabilities
+    PlayerCaps			caps;
 
     // logic class for server side players
     bz_ServerSidePlayerHandler	*playerHandler;
