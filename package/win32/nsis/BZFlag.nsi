@@ -132,6 +132,30 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\data\l10n
   File ..\..\..\data\l10n\*.*
 
+  SetOutPath $INSTDIR\data\skins\blue
+  File ..\..\..\data\skins\blue\*.*
+
+  SetOutPath $INSTDIR\data\skins\red
+  File ..\..\..\data\skins\red\*.*
+
+  SetOutPath $INSTDIR\data\skins\green
+  File ..\..\..\data\skins\green\*.*
+
+  SetOutPath $INSTDIR\data\skins\purple
+  File ..\..\..\data\skins\purple\*.*
+
+  SetOutPath $INSTDIR\data\skins\hunter
+  File ..\..\..\data\skins\hunter\*.*
+
+  SetOutPath $INSTDIR\data\skins\observer
+  File ..\..\..\data\skins\observer\*.*
+
+  SetOutPath $INSTDIR\data\skins\rabbit
+  File ..\..\..\data\skins\rabbit\*.*
+
+  SetOutPath $INSTDIR\data\skins\rogue
+  File ..\..\..\data\skins\rogue\*.*
+
   ; make the doc dir
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html
@@ -311,6 +335,15 @@ Section "Uninstall"
   Delete $INSTDIR\data\*.*
   Delete $INSTDIR\data\fonts\*.*
   Delete $INSTDIR\data\l10n\*.*
+  Delete $INSTDIR\data\skins\blue\*.*
+  Delete $INSTDIR\data\skins\red\*.*
+  Delete $INSTDIR\data\skins\green\*.*
+  Delete $INSTDIR\data\skins\purple\*.*
+  Delete $INSTDIR\data\skins\rabbit\*.*
+  Delete $INSTDIR\data\skins\observer\*.*
+  Delete $INSTDIR\data\skins\hunter\*.*
+  Delete $INSTDIR\data\skins\rogue\*.*
+
   Delete $INSTDIR\API\*.*
 
   ; MUST REMOVE UNINSTALLER, too
@@ -321,6 +354,15 @@ Section "Uninstall"
   RMDir "$INSTDIR\API"
   RMDir "$INSTDIR\data\l10n"
   RMDir "$INSTDIR\data\fonts"
+  RMDir "$INSTDIR\data\skins\blue"
+  RMDir "$INSTDIR\data\skins\green"
+  RMDir "$INSTDIR\data\skins\hunter"
+  RMDir "$INSTDIR\data\skins\red"
+  RMDir "$INSTDIR\data\skins\purple"
+  RMDir "$INSTDIR\data\skins\rabbit"
+  RMDir "$INSTDIR\data\skins\observer"
+  RMDir "$INSTDIR\data\skins\rogue"
+  RMDir "$INSTDIR\data\skins\"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"
