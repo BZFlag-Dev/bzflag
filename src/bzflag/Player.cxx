@@ -131,6 +131,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
   spawnTime = TimeKeeper::getCurrent();
 
+  shotType = StandardShot;
+
   return;
 }
 
@@ -732,6 +734,8 @@ void Player::setFlag(FlagType* _flag)
 {
   // set the type
   flagType = _flag;
+  if (_flag == NULL)
+	  setShotType(StandardShot);
   updateFlagEffect(flagType);
   return;
 }
@@ -1490,13 +1494,13 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   // the shot flag is normal -- otherwise FiringInfo will have
   // to be changed to add a real bitwise status variable
   if (getFlag() == Flags::PhantomZone && !isFlagActive())
-    firingInfo.flagType = Flags::Null;
+    firingInfo.shotType = StandardShot;
 
   // FIXME team coloring of shot is never used; it was meant to be used
   // for rabbit mode to correctly calculate team kills when rabbit changes
   firingInfo.shot.team = getTeam();
 
-  if (firingInfo.flagType == Flags::ShockWave) {
+  if (firingInfo.shotType == ShockWaveShot) {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];

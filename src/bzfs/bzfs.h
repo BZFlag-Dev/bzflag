@@ -93,6 +93,8 @@ extern void startCountdown ( int delay, float limit, const char *buyWho );
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
 
+void zapFlag(FlagInfo &flag);
+
 typedef struct _CheatProtectionOptions
 {
   bool doHeightChecks;

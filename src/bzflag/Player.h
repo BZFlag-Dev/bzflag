@@ -94,8 +94,12 @@ public:
   short		getFromTeleporter() const;
   short		getToTeleporter() const;
   float		getTeleporterProximity() const;
+
+  // shots
   int		getMaxShots() const;
   ShotPath*	getShot(int index) const;
+  ShotType	getShotType ( void ) const {return shotType;}
+  void		setShotType ( ShotType _shotType ) {shotType = _shotType;}
 
   const ShotStatistics*	getShotStatistics() const;
 
@@ -253,6 +257,7 @@ private:
 
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
+  ShotType		shotType;		// the shots I fire
   float			dimensions[3];		// current tank dimensions
   float			dimensionsScale[3];	// use to scale the dimensions
   float			dimensionsRate[3];	 // relative to scale
@@ -541,7 +546,7 @@ inline bool		Player::canMove() const
 inline bool		Player::canShoot() const
 {
   //return (state.status & short(PlayerState::AllowShooting)) != 0;
-  return allowShooting;
+  return allowShooting && getShotType() != NoShot;
 }
 
 inline bool		Player::isNotResponding() const

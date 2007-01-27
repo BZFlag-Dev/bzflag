@@ -29,6 +29,7 @@
 #include "ForceFeedback.h"
 #include "effectsRenderer.h"
 #include "playing.h"
+#include "SyncClock.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -1195,7 +1196,7 @@ bool			LocalPlayer::fireShot()
   if (! (firingStatus == Ready || firingStatus == Zoned))
     return false;
 
-  if (! canShoot())
+  if (!canShoot())
     return false;
 
   // find an empty slot
@@ -1214,6 +1215,7 @@ bool			LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo;
+  firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());
   prepareShotInfo(firingInfo);
@@ -1221,8 +1223,7 @@ bool			LocalPlayer::fireShot()
   addShot(new LocalShotPath(firingInfo), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
-  const float timeStamp = float(TimeKeeper::getCurrent() - TimeKeeper::getNullTime());
-  firingInfo.timeSent = timeStamp;
+  firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
 
   // always send a player-update message. To synchronize movement and
   // shot start. They should generally travel on the same frame, when
@@ -1233,27 +1234,35 @@ bool			LocalPlayer::fireShot()
   if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
     EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
 
-  if (gettingSound) {
-    if (firingInfo.flagType == Flags::ShockWave) {
-      playLocalSound(SFX_SHOCK);
-      ForceFeedback::shockwaveFired();
-    }
-    else if (firingInfo.flagType == Flags::Laser) {
-      playLocalSound(SFX_LASER);
-      ForceFeedback::laserFired();
-    }
-    else if (firingInfo.flagType == Flags::GuidedMissile) {
-      playLocalSound(SFX_MISSILE);
-      ForceFeedback::shotFired();
-    }
-    else if (firingInfo.flagType == Flags::Thief) {
-      playLocalSound(SFX_THIEF);
-      ForceFeedback::shotFired();
-    }
-    else {
-      playLocalSound(SFX_FIRE);
-      ForceFeedback::shotFired();
-    }
+  if (gettingSound)
+  {
+	  switch(firingInfo.shotType)
+	  {
+		case ShockWaveShot:
+			playLocalSound(SFX_SHOCK);
+			ForceFeedback::shockwaveFired();
+			break;
+
+		case LaserShot:
+			playLocalSound(SFX_LASER);
+			ForceFeedback::laserFired();
+			break;
+
+		case GMShot:
+			playLocalSound(SFX_MISSILE);
+			ForceFeedback::shotFired();
+			break;
+
+		case ThiefShot:
+			playLocalSound(SFX_THIEF);
+			ForceFeedback::shotFired();
+			break;
+
+		default:
+			playLocalSound(SFX_FIRE);
+			ForceFeedback::shotFired();
+			break;
+	  }
   }
 
   if (getFlag() == Flags::TriggerHappy) {
@@ -1502,8 +1511,10 @@ bool			LocalPlayer::checkHit(const Player* source,
     const ShotPath* shot = source->getShot(i);
     if (!shot || shot->isExpired()) continue;
 
+	ShotType	shotType = shot->getShotType();
+
     // my own shock wave cannot kill me
-    if (source == this && ((shot->getFlag() == Flags::ShockWave) || (shot->getFlag() == Flags::Thief))) continue;
+    if (source == this && ((shotType == ShockWaveShot) || (shotType == ThiefShot))) continue;
 
 	// if no team kills, shots of my team can't kill me
 	if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
@@ -1513,17 +1524,17 @@ bool			LocalPlayer::checkHit(const Player* source,
     // only superbullet or shockwave can kill zoned dude
     const FlagType* shotFlag = shot->getFlag();
     if (isPhantomZoned() &&
-	(shotFlag != Flags::ShockWave) &&
-	(shotFlag != Flags::SuperBullet) &&
-	(shotFlag != Flags::PhantomZone))
+	(shotType != ShockWaveShot) &&
+	(shotType != SuperShot) &&
+	(shotType != PhantomShot))
       continue;
 
     // laser can't hit a cloaked tank
-    if ((getFlag() == Flags::Cloaking) && (shotFlag == Flags::Laser))
+    if ((getFlag() == Flags::Cloaking) && (shotType == LaserShot))
       continue;
 
     // zoned shots only kill zoned tanks
-    if ((shotFlag == Flags::PhantomZone) && !isPhantomZoned()) {
+    if ((shotType == PhantomShot) && !isPhantomZoned()) {
       continue;
     }
 

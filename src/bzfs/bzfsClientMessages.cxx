@@ -236,19 +236,19 @@ void handleGameJoinRequest( GameKeeper::Player *playerData )
 }
 
 void handlePlayerUpdate(void **buf, uint16_t &code,
-			GameKeeper::Player *playerData, const void *, int)
+						GameKeeper::Player *playerData, const void *, int)
 {
-  if (!playerData)
-    return;
+	if (!playerData)
+		return;
 
-  float       timestamp;
-  PlayerState state;
+	float       timestamp;
+	PlayerState state;
 
-  *buf = nboUnpackFloat(*buf, timestamp);
-  *buf = state.unpack(*buf, code);
+	*buf = nboUnpackFloat(*buf, timestamp);
+	*buf = state.unpack(*buf, code);
 
-  updatePlayerState(playerData, state, timestamp,
-		    code == MsgPlayerUpdateSmall);
+	updatePlayerState(playerData, state, timestamp,
+		code == MsgPlayerUpdateSmall);
 }
 
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState)
@@ -327,7 +327,7 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 			if (dstPlayer > LastRealPlayer)
 			{
 				logDebugMessage(1,"Player %s [%d] -> Team: %s\n",playerData->player.getCallSign(),
-				       playerData->getIndex(), message);
+					playerData->getIndex(), message);
 			}
 			else
 			{
@@ -335,12 +335,12 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 				if (p != NULL)
 				{
 					logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",playerData->player.getCallSign(),
-					       playerData->getIndex(), p->player.getCallSign(), dstPlayer, message);
+						playerData->getIndex(), p->player.getCallSign(), dstPlayer, message);
 				}
 				else
 				{
 					logDebugMessage(1,"Player %s [%d] -> Player Unknown [%d]: %s\n",
-					       playerData->player.getCallSign(), playerData->getIndex(), dstPlayer, message);
+						playerData->player.getCallSign(), playerData->getIndex(), dstPlayer, message);
 				}
 			}
 		}
@@ -363,6 +363,55 @@ void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer)
 	buffer = nboUnpackUShort(buffer, _team);
 
 	captureFlag(playerData->getIndex(), TeamColor(_team));
+}
+
+void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
+{
+	PlayerId from, to;
+
+	from = playerData->getIndex();
+
+	buffer = nboUnpackUByte(buffer, to);
+
+	GameKeeper::Player *fromData = playerData;
+
+	int flagIndex = fromData->player.getFlag();
+	if (to == ServerPlayer) 
+	{
+		if (flagIndex >= 0)
+			zapFlag (*FlagInfo::get(flagIndex));
+		return;
+	}
+
+	// Sanity check
+	if (to >= curMaxPlayers)
+		return;
+
+	if (flagIndex == -1)
+		return;
+
+	GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(to);
+	if (!toData)
+		return;
+
+	bz_FlagTransferredEventData_V1 eventData;
+
+	eventData.fromPlayerID = fromData->player.getPlayerIndex();
+	eventData.toPlayerID = toData->player.getPlayerIndex();
+	eventData.flagType = NULL;
+	eventData.action = eventData.ContinueSteal;
+
+	worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
+
+	if (eventData.action != eventData.CancelSteal)
+	{
+		int oFlagIndex = toData->player.getFlag();
+		if (oFlagIndex >= 0)
+			zapFlag (*FlagInfo::get(oFlagIndex));
+	}
+
+	if (eventData.action == eventData.ContinueSteal) 
+		sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
 }
 
 const float *closestBase( TeamColor color, float *position )

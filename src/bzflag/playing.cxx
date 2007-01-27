@@ -1952,7 +1952,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
     if (tank == myTank) {
       wasRabbit = tank->getTeam() == RabbitTeam;
       myTank->restart(pos, forward);
-
+	  myTank->setShotType(StandardShot);
       firstLife = false;
       justJoined = false;
 
@@ -2260,10 +2260,12 @@ static void handleGrabFlag ( void *msg, uint16_t /*len*/ )
 {
   PlayerId id;
   uint16_t flagIndex;
+  unsigned char shot;
 
   msg = nboUnpackUByte(msg, id);
   msg = nboUnpackUShort(msg, flagIndex);
   msg = world->getFlag(int(flagIndex)).unpack(msg);
+  msg = nboUnpackUByte(msg,shot);
 
   Player* tank = lookupPlayer(id);
   if (!tank)
@@ -2271,6 +2273,7 @@ static void handleGrabFlag ( void *msg, uint16_t /*len*/ )
 
   // player now has flag
   tank->setFlag(world->getFlag(flagIndex).type);
+  tank->setShotType((ShotType)shot);
 
   if (tank == myTank) {
     playLocalSound(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);		// grabbed flag
@@ -2523,6 +2526,23 @@ static void handleWhatTimeIsIt(void *msg, uint16_t /*len*/ )
 	syncedClock.timeMessage(tag,time);
 }
 
+static void handleSetShotType(void *msg, uint16_t /*len*/ )
+{
+	PlayerId id;
+	msg = nboUnpackUByte(msg, id);
+	
+	int flag;
+	msg = nboUnpackInt(msg, flag);
+
+	unsigned char shotType = 0;
+	msg = nboUnpackUByte(msg, shotType);
+
+	Player *p = lookupPlayer(id);
+	if (!p)
+		return;
+	p->setShotType((ShotType)shotType);
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
 {
@@ -2531,6 +2551,10 @@ static void		handleServerMessage(bool human, uint16_t code,
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
+
+	case MsgSetShot:
+		handleSetShotType(msg,len);
+		break;
 
 	case MsgWhatTimeIsIt:
 	  handleWhatTimeIsIt(msg,len);

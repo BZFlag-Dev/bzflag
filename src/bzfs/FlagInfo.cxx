@@ -123,8 +123,7 @@ void FlagInfo::addFlag()
   dropDone	       = TimeKeeper::getCurrent();
   dropDone	      += flightTime;
 
-  if (flag.type == Flags::Null)
-    // pick a random flag
+  if (flag.type == Flags::Null)    // pick a random flag
     flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
 
   // decide how sticky the flag will be

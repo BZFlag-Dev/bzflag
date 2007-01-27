@@ -32,6 +32,7 @@ void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *player
 void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer );
 void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer);
 void handleCollide ( GameKeeper::Player *playerData, void* buffer);
+void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer);
 
 // util functions 
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);

@@ -229,7 +229,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   const int numSegments = (const int)segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
-    if (i == 0 && getPath().getFlag() == Flags::Laser &&
+    if (i == 0 && getPath().getShotType() == LaserShot &&
 	getPath().getPlayer() == tank->getId())
       continue;
 

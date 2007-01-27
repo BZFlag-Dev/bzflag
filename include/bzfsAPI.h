@@ -88,6 +88,7 @@ typedef enum
 	bz_eNetDataReceveEvent,
 	bz_eLogingEvent,
     bz_eFlagTransferredEvent,
+	bz_eFlagGrabbedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -183,6 +184,23 @@ typedef enum
 	eRabbitGame,
 	eOpenFFAGame
 }bz_eGameType;
+
+typedef enum
+{
+	eNoShot = 0,
+	eStandardShot,
+	eGMShot,
+	eLaserShot,
+	eThiefShot,
+	eSuperShot,
+	ePhantomShot,
+	eShockWaveShot,
+	eRicoShot,
+	eMachineGunShot,
+	eInvisibleShot,
+	eRapidFireShot,
+	eLastShotType
+}bz_eShotType;
 
 //utility classes
 class BZF_API bz_ApiString
@@ -1007,6 +1025,28 @@ public:
   enum Action action;
 };
 
+class bz_FlagGrabbedEventData_V1 : public bz_EventData
+{
+public:
+
+	bz_FlagGrabbedEventData_V1()
+	{
+		playerID = bz_eFlagGrabbedEvent;
+		flagID = -1;
+		shotType = eNoShot;
+		position[0] = position[1] = position[2] = 0;
+	}
+
+	virtual ~bz_FlagGrabbedEventData_V1(){};
+
+	int playerID;
+	int flagID;
+
+	bz_eShotType shotType;
+
+	const char *flagType;
+	float	position[3];
+};
 
 // event handler callback
 class bz_EventHandler
@@ -1109,6 +1149,10 @@ BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs (int playerId, int tks);
 
 BZF_API bool bz_resetPlayerScore(int playerId);
+
+// player shots
+BZF_API bool bz_setPlayerShotType( int playerId, bz_eShotType shotType );
+
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList ( void );

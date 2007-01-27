@@ -94,9 +94,20 @@ enum FlagQuality {
 /** This enum says if the flag type gives the carrier a special shooting
     ability. */
 enum ShotType {
-  NormalShot = 0,
-  SpecialShot = 1
+	NoShot = 0,
+	StandardShot,
+	GMShot,
+	LaserShot,
+	ThiefShot,
+	SuperShot,
+	PhantomShot,
+	ShockWaveShot,
+	RicoShot,
+	MachineGunShot,
+	InvisibleShot,
+	RapidFireShot
 };
+
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
 

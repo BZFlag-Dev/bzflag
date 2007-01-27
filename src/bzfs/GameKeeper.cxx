@@ -68,6 +68,8 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
  curentVel[0] = curentVel[1] = curentVel[2] = 0;
  currentRot = 0;
  currentAngVel =0;
+
+ efectiveShotType = StandardShot;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):

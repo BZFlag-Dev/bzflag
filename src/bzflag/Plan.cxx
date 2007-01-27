@@ -234,18 +234,18 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 			if (!shot || shot->isExpired())
 				continue;
 
-			if ((shot->getFlag() == Flags::InvisibleBullet) &&
+			if ((shot->getShotType() == InvisibleShot) &&
 				(myTank->getFlag() != Flags::Seer))
 				continue; //Theoretically Roger could triangulate the sound
 			if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 				continue;
-			if ((shot->getFlag() == Flags::Laser) &&
+			if ((shot->getShotType() == LaserShot) &&
 				(myTank->getFlag() == Flags::Cloaking))
 				continue; //cloaked tanks can't die from lasers
 
 			const float* shotPos = shot->getPosition();
 			if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
-				(shot->getFlag() != Flags::GuidedMissile))
+				(shot->getShotType() != GMShot))
 				continue;
 
 			const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
@@ -273,13 +273,13 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 		if (!shot || shot->isExpired())
 			continue;
 
-		if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
+		if (shot->getShotType() == InvisibleShot && myTank->getFlag() != Flags::Seer)
 			continue; //Theoretically Roger could triangulate the sound
-		if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
+		if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
 			continue; //cloaked tanks can't die from lasers
 
 		const float* shotPos = shot->getPosition();
-		if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+		if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
 			continue;
 
 		const float dist = TargetingUtils::getTargetDistance( pos, shotPos );

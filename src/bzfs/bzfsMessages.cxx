@@ -453,6 +453,29 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 		Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
 }
 
+void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
+{
+	void *obufStart = getDirectMessageBuffer();
+	void *obuf = nboPackUByte(obufStart, toPlayer);
+	obuf = nboPackUByte(obuf, fromPlayer);
+
+	GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(toPlayer);
+	GameKeeper::Player *fromData = GameKeeper::Player::getPlayerByIndex(fromPlayer);
+
+	toData->efectiveShotType = fromData->efectiveShotType;
+	fromData->efectiveShotType = StandardShot;
+	flag.flag.owner = toPlayer;
+	flag.player = toPlayer;
+	toData->player.resetFlag();
+	toData->player.setFlag(flag.getIndex());
+	fromData->player.resetFlag();
+	obuf = flag.pack(obuf);
+	obuf = nboPackUByte(obuf,toData->efectiveShotType);
+
+	broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
+		obufStart);
+}
+
 
 void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
 {
@@ -463,6 +486,60 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
 	buf = nboPackStdString(buf, std::string(type->flagName));
 	directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
 }
+
+void sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!playerData)
+		return;
+
+	flag.grab(playerIndex);
+	playerData->player.setFlag(flag.getIndex());
+
+	// send MsgGrabFlag
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = flag.pack(buf);
+
+	bz_FlagGrabbedEventData_V1	data;
+	data.flagID = flag.getIndex();
+	data.flagType = flag.flag.type->flagAbbv;
+	data.shotType = (bz_eShotType)flag.flag.type->flagShot;
+
+	worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
+
+	// pack in the shot type, it may have been modified
+	buf = nboPackUByte(buf,data.shotType);
+	playerData->efectiveShotType = (ShotType)data.shotType;
+
+	broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+
+	playerData->flagHistory.add(flag.flag.type);
+}
+
+void sendSetShotType ( int playerIndex, ShotType type )
+{
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!playerData)
+		return;
+
+	FlagInfo *flag = FlagInfo::get(playerData->player.getFlag());
+	if (!flag)
+		return;
+
+	if (type == playerData->efectiveShotType )
+		return; // it's the same as what they have
+
+	playerData->efectiveShotType = type;
+
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackInt(buf,flag->getIndex());
+	buf = nboPackUByte(buf,type);
+
+	broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);
+}
+
 
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)

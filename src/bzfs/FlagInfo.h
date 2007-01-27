@@ -23,6 +23,7 @@
 #include "Flag.h"
 #include "TimeKeeper.h"
 
+
 /** FlagInfo describes a flag as it pertains to the world.
  */
 class FlagInfo {

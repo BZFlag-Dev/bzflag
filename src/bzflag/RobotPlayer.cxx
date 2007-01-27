@@ -241,11 +241,11 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	if (!shot || shot->isExpired())
 	  continue;
 	// ignore invisible bullets completely for now (even when visible)
-	if (shot->getFlag() == Flags::InvisibleBullet)
+	if (shot->getShotType() == InvisibleShot)
 	  continue;
 
 	const float* shotPos = shot->getPosition();
-	if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+	if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
 	  continue;
 	const float dist = TargetingUtils::getTargetDistance(position, shotPos);
 	if (dist < 150.0f) {

@@ -2405,6 +2405,7 @@ void playerAlive(int playerIndex)
 
   sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
 
+  playerData->efectiveShotType = StandardShot;
   playerData->player.setAllowMovement(true);
   playerData->player.setAllowShooting(true);
   sendMessageAllow(playerIndex, true, true);
@@ -2695,27 +2696,18 @@ void searchFlag(GameKeeper::Player &playerData)
     return;
   }
   FlagInfo &flag = *FlagInfo::get(closestFlag);
-  if (id) {
+  if (id)
+  {
     if (closestFlag != playerData.getLastIdFlag()) 
 	{
 		sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
 		playerData.setLastIdFlag(closestFlag);
 	}
-  } else {
-    TeamColor flagteam = flag.flag.type->flagTeam;
-    TeamColor playerteam = playerData.player.getTeam();
-    if (BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG) || flagteam != playerteam) {
-      // okay, player can have it
-      flag.grab(playerIndex);
-      playerData.player.setFlag(flag.getIndex());
-
-      // send MsgGrabFlag
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, playerIndex);
-      buf = flag.pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
-      playerData.flagHistory.add(flag.flag.type);
-    }
+  }
+  else
+  {
+    if (BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG) || flag.flag.type->flagTeam != playerData.player.getTeam())
+     sendGrabFlagMessage(playerIndex,flag);
   }
 }
 
@@ -2909,78 +2901,95 @@ static void shotUpdate(void *buf, int len, NetHandler *handler)
 
 static void shotFired(void *buf, int len, NetHandler *handler)
 {
-  FiringInfo firingInfo;
+	FiringInfo firingInfo;
 
-  PlayerId		player;
-  uint16_t		id;
-  void                 *bufTmp;
+	PlayerId		player;
+	uint16_t		id;
+	void                 *bufTmp;
 
-  bufTmp = nboUnpackUByte(buf, player);
-  bufTmp = nboUnpackUShort(bufTmp, id);
+	bufTmp = nboUnpackUByte(buf, player);
+	bufTmp = nboUnpackUShort(bufTmp, id);
 
-  firingInfo.shot.player = player;
-  firingInfo.shot.id     = id;
+	firingInfo.shot.player = player;
+	firingInfo.shot.id     = id;
 
-  int playerIndex = player;
+	int playerIndex = player;
 
-  // verify playerId
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
+	// verify playerId
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	if (!playerData)
+		return;
 
-  if (playerData->netHandler != handler)
-    return;
+	firingInfo.shotType = playerData->efectiveShotType;
 
-  const PlayerInfo &shooter = playerData->player;
-  if (!shooter.isAlive() || shooter.isObserver())
-    return;
+	if (playerData->netHandler != handler)
+		return;
 
-  FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
+	const PlayerInfo &shooter = playerData->player;
+	if (!shooter.isAlive() || shooter.isObserver())
+		return;
 
-  if (shooter.haveFlag())
-    firingInfo.flagType = fInfo.flag.type;
-  else
-    firingInfo.flagType = Flags::Null;
+	FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
 
-  if (!playerData->addShot(id & 0xff, id >> 8, firingInfo))
-    return;
+	if (shooter.haveFlag())
+		firingInfo.flagType = fInfo.flag.type;
+	else
+		firingInfo.flagType = Flags::Null;
 
-  char message[MessageLen];
-  if (shooter.haveFlag()) {
-    fInfo.numShots++; // increase the # shots fired
-    int limit = clOptions->flagLimit[fInfo.flag.type];
-    if (limit != -1){ // if there is a limit for players flag
-      int shotsLeft = limit -  fInfo.numShots;
-      if (shotsLeft > 0) { //still have some shots left
-	// give message each shot below 5, each 5th shot & at start
-	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
-	  if (shotsLeft > 1)
-	    sprintf(message,"%d shots left",shotsLeft);
-	  else
-	    strcpy(message,"1 shot left");
-	  sendMessage(ServerPlayer, playerIndex, message);
-	}
-      } else { // no shots left
-	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)){
-	  // drop flag at last known position of player
-	  // also handle case where limit was set to 0
-	  float lastPos [3];
-	  for (int i = 0; i < 3; i ++){
-	    lastPos[i] = playerData->currentPos[i];
-	  }
-	  fInfo.grabs = 0; // recycle this flag now
-	  dropPlayerFlag(*playerData, lastPos);
-	} else { // more shots fired than allowed
-	  // do nothing for now -- could return and not allow shot
-	}
-      } // end no shots left
-    } // end is limit
-  } // end of player has flag
+	if (!playerData->addShot(id & 0xff, id >> 8, firingInfo))
+		return;
 
-  bool repack = false;
+	char message[MessageLen];
+	if (shooter.haveFlag()) 
+	{
+		fInfo.numShots++; // increase the # shots fired
+		int limit = clOptions->flagLimit[fInfo.flag.type];
+		if (limit != -1)
+		{ 
+			// if there is a limit for players flag
+			int shotsLeft = limit -  fInfo.numShots;
 
-    // ask the API if it wants to modify this shot
+			if (shotsLeft > 0)
+			{
+				//still have some shots left
+				// give message each shot below 5, each 5th shot & at start
+				if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
+				{
+					if (shotsLeft > 1)
+						sprintf(message,"%d shots left",shotsLeft);
+					else
+						strcpy(message,"1 shot left");
+
+					sendMessage(ServerPlayer, playerIndex, message);
+				}
+			} 
+			else
+			{ 
+				// no shots left
+				if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
+				{
+					// drop flag at last known position of player
+					// also handle case where limit was set to 0
+					float lastPos [3];
+					for (int i = 0; i < 3; i ++)
+					{
+						lastPos[i] = playerData->currentPos[i];
+					}
+					fInfo.grabs = 0; // recycle this flag now
+					dropPlayerFlag(*playerData, lastPos);
+				}
+				else
+				{ 
+					// more shots fired than allowed
+					// do nothing for now -- could return and not allow shot
+				}
+			} // end no shots left
+		} // end is limit
+	} // end of player has flag
+
+	bool repack = false;
+
+	// ask the API if it wants to modify this shot
 	bz_ShotFiredEventData_V1 shotEvent;
 
 	shotEvent.pos[0] = firingInfo.shot.pos[0];
@@ -2998,11 +3007,11 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 		repack = true;
 	}
 
-  // repack if changed
-  if (repack)
-    firingInfo.pack(buf);
+	// repack if changed
+	if (repack)
+		firingInfo.pack(buf);
 
-  relayMessage(MsgShotBegin, len, buf);
+	relayMessage(MsgShotBegin, len, buf);
 
 }
 
@@ -3314,65 +3323,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		break;
 
     // player has transferred flag to another tank
-    case MsgTransferFlag: {
-      PlayerId from, to;
-
-      from = playerID;
-
-      buf = nboUnpackUByte(buf, to);
-
-      GameKeeper::Player *fromData = playerData;
-
-      int flagIndex = fromData->player.getFlag();
-      if (to == ServerPlayer) {
-	if (flagIndex >= 0)
-	  zapFlag (*FlagInfo::get(flagIndex));
-	return;
-      }
-
-      // Sanity check
-      if (to >= curMaxPlayers)
-	return;
-
-      if (flagIndex == -1)
-	return;
-
-      GameKeeper::Player *toData
-	= GameKeeper::Player::getPlayerByIndex(to);
-      if (!toData)
-	return;
-
-      bz_FlagTransferredEventData_V1 eventData;
-
-      eventData.fromPlayerID = fromData->player.getPlayerIndex();
-      eventData.toPlayerID = toData->player.getPlayerIndex();
-      eventData.flagType = NULL;
-      eventData.action = eventData.ContinueSteal;
-
-      worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
-
-      if (eventData.action != eventData.CancelSteal) {
-        int oFlagIndex = toData->player.getFlag();
-        if (oFlagIndex >= 0)
-          zapFlag (*FlagInfo::get(oFlagIndex));
-      }
-
-      if (eventData.action == eventData.ContinueSteal) {
-        void *obufStart = getDirectMessageBuffer();
-        void *obuf = nboPackUByte(obufStart, from);
-        obuf = nboPackUByte(obuf, to);
-        FlagInfo &flag = *FlagInfo::get(flagIndex);
-        flag.flag.owner = to;
-        flag.player = to;
-        toData->player.resetFlag();
-        toData->player.setFlag(flagIndex);
-        fromData->player.resetFlag();
-        obuf = flag.pack(obuf);
-        broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
-                         obufStart);
-      }
-      break;
-    }
+	case MsgTransferFlag:
+		handleFlagTransfer(playerData,buf);
+		break;
 
     case MsgUDPLinkEstablished:
       logDebugMessage(2,"Connection at %s outbound UDP up\n", handler->getTargetIP());

@@ -171,6 +171,8 @@ public:
     PlayerState       lastState;
     float				stateTimeStamp;
 
+	ShotType			efectiveShotType;
+
 	void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
 	float				currentPos[3];
 	float				curentVel[3];

@@ -34,30 +34,48 @@ ShotPath::ShotPath(const FiringInfo& info) :
 				expiring(false),
 				expired(false)
 {
-  if (firingInfo.flagType->flagShot == NormalShot)
-    strategy = new NormalShotStrategy(this);
-  else {
-    if (firingInfo.flagType == Flags::RapidFire)
-      strategy = new RapidFireStrategy(this);
-    else if (firingInfo.flagType == Flags::MachineGun)
-      strategy = new MachineGunStrategy(this);
-    else if (firingInfo.flagType == Flags::GuidedMissile)
-      strategy = new GuidedMissileStrategy(this);
-    else if (firingInfo.flagType == Flags::Laser)
-      strategy = new LaserStrategy(this);
-    else if (firingInfo.flagType == Flags::Ricochet)
-      strategy = new RicochetStrategy(this);
-    else if (firingInfo.flagType == Flags::SuperBullet)
-      strategy = new SuperBulletStrategy(this);
-    else if (firingInfo.flagType == Flags::ShockWave)
-      strategy = new ShockWaveStrategy(this);
-    else if (firingInfo.flagType == Flags::Thief)
-      strategy = new ThiefStrategy(this);
-    else if (firingInfo.flagType == Flags::PhantomZone)
-      strategy = new PhantomBulletStrategy(this);
-    else
-      assert(0);    // shouldn't happen
-  }
+	switch(info.shotType)
+	{
+		default:
+			strategy = new NormalShotStrategy(this);
+		break;
+
+		case GMShot:
+			strategy = new GuidedMissileStrategy(this);
+			break;
+
+		case LaserShot:
+			 strategy = new LaserStrategy(this);
+			 break;
+
+		case ThiefShot:
+			 strategy = new ThiefStrategy(this);
+			 break;
+
+		case SuperShot:
+			 strategy = new SuperBulletStrategy(this);
+			 break;
+
+		case PhantomShot:
+			strategy = new PhantomBulletStrategy(this);
+			break;
+
+		case ShockWaveShot:
+			 strategy = new ShockWaveStrategy(this);
+			 break;
+
+		case RicoShot:
+			 strategy = new RicochetStrategy(this);
+			 break;
+
+		case MachineGunShot:
+			strategy = new MachineGunStrategy(this);
+			break;
+
+		case RapidFireShot:
+			 strategy = new RapidFireStrategy(this);
+			 break;
+	}
 }
 
 ShotPath::~ShotPath()

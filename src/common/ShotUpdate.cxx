@@ -62,6 +62,7 @@ void*			FiringInfo::pack(void* buf) const
   buf = shot.pack(buf);
   buf = flagType->pack(buf);
   buf = nboPackFloat(buf, lifetime);
+  buf = nboPackUByte(buf, shotType);
   return buf;
 }
 
@@ -71,7 +72,10 @@ void*			FiringInfo::unpack(void* buf)
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
- return buf;
+  unsigned char t;
+  buf = nboUnpackUByte(buf, t);
+  shotType = (ShotType)t;
+  return buf;
 }
 
 void*			FiringInfo::unpackW(void* buf)
@@ -80,7 +84,10 @@ void*			FiringInfo::unpackW(void* buf)
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
- return buf;
+  unsigned char t;
+  buf = nboUnpackUByte(buf, t);
+  shotType = (ShotType)t;
+  return buf;
 }
 
 // Local Variables: ***

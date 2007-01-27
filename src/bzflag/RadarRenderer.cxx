@@ -786,7 +786,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-	if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll)) {
+	if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
 	  const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	  const float *shotcolor;
 	  if (coloredShot) {

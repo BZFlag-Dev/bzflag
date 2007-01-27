@@ -43,6 +43,9 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 void sendRabbitUpdate ( int playerIndex, unsigned char mode );
 void sendSetTeam ( int playerIndex, int team );
 void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
+void sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
+void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
+void sendSetShotType ( int playerIndex, ShotType type );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
