@@ -2544,6 +2544,80 @@ static void handleSetShotType(void *msg, uint16_t /*len*/ )
 	p->setShotType((ShotType)shotType);
 }
 
+static void handleShotBegin(bool human, void *msg, uint16_t /*len*/ )
+{
+	FiringInfo firingInfo;
+
+	PlayerId		shooterid;
+	uint16_t		id;
+
+	msg = nboUnpackUByte(msg, shooterid);
+	msg = nboUnpackUShort(msg, id);
+
+	msg = firingInfo.unpack(msg);
+
+	firingInfo.shot.player = shooterid;
+	firingInfo.shot.id     = id;
+
+	if (shooterid >= playerSize)
+		return;
+
+	RemotePlayer* shooter = player[shooterid];
+
+	if (shooterid != ServerPlayer) 
+	{
+		if (shooter && player[shooterid]->getId() == shooterid)
+		{
+			shooter->addShot(firingInfo);
+
+			if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
+			{
+				float shotPos[3];
+				shooter->getMuzzle(shotPos);
+
+				// if you are driving with a tank in observer mode
+				// and do not want local shot effects,
+				// disable shot effects for that specific tank
+				if ((ROAM.getMode() != Roaming::roamViewFP) || (!ROAM.getTargetTank()) || (shooterid != ROAM.getTargetTank()->getId()) || BZDB.isTrue("enableLocalShotEffect"))
+						EFFECTS.addShotEffect(shooter->getColor(), shotPos, shooter->getAngle(), shooter->getVelocity());
+			}
+		}
+		else
+			return;
+	}
+
+	if (human) 
+	{
+		const float* pos = firingInfo.shot.pos;
+		const bool importance = false;
+		const bool localSound = isViewTank(shooter);
+
+		switch(firingInfo.shotType)
+		{
+			default:
+				playSound(SFX_FIRE, pos, importance, localSound);
+				break;
+
+			case ShockWaveShot:
+				playSound(SFX_SHOCK, pos, importance, localSound);
+				break;
+
+			case LaserShot:
+				playSound(SFX_LASER, pos, importance, localSound);
+				break;
+
+			case GMShot:
+				playSound(SFX_MISSILE, pos, importance, localSound);
+				break;
+
+			case ThiefShot:
+				playSound(SFX_THIEF, pos, importance, localSound);
+				break;
+
+		}
+	}
+}
+
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, void* msg)
 {
@@ -2677,68 +2751,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       handleNewRabbit(msg,len);
       break;
 
-    case MsgShotBegin: {
-      FiringInfo firingInfo;
-
-      PlayerId		shooterid;
-      uint16_t		id;
-
-      msg = nboUnpackUByte(msg, shooterid);
-      msg = nboUnpackUShort(msg, id);
-
-	  msg = firingInfo.unpack(msg);
-
-      firingInfo.shot.player = shooterid;
-      firingInfo.shot.id     = id;
-
-      if (shooterid >= playerSize)
-	break;
-
-      RemotePlayer* shooter = player[shooterid];
-
-      if (shooterid != ServerPlayer) {
-	if (shooter && player[shooterid]->getId() == shooterid) {
-	  shooter->addShot(firingInfo);
-
-	  if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-	    float shotPos[3];
-	    shooter->getMuzzle(shotPos);
-
-	    // if you are driving with a tank in observer mode
-	    // and do not want local shot effects,
-	    // disable shot effects for that specific tank
-	    if ((ROAM.getMode() != Roaming::roamViewFP)
-		|| (!ROAM.getTargetTank())
-		|| (shooterid != ROAM.getTargetTank()->getId())
-		|| BZDB.isTrue("enableLocalShotEffect")) {
-	      EFFECTS.addShotEffect(shooter->getColor(), shotPos,
-				    shooter->getAngle(),
-				    shooter->getVelocity());
-	    }
-	  }
-	} else {
-	  break;
-	}
-      }
-
-      if (human) {
-	const float* pos = firingInfo.shot.pos;
-	const bool importance = false;
-	const bool localSound = isViewTank(shooter);
-	if (firingInfo.flagType == Flags::ShockWave) {
-	  playSound(SFX_SHOCK, pos, importance, localSound);
-	} else if (firingInfo.flagType == Flags::Laser) {
-	  playSound(SFX_LASER, pos, importance, localSound);
-	} else if (firingInfo.flagType == Flags::GuidedMissile) {
-	  playSound(SFX_MISSILE, pos, importance, localSound);
-	} else if (firingInfo.flagType == Flags::Thief) {
-	  playSound(SFX_THIEF, pos, importance, localSound);
-	} else {
-	  playSound(SFX_FIRE, pos, importance, localSound);
-	}
-      }
+    case MsgShotBegin:
+		handleShotBegin(human,msg,len);
       break;
-    }
 
     case MsgShotEnd: {
       PlayerId id;
