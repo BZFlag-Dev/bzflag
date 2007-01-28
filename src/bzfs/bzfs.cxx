@@ -3010,7 +3010,7 @@ static void shotFired(void *buf, int len, NetHandler *handler)
 	// we always repack in the shot
 	bufTmp = firingInfo.pack(bufTmp);
 
-	relayMessage(MsgShotBegin, len, buf);
+	relayMessage(MsgShotBegin, (char*)bufTmp-(char*)buf, buf);
 }
 
 static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)

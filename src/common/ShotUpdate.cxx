@@ -72,7 +72,7 @@ void*			FiringInfo::unpack(void* buf)
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
-  unsigned char t;
+  unsigned char t = 0 ;
   buf = nboUnpackUByte(buf, t);
   shotType = (ShotType)t;
   return buf;
@@ -84,7 +84,7 @@ void*			FiringInfo::unpackW(void* buf)
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
-  unsigned char t;
+  unsigned char t = 0;
   buf = nboUnpackUByte(buf, t);
   shotType = (ShotType)t;
   return buf;
