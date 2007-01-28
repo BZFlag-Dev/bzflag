@@ -508,6 +508,16 @@ bool SDLDisplay::createWindow() {
   int    width;
   int    height;
   Uint32 flags = SDL_OPENGL;
+
+  /* anti-aliasing */
+  if (BZDB.isSet("multisamples")) {
+    int ms = BZDB.evalInt("multisamples");
+    if (ms == 2 || ms == 4) {
+      SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1);
+      SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, ms);
+    }
+  }
+
   // getting width, height & flags for SetVideoMode
   getWindowSize(width, height);
   if (fullScreen) {
@@ -515,14 +525,17 @@ bool SDLDisplay::createWindow() {
   } else {
     flags |= SDL_RESIZABLE;
   }
+
   // if they are the same, don't bother building a new window
   if ((width == oldWidth) && (height == oldHeight)
       && (fullScreen == oldFullScreen))
     return true;
+
   // save the values for the next
   oldWidth      = width;
   oldHeight     = height;
   oldFullScreen = fullScreen;
+
   // Set the video mode and hope for no errors
   if (!SDL_SetVideoMode(width, height, 0, flags)) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
