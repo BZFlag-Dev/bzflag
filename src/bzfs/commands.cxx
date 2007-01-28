@@ -1477,15 +1477,8 @@ bool FlagCommand::operator() (const char *message,
 	fPlayer->player.setFlag(-1);
       }
 
-      // setup bzfs' state
-      fi->grab(gkPlayer->getIndex());
-      gkPlayer->player.setFlag(fi->getIndex());
-
-      // send MsgGrabFlag
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, gkPlayer->getIndex());
-      buf = fi->pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+      // Send the grab message to the player
+	  sendGrabFlagMessage(gkPlayer->getIndex(), *fi);
 
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
