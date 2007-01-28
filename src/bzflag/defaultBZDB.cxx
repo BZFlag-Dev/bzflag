@@ -116,6 +116,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "flagLists",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "lightLists",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "noMeshClusters",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "multisamples",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

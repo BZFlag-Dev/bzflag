@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include "StateDatabase.h"
 
 #ifdef HAVE_SDL
 #include <stdio.h>
