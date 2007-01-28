@@ -63,7 +63,11 @@
 
 // only include this if we are going to use plugins and export the API
 #ifdef _USE_BZ_API
-#include "bzfsPlugins.h"
+#  include "bzfsPlugins.h"
+#endif
+
+#ifndef BUFSIZE
+#  define BUFSIZE 2048
 #endif
 
 // pass through the SELECT loop
