@@ -3791,10 +3791,9 @@ int main(int argc, char **argv)
 
   logingCallback = &apiLogingCallback;
 
-#ifndef _WIN32
-  setvbuf(stdout, (char *)NULL, _IOLBF, 0);
-  setvbuf(stderr, (char *)NULL, _IOLBF, 0);
-#endif
+  /* line buffered output to console */
+  setvbuf(stdout, (char *)NULL, _IOLBF, BUFSIZE);
+  setvbuf(stderr, (char *)NULL, _IOLBF, BUFSIZE);
 
   Record::init();
 
