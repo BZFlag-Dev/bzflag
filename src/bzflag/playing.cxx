@@ -3863,32 +3863,32 @@ static void		checkEnvironment()
 			if (hitter)
 				hitter->endShot(hit->getShotId());
 		}
-		else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
-			gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
-		else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
-			gotBlowedUp(myTank, WaterDeath, ServerPlayer);
-		else  // if not dead yet, see if i got run over by the steamroller
+	}
+	else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
+		gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
+	else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
+		gotBlowedUp(myTank, WaterDeath, ServerPlayer);
+	else  // if not dead yet, see if i got run over by the steamroller
+	{
+		const float* myPos = myTank->getPosition();
+		const float myRadius = myTank->getRadius();
+		for (i = 0; i < curMaxPlayers; i++) 
 		{
-			const float* myPos = myTank->getPosition();
-			const float myRadius = myTank->getRadius();
-			for (i = 0; i < curMaxPlayers; i++) 
+			if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((myPos[2] < 0.0f) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
 			{
-				if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((myPos[2] < 0.0f) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
-				{
-					const float* pos = player[i]->getPosition();
-					if (pos[2] < 0.0f)
-						continue;
+				const float* pos = player[i]->getPosition();
+				if (pos[2] < 0.0f)
+					continue;
 
-					if (!myTank->isPhantomZoned())
-					{
-						const float radius = myRadius +
-						BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-						const float distSquared =
-						hypotf(hypotf(myPos[0] - pos[0],
-						myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-						if (distSquared < radius)
-							gotBlowedUp(myTank, GotRunOver, player[i]->getId());
-					}
+				if (!myTank->isPhantomZoned())
+				{
+					const float radius = myRadius +
+					BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+					const float distSquared =
+					hypotf(hypotf(myPos[0] - pos[0],
+					myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+					if (distSquared < radius)
+						gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 				}
 			}
 		}
