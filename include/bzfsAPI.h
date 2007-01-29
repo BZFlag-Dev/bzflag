@@ -1721,6 +1721,7 @@ public:
   virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
   virtual void flagTransfer ( int from, int to, int flagID, bz_eShotType shot );
   virtual void nearestFlag ( const char* flagName, float pos[3] );
+  virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shot );
 
   int playerID;
 

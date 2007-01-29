@@ -2618,10 +2618,16 @@ void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState*,
 void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int)
 {
 }
+
 void bz_ServerSidePlayerHandler::flagTransfer ( int from, int to, int flagID, bz_eShotType shot )
 {
 }
+
 void bz_ServerSidePlayerHandler::nearestFlag ( const char* flagName, float pos[3] )
+{
+}
+
+void bz_ServerSidePlayerHandler::grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shot )
 {
 }
 

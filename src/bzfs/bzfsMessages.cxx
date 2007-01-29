@@ -526,6 +526,14 @@ void sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
 	broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
 
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv,(bz_eShotType)playerData->efectiveShotType);
+	}
+
 	playerData->flagHistory.add(flag.flag.type);
 }
 
