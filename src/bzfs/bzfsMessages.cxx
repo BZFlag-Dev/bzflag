@@ -553,6 +553,14 @@ void sendSetShotType ( int playerIndex, ShotType type )
 	buf = nboPackUByte(buf,type);
 
 	broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);
+
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->efectiveShotType);
+	}
 }
 
 

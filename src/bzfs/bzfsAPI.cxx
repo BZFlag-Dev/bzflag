@@ -2631,6 +2631,10 @@ void bz_ServerSidePlayerHandler::grabFlag ( int player, int flagID, const char* 
 {
 }
 
+void bz_ServerSidePlayerHandler::setShotType ( int player, bz_eShotType shot )
+{
+}
+
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
 					       const char  *email,

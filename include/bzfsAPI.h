@@ -1722,6 +1722,7 @@ public:
   virtual void flagTransfer ( int from, int to, int flagID, bz_eShotType shot );
   virtual void nearestFlag ( const char* flagName, float pos[3] );
   virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shot );
+  virtual void setShotType ( int player, bz_eShotType shot );
 
   int playerID;
 
