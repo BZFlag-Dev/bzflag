@@ -316,19 +316,24 @@ public:
 
 		bz_freePlayerRecord(p);
 
-		// list dosn't need admin
+		// list needs listplugins permission
 		if ( TextUtils::tolower(command) == "listplugins" )
 		{
-			std::vector<std::string>	plugins = getPluginList();
+			if (!bz_hasPerm(playerID, "listPlugins")) {
+				bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run the listplugins command");
+				return true;
+			} else {
+				std::vector<std::string>	plugins = getPluginList();
 
-			if (!plugins.size())
-				bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
-			else
-			{
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
+				if (!plugins.size())
+					bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
+				else
+				{
+					bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
-				for ( unsigned int i = 0; i < plugins.size(); i++)
-					bz_sendTextMessage(BZ_SERVER,playerID,plugins[i].c_str());
+					for ( unsigned int i = 0; i < plugins.size(); i++)
+						bz_sendTextMessage(BZ_SERVER,playerID,plugins[i].c_str());
+				}
 			}
 			return true;
 		}

@@ -381,6 +381,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::kill: return "kill";
     case PlayerAccessInfo::lagStats: return "lagStats";
     case PlayerAccessInfo::lagwarn: return "lagwarn";
+    case PlayerAccessInfo::listPlugins: return "listPlugins";
     case PlayerAccessInfo::jitterwarn: return "jitterwarn";
     case PlayerAccessInfo::packetlosswarn: return "packetlosswarn";
     case PlayerAccessInfo::listPerms: return "listPerms";

@@ -67,6 +67,7 @@ public:
       kill,
       lagStats,
       lagwarn,
+      listPlugins,
       jitterwarn,
       packetlosswarn,
       listPerms,
