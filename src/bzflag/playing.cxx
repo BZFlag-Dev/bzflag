@@ -3870,6 +3870,7 @@ static void		checkEnvironment()
 	}
 	else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
 		gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
+	// this is done on the server now, we should remove this when we are sure its ok.
 /*	else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
 		gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
 	else  // if not dead yet, see if i got run over by the steamroller

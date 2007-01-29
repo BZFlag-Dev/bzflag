@@ -563,7 +563,6 @@ void sendSetShotType ( int playerIndex, ShotType type )
 	}
 }
 
-
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {
