@@ -90,6 +90,8 @@ extern void resumeCountdown ( const char *resumedBy );
 extern void resetTeamScores ( void );
 extern void startCountdown ( int delay, float limit, const char *buyWho );
 
+void relayMessage(uint16_t code, int len, const void *msg);
+
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
 

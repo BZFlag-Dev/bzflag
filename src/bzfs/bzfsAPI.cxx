@@ -2619,7 +2619,7 @@ void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int)
 {
 }
 
-void bz_ServerSidePlayerHandler::flagTransfer ( int from, int to, int flagID, bz_eShotType shot )
+void bz_ServerSidePlayerHandler::flagTransfer ( int from, int to, int flagID, bz_eShotType shotType )
 {
 }
 
@@ -2627,14 +2627,17 @@ void bz_ServerSidePlayerHandler::nearestFlag ( const char* flagName, float pos[3
 {
 }
 
-void bz_ServerSidePlayerHandler::grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shot )
+void bz_ServerSidePlayerHandler::grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shotType )
 {
 }
 
-void bz_ServerSidePlayerHandler::setShotType ( int player, bz_eShotType shot )
+void bz_ServerSidePlayerHandler::setShotType ( int player, bz_eShotType shotType )
 {
 }
 
+void bz_ServerSidePlayerHandler::shotFired ( int player, unsigned short shotID, bz_eShotType shotType )
+{
+}
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
 					       const char  *email,

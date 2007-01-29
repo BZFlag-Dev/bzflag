@@ -269,7 +269,7 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 }
 
 // relay message only for human. Bots will get message locally.
-static void relayMessage(uint16_t code, int len, const void *msg)
+void relayMessage(uint16_t code, int len, const void *msg)
 {
 	void *bufStart = (char *)msg - 2*sizeof(uint16_t);
 	void *buf = nboPackUShort(bufStart, uint16_t(len));
@@ -2911,112 +2911,6 @@ static void shotUpdate(void *buf, int len, NetHandler *handler)
 
 }
 
-static void shotFired(void *buf, int len, NetHandler *handler)
-{
-	FiringInfo firingInfo;
-
-	PlayerId		player;
-	uint16_t		id;
-	void                 *bufTmp;
-
-	bufTmp = nboUnpackUByte(buf, player);
-	bufTmp = nboUnpackUShort(bufTmp, id);
-
-	firingInfo.shot.player = player;
-	firingInfo.shot.id     = id;
-
-	int playerIndex = player;
-
-	// verify playerId
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!playerData)
-		return;
-
-	firingInfo.shotType = playerData->efectiveShotType;
-
-	if (playerData->netHandler != handler)
-		return;
-
-	const PlayerInfo &shooter = playerData->player;
-	if (!shooter.isAlive() || shooter.isObserver())
-		return;
-
-	FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
-
-	if (shooter.haveFlag())
-		firingInfo.flagType = fInfo.flag.type;
-	else
-		firingInfo.flagType = Flags::Null;
-
-	if (!playerData->addShot(id & 0xff, id >> 8, firingInfo))
-		return;
-
-	char message[MessageLen];
-	if (shooter.haveFlag())
-	{
-		fInfo.numShots++; // increase the # shots fired
-		int limit = clOptions->flagLimit[fInfo.flag.type];
-		if (limit != -1)
-		{
-			// if there is a limit for players flag
-			int shotsLeft = limit -  fInfo.numShots;
-
-			if (shotsLeft > 0)
-			{
-				//still have some shots left
-				// give message each shot below 5, each 5th shot & at start
-				if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
-				{
-					if (shotsLeft > 1)
-						sprintf(message,"%d shots left",shotsLeft);
-					else
-						strcpy(message,"1 shot left");
-
-					sendMessage(ServerPlayer, playerIndex, message);
-				}
-			}
-			else
-			{
-				// no shots left
-				if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
-				{
-					// drop flag at last known position of player
-					// also handle case where limit was set to 0
-					float lastPos [3];
-					for (int i = 0; i < 3; i ++)
-					{
-						lastPos[i] = playerData->currentPos[i];
-					}
-					fInfo.grabs = 0; // recycle this flag now
-					dropPlayerFlag(*playerData, lastPos);
-				}
-				else
-				{
-					// more shots fired than allowed
-					// do nothing for now -- could return and not allow shot
-				}
-			} // end no shots left
-		} // end is limit
-	} // end of player has flag
-
-	// ask the API if it wants to modify this shot
-	bz_ShotFiredEventData_V1 shotEvent;
-
-	shotEvent.pos[0] = firingInfo.shot.pos[0];
-	shotEvent.pos[1] = firingInfo.shot.pos[1];
-	shotEvent.pos[2] = firingInfo.shot.pos[2];
-	shotEvent.player = (int)player;
-
-	shotEvent.type = firingInfo.flagType->flagAbbv;
-
-	worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
-
-	// we always repack in the shot
-	bufTmp = firingInfo.pack(bufTmp);
-
-	relayMessage(MsgShotBegin, (char*)bufTmp-(char*)buf, buf);
-}
-
 static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
   // shot has ended prematurely -- send MsgShotEnd
@@ -3251,9 +3145,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     // shot fired
     case MsgShotBegin:
-      // Sanity check
-      if (len == 3)
-	shotFired(buf, int(len), handler);
+		handleShotFired(buf, int(len), handler);
       break;
 
     // shot ended prematurely

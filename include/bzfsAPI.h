@@ -1719,10 +1719,11 @@ public:
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);
   virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
-  virtual void flagTransfer ( int from, int to, int flagID, bz_eShotType shot );
+  virtual void flagTransfer ( int from, int to, int flagID, bz_eShotType shotType );
   virtual void nearestFlag ( const char* flagName, float pos[3] );
-  virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shot );
-  virtual void setShotType ( int player, bz_eShotType shot );
+  virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shotType );
+  virtual void setShotType ( int player, bz_eShotType shotType );
+  virtual void shotFired ( int player, unsigned short shotID, bz_eShotType shotType );
 
   int playerID;
 
