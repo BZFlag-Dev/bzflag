@@ -1643,10 +1643,7 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
 		gkPlayer->player.setFlag(fi->getIndex());
 
 		// send MsgGrabFlag
-		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte(bufStart, gkPlayer->getIndex());
-		buf = fi->pack(buf);
-		broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+		sendGrabFlagMessage(gkPlayer->getIndex(), *fi);
 
 		//flag successfully given to player
 		return true;
