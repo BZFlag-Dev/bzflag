@@ -13,6 +13,7 @@ SUBDIRS = \
 	HoldTheFlag \
 	nagware \
 	vocaliser \
+	wwzones \
 	torBlock \
 	recordmatch 
 
