@@ -3774,7 +3774,7 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
-void updatePlayerPositions ( void )
+static void updatePlayerPositions ( void )
 {
 	double now = TimeKeeper::getCurrent().getSeconds();
 	for (int i = 0; i < curMaxPlayers; i++)
@@ -3782,6 +3782,22 @@ void updatePlayerPositions ( void )
 		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
 		 if (player)
 			 player->doPlayerDR((float)now);
+	}
+}
+
+static void checkForWorldDeaths ( void )
+{
+	float waterLevel = world->getWaterLevel();
+
+	if (waterLevel > 0.0f)
+	{
+		for (int i = 0; i < curMaxPlayers; i++)
+		{
+			// kill anyone under the water level
+			GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
+			if ( player && player->currentPos[0] <= waterLevel)
+				playerKilled(player->getIndex(), ServerPlayer, WaterDeath, -1, Flags::Null, -1);
+		}
 	}
 }
 
@@ -4176,6 +4192,7 @@ int main(int argc, char **argv)
 	worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
 	updatePlayerPositions();
+	checkForWorldDeaths();
 
     // see if the octree needs to be reloaded
     world->checkCollisionManager();
