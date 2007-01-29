@@ -153,7 +153,7 @@ static void		setHuntTarget();
 static void		setTankFlags();
 static void*		handleMsgSetVars(void *msg);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
-static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
+static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex, ShotType shotType );
 static void		enteringServer(void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
@@ -2875,9 +2875,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUByte(msg, toId);
 	msg = nboUnpackUShort(msg, flagIndex);
 	msg = world->getFlag(int(flagIndex)).unpack(msg);
+	unsigned char t = 0;
+	msg = nboUnpackUByte(msg,t);
 	Player* fromTank = lookupPlayer(fromId);
 	Player* toTank = lookupPlayer(toId);
-	handleFlagTransferred( fromTank, toTank, flagIndex);
+	handleFlagTransferred( fromTank, toTank, flagIndex, (ShotType)t);
 	break;
       }
 
@@ -3588,11 +3590,13 @@ void handleFlagDropped(Player* tank)
   tank->setFlag(Flags::Null);
 }
 
-static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
+static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex, ShotType shotType )
 {
   Flag f = world->getFlag(flagIndex);
 
+  fromTank->setShotType(StandardShot);
   fromTank->setFlag(Flags::Null);
+  toTank->setShotType(shotType);
   toTank->setFlag(f.type);
 
   if ((fromTank == myTank) || (toTank == myTank))
