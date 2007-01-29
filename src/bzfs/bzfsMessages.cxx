@@ -472,19 +472,31 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
 	obuf = flag.pack(obuf);
 	obuf = nboPackUByte(obuf,toData->efectiveShotType);
 
-	broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
-		obufStart);
-}
+	broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart, obufStart);
 
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->flagTransfer(fromData->getIndex(),toData->getIndex(),flag.getIndex(),(bz_eShotType)toData->efectiveShotType);
+	}
+}
 
 void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
 {
-	if (!type)
+	GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+	if (!type || !playerData)
 		return;
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackVector(bufStart, pos);
 	buf = nboPackStdString(buf, std::string(type->flagName));
-	directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
+	if ( playerData->playerHandler)
+		playerData->playerHandler->nearestFlag(type->flagName,pos);
+	else
+		directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
+
 }
 
 void sendGrabFlagMessage (int playerIndex, FlagInfo &flag )

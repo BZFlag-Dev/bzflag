@@ -1719,6 +1719,8 @@ public:
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);
   virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
+  virtual void flagTransfer ( int from, int to, int flagID, bz_eShotType shot );
+  virtual void nearestFlag ( const char* flagName, float pos[3] );
 
   int playerID;
 
