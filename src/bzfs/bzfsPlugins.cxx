@@ -316,7 +316,7 @@ public:
 
 		bz_freePlayerRecord(p);
 
-		// list needs listplugins permission
+		// list needs listPlugins permission
 		if ( TextUtils::tolower(command) == "listplugins" )
 		{
 			if (!bz_hasPerm(playerID, "listPlugins")) {

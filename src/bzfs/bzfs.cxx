@@ -3737,6 +3737,7 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
   info.explicitAllows[PlayerAccessInfo::idleStats] = true;
   info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+  info.explicitAllows[PlayerAccessInfo::listPlugins] = true;
   info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
   info.explicitAllows[PlayerAccessInfo::spawn] = true;
   info.explicitAllows[PlayerAccessInfo::talk] = true;
