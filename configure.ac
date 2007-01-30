@@ -841,6 +841,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/flagStay/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/torBlock/Makefile
+	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/logDetail/Makefile
 	plugins/playHistoryTracker/Makefile

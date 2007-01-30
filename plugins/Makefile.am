@@ -5,6 +5,7 @@ SUBDIRS = \
 	chathistory \
 	flagStay \
 	hiddenAdmin \
+	keepaway \
 	killall \
 	logDetail \
 	playHistoryTracker \
