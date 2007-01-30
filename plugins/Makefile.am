@@ -13,6 +13,7 @@ SUBDIRS = \
 	shockwaveDeath \
 	HoldTheFlag \
 	nagware \
+	teamflagreset \
 	vocaliser \
 	wwzones \
 	torBlock \
