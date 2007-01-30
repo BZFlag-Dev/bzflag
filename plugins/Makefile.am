@@ -14,6 +14,7 @@ SUBDIRS = \
 	HoldTheFlag \
 	nagware \
 	teamflagreset \
+	timedctf \
 	vocaliser \
 	wwzones \
 	torBlock \
