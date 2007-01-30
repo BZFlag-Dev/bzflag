@@ -581,6 +581,23 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 	}
 }
 
+void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
+{
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, player);
+	buf = nboPackShort(buf, id);
+	buf = nboPackUShort(buf, reason);
+	relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+
+	// now do everyone who dosn't have network
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+		if (otherData && otherData->playerHandler)
+			otherData->playerHandler->shotEnded(player,id,reason);
+	}
+}
+
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {

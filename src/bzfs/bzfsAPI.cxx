@@ -2638,6 +2638,9 @@ void bz_ServerSidePlayerHandler::setShotType ( int player, bz_eShotType shotType
 void bz_ServerSidePlayerHandler::shotFired ( int player, unsigned short shotID, bz_eShotType shotType )
 {
 }
+void bz_ServerSidePlayerHandler::shotEnded ( int player, unsigned short shotID, unsigned short reason )
+{
+}
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
 					       const char  *email,

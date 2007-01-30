@@ -1724,6 +1724,7 @@ public:
   virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shotType );
   virtual void setShotType ( int player, bz_eShotType shotType );
   virtual void shotFired ( int player, unsigned short shotID, bz_eShotType shotType );
+  virtual void shotEnded( int player, unsigned short shotID, unsigned short reason );
 
   int playerID;
 

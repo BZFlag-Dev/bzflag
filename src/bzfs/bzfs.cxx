@@ -2921,24 +2921,6 @@ static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
-{
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(id);
-  if (!playerData)
-    return;
-
-  FiringInfo firingInfo;
-  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8, firingInfo);
-
-  // shot has ended prematurely -- send MsgShotEnd
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, id);
-  buf = nboPackShort(buf, shotIndex);
-  buf = nboPackUShort(buf, reason);
-  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
-}
-
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -3143,25 +3125,13 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleCollide(playerData,buf);
 		break;
 
-    // shot fired
     case MsgShotBegin:
 		handleShotFired(buf, int(len), handler);
       break;
 
-    // shot ended prematurely
-    case MsgShotEnd: {
-      if (playerData->player.isObserver())
-	break;
-
-      // data: shooter id, shot number, reason
-      PlayerId sourcePlayer = playerID;
-      int16_t shot;
-      uint16_t reason;
-      buf = nboUnpackShort(buf, shot);
-      buf = nboUnpackUShort(buf, reason);
-      shotEnded(sourcePlayer, shot, reason);
-      break;
-    }
+    case MsgShotEnd: 
+		handleShotEnded(playerData,buf,len);
+		break;
 
     // tank is being hit
     case MsgHit: {

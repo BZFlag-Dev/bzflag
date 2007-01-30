@@ -414,6 +414,25 @@ void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
 		sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
 }
 
+void handleShotEnded ( GameKeeper::Player *playerData, void *buf, int len )
+{
+	if ( len != 3 || playerData->player.isObserver())
+		return;
+
+	// data: shooter id, shot number, reason
+	PlayerId sourcePlayer = playerData->getIndex();
+
+	int16_t shot;
+	uint16_t reason;
+	buf = nboUnpackShort(buf, shot);
+	buf = nboUnpackUShort(buf, reason);
+
+	FiringInfo firingInfo;
+	playerData->removeShot(shot & 0xff, shot >> 8, firingInfo);
+
+	sendMsgShotEnd(sourcePlayer,shot,reason);
+}
+
 void handleShotFired(void *buf, int len, NetHandler *handler)
 {
 	// Sanity check

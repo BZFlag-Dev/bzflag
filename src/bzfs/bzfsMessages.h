@@ -47,6 +47,7 @@ void sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
 void sendSetShotType ( int playerIndex, ShotType type );
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo );
+void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
