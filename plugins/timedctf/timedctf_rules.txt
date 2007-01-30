@@ -1,0 +1,8 @@
+----------------------------------------------------
+Goal of game: Capture your opponent's flag before
+time runs out.  If you do not do so, your entire
+team dies.
+----------------------------------------------------
+Watch server messages for game updates- how much 
+time is left, etc.
+----------------------------------------------------

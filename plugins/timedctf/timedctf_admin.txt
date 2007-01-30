@@ -1,0 +1,11 @@
+----------------------------------------------------------
+Timed CTF Commands Available To Admins:
+----------------------------------------------------------
+Admin only:
+"ctfcaptime iii" - change cap time to iii
+"ctfcaptimeoff" - disable timed CTF. 
+"ctfcaptimeon" - enable timed CTF. 
+"ctfcaptimestatus" - return status of timedctf 
+"fairctfoff" - disable the fair ctf function. 
+"fairctfon" - enable the fair ctf function. 
+----------------------------------------------------------
