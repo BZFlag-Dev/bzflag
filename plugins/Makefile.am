@@ -4,6 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
+	keepaway \
 	thiefControl \
 	airspawn \
 	chathistory \
