@@ -195,6 +195,7 @@ AC_CONFIG_FILES([
 	Makefile
 	RogueGenocide/Makefile
 	SAMPLE_PLUGIN/Makefile
+	koth/Makefile
 	keepaway/Makefile
 	thiefControl/Makefile
 	airspawn/Makefile
