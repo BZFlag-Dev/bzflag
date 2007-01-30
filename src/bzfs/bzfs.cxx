@@ -3197,7 +3197,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     case MsgNewRabbit: {
       if (playerID == rabbitIndex)
-	anointNewRabbit();
+		anointNewRabbit();
       break;
     }
 

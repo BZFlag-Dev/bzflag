@@ -1738,6 +1738,40 @@ protected:
   void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS);
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
   void captureFlag(bz_eTeamType team);
+
+  void setMovementInput ( float forward, float turn );
+  bool fireShot ( void );
+  bool jump ( void );
+
+  void updatePhysics ( void );
+
+  // info
+  bool canJump ( void );
+  bool canShoot ( void );
+  bool canMove ( void );
+  bz_eShotType getShotType ( void );
+
+protected:
+	typedef struct 
+	{
+		bool enabled;
+		bz_eShotType shotType;
+		float x,y,z;
+		float vx,vy,vz;
+		float fireTime;
+
+		float cx,cy,cz;
+	}Shot;
+
+#define _BOT_MAX_SHOTS 100
+	Shot shots[_BOT_MAX_SHOTS];
+
+	float input[2];
+
+	float pos[3];
+	float vec[3];
+	float rot;
+	float rotVel;
 };
 
 // *** NOTE *** support for server side players in incomplete.

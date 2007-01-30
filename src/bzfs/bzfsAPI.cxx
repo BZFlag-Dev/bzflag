@@ -2756,6 +2756,45 @@ void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
   ::captureFlag(playerID, convertTeam(_team));
 }
 
+void bz_ServerSidePlayerHandler::setMovementInput ( float forward, float turn )
+{
+	input[0] = turn;
+	input[1] = forward;
+}
+
+bool bz_ServerSidePlayerHandler::fireShot ( void )
+{
+	return false;
+}
+
+bool bz_ServerSidePlayerHandler::jump ( void )
+{
+	return false;
+}
+
+void bz_ServerSidePlayerHandler::updatePhysics ( void )
+{
+}
+
+bool bz_ServerSidePlayerHandler::canJump ( void )
+{
+	return false;
+}
+
+bool bz_ServerSidePlayerHandler::canShoot ( void )
+{
+	return false;
+}
+
+bool bz_ServerSidePlayerHandler::canMove ( void )
+{
+	return false;
+}
+
+bz_eShotType bz_ServerSidePlayerHandler::getShotType ( void )
+{
+	return (bz_eShotType)GameKeeper::Player::getPlayerByIndex(playerID)->efectiveShotType;
+}
 
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler )
 {
