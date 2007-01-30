@@ -7,6 +7,7 @@ SUBDIRS = \
 	hiddenAdmin \
 	keepaway \
 	killall \
+	koth \
 	logDetail \
 	playHistoryTracker \
 	python \

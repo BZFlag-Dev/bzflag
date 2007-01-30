@@ -843,6 +843,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/torBlock/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
+	plugins/koth/Makefile
 	plugins/logDetail/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
