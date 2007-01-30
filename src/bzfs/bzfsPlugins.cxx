@@ -39,6 +39,7 @@ tmCustomPluginMap customPluginMap;
 
 typedef struct
 {
+	std::string foundPath;
 	std::string plugin;
 
 #ifdef _WIN32
@@ -47,6 +48,26 @@ typedef struct
 	void*		handle;
 #endif
 }trPluginRecord;
+
+std::vector<trPluginRecord>	vPluginList;
+
+typedef enum
+{
+	eLoadFailedDupe = -1,
+	eLoadFailedError = 0,
+	eLoadComplete
+}PluginLoadReturn;
+
+bool pluginExists ( std::string plugin )
+{
+	for ( int i = 0; i < (int)vPluginList.size(); i++ )
+	{
+		if ( vPluginList[i].foundPath == plugin )
+			return true;
+	}
+	return false;
+}
+
 
 std::string findPlugin ( std::string pluginName )
 {
@@ -88,8 +109,6 @@ std::string findPlugin ( std::string pluginName )
 	return std::string("");
 }
 
-std::vector<trPluginRecord>	vPluginList;
-
 void unload1Plugin ( int iPluginID );
 
 #ifdef _WIN32
@@ -104,11 +123,16 @@ int getPluginVersion ( HINSTANCE hLib )
 	return 0;
 }
 
-bool load1Plugin ( std::string plugin, std::string config )
+PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
 	std::string realPluginName = findPlugin(plugin);
+	if (pluginExists(realPluginName))
+	{
+		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
+		return eLoadFailedDupe;
+	}	
 
 	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
 	if (hLib)
@@ -117,7 +141,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		{
 			logDebugMessage(1,"Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
-			return false;
+			return eLoadFailedError;
 		}
 		else
 		{
@@ -128,24 +152,26 @@ bool load1Plugin ( std::string plugin, std::string config )
 				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
 
 				trPluginRecord pluginRecord;
+				pluginRecord.foundPath = realPluginName;
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
 				vPluginList.push_back(pluginRecord);
-				return true;
 			}
 			else
 			{
 				logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
 				FreeLibrary(hLib);
-				return false;
+				return eLoadFailedError;
 			}
 		}
 	}
 	else
 	{
 		logDebugMessage(1,"Plugin:%s not found\n",plugin.c_str());
-		return false;
+		return eLoadFailedError;
 	}
+
+	return eLoadComplete;
 }
 
 void unload1Plugin ( int iPluginID )
@@ -153,6 +179,8 @@ void unload1Plugin ( int iPluginID )
 	int (*lpProc)(void);
 
 	trPluginRecord &plugin = vPluginList[iPluginID];
+	if (!plugin.handle)
+		return;
 
 	lpProc = (int (__cdecl *)(void))GetProcAddress(plugin.handle, "bz_Unload");
 	if (lpProc)
@@ -162,6 +190,8 @@ void unload1Plugin ( int iPluginID )
 
 	FreeLibrary(plugin.handle);
 	plugin.handle = NULL;
+	plugin.foundPath = "";
+	plugin.plugin = "";
 }
 #else
 
@@ -177,11 +207,17 @@ int getPluginVersion ( void* hLib )
 	return 0;
 }
 
-bool load1Plugin ( std::string plugin, std::string config )
+PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 {
 	int (*lpProc)(const char*);
 
 	std::string realPluginName = findPlugin(plugin);
+
+	if (pluginExists(realPluginName))
+	{
+		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
+		return eLoadFailedDupe;
+	}	
 
 	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	if (hLib)
@@ -189,7 +225,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		if (dlsym(hLib, "bz_Load") == NULL) {
 			logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
-			return false;
+			return eLoadFailedError;
 		}
 
 		int version = getPluginVersion(hLib);
@@ -197,7 +233,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		{
 			logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
 			dlclose(hLib);
-			return false;
+			return eLoadFailedError;
 		}
 		else
 		{
@@ -210,24 +246,27 @@ bool load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.handle = hLib;
 				pluginRecord.plugin = plugin;
 				vPluginList.push_back(pluginRecord);
-				return true;
+				return eLoadComplete;
 			}
 		}
 	}
 	else
 	{
 		logDebugMessage(1,"Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
-		return false;
+		return eLoadFailedError;
 	}
 
 	logDebugMessage(1,"If you see this, there is something terribly wrong.\n");
-	return false;
+	return eLoadFailedError;
 }
 
 void unload1Plugin ( int iPluginID )
 {
 	int (*lpProc)(void);
 	trPluginRecord &plugin = vPluginList[iPluginID];
+
+	if(!plugin.handle)
+		return;
 
 	*(void**) &lpProc = dlsym(plugin.handle, "bz_Unload");
 	if (lpProc)
@@ -237,6 +276,9 @@ void unload1Plugin ( int iPluginID )
 
 	dlclose(plugin.handle);
 	plugin.handle = NULL;
+	plugin.foundPath = "";
+	plugin.plugin = "";
+
 }
 #endif
 
@@ -257,7 +299,7 @@ bool loadPlugin ( std::string plugin, std::string config )
 		return handler->handle(plugin,config);
 	}
 	else
-		return load1Plugin(plugin,config);
+		return load1Plugin(plugin,config) == eLoadComplete;
 }
 
 bool unloadPlugin ( std::string plugin )
