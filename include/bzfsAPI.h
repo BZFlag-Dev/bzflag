@@ -1119,6 +1119,8 @@ public:
 		op=false;
 
 		lag = 0;
+		jitter = 0;
+		packetloss = 0;
 
 		wins = 0;
 		losses = 0;
