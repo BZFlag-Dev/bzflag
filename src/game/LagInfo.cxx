@@ -42,6 +42,11 @@ int LagInfo::getJitter() const
   return int(jitteravg * 1000);
 }
 
+int LagInfo::getLoss() const
+{
+	return int(lostavg * 100);
+}
+
 float LagInfo::getLagAvg() const
 {
   return lagavg;

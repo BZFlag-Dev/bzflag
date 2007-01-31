@@ -922,6 +922,11 @@ BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
+// player lag info
+BZF_API int bz_getPlayerLag( int playerId );
+BZF_API int bz_getPlayerJitter( int playerId );
+BZF_API float bz_getPlayerPacketloss( int playerId );
+
 class bz_PlayerRecord
 {
 public:

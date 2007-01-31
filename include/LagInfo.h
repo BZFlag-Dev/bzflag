@@ -33,6 +33,9 @@ public:
   /** Getting jitter value (in milliseconds)
   */
   int	getJitter() const;
+  /** Getting packetloss value (in percent)
+  */
+  int	getLoss() const;
   /** Get the floating point value of the lag (in seconds)
   */
   float	getLagAvg() const;

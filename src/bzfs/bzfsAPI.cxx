@@ -787,6 +787,30 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
 	return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
 }
 
+BZF_API int bz_getPlayerLag( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getLag();
+}
+
+BZF_API int bz_getPlayerJitter( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getJitter();
+}
+
+BZF_API float bz_getPlayerPacketloss( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return (float)GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getLoss();
+}
+
 
 BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
 {
@@ -1770,8 +1794,6 @@ BZF_API bool bz_saveWorldCacheFile( const char* file )
 		return false;
 	return saveWorldCache(file);
 }
-
-
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
