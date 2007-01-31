@@ -722,6 +722,8 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 
 	playerRecord->spawned = player->player.isAlive();
 	playerRecord->lag = player->lagInfo.getLag();
+	playerRecord->jitter = player->lagInfo.getJitter();
+	playerRecord->packetloss = (float)player->lagInfo.getLoss();
 
 	playerRecord->wins = player->score.getWins();
 	playerRecord->losses = player->score.getLosses();
@@ -950,6 +952,30 @@ BZF_API bool bz_setPlayerShotType( int playerId, bz_eShotType shotType )
 
 	sendSetShotType(playerId,(ShotType)shotType);
 	return true;
+}
+
+BZF_API int bz_getPlayerLag( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getLag();
+}
+
+BZF_API int bz_getPlayerJitter( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getJitter();
+}
+
+BZF_API float bz_getPlayerPacketloss( int playerId )
+{
+	if (!GameKeeper::Player::getPlayerByIndex(playerId))
+		return 0;
+
+	return (float)GameKeeper::Player::getPlayerByIndex(playerId)->lagInfo.getLoss();
 }
 
 BZF_API bz_APIStringList* bz_getGroupList ( void )

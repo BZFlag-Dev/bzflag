@@ -1158,6 +1158,8 @@ public:
 	bz_APIStringList groups;
 
 	int lag;
+	int jitter;
+	float packetloss;
 
 	int wins;
 	int losses;
@@ -1179,6 +1181,10 @@ BZF_API bool bz_resetPlayerScore(int playerId);
 // player shots
 BZF_API bool bz_setPlayerShotType( int playerId, bz_eShotType shotType );
 
+// player lag info
+BZF_API int bz_getPlayerLag( int playerId );
+BZF_API int bz_getPlayerJitter( int playerId );
+BZF_API float bz_getPlayerPacketloss( int playerId );
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList ( void );
