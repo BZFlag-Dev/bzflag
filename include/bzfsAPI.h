@@ -1736,6 +1736,10 @@ public:
 
   int playerID;
 
+  // higher level functions
+  virtual void spawned ( void );
+  virtual bool think ( void );	// return true to kill and delete the bot;
+
 protected:
   void setPlayerData(const char *callsign, const char *email,
 		     const char *token, const char *clientVersion,
@@ -1780,6 +1784,11 @@ protected:
 	float vec[3];
 	float rot;
 	float rotVel;
+
+	bool alive;
+
+private:
+	void computeVelsFromInput ( void );
 };
 
 // *** NOTE *** support for server side players in incomplete.

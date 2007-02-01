@@ -2586,6 +2586,19 @@ BZF_API bz_eGameType bz_getGameType( void )
 }
 
 // server side bot API
+
+// higer level logic API
+void bz_ServerSidePlayerHandler::spawned ( void )
+{
+
+}
+
+bool bz_ServerSidePlayerHandler::think ( void )
+{
+	return false;
+}
+
+// lower level message API
 void bz_ServerSidePlayerHandler::playerRemoved(int)
 {
 }
@@ -2594,8 +2607,20 @@ void bz_ServerSidePlayerHandler::playerRejected(bz_eRejectCodes, const char*)
 {
 }
 
-void bz_ServerSidePlayerHandler::playerSpawned(int, float[3], float)
+void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot)
 {
+	if ( id == playerID )
+	{
+		// it was me, I'm not in limbo
+		alive = true;
+
+		// get where I am;
+		memcpy(pos,_pos,sizeof(float)*3);
+		rot = _rot;
+
+		// tell the high level API that we done spawned;
+		spawned();
+	}
 }
 
 void bz_ServerSidePlayerHandler::textMessage(int, int, const char*)
@@ -2690,6 +2715,8 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char  *callsign,
   char     reason[512] = {0};
   if (!player->player.processEnter(code, reason))
     playerRejected((bz_eRejectCodes)code, reason);
+
+  alive = player->player.isAlive();
 }
 
 void  bz_ServerSidePlayerHandler::joinGame ( void )
@@ -2782,10 +2809,29 @@ void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
   ::captureFlag(playerID, convertTeam(_team));
 }
 
+void bz_ServerSidePlayerHandler::computeVelsFromInput ( void )
+{
+	
+}
+
 void bz_ServerSidePlayerHandler::setMovementInput ( float forward, float turn )
 {
+	if ( input[0] == turn && input[1] == forward )
+		return;
+
 	input[0] = turn;
 	input[1] = forward;
+
+	if (input[0] > 1.0f)
+		input[0] = 1.0f;
+	if (input[1] > 1.0f)
+		input[1] = 1.0f;
+	if (input[0] < -1.0f)
+		input[0] = -1.0f;
+	if (input[1] < -1.0f)
+		input[1] = -1.0f;
+
+	computeVelsFromInput();
 }
 
 bool bz_ServerSidePlayerHandler::fireShot ( void )
@@ -2800,6 +2846,8 @@ bool bz_ServerSidePlayerHandler::jump ( void )
 
 void bz_ServerSidePlayerHandler::updatePhysics ( void )
 {
+	if (!alive)
+		return;
 }
 
 bool bz_ServerSidePlayerHandler::canJump ( void )
@@ -2814,7 +2862,7 @@ bool bz_ServerSidePlayerHandler::canShoot ( void )
 
 bool bz_ServerSidePlayerHandler::canMove ( void )
 {
-	return false;
+	return alive; // !jumping;
 }
 
 bz_eShotType bz_ServerSidePlayerHandler::getShotType ( void )
