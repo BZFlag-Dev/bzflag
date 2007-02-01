@@ -146,6 +146,9 @@ public:
     void           setLastIdFlag(int _idFlag);
     int            getLastIdFlag();
 
+	// to handle movement
+	float getRealSpeed ( float input );
+
     enum LSAState
       {
 	start,
@@ -215,7 +218,8 @@ public:
     static int             maxShots;
     std::vector<ShotInfo> shotsInfo;
 
-    int                   idFlag;
+    int						idFlag;
+	TimeKeeper				agilityTime;
   };
 
   class Flag {

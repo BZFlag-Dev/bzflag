@@ -20,6 +20,8 @@
 
 /* common headers */
 #include "GameTime.h"
+#include "FlagInfo.h"
+#include "StateDatabase.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -567,6 +569,73 @@ void GameKeeper::Player::setLastIdFlag(int _idFlag) {
 
 int GameKeeper::Player::getLastIdFlag() {
   return idFlag;
+}
+
+float GameKeeper::Player::getRealSpeed ( float input )
+{
+	FlagInfo* flag = FlagInfo::get(player.getFlag());
+
+	FlagType* flagType = NULL;
+	if ( flagType )
+		flagType = flag->flag.type;
+	
+	float fracOfMaxSpeed = input;
+
+	// If we aren't allowed to move, then the real speed is 0.
+	if (!player.canMove())
+		return 0.0f;
+
+	// can't go faster forward than at top speed, and backward at half speed
+	if (fracOfMaxSpeed > 1.0f)
+		fracOfMaxSpeed = 1.0f;
+	else if (fracOfMaxSpeed < -0.5f)
+		fracOfMaxSpeed = -0.5f;
+
+	// oscillation overthruster tank in building can't back up
+	if (fracOfMaxSpeed < 0.0f && (lastState.status & PlayerState::InBuilding) && flagType == Flags::OscillationOverthruster) 
+		fracOfMaxSpeed = 0.0f;
+
+	// boost speed for certain flags
+	if (flagType == Flags::Velocity)
+		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	else if (flagType == Flags::Thief)
+		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	else if ((flagType == Flags::Burrow) && (lastState.pos[2] < 0.0f))
+		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+	else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
+		fracOfMaxSpeed = 0.0f;
+	else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
+		fracOfMaxSpeed = 0.0f;
+	else if (flagType == Flags::Agility) 
+	{
+	/*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
+			fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+		else
+		{
+			float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
+			if (oldFrac > 1.0f)
+				oldFrac = 1.0f;
+			else if (oldFrac < -0.5f)
+				oldFrac = -0.5f;
+
+			float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+
+			if (fracOfMaxSpeed < 0.0f)
+				limit /= 2.0f;
+			if (fabs(fracOfMaxSpeed - oldFrac) > limit) 
+			{
+				fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+				agilityTime = TimeKeeper::getCurrent();
+			}
+		} */
+	}
+	float handicap = 1.0f;
+
+	// apply handicap advantage to tank speed
+	fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
+
+	// set desired speed
+	return BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
 }
 
 // Local Variables: ***
