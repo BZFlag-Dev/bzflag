@@ -424,6 +424,8 @@ float			StateDatabase::eval(const std::string& name)
   }
   Expression pre, inf;
   std::string value = index->second.value;
+  if (!value.size())
+	  return NaN;
   value >> inf;
   pre = infixToPrefix(inf);
   float retn = evaluate(pre);
