@@ -316,9 +316,6 @@ inline bool oneTeam(bz_eTeamType leavingPlayerTeam)
 	int Test1 = (RT * GT) + (RT * BT) + (RT * PT) + (GT * BT) + (GT * PT) + (BT * PT);
 	int Test2 = RT + GT + BT + PT + RGT;
 
-	if (leavingPlayerTeam == eRedTeam)
-		RT--;
-	
 	if (Test1 < 1 && Test2 < 2)
 	{
 		if (!oneTeamWarn)
