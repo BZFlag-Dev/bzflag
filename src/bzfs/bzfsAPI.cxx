@@ -1651,6 +1651,22 @@ BZF_API bool bz_resetFlag ( int flag )
 	return true;
 }
 
+BZF_API bool bz_moveFlag ( int flag, float pos[3] )
+{
+	FlagInfo *pFlag = FlagInfo::get(flag);
+	if(!pFlag)
+		return false;
+
+	// if somone has it, drop it
+	if (pFlag->player != -1)
+		sendDrop(*pFlag);
+
+	pFlag->resetFlag(pos, true);
+	sendFlagUpdate(*pFlag);
+
+	return true;
+}
+
 BZF_API int bz_flagPlayer ( int flag )
 {
 	FlagInfo *pFlag = FlagInfo::get(flag);
