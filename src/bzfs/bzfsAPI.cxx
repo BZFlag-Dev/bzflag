@@ -1738,7 +1738,7 @@ BZF_API bool bz_resetFlag ( int flag )
 	return true;
 }
 
-BZF_API bool bz_moveFlag ( int flag, float pos[3] )
+BZF_API bool bz_moveFlag ( int flag, float pos[3], bool reset )
 {
 	FlagInfo *pFlag = FlagInfo::get(flag);
 	if(!pFlag)
@@ -1748,7 +1748,11 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] )
 	if (pFlag->player != -1)
 		sendDrop(*pFlag);
 
-	pFlag->resetFlag(pos, true);
+	if (reset)
+		pFlag->resetFlag(pos, true);
+	else
+		memcpy(pFlag->flag.position,pos,sizeof(float)*3);
+
 	sendFlagUpdate(*pFlag);
 
 	return true;
