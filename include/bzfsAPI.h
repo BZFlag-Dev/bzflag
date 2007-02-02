@@ -94,6 +94,7 @@ typedef enum
     bz_eFlagTransferredEvent,
 	bz_eFlagGrabbedEvent,
 	bz_eFlagDroppedEvent,
+	bz_eShotEndedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1074,6 +1075,27 @@ public:
 	const char *flagType;
 	float	position[3];
 };
+
+
+class bz_ShotEndedEventData_V1 : public bz_EventData
+{
+public:
+
+	bz_ShotEndedEventData_V1()
+	{
+		eventType = bz_eShotEndedEvent;
+		playerID = -1;
+		shotID = -1;
+		exlpode = false;
+	}
+
+	virtual ~bz_ShotEndedEventData_V1(){};
+
+	int playerID;
+	int shotID;
+	bool exlpode;
+};
+
 // event handler callback
 class bz_EventHandler
 {

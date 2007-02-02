@@ -427,6 +427,13 @@ void handleShotEnded ( GameKeeper::Player *playerData, void *buf, int len )
 	buf = nboUnpackShort(buf, shot);
 	buf = nboUnpackUShort(buf, reason);
 
+	// ask the API if it wants to modify this shot
+	bz_ShotEndedEventData_V1 shotEvent;
+	shotEvent.playerID = (int)sourcePlayer;
+	shotEvent.shotID = shot;
+	shotEvent.exlpode = reason == 0;
+	worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
+
 	FiringInfo firingInfo;
 	playerData->removeShot(shot & 0xff, shot >> 8, firingInfo);
 
