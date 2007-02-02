@@ -1299,6 +1299,8 @@ BZF_API const bz_ApiString bz_getName( int flag );
 BZF_API bool bz_resetFlag ( int flag );
 BZF_API int bz_flagPlayer ( int flag );
 BZF_API bool bz_getFlagPosition ( int flag, float* pos );
+BZF_API bool bz_moveFlag ( int flag, float pos[3] );
+
 
 // world
 typedef struct
