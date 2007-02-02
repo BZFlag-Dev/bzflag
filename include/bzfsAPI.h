@@ -83,6 +83,7 @@ typedef enum
 	bz_eNetDataSendEvent,
 	bz_eNetDataReceveEvent,
 	bz_eLogingEvent,
+	bz_eShotEndedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -893,6 +894,25 @@ public:
 	double time;
 	int level;
 	bzApiString message;
+};
+
+class bz_ShotEndedEventData : public bz_EventData
+{
+public:
+
+	bz_ShotEndedEventData()
+	{
+		eventType = bz_eShotEndedEvent;
+		playerID = -1;
+		shotID = -1;
+		exlpode = false;
+	}
+
+	virtual ~bz_ShotEndedEventData(){};
+
+	int playerID;
+	int shotID;
+	bool exlpode;
 };
 
 

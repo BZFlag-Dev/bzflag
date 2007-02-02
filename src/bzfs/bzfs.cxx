@@ -3108,6 +3108,12 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   buf = nboPackShort(buf, shotIndex);
   buf = nboPackUShort(buf, reason);
   broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+
+  bz_ShotEndedEventData shotEvent;
+  shotEvent.playerID = (int)id;
+  shotEvent.shotID = shotIndex;
+  shotEvent.exlpode = reason == 0;
+  worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 }
 
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
