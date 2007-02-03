@@ -1,5 +1,5 @@
 /* zutil.h -- internal interface and configuration of the compression library
- * Copyright (C) 1995-2003 Jean-loup Gailly.
+ * Copyright (C) 1995-2005 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -17,14 +17,26 @@
 #include "zlib.h"
 
 #ifdef STDC
-#  include <stddef.h>
+#  ifndef _WIN32_WCE
+#    include <stddef.h>
+#  endif
 #  include <string.h>
 #  include <stdlib.h>
 #endif
 #ifdef NO_ERRNO_H
+#   ifdef _WIN32_WCE
+      /* The Microsoft C Run-Time Library for Windows CE doesn't have
+       * errno.  We define it as a global variable to simplify porting.
+       * Its value is always 0 and should not be used.  We rename it to
+       * avoid conflict with other libraries that use the same workaround.
+       */
+#     define errno z_errno
+#   endif
     extern int errno;
 #else
-#   include <errno.h>
+#  ifndef _WIN32_WCE
+#    include <errno.h>
+#  endif
 #endif
 
 #ifndef local
@@ -47,7 +59,7 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
   return (strm->msg = (char*)ERR_MSG(err), (err))
 /* To be used only when the state is known to be valid */
 
-	/* common constants */
+        /* common constants */
 
 #ifndef DEF_WBITS
 #  define DEF_WBITS MAX_WBITS
@@ -72,7 +84,7 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 
 #define PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
 
-	/* target dependencies */
+        /* target dependencies */
 
 #if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
 #  define OS_CODE  0x00
@@ -105,6 +117,9 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 
 #ifdef OS2
 #  define OS_CODE  0x06
+#  ifdef M_I86
+     #include <malloc.h>
+#  endif
 #endif
 
 #if defined(MACOS) || defined(TARGET_OS_MAC)
@@ -148,7 +163,7 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #  endif
 #endif
 
-	/* common defaults */
+        /* common defaults */
 
 #ifndef OS_CODE
 #  define OS_CODE  0x03  /* assume Unix */
@@ -158,7 +173,7 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #  define F_OPEN(name, mode) fopen((name), (mode))
 #endif
 
-	 /* functions */
+         /* functions */
 
 #if defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
 #  ifndef HAVE_VSNPRINTF
@@ -173,7 +188,7 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #ifndef HAVE_VSNPRINTF
 #  ifdef MSDOS
      /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
-	but for now we just assume it doesn't. */
+        but for now we just assume it doesn't. */
 #    define NO_vsnprintf
 #  endif
 #  ifdef __TURBOC__
@@ -191,15 +206,6 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #endif
 #ifdef VMS
 #  define NO_vsnprintf
-#endif
-
-#ifdef HAVE_STRERROR
-#  ifndef VMS
-     extern char *strerror OF((int));
-#  endif
-#  define zstrerror(errnum) strerror(errnum)
-#else
-#  define zstrerror(errnum) ""
 #endif
 
 #if defined(pyr)
@@ -256,7 +262,7 @@ voidpf zcalloc OF((voidpf opaque, unsigned items, unsigned size));
 void   zcfree  OF((voidpf opaque, voidpf ptr));
 
 #define ZALLOC(strm, items, size) \
-	   (*((strm)->zalloc))((strm)->opaque, (items), (size))
+           (*((strm)->zalloc))((strm)->opaque, (items), (size))
 #define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
 #define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
 

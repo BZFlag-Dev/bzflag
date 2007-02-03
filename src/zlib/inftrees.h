@@ -1,5 +1,5 @@
 /* inftrees.h -- header to use inftrees.c
- * Copyright (C) 1995-2003 Mark Adler
+ * Copyright (C) 1995-2005 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -22,9 +22,9 @@
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
 typedef struct {
-    unsigned char op;	   /* operation, extra bits, table bits */
-    unsigned char bits;	 /* bits in this part of the code */
-    unsigned short val;	 /* offset in table or code value */
+    unsigned char op;           /* operation, extra bits, table bits */
+    unsigned char bits;         /* bits in this part of the code */
+    unsigned short val;         /* offset in table or code value */
 } code;
 
 /* op values as set by inflate_table():
@@ -36,12 +36,12 @@ typedef struct {
  */
 
 /* Maximum size of dynamic tree.  The maximum found in a long but non-
-   exhaustive search was 1004 code structures (850 for length/literals
-   and 154 for distances, the latter actually the result of an
+   exhaustive search was 1444 code structures (852 for length/literals
+   and 592 for distances, the latter actually the result of an
    exhaustive search).  The true maximum is not known, but the value
    below is more than safe. */
-#define ENOUGH 1440
-#define MAXD 154
+#define ENOUGH 2048
+#define MAXD 592
 
 /* Type of code to build for inftable() */
 typedef enum {
@@ -51,5 +51,5 @@ typedef enum {
 } codetype;
 
 extern int inflate_table OF((codetype type, unsigned short FAR *lens,
-			     unsigned codes, code FAR * FAR *table,
-			     unsigned FAR *bits, unsigned short FAR *work));
+                             unsigned codes, code FAR * FAR *table,
+                             unsigned FAR *bits, unsigned short FAR *work));

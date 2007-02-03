@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Updated zlib to version 1.2.3 - Sean Morrison
 * Anti-aliased rendering option - Snick
 * Added bzfscron plugin to execute commands on time intervals - Daniel Remenak
 * Removed original BSD advertising clause from 3rd party code - Sean Morrison
