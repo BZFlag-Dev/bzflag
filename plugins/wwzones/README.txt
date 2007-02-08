@@ -2,22 +2,13 @@
     DYNAMIC LINK LIBRARY : wwzones Project Overview
 ========================================================================
 
-wwzones plugin version 2.0
+wwzones plugin
 
-Author: LouMan (modified from 'flagStay' code written by JeffM2501)
-Description: See below. 
-Min Version: Latest CVS 2.0 branch code (to compile), bzfs 2.0.8 
-Files: Attached in .zip file: 
-Makefile.am 
-README.txt 
-wwzones.cpp 
-wwzones.def 
-wwzones.dll (for Windows versions) 
-wwzones.sln 
-wwzones.vcproj 
+Author: LouMan
 
 Credit to JeffM2501 for base zone and custom map object code (from flagStay plugin), which I have modified to fit this application.
 
+Description: 
 
 The plugin will fire a map defined world weapon whenever a player is in a map defined volume.  It could be used for landmines, booby traps, clearing campers in difficult locations, general amusement, etc.  Multiple zones with different weapons, etc. may be used in same map file.
 
