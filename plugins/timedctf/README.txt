@@ -2,19 +2,9 @@
     DYNAMIC LINK LIBRARY : timedctf Project Overview
 ========================================================================
 
-timedctf plugin version 2.1
+timedctf plugin
 
 Author: LouMan 
-Description: See below. 
-Min Version: Latest CVS 2.0 branch code (to compile), bzfs 2.0.8 
-Files: Attached in .zip file: 
-Makefile.am 
-README.txt 
-timedctf.cpp 
-timedctf.def 
-timedctf.dll (for Windows versions) 
-timedctf.sln 
-timedctf.vcproj 
 
 Description: 
 
@@ -24,6 +14,7 @@ There are warning messages sent to individual teams as their time starts to expi
 
 A warning every minute (with time remaining) until the last minute. 
 A warning at 30 seconds before time expires. 
+A warning at 20 seconds before time expires. 
 A warning at 10 seconds before time expires. 
 (boom) 
 
@@ -55,14 +46,16 @@ There are also standard CTF sounds used whenever significant events take place.
 
 The plugin has the following commands available to administrators: 
 
-"ctfcaptime iii" : this will change required capture time to iii (min 1 minute, max 120 minutes). 
-"ctfcaptimeoff" : this will disable timed CTF. 
-"ctfcaptimeon" : this will enable timed CTF. 
-"ctfcaptimestatus" : this will return the current status of functions and the current time limit. 
+"tctftime <iii>" : this will change required capture time to <iii> (1-120 minutes). 
+"tctfoff" : this will disable timed CTF. 
+"tctfon" : this will enable timed CTF. 
+"tctfsoundoff" : this will disable timed CTF sounds. 
+"tctfsoundon" : this will enable timed CTF sounds. 
+"tctfstatus" : this will return the current status of functions and the current time limit. 
 "fairctfoff" : this will disable the fair ctf function. 
 "fairctfon" : this will enable the fair ctf function. 
 
-Note that the balance of teams will still be monitored when the ctf timer is off, and team flags will be dropped if teams are uneven (as described above). This allows this plugin to be utilized for fair, normal ctf play as well, if the ctf timer is turned off.  If both functions (ctfcaptime and fairctf) are turned off, the plugin is effectively disabled.  If the fair CTF function is disabled and the timed CTF function is enabled, the plugin will check for at least 2 teams present before allowing timed CTF to take place.
+Note that the balance of teams will still be monitored when the ctf timer is off, and team flags will be dropped if teams are uneven (as described above). This allows this plugin to be utilized for fair, normal ctf play as well, if the ctf timer is turned off.  If both functions (tctf and fairctf) are turned off, the plugin is effectively disabled.  If the fair CTF function is disabled and the timed CTF function is enabled, the plugin will check for at least 2 teams present before allowing timed CTF to take place.
 
 It will also allow the time limit to be passed to the plugin through the -loadplugin command line with bzfs.  The format is as follows:
 

@@ -1,5 +1,4 @@
 // timedctf.cpp : Defines the entry point for the DLL application.
-// Version 2.1
 
 #include "bzfsAPI.h"
 
@@ -7,62 +6,88 @@ BZ_GET_PLUGIN_VERSION
 
 // event handler callback
 
-class FlagCapped : public bz_EventHandler
+class TCTF
+{
+public:
+	TCTF()
+	{
+		timeLimit = 300; 
+		timeElapsed = 0;
+		timeRemaining = 0;
+		redLastTime = bz_getCurrentTime ();
+		greenLastTime = bz_getCurrentTime ();
+		blueLastTime = bz_getCurrentTime ();
+		purpleLastTime = bz_getCurrentTime ();
+		redLastWarn = bz_getCurrentTime ();
+		greenLastWarn = bz_getCurrentTime ();
+		blueLastWarn = bz_getCurrentTime ();
+		purpleLastWarn = bz_getCurrentTime ();
+		adjTime = 0;
+		timerRunning = false;
+		enabled = true;
+		fairCTFEnabled = true;
+		notifiedCTFOK = false;
+		fairCTF = false;
+		soundEnabled = true;
+	}
+	double timeLimit; 
+	double timeElapsed;
+	double timeRemaining;
+	double redLastTime;
+	double greenLastTime;
+	double blueLastTime;
+	double purpleLastTime;
+	double redLastWarn;
+	double greenLastWarn;
+	double blueLastWarn;
+	double purpleLastWarn;
+	int adjTime;
+	bool timerRunning;
+	bool enabled;
+	bool fairCTFEnabled;
+	bool notifiedCTFOK;
+	bool fairCTF;
+	bool soundEnabled;
+};
+
+TCTF tctf;
+
+class TCTFFlagCapped : public bz_EventHandler
 {
 public:
 	virtual void	process ( bz_EventData *eventData );
 };
 
-class PlayerUpdates : public bz_EventHandler
+class TCTFPlayerUpdates : public bz_EventHandler
 {
 public:
 	virtual void	process ( bz_EventData *eventData );
 };
 
-class TickEvents : public bz_EventHandler
+class TCTFTickEvents : public bz_EventHandler
 {
 public:
 	virtual void	process ( bz_EventData *eventData );
 };
 
-class Commands : public bz_CustomSlashCommandHandler
+class TCTFCommands : public bz_CustomSlashCommandHandler
 {
 public:
-  virtual ~Commands(){};
+  virtual ~TCTFCommands(){};
   virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
-class PlayerJoined : public bz_EventHandler
+class TCTFPlayerJoined : public bz_EventHandler
 {
 public:
 	virtual void	process ( bz_EventData *eventData );
 };
 
-FlagCapped flagcapped;
-PlayerUpdates playerupdates;
-TickEvents tickevents;
-Commands commands;
-PlayerJoined playerjoined;
-
-// default TimeLimit is 5 minutes:
-
-double TimeLimit = 300; 
-double TimeElapsed = 0;
-double TimeRemaining = 0;
-double RedLastTime = bz_getCurrentTime ();
-double GreenLastTime = bz_getCurrentTime ();
-double BlueLastTime = bz_getCurrentTime ();
-double PurpleLastTime = bz_getCurrentTime ();
-double RedLastWarn = bz_getCurrentTime ();
-double GreenLastWarn = bz_getCurrentTime ();
-double BlueLastWarn = bz_getCurrentTime ();
-double PurpleLastWarn = bz_getCurrentTime ();
-int AdjTime = 0;
-bool TimerRunning = false;
-bool TimedCTFEnabled = true;
-bool FairCTFEnabled = true;
-bool NotifiedCTFOK = false;
-bool FairCTF = false;
+TCTFFlagCapped tctfflagcapped;
+TCTFPlayerUpdates tctfplayerupdates;
+TCTFTickEvents tctftickevents;
+TCTFCommands tctfcommands;
+TCTFPlayerJoined tctfplayerjoined;
 
 double ConvertToInt(std::string inmessage){
 
@@ -98,48 +123,52 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   double timelimitparameter = ConvertToInt(parameter);
   
   if (timelimitparameter > 0)
-	  TimeLimit = timelimitparameter * 60;
+	  tctf.timeLimit = timelimitparameter * 60;
   
   bz_debugMessage(4,"timedctf plugin loaded");
-  bz_registerEvent(bz_eCaptureEvent,&flagcapped);
-  bz_registerEvent(bz_ePlayerJoinEvent,&playerjoined);
-  bz_registerEvent(bz_ePlayerUpdateEvent,&playerupdates);
-  bz_registerEvent(bz_eTickEvent,&tickevents);
-  bz_registerCustomSlashCommand("ctfcaptimestatus",&commands);
-  bz_registerCustomSlashCommand("ctfcaptime",&commands);
-  bz_registerCustomSlashCommand("ctfcaptimeon",&commands);
-  bz_registerCustomSlashCommand("ctfcaptimeoff",&commands);
-  bz_registerCustomSlashCommand("fairctfon",&commands);
-  bz_registerCustomSlashCommand("fairctfoff",&commands);
+  bz_registerEvent(bz_eCaptureEvent,&tctfflagcapped);
+  bz_registerEvent(bz_ePlayerJoinEvent,&tctfplayerjoined);
+  bz_registerEvent(bz_ePlayerUpdateEvent,&tctfplayerupdates);
+  bz_registerEvent(bz_eTickEvent,&tctftickevents);
+  bz_registerCustomSlashCommand("tctfstatus",&tctfcommands);
+  bz_registerCustomSlashCommand("tctftime",&tctfcommands);
+  bz_registerCustomSlashCommand("tctfon",&tctfcommands);
+  bz_registerCustomSlashCommand("tctfoff",&tctfcommands);
+  bz_registerCustomSlashCommand("fairctfon",&tctfcommands);
+  bz_registerCustomSlashCommand("fairctfoff",&tctfcommands);
+  bz_registerCustomSlashCommand("tctfsoundon",&tctfcommands);
+  bz_registerCustomSlashCommand("tctfsoundoff",&tctfcommands);
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
   bz_debugMessage(4,"timedctf plugin unloaded");
-  bz_removeEvent(bz_eCaptureEvent,&flagcapped);
-  bz_removeEvent(bz_ePlayerJoinEvent,&playerjoined);
-  bz_removeEvent(bz_ePlayerUpdateEvent,&playerupdates);
-  bz_removeEvent(bz_eTickEvent,&tickevents);
-  bz_removeCustomSlashCommand("ctfcaptimestatus");
-  bz_removeCustomSlashCommand("ctfcaptime");
-  bz_removeCustomSlashCommand("ctfcaptimeon");
-  bz_removeCustomSlashCommand("ctfcaptimeoff");
+  bz_removeEvent(bz_eCaptureEvent,&tctfflagcapped);
+  bz_removeEvent(bz_ePlayerJoinEvent,&tctfplayerjoined);
+  bz_removeEvent(bz_ePlayerUpdateEvent,&tctfplayerupdates);
+  bz_removeEvent(bz_eTickEvent,&tctftickevents);
+  bz_removeCustomSlashCommand("tctfstatus");
+  bz_removeCustomSlashCommand("tctftime");
+  bz_removeCustomSlashCommand("tctfon");
+  bz_removeCustomSlashCommand("tctfoff");
   bz_removeCustomSlashCommand("fairctfon");
   bz_removeCustomSlashCommand("fairctfoff");
+  bz_removeCustomSlashCommand("tctfsoundon");
+  bz_removeCustomSlashCommand("tctfsoundoff");
   return 0;
 }
 
 void ResetTeamData(){
 
-	RedLastTime = bz_getCurrentTime ();
-	GreenLastTime = bz_getCurrentTime ();
-	BlueLastTime = bz_getCurrentTime ();
-	PurpleLastTime = bz_getCurrentTime ();
-	RedLastWarn = bz_getCurrentTime ();
-	GreenLastWarn = bz_getCurrentTime ();
-	BlueLastWarn = bz_getCurrentTime ();
-	PurpleLastWarn = bz_getCurrentTime ();
+	tctf.redLastTime = bz_getCurrentTime ();
+	tctf.greenLastTime = bz_getCurrentTime ();
+	tctf.blueLastTime = bz_getCurrentTime ();
+	tctf.purpleLastTime = bz_getCurrentTime ();
+	tctf.redLastWarn = bz_getCurrentTime ();
+	tctf.greenLastWarn = bz_getCurrentTime ();
+	tctf.blueLastWarn = bz_getCurrentTime ();
+	tctf.purpleLastWarn = bz_getCurrentTime ();
 	return;
 }
 
@@ -219,7 +248,13 @@ void KillTeam(bz_eTeamType TeamToKill){
 			if (player){
 			
 				if (player->team == TeamToKill)
+				{
 					bz_killPlayer(player->playerID, true, BZ_SERVER);
+					if (tctf.soundEnabled)
+						bz_sendPlayCustomLocalSound(player->playerID,"flag_lost");
+				}
+				else if (tctf.soundEnabled)
+					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
 		
 		bz_freePlayerRecord(player);
@@ -234,31 +269,35 @@ void KillTeam(bz_eTeamType TeamToKill){
 
 int TeamCheck(bz_eTeamType Team, const char* Color, double LastWarn, double LastTime){
 
-	if (bz_getTeamCount(Team) != 0 && TimerRunning){
+	if (bz_getTeamCount(Team) != 0 && tctf.timerRunning){
 
-		TimeElapsed = bz_getCurrentTime() - LastTime;
-		TimeRemaining = TimeLimit - TimeElapsed;
+		tctf.timeElapsed = bz_getCurrentTime() - LastTime;
+		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 
 		if (bz_getCurrentTime() - LastWarn > 60){
-			AdjTime = (int)(TimeRemaining / 60);
-			bz_sendTextMessagef (BZ_SERVER, Team, "%s Team: less than %i minute(s) left to capture a flag!", Color, AdjTime + 1);
+			tctf.adjTime = (int)(tctf.timeRemaining / 60);
+			bz_sendTextMessagef (BZ_SERVER, Team, "%s Team: less than %i minute(s) left to capture a flag!", Color, tctf.adjTime + 1);
 			return 1; // 1 = reset team's LastWarn
 		}
-		if (bz_getCurrentTime() - LastWarn > 30 && TimeRemaining < 30){
+		if (bz_getCurrentTime() - LastWarn > 30 && tctf.timeRemaining < 30){
 			bz_sendTextMessagef (BZ_SERVER, Team, "%s Team: less than 30 seconds left to capture a flag!", Color);
 			return 1; // 1 = reset team's LastWarn
 		}
-		if (bz_getCurrentTime() - LastWarn > 10 && TimeRemaining < 10){
+		if (bz_getCurrentTime() - LastWarn > 10 && tctf.timeRemaining < 20 && tctf.timeRemaining > 10){
+			bz_sendTextMessagef (BZ_SERVER, Team, "%s Team: less than 20 seconds left to capture a flag!", Color);
+			return 1; // 1 = reset team's LastWarn
+		}
+		if (bz_getCurrentTime() - LastWarn > 10 && tctf.timeRemaining < 10 && tctf.timeRemaining > 1){
 			bz_sendTextMessagef (BZ_SERVER, Team, "%s Team: less than 10 seconds left to capture a flag!", Color);
 			return 1; // 1 = reset team's LastWarn
 		}
 
-		if (TimeElapsed >= TimeLimit){
+		if (tctf.timeElapsed >= tctf.timeLimit){
 
 			KillTeam(Team);
 			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s team did not capture any other team flags in time.", Color);
-			AdjTime = (int)(TimeLimit / 60 + 0.5);
-			bz_sendTextMessagef (BZ_SERVER, Team, "CTF timer is reset to %i minutes for the %s team.", AdjTime, Color);
+			tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+			bz_sendTextMessagef (BZ_SERVER, Team, "CTF timer is reset to %i minutes for the %s team.", tctf.adjTime, Color);
 			return 2; // 2 = reset team's LastWarn and LastTime
 		}
 	}
@@ -271,20 +310,20 @@ int TeamCheck(bz_eTeamType Team, const char* Color, double LastWarn, double Last
 void ResetZeroTeams(){
 
 	if (bz_getTeamCount(eRedTeam) == 0){
-		RedLastTime = bz_getCurrentTime ();
-		RedLastWarn = bz_getCurrentTime ();
+		tctf.redLastTime = bz_getCurrentTime ();
+		tctf.redLastWarn = bz_getCurrentTime ();
 	}
 	if (bz_getTeamCount(eGreenTeam) == 0){
-		GreenLastTime = bz_getCurrentTime ();
-		GreenLastWarn = bz_getCurrentTime ();
+		tctf.greenLastTime = bz_getCurrentTime ();
+		tctf.greenLastWarn = bz_getCurrentTime ();
 	}
 	if (bz_getTeamCount(eBlueTeam) == 0){
-		BlueLastTime = bz_getCurrentTime ();
-		BlueLastWarn = bz_getCurrentTime ();
+		tctf.blueLastTime = bz_getCurrentTime ();
+		tctf.blueLastWarn = bz_getCurrentTime ();
 	}
 	if (bz_getTeamCount(ePurpleTeam) == 0){
-		PurpleLastTime = bz_getCurrentTime ();
-		PurpleLastWarn = bz_getCurrentTime ();
+		tctf.purpleLastTime = bz_getCurrentTime ();
+		tctf.purpleLastWarn = bz_getCurrentTime ();
 	}
 	return;
 }
@@ -308,7 +347,7 @@ bool OnlyOneTeamPlaying(){
 	return false;
 }
 
-void PlayerJoined::process ( bz_EventData *eventData )
+void TCTFPlayerJoined::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerJoinEvent)
     return;
@@ -316,9 +355,9 @@ void PlayerJoined::process ( bz_EventData *eventData )
 	bz_PlayerJoinPartEventData_V1 *JoinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 
 	// if teams are not even, notify joiner no CTF.
-	// this should never be true if fair ctf is disabled (see definition of FairCTF):
+	// this should never be true if fair ctf is disabled (see definition of tctf.fairCTF):
 
-	if (!FairCTF){
+	if (!tctf.fairCTF){
 		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Capture The Flag disabled - teams are not evenly balanced.");
 		return;
 	}
@@ -326,61 +365,61 @@ void PlayerJoined::process ( bz_EventData *eventData )
 	// if timed CTF turned off, but teams now even, let everyone know it's ok to cap.
 	// if fair CTF is disabled, no need to notify:
 
-	if (FairCTF && !TimedCTFEnabled && FairCTFEnabled){
+	if (tctf.fairCTF && !tctf.enabled && tctf.fairCTFEnabled){
 		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Capture The Flag enabled - teams are evenly balanced.");
 		return;
 	}
 
 	// if timed CTF turned off, get outta here:
 
-	if (!TimedCTFEnabled)
+	if (!tctf.enabled)
 		return;
 
 	// if teams even, notify joiner how much time is left to CTF for their team:
 
-	if (JoinData->team == eRedTeam  && TimerRunning){
-		TimeElapsed = bz_getCurrentTime () - RedLastTime;
-		TimeRemaining = TimeLimit - TimeElapsed;
-		AdjTime = (int)(TimeRemaining / 60);
-		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", AdjTime + 1);
+	if (JoinData->team == eRedTeam  && tctf.timerRunning){
+		tctf.timeElapsed = bz_getCurrentTime () - tctf.redLastTime;
+		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
+		tctf.adjTime = (int)(tctf.timeRemaining / 60);
+		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime + 1);
 		return;
 	}
 
-	if (JoinData->team == eGreenTeam  && TimerRunning){
-		TimeElapsed = bz_getCurrentTime () - GreenLastTime;
-		TimeRemaining = TimeLimit - TimeElapsed;
-		AdjTime = (int)(TimeRemaining / 60);
-		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", AdjTime + 1);
+	if (JoinData->team == eGreenTeam  && tctf.timerRunning){
+		tctf.timeElapsed = bz_getCurrentTime () - tctf.greenLastTime;
+		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
+		tctf.adjTime = (int)(tctf.timeRemaining / 60);
+		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime + 1);
 		return;
 	}
 
-	if (JoinData->team == eBlueTeam  && TimerRunning){
-		TimeElapsed = bz_getCurrentTime () - BlueLastTime;
-		TimeRemaining = TimeLimit - TimeElapsed;
-		AdjTime = (int)(TimeRemaining / 60);
-		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", AdjTime + 1);
+	if (JoinData->team == eBlueTeam  && tctf.timerRunning){
+		tctf.timeElapsed = bz_getCurrentTime () - tctf.blueLastTime;
+		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
+		tctf.adjTime = (int)(tctf.timeRemaining / 60);
+		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime + 1);
 		return;
 	}
 
-	if (JoinData->team == ePurpleTeam  && TimerRunning){
-		TimeElapsed = bz_getCurrentTime () - PurpleLastTime;
-		TimeRemaining = TimeLimit - TimeElapsed;
-		AdjTime = (int)(TimeRemaining / 60);
-		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", AdjTime + 1);
+	if (JoinData->team == ePurpleTeam  && tctf.timerRunning){
+		tctf.timeElapsed = bz_getCurrentTime () - tctf.purpleLastTime;
+		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
+		tctf.adjTime = (int)(tctf.timeRemaining / 60);
+		bz_sendTextMessagef (BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime + 1);
 		return;
 	}
 
 	return;
 }
 
-void FlagCapped::process ( bz_EventData *eventData )
+void TCTFFlagCapped::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eCaptureEvent)
     return;
 
 	// if timed CTF turned off, get outta here:
 
-	if (!TimedCTFEnabled || !TimerRunning)
+	if (!tctf.enabled || !tctf.timerRunning)
 		return;
 
 	bz_CTFCaptureEventData_V1 *CapData = (bz_CTFCaptureEventData_V1*)eventData;
@@ -388,31 +427,31 @@ void FlagCapped::process ( bz_EventData *eventData )
 	// if team caps, reset their timer and notify their team
 
 	if (CapData->teamCapping == eRedTeam){
-		AdjTime = (int)(TimeLimit / 60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, eRedTeam, "CTF timer is reset to %i minutes for the red team.", AdjTime);
-		RedLastTime = bz_getCurrentTime ();
-		RedLastWarn = bz_getCurrentTime ();
+		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, eRedTeam, "CTF timer is reset to %i minutes for the red team.", tctf.adjTime);
+		tctf.redLastTime = bz_getCurrentTime ();
+		tctf.redLastWarn = bz_getCurrentTime ();
 		return;
 	}
 	if (CapData->teamCapping == eGreenTeam){
-		AdjTime = (int)(TimeLimit / 60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, eGreenTeam, "CTF timer is reset to %i minutes for the green team.", AdjTime);
-		GreenLastTime = bz_getCurrentTime ();
-		GreenLastWarn = bz_getCurrentTime ();
+		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, eGreenTeam, "CTF timer is reset to %i minutes for the green team.", tctf.adjTime);
+		tctf.greenLastTime = bz_getCurrentTime ();
+		tctf.greenLastWarn = bz_getCurrentTime ();
 		return;
 	}
 	if (CapData->teamCapping == eBlueTeam){
-		AdjTime = (int)(TimeLimit / 60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, eBlueTeam, "CTF timer is reset to %i minutes for the blue team.", AdjTime);
-		BlueLastTime = bz_getCurrentTime ();
-		BlueLastWarn = bz_getCurrentTime ();
+		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, eBlueTeam, "CTF timer is reset to %i minutes for the blue team.", tctf.adjTime);
+		tctf.blueLastTime = bz_getCurrentTime ();
+		tctf.blueLastWarn = bz_getCurrentTime ();
 		return;
 	}
 	if (CapData->teamCapping == ePurpleTeam){
-		AdjTime = (int)(TimeLimit / 60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, ePurpleTeam, "CTF timer is reset to %i minutes for the purple team.", AdjTime);
-		PurpleLastTime = bz_getCurrentTime ();
-		PurpleLastWarn = bz_getCurrentTime ();
+		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, ePurpleTeam, "CTF timer is reset to %i minutes for the purple team.", tctf.adjTime);
+		tctf.purpleLastTime = bz_getCurrentTime ();
+		tctf.purpleLastWarn = bz_getCurrentTime ();
 		return;
 	}
 
@@ -421,7 +460,7 @@ void FlagCapped::process ( bz_EventData *eventData )
 
 // this is where most of the decisions are made - a little clunky, but seems to work:
 
-void TickEvents::process ( bz_EventData *eventData )
+void TCTFTickEvents::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eTickEvent)
 		return;
@@ -429,55 +468,55 @@ void TickEvents::process ( bz_EventData *eventData )
 	// read this function once per tick event.  If fair CTF disabled, make it look fair to rest
 	// of code - need to do this to be able to have timed ctf without fair ctf.
 
-	FairCTF = (TeamsBalanced() || !FairCTFEnabled);  
+	tctf.fairCTF = (TeamsBalanced() || !tctf.fairCTFEnabled);  
 
 	// check/notify team balance changes while timed CTF is disabled.
 	// if fair ctf is disabled, no need to check/notify about team balance changes:
 
-	if (FairCTF && !NotifiedCTFOK && !TimedCTFEnabled && FairCTFEnabled){
+	if (tctf.fairCTF && !tctf.notifiedCTFOK && !tctf.enabled && tctf.fairCTFEnabled){
 
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Capture The Flag enabled - teams are evenly balanced.");
-		NotifiedCTFOK = true;
+		tctf.notifiedCTFOK = true;
 		return;
 	}
 
-	if (!FairCTF && NotifiedCTFOK && !TimedCTFEnabled && FairCTFEnabled){
+	if (!tctf.fairCTF && tctf.notifiedCTFOK && !tctf.enabled && tctf.fairCTFEnabled){
 
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Capture The Flag disabled - teams are not evenly balanced.");
-		NotifiedCTFOK = false;
+		tctf.notifiedCTFOK = false;
 		return;
 	}
 
 	// if no timed CTF, we can leave:
 
-	if (!TimedCTFEnabled)
+	if (!tctf.enabled)
 		return;
 
 	// if this is true, we can leave too:
 
-	if (!FairCTF && !TimerRunning)
+	if (!tctf.fairCTF && !tctf.timerRunning)
 		return;
 
 	// check/notify team balance changes while timed CTF and fair CTF are enabled:
 
-	if(!FairCTF && TimerRunning && FairCTFEnabled){
+	if(!tctf.fairCTF && tctf.timerRunning && tctf.fairCTFEnabled){
 
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Capture The Flag disabled - teams are not evenly balanced.");
-		TimerRunning = false;
+		tctf.timerRunning = false;
 		ResetTeamData();
 		return;
 	}
 
 	// no timed ctf with fair CTF disabled and only one team present:
 
-	if (FairCTF && !FairCTFEnabled){ 
+	if (tctf.fairCTF && !tctf.fairCTFEnabled){ 
 		
 		if (OnlyOneTeamPlaying()){
 
-			if (TimerRunning)
+			if (tctf.timerRunning)
 				bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF disabled - not enough teams.");
 
-			TimerRunning = false;
+			tctf.timerRunning = false;
 			ResetTeamData();
 			return;
 		}
@@ -485,11 +524,11 @@ void TickEvents::process ( bz_EventData *eventData )
 
 	// start timing if we have made it this far:
 
-	if (FairCTF && !TimerRunning && !OnlyOneTeamPlaying()){ 
+	if (tctf.fairCTF && !tctf.timerRunning && !OnlyOneTeamPlaying()){ 
 
-		AdjTime = (int)(TimeLimit / 60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", AdjTime);
-		TimerRunning = true;
+		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime);
+		tctf.timerRunning = true;
 		ResetTeamData();
 		return;
 	}
@@ -497,34 +536,34 @@ void TickEvents::process ( bz_EventData *eventData )
 	// everything is a go for timed ctf checks now.
 	// check each team's time left, warn and kill if necessary:
 
-	int RedReturn = TeamCheck(eRedTeam, "RED", RedLastWarn, RedLastTime);
-	int GreenReturn = TeamCheck(eGreenTeam, "GREEN", GreenLastWarn, GreenLastTime);
-	int BlueReturn = TeamCheck(eBlueTeam, "BLUE", BlueLastWarn, BlueLastTime);
-	int PurpleReturn = TeamCheck(ePurpleTeam, "PURPLE", PurpleLastWarn, PurpleLastTime);
+	int RedReturn = TeamCheck(eRedTeam, "RED", tctf.redLastWarn, tctf.redLastTime);
+	int GreenReturn = TeamCheck(eGreenTeam, "GREEN", tctf.greenLastWarn, tctf.greenLastTime);
+	int BlueReturn = TeamCheck(eBlueTeam, "BLUE", tctf.blueLastWarn, tctf.blueLastTime);
+	int PurpleReturn = TeamCheck(ePurpleTeam, "PURPLE", tctf.purpleLastWarn, tctf.purpleLastTime);
 
 	if (RedReturn == 1)
-		RedLastWarn = bz_getCurrentTime();
+		tctf.redLastWarn = bz_getCurrentTime();
 	if (RedReturn == 2){
-		RedLastWarn = bz_getCurrentTime();
-		RedLastTime = bz_getCurrentTime();
+		tctf.redLastWarn = bz_getCurrentTime();
+		tctf.redLastTime = bz_getCurrentTime();
 	}
 	if (GreenReturn == 1)
-		GreenLastWarn = bz_getCurrentTime();
+		tctf.greenLastWarn = bz_getCurrentTime();
 	if (GreenReturn == 2){
-		GreenLastWarn = bz_getCurrentTime();
-		GreenLastTime = bz_getCurrentTime();
+		tctf.greenLastWarn = bz_getCurrentTime();
+		tctf.greenLastTime = bz_getCurrentTime();
 	}
 	if (BlueReturn == 1)
-		BlueLastWarn = bz_getCurrentTime();
+		tctf.blueLastWarn = bz_getCurrentTime();
 	if (BlueReturn == 2){
-		BlueLastWarn = bz_getCurrentTime();
-		BlueLastTime = bz_getCurrentTime();
+		tctf.blueLastWarn = bz_getCurrentTime();
+		tctf.blueLastTime = bz_getCurrentTime();
 	}
 	if (PurpleReturn == 1)
-		PurpleLastWarn = bz_getCurrentTime();
+		tctf.purpleLastWarn = bz_getCurrentTime();
 	if (PurpleReturn == 2){
-		PurpleLastWarn = bz_getCurrentTime();
-		PurpleLastTime = bz_getCurrentTime();
+		tctf.purpleLastWarn = bz_getCurrentTime();
+		tctf.purpleLastTime = bz_getCurrentTime();
 	}
 
 	ResetZeroTeams(); // reset team data for teams with no players.
@@ -532,14 +571,14 @@ void TickEvents::process ( bz_EventData *eventData )
 	return;
 }
 	
-void PlayerUpdates::process ( bz_EventData *eventData )
+void TCTFPlayerUpdates::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerUpdateEvent)
 		return;
 
 	// no CTF if teams not balanced, drop team flags asap:
 
-	if (!FairCTF){
+	if (!tctf.fairCTF){
 
 		int playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->player;
 		const char* FlagHeld = bz_getPlayerFlag(playerID);
@@ -557,7 +596,7 @@ void PlayerUpdates::process ( bz_EventData *eventData )
 	return;
 }
 
-bool Commands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
+bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
@@ -571,10 +610,10 @@ bool Commands::handle ( int playerID, bz_ApiString _command, bz_ApiString _messa
 		return true;
 	}
 
-	if ( command == "ctfcaptimeon"){
+	if ( command == "tctfon"){
 	
-		TimedCTFEnabled = true;
-		if (!TimerRunning)
+		tctf.enabled = true;
+		if (!tctf.timerRunning)
 			ResetTeamData();
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF is enabled.");
 		return true;
@@ -582,65 +621,85 @@ bool Commands::handle ( int playerID, bz_ApiString _command, bz_ApiString _messa
 
 	bz_freePlayerRecord(fromPlayer);
 
-	if ( command == "ctfcaptimeoff"){
+	if ( command == "tctfoff"){
 	
-		TimedCTFEnabled = false;
-		TimerRunning = false;
+		tctf.enabled = false;
+		tctf.timerRunning = false;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF is disabled.");
 		return true;
 	}
 
 	if ( command == "fairctfon"){
 	
-		FairCTFEnabled = true;
+		tctf.fairCTFEnabled = true;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Fair CTF is enabled.");
 		return true;
 	}
 
 	if ( command == "fairctfoff"){
 	
-		FairCTFEnabled = false;
+		tctf.fairCTFEnabled = false;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Fair CTF is disabled.");
-		if (!TimerRunning)
+		if (!tctf.timerRunning)
 			ResetTeamData();
 		return true;
 	}
 
-	if ( command == "ctfcaptimestatus"){
+	if ( command == "tctfsoundon"){
+	
+		tctf.soundEnabled = true;
+		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF sound is enabled.");
+		return true;
+	}
 
-		if (TimedCTFEnabled && !TimerRunning)
+	if ( command == "tctfsoundoff"){
+	
+		tctf.soundEnabled = false;
+		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF sound is disabled.");
+		return true;
+	}
+
+	if ( command == "tctfstatus"){
+
+		if (tctf.enabled && !tctf.timerRunning)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Timed CTF is currently enabled, but not running.");
 
-		if (TimedCTFEnabled && TimerRunning)
+		if (tctf.enabled && tctf.timerRunning)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Timed CTF is currently enabled, and running");
 
-		if (!TimedCTFEnabled)
+		if (!tctf.enabled)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Timed CTF is currently disabled.");
 
-		if (!FairCTFEnabled)
+		if (!tctf.fairCTFEnabled)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Fair CTF is currently disabled");
 
-		if (FairCTFEnabled)
+		if (tctf.fairCTFEnabled)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Fair CTF is currently enabled");
 
-		AdjTime = (int)(TimeLimit/60 + 0.5);
-		bz_sendTextMessagef (BZ_SERVER, playerID, "CTF capture time is currently set to: %i minutes", AdjTime);
+		if (!tctf.soundEnabled)
+			bz_sendTextMessagef (BZ_SERVER, playerID, "Timed CTF sounds are currently disabled");
+
+		if (tctf.soundEnabled)
+			bz_sendTextMessagef (BZ_SERVER, playerID, "Timed CTF sounds are currently enabled");
+
+		tctf.adjTime = (int)(tctf.timeLimit/60 + 0.5);
+		bz_sendTextMessagef (BZ_SERVER, playerID, "CTF capture time is currently set to: %i minutes", tctf.adjTime);
 		return true;
 	}
     
   // explicit time command handler:
 
-	if ( command == "ctfcaptime" ){
+	if ( command == "tctftime" ){
 
 		double inputvalue = ConvertToInt(message);
   
 		if (inputvalue > 0){
 
-			TimeLimit = inputvalue * 60;
-			AdjTime = (int)(TimeLimit / 60 + 0.5);
-			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "CTF capture time has been set to %i minutes.", AdjTime);
+			tctf.timeLimit = inputvalue * 60;
+			tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
+			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "CTF capture time has been set to %i minutes.", tctf.adjTime);
 
-			if (!TimedCTFEnabled)
+			if (!tctf.enabled)
 				bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "(Timed CTF is still disabled)");
 
 			ResetTeamData();

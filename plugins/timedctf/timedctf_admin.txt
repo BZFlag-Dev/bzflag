@@ -1,11 +1,12 @@
-----------------------------------------------------------
-Timed CTF Commands Available To Admins:
-----------------------------------------------------------
-Admin only:
-"ctfcaptime iii" - change cap time to iii
-"ctfcaptimeoff" - disable timed CTF. 
-"ctfcaptimeon" - enable timed CTF. 
-"ctfcaptimestatus" - return status of timedctf 
-"fairctfoff" - disable the fair ctf function. 
-"fairctfon" - enable the fair ctf function. 
-----------------------------------------------------------
+-----------------------------------------------------
+Timed CTF Admin Commands Available:
+-----------------------------------------------------
+"tctfon" - enable Timed CTF mode.
+"tctfoff" - disable Timed CTF mode.
+"tctfsoundon" - enable Timed CTF sounds.
+"tctfsoundoff" - disable Timed CTF sounds.
+"tctftime <minutes>" - change CTF time 1-120 minutes.
+"tctfstatus" - indicate the status of the plugin.
+"fairctfon" - enables fair ctf function.
+"fairctfoff" - disables fair ctf function.
+-----------------------------------------------------
