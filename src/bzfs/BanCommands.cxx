@@ -1053,22 +1053,12 @@ bool MasterBanCommand::operator() (const char	 *message,
 
     if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
       MasterBanList	banList;
-      int	       banCount;
 
       clOptions->acl.purgeMasters();
       sendMessage(ServerPlayer, t,
-		  "Previous master ban list entries have been flushed.");
+		  "Previous master ban list entries have been flushed, reloading in background");
 
-      for (std::vector<std::string>::const_iterator i
-	     = clOptions->masterBanListURL.begin();
-	   i != clOptions->masterBanListURL.end(); i++) {
-	banCount = clOptions->acl.merge(banList.get(i->c_str()));
-	std::string reloadmsg
-	  = TextUtils::format("Loaded %d master bans from %s", banCount,
-			      i->c_str());
-	logDebugMessage(1,"%s\n", reloadmsg.c_str());
-	sendMessage(ServerPlayer, t, reloadmsg.c_str());
-      }
+	  bz_reloadMasterBans();
 
     } else {
       sendMessage(ServerPlayer, t, "No action taken.");

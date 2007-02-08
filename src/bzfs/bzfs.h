@@ -95,6 +95,8 @@ void relayMessage(uint16_t code, int len, const void *msg);
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
 
+void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int playerID = -1 );
+
 void zapFlag(FlagInfo &flag);
 
 typedef struct _CheatProtectionOptions

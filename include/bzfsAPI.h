@@ -1592,6 +1592,12 @@ BZF_API bool bz_restart ( void );
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
 
+BZF_API void bz_reloadLocalBans();
+BZF_API void bz_reloadMasterBans();
+BZF_API void bz_reloadGroups();
+BZF_API void bz_reloadUsers();
+BZF_API void bz_reloadHelp();
+
 // rabbit control
 BZF_API void bz_newRabbit( int player, bool swap );
 BZF_API void bz_removeRabbit( int player );
