@@ -2,23 +2,13 @@
     DYNAMIC LINK LIBRARY : Keep Away Project Overview
 ========================================================================
 
-keepaway plugin version 1.4
+keepaway plugin
 
 Author: LouMan
-Description: See below. 
-Min Version: Latest CVS 2.0 branch code (to compile), bzfs 2.0.8 
-Files: Attached in .zip file: 
-Makefile.am 
-README.txt 
-keepaway.cpp 
-keepaway.def 
-keepaway.dll (for Windows versions) 
-keepaway.sln 
-keepaway.vcproj 
-keepaway_rules.hlp (for server help files)
-keepaway_admin.hlp (for server help files)
 
 Credit to JeffM2501 for custom map object code (from flagStay plugin), which I have modified to fit this application.  Also, credit to Thumper for brilliant idea :)
+
+Description:
 
 The plugin will create a Keep Away game mode in which a player/team must hold a "Keep Away" flag (defined in map file) for a defined amount of time; if held long enough all other teams (or players) are killed.
 
