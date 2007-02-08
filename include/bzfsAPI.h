@@ -1293,12 +1293,18 @@ BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );
 BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 
-
 // server control
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int,int = -1);
 BZF_API bool bz_restart ( void );
+
+BZF_API void bz_reloadLocalBans();
+BZF_API void bz_reloadMasterBans();
+BZF_API void bz_reloadGroups();
+BZF_API void bz_reloadUsers();
+BZF_API void bz_reloadHelp();
+
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

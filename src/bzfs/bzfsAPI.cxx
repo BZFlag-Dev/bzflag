@@ -38,6 +38,74 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
+class MasterBanURLHandler : public bz_URLHandler
+{
+public:
+	bool busy;
+	unsigned int id;
+	std::string theData;
+
+	void doNext ( void )
+	{
+		if (id >= clOptions->masterBanListURL.size())
+		{
+			rescanForBans();
+			busy = false;
+			return;
+		}
+		theData = "";
+		bz_addURLJob(clOptions->masterBanListURL[id].c_str(),this);
+		id++;
+	}
+
+	void start ( void )
+	{
+
+		id = 0;
+		busy = true;
+		doNext();
+	}
+
+	virtual void done ( const char* URL, void * data, unsigned int size, bool complete )
+	{
+		if (!busy)
+			return;
+
+		if (data && size > 0)
+		{
+			char *p = (char*)malloc(size+1);
+			memcpy(p,data,size);
+			p[size] = 0;
+			theData += p;
+			free(p);
+		}
+
+		if (complete)
+		{
+			clOptions->acl.merge(theData);
+			doNext();
+		}
+	}
+
+	virtual void timeout ( const char* /*URL*/, int /*errorCode*/ )
+	{
+		doNext();
+	}
+
+	virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+	{
+		doNext();
+	}
+
+	MasterBanURLHandler()
+	{
+		id = 0;
+		busy = false;
+	}
+};
+
+MasterBanURLHandler	masterBanHandler;
+
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 {
@@ -2348,6 +2416,54 @@ BZF_API bool bz_restart ( void )
 		FlagInfo &flag = *FlagInfo::get(i);
 
 	return true;
+}
+
+BZF_API void bz_reloadLocalBans()
+{
+	// reload the banlist
+	logDebugMessage(3,"Reloading bans\n");
+	clOptions->acl.load();
+
+	rescanForBans();
+}
+
+BZF_API void bz_reloadMasterBans()
+{
+	if (masterBanHandler.busy)
+		return;
+
+	// reload the banlist
+	logDebugMessage(3,"Reloading master bans\n");
+	clOptions->acl.purgeMasters();
+
+	masterBanHandler.start();
+}
+
+BZF_API void bz_reloadGroups()
+{
+	logDebugMessage(3,"Reloading groups\n");
+	groupAccess.clear();
+	initGroups();
+}
+
+BZF_API void bz_reloadUsers()
+{
+	logDebugMessage(3,"Reloading users and passwords\n");
+	userDatabase.clear();
+	passwordDatabase.clear();
+
+	if (passFile.size())
+		readPassFile(passFile);
+	if (userDatabaseFile.size())
+		PlayerAccessInfo::readPermsFile(userDatabaseFile);
+	GameKeeper::Player::reloadAccessDatabase();
+}
+
+BZF_API void bz_reloadHelp()
+{
+	// reload the text chunks
+	logDebugMessage(3,"Reloading helpfiles\n");
+	clOptions->textChunker.reload();
 }
 
 BZF_API void bz_superkill()
