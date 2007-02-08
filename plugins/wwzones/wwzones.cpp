@@ -1,6 +1,4 @@
 // wwzones.cpp : Defines the entry point for the DLL application.
-// (code modified from JeffM2501's flayStay plugin)
-// Version 2.0
 
 #include "bzfsAPI.h"
 #include <string>
@@ -8,57 +6,68 @@
 #include <map>
 #include <math.h>
 
-double pi = 3.14159265358979323846;
-double minTickTime = 0.5;
+class WWINFO
+{
+public:
+	WWINFO()
+	{
+		pi = 3.14159265358979323846;
+		tickTime = 0.5;
+	}
+	double pi;
+	double tickTime;
+};
+
+WWINFO wwinfo;
 
 BZ_GET_PLUGIN_VERSION
 
-class WWZoneHandler : public bz_CustomMapObjectHandler
+class WWZHandler : public bz_CustomMapObjectHandler
 {
 public:
 	virtual bool handle ( bzApiString object, bz_CustomMapObjectInfo *data );
 };
 
-WWZoneHandler	wwzonehandler;
+WWZHandler	wwzhandler;
 
-class EventHandler : public bz_EventHandler
+class WWZEventHandler : public bz_EventHandler
 {
 public:
 	virtual void process ( bz_EventData *eventData );
 };
 
-EventHandler eventHandler;
+WWZEventHandler wwzeventHandler;
 
 BZF_PLUGIN_CALL int bz_Load (const char* /*commandLineParameter*/){
 
 	bz_debugMessage(4,"wwzones plugin loaded");
-	bz_registerCustomMapObject("WWZONE",&wwzonehandler);
-	bz_registerEvent(bz_eTickEvent,&eventHandler);
+	bz_registerCustomMapObject("WWZONE",&wwzhandler);
+	bz_registerEvent(bz_eTickEvent,&wwzeventHandler);
 	return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload (void){
 
-	bz_removeEvent(bz_eTickEvent,&eventHandler);
+	bz_removeEvent(bz_eTickEvent,&wwzeventHandler);
 	bz_debugMessage(4,"wwzones plugin unloaded");
 	bz_removeCustomMapObject("WWZONE");
 	return 0;
 }
 
-class PlyrInfo
+class WWZPlyrInfo
 {
 public:
-	PlyrInfo()
+	WWZPlyrInfo()
 	{
-		plyrID = -1;
-		plyrInTime = 0;
+		wwzplyrID = -1;
+		wwzPlyrInTime = 0;
 	}
 
-	int plyrID;
-	double plyrInTime;
+	int wwzplyrID;
+	double wwzPlyrInTime;
 };
 
-PlyrInfo newPlyr;
+WWZPlyrInfo wwzNewPlyr;
 
 class WWZone
 {
@@ -83,10 +92,10 @@ public:
 		zoneWeaponTimeDelay = 0;
 		zoneWeaponInfoMessage = false;
 		zoneWeaponSentMessage = false;
-		plyrList.clear();
+		wwzPlyrList.clear();
 	}
 
-	std::vector <PlyrInfo> plyrList;
+	std::vector <WWZPlyrInfo> wwzPlyrList;
 	bool box;
 	float xMax,xMin,yMax,yMin,zMax,zMin;
 	float rad;
@@ -133,7 +142,7 @@ public:
 
 std::vector <WWZone> zoneList;
 
-bool WWZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
+bool WWZHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "WWZONE" || !data)
 		return false;
@@ -179,9 +188,9 @@ bool WWZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 				newZone.zoneWeaponPosition[1] = (float)atof(nubs->get(4).c_str());
 				newZone.zoneWeaponPosition[2] = (float)atof(nubs->get(5).c_str());
 				newZone.zoneWeaponTilt = (float)atof(nubs->get(6).c_str());
-				newZone.zoneWeaponTilt = (newZone.zoneWeaponTilt / 360) * (2 * (float)pi);
+				newZone.zoneWeaponTilt = (newZone.zoneWeaponTilt / 360) * (2 * (float)wwinfo.pi);
 				newZone.zoneWeaponDirection = (float)atof(nubs->get(7).c_str());
-				newZone.zoneWeaponDirection = (newZone.zoneWeaponDirection / 360) * (2 * (float)pi);
+				newZone.zoneWeaponDirection = (newZone.zoneWeaponDirection / 360) * (2 * (float)wwinfo.pi);
 				newZone.zoneWeaponShotID = (int)atoi(nubs->get(8).c_str());
 				newZone.zoneWeaponDT = (float)atof(nubs->get(9).c_str());
 			}
@@ -193,8 +202,8 @@ bool WWZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 			{
 				newZone.zoneWeaponRepeat = true;
 				newZone.zoneWeaponMinFireTime = (double)atof(nubs->get(1).c_str());
-				if (newZone.zoneWeaponMinFireTime < minTickTime && newZone.zoneWeaponMinFireTime >= 0.1)
-					minTickTime = newZone.zoneWeaponMinFireTime - .05;  //tick faster than ww calls
+				if (newZone.zoneWeaponMinFireTime < wwinfo.tickTime && newZone.zoneWeaponMinFireTime >= 0.1)
+					wwinfo.tickTime = newZone.zoneWeaponMinFireTime - .05;  //tick faster than ww calls
 			}
 			else if ( key == "TIMEDELAY" && nubs->size() > 1 )
 			{
@@ -218,22 +227,22 @@ bool WWZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 		bz_deleteStringList(nubs);
 	}
 	zoneList.push_back(newZone);
-	bz_setMaxWaitTime ( (float)minTickTime );
+	bz_setMaxWaitTime ( (float)wwinfo.tickTime );
 	return true;
 }
 
 inline bool wasHere(int zoneNum, int plyrNum)
 {
-	for (unsigned int j = 0; j < zoneList[zoneNum].plyrList.size(); j++)
+	for (unsigned int j = 0; j < zoneList[zoneNum].wwzPlyrList.size(); j++)
 	{
-		if (plyrNum == zoneList[zoneNum].plyrList[j].plyrID)
+		if (plyrNum == zoneList[zoneNum].wwzPlyrList[j].wwzplyrID)
 			return true;
 	}
 
-	newPlyr.plyrID = plyrNum;
-	newPlyr.plyrInTime = bz_getCurrentTime();
+	wwzNewPlyr.wwzplyrID = plyrNum;
+	wwzNewPlyr.wwzPlyrInTime = bz_getCurrentTime();
 
-	zoneList[zoneNum].plyrList.push_back(newPlyr);
+	zoneList[zoneNum].wwzPlyrList.push_back(wwzNewPlyr);
 	zoneList[zoneNum].zoneWeaponSentMessage = false;
 	zoneList[zoneNum].zoneWeaponFired = false;
 
@@ -242,11 +251,11 @@ inline bool wasHere(int zoneNum, int plyrNum)
 
 inline void notHere(int zoneNum, int plyrNum)
 {
-	for (unsigned int j = 0; j < zoneList[zoneNum].plyrList.size(); j++)
+	for (unsigned int j = 0; j < zoneList[zoneNum].wwzPlyrList.size(); j++)
 	{
-		if (plyrNum == zoneList[zoneNum].plyrList[j].plyrID)
+		if (plyrNum == zoneList[zoneNum].wwzPlyrList[j].wwzplyrID)
 		{
-			zoneList[zoneNum].plyrList.erase(zoneList[zoneNum].plyrList.begin() + j);
+			zoneList[zoneNum].wwzPlyrList.erase(zoneList[zoneNum].wwzPlyrList.begin() + j);
 			zoneList[zoneNum].zoneWeaponFired = false;
 			zoneList[zoneNum].zoneWeaponSentMessage = false;
 			return;
@@ -258,13 +267,13 @@ inline void notHere(int zoneNum, int plyrNum)
 
 inline bool OKToFire(int zoneNum, int plyrNum)
 {
-	for (unsigned int j = 0; j < zoneList[zoneNum].plyrList.size(); j++)
+	for (unsigned int j = 0; j < zoneList[zoneNum].wwzPlyrList.size(); j++)
 	{
-		if (zoneList[zoneNum].plyrList[j].plyrID == plyrNum)
+		if (zoneList[zoneNum].wwzPlyrList[j].wwzplyrID == plyrNum)
 		{
-			if ((bz_getCurrentTime() - zoneList[zoneNum].plyrList[j].plyrInTime) > zoneList[zoneNum].zoneWeaponTimeDelay && !zoneList[zoneNum].zoneWeaponFired)
+			if ((bz_getCurrentTime() - zoneList[zoneNum].wwzPlyrList[j].wwzPlyrInTime) > zoneList[zoneNum].zoneWeaponTimeDelay && !zoneList[zoneNum].zoneWeaponFired)
 			{
-				zoneList[zoneNum].plyrList[j].plyrInTime = bz_getCurrentTime();
+				zoneList[zoneNum].wwzPlyrList[j].wwzPlyrInTime = bz_getCurrentTime();
 				return true;
 			}
 		}
@@ -273,7 +282,7 @@ inline bool OKToFire(int zoneNum, int plyrNum)
 	return false;
 }
 
-void EventHandler::process ( bz_EventData *eventData )
+void WWZEventHandler::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eTickEvent)
 		return;
