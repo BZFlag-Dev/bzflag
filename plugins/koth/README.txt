@@ -2,23 +2,13 @@
     DYNAMIC LINK LIBRARY : King of the Hill Project Overview
 ========================================================================
 
-koth plugin version 2.3
+koth plugin
 
 Author: LouMan
-Description: See below. 
-Min Version: Latest CVS 2.0 branch code (to compile), bzfs 2.0.8 
-Files: Attached in .zip file: 
-Makefile.am 
-README.txt 
-koth.cpp 
-koth.def 
-koth.dll (for Windows versions) 
-koth.sln 
-koth.vcproj 
-koth.hlp (for server help files)
-kothadmin.hlp (for server help files)
 
 Credit to JeffM2501 for base zone and custom map object code (from flagStay plugin), which I have modified to fit this application.
+
+Description:
 
 The plugin will create a King of the Hill game mode in which a team (or player) can occupy a defined volume ("Hill") for a defined amount of time and kill all other teams (or players) if occupied long enough.
 
