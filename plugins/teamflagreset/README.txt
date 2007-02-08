@@ -1,5 +1,5 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : teamflagreset Version 2.1 Project Overview
+    DYNAMIC LINK LIBRARY : teamflagreset Project Overview
 ========================================================================
 
 This is the teamflagreset plugin. It will look at the team flags and see if they have been held by a player and dropped - if so, it will start timing to a limit.  If the flag is not picked up again within that time limit the team flag will reset with a message saying which team flag sat idle too long.  It will also automatically disable itself for teams with no players and for only 1 team in the match (no opposing teams).
@@ -7,13 +7,13 @@ This is the teamflagreset plugin. It will look at the team flags and see if they
 
 There are 5 administrator commands available with the plugin:
 
-"flagidletime m" this will set timer interval for checking idle flags to m minutes (1-120).
+"tfrtime <iii>" this will set timer interval for checking idle flags to <iii> minutes (1-120).
 
-"flagidletimeoff" this will disable the timer.
+"tfroff" this will disable the timer.
 
-"flagidletimeon" this will enable the timer.
+"tfron" this will enable the timer.
 
-"flagidletimestatus" this will return the status of the timer (enabled or disabled and time interval).
+"tfrstatus" this will return the status of the timer (enabled or disabled and time interval).
 
 The plugin will also allow the time limit to be passed to it through the -loadplugin command line with bzfs.  The format is as follows:
 

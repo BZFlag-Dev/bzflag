@@ -1,0 +1,8 @@
+------------------------------------------------------
+Team Flag Reset Admin Commands Available:
+------------------------------------------------------
+"tfron" - enable Team Flag Reset.
+"tfroff" - disable Team Flag Reset.
+"tfrtime <minutes>" - change reset time 1-120 minutes.
+"tfrstatus" - indicate the status of the plugin.
+------------------------------------------------------
