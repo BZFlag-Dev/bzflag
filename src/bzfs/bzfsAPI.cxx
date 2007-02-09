@@ -36,6 +36,8 @@
 
 #include "Permissions.h"
 
+#include "CommandManager.h"
+
 TimeKeeper synct = TimeKeeper::getCurrent();
 
 class MasterBanURLHandler : public bz_URLHandler
@@ -1349,6 +1351,23 @@ BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList )
 	BZDB.iterate(&bzdbIterator,varList);
 	return (int)varList->size();
 }
+
+BZF_API void bz_resetBZDBVar( const char* variable )
+{
+	std::string command = "reset ";
+	if ( variable && strlen(variable) )
+		command += variable;
+	else
+		command += "*";
+	
+	CMDMGR.run(command);
+}
+
+BZF_API void bz_resetALLBZDBVars( void )
+{
+	bz_resetBZDBVar(NULL);
+}
+
 
 
 // logging

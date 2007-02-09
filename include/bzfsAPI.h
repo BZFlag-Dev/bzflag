@@ -1066,6 +1066,8 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool p
 
 BZF_API int bz_getBZDBVarList( bzAPIStringList	*varList );
 
+BZF_API void bz_resetBZDBVar( const char* variable );
+BZF_API void bz_resetALLBZDBVars( void );
 
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
@@ -1308,7 +1310,6 @@ BZF_API void bz_reloadMasterBans();
 BZF_API void bz_reloadGroups();
 BZF_API void bz_reloadUsers();
 BZF_API void bz_reloadHelp();
-
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
