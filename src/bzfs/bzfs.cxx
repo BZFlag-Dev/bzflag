@@ -2058,6 +2058,7 @@ void pausePlayer(int playerIndex, bool paused = true)
   bz_PlayerPausedEventData_V1	pauseEventData;
   pauseEventData.player = playerIndex;
   pauseEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
+  pauseEventData.pause = paused;
 
   worldEventManager.callEvents(bz_ePlayerPausedEvent,&pauseEventData);
 }

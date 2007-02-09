@@ -922,6 +922,16 @@ BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
 	return true;
 }
 
+BZF_API bool bz_isPlayerPaused( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return FALSE;
+
+	return player->player.isPaused();
+}
+
 BZF_API const char* bz_getPlayerFlag( int playerID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);

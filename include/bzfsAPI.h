@@ -766,12 +766,14 @@ public:
 		eventType = bz_ePlayerPausedEvent;
 		player = -1;
 		eventTime = 0.0;
+		pause = false;
 	}
 	virtual ~bz_PlayerPausedEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
 	int player;
 	double eventTime;
+	bool pause;
 };
 
 class BZF_API bz_MessageFilteredEventData_V1 : public bz_EventData
@@ -1122,6 +1124,8 @@ BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
+
+BZF_API bool bz_isPlayerPaused( int playerID );
 
 class BZF_API bz_BasePlayerRecord
 {
