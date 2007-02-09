@@ -41,6 +41,7 @@
 #include "CustomWorld.h"
 
 #include "Permissions.h"
+#include "CommandManager.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
@@ -1437,6 +1438,21 @@ BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList )
 	return (int)varList->size();
 }
 
+BZF_API void bz_resetBZDBVar( const char* variable )
+{
+	std::string command = "reset ";
+	if ( variable && strlen(variable) )
+		command += variable;
+	else
+		command += "*";
+
+	CMDMGR.run(command);
+}
+
+BZF_API void bz_resetALLBZDBVars( void )
+{
+	bz_resetBZDBVar(NULL);
+}
 
 // logging
 BZF_API void bz_debugMessage ( int _debugLevel, const char* message )
