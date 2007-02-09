@@ -928,7 +928,7 @@ BZF_API bool bz_isPlayerPaused( int playerID )
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
 	if (!player)
-		return FALSE;
+		return false;
 
 	return player->player.isPaused();
 }
