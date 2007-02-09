@@ -713,11 +713,13 @@ public:
 		eventType = bz_ePlayerPausedEvent;
 		player = -1;
 		time = 0.0;
+		pause = false;
 	}
 	virtual ~bz_PlayerPausedEventData(){};
 
 	int player;
 	double time;
+	bool pause;
 };
 
 class bz_MessageFilteredEventData : public bz_EventData
@@ -941,6 +943,8 @@ BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 BZF_API bool bz_freePlayerRecord ( bz_PlayerRecord *playerRecord );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
+
+BZF_API bool bz_isPlayerPaused( int playerID );
 
 // player lag info
 BZF_API int bz_getPlayerLag( int playerId );

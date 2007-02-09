@@ -855,6 +855,16 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
 	return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
 }
 
+BZF_API bool bz_isPlayerPaused( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return FALSE;
+
+	return player->player.isPaused();
+}
+
 BZF_API int bz_getPlayerLag( int playerId )
 {
 	if (!GameKeeper::Player::getPlayerByIndex(playerId))
