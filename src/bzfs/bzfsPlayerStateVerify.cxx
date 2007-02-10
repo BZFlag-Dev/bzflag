@@ -176,6 +176,11 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	float normalGravity = BZDBCache::gravity;
 	float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
 
+	// map contains physics driver therefore skip the check here
+	if (!cheatProtectionOptions.doHeightChecks) {
+		return true;
+	}
+	
 	// All tanks with wings are flying away or they do without a flag
 	if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
 		return true;
@@ -258,7 +263,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
 
-	// currently we don't know how height the teleporter is so skip the check
+	// currently we don't know how high the teleporter is so skip the check
 	if ((state.status & PlayerState::Falling) && (state.status & PlayerState::Teleporting)) {
 		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
