@@ -941,7 +941,19 @@ public:
 	bz_PlayerUpdateEventData_V1()
 	{
 		eventType = bz_ePlayerUpdateEvent;
-		status = 0;
+		Alive = false;
+		Paused = false;
+		Exploding = false;
+		Teleporting = false;
+		FlagActive = false;
+		CrossingWall = false;
+		Falling = false;
+		OnDriver = false;
+		UserInputs = false;
+		JumpJets = false;
+		PlaySound = false;
+		PhantomZoned = false;
+		InBuilding = false;
 		pos[0] = pos[1] = pos[2] = 0;
 		velocity[0] = velocity[1] = velocity[2] = 0;
 		azimuth = angVel = 0.0f;
@@ -953,7 +965,19 @@ public:
 	virtual ~bz_PlayerUpdateEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
-	short	status;
+	bool	Alive;
+	bool	Paused;
+	bool	Exploding;
+	bool	Teleporting;
+	bool	FlagActive;
+	bool	CrossingWall;
+	bool	Falling;
+	bool	OnDriver;
+	bool	UserInputs;
+	bool	JumpJets;
+	bool	PlaySound;
+	bool	PhantomZoned;
+	bool	InBuilding;
 	float	pos[3];
 	float	velocity[3];
 	float	azimuth;
