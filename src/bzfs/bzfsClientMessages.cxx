@@ -262,6 +262,7 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	}
 
 	bz_PlayerUpdateEventData_V1 eventData;
+	eventData.status = state.status;
 	memcpy(eventData.pos,state.pos,sizeof(float)*3);
 	memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
 	eventData.angVel = state.angVel;

@@ -941,6 +941,7 @@ public:
 	bz_PlayerUpdateEventData_V1()
 	{
 		eventType = bz_ePlayerUpdateEvent;
+		status = 0;
 		pos[0] = pos[1] = pos[2] = 0;
 		velocity[0] = velocity[1] = velocity[2] = 0;
 		azimuth = angVel = 0.0f;
@@ -952,6 +953,7 @@ public:
 	virtual ~bz_PlayerUpdateEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
+	short	status;
 	float	pos[3];
 	float	velocity[3];
 	float	azimuth;
