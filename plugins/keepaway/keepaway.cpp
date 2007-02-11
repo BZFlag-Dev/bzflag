@@ -89,6 +89,8 @@ BZF_PLUGIN_CALL int bz_Load (const char* /*commandLine*/)
 	bz_registerCustomSlashCommand("kaf+",&keepawaycommands);
 	bz_registerCustomSlashCommand("kasoundon",&keepawaycommands);
 	bz_registerCustomSlashCommand("kasoundoff",&keepawaycommands);
+	bz_registerCustomSlashCommand("kaflagreseton",&keepawaycommands);
+	bz_registerCustomSlashCommand("kaflagresetoff",&keepawaycommands);
 	return 0;
 }
 
@@ -116,6 +118,8 @@ BZF_PLUGIN_CALL int bz_Unload (void)
 	bz_removeCustomSlashCommand("kaf+");
 	bz_removeCustomSlashCommand("kasoundon");
 	bz_removeCustomSlashCommand("kasoundoff");
+	bz_removeCustomSlashCommand("kaflagreseton");
+	bz_removeCustomSlashCommand("kaflagresetoff");
 	return 0;
 }
 
@@ -143,6 +147,7 @@ public:
 		notEnoughTeams = true;
 		soundEnabled = true;
 		teamPlay = false;
+		flagResetEnabled = true;
 		TTHminutes = 0;
 		TTHseconds = 30;
 		flagToKeepIndex = 0;
@@ -167,6 +172,7 @@ public:
 	bool forcedFlags;
 	bool notEnoughTeams;
 	bool soundEnabled;
+	bool flagResetEnabled;
 	int TTHminutes;
 	int TTHseconds;
 	int flagToKeepIndex;
@@ -307,6 +313,9 @@ bool KeepAwayMapHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *da
 			
 			else if ( key == "NOSOUND" && nubs->size() > 0 )
 				keepaway.soundEnabled = false;
+
+			else if ( key == "NOFLAGRESET" && nubs->size() > 0 )
+				keepaway.flagResetEnabled = false;
 
 			else if ( key == "HOLDTIME" && nubs->size() > 1 )
 			{
@@ -486,6 +495,9 @@ void killTeams(bz_eTeamType safeteam, std::string keepawaycallsign)
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) Kept the Flag Away!", getTeamColor(safeteam), keepawaycallsign.c_str());
 
+	if (keepaway.flagResetEnabled)
+		bz_resetFlags(true);
+
 	return;
 }
 
@@ -516,6 +528,9 @@ void killPlayers(int safeid, std::string keepawaycallsign)
 	bz_deleteIntList(playerList); 
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s Kept the Flag Away!", keepawaycallsign.c_str());
+
+	if (keepaway.flagResetEnabled)
+		bz_resetFlags(true);
 	
 	return;
 }
@@ -965,6 +980,19 @@ bool KeepAwayCommands::handle ( int playerID, bzApiString _command, bzApiString 
 		return true;
 	}
 
+	if ( command == "kaflagresetoff" )
+	{
+		keepaway.flagResetEnabled = false;
+		bz_sendTextMessage (BZ_SERVER, playerID, "Keep Away flag reset is disabled.");
+		return true;
+	}
+		if ( command == "kaflagreseton" )
+	{
+		keepaway.flagResetEnabled = true;
+		bz_sendTextMessage (BZ_SERVER, playerID, "Keep Away flag reset is enabled.");
+		return true;
+	}
+
 	if ( command == "kaf+" )
 	{
 		if (!keepaway.forcedFlags)  // this will always create an open spot for getFlag(), if it's needed
@@ -1061,6 +1089,12 @@ bool KeepAwayCommands::handle ( int playerID, bzApiString _command, bzApiString 
 
 		if (!keepaway.soundEnabled)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away sounds are disabled.");
+
+		if (keepaway.flagResetEnabled)
+			bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away flag reset is enabled.");
+
+		if (!keepaway.flagResetEnabled)
+			bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away flag reset is disabled.");
 
 		return true;
 	}

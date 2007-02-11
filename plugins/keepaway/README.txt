@@ -70,6 +70,11 @@ nosound
 
 Optional.  This will disable sounds associated with Keep Away plugin (some clients seem to have issues with this feature).
 
+
+noflagreset
+
+Optional.  This will disable automatic flag reset function of the Keep Away plugin (enabled as default).
+
 -------------------------------------------------------------------------------------
 
 Examples of map (.bzw) entries:
@@ -81,9 +86,10 @@ keepaway
   keepawayflags SB G TH MG GM L 
   forcedflags
   teamplay
+  noflagreset
 end  
 
-This would set up a Keep Away game using Super Bullet, Genocide, Thief, Machine Gun, Guided Missile and Laser flags for Keep Away flags.  Teamplay would be enabled and the initial required time to hold the Keep Away flag would be 90 seconds (1.5 minutes).  Time to hold would automatically adjust downward with new players; 2% per new player after 2, to a minimum of 40% of the original time to hold (36 seconds).
+This would set up a Keep Away game using Super Bullet, Genocide, Thief, Machine Gun, Guided Missile and Laser flags for Keep Away flags.  Teamplay would be enabled and the initial required time to hold the Keep Away flag would be 90 seconds (1.5 minutes).  Time to hold would automatically adjust downward with new players; 2% per new player after 2, to a minimum of 40% of the original time to hold (36 seconds).  The automatic flag reset function of the plugin would be disabled.
 
 
 keepaway
@@ -120,6 +126,8 @@ There are several administrator commands available with the plugin:
 "kaf+" - advance to next Keep Away flag.
 "kasoundon" - enables Keep Away sounds.
 "kasoundoff" - disables Keep Away sounds.
+"kaflagreseton" - enables Keep Away sounds.
+"kaflagresetoff" - disables Keep Away sounds.
 
 -------------------------------------------------------------------------------------
 
