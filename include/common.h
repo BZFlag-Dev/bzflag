@@ -42,16 +42,18 @@
 extern int debugLevel;
 
 /* near zero by some epsilon convenience define since relying on
-* the floating point unit for proper equivalence is not safe
-*/
+ * the floating point unit for proper equivalence is not safe
+ */
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
-/* seven places of precision is pretty safe, so something less precise */
-#ifdef FLT_EPSILON
-#  define ZERO_TOLERANCE FLT_EPSILON
-#else
-#  define ZERO_TOLERANCE 1.0e-06f
-#endif
+/**
+ * a tolerance of FLT_EPSILON was causing a variety of issues being
+ * too close to floating point computational instabilities during
+ * computation resulting in missed collision detection, bad
+ * reflections, and possibly other errors.  Pick a tolerance more
+ * reasonable to the scale of the worlds, 5 millimeter accuracy.
+ */
+#define ZERO_TOLERANCE 0.005
 
 /* Might we be BSDish? sys/param.h has BSD defined if so */
 #ifdef HAVE_SYS_PARAM_H
