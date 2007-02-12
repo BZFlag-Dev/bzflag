@@ -262,24 +262,7 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	}
 
 	bz_PlayerUpdateEventData_V1 eventData;
-	eventData.Alive = (state.status & PlayerState::Alive);
-	eventData.Paused = (state.status & PlayerState::Paused);
-	eventData.Exploding = (state.status & PlayerState::Exploding);
-	eventData.Teleporting = (state.status & PlayerState::Teleporting);
-	eventData.FlagActive = (state.status & PlayerState::FlagActive);
-	eventData.CrossingWall = (state.status & PlayerState::CrossingWall);
-	eventData.Falling = (state.status & PlayerState::Falling);
-	eventData.OnDriver = (state.status & PlayerState::OnDriver);
-	eventData.UserInputs = (state.status & PlayerState::UserInputs);
-	eventData.JumpJets = (state.status & PlayerState::JumpJets);
-	eventData.PlaySound = (state.status & PlayerState::PlaySound);
-	eventData.PhantomZoned = (state.status & PlayerState::PhantomZoned);
-	eventData.InBuilding = (state.status & PlayerState::InBuilding);
-	memcpy(eventData.pos,state.pos,sizeof(float)*3);
-	memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
-	eventData.angVel = state.angVel;
-	eventData.azimuth = state.azimuth;
-	eventData.phydrv = state.phydrv;
+	playerStateToAPIState(eventData.state,playerData->lastState);
 	eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 	eventData.player = playerData->getIndex();
 	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);

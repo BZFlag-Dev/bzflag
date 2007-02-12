@@ -334,6 +334,32 @@ protected:
  BZF_API bz_APIStringList* bz_newStringList ( void );
  BZF_API void bz_deleteStringList( bz_APIStringList * l );
 
+
+ // update structs use by a number of others
+
+typedef enum
+{
+	eDead,		// not alive, not paused, etc.
+	eAlive,				// player is alive
+	ePaused,			// player is paused
+	eExploding,			// currently blowing up
+	eTeleporting,		// teleported recently
+	eInBuilding			// has OO and is in a building
+}bz_ePlayerStatus;
+
+typedef struct bz_PlayerUpdateState
+{
+	bz_ePlayerStatus	status;			// special states
+	bool				falling;		// not driving on the ground or an obstacle
+	bool				crossingWall;	// crossing an obstacle wall
+	bool				inPhantomZone;	// zoned
+	float				pos[3];			// position of tank
+	float				velocity[3];	// velocity of tank
+	float				rotation;		// orientation of tank
+	float				angVel;			// angular velocity of tank
+	int					phydrv;			// physics driver
+}bz_PlayerUpdateState;
+
 // event data types
 class BZF_API bz_EventData
 {
@@ -941,23 +967,6 @@ public:
 	bz_PlayerUpdateEventData_V1()
 	{
 		eventType = bz_ePlayerUpdateEvent;
-		Alive = false;
-		Paused = false;
-		Exploding = false;
-		Teleporting = false;
-		FlagActive = false;
-		CrossingWall = false;
-		Falling = false;
-		OnDriver = false;
-		UserInputs = false;
-		JumpJets = false;
-		PlaySound = false;
-		PhantomZoned = false;
-		InBuilding = false;
-		pos[0] = pos[1] = pos[2] = 0;
-		velocity[0] = velocity[1] = velocity[2] = 0;
-		azimuth = angVel = 0.0f;
-		phydrv = 0;
 		eventTime = 0;
 		player = -1;
 	}
@@ -965,25 +974,8 @@ public:
 	virtual ~bz_PlayerUpdateEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
-	bool	Alive;
-	bool	Paused;
-	bool	Exploding;
-	bool	Teleporting;
-	bool	FlagActive;
-	bool	CrossingWall;
-	bool	Falling;
-	bool	OnDriver;
-	bool	UserInputs;
-	bool	JumpJets;
-	bool	PlaySound;
-	bool	PhantomZoned;
-	bool	InBuilding;
-	float	pos[3];
-	float	velocity[3];
-	float	azimuth;
-	float	angVel;
-	int		phydrv;
 	int		player;
+	bz_PlayerUpdateState state;
 
 	double eventTime;
 };
@@ -1151,6 +1143,8 @@ BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
+BZF_API bool bz_getPlayerCurrentState ( int playerID, bz_PlayerUpdateState &state );
+
 BZF_API bool bz_isPlayerPaused( int playerID );
 
 class BZF_API bz_BasePlayerRecord
@@ -1161,14 +1155,11 @@ public:
 		playerID = -1;
 		team = eNoTeam;
 
-		pos[0] = pos[1] = pos[2] = 0;
-		rot = 0;
-
 		spawned = false;
 		verified = false;
 		globalUser = false;
 		admin = false;
-		op=false;
+		op = false;
 
 		lag = 0;
 		jitter = 0;
@@ -1195,8 +1186,9 @@ public:
 
 	bz_eTeamType team;
 
-	float pos[3];
-	float rot;
+	float					lastUpdateTime;
+	bz_PlayerUpdateState	lastKnownState;
+	bz_PlayerUpdateState	currentState;
 
 	bz_ApiString ipAddress;
 
@@ -1716,39 +1708,6 @@ typedef struct
 	int player;
 	int handycap;
 }bz_HandycapUpdateRecord;
-
-typedef enum
-{
-	eDead,		// not alive, not paused, etc.
-	eAlive,				// player is alive
-	ePaused,			// player is paused
-	eExploding,			// currently blowing up
-	eTeleporting		// teleported recently
-}bz_ePlayerStatus;
-
-typedef struct bz_PlayerUpdateState
-{
-	bz_ePlayerStatus	status;
-	bool				falling;
-	bool				crossingWall;
-	float				pos[3];			// position of tank
-	float				velocity[3];	// velocity of tank
-	float				rotation;		// orientation of tank
-	float				angVel;			// angular velocity of tank
-	int					phydrv;			// physics driver
-
-	bz_PlayerUpdateState()
-	{
-		status = eAlive;
-		falling = false;
-		crossingWall = false;
-		pos[0] = pos[1] = pos[2] = 0;
-		velocity[0] = velocity[1] = velocity[2] = 0;
-		rotation = 0;
-		angVel = 0;
-		phydrv = -1;
-	}
-}bz_PlayerUpdateState;
 
 typedef enum
 {

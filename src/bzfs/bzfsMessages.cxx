@@ -1044,7 +1044,10 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &
 		apiState.status = eExploding;
 	else if (playerState.status & PlayerState::Teleporting)
 		apiState.status = eTeleporting;
+	else if (playerState.status & PlayerState::InBuilding)
+		apiState.status = eInBuilding;
 
+	apiState.inPhantomZone = (playerState.status & PlayerState::PhantomZoned) != 0;
 	apiState.falling = (playerState.status & PlayerState::Falling) != 0;
 	apiState.crossingWall = (playerState.status & PlayerState::CrossingWall) != 0;
 	apiState.phydrv = (playerState.status & PlayerState::OnDriver) ? playerState.phydrv : -1;
@@ -1074,7 +1077,14 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 		case eTeleporting:
 			playerState.status |= PlayerState::Teleporting;
 			break;
+
+		case eInBuilding:
+			playerState.status |= PlayerState::InBuilding;
+			break;
 	}
+
+	if (apiState.inPhantomZone)
+		playerState.status |=  PlayerState::PhantomZoned;
 
 	if (apiState.falling)
 		playerState.status |=  PlayerState::Falling;

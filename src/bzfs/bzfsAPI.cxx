@@ -764,8 +764,10 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 	if (!player)
 		return false;
 
-	memcpy(playerRecord->pos, player->currentPos, sizeof(float) * 3);
-	playerRecord->rot = player->currentRot;
+	playerStateToAPIState(playerRecord->lastKnownState,player->lastState);
+	playerRecord->lastUpdateTime = player->lastState.lastUpdateTime;
+
+	playerStateToAPIState(playerRecord->currentState,player->getCurrentStateAsState());
 
 	int flagid = player->player.getFlag();
 	FlagInfo *flagInfo = FlagInfo::get(flagid);
@@ -945,6 +947,18 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
 		return NULL;
 
 	return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
+}
+
+BZF_API bool bz_getPlayerCurrentState ( int playerID, bz_PlayerUpdateState &state )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player)
+		return false;
+
+	playerStateToAPIState(state,player->getCurrentStateAsState());
+
+	return true;
 }
 
 BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )

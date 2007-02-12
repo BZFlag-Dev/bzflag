@@ -64,6 +64,10 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
 // using from bzfs
 extern void pwriteBroadcast(const void *b, int l, int mask);
 
+// utils
+void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
+void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
+
 /** class to send a bunch of BZDB variables via MsgSetVar.
 * dtor does the actual send
 */
