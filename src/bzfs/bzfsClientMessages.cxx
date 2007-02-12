@@ -262,11 +262,11 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	}
 
 	bz_PlayerUpdateEventData_V1 eventData;
-	playerStateToAPIState(eventData.state,playerData->lastState);
+	playerStateToAPIState(eventData.state,state);
+	eventData.stateTime = timeStamp;
 	eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 	eventData.player = playerData->getIndex();
 	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
-
 
 	// silently drop old packet
 	if (state.order <= playerData->lastState.order)

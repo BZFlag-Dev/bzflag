@@ -968,6 +968,7 @@ public:
 	{
 		eventType = bz_ePlayerUpdateEvent;
 		eventTime = 0;
+		stateTime = 0;
 		player = -1;
 	}
 
@@ -976,6 +977,7 @@ public:
 
 	int		player;
 	bz_PlayerUpdateState state;
+	double stateTime;
 
 	double eventTime;
 };
