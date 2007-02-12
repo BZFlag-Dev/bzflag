@@ -298,7 +298,7 @@ void WWZEventHandler::process ( bz_EventData *eventData )
 
 				for ( unsigned int i = 0; i < zoneList.size(); i++ )
 				{
-					if (zoneList[i].pointIn(player->pos) && player->spawned)
+					if (zoneList[i].pointIn(player->lastKnownState.pos) && player->spawned)
 					{
 						if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired)
 						{

@@ -161,9 +161,9 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 				{
 					float vectorTo[3];
 
-					vectorTo[0] = player->pos[0] - pos[0];
-					vectorTo[1] = player->pos[1] - pos[1];
-					vectorTo[2] = player->pos[2] - pos[2];
+					vectorTo[0] = player->currentState.pos[0] - pos[0];
+					vectorTo[1] = player->currentState.pos[1] - pos[1];
+					vectorTo[2] = player->currentState.pos[2] - pos[2];
 
 					float dist = sqrt(vectorTo[0]*vectorTo[0]+vectorTo[1]*vectorTo[1]+vectorTo[2]*vectorTo[2]);
 					vectorTo[0] /= dist;

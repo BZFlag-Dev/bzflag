@@ -120,7 +120,7 @@ void sendNagMessage (int who, std::string *msg ){
   std::string fullMsg = *msg + Config.msgSuffix;
   unsigned int idx=0, x;
 
-  while ((x = fullMsg.find("\\n", idx)) != std::string::npos){
+  while ((x = (unsinged int)fullMsg.find("\\n", idx)) != std::string::npos){
     bz_sendTextMessage(BZ_SERVER, who, fullMsg.substr(idx, x-idx).c_str());
     idx = x+2;
   }
@@ -318,7 +318,7 @@ void Nagware::process ( bz_EventData *eventData )
   // tick
   } else if (eventData->eventType == bz_eTickEvent) {
     bz_TickEventData_V1 *msgData = (bz_TickEventData_V1*)eventData;
-    tickEvent (msgData->eventTime);
+    tickEvent ((float)msgData->eventTime);
 
   }
 }
