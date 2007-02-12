@@ -536,7 +536,7 @@ bool teamClear(bz_eTeamType teamToCheck)
 
 			if (player)
 			{
-				if (player->team == teamToCheck && kothzone.pointIn(player->pos) && player->spawned)
+				if (player->team == teamToCheck && kothzone.pointIn(player->currentState.pos) && player->spawned)
 					isOut = false;
 			}
 
@@ -558,7 +558,7 @@ void KOTHPlayerPaused::process ( bz_EventData *eventData )
 
 	if (player)
 	{
-		if(kothzone.pointIn(player->pos))
+		if(kothzone.pointIn(player->currentState.pos))
 		{
 			bz_killPlayer (PauseData->player, true, BZ_SERVER);
 			bz_sendTextMessage (BZ_SERVER, PauseData->player, "Cannot pause while on the Hill.");
@@ -628,9 +628,9 @@ inline void KOTHEventHandler::process ( bz_EventData *eventData )
 	switch (eventData->eventType)
 	{
 	case bz_ePlayerUpdateEvent:
-		pos[0] = ((bz_PlayerUpdateEventData_V1*)eventData)->pos[0];
-		pos[1] = ((bz_PlayerUpdateEventData_V1*)eventData)->pos[1];
-		pos[2] = ((bz_PlayerUpdateEventData_V1*)eventData)->pos[2];
+		pos[0] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[0];
+		pos[1] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[1];
+		pos[2] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[2];
 		playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->player;
 		break;
 
