@@ -53,7 +53,7 @@ extern int debugLevel;
  * reflections, and possibly other errors.  Pick a tolerance more
  * reasonable to the scale of the worlds, 5 millimeter accuracy.
  */
-#define ZERO_TOLERANCE 0.005
+#define ZERO_TOLERANCE 0.005f
 
 /* Might we be BSDish? sys/param.h has BSD defined if so */
 #ifdef HAVE_SYS_PARAM_H
