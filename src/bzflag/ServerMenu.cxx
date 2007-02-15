@@ -117,6 +117,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 ServerMenu::ServerMenu() : defaultKey(this),
 				selectedIndex(0),
 				serversFound(0),
+			   realServersFound(0),
 				findMode(false),
 				filter("*"),
 				lastFilter("*")
