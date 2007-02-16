@@ -3032,7 +3032,7 @@ static void adjustTolerances()
     logDebugMessage(1,"Warning: disabling speed checking due to physics drivers\n");
   }
   if (!cheatProtectionOptions.doHeightChecks) {
-    logDebugMessage(1,"Warning: disabling height checking due to physics drivers\n");
+    logDebugMessage(1,"Warning: disabling height checking partly due to physics drivers\n");
   }
 
   return;

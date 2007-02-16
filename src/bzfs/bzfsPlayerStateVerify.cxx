@@ -175,11 +175,6 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	float normalGravity = BZDBCache::gravity;
 	float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
-
-	// map contains physics driver therefore skip the check here
-	if (!cheatProtectionOptions.doHeightChecks) {
-		return true;
-	}
 	
 	// All tanks with wings are flying away or they do without a flag
 	if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
@@ -199,6 +194,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		// Skip the check because the server owners disabled it
 		return true;
 	}
+
 	int pFlag = playerData->player.getFlag();
 	bool hasWings = false;
 	bool hasLG = false;
@@ -273,6 +269,13 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	// new update from him yet
 	if (playerData->player.allowedHeightAtJumpStart > maxHeight) {
 		maxHeight = playerData->player.allowedHeightAtJumpStart;
+	}
+
+	// if player was on physics driver skip check until he lands again
+	// FIXME: Compute how high the player should jump
+	if ((state.status & PlayerState::Falling) && (playerData->lastState.status & PlayerState::OnDriver)
+		&& !cheatProtectionOptions.doHeightChecks) {
+		playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
 	}
 
 	if ((normalGravity < -25.0f) && !(playerData->player.allowedHeightAtJumpStart == MAXFLOAT)) {
