@@ -33,7 +33,6 @@
 #include "AccessList.h"
 #include "AnsiCodes.h"
 #include "AresHandler.h"
-#include "BackgroundRenderer.h"
 #include "BaseBuilding.h"
 #include "BillboardSceneNode.h"
 #include "BZDBCache.h"
@@ -76,7 +75,6 @@
 #include "HUDRenderer.h"
 #include "MainMenu.h"
 #include "motd.h"
-#include "RadarRenderer.h"
 #include "Roaming.h"
 #include "RobotPlayer.h"
 #include "Roster.h"
@@ -5827,22 +5825,16 @@ static void		updateDestructCountdown(float dt)
 // main playing loop
 //
 
-static void		playingLoop()
+void Playing::playingLoop()
 {
+  if (CommandsStandard::isQuit()) {
+    csRef<iEventQueue> q = csQueryRegistry<iEventQueue>(objectRegistry);
+    if (q.IsValid())
+      q->GetEventOutlet()->Broadcast(csevQuit(objectRegistry));
+    return;
+  }
+
   int i;
-
-  mainWindow->setZoomFactor(getZoomFactor());
-  if (BZDB.isTrue("fakecursor"))
-    mainWindow->getWindow()->hideMouse();
-
-  // start timing
-  TimeKeeper::setTick();
-  updateDaylight(epochOffset, *sceneRenderer);
-
-  worldDownLoader = new WorldDownLoader;
-
-  // main loop
-  while (!CommandsStandard::isQuit()) {
 
     BZDBCache::update();
 
@@ -5968,7 +5960,10 @@ static void		playingLoop()
 
     // quick out
     if (CommandsStandard::isQuit()) {
-      break;
+      csRef<iEventQueue> q = csQueryRegistry<iEventQueue>(objectRegistry);
+      if (q.IsValid())
+	q->GetEventOutlet()->Broadcast(csevQuit(objectRegistry));
+      return;
     }
 
     // if server died then leave the game (note that this may cause
@@ -6188,22 +6183,6 @@ static void		playingLoop()
       }
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
-
-
-  } // end main client loop
-
-
-  delete worldDownLoader;
-  // restore the sound.  if we don't do this then we'll save the
-  // wrong volume when we dump out the configuration file if the
-  // app exits when the game is paused.
-  if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
-    savedVolume = -1;
-  }
-
-  // hide window
-  mainWindow->showWindow(false);
 }
 
 
@@ -6445,8 +6424,14 @@ static void		startupErrorCallback(const char* msg)
 }
 
 
-void			startPlaying(BzfDisplay* _display,
-				     SceneRenderer& renderer)
+Playing::Playing(BzfDisplay      *_display,
+		 SceneRenderer   &renderer,
+		 iObjectRegistry *_objectRegistry)
+  : _controlPanel(renderer.getWindow(), renderer),
+    _radar(renderer, world),
+    _hud(_display, renderer),
+    background(renderer),
+    objectRegistry(_objectRegistry)
 {
   // initalization
   display = _display;
@@ -6466,11 +6451,9 @@ void			startPlaying(BzfDisplay* _display,
   SphereLodSceneNode::init();
 
   // make control panel
-  ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
   controlPanel = &_controlPanel;
 
   // make the radar
-  RadarRenderer _radar(*sceneRenderer, world);
   radar = &_radar;
 
   // tie the radar to the control panel
@@ -6627,7 +6610,6 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display
-  HUDRenderer _hud(display, renderer);
   hud = &_hud;
   scoreboard = hud->getScoreboard();
 
@@ -6638,7 +6620,6 @@ void			startPlaying(BzfDisplay* _display,
   notifyBzfKeyMapChanged();
 
   // make background renderer
-  BackgroundRenderer background(renderer);
   sceneRenderer->setBackground(&background);
 
   // if no configuration file try to determine rendering settings
@@ -6797,8 +6778,30 @@ void			startPlaying(BzfDisplay* _display,
     HUDDialogStack::get()->push(mainMenu);
   }
 
-  // start game loop
-  playingLoop();
+  mainWindow->setZoomFactor(getZoomFactor());
+  if (BZDB.isTrue("fakecursor"))
+    mainWindow->getWindow()->hideMouse();
+
+  // start timing
+  TimeKeeper::setTick();
+  updateDaylight(epochOffset, *sceneRenderer);
+
+  worldDownLoader = new WorldDownLoader;
+}
+
+Playing::~Playing()
+{
+  delete worldDownLoader;
+  // restore the sound.  if we don't do this then we'll save the
+  // wrong volume when we dump out the configuration file if the
+  // app exits when the game is paused.
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
+  // hide window
+  mainWindow->showWindow(false);
 
   // clean up
   TankGeometryMgr::kill();

@@ -17,6 +17,7 @@
 
 // system includes
 #include <string>
+#include <crystalspace.h>
 
 extern void dumpResources();
 
@@ -29,6 +30,43 @@ extern struct tm   userTime;
 #ifdef ROBOT
 extern int numRobotTanks;
 #endif
+
+class WordFilter;
+class BzfVisual;
+class PlatformFactory;
+class BundleMgr;
+class MainWindow;
+class BzfJoystick;
+class BzfWindow;
+class Playing;
+
+class Bzflag : public csApplicationFramework,
+	       public csBaseEventHandler {
+public:
+  Bzflag();
+  virtual ~Bzflag();
+
+  virtual bool Application();
+  virtual void OnCommandLineHelp();
+  virtual void OnExit();
+  virtual bool OnInitialize(int argc, char *argv[]);
+
+  virtual void Frame();
+private:
+  void parse();
+  void parseConfigName();
+
+  WordFilter      *filter;
+  MainWindow      *pmainWindow;
+  BzfJoystick     *joystick;
+  BzfWindow       *window;
+  BzfVisual       *visual;
+  PlatformFactory *platformFactory;
+  BundleMgr       *bm;
+  Playing         *playing;
+
+  csRef<iCommandLineParser> clp;
+};
 
 #endif // BZF_BZFLAG_H
 
