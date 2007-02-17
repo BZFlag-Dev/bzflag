@@ -244,6 +244,8 @@ LDADD =	\
 #	$(ALIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CURL_CFLAGS@
+AM_CXXFLAGS = `cs-config --cflags`
+AM_LDFLAGS  = `cs-config --libs`
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \
