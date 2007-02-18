@@ -24,6 +24,7 @@ SUBDIRS = \
 	soundTest \
 	weaponArena \
 	recordmatch \
+	torBlock	\
 	bzfscron
 
 DIST_SUBDIRS = \
