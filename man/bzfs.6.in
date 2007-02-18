@@ -21,6 +21,7 @@ bzfs \- BZFlag game server
 [\fB\-badwords \fIbadwordfile\fR]
 [\fB\-ban \fIip\fR[\fI,ip\fR]...]
 [\fB\-banfile \fIfilename\fR]
+[\fB\-botsPerIP \fInum\fR]
 [\fB\-c\fR]
 [\fB\-cache \fIworldCacheURL\fR]
 [\fB\-cacheout \fIfilename\fR]
@@ -150,6 +151,10 @@ Specifies the name of a file where bzfs will store the banlist. It will
 load the banlist from this file when it starts (if the file exists),
 and write the banlist back to the file when someone gets banned or unbanned.
 If this option isn't given the banlist will not be saved.
+.TP
+\fB\-botsPerIP \fInum\fR
+Specifies the maximum number of client-side bot players allowed from
+any given IP address. By default, this is 2 bots.
 .TP 
 .B \-c
 Enables the capture\-the\-flag style game. By default this allocates one team flag per team.

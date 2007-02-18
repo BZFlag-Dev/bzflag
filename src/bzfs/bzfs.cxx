@@ -2369,12 +2369,35 @@ void playerAlive(int playerIndex)
     spawnAllowData.allow = false;
   }
 
-  if (playerData->player.isBot()
-      && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
-    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
-    removePlayer(playerIndex, "ComputerPlayer", true);
-    return;
+  if (playerData->player.isBot()) {
+    if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) || (clOptions->botsPerIP == 0)) {
+      sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
+      removePlayer(playerIndex, "ComputerPlayer", true);
+      return;
+    }
+
+    /* count how many bots are active from this IP address */
+    in_addr playerIP = playerData->netHandler->getIPAddress();
+    int botsFound = 0;
+    for (int i = 0; i < curMaxPlayers; i++) {
+      GameKeeper::Player *pbData = GameKeeper::Player::getPlayerByIndex(i);
+      if ((pbData->netHandler->getIPAddress().s_addr == playerIP.s_addr) && pbData->player.isBot()) {
+	botsFound++;
+	if (botsFound >= clOptions->botsPerIP) {
+	  break;
+	}
+      }
+    }
+    if (botsFound >= clOptions->botsPerIP) {
+      sendMessage(ServerPlayer, playerIndex, "So sorry.  You are attempting to connect with too many bots.");
+      sendMessage(ServerPlayer, playerIndex,
+		  TextUtils::format("This server only allows a maximum of %d %s per IP address.",
+				    clOptions->botsPerIP,
+				    clOptions->botsPerIP==1?"bot":"bots").c_str());
+      removePlayer(playerIndex, "Too many bots", true);
+    }
   }
+
 
   // check for any spawn allow events
   worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);

@@ -57,6 +57,7 @@ const char *usageString =
 "[-badwords <filename>] "
 "[-ban ip{,ip}*] "
 "[-banfile <filename>] "
+"[-botsPerIP <num>] "
 "[-c] "
 "[-cache <url prefix>] "
 "[-cacheout <filename>] "
@@ -155,6 +156,7 @@ const char *extraUsageString =
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
+"\t-botsPerIP: specify how many client-side bots are allowed per IP address\n"
 "\t-c: classic capture-the-flag style game,\n"
 "\t-cache: url to get binary formatted world\n"
 "\t-cacheout: generate a binary cache file\n"
@@ -578,18 +580,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "ERROR: could not load banfile [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       }
-    }
-	else if (strcmp(argv[i], "-c") == 0)
-	{
+    } else if (TextUtils::compare_nocase(argv[i], "-botsPerIP") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.botsPerIP = atoi(argv[i]);
+    } else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
-      if (options.gameType == eRabbitChase)
-	  {
-		std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-		std::cerr << "Capture the flag assumed" << std::endl;
+      if (options.gameType == eRabbitChase) {
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
-	  options.gameType = eClassicCTF;
-    }
-	else if (strcmp(argv[i], "-cache") == 0) {
+      options.gameType = eClassicCTF;
+    } else if (strcmp(argv[i], "-cache") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
     } else if (strcmp(argv[i], "-cacheout") == 0) {

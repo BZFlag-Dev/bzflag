@@ -79,7 +79,7 @@ struct CmdLineOptions
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
-    autoTeam(false), citySize(5), cacheURL(""), cacheOut("")
+    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(2)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -205,6 +205,9 @@ struct CmdLineOptions
 
   /* freezetag options */
   bool			freezeTag;
+
+  /** how many client-side bots are allowed per IP address */
+  int			botsPerIP;
 
   // plugins
   typedef struct
