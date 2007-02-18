@@ -117,8 +117,7 @@ extern bool	     roamButton;
 class Playing {
 public:
   Playing(BzfDisplay      *_display,
-	  SceneRenderer   &renderer,
-	  iObjectRegistry *_objectRegistry);
+	  SceneRenderer   &renderer);
   ~Playing();
 
   void playingLoop();
@@ -128,7 +127,7 @@ private:
   RadarRenderer      _radar;
   HUDRenderer        _hud;
   BackgroundRenderer background;
-  iObjectRegistry   *objectRegistry;
+  csApplicationFramework *application;
 };
 
 #endif // BZF_PLAYING_H

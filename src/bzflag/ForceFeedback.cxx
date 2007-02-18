@@ -26,10 +26,6 @@ static bool	     useForceFeedback(const char *type = "Rumble");
 
 static BzfJoystick*     getJoystick()
 {
-  MainWindow *win = getMainWindow();
-  if (win)
-    return win->getJoystick();
-  else
     return NULL;
 }
 

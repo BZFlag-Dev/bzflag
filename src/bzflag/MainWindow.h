@@ -19,6 +19,7 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+#include <crystalspace.h>
 
 /* common interface headers */
 #include "BzfWindow.h"
@@ -39,7 +40,7 @@ class MainWindow {
 			LowerHalf
     };
 
-			MainWindow(BzfWindow*, BzfJoystick*);
+			MainWindow(BzfWindow *, csApplicationFramework *);
 			~MainWindow();
 
     BzfWindow*		getWindow() const { return window; }
@@ -116,6 +117,11 @@ class MainWindow {
     int			minWidth;
     int			minHeight;
     bool		faulting;
+
+  csRef<iJoystickDriver> joy;
+  uint                   joystickNumber;
+  uint                   joystickXAxis;
+  uint                   joystickYAxis;
 };
 
 //

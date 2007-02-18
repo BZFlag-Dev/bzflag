@@ -623,10 +623,32 @@ int			main(int argc, char** argv)
 
 bool Bzflag::OnInitialize(int argc, char *argv[])
 {
+  if (!RequestPlugins(GetObjectRegistry(),
+		      CS_REQUEST_VFS,
+		      CS_REQUEST_REPORTER,
+		      CS_REQUEST_REPORTERLISTENER,
+		      CS_REQUEST_END))
+    return ReportError("Failed to initialize plugins!");
+  // Attempt to load a joystick plugin.
+  csRef<iStringArray> joystickClasses
+    = iSCF::SCF->QueryClassList("crystalspace.device.joystick.");
+  if (joystickClasses.IsValid()) {
+    csRef<iPluginManager> plugmgr
+      = CS_QUERY_REGISTRY(GetObjectRegistry(), iPluginManager);
+    for (size_t i = 0; i < joystickClasses->Length(); i++) {
+      const char *className = joystickClasses->Get(i);
+      iBase *b = plugmgr->LoadPlugin(className);
+      if (b != 0)
+	b->DecRef();
+    }
+  }
+
   csBaseEventHandler::Initialize(GetObjectRegistry());
   if (!RegisterQueue(GetObjectRegistry(),
 		     csevAllEvents(GetObjectRegistry())))
     return ReportError("Failed to set up event handler!");
+
+  argv0 = argv[0];
 
   return true;
 }
@@ -1095,7 +1117,7 @@ bool Bzflag::Application()
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  pmainWindow = new MainWindow(window, joystick);
+  pmainWindow = new MainWindow(window, this);
   if (pmainWindow->isInFault()) {
 #ifdef _WIN32
     WSACleanup();
@@ -1339,7 +1361,10 @@ bool Bzflag::Application()
   }
 
   // start playing
-  playing = new Playing(display, RENDERER, GetObjectRegistry());
+  playing = new Playing(display, RENDERER);
+
+  if (!Open())
+    return false;
 
   // start game loop
   Run();

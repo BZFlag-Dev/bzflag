@@ -5828,9 +5828,11 @@ static void		updateDestructCountdown(float dt)
 void Playing::playingLoop()
 {
   if (CommandsStandard::isQuit()) {
-    csRef<iEventQueue> q = csQueryRegistry<iEventQueue>(objectRegistry);
+    csRef<iEventQueue> q = csQueryRegistry<iEventQueue>
+      (csApplicationFramework::GetObjectRegistry());
     if (q.IsValid())
-      q->GetEventOutlet()->Broadcast(csevQuit(objectRegistry));
+      q->GetEventOutlet()->
+	Broadcast(csevQuit(csApplicationFramework::GetObjectRegistry()));
     return;
   }
 
@@ -5960,9 +5962,11 @@ void Playing::playingLoop()
 
     // quick out
     if (CommandsStandard::isQuit()) {
-      csRef<iEventQueue> q = csQueryRegistry<iEventQueue>(objectRegistry);
+      csRef<iEventQueue> q = csQueryRegistry<iEventQueue>
+	(csApplicationFramework::GetObjectRegistry());
       if (q.IsValid())
-	q->GetEventOutlet()->Broadcast(csevQuit(objectRegistry));
+	q->GetEventOutlet()->
+	  Broadcast(csevQuit(csApplicationFramework::GetObjectRegistry()));
       return;
     }
 
@@ -6425,13 +6429,11 @@ static void		startupErrorCallback(const char* msg)
 
 
 Playing::Playing(BzfDisplay      *_display,
-		 SceneRenderer   &renderer,
-		 iObjectRegistry *_objectRegistry)
+		 SceneRenderer   &renderer)
   : _controlPanel(renderer.getWindow(), renderer),
     _radar(renderer, world),
     _hud(_display, renderer),
-    background(renderer),
-    objectRegistry(_objectRegistry)
+    background(renderer)
 {
   // initalization
   display = _display;

@@ -22,9 +22,9 @@
 // MainWindow
 //
 
-MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
+MainWindow::MainWindow(BzfWindow*              _window,
+		       csApplicationFramework *application) :
 				window(_window),
-				joystick(_joystick),
 				quit(false),
 				quadrant(FullWindow),
 				isFullscreen(false),
@@ -39,6 +39,20 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 {
   window->addResizeCallback(resizeCB, this);
   resize();
+
+  // create & initialize the joystick
+  if (BZDB.get("joystickname") == "off" || BZDB.get("joystickname") == "") {
+    joystickNumber = 255;
+  } else {
+    joystickNumber = atoi(BZDB.get("joystickname").c_str());
+    joystickXAxis  = atoi(BZDB.get("jsXAxis").c_str());
+    joystickYAxis  = atoi(BZDB.get("jsYAxis").c_str());
+  }
+
+  joy = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
+			  iJoystickDriver);
+  if (!joy)
+    application->ReportWarning("Failed to locate Joystick!\n");
 }
 
 MainWindow::~MainWindow()
@@ -244,45 +258,68 @@ void			MainWindow::iconify()
 
 bool			MainWindow::haveJoystick() const
 {
-  return joystick->joystick();
+  return true;
 }
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
-  joystick->getJoy(mx, my);
+  int imx, imy;
+  mx = joy->GetLast(joystickNumber, joystickXAxis);
+  my = joy->GetLast(joystickNumber, joystickYAxis);
   mx = ((width >> 1) * mx) / (900);
   my = ((height >> 1) * my) / (900);
 }
 
 unsigned long		  MainWindow::getJoyButtonSet() const
 {
-  return joystick->getJoyButtons();
+  unsigned long buttons = 0;
+
+  if (joystickNumber == 255)
+    return 0;
+
+  for (int i = 0; i < CS_MAX_JOYSTICK_BUTTONS; i++)
+    buttons |= joy->GetLastButton(joystickNumber, i) << i;
+
+  return buttons;
 }
 
 void		    MainWindow::getJoyDevices(std::vector<std::string>
 						  &list) const
 {
-  joystick->getJoyDevices(list);
+  list.erase(list.begin(), list.end());
+  for (int i = 0; i < (int)CS_MAX_JOYSTICK_COUNT; i++) {
+    char joystickDevice[3];
+    sprintf(joystickDevice, "%d", i);
+    list.push_back(joystickDevice);
+  }
 }
 
 void		    MainWindow::getJoyDeviceAxes(std::vector<std::string>
 						 &list) const
 {
-  joystick->getJoyDeviceAxes(list);
+  for (int i = 0; i < CS_MAX_JOYSTICK_AXES; i++) {
+    char joystickAxes[3];
+    sprintf(joystickAxes, "%d", i);
+    list.push_back(joystickAxes);
+  }
 }
 
 void		    MainWindow::setJoyXAxis(const std::string axis)
 {
-  joystick->setXAxis(axis);
+  joystickXAxis = atoi(axis.c_str());
 }
 
 void		    MainWindow::setJoyYAxis(const std::string axis)
 {
-  joystick->setYAxis(axis);
+  joystickYAxis = atoi(axis.c_str());
 }
 
 void			MainWindow::initJoystick(std::string &joystickName) {
-  joystick->initJoystick(joystickName.c_str());
+  if (!strcasecmp(joystickName.c_str(), "off")
+      || !strcmp(joystickName.c_str(), ""))
+    joystickNumber = 255;
+  else
+    joystickNumber = atoi(joystickName.c_str());
 }
 
 // Local Variables: ***
