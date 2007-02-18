@@ -20,11 +20,11 @@ BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
-class logDetail : public bz_EventHandler
+class LogDetail : public bz_EventHandler
 {
 public:
-  logDetail() {};
-  virtual ~logDetail() {};
+  LogDetail() {};
+  virtual ~LogDetail() {};
   virtual void process( bz_EventData *eventData );
 private:
   void displayPlayerPrivs( int playerID );
@@ -33,7 +33,7 @@ private:
   void displayTeam( bz_eTeamType team );
 };
 
-logDetail logDetailHandler;
+LogDetail logDetailHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
@@ -59,7 +59,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void logDetail::process( bz_EventData *eventData )
+void LogDetail::process( bz_EventData *eventData )
 {
   bz_ChatEventData *chatData = (bz_ChatEventData *) eventData;
   bz_ServerMsgEventData *serverMsgData = (bz_ServerMsgEventData *) eventData;
@@ -164,7 +164,7 @@ void logDetail::process( bz_EventData *eventData )
   }
 }
 
-void logDetail::displayPlayerPrivs( int playerID )
+void LogDetail::displayPlayerPrivs( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -178,13 +178,13 @@ void logDetail::displayPlayerPrivs( int playerID )
   }
 }
 
-void logDetail::displayCallsign( bzApiString callsign )
+void LogDetail::displayCallsign( bzApiString callsign )
 {
   cout << strlen( callsign.c_str() ) << ":";
   cout << callsign.c_str();
 }
 
-void logDetail::displayCallsign( int playerID )
+void LogDetail::displayCallsign( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -196,7 +196,7 @@ void logDetail::displayCallsign( int playerID )
 }
 
 
-void logDetail::displayTeam( bz_eTeamType team )
+void LogDetail::displayTeam( bz_eTeamType team )
 {
   // Display the player team
   switch ( team ) {
