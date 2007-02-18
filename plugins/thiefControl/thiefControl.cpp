@@ -5,15 +5,15 @@
 
 BZ_GET_PLUGIN_VERSION
 
-class thiefControl : public bz_EventHandler
+class ThiefControl : public bz_EventHandler
 {
 public:
-  thiefControl() {} ;
-  virtual ~thiefControl() {};
+  ThiefControl() {} ;
+  virtual ~ThiefControl() {};
   virtual void process( bz_EventData *eventData );
 };
 
-thiefControl thiefHandler;
+ThiefControl thiefHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
@@ -29,7 +29,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void thiefControl::process( bz_EventData *eventData )
+void ThiefControl::process( bz_EventData *eventData )
 {
   bz_FlagTransferredEventData_V1 *data = (bz_FlagTransferredEventData_V1 *) eventData;
   bz_BasePlayerRecord *playerFrom = bz_getPlayerByIndex(data->fromPlayerID);

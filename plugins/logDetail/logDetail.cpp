@@ -23,11 +23,11 @@ using namespace std;
 
 enum action { join , auth , part };
 
-class logDetail : public bz_EventHandler
+class LogDetail : public bz_EventHandler
 {
 public:
-  logDetail();
-  virtual ~logDetail();
+  LogDetail();
+  virtual ~LogDetail();
   virtual void process( bz_EventData *eventData );
 private:
   void displayPlayerPrivs( int playerID );
@@ -38,7 +38,7 @@ private:
   virtual void listPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
 };
 
-logDetail logDetailHandler;
+LogDetail logDetailHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
@@ -64,19 +64,19 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-logDetail::logDetail()
+LogDetail::LogDetail()
 {
   cout << "SERVER-STATUS Running" << endl;
   listPlayers( join , NULL );
 }
 
-logDetail::~logDetail()
+LogDetail::~LogDetail()
 {
   listPlayers( part , NULL );
   cout << "SERVER-STATUS Stopped" << endl;
 }
 
-void logDetail::process( bz_EventData *eventData )
+void LogDetail::process( bz_EventData *eventData )
 {
   bz_ChatEventData_V1 *chatData = (bz_ChatEventData_V1 *) eventData;
   bz_ServerMsgEventData_V1 *serverMsgData = (bz_ServerMsgEventData_V1 *) eventData;
@@ -186,14 +186,14 @@ void logDetail::process( bz_EventData *eventData )
   }
 }
 
-void logDetail::displayBZid( int playerID )
+void LogDetail::displayBZid( int playerID )
 {
   bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player && player->globalUser)
     cout << " BZid:" << player->bzID.c_str();
 }
 
-void logDetail::displayPlayerPrivs( int playerID )
+void LogDetail::displayPlayerPrivs( int playerID )
 {
   bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -207,13 +207,13 @@ void logDetail::displayPlayerPrivs( int playerID )
   }
 }
 
-void logDetail::displayCallsign( bz_ApiString callsign )
+void LogDetail::displayCallsign( bz_ApiString callsign )
 {
   cout << strlen( callsign.c_str() ) << ":";
   cout << callsign.c_str();
 }
 
-void logDetail::displayCallsign( int playerID )
+void LogDetail::displayCallsign( int playerID )
 {
   bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
@@ -225,7 +225,7 @@ void logDetail::displayCallsign( int playerID )
 }
 
 
-void logDetail::displayTeam( bz_eTeamType team )
+void LogDetail::displayTeam( bz_eTeamType team )
 {
   // Display the player team
   switch ( team ) {
@@ -259,7 +259,7 @@ void logDetail::displayTeam( bz_eTeamType team )
   }
 }
 
-void logDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
+void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_BasePlayerRecord *player;
