@@ -22,6 +22,7 @@
 #include "BzfEvent.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -30,6 +31,7 @@
 #include "effectsRenderer.h"
 #include "playing.h"
 #include "SyncClock.h"
+
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -206,30 +208,67 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 }
 
 
-float LocalPlayer::getNewAngVel(float old, float desired)
+float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 {
   float newAngVel;
+  float frames;
 
   if ((inputMethod != Keyboard) || (getPhysicsDriver() >= 0)) {
     // mouse and joystick users
     newAngVel = desired;
 
   } else {
-
-    /* keybaord users
-     * the larger the oldAngVel contribution, the more slowly an
-     * angular velocity converges to the desired "max" velocity; the
-     * contribution of the desired and old velocity should add up to
-     * one for a linear convergence rate.
-     */
-    newAngVel = (old * 0.8f) + (desired * 0.2f);
-
-    // instant stop
-    if ((old * desired < 0.0f) ||
-	(NEAR_ZERO(desired, ZERO_TOLERANCE))) {
+    // keyboard users
+    if ((old * desired < 0.0f) || // reversed direction
+	(NEAR_ZERO(desired, ZERO_TOLERANCE)) || // stopped
+	(NEAR_ZERO(old - desired, ZERO_TOLERANCE))) { // close enough
       newAngVel = desired;
+    } else {
+      /* dampened turning for aim control */
+
+      /* mildly fudgey factor controls turn rate dampening.  should
+       * converge roughly within converge and converge*converge
+       * seconds (assuming converge is < 1).
+       *
+       * it would converge within .5 but we didn't accelerate
+       * non-linearly by combining additional previous velocity, so
+       * it's generally around sqrt(converge) * converge seconds
+       * (i.e., around .35 sec for converge of .5)
+       */
+      static const float converge = 0.5f;
+
+      /* spread out dampening over this many frames */
+      frames = converge / dt;
+      if (frames < 1.0f) {
+	frames = 1.0f; // framerate too low
+      }
+
+      /* accelerate towards desired */
+      newAngVel = (old + (old / frames)) + (desired / frames);
+
+      // if reached desired, clamp it
+      if (desired > 0) {
+	if (newAngVel > desired) {
+	  newAngVel = desired;
+	}
+      } else {
+	if (newAngVel < desired) {
+	  newAngVel = desired;
+	}
+      }
     }
   }
+
+  // debug timing
+  if (BZDB.isTrue("debugNewAngVel")) {
+    static TimeKeeper k = TimeKeeper::getNullTime();
+    if (TimeKeeper::getCurrent() - k > 0.1f) { // tick every .1 s
+      addMessage(NULL, TextUtils::format("dt = %.4f ; old = %.4f ; desired = %.4f ; frames = %0.4f ; new = %0.4f\n", dt, old, desired, frames, newAngVel));
+      printf("dt = %.4f ; old = %.4f ; desired = %.4f ; frames = %0.4f ; new = %0.4f\n", dt, old, desired, frames, newAngVel);
+      k = TimeKeeper::getCurrent();
+    }
+  }
+    
   return newAngVel;
 }
 
@@ -307,7 +346,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       float speed = desiredSpeed;
 
       // angular velocity
-      newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
+      newAngVel = getNewAngVel(oldAngVel, desiredAngVel, dt);
 
       // limit acceleration
       doMomentum(dt, speed, newAngVel);
@@ -338,7 +377,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	float speed = desiredSpeed;
 
 	// angular velocity
-	newAngVel = getNewAngVel(oldAngVel, desiredAngVel);
+	newAngVel = getNewAngVel(oldAngVel, desiredAngVel, dt);
 
 	// compute horizontal velocity so far
 	const float slideTime = BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME);
@@ -1529,7 +1568,6 @@ bool			LocalPlayer::checkHit(const Player* source,
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    const FlagType* shotFlag = shot->getFlag();
     if (isPhantomZoned() &&
 	(shotType != ShockWaveShot) &&
 	(shotType != SuperShot) &&
