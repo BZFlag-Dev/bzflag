@@ -141,14 +141,14 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team prefixes
-  { "redTeamPrefix",		"skins/red/",			true,	StateDatabase::ReadWrite,	NULL },
+  { "redTeamPrefix",		"skins/red/",		true,	StateDatabase::ReadWrite,	NULL },
   { "blueTeamPrefix",		"skins/blue/",		true,	StateDatabase::ReadWrite,	NULL },
   { "greenTeamPrefix",		"skins/green/",		true,	StateDatabase::ReadWrite,	NULL },
-  { "purpleTeamPrefix",		"skins/purple/",		true,	StateDatabase::ReadWrite,	NULL },
-  { "rabbitTeamPrefix",		"skins/rabbit/",		true,	StateDatabase::ReadWrite,	NULL },
-  { "hunterTeamPrefix",		"skins/hunter/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "purpleTeamPrefix",		"skins/purple/",	true,	StateDatabase::ReadWrite,	NULL },
+  { "rabbitTeamPrefix",		"skins/rabbit/",	true,	StateDatabase::ReadWrite,	NULL },
+  { "hunterTeamPrefix",		"skins/hunter/",	true,	StateDatabase::ReadWrite,	NULL },
   { "rogueTeamPrefix",		"skins/rogue/",		true,	StateDatabase::ReadWrite,	NULL },
-  { "observerTeamPrefix",	"skins/observer/",		true,	StateDatabase::ReadWrite,	NULL },
+  { "observerTeamPrefix",	"skins/observer/",	true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
   { "superPrefix",		"super_",		true,	StateDatabase::ReadWrite,	NULL },
@@ -177,14 +177,14 @@ DefaultDBItem	defaultDBItems[] = {
   { "emailDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
 
   // 3rdPerson Camera
-  { "3rdPersonCam",				"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonCamXYOffset",		"10.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonCamZOffset",		"2.5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonCamTargetMult",	"50.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonNearTargetSize",	"1.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonNearTargetDistance",	"40.0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonFarTargetSize",	"1.5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "3rdPersonFarTargetDistance",	"180.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCam",			"0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamXYOffset",		"10.0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamZOffset",		"2.5",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonCamTargetMult",		"50.0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonNearTargetSize",		"1.0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonNearTargetDistance",	"40.0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonFarTargetSize",		"1.5",		true,	StateDatabase::ReadWrite,	NULL },
+  { "3rdPersonFarTargetDistance",	"180.0",	true,	StateDatabase::ReadWrite,	NULL },
 
 #ifdef USE_XFIRE
   /* Xfire support
@@ -192,14 +192,17 @@ DefaultDBItem	defaultDBItems[] = {
    * 1: Private: do NOT send player-specific information (callsign, team, score...)
    * 2: Full: send all available information (to friends only)
    */
-  { "xfireCommunicationLevel",	"2",		true,	StateDatabase::ReadWrite,	NULL },
+  { "xfireCommunicationLevel",		"2",		true,	StateDatabase::ReadWrite,	NULL },
 #endif
   // seconds between pulses to textOutput (0 is disabled)
-  { "statsOutputFrequency",	"0",		true,	StateDatabase::ReadWrite,	NULL },
-  { "statsOutputFilename",	"",		true,	StateDatabase::ReadWrite,	NULL },
+  { "statsOutputFrequency",		"0",		true,	StateDatabase::ReadWrite,	NULL },
+  { "statsOutputFilename",		"",		true,	StateDatabase::ReadWrite,	NULL },
 
   // last screenshot
-  { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL }
+  { "lastScreenshot",			"0",		true,	StateDatabase::ReadWrite,	NULL },
+
+  // debugging (none should be persistent)
+  { "debugNewAngVel",			"0",		false,	StateDatabase::ReadWrite,	NULL }
 
 };
 
