@@ -168,7 +168,7 @@ static void		setVisual(BzfVisual* visual)
 #endif
 }
 
-Bzflag::Bzflag() : filter(NULL), pmainWindow(NULL), joystick(NULL),
+Bzflag::Bzflag() : filter(NULL), pmainWindow(NULL),
 		   window(NULL), visual(NULL), platformFactory(NULL),
 		   bm(NULL), playing(NULL)
 {
@@ -1392,7 +1392,6 @@ void Bzflag::OnExit()
   if (display)
     display->setDefaultResolution();
   delete pmainWindow;
-  delete joystick;
   delete window;
   delete visual;
   closeSound();

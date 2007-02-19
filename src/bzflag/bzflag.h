@@ -36,7 +36,6 @@ class BzfVisual;
 class PlatformFactory;
 class BundleMgr;
 class MainWindow;
-class BzfJoystick;
 class BzfWindow;
 class Playing;
 
@@ -58,7 +57,6 @@ private:
 
   WordFilter      *filter;
   MainWindow      *pmainWindow;
-  BzfJoystick     *joystick;
   BzfWindow       *window;
   BzfVisual       *visual;
   PlatformFactory *platformFactory;
