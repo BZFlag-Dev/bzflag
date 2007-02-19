@@ -207,7 +207,7 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
     return true;
   }
 
-  if ( command == "list")
+  if ( command == "last")
   {
     std::vector<std::string> params = tokenize(message,std::string(" "),0,true);
     if ( params.size() <2)
