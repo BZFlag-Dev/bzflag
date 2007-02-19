@@ -217,6 +217,7 @@ AC_CONFIG_FILES([
 	shockwaveDeath/Makefile
 	soundTest/Makefile
 	weaponArena/Makefile
+	torBlock/Makefile
 	bzfscron/Makefile
 ])
 
@@ -243,5 +244,6 @@ AC_MSG_RESULT([  nagware - Annoy users until they register])
 AC_MSG_RESULT([  playHistoryTracker - Maintain statistics on players])
 AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
 AC_MSG_RESULT([  recordmatch - Makes countdown record games to a file])
+AC_MSG_RESULT([  torBlock - Blocks messages from the tor network])
 AC_MSG_RESULT([  bzfscron - Allows you to run commands at time intervals])
 AC_MSG_RESULT([])

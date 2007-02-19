@@ -148,7 +148,7 @@ public:
 
 Handler handler;
 
-class MyURLHandler: public bz_URLHandler
+class MyURLHandler: public bz_BaseURLHandler
 {
 public:
 	std::string page;
@@ -196,7 +196,7 @@ public:
 class mySlashCommand : public bz_CustomSlashCommandHandler
 {
 public:
-	virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params )
+	virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
 	{
 		bz_sendTextMessage(BZ_SERVER,playerID,"torBlock List");
 		for ( unsigned int i = 0; i < exitNodes.size(); i++ )
@@ -257,7 +257,7 @@ void Handler::process ( bz_EventData *eventData )
 	{
 		case bz_eAllowPlayer:
 			{
-				bz_AllowPlayerEventData *data = (bz_AllowPlayerEventData*)eventData;
+				bz_AllowPlayerEventData_V1 *data = (bz_AllowPlayerEventData_V1*)eventData;
 
 				if (isTorAddress(data->ipAddress.c_str()))
 				{
