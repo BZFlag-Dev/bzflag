@@ -996,12 +996,6 @@ bool Bzflag::Application()
   }
   window->setTitle("bzflag");
 
-  // create & initialize the joystick
-  joystick = platformFactory->createJoystick();
-  joystick->initJoystick(BZDB.get("joystickname").c_str());
-  joystick->setXAxis(BZDB.get("jsXAxis"));
-  joystick->setYAxis(BZDB.get("jsYAxis"));
-
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
     PlatformFactory::getMedia()->setDriver(BZDB.get("audioDriver"));

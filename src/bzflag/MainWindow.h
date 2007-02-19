@@ -23,7 +23,6 @@
 
 /* common interface headers */
 #include "BzfWindow.h"
-#include "BzfJoystick.h"
 
 #define	USE_GL_STEREO
 
@@ -44,7 +43,6 @@ class MainWindow {
 			~MainWindow();
 
     BzfWindow*		getWindow() const { return window; }
-    BzfJoystick*	getJoystick() const { return joystick; }
 
     int			getOriginX() const;
     int			getOriginY() const;
@@ -101,7 +99,6 @@ class MainWindow {
 
   private:
     BzfWindow*		window;
-    BzfJoystick*	joystick;
     bool		quit;
     Quadrant		quadrant;
     bool		isFullscreen;
