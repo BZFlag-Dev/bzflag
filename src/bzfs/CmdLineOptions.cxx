@@ -177,7 +177,7 @@ const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
-"\t-jitterdrop: drop player after this many jitter warnings\n]"
+"\t-jitterdrop: drop player after this many jitter warnings\n"
 "\t-jitterwarn: jitter warning threshhold time [ms]\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
