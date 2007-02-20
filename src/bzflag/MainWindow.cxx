@@ -141,7 +141,6 @@ void			MainWindow::setFullscreen()
 void			MainWindow::toggleFullscreen()
 {
   isFullscreen = !isFullscreen;
-  window->setFullscreen(isFullscreen);
   resize();
 }
 
@@ -237,11 +236,11 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
 
 void			MainWindow::resize()
 {
-  window->getSize(trueWidth, trueHeight);
-  window->makeCurrent();
-  if (!window->create())
-    faulting = true;
-  setQuadrant(quadrant);
+  csRef<iGraphics3D> g3d
+    = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
+			iGraphics3D);
+  width  = g3d->GetWidth();
+  height = g3d->GetHeight();
 }
 
 void			MainWindow::resizeCB(void* _self)
@@ -263,7 +262,6 @@ bool			MainWindow::haveJoystick() const
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
-  int imx, imy;
   mx = joy->GetLast(joystickNumber, joystickXAxis);
   my = joy->GetLast(joystickNumber, joystickYAxis);
   mx = ((width >> 1) * mx) / (900);

@@ -127,7 +127,7 @@ private:
   RadarRenderer      _radar;
   HUDRenderer        _hud;
   BackgroundRenderer background;
-  csApplicationFramework *application;
+  csRef<iGraphics2D> g2d;
 };
 
 #endif // BZF_PLAYING_H

@@ -64,6 +64,8 @@ private:
   Playing         *playing;
 
   csRef<iCommandLineParser> clp;
+  csRef<iGraphics3D>        g3d;
+  csRef<iGraphics2D>        g2d;
 };
 
 #endif // BZF_BZFLAG_H

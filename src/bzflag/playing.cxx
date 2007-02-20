@@ -5609,8 +5609,6 @@ void drawFrame(const float dt)
       glPopMatrix();
     }
 
-    mainWindow->getWindow()->swapBuffers();
-
     // remove dynamic nodes from this frame
     if (scene) {
       scene->removeDynamicNodes();
@@ -6116,8 +6114,14 @@ void Playing::playingLoop()
     // prep the HUD
     prepareTheHUD();
 
+    g2d->Clear(0);
+    g2d->BeginDraw();
+
     // draw the frame
     drawFrame(dt);
+
+    g2d->FinishDraw();
+    g2d->Print(NULL);
 
     // play the sounds
     updateSound();
@@ -6424,7 +6428,6 @@ static void		startupErrorCallback(const char* msg)
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
 }
 
 
@@ -6439,6 +6442,9 @@ Playing::Playing(BzfDisplay      *_display,
   display = _display;
   sceneRenderer = &renderer;
   mainWindow = &sceneRenderer->getWindow();
+
+  g2d = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
+			  iGraphics2D);
 
   lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
 
@@ -6517,7 +6523,6 @@ Playing::Playing(BzfDisplay      *_display,
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glDisable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
-  mainWindow->getWindow()->swapBuffers();
 
   // resize and draw basic stuff
   glClear(GL_COLOR_BUFFER_BIT);
@@ -6525,7 +6530,6 @@ Playing::Playing(BzfDisplay      *_display,
   controlPanel->resize();
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
 
   // startup error callback adds message to control panel and
   // forces an immediate redraw.
@@ -6559,15 +6563,6 @@ Playing::Playing(BzfDisplay      *_display,
 
   std::string videoFormat;
   int format = -1;
-  if (BZDB.isSet("resolution")) {
-    videoFormat = BZDB.get("resolution");
-    if (videoFormat.length() != 0) {
-      format = display->findResolution(videoFormat.c_str());
-      if (format >= 0) {
-	mainWindow->getWindow()->callResizeCallbacks();
-      }
-    }
-  };
   // set the resolution (only if in full screen mode)
   if (!BZDB.isSet("_window") && BZDB.isSet("resolution")) {
     if (videoFormat.length() != 0) {
@@ -6608,7 +6603,6 @@ Playing::Playing(BzfDisplay      *_display,
   glClear(GL_COLOR_BUFFER_BIT);
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
   mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display

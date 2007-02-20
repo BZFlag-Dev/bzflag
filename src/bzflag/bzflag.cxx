@@ -100,10 +100,6 @@ bool			echoToConsole = false;
 bool			echoAnsi = false;
 int			debugLevel = 0;
 
-static BzfDisplay*	display = NULL;
-
-
-
 #ifdef ROBOT
 // ROBOT -- tidy up
 int numRobotTanks = 0;
@@ -137,35 +133,6 @@ static void		setRadarColor(TeamColor team, const std::string& str)
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, Team::getTankColor(team), color);
-}
-
-static void		setVisual(BzfVisual* visual)
-{
-  // sine qua non
-  visual->setLevel(0);
-  visual->setDoubleBuffer(true);
-  visual->setRGBA(1, 1, 1, 0);
-
-  // ask for a zbuffer if not disabled.  we might
-  // choose not to use it if we do ask for it.
-  if (!BZDB.isSet("zbuffer") || (BZDB.get("zbuffer") != "disable")) {
-    int depthLevel = 16;
-    if (BZDB.isSet("forceDepthBits")) {
-      depthLevel = BZDB.evalInt("forceDepthBits");
-    }
-    visual->setDepth(depthLevel);
-  }
-
-  // optional
-#if defined(DEBUG_RENDERING)
-  visual->setStencil(4);
-#endif
-  if (BZDB.isTrue("multisample"))
-    visual->setMultisample(4);
-#ifdef USE_GL_STEREO
-  if (BZDB.isSet("view") && BZDB.get("view") == configViewValues[1])
-    visual->setStereo(true);
-#endif
 }
 
 Bzflag::Bzflag() : filter(NULL), pmainWindow(NULL),
@@ -526,10 +493,6 @@ void			dumpResources()
   }
 
   BZDB.set("quality", configQualityValues[RENDERER.useQuality()]);
-  if (!BZDB.isSet("_window") && display->getResolution() != -1 &&
-      display->getResolution(display->getResolution())) {
-    BZDB.set("resolution", display->getResolution(display->getResolution())->name);
-  }
   BZDB.set("startcode", ServerStartMenu::getSettings());
 
   BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
@@ -625,6 +588,7 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
 {
   if (!RequestPlugins(GetObjectRegistry(),
 		      CS_REQUEST_VFS,
+		      CS_REQUEST_OPENGL3D,
 		      CS_REQUEST_REPORTER,
 		      CS_REQUEST_REPORTERLISTENER,
 		      CS_REQUEST_END))
@@ -678,6 +642,9 @@ bool Bzflag::Application()
 #endif
 
   clp = CS_QUERY_REGISTRY(GetObjectRegistry(), iCommandLineParser);
+
+  g3d = CS_QUERY_REGISTRY(GetObjectRegistry(), iGraphics3D);
+  g2d = CS_QUERY_REGISTRY(GetObjectRegistry(), iGraphics2D);
 
   filter = (WordFilter *)NULL;
 
@@ -973,21 +940,11 @@ bool Bzflag::Application()
   // make platform factory
   platformFactory = PlatformFactory::getInstance();
 
-  // open display
-  display = platformFactory->createDisplay(NULL, NULL);
-  if (!display) {
-#ifdef _WIN32
-    WSACleanup();
-#endif
-    return ReportError("Can't open display.\n");
-  }
-
   // choose visual
-  visual = platformFactory->createVisual(display);
-  setVisual(visual);
+  visual = platformFactory->createVisual(NULL);
 
   // make the window
-  window = platformFactory->createWindow(display, visual);
+  window = platformFactory->createWindow(NULL, visual);
   if (!window->isValid()) {
 #ifdef _WIN32
     WSACleanup();
@@ -1048,6 +1005,9 @@ bool Bzflag::Application()
     return ReportError("No fonts found  (the -directory option may help).");
   }
 
+  if (!Open())
+    return false;
+
   // initialize locale system
 
   bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
@@ -1079,13 +1039,11 @@ bool Bzflag::Application()
 	h = 192;
       if (count == 6) {
 	if (xs == '-')
-	  x = display->getWidth() - x - w;
+	  x = g3d->GetWidth() - x - w;
 	if (ys == '-')
-	  y = display->getHeight() - y - h;
+	  y = g3d->GetHeight() - y - h;
 	setPosition = true;
       }
-      // must call this before setFullscreen() is called
-      display->setPassthroughSize(w, h);
     }
   }
 
@@ -1103,8 +1061,6 @@ bool Bzflag::Application()
       window->setSize(w, h);
   } else if (setSize) {
     window->setSize(w, h);
-  } else {
-    window->setSize(640, 480);
   }
   if (setPosition)
     window->setPosition(x, y);
@@ -1120,22 +1076,6 @@ bool Bzflag::Application()
   }
 
   std::string videoFormat;
-  int format = -1;
-  if (BZDB.isSet("resolution")) {
-    videoFormat = BZDB.get("resolution");
-    if (videoFormat.length() != 0) {
-      format = display->findResolution(videoFormat.c_str());
-      if (format >= 0) {
-	display->setFullScreenFormat(format);
-      }
-    }
-  };
-  // set fullscreen again so MainWindow object knows it's full screen
-  if (useFullscreen)
-    // this will also call window create
-    pmainWindow->setFullscreen();
-  else
-    window->create();
 
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.
@@ -1162,11 +1102,6 @@ bool Bzflag::Application()
 //  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   if (!OpenGLGState::haveGLContext()) {
-    // DIE
-    if (display != NULL) {
-      delete display;
-      display=NULL;
-    }
 #ifdef _WIN32
     WSACleanup();
 #endif
@@ -1220,10 +1155,6 @@ bool Bzflag::Application()
 #ifdef _WIN32
     WSACleanup();
 #endif
-    if (display != NULL) {
-      delete display;
-      display=NULL;
-    }
     return ReportError("ERROR: Unable to initialize an OpenGL renderer");
   }
 
@@ -1242,8 +1173,7 @@ bool Bzflag::Application()
   // set gamma if set in resources and we have gamma control
   if (BZDB.isSet("gamma")) {
     if (pmainWindow->getWindow()->hasGammaControl())
-      pmainWindow->getWindow()->setGamma
-	((float)atof(BZDB.get("gamma").c_str()));
+      g2d->SetGamma((float)atof(BZDB.get("gamma").c_str()));
   }
 
   // set the scene renderer's window
@@ -1293,14 +1223,6 @@ bool Bzflag::Application()
 
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
-  }
-
-  // grab the mouse only if allowed
-  if (BZDB.isSet("mousegrab") && !BZDB.isTrue("mousegrab")) {
-    pmainWindow->setNoMouseGrab();
-    pmainWindow->enableGrabMouse(false);
-  } else {
-    pmainWindow->enableGrabMouse(true);
   }
 
   // set window quadrant
@@ -1355,10 +1277,7 @@ bool Bzflag::Application()
   }
 
   // start playing
-  playing = new Playing(display, RENDERER);
-
-  if (!Open())
-    return false;
+  playing = new Playing(NULL, RENDERER);
 
   // start game loop
   Run();
@@ -1389,13 +1308,10 @@ void Bzflag::OnExit()
   if (filter != NULL)
     delete filter;
   filter = NULL;
-  if (display)
-    display->setDefaultResolution();
   delete pmainWindow;
   delete window;
   delete visual;
   closeSound();
-  delete display;
   delete platformFactory;
   delete bm;
   Flags::kill();
