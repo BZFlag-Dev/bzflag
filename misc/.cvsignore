@@ -1,7 +1,6 @@
 rrlog
 3ds2bzw
 bzflag.desktop
-INSTALL.backup
 config.guess
 config.sub
 depcomp
@@ -12,4 +11,3 @@ config.guess.backup
 config.sub.backup
 ltmain.sh.backup
 mkinstalldirs
-COPYING.backup
