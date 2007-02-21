@@ -53,6 +53,8 @@ public:
   virtual void Frame();
 
   virtual bool OnKeyboard(iEvent &event);
+  virtual bool OnMouseDown(iEvent &event);
+  virtual bool OnMouseUp(iEvent &event);
 private:
   void parse();
   void parseConfigName();

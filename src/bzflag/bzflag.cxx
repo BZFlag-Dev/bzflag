@@ -1455,7 +1455,70 @@ bool Bzflag::OnKeyboard(iEvent &event)
     keyEvent.shift |= BzfKeyEvent::AltKey;
 
   playing->doKey(keyEvent, pressed);
-  return false;
+  return true;
+}
+
+bool Bzflag::OnMouseDown(iEvent &event)
+{
+  const uint       csmb      = csMouseEventHelper::GetButton(&event);
+  csMouseEventType eventtype = csMouseEventHelper::GetEventType(&event);
+  csKeyModifiers   m;
+  BzfKeyEvent      buttonEvent;
+
+  csMouseEventHelper::GetModifiers(&event, m);
+  bool pressed = (eventtype == csMouseEventTypeDown);
+
+  buttonEvent.ascii = 0;
+  buttonEvent.shift = 0;
+  // With mouse, keyboard modifier do not work great
+  //   if (m.modifiers[csKeyModifierTypeShift])
+  //     buttonEvent.shift |= BzfKeyEvent::ShiftKey;
+  //   if (m.modifiers[csKeyModifierTypeCtrl])
+  //     buttonEvent.shift |= BzfKeyEvent::ControlKey;
+  //   if (m.modifiers[csKeyModifierTypeAlt])
+  //     buttonEvent.shift |= BzfKeyEvent::AltKey;
+
+  switch (csmb) {
+  case 0:
+    buttonEvent.button = BzfKeyEvent::LeftMouse;
+    break;
+  case 2:
+    buttonEvent.button = BzfKeyEvent::MiddleMouse;
+    break;
+  case 1:
+    buttonEvent.button = BzfKeyEvent::RightMouse;
+    break;
+  case 3:
+    buttonEvent.button = BzfKeyEvent::WheelUp;
+    break;
+  case 4:
+    buttonEvent.button = BzfKeyEvent::WheelDown;
+    break;
+  case 5:
+    buttonEvent.button = BzfKeyEvent::MouseButton6;
+    break;
+  case 6:
+    buttonEvent.button = BzfKeyEvent::MouseButton7;
+    break;
+  case 7:
+    buttonEvent.button = BzfKeyEvent::MouseButton8;
+    break;
+  case 8:
+    buttonEvent.button = BzfKeyEvent::MouseButton9;
+    break;
+  case 9:
+    buttonEvent.button = BzfKeyEvent::MouseButton10;
+    break;
+  default:
+    return false;
+  }
+  playing->doKey(buttonEvent, pressed);
+  return true;
+}
+
+bool Bzflag::OnMouseUp(iEvent &event)
+{
+  return OnMouseDown(event);
 }
 
 void Bzflag::OnExit()
