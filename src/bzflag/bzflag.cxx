@@ -139,6 +139,7 @@ Bzflag::Bzflag() : filter(NULL), pmainWindow(NULL),
 		   window(NULL), visual(NULL), platformFactory(NULL),
 		   bm(NULL), playing(NULL)
 {
+  SetApplicationName ("BZFlag");
 }
 
 Bzflag::~Bzflag()
@@ -1288,6 +1289,173 @@ void Bzflag::Frame()
 {
   // main loop
   playing->playingLoop();
+}
+
+bool Bzflag::OnKeyboard(iEvent &event)
+{
+  csKeyEventType eventtype = csKeyEventHelper::GetEventType(&event);
+  utf32_char     code      = csKeyEventHelper::GetCookedCode(&event);
+  csKeyModifiers m;
+
+  csKeyEventHelper::GetModifiers(&event, m);
+
+  bool pressed = (eventtype == csKeyEventTypeDown);
+  BzfKeyEvent keyEvent;
+  keyEvent.ascii  = 0;
+  switch (code) {
+  case CSKEY_PAUSE:
+    keyEvent.button = BzfKeyEvent::Pause;
+    break;
+  case CSKEY_HOME:
+    keyEvent.button = BzfKeyEvent::Home;
+    break;
+  case CSKEY_END:
+    keyEvent.button = BzfKeyEvent::End;
+    break;
+  case CSKEY_LEFT:
+    keyEvent.button = BzfKeyEvent::Left;
+    break;
+  case CSKEY_RIGHT:
+    keyEvent.button = BzfKeyEvent::Right;
+    break;
+  case CSKEY_UP:
+    keyEvent.button = BzfKeyEvent::Up;
+    break;
+  case CSKEY_DOWN:
+    keyEvent.button = BzfKeyEvent::Down;
+    break;
+  case CSKEY_PGUP:
+    keyEvent.button = BzfKeyEvent::PageUp;
+    break;
+  case CSKEY_PGDN:
+    keyEvent.button = BzfKeyEvent::PageDown;
+    break;
+  case CSKEY_INS:
+    keyEvent.button = BzfKeyEvent::Insert;
+    break;
+  case CSKEY_BACKSPACE:
+    keyEvent.button = BzfKeyEvent::Backspace;
+    break;
+  case CSKEY_DEL:
+    keyEvent.button = BzfKeyEvent::Delete;
+    break;
+  case CSKEY_F1:
+    keyEvent.button = BzfKeyEvent::F1;
+    break;
+  case CSKEY_F2:
+    keyEvent.button = BzfKeyEvent::F2;
+    break;
+  case CSKEY_F3:
+    keyEvent.button = BzfKeyEvent::F3;
+    break;
+  case CSKEY_F4:
+    keyEvent.button = BzfKeyEvent::F4;
+    break;
+  case CSKEY_F5:
+    keyEvent.button = BzfKeyEvent::F5;
+    break;
+  case CSKEY_F6:
+    keyEvent.button = BzfKeyEvent::F6;
+    break;
+  case CSKEY_F7:
+    keyEvent.button = BzfKeyEvent::F7;
+    break;
+  case CSKEY_F8:
+    keyEvent.button = BzfKeyEvent::F8;
+    break;
+  case CSKEY_F9:
+    keyEvent.button = BzfKeyEvent::F9;
+    break;
+  case CSKEY_F10:
+    keyEvent.button = BzfKeyEvent::F10;
+    break;
+  case CSKEY_F11:
+    keyEvent.button = BzfKeyEvent::F11;
+    break;
+  case CSKEY_F12:
+    keyEvent.button = BzfKeyEvent::F12;
+    break;
+  case CSKEY_PAD0:
+    keyEvent.button = BzfKeyEvent::Kp0;
+    break;
+  case CSKEY_PAD1:
+    keyEvent.button = BzfKeyEvent::Kp1;
+    break;
+  case CSKEY_PAD2:
+    keyEvent.button = BzfKeyEvent::Kp2;
+    break;
+  case CSKEY_PAD3:
+    keyEvent.button = BzfKeyEvent::Kp3;
+    break;
+  case CSKEY_PAD4:
+    keyEvent.button = BzfKeyEvent::Kp4;
+    break;
+  case CSKEY_PAD5:
+    keyEvent.button = BzfKeyEvent::Kp5;
+    break;
+  case CSKEY_PAD6:
+    keyEvent.button = BzfKeyEvent::Kp6;
+    break;
+  case CSKEY_PAD7:
+    keyEvent.button = BzfKeyEvent::Kp7;
+    break;
+  case CSKEY_PAD8:
+    keyEvent.button = BzfKeyEvent::Kp8;
+    break;
+  case CSKEY_PAD9:
+    keyEvent.button = BzfKeyEvent::Kp9;
+    break;
+  case CSKEY_PADDECIMAL:
+    keyEvent.button = BzfKeyEvent::Kp_Period;
+    break;
+  case CSKEY_PADDIV:
+    keyEvent.button = BzfKeyEvent::Kp_Divide;
+    break;
+  case CSKEY_PADMULT:
+    keyEvent.button = BzfKeyEvent::Kp_Multiply;
+    break;
+  case CSKEY_PADMINUS:
+    keyEvent.button = BzfKeyEvent::Kp_Minus;
+    break;
+  case CSKEY_PADPLUS:
+    keyEvent.button = BzfKeyEvent::Kp_Plus;
+    break;
+  case CSKEY_PADENTER:
+    keyEvent.button = BzfKeyEvent::Kp_Enter;
+    break;
+  case CSKEY_PRINTSCREEN:
+    keyEvent.button = BzfKeyEvent::Print;
+    break;
+  default:
+    keyEvent.button = BzfKeyEvent::NoButton;
+    break;
+  }
+  // When NUM LOCK treat the KP number as numbers and Enter as Enter
+  if (m.modifiers[csKeyModifierTypeNumLock])
+    if (((keyEvent.button >= BzfKeyEvent::Kp0)
+	 && (keyEvent.button <= BzfKeyEvent::Kp9))
+	|| (keyEvent.button == BzfKeyEvent::Kp_Enter))
+      keyEvent.button = BzfKeyEvent::NoButton;
+
+  if (keyEvent.button == BzfKeyEvent::NoButton) {
+    if ((code & 0xFF80))
+      return false;
+    keyEvent.ascii = code & 0x7F;
+  }
+
+  if (code == CSKEY_ENTER)
+    keyEvent.ascii = '\r';
+
+  keyEvent.shift = 0;
+  if (m.modifiers[csKeyModifierTypeShift])
+    keyEvent.shift |= BzfKeyEvent::ShiftKey;
+  if (m.modifiers[csKeyModifierTypeCtrl])
+    keyEvent.shift |= BzfKeyEvent::ControlKey;
+  if (m.modifiers[csKeyModifierTypeAlt])
+    keyEvent.shift |= BzfKeyEvent::AltKey;
+
+  playing->doKey(keyEvent, pressed);
+  return false;
 }
 
 void Bzflag::OnExit()

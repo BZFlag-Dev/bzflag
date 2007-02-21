@@ -51,6 +51,8 @@ public:
   virtual bool OnInitialize(int argc, char *argv[]);
 
   virtual void Frame();
+
+  virtual bool OnKeyboard(iEvent &event);
 private:
   void parse();
   void parseConfigName();

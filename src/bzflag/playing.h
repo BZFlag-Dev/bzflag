@@ -121,6 +121,7 @@ public:
   ~Playing();
 
   void playingLoop();
+  void doKey(const BzfKeyEvent &key, bool pressed);
 
 private:
   ControlPanel       _controlPanel;

@@ -754,7 +754,8 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
   }
 }
 
-static void doKey(const BzfKeyEvent& key, bool pressed) {
+void Playing::doKey(const BzfKeyEvent& key, bool pressed) {
+
   if (myTank) {
     const std::string cmd = KEYMGR.get(key, pressed);
     if (cmd == "jump") {
@@ -975,14 +976,6 @@ static void		doEvent(BzfDisplay *disply)
 
       unmapped = true;
       mainWindow->ungrabMouse();
-      break;
-
-    case BzfEvent::KeyUp:
-      doKey(event.keyUp, false);
-      break;
-
-    case BzfEvent::KeyDown:
-      doKey(event.keyDown, true);
       break;
 
     case BzfEvent::MouseMove:
