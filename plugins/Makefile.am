@@ -24,6 +24,7 @@ SUBDIRS = \
 	soundTest \
 	weaponArena \
 	recordmatch \
+	plugin_utils\
 	torBlock	\
 	bzfscron
 
