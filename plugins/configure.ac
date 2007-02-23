@@ -195,6 +195,7 @@ AC_CONFIG_FILES([
 	Makefile
 	RogueGenocide/Makefile
 	SAMPLE_PLUGIN/Makefile
+	serverControl/Makefile
 	wwzones/Makefile
 	timedctf/Makefile
 	teamflagreset/Makefile
