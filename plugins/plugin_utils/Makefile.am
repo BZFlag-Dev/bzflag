@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = plugin_utils.la
 
-plugin_utils_la_SOURCES = plugin_utils.cpp
+plugin_utils_la_SOURCES = plugin_utils.cpp PluginConfig.cpp
 plugin_utils_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
