@@ -2,6 +2,7 @@ AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
+	plugin_utils\
 	RogueGenocide \
 	SAMPLE_PLUGIN \
 	serverControl \
@@ -25,7 +26,6 @@ SUBDIRS = \
 	soundTest \
 	weaponArena \
 	recordmatch \
-	plugin_utils\
 	torBlock	\
 	bzfscron
 
