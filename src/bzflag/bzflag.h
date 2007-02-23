@@ -50,12 +50,17 @@ public:
   virtual void OnExit();
   virtual bool OnInitialize(int argc, char *argv[]);
 
+private:
+  virtual void PreProcessFrame();
   virtual void Frame();
+  virtual void ProcessFrame();
+  virtual void PostProcessFrame();
+  virtual void FinishFrame();
 
   virtual bool OnKeyboard(iEvent &event);
   virtual bool OnMouseDown(iEvent &event);
   virtual bool OnMouseUp(iEvent &event);
-private:
+
   void parse();
   void parseConfigName();
 
@@ -70,6 +75,9 @@ private:
   csRef<iCommandLineParser> clp;
   csRef<iGraphics3D>        g3d;
   csRef<iGraphics2D>        g2d;
+
+  CS_EVENTHANDLER_NAMES("application.bzflag");
+  CS_EVENTHANDLER_NIL_CONSTRAINTS
 };
 
 #endif // BZF_BZFLAG_H

@@ -642,10 +642,9 @@ bool Bzflag::Application()
   }
 #endif
 
-  clp = CS_QUERY_REGISTRY(GetObjectRegistry(), iCommandLineParser);
-
-  g3d = CS_QUERY_REGISTRY(GetObjectRegistry(), iGraphics3D);
-  g2d = CS_QUERY_REGISTRY(GetObjectRegistry(), iGraphics2D);
+  clp    = csQueryRegistry<iCommandLineParser>(GetObjectRegistry());
+  g3d    = csQueryRegistry<iGraphics3D>(GetObjectRegistry());
+  g2d    = csQueryRegistry<iGraphics2D>(GetObjectRegistry());
 
   filter = (WordFilter *)NULL;
 
@@ -1285,10 +1284,33 @@ bool Bzflag::Application()
   return true;
 }
 
+void Bzflag::PreProcessFrame()
+{
+}
+
 void Bzflag::Frame()
 {
+}
+
+void Bzflag::ProcessFrame()
+{
+  g2d->Clear(0);
+  // Tell 3D driver we're going to display 3D things.
+  if (!g3d->BeginDraw(CSDRAW_3DGRAPHICS))
+    return;
+
   // main loop
   playing->playingLoop();
+}
+
+void Bzflag::PostProcessFrame()
+{
+}
+
+void Bzflag::FinishFrame()
+{
+  g3d->FinishDraw();
+  g3d->Print(0);
 }
 
 bool Bzflag::OnKeyboard(iEvent &event)

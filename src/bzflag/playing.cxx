@@ -6107,14 +6107,8 @@ void Playing::playingLoop()
     // prep the HUD
     prepareTheHUD();
 
-    g2d->Clear(0);
-    g2d->BeginDraw();
-
     // draw the frame
     drawFrame(dt);
-
-    g2d->FinishDraw();
-    g2d->Print(NULL);
 
     // play the sounds
     updateSound();
