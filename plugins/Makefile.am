@@ -3,31 +3,31 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
 	plugin_utils\
+	HoldTheFlag \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
-	serverControl \
-	wwzones \
-	timedctf \
-	teamflagreset \
-	koth \
-	keepaway \
-	thiefControl \
 	airspawn \
+	bzfscron \
 	chathistory \
-	hiddenAdmin \
 	flagStay \
+	hiddenAdmin \
+	keepaway \
 	killall \
+	koth \
 	logDetail \
+	nagware \
 	playHistoryTracker \
 	python \
-	shockwaveDeath \
-	HoldTheFlag \
-	nagware \
-	soundTest \
-	weaponArena \
 	recordmatch \
-	torBlock	\
-	bzfscron
+	serverControl \
+	shockwaveDeath \
+	soundTest \
+	teamflagreset \
+	thiefControl \
+	timedctf \
+	torBlock \
+	weaponArena \
+	wwzones
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \
