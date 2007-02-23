@@ -2,7 +2,7 @@ lib_LTLIBRARIES = SAMPLE_PLUGIN.la
 
 SAMPLE_PLUGIN_la_SOURCES = SAMPLE_PLUGIN.cpp
 SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version
-SAMPLE_PLUGIN_la_CPPFLAGS= -I/../plugin_utils
+SAMPLE_PLUGIN_la_CPPFLAGS= -I../plugin_utils
 
 EXTRA_DIST = \
 	README.txt \
