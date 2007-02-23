@@ -791,8 +791,8 @@ BZFlag 1.7d release 9 (2000-02-01)
 * improved win32 config file location - Daniel Léonard
 
 
-BZFlag 1.7d release 8
----------------------
+BZFlag 1.7d release 8 (2000-01-25)
+----------------------------------
 
 * fixed bug in bzfs that caused the player table to fill up
 * fixed bugs in bzfls that left open sockets and leaked memory
@@ -804,8 +804,8 @@ BZFlag 1.7d release 8
 * gave flag help messsages more space to avoid overlapping target box
 
 
-BZFlag 1.7d release 7
----------------------
+BZFlag 1.7d release 7 (2000-01-16)
+----------------------------------
 
 * added sym link for bzfs in RPM spec file
     can't launch server from client without it
@@ -823,8 +823,8 @@ BZFlag 1.7d release 7
 * added -3dfx and -no3dfx bzflag options to set/unset MESA_GLX_FX
 
 
-BZFlag 1.7d release 6
----------------------
+BZFlag 1.7d release 6 (2000-01-10)
+----------------------------------
 
 * now allows user to configure a non-optimized build (e.g. make linux-noopt)
 * added tarball make target to gather source tree into a tarball
@@ -844,8 +844,8 @@ BZFlag 1.7d release 6
 * added man pages for bzfls and bzfrelay
 
 
-BZFlag 1.7d release 5
----------------------
+BZFlag 1.7d release 5 (2000-01-03)
+----------------------------------
 
 * now allows user to configure a debug build (e.g. make linux-i386-debug)
 * cleaned up some compiler warnings
@@ -886,8 +886,8 @@ BZFlag 1.7d release 4
 * fixed ref count bug in bzfls
 
 
-BZFlag 1.7d release 3
----------------------
+BZFlag 1.7d release 3 (1999-11-12)
+----------------------------------
 
 * fixed truncation of server list reads
 * fixed menuing bug in find servers when no servers found
@@ -908,8 +908,8 @@ BZFlag 1.7d release 2
 * fixed bug in ServerLink::read();  now won't try to recv() zero bytes
 
 
-BZFlag 1.7d release 1
----------------------
+BZFlag 1.7d release 1 (1999-11-01?)
+-----------------------------------
 
 * starting from 1.7c release 2 patch 3
 * preliminary support for bzfls, a server for listing bzfs servers
@@ -967,7 +967,7 @@ first official open source release.
 * fixed broadcasting and multicasting on linux
 
 
-BZFlag 1.7c release 1
+BZFlag 1.7c release 1 (1999-06-01)
 ----------------------------------
 
 preliminary open source release.
