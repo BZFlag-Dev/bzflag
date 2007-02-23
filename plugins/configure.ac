@@ -211,6 +211,7 @@ AC_CONFIG_FILES([
 	m4/Makefile
 	nagware/Makefile
 	playHistoryTracker/Makefile
+	plugin_utils/Makefile
 	python/Makefile
 	recordmatch/Makefile
 	serverSideBotSample/Makefile
@@ -242,8 +243,9 @@ AC_MSG_RESULT([  killall - Simple means to kill everyone on demand])
 AC_MSG_RESULT([  logDetail - Extensive logging support])
 AC_MSG_RESULT([  nagware - Annoy users until they register])
 AC_MSG_RESULT([  playHistoryTracker - Maintain statistics on players])
+AC_MSG_RESULT([  plugin_utils - static lib for shared code between plug-ins])
 AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
 AC_MSG_RESULT([  recordmatch - Makes countdown record games to a file])
-AC_MSG_RESULT([  torBlock - Blocks messages from the tor network])
+AC_MSG_RESULT([  torBlock - Blocks messages from the TOR network])
 AC_MSG_RESULT([  bzfscron - Allows you to run commands at time intervals])
 AC_MSG_RESULT([])
