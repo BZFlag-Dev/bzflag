@@ -961,9 +961,9 @@ BZF_API bool bz_getPlayerCurrentState ( int playerID, bz_PlayerUpdateState &stat
   return true;
 }
 
-BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
+BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType _team )
 {
-  switch(team)
+  switch(_team)
     {
       case eRogueTeam:
       case eBlueTeam:
@@ -971,7 +971,7 @@ BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
       case eGreenTeam:
       case ePurpleTeam:
       case eObservers:
-	return clOptions->maxTeam[convertTeam(team)];
+	return clOptions->maxTeam[convertTeam(_team)];
     }
 
   return 0;
