@@ -86,16 +86,14 @@ int DynamicColorManager::findColor(const std::string& dyncol) const
 {
   if (dyncol.size() <= 0) {
     return -1;
-  }
-  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
     int index = atoi (dyncol.c_str());
     if ((index < 0) || (index >= (int)colors.size())) {
       return -1;
     } else {
       return index;
     }
-  }
-  else {
+  } else {
     for (int i = 0; i < (int)colors.size(); i++) {
       if (colors[i]->getName() == dyncol) {
 	return i;
@@ -244,8 +242,7 @@ void DynamicColor::finalize()
   if ((p.minValue == 1.0f) && (p.maxValue == 1.0f)) {
     // opaque regardless of functions
     possibleAlpha = false;
-  }
-  else {
+  } else {
 
     // check the a special sequence case
     const sequenceParams& seq = p.sequence;
@@ -253,8 +250,7 @@ void DynamicColor::finalize()
 	(noAlphaSeqMid && (p.minValue == 0.0f) && (p.maxValue == 1.0f))) {
       // transparency, not translucency
       possibleAlpha = false;
-    }
-    else {
+    } else {
       // check for the common case
       if ((p.sinusoids.size() == 0) &&
 	  (p.clampUps.size() == 0) &&
@@ -277,12 +273,10 @@ bool DynamicColor::setName(const std::string& dyncol)
   if (dyncol.size() <= 0) {
     name = "";
     return false;
-  }
-  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
     name = "";
     return false;
-  }
-  else {
+  } else {
     name = dyncol;
   }
   return true;
@@ -320,15 +314,13 @@ void DynamicColor::setLimits(int channel, float min, float max)
 {
   if (min < 0.0f) {
     min = 0.0f;
-  }
-  else if (min > 1.0f) {
+  } else if (min > 1.0f) {
     min = 1.0f;
   }
 
   if (max < 0.0f) {
     max = 0.0f;
-  }
-  else if (max > 1.0f) {
+  } else if (max > 1.0f) {
     max = 1.0f;
   }
 
@@ -340,7 +332,7 @@ void DynamicColor::setLimits(int channel, float min, float max)
 
 
 void DynamicColor::setSequence(int channel,float period, float offset,
-				std::vector<char>& list)
+			       std::vector<char>& list)
 {
   sequenceParams& seq = channels[channel].sequence;
 
@@ -423,8 +415,7 @@ void DynamicColor::updateVariable()
   std::string::size_type atpos = expr.find_first_of('@');
   if (atpos == std::string::npos) {
     varTimingTmp = varTiming;
-  }
-  else {
+  } else {
     char* end;
     const char* start = expr.c_str() + atpos + 1;
     varTimingTmp = (float)strtod(start, &end);
@@ -468,8 +459,7 @@ void DynamicColor::update (double t)
 	color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
 	color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
 	color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
-      }
-      else {
+      } else {
 	// make sure the final color is set exactly
 	varTransition = false;
 	memcpy(color, varNewColor, sizeof(float[4]));
@@ -500,12 +490,10 @@ void DynamicColor::update (double t)
       const unsigned int index = (unsigned int)(indexTime / seqPeriod);
       if (seq.list[index] == colorMin) {
 	clampDown = true;
-      }
-      else if (seq.list[index] == colorMax) {
+      } else if (seq.list[index] == colorMax) {
 	clampUp = true;
       }
-    }
-    else {
+    } else {
       // check for active clampUp
       for (i = 0; i < channel.clampUps.size(); i++) {
 	const clampParams& clamp = channel.clampUps[i];
@@ -543,15 +531,12 @@ void DynamicColor::update (double t)
     // check the clamps
     if (clampUp && clampDown) {
       factor = 0.5f;
-    }
-    else if (clampUp) {
+    } else if (clampUp) {
       factor = 1.0f;
-    }
-    else if (clampDown) {
+    } else if (clampDown) {
       factor = 0.0f;
-    }
-    // no clamps, try sinusoids
-    else if (channel.sinusoids.size() > 0) {
+    } else if (channel.sinusoids.size() > 0) {
+      // no clamps, try sinusoids
       float value = 0.0f;
       for (i = 0; i < channel.sinusoids.size(); i++) {
 	const sinusoidParams& s = channel.sinusoids[i];
@@ -563,14 +548,13 @@ void DynamicColor::update (double t)
       factor = 0.5f + (0.5f * value);
       if (factor < 0.0f) {
 	factor = 0.0f;
-      }
-      else if (factor > 1.0f) {
+      } else if (factor > 1.0f) {
 	factor = 1.0f;
       }
     }
 
     color[c] = (channel.minValue * (1.0f - factor)) +
-	       (channel.maxValue * factor);
+      (channel.maxValue * factor);
   }
 
   return;
@@ -751,7 +735,7 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
     unsigned int i;
     if (p.sequence.count > 0) {
       out << indent << "  " << colorStr << " sequence " << p.sequence.period << " "
-					      << p.sequence.offset;
+	  << p.sequence.offset;
       for (i = 0; i < p.sequence.count; i++) {
 	out << " " << (int)p.sequence.list[i];
       }
