@@ -227,9 +227,9 @@ void DynamicColor::finalize()
   for (int c = 0; c < 4; c++) {
     sequenceParams& seq = channels[c].sequence;
     for (unsigned int i = 0; i < seq.count; i++) {
-      if ((int)seq.list[i] < colorMin) {
+      if ((int)seq.list[i] < (int)colorMin) {
 	seq.list[i] = colorMin;
-      } else if (seq.list[i] > colorMax) {
+      } else if ((int)seq.list[i] > (int)colorMax) {
 	seq.list[i] = colorMax;
       } else if ((c == 3) && (seq.list[i] == colorMid)) {
 	noAlphaSeqMid = false;
