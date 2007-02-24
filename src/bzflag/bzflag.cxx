@@ -1290,6 +1290,8 @@ void Bzflag::PreProcessFrame()
 
 void Bzflag::Frame()
 {
+  // main loop
+  playing->playingLoop();
 }
 
 void Bzflag::ProcessFrame()
@@ -1298,9 +1300,7 @@ void Bzflag::ProcessFrame()
   // Tell 3D driver we're going to display 3D things.
   if (!g3d->BeginDraw(CSDRAW_3DGRAPHICS))
     return;
-
-  // main loop
-  playing->playingLoop();
+  playing->drawFrame();
 }
 
 void Bzflag::PostProcessFrame()

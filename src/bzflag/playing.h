@@ -92,7 +92,6 @@ void handleFlagDropped(Player* tank);
 void setTarget();
 bool shouldGrabMouse();
 void setRoamingLabel();
-void drawFrame(const float dt);
 
 extern void joinGame();
 
@@ -122,7 +121,9 @@ public:
 
   void playingLoop();
   void doKey(const BzfKeyEvent &key, bool pressed);
+  void drawFrame();
 
+  float dt;
 private:
   ControlPanel       _controlPanel;
   RadarRenderer      _radar;

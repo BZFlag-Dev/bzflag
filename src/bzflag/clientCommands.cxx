@@ -727,11 +727,6 @@ static std::string cmdScreenshot(const std::string&,
       }
     }
 
-    // let the user know we're paused while saving the file
-    if (temp_paused) {
-      drawFrame(0.0f);
-    }
-
     unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
     unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
     // compress b into bz
@@ -782,8 +777,6 @@ static std::string cmdScreenshot(const std::string&,
     if (temp_paused) {
       myTank->setPause(false);
     }
-    // update the display regardless of pausing
-    drawFrame(0.0f);
 
   }
   return std::string();

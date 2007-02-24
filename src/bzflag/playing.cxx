@@ -1451,7 +1451,6 @@ static void loadCachedWorld()
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
     HUDDialogStack::get()->setFailedMessage("World cache files disappeared.  Join canceled");
-    drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1459,7 +1458,6 @@ static void loadCachedWorld()
 
   // status update
   HUDDialogStack::get()->setFailedMessage("Loading world into memory...");
-  drawFrame(0.0f);
 
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
@@ -1471,7 +1469,6 @@ static void loadCachedWorld()
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
     HUDDialogStack::get()->setFailedMessage("Error loading cached world.  Join canceled");
-    drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1481,7 +1478,6 @@ static void loadCachedWorld()
 
   // verify
   HUDDialogStack::get()->setFailedMessage("Verifying world integrity...");
-  drawFrame(0.0f);
   MD5 md5;
   md5.update((unsigned char *)localWorldDatabase, charSize);
   md5.finalize();
@@ -1499,7 +1495,6 @@ static void loadCachedWorld()
 
   // make world
   HUDDialogStack::get()->setFailedMessage("Preparing world...");
-  drawFrame(0.0f);
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder)
@@ -4753,11 +4748,9 @@ static void joinInternetGame2()
 
   // make scene database
   setSceneDatabase();
-  mainWindow->getWindow()->yieldCurrent();
 
   // make radar
   //  radar = new RadarRenderer(*sceneRenderer, *world);
-  //  mainWindow->getWindow()->yieldCurrent();
   radar->setWorld(world);
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
@@ -5000,7 +4993,7 @@ static void setupFarPlane()
 }
 
 
-void drawFrame(const float dt)
+void Playing::drawFrame()
 {
   // get view type (constant for entire game)
   static SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
@@ -5837,9 +5830,7 @@ void Playing::playingLoop()
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();
-    const float dt = float(TimeKeeper::getTick() - prevTime);
-
-    mainWindow->getWindow()->yieldCurrent();
+    dt = float(TimeKeeper::getTick() - prevTime);
 
     // handle incoming packets
     doMessages();
@@ -5848,8 +5839,6 @@ void Playing::playingLoop()
     if (world) {
       world->checkCollisionManager();
     }
-
-    mainWindow->getWindow()->yieldCurrent();
 
     // try to join a game if requested.  do this *before* handling
     // events so we do a redraw after the request is posted and
@@ -5908,8 +5897,6 @@ void Playing::playingLoop()
 	waitingDNS = false;
       }
     }
-    mainWindow->getWindow()->yieldCurrent();
-
     // handle pending events for some small fraction of time
     clockAdjust = 0.0f;
     processInputEvents(0.1f);
@@ -5944,12 +5931,8 @@ void Playing::playingLoop()
       old_buttons = new_buttons;
     }
 
-    mainWindow->getWindow()->yieldCurrent();
-
     // invoke callbacks
     callPlayingCallbacks();
-
-    mainWindow->getWindow()->yieldCurrent();
 
     // quick out
     if (CommandsStandard::isQuit()) {
@@ -6106,9 +6089,6 @@ void Playing::playingLoop()
 
     // prep the HUD
     prepareTheHUD();
-
-    // draw the frame
-    drawFrame(dt);
 
     // play the sounds
     updateSound();
@@ -6590,7 +6570,6 @@ Playing::Playing(BzfDisplay      *_display,
   glClear(GL_COLOR_BUFFER_BIT);
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display
   hud = &_hud;
