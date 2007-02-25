@@ -4995,8 +4995,6 @@ static void setupFarPlane()
 
 void Playing::drawFrame()
 {
-  // get view type (constant for entire game)
-  static SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
   // get media object
   static BzfMedia* media = PlatformFactory::getMedia();
 
@@ -5043,9 +5041,6 @@ void Playing::drawFrame()
 	fov = 120.0f;
       } else {
 	fov = BZDB.eval("displayFOV");
-      }
-      if (viewType == SceneRenderer::ThreeChannel) {
-	fov *= 0.75f;
       }
     }
     fov *= (float)(M_PI / 180.0);
