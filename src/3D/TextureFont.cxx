@@ -55,6 +55,7 @@ void TextureFont::build(void)
 
 void TextureFont::preLoadLists()
 {
+  return;
   if (texture.size() < 1) {
     logDebugMessage(2,"Font %s does not have an associated texture name, not loading\n", texture.c_str());
     return;
