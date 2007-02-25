@@ -6485,18 +6485,8 @@ Playing::Playing(BzfDisplay      *_display,
   setGrabMouse(true);
 #endif
 
-  // show window and clear it immediately
-  mainWindow->showWindow(true);
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  glDisable(GL_SCISSOR_TEST);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // resize and draw basic stuff
-  glClear(GL_COLOR_BUFFER_BIT);
-  glEnable(GL_SCISSOR_TEST);
+  // resize
   controlPanel->resize();
-  sceneRenderer->render();
-  controlPanel->render(*sceneRenderer);
 
   // startup error callback adds message to control panel and
   // forces an immediate redraw.
@@ -6565,11 +6555,6 @@ Playing::Playing(BzfDisplay      *_display,
   // grab mouse if we should
   if (shouldGrabMouse())
     mainWindow->grabMouse();
-
-  // draw again
-  glClear(GL_COLOR_BUFFER_BIT);
-  sceneRenderer->render();
-  controlPanel->render(*sceneRenderer);
 
   // make heads up display
   hud = &_hud;
