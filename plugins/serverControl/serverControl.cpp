@@ -20,7 +20,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "bzfsAPI.h"
-#include "PluginUtils.h"
+#include "plugin_utils.h"
 
 BZ_GET_PLUGIN_VERSION
 
