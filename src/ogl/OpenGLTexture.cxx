@@ -135,6 +135,7 @@ void OpenGLTexture::freeContext()
 
 void OpenGLTexture::initContext()
 {
+  return;
   // make texture map object/list
   glGenTextures(1, &list);
 
