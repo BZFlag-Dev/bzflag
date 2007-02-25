@@ -20,7 +20,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "PluginUtils.h"
 
 BZ_GET_PLUGIN_VERSION
 
@@ -36,7 +36,7 @@ public:
   virtual void process( bz_EventData *eventData );
   int loadConfig(const char *cmdLine);
 private:
-  void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
+  void countPlayers( action act, bz_PlayerJoinPartEventData *data );
   void checkShutdown( void );
   void checkBanChanges( void );
   void checkMasterBanChanges( void );
@@ -180,7 +180,7 @@ void ServerControl::checkShutdown( void ) {
 void ServerControl::process( bz_EventData *eventData ) 
 {
   ostringstream msg;
-  bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
+  bz_PlayerJoinPartEventData *data = (bz_PlayerJoinPartEventData *) eventData;
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -209,10 +209,10 @@ void ServerControl::process( bz_EventData *eventData )
   }
 }
 
-void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
+void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData *data)
 {
-  bz_APIIntList *playerList = bz_newIntList();
-  bz_BasePlayerRecord *player;
+  bzAPIIntList *playerList = bz_newIntList();
+  bz_PlayerRecord *player;
   ostringstream msg;
   string str;
   int numLines = 0;
