@@ -892,6 +892,36 @@ AC_CONFIG_FILES(bzflag.info
 	win32/VC8/Makefile)
 AC_OUTPUT
 
+
+#################
+# patch libtool #
+#################
+case $host_os in
+    darwin*)
+	for script in $ac_top_builddir $ac_abs_builddir $ac_builddir . ; do
+	    if test "x$script" = "x" ; then
+		libtoolscript="libtool"
+	    else
+		libtoolscript="${script}/libtool"
+	    fi
+	    if test -f ${libtoolscript} ; then
+		if test -w ${libtoolscript} ; then
+		    # remove any -all_load option.
+		    # provokes libtool linker bug with noinst C++ libraries.
+		    sed 's/-all_load.*convenience//g' < $libtoolscript > ${libtoolscript}.sed
+		    if test ! "x`cat ${libtoolscript}`" = "x`cat ${libtoolscript}.sed`" ; then
+			AC_MSG_RESULT([Found -all_load in libtool script, removing])
+			cp ${libtoolscript}.sed ${libtoolscript}
+		    fi
+		    rm -f ${libtoolscript}.sed
+		else
+		    AC_MSG_WARN([libtool script exists but is not writable so not attempting to edit])
+		fi
+	    fi
+	done
+	;;
+esac
+
 # use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 
 echo "CFLAGS are $CFLAGS"
