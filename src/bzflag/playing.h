@@ -130,6 +130,10 @@ private:
   HUDRenderer        _hud;
   BackgroundRenderer background;
   csRef<iGraphics2D> g2d;
+
+  GLfloat            fov;
+  GLfloat            eyePoint[3];
+  GLfloat            targetPoint[3];
 };
 
 #endif // BZF_PLAYING_H

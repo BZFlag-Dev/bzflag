@@ -4976,16 +4976,9 @@ void Playing::drawFrame()
   // get media object
   static BzfMedia* media = PlatformFactory::getMedia();
 
-  static const float	defaultPos[3] = { 0.0f, 0.0f, 0.0f };
-  static const float	defaultDir[3] = { 1.0f, 0.0f, 0.0f };
   static int frameCount = 0;
   static float cumTime = 0.0f;
 
-  const float* myTankPos;
-  const float* myTankDir;
-  GLfloat fov;
-  GLfloat eyePoint[3];
-  GLfloat targetPoint[3];
   int i;
 
   checkDirtyControlPanel(controlPanel);
@@ -5002,123 +4995,6 @@ void Playing::drawFrame()
 
     // drift clouds
     sceneRenderer->getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
-
-    // get tank camera info
-    float muzzleHeight;
-    if (!myTank) {
-      myTankPos = defaultPos;
-      myTankDir = defaultDir;
-      muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      fov = 60.0f;
-    } else {
-      myTankPos = myTank->getPosition();
-      myTankDir = myTank->getForward();
-      muzzleHeight = myTank->getMuzzleHeight();
-
-      if (myTank->getFlag() == Flags::WideAngle) {
-	fov = 120.0f;
-      } else {
-	fov = BZDB.eval("displayFOV");
-      }
-    }
-    fov *= (float)(M_PI / 180.0);
-
-    // set projection and view
-    eyePoint[0] = myTankPos[0];
-    eyePoint[1] = myTankPos[1];
-    eyePoint[2] = myTankPos[2] + muzzleHeight;
-    targetPoint[0] = eyePoint[0] + myTankDir[0];
-    targetPoint[1] = eyePoint[1] + myTankDir[1];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
-
-    if (devDriving || ROAM.isRoaming()) {
-      hud->setAltitude(-1.0f);
-      float roamViewAngle;
-      const Roaming::RoamingCamera* roam = ROAM.getCamera();
-      if (!(ROAM.getMode() == Roaming::roamViewFree) &&
-	  (ROAM.getTargetTank() || (devDriving && myTank))) {
-	Player *target;
-	if (!devDriving) {
-	  target = ROAM.getTargetTank();
-	} else {
-	  target = myTank;
-	}
-	const float *targetTankDir = target->getForward();
-	// fixed camera tracking target
-	if (ROAM.getMode() == Roaming::roamViewTrack) {
-	  eyePoint[0] = roam->pos[0];
-	  eyePoint[1] = roam->pos[1];
-	  eyePoint[2] = roam->pos[2];
-	  targetPoint[0] = target->getPosition()[0];
-	  targetPoint[1] = target->getPosition()[1];
-	  targetPoint[2] = target->getPosition()[2] +
-	    target->getMuzzleHeight();
-	}
-	// camera following target
-	else if (ROAM.getMode() == Roaming::roamViewFollow) {
-	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-	    eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-	    targetPoint[0] = target->getPosition()[0];
-	    targetPoint[1] = target->getPosition()[1];
-	    targetPoint[2] = target->getPosition()[2];
-	  }
-	}
-	// target's view
-	else if (ROAM.getMode() == Roaming::roamViewFP) {
-	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	    eyePoint[0] = target->getPosition()[0];
-	    eyePoint[1] = target->getPosition()[1];
-	    eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
-	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
-	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
-	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
-	    hud->setAltitude(target->getPosition()[2]);
-	  }
-	}
-	// track team flag
-	else if (ROAM.getMode() == Roaming::roamViewFlag) {
-	  Flag* targetFlag = ROAM.getTargetFlag();
-	  eyePoint[0] = roam->pos[0];
-	  eyePoint[1] = roam->pos[1];
-	  eyePoint[2] = roam->pos[2];
-	  targetPoint[0] = targetFlag->position[0];
-	  targetPoint[1] = targetFlag->position[1];
-	  targetPoint[2] = targetFlag->position[2];
-	  if (targetFlag->status != FlagOnTank) {
-	    targetPoint[2] += muzzleHeight;
-	  } else {
-	    targetPoint[2] -= (BZDBCache::tankHeight -
-			       BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
-	  }
-	}
-	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-				       targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
-      }
-      // free Roaming
-      else {
-	float dir[3];
-	dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
-	dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
-	dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
-	eyePoint[0] = roam->pos[0];
-	eyePoint[1] = roam->pos[1];
-	eyePoint[2] = roam->pos[2];
-	targetPoint[0] = eyePoint[0] + dir[0];
-	targetPoint[1] = eyePoint[1] + dir[1];
-	targetPoint[2] = eyePoint[2] + dir[2];
-	roamViewAngle = roam->theta;
-      }
-      if (!devDriving) {
-	float virtPos[] = {eyePoint[0], eyePoint[1], 0};
-	if (myTank) {
-	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
-	}
-      }
-      fov = (float)(roam->zoom * M_PI / 180.0);
-      moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
-    }
 
     // only use a close plane for drawing in the
     // cockpit, and even then only for odd sized tanks
@@ -5889,6 +5765,125 @@ void Playing::playingLoop()
       }
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
+
+    static const float defaultPos[3] = {0.0f, 0.0f, 0.0f};
+    static const float defaultDir[3] = {1.0f, 0.0f, 0.0f};
+    const        float *myTankPos;
+    const        float *myTankDir;
+    // get tank camera info
+    float muzzleHeight;
+
+    if (!myTank) {
+      myTankPos = defaultPos;
+      myTankDir = defaultDir;
+      muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      fov = 60.0f;
+    } else {
+      myTankPos = myTank->getPosition();
+      myTankDir = myTank->getForward();
+      muzzleHeight = myTank->getMuzzleHeight();
+
+      if (myTank->getFlag() == Flags::WideAngle) {
+	fov = 120.0f;
+      } else {
+	fov = BZDB.eval("displayFOV");
+      }
+    }
+    fov *= (float)(M_PI / 180.0);
+
+    // set projection and view
+    eyePoint[0] = myTankPos[0];
+    eyePoint[1] = myTankPos[1];
+    eyePoint[2] = myTankPos[2] + muzzleHeight;
+    targetPoint[0] = eyePoint[0] + myTankDir[0];
+    targetPoint[1] = eyePoint[1] + myTankDir[1];
+    targetPoint[2] = eyePoint[2] + myTankDir[2];
+
+    if (devDriving || ROAM.isRoaming()) {
+      hud->setAltitude(-1.0f);
+      float roamViewAngle;
+      const Roaming::RoamingCamera* roam = ROAM.getCamera();
+      if (!(ROAM.getMode() == Roaming::roamViewFree) &&
+	  (ROAM.getTargetTank() || (devDriving && myTank))) {
+	Player *target;
+	if (!devDriving) {
+	  target = ROAM.getTargetTank();
+	} else {
+	  target = myTank;
+	}
+	const float *targetTankDir = target->getForward();
+	// fixed camera tracking target
+	if (ROAM.getMode() == Roaming::roamViewTrack) {
+	  eyePoint[0] = roam->pos[0];
+	  eyePoint[1] = roam->pos[1];
+	  eyePoint[2] = roam->pos[2];
+	  targetPoint[0] = target->getPosition()[0];
+	  targetPoint[1] = target->getPosition()[1];
+	  targetPoint[2] = target->getPosition()[2] +
+	    target->getMuzzleHeight();
+	} else if (ROAM.getMode() == Roaming::roamViewFollow) {
+	  // camera following target
+	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	    eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
+	} else if (ROAM.getMode() == Roaming::roamViewFP) {
+	  // target's view
+	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	    eyePoint[0] = target->getPosition()[0];
+	    eyePoint[1] = target->getPosition()[1];
+	    eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
+	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
+	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	    hud->setAltitude(target->getPosition()[2]);
+	  }
+	} else if (ROAM.getMode() == Roaming::roamViewFlag) {
+	  // track team flag
+	  Flag* targetFlag = ROAM.getTargetFlag();
+	  eyePoint[0] = roam->pos[0];
+	  eyePoint[1] = roam->pos[1];
+	  eyePoint[2] = roam->pos[2];
+	  targetPoint[0] = targetFlag->position[0];
+	  targetPoint[1] = targetFlag->position[1];
+	  targetPoint[2] = targetFlag->position[2];
+	  if (targetFlag->status != FlagOnTank) {
+	    targetPoint[2] += muzzleHeight;
+	  } else {
+	    targetPoint[2] -= (BZDBCache::tankHeight -
+			       BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+	  }
+	}
+	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+				       targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+      } else {
+	// free Roaming
+	float dir[3];
+	dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
+	dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
+	dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+	eyePoint[0] = roam->pos[0];
+	eyePoint[1] = roam->pos[1];
+	eyePoint[2] = roam->pos[2];
+	targetPoint[0] = eyePoint[0] + dir[0];
+	targetPoint[1] = eyePoint[1] + dir[1];
+	targetPoint[2] = eyePoint[2] + dir[2];
+	roamViewAngle = roam->theta;
+      }
+      if (!devDriving) {
+	float virtPos[] = {eyePoint[0], eyePoint[1], 0};
+	if (myTank) {
+	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+	}
+      }
+      fov = (float)(roam->zoom * M_PI / 180.0);
+      moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+    }
+
 }
 
 
