@@ -834,27 +834,29 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	plugins/Makefile
+        plugins/plugin_utils/Makefile
+	plugins/HoldTheFlag/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
 	plugins/airspawn/Makefile
 	plugins/chathistory/Makefile
 	plugins/flagStay/Makefile
 	plugins/hiddenAdmin/Makefile
-	plugins/torBlock/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile
 	plugins/logDetail/Makefile
+	plugins/nagware/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
 	plugins/recordmatch/Makefile
+	plugins/serverControl/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/timedctf/Makefile
+	plugins/torBlock/Makefile
 	plugins/vocaliser/Makefile
         plugins/wwzones/Makefile
-	plugins/HoldTheFlag/Makefile
-	plugins/nagware/Makefile
 	plugins/doc/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile

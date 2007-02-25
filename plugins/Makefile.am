@@ -1,4 +1,6 @@
 SUBDIRS = \
+	plugin_utils \
+	HoldTheFlag \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
 	airspawn \
@@ -9,17 +11,17 @@ SUBDIRS = \
 	killall \
 	koth \
 	logDetail \
+	nagware \
 	playHistoryTracker \
 	python \
+	recordmatch \
+	serverControl \
 	shockwaveDeath \
-	HoldTheFlag \
-	nagware \
 	teamflagreset \
 	timedctf \
-	vocaliser \
-	wwzones \
 	torBlock \
-	recordmatch 
+	vocaliser \
+	wwzones 
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)	\

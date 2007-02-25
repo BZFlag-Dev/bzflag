@@ -2,6 +2,7 @@
 //
 
 #include "bzfsAPI.h"
+#include "plugin_utils.h"
 
 BZ_GET_PLUGIN_VERSION
 
