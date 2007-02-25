@@ -14,23 +14,28 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include "bzfsAPI.h"
 
 BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
+enum action { join , auth , part };
+
 class LogDetail : public bz_EventHandler
 {
 public:
-  LogDetail() {};
-  virtual ~LogDetail() {};
+  LogDetail();
+  virtual ~LogDetail();
   virtual void process( bz_EventData *eventData );
 private:
   void displayPlayerPrivs( int playerID );
   void displayCallsign( bzApiString callsign );
   void displayCallsign( int playerID );
+  void displayBZid( int playerID );
   void displayTeam( bz_eTeamType team );
+  virtual void listPlayers( action act, bz_PlayerJoinPartEventData *data );
 };
 
 LogDetail logDetailHandler;
@@ -57,6 +62,18 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerAuthEvent, &logDetailHandler);
   bz_debugMessage(4, "logDetail plugin unloaded");
   return 0;
+}
+
+LogDetail::LogDetail()
+{
+  cout << "SERVER-STATUS Running" << endl;
+  listPlayers( join , NULL );
+}
+
+LogDetail::~LogDetail()
+{
+  listPlayers( part , NULL );
+  cout << "SERVER-STATUS Stopped" << endl;
 }
 
 void LogDetail::process( bz_EventData *eventData )
@@ -139,9 +156,11 @@ void LogDetail::process( bz_EventData *eventData )
 	    cout << "PLAYER-JOIN ";
 	    displayCallsign( player->callsign );
 	    cout << " #" << joinPartData->playerID;
+	    displayBZid( joinPartData->playerID );
 	    displayTeam( joinPartData->team );
 	    displayPlayerPrivs( joinPartData->playerID );
 	    cout << endl;
+	    listPlayers( join, joinPartData);
 	  }
 	}
 	break;
@@ -149,19 +168,29 @@ void LogDetail::process( bz_EventData *eventData )
 	cout << "PLAYER-PART ";
 	displayCallsign( joinPartData->playerID );
 	cout << " #" << joinPartData->playerID;
+	displayBZid( joinPartData->playerID );
 	cout << " " << joinPartData->reason.c_str();
 	cout << endl;
+	listPlayers( part, joinPartData);
 	break;
       case bz_ePlayerAuthEvent:
 	cout << "PLAYER-AUTH ";
 	displayCallsign( authData->playerID );
 	displayPlayerPrivs( authData->playerID );
 	cout << endl;
+	listPlayers( join, joinPartData);
 	break;
       default :
 	break;
     }
   }
+}
+
+void LogDetail::displayBZid( int playerID )
+{
+  bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
+  if (player && player->globalUser)
+    cout << " BZid:" << player->bzID.c_str();
 }
 
 void LogDetail::displayPlayerPrivs( int playerID )
@@ -228,6 +257,72 @@ void LogDetail::displayTeam( bz_eTeamType team )
       cout << " NOTEAM";
       break;
   }
+}
+
+void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData *data )
+{
+  bzAPIIntList *playerList = bz_newIntList();
+  bz_PlayerRecord *player;
+  ostringstream msg;
+  string str;
+  char playerStatus;
+  int numPlayers;
+
+  bz_getPlayerIndexList( playerList );
+
+  bz_debugMessage( 4 , "Players:" );
+  //
+  // Count number of players
+  //
+  numPlayers = 0;
+  for ( unsigned int i = 0; i < playerList->size(); i++ ) {
+    player = bz_getPlayerByIndex( playerList->get(i));
+    if (player) {
+      if ((player->callsign != "") && (act == join || act == auth || (data && (player->playerID != data->playerID))))
+	numPlayers++;
+      bz_freePlayerRecord( player );
+    }
+  }
+  
+  //
+  // Display number of players, callsign, and email string in the following format:
+  //
+  // PLAYERS (nn) [G]cc:callsign(ee:emailstring)
+  // nn - number of players
+  // G  - global auth identifier (+|-| |@)
+  // cc - count of characters in player callsign
+  // callsign - player callsign
+  // ee - count of characters in email string
+  // emailstring - player email string
+  //
+  // eg.
+  // PLAYERS (2) [@]7:Thumper(16:me@somewhere.net) [ ]3:xxx()
+  //
+  msg.str("");
+  msg << "PLAYERS (" << numPlayers << ") ";
+  for ( unsigned int i = 0; i < playerList->size(); i++ ) {
+    player = bz_getPlayerByIndex( playerList->get(i));
+    if (player) {
+      if ((player->callsign != "") && (act == join || act == auth || (data && (player->playerID != data->playerID)))) {
+	playerStatus = ' ';
+	if (player->globalUser) playerStatus = '+';
+	if (player->verified) playerStatus = '+';
+	if (player->admin and !bz_hasPerm(player->playerID, bz_perm_hideAdmin)) playerStatus = '@';
+	msg << "[" << playerStatus << "]";
+	msg << player->callsign.size() << ':';
+	msg << player->callsign.c_str();
+	msg << "(";
+	if (player->email != "")
+	  msg << player->email.size() << ":" << player->email.c_str();
+	msg << ") ";
+      }
+      bz_freePlayerRecord( player );
+    }
+  }
+  str = msg.str();
+  cout << str << endl;
+
+  bz_deleteIntList(playerList);
 }
 
 // Local Variables: ***
