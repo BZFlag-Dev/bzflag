@@ -171,7 +171,6 @@ void Bzflag::OnCommandLineHelp()
   csPrintf(" [-team={red|green|blue|purple|rogue|observer}]\n");
   csPrintf(" [-time=hh:mm:ss] [-notime]\n");
   csPrintf(" [-v | -version | --version]\n");
-  csPrintf(" [-view={normal|stereo|stacked|three|anaglyph|interlaced}]\n");
   csPrintf(" [-window]\n");
   csPrintf(" [-zoom=<zoom-factor>]\n");
   csPrintf(" [callsign[:password]@]server[:port]\n");
@@ -1155,16 +1154,6 @@ bool Bzflag::Application()
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
   }
-
-  // set window quadrant
-  if (RENDERER.getViewType() == SceneRenderer::ThreeChannel)
-    pmainWindow->setQuadrant(MainWindow::UpperRight);
-  else if (RENDERER.getViewType() == SceneRenderer::Stacked)
-    pmainWindow->setQuadrant(MainWindow::LowerHalf);
-#ifndef USE_GL_STEREO
-  else if (RENDERER.getViewType() == SceneRenderer::Stereo)
-    pmainWindow->setQuadrant(MainWindow::UpperRight);
-#endif
 
   // clear the grid graphics if they are not accessible
 #if !defined(DEBUG_RENDERING)
