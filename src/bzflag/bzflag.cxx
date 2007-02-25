@@ -148,7 +148,6 @@ Bzflag::~Bzflag()
 
 void Bzflag::OnCommandLineHelp()
 {
-  csPrintf(" [-3dfx] [-no3dfx]\n");
   csPrintf(" [-anonymous]\n");
   csPrintf(" [-badwords=<filterfile>]\n");
   csPrintf(" [-config=<configfile>]\n");
@@ -206,20 +205,6 @@ void Bzflag::parse()
   }
   if (clp->GetOption("window"))
     BZDB.set("_window", "1");
-  if (clp->GetOption("3dfx") || clp->GetOption("3Dfx")) {
-#if !defined(__linux__)
-    putenv("MESA_GLX_FX=fullscreen");
-#else
-    setenv("MESA_GLX_FX", "fullscreen", 1);
-#endif
-  }
-  if (clp->GetOption("no3dfx") || clp->GetOption("no3Dfx")) {
-#if !defined(__linux__)
-    putenv("MESA_GLX_FX=");
-#else
-    unsetenv("MESA_GLX_FX");
-#endif
-  }
   size_t optionCount; 
   for (optionCount = 0; clp->GetOption("d", optionCount); optionCount++)
     debugLevel++;
@@ -1109,15 +1094,6 @@ bool Bzflag::Application()
   // to see stuff in control panel)
   pmainWindow->setMinSize(256, 192);
 
-  // initialize graphics state
-  if (!OpenGLGState::haveGLContext()) {
-#ifdef _WIN32
-    WSACleanup();
-#endif
-    return ReportError("ERROR: Unable to initialize an OpenGL context");
-  }
-  OpenGLGState::init();
-
   // add the zbuffer callback here, after the OpenGL context is initialized
   BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
@@ -1175,14 +1151,6 @@ bool Bzflag::Application()
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
   }
-
-  // clear the grid graphics if they are not accessible
-#if !defined(DEBUG_RENDERING)
-  if (debugLevel <= 0) {
-    BZDB.set("showCullingGrid", "0");
-    BZDB.set("showCollisionGrid", "0");
-  }
-#endif
 
   // set server list URL
   if (BZDB.isSet("list"))

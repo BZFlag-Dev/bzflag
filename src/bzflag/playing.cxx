@@ -653,28 +653,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	}
 	return true;
 
-	// for testing forced recreation of OpenGL context
-#if defined(DEBUG_RENDERING)
-      case 'X':
-	if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
-	  // destroy OpenGL context
-	  getMainWindow()->getWindow()->freeContext();
-
-	  // recreate OpenGL context
-	  getMainWindow()->getWindow()->makeContext();
-
-	  // force a redraw (mainly for control panel)
-	  getMainWindow()->getWindow()->callExposeCallbacks();
-
-	  // cause sun/moon to be repositioned immediately
-	  lastEpochOffset = epochOffset - 5.0;
-
-	  // reload display lists and textures and initialize other state
-	  OpenGLGState::initContext();
-	}
-	return true;
-#endif // DEBUG_RENDERING
-
       case ']':
       case '}':
 	// plus 30 seconds
@@ -5286,12 +5264,6 @@ void Playing::drawFrame()
 
     // get frame start time
     if (showDrawTime) {
-#if defined(DEBUG_RENDERING)
-      // get an accurate measure of frame time (at expense of frame rate)
-      if (BZDB.isTrue("glFinish")) {
-	glFinish();
-      }
-#endif
       media->stopwatch(true);
     }
 
@@ -5351,47 +5323,7 @@ void Playing::drawFrame()
 
     // get frame end time
     if (showDrawTime) {
-#if defined(DEBUG_RENDERING)
-      // get an accurate measure of frame time (at expense of frame rate)
-      if (BZDB.isTrue("glFinish")) {
-	glFinish();
-      }
-#endif
       hud->setDrawTime((float)media->stopwatch(false));
-    }
-
-    // draw a fake cursor if requested.  this is mostly intended for
-    // pass through 3D cards that don't have cursor support.
-    if (BZDB.isTrue("fakecursor")) {
-      int mx, my;
-      const int width = mainWindow->getWidth();
-      const int height = mainWindow->getHeight();
-      const int ox = mainWindow->getOriginX();
-      const int oy = mainWindow->getOriginY();
-      mainWindow->getWindow()->getMouse(mx, my);
-      my = height - my - 1;
-
-      glScissor(ox, oy, width, height);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-      glMatrixMode(GL_MODELVIEW);
-      glPushMatrix();
-      glLoadIdentity();
-
-      glColor3f(0.0f, 0.0f, 0.0f);
-      glRecti(mx - 8, my - 2, mx - 2, my + 2);
-      glRecti(mx + 2, my - 2, mx + 8, my + 2);
-      glRecti(mx - 2, my - 8, mx + 2, my - 2);
-      glRecti(mx - 2, my + 2, mx + 2, my + 8);
-
-      glColor3f(1.0f, 1.0f, 1.0f);
-      glRecti(mx - 7, my - 1, mx - 3, my + 1);
-      glRecti(mx + 3, my - 1, mx + 7, my + 1);
-      glRecti(mx - 1, my - 7, mx + 1, my - 3);
-      glRecti(mx - 1, my + 3, mx + 1, my + 7);
-
-      glPopMatrix();
     }
 
     // remove dynamic nodes from this frame
@@ -6511,8 +6443,6 @@ Playing::Playing(BzfDisplay      *_display,
   }
 
   mainWindow->setZoomFactor(getZoomFactor());
-  if (BZDB.isTrue("fakecursor"))
-    mainWindow->getWindow()->hideMouse();
 
   // start timing
   TimeKeeper::setTick();
