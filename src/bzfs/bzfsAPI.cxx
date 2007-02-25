@@ -822,6 +822,7 @@ BZF_API bz_PlayerRecord * bz_getPlayerByIndex ( int index )
 	playerRecord->callsign = player->player.getCallSign();
 	playerRecord->email =  player->player.getEMail();
 	playerRecord->playerID = index;
+	playerRecord->bzID = player->getBzIdentifier();
 	playerRecord->team = convertTeam(player->player.getTeam());
 
 	playerRecord->spawned = player->player.isAlive();

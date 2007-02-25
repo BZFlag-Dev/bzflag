@@ -38,7 +38,7 @@
 	#define BZF_PLUGIN_CALL extern "C"
 #endif
 
-#define BZ_API_VERSION	15
+#define BZ_API_VERSION	16
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
@@ -1000,6 +1000,7 @@ public:
 
 		wins = 0;
 		losses = 0;
+		bzID = "";
 	}
 
 	~bz_PlayerRecord(){};
@@ -1027,6 +1028,7 @@ public:
 	bool spawned;
 	bool verified;
 	bool globalUser;
+        bzApiString bzID;
 	bool admin;
 	bool op;
 	bzAPIStringList groups;
