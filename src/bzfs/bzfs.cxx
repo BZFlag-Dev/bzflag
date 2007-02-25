@@ -2555,8 +2555,12 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   // update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
     killerData->score.tK();
+    char message[MessageLen];
+    if (clOptions->tkAnnounce) {
+      snprintf(message, MessageLen, "Team kill: %s killed %s", killerData->player.getCallSign(), victimData->player.getCallSign());
+      sendMessage(ServerPlayer, AdminPlayers, message);
+    }
     if (killerData->score.isTK()) {
-      char message[MessageLen];
       strcpy(message, "You have been automatically kicked for team killing" );
       sendMessage(ServerPlayer, killerIndex, message);
       snprintf(message, MessageLen, "Player %s removed: team killing", killerData->player.getCallSign());
