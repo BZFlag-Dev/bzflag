@@ -593,6 +593,10 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
 		      CS_REQUEST_REPORTERLISTENER,
 		      CS_REQUEST_END))
     return ReportError("Failed to initialize plugins!");
+
+  // "Warm up" the event handler so it can interact with the world
+  csBaseEventHandler::Initialize(GetObjectRegistry());
+
   // Attempt to load a joystick plugin.
   csRef<iStringArray> joystickClasses
     = iSCF::SCF->QueryClassList("crystalspace.device.joystick.");
@@ -607,7 +611,6 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
     }
   }
 
-  csBaseEventHandler::Initialize(GetObjectRegistry());
   if (!RegisterQueue(GetObjectRegistry(),
 		     csevAllEvents(GetObjectRegistry())))
     return ReportError("Failed to set up event handler!");
@@ -617,8 +620,33 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
   return true;
 }
 
+bool Bzflag::SetupModules()
+{
+  // Now get the pointer to various modules we need. We fetch them
+  // from the object registry. The RequestPlugins() call we did earlier
+  // registered all loaded plugins with the object registry.
+  clp    = csQueryRegistry<iCommandLineParser>(GetObjectRegistry());
+  if (!clp)
+    return ReportError("Failed to locate the Command Line parser!");
+
+  g3d    = csQueryRegistry<iGraphics3D>(GetObjectRegistry());
+  if (!g3d)
+    return ReportError("Failed to locate 3D renderer!");
+
+  g2d = g3d->GetDriver2D();
+
+  return true;
+}
+
 bool Bzflag::Application()
 {
+  // Open the main system. This will open all the previously loaded plug-ins.
+  // i.e. all windows will be opened.
+  if (!Open())
+    return ReportError("Error opening system!");
+
+  bool result = SetupModules();
+
   unsigned int i;
 
 #ifdef _WIN32
@@ -640,10 +668,6 @@ bool Bzflag::Application()
 		       major, minor);
   }
 #endif
-
-  clp    = csQueryRegistry<iCommandLineParser>(GetObjectRegistry());
-  g3d    = csQueryRegistry<iGraphics3D>(GetObjectRegistry());
-  g2d    = csQueryRegistry<iGraphics2D>(GetObjectRegistry());
 
   filter = (WordFilter *)NULL;
 
@@ -1004,9 +1028,6 @@ bool Bzflag::Application()
     return ReportError("No fonts found  (the -directory option may help).");
   }
 
-  if (!Open())
-    return false;
-
   // initialize locale system
 
   bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
@@ -1200,7 +1221,11 @@ bool Bzflag::Application()
   playing = new Playing(NULL, RENDERER);
 
   // start game loop
-  Run();
+  if (result)
+    // This calls the default runloop. This will basically just keep
+    // broadcasting process events to keep the game going.
+    Run();
+
   return true;
 }
 

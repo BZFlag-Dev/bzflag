@@ -51,13 +51,6 @@ public:
   virtual bool OnInitialize(int argc, char *argv[]);
 
 private:
-  virtual void PreProcessFrame();
-  virtual void Frame();
-  virtual void ProcessFrame();
-  virtual void PostProcessFrame();
-  virtual void FinishFrame();
-
-  virtual bool OnKeyboard(iEvent &event);
   virtual bool OnMouseDown(iEvent &event);
   virtual bool OnMouseUp(iEvent &event);
 
@@ -72,12 +65,42 @@ private:
   BundleMgr       *bm;
   Playing         *playing;
 
+  /// A pointer to the 3D renderer plugin.
+  csRef<iGraphics3D> g3d;
+	
   csRef<iCommandLineParser> clp;
-  csRef<iGraphics3D>        g3d;
   csRef<iGraphics2D>        g2d;
 
-  CS_EVENTHANDLER_NAMES("application.bzflag");
-  CS_EVENTHANDLER_NIL_CONSTRAINTS
+public:
+  bool SetupModules ();
+
+  /**
+   * Handle keyboard events - ie key presses and releases.
+   * This routine is called from the event handler in response to a 
+   * csevKeyboard event.
+   */
+  bool OnKeyboard(iEvent&);
+  
+  virtual void PreProcessFrame();
+
+  /**
+   * Setup everything that needs to be rendered on screen. This routine
+   * is called from the event handler in response to a csevFrame
+   * message, and is called in the "logic" phase (meaning that all
+   * event handlers for 3D, 2D, Console, Debug, and Frame phases
+   * will be called after this one).
+   */
+  void Frame();
+  
+  virtual void ProcessFrame();
+  virtual void PostProcessFrame();
+  virtual void FinishFrame();
+
+  /* Declare the name by which this class is identified to the event scheduler.
+   * Declare that we want to receive the frame event in the "LOGIC" phase,
+   * and that we're not terribly interested in having other events
+   * delivered to us before or after other modules, plugins, etc. */
+  CS_EVENTHANDLER_PHASE_LOGIC("application.bzflag")
 };
 
 #endif // BZF_BZFLAG_H
