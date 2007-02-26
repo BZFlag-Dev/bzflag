@@ -4973,6 +4973,13 @@ static void setupFarPlane()
 
 void Playing::drawFrame()
 {
+  g2d->Clear(0);
+  // Tell 3D driver we're going to display 3D things.
+  if (!g3d->BeginDraw(CSDRAW_3DGRAPHICS))
+    return;
+  view->Draw();
+  return;
+  
   // get media object
   static BzfMedia* media = PlatformFactory::getMedia();
 
@@ -5884,6 +5891,11 @@ void Playing::playingLoop()
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
+    csVector3 camera_pos(eyePoint[0], -eyePoint[1], eyePoint[2]);
+    csVector3 look_at_pos(targetPoint[0], -targetPoint[1], targetPoint[2]);
+    csVector3 up(0, 0, 1);
+    view->GetCamera()->GetTransform().SetOrigin(camera_pos);
+    view->GetCamera()->GetTransform().LookAt(look_at_pos - camera_pos, up);
 }
 
 
@@ -6123,6 +6135,45 @@ static void		startupErrorCallback(const char* msg)
   controlPanel->render(*sceneRenderer);
 }
 
+bool Playing::SetupModules()
+{
+  // Now get the pointer to various modules we need. We fetch them
+  // from the object registry. The RequestPlugins() call we did earlier
+  // registered all loaded plugins with the object registry.
+  engine = csQueryRegistry<iEngine>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!engine)
+    return csApplicationFramework::ReportError
+      ("Failed to locate 3D Engine!");
+
+  loader = csQueryRegistry<iLoader>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!loader)
+    return csApplicationFramework::ReportError
+      ("Failed to locate Loader!");
+
+  g3d    = csQueryRegistry<iGraphics3D>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!g3d)
+    return csApplicationFramework::ReportError
+      ("Failed to locate 3D renderer!");
+
+  g2d = g3d->GetDriver2D();
+
+  kbd = csQueryRegistry<iKeyboardDriver>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!kbd)
+    return csApplicationFramework::ReportError
+      ("Failed to locate Keyboard Driver!");
+
+  vc = csQueryRegistry<iVirtualClock>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!vc)
+    return csApplicationFramework::ReportError
+      ("Failed to locate Virtual Clock!");
+
+  return true;
+}
 
 Playing::Playing(BzfDisplay      *_display,
 		 SceneRenderer   &renderer)
@@ -6131,13 +6182,12 @@ Playing::Playing(BzfDisplay      *_display,
     _hud(_display, renderer),
     background(renderer)
 {
+  SetupModules();
+
   // initalization
   display = _display;
   sceneRenderer = &renderer;
   mainWindow = &sceneRenderer->getWindow();
-
-  g2d = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
-			  iGraphics2D);
 
   lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
 
@@ -6444,6 +6494,35 @@ Playing::Playing(BzfDisplay      *_display,
   updateDaylight(epochOffset, *sceneRenderer);
 
   worldDownLoader = new WorldDownLoader;
+
+  // We need a View to the virtual world.
+  view.AttachNew(new csView(engine, g3d));
+ 
+  // We use the full window to draw the world.
+  view->SetRectangle(0, 0, g2d->GetWidth(), g2d->GetHeight());
+
+  // First disable the lighting cache. Our app is simple enough
+  // not to need this.
+  engine->SetLightingCacheMode(0);
+
+  // Here we create our world.
+  CreateRoom();
+
+  // Let the engine prepare all lightmaps for use and also free all images 
+  // that were loaded for the texture manager.
+  engine->Prepare();
+
+  // Now we need to position the camera in our world.
+  view->GetCamera()->SetSector(room);
+
+  // We use some other "helper" event handlers to handle 
+  // pushing our work into the 3D engine and rendering it
+  // to the screen.
+  drawer.AttachNew(new FrameBegin3DDraw
+		   (csApplicationFramework::GetObjectRegistry(), view));
+  printer.AttachNew(new FramePrinter
+		    (csApplicationFramework::GetObjectRegistry()));
+
 }
 
 Playing::~Playing()
@@ -6483,6 +6562,39 @@ Playing::~Playing()
   display = NULL;
   cleanWorldCache();
 }
+
+void Playing::CreateRoom ()
+{
+  // Load the texture from the standard library.  This is located in
+  // CS/data/standard.zip and mounted as /lib/std using the Virtual
+  // File System (VFS) plugin.
+  if (!loader->LoadTexture("stone", "/lib/std/stone4.gif"))
+    csApplicationFramework::ReportError("Error loading 'stone4' texture!");
+
+  iMaterialWrapper* tm = engine->GetMaterialList()->FindByName("stone");
+
+  // We create a new sector called "room".
+  room = engine->CreateSector("room");
+
+  // Creating the walls for our room.
+  csRef<iMeshWrapper> walls(engine->CreateSectorWallsMesh(room, "walls"));
+  iMeshObject        *walls_object  = walls->GetMeshObject();
+  iMeshObjectFactory *walls_factory = walls_object->GetFactory();
+  csRef<iThingFactoryState> walls_state
+    = scfQueryInterface<iThingFactoryState>(walls_factory);
+  walls_state->AddInsideBox(csVector3(-400, -400, 0),
+			    csVector3(400, 400, 20));
+  walls_state->SetPolygonMaterial(CS_POLYRANGE_LAST, tm);
+  walls_state->SetPolygonTextureMapping(CS_POLYRANGE_LAST, 3);
+
+  // Now we need light to see something.
+  csRef<iLight> light;
+  iLightList* ll = room->GetLights();
+
+  light = engine->CreateLight(0, csVector3(-3, 5, 0), 10, csColor(1, 0, 0));
+  ll->Add(light);
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

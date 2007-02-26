@@ -125,15 +125,45 @@ public:
 
   float dt;
 private:
+  bool SetupModules();
+  void CreateRoom();
+
   ControlPanel       _controlPanel;
   RadarRenderer      _radar;
   HUDRenderer        _hud;
   BackgroundRenderer background;
-  csRef<iGraphics2D> g2d;
 
   GLfloat            fov;
   GLfloat            eyePoint[3];
   GLfloat            targetPoint[3];
+
+  /// A pointer to the 3D engine.
+  csRef<iEngine> engine;
+
+  /// A pointer to the map loader plugin.
+  csRef<iLoader> loader;
+
+  /// A pointer to the 3D renderer plugin.
+  csRef<iGraphics3D> g3d;
+
+  /// A pointer to the 2D renderer plugin.
+  csRef<iGraphics2D> g2d;
+
+  /// A pointer to the keyboard driver.
+  csRef<iKeyboardDriver> kbd;
+
+  /// A pointer to the virtual clock.
+  csRef<iVirtualClock> vc;
+
+  /// A pointer to the view which contains the camera.
+  csRef<iView> view;
+
+  /// A pointer to the sector the camera will be in.
+  iSector *room;
+
+  /// Event handlers to draw and print the 3D canvas on each frame
+  csRef<FrameBegin3DDraw> drawer;
+  csRef<FramePrinter>     printer;
 };
 
 #endif // BZF_PLAYING_H

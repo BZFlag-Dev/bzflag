@@ -573,7 +573,11 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
 {
   if (!RequestPlugins(GetObjectRegistry(),
 		      CS_REQUEST_VFS,
+		      CS_REQUEST_ENGINE,
+		      CS_REQUEST_FONTSERVER,
 		      CS_REQUEST_OPENGL3D,
+		      CS_REQUEST_IMAGELOADER,
+		      CS_REQUEST_LEVELLOADER,
 		      CS_REQUEST_REPORTER,
 		      CS_REQUEST_REPORTERLISTENER,
 		      CS_REQUEST_END))
@@ -1209,10 +1213,6 @@ void Bzflag::Frame()
 
 void Bzflag::ProcessFrame()
 {
-  g2d->Clear(0);
-  // Tell 3D driver we're going to display 3D things.
-  if (!g3d->BeginDraw(CSDRAW_3DGRAPHICS))
-    return;
   playing->drawFrame();
 }
 
