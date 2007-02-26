@@ -201,6 +201,27 @@ version_check ( ) {
 }
 
 
+######################################
+# LOCATE_CONFIGURE_TEMPLATE FUNCTION #
+######################################
+locate_configure_template ( ) {
+    _pwd="`pwd`"
+    if test -f "./configure.ac" ; then
+	echo "./configure.ac"
+    elif test -f "./configure.in" ; then
+	echo "./configure.in"
+    elif test -f "$_pwd/configure.ac" ; then
+	echo "$_pwd/configure.ac"
+    elif test -f "$_pwd/configure.in" ; then
+	echo "$_pwd/configure.in"
+    elif test -f "$PATH_TO_AUTOGEN/configure.ac" ; then
+	echo "$PATH_TO_AUTOGEN/configure.ac"
+    elif test -f "$PATH_TO_AUTOGEN/configure.in" ; then
+	echo "$PATH_TO_AUTOGEN/configure.in"
+    fi
+}
+
+
 ##################
 # argument check #
 ##################
@@ -351,12 +372,8 @@ fi
 # look for a configure file #
 #############################
 if [ "x$CONFIGURE" = "x" ] ; then
-    CONFIGURE=/dev/null
-    if test -f configure.ac ; then
-	CONFIGURE=configure.ac
-    elif test -f configure.in ; then
-	CONFIGURE=configure.in
-    fi
+    CONFIGURE="`locate_configure_template`"
+    $VERBOSE_ECHO "Found a configure template: $CONFIGURE"
 else
     $ECHO "Using CONFIGURE environment variable override: $CONFIGURE"
 fi
@@ -630,6 +647,27 @@ fi
 #######################
 initialize ( ) {
 
+    ##################################
+    # check for a configure template #
+    ##################################
+    CONFIGURE="`locate_configure_template`"
+    config_fail=no
+    if [ "x$CONFIGURE" = "x" ] ; then
+	config_fail=yes
+    elif ! test -f $CONFIGURE ; then
+	config_fail=yes
+    fi
+    if [ "x$config_fail" = "xyes" ] ; then
+	$ECHO
+	$ECHO "A configure.ac or configure.in file could not be located implying"
+	$ECHO "that the GNU Build System is at least not used in this directory.  In"
+	$ECHO "any case, there is nothing to do here without one of those files."
+	$ECHO
+	$ECHO "ERROR: No configure.in or configure.ac file found."
+	exit 1
+    fi
+
+
     #####################
     # detect an aux dir #
     #####################
@@ -644,8 +682,8 @@ initialize ( ) {
     ################################
     # detect a recursive configure #
     ################################
-    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $CONFIGURE | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
     CONFIG_SUBDIRS=""
+    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $CONFIGURE | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
     for dir in $_det_config_subdirs ; do
 	if test -d "$dir" ; then
 	    $VERBOSE_ECHO "Detected recursive configure directory: $dir"
@@ -757,6 +795,25 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] ; then
     $VERBOSE_ECHO "$autoreconf_output"
 
     if [ ! $ret = 0 ] ; then
+	if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
+	    if [ ! "x`echo \"$autoreconf_output\" | grep \"failed to run libtoolize: No such file or directory\"`" = "x" ] ; then
+		$ECHO
+		$ECHO "Warning: autoreconf failed but for for a reason that seems to be"
+		$ECHO "a common libtool misconfiguration issue.  This problem is commonly"
+		$ECHO "found on systems that have installed libtoolize under a different"
+		$ECHO "name without providing a symbolic link or a LIBTOOLIZE environment"
+		$ECHO "variable."
+		$ECHO
+		$ECHO "Restarting the preparation steps with LIBTOOLIZE set to $LIBTOOLIZE"
+		export LIBTOOLIZE
+		RUN_RECURSIVE=no
+		export RUN_RECURSIVE
+		$VERBOSE_ECHO sh $AUTOGEN_SH "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
+		sh "$AUTOGEN_SH" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
+		exit $?
+	    fi
+	fi
+
 	$ECHO "Warning: $AUTORECONF failed"
 
 	if test -f ltmain.sh ; then
@@ -820,19 +877,6 @@ manual_autogen ( ) {
     #   autoheader                                   #
     #   automake -a -c -f                            #
     ##################################################
-    $ECHO
-    $ECHO $ECHO_N "Preparing build ... $ECHO_C"
-
-    if ! test -f configure.in -o -f configure.ac ; then
-	$ECHO
-	$ECHO
-	$ECHO "A configure.ac or configure.in file could not be located implying"
-	$ECHO "that the GNU Build System is at least not used in this directory.  In"
-	$ECHO "any case, there is nothing to do here without one of those files."
-	$ECHO
-	$ECHO "ERROR: No configure.in or configure.ac file found."
-	exit 1
-    fi
 
     ###########
     # aclocal #
@@ -846,47 +890,59 @@ manual_autogen ( ) {
     ##############
     # libtoolize #
     ##############
-    if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
-	$VERBOSE_ECHO "$LIBTOOLIZE $LIBTOOLIZE_OPTIONS"
-	libtoolize_output="`$LIBTOOLIZE $LIBTOOLIZE_OPTIONS 2>&1`"
-	ret=$?
-	$VERBOSE_ECHO "$libtoolize_output"
-
-	if [ ! $ret = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
-    else
-	if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
-	    $VERBOSE_ECHO "$LIBTOOLIZE $ALT_LIBTOOLIZE_OPTIONS"
-	    libtoolize_output="`$LIBTOOLIZE $ALT_LIBTOOLIZE_OPTIONS 2>&1`"
+    need_libtoolize=no
+    for feature in AC_PROG_LIBTOOL LT_INIT ; do
+	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
+	found="`grep \"^$feature.*\" $CONFIGURE`"
+	if [ ! "x$found" = "x" ] ; then
+	    need_libtoolize=yes
+	    break
+	fi
+    done
+    if [ "x$need_libtoolize" = "x" ] ; then
+	if [ "x$HAVE_LIBTOOLIZE" = "xyes" ] ; then
+	    $VERBOSE_ECHO "$LIBTOOLIZE $LIBTOOLIZE_OPTIONS"
+	    libtoolize_output="`$LIBTOOLIZE $LIBTOOLIZE_OPTIONS 2>&1`"
 	    ret=$?
 	    $VERBOSE_ECHO "$libtoolize_output"
-
+	    
 	    if [ ! $ret = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
+	else
+	    if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
+		$VERBOSE_ECHO "$LIBTOOLIZE $ALT_LIBTOOLIZE_OPTIONS"
+		libtoolize_output="`$LIBTOOLIZE $ALT_LIBTOOLIZE_OPTIONS 2>&1`"
+		ret=$?
+		$VERBOSE_ECHO "$libtoolize_output"
+		
+		if [ ! $ret = 0 ] ; then $ECHO "ERROR: $LIBTOOLIZE failed" && exit 2 ; fi
+	    fi
 	fi
-    fi
 
-    ###########
-    # aclocal #
-    ###########
-    # re-run again as instructed by libtoolize
-    $VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS"
-    aclocal_output="`$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS 2>&1`"
-    ret=$?
-    $VERBOSE_ECHO "$aclocal_output"
+	###########
+	# aclocal #
+	###########
+	# re-run again as instructed by libtoolize
+	$VERBOSE_ECHO "$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS"
+	aclocal_output="`$ACLOCAL $SEARCH_DIRS $ACLOCAL_OPTIONS 2>&1`"
+	ret=$?
+	$VERBOSE_ECHO "$aclocal_output"
 
-    # libtoolize might put ltmain.sh in the wrong place
-    if test -f ltmain.sh ; then
-	if test ! -f "${_aux_dir}/ltmain.sh" ; then
-	    $ECHO
-	    $ECHO "Warning:  $LIBTOOLIZE is creating ltmain.sh in the wrong directory"
-	    $ECHO
-	    $ECHO "Fortunately, the problem can be worked around by simply copying the"
-	    $ECHO "file to the appropriate location (${_aux_dir}/).  This has been done for you."
-	    $ECHO
-	    $VERBOSE_ECHO "cp ltmain.sh \"${_aux_dir}/ltmain.sh\""
-	    cp ltmain.sh "${_aux_dir}/ltmain.sh"
-	    $ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
-	fi
-    fi
+	# libtoolize might put ltmain.sh in the wrong place
+	if test -f ltmain.sh ; then
+	    if test ! -f "${_aux_dir}/ltmain.sh" ; then
+		$ECHO
+		$ECHO "Warning:  $LIBTOOLIZE is creating ltmain.sh in the wrong directory"
+		$ECHO
+		$ECHO "Fortunately, the problem can be worked around by simply copying the"
+		$ECHO "file to the appropriate location (${_aux_dir}/).  This has been done for you."
+		$ECHO
+		$VERBOSE_ECHO "cp ltmain.sh \"${_aux_dir}/ltmain.sh\""
+		cp ltmain.sh "${_aux_dir}/ltmain.sh"
+		$ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
+	    fi
+	fi # ltmain.sh
+    fi # need_libtoolize
+
 
     ############
     # autoconf #
@@ -932,7 +988,7 @@ manual_autogen ( ) {
 	    $ECHO
 	    $ECHO "Warning:  Unsupported macros were found in $CONFIGURE"
 	    $ECHO
-	    $ECHO "The $CONFIGURE file was scanned in order to determine if any"
+	    $ECHO "The `echo $CONFIGURE | basename` file was scanned in order to determine if any"
 	    $ECHO "unsupported macros are used that exceed the minimum version"
 	    $ECHO "settings specified within this file.  As such, the following macros"
 	    $ECHO "should be removed from configure.ac or the version numbers in this"
@@ -976,130 +1032,146 @@ EOF
 		$ECHO "	$AUTOGEN_SH --verbose"
 	    else
 		$ECHO "reviewing the minimum GNU Autotools version settings contained in"
-		$ECHO "this script along with the macros being used in your $CONFIGURE file."
+		$ECHO "this script along with the macros being used in your `echo $CONFIGURE | basename` file."
 	    fi
 	    $ECHO
 	    $ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
-	fi
-    fi
+	fi # autoconf ret = 0
+    fi # autoconf ret = 0
 
     ##############
     # autoheader #
     ##############
-    $VERBOSE_ECHO "$AUTOHEADER $AUTOHEADER_OPTIONS"
-    autoheader_output="`$AUTOHEADER $AUTOHEADER_OPTIONS 2>&1`"
-    ret=$?
-    $VERBOSE_ECHO "$autoheader_output"
-    if [ ! $ret = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
+    need_autoheader=no
+    for feature in AM_CONFIG_HEADER AC_CONFIG_HEADER ; do
+	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
+	found="`grep \"^$feature.*\" $CONFIGURE`"
+	if [ ! "x$found" = "x" ] ; then
+	    need_autoheader=yes
+	    break
+	fi
+    done
+    if [ "x$need_autoheader" = "x" ] ; then
+	$VERBOSE_ECHO "$AUTOHEADER $AUTOHEADER_OPTIONS"
+	autoheader_output="`$AUTOHEADER $AUTOHEADER_OPTIONS 2>&1`"
+	ret=$?
+	$VERBOSE_ECHO "$autoheader_output"
+	if [ ! $ret = 0 ] ; then $ECHO "ERROR: $AUTOHEADER failed" && exit 2 ; fi
+    fi # need_autoheader
 
     ############
     # automake #
     ############
-    $VERBOSE_ECHO "$AUTOMAKE $AUTOMAKE_OPTIONS"
-    automake_output="`$AUTOMAKE $AUTOMAKE_OPTIONS 2>&1`"
-    ret=$?
-    $VERBOSE_ECHO "$automake_output"
-
-    if [ ! $ret = 0 ] ; then
-	###################
-	# automake, retry #
-	###################
-	$VERBOSE_ECHO
-	$VERBOSE_ECHO "$AUTOMAKE $ALT_AUTOMAKE_OPTIONS"
-	# retry without the -f
-	automake_output="`$AUTOMAKE $ALT_AUTOMAKE_OPTIONS 2>&1`"
+    need_automake=no
+    for feature in AM_INIT_AUTOMAKE ; do
+	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
+	found="`grep \"^$feature.*\" $CONFIGURE`"
+	if [ ! "x$found" = "x" ] ; then
+	    config_header=yes
+	    break
+	fi
+    done
+    if [ "x$need_automake" = "x" ] ; then
+	$VERBOSE_ECHO "$AUTOMAKE $AUTOMAKE_OPTIONS"
+	automake_output="`$AUTOMAKE $AUTOMAKE_OPTIONS 2>&1`"
 	ret=$?
 	$VERBOSE_ECHO "$automake_output"
-
+	
 	if [ ! $ret = 0 ] ; then
+	    ###################
+	    # automake, retry #
+	    ###################
+	    $VERBOSE_ECHO
+	    $VERBOSE_ECHO "$AUTOMAKE $ALT_AUTOMAKE_OPTIONS"
+	    # retry without the -f
+	    automake_output="`$AUTOMAKE $ALT_AUTOMAKE_OPTIONS 2>&1`"
+	    ret=$?
+	    $VERBOSE_ECHO "$automake_output"
+	    
+	    if [ ! $ret = 0 ] ; then
+		
+	 	# test if libtool is busted
+		libtool_failure "$automake_output"
 
-	    # test if libtool is busted
-	    libtool_failure "$automake_output"
-
-	    # let the user know what went wrong
-	    cat <<EOF
+		# let the user know what went wrong
+		cat <<EOF
 $automake_output
 EOF
+	    fi
+	    $ECHO "ERROR: $AUTOMAKE failed"
+	    exit 2
+	fi # automake ret = 0
+    fi # need_automake
+}
+
+
+recursive_manual_autogen ( ) {
+    # run the build preparation steps manually for this directory
+    manual_autogen
+
+    #########################################
+    # restore COPYING & INSTALL from backup #
+    #########################################
+    spacer=no
+    if test -f COPYING ; then
+    # compare entire content, restore if needed
+	if test "x$COPYING_BACKUP" != "x__none__" -a "x`cat COPYING`" != "x$COPYING_BACKUP" ; then
+	    if test "x$spacer" = "xno" ; then
+		$VERBOSE_ECHO
+		spacer=yes
+	    fi
+	# restore the backup
+	    $VERBOSE_ECHO "Restoring COPYING from backup (automake -f likely clobbered it)"
+	    $VERBOSE_ECHO "echo \"\$COPYING_BACKUP\" > COPYING"
+	    rm -f COPYING
+	    echo "$COPYING_BACKUP" > COPYING
+	# release content
+	    COPYING_BACKUP=""
+	    export COPYING_BACKUP
 	fi
-	$ECHO "ERROR: $AUTOMAKE failed"
-	exit 2
+    fi
+    if test -f INSTALL ; then
+    # compare entire content, restore if needed
+	if test "x$INSTALL_BACKUP" != "x__none__" -a "x`cat INSTALL`" != "x$INSTALL_BACKUP" ; then
+	    if test "x$spacer" = "xno" ; then
+		$VERBOSE_ECHO
+		spacer=yes
+	    fi
+	# restore the backup
+	    $VERBOSE_ECHO "Restoring INSTALL from backup (automake -f likely clobbered it)"
+	    $VERBOSE_ECHO "echo \"\$INSTALL_BACKUP\" > INSTALL"
+	    rm -f INSTALL
+	    echo "$INSTALL_BACKUP" > INSTALL
+	# release content
+	    INSTALL_BACKUP=""
+	    export INSTALL_BACKUP
+	fi
+    fi
+
+    # for projects using recursive configure, run the build
+    # preparation steps for the subdirectories.
+    if [ ! "x$CONFIG_SUBDIRS" = "x" ] ; then
+	$VERBOSE_ECHO "Recursively configuring the following directories:"
+	$VERBOSE_ECHO "  $CONFIG_SUBDIRS"
+	for dir in $CONFIG_SUBDIRS ; do
+	    $VERBOSE_ECHO "Processing recursive configure in $dir"
+	    cd "$_prev_path"
+	    cd "$dir"
+	    initialize
+	    recursive_manual_autogen
+	done
     fi
 }
 
 
-##################################
+################################
 # run manual preparation steps #
-##################################
+################################
 if [ "x$reconfigure_manually" = "xyes" ] ; then
+    $ECHO
+    $ECHO $ECHO_N "Preparing build ... $ECHO_C"
 
-    # XXX if this is a recursive configure, manual steps don't work
-    # yet .. assume it's the libtool/glibtool problem.
-    if [ ! "x$CONFIG_SUBDIRS" = "x" ] ; then
-	$ECHO "Running the preparation steps individually does not yet work"
-	$ECHO "well with a recursive configure."
-	if [ ! "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
-	    exit 3
-	fi
-	$ECHO "Assuming this is a libtoolize problem..."
-	export LIBTOOLIZE
-	RUN_RECURSIVE=no
-	export RUN_RECURSIVE
-	$ECHO
-	$ECHO "Restarting the preparation steps with LIBTOOLIZE set to $LIBTOOLIZE"
-	$VERBOSE_ECHO sh $AUTOGEN_SH "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
-	sh "$AUTOGEN_SH" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
-	exit $?
-    fi
-
-    # run the build preparation steps manually for this directory
-    manual_autogen
-
-    # for projects using recursive configure, run the build
-    # preparation steps for the subdirectories.
-    for dir in $CONFIG_SUBDIRS ; do
-	$VERBOSE_ECHO "Processing recursive configure in $dir"
-	cd "$_prev_path"
-	cd "$dir"
-	manual_autogen
-    done
-fi
-
-
-#########################################
-# restore COPYING & INSTALL from backup #
-#########################################
-spacer=no
-if test -f COPYING ; then
-    # compare entire content, restore if needed
-    if test "x$COPYING_BACKUP" != "x__none__" -a "x`cat COPYING`" != "x$COPYING_BACKUP" ; then
-	if test "x$spacer" = "xno" ; then
-	    $VERBOSE_ECHO
-	    spacer=yes
-	fi
-	# restore the backup
-	$VERBOSE_ECHO "Restoring COPYING from backup (automake -f likely clobbered it)"
-	$VERBOSE_ECHO "echo \"\$COPYING_BACKUP\" > COPYING"
-	echo "$COPYING_BACKUP" > COPYING
-	# release content
-	COPYING_BACKUP=""
-	export COPYING_BACKUP
-    fi
-fi
-if test -f INSTALL ; then
-    # compare entire content, restore if needed
-    if test "x$INSTALL_BACKUP" != "x__none__" -a "x`cat INSTALL`" != "x$INSTALL_BACKUP" ; then
-	if test "x$spacer" = "xno" ; then
-	    $VERBOSE_ECHO
-	    spacer=yes
-	fi
-	# restore the backup
-	$VERBOSE_ECHO "Restoring INSTALL from backup (automake -f likely clobbered it)"
-	$VERBOSE_ECHO "echo \"\$INSTALL_BACKUP\" > INSTALL"
-	echo "$INSTALL_BACKUP" > INSTALL
-	# release content
-	INSTALL_BACKUP=""
-	export INSTALL_BACKUP
-    fi
+    recursive_manual_autogen
 fi
 
 
@@ -1107,11 +1179,28 @@ fi
 # restore and summarize #
 #########################
 cd "$_prev_path"
+config_ac="`locate_configure_template`"
+config="`echo $config_ac | sed 's/\.ac$//' | sed 's/\.in$//'`"
+if [ "x$config" = "x" ] ; then
+    $VERBOSE_ECHO "WARNING: path to configure could not be found"
+fi
+if [ ! -f "$config" ] ; then
+    $VERBOSE_ECHO "WARNING: expected configure file does not exist"
+    config=""
+fi
 $ECHO "done"
 $ECHO
-$ECHO "The $PROJECT build system is now prepared.  To build here, run:"
-$ECHO "  $PATH_TO_AUTOGEN/configure"
-$ECHO "  make"
+if [ "x$config" = "x" ] ; then
+    $ECHO "WARNING: The $PROJECT build system should now be prepared but there"
+    $ECHO "does not seem to be a resulting configure file.  This is unexpected"
+    $ECHO "and likely the result of an error.  You should run $NAME_OF_AUTOGEN"
+    $ECHO "with the --verbose option to get more details on a potential"
+    $ECHO "misconfiguration."
+else
+    $ECHO "The $PROJECT build system is now prepared.  To build here, run:"
+    $ECHO "  $config"
+    $ECHO "  make"
+fi
 
 
 # Local Variables:
