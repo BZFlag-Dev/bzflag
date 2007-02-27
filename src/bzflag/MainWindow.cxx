@@ -22,8 +22,7 @@
 // MainWindow
 //
 
-MainWindow::MainWindow(BzfWindow*              _window,
-		       csApplicationFramework *application) :
+MainWindow::MainWindow(BzfWindow *_window) :
 				window(_window),
 				quit(false),
 				quadrant(FullWindow),
@@ -34,8 +33,7 @@ MainWindow::MainWindow(BzfWindow*              _window,
 				zoomFactor(1),
 				width(0),
 				minWidth(MinX),
-				minHeight(MinY),
-				faulting(false)
+				minHeight(MinY)
 {
   window->addResizeCallback(resizeCB, this);
   resize();
@@ -49,10 +47,15 @@ MainWindow::MainWindow(BzfWindow*              _window,
     joystickYAxis  = atoi(BZDB.get("jsYAxis").c_str());
   }
 
-  joy = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
-			  iJoystickDriver);
+  joy = csQueryRegistry<iJoystickDriver>
+    (csApplicationFramework::GetObjectRegistry());
   if (!joy)
-    application->ReportWarning("Failed to locate Joystick!\n");
+    csApplicationFramework::ReportError("Failed to locate Joystick!\n");
+
+  kbd = csQueryRegistry<iKeyboardDriver>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!kbd)
+    csApplicationFramework::ReportError("Failed to locate Keyboard Driver!");
 }
 
 MainWindow::~MainWindow()
@@ -318,6 +321,13 @@ void			MainWindow::initJoystick(std::string &joystickName) {
     joystickNumber = 255;
   else
     joystickNumber = atoi(joystickName.c_str());
+}
+
+void MainWindow::getModState(bool &shift, bool &ctrl, bool &alt)
+{
+  shift = (kbd->GetModifierState(CSKEY_SHIFT) != 0);
+  ctrl  = (kbd->GetModifierState(CSKEY_CTRL) != 0);
+  alt   = (kbd->GetModifierState(CSKEY_ALT) != 0);
 }
 
 // Local Variables: ***

@@ -39,7 +39,7 @@ class MainWindow {
 			LowerHalf
     };
 
-			MainWindow(BzfWindow *, csApplicationFramework *);
+			MainWindow(BzfWindow *);
 			~MainWindow();
 
     BzfWindow*		getWindow() const { return window; }
@@ -88,7 +88,7 @@ class MainWindow {
     void		setJoyYAxis(const std::string axis);
     void		initJoystick(std::string &joystickName);
 
-    bool		isInFault() { return faulting; };
+  void getModState(bool &shift, bool &ctrl, bool &alt);
 
   private:
     // no copying
@@ -113,12 +113,14 @@ class MainWindow {
     int			viewHeight;
     int			minWidth;
     int			minHeight;
-    bool		faulting;
 
   csRef<iJoystickDriver> joy;
   uint                   joystickNumber;
   uint                   joystickXAxis;
   uint                   joystickYAxis;
+
+  /// A pointer to the keyboard driver.
+  csRef<iKeyboardDriver> kbd;
 };
 
 //

@@ -5221,7 +5221,7 @@ void Playing::drawFrame()
 }
 
 
-static void		setupRoamingCamera(float dt)
+void Playing::setupRoamingCamera(float dt)
 {
   static Roaming::RoamingCamera prevDeltaCamera;
   static bool inited = false;
@@ -5239,9 +5239,7 @@ static void		setupRoamingCamera(float dt)
     bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
     bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
     bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
-    if (display->hasGetKeyMode()) {
-      display->getModState (shift, control, alt);
-    }
+    mainWindow->getModState(shift, control, alt);
     if (!control && !shift) {
       deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }

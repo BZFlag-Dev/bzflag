@@ -1076,13 +1076,7 @@ bool Bzflag::Application()
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  pmainWindow = new MainWindow(window, this);
-  if (pmainWindow->isInFault()) {
-#ifdef _WIN32
-    WSACleanup();
-#endif
-    return ReportError("Error creating window.\n");
-  }
+  pmainWindow = new MainWindow(window);
 
   std::string videoFormat;
 

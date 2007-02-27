@@ -127,6 +127,7 @@ public:
 private:
   bool SetupModules();
   void CreateRoom();
+  void setupRoamingCamera(float dt);
 
   ControlPanel       _controlPanel;
   RadarRenderer      _radar;
