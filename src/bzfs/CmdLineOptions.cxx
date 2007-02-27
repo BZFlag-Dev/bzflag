@@ -153,7 +153,7 @@ const char *extraUsageString =
 "\t-advertise: specify which groups to advertise to (list server)\n"
 "\t-autoTeam: automatically assign players to teams when they join\n"
 "\t-b: randomly oriented buildings\n"
-"\t-badwords: bad-world file\n"
+"\t-badwords: bad-word file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-botsPerIP: specify how many client-side bots are allowed per IP address\n"
