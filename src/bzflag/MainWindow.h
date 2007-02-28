@@ -89,6 +89,9 @@ class MainWindow {
     void		initJoystick(std::string &joystickName);
 
   void getModState(bool &shift, bool &ctrl, bool &alt);
+  bool  hasGammaControl();
+  float getGamma();
+  void  setGamma(float gamma);
 
   private:
     // no copying
@@ -119,8 +122,15 @@ class MainWindow {
   uint                   joystickXAxis;
   uint                   joystickYAxis;
 
+  bool                   hasGamma;
+
   /// A pointer to the keyboard driver.
   csRef<iKeyboardDriver> kbd;
+
+  /// A pointer to the 3D graphic driver.
+  csRef<iGraphics3D>     g3d;
+  /// A pointer to the 2D graphic driver.
+  csRef<iGraphics2D>     g2d;
 };
 
 //

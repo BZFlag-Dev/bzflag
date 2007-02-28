@@ -472,9 +472,9 @@ void			dumpResources()
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
 
-  if (RENDERER.getWindow().getWindow()->hasGammaControl()) {
+  if (RENDERER.getWindow().hasGammaControl()) {
     BZDB.set("gamma",
-	     TextUtils::format("%f", RENDERER.getWindow().getWindow()->getGamma()));
+	     TextUtils::format("%f", RENDERER.getWindow().getGamma()));
   }
 
   BZDB.set("quality", configQualityValues[RENDERER.useQuality()]);
@@ -1097,8 +1097,7 @@ bool Bzflag::Application()
 
   // set gamma if set in resources and we have gamma control
   if (BZDB.isSet("gamma")) {
-    if (pmainWindow->getWindow()->hasGammaControl())
-      g2d->SetGamma((float)atof(BZDB.get("gamma").c_str()));
+    pmainWindow->setGamma((float)atof(BZDB.get("gamma").c_str()));
   }
 
   // set the scene renderer's window

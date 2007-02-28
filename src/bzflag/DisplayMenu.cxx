@@ -210,7 +210,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setFontFace(fontFace);
   option->setLabel("Brightness:");
   option->setCallback(callback, (void*)"g");
-  if (window->hasGammaControl()) {
+  if (getMainWindow()->hasGammaControl()) {
     option->createSlider(15);
   } else {
     options = &option->getList();
@@ -336,9 +336,9 @@ void			DisplayMenu::resize(int _width, int _height)
   }
 
   // brightness
-  BzfWindow* window = getMainWindow()->getWindow();
-  if (window->hasGammaControl())
-    ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
+  if (getMainWindow()->hasGammaControl())
+    ((HUDuiList*)listHUD[i])
+      ->setIndex(gammaToIndex(getMainWindow()->getGamma()));
   i++;
 
   // energy saver
@@ -436,9 +436,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.setBool("saveEnergy", list->getIndex() != 0);
     break;
   case 'g':
-    BzfWindow* window = getMainWindow()->getWindow();
-    if (window->hasGammaControl())
-      window->setGamma(indexToGamma(list->getIndex()));
+    getMainWindow()->setGamma(indexToGamma(list->getIndex()));
     break;
   }
 }

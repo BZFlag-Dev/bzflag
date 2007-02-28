@@ -56,6 +56,15 @@ MainWindow::MainWindow(BzfWindow *_window) :
     (csApplicationFramework::GetObjectRegistry());
   if (!kbd)
     csApplicationFramework::ReportError("Failed to locate Keyboard Driver!");
+  
+  g3d = csQueryRegistry<iGraphics3D>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!g3d)
+    csApplicationFramework::ReportError("Failed to locate 3D Graphic Driver!");
+
+  g2d = g3d->GetDriver2D();
+
+  hasGamma = g2d->SetGamma(g2d->GetGamma());
 }
 
 MainWindow::~MainWindow()
@@ -336,6 +345,18 @@ void MainWindow::getModState(bool &shift, bool &ctrl, bool &alt)
   shift = (kbd->GetModifierState(CSKEY_SHIFT) != 0);
   ctrl  = (kbd->GetModifierState(CSKEY_CTRL) != 0);
   alt   = (kbd->GetModifierState(CSKEY_ALT) != 0);
+}
+
+bool MainWindow::hasGammaControl() {
+  return hasGamma;
+}
+
+float MainWindow::getGamma() {
+  return g2d->GetGamma();
+}
+
+void MainWindow::setGamma(float gamma) {
+  g2d->SetGamma(gamma);
 }
 
 // Local Variables: ***
