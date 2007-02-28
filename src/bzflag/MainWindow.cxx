@@ -260,13 +260,18 @@ void			MainWindow::iconify()
 
 bool			MainWindow::haveJoystick() const
 {
-  return true;
+  return joy;
 }
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
-  mx = joy->GetLast(joystickNumber, joystickXAxis);
-  my = joy->GetLast(joystickNumber, joystickYAxis);
+  if (joy) {
+    mx = joy->GetLast(joystickNumber, joystickXAxis);
+    my = joy->GetLast(joystickNumber, joystickYAxis);
+  } else {
+    mx = 0;
+    my = 0;
+  }
   mx = ((width >> 1) * mx) / (900);
   my = ((height >> 1) * my) / (900);
 }
@@ -276,6 +281,9 @@ unsigned long		  MainWindow::getJoyButtonSet() const
   unsigned long buttons = 0;
 
   if (joystickNumber == 255)
+    return 0;
+
+  if (!joy)
     return 0;
 
   for (int i = 0; i < CS_MAX_JOYSTICK_BUTTONS; i++)
