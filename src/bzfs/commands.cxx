@@ -1603,7 +1603,7 @@ bool JitterDropCommand::operator() (const char	 *message,
     snprintf(reply, MessageLen, "jitterdrop is set to %d",
 	     clOptions->maxjitterwarn);
   }
-  LagInfo::setThreshold(clOptions->jitterwarnthresh,
+  LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
 			(float)clOptions->maxjitterwarn);
   sendMessage(ServerPlayer, t, reply);
   return true;
