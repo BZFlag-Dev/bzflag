@@ -274,15 +274,20 @@ bool			MainWindow::haveJoystick() const
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
-  if (joy) {
-    mx = joy->GetLast(joystickNumber, joystickXAxis);
-    my = joy->GetLast(joystickNumber, joystickYAxis);
-  } else {
-    mx = 0;
-    my = 0;
-  }
-  mx = ((width >> 1) * mx) / (900);
-  my = ((height >> 1) * my) / (900);
+  mx = 0;
+  my = 0;
+
+  if (joystickNumber == 255)
+    return;
+
+  if (!joy)
+    return;
+
+  mx = joy->GetLast(joystickNumber, joystickXAxis);
+  my = joy->GetLast(joystickNumber, joystickYAxis);
+
+  mx = ((width >> 1)  * mx) / 900;
+  my = ((height >> 1) * my) / 900;
 }
 
 unsigned long		  MainWindow::getJoyButtonSet() const
