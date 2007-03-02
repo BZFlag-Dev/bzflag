@@ -205,7 +205,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   }
 #endif
 
-  BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Brightness:");
