@@ -50,7 +50,12 @@ MainWindow::MainWindow(BzfWindow *_window) :
   joy = csQueryRegistry<iJoystickDriver>
     (csApplicationFramework::GetObjectRegistry());
   if (!joy)
-    csApplicationFramework::ReportError("Failed to locate Joystick!\n");
+    csApplicationFramework::ReportError("Failed to locate Joystick Driver!\n");
+
+  mouse = csQueryRegistry<iMouseDriver>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!mouse)
+    csApplicationFramework::ReportError("Failed to locate Mouse Driver!\n");
 
   kbd = csQueryRegistry<iKeyboardDriver>
     (csApplicationFramework::GetObjectRegistry());
@@ -63,6 +68,8 @@ MainWindow::MainWindow(BzfWindow *_window) :
     csApplicationFramework::ReportError("Failed to locate 3D Graphic Driver!");
 
   g2d = g3d->GetDriver2D();
+  if (!g2d)
+    csApplicationFramework::ReportError("Failed to locate 2D Graphic Driver!");
 
   hasGamma = g2d->SetGamma(g2d->GetGamma());
 }
@@ -107,15 +114,18 @@ void			MainWindow::warpMouse()
   // move mouse to center of view window (zero motion box)
   int y = viewHeight >> 1;
   if (quadrant != FullWindow) y += ((trueHeight+1) >> 1) - yOrigin;
-  window->warpMouse((width >> 1) + xOrigin, y);
+  g2d->SetMousePosition(width >> 1, height >> 1);
 }
 
 void			MainWindow::getMousePosition(int& mx, int& my) const
 {
-  window->getMouse(mx, my);
-  mx -= (width >> 1) + xOrigin;
-  my -= (viewHeight >> 1);
-  if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
+  mx = mouse->GetLastX();
+  my = mouse->GetLastY();
+  mx -= (width >> 1);
+  my -= (height >> 1);
+//   my -= (viewHeight >> 1);
+//   if (quadrant != FullWindow)
+//     my -= ((trueHeight+1) >> 1) - yOrigin;
 }
 
 void			MainWindow::grabMouse()
@@ -242,8 +252,6 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
     width = inWidth / zoomFactor + 1;
     height = inHeight / zoomFactor + 1;
   }
-
-  glViewport(xOrigin, yOrigin, width, height);
 }
 
 void			MainWindow::resize()

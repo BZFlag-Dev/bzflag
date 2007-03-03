@@ -131,6 +131,8 @@ class MainWindow {
   csRef<iGraphics3D>     g3d;
   /// A pointer to the 2D graphic driver.
   csRef<iGraphics2D>     g2d;
+  /// A pointer to the mouse driver.
+  csRef<iMouseDriver>    mouse;
 };
 
 //

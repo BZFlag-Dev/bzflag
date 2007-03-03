@@ -5623,9 +5623,6 @@ void Playing::playingLoop()
 	     (myTank->getFlag() == Flags::TriggerHappy))) {
 	  myTank->fireShot();
 	}
-      } else {
-	int mx, my;
-	mainWindow->getMousePosition(mx, my);
       }
       myTank->update();
     }
