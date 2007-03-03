@@ -50,6 +50,7 @@ public:
   virtual void OnExit();
   virtual bool OnInitialize(int argc, char *argv[]);
 
+  static Playing *playing;
 private:
   virtual bool OnMouseDown(iEvent &event);
   virtual bool OnMouseUp(iEvent &event);
@@ -63,7 +64,6 @@ private:
   BzfVisual       *visual;
   PlatformFactory *platformFactory;
   BundleMgr       *bm;
-  Playing         *playing;
 
   /// A pointer to the 3D renderer plugin.
   csRef<iGraphics3D> g3d;

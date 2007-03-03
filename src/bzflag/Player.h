@@ -17,6 +17,9 @@
 
 /* system headers */
 #include <string>
+#ifndef BUILDING_BZADMIN
+#include "crystalspace.h"
+#endif
 
 /* common interface headers */
 #include "global.h"
@@ -332,6 +335,10 @@ private:
 
   int			oldStatus;		// old tank status bits
   float			oldZSpeed;		// old tank vertical speed
+
+#ifndef BUILDING_BZADMIN
+  csRef<iMeshWrapper>   tankMesh;
+#endif
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

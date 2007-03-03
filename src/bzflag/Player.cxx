@@ -33,6 +33,7 @@
 #include "sound.h"
 #include "effectsRenderer.h"
 #include "Roaming.h"
+#include "bzflag.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -72,8 +73,15 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   offset(0.0),
   deadReckoningState(0),
   oldStatus(0),
-  oldZSpeed(0.0f)
+  oldZSpeed(0.0f),
+  tankMesh(NULL)
 {
+  if (id != ServerPlayer) {
+    tankMesh = Bzflag::playing->engine->CreateMeshWrapper
+      (Bzflag::playing->tankFactory,
+       "Tank",
+       Bzflag::playing->room);
+  }
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
   setVelocity(zero);
@@ -137,6 +145,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 Player::~Player()
 {
   if (id != ServerPlayer) {
+    Bzflag::playing->engine->WantToDie(tankMesh);
     delete tankIDLNode;
     delete tankNode;
     delete pausedSphere;
@@ -834,8 +843,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
   if (!isAlive() && !isExploding()) {
+    tankMesh->GetFlags().Set(CS_ENTITY_INVISIBLE);
     return; // don't draw anything
   }
+  tankMesh->GetFlags().Reset(CS_ENTITY_INVISIBLE);
 
   // place the tank
   tankNode->move(state.pos, forward);
@@ -952,6 +963,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 		       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
     scene->addDynamicSphere(pausedSphere);
   }
+
+  tankMesh->GetMovable()->SetPosition(csVector3(state.pos[0],
+						- state.pos[1],
+						state.pos[2]));
+  tankMesh->GetMovable()->UpdateMove();
 }
 
 

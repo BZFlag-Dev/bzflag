@@ -75,7 +75,6 @@
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"
-#include "playing.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -104,6 +103,8 @@ int			debugLevel = 0;
 // ROBOT -- tidy up
 int numRobotTanks = 0;
 #endif
+
+Playing *Bzflag::playing = NULL;
 
 
 //
@@ -137,7 +138,7 @@ static void		setRadarColor(TeamColor team, const std::string& str)
 
 Bzflag::Bzflag() : filter(NULL), pmainWindow(NULL),
 		   window(NULL), visual(NULL), platformFactory(NULL),
-		   bm(NULL), playing(NULL)
+		   bm(NULL)
 {
   SetApplicationName ("BZFlag");
 }

@@ -4986,8 +4986,6 @@ void Playing::drawFrame()
   static int frameCount = 0;
   static float cumTime = 0.0f;
 
-  int i;
-
   checkDirtyControlPanel(controlPanel);
 
   if (!unmapped) {
@@ -5049,37 +5047,6 @@ void Playing::drawFrame()
       // add flags
       world->addFlags(scene, seerView);
 
-
-      // add other tanks and shells
-      for (i = 0; i < curMaxPlayers; i++) {
-	if (player[i]) {
-	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  player[i]->addShots(scene, colorblind);
-
-	  TeamColor effectiveTeam = RogueTeam;
-	  if (!colorblind){
-	    if ((player[i]->getFlag() == Flags::Masquerade)
-		&& (myTank->getFlag() != Flags::Seer)
-		&& (myTank->getTeam() != ObserverTeam)) {
-	      effectiveTeam = myTank->getTeam();
-	    }
-	    else {
-	      effectiveTeam = player[i]->getTeam();
-	    }
-	  }
-
-	  const bool inCockpt  = ROAM.isRoaming() && !devDriving &&
-	    (ROAM.getMode() == Roaming::roamViewFP) &&
-	    ROAM.getTargetTank() &&
-	    (ROAM.getTargetTank()->getId() == i);
-	  const bool showPlayer = !inCockpt || showTreads;
-
-	  // add player tank if required
-	  player[i]->addToScene(scene, effectiveTeam,
-				inCockpt, seerView,
-				showPlayer, showPlayer /*showIDL*/);
-	}
-      }
 
       // add explosions
       addExplosions(scene);
@@ -5894,6 +5861,41 @@ void Playing::playingLoop()
     csVector3 up(0, 0, 1);
     view->GetCamera()->GetTransform().SetOrigin(camera_pos);
     view->GetCamera()->GetTransform().LookAt(look_at_pos - camera_pos, up);
+
+    SceneDatabase *scene      = sceneRenderer->getSceneDatabase();
+
+    if (scene && myTank) {
+      const bool     showTreads = BZDB.isTrue("showTreads");
+      const bool     seerView   = (myTank->getFlag() == Flags::Seer);
+
+      // add other tanks and shells
+      for (i = 0; i < curMaxPlayers; i++)
+	if (player[i]) {
+	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+	  player[i]->addShots(scene, colorblind);
+
+	  TeamColor effectiveTeam = RogueTeam;
+	  if (!colorblind){
+	    if ((player[i]->getFlag() == Flags::Masquerade)
+		&& (myTank->getFlag() != Flags::Seer)
+		&& (myTank->getTeam() != ObserverTeam)) {
+	      effectiveTeam = myTank->getTeam();
+	    } else {
+	      effectiveTeam = player[i]->getTeam();
+	    }
+	  }
+
+	  const bool inCockpt = ROAM.isRoaming() && !devDriving
+	    && (ROAM.getMode() == Roaming::roamViewFP) && ROAM.getTargetTank()
+	    && (ROAM.getTargetTank()->getId() == i);
+	  const bool showPlayer = !inCockpt || showTreads;
+
+	  // add player tank if required
+	  player[i]->addToScene(scene, effectiveTeam,
+				inCockpt, seerView,
+				showPlayer, showPlayer /*showIDL*/);
+	}
+    }
 }
 
 
@@ -6591,6 +6593,12 @@ void Playing::CreateRoom ()
 
   light = engine->CreateLight(0, csVector3(-3, 5, 0), 10, csColor(1, 0, 0));
   ll->Add(light);
+
+  // Load a mesh template from disk.
+  tankFactory = loader->LoadMeshObjectFactory("this/data/tank.mds");
+  if (!tankFactory)
+    csApplicationFramework::ReportError
+      ("Error loading mesh object factory!");
 }
 
 

@@ -153,9 +153,7 @@ const char*		getAppVersion()
     // TODO add current platform, release, cpu, etc
     appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
-#ifdef HAVE_SDL
-    appVersionStream << "-SDL";
-#endif
+    appVersionStream << "-CS";
     appVersion = appVersionStream.str();
   }
   return appVersion.c_str();

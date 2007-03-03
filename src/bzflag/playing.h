@@ -124,6 +124,15 @@ public:
   void drawFrame();
 
   float dt;
+
+  csRef<iMeshFactoryWrapper> tankFactory;
+
+  /// A pointer to the 3D engine.
+  csRef<iEngine> engine;
+
+  /// A pointer to the sector the camera will be in.
+  iSector *room;
+
 private:
   bool SetupModules();
   void CreateRoom();
@@ -137,9 +146,6 @@ private:
   GLfloat            fov;
   GLfloat            eyePoint[3];
   GLfloat            targetPoint[3];
-
-  /// A pointer to the 3D engine.
-  csRef<iEngine> engine;
 
   /// A pointer to the map loader plugin.
   csRef<iLoader> loader;
@@ -158,9 +164,6 @@ private:
 
   /// A pointer to the view which contains the camera.
   csRef<iView> view;
-
-  /// A pointer to the sector the camera will be in.
-  iSector *room;
 
   /// Event handlers to draw and print the 3D canvas on each frame
   csRef<FrameBegin3DDraw> drawer;
