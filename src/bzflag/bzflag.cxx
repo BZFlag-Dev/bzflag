@@ -581,6 +581,8 @@ bool Bzflag::OnInitialize(int argc, char *argv[])
 		      CS_REQUEST_LEVELLOADER,
 		      CS_REQUEST_REPORTER,
 		      CS_REQUEST_REPORTERLISTENER,
+		      CS_REQUEST_PLUGIN("crystalspace.utilities.bugplug",
+					iBugPlug),
 		      CS_REQUEST_END))
     return ReportError("Failed to initialize plugins!");
 
@@ -1203,11 +1205,11 @@ void Bzflag::Frame()
 {
   // main loop
   playing->playingLoop();
+  playing->drawFrame();
 }
 
 void Bzflag::ProcessFrame()
 {
-  playing->drawFrame();
 }
 
 void Bzflag::PostProcessFrame()
