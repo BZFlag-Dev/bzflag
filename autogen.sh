@@ -159,13 +159,17 @@ version_check ( ) {
     fi
     _cur="$2"
 
-    _min_major="`echo ${_min}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
-    _min_minor="`echo ${_min}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
-    _min_patch="`echo ${_min}. | cut -d. -f3 | sed 's/[^0-9]//g'`"
+    # needed to handle versions like 1.10 and 1.4-p6
+    _min="`echo ${_min}. | sed 's/[^0-9]/./g' | sed 's/\.\././g'`"
+    _cur="`echo ${_cur}. | sed 's/[^0-9]/./g' | sed 's/\.\././g'`"
 
-    _cur_major="`echo ${_cur}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
-    _cur_minor="`echo ${_cur}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
-    _cur_patch="`echo ${_cur}. | cut -d. -f3 | sed 's/[^0-9]//g'`"
+    _min_major="`echo $_min | cut -d. -f1`"
+    _min_minor="`echo $_min | cut -d. -f2`"
+    _min_patch="`echo $_min | cut -d. -f3`"
+
+    _cur_major="`echo $_cur | cut -d. -f1`"
+    _cur_minor="`echo $_cur | cut -d. -f2`"
+    _cur_patch="`echo $_cur | cut -d. -f3`"
 
     if [ "x$_min_major" = "x" ] ; then
 	_min_major=0
@@ -185,6 +189,8 @@ version_check ( ) {
     if [ "x$_cur_patch" = "x" ] ; then
 	_cur_patch=0
     fi
+
+    $VERBOSE_ECHO "Checking if ${_cur_major}.${_cur_minor}.${_cur_patch} is greater than ${_min_major}.${_min_minor}.${_min_patch}"
 
     if [ $_min_major -lt $_cur_major ] ; then
 	return 0
@@ -765,11 +771,11 @@ initialize ( ) {
 	$VERBOSE_ECHO "rm -rf autom4te.cache"
 	rm -rf autom4te.cache
     fi
-    if test -f aclocal.m4 ; then
-	$VERBOSE_ECHO "Found an aclocal.m4 file, deleting it"
-	$VERBOSE_ECHO "rm -f aclocal.m4"
-	rm -f aclocal.m4
-    fi
+#     if test -f aclocal.m4 ; then
+# 	$VERBOSE_ECHO "Found an aclocal.m4 file, deleting it"
+# 	$VERBOSE_ECHO "rm -f aclocal.m4"
+# 	rm -f aclocal.m4
+#     fi
 
 } # end of initialize()
 
@@ -965,14 +971,17 @@ manual_autogen ( ) {
 	ac2_54_macros="AC_C_BACKSLASH_A AC_CONFIG_LIBOBJ_DIR AC_GNU_SOURCE AC_PROG_EGREP AC_PROG_FGREP AC_REPLACE_FNMATCH AC_FUNC_FNMATCH_GNU AC_FUNC_REALLOC AC_TYPE_MBSTATE_T"
 
 	macros_to_search=""
-	if [ $AUTOCONF_MAJOR_VERSION -lt 2 ] ; then
+	ac_major="`echo ${AUTOCONF_VERSION}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
+	ac_minor="`echo ${AUTOCONF_VERSION}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
+	
+	if [ $ac_major -lt 2 ] ; then
 	    macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
 	else
-	    if [ $AUTOCONF_MINOR_VERSION -lt 54 ] ; then
+	    if [ $ac_minor -lt 54 ] ; then
 		macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
-	    elif [ $AUTOCONF_MINOR_VERSION -lt 55 ] ; then
+	    elif [ $ac_minor -lt 55 ] ; then
 		macros_to_search="$ac2_59_macros $ac2_55_macros"
-	    elif [ $AUTOCONF_MINOR_VERSION -lt 59 ] ; then
+	    elif [ $ac_minor -lt 59 ] ; then
 		macros_to_search="$ac2_59_macros"
 	    fi
 	fi
