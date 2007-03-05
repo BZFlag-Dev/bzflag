@@ -1,7 +1,7 @@
 <?php
 
 // This function will check a username and token returned by the bzflag
-// weblogin page at http://my.bzflag.org/weblogin?action=weblogin. You can use
+// weblogin page at http://my.bzflag.org/weblogin.php?action=weblogin. You can use
 // this URL to ask a user for his bzflag global login. Your page needs to pass
 // in an URL paramater to the weblogin that contains your URL to be called with
 // the username and token. This allows your site to use the same usernames and
@@ -10,7 +10,7 @@
 // %USERNAME% that will be replaced with the real username and token when the
 // URL is called. For example:
 //
-// http://my.bzflag.org/weblogin?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&callsign=%USERNAME%
+// http://my.bzflag.org/weblogin.php?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&callsign=%USERNAME%
 //
 // This would call mysite.com with the token and username passed in as
 // paramaters after the user has given the page a valid username and password.
