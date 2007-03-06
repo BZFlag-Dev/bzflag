@@ -473,7 +473,7 @@ void			dumpResources()
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
   }
 
-  if (RENDERER.getWindow().hasGammaControl()) {
+  if (&RENDERER.getWindow() && RENDERER.getWindow().hasGammaControl()) {
     BZDB.set("gamma",
 	     TextUtils::format("%f", RENDERER.getWindow().getGamma()));
   }
