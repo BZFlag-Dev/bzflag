@@ -561,11 +561,7 @@ static void createCacheSignature ()
 //	initialize application and enter event loop
 //
 
-#if defined(_WIN32) && !defined(HAVE_SDL)
-int			myMain(int argc, char** argv)
-#else /* defined(_WIN32) */
 int			main(int argc, char** argv)
-#endif /* defined(_WIN32) */
 {
   return csApplicationRunner<Bzflag>::Run (argc, argv);
 }
@@ -1508,7 +1504,7 @@ void Bzflag::OnExit()
 //	windows entry point.  forward to main()
 //
 
-int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
+/*int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
@@ -1550,7 +1546,7 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   delete[] argv;
   free(cmdLine);
   return exitCode;
-}
+} */
 
 #endif /* defined(_WIN32) */
 
