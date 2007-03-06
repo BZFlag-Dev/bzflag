@@ -23,7 +23,7 @@
 
 class WinWindow : public BzfWindow {
   public:
-			WinWindow(const WinDisplay*, WinVisual*);
+			WinWindow(void);
 			~WinWindow();
 
     bool		isValid() const;
@@ -80,26 +80,6 @@ class WinWindow : public BzfWindow {
     void		setGammaRamps(const WORD*);
 
   private:
-    const WinDisplay*	display;
-    WinVisual		visual;
-    bool		inDestroy;
-    static HWND		hwnd;
-    HWND		hwndChild;
-    HGLRC		hRC;
-    HDC			hDC;
-    HDC			hDCChild;
-    bool		inactiveDueToDeactivate;
-    bool		inactiveDueToDeactivateAll;
-    bool		useColormap;
-    bool		hasGamma;
-    bool		has3DFXGamma;
-    float		gammaVal;
-    WORD		origGammaRamps[6 * 256];
-    PIXELFORMATDESCRIPTOR pfd;
-    WinWindow*		prev;
-    WinWindow*		next;
-    static WinWindow*	first;
-    static HPALETTE	colormap;
 };
 
 #endif // BZF_WINWINDOW_H

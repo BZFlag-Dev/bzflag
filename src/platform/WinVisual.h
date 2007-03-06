@@ -51,10 +51,6 @@ class WinVisual : public BzfVisual {
     void		editAttribute(int index, int value);
 
   private:
-    WinDisplay::Rep*	display;
-    PIXELFORMATDESCRIPTOR pfd;
-    int			pixelFormat;
-    HDC			hDC;
 };
 
 #endif // BZF_WINVISUAL_H

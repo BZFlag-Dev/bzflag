@@ -104,7 +104,7 @@ BzfWindow*		WinPlatformFactory::createWindow(
 #endif
 
   if (useNative) {
-    winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
+    winWindow = new WinWindow();
     return winWindow;
   } else {
 #ifdef HAVE_SDL
