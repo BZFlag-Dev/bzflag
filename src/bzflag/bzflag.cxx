@@ -1201,7 +1201,6 @@ void Bzflag::Frame()
 {
   // main loop
   playing->playingLoop();
-  playing->drawFrame();
 }
 
 void Bzflag::ProcessFrame()
@@ -1214,8 +1213,6 @@ void Bzflag::PostProcessFrame()
 
 void Bzflag::FinishFrame()
 {
-  g3d->FinishDraw();
-  g3d->Print(0);
 }
 
 bool Bzflag::OnKeyboard(iEvent &event)
