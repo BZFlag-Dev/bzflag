@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;&quot;$(CRYSTAL)/include&quot;"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;&quot;$(CRYSTAL)\include&quot;"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG;CS_WIN32_CSCONFIG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="FALSE"
-				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew32.lib libcrystalspace_d.lib libcrystalspace_opengl_d.lib"
+				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew32.lib libcrystalspace_d.lib libcrystalspace_opengl_d.lib libcrystalspace_windows_d.lib"
 				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\src\3D\debug;&quot;$(CRYSTAL)\out\debugvc71\libs\&quot;"
+				AdditionalLibraryDirectories="..\..\src\3D\debug;&quot;$(CRYSTAL)\out\debug71\libs\&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
 				SubSystem="2"
@@ -113,10 +113,11 @@ copy debug\*.pdb ..\..\*.pdb
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib libcurl.lib odbc32.lib odbccp32.lib glew32.lib"
+				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib libcurl.lib odbc32.lib odbccp32.lib glew32.lib libcrystalspace.lib libcrystalspace_opengl.lib libcrystalspace_windows.lib"
 				OutputFile="..\..\src\bzflag\bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(CRYSTAL)\out\release71\libs\"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
 				SubSystem="2"
