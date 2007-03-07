@@ -1123,6 +1123,22 @@ recursive_manual_autogen ( ) {
     # run the build preparation steps manually for this directory
     manual_autogen
 
+    # for projects using recursive configure, run the build
+    # preparation steps for the subdirectories.
+    if [ ! "x$CONFIG_SUBDIRS" = "x" ] ; then
+	$VERBOSE_ECHO "Recursively configuring the following directories:"
+	$VERBOSE_ECHO "  $CONFIG_SUBDIRS"
+	for dir in $CONFIG_SUBDIRS ; do
+	    $VERBOSE_ECHO "Processing recursive configure in $dir"
+	    cd "$_prev_path"
+	    cd "$dir"
+	    initialize
+	    recursive_manual_autogen
+	done
+    fi
+}
+
+restore_backups () {
     #########################################
     # restore COPYING & INSTALL from backup #
     #########################################
@@ -1161,20 +1177,6 @@ recursive_manual_autogen ( ) {
 	    export INSTALL_BACKUP
 	fi
     fi
-
-    # for projects using recursive configure, run the build
-    # preparation steps for the subdirectories.
-    if [ ! "x$CONFIG_SUBDIRS" = "x" ] ; then
-	$VERBOSE_ECHO "Recursively configuring the following directories:"
-	$VERBOSE_ECHO "  $CONFIG_SUBDIRS"
-	for dir in $CONFIG_SUBDIRS ; do
-	    $VERBOSE_ECHO "Processing recursive configure in $dir"
-	    cd "$_prev_path"
-	    cd "$dir"
-	    initialize
-	    recursive_manual_autogen
-	done
-    fi
 }
 
 
@@ -1187,6 +1189,7 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 
     recursive_manual_autogen
 fi
+restore_backups
 
 
 #########################
