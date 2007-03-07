@@ -3131,7 +3131,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleGameJoinRequest(playerData);
 		break;
 
-    case MsgKilled: // player declaring self destroyed
+    case MsgKilled: // player got killed
 	// stop pausing attempts as you can not pause when being dead
 	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
 	handlePlayerKilled(playerData,buf);
@@ -3157,7 +3157,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 		handleShotEnded(playerData,buf,len);
 		break;
 
-    // tank is being hit
+    // tank has been shot
     case MsgHit: {
       if (playerData->player.isObserver())
 	break;
@@ -3186,8 +3186,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
 	  playerKilled(hitPlayer, shooterPlayer, GotShot, shot,
 		       firingInfo.flagType, false, false);
-	  // stop pausing attempts as you can not pause when being dead
-      playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
       }
       break;
     }

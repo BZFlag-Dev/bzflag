@@ -1532,8 +1532,8 @@ bool JitterWarnCommand::operator() (const char  *message,
 
   char reply[MessageLen] = {0};
   if (message[11] == ' ') {
-    const char *maxlag = message + 12;
-    clOptions->jitterwarnthresh = (float) (atoi(maxlag) / 1000.0);
+    const char *maxjitt = message + 12;
+    clOptions->jitterwarnthresh = (float) (atoi(maxjitt) / 1000.0);
     snprintf(reply, MessageLen, "jitterwarn is now %d ms",
 	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
   } else {
@@ -1558,8 +1558,8 @@ bool PacketLossWarnCommand::operator() (const char  *message,
 
   char reply[MessageLen] = {0};
   if (message[15] == ' ') {
-    const char *maxlag = message + 16;
-    clOptions->packetlosswarnthresh = (float) (atoi(maxlag) / 1000.0);
+    const char *maxloss = message + 16;
+    clOptions->packetlosswarnthresh = (float) (atoi(maxloss) / 1000.0);
     snprintf(reply, MessageLen, "packetlosswarn is now %d%%",
 	     int(clOptions->packetlosswarnthresh * 1000 + 0.5));
   } else {
@@ -1607,8 +1607,8 @@ bool JitterDropCommand::operator() (const char  *message,
 
   char reply[MessageLen] = {0};
   if (message[11] == ' ') {
-    const char *maxwarn = message + 12;
-    clOptions->maxjitterwarn = atoi(maxwarn);
+    const char *maxjittwarn = message + 12;
+    clOptions->maxjitterwarn = atoi(maxjittwarn);
     snprintf(reply, MessageLen, "jitterdrop is now %d", clOptions->maxjitterwarn);
   } else {
     snprintf(reply, MessageLen, "jitterdrop is set to %d", clOptions->maxjitterwarn);
@@ -1631,8 +1631,8 @@ bool PacketLossDropCommand::operator() (const char  *message,
 
   char reply[MessageLen] = {0};
   if (message[15] == ' ') {
-    const char *maxwarn = message + 16;
-    clOptions->maxpacketlosswarn = atoi(maxwarn);
+    const char *maxlosswarn = message + 16;
+    clOptions->maxpacketlosswarn = atoi(maxlosswarn);
     snprintf(reply, MessageLen, "packetlossdrop is now %d", clOptions->maxpacketlosswarn);
   } else {
     snprintf(reply, MessageLen, "packetlossdrop is set to %d", clOptions->maxpacketlosswarn);
