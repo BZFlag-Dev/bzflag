@@ -104,7 +104,7 @@ int			debugLevel = 0;
 int numRobotTanks = 0;
 #endif
 
-Playing *Bzflag::playing = NULL;
+Playing *playing = NULL;
 
 
 //
@@ -1183,6 +1183,8 @@ bool Bzflag::Application()
 
   // start playing
   playing = new Playing(NULL, RENDERER);
+  // start 2D Drawer
+  frame2D = new FrameBegin2DDraw(this);
 
   // start game loop
   if (result)
@@ -1448,6 +1450,7 @@ bool Bzflag::OnMouseUp(iEvent &event)
 void Bzflag::OnExit()
 {
   delete playing;
+  delete frame2D;
 
   // save resources
   if (BZDB.isTrue("saveSettings")) {
@@ -1487,65 +1490,26 @@ void Bzflag::OnExit()
   // clean up
   WSACleanup();
 #endif
-
-  // clean up singletons
-  //  delete FILEMGR;
-  //  delete CMDMGR;
-  //  delete BZDB;
 }
-//
-#if defined(_WIN32) && !defined(HAVE_SDL)
 
-//
-// WinMain()
-//	windows entry point.  forward to main()
-//
-
-/*int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
+FrameBegin2DDraw::FrameBegin2DDraw(Bzflag *_bzflag)
+  : csBaseEventHandler(), bzflag(_bzflag)
 {
-  // convert command line to argc and argv.  note that it's too late
-  // to do this right because spaces that were embedded in a single
-  // argument now look like like normal spaces.  not much we can do
-  // about that.
-  // FIXME -- argc and argv can be accessible;  use them instead of this.
-  char* cmdLine = strdup(_cmdLine);
+  Initialize(bzflag->GetObjectRegistry());
+  if (!RegisterQueue(bzflag->GetObjectRegistry(),
+		     csevAllEvents(bzflag->GetObjectRegistry())))
+    bzflag->ReportError("Failed to set up event handler!");
+}
 
-  // count number of arguments
-  int argc = 1;
-  char* scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
-  while (*scan) {
-    argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    while (isspace(*scan) && *scan != 0) scan++;
-  }
+FrameBegin2DDraw::~FrameBegin2DDraw()
+{
+}
 
-  // get path to application.  this is ridiculously simple.
-  char appName[MAX_PATH];
-  GetModuleFileName(instance,appName,MAX_PATH);
-
-  // make argument list and assign arguments
-  char** argv = new char*[argc];
-  argc = 0;
-  argv[argc++] = appName;
-  scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
-  while (*scan) {
-    argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    if (*scan) *scan++ = 0;
-    while (isspace(*scan) && *scan != 0) scan++;
-  }
-
-  const int exitCode = myMain(argc, argv);
-
-  // clean up and return exit code
-  delete[] argv;
-  free(cmdLine);
-  return exitCode;
-} */
-
-#endif /* defined(_WIN32) */
+void FrameBegin2DDraw::Frame()
+{
+  bzflag->g3d->BeginDraw(CSDRAW_2DGRAPHICS);
+  playing->drawUI();
+}
 
 
 // Local Variables: ***

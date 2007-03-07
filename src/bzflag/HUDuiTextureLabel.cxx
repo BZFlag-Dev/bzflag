@@ -58,7 +58,6 @@ void			HUDuiTextureLabel::doRender()
     const float descent = 0;
     const float xx = getX();
     const float yy = getY();
-    gstate.setState();
     glColor3fv(textColor);
     glBegin(GL_QUADS);
       glTexCoord2f(0.0f, 0.0f);

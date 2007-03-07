@@ -77,10 +77,10 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   tankMesh(NULL)
 {
   if (id != ServerPlayer) {
-    tankMesh = Bzflag::playing->engine->CreateMeshWrapper
-      (Bzflag::playing->tankFactory,
+    tankMesh = playing->engine->CreateMeshWrapper
+      (playing->tankFactory,
        "Tank",
-       Bzflag::playing->room);
+       playing->room);
   }
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
@@ -145,7 +145,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 Player::~Player()
 {
   if (id != ServerPlayer) {
-    Bzflag::playing->engine->WantToDie(tankMesh);
+    playing->engine->WantToDie(tankMesh);
     delete tankIDLNode;
     delete tankNode;
     delete pausedSphere;

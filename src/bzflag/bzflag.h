@@ -38,6 +38,34 @@ class BundleMgr;
 class MainWindow;
 class BzfWindow;
 class Playing;
+class Bzflag;
+
+extern Playing *playing;
+
+class FrameBegin2DDraw : public csBaseEventHandler {
+public:
+  FrameBegin2DDraw(Bzflag *_bzflag);
+  virtual ~FrameBegin2DDraw();
+
+private:
+  Bzflag *bzflag;
+
+public:
+  /**
+   * Setup everything that needs to be rendered on screen. This routine
+   * is called from the event handler in response to a csevFrame
+   * message, and is called in the "logic" phase (meaning that all
+   * event handlers for 3D, 2D, Console, Debug, and Frame phases
+   * will be called after this one).
+   */
+  void Frame();
+
+  /* Declare the name by which this class is identified to the event scheduler.
+   * Declare that we want to receive the frame event in the "LOGIC" phase,
+   * and that we're not terribly interested in having other events
+   * delivered to us before or after other modules, plugins, etc. */
+  CS_EVENTHANDLER_PHASE_2D("application.bzflag");
+};
 
 class Bzflag : public csApplicationFramework,
 	       public csBaseEventHandler {
@@ -50,7 +78,9 @@ public:
   virtual void OnExit();
   virtual bool OnInitialize(int argc, char *argv[]);
 
-  static Playing *playing;
+  /// A pointer to the 3D renderer plugin.
+  csRef<iGraphics3D> g3d;
+	
 private:
   virtual bool OnMouseDown(iEvent &event);
   virtual bool OnMouseUp(iEvent &event);
@@ -65,11 +95,10 @@ private:
   PlatformFactory *platformFactory;
   BundleMgr       *bm;
 
-  /// A pointer to the 3D renderer plugin.
-  csRef<iGraphics3D> g3d;
-	
   csRef<iCommandLineParser> clp;
   csRef<iGraphics2D>        g2d;
+
+  FrameBegin2DDraw         *frame2D;
 
 public:
   bool SetupModules ();

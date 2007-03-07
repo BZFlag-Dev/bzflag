@@ -4797,7 +4797,7 @@ static int		getZoomFactor()
 }
 
 
-static void drawUI()
+void Playing::drawUI()
 {
   // setup the triangle counts  (FIXME: hackish)
   if (showFPS && showDrawTime) {

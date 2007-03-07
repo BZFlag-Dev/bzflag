@@ -122,6 +122,7 @@ public:
   void playingLoop();
   void doKey(const BzfKeyEvent &key, bool pressed);
   void drawFrame();
+  void drawUI();
 
   float dt;
 
