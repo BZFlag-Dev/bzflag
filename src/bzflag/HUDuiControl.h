@@ -68,8 +68,6 @@ class HUDuiControl {
 
     void		render();
 
-    static int  getArrow() { return arrow; }
-
   protected:
     virtual void	onSetFont();
     virtual bool	doKeyPress(const BzfKeyEvent&) = 0;
