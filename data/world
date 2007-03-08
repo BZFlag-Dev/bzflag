@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<world>
+  <textures>
+    <texture name="arrow">
+      <file>this/data/menu_arrow.png</file>
+      <for2d>True</for2d>
+      <for3d>False</for3d>
+      <mipmap>False</mipmap>
+    </texture>
+    <texture name="stone">
+      <file>/lib/std/stone4.gif</file>
+    </texture>
+  </textures>
+  <sector name="room">
+    <meshobj name="walls">
+    <plugin>crystalspace.mesh.loader.thing</plugin>
+    <params>
+      <v x="-400" y=" 0" z=" 400" />
+      <v x=" 400" y=" 0" z=" 400" />
+      <v x="-400" y=" 0" z="-400" />
+      <v x=" 400" y=" 0" z="-400" />
+      <v x="-400" y="40" z=" 400" />
+      <v x=" 400" y="40" z=" 400" />
+      <v x="-400" y="40" z="-400" />
+      <v x=" 400" y="40" z="-400" />
+      <material>stone</material>
+      <texlen>3</texlen>
+      <p name="up">
+        <v>6</v> <v>7</v> <v>5</v> <v>4</v>
+      </p>
+      <p name="down">
+        <v>3</v> <v>2</v> <v>0</v> <v>1</v>
+      </p>
+      <p name="back">
+        <v>7</v> <v>6</v> <v>2</v> <v>3</v>
+      </p>
+      <p name="front">
+        <v>4</v> <v>5</v> <v>1</v> <v>0</v>
+      </p>
+      <p name="left">
+        <v>6</v> <v>4</v> <v>0</v> <v>2</v>
+      </p>
+      <p name="right">
+        <v>5</v> <v>7</v> <v>3</v> <v>1</v>
+      </p>
+    </params>
+    </meshobj>
+    <light>
+      <center x="0" y="3" z="0"/>
+      <radius>40</radius>
+      <color red="1" green="1" blue="1"/>
+    </light>
+  </sector>
+  <start>
+    <sector>room</sector>
+    <position x="0" y="1" z="0" />
+  </start>
+</world>
