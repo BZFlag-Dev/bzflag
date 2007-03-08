@@ -13,6 +13,7 @@
 #include "common.h"
 
 /* system headers */
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -362,7 +363,7 @@ public:
 		if ( TextUtils::tolower(command) == "listplugins" )
 		{
 			if (!bz_hasPerm(playerID, "listPlugins")) {
-				bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run the listplugins command");
+				bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run the /listplugins command");
 				return true;
 			} else {
 				std::vector<std::string>	plugins = getPluginList();

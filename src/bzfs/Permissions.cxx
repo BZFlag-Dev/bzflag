@@ -450,6 +450,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "KILL") return PlayerAccessInfo::kill;
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
+  if (name == "LISTPLUGINS") return PlayerAccessInfo::listPlugins;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
   if (name == "MASTERBAN") return PlayerAccessInfo::masterBan;
   if (name == "MODCOUNT") return PlayerAccessInfo::modCount;
