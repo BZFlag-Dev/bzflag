@@ -965,8 +965,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
 
   tankMesh->GetMovable()->SetPosition(csVector3(state.pos[0],
-						- state.pos[1],
-						state.pos[2]));
+						state.pos[2],
+						state.pos[1]));
   tankMesh->GetMovable()->UpdateMove();
 }
 

@@ -5853,11 +5853,12 @@ void Playing::playingLoop()
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
-    csVector3 camera_pos(eyePoint[0], -eyePoint[1], eyePoint[2]);
-    csVector3 look_at_pos(targetPoint[0], -targetPoint[1], targetPoint[2]);
-    csVector3 up(0, 0, 1);
+    csVector3 camera_pos(eyePoint[0], eyePoint[2], eyePoint[1]);
+    csVector3 look_at_pos(targetPoint[0], targetPoint[2], targetPoint[1]);
+    csVector3 up(0, 1, 0);
     view->GetCamera()->GetTransform().SetOrigin(camera_pos);
     view->GetCamera()->GetTransform().LookAt(look_at_pos - camera_pos, up);
+    view->GetCamera()->SetFOVAngle(fov * 180.0 / M_PI, g3d->GetWidth());
 
     SceneDatabase *scene      = sceneRenderer->getSceneDatabase();
 
@@ -6357,34 +6358,10 @@ Playing::~Playing()
 
 void Playing::CreateRoom ()
 {
-  // Load the texture from the standard library.  This is located in
-  // CS/data/standard.zip and mounted as /lib/std using the Virtual
-  // File System (VFS) plugin.
-  if (!loader->LoadTexture("stone", "/lib/std/stone4.gif"))
-    csApplicationFramework::ReportError("Error loading 'stone4' texture!");
-
-  iMaterialWrapper* tm = engine->GetMaterialList()->FindByName("stone");
+  loader->LoadMapFile("this/data/world");
 
   // We create a new sector called "room".
-  room = engine->CreateSector("room");
-
-  // Creating the walls for our room.
-  csRef<iMeshWrapper> walls(engine->CreateSectorWallsMesh(room, "walls"));
-  iMeshObject        *walls_object  = walls->GetMeshObject();
-  iMeshObjectFactory *walls_factory = walls_object->GetFactory();
-  csRef<iThingFactoryState> walls_state
-    = scfQueryInterface<iThingFactoryState>(walls_factory);
-  walls_state->AddInsideBox(csVector3(-400, -400, 0),
-			    csVector3(400, 400, 20));
-  walls_state->SetPolygonMaterial(CS_POLYRANGE_LAST, tm);
-  walls_state->SetPolygonTextureMapping(CS_POLYRANGE_LAST, 3);
-
-  // Now we need light to see something.
-  csRef<iLight> light;
-  iLightList* ll = room->GetLights();
-
-  light = engine->CreateLight(0, csVector3(-3, 5, 0), 10, csColor(1, 0, 0));
-  ll->Add(light);
+  room = engine->FindSector("room");
 
   // Load a mesh template from disk.
   tankFactory = loader->LoadMeshObjectFactory("this/data/tank.mds");
