@@ -1508,7 +1508,7 @@ FrameBegin2DDraw::~FrameBegin2DDraw()
 void FrameBegin2DDraw::Frame()
 {
   bzflag->g3d->BeginDraw(CSDRAW_2DGRAPHICS);
-  playing->drawUI();
+  //playing->drawUI();
 }
 
 
