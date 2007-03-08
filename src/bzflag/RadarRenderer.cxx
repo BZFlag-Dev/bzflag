@@ -330,6 +330,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
 void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 {
+  return;
   RenderNode::resetTriangleCount();
 
   const float radarLimit = BZDBCache::radarLimit;

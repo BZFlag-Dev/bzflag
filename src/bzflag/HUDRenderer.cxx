@@ -614,6 +614,7 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 
 void			HUDRenderer::render(SceneRenderer& renderer)
 {
+  return;
   if (firstRender) {
     firstRender = false;
     resize(false);
