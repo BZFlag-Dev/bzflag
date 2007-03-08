@@ -4799,20 +4799,6 @@ static int		getZoomFactor()
 
 void Playing::drawUI()
 {
-  // setup the triangle counts  (FIXME: hackish)
-  if (showFPS && showDrawTime) {
-    hud->setFrameTriangleCount(sceneRenderer->getFrameTriangleCount());
-    // NOTE:  the radar triangle count is actually from the previous frame
-    if (radar) {
-      hud->setFrameRadarTriangleCount(radar->getFrameTriangleCount());
-    } else {
-      hud->setFrameRadarTriangleCount(0);
-    }
-  } else {
-    hud->setFrameTriangleCount(0);
-    hud->setFrameRadarTriangleCount(0);
-  }
-
   // update the HUD (player list, alerts)
   if (hud) {
     hud->render(*sceneRenderer);
