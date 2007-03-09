@@ -64,7 +64,7 @@ public:
    * Declare that we want to receive the frame event in the "LOGIC" phase,
    * and that we're not terribly interested in having other events
    * delivered to us before or after other modules, plugins, etc. */
-  CS_EVENTHANDLER_PHASE_2D("application.bzflag");
+  CS_EVENTHANDLER_PHASE_2D("application.bzflag.2dHandler");
 };
 
 class Bzflag : public csApplicationFramework,
