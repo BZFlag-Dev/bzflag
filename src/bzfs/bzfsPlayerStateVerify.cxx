@@ -300,6 +300,53 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	return true;
 }
 
+bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
+{
+	// skip if tank does not have OO flag
+	int flagId = playerData->player.getFlag();
+	if (flagId >= 0) {
+		FlagInfo &playerFlag = *FlagInfo::get(flagId);
+		if (playerFlag.flag.type != Flags::OscillationOverthruster)
+			return true;
+	}
+	if (flagId < 0)
+		return true;
+
+	// tank did not move therefore skip check
+	if  (!(((state.velocity[0]) != (playerData->lastState.velocity[0]))
+	  || ((state.velocity[1]) != (playerData->lastState.velocity[1]))
+	  || ((state.velocity[2]) != (playerData->lastState.velocity[2]))))
+	{
+	    return true;
+	}
+
+	float forward[3];
+	float rotation = state.azimuth;
+	forward[0] = cosf(rotation);
+	forward[1] = sinf(rotation);
+	forward[2] = 0.0f;
+	bool droveForward = false;
+	if (state.velocity[0] != 0)
+		droveForward = ((forward[0] / (state.velocity[0])) > ZERO_TOLERANCE);
+	if (state.velocity[1] != 0 && !droveForward)
+		droveForward = ((forward[1] / (state.velocity[1])) > ZERO_TOLERANCE);
+
+	
+	if (!droveForward && (((state.velocity[0]) == 0) || ((state.velocity[1]) == 0)))
+		droveForward = true;
+
+	// InBuilding state doesn't get set when tank is inside a drivethrough obstacle
+	if (!(state.status & PlayerState::Falling) && !droveForward && !(playerData->lastState.status & PlayerState::Falling)
+	    && (state.status & PlayerState::InBuilding))
+	{
+		logDebugMessage(1, "%s drove backward in building\n", playerData->player.getCallSign());
+		char message[MessageLen];
+		snprintf(message, MessageLen, "Cheat checks: %s drove backwards in building", playerData->player.getCallSign());
+		sendMessage(ServerPlayer, AdminPlayers, message);
+	}
+	return true;
+}
+
 bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 {
 	// Don't kick players if the world param is still changing
@@ -317,6 +364,10 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 
 	// see if the player is too high
 	if (!doHeightChecks(playerData,state))
+		return false;
+
+	// see if player drives backwards in buildings
+	if (!doOOChecks(playerData,state))
 		return false;
 	return true;
 }
