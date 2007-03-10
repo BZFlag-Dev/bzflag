@@ -106,7 +106,6 @@ protected:
   void		renderBox(SceneRenderer&);
   void		renderTankLabels(SceneRenderer&);
   void		renderGUI(SceneRenderer&);
-  void		renderNoGUI(SceneRenderer&);
   void		renderTimes(void);
   void		renderShots(const Player*);
 
