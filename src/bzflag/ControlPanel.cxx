@@ -147,6 +147,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				dv(0),
 				messageMode(MessageAll)
 {
+  return;
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
