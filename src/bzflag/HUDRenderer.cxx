@@ -621,51 +621,39 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   }
 
   OpenGLGState::resetState();
-  if (!BZDB.isTrue("noGUI")) {
-    if (playing) {
-      renderPlaying(renderer);
-    }
-    else if (roaming) {
-      renderRoaming(renderer);
-    }
-    else {
-      renderNotPlaying(renderer);
-    }
-  }
-  else {
-    const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
-			   (triangleCount > 0) || (radarTriangleCount > 0);
-    const bool showTankLabels = BZDB.isTrue("displayLabels");
 
-    if (showCompose || showTimes || showTankLabels) {
-      // get view metrics
-      const int width = window.getWidth();
-      const int height = window.getHeight();
-      const int viewHeight = window.getViewHeight();
-      const int ox = window.getOriginX();
-      const int oy = window.getOriginY();
-      // use one-to-one pixel projection
-      glScissor(ox, oy + height - viewHeight, width, viewHeight);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-      glMatrixMode(GL_MODELVIEW);
-      glPushMatrix();
-      glLoadIdentity();
+  // get view metrics
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
 
-      if (showCompose) {
-	renderCompose(renderer);
-      }
-      if (showTimes) {
-	renderTimes();
-      }
-      if (showTankLabels) {
-	renderTankLabels(renderer);
-      }
+  // use one-to-one pixel projection
+  glScissor(ox, oy + height - viewHeight, width, viewHeight);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
 
-      glPopMatrix();
-    }
-  }
+  // draw message composition
+  if (showCompose)
+    renderCompose(renderer);
+
+  // draw times
+  renderTimes();
+
+  // show tank labels
+  if (roaming && BZDB.isTrue("displayLabels"))
+    renderTankLabels(renderer);
+
+  if (!BZDB.isTrue("noGUI"))
+    renderGUI(renderer);
+
+  // restore graphics state
+  glPopMatrix();
 }
 
 void			HUDRenderer::renderAlerts(void)
@@ -1293,44 +1281,14 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   }
 }
 
-void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
+void HUDRenderer::renderGUI(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
   const int viewHeight = window.getViewHeight();
-  const int ox = window.getOriginX();
-  const int oy = window.getOriginY();
-  const int centerx = width >> 1;
-  int i;
-  float y;
 
   FontManager &fm = FontManager::instance();
-
-  // use one-to-one pixel projection
-  glScissor(ox, oy + height - viewHeight, width, viewHeight);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  // cover the lower portion of the screen when burrowed
-  const LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && myTank->getPosition()[2] < 0.0f) {
-    glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
-  }
-
-  // draw shot reload status
-  if (BZDB.isTrue("displayReloadTimer")) {
-    renderShots(myTank);
-  }
-
-  // draw cracks
-  if (showCracks)
-    renderCracks();
 
   // draw status line
   renderStatus();
@@ -1340,186 +1298,93 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // show player scoreboard
   scoreboard->setRoaming(roaming);
-  scoreboard->render(false);
+  scoreboard->render(!playing && !roaming);
+
+  // draw cracks
+  if (showCracks && (playing || ! roaming))
+    renderCracks();
+
+  // draw targeting box
+  if (playing || (roaming && (altitude != -1.0f)))
+    renderBox(renderer);
+
+  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  // draw shot reload status
+  if (BZDB.isTrue("displayReloadTimer"))
+    if (playing || (roaming && (ROAM.getMode() == Roaming::roamViewFP)))
+      renderShots(myTank);
+
+  if (playing || roaming) {
+    // cover the lower portion of the screen when burrowed
+    if (myTank && myTank->getPosition()[2] < 0.0f) {
+      glColor4f(0.02f, 0.01f, 0.01f, 1.0);
+      glRectf(0, 0, (float)width,
+	      (myTank->getPosition()[2]
+	       /(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f))
+	      * ((float)viewHeight/2.0f));
+    }
+  }
+
+  if (myTank && globalClock.isOn()) {
+    float y = 0.5f * (float)height
+      + fm.getStrHeight(bigFontFace, bigFontSize, "0");
+    if (playing) {
+      // display Autopilot
+      if (myTank->isAutoPilot()) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
+		      bigFontFace,
+		      bigFontSize, autoPilotLabel);
+      }
+    } else if (roaming) {
+      // display game over
+      if (gameOver) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
+		      bigFontFace, bigFontSize, gameOverLabel);
+      }
+    } else {
+      // tell player what to do to start/resume playing
+      if (gameOver) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
+		      bigFontFace, bigFontSize, gameOverLabel);
+      } else if (!myTank->isAlive() && !myTank->isExploding()) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
+		      bigFontFace, bigFontSize, restartLabel);
+      } else if (myTank->isPaused()) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
+		      bigFontFace, bigFontSize, resumeLabel);
+      } else if (myTank->isAutoPilot()) {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
+		      bigFontFace, bigFontSize, autoPilotLabel);
+      }
+    }
+  }
 
   // draw flag help
-  if (flagHelpClock.isOn()) {
+  if (playing && flagHelpClock.isOn()) {
+    const int centerx = width >> 1;
+    int i;
+    float y = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     hudColor3fv(messageColor);
-    flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
-    y = flagHelpY;
     const char* flagHelpBase = flagHelpText.c_str();
     for (i = 0; i < flagHelpLines; i++) {
       y -= fm.getStrHeight(minorFontFace, minorFontSize, "0");
-      fm.drawString((float)(centerx - fm.getStrLength(minorFontFace, minorFontSize, flagHelpBase)/2.0),
+      fm.drawString((float)(centerx - fm.getStrLength(minorFontFace,
+						      minorFontSize,
+						      flagHelpBase)/2.0),
 		    y, 0, minorFontFace, minorFontSize, flagHelpBase);
-      while (*flagHelpBase) flagHelpBase++;
+      while (*flagHelpBase)
+	flagHelpBase++;
       flagHelpBase++;
     }
-
   }
-
-  if (myTank && globalClock.isOn()) {
-    float yy = 0.5f * (float)height
-      + fm.getStrHeight(bigFontFace, bigFontSize, "0");
-    if (myTank->isAutoPilot()) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace,
-		    bigFontSize, autoPilotLabel);
-    }
-  }
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
-
-  // draw targeting box
-  renderBox(renderer);
-
-  // restore graphics state
-  glPopMatrix();
 }
-
-void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
-{
-  // get view metrics
-  const int width = window.getWidth();
-  const int height = window.getHeight();
-  const int viewHeight = window.getViewHeight();
-  const int ox = window.getOriginX();
-  const int oy = window.getOriginY();
-
-  FontManager &fm = FontManager::instance();
-
-  // use one-to-one pixel projection
-  glScissor(ox, oy + height - viewHeight, width, viewHeight);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  // draw cracks
-  if (showCracks)
-    renderCracks();
-
-  // draw status line
-  renderStatus();
-
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
-  scoreboard->setRoaming(roaming);
-  scoreboard->render(true);
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
-
-  // tell player what to do to start/resume playing
-  LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (myTank && globalClock.isOn()) {
-    float y = 0.5f * (float)viewHeight + fm.getStrHeight(bigFontFace, bigFontSize, "0");
-    if (gameOver) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel);
-    } else if (!myTank->isAlive() && !myTank->isExploding()) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, restartLabel);
-    } else if (myTank->isPaused()) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, resumeLabel);
-    } else if (myTank->isAutoPilot()) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
-		    bigFontFace, bigFontSize, autoPilotLabel);
-    }
-  }
-
-  // restore graphics state
-  glPopMatrix();
-}
-
-void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
-{
-  // get view metrics
-  const int width = window.getWidth();
-  const int height = window.getHeight();
-  const int viewHeight = window.getViewHeight();
-  const int ox = window.getOriginX();
-  const int oy = window.getOriginY();
-
-  FontManager &fm = FontManager::instance();
-
-  // use one-to-one pixel projection
-  glScissor(ox, oy + height - viewHeight, width, viewHeight);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  // black out the underground if we're driving with a tank with BU
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && myTank->getPosition()[2] < 0.0f) {
-    glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
-  }
-
-  // draw shot reload status
-  if ((ROAM.getMode() == Roaming::roamViewFP) && BZDB.isTrue("displayReloadTimer")) {
-    renderShots(ROAM.getTargetTank());
-  }
-
-  // draw alert messages
-  renderAlerts();
-
-  // show player scoreboard
-  scoreboard->setRoaming(roaming);
-  scoreboard->render(false);
-
-  // show tank labels
-  if (BZDB.isTrue("displayLabels")) renderTankLabels(renderer);
-
-  // draw times
-  renderTimes();
-
-  // draw message composition
-  if (showCompose)
-    renderCompose(renderer);
-
-  // display game over
-  if (myTank && globalClock.isOn()) {
-    float y = 0.5f * (float)height + fm.getStrHeight(bigFontFace, bigFontSize, "0");
-    if (gameOver) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel);
-    }
-  }
-
-  renderStatus();
-
-  // draw targeting box
-  if (altitude != -1.0f)
-    renderBox(renderer);
-
-  // restore graphics state
-  glPopMatrix();
-}
-
-
 
 static int compare_float (const void* a, const void* b)
 {

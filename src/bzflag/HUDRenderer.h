@@ -105,9 +105,8 @@ protected:
   void		renderCompose(SceneRenderer&);
   void		renderBox(SceneRenderer&);
   void		renderTankLabels(SceneRenderer&);
-  void		renderPlaying(SceneRenderer&);
-  void		renderNotPlaying(SceneRenderer&);
-  void		renderRoaming(SceneRenderer&);
+  void		renderGUI(SceneRenderer&);
+  void		renderNoGUI(SceneRenderer&);
   void		renderTimes(void);
   void		renderShots(const Player*);
 
