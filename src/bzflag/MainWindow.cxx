@@ -122,10 +122,7 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
   mx = mouse->GetLastX();
   my = mouse->GetLastY();
   mx -= (width >> 1);
-  my -= (height >> 1);
-//   my -= (viewHeight >> 1);
-//   if (quadrant != FullWindow)
-//     my -= ((trueHeight+1) >> 1) - yOrigin;
+  my -= (viewHeight >> 1);
 }
 
 void			MainWindow::grabMouse()
@@ -259,8 +256,9 @@ void			MainWindow::resize()
   csRef<iGraphics3D> g3d
     = CS_QUERY_REGISTRY(csApplicationFramework::GetObjectRegistry(),
 			iGraphics3D);
-  width  = g3d->GetWidth();
-  height = g3d->GetHeight();
+  trueWidth  = g3d->GetWidth();
+  trueHeight = g3d->GetHeight();
+  setQuadrant(quadrant);
 }
 
 void			MainWindow::resizeCB(void* _self)
