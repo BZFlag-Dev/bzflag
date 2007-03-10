@@ -4759,6 +4759,7 @@ static void joinInternetGame2()
 
 static void		renderDialog()
 {
+  return;
   if (HUDDialogStack::get()->isActive()) {
     const int width = mainWindow->getWidth();
     const int height = mainWindow->getHeight();
