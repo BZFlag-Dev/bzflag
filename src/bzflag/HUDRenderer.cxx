@@ -1088,7 +1088,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   myG2D->DrawLine(centerx, centery - maxMotionSize,
 		  centerx, centery - maxMotionSize + 5,
 		  lastColor);
-  return;
+
   // draw heading strip
 
   // figure out which marker is closest to center
@@ -1098,39 +1098,20 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   int maxMark = baseMark + int(headingOffset / 10.0f) + 1;
 
   // draw tick marks
-  glPushMatrix();
-  if (smooth) {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_BLEND);
-  }
   GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) /
     headingOffset;
   if (!smooth) basex = floorf(basex);
-  glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
   x = smooth ? 0.0f : -0.5f;
-  glBegin(GL_LINES);
   for (i = minMark; i <= maxMark; i++) {
-    glVertex2i((int)x, 0);
-    glVertex2i((int)x, 8);
+    myG2D->DrawLine(centerx - basex + (int)x, centery - maxMotionSize,
+		    centerx - basex + (int)x, centery - maxMotionSize - 8,
+		    lastColor);
     x += headingMarkSpacing;
-    glVertex2i((int)x, 0);
-    glVertex2i((int)x, 4);
+    myG2D->DrawLine(centerx - basex + (int)x, centery - maxMotionSize,
+		    centerx - basex + (int)x, centery - maxMotionSize - 4,
+		    lastColor);
     x += headingMarkSpacing;
   }
-  glEnd();
-
-  // back to our regular rendering mode
-  if (smooth) {
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_BLEND);
-  }
-  glPopMatrix();
-  return;
-  OpenGLGState::resetState();
-    // first clip to area
-    glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
-		2 * maxMotionSize, 25 + (int)(headingFontSize + 0.5f));
 
     bool smoothLabel = smooth;
     x = (float)centerx - basex;
@@ -1154,14 +1135,12 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 	x += 2.0f * headingMarkSpacing;
       }
     }
-    OpenGLGState::resetState();
 
     // draw markers (give 'em a little more space on the sides)
-    glScissor(ox + centerx - maxMotionSize - 8, oy + height - viewHeight + centery + maxMotionSize,
-		2 * maxMotionSize + 16, 10);
-    glPushMatrix();
-    glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
     for (MarkerList::const_iterator it = markers.begin(); it != markers.end(); ++it) {
+      break;
+      glPushMatrix();
+      glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
       const HUDMarker &m = *it;
       const float relAngle = fmodf(360.0f + m.heading - heading, 360.0f);
       hudColor3fv(m.color);
@@ -1190,22 +1169,17 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 	  glVertex2f(-(float)maxMotionSize - 4.0f, 4.0f);
 	glEnd();
       }
+      glPopMatrix();
     }
     markers.clear();
-    glPopMatrix();
 
   // draw altitude strip
   if (altitudeTape) {
-    // clip to area
-    glScissor(ox + centerx + maxMotionSize - 5, oy + height - viewHeight + centery - maxMotionSize,
-		(int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
-
     // draw altitude mark
     hudColor3fv(hudColor);
-    glBegin(GL_LINES);
-      glVertex2i(centerx + maxMotionSize, centery);
-      glVertex2i(centerx + maxMotionSize - 5, centery);
-    glEnd();
+    myG2D->DrawLine(centerx + maxMotionSize,     centery,
+		    centerx + maxMotionSize - 5, centery,
+		    lastColor);
 
     // figure out which marker is closest to center
     int baseMark = int(altitude) / 5;
@@ -1217,33 +1191,19 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     int maxMark = baseMark + int(altitudeOffset / 5.0f) + 1;
 
     // draw tick marks
-    glPushMatrix();
-    if (smooth) {
-      glEnable(GL_LINE_SMOOTH);
-      glEnable(GL_BLEND);
-    }
     // NOTE: before I (Steve Krenzel) made changes, minMark was always 0, which appears
     // to have made basey always equal 0, maybe I overlooked something
     GLfloat basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
 								altitudeOffset;
     if (!smooth) basey = floorf(basey);
-    glTranslatef((float)(centerx + maxMotionSize),
-				(float)centery - basey, 0.0f);
     y = smooth ? 0.0f : -0.5f;
-    glBegin(GL_LINES);
     for (i = minMark; i <= maxMark; i++) {
-      glVertex2i(0, (int)y);
-      glVertex2i(8, (int)y);
+      myG2D->DrawLine(centerx + maxMotionSize,     centery + basey - y,
+		      centerx + maxMotionSize + 8, centery + basey - y,
+		      lastColor);
       y += altitudeMarkSpacing;
     }
-    glEnd();
 
-    // back to our regular rendering mode
-    if (smooth) {
-      glDisable(GL_LINE_SMOOTH);
-      glDisable(GL_BLEND);
-    }
-    glPopMatrix();
 
     bool smoothLabel = smooth;
     x = (float)(10 + centerx + maxMotionSize);
