@@ -139,7 +139,8 @@ void FontManager::loadAll(std::string directory)
   if (directory.size() == 0)
     return;
 
-  const bool bitmapRenderer = BZDB.isTrue("useBitmapFontRenderer");
+  // const bool bitmapRenderer = BZDB.isTrue("useBitmapFontRenderer");
+  const bool bitmapRenderer = true;
   canScale = !bitmapRenderer;
 
   // save this in case we have to rebuild
@@ -318,7 +319,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     endSend = (int)text.size();
     doneLastSection = true;
   }
-  return;
+
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
@@ -331,13 +332,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       const char* tmpText = text.c_str();
       // get substr width, we may need it a couple times
       width = pFont->getStrLength(scale, &tmpText[startSend], len);
-      glPushMatrix();
-      glTranslatef(x, y, z);
-      GLboolean depthMask;
-      glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
-      glDepthMask(0);
-      pFont->drawString(scale, color, &tmpText[startSend], len);
+      pFont->drawString(int(x), int(y), color, &tmpText[startSend], len);
       if (underline) {
+	glPushMatrix();
+	glTranslatef(x, y, z);
 	if (canScale) {
 	  glDisable(GL_TEXTURE_2D);
 	}
@@ -358,9 +356,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	if (canScale) {
 	  glEnable(GL_TEXTURE_2D);
 	}
+	glPopMatrix();
       }
-      glDepthMask(depthMask);
-      glPopMatrix();
       // x transform for next substr
       x += width;
     }

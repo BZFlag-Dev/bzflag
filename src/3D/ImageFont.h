@@ -40,6 +40,8 @@ public:
 
   virtual void filter(bool dofilter) = 0;
   virtual void drawString(float scale, GLfloat color[3], const char *str, int len) = 0;
+  virtual void drawString(int x, int y, GLfloat color[3], const char *str,
+			  int len) = 0;
 
   float getStrLength(float scale, const char *str, int len) const;
 

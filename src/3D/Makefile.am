@@ -5,7 +5,7 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include `cs-config --cflags`
 
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES =		\

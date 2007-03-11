@@ -31,6 +31,13 @@ BitmapFont::BitmapFont()
     bitmaps[i] = 0;
     fontMetrics[i].charWidth = -1;
   }
+
+  g3d = csQueryRegistry<iGraphics3D>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!g3d)
+    csApplicationFramework::ReportError("Failed to locate 3D renderer!");
+  if (g3d)
+    font = g3d->GetDriver2D()->GetFontServer()->LoadFont(CSFONT_LARGE);
 }
 
 BitmapFont::~BitmapFont()
@@ -103,13 +110,6 @@ void BitmapFont::build(void)
   }
   delete[] image;
   loaded = true;
-
-  // create GState
-  OpenGLGStateBuilder builder(gstate);
-  builder.enableTexture(false);
-  builder.setBlending();
-  builder.setAlphaFunc();
-  gstate = builder.getState();
 }
 
 
@@ -120,6 +120,31 @@ void BitmapFont::free(void)
 
 void BitmapFont::filter(bool /*dofilter*/)
 {
+}
+
+void BitmapFont::drawString(int x, int y, GLfloat color[4], const char *str,
+			    int len)
+{
+  if (!str)
+    return;
+
+  char myString[128];
+  int  myLen = len;
+
+  if (myLen > 127)
+    myLen = 127;
+
+  memcpy(myString, str, myLen);
+  myString[127] = '\0';
+  
+  int fg = 0;
+  if (color[0] >= 0)
+    fg = g3d->GetDriver2D()->FindRGB(int(color[0] * 255.0f),
+				     int(color[1] * 255.0f),
+				     int(color[2] * 255.0f),
+				     int(color[3] * 255.0f));
+
+  g3d->GetDriver2D()->Write(font, x, y, fg, -1, str);
 }
 
 void BitmapFont::drawString(float scale, GLfloat color[4], const char *str,
@@ -144,8 +169,6 @@ void BitmapFont::drawString(float scale, GLfloat color[4], const char *str,
     glColor4fv(color);
 
   glRasterPos3f(0, 0, 0);
-
-  gstate.setState();
 
   int charToUse = 0;
   for (int i = 0; i < len; i++) {

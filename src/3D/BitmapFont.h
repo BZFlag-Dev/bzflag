@@ -16,6 +16,9 @@
 /* common header */
 #include "common.h"
 
+// System Headers
+#include <crystalspace.h>
+
 /* interface headers */
 #include "ImageFont.h"
 #include "bzfgl.h"
@@ -31,6 +34,8 @@ public:
 
   virtual void filter(bool dofilter);
   virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
+  virtual void drawString(int x, int y, GLfloat color[3], const char *str,
+			  int len);
 
   virtual void free();
 
@@ -38,6 +43,10 @@ private:
   OpenGLGState gstate;
   unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
   bool	loaded;
+
+  /// A pointer to the 3D renderer plugin.
+  csRef<iGraphics3D> g3d;
+  csRef<iFont>       font;
 };
 
 #endif //_BITMAP_FONT_H_

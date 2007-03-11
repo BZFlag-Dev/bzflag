@@ -31,6 +31,8 @@ public:
 
   virtual void filter(bool dofilter);
   virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
+  virtual void drawString(int x, int y, GLfloat color[3], const char *str,
+			  int len);
 
   virtual void free();
 

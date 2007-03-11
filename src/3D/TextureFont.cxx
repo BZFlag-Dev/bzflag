@@ -140,6 +140,10 @@ void TextureFont::filter(bool dofilter)
   }
 }
 
+void TextureFont::drawString(int, int, GLfloat [4], const char *, int)
+{
+}
+
 void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
 			     int len)
 {
