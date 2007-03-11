@@ -318,7 +318,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     endSend = (int)text.size();
     doneLastSection = true;
   }
-
+  return;
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
