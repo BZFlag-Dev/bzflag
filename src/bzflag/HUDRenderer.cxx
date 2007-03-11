@@ -1045,18 +1045,18 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 {
   // get view metrics
   const int width = window.getWidth();
-  const int height = window.getHeight();
   const int viewHeight = window.getViewHeight();
-  const int ox = window.getOriginX();
-  const int oy = window.getOriginY();
   const int centerx = width >> 1;
   const int centery = viewHeight >> 1;
   int i;
   float x, y;
 
-  FontManager &fm = FontManager::instance();
+  GLfloat resetColor[4];
+  
+  memcpy(resetColor, hudColor, sizeof(hudColor));
+  resetColor[3] = 1.0f;
 
-  const bool smooth = BZDBCache::smooth;
+  FontManager &fm = FontManager::instance();
 
   // draw targeting box
   hudColor3fv(hudColor);
@@ -1100,8 +1100,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   // draw tick marks
   GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) /
     headingOffset;
-  if (!smooth) basex = floorf(basex);
-  x = smooth ? 0.0f : -0.5f;
+  basex = floorf(basex);
+  x = -0.5f;
   for (i = minMark; i <= maxMark; i++) {
     myG2D->DrawLine(centerx - basex + (int)x, centery - maxMotionSize,
 		    centerx - basex + (int)x, centery - maxMotionSize - 8,
@@ -1113,27 +1113,12 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     x += headingMarkSpacing;
   }
 
-    bool smoothLabel = smooth;
     x = (float)centerx - basex;
-    y = 7.0f + (float)(centery + maxMotionSize);
-    if (smoothLabel) {
-      x -= 0.5f;
-      hudColor4f(hudColor[0], hudColor[1], hudColor[2], basex - floorf(basex));
-    }
+    y = (float)(centery - maxMotionSize) - 16.0f;
     for (i = minMark; i <= maxMark; i++) {
       fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
-		    headingFontSize, headingLabel[(i + 36) % 36]);
+		    headingFontSize, headingLabel[(i + 36) % 36], resetColor);
       x += 2.0f * headingMarkSpacing;
-    }
-    if (smoothLabel) {
-      x = (float)centerx - basex + 0.5f;
-      basex -= floorf(basex);
-      hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
-      for (i = minMark; i <= maxMark; i++) {
-      fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
-		    headingFontSize, headingLabel[(i + 36) % 36]);
-	x += 2.0f * headingMarkSpacing;
-      }
     }
 
     // draw markers (give 'em a little more space on the sides)
@@ -1195,8 +1180,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     // to have made basey always equal 0, maybe I overlooked something
     GLfloat basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
 								altitudeOffset;
-    if (!smooth) basey = floorf(basey);
-    y = smooth ? 0.0f : -0.5f;
+    basey = floorf(basey);
+    y = -0.5f;
     for (i = minMark; i <= maxMark; i++) {
       myG2D->DrawLine(centerx + maxMotionSize,     centery + basey - y,
 		      centerx + maxMotionSize + 8, centery + basey - y,
@@ -1205,29 +1190,14 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
 
 
-    bool smoothLabel = smooth;
     x = (float)(10 + centerx + maxMotionSize);
-    y = (float)centery - basey + floorf(fm.getStrHeight(headingFontFace, headingFontSize, "0") / 2);
-    if (smoothLabel) {
-      y -= 0.5f;
-      hudColor4f(hudColor[0], hudColor[1], hudColor[2], basey - floorf(basey));
-    }
+    y = (float)centery + basey - floorf(fm.getStrHeight(headingFontFace, headingFontSize, "0") / 2);
     char buf[10];
     for (i = minMark; i <= maxMark; i++) {
       sprintf(buf, "%d", i * 5);
-      fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
-      y += altitudeMarkSpacing;
-    }
-    if (smoothLabel) {
-      y = (float)centery - basey + floorf(fm.getStrHeight(headingFontFace, headingFontSize, "0") / 2);
-      y += 0.5f;
-      basey -= floorf(basey);
-      hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
-      for (i = minMark; i <= maxMark; i++) {
-	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
-	y += altitudeMarkSpacing;
-      }
+      fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf),
+		    resetColor);
+      y -= altitudeMarkSpacing;
     }
   }
 }
