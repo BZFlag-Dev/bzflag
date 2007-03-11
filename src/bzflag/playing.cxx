@@ -4960,13 +4960,6 @@ static void setupFarPlane()
 
 void Playing::drawFrame()
 {
-  g2d->Clear(0);
-  // Tell 3D driver we're going to display 3D things.
-  if (!g3d->BeginDraw(CSDRAW_3DGRAPHICS))
-    return;
-  view->Draw();
-  return;
-  
   // get media object
   static BzfMedia* media = PlatformFactory::getMedia();
 
@@ -5092,12 +5085,6 @@ void Playing::drawFrame()
 	radar->setDimming(0.0f);
       }
     }
-
-    // set hud state
-    hud->setDim(HUDDialogStack::get()->isActive());
-    hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
-    hud->setRoaming(ROAM.isRoaming());
-    hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
 
     // get frame start time
     if (showDrawTime) {
@@ -5652,6 +5639,12 @@ void Playing::playingLoop()
 
     // prep the HUD
     prepareTheHUD();
+
+    // set hud state
+    hud->setDim(HUDDialogStack::get()->isActive());
+    hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
+    hud->setRoaming(ROAM.isRoaming());
+    hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
 
     // play the sounds
     updateSound();
