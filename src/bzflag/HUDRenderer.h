@@ -218,6 +218,9 @@ private:
   unsigned int		lastTimeChange;
   int			triangleCount;
   int			radarTriangleCount;
+
+  csRef<iGraphics2D>    myG2D;
+  int                   lastColor;
 };
 
 

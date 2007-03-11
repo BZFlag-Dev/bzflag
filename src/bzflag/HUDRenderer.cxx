@@ -69,8 +69,15 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				dater(false),
 				lastTimeChange(time(NULL)),
 				triangleCount(0),
-				radarTriangleCount(0)
+				radarTriangleCount(0),
+				lastColor(-1)
 {
+  myG2D = csQueryRegistry<iGraphics2D>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!myG2D)
+    csApplicationFramework::ReportError
+      ("Failed to locate 2D graphics driver!");
+
   if (BZDB.eval("timedate") == 0) //we just want the time
     dater = false;
   else if (BZDB.eval("timedate") == 1) //just the date
@@ -591,9 +598,13 @@ void			HUDRenderer::hudColor4f(
 void			HUDRenderer::hudColor3fv(const GLfloat* c)
 {
   if (dim)
-    glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
+    lastColor = myG2D->FindRGB(int(dimFactor * c[0] * 255.0f),
+			       int(dimFactor * c[1] * 255.0f),
+			       int(dimFactor * c[2] * 255.0f));
   else
-    glColor3fv(c);
+    lastColor = myG2D->FindRGB(int(c[0] * 255.0f),
+			       int(c[1] * 255.0f),
+			       int(c[2] * 255.0f));
 }
 
 void			HUDRenderer::hudSColor3fv(const GLfloat* c)
@@ -614,29 +625,10 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 
 void			HUDRenderer::render(SceneRenderer& renderer)
 {
-  return;
   if (firstRender) {
     firstRender = false;
     resize(false);
   }
-
-  OpenGLGState::resetState();
-
-  // get view metrics
-  const int width = window.getWidth();
-  const int height = window.getHeight();
-  const int viewHeight = window.getViewHeight();
-  const int ox = window.getOriginX();
-  const int oy = window.getOriginY();
-
-  // use one-to-one pixel projection
-  glScissor(ox, oy + height - viewHeight, width, viewHeight);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
 
   // draw message composition
   if (showCompose)
@@ -651,13 +643,11 @@ void			HUDRenderer::render(SceneRenderer& renderer)
 
   if (!BZDB.isTrue("noGUI"))
     renderGUI(renderer);
-
-  // restore graphics state
-  glPopMatrix();
 }
 
 void			HUDRenderer::renderAlerts(void)
 {
+  return;
   const float centerx = 0.5f * (float)window.getWidth();
 
   FontManager &fm = FontManager::instance();
@@ -684,6 +674,7 @@ void			HUDRenderer::renderAlerts(void)
 
 void			HUDRenderer::renderStatus(void)
 {
+  return;
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
 
@@ -911,6 +902,7 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
+  return;
   if (!World::getWorld()) return;
 
   int offset = window.getViewHeight() - window.getHeight();
@@ -1000,12 +992,14 @@ void			HUDRenderer::renderCracks()
 
 void			HUDRenderer::renderCompose(SceneRenderer&)
 {
+  return;
   composeTypeIn->render();
   OpenGLGState::resetState();
 }
 
 void			HUDRenderer::renderTimes(void)
 {
+  return;
   const int centerx = window.getWidth() >> 1;
   const int centery = window.getViewHeight() >> 1;
   FontManager &fm = FontManager::instance();
@@ -1062,83 +1056,81 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 
   FontManager &fm = FontManager::instance();
 
-  OpenGLGState::resetState();
   const bool smooth = BZDBCache::smooth;
 
   // draw targeting box
   hudColor3fv(hudColor);
-  glBegin(GL_LINE_LOOP); {
-    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
-    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-  } glEnd();
-  glBegin(GL_POINTS); {
-    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
-    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-  } glEnd();
-  glBegin(GL_LINE_LOOP); {
-    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
-    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-  } glEnd();
-  glBegin(GL_POINTS); {
-    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
-    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-  } glEnd();
-
+  myG2D->DrawLine(centerx - noMotionSize, centery - noMotionSize,
+		  centerx + noMotionSize, centery - noMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx + noMotionSize, centery - noMotionSize,
+		  centerx + noMotionSize, centery + noMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx + noMotionSize, centery + noMotionSize,
+		  centerx - noMotionSize, centery + noMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx - noMotionSize, centery + noMotionSize,
+		  centerx - noMotionSize, centery - noMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx - maxMotionSize, centery - maxMotionSize,
+		  centerx + maxMotionSize, centery - maxMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx + maxMotionSize, centery - maxMotionSize,
+		  centerx + maxMotionSize, centery + maxMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx + maxMotionSize, centery + maxMotionSize,
+		  centerx - maxMotionSize, centery + maxMotionSize,
+		  lastColor);
+  myG2D->DrawLine(centerx - maxMotionSize, centery + maxMotionSize,
+		  centerx - maxMotionSize, centery - maxMotionSize,
+		  lastColor);
+  // draw heading mark
+  myG2D->DrawLine(centerx, centery - maxMotionSize,
+		  centerx, centery - maxMotionSize + 5,
+		  lastColor);
+  return;
   // draw heading strip
-  if (true /* always draw heading strip */) {
+
+  // figure out which marker is closest to center
+  int baseMark = int(heading) / 10;
+  // get minimum and maximum visible marks (leave some leeway)
+  int minMark = baseMark - int(headingOffset / 10.0f) - 1;
+  int maxMark = baseMark + int(headingOffset / 10.0f) + 1;
+
+  // draw tick marks
+  glPushMatrix();
+  if (smooth) {
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
+  }
+  GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) /
+    headingOffset;
+  if (!smooth) basex = floorf(basex);
+  glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
+  x = smooth ? 0.0f : -0.5f;
+  glBegin(GL_LINES);
+  for (i = minMark; i <= maxMark; i++) {
+    glVertex2i((int)x, 0);
+    glVertex2i((int)x, 8);
+    x += headingMarkSpacing;
+    glVertex2i((int)x, 0);
+    glVertex2i((int)x, 4);
+    x += headingMarkSpacing;
+  }
+  glEnd();
+
+  // back to our regular rendering mode
+  if (smooth) {
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+  }
+  glPopMatrix();
+  return;
+  OpenGLGState::resetState();
     // first clip to area
     glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
 		2 * maxMotionSize, 25 + (int)(headingFontSize + 0.5f));
-
-    // draw heading mark
-    glBegin(GL_LINES);
-      glVertex2i(centerx, centery + maxMotionSize);
-      glVertex2i(centerx, centery + maxMotionSize - 5);
-    glEnd();
-
-    // figure out which marker is closest to center
-    int baseMark = int(heading) / 10;
-    // get minimum and maximum visible marks (leave some leeway)
-    int minMark = baseMark - int(headingOffset / 10.0f) - 1;
-    int maxMark = baseMark + int(headingOffset / 10.0f) + 1;
-
-    // draw tick marks
-    glPushMatrix();
-    if (smooth) {
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glEnable(GL_LINE_SMOOTH);
-      glEnable(GL_BLEND);
-    }
-    GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) /
-								headingOffset;
-    if (!smooth) basex = floorf(basex);
-    glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
-    x = smooth ? 0.0f : -0.5f;
-    glBegin(GL_LINES);
-    for (i = minMark; i <= maxMark; i++) {
-      glVertex2i((int)x, 0);
-      glVertex2i((int)x, 8);
-      x += headingMarkSpacing;
-      glVertex2i((int)x, 0);
-      glVertex2i((int)x, 4);
-      x += headingMarkSpacing;
-    }
-    glEnd();
-
-    // back to our regular rendering mode
-    if (smooth) {
-      glDisable(GL_LINE_SMOOTH);
-      glDisable(GL_BLEND);
-    }
-    glPopMatrix();
 
     bool smoothLabel = smooth;
     x = (float)centerx - basex;
@@ -1201,7 +1193,6 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
     markers.clear();
     glPopMatrix();
-  }
 
   // draw altitude strip
   if (altitudeTape) {
@@ -1296,6 +1287,11 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   // draw alert messages
   renderAlerts();
 
+  // draw targeting box
+  if (playing || (roaming && (altitude != -1.0f)))
+    renderBox(renderer);
+
+  return;
   // show player scoreboard
   scoreboard->setRoaming(roaming);
   scoreboard->render(!playing && !roaming);
@@ -1303,10 +1299,6 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   // draw cracks
   if (showCracks && (playing || ! roaming))
     renderCracks();
-
-  // draw targeting box
-  if (playing || (roaming && (altitude != -1.0f)))
-    renderBox(renderer);
 
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
