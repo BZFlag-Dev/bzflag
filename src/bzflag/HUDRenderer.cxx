@@ -580,10 +580,19 @@ static const float dimFactor = 0.2f;
 
 void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
 {
+  int i;
+
   if (dim)
     glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
   else
     glColor3f(r, g, b);
+
+  memcpy(resetColor, hudColor, sizeof(hudColor));
+  if (dim)
+    for (i = 0; i < 3; i++)
+      resetColor[i] *= dimFactor;
+
+  resetColor[3] = 1.0f;
 }
 
 void			HUDRenderer::hudColor4f(
@@ -674,7 +683,6 @@ void			HUDRenderer::renderAlerts(void)
 
 void			HUDRenderer::renderStatus(void)
 {
-  return;
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
 
@@ -685,7 +693,7 @@ void			HUDRenderer::renderStatus(void)
   char buffer[80];
   const float h = fm.getStrHeight(majorFontFace, majorFontSize, " ");
   float x = 0.25f * h;
-  float y = (float)window.getViewHeight() - h;
+  float y = h;
   TeamColor teamIndex = myTank->getTeam();
   FlagType* flag = myTank->getFlag();
 
@@ -693,7 +701,7 @@ void			HUDRenderer::renderStatus(void)
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
     sprintf(buffer, "%s: %d", myTank->getCallSign(), myTank->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex, World::getWorld()->allowRabbit()));
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer, resetColor);
   }
 
   // print flag if player has one in upper right
@@ -704,7 +712,7 @@ void			HUDRenderer::renderStatus(void)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer, resetColor);
   } else {
     time_t timeNow;
     struct tm userTime;
@@ -728,17 +736,17 @@ void			HUDRenderer::renderStatus(void)
       sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
     hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer, resetColor);
   }
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-    y -= float(1.5*h);
+    y += float(1.5*h);
     sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
 	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
-    y += float(1.5*h);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer, resetColor);
+    y -= float(1.5*h);
   }
 
   if (roaming && BZDB.isTrue("showVelocities"))
@@ -758,10 +766,10 @@ void			HUDRenderer::renderStatus(void)
 		  float aperantLinSpeed = sqrt(aperantVel[0]*aperantVel[0]+aperantVel[1]*aperantVel[1]);
 
 		  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
-		  float drawY = y-smallZHeight;
+		  float drawY = y+smallZHeight;
 		  // draw header
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
-		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
+		  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info", resetColor);
 
 		  std::string label = "Linear Speed:";
 		  if ( rotSpeed > target->getMaxSpeed() )
@@ -772,28 +780,28 @@ void			HUDRenderer::renderStatus(void)
 			  sprintf(buffer,"%s%5.2f(%5.2f)",label.c_str(),linSpeed,aperantLinSpeed);
 
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x,drawY+smallZHeight, 0, minorFontFace, minorFontSize, buffer, resetColor);
 
 		  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
 		  if (BZDB.evalInt("showVelocities") > 1)
 			  sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,aperantVel[2]);
 
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x, drawY+smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer, resetColor);
 
 		  label = "Angular Speed:";
 		  if ( rotSpeed > BZDB.eval(StateDatabase::BZDB_TANKANGVEL))
 			  label += "!";
 		  sprintf(buffer,"%s%5.2f",label.c_str(),rotSpeed);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x,drawY+smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer, resetColor);
 
 		  float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
 		  float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
 		  sprintf(buffer,"Last Shot Info  Time:%6.4f  Deviation:%6.3f", shotTime, shotDeviation);
 		  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-		  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
+		  fm.drawString(x,drawY+smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer, resetColor);
 
 		  float offset = 4.0f;
 		  if (BZDB.evalInt("showVelocities") > 2)
@@ -801,12 +809,12 @@ void			HUDRenderer::renderStatus(void)
 			  offset += 1.0f;
 			  sprintf(buffer,"ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits,(float)target->reportedHits/(float)target->computedHits);
 			  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-			  fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer);
+			  fm.drawString(x,drawY+smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer, resetColor);
 		  }
 
 		  offset += 1.5f;
 
-		  scoreboard->setTeamScoreY(drawY-smallZHeight*offset);
+		  scoreboard->setTeamScoreY(drawY+smallZHeight*offset);
 	  }
 	  else
 		  scoreboard->setTeamScoreY(0);
@@ -878,7 +886,7 @@ void			HUDRenderer::renderStatus(void)
 
   x = 0.5f * ((float)window.getWidth() - fm.getStrLength(majorFontFace, majorFontSize, buffer));
   hudColor3fv(statusColor);
-  fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+  fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer, resetColor);
 }
 
 int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
@@ -1050,11 +1058,6 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   const int centery = viewHeight >> 1;
   int i;
   float x, y;
-
-  GLfloat resetColor[4];
-  
-  memcpy(resetColor, hudColor, sizeof(hudColor));
-  resetColor[3] = 1.0f;
 
   FontManager &fm = FontManager::instance();
 

@@ -221,6 +221,8 @@ private:
 
   csRef<iGraphics2D>    myG2D;
   int                   lastColor;
+
+  GLfloat               resetColor[4];
 };
 
 
