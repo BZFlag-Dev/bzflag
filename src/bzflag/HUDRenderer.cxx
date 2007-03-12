@@ -420,8 +420,8 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     if (cFontFace >= 0) {
       FontManager &fm = FontManager::instance();
       const float x = fm.getStrLength(cFontFace, cFontSize, composeTypeIn->getLabel()) +
-		      fm.getStrLength(cFontFace, cFontSize, "99");
-      const float y = 1.0f;
+		      3 * fm.getStrLength(cFontFace, cFontSize, "99");
+      const float y = window.getViewHeight() - fm.getStrHeight(cFontFace, cFontSize, " ");
       composeTypeIn->setLabelWidth(x);
       composeTypeIn->setPosition(x, y);
       // FIXME what is this supposed to do?
@@ -999,9 +999,7 @@ void			HUDRenderer::renderCracks()
 
 void			HUDRenderer::renderCompose(SceneRenderer&)
 {
-  return;
   composeTypeIn->render();
-  OpenGLGState::resetState();
 }
 
 void			HUDRenderer::renderBox(SceneRenderer&)
