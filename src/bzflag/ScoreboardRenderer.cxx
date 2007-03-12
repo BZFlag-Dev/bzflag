@@ -202,14 +202,14 @@ void	ScoreboardRenderer::render(bool forceDisplay)
   }
 
   if (BZDB.isTrue("displayScore") || forceDisplay){
-    OpenGLGState::resetState();
     renderScoreboard();
   } else {
     if (getHuntState() == HUNT_SELECTING){      // 'S' pressed while selecting ...
+      return;
       exitSelectState ();
     }
     if (BZDB.isTrue("alwaysShowTeamScores")){
-      OpenGLGState::resetState();
+      return;
       renderTeamScores(winWidth, winY,
 	    FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
     }
@@ -331,7 +331,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
     teams[teamCount++] = i;
   }
   qsort(teams, teamCount, sizeof(int), teamScoreCompare);
-  y -= dy;
+  y += dy;
 
   bool rabbitMode = World::getWorld()->allowRabbit();
 
@@ -341,7 +341,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
     sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i],rabbitMode));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
-    y -= dy;
+    y += dy;
   }
 }
 
@@ -416,10 +416,11 @@ void			ScoreboardRenderer::renderScoreboard(void)
   Bundle *bdl = BundleMgr::getCurrentBundle();
   FontManager &fm = FontManager::instance();
 
+  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
   const float x1 = winX;
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + killsLabelWidth;
-  const float y0 = winY;
+  const float y0 = 3 * dy;
   hudColor3fv(messageColor);
 
   std::string psLabel = bdl->getLocalString(playerLabel);
@@ -430,8 +431,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
   fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
   fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel);
-  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
-  float y = y0 - dy;
+  float y = y0 + dy;
 
   // make room for the status marker
   const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
@@ -489,14 +489,14 @@ void			ScoreboardRenderer::renderScoreboard(void)
     if (player->isHunted())
       ++numHunted;
     if (player->getTeam()==ObserverTeam && !haveObs){
-      y -= dy;
+      y += dy;
       haveObs = true;
     }
     if (huntState==HUNT_SELECTING && i==huntPosition)
       drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, true);
     else
       drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, false);
-    y -= dy;
+    y += dy;
     ++i;
   }
 

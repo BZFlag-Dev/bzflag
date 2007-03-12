@@ -660,8 +660,7 @@ void			HUDRenderer::renderAlerts(void)
 
   FontManager &fm = FontManager::instance();
 
-  float y = fm.getStrHeight(majorFontFace, majorFontSize, " ") +
-	    fm.getStrHeight(alertFontFace, alertFontSize, " ");
+  float y = fm.getStrHeight(alertFontFace, alertFontSize, " ");
 
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
@@ -691,7 +690,7 @@ void			HUDRenderer::renderStatus(void)
   char buffer[80];
   const float h = fm.getStrHeight(majorFontFace, majorFontSize, " ");
   float x = 0.25f * h;
-  float y = h;
+  float y = 0;
   TeamColor teamIndex = myTank->getTeam();
   FlagType* flag = myTank->getFlag();
 
@@ -1222,10 +1221,10 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   if (playing || (roaming && (altitude != -1.0f)))
     renderBox(renderer);
 
-  return;
   // show player scoreboard
   scoreboard->setRoaming(roaming);
   scoreboard->render(!playing && !roaming);
+  return;
 
   // draw cracks
   if (showCracks && (playing || ! roaming))
