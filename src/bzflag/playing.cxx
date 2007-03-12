@@ -4759,22 +4759,8 @@ static void joinInternetGame2()
 
 static void		renderDialog()
 {
-  return;
   if (HUDDialogStack::get()->isActive()) {
-    const int width = mainWindow->getWidth();
-    const int height = mainWindow->getHeight();
-    const int ox = mainWindow->getOriginX();
-    const int oy = mainWindow->getOriginY();
-    glScissor(ox, oy, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    OpenGLGState::resetState();
     HUDDialogStack::get()->render();
-    glPopMatrix();
   }
 }
 
