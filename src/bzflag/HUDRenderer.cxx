@@ -656,14 +656,12 @@ void			HUDRenderer::render(SceneRenderer& renderer)
 
 void			HUDRenderer::renderAlerts(void)
 {
-  return;
   const float centerx = 0.5f * (float)window.getWidth();
 
   FontManager &fm = FontManager::instance();
 
-  float y = (float)window.getViewHeight() +
-	    -fm.getStrHeight(majorFontFace, majorFontSize, " ") +
-	    -fm.getStrHeight(alertFontFace, alertFontSize, " ");
+  float y = fm.getStrHeight(majorFontFace, majorFontSize, " ") +
+	    fm.getStrHeight(alertFontFace, alertFontSize, " ");
 
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
@@ -675,8 +673,8 @@ void			HUDRenderer::renderAlerts(void)
 			     + ColorStrings[ResetColor].size(), ColorStrings[DimColor]);
       }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
-		    alertFontFace, alertFontSize, newAlertLabel);
-      y -= fm.getStrHeight(alertFontFace, alertFontSize, " ");
+		    alertFontFace, alertFontSize, newAlertLabel, resetColor);
+      y += fm.getStrHeight(alertFontFace, alertFontSize, " ");
     }
   }
 }
