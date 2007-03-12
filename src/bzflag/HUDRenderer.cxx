@@ -583,9 +583,13 @@ void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
   int i;
 
   if (dim)
-    glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
+    lastColor = myG2D->FindRGB(int(dimFactor * r * 255.0f),
+			       int(dimFactor * g * 255.0f),
+			       int(dimFactor * b * 255.0f));
   else
-    glColor3f(r, g, b);
+    lastColor = myG2D->FindRGB(int(r * 255.0f),
+			       int(g * 255.0f),
+			       int(b * 255.0f));
 
   memcpy(resetColor, hudColor, sizeof(hudColor));
   if (dim)
@@ -971,28 +975,29 @@ void			HUDRenderer::renderCracks()
     delta = 1.0;
   int maxLevels = (int) (HUDCrackLevels * delta);
 
-  glPushMatrix();
-  glTranslatef(GLfloat(window.getWidth() >> 1),
-	       GLfloat(window.getViewHeight() >> 1), 0.0f);
-  glLineWidth(3.0);
+  int x = window.getWidth() >> 1;
+  int y = window.getViewHeight() >> 1;
   hudColor3f(1.0f, 1.0f, 1.0f);
-  glBegin(GL_LINES);
     for (int i = 0; i < HUDNumCracks; i++) {
-      glVertex2fv(cracks[i][0]);
-      glVertex2fv(cracks[i][1]);
+      myG2D->DrawLine(x + cracks[i][0][0], y + cracks[i][0][1],
+		      x + cracks[i][1][0], y + cracks[i][1][1],
+		      lastColor);
       for (int j = 0; j < maxLevels-1; j++) {
 	const int num = 1 << j;
 	for (int k = 0; k < num; k++) {
-	  glVertex2fv(cracks[i][num + k]);
-	  glVertex2fv(cracks[i][2 * (num + k)]);
-	  glVertex2fv(cracks[i][num + k]);
-	  glVertex2fv(cracks[i][2 * (num + k) + 1]);
+	  myG2D->DrawLine(x + cracks[i][num + k][0],
+			  y + cracks[i][num + k][1],
+			  x + cracks[i][2 * (num + k)][0],
+			  y + cracks[i][2 * (num + k)][1],
+			  lastColor);
+	  myG2D->DrawLine(x + cracks[i][num + k][0],
+			  y + cracks[i][num + k][1],
+			  x + cracks[i][2 * (num + k) + 1][0],
+			  y + cracks[i][2 * (num + k) + 1][1],
+			  lastColor);
 	}
       }
     }
-  glEnd();
-  glLineWidth(1.0);
-  glPopMatrix();
 }
 
 void			HUDRenderer::renderCompose(SceneRenderer&)
@@ -1224,11 +1229,11 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   // show player scoreboard
   scoreboard->setRoaming(roaming);
   scoreboard->render(!playing && !roaming);
-  return;
 
   // draw cracks
   if (showCracks && (playing || ! roaming))
     renderCracks();
+  return;
 
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
