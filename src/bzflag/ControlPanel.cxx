@@ -147,7 +147,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				dv(0),
 				messageMode(MessageAll)
 {
-  return;
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
@@ -222,7 +221,6 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 
 void			ControlPanel::render(SceneRenderer& _renderer)
 {
-  return;
   if (!BZDB.isTrue("displayConsole")) {
     // always draw the console if its fully opaque
     const float opacity = RENDERER.getPanelOpacity();
@@ -242,17 +240,10 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
+  const int h = window.getHeight();
   const int tabStyle = (int)BZDB.eval("showtabs");
   const bool showTabs = (tabStyle > 0);
   tabsOnRight = (tabStyle == 2);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, (double)w, 0.0, window.getHeight(), -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-  OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
   fm.setOpacity(dimming);
@@ -265,17 +256,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
     : int(lineHeight + 4);
 
-  glScissor(x + messageAreaPixels[0] - 1,
-      y + messageAreaPixels[1],
-      messageAreaPixels[2] + 1,
-      messageAreaPixels[3] + ay);
-  OpenGLGState::resetState();
-
   if (_renderer.getPanelOpacity() > 0.0f) {
-    // nice blended messages background
-    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
-      glEnable(GL_BLEND);
-
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0] - 1, // clear an extra pixel column to simplify fuzzy float stuff later
@@ -311,9 +292,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	drawnTabWidth += long(tabTextWidth[tab]);
       } // end iteration over tabs
     }
-
-    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
-      glDisable(GL_BLEND);
   }
 
   // show scroll indicator if not at end
@@ -354,12 +332,14 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       if (tabsOnRight) {
 	// draw the tabs on the right side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      h - (messageAreaPixels[1] + messageAreaPixels[3]
+			   - floorf(lineHeight + 2.0f) + ay),
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      h - (messageAreaPixels[1] + messageAreaPixels[3]
+			   - floorf(lineHeight + 2.0f) + ay),
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
@@ -383,11 +363,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
    * lines of messages (and scrollback). It is stored as a BZDB
    * parameter.
    */
-
-  glScissor(x + messageAreaPixels[0],
-	    y + messageAreaPixels[1],
-	    messageAreaPixels[2],
-	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   if (messageMode >= 0) {
     i = (int)messages[messageMode].size() - 1;
@@ -454,14 +429,16 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+	  fm.drawString(fx + msgx, h - (fy + msgy * lineHeight), 0, fontFace, fontSize, msg,
+			whiteColor);
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg);
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
+	  fm.drawString(fx + msgx, h - (fy + msgy * lineHeight), 0, fontFace, fontSize, newMsg,
+			whiteColor);
 	}
       }
 
@@ -477,12 +454,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     regfree(&re);
   }
 
-  glScissor(x + messageAreaPixels[0] - 2,
-	    y + messageAreaPixels[1] - 2,
-	    messageAreaPixels[2] + 3,
-	    messageAreaPixels[3] + 33);
-  OpenGLGState::resetState();
-
   // draw the lines around the console panel
   long xpos;
   long ypos;
@@ -491,9 +462,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
   if ( outlineOpacity < 1.0f )
 	outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
-
-  if (BZDBCache::blend)
-	 glEnable(GL_BLEND);
 
   // nice border
   glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity );
@@ -574,12 +542,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     }
   } glEnd();
 
-  if (BZDBCache::blend)
-	  glDisable(GL_BLEND);
-
   glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
-
-  glPopMatrix();
 
   fm.setOpacity(1.0f);
 }
