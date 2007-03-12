@@ -193,16 +193,16 @@ void			MainMenu::resize(int _width, int _height)
   float texWidth = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).x;
   float titleWidth = (texWidth / texHeight) * titleFontSize;
   float x = 0.5f * ((float)_width - titleWidth);
-  float y = (float)_height - titleFontSize * 1.25f;
+  float y = titleFontSize * 1.25f;
   title->setPosition(x, y);
 
   // reposition instructions
   HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   hint->setFontSize(tinyFontSize);
   const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
-  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
+  y += 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
+  y += 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
 
   // reposition menu items (first is centered, rest aligned to the first)
   const float firstWidth
@@ -214,7 +214,7 @@ void			MainMenu::resize(int _width, int _height)
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
+    y += 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
   }
 }
 

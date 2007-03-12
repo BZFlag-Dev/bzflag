@@ -315,12 +315,12 @@ void JoinMenu::resize(int _width, int _height)
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, "");
   float x = 0.5f * ((float)_width - titleWidth);
-  float y = (float)_height - titleHeight;
+  float y = titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * ((float)_width - 0.5f * titleWidth);
-  y -= 0.6f * titleHeight;
+  y += 0.6f * titleHeight;
   listHUD[1]->setFontSize(fontSize);
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
   const int count = listHUD.size();
@@ -328,7 +328,7 @@ void JoinMenu::resize(int _width, int _height)
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     if (i != 5)
-      y -= 1.0f * h;
+      y += 1.0f * h;
     if (i <= 2 || i == 9) y -= 0.5f * h;
   }
 

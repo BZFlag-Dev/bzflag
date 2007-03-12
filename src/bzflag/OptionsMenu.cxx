@@ -154,12 +154,12 @@ void OptionsMenu::resize(int _width, int _height)
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)_width - titleWidth);
-  float y = (float)_height - titleHeight;
+  float y = titleHeight;
   title->setPosition(x, y);
 
   // reposition options in two columns
   x = 0.5f * (float)_width;
-  y -= 0.6f * titleHeight;
+  y += 0.6f * titleHeight;
   const int count = listHUD.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
@@ -167,9 +167,9 @@ void OptionsMenu::resize(int _width, int _height)
     ctl->setFontSize(fontSize);
     ctl->setPosition(x, y);
     if ((i == 6) || (i == 8)) {
-      y -= 1.75f * h;
+      y += 1.75f * h;
     } else {
-      y -= 1.0f * h;
+      y += 1.0f * h;
     }
   }
 
