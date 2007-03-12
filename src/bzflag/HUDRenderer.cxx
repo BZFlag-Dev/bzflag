@@ -647,9 +647,6 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   if (showCompose)
     renderCompose(renderer);
 
-  // draw times
-  renderTimes();
-
   // show tank labels
   if (roaming && BZDB.isTrue("displayLabels"))
     renderTankLabels(renderer);
@@ -1007,50 +1004,6 @@ void			HUDRenderer::renderCompose(SceneRenderer&)
   OpenGLGState::resetState();
 }
 
-void			HUDRenderer::renderTimes(void)
-{
-  return;
-  const int centerx = window.getWidth() >> 1;
-  const int centery = window.getViewHeight() >> 1;
-  FontManager &fm = FontManager::instance();
-
-  // draw frames per second
-  if (fps > 0.0f) {
-    char buf[20];
-    sprintf(buf, "FPS: %d", int(fps));
-    hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
-  }
-  float triCountYOffset = 4.5f;
-  if (radarTriangleCount > 0) {
-    char buf[20];
-    sprintf(buf, "rtris: %i", radarTriangleCount);
-    hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
-    triCountYOffset += 1.5f;
-  }
-  if (triangleCount > 0) {
-    char buf[20];
-    sprintf(buf, "tris: %i", triangleCount);
-    hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
-  }
-  if (drawTime > 0.0f) {
-    char buf[20];
-    sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
-    hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx + maxMotionSize) - fm.getStrLength(headingFontFace, headingFontSize, buf),
-		  (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0, headingFontFace, headingFontSize, buf);
-  }
-}
-
 void			HUDRenderer::renderBox(SceneRenderer&)
 {
   // get view metrics
@@ -1233,7 +1186,6 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   // draw cracks
   if (showCracks && (playing || ! roaming))
     renderCracks();
-  return;
 
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
@@ -1245,6 +1197,8 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   if (playing || roaming) {
     // cover the lower portion of the screen when burrowed
     if (myTank && myTank->getPosition()[2] < 0.0f) {
+      // just a way to jump the code for now
+      return;
       glColor4f(0.02f, 0.01f, 0.01f, 1.0);
       glRectf(0, 0, (float)width,
 	      (myTank->getPosition()[2]
@@ -1262,33 +1216,33 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
 		      bigFontFace,
-		      bigFontSize, autoPilotLabel);
+		      bigFontSize, autoPilotLabel, resetColor);
       }
     } else if (roaming) {
       // display game over
       if (gameOver) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		      bigFontFace, bigFontSize, gameOverLabel);
+		      bigFontFace, bigFontSize, gameOverLabel, resetColor);
       }
     } else {
       // tell player what to do to start/resume playing
       if (gameOver) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		      bigFontFace, bigFontSize, gameOverLabel);
+		      bigFontFace, bigFontSize, gameOverLabel, resetColor);
       } else if (!myTank->isAlive() && !myTank->isExploding()) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		      bigFontFace, bigFontSize, restartLabel);
+		      bigFontFace, bigFontSize, restartLabel, resetColor);
       } else if (myTank->isPaused()) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
-		      bigFontFace, bigFontSize, resumeLabel);
+		      bigFontFace, bigFontSize, resumeLabel, resetColor);
       } else if (myTank->isAutoPilot()) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
-		      bigFontFace, bigFontSize, autoPilotLabel);
+		      bigFontFace, bigFontSize, autoPilotLabel, resetColor);
       }
     }
   }
@@ -1297,7 +1251,7 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
   if (playing && flagHelpClock.isOn()) {
     const int centerx = width >> 1;
     int i;
-    float y = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
+    float y = (float) ((window.getViewHeight() >> 1) + maxMotionSize);
     hudColor3fv(messageColor);
     const char* flagHelpBase = flagHelpText.c_str();
     for (i = 0; i < flagHelpLines; i++) {
@@ -1305,7 +1259,8 @@ void HUDRenderer::renderGUI(SceneRenderer& renderer)
       fm.drawString((float)(centerx - fm.getStrLength(minorFontFace,
 						      minorFontSize,
 						      flagHelpBase)/2.0),
-		    y, 0, minorFontFace, minorFontSize, flagHelpBase);
+		    y, 0, minorFontFace, minorFontSize, flagHelpBase,
+		    resetColor);
       while (*flagHelpBase)
 	flagHelpBase++;
       flagHelpBase++;
@@ -1326,6 +1281,7 @@ static int compare_float (const void* a, const void* b)
 
 void			HUDRenderer::renderShots(const Player* target)
 {
+  return;
   // get the target tank
   if (!target) return;
 

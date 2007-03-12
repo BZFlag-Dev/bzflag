@@ -106,7 +106,6 @@ protected:
   void		renderBox(SceneRenderer&);
   void		renderTankLabels(SceneRenderer&);
   void		renderGUI(SceneRenderer&);
-  void		renderTimes(void);
   void		renderShots(const Player*);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
