@@ -10,6 +10,12 @@
     <texture name="stone">
       <file>/lib/std/stone4.gif</file>
     </texture>
+    <texture name="grass">
+      <file>this/data/std_ground.png</file>
+    </texture>
+    <texture name="sky">
+      <file>this/data/clouds.png</file>
+    </texture>
   </textures>
   <sector name="room">
     <meshobj name="walls">
@@ -23,14 +29,16 @@
       <v x=" 400" y="40" z=" 400" />
       <v x="-400" y="40" z="-400" />
       <v x=" 400" y="40" z="-400" />
-      <material>stone</material>
-      <texlen>3</texlen>
+      <material>grass</material>
+      <texlen>15</texlen>
+	<p name="down">
+        <v>3</v> <v>2</v> <v>0</v> <v>1</v>
+      </p>
+       <material>sky</material>
       <p name="up">
         <v>6</v> <v>7</v> <v>5</v> <v>4</v>
       </p>
-      <p name="down">
-        <v>3</v> <v>2</v> <v>0</v> <v>1</v>
-      </p>
+      <material>stone</material>
       <p name="back">
         <v>7</v> <v>6</v> <v>2</v> <v>3</v>
       </p>
