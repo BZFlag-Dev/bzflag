@@ -135,7 +135,7 @@ void BitmapFont::drawString(int x, int y, GLfloat color[4], const char *str,
     myLen = 127;
 
   memcpy(myString, str, myLen);
-  myString[127] = '\0';
+  myString[myLen] = '\0';
   
   int fg = 0;
   if (color[0] >= 0)
@@ -144,7 +144,7 @@ void BitmapFont::drawString(int x, int y, GLfloat color[4], const char *str,
 				     int(color[2] * 255.0f),
 				     int(color[3] * 255.0f));
 
-  g3d->GetDriver2D()->Write(font, x, y, fg, -1, str);
+  g3d->GetDriver2D()->Write(font, x, y, fg, -1, myString);
 }
 
 void BitmapFont::drawString(float scale, GLfloat color[4], const char *str,
