@@ -278,7 +278,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   static const float MinSearchStep = 0.0001f;
   static const int MaxSearchSteps = 7;
   static const int MaxSteps = 4;
-  static const float TinyDistance = 0.001f;
+  static const float TinyDistance = 0.0001f;
 
   // save old state
   const Location oldLocation = location;
@@ -667,14 +667,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newVelocity[0] -= mag * normal[0];
 	newVelocity[1] -= mag * normal[1];
 
-	// high framerates cause extreme bouncing off walls
-	// add a factor to even tank behavior
-	float compensationFactor = dt/0.5f;
-	if (compensationFactor > 25)
-	  compensationFactor = 25;
-	compensationFactor = compensationFactor / 25;
-	newPos[0] -= TinyDistance * compensationFactor * mag * normal[0];
-	newPos[1] -= TinyDistance * compensationFactor * mag * normal[1];
+	newPos[0] -= TinyDistance * mag * normal[0];
+	newPos[1] -= TinyDistance * mag * normal[1];
       }
       if (mag > -0.01f) {
 	// assume we're not allowed to turn anymore if there's no
