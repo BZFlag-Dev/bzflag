@@ -35,7 +35,7 @@ PluginConfig::PluginConfig(string filename) {
 
 string PluginConfig::item(string section, string key)
 {
-  return sections[section][key];
+  return sections[tolower(section)][tolower(key)];
 }
 
 void PluginConfig::parse(void)
@@ -125,7 +125,7 @@ void PluginConfig::parse(void)
       value = line.substr(start, end - start + 1);
 
     /* Save the section, key and value in the map for later retrieval */
-    sections[section][key] = value;
+    sections[tolower(section)][tolower(key)] = value;
     bz_debugMessagef(4, "PluginConfig: Found key [%s].%s = %s",
 		     section.c_str(), key.c_str(), value.c_str());
   }
