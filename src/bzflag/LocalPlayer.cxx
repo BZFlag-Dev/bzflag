@@ -667,8 +667,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newVelocity[0] -= mag * normal[0];
 	newVelocity[1] -= mag * normal[1];
 
-	newPos[0] -= TinyDistance * mag * normal[0];
-	newPos[1] -= TinyDistance * mag * normal[1];
+	// high framerates cause extreme bouncing off walls
+	// add a factor to even tank behavior
+	float compensationFactor = dt/0.5f;
+	if (compensationFactor > 25)
+	  compensationFactor = 25;
+	compensationFactor = compensationFactor / 25;
+	newPos[0] -= TinyDistance * compensationFactor * mag * normal[0];
+	newPos[1] -= TinyDistance * compensationFactor * mag * normal[1];
       }
       if (mag > -0.01f) {
 	// assume we're not allowed to turn anymore if there's no
