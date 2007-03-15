@@ -27,20 +27,22 @@ bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t)
 	if (oldMsg.length() > 0 && dt < clOptions->msgTimer) {
 		// might be spam, start doing comparisons
 		// does it match the last message? (disregarding whitespace and case)
-		if (TextUtils::compare_nocase(newMsg, oldMsg) == 0) {
-			player.incSpamWarns();
-			sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+		if ((TextUtils::compare_nocase(newMsg, oldMsg) == 0) && (newMsg.length() > 0)) {
+			if (newMsg[0] != '/') {
+				player.incSpamWarns();
+				sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
 
-			// has this player already had his share of warnings?
-			if (player.getSpamWarns() > clOptions->spamWarnMax
-				|| clOptions->spamWarnMax == 0) {
-					sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-					logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
-						"2 messages sent within %fs after %d warnings",
-						player.getCallSign(), t, dt, player.getSpamWarns());
-					removePlayer(t, "spam", true);
-					return true;
-				}
+				// has this player already had his share of warnings?
+				if (player.getSpamWarns() > clOptions->spamWarnMax
+					|| clOptions->spamWarnMax == 0) {
+						sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+						logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
+							"2 messages sent within %fs after %d warnings",
+							player.getCallSign(), t, dt, player.getSpamWarns());
+						removePlayer(t, "spam", true);
+						return true;
+					}
+			}
 		}
 	}
 
