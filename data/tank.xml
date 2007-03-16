@@ -1,0 +1,3413 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<meshfact name='tank'>
+  <plugin>thingFact</plugin>
+    <zuse />
+    <params>
+      <v x=' 2.82' z='-0.877' y='0.716'/>
+      <v x=' 2.82' z=' 0.878' y='0.716'/>
+      <v x=' 2.8'  z='-0.876' y='0.829'/>
+      <v x=' 2.8'  z=' 0.878' y='0.829'/>
+      <v x=' 2.8'  z='-0.876' y='0.829'/>
+      <v x=' 2.82' z=' 0.878' y='0.716'/>
+      <v x=' 2.8'  z='-0.876' y='0.829'/>
+      <v x=' 2.8'  z=' 0.878' y='0.829'/>
+      <v x=' 2.57' z='-0.877' y='0.99'/>
+      <v x=' 2.57' z=' 0.877' y='0.99'/>
+      <v x=' 2.57' z='-0.877' y='0.99'/>
+      <v x=' 2.8'  z=' 0.878' y='0.829'/>
+      <v x=' 2.57' z='-0.877' y='0.99'/>
+      <v x=' 2.57' z=' 0.877' y='0.99'/>
+      <v x=' 2.17' z='-0.877' y='1.01'/>
+      <v x=' 2.17' z=' 0.877' y='1.01'/>
+      <v x=' 2.17' z='-0.877' y='1.01'/>
+      <v x=' 2.57' z=' 0.877' y='0.99'/>
+      <v x=' 2.17' z='-0.877' y='1.01'/>
+      <v x=' 2.17' z=' 0.877' y='1.01'/>
+      <v x=' 1.76' z='-0.877' y='1.13'/>
+      <v x=' 1.76' z=' 0.877' y='1.13'/>
+      <v x=' 1.76' z='-0.877' y='1.13'/>
+      <v x=' 2.17' z=' 0.877' y='1.01'/>
+      <v x=' 1.76' z='-0.877' y='1.13'/>
+      <v x=' 1.76' z=' 0.877' y='1.13'/>
+      <v x='-1.46' z='-0.877' y='1.13'/>
+      <v x='-1.46' z=' 0.877' y='1.13'/>
+      <v x='-1.46' z='-0.877' y='1.13'/>
+      <v x=' 1.76' z=' 0.877' y='1.13'/>
+      <v x='-1.46' z='-0.877' y='1.13'/>
+      <v x='-1.46' z=' 0.877' y='1.13'/>
+      <v x='-2.9'  z='-0.877' y='1.24'/>
+      <v x='-2.9'  z=' 0.877' y='1.24'/>
+      <v x='-2.9'  z='-0.877' y='1.24'/>
+      <v x='-1.46' z=' 0.877' y='1.13'/>
+      <v x='-2.9'  z='-0.877' y='1.24'/>
+      <v x='-2.9'  z=' 0.877' y='1.24'/>
+      <v x='-2.74' z='-0.877' y='0.528'/>
+      <v x='-2.74' z=' 0.877' y='0.528'/>
+      <v x='-2.74' z='-0.877' y='0.528'/>
+      <v x='-2.9'  z=' 0.877' y='1.24'/>
+      <v x='-2.74' z='-0.877' y='0.528'/>
+      <v x='-2.74' z=' 0.877' y='0.528'/>
+      <v x='-1.62' z='-0.877' y='0'/>
+      <v x='-1.62' z=' 0.877' y='0'/>
+      <v x='-1.62' z='-0.877' y='0'/>
+      <v x='-2.74' z=' 0.877' y='0.528'/>
+      <v x='-1.62' z='-0.877' y='0'/>
+      <v x='-1.62' z=' 0.877' y='0'/>
+      <v x=' 1.81' z='-0.877' y='0'/>
+      <v x=' 1.81' z=' 0.877' y='0'/>
+      <v x=' 1.81' z='-0.877' y='0'/>
+      <v x='-1.62' z=' 0.877' y='0'/>
+      <v x=' 1.81' z='-0.877' y='0'/>
+      <v x=' 1.81' z=' 0.877' y='0'/>
+      <v x=' 2.61' z='-0.877' y='0.408'/>
+      <v x=' 2.61' z=' 0.877' y='0.408'/>
+      <v x=' 2.61' z='-0.877' y='0.408'/>
+      <v x=' 1.81' z=' 0.877' y='0'/>
+      <v x=' 2.61' z='-0.877' y='0.408'/>
+      <v x=' 2.61' z=' 0.877' y='0.408'/>
+      <v x=' 2.68' z='-0.877' y='0.684'/>
+      <v x=' 2.68' z=' 0.877' y='0.684'/>
+      <v x=' 2.68' z='-0.877' y='0.684'/>
+      <v x=' 2.61' z=' 0.877' y='0.408'/>
+      <v x=' 2.68' z='-0.877' y='0.684'/>
+      <v x=' 2.68' z=' 0.877' y='0.684'/>
+      <v x=' 2.82' z='-0.877' y='0.716'/>
+      <v x=' 2.82' z=' 0.878' y='0.716'/>
+      <v x=' 2.82' z='-0.877' y='0.716'/>
+      <v x=' 2.68' z=' 0.877' y='0.684'/>
+      <v x='-2.82' z=' 0.686' y='1.07'/>
+      <v x='-3.08' z=' 0.686' y='1.07'/>
+      <v x='-2.82' z=' 0.686' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.17'/>
+      <v x='-2.82' z=' 0.686' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.07'/>
+      <v x='-2.82' z=' 0.686' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.17'/>
+      <v x='-2.82' z=' 0.367' y='1.17'/>
+      <v x='-3.08' z=' 0.367' y='1.17'/>
+      <v x='-2.82' z=' 0.367' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.17'/>
+      <v x='-2.82' z=' 0.367' y='1.17'/>
+      <v x='-3.08' z=' 0.367' y='1.17'/>
+      <v x='-2.82' z=' 0.367' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.07'/>
+      <v x='-2.82' z=' 0.367' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.17'/>
+      <v x='-2.82' z=' 0.367' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.07'/>
+      <v x='-2.82' z=' 0.686' y='1.07'/>
+      <v x='-3.08' z=' 0.686' y='1.07'/>
+      <v x='-2.82' z=' 0.686' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.07'/>
+      <v x='-3.08' z=' 0.686' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.17'/>
+      <v x='-3.08' z=' 0.367' y='1.07'/>
+      <v x='-3.08' z=' 0.367' y='1.17'/>
+      <v x='-3.08' z=' 0.686' y='1.07'/>
+      <v x='-2.84' z='-0.084' y='1.07'/>
+      <v x='-3.1'  z='-0.084' y='1.07'/>
+      <v x='-2.84' z='-0.084' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.17'/>
+      <v x='-2.84' z='-0.084' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.07'/>
+      <v x='-2.84' z='-0.084' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.17'/>
+      <v x='-2.84' z='-0.877' y='1.17'/>
+      <v x='-3.1'  z='-0.877' y='1.17'/>
+      <v x='-2.84' z='-0.877' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.17'/>
+      <v x='-2.84' z='-0.877' y='1.17'/>
+      <v x='-3.1'  z='-0.877' y='1.17'/>
+      <v x='-2.84' z='-0.877' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.07'/>
+      <v x='-2.84' z='-0.877' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.17'/>
+      <v x='-2.84' z='-0.877' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.07'/>
+      <v x='-2.84' z='-0.084' y='1.07'/>
+      <v x='-3.1'  z='-0.084' y='1.07'/>
+      <v x='-2.84' z='-0.084' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.07'/>
+      <v x='-3.1'  z='-0.084' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.17'/>
+      <v x='-3.1'  z='-0.877' y='1.07'/>
+      <v x='-3.1'  z='-0.877' y='1.17'/>
+      <v x='-3.1'  z='-0.084' y='1.07'/>
+      <material>mosaic</material>
+      <p name="0">
+        <v>2</v>
+        <v>1</v>
+        <v>0</v>
+        <texmap>
+          <uv idx='2' u='1.21' v='-1.29'/>
+	  <uv idx='1' u='0.669' v='-1.04'/>
+	  <uv idx='0' u='1.21' v='-1.28'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="1">
+        <v>5</v>
+        <v>4</v>
+        <v>3</v>
+        <texmap>
+          <uv idx='2' u='0.672' v='-1.03'/>
+	  <uv idx='1' u='1.21' v='-1.28'/>
+	  <uv idx='0' u='0.669' v='-1.04'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="2">
+        <v>8</v>
+        <v>7</v>
+        <v>6</v>
+        <texmap>
+          <uv idx='2' u='1.21' v='-1.28'/>
+	  <uv idx='1' u='0.672' v='-1.03'/>
+	  <uv idx='0' u='1.24' v='-1.21'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="3">
+        <v>11</v>
+        <v>10</v>
+        <v>9</v>
+        <texmap>
+          <uv idx='2' u='0.705' v='-0.96'/>
+	  <uv idx='1' u='1.24' v='-1.21'/>
+	  <uv idx='0' u='0.672' v='-1.03'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="4">
+        <v>14</v>
+        <v>13</v>
+        <v>12</v>
+        <texmap>
+          <uv idx='2' u='1.24' v='-1.21'/>
+	  <uv idx='1' u='0.705' v='-0.96'/>
+	  <uv idx='0' u='1.3' v='-1.09'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="5">
+        <v>17</v>
+        <v>16</v>
+        <v>15</v>
+        <texmap>
+          <uv idx='2' u='0.763' v='-0.84'/>
+	  <uv idx='1' u='1.3' v='-1.09'/>
+	  <uv idx='0' u='0.705' v='-0.96'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="6">
+        <v>20</v>
+        <v>19</v>
+        <v>18</v>
+        <texmap>
+          <uv idx='2' u='1.3' v='-1.09'/>
+	  <uv idx='1' u='0.763' v='-0.84'/>
+	  <uv idx='0' u='1.36' v='-0.97'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="7">
+        <v>23</v>
+        <v>22</v>
+        <v>21</v>
+        <texmap>
+          <uv idx='2' u='0.822' v='-0.71'/>
+	  <uv idx='1' u='1.36' v='-0.97'/>
+	  <uv idx='0' u='0.763' v='-0.84'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="8">
+        <v>26</v>
+        <v>25</v>
+        <v>24</v>
+        <texmap>
+          <uv idx='2' u='1.36' v='-0.97'/>
+	  <uv idx='1' u='0.822' v='-0.71'/>
+	  <uv idx='0' u='1.82' v='0.019'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="9">
+        <v>29</v>
+        <v>28</v>
+        <v>27</v>
+        <texmap>
+          <uv idx='2' u='1.28' v='0.271'/>
+	  <uv idx='1' u='1.82' v='0.019'/>
+	  <uv idx='0' u='0.822' v='-0.71'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="10">
+        <v>32</v>
+        <v>31</v>
+        <v>30</v>
+        <texmap>
+          <uv idx='2' u='1.82' v='0.019'/>
+	  <uv idx='1' u='1.28' v='0.271'/>
+	  <uv idx='0' u='2.03' v='0.459'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="11">
+        <v>35</v>
+        <v>34</v>
+        <v>33</v>
+        <texmap>
+          <uv idx='2' u='1.49' v='0.711'/>
+	  <uv idx='1' u='2.03' v='0.459'/>
+	  <uv idx='0' u='1.28' v='0.271'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="12">
+        <v>38</v>
+        <v>37</v>
+        <v>36</v>
+        <texmap>
+          <uv idx='2' u='2.03' v='0.459'/>
+	  <uv idx='1' u='1.49' v='0.711'/>
+	  <uv idx='0' u='2' v='0.41'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="13">
+        <v>41</v>
+        <v>40</v>
+        <v>39</v>
+        <texmap>
+          <uv idx='2' u='1.47' v='0.662'/>
+	  <uv idx='1' u='2' v='0.41'/>
+	  <uv idx='0' u='1.49' v='0.711'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="14">
+        <v>44</v>
+        <v>43</v>
+        <v>42</v>
+        <texmap>
+          <uv idx='2' u='2' v='0.41'/>
+	  <uv idx='1' u='1.47' v='0.662'/>
+	  <uv idx='0' u='1.84' v='0.068'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="15">
+        <v>47</v>
+        <v>46</v>
+        <v>45</v>
+        <texmap>
+          <uv idx='2' u='1.31' v='0.32'/>
+	  <uv idx='1' u='1.84' v='0.068'/>
+	  <uv idx='0' u='1.47' v='0.662'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="16">
+        <v>50</v>
+        <v>49</v>
+        <v>48</v>
+        <texmap>
+          <uv idx='2' u='1.84' v='0.068'/>
+	  <uv idx='1' u='1.31' v='0.32'/>
+	  <uv idx='0' u='1.35' v='-0.98'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="17">
+        <v>53</v>
+        <v>52</v>
+        <v>51</v>
+        <texmap>
+          <uv idx='2' u='0.815' v='-0.73'/>
+	  <uv idx='1' u='1.35' v='-0.98'/>
+	  <uv idx='0' u='1.31' v='0.32'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="18">
+        <v>56</v>
+        <v>55</v>
+        <v>54</v>
+        <texmap>
+          <uv idx='2' u='1.35' v='-0.98'/>
+	  <uv idx='1' u='0.815' v='-0.73'/>
+	  <uv idx='0' u='1.24' v='-1.23'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="19">
+        <v>59</v>
+        <v>58</v>
+        <v>57</v>
+        <texmap>
+          <uv idx='2' u='0.7' v='-0.97'/>
+	  <uv idx='1' u='1.24' v='-1.23'/>
+	  <uv idx='0' u='0.815' v='-0.73'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="20">
+        <v>62</v>
+        <v>61</v>
+        <v>60</v>
+        <texmap>
+          <uv idx='2' u='1.24' v='-1.23'/>
+	  <uv idx='1' u='0.7' v='-0.97'/>
+	  <uv idx='0' u='1.23' v='-1.25'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="21">
+        <v>65</v>
+        <v>64</v>
+        <v>63</v>
+        <texmap>
+          <uv idx='2' u='0.69' v='-1'/>
+	  <uv idx='1' u='1.23' v='-1.25'/>
+	  <uv idx='0' u='0.7' v='-0.97'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="22">
+        <v>68</v>
+        <v>67</v>
+        <v>66</v>
+        <texmap>
+          <uv idx='2' u='1.23' v='-1.25'/>
+	  <uv idx='1' u='0.69' v='-1'/>
+	  <uv idx='0' u='1.21' v='-1.29'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="23">
+        <v>71</v>
+        <v>70</v>
+        <v>69</v>
+        <texmap>
+          <uv idx='2' u='0.669' v='-1.04'/>
+	  <uv idx='1' u='1.21' v='-1.29'/>
+	  <uv idx='0' u='0.69' v='-1'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="24">
+        <v>74</v>
+        <v>73</v>
+        <v>72</v>
+        <texmap>
+          <uv idx='2' u='1.54' v='0.659'/>
+	  <uv idx='1' u='1.58' v='0.739'/>
+	  <uv idx='0' u='1.54' v='0.659'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="25">
+        <v>77</v>
+        <v>76</v>
+        <v>75</v>
+        <texmap>
+          <uv idx='2' u='1.58' v='0.739'/>
+	  <uv idx='1' u='1.54' v='0.659'/>
+	  <uv idx='0' u='1.58' v='0.739'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="26">
+        <v>80</v>
+        <v>79</v>
+        <v>78</v>
+        <texmap>
+          <uv idx='2' u='1.54' v='0.659'/>
+	  <uv idx='1' u='1.58' v='0.739'/>
+	  <uv idx='0' u='1.64' v='0.613'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="27">
+        <v>83</v>
+        <v>82</v>
+        <v>81</v>
+        <texmap>
+          <uv idx='2' u='1.67' v='0.693'/>
+	  <uv idx='1' u='1.64' v='0.613'/>
+	  <uv idx='0' u='1.58' v='0.739'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="28">
+        <v>86</v>
+        <v>85</v>
+        <v>84</v>
+        <texmap>
+          <uv idx='2' u='1.64' v='0.613'/>
+	  <uv idx='1' u='1.67' v='0.693'/>
+	  <uv idx='0' u='1.64' v='0.613'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="29">
+        <v>89</v>
+        <v>88</v>
+        <v>87</v>
+        <texmap>
+          <uv idx='2' u='1.67' v='0.693'/>
+	  <uv idx='1' u='1.64' v='0.613'/>
+	  <uv idx='0' u='1.67' v='0.693'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="30">
+        <v>92</v>
+        <v>91</v>
+        <v>90</v>
+        <texmap>
+          <uv idx='2' u='1.64' v='0.613'/>
+	  <uv idx='1' u='1.67' v='0.693'/>
+	  <uv idx='0' u='1.54' v='0.659'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="31">
+        <v>95</v>
+        <v>94</v>
+        <v>93</v>
+        <texmap>
+          <uv idx='2' u='1.58' v='0.739'/>
+	  <uv idx='1' u='1.54' v='0.659'/>
+	  <uv idx='0' u='1.67' v='0.693'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="32">
+        <v>98</v>
+        <v>97</v>
+        <v>96</v>
+        <texmap>
+          <uv idx='2' u='1.58' v='0.739'/>
+	  <uv idx='1' u='1.58' v='0.739'/>
+	  <uv idx='0' u='1.67' v='0.693'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="33">
+        <v>101</v>
+        <v>100</v>
+        <v>99</v>
+        <texmap>
+          <uv idx='2' u='1.67' v='0.693'/>
+	  <uv idx='1' u='1.67' v='0.693'/>
+	  <uv idx='0' u='1.58' v='0.739'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="34">
+        <v>104</v>
+        <v>103</v>
+        <v>102</v>
+        <texmap>
+          <uv idx='2' u='1.78' v='0.555'/>
+	  <uv idx='1' u='1.81' v='0.634'/>
+	  <uv idx='0' u='1.78' v='0.555'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="35">
+        <v>107</v>
+        <v>106</v>
+        <v>105</v>
+        <texmap>
+          <uv idx='2' u='1.81' v='0.634'/>
+	  <uv idx='1' u='1.78' v='0.555'/>
+	  <uv idx='0' u='1.81' v='0.634'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="36">
+        <v>110</v>
+        <v>109</v>
+        <v>108</v>
+        <texmap>
+          <uv idx='2' u='1.78' v='0.555'/>
+	  <uv idx='1' u='1.81' v='0.634'/>
+	  <uv idx='0' u='2.02' v='0.441'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="37">
+        <v>113</v>
+        <v>112</v>
+        <v>111</v>
+        <texmap>
+          <uv idx='2' u='2.06' v='0.52'/>
+	  <uv idx='1' u='2.02' v='0.441'/>
+	  <uv idx='0' u='1.81' v='0.634'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="38">
+        <v>116</v>
+        <v>115</v>
+        <v>114</v>
+        <texmap>
+          <uv idx='2' u='2.02' v='0.441'/>
+	  <uv idx='1' u='2.06' v='0.52'/>
+	  <uv idx='0' u='2.02' v='0.441'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="39">
+        <v>119</v>
+        <v>118</v>
+        <v>117</v>
+        <texmap>
+          <uv idx='2' u='2.06' v='0.52'/>
+	  <uv idx='1' u='2.02' v='0.441'/>
+	  <uv idx='0' u='2.06' v='0.52'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="40">
+        <v>122</v>
+        <v>121</v>
+        <v>120</v>
+        <texmap>
+          <uv idx='2' u='2.02' v='0.441'/>
+	  <uv idx='1' u='2.06' v='0.52'/>
+	  <uv idx='0' u='1.78' v='0.555'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="41">
+        <v>125</v>
+        <v>124</v>
+        <v>123</v>
+        <texmap>
+          <uv idx='2' u='1.81' v='0.634'/>
+	  <uv idx='1' u='1.78' v='0.555'/>
+	  <uv idx='0' u='2.06' v='0.52'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="42">
+        <v>128</v>
+        <v>127</v>
+        <v>126</v>
+        <texmap>
+          <uv idx='2' u='1.81' v='0.634'/>
+	  <uv idx='1' u='1.81' v='0.634'/>
+	  <uv idx='0' u='2.06' v='0.52'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="43">
+        <v>131</v>
+        <v>130</v>
+        <v>129</v>
+        <texmap>
+          <uv idx='2' u='2.06' v='0.52'/>
+	  <uv idx='1' u='2.06' v='0.52'/>
+	  <uv idx='0' u='1.81' v='0.634'/>
+	</texmap>
+	<lighting>no</lighting>
+      </p>
+    </params>
+    <nolighting />
+  <meshfact name='tankltread'>
+    <plugin>thingFact</plugin>
+    <zuse/>
+    <params>
+      <material>(null)no</material>
+      <v x=' 3'    z='0.877' y='0.77'/>
+      <v x=' 3'    z='1.4'   y='0.77'/>
+      <v x=' 2.98' z='0.877' y='0.883'/>
+      <v x=' 2.98' z='1.4'   y='0.883'/>
+      <v x=' 2.98' z='0.877' y='0.883'/>
+      <v x=' 3'    z='1.4'   y='0.77'/>
+      <v x=' 2.98' z='0.877' y='0.883'/>
+      <v x=' 2.98' z='1.4'   y='0.883'/>
+      <v x=' 2.86' z='0.877' y='0.956'/>
+      <v x=' 2.86' z='1.4'   y='0.956'/>
+      <v x=' 2.86' z='0.877' y='0.956'/>
+      <v x=' 2.98' z='1.4'   y='0.883'/>
+      <v x=' 2.86' z='0.877' y='0.956'/>
+      <v x=' 2.86' z='1.4'   y='0.956'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x=' 2.86' z='1.4'   y='0.956'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 2.35' z='0.877' y='1.1'/>
+      <v x=' 2.35' z='1.4'   y='1.1'/>
+      <v x=' 2.35' z='0.877' y='1.1'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 2.35' z='0.877' y='1.1'/>
+      <v x=' 2.35' z='1.4'   y='1.1'/>
+      <v x=' 1.94' z='0.877' y='1.31'/>
+      <v x=' 1.94' z='1.4'   y='1.31'/>
+      <v x=' 1.94' z='0.877' y='1.31'/>
+      <v x=' 2.35' z='1.4'   y='1.1'/>
+      <v x=' 1.94' z='0.877' y='1.31'/>
+      <v x=' 1.94' z='1.4'   y='1.31'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x=' 1.94' z='1.4'   y='1.31'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x='-1.46' z='0.877' y='1.4'/>
+      <v x='-1.46' z='1.4'   y='1.4'/>
+      <v x='-1.46' z='0.877' y='1.4'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x='-1.46' z='0.877' y='1.4'/>
+      <v x='-1.46' z='1.4'   y='1.4'/>
+      <v x='-2.97' z='0.877' y='1.41'/>
+      <v x='-2.97' z='1.4'   y='1.41'/>
+      <v x='-2.97' z='0.877' y='1.41'/>
+      <v x='-1.46' z='1.4'   y='1.4'/>
+      <v x='-2.97' z='0.877' y='1.41'/>
+      <v x='-2.97' z='1.4'   y='1.41'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-2.97' z='1.4'   y='1.41'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-1.62' z='0.877' y='0'/>
+      <v x='-1.62' z='1.4'   y='0'/>
+      <v x='-1.62' z='0.877' y='0'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-1.62' z='0.877' y='0'/>
+      <v x='-1.62' z='1.4'   y='0'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x='-1.62' z='1.4'   y='0'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 2.79' z='0.877' y='0.408'/>
+      <v x=' 2.79' z='1.4'   y='0.408'/>
+      <v x=' 2.79' z='0.877' y='0.408'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 2.79' z='0.877' y='0.408'/>
+      <v x=' 2.79' z='1.4'   y='0.408'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.79' z='1.4'   y='0.408'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 3'    z='0.877' y='0.77'/>
+      <v x=' 3'    z='1.4'   y='0.77'/>
+      <v x=' 3'    z='0.877' y='0.77'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-1.62' z='0.877' y='0'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x='-1.46' z='0.877' y='1.4'/>
+      <v x='-2.74' z='0.877' y='0.528'/>
+      <v x='-1.46' z='0.877' y='1.4'/>
+      <v x='-2.97' z='0.877' y='1.41'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 2.79' z='0.877' y='0.408'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x=' 2.35' z='0.877' y='1.1'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 2.35' z='0.877' y='1.1'/>
+      <v x=' 1.94' z='0.877' y='1.31'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x=' 1.94' z='0.877' y='1.31'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x=' 1.99' z='0.877' y='0'/>
+      <v x='-1.02' z='0.877' y='1.32'/>
+      <v x='-1.62' z='0.877' y='0'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 3'    z='0.877' y='0.77'/>
+      <v x=' 2.98' z='0.877' y='0.883'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.98' z='0.877' y='0.883'/>
+      <v x=' 2.86' z='0.877' y='0.956'/>
+      <v x=' 2.86' z='0.877' y='0.739'/>
+      <v x=' 2.86' z='0.877' y='0.956'/>
+      <v x=' 2.75' z='0.877' y='1.08'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-2.97' z='1.4'   y='1.41'/>
+      <v x='-1.46' z='1.4'   y='1.4'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-1.46' z='1.4'   y='1.4'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x='-2.74' z='1.4'   y='0.528'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x='-1.62' z='1.4'   y='0'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x='-1.62' z='1.4'   y='0'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x='-1.02' z='1.4'   y='1.32'/>
+      <v x=' 1.94' z='1.4'   y='1.31'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 1.94' z='1.4'   y='1.31'/>
+      <v x=' 2.35' z='1.4'   y='1.1'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 2.35' z='1.4'   y='1.1'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 1.99' z='1.4'   y='0'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 2.79' z='1.4'   y='0.408'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 2.75' z='1.4'   y='1.08'/>
+      <v x=' 2.86' z='1.4'   y='0.956'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 2.86' z='1.4'   y='0.956'/>
+      <v x=' 2.98' z='1.4'   y='0.883'/>
+      <v x=' 2.86' z='1.4'   y='0.739'/>
+      <v x=' 2.98' z='1.4'   y='0.883'/>
+      <v x=' 3'    z='1.4'   y='0.77'/>
+      <p name="0">
+        <v>2</v>
+        <v>1</v>
+        <v>0</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.193' v='0.273'/>          <uv idx='1' u='0.009' v='0.644'/>          <uv idx='0' u='-0.164' v='0.321'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="1">
+        <v>5</v>
+        <v>4</v>
+        <v>3</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.015' v='0.593'/>          <uv idx='1' u='-0.164' v='0.321'/>          <uv idx='0' u='0.009' v='0.644'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="2">
+        <v>8</v>
+        <v>7</v>
+        <v>6</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.164' v='0.321'/>          <uv idx='1' u='-0.015' v='0.593'/>          <uv idx='0' u='-0.134' v='0.334'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="3">
+        <v>11</v>
+        <v>10</v>
+        <v>9</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.01' v='0.561'/>          <uv idx='1' u='-0.134' v='0.334'/>          <uv idx='0' u='-0.015' v='0.593'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="4">
+        <v>14</v>
+        <v>13</v>
+        <v>12</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.134' v='0.334'/>          <uv idx='1' u='-0.01' v='0.561'/>          <uv idx='0' u='-0.102' v='0.353'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="5">
+        <v>17</v>
+        <v>16</v>
+        <v>15</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.009' v='0.523'/>          <uv idx='1' u='-0.102' v='0.353'/>          <uv idx='0' u='-0.01' v='0.561'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="6">
+        <v>20</v>
+        <v>19</v>
+        <v>18</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.102' v='0.353'/>          <uv idx='1' u='-0.009' v='0.523'/>          <uv idx='0' u='-0.041' v='0.325'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="7">
+        <v>23</v>
+        <v>22</v>
+        <v>21</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.048' v='0.488'/>          <uv idx='1' u='-0.041' v='0.325'/>          <uv idx='0' u='-0.009' v='0.523'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="8">
+        <v>26</v>
+        <v>25</v>
+        <v>24</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.041' v='0.325'/>          <uv idx='1' u='0.048' v='0.488'/>          <uv idx='0' u='0.033' v='0.316'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="9">
+        <v>29</v>
+        <v>28</v>
+        <v>27</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.095' v='0.43'/>          <uv idx='1' u='0.033' v='0.316'/>          <uv idx='0' u='0.048' v='0.488'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="10">
+        <v>32</v>
+        <v>31</v>
+        <v>30</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.033' v='0.316'/>          <uv idx='1' u='0.095' v='0.43'/>          <uv idx='0' u='0.468' v='0.08'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="11">
+        <v>35</v>
+        <v>34</v>
+        <v>33</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.529' v='0.192'/>          <uv idx='1' u='0.468' v='0.08'/>          <uv idx='0' u='0.095' v='0.43'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="12">
+        <v>38</v>
+        <v>37</v>
+        <v>36</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.468' v='0.08'/>          <uv idx='1' u='0.529' v='0.192'/>          <uv idx='0' u='0.536' v='0.051'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="13">
+        <v>41</v>
+        <v>40</v>
+        <v>39</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.591' v='0.151'/>          <uv idx='1' u='0.536' v='0.051'/>          <uv idx='0' u='0.529' v='0.192'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="14">
+        <v>44</v>
+        <v>43</v>
+        <v>42</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.536' v='0.051'/>          <uv idx='1' u='0.591' v='0.151'/>          <uv idx='0' u='0.759' v='-0.0700001'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="15">
+        <v>47</v>
+        <v>46</v>
+        <v>45</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.813' v='0.03'/>          <uv idx='1' u='0.759' v='-0.0700001'/>          <uv idx='0' u='0.591' v='0.151'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="16">
+        <v>50</v>
+        <v>49</v>
+        <v>48</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.759' v='-0.0700001'/>          <uv idx='1' u='0.813' v='0.03'/>          <uv idx='0' u='0.587' v='-0.3'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="17">
+        <v>53</v>
+        <v>52</v>
+        <v>51</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.917' v='0.3'/>          <uv idx='1' u='0.587' v='-0.3'/>          <uv idx='0' u='0.813' v='0.03'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="18">
+        <v>56</v>
+        <v>55</v>
+        <v>54</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.587' v='-0.3'/>          <uv idx='1' u='0.917' v='0.3'/>          <uv idx='0' u='0.375' v='-0.3'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="19">
+        <v>59</v>
+        <v>58</v>
+        <v>57</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.8' v='0.477'/>          <uv idx='1' u='0.375' v='-0.3'/>          <uv idx='0' u='0.917' v='0.3'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="20">
+        <v>62</v>
+        <v>61</v>
+        <v>60</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.375' v='-0.3'/>          <uv idx='1' u='0.8' v='0.477'/>          <uv idx='0' u='-0.156' v='-0.00999999'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="21">
+        <v>65</v>
+        <v>64</v>
+        <v>63</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='-0.156' v='-0.00999999'/>          <uv idx='0' u='0.8' v='0.477'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="22">
+        <v>68</v>
+        <v>67</v>
+        <v>66</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='0.268' v='0.767'/>          <uv idx='0' u='-0.246' v='0.104'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="23">
+        <v>71</v>
+        <v>70</v>
+        <v>69</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.123' v='0.78'/>          <uv idx='1' u='-0.246' v='0.104'/>          <uv idx='0' u='0.268' v='0.767'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="24">
+        <v>74</v>
+        <v>73</v>
+        <v>72</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.246' v='0.104'/>          <uv idx='1' u='0.123' v='0.78'/>          <uv idx='0' u='-0.182' v='0.246'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="25">
+        <v>77</v>
+        <v>76</v>
+        <v>75</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.038' v='0.648'/>          <uv idx='1' u='-0.182' v='0.246'/>          <uv idx='0' u='0.123' v='0.78'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="26">
+        <v>80</v>
+        <v>79</v>
+        <v>78</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.182' v='0.246'/>          <uv idx='1' u='0.038' v='0.648'/>          <uv idx='0' u='-0.193' v='0.273'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="27">
+        <v>83</v>
+        <v>82</v>
+        <v>81</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.009' v='0.644'/>          <uv idx='1' u='-0.193' v='0.273'/>          <uv idx='0' u='0.038' v='0.648'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="28">
+        <v>86</v>
+        <v>85</v>
+        <v>84</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.587' v='-0.3'/>          <uv idx='1' u='0.375' v='-0.3'/>          <uv idx='0' u='0.468' v='0.08'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="29">
+        <v>89</v>
+        <v>88</v>
+        <v>87</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.587' v='-0.3'/>          <uv idx='1' u='0.468' v='0.08'/>          <uv idx='0' u='0.536' v='0.051'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="30">
+        <v>92</v>
+        <v>91</v>
+        <v>90</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.587' v='-0.3'/>          <uv idx='1' u='0.536' v='0.051'/>          <uv idx='0' u='0.759' v='-0.0700001'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="31">
+        <v>95</v>
+        <v>94</v>
+        <v>93</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='-0.246' v='0.104'/>          <uv idx='0' u='-0.182' v='0.246'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="32">
+        <v>98</v>
+        <v>97</v>
+        <v>96</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='-0.182' v='0.246'/>          <uv idx='0' u='-0.102' v='0.353'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="33">
+        <v>101</v>
+        <v>100</v>
+        <v>99</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='-0.102' v='0.353'/>          <uv idx='0' u='-0.041' v='0.325'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="34">
+        <v>104</v>
+        <v>103</v>
+        <v>102</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='-0.041' v='0.325'/>          <uv idx='0' u='0.033' v='0.316'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="35">
+        <v>107</v>
+        <v>106</v>
+        <v>105</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='0.033' v='0.316'/>          <uv idx='0' u='0.468' v='0.08'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="36">
+        <v>110</v>
+        <v>109</v>
+        <v>108</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.156' v='-0.00999999'/>          <uv idx='1' u='0.468' v='0.08'/>          <uv idx='0' u='0.375' v='-0.3'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="37">
+        <v>113</v>
+        <v>112</v>
+        <v>111</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.182' v='0.246'/>          <uv idx='1' u='-0.193' v='0.273'/>          <uv idx='0' u='-0.164' v='0.321'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="38">
+        <v>116</v>
+        <v>115</v>
+        <v>114</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.182' v='0.246'/>          <uv idx='1' u='-0.164' v='0.321'/>          <uv idx='0' u='-0.134' v='0.334'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="39">
+        <v>119</v>
+        <v>118</v>
+        <v>117</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.182' v='0.246'/>          <uv idx='1' u='-0.134' v='0.334'/>          <uv idx='0' u='-0.102' v='0.353'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="40">
+        <v>122</v>
+        <v>121</v>
+        <v>120</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.917' v='0.3'/>          <uv idx='1' u='0.813' v='0.03'/>          <uv idx='0' u='0.591' v='0.151'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="41">
+        <v>125</v>
+        <v>124</v>
+        <v>123</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.917' v='0.3'/>          <uv idx='1' u='0.591' v='0.151'/>          <uv idx='0' u='0.529' v='0.192'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="42">
+        <v>128</v>
+        <v>127</v>
+        <v>126</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.917' v='0.3'/>          <uv idx='1' u='0.529' v='0.192'/>          <uv idx='0' u='0.8' v='0.477'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="43">
+        <v>131</v>
+        <v>130</v>
+        <v>129</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='0.8' v='0.477'/>          <uv idx='0' u='0.529' v='0.192'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="44">
+        <v>134</v>
+        <v>133</v>
+        <v>132</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='0.529' v='0.192'/>          <uv idx='0' u='0.095' v='0.43'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="45">
+        <v>137</v>
+        <v>136</v>
+        <v>135</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='0.095' v='0.43'/>          <uv idx='0' u='0.048' v='0.488'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="46">
+        <v>140</v>
+        <v>139</v>
+        <v>138</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='0.048' v='0.488'/>          <uv idx='0' u='-0.009' v='0.523'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="47">
+        <v>143</v>
+        <v>142</v>
+        <v>141</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='-0.009' v='0.523'/>          <uv idx='0' u='0.038' v='0.648'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="48">
+        <v>146</v>
+        <v>145</v>
+        <v>144</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.268' v='0.767'/>          <uv idx='1' u='0.038' v='0.648'/>          <uv idx='0' u='0.123' v='0.78'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="49">
+        <v>149</v>
+        <v>148</v>
+        <v>147</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.038' v='0.648'/>          <uv idx='1' u='-0.009' v='0.523'/>          <uv idx='0' u='-0.01' v='0.561'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="50">
+        <v>152</v>
+        <v>151</v>
+        <v>150</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.038' v='0.648'/>          <uv idx='1' u='-0.01' v='0.561'/>          <uv idx='0' u='-0.015' v='0.593'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="51">
+        <v>155</v>
+        <v>154</v>
+        <v>153</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.038' v='0.648'/>          <uv idx='1' u='-0.015' v='0.593'/>          <uv idx='0' u='0.009' v='0.644'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+    </params>
+  </meshfact>
+  <meshfact name='tankrtread'>
+    <plugin>thingFact</plugin>
+    <zuse/>
+    <params>
+      <material>(null)no</material>
+      <v x='3' z='-1.4' y='0.77'/>
+      <v x='3' z='-0.875' y='0.77'/>
+      <v x='2.98' z='-1.4' y='0.883'/>
+      <v x='2.98' z='-0.875' y='0.883'/>
+      <v x='2.98' z='-1.4' y='0.883'/>
+      <v x='3' z='-0.875' y='0.77'/>
+      <v x='2.98' z='-1.4' y='0.883'/>
+      <v x='2.98' z='-0.875' y='0.883'/>
+      <v x='2.86' z='-1.4' y='0.956'/>
+      <v x='2.86' z='-0.875' y='0.956'/>
+      <v x='2.86' z='-1.4' y='0.956'/>
+      <v x='2.98' z='-0.875' y='0.883'/>
+      <v x='2.86' z='-1.4' y='0.956'/>
+      <v x='2.86' z='-0.875' y='0.956'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='2.86' z='-0.875' y='0.956'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='2.35' z='-1.4' y='1.1'/>
+      <v x='2.35' z='-0.875' y='1.1'/>
+      <v x='2.35' z='-1.4' y='1.1'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='2.35' z='-1.4' y='1.1'/>
+      <v x='2.35' z='-0.875' y='1.1'/>
+      <v x='1.94' z='-1.4' y='1.31'/>
+      <v x='1.94' z='-0.875' y='1.31'/>
+      <v x='1.94' z='-1.4' y='1.31'/>
+      <v x='2.35' z='-0.875' y='1.1'/>
+      <v x='1.94' z='-1.4' y='1.31'/>
+      <v x='1.94' z='-0.875' y='1.31'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='1.94' z='-0.875' y='1.31'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='-1.46' z='-1.4' y='1.4'/>
+      <v x='-1.46' z='-0.875' y='1.4'/>
+      <v x='-1.46' z='-1.4' y='1.4'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='-1.46' z='-1.4' y='1.4'/>
+      <v x='-1.46' z='-0.875' y='1.4'/>
+      <v x='-2.97' z='-1.4' y='1.41'/>
+      <v x='-2.97' z='-0.875' y='1.41'/>
+      <v x='-2.97' z='-1.4' y='1.41'/>
+      <v x='-1.46' z='-0.875' y='1.4'/>
+      <v x='-2.97' z='-1.4' y='1.41'/>
+      <v x='-2.97' z='-0.875' y='1.41'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-2.97' z='-0.875' y='1.41'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-1.62' z='-1.4' y='0'/>
+      <v x='-1.62' z='-0.875' y='0'/>
+      <v x='-1.62' z='-1.4' y='0'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-1.62' z='-1.4' y='0'/>
+      <v x='-1.62' z='-0.875' y='0'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='-1.62' z='-0.875' y='0'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='2.79' z='-1.4' y='0.408'/>
+      <v x='2.79' z='-0.875' y='0.408'/>
+      <v x='2.79' z='-1.4' y='0.408'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='2.79' z='-1.4' y='0.408'/>
+      <v x='2.79' z='-0.875' y='0.408'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.79' z='-0.875' y='0.408'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='3' z='-1.4' y='0.77'/>
+      <v x='3' z='-0.875' y='0.77'/>
+      <v x='3' z='-1.4' y='0.77'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-1.62' z='-1.4' y='0'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='-1.46' z='-1.4' y='1.4'/>
+      <v x='-2.74' z='-1.4' y='0.528'/>
+      <v x='-1.46' z='-1.4' y='1.4'/>
+      <v x='-2.97' z='-1.4' y='1.41'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='2.79' z='-1.4' y='0.408'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='2.35' z='-1.4' y='1.1'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='2.35' z='-1.4' y='1.1'/>
+      <v x='1.94' z='-1.4' y='1.31'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='1.94' z='-1.4' y='1.31'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='1.99' z='-1.4' y='0'/>
+      <v x='-1.02' z='-1.4' y='1.32'/>
+      <v x='-1.62' z='-1.4' y='0'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='3' z='-1.4' y='0.77'/>
+      <v x='2.98' z='-1.4' y='0.883'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.98' z='-1.4' y='0.883'/>
+      <v x='2.86' z='-1.4' y='0.956'/>
+      <v x='2.86' z='-1.4' y='0.739'/>
+      <v x='2.86' z='-1.4' y='0.956'/>
+      <v x='2.75' z='-1.4' y='1.08'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-2.97' z='-0.875' y='1.41'/>
+      <v x='-1.46' z='-0.875' y='1.4'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-1.46' z='-0.875' y='1.4'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='-2.74' z='-0.875' y='0.528'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='-1.62' z='-0.875' y='0'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='-1.62' z='-0.875' y='0'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='-1.02' z='-0.875' y='1.32'/>
+      <v x='1.94' z='-0.875' y='1.31'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='1.94' z='-0.875' y='1.31'/>
+      <v x='2.35' z='-0.875' y='1.1'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='2.35' z='-0.875' y='1.1'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='1.99' z='-0.875' y='0'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='2.79' z='-0.875' y='0.408'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='2.75' z='-0.875' y='1.08'/>
+      <v x='2.86' z='-0.875' y='0.956'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='2.86' z='-0.875' y='0.956'/>
+      <v x='2.98' z='-0.875' y='0.883'/>
+      <v x='2.86' z='-0.875' y='0.739'/>
+      <v x='2.98' z='-0.875' y='0.883'/>
+      <v x='3' z='-0.875' y='0.77'/>
+      <p name="0">
+        <v>2</v>
+        <v>1</v>
+        <v>0</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.295' v='0.959'/>          <uv idx='1' u='0.045' v='1.208'/>          <uv idx='0' u='-0.248' v='0.99'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="1">
+        <v>5</v>
+        <v>4</v>
+        <v>3</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.002' v='1.173'/>          <uv idx='1' u='-0.248' v='0.99'/>          <uv idx='0' u='0.045' v='1.208'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="2">
+        <v>8</v>
+        <v>7</v>
+        <v>6</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.248' v='0.99'/>          <uv idx='1' u='0.002' v='1.173'/>          <uv idx='0' u='-0.216' v='0.989'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="3">
+        <v>11</v>
+        <v>10</v>
+        <v>9</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.007' v='1.141'/>          <uv idx='1' u='-0.216' v='0.989'/>          <uv idx='0' u='0.002' v='1.173'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="4">
+        <v>14</v>
+        <v>13</v>
+        <v>12</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.216' v='0.989'/>          <uv idx='1' u='-0.007' v='1.141'/>          <uv idx='0' u='-0.179' v='0.992'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="5">
+        <v>17</v>
+        <v>16</v>
+        <v>15</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.022' v='1.107'/>          <uv idx='1' u='-0.179' v='0.992'/>          <uv idx='0' u='-0.007' v='1.141'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="6">
+        <v>20</v>
+        <v>19</v>
+        <v>18</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.179' v='0.992'/>          <uv idx='1' u='-0.022' v='1.107'/>          <uv idx='0' u='-0.136' v='0.941'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="7">
+        <v>23</v>
+        <v>22</v>
+        <v>21</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.014' v='1.05'/>          <uv idx='1' u='-0.136' v='0.941'/>          <uv idx='0' u='-0.022' v='1.107'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="8">
+        <v>26</v>
+        <v>25</v>
+        <v>24</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.136' v='0.941'/>          <uv idx='1' u='0.014' v='1.05'/>          <uv idx='0' u='-0.072' v='0.901'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="9">
+        <v>29</v>
+        <v>28</v>
+        <v>27</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.032' v='0.978'/>          <uv idx='1' u='-0.072' v='0.901'/>          <uv idx='0' u='0.014' v='1.05'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="10">
+        <v>32</v>
+        <v>31</v>
+        <v>30</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.072' v='0.901'/>          <uv idx='1' u='0.032' v='0.978'/>          <uv idx='0' u='0.221' v='0.503'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="11">
+        <v>35</v>
+        <v>34</v>
+        <v>33</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.324' v='0.578'/>          <uv idx='1' u='0.221' v='0.503'/>          <uv idx='0' u='0.032' v='0.978'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="12">
+        <v>38</v>
+        <v>37</v>
+        <v>36</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.221' v='0.503'/>          <uv idx='1' u='0.324' v='0.578'/>          <uv idx='0' u='0.27' v='0.447'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="13">
+        <v>41</v>
+        <v>40</v>
+        <v>39</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.362' v='0.514'/>          <uv idx='1' u='0.27' v='0.447'/>          <uv idx='0' u='0.324' v='0.578'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="14">
+        <v>44</v>
+        <v>43</v>
+        <v>42</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.27' v='0.447'/>          <uv idx='1' u='0.362' v='0.514'/>          <uv idx='0' u='0.419' v='0.243'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="15">
+        <v>47</v>
+        <v>46</v>
+        <v>45</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.511' v='0.31'/>          <uv idx='1' u='0.419' v='0.243'/>          <uv idx='0' u='0.362' v='0.514'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="16">
+        <v>50</v>
+        <v>49</v>
+        <v>48</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.419' v='0.243'/>          <uv idx='1' u='0.511' v='0.31'/>          <uv idx='0' u='0.165' v='0.104'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="17">
+        <v>53</v>
+        <v>52</v>
+        <v>51</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.72' v='0.511'/>          <uv idx='1' u='0.165' v='0.104'/>          <uv idx='0' u='0.511' v='0.31'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="18">
+        <v>56</v>
+        <v>55</v>
+        <v>54</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.165' v='0.104'/>          <uv idx='1' u='0.72' v='0.511'/>          <uv idx='0' u='-0.026' v='0.197'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="19">
+        <v>59</v>
+        <v>58</v>
+        <v>57</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.69' v='0.721'/>          <uv idx='1' u='-0.026' v='0.197'/>          <uv idx='0' u='0.72' v='0.511'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="20">
+        <v>62</v>
+        <v>61</v>
+        <v>60</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.026' v='0.197'/>          <uv idx='1' u='0.69' v='0.721'/>          <uv idx='0' u='-0.383' v='0.686'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="21">
+        <v>65</v>
+        <v>64</v>
+        <v>63</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='-0.383' v='0.686'/>          <uv idx='0' u='0.69' v='0.721'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="22">
+        <v>68</v>
+        <v>67</v>
+        <v>66</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='0.332' v='1.209'/>          <uv idx='0' u='-0.415' v='0.828'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="23">
+        <v>71</v>
+        <v>70</v>
+        <v>69</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.206' v='1.283'/>          <uv idx='1' u='-0.415' v='0.828'/>          <uv idx='0' u='0.332' v='1.209'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="24">
+        <v>74</v>
+        <v>73</v>
+        <v>72</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.415' v='0.828'/>          <uv idx='1' u='0.206' v='1.283'/>          <uv idx='0' u='-0.296' v='0.93'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="25">
+        <v>77</v>
+        <v>76</v>
+        <v>75</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.073' v='1.2'/>          <uv idx='1' u='-0.296' v='0.93'/>          <uv idx='0' u='0.206' v='1.283'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="26">
+        <v>80</v>
+        <v>79</v>
+        <v>78</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.296' v='0.93'/>          <uv idx='1' u='0.073' v='1.2'/>          <uv idx='0' u='-0.295' v='0.959'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="27">
+        <v>83</v>
+        <v>82</v>
+        <v>81</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.045' v='1.208'/>          <uv idx='1' u='-0.295' v='0.959'/>          <uv idx='0' u='0.073' v='1.2'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="28">
+        <v>86</v>
+        <v>85</v>
+        <v>84</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.165' v='0.104'/>          <uv idx='1' u='-0.026' v='0.197'/>          <uv idx='0' u='0.221' v='0.503'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="29">
+        <v>89</v>
+        <v>88</v>
+        <v>87</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.165' v='0.104'/>          <uv idx='1' u='0.221' v='0.503'/>          <uv idx='0' u='0.27' v='0.447'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="30">
+        <v>92</v>
+        <v>91</v>
+        <v>90</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.165' v='0.104'/>          <uv idx='1' u='0.27' v='0.447'/>          <uv idx='0' u='0.419' v='0.243'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="31">
+        <v>95</v>
+        <v>94</v>
+        <v>93</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='-0.415' v='0.828'/>          <uv idx='0' u='-0.296' v='0.93'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="32">
+        <v>98</v>
+        <v>97</v>
+        <v>96</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='-0.296' v='0.93'/>          <uv idx='0' u='-0.179' v='0.992'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="33">
+        <v>101</v>
+        <v>100</v>
+        <v>99</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='-0.179' v='0.992'/>          <uv idx='0' u='-0.136' v='0.941'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="34">
+        <v>104</v>
+        <v>103</v>
+        <v>102</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='-0.136' v='0.941'/>          <uv idx='0' u='-0.072' v='0.901'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="35">
+        <v>107</v>
+        <v>106</v>
+        <v>105</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='-0.072' v='0.901'/>          <uv idx='0' u='0.221' v='0.503'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="36">
+        <v>110</v>
+        <v>109</v>
+        <v>108</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.383' v='0.686'/>          <uv idx='1' u='0.221' v='0.503'/>          <uv idx='0' u='-0.026' v='0.197'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="37">
+        <v>113</v>
+        <v>112</v>
+        <v>111</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.296' v='0.93'/>          <uv idx='1' u='-0.295' v='0.959'/>          <uv idx='0' u='-0.248' v='0.99'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="38">
+        <v>116</v>
+        <v>115</v>
+        <v>114</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.296' v='0.93'/>          <uv idx='1' u='-0.248' v='0.99'/>          <uv idx='0' u='-0.216' v='0.989'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="39">
+        <v>119</v>
+        <v>118</v>
+        <v>117</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='-0.296' v='0.93'/>          <uv idx='1' u='-0.216' v='0.989'/>          <uv idx='0' u='-0.179' v='0.992'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="40">
+        <v>122</v>
+        <v>121</v>
+        <v>120</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.72' v='0.511'/>          <uv idx='1' u='0.511' v='0.31'/>          <uv idx='0' u='0.362' v='0.514'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="41">
+        <v>125</v>
+        <v>124</v>
+        <v>123</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.72' v='0.511'/>          <uv idx='1' u='0.362' v='0.514'/>          <uv idx='0' u='0.324' v='0.578'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="42">
+        <v>128</v>
+        <v>127</v>
+        <v>126</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.72' v='0.511'/>          <uv idx='1' u='0.324' v='0.578'/>          <uv idx='0' u='0.69' v='0.721'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="43">
+        <v>131</v>
+        <v>130</v>
+        <v>129</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='0.69' v='0.721'/>          <uv idx='0' u='0.324' v='0.578'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="44">
+        <v>134</v>
+        <v>133</v>
+        <v>132</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='0.324' v='0.578'/>          <uv idx='0' u='0.032' v='0.978'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="45">
+        <v>137</v>
+        <v>136</v>
+        <v>135</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='0.032' v='0.978'/>          <uv idx='0' u='0.014' v='1.05'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="46">
+        <v>140</v>
+        <v>139</v>
+        <v>138</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='0.014' v='1.05'/>          <uv idx='0' u='-0.022' v='1.107'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="47">
+        <v>143</v>
+        <v>142</v>
+        <v>141</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='-0.022' v='1.107'/>          <uv idx='0' u='0.073' v='1.2'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="48">
+        <v>146</v>
+        <v>145</v>
+        <v>144</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.332' v='1.209'/>          <uv idx='1' u='0.073' v='1.2'/>          <uv idx='0' u='0.206' v='1.283'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="49">
+        <v>149</v>
+        <v>148</v>
+        <v>147</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.073' v='1.2'/>          <uv idx='1' u='-0.022' v='1.107'/>          <uv idx='0' u='-0.007' v='1.141'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="50">
+        <v>152</v>
+        <v>151</v>
+        <v>150</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.073' v='1.2'/>          <uv idx='1' u='-0.007' v='1.141'/>          <uv idx='0' u='0.002' v='1.173'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="51">
+        <v>155</v>
+        <v>154</v>
+        <v>153</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.073' v='1.2'/>          <uv idx='1' u='0.002' v='1.173'/>          <uv idx='0' u='0.045' v='1.208'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+    </params>
+  </meshfact>
+  <meshfact name='tankbarrel'>
+    <plugin>thingFact</plugin>
+    <zuse/>
+    <params>
+      <material>(null)no</material>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='0.089' y='1.44'/>
+      <v x='4.94' z='0.126' y='1.53'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='0.126' y='1.53'/>
+      <v x='4.94' z='0.089' y='1.62'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='0.089' y='1.62'/>
+      <v x='4.94' z='0' y='1.66'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='0' y='1.66'/>
+      <v x='4.94' z='-0.09' y='1.62'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='-0.09' y='1.62'/>
+      <v x='4.94' z='-0.126' y='1.53'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='4.94' z='-0.126' y='1.53'/>
+      <v x='4.94' z='-0.09' y='1.44'/>
+      <v x='1.57' z='-0.18' y='1.53'/>
+      <v x='4.94' z='-0.126' y='1.53'/>
+      <v x='1.57' z='-0.128' y='1.66'/>
+      <v x='4.94' z='-0.09' y='1.62'/>
+      <v x='1.57' z='-0.128' y='1.66'/>
+      <v x='4.94' z='-0.126' y='1.53'/>
+      <v x='1.57' z='-0.128' y='1.66'/>
+      <v x='4.94' z='-0.09' y='1.62'/>
+      <v x='1.57' z='0' y='1.71'/>
+      <v x='4.94' z='0' y='1.66'/>
+      <v x='1.57' z='0' y='1.71'/>
+      <v x='4.94' z='-0.09' y='1.62'/>
+      <v x='1.57' z='0' y='1.71'/>
+      <v x='4.94' z='0' y='1.66'/>
+      <v x='1.57' z='0.126' y='1.66'/>
+      <v x='4.94' z='0.089' y='1.62'/>
+      <v x='1.57' z='0.126' y='1.66'/>
+      <v x='4.94' z='0' y='1.66'/>
+      <v x='1.57' z='0.126' y='1.66'/>
+      <v x='4.94' z='0.089' y='1.62'/>
+      <v x='1.57' z='0.18' y='1.53'/>
+      <v x='4.94' z='0.126' y='1.53'/>
+      <v x='1.57' z='0.18' y='1.53'/>
+      <v x='4.94' z='0.089' y='1.62'/>
+      <v x='1.57' z='0.18' y='1.53'/>
+      <v x='4.94' z='0.126' y='1.53'/>
+      <v x='1.57' z='0.126' y='1.4'/>
+      <v x='4.94' z='0.089' y='1.44'/>
+      <v x='1.57' z='0.126' y='1.4'/>
+      <v x='4.94' z='0.126' y='1.53'/>
+      <v x='1.57' z='0.126' y='1.4'/>
+      <v x='4.94' z='0.089' y='1.44'/>
+      <v x='1.57' z='0' y='1.35'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='1.57' z='0' y='1.35'/>
+      <v x='4.94' z='0.089' y='1.44'/>
+      <v x='1.57' z='0' y='1.35'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='1.57' z='-0.128' y='1.4'/>
+      <v x='4.94' z='-0.09' y='1.44'/>
+      <v x='1.57' z='-0.128' y='1.4'/>
+      <v x='4.94' z='0' y='1.41'/>
+      <v x='1.57' z='-0.128' y='1.4'/>
+      <v x='4.94' z='-0.09' y='1.44'/>
+      <v x='1.57' z='-0.18' y='1.53'/>
+      <v x='4.94' z='-0.126' y='1.53'/>
+      <v x='1.57' z='-0.18' y='1.53'/>
+      <v x='4.94' z='-0.09' y='1.44'/>
+      <p name="0">
+        <v>2</v>
+        <v>1</v>
+        <v>0</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="1">
+        <v>5</v>
+        <v>4</v>
+        <v>3</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="2">
+        <v>8</v>
+        <v>7</v>
+        <v>6</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="3">
+        <v>11</v>
+        <v>10</v>
+        <v>9</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="4">
+        <v>14</v>
+        <v>13</v>
+        <v>12</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="5">
+        <v>17</v>
+        <v>16</v>
+        <v>15</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="6">
+        <v>20</v>
+        <v>19</v>
+        <v>18</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="7">
+        <v>23</v>
+        <v>22</v>
+        <v>21</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="8">
+        <v>26</v>
+        <v>25</v>
+        <v>24</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="9">
+        <v>29</v>
+        <v>28</v>
+        <v>27</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="10">
+        <v>32</v>
+        <v>31</v>
+        <v>30</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="11">
+        <v>35</v>
+        <v>34</v>
+        <v>33</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="12">
+        <v>38</v>
+        <v>37</v>
+        <v>36</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="13">
+        <v>41</v>
+        <v>40</v>
+        <v>39</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="14">
+        <v>44</v>
+        <v>43</v>
+        <v>42</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="15">
+        <v>47</v>
+        <v>46</v>
+        <v>45</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="16">
+        <v>50</v>
+        <v>49</v>
+        <v>48</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="17">
+        <v>53</v>
+        <v>52</v>
+        <v>51</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="18">
+        <v>56</v>
+        <v>55</v>
+        <v>54</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="19">
+        <v>59</v>
+        <v>58</v>
+        <v>57</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="20">
+        <v>62</v>
+        <v>61</v>
+        <v>60</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="21">
+        <v>65</v>
+        <v>64</v>
+        <v>63</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0' v='1'/>          <uv idx='1' u='0' v='1'/>          <uv idx='0' u='0' v='1'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+    </params>
+  </meshfact>
+  <meshfact name='tankturret'>
+    <plugin>thingFact</plugin>
+    <zuse/>
+    <params>
+      <material>(null)no</material>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.37' z='0.764' y='2.05'/>
+      <v x='-1.45' z='0.764' y='1.56'/>
+      <v x='-1.37' z='0.764' y='2.05'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.37' z='-0.765' y='2.05'/>
+      <v x='-1.45' z='-0.765' y='1.56'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <v x='-0.964' z='-0.765' y='1.51'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <v x='-1.45' z='-0.765' y='1.56'/>
+      <v x='-0.456' z='1.08' y='1.04'/>
+      <v x='-0.456' z='-1.06' y='1.04'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.456' z='-1.06' y='1.04'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-0.964' z='-0.765' y='1.51'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='1.48' z='-0.516' y='1.04'/>
+      <v x='1.48' z='0.516' y='1.04'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.48' z='0.516' y='1.04'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.77' z='-0.434' y='1.54'/>
+      <v x='1.77' z='0.434' y='1.54'/>
+      <v x='1.77' z='-0.434' y='1.54'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.77' z='-0.434' y='1.54'/>
+      <v x='1.77' z='0.434' y='1.54'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='1.77' z='0.434' y='1.54'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='-0.548' z='0.599' y='1.92'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='1.92'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='-0.548' z='0.599' y='1.92'/>
+      <v x='-0.156' z='-0.796' y='2.08'/>
+      <v x='0.108' z='-0.757' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='0.108' z='-0.757' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='-0.156' z='0.796' y='2.08'/>
+      <v x='0.108' z='0.757' y='2.08'/>
+      <v x='-0.156' z='0.796' y='2.08'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <v x='-0.964' z='-0.765' y='1.51'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='-0.964' z='-0.765' y='1.51'/>
+      <v x='-0.611' z='-0.984' y='1.91'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='0.001' z='-1.11' y='1.94'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='1.09' z='-0.697' y='1.95'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='1.58' z='-0.434' y='1.79'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.77' z='-0.434' y='1.54'/>
+      <v x='1.77' z='0.434' y='1.54'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.58' z='0.435' y='1.79'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='1.09' z='0.697' y='1.95'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='0.007' z='1.11' y='1.94'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.611' z='1.01' y='1.91'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.37' z='0.764' y='2.05'/>
+      <v x='-1.45' z='0.764' y='1.56'/>
+      <v x='-1.51' z='0.382' y='2.05'/>
+      <v x='-1.58' z='0.382' y='1.56'/>
+      <v x='-1.51' z='0.382' y='2.05'/>
+      <v x='-1.45' z='0.764' y='1.56'/>
+      <v x='-1.51' z='0.382' y='2.05'/>
+      <v x='-1.58' z='0.382' y='1.56'/>
+      <v x='-1.56' z='-0.01' y='2.05'/>
+      <v x='-1.64' z='-0.01' y='1.56'/>
+      <v x='-1.56' z='-0.01' y='2.05'/>
+      <v x='-1.58' z='0.382' y='1.56'/>
+      <v x='-1.56' z='-0.01' y='2.05'/>
+      <v x='-1.64' z='-0.01' y='1.56'/>
+      <v x='-1.51' z='-0.383' y='2.05'/>
+      <v x='-1.58' z='-0.383' y='1.56'/>
+      <v x='-1.51' z='-0.383' y='2.05'/>
+      <v x='-1.64' z='-0.01' y='1.56'/>
+      <v x='-1.51' z='-0.383' y='2.05'/>
+      <v x='-1.58' z='-0.383' y='1.56'/>
+      <v x='-1.37' z='-0.765' y='2.05'/>
+      <v x='-1.45' z='-0.765' y='1.56'/>
+      <v x='-1.37' z='-0.765' y='2.05'/>
+      <v x='-1.58' z='-0.383' y='1.56'/>
+      <v x='-0.456' z='-1.06' y='1.31'/>
+      <v x='-0.456' z='-1.06' y='1.04'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='0.014' z='-1.1' y='1.03'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='-0.456' z='-1.06' y='1.04'/>
+      <v x='0.014' z='-1.1' y='1.3'/>
+      <v x='0.014' z='-1.1' y='1.03'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='0.912' z='-0.749' y='1.03'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='0.014' z='-1.1' y='1.03'/>
+      <v x='0.912' z='-0.749' y='1.3'/>
+      <v x='0.912' z='-0.749' y='1.03'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='1.48' z='-0.516' y='1.04'/>
+      <v x='1.48' z='-0.516' y='1.31'/>
+      <v x='0.912' z='-0.749' y='1.03'/>
+      <v x='1.48' z='0.516' y='1.31'/>
+      <v x='1.48' z='0.516' y='1.04'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='0.912' z='0.749' y='1.03'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='1.48' z='0.516' y='1.04'/>
+      <v x='0.912' z='0.749' y='1.3'/>
+      <v x='0.912' z='0.749' y='1.03'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='0.014' z='1.1' y='1.03'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='0.912' z='0.749' y='1.03'/>
+      <v x='0.014' z='1.1' y='1.3'/>
+      <v x='0.014' z='1.1' y='1.03'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='-0.456' z='1.08' y='1.04'/>
+      <v x='-0.456' z='1.08' y='1.31'/>
+      <v x='0.014' z='1.1' y='1.03'/>
+      <v x='-0.548' z='-0.599' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='1.92'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='1.92'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='-0.548' z='-0.599' y='1.92'/>
+      <v x='-0.418' z='-0.704' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='1.92'/>
+      <v x='-0.156' z='-0.796' y='2.08'/>
+      <v x='-0.156' z='-0.796' y='1.92'/>
+      <v x='-0.156' z='-0.796' y='2.08'/>
+      <v x='-0.418' z='-0.704' y='1.92'/>
+      <v x='-0.156' z='-0.796' y='2.08'/>
+      <v x='-0.156' z='-0.796' y='1.92'/>
+      <v x='0.108' z='-0.757' y='2.08'/>
+      <v x='0.108' z='-0.757' y='1.92'/>
+      <v x='0.108' z='-0.757' y='2.08'/>
+      <v x='-0.156' z='-0.796' y='1.92'/>
+      <v x='0.108' z='-0.757' y='2.08'/>
+      <v x='0.108' z='-0.757' y='1.92'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='0.238' z='-0.644' y='1.92'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='0.108' z='-0.757' y='1.92'/>
+      <v x='0.238' z='-0.644' y='2.08'/>
+      <v x='0.238' z='-0.644' y='1.92'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='0.313' z='-0.503' y='1.92'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='0.238' z='-0.644' y='1.92'/>
+      <v x='0.313' z='-0.503' y='2.08'/>
+      <v x='0.313' z='-0.503' y='1.92'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='0.313' z='0.503' y='1.92'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='0.313' z='-0.503' y='1.92'/>
+      <v x='0.313' z='0.503' y='2.08'/>
+      <v x='0.313' z='0.503' y='1.92'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='0.238' z='0.644' y='1.92'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='0.313' z='0.503' y='1.92'/>
+      <v x='0.238' z='0.644' y='2.08'/>
+      <v x='0.238' z='0.644' y='1.92'/>
+      <v x='0.108' z='0.757' y='2.08'/>
+      <v x='0.108' z='0.757' y='1.92'/>
+      <v x='0.108' z='0.757' y='2.08'/>
+      <v x='0.238' z='0.644' y='1.92'/>
+      <v x='0.108' z='0.757' y='2.08'/>
+      <v x='0.108' z='0.757' y='1.92'/>
+      <v x='-0.156' z='0.796' y='2.08'/>
+      <v x='-0.156' z='0.796' y='1.92'/>
+      <v x='-0.156' z='0.796' y='2.08'/>
+      <v x='0.108' z='0.757' y='1.92'/>
+      <v x='-0.156' z='0.796' y='2.08'/>
+      <v x='-0.156' z='0.796' y='1.92'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='-0.418' z='0.704' y='1.92'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='-0.156' z='0.796' y='1.92'/>
+      <v x='-0.418' z='0.704' y='2.08'/>
+      <v x='-0.418' z='0.704' y='1.92'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='-0.548' z='0.599' y='1.92'/>
+      <v x='-0.548' z='0.599' y='2.08'/>
+      <v x='-0.418' z='0.704' y='1.92'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-0.964' z='-0.765' y='1.51'/>
+      <v x='-1.45' z='-0.765' y='1.56'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.45' z='-0.765' y='1.56'/>
+      <v x='-1.58' z='-0.383' y='1.56'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.58' z='-0.383' y='1.56'/>
+      <v x='-1.64' z='-0.01' y='1.56'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.64' z='-0.01' y='1.56'/>
+      <v x='-1.58' z='0.382' y='1.56'/>
+      <v x='-0.964' z='0.765' y='1.51'/>
+      <v x='-1.58' z='0.382' y='1.56'/>
+      <v x='-1.45' z='0.764' y='1.56'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.37' z='0.764' y='2.05'/>
+      <v x='-1.51' z='0.382' y='2.05'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.51' z='0.382' y='2.05'/>
+      <v x='-1.56' z='-0.01' y='2.05'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.56' z='-0.01' y='2.05'/>
+      <v x='-1.51' z='-0.383' y='2.05'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.51' z='-0.383' y='2.05'/>
+      <v x='-1.37' z='-0.765' y='2.05'/>
+      <v x='-0.946' z='0.762' y='1.97'/>
+      <v x='-1.37' z='-0.765' y='2.05'/>
+      <v x='-0.946' z='-0.766' y='1.97'/>
+      <p name="0">
+        <v>2</v>
+        <v>1</v>
+        <v>0</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='1.06' v='0.985'/>          <uv idx='0' u='1.08' v='0.831'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="1">
+        <v>5</v>
+        <v>4</v>
+        <v>3</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.16' v='0.881'/>          <uv idx='1' u='1.08' v='0.831'/>          <uv idx='0' u='1.06' v='0.985'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="2">
+        <v>8</v>
+        <v>7</v>
+        <v>6</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.866' v='0.598'/>          <uv idx='1' u='0.822' v='0.516'/>          <uv idx='0' u='0.766' v='0.674'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="3">
+        <v>11</v>
+        <v>10</v>
+        <v>9</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.711' v='0.606'/>          <uv idx='1' u='0.766' v='0.674'/>          <uv idx='0' u='0.822' v='0.516'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="4">
+        <v>14</v>
+        <v>13</v>
+        <v>12</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.996' v='1.132'/>          <uv idx='1' u='0.559' v='0.661'/>          <uv idx='0' u='0.973' v='1.107'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="5">
+        <v>17</v>
+        <v>16</v>
+        <v>15</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.583' v='0.688'/>          <uv idx='1' u='0.973' v='1.107'/>          <uv idx='0' u='0.559' v='0.661'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="6">
+        <v>20</v>
+        <v>19</v>
+        <v>18</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.973' v='1.107'/>          <uv idx='1' u='0.583' v='0.688'/>          <uv idx='0' u='1.06' v='0.985'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="7">
+        <v>23</v>
+        <v>22</v>
+        <v>21</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.711' v='0.606'/>          <uv idx='1' u='1.06' v='0.985'/>          <uv idx='0' u='0.583' v='0.688'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="8">
+        <v>26</v>
+        <v>25</v>
+        <v>24</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.107' v='1.009'/>          <uv idx='1' u='0.617' v='1.559'/>          <uv idx='0' u='0.143' v='1.049'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="9">
+        <v>29</v>
+        <v>28</v>
+        <v>27</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.581' v='1.519'/>          <uv idx='1' u='0.143' v='1.049'/>          <uv idx='0' u='0.617' v='1.559'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="10">
+        <v>32</v>
+        <v>31</v>
+        <v>30</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.143' v='1.049'/>          <uv idx='1' u='0.581' v='1.519'/>          <uv idx='0' u='0.126' v='1.155'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="11">
+        <v>35</v>
+        <v>34</v>
+        <v>33</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.473' v='1.529'/>          <uv idx='1' u='0.126' v='1.155'/>          <uv idx='0' u='0.581' v='1.519'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="12">
+        <v>38</v>
+        <v>37</v>
+        <v>36</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.126' v='1.155'/>          <uv idx='1' u='0.473' v='1.529'/>          <uv idx='0' u='0.224' v='1.178'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="13">
+        <v>41</v>
+        <v>40</v>
+        <v>39</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.457' v='1.429'/>          <uv idx='1' u='0.224' v='1.178'/>          <uv idx='0' u='0.473' v='1.529'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="14">
+        <v>44</v>
+        <v>43</v>
+        <v>42</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.224' v='1.178'/>          <uv idx='1' u='0.457' v='1.429'/>          <uv idx='0' u='0.331' v='1.083'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="15">
+        <v>47</v>
+        <v>46</v>
+        <v>45</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.56' v='1.329'/>          <uv idx='1' u='0.331' v='1.083'/>          <uv idx='0' u='0.457' v='1.429'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="16">
+        <v>50</v>
+        <v>49</v>
+        <v>48</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.331' v='1.083'/>          <uv idx='1' u='0.56' v='1.329'/>          <uv idx='0' u='0.546' v='0.844'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="17">
+        <v>53</v>
+        <v>52</v>
+        <v>51</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.812' v='1.134'/>          <uv idx='1' u='0.546' v='0.844'/>          <uv idx='0' u='0.56' v='1.329'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="18">
+        <v>56</v>
+        <v>55</v>
+        <v>54</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.546' v='0.844'/>          <uv idx='1' u='0.812' v='1.134'/>          <uv idx='0' u='0.678' v='0.724'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="19">
+        <v>59</v>
+        <v>58</v>
+        <v>57</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.944' v='1.01'/>          <uv idx='1' u='0.678' v='0.724'/>          <uv idx='0' u='0.812' v='1.134'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="20">
+        <v>62</v>
+        <v>61</v>
+        <v>60</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.678' v='0.724'/>          <uv idx='1' u='0.944' v='1.01'/>          <uv idx='0' u='0.766' v='0.674'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="21">
+        <v>65</v>
+        <v>64</v>
+        <v>63</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='0.766' v='0.674'/>          <uv idx='0' u='0.944' v='1.01'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="22">
+        <v>68</v>
+        <v>67</v>
+        <v>66</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.89' v='0.978'/>          <uv idx='1' u='0.909' v='0.998'/>          <uv idx='0' u='0.706' v='0.78'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="23">
+        <v>71</v>
+        <v>70</v>
+        <v>69</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.687' v='0.759'/>          <uv idx='1' u='0.706' v='0.78'/>          <uv idx='0' u='0.909' v='0.998'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="24">
+        <v>74</v>
+        <v>73</v>
+        <v>72</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.606' v='0.842'/>          <uv idx='1' u='0.552' v='0.898'/>          <uv idx='0' u='0.669' v='0.796'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="25">
+        <v>77</v>
+        <v>76</v>
+        <v>75</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.532' v='0.933'/>          <uv idx='1' u='0.669' v='0.796'/>          <uv idx='0' u='0.552' v='0.898'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="26">
+        <v>80</v>
+        <v>79</v>
+        <v>78</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.669' v='0.796'/>          <uv idx='1' u='0.532' v='0.933'/>          <uv idx='0' u='0.706' v='0.78'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="27">
+        <v>83</v>
+        <v>82</v>
+        <v>81</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.529' v='0.962'/>          <uv idx='1' u='0.706' v='0.78'/>          <uv idx='0' u='0.532' v='0.933'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="28">
+        <v>86</v>
+        <v>85</v>
+        <v>84</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.706' v='0.78'/>          <uv idx='1' u='0.529' v='0.962'/>          <uv idx='0' u='0.89' v='0.978'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="29">
+        <v>89</v>
+        <v>88</v>
+        <v>87</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.695' v='1.14'/>          <uv idx='1' u='0.89' v='0.978'/>          <uv idx='0' u='0.529' v='0.962'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="30">
+        <v>92</v>
+        <v>91</v>
+        <v>90</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.89' v='0.978'/>          <uv idx='1' u='0.695' v='1.14'/>          <uv idx='0' u='0.871' v='1.013'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="31">
+        <v>95</v>
+        <v>94</v>
+        <v>93</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.725' v='1.139'/>          <uv idx='1' u='0.871' v='1.013'/>          <uv idx='0' u='0.695' v='1.14'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="32">
+        <v>98</v>
+        <v>97</v>
+        <v>96</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.871' v='1.013'/>          <uv idx='1' u='0.725' v='1.139'/>          <uv idx='0' u='0.82' v='1.072'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="33">
+        <v>101</v>
+        <v>100</v>
+        <v>99</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.76' v='1.122'/>          <uv idx='1' u='0.82' v='1.072'/>          <uv idx='0' u='0.725' v='1.139'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="34">
+        <v>104</v>
+        <v>103</v>
+        <v>102</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.766' v='0.674'/>          <uv idx='1' u='0.711' v='0.606'/>          <uv idx='0' u='0.678' v='0.724'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="35">
+        <v>107</v>
+        <v>106</v>
+        <v>105</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.583' v='0.688'/>          <uv idx='1' u='0.678' v='0.724'/>          <uv idx='0' u='0.711' v='0.606'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="36">
+        <v>110</v>
+        <v>109</v>
+        <v>108</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.678' v='0.724'/>          <uv idx='1' u='0.583' v='0.688'/>          <uv idx='0' u='0.546' v='0.844'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="37">
+        <v>113</v>
+        <v>112</v>
+        <v>111</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.482' v='0.782'/>          <uv idx='1' u='0.546' v='0.844'/>          <uv idx='0' u='0.583' v='0.688'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="38">
+        <v>116</v>
+        <v>115</v>
+        <v>114</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.546' v='0.844'/>          <uv idx='1' u='0.482' v='0.782'/>          <uv idx='0' u='0.331' v='1.083'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="39">
+        <v>119</v>
+        <v>118</v>
+        <v>117</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.279' v='0.949'/>          <uv idx='1' u='0.331' v='1.083'/>          <uv idx='0' u='0.482' v='0.782'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="40">
+        <v>122</v>
+        <v>121</v>
+        <v>120</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.331' v='1.083'/>          <uv idx='1' u='0.279' v='0.949'/>          <uv idx='0' u='0.224' v='1.178'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="41">
+        <v>125</v>
+        <v>124</v>
+        <v>123</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.143' v='1.049'/>          <uv idx='1' u='0.224' v='1.178'/>          <uv idx='0' u='0.279' v='0.949'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="42">
+        <v>128</v>
+        <v>127</v>
+        <v>126</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.224' v='1.178'/>          <uv idx='1' u='0.143' v='1.049'/>          <uv idx='0' u='0.126' v='1.155'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="43">
+        <v>131</v>
+        <v>130</v>
+        <v>129</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.473' v='1.529'/>          <uv idx='1' u='0.581' v='1.519'/>          <uv idx='0' u='0.457' v='1.429'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="44">
+        <v>134</v>
+        <v>133</v>
+        <v>132</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.69' v='1.391'/>          <uv idx='1' u='0.457' v='1.429'/>          <uv idx='0' u='0.581' v='1.519'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="45">
+        <v>137</v>
+        <v>136</v>
+        <v>135</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.457' v='1.429'/>          <uv idx='1' u='0.69' v='1.391'/>          <uv idx='0' u='0.56' v='1.329'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="46">
+        <v>140</v>
+        <v>139</v>
+        <v>138</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.872' v='1.201'/>          <uv idx='1' u='0.56' v='1.329'/>          <uv idx='0' u='0.69' v='1.391'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="47">
+        <v>143</v>
+        <v>142</v>
+        <v>141</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.56' v='1.329'/>          <uv idx='1' u='0.872' v='1.201'/>          <uv idx='0' u='0.812' v='1.134'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="48">
+        <v>146</v>
+        <v>145</v>
+        <v>144</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.973' v='1.107'/>          <uv idx='1' u='0.812' v='1.134'/>          <uv idx='0' u='0.872' v='1.201'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="49">
+        <v>149</v>
+        <v>148</v>
+        <v>147</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.812' v='1.134'/>          <uv idx='1' u='0.973' v='1.107'/>          <uv idx='0' u='0.944' v='1.01'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="50">
+        <v>152</v>
+        <v>151</v>
+        <v>150</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='0.944' v='1.01'/>          <uv idx='0' u='0.973' v='1.107'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="51">
+        <v>155</v>
+        <v>154</v>
+        <v>153</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.944' v='1.01'/>          <uv idx='1' u='1.06' v='0.985'/>          <uv idx='0' u='0.999' v='0.925'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="52">
+        <v>158</v>
+        <v>157</v>
+        <v>156</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.08' v='0.831'/>          <uv idx='1' u='1.16' v='0.881'/>          <uv idx='0' u='1.08' v='0.764'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="53">
+        <v>161</v>
+        <v>160</v>
+        <v>159</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.19' v='0.854'/>          <uv idx='1' u='1.08' v='0.764'/>          <uv idx='0' u='1.16' v='0.881'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="54">
+        <v>164</v>
+        <v>163</v>
+        <v>162</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.08' v='0.764'/>          <uv idx='1' u='1.19' v='0.854'/>          <uv idx='0' u='1.01' v='0.675'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="55">
+        <v>167</v>
+        <v>166</v>
+        <v>165</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.912' v='0.532'/>          <uv idx='1' u='1.01' v='0.675'/>          <uv idx='0' u='1.19' v='0.854'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="56">
+        <v>170</v>
+        <v>169</v>
+        <v>168</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.01' v='0.675'/>          <uv idx='1' u='0.912' v='0.532'/>          <uv idx='0' u='0.933' v='0.61'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="57">
+        <v>173</v>
+        <v>172</v>
+        <v>171</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.85' v='0.491'/>          <uv idx='1' u='0.933' v='0.61'/>          <uv idx='0' u='0.912' v='0.532'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="58">
+        <v>176</v>
+        <v>175</v>
+        <v>174</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.933' v='0.61'/>          <uv idx='1' u='0.85' v='0.491'/>          <uv idx='0' u='0.866' v='0.598'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="59">
+        <v>179</v>
+        <v>178</v>
+        <v>177</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.822' v='0.516'/>          <uv idx='1' u='0.866' v='0.598'/>          <uv idx='0' u='0.85' v='0.491'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="60">
+        <v>182</v>
+        <v>181</v>
+        <v>180</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.583' v='0.688'/>          <uv idx='1' u='0.559' v='0.661'/>          <uv idx='0' u='0.482' v='0.782'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="61">
+        <v>185</v>
+        <v>184</v>
+        <v>183</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.458' v='0.756'/>          <uv idx='1' u='0.482' v='0.782'/>          <uv idx='0' u='0.559' v='0.661'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="62">
+        <v>188</v>
+        <v>187</v>
+        <v>186</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.482' v='0.782'/>          <uv idx='1' u='0.458' v='0.756'/>          <uv idx='0' u='0.279' v='0.949'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="63">
+        <v>191</v>
+        <v>190</v>
+        <v>189</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.248' v='0.916'/>          <uv idx='1' u='0.279' v='0.949'/>          <uv idx='0' u='0.458' v='0.756'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="64">
+        <v>194</v>
+        <v>193</v>
+        <v>192</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.279' v='0.949'/>          <uv idx='1' u='0.248' v='0.916'/>          <uv idx='0' u='0.143' v='1.049'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="65">
+        <v>197</v>
+        <v>196</v>
+        <v>195</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.107' v='1.009'/>          <uv idx='1' u='0.143' v='1.049'/>          <uv idx='0' u='0.248' v='0.916'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="66">
+        <v>200</v>
+        <v>199</v>
+        <v>198</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.581' v='1.519'/>          <uv idx='1' u='0.617' v='1.559'/>          <uv idx='0' u='0.69' v='1.391'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="67">
+        <v>203</v>
+        <v>202</v>
+        <v>201</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.721' v='1.424'/>          <uv idx='1' u='0.69' v='1.391'/>          <uv idx='0' u='0.617' v='1.559'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="68">
+        <v>206</v>
+        <v>205</v>
+        <v>204</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.69' v='1.391'/>          <uv idx='1' u='0.721' v='1.424'/>          <uv idx='0' u='0.872' v='1.201'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="69">
+        <v>209</v>
+        <v>208</v>
+        <v>207</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.895' v='1.226'/>          <uv idx='1' u='0.872' v='1.201'/>          <uv idx='0' u='0.721' v='1.424'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="70">
+        <v>212</v>
+        <v>211</v>
+        <v>210</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.872' v='1.201'/>          <uv idx='1' u='0.895' v='1.226'/>          <uv idx='0' u='0.973' v='1.107'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="71">
+        <v>215</v>
+        <v>214</v>
+        <v>213</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.996' v='1.132'/>          <uv idx='1' u='0.973' v='1.107'/>          <uv idx='0' u='0.895' v='1.226'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="72">
+        <v>218</v>
+        <v>217</v>
+        <v>216</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.706' v='0.78'/>          <uv idx='1' u='0.687' v='0.759'/>          <uv idx='0' u='0.669' v='0.796'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="73">
+        <v>221</v>
+        <v>220</v>
+        <v>219</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.651' v='0.777'/>          <uv idx='1' u='0.669' v='0.796'/>          <uv idx='0' u='0.687' v='0.759'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="74">
+        <v>224</v>
+        <v>223</v>
+        <v>222</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.669' v='0.796'/>          <uv idx='1' u='0.651' v='0.777'/>          <uv idx='0' u='0.606' v='0.842'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="75">
+        <v>227</v>
+        <v>226</v>
+        <v>225</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.589' v='0.824'/>          <uv idx='1' u='0.606' v='0.842'/>          <uv idx='0' u='0.651' v='0.777'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="76">
+        <v>230</v>
+        <v>229</v>
+        <v>228</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.606' v='0.842'/>          <uv idx='1' u='0.589' v='0.824'/>          <uv idx='0' u='0.552' v='0.898'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="77">
+        <v>233</v>
+        <v>232</v>
+        <v>231</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.535' v='0.88'/>          <uv idx='1' u='0.552' v='0.898'/>          <uv idx='0' u='0.589' v='0.824'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="78">
+        <v>236</v>
+        <v>235</v>
+        <v>234</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.552' v='0.898'/>          <uv idx='1' u='0.535' v='0.88'/>          <uv idx='0' u='0.532' v='0.933'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="79">
+        <v>239</v>
+        <v>238</v>
+        <v>237</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.514' v='0.913'/>          <uv idx='1' u='0.532' v='0.933'/>          <uv idx='0' u='0.535' v='0.88'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="80">
+        <v>242</v>
+        <v>241</v>
+        <v>240</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.532' v='0.933'/>          <uv idx='1' u='0.514' v='0.913'/>          <uv idx='0' u='0.529' v='0.962'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="81">
+        <v>245</v>
+        <v>244</v>
+        <v>243</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.51' v='0.941'/>          <uv idx='1' u='0.529' v='0.962'/>          <uv idx='0' u='0.514' v='0.913'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="82">
+        <v>248</v>
+        <v>247</v>
+        <v>246</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.529' v='0.962'/>          <uv idx='1' u='0.51' v='0.941'/>          <uv idx='0' u='0.695' v='1.14'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="83">
+        <v>251</v>
+        <v>250</v>
+        <v>249</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.715' v='1.161'/>          <uv idx='1' u='0.695' v='1.14'/>          <uv idx='0' u='0.51' v='0.941'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="84">
+        <v>254</v>
+        <v>253</v>
+        <v>252</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.695' v='1.14'/>          <uv idx='1' u='0.715' v='1.161'/>          <uv idx='0' u='0.725' v='1.139'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="85">
+        <v>257</v>
+        <v>256</v>
+        <v>255</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.743' v='1.159'/>          <uv idx='1' u='0.725' v='1.139'/>          <uv idx='0' u='0.715' v='1.161'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="86">
+        <v>260</v>
+        <v>259</v>
+        <v>258</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.725' v='1.139'/>          <uv idx='1' u='0.743' v='1.159'/>          <uv idx='0' u='0.76' v='1.122'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="87">
+        <v>263</v>
+        <v>262</v>
+        <v>261</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.778' v='1.14'/>          <uv idx='1' u='0.76' v='1.122'/>          <uv idx='0' u='0.743' v='1.159'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="88">
+        <v>266</v>
+        <v>265</v>
+        <v>264</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.76' v='1.122'/>          <uv idx='1' u='0.778' v='1.14'/>          <uv idx='0' u='0.82' v='1.072'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="89">
+        <v>269</v>
+        <v>268</v>
+        <v>267</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.837' v='1.09'/>          <uv idx='1' u='0.82' v='1.072'/>          <uv idx='0' u='0.778' v='1.14'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="90">
+        <v>272</v>
+        <v>271</v>
+        <v>270</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.82' v='1.072'/>          <uv idx='1' u='0.837' v='1.09'/>          <uv idx='0' u='0.871' v='1.013'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="91">
+        <v>275</v>
+        <v>274</v>
+        <v>273</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.888' v='1.032'/>          <uv idx='1' u='0.871' v='1.013'/>          <uv idx='0' u='0.837' v='1.09'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="92">
+        <v>278</v>
+        <v>277</v>
+        <v>276</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.871' v='1.013'/>          <uv idx='1' u='0.888' v='1.032'/>          <uv idx='0' u='0.89' v='0.978'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="93">
+        <v>281</v>
+        <v>280</v>
+        <v>279</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.909' v='0.998'/>          <uv idx='1' u='0.89' v='0.978'/>          <uv idx='0' u='0.888' v='1.032'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="94">
+        <v>284</v>
+        <v>283</v>
+        <v>282</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='0.711' v='0.606'/>          <uv idx='0' u='0.822' v='0.516'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="95">
+        <v>287</v>
+        <v>286</v>
+        <v>285</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='0.822' v='0.516'/>          <uv idx='0' u='0.85' v='0.491'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="96">
+        <v>290</v>
+        <v>289</v>
+        <v>288</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='0.85' v='0.491'/>          <uv idx='0' u='0.912' v='0.532'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="97">
+        <v>293</v>
+        <v>292</v>
+        <v>291</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='0.912' v='0.532'/>          <uv idx='0' u='1.19' v='0.854'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="98">
+        <v>296</v>
+        <v>295</v>
+        <v>294</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='1.06' v='0.985'/>          <uv idx='1' u='1.19' v='0.854'/>          <uv idx='0' u='1.16' v='0.881'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="99">
+        <v>299</v>
+        <v>298</v>
+        <v>297</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='1.08' v='0.831'/>          <uv idx='0' u='1.08' v='0.764'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="100">
+        <v>302</v>
+        <v>301</v>
+        <v>300</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='1.08' v='0.764'/>          <uv idx='0' u='1.01' v='0.675'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="101">
+        <v>305</v>
+        <v>304</v>
+        <v>303</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='1.01' v='0.675'/>          <uv idx='0' u='0.933' v='0.61'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="102">
+        <v>308</v>
+        <v>307</v>
+        <v>306</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='0.933' v='0.61'/>          <uv idx='0' u='0.866' v='0.598'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+      <p name="103">
+        <v>311</v>
+        <v>310</v>
+        <v>309</v>
+        <material>(null)no</material>
+        <texmap>
+          <uv idx='2' u='0.999' v='0.925'/>          <uv idx='1' u='0.866' v='0.598'/>          <uv idx='0' u='0.766' v='0.674'/>        </texmap>
+	<lighting>no</lighting>
+      </p>
+    </params>
+  </meshfact>
+  </meshfact>

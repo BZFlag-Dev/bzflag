@@ -6330,7 +6330,7 @@ void Playing::CreateRoom ()
   room = engine->FindSector("room");
 
   // Load a mesh template from disk.
-  tankFactory = loader->LoadMeshObjectFactory("tank.mds");
+  tankFactory = engine->FindMeshFactory("tank");
   if (!tankFactory)
     csApplicationFramework::ReportError
       ("Error loading mesh object factory!");

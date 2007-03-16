@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <world>
+  <plugins>
+    <plugin name="thingMesh">crystalspace.mesh.loader.thing</plugin>
+    <plugin name="thingFact">crystalspace.mesh.loader.factory.thing</plugin>
+  </plugins>
   <textures>
     <texture name="arrow">
       <file>menu_arrow.png</file>
@@ -29,6 +33,7 @@
       <texture>sky</texture>
     </material>
   </materials>
+  <meshfact file="tank.xml" />
   <sector name="room">
     <meshobj name="sky">
     <plugin>crystalspace.mesh.loader.thing</plugin>
@@ -124,7 +129,7 @@
     </meshobj>
     <light>
       <center x="0" y="3" z="0"/>
-      <radius>40</radius>
+      <radius>4000</radius>
       <color red="1" green="1" blue="1"/>
     </light>
   </sector>
