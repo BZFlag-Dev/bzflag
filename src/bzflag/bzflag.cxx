@@ -623,6 +623,10 @@ bool Bzflag::SetupModules()
 
   g2d = g3d->GetDriver2D();
 
+  vfs = csQueryRegistry<iVFS>(GetObjectRegistry());
+  if (!vfs)
+    return ReportError("Failed to locate Virtual File System!");
+
   return true;
 }
 
@@ -634,6 +638,9 @@ bool Bzflag::Application()
     return ReportError("Error opening system!");
 
   bool result = SetupModules();
+
+  if (vfs)
+    vfs->ChDir("this/data/");
 
   unsigned int i;
 
@@ -1195,26 +1202,10 @@ bool Bzflag::Application()
   return true;
 }
 
-void Bzflag::PreProcessFrame()
-{
-}
-
 void Bzflag::Frame()
 {
   // main loop
   playing->playingLoop();
-}
-
-void Bzflag::ProcessFrame()
-{
-}
-
-void Bzflag::PostProcessFrame()
-{
-}
-
-void Bzflag::FinishFrame()
-{
 }
 
 bool Bzflag::OnKeyboard(iEvent &event)

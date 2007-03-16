@@ -6324,13 +6324,13 @@ Playing::~Playing()
 
 void Playing::CreateRoom ()
 {
-  loader->LoadMapFile("this/data/world");
+  loader->LoadMapFile("world");
 
   // We create a new sector called "room".
   room = engine->FindSector("room");
 
   // Load a mesh template from disk.
-  tankFactory = loader->LoadMeshObjectFactory("this/data/tank.mds");
+  tankFactory = loader->LoadMeshObjectFactory("tank.mds");
   if (!tankFactory)
     csApplicationFramework::ReportError
       ("Error loading mesh object factory!");

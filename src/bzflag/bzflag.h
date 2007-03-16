@@ -97,6 +97,7 @@ private:
 
   csRef<iCommandLineParser> clp;
   csRef<iGraphics2D>        g2d;
+  csRef<iVFS>               vfs;
 
   FrameBegin2DDraw         *frame2D;
 
@@ -110,8 +111,6 @@ public:
    */
   bool OnKeyboard(iEvent&);
   
-  virtual void PreProcessFrame();
-
   /**
    * Setup everything that needs to be rendered on screen. This routine
    * is called from the event handler in response to a csevFrame
@@ -121,10 +120,6 @@ public:
    */
   void Frame();
   
-  virtual void ProcessFrame();
-  virtual void PostProcessFrame();
-  virtual void FinishFrame();
-
   /* Declare the name by which this class is identified to the event scheduler.
    * Declare that we want to receive the frame event in the "LOGIC" phase,
    * and that we're not terribly interested in having other events
