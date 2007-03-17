@@ -19,19 +19,6 @@
 
 #include "common.h"
 
-// magic to identify a bzflag server.  first four characters are the
-// bzflag magic.  the last four give the version number.  the first
-// digit is the major release, the second and third digits are the
-// minor release, and the last character is the revision.  The major
-// number should increment when there've been sweeping changes in the
-// whole program.  The minor release should increment for smaller
-// changes that make the new version incompatible with older servers
-// or clients.  The revision should be incremented for minor changes
-// that don't cause incompatibility.
-// adding new flags or changing the communication protocol requires
-// minor release number changes.  adding new graphics effects normally
-// only requires incrementing the revision number.
-
 // well known service port number for bzflag server
 const int		ServerPort = 5154;
 
