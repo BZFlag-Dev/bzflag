@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="ares"
 	ProjectGUID="{417CB8F4-5AE3-45AC-B903-83DB1556303C}"
+	RootNamespace="ares"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -677,7 +678,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -686,6 +687,7 @@
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
