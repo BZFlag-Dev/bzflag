@@ -31,7 +31,7 @@
 #  include <mmsystem.h>
 #endif
 
-LogingCallback	*logingCallback = NULL;
+LoggingCallback	*loggingCallback = NULL;
 
 static bool doTimestamp = false;
 static bool doMicros = false;
@@ -89,6 +89,6 @@ void logDebugMessage(int level, const char* fmt, ...)
 #endif
 	}
 
-	if (logingCallback)
-		logingCallback->log(level,buffer);
+	if (loggingCallback)
+		loggingCallback->log(level,buffer);
 }

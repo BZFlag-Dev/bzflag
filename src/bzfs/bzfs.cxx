@@ -162,22 +162,22 @@ static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
-// loging to the API
-class APILogingCallback : public LogingCallback
+// Logging to the API
+class APILoggingCallback : public LoggingCallback
 {
 public:
 	void log ( int level, const char* message )
 	{
-		bz_LogingEventData_V1 data;
+		bz_LoggingEventData_V1 data;
 		data.level = level;
 		data.message = message;
 		data.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-		worldEventManager.callEvents(bz_eLogingEvent,&data);
+		worldEventManager.callEvents(bz_eLoggingEvent,&data);
 	}
 };
 
-APILogingCallback apiLogingCallback;
+APILoggingCallback apiLoggingCallback;
 
 int getCurMaxPlayers()
 {
@@ -3741,7 +3741,7 @@ int main(int argc, char **argv)
   int nfound;
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
-  logingCallback = &apiLogingCallback;
+  loggingCallback = &apiLoggingCallback;
 
   /* line buffered output to console */
   setvbuf(stdout, (char *)NULL, _IOLBF, BUFSIZE);

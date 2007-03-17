@@ -90,7 +90,7 @@ typedef enum
 	bz_ePlayerUpdateEvent,
 	bz_eNetDataSendEvent,
 	bz_eNetDataReceveEvent,
-	bz_eLogingEvent,
+	bz_eLoggingEvent,
     bz_eFlagTransferredEvent,
 	bz_eFlagGrabbedEvent,
 	bz_eFlagDroppedEvent,
@@ -1010,17 +1010,17 @@ public:
 	unsigned char* data;
 };
 
-class bz_LogingEventData_V1 : public bz_EventData
+class bz_LoggingEventData_V1 : public bz_EventData
 {
 public:
-	bz_LogingEventData_V1()
+	bz_LoggingEventData_V1()
 	{
-		eventType = bz_eLogingEvent;
+		eventType = bz_eLoggingEvent;
 		level = 0;
 		eventTime = 0;
 	}
 
-	virtual ~bz_LogingEventData_V1(){};
+	virtual ~bz_LoggingEventData_V1(){};
 	virtual void update (){bz_EventData::update();}
 
 	double eventTime;
