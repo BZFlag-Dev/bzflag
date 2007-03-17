@@ -964,6 +964,9 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     scene->addDynamicSphere(pausedSphere);
   }
 
+  const float azimuth = atan2f(forward[1], forward[0]);
+  const csYRotMatrix3 rotation(azimuth);
+  tankMesh->GetMovable()->SetTransform(rotation);
   tankMesh->GetMovable()->SetPosition(csVector3(state.pos[0],
 						state.pos[2],
 						state.pos[1]));
