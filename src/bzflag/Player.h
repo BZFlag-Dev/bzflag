@@ -339,6 +339,7 @@ private:
 #ifndef BUILDING_BZADMIN
   csRef<iMeshWrapper>   tankMesh;
 #endif
+  bool                  meshInSector;
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

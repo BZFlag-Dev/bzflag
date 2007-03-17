@@ -74,14 +74,13 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   deadReckoningState(0),
   oldStatus(0),
   oldZSpeed(0.0f),
-  tankMesh(NULL)
+  tankMesh(NULL),
+  meshInSector(false)
 {
-  if (id != ServerPlayer) {
+  if (id != ServerPlayer)
     tankMesh = playing->engine->CreateMeshWrapper
       (playing->tankFactory,
-       "Tank",
-       playing->room);
-  }
+       "Tank");
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
   setVelocity(zero);
@@ -146,6 +145,7 @@ Player::~Player()
 {
   if (id != ServerPlayer) {
     playing->engine->WantToDie(tankMesh);
+    tankMesh = NULL;
     delete tankIDLNode;
     delete tankNode;
     delete pausedSphere;
@@ -843,10 +843,17 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
   if (!isAlive() && !isExploding()) {
-    tankMesh->GetFlags().Set(CS_ENTITY_INVISIBLE);
+    if (meshInSector) {
+      tankMesh->GetMovable()->SetSector(NULL);
+      tankMesh->GetMovable()->UpdateMove();
+      meshInSector = false;
+    }
     return; // don't draw anything
   }
-  tankMesh->GetFlags().Reset(CS_ENTITY_INVISIBLE);
+  if (!meshInSector) {
+    meshInSector = true;
+    tankMesh->GetMovable()->SetSector(playing->room);
+  }
 
   // place the tank
   tankNode->move(state.pos, forward);
