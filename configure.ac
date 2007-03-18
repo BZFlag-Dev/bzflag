@@ -559,6 +559,11 @@ AC_MSG_RESULT([$sdl_image_check])
 AC_SUBST(SDL_IMAGE_LIBS)
 LIBS=$tmpLIBS
 
+#Check for Crystal Space requirement
+CS_PATH_CRYSTAL_CHECK(1.0.1)
+AC_SUBST(CRYSTAL_CFLAGS)
+AC_SUBST(CRYSTAL_LIBS)
+
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
 if test x$enable_debug = xyes; then
