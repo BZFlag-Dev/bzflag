@@ -3,6 +3,7 @@
   <plugins>
     <plugin name="thingMesh">crystalspace.mesh.loader.thing</plugin>
     <plugin name="thingFact">crystalspace.mesh.loader.factory.thing</plugin>
+    <plugin name="genmeshfact">crystalspace.mesh.loader.factory.genmesh</plugin>
   </plugins>
   <textures>
     <texture name="arrow">
@@ -21,6 +22,15 @@
       <file>/lib/stdtex/sky.jpg</file>
       <mipmap>False</mipmap>
     </texture>
+    <texture name="boxwall">
+      <file>boxwall.png</file>
+    </texture>
+    <texture name="roof">
+      <file>roof.png</file>
+    </texture>
+    <texture name="red_tank">
+      <file>red_tank.png</file>
+    </texture>
   </textures>
   <materials>
     <material name="stone">
@@ -32,9 +42,19 @@
     <material name="sky">
       <texture>sky</texture>
     </material>
+    <material name="boxwall">
+      <texture>boxwall</texture>
+    </material>
+    <material name="roof">
+      <texture>roof</texture>
+    </material>
+    <material name="red_tank">
+      <texture>red_tank</texture> 
+    </material>
   </materials>
   <meshfact file="tank.xml" />
   <sector name="room">
+    <ambient red="0.3" green="0.3" blue="1.0" />
     <meshobj name="sky">
     <plugin>crystalspace.mesh.loader.thing</plugin>
     <params>
