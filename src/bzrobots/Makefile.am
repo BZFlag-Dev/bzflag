@@ -181,6 +181,8 @@ bzrobots_SOURCES =			\
 	../bzflag/ShotStrategy.h		\
 	../bzflag/SilenceDefaultKey.cxx		\
 	../bzflag/SilenceDefaultKey.h		\
+	../bzflag/SyncClock.cxx			\
+	../bzflag/SyncClock.h			\
 	../bzflag/TargetingUtils.cxx		\
 	../bzflag/TargetingUtils.h		\
 	../bzflag/TrackMarks.cxx		\
