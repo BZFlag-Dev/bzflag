@@ -74,6 +74,7 @@
 #include "RCRobotPlayer.h"
 #include "World.h"
 #include "WorldBuilder.h"
+#include "SyncClock.h"
 
 //#include "messages.h"
 
@@ -1065,7 +1066,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
       tank->move(pos, forward);
       tank->setVelocity(zero);
       tank->setAngularVelocity(0.0f);
-      tank->setDeadReckoning();
+      tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
     }
 }
 
@@ -1526,7 +1527,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (i >= 0)
 	    sPlayer = getPlayerByIndex(i);
 	  else
-	    DEBUG1("Received handicap update for unknown player!\n");
+	    logDebugMessage(1, "Received handicap update for unknown player!\n");
 	  if (sPlayer) {
 	    // a relative score of -50 points will provide maximum handicap
 	    float normalizedHandicap = float(handicap)
@@ -1563,7 +1564,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (i >= 0)
 	    sPlayer = getPlayerByIndex(i);
 	  else
-	    DEBUG1("Recieved score update for unknown player!\n");
+	    logDebugMessage(1, "Recieved score update for unknown player!\n");
 	  if (sPlayer)
 	    sPlayer->changeScore(wins, losses, tks);
 	}
@@ -1724,7 +1725,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (!robots[i])
 	    break;
 	if (i >= MAX_ROBOTS) {
-	  DEBUG1("Too much bots requested\n");
+	  logDebugMessage(1, "Too much bots requested\n");
 	  break;
 	}
 	char callsign[CallSignLen];
@@ -2824,7 +2825,7 @@ static void cleanWorldCache()
     }
 
     // remove the oldest file
-    DEBUG1("cleanWorldCache: removed %s\n", oldestFile);
+    logDebugMessage(1, "cleanWorldCache: removed %s\n", oldestFile);
     remove((worldPath + oldestFile).c_str());
     free(oldestFile);
     totalSize -= oldestSize;
@@ -3073,10 +3074,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
 #endif
 
   // use parallel UDP if desired and using server relay
-  if (startupInfo.useUDPconnection)
-    serverLink->sendUDPlinkRequest();
-  else
-    printError("No UDP connection, see Options to enable.");
+  serverLink->sendUDPlinkRequest();
 
   printout("Connection Established...");
 
@@ -3432,7 +3430,7 @@ void			botStartPlaying()
     ZeroMemory(&info, sizeof(OSVERSIONINFO));
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
-    DEBUG1("Running on Windows %s%d.%d %s\n",
+    logDebugMessage(1, "Running on Windows %s%d.%d %s\n",
 	   (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
 	   info.dwMajorVersion, info.dwMinorVersion,
 	   info.szCSDVersion);

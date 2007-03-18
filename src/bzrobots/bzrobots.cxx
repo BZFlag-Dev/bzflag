@@ -563,9 +563,6 @@ int			main(int argc, char** argv)
 
   setupConfigs();
 
-  // use UDP? yes
-  startupInfo.useUDPconnection=true;
-
   // parse arguments
   parse(argc, argv);
 
