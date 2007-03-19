@@ -1,10 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <world>
+
+  <addon>
+    <plugin>crystalspace.renderloop.loop.loader</plugin>
+    <paramsfile>renderloop.hi.xml</paramsfile>
+  </addon>
+
+  <settings>
+    <clearzbuf>no</clearzbuf>
+    <clearscreen>yes</clearscreen>
+    <renderloop>renderloop</renderloop>
+  </settings>
+
   <plugins>
-    <plugin name="thingMesh">crystalspace.mesh.loader.thing</plugin>
-    <plugin name="thingFact">crystalspace.mesh.loader.factory.thing</plugin>
     <plugin name="genmeshfact">crystalspace.mesh.loader.factory.genmesh</plugin>
+    <plugin name="genmesh">crystalspace.mesh.loader.genmesh</plugin>
   </plugins>
+
+  <shaders>
+    <shader><file>/shader/ambient.xml</file></shader>
+    <shader><file>/shader/std_lighting_fixed.xml</file></shader>
+    <shader><file>/shader/sky_scattering.xml</file></shader>
+    <shader><file>/shader/light_bumpmap.xml</file></shader>
+    <shader><file>/shader/specular/light_spec_bumpmap.xml</file></shader>
+    <shader><file>/shader/reflect.xml</file></shader>
+  </shaders>
+
   <textures>
     <texture name="arrow">
       <file>menu_arrow.png</file>
@@ -18,10 +39,6 @@
     <texture name="grass">
       <file>std_ground.png</file>
     </texture>
-    <texture name="sky">
-      <file>/lib/stdtex/sky.jpg</file>
-      <mipmap>False</mipmap>
-    </texture>
     <texture name="boxwall">
       <file>boxwall.png</file>
     </texture>
@@ -31,130 +48,134 @@
     <texture name="red_tank">
       <file>red_tank.png</file>
     </texture>
+    <texture name="plain.nor">
+      <file>plain_nor.png</file>
+      <class>normalmap</class>
+    </texture>
   </textures>
+
   <materials>
     <material name="stone">
-      <texture>stone</texture>
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">stone</shadervar>
     </material>
     <material name="grass">
-      <texture>grass</texture>
-    </material>
-    <material name="sky">
-      <texture>sky</texture>
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">grass</shadervar>
     </material>
     <material name="boxwall">
-      <texture>boxwall</texture>
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">boxwall</shadervar>
     </material>
     <material name="roof">
-      <texture>roof</texture>
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">roof</shadervar>
     </material>
     <material name="red_tank">
-      <texture>red_tank</texture> 
+      <shader type="ambient">ambient</shader>
+      <shader type="ppl">light_spec_bumpmap</shader>
+      <shadervar name="tex diffuse" type="texture">red_tank</shadervar>
+      <shadervar name="tex normal" type="texture">plain.nor</shadervar>
+      <shadervar name="specular" type="vector4">0.8, 0.8, 0.8, 0.1</shadervar>
+    </material>
+    <material name="sky">
+      <shader type="ambient">sky_scattering</shader>
+      <color red="0" green="0" blue="0"/>
+      <shadervar name="sky base color" type="vector3">1.19, 1.50, 2.72</shadervar>
+      <shadervar name="sky sun-glow color" type="vector3">0.8, 0.8, 0.8</shadervar>
+      <shadervar name="sky sun size" type="float">0.00005</shadervar>
     </material>
   </materials>
-  <meshfact file="tank.xml" />
+
+  <meshfact file="tank.xml"/>
+
+  <meshfact name="sky">
+    <plugin>genmeshfact</plugin>
+    <params>
+      <sphere rimvertices="64" reversed="true">
+        <radius x="50000" y="50000" z="50000" />
+      </sphere>
+    </params>
+  </meshfact>
+
   <sector name="room">
-    <ambient red="0.3" green="0.3" blue="1.0" />
-    <meshobj name="sky">
-    <plugin>crystalspace.mesh.loader.thing</plugin>
-    <params>
-      <v x="-2000" y="-2000" z=" 2000" />
-      <v x=" 2000" y="-2000" z=" 2000" />
-      <v x="-2000" y="-2000" z="-2000" />
-      <v x=" 2000" y="-2000" z="-2000" />
-      <v x="-2000" y=" 2000" z=" 2000" />
-      <v x=" 2000" y=" 2000" z=" 2000" />
-      <v x="-2000" y=" 2000" z="-2000" />
-      <v x=" 2000" y=" 2000" z="-2000" />
-      <material>sky</material>
-      <texlen>8000</texlen>
-      <p name="down">
-        <lighting>no</lighting>
-        <v>3</v> <v>2</v> <v>0</v> <v>1</v>
-      </p>
-      <p name="up">
-        <lighting>no</lighting>
-        <v>6</v> <v>7</v> <v>5</v> <v>4</v>
-      </p>
-      <p name="back">
-        <lighting>no</lighting>
-        <v>7</v> <v>6</v> <v>2</v> <v>3</v>
-      </p>
-      <p name="front">
-        <lighting>no</lighting>
-        <v>4</v> <v>5</v> <v>1</v> <v>0</v>
-      </p>
-      <p name="left">
-        <lighting>no</lighting>
-        <v>6</v> <v>4</v> <v>0</v> <v>2</v>
-      </p>
-      <p name="right">
-        <lighting>no</lighting>
-        <v>5</v> <v>7</v> <v>3</v> <v>1</v>
-      </p>
-    </params>
-    <zfill />
-    <priority>sky</priority>
-    <camera />
-    </meshobj>
-    <meshobj name="terrain">
-    <plugin>crystalspace.mesh.loader.thing</plugin>
-    <params>
-      <v x="-800" y="0" z=" 800" />
-      <v x=" 800" y="0" z=" 800" />
-      <v x="-800" y="0" z="-800" />
-      <v x=" 800" y="0" z="-800" />
-      <material>grass</material>
-      <texlen>15</texlen>
-      <p name="down">
-        <lighting>no</lighting>
-        <v>3</v> <v>2</v> <v>0</v> <v>1</v>
-      </p>
-    </params>
-    <zfill />
-    <priority>wall</priority>
-    </meshobj>
-    <meshobj name="walls">
-    <plugin>crystalspace.mesh.loader.thing</plugin>
-    <params>
-      <v x="-400" y="0" z=" 400" />
-      <v x=" 400" y="0" z=" 400" />
-      <v x="-400" y="0" z="-400" />
-      <v x=" 400" y="0" z="-400" />
-      <v x="-400" y="8" z=" 400" />
-      <v x=" 400" y="8" z=" 400" />
-      <v x="-400" y="8" z="-400" />
-      <v x=" 400" y="8" z="-400" />
-      <material>stone</material>
-      <texlen>15</texlen>
-      <p name="back">
-        <v>7</v> <v>6</v> <v>2</v> <v>3</v>
-        <lighting>no</lighting>
-      </p>
-      <p name="front">
-        <v>4</v> <v>5</v> <v>1</v> <v>0</v>
-        <lighting>no</lighting>
-      </p>
-      <p name="left">
-        <v>6</v> <v>4</v> <v>0</v> <v>2</v>
-        <lighting>no</lighting>
-      </p>
-      <p name="right">
-        <v>5</v> <v>7</v> <v>3</v> <v>1</v>
-        <lighting>no</lighting>
-      </p>
-    </params>
-    <zfill />
-    <priority>wall2</priority>
-    </meshobj>
-    <light>
-      <center x="0" y="3" z="0"/>
-      <radius>4000</radius>
-      <color red="1" green="1" blue="1"/>
+
+    <ambient red="0.3" green="0.3" blue="0.3" />
+
+    <light name="sun">
+      <center x="500000" y="200000" z="0"/>
+      <color red="1.5" green="1.3" blue="1.0"/>
+      <radius>10000000</radius>
+      <influenceradius>10000000</influenceradius>
     </light>
+
+    <meshobj name="sky">
+      <plugin>genmesh</plugin>
+      <params>
+        <factory>sky</factory>
+        <material>sky</material>
+        <color red="1.0" green="1.0" blue="1.0"/>
+      </params>
+      <priority>sky</priority>
+      <camera/>
+      <zfill/>
+      <nohitbeam/>
+      <noshadows/>
+      <staticshape/>
+      <polymesh><colldet/></polymesh>
+    </meshobj>
+
+    <meshobj name="terrain">
+      <plugin>crystalspace.mesh.loader.thing</plugin>
+      <params>
+        <v x="-800" y="0" z=" 800" />
+        <v x=" 800" y="0" z=" 800" />
+        <v x="-800" y="0" z="-800" />
+        <v x=" 800" y="0" z="-800" />
+        <material>grass</material>
+        <texlen>15</texlen>
+        <p name="down">
+          <v>3</v> <v>2</v> <v>0</v> <v>1</v>
+        </p>
+      </params>
+      <zuse/>
+      <priority>wall</priority>
+    </meshobj>
+
+    <meshobj name="walls">
+      <plugin>crystalspace.mesh.loader.thing</plugin>
+      <params>
+        <v x="-400" y="0" z=" 400" />
+        <v x=" 400" y="0" z=" 400" />
+        <v x="-400" y="0" z="-400" />
+        <v x=" 400" y="0" z="-400" />
+        <v x="-400" y="8" z=" 400" />
+        <v x=" 400" y="8" z=" 400" />
+        <v x="-400" y="8" z="-400" />
+        <v x=" 400" y="8" z="-400" />
+        <material>stone</material>
+        <texlen>15</texlen>
+        <p name="back">
+          <v>7</v> <v>6</v> <v>2</v> <v>3</v>
+        </p>
+        <p name="front">
+          <v>4</v> <v>5</v> <v>1</v> <v>0</v>
+        </p>
+        <p name="left">
+          <v>6</v> <v>4</v> <v>0</v> <v>2</v>
+        </p>
+        <p name="right">
+          <v>5</v> <v>7</v> <v>3</v> <v>1</v>
+        </p>
+      </params>
+      <zuse/>
+      <priority>wall</priority>
+    </meshobj>
   </sector>
+
   <start>
     <sector>room</sector>
     <position x="0" y="1" z="0" />
   </start>
+
 </world>

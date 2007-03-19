@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<params>
+  <name>renderloop</name>
+    <steps>
+      <!-- ambient lighting -->
+      <step plugin="crystalspace.renderloop.step.generic">
+        <shadertype>ambient</shadertype>
+        <zoffset>yes</zoffset>
+        <portaltraversal/>
+        <zmesh/>
+      </step>
+      <!-- diffuse lighting -->
+      <step plugin="crystalspace.renderloop.step.lightiter">
+        <steps>
+          <!-- stencil shadows -->
+          <step plugin="crystalspace.renderloop.step.shadow.stencil">
+            <steps>
+              <!-- per pixel lighting -->
+              <step plugin="crystalspace.renderloop.step.generic">
+                <shadertype>ppl</shadertype>
+                <zoffset>no</zoffset>
+                <ztest/>
+             </step>
+            </steps>
+          </step>
+        </steps>
+      </step>
+      <!-- per vertex lighting -->
+      <step plugin="crystalspace.renderloop.step.generic">
+        <shadertype>pvl</shadertype>
+        <zoffset>no</zoffset>
+        <portaltraversal/>
+        <zmesh/>
+      </step>
+    </steps>
+</params>
