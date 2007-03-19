@@ -18,7 +18,12 @@
 #ifndef	BZF_SCENE_BUILDER_H
 #define	BZF_SCENE_BUILDER_H
 
+/* common header */
 #include "common.h"
+
+// system includes
+#include <crystalspace.h>
+
 #include "OpenGLMaterial.h"
 
 class SceneRenderer;
@@ -87,6 +92,12 @@ class SceneDatabaseBuilder {
     static const GLfloat teleporterModulateColors[3][4];
     static const GLfloat teleporterLightedColors[3][4];
     static const GLfloat teleporterLightedModulateColors[3][4];
+
+  /// A pointer to the 3D engine.
+  csRef<iEngine> engine;
+
+  /// A pointer to the sector the camera will be in.
+  iSector *room;
 };
 
 #endif // BZF_SCENE_BUILDER_H

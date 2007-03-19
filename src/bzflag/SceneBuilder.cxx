@@ -185,6 +185,11 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
   // lower maximum tank lod if lowdetail is true
   if (renderer->useQuality() == 0)
     TankSceneNode::setMaxLOD(2);
+
+  engine = csQueryRegistry<iEngine>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!engine)
+    csApplicationFramework::ReportError("Failed to locate 3D Engine!");
 }
 
 
@@ -196,6 +201,9 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 
 SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 {
+  // We find the sector called "room".
+  room = engine->FindSector("room");
+
   // set LOD flags
   const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
   wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
@@ -253,6 +261,8 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
   addWaterLevel(db, world);
 
   db->finalizeStatics();
+
+  engine->Prepare();
 
   return db;
 }
@@ -433,6 +443,67 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 #endif // SHELL_INSIDE_NODES
 
   delete nodeGen;
+
+  float        w = o.getWidth();
+  float        b = o.getBreadth();
+  float        h = o.getHeight();
+  const float *p = o.getPosition();
+  float        r = o.getRotation();
+
+  csRef<iMeshFactoryWrapper> boxFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
+				NULL);
+  csRef<iGeneralFactoryState> boxFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (boxFactory->GetMeshObjectFactory());
+
+  boxFactState->SetVertexCount(8);
+
+  boxFactState->GetVertices()[0].Set(-w, h, b);
+  boxFactState->GetVertices()[1].Set(-w, h,-b);
+  boxFactState->GetVertices()[2].Set( w, h,-b);
+  boxFactState->GetVertices()[3].Set( w, h, b);
+  boxFactState->GetVertices()[4].Set(-w, 0, b);
+  boxFactState->GetVertices()[5].Set(-w, 0,-b);
+  boxFactState->GetVertices()[6].Set( w, 0,-b);
+  boxFactState->GetVertices()[7].Set( w, 0, b);
+
+  boxFactState->GetTexels()[0].Set(0, 0);
+  boxFactState->GetTexels()[1].Set(1, 0);
+  boxFactState->GetTexels()[2].Set(0, 1);
+  boxFactState->GetTexels()[3].Set(1, 1);
+  boxFactState->GetTexels()[4].Set(1, 0);
+  boxFactState->GetTexels()[5].Set(0, 1);
+  boxFactState->GetTexels()[6].Set(1, 1);
+  boxFactState->GetTexels()[7].Set(0, 0);
+
+  boxFactState->SetTriangleCount(12);  
+  boxFactState->GetTriangles()[ 0].Set(0, 3, 1);
+  boxFactState->GetTriangles()[ 1].Set(3, 2, 1);
+  boxFactState->GetTriangles()[ 2].Set(4, 5, 7);
+  boxFactState->GetTriangles()[ 3].Set(5, 6, 7);
+  boxFactState->GetTriangles()[ 4].Set(0, 4, 3);
+  boxFactState->GetTriangles()[ 5].Set(4, 7, 3);
+  boxFactState->GetTriangles()[ 6].Set(1, 6, 5);
+  boxFactState->GetTriangles()[ 7].Set(1, 2, 6);
+  boxFactState->GetTriangles()[ 8].Set(0, 1, 5);
+  boxFactState->GetTriangles()[ 9].Set(0, 5, 4);
+  boxFactState->GetTriangles()[10].Set(2, 3, 7);
+  boxFactState->GetTriangles()[11].Set(2, 7, 6);
+
+  boxFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> boxMesh = engine->CreateMeshWrapper(boxFactory, "Box");
+
+  iMaterialWrapper *sideMaterial = engine->FindMaterial("boxwall");
+  boxMesh->GetMeshObject()->SetMaterialWrapper(sideMaterial);
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (boxMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *boxMove = boxMesh->GetMovable();
+  boxMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
+  boxMove->SetTransform(csYRotMatrix3(r));
+  boxMove->UpdateMove();
 }
 
 
