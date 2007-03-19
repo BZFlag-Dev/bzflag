@@ -666,9 +666,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (mag < 0.0f) {
 	newVelocity[0] -= mag * normal[0];
 	newVelocity[1] -= mag * normal[1];
-
-	newPos[0] -= TinyDistance * mag * normal[0];
-	newPos[1] -= TinyDistance * mag * normal[1];
+	if (!(getStatus() & PlayerState::BackedOff)) {
+	  newPos[0] -= TinyDistance * mag * normal[0];
+	  newPos[1] -= TinyDistance * mag * normal[1];
+	  setStatus(getStatus() | PlayerState::BackedOff);
+	}
       }
       if (mag > -0.01f) {
 	// assume we're not allowed to turn anymore if there's no
@@ -814,6 +816,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (location == OnGround || location == OnBuilding ||
       (location == InBuilding && newPos[2] == 0.0f)) {
     setStatus(getStatus() & ~short(PlayerState::Falling));
+    setStatus(getStatus() & ~PlayerState::BackedOff);
   }
   else if (location == InAir || location == InBuilding) {
     setStatus(getStatus() | short(PlayerState::Falling));

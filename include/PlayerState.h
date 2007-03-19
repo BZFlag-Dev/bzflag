@@ -49,7 +49,8 @@ class PlayerState
       JumpJets =	(1 << 9),	// tank has jump jets on
       PlaySound =	(1 << 10),	// play one or more sounds
       PhantomZoned =	(1 << 11),	// tank is phantom-zoned
-      InBuilding =	(1 << 12)	// tank inside a building
+      InBuilding =	(1 << 12),	// tank inside a building
+      BackedOff =	(1 << 13)	// tank hit building and backed off
     };
 
     enum PStatusSounds {
