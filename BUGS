@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- client side bots don't even show as tanks.
+
 - bullets do no longer bounce off the walls in replays
   even when ricochets have been enabled
 
