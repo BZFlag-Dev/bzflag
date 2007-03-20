@@ -612,7 +612,7 @@ void HUDRenderer::saveMatrixes ( const float *mm, const float *pm )
 		modelMatrix[i] = mm[i];
 		projMatrix[i] = pm[i];
 	}
-	glGetIntegerv(GL_VIEWPORT,viewport);
+	glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
 }
 
 
@@ -627,7 +627,7 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 	float deg2Rad = 0.017453292519943295769236907684886f;
 
 	glPushMatrix();
-	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,viewport,&map[0],&map[1],&map[2]);
+	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
 	glPopMatrix();
 
 	float halfWidth = window.getWidth( )* 0.5f;
@@ -732,7 +732,7 @@ void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::s
 	float deg2Rad = 0.017453292519943295769236907684886f;
 
 	glPushMatrix();
-	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,viewport,&map[0],&map[1],&map[2]);
+	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
 	glPopMatrix();
 
 	float halfWidth = window.getWidth( )* 0.5f;
