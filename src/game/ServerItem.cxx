@@ -18,28 +18,38 @@
 /* interface header */
 #include "ServerItem.h"
 
+/* common implementation headers */
+#include "TextUtils.h"
+
 /* local implementation headers */
 #include "ServerListCache.h"
 
 
+ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false)
+{
+}
+
 void ServerItem::writeToFile(std::ostream& out) const
 {
-  char buffer[MAX_STRING+1]; // MAX_STRING is inherited from ServerListCache.h
+  char buffer[ServerListCache::max_string+1]; // ServerListCache::max_string is inherited from ServerListCache.h
 
   // write out desc.
   memset(buffer,0,sizeof(buffer));
-  int copyLength = int(description.size() < MAX_STRING ? description.size(): MAX_STRING);
+  int copyLength = int(description.size() < ServerListCache::max_string ? description.size(): ServerListCache::max_string);
   strncpy(&buffer[0],description.c_str(),copyLength);
   out.write(buffer,sizeof(buffer));
 
   // write out name
   memset(buffer,0,sizeof(buffer));
-  copyLength = int(name.size() < MAX_STRING ? name.size(): MAX_STRING);
+  copyLength = int(name.size() < ServerListCache::max_string ? name.size(): ServerListCache::max_string);
   strncpy(&buffer[0],name.c_str(),copyLength);
   out.write(buffer,sizeof(buffer));
 
   // write out pingpacket
   ping.writeToFile(out);
+
+  nboPackUByte(buffer, favorite);
+  out.write(buffer, 1);
 
   // write out current time
   memset(buffer,0,sizeof(buffer));
@@ -47,9 +57,9 @@ void ServerItem::writeToFile(std::ostream& out) const
   out.write(&buffer[0], 4);
 }
 
-bool ServerItem::readFromFile(std::istream& in)
+bool ServerItem::readFromFile(std::istream& in, int subrevision)
 {
-  char buffer [MAX_STRING+1];
+  char buffer[ServerListCache::max_string+1];
 
   //read description
   memset(buffer,0,sizeof(buffer));
@@ -61,11 +71,18 @@ bool ServerItem::readFromFile(std::istream& in)
   memset(buffer,0,sizeof(buffer));
   in.read(buffer,sizeof(buffer));
   if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
-
   name = buffer;
 
   bool pingWorked = ping.readFromFile(in);
   if (!pingWorked) return false; // pingpacket failed to read
+
+  // favorites introduced in subrevision 1
+  if (subrevision >=1) {
+    uint8_t fav;
+    in.read(buffer, 1);
+    nboUnpackUByte(buffer, fav);
+    favorite = fav;
+  }
 
   // read in time
   in.read(&buffer[0],4);
@@ -189,6 +206,11 @@ int ServerItem::getPlayerCount() const
       curPlayer = maxPlayer;
   }
   return curPlayer;
+}
+
+std::string ServerItem::getAddrName() const
+{
+  return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.port));
 }
 
 unsigned int ServerItem::getSortFactor() const

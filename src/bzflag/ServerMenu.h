@@ -53,7 +53,7 @@ public:
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
   int getSelected() const;
-  void setSelected(int);
+  void setSelected(int, bool forcerefresh=false);
   void show();
   void execute();
   void dismiss();
@@ -63,6 +63,9 @@ public:
 
   bool getFind() const;
   void setFind(bool mode);
+
+  void toggleFavView();
+  void setFav(bool);
 
   static const int NumItems;
 
@@ -78,6 +81,7 @@ private:
   ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
   HUDuiLabel* status;
+  HUDuiLabel* help;
 
   HUDuiLabel* pageLabel;
   int selectedIndex;
@@ -87,7 +91,8 @@ private:
   HUDuiTypeIn* search;
   bool findMode;
   std::string filter;
-  std::string lastFilter;
+  bool favView;
+  bool newfilter;
 
   static const int NumReadouts;
 };
