@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2006 Tim Riker
+ * Copyright (c) 1993 - 2007 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -57,10 +57,8 @@ class SDLMedia : public BzfMedia {
   private:
     bool		audioReady;
     int			audioOutputRate;
-    int			audioBufferSize;
 
-    short*		outputBuffer;
-    int		 sampleToSend;  // next sample to send on outputBuffer
+    bool                outputBufferEmpty;
 
     Uint32		stopwatchTime;
 
@@ -68,6 +66,7 @@ class SDLMedia : public BzfMedia {
     int		 cmdFill;	// from 0 to cmdFill
 
     bool		(*userCallback)(void);
+    SDL_AudioCVT        convert;
 };
 
 #endif // BZF_SDLMEDIA_H
@@ -79,4 +78,3 @@ class SDLMedia : public BzfMedia {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

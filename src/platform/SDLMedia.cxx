@@ -1,6 +1,6 @@
 
 /* bzflag
- * Copyright (c) 1993 - 2006 Tim Riker
+ * Copyright (c) 1993 - 2007 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,20 +19,17 @@
 #include "SDLMedia.h"
 #include "ErrorHandler.h"
 
-#ifdef HALF_RATE_AUDIO
-static const int defaultAudioRate=11025;
-#else
 static const int defaultAudioRate=22050;
-#endif
 
 //
 // SDLMedia
 //
 
-SDLMedia::SDLMedia() : BzfMedia(), outputBuffer(NULL)
+SDLMedia::SDLMedia() : BzfMedia()
 {
   cmdFill       = 0;
   audioReady    = false;
+  convert.buf   = 0;
 }
 
 double			SDLMedia::stopwatch(bool start)
@@ -62,6 +59,7 @@ bool			SDLMedia::openAudio()
   };
 
   static SDL_AudioSpec desired;
+  static SDL_AudioSpec obtained;
 
   // what the frequency?
   audioOutputRate = defaultAudioRate;
@@ -76,24 +74,50 @@ bool			SDLMedia::openAudio()
   while ((1 << n) < fragmentSize)
     ++n;
 
-  // samples are two bytes each so double the size
-  audioBufferSize = 1 << (n + 1);
-
   desired.freq       = audioOutputRate;
   desired.format     = AUDIO_S16SYS;
   desired.channels   = 2;
-  desired.samples    = audioBufferSize >> 1; // In stereo samples
+  desired.samples    = 1 << n; // In stereo samples
   desired.callback   = &fillAudioWrapper;
   desired.userdata   = (void *) this;	// To handle Wrap of func
 
-  /* Open the audio device, forcing the desired format */
-  if (SDL_OpenAudio(&desired, NULL) < 0) {
+  /* Open the audio device */
+  if (SDL_OpenAudio(&desired, &obtained) < 0) {
     fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
     return false;
   }
+  if (audioOutputRate != obtained.freq) {
+    SDL_CloseAudio();
+    audioOutputRate = obtained.freq;
+    fragmentSize    = (int)(0.03f * (float)audioOutputRate);
+
+    n = 0;
+    while ((1 << n) < fragmentSize)
+      ++n;
+
+    desired.freq       = audioOutputRate;
+    desired.samples    = 1 << n;
+    /* Open the audio device */
+    if (SDL_OpenAudio(&desired, &obtained) < 0) {
+      fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+      return false;
+    }
+  }
+  audioOutputRate = obtained.freq;
+  if (SDL_BuildAudioCVT
+      (&convert,
+       desired.format, desired.channels, obtained.freq,
+       obtained.format, obtained.channels, obtained.freq) == -1) {
+    /* Check that the convert was built */
+    printFatalError("Could not build converter for audio ", SDL_GetError());
+    closeAudio();
+    return false;
+  }
+  convert.len = (int)((double)obtained.size / convert.len_ratio);
+  convert.buf = (Uint8 *)malloc(convert.len * convert.len_mult);
 
   // make an output buffer
-  outputBuffer  = new short[audioBufferSize];
+  outputBufferEmpty = true;
 
   // ready to go
   audioReady = true;
@@ -107,8 +131,8 @@ void			SDLMedia::closeAudio()
   SDL_PauseAudio(1);
 
   SDL_CloseAudio();
-  delete [] outputBuffer;
-  outputBuffer  = 0;
+  free(convert.buf);
+  convert.buf = 0;
   SDL_QuitSubSystem(SDL_INIT_AUDIO);
   audioReady    = false;
 }
@@ -116,7 +140,6 @@ void			SDLMedia::closeAudio()
 void			SDLMedia::startAudioCallback(bool (*proc)(void))
 {
   userCallback = proc;
-
   // Stop sending silence and start calling audio callback
   SDL_PauseAudio(0);
 }
@@ -159,31 +182,34 @@ int			SDLMedia::getAudioOutputRate() const
 
 int			SDLMedia::getAudioBufferSize() const
 {
-  return audioBufferSize;
+  return convert.len >> 1;
 }
 
 int			SDLMedia::getAudioBufferChunkSize() const
 {
-  return audioBufferSize>>1;
+  return convert.len >> 2;
 }
 
 void SDLMedia::fillAudio (Uint8 * stream, int len)
 {
-  userCallback();
-  Uint8* soundBuffer	= stream;
+  static int sampleToSend;  // next sample to send on output buffer
+  if (outputBufferEmpty) {
+    userCallback();
+    sampleToSend = 0;
+  }
 
-  int transferSize = (audioBufferSize - sampleToSend) * 2;
-  if (transferSize > len)
-    transferSize   = len;
+  int transferSize = convert.len_cvt - sampleToSend;
+  if (transferSize > len) {
+    transferSize = len;
+    outputBufferEmpty = false;
+  } else {
+    outputBufferEmpty = true;
+  }
+
   // just copying into the soundBuffer is enough, SDL is looking for
   // something different from silence sample
-  memcpy(soundBuffer,
-	 (Uint8 *) &outputBuffer[sampleToSend],
-	 transferSize);
-  sampleToSend    += transferSize / 2;
-  soundBuffer     += transferSize;
-  len	     -= transferSize;
-
+  memcpy(stream, convert.buf + sampleToSend, transferSize);
+  sampleToSend += transferSize;
 }
 
 void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
@@ -192,38 +218,20 @@ void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
   me->fillAudio(stream, len);
 }
 
-void			SDLMedia::writeAudioFrames(
-				const float* samples, int numFrames)
+void SDLMedia::writeAudioFrames(const float* samples, int)
 {
-  int numSamples = 2 * numFrames;
-  int limit;
+  int    audioBufferSize = convert.len >> 1;
+  short *buffer          = (short *)convert.buf;
 
-  while (numSamples > 0) {
-    if (numSamples>audioBufferSize)
-      limit=audioBufferSize;
+  for (int j = 0; j < audioBufferSize; j++) {
+    if (samples[j] < -32767.0)
+      buffer[j] = -32767;
+    else if (samples[j] > 32767.0)
+      buffer[j] = 32767;
     else
-      limit=numSamples;
-    for (int j = 0; j < limit; j++) {
-      if (samples[j] < -32767.0)
-	outputBuffer[j] = -32767;
-      else
-	if (samples[j] > 32767.0)
-	  outputBuffer[j] = 32767;
-	else
-	  outputBuffer[j] = short(samples[j]);
-    }
-
-    // fill out the chunk (we never write a partial chunk)
-    if (limit < audioBufferSize) {
-      for (int j = limit; j < audioBufferSize; ++j)
-	outputBuffer[j] = 0;
-    }
-
-    sampleToSend = 0;
-
-    samples    += audioBufferSize;
-    numSamples -= audioBufferSize;
+      buffer[j] = short(samples[j]);
   }
+  SDL_ConvertAudio(&convert);
 }
 
 // Setting Audio Driver
@@ -261,7 +269,7 @@ float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
     /* Build AudioCVT */
     ret = SDL_BuildAudioCVT(&wav_cvt,
 			    wav_spec.format, wav_spec.channels, wav_spec.freq,
-			    AUDIO_S16SYS, 2, defaultAudioRate);
+			    AUDIO_S16SYS, 2, audioOutputRate);
     /* Check that the convert was built */
     if (ret == -1) {
       printFatalError("Could not build converter for Wav file %s: %s.\n",
@@ -303,4 +311,3 @@ void SDLMedia::audioDriver(std::string& driverName)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
