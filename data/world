@@ -17,88 +17,7 @@
     <plugin name="genmesh">crystalspace.mesh.loader.genmesh</plugin>
   </plugins>
 
-  <shaders>
-    <shader><file>/shader/ambient.xml</file></shader>
-    <shader><file>/shader/std_lighting_fixed.xml</file></shader>
-    <shader><file>/shader/sky_scattering.xml</file></shader>
-    <shader><file>/shader/light_bumpmap.xml</file></shader>
-    <shader><file>/shader/specular/light_spec_bumpmap.xml</file></shader>
-    <shader><file>/shader/reflect.xml</file></shader>
-  </shaders>
-
-  <textures>
-    <texture name="arrow">
-      <file>menu_arrow.png</file>
-      <for2d>True</for2d>
-      <for3d>False</for3d>
-      <mipmap>False</mipmap>
-    </texture>
-    <texture name="stone">
-      <file>/lib/std/stone4.gif</file>
-    </texture>
-    <texture name="grass">
-      <file>std_ground.png</file>
-    </texture>
-    <texture name="boxwall">
-      <file>boxwall.png</file>
-    </texture>
-    <texture name="roof">
-      <file>roof.png</file>
-    </texture>
-    <texture name="red_tank">
-      <file>red_tank.png</file>
-    </texture>
-    <texture name="plain.nor">
-      <file>plain_nor.png</file>
-      <class>normalmap</class>
-    </texture>
-  </textures>
-
-  <materials>
-    <material name="stone">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">stone</shadervar>
-    </material>
-    <material name="grass">
-      <shader type="ambient">ambient</shader>
-      <shader type="ppl">light_bumpmap</shader>
-      <shadervar name="tex diffuse" type="texture">grass</shadervar>
-      <shadervar name="tex normal" type="texture">plain.nor</shadervar>
-    </material>
-    <material name="boxwall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">boxwall</shadervar>
-    </material>
-    <material name="roof">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">roof</shadervar>
-    </material>
-    <material name="red_tank">
-      <shader type="ambient">ambient</shader>
-      <shader type="ppl">light_spec_bumpmap</shader>
-      <shadervar name="tex diffuse" type="texture">red_tank</shadervar>
-      <shadervar name="tex normal" type="texture">plain.nor</shadervar>
-      <shadervar name="specular" type="vector4">0.8, 0.8, 0.8, 0.1</shadervar>
-    </material>
-    <material name="sky">
-      <shader type="ambient">sky_scattering</shader>
-      <color red="0" green="0" blue="0"/>
-      <shadervar name="sky base color" type="vector3">1.19, 1.50, 2.72</shadervar>
-      <shadervar name="sky sun-glow color" type="vector3">0.8, 0.8, 0.8</shadervar>
-      <shadervar name="sky sun size" type="float">0.00005</shadervar>
-    </material>
-  </materials>
-
-  <meshfact file="tank.xml"/>
-
-  <meshfact name="sky">
-    <plugin>genmeshfact</plugin>
-    <params>
-      <sphere rimvertices="64" reversed="true">
-        <radius x="50000" y="50000" z="50000" />
-      </sphere>
-    </params>
-  </meshfact>
+  <library>materials.hi.xml</library>
 
   <meshfact name='terrain'>
     <plugin>genmeshfact</plugin>
@@ -110,6 +29,17 @@
       <v x="800" y="0" z="-800" u="50" v="-50" nx="0" ny="1" nz="-0"/>
       <t v1="3" v2="2" v3="1"/>
       <t v1="3" v2="1" v3="0"/>
+    </params>
+  </meshfact>
+
+  <meshfact file="tank.xml"/>
+
+  <meshfact name="sky">
+    <plugin>genmeshfact</plugin>
+    <params>
+      <sphere rimvertices="64" reversed="true">
+        <radius x="50000" y="50000" z="50000" />
+      </sphere>
     </params>
   </meshfact>
 

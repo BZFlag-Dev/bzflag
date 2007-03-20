@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<params>
+  <name>renderloop</name>
+    <steps>
+      <!-- per vertex lighting -->
+      <step plugin="crystalspace.renderloop.step.generic">
+        <shadertype>pvl</shadertype>
+        <zoffset>no</zoffset>
+        <portaltraversal/>
+        <zmesh/>
+      </step>
+    </steps>
+</params>
