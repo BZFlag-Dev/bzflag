@@ -12,6 +12,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * make sure there are no outstanding serious bugs (e.g. check OO)
 
+* take out the flag type out of the flag messages, as they are all PZ.
+  Change the team flags to be a difrent message and take the real team
+  enumeration. The flag type is told on pickup.
 
 THESE ARE LOWER PRIORITY
 
