@@ -23,7 +23,6 @@
 #include "BZDBCache.h"
 
 /* local implementation headers */
-#include "LocalPlayer.h"
 #include "World.h"
 #include "HUDui.h"
 #include "Roaming.h"
@@ -452,6 +451,30 @@ void			HUDRenderer::addMarker(float _heading, const float *_color )
   memcpy(m.color, _color, sizeof(m.color));
 }
 
+void HUDRenderer::AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name,  float zShift )
+{
+	EnhancedHUDMarker	newMarker(pos,color);
+	newMarker.pos[2] += zShift;
+	newMarker.name = name;
+	enhancedMarkers.push_back(newMarker);
+}
+
+void HUDRenderer::AddEnhancedMarker ( const float* pos, const float *color, float zShift )
+{
+	EnhancedHUDMarker	newMarker(pos,color);
+	newMarker.pos[2] += zShift;
+	enhancedMarkers.push_back(newMarker);
+}
+
+void HUDRenderer::AddLockOnMarker ( const float* pos, std::string name, float zShift )
+{
+	float color[3] = {0.75f,0.125f,0.125f};
+	EnhancedHUDMarker	newMarker(pos,color);
+	newMarker.pos[2] += zShift;
+	newMarker.name = name;
+	lockOnMarkers.push_back(newMarker);
+}
+
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
   char buffer[250];
@@ -540,6 +563,14 @@ void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
     glColor3f(r, g, b);
 }
 
+void HUDRenderer::hudColor3Afv( const GLfloat*c , const float a)
+{
+	if( dim )
+		glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
+	else
+		glColor4f( c[0],c[1],c[2],a );
+}
+
 void			HUDRenderer::hudColor4f(
 						GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
@@ -571,6 +602,210 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
     glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
   else
     glColor4fv(c);
+}
+
+void HUDRenderer::saveMatrixes ( const float *mm, const float *pm )
+{
+	// ssave off the stuff before we reset it
+	for(int i = 0; i < 16; i++)
+	{
+		modelMatrix[i] = mm[i];
+		projMatrix[i] = pm[i];
+	}
+	glGetIntegerv(GL_VIEWPORT,viewport);
+}
+
+
+void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std::string name )
+{
+	double map[3] = {0,0,0};
+	double o[3];
+	o[0] = object[0];
+	o[1] = object[1];
+	o[2] = object[2];
+
+	float deg2Rad = 0.017453292519943295769236907684886f;
+
+	glPushMatrix();
+	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,viewport,&map[0],&map[1],&map[2]);
+	glPopMatrix();
+
+	float halfWidth = window.getWidth( )* 0.5f;
+	float halfHeight = window.getHeight() * 0.5f;
+
+	// comp us back to the view
+	map[0] -= halfWidth;
+	map[1] -= halfHeight;
+
+	float headingVec[3] = {0,0,0};
+	headingVec[0] = sinf( heading *deg2Rad );
+	headingVec[1] = cosf( heading *deg2Rad );
+
+	float toPosVec[3] = {0,0,0};
+	toPosVec[0] = (float)object[0] - viewPos[0];
+	toPosVec[1] = (float)object[1] - viewPos[1];
+
+	if ( vec3dot(toPosVec,headingVec) <= 0.866f )
+	{
+		map[0] = halfWidth * (fabs(map[0])/map[0]);
+		map[1] = 0;
+	}
+	else
+	{
+		if ( map[0] < -halfWidth )
+			map[0] = -halfWidth;
+		if ( map[0] > halfWidth )
+			map[0] = halfWidth;
+
+		if ( map[1] < -halfHeight )
+			map[1] = -halfHeight;
+		if ( map[1] > halfHeight )
+			map[1] = halfHeight;
+	}
+
+	glPushMatrix();
+	glTranslatef((float)map[0],(float)map[1],0);
+	glPushMatrix();
+	float triangleSize = BZDB.eval("hudWayPMarkerSize");
+	if (name.size())
+		triangleSize *= 0.75f;
+
+	if ( map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
+		glRotatef(90,0,0,1);
+
+	if ( map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
+		glRotatef(-90,0,0,1);
+
+	if ( map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
+		glRotatef(180,0,0,1);
+
+	if ( map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
+		glRotatef(45,0,0,1);
+
+	if ( map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
+		glRotatef(-45,0,0,1);
+
+	if ( map[0] == halfWidth && map[1] == halfHeight)	// upper right
+		glRotatef(180-45,0,0,1);
+
+	if ( map[0] == -halfWidth && map[1] == halfHeight)	// upper left
+		glRotatef(180+45,0,0,1);
+
+	glBegin(GL_TRIANGLES);
+	glVertex2f(0,0);
+	glVertex2f(triangleSize,triangleSize);
+	glVertex2f(-triangleSize,triangleSize);
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2f(0,0);
+	glVertex2f(triangleSize,triangleSize);
+	glVertex2f(-triangleSize,triangleSize);
+	glEnd();
+
+	glPopMatrix();
+
+	if (name.size())
+	{
+		float textOffset = 5.0f;
+		float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
+		glEnable(GL_TEXTURE_2D);
+		FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize,name);
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	glPopMatrix();
+}
+
+//-------------------------------------------------------------------------
+// HUDRenderer::drawLockonMarker
+//-------------------------------------------------------------------------
+
+void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::string name )
+{
+	double map[3] = {0,0,0};
+	double o[3];
+	o[0] = object[0];
+	o[1] = object[1];
+	o[2] = object[2];
+
+	float deg2Rad = 0.017453292519943295769236907684886f;
+
+	glPushMatrix();
+	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,viewport,&map[0],&map[1],&map[2]);
+	glPopMatrix();
+
+	float halfWidth = window.getWidth( )* 0.5f;
+	float halfHeight = window.getHeight() * 0.5f;
+
+	// comp us back to the view
+	map[0] -= halfWidth;
+	map[1] -= halfHeight;
+
+	float headingVec[3] = {0,0,0};
+	headingVec[0] = sinf( heading *deg2Rad );
+	headingVec[1] = cosf( heading *deg2Rad );
+
+	float toPosVec[3] = {0,0,0};
+	toPosVec[0] = (float)object[0] - viewPos[0];
+	toPosVec[1] = (float)object[1] - viewPos[1];
+
+	if ( vec3dot(toPosVec,headingVec) <= 0.866f )
+	{
+		map[0] = halfWidth * (fabs(map[0])/map[0]);
+		map[1] = 0;
+	}
+	else
+	{
+		if ( map[0] < -halfWidth )
+			map[0] = -halfWidth;
+		if ( map[0] > halfWidth )
+			map[0] = halfWidth;
+
+		if ( map[1] < -halfHeight )
+			map[1] = -halfHeight;
+		if ( map[1] > halfHeight )
+			map[1] = halfHeight;
+	}
+
+	glPushMatrix();
+	glTranslatef((float)map[0],(float)map[1],0);
+	glPushMatrix();
+
+	float lockonSize = 40;
+	float lockonInset = 15;
+	float lockonDeclination = 15;
+
+	glLineWidth(3.0f);
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2f(-lockonInset,lockonSize-lockonDeclination);
+	glVertex2f(-lockonSize,lockonSize);
+	glVertex2f(-lockonSize,-lockonSize);
+	glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2f(lockonInset,lockonSize-lockonDeclination);
+	glVertex2f(lockonSize,lockonSize);
+	glVertex2f(lockonSize,-lockonSize);
+	glVertex2f(lockonInset,-lockonSize+lockonDeclination);
+	glEnd();
+
+	glLineWidth(1.0f);
+
+	glPopMatrix();
+
+	if (name.size())
+	{
+		float textOffset = 5.0f;
+		float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
+		glEnable(GL_TEXTURE_2D);
+		FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize,name);
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	glPopMatrix();
 }
 
 void			HUDRenderer::render(SceneRenderer& renderer)
@@ -622,7 +857,6 @@ void			HUDRenderer::render(SceneRenderer& renderer)
       if (showTankLabels) {
 	renderTankLabels(renderer);
       }
-
       glPopMatrix();
     }
   }
@@ -1254,6 +1488,39 @@ void HUDRenderer::renderUpdate(SceneRenderer& renderer)
   return;
 }
 
+void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
+{
+	if (myTank)
+	{
+		glPushMatrix();
+
+		hudColor3Afv( hudColor, 0.5f );
+
+		glTranslatef((float)centerx,(float)centery,0);
+		glLineWidth(2.0f);
+
+		// draw any waypoint markers
+		for ( int i = 0; i < (int)enhancedMarkers.size(); i++ )
+		{
+			hudColor3Afv( enhancedMarkers[i].color, 0.45f );
+			drawWaypointMarker(enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name);
+		}
+		enhancedMarkers.clear();
+
+		// draw any lockon markers
+		for ( int i = 0; i < (int)lockOnMarkers.size(); i++ )
+		{
+			hudColor3Afv( lockOnMarkers[i].color, 0.45f );
+			drawLockonMarker(lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name);
+		}
+		lockOnMarkers.clear();
+		glLineWidth(1.0f);
+
+		glPopMatrix();
+
+	}
+}
+
 
 void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
@@ -1264,6 +1531,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int ox = window.getOriginX();
   const int oy = window.getOriginY();
   const int centerx = width >> 1;
+  const int centery = viewHeight >> 1;
   int i;
   float y;
 
@@ -1278,12 +1546,15 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
 
+  glPushMatrix();
   // cover the lower portion of the screen when burrowed
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
+
+	drawMarkersInView(centerx,centery,myTank);
 
   // draw shot reload status
   if (BZDB.isTrue("displayReloadTimer")) {
@@ -1322,6 +1593,9 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw targeting box
   renderBox(renderer);
 
+  glPopMatrix();
+
+  
   // restore graphics state
   glPopMatrix();
 }

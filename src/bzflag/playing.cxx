@@ -5434,6 +5434,10 @@ void drawFrame(const float dt)
 
     viewFrustum.setView(eyePoint, targetPoint);
 
+	// let the hud save off the view matrix so it can do view projections
+	if (hud)
+		hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
+
     // add dynamic nodes
     SceneDatabase* scene = sceneRenderer->getSceneDatabase();
     if (scene && myTank) {
@@ -5960,6 +5964,7 @@ static void		prepareTheHUD()
 	  const float* flagPos = flag.position;
 	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
 	  hud->addMarker(heading, myTeamColor);
+	  hud->AddEnhancedMarker(flagPos,myTeamColor,BZDBCache::flagPoleSize*2);
 	}
       }
     }
@@ -5970,6 +5975,7 @@ static void		prepareTheHUD()
 			     antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
+	  hud->AddEnhancedMarker(antidotePos,antidoteColor,BZDBCache::flagPoleSize*2);
     }
   }
   return;

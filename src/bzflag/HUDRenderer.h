@@ -31,6 +31,7 @@
 #include "BzfDisplay.h"
 #include "Player.h"
 #include "ScoreboardRenderer.h"
+#include "LocalPlayer.h"
 
 
 const int		MaxAlerts = 3;
@@ -41,6 +42,29 @@ public:
   GLfloat		color[3];
 };
 typedef std::vector<HUDMarker> MarkerList;
+
+
+class EnhancedHUDMarker
+{
+public:
+	EnhancedHUDMarker()
+	{
+		pos[0] = pos[1] = pos[2] = 0;
+		color[0] = color[1] = color[2] = 0;
+	}
+
+	EnhancedHUDMarker( const float *p, const float* c)
+	{
+		memcpy( color, c, sizeof(GLfloat)*3);
+		memcpy( pos, p, sizeof(float)*3);
+	}
+
+	float pos[3];
+	GLfloat color[3];
+	std::string name;
+};
+typedef std::vector < EnhancedHUDMarker > EnhancedMarkerList;
+
 
 
 /**
@@ -75,6 +99,12 @@ public:
   void		setRestartKeyLabel(const std::string&);
   void		setTimeLeft(uint32_t timeLeftInSeconds);
 
+  void AddEnhancedMarker ( const float* pos, const float *color, float zShift = 0 );
+  void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, float zShift = 0 );
+
+  void AddLockOnMarker ( const float* pos, std::string name, float zShift = 0 );
+	
+  void saveMatrixes ( const float *mm, const float *pm );
   void		setDim(bool);
 
   bool		getComposing() const;
@@ -92,6 +122,7 @@ protected:
   void		hudColor3f(GLfloat, GLfloat, GLfloat);
   void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
   void		hudColor3fv(const GLfloat*);
+  void		hudColor3Afv( const GLfloat*, const float );
   void		hudColor4fv(const GLfloat*);
   void		hudSColor3fv(const GLfloat*);
   void		renderAlerts(void);
@@ -107,6 +138,10 @@ protected:
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
 
+  void drawLockonMarker ( float *object, const float *viewPos, std::string name );
+  void drawWaypointMarker ( float *object, const float *viewPos, std::string name );
+
+  void drawMarkersInView ( int centerX, int centerY, const LocalPlayer* myTank );
   /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
    */
   void		renderUpdate(SceneRenderer&);
@@ -200,6 +235,9 @@ private:
   bool		showCracks;
 
   MarkerList		markers;
+  EnhancedMarkerList	enhancedMarkers;
+  EnhancedMarkerList	lockOnMarkers;
+
 
   HUDuiTypeIn*	composeTypeIn;
 
@@ -214,6 +252,11 @@ private:
   time_t		lastTimeChange;
   int			triangleCount;
   int			radarTriangleCount;
+
+  double modelMatrix[16];
+  double projMatrix[16];
+  int		viewport[4];
+
 };
 
 
