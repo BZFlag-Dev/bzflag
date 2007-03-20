@@ -23,13 +23,6 @@
 #include "ServerItem.h"
 
 
-/** size of description/name */
-static const size_t MAX_STRING = 200;
-
-/** convenience map type */
-typedef std::map<std::string, ServerItem> SRV_STR_MAP;
-
-
 /** The ServerListCache is a simple aging container of server entries.
  * The class can load from and safe to file.  Entries are culled based
  * on a specified cache age.
@@ -37,6 +30,13 @@ typedef std::map<std::string, ServerItem> SRV_STR_MAP;
 class ServerListCache {
 
 public:
+  /** size of description/name */
+  static const size_t max_string = 200;
+  
+  /** convenience map type */
+  typedef std::map<std::string, ServerItem> SRV_STR_MAP;
+
+
   ServerListCache();
   ~ServerListCache();
 
@@ -70,12 +70,18 @@ public:
 
   /** search for some address in the cache.  this is a wrapper that
    * allows access to the maps find method */
-  SRV_STR_MAP::iterator find(std::string ServerAddress);
+  SRV_STR_MAP::iterator find(const std::string &ServerAddress);
 
   /** add an entry to the cache list */
-  void			insert(std::string serverAddress,ServerItem& info);
+  void			insert(const std::string &serverAddress, const ServerItem &info);
+
+  /** is given server in cache and marked as favorite? */
+  bool                  isFavorite(const std::string &serverAddress) const;
 
 private:
+  /** the full path of the file the cache is stored in **/
+  std::string getCacheFilename() const;
+
   /** the actual map container of entries */
   SRV_STR_MAP		serverCache;
 

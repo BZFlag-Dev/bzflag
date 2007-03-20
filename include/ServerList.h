@@ -47,7 +47,8 @@ public:
   void finalization(char *data, unsigned int length, bool good);
 
 public:
-  void addToList(ServerItem&, bool doCache=false);
+  void addToList(ServerItem, bool doCache=false);
+  void markFav(const std::string &, bool);
   void clear();
 
 private:

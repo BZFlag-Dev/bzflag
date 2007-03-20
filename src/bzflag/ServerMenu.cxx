@@ -77,10 +77,31 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   else if (key.ascii == '/') {
-    if (HUDui::getFocus()) {
+    if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFind(true);
+      return true;
     }
-    return true;
+  }
+
+  else if (key.ascii == 'f') {
+    if (HUDui::getFocus() && !menu->getFind()) {
+      menu->toggleFavView();
+      return true;
+    }
+  }
+
+  else if (key.ascii == '+') {
+    if (HUDui::getFocus() && !menu->getFind()) {
+      menu->setFav(true);
+      return true;
+    }
+  }
+
+  else if (key.ascii == '-') {
+    if (HUDui::getFocus() && !menu->getFind()) {
+      menu->setFav(false);
+      return true;
+    }
   }
 
   else if (key.ascii == 27) {
@@ -115,11 +136,12 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 ServerMenu::ServerMenu() : defaultKey(this),
-				selectedIndex(0),
-				serversFound(0),
-				findMode(false),
-				filter("*"),
-				lastFilter("*")
+			   selectedIndex(0),
+			   serversFound(0),
+			   findMode(false),
+			   filter("*"),
+			   favView(false),
+			   newfilter(false)
 {
   // add controls
   addLabel("Servers", "");
@@ -160,6 +182,12 @@ ServerMenu::ServerMenu() : defaultKey(this),
   getControls().push_back(search);
   setFind(false);
 
+  // short key help
+  help = new HUDuiLabel;
+  help->setFontFace(MainMenu::getFontFace());
+  help->setString("Press  +/- add/remove favorites   f - toggle view");
+  getControls().push_back(help);
+
   // set initial focus
   setFocus(status);
 }
@@ -176,6 +204,7 @@ void ServerMenu::addLabel(const char* msg, const char* _label)
 
 void ServerMenu::setFind(bool mode)
 {
+  std::string oldfilter = filter;
   if (mode) {
     search->setLabel("Find Servers:");
     search->setFocus();
@@ -196,6 +225,8 @@ void ServerMenu::setFind(bool mode)
     setSelected(0);
   }
   findMode = mode;
+  
+  newfilter = (filter != oldfilter);
 }
 
 bool ServerMenu::getFind() const
@@ -203,12 +234,36 @@ bool ServerMenu::getFind() const
   return findMode;
 }
 
+void ServerMenu::toggleFavView()
+{
+  favView = !favView;
+  newfilter = true;
+  updateStatus();
+}
+
+void ServerMenu::setFav(bool fav)
+{
+  const ServerItem& item = serverList.getServers()[selectedIndex];
+  std::string addrname = item.getAddrName();
+  ServerListCache *cache = ServerListCache::get();
+  ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
+  if (i!= cache->end()) {
+    i->second.favorite = fav;
+  } else {
+    // FIXME  should not ever come here, but what to do?
+  }
+  realServerList.markFav(addrname, fav);
+  serverList.markFav(addrname, fav);
+
+  setSelected(getSelected()+1, true);
+}
+
 int ServerMenu::getSelected() const
 {
   return selectedIndex;
 }
 
-void ServerMenu::setSelected(int index)
+void ServerMenu::setSelected(int index, bool forcerefresh)
 {
   // clamp index
   if (index < 0)
@@ -217,7 +272,7 @@ void ServerMenu::setSelected(int index)
     index = 0;
 
   // ignore if no change
-  if (selectedIndex == index)
+  if (!forcerefresh && selectedIndex == index)
     return;
 
   // update selected index and get old and new page numbers
@@ -226,7 +281,7 @@ void ServerMenu::setSelected(int index)
   const int newPage = (selectedIndex / NumItems);
 
   // if page changed then load items for this page
-  if (oldPage != newPage) {
+  if (oldPage != newPage || forcerefresh) {
     // fill items
     std::vector<HUDuiControl*>& listHUD = getControls();
     const int base = newPage * NumItems;
@@ -307,8 +362,11 @@ void ServerMenu::setSelected(int index)
 	if (pos != std::string::npos) {
 	  desc = addr.substr(pos > 0 ? pos+1 : pos);
 	  addr.resize(pos);
-	}
-	fullLabel += ANSI_STR_FG_WHITE;
+        }
+        if (server.favorite)
+          fullLabel += ANSI_STR_FG_ORANGE;
+        else
+	  fullLabel += ANSI_STR_FG_WHITE;
 	fullLabel += addr;
 	fullLabel += ANSI_STR_RESET " ";
 	fullLabel += desc;
@@ -669,6 +727,16 @@ void			ServerMenu::resize(int _width, int _height)
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
 
+  // reposition key help
+  {
+    fontSize = (float)_height / 54.0f;
+    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    help->setFontSize(fontSize);
+    const float searchWidth = fm.getStrLength(help->getFontFace(), fontSize, help->getString());
+    x = 0.5f * ((float)_width - searchWidth);
+    help->setPosition(x, fontHt / 2 /* near bottom of screen */);
+  }
+
   // position page readout and server item list
   fontSize = (float)_height / 54.0f;
   fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
@@ -703,41 +771,39 @@ void			ServerMenu::updateStatus() {
   }
 
   // don't run unnecessarily
-  if (realServersFound == realServerList.size() &&
-      filter == lastFilter)
+  if (realServersFound == realServerList.size() && !newfilter)
     return;
 
   // do filtering
   serverList.clear();
   for (unsigned int i = 0; i < realServerList.size(); ++i) {
-    const ServerItem* item = &(realServerList.getServers()[i]);
+    const ServerItem &item = realServerList.getServers()[i];
     // filter is already lower case.  do case insensitive matching.
-    if (glob_match(filter, TextUtils::tolower(item->description))
-     || glob_match(filter, TextUtils::tolower(item->name))) {
-      // FIXME constness idiocy
-      ServerItem copy = *item;
-      serverList.addToList(copy);
+    if ((glob_match(filter, TextUtils::tolower(item.description)) ||
+         glob_match(filter, TextUtils::tolower(item.name))) &&
+        (!favView || item.favorite)
+       ) {
+      serverList.addToList(item);
     }
   }
-  lastFilter = filter;
+  newfilter = false;
 
   // update the status label
-  if (serversFound != serverList.size() ||
-      realServersFound != realServerList.size()) {
-    std::vector<std::string> args;
-    char buffer [80];
-    sprintf(buffer, "%d", (unsigned int)serverList.size());
-    args.push_back(buffer);
-    sprintf(buffer, "%d", (unsigned int)realServerList.size());
-    args.push_back(buffer);
+  std::vector<std::string> args;
+  char buffer [80];
+  sprintf(buffer, "%d", (unsigned int)serverList.size());
+  args.push_back(buffer);
+  sprintf(buffer, "%d", (unsigned int)realServerList.size());
+  args.push_back(buffer);
+  if (favView)
+    setStatus("Favorite servers: {1}/{2}", &args);
+  else
     setStatus("Servers found: {1}/{2}", &args);
-    pageLabel->setString("");
-    selectedIndex = -1;
-    setSelected(0);
+  pageLabel->setString("");
+  selectedIndex = -1;
+  setSelected(0);
 
-    serversFound = (unsigned int)serverList.size();
-  }
-
+  serversFound = (unsigned int)serverList.size();
   realServersFound = (unsigned int)realServerList.size();
 }
 
