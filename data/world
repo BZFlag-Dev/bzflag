@@ -60,8 +60,10 @@
       <shadervar name="tex diffuse" type="texture">stone</shadervar>
     </material>
     <material name="grass">
-      <shader type="pvl">std_lighting_fixed</shader>
+      <shader type="ambient">ambient</shader>
+      <shader type="ppl">light_bumpmap</shader>
       <shadervar name="tex diffuse" type="texture">grass</shadervar>
+      <shadervar name="tex normal" type="texture">plain.nor</shadervar>
     </material>
     <material name="boxwall">
       <shader type="pvl">std_lighting_fixed</shader>
@@ -98,6 +100,19 @@
     </params>
   </meshfact>
 
+  <meshfact name='terrain'>
+    <plugin>genmeshfact</plugin>
+    <params>
+      <material>grass</material>
+      <v x="800" y="0" z="800" u="-50" v="-50" nx="0" ny="1" nz="-0"/>
+      <v x="-800" y="0" z="800" u="-50" v="50" nx="0" ny="1" nz="-0"/>
+      <v x="-800" y="0" z="-800" u="50" v="50" nx="0" ny="1" nz="-0"/>
+      <v x="800" y="0" z="-800" u="50" v="-50" nx="0" ny="1" nz="-0"/>
+      <t v1="3" v2="2" v3="1"/>
+      <t v1="3" v2="1" v3="0"/>
+    </params>
+  </meshfact>
+
   <sector name="room">
 
     <ambient red="0.3" green="0.3" blue="0.3" />
@@ -126,20 +141,14 @@
     </meshobj>
 
     <meshobj name="terrain">
-      <plugin>crystalspace.mesh.loader.thing</plugin>
+      <plugin>genmesh</plugin>
       <params>
-        <v x="-800" y="0" z=" 800" />
-        <v x=" 800" y="0" z=" 800" />
-        <v x="-800" y="0" z="-800" />
-        <v x=" 800" y="0" z="-800" />
-        <material>grass</material>
-        <texlen>15</texlen>
-        <p name="down">
-          <v>3</v> <v>2</v> <v>0</v> <v>1</v>
-        </p>
+        <factory>terrain</factory>
       </params>
-      <zuse/>
       <priority>wall</priority>
+      <zuse/>
+      <staticpos/>
+      <staticshape/>
     </meshobj>
 
     <meshobj name="walls">
@@ -170,6 +179,8 @@
       </params>
       <zuse/>
       <priority>wall</priority>
+      <staticpos/>
+      <staticshape/>
     </meshobj>
   </sector>
 
