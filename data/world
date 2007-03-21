@@ -32,6 +32,76 @@
     </params>
   </meshfact>
 
+  <meshfact name='mountains'>
+    <plugin>genmeshfact</plugin>
+    <zuse/>
+    <params>
+      <v x="800" y="0" z="-800" u="0.000000" v="-0.100000" nx="-0.707083" ny="0" nz="0.707083"/>
+      <v x="-800" y="0" z="-800" u="1.000000" v="-0.100000" nx="0.707083" ny="0" nz="0.707083"/>
+      <v x="-800" y="100" z="-800" u="1.000000" v="-0.900000" nx="0.707083" ny="0" nz="0.707083"/>
+      <v x="800" y="100" z="-800" u="0.000000" v="-0.900000" nx="-0.707083" ny="0" nz="0.707083"/>
+      <t v1="3" v2="2" v3="1"/>
+      <t v1="3" v2="1" v3="0"/>
+      <v x="800" y="100" z="-800" u="1.000000" v="-0.900000" nx="-0.707083" ny="0" nz="0.707083"/>
+      <v x="800" y="100" z="800" u="0.000000" v="-0.900000" nx="-0.707083" ny="0" nz="-0.707083"/>
+      <v x="800" y="0" z="800" u="0.000000" v="-0.100000" nx="-0.707083" ny="0" nz="-0.707083"/>
+      <v x="800" y="0" z="-800" u="1.000000" v="-0.100000" nx="-0.707083" ny="0" nz="0.707083"/>
+      <t v1="7" v2="6" v3="5"/>
+      <t v1="7" v2="5" v3="4"/>
+      <v x="800" y="100" z="800" u="1.000000" v="-0.900000" nx="-0.707083" ny="0" nz="-0.707083"/>
+      <v x="-800" y="100" z="800" u="0.000000" v="-0.900000" nx="0.707083" ny="0" nz="-0.707083"/>
+      <v x="-800" y="0" z="800" u="0.000000" v="-0.100000" nx="0.707083" ny="0" nz="-0.707083"/>
+      <v x="800" y="0" z="800" u="1.000000" v="-0.100000" nx="-0.707083" ny="0" nz="-0.707083"/>
+      <t v1="11" v2="10" v3="9"/>
+      <t v1="11" v2="9" v3="8"/>
+      <v x="-800" y="0" z="-800" u="0.000000" v="-0.100000" nx="0.707083" ny="0" nz="0.707083"/>
+      <v x="-800" y="0" z="800" u="1.000000" v="-0.100000" nx="0.707083" ny="0" nz="-0.707083"/>
+      <v x="-800" y="100" z="800" u="1.000000" v="-0.900000" nx="0.707083" ny="0" nz="-0.707083"/>
+      <v x="-800" y="100" z="-800" u="0.000000" v="-0.900000" nx="0.707083" ny="0" nz="0.707083"/>
+      <t v1="15" v2="14" v3="13"/>
+      <t v1="15" v2="13" v3="12"/>
+      <submesh>
+        <indexbuffer components="1" type="uint" indices="yes">
+          <e c0="3"/>
+          <e c0="2"/>
+          <e c0="1"/>
+          <e c0="3"/>
+          <e c0="1"/>
+          <e c0="0"/>
+          <e c0="11"/>
+          <e c0="10"/>
+          <e c0="9"/>
+          <e c0="11"/>
+          <e c0="9"/>
+          <e c0="8"/>
+        </indexbuffer>
+        <material>mountain1</material>
+      </submesh>
+      <submesh>
+        <indexbuffer components="1" type="uint" indices="yes">
+          <e c0="7"/>
+          <e c0="6"/>
+          <e c0="5"/>
+          <e c0="7"/>
+          <e c0="5"/>
+          <e c0="4"/>
+        </indexbuffer>
+        <material>mountain3</material>
+      </submesh>
+      <submesh>
+        <indexbuffer components="1" type="uint" indices="yes">
+          <e c0="15"/>
+          <e c0="14"/>
+          <e c0="13"/>
+          <e c0="15"/>
+          <e c0="13"/>
+          <e c0="12"/>
+        </indexbuffer>
+        <material>mountain2</material>
+      </submesh>
+    </params>
+  </meshfact>
+
   <meshfact file="tank.xml"/>
 
   <meshfact name="sky">
@@ -74,6 +144,17 @@
       <plugin>genmesh</plugin>
       <params>
         <factory>terrain</factory>
+      </params>
+      <priority>wall</priority>
+      <zuse/>
+      <staticpos/>
+      <staticshape/>
+    </meshobj>
+
+    <meshobj name="mountains">
+      <plugin>genmesh</plugin>
+      <params>
+        <factory>mountains</factory>
       </params>
       <priority>wall</priority>
       <zuse/>

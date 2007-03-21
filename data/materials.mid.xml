@@ -35,6 +35,18 @@
       <file>plain_nor.png</file>
       <class>normalmap</class>
     </texture>
+    <texture name="mountain1">
+      <file>mountain1.png</file>
+      <mipmap>no</mipmap>
+    </texture>
+    <texture name="mountain2">
+      <file>mountain2.png</file>
+      <mipmap>no</mipmap>
+    </texture>
+    <texture name="mountain3">
+      <file>mountain3.png</file>
+      <mipmap>no</mipmap>
+    </texture>
   </textures>
 
   <materials>
@@ -71,6 +83,18 @@
       <shadervar name="sky base color" type="vector3">1.19, 1.50, 2.72</shadervar>
       <shadervar name="sky sun-glow color" type="vector3">0.8, 0.8, 0.8</shadervar>
       <shadervar name="sky sun size" type="float">0.00005</shadervar>
+    </material>
+    <material name="mountain1">
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">mountain1</shadervar>
+    </material>
+    <material name="mountain2">
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">mountain2</shadervar>
+    </material>
+    <material name="mountain3">
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">mountain3</shadervar>
     </material>
   </materials>
 
