@@ -52,8 +52,6 @@ Put a HUD "lock on" box over the target you are locked onto.
 
 Show a HUD marker for team mates on the HUD
 
-Show a HUD marker that shows where the team flag is  ( on the compass ).
-
 Make the HUD target sight turn a "bad" color when you are aiming at a team mate.
 
 HUD indicator for vertical speed.
