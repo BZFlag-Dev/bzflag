@@ -6448,6 +6448,11 @@ void doTankMotions ( const float /*dt*/ )
 	    myTank->fireShot();
 
 	  setLookAtMarker();
+
+	  // see if we have a target, if so lock on to the bastage
+	  if (myTank->getTarget())
+		  hud->AddLockOnMarker(myTank->getTarget()->getPosition(),myTank->getTarget()->getCallSign());
+
 	}
       else
 	{

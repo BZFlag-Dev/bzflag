@@ -750,9 +750,9 @@ void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::s
 	toPosVec[0] = (float)object[0] - viewPos[0];
 	toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 0.866f )
+	if ( vec3dot(toPosVec,headingVec) <= 1.0f )
 	{
-		map[0] = halfWidth * (fabs(map[0])/map[0]);
+		map[0] = -halfWidth * (fabs(map[0])/map[0]);
 		map[1] = 0;
 	}
 	else
