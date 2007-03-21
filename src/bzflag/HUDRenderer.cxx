@@ -645,9 +645,9 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 	toPosVec[0] = (float)object[0] - viewPos[0];
 	toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 0.866f )
+	if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ )
 	{
-		map[0] = halfWidth * (fabs(map[0])/map[0]);
+		map[0] = -halfWidth * (fabs(map[0])/map[0]);
 		map[1] = 0;
 	}
 	else
@@ -698,9 +698,9 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 	glEnd();
 
 	glBegin(GL_LINE_STRIP);
-	glVertex2f(0,0);
-	glVertex2f(triangleSize,triangleSize);
-	glVertex2f(-triangleSize,triangleSize);
+	glVertex3f(0,0,0.01f);
+	glVertex3f(triangleSize,triangleSize,0.01f);
+	glVertex3f(-triangleSize,triangleSize,0.01f);
 	glEnd();
 
 	glPopMatrix();
@@ -1518,6 +1518,7 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 
 		glPopMatrix();
 
+		hudColor3Afv( hudColor, 0.5f );
 	}
 }
 
@@ -1554,8 +1555,6 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
 
-	drawMarkersInView(centerx,centery,myTank);
-
   // draw shot reload status
   if (BZDB.isTrue("displayReloadTimer")) {
     renderShots(myTank);
@@ -1563,6 +1562,14 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // update the display
   renderUpdate(renderer);
+
+  bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
+
+  glDisable(GL_TEXTURE_2D);
+  drawMarkersInView(centerx,centery,myTank);
+
+  if (enableTex)
+	  glEnable(GL_TEXTURE_2D);
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1577,10 +1584,10 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }
-
   }
 
   if (myTank && globalClock.isOn()) {
+
     float yy = 0.5f * (float)height
       + fm.getStrHeight(bigFontFace, bigFontSize, "0");
     if (myTank->isAutoPilot()) {
@@ -1588,7 +1595,9 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
       fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace,
 		    bigFontSize, autoPilotLabel);
     }
+
   }
+
 
   // draw targeting box
   renderBox(renderer);

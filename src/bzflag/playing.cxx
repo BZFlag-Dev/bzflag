@@ -3913,6 +3913,85 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
   return false;
 }
 
+bool inLockRange ( float angle, float distance, float bestDistance, RemotePlayer *player )
+{
+	if ( player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth )
+		return false; // can't lock to paused, NR, or stealth
+
+	if ( angle >=  BZDB.eval( StateDatabase::BZDB_LOCKONANGLE) )
+		return false;
+
+	if ( distance >= bestDistance )
+		return false;
+
+	return true;
+}
+
+bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer *player )
+{
+	if (angle >= BZDB.eval( StateDatabase::BZDB_TARGETINGANGLE ) )// about 17 degrees
+		return false;
+
+	if ( distance > bestDistance )
+		return false;
+
+	if ( player->getFlag() == Flags::Stealth  )
+		return myTank->getFlag() == Flags::Seer;
+
+	return true;
+}
+
+void setLookAtMarker ( void )
+{
+	// get info about my tank
+	const float c = cosf(  - myTank->getAngle());
+	const float s = sinf(  - myTank->getAngle());
+	const float x0 = myTank->getPosition()[0];
+	const float y0 = myTank->getPosition()[1];
+
+	// initialize best target
+	Player *bestTarget = NULL;
+	float bestDistance = Infinity;
+
+	// figure out which tank is centered in my sights
+	for( int i = 0; i < curMaxPlayers; i++ )
+	{
+		if( !player[i] || !player[i]->isAlive())
+			continue;
+
+		// compute position in my local coordinate system
+		const float *pos = player[i]->getPosition();
+		const float x = c *( pos[0] - x0 ) - s *( pos[1] - y0 );
+		const float y = s *( pos[0] - x0 ) + c *( pos[1] - y0 );
+
+		// ignore things behind me
+		if( x < 0.0f )
+			continue;
+
+		// get distance and sin(angle) from directly forward
+		const float d = hypotf( x, y );
+		const float a = fabsf( y / d );
+
+		if (inLookRange(a,d,bestDistance,player[i]))
+		{
+			// is it better?
+			bestTarget = player[i];
+			bestDistance = d;
+		}
+	}
+
+	if( !bestTarget )
+		return ;
+
+	std::string label = bestTarget->getCallSign();
+	if (bestTarget->getFlag())
+	{
+		std::string flagName = bestTarget->getFlag()->flagAbbv;
+		label += std::string("(") + flagName + std::string(")");
+	}
+	hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,2.0f);
+}
+
 void setTarget()
 {
   // get info about my tank
@@ -6367,6 +6446,8 @@ void doTankMotions ( const float /*dt*/ )
 
 	  if (myTank->getTeam() != ObserverTeam && ((fireButton && myTank->getFlag() == Flags::MachineGun) || (myTank->getFlag() == Flags::TriggerHappy)))
 	    myTank->fireShot();
+
+	  setLookAtMarker();
 	}
       else
 	{
