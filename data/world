@@ -161,38 +161,6 @@
       <staticpos/>
       <staticshape/>
     </meshobj>
-
-    <meshobj name="walls">
-      <plugin>crystalspace.mesh.loader.thing</plugin>
-      <params>
-        <v x="-400" y="0" z=" 400" />
-        <v x=" 400" y="0" z=" 400" />
-        <v x="-400" y="0" z="-400" />
-        <v x=" 400" y="0" z="-400" />
-        <v x="-400" y="8" z=" 400" />
-        <v x=" 400" y="8" z=" 400" />
-        <v x="-400" y="8" z="-400" />
-        <v x=" 400" y="8" z="-400" />
-        <material>stone</material>
-        <texlen>15</texlen>
-        <p name="back">
-          <v>7</v> <v>6</v> <v>2</v> <v>3</v>
-        </p>
-        <p name="front">
-          <v>4</v> <v>5</v> <v>1</v> <v>0</v>
-        </p>
-        <p name="left">
-          <v>6</v> <v>4</v> <v>0</v> <v>2</v>
-        </p>
-        <p name="right">
-          <v>5</v> <v>7</v> <v>3</v> <v>1</v>
-        </p>
-      </params>
-      <zuse/>
-      <priority>wall</priority>
-      <staticpos/>
-      <staticshape/>
-    </meshobj>
   </sector>
 
   <start>

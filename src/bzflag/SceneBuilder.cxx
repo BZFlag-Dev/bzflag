@@ -328,23 +328,60 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
     wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
   if (wallTexture < 0)
     wallTexture = tm.getTextureID( "wall" );
-  else
-    useColorTexture = wallTexture >= 0;
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				o.getHeight() / wallTexHeight, wallLOD))) {
-    node->setColor(wallColors[part]);
-    node->setModulateColor(wallModulateColors[part]);
-    node->setLightedColor(wallLightedColors[0]);
-    node->setLightedModulateColor(wallLightedModulateColors[0]);
-    node->setMaterial(wallMaterial);
     node->setTexture(wallTexture);
-    node->setUseColorTexture(useColorTexture);
-
     db->addStaticNode(node, false);
     part = (part + 1) % 5;
   }
   delete nodeGen;
+
+  float        w = o.getWidth();
+  float        b = o.getBreadth();
+  float        h = o.getHeight();
+  const float *p = o.getPosition();
+  float        r = o.getRotation();
+
+  csRef<iMeshFactoryWrapper> wallFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
+				NULL);
+  csRef<iGeneralFactoryState> wallFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (wallFactory->GetMeshObjectFactory());
+
+  wallFactState->SetVertexCount(4);
+
+  wallFactState->GetVertices()[0].Set(0, 0, -b);
+  wallFactState->GetVertices()[1].Set(0, 0,  b);
+  wallFactState->GetVertices()[2].Set(0, h, -b);
+  wallFactState->GetVertices()[3].Set(0, h,  b);
+
+  wallFactState->GetTexels()[0].Set(0, 0);
+  wallFactState->GetTexels()[1].Set(o.getBreadth() / wallTexWidth,
+				    0);
+  wallFactState->GetTexels()[2].Set(0,
+				    o.getHeight() / wallTexHeight);
+  wallFactState->GetTexels()[3].Set(o.getBreadth() / wallTexWidth,
+				    o.getHeight() / wallTexHeight);
+
+  wallFactState->SetTriangleCount(2);  
+  wallFactState->GetTriangles()[ 0].Set(0, 3, 1);
+  wallFactState->GetTriangles()[ 1].Set(0, 2, 3);
+
+  wallFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> wallMesh = engine->CreateMeshWrapper(wallFactory, "Wall");
+
+  iMaterialWrapper *sideMaterial = engine->FindMaterial("wall");
+  wallMesh->GetMeshObject()->SetMaterialWrapper(sideMaterial);
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (wallMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *wallMove = wallMesh->GetMovable();
+  wallMove->SetPosition(room, csVector3(p[0], 0, p[1]));
+  wallMove->SetTransform(csYRotMatrix3(r));
+  wallMove->UpdateMove();
 }
 
 
@@ -406,18 +443,13 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 				nodeGen->getNextNode(
 				-boxTexHeight,
 				-boxTexHeight, boxLOD)))) {
-    node->setColor(boxColors[part]);
-    node->setModulateColor(boxModulateColors[part]);
-    node->setLightedColor(boxLightedColors[part]);
     node->setLightedModulateColor(boxLightedModulateColors[part]);
     node->setMaterial(boxMaterial);
     if (part < 4){
       node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
     }
     else{
       node->setTexture(boxTopTexture);
-      node->setUseColorTexture(useColorTexture[1]);
     }
 
 #ifdef SHELL_INSIDE_NODES
@@ -534,13 +566,9 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
 				-textureFactor * boxTexHeight,
 				pyramidLOD))) {
-    node->setColor(pyramidColors[part]);
-    node->setModulateColor(pyramidModulateColors[part]);
-    node->setLightedColor(pyramidLightedColors[part]);
     node->setLightedModulateColor(pyramidLightedModulateColors[part]);
     node->setMaterial(pyramidMaterial);
     node->setTexture(pyramidTexture);
-    node->setUseColorTexture(useColorTexture);
 
 #ifdef SHELL_INSIDE_NODES
     const bool ownTheNode = db->addStaticNode(node, true);
@@ -617,18 +645,13 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 							   o.getHeight(),
 							   boxLOD)))) {
     if ((part % 5) != 0) {
-      node->setColor(boxColors[part - 2]);
-      node->setModulateColor(boxModulateColors[part - 2]);
-      node->setLightedColor(boxLightedColors[part - 2]);
       node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
       node->setMaterial(boxMaterial);
       node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
     }
     else{
       if (useColorTexture[1]) {  // only set the texture if we have one and are using it
 	node->setTexture(baseTopTexture);
-	node->setUseColorTexture(useColorTexture[1]);
       }
     }
     part++;
@@ -684,33 +707,21 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 							teleporterLOD))) {
     if (o.isHorizontal ()) {
       if (part >= 0 && part <= 15) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
       }
     }
     else {
       if (part >= 0 && part <= 1) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
       }
       else if (part >= 2 && part <= 11) {
-	node->setColor (teleporterColors[1]);
-	node->setModulateColor (teleporterModulateColors[1]);
-	node->setLightedColor (teleporterLightedColors[1]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[1]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
       }
     }
 

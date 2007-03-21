@@ -16,8 +16,8 @@
       <for3d>False</for3d>
       <mipmap>False</mipmap>
     </texture>
-    <texture name="stone">
-      <file>/lib/std/stone4.gif</file>
+    <texture name="wall">
+      <file>wall.png</file>
     </texture>
     <texture name="grass">
       <file>std_ground.png</file>
@@ -50,9 +50,9 @@
   </textures>
 
   <materials>
-    <material name="stone">
+    <material name="wall">
       <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">stone</shadervar>
+      <shadervar name="tex diffuse" type="texture">wall</shadervar>
     </material>
     <material name="grass">
       <shader type="ambient">ambient</shader>
