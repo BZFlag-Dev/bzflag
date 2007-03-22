@@ -14,6 +14,9 @@
     <texture name="wall">
       <file>wall.png</file>
     </texture>
+    <texture name="pyrwall">
+      <file>pyrwall.png</file>
+    </texture>
     <texture name="grass">
       <file>std_ground.png</file>
     </texture>
@@ -48,6 +51,10 @@
     <material name="wall">
       <shader type="pvl">std_lighting_fixed</shader>
       <shadervar name="tex diffuse" type="texture">wall</shadervar>
+    </material>
+    <material name="pyrwall">
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">pyrwall</shadervar>
     </material>
     <material name="grass">
       <shader type="pvl">std_lighting_fixed</shader>

@@ -289,7 +289,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 }
 
 
-void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
+void SceneDatabaseBuilder::addWall(SceneDatabase*, const WallObstacle& o)
 {
   if (o.getHeight() <= 0.0f) {
     return;
@@ -510,42 +510,19 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
 
-  TextureManager &tm = TextureManager::instance();
-  int pyramidTexture = -1;
-
-  bool useColorTexture = false;
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (pyramidTexture < 0)
-    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
-
-  useColorTexture = pyramidTexture >= 0;
-
   // Using boxTexHeight since it's (currently) the same and it's already available
-  float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (renderer->useQuality() >= 3)
-    textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+  float textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
 				-textureFactor * boxTexHeight,
 				pyramidLOD))) {
-    node->setLightedModulateColor(pyramidLightedModulateColors[part]);
     node->setMaterial(pyramidMaterial);
-    node->setTexture(pyramidTexture);
 
-#ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
     db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES
 
     part = (part + 1) % 5;
   }
 
-#ifndef SHELL_INSIDE_NODES
   // add the inside node
   GLfloat obstacleSize[3];
   obstacleSize[0] = o.getWidth();
@@ -554,9 +531,76 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   SceneNode* inode =
     new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES
 
   delete nodeGen;
+
+  /////////////////////////////////////////////////////////
+  iMaterialWrapper *pyrMaterial = NULL;
+
+  // try object, standard
+  if (o.userTextures[0].size())
+    pyrMaterial = engine->FindMaterial(o.userTextures[0].c_str());
+  if (pyrMaterial == NULL)
+    pyrMaterial = engine->FindMaterial(BZDB.get("pyrWallTexture").c_str());
+
+  float        w = o.getWidth();
+  float        b = o.getBreadth();
+  float        h = o.getHeight();
+  const float *p = o.getPosition();
+  float        r = o.getRotation();
+
+  csRef<iMeshFactoryWrapper> pyrFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
+				NULL);
+  csRef<iGeneralFactoryState> pyrFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (pyrFactory->GetMeshObjectFactory());
+
+  pyrFactState->SetVertexCount(5);
+
+  if (o.getZFlip()) {
+    pyrFactState->GetVertices()[0].Set( w, h,  b);
+    pyrFactState->GetVertices()[1].Set(-w, h,  b);
+    pyrFactState->GetVertices()[2].Set(-w, h, -b);
+    pyrFactState->GetVertices()[3].Set( w, h, -b);
+    pyrFactState->GetVertices()[4].Set( 0, 0,  0);
+  } else {
+    pyrFactState->GetVertices()[0].Set( w,  0,  b);
+    pyrFactState->GetVertices()[1].Set(-w,  0,  b);
+    pyrFactState->GetVertices()[2].Set(-w,  0, -b);
+    pyrFactState->GetVertices()[3].Set( w,  0, -b);
+    pyrFactState->GetVertices()[4].Set( 0,  h,  0);
+  }
+
+  pyrFactState->SetTriangleCount(6);
+  if (o.getZFlip()) {
+    pyrFactState->GetTriangles()[0].Set(4, 1, 0);
+    pyrFactState->GetTriangles()[1].Set(4, 2, 1);
+    pyrFactState->GetTriangles()[2].Set(4, 3, 2);
+    pyrFactState->GetTriangles()[3].Set(4, 0, 3);
+    pyrFactState->GetTriangles()[4].Set(0, 1, 3);
+    pyrFactState->GetTriangles()[5].Set(2, 3, 1);
+  } else {
+    pyrFactState->GetTriangles()[0].Set(0, 1, 4);
+    pyrFactState->GetTriangles()[1].Set(1, 2, 4);
+    pyrFactState->GetTriangles()[2].Set(2, 3, 4);
+    pyrFactState->GetTriangles()[3].Set(3, 0, 4);
+    pyrFactState->GetTriangles()[4].Set(0, 3, 1);
+    pyrFactState->GetTriangles()[5].Set(2, 1, 3);
+  }
+
+  pyrFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> pyrMesh = engine->CreateMeshWrapper(pyrFactory, "Box");
+
+  pyrMesh->GetMeshObject()->SetMaterialWrapper(pyrMaterial);
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (pyrMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *pyrMove = pyrMesh->GetMovable();
+  pyrMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
+  pyrMove->SetTransform(csYRotMatrix3(r));
+  pyrMove->UpdateMove();
 }
 
 
