@@ -2668,7 +2668,10 @@ BZF_API bool bz_restart ( void )
     }
 
   for (int i = 0; i < numFlags; i++)
+  {
     FlagInfo &flag = *FlagInfo::get(i);
+	zapFlag(flag);
+  }
 
   return true;
 }
