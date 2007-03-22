@@ -52,25 +52,6 @@
 
 static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-
 const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.63f, 0.25f, 0.25f, 1.0f },
@@ -314,30 +295,14 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
     return;
   }
 
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
+  iMaterialWrapper *sideMaterial = NULL;
 
-  TextureManager &tm = TextureManager::instance();
-  int wallTexture = -1;
-
-  bool  useColorTexture = false;
-
-  // try object, standard, then default
+  // try object, standard
   if (o.userTextures[0].size())
-    wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (wallTexture < 0)
-    wallTexture = tm.getTextureID( "wall" );
+    sideMaterial = engine->FindMaterial(o.userTextures[0].c_str());
+  if (sideMaterial == NULL)
+    sideMaterial = engine->FindMaterial("wall");
 
-  while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
-				o.getHeight() / wallTexHeight, wallLOD))) {
-    node->setTexture(wallTexture);
-    db->addStaticNode(node, false);
-    part = (part + 1) % 5;
-  }
-  delete nodeGen;
-
-  float        w = o.getWidth();
   float        b = o.getBreadth();
   float        h = o.getHeight();
   const float *p = o.getPosition();
@@ -371,9 +336,9 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 
   wallFactState->CalculateNormals();
 
-  csRef<iMeshWrapper> wallMesh = engine->CreateMeshWrapper(wallFactory, "Wall");
+  csRef<iMeshWrapper> wallMesh = engine->CreateMeshWrapper(wallFactory,
+							   "Wall");
 
-  iMaterialWrapper *sideMaterial = engine->FindMaterial("wall");
   wallMesh->GetMeshObject()->SetMaterialWrapper(sideMaterial);
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
     (wallMesh->GetMeshObject());
@@ -383,7 +348,6 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
   wallMove->SetTransform(csYRotMatrix3(r));
   wallMove->UpdateMove();
 }
-
 
 void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 {
