@@ -731,8 +731,6 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 
 void sendMessageAlive ( int playerID, float pos[3], float rot )
 {
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
-
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerID);
 	buf = nboPackVector(buf, pos);
