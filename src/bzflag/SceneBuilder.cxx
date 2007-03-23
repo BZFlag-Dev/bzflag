@@ -85,36 +85,6 @@ const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
 				{ 0.875f, 0.875f, 0.875f, 1.0f }
 			};
 
-const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-
 const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
 				{ 1.0f, 0.875f, 0.0f, 1.0f },
 				{ 0.9f, 0.8f, 0.0f, 1.0f },
@@ -503,38 +473,11 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 }
 
 
-void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
+void SceneDatabaseBuilder::addPyramid(SceneDatabase*, PyramidBuilding& o)
 {
-  // this assumes pyramids have four parts:  four sides
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
-
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
-  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				-textureFactor * boxTexHeight,
-				pyramidLOD))) {
-    node->setMaterial(pyramidMaterial);
-
-    db->addStaticNode(node, false);
-
-    part = (part + 1) % 5;
-  }
-
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode =
-    new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
-
-  delete nodeGen;
-
-  /////////////////////////////////////////////////////////
   iMaterialWrapper *pyrMaterial = NULL;
 
   // try object, standard
@@ -549,11 +492,14 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   const float *p = o.getPosition();
   float        r = o.getRotation();
 
+  const float textureSize  = textureFactor * boxTexHeight;
+  const float vertexLength = sqrtf(w * w + b * b + h * h);
+
   csMatrix3    rotationMatrix;
-  csVector3    positionVector(p[0], p[1], p[2]);
+  csVector3    positionVector(p[0], p[2], p[1]);
   if (o.getZFlip()) {
     rotationMatrix     = csYRotMatrix3(r) * csMatrix3(csZRotMatrix3(M_PI));
-    positionVector[2] += h;
+    positionVector[1] += h;
   } else {
     rotationMatrix     = csYRotMatrix3(r);
   }
@@ -565,22 +511,52 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     = scfQueryInterface<iGeneralFactoryState>
     (pyrFactory->GetMeshObjectFactory());
 
-  pyrFactState->SetVertexCount(5);
+  pyrFactState->SetVertexCount(16);
+  pyrFactState->SetTriangleCount(6);
 
   pyrFactState->GetVertices()[0].Set( w,  0,  b);
   pyrFactState->GetVertices()[1].Set(-w,  0,  b);
-  pyrFactState->GetVertices()[2].Set(-w,  0, -b);
-  pyrFactState->GetVertices()[3].Set( w,  0, -b);
-  pyrFactState->GetVertices()[4].Set( 0,  h,  0);
+  pyrFactState->GetVertices()[2].Set( 0,  h,  0);
+  pyrFactState->GetTexels()[0].Set(0, 0);
+  pyrFactState->GetTexels()[1].Set(2 * w / textureSize, 0);
+  pyrFactState->GetTexels()[2].Set(0, vertexLength / textureSize);
+  pyrFactState->GetTriangles()[0].Set(1, 0, 2);
 
-  pyrFactState->SetTriangleCount(6);
+  pyrFactState->GetVertices()[3].Set(-w,  0,  b);
+  pyrFactState->GetVertices()[4].Set(-w,  0, -b);
+  pyrFactState->GetVertices()[5].Set( 0,  h,  0);
+  pyrFactState->GetTexels()[3].Set(0, 0);
+  pyrFactState->GetTexels()[4].Set(2 * b / textureSize, 0);
+  pyrFactState->GetTexels()[5].Set(0, vertexLength / textureSize);
+  pyrFactState->GetTriangles()[1].Set(4, 3, 5);
 
-  pyrFactState->GetTriangles()[0].Set(1, 0, 4);
-  pyrFactState->GetTriangles()[1].Set(2, 1, 4);
-  pyrFactState->GetTriangles()[2].Set(3, 2, 4);
-  pyrFactState->GetTriangles()[3].Set(0, 3, 4);
-  pyrFactState->GetTriangles()[4].Set(0, 3, 1);
-  pyrFactState->GetTriangles()[5].Set(2, 1, 3);
+  pyrFactState->GetVertices()[6].Set(-w,  0, -b);
+  pyrFactState->GetVertices()[7].Set( w,  0, -b);
+  pyrFactState->GetVertices()[8].Set( 0,  h,  0);
+  pyrFactState->GetTexels()[6].Set(0, 0);
+  pyrFactState->GetTexels()[7].Set(2 * w / textureSize, 0);
+  pyrFactState->GetTexels()[8].Set(0, vertexLength / textureSize);
+  pyrFactState->GetTriangles()[2].Set(7, 6, 8);
+
+  pyrFactState->GetVertices()[ 9].Set( w,  0, -b);
+  pyrFactState->GetVertices()[10].Set( w,  0,  b);
+  pyrFactState->GetVertices()[11].Set( 0,  h,  0);
+  pyrFactState->GetTexels()[ 9].Set(0, 0);
+  pyrFactState->GetTexels()[10].Set(2 * b / textureSize, 0);
+  pyrFactState->GetTexels()[11].Set(0, vertexLength / textureSize);
+  pyrFactState->GetTriangles()[3].Set(10, 9, 11);
+
+  pyrFactState->GetVertices()[12].Set( w,  0,  b);
+  pyrFactState->GetVertices()[13].Set( w,  0, -b);
+  pyrFactState->GetVertices()[14].Set(-w,  0,  b);
+  pyrFactState->GetVertices()[15].Set(-w,  0, -b);
+  pyrFactState->GetTexels()[12].Set(0, 0);
+  pyrFactState->GetTexels()[13].Set(2 * b / textureSize, 0);
+  pyrFactState->GetTexels()[14].Set(0, 2 * w / textureSize);
+  pyrFactState->GetTexels()[15].Set(2 * b / textureSize,
+				    2 * w / textureSize);
+  pyrFactState->GetTriangles()[4].Set(13, 12, 14);
+  pyrFactState->GetTriangles()[5].Set(15, 13, 14);
 
   pyrFactState->CalculateNormals();
 
@@ -595,7 +571,6 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   pyrMove->SetTransform(rotationMatrix);
   pyrMove->UpdateMove();
 }
-
 
 void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 {
