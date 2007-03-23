@@ -549,6 +549,15 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   const float *p = o.getPosition();
   float        r = o.getRotation();
 
+  csMatrix3    rotationMatrix;
+  csVector3    positionVector(p[0], p[1], p[2]);
+  if (o.getZFlip()) {
+    rotationMatrix     = csYRotMatrix3(r) * csMatrix3(csZRotMatrix3(M_PI));
+    positionVector[2] += h;
+  } else {
+    rotationMatrix     = csYRotMatrix3(r);
+  }
+
   csRef<iMeshFactoryWrapper> pyrFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
 				NULL);
@@ -558,36 +567,20 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
   pyrFactState->SetVertexCount(5);
 
-  if (o.getZFlip()) {
-    pyrFactState->GetVertices()[0].Set( w, h,  b);
-    pyrFactState->GetVertices()[1].Set(-w, h,  b);
-    pyrFactState->GetVertices()[2].Set(-w, h, -b);
-    pyrFactState->GetVertices()[3].Set( w, h, -b);
-    pyrFactState->GetVertices()[4].Set( 0, 0,  0);
-  } else {
-    pyrFactState->GetVertices()[0].Set( w,  0,  b);
-    pyrFactState->GetVertices()[1].Set(-w,  0,  b);
-    pyrFactState->GetVertices()[2].Set(-w,  0, -b);
-    pyrFactState->GetVertices()[3].Set( w,  0, -b);
-    pyrFactState->GetVertices()[4].Set( 0,  h,  0);
-  }
+  pyrFactState->GetVertices()[0].Set( w,  0,  b);
+  pyrFactState->GetVertices()[1].Set(-w,  0,  b);
+  pyrFactState->GetVertices()[2].Set(-w,  0, -b);
+  pyrFactState->GetVertices()[3].Set( w,  0, -b);
+  pyrFactState->GetVertices()[4].Set( 0,  h,  0);
 
   pyrFactState->SetTriangleCount(6);
-  if (o.getZFlip()) {
-    pyrFactState->GetTriangles()[0].Set(4, 1, 0);
-    pyrFactState->GetTriangles()[1].Set(4, 2, 1);
-    pyrFactState->GetTriangles()[2].Set(4, 3, 2);
-    pyrFactState->GetTriangles()[3].Set(4, 0, 3);
-    pyrFactState->GetTriangles()[4].Set(0, 1, 3);
-    pyrFactState->GetTriangles()[5].Set(2, 3, 1);
-  } else {
-    pyrFactState->GetTriangles()[0].Set(0, 1, 4);
-    pyrFactState->GetTriangles()[1].Set(1, 2, 4);
-    pyrFactState->GetTriangles()[2].Set(2, 3, 4);
-    pyrFactState->GetTriangles()[3].Set(3, 0, 4);
-    pyrFactState->GetTriangles()[4].Set(0, 3, 1);
-    pyrFactState->GetTriangles()[5].Set(2, 1, 3);
-  }
+
+  pyrFactState->GetTriangles()[0].Set(1, 0, 4);
+  pyrFactState->GetTriangles()[1].Set(2, 1, 4);
+  pyrFactState->GetTriangles()[2].Set(3, 2, 4);
+  pyrFactState->GetTriangles()[3].Set(0, 3, 4);
+  pyrFactState->GetTriangles()[4].Set(0, 3, 1);
+  pyrFactState->GetTriangles()[5].Set(2, 1, 3);
 
   pyrFactState->CalculateNormals();
 
@@ -598,8 +591,8 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     (pyrMesh->GetMeshObject());
   meshstate->SetLighting(true);
   iMovable *pyrMove = pyrMesh->GetMovable();
-  pyrMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
-  pyrMove->SetTransform(csYRotMatrix3(r));
+  pyrMove->SetPosition(room, positionVector);
+  pyrMove->SetTransform(rotationMatrix);
   pyrMove->UpdateMove();
 }
 
