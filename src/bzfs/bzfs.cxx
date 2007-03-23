@@ -1179,17 +1179,16 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     }
     msg = filtered;
 
-	if (strcmp(message,filtered) != 0)	// the filter did do something so barf a message
-	{
-		bz_MessageFilteredEventData_V1	eventData;
+    if (strcmp(message,filtered) != 0) {	// the filter did do something so barf a message
+      bz_MessageFilteredEventData_V1	eventData;
 
-		eventData.player = sendingPlayer;
-		eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
-		eventData.rawMessage = message;
-		eventData.filteredMessage = filtered;
+      eventData.player = sendingPlayer;
+      eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
+      eventData.rawMessage = message;
+      eventData.filteredMessage = filtered;
 
-		worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
-	}
+      worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
+    }
   }
 
   // check that the player has the talk permission
@@ -1198,16 +1197,14 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (!senderData) {
     return;
   }
-  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk))
-  {
+  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
 
     // if the player were sending to is an admin
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
 
     // don't care if they're real, just care if they're an admin
-    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers) )
-	{
-	  sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
+    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers)) {
+      sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
       return;
     }
   }
