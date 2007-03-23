@@ -304,75 +304,87 @@ void warnAboutMainFlags()
 {
   // warning message for hidden flags
   if (!BZDBCache::displayMainFlags){
-    std::string showFlagsMsg = ColorStrings[YellowColor];
-    showFlagsMsg += "Flags on field hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
 
     if (keys.size() != 0) {
-      showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
-      showFlagsMsg += tolower(keys[0][0]);
-      showFlagsMsg += ColorStrings[YellowColor] + "\"";
+      addMessage(NULL,
+		 TextUtils::format("%sFlags on field hidden, to show them "
+				   "hit \"%s%s%s\"",
+				   ColorStrings[YellowColor].c_str(),
+				   ColorStrings[WhiteColor].c_str(),
+				   keys[0].c_str(),
+				   ColorStrings[YellowColor].c_str()));
     } else {
-      showFlagsMsg += " bind a key to Toggle Flags on Field";
+      addMessage(NULL,
+		 TextUtils::format("%sFlags on field hidden, to show them "
+				   "bind a key to Toggle Flags on Field",
+				   ColorStrings[YellowColor].c_str()));
     }
-    addMessage(NULL, showFlagsMsg);
   }
 }
 
 void warnAboutRadarFlags()
 {
   if (!BZDB.isTrue("displayRadarFlags")){
-    std::string showFlagsMsg = ColorStrings[YellowColor];
-    showFlagsMsg += "Flags on radar hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
 
     if (keys.size() != 0) {
-      showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
-      showFlagsMsg += tolower(keys[0][0]);
-      showFlagsMsg += ColorStrings[YellowColor] + "\"";
+      addMessage(NULL,
+		 TextUtils::format("%sFlags on radar hidden, to show them "
+				   "hit \"%s%s%s\"",
+				   ColorStrings[YellowColor].c_str(),
+				   ColorStrings[WhiteColor].c_str(),
+				   keys[0].c_str(),
+				   ColorStrings[YellowColor].c_str()));
     } else {
-      showFlagsMsg += " bind a key to Toggle Flags on Radar";
+      addMessage(NULL,
+		 TextUtils::format("Flags on radar hidden, to show them "
+				   "bind a key to Toggle Flags on Radar",
+				   ColorStrings[YellowColor].c_str()));
     }
-    addMessage(NULL, showFlagsMsg);
   }
 }
 
 void warnAboutRadar()
 {
   if (!BZDB.isTrue("displayRadar")) {
-    std::string message = ColorStrings[YellowColor];
-    message += "To toggle the radar ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleRadar", true);
 
     if (keys.size() != 0) {
-      message += "hit \"" + ColorStrings[WhiteColor];
-      message += keys[0];
-      message += ColorStrings[YellowColor] + "\"";
+      addMessage(NULL,
+		 TextUtils::format("%sTo toggle the radar hit \"%s%s%s\"",
+				   ColorStrings[YellowColor].c_str(),
+				   ColorStrings[WhiteColor].c_str(),
+				   keys[0].c_str(),
+				   ColorStrings[YellowColor].c_str()));
     } else {
-      message += " bind a key to Toggle Radar";
+      addMessage(NULL,
+		 TextUtils::format("%sTo toggle the radar bind a key to "
+				   "Toggle Radar",
+				   ColorStrings[YellowColor].c_str()));
     }
-
-    addMessage(NULL, message);
   }
 }
 
 void warnAboutConsole()
 {
   if (!BZDB.isTrue("displayConsole")) {
-    std::string message = ColorStrings[YellowColor];
-    message += "To toggle the console ";
+    // We can't use a console message for this one.
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsole", true);
 
     if (keys.size() != 0) {
-      message += "hit \"" + ColorStrings[WhiteColor];
-      message += keys[0];
-      message += ColorStrings[YellowColor] + "\"";
+      hud->setAlert(3, TextUtils::format("%sTo toggle the console hit \"%s%s%s\"",
+					 ColorStrings[YellowColor].c_str(),
+					 ColorStrings[WhiteColor].c_str(),
+					 keys[0].c_str(),
+					 ColorStrings[YellowColor].c_str()).c_str(),
+		    2.0f, true);
     } else {
-      message += " bind a key to Toggle Console";
+      hud->setAlert(3, TextUtils::format("%sTo toggle the console bind a key "
+					 "to Toggle Console",
+					 ColorStrings[YellowColor].c_str()).c_str(),
+		    2.0f, true);
     }
-
-    // can't use a console message for this one
-    hud->setAlert(3, message.c_str(), 2.0f, true);
   }
 }
 
