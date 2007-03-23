@@ -2721,11 +2721,273 @@ static void handleScore(void *msg)
   }
 }
 
+static void handleTeleport(void* msg)
+{
+  PlayerId id;
+  uint16_t from, to;
+  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUShort(msg, from);
+  msg = nboUnpackUShort(msg, to);
+  Player* tank = lookupPlayer(id);
+  if (tank && tank != myTank) {
+    int face;
+    const Teleporter* teleporter = world->getTeleporter(int(to), face);
+    const float* pos = teleporter->getPosition();
+    tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
+    playWorldSound(SFX_TELEPORT, pos);
+  }
+}
+
+static void handleTransferFlag(void *msg)
+{
+  PlayerId fromId, toId;
+  unsigned short flagIndex;
+  msg = nboUnpackUByte(msg, fromId);
+  msg = nboUnpackUByte(msg, toId);
+  msg = nboUnpackUShort(msg, flagIndex);
+  msg = world->getFlag(int(flagIndex)).unpack(msg);
+  unsigned char t = 0;
+  msg = nboUnpackUByte(msg,t);
+  Player* fromTank = lookupPlayer(fromId);
+  Player* toTank = lookupPlayer(toId);
+  handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
+}
+
+static void handleMessage(void *msg)
+{
+  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
+
+  PlayerId src;
+  PlayerId dst;
+  msg = nboUnpackUByte(msg, src);
+  msg = nboUnpackUByte(msg, dst);
+  Player* srcPlayer = lookupPlayer(src);
+  Player* dstPlayer = lookupPlayer(dst);
+  TeamColor dstTeam = PlayerIdToTeam(dst);
+  bool toAll = (dst == AllPlayers);
+  bool fromServer = (src == ServerPlayer);
+  bool toAdmin = (dst == AdminPlayers);
+  std::string dstName;
+
+  const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
+  if (dstPlayer){
+    dstName = dstPlayer->getCallSign();
+  } else if (toAdmin){
+    dstName = "Admin";
+  } else {
+    dstName = "(UNKNOWN)";
+  }
+  std::string fullMsg;
+
+  bool ignore = false;
+  unsigned int i;
+  for (i = 0; i < silencePlayers.size(); i++) {
+    const std::string &silenceCallSign = silencePlayers[i];
+    if (srcName == silenceCallSign || "*" == silenceCallSign) {
+      ignore = true;
+      break;
+    }
+  }
+
+  if (ignore) {
+#ifdef DEBUG
+    // to verify working
+    std::string msg2 = "Ignored Msg";
+    if (silencePlayers[i] != "*") {
+      msg2 += " from " + silencePlayers[i];
+    } else {
+      //if * just echo a generic Ignored
+    }
+    addMessage(NULL,msg2);
+#endif
+    return;
+  }
+
+  if (fromServer) {
+    /* if the server tells us that we need to identify, and we have
+     * already stored a password key for this server -- send it on
+     * over back to auto-identify.
+     */
+    static const char passwdRequest[] = "Identify with /identify";
+    if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
+      const std::string passwdKeys[] = {
+	TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
+	TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
+	TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
+	TextUtils::format("%s", startupInfo.serverName),
+	TextUtils::format("%s", startupInfo.callsign),
+	"@" // catch-all for all callsign/server/ports
+      };
+
+      for (size_t j = 0; j < countof(passwdKeys); j++) {
+	if (BZDB.isSet(passwdKeys[j])) {
+	  char messageBuffer[MessageLen];
+	  memset(messageBuffer, 0, MessageLen);
+	  std::string passwdResponse = "/identify "
+	    + BZDB.get(passwdKeys[j]);
+	  addMessage(0, ("Autoidentifying with password stored for "
+			 + passwdKeys[j]).c_str(), 2, false);
+	  strncpy(messageBuffer,
+		  passwdResponse.c_str(),
+		  MessageLen);
+	  serverLink->sendMessage(ServerPlayer, messageBuffer);
+	  break;
+	}
+      }
+    }
+  }
+
+  // if filtering is turned on, filter away the goo
+  if (wordfilter != NULL) {
+    wordfilter->filter((char *)msg);
+  }
+
+  std::string origText = stripAnsiCodes(std::string((char*)msg));
+  std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
+
+  if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||
+      dstTeam == myTank->getTeam()) {
+    // message is for me
+    std::string colorStr;
+    if (srcPlayer == NULL) {
+      colorStr += ColorStrings[RogueTeam];
+    } else {
+      const PlayerId pid = srcPlayer->getId();
+      if (pid < 200) {
+	if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+	  colorStr += ColorStrings[srcPlayer->getTeam()];
+	else
+	  colorStr += ColorStrings[RogueTeam];
+      } else if (pid == ServerPlayer) {
+	colorStr += ColorStrings[YellowColor];
+      } else {
+	colorStr += ColorStrings[CyanColor]; // replay observers
+      }
+    }
+
+    fullMsg += colorStr;
+
+    // display action messages differently
+    bool isAction = false;
+    if ((text[0] == '*') && (text[1] == ' ') &&
+	(text[text.size() - 1] == '*') &&
+	(text[text.size() - 2] == '\t')) {
+      isAction = true;
+      text = text.substr(2, text.size() - 4);
+    }
+
+    // play a sound on a message not from self or server
+    bool playSound = true;
+    if (fromServer) {
+      // play no sounds from server if beeping is turned off
+      if (!BZDB.isTrue("beepOnServerMsg")) {
+	playSound = false;
+      }
+    } else if (srcPlayer == myTank) {
+      // don't play sounds for messages from self
+      playSound = false;
+    }
+
+    // direct message to or from me
+    if (dstPlayer) {
+      // talking to myself? that's strange
+      if (dstPlayer == myTank && srcPlayer == myTank) {
+	fullMsg = text;
+      } else {
+	if (BZDB.get("killerhighlight") == "1")
+	  fullMsg += ColorStrings[PulsatingColor];
+	else if (BZDB.get("killerhighlight") == "2")
+	  fullMsg += ColorStrings[UnderlineColor];
+
+	if (srcPlayer == myTank) {
+	  if (isAction) {
+	    fullMsg += "[->" + text + "]";
+	  } else {
+	    fullMsg += "[->" + dstName + "]";
+	    fullMsg += ColorStrings[ResetColor] + " ";
+	    fullMsg += ColorStrings[CyanColor] + text;
+	  }
+	} else {
+	  if (isAction) {
+	    fullMsg += "[" + text + "->]";
+	  } else {
+	    fullMsg += "[" + srcName + "->]";
+	    fullMsg += ColorStrings[ResetColor] + " ";
+	    fullMsg += ColorStrings[CyanColor] + text;
+	  }
+
+	  if (srcPlayer)
+	    myTank->setRecipient(srcPlayer);
+
+	  // play a sound on a private message not from self or server
+	  if (playSound) {
+	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	      playLocalSound( SFX_MESSAGE_PRIVATE );
+	    lastMsg = TimeKeeper::getTick();
+	  }
+	}
+      }
+    } else { // !dstPlayer
+      // team / admin message
+      if (toAdmin) {
+
+	// play a sound on a private message
+	if (playSound) {
+	  static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	  if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	    playLocalSound( SFX_MESSAGE_ADMIN );
+	  lastMsg = TimeKeeper::getTick();
+	}
+
+	fullMsg += "[Admin] ";
+      } else if (dstTeam != NoTeam) {
+#ifdef BWSUPPORT
+	fullMsg = "[to ";
+	fullMsg += Team::getName(TeamColor(dstTeam));
+	fullMsg += "] ";
+#else
+	fullMsg += "[Team] ";
+#endif
+
+	// play a sound on a team message
+	if (playSound) {
+	  static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	  if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	    playLocalSound(SFX_MESSAGE_TEAM);
+	  lastMsg = TimeKeeper::getTick();
+	}
+      }
+
+      // display action messages differently
+      if (isAction) {
+	fullMsg += text;
+      } else {
+	fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
+      }
+    }
+
+    std::string oldcolor = "";
+    if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
+      oldcolor = ColorStrings[RogueTeam];
+    else if (srcPlayer->getTeam() == ObserverTeam)
+      oldcolor = ColorStrings[CyanColor];
+    else
+      oldcolor = ColorStrings[srcPlayer->getTeam()];
+    if (fromServer)
+      addMessage(NULL, fullMsg, 2, false, oldcolor.c_str());
+    else
+      addMessage(NULL, fullMsg, 1, false, oldcolor.c_str());
+
+    if (!srcPlayer || srcPlayer!=myTank)
+      hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
+  }
+}
+
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
-  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
     case MsgSetShot:
@@ -2869,269 +3131,19 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       break;
 
     case MsgSetVar:
-      handleMsgSetVars(msg);
+      // XXX: why does this return msg again?
+      msg = handleMsgSetVars(msg);
       break;
 
-    case MsgTeleport: {
-      PlayerId id;
-      uint16_t from, to;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, from);
-      msg = nboUnpackUShort(msg, to);
-      Player* tank = lookupPlayer(id);
-      if (tank && tank != myTank) {
-	int face;
-	const Teleporter* teleporter = world->getTeleporter(int(to), face);
-	const float* pos = teleporter->getPosition();
-	tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-	playWorldSound(SFX_TELEPORT, pos);
-      }
+    case MsgTeleport:
+      handleTeleport(msg);
       break;
-    }
 
     case MsgTransferFlag:
-      {
-	PlayerId fromId, toId;
-	unsigned short flagIndex;
-	msg = nboUnpackUByte(msg, fromId);
-	msg = nboUnpackUByte(msg, toId);
-	msg = nboUnpackUShort(msg, flagIndex);
-	msg = world->getFlag(int(flagIndex)).unpack(msg);
-	unsigned char t = 0;
-	msg = nboUnpackUByte(msg,t);
-	Player* fromTank = lookupPlayer(fromId);
-	Player* toTank = lookupPlayer(toId);
-	handleFlagTransferred( fromTank, toTank, flagIndex, (ShotType)t);
-	break;
-      }
-
+      handleTransferFlag(msg);
+      break;
 
     case MsgMessage: {
-      PlayerId src;
-      PlayerId dst;
-      msg = nboUnpackUByte(msg, src);
-      msg = nboUnpackUByte(msg, dst);
-      Player* srcPlayer = lookupPlayer(src);
-      Player* dstPlayer = lookupPlayer(dst);
-      TeamColor dstTeam = PlayerIdToTeam(dst);
-      bool toAll = (dst == AllPlayers);
-      bool fromServer = (src == ServerPlayer);
-      bool toAdmin = (dst == AdminPlayers);
-      std::string dstName;
-
-      const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
-      if (dstPlayer){
-	dstName = dstPlayer->getCallSign();
-      } else if (toAdmin){
-	dstName = "Admin";
-      } else {
-	dstName = "(UNKNOWN)";
-      }
-      std::string fullMsg;
-
-      bool ignore = false;
-      unsigned int i;
-      for (i = 0; i < silencePlayers.size(); i++) {
-	const std::string &silenceCallSign = silencePlayers[i];
-	if (srcName == silenceCallSign || "*" == silenceCallSign) {
-	  ignore = true;
-	  break;
-	}
-      }
-
-      if (ignore) {
-#ifdef DEBUG
-	// to verify working
-	std::string msg2 = "Ignored Msg";
-	if (silencePlayers[i] != "*") {
-	  msg2 += " from " + silencePlayers[i];
-	} else {
-	  //if * just echo a generic Ignored
-	}
-	addMessage(NULL,msg2);
-#endif
-	break;
-      }
-
-      if (fromServer) {
-	/* if the server tells us that we need to identify, and we have
-	 * already stored a password key for this server -- send it on
-	 * over back to auto-identify.
-	 */
-	static const char passwdRequest[] = "Identify with /identify";
-	if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-	  const std::string passwdKeys[] = {
-	    TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
-	    TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-	    TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
-	    TextUtils::format("%s", startupInfo.serverName),
-	    TextUtils::format("%s", startupInfo.callsign),
-	    "@" // catch-all for all callsign/server/ports
-	  };
-
-	  for (size_t j = 0; j < countof(passwdKeys); j++) {
-	    if (BZDB.isSet(passwdKeys[j])) {
-	      char messageBuffer[MessageLen];
-	      memset(messageBuffer, 0, MessageLen);
-	      std::string passwdResponse = "/identify "
-		+ BZDB.get(passwdKeys[j]);
-	      addMessage(0, ("Autoidentifying with password stored for "
-			     + passwdKeys[j]).c_str(), 2, false);
-	      strncpy(messageBuffer,
-		      passwdResponse.c_str(),
-		      MessageLen);
-	      serverLink->sendMessage(ServerPlayer, messageBuffer);
-	      break;
-	    }
-	  }
-	}
-      }
-
-      // if filtering is turned on, filter away the goo
-      if (wordfilter != NULL) {
-	wordfilter->filter((char *)msg);
-      }
-
-      std::string origText = stripAnsiCodes(std::string((char*)msg));
-      std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
-
-      if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||
-	  dstTeam == myTank->getTeam()) {
-	// message is for me
-	std::string colorStr;
-	if (srcPlayer == NULL) {
-	  colorStr += ColorStrings[RogueTeam];
-	} else {
-	  const PlayerId pid = srcPlayer->getId();
-	  if (pid < 200) {
-	    if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	      colorStr += ColorStrings[srcPlayer->getTeam()];
-	    else
-	      colorStr += ColorStrings[RogueTeam];
-	  } else if (pid == ServerPlayer) {
-	    colorStr += ColorStrings[YellowColor];
-	  } else {
-	    colorStr += ColorStrings[CyanColor]; // replay observers
-	  }
-	}
-
-	fullMsg += colorStr;
-
-	// display action messages differently
-	bool isAction = false;
-	if ((text[0] == '*') && (text[1] == ' ') &&
-	    (text[text.size() - 1] == '*') &&
-	    (text[text.size() - 2] == '\t')) {
-	  isAction = true;
-	  text = text.substr(2, text.size() - 4);
-	}
-
-	// play a sound on a message not from self or server
-	bool playSound = true;
-	if (fromServer) {
-	  // play no sounds from server if beeping is turned off
-	  if (!BZDB.isTrue("beepOnServerMsg")) {
-	    playSound = false;
-	  }
-	} else if (srcPlayer == myTank) {
-	  // don't play sounds for messages from self
-	  playSound = false;
-	}
-
-	// direct message to or from me
-	if (dstPlayer) {
-	  // talking to myself? that's strange
-	  if (dstPlayer == myTank && srcPlayer == myTank) {
-	    fullMsg = text;
-	  } else {
-	    if (BZDB.get("killerhighlight") == "1")
-	      fullMsg += ColorStrings[PulsatingColor];
-	    else if (BZDB.get("killerhighlight") == "2")
-	      fullMsg += ColorStrings[UnderlineColor];
-
-	    if (srcPlayer == myTank) {
-	      if (isAction) {
-		fullMsg += "[->" + text + "]";
-	      } else {
-		fullMsg += "[->" + dstName + "]";
-		fullMsg += ColorStrings[ResetColor] + " ";
-		fullMsg += ColorStrings[CyanColor] + text;
-	      }
-	    } else {
-	      if (isAction) {
-		fullMsg += "[" + text + "->]";
-	      } else {
-		fullMsg += "[" + srcName + "->]";
-		fullMsg += ColorStrings[ResetColor] + " ";
-		fullMsg += ColorStrings[CyanColor] + text;
-	      }
-
-	      if (srcPlayer)
-		myTank->setRecipient(srcPlayer);
-
-	      // play a sound on a private message not from self or server
-	      if (playSound) {
-		static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-		if (TimeKeeper::getTick() - lastMsg > 2.0f)
-		  playLocalSound( SFX_MESSAGE_PRIVATE );
-		lastMsg = TimeKeeper::getTick();
-	      }
-	    }
-	  }
-	} else { // !dstPlayer
-	  // team / admin message
-	  if (toAdmin) {
-
-	    // play a sound on a private message
-	    if (playSound) {
-	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
-		playLocalSound( SFX_MESSAGE_ADMIN );
-	      lastMsg = TimeKeeper::getTick();
-	    }
-
-	    fullMsg += "[Admin] ";
-	  } else if (dstTeam != NoTeam) {
-#ifdef BWSUPPORT
-	    fullMsg = "[to ";
-	    fullMsg += Team::getName(TeamColor(dstTeam));
-	    fullMsg += "] ";
-#else
-	    fullMsg += "[Team] ";
-#endif
-
-	    // play a sound on a team message
-	    if (playSound) {
-	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
-		playLocalSound(SFX_MESSAGE_TEAM);
-	      lastMsg = TimeKeeper::getTick();
-	    }
-	  }
-
-	  // display action messages differently
-	  if (isAction) {
-	    fullMsg += text;
-	  } else {
-	    fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
-	  }
-	}
-
-	std::string oldcolor = "";
-	if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
-	  oldcolor = ColorStrings[RogueTeam];
-	else if (srcPlayer->getTeam() == ObserverTeam)
-	  oldcolor = ColorStrings[CyanColor];
-	else
-	  oldcolor = ColorStrings[srcPlayer->getTeam()];
-	if (fromServer)
-	  addMessage(NULL, fullMsg, 2, false, oldcolor.c_str());
-	else
-	  addMessage(NULL, fullMsg, 1, false, oldcolor.c_str());
-
-	if (!srcPlayer || srcPlayer!=myTank)
-	  hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
-      }
       break;
     }
 
