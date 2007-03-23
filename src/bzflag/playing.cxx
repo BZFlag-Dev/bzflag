@@ -1768,7 +1768,7 @@ static void handleRejectMessage(void *msg)
   printError(reason);
 }
 
-static void handleFlagNegotiation ( void *msg, uint16_t len )
+static void handleFlagNegotiation(void *msg, uint16_t len)
 {
   if (len > 0) {
     dumpMissingFlag((char *)msg, len);
@@ -1777,7 +1777,7 @@ static void handleFlagNegotiation ( void *msg, uint16_t len )
   serverLink->send(MsgWantSettings, 0, NULL);
 }
 
-static void handleGameSettings ( void *msg )
+static void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
     delete worldBuilder;
@@ -1789,7 +1789,7 @@ static void handleGameSettings ( void *msg )
   HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
 }
 
-static void handleCacheURL ( void *msg, uint16_t len )
+static void handleCacheURL(void *msg, uint16_t len)
 {
   char *cacheURL = new char[len];
   nboUnpackString(msg, cacheURL, len);
@@ -1797,7 +1797,7 @@ static void handleCacheURL ( void *msg, uint16_t len )
   delete [] cacheURL;
 }
 
-static void handleWantHash ( void* msg, uint16_t len )
+static void handleWantHash(void* msg, uint16_t len)
 {
   char *hexDigest = new char[len];
   nboUnpackString(msg, hexDigest, len);
@@ -1808,7 +1808,7 @@ static void handleWantHash ( void* msg, uint16_t len )
   delete [] hexDigest;
 }
 
-static void handleGetWorld ( void* msg, uint16_t len )
+static void handleGetWorld(void* msg, uint16_t len)
 {
   // create world
   uint32_t bytesLeft;
@@ -1931,7 +1931,7 @@ static void handleFlagUpdate(void *msg)
   }
 }
 
-static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
+static void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
   uint16_t team;
@@ -1945,7 +1945,7 @@ static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
   checkScores = true;
 }
 
-static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
+static void handleAliveMessage(void *msg)
 {
   PlayerId id;
   float pos[3], forward;
@@ -2004,7 +2004,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   }
 }
 
-static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
+static void handleAutoPilot(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
@@ -2020,7 +2020,7 @@ static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
   addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
 
-static void handleAllow ( void *msg, uint16_t /*len*/ )
+static void handleAllow(void *msg)
 {
   PlayerId id;
   LocalPlayer *localtank = NULL;
@@ -2067,7 +2067,7 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
   addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
 }
 
-static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool &checkScores )
+static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 {
   PlayerId victim, killer;
   FlagType* flagType;
@@ -2122,7 +2122,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
   if (killerLocal) {
     // local player did it
     if (shotId >= 0)
-      killerLocal->endShot(shotId, true);				// terminate the shot
+      killerLocal->endShot(shotId, true); // terminate the shot
 
     if (victimPlayer && killerLocal != victimPlayer) {
       if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams()) {
@@ -2269,7 +2269,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool human, bool 
   checkScores = true;
 }
 
-static void handleGrabFlag ( void *msg, uint16_t /*len*/ )
+static void handleGrabFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -2315,7 +2315,7 @@ static void handleGrabFlag ( void *msg, uint16_t /*len*/ )
   addMessage(tank, message);
 }
 
-static void handleDropFlag ( void *msg, uint16_t /*len*/)
+static void handleDropFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -2331,7 +2331,7 @@ static void handleDropFlag ( void *msg, uint16_t /*len*/)
   handleFlagDropped(tank);
 }
 
-static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
+static void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
   uint16_t flagIndex, team;
@@ -2422,7 +2422,7 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
   checkScores = true;
 }
 
-static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
+static void handleNewRabbit(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
@@ -2498,9 +2498,9 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
 #endif
 }
 
-static void handleSetTeam ( void *msg, uint16_t len )
+static void handleSetTeam(void *msg, uint16_t len)
 {
-  if ( len < 2 )
+  if (len < 2)
     return;
 
   PlayerId id;
@@ -2514,7 +2514,7 @@ static void handleSetTeam ( void *msg, uint16_t len )
   p->changeTeam((TeamColor)team);
 }
 
-static void handleNearFlag ( void *msg, uint16_t /*len*/ )
+static void handleNearFlag(void *msg)
 {
   float pos[3];
   std::string flagName;
@@ -2529,106 +2529,199 @@ static void handleNearFlag ( void *msg, uint16_t /*len*/ )
   }
 }
 
-static void handleWhatTimeIsIt(void *msg, uint16_t /*len*/ )
+static void handleWhatTimeIsIt(void *msg)
 {
-	float time = -1;
-	unsigned char tag = 0;
+  float time = -1;
+  unsigned char tag = 0;
 
-	msg = nboUnpackUByte(msg, tag);
-	msg = nboUnpackFloat(msg, time);
-	syncedClock.timeMessage(tag,time);
+  msg = nboUnpackUByte(msg, tag);
+  msg = nboUnpackFloat(msg, time);
+  syncedClock.timeMessage(tag,time);
 }
 
-static void handleSetShotType(void *msg, uint16_t /*len*/ )
+static void handleSetShotType(void *msg)
 {
-	PlayerId id;
-	msg = nboUnpackUByte(msg, id);
-	
-	unsigned char shotType = 0;
-	msg = nboUnpackUByte(msg, shotType);
+  PlayerId id;
+  msg = nboUnpackUByte(msg, id);
 
-	Player *p = lookupPlayer(id);
-	if (!p)
-		return;
-	p->setShotType((ShotType)shotType);
+  unsigned char shotType = 0;
+  msg = nboUnpackUByte(msg, shotType);
+
+  Player *p = lookupPlayer(id);
+  if (!p)
+    return;
+  p->setShotType((ShotType)shotType);
 }
 
-static void handleShotBegin(bool human, void *msg, uint16_t /*len*/ )
+static void handleShotBegin(bool human, void *msg)
 {
-	FiringInfo firingInfo;
+  PlayerId shooterid;
+  uint16_t id;
 
-	PlayerId		shooterid;
-	uint16_t		id;
+  msg = nboUnpackUByte(msg, shooterid);
+  msg = nboUnpackUShort(msg, id);
 
-	msg = nboUnpackUByte(msg, shooterid);
-	msg = nboUnpackUShort(msg, id);
+  FiringInfo firingInfo;
+  msg = firingInfo.unpack(msg);
+  firingInfo.shot.player = shooterid;
+  firingInfo.shot.id     = id;
 
-	msg = firingInfo.unpack(msg);
+  if (shooterid >= playerSize)
+    return;
 
-	firingInfo.shot.player = shooterid;
-	firingInfo.shot.id     = id;
+  RemotePlayer* shooter = player[shooterid];
 
-	if (shooterid >= playerSize)
-		return;
+  if (shooterid != ServerPlayer) {
+    if (shooter && player[shooterid]->getId() == shooterid) {
+      shooter->addShot(firingInfo);
 
-	RemotePlayer* shooter = player[shooterid];
+      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
+	float shotPos[3];
+	shooter->getMuzzle(shotPos);
 
-	if (shooterid != ServerPlayer) 
-	{
-		if (shooter && player[shooterid]->getId() == shooterid)
-		{
-			shooter->addShot(firingInfo);
+	// if you are driving with a tank in observer mode
+	// and do not want local shot effects,
+	// disable shot effects for that specific tank
+	if ((ROAM.getMode() != Roaming::roamViewFP) ||
+	    (!ROAM.getTargetTank()) ||
+	    (shooterid != ROAM.getTargetTank()->getId()) ||
+	    BZDB.isTrue("enableLocalShotEffect"))
+	      EFFECTS.addShotEffect(shooter->getColor(),
+				    shotPos,
+				    shooter->getAngle(),
+				    shooter->getVelocity());
+      }
+    } else {
+      return;
+    }
+  }
 
-			if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
-			{
-				float shotPos[3];
-				shooter->getMuzzle(shotPos);
+  if (human) {
+    const float* pos = firingInfo.shot.pos;
+    const bool importance = false;
+    const bool localSound = isViewTank(shooter);
 
-				// if you are driving with a tank in observer mode
-				// and do not want local shot effects,
-				// disable shot effects for that specific tank
-				if ((ROAM.getMode() != Roaming::roamViewFP) || (!ROAM.getTargetTank()) || (shooterid != ROAM.getTargetTank()->getId()) || BZDB.isTrue("enableLocalShotEffect"))
-						EFFECTS.addShotEffect(shooter->getColor(), shotPos, shooter->getAngle(), shooter->getVelocity());
-			}
-		}
-		else
-			return;
-	}
+    switch (firingInfo.shotType) {
+      default:
+	playSound(SFX_FIRE, pos, importance, localSound);
+	break;
 
-	if (human) 
-	{
-		const float* pos = firingInfo.shot.pos;
-		const bool importance = false;
-		const bool localSound = isViewTank(shooter);
+      case ShockWaveShot:
+	playSound(SFX_SHOCK, pos, importance, localSound);
+	break;
 
-		switch(firingInfo.shotType)
-		{
-			default:
-				playSound(SFX_FIRE, pos, importance, localSound);
-				break;
+      case LaserShot:
+	playSound(SFX_LASER, pos, importance, localSound);
+	break;
 
-			case ShockWaveShot:
-				playSound(SFX_SHOCK, pos, importance, localSound);
-				break;
+      case GMShot:
+	playSound(SFX_MISSILE, pos, importance, localSound);
+	break;
 
-			case LaserShot:
-				playSound(SFX_LASER, pos, importance, localSound);
-				break;
+      case ThiefShot:
+	playSound(SFX_THIEF, pos, importance, localSound);
+	break;
 
-			case GMShot:
-				playSound(SFX_MISSILE, pos, importance, localSound);
-				break;
-
-			case ThiefShot:
-				playSound(SFX_THIEF, pos, importance, localSound);
-				break;
-
-		}
-	}
+    }
+  }
 }
 
-static void		handleServerMessage(bool human, uint16_t code,
-					    uint16_t len, void* msg)
+static void handleShotEnd(void *msg)
+{
+  PlayerId id;
+  int16_t shotId;
+  uint16_t reason;
+  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackShort(msg, shotId);
+  msg = nboUnpackUShort(msg, reason);
+  BaseLocalPlayer* localPlayer = getLocalPlayer(id);
+
+  if (localPlayer) {
+    localPlayer->endShot(int(shotId), false, reason == 0);
+  } else {
+    Player *pl = lookupPlayer(id);
+    if (pl)
+      pl->endShot(int(shotId), false, reason == 0);
+  }
+}
+
+static void handleHandicap(void *msg)
+{
+  PlayerId id;
+  uint8_t numHandicaps;
+  int16_t handicap;
+  msg = nboUnpackUByte(msg, numHandicaps);
+  for (uint8_t s = 0; s < numHandicaps; s++) {
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackShort(msg, handicap);
+    Player *sPlayer = NULL;
+    if (id == myTank->getId()) {
+      sPlayer = myTank;
+    } else {
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	sPlayer = getPlayerByIndex(i);
+      else
+	logDebugMessage(1,"Received handicap update for unknown player!\n");
+    }
+    if (sPlayer) {
+      // a relative score of -50 points will provide maximum handicap
+      float normalizedHandicap = float(handicap)
+	/ BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+
+      /* limit how much of a handicap is afforded, and only provide
+       * handicap advantages instead of disadvantages.
+       */
+      if (normalizedHandicap > 1.0f)
+	// advantage
+	normalizedHandicap  = 1.0f;
+      else if (normalizedHandicap < 0.0f)
+	// disadvantage
+	normalizedHandicap  = 0.0f;
+
+      sPlayer->setHandicap(normalizedHandicap);
+    }
+  }
+}
+
+static void handleScore(void *msg)
+{
+  uint8_t numScores;
+  PlayerId id;
+  uint16_t wins, losses, tks;
+  msg = nboUnpackUByte(msg, numScores);
+
+  for (uint8_t s = 0; s < numScores; s++) {
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, wins);
+    msg = nboUnpackUShort(msg, losses);
+    msg = nboUnpackUShort(msg, tks);
+
+    Player *sPlayer = NULL;
+    if (id == myTank->getId()) {
+      sPlayer = myTank;
+    } else {
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	sPlayer = getPlayerByIndex(i);
+      else
+	logDebugMessage(1,"Recieved score update for unknown player!\n");
+    }
+    if (sPlayer) {
+      if (sPlayer == myTank) {
+	  ExportInformation &ei = ExportInformation::instance();
+	  ei.setInformation("Score",
+			    TextUtils::format("%d (%d-%d) [%d]",
+					      wins - losses, wins, losses, tks),
+			    ExportInformation::eitPlayerStatistics,
+			    ExportInformation::eipPrivate);
+      }
+      sPlayer->changeScore(wins, losses, tks);
+    }
+  }
+}
+
+static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
@@ -2636,15 +2729,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
     case MsgSetShot:
-      handleSetShotType(msg,len);
+      handleSetShotType(msg);
       break;
 
     case MsgWhatTimeIsIt:
-      handleWhatTimeIsIt(msg,len);
+      handleWhatTimeIsIt(msg);
       break;
 
     case MsgNearFlag:
-      handleNearFlag(msg,len);
+      handleNearFlag(msg);
       break;
 
     case MsgSetTeam:
@@ -2679,7 +2772,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
 
     case MsgNegotiateFlags:
-      handleFlagNegotiation(msg,len);
+      handleFlagNegotiation(msg, len);
       break;
 
     case MsgGameSettings:
@@ -2724,139 +2817,60 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
 
     case MsgTeamUpdate:
-      handleTeamUpdate(msg,len,checkScores);
+      handleTeamUpdate(msg, checkScores);
       break;
 
     case MsgAlive:
-      handleAliveMessage(msg,len);
+      handleAliveMessage(msg);
       break;;
 
     case MsgAutoPilot:
-      handleAutoPilot(msg,len);
+      handleAutoPilot(msg);
       break;;
 
     case MsgAllow:
-      handleAllow(msg,len);
+      handleAllow(msg);
       break;
 
     case MsgKilled:
-      handleKilledMessage(msg,len,human,checkScores);
+      handleKilledMessage(msg, human, checkScores);
       break;;
 
     case MsgGrabFlag:
-      handleGrabFlag(msg,len);
+      handleGrabFlag(msg);
       break;
 
     case MsgDropFlag:
-      handleDropFlag(msg,len);
+      handleDropFlag(msg);
       break;
 
     case MsgCaptureFlag:
-      handleCaptureFlag(msg,len,checkScores);
+      handleCaptureFlag(msg, checkScores);
       break;
 
     case MsgNewRabbit:
-      handleNewRabbit(msg,len);
+      handleNewRabbit(msg);
       break;
 
     case MsgShotBegin:
-		handleShotBegin(human,msg,len);
+      handleShotBegin(human, msg);
       break;
 
-    case MsgShotEnd: {
-      PlayerId id;
-      int16_t shotId;
-      uint16_t reason;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackShort(msg, shotId);
-      msg = nboUnpackUShort(msg, reason);
-      BaseLocalPlayer* localPlayer = getLocalPlayer(id);
-
-      if (localPlayer)
-	localPlayer->endShot(int(shotId), false, reason == 0);
-      else {
-	Player *pl = lookupPlayer(id);
-	if (pl)
-	  pl->endShot(int(shotId), false, reason == 0);
-      }
+    case MsgShotEnd:
+      handleShotEnd(msg);
       break;
-    }
 
-    case MsgHandicap: {
-      PlayerId id;
-      uint8_t numHandicaps;
-      int16_t handicap;
-      msg = nboUnpackUByte(msg, numHandicaps);
-      for (uint8_t s = 0; s < numHandicaps; s++) {
-	msg = nboUnpackUByte(msg, id);
-	msg = nboUnpackShort(msg, handicap);
-	Player *sPlayer = NULL;
-	if (id == myTank->getId()) {
-	  sPlayer = myTank;
-	} else {
-	  int i = lookupPlayerIndex(id);
-	  if (i >= 0)
-	    sPlayer = getPlayerByIndex(i);
-	  else
-	    logDebugMessage(1,"Received handicap update for unknown player!\n");
-	}
-	if (sPlayer) {
-	  // a relative score of -50 points will provide maximum handicap
-	  float normalizedHandicap = float(handicap)
-	    / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
-
-	  /* limit how much of a handicap is afforded, and only provide
-	   * handicap advantages instead of disadvantages.
-	   */
-	  if (normalizedHandicap > 1.0f)
-	    // advantage
-	    normalizedHandicap  = 1.0f;
-	  else if (normalizedHandicap < 0.0f)
-	    // disadvantage
-	    normalizedHandicap  = 0.0f;
-
-	  sPlayer->setHandicap(normalizedHandicap);
-	}
-      }
-    }
-    case MsgScore: {
-      uint8_t numScores;
-      PlayerId id;
-      uint16_t wins, losses, tks;
-      msg = nboUnpackUByte(msg, numScores);
-
-      for (uint8_t s = 0; s < numScores; s++) {
-	msg = nboUnpackUByte(msg, id);
-	msg = nboUnpackUShort(msg, wins);
-	msg = nboUnpackUShort(msg, losses);
-	msg = nboUnpackUShort(msg, tks);
-
-	Player *sPlayer = NULL;
-	if (id == myTank->getId()) {
-	  sPlayer = myTank;
-	} else {
-	  int i = lookupPlayerIndex(id);
-	  if (i >= 0)
-	    sPlayer = getPlayerByIndex(i);
-	  else
-	    logDebugMessage(1,"Recieved score update for unknown player!\n");
-	}
-	if (sPlayer) {
-	  if (sPlayer == myTank) {
-	      ExportInformation &ei = ExportInformation::instance();
-	      ei.setInformation("Score", TextUtils::format("%d (%d-%d) [%d]", wins - losses, wins, losses, tks),
-		    ExportInformation::eitPlayerStatistics, ExportInformation::eipPrivate);
-	  }
-	  sPlayer->changeScore(wins, losses, tks);
-	}
-      }
+    case MsgHandicap:
+      handleHandicap(msg);
       break;
-    }
 
-    case MsgSetVar: {
-      msg = handleMsgSetVars(msg);
+    case MsgScore:
+      handleScore(msg);
       break;
-    }
+
+    case MsgSetVar:
+      handleMsgSetVars(msg);
+      break;
 
     case MsgTeleport: {
       PlayerId id;
