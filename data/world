@@ -34,7 +34,6 @@
 
   <meshfact name='mountains'>
     <plugin>genmeshfact</plugin>
-    <zuse/>
     <params>
       <v x="800" y="0" z="-800" u="0.000000" v="-0.100000" nx="-0.707083" ny="0" nz="0.707083"/>
       <v x="-800" y="0" z="-800" u="1.000000" v="-0.100000" nx="0.707083" ny="0" nz="0.707083"/>
@@ -100,6 +99,7 @@
         <material>mountain2</material>
       </submesh>
     </params>
+    <zuse/>
   </meshfact>
 
   <meshfact file="tank.xml"/>
@@ -149,6 +149,7 @@
       <zuse/>
       <staticpos/>
       <staticshape/>
+      <noshadows/>
     </meshobj>
 
     <meshobj name="mountains">
@@ -160,6 +161,7 @@
       <zuse/>
       <staticpos/>
       <staticshape/>
+      <noshadows/>
     </meshobj>
   </sector>
 
