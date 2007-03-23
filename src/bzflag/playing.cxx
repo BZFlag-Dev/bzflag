@@ -242,7 +242,7 @@ std::vector<std::string>& getSilenceList()
 
 // try to select the next recipient in the specified direction
 // eventually avoiding robots
-void selectNextRecipient (bool forward, bool robotIn)
+void selectNextRecipient(bool forward, bool robotIn)
 {
   LocalPlayer *my = LocalPlayer::getMyTank();
   const Player *recipient = my->getRecipient();
@@ -416,14 +416,13 @@ SceneRenderer*		getSceneRenderer()
 
 void			setSceneDatabase()
 {
-  SceneDatabase *scene; // FIXME - test the zbuffer here
-
+  // FIXME - test the zbuffer here
   // delete the old database
   sceneRenderer->setSceneDatabase(NULL);
 
   // make the scene, and record the processing time
   TimeKeeper startTime = TimeKeeper::getCurrent();
-  scene = sceneBuilder->make(world);
+  SceneDatabase *scene = sceneBuilder->make(world);
   float elapsed = float(TimeKeeper::getCurrent() - startTime);
 
   // print debugging info
@@ -1004,15 +1003,16 @@ static void		doEvent(BzfDisplay *disply)
 void		addMessage(const Player *_player, const std::string& msg,
 			   int mode, bool highlight, const char* oldColor)
 {
-  std::string fullMessage;
+  std::string prefix;
+  std::string message;
 
   if (BZDB.isTrue("colorful")) {
     if (_player) {
       if (highlight) {
 	if (BZDB.get("killerhighlight") == "1")
-	  fullMessage += ColorStrings[PulsatingColor];
+	  prefix += ColorStrings[PulsatingColor];
 	else if (BZDB.get("killerhighlight") == "2")
-	  fullMessage += ColorStrings[UnderlineColor];
+	  prefix += ColorStrings[UnderlineColor];
       }
       const PlayerId pid = _player->getId();
       if (pid < 200) {
@@ -1021,41 +1021,44 @@ void		addMessage(const Player *_player, const std::string& msg,
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
 	}
-	fullMessage += ColorStrings[color];
+	prefix += ColorStrings[color];
       } else if (pid == ServerPlayer) {
-	fullMessage += ColorStrings[YellowColor];
+	prefix += ColorStrings[YellowColor];
       } else {
-	fullMessage += ColorStrings[CyanColor]; //replay observers
+	prefix += ColorStrings[CyanColor]; //replay observers
       }
-      fullMessage += _player->getCallSign();
+      prefix += _player->getCallSign();
 
       if (highlight)
-	fullMessage += ColorStrings[ResetColor];
+	prefix += ColorStrings[ResetColor];
 #ifdef BWSUPPORT
-      fullMessage += " (";
-      fullMessage += Team::getName(_player->getTeam());
-      fullMessage += ")";
+      prefix += " (";
+      prefix += Team::getName(_player->getTeam());
+      prefix += ")";
 #endif
-      fullMessage += ColorStrings[DefaultColor] + ": ";
+      prefix += ColorStrings[DefaultColor] + ": ";
     }
-    fullMessage += msg;
+    message = msg;
   } else {
     if (oldColor != NULL)
-      fullMessage = oldColor;
+      prefix = oldColor;
 
     if (_player) {
-      fullMessage += _player->getCallSign();
+      prefix += _player->getCallSign();
 
 #ifdef BWSUPPORT
-      fullMessage += " (";
-      fullMessage += Team::getName(_player->getTeam());
-      fullMessage += ")";
+      prefix += " (";
+      prefix += Team::getName(_player->getTeam());
+      prefix += ")";
 #endif
-      fullMessage += ": ";
+      prefix += ": ";
     }
-    fullMessage += stripAnsiCodes(msg);
+    message = stripAnsiCodes(msg);
   }
-  controlPanel->addMessage(fullMessage, mode);
+  controlPanel->addMessage(TextUtils::format("%s%s",
+					     prefix.c_str(),
+					     message.c_str()),
+			   mode);
 }
 
 static void		updateNumPlayers()
@@ -1409,35 +1412,33 @@ int curlProgressFunc(void* /*clientp*/,
 		     double /*ultotal*/, double /*ulnow*/)
 {
   // FIXME: beaucoup cheeze here in the aborting style
-  //	we should be using async dns and multi-curl
+  // we should be using async dns and multi-curl
 
-  // abort the download?
+  // run an inner main loop to check if we should abort
   BzfEvent event;
-  if (display->isEventPending()) {
-    if (display->peekEvent(event)) {
-      switch (event.type) {
-	case BzfEvent::Quit:
-	  return 1;		    // terminate the curl call
-	case BzfEvent::KeyDown:
-	  display->getEvent(event); // flush the event
-	  if (event.keyDown.ascii == 27) {
-	    return 1;		    // terminate the curl call
-	  }
-	  break;
-	case BzfEvent::KeyUp:
-	  display->getEvent(event); // flush the event
-	  break;
-	case BzfEvent::MouseMove:
-	  display->getEvent(event); // flush the event
-	  break;
-	case BzfEvent::Unset:
-	case BzfEvent::Map:
-	case BzfEvent::Unmap:
-	case BzfEvent::Redraw:
-	case BzfEvent::Resize:
-	  // leave the event, it might be important
-	  break;
-      }
+  if (display->isEventPending() && display->peekEvent(event)) {
+    switch (event.type) {
+      case BzfEvent::Quit:
+	return 1; // terminate the curl call
+      case BzfEvent::KeyDown:
+	display->getEvent(event); // flush the event
+	if (event.keyDown.ascii == 27) {
+	  return 1; // terminate the curl call
+	}
+	break;
+      case BzfEvent::KeyUp:
+	display->getEvent(event); // flush the event
+	break;
+      case BzfEvent::MouseMove:
+	display->getEvent(event); // flush the event
+	break;
+      case BzfEvent::Unset:
+      case BzfEvent::Map:
+      case BzfEvent::Unmap:
+      case BzfEvent::Redraw:
+      case BzfEvent::Resize:
+	// leave the event, it might be important
+	break;
     }
   }
 
@@ -1446,9 +1447,9 @@ int curlProgressFunc(void* /*clientp*/,
   if ((int)dltotal > 0) {
     percentage = 100.0 * dlnow / dltotal;
   }
-  char buffer[128];
-  sprintf (buffer, "%2.1f%% (%i/%i)", percentage, (int)dlnow, (int)dltotal);
-  HUDDialogStack::get()->setFailedMessage(buffer);
+  HUDDialogStack::get()->setFailedMessage(
+    TextUtils::format("%2.1f%% (%i/%i)",
+		      percentage, (int) dlnow, (int) dltotal).c_str());
 
   return 0;
 }
@@ -1456,7 +1457,7 @@ int curlProgressFunc(void* /*clientp*/,
 static void loadCachedWorld()
 {
   // can't get a cache from nothing
-  if (worldCachePath == std::string("")) {
+  if (worldCachePath.size() == 0) {
     joiningGame = false;
     return;
   }
@@ -1546,13 +1547,13 @@ static void loadCachedWorld()
 
 class WorldDownLoader : private cURLManager {
 public:
-  void	 start(char * hexDigest);
+  void start(char *hexDigest);
 private:
-  void	 askToBZFS();
+  void askToBZFS();
   virtual void finalization(char *data, unsigned int length, bool good);
 };
 
-void WorldDownLoader::start(char * hexDigest)
+void WorldDownLoader::start(char *hexDigest)
 {
   if (isCached(hexDigest)) {
     loadCachedWorld();
@@ -1630,11 +1631,9 @@ static void dumpMissingFlag(char *buf, uint16_t len)
     buf += 2;
   }
 
-  std::vector<std::string> args;
-  args.push_back(flags);
   HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format("Flags not supported by this client: {1}",
-		       &args).c_str());
+    (TextUtils::format("Flags not supported by this client: %s",
+		       flags.c_str()).c_str());
 }
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
@@ -1643,10 +1642,10 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   int doneSize  = worldPtr + len;
   if (cacheOut)
     cacheOut->write((char *)buf, len);
-  HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format
-     ("Downloading World (%2d%% complete/%d kb remaining)...",
-      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
+  HUDDialogStack::get()->setFailedMessage(
+    TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
+                      (100 * doneSize / totalSize),
+		      bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
@@ -1703,7 +1702,7 @@ static void handleResourceFetch (void* msg)
 }
 
 
-static void handleCustomSound ( void *msg )
+static void handleCustomSound(void *msg)
 {
   // bail out if we don't want to do remote sounds
   if (BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds"))
@@ -1715,9 +1714,9 @@ static void handleCustomSound ( void *msg )
   uint16_t stringLen;
   std::string soundName;
 
-  buf = nboUnpackUShort (msg, soundType);   // the type
-  buf = nboUnpackUShort (buf, stringLen);   // how long our str is
-  buf = nboUnpackString (buf, buffer, stringLen);
+  buf = nboUnpackUShort(msg, soundType);
+  buf = nboUnpackUShort(buf, stringLen);
+  buf = nboUnpackString(buf, buffer, stringLen);
 
   buffer[stringLen] = '\0';
   soundName = buffer;
@@ -1732,7 +1731,7 @@ static void handleCustomSound ( void *msg )
 }
 
 
-static void handleSuperKill ( void *msg )
+static void handleSuperKill(void *msg)
 {
   uint8_t id;
   nboUnpackUByte(msg, id);
@@ -1755,7 +1754,7 @@ static void handleSuperKill ( void *msg )
   }
 }
 
-static void handleRejectMessage ( void *msg )
+static void handleRejectMessage(void *msg)
 {
   void *buf;
   char buffer[MessageLen];
@@ -1831,7 +1830,7 @@ static void handleGetWorld ( void* msg, uint16_t len )
     markOld(worldCachePath);
 }
 
-static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
+static void handleTimeUpdate(void* msg)
 {
   int32_t timeLeft;
   msg = nboUnpackInt(msg, timeLeft);
@@ -1851,7 +1850,7 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
   }
 }
 
-static void handleScoreOver ( void *msg, uint16_t /*len*/ )
+static void handleScoreOver(void *msg)
 {
   // unpack packet
   PlayerId id;
@@ -1865,18 +1864,16 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
   if (team == (uint16_t)NoTeam) {
     // a player won
     if (player) {
-      msg2 = _player->getCallSign();
-      msg2 += " (";
-      msg2 += Team::getName(_player->getTeam());
-      msg2 += ")";
+      msg2 = TextUtils::format("%s (%s) won the game",
+			       _player->getCallSign(),
+			       Team::getName(_player->getTeam()));
     } else {
-      msg2 = "[unknown player]";
+      msg2 = "[unknown player] won the game";
     }
   } else {
-    msg2 = Team::getName(TeamColor(team));		// a team won
+    msg2 = TextUtils::format("%s won the game",
+                             Team::getName(TeamColor(team)));
   }
-
-  msg2 += " won the game";
 
   gameOver = true;
   hud->setTimeLeft((uint32_t)~0);
@@ -1892,7 +1889,7 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 #endif
 }
 
-static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
+static void handleAddPlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
@@ -1913,7 +1910,7 @@ static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
   }
 }
 
-static void handleRemovePlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
+static void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
@@ -1922,7 +1919,7 @@ static void handleRemovePlayer ( void	*msg, uint16_t /*len*/, bool &checkScores 
     checkScores = true;
 }
 
-static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
+static void handleFlagUpdate(void *msg)
 {
   uint16_t count;
   uint16_t flagIndex;
@@ -2638,14 +2635,13 @@ static void		handleServerMessage(bool human, uint16_t code,
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
+    case MsgSetShot:
+      handleSetShotType(msg,len);
+      break;
 
-	case MsgSetShot:
-		handleSetShotType(msg,len);
-		break;
-
-	case MsgWhatTimeIsIt:
-	  handleWhatTimeIsIt(msg,len);
-	  break;
+    case MsgWhatTimeIsIt:
+      handleWhatTimeIsIt(msg,len);
+      break;
 
     case MsgNearFlag:
       handleNearFlag(msg,len);
@@ -2691,15 +2687,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
 
     case MsgCacheURL:
-      handleCacheURL(msg,len);
+      handleCacheURL(msg, len);
       break;
 
     case MsgWantWHash:
-      handleWantHash(msg,len);
+      handleWantHash(msg, len);
       break;
 
     case MsgGetWorld:
-      handleGetWorld(msg,len);
+      handleGetWorld(msg, len);
       break;
 
     case MsgGameTime:
@@ -2708,23 +2704,23 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
 
     case MsgTimeUpdate:
-      handleTimeUpdate(msg,len);
+      handleTimeUpdate(msg);
       break;
 
     case MsgScoreOver:
-      handleScoreOver(msg,len);
+      handleScoreOver(msg);
       break;
 
     case MsgAddPlayer:
-      handleAddPlayer(msg,len,checkScores);
+      handleAddPlayer(msg, checkScores);
       break;
 
     case MsgRemovePlayer:
-      handleRemovePlayer(msg,len,checkScores);
+      handleRemovePlayer(msg, checkScores);
       break;
 
     case MsgFlagUpdate:
-      handleFlagUpdate(msg,len);
+      handleFlagUpdate(msg);
       break;
 
     case MsgTeamUpdate:
