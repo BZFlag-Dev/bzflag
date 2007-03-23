@@ -77,7 +77,7 @@ typedef enum
 	bz_eKickEvent,
 	bz_eKillEvent,
 	bz_ePlayerPausedEvent,
-	bz_eMessagFilteredEvent,
+	bz_eMessageFilteredEvent,
 	bz_eGameStartEvent,
 	bz_eGameEndEvent,
 	bz_eSlashCommandEvent,
@@ -808,7 +808,7 @@ class BZF_API bz_MessageFilteredEventData_V1 : public bz_EventData
 public:
 	bz_MessageFilteredEventData_V1() : bz_EventData()
 	{
-		eventType = bz_eMessagFilteredEvent;
+		eventType = bz_eMessageFilteredEvent;
 		player = -1;
 		eventTime = 0.0;
 	}
