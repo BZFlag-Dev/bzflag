@@ -52,39 +52,6 @@
 
 static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.63f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.375f, 0.375f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.275f, 0.2f, 0.2f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.63f, 0.63f, 0.63f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.69f, 0.69f, 0.69f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.375f, 0.375f, 0.375f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f }
-			};
-
 const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
 				{ 1.0f, 0.875f, 0.0f, 1.0f },
 				{ 0.9f, 0.8f, 0.0f, 1.0f },
@@ -338,83 +305,32 @@ void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 }
 
 
-void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
+void SceneDatabaseBuilder::addBox(SceneDatabase*, BoxBuilding& o)
 {
   // this assumes boxes have six parts:  four sides, a roof, and a bottom.
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
-  TextureManager &tm = TextureManager::instance();
-  int    boxTexture = -1;
-  bool  useColorTexture[2] = {false,false};
+  float textureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
-  // try object, standard, then default
+  iMaterialWrapper *boxWallMaterial = NULL;
+  iMaterialWrapper *boxTopMaterial = NULL;
+
+  // try object, standard
   if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
-
-  useColorTexture[0] = boxTexture >= 0;
-
-  int boxTopTexture = -1;
+    boxWallMaterial = engine->FindMaterial(o.userTextures[0].c_str());
+  if (boxWallMaterial == NULL)
+    boxWallMaterial = engine->FindMaterial(BZDB.get("boxWallTexture").c_str());
 
   if (o.userTextures[1].size())
-    boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
-  if (boxTopTexture < 0)
-    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
-
-  useColorTexture[1] = boxTopTexture >= 0;
-
-  float texutureFactor = BZDB.eval("boxWallTexRepeat");
-  if (renderer->useQuality() >= 3)
-    texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
-
-  while ((node = ((part < 4) ? nodeGen->getNextNode(
-				-texutureFactor*boxTexWidth,
-				-texutureFactor*boxTexWidth, boxLOD) :
-    // I'm using boxTexHeight for roof since textures are same
-    // size and this number is available
-				nodeGen->getNextNode(
-				-boxTexHeight,
-				-boxTexHeight, boxLOD)))) {
-    node->setLightedModulateColor(boxLightedModulateColors[part]);
-    node->setMaterial(boxMaterial);
-    if (part < 4){
-      node->setTexture(boxTexture);
-    }
-    else{
-      node->setTexture(boxTopTexture);
-    }
-
-#ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
-    db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES
-
-    part = (part + 1) % 6;
-  }
-
-#ifndef SHELL_INSIDE_NODES
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode =
-    new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES
-
-  delete nodeGen;
+    boxTopMaterial = engine->FindMaterial(o.userTextures[1].c_str());
+  if (boxTopMaterial == NULL)
+    boxTopMaterial = engine->FindMaterial(BZDB.get("boxTopTexture").c_str());
 
   float        w = o.getWidth();
   float        b = o.getBreadth();
   float        h = o.getHeight();
   const float *p = o.getPosition();
   float        r = o.getRotation();
+
+  const float textureSize  = textureFactor * boxTexWidth;
 
   csRef<iMeshFactoryWrapper> boxFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
@@ -423,46 +339,120 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     = scfQueryInterface<iGeneralFactoryState>
     (boxFactory->GetMeshObjectFactory());
 
-  boxFactState->SetVertexCount(8);
+  csRef<iRenderBuffer> index_buffer_side;
+  csRef<iRenderBuffer> index_buffer_top;
+  index_buffer_side = csRenderBuffer::CreateIndexRenderBuffer
+    (24, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
+  index_buffer_top = csRenderBuffer::CreateIndexRenderBuffer
+    (12, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
 
-  boxFactState->GetVertices()[0].Set(-w, h, b);
-  boxFactState->GetVertices()[1].Set(-w, h,-b);
-  boxFactState->GetVertices()[2].Set( w, h,-b);
-  boxFactState->GetVertices()[3].Set( w, h, b);
+  boxFactState->SetVertexCount(24);
+
+  boxFactState->GetVertices()[0].Set( w, 0, b);
+  boxFactState->GetVertices()[1].Set(-w, 0, b);
+  boxFactState->GetVertices()[2].Set( w, h, b);
+  boxFactState->GetVertices()[3].Set(-w, h, b);
+  boxFactState->GetTexels()[0].Set(0, 0);
+  boxFactState->GetTexels()[1].Set(2 * w / textureSize, 0);
+  boxFactState->GetTexels()[2].Set(0, h / textureSize);
+  boxFactState->GetTexels()[3].Set(2 * w / textureSize, h / textureSize);
+
   boxFactState->GetVertices()[4].Set(-w, 0, b);
   boxFactState->GetVertices()[5].Set(-w, 0,-b);
-  boxFactState->GetVertices()[6].Set( w, 0,-b);
-  boxFactState->GetVertices()[7].Set( w, 0, b);
+  boxFactState->GetVertices()[6].Set(-w, h, b);
+  boxFactState->GetVertices()[7].Set(-w, h,-b);
+  boxFactState->GetTexels()[4].Set(0, 0);
+  boxFactState->GetTexels()[5].Set(2 * b / textureSize, 0);
+  boxFactState->GetTexels()[6].Set(0, h / textureSize);
+  boxFactState->GetTexels()[7].Set(2 * b / textureSize, h / textureSize);
 
-  boxFactState->GetTexels()[0].Set(0, 0);
-  boxFactState->GetTexels()[1].Set(1, 0);
-  boxFactState->GetTexels()[2].Set(0, 1);
-  boxFactState->GetTexels()[3].Set(1, 1);
-  boxFactState->GetTexels()[4].Set(1, 0);
-  boxFactState->GetTexels()[5].Set(0, 1);
-  boxFactState->GetTexels()[6].Set(1, 1);
-  boxFactState->GetTexels()[7].Set(0, 0);
+  boxFactState->GetVertices()[ 8].Set(-w, 0,-b);
+  boxFactState->GetVertices()[ 9].Set( w, 0,-b);
+  boxFactState->GetVertices()[10].Set(-w, h,-b);
+  boxFactState->GetVertices()[11].Set( w, h,-b);
+  boxFactState->GetTexels()[ 8].Set(0, 0);
+  boxFactState->GetTexels()[ 9].Set(2 * w / textureSize, 0);
+  boxFactState->GetTexels()[10].Set(0, h / textureSize);
+  boxFactState->GetTexels()[11].Set(2 * w / textureSize, h / textureSize);
 
-  boxFactState->SetTriangleCount(12);  
-  boxFactState->GetTriangles()[ 0].Set(0, 3, 1);
-  boxFactState->GetTriangles()[ 1].Set(3, 2, 1);
-  boxFactState->GetTriangles()[ 2].Set(4, 5, 7);
-  boxFactState->GetTriangles()[ 3].Set(5, 6, 7);
-  boxFactState->GetTriangles()[ 4].Set(0, 4, 3);
-  boxFactState->GetTriangles()[ 5].Set(4, 7, 3);
-  boxFactState->GetTriangles()[ 6].Set(1, 6, 5);
-  boxFactState->GetTriangles()[ 7].Set(1, 2, 6);
-  boxFactState->GetTriangles()[ 8].Set(0, 1, 5);
-  boxFactState->GetTriangles()[ 9].Set(0, 5, 4);
-  boxFactState->GetTriangles()[10].Set(2, 3, 7);
-  boxFactState->GetTriangles()[11].Set(2, 7, 6);
+  boxFactState->GetVertices()[12].Set( w, 0,-b);
+  boxFactState->GetVertices()[13].Set( w, 0, b);
+  boxFactState->GetVertices()[14].Set( w, h,-b);
+  boxFactState->GetVertices()[15].Set( w, h, b);
+  boxFactState->GetTexels()[12].Set(0, 0);
+  boxFactState->GetTexels()[13].Set(2 * b / textureSize, 0);
+  boxFactState->GetTexels()[14].Set(0, h / textureSize);
+  boxFactState->GetTexels()[15].Set(2 * b / textureSize, h / textureSize);
 
+  boxFactState->GetVertices()[16].Set( w, h, b);
+  boxFactState->GetVertices()[17].Set(-w, h, b);
+  boxFactState->GetVertices()[18].Set( w, h,-b);
+  boxFactState->GetVertices()[19].Set(-w, h,-b);
+  boxFactState->GetTexels()[16].Set(0, 0);
+  boxFactState->GetTexels()[17].Set(2 * w / boxTexHeight, 0);
+  boxFactState->GetTexels()[18].Set(0, 2 * b / boxTexHeight);
+  boxFactState->GetTexels()[19].Set(2 * w / boxTexHeight,
+				    2 * b / boxTexHeight);
+
+  boxFactState->GetVertices()[20].Set( w, 0, b);
+  boxFactState->GetVertices()[21].Set( w, 0,-b);
+  boxFactState->GetVertices()[22].Set(-w, 0, b);
+  boxFactState->GetVertices()[23].Set(-w, 0,-b);
+  boxFactState->GetTexels()[20].Set(0, 0);
+  boxFactState->GetTexels()[21].Set(2 * b / boxTexHeight, 0);
+  boxFactState->GetTexels()[22].Set(0, 2 * w / boxTexHeight);
+  boxFactState->GetTexels()[23].Set(2 * b / boxTexHeight,
+				    2 * w / boxTexHeight);
+
+  {
+    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_side);
+    *index++ = 0;
+    *index++ = 2;
+    *index++ = 1;
+    *index++ = 1;
+    *index++ = 2;
+    *index++ = 3;
+    *index++ = 4;
+    *index++ = 6;
+    *index++ = 5;
+    *index++ = 5;
+    *index++ = 6;
+    *index++ = 7;
+    *index++ = 8;
+    *index++ = 10;
+    *index++ = 9;
+    *index++ = 9;
+    *index++ = 10;
+    *index++ = 11;
+    *index++ = 12;
+    *index++ = 14;
+    *index++ = 13;
+    *index++ = 13;
+    *index++ = 14;
+    *index++ = 15;
+  }
+  boxFactState->AddSubMesh(index_buffer_side, boxWallMaterial, "Side");
+  {
+    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_top);
+    *index++ = 16;
+    *index++ = 18;
+    *index++ = 17;
+    *index++ = 17;
+    *index++ = 18;
+    *index++ = 19;
+    *index++ = 20;
+    *index++ = 22;
+    *index++ = 21;
+    *index++ = 21;
+    *index++ = 22;
+    *index++ = 23;
+  }
+  boxFactState->AddSubMesh(index_buffer_top, boxTopMaterial, "Top");
+  
   boxFactState->CalculateNormals();
 
   csRef<iMeshWrapper> boxMesh = engine->CreateMeshWrapper(boxFactory, "Box");
 
-  iMaterialWrapper *sideMaterial = engine->FindMaterial("boxwall");
-  boxMesh->GetMeshObject()->SetMaterialWrapper(sideMaterial);
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
     (boxMesh->GetMeshObject());
   meshstate->SetLighting(true);
@@ -621,7 +611,6 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 							   o.getHeight(),
 							   boxLOD)))) {
     if ((part % 5) != 0) {
-      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
       node->setMaterial(boxMaterial);
       node->setTexture(boxTexture);
     }
