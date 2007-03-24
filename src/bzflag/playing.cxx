@@ -3006,6 +3006,122 @@ static void handleReplayReset(void* msg, bool& checkScores)
   }
 }
 
+static void handleAdminInfo(void* msg)
+{
+  uint8_t numIPs;
+  msg = nboUnpackUByte(msg, numIPs);
+
+  /* if we're getting this, we have playerlist perm */
+  myTank->setPlayerList(true);
+
+  // replacement for the normal MsgAddPlayer message
+  if (numIPs == 1) {
+    uint8_t ipsize;
+    uint8_t index;
+    Address ip;
+    void* tmpMsg = msg; // leave 'msg' pointing at the first entry
+
+    tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
+    tmpMsg = nboUnpackUByte(tmpMsg, index);
+    tmpMsg = ip.unpack(tmpMsg);
+    int playerIndex = lookupPlayerIndex(index);
+    Player* tank = getPlayerByIndex(playerIndex);
+    if (!tank) {
+      return;
+    }
+
+    std::string name(tank->getCallSign());
+    std::string message("joining as ");
+    if (tank->getTeam() == ObserverTeam) {
+      message += "an observer";
+    } else {
+      switch (tank->getPlayerType()) {
+	case TankPlayer:
+	  message += "a tank";
+	  break;
+	case ComputerPlayer:
+	  message += "a robot tank";
+	  break;
+	default:
+	  message += "an unknown type";
+	  break;
+      }
+    }
+    message += " from " + ip.getDotNotation();
+    tank->setIpAddress(ip);
+    addMessage(tank, message);
+  }
+
+  // print fancy version to be easily found
+  if ((numIPs != 1) || (BZDB.evalInt("showips") > 0)) {
+    uint8_t playerId;
+    uint8_t addrlen;
+    Address addr;
+
+    for (int i = 0; i < numIPs; i++) {
+      msg = nboUnpackUByte(msg, addrlen);
+      msg = nboUnpackUByte(msg, playerId);
+      msg = addr.unpack(msg);
+
+      int playerIndex = lookupPlayerIndex(playerId);
+      Player *_player = getPlayerByIndex(playerIndex);
+      if (!_player) continue;
+      printIpInfo(_player, addr, "(join)");
+      _player->setIpAddress(addr); // save for the signoff message
+    } // end for loop
+  }
+}
+
+static void handlePlayerInfo(void* msg)
+{
+  uint8_t numPlayers;
+  int i;
+  msg = nboUnpackUByte(msg, numPlayers);
+  for (i = 0; i < numPlayers; ++i) {
+    PlayerId id;
+    msg = nboUnpackUByte(msg, id);
+    Player *p = lookupPlayer(id);
+    uint8_t info;
+    // parse player info bitfield
+    msg = nboUnpackUByte(msg, info);
+    if (!p)
+      continue;
+    p->setAdmin((info & IsAdmin) != 0);
+    p->setRegistered((info & IsRegistered) != 0);
+    p->setVerified((info & IsVerified) != 0);
+  }
+}
+
+static void handleNewPlayer(void* msg)
+{
+  uint8_t id;
+  msg = nboUnpackUByte(msg, id);
+#ifdef ROBOT
+  int i;
+  for (i = 0; i < MAX_ROBOTS; i++)
+    if (!robots[i])
+      break;
+  if (i >= MAX_ROBOTS) {
+    logDebugMessage(1,"Too much bots requested\n");
+    return;
+  }
+  robots[i] = new RobotPlayer(id,
+			      TextUtils::format("%s%2.2d", myTank->getCallSign(),
+						i).c_str(),
+			      serverLink,
+			      myTank->getEmailAddress());
+  robots[i]->setTeam(AutomaticTeam);
+  serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+			robots[i]->getCallSign(),
+			robots[i]->getEmailAddress(), "");
+  if (!numRobots) {
+    makeObstacleList();
+    RobotPlayer::setObstacleList(&obstacleList);
+  }
+  numRobots++;
+#endif
+}
+
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
@@ -3172,118 +3288,16 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       handleReplayReset(msg, checkScores);
       break;
 
-    case MsgAdminInfo: {
-      uint8_t numIPs;
-      msg = nboUnpackUByte(msg, numIPs);
-
-      /* if we're getting this, we have playerlist perm */
-      myTank->setPlayerList(true);
-
-      // replacement for the normal MsgAddPlayer message
-      if (numIPs == 1) {
-	uint8_t ipsize;
-	uint8_t index;
-	Address ip;
-	void* tmpMsg = msg; // leave 'msg' pointing at the first entry
-
-	tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
-	tmpMsg = nboUnpackUByte(tmpMsg, index);
-	tmpMsg = ip.unpack(tmpMsg);
-	int playerIndex = lookupPlayerIndex(index);
-	Player* tank = getPlayerByIndex(playerIndex);
-	if (!tank) {
-	  break;
-	}
-
-	std::string name(tank->getCallSign());
-	std::string message("joining as ");
-	if (tank->getTeam() == ObserverTeam) {
-	  message += "an observer";
-	} else {
-	  switch (tank->getPlayerType()) {
-	    case TankPlayer:
-	      message += "a tank";
-	      break;
-	    case ComputerPlayer:
-	      message += "a robot tank";
-	      break;
-	    default:
-	      message += "an unknown type";
-	      break;
-	  }
-	}
-	message += " from " + ip.getDotNotation();
-	tank->setIpAddress(ip);
-	addMessage(tank, message);
-      }
-
-      // print fancy version to be easily found
-      if ((numIPs != 1) || (BZDB.evalInt("showips") > 0)) {
-	uint8_t playerId;
-	uint8_t addrlen;
-	Address addr;
-
-	for (int i = 0; i < numIPs; i++) {
-	  msg = nboUnpackUByte(msg, addrlen);
-	  msg = nboUnpackUByte(msg, playerId);
-	  msg = addr.unpack(msg);
-
-	  int playerIndex = lookupPlayerIndex(playerId);
-	  Player *_player = getPlayerByIndex(playerIndex);
-	  if (!_player) continue;
-	  printIpInfo(_player, addr, "(join)");
-	  _player->setIpAddress(addr); // save for the signoff message
-	} // end for loop
-      }
+    case MsgAdminInfo:
+      handleAdminInfo(msg);
       break;
-    }
 
-    case MsgPlayerInfo: {
-      uint8_t numPlayers;
-      int i;
-      msg = nboUnpackUByte(msg, numPlayers);
-      for (i = 0; i < numPlayers; ++i) {
-	PlayerId id;
-	msg = nboUnpackUByte(msg, id);
-	Player *p = lookupPlayer(id);
-	uint8_t info;
-	// parse player info bitfield
-	msg = nboUnpackUByte(msg, info);
-	if (!p)
-	  continue;
-	p->setAdmin((info & IsAdmin) != 0);
-	p->setRegistered((info & IsRegistered) != 0);
-	p->setVerified((info & IsVerified) != 0);
-      }
+    case MsgPlayerInfo:
+      handlePlayerInfo(msg);
       break;
-    }
 
     case MsgNewPlayer:
-      uint8_t id;
-      msg = nboUnpackUByte(msg, id);
-#ifdef ROBOT
-      int i;
-      for (i = 0; i < MAX_ROBOTS; i++)
-	if (!robots[i])
-	  break;
-      if (i >= MAX_ROBOTS) {
-	logDebugMessage(1,"Too much bots requested\n");
-	break;
-      }
-      char callsign[CallSignLen];
-      snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), i);
-      robots[i] = new RobotPlayer(id, callsign, serverLink,
-				  myTank->getEmailAddress());
-      robots[i]->setTeam(AutomaticTeam);
-      serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-			    robots[i]->getCallSign(),
-			    robots[i]->getEmailAddress(), "");
-      if (!numRobots) {
-	makeObstacleList();
-	RobotPlayer::setObstacleList(&obstacleList);
-      }
-      numRobots++;
-#endif
+      handleNewPlayer(msg);
       break;
 
       // inter-player relayed message
@@ -3948,83 +3962,81 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
   return false;
 }
 
-bool inLockRange ( float angle, float distance, float bestDistance, RemotePlayer *player )
+bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
-	if ( player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth )
-		return false; // can't lock to paused, NR, or stealth
+  if (player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth)
+    return false; // can't lock to paused, NR, or stealth
 
-	if ( angle >=  BZDB.eval( StateDatabase::BZDB_LOCKONANGLE) )
-		return false;
+  if (angle >=  BZDB.eval(StateDatabase::BZDB_LOCKONANGLE))
+    return false;
 
-	if ( distance >= bestDistance )
-		return false;
+  if (distance >= bestDistance)
+    return false;
 
-	return true;
+  return true;
 }
 
 bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer *player )
 {
-	if (angle >= BZDB.eval( StateDatabase::BZDB_TARGETINGANGLE ) )// about 17 degrees
-		return false;
+  // usually about 17 degrees
+  if (angle >= BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE))
+    return false;
 
-	if ( distance > bestDistance )
-		return false;
+  if (distance > bestDistance)
+    return false;
 
-	if ( player->getFlag() == Flags::Stealth  )
-		return myTank->getFlag() == Flags::Seer;
+  if (player->getFlag() == Flags::Stealth)
+    return myTank->getFlag() == Flags::Seer;
 
-	return true;
+  return true;
 }
 
-void setLookAtMarker ( void )
+void setLookAtMarker(void)
 {
-	// get info about my tank
-	const float c = cosf(  - myTank->getAngle());
-	const float s = sinf(  - myTank->getAngle());
-	const float x0 = myTank->getPosition()[0];
-	const float y0 = myTank->getPosition()[1];
+  // get info about my tank
+  const float c = cosf(  - myTank->getAngle());
+  const float s = sinf(  - myTank->getAngle());
+  const float x0 = myTank->getPosition()[0];
+  const float y0 = myTank->getPosition()[1];
 
-	// initialize best target
-	Player *bestTarget = NULL;
-	float bestDistance = Infinity;
+  // initialize best target
+  Player *bestTarget = NULL;
+  float bestDistance = Infinity;
 
-	// figure out which tank is centered in my sights
-	for( int i = 0; i < curMaxPlayers; i++ )
-	{
-		if( !player[i] || !player[i]->isAlive())
+  // figure out which tank is centered in my sights
+  for(int i = 0; i < curMaxPlayers; i++) {
+    if (!player[i] || !player[i]->isAlive())
 			continue;
 
-		// compute position in my local coordinate system
-		const float *pos = player[i]->getPosition();
-		const float x = c *( pos[0] - x0 ) - s *( pos[1] - y0 );
-		const float y = s *( pos[0] - x0 ) + c *( pos[1] - y0 );
+    // compute position in my local coordinate system
+    const float *pos = player[i]->getPosition();
+    const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
+    const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
 
-		// ignore things behind me
-		if( x < 0.0f )
-			continue;
+    // ignore things behind me
+    if (x < 0.0f)
+      continue;
 
-		// get distance and sin(angle) from directly forward
-		const float d = hypotf( x, y );
-		const float a = fabsf( y / d );
+    // get distance and sin(angle) from directly forward
+    const float d = hypotf( x, y );
+    const float a = fabsf( y / d );
 
-		if (inLookRange(a,d,bestDistance,player[i]))
-		{
-			// is it better?
-			bestTarget = player[i];
-			bestDistance = d;
-		}
-	}
+    if (inLookRange(a, d, bestDistance, player[i])) {
+      // is it better?
+      bestTarget = player[i];
+      bestDistance = d;
+    }
+  }
 
-	if( !bestTarget )
-		return ;
+  if (!bestTarget)
+    return;
 
-	std::string label = bestTarget->getCallSign();
-	if (bestTarget->getFlag())
-	{
-		std::string flagName = bestTarget->getFlag()->flagAbbv;
-		label += std::string("(") + flagName + std::string(")");
-	}
-	hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,2.0f);
+  std::string label = bestTarget->getCallSign();
+  if (bestTarget->getFlag()) {
+    std::string flagName = bestTarget->getFlag()->flagAbbv;
+    label += std::string("(") + flagName + std::string(")");
+  }
+  hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,2.0f);
 }
 
 void setTarget()
