@@ -46,9 +46,6 @@ class BackgroundRenderer {
 
     void		resize();
 
-    bool		getBlank() const;
-    bool		getInvert() const;
-    bool		getSimpleGround() const;
     const GLfloat*	getSunDirection() const;
     void		setBlank(bool blank = true);
     void		setInvert(bool invert = true);
@@ -61,8 +58,6 @@ class BackgroundRenderer {
 
     int			getTriangleCount() const;
     void		resetTriangleCount();
-
-    std::string		userTextures[2];
   protected:
     void		drawSky(SceneRenderer&, bool mirror);
     void		drawSkybox();
@@ -180,29 +175,14 @@ class BackgroundRenderer {
 // BackgroundRenderer
 //
 
-inline bool		BackgroundRenderer::getBlank() const
-{
-  return blank;
-}
-
 inline void		BackgroundRenderer::setBlank(bool _blank)
 {
   blank = _blank;
 }
 
-inline bool		BackgroundRenderer::getInvert() const
-{
-  return invert;
-}
-
 inline void		BackgroundRenderer::setInvert(bool _invert)
 {
   invert = _invert;
-}
-
-inline bool		BackgroundRenderer::getSimpleGround() const
-{
-  return simpleGround;
 }
 
 inline void		BackgroundRenderer::setSimpleGround(bool _simple)
