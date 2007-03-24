@@ -268,7 +268,6 @@ void ServerList::addToList(ServerItem info, bool doCache)
 void                    ServerList::markFav(const std::string &serverAddress, bool fav)
 {
   for (int i = 0; i < (int)servers.size(); i++) {
-    ServerItem& server = servers[i];
     if (serverAddress == servers[i].getAddrName()) {
       servers[i].favorite = fav;
       break;
