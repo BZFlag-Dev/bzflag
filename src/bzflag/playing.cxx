@@ -151,7 +151,7 @@ PlayerId                msgDestination;
 
 static void		setHuntTarget();
 static void		setTankFlags();
-static void*		handleMsgSetVars(void *msg);
+static void		handleMsgSetVars(void *msg);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex, ShotType shotType );
 static void		enteringServer(void *buf);
@@ -2983,6 +2983,29 @@ static void handleMessage(void *msg)
   }
 }
 
+static void handleReplayReset(void* msg, bool& checkScores)
+{
+  int i;
+  unsigned char lastPlayer;
+  msg = nboUnpackUByte(msg, lastPlayer);
+
+  // remove players up to 'lastPlayer'
+  // any PlayerId above lastPlayer is a replay observers
+  for (i=0 ; i<lastPlayer ; i++) {
+    if (removePlayer (i)) {
+      checkScores = true;
+    }
+  }
+
+  // remove all of the flags
+  for (i=0 ; i<numFlags; i++) {
+    Flag& flag = world->getFlag(i);
+    flag.owner = (PlayerId) -1;
+    flag.status = FlagNoExist;
+    world->initFlag(i);
+  }
+}
+
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
@@ -3130,8 +3153,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       break;
 
     case MsgSetVar:
-      // XXX: why does this return msg again?
-      msg = handleMsgSetVars(msg);
+      handleMsgSetVars(msg);
       break;
 
     case MsgTeleport:
@@ -3142,32 +3164,13 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       handleTransferFlag(msg);
       break;
 
-    case MsgMessage: {
+    case MsgMessage:
+      handleMessage(msg);
       break;
-    }
 
-    case MsgReplayReset: {
-      int i;
-      unsigned char lastPlayer;
-      msg = nboUnpackUByte(msg, lastPlayer);
-
-      // remove players up to 'lastPlayer'
-      // any PlayerId above lastPlayer is a replay observers
-      for (i=0 ; i<lastPlayer ; i++) {
-	if (removePlayer (i)) {
-	  checkScores = true;
-	}
-      }
-
-      // remove all of the flags
-      for (i=0 ; i<numFlags; i++) {
-	Flag& flag = world->getFlag(i);
-	flag.owner = (PlayerId) -1;
-	flag.status = FlagNoExist;
-	world->initFlag (i);
-      }
+    case MsgReplayReset:
+      handleReplayReset(msg, checkScores);
       break;
-    }
 
     case MsgAdminInfo: {
       uint8_t numIPs;
@@ -3569,7 +3572,7 @@ static void		handleMyTankKilled(int reason)
 }
 #endif
 
-static void *handleMsgSetVars(void *msg)
+static void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
   uint8_t nameLen, valueLen;
@@ -3591,7 +3594,6 @@ static void *handleMsgSetVars(void *msg)
     BZDB.setPersistent(name, false);
     BZDB.setPermission(name, StateDatabase::Locked);
   }
-  return msg;
 }
 
 void handleFlagDropped(Player* tank)
