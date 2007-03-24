@@ -131,6 +131,11 @@ int ServerControl::loadConfig(const char *cmdLine)
     bz_debugMessagef(1, "ServerControl - No ResetServerAlwaysFile specified");
   else
     bz_debugMessagef(1, "ServerControl - Using ResetServerAlwaysFile: %s", resetServerAlwaysFilename.c_str());
+  // Announce Filtered Chat
+  if (announceFilteredMessages == "on")
+    bz_debugMessagef(1, "ServerControl - Announcing filtered chat messages on the admin channel");
+  else
+    bz_debugMessagef(1, "ServerControl - Not announcing filtered chat messages");
 
   /* Set the initial ban file access times */
   if (masterBanFilename != "")
@@ -210,7 +215,7 @@ void ServerControl::process( bz_EventData *eventData )
 	checkShutdown();
 	break;
       case bz_eMessageFilteredEvent:
-	if (announceFilteredMessages == "yes") {
+	if (announceFilteredMessages == "on") {
 	  player = bz_getPlayerByIndex( filteredData->player );
 	  if (player) {
 	    msg.str("");
