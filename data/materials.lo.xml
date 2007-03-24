@@ -73,6 +73,7 @@
       <shadervar name="tex diffuse" type="texture">red_tank</shadervar>
     </material>
     <material name="sky">
+      <shader type="pvl">std_lighting_fixed</shader>
       <color red="0.2" green="0.5" blue="1.0"/>
     </material>
     <material name="mountain1">
