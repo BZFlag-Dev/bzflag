@@ -47,6 +47,7 @@ private:
   string resetServerAlwaysFilename;
   string banReloadMessage;
   string masterBanReloadMessage;
+  string announceFilteredMessages;
   time_t banFileAccessTime;
   time_t masterBanFileAccessTime;
   int numPlayers;
@@ -62,6 +63,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* cmdLine)
   bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_registerEvent(bz_eTickEvent, &serverControlHandler);
+  bz_registerEvent(bz_eMessageFilteredEvent, &serverControlHandler);
   bz_setMaxWaitTime( 3.0 );
   return 0;
 }
@@ -71,6 +73,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_removeEvent(bz_eTickEvent, &serverControlHandler);
+  bz_removeEvent(bz_eMessageFilteredEvent, &serverControlHandler);
   return 0;
 }
 
@@ -93,6 +96,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   resetServerAlwaysFilename = config.item(section, "ResetServerAlwaysFile");
   banReloadMessage = config.item(section, "BanReloadMessage");
   masterBanReloadMessage = config.item(section, "MasterBanReloadMessage");
+  announceFilteredMessages = tolower(config.item(section, "AnnounceFilteredMessages"));
 
   /*
    * Report settings
@@ -179,8 +183,10 @@ void ServerControl::checkShutdown( void ) {
 
 void ServerControl::process( bz_EventData *eventData ) 
 {
-  ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
+  bz_MessageFilteredEventData_V1 *filteredData = (bz_MessageFilteredEventData_V1 *) eventData;
+  bz_BasePlayerRecord *player = NULL;
+  ostringstream msg;
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -202,6 +208,16 @@ void ServerControl::process( bz_EventData *eventData )
       case bz_ePlayerPartEvent:
 	countPlayers( part , data );
 	checkShutdown();
+	break;
+      case bz_eMessageFilteredEvent:
+	if (announceFilteredMessages == "yes") {
+	  player = bz_getPlayerByIndex( filteredData->player );
+	  if (player) {
+	    msg.str("");
+	    msg << "Filtered Msg: " << player->callsign.c_str() << " said \"" << filteredData->rawMessage.c_str() << '"';
+	    bz_sendTextMessage(BZ_SERVER, eAdministrators, msg.str().c_str());
+	  }
+	}
 	break;
       default :
 	break;
