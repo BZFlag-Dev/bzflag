@@ -736,8 +736,6 @@ int			main(int argc, char** argv)
   }
 #endif
 
-  WordFilter *filter = (WordFilter *)NULL;
-
   argv0 = argv[0];
 
   // init libs
@@ -862,18 +860,12 @@ int			main(int argc, char** argv)
     name = getConfigDirName();
     name += "badwords.txt";
 
-    // get a handle on a filter object to attempt a load
-    if (BZDB.isSet("filter")) {
-      filter = (WordFilter *)BZDB.getPointer("filter");
-      if (filter == NULL) {
-	filter = new WordFilter();
-      }
-    } else {
-      // filter is not set
-      filter = new WordFilter();
+    // create a new filter object if one does not exist already
+    if (wordFilter == NULL) {
+      wordFilter = new WordFilter();
     }
     // XXX should stat the file first and load with interactive feedback
-    unsigned int count = filter->loadFromFile(name, false);
+    unsigned int count = wordFilter->loadFromFile(name, false);
     if (count > 0) {
       std::cout << "Loaded " << count << " words from \"" << name << "\"" << std::endl;
     }
@@ -884,16 +876,12 @@ int			main(int argc, char** argv)
     std::string filterFilename = BZDB.get("filterFilename");
     std::cout << "Filter file name specified is \"" << filterFilename << "\"" << std::endl;
     if (filterFilename.length() != 0) {
-      if (filter == NULL) {
-	filter = new WordFilter();
+      if (wordFilter == NULL) {
+	wordFilter = new WordFilter();
       }
       std::cout << "Loading " << filterFilename << std::endl;
-      unsigned int count = filter->loadFromFile(filterFilename, true);
+      unsigned int count = wordFilter->loadFromFile(filterFilename, true);
       std::cout << "Loaded " << count << " words" << std::endl;
-
-      // stash the filter into the database for retrieval later
-      BZDB.setPointer("filter", (void *)filter, StateDatabase::ReadOnly );
-      BZDB.setPersistent("filter", false);
     } else {
       std::cerr << "WARNING: A proper file name was not given for the -badwords argument" << std::endl;
     }
@@ -1315,9 +1303,9 @@ int			main(int argc, char** argv)
   }
 
   // shut down
-  if (filter != NULL)
-    delete filter;
-  filter = NULL;
+  if (wordFilter != NULL)
+    delete wordFilter;
+  wordFilter = NULL;
   display->setDefaultResolution();
   delete pmainWindow;
   delete joystick;

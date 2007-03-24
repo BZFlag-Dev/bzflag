@@ -52,6 +52,7 @@ class SceneRenderer;
 class Player;
 class ServerLink;
 class HUDRenderer;
+class WordFilter;
 
 void			initPlaying();
 BzfDisplay*		getDisplay();
@@ -118,6 +119,7 @@ extern float	    pauseCountdown;
 extern float	    clockAdjust;
 extern float	    roamDZoom;
 extern bool	     roamButton;
+extern WordFilter *wordFilter;
 
 /* Any code surrounded by "if (!headless)" is unsafely assuming that it's
  * operating in a context where graphics and sound are available.

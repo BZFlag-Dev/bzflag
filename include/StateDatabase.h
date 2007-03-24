@@ -82,12 +82,6 @@ public:
   void			   setFloat(const std::string& name,
 				    const float& value,
 				    Permission access = Client);
-  /** allow setting name/pointer pairs.  this allows simple object
-   * pointer storage into the bzdb via pointer address serialization.
-   */
-  void				setPointer(const std::string& name,
-				    const void *value,
-				    Permission access = Client);
 
   /** unset a name if access is not less than the permission level
    * of the name.
@@ -147,11 +141,6 @@ public:
    *  Returns 0 (or min) if value is not set.
    */
   int	getIntClamped(const std::string& name, const int min, const int max) const;
-
-  /** returns the pointer stored with a name.  returns NULL if the
-   * name isn't set.
-   */
-  void *			getPointer(const std::string& name) const;
 
   /** get the value as a floating point number. this will evaluate
    * the string as an expression

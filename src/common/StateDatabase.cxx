@@ -293,18 +293,6 @@ void		   StateDatabase::setFloat(const std::string& name,
   set(name,TextUtils::format("%f",value),access);
 }
 
-void			StateDatabase::setPointer(const std::string& name,
-					   const void * value,
-					   Permission access)
-{
-  char address[32];
-  memset(address, 0, 32);
-  snprintf(address, 32, "%lu", (unsigned long)value);
-  std::string ssaddress = address;
-  this->set(name, ssaddress, access);
-}
-
-
 void			StateDatabase::unset(const std::string& name,
 					     Permission access)
 {
@@ -396,16 +384,6 @@ int		StateDatabase::getIntClamped(const std::string& name, const int min, const 
   else if (val > max)
     return max;
   return val;
-}
-
-void *		StateDatabase::getPointer(const std::string& name) const
-{
-  debugLookups(name);
-  Map::const_iterator index = items.find(name);
-  if (index == items.end() || !index->second.isSet)
-    return (void *)NULL;
-  else
-    return (void *)strtoul(index->second.value.c_str(), NULL, 0);
 }
 
 float			StateDatabase::eval(const std::string& name)

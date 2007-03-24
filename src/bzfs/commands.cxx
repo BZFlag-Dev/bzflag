@@ -2368,16 +2368,13 @@ bool VoteCommand::operator() (const char *message,
   }
 
   /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty("poll")) {
+  if (votingArbiter == NULL) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
     return true;
   }
 
-  // only need to get this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-
   /* make sure that there is a poll to vote upon */
-  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+  if (!votingArbiter->knowsPoll()) {
     sendMessage(ServerPlayer, t, "A poll is not presently in progress.  There is nothing to vote on");
     return true;
   }
@@ -2440,15 +2437,15 @@ bool VoteCommand::operator() (const char *message,
   // cast the vote or complain
   bool cast = false;
   if (vote == 0) {
-    if ((cast = arbiter->voteNo(callsign)) == true) {
+    if ((cast = votingArbiter->voteNo(callsign)) == true) {
       /* player voted no */
-      snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), votingArbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(callsign)) == true) {
+    if ((cast = votingArbiter->voteYes(callsign)) == true) {
       /* player voted yes */
-      snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), votingArbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   } else {
@@ -2463,16 +2460,16 @@ bool VoteCommand::operator() (const char *message,
     return true;
   }
 
-  if (arbiter->hasVoted(callsign) && !cast) {
+  if (votingArbiter->hasVoted(callsign) && !cast) {
     /* player already voted */
-    snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), votingArbiter->getPollAction().c_str(), votingArbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
 
   if (!cast){
     /* There was an error while voting, probably could send a less generic message */
-    snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), votingArbiter->getPollAction().c_str(), votingArbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
@@ -2495,16 +2492,13 @@ bool VetoCommand::operator() (const char *,
   }
 
   /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty("poll")) {
+  if (votingArbiter == NULL) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
     return true;
   }
 
-  // only need to do this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-
   /* make sure there is an unexpired poll */
-  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+  if (!votingArbiter->knowsPoll()) {
     sendMessage(ServerPlayer, t,
 		TextUtils::format
 		("%s, there is presently no active poll to veto",
@@ -2515,11 +2509,11 @@ bool VetoCommand::operator() (const char *,
   sendMessage(ServerPlayer, t,
 	      TextUtils::format("%s, you have cancelled the poll to %s %s",
 				playerData->player.getCallSign(),
-				arbiter->getPollAction().c_str(),
-				arbiter->getPollTarget().c_str()).c_str());
+				votingArbiter->getPollAction().c_str(),
+				votingArbiter->getPollTarget().c_str()).c_str());
 
   /* poof */
-  arbiter->forgetPoll();
+  votingArbiter->forgetPoll();
 
   sendMessage(ServerPlayer, AllPlayers,
 	      TextUtils::format("The poll was cancelled by %s",
@@ -2548,21 +2542,16 @@ bool PollCommand::operator() (const char *message,
   logDebugMessage(3,"Player has permission to run /poll\n");
 
   /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty("poll")) {
+  if (votingArbiter == NULL) {
     sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
     return true;
   }
 
-  logDebugMessage(3,"BZDB poll value is not empty\n");
-
-  // only need to do this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-
-  logDebugMessage(3,"Arbiter was acquired with address 0x%p\n", arbiter);
+  logDebugMessage(3,"Arbiter was acquired with address 0x%p\n", votingArbiter);
 
   /* make sure that there is not a poll active already */
-  if (arbiter->knowsPoll()) {
-    snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+  if (votingArbiter->knowsPoll()) {
+    snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", votingArbiter->getPollAction().c_str(), votingArbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over");
     return true;
@@ -2775,15 +2764,15 @@ bool PollCommand::operator() (const char *message,
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target, callsign, targetIP));
+      canDo = (votingArbiter->pollToBan(target, callsign, targetIP));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target, callsign, targetIP));
+      canDo = (votingArbiter->pollToKick(target, callsign, targetIP));
     } else if (cmd == "kill") {
-      canDo = (arbiter->pollToKill(target, callsign, targetIP));
+      canDo = (votingArbiter->pollToKill(target, callsign, targetIP));
     } else if (cmd == "set") {
-      canDo = (arbiter->pollToSet(target, callsign));
+      canDo = (votingArbiter->pollToSet(target, callsign));
     } else if (cmd == "flagreset") {
-      canDo = (arbiter->pollToResetFlags(callsign));
+      canDo = (votingArbiter->pollToResetFlags(callsign));
     }
 
     if (!canDo) {
@@ -2800,7 +2789,7 @@ bool PollCommand::operator() (const char *message,
     sendMessage(ServerPlayer, AllPlayers, reply);
 
     // set the number of available voters
-    arbiter->setAvailableVoters(available);
+    votingArbiter->setAvailableVoters(available);
 
     // keep track of who is allowed to vote
     for (int j = 0; j < curMaxPlayers; j++) {
@@ -2808,14 +2797,14 @@ bool PollCommand::operator() (const char *message,
       // observers) are eligible to vote
       GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(j);
       if (otherData && otherData->accessInfo.exists()) {
-	arbiter->grantSuffrage(otherData->player.getCallSign());
+	votingArbiter->grantSuffrage(otherData->player.getCallSign());
       }
     }
 
     // automatically place a vote for the player requesting the poll
     logDebugMessage(3,"Attempting to automatically place a vote for [%s]\n", callsign.c_str());
 
-    bool voted = arbiter->voteYes(callsign);
+    bool voted = votingArbiter->voteYes(callsign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason");
       logDebugMessage(3,"Unable to automatically place a vote for [%s]\n", callsign.c_str());

@@ -163,6 +163,7 @@ static void		setRobotTarget(RobotPlayer* robot);
 #endif
 
 static ResourceGetter	*resourceDownloader = NULL;
+WordFilter       *wordFilter = NULL;
 
 // Far and Near Frustum clipping planes
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
@@ -2755,8 +2756,6 @@ static void handleTransferFlag(void *msg)
 
 static void handleMessage(void *msg)
 {
-  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
-
   PlayerId src;
   PlayerId dst;
   msg = nboUnpackUByte(msg, src);
@@ -2838,8 +2837,8 @@ static void handleMessage(void *msg)
   }
 
   // if filtering is turned on, filter away the goo
-  if (wordfilter != NULL) {
-    wordfilter->filter((char *)msg);
+  if (wordFilter != NULL) {
+    wordFilter->filter((char *)msg);
   }
 
   std::string origText = stripAnsiCodes(std::string((char*)msg));

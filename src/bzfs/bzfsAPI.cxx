@@ -1592,20 +1592,15 @@ BZF_API bool bz_isCountDownInProgress( void )
 BZF_API bool bz_pollVeto( void )
 {
   /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty(std::string("poll")))
+  if (votingArbiter == NULL)
     return false;
 
-  // only need to do this once
-  void *ptr = BZDB.getPointer(std::string("poll"));
-
-  VotingArbiter *arbiter = (VotingArbiter *)ptr;
-
   /* make sure there is an unexpired poll */
-  if ((arbiter != NULL) && !arbiter->knowsPoll())
+  if (!votingArbiter->knowsPoll())
     return false;
 
   /* poof */
-  arbiter->forgetPoll();
+  votingArbiter->forgetPoll();
 
   return true;
 }

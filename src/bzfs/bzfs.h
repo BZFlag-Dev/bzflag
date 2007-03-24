@@ -37,6 +37,7 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 #include "RejoinList.h"
+#include "VotingArbiter.h"
 
 
 // to dump score info to stdout
@@ -142,6 +143,7 @@ extern bool        isIdentifyFlagIn;
 extern bool        worldWasSentToAPlayer;
 extern RejoinList  rejoinList;
 extern bool		   publiclyDisconnected;
+extern VotingArbiter *votingArbiter;
 
 // FIXME - this should not be hangin out here
 extern bool dontWait;

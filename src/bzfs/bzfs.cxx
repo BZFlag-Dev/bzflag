@@ -139,6 +139,8 @@ float pluginWorldHeight = -1;
 float	pluginMaxWait = 1000.0;
 Filter   filter;
 
+VotingArbiter *votingArbiter = NULL;
+
 BasesList bases;
 
 // global keeper of world Events
@@ -2137,9 +2139,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
 
   // if there is an active poll, cancel any vote this player may have made
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-  if ((arbiter != NULL) && (arbiter->knowsPoll())) {
-    arbiter->retractVote(std::string(playerData->player.getCallSign()));
+  if ((votingArbiter != NULL) && (votingArbiter->knowsPoll())) {
+    votingArbiter->retractVote(std::string(playerData->player.getCallSign()));
   }
 
   // status message
@@ -3736,7 +3737,6 @@ static void checkForWorldDeaths ( void )
 int main(int argc, char **argv)
 {
   int nfound;
-  VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
   loggingCallback = &apiLoggingCallback;
 
@@ -3947,7 +3947,7 @@ int main(int argc, char **argv)
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
-    votingarbiter =
+    votingArbiter =
       new VotingArbiter(clOptions->voteTime, clOptions->vetoTime,
 			clOptions->votesRequired, clOptions->votePercentage,
 			clOptions->voteRepeatTime);
@@ -3960,8 +3960,7 @@ int main(int argc, char **argv)
     logDebugMessage(1,"\tavailable voters is initially set to %d\n", maxPlayers);
 
     // override the default voter count to the max number of players possible
-    votingarbiter->setAvailableVoters(maxPlayers);
-    BZDB.setPointer("poll", (void *)votingarbiter);
+    votingArbiter->setAvailableVoters(maxPlayers);
     BZDB.setPermission("poll", StateDatabase::ReadOnly);
   }
 
@@ -4427,14 +4426,14 @@ int main(int argc, char **argv)
     GameKeeper::Player::setAllNeedHostbanChecked(false);
 
     // manage voting poll for collective kicks/bans/sets
-    if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {
-      if (votingarbiter->knowsPoll()) {
+    if ((clOptions->voteTime > 0) && (votingArbiter != NULL)) {
+      if (votingArbiter->knowsPoll()) {
 	char message[MessageLen];
 
-	std::string pollRequester = votingarbiter->getPollRequestor();
-	std::string target = votingarbiter->getPollTarget();
-	std::string action = votingarbiter->getPollAction();
-	std::string realIP = votingarbiter->getPollTargetIP();
+	std::string pollRequester = votingArbiter->getPollRequestor();
+	std::string target = votingArbiter->getPollTarget();
+	std::string action = votingArbiter->getPollAction();
+	std::string realIP = votingArbiter->getPollTargetIP();
 
 	static unsigned short int voteTime = 0;
 
@@ -4445,7 +4444,7 @@ int main(int argc, char **argv)
 
 	/* once a poll begins, announce its commencement */
 	if (!announcedOpening) {
-	  voteTime = votingarbiter->getVoteTime();
+	  voteTime = votingArbiter->getVoteTime();
 	  snprintf(message, MessageLen, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
 	  sendMessage(ServerPlayer, AllPlayers, message);
 	  announcedOpening = true;
@@ -4454,23 +4453,23 @@ int main(int argc, char **argv)
 	static TimeKeeper lastAnnounce = TimeKeeper::getNullTime();
 
 	/* make a heartbeat announcement every 15 seconds */
-	if (((voteTime - (int)(tm - votingarbiter->getStartTime()) - 1) % 15 == 0) &&
+	if (((voteTime - (int)(tm - votingArbiter->getStartTime()) - 1) % 15 == 0) &&
 	    ((int)(tm - lastAnnounce) != 0) &&
-	    (votingarbiter->timeRemaining() > 0)) {
-	  snprintf(message, MessageLen, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
+	    (votingArbiter->timeRemaining() > 0)) {
+	  snprintf(message, MessageLen, "%d seconds remain in the poll to %s %s.", votingArbiter->timeRemaining(), action.c_str(), target.c_str());
 	  sendMessage(ServerPlayer, AllPlayers, message);
 	  lastAnnounce = tm;
 	}
 
-	if (votingarbiter->isPollClosed()) {
+	if (votingArbiter->isPollClosed()) {
 
 	  if (!announcedResults) {
-	    snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
+	    snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingArbiter->getYesCount(), votingArbiter->getNoCount(), votingArbiter->getAbstentionCount());
 	    sendMessage(ServerPlayer, AllPlayers, message);
 	    announcedResults = true;
 	  }
 
-	  if (votingarbiter->isPollSuccessful()) {
+	  if (votingArbiter->isPollSuccessful()) {
 	    if (!announcedClosure) {
 	      std::string pollAction;
 	      if (action == "ban")
@@ -4496,16 +4495,16 @@ int main(int argc, char **argv)
 	      announcedClosure = true;
 
 	      // go ahead and reset the poll (don't bother waiting for veto timeout)
-	      votingarbiter->forgetPoll();
+	      votingArbiter->forgetPoll();
 	      announcedClosure = false;
 	    }
 	  }
 
 	  /* the poll either terminates by itself or via a veto command */
-	  if (votingarbiter->isPollExpired()) {
+	  if (votingArbiter->isPollExpired()) {
 
 	    /* maybe successful, maybe not */
-	    if (votingarbiter->isPollSuccessful()) {
+	    if (votingArbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
 	      std::string pollAction;
 	      if (action == "ban") {
@@ -4612,7 +4611,7 @@ int main(int argc, char **argv)
 	    } /* end if poll is successful */
 
 	    // get ready for the next poll
-	    votingarbiter->forgetPoll();
+	    votingArbiter->forgetPoll();
 
 	    announcedClosure = false;
 	    announcedOpening = false;
@@ -4622,7 +4621,7 @@ int main(int argc, char **argv)
 
 	} else {
 	  // the poll may get enough votes early
-	  if (votingarbiter->isPollSuccessful()) {
+	  if (votingArbiter->isPollSuccessful()) {
 	    if (action != "flagreset")
 	      snprintf(message,  MessageLen, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
 	    else
@@ -4631,7 +4630,7 @@ int main(int argc, char **argv)
 	    sendMessage(ServerPlayer, AllPlayers, message);
 
 	    // close the poll since we have enough votes (next loop will kick off notification)
-	    votingarbiter->closePoll();
+	    votingArbiter->closePoll();
 
 	  } // the poll is over
 	} // is the poll closed
@@ -4863,7 +4862,7 @@ int main(int argc, char **argv)
   FlagInfo::setSize(0);
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
-  delete votingarbiter; votingarbiter = NULL;
+  delete votingArbiter; votingArbiter = NULL;
 
   Record::kill();
   Replay::kill();
