@@ -562,86 +562,164 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase*, PyramidBuilding& o)
   pyrMove->UpdateMove();
 }
 
-void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
+void SceneDatabaseBuilder::addBase(SceneDatabase*, BaseBuilding &o)
 {
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
+  iMaterialWrapper *baseWallMaterial   = NULL;
+  iMaterialWrapper *baseTopMaterial    = NULL;
 
-  TextureManager &tm = TextureManager::instance();
-  int   boxTexture = -1;
-
-  bool  useColorTexture[2] = {false,false};
-
-  // try object, standard, then default
+  // try object, standard
   if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
-  if (boxTexture < 0) {
+    baseWallMaterial = engine->FindMaterial(o.userTextures[0].c_str());
+  if (baseWallMaterial == NULL) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase += BZDB.get("baseWallTexture");
-    boxTexture = tm.getTextureID(teamBase.c_str(),false);
+    baseWallMaterial = engine->FindMaterial(teamBase.c_str());
   }
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
-
-  useColorTexture[0] = boxTexture >= 0;
-
-  int   baseTopTexture = -1;
+  if (baseWallMaterial == NULL)
+    baseWallMaterial = engine->FindMaterial(BZDB.get("boxWallTexture")
+					    .c_str());
 
   if (o.userTextures[1].size())
-    baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
-  if (baseTopTexture < 0) {
+    baseTopMaterial = engine->FindMaterial(o.userTextures[1].c_str());
+  if (baseTopMaterial == NULL) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase += BZDB.get("baseTopTexture").c_str();
-    baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
-  }
-  if (baseTopTexture < 0)
-    baseTopTexture = -1;
-  else
-    useColorTexture[1] = baseTopTexture >= 0;
-
-  // this assumes bases have 6 parts - if they don't, it still works
-  int part = 0;
-  // repeat the textue once for the top and bottom, else use the old messed up way
-  // There are 3 cases for the texture ordering:
-  // 1. getNextNode() only returns the top texture
-  // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
-  // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
-  while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
-				      nodeGen->getNextNode(o.getBreadth(),
-							   o.getHeight(),
-							   boxLOD)))) {
-    if ((part % 5) != 0) {
-      node->setMaterial(boxMaterial);
-      node->setTexture(boxTexture);
-    }
-    else{
-      if (useColorTexture[1]) {  // only set the texture if we have one and are using it
-	node->setTexture(baseTopTexture);
-      }
-    }
-    part++;
-
-#ifdef SHELL_INSIDE_NODES
-    const bool ownTheNode = db->addStaticNode(node, true);
-    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
-    o.addInsideSceneNode(inode);
-#else
-    db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES
+    baseTopMaterial = engine->FindMaterial(teamBase.c_str());
   }
 
-#ifndef SHELL_INSIDE_NODES
-  // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
-  SceneNode* inode = new
-    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
-  o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES
+  float        w = o.getWidth();
+  float        b = o.getBreadth();
+  float        h = o.getHeight();
+  const float *p = o.getPosition();
+  float        r = o.getRotation();
 
-  delete nodeGen;
+  csRef<iMeshFactoryWrapper> baseFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
+				NULL);
+  csRef<iGeneralFactoryState> baseFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (baseFactory->GetMeshObjectFactory());
+
+  csRef<iRenderBuffer> index_buffer_side;
+  csRef<iRenderBuffer> index_buffer_top;
+  index_buffer_side = csRenderBuffer::CreateIndexRenderBuffer
+    (24, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
+  index_buffer_top = csRenderBuffer::CreateIndexRenderBuffer
+    (12, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
+
+  baseFactState->SetVertexCount(24);
+
+  baseFactState->GetVertices()[0].Set( w, 0, b);
+  baseFactState->GetVertices()[1].Set(-w, 0, b);
+  baseFactState->GetVertices()[2].Set( w, h, b);
+  baseFactState->GetVertices()[3].Set(-w, h, b);
+  baseFactState->GetTexels()[0].Set(0, 0);
+  baseFactState->GetTexels()[1].Set(b, 0);
+  baseFactState->GetTexels()[2].Set(0, h);
+  baseFactState->GetTexels()[3].Set(b, h);
+
+  baseFactState->GetVertices()[4].Set(-w, 0, b);
+  baseFactState->GetVertices()[5].Set(-w, 0,-b);
+  baseFactState->GetVertices()[6].Set(-w, h, b);
+  baseFactState->GetVertices()[7].Set(-w, h,-b);
+  baseFactState->GetTexels()[4].Set(0, 0);
+  baseFactState->GetTexels()[5].Set(b, 0);
+  baseFactState->GetTexels()[6].Set(0, h);
+  baseFactState->GetTexels()[7].Set(b, h);
+
+  baseFactState->GetVertices()[ 8].Set(-w, 0,-b);
+  baseFactState->GetVertices()[ 9].Set( w, 0,-b);
+  baseFactState->GetVertices()[10].Set(-w, h,-b);
+  baseFactState->GetVertices()[11].Set( w, h,-b);
+  baseFactState->GetTexels()[ 8].Set(0, 0);
+  baseFactState->GetTexels()[ 9].Set(b, 0);
+  baseFactState->GetTexels()[10].Set(0, h);
+  baseFactState->GetTexels()[11].Set(b, h);
+
+  baseFactState->GetVertices()[12].Set( w, 0,-b);
+  baseFactState->GetVertices()[13].Set( w, 0, b);
+  baseFactState->GetVertices()[14].Set( w, h,-b);
+  baseFactState->GetVertices()[15].Set( w, h, b);
+  baseFactState->GetTexels()[12].Set(0, 0);
+  baseFactState->GetTexels()[13].Set(b, 0);
+  baseFactState->GetTexels()[14].Set(0, h);
+  baseFactState->GetTexels()[15].Set(b, h);
+
+  baseFactState->GetVertices()[16].Set( w, h, b);
+  baseFactState->GetVertices()[17].Set(-w, h, b);
+  baseFactState->GetVertices()[18].Set( w, h,-b);
+  baseFactState->GetVertices()[19].Set(-w, h,-b);
+  baseFactState->GetTexels()[16].Set(0, 0);
+  baseFactState->GetTexels()[17].Set(1, 0);
+  baseFactState->GetTexels()[18].Set(0, 1);
+  baseFactState->GetTexels()[19].Set(1, 1);
+
+  baseFactState->GetVertices()[20].Set( w, 0, b);
+  baseFactState->GetVertices()[21].Set( w, 0,-b);
+  baseFactState->GetVertices()[22].Set(-w, 0, b);
+  baseFactState->GetVertices()[23].Set(-w, 0,-b);
+  baseFactState->GetTexels()[20].Set(0, 0);
+  baseFactState->GetTexels()[21].Set(1, 0);
+  baseFactState->GetTexels()[22].Set(0, 1);
+  baseFactState->GetTexels()[23].Set(1, 1);
+
+  {
+    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_side);
+    *index++ = 0;
+    *index++ = 2;
+    *index++ = 1;
+    *index++ = 1;
+    *index++ = 2;
+    *index++ = 3;
+    *index++ = 4;
+    *index++ = 6;
+    *index++ = 5;
+    *index++ = 5;
+    *index++ = 6;
+    *index++ = 7;
+    *index++ = 8;
+    *index++ = 10;
+    *index++ = 9;
+    *index++ = 9;
+    *index++ = 10;
+    *index++ = 11;
+    *index++ = 12;
+    *index++ = 14;
+    *index++ = 13;
+    *index++ = 13;
+    *index++ = 14;
+    *index++ = 15;
+  }
+  baseFactState->AddSubMesh(index_buffer_side, baseWallMaterial, "Side");
+  {
+    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_top);
+    *index++ = 16;
+    *index++ = 18;
+    *index++ = 17;
+    *index++ = 17;
+    *index++ = 18;
+    *index++ = 19;
+    *index++ = 20;
+    *index++ = 22;
+    *index++ = 21;
+    *index++ = 21;
+    *index++ = 22;
+    *index++ = 23;
+  }
+  baseFactState->AddSubMesh(index_buffer_top, baseTopMaterial, "Top");
+  
+  baseFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> baseMesh = engine->CreateMeshWrapper(baseFactory,
+							   "Base");
+
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (baseMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *baseMove = baseMesh->GetMovable();
+  baseMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
+  baseMove->SetTransform(csYRotMatrix3(r));
+  baseMove->UpdateMove();
 }
 
 void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
