@@ -6025,53 +6025,8 @@ Playing::Playing(BzfDisplay      *_display,
   bzSignal(SIGABRT, SIG_PF(dying));
   bzSignal(SIGSEGV, SIG_PF(dying));
   bzSignal(SIGTERM, SIG_PF(suicide));
-#if !defined(_WIN32)
-  if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
-    bzSignal(SIGINT, SIG_PF(suicide));
-  bzSignal(SIGPIPE, SIG_PF(hangup));
-  bzSignal(SIGHUP, SIG_IGN);
-  if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
-    bzSignal(SIGQUIT, SIG_PF(dying));
-#ifndef GUSI_20
-  bzSignal(SIGBUS, SIG_PF(dying));
-#endif
-  bzSignal(SIGUSR1, SIG_IGN);
-  bzSignal(SIGUSR2, SIG_IGN);
-#endif /* !defined(_WIN32) */
 
   std::string videoFormat;
-  int format = -1;
-  // set the resolution (only if in full screen mode)
-  if (!BZDB.isSet("_window") && BZDB.isSet("resolution")) {
-    if (videoFormat.length() != 0) {
-      if (display->isValidResolution(format) &&
-	  display->getResolution() != format &&
-	  display->setResolution(format)) {
-
-	// handle resize
-	if (BZDB.isSet("geometry")) {
-	  int w, h, x, y, count;
-	  char xs, ys;
-	  count = sscanf(BZDB.get("geometry").c_str(),
-			 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
-	  if (w < 256) w = 256;
-	  if (h < 192) h = 192;
-	  if (count == 6) {
-	    if (xs == '-') x = display->getWidth() - x - w;
-	    if (ys == '-') y = display->getHeight() - y - h;
-	    mainWindow->setPosition(x, y);
-	  }
-	  mainWindow->setSize(w, h);
-	} else {
-	  mainWindow->setFullscreen();
-	}
-
-	// more resize handling
-	mainWindow->getWindow()->callResizeCallbacks();
-	mainWindow->warpMouse();
-      }
-    }
-  }
 
   // grab mouse if we should
   if (shouldGrabMouse())
