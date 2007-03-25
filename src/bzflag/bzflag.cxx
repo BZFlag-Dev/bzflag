@@ -65,7 +65,6 @@
 #include "TimeBomb.h"
 #include "WordFilter.h"
 #include "World.h"
-#include "bzfSDL.h"
 #include "bzfgl.h"
 #include "bzfio.h"
 
