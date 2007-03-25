@@ -47,7 +47,6 @@ private:
   string resetServerAlwaysFilename;
   string banReloadMessage;
   string masterBanReloadMessage;
-  string announceFilteredMessages;
   time_t banFileAccessTime;
   time_t masterBanFileAccessTime;
   int numPlayers;
@@ -63,7 +62,6 @@ BZF_PLUGIN_CALL int bz_Load ( const char* cmdLine)
   bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_registerEvent(bz_eTickEvent, &serverControlHandler);
-  bz_registerEvent(bz_eMessageFilteredEvent, &serverControlHandler);
   bz_setMaxWaitTime( 3.0 );
   return 0;
 }
@@ -73,7 +71,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_removeEvent(bz_eTickEvent, &serverControlHandler);
-  bz_removeEvent(bz_eMessageFilteredEvent, &serverControlHandler);
   return 0;
 }
 
@@ -96,7 +93,6 @@ int ServerControl::loadConfig(const char *cmdLine)
   resetServerAlwaysFilename = config.item(section, "ResetServerAlwaysFile");
   banReloadMessage = config.item(section, "BanReloadMessage");
   masterBanReloadMessage = config.item(section, "MasterBanReloadMessage");
-  announceFilteredMessages = tolower(config.item(section, "AnnounceFilteredMessages"));
 
   /*
    * Report settings
@@ -131,11 +127,6 @@ int ServerControl::loadConfig(const char *cmdLine)
     bz_debugMessagef(1, "ServerControl - No ResetServerAlwaysFile specified");
   else
     bz_debugMessagef(1, "ServerControl - Using ResetServerAlwaysFile: %s", resetServerAlwaysFilename.c_str());
-  // Announce Filtered Chat
-  if (announceFilteredMessages == "on")
-    bz_debugMessagef(1, "ServerControl - Announcing filtered chat messages on the admin channel");
-  else
-    bz_debugMessagef(1, "ServerControl - Not announcing filtered chat messages");
 
   /* Set the initial ban file access times */
   if (masterBanFilename != "")
@@ -188,10 +179,8 @@ void ServerControl::checkShutdown( void ) {
 
 void ServerControl::process( bz_EventData *eventData ) 
 {
-  bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
-  bz_MessageFilteredEventData_V1 *filteredData = (bz_MessageFilteredEventData_V1 *) eventData;
-  bz_BasePlayerRecord *player = NULL;
   ostringstream msg;
+  bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -213,16 +202,6 @@ void ServerControl::process( bz_EventData *eventData )
       case bz_ePlayerPartEvent:
 	countPlayers( part , data );
 	checkShutdown();
-	break;
-      case bz_eMessageFilteredEvent:
-	if (announceFilteredMessages == "on") {
-	  player = bz_getPlayerByIndex( filteredData->player );
-	  if (player) {
-	    msg.str("");
-	    msg << "Filtered Msg: " << player->callsign.c_str() << " said \"" << filteredData->rawMessage.c_str() << '"';
-	    bz_sendTextMessage(BZ_SERVER, eAdministrators, msg.str().c_str());
-	  }
-	}
 	break;
       default :
 	break;
