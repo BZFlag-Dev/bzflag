@@ -76,7 +76,7 @@ struct CmdLineOptions
     useTeleporters(false), teamKillerDies(true), printScore(false),
     publicizeServer(false), replayServer(false), startRecording(false),
     timestampLog(false), timestampMicros(false), tkAnnounce(false),
-    filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
+    filterFilename(""), filterAnnounce(false), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
     autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(2)
@@ -175,6 +175,7 @@ struct CmdLineOptions
 
   /* inappropriate language filter */
   std::string		filterFilename;
+  bool			filterAnnounce;
   bool			filterCallsigns;
   bool			filterChat;
   bool			filterSimple;

@@ -1170,9 +1170,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
 {
   const char* msg = message;
+  char filtered[MessageLen] = {0};
+  char adminmsg[MessageLen] = {0};
+  bool msgWasFiltered = false;
 
   if (clOptions->filterChat) {
-    char filtered[MessageLen] = {0};
     strncpy(filtered, message, MessageLen);
     if (clOptions->filterSimple) {
       clOptions->filter.filter(filtered, true);
@@ -1184,6 +1186,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     if (strcmp(message,filtered) != 0) {	// the filter did do something so barf a message
       bz_MessageFilteredEventData_V1	eventData;
 
+      msgWasFiltered = true;
       eventData.player = sendingPlayer;
       eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
       eventData.rawMessage = message;
@@ -1217,23 +1220,29 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   chatData.to = BZ_NULLUSER;
 
   if (recipientPlayer == AllPlayers)
-	  chatData.to = BZ_ALLUSERS;
+    chatData.to = BZ_ALLUSERS;
   else if ( recipientPlayer == AdminPlayers )
-	  chatData.team = eAdministrators;
+    chatData.team = eAdministrators;
   else if ( recipientPlayer > LastRealPlayer )
-	  chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
+    chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
   else
-	  chatData.to = recipientPlayer;
+    chatData.to = recipientPlayer;
 
   chatData.message = msg;
   chatData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   // send any events that want to watch the chat
   if (chatData.message.size())
-	  worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
+    worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
 
   if (chatData.message.size())
-	sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+    sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+
+  // If the message was filtered report it on the admin channel
+  if (msgWasFiltered && clOptions->filterAnnounce) {
+    snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
+    sendMessage(ServerPlayer, AdminPlayers, adminmsg);
+  }
 }
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)

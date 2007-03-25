@@ -33,6 +33,7 @@ bzfs \- BZFlag game server
 [\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIteam|\fR|\fIflag\-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIgood\fR|\fIbad\fR|\fIflag\-id\fR}]
 [\fB\-fb\fR]
+[\fB\-filterAnnounce\fR]
 [\fB\-filterCallsigns\fR]
 [\fB\-filterChat\fR]
 [\fB\-filterSimple\fR]
@@ -209,6 +210,9 @@ give you exactly 40 good flags except genocide and 10 of each bad flag.
 .TP 
 .B \-fb
 Allow flags on box buildings.
+.TP 
+.B \-filterAnnounce
+Announces raw chat for filtered messages on the admin channel.
 .TP 
 .B \-filterCallsigns
 Turn on the filtering of callsigns and email addresses.  Callsigns and

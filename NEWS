@@ -4,6 +4,7 @@
 BZFlag 2.1.x
 ------------
 
+* Add -filterAnnounce server option - Bernt Hansen
 * framerate independent keyboard turn dampening - Sean Morrison, randomparticle
 * Added new bzfs -botsPerIP option to limit bot connections - Sean Morrison
 * Updated zlib to version 1.2.3 - Sean Morrison

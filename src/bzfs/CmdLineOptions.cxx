@@ -69,6 +69,7 @@ const char *usageString =
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
 "[-fb] "
+"[-filterAnnounce] "
 "[-filterCallsigns] "
 "[-filterChat] "
 "[-filterSimple] "
@@ -168,6 +169,7 @@ const char *extraUsageString =
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
 "\t-fb: allow flags on box buildings\n"
+"\t-filterAnnounce: announces raw messages on the admin channel for filtered chat\n"
 "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
 "\t-filterChat: filter chat messages\n"
 "\t-filterSimple: perform simple exact matches with the bad word list\n"
@@ -703,6 +705,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
       options.flagsOnBuildings = true;
+    } else if (strcmp(argv[i], "-filterAnnounce") == 0) {
+      options.filterAnnounce = true;
     } else if (strcmp(argv[i], "-filterCallsigns") == 0) {
       options.filterCallsigns = true;
     } else if (strcmp(argv[i], "-filterChat") == 0) {

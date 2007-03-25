@@ -48,6 +48,12 @@ void PluginConfig::parse(void)
   size_t start, end;
   size_t equalPos;
 
+  if (configFilename == "") {
+    bz_debugMessage(1, "PluginConfig: No configuration file specified");
+    errors++;
+    return;
+  }
+
   /*
    * Parse key,value pairs for sections out of the INI type
    * configuration file specified in 'filename'
