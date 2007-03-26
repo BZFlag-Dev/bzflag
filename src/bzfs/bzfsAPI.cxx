@@ -327,6 +327,11 @@ void bzApiString::tolower ( void )
 	data->str = TextUtils::tolower(data->str);
 }
 
+void bzApiString::urlEncode() ( void )
+{
+	data->str = TextUtils::url_encode(data->str);
+}
+
 void bzApiString::toupper ( void )
 {
 	data->str = TextUtils::toupper(data->str);
@@ -2402,6 +2407,17 @@ BZF_API const char *bz_tolower(const char* val )
 	temp	 =	TextUtils::tolower(std::string(val));
 	return temp.c_str();
 }
+
+BZF_API const char *bz_urlEncode(const char* val )
+{
+	static std::string temp;
+	if (!val)
+		return NULL;
+
+	temp	 =	TextUtils::url_encode(std::string(val));
+	return temp.c_str();
+}
+
 
 // server control
 BZF_API void bz_shutdown ( void )
