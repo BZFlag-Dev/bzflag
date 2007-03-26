@@ -158,7 +158,6 @@ typedef enum
 #define bz_perm_viewReports  "viewReports"
 #define bz_perm_vote  "vote"
 
-
 typedef enum
 {
 	eAutomaticTeam = -2,
@@ -242,6 +241,8 @@ public:
 
 	void tolower ( void );
 	void toupper ( void );
+
+	void urlEncode ( void );
 
 protected:
 	class dataBlob;
@@ -1608,6 +1609,7 @@ BZF_API bool bz_stopRecBuf( void );
 BZF_API const char *bz_format(const char* fmt, ...);
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
+BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
 BZF_API void bz_pauseCountdown ( const char *pausedBy );
@@ -1812,6 +1814,7 @@ protected:
 
 	bool alive;
 
+	bz_PlayerUpdateState	currentState;
 private:
 	void computeVelsFromInput ( void );
 };

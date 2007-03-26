@@ -343,6 +343,11 @@ void bz_ApiString::toupper ( void )
   data->str = TextUtils::toupper(data->str);
 }
 
+void bz_ApiString::urlEncode() ( void )
+{
+	data->str = TextUtils::url_encode(data->str);
+}
+
 //******************************bz_APIIntList********************************************
 class bz_APIIntList::dataBlob
 {
@@ -2630,6 +2635,16 @@ BZF_API const char *bz_tolower(const char* val )
 
   temp	 =	TextUtils::tolower(std::string(val));
   return temp.c_str();
+}
+
+BZF_API const char *bz_urlEncode(const char* val )
+{
+	static std::string temp;
+	if (!val)
+		return NULL;
+
+	temp	 =	TextUtils::url_encode(std::string(val));
+	return temp.c_str();
 }
 
 // server control
