@@ -327,7 +327,7 @@ void bzApiString::tolower ( void )
 	data->str = TextUtils::tolower(data->str);
 }
 
-void bzApiString::urlEncode() ( void )
+void bzApiString::urlEncode ( void )
 {
 	data->str = TextUtils::url_encode(data->str);
 }
