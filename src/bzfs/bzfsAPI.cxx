@@ -2317,7 +2317,7 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
       for ( int i =0; i < NumTeams; i++)
 	{
 	  team[i].team.won = 0;
-	  team[teamIndex].team.lost = 0;
+	  team[i].team.lost = 0;
 	  sendTeamUpdateMessageBroadcast(i);
 	}
     }
