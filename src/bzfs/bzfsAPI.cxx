@@ -343,7 +343,7 @@ void bz_ApiString::toupper ( void )
   data->str = TextUtils::toupper(data->str);
 }
 
-void bz_ApiString::urlEncode() ( void )
+void bz_ApiString::urlEncode ( void )
 {
 	data->str = TextUtils::url_encode(data->str);
 }
