@@ -51,6 +51,88 @@
 
 static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
 
+const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.4f, 0.4f, 0.4f, 1.0f },
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.6f, 0.6f, 0.6f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.4f, 0.4f, 0.4f, 1.0f },
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.6f, 0.6f, 0.6f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
+				{ 0.5f, 0.5f, 0.5f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
+				{ 0.5f, 0.5f, 0.5f, 1.0f }
+			};
+
+const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.63f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.375f, 0.375f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f },
+				{ 0.275f, 0.2f, 0.2f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.63f, 0.63f, 0.63f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.69f, 0.69f, 0.69f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f },
+				{ 0.375f, 0.375f, 0.375f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f }
+			};
+
+const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f },
+				{ 0.175f, 0.175f, 0.35f, 1.0f }
+			};
+
+const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f },
+				{ 0.175f, 0.175f, 0.35f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
+			};
+const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
+			};
+
 const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
 				{ 1.0f, 0.875f, 0.0f, 1.0f },
 				{ 0.9f, 0.8f, 0.0f, 1.0f },
@@ -102,11 +184,6 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
   // lower maximum tank lod if lowdetail is true
   if (renderer->useQuality() == 0)
     TankSceneNode::setMaxLOD(2);
-
-  engine = csQueryRegistry<iEngine>
-    (csApplicationFramework::GetObjectRegistry());
-  if (!engine)
-    csApplicationFramework::ReportError("Failed to locate 3D Engine!");
 }
 
 
@@ -118,9 +195,6 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 
 SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 {
-  // We find the sector called "room".
-  room = engine->FindSector("room");
-
   // set LOD flags
   const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
   wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
@@ -175,8 +249,6 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   db->finalizeStatics();
 
-  engine->Prepare();
-
   return db;
 }
 
@@ -221,65 +293,45 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 }
 
 
-void SceneDatabaseBuilder::addWall(SceneDatabase*, const WallObstacle& o)
+void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 {
   if (o.getHeight() <= 0.0f) {
     return;
   }
 
-  iMaterialWrapper *sideMaterial = NULL;
+  int part = 0;
+  WallSceneNode* node;
+  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
 
-  // try object, standard
+  TextureManager &tm = TextureManager::instance();
+  int wallTexture = -1;
+
+  bool  useColorTexture = false;
+
+  // try object, standard, then default
   if (o.userTextures[0].size())
-    sideMaterial = engine->FindMaterial(o.userTextures[0].c_str());
-  if (sideMaterial == NULL)
-    sideMaterial = engine->FindMaterial("wall");
+    wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (wallTexture < 0)
+    wallTexture = tm.getTextureID( "wall" );
+  else
+    useColorTexture = wallTexture >= 0;
 
-  float        b = o.getBreadth();
-  float        h = o.getHeight();
-  const float *p = o.getPosition();
-  float        r = o.getRotation();
+  while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
+				o.getHeight() / wallTexHeight, wallLOD))) {
+    node->setColor(wallColors[part]);
+    node->setModulateColor(wallModulateColors[part]);
+    node->setLightedColor(wallLightedColors[0]);
+    node->setLightedModulateColor(wallLightedModulateColors[0]);
+    node->setMaterial(wallMaterial);
+    node->setTexture(wallTexture);
+    node->setUseColorTexture(useColorTexture);
 
-  csRef<iMeshFactoryWrapper> wallFactory
-    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
-				NULL);
-  csRef<iGeneralFactoryState> wallFactState
-    = scfQueryInterface<iGeneralFactoryState>
-    (wallFactory->GetMeshObjectFactory());
-
-  wallFactState->SetVertexCount(4);
-
-  wallFactState->GetVertices()[0].Set(0, 0, -b);
-  wallFactState->GetVertices()[1].Set(0, 0,  b);
-  wallFactState->GetVertices()[2].Set(0, h, -b);
-  wallFactState->GetVertices()[3].Set(0, h,  b);
-
-  wallFactState->GetTexels()[0].Set(0, 0);
-  wallFactState->GetTexels()[1].Set(o.getBreadth() / wallTexWidth,
-				    0);
-  wallFactState->GetTexels()[2].Set(0,
-				    o.getHeight() / wallTexHeight);
-  wallFactState->GetTexels()[3].Set(o.getBreadth() / wallTexWidth,
-				    o.getHeight() / wallTexHeight);
-
-  wallFactState->SetTriangleCount(2);  
-  wallFactState->GetTriangles()[ 0].Set(0, 3, 1);
-  wallFactState->GetTriangles()[ 1].Set(0, 2, 3);
-
-  wallFactState->CalculateNormals();
-
-  csRef<iMeshWrapper> wallMesh = engine->CreateMeshWrapper(wallFactory,
-							   "Wall");
-
-  wallMesh->GetMeshObject()->SetMaterialWrapper(sideMaterial);
-  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
-    (wallMesh->GetMeshObject());
-  meshstate->SetLighting(true);
-  iMovable *wallMove = wallMesh->GetMovable();
-  wallMove->SetPosition(room, csVector3(p[0], 0, p[1]));
-  wallMove->SetTransform(csYRotMatrix3(r));
-  wallMove->UpdateMove();
+    db->addStaticNode(node, false);
+    part = (part + 1) % 5;
+  }
+  delete nodeGen;
 }
+
 
 void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 {
@@ -300,421 +352,232 @@ void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 }
 
 
-void SceneDatabaseBuilder::addBox(SceneDatabase*, BoxBuilding& o)
+void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 {
   // this assumes boxes have six parts:  four sides, a roof, and a bottom.
-  float textureFactor = BZDB.eval("boxWallHighResTexRepeat");
+  int part = 0;
+  WallSceneNode* node;
+  ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
+  TextureManager &tm = TextureManager::instance();
+  int    boxTexture = -1;
+  bool  useColorTexture[2] = {false,false};
 
-  iMaterialWrapper *boxWallMaterial = NULL;
-  iMaterialWrapper *boxTopMaterial = NULL;
-
-  // try object, standard
+  // try object, standard, then default
   if (o.userTextures[0].size())
-    boxWallMaterial = engine->FindMaterial(o.userTextures[0].c_str());
-  if (boxWallMaterial == NULL)
-    boxWallMaterial = engine->FindMaterial(BZDB.get("boxWallTexture").c_str());
+    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (boxTexture < 0)
+    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
+
+  useColorTexture[0] = boxTexture >= 0;
+
+  int boxTopTexture = -1;
 
   if (o.userTextures[1].size())
-    boxTopMaterial = engine->FindMaterial(o.userTextures[1].c_str());
-  if (boxTopMaterial == NULL)
-    boxTopMaterial = engine->FindMaterial(BZDB.get("boxTopTexture").c_str());
+    boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+  if (boxTopTexture < 0)
+    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
 
-  float        w = o.getWidth();
-  float        b = o.getBreadth();
-  float        h = o.getHeight();
-  const float *p = o.getPosition();
-  float        r = o.getRotation();
+  useColorTexture[1] = boxTopTexture >= 0;
 
-  const float textureSize  = textureFactor * boxTexWidth;
+  float texutureFactor = BZDB.eval("boxWallTexRepeat");
+  if (renderer->useQuality() >= 3)
+    texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
-  csRef<iMeshFactoryWrapper> boxFactory
-    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
-				NULL);
-  csRef<iGeneralFactoryState> boxFactState
-    = scfQueryInterface<iGeneralFactoryState>
-    (boxFactory->GetMeshObjectFactory());
+  while ((node = ((part < 4) ? nodeGen->getNextNode(
+				-texutureFactor*boxTexWidth,
+				-texutureFactor*boxTexWidth, boxLOD) :
+    // I'm using boxTexHeight for roof since textures are same
+    // size and this number is available
+				nodeGen->getNextNode(
+				-boxTexHeight,
+				-boxTexHeight, boxLOD)))) {
+    node->setColor(boxColors[part]);
+    node->setModulateColor(boxModulateColors[part]);
+    node->setLightedColor(boxLightedColors[part]);
+    node->setLightedModulateColor(boxLightedModulateColors[part]);
+    node->setMaterial(boxMaterial);
+    if (part < 4){
+      node->setTexture(boxTexture);
+      node->setUseColorTexture(useColorTexture[0]);
+    }
+    else{
+      node->setTexture(boxTopTexture);
+      node->setUseColorTexture(useColorTexture[1]);
+    }
 
-  csRef<iRenderBuffer> index_buffer_side;
-  csRef<iRenderBuffer> index_buffer_top;
-  index_buffer_side = csRenderBuffer::CreateIndexRenderBuffer
-    (24, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
-  index_buffer_top = csRenderBuffer::CreateIndexRenderBuffer
-    (12, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
+    db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES
 
-  boxFactState->SetVertexCount(24);
-
-  boxFactState->GetVertices()[0].Set( w, 0, b);
-  boxFactState->GetVertices()[1].Set(-w, 0, b);
-  boxFactState->GetVertices()[2].Set( w, h, b);
-  boxFactState->GetVertices()[3].Set(-w, h, b);
-  boxFactState->GetTexels()[0].Set(0, 0);
-  boxFactState->GetTexels()[1].Set(2 * w / textureSize, 0);
-  boxFactState->GetTexels()[2].Set(0, h / textureSize);
-  boxFactState->GetTexels()[3].Set(2 * w / textureSize, h / textureSize);
-
-  boxFactState->GetVertices()[4].Set(-w, 0, b);
-  boxFactState->GetVertices()[5].Set(-w, 0,-b);
-  boxFactState->GetVertices()[6].Set(-w, h, b);
-  boxFactState->GetVertices()[7].Set(-w, h,-b);
-  boxFactState->GetTexels()[4].Set(0, 0);
-  boxFactState->GetTexels()[5].Set(2 * b / textureSize, 0);
-  boxFactState->GetTexels()[6].Set(0, h / textureSize);
-  boxFactState->GetTexels()[7].Set(2 * b / textureSize, h / textureSize);
-
-  boxFactState->GetVertices()[ 8].Set(-w, 0,-b);
-  boxFactState->GetVertices()[ 9].Set( w, 0,-b);
-  boxFactState->GetVertices()[10].Set(-w, h,-b);
-  boxFactState->GetVertices()[11].Set( w, h,-b);
-  boxFactState->GetTexels()[ 8].Set(0, 0);
-  boxFactState->GetTexels()[ 9].Set(2 * w / textureSize, 0);
-  boxFactState->GetTexels()[10].Set(0, h / textureSize);
-  boxFactState->GetTexels()[11].Set(2 * w / textureSize, h / textureSize);
-
-  boxFactState->GetVertices()[12].Set( w, 0,-b);
-  boxFactState->GetVertices()[13].Set( w, 0, b);
-  boxFactState->GetVertices()[14].Set( w, h,-b);
-  boxFactState->GetVertices()[15].Set( w, h, b);
-  boxFactState->GetTexels()[12].Set(0, 0);
-  boxFactState->GetTexels()[13].Set(2 * b / textureSize, 0);
-  boxFactState->GetTexels()[14].Set(0, h / textureSize);
-  boxFactState->GetTexels()[15].Set(2 * b / textureSize, h / textureSize);
-
-  boxFactState->GetVertices()[16].Set( w, h, b);
-  boxFactState->GetVertices()[17].Set(-w, h, b);
-  boxFactState->GetVertices()[18].Set( w, h,-b);
-  boxFactState->GetVertices()[19].Set(-w, h,-b);
-  boxFactState->GetTexels()[16].Set(0, 0);
-  boxFactState->GetTexels()[17].Set(2 * w / boxTexHeight, 0);
-  boxFactState->GetTexels()[18].Set(0, 2 * b / boxTexHeight);
-  boxFactState->GetTexels()[19].Set(2 * w / boxTexHeight,
-				    2 * b / boxTexHeight);
-
-  boxFactState->GetVertices()[20].Set( w, 0, b);
-  boxFactState->GetVertices()[21].Set( w, 0,-b);
-  boxFactState->GetVertices()[22].Set(-w, 0, b);
-  boxFactState->GetVertices()[23].Set(-w, 0,-b);
-  boxFactState->GetTexels()[20].Set(0, 0);
-  boxFactState->GetTexels()[21].Set(2 * b / boxTexHeight, 0);
-  boxFactState->GetTexels()[22].Set(0, 2 * w / boxTexHeight);
-  boxFactState->GetTexels()[23].Set(2 * b / boxTexHeight,
-				    2 * w / boxTexHeight);
-
-  {
-    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_side);
-    *index++ = 0;
-    *index++ = 2;
-    *index++ = 1;
-    *index++ = 1;
-    *index++ = 2;
-    *index++ = 3;
-    *index++ = 4;
-    *index++ = 6;
-    *index++ = 5;
-    *index++ = 5;
-    *index++ = 6;
-    *index++ = 7;
-    *index++ = 8;
-    *index++ = 10;
-    *index++ = 9;
-    *index++ = 9;
-    *index++ = 10;
-    *index++ = 11;
-    *index++ = 12;
-    *index++ = 14;
-    *index++ = 13;
-    *index++ = 13;
-    *index++ = 14;
-    *index++ = 15;
+    part = (part + 1) % 6;
   }
-  boxFactState->AddSubMesh(index_buffer_side, boxWallMaterial, "Side");
-  {
-    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_top);
-    *index++ = 16;
-    *index++ = 18;
-    *index++ = 17;
-    *index++ = 17;
-    *index++ = 18;
-    *index++ = 19;
-    *index++ = 20;
-    *index++ = 22;
-    *index++ = 21;
-    *index++ = 21;
-    *index++ = 22;
-    *index++ = 23;
-  }
-  boxFactState->AddSubMesh(index_buffer_top, boxTopMaterial, "Top");
-  
-  boxFactState->CalculateNormals();
 
-  csRef<iMeshWrapper> boxMesh = engine->CreateMeshWrapper(boxFactory, "Box");
+#ifndef SHELL_INSIDE_NODES
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode =
+    new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES
 
-  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
-    (boxMesh->GetMeshObject());
-  meshstate->SetLighting(true);
-  iMovable *boxMove = boxMesh->GetMovable();
-  boxMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
-  boxMove->SetTransform(csYRotMatrix3(r));
-  boxMove->UpdateMove();
+  delete nodeGen;
 }
 
 
-void SceneDatabaseBuilder::addPyramid(SceneDatabase*, PyramidBuilding& o)
+void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 {
+  // this assumes pyramids have four parts:  four sides
+  int part = 0;
+  WallSceneNode* node;
+  ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
+
+  TextureManager &tm = TextureManager::instance();
+  int pyramidTexture = -1;
+
+  bool useColorTexture = false;
+  // try object, standard, then default
+  if (o.userTextures[0].size())
+    pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (pyramidTexture < 0)
+    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
+
+  useColorTexture = pyramidTexture >= 0;
+
   // Using boxTexHeight since it's (currently) the same and it's already available
-  float textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+  float textureFactor = BZDB.eval("pyrWallTexRepeat");
+  if (renderer->useQuality() >= 3)
+    textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
-  iMaterialWrapper *pyrMaterial = NULL;
+  while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
+				-textureFactor * boxTexHeight,
+				pyramidLOD))) {
+    node->setColor(pyramidColors[part]);
+    node->setModulateColor(pyramidModulateColors[part]);
+    node->setLightedColor(pyramidLightedColors[part]);
+    node->setLightedModulateColor(pyramidLightedModulateColors[part]);
+    node->setMaterial(pyramidMaterial);
+    node->setTexture(pyramidTexture);
+    node->setUseColorTexture(useColorTexture);
 
-  // try object, standard
-  if (o.userTextures[0].size())
-    pyrMaterial = engine->FindMaterial(o.userTextures[0].c_str());
-  if (pyrMaterial == NULL)
-    pyrMaterial = engine->FindMaterial(BZDB.get("pyrWallTexture").c_str());
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
+    db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES
 
-  float        w = o.getWidth();
-  float        b = o.getBreadth();
-  float        h = o.getHeight();
-  const float *p = o.getPosition();
-  float        r = o.getRotation();
-
-  const float textureSize  = textureFactor * boxTexHeight;
-  const float vertexLength = sqrtf(w * w + b * b + h * h);
-
-  csMatrix3    rotationMatrix;
-  csVector3    positionVector(p[0], p[2], p[1]);
-  if (o.getZFlip()) {
-    rotationMatrix     = csYRotMatrix3(r) * csMatrix3(csZRotMatrix3(M_PI));
-    positionVector[1] += h;
-  } else {
-    rotationMatrix     = csYRotMatrix3(r);
+    part = (part + 1) % 5;
   }
 
-  csRef<iMeshFactoryWrapper> pyrFactory
-    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
-				NULL);
-  csRef<iGeneralFactoryState> pyrFactState
-    = scfQueryInterface<iGeneralFactoryState>
-    (pyrFactory->GetMeshObjectFactory());
+#ifndef SHELL_INSIDE_NODES
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode =
+    new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES
 
-  pyrFactState->SetVertexCount(16);
-  pyrFactState->SetTriangleCount(6);
-
-  pyrFactState->GetVertices()[0].Set( w,  0,  b);
-  pyrFactState->GetVertices()[1].Set(-w,  0,  b);
-  pyrFactState->GetVertices()[2].Set( 0,  h,  0);
-  pyrFactState->GetTexels()[0].Set(0, 0);
-  pyrFactState->GetTexels()[1].Set(2 * w / textureSize, 0);
-  pyrFactState->GetTexels()[2].Set(0, vertexLength / textureSize);
-  pyrFactState->GetTriangles()[0].Set(1, 0, 2);
-
-  pyrFactState->GetVertices()[3].Set(-w,  0,  b);
-  pyrFactState->GetVertices()[4].Set(-w,  0, -b);
-  pyrFactState->GetVertices()[5].Set( 0,  h,  0);
-  pyrFactState->GetTexels()[3].Set(0, 0);
-  pyrFactState->GetTexels()[4].Set(2 * b / textureSize, 0);
-  pyrFactState->GetTexels()[5].Set(0, vertexLength / textureSize);
-  pyrFactState->GetTriangles()[1].Set(4, 3, 5);
-
-  pyrFactState->GetVertices()[6].Set(-w,  0, -b);
-  pyrFactState->GetVertices()[7].Set( w,  0, -b);
-  pyrFactState->GetVertices()[8].Set( 0,  h,  0);
-  pyrFactState->GetTexels()[6].Set(0, 0);
-  pyrFactState->GetTexels()[7].Set(2 * w / textureSize, 0);
-  pyrFactState->GetTexels()[8].Set(0, vertexLength / textureSize);
-  pyrFactState->GetTriangles()[2].Set(7, 6, 8);
-
-  pyrFactState->GetVertices()[ 9].Set( w,  0, -b);
-  pyrFactState->GetVertices()[10].Set( w,  0,  b);
-  pyrFactState->GetVertices()[11].Set( 0,  h,  0);
-  pyrFactState->GetTexels()[ 9].Set(0, 0);
-  pyrFactState->GetTexels()[10].Set(2 * b / textureSize, 0);
-  pyrFactState->GetTexels()[11].Set(0, vertexLength / textureSize);
-  pyrFactState->GetTriangles()[3].Set(10, 9, 11);
-
-  pyrFactState->GetVertices()[12].Set( w,  0,  b);
-  pyrFactState->GetVertices()[13].Set( w,  0, -b);
-  pyrFactState->GetVertices()[14].Set(-w,  0,  b);
-  pyrFactState->GetVertices()[15].Set(-w,  0, -b);
-  pyrFactState->GetTexels()[12].Set(0, 0);
-  pyrFactState->GetTexels()[13].Set(2 * b / textureSize, 0);
-  pyrFactState->GetTexels()[14].Set(0, 2 * w / textureSize);
-  pyrFactState->GetTexels()[15].Set(2 * b / textureSize,
-				    2 * w / textureSize);
-  pyrFactState->GetTriangles()[4].Set(13, 12, 14);
-  pyrFactState->GetTriangles()[5].Set(15, 13, 14);
-
-  pyrFactState->CalculateNormals();
-
-  csRef<iMeshWrapper> pyrMesh = engine->CreateMeshWrapper(pyrFactory, "Box");
-
-  pyrMesh->GetMeshObject()->SetMaterialWrapper(pyrMaterial);
-  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
-    (pyrMesh->GetMeshObject());
-  meshstate->SetLighting(true);
-  iMovable *pyrMove = pyrMesh->GetMovable();
-  pyrMove->SetPosition(room, positionVector);
-  pyrMove->SetTransform(rotationMatrix);
-  pyrMove->UpdateMove();
+  delete nodeGen;
 }
 
-void SceneDatabaseBuilder::addBase(SceneDatabase*, BaseBuilding &o)
-{
-  iMaterialWrapper *baseWallMaterial   = NULL;
-  iMaterialWrapper *baseTopMaterial    = NULL;
 
-  // try object, standard
+void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
+{
+  WallSceneNode* node;
+  ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
+
+  TextureManager &tm = TextureManager::instance();
+  int   boxTexture = -1;
+
+  bool  useColorTexture[2] = {false,false};
+
+  // try object, standard, then default
   if (o.userTextures[0].size())
-    baseWallMaterial = engine->FindMaterial(o.userTextures[0].c_str());
-  if (baseWallMaterial == NULL) {
+    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (boxTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase += BZDB.get("baseWallTexture");
-    baseWallMaterial = engine->FindMaterial(teamBase.c_str());
+    boxTexture = tm.getTextureID(teamBase.c_str(),false);
   }
-  if (baseWallMaterial == NULL)
-    baseWallMaterial = engine->FindMaterial(BZDB.get("boxWallTexture")
-					    .c_str());
+  if (boxTexture < 0)
+    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
+
+  useColorTexture[0] = boxTexture >= 0;
+
+  int   baseTopTexture = -1;
 
   if (o.userTextures[1].size())
-    baseTopMaterial = engine->FindMaterial(o.userTextures[1].c_str());
-  if (baseTopMaterial == NULL) {
+    baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+  if (baseTopTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase += BZDB.get("baseTopTexture").c_str();
-    baseTopMaterial = engine->FindMaterial(teamBase.c_str());
+    baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
+  }
+  if (baseTopTexture < 0)
+    baseTopTexture = -1;
+  else
+    useColorTexture[1] = baseTopTexture >= 0;
+
+  // this assumes bases have 6 parts - if they don't, it still works
+  int part = 0;
+  // repeat the textue once for the top and bottom, else use the old messed up way
+  // There are 3 cases for the texture ordering:
+  // 1. getNextNode() only returns the top texture
+  // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
+  // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
+  while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
+				      nodeGen->getNextNode(o.getBreadth(),
+							   o.getHeight(),
+							   boxLOD)))) {
+    if ((part % 5) != 0) {
+      node->setColor(boxColors[part - 2]);
+      node->setModulateColor(boxModulateColors[part - 2]);
+      node->setLightedColor(boxLightedColors[part - 2]);
+      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
+      node->setMaterial(boxMaterial);
+      node->setTexture(boxTexture);
+      node->setUseColorTexture(useColorTexture[0]);
+    }
+    else{
+      if (useColorTexture[1]) {  // only set the texture if we have one and are using it
+	node->setTexture(baseTopTexture);
+	node->setUseColorTexture(useColorTexture[1]);
+      }
+    }
+    part++;
+
+#ifdef SHELL_INSIDE_NODES
+    const bool ownTheNode = db->addStaticNode(node, true);
+    EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
+    o.addInsideSceneNode(inode);
+#else
+    db->addStaticNode(node, false);
+#endif // SHELL_INSIDE_NODES
   }
 
-  float        w = o.getWidth();
-  float        b = o.getBreadth();
-  float        h = o.getHeight();
-  const float *p = o.getPosition();
-  float        r = o.getRotation();
+#ifndef SHELL_INSIDE_NODES
+  // add the inside node
+  GLfloat obstacleSize[3];
+  obstacleSize[0] = o.getWidth();
+  obstacleSize[1] = o.getBreadth();
+  obstacleSize[2] = o.getHeight();
+  SceneNode* inode = new
+    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+  o.addInsideSceneNode(inode);
+#endif // SHELL_INSIDE_NODES
 
-  csRef<iMeshFactoryWrapper> baseFactory
-    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh",
-				NULL);
-  csRef<iGeneralFactoryState> baseFactState
-    = scfQueryInterface<iGeneralFactoryState>
-    (baseFactory->GetMeshObjectFactory());
-
-  csRef<iRenderBuffer> index_buffer_side;
-  csRef<iRenderBuffer> index_buffer_top;
-  index_buffer_side = csRenderBuffer::CreateIndexRenderBuffer
-    (24, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
-  index_buffer_top = csRenderBuffer::CreateIndexRenderBuffer
-    (12, CS_BUF_STATIC, CS_BUFCOMP_UNSIGNED_INT, 0, 23);
-
-  baseFactState->SetVertexCount(24);
-
-  baseFactState->GetVertices()[0].Set( w, 0, b);
-  baseFactState->GetVertices()[1].Set(-w, 0, b);
-  baseFactState->GetVertices()[2].Set( w, h, b);
-  baseFactState->GetVertices()[3].Set(-w, h, b);
-  baseFactState->GetTexels()[0].Set(0, 0);
-  baseFactState->GetTexels()[1].Set(b, 0);
-  baseFactState->GetTexels()[2].Set(0, h);
-  baseFactState->GetTexels()[3].Set(b, h);
-
-  baseFactState->GetVertices()[4].Set(-w, 0, b);
-  baseFactState->GetVertices()[5].Set(-w, 0,-b);
-  baseFactState->GetVertices()[6].Set(-w, h, b);
-  baseFactState->GetVertices()[7].Set(-w, h,-b);
-  baseFactState->GetTexels()[4].Set(0, 0);
-  baseFactState->GetTexels()[5].Set(b, 0);
-  baseFactState->GetTexels()[6].Set(0, h);
-  baseFactState->GetTexels()[7].Set(b, h);
-
-  baseFactState->GetVertices()[ 8].Set(-w, 0,-b);
-  baseFactState->GetVertices()[ 9].Set( w, 0,-b);
-  baseFactState->GetVertices()[10].Set(-w, h,-b);
-  baseFactState->GetVertices()[11].Set( w, h,-b);
-  baseFactState->GetTexels()[ 8].Set(0, 0);
-  baseFactState->GetTexels()[ 9].Set(b, 0);
-  baseFactState->GetTexels()[10].Set(0, h);
-  baseFactState->GetTexels()[11].Set(b, h);
-
-  baseFactState->GetVertices()[12].Set( w, 0,-b);
-  baseFactState->GetVertices()[13].Set( w, 0, b);
-  baseFactState->GetVertices()[14].Set( w, h,-b);
-  baseFactState->GetVertices()[15].Set( w, h, b);
-  baseFactState->GetTexels()[12].Set(0, 0);
-  baseFactState->GetTexels()[13].Set(b, 0);
-  baseFactState->GetTexels()[14].Set(0, h);
-  baseFactState->GetTexels()[15].Set(b, h);
-
-  baseFactState->GetVertices()[16].Set( w, h, b);
-  baseFactState->GetVertices()[17].Set(-w, h, b);
-  baseFactState->GetVertices()[18].Set( w, h,-b);
-  baseFactState->GetVertices()[19].Set(-w, h,-b);
-  baseFactState->GetTexels()[16].Set(0, 0);
-  baseFactState->GetTexels()[17].Set(1, 0);
-  baseFactState->GetTexels()[18].Set(0, 1);
-  baseFactState->GetTexels()[19].Set(1, 1);
-
-  baseFactState->GetVertices()[20].Set( w, 0, b);
-  baseFactState->GetVertices()[21].Set( w, 0,-b);
-  baseFactState->GetVertices()[22].Set(-w, 0, b);
-  baseFactState->GetVertices()[23].Set(-w, 0,-b);
-  baseFactState->GetTexels()[20].Set(0, 0);
-  baseFactState->GetTexels()[21].Set(1, 0);
-  baseFactState->GetTexels()[22].Set(0, 1);
-  baseFactState->GetTexels()[23].Set(1, 1);
-
-  {
-    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_side);
-    *index++ = 0;
-    *index++ = 2;
-    *index++ = 1;
-    *index++ = 1;
-    *index++ = 2;
-    *index++ = 3;
-    *index++ = 4;
-    *index++ = 6;
-    *index++ = 5;
-    *index++ = 5;
-    *index++ = 6;
-    *index++ = 7;
-    *index++ = 8;
-    *index++ = 10;
-    *index++ = 9;
-    *index++ = 9;
-    *index++ = 10;
-    *index++ = 11;
-    *index++ = 12;
-    *index++ = 14;
-    *index++ = 13;
-    *index++ = 13;
-    *index++ = 14;
-    *index++ = 15;
-  }
-  baseFactState->AddSubMesh(index_buffer_side, baseWallMaterial, "Side");
-  {
-    csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer_top);
-    *index++ = 16;
-    *index++ = 18;
-    *index++ = 17;
-    *index++ = 17;
-    *index++ = 18;
-    *index++ = 19;
-    *index++ = 20;
-    *index++ = 22;
-    *index++ = 21;
-    *index++ = 21;
-    *index++ = 22;
-    *index++ = 23;
-  }
-  baseFactState->AddSubMesh(index_buffer_top, baseTopMaterial, "Top");
-  
-  baseFactState->CalculateNormals();
-
-  csRef<iMeshWrapper> baseMesh = engine->CreateMeshWrapper(baseFactory,
-							   "Base");
-
-  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
-    (baseMesh->GetMeshObject());
-  meshstate->SetLighting(true);
-  iMovable *baseMove = baseMesh->GetMovable();
-  baseMove->SetPosition(room, csVector3(p[0], p[2], p[1]));
-  baseMove->SetTransform(csYRotMatrix3(r));
-  baseMove->UpdateMove();
+  delete nodeGen;
 }
 
 void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
@@ -745,21 +608,33 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 							teleporterLOD))) {
     if (o.isHorizontal ()) {
       if (part >= 0 && part <= 15) {
+	node->setColor (teleporterColors[0]);
+	node->setModulateColor (teleporterModulateColors[0]);
+	node->setLightedColor (teleporterLightedColors[0]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
     }
     else {
       if (part >= 0 && part <= 1) {
+	node->setColor (teleporterColors[0]);
+	node->setModulateColor (teleporterModulateColors[0]);
+	node->setLightedColor (teleporterLightedColors[0]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
       else if (part >= 2 && part <= 11) {
+	node->setColor (teleporterColors[1]);
+	node->setModulateColor (teleporterModulateColors[1]);
+	node->setLightedColor (teleporterLightedColors[1]);
 	node->setLightedModulateColor (teleporterLightedModulateColors[1]);
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
     }
 
