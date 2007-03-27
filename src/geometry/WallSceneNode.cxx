@@ -32,9 +32,8 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-WallSceneNode::WallSceneNode() : numLODs(0),
-				elementAreas(NULL),
-				style(0)
+WallSceneNode::WallSceneNode() : wallTexture(-1), numLODs(0),
+				 elementAreas(NULL), style(0)
 {
   noPlane      = false;
   dynamicColor = NULL;
@@ -315,11 +314,9 @@ void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
   gstate = builder.getState();
 }
 
-void			WallSceneNode::setTexture(const int tex)
+void			WallSceneNode::setTexture(int tex)
 {
-  OpenGLGStateBuilder builder(gstate);
-  builder.setTexture(tex);
-  gstate = builder.getState();
+  wallTexture = tex;
 }
 
 void			WallSceneNode::setTextureMatrix(const GLfloat* texmat)

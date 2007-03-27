@@ -22,6 +22,7 @@
 // common implementation headers
 #include "Intersect.h"
 #include "StateDatabase.h"
+#include "TextureManager.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -411,6 +412,9 @@ void QuadWallSceneNode::renderRadar()
 }
 
 void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
+  TextureManager &tm      = TextureManager::instance();
+  std::string     texture = tm.getInfo(wallTexture).name;
+
   csRef<iMeshFactoryWrapper> quadWallFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
   csRef<iGeneralFactoryState> quadWallFactState
@@ -437,7 +441,7 @@ void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
     = engine->CreateMeshWrapper(quadWallFactory, "QuadWall");
 
   iMaterialWrapper *quadWallMaterial
-    = engine->FindMaterial(BZDB.get("cautionTexture").c_str());
+    = engine->FindMaterial(texture.c_str());
   quadWallMesh->GetMeshObject()->SetMaterialWrapper(quadWallMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

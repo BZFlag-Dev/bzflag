@@ -86,6 +86,8 @@ class WallSceneNode : public SceneNode {
 				const GLfloat2Array& uvs,
 				SceneNode*& front, SceneNode*& back); // const
 
+    int                 wallTexture;
+
   private:
     static void splitEdge(float d1, float d2,
 			  const GLfloat* p1, const GLfloat* p2,
