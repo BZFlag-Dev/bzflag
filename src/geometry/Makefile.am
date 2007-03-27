@@ -8,6 +8,7 @@ noinst_LTLIBRARIES = libGeometry.la
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\

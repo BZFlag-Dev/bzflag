@@ -28,6 +28,9 @@
 #define	BZF_SCENE_NODE_H
 
 #include "common.h"
+
+#include <crystalspace.h>
+
 #include "bzfgl.h"
 #include "bzfio.h"
 #include "OpenGLGState.h"
@@ -51,6 +54,7 @@
 
 class ViewFrustum;
 class SceneRenderer;
+class iEngine;
 
 class SceneNode {
   public:
@@ -81,6 +85,8 @@ class SceneNode {
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
     virtual void	renderRadar();
+
+    virtual void        addToEngine(csRef<iEngine>, iSector *) {;};
 
     struct RenderSet {
       RenderNode* node;

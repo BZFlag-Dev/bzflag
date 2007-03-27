@@ -6,6 +6,7 @@ noinst_LTLIBRARIES =	libTank.la
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libTank_la_LDFLAGS = -static
 libTank_la_SOURCES =	\

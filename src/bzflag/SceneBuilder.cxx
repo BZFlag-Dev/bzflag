@@ -14,8 +14,7 @@
 #include "SceneBuilder.h"
 
 // local implemenation headers
-#include "ZSceneDatabase.h"
-#include "BSPSceneDatabase.h"
+#include "CSSceneDatabase.h"
 #include "World.h"
 
 // scene node implemenation headers
@@ -127,11 +126,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
   wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
 
   // pick type of database
-  SceneDatabase* db;
-  if (BZDBCache::zbuffer)
-    db = new ZSceneDatabase;
-  else
-    db = new BSPSceneDatabase;
+  SceneDatabase* db = new CSSceneDatabase;
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   if (!world) {

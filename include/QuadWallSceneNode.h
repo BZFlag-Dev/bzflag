@@ -51,6 +51,7 @@ class QuadWallSceneNode : public WallSceneNode {
     const		GLfloat* getVertex (int vertex) const;
 
     virtual void	getRenderNodes(std::vector<RenderSet>& rnodes);
+    virtual void        addToEngine(csRef<iEngine> engine, iSector *room);
 
   private:
     void		init(const GLfloat base[3],

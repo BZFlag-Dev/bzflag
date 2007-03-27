@@ -47,6 +47,9 @@
     <texture name="red_basetop">
       <file>red_basetop.png</file>
     </texture>
+    <texture name="caution">
+      <file>caution.png</file>
+    </texture>
     <texture name="roof">
       <file>roof.png</file>
     </texture>
@@ -103,6 +106,10 @@
     <material name="red_basetop">
       <shader type="pvl">std_lighting_fixed</shader>
       <shadervar name="tex diffuse" type="texture">red_basetop</shadervar>
+    </material>
+    <material name="caution">
+      <shader type="pvl">std_lighting_fixed</shader>
+      <shadervar name="tex diffuse" type="texture">caution</shadervar>
     </material>
     <material name="wall">
       <shader type="pvl">std_lighting_fixed</shader>

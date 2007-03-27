@@ -34,6 +34,7 @@ noinst_HEADERS =			\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
+	CSSceneDatabase.h		\
 	DirectoryNames.h		\
 	DynamicColor.h			\
 	EighthDBaseSceneNode.h		\

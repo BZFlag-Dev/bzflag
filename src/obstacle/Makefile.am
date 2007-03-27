@@ -5,6 +5,7 @@ MAINTAINERCLEANFILES =	\
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libObstacle_la_LDFLAGS = -static
 

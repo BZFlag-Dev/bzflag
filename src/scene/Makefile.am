@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libSceneDB_la_LDFLAGS = -static
 libSceneDB_la_SOURCES =			\
@@ -14,6 +15,7 @@ libSceneDB_la_SOURCES =			\
 	Octree.cxx			\
 	Octree.h			\
 	SceneDatabase.cxx		\
+	CSSceneDatabase.cxx		\
 	ZSceneDatabase.cxx		\
 	BSPSceneDatabase.cxx
 

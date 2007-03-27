@@ -21,6 +21,7 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "StateDatabase.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -409,6 +410,43 @@ void QuadWallSceneNode::renderRadar()
   return;
 }
 
+void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
+  csRef<iMeshFactoryWrapper> quadWallFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
+  csRef<iGeneralFactoryState> quadWallFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (quadWallFactory->GetMeshObjectFactory());
+  
+  quadWallFactState->SetVertexCount(getVertexCount());
+  quadWallFactState->SetTriangleCount(2);
+
+  int           i;
+  for (i = 0; i < 4; i++) {
+    const GLfloat* vertex = nodes[0]->getVertex(i);
+    quadWallFactState->GetVertices()[i].Set(vertex[0], vertex[2], vertex[1]);
+    quadWallFactState->GetTexels()[i].Set(nodes[0]->uv[i][0],
+					  nodes[0]->uv[i][1]);
+  }
+
+  quadWallFactState->GetTriangles()[0].Set(0, 2, 1);
+  quadWallFactState->GetTriangles()[1].Set(1, 2, 3);
+
+  quadWallFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> quadWallMesh
+    = engine->CreateMeshWrapper(quadWallFactory, "QuadWall");
+
+  iMaterialWrapper *quadWallMaterial
+    = engine->FindMaterial(BZDB.get("cautionTexture").c_str());
+  quadWallMesh->GetMeshObject()->SetMaterialWrapper(quadWallMaterial);
+
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (quadWallMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *quadWallMove = quadWallMesh->GetMovable();
+  quadWallMove->SetPosition(room, csVector3(0));
+  quadWallMove->UpdateMove();
+}
 
 // Local Variables: ***
 // mode:C++ ***
