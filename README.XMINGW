@@ -94,7 +94,7 @@ make
 make install
 
 ------ bzflag
-Now, time to get a copy of bzflag, from CVS or from source tarball.
+Now, time to get a copy of bzflag, from SVN or from source tarball.
 
 When you have your source tree exploded, go to the root of this tree and:
 

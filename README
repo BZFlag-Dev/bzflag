@@ -51,17 +51,15 @@ more, with details varying depending on the platform.  Source code
 distributions are provided and archived in various formats as well.
 See the project site for the download links.
 
-BZFlag is also available directly from CVS.  To obtain BZflag from
-CVS, a bit more familiarity with software development is expected.
-Sometimes active BZFlag development is on CVS HEAD, sometimes it is on
+BZFlag is also available directly from SVN.  To obtain BZflag from
+SVN, a bit more familiarity with software development is expected.
+Sometimes active BZFlag development is on SVN HEAD, sometimes it is on
 a branch, sometimes it's in multiple places.  Inquire on the #bzflag
 IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
 to where the current development activity resides.  If you're familiar
-enough, anonymous CVS access is provided:
+enough, anonymous SVN access is provided:
 
-    cvs -d:pserver:anonymous@bzflag.cvs.sourceforge.net:/cvsroot/bzflag login
-[ press return for no password ]
-    cvs -z3 -d:pserver:anonymous@bzflag.cvs.sourceforge.net co -P bzflag
+     svn co https://bzflag.svn.sourceforge.net/svnroot/bzflag/trunk/bzflag bzflag
 
 
 Compiling and Installation
@@ -89,7 +87,7 @@ for common problems specific to those platforms as well.
 
 The Longer Version:
 
-To build sources checked out directly from CVS you need to create a
+To build sources checked out directly from SVN you need to create a
 configure script. You can skip this step if you grab an distribution
 of BZFlag that already has a ./configure script in it, such as from a
 source distribution tarball.  To generate the configure script, you
@@ -212,7 +210,7 @@ man pages. This should get things back to a tarball state.
 `make maintainer-clean' removes everything distclean does and also
 packages, directories created during the build, and the platform
 configuration; this should get the source tree back to its state in
-CVS.
+SVN.
 
 To build BZFlag for an unsupported platform, see PORTING.
 
@@ -244,7 +242,7 @@ There are several BZFlag mailing lists, but the two of particular
 interest to most are the user's list and the main developer's list.
 The former is for general BZFlag discussion and announcements.  The
 latter is for coding and development discussion only.  There are also
-lists dedicated to CVS activity, league discussions, and server
+lists dedicated to SVN activity, league discussions, and server
 administration.
 
 To join a mailing list, go to the Sourceforge mailing list page on the
@@ -311,10 +309,10 @@ Patches should be entered into the BZFlag patch tracking system at:
 
 http://sourceforge.net/tracker/?group_id=3248&atid=303248
 
-Patches are preferred in the unified diff format.  From a CVS
+Patches are preferred in the unified diff format.  From a SVN
 checkout, a unified diff patch file may be created as follows:
 
-  % cvs diff -u > patch.diff
+  % svn diff > patch.diff
 
 If you like, you may also send mail to either the BZFlag development
 mailing list or to Tim@Rikers.org (the development mailing list is

@@ -49,7 +49,7 @@ BZFlag.app build.
 
 If you're compiling from source, it's expected that you have some
 understanding of how to compile applications on the command line.  In
-general, source distributions are not supported for CVS checkouts.
+general, source distributions are not supported for SVN checkouts.
 They are only supported for regular source release distributions.
 
 See the instructions in README and INSTALL for more details.

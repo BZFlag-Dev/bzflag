@@ -118,9 +118,9 @@ check the box near the bottom that says, "Use fast but imperfect dependency gene
 compiling.
 
 ==Linker Errors==
-If compilation includes linking errors, and you are using CVS source code, it may be temporary
+If compilation includes linking errors, and you are using SVN source code, it may be temporary
 and due to the project files not being updated yet for new BZFlag source files. Make sure you
-also have the latest Dev-C++/CodeBlocks files from CVS. If you are using release source code, it most likely
+also have the latest Dev-C++/CodeBlocks files from SVN. If you are using release source code, it most likely
 is due to the library (.a) files of your compiler. Make sure you have properly installed your compiler,
 and have the correct library files in the correct place, and of the correct version that matches your compiler.
 Also, your Dev-C++/CodeBlocks configuration and setup (more specifically, that of MinGW32/GCC) may be the problem. If
@@ -136,14 +136,14 @@ Curses lib file is named "libcurses.a" so it links correctly (named exactly like
 
 ==Further Help==
 If you have any trouble not answered here, and you are unable to figure it out yourself, BZBB (bzbb.bzflag.org)
-can be a big help. Check the "CVS/Development/Compiling" forum on BZBB; there are several posts regarding Dev-C++.
+can be a big help. Check the "SVN/Development/Compiling" forum on BZBB; there are several posts regarding Dev-C++.
 Post your own message if you still are unable to fix it.
 
 ==Messed Up Interface==
 If BZFlag looks significantly messed up when you run it, and it is clearly done loading, and you also have
 reasonably played around with the GUI settings, you may want to close it and re-open it. If
 this does not work, try doing a "clean compile" (rebuild the entire BZFlag project); this usually
-works. If it still looks messed up, it may be a current issue in CVS or your release. Get the latest code
+works. If it still looks messed up, it may be a current issue in SVN or your release. Get the latest code
 and try again. If it still does not work, you most likely are a victim of poor hardware. Mention it on BZBB
 for further help.
 
