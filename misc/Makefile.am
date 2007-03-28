@@ -27,7 +27,6 @@ EXTRA_DIST =				\
 	rrlog.cxx			\
 	serverstats.sh			\
 	simpleSwearList.txt		\
-	snap.sh				\
 	tar				\
 	Template.cxx			\
 	Template.h			\
