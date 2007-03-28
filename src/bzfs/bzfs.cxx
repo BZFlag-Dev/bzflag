@@ -765,17 +765,17 @@ bool defineWorld ( void )
 
   if (!worldData.generated && worldData.worldFile.size())
   {
-	  clOptions->worldFile = worldData.worldFile.c_str();
-	  if (worldData.ctf)
-		  clOptions->gameType = eClassicCTF;
-	  else if (worldData.rabbit)
-		  clOptions->gameType = eRabbitChase;
-	  else if (worldData.openFFA)
-		  clOptions->gameType = eOpenFFA;
-	  else
-		  clOptions->gameType = eTeamFFA;
+    clOptions->worldFile = worldData.worldFile.c_str();
+    if (worldData.ctf)
+      clOptions->gameType = eClassicCTF;
+    else if (worldData.rabbit)
+      clOptions->gameType = eRabbitChase;
+    else if (worldData.openFFA)
+      clOptions->gameType = eOpenFFA;
+    else
+      clOptions->gameType = eTeamFFA;
 
-	  // todo.. load this maps options and vars and stuff.
+    // todo.. load this maps options and vars and stuff.
   }
 
   // make world and add buildings
