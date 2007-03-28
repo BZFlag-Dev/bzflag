@@ -24,7 +24,6 @@ EXTRA_DIST =				\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
-	rebuild-bzflag			\
 	rrlog.cxx			\
 	serverstats.sh			\
 	simpleSwearList.txt		\
