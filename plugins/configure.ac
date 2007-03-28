@@ -74,12 +74,12 @@ AC_MSG_NOTICE([**************************])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
-# if this is not a CVS checkout, disable dependency tracking for a
-# faster build. it's not likely that the user is doing development
-# from a source release. at least they really should not given the
-# extra steps that are necessary for making a proper useful diff.
+# if this is not a checkout, disable dependency tracking for a faster
+# build. it's not likely that the user is doing development from a
+# source release. at least they really should not given the extra
+# steps that are necessary for making a proper useful diff.
 AC_MSG_CHECKING([whether dependency tracking should be enabled])
-if test -d $srcdir/CVS ; then
+if test -d $srcdir/.svn ; then
 	if test "x$enable_maintainer_mode" = "x" ; then
 		enable_maintainer_mode="yes"
 	fi

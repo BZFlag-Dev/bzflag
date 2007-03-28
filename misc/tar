@@ -2,6 +2,7 @@
 exec /bin/tar \
  --dereference \
  --exclude CVS \
+ --exclude .svn \
  --exclude .cvsignore \
  --exclude config.log \
  --exclude config.cache \
