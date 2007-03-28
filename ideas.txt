@@ -26,8 +26,6 @@ Put the registration requirements of the game into the game mode ( open, limited
 
 Make sure public servers can advertise to reg only.
 
-Add "trueFFA" game mode. FFA where color doesn't mater ( like a normal death match ). Let the game go till score limits, and reset.
-
 Change +s to be game mode sensitive and not add stupid flags ( don't add geno, or the mind affecters in true FFA, don't do PZ when no teleporters, etc.. )
 
 Hide the cursor in the menu and show the menu controls on each menu page (lower right).
