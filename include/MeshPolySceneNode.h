@@ -43,7 +43,7 @@ class MeshPolySceneNode : public WallSceneNode {
     void renderRadar();
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
-
+    virtual void        addToEngine(csRef<iEngine> engine, iSector *room);
 
   protected:
     class Geometry : public RenderNode {

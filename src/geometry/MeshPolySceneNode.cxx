@@ -22,6 +22,7 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "TextureManager.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
@@ -752,6 +753,46 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
   return;
 }
 
+void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
+  TextureManager &tm      = TextureManager::instance();
+  std::string     texture = tm.getInfo(wallTexture).name;
+
+  csRef<iMeshFactoryWrapper> meshPolyFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
+  csRef<iGeneralFactoryState> meshPolyFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (meshPolyFactory->GetMeshObjectFactory());
+  
+  meshPolyFactState->SetVertexCount(getVertexCount());
+  meshPolyFactState->SetTriangleCount(getVertexCount() - 2);
+
+  int i;
+  for (i = 0; i < getVertexCount(); i++) {
+    const GLfloat* vertex = node.getVertex(i);
+    meshPolyFactState->GetVertices()[i].Set(vertex[0], vertex[2], vertex[1]);
+    meshPolyFactState->GetTexels()[i].Set(node.texcoords[i][0],
+					  node.texcoords[i][1]);
+  }
+
+  for (i = 0; i < getVertexCount() - 2; i++)
+    meshPolyFactState->GetTriangles()[i].Set(0, i + 1, i + 2);
+
+  meshPolyFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> meshPolyMesh
+    = engine->CreateMeshWrapper(meshPolyFactory, "MeshPoly");
+
+  iMaterialWrapper *meshPolyMaterial
+    = engine->FindMaterial(texture.c_str());
+  meshPolyMesh->GetMeshObject()->SetMaterialWrapper(meshPolyMaterial);
+
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (meshPolyMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *meshPolyMove = meshPolyMesh->GetMovable();
+  meshPolyMove->SetPosition(room, csVector3(0));
+  meshPolyMove->UpdateMove();
+}
 
 // Local Variables: ***
 // mode:C++ ***
