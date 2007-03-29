@@ -22,6 +22,7 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "TextureManager.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
@@ -321,6 +322,45 @@ void TriWallSceneNode::renderRadar()
   return;
 }
 
+void TriWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
+  TextureManager &tm      = TextureManager::instance();
+  std::string     texture = tm.getInfo(wallTexture).name;
+
+  csRef<iMeshFactoryWrapper> triWallFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
+  csRef<iGeneralFactoryState> triWallFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (triWallFactory->GetMeshObjectFactory());
+  
+  triWallFactState->SetVertexCount(getVertexCount());
+  triWallFactState->SetTriangleCount(1);
+
+  int i;
+  for (i = 0; i < 3; i++) {
+    const GLfloat* vertex = nodes[0]->getVertex(i);
+    triWallFactState->GetVertices()[i].Set(vertex[0], vertex[2], vertex[1]);
+    triWallFactState->GetTexels()[i].Set(nodes[0]->uv[i][0],
+					 nodes[0]->uv[i][1]);
+  }
+
+  triWallFactState->GetTriangles()[0].Set(0, 2, 1);
+
+  triWallFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> triWallMesh
+    = engine->CreateMeshWrapper(triWallFactory, "TriWall");
+
+  iMaterialWrapper *triWallMaterial
+    = engine->FindMaterial(texture.c_str());
+  triWallMesh->GetMeshObject()->SetMaterialWrapper(triWallMaterial);
+
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (triWallMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *triWallMove = triWallMesh->GetMovable();
+  triWallMove->SetPosition(room, csVector3(0));
+  triWallMove->UpdateMove();
+}
 
 // Local Variables: ***
 // mode:C++ ***

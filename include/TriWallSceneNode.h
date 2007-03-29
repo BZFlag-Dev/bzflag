@@ -44,6 +44,7 @@ class TriWallSceneNode : public WallSceneNode {
     bool		cull(const ViewFrustum&) const;
 
     void		getRenderNodes(std::vector<RenderSet>& rnodes);
+    virtual void        addToEngine(csRef<iEngine> engine, iSector *room);
 
   protected:
     class Geometry : public RenderNode {
