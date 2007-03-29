@@ -2706,7 +2706,7 @@ static void handleScore(void *msg)
       if (i >= 0)
 	sPlayer = getPlayerByIndex(i);
       else
-	logDebugMessage(1,"Recieved score update for unknown player!\n");
+	logDebugMessage(1,"Received score update for unknown player!\n");
     }
     if (sPlayer) {
       if (sPlayer == myTank) {
