@@ -437,6 +437,47 @@ void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
   return;
 }
 
+void MeshFragSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
+  const std::string &texture = faces[0]->getMaterial()->getTexture(0);
+
+  csRef<iMeshFactoryWrapper> meshFragFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
+  csRef<iGeneralFactoryState> meshFragFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (meshFragFactory->GetMeshObjectFactory());
+  
+  meshFragFactState->SetVertexCount(arrayCount * 3);
+  meshFragFactState->SetTriangleCount(arrayCount);
+
+  int i;
+  for (i = 0; i < arrayCount * 3; i++) {
+    meshFragFactState->GetVertices()[i].Set(vertices[i * 3],
+					    vertices[i * 3 + 2],
+					    vertices[i * 3 + 1]);
+    meshFragFactState->GetTexels()[i].Set(texcoords[i * 2],
+					  texcoords[i * 2 + 1]);
+  }
+
+  for (i = 0; i < arrayCount; i++)
+    meshFragFactState->GetTriangles()[i].Set(i * 3, i * 3 + 2, i * 3 + 1);
+
+  meshFragFactState->CalculateNormals();
+
+  csRef<iMeshWrapper> meshFragMesh
+    = engine->CreateMeshWrapper(meshFragFactory, "MeshFrag");
+
+  iMaterialWrapper *meshFragMaterial
+    = engine->FindMaterial(texture.c_str());
+  meshFragMesh->GetMeshObject()->SetMaterialWrapper(meshFragMaterial);
+
+  csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
+    (meshFragMesh->GetMeshObject());
+  meshstate->SetLighting(true);
+  iMovable *meshFragMove = meshFragMesh->GetMovable();
+  meshFragMove->SetPosition(room, csVector3(0));
+  meshFragMove->UpdateMove();
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

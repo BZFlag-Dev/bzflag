@@ -50,6 +50,7 @@ class MeshFragSceneNode : public WallSceneNode {
     bool inAxisBox(const Extents& exts) const;
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
+    virtual void addToEngine(csRef<iEngine> engine, iSector *room);
 
   protected:
     class Geometry : public RenderNode {
