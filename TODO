@@ -3,6 +3,10 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* define local group files using BZID, so that the need for global groups
+  isn't has high for people that only run one server, or groups that
+  don't change often ( admin groups, etc.. ).
+
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
   or just say it's global or nothing
