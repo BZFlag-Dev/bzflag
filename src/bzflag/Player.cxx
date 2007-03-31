@@ -843,16 +843,9 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
   if (!isAlive() && !isExploding()) {
-    if (meshInSector) {
-      tankMesh->GetMovable()->SetSector(NULL);
-      tankMesh->GetMovable()->UpdateMove();
-      meshInSector = false;
-    }
+    tankMesh->GetMovable()->SetSector(NULL);
+    tankMesh->GetMovable()->UpdateMove();
     return; // don't draw anything
-  }
-  if (!meshInSector) {
-    meshInSector = true;
-    tankMesh->GetMovable()->SetSector(playing->room);
   }
 
   // place the tank
@@ -875,6 +868,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
 
   if (cloaked && !seerView) {
+    tankMesh->GetMovable()->SetSector(NULL);
+    tankMesh->GetMovable()->UpdateMove();
     return; // don't draw anything
   }
 
@@ -883,6 +878,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     tankNode->setOnlyShadows(true);
   } else {
     tankNode->setOnlyShadows(false);
+  }
+  if (inCockpit) {
+    tankMesh->GetMovable()->SetSector(NULL);
+    tankMesh->GetMovable()->UpdateMove();
+    return; // don't draw anything
   }
 
   // adjust alpha for seerView
@@ -973,6 +973,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
   const float azimuth = atan2f(forward[1], forward[0]);
   const csYRotMatrix3 rotation(azimuth);
+  tankMesh->GetMovable()->SetSector(playing->room);
   tankMesh->GetMovable()->SetTransform(rotation);
   tankMesh->GetMovable()->SetPosition(csVector3(state.pos[0],
 						state.pos[2],
