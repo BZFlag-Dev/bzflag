@@ -162,6 +162,7 @@ class SceneNode {
     bool		noPlane;
     bool		occluder;
     Extents		extents;
+    static bool         errored;
   private:
     GLfloat		sphere[4];
 #ifdef __MINGW32__

@@ -468,6 +468,14 @@ void MeshFragSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
 
   iMaterialWrapper *meshFragMaterial
     = engine->FindMaterial(texture.c_str());
+  if (meshFragMaterial == NULL) {
+    if (!errored) {
+      errored = true;
+      csApplicationFramework::ReportError
+	("Error looking for material %s !", texture.c_str());
+    }
+    return;
+  }
   meshFragMesh->GetMeshObject()->SetMaterialWrapper(meshFragMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

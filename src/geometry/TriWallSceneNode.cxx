@@ -352,6 +352,14 @@ void TriWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
 
   iMaterialWrapper *triWallMaterial
     = engine->FindMaterial(texture.c_str());
+  if (triWallMaterial == NULL) {
+    if (!errored) {
+      errored = true;
+      csApplicationFramework::ReportError
+	("Error looking for material %s !", texture.c_str());
+    }
+    return;
+  }
   triWallMesh->GetMeshObject()->SetMaterialWrapper(triWallMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

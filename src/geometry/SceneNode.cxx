@@ -36,6 +36,7 @@ void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
 
+bool SceneNode::errored = false;
 SceneNode::SceneNode()
 {
   static bool init = false;

@@ -6288,7 +6288,7 @@ void Playing::CreateRoom ()
   tankFactory = engine->FindMeshFactory("tank");
   if (!tankFactory)
     csApplicationFramework::ReportError
-      ("Error loading mesh object factory!");
+      ("Error loading tank mesh object factory!");
 }
 
 

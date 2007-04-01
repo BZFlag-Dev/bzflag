@@ -784,6 +784,14 @@ void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
 
   iMaterialWrapper *meshPolyMaterial
     = engine->FindMaterial(texture.c_str());
+  if (meshPolyMaterial == NULL) {
+    if (!errored) {
+      errored = true;
+      csApplicationFramework::ReportError
+	("Error looking for material %s !", texture.c_str());
+    }
+    return;
+  }
   meshPolyMesh->GetMeshObject()->SetMaterialWrapper(meshPolyMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

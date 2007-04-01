@@ -424,7 +424,7 @@ void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   quadWallFactState->SetVertexCount(getVertexCount());
   quadWallFactState->SetTriangleCount(2);
 
-  int           i;
+  int i;
   for (i = 0; i < 4; i++) {
     const GLfloat* vertex = nodes[0]->getVertex(i);
     quadWallFactState->GetVertices()[i].Set(vertex[0], vertex[2], vertex[1]);
@@ -442,6 +442,14 @@ void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
 
   iMaterialWrapper *quadWallMaterial
     = engine->FindMaterial(texture.c_str());
+  if (quadWallMaterial == NULL) {
+    if (!errored) {
+      errored = true;
+      csApplicationFramework::ReportError
+	("Error looking for material %s !", texture.c_str());
+    }
+    return;
+  }
   quadWallMesh->GetMeshObject()->SetMaterialWrapper(quadWallMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
