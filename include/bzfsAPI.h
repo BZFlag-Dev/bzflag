@@ -85,6 +85,8 @@ typedef enum
 	bz_eLogingEvent,
 	bz_eShotEndedEvent,
 	bz_eFlagTransferredEvent,
+	bz_eFlagGrabbedEvent,
+	bz_eFlagDroppedEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -944,6 +946,48 @@ public:
   int toPlayerID;
   const char *flagType;
   enum Action action;
+};
+
+class bz_FlagGrabbedEventData : public bz_EventData
+{
+public:
+
+	bz_FlagGrabbedEventData_V1()
+	{
+		eventType = bz_eFlagGrabbedEvent;
+		playerID = -1;
+		flagID = -1;
+		position[0] = position[1] = position[2] = 0;
+	}
+
+	virtual ~bz_FlagGrabbedEventData_V1(){};
+
+	int playerID;
+	int flagID;
+
+	const char *flagType;
+	float	position[3];
+};
+
+class bz_FlagDroppedEvenData : public bz_EventData
+{
+public:
+
+	bz_FlagDroppedEvenData_V1()
+	{
+		eventType = bz_eFlagDroppedEvent;
+		playerID = -1;
+		flagID = -1;
+		position[0] = position[1] = position[2] = 0;
+	}
+
+	virtual ~bz_FlagDroppedEvenData_V1(){};
+
+	int playerID;
+	int flagID;
+
+	const char *flagType;
+	float	position[3];
 };
 
 

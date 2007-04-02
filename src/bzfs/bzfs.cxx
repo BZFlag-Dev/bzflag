@@ -2695,6 +2695,13 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = flag.pack(buf);
+
+  bz_FlagGrabbedEventData	data;
+  data.flagID = flag.getIndex();
+  data.flagType = flag.flag.type->flagAbbv;
+
+  worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
+
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
   playerData->flagHistory.add(flag.flag.type);
@@ -2799,6 +2806,15 @@ static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3
     return;
   }
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
+
+  bz_FlagDroppedEvenData data;
+  data.playerID = playerData.getIndex();
+  data.flagID = flagIndex;
+  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
+  memcpy(data.position, dropPos, sizeof(float)*3);
+
+  worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
+
   return;
 }
 
