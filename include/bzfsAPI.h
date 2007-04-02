@@ -952,7 +952,7 @@ class bz_FlagGrabbedEventData : public bz_EventData
 {
 public:
 
-	bz_FlagGrabbedEventData_V1()
+	bz_FlagGrabbedEventData()
 	{
 		eventType = bz_eFlagGrabbedEvent;
 		playerID = -1;
@@ -960,7 +960,7 @@ public:
 		position[0] = position[1] = position[2] = 0;
 	}
 
-	virtual ~bz_FlagGrabbedEventData_V1(){};
+	virtual ~bz_FlagGrabbedEventData(){};
 
 	int playerID;
 	int flagID;
@@ -973,7 +973,7 @@ class bz_FlagDroppedEvenData : public bz_EventData
 {
 public:
 
-	bz_FlagDroppedEvenData_V1()
+	bz_FlagDroppedEvenData()
 	{
 		eventType = bz_eFlagDroppedEvent;
 		playerID = -1;
@@ -981,7 +981,7 @@ public:
 		position[0] = position[1] = position[2] = 0;
 	}
 
-	virtual ~bz_FlagDroppedEvenData_V1(){};
+	virtual ~bz_FlagDroppedEvenData(){};
 
 	int playerID;
 	int flagID;
