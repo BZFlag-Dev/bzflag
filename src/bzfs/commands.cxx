@@ -3231,71 +3231,71 @@ bool DateTimeCommand::operator() (const char *,
 // parse server comands
 void parseServerCommand(const char *message, int t)
 {
-  if (!message) {
-    std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
-    return;
-  }
+	if (!message)
+	{
+		std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
+		return;
+	}
 
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
+	if (!playerData)
+		return;
 
-  // Notify plugins of slash command execution request
-  bz_SlashCommandEventData_V1 commandData;
-  commandData.from = t;
-  commandData.message = message;
-  commandData.eventTime = TimeKeeper::getCurrent().getSeconds();
+	// Notify plugins of slash command execution request
+	bz_SlashCommandEventData_V1 commandData;
+	commandData.from = t;
+	commandData.message = message;
+	commandData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-  worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
+	worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
-  if (ServerCommand::execute(message, playerData))
-    return;
+	// lets see if if ther is a cusom handler for the event
+	std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
 
-  if (cmdHelp(message, playerData))
-    return;
+	if (params.size() == 0)
+		return;
 
-  {
-    // lets see if it is a custom command
-    std::vector<std::string> params =
-      TextUtils::tokenize(std::string(message+1),std::string(" "));
+	std::string temp = "/" +  params[0];
+	tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(temp));
 
-    if (params.size() == 0)
-      return;
+	bz_ApiString	command = params[0];
+	bz_ApiString APIMessage;
+	bz_APIStringList	APIParams;
 
-    std::string temp = "/" +  params[0];
-    tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(temp));
+	for (unsigned int i = 1; i < params.size(); i++)
+		APIParams.push_back(params[i]);
 
-    bz_ApiString	command = params[0];
-    bz_ApiString APIMessage;
-    bz_APIStringList	APIParams;
+	if (strlen(message+1) > params[0].size())
+		APIMessage = (message+params[0].size()+2);
 
-    for (unsigned int i = 1; i < params.size(); i++)
-      APIParams.push_back(params[i]);
+	// see if we have a registerd custom command and call it
+	if (itr != customCommands.end())
+	{
+		// if it handles it, then we are good
+		if (itr->second->handle(t, command, APIMessage, &APIParams))
+			return;
+	}
 
-    if (strlen(message+1) > params[0].size())
-      APIMessage = (message+params[0].size()+2);
+	// if it hasn't been handled try the standard commands.
+	if (ServerCommand::execute(message, playerData))
+		return;
 
-    // see if we have a registerd custom command and call it
-    if (itr != customCommands.end()) {
-      // if it handles it, then we are good
-      if (itr->second->handle(t, command, APIMessage, &APIParams))
-	return;
-    }
+	if (cmdHelp(message, playerData))
+		return;
 
-    // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData_V1 commandData1;
-    commandData1.from = t;
-    commandData1.message = message;
-    commandData1.eventTime = TimeKeeper::getCurrent().getSeconds();
+	// lets see if anyone wants to handle the unhandled event
+	bz_UnknownSlashCommandEventData_V1 commandData1;
+	commandData1.from = t;
+	commandData1.message = message;
+	commandData1.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
-    if (commandData1.handled) // did anyone do it?
-      return;
+	worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
+	if (commandData1.handled) // did anyone do it?
+		return;
 
-    char reply[MessageLen];
-    snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
-    sendMessage(ServerPlayer, t, reply);
-  }
+	char reply[MessageLen];
+	snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
+	sendMessage(ServerPlayer, t, reply);
 }
 
 void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)
