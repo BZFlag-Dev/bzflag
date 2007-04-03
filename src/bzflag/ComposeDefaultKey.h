@@ -16,6 +16,7 @@
 #include "common.h"
 
 /* system interface headers */
+#include <string>
 #include <deque>
 
 /* common interface headers */

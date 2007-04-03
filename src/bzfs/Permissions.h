@@ -29,6 +29,7 @@
 #include <map>
 #include <algorithm>
 #include <string>
+#include <cctype>
 
 /* common interface headers */
 #include "TimeKeeper.h"
