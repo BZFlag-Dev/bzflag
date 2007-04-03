@@ -3271,8 +3271,12 @@ void parseServerCommand(const char *message, int t)
 	// see if we have a registerd custom command and call it
 	if (itr != customCommands.end())
 	{
+		bool handled = false;
 		// if it handles it, then we are good
 		if (itr->second->handle(t, command, APIMessage, &APIParams))
+			handled = true;
+
+		if (handled)
 			return;
 	}
 
