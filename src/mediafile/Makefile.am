@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libMediaFile_la_LDFLAGS = -static
 libMediaFile_la_SOURCES =	\
