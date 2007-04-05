@@ -1,6 +1,10 @@
 to do list for BZFlag
 ---------------------
 
+THESE MUST HAPPEN BEFORE THE NEXT RELEASE:
+
+* fix all server stat "scanning" scripts and sites to send out "BZFLAG\r\n\r\n" on conenct.
+
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * define local group files using BZID, so that the need for global groups
