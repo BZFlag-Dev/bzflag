@@ -221,6 +221,7 @@ AC_CONFIG_FILES([
 	weaponArena/Makefile
 	torBlock/Makefile
 	bzfscron/Makefile
+	httpTest/Makefile
 ])
 
 AC_OUTPUT
