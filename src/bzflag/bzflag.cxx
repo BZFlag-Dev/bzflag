@@ -638,9 +638,6 @@ bool Bzflag::Application()
 
   bool result = SetupModules();
 
-  if (vfs)
-    vfs->ChDir("this/data/");
-
   unsigned int i;
 
 #ifdef _WIN32
@@ -771,6 +768,28 @@ bool Bzflag::Application()
   else
     // bind default keys
     ActionBinding::instance().resetBindings();
+
+  if (vfs) {
+    std::string realPath;
+    if (BZDB.isSet("directory")) {
+      realPath = BZDB.get("directory") + "$/, ";
+    }
+    realPath += "$.$/data$/, $.$/";
+#if defined(INSTALL_DATA_DIR)
+    realPath += ", ";
+    realPath += INSTALL_DATA_DIR;
+    realPath += "$/";
+#endif
+    if (!vfs->Mount("/bzflag/data", realPath.c_str())) {
+      ReportError("Cannot mount /bzflag/data");
+      return false;
+    }
+    if (!vfs->ChDir("/bzflag/data")) {
+      ReportError("Cannot change directory to /bzflag/data");
+      return false;
+    }
+    ReportInfo("Current Working Directory is %s\n", vfs->GetCwd());
+  }
 
   ServerListCache::get()->loadCache();
 
