@@ -5002,7 +5002,7 @@ static void runMainLoop ( void )
 	    if (netHandler->pflush(&write_set) == -1)
 	    {
 	      removePlayer(peerItr->second.player, "ECONNRESET/EPIPE", false);
-	      netConnectedPeers.erase(peerItr);
+	      netConnectedPeers.erase(peerItr++);
 	    }
 	    else
 	    {
@@ -5017,7 +5017,7 @@ static void runMainLoop ( void )
 	  sendBufferedNetDataForPeer(peerItr->second);
 
 	  if (netHandler->pflush(&write_set) == -1)
-	    netConnectedPeers.erase(peerItr);
+	    netConnectedPeers.erase(peerItr++);
 	  else
 	  {
 	    if (netHandler->isFdSet(&read_set))
@@ -5043,7 +5043,7 @@ static void runMainLoop ( void )
 		    logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
 		}
 		if (drop)
-		  netConnectedPeers.erase(peerItr);
+		  netConnectedPeers.erase(peerItr++);
 		else
 		{
 		  unsigned int readSize = netHandler->getTcpReadSize();
@@ -5084,7 +5084,7 @@ static void runMainLoop ( void )
 		      send(fd, (const char*)buffer, sizeof(buffer), 0);
 		      close(fd);
 		      delete netHandler;
-		      netConnectedPeers.erase(peerItr);
+		      netConnectedPeers.erase(peerItr++);
 		    }
 		  }
 		  else
@@ -5153,7 +5153,7 @@ static void runMainLoop ( void )
 
 		  delete(netHandler);
 
-		  netConnectedPeers.erase(peerItr);
+		  netConnectedPeers.erase(peerItr++);
 
 		  if (e == ReadError)
 		    nerror("error on read");
@@ -5209,7 +5209,7 @@ static void runMainLoop ( void )
 		// noone loves it, it's got nothing left to send, so kill it
 		close(peerItr->first);
 		delete netHandler;
-		netConnectedPeers.erase(peerItr);
+		netConnectedPeers.erase(peerItr++);
 	      }
 	      else
 		peerItr++;
