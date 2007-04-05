@@ -117,8 +117,6 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 // utility methods to read various media files in any supported format
 //
 
-#include "FileManager.h"
-
 unsigned char*		MediaFile::readImage(
 				std::string filename,
 				int* width, int* height)

@@ -10,13 +10,7 @@ AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libMediaFile_la_LDFLAGS = -static
 libMediaFile_la_SOURCES =	\
-	ImageFile.cxx		\
-	ImageFile.h		\
 	MediaFile.cxx		\
-	PNGImageFile.cxx	\
-	PNGImageFile.h		\
-	SGIImageFile.cxx	\
-	SGIImageFile.h		\
 	AudioFile.cxx		\
 	AudioFile.h		\
 	WaveAudioFile.h		\
