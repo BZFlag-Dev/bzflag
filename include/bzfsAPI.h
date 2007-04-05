@@ -1164,7 +1164,8 @@ public:
 
 BZF_API bool bz_registerNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler );
 BZF_API bool bz_removeNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler );
-BZF_API bool bz_sendNonPlayerData ( int connectionID, void *data, unsigned int size );
+BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned int size );
+BZF_API bool bz_disconectNonPlayerConnection ( int connectionID );
 
 // player info
 

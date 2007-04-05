@@ -786,9 +786,9 @@ BZF_API bool bz_removeNonPlayerConnectionHandler ( int connectionID, bz_NonPlaye
 	return false;
 }
 
-BZF_API bool bz_sendNonPlayerData ( int connectionID, void *data, unsigned int size )
+BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned int size )
 {
-	if (!data  || size == 0 || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
+	if (!data  || size == 0 || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1 || !netConnectedPeers[connectionID].handler )
 		return false;
 
 	// really should add this to some buffered data thing
@@ -796,6 +796,23 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, void *data, unsigned int s
 
 	return true;
 }
+
+
+BZF_API bool bz_disconectNonPlayerConnection ( int connectionID )
+{
+	if (netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
+		return false;
+
+	for ( unsigned int i = 0; i < netConnectedPeers[connectionID].notifyList.size(); i++ )
+		netConnectedPeers[connectionID].notifyList[i]->disconect(connectionID);
+
+	delete(netConnectedPeers[connectionID].handler);
+
+	netConnectedPeers.erase(netConnectedPeers.find(connectionID));
+
+	return true;
+}
+
 
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 {

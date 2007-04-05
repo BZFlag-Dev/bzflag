@@ -5094,6 +5094,8 @@ static void runMainLoop ( void )
 											data = temp;
 											totalSize += readSize;
 										}
+										// we have a copy of all the data, so we can flush now
+										netHandler->flushData();
 
 										// get real size we have
 
@@ -5106,8 +5108,6 @@ static void runMainLoop ( void )
 										eventData.connectionID = peerItr->first;
 
 										worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
-
-										netHandler->flushData();
 
 										free(data);
 
@@ -5127,21 +5127,22 @@ static void runMainLoop ( void )
 							{
 								RxStatus e = netHandler->receive(256);
 
-								bool drop = false;
 								if ( e !=ReadAll && e != ReadPart )
 								{
-									// ther ewas an error
+									// there ewas an error
+									for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
+										peerItr->second.notifyList[i]->disconect(peerItr->first);
 
-									dropHandler(netHandler, "ECONNRESET/EPIPE");
-									drop = true;
+									delete(netHandler);
+
+									peerItr = netConnectedPeers.erase(peerItr);
+
 									if (e == ReadError)
 										nerror("error on read");
 
 									if (e == ReadHuge)
 										logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
 								}
-								if (drop)
-									peerItr = netConnectedPeers.erase(peerItr);
 								else
 								{
 									unsigned int readSize = netHandler->getTcpReadSize();
