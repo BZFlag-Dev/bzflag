@@ -428,7 +428,7 @@ int NetHandler::pflush(fd_set *set) {
     return 0;
 }
 
-RxStatus NetHandler::tcpReceive() {
+RxStatus NetHandler::tcpReceive( bool doCodes ) {
   // read more data into player's message buffer
 #if defined(USE_THREADS) && defined(HAVE_SDL)
   fd_set read_set;
@@ -443,14 +443,18 @@ RxStatus NetHandler::tcpReceive() {
     // if header not ready yet then skip the read of the body
     return e;
 
-  // read body if we don't have it yet
-  uint16_t len, code;
+  uint16_t len = 0, code =0;
   void *buf = tcpmsg;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
-  if (len > MaxPacketLen) {
-    netConnections.remove(this);
-    return ReadHuge;
+
+  if (doCodes)
+  {
+	// read body if we don't have it yet
+	buf = nboUnpackUShort(buf, len);
+	buf = nboUnpackUShort(buf, code);
+	if (len > MaxPacketLen) {
+		netConnections.remove(this);
+		return ReadHuge;
+	}
   }
   e = receive(4 + (int) len);
   if (e != ReadAll)
@@ -514,6 +518,11 @@ RxStatus NetHandler::receive(size_t length) {
 
 void *NetHandler::getTcpBuffer() {
   return tcpmsg;
+}
+
+unsigned int NetHandler::getTcpReadSize ( void  )
+{
+	return tcplen;
 }
 
 void NetHandler::flushUDP()

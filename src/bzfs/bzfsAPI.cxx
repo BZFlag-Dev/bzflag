@@ -760,6 +760,43 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHan
   return true;
 }
 
+BZF_API bool bz_registerNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler )
+{
+	if (!handler || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
+		return false;
+
+	netConnectedPeers[connectionID].notifyList.push_back(handler);
+	return true;
+}
+
+BZF_API bool bz_removeNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler )
+{
+	if (!handler || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
+		return false;
+
+	for ( unsigned int i = 0; i < netConnectedPeers[connectionID].notifyList.size(); i++ )
+	{
+		if (netConnectedPeers[connectionID].notifyList[i] == handler)
+		{
+			netConnectedPeers[connectionID].notifyList.erase( netConnectedPeers[connectionID].notifyList.begin() + i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+BZF_API bool bz_sendNonPlayerData ( int connectionID, void *data, unsigned int size )
+{
+	if (!data  || size == 0 || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
+		return false;
+
+	// really should add this to some buffered data thing
+	netConnectedPeers[connectionID].handler->bufferedSend(data,size);
+
+	return true;
+}
+
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 {
   if (!playerRecord)

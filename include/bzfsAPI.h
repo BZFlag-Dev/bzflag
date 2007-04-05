@@ -95,6 +95,7 @@ typedef enum
 	bz_eFlagGrabbedEvent,
 	bz_eFlagDroppedEvent,
 	bz_eShotEndedEvent,
+	bz_eNewNonPlayerConnection,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1120,6 +1121,25 @@ public:
 	bool exlpode;
 };
 
+class bz_NewNonPlayerConnectionEventData_V1 : public bz_EventData
+{
+public:
+
+	bz_NewNonPlayerConnectionEventData_V1()
+	{
+		eventType = bz_eNewNonPlayerConnection;
+		connectionID = -1;
+		data = NULL;
+		size = 0;
+	}
+
+	virtual ~bz_NewNonPlayerConnectionEventData_V1(){};
+
+	int connectionID;
+	void *data;
+	unsigned int size;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -1131,6 +1151,20 @@ public:
 
 BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
 BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
+
+// non player data handlers
+
+class bz_NonPlayerConnectionHandler
+{
+public:
+	virtual ~bz_NonPlayerConnectionHandler(){};
+	virtual void pending ( int connectionID, void *data, unsigned int size ) = 0; 
+	virtual void disconect ( int connectionID ){}; 
+};
+
+BZF_API bool bz_registerNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler );
+BZF_API bool bz_removeNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler );
+BZF_API bool bz_sendNonPlayerData ( int connectionID, void *data, unsigned int size );
 
 // player info
 

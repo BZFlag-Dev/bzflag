@@ -208,6 +208,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     return;
   }
 #endif // !defined(_WIN32)
+
+  // send out the connect header
+
+  ::send(query,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER),0);
+
   i = recv(query, (char*)version, 8, 0);
   if (i < 8)
     goto done;

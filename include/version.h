@@ -32,6 +32,8 @@ extern int getBuildDate();
 #define BZ_CONFIG_FILE_VERSION	1
 #endif
 
+#define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"
+
 extern const char *bzfcopyright;
 
 // various version functions in buildDate.cxx

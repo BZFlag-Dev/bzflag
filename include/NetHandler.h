@@ -105,8 +105,9 @@ public:
      ReadError  : Error detected on the tcp connection
      ReadDiscon : Peer has closed the connection
   */
-  RxStatus    tcpReceive();
+  RxStatus    tcpReceive(bool doCodes = true);
   void       *getTcpBuffer();
+  unsigned int getTcpReadSize ( void  );
 
   /// Request if there is any buffered udp messages waiting to be sent
   static bool	anyUDPPending() {return pendingUDP;};
@@ -145,11 +146,9 @@ public:
   bool isMyUdpAddrPort(struct sockaddr_in uaddr, bool checkPort);
 
   static std::list<NetHandler*> netConnections;
-private:
-  int  send(const void *buffer, size_t length);
-  void udpSend(const void *b, size_t l);
 
-  /// Send data for transmission on the tcp channel.
+  int  send(const void *buffer, size_t length);
+ /// Send data for transmission on the tcp channel.
   ///   in case channel is not ready to accept other data, it just buffer it
   /// Return 0 if all went ok
   ///       -1 if got an error
@@ -157,6 +156,12 @@ private:
   int  bufferedSend(const void *buffer, size_t length);
 
   RxStatus    receive(size_t length);
+
+  void flushData ( void ){tcplen = 0;}
+
+private:
+  void udpSend(const void *b, size_t l);
+
 #ifdef NETWORK_STATS
   void	countMessage(uint16_t code, int len, int direction);
   void	dumpMessageStats();

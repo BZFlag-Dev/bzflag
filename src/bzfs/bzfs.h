@@ -39,6 +39,7 @@
 #include "RejoinList.h"
 #include "VotingArbiter.h"
 
+#include "bzfsAPI.h"
 
 // to dump score info to stdout
 #define SERVERLOGINMSG true
@@ -149,6 +150,16 @@ extern VotingArbiter *votingArbiter;
 extern bool dontWait;
 extern float maxWorldHeight;
 
+// peer list
+typedef struct 
+{
+	int socket;
+	int player;
+	NetHandler *handler;
+	std::vector<bz_NonPlayerConnectionHandler*> notifyList;
+}NetConnectedPeer;
+
+extern std::map<int,NetConnectedPeer> netConnectedPeers;
 
 #endif /* __BZFS_H__ */
 
