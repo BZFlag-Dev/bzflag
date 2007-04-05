@@ -169,6 +169,8 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
+unsigned int maxNonPlayerDataChunk = 512;
+
 // Logging to the API
 class APILoggingCallback : public LoggingCallback
 {
@@ -4794,6 +4796,16 @@ static void cleanPendingPlayers ( void )
 	}
 }
 
+void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
+{
+	if ( !peer.pendingSendChunks.size() )
+		return;
+
+	peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+
+	peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
+}
+
 static void runMainLoop ( void )
 {
 	/* MAIN SERVER RUN LOOP
@@ -5001,14 +5013,19 @@ static void runMainLoop ( void )
 				}
 				else
 				{
+					// check for any data to send out
+					sendBufferedNetDataForPeer(peerItr->second);
+
 					if (netHandler->pflush(&write_set) == -1)
 						peerItr = netConnectedPeers.erase(peerItr);
 					else
 					{
 						if (netHandler->isFdSet(&read_set))
 						{
+							// there is some data for us
 							if ( !peerItr->second.notifyList.size() )
 							{
+								// we have no listeners yet, so we are probably new.
 								// just read in the first N bits
 								RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
 
@@ -5113,9 +5130,9 @@ static void runMainLoop ( void )
 										peerItr++;
 										free(data);
 
-										if ( netConnectedPeers.find(eventData.connectionID) != netConnectedPeers.end() && !netConnectedPeers[eventData.connectionID].notifyList.size())
+										if ( netConnectedPeers.find(eventData.connectionID) != netConnectedPeers.end() && !netConnectedPeers[eventData.connectionID].notifyList.size() && !netConnectedPeers[eventData.connectionID].pendingSendChunks.size() )
 										{
-											// nobody wanted it
+											// nobody wanted it and it's got nothing to send
 											close(eventData.connectionID);
 											delete netHandler;
 											netConnectedPeers.erase(netConnectedPeers.find(eventData.connectionID));
@@ -5125,6 +5142,7 @@ static void runMainLoop ( void )
 							}
 							else
 							{
+								// we have a listener, so lets get all our data, and send it to him so he can do what he wants to do with us.
 								RxStatus e = netHandler->receive(256);
 
 								if ( e !=ReadAll && e != ReadPart )
@@ -5182,6 +5200,19 @@ static void runMainLoop ( void )
 									peerItr++;
 								}
 							}
+						}
+						else
+						{
+							// there is no data, so delete us or move along.
+							if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
+							{
+								// noone loves it, it's got nothing left to send, so kill it
+								close(peerItr->first);
+								delete netHandler;
+								peerItr = netConnectedPeers.erase(peerItr);
+							}
+							else
+								peerItr++;
 						}
 					}
 				}

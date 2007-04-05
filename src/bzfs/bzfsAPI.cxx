@@ -791,17 +791,37 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned
 	if (!data  || size == 0 || netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1 || !netConnectedPeers[connectionID].handler )
 		return false;
 
-	// really should add this to some buffered data thing
-	netConnectedPeers[connectionID].handler->bufferedSend(data,size);
+	unsigned int pos = 0;
+	while ( pos < size )
+	{
+		char *dataBlob;
+		unsigned int thisSize;
+
+		dataBlob = (char*)data + pos;
+		if ( size - pos < maxNonPlayerDataChunk )
+			thisSize = size - pos;
+		else
+			thisSize = maxNonPlayerDataChunk;
+
+		netConnectedPeers[connectionID].pendingSendChunks.push_back(NonPlayerDataChunk(dataBlob,thisSize));
+
+		pos += thisSize;
+	}
+
+	// send off at least one now
+	sendBufferedNetDataForPeer(netConnectedPeers[connectionID]);
 
 	return true;
 }
-
 
 BZF_API bool bz_disconectNonPlayerConnection ( int connectionID )
 {
 	if (netConnectedPeers.find(connectionID) == netConnectedPeers.end() || netConnectedPeers[connectionID].player != -1)
 		return false;
+
+	// flush out the rest of it's sends
+	while (netConnectedPeers[connectionID].pendingSendChunks.size())
+		sendBufferedNetDataForPeer(netConnectedPeers[connectionID]);
 
 	for ( unsigned int i = 0; i < netConnectedPeers[connectionID].notifyList.size(); i++ )
 		netConnectedPeers[connectionID].notifyList[i]->disconnect(connectionID);

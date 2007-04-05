@@ -150,6 +150,44 @@ extern VotingArbiter *votingArbiter;
 extern bool dontWait;
 extern float maxWorldHeight;
 
+extern unsigned int maxNonPlayerDataChunk;
+
+class NonPlayerDataChunk
+{
+public:
+	NonPlayerDataChunk()
+	{
+		data = NULL;
+		size = 0;
+	}
+
+	NonPlayerDataChunk( const char* d, unsigned int s )
+	{
+		data = (char*)malloc(s);
+		memcpy(data,d,s);
+		size = s;
+	}
+
+	NonPlayerDataChunk( const NonPlayerDataChunk &t )
+	{
+		data = (char*)malloc(t.size);
+		memcpy(data,t.data,t.size);
+		size = t.size;
+	}
+
+	~NonPlayerDataChunk()
+	{
+		if (data)
+			free (data);
+
+		data = NULL;
+		size = 0;
+	}
+
+	char *data;
+	unsigned int size;
+};
+
 // peer list
 typedef struct 
 {
@@ -157,9 +195,13 @@ typedef struct
 	int player;
 	NetHandler *handler;
 	std::vector<bz_NonPlayerConnectionHandler*> notifyList;
+
+	std::vector<NonPlayerDataChunk>	pendingSendChunks;
 }NetConnectedPeer;
 
 extern std::map<int,NetConnectedPeer> netConnectedPeers;
+
+void sendBufferedNetDataForPeer (NetConnectedPeer &peer );
 
 #endif /* __BZFS_H__ */
 
