@@ -788,7 +788,6 @@ bool Bzflag::Application()
       ReportError("Cannot change directory to /bzflag/data");
       return false;
     }
-    ReportInfo("Current Working Directory is %s\n", vfs->GetCwd());
   }
 
   ServerListCache::get()->loadCache();
