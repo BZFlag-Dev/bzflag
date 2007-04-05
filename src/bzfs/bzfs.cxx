@@ -5109,17 +5109,17 @@ static void runMainLoop ( void )
 
 										worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
 
+										// move to the next one
+										peerItr++;
 										free(data);
 
-										if ( !peerItr->second.notifyList.size())
+										if ( netConnectedPeers.find(eventData.connectionID) != netConnectedPeers.end() && !netConnectedPeers[eventData.connectionID].notifyList.size())
 										{
 											// nobody wanted it
-											close(fd);
+											close(eventData.connectionID);
 											delete netHandler;
-											peerItr = netConnectedPeers.erase(peerItr);
+											netConnectedPeers.erase(netConnectedPeers.find(eventData.connectionID));
 										}
-										else
-											peerItr++;
 									}
 								}
 							}
@@ -5131,7 +5131,7 @@ static void runMainLoop ( void )
 								{
 									// there ewas an error
 									for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
-										peerItr->second.notifyList[i]->disconect(peerItr->first);
+										peerItr->second.notifyList[i]->disconnect(peerItr->first);
 
 									delete(netHandler);
 

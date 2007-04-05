@@ -1159,7 +1159,7 @@ class bz_NonPlayerConnectionHandler
 public:
 	virtual ~bz_NonPlayerConnectionHandler(){};
 	virtual void pending ( int connectionID, void *data, unsigned int size ) = 0; 
-	virtual void disconect ( int connectionID ){}; 
+	virtual void disconnect ( int connectionID ){}; 
 };
 
 BZF_API bool bz_registerNonPlayerConnectionHandler ( int connectionID, bz_NonPlayerConnectionHandler* handler );

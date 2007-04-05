@@ -804,7 +804,7 @@ BZF_API bool bz_disconectNonPlayerConnection ( int connectionID )
 		return false;
 
 	for ( unsigned int i = 0; i < netConnectedPeers[connectionID].notifyList.size(); i++ )
-		netConnectedPeers[connectionID].notifyList[i]->disconect(connectionID);
+		netConnectedPeers[connectionID].notifyList[i]->disconnect(connectionID);
 
 	delete(netConnectedPeers[connectionID].handler);
 
