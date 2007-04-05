@@ -5007,38 +5007,23 @@ static void runMainLoop ( void )
 					{
 						if (netHandler->isFdSet(&read_set))
 						{
-							// just read in the first N bits
-							const RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
-
-							bool drop = false;
-							if (e != ReadPart)
+							if ( !peerItr->second.notifyList.size() )
 							{
-								if (e != ReadAll)
+								// just read in the first N bits
+								RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
+
+								bool drop = false;
+								if ( e !=ReadAll && e != ReadPart )
 								{
-									if (e == ReadReset)
-									{
-										dropHandler(netHandler, "ECONNRESET/EPIPE");
-										drop = true;
-									}
-									else if (e == ReadError)
-									{
-										// dump other errors and remove the player
+									// ther ewas an error
+
+									dropHandler(netHandler, "ECONNRESET/EPIPE");
+									drop = true;
+									if (e == ReadError)
 										nerror("error on read");
-										dropHandler(netHandler, "Read error");
-										drop = true;
-									}
-									else if (e == ReadDiscon)
-									{
-										// disconnected
-										dropHandler(netHandler, "Disconnected");
-										drop = true;
-									}
-									else if (e == ReadHuge)
-									{
+									
+									if (e == ReadHuge)
 										logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-										dropHandler(netHandler, "large packet recvd");
-										drop = true;
-									}
 								}
 								if (drop)
 									peerItr = netConnectedPeers.erase(peerItr);
@@ -5048,7 +5033,7 @@ static void runMainLoop ( void )
 									void *buf = netHandler->getTcpBuffer();
 									int fd = peerItr->first;
 
-									if (strncmp((char*)buf,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER)) == 0 )
+									if (e == ReadAll && strncmp((char*)buf,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER)) == 0 )
 									{
 										// it's a player handle it
 
@@ -5088,39 +5073,112 @@ static void runMainLoop ( void )
 									else
 									{
 										// it's NOT a player, see if anyone is dealing with it
+										// ok read the rest of it.
 
-										if ( peerItr->second.notifyList.size())
+										void *data = malloc(readSize);
+										memcpy(data,buf,readSize);
+										unsigned int totalSize = readSize;
+
+										while ( e == ReadAll )
 										{
-											// it has dudes lets lets call them.
-											for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
-											{
-												if (peerItr->second.notifyList[i])
-													peerItr->second.notifyList[i]->pending(peerItr->first,buf,readSize);
-											}
+											netHandler->flushData();
+
+											e = netHandler->receive(256);
+											readSize = netHandler->getTcpReadSize();
+											buf = netHandler->getTcpBuffer();
+
+											unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
+											memcpy(temp,data,totalSize);
+											memcpy(temp+totalSize,buf,readSize);
+											free(data);
+											data = temp;
+											totalSize += readSize;
+										}
+
+										// get real size we have
+
+										// call an event to let people know we got a new connect
+
+										bz_NewNonPlayerConnectionEventData_V1	eventData;
+
+										eventData.data = data;
+										eventData.size = totalSize;
+										eventData.connectionID = peerItr->first;
+
+										worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
+
+										netHandler->flushData();
+
+										free(data);
+
+										if ( !peerItr->second.notifyList.size())
+										{
+											// nobody wanted it
+											close(fd);
+											delete netHandler;
+											peerItr = netConnectedPeers.erase(peerItr);
 										}
 										else
-										{
-											// call an event to let people know we got a new connect
-
-											bz_NewNonPlayerConnectionEventData_V1	eventData;
-
-											eventData.data = buf;
-											eventData.size = readSize;
-											eventData.connectionID = peerItr->first;
-
-											worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
-
-											if ( !peerItr->second.notifyList.size())
-											{
-												// nobody wanted it
-												close(fd);
-												delete netHandler;
-												peerItr = netConnectedPeers.erase(peerItr);
-											}
-											else
-												peerItr++;
-										}
+											peerItr++;
 									}
+								}
+							}
+							else
+							{
+								RxStatus e = netHandler->receive(256);
+
+								bool drop = false;
+								if ( e !=ReadAll && e != ReadPart )
+								{
+									// ther ewas an error
+
+									dropHandler(netHandler, "ECONNRESET/EPIPE");
+									drop = true;
+									if (e == ReadError)
+										nerror("error on read");
+
+									if (e == ReadHuge)
+										logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
+								}
+								if (drop)
+									peerItr = netConnectedPeers.erase(peerItr);
+								else
+								{
+									unsigned int readSize = netHandler->getTcpReadSize();
+									void *buf = netHandler->getTcpBuffer();
+
+									void *data = malloc(readSize);
+									memcpy(data,buf,readSize);
+									unsigned int totalSize = readSize;
+
+									while ( e == ReadAll )
+									{
+										netHandler->flushData();
+
+										e = netHandler->receive(256);
+										readSize = netHandler->getTcpReadSize();
+										buf = netHandler->getTcpBuffer();
+
+										unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
+										memcpy(temp,data,totalSize);
+										memcpy(temp+totalSize,buf,readSize);
+										free(data);
+										data = temp;
+										totalSize += readSize;
+									}
+
+									netHandler->flushData();
+
+									// it has dudes lets lets call them.
+									for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
+									{
+										if (peerItr->second.notifyList[i])
+											peerItr->second.notifyList[i]->pending(peerItr->first,data,totalSize);
+									}
+
+									free(data);
+
+									peerItr++;
 								}
 							}
 						}
