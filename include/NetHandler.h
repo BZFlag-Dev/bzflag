@@ -159,6 +159,8 @@ public:
 
   void flushData ( void ){tcplen = 0;}
 
+  int getFD ( void ) {return fd;}
+
 private:
   void udpSend(const void *b, size_t l);
 

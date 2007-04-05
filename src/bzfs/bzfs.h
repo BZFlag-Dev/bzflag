@@ -197,6 +197,8 @@ typedef struct
 	std::vector<bz_NonPlayerConnectionHandler*> notifyList;
 
 	std::vector<NonPlayerDataChunk>	pendingSendChunks;
+
+	bool		deleteMe;
 }NetConnectedPeer;
 
 extern std::map<int,NetConnectedPeer> netConnectedPeers;
