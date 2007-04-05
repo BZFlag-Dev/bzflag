@@ -23,15 +23,79 @@
 // system headers
 #include <vector>
 #include <string>
+#include <crystalspace.h>
 
 // common implementation headers
 #include "bzfgl.h"
 #include "TextUtils.h"
 #include "global.h"
-#include "MediaFile.h"
 #include "ErrorHandler.h"
 #include "OpenGLTexture.h"
 #include "OSFile.h"
+#include "CacheManager.h"
+
+
+//
+// utility methods to read various media files in any supported format
+//
+
+/** Read an image file.  Use delete[] to release the returned
+    image.  Returns NULL on failure.  Images are stored RGBA,
+    left to right, bottom to top. */
+static unsigned char *readImage(std::string filename, int* width, int* height)
+{
+  csRef<iVFS> vfs = csQueryRegistry<iVFS>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!vfs) {
+    csApplicationFramework::ReportError
+      ("Failed to locate Virtual File System!");
+    return NULL;
+  }
+  csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!imageLoader) {
+    csApplicationFramework::ReportError("Failed to locate Image Loader!");
+    return NULL;
+  }
+  csRef<iEngine> engine = csQueryRegistry<iEngine>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!engine) {
+    csApplicationFramework::ReportError("Failed to locate Engine!");
+    return NULL;
+  }
+  int format = engine->GetTextureFormat();
+
+  // get the absolute filename for cache textures
+  if (CACHEMGR.isCacheFileType(filename)) {
+    filename = CACHEMGR.getLocalName(filename);
+  }
+
+  if (vfs->Exists(filename.c_str())) {
+    ;
+  } else if (vfs->Exists((filename + ".png").c_str())) {
+    filename += ".png";
+  } else if (vfs->Exists((filename + ".rgb").c_str())) {
+    filename += ".rgb";
+  }
+  csRef<iDataBuffer> buf = vfs->ReadFile(filename.c_str(), false);
+  if (!buf.IsValid())
+    return NULL;
+
+  csRef<iImage> image = imageLoader->Load(buf, format);
+  if (!image)
+    return NULL;
+
+  *width  = image->GetWidth();
+  *height = image->GetHeight();
+
+  size_t imageSize = csImageTools::ComputeDataSize(image);
+
+  unsigned char *retBuffer = new unsigned char[imageSize];
+
+  memcpy(retBuffer, image->GetImageData(), imageSize);
+
+  return retBuffer;
+}
 
 /*const int NO_VARIANT = (-1); */
 
@@ -350,7 +414,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
 {
   int width, height;
-  unsigned char* image = MediaFile::readImage(init.name, &width, &height);
+  unsigned char* image = readImage(init.name, &width, &height);
 
   if (!image) {
     if (reportFail) {

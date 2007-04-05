@@ -45,88 +45,6 @@ void			BzfMedia::setMediaDirectory(const std::string& _dir)
   mediaDir = _dir;
 }
 
-unsigned char*		BzfMedia::readImage(const std::string& filename,
-				int& width, int& height, int& depth) const
-{
-  // try mediaDir/filename
-  std::string name = makePath(mediaDir, filename);
-  unsigned char* image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try filename as is
-  image = doReadImage(filename, width, height, depth);
-  if (image) return image;
-
-#if defined(INSTALL_DATA_DIR)
-  // try standard-mediaDir/filename
-  name = makePath(INSTALL_DATA_DIR, filename);
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-#endif
-
-  // try mediaDir/filename with replaced extension
-  name = replaceExtension(makePath(mediaDir, filename), getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try filename with replaced extension
-  name = replaceExtension(filename, getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-#if defined(INSTALL_DATA_DIR)
-  // try standard-mediaDir/filename with replaced extension
-  name = makePath(INSTALL_DATA_DIR, filename);
-  name = replaceExtension(name, getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-#endif
-
-  // try data/filename
-  name = makePath(DEFAULT_MEDIA_DIR, filename);
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try data/filename with replaced extension
-  name = replaceExtension(makePath(DEFAULT_MEDIA_DIR, filename), getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try ../data/filename
-  name = "../";
-  name += DEFAULT_MEDIA_DIR;
-  name = makePath(name, filename);
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try ../data/filename with replaced extension
-  name = "../";
-  name += DEFAULT_MEDIA_DIR;
-  name = replaceExtension(makePath(name, filename), getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try ../../data/filename
-  name = "../../";
-  name += DEFAULT_MEDIA_DIR;
-  name = makePath(name, filename);
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-  // try ../../data/filename with replaced extension
-  name = "../../";
-  name += DEFAULT_MEDIA_DIR;
-  name = replaceExtension(makePath(name, filename), getImageExtension());
-  image = doReadImage(name, width, height, depth);
-  if (image) return image;
-
-#ifndef DEBUG
-  std::cout << "Unable to locate [" << filename << "] image file (media dir is set to " << mediaDir << ")" << std::endl;
-#endif
-
-  return NULL;
-}
-
 float*			BzfMedia::readSound(const std::string& filename,
 				int& numFrames, int& rate) const
 {
@@ -251,12 +169,6 @@ std::string		BzfMedia::getImageExtension() const
 std::string		BzfMedia::getSoundExtension() const
 {
   return std::string("wav");
-}
-
-unsigned char*		BzfMedia::doReadImage(const std::string& filename,
-				int& dx, int& dy, int&) const
-{
-  return MediaFile::readImage( filename, &dx, &dy );
 }
 
 int16_t			BzfMedia::getShort(const void* ptr)

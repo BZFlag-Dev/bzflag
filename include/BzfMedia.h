@@ -47,12 +47,6 @@ class BzfMedia {
     std::string		getMediaDirectory() const;
     void		setMediaDirectory(const std::string&);
 
-    // images are stored RGBARGBA..., left to right, bottom to top.
-    // depth indicates how many channels were in the stored image.
-    // use delete[] to release the returned memory.
-    unsigned char*	readImage(const std::string& filename,
-				int& width, int& height, int& depth) const;
-
     // sounds are stored as left, right, left, right ..., values are
     // in the range -1 to 1.  numFrames returns the number of left,right
     // pairs.  rate is in frames per second.  use delete[] to release
@@ -127,10 +121,6 @@ class BzfMedia {
     // return default extensions for image and sound files
     virtual std::string	getImageExtension() const;
     virtual std::string	getSoundExtension() const;
-
-    // return NULL on failure
-    virtual unsigned char* doReadImage(const std::string& filename,
-				int& width, int& height, int& depth) const;
 
     // return NULL on failure
     virtual float*	doReadSound(const std::string& filename,
