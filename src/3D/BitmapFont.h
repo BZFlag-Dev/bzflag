@@ -21,8 +21,6 @@
 
 /* interface headers */
 #include "ImageFont.h"
-#include "bzfgl.h"
-#include "OpenGLGState.h"
 
 class BitmapFont : public ImageFont {
 public:
@@ -30,7 +28,7 @@ public:
   virtual ~BitmapFont();
 
   virtual void build();
-  virtual bool isBuilt() const {return loaded;}
+  virtual bool isBuilt() const {return true;}
 
   virtual void filter(bool dofilter);
   virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
@@ -40,10 +38,6 @@ public:
   virtual void free();
 
 private:
-  OpenGLGState gstate;
-  unsigned char *bitmaps[MAX_TEXTURE_FONT_CHARS];
-  bool	loaded;
-
   /// A pointer to the 3D renderer plugin.
   csRef<iGraphics3D> g3d;
   csRef<iFont>       font;
