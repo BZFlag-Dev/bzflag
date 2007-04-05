@@ -5,7 +5,8 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CRYSTAL_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES =		\
