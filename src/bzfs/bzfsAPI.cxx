@@ -43,6 +43,10 @@
 #include "Permissions.h"
 #include "CommandManager.h"
 
+#ifdef _USE_BZ_API
+#include "bzfsPlugins.h"
+#endif //_USE_BZ_API
+
 TimeKeeper synct=TimeKeeper::getCurrent();
 
 class MasterBanURLHandler: public bz_BaseURLHandler
@@ -2611,6 +2615,46 @@ BZF_API bz_ApiString bz_getPublicDescription(void)
 
   return bz_ApiString(clOptions->publicizedTitle);
 }
+
+BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
+{
+#ifdef _USE_BZ_API
+  std::vector<std::string>  pList = getPluginList();
+  for (unsigned int i = 0; i < pList.size(); i++ )
+    list->push_back(pList[i]);
+
+  return (int)pList.size();
+#else
+  return -1;
+#endif 
+}
+
+BZF_API bool bz_loadPlugin( const char* path, const char *params )
+{
+#ifdef _USE_BZ_API
+  if (!path)
+    return false;
+  std::string config;
+  if (params)
+    config = params;
+  return loadPlugin(std::string(path),config);
+#else
+  return false;
+#endif
+}
+
+BZF_API bool bz_unloadPlugin( const char* path )
+{
+#ifdef _USE_BZ_API
+  if (!path)
+    return false;
+
+  return unloadPlugin(std::string(path));
+#else
+  return false;
+#endif
+}
+
 
 //-------------------------------------------------------------------------
 
