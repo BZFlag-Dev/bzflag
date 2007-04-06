@@ -167,7 +167,6 @@ bz_eTeamType convertTeam(TeamColor _team)
       return eHunterTeam;
     case AutomaticTeam:
       return eAutomaticTeam;
-
   }
 }
 
