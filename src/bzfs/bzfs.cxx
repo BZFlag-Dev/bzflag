@@ -5011,8 +5011,16 @@ static void runMainLoop ( void )
 
       for ( unsigned int i = 0; i < toKill.size(); i++ )
       {
-	delete(netConnectedPeers[i].handler);
-	netConnectedPeers.erase(netConnectedPeers.find(i));
+	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end() )
+	{
+	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
+	  if (peer.handler)
+	    delete(peer.handler);
+
+	  peer.handler = NULL;
+	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
+
+	}
       }
     
       GameKeeper::Player *playerData = NULL;
