@@ -83,7 +83,6 @@ noinst_HEADERS =			\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
-	OpenGLTexture.h			\
 	OSFile.h			\
 	PTSceneNode.h			\
 	Pack.h				\

@@ -5995,7 +5995,6 @@ Playing::Playing(BzfDisplay      *_display,
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
     BZDB.set("radarStyle", "0");
-    TextureManager::instance().setMaxFilter(OpenGLTexture::Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.

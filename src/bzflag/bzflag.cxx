@@ -1142,10 +1142,6 @@ bool Bzflag::Application()
       }
     }
 
-    TextureManager& tm = TextureManager::instance();
-    tm.setMaxFilter(BZDB.get("texture"));
-    BZDB.set("texture", tm.getMaxFilterName());
-
     BZDB.set("texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("texturereplace", false);

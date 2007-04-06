@@ -18,7 +18,6 @@
 
 // common implementation headers
 #include "TextureManager.h"
-#include "OpenGLTexture.h"
 
 //
 // HUDuiTextureLabel
@@ -47,7 +46,7 @@ void			HUDuiTextureLabel::doRender()
 
   // render string if texture filter is Off, otherwise draw the texture
   // about the same size and position as the string would be.
-  if (OpenGLTexture::getMaxFilter() == OpenGLTexture::Off || !gstate.isTextured() || texture < 0) {
+  if (!gstate.isTextured() || texture < 0) {
     HUDuiLabel::doRender();
   } else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
     const float _height = getFontSize(); //texture.getHeight();//

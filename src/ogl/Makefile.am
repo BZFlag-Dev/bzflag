@@ -6,13 +6,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CXXFLAGS = @CRYSTAL_CFLAGS@
 
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =			\
 	OpenGLGState.cxx		\
 	OpenGLLight.cxx			\
 	OpenGLMaterial.cxx		\
-	OpenGLTexture.cxx		\
 	OpenGLDisplayList.cxx		\
 	RenderNode.cxx
 

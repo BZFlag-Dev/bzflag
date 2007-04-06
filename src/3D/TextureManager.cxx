@@ -23,79 +23,15 @@
 // system headers
 #include <vector>
 #include <string>
-#include <crystalspace.h>
 
 // common implementation headers
 #include "bzfgl.h"
 #include "TextUtils.h"
 #include "global.h"
 #include "ErrorHandler.h"
-#include "OpenGLTexture.h"
 #include "OSFile.h"
 #include "CacheManager.h"
 
-
-//
-// utility methods to read various media files in any supported format
-//
-
-/** Read an image file.  Use delete[] to release the returned
-    image.  Returns NULL on failure.  Images are stored RGBA,
-    left to right, bottom to top. */
-static unsigned char *readImage(std::string filename, int* width, int* height)
-{
-  csRef<iVFS> vfs = csQueryRegistry<iVFS>
-    (csApplicationFramework::GetObjectRegistry());
-  if (!vfs) {
-    csApplicationFramework::ReportError
-      ("Failed to locate Virtual File System!");
-    return NULL;
-  }
-  csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>
-    (csApplicationFramework::GetObjectRegistry());
-  if (!imageLoader) {
-    csApplicationFramework::ReportError("Failed to locate Image Loader!");
-    return NULL;
-  }
-  csRef<iEngine> engine = csQueryRegistry<iEngine>
-    (csApplicationFramework::GetObjectRegistry());
-  if (!engine) {
-    csApplicationFramework::ReportError("Failed to locate Engine!");
-    return NULL;
-  }
-  int format = engine->GetTextureFormat();
-
-  // get the absolute filename for cache textures
-  if (CACHEMGR.isCacheFileType(filename)) {
-    filename = CACHEMGR.getLocalName(filename);
-  }
-
-  if (vfs->Exists(filename.c_str())) {
-    ;
-  } else if (vfs->Exists((filename + ".png").c_str())) {
-    filename += ".png";
-  } else if (vfs->Exists((filename + ".rgb").c_str())) {
-    filename += ".rgb";
-  }
-  csRef<iDataBuffer> buf = vfs->ReadFile(filename.c_str(), false);
-  if (!buf.IsValid())
-    return NULL;
-
-  csRef<iImage> image = imageLoader->Load(buf, format);
-  if (!image)
-    return NULL;
-
-  *width  = image->GetWidth();
-  *height = image->GetHeight();
-
-  size_t imageSize = csImageTools::ComputeDataSize(image);
-
-  unsigned char *retBuffer = new unsigned char[imageSize];
-
-  memcpy(retBuffer, image->GetImageData(), imageSize);
-
-  return retBuffer;
-}
 
 /*const int NO_VARIANT = (-1); */
 
@@ -109,9 +45,39 @@ ProcTextureInit procLoader[1];
 
 TextureManager::TextureManager()
 {
+  vfs = csQueryRegistry<iVFS> (csApplicationFramework::GetObjectRegistry());
+  if (!vfs) {
+    csApplicationFramework::ReportError
+      ("Failed to locate Virtual File System!");
+    return;
+  }
+  imageLoader = csQueryRegistry<iImageIO>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!imageLoader) {
+    csApplicationFramework::ReportError("Failed to locate Image Loader!");
+    return;
+  }
+  engine = csQueryRegistry<iEngine>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!engine) {
+    csApplicationFramework::ReportError("Failed to locate Engine!");
+    return;
+  }
+  g3d = csQueryRegistry<iGraphics3D>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!g3d) {
+    csApplicationFramework::ReportError("Failed to locate 3D driver!");
+    return;
+  }
+  tm = g3d->GetTextureManager();
+  if (!tm) {
+    csApplicationFramework::ReportError("Failed to locate Texture Manager!");
+    return;
+  }
+  format = engine->GetTextureFormat();
+
   // fill out the standard proc textures
   procLoader[0].name = "noise";
-  procLoader[0].filter = OpenGLTexture::Nearest;
   procLoader[0].proc = noiseProc;
 
   lastImageID = -1;
@@ -139,7 +105,7 @@ TextureManager::~TextureManager()
   textureIDs.clear();
 }
 
-int TextureManager::getTextureID( const char* name, bool reportFail )
+int TextureManager::getTextureID( const char* name, bool)
 {
   if (!name) {
     logDebugMessage(2,"Could not get texture ID; no provided name\n");
@@ -157,11 +123,9 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
 
     FileTextureInit texInfo;
     texInfo.name = filename;
-    texInfo.filter = OpenGLTexture::LinearMipmapLinear;
 
-    OpenGLTexture *image = loadTexture(texInfo, reportFail);
+    csRef<iTextureHandle> image(loadTexture(texInfo));
     if (!image) {
-      logDebugMessage(2,"Image not found or unloadable: %s\n", name);
       return -1;
     }
     return addTexture(name, image);
@@ -187,7 +151,6 @@ bool TextureManager::removeTexture(const std::string& name)
     return false;
   }
 
-  // delete the OpenGLTexture
   ImageInfo& info = it->second;
   delete info.texture;
   info.texture = NULL;
@@ -204,136 +167,25 @@ bool TextureManager::removeTexture(const std::string& name)
 
 bool TextureManager::reloadTextures()
 {
-  TextureNameMap::iterator it = textureNames.begin();
-  while (it != textureNames.end()) {
-    reloadTextureImage(it->first);
-    it++;
-  }
   return true;
 }
 
 
-bool TextureManager::reloadTextureImage(const std::string& name)
+bool TextureManager::reloadTextureImage(const std::string&)
 {
-  TextureNameMap::iterator it = textureNames.find(name);
-  if (it == textureNames.end()) {
-    return false;
-  }
-
-  ImageInfo& info = it->second;
-  OpenGLTexture* oldTex = info.texture;
-  OpenGLTexture::Filter filter = oldTex->getFilter();
-
-  // make the new texture object
-  FileTextureInit fileInit;
-  fileInit.filter = OpenGLTexture::LinearMipmapLinear;
-  fileInit.name = name;
-  OpenGLTexture* newTex = loadTexture(fileInit, false);
-  if (newTex == NULL) {
-    // couldn't reload, leave it alone
-    return false;
-  }
-
-  //  name and id fields are not changed
-  newTex->setFilter(filter);
-  info.texture = newTex;
-  info.alpha = newTex->hasAlpha();
-  info.x = newTex->getWidth();
-  info.y = newTex->getHeight();
-
-  delete oldTex;
-
   return true;
 }
 
 
 bool TextureManager::bind ( int id )
 {
-  TextureIDMap::iterator it = textureIDs.find(id);
-  if (it == textureIDs.end()) {
-    logDebugMessage(1,"Unable to bind texture (by id): %d\n", id);
-    return false;
-  }
-
-  if (id != lastBoundID) {
-    it->second->texture->execute();
-    lastBoundID = id;
-  }
   return true;
 }
 
 
 bool TextureManager::bind ( const char* name )
 {
-  std::string nameStr = name;
-
-  TextureNameMap::iterator it = textureNames.find(nameStr);
-  if (it == textureNames.end()) {
-    logDebugMessage(1,"Unable to bind texture (by name): %s\n", name);
-    return false;
-  }
-
-  int id = it->second.id;
-  if (id != lastBoundID) {
-    it->second.texture->execute();
-    lastBoundID = id;
-  }
   return true;
-}
-
-
-OpenGLTexture::Filter TextureManager::getMaxFilter ( void )
-{
-  return OpenGLTexture::getMaxFilter();
-}
-
-
-std::string TextureManager::getMaxFilterName ( void )
-{
-  OpenGLTexture::Filter maxFilter = OpenGLTexture::getMaxFilter();
-  std::string name = OpenGLTexture::getFilterName(maxFilter);
-  return name;
-}
-
-
-void TextureManager::setMaxFilter(std::string filter)
-{
-  const char** names = OpenGLTexture::getFilterNames();
-  for (int i = 0; i < OpenGLTexture::getFilterCount(); i++) {
-    if (filter == names[i]) {
-      setMaxFilter((OpenGLTexture::Filter) i);
-      return;
-    }
-  }
-  logDebugMessage(1,"setMaxFilter(): bad filter = %s\n", filter.c_str());
-}
-
-
-void TextureManager::setMaxFilter (OpenGLTexture::Filter filter )
-{
-  OpenGLTexture::setMaxFilter(filter);
-  updateTextureFilters();
-  return;
-}
-
-
-void TextureManager::updateTextureFilters()
-{
-  // reset all texture filters to the current maxFilter
-  TextureNameMap::iterator itr = textureNames.begin();
-  while (itr != textureNames.end()) {
-    OpenGLTexture* texture = itr->second.texture;
-    // getting, then setting re-clamps the filter level
-    OpenGLTexture::Filter current = texture->getFilter();
-    texture->setFilter(current);
-    itr++;
-  }
-
-  // rebuild proc textures
-  for (int i = 0; i < (int)countof(procLoader); i++) {
-    procLoader[i].manager = this;
-    procLoader[i].proc(procLoader[i]);
-  }
 }
 
 
@@ -370,19 +222,7 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 }
 
 
-bool TextureManager::getColorAverages(int texId, float rgba[4],
-				      bool factorAlpha) const
-{
-  TextureIDMap::const_iterator it = textureIDs.find(texId);
-  if (it == textureIDs.end()) {
-    logDebugMessage(1,"getColorAverages: Unable to find texture (by id): %d\n", texId);
-    return false;
-  }
-  return it->second->texture->getColorAverages(rgba, factorAlpha);
-}
-
-
-int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
+int TextureManager::addTexture(const char *name, csRef<iTextureHandle> texture)
 {
   if (!name || !texture)
     return -1;
@@ -399,9 +239,8 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   info.name = name;
   info.texture = texture;
   info.id = ++lastImageID;
-  info.alpha = texture->hasAlpha();
-  info.x = texture->getWidth();
-  info.y = texture->getHeight();
+  info.alpha = texture->GetAlphaMap();
+  texture->GetOriginalDimensions(info.x, info.y);
 
   textureNames[name] = info;
   textureIDs[info.id] = &textureNames[name];
@@ -411,69 +250,50 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   return info.id;
 }
 
-OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
+csRef<iTextureHandle> TextureManager::loadTexture(FileTextureInit &init)
 {
-  int width, height;
-  unsigned char* image = readImage(init.name, &width, &height);
+  std::string filename = init.name;
 
-  if (!image) {
-    if (reportFail) {
-      std::vector<std::string> args;
-      args.push_back(init.name);
-      printError("cannot load texture: {1}", &args);
-    }
+  // get the absolute filename for cache textures
+  if (CACHEMGR.isCacheFileType(filename)) {
+    filename = CACHEMGR.getLocalName(filename);
+  }
+
+  if (vfs->Exists(filename.c_str())) {
+    ;
+  } else if (vfs->Exists((filename + ".png").c_str())) {
+    filename += ".png";
+  } else if (vfs->Exists((filename + ".rgb").c_str())) {
+    filename += ".rgb";
+  }
+  if (!vfs->Exists(filename.c_str())) {
+    csApplicationFramework::ReportInfo("Failed to locate file %s!",
+				       filename.c_str());
+    return NULL;
+  }
+  csRef<iDataBuffer> buf = vfs->ReadFile(filename.c_str(), false);
+  if (!buf.IsValid()) {
+    csApplicationFramework::ReportInfo("Failed to load texture %s!",
+				       filename.c_str());
     return NULL;
   }
 
-  OpenGLTexture *texture =
-    new OpenGLTexture(width, height, image, init.filter, true);
+  csRef<iImage> image(imageLoader->Load(buf, format));
+  if (!image) {
+    csApplicationFramework::ReportInfo("Failed to load texture %s!",
+				       filename.c_str());
+    return NULL;
+  }
+  csRef<iDataBuffer> xname = vfs->ExpandPath(filename.c_str());
+  image->SetName(**xname);
 
-  delete[] image;
+  csRef<iTextureHandle> texture(tm->RegisterTexture(image, CS_TEXTURE_3D));
 
   return texture;
 }
 
 
-int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data,
-			       OpenGLTexture::Filter filter, bool repeat, int format)
-{
-  return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
-}
-
-
-void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter)
-{
-  TextureIDMap::iterator it = textureIDs.find(texId);
-  if (it == textureIDs.end()) {
-    logDebugMessage(1,"setTextureFilter() Couldn't find texid: %i\n", texId);
-    return;
-  }
-
-  ImageInfo& image = *(it->second);
-  OpenGLTexture* texture = image.texture;
-  texture->setFilter(filter);
-
-  return;
-}
-
-
-OpenGLTexture::Filter TextureManager::getTextureFilter(int texId)
-{
-  TextureIDMap::iterator it = textureIDs.find(texId);
-  if (it == textureIDs.end()) {
-    logDebugMessage(1,"getTextureFilter() Couldn't find texid: %i\n", texId);
-    return OpenGLTexture::Max;
-  }
-  ImageInfo& image = *(it->second);
-  OpenGLTexture* texture = image.texture;
-
-  return texture->getFilter();
-}
-
-
-/* --- Procs --- */
-
-int noiseProc(ProcTextureInit &init)
+int TextureManager::newTexture()
 {
   int noizeSize = 128;
   const int size = 4 * noizeSize * noizeSize;
@@ -485,9 +305,19 @@ int noiseProc(ProcTextureInit &init)
     noise[i+2] = n;
     noise[i+3] = n;
   }
-  int texture = init.manager->newTexture(init.name.c_str(), noizeSize, noizeSize, noise, init.filter);
+//   csRef<iTextureHandle> texture(tm->CreateTexture(noizeSize, noizeSize, csimg2D,
+// 						  NULL, CS_TEXTURE_3D));
   delete[] noise;
-  return texture;
+//   int result = addTexture("noise", texture);
+  return -1;
+}
+
+
+/* --- Procs --- */
+
+int noiseProc(ProcTextureInit &init)
+{
+  return init.manager->newTexture();
 }
 
 

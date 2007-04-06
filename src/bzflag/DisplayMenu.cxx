@@ -293,7 +293,6 @@ void			DisplayMenu::resize(int _width, int _height)
   // load current settings
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
-    TextureManager& tm = TextureManager::instance();
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
@@ -306,7 +305,7 @@ void			DisplayMenu::resize(int _width, int _height)
     } else {
       ((HUDuiList*)listHUD[i++])->setIndex(0);
     }
-    ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+    ((HUDuiList*)listHUD[i++])->setIndex(0);
     int aniso = BZDB.evalInt("aniso");
     aniso = (aniso < 1) ? 1 : aniso;
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
@@ -384,18 +383,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   }
   case '5': {
-    TextureManager& tm = TextureManager::instance();
-    tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
-    BZDB.set("texture", tm.getMaxFilterName());
-    sceneRenderer->notifyStyleChange();
     break;
   }
   case 'A': {
-    int aniso = list->getIndex() + 1;
-    BZDB.setInt("aniso", aniso);
-    TextureManager& tm = TextureManager::instance();
-    tm.setMaxFilter(tm.getMaxFilter());
-    sceneRenderer->notifyStyleChange();
     break;
   }
   case '6':

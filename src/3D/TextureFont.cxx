@@ -72,9 +72,6 @@ void TextureFont::preLoadLists()
   }
   logDebugMessage(4,"Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
 
-  // fonts are usually pixel aligned
-  tm.setTextureFilter(textureID, OpenGLTexture::Nearest);
-
   for (int i = 0; i < numberOfCharacters; i++) {
     if (listIDs[i] != INVALID_GL_LIST_ID) {
       glDeleteLists(listIDs[i], 1);
@@ -130,14 +127,8 @@ void TextureFont::free(void)
   textureID = -1;
 }
 
-void TextureFont::filter(bool dofilter)
+void TextureFont::filter(bool)
 {
-  TextureManager &tm = TextureManager::instance();
-  if (textureID >= 0) {
-    const OpenGLTexture::Filter type = dofilter ? OpenGLTexture::Max
-						: OpenGLTexture::Nearest;
-    tm.setTextureFilter(textureID, type);
-  }
 }
 
 void TextureFont::drawString(int, int, GLfloat [4], const char *, int)
