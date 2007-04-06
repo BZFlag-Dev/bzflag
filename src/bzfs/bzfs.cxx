@@ -5062,8 +5062,6 @@ static void runMainLoop ( void )
 	  {
 	    if (netHandler->isFdSet(&read_set))
 	    {
-	      // the dude has sent SOME data
-	      peerItr->second.sent = true;
 	      // there is some data for us
 	      if ( !peerItr->second.notifyList.size() )
 	      {
@@ -5071,19 +5069,23 @@ static void runMainLoop ( void )
 		// just read in the first N bits
 		RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
 
-		bool drop = false;
 		if ( e !=ReadAll && e != ReadPart )
 		{
 		  // there ewas an error but we arn't a player yet
-		  peerItr->second.deleteMe = true;
 		  if (e == ReadError)
 		    nerror("error on read");
-
-		  if (e == ReadHuge)
-		    logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
+		  else
+		  {
+		    if (e == ReadHuge)
+		      logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
+		    peerItr->second.deleteMe = true;
+		  }
 		}
 		else
 		{
+		  // the dude has sent SOME data
+		  peerItr->second.sent = true;
+
 		  unsigned int readSize = netHandler->getTcpReadSize();
 		  void *buf = netHandler->getTcpBuffer();
 		  int fd = peerItr->first;
@@ -5184,6 +5186,9 @@ static void runMainLoop ( void )
 		}
 		else
 		{
+		  // the dude has sent SOME data
+		  peerItr->second.sent = true;
+
 		  unsigned int readSize = netHandler->getTcpReadSize();
 		  void *buf = netHandler->getTcpBuffer();
 
@@ -5227,23 +5232,6 @@ static void runMainLoop ( void )
 	      {
 		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
 		  peerItr->second.deleteMe = true;
-		else
-		{
-		  if (now - peerItr->second.startTime > tcpTimeout)
-		  {
-		    // call some events
-
-		    bz_NewNonPlayerConnectionEventData_V1 eventData;
-		    eventData.eventType = bz_eIdleNewNonPlayerConnection;
-		    eventData.connectionID = peerItr->first;
-
-		    worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
-		    peerItr->second.sent = true;
-
-		    if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-		      peerItr->second.deleteMe = true;
-		  }
-		}
 	      }
 	    }
 	  }
@@ -5266,6 +5254,30 @@ static void runMainLoop ( void )
 	  NetHandler::flushAllUDP();
     }
 
+      // check for any waiting conenctions if they are timed, then see if anyone wants them
+    std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
+
+    while ( peerItr != netConnectedPeers.end() )
+    {
+      if (!peerItr->second.sent) // little guy hasn't sent us a thing
+      {
+	if (now - peerItr->second.startTime > tcpTimeout)
+	{
+	  // see if anyone wants him
+	  bz_NewNonPlayerConnectionEventData_V1 eventData;
+	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
+	  eventData.connectionID = peerItr->first;
+
+	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
+	  peerItr->second.sent = true;
+
+	  // no love for our little connection, let him go.
+	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
+	    peerItr->second.deleteMe = true;
+	}
+      }
+      peerItr++;
+    }
     // Fire world weapons
     world->getWorldWeapons().fire();
 
