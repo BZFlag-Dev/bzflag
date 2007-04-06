@@ -3,6 +3,13 @@ This document is just a repository for some ideas for future versions. Nothing i
 
 2.1 ideas
 
+BZFS networking guts
+	Finish listener class
+	Move the main listener socket into an instnace of the listener class
+	Create PlayerNetHandler that takes a NetHandler and does the BZFS message unpack stuff ( code,len )
+	Convert HandleCmmand into a set of registered callbacks based on the code.
+	Add an outgoing connection class
+	
 Add a new modal type dialog plane. Text would be framed in a border, be on top of all other things (including menus) and require user action to remove. Provide modes for, OK, OK/Cancel, and Yes/No type boxes. App needs to know what was chosen.
 
 Look into taking the hard coded strings out of the software and pulling them from some sort of string resource system.
