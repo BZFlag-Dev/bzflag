@@ -157,6 +157,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_tankSpeed",		"25.0",				false, StateDatabase::Locked},
   { "_tankWidth",		"2.8",				false, StateDatabase::Locked},
   { "_targetingAngle",		"0.3",				false, StateDatabase::Locked},
+  { "_tcpTimeout",		"6.0",				false, StateDatabase::Locked},
   { "_teleportBreadth",		"4.48",				false, StateDatabase::Locked},
   { "_teleportHeight",		"10.08",			false, StateDatabase::Locked},
   { "_teleportTime",		"1.0",				false, StateDatabase::Locked},

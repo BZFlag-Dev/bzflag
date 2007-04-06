@@ -1045,6 +1045,8 @@ static void acceptClient( fd_set *socketSet )
   peer.player = -1;
   peer.socket = fd;
   peer.deleteMe = false;
+  peer.sent = false;
+  peer.startTime = TimeKeeper::getCurrent().getSeconds();
 
   netConnectedPeers[fd] = peer;
 
@@ -4860,6 +4862,9 @@ static void runMainLoop ( void )
     float waitTime = 3.0f;
     checkWaitTime(tm,waitTime);
 
+    double now = tm.getSeconds();
+    double tcpTimeout = BZDB.eval(StateDatabase::BZDB_TCPTIMEOUT);
+
     /**************
     *  SELECT()  *
     **************/
@@ -5025,6 +5030,7 @@ static void runMainLoop ( void )
 	NetHandler *netHandler = peerItr->second.handler;
 	if ( peerItr->second.player != -1 )
 	{
+	  peerItr->second.sent = true;
 	  // it's a player now, so treat them with the respect they deserve
 	  playerData = GameKeeper::Player::getPlayerByIndex(peerItr->second.player);
   
@@ -5049,6 +5055,8 @@ static void runMainLoop ( void )
 	  {
 	    if (netHandler->isFdSet(&read_set))
 	    {
+	      // the dude has sent SOME data
+	      peerItr->second.sent = true;
 	      // there is some data for us
 	      if ( !peerItr->second.notifyList.size() )
 	      {
@@ -5209,7 +5217,27 @@ static void runMainLoop ( void )
 	    {
 	      // there is no data, so delete us or move along.
 	      if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-		peerItr->second.deleteMe = true;
+	      {
+		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
+		  peerItr->second.deleteMe = true;
+		else
+		{
+		  if (now - peerItr->second.startTime > tcpTimeout)
+		  {
+		    // call some events
+
+		    bz_NewNonPlayerConnectionEventData_V1 eventData;
+		    eventData.eventType = bz_eIdleNewNonePlayerConnection;
+		    eventData.connectionID = peerItr->first;
+
+		    worldEventManager.callEvents(bz_eIdleNewNonePlayerConnection,&eventData);
+		    peerItr->second.sent = true;
+
+		    if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
+		      peerItr->second.deleteMe = true;
+		  }
+		}
+	      }
 	    }
 	  }
 	}

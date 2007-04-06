@@ -305,6 +305,7 @@ public:
   static const std::string	BZDB_TANKSPEED;
   static const std::string	BZDB_TANKRADIUS;
   static const std::string	BZDB_TARGETINGANGLE;
+  static const std::string	BZDB_TCPTIMEOUT;
   static const std::string	BZDB_TELEBREADTH;
   static const std::string	BZDB_TELEHEIGHT;
   static const std::string	BZDB_TELEPORTTIME;

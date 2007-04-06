@@ -154,51 +154,53 @@ extern unsigned int maxNonPlayerDataChunk;
 
 class NonPlayerDataChunk
 {
-public:
-	NonPlayerDataChunk()
-	{
-		data = NULL;
-		size = 0;
-	}
+  public:
+  NonPlayerDataChunk()
+  {
+    data = NULL;
+    size = 0;
+  }
 
-	NonPlayerDataChunk( const char* d, unsigned int s )
-	{
-		data = (char*)malloc(s);
-		memcpy(data,d,s);
-		size = s;
-	}
+  NonPlayerDataChunk( const char* d, unsigned int s )
+  {
+    data = (char*)malloc(s);
+    memcpy(data,d,s);
+    size = s;
+  }
 
-	NonPlayerDataChunk( const NonPlayerDataChunk &t )
-	{
-		data = (char*)malloc(t.size);
-		memcpy(data,t.data,t.size);
-		size = t.size;
-	}
+  NonPlayerDataChunk( const NonPlayerDataChunk &t )
+  {
+    data = (char*)malloc(t.size);
+    memcpy(data,t.data,t.size);
+    size = t.size;
+  }
 
-	~NonPlayerDataChunk()
-	{
-		if (data)
-			free (data);
+  ~NonPlayerDataChunk()
+  {
+    if (data)
+	    free (data);
 
-		data = NULL;
-		size = 0;
-	}
+    data = NULL;
+    size = 0;
+  }
 
-	char *data;
-	unsigned int size;
+  char *data;
+  unsigned int size;
 };
 
 // peer list
 typedef struct 
 {
-	int socket;
-	int player;
-	NetHandler *handler;
-	std::vector<bz_NonPlayerConnectionHandler*> notifyList;
+  int socket;
+  int player;
+  NetHandler *handler;
+  std::vector<bz_NonPlayerConnectionHandler*> notifyList;
 
-	std::vector<NonPlayerDataChunk>	pendingSendChunks;
+  std::vector<NonPlayerDataChunk> pendingSendChunks;
 
-	bool		deleteMe;
+  double    startTime;
+  bool	    sent;
+  bool	    deleteMe;
 }NetConnectedPeer;
 
 extern std::map<int,NetConnectedPeer> netConnectedPeers;
