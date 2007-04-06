@@ -169,7 +169,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
-unsigned int maxNonPlayerDataChunk = 512;
+unsigned int maxNonPlayerDataChunk = 2048;
 
 // Logging to the API
 class APILoggingCallback : public LoggingCallback
@@ -209,7 +209,7 @@ static void dropHandler(NetHandler *handler, const char *reason)
       continue;
     removePlayer(i, reason, false);
   }
-  delete handler;
+  netConnectedPeers[handler->getFD()].deleteMe = true;
 }
 
 int bz_pwrite(NetHandler *handler, const void *b, int l)
@@ -2091,8 +2091,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // not to undo operations that haven't been done.
   // first shutdown connection
 
-  GameKeeper::Player *playerData
-		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
 
