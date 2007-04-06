@@ -4851,9 +4851,9 @@ static void runMainLoop ( void )
       maxFileDescriptor = wksSocket;
 
     // Check for cURL needed activity
-    int cURLmaxFile = cURLManager::fdset(read_set, write_set);
-    if (cURLmaxFile > maxFileDescriptor)
-      maxFileDescriptor = cURLmaxFile;
+  //  int cURLmaxFile = cURLManager::fdset(read_set, write_set);
+  //  if (cURLmaxFile > maxFileDescriptor)
+  //    maxFileDescriptor = cURLmaxFile;
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -5282,6 +5282,19 @@ static void runMainLoop ( void )
     world->getWorldWeapons().fire();
 
     cleanPendingPlayers();
+
+
+    // let curl do it's own select
+    fd_set curlReadSet,curlWriteSet;
+    FD_ZERO(&curlReadSet);
+    FD_ZERO(&curlWriteSet);
+
+    timeout.tv_sec = long(floorf(0.01f));
+    timeout.tv_usec = long(1.0e+6f * (0.01f - floorf(0.01f)));
+
+    int curlMaxFile = cURLManager::fdset(curlReadSet,curlWriteSet);
+    
+    nfound = select(curlMaxFile+1, (fd_set*)&curlReadSet, (fd_set*)&curlWriteSet, 0, &timeout);
 
     // cURLperform should be called in any case as we could incur in timeout
     dontWait = dontWait || cURLManager::perform();
