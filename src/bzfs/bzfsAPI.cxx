@@ -993,10 +993,9 @@ BZF_API bool bz_disconectNonPlayerConnection(int connectionID)
   for(unsigned int i=0; i < netConnectedPeers[connectionID].notifyList.size(); i++)
     netConnectedPeers[connectionID].notifyList[i]->disconnect(connectionID);
 
-  delete (netConnectedPeers[connectionID].handler);
-
-  netConnectedPeers.erase(netConnectedPeers.find(connectionID));
-
+  netConnectedPeers[connectionID].notifyList.clear();
+  netConnectedPeers[connectionID].pendingSendChunks.clear();
+  netConnectedPeers[connectionID].deleteMe = true;
   return true;
 }
 
