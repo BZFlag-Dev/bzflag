@@ -342,20 +342,6 @@ int lookupPlayer(const PlayerId& id)
   return id;
 }
 
-static void setNoDelay(int fd)
-{
-  // turn off TCP delay (collection).  we want packets sent immediately.
-#if defined(_WIN32)
-  BOOL on = TRUE;
-#else
-  int on = 1;
-#endif
-  struct protoent *p = getprotobyname("tcp");
-  if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
-    nerror("enabling TCP_NODELAY");
-  }
-}
-
 void sendFlagUpdate(FlagInfo &flag)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -367,7 +353,6 @@ void sendFlagUpdate(FlagInfo &flag)
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart,
 		   false);
 }
-
 
 static float nextGameTime()
 {
@@ -4813,6 +4798,25 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
 }
 
+bool updateCurl ( void )
+{
+  // let curl do it's own select
+  fd_set curlReadSet,curlWriteSet;
+  FD_ZERO(&curlReadSet);
+  FD_ZERO(&curlWriteSet);
+
+  struct timeval timeout;
+
+  timeout.tv_sec = long(floorf(0.01f));
+  timeout.tv_usec = long(1.0e+6f * (0.01f - floorf(0.01f)));
+
+  int curlMaxFile = cURLManager::fdset(curlReadSet,curlWriteSet);
+
+  int nfound = select(curlMaxFile+1, (fd_set*)&curlReadSet, (fd_set*)&curlWriteSet, 0, &timeout);
+
+  return cURLManager::perform();
+}
+
 static void runMainLoop ( void )
 {
   /* MAIN SERVER RUN LOOP
@@ -4849,11 +4853,6 @@ static void runMainLoop ( void )
     FD_SET((unsigned int)wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor) 
       maxFileDescriptor = wksSocket;
-
-    // Check for cURL needed activity
-  //  int cURLmaxFile = cURLManager::fdset(read_set, write_set);
-  //  if (cURLmaxFile > maxFileDescriptor)
-  //    maxFileDescriptor = cURLmaxFile;
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -5283,21 +5282,7 @@ static void runMainLoop ( void )
 
     cleanPendingPlayers();
 
-
-    // let curl do it's own select
-    fd_set curlReadSet,curlWriteSet;
-    FD_ZERO(&curlReadSet);
-    FD_ZERO(&curlWriteSet);
-
-    timeout.tv_sec = long(floorf(0.01f));
-    timeout.tv_usec = long(1.0e+6f * (0.01f - floorf(0.01f)));
-
-    int curlMaxFile = cURLManager::fdset(curlReadSet,curlWriteSet);
-    
-    nfound = select(curlMaxFile+1, (fd_set*)&curlReadSet, (fd_set*)&curlWriteSet, 0, &timeout);
-
-    // cURLperform should be called in any case as we could incur in timeout
-    dontWait = dontWait || cURLManager::perform();
+    dontWait = dontWait || updateCurl();
   }
 }
 

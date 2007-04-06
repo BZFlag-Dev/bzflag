@@ -18,6 +18,7 @@
 
 #include "bzfsAPI.h"
 #include "WorldEventManager.h"
+//#include "GameKeeper.h"
 
 // Are these size/limits reasonable?
 const int udpBufSize = 128*1024;
@@ -27,6 +28,19 @@ bool NetHandler::pendingUDP = false;
 TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
 std::list<NetHandler*> NetHandler::netConnections;
 
+void setNoDelay(int fd)
+{
+  // turn off TCP delay (collection).  we want packets sent immediately.
+#if defined(_WIN32)
+  BOOL on = TRUE;
+#else
+  int on = 1;
+#endif
+  struct protoent *p = getprotobyname("tcp");
+  if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
+    nerror("enabling TCP_NODELAY");
+  }
+}
 
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
@@ -762,6 +776,150 @@ void NetHandler::setUDPin(struct sockaddr_in *_uaddr)
     uaddr.sin_port = _uaddr->sin_port;
   udpin = true;
 }
+
+NetListener::NetListener()
+{
+  listenSocket = -1;
+  maxFileDescriptors = 0;
+  toRead = 0;
+}
+
+NetListener::~NetListener()
+{
+
+}
+
+bool NetListener::listen ( unsigned short port )
+{
+  return false;
+}
+
+bool NetListener::close ( NetHandler *handler )
+{
+  return false;
+}
+
+bool NetListener::close ( int connectionID )
+{
+  return false;
+}
+
+int NetListener::update ( float waitTime )
+{
+  if (listenSocket < 0)
+    return -1;
+
+  toRead = 0;
+
+  // prepare select set
+  FD_ZERO(&read_set);
+  FD_ZERO(&write_set);
+  NetHandler::setFd(&read_set, &write_set, maxFileDescriptors);
+
+  // always listen for connections
+  FD_SET((unsigned int)listenSocket, &read_set);
+  if (listenSocket > maxFileDescriptors) 
+    maxFileDescriptors = listenSocket;
+
+ // GameKeeper::Player::freeTCPMutex();
+  struct timeval timeout;
+  timeout.tv_sec = long(floorf(waitTime));
+  timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
+
+  toRead = select(maxFileDescriptors+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+
+  return toRead;
+}
+
+void NetListener::processConnections ( void )
+{
+  if (toRead < 1)
+    return;
+
+  if (FD_ISSET(listenSocket, &read_set))
+    accept();
+
+
+  toRead = 0;
+}
+
+void NetListener::accept ( void )
+{
+  struct sockaddr_in clientAddr;
+  AddrLen addr_len = sizeof(clientAddr);
+  int fd = ::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
+  if (fd == -1)
+  {
+    nerror("accepting on wks");
+    return;
+  }
+  // don't buffer info, send it immediately
+  setNoDelay(fd);
+  BzfNetwork::setNonBlocking(fd);
+
+  int keepalive = 1, n;
+  n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (SSOType)&keepalive, sizeof(int));
+
+  if (n < 0)
+    nerror("couldn't set keepalive");
+
+  // they arn't a player yet till they send us the connection string
+  NetHandler* peer = new NetHandler(clientAddr, fd);
+
+  bool kill = true;
+
+  for ( unsigned int i = 0; i < newConnectionCallbacks.size(); i++ )
+  {
+    if ( newConnectionCallbacks[i]->accept(peer,fd) )
+      kill = false;
+  }
+
+  if ( kill )
+    delete(peer);
+  else
+  {
+    handlers[fd] = peer;
+    FD_SET( (unsigned int)fd, &read_set);
+  }
+}
+
+void NetListener::addNewConnectionCallback ( NewNetworkConnectionCallback *handler )
+{
+  if (handler)
+    newConnectionCallbacks.push_back(handler);
+}
+
+void NetListener::removeNewConnectionCallback  ( NewNetworkConnectionCallback *handler )
+{
+  for (unsigned int i = 0; i < newConnectionCallbacks.size(); i++)
+  {
+    if ( newConnectionCallbacks[i] == handler )
+    {
+      newConnectionCallbacks.erase(newConnectionCallbacks.begin()+i);
+      return;
+    }
+  }
+}
+
+void NetListener::addDataPendingCallback( NetworkDataPendingCallback *handler )
+{
+  if (handler)
+    dataPendingCallbacks.push_back(handler);
+}
+
+void NetListener::removeDataPendingCallback( NetworkDataPendingCallback *handler )
+{
+  for (unsigned int i = 0; i < dataPendingCallbacks.size(); i++)
+  {
+    if ( dataPendingCallbacks[i] == handler )
+    {
+      dataPendingCallbacks.erase(dataPendingCallbacks.begin()+i);
+      return;
+    }
+  }
+}
+
+
 
 // Local Variables: ***
 // mode:C++ ***

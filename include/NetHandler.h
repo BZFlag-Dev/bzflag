@@ -47,6 +47,8 @@ struct MessageCount {
 };
 #endif
 
+void setNoDelay(int fd);
+
 /** This class is a client that connects to a BZFlag client and has
     functions for sending and receiving messages.
 */
@@ -236,6 +238,60 @@ private:
   typedef std::map<const uint16_t, struct MessageCount> MessageCountMap;
   MessageCountMap msg[2];
 #endif
+};
+
+class NewNetworkConnectionCallback
+{
+public:
+  virtual ~NewNetworkConnectionCallback(){};
+
+  virtual bool accept ( NetHandler *handler, int connectionID ) = 0;
+};
+
+
+class NetworkDataPendingCallback
+{
+public:
+    virtual ~NetworkDataPendingCallback(){};
+    virtual bool pending ( NetHandler *handler, int connectionID, bool tcp ) = 0;
+};
+
+class NetListener
+{
+public:
+  NetListener();
+  ~NetListener();
+
+  bool listen ( unsigned short port );
+
+  bool close ( NetHandler *handler );
+  bool close ( int connectionID );
+
+  int update ( float waitTime );
+
+  void processConnections ( void );
+
+  void addNewConnectionCallback ( NewNetworkConnectionCallback *handler );
+  void removeNewConnectionCallback  ( NewNetworkConnectionCallback *handler );
+
+  void addDataPendingCallback( NetworkDataPendingCallback *handler );
+  void removeDataPendingCallback( NetworkDataPendingCallback *handler );
+
+protected:
+  int	  listenSocket;
+
+  int	  toRead;
+
+  int	  maxFileDescriptors;
+  fd_set  read_set;
+  fd_set  write_set;
+
+  std::map<int,NetHandler*> handlers;
+
+  std::vector<NewNetworkConnectionCallback*>	newConnectionCallbacks;
+  std::vector<NetworkDataPendingCallback*>	dataPendingCallbacks;
+
+  void accept ( void );
 };
 
 #endif
