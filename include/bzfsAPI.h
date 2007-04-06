@@ -96,7 +96,7 @@ typedef enum
   bz_eFlagDroppedEvent,
   bz_eShotEndedEvent,
   bz_eNewNonPlayerConnection,
-  bz_eIdleNewNonePlayerConnection,
+  bz_eIdleNewNonPlayerConnection,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 

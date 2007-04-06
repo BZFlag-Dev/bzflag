@@ -5011,7 +5011,6 @@ static void runMainLoop ( void )
 
       for ( unsigned int i = 0; i < toKill.size(); i++ )
       {
-	close(i);
 	delete(netConnectedPeers[i].handler);
 	netConnectedPeers.erase(netConnectedPeers.find(i));
       }
@@ -5227,10 +5226,10 @@ static void runMainLoop ( void )
 		    // call some events
 
 		    bz_NewNonPlayerConnectionEventData_V1 eventData;
-		    eventData.eventType = bz_eIdleNewNonePlayerConnection;
+		    eventData.eventType = bz_eIdleNewNonPlayerConnection;
 		    eventData.connectionID = peerItr->first;
 
-		    worldEventManager.callEvents(bz_eIdleNewNonePlayerConnection,&eventData);
+		    worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
 		    peerItr->second.sent = true;
 
 		    if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
