@@ -180,13 +180,18 @@ ServerMenu::ServerMenu() : defaultKey(this),
   search->setFontFace(MainMenu::getFontFace());
   search->setMaxLength(30);
   getControls().push_back(search);
-  setFind(false);
 
   // short key help
   help = new HUDuiLabel;
   help->setFontFace(MainMenu::getFontFace());
-  help->setString("Press  +/- add/remove favorites   f - toggle view");
+  if (serverList.size() == 0) {
+    help->setString("");
+  } else {
+    help->setString("Press  +/- add/remove favorites   f - toggle view");
+  }
   getControls().push_back(help);
+
+  setFind(false);
 
   // set initial focus
   setFocus(status);
@@ -210,7 +215,13 @@ void ServerMenu::setFind(bool mode)
     search->setFocus();
   } else {
     if (search->getString() == "" || search->getString() == "*") {
-      search->setLabel("Press '/' to search");
+      if (serverList.size() == 0) {
+	search->setLabel("");
+	help->setString("");
+      } else {
+	search->setLabel("Press '/' to search");
+	help->setString("Press  +/- add/remove favorites   f - toggle view");
+      }
       search->setString("");
       filter = "*";
     } else {
