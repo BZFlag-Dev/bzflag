@@ -243,7 +243,7 @@ void ServerMenu::toggleFavView()
 
 void ServerMenu::setFav(bool fav)
 {
-  if (selectedIndex < 0) {
+  if (serverList.size() == 0 || selectedIndex < 0) {
     return;
   }
 
