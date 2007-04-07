@@ -471,7 +471,7 @@ void Occluder::draw() const
 void Occluder::print(const char* string) const
 {
   // FIXME - debugging
-  printf ("%s: %p, V = %i, P = %i\n", string, sceneNode, vertexCount, planeCount);
+  printf ("%s: %p, V = %i, P = %i\n", string, (void*)sceneNode, vertexCount, planeCount);
   for (int v = 0; v < vertexCount; v++) {
     printf ("  v%i: %f, %f, %f\n", v, vertices[v][0], vertices[v][1],vertices[v][2]);
   }
