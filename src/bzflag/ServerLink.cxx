@@ -196,12 +196,21 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   if (!okay)
     goto done;
 
+  // send out the connect header
+  ::send(query,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER),0);
+
   // get server version and verify
 #if !defined(_WIN32)
   FD_ZERO(&read_set);
+  FD_ZERO(&write_set);
   FD_SET((unsigned int)query, &read_set);
+  FD_SET((unsigned int)query, &write_set);
+
   timeout.tv_sec = long(5);
   timeout.tv_usec = 0;
+
+  // send what we got, then receive it
+  nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
   nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
   if (nfound <= 0) {
     close(query);
@@ -209,9 +218,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
 #endif // !defined(_WIN32)
 
-  // send out the connect header
-
-  ::send(query,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER),0);
 
   i = recv(query, (char*)version, 8, 0);
   if (i < 8)
