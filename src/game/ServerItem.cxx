@@ -208,6 +208,9 @@ int ServerItem::getPlayerCount() const
 
 std::string ServerItem::getAddrName() const
 {
+  if (name.size() <= 0) {
+    return std::string("");
+  }
   return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.port));
 }
 
