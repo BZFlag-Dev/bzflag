@@ -136,7 +136,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 ServerMenu::ServerMenu() : defaultKey(this),
-			   selectedIndex(0),
+			   selectedIndex(-1),
 			   serversFound(0),
 			   findMode(false),
 			   filter("*"),
@@ -243,6 +243,10 @@ void ServerMenu::toggleFavView()
 
 void ServerMenu::setFav(bool fav)
 {
+  if (selectedIndex < 0) {
+    return;
+  }
+
   const ServerItem& item = serverList.getServers()[selectedIndex];
   std::string addrname = item.getAddrName();
   ServerListCache *cache = ServerListCache::get();
@@ -402,7 +406,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 
 void ServerMenu::pick()
 {
-  if (serverList.size() == 0)
+  if (serverList.size() == 0 || selectedIndex < 0)
     return;
 
   // get server info
