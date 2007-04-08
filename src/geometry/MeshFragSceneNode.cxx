@@ -442,8 +442,11 @@ void MeshFragSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   const std::string &texture = faces[0]->getMaterial()->getTexture(0);
   TextureManager &tm = TextureManager::instance();
   int             id = tm.getTextureID(texture.c_str());
-  if (id == -1)
+  if (id == -1) {
+    csApplicationFramework::ReportInfo
+      ("Failed to locate texture %s !", texture.c_str());
     return;
+  }
 
   csRef<iMeshFactoryWrapper> meshFragFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);

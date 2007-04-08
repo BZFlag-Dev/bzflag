@@ -755,8 +755,10 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 
 void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
-  if (wallTexture == -1)
+  if (wallTexture == -1) {
+    csApplicationFramework::ReportInfo("Failed to locate texture!");
     return;
+  }
   csRef<iMeshFactoryWrapper> meshPolyFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
   csRef<iGeneralFactoryState> meshPolyFactState
@@ -775,7 +777,7 @@ void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   }
 
   for (i = 0; i < getVertexCount() - 2; i++)
-    meshPolyFactState->GetTriangles()[i].Set(0, i + 1, i + 2);
+    meshPolyFactState->GetTriangles()[i].Set(0, i + 2, i + 1);
 
   meshPolyFactState->CalculateNormals();
 

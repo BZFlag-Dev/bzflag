@@ -325,8 +325,11 @@ void TriWallSceneNode::renderRadar()
 void TriWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
   csRef<iMaterialWrapper> triWallMaterial(tm.getInfo(wallTexture).material);
-  if (!triWallMaterial)
+  if (!triWallMaterial) {
+    csApplicationFramework::ReportInfo
+      ("Failed to locate material!");
     return;
+  }
 
   csRef<iMeshFactoryWrapper> triWallFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);

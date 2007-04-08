@@ -414,8 +414,10 @@ void QuadWallSceneNode::renderRadar()
 void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
   csRef<iMaterialWrapper> quadWallMaterial(tm.getInfo(wallTexture).material);
-  if (!quadWallMaterial)
+  if (!quadWallMaterial) {
+    csApplicationFramework::ReportInfo("Failed to locate material!");
     return;
+  }
 
   csRef<iMeshFactoryWrapper> quadWallFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
