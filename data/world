@@ -6,12 +6,6 @@
     <paramsfile>renderloop.hi.xml</paramsfile>
   </addon>
 
-  <settings>
-    <clearzbuf>no</clearzbuf>
-    <clearscreen>yes</clearscreen>
-    <renderloop>renderloop</renderloop>
-  </settings>
-
   <plugins>
     <plugin name="genmeshfact">crystalspace.mesh.loader.factory.genmesh</plugin>
     <plugin name="genmesh">crystalspace.mesh.loader.genmesh</plugin>

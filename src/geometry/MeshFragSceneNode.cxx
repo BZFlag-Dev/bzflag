@@ -29,6 +29,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "SceneRenderer.h"
+#include "TextureManager.h"
 
 
 // FIXME - no tesselation is done on for shot lighting
@@ -439,6 +440,10 @@ void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 
 void MeshFragSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   const std::string &texture = faces[0]->getMaterial()->getTexture(0);
+  TextureManager &tm = TextureManager::instance();
+  int             id = tm.getTextureID(texture.c_str());
+  if (id == -1)
+    return;
 
   csRef<iMeshFactoryWrapper> meshFragFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
@@ -466,17 +471,7 @@ void MeshFragSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   csRef<iMeshWrapper> meshFragMesh
     = engine->CreateMeshWrapper(meshFragFactory, "MeshFrag");
 
-  iMaterialWrapper *meshFragMaterial
-    = engine->FindMaterial(texture.c_str());
-  if (meshFragMaterial == NULL) {
-    if (!errored) {
-      errored = true;
-      csApplicationFramework::ReportError
-	("Error looking for material %s !", texture.c_str());
-    }
-    return;
-  }
-  meshFragMesh->GetMeshObject()->SetMaterialWrapper(meshFragMaterial);
+  meshFragMesh->GetMeshObject()->SetMaterialWrapper(tm.getInfo(id).material);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
     (meshFragMesh->GetMeshObject());

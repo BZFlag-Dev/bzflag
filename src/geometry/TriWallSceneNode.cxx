@@ -324,7 +324,9 @@ void TriWallSceneNode::renderRadar()
 
 void TriWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
-  std::string     texture = tm.getInfo(wallTexture).name;
+  csRef<iMaterialWrapper> triWallMaterial(tm.getInfo(wallTexture).material);
+  if (!triWallMaterial)
+    return;
 
   csRef<iMeshFactoryWrapper> triWallFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
@@ -350,16 +352,6 @@ void TriWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   csRef<iMeshWrapper> triWallMesh
     = engine->CreateMeshWrapper(triWallFactory, "TriWall");
 
-  iMaterialWrapper *triWallMaterial
-    = engine->FindMaterial(texture.c_str());
-  if (triWallMaterial == NULL) {
-    if (!errored) {
-      errored = true;
-      csApplicationFramework::ReportError
-	("Error looking for material %s !", texture.c_str());
-    }
-    return;
-  }
   triWallMesh->GetMeshObject()->SetMaterialWrapper(triWallMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

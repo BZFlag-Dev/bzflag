@@ -36,7 +36,7 @@ typedef  struct
   int   x;
   int   y;
   bool  alpha;
-  csRef<iTextureHandle> texture;
+  csRef<iMaterialWrapper> material;
   std::string   name;
 } ImageInfo;
 
@@ -78,14 +78,13 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   ~TextureManager();
 
-  int addTexture(const char*, csRef<iTextureHandle> texture);
-  csRef<iTextureHandle> loadTexture(FileTextureInit &init);
+  bool loadTexture(ImageInfo &info);
+  csRef<iImage> loadImage(std::string filename);
 
   typedef std::map<std::string, ImageInfo> TextureNameMap;
   typedef std::map<int, ImageInfo*> TextureIDMap;
 
   int	    lastImageID;
-  int	    lastBoundID;
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
 
@@ -94,6 +93,7 @@ private:
   csRef<iEngine>     engine;
   csRef<iGraphics3D> g3d;
   iTextureManager   *tm;
+  iTextureList      *tl;
   int                format;
 };
 

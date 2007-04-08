@@ -413,7 +413,9 @@ void QuadWallSceneNode::renderRadar()
 
 void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
-  std::string     texture = tm.getInfo(wallTexture).name;
+  csRef<iMaterialWrapper> quadWallMaterial(tm.getInfo(wallTexture).material);
+  if (!quadWallMaterial)
+    return;
 
   csRef<iMeshFactoryWrapper> quadWallFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
@@ -440,16 +442,6 @@ void QuadWallSceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   csRef<iMeshWrapper> quadWallMesh
     = engine->CreateMeshWrapper(quadWallFactory, "QuadWall");
 
-  iMaterialWrapper *quadWallMaterial
-    = engine->FindMaterial(texture.c_str());
-  if (quadWallMaterial == NULL) {
-    if (!errored) {
-      errored = true;
-      csApplicationFramework::ReportError
-	("Error looking for material %s !", texture.c_str());
-    }
-    return;
-  }
   quadWallMesh->GetMeshObject()->SetMaterialWrapper(quadWallMaterial);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>

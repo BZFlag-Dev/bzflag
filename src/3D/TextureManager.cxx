@@ -25,11 +25,7 @@
 #include <string>
 
 // common implementation headers
-#include "bzfgl.h"
-#include "TextUtils.h"
 #include "global.h"
-#include "ErrorHandler.h"
-#include "OSFile.h"
 #include "CacheManager.h"
 
 
@@ -74,6 +70,11 @@ TextureManager::TextureManager()
     csApplicationFramework::ReportError("Failed to locate Texture Manager!");
     return;
   }
+  tl = engine->GetTextureList();
+  if (!tl) {
+    csApplicationFramework::ReportError("Failed to locate Texture List!");
+    return;
+  }
   format = engine->GetTextureFormat();
 
   // fill out the standard proc textures
@@ -81,7 +82,6 @@ TextureManager::TextureManager()
   procLoader[0].proc = noiseProc;
 
   lastImageID = -1;
-  lastBoundID = -1;
 
   int i, numTextures;
   numTextures = countof(procLoader);
@@ -95,11 +95,10 @@ TextureManager::TextureManager()
 TextureManager::~TextureManager()
 {
   // we are done remove all textures
-  for (TextureNameMap::iterator it = textureNames.begin(); it != textureNames.end(); ++it) {
+  for (TextureNameMap::iterator it = textureNames.begin();
+       it != textureNames.end(); ++it) {
     ImageInfo &tex = it->second;
-    if (tex.texture != NULL) {
-      delete tex.texture;
-    }
+    tex.material = NULL;
   }
   textureNames.clear();
   textureIDs.clear();
@@ -116,21 +115,17 @@ int TextureManager::getTextureID( const char* name, bool)
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
     return it->second.id;
-  } else { // we don't have it so try and load it
-
-    OSFile osFilename(name); // convert to native format
-    const std::string filename = osFilename.getOSName();
-
-    FileTextureInit texInfo;
-    texInfo.name = filename;
-
-    csRef<iTextureHandle> image(loadTexture(texInfo));
-    if (!image) {
-      return -1;
-    }
-    return addTexture(name, image);
   }
-  return -1;
+  // we don't have it so try and load it
+  ImageInfo info;
+  info.name = name;
+  info.id   = ++lastImageID;
+  if (!loadTexture(info))
+    return -1;
+  textureNames[info.name] = info;
+  textureIDs[info.id]     = &textureNames[info.name];
+
+  return info.id;
 }
 
 
@@ -152,8 +147,7 @@ bool TextureManager::removeTexture(const std::string& name)
   }
 
   ImageInfo& info = it->second;
-  delete info.texture;
-  info.texture = NULL;
+  info.material = NULL;
 
   // clear the maps
   textureIDs.erase(info.id);
@@ -167,23 +161,34 @@ bool TextureManager::removeTexture(const std::string& name)
 
 bool TextureManager::reloadTextures()
 {
+  TextureNameMap::iterator it = textureNames.begin();
+  while (it != textureNames.end()) {
+    reloadTextureImage(it->first);
+    it++;
+  }
   return true;
 }
 
 
-bool TextureManager::reloadTextureImage(const std::string&)
+bool TextureManager::reloadTextureImage(const std::string &name)
+{
+  TextureNameMap::iterator it = textureNames.find(name);
+  if (it == textureNames.end()) {
+    return false;
+  }
+  ImageInfo &info = it->second;
+  loadTexture(info);
+  return true;
+}
+
+
+bool TextureManager::bind(int)
 {
   return true;
 }
 
 
-bool TextureManager::bind ( int id )
-{
-  return true;
-}
-
-
-bool TextureManager::bind ( const char* name )
+bool TextureManager::bind(const char*)
 {
   return true;
 }
@@ -222,38 +227,8 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 }
 
 
-int TextureManager::addTexture(const char *name, csRef<iTextureHandle> texture)
+csRef<iImage> TextureManager::loadImage(std::string filename)
 {
-  if (!name || !texture)
-    return -1;
-
-  // if the texture already exists kill it
-  // this is why IDs are way better than objects for this stuff
-  TextureNameMap::iterator it = textureNames.find(name);
-  if (it != textureNames.end()) {
-   logDebugMessage(3,"Texture %s already exists, overwriting\n", name);
-   textureIDs.erase(it->second.id);
-   delete it->second.texture;
-  }
-  ImageInfo info;
-  info.name = name;
-  info.texture = texture;
-  info.id = ++lastImageID;
-  info.alpha = texture->GetAlphaMap();
-  texture->GetOriginalDimensions(info.x, info.y);
-
-  textureNames[name] = info;
-  textureIDs[info.id] = &textureNames[name];
-
-  logDebugMessage(4,"Added texture %s: id %d\n", name, info.id);
-
-  return info.id;
-}
-
-csRef<iTextureHandle> TextureManager::loadTexture(FileTextureInit &init)
-{
-  std::string filename = init.name;
-
   // get the absolute filename for cache textures
   if (CACHEMGR.isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
@@ -266,30 +241,79 @@ csRef<iTextureHandle> TextureManager::loadTexture(FileTextureInit &init)
   } else if (vfs->Exists((filename + ".rgb").c_str())) {
     filename += ".rgb";
   }
-  if (!vfs->Exists(filename.c_str())) {
-    csApplicationFramework::ReportInfo("Failed to locate file %s!",
-				       filename.c_str());
-    return NULL;
-  }
-  csRef<iDataBuffer> buf = vfs->ReadFile(filename.c_str(), false);
-  if (!buf.IsValid()) {
-    csApplicationFramework::ReportInfo("Failed to load texture %s!",
-				       filename.c_str());
-    return NULL;
-  }
 
-  csRef<iImage> image(imageLoader->Load(buf, format));
-  if (!image) {
+  // First of all, load the image file
+  csRef<iDataBuffer> data = vfs->ReadFile(filename.c_str(), false);
+  if (!data || !data->GetSize()) {
     csApplicationFramework::ReportInfo("Failed to load texture %s!",
+				       filename.c_str());
+    return NULL;
+  }
+  csRef<iImage> image(imageLoader->Load(data, format));
+  if (!image) {
+    csApplicationFramework::ReportInfo("Unknown image file format %s!",
 				       filename.c_str());
     return NULL;
   }
   csRef<iDataBuffer> xname = vfs->ExpandPath(filename.c_str());
   image->SetName(**xname);
 
-  csRef<iTextureHandle> texture(tm->RegisterTexture(image, CS_TEXTURE_3D));
+  return image;
+}
 
-  return texture;
+bool TextureManager::loadTexture(ImageInfo &info)
+{
+  std::string filename = info.name;
+
+  csRef<iImage> image(loadImage(filename));
+  if (!image)
+    return false;
+
+  char textureName[20];
+  if (snprintf(textureName, sizeof(textureName), "_bzflag%i", info.id) < 0)
+    return false;
+
+  // See if a texture with the same name is already registered
+  csRef<iTextureWrapper> texture(engine->FindTexture(textureName));
+  csRef<iTextureHandle>  textureH;
+  if (texture) {
+    // This texture should have been registered here. Do a check 
+    if (!info.material.IsValid())
+      return false;
+
+    // So we already have a texture Wrapper and a Texture Handle
+    // Update the image, reregister and get the handle
+    texture->SetImageFile(image);
+    texture->Register(tm);
+    textureH = texture->GetTextureHandle();
+    if (!textureH)
+      return false;
+  } else {
+    // Create a texture Handle and register the image
+    textureH = tm->RegisterTexture(image, CS_TEXTURE_3D);
+    if (!textureH)
+      return false;
+
+    // Create a texture Wrapper
+    texture = tl->NewTexture(textureH);
+    if (texture == NULL)
+      return false;
+  }
+
+  // Update the info values
+  info.alpha = textureH->GetAlphaMap();
+  textureH->GetOriginalDimensions(info.x, info.y);
+
+  // Give the name to the Texture Wrapper
+  texture->QueryObject()->SetName(textureName);
+
+  // Don't need to recreate material if already valid I suppose nobody
+  // messed up with it, so the same texture wrapper is associate
+  if (!info.material.IsValid())
+    // Create default material with the same name as the texture
+    info.material = engine->CreateMaterial(textureName, texture);
+
+  return true;
 }
 
 
@@ -308,7 +332,21 @@ int TextureManager::newTexture()
 //   csRef<iTextureHandle> texture(tm->CreateTexture(noizeSize, noizeSize, csimg2D,
 // 						  NULL, CS_TEXTURE_3D));
   delete[] noise;
-//   int result = addTexture("noise", texture);
+
+  // if the texture already exists kill it
+  // this is why IDs are way better than objects for this stuff
+  TextureNameMap::iterator it = textureNames.find("noise");
+  if (it != textureNames.end()) {
+    logDebugMessage(3,"Texture noise already exists, overwriting\n");
+    textureIDs.erase(it->second.id);
+    it->second.material = NULL;
+  }
+  ImageInfo info;
+  info.name = "noise";
+  info.id   = ++lastImageID;
+
+  textureNames[info.name] = info;
+  textureIDs[info.id]     = &textureNames[info.name];
   return -1;
 }
 

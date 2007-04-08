@@ -755,8 +755,8 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 
 void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   TextureManager &tm      = TextureManager::instance();
-  std::string     texture = tm.getInfo(wallTexture).name;
-
+  if (wallTexture == -1)
+    return;
   csRef<iMeshFactoryWrapper> meshPolyFactory
     = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
   csRef<iGeneralFactoryState> meshPolyFactState
@@ -782,17 +782,8 @@ void MeshPolySceneNode::addToEngine(csRef<iEngine> engine, iSector *room) {
   csRef<iMeshWrapper> meshPolyMesh
     = engine->CreateMeshWrapper(meshPolyFactory, "MeshPoly");
 
-  iMaterialWrapper *meshPolyMaterial
-    = engine->FindMaterial(texture.c_str());
-  if (meshPolyMaterial == NULL) {
-    if (!errored) {
-      errored = true;
-      csApplicationFramework::ReportError
-	("Error looking for material %s !", texture.c_str());
-    }
-    return;
-  }
-  meshPolyMesh->GetMeshObject()->SetMaterialWrapper(meshPolyMaterial);
+  meshPolyMesh->GetMeshObject()
+    ->SetMaterialWrapper(tm.getInfo(wallTexture).material);
 
   csRef<iGeneralMeshState> meshstate = scfQueryInterface<iGeneralMeshState>
     (meshPolyMesh->GetMeshObject());
