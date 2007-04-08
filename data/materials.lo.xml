@@ -11,50 +11,8 @@
       <for3d>False</for3d>
       <mipmap>False</mipmap>
     </texture>
-    <texture name="wall">
-      <file>wall.png</file>
-    </texture>
-    <texture name="pyrwall">
-      <file>pyrwall.png</file>
-    </texture>
     <texture name="grass">
       <file>std_ground.png</file>
-    </texture>
-    <texture name="boxwall">
-      <file>boxwall.png</file>
-    </texture>
-    <texture name="blue_basewall">
-      <file>blue_basewall.png</file>
-    </texture>
-    <texture name="green_basewall">
-      <file>green_basewall.png</file>
-    </texture>
-    <texture name="purple_basewall">
-      <file>purple_basewall.png</file>
-    </texture>
-    <texture name="red_basewall">
-      <file>red_basewall.png</file>
-    </texture>
-    <texture name="blue_basetop">
-      <file>blue_basetop.png</file>
-    </texture>
-    <texture name="green_basetop">
-      <file>green_basetop.png</file>
-    </texture>
-    <texture name="purple_basetop">
-      <file>purple_basetop.png</file>
-    </texture>
-    <texture name="red_basetop">
-      <file>red_basetop.png</file>
-    </texture>
-    <texture name="caution">
-      <file>caution.png</file>
-    </texture>
-    <texture name="telelink">
-      <file>telelink.png</file>
-    </texture>
-    <texture name="roof">
-      <file>roof.png</file>
     </texture>
     <texture name="red_tank">
       <file>red_tank.png</file>
@@ -78,61 +36,9 @@
   </textures>
 
   <materials>
-    <material name="blue_basewall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">blue_basewall</shadervar>
-    </material>
-    <material name="green_basewall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">green_basewall</shadervar>
-    </material>
-    <material name="purple_basewall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">purple_basewall</shadervar>
-    </material>
-    <material name="red_basewall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">red_basewall</shadervar>
-    </material>
-    <material name="blue_basetop">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">blue_basetop</shadervar>
-    </material>
-    <material name="green_basetop">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">green_basetop</shadervar>
-    </material>
-    <material name="purple_basetop">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">purple_basetop</shadervar>
-    </material>
-    <material name="red_basetop">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">red_basetop</shadervar>
-    </material>
-    <material name="caution">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">caution</shadervar>
-    </material>
-    <material name="wall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">wall</shadervar>
-    </material>
-    <material name="pyrwall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">pyrwall</shadervar>
-    </material>
     <material name="grass">
       <shader type="pvl">std_lighting_fixed</shader>
       <shadervar name="tex diffuse" type="texture">grass</shadervar>
-    </material>
-    <material name="boxwall">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">boxwall</shadervar>
-    </material>
-    <material name="roof">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">roof</shadervar>
     </material>
     <material name="red_tank">
       <shader type="pvl">std_lighting_fixed</shader>
