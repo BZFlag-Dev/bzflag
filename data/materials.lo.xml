@@ -60,10 +60,6 @@
       <shader type="pvl">std_lighting_fixed</shader>
       <shadervar name="tex diffuse" type="texture">mountain3</shadervar>
     </material>
-     <material name="telelink">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">telelink</shadervar>
-    </material>
   </materials>
 
 </library>

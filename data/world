@@ -3,7 +3,7 @@
 
   <addon>
     <plugin>crystalspace.renderloop.loop.loader</plugin>
-    <paramsfile>renderloop.hi.xml</paramsfile>
+    <paramsfile>renderloop.lo.xml</paramsfile>
   </addon>
 
   <plugins>
@@ -11,7 +11,7 @@
     <plugin name="genmesh">crystalspace.mesh.loader.genmesh</plugin>
   </plugins>
 
-  <library>materials.hi.xml</library>
+  <library>materials.lo.xml</library>
 
   <meshfact name='terrain'>
     <plugin>genmeshfact</plugin>
