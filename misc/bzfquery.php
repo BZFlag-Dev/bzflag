@@ -90,6 +90,67 @@ function bzfquery($hostport)
     echo"$errstr ($errno)\n";
     return $server;
   }
+  fputs ($fp, "BZFLAG\r\n\r\n");
+  $buffer = fread($fp, 9);
+  //var_dump($buffer);
+  if (strlen($buffer) != 9)
+  {
+    echo"not a bzflag server";
+    return $server;
+  }
+  # parse reply
+  $server += unpack("a4magic/a4protocol/Cid", $buffer);
+  //var_dump($server);
+  if ($server['magic'] != "BZFS")
+  {
+    echo"not a bzflag server\n";
+    fclose($fp);
+    return $server;
+  }
+  switch ($server['protocol'])
+  {
+    case "1910":
+      return bzfquery_old($hostport);
+      break;
+    case "0026":
+      return bzfquery_old($hostport);
+      break;
+    case "0048":
+      return bzfquery0048($server, $fp);
+      break;
+    default:
+      echo"incompatible version\n";
+      fclose($fp);
+      return $server;
+  }
+}
+
+function bzfquery_old($hostport)
+{
+  list($server['host'], $server['port']) = split(":", $hostport, 2);
+  $protocol = 'tcp';
+  $get_prot = getprotobyname($protocol);
+  if ($get_prot ==  - 1)
+  {
+    // if nothing found, returns -1
+    echo'Invalid Protocol';
+    return $server;
+  }
+  if (!$server['port'])
+  {
+    $server['port'] = 5154;
+  }
+  elseif (!ctype_digit($server['port']))
+  {
+    $server['port'] = getservbyname($server['port'], $protocol);
+  }
+  $server['ip'] = gethostbyname($server['host']);
+  $fp = fsockopen($server['host'], $server['port'], $errno, $errstr, 5);
+  if (!$fp)
+  {
+    echo"$errstr ($errno)\n";
+    return $server;
+  }
   $buffer = fread($fp, 9);
   //var_dump($buffer);
   if (strlen($buffer) != 9)
@@ -114,15 +175,13 @@ function bzfquery($hostport)
     case "0026":
       return bzfquery0026($server, $fp);
       break;
-    case "0047":
-      return bzfquery0047($server, $fp);
-      break;
     default:
       echo"incompatible version\n";
       fclose($fp);
       return $server;
   }
 }
+
 
 function bzfquery1910($server, &$fp)
 {
@@ -258,7 +317,7 @@ function bzfquery0026($server, &$fp)
   return $server;
 }
 
-function bzfquery0047($server, &$fp)
+function bzfquery0048($server, &$fp)
 {
   # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);

@@ -4996,7 +4996,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // open server
   ServerLink* _serverLink = new ServerLink(serverAddress,
 					   startupInfo.serverPort);
-
+std::cout << "reached\n";
   serverLink = _serverLink;
 
   serverLink->sendVarRequest();
