@@ -61,6 +61,7 @@ private:
     std::string advertiseGroups;
 
     virtual void finalization(char *data, unsigned int length, bool good);
+    std::string verifyGroupPermissions(const std::string& groups);
 
     // messages to send, used by sendQueuedMessages
     void addMe(PingPacket pingInfo, std::string publicizedAddress,

@@ -353,6 +353,19 @@ void setUserPassword(const std::string &nick, const std::string &pass)
   }
 }
 
+bool groupHasPermission(std::string group, PlayerAccessInfo::AccessPerm perm)
+{
+  PlayerAccessMap::iterator itr = groupAccess.find(TextUtils::toupper(group));
+
+  if (itr == groupAccess.end())
+    return false; // nonexistent groups don't have any perms (not quite true, but still)
+
+  if (itr->second.explicitAllows.test(perm) && !itr->second.explicitDenys.test(perm))
+    return true;
+
+  return false; // default
+}
+
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {

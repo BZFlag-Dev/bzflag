@@ -280,7 +280,7 @@ void ListServerLink::sendQueuedMessages()
     bz_ListServerUpdateEvent_V1	updateEvent;
     updateEvent.address = publicizeAddress;
     updateEvent.description = publicizeDescription;
-    updateEvent.groups = advertiseGroups;
+    updateEvent.groups = verifyGroupPermissions(advertiseGroups);
 
     worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
 
@@ -291,6 +291,69 @@ void ListServerLink::sendQueuedMessages()
     removeMe(publicizeAddress);
   }
   nextMessageType = ListServerLink::NONE;
+}
+
+std::string ListServerLink::verifyGroupPermissions(const std::string& groups)
+{
+  // replay servers can have any crazy permissions they want
+  if (Replay::enabled())
+    return groups;
+
+  // check to make sure these groups are actually good
+  std::vector<std::string> vgroups = TextUtils::tokenize(groups, ",");
+  std::vector<std::string>::iterator delitr = vgroups.end();
+  // case-insensitive comparisons the cheap way
+  for (std::vector<std::string>::iterator itr = vgroups.begin(); itr != vgroups.end(); ++itr) {
+    (*itr) = TextUtils::toupper(*itr);
+  }
+
+  // if EVERYONE is included, delist it if EVERYONE can neither spawn nor talk
+  delitr = std::find(vgroups.begin(), vgroups.end(), "EVERYONE");
+  if (delitr != vgroups.end()) {
+    if (!groupHasPermission("EVERYONE", PlayerAccessInfo::spawn) &&
+	!groupHasPermission("EVERYONE", PlayerAccessInfo::talk))
+      vgroups.erase(delitr);
+  }
+
+  // if nothing is left, add VERIFIED
+  if (vgroups.size() < 1) {
+    vgroups.push_back("VERIFIED");
+  }
+
+  // if VERIFIED is included, delist it if VERIFIED can neither spawn nor talk
+  delitr = std::find(vgroups.begin(), vgroups.end(), "VERIFIED");
+  if (delitr != vgroups.end()) {
+    if (!groupHasPermission("VERIFIED", PlayerAccessInfo::spawn) &&
+	!groupHasPermission("VERIFIED", PlayerAccessInfo::talk))
+      vgroups.erase(delitr);
+  }
+
+  // if there's nothing left, add any non-local groups who CAN either spawn or talk
+  if (vgroups.size() < 1) {
+    for (PlayerAccessMap::iterator itr = groupAccess.begin(); itr != groupAccess.end(); ++itr) {
+      if ((*itr).first.compare(0, 6, "LOCAL.") == 0)
+	continue;
+      if ((*itr).second.hasPerm(PlayerAccessInfo::spawn) ||
+	  (*itr).second.hasPerm(PlayerAccessInfo::talk)) {
+	vgroups.push_back((*itr).first);
+      }
+    }
+  }
+
+  // if there's still nothing left, this is one screwed up configuration, so just bail with an error
+  if (vgroups.size() < 1) {
+    std::cout << "No groups found who can spawn or talk." << std::endl << std::flush;
+    exit(2);
+  }
+
+  // shove it all back into a string
+  std::string retgroups = "";
+  for (std::vector<std::string>::iterator itr = vgroups.begin(); itr != vgroups.end(); ++itr) {
+    retgroups += (*itr) + ",";
+  }
+  retgroups.erase(retgroups.length() - 1, 1); // last comma
+
+  return retgroups;
 }
 
 void ListServerLink::addMe(PingPacket pingInfo,

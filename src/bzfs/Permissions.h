@@ -206,6 +206,7 @@ bool verifyUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
 void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
+bool groupHasPermission(std::string group, PlayerAccessInfo::AccessPerm perm);
 
 uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
 
