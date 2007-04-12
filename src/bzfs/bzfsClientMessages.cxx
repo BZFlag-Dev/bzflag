@@ -594,6 +594,45 @@ void handleTeleport( GameKeeper::Player *playerData, void *buf, int len)
   sendMsgTeleport(playerData->getIndex(), from, to);
 }
 
+void handleRabbitMessage( GameKeeper::Player *playerData )
+{
+  if (playerData->getIndex() == rabbitIndex)
+     anointNewRabbit();
+}
+
+void handlePauseMessage( GameKeeper::Player *playerData, void *buf, int len )
+{
+  if (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
+  {
+    // player wants to unpause
+    playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
+    pausePlayer(playerData->getIndex(), false);
+  }
+  else
+  {
+    // player wants to pause
+    playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
+
+    // adjust pauseRequestTime according to players lag to avoid kicking innocent players
+    int requestLag = playerData->lagInfo.getLag();
+    if (requestLag < 100)
+      requestLag = 250;
+    else
+      requestLag *= 2;
+   
+    playerData->player.pauseRequestLag = requestLag;
+  }
+}
+
+void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len )
+{
+  uint8_t autopilot;
+  nboUnpackUByte(buf, autopilot);
+  
+  playerData->player.setAutoPilot(autopilot != 0);
+
+  sendMsgAutoPilot(playerData->getIndex(),autopilot);
+}
 const float *closestBase( TeamColor color, float *position )
 {
   float bestdist = Infinity;

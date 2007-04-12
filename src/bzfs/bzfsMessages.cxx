@@ -616,6 +616,23 @@ void sendMsgTeleport( int player, unsigned short from, unsigned short to )
   }
 }
 
+void sendMsgAutoPilot( int player, unsigned char autopilot )
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, player);
+  buf = nboPackUByte(buf, autopilot);
+  
+  broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
+
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->playerAutopilot(player,autopilot != 0);
+  }
+}
+
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {
@@ -955,8 +972,6 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
 		case MsgPause:
 		case MsgAutoPilot:
 		case MsgLagPing:
-		case MsgKrbPrincipal:
-		case MsgKrbTicket:
 		case MsgNewRabbit:
 		case MsgPlayerUpdate:
 		case MsgPlayerUpdateSmall:

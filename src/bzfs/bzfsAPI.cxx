@@ -3404,6 +3404,8 @@ void bz_ServerSidePlayerHandler::shotEnded(int player, unsigned short shotID, un
 
 void bz_ServerSidePlayerHandler::playerTeleported( int player, unsigned short from, unsigned short to ){}
 
+void bz_ServerSidePlayerHandler::playerAutopilot( int player, bool autopilot ){}
+
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *email, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);

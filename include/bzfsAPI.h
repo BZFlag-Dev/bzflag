@@ -1799,6 +1799,7 @@ public:
   virtual void shotFired ( int player, unsigned short shotID, bz_eShotType shotType );
   virtual void shotEnded( int player, unsigned short shotID, unsigned short reason );
   virtual void playerTeleported( int player, unsigned short from, unsigned short to );
+  virtual void playerAutopilot( int player, bool autopilot );
 
   int playerID;
 

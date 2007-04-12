@@ -1966,7 +1966,7 @@ static void dropAssignedFlag(int playerIndex) {
   }
 } // dropAssignedFlag
 
-static void anointNewRabbit(int killerId = NoPlayer)
+void anointNewRabbit( int killerId )
 {
   GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(killerId);
   GameKeeper::Player *oldRabbitData = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
@@ -1987,34 +1987,34 @@ static void anointNewRabbit(int killerId = NoPlayer)
   bz_AnointRabbitEventData_V1	anoitData;
   anoitData.newRabbit = rabbitIndex;
   if (anoitData.newRabbit == NoPlayer)
-	  anoitData.newRabbit = -1;
+    anoitData.newRabbit = -1;
+ 
   anoitData.swap = true;
 
   worldEventManager.callEvents(bz_eAnointRabbitEvent,&anoitData);
 
   if (anoitData.newRabbit != oldRabbit)
   {
-	  logDebugMessage(3,"rabbitIndex is set to %d\n", anoitData.newRabbit);
+    logDebugMessage(3,"rabbitIndex is set to %d\n", anoitData.newRabbit);
     if (oldRabbitData && anoitData.swap)
       oldRabbitData->player.wasARabbit();
 
     if (anoitData.newRabbit != -1)
-	{
-		GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(anoitData.newRabbit);
-		rabbitData->player.setTeam(RabbitTeam);
+    {
+      GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(anoitData.newRabbit);
+      rabbitData->player.setTeam(RabbitTeam);
 
-		sendRabbitUpdate(rabbitIndex,anoitData.swap ? 0 : 1);
+      sendRabbitUpdate(rabbitIndex,anoitData.swap ? 0 : 1);
     }
 
-	bz_NewRabbitEventData_V1	newRabbitData;
+    bz_NewRabbitEventData_V1	newRabbitData;
 
-	newRabbitData.newRabbit = anoitData.newRabbit;
-	worldEventManager.callEvents(bz_eNewRabbitEvent,&newRabbitData);
+    newRabbitData.newRabbit = anoitData.newRabbit;
+    worldEventManager.callEvents(bz_eNewRabbitEvent,&newRabbitData);
   }
   else
   {
-    logDebugMessage(3,"no other than old rabbit to choose from, rabbitIndex is %d\n",
-	   rabbitIndex);
+    logDebugMessage(3,"no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
   }
 }
 
@@ -2046,21 +2046,6 @@ void pausePlayer(int playerIndex, bool paused = true)
   pauseEventData.pause = paused;
 
   worldEventManager.callEvents(bz_ePlayerPausedEvent,&pauseEventData);
-}
-
-static void autopilotPlayer(int playerIndex, bool autopilot)
-{
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-
-  playerData->player.setAutoPilot(autopilot);
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, autopilot);
-  broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
 }
 
 void zapFlagByPlayer(int playerIndex)
@@ -3058,11 +3043,11 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       handeCapBits(buf,len,playerData);
       break;
 
-    case MsgEnter:     // player joining
+    case MsgEnter:// player joining
       handleClientEnter(&buf,playerData);
       break;
 
-    case MsgExit:    // player closing connection
+    case MsgExit:// player closing connection
       handleClientExit(playerData);
       break;
 
@@ -3074,7 +3059,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       handleFlagNegotiation(handler,&buf,len);
       break;
 
-    case MsgGetWorld:    // player wants more of world database
+    case MsgGetWorld:// player wants more of world database
       handleWorldChunk(handler,buf);
       break;
 
@@ -3094,7 +3079,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       sendQueryPlayers(handler);
       break;
 
-    case MsgAlive:    // player is coming alive
+    case MsgAlive:// player is coming alive
       handleGameJoinRequest(playerData);
       break;
 
@@ -3102,15 +3087,15 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       handlePlayerKilled(playerData,buf);
       break;
 
-    case MsgDropFlag:    // player requesting to drop flag
+    case MsgDropFlag:// player requesting to drop flag
       handlePlayerFlagDrop(playerData,buf);
       break;
 
-    case MsgCaptureFlag:	// player has captured a flag
+    case MsgCaptureFlag:// player has captured a flag
       handleFlagCapture(playerData,buf);
       break;
 
-    case MsgCollide:		// two players have collided
+    case MsgCollide:// two players have collided
       handleCollide(playerData,buf);
       break;
 
@@ -3126,65 +3111,39 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       handleTankHit(playerData,buf,len);
       break;
 
-    // player teleported
-    case MsgTeleport:
+    case MsgTeleport:// player teleported
       handleTeleport(playerData,buf,len);
       break;
 
-    // player sending a message
-    case MsgMessage:
-		handlePlayerMessage(playerData,buf);
-		break;
+    case MsgMessage:// player sending a message
+      handlePlayerMessage(playerData,buf);
+      break;
 
-    // player has transferred flag to another tank
-	case MsgTransferFlag:
-		handleFlagTransfer(playerData,buf);
-		break;
+    case MsgTransferFlag:    // player has transferred flag to another tank
+     handleFlagTransfer(playerData,buf);
+     break;
 
     case MsgUDPLinkEstablished:
       logDebugMessage(2,"Connection at %s outbound UDP up\n", handler->getTargetIP());
       break;
 
-    case MsgNewRabbit: {
-      if (playerID == rabbitIndex)
-		anointNewRabbit();
+    case MsgNewRabbit:
+      handleRabbitMessage(playerData);
       break;
-    }
 
-    case MsgPause: {
-      if (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0){
-	// player wants to unpause
-	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-	pausePlayer(playerID, false);
-    } else {
-	// player wants to pause
-	playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
-
-	// adjust pauseRequestTime according to players lag to avoid kicking innocent players
-	int requestLag = playerData->lagInfo.getLag();
-	if (requestLag < 100) {
-	    requestLag = 250;
-	}
-	else {
-	    requestLag *= 2;
-	}
-	playerData->player.pauseRequestLag = requestLag;
-    };
+    case MsgPause:
+      handlePauseMessage(playerData,buf,len);
       break;
-    }
 
-    case MsgAutoPilot: {
-      uint8_t autopilot;
-      nboUnpackUByte(buf, autopilot);
-      autopilotPlayer(playerID, autopilot != 0);
+    case MsgAutoPilot: 
+      handleAutoPilotMessage(playerData,buf,len);
       break;
-    }
 
-    // player is sending a Server Control Message not implemented yet
     case MsgServerControl:
-      break;
+      break;    // player is sending a Server Control Message not implemented yet
 
-    case MsgLagPing: {
+    case MsgLagPing: 
+      {
       bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
       playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
       if (warn) {
@@ -3233,19 +3192,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
     // FIXME handled inside uread, but not discarded
     case MsgUDPLinkRequest:
-      break;
-
-    case MsgKrbPrincipal:
-      playerData->authentication.setPrincipalName((char *)buf, len);
-      break;
-
-    case MsgKrbTicket:
-      playerData->freeTCPMutex();
-      playerData->authentication.verifyCredential((char *)buf, len);
-      playerData->passTCPMutex();
-      // Not really the place here, but for initial testing we need something
-      if (playerData->authentication.isTrusted())
-	sendMessage(ServerPlayer, playerID, "Welcome, we trust you");
       break;
 
     // unknown msg type

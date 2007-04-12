@@ -91,15 +91,12 @@ extern void pauseCountdown ( const char *pausedBy );
 extern void resumeCountdown ( const char *resumedBy );
 extern void resetTeamScores ( void );
 extern void startCountdown ( int delay, float limit, const char *buyWho );
-
 void relayMessage(uint16_t code, int len, const void *msg);
-
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
-
 void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int playerID = -1 );
-
 void zapFlag(FlagInfo &flag);
+void anointNewRabbit( int killerId = NoPlayer);
 
 typedef struct _CheatProtectionOptions
 {
