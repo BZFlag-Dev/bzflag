@@ -22,20 +22,13 @@
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
 #include "JoinMenu.h"
-#ifdef HAVE_KRB5
-#include "LoginMenu.h"
-#endif
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
 #include "HUDuiImage.h"
 #include "playing.h"
 #include "HUDui.h"
 
-MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
-#ifdef HAVE_KRB5
-		       loginMenu(NULL),
-#endif
-		       optionsMenu(NULL), quitMenu(NULL)
+MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
 }
 
@@ -65,11 +58,6 @@ void	  MainMenu::createControls()
 
   join = createLabel("Join Game");
   listHUD.push_back(join);
-
-#ifdef HAVE_KRB5
-  login = createLabel("Login");
-  listHUD.push_back(login);
-#endif
 
   options = createLabel("Options");
   listHUD.push_back(options);
@@ -113,9 +101,6 @@ MainMenu::~MainMenu()
 
   // destroy submenus
   delete joinMenu;
-#ifdef HAVE_KRB5
-  delete loginMenu;
-#endif
   delete optionsMenu;
   delete quitMenu;
   HelpMenu::done();
@@ -138,11 +123,6 @@ void			MainMenu::execute()
   if (_focus == join) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
-#ifdef HAVE_KRB5
-  } else if (_focus == login) {
-    if (!loginMenu) loginMenu = new LoginMenu;
-    HUDDialogStack::get()->push(loginMenu);
-#endif
   } else if (_focus == options) {
     if (!optionsMenu) optionsMenu = new OptionsMenu;
     HUDDialogStack::get()->push(optionsMenu);

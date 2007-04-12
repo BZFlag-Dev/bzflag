@@ -92,10 +92,6 @@
 #include "SyncClock.h"
 //#include "messages.h"
 
-#ifdef HAVE_KRB5
-#include "ClientAuthentication.h"
-#endif
-
 static const float	FlagHelpDuration = 60.0f;
 StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
@@ -5068,12 +5064,6 @@ static void joinInternetGame(const struct in_addr *inAddress)
     }
     return;
   }
-
-#ifdef HAVE_KRB5
-  // Sending our credential to the server
-  ClientAuthentication::sendCredential(*serverLink);
-#endif
-
   // use parallel UDP if desired and using server relay
   serverLink->sendUDPlinkRequest();
 
