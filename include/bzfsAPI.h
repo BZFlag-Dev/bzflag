@@ -1798,6 +1798,7 @@ public:
   virtual void setShotType ( int player, bz_eShotType shotType );
   virtual void shotFired ( int player, unsigned short shotID, bz_eShotType shotType );
   virtual void shotEnded( int player, unsigned short shotID, unsigned short reason );
+  virtual void playerTeleported( int player, unsigned short from, unsigned short to );
 
   int playerID;
 

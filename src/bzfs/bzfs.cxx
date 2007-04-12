@@ -2922,16 +2922,6 @@ static void shotUpdate(void *buf, int len, NetHandler *handler)
 
 }
 
-static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
-{
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, from);
-  buf = nboPackUShort(buf, to);
-  broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart, false);
-}
-
-
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
@@ -3137,17 +3127,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     // player teleported
-    case MsgTeleport: {
-      uint16_t from, to;
-
-      if (invalidPlayerAction(playerData->player, playerID, "teleport"))
-	break;
-
-      buf = nboUnpackUShort(buf, from);
-      buf = nboUnpackUShort(buf, to);
-      sendTeleport(playerID, from, to);
+    case MsgTeleport:
+      handleTeleport(playerData,buf,len);
       break;
-    }
 
     // player sending a message
     case MsgMessage:

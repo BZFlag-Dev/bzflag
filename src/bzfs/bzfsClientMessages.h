@@ -36,6 +36,7 @@ void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer);
 void handleShotFired(void *buf, int len, NetHandler *handler);
 void handleShotEnded(GameKeeper::Player *playerData, void *buf, int len);
 void handleTankHit( GameKeeper::Player *playerData, void *buf, int len);
+void handleTeleport( GameKeeper::Player *playerData, void *buf, int len);
 
 // util functions
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);

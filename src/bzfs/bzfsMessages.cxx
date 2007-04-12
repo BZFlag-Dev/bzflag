@@ -583,19 +583,37 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 
 void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, player);
-	buf = nboPackShort(buf, id);
-	buf = nboPackUShort(buf, reason);
-	relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, player);
+  buf = nboPackShort(buf, id);
+  buf = nboPackUShort(buf, reason);
+  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 
-	// now do everyone who dosn't have network
-	for (int i = 0; i < curMaxPlayers; i++)
-	{
-		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->shotEnded(player,id,reason);
-	}
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+	    otherData->playerHandler->shotEnded(player,id,reason);
+  }
+ }
+
+void sendMsgTeleport( int player, unsigned short from, unsigned short to )
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, player);
+  buf = nboPackUShort(buf, from);
+  buf = nboPackUShort(buf, to);
+
+  broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart, false);
+  
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->playerTeleported(player,from,to);
+  }
 }
 
 // network only messages

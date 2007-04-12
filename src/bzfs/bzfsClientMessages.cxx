@@ -581,6 +581,19 @@ void handleTankHit ( GameKeeper::Player *playerData, void *buf, int len )
   }
 }
 
+void handleTeleport( GameKeeper::Player *playerData, void *buf, int len)
+{
+  uint16_t from, to;
+
+  if (invalidPlayerAction(playerData->player, playerData->getIndex(), "teleport"))
+    return;
+
+  buf = nboUnpackUShort(buf, from);
+  buf = nboUnpackUShort(buf, to);
+  
+  sendMsgTeleport(playerData->getIndex(), from, to);
+}
+
 const float *closestBase( TeamColor color, float *position )
 {
   float bestdist = Infinity;
