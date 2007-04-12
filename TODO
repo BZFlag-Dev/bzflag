@@ -1,15 +1,22 @@
 to do list for BZFlag
 ---------------------
 
+These are the tasks that are generaly agreed upon by the core developers.
+If a task has a name next to it, then that person has agreed to work on it.
+If you wish to do that task, or help on it, please contact the developer
+so that no work is duplicated.
+
+----------------------------------------
+
 THESE MUST HAPPEN BEFORE THE NEXT RELEASE:
 
-* fix all server stat "scanning" scripts and sites to send out "BZFLAG\r\n\r\n" on conenct.
+* fix all server stat "scanning" scripts and sites to send out 
+  "BZFLAG\r\n\r\n" on conenct.
+
+* make sure there are no outstanding serious bugs
+  (e.g. check OO,F5, etc..)
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
-
-* define local group files using BZID, so that the need for global groups
-  isn't has high for people that only run one server, or groups that
-  don't change often ( admin groups, etc.. ).
 
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
@@ -18,21 +25,33 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * /ghost should be removed, we should auto ghost people when the login
   with global auth
 
-* make sure there are no outstanding serious bugs (e.g. check OO)
-
 * take out the flag type out of the flag messages, as they are all PZ.
   Change the team flags to be a difrent message and take the real team
   enumeration. The flag type is told on pickup.
 
+* Finish Server listener class and hooks to the API (JeffM2501)
+
+* Cleanup HandleCommand on the server (JeffM2501)
+
+* Implement Server side shot tracking (JeffM2501)
+
+* Apply Simple Gravity to all DR (JeffM2501)
+
+* Do Server side object collisions (JeffM2501)
+
+* Verify player updates with Serer State for movement and death (JeffM2501)
+
 THESE ARE LOWER PRIORITY
+
+* Split out radar and 3d and world position updates, Radar can be less data
+  at a way lower resolution. Don't send the type of data when it is invalid
+  for the player. (JeffM2501)
 
 * add a command line option to let random worlds do an oncap weapon
   for CTF bases.
 
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
-
-THESE ARE LOWER PRIORITY
 
 * When jumping, leave the tank in contact for a <put here a new BZD var name>
   msec, so force could be applied even after the jump instant. Should fix
