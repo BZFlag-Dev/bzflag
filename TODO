@@ -8,7 +8,7 @@ so that no work is duplicated.
 
 ----------------------------------------
 
-THESE MUST HAPPEN BEFORE THE NEXT RELEASE:
+Required for release of 2.2.:
 
 * fix all server stat "scanning" scripts and sites to send out 
   "BZFLAG\r\n\r\n" on conenct.
@@ -16,7 +16,7 @@ THESE MUST HAPPEN BEFORE THE NEXT RELEASE:
 * make sure there are no outstanding serious bugs
   (e.g. check OO,F5, etc..)
 
-THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
+Should be considered for the release of 2.2:
 
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
@@ -41,11 +41,15 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * Verify player updates with Serer State for movement and death (JeffM2501)
 
-THESE ARE LOWER PRIORITY
+Would be nice to have but are not critical for 2.2
 
 * Split out radar and 3d and world position updates, Radar can be less data
   at a way lower resolution. Don't send the type of data when it is invalid
   for the player. (JeffM2501)
+
+* Create a user modifiable group management system that is based on 
+  the concepts of registered orginisations. 
+  Design Doc at http://my.bzflag.org/w/Group_Management_System
 
 * add a command line option to let random worlds do an oncap weapon
   for CTF bases.
@@ -283,7 +287,7 @@ THESE ARE LOWER PRIORITY
   very cool, but very low priority.
 
 
-THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
+Future Development
 
 * flags should all be nullflags from client view until
   a) you pick one up
