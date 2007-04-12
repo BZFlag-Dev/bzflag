@@ -24,6 +24,8 @@ function validate_token($token, $callsign, $groups = array())
   //Some config options
   $list_server = 'http://my.bzflag.org/db/';
 
+  $url_callsign = urlencode($callsign);
+  
   //The program
   //$key => $group
   $group_list = '&groups=';
@@ -35,7 +37,7 @@ function validate_token($token, $callsign, $groups = array())
   $group_list = substr($group_list, 0, strlen($group_list) - 6);
 
   $reply = file_get_contents(''.$list_server.'?action=CHECKTOKENS&checktokens
-    ='.$callsign.'%3D'.$token.''.$group_list.'');
+    ='.$url_callsign.'%3D'.$token.''.$group_list.'');
 
   //If we got a TOKBAD, return false, because the token can't be right
   if (strpos($reply, 'TOKBAD: '))
