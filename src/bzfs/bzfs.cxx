@@ -3068,43 +3068,43 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
 	  return;
 
-  switch (code) {
+  switch (code)
+  {
+    case MsgWhatTimeIsIt:
+      handleWhatTimeMessage(handler,buf,len);
+      break;
 
-	case MsgWhatTimeIsIt:
-		handleWhatTimeMessage(handler,buf,len);
-		break;
-
-	case MsgCapBits:
-		handeCapBits(buf,len,playerData);
-		break;
+    case MsgCapBits:
+      handeCapBits(buf,len,playerData);
+      break;
 
     case MsgEnter:     // player joining
-		handleClientEnter(&buf,playerData);
-		break;
+      handleClientEnter(&buf,playerData);
+      break;
 
     case MsgExit:    // player closing connection
-		handleClientExit(playerData);
-		break;
+      handleClientExit(playerData);
+      break;
 
     case MsgSetVar:
-		handleSetVar(handler);
-		break;
+      handleSetVar(handler);
+      break;
 
     case MsgNegotiateFlags:
-		handleFlagNegotiation(handler,&buf,len);
-		break;
+      handleFlagNegotiation(handler,&buf,len);
+      break;
 
     case MsgGetWorld:    // player wants more of world database
-		handleWorldChunk(handler,buf);
-		break;
+      handleWorldChunk(handler,buf);
+      break;
 
     case MsgWantSettings:
-		handleWorldSettings(handler);
-		break;
+      handleWorldSettings(handler);
+      break;
 
     case MsgWantWHash:
-		handleWorldHash(handler);
-		break;
+      handleWorldHash(handler);
+      break;
 
     case MsgQueryGame:
       sendQueryGame(handler);
@@ -3115,14 +3115,12 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgAlive:    // player is coming alive
-		handleGameJoinRequest(playerData);
-		break;
+      handleGameJoinRequest(playerData);
+      break;
 
     case MsgKilled: // player got killed
-	// stop pausing attempts as you can not pause when being dead
-	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-	handlePlayerKilled(playerData,buf);
-		break;
+      handlePlayerKilled(playerData,buf);
+      break;
 
     case MsgDropFlag:    // player requesting to drop flag
 		handlePlayerFlagDrop(playerData,buf);

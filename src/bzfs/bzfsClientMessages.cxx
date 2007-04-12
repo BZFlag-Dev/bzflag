@@ -211,6 +211,9 @@ void handlePlayerKilled ( GameKeeper::Player *playerData, void* buffer )
 	}
 	playerData->player.endShotCredit--;
 	playerKilled(playerData->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
+	
+	// stop pausing attempts as you can not pause when being dead
+	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
 }
 
 void handleGameJoinRequest( GameKeeper::Player *playerData )
