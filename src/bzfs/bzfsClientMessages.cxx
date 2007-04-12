@@ -546,6 +546,41 @@ void handleShotFired(void *buf, int len, NetHandler *handler)
 	sendMsgShotBegin(player,id,firingInfo);
 }
 
+void handleTankHit ( GameKeeper::Player *playerData, void *buf, int len )
+{
+  if (playerData->player.isObserver() || !playerData->player.isAlive())
+    return;
+
+  PlayerId hitPlayer = playerData->getIndex();
+  PlayerId shooterPlayer;
+  FiringInfo firingInfo;
+  int16_t shot;
+
+  buf = nboUnpackUByte(buf, shooterPlayer);
+  buf = nboUnpackShort(buf, shot);
+  GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
+
+  if (!shooterData)
+    return;
+
+  if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo))
+  {
+    sendMsgShotEnd(shooterPlayer, shot, 1);
+    
+    const int flagIndex = playerData->player.getFlag();
+    FlagInfo *flagInfo  = NULL;
+   
+    if (flagIndex >= 0) 
+    {
+      flagInfo = FlagInfo::get(flagIndex);
+      dropFlag(*flagInfo);
+    }
+
+    if (!flagInfo || flagInfo->flag.type != Flags::Shield)
+      playerKilled(hitPlayer, shooterPlayer, GotShot, shot, firingInfo.flagType, false, false);
+  }
+}
+
 const float *closestBase( TeamColor color, float *position )
 {
   float bestdist = Infinity;

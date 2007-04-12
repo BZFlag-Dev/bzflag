@@ -2197,7 +2197,7 @@ BZF_API void bz_resetFlags(bool onlyUnused)
     if(!onlyUnused || (playerIndex==-1))
     {
       if(playerIndex!=-1)
-	sendDrop(flag);
+	dropFlag(flag);
 
       resetFlag(flag);
     }
@@ -2232,7 +2232,7 @@ BZF_API bool bz_resetFlag(int flag)
 
   // if somone has it, drop it
   if(pFlag->player!=-1)
-    sendDrop(*pFlag);
+    dropFlag(*pFlag);
 
   resetFlag(*pFlag);
 
@@ -2249,7 +2249,7 @@ BZF_API bool bz_moveFlag(int flag, float pos[3], bool reset)
 
   // if somone has it, drop it
   if(pFlag->player!=-1)
-    sendDrop(*pFlag);
+    dropFlag(*pFlag);
 
   if(reset)
     pFlag->resetFlag(pos, true);

@@ -57,7 +57,7 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 extern char *getDirectMessageBuffer();
 extern void  pausePlayer(int playerIndex, bool paused);
 extern void  sendFlagUpdate(FlagInfo &flag);
-extern void  sendDrop(FlagInfo &flag);
+extern void  dropFlag(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code, int len, const void *msg);

@@ -1243,7 +1243,7 @@ bool FlagCommand::operator() (const char *message,
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
-	sendDrop(flag);
+	dropFlag(flag);
 	flag.flag.status = FlagGoing;
 	if (!flag.required) {
 	  flag.flag.type = Flags::Null;
@@ -1283,7 +1283,7 @@ bool FlagCommand::operator() (const char *message,
 	if ((fi != NULL) && (fi->flag.type->flagTeam != NoTeam)) {
 	  const int playerIndex = fi->player;
 	  if (playerIndex != -1) {
-	    sendDrop(*fi);
+	    dropFlag(*fi);
 	  }
 	  resetFlag(*fi);
 	}
@@ -1298,7 +1298,7 @@ bool FlagCommand::operator() (const char *message,
       if (fi != NULL) {
 	const int playerIndex = fi->player;
 	if (playerIndex != -1) {
-	  sendDrop(*fi);
+	  dropFlag(*fi);
 	}
 	resetFlag(*fi);
       }
@@ -1313,7 +1313,7 @@ bool FlagCommand::operator() (const char *message,
 	if ((fi != NULL) && (fi->flag.type == ft)) {
 	  const int playerIndex = fi->player;
 	  if (playerIndex != -1) {
-	    sendDrop(*fi);
+	    dropFlag(*fi);
 	  }
 	  resetFlag(*fi);
 	}
@@ -1351,7 +1351,7 @@ bool FlagCommand::operator() (const char *message,
 
     FlagInfo* fi = FlagInfo::get(gkPlayer->player.getFlag());
     if (fi != NULL) {
-      sendDrop(*fi);
+      dropFlag(*fi);
       resetFlag(*fi);
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",

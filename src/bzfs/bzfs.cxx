@@ -1925,7 +1925,7 @@ void resetFlag(FlagInfo &flag)
 }
 
 
-void sendDrop(FlagInfo &flag)
+void dropFlag(FlagInfo &flag)
 {
   // see if someone had grabbed flag.  tell 'em to drop it.
   const int playerIndex = flag.player;
@@ -1933,7 +1933,7 @@ void sendDrop(FlagInfo &flag)
   if (!playerData)
     return;
 
-  flag.player      = -1;
+  flag.player = -1;
   playerData->player.resetFlag();
 
   sendDropFlagMessage(playerIndex,flag);
@@ -1944,7 +1944,7 @@ void zapFlag(FlagInfo &flag)
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
 
-  sendDrop(flag);
+  dropFlag(flag);
 
   // if flag was flying then it flies no more
   flag.landing(TimeKeeper::getSunExplodeTime());
@@ -2807,7 +2807,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   drpFlag.dropFlag(pos, landing, vanish);
 
   // player no longer has flag -- send MsgDropFlag
-  sendDrop(drpFlag);
+  dropFlag(drpFlag);
 
   // notify of new flag state
   sendFlagUpdate(drpFlag);
@@ -2920,16 +2920,6 @@ static void shotUpdate(void *buf, int len, NetHandler *handler)
 
   relayMessage(MsgGMUpdate, len, buf);
 
-}
-
-static void sendShotEnd(const PlayerId& id, int16_t shotIndex, uint16_t reason)
-{
-  // shot has ended prematurely -- send MsgShotEnd
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, id);
-  buf = nboPackShort(buf,      shotIndex);
-  buf = nboPackUShort(buf,     reason);
-  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
@@ -3123,57 +3113,28 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgDropFlag:    // player requesting to drop flag
-		handlePlayerFlagDrop(playerData,buf);
-		break;
+      handlePlayerFlagDrop(playerData,buf);
+      break;
 
     case MsgCaptureFlag:	// player has captured a flag
-		handleFlagCapture(playerData,buf);
-		break;
+      handleFlagCapture(playerData,buf);
+      break;
 
     case MsgCollide:		// two players have collided
-		handleCollide(playerData,buf);
-		break;
+      handleCollide(playerData,buf);
+      break;
 
     case MsgShotBegin:
-		handleShotFired(buf, int(len), handler);
+      handleShotFired(buf, int(len), handler);
       break;
 
     case MsgShotEnd: 
-		handleShotEnded(playerData,buf,len);
-		break;
-
-    // tank has been shot
-    case MsgHit: {
-      if (playerData->player.isObserver())
-	break;
-      if (!playerData->player.isAlive())
-	break;
-
-      PlayerId hitPlayer = playerID;
-      PlayerId shooterPlayer;
-      FiringInfo firingInfo;
-      int16_t shot;
-      buf = nboUnpackUByte(buf, shooterPlayer);
-      buf = nboUnpackShort(buf, shot);
-      GameKeeper::Player *shooterData
-	= GameKeeper::Player::getPlayerByIndex(shooterPlayer);
-      if (!shooterData)
-	break;
-      if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo)) {
-	sendShotEnd(shooterPlayer, shot, 1);
-	const int flagIndex = playerData->player.getFlag();
-	FlagInfo *flagInfo  = NULL;
-	if (flagIndex >= 0) {
-	  flagInfo = FlagInfo::get(flagIndex);
-	  sendDrop(*flagInfo);
-	}
-
-	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-	  playerKilled(hitPlayer, shooterPlayer, GotShot, shot,
-		       firingInfo.flagType, false, false);
-      }
+      handleShotEnded(playerData,buf,len);
       break;
-    }
+
+    case MsgHit:
+      handleTankHit(playerData,buf,len);
+      break;
 
     // player teleported
     case MsgTeleport: {
