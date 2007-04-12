@@ -2927,8 +2927,7 @@ bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   return false;
 }
 
-
-static void lagKick(int playerIndex)
+void lagKick(int playerIndex)
 {
   char message[MessageLen];
   sprintf(message,
@@ -2941,7 +2940,7 @@ static void lagKick(int playerIndex)
   removePlayer(playerIndex, "lag", true);
 }
 
-static void jitterKick(int playerIndex)
+void jitterKick(int playerIndex)
 {
   char message[MessageLen];
   sprintf(message,
@@ -2956,7 +2955,7 @@ static void jitterKick(int playerIndex)
   removePlayer(playerIndex, "jitter", true);
 }
 
-static void packetLossKick(int playerIndex)
+void packetLossKick(int playerIndex)
 {
   char message[MessageLen];
   sprintf(message,
@@ -2970,7 +2969,6 @@ static void packetLossKick(int playerIndex)
   sendMessage(ServerPlayer, AdminPlayers, message);
   removePlayer(playerIndex, "packetloss", true);
 }
-
 
 static void adjustTolerances()
 {
@@ -3143,61 +3141,27 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;    // player is sending a Server Control Message not implemented yet
 
     case MsgLagPing: 
-      {
-      bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
-      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
-      if (warn) {
-	char message[MessageLen];
-	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-		playerData->lagInfo.getLag());
-	sendMessage(ServerPlayer, playerID, message);
-	if (kick)
-	  lagKick(playerID);
-      }
-      if (jittwarn) {
-	char message[MessageLen];
-	sprintf(message,
-		"*** Server Warning: your jitter is too high (%d ms) ***",
-		playerData->lagInfo.getJitter());
-	sendMessage(ServerPlayer, playerID, message);
-	if (jittkick)
-	  jitterKick(playerID);
-      }
-      if (plosswarn) {
-	char message[MessageLen];
-	sprintf(message,
-		"*** Server Warning: your packetloss is too high (%d%%) ***",
-		playerData->lagInfo.getLoss());
-	sendMessage(ServerPlayer, playerID, message);
-	if (plosskick)
-	  packetLossKick(playerID);
-      }
+      handleLagPing(playerData,buf,len);
       break;
-    }
 
-  case MsgNewPlayer: {
-    sendNewPlayer(handler);
-    break;
-  }
+    case MsgNewPlayer:
+      sendNewPlayer(handler);
+      break;
 
-    // player is sending his position/speed (bulk data)
-    case MsgPlayerUpdate:
+    case MsgPlayerUpdate:    // player is sending his position/speed (bulk data)
     case MsgPlayerUpdateSmall:
-	 handlePlayerUpdate(&buf,code,playerData,rawbuf,len);
-	 break;
+      handlePlayerUpdate(&buf,code,playerData,rawbuf,len);
+      break;
 
     case MsgGMUpdate:
       shotUpdate(buf, int(len), handler);
       break;
 
-    // FIXME handled inside uread, but not discarded
-    case MsgUDPLinkRequest:
+    case MsgUDPLinkRequest:    // FIXME handled inside uread, but not discarded
       break;
 
-    // unknown msg type
-    default:
-      logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n",
-	     code, handler->getTargetIP());
+    default:    // unknown msg type
+      logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
   }
 }
 

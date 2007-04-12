@@ -98,6 +98,10 @@ void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int pl
 void zapFlag(FlagInfo &flag);
 void anointNewRabbit( int killerId = NoPlayer);
 
+void lagKick(int playerIndex);
+void jitterKick(int playerIndex);
+void packetLossKick(int playerIndex);
+
 typedef struct _CheatProtectionOptions
 {
   bool doHeightChecks;

@@ -633,6 +633,42 @@ void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len 
 
   sendMsgAutoPilot(playerData->getIndex(),autopilot);
 }
+
+void handleLagPing( GameKeeper::Player *playerData, void *buf, int len )
+{
+  bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
+  char message[MessageLen];
+  
+  playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
+  
+  if (warn)
+  {
+    sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", playerData->lagInfo.getLag());
+    sendMessage(ServerPlayer, playerData->getIndex(), message);
+    
+    if (kick)
+      lagKick(playerData->getIndex());
+  }
+
+  if (jittwarn) 
+  {
+    sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", playerData->lagInfo.getJitter());
+    sendMessage(ServerPlayer, playerData->getIndex(), message);
+    
+    if (jittkick)
+      jitterKick(playerData->getIndex());
+  }
+
+  if (plosswarn) 
+  {
+    sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", playerData->lagInfo.getLoss());
+    sendMessage(ServerPlayer, playerData->getIndex(), message);
+   
+    if (plosskick)
+      packetLossKick(playerData->getIndex());
+  }
+}
+
 const float *closestBase( TeamColor color, float *position )
 {
   float bestdist = Infinity;
