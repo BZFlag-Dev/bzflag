@@ -62,7 +62,6 @@ void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
-GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID );
 
 // using from bzfs
 extern void pwriteBroadcast(const void *b, int l, int mask);

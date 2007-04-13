@@ -43,6 +43,37 @@ void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len)
 void handleLagPing( GameKeeper::Player *playerData, void *buf, int len);
 void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len );
 
+GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID );
+bool isPlayerMessage ( uint16_t &code );
+
+class PlayerNetworkMessageHandler
+{
+public:
+  virtual ~PlayerNetworkMessageHandler(){};
+  
+  virtual int unpack ( uint16_t &code, void * buf, int len ) = 0;
+  virtual bool execute ( void ) = 0;
+  
+  GameKeeper::Player *getPlayer(void) {return player;}
+
+protected:
+  GameKeeper::Player *player;
+};
+
+extern std::map<uint16_t,PlayerNetworkMessageHandler*> playerNeworkHandlers;
+
+class ClientNetworkMessageHandler
+{
+public:
+  virtual ~ClientNetworkMessageHandler(){};
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len ) = 0;
+};
+
+extern std::map<uint16_t,ClientNetworkMessageHandler*> clientNeworkHandlers;
+
+void registerDefaultHandlers ( void );
+void cleanupDefaultHandlers ( void );
+
 // util functions
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);
 

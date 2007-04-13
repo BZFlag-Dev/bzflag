@@ -962,41 +962,6 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
   *buffer = nboUnpackUShort(*buffer, code);
 }
 
-GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID )
-{
-  switch (code)
-  {
-    case MsgEnter:
-    case MsgExit:
-    case MsgAlive:
-    case MsgKilled:
-    case MsgGrabFlag:
-    case MsgDropFlag:
-    case MsgCaptureFlag:
-    case MsgShotEnd:
-    case MsgHit:
-    case MsgTeleport:
-    case MsgMessage:
-    case MsgTransferFlag:
-    case MsgPause:
-    case MsgAutoPilot:
-    case MsgLagPing:
-    case MsgNewRabbit:
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall:
-    case MsgCollide:
-    case MsgGMUpdate:
-    case MsgShotBegin:
-      uint8_t id;
-      *buffer  = nboUnpackUByte(*buffer, id);
-      playerID = id;
-      if (code == MsgGMUpdate || code == MsgShotBegin) // the player was in the shot, don't move past it, the shot unpack needs it
-	*buffer--;
-      return GameKeeper::Player::getPlayerByIndex(playerID);
-  }
-  return NULL;
-}
-
 PackVars::PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
 {
 	buf = nboPackUShort(bufStart, 0);//placeholder

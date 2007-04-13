@@ -3003,6 +3003,26 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
   GameKeeper::Player *playerData = NULL;
 
+  bool handled = false;
+  if (isPlayerMessage(code))
+  {
+    std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator itr = playerNeworkHandlers.find(code);
+    if(itr != playerNeworkHandlers.end())
+    {
+      if (itr->second->unpack(code,buf,len)> 0 && itr->second->getPlayer()->netHandler == handler)
+	handled = itr->second->execute();
+    }
+  }
+  else
+  {
+    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator itr = clientNeworkHandlers.find(code);
+    if(itr != clientNeworkHandlers.end())
+	handled = itr->second->execute(handler,code,buf,len);
+  }
+
+  if (handled)
+    return;
+
   int playerID = 0;
   playerData = getPlayerMessageInfo(&buf,code,playerID);
   if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
