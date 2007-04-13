@@ -3000,13 +3000,13 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   getGeneralMessageInfo(&buf,code,len);
 
   if (udp && isUDPAtackMessage(code))
-	  logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
+    logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
   GameKeeper::Player *playerData = NULL;
 
   int playerID = 0;
   playerData = getPlayerMessageInfo(&buf,code,playerID);
   if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
-	  return;
+    return;
 
   switch (code)
   {
@@ -3075,7 +3075,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgShotBegin:
-      handleShotFired(buf, int(len), handler);
+      handleShotFired(buf, int(len));
       break;
 
     case MsgShotEnd: 

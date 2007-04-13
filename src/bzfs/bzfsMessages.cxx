@@ -986,10 +986,11 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
     case MsgPlayerUpdateSmall:
     case MsgCollide:
     case MsgGMUpdate:
+    case MsgShotBegin:
       uint8_t id;
       *buffer  = nboUnpackUByte(*buffer, id);
       playerID = id;
-      if (code == MsgGMUpdate) // the player was in the shot, don't move past it, the shot unpack needs it
+      if (code == MsgGMUpdate || code == MsgShotBegin) // the player was in the shot, don't move past it, the shot unpack needs it
 	*buffer--;
       return GameKeeper::Player::getPlayerByIndex(playerID);
   }

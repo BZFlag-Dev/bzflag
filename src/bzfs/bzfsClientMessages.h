@@ -33,7 +33,7 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer );
 void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer);
 void handleCollide ( GameKeeper::Player *playerData, void* buffer);
 void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer);
-void handleShotFired(void *buf, int len, NetHandler *handler);
+void handleShotFired(void *buf, int len );
 void handleShotEnded(GameKeeper::Player *playerData, void *buf, int len);
 void handleTankHit( GameKeeper::Player *playerData, void *buf, int len);
 void handleTeleport( GameKeeper::Player *playerData, void *buf, int len);
