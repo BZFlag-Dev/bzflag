@@ -10,53 +10,87 @@
 // %USERNAME% that will be replaced with the real username and token when the
 // URL is called. For example:
 //
-// http://my.bzflag.org/weblogin.php?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&callsign=%USERNAME%
+// http://my.bzflag.org/weblogin.php?action=weblogin&url=http://www.mysite.com/mydir/login.php?token=%TOKEN%&username=%USERNAME%
+//
+// NOTE: The URL passed MUST be URL encoded.  The example above shows the URL
+// in plain text to make it clearer what is happening.
 //
 // This would call mysite.com with the token and username passed in as
 // paramaters after the user has given the page a valid username and password.
-
+//
 // This function should be used after you get the info from the login callback,
-// to verify that it is a valid token, and the user belongs to any groups you
-// care about.
+// to verify that it is a valid token, and to test which groups the user is a
+// member of.
+//
+// TODO: Add some error handling/reporting
 
-function validate_token($token, $callsign, $groups = array())
+function validate_token($token, $username, $groups = array())
 {
-  //Some config options
-  $list_server = 'http://my.bzflag.org/db/';
-
-  $url_callsign = urlencode($callsign);
+  // We should probably do a little more error checking here and
+  // provide an error return code (define constants?)
+  if (isset($token, $username) && strlen($token) > 0 && strlen($username) > 0)
+  {
+    $listserver = Array();
+    
+    // First off, start with the base URL
+    $listserver['url'] = 'http://my.bzflag.org/db/';
+    // Add on the action and the username
+    $listserver['url'] .= '?action=CHECKTOKENS&checktokens='.urlencode($username);
+    // Make sure we match the IP address of the user
+    if (false) $listserver['url'] .= '@'.$_SERVER['REMOTE_ADDR'];
+    // Add the token
+    $listserver['url'] .= '%3D'.$token;
+    // If use have groups to check, add those now
+    if (is_array($groups) && sizeof($groups) > 0)
+      $listserver['url'] .= '&groups='.implode("%0D%0A", $groups);
+    
+    // Run the web query and trim the result
+    // An alternative to this method would be to use cURL
+    $listserver['reply'] = trim(file_get_contents($listserver['url']));
   
-  //The program
-  //$key => $group
-  $group_list = '&groups=';
-  foreach($groups as $group)
-  {
-    $group_list. = "$group%0D%0A";
-  }
-  //Trim the last 6 characters, wich are "%0D%0A", off of the last group
-  $group_list = substr($group_list, 0, strlen($group_list) - 6);
-
-  $reply = file_get_contents(''.$list_server.'?action=CHECKTOKENS&checktokens
-    ='.$url_callsign.'%3D'.$token.''.$group_list.'');
-
-  //If we got a TOKBAD, return false, because the token can't be right
-  if (strpos($reply, 'TOKBAD: '))
-    return false;
-
-  //Here's where it gets tricky: making sure the user is in all groups specified
-  $group_list = '';
-  foreach($groups as $group)
-  {
-    $group_list. = ":$group";
-  }
-  if (strpos($reply, "TOKGOOD: $callsign$group_list"))
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
+  //EXAMPLE TOKGOOD RESPONSE
+  /*
+  MSG: checktoken callsign=SuperAdmin, ip=, token=1234567890  group=SUPER.ADMIN group=SUPER.COP group=SUPER.OWNER
+  TOKGOOD: SuperAdmin:SUPER.ADMIN:SUPER.OWNER
+  BZID: 123456 SuperAdmin
+  */
+  
+    // Fix up the line endings just in case
+    $listserver['reply'] = str_replace("\r\n", "\n", $listserver['reply']);
+    $listserver['reply'] = str_replace("\r", "\n", $listserver['reply']);
+    $listserver['reply'] = explode("\n", $listserver['reply']);
+    
+    // Grab the groups they are in, and their BZID
+    foreach ($listserver['reply'] as $line)
+    {
+      if (substr($line, 0, strlen('TOKGOOD: ')) == 'TOKGOOD: ')
+      {
+        if (strpos($line, ':', strlen('TOKGOOD: ')) == FALSE) continue;
+        $listserver['groups'] = explode(':', substr($line, strpos($line, ':', strlen('TOKGOOD: '))+1 ));
+      }
+      else if (substr($line, 0, strlen('BZID: ')) == 'BZID: ')
+      {
+        list($listserver['bzid'],$listserver['username']) = explode(' ', substr($line, strlen('BZID: ')), 2);
+      }
+    }
+    
+    if (isset($listserver['bzid']) && is_numeric($listserver['bzid']))
+    { 
+      $return['username'] = $listserver['username'];
+      $return['bzid'] = $listserver['bzid'];
+      
+      if (isset($listserver['groups']) && sizeof($listserver['groups']) > 0)
+      {
+        $return['groups'] = $listserver['groups'];
+      }
+      else
+      {
+        $return['groups'] = Array();
+      }
+      
+      return $return;
+    }
+  } // if (isset($token, $username))
+} // validate_token(...)
 
 ?>
