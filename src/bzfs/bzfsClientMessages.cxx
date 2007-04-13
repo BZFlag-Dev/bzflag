@@ -118,15 +118,6 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	return true;
 }
 
-void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer )
-{
-	// data: position of drop
-	float pos[3];
-	buffer = nboUnpackVector(buffer, pos);
-
-	dropPlayerFlag(*playerData, pos);
-}
-
 void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 {
 	// data: target player/team, message string
@@ -180,15 +171,6 @@ void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
 		return;
 
 	sendPlayerMessage(playerData, dstPlayer, message);
-}
-
-void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer)
-{
-	// data: team whose territory flag was brought to
-	uint16_t _team;
-	buffer = nboUnpackUShort(buffer, _team);
-
-	captureFlag(playerData->getIndex(), TeamColor(_team));
 }
 
 void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
@@ -504,94 +486,6 @@ void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len )
     return;
 
   sendMsgGMUpdate( playerData->getIndex(), &shot );
-}
-
-const float *closestBase( TeamColor color, float *position )
-{
-  float bestdist = Infinity;
-  const float *bestbase = NULL;
-
-  if (bases.find(color) == bases.end()) {
-    return NULL;
-  }
-
-  TeamBases &teamBases = bases[color];
-  int count = teamBases.size();
-  for (int i=0; i<count; i++) {
-    const float *basepos = teamBases.getBasePosition(i);
-    float dx = position[0] - basepos[0];
-    float dy = position[1] - basepos[1];
-    float dist = sqrt(dx * dx + dy * dy);
-
-    if (dist < bestdist) {
-      bestbase = basepos;
-      bestdist = dist;
-    }
-  }
-
-  return bestbase;
-}
-
-void handleCollide ( GameKeeper::Player *playerData, void* buffer)
-{
-  if (!playerData) {
-    std::cerr << "Invalid MsgCollide (no such player)\n";
-    return;
-  }
-
-  if (clOptions->gameOptions & FreezeTagGameStyle) {
-    TeamColor playerTeam = playerData->player.getTeam();
-
-    PlayerId otherPlayer;
-    buffer = nboUnpackUByte(buffer, otherPlayer);
-    GameKeeper::Player *otherData =
-	  GameKeeper::Player::getPlayerByIndex(otherPlayer);
-    TeamColor otherTeam = otherData->player.getTeam();
-
-    float collpos[3];
-    buffer = nboUnpackVector(buffer, collpos);
-
-    if (playerTeam == otherTeam) {
-      // unfreeze
-      if (!playerData->player.canShoot() || !playerData->player.canMove()) {
-	sendMessageAllow(playerData->getIndex(), true, true);
-	playerData->player.setAllowShooting(true);
-	playerData->player.setAllowMovement(true);
-      }
-    } else {
-      float dx, dy, dist, angle, cos_angle;
-      const float *playerBase = closestBase(playerTeam, collpos);
-      const float *otherBase = closestBase(otherTeam, collpos);
-
-      if (!playerBase || !otherBase) {
-	return;
-      }
-
-      angle = atan2f(otherBase[1] - playerBase[1],
-		otherBase[0] - playerBase[0]);
-      cos_angle = fabs(cosf(angle));
-
-      dx = collpos[0] - playerBase[0];
-      dy = collpos[1] - playerBase[1];
-      dist = sqrt(dx * dx + dy * dy);
-      float playerDist = dist * cos_angle;
-
-      dx = collpos[0] - otherBase[0];
-      dy = collpos[1] - otherBase[1];
-      dist = sqrt(dx * dx + dy * dy);
-      float otherDist = dist * cos_angle;
-
-      if (playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) {
-	// freeze
-	if (playerData->player.canShoot() || playerData->player.canMove()) {
-	  sendMessageAllow(playerData->getIndex(), false, false);
-	  playerData->player.setAllowMovement(false);
-	  playerData->player.setAllowShooting(false);
-	}
-      }
-
-    }
-  }
 }
 
 // messages that don't have players
@@ -988,6 +882,59 @@ public:
   }
 };
 
+class DropFlagHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 13)
+      return false;
+
+    // data: position of drop
+    float pos[3];
+    buf = nboUnpackVector(buf, pos);
+
+    dropPlayerFlag(*player, pos);
+    return true;
+  }
+};
+
+class CaptureFlagHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+
+    // data: team whose territory flag was brought to
+    uint16_t _team;
+    buf = nboUnpackUShort(buf, _team);
+
+    captureFlag(player->getIndex(), TeamColor(_team));
+    return true;
+  }
+};
+
+class CollideHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 13)
+      return false;
+
+    PlayerId otherPlayer;
+    buf = nboUnpackUByte(buf, otherPlayer);
+    float collpos[3];
+    buf = nboUnpackVector(buf, collpos);
+    GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
+
+    processCollision(player,otherData,collpos);
+    return true;
+  }
+};
+
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
@@ -1004,6 +951,9 @@ void registerDefaultHandlers ( void )
   playerNeworkHandlers[MsgExit] = new ExitHandler;
   playerNeworkHandlers[MsgAlive] = new AliveHandler;
   playerNeworkHandlers[MsgKilled] = new KilledHandler;
+  playerNeworkHandlers[MsgDropFlag] = new DropFlagHandler;
+  playerNeworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
+  playerNeworkHandlers[MsgCollide] = new CollideHandler;
 }
 
 void cleanupDefaultHandlers ( void )

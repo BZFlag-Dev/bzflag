@@ -102,6 +102,8 @@ void lagKick(int playerIndex);
 void jitterKick(int playerIndex);
 void packetLossKick(int playerIndex);
 
+void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] );
+
 typedef struct _CheatProtectionOptions
 {
   bool doHeightChecks;

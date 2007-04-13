@@ -2342,14 +2342,15 @@ void playerAlive(int playerIndex)
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
-	  return;
+    return;
+ 
   if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore)
   {
-	sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
+    sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
 
     gameOver = true;
     if (clOptions->oneGameOnly)
-	{
+    {
       done = true;
       exitCode = 0;
     }
@@ -2358,84 +2359,181 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 
 bool allowTeams ( void )
 {
-	return clOptions->gameType != eOpenFFA;
+  return clOptions->gameType != eOpenFFA;
 }
 
 bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )
 {
-	if(!allowTeams() || !victim || !killer)
-		return false;
+  if(!allowTeams() || !victim || !killer)
+    return false;
 
-	// killing rabbit or killing anything when I am a dead ex-rabbit is allowed
-	teamkill = !areFoes(victim->player.getTeam(), killer->player.getTeam()) && !killer->player.isARabbitKill(victim->player);
+  // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
+  teamkill = !areFoes(victim->player.getTeam(), killer->player.getTeam()) && !killer->player.isARabbitKill(victim->player);
 
-	// update tk-score
-	if ((victim->getIndex() != killer->getIndex()) && teamkill)
-	{
-		killer->score.tK();
-		char message[MessageLen];
-		if (clOptions->tkAnnounce) {
-			snprintf(message, MessageLen, "Team kill: %s killed %s", killer->player.getCallSign(), victim->player.getCallSign());
-			sendMessage(ServerPlayer, AdminPlayers, message);
-		}
-		if (killer->score.isTK())
-		{
-			strcpy(message, "You have been automatically kicked for team killing" );
-			sendMessage(ServerPlayer, killer->getIndex(), message);
-			snprintf(message, MessageLen, "Player %s removed: team killing", killer->player.getCallSign());
-			sendMessage(ServerPlayer, AdminPlayers, message);
-			removePlayer(killer->getIndex(), "teamkilling", true);
-			return true;
-		}
-	}
-	return false;
+  // update tk-score
+  if ((victim->getIndex() != killer->getIndex()) && teamkill)
+  {
+    killer->score.tK();
+    char message[MessageLen];
+    if (clOptions->tkAnnounce)
+    {
+      snprintf(message, MessageLen, "Team kill: %s killed %s", killer->player.getCallSign(), victim->player.getCallSign());
+      sendMessage(ServerPlayer, AdminPlayers, message);
+    }
+    if (killer->score.isTK())
+    {
+      strcpy(message, "You have been automatically kicked for team killing" );
+      sendMessage(ServerPlayer, killer->getIndex(), message);
+      snprintf(message, MessageLen, "Player %s removed: team killing", killer->player.getCallSign());
+      sendMessage(ServerPlayer, AdminPlayers, message);
+      removePlayer(killer->getIndex(), "teamkilling", true);
+      return true;
+    }
+  }
+  return false;
 }
 
 void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer, bool teamkill)
 {
-	// change the player score
-	if(victim)
-	{
-		victim->score.killedBy();
-		sendPlayerScoreUpdate(victim);
-	}
-	if (killer)
-	{
-		if (victim->getIndex() != killer->getIndex())
-		{
-			if (teamkill && !clOptions->teamKillerDies)
-				killer->score.killedBy();
-			else if (!teamkill)
-				killer->score.kill();
-		}
-		sendPlayerScoreUpdate(killer);
-	}
+  // change the player score
+  if(victim)
+  {
+    victim->score.killedBy();
+    sendPlayerScoreUpdate(victim);
+  }
+  if (killer)
+  {
+   if (victim->getIndex() != killer->getIndex())
+   {
+    if (teamkill && !clOptions->teamKillerDies)
+      killer->score.killedBy();
+    else if (!teamkill)
+     killer->score.kill();
+    }
+    sendPlayerScoreUpdate(killer);
+  }
 }
 void updateHandycaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
 {
-	if (!(clOptions->gameOptions & HandicapGameStyle))
-		return;
+  if (!(clOptions->gameOptions & HandicapGameStyle))
+   return;
 
-	if (killer)
-		sendSingleHandycapInfoUpdate(killer);
-	if (victim)
-		sendSingleHandycapInfoUpdate(victim);
+  if (killer)
+    sendSingleHandycapInfoUpdate(killer);
+ 
+  if (victim)
+    sendSingleHandycapInfoUpdate(victim);
 }
 
 void checkForScoreLimit ( GameKeeper::Player* killer )
 {
-	// see if the player reached the score limit
-	if (clOptions->maxPlayerScore != 0 && killer && killer->score.reached())
-	{
-		sendScoreOverMessage(killer->getIndex(), NoTeam);
+  // see if the player reached the score limit
+  if (clOptions->maxPlayerScore != 0 && killer && killer->score.reached())
+  {
+    sendScoreOverMessage(killer->getIndex(), NoTeam);
 
-		gameOver = true;
-		if (clOptions->oneGameOnly)
-		{
-			done = true;
-			exitCode = 0;
-		}
-	}
+    gameOver = true;
+    if (clOptions->oneGameOnly)
+    {
+      done = true;
+      exitCode = 0;
+    }
+  }
+}
+
+const float *closestBase( TeamColor color, float *position )
+{
+  float bestdist = Infinity;
+  const float *bestbase = NULL;
+
+  if (bases.find(color) == bases.end())
+    return NULL;
+
+  TeamBases &teamBases = bases[color];
+  int count = teamBases.size();
+  for (int i=0; i<count; i++) 
+  {
+    const float *basepos = teamBases.getBasePosition(i);
+    float dx = position[0] - basepos[0];
+    float dy = position[1] - basepos[1];
+    float dist = sqrt(dx * dx + dy * dy);
+
+    if (dist < bestdist)
+    {
+      bestbase = basepos;
+      bestdist = dist;
+    }
+  }
+
+  return bestbase;
+}
+
+void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+{
+  TeamColor playerTeam = player->player.getTeam();
+  TeamColor otherTeam = otherPlayer->player.getTeam();
+
+  if (playerTeam == otherTeam)
+  {
+    // unfreeze
+    if (!player->player.canShoot() || !player->player.canMove()) 
+    {
+      sendMessageAllow(player->getIndex(), true, true);
+      player->player.setAllowShooting(true);
+      player->player.setAllowMovement(true);
+    }
+  }
+  else 
+  {
+    float dx, dy, dist, angle, cos_angle;
+    const float *playerBase = closestBase(playerTeam, pos);
+    const float *otherBase = closestBase(otherTeam, pos);
+
+    if (!playerBase || !otherBase) 
+      return;
+
+    angle = atan2f(otherBase[1] - playerBase[1], otherBase[0] - playerBase[0]);
+    cos_angle = fabs(cosf(angle));
+
+    dx = pos[0] - playerBase[0];
+    dy = pos[1] - playerBase[1];
+    dist = sqrt(dx * dx + dy * dy);
+    float playerDist = dist * cos_angle;
+
+    dx = pos[0] - otherBase[0];
+    dy = pos[1] - otherBase[1];
+    dist = sqrt(dx * dx + dy * dy);
+    float otherDist = dist * cos_angle;
+
+    if ( (playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) && (player->player.canShoot() || player->player.canMove()) )
+    {
+      sendMessageAllow(player->getIndex(), false, false);
+      player->player.setAllowMovement(false);
+      player->player.setAllowShooting(false);
+    }
+  }
+}
+
+void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+{
+  if (!player || !otherPlayer)
+    return;
+
+  bz_PlayerCollisionEventData_V1  eventData;
+  eventData.players[0] = player->getIndex();
+  eventData.players[1] = otherPlayer->getIndex();
+  eventData.time = (float)TimeKeeper::getCurrent().getSeconds();
+  eventData.position[0] = pos[0];
+  eventData.position[1] = pos[1];
+  eventData.position[2] = pos[2];
+
+  worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
+
+  if ( eventData.handled )
+    return;
+
+  if (clOptions->gameOptions & FreezeTagGameStyle)
+    processFreezeTagCollision(player,otherPlayer,pos);
 }
 
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
@@ -2952,18 +3050,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code)
   {
-    case MsgDropFlag:// player requesting to drop flag
-      handlePlayerFlagDrop(playerData,buf);
-      break;
-
-    case MsgCaptureFlag:// player has captured a flag
-      handleFlagCapture(playerData,buf);
-      break;
-
-    case MsgCollide:// two players have collided
-      handleCollide(playerData,buf);
-      break;
-
     case MsgShotBegin:
       handleShotFired(buf, int(len));
       break;

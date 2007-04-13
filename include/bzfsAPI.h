@@ -97,6 +97,7 @@ typedef enum
   bz_eShotEndedEvent,
   bz_eNewNonPlayerConnection,
   bz_eIdleNewNonPlayerConnection,
+  bz_ePlayerCollision,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1138,6 +1139,27 @@ public:
   int connectionID;
   void *data;
   unsigned int size;
+};
+
+class bz_PlayerCollisionEventData_V1 : public bz_EventData
+{
+public:
+
+  bz_PlayerCollisionEventData_V1()
+  {
+    eventType = bz_ePlayerCollision;
+    players[0] = players[1] = -1;
+    time = 0;
+    position[0] = position[1] = position[2] = 0;
+    handled = false;
+  }
+
+  virtual ~bz_PlayerCollisionEventData_V1(){};
+
+  int players[2];
+  float position[3];
+  float time;
+  bool handled;
 };
 
 // event handler callback
