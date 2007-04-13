@@ -16,17 +16,6 @@
 #include "global.h"
 #include "bzfs.h"
 
-void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void* rawbuf, int len );	//once relay is based on state, remove rawbuf
-void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer);
-void handleRabbitMessage( GameKeeper::Player *playerData );
-void handlePauseMessage( GameKeeper::Player *playerData, void *buf, int len);
-void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len);
-void handleLagPing( GameKeeper::Player *playerData, void *buf, int len);
-void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len );
-
-GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID );
-bool isPlayerMessage ( uint16_t &code );
-
 class PlayerNetworkMessageHandler
 {
 public:

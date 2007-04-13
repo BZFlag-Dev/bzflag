@@ -942,7 +942,7 @@ static void dumpScore()
   std::cout << "#end" << std::endl;
 }
 
-static PlayerId getNewPlayer(NetHandler *netHandler)
+PlayerId getNewPlayer(NetHandler *netHandler)
 {
   PlayerId playerIndex = getNewPlayerID();
 
@@ -992,15 +992,6 @@ void checkGameOn ( void )
 	}
 }
 
-static void sendNewPlayer(NetHandler *handler)
-{
-  PlayerId id = getNewPlayer(handler);
-  if (id == 0xff)
-    return;
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, id);
-  directMessage(handler, MsgNewPlayer, (char*)buf - (char*)bufStart, bufStart);
-}
 
 static void acceptClient( fd_set *socketSet )
 {
@@ -2894,6 +2885,43 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
+bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState )
+{
+  // observer updates are not relayed, or checked
+  if (playerData->player.isObserver())
+  {
+    // skip all of the checks
+    playerData->setPlayerState(state, timeStamp);
+    return true;
+  }
+
+  bz_PlayerUpdateEventData_V1 eventData;
+  playerStateToAPIState(eventData.state,state);
+  eventData.stateTime = timeStamp;
+  eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
+  eventData.player = playerData->getIndex();
+  worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
+
+  // silently drop old packet
+  if (state.order <= playerData->lastState.order)
+    return true;
+
+  if(!validatePlayerState(playerData,state))
+    return false;
+
+  playerData->setPlayerState(state, timeStamp);
+
+  // Player might already be dead and did not know it yet (e.g. teamkill)
+  // do not propogate
+  if (!playerData->player.isAlive() && (state.status & short(PlayerState::Alive)))
+    return true;
+
+  searchFlag(*playerData);
+
+  sendPlayerStateMessage(playerData,shortState);
+  return true;
+}
+
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
@@ -3000,7 +3028,8 @@ static void adjustTolerances()
 
 static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 {
-  if (!rawbuf) {
+  if (!rawbuf)
+  {
     std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
     return;
   }
@@ -3019,83 +3048,28 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   // see if we have any registered handlers for this message type
   bool handled = false;
-  if (isPlayerMessage(code))
+ 
+  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNeworkHandlers.find(code);
+  if(playerItr != playerNeworkHandlers.end())
   {
     // player messages all start with the player ID first
     // so get it, and verify that the sender IS the player.
     // TODO, punish the person who owns handler, as they are up to no good
-    std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNeworkHandlers.find(code);
-    if(playerItr != playerNeworkHandlers.end())
-    {
-      buf = playerItr->second->unpackPlayer(buf,len);
-      if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
-	handled = playerItr->second->execute(code,buf,len);
-    }
+    buf = playerItr->second->unpackPlayer(buf,len);
+    if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
+      handled = playerItr->second->execute(code,buf,len);
   }
-  else	// it's a pre player connection
+  else
   {
+    // try a non player message
+    // they don't start with a player
     std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNeworkHandlers.find(code);
     if(clientItr != clientNeworkHandlers.end())
-	handled = clientItr->second->execute(handler,code,buf,len);
+      handled = clientItr->second->execute(handler,code,buf,len);
   }
 
-  if (handled)	// somone got it, don't need to do the old way
-    return;
-
-  GameKeeper::Player *playerData = NULL;
-  int playerID = 0;
-  playerData = getPlayerMessageInfo(&buf,code,playerID);
-  if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
-    return;
-
-  switch (code)
-  {
-    case MsgTransferFlag:    // player has transferred flag to another tank
-     handleFlagTransfer(playerData,buf);
-     break;
-
-    case MsgUDPLinkEstablished:
-      logDebugMessage(2,"Connection at %s outbound UDP up\n", handler->getTargetIP());
-      break;
-
-    case MsgNewRabbit:
-      handleRabbitMessage(playerData);
-      break;
-
-    case MsgPause:
-      handlePauseMessage(playerData,buf,len);
-      break;
-
-    case MsgAutoPilot: 
-      handleAutoPilotMessage(playerData,buf,len);
-      break;
-
-    case MsgServerControl:
-      break;    // player is sending a Server Control Message not implemented yet
-
-    case MsgLagPing: 
-      handleLagPing(playerData,buf,len);
-      break;
-
-    case MsgNewPlayer:
-      sendNewPlayer(handler);
-      break;
-
-    case MsgPlayerUpdate:    // player is sending his position/speed (bulk data)
-    case MsgPlayerUpdateSmall:
-      handlePlayerUpdate(&buf,code,playerData,rawbuf,len);
-      break;
-
-    case MsgGMUpdate:
-      handleShotUpdate(playerData,buf,len);
-      break;
-
-    case MsgUDPLinkRequest:    // FIXME handled inside uread, but not discarded
-      break;
-
-    default:    // unknown msg type
-      logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
-  }
+  if (!handled)	// somone got it, don't need to do the old way
+    logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
 }
 
 static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)

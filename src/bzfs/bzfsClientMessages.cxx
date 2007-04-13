@@ -20,242 +20,6 @@
 std::map<uint16_t,ClientNetworkMessageHandler*> clientNeworkHandlers;
 std::map<uint16_t,PlayerNetworkMessageHandler*> playerNeworkHandlers;
 
-bool isPlayerMessage ( uint16_t &code )
-{
-  switch (code)
-  {
-    case MsgEnter:
-    case MsgExit:
-    case MsgAlive:
-    case MsgKilled:
-    case MsgGrabFlag:
-    case MsgDropFlag:
-    case MsgCaptureFlag:
-    case MsgShotEnd:
-    case MsgHit:
-    case MsgTeleport:
-    case MsgMessage:
-    case MsgTransferFlag:
-    case MsgPause:
-    case MsgAutoPilot:
-    case MsgLagPing:
-    case MsgNewRabbit:
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall:
-    case MsgCollide:
-    case MsgGMUpdate:
-    case MsgShotBegin:
-    case MsgCapBits:
-      return true;
-  }
-  return false;
-}
-
-GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &playerID )
-{
-  if (isPlayerMessage(code))
-  {
-    uint8_t id;
-    *buffer  = nboUnpackUByte(*buffer, id);
-    playerID = id;
-    if (code == MsgGMUpdate || code == MsgShotBegin) // the player was in the shot, don't move past it, the shot unpack needs it
-      *buffer--;
-    return GameKeeper::Player::getPlayerByIndex(playerID);
-  }
-  return NULL;
-}
-
-void handlePlayerUpdate(void **buf, uint16_t &code,
-						GameKeeper::Player *playerData, const void *, int)
-{
-	if (!playerData)
-		return;
-
-	float       timestamp;
-	PlayerState state;
-
-	*buf = nboUnpackFloat(*buf, timestamp);
-	*buf = state.unpack(*buf, code);
-
-	updatePlayerState(playerData, state, timestamp,
-		code == MsgPlayerUpdateSmall);
-}
-
-bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState)
-{
-	// observer updates are not relayed, or checked
-	if (playerData->player.isObserver())
-	{
-		// skip all of the checks
-		playerData->setPlayerState(state, timeStamp);
-		return true;
-	}
-
-	bz_PlayerUpdateEventData_V1 eventData;
-	playerStateToAPIState(eventData.state,state);
-	eventData.stateTime = timeStamp;
-	eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
-	eventData.player = playerData->getIndex();
-	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
-
-	// silently drop old packet
-	if (state.order <= playerData->lastState.order)
-		return true;
-
-	if(!validatePlayerState(playerData,state))
-		return false;
-
-	playerData->setPlayerState(state, timeStamp);
-
-	// Player might already be dead and did not know it yet (e.g. teamkill)
-	// do not propogate
-	if (!playerData->player.isAlive() && (state.status & short(PlayerState::Alive)))
-		return true;
-
-	searchFlag(*playerData);
-
-	sendPlayerStateMessage(playerData,shortState);
-	return true;
-}
-
-void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
-{
-	PlayerId from, to;
-
-	from = playerData->getIndex();
-
-	buffer = nboUnpackUByte(buffer, to);
-
-	GameKeeper::Player *fromData = playerData;
-
-	int flagIndex = fromData->player.getFlag();
-	if (to == ServerPlayer) 
-	{
-		if (flagIndex >= 0)
-			zapFlag (*FlagInfo::get(flagIndex));
-		return;
-	}
-
-	// Sanity check
-	if (to >= curMaxPlayers)
-		return;
-
-	if (flagIndex == -1)
-		return;
-
-	GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(to);
-	if (!toData)
-		return;
-
-	bz_FlagTransferredEventData_V1 eventData;
-
-	eventData.fromPlayerID = fromData->player.getPlayerIndex();
-	eventData.toPlayerID = toData->player.getPlayerIndex();
-	eventData.flagType = NULL;
-	eventData.action = eventData.ContinueSteal;
-
-	worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
-
-	if (eventData.action != eventData.CancelSteal)
-	{
-		int oFlagIndex = toData->player.getFlag();
-		if (oFlagIndex >= 0)
-			zapFlag (*FlagInfo::get(oFlagIndex));
-	}
-
-	if (eventData.action == eventData.ContinueSteal) 
-		sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
-}
-
-void handleRabbitMessage( GameKeeper::Player *playerData )
-{
-  if (playerData->getIndex() == rabbitIndex)
-     anointNewRabbit();
-}
-
-void handlePauseMessage( GameKeeper::Player *playerData, void *buf, int len )
-{
-  if (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
-  {
-    // player wants to unpause
-    playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-    pausePlayer(playerData->getIndex(), false);
-  }
-  else
-  {
-    // player wants to pause
-    playerData->player.pauseRequestTime = TimeKeeper::getCurrent();
-
-    // adjust pauseRequestTime according to players lag to avoid kicking innocent players
-    int requestLag = playerData->lagInfo.getLag();
-    if (requestLag < 100)
-      requestLag = 250;
-    else
-      requestLag *= 2;
-   
-    playerData->player.pauseRequestLag = requestLag;
-  }
-}
-
-void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len )
-{
-  uint8_t autopilot;
-  nboUnpackUByte(buf, autopilot);
-  
-  playerData->player.setAutoPilot(autopilot != 0);
-
-  sendMsgAutoPilot(playerData->getIndex(),autopilot);
-}
-
-void handleLagPing( GameKeeper::Player *playerData, void *buf, int len )
-{
-  bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
-  char message[MessageLen];
-  
-  playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
-  
-  if (warn)
-  {
-    sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", playerData->lagInfo.getLag());
-    sendMessage(ServerPlayer, playerData->getIndex(), message);
-    
-    if (kick)
-      lagKick(playerData->getIndex());
-  }
-
-  if (jittwarn) 
-  {
-    sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", playerData->lagInfo.getJitter());
-    sendMessage(ServerPlayer, playerData->getIndex(), message);
-    
-    if (jittkick)
-      jitterKick(playerData->getIndex());
-  }
-
-  if (plosswarn) 
-  {
-    sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", playerData->lagInfo.getLoss());
-    sendMessage(ServerPlayer, playerData->getIndex(), message);
-   
-    if (plosskick)
-      packetLossKick(playerData->getIndex());
-  }
-}
-
-void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len )
-{
-  ShotUpdate shot;
-  shot.unpack(buf);
-
-  if (!playerData->player.isAlive() || playerData->player.isObserver())
-    return;
-
-  if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
-    return;
-
-  sendMsgGMUpdate( playerData->getIndex(), &shot );
-}
-
 // messages that don't have players
 class WhatTimeIsItHandler : public ClientNetworkMessageHandler
 {
@@ -480,6 +244,32 @@ public:
   }
 };
 
+class UDPLinkExtablishedHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    logDebugMessage(2,"Connection at %s outbound UDP up\n", handler->getTargetIP());
+    return true;
+  }
+};
+
+class NewPlayerHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    PlayerId id = getNewPlayer(handler);
+    if (id == 0xff)
+      return false;
+    
+    void *buffer, *bufStart = getDirectMessageBuffer();
+    buffer = nboPackUByte(bufStart, id);
+    directMessage(handler, MsgNewPlayer, (char*)buffer - (char*)bufStart, bufStart);
+
+    return true;
+  }
+};
 
 // messages that have players
 
@@ -944,6 +734,231 @@ public:
   }
 };
 
+class TransferFlagHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 2)
+      return false;
+
+    PlayerId from, to;
+
+    from = player->getIndex();
+
+    buf = nboUnpackUByte(buf, to);
+
+    int flagIndex = player->player.getFlag();
+    if (to == ServerPlayer) 
+    {
+      if (flagIndex >= 0)
+	zapFlag (*FlagInfo::get(flagIndex));
+      return true;
+    }
+
+    // Sanity check
+    if ( (to >= curMaxPlayers) || (flagIndex == -1) )
+      return true;
+
+    GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(to);
+    if (!toData)
+      return true;
+
+    bz_FlagTransferredEventData_V1 eventData;
+
+    eventData.fromPlayerID = player->player.getPlayerIndex();
+    eventData.toPlayerID = toData->player.getPlayerIndex();
+    eventData.flagType = NULL;
+    eventData.action = eventData.ContinueSteal;
+
+    worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
+
+    if (eventData.action != eventData.CancelSteal)
+    {
+      int oFlagIndex = toData->player.getFlag();
+      if (oFlagIndex >= 0)
+	zapFlag (*FlagInfo::get(oFlagIndex));
+    }
+
+    if (eventData.action == eventData.ContinueSteal) 
+      sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
+    return true;
+  }
+};
+
+class NewRabbitHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+    
+    if (player->getIndex() == rabbitIndex)
+      anointNewRabbit();
+    
+    return true;
+  }
+};
+
+class PauseHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+
+    if (player->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
+    {
+      // player wants to unpause
+      player->player.pauseRequestTime = TimeKeeper::getNullTime();
+      pausePlayer(player->getIndex(), false);
+    }
+    else
+    {
+      // player wants to pause
+      player->player.pauseRequestTime = TimeKeeper::getCurrent();
+
+      // adjust pauseRequestTime according to players lag to avoid kicking innocent players
+      int requestLag = player->lagInfo.getLag();
+      if (requestLag < 100)
+	requestLag = 250;
+      else
+	requestLag *= 2;
+
+      player->player.pauseRequestLag = requestLag;
+    }
+
+    return true;
+  }
+};
+
+class AutoPilotHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 2)
+      return false;
+
+    uint8_t autopilot;
+    nboUnpackUByte(buf, autopilot);
+
+    player->player.setAutoPilot(autopilot != 0);
+
+    sendMsgAutoPilot(player->getIndex(),autopilot);
+
+    return true;
+  }
+};
+
+class LagPingHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+
+    bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
+    char message[MessageLen];
+
+    player->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
+
+    if (warn)
+    {
+      sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", player->lagInfo.getLag());
+      sendMessage(ServerPlayer, player->getIndex(), message);
+
+      if (kick)
+	lagKick(player->getIndex());
+    }
+
+    if (jittwarn) 
+    {
+      sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", player->lagInfo.getJitter());
+      sendMessage(ServerPlayer, player->getIndex(), message);
+
+      if (jittkick)
+	jitterKick(player->getIndex());
+    }
+
+    if (plosswarn) 
+    {
+      sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", player->lagInfo.getLoss());
+      sendMessage(ServerPlayer, player->getIndex(), message);
+
+      if (plosskick)
+	packetLossKick(player->getIndex());
+    }
+    return true;
+  }
+};
+
+class PlayerUpdateHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+
+    if (code == MsgPlayerUpdateSmall && len < 21)
+      return false;
+    else if(len < 37)
+      return false;
+
+    float       timestamp;
+    PlayerState state;
+
+    buf = nboUnpackFloat(buf, timestamp);
+    buf = state.unpack(buf, code);
+
+    updatePlayerState(player, state, timestamp, code == MsgPlayerUpdateSmall);
+
+    return true;
+  }
+};
+
+class PlayerFirstNoBumpHandler : public PlayerFirstHandler
+{
+public:
+  virtual void *unpackPlayer ( void * buf, int len )
+  {
+    player = NULL;
+
+    if ( len >= 1 ) // byte * 3
+    {
+      unsigned char temp = 0;
+      nboUnpackUByte(buf, temp);
+      player = GameKeeper::Player::getPlayerByIndex(temp);
+
+      return buf;
+    }
+    return buf;
+  }
+};
+
+class GMUpdateHandler : public PlayerFirstNoBumpHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 33)
+      return false;
+
+    ShotUpdate shot;
+    shot.unpack(buf);
+
+    if (!player->player.isAlive() || player->player.isObserver() || !player->updateShot(shot.id & 0xff, shot.id >> 8))
+      return true ;
+    
+    sendMsgGMUpdate( player->getIndex(), &shot );
+    return true;
+  }
+};
+
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
@@ -954,6 +969,8 @@ void registerDefaultHandlers ( void )
   clientNeworkHandlers[MsgWantWHash] = new WantWHashHandler;
   clientNeworkHandlers[MsgQueryGame] = new QueryGameHandler;
   clientNeworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
+  clientNeworkHandlers[MsgUDPLinkEstablished] = new UDPLinkExtablishedHandler;
+  clientNeworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
 
   playerNeworkHandlers[MsgCapBits] = new CapBitsHandler;
   playerNeworkHandlers[MsgEnter] = new EnterHandler;
@@ -968,6 +985,14 @@ void registerDefaultHandlers ( void )
   playerNeworkHandlers[MsgHit] = new HitHandler;
   playerNeworkHandlers[MsgTeleport] = new TeleportHandler;
   playerNeworkHandlers[MsgMessage] = new MessageHandler;
+  playerNeworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
+  playerNeworkHandlers[MsgNewRabbit] = new NewRabbitHandler;
+  playerNeworkHandlers[MsgPause] = new PauseHandler;
+  playerNeworkHandlers[MsgAutoPilot] = new AutoPilotHandler;
+  playerNeworkHandlers[MsgLagPing] = new LagPingHandler;
+  playerNeworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
+  playerNeworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
+  playerNeworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
 }
 
 void cleanupDefaultHandlers ( void )
