@@ -4103,9 +4103,7 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
     {
       // we have a new pause
       countdownPauseStart = tm;
-      void *buf, *bufStart = getDirectMessageBuffer ();
-      buf = nboPackInt (bufStart, -1);
-      broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+      sendMsgTimeUpdate(-1);
     }
 
     if (countdownActive && !clOptions->countdownPaused && (countdownResumeTime < 0) && countdownPauseStart) 
@@ -4115,9 +4113,7 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
       countdownPauseStart = TimeKeeper::getNullTime ();
       newTimeElapsed = (float)(tm - gameStartTime);
       timeLeft = clOptions->timeLimit - newTimeElapsed;
-      void *buf, *bufStart = getDirectMessageBuffer ();
-      buf = nboPackInt (bufStart, (int32_t) timeLeft);
-      broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+      sendMsgTimeUpdate((int) timeLeft);
     }
 
     if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f) && !clOptions->countdownPaused && (countdownResumeTime < 0))
@@ -4136,9 +4132,7 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
 	clOptions->addedTime = 0.0f; //reset
       }
 
-      void *buf, *bufStart = getDirectMessageBuffer ();
-      buf = nboPackInt (bufStart, (int32_t) timeLeft);
-      broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+      sendMsgTimeUpdate((int)timeLeft);
       clOptions->timeElapsed = newTimeElapsed;
       if (clOptions->oneGameOnly && timeLeft == 0.0f)
       {
