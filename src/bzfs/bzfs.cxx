@@ -622,6 +622,8 @@ static bool serverStart()
 #endif
   maxFileDescriptor = 0;
 
+  packWorldSettings();
+
   // init addr:port structure
   struct sockaddr_in addr;
   memset(&addr, 0, sizeof(addr));
@@ -3998,10 +4000,7 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
 	gameStartTime = tm;
 	clOptions->timeElapsed = 0.0f;
 
-	// start client's clock
-	void *msg = getDirectMessageBuffer();
-	nboPackInt(msg, (int32_t)(int)clOptions->timeLimit);
-	broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
+	sendMsgTimeUpdate((int)clOptions->timeLimit);
 
 	// kill any players that are playing already
 	GameKeeper::Player *player;

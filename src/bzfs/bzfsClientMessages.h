@@ -16,6 +16,8 @@
 #include "global.h"
 #include "bzfs.h"
 
+void packWorldSettings ( void );
+
 class PlayerNetworkMessageHandler
 {
 public:

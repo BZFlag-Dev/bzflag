@@ -950,6 +950,14 @@ void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
   directMessage(handler, MsgWhatTimeIsIt, (char*)buf2-(char*)bufStart, bufStart);
 }
 
+void sendMsgTimeUpdate( int timeLimit )
+{
+  // start client's clock
+  void *msg = getDirectMessageBuffer();
+  nboPackInt(msg, timeLimit);
+  broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
+}
+
 void sendSetTeam ( int playerIndex, int _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -1018,39 +1026,38 @@ void PackVars::sendPackVars(const std::string &key)
 // net utils
 void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
 {
-	void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-	void *buf = nboPackUShort(bufStart, uint16_t(len));
-	nboPackUShort(buf, code);
+  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+  void *buf = nboPackUShort(bufStart, uint16_t(len));
+  nboPackUShort(buf, code);
 
-	// send message to everyone
-	int mask = NetHandler::clientBZFlag;
-	if (alsoTty)
-		mask |= NetHandler::clientBZAdmin;
-	pwriteBroadcast(bufStart, len + 4, mask);
+  // send message to everyone
+  int mask = NetHandler::clientBZFlag;
+  if (alsoTty)
+	  mask |= NetHandler::clientBZAdmin;
+  pwriteBroadcast(bufStart, len + 4, mask);
 
-	// record the packet
-	if (Record::enabled()) {
-		Record::addPacket(code, len, msg);
-	}
+  // record the packet
+  if (Record::enabled())
+    Record::addPacket(code, len, msg);
 }
 
 //utils
 bool isUDPAtackMessage ( uint16_t &code )
 {
-	switch (code)
-	{
-		case MsgShotBegin:
-		case MsgShotEnd:
-		case MsgPlayerUpdate:
-		case MsgPlayerUpdateSmall:
-		case MsgGMUpdate:
-		case MsgUDPLinkRequest:
-		case MsgUDPLinkEstablished:
-		case MsgHit:
-		case MsgWhatTimeIsIt:
-			return false;
-	}
-	return true;
+    switch (code)
+    {
+      case MsgShotBegin:
+      case MsgShotEnd:
+      case MsgPlayerUpdate:
+      case MsgPlayerUpdateSmall:
+      case MsgGMUpdate:
+      case MsgUDPLinkRequest:
+      case MsgUDPLinkEstablished:
+      case MsgHit:
+      case MsgWhatTimeIsIt:
+	      return false;
+    }
+    return true;
 }
 
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState )

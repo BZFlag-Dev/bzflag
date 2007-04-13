@@ -88,7 +88,6 @@ extern void captureFlag(int playerIndex, TeamColor teamCaptured);
 extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
 extern bool allowTeams ( void );
 extern void addBzfsCallback(const std::string& name, void* data);
-
 extern void pauseCountdown ( const char *pausedBy );
 extern void resumeCountdown ( const char *resumedBy );
 extern void resetTeamScores ( void );

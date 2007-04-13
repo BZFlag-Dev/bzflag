@@ -52,10 +52,10 @@ void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgGMUpdate ( int player, ShotUpdate *shot );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
+void sendMsgTimeUpdate ( int timeLimit );
 
-// messages sent to just network users ( like client query )
-int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 int sendTeamUpdateDirect(NetHandler *handler);
+int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
 // net message utils
 void  broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);

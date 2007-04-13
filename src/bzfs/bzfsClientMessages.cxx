@@ -20,6 +20,32 @@
 std::map<uint16_t,ClientNetworkMessageHandler*> clientNeworkHandlers;
 std::map<uint16_t,PlayerNetworkMessageHandler*> playerNeworkHandlers;
 
+
+void packWorldSettings ( void )
+{
+  if (!worldSettings)	// this stuff is static, so cache it once.
+    worldSettings = (char*) malloc(4 + WorldSettingsSize);
+
+  void* buffer = worldSettings;
+
+  // the header
+  buffer = nboPackUShort (buffer, WorldSettingsSize); // length
+  buffer = nboPackUShort (buffer, MsgGameSettings);   // code
+
+  // the settings
+  buffer = nboPackFloat  (buffer, BZDBCache::worldSize);
+  buffer = nboPackUShort (buffer, clOptions->gameType);
+  buffer = nboPackUShort (buffer, clOptions->gameOptions);
+  // An hack to fix a bug on the client
+  buffer = nboPackUShort (buffer, PlayerSlot);
+  buffer = nboPackUShort (buffer, clOptions->maxShots);
+  buffer = nboPackUShort (buffer, numFlags);
+  buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
+  buffer = nboPackUShort (buffer, clOptions->shakeWins);
+  buffer = nboPackUInt   (buffer, 0); // FIXME - used to be sync time
+}
+
+
 // messages that don't have players
 class WhatTimeIsItHandler : public ClientNetworkMessageHandler
 {
@@ -125,28 +151,8 @@ class WantSettingsHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
   {
-    if (!worldSettings)	// this stuff is static, so cache it once.
-    {
-      worldSettings = (char*) malloc(4 + WorldSettingsSize);
-      
-      void* buffer = worldSettings;
-
-      // the header
-      buffer = nboPackUShort (buffer, WorldSettingsSize); // length
-      buffer = nboPackUShort (buffer, MsgGameSettings);   // code
-
-      // the settings
-      buf = nboPackFloat  (buffer, BZDBCache::worldSize);
-      buf = nboPackUShort (buffer, clOptions->gameType);
-      buf = nboPackUShort (buffer, clOptions->gameOptions);
-      // An hack to fix a bug on the client
-      buffer = nboPackUShort (buffer, PlayerSlot);
-      buffer = nboPackUShort (buffer, clOptions->maxShots);
-      buffer = nboPackUShort (buffer, numFlags);
-      buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
-      buffer = nboPackUShort (buffer, clOptions->shakeWins);
-      buffer = nboPackUInt   (buffer, 0); // FIXME - used to be sync time
-    }
+    if (!worldSettings)
+      packWorldSettings();
 
     bz_pwrite(handler, worldSettings, 4 + WorldSettingsSize);
     return true;
