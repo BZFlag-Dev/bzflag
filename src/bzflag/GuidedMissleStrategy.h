@@ -46,8 +46,8 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		checkBuildings(const Ray& ray);
 
   private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
+    double		prevTime;
+    double		currentTime;
     std::vector<ShotPathSegment>	segments;
     int			renderTimes;
     float		azimuth;
@@ -56,7 +56,7 @@ class GuidedMissileStrategy : public ShotStrategy {
     BoltSceneNode*	ptSceneNode;
 
 		float	puffTime;
-		TimeKeeper lastPuff;
+		double	lastPuff;
     bool		needUpdate;
     PlayerId		lastTarget;
 };

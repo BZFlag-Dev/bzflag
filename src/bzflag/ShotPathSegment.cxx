@@ -19,8 +19,8 @@ ShotPathSegment::ShotPathSegment()
   // do nothing
 }
 
-ShotPathSegment::ShotPathSegment(const TimeKeeper& _start,
-				const TimeKeeper& _end, const Ray& _ray,
+ShotPathSegment::ShotPathSegment(const double _start,
+				const double _end, const Ray& _ray,
 				Reason _reason) :
 				start(_start),
 				end(_end),

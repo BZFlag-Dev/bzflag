@@ -1261,6 +1261,7 @@ bool			LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo;
+  firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
   firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());

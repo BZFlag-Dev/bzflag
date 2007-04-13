@@ -1756,8 +1756,8 @@ void			HUDRenderer::renderShots(const Player* target)
     const ShotPath* shot = target->getShot(i);
     factors[i] = 1.0f;
     if (shot) {
-      const TimeKeeper currentTime = shot->getCurrentTime();
-      const TimeKeeper startTime = shot->getStartTime();
+      const double currentTime = shot->getCurrentTime();
+      const double startTime = shot->getStartTime();
       const float reloadTime = shot->getReloadTime();
       factors[i] = float(1 - ((reloadTime - (currentTime - startTime)) / reloadTime));
       if (factors[i] > 1.0f) factors[i] = 1.0f;

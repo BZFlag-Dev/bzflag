@@ -169,12 +169,12 @@ void			SegmentedShotStrategy::update(float dt)
 }
 
 void			SegmentedShotStrategy::setCurrentTime(const
-						TimeKeeper& _currentTime)
+						double _currentTime)
 {
   currentTime = _currentTime;
 }
 
-const TimeKeeper&	SegmentedShotStrategy::getLastTime() const
+const double	SegmentedShotStrategy::getLastTime() const
 {
   return lastTime;
 }
@@ -370,20 +370,19 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
-  const ShotPath &shotPath  = getPath();
-  const float    *v	 = shotPath.getVelocity();
-  TimeKeeper      startTime = shotPath.getStartTime();
-  float timeLeft	    = shotPath.getLifetime();
-  float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
-  World *world = World::getWorld();
-  if (!world) {
+  const ShotPath  &shotPath  = getPath();
+  const float	  *v	 = shotPath.getVelocity();
+  double	  startTime = shotPath.getStartTime();
+  float		  timeLeft	    = shotPath.getLifetime();
+  float		  minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
+  World		  *world = World::getWorld();
+  
+  if (!world) 
     return; /* no world, no shots */
-  }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop && world->allShotsRicochet()) {
+  if (e == Stop && world->allShotsRicochet())
     e = Reflect;
-  }
 
   // prepare first segment
   float o[3], d[3];
@@ -436,12 +435,13 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     }
 
     // construct next shot segment and add it to list
-    TimeKeeper endTime(startTime);
-    if (t < 0.0f) {
+    double endTime(startTime);
+    
+    if (t < 0.0f) 
       endTime += Epsilon;
-    } else {
+     else 
       endTime += t;
-    }
+  
     ShotPathSegment segm(startTime, endTime, rs, reason);
     segments.push_back(segm);
     startTime = endTime;

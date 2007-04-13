@@ -17,11 +17,13 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
+#include "SyncClock.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "World.h"
 #include "playing.h"
+
 
 static float limitAngle(float a)
 {
@@ -193,6 +195,7 @@ void GuidedMissileStrategy::update(float dt)
     else
       elevation = limitAngle(elevation - dt * gmissileAng);
   }
+
   float newDirection[3];
   newDirection[0] = cosf(azimuth) * cosf(elevation);
   newDirection[1] = sinf(azimuth) * cosf(elevation);
@@ -200,8 +203,10 @@ void GuidedMissileStrategy::update(float dt)
   Ray ray = Ray(nextPos, newDirection);
 
   renderTimes++;
+  
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
-  if (currentTime.getSeconds() - lastPuff.getSeconds() > puffTime ) {
+  if (currentTime - lastPuff > puffTime )
+  {
     lastPuff = currentTime;
     addShotPuff(nextPos,azimuth,elevation);
   }
@@ -211,25 +216,29 @@ void GuidedMissileStrategy::update(float dt)
   ray.getPoint(dt * shotSpeed, nextPos);
 
   // see if we hit something
-  TimeKeeper segmentEndTime(currentTime);
-  /* if (!isRemote) */ {
-    if (nextPos[2] <= 0.0f) {
-      // hit ground -- expire it and shorten life of segment to time of impact
-      setExpiring();
-      float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
+  double segmentEndTime = currentTime;
+
+  if (nextPos[2] <= 0.0f)
+  {
+    // hit ground -- expire it and shorten life of segment to time of impact
+    setExpiring();
+    float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
+    segmentEndTime = prevTime;
+    segmentEndTime += t * (currentTime - prevTime);
+    ray.getPoint(t / shotSpeed, nextPos);
+    addShotExplosion(nextPos);
+  } 
+  else 
+  {
+    // see if we hit a building
+    const float t = checkBuildings(ray);
+    if (t >= 0.0f)
+    {
       segmentEndTime = prevTime;
-      segmentEndTime += t * (currentTime - prevTime);
-      ray.getPoint(t / shotSpeed, nextPos);
-      addShotExplosion(nextPos);
-    } else {
-      // see if we hit a building
-      const float t = checkBuildings(ray);
-      if (t >= 0.0f) {
-	segmentEndTime = prevTime;
-	segmentEndTime += t;
-      }
+      segmentEndTime += t;
     }
   }
+
 
   // throw out old segment and add new one
   ShotPathSegment nextSegment(prevTime, segmentEndTime, ray);
@@ -286,9 +295,9 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
 
   // GM is not active until activation time passes (for any tank)
   const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
-  if ((TimeKeeper::getTick() - getPath().getStartTime()) < activationTime) {
+
+  if ((syncedClock.GetServerSeconds() - getPath().getStartTime()) < activationTime)
     return minTime;
-  }
 
   // get tank radius
   float radius = tank->getRadius();

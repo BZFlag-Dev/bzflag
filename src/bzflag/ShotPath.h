@@ -52,8 +52,8 @@ class ShotPath {
 	FlagType*		getFlag() const;
     float		getLifetime() const;
     float		getReloadTime() const;
-    const TimeKeeper&	getStartTime() const;
-    const TimeKeeper&	getCurrentTime() const;
+    const double	getStartTime() const;
+    const double	getCurrentTime() const;
     const float*	getPosition() const;
     const float*	getVelocity() const;
 
@@ -86,8 +86,8 @@ class ShotPath {
     ShotStrategy*	strategy;		// strategy for moving shell
     FiringInfo		firingInfo;		// shell information
     float		reloadTime;		// time to reload
-    TimeKeeper		startTime;		// time of firing
-    TimeKeeper		currentTime;		// current time
+    double		startTime;		// time of firing
+    double		currentTime;		// current time
     bool		expiring;		// shot has almost terminated
     bool		expired;		// shot has terminated
 };
@@ -159,12 +159,12 @@ inline float		ShotPath::getReloadTime() const
   return reloadTime;
 }
 
-inline const TimeKeeper	&ShotPath::getStartTime() const
+inline const double ShotPath::getStartTime() const
 {
   return startTime;
 }
 
-inline const TimeKeeper	&ShotPath::getCurrentTime() const
+inline const double ShotPath::getCurrentTime() const
 {
   return currentTime;
 }

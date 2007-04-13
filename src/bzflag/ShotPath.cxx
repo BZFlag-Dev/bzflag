@@ -21,6 +21,7 @@
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"
 
+#include "SyncClock.h"
 
 //
 // ShotPath
@@ -29,53 +30,54 @@
 ShotPath::ShotPath(const FiringInfo& info) :
 				firingInfo(info),
 				reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME)),
-				startTime(TimeKeeper::getTick()),
-				currentTime(TimeKeeper::getTick()),
 				expiring(false),
 				expired(false)
 {
-	switch(info.shotType)
-	{
-		default:
-			strategy = new NormalShotStrategy(this);
-		break;
+  startTime = info.timeSent;
+  currentTime = syncedClock.GetServerSeconds();
 
-		case GMShot:
-			strategy = new GuidedMissileStrategy(this);
-			break;
+  switch(info.shotType)
+  {
+    default:
+      strategy = new NormalShotStrategy(this);
+    break;
 
-		case LaserShot:
-			 strategy = new LaserStrategy(this);
-			 break;
+    case GMShot:
+      strategy = new GuidedMissileStrategy(this);
+      break;
 
-		case ThiefShot:
-			 strategy = new ThiefStrategy(this);
-			 break;
+    case LaserShot:
+      strategy = new LaserStrategy(this);
+      break;
 
-		case SuperShot:
-			 strategy = new SuperBulletStrategy(this);
-			 break;
+    case ThiefShot:
+      strategy = new ThiefStrategy(this);
+      break;
 
-		case PhantomShot:
-			strategy = new PhantomBulletStrategy(this);
-			break;
+    case SuperShot:
+      strategy = new SuperBulletStrategy(this);
+      break;
 
-		case ShockWaveShot:
-			 strategy = new ShockWaveStrategy(this);
-			 break;
+    case PhantomShot:
+      strategy = new PhantomBulletStrategy(this);
+      break;
 
-		case RicoShot:
-			 strategy = new RicochetStrategy(this);
-			 break;
+    case ShockWaveShot:
+      strategy = new ShockWaveStrategy(this);
+      break;
 
-		case MachineGunShot:
-			strategy = new MachineGunStrategy(this);
-			break;
+    case RicoShot:
+      strategy = new RicochetStrategy(this);
+      break;
 
-		case RapidFireShot:
-			 strategy = new RapidFireStrategy(this);
-			 break;
-	}
+    case MachineGunShot:
+      strategy = new MachineGunStrategy(this);
+      break;
+
+    case RapidFireShot:
+      strategy = new RapidFireStrategy(this);
+      break;
+  }
 }
 
 ShotPath::~ShotPath()

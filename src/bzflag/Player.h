@@ -183,8 +183,8 @@ public:
 
   void		renderRadar() const;
 
-  void setZpos (float z);
-  float getMaxSpeed ( void ) const;
+  void		setZpos (float z);
+  float		getMaxSpeed ( void ) const;
 
 protected:
   void	  clearRemoteSounds();
@@ -194,12 +194,12 @@ protected:
 
 protected:
   // shot statistics
-  ShotStatistics	shotStatistics;
-  const Obstacle* lastObstacle; // last obstacle touched
+  ShotStatistics	  shotStatistics;
+  const Obstacle*	  lastObstacle; // last obstacle touched
 
-  std::vector<ShotPath*> shots;
-  float                  handicap;
-  TimeKeeper	jamTime;
+  std::vector<ShotPath*>  shots;
+  float			  handicap;
+  TimeKeeper		  jamTime;
 
 private:
   // return true if the shot had to be terminated or false if it

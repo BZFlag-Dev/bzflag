@@ -23,8 +23,8 @@ class ShotPathSegment {
     enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
 
 			ShotPathSegment();
-			ShotPathSegment(const TimeKeeper& start,
-					const TimeKeeper& end,
+			ShotPathSegment(const double start,
+					const double end,
 					const Ray& r,
 					Reason = Initial);
 			ShotPathSegment(const ShotPathSegment&);
@@ -32,8 +32,8 @@ class ShotPathSegment {
     ShotPathSegment&	operator=(const ShotPathSegment&);
 
   public:
-    TimeKeeper		start;
-    TimeKeeper		end;
+    double		start;
+    double		end;
     Ray			ray;
     Reason		reason;
     float		bbox[2][3];
