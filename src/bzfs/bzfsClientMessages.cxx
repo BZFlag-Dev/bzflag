@@ -45,6 +45,7 @@ bool isPlayerMessage ( uint16_t &code )
     case MsgCollide:
     case MsgGMUpdate:
     case MsgShotBegin:
+    case MsgCapBits:
       return true;
   }
   return false;
@@ -62,87 +63,6 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
     return GameKeeper::Player::getPlayerByIndex(playerID);
   }
   return NULL;
-}
-
-
-void handleWhatTimeMessage( NetHandler *handler, void* buf, uint16_t len )
-{
-	// the client wants to know what time we think it is.
-	// he may have sent us a tag to ID the ping with ( for packet loss )
-	// so we send that back to them with the time.
-	// this is so the client can try and get a decent guess
-	// at what our time is, and timestamp stuff with a real server
-	// time, so everyone can go and compensate for some lag.
-	unsigned char tag = 0;
-	if (len >= 1)
-		buf = nboUnpackUByte(buf,tag);
-
-	float time = (float)TimeKeeper::getCurrent().getSeconds();
-
-	logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
-
-	/* Pack a message with the list of missing flags */
-	void *bufStart;
-	void *buf2 = bufStart = getDirectMessageBuffer();
-	buf2 = nboPackUByte(bufStart,tag);
-	buf2 = nboPackFloat(buf2,time);
-
-	directMessage(handler, MsgWhatTimeIsIt, (char*)buf2-(char*)bufStart, bufStart);
-}
-
-void handeCapBits ( void* buf, uint16_t len, GameKeeper::Player *playerData )
-{
-	if (!playerData)
-		return;
-
-	unsigned char bits[2] = {0};
-
-	if (len >= 1)
-		buf = nboUnpackUByte(buf,bits[0]);
-	if (len >= 2)
-		buf = nboUnpackUByte(buf,bits[1]);
-
-	playerData->caps.canDownloadResources = bits[0] != 0;
-	playerData->caps.canPlayRemoteSounds = bits[1] != 0;
-}
-
-void handleClientEnter(void **buf, GameKeeper::Player *playerData)
-{
-	if (!playerData)
-		return;
-
-	uint16_t rejectCode;
-	char     rejectMsg[MessageLen];
-
-	if (!playerData->player.unpackEnter(*buf, rejectCode, rejectMsg))
-	{
-		rejectPlayer(playerData->getIndex(), rejectCode, rejectMsg);
-		return;
-	}
-
-	playerData->accessInfo.setName(playerData->player.getCallSign());
-	std::string timeStamp = TimeKeeper::timestamp();
-	std::string playerIP = "local.player";
-	if ( playerData->netHandler )
-		playerIP = playerData->netHandler->getTargetIP();
-
-	logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
-		playerData->player.getCallSign(),
-		playerData->getIndex(), playerIP.c_str(), timeStamp.c_str(),
-		playerData->player.getToken());
-
-	if (!clOptions->publicizeServer)
-		playerData->_LSAState = GameKeeper::Player::notRequired;
-	else if (strlen(playerData->player.getCallSign()))
-		playerData->_LSAState = GameKeeper::Player::required;
-
-	dontWait = true;
-}
-
-void handleClientExit ( GameKeeper::Player *playerData )
-{
-	// data: <none>
-	removePlayer(playerData->getIndex(), "left", false);
 }
 
 void handleSetVar ( NetHandler *netHandler )
@@ -814,6 +734,7 @@ void handleCollide ( GameKeeper::Player *playerData, void* buffer)
   }
 }
 
+// messages that don't have players
 class WhatTimeIsItHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -839,9 +760,105 @@ public:
   }
 };
 
+// messages that have players
+
+class PlayerFirstHandler : public PlayerNetworkMessageHandler
+{
+public:
+  virtual void *unpackPlayer ( void * buf, int len )
+  {
+    player = NULL;
+
+    if ( len >= 1 ) // byte * 3
+    {
+      unsigned char temp = 0;
+      buf  = nboUnpackUByte(buf, temp);
+      player = GameKeeper::Player::getPlayerByIndex(temp);
+
+      return buf;
+    }
+    return buf;
+  }
+};
+
+class CapBitsHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+   
+    unsigned char temp = 0;
+
+    buf = nboUnpackUByte(buf,temp);
+    player->caps.canDownloadResources = temp != 0;
+
+    buf = nboUnpackUByte(buf,temp);
+    player->caps.canPlayRemoteSounds = temp != 0;
+
+    return true;
+  }
+};
+
+class EnterHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 247)
+      return false;
+
+    uint16_t rejectCode;
+    char     rejectMsg[MessageLen];
+
+    if (!player->player.unpackEnter(buf, rejectCode, rejectMsg))
+    {
+      rejectPlayer(player->getIndex(), rejectCode, rejectMsg);
+      return true;
+    }
+
+    player->accessInfo.setName(player->player.getCallSign());
+    std::string timeStamp = TimeKeeper::timestamp();
+    std::string playerIP = "local.player";
+    if ( player->netHandler )
+      playerIP = player->netHandler->getTargetIP();
+
+    logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+      player->player.getCallSign(),
+      player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
+      player->player.getToken());
+
+    if (!clOptions->publicizeServer)
+      player->_LSAState = GameKeeper::Player::notRequired;
+    else if (strlen(player->player.getCallSign()))
+      player->_LSAState = GameKeeper::Player::required;
+
+    dontWait = true;
+
+    return true;
+  }
+};
+
+class ExitHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+    removePlayer(player->getIndex(), "left", false);
+    return true;
+  }
+};
+
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
+ 
+  playerNeworkHandlers[MsgCapBits] = new CapBitsHandler;
+  playerNeworkHandlers[MsgEnter] = new EnterHandler;
+  playerNeworkHandlers[MsgExit] = new ExitHandler;
 }
 
 void cleanupDefaultHandlers ( void )

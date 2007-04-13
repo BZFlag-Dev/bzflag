@@ -16,7 +16,7 @@
 // implementation-specific system headers
 #include <iostream>
 #include <algorithm>
-#include <assert.h>f
+#include <assert.h>
 #include <errno.h>
 #include <vector>
 #include <string>
@@ -3009,8 +3009,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator itr = playerNeworkHandlers.find(code);
     if(itr != playerNeworkHandlers.end())
     {
-      if (itr->second->unpack(code,buf,len)> 0 && itr->second->getPlayer()->netHandler == handler)
-	handled = itr->second->execute();
+      buf = itr->second->unpackPlayer(buf,len);
+      if (itr->second->getPlayer()->netHandler == handler)
+	handled = itr->second->execute(code,buf,len);
     }
   }
   else
@@ -3030,22 +3031,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code)
   {
-    case MsgWhatTimeIsIt:
-      handleWhatTimeMessage(handler,buf,len);
-      break;
-
-    case MsgCapBits:
-      handeCapBits(buf,len,playerData);
-      break;
-
-    case MsgEnter:// player joining
-      handleClientEnter(&buf,playerData);
-      break;
-
-    case MsgExit:// player closing connection
-      handleClientExit(playerData);
-      break;
-
     case MsgSetVar:
       handleSetVar(handler);
       break;

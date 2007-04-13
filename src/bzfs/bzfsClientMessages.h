@@ -51,8 +51,8 @@ class PlayerNetworkMessageHandler
 public:
   virtual ~PlayerNetworkMessageHandler(){};
   
-  virtual int unpack ( uint16_t &code, void * buf, int len ) = 0;
-  virtual bool execute ( void ) = 0;
+  virtual void *unpackPlayer ( void * buf, int len ) = 0;
+  virtual bool execute ( uint16_t &code, void * buf, int len ) = 0;
   
   GameKeeper::Player *getPlayer(void) {return player;}
 
