@@ -1530,13 +1530,6 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
     firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
     firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
 
-    // plot the position forward based on the time
-    float delta = syncedClock.GetServerSeconds() - firingInfo.timeSent;
-
-    firingInfo.shot.pos[0] +=  firingInfo.shot.vel[0] * delta;
-    firingInfo.shot.pos[1] +=  firingInfo.shot.vel[1] * delta;
-    firingInfo.shot.pos[2] +=  firingInfo.shot.vel[2] * delta;
-
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.
     // keeping shots moving horizontally makes the game more playable.

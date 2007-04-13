@@ -104,7 +104,8 @@ void			ShotPath::addShot(SceneDatabase* scene,
 
 void			ShotPath::radarRender() const
 {
-  if (!isExpired()) strategy->radarRender();
+  if (!isExpired())
+    strategy->radarRender();
 }
 
 void			ShotPath::updateShot(float dt)
@@ -113,9 +114,12 @@ void			ShotPath::updateShot(float dt)
   currentTime += dt;
 
   // update shot
-  if (!expired) {
-    if (expiring) setExpired();
-    else getStrategy()->update(dt);
+  if (!expired)
+  {
+    if (expiring) 
+      setExpired();
+    else
+      getStrategy()->update(dt);
   }
 }
 

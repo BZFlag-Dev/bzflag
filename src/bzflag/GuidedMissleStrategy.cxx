@@ -121,8 +121,8 @@ void GuidedMissileStrategy::update(float dt)
 
   // if shot life ran out then send notification and expire shot.
   // only local shots are expired.
-  if (!isRemote &&
-      currentTime - getPath().getStartTime() >= getPath().getLifetime()) {
+  if (!isRemote && currentTime - getPath().getStartTime() >= getPath().getLifetime()) 
+  {
     /* NOTE -- comment out to not explode when shot expires */
     addShotExplosion(nextPos);
     setExpiring();
@@ -131,36 +131,46 @@ void GuidedMissileStrategy::update(float dt)
 
   // get target
   const Player* target = NULL;
-  if (isRemote) {
+  if (isRemote) 
+  {
     if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
-  } else {
+  } 
+  else 
+  {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank)
       target = myTank->getTarget();
 
     // see if the target changed
-    if (target) {
-      if (lastTarget != target->getId()) {
+    if (target)
+    {
+      if (lastTarget != target->getId())
+      {
 	needUpdate = true;
 	lastTarget = target->getId();
       }
-    } else {
-      if (lastTarget != NoPlayer) {
+    }
+    else
+    {
+      if (lastTarget != NoPlayer)
+      {
 	needUpdate = true;
 	lastTarget = NoPlayer;
       }
     }
   }
 
-  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
+  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) 
+  {
     target = NULL;
     lastTarget = NoPlayer;
     needUpdate = true;
   }
 
   // compute next segment's ray
-  if (target) {
+  if (target)
+  {
     // turn towards target
     // find desired direction
     const float* targetPos = target->getPosition();
@@ -172,8 +182,7 @@ void GuidedMissileStrategy::update(float dt)
 
     // compute desired angles
     float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
-    float newElevation = atan2f(desiredDir[2],
-				hypotf(desiredDir[1], desiredDir[0]));
+    float newElevation = atan2f(desiredDir[2], hypotf(desiredDir[1], desiredDir[0]));
 
     float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
 
