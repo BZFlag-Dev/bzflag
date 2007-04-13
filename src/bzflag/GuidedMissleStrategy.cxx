@@ -17,7 +17,6 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
-#include "SyncClock.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -305,7 +304,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
   // GM is not active until activation time passes (for any tank)
   const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
 
-  if ((syncedClock.GetServerSeconds() - getPath().getStartTime()) < activationTime)
+  if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime)
     return minTime;
 
   // get tank radius
