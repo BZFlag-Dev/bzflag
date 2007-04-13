@@ -207,7 +207,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
 
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
-  BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", worldSize));
+  BZDB.setFloat(StateDatabase::BZDB_WORLDSIZE, worldSize);
   buf = nboUnpackUShort(buf, gameType);
   setGameType(short(gameType));
   buf = nboUnpackUShort(buf, gameOptions);
@@ -223,8 +223,6 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   setShakeTimeout(0.1f * float(shakeTimeout));
   buf = nboUnpackUShort(buf, shakeWins);
   setShakeWins(shakeWins);
-  uint32_t UsedToBeSyncTime; // FIXME
-  buf = nboUnpackUInt(buf, UsedToBeSyncTime);
 
   return buf;
 }

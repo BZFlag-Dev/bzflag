@@ -42,7 +42,6 @@ void packWorldSettings ( void )
   buffer = nboPackUShort (buffer, numFlags);
   buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
   buffer = nboPackUShort (buffer, clOptions->shakeWins);
-  buffer = nboPackUInt   (buffer, 0); // FIXME - used to be sync time
 }
 
 
