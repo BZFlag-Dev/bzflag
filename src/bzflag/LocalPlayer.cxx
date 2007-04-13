@@ -1267,7 +1267,7 @@ bool			LocalPlayer::fireShot()
   firingInfo.shot.id     = uint16_t(i + getSalt());
   prepareShotInfo(firingInfo);
   // make shot and put it in the table
-  addShot(new LocalShotPath(firingInfo), firingInfo);
+  addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
   firingInfo.timeSent = (float)syncedClock.GetServerSeconds();

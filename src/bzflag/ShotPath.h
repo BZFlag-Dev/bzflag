@@ -72,7 +72,7 @@ class ShotPath {
   virtual void          update(float) {};
 
   protected:
-			ShotPath(const FiringInfo&);
+			ShotPath(const FiringInfo&, double);
     void		updateShot(float dt);
     const ShotStrategy*	getStrategy() const;
     ShotStrategy*	getStrategy();
@@ -94,7 +94,7 @@ class ShotPath {
 
 class LocalShotPath : public ShotPath {
   public:
-			LocalShotPath(const FiringInfo&);
+			LocalShotPath(const FiringInfo&,double);
 			~LocalShotPath();
 
     void		update(float dt);
@@ -102,7 +102,7 @@ class LocalShotPath : public ShotPath {
 
 class RemoteShotPath : public ShotPath {
   public:
-			RemoteShotPath(const FiringInfo&);
+			RemoteShotPath(const FiringInfo&,double);
 			~RemoteShotPath();
 
     void		update(float dt);

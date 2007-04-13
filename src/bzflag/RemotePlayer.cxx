@@ -15,6 +15,7 @@
 
 /* common implementation headers */
 #include "World.h"
+#include "SyncClock.h"
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
@@ -40,7 +41,7 @@ RemotePlayer::~RemotePlayer()
 void			RemotePlayer::addShot(FiringInfo& info)
 {
   prepareShotInfo(info);
-  Player::addShot(new RemoteShotPath(info), info);
+  Player::addShot(new RemoteShotPath(info,syncedClock.GetServerSeconds()), info);
 }
 
 bool			RemotePlayer::doEndShot(

@@ -21,20 +21,18 @@
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"
 
-#include "SyncClock.h"
-
 //
 // ShotPath
 //
 
-ShotPath::ShotPath(const FiringInfo& info) :
+ShotPath::ShotPath(const FiringInfo& info, double now) :
 				firingInfo(info),
 				reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME)),
 				expiring(false),
 				expired(false)
 {
   startTime = info.timeSent;
-  currentTime = syncedClock.GetServerSeconds();
+  currentTime = now;
 
   switch(info.shotType)
   {
@@ -163,8 +161,8 @@ void			ShotPath::boostReloadTime(float dt)
 // LocalShotPath
 //
 
-LocalShotPath::LocalShotPath(const FiringInfo& info) :
-				ShotPath(info)
+LocalShotPath::LocalShotPath(const FiringInfo& info, double now) :
+				ShotPath(info,now)
 {
   // do nothing
 }
@@ -187,8 +185,8 @@ void			LocalShotPath::update(float dt)
 // RemoteShotPath
 //
 
-RemoteShotPath::RemoteShotPath(const FiringInfo& info) :
-				ShotPath(info)
+RemoteShotPath::RemoteShotPath(const FiringInfo& info,double now) :
+				ShotPath(info,now)
 {
   // do nothing
 }
