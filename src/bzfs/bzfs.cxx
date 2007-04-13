@@ -2927,19 +2927,19 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     // player messages all start with the player ID first
     // so get it, and verify that the sender IS the player.
     // TODO, punish the person who owns handler, as they are up to no good
-    std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator itr = playerNeworkHandlers.find(code);
-    if(itr != playerNeworkHandlers.end())
+    std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNeworkHandlers.find(code);
+    if(playerItr != playerNeworkHandlers.end())
     {
-      buf = itr->second->unpackPlayer(buf,len);
-      if (itr->second->getPlayer()->netHandler == handler)
-	handled = itr->second->execute(code,buf,len);
+      buf = playerItr->second->unpackPlayer(buf,len);
+      if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
+	handled = playerItr->second->execute(code,buf,len);
     }
   }
   else	// it's a pre player connection
   {
-    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator itr = clientNeworkHandlers.find(code);
-    if(itr != clientNeworkHandlers.end())
-	handled = itr->second->execute(handler,code,buf,len);
+    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNeworkHandlers.find(code);
+    if(clientItr != clientNeworkHandlers.end())
+	handled = clientItr->second->execute(handler,code,buf,len);
   }
 
   if (handled)	// somone got it, don't need to do the old way
