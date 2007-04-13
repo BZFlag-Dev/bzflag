@@ -93,7 +93,7 @@ static Address serverAddress;
 // well known service socket
 static int wksSocket;
 bool handlePings = true;
-static PingPacket pingReply;
+PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
 // team info
@@ -134,13 +134,13 @@ static int listServerLinksCount = 0;
 // FIXME: should be static, but needed by SpawnPosition
 WorldInfo *world = NULL;
 // FIXME: should be static, but needed by RecordReplay
-char *worldDatabase = NULL;
-uint32_t worldDatabaseSize = 0;
-char worldSettings[4 + WorldSettingsSize];
-float pluginWorldSize = -1;
-float pluginWorldHeight = -1;
-float	pluginMaxWait = 1000.0;
-Filter   filter;
+char	  *worldDatabase = NULL;
+uint32_t  worldDatabaseSize = 0;
+char	  *worldSettings = NULL;
+float	  pluginWorldSize = -1;
+float	  pluginWorldHeight = -1;
+float	  pluginMaxWait = 1000.0;
+Filter	  filter;
 
 VotingArbiter *votingArbiter = NULL;
 
@@ -2218,94 +2218,6 @@ bool areFoes(TeamColor team1, TeamColor team2)
   return team1!=team2 || (team1==RogueTeam);
 }
 
-static void makeGameSettings()
-{
-  void* buf = worldSettings;
-
-  // the header
-  buf = nboPackUShort (buf, WorldSettingsSize); // length
-  buf = nboPackUShort (buf, MsgGameSettings);   // code
-
-  // the settings
-  buf = nboPackFloat  (buf, BZDBCache::worldSize);
-  buf = nboPackUShort (buf, clOptions->gameType);
-  buf = nboPackUShort (buf, clOptions->gameOptions);
-  // An hack to fix a bug on the client
-  buf = nboPackUShort (buf, PlayerSlot);
-  buf = nboPackUShort (buf, clOptions->maxShots);
-  buf = nboPackUShort (buf, numFlags);
-  buf = nboPackUShort (buf, clOptions->shakeTimeout);
-  buf = nboPackUShort (buf, clOptions->shakeWins);
-  buf = nboPackUInt   (buf, 0); // FIXME - used to be sync time
-
-  return;
-}
-
-
-static void sendQueryGame(NetHandler *handler)
-{
-  // much like a ping packet but leave out useless stuff (like
-  // the server address, which must already be known, and the
-  // server version, which was already sent).
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, pingReply.gameType);
-  buf = nboPackUShort(buf, pingReply.gameOptions);
-  buf = nboPackUShort(buf, pingReply.maxPlayers);
-  buf = nboPackUShort(buf, pingReply.maxShots);
-  buf = nboPackUShort(buf, team[0].team.size);
-  buf = nboPackUShort(buf, team[1].team.size);
-  buf = nboPackUShort(buf, team[2].team.size);
-  buf = nboPackUShort(buf, team[3].team.size);
-  buf = nboPackUShort(buf, team[4].team.size);
-  buf = nboPackUShort(buf, team[5].team.size);
-  buf = nboPackUShort(buf, pingReply.rogueMax);
-  buf = nboPackUShort(buf, pingReply.redMax);
-  buf = nboPackUShort(buf, pingReply.greenMax);
-  buf = nboPackUShort(buf, pingReply.blueMax);
-  buf = nboPackUShort(buf, pingReply.purpleMax);
-  buf = nboPackUShort(buf, pingReply.observerMax);
-  buf = nboPackUShort(buf, pingReply.shakeWins);
-  // 1/10ths of second
-  buf = nboPackUShort(buf, pingReply.shakeTimeout);
-  buf = nboPackUShort(buf, pingReply.maxPlayerScore);
-  buf = nboPackUShort(buf, pingReply.maxTeamScore);
-  buf = nboPackUShort(buf, pingReply.maxTime);
-  buf = nboPackUShort(buf, (uint16_t)clOptions->timeElapsed);
-
-  // send it
-  directMessage(handler, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void sendQueryPlayers(NetHandler *handler)
-{
-  int result;
-  // count the number of active players
-  int numPlayers = GameKeeper::Player::count();
-
-  // first send number of teams and players being sent
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, NumTeams);
-  buf = nboPackUShort(buf, numPlayers);
-  result = directMessage(handler, MsgQueryPlayers,
-			 (char*)buf-(char*)bufStart, bufStart);
-  if (result < 0)
-    return;
-
-  // now send the teams and players
-  result = sendTeamUpdateDirect(handler);
-  if (result < 0)
-    return;
-  GameKeeper::Player *otherData;
-  for (int i = 0; i < curMaxPlayers; i++) {
-    otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!otherData)
-      continue;
-    result = sendPlayerUpdateDirect(handler, otherData);
-    if (result < 0)
-      return;
-  }
-}
-
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2995,17 +2907,26 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     return;
   }
 
+  if (!handler)	// WTF?
+    return;
+
+  // pull off the BZFS code and size that packs all BZFS fomat comunication
   uint16_t len, code;
   void *buf = (char *)rawbuf;
   getGeneralMessageInfo(&buf,code,len);
 
+  // make sure it's not an attack
   if (udp && isUDPAtackMessage(code))
     logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
   GameKeeper::Player *playerData = NULL;
 
+  // see if we have any registered handlers for this message type
   bool handled = false;
   if (isPlayerMessage(code))
   {
+    // player messages all start with the player ID first
+    // so get it, and verify that the sender IS the player.
+    // TODO, punish the person who owns handler, as they are up to no good
     std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator itr = playerNeworkHandlers.find(code);
     if(itr != playerNeworkHandlers.end())
     {
@@ -3014,14 +2935,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 	handled = itr->second->execute(code,buf,len);
     }
   }
-  else
+  else	// it's a pre player connection
   {
     std::map<uint16_t,ClientNetworkMessageHandler*>::iterator itr = clientNeworkHandlers.find(code);
     if(itr != clientNeworkHandlers.end())
 	handled = itr->second->execute(handler,code,buf,len);
   }
 
-  if (handled)
+  if (handled)	// somone got it, don't need to do the old way
     return;
 
   int playerID = 0;
@@ -3031,38 +2952,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code)
   {
-    case MsgSetVar:
-      handleSetVar(handler);
-      break;
-
-    case MsgNegotiateFlags:
-      handleFlagNegotiation(handler,&buf,len);
-      break;
-
-    case MsgGetWorld:// player wants more of world database
-      handleWorldChunk(handler,buf);
-      break;
-
-    case MsgWantSettings:
-      handleWorldSettings(handler);
-      break;
-
-    case MsgWantWHash:
-      handleWorldHash(handler);
-      break;
-
-    case MsgQueryGame:
-      sendQueryGame(handler);
-      break;
-
-    case MsgQueryPlayers:
-      sendQueryPlayers(handler);
-      break;
-
-    case MsgAlive:// player is coming alive
-      handleGameJoinRequest(playerData);
-      break;
-
     case MsgKilled: // player got killed
       handlePlayerKilled(playerData,buf);
       break;
@@ -3945,9 +3834,6 @@ static bool initServer ( int argc, char **argv )
 
   // adjust speed and height checking as required
   adjustTolerances();
-
-  // setup the game settings
-  makeGameSettings();
 
   // no original world weapons in replay mode
   if (Replay::enabled()) 
@@ -5143,6 +5029,9 @@ static void cleanupServer ( void )
   Record::kill();
   Replay::kill();
   Flags::kill();
+
+  if (worldSettings)
+    free(worldSettings);
 
 #if defined(_WIN32)
   WSACleanup();

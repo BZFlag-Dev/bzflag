@@ -65,88 +65,6 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
   return NULL;
 }
 
-void handleSetVar ( NetHandler *netHandler )
-{
-	if (!netHandler)
-		return;
-
-	void *bufStart = getDirectMessageBuffer();
-	PackVars pv(bufStart, netHandler);
-	BZDB.iterate(PackVars::packIt, &pv);
-}
-
-void handleFlagNegotiation( NetHandler *handler, void **buf, int len )
-{
-	if (!handler)
-		return;
-
-	void *bufStart;
-	FlagTypeMap::iterator it;
-	FlagSet::iterator m_it;
-	FlagOptionMap hasFlag;
-	FlagSet missingFlags;
-	unsigned short numClientFlags = len/2;
-
-	/* Unpack incoming message containing the list of flags our client supports */
-	for (int i = 0; i < numClientFlags; i++)
-	{
-		FlagType *fDesc;
-		*buf = FlagType::unpack(*buf, fDesc);
-		if (fDesc != Flags::Null)
-			hasFlag[fDesc] = true;
-	}
-
-	/* Compare them to the flags this game might need, generating a list of missing flags */
-	for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
-	{
-		if (!hasFlag[it->second])
-		{
-			if (clOptions->flagCount[it->second] > 0)
-				missingFlags.insert(it->second);
-			if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
-				missingFlags.insert(it->second);
-		}
-	}
-
-	/* Pack a message with the list of missing flags */
-	void *buf2 = bufStart = getDirectMessageBuffer();
-	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
-	{
-		if ((*m_it) != Flags::Null)
-			buf2 = (*m_it)->pack(buf2);
-	}
-	directMessage(handler, MsgNegotiateFlags, (char*)buf2-(char*)bufStart, bufStart);
-}
-
-void handleWorldChunk( NetHandler *handler, void *buf )
-{
-	uint32_t ptr;	// data: count (bytes read so far)
-	buf = nboUnpackUInt(buf, ptr);
-
-	sendWorldChunk(handler, ptr);
-}
-
-void handleWorldSettings( NetHandler *handler )
-{
-	if(handler)
-		bz_pwrite(handler, worldSettings, 4 + WorldSettingsSize);
-}
-
-void handleWorldHash( NetHandler *handler )
-{
-	if(!handler)
-		return;
-
-	void *obuf, *obufStart = getDirectMessageBuffer();
-	if (clOptions->cacheURL.size() > 0)
-	{
-		obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
-		directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
-	}
-	obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
-	directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
-}
-
 void handlePlayerKilled ( GameKeeper::Player *playerData, void* buffer )
 {
 	if (!playerData || playerData->player.isObserver())
@@ -181,28 +99,6 @@ void handlePlayerKilled ( GameKeeper::Player *playerData, void* buffer )
 	
 	// stop pausing attempts as you can not pause when being dead
 	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-}
-
-void handleGameJoinRequest( GameKeeper::Player *playerData )
-{
-	// player is on the waiting list
-	char buffer[MessageLen];
-	float waitTime = rejoinList.waitTime(playerData->getIndex());
-	if (waitTime > 0.0f)
-	{
-		snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
-		sendMessage(ServerPlayer, playerData->getIndex(), buffer);
-
-		// Make them pay dearly for trying to rejoin quickly
-		playerAlive(playerData->getIndex());
-		playerKilled(playerData->getIndex(), playerData->getIndex(), GotKilledMsg, -1, Flags::Null, -1);
-		return;
-	}
-
-	// player moved before countdown started
-	if (clOptions->timeLimit>0.0f && !countdownActive)
-		playerData->player.setPlayedEarly();
-	playerAlive(playerData->getIndex());
 }
 
 void handlePlayerUpdate(void **buf, uint16_t &code,
@@ -738,7 +634,6 @@ void handleCollide ( GameKeeper::Player *playerData, void* buffer)
 class WhatTimeIsItHandler : public ClientNetworkMessageHandler
 {
 public:
-
   virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
   {
     // the client wants to know what time we think it is.
@@ -759,6 +654,206 @@ public:
     return true;
   }
 };
+
+class SetVarHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    void *bufStart = getDirectMessageBuffer();
+    PackVars pv(bufStart, handler);
+    BZDB.iterate(PackVars::packIt, &pv);
+
+    return true;
+  }
+};
+
+class NegotiateFlagHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    void *bufStart;
+    FlagTypeMap::iterator it;
+    FlagSet::iterator m_it;
+    FlagOptionMap hasFlag;
+    FlagSet missingFlags;
+    unsigned short numClientFlags = len/2;
+
+    /* Unpack incoming message containing the list of flags our client supports */
+    for (int i = 0; i < numClientFlags; i++)
+    {
+      FlagType *fDesc;
+      buf = FlagType::unpack(buf, fDesc);
+      if (fDesc != Flags::Null)
+	hasFlag[fDesc] = true;
+    }
+
+    /* Compare them to the flags this game might need, generating a list of missing flags */
+    for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
+    {
+      if (!hasFlag[it->second])
+      {
+	if (clOptions->flagCount[it->second] > 0)
+	  missingFlags.insert(it->second);
+	if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+	  missingFlags.insert(it->second);
+      }
+    }
+
+    /* Pack a message with the list of missing flags */
+    void *buf2 = bufStart = getDirectMessageBuffer();
+    for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
+    {
+      if ((*m_it) != Flags::Null)
+	buf2 = (*m_it)->pack(buf2);
+    }
+    directMessage(handler, MsgNegotiateFlags, (char*)buf2-(char*)bufStart, bufStart);
+    return true;
+  }
+};
+
+class GetWorldHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    if (len < 4)
+      return false;
+
+    uint32_t ptr;	// data: count (bytes read so far)
+    buf = nboUnpackUInt(buf, ptr);
+
+    sendWorldChunk(handler, ptr);
+
+    return true;
+  }
+};
+
+class WantSettingsHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    if (!worldSettings)	// this stuff is static, so cache it once.
+    {
+      worldSettings = (char*) malloc(4 + WorldSettingsSize);
+      
+      void* buffer = worldSettings;
+
+      // the header
+      buffer = nboPackUShort (buffer, WorldSettingsSize); // length
+      buffer = nboPackUShort (buffer, MsgGameSettings);   // code
+
+      // the settings
+      buf = nboPackFloat  (buffer, BZDBCache::worldSize);
+      buf = nboPackUShort (buffer, clOptions->gameType);
+      buf = nboPackUShort (buffer, clOptions->gameOptions);
+      // An hack to fix a bug on the client
+      buffer = nboPackUShort (buffer, PlayerSlot);
+      buffer = nboPackUShort (buffer, clOptions->maxShots);
+      buffer = nboPackUShort (buffer, numFlags);
+      buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
+      buffer = nboPackUShort (buffer, clOptions->shakeWins);
+      buffer = nboPackUInt   (buffer, 0); // FIXME - used to be sync time
+    }
+
+    bz_pwrite(handler, worldSettings, 4 + WorldSettingsSize);
+    return true;
+  }
+};
+
+class WantWHashHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    void *obuf, *obufStart = getDirectMessageBuffer();
+    if (clOptions->cacheURL.size() > 0)
+    {
+      obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
+      directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
+    }
+    obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
+    directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
+    return true;
+  }
+};
+
+class QueryGameHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    // much like a ping packet but leave out useless stuff (like
+    // the server address, which must already be known, and the
+    // server version, which was already sent).
+    void *buffer, *bufStart = getDirectMessageBuffer();
+    buffer = nboPackUShort(bufStart, pingReply.gameType);
+    buffer = nboPackUShort(buffer, pingReply.gameOptions);
+    buffer = nboPackUShort(buffer, pingReply.maxPlayers);
+    buffer = nboPackUShort(buffer, pingReply.maxShots);
+    buffer = nboPackUShort(buffer, team[0].team.size);
+    buffer = nboPackUShort(buffer, team[1].team.size);
+    buffer = nboPackUShort(buffer, team[2].team.size);
+    buffer = nboPackUShort(buffer, team[3].team.size);
+    buffer = nboPackUShort(buffer, team[4].team.size);
+    buffer = nboPackUShort(buffer, team[5].team.size);
+    buffer = nboPackUShort(buffer, pingReply.rogueMax);
+    buffer = nboPackUShort(buffer, pingReply.redMax);
+    buffer = nboPackUShort(buffer, pingReply.greenMax);
+    buffer = nboPackUShort(buffer, pingReply.blueMax);
+    buffer = nboPackUShort(buffer, pingReply.purpleMax);
+    buffer = nboPackUShort(buffer, pingReply.observerMax);
+    buffer = nboPackUShort(buffer, pingReply.shakeWins);
+    // 1/10ths of second
+    buffer = nboPackUShort(buffer, pingReply.shakeTimeout);
+    buffer = nboPackUShort(buffer, pingReply.maxPlayerScore);
+    buffer = nboPackUShort(buffer, pingReply.maxTeamScore);
+    buffer = nboPackUShort(buffer, pingReply.maxTime);
+    buffer = nboPackUShort(buffer, (uint16_t)clOptions->timeElapsed);
+
+    // send it
+    directMessage(handler, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
+
+    return true;
+  }
+};
+
+class QueryPlayersHandler : public ClientNetworkMessageHandler
+{
+public:
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    // count the number of active players
+    int numPlayers = GameKeeper::Player::count();
+
+    // first send number of teams and players being sent
+    void *buffer, *bufStart = getDirectMessageBuffer();
+    buffer = nboPackUShort(bufStart, NumTeams);
+    buffer = nboPackUShort(buffer, numPlayers);
+    
+    if (directMessage(handler, MsgQueryPlayers,(char*)buffer-(char*)bufStart, bufStart) < 0)
+      return true;
+   
+    if (sendTeamUpdateDirect(handler) < 0)
+      return true;
+    
+    GameKeeper::Player *otherData;
+    for (int i = 0; i < curMaxPlayers; i++) 
+    {
+      otherData = GameKeeper::Player::getPlayerByIndex(i);
+      
+      if (!otherData)
+	continue;
+           
+      if (sendPlayerUpdateDirect(handler, otherData) < 0)
+	return true;
+    }
+    return true;
+  }
+};
+
 
 // messages that have players
 
@@ -852,13 +947,52 @@ public:
   }
 };
 
+class AliveHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+    
+    // player is on the waiting list
+    char buffer[MessageLen];
+    float waitTime = rejoinList.waitTime(player->getIndex());
+   
+    if (waitTime > 0.0f)
+    {
+      snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
+      sendMessage(ServerPlayer, player->getIndex(), buffer);
+
+      // Make them pay dearly for trying to rejoin quickly
+      playerAlive(player->getIndex());
+      playerKilled(player->getIndex(), player->getIndex(), GotKilledMsg, -1, Flags::Null, -1);
+      return true;
+    }
+
+    // player moved before countdown started
+    if (clOptions->timeLimit>0.0f && !countdownActive)
+      player->player.setPlayedEarly();
+   
+    playerAlive(player->getIndex()); 
+    return true;
+  }
+};
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
- 
+  clientNeworkHandlers[MsgSetVar] = new SetVarHandler;
+  clientNeworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;
+  clientNeworkHandlers[MsgGetWorld] = new GetWorldHandler;
+  clientNeworkHandlers[MsgWantSettings] = new WantSettingsHandler;
+  clientNeworkHandlers[MsgWantWHash] = new WantWHashHandler;
+  clientNeworkHandlers[MsgQueryGame] = new QueryGameHandler;
+  clientNeworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
+
   playerNeworkHandlers[MsgCapBits] = new CapBitsHandler;
   playerNeworkHandlers[MsgEnter] = new EnterHandler;
   playerNeworkHandlers[MsgExit] = new ExitHandler;
+  playerNeworkHandlers[MsgAlive] = new AliveHandler;
 }
 
 void cleanupDefaultHandlers ( void )
@@ -874,7 +1008,6 @@ void cleanupDefaultHandlers ( void )
     delete((clientIter++)->second);
 
   clientNeworkHandlers.clear();
-
 }
 
 // Local Variables: ***
