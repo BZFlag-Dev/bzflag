@@ -3016,7 +3016,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   // make sure it's not an attack
   if (udp && isUDPAtackMessage(code))
     logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
-  GameKeeper::Player *playerData = NULL;
 
   // see if we have any registered handlers for this message type
   bool handled = false;
@@ -3043,6 +3042,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   if (handled)	// somone got it, don't need to do the old way
     return;
 
+  GameKeeper::Player *playerData = NULL;
   int playerID = 0;
   playerData = getPlayerMessageInfo(&buf,code,playerID);
   if (playerData && playerData->netHandler != handler)	// make sure they are who they say they are
@@ -3050,26 +3050,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code)
   {
-    case MsgShotBegin:
-      handleShotFired(buf, int(len));
-      break;
-
-    case MsgShotEnd: 
-      handleShotEnded(playerData,buf,len);
-      break;
-
-    case MsgHit:
-      handleTankHit(playerData,buf,len);
-      break;
-
-    case MsgTeleport:// player teleported
-      handleTeleport(playerData,buf,len);
-      break;
-
-    case MsgMessage:// player sending a message
-      handlePlayerMessage(playerData,buf);
-      break;
-
     case MsgTransferFlag:    // player has transferred flag to another tank
      handleFlagTransfer(playerData,buf);
      break;
@@ -3202,7 +3182,6 @@ static void terminateServer(int /*sig*/)
   exitCode = 0;
   done = true;
 }
-
 
 static std::string cmdSet(const std::string&, const CommandManager::ArgList& args, bool *worked)
 {

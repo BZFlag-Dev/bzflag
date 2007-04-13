@@ -118,61 +118,6 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 	return true;
 }
 
-void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer )
-{
-	// data: target player/team, message string
-	PlayerId dstPlayer;
-	char message[MessageLen];
-
-	buffer = nboUnpackUByte(buffer, dstPlayer);
-	buffer = nboUnpackString(buffer, message, sizeof(message));
-	message[MessageLen - 1] = '\0';
-
-	playerData->player.hasSent();
-	if (dstPlayer == AllPlayers)
-	{
-		logDebugMessage(1,"Player %s [%d] -> All: %s\n", playerData->player.getCallSign(), playerData->getIndex(), message);
-	}
-	else
-	{
-		if (dstPlayer == AdminPlayers)
-		{
-			logDebugMessage(1,"Player %s [%d] -> Admin: %s\n",playerData->player.getCallSign(), playerData->getIndex(), message);
-		}
-		else
-		{
-			if (dstPlayer > LastRealPlayer)
-			{
-				logDebugMessage(1,"Player %s [%d] -> Team: %s\n",playerData->player.getCallSign(),
-					playerData->getIndex(), message);
-			}
-			else
-			{
-				GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-				if (p != NULL)
-				{
-					logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",playerData->player.getCallSign(),
-						playerData->getIndex(), p->player.getCallSign(), dstPlayer, message);
-				}
-				else
-				{
-					logDebugMessage(1,"Player %s [%d] -> Player Unknown [%d]: %s\n",
-						playerData->player.getCallSign(), playerData->getIndex(), dstPlayer, message);
-				}
-			}
-		}
-	}
-	// check for spamming
-	if (checkChatSpam(message, playerData, playerData->getIndex()))
-		return;
-
-	// check for garbage
-	if (checkChatGarbage(message, playerData, playerData->getIndex()))
-		return;
-
-	sendPlayerMessage(playerData, dstPlayer, message);
-}
-
 void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
 {
 	PlayerId from, to;
@@ -220,183 +165,6 @@ void handleFlagTransfer ( GameKeeper::Player *playerData, void* buffer)
 
 	if (eventData.action == eventData.ContinueSteal) 
 		sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
-}
-
-void handleShotEnded ( GameKeeper::Player *playerData, void *buf, int len )
-{
-	if ( len != 3 || playerData->player.isObserver())
-		return;
-
-	// data: shooter id, shot number, reason
-	PlayerId sourcePlayer = playerData->getIndex();
-
-	int16_t shot;
-	uint16_t reason;
-	buf = nboUnpackShort(buf, shot);
-	buf = nboUnpackUShort(buf, reason);
-
-	// ask the API if it wants to modify this shot
-	bz_ShotEndedEventData_V1 shotEvent;
-	shotEvent.playerID = (int)sourcePlayer;
-	shotEvent.shotID = shot;
-	shotEvent.exlpode = reason == 0;
-	worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
-
-	FiringInfo firingInfo;
-	playerData->removeShot(shot & 0xff, shot >> 8, firingInfo);
-
-	sendMsgShotEnd(sourcePlayer,shot,reason);
-}
-
-void handleShotFired(void *buf, int len )
-{
-  // Sanity check
-  if (len != 3)
-	  return;
-
-  FiringInfo firingInfo;
-
-  PlayerId		player;
-  uint16_t		id;
-  void                 *bufTmp;
-
-  bufTmp = nboUnpackUByte(buf, player);
-  bufTmp = nboUnpackUShort(bufTmp, id);
-
-  firingInfo.shot.player = player;
-  firingInfo.shot.id     = id;
-
-  int playerIndex = player;
-
-  // verify playerId
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-
-  firingInfo.shotType = playerData->efectiveShotType;
-
-  const PlayerInfo &shooter = playerData->player;
-  if (!shooter.isAlive() || shooter.isObserver())
-    return;
-
-  FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
-
-  if (shooter.haveFlag())
-    firingInfo.flagType = fInfo.flag.type;
-  else
-    firingInfo.flagType = Flags::Null;
-
-  if (!playerData->addShot(id & 0xff, id >> 8, firingInfo))
-    return;
-
-  char message[MessageLen];
-  if (shooter.haveFlag())
-  {
-    fInfo.numShots++; // increase the # shots fired
-    int limit = clOptions->flagLimit[fInfo.flag.type];
-    if (limit != -1)
-    {
-      // if there is a limit for players flag
-      int shotsLeft = limit -  fInfo.numShots;
-
-      if (shotsLeft > 0)
-      {
-	//still have some shots left
-	// give message each shot below 5, each 5th shot & at start
-	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
-	{
-	  if (shotsLeft > 1)
-	    sprintf(message,"%d shots left",shotsLeft);
-	  else
-	    strcpy(message,"1 shot left");
-
-	  sendMessage(ServerPlayer, playerIndex, message);
-	}
-      }
-      else
-      {
-	// no shots left
-	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
-	{
-	  // drop flag at last known position of player
-	  // also handle case where limit was set to 0
-	  float lastPos [3];
-	  for (int i = 0; i < 3; i ++)
-	    lastPos[i] = playerData->currentPos[i];
-
-	  fInfo.grabs = 0; // recycle this flag now
-	  dropPlayerFlag(*playerData, lastPos);
-	}
-	else
-	{
-	  // more shots fired than allowed
-	  // do nothing for now -- could return and not allow shot
-	}
-      } // end no shots left
-    } // end is limit
-  } // end of player has flag
-
-  // ask the API if it wants to modify this shot
-  bz_ShotFiredEventData_V1 shotEvent;
-
-  shotEvent.pos[0] = firingInfo.shot.pos[0];
-  shotEvent.pos[1] = firingInfo.shot.pos[1];
-  shotEvent.pos[2] = firingInfo.shot.pos[2];
-  shotEvent.player = (int)player;
-
-  shotEvent.type = firingInfo.flagType->flagAbbv;
-
-  worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
-
-  sendMsgShotBegin(player,id,firingInfo);
-}
-
-void handleTankHit ( GameKeeper::Player *playerData, void *buf, int len )
-{
-  if (playerData->player.isObserver() || !playerData->player.isAlive())
-    return;
-
-  PlayerId hitPlayer = playerData->getIndex();
-  PlayerId shooterPlayer;
-  FiringInfo firingInfo;
-  int16_t shot;
-
-  buf = nboUnpackUByte(buf, shooterPlayer);
-  buf = nboUnpackShort(buf, shot);
-  GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
-
-  if (!shooterData)
-    return;
-
-  if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo))
-  {
-    sendMsgShotEnd(shooterPlayer, shot, 1);
-    
-    const int flagIndex = playerData->player.getFlag();
-    FlagInfo *flagInfo  = NULL;
-   
-    if (flagIndex >= 0) 
-    {
-      flagInfo = FlagInfo::get(flagIndex);
-      dropFlag(*flagInfo);
-    }
-
-    if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-      playerKilled(hitPlayer, shooterPlayer, GotShot, shot, firingInfo.flagType, false, false);
-  }
-}
-
-void handleTeleport( GameKeeper::Player *playerData, void *buf, int len)
-{
-  uint16_t from, to;
-
-  if (invalidPlayerAction(playerData->player, playerData->getIndex(), "teleport"))
-    return;
-
-  buf = nboUnpackUShort(buf, from);
-  buf = nboUnpackUShort(buf, to);
-  
-  sendMsgTeleport(playerData->getIndex(), from, to);
 }
 
 void handleRabbitMessage( GameKeeper::Player *playerData )
@@ -935,6 +703,247 @@ public:
   }
 };
 
+class ShotBeginHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+
+    FiringInfo firingInfo;
+
+    uint16_t		id;
+    void		*bufTmp;
+
+    bufTmp = nboUnpackUShort(bufTmp, id);
+
+    // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
+    firingInfo.shot.player = player->getIndex();
+    firingInfo.shot.id     = id;
+
+    firingInfo.shotType = player->efectiveShotType;
+
+    const PlayerInfo &shooter = player->player;
+    if (!shooter.isAlive() || shooter.isObserver())
+      return true;
+
+    FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
+
+    if (shooter.haveFlag())
+      firingInfo.flagType = fInfo.flag.type;
+    else
+      firingInfo.flagType = Flags::Null;
+
+    if (!player->addShot(id & 0xff, id >> 8, firingInfo))
+      return true;
+
+    char message[MessageLen];
+    if (shooter.haveFlag())
+    {
+      fInfo.numShots++; // increase the # shots fired
+      int limit = clOptions->flagLimit[fInfo.flag.type];
+      if (limit != -1)
+      {
+	// if there is a limit for players flag
+	int shotsLeft = limit -  fInfo.numShots;
+
+	if (shotsLeft > 0)
+	{
+	  //still have some shots left
+	  // give message each shot below 5, each 5th shot & at start
+	  if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
+	  {
+	    if (shotsLeft > 1)
+	      sprintf(message,"%d shots left",shotsLeft);
+	    else
+	      strcpy(message,"1 shot left");
+
+	    sendMessage(ServerPlayer, player->getIndex(), message);
+	  }
+	}
+	else
+	{
+	  // no shots left
+	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
+	  {
+	    // drop flag at last known position of player
+	    // also handle case where limit was set to 0
+	    float lastPos [3];
+	    for (int i = 0; i < 3; i ++)
+	      lastPos[i] = player->currentPos[i];
+
+	    fInfo.grabs = 0; // recycle this flag now
+	    dropPlayerFlag(*player, lastPos);
+	  }
+	  else
+	  {
+	    // more shots fired than allowed
+	    // do nothing for now -- could return and not allow shot
+	  }
+	} // end no shots left
+      } // end is limit
+    } // end of player has flag
+
+    // ask the API if it wants to modify this shot
+    bz_ShotFiredEventData_V1 shotEvent;
+
+    shotEvent.pos[0] = firingInfo.shot.pos[0];
+    shotEvent.pos[1] = firingInfo.shot.pos[1];
+    shotEvent.pos[2] = firingInfo.shot.pos[2];
+    shotEvent.player = (int)player->getIndex();
+
+    shotEvent.type = firingInfo.flagType->flagAbbv;
+
+    worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
+
+    sendMsgShotBegin(player->getIndex(),id,firingInfo);
+
+    return true;
+  }
+};
+
+class ShotEndHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+
+    if (player->player.isObserver())
+      return true;
+
+    int16_t shot;
+    uint16_t reason;
+    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackUShort(buf, reason);
+
+    // ask the API if it wants to modify this shot
+    bz_ShotEndedEventData_V1 shotEvent;
+    shotEvent.playerID = (int)player->getIndex();
+    shotEvent.shotID = shot;
+    shotEvent.exlpode = reason == 0;
+    worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
+
+    FiringInfo firingInfo;
+    player->removeShot(shot & 0xff, shot >> 8, firingInfo);
+
+    sendMsgShotEnd(player->getIndex(),shot,reason);
+
+    return true;
+  }
+};
+
+class HitHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 3)
+      return false;
+
+    if (player->player.isObserver() || !player->player.isAlive())
+      return true;
+
+    PlayerId hitPlayer = player->getIndex();
+    PlayerId shooterPlayer;
+    FiringInfo firingInfo;
+    int16_t shot;
+
+    buf = nboUnpackUByte(buf, shooterPlayer);
+    buf = nboUnpackShort(buf, shot);
+    GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
+
+    if (!shooterData)
+      return true;
+
+    if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo))
+    {
+      sendMsgShotEnd(shooterPlayer, shot, 1);
+
+      const int flagIndex = player->player.getFlag();
+      FlagInfo *flagInfo  = NULL;
+
+      if (flagIndex >= 0) 
+      {
+	flagInfo = FlagInfo::get(flagIndex);
+	dropFlag(*flagInfo);
+      }
+
+      if (!flagInfo || flagInfo->flag.type != Flags::Shield)
+	playerKilled(hitPlayer, shooterPlayer, GotShot, shot, firingInfo.flagType, false, false);
+    }
+
+    return true;
+  }
+};
+class TeleportHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 4)
+      return false;
+
+    uint16_t from, to;
+
+    if (invalidPlayerAction(player->player, player->getIndex(), "teleport"))
+      return true;
+
+    buf = nboUnpackUShort(buf, from);
+    buf = nboUnpackUShort(buf, to);
+
+    sendMsgTeleport(player->getIndex(), from, to);
+    return true;
+  }
+};
+
+class MessageHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < MessageLen+1)
+      return false;
+
+    // data: target player/team, message string
+    PlayerId dstPlayer;
+    char message[MessageLen];
+
+    buf = nboUnpackUByte(buf, dstPlayer);
+    buf = nboUnpackString(buf, message, sizeof(message));
+    message[MessageLen - 1] = '\0';
+
+    player->player.hasSent();
+    if (dstPlayer == AllPlayers)
+      logDebugMessage(1,"Player %s [%d] -> All: %s\n", player->player.getCallSign(), player->getIndex(), message);
+    else
+    {
+      if (dstPlayer == AdminPlayers)
+	logDebugMessage(1,"Player %s [%d] -> Admin: %s\n",player->player.getCallSign(), player->getIndex(), message);
+      else
+      {
+	if (dstPlayer > LastRealPlayer)
+	  logDebugMessage(1,"Player %s [%d] -> Team: %s\n",player->player.getCallSign(),  player->getIndex(), message);
+	else
+	{
+	  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
+	  if (p != NULL)
+	    logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",player->player.getCallSign(), player->getIndex(), p->player.getCallSign(), dstPlayer, message);
+	  else
+	    logDebugMessage(1,"Player %s [%d] -> Player Unknown [%d]: %s\n",  player->player.getCallSign(), player->getIndex(), dstPlayer, message);
+	}
+      }
+    }
+    // check for spamming and garbage
+    if (!checkChatSpam(message, player, player->getIndex()) && !checkChatGarbage(message, player, player->getIndex()))
+      sendPlayerMessage(player, dstPlayer, message); 
+    
+    return true;
+  }
+};
+
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
@@ -954,6 +963,11 @@ void registerDefaultHandlers ( void )
   playerNeworkHandlers[MsgDropFlag] = new DropFlagHandler;
   playerNeworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
   playerNeworkHandlers[MsgCollide] = new CollideHandler;
+  playerNeworkHandlers[MsgShotBegin] = new ShotBeginHandler;
+  playerNeworkHandlers[MsgShotEnd] = new ShotEndHandler;
+  playerNeworkHandlers[MsgHit] = new HitHandler;
+  playerNeworkHandlers[MsgTeleport] = new TeleportHandler;
+  playerNeworkHandlers[MsgMessage] = new MessageHandler;
 }
 
 void cleanupDefaultHandlers ( void )
