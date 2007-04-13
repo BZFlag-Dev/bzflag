@@ -4007,6 +4007,12 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
 
 	if (clOptions->gameType == eClassicCTF)
 	{
+	  // cap all the flags
+	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(RedTeam),RedTeam);
+	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(GreenTeam),GreenTeam);
+	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(BlueTeam),BlueTeam);
+	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(PurpleTeam),PurpleTeam);
+
 	  for (int j = 0; j < curMaxPlayers; j++)
 	  {
 	    void *buf, *bufStart = getDirectMessageBuffer();
@@ -4014,19 +4020,6 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
 
 	    if (!player || player->player.isObserver() || !player->player.isPlaying())
 	      continue;
-
-	    // the server gets to capture the flag -- send some
-	    // bogus player id
-
-	    // curMaxPlayers should never exceed 255, so this should
-	    // be a safe cast
-	    TeamColor vteam = player->player.getTeam();
-
-	    buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
-	    buf = nboPackUShort (buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
-	    buf = nboPackUShort(buf, uint16_t(1 + (int(vteam) % 4)));
-
-	    directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 
 	    // kick 'em while they're down
 	    playerKilled(j, curMaxPlayers, GotKilledMsg, -1, Flags::Null, -1);
