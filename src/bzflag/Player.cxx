@@ -1500,7 +1500,8 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   // for rabbit mode to correctly calculate team kills when rabbit changes
   firingInfo.shot.team = getTeam();
 
-  if (firingInfo.shotType == ShockWaveShot) {
+  if (firingInfo.shotType == ShockWaveShot)
+  {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];
@@ -1509,23 +1510,32 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
     firingInfo.shot.vel[0] = 0.0f;
     firingInfo.shot.vel[1] = 0.0f;
     firingInfo.shot.vel[2] = 0.0f;
-  } else {
+  }
+  else
+  {
     getMuzzle(firingInfo.shot.pos);
 
     const float* dir     = getForward();
     const float* tankVel = getVelocity();
     float shotSpeed      = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
 
-    if (handicap > 0.0f) {
+    if (handicap > 0.0f)
+    {
       // apply any handicap advantage to shot speed
-      const float speedAd = 1.0f
-	+ (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
+      const float speedAd = 1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
       shotSpeed *= speedAd;
     }
 
     firingInfo.shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
     firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
     firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
+
+    // plot the position forward based on the time
+    float delta = syncedClock.GetServerSeconds() - firingInfo.timeSent;
+
+    firingInfo.shot.pos[0] +=  firingInfo.shot.vel[0] * delta;
+    firingInfo.shot.pos[1] +=  firingInfo.shot.vel[1] * delta;
+    firingInfo.shot.pos[2] +=  firingInfo.shot.vel[2] * delta;
 
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.

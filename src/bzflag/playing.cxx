@@ -2550,6 +2550,23 @@ static void handleSetShotType(void *msg)
   p->setShotType((ShotType)shotType);
 }
 
+// if you are driving with a tank in observer mode
+// and do not want local shot effects,
+// disable shot effects for that specific tank
+static bool showShotEffects ( int shooterid )
+{
+  if(!BZDB.isTrue("enableLocalShotEffect"))
+    return false;
+
+  if (ROAM.getMode() == Roaming::roamViewFP)
+    return false;
+  
+  if (ROAM.getTargetTank() && shooterid != ROAM.getTargetTank()->getId())
+    return false;
+  
+  return true;
+}
+
 static void handleShotBegin(bool human, void *msg)
 {
   PlayerId shooterid;
@@ -2568,37 +2585,35 @@ static void handleShotBegin(bool human, void *msg)
 
   RemotePlayer* shooter = player[shooterid];
 
-  if (shooterid != ServerPlayer) {
-    if (shooter && player[shooterid]->getId() == shooterid) {
+  if (shooterid != ServerPlayer)
+  {
+    if (shooter && player[shooterid]->getId() == shooterid)
+    {
       shooter->addShot(firingInfo);
 
-      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
+      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) 
+      {
 	float shotPos[3];
 	shooter->getMuzzle(shotPos);
 
-	// if you are driving with a tank in observer mode
-	// and do not want local shot effects,
-	// disable shot effects for that specific tank
-	if ((ROAM.getMode() != Roaming::roamViewFP) ||
-	    (!ROAM.getTargetTank()) ||
-	    (shooterid != ROAM.getTargetTank()->getId()) ||
-	    BZDB.isTrue("enableLocalShotEffect"))
-	      EFFECTS.addShotEffect(shooter->getColor(),
-				    shotPos,
-				    shooter->getAngle(),
-				    shooter->getVelocity());
+	if (showShotEffects(shooterid))
+	  EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
       }
-    } else {
+    }
+    else
+    {
       return;
     }
   }
 
-  if (human) {
+  if (human)
+  {
     const float* pos = firingInfo.shot.pos;
     const bool importance = false;
     const bool localSound = isViewTank(shooter);
 
-    switch (firingInfo.shotType) {
+    switch (firingInfo.shotType)
+    {
       default:
 	playSound(SFX_FIRE, pos, importance, localSound);
 	break;
@@ -2618,7 +2633,6 @@ static void handleShotBegin(bool human, void *msg)
       case ThiefShot:
 	playSound(SFX_THIEF, pos, importance, localSound);
 	break;
-
     }
   }
 }
