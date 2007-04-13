@@ -4015,7 +4015,6 @@ static void doCountdown ( int &readySetGo, TimeKeeper &tm )
 
 	  for (int j = 0; j < curMaxPlayers; j++)
 	  {
-	    void *buf, *bufStart = getDirectMessageBuffer();
 	    player = GameKeeper::Player::getPlayerByIndex(j);
 
 	    if (!player || player->player.isObserver() || !player->player.isPlaying())
