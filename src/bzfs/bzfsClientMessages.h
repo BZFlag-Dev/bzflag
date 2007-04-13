@@ -41,6 +41,7 @@ void handleRabbitMessage( GameKeeper::Player *playerData );
 void handlePauseMessage( GameKeeper::Player *playerData, void *buf, int len);
 void handleAutoPilotMessage( GameKeeper::Player *playerData, void *buf, int len);
 void handleLagPing( GameKeeper::Player *playerData, void *buf, int len);
+void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len );
 
 // util functions
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);

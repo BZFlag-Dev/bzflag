@@ -2884,29 +2884,6 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-static void shotUpdate(void *buf, int len, NetHandler *handler)
-{
-  ShotUpdate shot;
-  shot.unpack(buf);
-
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(shot.player);
-  if (!playerData)
-    return;
-  if (playerData->netHandler != handler)
-    return;
-
-  const PlayerInfo &shooter = playerData->player;
-  if (!shooter.isAlive() || shooter.isObserver())
-    return;
-
-  if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
-    return;
-
-  relayMessage(MsgGMUpdate, len, buf);
-
-}
-
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
@@ -3154,7 +3131,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       break;
 
     case MsgGMUpdate:
-      shotUpdate(buf, int(len), handler);
+      handleShotUpdate(playerData,buf,len);
       break;
 
     case MsgUDPLinkRequest:    // FIXME handled inside uread, but not discarded

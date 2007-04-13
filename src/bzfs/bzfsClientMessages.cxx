@@ -669,6 +669,20 @@ void handleLagPing( GameKeeper::Player *playerData, void *buf, int len )
   }
 }
 
+void handleShotUpdate ( GameKeeper::Player *playerData, void *buf, int len )
+{
+  ShotUpdate shot;
+  shot.unpack(buf);
+
+  if (!playerData->player.isAlive() || playerData->player.isObserver())
+    return;
+
+  if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
+    return;
+
+  sendMsgGMUpdate( playerData->getIndex(), &shot );
+}
+
 const float *closestBase( TeamColor color, float *position )
 {
   float bestdist = Infinity;
