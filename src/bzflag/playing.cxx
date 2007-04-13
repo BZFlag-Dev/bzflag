@@ -5931,6 +5931,8 @@ bool Playing::SetupModules()
     return csApplicationFramework::ReportError
       ("Failed to locate Virtual Clock!");
 
+  engine->SetSaveableFlag(true);
+
   return true;
 }
 
