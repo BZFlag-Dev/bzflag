@@ -830,15 +830,18 @@ int NetListener::update ( float waitTime )
 
   return toRead;
 }
-
 void NetListener::processConnections ( void )
 {
   if (toRead < 1)
     return;
 
+  // any new clients
   if (FD_ISSET(listenSocket, &read_set))
     accept();
 
+ // int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
+ // if (id == -1)
+ //   break;
 
   toRead = 0;
 }

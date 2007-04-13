@@ -51,6 +51,7 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason );
 void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgGMUpdate ( int player, ShotUpdate *shot );
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
 
 // messages sent to just network users ( like client query )
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);

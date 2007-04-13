@@ -814,13 +814,50 @@ void handleCollide ( GameKeeper::Player *playerData, void* buffer)
   }
 }
 
+class WhatTimeIsItHandler : public ClientNetworkMessageHandler
+{
+public:
+
+  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  {
+    // the client wants to know what time we think it is.
+    // he may have sent us a tag to ID the ping with ( for packet loss )
+    // so we send that back to them with the time.
+    // this is so the client can try and get a decent guess
+    // at what our time is, and timestamp stuff with a real server
+    // time, so everyone can go and compensate for some lag.
+    unsigned char tag = 0;
+    if (len >= 1)
+      buf = nboUnpackUByte(buf,tag);
+
+    float time = (float)TimeKeeper::getCurrent().getSeconds();
+
+    logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
+    
+    sendMsgWhatTimeIsIt(handler,tag,time);
+    return true;
+  }
+};
 
 void registerDefaultHandlers ( void )
-{
+{ 
+  clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
 }
 
 void cleanupDefaultHandlers ( void )
 {
+  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerIter = playerNeworkHandlers.begin();
+  while(playerIter != playerNeworkHandlers.end())
+    delete((playerIter++)->second);
+
+  playerNeworkHandlers.clear();
+
+  std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientIter = clientNeworkHandlers.begin();
+  while(clientIter != clientNeworkHandlers.end())
+    delete((clientIter++)->second);
+
+  clientNeworkHandlers.clear();
+
 }
 
 // Local Variables: ***

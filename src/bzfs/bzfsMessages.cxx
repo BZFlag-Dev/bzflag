@@ -939,6 +939,17 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot )
   broadcastMessage(MsgGMUpdate, (char*)buf-(char*)bufStart, bufStart);
 }
 
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
+{
+  /* Pack a message with the list of missing flags */
+  void *bufStart;
+  void *buf2 = bufStart = getDirectMessageBuffer();
+  buf2 = nboPackUByte(bufStart,tag);
+  buf2 = nboPackFloat(buf2,time);
+
+  directMessage(handler, MsgWhatTimeIsIt, (char*)buf2-(char*)bufStart, bufStart);
+}
+
 void sendSetTeam ( int playerIndex, int _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();

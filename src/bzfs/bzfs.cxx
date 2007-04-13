@@ -16,7 +16,7 @@
 // implementation-specific system headers
 #include <iostream>
 #include <algorithm>
-#include <assert.h>
+#include <assert.h>f
 #include <errno.h>
 #include <vector>
 #include <string>
@@ -5174,6 +5174,8 @@ int main(int argc, char **argv)
   if (!initServer(argc,argv))
     return 1;
 
+  registerDefaultHandlers();
+
   // start the server
   if (!serverStart())
   {
@@ -5189,6 +5191,7 @@ int main(int argc, char **argv)
   runMainLoop();
 
   cleanupServer();
+  cleanupDefaultHandlers();
 
   // done
   return exitCode;
