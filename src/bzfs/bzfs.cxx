@@ -2952,10 +2952,6 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   switch (code)
   {
-    case MsgKilled: // player got killed
-      handlePlayerKilled(playerData,buf);
-      break;
-
     case MsgDropFlag:// player requesting to drop flag
       handlePlayerFlagDrop(playerData,buf);
       break;

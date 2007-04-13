@@ -16,9 +16,7 @@
 #include "global.h"
 #include "bzfs.h"
 
-void handlePlayerKilled( GameKeeper::Player *playerData, void* buffer );
 void handlePlayerFlagDrop( GameKeeper::Player *playerData, void* buffer );
-void handleGameJoinRequest( GameKeeper::Player *playerData );
 void handlePlayerUpdate ( void **buf, uint16_t &code, GameKeeper::Player *playerData, const void* rawbuf, int len );	//once relay is based on state, remove rawbuf
 void handlePlayerMessage ( GameKeeper::Player *playerData, void* buffer );
 void handleFlagCapture ( GameKeeper::Player *playerData, void* buffer);

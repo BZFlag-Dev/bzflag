@@ -65,42 +65,6 @@ GameKeeper::Player *getPlayerMessageInfo ( void **buffer, uint16_t &code, int &p
   return NULL;
 }
 
-void handlePlayerKilled ( GameKeeper::Player *playerData, void* buffer )
-{
-	if (!playerData || playerData->player.isObserver())
-		return;
-
-	// data: id of killer, shot id of killer
-	PlayerId killer;
-	FlagType* flagType;
-	int16_t shot, reason;
-	int phydrv = -1;
-
-	buffer = nboUnpackUByte(buffer, killer);
-	buffer = nboUnpackShort(buffer, reason);
-	buffer = nboUnpackShort(buffer, shot);
-	buffer = FlagType::unpack(buffer, flagType);
-
-	if (reason == PhysicsDriverDeath)
-	{
-		int32_t inPhyDrv;
-		buffer = nboUnpackInt(buffer, inPhyDrv);
-		phydrv = int(inPhyDrv);
-	}
-
-	if (killer != ServerPlayer)	// Sanity check on shot: Here we have the killer
-	{
-		int si = (shot == -1 ? -1 : shot & 0x00FF);
-		if ((si < -1) || (si >= clOptions->maxShots))
-			return;
-	}
-	playerData->player.endShotCredit--;
-	playerKilled(playerData->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
-	
-	// stop pausing attempts as you can not pause when being dead
-	playerData->player.pauseRequestTime = TimeKeeper::getNullTime();
-}
-
 void handlePlayerUpdate(void **buf, uint16_t &code,
 						GameKeeper::Player *playerData, const void *, int)
 {
@@ -978,6 +942,52 @@ public:
     return true;
   }
 };
+
+class KilledHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player || len < 7)
+      return false;
+   
+    if (player->player.isObserver())
+      return true;
+
+    // data: id of killer, shot id of killer
+    PlayerId killer;
+    FlagType* flagType;
+    int16_t shot, reason;
+    int phydrv = -1;
+
+    buf = nboUnpackUByte(buf, killer);
+    buf = nboUnpackShort(buf, reason);
+    buf = nboUnpackShort(buf, shot);
+    buf = FlagType::unpack(buf, flagType);
+
+    if (reason == PhysicsDriverDeath)
+    {
+      int32_t inPhyDrv;
+      buf = nboUnpackInt(buf, inPhyDrv);
+      phydrv = int(inPhyDrv);
+    }
+
+    if (killer != ServerPlayer)	// Sanity check on shot: Here we have the killer
+    {
+      int si = (shot == -1 ? -1 : shot & 0x00FF);
+      if ((si < -1) || (si >= clOptions->maxShots))
+	return true;
+    }
+
+    player->player.endShotCredit--;
+    playerKilled(player->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
+
+    // stop pausing attempts as you can not pause when being dead
+    player->player.pauseRequestTime = TimeKeeper::getNullTime();
+    return true;
+  }
+};
+
 void registerDefaultHandlers ( void )
 { 
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
@@ -993,6 +1003,7 @@ void registerDefaultHandlers ( void )
   playerNeworkHandlers[MsgEnter] = new EnterHandler;
   playerNeworkHandlers[MsgExit] = new ExitHandler;
   playerNeworkHandlers[MsgAlive] = new AliveHandler;
+  playerNeworkHandlers[MsgKilled] = new KilledHandler;
 }
 
 void cleanupDefaultHandlers ( void )
