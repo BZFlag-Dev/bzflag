@@ -220,8 +220,17 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   double lameTimeout = 60.0;  // TODO: this is way to huge
   nfound = 0;
 
-  while ( nfound < 0 || (TimeKeeper::getCurrent().getSeconds()-timeStart < lameTimeout))
+  bool gotSomething = false;
+
+  while ( !gotSomething )
+  {
     nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
+   
+    if ( nfound <= 0 )
+      gotSomething = true;
+    else if ( (TimeKeeper::getCurrent().getSeconds()-timeStart > lameTimeout) )
+      gotSomething = true;
+  }
 
   if (nfound <= 0) {
     close(query);
