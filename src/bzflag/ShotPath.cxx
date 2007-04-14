@@ -83,10 +83,10 @@ ShotPath::~ShotPath()
   delete strategy;
 }
 
-float			ShotPath::checkHit(const BaseLocalPlayer* player,
+float			ShotPath::checkHit(const ShotCollider& tank,
 							float position[3]) const
 {
-  return strategy->checkHit(player, position);
+  return strategy->checkHit(tank, position);
 }
 
 bool			ShotPath::isStoppedByHit() const

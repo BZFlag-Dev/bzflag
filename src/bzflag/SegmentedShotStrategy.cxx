@@ -197,7 +197,7 @@ void			SegmentedShotStrategy::setCurrentSegment(int _segment)
   segment = _segment;
 }
 
-float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
+float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 							float position[3]) const
 {
   float minTime = Infinity;
@@ -205,21 +205,19 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   if (getPath().isExpired()) return minTime;
 
   // get tank radius
-  float radius = tank->getRadius();
-  const float radius2 = radius * radius;
+  const float radius2 = tank.radius * tank.radius;
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
-  const float tankHeight = tank->getDimensions()[2];
-  Ray tankLastMotionRaw = tank->getLastMotion();
+  const float tankHeight = tank.size[2];
   float lastTankPositionRaw[3];
-  lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
-  lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * tankHeight;
-  Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
+  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
+  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
+  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
+  Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
-  const float (*tankBBox)[3] = tank->getLastMotionBBox();
+  const float (*tankBBox)[3] = tank.bbox;
   if (!isOverlapping(bbox, tankBBox)) return minTime;
 
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
@@ -227,10 +225,10 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
   const int numSegments = (const int)segments.size();
-  for (int i = lastSegment; i <= segment && i < numSegments; i++) {
+  for (int i = lastSegment; i <= segment && i < numSegments; i++) 
+  {
     // can never hit your own first laser segment
-    if (i == 0 && getPath().getShotType() == LaserShot &&
-	getPath().getPlayer() == tank->getId())
+    if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
       continue;
 
 /*
@@ -249,16 +247,17 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // get hit time
     float t;
-    if (tank->getFlag() == Flags::Narrow) {
+    if (tank.test2D)
+    {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank->getAngle(),
-			0.5f * BZDBCache::tankLength, shotRadius, tankHeight);
+      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
+			0.5f * tank.lenght, shotRadius, tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
-      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * radius);
+      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
 
     // short circuit if time is greater then smallest time so far
@@ -279,7 +278,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
       // compute location of tank at time of hit
       float tankPos[3];
-      tank->getLastMotion().getPoint(t, tankPos);
+      tank.motion.getPoint(t, tankPos);
 
       // compute position of intersection
       position[0] = tankPos[0] + closestPos[0];

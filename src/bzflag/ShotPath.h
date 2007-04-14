@@ -38,6 +38,7 @@
 #include "SceneDatabase.h"
 
 class ShotStrategy;
+class ShotCollider;
 
 class ShotPath {
   public:
@@ -57,7 +58,7 @@ class ShotPath {
     const float*	getPosition() const;
     const float*	getVelocity() const;
 
-    float		checkHit(const BaseLocalPlayer*, float position[3]) const;
+    float		checkHit(const ShotCollider&, float[3]) const;
     void		setExpiring();
     void		setExpired();
     bool		isStoppedByHit() const;

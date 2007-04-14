@@ -31,7 +31,7 @@ class ShockWaveStrategy : public ShotStrategy {
 			~ShockWaveStrategy();
 
     void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
+    float		checkHit(const ShotCollider&, float[3]) const;
     bool		isStoppedByHit() const;
     void		addShot(SceneDatabase*, bool colorblind);
     void		radarRender() const;

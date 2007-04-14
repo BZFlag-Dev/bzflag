@@ -296,10 +296,11 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   return -1.0f;
 }
 
-float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]) const
+float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3]) const
 {
   float minTime = Infinity;
-  if (getPath().isExpired()) return minTime;
+  if (getPath().isExpired())
+    return minTime;
 
   // GM is not active until activation time passes (for any tank)
   const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
@@ -308,26 +309,26 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
     return minTime;
 
   // get tank radius
-  float radius = tank->getRadius();
-  const float radius2 = radius * radius;
+  const float radius2 = tank.radius * tank.radius;
 
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
-  const float tankHeight = tank->getDimensions()[2];
-  Ray tankLastMotionRaw = tank->getLastMotion();
+  const float tankHeight = tank.size[2];
+
   float lastTankPositionRaw[3];
-  lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
-  lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * tankHeight;
-  Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
+  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
+  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
+  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
+ 
+  Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   // check each segment
   const size_t numSegments = segments.size();
   size_t i = 0;
   // only test most recent segment if shot is from my tank
-  if (numSegments > 1 && tank->getId() == getPath().getPlayer())
+  if (numSegments > 1 && tank.testLastSegment )
     i = numSegments - 1;
   for (; i < numSegments; i++) {
     const Ray& ray = segments[i].ray;
@@ -347,17 +348,21 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
 
     // get closest approach time
     float t;
-    if (tank->getFlag() == Flags::Narrow) {
+    if (tank.test2D) 
+    {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank->getAngle(),
-			0.5f * BZDBCache::tankLength, shotRadius, tankHeight);
-    } else {
-      // find time when shot hits sphere around tank
-      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * radius);
+      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.lenght, shotRadius, tankHeight);
     }
-    if (t > minTime) continue;
+    else 
+    {
+      // find time when shot hits sphere around tank
+      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
+    }
+
+    if (t > minTime)
+      continue;
 
     // if not in shot segment times then no hit
     if (t < 0.0f || t > segments[i].end - segments[i].start)
@@ -374,7 +379,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
 
       // compute location of tank at time of hit
       float tankPos[3];
-      tank->getLastMotion().getPoint(t, tankPos);
+      tank.motion.getPoint(t, tankPos);
 
       // compute position of intersection
       position[0] = tankPos[0] + closestPos[0];

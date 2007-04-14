@@ -1589,7 +1589,20 @@ bool			LocalPlayer::checkHit(const Player* source,
 
     // test myself against shot
     float position[3];
-    const float t = shot->checkHit(this, position);
+
+    ShotCollider  collider;
+
+    memcpy(collider.position,getPosition(),sizeof(float)*3);
+    collider.angle = getAngle();
+    collider.lenght = BZDBCache::tankLength;
+    collider.motion = getLastMotion();
+    collider.radius = this->getRadius();
+    memcpy(collider.size,getDimensions(),sizeof(float)*3);
+    collider.test2D = this->getFlag() == Flags::Narrow;
+    collider.testLastSegment = getId() == shot->getPlayer();
+    memcpy(collider.bbox,bbox,sizeof(bbox));
+
+    const float t = shot->checkHit(collider, position);
     if (t >= minTime) continue;
 
     // test if shot hit a part of my tank that's through a teleporter.
