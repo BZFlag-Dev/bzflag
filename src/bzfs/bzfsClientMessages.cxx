@@ -911,7 +911,7 @@ public:
 
     if (code == MsgPlayerUpdateSmall && len < 21)
       return false;
-    else if(len < 37)
+    else if(len < 27)
       return false;
 
     float       timestamp;
