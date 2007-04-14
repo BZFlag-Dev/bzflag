@@ -49,7 +49,7 @@ void packWorldSettings ( void )
 class WhatTimeIsItHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
   {
     // the client wants to know what time we think it is.
     // he may have sent us a tag to ID the ping with ( for packet loss )
@@ -73,7 +73,7 @@ public:
 class SetVarHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     void *bufStart = getDirectMessageBuffer();
     PackVars pv(bufStart, handler);
@@ -86,7 +86,7 @@ public:
 class NegotiateFlagHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
   {
     void *bufStart;
     FlagTypeMap::iterator it;
@@ -131,7 +131,7 @@ public:
 class GetWorldHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
   {
     if (len < 4)
       return false;
@@ -148,7 +148,7 @@ public:
 class WantSettingsHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!worldSettings)
       packWorldSettings();
@@ -161,7 +161,7 @@ public:
 class WantWHashHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     void *obuf, *obufStart = getDirectMessageBuffer();
     if (clOptions->cacheURL.size() > 0)
@@ -178,7 +178,7 @@ public:
 class QueryGameHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     // much like a ping packet but leave out useless stuff (like
     // the server address, which must already be known, and the
@@ -209,7 +209,7 @@ public:
     buffer = nboPackUShort(buffer, (uint16_t)clOptions->timeElapsed);
 
     // send it
-    directMessage(handler, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
+    directMessage(handler, MsgQueryGame, (char*)buffer-(char*)bufStart, bufStart);
 
     return true;
   }
@@ -218,7 +218,7 @@ public:
 class QueryPlayersHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     // count the number of active players
     int numPlayers = GameKeeper::Player::count();
@@ -252,7 +252,7 @@ public:
 class UDPLinkExtablishedHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     logDebugMessage(2,"Connection at %s outbound UDP up\n", handler->getTargetIP());
     return true;
@@ -262,7 +262,7 @@ public:
 class NewPlayerHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     PlayerId id = getNewPlayer(handler);
     if (id == 0xff)
@@ -300,7 +300,7 @@ public:
 class CapBitsHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -320,7 +320,7 @@ public:
 class EnterHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 247)
       return false;
@@ -359,7 +359,7 @@ public:
 class ExitHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!player)
       return false;
@@ -371,7 +371,7 @@ public:
 class AliveHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!player)
       return false;
@@ -403,7 +403,7 @@ public:
 class KilledHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 7)
       return false;
@@ -448,7 +448,7 @@ public:
 class DropFlagHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 13)
       return false;
@@ -465,7 +465,7 @@ public:
 class CaptureFlagHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -482,7 +482,7 @@ public:
 class CollideHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 13)
       return false;
@@ -501,7 +501,7 @@ public:
 class ShotBeginHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -601,7 +601,7 @@ public:
 class ShotEndHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -633,7 +633,7 @@ public:
 class HitHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -676,7 +676,7 @@ public:
 class TeleportHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 4)
       return false;
@@ -697,7 +697,7 @@ public:
 class MessageHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < MessageLen+1)
       return false;
@@ -742,7 +742,7 @@ public:
 class TransferFlagHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 2)
       return false;
@@ -794,7 +794,7 @@ public:
 class NewRabbitHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!player)
       return false;
@@ -809,7 +809,7 @@ public:
 class PauseHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!player)
       return false;
@@ -842,7 +842,7 @@ public:
 class AutoPilotHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 2)
       return false;
@@ -861,7 +861,7 @@ public:
 class LagPingHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 3)
       return false;
@@ -948,7 +948,7 @@ public:
 class GMUpdateHandler : public PlayerFirstNoBumpHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 33)
       return false;
