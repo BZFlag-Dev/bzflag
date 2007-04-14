@@ -197,7 +197,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     goto done;
 
   // send out the connect header
-  ::send(query,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER),0);
+  ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
 
   // get server version and verify
 #if !defined(_WIN32)

@@ -80,7 +80,7 @@ bool ServerItem::readFromFile(std::istream& in)
   uint8_t fav;
   in.read(buffer, 1);
   nboUnpackUByte(buffer, fav);
-  favorite = fav;
+  favorite = (fav != 0);
 
   // read in time
   in.read(&buffer[0],4);

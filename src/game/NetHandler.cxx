@@ -18,7 +18,6 @@
 
 #include "bzfsAPI.h"
 #include "WorldEventManager.h"
-//#include "GameKeeper.h"
 
 // Are these size/limits reasonable?
 const int udpBufSize = 128*1024;
@@ -850,7 +849,7 @@ void NetListener::accept ( void )
 {
   struct sockaddr_in clientAddr;
   AddrLen addr_len = sizeof(clientAddr);
-  int fd = ::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
+  int fd = (int)::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1)
   {
     nerror("accepting on wks");
