@@ -35,6 +35,9 @@ Should be considered for the release of 2.2:
 
 * Implement Server side shot tracking (JeffM2501)
 
+* Implement server side shot ID and path enhacements (JeffM2501)
+  Design Doc at http://my.bzflag.org/w/Server_Updated_Shots
+
 * Apply Simple Gravity to all DR (JeffM2501)
 
 * Do Server side object collisions (JeffM2501)
