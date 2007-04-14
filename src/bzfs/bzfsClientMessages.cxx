@@ -511,7 +511,7 @@ public:
     uint16_t		id;
     void		*bufTmp;
 
-    bufTmp = nboUnpackUShort(bufTmp, id);
+    bufTmp = nboUnpackUShort(buf, id);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
