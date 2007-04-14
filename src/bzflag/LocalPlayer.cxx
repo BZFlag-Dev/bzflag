@@ -1560,15 +1560,14 @@ bool			LocalPlayer::checkHit(const Player* source,
     // get shot
     const ShotPath* shot = source->getShot(i);
     if (!shot || shot->isExpired()) continue;
-
-	ShotType	shotType = shot->getShotType();
+    ShotType	shotType = shot->getShotType();
 
     // my own shock wave cannot kill me
     if (source == this && ((shotType == ShockWaveShot) || (shotType == ThiefShot))) continue;
 
-	// if no team kills, shots of my team can't kill me
-	if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
-		 continue;
+    // if no team kills, shots of my team can't kill me
+    if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
+      continue;
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
@@ -1594,7 +1593,7 @@ bool			LocalPlayer::checkHit(const Player* source,
 
     memcpy(collider.position,getPosition(),sizeof(float)*3);
     collider.angle = getAngle();
-    collider.lenght = BZDBCache::tankLength;
+    collider.length = BZDBCache::tankLength;
     collider.motion = getLastMotion();
     collider.radius = this->getRadius();
     memcpy(collider.size,getDimensions(),sizeof(float)*3);

@@ -1771,8 +1771,8 @@ typedef enum
 typedef struct
 {
   int player;
-  int handycap;
-}bz_HandycapUpdateRecord;
+  int handicap;
+}bz_HandicapUpdateRecord;
 
 typedef enum
 {
@@ -1808,8 +1808,8 @@ public:
   virtual void flagUpdate(int count, bz_FlagUpdateRecord **flagList);
   virtual void playerInfoUpdate(bz_PlayerInfoUpdateRecord *playerRecord);
   virtual void teamUpdate(int count, bz_TeamInfoRecord **teamList);
-  virtual void handycapUpdate(int count,
-			      bz_HandycapUpdateRecord **handycapList);
+  virtual void handicapUpdate(int count,
+			      bz_HandicapUpdateRecord **handicapList);
   virtual void playerIPUpdate(int player, const char *ipAddress);
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);

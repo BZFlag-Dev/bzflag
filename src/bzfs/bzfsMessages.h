@@ -25,8 +25,8 @@ bool sendTeamUpdateMessage( int newPlayer );
 void sendTeamUpdateMessageBroadcast( int teamIndex1 = -1, int teamIndex2 = -1 );
 void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason );
 bool sendAcceptPlayerMessage ( int playerID );
-void sendHandycapInfoUpdate (int playerID );
-void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData );
+void sendHandicapInfoUpdate (int playerID );
+void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
 void sendWorldChunk(NetHandler *handler, uint32_t ptr);
 void broadcastPlayerStateUpdate ( void );
@@ -58,7 +58,7 @@ int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
 // net message utils
-void  broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);
+void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
 // receving network messages
@@ -91,8 +91,8 @@ private:
 	unsigned int count;
 };
 
-// utilitys
-bool isUDPAtackMessage ( uint16_t &code );
+// utilities
+bool isUDPAttackMessage ( uint16_t &code );
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
 

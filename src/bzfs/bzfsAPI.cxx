@@ -3382,7 +3382,7 @@ void bz_ServerSidePlayerHandler::playerInfoUpdate(bz_PlayerInfoUpdateRecord*){}
 
 void bz_ServerSidePlayerHandler::teamUpdate(int, bz_TeamInfoRecord **){}
 
-void bz_ServerSidePlayerHandler::handycapUpdate(int, bz_HandycapUpdateRecord **){}
+void bz_ServerSidePlayerHandler::handicapUpdate(int, bz_HandicapUpdateRecord **){}
 
 void bz_ServerSidePlayerHandler::playerIPUpdate(int, const char*){}
 

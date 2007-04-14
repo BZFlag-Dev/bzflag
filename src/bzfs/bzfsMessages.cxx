@@ -332,7 +332,7 @@ bool sendAcceptPlayerMessage ( int playerID )
 	return true;
 }
 
-void sendHandycapInfoUpdate(int playerID)
+void sendHandicapInfoUpdate(int playerID)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerID);
@@ -342,23 +342,23 @@ void sendHandycapInfoUpdate(int playerID)
   GameKeeper::Player *otherData;
   if (clOptions->gameOptions & HandicapGameStyle) {
     if (playerData->playerHandler) {
-      std::vector<bz_HandycapUpdateRecord*> handyList;
+      std::vector<bz_HandicapUpdateRecord*> handyList;
       for (int i = 0; i < curMaxPlayers; i++) {
 	otherData = GameKeeper::Player::getPlayerByIndex(i);
 	if (otherData) {
-	  bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
+	  bz_HandicapUpdateRecord *handyData = new bz_HandicapUpdateRecord;
 	  handyData->player   = i;
-	  handyData->handycap = otherData->score.getHandicap();
+	  handyData->handicap = otherData->score.getHandicap();
 	  handyList.push_back(handyData);
 	}
 
-	bz_HandycapUpdateRecord **handyPtrList
-	  = (bz_HandycapUpdateRecord**)malloc(sizeof(bz_HandycapUpdateRecord*)
+	bz_HandicapUpdateRecord **handyPtrList
+	  = (bz_HandicapUpdateRecord**)malloc(sizeof(bz_HandicapUpdateRecord*)
 					      * handyList.size());
 	for (int j = 0; j < (int)handyList.size(); j++)
 	  handyPtrList[j] = handyList[j];
 
-	playerData->playerHandler->handycapUpdate((int)handyList.size(),
+	playerData->playerHandler->handicapUpdate((int)handyList.size(),
 						  handyPtrList);
 
 	free(handyPtrList);
@@ -387,7 +387,7 @@ void sendHandycapInfoUpdate(int playerID)
   }
 }
 
-void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData )
+void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData )
 {
 	if (!playerData)
 		return;
@@ -398,16 +398,16 @@ void sendSingleHandycapInfoUpdate ( GameKeeper::Player* playerData )
 	buf = nboPackShort(buf, playerData->score.getHandicap());
 	broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
 
-	bz_HandycapUpdateRecord *handyData = new bz_HandycapUpdateRecord;
+	bz_HandicapUpdateRecord *handyData = new bz_HandicapUpdateRecord;
 	handyData->player = playerData->getIndex();
-	handyData->handycap = playerData->score.getHandicap();
+	handyData->handicap = playerData->score.getHandicap();
 
 	// now do everyone who dosn't have network
 	for (int i = 0; i < curMaxPlayers; i++)
 	{
 		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
 		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->handycapUpdate(1,&handyData);
+			otherData->playerHandler->handicapUpdate(1,&handyData);
 	}
 	delete(handyData);
 }
@@ -1042,7 +1042,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
 }
 
 //utils
-bool isUDPAtackMessage ( uint16_t &code )
+bool isUDPAttackMessage ( uint16_t &code )
 {
     switch (code)
     {

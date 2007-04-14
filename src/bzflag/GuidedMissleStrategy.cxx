@@ -353,7 +353,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.lenght, shotRadius, tankHeight);
+      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.length, shotRadius, tankHeight);
     }
     else 
     {

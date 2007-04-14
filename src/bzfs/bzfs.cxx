@@ -1716,7 +1716,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!playerData->player.isBot())
   {
     sendExistingPlayerUpdates(playerIndex);
-    sendHandycapInfoUpdate(playerIndex);
+    sendHandicapInfoUpdate(playerIndex);
   }
 
   // if new player connection was closed (because of an error) then stop here
@@ -2406,16 +2406,16 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(killer);
   }
 }
-void updateHandycaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
+void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
 {
   if (!(clOptions->gameOptions & HandicapGameStyle))
    return;
 
   if (killer)
-    sendSingleHandycapInfoUpdate(killer);
+    sendSingleHandicapInfoUpdate(killer);
  
   if (victim)
-    sendSingleHandycapInfoUpdate(victim);
+    sendSingleHandicapInfoUpdate(victim);
 }
 
 void checkForScoreLimit ( GameKeeper::Player* killer )
@@ -2597,7 +2597,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
 	if (!respawnOnBase){
 		updateScoresForKill(victimData,killerData,teamkill);
-		updateHandycaps(victimData,killerData);
+		updateHandicaps(victimData,killerData);
 		checkForScoreLimit(killerData);
 	}
 
@@ -3045,7 +3045,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   getGeneralMessageInfo(&buf,code,len);
 
   // make sure it's not an attack
-  if (udp && isUDPAtackMessage(code))
+  if (udp && isUDPAttackMessage(code))
     logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
 
   // see if we have any registered handlers for this message type

@@ -42,7 +42,7 @@ public:
 
   bool	  test2D;
   float	  angle;
-  float	  lenght;
+  float	  length;
 
   float	  bbox[2][3];
 

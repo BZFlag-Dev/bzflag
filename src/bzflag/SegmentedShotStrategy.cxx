@@ -253,7 +253,7 @@ float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
       t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
-			0.5f * tank.lenght, shotRadius, tankHeight);
+			0.5f * tank.length, shotRadius, tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
