@@ -194,7 +194,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
 #endif // !defined(_WIN32)
   if (!okay)
-    goto done;
+  {
+    close(query);
+    return;
+  }
 
   // send out the connect header
   ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
@@ -229,7 +232,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   i = recv(query, (char*)version, 8, 0);
   if (i < 8)
-    goto done;
+  {
+    close(query);
+    return;
+  }
 
   if (debugLevel >= 1) {
     char cServerVersion[128];
@@ -254,7 +260,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       rejectionMessage = message;
     }
 
-    goto done;
+    close(query);
+    return;
   }
 
   // read local player's id
@@ -274,7 +281,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     return;
   if (id == 0xff) {
     state = Rejected;
-    goto done;
+    close(query);
+    return;
   }
 
 #if !defined(_WIN32)
@@ -306,9 +314,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
 
   return;
-
-done:
-  close(query);
 }
 
 ServerLink::~ServerLink()
