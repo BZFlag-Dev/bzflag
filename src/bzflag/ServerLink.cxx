@@ -209,9 +209,17 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   timeout.tv_sec = long(5);
   timeout.tv_usec = 0;
 
-  // send what we got, then receive it
+  // send what we got
   nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
-  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
+  
+  // do a bunch of selects untill we get something back, or untill a long time happens.
+  double timeStart = TimeKeeper::getCurrent().getSeconds();
+  double lameTimeout = 60.0;  // TODO: this is way to huge
+  nfound = 0;
+
+  while ( nfound < 0 || (TimeKeeper::getCurrent().getSeconds()-timeStart < lameTimeout))
+    nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
+
   if (nfound <= 0) {
     close(query);
     return;
