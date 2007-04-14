@@ -136,7 +136,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   // for UDP, used later
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
  
-  const bool okay = true;
+  bool okay = true;
   int fdMax = query;
   struct timeval timeout;
   fd_set write_set;
@@ -185,8 +185,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
 
   hThread = CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
-  const bool okay2 = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
-  if(!okay2)
+  okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+  if(!okay)
     TerminateThread(hThread ,1);
 
   // Do some cleanup
@@ -194,7 +194,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   CloseHandle(hThread);
 
 #endif // !defined(_WIN32)
-  if (!okay2)
+  if (!okay)
   {
     close(query);
     return;
@@ -214,8 +214,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // send what we got
   nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
-  nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
-  // this is just a guess, let em send again to make sure, but realy it's a HACK
   nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
 
   if (nfound <= 0) {
