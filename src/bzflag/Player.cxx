@@ -804,6 +804,27 @@ void Player::setVisualTeam (TeamColor visualTeam)
   }
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(tankTexture);
+  if (tankMesh) {
+    iMeshObject *meshObj = tankMesh->GetMeshObject();
+    if (meshObj)
+      meshObj->SetMaterialWrapper(tm.getInfo(tankTexture).material);
+    iMeshWrapper *child = tankMesh->FindChildByName("tankltread");
+    meshObj = child->GetMeshObject();
+    if (meshObj)
+      meshObj->SetMaterialWrapper(tm.getInfo(tankTexture).material);
+    child = tankMesh->FindChildByName("tankrtread");
+    meshObj = child->GetMeshObject();
+    if (meshObj)
+      meshObj->SetMaterialWrapper(tm.getInfo(tankTexture).material);
+    child = tankMesh->FindChildByName("tankbarrel");
+    meshObj = child->GetMeshObject();
+    if (meshObj)
+      meshObj->SetMaterialWrapper(tm.getInfo(tankTexture).material);
+    child = tankMesh->FindChildByName("tankturret");
+    meshObj = child->GetMeshObject();
+    if (meshObj)
+      meshObj->SetMaterialWrapper(tm.getInfo(tankTexture).material);
+  }
 
   int jumpJetsTexture = tm.getTextureID("jumpjets", false);
   tankNode->setJumpJetsTexture(jumpJetsTexture);
