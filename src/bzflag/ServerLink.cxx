@@ -135,18 +135,19 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // for UDP, used later
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
-
-#if !defined(_WIN32)
+ 
   const bool okay = true;
   int fdMax = query;
-  if (BzfNetwork::setNonBlocking(query) < 0) {
-    close(query);
-    return;
-  }
   struct timeval timeout;
   fd_set write_set;
   fd_set read_set;
   int nfound;
+
+#if !defined(_WIN32)
+  if (BzfNetwork::setNonBlocking(query) < 0) {
+    close(query);
+    return;
+  }
   if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0) {
     if (getErrno() != EINPROGRESS) {
       close(query);
@@ -184,8 +185,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
 
   hThread = CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
-  const bool okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
-  if(!okay)
+  const bool okay2 = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+  if(!okay2)
     TerminateThread(hThread ,1);
 
   // Do some cleanup
@@ -193,7 +194,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   CloseHandle(hThread);
 
 #endif // !defined(_WIN32)
-  if (!okay)
+  if (!okay2)
   {
     close(query);
     return;
@@ -203,7 +204,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
 
   // get server version and verify
-#if !defined(_WIN32)
   FD_ZERO(&read_set);
   FD_ZERO(&write_set);
   FD_SET((unsigned int)query, &read_set);
@@ -215,28 +215,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   // send what we got
   nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
   nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
- 
-  /*// do a bunch of selects untill we get something back, or untill a long time happens.
-  double timeStart = TimeKeeper::getCurrent().getSeconds();
-  double lameTimeout = 60.0;  // TODO: this is way to huge
-  nfound = 0;
-
-  bool gotSomething = false;
-
-  while ( !gotSomething )
-  {
-   
-    if ( nfound <= 0 )
-      gotSomething = true;
-    else if ( (TimeKeeper::getCurrent().getSeconds()-timeStart > lameTimeout) )
-      gotSomething = true;
-  } */
+  // this is just a guess, let em send again to make sure, but realy it's a HACK
+  nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
 
   if (nfound <= 0) {
     close(query);
     return;
   }
-#endif // !defined(_WIN32)
 
 
   i = recv(query, (char*)version, 8, 0);
