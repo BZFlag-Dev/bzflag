@@ -29,10 +29,6 @@ Should be considered for the release of 2.2:
   Change the team flags to be a difrent message and take the real team
   enumeration. The flag type is told on pickup.
 
-* Finish Server listener class and hooks to the API (JeffM2501)
-
-* Cleanup HandleCommand on the server (JeffM2501)
-
 * Implement Server side shot tracking (JeffM2501)
 
 * Implement server side shot ID and path enhacements (JeffM2501)
@@ -49,6 +45,8 @@ Would be nice to have but are not critical for 2.2
 * Split out radar and 3d and world position updates, Radar can be less data
   at a way lower resolution. Don't send the type of data when it is invalid
   for the player. (JeffM2501)
+
+* Finish Server listener class and hooks to the API (JeffM2501)
 
 * Create a user modifiable group management system that is based on 
   the concepts of registered orginisations. 
