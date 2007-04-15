@@ -17,6 +17,7 @@ SUBDIRS = \
 	logDetail \
 	nagware \
 	playHistoryTracker \
+	Phoenix \
 	python \
 	recordmatch \
 	serverControl \
