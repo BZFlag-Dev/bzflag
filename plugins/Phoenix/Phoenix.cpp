@@ -17,6 +17,10 @@ class PhoenixEvents : public bz_EventHandler
   {
     switch(eventData->eventType)
     {
+      case bz_eCaptureEvent:
+	lastDeaded.clear();
+	break;
+
       case bz_ePlayerDieEvent:
 	{
 	  bz_PlayerDieEventData* data = (bz_PlayerDieEventData*)eventData;
@@ -70,6 +74,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
   bz_registerEvent(bz_ePlayerDieEvent,&phoenixEvents);
   bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&phoenixEvents);
   bz_registerEvent(bz_ePlayerPartEvent,&phoenixEvents);
+  bz_registerEvent(bz_eCaptureEvent,&phoenixEvents);
 
   bz_debugMessage(4,"Phoenix plugin loaded");
   return 0;
@@ -80,6 +85,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerDieEvent,&phoenixEvents);
   bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&phoenixEvents);
   bz_removeEvent(bz_ePlayerPartEvent,&phoenixEvents);
+  bz_removeEvent(bz_eCaptureEvent,&phoenixEvents);
 
   lastDeaded.clear();
   bz_debugMessage(4,"Phoenix plugin unloaded");
