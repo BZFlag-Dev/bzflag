@@ -213,6 +213,7 @@ AC_CONFIG_FILES([
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	plugin_utils/Makefile
+	Phoenix/Makefile
 	python/Makefile
 	recordmatch/Makefile
 	serverSideBotSample/Makefile
