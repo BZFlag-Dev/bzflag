@@ -201,7 +201,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
 
   // send out the connect header
-  ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
+  int sendRepply = ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
+
+  logDebugMessage(2,"CONNECT:send in connect returned %d\n",sendRepply);
 
   // get server version and verify
   FD_ZERO(&read_set);
@@ -216,13 +218,16 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   double connectTimeout = 30.0;
   bool gotNetData = false;
 
+  int loopCount = 0;
   while(!gotNetData)
   {
+    loopCount++;
     nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
     
     // there has to be at least one socket active, or we are screwed
     if (nfound <= 0)
     {
+      logDebugMessage(1,"CONNECT:select in connect failed, nfound = %d\n",nfound);
       close(query);
       return;
     }
@@ -232,17 +237,23 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
     // if we got some, then we are done
     if ( i > 0)
+    {
+      logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
       gotNetData = true;
+    }
     else
     {
       // if we have waited too long, then bail
       if ( (TimeKeeper::getCurrent().getSeconds() - startTime) > connectTimeout)
       {
+	logDebugMessage(1,"CONNECT:connect time out failed\n");
 	close(query);
 	return;
       }
     }
  }
+
+  logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
   // send what we got
   if (i < 8)
