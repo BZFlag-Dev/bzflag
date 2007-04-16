@@ -24,78 +24,81 @@
 
 bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 {
-	// Speed problems occur around flag drops, so don't check for
-	// a short period of time after player drops a flag. Currently
-	// 2 second, adjust as needed.
-	if (playerData->player.isFlagTransitSafe())
-	{
-		// we'll be checking against the player's flag type
-		int pFlag = playerData->player.getFlag();
+  // Speed problems occur around flag drops, so don't check for
+  // a short period of time after player drops a flag. Currently
+  // 2 second, adjust as needed.
+  if (playerData->player.isFlagTransitSafe())
+  {
+    // we'll be checking against the player's flag type
+    int pFlag = playerData->player.getFlag();
 
-		// check for highspeed cheat; if inertia is enabled, skip test for now
-		if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f)
-		{
-			// Doesn't account for going fast backwards, or jumping/falling
-			float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] + state.velocity[1]*state.velocity[1];
+    // check for highspeed cheat; if inertia is enabled, skip test for now
+    if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f)
+    {
+      // Doesn't account for going fast backwards, or jumping/falling
+      float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] + state.velocity[1]*state.velocity[1];
 
-			float maxPlanarSpeed = BZDBCache::tankSpeed;
+      float maxPlanarSpeed = BZDBCache::tankSpeed;
 
-			bool logOnly = false;
+      bool logOnly = false;
 
-			// if tank is not driving cannot be sure it didn't toss
-			// (V) in flight
+      if (BZDB.isTrue("_forceSpeedChecksToLog"))
+	logOnly = true;
 
-			// if tank is not alive cannot be sure it didn't just toss
-			// (V)
-			if (pFlag >= 0)
-			{
-				FlagInfo &flag = *FlagInfo::get(pFlag);
-				if (flag.flag.type == Flags::Velocity)
-					maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-				else if (flag.flag.type == Flags::Thief)
-					maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-				else if (flag.flag.type == Flags::Agility)
-					maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-				else if ((flag.flag.type == Flags::Burrow) && (playerData->lastState.pos[2] == state.pos[2]) && (playerData->lastState.velocity[2] == state.velocity[2]) && (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
-				{	// if we have burrow and are not actively burrowing
-					// You may have burrow and still be above ground. Must
-					// check z in ground!!
-					maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-				}
-			}
+      // if tank is not driving cannot be sure it didn't toss
+      // (V) in flight
 
-			float maxPlanarSpeedSqr = maxPlanarSpeed * maxPlanarSpeed;
-
-			// If player is moving vertically, or not alive the speed checks
-			// seem to be problematic. If this happens, just log it for now,
-			// but don't actually kick
-			if ((playerData->lastState.pos[2] != state.pos[2]) || (playerData->lastState.velocity[2] != state.velocity[2]) || ((state.status & PlayerState::Alive) == 0))
-				logOnly = true;
-
-			// allow a 10% tolerance level for speed if -speedtol is not sane
-			if (cheatProtectionOptions.doSpeedChecks)
-			{
-				float realtol = 1.1f;
-				if (speedTolerance > 1.0f)
-					realtol = speedTolerance;
-				maxPlanarSpeedSqr *= realtol;
-
-				if (curPlanarSpeedSqr > maxPlanarSpeedSqr)
-				{
-					if (logOnly)
-						logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-					else
-					{
-						logDebugMessage(1,"Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-						sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player tank is moving too fast.");
-						removePlayer(playerData->getIndex(), "too fast");
-					}
-					return false;
-				}
-			}
-		}
+      // if tank is not alive cannot be sure it didn't just toss
+      // (V)
+      if (pFlag >= 0)
+      {
+	FlagInfo &flag = *FlagInfo::get(pFlag);
+	if (flag.flag.type == Flags::Velocity)
+		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	else if (flag.flag.type == Flags::Thief)
+		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	else if (flag.flag.type == Flags::Agility)
+		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+	else if ((flag.flag.type == Flags::Burrow) && (playerData->lastState.pos[2] == state.pos[2]) && (playerData->lastState.velocity[2] == state.velocity[2]) && (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
+	{	// if we have burrow and are not actively burrowing
+		// You may have burrow and still be above ground. Must
+		// check z in ground!!
+		maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	}
-	return true;
+      }
+
+      float maxPlanarSpeedSqr = maxPlanarSpeed * maxPlanarSpeed;
+
+      // If player is moving vertically, or not alive the speed checks
+      // seem to be problematic. If this happens, just log it for now,
+      // but don't actually kick
+      if ((playerData->lastState.pos[2] != state.pos[2]) || (playerData->lastState.velocity[2] != state.velocity[2]) || ((state.status & PlayerState::Alive) == 0))
+	logOnly = true;
+
+      // allow a 10% tolerance level for speed if -speedtol is not sane
+      if (cheatProtectionOptions.doSpeedChecks)
+      {
+	float realtol = 1.1f;
+	if (speedTolerance > 1.0f)
+		realtol = speedTolerance;
+	maxPlanarSpeedSqr *= realtol;
+
+	if (curPlanarSpeedSqr > maxPlanarSpeedSqr)
+	{
+	  if (logOnly)
+	    logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	  else
+	  {
+	    logDebugMessage(1,"Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	    sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player tank is moving too fast.");
+	    removePlayer(playerData->getIndex(), "too fast");
+	  }
+	  return false;
+	}
+      }
+    }
+  }
+  return true;
 }
 
 bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
