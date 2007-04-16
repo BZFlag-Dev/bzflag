@@ -212,17 +212,39 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   timeout.tv_sec = long(10);
   timeout.tv_usec = 0;
 
+  double startTime = TimeKeeper::getCurrent().getSeconds();
+  double connectTimeout = 30.0;
+  bool gotNetData = false;
+
+  while(!gotNetData)
+  {
+    nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
+    
+    // there has to be at least one socket active, or we are screwed
+    if (nfound <= 0)
+    {
+      close(query);
+      return;
+    }
+
+    // try and get data back from the server
+    i = recv(query, (char*)version, 8, 0);
+
+    // if we got some, then we are done
+    if ( i > 0)
+      gotNetData = true;
+    else
+    {
+      // if we have waited too long, then bail
+      if ( (TimeKeeper::getCurrent().getSeconds() - startTime) > connectTimeout)
+      {
+	close(query);
+	return;
+      }
+    }
+ }
+
   // send what we got
-  nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
-  nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
-
-  if (nfound <= 0) {
-    close(query);
-    return;
-  }
-
-
-  i = recv(query, (char*)version, 8, 0);
   if (i < 8)
   {
     close(query);
