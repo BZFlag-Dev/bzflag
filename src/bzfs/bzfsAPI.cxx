@@ -1245,6 +1245,8 @@ BZF_API unsigned int bz_getTeamPlayerLimit(bz_eTeamType _team)
     case ePurpleTeam:
     case eObservers:
       return clOptions->maxTeam[convertTeam(_team)];
+    default:
+      break;
   }
 
   return 0;
@@ -3390,21 +3392,21 @@ void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, 
 
 void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int){}
 
-void bz_ServerSidePlayerHandler::flagTransfer(int from, int to, int flagID, bz_eShotType shotType){}
+void bz_ServerSidePlayerHandler::flagTransfer(int, int, int, bz_eShotType){}
 
-void bz_ServerSidePlayerHandler::nearestFlag(const char *flagName, float pos[3]){}
+void bz_ServerSidePlayerHandler::nearestFlag(const char *, float[3]){}
 
-void bz_ServerSidePlayerHandler::grabFlag(int player, int flagID, const char *flagType, bz_eShotType shotType){}
+void bz_ServerSidePlayerHandler::grabFlag(int, int, const char *, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::setShotType(int player, bz_eShotType shotType){}
+void bz_ServerSidePlayerHandler::setShotType(int player, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::shotFired(int player, unsigned short shotID, bz_eShotType shotType){}
+void bz_ServerSidePlayerHandler::shotFired(int, unsigned short, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::shotEnded(int player, unsigned short shotID, unsigned short reason){}
+void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short){}
 
 void bz_ServerSidePlayerHandler::playerTeleported( int player, unsigned short from, unsigned short to ){}
 
-void bz_ServerSidePlayerHandler::playerAutopilot( int player, bool autopilot ){}
+void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *email, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
@@ -3421,10 +3423,7 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
   player->player.setClientVersion(clientVersion);
 
   uint16_t code=0;
-  char reason[512]=
-  {
-    0
-  };
+  char reason[512] = {0};
   if(!player->player.processEnter(code, reason))
     playerRejected((bz_eRejectCodes)code, reason);
 
@@ -3464,13 +3463,13 @@ void bz_ServerSidePlayerHandler::updateState(bz_PlayerUpdateState *state)
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::dropFlag(float pos[3])
+void bz_ServerSidePlayerHandler::dropFlag(float _pos[3])
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player)
     return ;
 
-  dropPlayerFlag(*player, pos);
+  dropPlayerFlag(*player, _pos);
 }
 
 //-------------------------------------------------------------------------
