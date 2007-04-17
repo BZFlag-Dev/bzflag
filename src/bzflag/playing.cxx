@@ -4016,7 +4016,7 @@ void setLookAtMarker(void)
   // figure out which tank is centered in my sights
   for(int i = 0; i < curMaxPlayers; i++) {
     if (!player[i] || !player[i]->isAlive())
-			continue;
+      continue;
 
     // compute position in my local coordinate system
     const float *pos = player[i]->getPosition();
