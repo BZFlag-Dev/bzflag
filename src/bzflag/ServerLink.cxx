@@ -153,7 +153,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       close(query);
       return;
     }
-    FD_ZERO(&write_set);
+
+    // send some data before we select
+    // it'll happen later
+   /* FD_ZERO(&write_set);
     FD_SET((unsigned int)query, &write_set);
     timeout.tv_sec = long(5);
     timeout.tv_usec = 0;
@@ -172,7 +175,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     if (connectError != 0) {
       close(query);
       return;
-    }
+    } */
   }
 #else // Connection timeout for Windows
 
@@ -242,7 +245,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     if ( i > 0)
     {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
-      gotNetData = true;
+      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - startTime));
+     gotNetData = true;
     }
     else
     {
@@ -258,6 +262,21 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
  }
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+
+#if !defined(_WIN32)
+  int       connectError;
+  socklen_t errorLen = sizeof(int);
+  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)  < 0)
+  {
+    close(query);
+    return;
+  }
+  if (connectError != 0)
+  {
+    close(query);
+    return;
+  }
+#endif
 
   // send what we got
   if (i < 8)
