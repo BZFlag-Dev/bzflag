@@ -4550,7 +4550,7 @@ bool updateCurl ( void )
 
   int curlMaxFile = cURLManager::fdset(curlReadSet,curlWriteSet);
 
-  int nfound = select(curlMaxFile+1, (fd_set*)&curlReadSet, (fd_set*)&curlWriteSet, 0, &timeout);
+  select(curlMaxFile+1, (fd_set*)&curlReadSet, (fd_set*)&curlWriteSet, 0, &timeout);
 
   return cURLManager::perform();
 }
