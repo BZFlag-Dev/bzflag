@@ -225,7 +225,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   timeout.tv_sec = long(10);
   timeout.tv_usec = 0;
 
-  double startTime = TimeKeeper::getCurrent().getSeconds();
+  double thisStartTime = TimeKeeper::getCurrent().getSeconds();
   double connectTimeout = 30.0;
   if (BZDB.isSet("connectionTimeout"))
     connectTimeout = BZDB.eval("connectionTimeout")  ;
@@ -253,13 +253,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     if ( i > 0)
     {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
-      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - startTime));
+      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
      gotNetData = true;
     }
     else
     {
       // if we have waited too long, then bail
-      if ( (TimeKeeper::getCurrent().getSeconds() - startTime) > connectTimeout)
+      if ( (TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout)
       {
 	logDebugMessage(1,"CONNECT:connect time out failed\n");
 	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
