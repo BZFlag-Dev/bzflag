@@ -3398,13 +3398,13 @@ void bz_ServerSidePlayerHandler::nearestFlag(const char *, float[3]){}
 
 void bz_ServerSidePlayerHandler::grabFlag(int, int, const char *, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::setShotType(int player, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::setShotType(int, bz_eShotType ){}
 
 void bz_ServerSidePlayerHandler::shotFired(int, unsigned short, bz_eShotType ){}
 
 void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short){}
 
-void bz_ServerSidePlayerHandler::playerTeleported( int player, unsigned short from, unsigned short to ){}
+void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned short ){}
 
 void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
 
