@@ -788,17 +788,17 @@ NetListener::~NetListener()
 
 }
 
-bool NetListener::listen ( unsigned short port )
+bool NetListener::listen ( unsigned short /*port*/ )
 {
   return false;
 }
 
-bool NetListener::close ( NetHandler *handler )
+bool NetListener::close ( NetHandler */*handler*/ )
 {
   return false;
 }
 
-bool NetListener::close ( int connectionID )
+bool NetListener::close ( int /*connectionID*/ )
 {
   return false;
 }
