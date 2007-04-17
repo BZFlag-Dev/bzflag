@@ -144,10 +144,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   int nfound;
 
 #if !defined(_WIN32)
-  if (BzfNetwork::setNonBlocking(query) < 0) {
-    close(query);
-    return;
-  }
   if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
   {
     int error = getErrno();
@@ -280,6 +276,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     close(query);
     return;
   }
+
+#if !defined(_WIN32)
+  if (BzfNetwork::setNonBlocking(query) < 0) {
+    close(query);
+    return;
+  }
+#endif
 
   if (debugLevel >= 1) {
     char cServerVersion[128];
