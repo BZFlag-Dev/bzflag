@@ -150,15 +150,15 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
   if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
   {
-    int error = getErrno();
-    while ( error == EINPROGRESS)
-    {
-      connect(query, (CNCTType*)&addr, sizeof(addr));
-      error = getErrno();
-      TimeKeeper::sleep(0.01);
-    }
+   // int error = getErrno();
+  //  while ( error == EINPROGRESS)
+  //  {
+  //    connect(query, (CNCTType*)&addr, sizeof(addr));
+  //    error = getErrno();
+   //   TimeKeeper::sleep(0.01);
+   // }
 
-    if (error != EISCONN)
+    if (error != EINPROGRESS)
     {
       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
 
