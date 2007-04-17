@@ -3972,9 +3972,9 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
   return false;
 }
 
-bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
+bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *_player)
 {
-  if (player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth)
+  if (_player->isPaused() || _player->isNotResponding() || _player->getFlag() == Flags::Stealth)
     return false; // can't lock to paused, NR, or stealth
 
   if (angle >=  BZDB.eval(StateDatabase::BZDB_LOCKONANGLE))
@@ -3986,7 +3986,7 @@ bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *
   return true;
 }
 
-bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer *player )
+bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer *_player )
 {
   // usually about 17 degrees
   if (angle >= BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE))
@@ -3995,7 +3995,7 @@ bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer
   if (distance > bestDistance)
     return false;
 
-  if (player->getFlag() == Flags::Stealth)
+  if (_player->getFlag() == Flags::Stealth)
     return myTank->getFlag() == Flags::Seer;
 
   return true;
