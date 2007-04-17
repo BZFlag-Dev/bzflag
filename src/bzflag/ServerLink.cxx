@@ -150,14 +150,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
   if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
   {
-   // int error = getErrno();
-  //  while ( error == EINPROGRESS)
-  //  {
-  //    connect(query, (CNCTType*)&addr, sizeof(addr));
-  //    error = getErrno();
-   //   TimeKeeper::sleep(0.01);
-   // }
-
+    int error = getErrno();
     if (error != EINPROGRESS)
     {
       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
@@ -168,11 +161,14 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
     // send some data before we select
     // it'll happen later
-   /* FD_ZERO(&write_set);
+    FD_ZERO(&write_set);
     FD_SET((unsigned int)query, &write_set);
     timeout.tv_sec = long(5);
     timeout.tv_usec = 0;
     nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
+    error = getErrno();
+    logDebugMessage(2,"CONNECT:non windows inital select nfound = %d error = %d\n",nfound,error);
+
     if (nfound <= 0) {
       close(query);
       return;
@@ -187,7 +183,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     if (connectError != 0) {
       close(query);
       return;
-    } */
+    }
   }
 #else // Connection timeout for Windows
 
@@ -276,21 +272,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
  }
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
-
-#if !defined(_WIN32)
-  int       connectError;
-  socklen_t errorLen = sizeof(int);
-  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)  < 0)
-  {
-    close(query);
-    return;
-  }
-  if (connectError != 0)
-  {
-    close(query);
-    return;
-  }
-#endif
 
   // send what we got
   if (i < 8)
