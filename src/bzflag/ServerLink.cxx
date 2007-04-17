@@ -181,6 +181,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       return;
     }
     if (connectError != 0) {
+      logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
       close(query);
       return;
     }
