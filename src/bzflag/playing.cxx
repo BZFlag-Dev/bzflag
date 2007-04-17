@@ -5147,12 +5147,14 @@ static void joinInternetGame2()
 
   // tell server we want to join
   bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
-  serverLink->sendCaps(true,!noSounds);
   serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
 			startupInfo.token);
   startupInfo.token[0] = '\0';
+
+  serverLink->sendCaps(myTank->getId(),true,!noSounds);
+
 
   ExportInformation &ei = ExportInformation::instance();
   ei.setInformation("Callsign", myTank->getCallSign(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);

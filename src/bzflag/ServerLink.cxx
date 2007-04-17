@@ -644,16 +644,18 @@ if (packetStream) {
 }
   return 1;
 }
-void ServerLink::sendCaps(bool downloads, bool sounds )
+void ServerLink::sendCaps(PlayerId _id,bool downloads, bool sounds )
 {
-	if (state != Okay) return;
-	char msg[2] = {0};
-	void* buf = msg;
+  if (state != Okay)
+    return;
+  char msg[2] = {0};
+  void* buf = msg;
 
-	buf = nboPackUByte(buf, downloads ? 1 : 0);
-	buf = nboPackUByte(buf, sounds ? 1 : 0);
+  buf = nboPackUByte(buf, uint8_t(_id));
+  buf = nboPackUByte(buf, downloads ? 1 : 0);
+  buf = nboPackUByte(buf, sounds ? 1 : 0);
 
-	send(MsgCapBits, (uint16_t)((char*)buf - msg), msg);
+  send(MsgCapBits, (uint16_t)((char*)buf - msg), msg);
 }
 
 void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
