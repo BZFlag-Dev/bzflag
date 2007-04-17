@@ -647,7 +647,7 @@ void ServerLink::sendCaps(PlayerId _id,bool downloads, bool sounds )
 {
   if (state != Okay)
     return;
-  char msg[2] = {0};
+  char msg[3] = {0};
   void* buf = msg;
 
   buf = nboPackUByte(buf, uint8_t(_id));
