@@ -294,6 +294,7 @@ public:
   static const std::string	BZDB_SHOTSKEEPVERTICALV;
   static const std::string	BZDB_SQUISHFACTOR;
   static const std::string	BZDB_SQUISHTIME;
+  static const std::string	BZDB_SPEEDCHECKSLOGONLY;
   static const std::string	BZDB_SRRADIUSMULT;
   static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;

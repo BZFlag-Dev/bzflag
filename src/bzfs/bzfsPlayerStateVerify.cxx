@@ -42,7 +42,7 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
       bool logOnly = false;
 
-      if (BZDB.isTrue("_forceSpeedChecksToLog"))
+      if (BZDB.isTrue("_speedChecksLogOnly"))
 	logOnly = true;
 
       // if tank is not driving cannot be sure it didn't toss
