@@ -133,6 +133,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_spawnSafeRadMod",		"20",				false, StateDatabase::Locked},
   { "_spawnSafeSRMod",		"3",				false, StateDatabase::Locked},
   { "_spawnSafeSWMod",		"1.5",				false, StateDatabase::Locked},
+  { "_speedChecksLogOnly",	"0",				false, StateDatabase::Locked},
   { "_srRadiusMult",		"2.0",				false, StateDatabase::Locked},
   { "_squishFactor",		"1.0",				false, StateDatabase::Locked},
   { "_squishTime",		"1.0",				false, StateDatabase::Locked},

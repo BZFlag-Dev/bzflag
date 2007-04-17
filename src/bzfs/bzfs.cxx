@@ -3949,7 +3949,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    float maxPlanarSpeed = BZDBCache::tankSpeed;
 
 	    bool logOnly = false;
-	    if (BZDB.isTrue("_forceSpeedChecksToLog"))
+	    if (BZDB.isTrue("_speedChecksLogOnly"))
 	      logOnly = true;
 
 	    // if tank is not driving cannot be sure it didn't toss
