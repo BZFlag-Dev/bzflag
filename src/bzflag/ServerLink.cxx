@@ -258,6 +258,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 	close(query);
 	return;
       }
+
+      TimeKeeper::sleep(0.25f);
     }
  }
 
