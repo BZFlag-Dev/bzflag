@@ -216,6 +216,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   double startTime = TimeKeeper::getCurrent().getSeconds();
   double connectTimeout = 30.0;
+  if (BZDB.isSet("connectionTimeout"))
+    connectTimeout = BZDB.eval("connectionTimeout")  ;
+
   bool gotNetData = false;
 
   int loopCount = 0;
@@ -247,6 +250,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       if ( (TimeKeeper::getCurrent().getSeconds() - startTime) > connectTimeout)
       {
 	logDebugMessage(1,"CONNECT:connect time out failed\n");
+	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 	close(query);
 	return;
       }
