@@ -708,10 +708,19 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 
 	if (friendly)
 	{
-	  glLineWidth(3.0f);
+	  float xFactor = 0.75f;
+
+	  glLineWidth(4.0f);
 	  glBegin(GL_LINES);
-	  glVertex3f(triangleSize,triangleSize,0.02f);
-	  glVertex3f(-triangleSize,-triangleSize,0.02f);
+	    glVertex3f(triangleSize*xFactor,triangleSize,0.02f);
+	    glVertex3f(-triangleSize*xFactor,0,0.02f);
+	    glVertex3f(triangleSize*xFactor,triangleSize,0.03f);
+	    glVertex3f(-triangleSize*xFactor,0,0.02f);
+	   
+	    glVertex3f(-triangleSize*xFactor,triangleSize,0.02f);
+	    glVertex3f(triangleSize*xFactor,0,0.02f);
+	    glVertex3f(-triangleSize*xFactor,triangleSize,0.03f);
+	    glVertex3f(triangleSize*xFactor,0,0.02f);
 	  glEnd();
 	  glLineWidth(1.0f);
 

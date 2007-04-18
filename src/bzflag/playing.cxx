@@ -4058,7 +4058,7 @@ void setLookAtMarker(void)
     std::string flagName = bestTarget->getFlag()->flagAbbv;
     label += std::string("(") + flagName + std::string(")");
   }
-  hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,isKillable(bestTarget),2.0f);
+  hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,!isKillable(bestTarget),2.0f);
 }
 
 void setTarget()
@@ -6516,7 +6516,7 @@ void doTankMotions ( const float /*dt*/ )
 
 	  // see if we have a target, if so lock on to the bastage
 	  if (myTank->getTarget())
-	    hud->AddLockOnMarker(myTank->getTarget()->getPosition(),myTank->getTarget()->getCallSign(),isKillable(myTank->getTarget()));
+	    hud->AddLockOnMarker(myTank->getTarget()->getPosition(),myTank->getTarget()->getCallSign(),!isKillable(myTank->getTarget()));
 
 	}
       else
