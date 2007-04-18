@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- jitter on windows servers is reported as very high, but play
+  is unaffected.
+
 - client side bots don't even show as tanks.
 
 - bullets do no longer bounce off the walls in replays
