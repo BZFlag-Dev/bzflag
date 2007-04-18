@@ -451,28 +451,31 @@ void			HUDRenderer::addMarker(float _heading, const float *_color )
   memcpy(m.color, _color, sizeof(m.color));
 }
 
-void HUDRenderer::AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name,  float zShift )
+void HUDRenderer::AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly,  float zShift )
 {
-	EnhancedHUDMarker	newMarker(pos,color);
-	newMarker.pos[2] += zShift;
-	newMarker.name = name;
-	enhancedMarkers.push_back(newMarker);
+  EnhancedHUDMarker	newMarker(pos,color);
+  newMarker.pos[2] += zShift;
+  newMarker.name = name;
+  newMarker.friendly = friendly;
+  enhancedMarkers.push_back(newMarker);
 }
 
-void HUDRenderer::AddEnhancedMarker ( const float* pos, const float *color, float zShift )
+void HUDRenderer::AddEnhancedMarker ( const float* pos, const float *color, bool friendly, float zShift )
 {
-	EnhancedHUDMarker	newMarker(pos,color);
-	newMarker.pos[2] += zShift;
-	enhancedMarkers.push_back(newMarker);
+  EnhancedHUDMarker	newMarker(pos,color);
+  newMarker.pos[2] += zShift;
+  newMarker.friendly = friendly;
+  enhancedMarkers.push_back(newMarker);
 }
 
-void HUDRenderer::AddLockOnMarker ( const float* pos, std::string name, float zShift )
+void HUDRenderer::AddLockOnMarker ( const float* pos, std::string name, bool friendly, float zShift )
 {
-	float color[3] = {0.75f,0.125f,0.125f};
-	EnhancedHUDMarker	newMarker(pos,color);
-	newMarker.pos[2] += zShift;
-	newMarker.name = name;
-	lockOnMarkers.push_back(newMarker);
+  float color[3] = {0.75f,0.125f,0.125f};
+  EnhancedHUDMarker	newMarker(pos,color);
+  newMarker.pos[2] += zShift;
+  newMarker.name = name;
+  newMarker.friendly = friendly;
+  lockOnMarkers.push_back(newMarker);
 }
 
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
@@ -616,7 +619,7 @@ void HUDRenderer::saveMatrixes ( const float *mm, const float *pm )
 }
 
 
-void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std::string name )
+void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std::string name, bool friendly )
 {
 	double map[3] = {0,0,0};
 	double o[3];
@@ -703,15 +706,26 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 	glVertex3f(-triangleSize,triangleSize,0.01f);
 	glEnd();
 
+	if (friendly)
+	{
+	  glLineWidth(3.0f);
+	  glBegin(GL_LINES);
+	  glVertex3f(triangleSize,triangleSize,0.02f);
+	  glVertex3f(-triangleSize,-triangleSize,0.02f);
+	  glEnd();
+	  glLineWidth(1.0f);
+
+	}
+
 	glPopMatrix();
 
 	if (name.size())
 	{
-		float textOffset = 5.0f;
-		float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
-		glEnable(GL_TEXTURE_2D);
-		FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize,name);
-		glDisable(GL_TEXTURE_2D);
+	  float textOffset = 5.0f;
+	  float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
+	  glEnable(GL_TEXTURE_2D);
+	  FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize,name);
+	  glDisable(GL_TEXTURE_2D);
 	}
 
 	glPopMatrix();
@@ -721,7 +735,7 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::string name )
+void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::string name, bool friendly )
 {
 	double map[3] = {0,0,0};
 	double o[3];
@@ -1490,36 +1504,36 @@ void HUDRenderer::renderUpdate(SceneRenderer& renderer)
 
 void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
 {
-	if (myTank)
-	{
-		glPushMatrix();
+  if (myTank)
+  {
+    glPushMatrix();
 
-		hudColor3Afv( hudColor, 0.5f );
+    hudColor3Afv( hudColor, 0.5f );
 
-		glTranslatef((float)centerx,(float)centery,0);
-		glLineWidth(2.0f);
+    glTranslatef((float)centerx,(float)centery,0);
+    glLineWidth(2.0f);
 
-		// draw any waypoint markers
-		for ( int i = 0; i < (int)enhancedMarkers.size(); i++ )
-		{
-			hudColor3Afv( enhancedMarkers[i].color, 0.45f );
-			drawWaypointMarker(enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name);
-		}
-		enhancedMarkers.clear();
+    // draw any waypoint markers
+    for ( int i = 0; i < (int)enhancedMarkers.size(); i++ )
+    {
+      hudColor3Afv( enhancedMarkers[i].color, 0.45f );
+      drawWaypointMarker(enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name,enhancedMarkers[i].friendly);
+    }
+    enhancedMarkers.clear();
 
-		// draw any lockon markers
-		for ( int i = 0; i < (int)lockOnMarkers.size(); i++ )
-		{
-			hudColor3Afv( lockOnMarkers[i].color, 0.45f );
-			drawLockonMarker(lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name);
-		}
-		lockOnMarkers.clear();
-		glLineWidth(1.0f);
+    // draw any lockon markers
+    for ( int i = 0; i < (int)lockOnMarkers.size(); i++ )
+    {
+      hudColor3Afv( lockOnMarkers[i].color, 0.45f );
+      drawLockonMarker(lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name,lockOnMarkers[i].friendly);
+    }
+    lockOnMarkers.clear();
+    glLineWidth(1.0f);
 
-		glPopMatrix();
+    glPopMatrix();
 
-		hudColor3Afv( hudColor, 0.5f );
-	}
+    hudColor3Afv( hudColor, 0.5f );
+  }
 }
 
 

@@ -47,21 +47,22 @@ typedef std::vector<HUDMarker> MarkerList;
 class EnhancedHUDMarker
 {
 public:
-	EnhancedHUDMarker()
-	{
-		pos[0] = pos[1] = pos[2] = 0;
-		color[0] = color[1] = color[2] = 0;
-	}
+  EnhancedHUDMarker()
+  {
+    pos[0] = pos[1] = pos[2] = 0;
+    color[0] = color[1] = color[2] = 0;
+  }
 
-	EnhancedHUDMarker( const float *p, const float* c)
-	{
-		memcpy( color, c, sizeof(GLfloat)*3);
-		memcpy( pos, p, sizeof(float)*3);
-	}
+  EnhancedHUDMarker( const float *p, const float* c)
+  {
+    memcpy( color, c, sizeof(GLfloat)*3);
+    memcpy( pos, p, sizeof(float)*3);
+  }
 
-	float pos[3];
-	GLfloat color[3];
-	std::string name;
+  float pos[3];
+  GLfloat color[3];
+  std::string name;
+  bool friendly;
 };
 typedef std::vector < EnhancedHUDMarker > EnhancedMarkerList;
 
@@ -99,10 +100,10 @@ public:
   void		setRestartKeyLabel(const std::string&);
   void		setTimeLeft(uint32_t timeLeftInSeconds);
 
-  void AddEnhancedMarker ( const float* pos, const float *color, float zShift = 0 );
-  void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, float zShift = 0 );
+  void AddEnhancedMarker ( const float* pos, const float *color, bool friendly = false, float zShift = 0 );
+  void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly = false, float zShift = 0 );
 
-  void AddLockOnMarker ( const float* pos, std::string name, float zShift = 0 );
+  void AddLockOnMarker ( const float* pos, std::string name, bool friendly = false, float zShift = 0 );
 	
   void saveMatrixes ( const float *mm, const float *pm );
   void		setDim(bool);
@@ -138,8 +139,8 @@ protected:
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
 
-  void drawLockonMarker ( float *object, const float *viewPos, std::string name );
-  void drawWaypointMarker ( float *object, const float *viewPos, std::string name );
+  void drawLockonMarker ( float *object, const float *viewPos, std::string name, bool friendly );
+  void drawWaypointMarker ( float *object, const float *viewPos, std::string name, bool friendly );
 
   void drawMarkersInView ( int centerX, int centerY, const LocalPlayer* myTank );
   /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
