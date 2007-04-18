@@ -228,7 +228,7 @@ void WeatherRenderer::set(void)
       }
       else if (rainType == "particle") {
 	rainDensity = (int)(500.0f * BZDB.eval("userRainScale"));
-	gstate.setTexture(tm.getTextureID ("skins\red\super_bolt"));
+	gstate.setTexture(tm.getTextureID ("skins/red/super_bolt"));
 	rainSpeed = -20.0f;
 	rainSpeedMod = 5.0f;
 	doPuddles = true;
