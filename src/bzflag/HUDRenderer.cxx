@@ -619,13 +619,15 @@ void HUDRenderer::saveMatrixes ( const float *mm, const float *pm )
 }
 
 
-void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std::string name, bool friendly )
+void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly )
 {
 	double map[3] = {0,0,0};
 	double o[3];
 	o[0] = object[0];
 	o[1] = object[1];
 	o[2] = object[2];
+
+	hudColor3Afv( color, alpha );
 
 	float deg2Rad = 0.017453292519943295769236907684886f;
 
@@ -708,28 +710,35 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 
 	if (friendly)
 	{
-	  float xFactor = 0.75f;
+	  float xFactor = 0.45f;
 
-	  glLineWidth(4.0f);
+	  // white outline
+	  hudColor4f( 1,1,1,0.85f );
+	  glLineWidth(6.0f);
 	  glBegin(GL_LINES);
 	    glVertex3f(triangleSize*xFactor,triangleSize,0.02f);
 	    glVertex3f(-triangleSize*xFactor,0,0.02f);
-	    glVertex3f(triangleSize*xFactor,triangleSize,0.03f);
-	    glVertex3f(-triangleSize*xFactor,0,0.02f);
-	   
 	    glVertex3f(-triangleSize*xFactor,triangleSize,0.02f);
 	    glVertex3f(triangleSize*xFactor,0,0.02f);
+	  glEnd();
+	
+	  // red X
+	  hudColor4f( 1,0,0, 0.85f );
+	  glLineWidth(3.0f);
+	  glBegin(GL_LINES);
+	    glVertex3f(triangleSize*xFactor,triangleSize,0.03f);
+	    glVertex3f(-triangleSize*xFactor,0,0.02f);
 	    glVertex3f(-triangleSize*xFactor,triangleSize,0.03f);
 	    glVertex3f(triangleSize*xFactor,0,0.02f);
 	  glEnd();
-	  glLineWidth(1.0f);
-
+	  glLineWidth(2.0f);
 	}
 
 	glPopMatrix();
 
 	if (name.size())
 	{
+	  hudColor3Afv( color, alpha );
 	  float textOffset = 5.0f;
 	  float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
 	  glEnable(GL_TEXTURE_2D);
@@ -744,7 +753,7 @@ void HUDRenderer::drawWaypointMarker ( float *object, const float *viewPos, std:
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::string name, bool friendly )
+void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, const float *viewPos, std::string name, bool friendly )
 {
 	double map[3] = {0,0,0};
 	double o[3];
@@ -753,6 +762,7 @@ void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::s
 	o[2] = object[2];
 
 	float deg2Rad = 0.017453292519943295769236907684886f;
+	hudColor3Afv( color, alpha );
 
 	glPushMatrix();
 	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
@@ -775,20 +785,20 @@ void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::s
 
 	if ( vec3dot(toPosVec,headingVec) <= 1.0f )
 	{
-		map[0] = -halfWidth * (fabs(map[0])/map[0]);
-		map[1] = 0;
+	  map[0] = -halfWidth * (fabs(map[0])/map[0]);
+	  map[1] = 0;
 	}
 	else
 	{
-		if ( map[0] < -halfWidth )
-			map[0] = -halfWidth;
-		if ( map[0] > halfWidth )
-			map[0] = halfWidth;
+	  if ( map[0] < -halfWidth )
+	    map[0] = -halfWidth;
+	  if ( map[0] > halfWidth )
+	    map[0] = halfWidth;
 
-		if ( map[1] < -halfHeight )
-			map[1] = -halfHeight;
-		if ( map[1] > halfHeight )
-			map[1] = halfHeight;
+	  if ( map[1] < -halfHeight )
+	    map[1] = -halfHeight;
+	  if ( map[1] > halfHeight )
+	    map[1] = halfHeight;
 	}
 
 	glPushMatrix();
@@ -815,17 +825,44 @@ void HUDRenderer::drawLockonMarker ( float *object, const float *viewPos, std::s
 	glVertex2f(lockonInset,-lockonSize+lockonDeclination);
 	glEnd();
 
+	if (friendly)
+	{
+	  float xFactor = 0.75f;
+
+	  // white outline
+	  hudColor4f( 1,1,1, 0.85f );
+	  glLineWidth(4.0f);
+	  glBegin(GL_LINES);
+	  glVertex3f(lockonSize*xFactor,lockonSize,0.02f);
+	  glVertex3f(-lockonSize*xFactor,0,0.02f);
+	  glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
+	  glVertex3f(lockonSize*xFactor,0,0.02f);
+	  glEnd();
+
+	  // red X
+	  hudColor4f( 1,0,0, 0.85f );
+	  glLineWidth(2.0f);
+	  glBegin(GL_LINES);
+	  glVertex3f(lockonSize*xFactor,lockonSize,0.03f);
+	  glVertex3f(-lockonSize*xFactor,0,0.02f);
+	  glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
+	  glVertex3f(lockonSize*xFactor,0,0.02f);
+	  glEnd();
+	  glLineWidth(2.0f);
+	}
+
 	glLineWidth(1.0f);
 
 	glPopMatrix();
 
 	if (name.size())
 	{
-		float textOffset = 5.0f;
-		float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
-		glEnable(GL_TEXTURE_2D);
-		FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize,name);
-		glDisable(GL_TEXTURE_2D);
+	  hudColor3Afv( color, alpha );
+	    float textOffset = 5.0f;
+	  float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize,name);
+	  glEnable(GL_TEXTURE_2D);
+	  FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize,name);
+	  glDisable(GL_TEXTURE_2D);
 	}
 
 	glPopMatrix();
@@ -1524,19 +1561,16 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 
     // draw any waypoint markers
     for ( int i = 0; i < (int)enhancedMarkers.size(); i++ )
-    {
-      hudColor3Afv( enhancedMarkers[i].color, 0.45f );
-      drawWaypointMarker(enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name,enhancedMarkers[i].friendly);
-    }
+      drawWaypointMarker(enhancedMarkers[i].color,0.45f, enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name,enhancedMarkers[i].friendly);
+    
     enhancedMarkers.clear();
 
     // draw any lockon markers
     for ( int i = 0; i < (int)lockOnMarkers.size(); i++ )
-    {
-      hudColor3Afv( lockOnMarkers[i].color, 0.45f );
-      drawLockonMarker(lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name,lockOnMarkers[i].friendly);
-    }
+      drawLockonMarker(lockOnMarkers[i].color, 0.45f, lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name,lockOnMarkers[i].friendly);
+    
     lockOnMarkers.clear();
+    
     glLineWidth(1.0f);
 
     glPopMatrix();

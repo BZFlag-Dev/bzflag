@@ -139,8 +139,8 @@ protected:
   void		renderNotPlaying(SceneRenderer&);
   void		renderRoaming(SceneRenderer&);
 
-  void drawLockonMarker ( float *object, const float *viewPos, std::string name, bool friendly );
-  void drawWaypointMarker ( float *object, const float *viewPos, std::string name, bool friendly );
+  void drawLockonMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly );
+  void drawWaypointMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly );
 
   void drawMarkersInView ( int centerX, int centerY, const LocalPlayer* myTank );
   /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
