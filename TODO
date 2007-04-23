@@ -11,7 +11,7 @@ so that no work is duplicated.
 Required for release of 2.2.:
 
 * fix all server stat "scanning" scripts and sites to send out 
-  "BZFLAG\r\n\r\n" on conenct.
+  "BZFLAG\r\n\r\n" on connect.
 
 * make sure there are no outstanding serious bugs
   (e.g. check OO,F5, etc..)
