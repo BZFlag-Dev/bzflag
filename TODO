@@ -21,6 +21,7 @@ Should be considered for the release of 2.2:
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
   or just say it's global or nothing
+  Design Doc at http://my.bzflag.org/w/LocalAuthentication
 
 * /ghost should be removed, we should auto ghost people when the login
   with global auth
