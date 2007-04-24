@@ -144,43 +144,44 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   int nfound;
 
 #if !defined(_WIN32)
-  if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
+  int connectReturn = connect(query, (CNCTType*)&addr, sizeof(addr));
+
+  logDebugMessage(2,"CONNECT:non windows inital connect returned %d\n",connectReturn);
+
+  int error = getErrno();
+  if (error != EINPROGRESS)
   {
-    int error = getErrno();
-    if (error != EINPROGRESS)
-    {
-      logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
+    logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
 
-      close(query);
-      return;
-    }
+    close(query);
+    return;
+  }
 
-    // send some data before we select
-    // it'll happen later
-    FD_ZERO(&write_set);
-    FD_SET((unsigned int)query, &write_set);
-    timeout.tv_sec = long(5);
-    timeout.tv_usec = 0;
-    nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
-    error = getErrno();
-    logDebugMessage(2,"CONNECT:non windows inital select nfound = %d error = %d\n",nfound,error);
+  // send some data before we select
+  // it'll happen later
+  FD_ZERO(&write_set);
+  FD_SET((unsigned int)query, &write_set);
+  timeout.tv_sec = long(5);
+  timeout.tv_usec = 0;
+  nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
+  error = getErrno();
+  logDebugMessage(2,"CONNECT:non windows inital select nfound = %d error = %d\n",nfound,error);
 
-    if (nfound <= 0) {
-      close(query);
-      return;
-    }
-    int       connectError;
-    socklen_t errorLen = sizeof(int);
-    if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
-	< 0) {
-      close(query);
-      return;
-    }
-    if (connectError != 0) {
-      logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
-      close(query);
-      return;
-    }
+  if (nfound <= 0) {
+    close(query);
+    return;
+  }
+  int       connectError;
+  socklen_t errorLen = sizeof(int);
+  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
+      < 0) {
+    close(query);
+    return;
+  }
+  if (connectError != 0) {
+    logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
+    close(query);
+    return;
   }
 #else // Connection timeout for Windows
 
