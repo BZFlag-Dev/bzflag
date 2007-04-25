@@ -148,13 +148,16 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   logDebugMessage(2,"CONNECT:non windows inital connect returned %d\n",connectReturn);
 
-  int error = getErrno();
-  if (error != EINPROGRESS)
+  if (connectReturn != 0)
   {
-    logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
+    int error = getErrno();
+    if (error != EINPROGRESS)
+    {
+      logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
 
-    close(query);
-    return;
+      close(query);
+      return;
+    }
   }
 
   // send some data before we select
