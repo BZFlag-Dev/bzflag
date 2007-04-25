@@ -148,9 +148,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   logDebugMessage(2,"CONNECT:non windows inital connect returned %d\n",connectReturn);
 
+  int error = 0;
   if (connectReturn != 0)
   {
-    int error = getErrno();
+    error = getErrno();
     if (error != EINPROGRESS)
     {
       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
