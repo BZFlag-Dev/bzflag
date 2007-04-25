@@ -144,16 +144,25 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   int nfound;
 
 #if !defined(_WIN32)
+  // for standard BSD sockets
+
+  // Open a connection.
+  // we are blocking at this point so we will wait till we connect, or error
   int connectReturn = connect(query, (CNCTType*)&addr, sizeof(addr));
 
   logDebugMessage(2,"CONNECT:non windows inital connect returned %d\n",connectReturn);
 
+  // check for a real error
+  // in progress is a holdover from when we did this as non blocking.
+  // we swaped to blockin because we changed from having
+  // the server send the first data, to having the client send it.
   int error = 0;
   if (connectReturn != 0)
   {
     error = getErrno();
     if (error != EINPROGRESS)
     {
+      // if it was a real error, log and bail
       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
 
       close(query);
@@ -161,8 +170,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     }
   }
 
-  // send some data before we select
-  // it'll happen later
+  // call a select to make sure the socket is good and ready.
   FD_ZERO(&write_set);
   FD_SET((unsigned int)query, &write_set);
   timeout.tv_sec = long(5);
@@ -171,10 +179,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   error = getErrno();
   logDebugMessage(2,"CONNECT:non windows inital select nfound = %d error = %d\n",nfound,error);
 
+  // if no sockets are active then we are done.
   if (nfound <= 0) {
     close(query);
     return;
   }
+
+  // if there are any connection errors, check them and we are done
   int       connectError;
   socklen_t errorLen = sizeof(int);
   if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
@@ -189,6 +200,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
 #else // Connection timeout for Windows
 
+  // winsock connection
   // Initialize structure
   conn.query = query;
   conn.addr = (CNCTType*)&addr;
@@ -207,6 +219,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   CloseHandle(hThread);
 
 #endif // !defined(_WIN32)
+
+  // if the connection failed for any reason, we can not continue
   if (!okay)
   {
     close(query);
@@ -214,11 +228,15 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
 
   // send out the connect header
+  // this will let the server know we are BZFS protocol.
+  // after the server gets this it will send back a version for us to check
   int sendRepply = ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
 
   logDebugMessage(2,"CONNECT:send in connect returned %d\n",sendRepply);
 
-  // get server version and verify
+  // wait to get data back. we are still blocking so these
+  // calls should be sync.
+
   FD_ZERO(&read_set);
   FD_ZERO(&write_set);
   FD_SET((unsigned int)query, &read_set);
@@ -227,6 +245,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   timeout.tv_sec = long(10);
   timeout.tv_usec = 0;
 
+  // pick some limit to time out on ( in seconds )
   double thisStartTime = TimeKeeper::getCurrent().getSeconds();
   double connectTimeout = 30.0;
   if (BZDB.isSet("connectionTimeout"))
@@ -234,6 +253,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   bool gotNetData = false;
 
+  // loop calling select untill we read some data back.
+  // its only 8 bytes so it better come back in one packet.
   int loopCount = 0;
   while(!gotNetData)
   {
@@ -275,13 +296,18 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
-  // send what we got
+  // if we got back less then the expected connect responce (BZFSXXXX)
+  // then something went bad, and we are done.
   if (i < 8)
   {
     close(query);
     return;
   }
 
+  // since we are connected, we can go non blocking
+  // on BSD sockets systems
+  // all other messages after this are handled via the normal
+  // message system
 #if !defined(_WIN32)
   if (BzfNetwork::setNonBlocking(query) < 0) {
     close(query);
