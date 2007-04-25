@@ -4961,8 +4961,8 @@ static void runMainLoop ( void )
 	    }
 	    else
 	    {
-	      // there is no data, so delete us or move along.
-	      if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
+	      // there is no data, so delete us or move along and it's not a player for gods sake
+	      if ( peerItr->second.player == -1 && !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
 	      {
 		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
 		  peerItr->second.deleteMe = true;
