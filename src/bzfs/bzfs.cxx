@@ -175,15 +175,15 @@ unsigned int maxNonPlayerDataChunk = 2048;
 class APILoggingCallback : public LoggingCallback
 {
 public:
-	void log ( int level, const char* message )
-	{
-		bz_LoggingEventData_V1 data;
-		data.level = level;
-		data.message = message;
-		data.eventTime = TimeKeeper::getCurrent().getSeconds();
+  void log ( int level, const char* message )
+  {
+    bz_LoggingEventData_V1 data;
+    data.level = level;
+    data.message = message;
+    data.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-		worldEventManager.callEvents(bz_eLoggingEvent,&data);
-	}
+    worldEventManager.callEvents(bz_eLoggingEvent,&data);
+  }
 };
 
 APILoggingCallback apiLoggingCallback;
@@ -280,17 +280,16 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 // relay message only for human. Bots will get message locally.
 void relayMessage(uint16_t code, int len, const void *msg)
 {
-	void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-	void *buf = nboPackUShort(bufStart, uint16_t(len));
-	nboPackUShort(buf, code);
+  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
+  void *buf = nboPackUShort(bufStart, uint16_t(len));
+  nboPackUShort(buf, code);
 
-	// send message to human kind
-	pwriteBroadcast(bufStart, len + 4, NetHandler::clientBZFlag);
+  // send message to human kind
+  pwriteBroadcast(bufStart, len + 4, NetHandler::clientBZFlag);
 
-	// record the packet
-	if (Record::enabled()) {
-		Record::addPacket(code, len, msg);
-	}
+  // record the packet
+  if (Record::enabled())
+    Record::addPacket(code, len, msg);
 }
 
 
@@ -312,7 +311,6 @@ static void onGlobalChanged(const std::string& name, void*)
   broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
 }
 
-
 //
 // provides external access to onGlobalChanged
 //
@@ -322,11 +320,11 @@ void addBzfsCallback(const std::string& name, void* data)
   return;
 }
 
-
 static void sendUDPupdate(NetHandler *handler)
 {
   // confirm inbound UDP with a TCP message
   directMessage(handler, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
+ 
   // request/test outbound UDP with a UDP back to where we got client's packet
   directMessage(handler, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
@@ -346,10 +344,10 @@ void sendFlagUpdate(FlagInfo &flag)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart,1);
-  bool hide
-    = (flag.flag.type->flagTeam == ::NoTeam)
-    && (flag.player == -1);
+ 
+  bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
   buf = flag.pack(buf, hide);
+ 
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart,
 		   false);
 }
@@ -358,15 +356,15 @@ static float nextGameTime()
 {
   float nextTime = +MAXFLOAT;
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && gkPlayer->netHandler)
-	{
+    {
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
-      if (pNextTime < nextTime) {
+      if (pNextTime < nextTime)
 	nextTime = pNextTime;
-      }
     }
   }
   return nextTime;
@@ -384,7 +382,8 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
   if (Replay::enabled() || gkPlayer->playerHandler)
     return;
 
-  if (gkPlayer != NULL) {
+  if (gkPlayer != NULL)
+  {
     void* buf = getDirectMessageBuffer();
     const float lag = gkPlayer->lagInfo.getLagAvg();
     const int length = makeGameTime(buf, lag);
@@ -397,13 +396,11 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
 static void sendPendingGameTime()
 {
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++) 
+  {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if ((gkPlayer != NULL)
-	&& gkPlayer->player.isHuman()
-	&& (gkPlayer->getNextGameTime() - nowTime) < 0.0f) {
+    if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && (gkPlayer->getNextGameTime() - nowTime) < 0.0f) 
       sendGameTime(gkPlayer);
-    }
   }
   return;
 }
