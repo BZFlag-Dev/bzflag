@@ -500,7 +500,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
   ShotInfo myShot;
   myShot.firingInfo  = firingInfo;
-  myShot.salt        = salt;
+  myShot.salt	= salt;
   myShot.expireTime  = now + lifeTime;
   myShot.present     = true;
   myShot.running     = true;
@@ -578,7 +578,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
 	FlagType* flagType = NULL;
 	if ( flagType )
 		flagType = flag->flag.type;
-	
+
 	float fracOfMaxSpeed = input;
 
 	// If we aren't allowed to move, then the real speed is 0.
@@ -592,7 +592,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
 		fracOfMaxSpeed = -0.5f;
 
 	// oscillation overthruster tank in building can't back up
-	if (fracOfMaxSpeed < 0.0f && (lastState.status & PlayerState::InBuilding) && flagType == Flags::OscillationOverthruster) 
+	if (fracOfMaxSpeed < 0.0f && (lastState.status & PlayerState::InBuilding) && flagType == Flags::OscillationOverthruster)
 		fracOfMaxSpeed = 0.0f;
 
 	// boost speed for certain flags
@@ -606,7 +606,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
 		fracOfMaxSpeed = 0.0f;
 	else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
 		fracOfMaxSpeed = 0.0f;
-	else if (flagType == Flags::Agility) 
+	else if (flagType == Flags::Agility)
 	{
 	/*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
 			fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
@@ -622,7 +622,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
 
 			if (fracOfMaxSpeed < 0.0f)
 				limit /= 2.0f;
-			if (fabs(fracOfMaxSpeed - oldFrac) > limit) 
+			if (fabs(fracOfMaxSpeed - oldFrac) > limit)
 			{
 				fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
 				agilityTime = TimeKeeper::getCurrent();

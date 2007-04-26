@@ -107,7 +107,7 @@ CronManager::~CronManager() {
 bool CronManager::reload(void) {
   // open the crontab
   std::ifstream input(crontab.c_str(), std::ios::in);
-  if (input.peek() == EOF) { 
+  if (input.peek() == EOF) {
     bz_debugMessage(1, "bzfscron: crontab nonexistant or invalid");
     return false;
   }
@@ -135,7 +135,7 @@ void CronManager::list(int playerID) const {
 
 void CronManager::process(bz_EventData *eventData) {
   switch (eventData->eventType) {
-  
+
   default: {
     // no, sir, we didn't ask for THIS!!
     bz_debugMessage(1, "bzfscron: received event with unrequested eventType!");

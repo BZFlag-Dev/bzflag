@@ -114,7 +114,7 @@ void			ShotPath::updateShot(float dt)
   // update shot
   if (!expired)
   {
-    if (expiring) 
+    if (expiring)
       setExpired();
     else
       getStrategy()->update(dt);

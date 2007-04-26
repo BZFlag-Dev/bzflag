@@ -24,16 +24,16 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
 static void drawRingYZ(float rad, float z, float topsideOffset = 0,
-                       float bottomUV = 0, float ZOffset = 0,
-                       float topUV = 1.0f, int segments = 32,
-                       float uScale = 2.0f);
+		       float bottomUV = 0, float ZOffset = 0,
+		       float topUV = 1.0f, int segments = 32,
+		       float uScale = 2.0f);
 static void drawRingXY(float rad, float z, float topsideOffset = 0,
-                       float bottomUV = 0, float topUV = 1.0f,
-                       int segments = 32, float uScale = 2.0f);
+		       float bottomUV = 0, float topUV = 1.0f,
+		       int segments = 32, float uScale = 2.0f);
 static void drawRingZ(float innerRad, float outerRad,
-                      float innerUV = 0.0f , float outerUV = 1.0f,
-                      float ZOffset = 0, int segments = 32,
-                      float uScale = 1.0f);
+		      float innerUV = 0.0f , float outerUV = 1.0f,
+		      float ZOffset = 0, int segments = 32,
+		      float uScale = 1.0f);
 
 static void RadialToCartesian(float angle, float rad, float *pos);
 
@@ -138,13 +138,13 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes(void)
 }
 
 void EffectsRenderer::addShotEffect(const float* rgb, const float* pos,
-                                    float rot, const float *vel, int _type)
+				    float rot, const float *vel, int _type)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
 
   int flashType = (_type >= 0) ? _type
-                               : static_cast<int>(BZDB.eval("shotEffect"));
+			       : static_cast<int>(BZDB.eval("shotEffect"));
 
   float rots[3] = {0};
   rots[2] = rot;
@@ -187,7 +187,7 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes(void)
 }
 
 void EffectsRenderer::addGMPuffEffect(const float* pos, float rot[2],
-                                      const float* vel)
+				      const float* vel)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
@@ -232,7 +232,7 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes(void)
 }
 
 void EffectsRenderer::addDeathEffect(const float* rgb, const float* pos,
-                                     float rot)
+				     float rot)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
@@ -302,7 +302,7 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes(void)
 }
 
 void EffectsRenderer::addRicoEffect(const float* pos, float rot[2],
-                                    const float* vel)
+				    const float* vel)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
@@ -343,7 +343,7 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes(void)
 }
 
 void EffectsRenderer::addShotTeleportEffect(const float* pos, float rot[2],
-                                            const float* vel)
+					    const float* vel)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
@@ -1125,7 +1125,7 @@ static void RadialToCartesian(float angle, float rad, float *pos)
 }
 
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
-                       float topUV, int segments, float uScale )
+		       float topUV, int segments, float uScale )
 {
   for (int i = 0; i < segments; i ++) {
     float thisAng = 360.0f/segments * i;
@@ -1201,8 +1201,8 @@ static float clampedZ(float z, float offset)
 }
 
 static void drawRingZ (float innerRad, float outerRad,
-                       float innerUV, float outerUV,
-                       float ZOffset, int segments, float uScale )
+		       float innerUV, float outerUV,
+		       float ZOffset, int segments, float uScale )
 {
   for (int i = 0; i < segments; i ++) {
     float thisAng = 360.0f/segments * i;

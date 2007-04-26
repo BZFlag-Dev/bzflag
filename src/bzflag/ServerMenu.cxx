@@ -236,7 +236,7 @@ void ServerMenu::setFind(bool mode)
     setSelected(0);
   }
   findMode = mode;
-  
+
   newfilter = (filter != oldfilter);
 }
 
@@ -377,10 +377,10 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	if (pos != std::string::npos) {
 	  desc = addr.substr(pos > 0 ? pos+1 : pos);
 	  addr.resize(pos);
-        }
-        if (server.favorite)
-          fullLabel += ANSI_STR_FG_ORANGE;
-        else
+	}
+	if (server.favorite)
+	  fullLabel += ANSI_STR_FG_ORANGE;
+	else
 	  fullLabel += ANSI_STR_FG_WHITE;
 	fullLabel += addr;
 	fullLabel += ANSI_STR_RESET " ";
@@ -795,8 +795,8 @@ void			ServerMenu::updateStatus() {
     const ServerItem &item = realServerList.getServers()[i];
     // filter is already lower case.  do case insensitive matching.
     if ((glob_match(filter, TextUtils::tolower(item.description)) ||
-         glob_match(filter, TextUtils::tolower(item.name))) &&
-        (!favView || item.favorite)
+	 glob_match(filter, TextUtils::tolower(item.name))) &&
+	(!favView || item.favorite)
        ) {
       serverList.addToList(item);
     }

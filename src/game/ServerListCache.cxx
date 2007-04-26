@@ -74,7 +74,7 @@ bool ServerListCache::isFavorite(const std::string &serverAddress) const
   return i!=serverCache.end() && i->second.favorite;
 }
 
-std::string             ServerListCache::getCacheFilename() const
+std::string	     ServerListCache::getCacheFilename() const
 {
   // get a file named e.g. BZFS1910Server.bzs in the cache dir
   // allows separation of server caches by protocol version

@@ -155,7 +155,7 @@ class JitterWarnCommand : public ServerCommand {
 public:
   JitterWarnCommand();
 
-  virtual bool operator() (const char         *commandLine,
+  virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
 };
 
@@ -163,7 +163,7 @@ class PacketLossWarnCommand : public ServerCommand {
 public:
   PacketLossWarnCommand();
 
-  virtual bool operator() (const char         *commandLine,
+  virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
 };
 
@@ -180,7 +180,7 @@ class JitterDropCommand : public ServerCommand {
 public:
   JitterDropCommand();
 
-  virtual bool operator() (const char         *commandLine,
+  virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
 };
 
@@ -188,7 +188,7 @@ class PacketLossDropCommand : public ServerCommand {
 public:
   PacketLossDropCommand();
 
-  virtual bool operator() (const char         *commandLine,
+  virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
 };
 

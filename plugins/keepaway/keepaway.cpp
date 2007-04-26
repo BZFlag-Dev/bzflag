@@ -133,7 +133,7 @@ public:
 		team = eNoTeam;
 		callsign = "";
 		flagsList.clear();
-		TTH = 120; 
+		TTH = 120;
 		adjustedTime = 120;
 		timeMult = 0.03;
 		timeMultMin = 0.50;
@@ -156,9 +156,9 @@ public:
 	bz_eTeamType team;
 	std::string callsign;
 	std::string flagToKeep;
-	std::vector <std::string> flagsList; 
+	std::vector <std::string> flagsList;
 	bool teamPlay;
-	double TTH; 
+	double TTH;
 	double adjustedTime;
 	double timeMult;
 	double timeMultMin;
@@ -273,7 +273,7 @@ std::string convertFlag(std::string flagAbbrev)
 		return "Blue Team (B*)";
 	if (flagAbbrev == "P*")
 		return "Purple Team (P*)";
-	
+
 	return "";
 }
 
@@ -289,7 +289,7 @@ bool KeepAwayMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *d
 
 		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
-		
+
 		if ( nubs->size() > 0)
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
@@ -310,7 +310,7 @@ bool KeepAwayMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *d
 					keepaway.timeMultMin = temp2 / 100;
 				keepaway.autoTimeOn = true;
 			}
-			
+
 			else if ( key == "NOSOUND" && nubs->size() > 0 )
 				keepaway.soundEnabled = false;
 
@@ -347,9 +347,9 @@ bool KeepAwayMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *d
 		keepaway.flagToKeep = ""; // map file didn't give us any flags
 		keepaway.flagToKeepIndex = 0;
 	}
-	
+
 	bz_setMaxWaitTime ( 0.5 );
-	
+
 	return true;
 }
 
@@ -435,7 +435,7 @@ void autoTime()
 
 	double timeDown = ( 1 - ((double)numPlayers - 2) * keepaway.timeMult);
 
-	if (timeDown < keepaway.timeMultMin) 
+	if (timeDown < keepaway.timeMultMin)
 		timeDown = keepaway.timeMultMin;
 
 	keepaway.adjustedTime = (int)(keepaway.TTH * timeDown);
@@ -453,9 +453,9 @@ double ConvertToNum(std::string inmessage, double minNum, double maxNum){
 		double tens = 1;
 
 		for ( int i = (messagelength - 1); i >= 0; i-- ){
-		
+
 			if (inmessage[i] < '0' || inmessage[i] > '9')  // got something other than a number
-				return 0; 
+				return 0;
 
 			tens *= 10;
 			messagevalue +=  (((double)inmessage[i] - '0') / 10) * tens;
@@ -470,15 +470,15 @@ double ConvertToNum(std::string inmessage, double minNum, double maxNum){
 
 void killTeams(bz_eTeamType safeteam, std::string keepawaycallsign)
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
-			
+
 				if (player->team != safeteam)
 				{
 					bz_killPlayer(player->playerID, true, BZ_SERVER);
@@ -489,9 +489,9 @@ void killTeams(bz_eTeamType safeteam, std::string keepawaycallsign)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) Kept the Flag Away!", getTeamColor(safeteam), keepawaycallsign.c_str());
 
@@ -503,15 +503,15 @@ void killTeams(bz_eTeamType safeteam, std::string keepawaycallsign)
 
 void killPlayers(int safeid, std::string keepawaycallsign)
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
-			
+
 				if (player->playerID != safeid)
 				{
 					bz_killPlayer(player->playerID, true, keepaway.id);
@@ -522,16 +522,16 @@ void killPlayers(int safeid, std::string keepawaycallsign)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
 
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s Kept the Flag Away!", keepawaycallsign.c_str());
 
 	if (keepaway.flagResetEnabled)
 		bz_resetFlags(true);
-	
+
 	return;
 }
 
@@ -540,17 +540,17 @@ void sendWarnings(const char* teamcolor, std::string playercallsign, double keep
 	double TimeElapsed = bz_getCurrentTime() - keepawaystartedtime;
 	double TimeRemaining = keepaway.adjustedTime - TimeElapsed;
 	int toTens = int((TimeRemaining + 5) / 10) * 10;
-	
+
 	if ((TimeRemaining/60) < keepaway.TTHminutes && keepaway.adjustedTime > 59 && TimeRemaining >= 1)
 	{
 		if (!keepaway.teamPlay || keepaway.team == eRogueTeam)
 			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s has %s flag; %i secs left!", playercallsign.c_str(), keepaway.flagToKeep.c_str(), toTens);
 		else
-			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) has %s flag; %i secs left!", teamcolor, playercallsign.c_str(), keepaway.flagToKeep.c_str(), toTens);	
-		
+			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) has %s flag; %i secs left!", teamcolor, playercallsign.c_str(), keepaway.flagToKeep.c_str(), toTens);
+
 		keepaway.TTHminutes--;
 	}
-	
+
 	if (keepaway.adjustedTime < keepaway.TTHseconds)
 	{
 		keepaway.TTHseconds = keepaway.TTHseconds - 10;
@@ -586,12 +586,12 @@ std::string getFlag()
 		std::string flagCandidate = keepaway.flagsList[keepaway.flagToKeepIndex];
 		bool flagNotHeld = true;
 
-		bz_APIIntList *playerList = bz_newIntList(); 
-		bz_getPlayerIndexList ( playerList ); 
-	
-		for ( unsigned int i = 0; i < playerList->size(); i++ ) 
-		{ 
-       		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+		bz_APIIntList *playerList = bz_newIntList();
+		bz_getPlayerIndexList ( playerList );
+
+		for ( unsigned int i = 0; i < playerList->size(); i++ )
+		{
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player)
 			{
@@ -610,14 +610,14 @@ std::string getFlag()
 			bz_freePlayerRecord(player);
 		}
 
-		bz_deleteIntList(playerList); 
+		bz_deleteIntList(playerList);
 
 		if (flagNotHeld)
 			return flagCandidate;
 	}
 
 	if (keepaway.flagsList.size() > 0)  // we should never get here, but if we do keep going
-		return keepaway.flagsList[0]; 
+		return keepaway.flagsList[0];
 	else
 		return "";
 }
@@ -655,12 +655,12 @@ void initiatekeepaway(bz_eTeamType plyrteam, bz_ApiString plyrcallsign, int plyr
 
 	if (keepaway.soundEnabled)
 	{
-		bz_APIIntList *playerList = bz_newIntList(); 
-		bz_getPlayerIndexList ( playerList ); 
+		bz_APIIntList *playerList = bz_newIntList();
+		bz_getPlayerIndexList ( playerList );
 
-		for ( unsigned int i = 0; i < playerList->size(); i++ ) 
-		{ 
-     		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+		for ( unsigned int i = 0; i < playerList->size(); i++ )
+		{
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player)
 			{
@@ -669,10 +669,10 @@ void initiatekeepaway(bz_eTeamType plyrteam, bz_ApiString plyrcallsign, int plyr
 				else
 					bz_sendPlayCustomLocalSound(player->playerID,"teamgrab");
 			}
-	
+
 			bz_freePlayerRecord(player);
 		}
-		bz_deleteIntList(playerList); 
+		bz_deleteIntList(playerList);
 	}
 
 	return;
@@ -680,23 +680,23 @@ void initiatekeepaway(bz_eTeamType plyrteam, bz_ApiString plyrcallsign, int plyr
 
 void playAlert()
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ) 
-	{ 
-     	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ )
+	{
+	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 		if (player)
 			bz_sendPlayCustomLocalSound(player->playerID,"hunt_select");
-	
+
 		bz_freePlayerRecord(player);
 	}
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	return;
 }
-	
+
 inline bool timeForReminder()
 {
 	double timeLeft = bz_getCurrentTime() - keepaway.lastReminder;
@@ -714,13 +714,13 @@ void KeepAwayPlayerPaused::process ( bz_EventData *eventData )
 		return;
 
 	bz_PlayerPausedEventData_V1 *PauseData = (bz_PlayerPausedEventData_V1*)eventData;
-	
+
 	bz_BasePlayerRecord *player = bz_getPlayerByIndex(PauseData->player);
 
 	if (player)
 	{
 		const char* flagHeld = bz_getPlayerFlag(player->playerID);
-	
+
 		if (flagHeld)
 		{
 			if (flagHeld == keepaway.flagToKeep)
@@ -763,21 +763,21 @@ void KeepAwayPlayerJoined::process ( bz_EventData *eventData )
 
 	if (keepaway.id == -1 && keepaway.enabled && keepaway.flagToKeep != "")
 	{
-		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "Keep Away flag is %s: find it and keep it for %i seconds!", convertFlag(keepaway.flagToKeep).c_str(), (int)keepaway.adjustedTime); 
+		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "Keep Away flag is %s: find it and keep it for %i seconds!", convertFlag(keepaway.flagToKeep).c_str(), (int)keepaway.adjustedTime);
 		if (keepaway.soundEnabled)
 			bz_sendPlayCustomLocalSound(joinData->playerID,"hunt_select");
 	}
 
 	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->team != keepaway.team || joinData->team == eRogueTeam))
 	{
-		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - kill him/her before time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str()); 
+		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - kill him/her before time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str());
 		if (keepaway.soundEnabled)
 			bz_sendPlayCustomLocalSound(joinData->playerID,"flag_alert");
 	}
-	
+
 	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->team == keepaway.team && joinData->team != eRogueTeam))
 	{
-		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - protect him/her until time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str()); 
+		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - protect him/her until time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str());
 		if (keepaway.soundEnabled)
 			bz_sendPlayCustomLocalSound(joinData->playerID,"teamgrab");
 	}
@@ -800,7 +800,7 @@ void KeepAwayPlayerLeft::process ( bz_EventData *eventData )
 		keepaway.team = eNoTeam;
 		keepaway.toldFlagFree = false;
 	}
-	
+
 	if (oneTeam(partData->team)) // team count check
 		keepaway.notEnoughTeams = true;
 	else
@@ -822,18 +822,18 @@ void KeepAwayPlayerDied::process ( bz_EventData *eventData )
 		keepaway.team = eNoTeam;
 		keepaway.toldFlagFree = false;
 	}
-	
+
 	return;
 }
 
 inline void checkKeepAwayHolder()
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player)
 			{
@@ -844,32 +844,32 @@ inline void checkKeepAwayHolder()
 					{
 						initiatekeepaway(player->team, player->callsign, player->playerID);
 						bz_freePlayerRecord(player);
-						bz_deleteIntList(playerList); 
+						bz_deleteIntList(playerList);
 						return;
 					}
 					if (flagHeld == keepaway.flagToKeep && keepaway.id == player->playerID) // someone still has it; leave
 					{
 						bz_freePlayerRecord(player);
-						bz_deleteIntList(playerList); 
+						bz_deleteIntList(playerList);
 						return;
 					}
 					if (flagHeld == keepaway.flagToKeep && keepaway.id != player->playerID) // must have stolen it
 					{
 						initiatekeepaway(player->team, player->callsign, player->playerID);
 						bz_freePlayerRecord(player);
-						bz_deleteIntList(playerList); 
+						bz_deleteIntList(playerList);
 						return;
 					}
 				}
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
 
 	keepaway.id = -1;  // no one has flag
 	keepaway.team = eNoTeam;
 
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	return;
 }
@@ -882,20 +882,20 @@ void KeepAwayEventHandler::process ( bz_EventData *eventData )
 
 	if (keepaway.notEnoughTeams) // Not enough teams - we can leave
 		return;
-	
+
 	checkKeepAwayHolder(); // check for someone holding flag
 
 	if (!keepaway.toldFlagFree && keepaway.id == -1) // Flag is free - inform players
 	{
-		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Keep Away flag: %s is free; find it and keep it!", convertFlag(keepaway.flagToKeep).c_str()); 
+		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Keep Away flag: %s is free; find it and keep it!", convertFlag(keepaway.flagToKeep).c_str());
 		keepaway.toldFlagFree = true;
-		
+
 		if ((bz_getCurrentTime() - keepaway.lastReminder) > 2 && keepaway.soundEnabled) // do not play free flag sound alert if player just won/lost (overlapping sounds)
 			playAlert();
 	}
 
 	if (timeForReminder() && keepaway.id == -1)
-		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Keep Away flag: %s is free; find it and keep it!", convertFlag(keepaway.flagToKeep).c_str()); 
+		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Keep Away flag: %s is free; find it and keep it!", convertFlag(keepaway.flagToKeep).c_str());
 
 	if (keepaway.id == -1)  // no one has it, we can leave
 		return;
@@ -951,7 +951,7 @@ bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiStrin
 		if (keepaway.id == -1)
 			bz_sendTextMessagef (BZ_SERVER, playerID, "The Keep Away flag is: %s", convertFlag(keepaway.flagToKeep).c_str());
 		else
-			bz_sendTextMessagef (BZ_SERVER, playerID, "%s has Keep Away flag: %s", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str()); 
+			bz_sendTextMessagef (BZ_SERVER, playerID, "%s has Keep Away flag: %s", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str());
 
 		return true;
 	}
@@ -960,7 +960,7 @@ bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiStrin
 
 	if ( !fromPlayer->admin )
 	{
-    	bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the keepaway commands.");
+	bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the keepaway commands.");
 		bz_freePlayerRecord(fromPlayer);
 		return true;
 	}
@@ -1074,7 +1074,7 @@ bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiStrin
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away time multiplier = %i percent.", (int)(keepaway.timeMult*100 + 0.5));
 
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away time multiplier minimum = %i percent.", (int)(keepaway.timeMultMin*100 + 0.5));
-		
+
 		int AdjTime = (int)(keepaway.adjustedTime + 0.5);
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Keep Away hold time is currently set to: %i seconds", AdjTime);
 
@@ -1098,13 +1098,13 @@ bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiStrin
 
 		return true;
 	}
-    
+
   // explicit time command handler:
 
 	if ( command == "katime" )
 	{
 		double inputvalue = ConvertToNum(message, 1, 7200);
-  
+
 		if (inputvalue > 0 )
 		{
 			keepaway.TTH = inputvalue;

@@ -55,7 +55,7 @@ const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAutoPilot = 0x6175;			// 'au'
 const uint16_t		MsgCapBits = 0x6362;			// 'cb'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
-const uint16_t		MsgCollide = 0x636f;            // 'co'
+const uint16_t		MsgCollide = 0x636f;	    // 'co'
 const uint16_t		MsgCustomSound = 0x6373;		// 'cs'
 const uint16_t		MsgCacheURL = 0x6375;			// 'cu'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
@@ -248,7 +248,7 @@ player to server messages:
 			-->
   MsgNegotiateFlags     -->flagCount/[flagabbv]
   MsgPause		-->true or false
-  MsgCollide            player has collided with another player
+  MsgCollide	    player has collided with another player
 			--> id, collidee-id, position
 			<== MsgAllow if sending player should freeze
 

@@ -143,7 +143,7 @@ float			roamDZoom = 0.0f;
 static MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
 
-PlayerId                msgDestination;
+PlayerId		msgDestination;
 
 static void		setHuntTarget();
 static void		setTankFlags();
@@ -1641,7 +1641,7 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
     cacheOut->write((char *)buf, len);
   HUDDialogStack::get()->setFailedMessage(
     TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-                      (100 * doneSize / totalSize),
+		      (100 * doneSize / totalSize),
 		      bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
@@ -1869,7 +1869,7 @@ static void handleScoreOver(void *msg)
     }
   } else {
     msg2 = TextUtils::format("%s won the game",
-                             Team::getName(TeamColor(team)));
+			     Team::getName(TeamColor(team)));
   }
 
   gameOver = true;
@@ -2560,10 +2560,10 @@ static bool showShotEffects ( int shooterid )
 
   if (ROAM.getMode() == Roaming::roamViewFP)
     return false;
-  
+
   if (ROAM.getTargetTank() && shooterid != ROAM.getTargetTank()->getId())
     return false;
-  
+
   return true;
 }
 
@@ -2591,7 +2591,7 @@ static void handleShotBegin(bool human, void *msg)
     {
       shooter->addShot(firingInfo);
 
-      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) 
+      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
       {
 	float shotPos[3];
 	shooter->getMuzzle(shotPos);
@@ -3830,7 +3830,7 @@ static void		checkEnvironment()
 
 	FlagType* flagd = myTank->getFlag();
 
-	if (flagd->flagTeam != NoTeam) 
+	if (flagd->flagTeam != NoTeam)
 	{
 		// have I captured a flag?
 		TeamColor base = world->whoseBase(myTank->getPosition());
@@ -3886,7 +3886,7 @@ static void		checkEnvironment()
 		int tankid;
 		if (upwards)
 			tankid = i;
-		else 
+		else
 			tankid = curMaxPlayers - 1 - i;
 
 		if (player[tankid])
@@ -3911,7 +3911,7 @@ static void		checkEnvironment()
 		FlagType* killerFlag = hit->getFlag();
 		bool stopShot;
 
-		if (killerFlag == Flags::Thief) 
+		if (killerFlag == Flags::Thief)
 		{
 			if (myTank->getFlag() != Flags::Null)
 				serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
@@ -3936,7 +3936,7 @@ static void		checkEnvironment()
 	{
 		const float* myPos = myTank->getPosition();
 		const float myRadius = myTank->getRadius();
-		for (i = 0; i < curMaxPlayers; i++) 
+		for (i = 0; i < curMaxPlayers; i++)
 		{
 			if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((myPos[2] < 0.0f) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
 			{
@@ -4001,7 +4001,7 @@ bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer
   return true;
 }
 
-static bool isKillable( const Player *target ) 
+static bool isKillable( const Player *target )
 {
   if (target == myTank)
     return false;

@@ -90,15 +90,15 @@ class ServerLink {
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
     void		sendPaused(bool paused);
-    void                sendNewPlayer();
+    void		sendNewPlayer();
     void		sendCollide(const PlayerId playerId,
 				    const PlayerId otherId, const float *pos);
 
     void		sendExit();
     void		sendAutoPilot(bool autopilot);
-    void                sendMessage(const PlayerId& to,
+    void		sendMessage(const PlayerId& to,
 				    char message[MessageLen]);
-    void                sendLagPing(char pingRequest[]);
+    void		sendLagPing(char pingRequest[]);
     void		sendUDPlinkRequest();
 
 	void		sendWhatTimeIsIt ( unsigned char tag );

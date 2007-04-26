@@ -88,7 +88,7 @@ struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
 int			debugLevel = 0;
-WordFilter*             wordFilter = NULL;
+WordFilter*	     wordFilter = NULL;
 
 // Function in botplaying.cxx:
 void botStartPlaying();

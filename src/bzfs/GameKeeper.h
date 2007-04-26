@@ -49,7 +49,7 @@ public:
   ShotInfo() : present(false) {};
 
   FiringInfo firingInfo;
-  int        salt;
+  int	salt;
   float      expireTime;
   bool       present;
   bool       running;
@@ -138,13 +138,13 @@ public:
 
     // To handle shot
     static void    setMaxShots(int _maxShots);
-    bool           addShot(int id, int salt, FiringInfo &firingInfo);
-    bool           removeShot(int id, int salt, FiringInfo &firingInfo);
-    bool           updateShot(int id, int salt);
+    bool	   addShot(int id, int salt, FiringInfo &firingInfo);
+    bool	   removeShot(int id, int salt, FiringInfo &firingInfo);
+    bool	   updateShot(int id, int salt);
 
     // To handle Identify
-    void           setLastIdFlag(int _idFlag);
-    int            getLastIdFlag();
+    void	   setLastIdFlag(int _idFlag);
+    int	    getLastIdFlag();
 
 	// to handle movement
 	float getRealSpeed ( float input );
@@ -215,7 +215,7 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
-    static int             maxShots;
+    static int	     maxShots;
     std::vector<ShotInfo> shotsInfo;
 
     int						idFlag;

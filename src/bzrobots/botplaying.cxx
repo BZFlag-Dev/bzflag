@@ -107,7 +107,7 @@ float			roamDZoom = 0.0f;
 static MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
 
-PlayerId                msgDestination;
+PlayerId		msgDestination;
 
 static void		setTankFlags();
 static void*		handleMsgSetVars(void *msg);

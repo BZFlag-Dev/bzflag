@@ -133,15 +133,15 @@ public:
   static const int     clientNone    = 0;
   static const int     clientBZAdmin = 1;
   static const int     clientBZFlag  = 2;
-  void          setClientKind(int kind);
-  int           getClientKind();
+  void	  setClientKind(int kind);
+  int	   getClientKind();
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.
   void		closing();
 
-  void          setUDPin(struct sockaddr_in *uaddr);
+  void	  setUDPin(struct sockaddr_in *uaddr);
 
   static void setCurrentTime(TimeKeeper tm);
 
@@ -194,10 +194,10 @@ private:
   /// bytes read in current msg
   int tcplen;
   /// current UDP msg
-  static char               udpmsg[MaxPacketLen];
-  static int                udpLen;
+  static char	       udpmsg[MaxPacketLen];
+  static int		udpLen;
   /// bytes read in current msg
-  static int                udpRead;
+  static int		udpRead;
   static struct sockaddr_in lastUDPRxaddr;
 
   /// Closing flag

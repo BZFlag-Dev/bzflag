@@ -171,7 +171,7 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 					vectorTo[2] /= dist;
 
 					float speed = 10.0f;
-					float timeDelta = 	thisTime - lastUpdateTime;
+					float timeDelta =	thisTime - lastUpdateTime;
 
 					pos[0] += vectorTo[0] * speed * timeDelta;
 					pos[1] += vectorTo[1] * speed * timeDelta;

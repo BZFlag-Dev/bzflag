@@ -103,7 +103,7 @@ void injectMessages(uint16_t code, uint16_t len, void *msg);
 extern void joinGame();
 
 extern HUDRenderer	*hud;
-extern PlayerId         msgDestination;
+extern PlayerId	 msgDestination;
 extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;

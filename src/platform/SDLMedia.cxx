@@ -221,7 +221,7 @@ void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
 void SDLMedia::writeAudioFrames(const float* samples, int)
 {
   int    audioBufferSize = convert.len >> 1;
-  short *buffer          = (short *)convert.buf;
+  short *buffer	  = (short *)convert.buf;
 
   for (int j = 0; j < audioBufferSize; j++) {
     if (samples[j] < -32767.0)

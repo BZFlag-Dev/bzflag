@@ -5,7 +5,7 @@
 #include "plugin_utils.h"
 #include <map>
 
-typedef struct 
+typedef struct
 {
    float x,y,z,a;
 }trDeathPos;

@@ -90,7 +90,7 @@ void ServerList::readServerList()
     // error
     if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
       strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-              TokenLen);
+	      TokenLen);
 #ifdef DEBUG
       printError("got token:");
       printError(startupInfo->token);
@@ -98,7 +98,7 @@ void ServerList::readServerList()
       base = scan;
       continue;
     } else if (!strncmp(base, noTokenIdentifier,
-                        strlen(noTokenIdentifier))) {
+			strlen(noTokenIdentifier))) {
       printError("ERROR: did not get token:");
       printError(base);
       strcpy(startupInfo->token, "badtoken\0");
@@ -140,25 +140,25 @@ void ServerList::readServerList()
 
     // check info
     if (strcmp(version, getServerVersion()) == 0 &&
-        (int)strlen(infoServer) == PingPacketHexPackedSize &&
-        port >= 1 && port <= 65535) {
+	(int)strlen(infoServer) == PingPacketHexPackedSize &&
+	port >= 1 && port <= 65535) {
       // store info
       ServerItem serverInfo;
       serverInfo.ping.unpackHex(infoServer);
       int dot[4] = {127,0,0,1};
       if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
-        if (dot[0] >= 0 && dot[0] <= 255 &&
-            dot[1] >= 0 && dot[1] <= 255 &&
-            dot[2] >= 0 && dot[2] <= 255 &&
-            dot[3] >= 0 && dot[3] <= 255) {
-          InAddr addr;
-          unsigned char* paddr = (unsigned char*)&addr.s_addr;
-          paddr[0] = (unsigned char)dot[0];
-          paddr[1] = (unsigned char)dot[1];
-          paddr[2] = (unsigned char)dot[2];
-          paddr[3] = (unsigned char)dot[3];
-          serverInfo.ping.serverId.serverHost = addr;
-        }
+	if (dot[0] >= 0 && dot[0] <= 255 &&
+	    dot[1] >= 0 && dot[1] <= 255 &&
+	    dot[2] >= 0 && dot[2] <= 255 &&
+	    dot[3] >= 0 && dot[3] <= 255) {
+	  InAddr addr;
+	  unsigned char* paddr = (unsigned char*)&addr.s_addr;
+	  paddr[0] = (unsigned char)dot[0];
+	  paddr[1] = (unsigned char)dot[1];
+	  paddr[2] = (unsigned char)dot[2];
+	  paddr[3] = (unsigned char)dot[3];
+	  serverInfo.ping.serverId.serverHost = addr;
+	}
       }
       serverInfo.ping.serverId.port = htons((int16_t)port);
       serverInfo.name = name;
@@ -166,14 +166,14 @@ void ServerList::readServerList()
       // construct description
       serverInfo.description = serverInfo.name;
       if (port != ServerPort) {
-        char portBuf[20];
-        sprintf(portBuf, "%d", port);
-        serverInfo.description += ":";
-        serverInfo.description += portBuf;
+	char portBuf[20];
+	sprintf(portBuf, "%d", port);
+	serverInfo.description += ":";
+	serverInfo.description += portBuf;
       }
       if (strlen(title) > 0) {
-        serverInfo.description += "; ";
-        serverInfo.description += title;
+	serverInfo.description += "; ";
+	serverInfo.description += title;
       }
 
       serverInfo.cached = false;
@@ -265,7 +265,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 }
 
 // mark server identified by host:port string as favorite
-void                    ServerList::markFav(const std::string &serverAddress, bool fav)
+void		    ServerList::markFav(const std::string &serverAddress, bool fav)
 {
   for (int i = 0; i < (int)servers.size(); i++) {
     if (serverAddress == servers[i].getAddrName()) {

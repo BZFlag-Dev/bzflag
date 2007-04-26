@@ -135,7 +135,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // for UDP, used later
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
- 
+
   bool okay = true;
   int fdMax = query;
   struct timeval timeout;
@@ -260,7 +260,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   {
     loopCount++;
     nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
-    
+
     // there has to be at least one socket active, or we are screwed
     if (nfound <= 0)
     {

@@ -70,7 +70,7 @@ class ShotPath {
     FiringInfo&		getFiringInfo();
     TeamColor		getTeam() const;
 
-  virtual void          update(float) {};
+  virtual void	  update(float) {};
 
   protected:
 			ShotPath(const FiringInfo&, double);

@@ -2102,12 +2102,12 @@ BZF_API bool bz_givePlayerFlag(int playeID, const char *flagType, bool force)
 	FlagInfo *fi2=FlagInfo::get(i);
 	if((fi2!=NULL) && (fi2->flag.type==ft))
 	{
-  	forced=fi2;
-  	if(fi2->player < 0)
-  	{
-    	unused=fi2;
-    	break;
-  	}
+	forced=fi2;
+	if(fi2->player < 0)
+	{
+	unused=fi2;
+	break;
+	}
 	}
       }
 
@@ -2117,10 +2117,10 @@ BZF_API bool bz_givePlayerFlag(int playeID, const char *flagType, bool force)
       else if(forced!=NULL)
       {
 	if(force)
-  	fi=forced;
+	fi=forced;
 	else
 	//all flags of this type are in use and force is set to false
-  	return false;
+	return false;
       }
       else
       {
@@ -2628,7 +2628,7 @@ BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
   return (int)pList.size();
 #else
   return -1;
-#endif 
+#endif
 }
 
 BZF_API bool bz_loadPlugin( const char* path, const char *params )
@@ -2892,7 +2892,7 @@ public:
       {
 	if(i==0)
 	{
-  	removeHandle();
+	removeHandle();
 	}
 	jobs.erase(jobs.begin()+i);
 	i=jobs.size()+1;

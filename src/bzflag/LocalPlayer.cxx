@@ -268,7 +268,7 @@ float LocalPlayer::getNewAngVel(float old, float desired, float dt)
       k = TimeKeeper::getCurrent();
     }
   }
-    
+
   return newAngVel;
 }
 
@@ -1498,7 +1498,7 @@ void			LocalPlayer::doMomentum(float dt,
     : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
 
   // limit linear acceleration
-  if (linearAcc > 0.0f) 
+  if (linearAcc > 0.0f)
   {
     const float acc = (speed - lastSpeed) / dt;
 

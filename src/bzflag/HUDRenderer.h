@@ -104,7 +104,7 @@ public:
   void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly = false, float zShift = 0 );
 
   void AddLockOnMarker ( const float* pos, std::string name, bool friendly = false, float zShift = 0 );
-	
+
   void saveMatrixes ( const float *mm, const float *pm );
   void		setDim(bool);
 

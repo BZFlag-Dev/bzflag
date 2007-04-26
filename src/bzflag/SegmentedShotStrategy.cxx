@@ -225,7 +225,7 @@ float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
   const int numSegments = (const int)segments.size();
-  for (int i = lastSegment; i <= segment && i < numSegments; i++) 
+  for (int i = lastSegment; i <= segment && i < numSegments; i++)
   {
     // can never hit your own first laser segment
     if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
@@ -375,8 +375,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float		  timeLeft	    = shotPath.getLifetime();
   float		  minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
   World		  *world = World::getWorld();
-  
-  if (!world) 
+
+  if (!world)
     return; /* no world, no shots */
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
@@ -435,12 +435,12 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
     // construct next shot segment and add it to list
     double endTime(startTime);
-    
-    if (t < 0.0f) 
+
+    if (t < 0.0f)
       endTime += Epsilon;
-     else 
+     else
       endTime += t;
-  
+
     ShotPathSegment segm(startTime, endTime, rs, reason);
     segments.push_back(segm);
     startTime = endTime;

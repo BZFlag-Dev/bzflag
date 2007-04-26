@@ -137,15 +137,15 @@ extern char		*worldDatabase;
 extern uint32_t		worldDatabaseSize;
 extern char		*worldSettings;
 extern uint8_t		rabbitIndex;
-extern float	        speedTolerance;
-extern bool	        handlePings;
-extern uint16_t	      	maxPlayers;
-extern uint16_t	      	maxRealPlayers;
-extern float	      	pluginWorldSize;
-extern float	      	pluginWorldHeight;
-extern float	      	pluginMaxWait;
-extern bool           	isIdentifyFlagIn;
-extern bool           	worldWasSentToAPlayer;
+extern float		speedTolerance;
+extern bool		handlePings;
+extern uint16_t		maxPlayers;
+extern uint16_t		maxRealPlayers;
+extern float		pluginWorldSize;
+extern float		pluginWorldHeight;
+extern float		pluginMaxWait;
+extern bool		isIdentifyFlagIn;
+extern bool		worldWasSentToAPlayer;
 extern RejoinList	rejoinList;
 extern bool		publiclyDisconnected;
 extern VotingArbiter	*votingArbiter;
@@ -194,7 +194,7 @@ class NonPlayerDataChunk
 };
 
 // peer list
-typedef struct 
+typedef struct
 {
   int socket;
   int player;

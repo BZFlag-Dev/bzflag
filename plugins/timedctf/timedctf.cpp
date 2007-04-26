@@ -11,7 +11,7 @@ class TCTF
 public:
 	TCTF()
 	{
-		timeLimit = 300; 
+		timeLimit = 300;
 		timeElapsed = 0;
 		timeRemaining = 0;
 		redLastTime = bz_getCurrentTime ();
@@ -30,7 +30,7 @@ public:
 		fairCTF = false;
 		soundEnabled = true;
 	}
-	double timeLimit; 
+	double timeLimit;
 	double timeElapsed;
 	double timeRemaining;
 	double redLastTime;
@@ -99,9 +99,9 @@ double ConvertToInt(std::string inmessage){
 		double tens = 1;
 
 		for ( int i = (messagelength - 1); i >= 0; i-- ){
-		
+
 			if (inmessage[i] < '0' || inmessage[i] > '9')  // got something other than a number
-				return 0; 
+				return 0;
 
 			tens *= 10;
 			messagevalue +=  (((double)inmessage[i] - '0') / 10) * tens;
@@ -121,10 +121,10 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
   std::string parameter = commandLine;
   double timelimitparameter = ConvertToInt(parameter);
-  
+
   if (timelimitparameter > 0)
 	  tctf.timeLimit = timelimitparameter * 60;
-  
+
   bz_debugMessage(4,"timedctf plugin loaded");
   bz_registerEvent(bz_eCaptureEvent,&tctfflagcapped);
   bz_registerEvent(bz_ePlayerJoinEvent,&tctfplayerjoined);
@@ -175,7 +175,7 @@ void ResetTeamData(){
 // are we ok to run this thing fairly?:
 
 bool TeamsBalanced(){
-	
+
 	// if not enough team players - no need to check any further:
 
 	if (bz_getTeamCount(eRedTeam) + bz_getTeamCount(eGreenTeam) + bz_getTeamCount(eBlueTeam) + bz_getTeamCount(ePurpleTeam) <= 1)
@@ -205,48 +205,48 @@ bool TeamsBalanced(){
 		RatioRB = (BS / RS);
 	if (BS > RS && BS !=0)
 		RatioRB = (RS / BS);
-	
+
 	if (RS >= PS && RS !=0)
 		RatioRP = (PS / RS);
 	if (PS > RS && PS !=0)
 		RatioRP = (RS / PS);
-	
+
 	if (GS >= BS && GS !=0)
 		RatioGB = (BS / GS);
 	if (BS > GS && BS !=0)
 		RatioGB = (GS / BS);
-	
+
 	if (PS >= GS && PS !=0)
 		RatioGP = (GS / PS);
 	if (GS > PS && GS !=0)
 		RatioGP = (PS / GS);
-	
+
 	if (BS >= PS && BS !=0)
 		RatioBP = (PS / BS);
 	if (PS > BS && PS !=0)
 		RatioBP = (BS / PS);
-	
+
 	if (RatioRG >= TeamRatioTolerance || RatioRB >= TeamRatioTolerance || RatioRP >= TeamRatioTolerance || RatioGB >= TeamRatioTolerance || RatioGP >= TeamRatioTolerance || RatioBP >= TeamRatioTolerance){
-		
+
 		return true;
 	}
 	else {
-		
+
 		return false;
 	}
 }
 
 void KillTeam(bz_eTeamType TeamToKill){
 
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
-			
+
 				if (player->team == TeamToKill)
 				{
 					bz_killPlayer(player->playerID, true, BZ_SERVER);
@@ -256,10 +256,10 @@ void KillTeam(bz_eTeamType TeamToKill){
 				else if (tctf.soundEnabled)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
-		
+
 		bz_freePlayerRecord(player);
 	}
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	return;
 }
@@ -468,7 +468,7 @@ void TCTFTickEvents::process ( bz_EventData *eventData )
 	// read this function once per tick event.  If fair CTF disabled, make it look fair to rest
 	// of code - need to do this to be able to have timed ctf without fair ctf.
 
-	tctf.fairCTF = (TeamsBalanced() || !tctf.fairCTFEnabled);  
+	tctf.fairCTF = (TeamsBalanced() || !tctf.fairCTFEnabled);
 
 	// check/notify team balance changes while timed CTF is disabled.
 	// if fair ctf is disabled, no need to check/notify about team balance changes:
@@ -509,8 +509,8 @@ void TCTFTickEvents::process ( bz_EventData *eventData )
 
 	// no timed ctf with fair CTF disabled and only one team present:
 
-	if (tctf.fairCTF && !tctf.fairCTFEnabled){ 
-		
+	if (tctf.fairCTF && !tctf.fairCTFEnabled){
+
 		if (OnlyOneTeamPlaying()){
 
 			if (tctf.timerRunning)
@@ -524,7 +524,7 @@ void TCTFTickEvents::process ( bz_EventData *eventData )
 
 	// start timing if we have made it this far:
 
-	if (tctf.fairCTF && !tctf.timerRunning && !OnlyOneTeamPlaying()){ 
+	if (tctf.fairCTF && !tctf.timerRunning && !OnlyOneTeamPlaying()){
 
 		tctf.adjTime = (int)(tctf.timeLimit / 60 + 0.5);
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF now in progress - capture a flag in less than %i minute(s)!", tctf.adjTime);
@@ -570,7 +570,7 @@ void TCTFTickEvents::process ( bz_EventData *eventData )
 
 	return;
 }
-	
+
 void TCTFPlayerUpdates::process ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerUpdateEvent)
@@ -582,7 +582,7 @@ void TCTFPlayerUpdates::process ( bz_EventData *eventData )
 
 		int playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->player;
 		const char* FlagHeld = bz_getPlayerFlag(playerID);
-				
+
 		if (FlagHeld != NULL){
 
 			if (strcmp(FlagHeld, "R*") == 0 || strcmp(FlagHeld, "G*") == 0 || strcmp(FlagHeld, "B*") == 0 || strcmp(FlagHeld, "P*") == 0 ){
@@ -604,14 +604,14 @@ bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 	bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
 	if ( !fromPlayer->admin ){
-    
+
 		bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the ctfcaptime commands.");
 		bz_freePlayerRecord(fromPlayer);
 		return true;
 	}
 
 	if ( command == "tctfon"){
-	
+
 		tctf.enabled = true;
 		if (!tctf.timerRunning)
 			ResetTeamData();
@@ -622,7 +622,7 @@ bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 	bz_freePlayerRecord(fromPlayer);
 
 	if ( command == "tctfoff"){
-	
+
 		tctf.enabled = false;
 		tctf.timerRunning = false;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF is disabled.");
@@ -630,14 +630,14 @@ bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 	}
 
 	if ( command == "fairctfon"){
-	
+
 		tctf.fairCTFEnabled = true;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Fair CTF is enabled.");
 		return true;
 	}
 
 	if ( command == "fairctfoff"){
-	
+
 		tctf.fairCTFEnabled = false;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Fair CTF is disabled.");
 		if (!tctf.timerRunning)
@@ -646,14 +646,14 @@ bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 	}
 
 	if ( command == "tctfsoundon"){
-	
+
 		tctf.soundEnabled = true;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF sound is enabled.");
 		return true;
 	}
 
 	if ( command == "tctfsoundoff"){
-	
+
 		tctf.soundEnabled = false;
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF sound is disabled.");
 		return true;
@@ -686,13 +686,13 @@ bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 		bz_sendTextMessagef (BZ_SERVER, playerID, "CTF capture time is currently set to: %i minutes", tctf.adjTime);
 		return true;
 	}
-    
+
   // explicit time command handler:
 
 	if ( command == "tctftime" ){
 
 		double inputvalue = ConvertToInt(message);
-  
+
 		if (inputvalue > 0){
 
 			tctf.timeLimit = inputvalue * 60;

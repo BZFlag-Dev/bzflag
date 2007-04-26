@@ -73,8 +73,8 @@ class World {
     Team&		getTeam(int index);
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
-    void                setPlayersSize(int _playersSize);
-    int                 getPlayersSize();
+    void		setPlayersSize(int _playersSize);
+    int		 getPlayersSize();
     RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
@@ -169,7 +169,7 @@ class World {
     std::vector<EntryZone> entryZones;
 
     RemotePlayer**	players;
-    int                 playersSize;
+    int		 playersSize;
     WorldPlayer*	worldWeapons;
     Flag*		flags;
     FlagSceneNode**	flagNodes;
@@ -197,7 +197,7 @@ class World {
 // World
 //
 
-inline 	bool	World::allowTeams() const
+inline	bool	World::allowTeams() const
 {
 	return gameType != eOpenFFA;
 }
@@ -333,7 +333,7 @@ inline Team&		World::getTeam(int index)
   return team[index];
 }
 
-inline int              World::getPlayersSize()
+inline int	      World::getPlayersSize()
 {
   return playersSize;
 }

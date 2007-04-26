@@ -606,7 +606,7 @@ void sendMsgTeleport( int player, unsigned short from, unsigned short to )
   buf = nboPackUShort(buf, to);
 
   broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart, false);
-  
+
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
   {
@@ -621,7 +621,7 @@ void sendMsgAutoPilot( int player, unsigned char autopilot )
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, player);
   buf = nboPackUByte(buf, autopilot);
-  
+
   broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
 
   // now do everyone who dosn't have network

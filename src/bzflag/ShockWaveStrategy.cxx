@@ -117,7 +117,7 @@ float ShockWaveStrategy::checkHit(const ShotCollider& tank, float position[3]) c
     position[2] = playerPos[2];
     return 0.5f;
   }
-  else 
+  else
     return Infinity;
 }
 

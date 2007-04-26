@@ -205,7 +205,7 @@ typedef unsigned char	uint8_t;
 #  ifndef HAVE_ISNAN
 #    ifdef __cplusplus
 #      ifdef isnan
-#        undef isnan
+#	 undef isnan
 #      endif
        template<typename Tp>
        inline int isnan(Tp f)

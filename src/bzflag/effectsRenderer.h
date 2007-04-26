@@ -76,8 +76,8 @@ public:
   virtual void draw(const SceneRenderer& sr);
 
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -114,8 +114,8 @@ public:
   virtual void draw(const SceneRenderer& sr);
 
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -141,8 +141,8 @@ public:
   virtual void draw(const SceneRenderer& sr);
 
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -156,8 +156,8 @@ public:
   virtual void draw(const SceneRenderer& sr);
 
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -170,8 +170,8 @@ public:
   virtual bool update(float time);
   virtual void draw(const SceneRenderer& sr);
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -184,8 +184,8 @@ public:
   virtual bool update(float time);
   virtual void draw(const SceneRenderer& sr);
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -198,8 +198,8 @@ public:
   virtual bool update(float time);
   virtual void draw(const SceneRenderer& sr);
 protected:
-  int          texture;
-  float        radius;
+  int	  texture;
+  float	radius;
   OpenGLGState ringState;
 };
 
@@ -228,7 +228,7 @@ public:
 
   // shot flashes
   void addShotEffect(const float* rgb, const float* pos, float rot,
-                     const float* vel = NULL, int _type = -1);
+		     const float* vel = NULL, int _type = -1);
   std::vector<std::string> getShotEffectTypes(void);
 
   // gm puffs
@@ -249,7 +249,7 @@ public:
 
   // shot teleport effect
   void addShotTeleportEffect(const float* pos, float rot[2],
-                             const float* vel = NULL);
+			     const float* vel = NULL);
   std::vector<std::string> getShotTeleportEffectTypes(void);
 
 protected:

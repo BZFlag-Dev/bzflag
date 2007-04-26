@@ -178,7 +178,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	float normalGravity = BZDBCache::gravity;
 	float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
-	
+
 	// All tanks with wings are flying away or they do without a flag
 	if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
 		return true;
@@ -334,7 +334,7 @@ bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	if (state.velocity[1] != 0 && !droveForward)
 		droveForward = ((forward[1] / (state.velocity[1])) > ZERO_TOLERANCE);
 
-	
+
 	if (!droveForward && (((state.velocity[0]) == 0) || ((state.velocity[1]) == 0)))
 		droveForward = true;
 

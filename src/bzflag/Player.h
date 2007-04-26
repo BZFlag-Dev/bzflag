@@ -165,7 +165,7 @@ public:
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
-  void          setHandicap(float handicap);
+  void	  setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
   void		setAllowMovement(bool allow);

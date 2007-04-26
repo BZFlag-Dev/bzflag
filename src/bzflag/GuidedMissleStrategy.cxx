@@ -120,7 +120,7 @@ void GuidedMissileStrategy::update(float dt)
 
   // if shot life ran out then send notification and expire shot.
   // only local shots are expired.
-  if (!isRemote && currentTime - getPath().getStartTime() >= getPath().getLifetime()) 
+  if (!isRemote && currentTime - getPath().getStartTime() >= getPath().getLifetime())
   {
     /* NOTE -- comment out to not explode when shot expires */
     addShotExplosion(nextPos);
@@ -130,12 +130,12 @@ void GuidedMissileStrategy::update(float dt)
 
   // get target
   const Player* target = NULL;
-  if (isRemote) 
+  if (isRemote)
   {
     if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
-  } 
-  else 
+  }
+  else
   {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank)
@@ -160,7 +160,7 @@ void GuidedMissileStrategy::update(float dt)
     }
   }
 
-  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) 
+  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
   {
     target = NULL;
     lastTarget = NoPlayer;
@@ -211,7 +211,7 @@ void GuidedMissileStrategy::update(float dt)
   Ray ray = Ray(nextPos, newDirection);
 
   renderTimes++;
-  
+
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
   if (currentTime - lastPuff > puffTime )
   {
@@ -235,8 +235,8 @@ void GuidedMissileStrategy::update(float dt)
     segmentEndTime += t * (currentTime - prevTime);
     ray.getPoint(t / shotSpeed, nextPos);
     addShotExplosion(nextPos);
-  } 
-  else 
+  }
+  else
   {
     // see if we hit a building
     const float t = checkBuildings(ray);
@@ -321,7 +321,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
   lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
   lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
   lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
- 
+
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   // check each segment
@@ -348,14 +348,14 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
 
     // get closest approach time
     float t;
-    if (tank.test2D) 
+    if (tank.test2D)
     {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
       t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.length, shotRadius, tankHeight);
     }
-    else 
+    else
     {
       // find time when shot hits sphere around tank
       t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);

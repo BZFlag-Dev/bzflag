@@ -133,7 +133,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 	{
 		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
 		return eLoadFailedDupe;
-	}	
+	}
 
 	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
 	if (hLib)
@@ -218,7 +218,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 	{
 		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
 		return eLoadFailedDupe;
-	}	
+	}
 
 	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	if (hLib)

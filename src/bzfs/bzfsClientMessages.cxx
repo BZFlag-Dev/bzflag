@@ -64,7 +64,7 @@ public:
     float time = (float)TimeKeeper::getCurrent().getSeconds();
 
     logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
-    
+
     sendMsgWhatTimeIsIt(handler,tag,time);
     return true;
   }
@@ -227,21 +227,21 @@ public:
     void *buffer, *bufStart = getDirectMessageBuffer();
     buffer = nboPackUShort(bufStart, NumTeams);
     buffer = nboPackUShort(buffer, numPlayers);
-    
+
     if (directMessage(handler, MsgQueryPlayers,(char*)buffer-(char*)bufStart, bufStart) < 0)
       return true;
-   
+
     if (sendTeamUpdateDirect(handler) < 0)
       return true;
-    
+
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers; i++) 
+    for (int i = 0; i < curMaxPlayers; i++)
     {
       otherData = GameKeeper::Player::getPlayerByIndex(i);
-      
+
       if (!otherData)
 	continue;
-           
+
       if (sendPlayerUpdateDirect(handler, otherData) < 0)
 	return true;
     }
@@ -267,7 +267,7 @@ public:
     PlayerId id = getNewPlayer(handler);
     if (id == 0xff)
       return false;
-    
+
     void *buffer, *bufStart = getDirectMessageBuffer();
     buffer = nboPackUByte(bufStart, id);
     directMessage(handler, MsgNewPlayer, (char*)buffer - (char*)bufStart, bufStart);
@@ -304,7 +304,7 @@ public:
   {
     if (!player || len < 3)
       return false;
-   
+
     unsigned char temp = 0;
 
     buf = nboUnpackUByte(buf,temp);
@@ -375,11 +375,11 @@ public:
   {
     if (!player)
       return false;
-    
+
     // player is on the waiting list
     char buffer[MessageLen];
     float waitTime = rejoinList.waitTime(player->getIndex());
-   
+
     if (waitTime > 0.0f)
     {
       snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
@@ -394,8 +394,8 @@ public:
     // player moved before countdown started
     if (clOptions->timeLimit>0.0f && !countdownActive)
       player->player.setPlayedEarly();
-   
-    playerAlive(player->getIndex()); 
+
+    playerAlive(player->getIndex());
     return true;
   }
 };
@@ -407,7 +407,7 @@ public:
   {
     if (!player || len < 7)
       return false;
-   
+
     if (player->player.isObserver())
       return true;
 
@@ -660,7 +660,7 @@ public:
       const int flagIndex = player->player.getFlag();
       FlagInfo *flagInfo  = NULL;
 
-      if (flagIndex >= 0) 
+      if (flagIndex >= 0)
       {
 	flagInfo = FlagInfo::get(flagIndex);
 	dropFlag(*flagInfo);
@@ -733,8 +733,8 @@ public:
     }
     // check for spamming and garbage
     if (!checkChatSpam(message, player, player->getIndex()) && !checkChatGarbage(message, player, player->getIndex()))
-      sendPlayerMessage(player, dstPlayer, message); 
-    
+      sendPlayerMessage(player, dstPlayer, message);
+
     return true;
   }
 };
@@ -754,7 +754,7 @@ public:
     buf = nboUnpackUByte(buf, to);
 
     int flagIndex = player->player.getFlag();
-    if (to == ServerPlayer) 
+    if (to == ServerPlayer)
     {
       if (flagIndex >= 0)
 	zapFlag (*FlagInfo::get(flagIndex));
@@ -785,7 +785,7 @@ public:
 	zapFlag (*FlagInfo::get(oFlagIndex));
     }
 
-    if (eventData.action == eventData.ContinueSteal) 
+    if (eventData.action == eventData.ContinueSteal)
       sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
     return true;
   }
@@ -798,10 +798,10 @@ public:
   {
     if (!player)
       return false;
-    
+
     if (player->getIndex() == rabbitIndex)
       anointNewRabbit();
-    
+
     return true;
   }
 };
@@ -880,7 +880,7 @@ public:
 	lagKick(player->getIndex());
     }
 
-    if (jittwarn) 
+    if (jittwarn)
     {
       sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", player->lagInfo.getJitter());
       sendMessage(ServerPlayer, player->getIndex(), message);
@@ -889,7 +889,7 @@ public:
 	jitterKick(player->getIndex());
     }
 
-    if (plosswarn) 
+    if (plosswarn)
     {
       sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", player->lagInfo.getLoss());
       sendMessage(ServerPlayer, player->getIndex(), message);
@@ -958,14 +958,14 @@ public:
 
     if (!player->player.isAlive() || player->player.isObserver() || !player->updateShot(shot.id & 0xff, shot.id >> 8))
       return true ;
-    
+
     sendMsgGMUpdate( player->getIndex(), &shot );
     return true;
   }
 };
 
 void registerDefaultHandlers ( void )
-{ 
+{
   clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
   clientNeworkHandlers[MsgSetVar] = new SetVarHandler;
   clientNeworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;

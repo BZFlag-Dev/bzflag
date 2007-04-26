@@ -69,7 +69,7 @@ class Nagware : public bz_EventHandler, public bz_CustomSlashCommandHandler
   private:
 };
 
-Nagware nagware;        // 'my' instance
+Nagware nagware;	// 'my' instance
 
 
 bool readConfig (char *filename, NagConfig *cfg, int playerID);

@@ -156,7 +156,7 @@ bool WWZHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 
 		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
-		
+
 		if ( nubs->size() > 0)
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
@@ -209,7 +209,7 @@ bool WWZHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 			{
 				newZone.zoneWeaponTimeDelay = (double)atof(nubs->get(1).c_str());
 				if (newZone.zoneWeaponTimeDelay < 0)
-					newZone.zoneWeaponTimeDelay = 0;  
+					newZone.zoneWeaponTimeDelay = 0;
 			}
 			else if ( key == "PLAYERMESSAGE" && nubs->size() > 1 )
 			{
@@ -287,12 +287,12 @@ void WWZEventHandler::process ( bz_EventData *eventData )
 	if (eventData->eventType != bz_eTickEvent)
 		return;
 
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
 	for ( unsigned int h = 0; h < playerList->size(); h++ )
-	{ 
-    	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h)); 
+	{
+	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h));
 
 			if (player){
 
@@ -330,8 +330,8 @@ void WWZEventHandler::process ( bz_EventData *eventData )
 			}
 			bz_freePlayerRecord(player);
 	}
-		
-	bz_deleteIntList(playerList); 
+
+	bz_deleteIntList(playerList);
 	return;
 }
 

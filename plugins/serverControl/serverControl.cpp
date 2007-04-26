@@ -28,7 +28,7 @@ using namespace std;
 
 enum action { join , part };
 
-class ServerControl : public bz_EventHandler 
+class ServerControl : public bz_EventHandler
 {
 public:
   ServerControl() {};
@@ -145,14 +145,14 @@ void ServerControl::fileAccessTime(const std::string filename, time_t *mtime)
     *mtime = buf.st_mtime;
   } else {
     *mtime = 0;
-    bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s", 
+    bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s",
 		     filename.c_str());
   }
 }
 
 void ServerControl::checkShutdown( void ) {
   // Check for server shutdown
-  // 
+  //
   // We shutdown the server in the following cases:
   //   The server has no players and
   //     the reset server once file exists OR
@@ -165,7 +165,7 @@ void ServerControl::checkShutdown( void ) {
 	resetOnce.close();
 	remove( resetServerOnceFilename.c_str() );
 	bz_shutdown();
-      } else if (resetServerAlwaysFilename != "" && serverActive) { 
+      } else if (resetServerAlwaysFilename != "" && serverActive) {
 	// Server was active - some non-observer player connected
 	std::ifstream resetAlways( resetServerAlwaysFilename.c_str() );
 	if (resetAlways) { // Reset server always exists
@@ -177,7 +177,7 @@ void ServerControl::checkShutdown( void ) {
   }
 }
 
-void ServerControl::process( bz_EventData *eventData ) 
+void ServerControl::process( bz_EventData *eventData )
 {
   ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
@@ -222,7 +222,7 @@ void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *dat
   for ( unsigned int i = 0; i < playerList->size(); i++ ) {
     player = bz_getPlayerByIndex( playerList->get(i));
     if (player) {
-      if (act == join || (data && (player->playerID != data->playerID) && 
+      if (act == join || (data && (player->playerID != data->playerID) &&
 			  (player->callsign != ""))) {
 	if (player->callsign != "")
 	  numLines++;

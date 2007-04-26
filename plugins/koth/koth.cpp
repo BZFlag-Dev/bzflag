@@ -121,7 +121,7 @@ public:
 		team = eNoTeam;
 		callsign = "";
 		teamPlay = false;
-		TTH = 60; 
+		TTH = 60;
 		adjustedTime = 60;
 		timeMult = 0.03;
 		timeMultMin = 0.50;
@@ -136,7 +136,7 @@ public:
 	}
 	bz_eTeamType team;
 	std::string callsign;
-	double TTH; 
+	double TTH;
 	double adjustedTime;
 	double timeMult;
 	double timeMultMin;
@@ -213,7 +213,7 @@ bool KOTHMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data 
 
 		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
-		
+
 		if ( nubs->size() > 0)
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
@@ -336,7 +336,7 @@ void autoTime()
 
 	double timeDown = ( 1 - ((double)numPlayers - 2) * koth.timeMult);
 
-	if (timeDown < koth.timeMultMin) 
+	if (timeDown < koth.timeMultMin)
 		timeDown = koth.timeMultMin;
 
 	koth.adjustedTime = (int)(koth.TTH * timeDown);
@@ -354,9 +354,9 @@ double ConvertToNum(std::string inmessage, double minNum, double maxNum){
 		double tens = 1;
 
 		for ( int i = (messagelength - 1); i >= 0; i-- ){
-		
+
 			if (inmessage[i] < '0' || inmessage[i] > '9')  // got something other than a number
-				return 0; 
+				return 0;
 
 			tens *= 10;
 			messagevalue +=  (((double)inmessage[i] - '0') / 10) * tens;
@@ -371,15 +371,15 @@ double ConvertToNum(std::string inmessage, double minNum, double maxNum){
 
 void killTeams(bz_eTeamType safeteam, std::string kothcallsign)
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
-			
+
 				if (player->team != safeteam)
 				{
 					bz_killPlayer(player->playerID, true, BZ_SERVER);
@@ -390,9 +390,9 @@ void killTeams(bz_eTeamType safeteam, std::string kothcallsign)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) IS KING OF THE HILL!", getTeamColor(safeteam), kothcallsign.c_str());
 
@@ -401,15 +401,15 @@ void killTeams(bz_eTeamType safeteam, std::string kothcallsign)
 
 void killPlayers(int safeid, std::string kothcallsign)
 {
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
-			
+
 				if (player->playerID != safeid)
 				{
 					bz_killPlayer(player->playerID, true, koth.id);
@@ -420,13 +420,13 @@ void killPlayers(int safeid, std::string kothcallsign)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
 
-	bz_deleteIntList(playerList); 
+	bz_deleteIntList(playerList);
 
 	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s IS KING OF THE HILL!", kothcallsign.c_str());
-	
+
 	return;
 }
 
@@ -441,11 +441,11 @@ void sendWarnings(const char* teamcolor, std::string playercallsign, double koth
 		if (!koth.teamPlay || koth.team == eRogueTeam)
 			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s will be King in %i secs!", playercallsign.c_str(), toTens);
 		else
-			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) will be King in %i secs!", teamcolor, playercallsign.c_str(), toTens);	
-		
+			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%s (%s) will be King in %i secs!", teamcolor, playercallsign.c_str(), toTens);
+
 		koth.TTHminutes--;
 	}
-	
+
 	if (koth.adjustedTime < koth.TTHseconds)
 	{
 		koth.TTHseconds = koth.TTHseconds - 10;
@@ -497,12 +497,12 @@ void initiatekoth(bz_eTeamType plyrteam, bz_ApiString plyrcallsign, int plyrID)
 
 	if (koth.soundEnabled)
 	{
-		bz_APIIntList *playerList = bz_newIntList(); 
-		bz_getPlayerIndexList ( playerList ); 
+		bz_APIIntList *playerList = bz_newIntList();
+		bz_getPlayerIndexList ( playerList );
 
-		for ( unsigned int i = 0; i < playerList->size(); i++ ) 
-		{ 
-     		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+		for ( unsigned int i = 0; i < playerList->size(); i++ )
+		{
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player)
 			{
@@ -511,10 +511,10 @@ void initiatekoth(bz_eTeamType plyrteam, bz_ApiString plyrcallsign, int plyrID)
 				else
 					bz_sendPlayCustomLocalSound(player->playerID,"teamgrab");
 			}
-	
+
 			bz_freePlayerRecord(player);
 		}
-		bz_deleteIntList(playerList); 
+		bz_deleteIntList(playerList);
 	}
 
 	return;
@@ -525,14 +525,14 @@ bool teamClear(bz_eTeamType teamToCheck)
 	if (teamToCheck == eRogueTeam || teamToCheck == eNoTeam || !koth.teamPlay)
 		return true;
 
-	bz_APIIntList *playerList = bz_newIntList(); 
-	bz_getPlayerIndexList ( playerList ); 
+	bz_APIIntList *playerList = bz_newIntList();
+	bz_getPlayerIndexList ( playerList );
 
 	bool isOut = true;
 
-	for ( unsigned int i = 0; i < playerList->size(); i++ ){ 
-       
-		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i)); 
+	for ( unsigned int i = 0; i < playerList->size(); i++ ){
+
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player)
 			{
@@ -540,7 +540,7 @@ bool teamClear(bz_eTeamType teamToCheck)
 					isOut = false;
 			}
 
-		bz_freePlayerRecord(player);	
+		bz_freePlayerRecord(player);
 	}
 
 	bz_deleteIntList(playerList);
@@ -609,7 +609,7 @@ void KOTHPlayerDied::process ( bz_EventData *eventData )
 		koth.id = -1;
 		koth.team = eNoTeam;
 	}
-	
+
 	return;
 }
 
@@ -620,7 +620,7 @@ inline void KOTHEventHandler::process ( bz_EventData *eventData )
 
 	if (onePlayer()) // Not enough players - we can leave
 		return;
-	
+
 	float pos[3] = {0};
 
 	int playerID = -1;
@@ -654,7 +654,7 @@ inline void KOTHEventHandler::process ( bz_EventData *eventData )
 	if (kothzone.pointIn(pos)) // player is on Hill
 	{
 		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-		
+
 		if (player)
 		{
 			if (player->playerID != koth.playerJustWon && player->spawned)
@@ -722,7 +722,7 @@ bool KOTHCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 
 	if ( !fromPlayer->admin )
 	{
-    	bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the koth commands.");
+	bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the koth commands.");
 		bz_freePlayerRecord(fromPlayer);
 		return true;
 	}
@@ -814,18 +814,18 @@ bool KOTHCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _m
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Time multiplier = %i percent.", (int)(koth.timeMult*100 + 0.5));
 
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Time multiplier minimum = %i percent.", (int)(koth.timeMultMin*100 + 0.5));
-		
+
 		int AdjTime = (int)(koth.adjustedTime + 0.5);
 		bz_sendTextMessagef (BZ_SERVER, playerID, "King of the Hill hold time is currently set to: %i seconds", AdjTime);
 		return true;
 	}
-    
+
   // explicit time command handler:
 
 	if ( command == "kothtime" )
 	{
 		double inputvalue = ConvertToNum(message, 1, 7200);
-  
+
 		if (inputvalue > 0 )
 		{
 			koth.TTH = inputvalue;

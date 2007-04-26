@@ -817,7 +817,7 @@ int NetListener::update ( float waitTime )
 
   // always listen for connections
   FD_SET((unsigned int)listenSocket, &read_set);
-  if (listenSocket > maxFileDescriptors) 
+  if (listenSocket > maxFileDescriptors)
     maxFileDescriptors = listenSocket;
 
  // GameKeeper::Player::freeTCPMutex();

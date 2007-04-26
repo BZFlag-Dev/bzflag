@@ -1180,7 +1180,7 @@ class bz_NonPlayerConnectionHandler
 {
 public:
   virtual ~bz_NonPlayerConnectionHandler(){};
-  virtual void pending ( int connectionID, void *data, unsigned int size ) = 0; 
+  virtual void pending ( int connectionID, void *data, unsigned int size ) = 0;
   virtual void disconnect ( int connectionID ){ if (connectionID) return; };
 };
 
@@ -1853,7 +1853,7 @@ protected:
   bz_eShotType getShotType ( void );
 
 protected:
-  typedef struct 
+  typedef struct
   {
     bool enabled;
     bz_eShotType shotType;

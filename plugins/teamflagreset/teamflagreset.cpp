@@ -11,7 +11,7 @@ class TFR
 public:
 	TFR()
 	{
-		idleTime = 300; 
+		idleTime = 300;
 		redLastTouched = bz_getCurrentTime();
 		greenLastTouched = bz_getCurrentTime();
 		blueLastTouched = bz_getCurrentTime();
@@ -24,7 +24,7 @@ public:
 		timerOff = false;
 		flagTouched ="";
 	}
-	double idleTime; 
+	double idleTime;
 	double redLastTouched;
 	double greenLastTouched;
 	double blueLastTouched;
@@ -66,9 +66,9 @@ double ConvertToInteger(std::string msg){
 		double tens = 1;
 
 		for ( int i = (msglength - 1); i >= 0; i-- ){
-		
+
 			if (msg[i] < '0' || msg[i] > '9')  // got something other than a number
-				return 0; 
+				return 0;
 
 			tens *= 10;
 			msgvalue +=  (((double)msg[i] - '0') / 10) * tens;
@@ -88,7 +88,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLineParameter )
 {
   std::string param = commandLineParameter;
   double timelimitparam = ConvertToInteger(param);
-  
+
   if (timelimitparam > 0)
 	  tfr.idleTime = timelimitparam * 60;
 
@@ -146,13 +146,13 @@ void TeamFlagResetHandler::process ( bz_EventData *eventData )
 	bz_getPlayerIndexList ( playerList );
 
 	// check to see if anyone has picked up a team flag & count players per team
-	
+
 	for ( unsigned int i = 0; i < playerList->size(); i++ ){
 
 		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 		if (player) {
-			
+
 			tfr.flagTouched = bz_getPlayerFlag(player->playerID);
 
 			if (tfr.flagTouched){
@@ -174,7 +174,7 @@ void TeamFlagResetHandler::process ( bz_EventData *eventData )
 					tfr.purpleFlagWasHeld = true;
 				}
 			}
-	
+
 			bz_freePlayerRecord(player);
 		}
 	}
@@ -251,17 +251,17 @@ bool TeamFlagResetIOHandler::handle ( int playerID, bz_ApiString _command, bz_Ap
 	bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
 	if ( !fromPlayer->admin ) {
-		
+
 		bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the teamflagreset commands.");
 		bz_freePlayerRecord(fromPlayer);
 		return true;
 	}
 	bz_freePlayerRecord(fromPlayer);
-	
+
 	if ( command == "tfrtime") {
 
 		double invalue = ConvertToInteger(message);
-  
+
 		if (invalue > 0){
 
 			tfr.timerOff = false;
@@ -286,7 +286,7 @@ bool TeamFlagResetIOHandler::handle ( int playerID, bz_ApiString _command, bz_Ap
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Team flag reset is disabled.");
 		return true;
 	}
-	
+
 	if ( command == "tfron") {
 
 		tfr.timerOff = false;
@@ -301,7 +301,7 @@ bool TeamFlagResetIOHandler::handle ( int playerID, bz_ApiString _command, bz_Ap
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Team flag reset is disabled.");
 		else
 			bz_sendTextMessagef (BZ_SERVER, playerID, "Team flag reset is enabled.");
-		
+
 		int AdjTime = (int)(tfr.idleTime / 60 + 0.5);
 		bz_sendTextMessagef (BZ_SERVER, playerID, "Team flag idle time is: %i minutes.", AdjTime);
 

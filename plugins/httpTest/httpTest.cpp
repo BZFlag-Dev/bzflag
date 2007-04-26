@@ -71,7 +71,7 @@ public:
   }
 };
 
-NewConnectionHandler newConnect; 
+NewConnectionHandler newConnect;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {

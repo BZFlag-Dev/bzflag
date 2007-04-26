@@ -35,7 +35,7 @@ bool CronCommand::handle(int playerID, bz_ApiString command, bz_ApiString messag
   }
   else if (strcasecmp((*params)[0].c_str(), "list") == 0) {
     cron.list(playerID);
-  } 
+  }
   return true;
 }
 

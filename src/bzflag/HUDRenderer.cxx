@@ -721,7 +721,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	    glVertex3f(-triangleSize*xFactor,triangleSize,0.02f);
 	    glVertex3f(triangleSize*xFactor,0,0.02f);
 	  glEnd();
-	
+
 	  // red X
 	  hudColor4f( 1,0,0, 0.85f );
 	  glLineWidth(3.0f);
@@ -1562,15 +1562,15 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
     // draw any waypoint markers
     for ( int i = 0; i < (int)enhancedMarkers.size(); i++ )
       drawWaypointMarker(enhancedMarkers[i].color,0.45f, enhancedMarkers[i].pos,myTank->getPosition(),enhancedMarkers[i].name,enhancedMarkers[i].friendly);
-    
+
     enhancedMarkers.clear();
 
     // draw any lockon markers
     for ( int i = 0; i < (int)lockOnMarkers.size(); i++ )
       drawLockonMarker(lockOnMarkers[i].color, 0.45f, lockOnMarkers[i].pos,myTank->getPosition(),lockOnMarkers[i].name,lockOnMarkers[i].friendly);
-    
+
     lockOnMarkers.clear();
-    
+
     glLineWidth(1.0f);
 
     glPopMatrix();
@@ -1661,7 +1661,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   glPopMatrix();
 
-  
+
   // restore graphics state
   glPopMatrix();
 }
