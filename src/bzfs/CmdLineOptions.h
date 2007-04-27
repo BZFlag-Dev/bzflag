@@ -161,7 +161,6 @@ struct CmdLineOptions
   bool			timestampLog;
   bool			timestampMicros;
   bool			countdownPaused;
-  bool			tkAnnounce;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
@@ -200,6 +199,8 @@ struct CmdLineOptions
 
   std::string	   cacheURL;
   std::string	   cacheOut;
+
+  bool			tkAnnounce;
 
   // plugins
   typedef struct

@@ -30,8 +30,8 @@ WordFilter *PlayerInfo::filterData	= NULL;
 bool	PlayerInfo::simpleFiltering   = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
-  playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
-  team(NoTeam),spamWarns(0), lastMsgTime(now), paused(false),
+  playerIndex(_playerIndex), state(PlayerInLimbo), team(NoTeam), flag(-1),
+  spamWarns(0), lastMsgTime(now), paused(false),
   pausedSince(TimeKeeper::getNullTime()), autopilot(false), tracker(0)
 {
   notResponding = false;

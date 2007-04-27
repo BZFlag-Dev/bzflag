@@ -132,7 +132,7 @@ void			ServerListCache::loadCache()
   // could not open, try again with older revision
   if (!inFile) {
     subrevision = 0;
-    std::string fileName = getCacheFilename(subrevision);
+    fileName = getCacheFilename(subrevision);
     if (fileName == "") return;
     inFile.clear();
     inFile.open(fileName.c_str(), std::ios::in | std::ios::binary);
