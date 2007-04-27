@@ -19,10 +19,11 @@
 #==============================================================================
 AC_PREREQ([2.56])
 
-m4_define([cs_min_version_default], [0.99])
+# Should stay in sync with csver.h
+m4_define([cs_min_version_default], [1.1])
 
 #------------------------------------------------------------------------------
-# CS_PATH_CRYSTAL_CHECK([MINIMUM-VERSION], [ACTION-IF-FOUND],
+# CS_PATH_CRYSTAL_CHECK([DESIRED-VERSION], [ACTION-IF-FOUND],
 #                       [ACTION-IF-NOT-FOUND], [REQUIRED-LIBS],
 #                       [OPTIONAL-LIBS])
 #	Checks for Crystal Space paths and libraries by consulting
@@ -62,6 +63,13 @@ AC_ARG_ENABLE([cstest],
 	[verify that the Crystal Space SDK is actually usable
 	(default YES)])], [], [enable_cstest=yes])
 
+# Split the DESIRED-VERSION into the major and minor version number 
+# components.
+cs_version_desired=m4_default([$1],[cs_min_version_default])
+sed_expr_base=[\\\([0-9]\\\+\\\)\.\\\([0-9]\\\+\\\).*]
+cs_version_major=`echo $cs_version_desired | sed "s/$sed_expr_base/\1/"`
+cs_version_minor=`echo $cs_version_desired | sed "s/$sed_expr_base/\2/"`
+
 # Try to find an installed cs-config.
 cs_path=''
 AS_IF([test -n "$CRYSTAL"],
@@ -75,11 +83,62 @@ AS_IF([test -n "$CRYSTAL"],
 AS_IF([test -n "$cs_path"], [cs_path="$cs_path$PATH_SEPARATOR"])
 cs_path="$cs_path$PATH$PATH_SEPARATOR/usr/local/crystalspace/bin"
 
-AC_PATH_TOOL([CRYSTAL_CONFIG_TOOL], [cs-config], [], [$cs_path])
+# Find a suitable CS version.
+# For a given desired version X.Y, the compatibility rules are as follows:
+#  Y is even (stable version): compatible are X.Y+1 and X.Y+2.
+#  Y is odd (development version): compatible are X.Y+1 up to X.Y+3, assuming 
+#                                  no deprecated features are used.
+# Generally, an exact version match is preferred. If that is not the case,
+# stable versions are preferred over development version, with a closer
+# version number preferred.
+# This yields the following search order:
+#  Y is even (stable version): X.Y, X.Y+2, X.Y+1
+#  Y is odd (development version): X.Y, X.Y+1, X.Y+3, X.Y+2
+
+cs_version_sequence="$cs_version_major.$cs_version_minor"
+
+cs_version_desired_is_stable=`expr $cs_version_minor % 2`
+
+AS_IF([test $cs_version_desired_is_stable -eq 0],
+  [# Development version search sequence
+  y=`expr $cs_version_minor + 1`
+  cs_version_sequence="$cs_version_sequence $cs_version_major.$y"
+  y=`expr $cs_version_minor + 3`
+  cs_version_sequence="$cs_version_sequence $cs_version_major.$y"
+  y=`expr $cs_version_minor + 2`
+  cs_version_sequence="$cs_version_sequence $cs_version_major.$y"],
+  [# Stable version search sequence
+  y=`expr $cs_version_minor + 2`
+  cs_version_sequence="$cs_version_sequence $cs_version_major.$y"
+  y=`expr $cs_version_minor + 1`
+  cs_version_sequence="$cs_version_sequence $cs_version_major.$y"])
+
+for test_version in $cs_version_sequence; do
+  cs_path_X_Y=''
+  test_version_major=`echo $test_version | sed "s/$sed_expr_base/\1/"`
+  test_version_minor=`echo $test_version | sed "s/$sed_expr_base/\2/"`
+  CRYSTAL_X_Y=$(sh -c "echo \$CRYSTAL_`echo ${test_version_major}_${test_version_minor}`")
+  AS_IF([test -n "$CRYSTAL_X_Y"],
+      [my_IFS=$IFS; IFS=$PATH_SEPARATOR
+      for cs_dir in $CRYSTAL_X_Y; do
+	  AS_IF([test -n "$cs_path_X_Y"], [cs_path_X_Y="$cs_path_X_Y$PATH_SEPARATOR"])
+	  cs_path_X_Y="$cs_path_X_Y$cs_dir$PATH_SEPARATOR$cs_dir/bin"
+      done
+      IFS=$my_IFS])
+  AC_PATH_TOOL([CRYSTAL_CONFIG_TOOL], [cs-config-$test_version], [], 
+      [$cs_path_X_Y$PATH_SEPARATOR$cs_path])
+  AS_IF([test -n "$CRYSTAL_CONFIG_TOOL"],
+    [break])
+done
+# Legacy: CS 1.0 used a bare-named cs-config
+AS_IF([test -z "$CRYSTAL_CONFIG_TOOL"],
+  [AC_PATH_TOOL([CRYSTAL_CONFIG_TOOL], [cs-config], [], [$cs_path])])
 
 AS_IF([test -n "$CRYSTAL_CONFIG_TOOL"],
     [cfg="$CRYSTAL_CONFIG_TOOL"
 
+    # Still do cs-config version check - this one will also take the release
+    # component into account. Also needed for legacy cs-config.
     CS_CHECK_PROG_VERSION([Crystal Space], [$cfg --version],
 	[m4_default([$1],[cs_min_version_default])], [9.9|.9],
 	[cs_sdk=yes], [cs_sdk=no])
