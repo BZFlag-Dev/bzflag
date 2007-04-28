@@ -140,30 +140,15 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
-if BUILD_REGEX
-REGEX = ../other/regex/libregex.la
-endif
-
-if BUILDZLIB
-ZLIB = ../other/zlib/libz.la
-else
-ZLIB = -lz
-endif
-
-if BUILDCARES
-CARESLIB = ../other/ares/libcares.la
-else
-CARESLIB = -lcares
-endif
 
 LDADD = \
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../common/libCommon.la		\
-	$(CARESLIB)			\
-	$(REGEX)			\
-	$(ZLIB)				\
+	$(LIBCARES)			\
+	$(LIBREGEX)			\
+	$(LIBZ)				\
 	$(KRB5_LIBS)			\
 	../date/libDate.la
 

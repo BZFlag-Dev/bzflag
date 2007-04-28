@@ -217,22 +217,6 @@ EXTRA_bzflag_SOURCES = \
 	LoginMenu.cxx			\
 	LoginMenu.h
 
-if BUILDZLIB
-ZLIB = ../other/zlib/libz.la
-else
-ZLIB = -lz
-endif
-
-if BUILDCARES
-CARESLIB = ../other/ares/libcares.la
-else
-CARESLIB = -lcares
-endif
-
-if BUILD_REGEX
-REGEX = ../other/regex/libregex.la
-endif
-
 if WIN32
 RESOURCE = bzflag.res
 else
@@ -255,9 +239,9 @@ LDADD =	\
 	../geometry/libGeometry.la	\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
-	$(CARESLIB)			\
-	$(REGEX)			\
-	$(ZLIB)				\
+	$(LIBCARES)			\
+	$(LIBREGEX)			\
+	$(LIBZ)				\
 	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\

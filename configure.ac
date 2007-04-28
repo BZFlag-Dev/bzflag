@@ -113,13 +113,6 @@ MP_WITH_CURSES
 # check for kerberos option
 AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 
-# check for regex option (on means build our own)
-AC_ARG_WITH(regex, [  --with-regex		  Use bzflag regex lib])
-if test x$with_regex != xno ; then
-   AC_DEFINE(BUILD_REGEX, 1, [Building regex])
-fi
-AM_CONDITIONAL(BUILD_REGEX, test "x$with_regex" != "xno")
-
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
 if test x$with_SDL != xno; then
@@ -245,18 +238,45 @@ dnl ***************************
 
 BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
-# FIXME: move library checks here
+# FIXME: move other library checks here
 
-AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
-AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
+dnl detect a usable system zlib compression library
+AC_CHECK_LIB(z, compress, LIBZ="-lz", LIBZ="")
 
-AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
-AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
-if test "x$BUILDCARES" = "xyes" ; then
-      AC_MSG_WARN([using an internal c-ares lib.])
-      AC_MSG_WARN([Consider installing an updated library at system level])
-      AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
-fi
+dnl detect a usable system c-ares lookup library
+AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", LIBCARES="")
+
+dnl detect a usable system regular expression library
+AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
+    [AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
+	[AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", LIBREGEX="")]
+    )]
+)
+
+# Check for the math lib
+AC_CHECK_LIB(m, sqrtf)
+
+# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
+AC_CHECK_LIB([socket], [socket])
+AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
+
+# check for various IEEE and c99 standard math functions in libm
+AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
+AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
+AC_CHECK_LIB([m], [atan2f], [AC_DEFINE([HAVE_ATAN2F],[1],[libm includes atan2f])])
+AC_CHECK_LIB([m], [atanf], [AC_DEFINE([HAVE_ATANF],[1],[libm includes atanf])])
+AC_CHECK_LIB([m], [cosf], [AC_DEFINE([HAVE_COSF],[1],[libm includes cosf])])
+AC_CHECK_LIB([m], [expf], [AC_DEFINE([HAVE_EXPF],[1],[libm includes expf])])
+AC_CHECK_LIB([m], [fabsf], [AC_DEFINE([HAVE_FABSF],[1],[libm includes fabsf])])
+AC_CHECK_LIB([m], [floorf], [AC_DEFINE([HAVE_FLOORF],[1],[libm includes floorf])])
+AC_CHECK_LIB([m], [fmodf], [AC_DEFINE([HAVE_FMODF],[1],[libm includes fmodf])])
+AC_CHECK_LIB([m], [hypotf], [AC_DEFINE([HAVE_HYPOTF],[1],[libm includes hypotf])])
+AC_CHECK_LIB([m], [logf], [AC_DEFINE([HAVE_LOGF],[1],[libm includes logf])])
+AC_CHECK_LIB([m], [log10f], [AC_DEFINE([HAVE_LOG10F],[1],[libm includes log10f])])
+AC_CHECK_LIB([m], [powf], [AC_DEFINE([HAVE_POWF],[1],[libm includes powf])])
+AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
+AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
+AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
 
 
 dnl *************************
@@ -297,6 +317,11 @@ AC_CHECK_HEADERS( \
 	dsound.h \
 )
 # nameser_compat.h used by src/c-ares
+
+found_regex_h=no
+AC_CHECK_HEADER(regex.h,
+		AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file])
+		found_regex_h=yes )
 
 
 dnl **********************************
@@ -453,30 +478,6 @@ case $host_os in
     ;;
 esac;
 
-# Check for the math lib
-AC_CHECK_LIB(m, sqrtf)
-
-# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
-AC_CHECK_LIB([socket], [socket])
-AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
-
-# check for various IEEE and c99 standard math functions in libm
-AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
-AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
-AC_CHECK_LIB([m], [atan2f], [AC_DEFINE([HAVE_ATAN2F],[1],[libm includes atan2f])])
-AC_CHECK_LIB([m], [atanf], [AC_DEFINE([HAVE_ATANF],[1],[libm includes atanf])])
-AC_CHECK_LIB([m], [cosf], [AC_DEFINE([HAVE_COSF],[1],[libm includes cosf])])
-AC_CHECK_LIB([m], [expf], [AC_DEFINE([HAVE_EXPF],[1],[libm includes expf])])
-AC_CHECK_LIB([m], [fabsf], [AC_DEFINE([HAVE_FABSF],[1],[libm includes fabsf])])
-AC_CHECK_LIB([m], [floorf], [AC_DEFINE([HAVE_FLOORF],[1],[libm includes floorf])])
-AC_CHECK_LIB([m], [fmodf], [AC_DEFINE([HAVE_FMODF],[1],[libm includes fmodf])])
-AC_CHECK_LIB([m], [hypotf], [AC_DEFINE([HAVE_HYPOTF],[1],[libm includes hypotf])])
-AC_CHECK_LIB([m], [logf], [AC_DEFINE([HAVE_LOGF],[1],[libm includes logf])])
-AC_CHECK_LIB([m], [log10f], [AC_DEFINE([HAVE_LOG10F],[1],[libm includes log10f])])
-AC_CHECK_LIB([m], [powf], [AC_DEFINE([HAVE_POWF],[1],[libm includes powf])])
-AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
-AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
-AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
 
 # avoid using X11 in BeOS and Mac OS X
 case $host_os in
@@ -499,15 +500,6 @@ case $host_os in
 esac
 
 AC_LANG(C++)
-
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <sys/types.h>
-#include <regex.h>
-]], [[
-regcomp(0, 0, 0);
-regexec(0, 0, 0, 0, 0);
-]])],[AC_DEFINE(HAVE_REGEX_H, 1,
-		[Define to 1 if you have regex stuff available])],[])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
@@ -963,6 +955,65 @@ fi
 AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
+# assume ares works if we found it.
+dnl figure out whether we need to build the included ares library
+AC_MSG_CHECKING(whether to build the included ares lookup library)
+BUILD_CARES="no (using system)"
+if test "x$LIBCARES" = "x" ; then
+    AC_DEFINE(BUILD_CARES, 1, [Build the included ares lookup library])
+    BUILD_CARES="yes"
+    LIBCARES='${top_builddir}/src/other/ares/libcares.la'
+fi
+AC_SUBST(LIBCARES)
+AC_MSG_RESULT($BUILD_CARES)
+AM_CONDITIONAL(BUILD_CARES, test "x$BUILD_CARES" = "xyes")
+
+# see if we have regex functionality
+AC_MSG_CHECKING(for regular expression functionality)
+regex_works=no
+PRELDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS $LIBREGEX"
+AC_TRY_RUN([
+#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+#include <regex.h>
+int main() {
+    regex_t re;
+    regcomp(&re, "abc", REG_EXTENDED);
+    regexec(&re, "", 0, 0, 0);
+    return 0;
+}
+], [regex_works=yes])
+LDFLAGS="$PRELDFLAGS"
+AC_MSG_RESULT($regex_works)
+dnl
+dnl figure out whether we need to build the included regex library
+dnl
+AC_MSG_CHECKING(whether to build the included regular expression library)
+BUILD_REGEX="no (using system)"
+if test "x$regex_works" = "xno" ; then
+    AC_DEFINE(BUILD_REGEX, 1, [Build the included regular expression library])
+    BUILD_REGEX="yes"
+    LIBREGEX='${top_builddir}/src/other/regex/libregex.la'
+fi
+AC_SUBST(LIBREGEX)
+AC_MSG_RESULT($BUILD_REGEX)
+AM_CONDITIONAL(BUILD_REGEX, test "x$BUILD_REGEX" = "xyes")
+
+# assume zlib works if we found it.
+dnl figure out whether we need to build the included zlib
+AC_MSG_CHECKING(whether to build the included zlib compression library)
+BUILD_ZLIB="no (using system)"
+if test "x$LIBZ" = "x" ; then
+    AC_DEFINE(BUILD_ZLIB, 1, [Build the included zlib compression library])
+    BUILD_ZLIB="yes"
+    LIBZ='${top_builddir}/src/other/zlib/libz.la'
+fi
+AC_SUBST(LIBZ)
+AC_MSG_RESULT($BUILD_ZLIB)
+AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
+
 
 dnl **************************************
 dnl *** Configure Makefiles and output ***
@@ -1172,6 +1223,10 @@ AC_MSG_RESULT([CXXFLAGS = ${CXXFLAGS}])
 AC_MSG_RESULT([CPPFLAGS = ${CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS  = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS     = ${LIBS}])
+AC_MSG_RESULT([])
+AC_MSG_RESULT([Build ares ....: $BUILD_CARES])
+AC_MSG_RESULT([Build regex ...: $BUILD_REGEX])
+AC_MSG_RESULT([Build zlib ....: $BUILD_ZLIB])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])

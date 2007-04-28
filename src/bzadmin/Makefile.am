@@ -44,17 +44,13 @@ EXTRA_bzadmin_SOURCES = \
 ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
 
-if BUILD_REGEX
-REGEX = ../other/regex/libregex.la
-endif
-
 LDADD = \
 	../date/libDate.la	\
-	@CURSES_LIB@		\
 	../game/libGame.la	\
 	../net/libNet.la	\
 	../common/libCommon.la	\
-	$(REGEX)
+	$(CURSES_LIB)		\
+	$(LIBREGEX)
 
 MAINTAINERCLEANFILES = \
 	ServerLink.cxx \

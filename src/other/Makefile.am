@@ -1,10 +1,10 @@
-if BUILDZLIB
+if BUILD_ZLIB
 ZLIB_DIR = zlib
 else
 ZLIB_DIR =
 endif
 
-if BUILDCARES
+if BUILD_CARES
 CARES_DIR = ares
 else
 CARES_DIR =
