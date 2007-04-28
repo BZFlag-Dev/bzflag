@@ -141,17 +141,17 @@ bzfs_SOURCES = \
 	bzfs.h
 
 if BUILD_REGEX
-REGEX = ../regex/libregex.la
+REGEX = ../other/regex/libregex.la
 endif
 
 if BUILDZLIB
-ZLIB = ../zlib/libz.la
+ZLIB = ../other/zlib/libz.la
 else
 ZLIB = -lz
 endif
 
 if BUILDCARES
-CARESLIB = ../c-ares/libcares.la
+CARESLIB = ../other/ares/libcares.la
 else
 CARESLIB = -lcares
 endif

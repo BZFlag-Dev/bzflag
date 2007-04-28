@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\zlib\Debug\"
-			IntermediateDirectory="..\..\src\zlib\Debug\"
+			OutputDirectory="..\..\src\other\zlib\Debug\"
+			IntermediateDirectory="..\..\src\other\zlib\Debug\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\zlib\Debug\zlib.lib"
+				OutputFile="..\..\src\other\zlib\Debug\zlib.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -64,8 +64,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\zlib\"
-			IntermediateDirectory="..\..\src\zlib\"
+			OutputDirectory="..\..\src\other\zlib\"
+			IntermediateDirectory="..\..\src\other\zlib\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -93,7 +93,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\zlib\zlib.lib"
+				OutputFile="..\..\src\other\zlib\zlib.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -149,7 +149,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\zlib\zlib.lib"
+				OutputFile="..\..\src\other\zlib\zlib.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -205,7 +205,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\zlib\zlib.lib"
+				OutputFile="..\..\src\other\zlib\zlib.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -236,7 +236,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\src\zlib\adler32.c">
+				RelativePath="..\..\src\other\zlib\adler32.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -272,7 +272,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\compress.c">
+				RelativePath="..\..\src\other\zlib\compress.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -308,7 +308,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\crc32.c">
+				RelativePath="..\..\src\other\zlib\crc32.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -344,7 +344,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\deflate.c">
+				RelativePath="..\..\src\other\zlib\deflate.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -380,7 +380,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\gzio.c">
+				RelativePath="..\..\src\other\zlib\gzio.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -416,7 +416,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inffast.c">
+				RelativePath="..\..\src\other\zlib\inffast.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -452,7 +452,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inflate.c">
+				RelativePath="..\..\src\other\zlib\inflate.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -488,7 +488,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inftrees.c">
+				RelativePath="..\..\src\other\zlib\inftrees.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -524,7 +524,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\trees.c">
+				RelativePath="..\..\src\other\zlib\trees.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -560,7 +560,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\uncompr.c">
+				RelativePath="..\..\src\other\zlib\uncompr.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -596,7 +596,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\zutil.c">
+				RelativePath="..\..\src\other\zlib\zutil.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -636,37 +636,37 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\..\src\zlib\deflate.h">
+				RelativePath="..\..\src\other\zlib\deflate.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\infblock.h">
+				RelativePath="..\..\src\other\zlib\infblock.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\infcodes.h">
+				RelativePath="..\..\src\other\zlib\infcodes.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inffast.h">
+				RelativePath="..\..\src\other\zlib\inffast.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inffixed.h">
+				RelativePath="..\..\src\other\zlib\inffixed.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\inftrees.h">
+				RelativePath="..\..\src\other\zlib\inftrees.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\infutil.h">
+				RelativePath="..\..\src\other\zlib\infutil.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\trees.h">
+				RelativePath="..\..\src\other\zlib\trees.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\zconf.h">
+				RelativePath="..\..\src\other\zlib\zconf.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\zlib.h">
+				RelativePath="..\..\src\other\zlib\zlib.h">
 			</File>
 			<File
-				RelativePath="..\..\src\zlib\zutil.h">
+				RelativePath="..\..\src\other\zlib\zutil.h">
 			</File>
 		</Filter>
 	</Files>

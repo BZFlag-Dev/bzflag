@@ -220,6 +220,21 @@ bzrobots_SOURCES =			\
 	../bzflag/stars.h			\
 	$(KRB5)
 
+if BUILDZLIB
+ZLIB = ../other/zlib/libz.la
+else
+ZLIB = -lz
+endif
+
+if BUILDCARES
+CARESLIB = ../other/ares/libcares.la
+else
+CARESLIB = -lcares
+endif
+
+if BUILD_REGEX
+REGEX = ../other/regex/libregex.la
+endif
 
 if WIN32
 RESOURCE = bzflag.res
@@ -227,26 +242,8 @@ else
 RESOURCE =
 endif
 
-if BUILDZLIB
-ZLIB = ../zlib/libz.la
-else
-ZLIB = -lz
-endif
-
-if BUILDCARES
-CARESLIB = ../c-ares/libcares.la
-else
-CARESLIB = -lcares
-endif
-
 if MACOS
-NACLIB = \
-	../platform/MacOSX/libMac.la
-endif
-
-if BUILD_REGEX
-REGEX = \
-	../regex/libregex.la
+NACLIB = ../platform/MacOSX/libMac.la
 endif
 
 LDADD =	\

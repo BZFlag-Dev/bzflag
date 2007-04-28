@@ -45,8 +45,7 @@ ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 if BUILD_REGEX
-REGEX = \
-	../regex/libregex.la
+REGEX = ../other/regex/libregex.la
 endif
 
 LDADD = \

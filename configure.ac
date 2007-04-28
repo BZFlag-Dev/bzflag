@@ -1013,7 +1013,6 @@ AC_CONFIG_FILES([
 	src/bzflag/Makefile
 	src/bzfs/Makefile
 	src/bzrobots/Makefile
-	src/c-ares/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/game/Makefile
@@ -1024,12 +1023,14 @@ AC_CONFIG_FILES([
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
+	src/other/Makefile
+	src/other/ares/Makefile
+	src/other/regex/Makefile
+	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile
-	src/regex/Makefile
 	src/scene/Makefile
-	src/zlib/Makefile
 	tools/Makefile
 	tools/TextTool-W32/Makefile
 	tools/TextTool-W32/res/Makefile

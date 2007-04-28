@@ -1,21 +1,3 @@
-if BUILDZLIB
-ZLIB_DIR = zlib
-else
-ZLIB_DIR =
-endif
-
-if BUILDCARES
-CARES_DIR = c-ares
-else
-CARES_DIR =
-endif
-
-if BUILD_REGEX
-REGEX_DIR = regex
-else
-REGEX_DIR =
-endif
-
 if CLIENT_INCLUDED
 BZFLAG_DIR = bzflag
 else
@@ -42,9 +24,7 @@ endif
 
 # the order matters greatly here
 SUBDIRS = \
-	${CARES_DIR}	\
-	${REGEX_DIR} \
-	${ZLIB_DIR} \
+	other \
 	date \
 	common \
 	mediafile \
