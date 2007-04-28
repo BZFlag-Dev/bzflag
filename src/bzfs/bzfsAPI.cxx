@@ -68,7 +68,7 @@ public:
 		doNext();
 	}
 
-	virtual void done ( const char* URL, void * data, unsigned int size, bool complete )
+	virtual void done (const char*, void * data, unsigned int size, bool complete)
 	{
 		if (!busy)
 			return;
@@ -892,9 +892,9 @@ BZF_API float bz_getPlayerPacketloss( int playerId )
 }
 
 
-BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
+BZF_API unsigned int bz_getTeamPlayerLimit (bz_eTeamType _team)
 {
-	switch(team)
+	switch(_team)
 	{
 	case eRogueTeam:
 	case eBlueTeam:
@@ -902,7 +902,9 @@ BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team )
 	case eGreenTeam:
 	case ePurpleTeam:
 	case eObservers:
-		return clOptions->maxTeam[convertTeam(team)];
+		return clOptions->maxTeam[convertTeam(_team)];
+	default:
+		break;
 	}
 
 	return 0;
@@ -2440,10 +2442,6 @@ BZF_API bool bz_restart ( void )
 		shutdownCommand(NULL,NULL);
 		return false;
 	}
-
-	for (int i = 0; i < numFlags; i++)
-		FlagInfo &flag = *FlagInfo::get(i);
-
 	return true;
 }
 
