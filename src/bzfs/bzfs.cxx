@@ -62,7 +62,7 @@
 #include "bzfsAPI.h"
 
 // only include this if we are going to use plugins and export the API
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
 #  include "bzfsPlugins.h"
 #endif
 
@@ -3512,7 +3512,7 @@ static void initStartupPrams(int argc, char **argv)
 
 static void setupPlugins(void)
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   // see if we are going to load any plugins
   initPlugins();
   // check for python by default
@@ -4834,7 +4834,7 @@ static void runMainLoop ( void )
 
 static void cleanupServer ( void )
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   unloadPlugins();
 #endif
 

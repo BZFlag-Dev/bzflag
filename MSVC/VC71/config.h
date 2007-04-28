@@ -101,8 +101,8 @@
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1
 
-/* Define if you wish to build exporting the bzflag API for plugins */
-#define _USE_BZ_API 1
+/* Define to 1 if you want to compile plugin support */
+#define BZ_PLUGINS 1
 
 // define all the direct X stuff because we want it, not the crapy STL stuff
 #define HAVE_DSOUND_H 1

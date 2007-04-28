@@ -16,8 +16,8 @@
 // implementation wrapers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
-#ifndef _USE_BZ_API
-  #include <iostream>
+#ifndef BZ_PLUGINS
+#  include <iostream>
 #endif
 
 #include "bzfs.h"
@@ -36,18 +36,16 @@
 #include "BzMaterial.h"
 #include "cURLManager.h"
 
-#include "bzfsPlugins.h"
-
 #include "CustomWorld.h"
 
 #include "Permissions.h"
 #include "CommandManager.h"
 
-#ifdef _USE_BZ_API
 #include "bzfsPlugins.h"
-#endif //_USE_BZ_API
+
 
 TimeKeeper synct=TimeKeeper::getCurrent();
+
 
 class MasterBanURLHandler: public bz_BaseURLHandler
 {
@@ -2620,7 +2618,7 @@ BZF_API bz_ApiString bz_getPublicDescription(void)
 
 BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   std::vector<std::string>  pList = getPluginList();
   for (unsigned int i = 0; i < pList.size(); i++ )
     list->push_back(pList[i]);
@@ -2633,7 +2631,7 @@ BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
 
 BZF_API bool bz_loadPlugin( const char* path, const char *params )
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   if (!path)
     return false;
   std::string config;
@@ -2647,7 +2645,7 @@ BZF_API bool bz_loadPlugin( const char* path, const char *params )
 
 BZF_API bool bz_unloadPlugin( const char* path )
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   if (!path)
     return false;
 
@@ -2701,7 +2699,7 @@ BZF_API bool bz_registerCustomPluginHandler(const char *extension, bz_APIPluginH
 
   std::string ext=extension;
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return registerCustomPluginHandler(ext, handler);
 #else
   std::cerr<<"This BZFlag server does not support plugins."<<std::endl;
@@ -2718,7 +2716,7 @@ BZF_API bool bz_removeCustomPluginHandler(const char *extension, bz_APIPluginHan
 
   std::string ext=extension;
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return removeCustomPluginHandler(ext, handler);
 #else
   std::cerr<<"This BZFlag server does not support plugins."<<std::endl;

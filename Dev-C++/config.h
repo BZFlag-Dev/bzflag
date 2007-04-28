@@ -36,7 +36,8 @@
 #define HAVE_SDL 1
 //#endif
 
-#define _USE_BZ_API 1
+/* Enable Plugins */
+#define BZ_PLUGINS 1
 
 #define USE_XFIRE //support for XFire
 
