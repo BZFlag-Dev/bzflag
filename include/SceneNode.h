@@ -54,7 +54,6 @@
 
 class ViewFrustum;
 class SceneRenderer;
-class iEngine;
 
 class SceneNode {
   public:
