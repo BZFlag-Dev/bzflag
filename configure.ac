@@ -60,7 +60,22 @@ REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date
 CONF_DATE=`date -u +%Y%m%d`
 BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
-echo "BZFlag-$BZFLAG_VERSION.$CONF_DATE"
+
+# print out the title with a pretty box computed to wrap around
+title="Configuring BZFlag $BZFLAG_VERSION, Build $CONF_DATE"
+length="`echo x${title}x | wc -c`"
+separator=""
+while test $length -gt 1 ; do
+separator="${separator}*"
+length="`expr $length - 1`"
+done
+
+BC_BOLD
+AC_MSG_RESULT([***${separator}***])
+AC_MSG_RESULT([*** ${title} ***])
+AC_MSG_RESULT([***${separator}***])
+BC_UNBOLD
+
 AC_CANONICAL_TARGET
 
 dnl Minimum version of automake required.  Should coincide with the
