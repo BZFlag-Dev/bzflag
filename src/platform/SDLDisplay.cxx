@@ -622,12 +622,10 @@ void SDLWindow::getMouse(int& _x, int& _y) const {
   _y = my;
 }
 
-void SDLWindow::setSize(int width, int height) {
-  ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
+void SDLWindow::setSize(int, int) {
 }
 
-void SDLWindow::getSize(int& width, int& height) const {
-  ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
+void SDLWindow::getSize(int&, int&) const {
 }
 
 void SDLWindow::setGamma(float gamma) {
