@@ -70,13 +70,6 @@ bool WordFilter::simpleFilter(char *input) const
 
 bool WordFilter::aggressiveFilter(char *input) const
 {
-#if !defined(BUILD_REGEX) && !defined(HAVE_REGEX_H)
-
-  std::cerr << "Regular expressions are not available (using the simple filter)" << std::endl;
-  return simpleFilter(input);
-
-#else /* BUILD_REGEX || HAVE_REGEX_H */
-
   bool filtered = false;
   regmatch_t match[1];
   if (input == NULL) return false;
@@ -315,18 +308,10 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 
   return filtered;
-
-#endif /* BUILD_REGEX || HAVE_REGEX_H */
 } // end aggressiveFilter
 
 
 // provides a pointer to a fresh compiled expression for some given expression
-#if !defined(BUILD_REGEX) && !defined(HAVE_REGEX_H)
-regex_t *WordFilter::getCompiledExpression(const std::string &) const
-{
-  return (regex_t *)NULL;
-}
-#else /* BUILD_REGEX || HAVE_REGEX_H */
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
   regex_t *compiledReg;
@@ -348,7 +333,6 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
   return compiledReg;
 
 }
-#endif /* BUILD_REGEX || HAVE_REGEX_H */
 
 
 std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
