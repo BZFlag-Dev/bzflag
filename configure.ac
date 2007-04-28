@@ -430,10 +430,6 @@ case $host_os in
 	;;
 esac
 
-CONF_CPPFLAGS=
-CONF_CFLAGS=
-CONF_CXXFLAGS=
-
 AC_PATH_XTRA
 CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
@@ -603,6 +599,7 @@ if test $prefix = NONE; then
 fi
 BZFLAG_DATA=`eval echo $datadir/bzflag`
 AC_SUBST(BZFLAG_DATA)
+AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA", [Data file directory])
 
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
@@ -679,9 +676,6 @@ BZ_CONFIGURE_STAGE([compiler], [6 of 9])
 
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
-
-AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA",
-[Data file directory])
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
@@ -762,9 +756,6 @@ case $host_os in
 	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
 	;;
 esac
-
-# We use buildDate.cxx's compilation date instead
-# CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$CONF_DATE"
 
 if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
