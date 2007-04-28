@@ -14,11 +14,10 @@
 #include "commands.h"
 
 /* system implementation headers */
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
+#include "zlib.h"
 #ifndef _WIN32
-#include <sys/types.h>
-#include <dirent.h>
+#  include <sys/types.h>
+#  include <dirent.h>
 #endif
 
 /* common implementation headers */

@@ -51,7 +51,7 @@
 #include "CustomZone.h"
 
 /* compression library header */
-#include "../zlib/zlib.h"
+#include "zlib.h"
 
 
 WorldInfo::WorldInfo() :

@@ -24,7 +24,7 @@
 #include "BaseBuilding.h"
 
 /* compression library header */
-#include "../zlib/zlib.h"
+#include "zlib.h"
 
 
 WorldBuilder::WorldBuilder()

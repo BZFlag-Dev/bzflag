@@ -15,8 +15,8 @@
 #include <iostream>
 #include "Pack.h"
 #include "bzfio.h"
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
+//#include "zconf.h"
+#include "zlib.h"
 
 #ifndef _WIN32
 #include <netinet/in.h>
