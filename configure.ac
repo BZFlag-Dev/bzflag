@@ -70,11 +70,11 @@ separator="${separator}*"
 length="`expr $length - 1`"
 done
 
-BC_BOLD
+BZ_BOLD
 AC_MSG_RESULT([***${separator}***])
 AC_MSG_RESULT([*** ${title} ***])
 AC_MSG_RESULT([***${separator}***])
-BC_UNBOLD
+BZ_UNBOLD
 
 AC_CANONICAL_TARGET
 

@@ -34,19 +34,25 @@
 #
 ###
 #
-# BC_BOLD
-# BC_UNBOLD
+# Changes:
+#
+# 2007-04-28 imported into bzflag and macros renamed with BZ prefix
+#
+###
+#
+# BZ_BOLD
+# BZ_UNBOLD
 #
 # sets and unsets the output to bold for emphasis
 #
 #
-# BC_CONFIGURE_STAGE
+# BZ_CONFIGURE_STAGE
 #
 # outputs status on the the specified configure stage being started.
 #
 ###
 
-AC_DEFUN([BC_BOLD], [
+AC_DEFUN([BZ_BOLD], [
 if test -t 1 ; then
 	if test -f "${srcdir}/sh/shtool" ; then
 		${srcdir}/sh/shtool echo -n -e %B
@@ -57,7 +63,7 @@ fi
 ])
 
 
-AC_DEFUN([BC_UNBOLD], [
+AC_DEFUN([BZ_UNBOLD], [
 if test -t 1 ; then
 	if test -f "${srcdir}/sh/shtool" ; then
 		${srcdir}/sh/shtool echo -n -e %b
@@ -68,18 +74,18 @@ fi
 ])
 
 
-AC_DEFUN([BC_CONFIGURE_STAGE], [
+AC_DEFUN([BZ_CONFIGURE_STAGE], [
 
 _bc_stage="[$1]"
 _bc_status="[$2]"
 _bc_stage="`echo $_bc_stage | sed 's/\(.\)/\1 /g'`"
 
-BC_BOLD
+BZ_BOLD
 
 AC_MSG_CHECKING([... $_bc_stage])
 AC_MSG_RESULT([($_bc_status)])
 
-BC_UNBOLD
+BZ_UNBOLD
 ])
 
 # Local Variables:
