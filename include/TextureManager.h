@@ -59,6 +59,7 @@ public:
   bool removeTexture(const std::string& name);
   bool reloadTextures();
   bool reloadTextureImage(const std::string& name);
+  void clearAll();
 
   bool bind ( int id );
   bool bind ( const char* name );
@@ -88,10 +89,6 @@ private:
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
 
-  csRef<iVFS>        vfs;
-  csRef<iImageIO>    imageLoader;
-  csRef<iEngine>     engine;
-  csRef<iGraphics3D> g3d;
   iTextureManager   *tm;
   iTextureList      *tl;
   int                format;

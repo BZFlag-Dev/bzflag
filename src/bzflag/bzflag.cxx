@@ -620,8 +620,6 @@ bool Bzflag::SetupModules()
   if (!g3d)
     return ReportError("Failed to locate 3D renderer!");
 
-  g2d = g3d->GetDriver2D();
-
   vfs = csQueryRegistry<iVFS>(GetObjectRegistry());
   if (!vfs)
     return ReportError("Failed to locate Virtual File System!");
@@ -1477,6 +1475,10 @@ void Bzflag::OnExit()
   delete platformFactory;
   delete bm;
   Flags::kill();
+  // Destruct font system
+  FontManager &fm = FontManager::instance();
+  // load fonts from data directory
+  fm.unloadAll();
 
 #if defined(_WIN32)
   {

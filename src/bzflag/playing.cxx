@@ -6276,6 +6276,8 @@ Playing::~Playing()
   sceneRenderer = NULL;
   display = NULL;
   cleanWorldCache();
+  TextureManager &tm = TextureManager::instance();
+  tm.clearAll();
 }
 
 void Playing::CreateRoom ()

@@ -96,7 +96,6 @@ private:
   BundleMgr       *bm;
 
   csRef<iCommandLineParser> clp;
-  csRef<iGraphics2D>        g2d;
   csRef<iVFS>               vfs;
 
   FrameBegin2DDraw         *frame2D;

@@ -41,25 +41,13 @@ ProcTextureInit procLoader[1];
 
 TextureManager::TextureManager()
 {
-  vfs = csQueryRegistry<iVFS> (csApplicationFramework::GetObjectRegistry());
-  if (!vfs) {
-    csApplicationFramework::ReportError
-      ("Failed to locate Virtual File System!");
-    return;
-  }
-  imageLoader = csQueryRegistry<iImageIO>
-    (csApplicationFramework::GetObjectRegistry());
-  if (!imageLoader) {
-    csApplicationFramework::ReportError("Failed to locate Image Loader!");
-    return;
-  }
-  engine = csQueryRegistry<iEngine>
+  csRef<iEngine> engine = csQueryRegistry<iEngine>
     (csApplicationFramework::GetObjectRegistry());
   if (!engine) {
     csApplicationFramework::ReportError("Failed to locate Engine!");
     return;
   }
-  g3d = csQueryRegistry<iGraphics3D>
+  csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D>
     (csApplicationFramework::GetObjectRegistry());
   if (!g3d) {
     csApplicationFramework::ReportError("Failed to locate 3D driver!");
@@ -95,13 +83,7 @@ TextureManager::TextureManager()
 TextureManager::~TextureManager()
 {
   // we are done remove all textures
-  for (TextureNameMap::iterator it = textureNames.begin();
-       it != textureNames.end(); ++it) {
-    ImageInfo &tex = it->second;
-    tex.material = NULL;
-  }
-  textureNames.clear();
-  textureIDs.clear();
+  clearAll();
 }
 
 int TextureManager::getTextureID( const char* name, bool)
@@ -156,6 +138,18 @@ bool TextureManager::removeTexture(const std::string& name)
   logDebugMessage(2,"TextureManager::removed: %s\n", name.c_str());
 
   return true;
+}
+
+void TextureManager::clearAll()
+{
+  for (TextureNameMap::iterator it = textureNames.begin();
+       it != textureNames.end();
+       ++it) {
+    ImageInfo &tex = it->second;
+    tex.material = NULL;
+  }
+  textureNames.clear();
+  textureIDs.clear();
 }
 
 
@@ -234,6 +228,12 @@ csRef<iImage> TextureManager::loadImage(std::string filename)
     filename = CACHEMGR.getLocalName(filename);
   }
 
+  csRef<iVFS> vfs = csQueryRegistry<iVFS> (csApplicationFramework::GetObjectRegistry());
+  if (!vfs) {
+    csApplicationFramework::ReportError
+      ("Failed to locate Virtual File System!");
+    return NULL;
+  }
   if (vfs->Exists(filename.c_str())) {
     ;
   } else if (vfs->Exists((filename + ".png").c_str())) {
@@ -247,6 +247,12 @@ csRef<iImage> TextureManager::loadImage(std::string filename)
   if (!data || !data->GetSize()) {
     csApplicationFramework::ReportInfo("Failed to load texture %s!",
 				       filename.c_str());
+    return NULL;
+  }
+  csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!imageLoader) {
+    csApplicationFramework::ReportError("Failed to locate Image Loader!");
     return NULL;
   }
   csRef<iImage> image(imageLoader->Load(data, format));
@@ -272,6 +278,13 @@ bool TextureManager::loadTexture(ImageInfo &info)
   char textureName[20];
   if (snprintf(textureName, sizeof(textureName), "_bzflag%i", info.id) < 0)
     return false;
+
+  csRef<iEngine> engine = csQueryRegistry<iEngine>
+    (csApplicationFramework::GetObjectRegistry());
+  if (!engine) {
+    csApplicationFramework::ReportError("Failed to locate Engine!");
+    return false;
+  }
 
   // See if a texture with the same name is already registered
   csRef<iTextureWrapper> texture(engine->FindTexture(textureName));

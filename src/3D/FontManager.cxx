@@ -497,7 +497,8 @@ void FontManager::unloadAll(void)
   while (faceItr != fontFaces.end()) {
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
-      itr->second->free();
+      delete itr->second;
+      itr->second = NULL;
       itr++;
     }
     faceItr++;
