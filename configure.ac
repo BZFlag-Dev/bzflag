@@ -939,14 +939,16 @@ AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
 # if the client was enabled, make sure we have GL
 if test x$enable_client != xno; then
+  have_gl=no
   if test "$ac_cv_search_gluScaleImage" = no; then
     AC_MSG_WARN(
-    [Client build has been requested, but GL is not fully available (missing gl.h)
+    [Client build has been requested, but OpenGL is not fully available
      ... disabling client generation])
     AM_CONDITIONAL(CLIENT_INCLUDED, false)
     enable_client=no
   else
     AM_CONDITIONAL(CLIENT_INCLUDED, true)
+    have_gl=yes
   fi
 else
   AM_CONDITIONAL(CLIENT_INCLUDED, false)
@@ -968,6 +970,7 @@ if test x$enable_bzrobots == xyes; then
   fi
 else
   AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
+  enable_bzrobots=no
 fi
 
 # if bzadmin was enabled, make sure we have curses.
@@ -1106,48 +1109,89 @@ case $host_os in
 	;;
 esac
 
-# use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 
 dnl **********************
 dnl *** Report Summary ***
 dnl **********************
 
+if test "x$enable_client" = "xno"; then
+    if test "x$have_gl" = "xno" ; then
+	build_bzflag="no bzflag client binary! (need OpenGL)"
+    else
+	build_bzflag="no bzflag client binary!"
+    fi
+else
+    if test x$with_SDL != xno; then
+	build_bzflag="yes (with SDL)"
+    else
+	build_bzflag="yes"
+    fi
+fi
+
+if test x$enable_plugins != xno ; then
+    build_bzfs="yes (with plugins)"
+else
+    build_bzfs="yes (without plugins)"
+fi
+
+if test "x$enable_bzadmin" = "xno"; then
+    if test "x$CURSES_LIB" = x; then
+	build_bzadmin="no bzadmin binary! (need Curses)"
+    else
+	build_bzadmin="no bzadmin binary!"
+    fi
+else
+    build_bzadmin="yes"
+fi
+
+if test "x$enable_bzrobots" = "xno"; then
+    if test "x$have_gl" = "xno" ; then
+	build_bzrobots="no bzrobots binary! (need OpenGL)"
+    else
+	build_bzrobots="no bzrobots binary!"
+    fi
+else
+    build_bzrobots="yes"
+fi
+
+dnl
+dnl Expand the variables for summary reporting
+dnl
+prefix=`eval "echo $prefix"`
+prefix=`eval "echo $prefix"`
+bindir=`eval "echo $bindir"`
+bindir=`eval "echo $bindir"`
+sysconfdir=`eval "echo $sysconfdir"`
+sysconfdir=`eval "echo $sysconfdir"`
+mandir=`eval "echo $mandir"`
+mandir=`eval "echo $mandir"`
+
+
+dnl use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
 BZ_BOLD
-AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE with the following:])
+AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE configured with the following:])
 BZ_UNBOLD
-
-echo ""
-echo "CFLAGS are $CFLAGS $CONF_CFLAGS"
-echo "CXXFLAGS are $CXXFLAGS $CONF_CXXFLAGS"
-echo "LDFLAGS are $LDFLAGS"
-echo "CPPFLAGS are $CPPFLAGS $CONF_CPPFLAGS"
-echo "LIBS are $LIBS"
-echo ""
-
-if test "x$CURSES_LIB" = x; then
-       AC_MSG_RESULT([     no curses!])
-else
-       AC_MSG_RESULT([     curses: $CURSES_LIB])
-fi
-if test x$with_SDL = xno; then
-       AC_MSG_RESULT([     no SDL!])
-else
-       AC_MSG_RESULT([     SDL])
-fi
-if test "x$enable_bzadmin" = "xno"; then
-       AC_MSG_RESULT([     no bzadmin client binary!])
-else
-       AC_MSG_RESULT([     bzadmin])
-fi
-if test "x$enable_client" = "xno"; then
-       AC_MSG_RESULT([     no bzflag client binary!])
-else
-       AC_MSG_RESULT([     bzflag client])
-fi
-if test "x$enable_bzrobots" = "xyes"; then
-       AC_MSG_RESULT([     bzrobots])
-else
-       AC_MSG_RESULT([     no bzrobots binary])
-fi
+AC_MSG_RESULT([])
+AC_MSG_RESULT([             Prefix: ${prefix}])
+AC_MSG_RESULT([           Binaries: ${bindir}])
+AC_MSG_RESULT([Configuration files: ${sysconfdir}])
+AC_MSG_RESULT([       Manual pages: ${mandir}])
+AC_MSG_RESULT([])
+AC_MSG_RESULT([CC       = ${CC}])
+AC_MSG_RESULT([CXX      = ${CXX}])
+AC_MSG_RESULT([CFLAGS   = ${CFLAGS}])
+AC_MSG_RESULT([CXXFLAGS = ${CXXFLAGS}])
+AC_MSG_RESULT([CPPFLAGS = ${CPPFLAGS}])
+AC_MSG_RESULT([LDFLAGS  = ${LDFLAGS}])
+AC_MSG_RESULT([LIBS     = ${LIBS}])
+AC_MSG_RESULT([])
+AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
+AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
+AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
+AC_MSG_RESULT([BZRobots client ...: $build_bzrobots])
+AC_MSG_RESULT([])
+AC_MSG_RESULT([---])
+AC_MSG_RESULT([$0 complete, type 'make' to being building])
+AC_MSG_RESULT([])
