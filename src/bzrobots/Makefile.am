@@ -271,8 +271,7 @@ LDADD =	\
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/include -I../bzflag $(SDL_CFLAGS) @CURL_CFLAGS@ \
-@CONF_CPPFLAGS@ @X_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include -I../bzflag $(SDL_CFLAGS) @CONF_CPPFLAGS@ @X_CFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico

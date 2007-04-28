@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libCommon.la
 
 AM_CFLAGS = -D_XOPEN_SOURCE @CONF_CFLAGS@
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) @CONF_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libCommon_la_LDFLAGS = -static

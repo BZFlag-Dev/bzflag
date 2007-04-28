@@ -4,7 +4,7 @@
 
 bin_PROGRAMS = bzadmin
 
-AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include -I$(top_srcdir)/src/bzflag @CURL_CFLAGS@ @CONF_CPPFLAGS@
+AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include -I$(top_srcdir)/src/bzflag @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_CURSES

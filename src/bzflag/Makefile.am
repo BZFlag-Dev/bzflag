@@ -4,7 +4,7 @@
 
 bin_PROGRAMS = bzflag
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CURL_CFLAGS@ @CONF_CPPFLAGS@ @X_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@ @X_CFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_KRB5

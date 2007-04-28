@@ -4,7 +4,7 @@
 
 bin_PROGRAMS = bzfs
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ @CONF_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include -DINSIDE_BZ @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if BUILD_PLUGINS
