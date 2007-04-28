@@ -105,6 +105,8 @@ dnl ***********************
 dnl *** Check arguments ***
 dnl ***********************
 
+BZ_CONFIGURE_STAGE([arguments], [1 of 9])
+
 # provide a with-curses option, test for curses
 MP_WITH_CURSES
 
@@ -180,6 +182,8 @@ AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
 dnl **************************
 dnl *** Check for programs ***
 dnl **************************
+
+BZ_CONFIGURE_STAGE([programs], [2 of 9])
 
 # cannot override LD directly, so warn (configure will override it)
 if test "x$LD" != "x" ; then
@@ -261,6 +265,8 @@ dnl ***************************
 dnl *** Check for libraries ***
 dnl ***************************
 
+BZ_CONFIGURE_STAGE([libraries], [3 of 9])
+
 # FIXME: move library checks here
 
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
@@ -278,6 +284,8 @@ fi
 dnl *************************
 dnl *** Check for headers ***
 dnl *************************
+
+BZ_CONFIGURE_STAGE([headers], [4 of 9])
 
 AC_HEADER_STDC
 AC_LANG(C++)
@@ -316,6 +324,8 @@ AC_CHECK_HEADERS( \
 dnl **********************************
 dnl *** Check for types/structures ***
 dnl **********************************
+
+BZ_CONFIGURE_STAGE([types], [5 of 9])
 
 #AM_CHECK_TYPES(socklen_t)
 #AC_CHECK_TYPES(socklen_t)
@@ -687,6 +697,8 @@ dnl ******************************************
 dnl *** Check for compiler characteristics ***
 dnl ******************************************
 
+BZ_CONFIGURE_STAGE([compiler], [6 of 9])
+
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
 
@@ -853,6 +865,8 @@ dnl ***************************
 dnl *** Check for functions ***
 dnl ***************************
 
+BZ_CONFIGURE_STAGE([functions], [7 of 9])
+
 AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
@@ -897,6 +911,8 @@ std::count, otherwise old version of count template is assumed])],[])
 dnl *********************************
 dnl *** Check for system services ***
 dnl *********************************
+
+BZ_CONFIGURE_STAGE([services], [8 of 9])
 
 # FIXME: system service checks seem to be spread out everywhere above,
 # need to consolidate them to here.
@@ -970,6 +986,8 @@ AC_SUBST(CURSES_LIB)
 dnl **************************************
 dnl *** Configure Makefiles and output ***
 dnl **************************************
+
+BZ_CONFIGURE_STAGE([output], [9 of 9])
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
@@ -1090,20 +1108,24 @@ esac
 
 # use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 
-echo "CFLAGS are $CFLAGS $CONF_CFLAGS"
-echo "CXXFLAGS are $CXXFLAGS $CONF_CXXFLAGS"
-echo "LDFLAGS are $LDFLAGS"
-echo "CPPFLAGS are $CPPFLAGS $CONF_CPPFLAGS"
-echo "LIBS are $LIBS"
-
-
 dnl **********************
 dnl *** Report Summary ***
 dnl **********************
 
 AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
+BZ_BOLD
 AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE with the following:])
+BZ_UNBOLD
+
+echo ""
+echo "CFLAGS are $CFLAGS $CONF_CFLAGS"
+echo "CXXFLAGS are $CXXFLAGS $CONF_CXXFLAGS"
+echo "LDFLAGS are $LDFLAGS"
+echo "CPPFLAGS are $CPPFLAGS $CONF_CPPFLAGS"
+echo "LIBS are $LIBS"
+echo ""
+
 if test "x$CURSES_LIB" = x; then
        AC_MSG_RESULT([     no curses!])
 else
