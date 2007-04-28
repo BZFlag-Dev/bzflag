@@ -1080,6 +1080,14 @@ AC_CONFIG_FILES([
 AC_OUTPUT
 
 
+# AC_OUTPUT won't update the config.h.in template timestamp if the
+# file is unchanged.  forcibly update the timestamp so autoheader
+# doesn't try to invoke.
+if test ! "x`cat include/config.h.in`" = "x" ; then
+    touch include/config.h.in
+fi
+
+
 #################
 # patch libtool #
 #################
