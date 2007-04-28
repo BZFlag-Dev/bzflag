@@ -221,28 +221,6 @@ if test $HASPOD2MAN = no; then
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 
-  #checking for libcurl library
-  MY_CURL
-  if test $my_cv_curl_vers != NONE; then
-    CURL_CFLAGS=`curl-config --cflags`
-    CURL_LIBS=`curl-config --libs`
-    if test "x$build_vendor" = "xapple" ; then
-      if test -f /usr/bin/libcurl.a ; then
-	# prefer to link static
-	CURL_LIBS=/usr/bin/libcurl.a
-      else
-	# mac os x curl-config outputs erroneous -arch i386 in libs
-	CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
-      fi
-    fi
-  else
-    AC_MSG_ERROR([libcurl is required. You must install it. \
-See http://curl.haxx.se/])
-  fi
-  AC_SUBST(CURL_CFLAGS)
-
-LIBS="$CURL_LIBS $LIBS"
-
 # Testing if kerberos 5 is in the system
 KRB5_CONFIG=no
 if test "x$with_kerberos" = "xyes" ; then
@@ -916,6 +894,15 @@ BZ_CONFIGURE_STAGE([services], [8 of 9])
 
 # FIXME: system service checks seem to be spread out everywhere above,
 # need to consolidate them to here.
+
+#checking for libcurl functionality
+LIBCURL_CHECK_CONFIG
+if test "x$libcurl_cv_lib_curl_usable" != "xyes" ; then
+  AC_MSG_ERROR([libcurl is required. You must install it. \
+See http://curl.haxx.se/])
+fi
+LIBS="$LIBS $LIBCURL"
+CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
 if test "x$with_kerberos" = "xyes" ; then
   have_krb5=no
