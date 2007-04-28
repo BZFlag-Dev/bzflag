@@ -27,8 +27,15 @@
 #include <ctype.h>
 #include <sys/types.h>
 
+#if defined(BUILD_REGEX)
+#  include "bzregex.h"
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
+#endif
+
 /* common interface headers */
 #include "TextUtils.h"
+
 
 
 /* words are stored by the index of their first letter of

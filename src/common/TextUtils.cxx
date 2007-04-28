@@ -24,6 +24,13 @@
 #include <vector>
 #include <stdio.h>
 
+#if defined(BUILD_REGEX)
+#  include "bzregex.h"
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
+#endif
+
+
 namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {

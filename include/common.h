@@ -261,13 +261,6 @@ typedef unsigned char	uint8_t;
 #  endif /* __cplusplus */
 #endif /* HAVE_STD_MIN */
 
-#ifdef BUILD_REGEX
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#else
-#  define regex_t void
-#endif  /* BUILD_REGEX */
 
 #endif /* BZF_COMMON_H */
 
