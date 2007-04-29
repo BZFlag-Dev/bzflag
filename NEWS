@@ -4,6 +4,8 @@
 BZFlag 2.1.x
 ------------
 
+* Implemented Confine Mouse for Windows platforms - Daniel Remenak
+* Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
 * Add -filterAnnounce server option - Bernt Hansen
 * framerate independent keyboard turn dampening - Sean Morrison, randomparticle
 * Added new bzfs -botsPerIP option to limit bot connections - Sean Morrison
