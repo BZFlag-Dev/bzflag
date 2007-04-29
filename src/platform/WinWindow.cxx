@@ -156,9 +156,12 @@ void			WinWindow::setMinSize(int, int)
 void			WinWindow::setFullscreen(bool on)
 {
   if (on) {
+    // no window decorations
     DWORD style = GetWindowLong(hwnd, GWL_STYLE);
     style &= ~(WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
     SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // take up the whole screen
     if (display->isFullScreenOnly())
       MoveWindow(hwnd, 0, 0,
 		  display->getFullWidth(),
@@ -168,12 +171,13 @@ void			WinWindow::setFullscreen(bool on)
 		  GetDeviceCaps(hDC, HORZRES),
 		  GetDeviceCaps(hDC, VERTRES), FALSE);
 
-  }  else if (!display->isFullScreenOnly()) {
+  } else if (!display->isFullScreenOnly()) {
+    // reset the resolution if we changed it before
     display->setDefaultResolution();
 
     // window stuff
     DWORD style = GetWindowLong(hwnd, GWL_STYLE);
-    style |= (WS_BORDER | WS_CAPTION | WS_DLGFRAME);
+    style |= (WS_BORDER | WS_CAPTION);
     SetWindowLong(hwnd, GWL_STYLE, style);
 
     // size it
