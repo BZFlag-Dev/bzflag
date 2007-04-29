@@ -17,6 +17,7 @@
 #include "OpenGLGState.h"
 #include <stdio.h>
 #include <math.h>
+#include "StateDatabase.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -149,6 +150,53 @@ void			WinWindow::setSize(int width, int height)
 void			WinWindow::setMinSize(int, int)
 {
   // FIXME
+}
+
+void			WinWindow::setFullscreen(bool on)
+{
+  if (on)
+    setFullscreen();
+  else if (!display->isFullScreenOnly())
+  {
+    display->setDefaultResolution();
+
+    // window stuff
+    DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+    style |= (WS_BORDER | WS_CAPTION | WS_DLGFRAME);
+    SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // size it
+    if (BZDB.isSet("geometry")) {
+      int w, h, x, y, count;
+      char xs, ys;
+      count = sscanf(BZDB.get("geometry").c_str(),
+    		 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+      if (w < 256) w = 256;
+      if (h < 192) h = 192;
+      if (count == 6) {
+        if (xs == '-') x = display->getWidth() - x - w;
+        if (ys == '-') y = display->getHeight() - y - h;
+        setPosition(x, y);
+      }
+      setSize(w, h);
+    } else {
+      // uh.... right
+      setPosition(0,0);
+      setSize(640,480);
+    }
+
+    // don't dis the brute force method
+    // get our GL status back where it needs to be
+    freeContext();
+    makeContext();
+    OpenGLGState::initContext();
+
+    // force windows to repaint the whole desktop
+    RECT rect;
+    GetWindowRect(NULL, &rect);
+    InvalidateRect(NULL, &rect, TRUE);
+  }
+
 }
 
 void			WinWindow::setFullscreen()

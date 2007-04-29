@@ -38,6 +38,7 @@ class WinWindow : public BzfWindow {
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
     void		setFullscreen();
+    void		setFullscreen(bool on);
 
     void		iconify();
 
