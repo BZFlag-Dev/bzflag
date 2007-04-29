@@ -44,6 +44,7 @@ Should be considered for the release of 2.2:
 Would be nice to have but are not critical for 2.2
 
 * Force feedback joystick support for Mac OS X
+  http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
 
 * Split out radar and 3d and world position updates, Radar can be less data
   at a way lower resolution. Don't send the type of data when it is invalid
