@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="mediafile"
 	ProjectGUID="{83AD1F75-22FD-477B-BB89-352F47286009}"
+	RootNamespace="mediafile"
 	>
 	<Platforms>
 		<Platform
@@ -1080,7 +1081,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,..\..\src\other\zlib,.\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

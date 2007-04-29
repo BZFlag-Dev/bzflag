@@ -1359,7 +1359,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,..\..\src\other\zlib,.\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

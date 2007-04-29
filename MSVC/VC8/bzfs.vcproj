@@ -1297,7 +1297,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,..\..\src\other\zlib,.\"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
