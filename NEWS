@@ -6,6 +6,7 @@
 BZFlag 2.1.x
 ------------
 
+* First map no longer ignored in Start Server menu - Ravu al Hemio
 * Check for talk permission for part/quit messages  - uso
 * Implemented Confine Mouse for Windows platforms - Daniel Remenak
 * Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
