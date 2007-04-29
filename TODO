@@ -18,6 +18,9 @@ Required for release of 2.2.:
 
 Should be considered for the release of 2.2:
 
+* have F1 actually toggle fullscreen consistently on Windows like it
+  does for other platforms (or jump to sdl like the mac build)
+
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
   or just say it's global or nothing
