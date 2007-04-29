@@ -39,7 +39,8 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				hasGamma(false),
 				gammaVal(1.0f),
 				prev(NULL),
-				next(NULL)
+				next(NULL),
+				mouseGrab(false)
 {
   // make window
   hwnd = CreateWindow("BZFLAG", "bzflag",
@@ -240,12 +241,31 @@ void			WinWindow::getMouse(int& x, int& y) const
 
 void			WinWindow::grabMouse()
 {
-  // FIXME
+  RECT wrect;
+  GetWindowRect(hwnd, &wrect);
+
+  int xborder = GetSystemMetrics(SM_CXDLGFRAME);
+  int yborder = GetSystemMetrics(SM_CYDLGFRAME);
+  int titlebar = GetSystemMetrics(SM_CYCAPTION);
+  RECT rect;
+  rect.top = wrect.top + titlebar + yborder;
+  rect.left = wrect.left + xborder;
+  rect.bottom = wrect.bottom - yborder;
+  rect.right = wrect.right - xborder;
+  ClipCursor(&rect);
 }
 
 void			WinWindow::ungrabMouse()
 {
-  // FIXME
+  ClipCursor(NULL);
+}
+
+void			WinWindow::enableGrabMouse(bool on)
+{
+  if (on)
+    mouseGrab = true;
+  else
+    mouseGrab = false;
 }
 
 void			WinWindow::showMouse()
@@ -507,6 +527,9 @@ bool			WinWindow::activate()
   const bool hadChild = (hDCChild != NULL);
   makeContext();
 
+  if (mouseGrab)
+    grabMouse();
+
   if (!hadChild && hDCChild != NULL) {
     // reload context data
     OpenGLGState::initContext();
@@ -529,6 +552,9 @@ bool			WinWindow::deactivate()
   // destroy OpenGL context
   const bool hadChild = (hDCChild != NULL);
   freeContext();
+
+  if (mouseGrab)
+    ungrabMouse();
 
   inactiveDueToDeactivate = true;
   return hadChild;

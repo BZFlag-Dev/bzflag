@@ -46,6 +46,7 @@ class WinWindow : public BzfWindow {
     void		getMouse(int& x, int& y) const;
     void		grabMouse();
     void		ungrabMouse();
+    void		enableGrabMouse(bool on);
     void		showMouse();
     void		hideMouse();
 
@@ -100,6 +101,7 @@ class WinWindow : public BzfWindow {
     WinWindow*		next;
     static WinWindow*	first;
     static HPALETTE	colormap;
+    bool		mouseGrab;
 };
 
 #endif // BZF_WINWINDOW_H
