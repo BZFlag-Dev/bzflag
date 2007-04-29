@@ -1,9 +1,12 @@
-			     BZFlag Release Notes
+							   -*- coding: utf-8 -*-
+			     BZFlag Release Notes                           
 			     ====================
+
 
 BZFlag 2.1.x
 ------------
 
+* Check for talk permission for part/quit messages  - uso
 * Implemented Confine Mouse for Windows platforms - Daniel Remenak
 * Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
 * Add -filterAnnounce server option - Bernt Hansen
