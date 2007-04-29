@@ -3,6 +3,7 @@
 
 BZFlag 2.1.x
 ------------
+* added documentation for torblock plugin - Josh Rogers
 * updated playerHistoryTracker killspree messages - Felix Monninger
 * changed format of recorded match filenames - uso
 * Added bz_fireWorldGM function, for firing a locked-on GM - Matthew Marshall
