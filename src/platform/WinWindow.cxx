@@ -196,8 +196,13 @@ void			WinWindow::setFullscreen(bool on)
     RECT rect;
     GetWindowRect(NULL, &rect);
     InvalidateRect(NULL, &rect, TRUE);
-  }
 
+    // reset mouse grab
+    if (mouseGrab) {
+      ungrabMouse();
+      grabMouse();
+    }
+  }
 }
 
 void			WinWindow::setFullscreen()
@@ -218,6 +223,12 @@ void			WinWindow::setFullscreen()
   int width, height;
   getSize(width, height);
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
+
+  // reset mouse grab
+  if (mouseGrab) {
+    ungrabMouse();
+    grabMouse();
+  }
 }
 
 void			WinWindow::iconify()
@@ -247,6 +258,13 @@ void			WinWindow::grabMouse()
   int xborder = GetSystemMetrics(SM_CXDLGFRAME);
   int yborder = GetSystemMetrics(SM_CYDLGFRAME);
   int titlebar = GetSystemMetrics(SM_CYCAPTION);
+
+  DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+  // don't compensate for window trimmings if they're turned off
+  if (!((style & (WS_BORDER | WS_CAPTION | WS_DLGFRAME))
+        == (WS_BORDER | WS_CAPTION | WS_DLGFRAME)))
+    xborder = yborder = titlebar = 0;
+
   RECT rect;
   rect.top = wrect.top + titlebar + yborder;
   rect.left = wrect.left + xborder;
