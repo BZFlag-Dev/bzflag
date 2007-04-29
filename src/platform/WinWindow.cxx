@@ -262,10 +262,13 @@ void			WinWindow::ungrabMouse()
 
 void			WinWindow::enableGrabMouse(bool on)
 {
-  if (on)
+  if (on) {
     mouseGrab = true;
-  else
+    grabMouse();
+  } else {
     mouseGrab = false;
+    ungrabMouse();
+  }
 }
 
 void			WinWindow::showMouse()
