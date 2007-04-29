@@ -4641,7 +4641,7 @@ static void runMainLoop ( void )
 		RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
 
 		if ( e !=ReadAll && e != ReadPart ) {
-		  // there ewas an error but we arn't a player yet
+		  // there was an error but we aren't a player yet
 		  if (e == ReadError)
 		    nerror("error on read");
 		  else {

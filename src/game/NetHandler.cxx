@@ -793,7 +793,7 @@ bool NetListener::listen ( unsigned short /*port*/ )
   return false;
 }
 
-bool NetListener::close ( NetHandler */*handler*/ )
+bool NetListener::close ( NetHandler* /*handler*/ )
 {
   return false;
 }

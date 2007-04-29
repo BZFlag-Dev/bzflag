@@ -3622,7 +3622,8 @@ static void handleMsgSetVars(void *msg)
 
 void handleFlagDropped(Player* tank)
 {
-	tank->setShotType(StandardShot);
+  tank->setShotType(StandardShot);
+
   // skip it if player doesn't actually have a flag
   if (tank->getFlag() == Flags::Null) return;
 
@@ -6108,7 +6109,7 @@ static void		prepareTheHUD()
 	  const float* flagPos = flag.position;
 	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
 	  hud->addMarker(heading, myTeamColor);
-	  hud->AddEnhancedMarker(flagPos,myTeamColor,BZDBCache::flagPoleSize*2);
+	  hud->AddEnhancedMarker(flagPos,myTeamColor,false,BZDBCache::flagPoleSize*2);
 	}
       }
     }
@@ -6119,7 +6120,7 @@ static void		prepareTheHUD()
 			     antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
-	  hud->AddEnhancedMarker(antidotePos,antidoteColor,BZDBCache::flagPoleSize*2);
+      hud->AddEnhancedMarker(antidotePos,antidoteColor,false,BZDBCache::flagPoleSize*2);
     }
   }
   return;

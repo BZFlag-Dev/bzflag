@@ -941,7 +941,7 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot )
 
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
 {
-  /* Pack a message with the list of missing flags */
+  /* Pack a message with the given time */
   void *bufStart;
   void *buf2 = bufStart = getDirectMessageBuffer();
   buf2 = nboPackUByte(bufStart,tag);
