@@ -752,12 +752,18 @@ bool PartCommand::operator() (const char *message,
   }
 
   if (byeStatement[0] != '\0') {
-    std::string message2;
-    message2 = TextUtils::format("%s has left (\"%s\") ",
-				 playerData->player.getCallSign(),  byeStatement.c_str());
+    // check talk permission for the bye message
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+      sendMessage(ServerPlayer, playerData->getIndex(),
+		  "You do not have permission to send a part message");
+    } else {
+      std::string message2;
+      message2 = TextUtils::format("%s has left (\"%s\") ",
+				   playerData->player.getCallSign(),  byeStatement.c_str());
 
-    logDebugMessage(2,"%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
-    sendMessage(ServerPlayer, AllPlayers, message2.c_str());
+      logDebugMessage(2,"%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
+      sendMessage(ServerPlayer, AllPlayers, message2.c_str());
+    }
   }
 
   // now to kick the player
@@ -783,12 +789,18 @@ bool QuitCommand::operator() (const char *message,
   }
 
   if (byeStatement[0] != '\0') {
-    std::string message2;
-    message2 = TextUtils::format("%s has quit (\"%s\") ",
-				 playerData->player.getCallSign(),  byeStatement.c_str());
+    // check talk permission for the bye message
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+      sendMessage(ServerPlayer, playerData->getIndex(),
+		  "You do not have permission to send a quit message");
+    } else {
+      std::string message2;
+      message2 = TextUtils::format("%s has quit (\"%s\") ",
+				   playerData->player.getCallSign(),  byeStatement.c_str());
 
-    logDebugMessage(2,"%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
-    sendMessage(ServerPlayer, AllPlayers, message2.c_str());
+      logDebugMessage(2,"%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
+      sendMessage(ServerPlayer, AllPlayers, message2.c_str());
+    }
   }
 
   // now to kick the player
