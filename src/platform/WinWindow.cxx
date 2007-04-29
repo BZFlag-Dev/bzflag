@@ -155,10 +155,20 @@ void			WinWindow::setMinSize(int, int)
 
 void			WinWindow::setFullscreen(bool on)
 {
-  if (on)
-    setFullscreen();
-  else if (!display->isFullScreenOnly())
-  {
+  if (on) {
+    DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+    style &= ~(WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
+    SetWindowLong(hwnd, GWL_STYLE, style);
+    if (display->isFullScreenOnly())
+      MoveWindow(hwnd, 0, 0,
+		  display->getFullWidth(),
+		  display->getFullHeight(), FALSE);
+    else
+      MoveWindow(hwnd, 0, 0,
+		  GetDeviceCaps(hDC, HORZRES),
+		  GetDeviceCaps(hDC, VERTRES), FALSE);
+
+  }  else if (!display->isFullScreenOnly()) {
     display->setDefaultResolution();
 
     // window stuff
@@ -186,38 +196,11 @@ void			WinWindow::setFullscreen(bool on)
       setSize(640,480);
     }
 
-    // don't dis the brute force method
-    // get our GL status back where it needs to be
-    freeContext();
-    makeContext();
-    OpenGLGState::initContext();
-
     // force windows to repaint the whole desktop
     RECT rect;
     GetWindowRect(NULL, &rect);
     InvalidateRect(NULL, &rect, TRUE);
-
-    // reset mouse grab
-    if (mouseGrab) {
-      ungrabMouse();
-      grabMouse();
-    }
   }
-}
-
-void			WinWindow::setFullscreen()
-{
-  DWORD style = GetWindowLong(hwnd, GWL_STYLE);
-  style &= ~(WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
-  SetWindowLong(hwnd, GWL_STYLE, style);
-  if (display->isFullScreenOnly())
-    MoveWindow(hwnd, 0, 0,
-		display->getFullWidth(),
-		display->getFullHeight(), FALSE);
-  else
-    MoveWindow(hwnd, 0, 0,
-		GetDeviceCaps(hDC, HORZRES),
-		GetDeviceCaps(hDC, VERTRES), FALSE);
 
   // resize child
   int width, height;
@@ -374,7 +357,7 @@ void			WinWindow::createChild()
   if (hwndChild == NULL) return;
 
   if (display->isFullScreenOnly())
-    setFullscreen();
+    setFullscreen(true);
 
   // get DC
   hDCChild = GetDC(hwndChild);

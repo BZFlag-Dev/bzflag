@@ -1042,7 +1042,7 @@ int			main(int argc, char** argv)
   const bool useFullscreen = needsFullscreen();
   if (useFullscreen) {
     // tell window to be fullscreen
-    window->setFullscreen();
+    window->setFullscreen(true);
 
     // set the size if one was requested.  this overrides the default
     // size (which is the display or passthrough size).
