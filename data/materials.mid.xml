@@ -19,24 +19,9 @@
     <texture name="grass">
       <file>std_ground.png</file>
     </texture>
-    <texture name="red_tank">
-      <file>red_tank.png</file>
-    </texture>
     <texture name="plain.nor">
       <file>plain_nor.png</file>
       <class>normalmap</class>
-    </texture>
-    <texture name="mountain1">
-      <file>mountain1.png</file>
-      <mipmap>no</mipmap>
-    </texture>
-    <texture name="mountain2">
-      <file>mountain2.png</file>
-      <mipmap>no</mipmap>
-    </texture>
-    <texture name="mountain3">
-      <file>mountain3.png</file>
-      <mipmap>no</mipmap>
     </texture>
   </textures>
 
@@ -47,31 +32,12 @@
       <shadervar name="tex diffuse" type="texture">grass</shadervar>
       <shadervar name="tex normal" type="texture">plain.nor</shadervar>
     </material>
-    <material name="red_tank">
-      <shader type="ambient">ambient</shader>
-      <shader type="ppl">light_spec_bumpmap</shader>
-      <shadervar name="tex diffuse" type="texture">red_tank</shadervar>
-      <shadervar name="tex normal" type="texture">plain.nor</shadervar>
-      <shadervar name="specular" type="vector4">0.8, 0.8, 0.8, 0.1</shadervar>
-    </material>
     <material name="sky">
       <shader type="ambient">sky_scattering</shader>
       <color red="0" green="0" blue="0"/>
       <shadervar name="sky base color" type="vector3">1.19, 1.50, 2.72</shadervar>
       <shadervar name="sky sun-glow color" type="vector3">0.8, 0.8, 0.8</shadervar>
       <shadervar name="sky sun size" type="float">0.00005</shadervar>
-    </material>
-    <material name="mountain1">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain1</shadervar>
-    </material>
-    <material name="mountain2">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain2</shadervar>
-    </material>
-    <material name="mountain3">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain3</shadervar>
     </material>
   </materials>
 

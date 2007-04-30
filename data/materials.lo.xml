@@ -14,24 +14,9 @@
     <texture name="grass">
       <file>std_ground.png</file>
     </texture>
-    <texture name="red_tank">
-      <file>red_tank.png</file>
-    </texture>
     <texture name="plain.nor">
       <file>plain_nor.png</file>
       <class>normalmap</class>
-    </texture>
-    <texture name="mountain1">
-      <file>mountain1.png</file>
-      <mipmap>no</mipmap>
-    </texture>
-    <texture name="mountain2">
-      <file>mountain2.png</file>
-      <mipmap>no</mipmap>
-    </texture>
-    <texture name="mountain3">
-      <file>mountain3.png</file>
-      <mipmap>no</mipmap>
     </texture>
   </textures>
 
@@ -40,25 +25,9 @@
       <shader type="pvl">std_lighting_fixed</shader>
       <shadervar name="tex diffuse" type="texture">grass</shadervar>
     </material>
-    <material name="red_tank">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">red_tank</shadervar>
-    </material>
     <material name="sky">
       <shader type="pvl">std_lighting_fixed</shader>
       <color red="0.2" green="0.5" blue="1.0"/>
-    </material>
-    <material name="mountain1">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain1</shadervar>
-    </material>
-    <material name="mountain2">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain2</shadervar>
-    </material>
-    <material name="mountain3">
-      <shader type="pvl">std_lighting_fixed</shader>
-      <shadervar name="tex diffuse" type="texture">mountain3</shadervar>
     </material>
   </materials>
 
