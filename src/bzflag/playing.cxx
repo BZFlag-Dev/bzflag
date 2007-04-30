@@ -6292,6 +6292,7 @@ void Playing::CreateRoom ()
   if (!tankFactory)
     csApplicationFramework::ReportError
       ("Error loading tank mesh object factory!");
+  sceneRenderer->getBackground()->addMountains(engine, room);
 }
 
 

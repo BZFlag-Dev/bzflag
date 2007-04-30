@@ -70,7 +70,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				mountainsAvailable(false),
 				numMountainTextures(0),
 				mountainsGState(NULL),
-				mountainsList(NULL),
 				cloudDriftU(0.0f),
 				cloudDriftV(0.0f)
 {
@@ -227,13 +226,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
-      mountainsList = new GLuint[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
 	char text[256];
 	sprintf (text, "mountain%d", i + 1);
 	gstate.setTexture (tm.getTextureID (text));
 	mountainsGState[i] = gstate.getState ();
-	mountainsList[i] = INVALID_GL_LIST_ID;
       }
     }
   }
@@ -257,7 +254,6 @@ BackgroundRenderer::~BackgroundRenderer()
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
 					     (void*)this);
   delete[] mountainsGState;
-  delete[] mountainsList;
 }
 
 
@@ -1516,7 +1512,6 @@ void BackgroundRenderer::drawMountains(void)
   glColor3f(1.0f, 1.0f, 1.0f);
   for (int i = 0; i < numMountainTextures; i++) {
     mountainsGState[i].setState();
-    glCallList(mountainsList[i]);
   }
 }
 
@@ -1546,18 +1541,127 @@ void BackgroundRenderer::doFreeDisplayLists()
       *lists[i] = INVALID_GL_LIST_ID;
     }
   }
+}
 
-  // delete the array of lists
-  if (mountainsList != NULL) {
-    for (i = 0; i < numMountainTextures; i++) {
-      if (mountainsList[i] != INVALID_GL_LIST_ID) {
-	glDeleteLists(mountainsList[i], 1);
-	mountainsList[i] = INVALID_GL_LIST_ID;
+//
+// mountains
+//
+void BackgroundRenderer::addMountains(csRef<iEngine> engine, iSector *room)
+{
+  if (numMountainTextures <= 0)
+    return;
+  const float worldSize = BZDBCache::worldSize;
+  // Need at least NumMountainFaces, but we also need a multiple of
+  // the number of subtextures.  put all the faces using a given
+  // texture into the same submesh.
+  const int numFacesPerTexture = (NumMountainFaces + numMountainTextures - 1)
+    / numMountainTextures;
+  const float angleScale  = M_PI / (numMountainTextures * numFacesPerTexture);
+  const float heightScale = mountainsMinWidth / 256.0f;
+
+  const unsigned int halfVertexCount
+    = 2 * (numFacesPerTexture + 1) * numMountainTextures;
+  const unsigned int vertexCount = 2 * halfVertexCount;
+
+  csRef<iMeshFactoryWrapper> mountainsFactory
+    = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", NULL);
+  csRef<iGeneralFactoryState> mountainsFactState
+    = scfQueryInterface<iGeneralFactoryState>
+    (mountainsFactory->GetMeshObjectFactory());
+  mountainsFactState->SetVertexCount(vertexCount);
+  mountainsFactState->SetTriangleCount(4 * numFacesPerTexture
+				       * numMountainTextures);
+
+  // Load All Vertex
+  int i;
+  int j;
+  float angle = 0;
+  unsigned int k = 0;
+  for (i = 0; i < 2; i++)
+    for (j = 0; j < numMountainTextures; j++) {
+      float frac = 0.0f;
+      for (int l = 0;; l++) {
+	mountainsFactState->GetVertices()[k].Set
+	  (2.25f * worldSize * cosf(angle),
+	   0.0f,
+	   2.25f * worldSize * sinf(angle));
+	mountainsFactState->GetTexels()[k++].Set(frac, 0.99f);
+	mountainsFactState->GetVertices()[k].Set
+	  (2.25f * worldSize * cosf(angle),
+	   0.45f * worldSize * heightScale,
+	   2.25f * worldSize * sinf(angle));
+	mountainsFactState->GetTexels()[k++].Set(frac, 0.02f);
+	if (l >= numFacesPerTexture)
+	  break;
+	frac  += 1.0f / (float) numFacesPerTexture;
+	angle += angleScale;
       }
     }
+  // Load All Triangles
+  k = 0;
+  int m = 0;
+  for (i = 0; i < 2; i++)
+    for (j = 0; j < numMountainTextures; j++) {
+      for (int l = 0; l < numFacesPerTexture; l++) {
+	mountainsFactState->GetTriangles()[m++].Set(k + 1, k,     k + 2);
+	mountainsFactState->GetTriangles()[m++].Set(k + 1, k + 2, k + 3);
+	k += 2;
+      }
+      k += 2;
+   }
+
+  mountainsFactState->CalculateNormals();
+
+  // Preparing submeshes
+  const unsigned int vertexPerTexture = numFacesPerTexture * 12;
+  TextureManager &tm = TextureManager::instance();
+  k = 0;
+  for (j = 0; j < numMountainTextures; j++) {
+    csRef<iRenderBuffer> index_buffer
+      = csRenderBuffer::CreateIndexRenderBuffer(vertexPerTexture,
+						CS_BUF_STATIC,
+						CS_BUFCOMP_UNSIGNED_INT,
+						0,
+						vertexCount - 1);
+    {
+      csRenderBufferLock<uint, iRenderBuffer*> index(index_buffer);
+      for (int l = 0; l < numFacesPerTexture; l++) {
+	*index++ = k + 1;
+	*index++ = k;
+	*index++ = k + 2;
+	*index++ = k + 1;
+	*index++ = k + 2;
+	*index++ = k + 3;
+	*index++ = halfVertexCount + k + 1;
+	*index++ = halfVertexCount + k;
+	*index++ = halfVertexCount + k + 2;
+	*index++ = halfVertexCount + k + 1;
+	*index++ = halfVertexCount + k + 2;
+	*index++ = halfVertexCount + k + 3;
+	k += 2;
+      }
+    }
+    // Assigning materials
+    char text[256];
+    sprintf (text, "mountain%d", j + 1);
+    mountainsFactState->AddSubMesh(index_buffer,
+				   tm.getInfo(text).material,
+				   text,
+				   j);
+    k += 2;
   }
 
-  return;
+  csRef<iMeshWrapper> mountainsMesh
+    = engine->CreateMeshWrapper(mountainsFactory, "Mountains");
+  mountainsMesh->SetRenderPriority(engine->GetWallRenderPriority());
+  mountainsMesh->GetFlags().Set(CS_ENTITY_NOSHADOWS | CS_ENTITY_NOLIGHTING);
+
+  iMeshObject *mountainsObject = mountainsMesh->GetMeshObject();
+  mountainsObject->GetFlags().Set(CS_MESH_STATICPOS | CS_MESH_STATICSHAPE);
+
+  iMovable *mountainsMove = mountainsMesh->GetMovable();
+  mountainsMove->SetPosition(room, csVector3(0));
+  mountainsMove->UpdateMove();
 }
 
 
@@ -1837,69 +1941,6 @@ void BackgroundRenderer::doInitDisplayLists()
       glEnd();
     }
     glEndList();
-  }
-
-  //
-  // mountains
-  //
-
-  if (numMountainTextures > 0) {
-    // prepare display lists.  need at least NumMountainFaces, but
-    // we also need a multiple of the number of subtextures.  put
-    // all the faces using a given texture into the same list.
-    const int numFacesPerTexture = (NumMountainFaces +
-				numMountainTextures - 1) / numMountainTextures;
-    const float angleScale = (float)(M_PI / (numMountainTextures * numFacesPerTexture));
-    int n = numFacesPerTexture / 2;
-    float hightScale = mountainsMinWidth / 256.0f;
-
-    for (j = 0; j < numMountainTextures; n += numFacesPerTexture, j++) {
-      mountainsList[j] = glGenLists(1);
-      glNewList(mountainsList[j], GL_COMPILE);
-      {
-	glBegin(GL_TRIANGLE_STRIP);
-	  for (i = 0; i <= numFacesPerTexture; i++) {
-	    const float angle = angleScale * (float)(i + n);
-	    float frac = (float)i / (float)numFacesPerTexture;
-	    if (numMountainTextures != 1)
-	      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) /
-			     (float)mountainsMinWidth;
-	    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)),
-			 (float)(-M_SQRT1_2 * sinf(angle)),
-			  (float)M_SQRT1_2);
-	    glTexCoord2f(frac, 0.02f);
-	    glVertex3f(2.25f * worldSize * cosf(angle),
-			 2.25f * worldSize * sinf(angle),
-			 0.0f);
-	    glTexCoord2f(frac, 0.99f);
-	    glVertex3f(2.25f * worldSize * cosf(angle),
-			 2.25f * worldSize * sinf(angle),
-			 0.45f * worldSize * hightScale);
-	  }
-	glEnd();
-	glBegin(GL_TRIANGLE_STRIP);
-	  for (i = 0; i <= numFacesPerTexture; i++) {
-	    const float angle = (float)(M_PI + angleScale * (double)(i + n));
-	    float frac = (float)i / (float)numFacesPerTexture;
-	    if (numMountainTextures != 1)
-	      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) /
-						(float)mountainsMinWidth;
-	    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)),
-			 (float)(-M_SQRT1_2 * sinf(angle)),
-			  (float)M_SQRT1_2);
-	    glTexCoord2f(frac, 0.02f);
-	    glVertex3f(2.25f * worldSize * cosf(angle),
-			 2.25f * worldSize * sinf(angle),
-			 0.0f);
-	    glTexCoord2f(frac, 0.99f);
-	    glVertex3f(2.25f * worldSize * cosf(angle),
-			 2.25f * worldSize * sinf(angle),
-			 0.45f * worldSize*hightScale);
-	  }
-	glEnd();
-      }
-      glEndList();
-    }
   }
 
   //

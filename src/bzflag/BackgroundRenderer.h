@@ -24,6 +24,7 @@
 
 /* system headers */
 #include <string>
+#include <crystalspace.h>
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -35,6 +36,8 @@ class BackgroundRenderer {
   public:
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
+
+  void addMountains(csRef<iEngine> engine, iSector *room);
 
     void		setupGroundMaterials();
     void		setupSkybox();
@@ -118,7 +121,6 @@ class BackgroundRenderer {
     int			numMountainTextures;
     int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
-    GLuint*		mountainsList;
 
     // stuff for clouds
     GLfloat		cloudDriftU, cloudDriftV;
