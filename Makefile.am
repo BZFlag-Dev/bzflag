@@ -64,7 +64,6 @@ EXTRA_DIST = \
 	bzflag.lsm.in \
 	bzflag.spec \
 	bzflag.spec.in \
-	ideas.txt
 	INSTALL \
 	PORTING
 

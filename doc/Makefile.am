@@ -1,6 +1,6 @@
 SUBDIRS = man faq guide howto
 
-EXTRA_DIST =
+EXTRA_DIST = ideas.txt
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
