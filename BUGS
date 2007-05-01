@@ -1,8 +1,6 @@
 recent bugs
 ------------
 
-- connecting to servers is broken on Mac OS X, probably other platforms are affected, too
-
 - jitter on windows servers is reported as very high, but play
   is unaffected.
 
