@@ -565,20 +565,20 @@ void sendSetShotType ( int playerIndex, ShotType type )
 
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, player);
-	buf = nboPackUShort(buf, id);
-	buf = firingInfo.pack(buf);
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, player);
+  buf = nboPackUShort(buf, id);
+  buf = firingInfo.pack(buf);
 
-	relayMessage(MsgShotBegin, (char*)buf-(char*)bufStart, bufStart);
+  relayMessage(MsgShotBegin, (char*)buf-(char*)bufStart, bufStart);
 
-	// now do everyone who dosn't have network
-	for (int i = 0; i < curMaxPlayers; i++)
-	{
-		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->shotFired(player,id,(bz_eShotType)firingInfo.shotType);
-	}
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->shotFired(player,id,(bz_eShotType)firingInfo.shotType);
+  }
 }
 
 void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
@@ -594,7 +594,7 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
   {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-	    otherData->playerHandler->shotEnded(player,id,reason);
+      otherData->playerHandler->shotEnded(player,id,reason);
   }
  }
 
@@ -636,52 +636,54 @@ void sendMsgAutoPilot( int player, unsigned char autopilot )
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {
-	if (!otherData->player.isPlaying())
-		return 0;
+  if (!otherData->player.isPlaying())
+    return 0;
 
-	void *bufStart = getDirectMessageBuffer();
-	void *buf      = otherData->packPlayerUpdate(bufStart);
+  void *bufStart = getDirectMessageBuffer();
+  void *buf      = otherData->packPlayerUpdate(bufStart);
 
-	return directMessage(handler, MsgAddPlayer,
-		(char*)buf - (char*)bufStart, bufStart);
+  return directMessage(handler, MsgAddPlayer,
+    (char*)buf - (char*)bufStart, bufStart);
 }
 
 int sendTeamUpdateDirect(NetHandler *handler)
 {
-	// send all teams
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, CtfTeams);
-	for (int t = 0; t < CtfTeams; t++) {
-		buf = nboPackUShort(buf, t);
-		buf = team[t].team.pack(buf);
-	}
-	return directMessage(handler, MsgTeamUpdate,
-		(char*)buf - (char*)bufStart, bufStart);
+  // send all teams
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, CtfTeams);
+  
+  for (int t = 0; t < CtfTeams; t++)
+  {
+    buf = nboPackUShort(buf, t);
+    buf = team[t].team.pack(buf);
+  }
+  return directMessage(handler, MsgTeamUpdate,
+    (char*)buf - (char*)bufStart, bufStart);
 }
 
 void sendWorldChunk(NetHandler *handler, uint32_t ptr)
 {
-	worldWasSentToAPlayer = true;
-	// send another small chunk of the world database
-	assert((world != NULL) && (worldDatabase != NULL));
+  worldWasSentToAPlayer = true;
+  // send another small chunk of the world database
+  assert((world != NULL) && (worldDatabase != NULL));
 
-	void *buf, *bufStart = getDirectMessageBuffer();
-	uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
-	uint32_t left = worldDatabaseSize - ptr;
+  void *buf, *bufStart = getDirectMessageBuffer();
+  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
+  uint32_t left = worldDatabaseSize - ptr;
 
-	if (ptr >= worldDatabaseSize)
-	{
-		size = 0;
-		left = 0;
-	}
-	else if (ptr + size >= worldDatabaseSize)
-	{
-		size = worldDatabaseSize - ptr;
-		left = 0;
-	}
-	buf = nboPackUInt(bufStart, uint32_t(left));
-	buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-	directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+  if (ptr >= worldDatabaseSize)
+  {
+    size = 0;
+    left = 0;
+  }
+  else if (ptr + size >= worldDatabaseSize)
+  {
+    size = worldDatabaseSize - ptr;
+    left = 0;
+  }
+  buf = nboPackUInt(bufStart, uint32_t(left));
+  buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
+  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
