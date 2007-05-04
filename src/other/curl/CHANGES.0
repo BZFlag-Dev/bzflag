@@ -1,0 +1,786 @@
+Version 5.3a (win32 only)
+
+ Troy Engel
+ - Corrected a win32 bug in the environment variable part.
+
+Version 5.3
+
+ Gilbert Ramirez Jr. (21 Dec 1998)
+ - I have implemented the "quote" function of FTP clients. It allows you to
+   send arbitrary commands to the remote FTP server. I chose the -Q/--quote
+   command-line arguments.
+
+   You can have more than one quoted string, and curl will apply them in
+   order.  This is what I use for my MVS upload:
+
+  curl -B --crlf -Q "site lrecl=80" -Q "site blk=8000" -T file ftp://os390/test
+
+   Curl will send the two quoted "site" commands in the proper order.
+
+ - Made it compile smoothly on AIX.
+
+ Gilbert Ramirez Jr. (18 Dec 1998)
+ - Brought an MVS patch: -3/--mvs, for ftp upload to the MVS ftp server.
+
+ Troy Engel (17 Dec 1998)
+ - Brought a correction that fixes the win32 curl bug.
+
+ Daniel Stenberg
+ - A bug, pointed out to me by Dr H. T. Leung, caused curl to crash on the -A
+   flag on certain systems. Actually, all systems should've!
+
+ - Added a few defines to make directories/file names get build nicer (with _
+   instead of . and \ instead of / in win32).
+
+ - steve <fisk at polar.bowdoin.edu> reported a weird bug that occured if the
+   ftp server response line had a parenthesis on the line before the (size)
+   info. I hope it works better now!
+
+Version 5.2.1
+
+ Steven G. Johnson (Dec 14, 1998)
+ - Brought a fix that corrected a crash in 5.2 due to bad treatment of the
+   environment variables.
+
+Version 5.2
+
+ Daniel Stenberg (Dec 14, 1998)
+ - Rewrote the mkhelp script and now, the mkhelp.pl script generates the
+   hugehelp.c file from the README *and* the man page file curl.1. By using
+   both files, I no longer need to have double information in both the man
+   page and the README as well. So, win32-users will only have the hugehelp.c
+   file for all info, but then, they download the plain binary most times
+   anyway.
+
+ - gcc2.8.1 with the -Wall flag complaints a lot on subscript has type `char'
+   if I don't explicitly typecast the argument to isdigit() or isspace() to
+   int. So I did to compile warning free with that too.
+
+ - Added checks for 'long double' and 'long long' in the configure script. I
+   need those for the mprintf.c source to compile well on non long long
+   comforming systems!
+
+Version 5.1 (not publicly released)
+
+ Daniel Stenberg (Dec 10, 1998)
+ - I got a request for a pre-compiled NT Alpha version. Anyone?
+
+ - Added Lynx/CERN www lib proxy environment variable support. That means curl
+   now reads and understands the following environment variables:
+
+	HTTP_PROXY, HTTPS_PROXY, FTP_PROXY, GOPHER_PROXY
+
+   They should be set for protocol-specific proxies. General proxy should be
+   set with
+	
+	ALL_PROXY
+
+   And a comma-separated list of host names that shouldn't go through any
+   proxy is set in (only an asterisk, '*' matches all hosts).
+
+	NO_PROXY
+
+   The usage of the -x/--proxy flag overrides the environment variables.
+
+ - Proxy can now be specified with a procotol:// prefix.
+
+ - Wrote the curl.1 man page.
+
+ - Introduced a whole new dynamic buffer system for all sprintf()s. It is
+   based on the *printf() package by yours truly and Bjorn Reese. Hopefully,
+   there aren't that many buffer overflow risks left now.
+
+ - Ah, I should mention I've compiled and built curl successfully under
+   solaris 2.6 with gcc now, gcc 2.7.2 won't work but 2.8.1 did ok.
+
+ Oren Tirosh (Dec 3, 1998)
+ - Brought two .spec files, to use when creating (Linux) Redhat style RPM
+   packages. They're named curl.spec and curl-ssl.spec.
+
+ Troy Engel
+ - Supplied the src/Makefile.vc6 for easy compiling with VC++ under Win32.
+
+Version 5.0
+
+ Daniel Stenberg (Dec 1, 1998)
+ - Not a single bug report in ages.
+ - Corrected getpass.c and main.c to compile warning and error free with the
+   Win32 VC++ crap.
+
+Version 5.0 beta 24
+
+ Daniel Stenberg (Nov 20, 1998)
+
+ HOW TO BUILD A RELEASE ARCHIVE:
+
+ * Pre-requisite software:
+   What		     To build what             Reads data from
+   ====              =============             ===============
+   GNU automake      Makefile.in, aclocal.m4   configure.in
+     GNU make(1)      - " -
+     GNU gcc(1)       - " -
+   GNU autoconf      configure                 configure.in
+   GNU autoheader(2) config.h.in	       configure.in, acconfig.h
+
+ * Make sure all files that should be part of the archive are put in FILES.
+
+ * Run './maketgz' and enter version number of the new to become archive.
+
+   maketgz does:
+
+   - Enters the newly created version number in url.h.
+   - (If you don't have automake, this script will warn about that, but unless
+     you have changed the Makefile.am files, that is nothing to care about.)
+     If you have it, it'll run it.
+   - If you have autoconf, the configure.in will be edited to get the newly
+     created version number and autoconf will be run.
+   - Creates a new directory named curl-<version>. (Actually, it uses the base
+     name of the current directory up to the first '-'.)
+   - Copies all files mentioned in FILES to the new directory. Saving
+     permissions and directory structure.
+   - Uses tar to create an archive of it all, named curl-<version>.tar.gz
+   - gzips the archive
+   - Removes the new directory and all its contents.
+
+ * When done, you have an archive stored in your directory named
+   curl-<version>.tar.gz.
+
+   Done!
+
+   (1) They're required to make automake run properly.
+   (2) It is distributed as a part of the GNU autoconf archive.
+
+ Daniel Stenberg (Nov 18, 1998)
+ - I changed the TAG-system. If you ever used urlget() from this package in
+   another product, you need to recompile with the new headers. I did this
+   new stuff to better deal with different compilers and system with different
+   variable sizes. I think it makes it a little more portable. This proves
+   to compile warning free with the problematic IRIX compiler!
+ - Win32 compiled with a silly error. Corrected now.
+ - Brian Chaplin reported yet another problem in
+   multiline FTP responses. I've tried to correct it. I mailed him a new
+   version and I hope he gets back soon with positive feedback!
+ - Improved the 'maketgz' to create a temporary directory tree which it makes
+   an archive from instead of the previous renaming of the current one.
+ - Mailing list opened (see README).
+ - Made -v more verbose on the PASV section of ftp transfers. Now it tells
+   host name and IP of the new host (and port number). I also added a section
+   about PORT vs PASV in the README.
+
+Version 5.0 beta 21
+
+ Angus Mackay (Nov 15, 1998)
+ - Introduced automake stuff.
+
+ Daniel Stenberg (Nov 13, 1998)
+ - Just made a successful GET of a document from an SSL-server using my own
+   private certificate for authentication! The certificate has to be in PEM
+   format. You do that the easiest way (although not *that* easy) by
+   downloading the SSLyeay PKCS#12-patch by Dr Stephen N. Henson from his site
+   at: http://www.drh-consultancy.demon.co.uk/. Using his tool, you can
+   convert any modern Netscape or (even) MSIE certificate to PEM-format.  Use
+   it with 'curl -E <certificate:password> https://site.com'.  If this isn't a
+   cool feature, then I don't know what cool features look like! ;-)
+ - Working slowly on telnet connections. #define TRY_TELNET to try it out.
+   (curl -u user:passwd "telnet://host.com/cat .login" is one example) I do
+   have problem to define how it should work. The prime purpose for this must
+   be to get (8bit clean) files via telnet, and it really isn't that easy to
+   get files this way. Still having problems with \n being converted to \r\n.
+
+ Angus Mackay (Nov 12, 1998)
+ - Corrected another bug in the long parameter name parser.
+ - Modified getpass.c (NOTE: see the special licensing in the top of that
+   source file).
+
+ Daniel Stenberg (Nov 12, 1998)
+ - We may have removed the silly warnings from url.c when compiled under IRIX.
+   Thanks again to Bjorn Reese and Martin Staael.
+ - Wrote formfind.pl which is a new perl script intended to help you find out
+   how a FORM submission should be done. This needs a little more work to get
+   really good.
+
+ Daniel Stenberg (Nov 11, 1998)
+ - Made the HTTP header-checker accept white spaces before the HTTP/1.? line.
+   Appearantly some proxies/sites add such at times (my test proxy did when I
+   downloaded a gopher page with it)!
+ - Moved the former -h to -M and made -h show the short help text instead. I
+   had to enable a forced help text option. Now an even shorter help text will
+   be presented when an unknown option and similar, is used.
+ - stdcheaders.h didn't work with IRIX 6.4 native cc compiler. I hope my
+   changes don't make other versions go nuts instead.
+
+ Daniel Stenberg (Nov 10, 1998)
+ - Added a weird check in the configure script to check for the silly AIX
+   warnings about my #define strcasecmp() stuff. I do that define to prevent
+   me and other contributors to accidentaly use that function name instead
+   of strequal()...
+ - I bugfixed Angus's getpass.c very little.
+ - Fixed the verbose flag names to getopt-style, i.e 'curl --loc' will be
+   sufficient instead of --location as "loc" is a unique prefix. Also, anything
+   after a '--' is treated as an URL. So if you do have a host with a weeeird
+   name you can do 'curl -- -host.com'.
+ - Another getopt-adjust; curl now accepts flags after the URL on the command
+   line. 'curl www.foo.com -O' is perfectly valid.
+ - Corrected the .curlrc parser so that strtok() is no longer used and I
+   believe it works better. Even URLs can be specified in it now.
+
+ Angus Mackay (Nov 9, 1998)
+ - Replaced getpass.c with a newly written one, not under GPL license
+ - Changed OS to a #define in config.h instead of compiler flag
+ - Makefile now uses -DHAVE_CONFIG_H
+
+ Daniel Stenberg (Nov 9, 1998)
+ - Ok, I expanded the tgz-target to update the version string on each occation
+   I build a release archive!
+ - I reacted on Angus Mackay's initiative and remade the parameter parser to
+   be more getopt compliant. Curl now supports "merged" flags as in 
+	curl -lsv ftp.site.com
+   Do note that I had to move three short-names of the options. Parameters
+   that needs an additional string such as -x must be stand-alone or the
+   last in a merged sequence:
+	curl -lsx my-proxy ftp.site.com
+   is ok, but using the flags in a different order like '-lxs' would cause
+   unexpected results (as the 's' option would be skipped).
+ - I've changed the headers in all files that are subject to the MozPL
+   license, as they are supposed to look like when conforming.
+ - Made the configure script make the config.h. The former config.h is now
+   setup.h.
+ - The RESOURCES and TODO files have been added to the archive.
+
+ Angus Mackay (Nov 5, 1998)
+ - Fixed getpass.c and various configure stuff
+
+ Daniel Stenberg (Nov 3, 1998)
+ - Use -H/--header for custom HTTP-headers. Lets you pass on your own
+   specified headers to the remote server. I wouldn't recommend trying to use
+   a header with a defined usage according to standards. Use this flag once
+   for every custom header you want to add.
+ - Use -B/--ftp-ascii to force ftp to use ASCII mode when transfering files.
+ - Corrected the 'getlinks.pl' script, I accidentally left my silly proxy
+   usage in there! Since the introduction of the .curlrc file, it is easier to
+   write scripts that use curl since proxies and stuff should be in the
+   .curlrc file anyway.
+ - Introducing the new -F flag for HTTP POST. It supports multipart/form-data
+   which means it is gonna be possible to upload files etc through HTTP POST.
+   Shiraz Kanga asked for the feature and my brother,
+   Björn Stenberg helped me design the user
+   interface for this beast.  This feature requires quite some docs,
+   since it has turned out not only quite capable, but also complicated! :-)
+ - A note here, since I've received mail about it. SSLeay versions prior to
+   0.8 will *not* work with curl!
+ - Wil Langford reported a bug that occurred since curl
+   did not properly use CRLF when issuing ftp commands. I fixed it.
+ - Rearranged the order config files are read. .curlrc is now *always* read
+   first and before the command line flags. -K config files then act as
+   additional config items.
+ - Use -q AS THE FIRST OPTION specified to prevent .curlrc from being read.
+ - You can now disable a proxy by using -x "". Useful if the .curlrc file
+   specifies a proxy and you wanna fetch something without going through
+   that.
+ - I'm thinking of dropping the -p support. Its really not useful since ports
+   could (and should?) be specified as :<port> appended on the host name
+   instead, both in URLs and to proxy host names.
+ - Martin Staael reports curl -L bugs under Windows NT
+   (test with URL http://come.to/scsde). This bug is not present in this
+   version anymore.
+ - Added support for the weird FTP URL type= thing. You can download a file
+   using ASCII transfer by appending ";type=A" to the right of it. Other
+   available types are type=D for dir-list (NLST) and type=I for binary
+   transfer. I can't say I've ever seen anyone use this kind of URL though!
+   :-)
+ - Troy Engel pointed out a bug in my getenv("HOME")
+   usage for win32 systems. I introduce getenv.c to better cope with
+   this. Mr Engel helps me with the details around that...
+ - A little note to myself and others, I should make the win32-binary built
+   with SSL support...
+ - Ryan Nelson sent me comments about building curl
+   with SSL under FreeBSD. See the Makefile for details. Using the configure
+   script, it should work better and automatically now...
+ - Cleaned up in the port number mess in the source. No longer stores and uses
+   proxy port number separate from normal port number.
+ - 'configure' script working. Confirmed compiles on:
+    Host         SSL  Compiler
+    SunOS 5.5    no   gcc
+    SunOS 5.5.1  yes  gcc
+    SunOS 5.6    no   cc  (with gcc, it has the "gcc include files" problem)
+    SunOS 4.1.3  no   gcc (without ANSI C headers)
+    SunOS 4.1.2  no   gcc (native compiler failed)
+    Linux 2.0.18 no   gcc
+    Linux 2.0.32 yes  gcc
+    Linux 2.0.35 no   gcc (with glibc)
+    IRIX 6.2     no   gcc (cc compiles generate a few warnings)
+    IRIX 6.4     no   cc  (generated warnings though)
+    Win32        no   Borland
+    OSF4.0	 no   ?
+
+ - Ooops. The 5beta (and 4.10) under win32 failed if the HOME variable wasn't
+   set.
+ - When using a proxy, curl now guesses and uses the protocol part in cases
+   like:
+	curl -x proxy:80 www.site.com
+   Proxies normally go nuts unless http:// is prepended to the host name, so
+   if curl is used like this, it guesses protocol and appends the protocol
+   string before passing it to the proxy. It already did this when used
+   without proxy.
+ - Better port usage with SSL through proxy now. If you specified a different
+   https-port when accessing through a proxy, it didn't use that number
+   correctly. I also rewrote the code that parses the stuff read from the
+   proxy when you wanna connect through it with SSL.
+ - Bjorn Reese helped me work around one of the compiler
+   warnings on IRIX native cc compiles.
+
+Version 4.10 (Oct 26, 1998)
+ Daniel Stenberg
+ - John A. Bristor suggested a config file switch,
+   and since I've been having that idea kind of in the background for a long
+   time I rewrote the parameter parsing function a little and now I introduce
+   the -K/--config flag. I also made curl *always* (unless -K is used) try to
+   load the .curlrc file for command line parameters. The syntax for the
+   config file is the standard command line argument style. Details in 'curl
+   -h' or the README.
+ - I removed the -k option. Keep-alive isn't really anything anyone would
+   want to enable with curl anyway.
+ - Martin Staael helped me add the 'irix' target. Now
+   "make irix" should build curl successfully on non-gcc SGI machines.
+ - Single switches now toggle behaviours. I.e if you use -v -v the second
+   will switch off the verbose mode the first one enabled. This is so that
+   you can disable a default setting a .curlrc file enables etc.
+
+Version 4.9 (Oct 7, 1998)
+ Daniel Stenberg
+ - Martin Staael suggested curl would support cookies.
+   I added -b/--cookie to enable free-text cookie data to be passed. There's
+   also a little blurb about general cookie stuff in the README/help text.
+ - dmh <dmh at jet.es> suggested HTTP resume capabilities. Although you could
+   manually get curl to resume HTTP documents, I made the -c resume flag work
+   for HTTP too (unless -r is used too, which would be very odd anyway).
+ - Added checklinks.pl to the archive. It is a still experimental perl script
+   that checks all links of a web page by using curl.
+ - Rearranged the archive hierarchy a little. Build the executable in the
+   src/ dir from now on!
+ - Version 4.9 and hereafter, is no longer released under the GPL license.
+   I have now updated the LEGAL file etc and now this is released using the
+   Mozilla Public License to avoid the plague known as "the GPL virus". You
+   must make the source available if you decide to change and/or redistribute
+   curl, but if you decide to use curl within something else you do not need
+   to offer the world the source to that too.
+ - Curl did not like HTTP servers that sent no headers at all on a GET
+   request.  It is a violation of RFC2068 but appearantly some servers do
+   that anyway.  Thanks to Gordon Beaton for the report!
+ - -L/--location was added after a suggestion from Martin Staael. This makes
+   curl ATTEMPT to follow the Location: redirect if one is present in the HTTP
+   headers. If -i or -I is used with this flag, you will see headers from all
+   sites the Location: points to. Do note that the first server can point to a
+   second that points to a third etc. It seems the Location: parameter (said
+   to be an AbsoluteURI in RFC2068) isn't always absolute.. :-/ Anyway, I've
+   made curl ATTEMPT to do the best it can to deal with the reality.
+ - Added getlinks.pl to the archive. getlinks.pl selectively downloads
+   files that a web page links to.
+
+Version 4.8.4
+ Daniel Stenberg
+ - As Julian Romero Nieto reported, curl reported wrong version number.
+ - As Teemu Yli-Elsila pointed out, the win32 version of 4.8 (and probably all
+   other versions for win32) didn't work with binary files since I'm too used
+   to the UNIX style fopen() where binary and text don't differ...
+ - Ralph Beckmann brought me some changes that lets curl compile error and
+   warning free with -Wall -pedantic with g++. I also took the opportunity to
+   clean off some unused variables and similar.
+ - Ralph Beckmann made me aware of a really odd bug now corrected. When curl
+   read a set of headers from a HTTP server, divided into more than one read
+   and the first read showed a full line *exactly* (i.e ending with a
+   newline), curl did not behave well.
+
+Version 4.8.3
+ Daniel Stenberg
+ - I was too quick to release 4.8.2 with too little testing. One of the
+   changes is now reverted slightly to the 4.8.1 way since 4.8.2 couldn't
+   upload files. I still think both problems corrected in 4.8.2 remain
+   corrected.  Reported by Julian Romero Nieto.
+
+Version 4.8.2
+ Daniel Stenberg
+ - Bernhard Iselborn reported two FTP protocol errors curl did. They're now
+   corrected. Both appeared when getting files from a MS FTP server! :-)
+
+Version 4.8.1
+ Daniel Stenberg
+ - Added a last update of the progress meter when the transfer is done. The
+   final output on the screen didn't have to be the final size transfered
+   which made it sometimes look odd.
+ - Thanks to David Long I got rid of a silly bug that happened if a HTTP-page
+   had nothing but header. Appearantly Solaris deals with negative sizes in
+   fwrite() calls a lot better than Linux does... =B-]
+
+Version 4.8
+ Daniel Stenberg
+ - Continue FTP file transfer. -c is the switch. Note that you need to
+   specify a file name if you wanna resume a download (you can't resume a
+   download sent to stdout). Resuming upload may be limited by the server
+   since curl is then using the non-RFC959 command SIZE to get the size of
+   the target file before upload begins (to figure out which offset to
+   use). Use -C to specify the offset yourself! -C is handy if you're doing
+   the output to something else but a plain file or when you just want to get
+   the end of a file.
+ - recursiveftpget.pl now features a maximum recursive level argument.
+
+Version 4.7
+ Daniel Stenberg
+ - Added support to abort a download if the speed is below a certain amount
+   (speed-limit) bytes per second for a certain (speed-time) time.
+ - Wrote a perl script 'recursiveftpget.pl' to recursively use curl to get a
+   whole ftp directory tree. It is meant as an example of how curl can be
+   used.  I agree it isn't the wisest thing to do to make a separate new
+   connection for each file and directory for this.
+
+Version 4.6
+ Daniel Stenberg
+ - Added a first attempt to optionally parse the .netrc file for login user
+   and password. If used with http, it enables user authentication. -n is
+   the new switch.
+ - Removed the extra newlines on the default user-agent string.
+ - Corrected the missing ftp upload error messages when it failed without the
+   verbose flag set. Gary W. Swearingen found it.
+ - Now using alarm() to enable second-precision timeout even on the name
+   resolving/connecting phase. The timeout is although reset after that first
+   sequence. (This should be corrected.) Gary W. Swearingen reported.
+ - Now spells "Unknown" properly, as in "Unknown option 'z'"... :-)
+ - Added bug report email address in the README.
+ - Added a "current speed" field to the progress meter. It shows the average
+   speed the last 5 seconds. The other speed field shows the average speed of
+   the entire transfer so far.
+
+Version 4.5.1
+ Linas Vepstas
+ - SSL through proxy fix
+ - Added -A to allow User-Agent: changes
+
+ Daniel Stenberg 
+ - Made the -A work when SSL-through-proxy.
+
+Version 4.5
+ Linas Vepstas
+ - More SSL corrections
+ - I've added a port to AIX.
+ - running SSL through a proxy causes a chunk of code to be executred twice.
+   one of those blocks needs to be deleted.
+
+ Daniel Stenberg
+ - Made -i and -I work again
+
+Version 4.4
+ Linas Vepstas
+ - -x can now also specify proxyport when used as in 'proxyhost:proxyport'
+ - SSL fixes
+
+Version 4.3
+ Daniel Stenberg
+ - Adjusted to compile under win32 (VisualC++ 5). The -P switch does not
+   support network interface names in win32. I couldn't figure out how!
+
+Version 4.2
+ Linas Vepstas / Sampo Kellomaki
+ - Added SSL / SSLeay support (https://)
+ - Added the -T usage for HTTP POST.
+
+ Daniel Stenberg
+ - Bugfixed the SSL implementation.
+ - Made -P a lot better to use other IP addresses. It now accepts a following
+   parameter that can be either
+        interface - i.e "eth0" to specify which interface's IP address you
+                    want to use
+        IP address - i.e "192.168.10.1" to specify exact IP number
+        host name - i.e "my.host.domain" to specify machine
+        "-"       - (any single-letter string) to make it pick the machine's
+                    default
+ - The Makefile is now ready to compile for solaris, sunos4 and linux right
+   out of the box.
+ - Better generated version string seen with 'curl -V'
+
+Version 4.1
+ Daniel Stenberg
+ - The IP number returned by the ftp server as a reply to PASV does no longer
+   have to DNS resolve. In fact, no IP-number-only addresses have to anymore.
+ - Binds better to available port when -P is used.
+ - Now LISTs ./ instead of / when used as in ftp://ftp.funet.fi/. The reason
+   for this is that exactly that site, ftp.funet.fi, does not allow LIST /
+   while LIST ./ is fine. Any objections?
+
+Version 4 (1998-03-20)
+ Daniel Stenberg
+ - I took another huge step and changed both version number and project name!
+   The reason for the new name is that there are just one too many programs
+   named urlget already and this program already can a lot more than merely
+   getting URLs, and the reason for the version number is that I did add the
+   pretty big change in -P and since I changed name I wanted to start with
+   something fresh!
+ - The --style flags are working better now.
+ - Listing directories with FTP often reported that the file transfer was
+   incomplete. Wrong assumptions were too common for directories, why no
+   size will be attempted to get compared on them from now on.
+ - Implemented the -P flag that let's the ftp control issue a PORT command
+   instead of the standard PASV.
+ - -a for appending FTP uploads works.
+
+***************************************************************************
+
+Version 3.12 (14 March 1998)
+ Daniel Stenberg
+ - End-of-header tracking still lacked support for \r\n or just \n at the
+   end of the last header line.
+ Sergio Barresi
+ - Added PROXY authentication.
+ Rafael Sagula
+ - Fixed some little bugs.
+
+Version 3.11
+ Daniel Stenberg
+ - The header parsing was still not correct since the 3.2 modification...
+
+Version 3.10
+ Daniel Stenberg
+ - 3.7 and 3.9 were simultaneously developed and merged into this version.
+ - FTP upload did not work correctly since 3.2.
+
+Version 3.9
+ Rafael Sagula
+ - Added the "-e <url> / --referer <url>" option where we can specify
+   the referer page. Obviously, this is necessary only to fool the
+   server, but...
+
+Version 3.7
+ Daniel Stenberg
+ - Now checks the last error code sent from the ftp server after a file has
+   been received or uploaded. Wasn't done previously.
+ - When 'urlget <host>' is used without a 'protocol://' first in the host part,
+   it now checks for host names starting with ftp or gopher and if it does,
+   it uses that protocol by default instead of http.
+
+Version 3.6
+ Daniel Stenberg
+ - Silly mistake made the POST bug. This has now also been tested to work with
+   proxy.
+
+Version 3.5
+ Daniel Stenberg
+ - Highly inspired by Rafael Sagula's changes to the 3.1 that added an almost
+   functional POST, I applied his changes into this version and made them work.
+   (It seems POST requires the Content-Type and Content-Length headers.) It is
+   now usable with the -d switch.
+
+Version 3.3 - 3.4
+ Passed to avoid confusions
+
+Version 3.2
+ Daniel Stenberg
+ - Major rewrite of two crucial parts of this code: upload and download.
+   They are both now using a select() switch, that allows much better
+   progress meter and time control. 
+ - alarm() usage removed completely
+ - FTP get can now list directory contents if the path ends with a slash '/'.
+   Urlget on a ftp-path that doesn't end with a slash means urlget will
+   attempt getting it as a file name.
+ - FTP directory view supports -l for "list-only" which lists the file names
+   only.
+ - All operations support -m for max time usage in seconds allowed.
+ - FTP upload now allows the size of the uploaded file to be provided, and
+   thus it can better check it actually uploaded the whole file. It also
+   makes the progress meter for uploads much better!
+ - Made the parameter parsing fail in cases like 'urlget -r 900' which
+   previously tried to connect to the host named '900'.
+
+Version 3.1
+ Kjell Ericson
+ - Pointed out how to correct the 3 warnings in win32-compiles.
+
+ Daniel Stenberg
+ - Removed all calls to exit().
+ - Made the short help text get written to stdout instead of stderr.
+ - Made this file instead of keeping these comments in the source.
+ - Made two callback hooks, that enable external programs to use urlget()
+   easier and to grab the output/offer the input easier.
+ - It is evident that Win32-compiles are painful. I watched the output from
+   the Borland C++ v5 and it was awful. Just ignore all those warnings.
+
+Version 3.0
+ Daniel Stenberg
+ - Added FTP upload capabilities. The name urlget gets a bit silly now
+   when we can put too... =)
+ - Restructured the source quite a lot.
+   Changed the urlget() interface. This way, we will survive changes much
+   better. New features can come and old can be removed without us needing
+   to change the interface. I've written a small explanation in urlget.h
+   that explains it.
+ - New flags include -t, -T, -O and -h. The -h text is generated by the new
+   mkhelp script.
+
+Version 2.9
+ Remco van Hooff
+ - Added a fix to make it compile smoothly on Amiga using the SAS/C
+   compiler.
+  
+ Daniel Stenberg
+ - Believe it or not, but the STUPID Novell web server seems to require
+   that the Host: keyword is used, so well I use it and I (re-introduce) the
+   urlget User-Agent:. I still have to check that this Host: usage works with
+   proxies... 'Host:' is required for HTTP/1.1 GET according to RFC2068.
+
+Version 2.8
+ Rafael Sagula
+ - some little modifications
+
+Version 2.7
+ Daniel Stenberg
+ - Removed the -l option and introduced the -f option instead. Now I'll
+   rewrite the former -l kludge in an external script that'll use urlget to
+   fetch multipart files like that.
+ - '-f' is introduced, it means Fail without output in case of HTTP server
+   errors (return code >=300).
+ - Added support for -r, ranges. Specify which part of a document you 
+   want, and only that part is returned. Only with HTTP/1.1-servers.
+ - Split up the source in 3 parts. Now all pure URL functions are in
+   urlget.c and stuff that deals with the stand-alone program is in main.c.
+ - I took a few minutes and wrote an embryo of a README file to explain
+   a few things.
+
+Version 2.6
+ Daniel Stenberg
+ - Made the -l (loop) thing use the new CONF_FAILONERROR which makes
+   urlget() return error code if non-successful. It also won't output anything
+   then. Now finally removed the HTTP 1.0 and error 404 dependencies.
+ - Added -I which uses the HEAD request to get the header only from a
+   http-server.
+
+Version 2.5
+ Rafael Sagula
+ - Made the progress meter use HHH:MM:SS instead of only seconds.
+
+Version 2.4
+ Daniel Stenberg
+ - Added progress meter. It appears when downloading > BUFFER SIZE and
+   mute is not selected. I found out that when downloading large files from
+   really really slow sites, it is desirable to know the status of the
+   download. Do note that some downloads are done unawaring of the size, which
+   makes the progress meter less thrilling ;) If the output is sent to a tty,
+   the progress meter is shut off.
+ - Increased buffer size used for reading.
+ - Added length checks in the user+passwd parsing.
+ - Made it grok user+passwd for HTTP fetches. The trick is to base64
+   encode the user+passwd and send an extra header line. Read chapter 11.1 in
+   RFC2068 for details. I added it to be used just like the ftp one.  To get a
+   http document from a place that requires user and password, use an URL
+   like:
+
+        http://user:passwd@www.site.to.leach/doc.html
+
+   I also added the -u flag, since WHEN USING A PROXY YOU CAN'T SPECIFY THE
+   USER AND PASSWORD WITH HTTP LIKE THAT. The -u flag works for ftp too, but
+   not if used with proxy. To do the same as the above one, you can invoke:
+
+        urlget -u user:passwd http://www.site.to.leach/doc.html
+
+Version 2.3
+ Rafael Sagula
+ - Added "-o" option (output file)
+ - Added URG_HTTP_NOT_FOUND return code.
+   (Daniel's note:)
+   Perhaps we should detect all kinds of errors and instead of writing that
+   custom string for the particular 404-error, use the error text we actually
+   get from the server. See further details in RFC2068 (HTTP 1.1
+   definition). The current way also relies on a HTTP/1.0 reply, which newer
+   servers might not do.
+ - Looping mode ("-l" option). It's easier to get various split files.
+   (Daniel's note:)
+   Use it like 'urlget -l 1 http://from.this.site/file%d.html', which will
+   make urlget to attempt to fetch all files named file1.html, file2.html etc
+   until no more files are found. This is only a modification of the
+   STAND_ALONE part, nothing in the urlget() function was modfified for this.
+ Daniel Stenberg
+ - Changed the -h to be -i instead. -h should be preserved to help use.
+ - Bjorn Reese indicated that Borland _might_ use '_WIN32' instead of the
+   VC++ WIN32 define and therefore I added a little fix for that.
+
+Version 2.2
+ Johan Andersson
+ - The urlget function didn't set the path to url when using proxy.
+ - Fixed bug with IMC proxy. Now using (almost) complete GET command.
+  
+ Daniel Stenberg
+ - Made it compile on Solaris. Had to reorganize the includes a bit.
+   (so Win32, Linux, SunOS 4 and Solaris 2 compile fine.)
+ - Made Johan's keepalive keyword optional with the -k flag (since it
+   makes a lot of urlgets take a lot longer time).
+ - Made a '-h' switch in case you want the HTTP-header in the output.
+
+Version 2.1
+ Daniel Stenberg and Kjell Ericson
+ - Win32-compilable
+ - No more global variables
+ - Mute option (no output at all to stderr)
+ - Full range of return codes from urlget(), which is now written to be a
+   function for easy-to-use in [other] programs.
+ - Define STAND_ALONE to compile the stand alone urlget program
+ - Now compiles with gcc options -ansi -Wall -pedantic ;)
+
+Version 2.0
+ - Introducing ftp GET support. The FTP URL type is recognized and used.
+ - Renamed the project to 'urlget'.
+ - Supports the user+passwd in the FTP URL (otherwise it tries anonymous
+   login with a weird email address as password).
+
+Version 1.5
+ Daniel Stenberg
+ - The skip_header() crap messed it up big-time. By simply removing that
+   one we can all of a sudden download anything ;)
+ - No longer requires a trailing slash on the URLs.
+ - If the given URL isn't prefixed with 'http://', HTTP is assumed and
+   given a try!
+ - 'void main()' is history.
+
+Version 1.4
+ Daniel Stenberg
+ - The gopher source used the ppath variable instead of path which could
+   lead to disaster.
+
+Version 1.3
+ Daniel Stenberg
+ - Well, I added a lame text about the time it took to get the data. I also
+   fought against Johan to prevent his -f option (to specify a file name
+   that should be written instead of stdout)! =)
+ - Made it write 'connection refused' for that particular connect()
+   problem.
+ - Renumbered the version. Let's not make silly 1.0.X versions, this is
+   a plain 1.3 instead.
+
+Version 1.2
+ Johan Andersson
+ - Discovered and fixed the problem with getting binary files. puts() is
+   now replaced with fwrite(). (Daniel's note: this also fixed the buffer
+   overwrite problem I found in the previous version.)
+
+ Rafael Sagula
+ - Let "-p" before "-x".
+
+ Daniel Stenberg
+ - Bugfixed the proxy usage. It should *NOT* use nor strip the port number
+   from the URL but simply pass that information to the proxy. This also
+   made the user/password fields possible to use in proxy [ftp-] URLs.
+   (like in ftp://user:password@ftp.my.site:8021/README)
+
+ Johan Andersson
+ - Implemented HTTP proxy support.
+ - Receive byte counter added.
+
+ Bjorn Reese
+ - Implemented URLs (and skipped the old syntax).
+ - Output is written to stdout, so to achieve the above example, do:
+   httpget http://143.54.10.6/info_logo.gif > test.gif
+
+Version 1.1
+ Daniel Stenberg
+ - Adjusted it slightly to accept named hosts on the command line. We
+   wouldn't wanna use IP numbers for the rest of our lifes, would we?
+
+Version 1.0
+  Rafael Sagula
+  - Wrote the initial httpget, which started all this!

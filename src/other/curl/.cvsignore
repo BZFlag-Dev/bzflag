@@ -1,0 +1,16 @@
+compile
+config.log
+Makefile
+libtool
+Makefile.in
+aclocal.m4
+configure
+config.h
+config.status
+curl-config
+autom4te.cache
+depcomp
+config.guess
+config.sub
+ltmain.sh
+libcurl.pc

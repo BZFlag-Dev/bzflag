@@ -1,0 +1,10 @@
+Makefile
+Makefile.in
+.deps
+.libs
+curl
+config.h.in
+config.h
+hugehelp.c
+stamp-h*
+*.dist

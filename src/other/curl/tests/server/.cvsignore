@@ -1,0 +1,11 @@
+.libs
+Makefile.in
+sws
+.deps
+stamp-h*
+config.h
+Makefile
+getpart
+sockfilt
+resolve
+tftpd
