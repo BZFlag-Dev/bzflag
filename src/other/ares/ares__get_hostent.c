@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -14,7 +16,6 @@
  */
 
 #include "setup.h"
-#include <sys/types.h>
 
 #if !defined(WIN32) || defined(WATT32)
 #include <sys/socket.h>
@@ -30,113 +31,130 @@
 
 #include "ares.h"
 #include "ares_private.h"
+#include "inet_net_pton.h"
 
-int ares__get_hostent(FILE *fp, struct hostent **host)
+int ares__get_hostent(FILE *fp, int family, struct hostent **host)
 {
   char *line = NULL, *p, *q, *canonical, **alias;
   int status, linesize, end_at_hostname, naliases;
   struct in_addr addr;
+  struct in6_addr addr6;
+  int addrlen = sizeof(struct in_addr);
   struct hostent *hostent = NULL;
 
   while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
     {
       /* Skip comment lines; terminate line at comment character. */
       if (*line == '#' || !*line)
-	continue;
+        continue;
       p = strchr(line, '#');
       if (p)
-	*p = 0;
+        *p = 0;
 
       /* Get the address part. */
       p = line;
-      while (*p && !isspace((unsigned char)*p))
-	p++;
+      while (*p && !ISSPACE(*p))
+        p++;
       if (!*p)
-	continue;
+        continue;
       *p = 0;
       addr.s_addr = inet_addr(line);
       if (addr.s_addr == INADDR_NONE)
-	continue;
+       {
+          if (ares_inet_pton(AF_INET6, line, &addr6) > 0)
+            {
+              if (family != AF_INET6)
+                continue;
+              addrlen = sizeof(struct in6_addr);
+            }
+          else
+            continue;
+       }
+      else if (family != AF_INET)
+        continue;
 
       /* Get the canonical hostname. */
       p++;
-      while (isspace((unsigned char)*p))
-	p++;
+      while (ISSPACE(*p))
+        p++;
       if (!*p)
-	continue;
+        continue;
       q = p;
-      while (*q && !isspace((unsigned char)*q))
-	q++;
+      while (*q && !ISSPACE(*q))
+        q++;
       end_at_hostname = (*q == 0);
       *q = 0;
       canonical = p;
 
       naliases = 0;
       if (!end_at_hostname)
-	{
-	  /* Count the aliases. */
-	  p = q + 1;
-	  while (isspace((unsigned char)*p))
-	    p++;
-	  while (*p)
-	    {
-	      while (*p && !isspace((unsigned char)*p))
-		p++;
-	      while (isspace((unsigned char)*p))
-		p++;
-	      naliases++;
-	    }
-	}
+        {
+          /* Count the aliases. */
+          p = q + 1;
+          while (ISSPACE(*p))
+            p++;
+          while (*p)
+            {
+              while (*p && !ISSPACE(*p))
+                p++;
+              while (ISSPACE(*p))
+                p++;
+              naliases++;
+            }
+        }
 
       /* Allocate memory for the host structure. */
-      hostent = (struct hostent *)malloc(sizeof(struct hostent));
+      hostent = malloc(sizeof(struct hostent));
       if (!hostent)
-	break;
+        break;
       hostent->h_aliases = NULL;
       hostent->h_addr_list = NULL;
       hostent->h_name = strdup(canonical);
       if (!hostent->h_name)
-	break;
-      hostent->h_addr_list = (char **)malloc(2 * sizeof(char *));
+        break;
+      hostent->h_addr_list = malloc(2 * sizeof(char *));
       if (!hostent->h_addr_list)
-	break;
-      hostent->h_addr_list[0] = (char *)malloc(sizeof(struct in_addr));
+        break;
+      hostent->h_addr_list[0] = malloc(addrlen);
       if (!hostent->h_addr_list[0])
-	break;
-      hostent->h_aliases = (char **)malloc((naliases + 1) * sizeof(char *));
+        break;
+      hostent->h_aliases = malloc((naliases + 1) * sizeof(char *));
       if (!hostent->h_aliases)
-	break;
+        break;
 
       /* Copy in aliases. */
       naliases = 0;
       if (!end_at_hostname)
-	{
-	  p = canonical + strlen(canonical) + 1;
-	  while (isspace((unsigned char)*p))
-	    p++;
-	  while (*p)
-	    {
-	      q = p;
-	      while (*q && !isspace((unsigned char)*q))
-		q++;
-	      hostent->h_aliases[naliases] = (char *)malloc(q - p + 1);
-	      if (hostent->h_aliases[naliases] == NULL)
-		break;
-	      memcpy(hostent->h_aliases[naliases], p, q - p);
-	      hostent->h_aliases[naliases][q - p] = 0;
-	      p = q;
-	      while (isspace((unsigned char)*p))
-		p++;
-	      naliases++;
-	    }
-	  if (*p)
-	    break;
-	}
+        {
+          p = canonical + strlen(canonical) + 1;
+          while (ISSPACE(*p))
+            p++;
+          while (*p)
+            {
+              q = p;
+              while (*q && !ISSPACE(*q))
+                q++;
+              hostent->h_aliases[naliases] = malloc(q - p + 1);
+              if (hostent->h_aliases[naliases] == NULL)
+                break;
+              memcpy(hostent->h_aliases[naliases], p, q - p);
+              hostent->h_aliases[naliases][q - p] = 0;
+              p = q;
+              while (ISSPACE(*p))
+                p++;
+              naliases++;
+            }
+          if (*p)
+            break;
+        }
       hostent->h_aliases[naliases] = NULL;
 
-      hostent->h_addrtype = AF_INET;
-      hostent->h_length = sizeof(struct in_addr);
-      memcpy(hostent->h_addr_list[0], &addr, sizeof(struct in_addr));
+      hostent->h_addrtype = family;
+      hostent->h_length = addrlen;
+      if (family == AF_INET)
+        memcpy(hostent->h_addr_list[0], &addr, addrlen);
+      else if (family == AF_INET6)
+        memcpy(hostent->h_addr_list[0], &addr6, addrlen);
       hostent->h_addr_list[1] = NULL;
       *host = hostent;
       free(line);
@@ -149,22 +167,22 @@ int ares__get_hostent(FILE *fp, struct hostent **host)
     {
       /* Memory allocation failure; clean up. */
       if (hostent)
-	{
-	  if(hostent->h_name)
-	    free((char *) hostent->h_name);
-	  if (hostent->h_aliases)
-	    {
-	      for (alias = hostent->h_aliases; *alias; alias++)
-		free(*alias);
-	    }
-	  if(hostent->h_aliases)
-	    free(hostent->h_aliases);
-	  if (hostent->h_addr_list && hostent->h_addr_list[0])
-	    free(hostent->h_addr_list[0]);
-	  if(hostent->h_addr_list)
-	    free(hostent->h_addr_list);
-	  free(hostent);
-	}
+        {
+          if(hostent->h_name)
+            free((char *) hostent->h_name);
+          if (hostent->h_aliases)
+            {
+              for (alias = hostent->h_aliases; *alias; alias++)
+                free(*alias);
+            }
+          if(hostent->h_aliases)
+            free(hostent->h_aliases);
+          if (hostent->h_addr_list && hostent->h_addr_list[0])
+            free(hostent->h_addr_list[0]);
+          if(hostent->h_addr_list)
+            free(hostent->h_addr_list);
+          free(hostent);
+        }
       return ARES_ENOMEM;
     }
 

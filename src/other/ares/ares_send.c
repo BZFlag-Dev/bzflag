@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -14,7 +16,6 @@
  */
 
 #include "setup.h"
-#include <sys/types.h>
 
 #if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
@@ -34,7 +35,7 @@
 #include "ares_private.h"
 
 void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
-	       ares_callback callback, void *arg)
+               ares_callback callback, void *arg)
 {
   struct query *query;
   int i;
@@ -48,20 +49,20 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
     }
 
   /* Allocate space for query and allocated fields. */
-  query = (struct query *)malloc(sizeof(struct query));
+  query = malloc(sizeof(struct query));
   if (!query)
     {
       callback(arg, ARES_ENOMEM, NULL, 0);
       return;
     }
-  query->tcpbuf = (unsigned char *)malloc(qlen + 2);
+  query->tcpbuf = malloc(qlen + 2);
   if (!query->tcpbuf)
     {
       free(query);
       callback(arg, ARES_ENOMEM, NULL, 0);
       return;
     }
-  query->skip_server = (int *)malloc(channel->nservers * sizeof(int));
+  query->skip_server = malloc(channel->nservers * sizeof(int));
   if (!query->skip_server)
     {
       free(query->tcpbuf);
@@ -71,14 +72,14 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
     }
 
   /* Compute the query ID.  Start with no timeout. */
-  query->qid = DNS_HEADER_QID(qbuf);
+  query->qid = (unsigned short)DNS_HEADER_QID(qbuf);
   query->timeout = 0;
 
   /* Form the TCP query buffer by prepending qlen (as two
    * network-order bytes) to qbuf.
    */
-  query->tcpbuf[0] = (qlen >> 8) & 0xff;
-  query->tcpbuf[1] = qlen & 0xff;
+  query->tcpbuf[0] = (unsigned char)((qlen >> 8) & 0xff);
+  query->tcpbuf[1] = (unsigned char)(qlen & 0xff);
   memcpy(query->tcpbuf + 2, qbuf, qlen);
   query->tcplen = qlen + 2;
 
@@ -89,7 +90,7 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
   query->arg = arg;
 
   /* Initialize query status. */
-  query->atry = 0;
+  query->try = 0;
   query->server = 0;
   for (i = 0; i < channel->nservers; i++)
     query->skip_server[i] = 0;

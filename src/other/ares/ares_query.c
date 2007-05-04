@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -14,7 +16,6 @@
  */
 
 #include "setup.h"
-#include <sys/types.h>
 
 #if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
@@ -39,7 +40,7 @@ struct qquery {
 static void qcallback(void *arg, int status, unsigned char *abuf, int alen);
 
 void ares_query(ares_channel channel, const char *name, int dnsclass,
-		int type, ares_callback callback, void *arg)
+                int type, ares_callback callback, void *arg)
 {
   struct qquery *qquery;
   unsigned char *qbuf;
@@ -48,7 +49,7 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
   /* Compose the query. */
   rd = !(channel->flags & ARES_FLAG_NORECURSE);
   status = ares_mkquery(name, dnsclass, type, channel->next_id, rd, &qbuf,
-			&qlen);
+                        &qlen);
   channel->next_id++;
   if (status != ARES_SUCCESS)
     {
@@ -57,7 +58,7 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
     }
 
   /* Allocate and fill in the query structure. */
-  qquery = (struct qquery *)malloc(sizeof(struct qquery));
+  qquery = malloc(sizeof(struct qquery));
   if (!qquery)
     {
       ares_free_string(qbuf);
@@ -88,26 +89,26 @@ static void qcallback(void *arg, int status, unsigned char *abuf, int alen)
 
       /* Convert errors. */
       switch (rcode)
-	{
-	case NOERROR:
-	  status = (ancount > 0) ? ARES_SUCCESS : ARES_ENODATA;
-	  break;
-	case FORMERR:
-	  status = ARES_EFORMERR;
-	  break;
-	case SERVFAIL:
-	  status = ARES_ESERVFAIL;
-	  break;
-	case NXDOMAIN:
-	  status = ARES_ENOTFOUND;
-	  break;
-	case NOTIMP:
-	  status = ARES_ENOTIMP;
-	  break;
-	case REFUSED:
-	  status = ARES_EREFUSED;
-	  break;
-	}
+        {
+        case NOERROR:
+          status = (ancount > 0) ? ARES_SUCCESS : ARES_ENODATA;
+          break;
+        case FORMERR:
+          status = ARES_EFORMERR;
+          break;
+        case SERVFAIL:
+          status = ARES_ESERVFAIL;
+          break;
+        case NXDOMAIN:
+          status = ARES_ENOTFOUND;
+          break;
+        case NOTIMP:
+          status = ARES_ENOTIMP;
+          break;
+        case REFUSED:
+          status = ARES_EREFUSED;
+          break;
+        }
       qquery->callback(qquery->arg, status, abuf, alen);
     }
   free(qquery);

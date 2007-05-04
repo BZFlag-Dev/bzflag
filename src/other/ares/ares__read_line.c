@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -36,29 +38,30 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize)
 
   if (*buf == NULL)
     {
-      *buf = (char *)malloc(128);
+      *buf = malloc(128);
       if (!*buf)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       *bufsize = 128;
     }
 
   while (1)
     {
       if (!fgets(*buf + offset, *bufsize - (int)offset, fp))
-	return (offset != 0) ? 0 : (ferror(fp)) ? ARES_EFILE : ARES_EOF;
+        return (offset != 0) ? 0 : (ferror(fp)) ? ARES_EFILE : ARES_EOF;
       len = offset + strlen(*buf + offset);
       if ((*buf)[len - 1] == '\n')
-	{
-	  (*buf)[len - 1] = 0;
-	  return ARES_SUCCESS;
-	}
+        {
+          (*buf)[len - 1] = 0;
+          break;
+        }
       offset = len;
 
       /* Allocate more space. */
-      newbuf = (char *)realloc(*buf, *bufsize * 2);
+      newbuf = realloc(*buf, *bufsize * 2);
       if (!newbuf)
-	return ARES_ENOMEM;
+        return ARES_ENOMEM;
       *buf = newbuf;
       *bufsize *= 2;
     }
+  return ARES_SUCCESS;
 }

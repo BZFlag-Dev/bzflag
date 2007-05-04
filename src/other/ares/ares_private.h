@@ -1,3 +1,6 @@
+#ifndef __ARES_PRIVATE_H
+#define __ARES_PRIVATE_H
+
 /* $Id$ */
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
@@ -33,15 +36,19 @@
 #define writev(s,v,c)     writev_s(s,v,c)
 #endif
 
-#define DEFAULT_TIMEOUT	 5
-#define DEFAULT_TRIES	   4
+#ifdef NETWARE
+#include <time.h>
+#endif
+
+#define DEFAULT_TIMEOUT         5
+#define DEFAULT_TRIES           4
 #ifndef INADDR_NONE
 #define INADDR_NONE 0xffffffff
 #endif
 
 #if defined(WIN32) && !defined(WATT32)
 
-#define IsNT ((int)GetVersion()>0)
+#define IS_NT()        ((int)GetVersion() > 0)
 #define WIN_NS_9X      "System\\CurrentControlSet\\Services\\VxD\\MSTCP"
 #define WIN_NS_NT_KEY  "System\\CurrentControlSet\\Services\\Tcpip\\Parameters"
 #define NAMESERVER     "NameServer"
@@ -56,18 +63,24 @@
 #elif defined(NETWARE)
 
 #define PATH_RESOLV_CONF "sys:/etc/resolv.cfg"
-#define PATH_HOSTS	      "sys:/etc/hosts"
+#define PATH_HOSTS              "sys:/etc/hosts"
+
+#elif defined(__riscos__)
+
+#define PATH_HOSTS             "InetDBase:Hosts"
 
 #else
 
-#define PATH_RESOLV_CONF	"/etc/resolv.conf"
+#define PATH_RESOLV_CONF        "/etc/resolv.conf"
 #ifdef ETC_INET
-#define PATH_HOSTS	      "/etc/inet/hosts"
+#define PATH_HOSTS              "/etc/inet/hosts"
 #else
-#define PATH_HOSTS	      "/etc/hosts"
+#define PATH_HOSTS              "/etc/hosts"
 #endif
 
 #endif
+
+#include "ares_ipv6.h"
 
 struct send_request {
   /* Remaining data to send */
@@ -113,7 +126,7 @@ struct query {
   void *arg;
 
   /* Query status */
-  int atry;
+  int try;
   int server;
   int *skip_server;
   int using_tcp;
@@ -124,9 +137,23 @@ struct query {
 };
 
 /* An IP address pattern; matches an IP address X if X & mask == addr */
+#define PATTERN_MASK 0x1
+#define PATTERN_CIDR 0x2
+
+union ares_addr {
+  struct in_addr addr4;
+  struct in6_addr addr6;
+};
+
 struct apattern {
-  struct in_addr addr;
-  struct in_addr mask;
+  union ares_addr addr;
+  union
+  {
+    union ares_addr addr;
+    unsigned short bits;
+  } mask;
+  int family;
+  unsigned short type;
 };
 
 struct ares_channeldata {
@@ -152,12 +179,21 @@ struct ares_channeldata {
 
   /* Active queries */
   struct query *queries;
+
+  ares_sock_state_cb sock_state_cb;
+  void *sock_state_cb_data;
 };
 
 void ares__send_query(ares_channel channel, struct query *query, time_t now);
-void ares__close_sockets(struct server_state *server);
-int ares__get_hostent(FILE *fp, struct hostent **host);
+void ares__close_sockets(ares_channel channel, struct server_state *server);
+int ares__get_hostent(FILE *fp, int family, struct hostent **host);
 int ares__read_line(FILE *fp, char **buf, int *bufsize);
+
+#define SOCK_STATE_CALLBACK(c, s, r, w)                                 \
+  do {                                                                  \
+    if ((c)->sock_state_cb)                                             \
+      (c)->sock_state_cb((c)->sock_state_cb_data, (s), (r), (w));       \
+  } while (0)
 
 #ifdef CURLDEBUG
 /* This is low-level hard-hacking memory leak tracking and similar. Using the
@@ -166,3 +202,6 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize);
    this anyway for convenience. */
 #include "../lib/memdebug.h"
 #endif
+
+#endif /* __ARES_PRIVATE_H */
+

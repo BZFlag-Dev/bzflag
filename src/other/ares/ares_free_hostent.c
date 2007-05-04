@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -27,7 +29,7 @@ void ares_free_hostent(struct hostent *host)
 {
   char **p;
 
-  free(host->h_name);
+  free((char *)(host->h_name));
   for (p = host->h_aliases; *p; p++)
     free(*p);
   free(host->h_aliases);

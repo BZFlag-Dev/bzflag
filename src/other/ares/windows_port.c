@@ -1,5 +1,7 @@
 #include "setup.h"
 
+/* $Id$ */
+
 /* only do the following on windows
  */
 #if (defined(WIN32) || defined(WATT32)) && !defined(MSDOS)
@@ -18,6 +20,20 @@
 #include "ares.h"
 #include "ares_private.h"
 
+#ifdef __WATCOMC__
+/*
+ * Watcom needs a DllMain() in order to initialise the clib startup code.
+ */
+BOOL
+WINAPI DllMain (HINSTANCE hnd, DWORD reason, LPVOID reserved)
+{
+  (void) hnd;
+  (void) reason;
+  (void) reserved;
+  return (TRUE);
+}
+#endif
+
 #ifndef __MINGW32__
 int
 ares_strncasecmp(const char *a, const char *b, int n)
@@ -25,9 +41,9 @@ ares_strncasecmp(const char *a, const char *b, int n)
     int i;
 
     for (i = 0; i < n; i++) {
-	int c1 = isupper(a[i]) ? tolower(a[i]) : a[i];
-	int c2 = isupper(b[i]) ? tolower(b[i]) : b[i];
-	if (c1 != c2) return c1-c2;
+        int c1 = ISUPPER(a[i]) ? tolower(a[i]) : a[i];
+        int c2 = ISUPPER(b[i]) ? tolower(b[i]) : b[i];
+        if (c1 != c2) return c1-c2;
     }
     return 0;
 }
@@ -35,33 +51,38 @@ ares_strncasecmp(const char *a, const char *b, int n)
 int
 ares_strcasecmp(const char *a, const char *b)
 {
-    return strncasecmp(a, b, (int)strlen(a)+1);
+    return strncasecmp(a, b, strlen(a)+1);
 }
+#endif
+
+/*
+ * Number of micro-seconds between the beginning of the Windows epoch
+ * (Jan. 1, 1601) and the Unix epoch (Jan. 1, 1970).
+ */
+#if defined(_MSC_VER) || defined(__WATCOMC__)
+#define EPOCH_FILETIME 11644473600000000Ui64
+#else
+#define EPOCH_FILETIME 11644473600000000ULL
 #endif
 
 int
 ares_gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    FILETIME	ft;
+    FILETIME        ft;
     LARGE_INTEGER   li;
-    __int64	 t;
-
-    tz = tz;
+    __int64         t;
 
     if (tv)
     {
-	GetSystemTimeAsFileTime(&ft);
-	li.LowPart  = ft.dwLowDateTime;
-	li.HighPart = ft.dwHighDateTime;
-	t  = li.QuadPart;       /* In 100-nanosecond intervals */
-#if 0
-	t -= EPOCHFILETIME;     /* Offset to the Epoch time */
-#endif
-	t /= 10;		/* In microseconds */
-	tv->tv_sec  = (long)(t / 1000000);
-	tv->tv_usec = (long)(t % 1000000);
+        GetSystemTimeAsFileTime(&ft);
+        li.LowPart  = ft.dwLowDateTime;
+        li.HighPart = ft.dwHighDateTime;
+        t  = li.QuadPart / 10;   /* In micro-second intervals */
+        t -= EPOCH_FILETIME;     /* Offset to the Epoch time */
+        tv->tv_sec  = (long)(t / 1000000);
+        tv->tv_usec = (long)(t % 1000000);
     }
-
+    (void) tz;
     return 0;
 }
 
@@ -84,7 +105,7 @@ ares_writev (ares_socket_t s, const struct iovec *vector, size_t count)
   buffer = bp = (char*) alloca (bytes);
   if (!buffer)
   {
-    errno = ENOMEM;
+    SET_ERRNO(ENOMEM);
     return (-1);
   }
 
@@ -95,6 +116,6 @@ ares_writev (ares_socket_t s, const struct iovec *vector, size_t count)
     memcpy (bp, vector[i].iov_base, vector[i].iov_len);
     bp += vector[i].iov_len;
   }
-  return send (s, (const void*)buffer, (int)bytes, 0);
+  return (int)swrite(s, buffer, bytes);
 }
 #endif /* WIN32 builds only */

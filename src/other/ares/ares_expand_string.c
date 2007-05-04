@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -14,16 +16,12 @@
  */
 
 #include "setup.h"
-#include <sys/types.h>
 
 #if defined(WIN32) && !defined(WATT32)
 #include "nameser.h"
 #else
 #include <netinet/in.h>
 #include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
-#endif
 #endif
 
 #include <string.h>
@@ -37,10 +35,10 @@
  * terminated.
  */
 int ares_expand_string(const unsigned char *encoded,
-		       const unsigned char *abuf,
-		       int alen,
-		       unsigned char **s,
-		       long *enclen)
+                       const unsigned char *abuf,
+                       int alen,
+                       unsigned char **s,
+                       long *enclen)
 {
   unsigned char *q;
   long len;
@@ -53,7 +51,7 @@ int ares_expand_string(const unsigned char *encoded,
 
   encoded++;
 
-  *s = (unsigned char*)malloc(len+1);
+  *s = malloc(len+1);
   if (*s == NULL)
     return ARES_ENOMEM;
   q = *s;
@@ -66,3 +64,4 @@ int ares_expand_string(const unsigned char *encoded,
 
   return ARES_SUCCESS;
 }
+

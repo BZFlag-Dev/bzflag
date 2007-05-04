@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright (C) 2004 by Daniel Stenberg et al
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -37,7 +39,10 @@ void ares_cancel(ares_channel channel)
   channel->queries = NULL;
   if (!(channel->flags & ARES_FLAG_STAYOPEN))
   {
-    for (i = 0; i < channel->nservers; i++)
-      ares__close_sockets(&channel->servers[i]);
+    if (channel->servers)
+    {
+      for (i = 0; i < channel->nservers; i++)
+        ares__close_sockets(channel, &channel->servers[i]);
+    }
   }
 }

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
  * Permission to use, copy, modify, and distribute this
@@ -38,9 +40,12 @@ const char *ares_strerror(int code)
     "Error reading file",
     "Out of memory",
     "Channel is being destroyed",
-    "Misformatted string"
+    "Misformatted string",
+    "Illegal flags specified",
+    "Given hostname is not numeric",
+    "Illegal hints flags specified"
   };
 
-  assert(code >= 0 && code < (int)(sizeof(errtext) / sizeof(*errtext)));
+  DEBUGASSERT(code >= 0 && code < (int)(sizeof(errtext) / sizeof(*errtext)));
   return errtext[code];
 }
