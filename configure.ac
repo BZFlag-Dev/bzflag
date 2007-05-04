@@ -211,6 +211,13 @@ AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
+# quell the verbosity
+LIBTOOLFLAGS=--silent
+AC_SUBST(LIBTOOLFLAGS)
+if test "x$LIBTOOL" != "x" ; then
+    LIBTOOL="$LIBTOOL --silent"
+fi
+
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
   AC_MSG_WARN([some man pages will not be generated])
