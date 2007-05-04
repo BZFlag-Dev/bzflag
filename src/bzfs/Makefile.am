@@ -4,7 +4,11 @@
 
 bin_PROGRAMS = bzfs
 
-AM_CPPFLAGS = -I$(top_srcdir)/include -DINSIDE_BZ @CONF_CPPFLAGS@
+AM_CPPFLAGS = \
+	-DINSIDE_BZ \
+	-I$(top_srcdir)/include \
+	$(LIBCURL_CPPFLAGS) \
+	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if BUILD_PLUGINS
@@ -146,6 +150,7 @@ LDADD = \
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../common/libCommon.la		\
+	$(LIBCURL)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\

@@ -8,8 +8,14 @@
 
 bin_PROGRAMS = bzrobots
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	-I../bzflag \
+	$(SDL_CFLAGS) \
+	$(LIBCURL_CPPFLAGS) \
+	@X_CFLAGS@ \
+	@CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
@@ -255,9 +261,9 @@ LDADD =	\
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/include -I../bzflag $(SDL_CFLAGS) @CONF_CPPFLAGS@ @X_CFLAGS@
-AM_CXXFLAGS = @CONF_CXXFLAGS@
-
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \
 	-O coff
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

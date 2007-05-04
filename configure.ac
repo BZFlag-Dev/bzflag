@@ -39,7 +39,7 @@ dnl optional compilation components that are part of this package.
 dnl You specify with/without arguments for components that are not a
 dnl part of this package.
 dnl
-dnl TODO: This mess needs serious cleaning up.
+dnl TODO: This mess (still) needs serious cleaning up.
 dnl
 
 dnl Minimum version of autoconf required.  Should coincide with the
@@ -95,9 +95,9 @@ AC_SUBST(BZFLAG_DATE)
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
 AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
 if test $HASWHOAMI = yes; then
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
+    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 else
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
+    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
 fi
 
 # automatically enable and load our configure cache file if available
@@ -119,22 +119,22 @@ AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
 if test x$with_SDL != xno; then
-  with_SDL=yes
+    with_SDL=yes
 fi
 
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
-   AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
+    AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
 # check whether threads are desired
 AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
 if test x$enable_threads = xyes; then
-   AC_DEFINE(USE_THREADS, 1, [Use threads])
-   CONF_CPPFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
-   LDFLAGS="$LDFLAGS -lpthread"
+    AC_DEFINE(USE_THREADS, 1, [Use threads])
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
+    LDFLAGS="$LDFLAGS -lpthread"
 fi
 
 # do we want bzadmin?
@@ -146,17 +146,17 @@ AC_ARG_ENABLE(bzrobots, [  --enable-bzrobots       build bzrobots client])
 # build a binary set to stop functioning after some date
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
 if test x$enable_timebomb = xyes; then
-   AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
+    AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
 fi
 
 AC_ARG_ENABLE(robots, [  --disable-robots        disable robots])
 if test x$enable_robots != xno; then
-  AC_DEFINE(ROBOT, 1, [Enabling Robots])
+    AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
 AC_ARG_ENABLE(snapping, [  --disable-snapping      disable snapping])
 if test x$enable_snapping != xno; then
-  AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
+    AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
 fi
 
 # debugging and profiling
@@ -164,15 +164,38 @@ AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
 AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
 # profiling requires debugging
 if test x$enable_profiling = xyes; then
-  enable_debug=yes
+    enable_debug=yes
 fi
 if test x$enable_debug = xyes; then
-  AC_DEFINE(DEBUG, 1, [Debugging])
-  AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
+    AC_DEFINE(DEBUG, 1, [Debugging])
+    AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
 fi
 
 # do we want the bzflag  client?
-AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
+AC_ARG_ENABLE(client, [  --disable-client        server-only build])
+
+# compile our own ares
+AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
+
+# compile our own curl
+AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
+
+# compile our own regex
+AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
+
+# compile our own zlib
+AC_ARG_ENABLE(zlib_build, [  --enable-zlib-build     Force compilation of zlib])
+
+# compile everything bz provides
+AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all dependencies])
+
+# enable compilation of all bundled external dependencies
+if test "x$enable_all_builds" = "xyes" ; then
+    enable_ares_build=yes
+    enable_curl_build=yes
+    enable_regex_build=yes
+    enable_zlib_build=yes
+fi
 
 
 dnl **************************
@@ -183,7 +206,7 @@ BZ_CONFIGURE_STAGE([programs], [2 of 9])
 
 # cannot override LD directly, so warn (configure will override it)
 if test "x$LD" != "x" ; then
-	AC_MSG_WARN([LD cannot be set directly yet it seems to be set ($LD)])
+    AC_MSG_WARN([LD cannot be set directly yet it seems to be set ($LD)])
 fi
 
 #Checks for programs.
@@ -197,8 +220,8 @@ AC_SUBST(AR_FLAGS)
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE" ; then
-  CC="ccache $CC"
-  CXX="ccache $CXX"
+    CC="ccache $CC"
+    CXX="ccache $CXX"
 fi
 
 AC_CHECK_TOOL(WINDRES, windres, :)
@@ -220,18 +243,18 @@ fi
 
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
-  AC_MSG_WARN([some man pages will not be generated])
+    AC_MSG_WARN([some man pages will not be generated])
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 
 # Testing if kerberos 5 is in the system
 KRB5_CONFIG=no
 if test "x$with_kerberos" = "xyes" ; then
-  AC_PATH_PROG(KRB5_CONFIG, krb5-config, no)
-  if test "x$KRB5_CONFIG" != "xno" ; then
-    KRB5_CFLAGS=`$KRB5_CONFIG --cflags`
-    KRB5_LIBS=`$KRB5_CONFIG --libs`
-  fi
+    AC_PATH_PROG(KRB5_CONFIG, krb5-config, no)
+    if test "x$KRB5_CONFIG" != "xno" ; then
+	KRB5_CFLAGS=`$KRB5_CONFIG --cflags`
+	KRB5_LIBS=`$KRB5_CONFIG --libs`
+    fi
 fi
 AC_SUBST(KRB5_CFLAGS)
 AC_SUBST(KRB5_LIBS)
@@ -251,17 +274,23 @@ BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 # FIXME: move other library checks here
 
 dnl detect a usable system zlib compression library
-AC_CHECK_LIB(z, compress, LIBZ="-lz", LIBZ="")
+if test "x$enable_zlib_build" != "xyes" ; then
+    AC_CHECK_LIB(z, compress, LIBZ="-lz", LIBZ="")
+fi
 
 dnl detect a usable system c-ares lookup library
-AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", LIBCARES="")
+if test "x$enable_ares_build" != "xyes" ; then
+    AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", LIBCARES="")
+fi
 
 dnl detect a usable system regular expression library
-AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
-    [AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
-	[AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", LIBREGEX="")]
-    )]
-)
+if test "x$enable_regex_build" != "xyes" ; then
+    AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
+	[AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
+	    [AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", LIBREGEX="")]
+	)]
+    )
+fi
 
 # Check for the math lib
 AC_CHECK_LIB(m, sqrtf)
@@ -304,10 +333,10 @@ AC_CHECK_HEADERS( \
 	cstring \
 )
 if test "x$with_kerberos" = "xyes" ; then
-  AC_CHECK_HEADERS(\
+    AC_CHECK_HEADERS(\
 	krb5.h\
 	Kerberos/Kerberos.h \
-  )
+    )
 fi
 AC_LANG(C)
 AC_CHECK_HEADERS( \
@@ -326,12 +355,11 @@ AC_CHECK_HEADERS( \
 	values.h \
 	dsound.h \
 )
-# nameser_compat.h used by src/c-ares
+# nameser_compat.h used by src/other/ares
 
-found_regex_h=no
-AC_CHECK_HEADER(regex.h,
-		AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file])
-		found_regex_h=yes )
+if test "x$enable_regex_build" != "xyes" ; then
+    AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
+fi
 
 
 dnl **********************************
@@ -383,83 +411,9 @@ else
 fi
 AC_MSG_RESULT([$ac_cv_type_socklen_t])
 
-# Check for working FF_RUMBLE support in linux/input.h
-AC_MSG_CHECKING([for linux rumble joystick support])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
-	[[struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;]])],
-	[ac_ff_effect_rumble=yes],[ac_ff_effect_rumble=no])
-if test x$ac_ff_effect_rumble = xyes; then
-    AC_DEFINE(HAVE_FF_EFFECT_RUMBLE, 1, [we appear to have working support for rumble force feedback effects])
-fi
-AC_MSG_RESULT([$ac_ff_effect_rumble])
-
-# Check for working directional FF support in linux/input.h
-AC_MSG_CHECKING([for linux force feedback joystick support])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
-	[[struct ff_effect x; x.direction = 0x4000; return 0;]])],
-	[ac_ff_effect_directional=yes],[ac_ff_effect_directional=no])
-if test x$ac_ff_effect_directional = xyes; then
-    AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
-fi
-AC_MSG_RESULT([$ac_ff_effect_directional])
-
-case $host_os in
-     linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*) linux=true;;
-     *) linux=false;;
-esac
-AM_CONDITIONAL(LINUX, $linux)
-AM_CONDITIONAL(HPUX, test x$host_os = xhpux)
-AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
-AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
-AM_CONDITIONAL(PPC,   test x$host_vendor = xppc)
-
-case $host_os in
-       solaris*) solaris=true;;
-       *) solaris=false;;
-     esac
-AM_CONDITIONAL(SOLARIS, $solaris)
-# Write code to detect platform specialization
-sun_wspro=false
-sun_cc=false
-sun_gcc=false
-
-case $host_os in
-     irix*) irix=true;;
-     *) irix=false;;
-esac
-AM_CONDITIONAL(IRIX, $irix)
-
-dnl On SGI systems, figure out if we are using MIPSPro compiler
-using_mipspro=no
-if test "$build_vendor" = "sgi" ; then
-   AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
-	[[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
-this line should cause a compile failure when building with the MIPSpro compiler;
-#endif
-int main() { return 0; }
-    ]])],[using_mipspro=no],[using_mipspro=yes])
-    AC_MSG_RESULT([$using_mipspro])
-fi
-
-AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
-
-case $host_os in
-     cygwin|mingw32*|windows**) win32=true;;
-     *) win32=false;;
-esac
-AM_CONDITIONAL(WIN32, $win32)
-
-case $host_os in
-   macos|darwin*) macos=true;;
-   *) macos=false;;
-esac
-
-AM_CONDITIONAL(MACOS, $macos)
-
 #CONFIG is only used for irix packaging
 case $host_os in
-   irix*)
+    irix*)
 	CONFIG=irix-mips3;
 	AC_SUBST(CONFIG)
 	;;
@@ -470,43 +424,43 @@ CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 
 case $host_os in
-  solaris*)
-    GLIBS="-lresolv -laudio $GLIBS"
-    LIBS="$LIBS -lsocket -lnsl -lresolv"
-    LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
-    ;;
-  irix*)
-    GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
-    ;;
-  beos)
-    GLIBS=" -lmedia -lgame $GLIBS"
-    LIBS="-lbe"
-    ;;
-  macos|darwin*)
-    ;;
-  *)
-    ;;
-esac;
+    solaris*)
+	GLIBS="-lresolv -laudio $GLIBS"
+	LIBS="$LIBS -lsocket -lnsl -lresolv"
+	LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
+	;;
+    irix*)
+	GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
+	;;
+    beos)
+	GLIBS=" -lmedia -lgame $GLIBS"
+	LIBS="-lbe"
+	;;
+    macos|darwin*)
+	;;
+    *)
+	;;
+esac
 
 
 # avoid using X11 in BeOS and Mac OS X
 case $host_os in
-  macos|darwin*)
-    ;;
-  beos*)
-    ;;
-  *)
-    if test x$no_x = x; then
-      GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
-    fi
+    macos|darwin*)
+	;;
+    beos*)
+	;;
+    *)
+	if test x$no_x = x; then
+	    GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
+	fi
 
-    AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
+	AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
-    if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
-      AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
-      AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
-    fi
-    ;;
+	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
+	    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
+	    AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
+	fi
+	;;
 esac
 
 AC_LANG(C++)
@@ -520,32 +474,32 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
 				[[glBegin(GL_POINTS)]])],
 	       [ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
-  LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
-				  [[glBegin(GL_POINTS)]])],
-		 [ac_cv_search_glBegin="-l$ac_lib"
-		  break],[])
+    LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
+				    [[glBegin(GL_POINTS)]])],
+		   [ac_cv_search_glBegin="-l$ac_lib"
+		    break],[])
 done
 if test "$ac_cv_search_glBegin" != no; then
-  GLIBS="$ac_cv_search_glBegin $GLIBS"
-  if test "$ac_cv_search_glBegin" = -lGL2; then
-    AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
-  fi
+    GLIBS="$ac_cv_search_glBegin $GLIBS"
+    if test "$ac_cv_search_glBegin" = -lGL2; then
+	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
+    fi
 
-  LIBS="-framework OpenGL $ac_func_search_save_LIBS"
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
-			[[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
-		 [ac_cv_search_gluScaleImage="-framework OpenGL"],[])
-  for ac_lib in glu32 GL GLU; do
-    LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glu.h>]],
-			[[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
-		   [ac_cv_search_gluScaleImage="-l$ac_lib"
-		    break],[])
-  done
-  if test "$ac_cv_search_gluScaleImage" != no; then
-    GLIBS="$ac_cv_search_gluScaleImage $GLIBS"
-  fi
+    LIBS="-framework OpenGL $ac_func_search_save_LIBS"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
+		   [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
+		    [ac_cv_search_gluScaleImage="-framework OpenGL"],[])
+    for ac_lib in glu32 GL GLU; do
+	LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glu.h>]],
+		       [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
+		        [ac_cv_search_gluScaleImage="-l$ac_lib"
+		         break],[])
+    done
+    if test "$ac_cv_search_gluScaleImage" != no; then
+	GLIBS="$ac_cv_search_gluScaleImage $GLIBS"
+    fi
 fi
 
 LIBS=$ac_func_search_save_LIBS
@@ -560,33 +514,31 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
 				[[glewInit()]])],
 	       [glew_check="yes"], [glew_check="no"])
 if test $glew_check = "yes"; then
-  AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
+    AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
 else
-  GLEW_LIBS=""
+    GLEW_LIBS=""
 fi
 AC_MSG_RESULT([$glew_check])
 AC_SUBST(GLEW_LIBS)
 LIBS=$tmpLIBS
 
 case $host_os in
-  mingw32*)
+    mingw32*)
+	AC_CHECK_LIB(ws2_32, closesocket)
+	AC_CHECK_LIB(winmm, timeGetTime)
 
-  AC_CHECK_LIB(ws2_32, closesocket)
-  AC_CHECK_LIB(winmm, timeGetTime)
-
-  GLIBS="-mwindows -lgdi32 -ldxguid -ldsound -ldinput $GLIBS"
-  # MingW does some funny stuff with DirectX.
-  # Test for a working DirectInput.
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-  #define DIRECTINPUT_VERSION 0x0700
-  #include <dinput.h>
-  ]], [[
-  IDirectInput7* directInput;
-  HINSTANCE hinst = GetModuleHandle(NULL);
-  HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION,
-		    IID_IDirectInput7, (void**)&directInput, NULL);
-  ]])],[],[AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
-  ;;
+	GLIBS="-mwindows -lgdi32 -ldxguid -ldsound -ldinput $GLIBS"
+	dnl MingW does some funny stuff with DirectX.
+	dnl Test for a working DirectInput.
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#define DIRECTINPUT_VERSION 0x0700
+#include <dinput.h>
+    ]], [[
+IDirectInput7* directInput;
+HINSTANCE hinst = GetModuleHandle(NULL);
+HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION, IID_IDirectInput7, (void**)&directInput, NULL);
+]])],[],[AC_DEFINE(BROKEN_DINPUT, 1, [Define to 1 if your DirectInput headers and libraries are broken or mismatched.])])
+	;;
 esac
 
 # Remove ogg/vorbis dependencies until we actually need them.
@@ -597,7 +549,7 @@ esac
 # AC_SUBST(ALIBS)
 
 if test $prefix = NONE; then
-	prefix=$ac_default_prefix
+    prefix=$ac_default_prefix
 fi
 BZFLAG_DATA=`eval echo $datadir/bzflag`
 AC_SUBST(BZFLAG_DATA)
@@ -608,29 +560,29 @@ LIBS="$GLIBS $LIBS"
 AC_LANG(C)
 if test x$with_SDL = xyes; then
 
-  AC_MSG_CHECKING([for SDL framework])
-  savedLDFLAGS="$LDFLAGS"
-  LDFLAGS="$LDFLAGS -framework SDL"
-  framework_SDL_flag_works=yes
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_version.h>]], [[]])],
-		 [],[framework_SDL_flag_works=no ])
-  AC_MSG_RESULT([$framework_SDL_flag_works])
-  if test x$framework_SDL_flag_works = xno ; then
-    LDFLAGS="$savedLDFLAGS"
-    with_SDL=no
-  fi
-
-  if test x$with_SDL = xno ; then
-    AM_PATH_SDL(1.2.5, with_SDL=yes, with_SDL=no)
-    if test x$with_SDL = xno; then
-      AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
+    AC_MSG_CHECKING([for SDL framework])
+    savedLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -framework SDL"
+    framework_SDL_flag_works=yes
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_version.h>]], [[]])],
+	[],[framework_SDL_flag_works=no ])
+    AC_MSG_RESULT([$framework_SDL_flag_works])
+    if test x$framework_SDL_flag_works = xno ; then
+	LDFLAGS="$savedLDFLAGS"
+	with_SDL=no
     fi
-  fi
+
+    if test x$with_SDL = xno ; then
+	AM_PATH_SDL(1.2.5, with_SDL=yes, with_SDL=no)
+	if test x$with_SDL = xno; then
+	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
+	fi
+    fi
 fi
 AC_LANG(C++)
 LIBS=$savedLIBS
 if test x$with_SDL = xyes; then
-  AC_DEFINE(HAVE_SDL, 1, [Using SDL])
+    AC_DEFINE(HAVE_SDL, 1, [Using SDL])
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 
@@ -643,9 +595,9 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
 				[[IMG_Load(NULL)]])],
 	       [sdl_image_check="yes"], [sdl_image_check="no"])
 if test $sdl_image_check = "yes"; then
-  AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
+    AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
 else
-  SDL_IMAGE_LIBS=""
+    SDL_IMAGE_LIBS=""
 fi
 AC_MSG_RESULT([$sdl_image_check])
 AC_SUBST(SDL_IMAGE_LIBS)
@@ -675,6 +627,20 @@ dnl *** Check for compiler characteristics ***
 dnl ******************************************
 
 BZ_CONFIGURE_STAGE([compiler], [6 of 9])
+
+dnl On SGI systems, figure out if we are using MIPSPro compiler
+using_mipspro=no
+if test "$build_vendor" = "sgi" ; then
+    AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
+		      [[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
+this line should cause a compile failure when building with the MIPSpro compiler;
+#endif
+int main() { return 0; }
+    ]])],[using_mipspro=no],[using_mipspro=yes])
+    AC_MSG_RESULT([$using_mipspro])
+fi
+AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
@@ -732,13 +698,6 @@ case $host_os in
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
-	if $sun_wspro; then
-	   FLAGS="-KPIC"
-	elif $sun_cc; then
-	   FLAGS="-fast"
-	elif $sun_gcc; then
-	   FLAGS="-fpermissive"
-	fi
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      macos|darwin*)
@@ -759,61 +718,69 @@ case $host_os in
 	;;
 esac
 
-if test x$enable_debug = xyes; then
-   CFLAGS="$CFLAGS -O0";
-   CXXFLAGS="$CXXFLAGS -O0";
-   case $host_os in
-     linux*|cygwin|mingw32*)
-	CONF_CFLAGS="$CONF_CFLAGS -Werror"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
-	if test x$enable_profiling = xyes; then
-	  CONF_CFLAGS="$CONF_CFLAGS -pg"
-	  CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
-	fi;;
-     macos|darwin*)
-	if test x$enable_profiling = xyes; then
-	  CONF_CFLAGS="$CONF_CFLAGS -pg"
-	  CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
-	fi;;
-     beos)
-	CONF_CFLAGS="$CONF_CFLAGS -Werror"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror";;
-    esac;
+if test x$enable_debug = xyes ; then
+    CFLAGS="$CFLAGS -O0"
+    CXXFLAGS="$CXXFLAGS -O0"
+    case $host_os in
+	linux*|cygwin|mingw32*)
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	    fi
+	    ;;
+	macos|darwin*)
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+		fi
+	    ;;
+        beos)
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror"
+	    ;;
+    esac
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	 linux*|cygwin|mingw32*)
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fno-exceptions";;
-	 solaris*)
-	   CONF_CFLAGS="$CONF_CFLAGS -O";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -O";;
-	 macos|darwin*)
-	   CONF_CFLAGS="$CONF_CFLAGS -O3";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -O3";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fomit-frame-pointer";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions";
-	   if test x$enable_profiling = xyes; then
-	     CONF_CFLAGS="$CONF_CFLAGS -pg";
-	     CONF_CXXFLAGS="$CONF_CXXFLAGS -pg";
-	   fi;;
-	 irix)
-	   if test x$host_cpu = xmips64; then
-	     FLAGS="-O3 -ffast-math -fomit-frame-pointer"
-	     FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
-	     CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	     CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
-	   else
-	     CONF_CFLAGS="$CONF_CFLAGS -O2";
-	     CONF_CXXFLAGS="$CONF_CXXFLAGS -O2";
-	   fi;;
-	 beos)
-	   CONF_CFLAGS="$CONF_CFLAGS -O2";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -ffast-math -fomit-frame-pointer";
-	   CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions";;
-     esac;
-     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
-fi;
+	linux*|cygwin|mingw32*)
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fno-exceptions"
+	    ;;
+	solaris*)
+	    CONF_CFLAGS="$CONF_CFLAGS -O"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O"
+	    ;;
+	macos|darwin*)
+	    CONF_CFLAGS="$CONF_CFLAGS -O3"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O3"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	    fi
+	    ;;
+	irix)
+	    if test x$host_cpu = xmips64 ; then
+		FLAGS="-O3 -ffast-math -fomit-frame-pointer"
+		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
+		CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
+	    else
+		CONF_CFLAGS="$CONF_CFLAGS -O2"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -O2"
+	    fi
+	    ;;
+	beos)
+	    CONF_CFLAGS="$CONF_CFLAGS -O2"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
+	    ;;
+    esac
+    AC_DEFINE(NDEBUG, 1, [Debugging disabled])
+fi
 
 AC_SUBST(CONF_CPPFLAGS)
 AC_SUBST(CONF_CFLAGS)
@@ -829,7 +796,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],
 	       [search_paths_first_flag_works=no])
 AC_MSG_RESULT($search_paths_first_flag_works)
 if test "x$search_paths_first_flag_works" = "xno" ; then
-	LDFLAGS="$PRELDFLAGS"
+    LDFLAGS="$PRELDFLAGS"
 fi
 
 dnl ***************************
@@ -888,70 +855,121 @@ BZ_CONFIGURE_STAGE([services], [8 of 9])
 # FIXME: system service checks seem to be spread out everywhere above,
 # need to consolidate them to here.
 
-#checking for libcurl functionality
-LIBCURL_CHECK_CONFIG
-if test "x$libcurl_cv_lib_curl_usable" != "xyes" ; then
-  AC_MSG_ERROR([libcurl is required. You must install it. \
-See http://curl.haxx.se/])
-fi
-LIBS="$LIBS $LIBCURL"
-CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
+case $host_os in
+    beos*)
+	beos=true
+	;;
+    hpux*)
+	hpux=true
+	;;
+    irix*)
+	irix=true
+	;;
+    linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*)
+	linux=true
+	;;
+    macos|darwin*) 
+	macos=true
+	;;
+    solaris*)
+	solaris=true
+	;;
+    cygwin|mingw32*|windows**)
+	win32=true
+	;;
+esac
+AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
+AM_CONDITIONAL(BEOS, test x$beos = xtrue)
+AM_CONDITIONAL(IRIX, test x$irix = xtrue)
+AM_CONDITIONAL(LINUX, test x$linux = xtrue)
+AM_CONDITIONAL(MACOS, test x$macos = xtrue)
+AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)
+AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
 
+# wtf are these for?
+AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
+AM_CONDITIONAL(PPC,   test x$host_vendor = xppc)
+
+# Check for working FF_RUMBLE support in linux/input.h
+AC_MSG_CHECKING([for linux rumble joystick support])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
+	[[struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;]])],
+	[ac_ff_effect_rumble=yes],[ac_ff_effect_rumble=no])
+if test x$ac_ff_effect_rumble = xyes; then
+    AC_DEFINE(HAVE_FF_EFFECT_RUMBLE, 1, [we appear to have working support for rumble force feedback effects])
+fi
+AC_MSG_RESULT([$ac_ff_effect_rumble])
+
+# Check for working directional FF support in linux/input.h
+AC_MSG_CHECKING([for linux force feedback joystick support])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
+	[[struct ff_effect x; x.direction = 0x4000; return 0;]])],
+	[ac_ff_effect_directional=yes],[ac_ff_effect_directional=no])
+if test x$ac_ff_effect_directional = xyes; then
+    AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
+fi
+AC_MSG_RESULT([$ac_ff_effect_directional])
+
+# if kerberos was enabled, see if it works
 if test "x$with_kerberos" = "xyes" ; then
-  have_krb5=no
-  AC_MSG_CHECKING([for Kerberos functionality])
-  if test "x$KRB5_CONFIG" != "xno" ; then
-    have_krb5=yes
-  elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
-    have_krb5=yes
-  elif test "x$ac_cv_header_Kerberos_Kerberos_h" = "xyes" ; then
-    have_krb5=yes
-  fi
-  if test "x$have_krb5" = "xyes" ; then
-    AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
-    AC_MSG_RESULT([yes])
-  else
-    AC_MSG_RESULT([no])
-    AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
-  fi
+    have_krb5=no
+    AC_MSG_CHECKING([for Kerberos functionality])
+    if test "x$KRB5_CONFIG" != "xno" ; then
+	have_krb5=yes
+    elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
+	have_krb5=yes
+    elif test "x$ac_cv_header_Kerberos_Kerberos_h" = "xyes" ; then
+	have_krb5=yes
+    fi
+    if test "x$have_krb5" = "xyes" ; then
+	AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
+	AC_MSG_RESULT([yes])
+    else
+	AC_MSG_RESULT([no])
+	AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
+    fi
 fi
 AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
+
 # if the client was enabled, make sure we have GL
 if test x$enable_client != xno; then
-  have_gl=no
-  if test "$ac_cv_search_gluScaleImage" = no; then
-    AC_MSG_WARN(
-    [Client build has been requested, but OpenGL is not fully available
-     ... disabling client generation])
-    AM_CONDITIONAL(CLIENT_INCLUDED, false)
-    enable_client=no
-  else
-    AM_CONDITIONAL(CLIENT_INCLUDED, true)
-    have_gl=yes
-  fi
+    have_gl=no
+    if test "$ac_cv_search_gluScaleImage" = no; then
+	AC_MSG_WARN(
+	[Client build has been requested, but OpenGL is not fully available
+... disabling client generation])
+	AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	enable_client=no
+    else
+	AM_CONDITIONAL(CLIENT_INCLUDED, true)
+	have_gl=yes
+    fi
 else
-  AM_CONDITIONAL(CLIENT_INCLUDED, false)
+    AM_CONDITIONAL(CLIENT_INCLUDED, false)
 fi
+
 
 # stub it for now, enable the server
 AM_CONDITIONAL(SERVER_INCLUDED, true)
 
+
 # if the bzrobots was enabled, make sure we have GL
 if test x$enable_bzrobots == xyes; then
-  if test "$ac_cv_search_gluScaleImage" = no; then
-    AC_MSG_WARN(
-    [BZRobots build has been requested, but GL is not fully available (missing gl.h)
-     ... disabling bzrobots generation])
+    if test "$ac_cv_search_gluScaleImage" = no; then
+	AC_MSG_WARN(
+	[BZRobots build has been requested, but GL is not fully available (missing gl.h)
+... disabling bzrobots generation])
+	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
+	enable_bzrobots=no
+    else
+	AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
+    fi
+else
     AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
     enable_bzrobots=no
-  else
-    AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
-  fi
-else
-  AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
-  enable_bzrobots=no
 fi
+
 
 # if bzadmin was enabled, make sure we have curses.
 if test x$enable_bzadmin != xno; then
@@ -960,30 +978,33 @@ if test x$enable_bzadmin != xno; then
     fi
     AM_CONDITIONAL(BZADMIN_INCLUDED, true)
 else
-  AM_CONDITIONAL(BZADMIN_INCLUDED, false)
+    AM_CONDITIONAL(BZADMIN_INCLUDED, false)
 fi
 AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
+
 # assume ares works if we found it.
 dnl figure out whether we need to build the included ares library
 AC_MSG_CHECKING(whether to build the included ares lookup library)
-BUILD_CARES="no (using system)"
+BUILD_ARES="no (using system)"
 if test "x$LIBCARES" = "x" ; then
-    AC_DEFINE(BUILD_CARES, 1, [Build the included ares lookup library])
-    BUILD_CARES="yes"
+    AC_DEFINE(BUILD_ARES, 1, [Build the included ares lookup library])
+    BUILD_ARES="yes"
     LIBCARES='${top_builddir}/src/other/ares/libcares.la'
 fi
 AC_SUBST(LIBCARES)
-AC_MSG_RESULT($BUILD_CARES)
-AM_CONDITIONAL(BUILD_CARES, test "x$BUILD_CARES" = "xyes")
+AC_MSG_RESULT($BUILD_ARES)
+AM_CONDITIONAL(BUILD_ARES, test "x$BUILD_ARES" = "xyes")
+
 
 # see if we have regex functionality
-AC_MSG_CHECKING(for regular expression functionality)
 regex_works=no
-PRELDFLAGS="$LDFLAGS"
-LDFLAGS="$LDFLAGS $LIBREGEX"
-AC_TRY_RUN([
+if test "x$enable_regex_build" != "xyes" ; then
+    AC_MSG_CHECKING(for regular expression functionality)
+    PRELDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $LIBREGEX"
+    AC_TRY_RUN([
 #ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
@@ -994,9 +1015,10 @@ int main() {
     regexec(&re, "", 0, 0, 0);
     return 0;
 }
-], [regex_works=yes])
-LDFLAGS="$PRELDFLAGS"
-AC_MSG_RESULT($regex_works)
+    ], [regex_works=yes])
+    LDFLAGS="$PRELDFLAGS"
+    AC_MSG_RESULT($regex_works)
+fi  # enable_regex_build
 dnl
 dnl figure out whether we need to build the included regex library
 dnl
@@ -1010,6 +1032,7 @@ fi
 AC_SUBST(LIBREGEX)
 AC_MSG_RESULT($BUILD_REGEX)
 AM_CONDITIONAL(BUILD_REGEX, test "x$BUILD_REGEX" = "xyes")
+
 
 # assume zlib works if we found it.
 dnl figure out whether we need to build the included zlib
@@ -1025,6 +1048,22 @@ AC_MSG_RESULT($BUILD_ZLIB)
 AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
 
 
+dnl figure out whether we need to build the included curl library
+if test "x$enable_curl_build" != "xyes" ; then
+    LIBCURL_CHECK_CONFIG
+fi
+AC_MSG_CHECKING(whether to build the included curl library)
+BUILD_CURL="no (using system)"
+if test "x$LIBCURL" = "x" ; then
+    AC_DEFINE(BUILD_CURL, 1, [Build the included curl library])
+    BUILD_CURL="yes"
+    LIBCURL='${top_builddir}/src/other/curl/lib/libcurl.la'
+fi
+dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
+AC_MSG_RESULT($BUILD_CURL)
+AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
+
+
 dnl **************************************
 dnl *** Configure Makefiles and output ***
 dnl **************************************
@@ -1034,8 +1073,22 @@ BZ_CONFIGURE_STAGE([output], [9 of 9])
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
+# stash the current configuration args before adding additional ones
+# for subconfigure
+bz_configure_args="$ac_configure_args"
+
 if test x$enable_plugins != xno ; then
-	AC_CONFIG_SUBDIRS(plugins)
+    AC_CONFIG_SUBDIRS(plugins)
+fi
+if test "x$BUILD_ARES" = "xyes" ; then
+    AC_CONFIG_SUBDIRS(src/other/ares)
+    if test "x$BUILD_CURL" = "xyes" ; then
+	# for libcurl
+	ac_configure_args="$ac_configure_args --enable-ares"
+    fi
+fi
+if test "x$BUILD_CURL" = "xyes" ; then
+    AC_CONFIG_SUBDIRS(src/other/curl)
 fi
 
 AC_CONFIG_FILES([
@@ -1099,7 +1152,6 @@ AC_CONFIG_FILES([
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/other/Makefile
-	src/other/ares/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
@@ -1118,13 +1170,15 @@ AC_CONFIG_FILES([
 ])
 AC_OUTPUT
 
+# restore back after AC_OUTPUT for recheck
+ac_configure_args="$bz_configure_args"
 
-# AC_OUTPUT won't update the config.h.in template timestamp if the
-# file is unchanged.  forcibly update the timestamp so autoheader
-# doesn't try to invoke.
-if test ! "x`cat include/config.h.in`" = "x" ; then
-    touch include/config.h.in
-fi
+dnl # AC_OUTPUT won't update the config.h.in template timestamp if the
+dnl # file is unchanged.  forcibly update the timestamp so autoheader
+dnl # doesn't try to invoke.
+dnl if test ! "x`cat include/config.h.in`" = "x" ; then
+dnl     touch include/config.h.in
+dnl fi
 
 
 #################
@@ -1234,7 +1288,8 @@ AC_MSG_RESULT([CPPFLAGS = ${CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS  = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS     = ${LIBS}])
 AC_MSG_RESULT([])
-AC_MSG_RESULT([Build ares ....: $BUILD_CARES])
+AC_MSG_RESULT([Build ares ....: $BUILD_ARES])
+AC_MSG_RESULT([Build curl ....: $BUILD_CURL])
 AC_MSG_RESULT([Build regex ...: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ....: $BUILD_ZLIB])
 AC_MSG_RESULT([])
@@ -1246,3 +1301,12 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([---])
 AC_MSG_RESULT([$0 complete, type 'make' to being building])
 AC_MSG_RESULT([])
+
+# Local Variables:
+# tab-width: 8
+# mode: autoconf
+# sh-indentation: 4
+# sh-basic-offset: 4
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=4 tabstop=8

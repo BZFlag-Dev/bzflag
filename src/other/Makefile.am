@@ -4,10 +4,10 @@ else
 ZLIB_DIR =
 endif
 
-if BUILD_CARES
-CARES_DIR = ares
+if BUILD_ARES
+ARES_DIR = ares
 else
-CARES_DIR =
+ARES_DIR =
 endif
 
 if BUILD_REGEX
@@ -16,10 +16,23 @@ else
 REGEX_DIR =
 endif
 
+if BUILD_CURL
+CURL_DIR = curl
+else
+CURL_DIR =
+endif
+
 SUBDIRS = \
-	${CARES_DIR} \
+	${ARES_DIR} \
+	${CURL_DIR} \
 	${REGEX_DIR} \
 	${ZLIB_DIR}
+
+DIST_SUBDIRS = \
+	ares \
+	curl \
+	regex \
+	zlib
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

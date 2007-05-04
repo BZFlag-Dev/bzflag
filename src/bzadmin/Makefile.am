@@ -4,7 +4,12 @@
 
 bin_PROGRAMS = bzadmin
 
-AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include -I$(top_srcdir)/src/bzflag @CONF_CPPFLAGS@
+AM_CPPFLAGS = \
+	-DBUILDING_BZADMIN \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/bzflag \
+	$(LIBCURL_CPPFLAGS) \
+	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_CURSES
@@ -50,6 +55,7 @@ LDADD = \
 	../net/libNet.la	\
 	../common/libCommon.la	\
 	$(CURSES_LIB)		\
+	$(LIBCURL)		\
 	$(LIBREGEX)
 
 MAINTAINERCLEANFILES = \

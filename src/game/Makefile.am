@@ -3,7 +3,10 @@ noinst_LTLIBRARIES = libGame.la
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	$(LIBCURL_CPPFLAGS) \
+	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGame_la_LDFLAGS = -static

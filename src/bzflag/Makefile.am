@@ -4,7 +4,12 @@
 
 bin_PROGRAMS = bzflag
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@ @X_CFLAGS@
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	$(SDL_CFLAGS) \
+	$(LIBCURL_CPPFLAGS) \
+	@X_CFLAGS@ \
+	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_KRB5
@@ -239,6 +244,7 @@ LDADD =	\
 	../geometry/libGeometry.la	\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
+	$(LIBCURL)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
