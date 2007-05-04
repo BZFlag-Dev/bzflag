@@ -100,6 +100,9 @@ else
   AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
 fi
 
+# automatically enable and load our configure cache file if available
+BZ_CONFIG_CACHE([config.cache.${host_os}.${ac_hostname}])
+
 
 dnl ***********************
 dnl *** Check arguments ***
