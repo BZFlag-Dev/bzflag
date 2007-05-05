@@ -213,8 +213,8 @@ fi
 
 #Checks for programs.
 AC_PROG_MAKE_SET
-AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR)
