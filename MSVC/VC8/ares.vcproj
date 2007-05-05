@@ -855,6 +855,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_parse_aaaa_reply.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_parse_ptr_reply.c"
 				>
 			</File>
@@ -887,6 +891,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\bitncmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\inet_net_pton.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\windows_port.c"
 				>
 			</File>
@@ -910,6 +922,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_version.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\bitncmp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\inet_net_pton.h"
 				>
 			</File>
 			<File
