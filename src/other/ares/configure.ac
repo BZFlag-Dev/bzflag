@@ -48,9 +48,8 @@ AC_HELP_STRING([--disable-debug],[Disable debug options]),
 
     dnl the entire --enable-debug is a hack that lives and runs on top of
     dnl libcurl stuff so this BUILDING_LIBCURL is not THAT much uglier
-    AC_DEFINE(BUILDING_LIBCURL, 1, [when building as static part of libcurl])
+    AC_DEFINE(BUILDING_LIBCURL, 0, [when building as static part of libcurl])
 
-    CPPFLAGS="$CPPFLAGS -DCURLDEBUG -I$srcdir/../include"
     CFLAGS="$CFLAGS -g" 
 
     dnl check for how to do large files, needed to get the curl_off_t check
