@@ -15,6 +15,7 @@ EXTRA_DIST =				\
 	checkam				\
 	checkToken.php			\
 	doxyfile			\
+	elapsed.sh			\
 	filter.txt			\
 	fountains.bzw			\
 	groups.conf			\

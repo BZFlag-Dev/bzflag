@@ -60,6 +60,7 @@ REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date
 CONF_DATE=`date -u +%Y%m%d`
 BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
+CONF_TIME="`date '+%H %M %S'`"
 
 # print out the title with a pretty box computed to wrap around
 title="Configuring BZFlag $BZFLAG_VERSION, Build $CONF_DATE"
@@ -1267,6 +1268,14 @@ sysconfdir=`eval "echo $sysconfdir"`
 mandir=`eval "echo $mandir"`
 mandir=`eval "echo $mandir"`
 
+dnl
+dnl Compute configuration time elapsed
+dnl
+if test -x "${srcdir}/misc/elapsed.sh" ; then
+	time_elapsed="`${srcdir}/misc/elapsed.sh $CONF_TIME`"
+else
+	time_elapsed="unknown"
+fi
 
 dnl use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 AC_MSG_RESULT([Done.])
@@ -1298,6 +1307,9 @@ AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
 AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
 AC_MSG_RESULT([BZRobots client ...: $build_bzrobots])
 AC_MSG_RESULT([])
+if test "x$time_elapsed" != "xunknown" ; then
+AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])
+fi
 AC_MSG_RESULT([---])
 AC_MSG_RESULT([$0 complete, type 'make' to being building])
 AC_MSG_RESULT([])
