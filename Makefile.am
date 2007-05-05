@@ -4,9 +4,9 @@ AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
 ACLOCAL_AMFLAGS = -I m4
 
 traversal_dirs = \
+	include \
 	data \
 	doc \
-	include \
 	man \
 	package \
 	src
@@ -89,3 +89,20 @@ debian-release: debian/changelog dist
 	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
 	cp debian/changelog $(distdir)/debian/
 	(cd $(distdir) && debian/buildsnap release)
+
+
+# Print out an informative summary.
+all-local:
+	@$(ECHO) "Done."
+	@$(ECHO)
+	@$(ECHO) "BZFlag @BZFLAG_VERSION@, Build @BZFLAG_DATE@"
+	@$(ECHO)
+	@if test "x$(MAKECMDGOALS)" = "xall-am" -o "x$(.TARGETS)" = "xall-am" -o "x$(MAKECMDGOALS)" = "x" -o "x$(.TARGETS)" = "x" ; then \
+	  $(ECHO) $(ECHO_N) "Elapsed time since configuration: " ;\
+	  sh $(top_srcdir)/misc/elapsed.sh @CONF_TIME@ ;\
+	  $(ECHO) $(ECHO_N) "Elapsed compilation time: " ;\
+	  sh $(top_srcdir)/misc/elapsed.sh `cat $(top_srcdir)/include/datestamp` ;\
+	  $(ECHO) "---" ;\
+	  $(ECHO) "Run 'make install' to begin installation into $(prefix)" ;\
+	fi
+	@$(ECHO)

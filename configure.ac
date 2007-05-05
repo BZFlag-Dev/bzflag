@@ -91,6 +91,7 @@ AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
 AC_SUBST(BZFLAG_VERSION)
 AC_SUBST(BZFLAG_DATE)
+AC_SUBST(CONF_TIME)
 
 # Let the C++ code know about OS and user
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
@@ -1064,6 +1065,14 @@ dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
 AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 
+# make sure ECHO and ECHO_N got defined and substituted
+if test "x$ECHO" = "x" ; then
+    ECHO=echo
+    AC_MSG_NOTICE([ECHO was not defined by configure so defining manually])
+fi
+AC_SUBST(ECHO)
+AC_SUBST(ECHO_N)
+
 
 dnl **************************************
 dnl *** Configure Makefiles and output ***
@@ -1311,7 +1320,7 @@ if test "x$time_elapsed" != "xunknown" ; then
 AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])
 fi
 AC_MSG_RESULT([---])
-AC_MSG_RESULT([$0 complete, type 'make' to being building])
+AC_MSG_RESULT([$0 complete, type 'make' to begin building])
 AC_MSG_RESULT([])
 
 # Local Variables:

@@ -1,3 +1,5 @@
+all-local:
+	@date > datestamp
 
 noinst_HEADERS =			\
 	AccessList.h			\
@@ -157,6 +159,7 @@ noinst_HEADERS =			\
 	version.h			\
 	win32.h
 
+CLEANFILES = datestamp
 
 MAINTAINERCLEANFILES =	\
 	config.h.in	\
