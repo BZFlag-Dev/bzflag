@@ -1632,13 +1632,12 @@ bool		LocalPlayer::checkCollision(const Player* otherTank)
   const float *myPosition = getPosition();
   const float *otherPosition = otherTank->getPosition();
 
-  float dx = otherPosition[0] - myPosition[0];
-  float dy = otherPosition[1] - myPosition[1];
+  const float dx = otherPosition[0] - myPosition[0];
+  const float dy = otherPosition[1] - myPosition[1];
 
-  float dist = sqrt(dx * dx + dy * dy);
-  float radius = BZDBCache::freezeTagRadius;
+  const float r = BZDBCache::freezeTagRadius;
 
-  if (dist < radius) {
+  if ((dx * dx + dy * dy) < (r * r)) {
     server->sendCollide(getId(), otherTank->getId(), myPosition);
     lastCollisionTime = current;
     return true;

@@ -3820,6 +3820,29 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   return (reason == GotShot && flag == Flags::Shield && shotId != -1);
 }
 
+static bool		canSquishMe(int id)
+{
+  // I must be playing
+  if (!myTank || myTank->getTeam == ObserverTeam || !myTank->isAlive() || myTank->isPaused())
+    return false;
+
+  // he must be playing
+  if (!player[id] || !player[id]->isAlive() || player[id]->isPaused() || player[id]->isNotResponding() )
+    return false;
+
+  // no squishy action if either of us is zoned
+  if (myTank->isPhantomZoned() || player[id]->isPhantomZoned)
+    return false;
+
+  // otherwise, he can always squish me if he has steamroller
+  if (player[id]->getFlag() == Flags::Steamroller)
+    return true;
+
+  // or he can squish me if I'm burrowed and he's not
+  if ((myTank->getPosition()[2] < 0.0f) && (player[id]->getPosition()[2] >= 0.0f))
+    return true;
+}
+
 static void		checkEnvironment()
 {
 	if (!myTank || myTank->getTeam() == ObserverTeam)
@@ -3933,30 +3956,24 @@ static void		checkEnvironment()
 	// this is done on the server now, we should remove this when we are sure its ok.
 /*	else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
 		gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
-	else  // if not dead yet, see if i got run over by the steamroller
+	else  // if not dead yet, see if i got squished
 	{
-		const float* myPos = myTank->getPosition();
-		const float myRadius = myTank->getRadius();
-		for (i = 0; i < curMaxPlayers; i++)
-		{
-			if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((myPos[2] < 0.0f) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
-			{
-				const float* pos = player[i]->getPosition();
-				if (pos[2] < 0.0f)
-					continue;
+	  const float* myPos = myTank->getPosition();
+	  const float myRadius = myTank->getRadius();
+	  for (i = 0; i < curMaxPlayers; i++) {
+	    if (canSquishMe(i)) {
+	      const float* pos = player[i]->getPosition();
 
-				if (!myTank->isPhantomZoned())
-				{
-					const float radius = myRadius +
-					BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-					const float distSquared =
-					hypotf(hypotf(myPos[0] - pos[0],
-					myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-					if (distSquared < radius)
-						gotBlowedUp(myTank, GotRunOver, player[i]->getId());
-				}
-			}
-		}
+	      const float radius = myRadius
+		+ BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	      const float dx = myPos[0] - pos[0]
+	      const float dy = myPos[1] - pos[1]
+	      const float dz = (myPos[2] - pos[2]) * 2.0f;
+	      const float distSquared = dx*dx + dy*dy + dz*dz;
+	      if (distSquared < radius * radius)
+		gotBlowedUp(myTank, GotRunOver, player[i]->getId());
+	    }
+	  }
 	}
 }
 

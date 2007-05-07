@@ -45,7 +45,7 @@ class World {
 			~World();
 
     bool		allowTeamFlags() const;
-	bool		allowTeamKills() const;
+    bool		allowTeamKills() const;
     bool		allowSuperFlags() const;
     bool		allowJumping() const;
     bool		allShotsRicochet() const;
@@ -54,7 +54,7 @@ class World {
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
     bool		allowHandicap() const;
-	bool		allowTeams() const;
+    bool		allowTeams() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
     const BzMaterial*	getLinkMaterial() const;
@@ -149,8 +149,8 @@ class World {
 
   private:
     short		gameType;
-	short		gameOptions;
-	int			maxPlayers;
+    short		gameOptions;
+    int			maxPlayers;
     int			curMaxPlayers;
     int			maxShots;
     int			maxFlags;
