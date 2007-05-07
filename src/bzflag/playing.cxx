@@ -3823,7 +3823,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 static bool		canSquishMe(int id)
 {
   // I must be playing
-  if (!myTank || myTank->getTeam == ObserverTeam || !myTank->isAlive() || myTank->isPaused())
+  if (!myTank || myTank->getTeam() == ObserverTeam || !myTank->isAlive() || myTank->isPaused())
     return false;
 
   // he must be playing
@@ -3831,7 +3831,7 @@ static bool		canSquishMe(int id)
     return false;
 
   // no squishy action if either of us is zoned
-  if (myTank->isPhantomZoned() || player[id]->isPhantomZoned)
+  if (myTank->isPhantomZoned() || player[id]->isPhantomZoned())
     return false;
 
   // otherwise, he can always squish me if he has steamroller
@@ -3966,8 +3966,8 @@ static void		checkEnvironment()
 
 	      const float radius = myRadius
 		+ BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	      const float dx = myPos[0] - pos[0]
-	      const float dy = myPos[1] - pos[1]
+	      const float dx = myPos[0] - pos[0];
+	      const float dy = myPos[1] - pos[1];
 	      const float dz = (myPos[2] - pos[2]) * 2.0f;
 	      const float distSquared = dx*dx + dy*dy + dz*dz;
 	      if (distSquared < radius * radius)
