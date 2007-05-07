@@ -3841,6 +3841,8 @@ static bool		canSquishMe(int id)
   // or he can squish me if I'm burrowed and he's not
   if ((myTank->getPosition()[2] < 0.0f) && (player[id]->getPosition()[2] >= 0.0f))
     return true;
+
+  return false;
 }
 
 static void		checkEnvironment()
