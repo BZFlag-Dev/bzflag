@@ -2667,10 +2667,6 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName)
   buf=nboPackUShort(bufStart, LocalCustomSound);
   buf=nboPackUShort(buf, (unsigned short)strlen(soundName));
   buf=nboPackString(buf, soundName, strlen(soundName));
-  if(playerID==BZ_ALLUSERS)
-    broadcastMessage(MsgCustomSound, (char*)buf-(char*)bufStart, bufStart);
-  else
-    directMessage(playerID, MsgCustomSound, (char*)buf-(char*)bufStart, bufStart);
 
   if(playerID==BZ_ALLUSERS)
   {
