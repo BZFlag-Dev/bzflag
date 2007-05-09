@@ -392,31 +392,17 @@ if [ "x$HELP" = "xyes" ] ; then
 fi
 
 
-#############################
-# look for a configure file #
-#############################
-if [ "x$CONFIGURE" = "x" ] ; then
-    CONFIGURE="`locate_configure_template`"
-    $VERBOSE_ECHO "Found a configure template: $CONFIGURE"
-else
-    $ECHO "Using CONFIGURE environment variable override: $CONFIGURE"
-fi
-
-
 #######################
 # set up signal traps #
 #######################
+untrap_abnormal ( ) {
+    for sig in 1 2 13 15; do
+	trap - $sig
+    done
+}
+
+# do this cleanup whenever we exit.
 trap '
-    # do this cleanup whenever we exit.
-
-    if test "$SIGNAL" != 0 ; then
-	$ECHO ""
-	$ECHO "Aborting $NAME_OF_AUTOGEN: caught signal $SIGNAL"
-
-	# clear out the signal
-        SIGNAL=0
-    fi
-
     # start from the root
     if test -d "$START_PATH" ; then
 	cd "$START_PATH"
@@ -426,9 +412,20 @@ trap '
     if test "x$PFC_INIT" = "x1" ; then
 	recursive_restore
     fi
+' 0
 
-    # clean up on abnormal exit
-    if test "x$SIGNAL" != "x0" ; then
+# trap SIGHUP (1), SIGINT (2), SIGPIPE (13), SIGTERM (15)
+for sig in 1 2 13 15; do
+    trap '
+	$ECHO ""
+	$ECHO "Aborting $NAME_OF_AUTOGEN: caught signal '$sig'"
+
+	# start from the root
+	if test -d "$START_PATH" ; then
+	    cd "$START_PATH"
+	fi
+
+	# clean up on abnormal exit
 	$VERBOSE_ECHO "rm -rf autom4te.cache"
 	rm -rf autom4te.cache
 
@@ -438,16 +435,37 @@ trap '
 
 	    $VERBOSE_ECHO "rm -f acinclude.m4.$$.backup"
 	    rm -f acinclude.m4.$$.backup
-	fi
-    fi
-' 0
+        fi
 
-# trap SIGHUP (1), SIGINT (2), SIGPIPE (13), SIGTERM (15)
-for sig in 1 2 13 15; do
-    trap 'SIGNAL='$sig'; { (exit 1); exit 1; }' $sig
+	{ (exit 1); exit 1; }
+' $sig
 done
-SIGNAL=0
 
+
+#############################
+# look for a configure file #
+#############################
+if [ "x$CONFIGURE" = "x" ] ; then
+    CONFIGURE="`locate_configure_template`"
+    if [ ! "x$CONFIGURE" = "x" ] ; then
+	$VERBOSE_ECHO "Found a configure template: $CONFIGURE"
+    fi
+else
+    $ECHO "Using CONFIGURE environment variable override: $CONFIGURE"
+fi
+if [ "x$CONFIGURE" = "x" ] ; then
+    if [ "x$VERSION_ONLY" = "xyes" ] ; then
+	CONFIGURE=/dev/null
+    else
+	$ECHO
+	$ECHO "A configure.ac or configure.in file could not be located implying"
+	$ECHO "that the GNU Build System is at least not used in this directory.  In"
+	$ECHO "any case, there is nothing to do here without one of those files."
+	$ECHO
+	$ECHO "ERROR: No configure.in or configure.ac file found."
+	exit 1
+    fi
+fi
 
 ####################
 # get project name #
@@ -827,6 +845,7 @@ restore_clobbered ( ) {
 		$VERBOSE_ECHO "cat COPYING.$$.protect_from_automake.backup > COPYING"
 		cat COPYING.$$.protect_from_automake.backup > COPYING
 	    fi # check contents
+	    $VERBOSE_ECHO "rm -f COPYING.$$.protect_from_automake.backup"
 	    rm -f COPYING.$$.protect_from_automake.backup
 	elif test -f COPYING.$$.protect_from_automake.backup ; then
 	    $VERBOSE_ECHO "mv COPYING.$$.protect_from_automake.backup COPYING"
@@ -846,6 +865,7 @@ restore_clobbered ( ) {
 		$VERBOSE_ECHO "cat INSTALL.$$.protect_from_automake.backup > INSTALL"
 		cat INSTALL.$$.protect_from_automake.backup > INSTALL
 	    fi # check contents
+	    $VERBOSE_ECHO "rm -f INSTALL.$$.protect_from_automake.backup"
 	    rm -f INSTALL.$$.protect_from_automake.backup
 	elif test -f INSTALL.$$.protect_from_automake.backup ; then
 	    $VERBOSE_ECHO "mv INSTALL.$$.protect_from_automake.backup INSTALL"
@@ -1060,7 +1080,7 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] ; then
 		export LIBTOOLIZE
 		RUN_RECURSIVE=no
 		export RUN_RECURSIVE
-		trap - 0
+		untrap_abnormal
 
 		$VERBOSE_ECHO sh $AUTOGEN_SH "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 		sh "$AUTOGEN_SH" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
@@ -1114,7 +1134,7 @@ libtool_failure ( ) {
 	    # don't keep doing this
 	    RUN_RECURSIVE=no
 	    export RUN_RECURSIVE
-	    trap - 0
+	    untrap_abnormal
 
 	    $ECHO
 	    $ECHO "Restarting the preparation steps with libtool macros in acinclude.m4"
@@ -1333,7 +1353,7 @@ EOF
 	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
 	found="`grep \"^$feature.*\" $CONFIGURE`"
 	if [ ! "x$found" = "x" ] ; then
-	    config_header=yes
+	    need_automake=yes
 	    break
 	fi
     done
