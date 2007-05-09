@@ -2528,10 +2528,17 @@ static void		sendMyTankList()
     const float *vel = bot->getVelocity();
     const float angvel = bot->getAngularVelocity();
 
+    float noisy_angle = gauss(angle, angnoise);
+    if (noisy_angle > M_PI) {
+      noisy_angle -= 2 * M_PI;
+    } else if (noisy_angle <= -M_PI) {
+      noisy_angle += 2 * M_PI;
+    }
+
     rcLink->respondf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
 	i, callsign, statstr, shots_avail, reloadtime, flagname,
 	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
-	gauss(angle, angnoise), gauss(vel[0], velnoise),
+	noisy_angle, gauss(vel[0], velnoise),
 	gauss(vel[1], velnoise), gauss(angvel, angnoise));
   }
 

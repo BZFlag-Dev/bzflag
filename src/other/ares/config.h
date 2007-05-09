@@ -26,13 +26,13 @@
 #define GETNAMEINFO_TYPE_ARG46 socklen_t
 
 /* Define to the type of arg 7 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG7 int
+#define GETNAMEINFO_TYPE_ARG7 unsigned int
 
 /* Specifies the number of arguments to getservbyport_r */
-/* #undef GETSERVBYPORT_R_ARGS */
+#define GETSERVBYPORT_R_ARGS 6
 
 /* Specifies the size of the buffer to pass to getservbyport_r */
-/* #undef GETSERVBYPORT_R_BUFSIZE */
+#define GETSERVBYPORT_R_BUFSIZE 4096
 
 /* Define to 1 if you have AF_INET6. */
 #define HAVE_AF_INET6 1
@@ -71,13 +71,13 @@
 #define HAVE_GETNAMEINFO 1
 
 /* Specifies whether getservbyport_r is present */
-/* #undef HAVE_GETSERVBYPORT_R */
+#define HAVE_GETSERVBYPORT_R 1
 
 /* Define to 1 if you have the `if_indextoname' function. */
 #define HAVE_IF_INDEXTONAME 1
 
 /* Define to 1 if you have the `inet_net_pton' function. */
-#define HAVE_INET_NET_PTON 1
+/* #undef HAVE_INET_NET_PTON */
 
 /* Define to 1 if inet_net_pton supports IPv6. */
 /* #undef HAVE_INET_NET_PTON_IPV6 */
@@ -104,7 +104,7 @@
 /* #undef HAVE_IOCTLSOCKET_CASE */
 
 /* Define to 1 if you have the `dl' library (-ldl). */
-/* #undef HAVE_LIBDL */
+#define HAVE_LIBDL 1
 
 /* Define to 1 if you have the `resolve' library (-lresolve). */
 /* #undef HAVE_LIBRESOLVE */
@@ -119,13 +119,13 @@
 #define HAVE_LONGLONG 1
 
 /* Define to 1 if you have the malloc.h header file. */
-/* #undef HAVE_MALLOC_H */
+#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the MSG_NOSIGNAL flag. */
-/* #undef HAVE_MSG_NOSIGNAL */
+#define HAVE_MSG_NOSIGNAL 1
 
 /* Define to 1 if you have the <netdb.h> header file. */
 #define HAVE_NETDB_H 1
@@ -233,7 +233,7 @@
 /* #undef NEED_MALLOC_H */
 
 /* cpu-machine-OS */
-#define OS "i386-apple-darwin8.9.1"
+#define OS "x86_64-unknown-linux-gnu"
 
 /* Name of package */
 #define PACKAGE "c-ares"
@@ -293,10 +293,10 @@
 /* #undef SIZEOF_CURL_OFF_T */
 
 /* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
+#define SIZEOF_LONG 8
 
 /* The size of a `size_t', as computed by sizeof. */
-#define SIZEOF_SIZE_T 4
+#define SIZEOF_SIZE_T 8
 
 /* The size of a `struct in6_addr', as computed by sizeof. */
 #define SIZEOF_STRUCT_IN6_ADDR 16
@@ -305,7 +305,7 @@
 #define SIZEOF_STRUCT_IN_ADDR 4
 
 /* The size of a `time_t', as computed by sizeof. */
-#define SIZEOF_TIME_T 4
+#define SIZEOF_TIME_T 8
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
