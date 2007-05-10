@@ -1103,7 +1103,6 @@ fi
 
 AC_CONFIG_FILES([
 	BZFlag.xcode/Makefile
-	Dev-C++/Makefile
 	Makefile
 	bzflag.info
 	bzflag.lsm
