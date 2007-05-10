@@ -23,7 +23,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(traversal_dirs) \
-	Dev-C++ \
 	MSVC \
 	debian \
 	m4 \
@@ -42,7 +41,6 @@ documentation_DATA = \
 	NEWS \
 	README \
 	README.BeOS \
-	README.DEVC++ \
 	README.HPUX \
 	README.IRIX \
 	README.Linux \
