@@ -2854,7 +2854,10 @@ public:
     doingStuff=false;
   }
 
-  virtual ~BZ_APIURLManager(){}
+  virtual ~BZ_APIURLManager()
+  {
+    flush();
+  }
 
   void addJob(const char *URL, bz_BaseURLHandler *handler, const char *_postData)
   {
