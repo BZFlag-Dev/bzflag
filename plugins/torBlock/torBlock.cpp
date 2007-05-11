@@ -159,6 +159,7 @@ public:
 		str[size] = 0;
 
 		page += str;
+		free(str);
 		if (!complete)
 			return;
 
