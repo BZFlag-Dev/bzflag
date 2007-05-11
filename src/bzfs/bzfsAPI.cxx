@@ -2886,7 +2886,7 @@ public:
       {
 	if(i==0)
 	{
-	removeHandle();
+	  removeHandle();
 	}
 	jobs.erase(jobs.begin()+i);
 	i=jobs.size()+1;
@@ -2914,6 +2914,9 @@ public:
       job.handler->done(job.url.c_str(), data, length, good);
     else if(job.handler)
       job.handler->error(job.url.c_str(), 1, "badness");
+
+    // free it
+    removeHandle();
 
     // do the next one if we must
     doJob();
