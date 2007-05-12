@@ -69,7 +69,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				gridCount(4.0f),
 				mountainsAvailable(false),
 				numMountainTextures(0),
-				mountainsGState(NULL),
 				cloudDriftU(0.0f),
 				cloudDriftV(0.0f)
 {
@@ -223,15 +222,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	minWidth = scaledHeight;
       }
       mountainsMinWidth = minWidth;
-
-      // prepare each texture
-      mountainsGState = new OpenGLGState[numMountainTextures];
-      for (i = 0; i < numMountainTextures; i++) {
-	char text[256];
-	sprintf (text, "mountain%d", i + 1);
-	gstate.setTexture (tm.getTextureID (text));
-	mountainsGState[i] = gstate.getState ();
-      }
     }
   }
 
@@ -253,7 +243,6 @@ BackgroundRenderer::~BackgroundRenderer()
   BZDB.removeCallback("_skyColor", bzdbCallback, this);
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
 					     (void*)this);
-  delete[] mountainsGState;
 }
 
 
@@ -1509,10 +1498,6 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
 void BackgroundRenderer::drawMountains(void)
 {
-  glColor3f(1.0f, 1.0f, 1.0f);
-  for (int i = 0; i < numMountainTextures; i++) {
-    mountainsGState[i].setState();
-  }
 }
 
 

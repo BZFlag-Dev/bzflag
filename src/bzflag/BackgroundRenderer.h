@@ -120,7 +120,6 @@ class BackgroundRenderer {
     bool		mountainsVisible;
     int			numMountainTextures;
     int			mountainsMinWidth;
-    OpenGLGState*	mountainsGState;
 
     // stuff for clouds
     GLfloat		cloudDriftU, cloudDriftV;
