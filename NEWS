@@ -6,6 +6,7 @@
 BZFlag 2.1.x
 ------------
 
+* Fixed framerate jitter-inducing bug on SMP systems - Sean Morrison
 * First map no longer ignored in Start Server menu - Ravu al Hemio
 * Check for talk permission for part/quit messages  - uso
 * Implemented Confine Mouse for Windows platforms - Daniel Remenak
