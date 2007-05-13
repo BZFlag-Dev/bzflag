@@ -52,13 +52,26 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
   if (lastTime.tv_sec != 0) {
+    double curr;
+    double last;
+    double diff;
     struct timeval now;
+
     gettimeofday(&now, NULL);
-    currentTime += double(now.tv_sec - lastTime.tv_sec) +
-      1.0e-6 * double(now.tv_usec - lastTime.tv_usec);
+
+    curr = double(now.tv_sec) + (1.0e-6 * double(now.tv_usec));
+    last = double(lastTime.tv_sec) + (1.0e-6 * double(lastTime.tv_usec));
+
+    if (curr <= last) {
+      // eh, how'd we go back in time?
+      diff = 0.0;
+    } else {
+      diff = curr - last;
+    }
+
+    currentTime += diff;
     lastTime = now;
-  }
-  else {
+  } else {
     gettimeofday(&lastTime, NULL);
   }
 #else /* !defined(_WIN32) */
@@ -91,7 +104,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   } else if (lastTime != 0) {
     unsigned long int now = (unsigned long int)timeGetTime();
     unsigned long int diff;
-    if (now <= lastTime) {
+    if (now < lastTime) {
       // eh, how'd we go back in time?
       diff = 0;
     } else {
