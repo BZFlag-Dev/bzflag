@@ -55,7 +55,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     struct timeval now;
     gettimeofday(&now, NULL);
     currentTime += double(now.tv_sec - lastTime.tv_sec) +
-		1.0e-6 * double(now.tv_usec - lastTime.tv_usec);
+      1.0e-6 * double(now.tv_usec - lastTime.tv_usec);
     lastTime = now;
   }
   else {
@@ -82,7 +82,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
 	if (qpcFrequency != oldqpcfreq)
 	  logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",
-		 (double)oldqpcfreq, (double)qpcFrequency);
+			  (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
 
@@ -170,8 +170,8 @@ const char *TimeKeeper::timestamp(void) // const
   ++now->tm_mon;
 
   strncpy (buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
-		     now->tm_year, now->tm_mon, now->tm_mday,
-		     now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
+				     now->tm_year, now->tm_mon, now->tm_mday,
+				     now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
   buffer[255] = '\0'; // safety
 
   return buffer;
@@ -190,25 +190,25 @@ TimeKeeper::shortTimeStamp(void) {
 
 void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
 {
-	time_t tnow = time(0);
-	struct tm *now = localtime(&tnow);
-	now->tm_year += 1900;
-	++now->tm_mon;
+  time_t tnow = time(0);
+  struct tm *now = localtime(&tnow);
+  now->tm_year += 1900;
+  ++now->tm_mon;
 
-	if ( year )
-		*year = now->tm_year;
-	if ( month )
-		*month = now->tm_mon;
-	if ( day )
-		*day = now->tm_mday;
-	if ( hour )
-		*hour = now->tm_hour;
-	if ( min )
-		*min = now->tm_min;
-	if ( sec )
-		*sec = now->tm_sec;
-	if ( dst )
-		*dst = now->tm_isdst != 0;
+  if ( year )
+    *year = now->tm_year;
+  if ( month )
+    *month = now->tm_mon;
+  if ( day )
+    *day = now->tm_mday;
+  if ( hour )
+    *hour = now->tm_hour;
+  if ( min )
+    *min = now->tm_min;
+  if ( sec )
+    *sec = now->tm_sec;
+  if ( dst )
+    *dst = now->tm_isdst != 0;
 }
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
