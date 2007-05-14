@@ -2123,6 +2123,7 @@ public:
 
 	virtual ~BZ_APIURLManager()
 	{
+		flush();
 	}
 
 	void addJob ( const char* URL, bz_URLHandler *handler, const char* _postData )
@@ -2182,6 +2183,9 @@ public:
 			job.handler->done(job.url.c_str(),data,length,good);
 		else if (job.handler)
 			job.handler->error(job.url.c_str(),1,"badness");
+
+		// free it
+		removeHandle();
 
 		// do the next one if we must
 		doJob();

@@ -59,6 +59,8 @@ class PhoenixEvents : public bz_EventHandler
 	    lastDeaded.erase(lastDeaded.find(data->playerID));
 	}
 	break;
+      default:
+        break;
     }
   }
 };

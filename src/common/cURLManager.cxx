@@ -85,6 +85,10 @@ cURLManager::~cURLManager()
   cURLMap.erase(easyHandle);
   curl_easy_cleanup(easyHandle);
   free(theData);
+
+  if (multiHandle)
+    curl_multi_cleanup(multiHandle);
+
 }
 
 void cURLManager::setup()

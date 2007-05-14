@@ -130,7 +130,7 @@ void resetTeamFlag (bzApiString flagSent)
 	for ( unsigned int i = 0; i < bz_getNumFlags(); i++ )
 	{
 		if (flagSent == bz_getName(i))
-			bool resetOK = bz_resetFlag (i);
+			bz_resetFlag (i);
 	}
 }
 
