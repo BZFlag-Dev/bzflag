@@ -178,38 +178,22 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   mountainsAvailable = false;
   {
     int mountainTexture = -1;
-    int width = 0;
     int height = 0;
     numMountainTextures = 0;
-    bool done = false;
-    while (!done) {
+    while (true) {
       char text[256];
       sprintf (text, "mountain%d", numMountainTextures + 1);
       mountainTexture = tm.getTextureID (text, false);
-      if (mountainTexture >= 0) {
-	const ImageInfo & info = tm.getInfo (mountainTexture);
-	height = info.y;
-	width += info.x;
-	numMountainTextures++;
-      }
-      else {
-	done = true;
-      }
+      if (mountainTexture < 0)
+	break;
+      const ImageInfo &info = tm.getInfo (mountainTexture);
+      height = info.y;
+      numMountainTextures++;
     }
 
     if (numMountainTextures > 0) {
       mountainsAvailable = true;
 
-      // prepare common gstate
-      gstate.reset ();
-      gstate.setShading ();
-      gstate.setBlending ();
-      gstate.setMaterial (defaultMaterial);
-      gstate.setAlphaFunc ();
-
-      if (numMountainTextures > 1) {
-	width -= 2 * numMountainTextures;
-      }
       // find power of two at least as large as height
       int scaledHeight = 1;
       while (scaledHeight < height) {
