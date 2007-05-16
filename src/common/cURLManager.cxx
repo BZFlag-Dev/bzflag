@@ -85,10 +85,6 @@ cURLManager::~cURLManager()
   cURLMap.erase(easyHandle);
   curl_easy_cleanup(easyHandle);
   free(theData);
-
-  if (multiHandle)
-    curl_multi_cleanup(multiHandle);
-
 }
 
 void cURLManager::setup()
@@ -98,7 +94,9 @@ void cURLManager::setup()
   logDebugMessage(1,"LIBCURL version:  %s\n", curl_version());
   if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
     logDebugMessage(1,"cURL Global init Error: %d\n", result);
-  multiHandle = curl_multi_init();
+  /* might need to call removeHandle() still if added */
+  if (!multiHandle)
+    multiHandle = curl_multi_init();
   if (!multiHandle)
     logDebugMessage(1,"Unexpected error creating multi handle from libcurl \n");
   inited = true;
