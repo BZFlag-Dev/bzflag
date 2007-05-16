@@ -98,6 +98,7 @@ void cURLManager::setup()
     logDebugMessage(1,"cURL Global init Error: %d\n", result);
   if (multiHandle)
     curl_multi_cleanup(multiHandle);
+  /* might need to call removeHandle() still if added */
   multiHandle = curl_multi_init();
   if (!multiHandle)
     logDebugMessage(1,"Unexpected error creating multi handle from libcurl \n");
