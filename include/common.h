@@ -19,11 +19,7 @@
 
 /* this should always be the very FIRST header */
 
-#ifdef _DEVCPP /* the Dev-C++ build is acting very stubborn; this is (hopefully) -temporary- */
-# include_next "config.h"
-#else
-# include "config.h"
-#endif
+#include "config.h"
 
 #ifdef _WIN32
 #  undef NOMINMAX

@@ -337,7 +337,6 @@ following files in the new 'bzflag' directory:
   COPYING	- the license for BZFlag
   ChangeLog	- source code changes since previous release
   DEVINFO       - information for developers
-  Dev-C++/	- Dev-C++ project files
   NEWS		- history of visible changes for each release
   PORTING	- a guide for porting BZFlag
   TODO		- incomplete list of things to do
