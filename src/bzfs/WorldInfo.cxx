@@ -69,6 +69,9 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
+  database = NULL;
+  databaseSize = 0;
+  uncompressedSize = 0;
   links.clear();
   OBSTACLEMGR.clear();
 	finished = false;
@@ -482,6 +485,17 @@ void WorldInfo::finishWorld()
 
 int WorldInfo::packDatabase()
 {
+  // deallocate any prior database
+  if (database) {
+    delete[] database;
+    databaseSize = 0;
+    uncompressedSize = 0;
+  }
+
+  // allocate the buffer
+  database = new char[databaseSize];
+  void *databasePtr = database;
+
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -500,12 +514,6 @@ int WorldInfo::packDatabase()
   if (waterLevel >= 0.0f) {
     databaseSize += sizeof(int32_t);
   }
-
-
-  // allocate the buffer
-  database = new char[databaseSize];
-  void *databasePtr = database;
-
 
   // pack dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
@@ -545,11 +553,13 @@ int WorldInfo::packDatabase()
   // compress the map database
   TimeKeeper startTime = TimeKeeper::getCurrent();
   uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
+
   char* gzDB = new char[gzDBlen];
-  int code = compress2 ((Bytef*)gzDB, &gzDBlen,
-			(Bytef*)database, databaseSize, 9);
+  int code = compress2 ((Bytef*)gzDB, &gzDBlen, (Bytef*)database, databaseSize, 9);
   if (code != Z_OK) {
     printf ("Could not create compressed world database: %i\n", code);
+    delete[] gzDB;
+    delete[] database;
     exit (1);
   }
   TimeKeeper endTime = TimeKeeper::getCurrent();
@@ -557,9 +567,8 @@ int WorldInfo::packDatabase()
   // switch to the compressed map database
   uncompressedSize = databaseSize;
   databaseSize = gzDBlen;
-  char *oldDB = database;
+  delete[] database;
   database = gzDB;
-  delete[] oldDB;
 
   logDebugMessage(1,"Map size: uncompressed = %i, compressed = %i\n",
 	   uncompressedSize, databaseSize);
