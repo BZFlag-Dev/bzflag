@@ -11,8 +11,6 @@ It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-like make file system;
 for details, see README.MINGW32 (for MinGW)or the main
 README (for Cygwin).
-There is a Dev-C++ project available as well. Please see
-the README.DEVC++ for more info.
 
 So, to build bzflag on Windows, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
@@ -34,7 +32,6 @@ If you wish to build bzAdmin you may also want to get PDCurses.
 
 The installer is the bzflag executable in the dist folder.
 
-The instructions for building with Dev-C++ are enclosed in README.DEVC++
 If you are using Visual C++ 2005 EXPRESS edition, you will need to install
 a number of extra things before you can build. BZFlag will not build with
 VC express editions "out of the box".
