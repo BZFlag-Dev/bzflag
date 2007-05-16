@@ -2865,10 +2865,11 @@ public:
       return ;
 
     trURLJob job;
-    job.url=URL;
-    job.handler=handler;
-    if(_postData)
-      job.postData=_postData;
+    job.url = URL;
+    job.handler = handler;
+    if(_postData) {
+      job.postData = _postData;
+    }
 
     jobs.push_back(job);
 
@@ -2879,26 +2880,30 @@ public:
   void removeJob(const char *URL)
   {
     if(!URL)
-      return ;
+      return;
 
-    std::string url=URL;
+    std::string url = URL;
 
-    for(unsigned int i=0; i < jobs.size(); i++)
-    {
-      if(jobs[i].url==url)
-      {
-	if(i==0)
-	{
+    for (unsigned int i=0; i < jobs.size(); i++) {
+      if (jobs[i].url == url) {
+	if (i == 0) {
 	  removeHandle();
 	}
-	jobs.erase(jobs.begin()+i);
-	i=jobs.size()+1;
+	jobs.erase(jobs.begin() + i);
+	i = jobs.size() + 1;
       }
     }
   }
 
   void flush(void)
   {
+    for(unsigned int i=0; i < jobs.size(); i++) {
+      /* fugly, but should clean up better */
+      removeJob(jobs[i].url.c_str());
+      /* who owns this handler? do we need to delete it?? */
+      delete jobs[i].handler;
+      jobs[i].handler = NULL;
+    }
     removeHandle();
     jobs.clear();
     doingStuff=false;
