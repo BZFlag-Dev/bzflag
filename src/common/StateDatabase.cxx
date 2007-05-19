@@ -883,8 +883,13 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
 	// unstack operators until a matching ( is found
-	while(operators.top().getOperator() != ExpressionToken::lparen) {
+	while((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
+	}
+	// handle expressions with mismatched right parens
+	if (operators.size() <= 0) {
+	  prefix.clear();
+	  return prefix;
 	}
 	// discard (
 	operators.pop();
