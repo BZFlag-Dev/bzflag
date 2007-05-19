@@ -914,6 +914,10 @@ float StateDatabase::evaluate(Expression e) const
 	evaluationStack.push(tok);
 	break;
       case ExpressionToken::oper:
+	if ((i->getOperator() == ExpressionToken::lparen) ||
+	    (i->getOperator() == ExpressionToken::rparen)) {
+	    break;  // should not have any parens here, skip them
+	}
 	if (evaluationStack.size() == 0) {
 	  // syntax error
 	}
