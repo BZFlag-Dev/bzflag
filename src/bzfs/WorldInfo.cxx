@@ -492,10 +492,6 @@ int WorldInfo::packDatabase()
     uncompressedSize = 0;
   }
 
-  // allocate the buffer
-  database = new char[databaseSize];
-  void *databasePtr = database;
-
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -514,6 +510,10 @@ int WorldInfo::packDatabase()
   if (waterLevel >= 0.0f) {
     databaseSize += sizeof(int32_t);
   }
+
+  // allocate the buffer
+  database = new char[databaseSize];
+  void *databasePtr = database;
 
   // pack dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
