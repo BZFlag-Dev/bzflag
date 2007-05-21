@@ -12,13 +12,6 @@ AM_CPPFLAGS = \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
-if HAVE_KRB5
-KRB5 =	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
-endif
-
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\

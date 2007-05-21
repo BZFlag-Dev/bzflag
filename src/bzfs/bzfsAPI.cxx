@@ -2974,9 +2974,14 @@ BZF_API bool bz_removeURLJob(const char *URL)
     return false;
 
   if(!bz_apiURLManager)
-    bz_apiURLManager=new BZ_APIURLManager;
+    return true;
 
   bz_apiURLManager->removeJob(URL);
+  if (bz_apiURLManager->jobCount() == 0)
+  {
+    delete bz_apiURLManager;
+    bz_apiURLManager = NULL;
+  }
   return true;
 }
 
@@ -2985,9 +2990,11 @@ BZF_API bool bz_removeURLJob(const char *URL)
 BZF_API bool bz_stopAllURLJobs(void)
 {
   if(!bz_apiURLManager)
-    bz_apiURLManager=new BZ_APIURLManager;
+    return true;
 
-  bz_apiURLManager->flush();
+  // flush is done automatically during d'tor
+  delete bz_apiURLManager;
+  bz_apiURLManager = NULL;
   return true;
 }
 

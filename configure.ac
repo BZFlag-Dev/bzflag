@@ -115,9 +115,6 @@ BZ_CONFIGURE_STAGE([arguments], [1 of 9])
 # provide a with-curses option, test for curses
 MP_WITH_CURSES
 
-# check for kerberos option
-AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
-
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
 if test x$with_SDL != xno; then
@@ -249,19 +246,6 @@ if test $HASPOD2MAN = no; then
 fi
 AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 
-# Testing if kerberos 5 is in the system
-KRB5_CONFIG=no
-if test "x$with_kerberos" = "xyes" ; then
-    AC_PATH_PROG(KRB5_CONFIG, krb5-config, no)
-    if test "x$KRB5_CONFIG" != "xno" ; then
-	KRB5_CFLAGS=`$KRB5_CONFIG --cflags`
-	KRB5_LIBS=`$KRB5_CONFIG --libs`
-    fi
-fi
-AC_SUBST(KRB5_CFLAGS)
-AC_SUBST(KRB5_LIBS)
-
-
 # Just for kicks
 AC_MSG_CHECKING([for artificial intelligence for bz's robots])
 AC_MSG_RESULT([not found])
@@ -334,12 +318,6 @@ AC_CHECK_HEADERS( \
 	cstdio \
 	cstring \
 )
-if test "x$with_kerberos" = "xyes" ; then
-    AC_CHECK_HEADERS(\
-	krb5.h\
-	Kerberos/Kerberos.h \
-    )
-fi
 AC_LANG(C)
 AC_CHECK_HEADERS( \
 	GL/glx.h \
@@ -911,28 +889,6 @@ if test x$ac_ff_effect_directional = xyes; then
     AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
 fi
 AC_MSG_RESULT([$ac_ff_effect_directional])
-
-# if kerberos was enabled, see if it works
-if test "x$with_kerberos" = "xyes" ; then
-    have_krb5=no
-    AC_MSG_CHECKING([for Kerberos functionality])
-    if test "x$KRB5_CONFIG" != "xno" ; then
-	have_krb5=yes
-    elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
-	have_krb5=yes
-    elif test "x$ac_cv_header_Kerberos_Kerberos_h" = "xyes" ; then
-	have_krb5=yes
-    fi
-    if test "x$have_krb5" = "xyes" ; then
-	AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
-	AC_MSG_RESULT([yes])
-    else
-	AC_MSG_RESULT([no])
-	AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
-    fi
-fi
-AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
-
 
 # if the client was enabled, make sure we have GL
 if test x$enable_client != xno; then

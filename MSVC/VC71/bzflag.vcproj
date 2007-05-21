@@ -414,9 +414,6 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ClientAuthentication.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\clientCommands.cxx">
 			</File>
 			<File
@@ -1642,9 +1639,6 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\KeyboardMapMenu.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\LoginMenu.cxx">
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\MainMenu.cxx">
 				</File>
 				<File
@@ -1710,9 +1704,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\callbacks.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ClientAuthentication.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\commands.h">
@@ -1833,9 +1824,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\LocalPlayer.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\LoginMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MainMenu.h">

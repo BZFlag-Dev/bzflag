@@ -154,7 +154,6 @@ LDADD = \
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
-	$(KRB5_LIBS)			\
 	../date/libDate.la
 
 MAINTAINERCLEANFILES = \

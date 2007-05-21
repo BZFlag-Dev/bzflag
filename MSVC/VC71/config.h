@@ -113,6 +113,9 @@
 /* Define to 1 if you have the <process.h> header file. */
 #define HAVE_PROCESS_H 1
 
+/* Windows has atexit */
+#define HAVE_ATEXIT 1
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
