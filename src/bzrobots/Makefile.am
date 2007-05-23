@@ -23,13 +23,6 @@ EXTRA_bzrobots_SOURCES = \
 	../bzflag/LoginMenu.cxx			\
 	../bzflag/LoginMenu.h
 
-if HAVE_KRB5
-KRB5 =	../bzflag/ClientAuthentication.cxx	\
-	../bzflag/ClientAuthentication.h	\
-	../bzflag/LoginMenu.cxx			\
-	../bzflag/LoginMenu.h
-endif
-
 bzrobots_SOURCES =			\
 	bzrobots.cxx			\
 	botplaying.cxx			\

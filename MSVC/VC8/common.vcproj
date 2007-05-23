@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="common"
 	ProjectGUID="{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
+	RootNamespace="common"
 	>
 	<Platforms>
 		<Platform
