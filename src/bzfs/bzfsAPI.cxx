@@ -2904,6 +2904,11 @@ public:
     doingStuff=false;
   }
 
+  int jobCount(void)
+  {
+    return jobs.size();
+  }
+
   virtual void finalization(char *data, unsigned int length, bool good)
   {
     if(!jobs.size() || !doingStuff)
