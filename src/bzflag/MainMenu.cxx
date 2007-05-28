@@ -42,7 +42,8 @@ void	  MainMenu::createControls()
   std::vector<HUDuiElement*>& listHUD = getElements();
   for (unsigned int i = 0; i < listHUD.size(); i++)
     delete listHUD[i];
-  listHUD.erase(listHUD.begin(), listHUD.end());
+  listHUD.clear();
+  getNav().clear();
 
   // load title
   int title = tm.getTextureID("title");
