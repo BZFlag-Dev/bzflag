@@ -403,7 +403,7 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     composeTypeIn->setEditing(_allowEdit);
     composeTypeIn->setLabel(prompt);
     composeTypeIn->setString("");
-    composeTypeIn->setFocus();
+    HUDui::setFocus(composeTypeIn);
 
     int cFontFace = composeTypeIn->getFontFace();
     float cFontSize = composeTypeIn->getFontSize();

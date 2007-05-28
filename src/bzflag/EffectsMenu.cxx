@@ -28,17 +28,16 @@
 
 EffectsMenu::EffectsMenu()
 {
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
+
+  // add controls
 
   // the menu label
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Effects Settings");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   // the menu options
   HUDuiList* option;
@@ -53,7 +52,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   option->createSlider(10);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // The Mirror
   option = new HUDuiList;
@@ -64,7 +63,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fog Effect
   option = new HUDuiList;
@@ -76,7 +75,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Nice"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Display Treads
   option = new HUDuiList;
@@ -87,7 +86,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Animated Treads
   option = new HUDuiList;
@@ -99,7 +98,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Covered"));
   options->push_back(std::string("Exposed"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Track Mark Fading Scale
   option = new HUDuiList;
@@ -110,7 +109,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   option->createSlider(10);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Track Mark Culling Type
   option = new HUDuiList;
@@ -122,7 +121,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Best"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects from effectsRenderer
   option = new HUDuiList;
@@ -133,7 +132,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   std::vector<std::string> optbuf;
 
@@ -146,7 +145,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getSpawnEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects Ia: Local spawn
   option = new HUDuiList;
@@ -157,7 +156,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("Same as spawns"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects II: Death
   option = new HUDuiList;
@@ -168,7 +167,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getDeathEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects III: Shots
   option = new HUDuiList;
@@ -179,7 +178,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getShotEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects IV: Local shots
   option = new HUDuiList;
@@ -190,7 +189,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("Same as shots"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects V: Velocity for shot effects
   option = new HUDuiList;
@@ -201,7 +200,7 @@ EffectsMenu::EffectsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects VI: Landing effects
   option = new HUDuiList;
@@ -212,7 +211,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getLandEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects VII: GM Smoke Trail effects
   option = new HUDuiList;
@@ -223,7 +222,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getGMPuffEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects VIIa: GM puff timing
   option = new HUDuiList;
@@ -232,7 +231,7 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"g");
   option->createSlider(11);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects VIII: rico effects
   option = new HUDuiList;
@@ -243,7 +242,7 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getRicoEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Fancy effects IX: shot Teleporter effects
   option = new HUDuiList;
@@ -254,9 +253,9 @@ EffectsMenu::EffectsMenu()
   optbuf = EFFECTS.getShotTeleportEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
-  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
+  initNavigation();
 }
 
 
@@ -280,7 +279,7 @@ void EffectsMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =

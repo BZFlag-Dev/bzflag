@@ -42,11 +42,9 @@ private:
   HUDuiControl* createLabel(const char* string);
 
   HUDuiControl*	join;
-  HUDuiControl*	login;
   HUDuiControl*	options;
   HUDuiControl*	help;
   HUDuiControl*	leave;
-  HUDuiControl*	save;
   HUDuiControl*	quit;
 
   JoinMenu*	joinMenu;

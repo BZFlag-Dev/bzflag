@@ -21,6 +21,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiDefaultKey.h"
 #include "MenuDefaultKey.h"
+#include "HUDNavigationQueue.h"
 
 
 class FormatMenu;
@@ -39,34 +40,32 @@ private:
 };
 
 class FormatMenu : public HUDDialog {
+  friend class FormatMenuDefaultKey;
 public:
   FormatMenu();
   ~FormatMenu();
 
   HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-  int			getSelected() const;
-  void			setSelected(int);
   void			show();
   void			execute();
   void			resize(int width, int height);
 
+private:
+  void			addLabel(const char* msg, const char* _label, bool navigable = false);
+  void			setPage(int page);
   void			setFormat(bool test);
 
-public:
+private:
   static const int	NumItems;
-
-private:
-  void			addLabel(const char* msg, const char* _label);
-
-private:
   FormatMenuDefaultKey	defaultKey;
   int			numFormats;
   float			center;
 
   HUDuiLabel*		currentLabel;
   HUDuiLabel*		pageLabel;
-  int			selectedIndex;
+  int			page;
   bool*			badFormats;
+  static size_t		navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void*);
 
   static const int	NumColumns;
   static const int	NumReadouts;

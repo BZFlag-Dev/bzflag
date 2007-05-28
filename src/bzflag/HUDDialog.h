@@ -24,6 +24,7 @@
 #include <vector>
 
 /* local interface headers */
+#include "HUDNavigationQueue.h"
 class HUDuiControl;
 class HUDuiElement;
 class HUDuiDefaultKey;
@@ -45,16 +46,15 @@ class HUDDialog {
     virtual void		dismiss() { }
     virtual void		resize(int _width, int _height);
     virtual void		setFailedMessage(const char *) {;};
-
-    HUDuiControl*		getFocus() const;
-    void			setFocus(HUDuiControl*);
-
-    void			initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
-
+    
+    HUDuiControl*		getFocus() const { return navList.get(); }
 
   protected:
-    const std::vector<HUDuiControl*>&	getControls() const { return controlList; }
-    std::vector<HUDuiControl*>&		getControls() { return controlList; }
+    void			addControl(HUDuiElement* element);
+    void			addControl(HUDuiControl* control, bool navigable = true);
+
+    const HUDNavigationQueue&	getNav() const { return navList; }
+    HUDNavigationQueue&		getNav() { return navList; }
 
     const std::vector<HUDuiElement*>&	getElements() const { return renderList; }
     std::vector<HUDuiElement*>&		getElements() { return renderList; }
@@ -62,19 +62,20 @@ class HUDDialog {
     int				getHeight() const { return height; }
     int				getWidth() const { return width; }
 
+    void			initNavigation();
+
   protected:
     int				height, width;
 
   private:
-    /* renderList contains elements which are to be rendered only
-     *  and may not be manipulated by the user.
-     * controlList contains elements which can potentially be
-     *  interacted with and hold focus if included in the correct
-     *  range in initNavigation.
-     * The union of the lists contains all elements on the dialog.
+    /* renderList contains all elements which are to be rendered.
+     * navList contains all elements which the user can navigate to.
+     * "Ordinary" controls will typically be in both lists.
+     * Elements which are on not on the render list will not be automatically
+     * deleted.
      */
     std::vector<HUDuiElement*>	renderList;
-    std::vector<HUDuiControl*>	controlList;
+    HUDNavigationQueue		navList;
     HUDuiControl*		focus;
 };
 

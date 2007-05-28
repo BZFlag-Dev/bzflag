@@ -50,7 +50,7 @@ class HUDuiElement {
     void		setFontFace(int face);
     void		setFontSize(float size);
 
-    void		render();
+    virtual void	render();
 
   protected:
     virtual void	onSetFont();

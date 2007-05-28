@@ -52,18 +52,17 @@ bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 QuitMenu::QuitMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiLabel* label;
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Yes, quit");
-  listHUD.push_back(label);
+  addControl(label);
 
   label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("No, return to game");
-  listHUD.push_back(label);
+  addControl(label);
 
   HUDuiList* list;
   list = new HUDuiList;
@@ -73,17 +72,16 @@ QuitMenu::QuitMenu()
   listList.push_back("No");
   listList.push_back("Yes");
   list->setIndex(BZDB.evalInt("saveSettings"));
-  listHUD.push_back(list);
+  addControl(list);
 
-  initNavigation(listHUD, 0, 2);
+  initNavigation();
 
   // frame
-  std::vector<HUDuiElement*>& listEle = getElements();
   HUDuiFrame* frame = new HUDuiFrame;
   frame->setLabel("Really Quit?");
   frame->setLineWidth(2.0f);
   frame->setStyle(HUDuiFrame::RoundedRectStyle);
-  listEle.push_back(frame);
+  addControl(frame);
 }
 
 QuitMenu::~QuitMenu()
@@ -105,7 +103,7 @@ void QuitMenu::resize(int _width, int _height)
   const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
 
   // get stuff
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
 
   // yes
   HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
@@ -128,9 +126,7 @@ void QuitMenu::resize(int _width, int _height)
   list->setPosition(x + stringWidth, y);
 
   // frame
-  std::vector<HUDuiElement*>& listEle = getElements();
-  HUDuiFrame* frame = (HUDuiFrame*)listEle[0];
-
+  HUDuiFrame* frame = (HUDuiFrame*)listHUD[3];
   const float gapSize = fm.getStrHeight(fontFace, fontSize, "99");
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
@@ -140,8 +136,8 @@ void QuitMenu::resize(int _width, int _height)
 
 void QuitMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDuiElement* _focus = getNav().get();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   if (_focus == listHUD[0]) { // yes
     const bool permanentSave = BZDB.isTrue("saveSettings");
     const bool tempSave = (((HUDuiList*)listHUD[2])->getIndex() != 0);

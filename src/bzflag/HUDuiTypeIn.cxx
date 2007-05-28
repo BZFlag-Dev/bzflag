@@ -19,9 +19,6 @@
 // common implementation headers
 #include "FontManager.h"
 
-// local implementation headers
-#include "HUDui.h"
-
 //
 // HUDuiTypeIn
 //
@@ -79,17 +76,12 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   static const char backspace = '\b';	// ^H
   static const char whitespace = ' ';
 
+  if (HUDuiControl::doKeyPress(key))
+    return true;
+
   if (!allowEdit) return false; //or return true ??
   char c = key.ascii;
   if (c == 0) switch (key.button) {
-    case BzfKeyEvent::Up:
-      HUDui::setFocus(getPrev());
-      return true;
-
-    case BzfKeyEvent::Down:
-      HUDui::setFocus(getNext());
-      return true;
-
     case BzfKeyEvent::Left:
       if (cursorPos > 0)
 	cursorPos--;
@@ -125,10 +117,6 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return false;
   }
 
-  if (c == '\t') {
-    HUDui::setFocus(getNext());
-    return true;
-  }
   if (!isprint(c) && c != backspace)
     return false;
 
@@ -181,7 +169,7 @@ void			HUDuiTypeIn::doRender()
   // find the position of where to draw the input cursor
   float start = fm.getStrLength(getFontFace(), getFontSize(), renderStr.substr(0, cursorPos));
 
-  if (HUDui::getFocus() == this && allowEdit) {
+  if (hasFocus() && allowEdit) {
     fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");
   }
 }

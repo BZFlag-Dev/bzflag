@@ -25,7 +25,6 @@
 #include "HUDDialogStack.h"
 #include "HUDuiList.h"
 #include "playing.h"
-#include "HUDui.h"
 #include "SceneRenderer.h"
 #include "BzfDisplay.h"
 
@@ -33,7 +32,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {
   // add controls
   std::vector<std::string>* options;
-  std::vector<HUDuiControl*>& listHUD  = getControls();
   HUDuiList* option;
 
   // cache font face id
@@ -42,7 +40,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Display Settings");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -52,7 +50,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -62,7 +60,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -72,7 +70,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -83,7 +81,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Best"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -98,7 +96,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Nearest Mipmap Linear"));
   options->push_back(std::string("Linear Mipmap Linear"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -126,7 +124,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Unavailable"));
 #endif
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -138,7 +136,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("High"));
   options->push_back(std::string("Experimental"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -149,7 +147,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Stipple"));
   options->push_back(std::string("Stencil"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
 #if !defined(DEBUG_RENDERING)
   if (debugLevel > 0) {
@@ -162,7 +160,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    listHUD.push_back(option);
+    addControl(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -172,7 +170,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    listHUD.push_back(option);
+    addControl(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -182,7 +180,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    listHUD.push_back(option);
+    addControl(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -192,7 +190,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    listHUD.push_back(option);
+    addControl(option);
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
@@ -202,7 +200,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
-    listHUD.push_back(option);
+    addControl(option);
 #if !defined(DEBUG_RENDERING)
   }
 #endif
@@ -219,7 +217,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Unavailable"));
   }
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -229,7 +227,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
@@ -239,10 +237,10 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     videoFormat = label = new HUDuiLabel;
     label->setFontFace(fontFace);
     label->setLabel("Change Video Format");
-    listHUD.push_back(label);
+    addControl(label);
   }
 
-  initNavigation(listHUD, 1, (int)listHUD.size()-1);
+  initNavigation();
 }
 
 DisplayMenu::~DisplayMenu()
@@ -252,7 +250,7 @@ DisplayMenu::~DisplayMenu()
 
 void			DisplayMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == videoFormat) {
     if (!formatMenu)
       formatMenu = new FormatMenu;
@@ -272,7 +270,7 @@ void			DisplayMenu::resize(int _width, int _height)
   int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());

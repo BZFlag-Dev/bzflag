@@ -30,9 +30,8 @@ HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality)
     qString = "Bad Flags";
   HelpMenu(qString.c_str());
 
-  std::vector<HUDuiControl*>& listHUD = getControls();
   qString.append(":");
-  listHUD.push_back(createLabel("", qString.c_str()));
+  addControl(createLabel("", qString.c_str()), false);
 
   FlagSet fs;
   if (quality == FlagGood)
@@ -48,7 +47,7 @@ HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality)
       continue;
     }
 
-    listHUD.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str()));
+    addControl(createLabel((*it)->flagHelp, (*it)->label().c_str()), false);
   }
 }
 

@@ -26,28 +26,24 @@
 QuickKeysMenu::QuickKeysMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& controls = getControls();
+  addControl(createLabel("Define Quick Keys"), false);
+  addControl(createLabel("Notice: depending on platform not all keys might work"), false);
 
-  controls.push_back(createLabel("Define Quick Keys"));
-  controls.push_back(createLabel("Notice: depending on platform not all keys might work"));
-
-  controls.push_back(createLabel("Send to All"));
-  controls.push_back(createLabel("Send to Team"));
-
-  firstKeyControl = (int)controls.size();
+  addControl(createLabel("Send to All"), false);
+  addControl(createLabel("Send to Team"), false);
 
   int i;
-  for (i=1; i < 11; i++) {
+  for (i=1; i < 11; ++i) {
     std::string keyLabel = TextUtils::format("Alt-F%d", i);
-    controls.push_back(createInput(keyLabel));
+    addControl(createInput(keyLabel));
   }
 
-  for (i=1; i < 11; i++) {
+  for (i=1; i < 11; ++i) {
     std::string keyLabel = TextUtils::format("Ctrl-F%d", i);
-    controls.push_back(createInput(keyLabel));
+    addControl(createInput(keyLabel));
   }
 
-  initNavigation(controls, firstKeyControl, (int)controls.size()-1);
+  initNavigation();
 }
 
 QuickKeysMenu::~QuickKeysMenu()
@@ -61,18 +57,18 @@ HUDuiDefaultKey* QuickKeysMenu::getDefaultKey()
 
 void QuickKeysMenu::show()
 {
-  std::vector<HUDuiControl*>& controls = getControls();
+  HUDNavigationQueue& controls = getNav();
 
   int i;
-  for (i=1; i < 11; i++) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i - 1]);
+  for (i=1; i < 11; ++i) {
+    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
     std::string keyName = TextUtils::format("quickMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
   }
 
-  for (i=1; i < 11; i++) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i + 9]);
+  for (i=1; i < 11; ++i) {
+    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
     std::string keyName = TextUtils::format("quickTeamMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
@@ -81,11 +77,11 @@ void QuickKeysMenu::show()
 
 void QuickKeysMenu::dismiss()
 {
-  std::vector<HUDuiControl*>& controls = getControls();
+  HUDNavigationQueue& controls = getNav();
 
   int i;
-  for (i=1; i < 11; i++) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i - 1]);
+  for (i=1; i < 11; ++i) {
+    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
     std::string keyValue = entry->getString();
     std::string keyName = TextUtils::format("quickMessage%d", i);
     if (keyValue.empty() && BZDB.isSet(keyName))
@@ -94,8 +90,8 @@ void QuickKeysMenu::dismiss()
       BZDB.set(keyName, keyValue);
   }
 
-  for (i=1; i < 11; i++) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[firstKeyControl + i + 9]);
+  for (i=1; i < 11; ++i) {
+    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
     std::string keyValue = entry->getString();
     std::string keyName = TextUtils::format("quickTeamMessage%d", i);
     if (keyValue.empty() && BZDB.isSet(keyName))
@@ -118,7 +114,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
@@ -149,25 +145,25 @@ void QuickKeysMenu::resize(int _width, int _height)
 
 
   // reposition options in two columns
+  HUDNavigationQueue& navItems = getNav();
   x = 0.10f * (float)_width;
   const float topY = y - (0.6f * titleHeight);
   y = topY;
-  listHUD[4]->setFontSize(fontSize);
   const float h = fm.getStrHeight(fontFace, fontSize, " ");
-  const int count = (int)listHUD.size() - firstKeyControl;
-  const int mid = (count / 2) + firstKeyControl;
+  const int count = (int)navItems.size();
+  const int mid = (count / 2);
 
-  for (i = firstKeyControl; i < mid; i++) {
-    listHUD[i]->setFontSize(fontSize);
-    listHUD[i]->setPosition(x, y);
+  for (i = 0; i < mid; ++i) {
+    navItems[i]->setFontSize(fontSize);
+    navItems[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 
   x = 0.60f * (float)_width;
   y = topY;
-  for (;i < count + firstKeyControl; i++) {
-    listHUD[i]->setFontSize(fontSize);
-    listHUD[i]->setPosition(x, y);
+  for (;i < count; ++i) {
+    navItems[i]->setFontSize(fontSize);
+    navItems[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 }

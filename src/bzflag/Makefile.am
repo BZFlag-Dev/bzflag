@@ -58,6 +58,8 @@ bzflag_SOURCES =			\
 	HUDDialog.h			\
 	HUDDialogStack.cxx		\
 	HUDDialogStack.h		\
+	HUDNavigationQueue.cxx		\
+	HUDNavigationQueue.h		\
 	HUDRenderer.cxx			\
 	HUDRenderer.h			\
 	HUDui.cxx			\

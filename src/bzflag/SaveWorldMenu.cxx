@@ -25,27 +25,24 @@
 SaveWorldMenu::SaveWorldMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Save World");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   filename = new HUDuiTypeIn;
   filename->setFontFace(MainMenu::getFontFace());
   filename->setLabel("File Name:");
   filename->setMaxLength(255);
-  listHUD.push_back(filename);
+  addControl(filename);
 
   status = new HUDuiLabel;
   status->setFontFace(MainMenu::getFontFace());
   status->setString("");
   status->setPosition(0.5f * (float)width, status->getY());
-  listHUD.push_back(status);
+  addControl(status, false);
 
-  // only navigate to the file name
-  initNavigation(listHUD, 1,1);
+  initNavigation();
 }
 
 SaveWorldMenu::~SaveWorldMenu()
@@ -93,7 +90,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());

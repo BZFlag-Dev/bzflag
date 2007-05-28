@@ -22,25 +22,23 @@
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
 #include "playing.h"
-#include "HUDui.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
   std::string currentJoystickDevice = BZDB.get("joystickname");
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
 
+  // add controls
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Input Settings");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   keyMapping = new HUDuiLabel;
   keyMapping->setFontFace(fontFace);
   keyMapping->setLabel("Change Key Mapping");
-  listHUD.push_back(keyMapping);
+  addControl(keyMapping);
 
   HUDuiList* option = new HUDuiList;
 
@@ -66,7 +64,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     }
   }
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   activeInput = new HUDuiList;
   activeInput->setFontFace(fontFace);
@@ -78,7 +76,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
   activeInput->update();
-  listHUD.push_back(activeInput);
+  addControl(activeInput);
 
   option = new HUDuiList;
   // force feedback
@@ -95,7 +93,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
       option->setIndex(i);
   }
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   // axis settings
@@ -103,13 +101,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setFontFace(fontFace);
   option->setLabel("Joystick X Axis:");
   option->setCallback(callback, (void*)"X");
-  listHUD.push_back(option);
+  addControl(option);
   option = new HUDuiList;
   jsy = option;
   option->setFontFace(fontFace);
   option->setLabel("Joystick Y Axis:");
   option->setCallback(callback, (void*)"Y");
-  listHUD.push_back(option);
+  addControl(option);
   fillJSOptions();
 
   option = new HUDuiList;
@@ -122,7 +120,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(std::string("Yes"));
   option->setIndex(getMainWindow()->isGrabEnabled() ? 1 : 0);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   // jump while typing on/off
@@ -134,7 +132,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(std::string("Yes"));
   option->setIndex(BZDB.isTrue("jumpTyping") ? 1 : 0);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   // tie the FOV into turning rate
@@ -146,9 +144,9 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(std::string("Yes"));
   option->setIndex(BZDB.isTrue("slowBinoculars") ? 1 : 0);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
-  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
+  initNavigation();
 }
 
 InputMenu::~InputMenu()
@@ -199,7 +197,7 @@ void InputMenu::fillJSOptions()
 
 void			InputMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == keyMapping) {
     if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
     HUDDialogStack::get()->push(keyboardMapMenu);
@@ -294,7 +292,7 @@ void			InputMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());

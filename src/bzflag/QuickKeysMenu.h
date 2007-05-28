@@ -40,8 +40,6 @@ public:
 private:
   HUDuiLabel* createLabel(const std::string &);
   HUDuiTypeIn* createInput(const std::string &);
-private:
-  int firstKeyControl;
 };
 
 

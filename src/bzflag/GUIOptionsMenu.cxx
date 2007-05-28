@@ -31,16 +31,14 @@
 
 GUIOptionsMenu::GUIOptionsMenu()
 {
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
 
+  // add controls
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("GUI Settings");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   HUDuiList* option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -52,7 +50,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Fast Sorted"));
   options->push_back(std::string("Enhanced"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -63,7 +61,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   while ( *sortLabels != NULL)
     options->push_back(std::string(*sortLabels++));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -73,7 +71,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -83,7 +81,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Auto"));
   option->createSlider(4);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -93,7 +91,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Auto"));
   option->createSlider(4);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set observer info
   option = new HUDuiList;
@@ -104,8 +102,8 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   options->push_back(std::string("On With Apparent Speeds"));
- option->update();
-  listHUD.push_back(option);
+  option->update();
+  addControl(option);
 
   // set Radar Translucency
   option = new HUDuiList;
@@ -114,7 +112,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"y");
   option->createSlider(11);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // toggle coloring of shots on radar
   option = new HUDuiList;
@@ -125,7 +123,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set radar shot length
   option = new HUDuiList;
@@ -134,7 +132,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"l");
   option->createSlider(11);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set radar shot size
   option = new HUDuiList;
@@ -143,7 +141,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"s");
   option->createSlider(11);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // radar shot leading line
   option = new HUDuiList;
@@ -154,7 +152,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Lagging"));
   options->push_back(std::string("Leading"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // radar shot guide on/off
   option = new HUDuiList;
@@ -165,7 +163,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set radar size
   option = new HUDuiList;
@@ -174,7 +172,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"R");
   option->createSlider(maxRadarSize+1);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set maxmotion size
   option = new HUDuiList;
@@ -183,7 +181,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"M");
   option->createSlider(22);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set locale
   option = new HUDuiList;
@@ -212,7 +210,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     }
   }
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // Tabs
   option = new HUDuiList;
@@ -224,7 +222,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Left"));
   options->push_back(std::string("Right"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // GUI coloring
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -234,7 +232,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // Underline color
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -245,7 +243,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Grey"));
   options->push_back(std::string("Text"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // Killer Highlight
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -256,7 +254,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Pulsating"));
   options->push_back(std::string("Underline"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // Pulsate Rate
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -264,7 +262,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"r");
   option->createSlider(9);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // Pulsate Depth
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -272,7 +270,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"d");
   option->createSlider(9);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // Time/date display settings
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -283,7 +281,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("date"));
   options->push_back(std::string("both"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
   // HUD Reload timer
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -293,7 +291,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   // set email display length
   option = new HUDuiList;
@@ -302,9 +300,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"E");
   option->createSlider(32+1);
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
-  initNavigation(listHUD, 1, (int)listHUD.size()-1);
+  initNavigation();
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
@@ -325,7 +323,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
@@ -356,7 +354,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 							  ("scorefontsize")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("cpanelfontsize")));
-	((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 		("showVelocities")));
     ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
 					       ->getPanelOpacity() + 0.5));
@@ -428,12 +426,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	break;
       }
 
-	case 'O':
-	{
-		BZDB.setInt("showVelocities", list->getIndex());
-		getMainWindow()->getWindow()->callResizeCallbacks();
-		break;
-	}
+    case 'O':
+      {
+        BZDB.setInt("showVelocities", list->getIndex());
+        getMainWindow()->getWindow()->callResizeCallbacks();
+        break;
+      }
 
     case 'y':
       {

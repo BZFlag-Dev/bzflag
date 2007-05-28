@@ -20,7 +20,6 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "HUDui.h"
 #include "clientConfig.h"
 #include "ConfigFileManager.h"
 #include "bzflag.h"
@@ -34,44 +33,43 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   int fontFace = MainMenu::getFontFace();
 
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiList* option;
   std::vector<std::string>* options;
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Options");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   inputSetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Input Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   audioSetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Audio Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   displaySetting = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Display Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   guiOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("GUI Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   effectsOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Effects Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   cacheOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Cache Settings");
-  listHUD.push_back(label);
+  addControl(label);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -81,7 +79,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   options->push_back(std::string("No"));
   options->push_back(std::string("On Exit"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -92,19 +90,19 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   options->push_back(std::string("Username only"));
   options->push_back(std::string("Username and password"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
   saveWorld = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save World");
-  listHUD.push_back(label);
+  addControl(label);
 
   saveSettings = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save Settings Now");
-  listHUD.push_back(label);
+  addControl(label);
 
-  initNavigation(listHUD, 1, (int)listHUD.size()-1);
+  initNavigation();
 }
 
 OptionsMenu::~OptionsMenu()
@@ -120,7 +118,7 @@ OptionsMenu::~OptionsMenu()
 
 void OptionsMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
@@ -163,7 +161,7 @@ void OptionsMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
@@ -178,9 +176,8 @@ void OptionsMenu::resize(int _width, int _height)
   const int count = (const int)listHUD.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
-    HUDuiControl *ctl = listHUD[i];
-    ctl->setFontSize(fontSize);
-    ctl->setPosition(x, y);
+    listHUD[i]->setFontSize(fontSize);
+    listHUD[i]->setPosition(x, y);
     if ((i == 6) || (i == 8)) {
       y -= 1.75f * h;
     } else {

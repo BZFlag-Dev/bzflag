@@ -70,7 +70,7 @@ public:
   static const int NumItems;
 
 private:
-  void addLabel(const char* str, const char* label);
+  void addLabel(const char* str, const char* label, bool navigable = false);
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void pick();
 

@@ -18,9 +18,6 @@
 #include "Bundle.h"
 #include "FontManager.h"
 
-// local implementation headers
-#include "HUDui.h"
-
 //
 // HUDuiLabel
 //
@@ -71,23 +68,8 @@ void			HUDuiLabel::onSetFont()
 
 bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 0) switch (key.button) {
-    case BzfKeyEvent::Up:
-      HUDui::setFocus(getPrev());
-      break;
-
-    case BzfKeyEvent::Down:
-      HUDui::setFocus(getNext());
-      break;
-
-    default:
-      return false;
-  }
-
-  if (key.ascii == '\t') {
-    HUDui::setFocus(getNext());
+  if (HUDuiControl::doKeyPress(key))
     return true;
-  }
 
   switch (key.ascii) {
     case 13:

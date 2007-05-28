@@ -34,6 +34,7 @@
 #include "TimeKeeper.h"
 
 class HUDuiControl;
+class HUDNavigationQueue;
 
 typedef void		(*HUDuiCallback)(HUDuiControl*, void*);
 
@@ -43,26 +44,22 @@ class HUDuiControl : public HUDuiElement {
 			HUDuiControl();
     virtual		~HUDuiControl();
 
-    HUDuiControl*	getPrev() const;
-    HUDuiControl*	getNext() const;
+    void		setCallback(HUDuiCallback, void*);
     HUDuiCallback	getCallback() const;
     void*		getUserData() const;
 
-    void		setPrev(HUDuiControl*);
-    void		setNext(HUDuiControl*);
-    void		setCallback(HUDuiCallback, void*);
-
     bool		hasFocus() const;
-    void		setFocus();
     void		showFocus(bool);
+
+    void		setNavQueue(HUDNavigationQueue*);
 
     void		render();
 
     static int  getArrow() { return arrow; }
 
   protected:
-    virtual bool	doKeyPress(const BzfKeyEvent&) = 0;
-    virtual bool	doKeyRelease(const BzfKeyEvent&) = 0;
+    virtual bool	doKeyPress(const BzfKeyEvent&);
+    virtual bool	doKeyRelease(const BzfKeyEvent&);
 
     void		renderFocus();
 
@@ -70,7 +67,7 @@ class HUDuiControl : public HUDuiElement {
 
   private:
     bool		showingFocus;
-    HUDuiControl*	prev, *next;
+    HUDNavigationQueue*	navList;
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;

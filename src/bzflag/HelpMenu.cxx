@@ -66,13 +66,11 @@ bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 HelpMenu::HelpMenu(const char* title) : HUDDialog()
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel(title));
-  listHUD.push_back(createLabel("Page Down for next page",
-			     "Page Up for previous page"));
+  addControl(createLabel(title), false);
+  addControl(createLabel("Page Down for next page",
+			 "Page Up for previous page"));
 
-
-  initNavigation(listHUD, 1, 1);
+  initNavigation();
 }
 
 HUDuiControl* HelpMenu::createLabel(const char* string,
@@ -100,7 +98,7 @@ void HelpMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
@@ -115,7 +113,7 @@ void HelpMenu::resize(int _width, int _height)
   y -= 1.25f * h;
   listHUD[1]->setPosition(0.5f * ((float)_width + h), y);
 
-  // reposition options
+  // reposition help
   x = getLeftSide(_width, _height);
   y -= 1.5f * h;
   const int count = (const int)listHUD.size();

@@ -23,30 +23,29 @@
 HelpCreditsMenu::HelpCreditsMenu() : HelpMenu("Credits")
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel("Tim Riker", "Maintainer:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Chris Schoeneman", "Original Author:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"));
-  listHUD.push_back(createLabel("Dan Kartch, Jed Lengyel", ""));
-  listHUD.push_back(createLabel("Jeff Myers, Tim Olson", ""));
-  listHUD.push_back(createLabel("Brian Smits, Greg Spencer", ""));
-  listHUD.push_back(createLabel("Daryll Strauss, Frank Thilo", ""));
-  listHUD.push_back(createLabel("Dave Brosius, David Trowbridge", ""));
-  listHUD.push_back(createLabel("Sean Morrison, Tupone Alfredo", ""));
-  listHUD.push_back(createLabel("Lars Luthman, Nils McCarthy", ""));
-  listHUD.push_back(createLabel("Daniel Remenak", ""));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Tamar Cohen", "Tank Models:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Kevin Novins, Rick Pasetto", "Special Thanks:"));
-  listHUD.push_back(createLabel("Adam Rosen, Erin Shaw", ""));
-  listHUD.push_back(createLabel("Ben Trumbore, Don Greenberg", ""));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("http://BZFlag.org/", "BZFlag Home Page:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Tim Riker", "Copyright (c) 1993 - 2007"));
+  addControl(createLabel("Tim Riker", "Maintainer:"), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("Chris Schoeneman", "Original Author:"), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"), false);
+  addControl(createLabel("Dan Kartch, Jed Lengyel", ""), false);
+  addControl(createLabel("Jeff Myers, Tim Olson", ""), false);
+  addControl(createLabel("Brian Smits, Greg Spencer", ""), false);
+  addControl(createLabel("Daryll Strauss, Frank Thilo", ""), false);
+  addControl(createLabel("Dave Brosius, David Trowbridge", ""), false);
+  addControl(createLabel("Sean Morrison, Tupone Alfredo", ""), false);
+  addControl(createLabel("Lars Luthman, Nils McCarthy", ""), false);
+  addControl(createLabel("Daniel Remenak", ""), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("Tamar Cohen", "Tank Models:"), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("Kevin Novins, Rick Pasetto", "Special Thanks:"), false);
+  addControl(createLabel("Adam Rosen, Erin Shaw", ""), false);
+  addControl(createLabel("Ben Trumbore, Don Greenberg", ""), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("http://BZFlag.org/", "BZFlag Home Page:"), false);
+  addControl(createLabel("", ""), false);
+  addControl(createLabel("Tim Riker", "Copyright (c) 1993 - 2007"), false);
 }
 
 float HelpCreditsMenu::getLeftSide(int _width, int _height)

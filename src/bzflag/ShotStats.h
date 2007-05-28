@@ -31,13 +31,13 @@ public:
   HUDuiDefaultKey* getDefaultKey();
   void resize(int width, int height);
   void execute(void);
-  void addStats(Player* player, std::vector<HUDuiControl*>& list);
+  void addStats(Player* player);
 
   static const int getFontFace();
 
 private:
 
-  void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
+  void createLabel(const std::string &str, bool navigable = false);
 
   int rows;
   int columns;

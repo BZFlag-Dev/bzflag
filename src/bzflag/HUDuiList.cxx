@@ -18,9 +18,6 @@
 #include "Bundle.h"
 #include "FontManager.h"
 
-// local implementation headers
-#include "HUDui.h"
-
 //
 // HUDuiList
 //
@@ -84,21 +81,11 @@ void			HUDuiList::createSlider(const int numValues)
 
 bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == '\t') {
-    HUDui::setFocus(getNext());
+  if (HUDuiControl::doKeyPress(key))
     return true;
-  }
 
   if (key.ascii == 0)
     switch (key.button) {
-      case BzfKeyEvent::Up:
-	HUDui::setFocus(getPrev());
-	break;
-
-      case BzfKeyEvent::Down:
-	HUDui::setFocus(getNext());
-	break;
-
       case BzfKeyEvent::Left:
 	if (index != -1) {
 	  if (--index < 0) index = (int)list.size() - 1;

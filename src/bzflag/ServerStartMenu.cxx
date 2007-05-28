@@ -57,12 +57,11 @@ char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 ServerStartMenu::ServerStartMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& controls = getControls();
   HUDuiList* listHUD;
   std::vector<std::string>* items;
 
   // 0
-  controls.push_back(createLabel("Start Server"));
+  addControl(createLabel("Start Server"), false);
 
   // 1
   listHUD = createList("Style:");
@@ -73,7 +72,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("Rabbit Hunt (Score-based Selection)");
   items->push_back("Rabbit Hunt (Killer Selection)");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 2
   listHUD = createList("Max Players:");
@@ -85,7 +84,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("20");
   items->push_back("40");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 3
   listHUD = createList("Max Shots:");
@@ -100,7 +99,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("15");
   items->push_back("20");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 4
   listHUD = createList("Teleporters:");
@@ -108,7 +107,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no");
   items->push_back("yes");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 5
   listHUD = createList("Ricochet:");
@@ -116,7 +115,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no");
   items->push_back("yes");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 6
   listHUD = createList("Jumping:");
@@ -124,7 +123,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no");
   items->push_back("yes");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 7
   listHUD = createList("Handicap:");
@@ -132,7 +131,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no");
   items->push_back("yes");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 8
   listHUD = createList("Superflags:");
@@ -141,7 +140,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("good flags only");
   items->push_back("all flags");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 9
   listHUD = createList("Max Superflags:");
@@ -151,7 +150,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("30");
   items->push_back("40");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 10
   listHUD = createList("Bad Flag Antidote:");
@@ -159,7 +158,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no");
   items->push_back("yes");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 11
   listHUD = createList("Bad Flag Time Limit:");
@@ -170,7 +169,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("60 seconds");
   items->push_back("180 seconds");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 12
   listHUD = createList("Bad Flag Win Limit:");
@@ -180,7 +179,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("drop after 2 wins");
   items->push_back("drop after 3 wins");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 13
   listHUD = createList("Game Over:");
@@ -198,7 +197,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("when a team gets +25");
   items->push_back("when a team gets +100");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 14
   listHUD = createList("Server Reset:");
@@ -206,7 +205,7 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("no, quit after game");
   items->push_back("yes, reset for more games");
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 15
   listHUD = createList("World Map:");
@@ -246,21 +245,21 @@ ServerStartMenu::ServerStartMenu()
   scanWorldFiles (searchDir, items);
 
   listHUD->update();
-  controls.push_back(listHUD);
+  addControl(listHUD);
 
   // 16
   start = createLabel("Start");
-  controls.push_back(start);
+  addControl(start);
 
   // 17
   status = createLabel("");
-  controls.push_back(status);
+  addControl(status, false);
 
   // 18
   failedMessage = createLabel("");
-  controls.push_back(failedMessage);
+  addControl(failedMessage, false);
 
-  initNavigation(controls, 1, (int)controls.size()-3);
+  initNavigation();
 
   // set settings
   loadSettings();
@@ -325,9 +324,9 @@ void ServerStartMenu::setSettings(const char* _settings)
 
 void ServerStartMenu::loadSettings()
 {
-  std::vector<HUDuiControl*>& controls = getControls();
+  HUDNavigationQueue& controls = getNav();
   const char* scan = settings;
-  for (int i = 1; *scan; i++, scan++)
+  for (int i = 0; *scan; i++, scan++)
     ((HUDuiList*)controls[i])->setIndex(*scan - 'a');
 }
 
@@ -338,9 +337,9 @@ void ServerStartMenu::show()
 
 void ServerStartMenu::dismiss()
 {
-  std::vector<HUDuiControl*>& controls = getControls();
+  HUDNavigationQueue& controls = getNav();
   char* scan = settings;
-  for (int i = 1; *scan; i++, scan++)
+  for (int i = 0; *scan; i++, scan++)
     *scan = (char)('a' + ((HUDuiList*)controls[i])->getIndex());
 }
 
@@ -349,7 +348,7 @@ void ServerStartMenu::execute()
   static const char*	serverApp = "bzfs";
   bool success = false;
 
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  HUDNavigationQueue& listHUD = getNav();
   HUDuiControl* _focus = HUDui::getFocus();
   if (_focus == start) {
     // start it up:
@@ -388,56 +387,56 @@ void ServerStartMenu::execute()
 
     // load the world map first, so that later arguments can
     // override any that are present in a map's "options" block
-    if (((HUDuiList*)listHUD[15])->getIndex() != 0) { // not random
+    if (((HUDuiList*)listHUD[14])->getIndex() != 0) { // not random
       args[arg++] = "-world";
-      std::vector<std::string> fileList = ((HUDuiList*)listHUD[15])->getList();
+      std::vector<std::string> fileList = ((HUDuiList*)listHUD[14])->getList();
       std::string filename
-	= fileList[((HUDuiList*)listHUD[15])->getIndex()].c_str();
+	= fileList[((HUDuiList*)listHUD[14])->getIndex()].c_str();
       args[arg++] = worldFiles[filename].c_str();
     }
 
     // game style
-    if (((HUDuiList*)listHUD[1])->getIndex() == 0) {
+    if (((HUDuiList*)listHUD[0])->getIndex() == 0) {
       args[arg++] = "-c";
       args[arg++] = "-b";
     }
-    else if (((HUDuiList*)listHUD[1])->getIndex() == 1){
+    else if (((HUDuiList*)listHUD[0])->getIndex() == 1){
       args[arg++] = "-h";
     }
     else {
 	static const char* rabbitStyles[] = { "random", "score", "killer" };
 	args[arg++] = "-rabbit";
-	args[arg++] = rabbitStyles[(((HUDuiList*)listHUD[1])->getIndex()) - 2];
+	args[arg++] = rabbitStyles[(((HUDuiList*)listHUD[0])->getIndex()) - 2];
     }
 
     // max players
     static const char* numPlayers[] = { "2", "3", "4", "8", "20", "40" };
     args[arg++] = "-mp";
-    args[arg++] = numPlayers[((HUDuiList*)listHUD[2])->getIndex()];
+    args[arg++] = numPlayers[((HUDuiList*)listHUD[1])->getIndex()];
 
     // max shots
     static const char* numShots[] = { "1", "2", "3", "4", "5", "8", "10", "15", "20" };
     args[arg++] = "-ms";
-    args[arg++] = numShots[((HUDuiList*)listHUD[3])->getIndex()];
+    args[arg++] = numShots[((HUDuiList*)listHUD[2])->getIndex()];
 
     // teleporters
-    if (((HUDuiList*)listHUD[4])->getIndex() == 1)
+    if (((HUDuiList*)listHUD[3])->getIndex() == 1)
       args[arg++] = "-t";
 
     // ricochet
-    if (((HUDuiList*)listHUD[5])->getIndex() == 1)
+    if (((HUDuiList*)listHUD[4])->getIndex() == 1)
       args[arg++] = "+r";
 
     // jumping
-    if (((HUDuiList*)listHUD[6])->getIndex() == 1)
+    if (((HUDuiList*)listHUD[5])->getIndex() == 1)
       args[arg++] = "-j";
 
     // handicap
-    if (((HUDuiList*)listHUD[7])->getIndex() == 1)
+    if (((HUDuiList*)listHUD[6])->getIndex() == 1)
       args[arg++] = "-handicap";
 
     // superflags
-    const int superflagOption = ((HUDuiList*)listHUD[8])->getIndex();
+    const int superflagOption = ((HUDuiList*)listHUD[7])->getIndex();
     if (superflagOption != 0) {
       if (superflagOption == 1) {
 	args[arg++] = "-f";
@@ -448,18 +447,18 @@ void ServerStartMenu::execute()
 
       // max superflags
       static const char* numFlagsList[] = { "10", "20", "30", "40" };
-      args[arg++] = numFlagsList[((HUDuiList*)listHUD[9])->getIndex()];
+      args[arg++] = numFlagsList[((HUDuiList*)listHUD[8])->getIndex()];
     }
 
     // shaking
     static const char* shakingTime[] = { "", "15", "30", "60", "180" };
     static const char* shakingWins[] = { "", "1", "2", "3" };
-    if (((HUDuiList*)listHUD[10])->getIndex() == 1) args[arg++] = "-sa";
-    if (((HUDuiList*)listHUD[11])->getIndex() != 0) {
+    if (((HUDuiList*)listHUD[9])->getIndex() == 1) args[arg++] = "-sa";
+    if (((HUDuiList*)listHUD[10])->getIndex() != 0) {
       args[arg++] = "-st";
       args[arg++] = shakingTime[((HUDuiList*)listHUD[11])->getIndex()];
     }
-    if (((HUDuiList*)listHUD[12])->getIndex() != 0) {
+    if (((HUDuiList*)listHUD[11])->getIndex() != 0) {
       args[arg++] = "-sw";
       args[arg++] = shakingWins[((HUDuiList*)listHUD[12])->getIndex()];
     }
@@ -473,13 +472,13 @@ void ServerStartMenu::execute()
 					   "300", "900", "3600", "10800",
 					   "3", "10", "25",
 					   "3", "10", "25", "100" };
-    if (((HUDuiList*)listHUD[13])->getIndex() != 0) {
+    if (((HUDuiList*)listHUD[12])->getIndex() != 0) {
       args[arg++] = gameOverArg[((HUDuiList*)listHUD[13])->getIndex()];
       args[arg++] = gameOverValue[((HUDuiList*)listHUD[13])->getIndex()];
     }
 
     // server reset
-    if (((HUDuiList*)listHUD[14])->getIndex() == 0)
+    if (((HUDuiList*)listHUD[13])->getIndex() == 0)
       args[arg++] = "-g";
 
     // no more arguments
@@ -601,7 +600,7 @@ void ServerStartMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());

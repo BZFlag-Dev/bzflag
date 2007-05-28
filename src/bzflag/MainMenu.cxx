@@ -25,8 +25,8 @@
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
 #include "HUDuiImage.h"
+#include "HUDuiLabel.h"
 #include "playing.h"
-#include "HUDui.h"
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
@@ -35,11 +35,11 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(
 void	  MainMenu::createControls()
 {
   TextureManager &tm = TextureManager::instance();
-  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiControl* label;
   HUDuiImage* textureLabel;
 
   // clear controls
+  std::vector<HUDuiElement*>& listHUD = getElements();
   for (unsigned int i = 0; i < listHUD.size(); i++)
     delete listHUD[i];
   listHUD.erase(listHUD.begin(), listHUD.end());
@@ -48,39 +48,34 @@ void	  MainMenu::createControls()
   int title = tm.getTextureID("title");
 
   // add controls
-  std::vector<HUDuiElement*>& listEle = getElements();
   textureLabel = new HUDuiImage;
   textureLabel->setTexture(title);
-  listEle.push_back(textureLabel);
+  addControl(textureLabel);
 
   label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   join = createLabel("Join Game");
-  listHUD.push_back(join);
+  addControl(join);
 
   options = createLabel("Options");
-  listHUD.push_back(options);
+  addControl(options);
 
   help = createLabel("Help");
-  listHUD.push_back(help);
+  addControl(help);
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!(myTank == NULL)) {
     leave = createLabel("Leave Game");
-    listHUD.push_back(leave);
+    addControl(leave);
   } else {
     leave = NULL;
   }
 
   quit = createLabel("Quit");
-  listHUD.push_back(quit);
+  addControl(quit);
 
-  resize(HUDDialog::getWidth(), HUDDialog::getHeight());
-  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
-
-  // set focus back at the top in case the item we had selected does not exist anymore
-  listHUD[2]->setFocus();
+  initNavigation();
 }
 
 HUDuiControl* MainMenu::createLabel(const char* string)
@@ -93,12 +88,6 @@ HUDuiControl* MainMenu::createLabel(const char* string)
 
 MainMenu::~MainMenu()
 {
-  // clear controls
-  std::vector<HUDuiControl *>& listHUD = getControls();
-  for (unsigned int i = 0; i < listHUD.size(); i++)
-    delete listHUD[i];
-  listHUD.erase(listHUD.begin(), listHUD.end());
-
   // destroy submenus
   delete joinMenu;
   delete optionsMenu;
@@ -119,7 +108,7 @@ HUDuiDefaultKey*	MainMenu::getDefaultKey()
 
 void			MainMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == join) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
@@ -150,8 +139,8 @@ void			MainMenu::resize(int _width, int _height)
   int fontFace = getFontFace();
 
   // reposition title
-  std::vector<HUDuiElement*>& listEle = getElements();
-  HUDuiImage* title = (HUDuiImage*)listEle[0];
+  std::vector<HUDuiElement*>& listHUD = getElements();
+  HUDuiImage* title = (HUDuiImage*)listHUD[0];
   title->setSize((float)_width, titleSize);
   // scale appropriately to center properly
   TextureManager &tm = TextureManager::instance();
@@ -164,21 +153,20 @@ void			MainMenu::resize(int _width, int _height)
   title->setPosition(x, y);
 
   // reposition instructions
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* hint = (HUDuiLabel*)listHUD[0];
+  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   hint->setFontSize(tinyFontSize);
   const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
   y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
   y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
 
-  // reposition menu items (first is centered, rest aligned to the first)
+  // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
     = fm.getStrLength(fontFace, fontSize,
-		      ((HUDuiLabel*)listHUD[2])->getString());
+		      ((HUDuiLabel*)listHUD[3])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
-  for (int i = 1; i < count; i++) {
+  for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);

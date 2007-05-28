@@ -26,7 +26,6 @@
 #include "ServerStartMenu.h"
 #include "TextureManager.h"
 #include "playing.h"
-#include "HUDui.h"
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 
@@ -37,30 +36,29 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   int fontFace = MainMenu::getFontFace();
 
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
   StartupInfo* info = getStartupInfo();
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Join Game");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   findServer = new HUDuiLabel;
   findServer->setFontFace(fontFace);
   findServer->setString("Find Server");
-  listHUD.push_back(findServer);
+  addControl(findServer);
 
   connectLabel = new HUDuiLabel;
   connectLabel->setFontFace(fontFace);
   connectLabel->setString("Connect");
-  listHUD.push_back(connectLabel);
+  addControl(connectLabel);
 
   callsign = new HUDuiTypeIn;
   callsign->setFontFace(fontFace);
   callsign->setLabel("Callsign:");
   callsign->setMaxLength(CallSignLen - 1);
   callsign->setString(info->callsign);
-  listHUD.push_back(callsign);
+  addControl(callsign);
 
   password = new HUDuiTypeIn;
   password->setObfuscation(true);
@@ -68,7 +66,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   password->setLabel("Password:");
   password->setMaxLength(CallSignLen - 1);
   password->setString(info->password);
-  listHUD.push_back(password);
+  addControl(password);
 
   team = new HUDuiList;
   team->setFontFace(fontFace);
@@ -85,19 +83,14 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   teams.push_back(std::string(Team::getName(ObserverTeam)));
   team->update();
   setTeam(info->team);
-  listHUD.push_back(team);
-
-  std::vector<HUDuiElement*>& listEle = getElements();
-  teamIcon = new HUDuiImage;
-  updateTeamTexture();
-  listEle.push_back(teamIcon);
+  addControl(team);
 
   server = new HUDuiTypeIn;
   server->setFontFace(fontFace);
   server->setLabel("Server:");
   server->setMaxLength(64);
   server->setString(info->serverName);
-  listHUD.push_back(server);
+  addControl(server);
 
   char buffer[10];
   sprintf(buffer, "%d", info->serverPort);
@@ -106,31 +99,35 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   port->setLabel("Port:");
   port->setMaxLength(5);
   port->setString(buffer);
-  listHUD.push_back(port);
+  addControl(port);
 
   email = new HUDuiTypeIn;
   email->setFontFace(fontFace);
   email->setLabel("Email:");
   email->setMaxLength(EmailLen - 1);
   email->setString(info->email);
-  listHUD.push_back(email);
+  addControl(email);
 
   startServer = new HUDuiLabel;
   startServer->setFontFace(fontFace);
   startServer->setString("Start Server");
-  listHUD.push_back(startServer);
+  addControl(startServer);
 
   status = new HUDuiLabel;
   status->setFontFace(fontFace);
   status->setString("");
-  listHUD.push_back(status);
+  addControl(status, false);
 
   failedMessage = new HUDuiLabel;
   failedMessage->setFontFace(fontFace);
   failedMessage->setString("");
-  listHUD.push_back(failedMessage);
+  addControl(failedMessage, false);
 
-  initNavigation(listHUD, 1, (int)listHUD.size() - 3);
+  teamIcon = new HUDuiImage;
+  updateTeamTexture();
+  addControl(teamIcon);
+
+  initNavigation();
 }
 
 JoinMenu::~JoinMenu()
@@ -191,7 +188,7 @@ void JoinMenu::loadInfo()
 
 void JoinMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == startServer) {
 
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
@@ -306,7 +303,7 @@ void JoinMenu::resize(int _width, int _height)
   FontManager &fm = FontManager::instance();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());

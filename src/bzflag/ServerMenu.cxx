@@ -24,6 +24,7 @@
 #include "HUDDialogStack.h"
 #include "playing.h"
 #include "HUDui.h"
+#include "HUDNavigationQueue.h"
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
@@ -166,20 +167,20 @@ ServerMenu::ServerMenu() : defaultKey(this),
   addLabel("", "");			// max player score
   addLabel("", "");			// cached status
   addLabel("", "");			// cached age
-  addLabel("", "");			// search status
+  addLabel("", "", true);		// search status
   addLabel("", "");			// page readout
-  status = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
-  pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
+  status = (HUDuiLabel*)(getElements()[NumReadouts - 2]);
+  pageLabel = (HUDuiLabel*)(getElements()[NumReadouts - 1]);
 
   // add server list items
   for (int i = 0; i < NumItems; ++i)
-    addLabel("", "");
+    addLabel("", "", true);
 
   // find server
   search = new HUDuiTypeIn;
   search->setFontFace(MainMenu::getFontFace());
   search->setMaxLength(30);
-  getControls().push_back(search);
+  addControl(search);
 
   // short key help
   help = new HUDuiLabel;
@@ -189,22 +190,24 @@ ServerMenu::ServerMenu() : defaultKey(this),
   } else {
     help->setString("Press  +/- add/remove favorites   f - toggle view");
   }
-  getControls().push_back(help);
+  addControl(help, false);
 
   setFind(false);
 
   // set initial focus
-  setFocus(status);
+  initNavigation();
+  if (serverList.size() == 0)
+    getNav().set(status);
 }
 
 
-void ServerMenu::addLabel(const char* msg, const char* _label)
+void ServerMenu::addLabel(const char* msg, const char* _label, bool navigable)
 {
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString(msg);
   label->setLabel(_label);
-  getControls().push_back(label);
+  addControl(label, navigable); // non-navigable by default
 }
 
 void ServerMenu::setFind(bool mode)
@@ -212,7 +215,7 @@ void ServerMenu::setFind(bool mode)
   std::string oldfilter = filter;
   if (mode) {
     search->setLabel("Find Servers:");
-    search->setFocus();
+    getNav().set(search);
   } else {
     if (search->getString() == "" || search->getString() == "*") {
       if (serverList.size() == 0) {
@@ -298,7 +301,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
   // if page changed then load items for this page
   if (oldPage != newPage || forcerefresh) {
     // fill items
-    std::vector<HUDuiControl*>& listHUD = getControls();
+    std::vector<HUDuiElement*>& listHUD = getElements();
     const int base = newPage * NumItems;
     for (int i = 0; i < NumItems; ++i) {
       HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
@@ -408,7 +411,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
   // set focus to selected item
   if (serverList.size() > 0) {
     const int indexOnPage = selectedIndex % NumItems;
-    getControls()[NumReadouts + indexOnPage]->setFocus();
+    getNav().set(NumReadouts + indexOnPage);
   }
 
   // update readouts
@@ -426,7 +429,7 @@ void ServerMenu::pick()
 
   // update server readouts
   char buf[60];
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
 
   const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
       ping.blueMax, ping.purpleMax, ping.observerMax };
@@ -609,7 +612,7 @@ void ServerMenu::pick()
 void			ServerMenu::show()
 {
   // clear server readouts
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   ((HUDuiLabel*)listHUD[1])->setLabel("");
   ((HUDuiLabel*)listHUD[2])->setLabel("");
   ((HUDuiLabel*)listHUD[3])->setLabel("");
@@ -641,7 +644,7 @@ void			ServerMenu::show()
   updateStatus();
 
   // focus to no-server
-  setFocus(status);
+  getNav().set(status);
 
   // *** NOTE *** start ping here
   // listen for echos
@@ -652,7 +655,7 @@ void			ServerMenu::show()
 
 void			ServerMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == search) {
     setFind(false);
     return;
@@ -684,7 +687,7 @@ void			ServerMenu::resize(int _width, int _height)
   // remember size
   HUDDialog::resize(_width, _height);
 
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)_height / 15.0f;

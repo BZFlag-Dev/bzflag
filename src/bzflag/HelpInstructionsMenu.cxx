@@ -26,13 +26,12 @@ HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::s
   : HelpMenu(title)
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel(""));
+  addControl(createLabel(""), false);
 
   std::vector<std::string>::iterator it;
   for (it = text.begin(); it != text.end(); ++it)
   {
-    listHUD.push_back(createLabel((*it).c_str()));
+    addControl(createLabel((*it).c_str()), false);
   }
 }
 
@@ -48,7 +47,7 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   // find the longest localized string
   float longestLength = 0;
   std::string longestString = "";
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   int fontFace = listHUD[2]->getFontFace();
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; ++i) {

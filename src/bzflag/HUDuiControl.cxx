@@ -18,6 +18,7 @@
 
 // local implementation headers
 #include "HUDui.h"
+#include "HUDNavigationQueue.h"
 
 
 //
@@ -32,7 +33,6 @@ TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true),
-				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
   if (totalCount == 0) {
@@ -65,16 +65,6 @@ HUDuiControl::~HUDuiControl()
   }
 }
 
-HUDuiControl*		HUDuiControl::getPrev() const
-{
-  return prev;
-}
-
-HUDuiControl*		HUDuiControl::getNext() const
-{
-  return next;
-}
-
 HUDuiCallback		HUDuiControl::getCallback() const
 {
   return cb;
@@ -83,18 +73,6 @@ HUDuiCallback		HUDuiControl::getCallback() const
 void*			HUDuiControl::getUserData() const
 {
   return userData;
-}
-
-void			HUDuiControl::setPrev(HUDuiControl* _prev)
-{
-  if (!_prev) prev = this;
-  else prev = _prev;
-}
-
-void			HUDuiControl::setNext(HUDuiControl* _next)
-{
-  if (!_next) next = this;
-  else next = _next;
 }
 
 void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
@@ -106,11 +84,6 @@ void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
 bool			HUDuiControl::hasFocus() const
 {
   return this == HUDui::getFocus();
-}
-
-void			HUDuiControl::setFocus()
-{
-  HUDui::setFocus(this);
 }
 
 void			HUDuiControl::showFocus(bool _showingFocus)
@@ -192,6 +165,38 @@ void			HUDuiControl::render()
   HUDuiElement::render();
 }
 
+void			HUDuiControl::setNavQueue(HUDNavigationQueue* _navList)
+{
+  navList = _navList;
+}
+
+bool			HUDuiControl::doKeyPress(const BzfKeyEvent& key)
+{
+  if (key.ascii == 0) switch (key.button) {
+    case BzfKeyEvent::Up:
+      navList->prev();
+      break;
+
+    case BzfKeyEvent::Down:
+      navList->next();
+      break;
+
+    default:
+      return false;
+  }
+
+  if (key.ascii == '\t') {
+    navList->next();
+    return true;
+  }
+
+  return false;
+}
+
+bool			HUDuiControl::doKeyRelease(const BzfKeyEvent&)
+{
+  return false;
+}
 
 // Local Variables: ***
 // mode:C++ ***

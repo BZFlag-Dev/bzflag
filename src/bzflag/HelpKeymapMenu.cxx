@@ -25,42 +25,41 @@
 HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel("Mouse Position", "Controls Tank Position:"));
-  listHUD.push_back(createLabel(NULL, "Fires Shot:"));
-  listHUD.push_back(createLabel(NULL, "Drops Flag (if not bad):"));
-  listHUD.push_back(createLabel(NULL, "Identifies Player (locks on GM):"));
-  listHUD.push_back(createLabel(NULL, "Short Radar Range:"));
-  listHUD.push_back(createLabel(NULL, "Medium Radar Range:"));
-  listHUD.push_back(createLabel(NULL, "Long Radar Range:"));
-  listHUD.push_back(createLabel(NULL, "Send Message to Everybody:"));
-  listHUD.push_back(createLabel(NULL, "Send Message to Teammates:"));
-  listHUD.push_back(createLabel(NULL, "Send Message to Nemesis:"));
-  listHUD.push_back(createLabel(NULL, "Send Message to Recipient:"));
-  listHUD.push_back(createLabel(NULL, "Jump (if allowed):"));
-  listHUD.push_back(createLabel(NULL, "Toggle Binoculars:"));
-  listHUD.push_back(createLabel(NULL, "Toggle Score Sheet:"));
-  listHUD.push_back(createLabel(NULL, "Toggle Tank Labels:"));
-  listHUD.push_back(createLabel(NULL, "Toggle Heads-up Flag Help:"));
-  listHUD.push_back(createLabel(NULL, "Set Time of Day Backward:"));
-  listHUD.push_back(createLabel(NULL, "Set Time of Day Forward:"));
-  listHUD.push_back(createLabel(NULL, "Pause/Resume:"));
-  listHUD.push_back(createLabel(NULL, "Self destruct/Cancel:"));
-  listHUD.push_back(createLabel(NULL, "Quit:"));
-  listHUD.push_back(createLabel(NULL, "Scroll Message Log Backward:"));
-  listHUD.push_back(createLabel(NULL, "Scroll Message Log Forward:"));
-  listHUD.push_back(createLabel(NULL, "Slow Motion:"));
-  listHUD.push_back(createLabel(NULL, "Toggle Radar Flags:"));
-  listHUD.push_back(createLabel(NULL, "Toggle Main Flags:"));
-  listHUD.push_back(createLabel(NULL, "Silence/UnSilence:"));
-  listHUD.push_back(createLabel(NULL, "Server Admin:"));
-  listHUD.push_back(createLabel(NULL, "Hunt:"));
-  listHUD.push_back(createLabel(NULL, "Auto Pilot:"));
-  listHUD.push_back(createLabel(NULL, "Main Message Tab:"));
-  listHUD.push_back(createLabel(NULL, "Chat Message Tab:"));
-  listHUD.push_back(createLabel(NULL, "Server Message Tab:"));
-  listHUD.push_back(createLabel(NULL, "Misc Message Tab:"));
-  listHUD.push_back(createLabel("Esc", "Show/Dismiss menu:"));
+  addControl(createLabel("Mouse Position", "Controls Tank Position:"), false);
+  addControl(createLabel(NULL, "Fires Shot:"), false);
+  addControl(createLabel(NULL, "Drops Flag (if not bad):"), false);
+  addControl(createLabel(NULL, "Identifies Player (locks on GM):"), false);
+  addControl(createLabel(NULL, "Short Radar Range:"), false);
+  addControl(createLabel(NULL, "Medium Radar Range:"), false);
+  addControl(createLabel(NULL, "Long Radar Range:"), false);
+  addControl(createLabel(NULL, "Send Message to Everybody:"), false);
+  addControl(createLabel(NULL, "Send Message to Teammates:"), false);
+  addControl(createLabel(NULL, "Send Message to Nemesis:"), false);
+  addControl(createLabel(NULL, "Send Message to Recipient:"), false);
+  addControl(createLabel(NULL, "Jump (if allowed):"), false);
+  addControl(createLabel(NULL, "Toggle Binoculars:"), false);
+  addControl(createLabel(NULL, "Toggle Score Sheet:"), false);
+  addControl(createLabel(NULL, "Toggle Tank Labels:"), false);
+  addControl(createLabel(NULL, "Toggle Heads-up Flag Help:"), false);
+  addControl(createLabel(NULL, "Set Time of Day Backward:"), false);
+  addControl(createLabel(NULL, "Set Time of Day Forward:"), false);
+  addControl(createLabel(NULL, "Pause/Resume:"), false);
+  addControl(createLabel(NULL, "Self destruct/Cancel:"), false);
+  addControl(createLabel(NULL, "Quit:"), false);
+  addControl(createLabel(NULL, "Scroll Message Log Backward:"), false);
+  addControl(createLabel(NULL, "Scroll Message Log Forward:"), false);
+  addControl(createLabel(NULL, "Slow Motion:"), false);
+  addControl(createLabel(NULL, "Toggle Radar Flags:"), false);
+  addControl(createLabel(NULL, "Toggle Main Flags:"), false);
+  addControl(createLabel(NULL, "Silence/UnSilence:"), false);
+  addControl(createLabel(NULL, "Server Admin:"), false);
+  addControl(createLabel(NULL, "Hunt:"), false);
+  addControl(createLabel(NULL, "Auto Pilot:"), false);
+  addControl(createLabel(NULL, "Main Message Tab:"), false);
+  addControl(createLabel(NULL, "Chat Message Tab:"), false);
+  addControl(createLabel(NULL, "Server Message Tab:"), false);
+  addControl(createLabel(NULL, "Misc Message Tab:"), false);
+  addControl(createLabel("Esc", "Show/Dismiss menu:"), false);
 
   initKeymap("fire", 3);
   initKeymap("drop", 4);
@@ -140,7 +139,7 @@ void HelpKeymapMenu::resize(int _width, int _height)
   }
   // load current settings
   KEYMGR.iterate(&onScanCB, this);
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
     if (it->second.key1.empty()) {

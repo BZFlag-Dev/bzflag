@@ -30,7 +30,6 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "HUDui.h"
 #include "HUDuiLabel.h"
 #include "CommandsStandard.h"
 
@@ -55,66 +54,65 @@ cURLManager(), byteTransferred(0)
 #endif
 
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
   HUDuiLabel* label;
   int fontFace = MainMenu::getFontFace();
 
   status = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("");
-  listHUD.push_back(status);
+  addControl(status, false);
 
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString(announce);
-  listHUD.push_back(label);
+  addControl(label, false);
 
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("A new version of BZFlag has been released!");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString(date);
-  listHUD.push_back(label);
+  addControl(label, false);
 
 #ifdef AUTOUPGRADE
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Would you like to upgrade now?");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("(Download and install: " + url + ")");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   yes = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Yes!");
-  listHUD.push_back(label);
+  addControl(label);
 
   no = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Not yet");
-  listHUD.push_back(label);
+  addControl(label);
 
-  initNavigation(listHUD, 6, 7);
+  initNavigation();
 #else
   label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("Please upgrade as soon as possible.");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   yes = NULL;
 
   no = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setString("OK");
-  listHUD.push_back(label);
+  addControl(label);
 
-  initNavigation(listHUD, 5, 5);
+  initNavigation();
 #endif
 
 }
@@ -125,7 +123,7 @@ NewVersionMenu::~NewVersionMenu()
 
 void NewVersionMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (!_focus) {
     return;
 #ifdef AUTOUPGRADE
@@ -204,7 +202,7 @@ void NewVersionMenu::resize(int _width, int _height)
   const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
 
   // get stuff
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   int i = 0;
 
   // status

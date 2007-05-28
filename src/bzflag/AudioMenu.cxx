@@ -28,19 +28,17 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
-#include "HUDui.h"
 
 AudioMenu::AudioMenu()
 {
   // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
   std::string currentDriver = BZDB.get("audioDriver");
   std::string currentDevice = BZDB.get("audioDevice");
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString("Audio Settings");
-  listHUD.push_back(label);
+  addControl(label, false);
 
   HUDuiList* option = new HUDuiList;
 
@@ -60,7 +58,7 @@ AudioMenu::AudioMenu()
     options->push_back(std::string("Unavailable"));
   }
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
 /* Right now only SDL_Media has a setDriver function.
    Disable driver selection for others as it gets saved in config
@@ -74,7 +72,7 @@ AudioMenu::AudioMenu()
   driver->setLabel("Driver:");
   driver->setMaxLength(10);
   driver->setString(currentDriver);
-  listHUD.push_back(driver);
+  addControl(driver);
 #else
   driver = NULL;
 #endif // HAVE_SDL
@@ -86,7 +84,7 @@ AudioMenu::AudioMenu()
   device->setLabel("Device:");
   device->setMaxLength(10);
   device->setString(currentDevice);
-  listHUD.push_back(device);
+  addControl(device);
 #else
   device = NULL;
 #endif // HAVE_SDL
@@ -100,9 +98,9 @@ AudioMenu::AudioMenu()
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
-  listHUD.push_back(option);
+  addControl(option);
 
-  initNavigation(listHUD, 1, (int)listHUD.size() - 1);
+  initNavigation();
 }
 
 AudioMenu::~AudioMenu()
@@ -111,7 +109,7 @@ AudioMenu::~AudioMenu()
 
 void			AudioMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
+  HUDuiControl* _focus = getNav().get();
   if (_focus == driver) {
     BZDB.set("audioDriver", driver->getString().c_str());
   } else if (_focus == device) {
@@ -131,7 +129,7 @@ void			AudioMenu::resize(int _width, int _height)
   int fontFace = MainMenu::getFontFace();
 
   // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
+  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
