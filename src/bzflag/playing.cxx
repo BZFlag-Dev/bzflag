@@ -3112,7 +3112,7 @@ static void handleNewPlayer(void* msg)
     if (!robots[i])
       break;
   if (i >= MAX_ROBOTS) {
-    logDebugMessage(1,"Too much bots requested\n");
+    logDebugMessage(1,"Too many bots requested\n");
     return;
   }
   robots[i] = new RobotPlayer(id,
