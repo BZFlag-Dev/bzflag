@@ -23,6 +23,7 @@ EXTRA_bzrobots_SOURCES = \
 	../bzflag/LoginMenu.cxx			\
 	../bzflag/LoginMenu.h
 
+bzrobots_LDFLAGS = -static
 bzrobots_SOURCES =			\
 	bzrobots.cxx			\
 	botplaying.cxx			\
@@ -216,8 +217,7 @@ bzrobots_SOURCES =			\
 	../bzflag/sound.cxx			\
 	../bzflag/sound.h			\
 	../bzflag/stars.cxx			\
-	../bzflag/stars.h			\
-	$(KRB5)
+	../bzflag/stars.h
 
 if WIN32
 RESOURCE = bzflag.res
@@ -245,7 +245,6 @@ LDADD =	\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
-	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\

@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
+bzflag_LDFLAGS = -static
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\
@@ -208,8 +209,7 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.cxx			\
-	stars.h				\
-	$(KRB5)
+	stars.h
 
 EXTRA_bzflag_SOURCES = \
 	ClientAuthentication.cxx	\
@@ -243,7 +243,6 @@ LDADD =	\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
-	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\

@@ -18,6 +18,7 @@ else
 CURSES_SRC =
 endif
 
+bzadmin_LDFLAGS = -static
 bzadmin_SOURCES = \
 	BZAdminClient.h \
 	BZAdminClient.cxx \
