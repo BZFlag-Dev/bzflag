@@ -19,7 +19,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
-	../bzflag/ClientAuthentication.h	\
+	../bzflag/ClientAuthentication.h
 
 bzrobots_LDFLAGS = -static
 bzrobots_SOURCES =			\
