@@ -188,9 +188,9 @@ void FormatMenu::show()
   pageLabel->setString("");
   int selectedIndex = getDisplay()->getResolution();
   // sync focus and selection
-  int page = (selectedIndex / NumItems);
-  setPage(page);
-  getNav().set(selectedIndex - (page * NumItems));
+  int _page = (selectedIndex / NumItems);
+  setPage(_page);
+  getNav().set(selectedIndex - (_page * NumItems));
   // set current format
   BzfDisplay* display = getDisplay();
   currentLabel->setString(display->getResolution(display->getResolution())->name);
