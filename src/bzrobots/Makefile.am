@@ -20,8 +20,6 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
 	../bzflag/ClientAuthentication.h	\
-	../bzflag/LoginMenu.cxx			\
-	../bzflag/LoginMenu.h
 
 bzrobots_LDFLAGS = -static
 bzrobots_SOURCES =			\
@@ -74,6 +72,8 @@ bzrobots_SOURCES =			\
 	../bzflag/HUDDialog.h			\
 	../bzflag/HUDDialogStack.cxx		\
 	../bzflag/HUDDialogStack.h		\
+	../bzflag/HUDNavigationQueue.cxx	\
+	../bzflag/HUDNavigationQueue.h		\
 	../bzflag/HUDRenderer.cxx		\
 	../bzflag/HUDRenderer.h			\
 	../bzflag/HUDui.cxx			\
