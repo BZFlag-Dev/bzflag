@@ -32,12 +32,6 @@ public:
 
 extern LoggingCallback	*loggingCallback;
 
-/* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
-#if defined(NULL)
-#  undef NULL
-#endif
-#define NULL 0
-
 /* insert any other broken OS conditionals here */
 #include <iostream>
 
