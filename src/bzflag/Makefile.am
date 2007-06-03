@@ -5,6 +5,7 @@
 bin_PROGRAMS = bzflag
 
 AM_CPPFLAGS = \
+	-DINSIDE_BZ \
 	-I$(top_srcdir)/include \
 	$(SDL_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
