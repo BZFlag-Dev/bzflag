@@ -19,12 +19,6 @@
 #include <string>
 
 
-#ifndef _WIN32
-const char DirectorySeparator = '/';
-#else
-const char DirectorySeparator = '\\';
-#endif
-
 extern std::string		getConfigDirName( const char* versionName = NULL );
 extern std::string		getCacheDirName();
 extern std::string		getRecordDirName();

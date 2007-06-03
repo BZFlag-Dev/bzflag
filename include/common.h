@@ -258,6 +258,13 @@ typedef unsigned char	uint8_t;
 #endif /* HAVE_STD_MIN */
 
 
+#ifdef _WIN32
+const char DirectorySeparator = '\\';
+#else
+const char DirectorySeparator = '/';
+#endif
+
+
 #endif /* BZF_COMMON_H */
 
 
