@@ -557,8 +557,15 @@ void startCountdown ( int delay, float limit, const char *buyWho )
 
 PingPacket getTeamCounts()
 {
-  if (gameOver) {
-    // pretend there are no players if the game is over.
+  if (gameOver && clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
+    // pretend there are no players if the game is over, but only
+    // for servers with automatic countdown because we want the server
+    // to become empty, so a new countdown can start.
+    // Servers with -timemanual (match servers) or plugins whch handle gameover
+    // usually want people to join even when last game has just ended.
+    // (FIXME: the countdown/gameover handling really needs a new concept,
+    //         originally it was not possible to even join a server when gameover
+    //         was reached, but this was changed for manual countdown (match) servers)
     pingReply.rogueCount = 0;
     pingReply.redCount = 0;
     pingReply.greenCount = 0;
