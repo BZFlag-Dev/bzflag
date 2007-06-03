@@ -14,6 +14,8 @@
 #include "SDLMedia.h"
 #include "SDLDisplay.h"
 #include "SDLJoystick.h"
+#include "SDLVisual.h"
+#include "SDLWindow.h"
 #include "EvdevJoystick.h"
 
 PlatformFactory* PlatformFactory::getInstance()
