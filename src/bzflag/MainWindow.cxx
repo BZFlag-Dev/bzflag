@@ -241,9 +241,7 @@ void			MainWindow::resizeCB(void* _self)
 
 void			MainWindow::exposeCB(void* _self)
 {
-#ifdef WIN32
   OpenGLGState::initContext();
-#endif
 }
 
 void			MainWindow::iconify()
