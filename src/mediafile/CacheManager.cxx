@@ -36,7 +36,7 @@
 
 // function prototypes
 static bool fileExists(const std::string& name);
-static void removeDirs(const std::string& path);
+static void removeDirs(unsigned int minLen, const std::string& path);
 static void removeNewlines(char* c);
 static std::string partialEncoding(const std::string& string);
 static bool compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b);
@@ -89,9 +89,11 @@ CacheManager::getLocalName(const std::string name) const
     local = cacheDir + "ftp/";
     local += partialEncoding(name.substr(6));
   }
-#ifdef _WIN32
-  std::replace(local.begin(), local.end(), '/', '\\');
-#endif
+
+  if (DirectorySeparator != '/') {
+    std::replace(local.begin(), local.end(), '/', DirectorySeparator);
+  }
+
   return local;
 }
 
@@ -269,7 +271,7 @@ CacheManager::limitCacheSize()
     CacheManager::CacheRecord& rec = records.back();
     currentSize -= rec.size;
     remove(rec.name.c_str());
-    removeDirs(rec.name);
+    removeDirs(cacheDir.size(), rec.name);
     records.pop_back();
   }
 
@@ -294,7 +296,7 @@ fileExists (const std::string& name)
   // Windows sucks yet again, if there is a trailing  "\"
   // at the end of the filename, _stat will return -1.
   std::string dirname = name;
-  while (dirname.find_last_of('\\') == (dirname.size() - 1)) {
+  while (dirname.find_last_of(DirectorySeparator) == (dirname.size() - 1)) {
     dirname.resize(dirname.size() - 1);
   }
   return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
@@ -303,16 +305,11 @@ fileExists (const std::string& name)
 
 
 static void
-removeDirs(const std::string& path)
+removeDirs(unsigned int minLen, const std::string& path)
 {
-  unsigned int minLen = (unsigned int)getConfigDirName().size();
   std::string tmp = path;
   while (tmp.size() > minLen) {
-#ifndef _WIN32
-    unsigned int i = (unsigned int)tmp.find_last_of('/');
-#else
-    unsigned int i = (unsigned int)tmp.find_last_of('\\');
-#endif
+    unsigned int i = (unsigned int)tmp.find_last_of(DirectorySeparator);
     tmp = tmp.substr(0, i);
     if (remove(tmp.c_str()) != 0) {
       break;
