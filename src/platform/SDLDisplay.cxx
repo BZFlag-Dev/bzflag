@@ -11,16 +11,25 @@
  */
 
 #include "common.h"
-#include "StateDatabase.h"
 
-#ifdef HAVE_SDL
-#include <stdio.h>
+/* interface header */
 #include "SDLDisplay.h"
+
+/* system implementation headers */
+#include <stdio.h>
 #include <iostream>
 #include <math.h>
 
-static int mx = 0;
-static int my = 0;
+/* common implementation headers */
+#include "StateDatabase.h"
+
+/* local implementation headers */
+#include "SDLVisual.h"
+#include "SDLWindow.h"
+
+
+int mx = 0;
+int my = 0;
 
 SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 			   base_height(480), canGrabMouse(true),
@@ -593,132 +602,6 @@ void SDLDisplay::enableGrabMouse(bool on) {
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-void SDLVisual::setDoubleBuffer(bool on) {
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
-}
-
-void SDLVisual::setRGBA(int minRed, int minGreen,
-			int minBlue, int minAlpha) {
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   minRed);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, minGreen);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, minAlpha);
-}
-
-void SDLVisual::setDepth(int minDepth) {
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
-}
-
-void SDLVisual::setStencil(int minDepth) {
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, minDepth);
-}
-
-void SDLVisual::setStereo(bool on) {
-  SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
-}
-
-SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
-{
-}
-
-void SDLWindow::setTitle(const char * title) {
-  SDL_WM_SetCaption(title, title);
-}
-
-void SDLWindow::setFullscreen(bool on) {
-  ((SDLDisplay *)getDisplay())->setFullscreen(on);
-}
-
-void SDLWindow::iconify(void) {
-  SDL_WM_IconifyWindow();
-}
-
-void SDLWindow::warpMouse(int _x, int _y) {
-  SDL_WarpMouse(_x, _y);
-}
-
-void SDLWindow::getMouse(int& _x, int& _y) const {
-  _x = mx;
-  _y = my;
-}
-
-void SDLWindow::setSize(int width, int height) {
-  ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
-}
-
-void SDLWindow::getSize(int& width, int& height) const {
-  ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
-}
-
-void SDLWindow::setGamma(float gamma) {
-  int result = SDL_SetGamma(gamma, gamma, gamma);
-  if (result == -1) {
-    printf("Could not set Gamma: %s.\n", SDL_GetError());
-    hasGamma = false;
-  }
-}
-
-// Code taken from SDL (not available through the headers)
-static float CalculateGammaFromRamp(Uint16 ramp[256]) {
-  /* The following is adapted from a post by Garrett Bass on OpenGL
-     Gamedev list, March 4, 2000.
-  */
-  float sum = 0.0;
-  int count = 0;
-
-  float gamma = 1.0;
-  for (int i = 1; i < 256; ++i) {
-    if ((ramp[i] != 0) && (ramp[i] != 65535)) {
-      double B = (double)i / 256.0;
-      double A = ramp[i] / 65535.0;
-      sum += (float) (log(A) / log(B));
-      count++;
-    }
-  }
-  if ( count && sum ) {
-    gamma = 1.0f / (sum / count);
-  }
-  return gamma;
-}
-
-float SDLWindow::getGamma() const {
-  Uint16 redRamp[256];
-  Uint16 greenRamp[256];
-  Uint16 blueRamp[256];
-  float gamma = 1.0;
-  int result = SDL_GetGammaRamp(redRamp, greenRamp, blueRamp);
-  if (result == -1) {
-    printf("Could not get Gamma: %s.\n", SDL_GetError());
-  } else {
-    float red   = CalculateGammaFromRamp(redRamp);
-    float green = CalculateGammaFromRamp(greenRamp);
-    float blue  = CalculateGammaFromRamp(blueRamp);
-    gamma = (red + green + blue) / 3.0;
-  }
-  return gamma;
-}
-
-bool SDLWindow::hasGammaControl() const {
-  return hasGamma;
-}
-
-void SDLWindow::swapBuffers() {
-  SDL_GL_SwapBuffers();
-}
-
-bool SDLWindow::create(void) {
-  if (!((SDLDisplay *)getDisplay())->createWindow()) {
-    return false;
-  }
-  return true;
-}
-
-void SDLWindow::enableGrabMouse(bool on) {
-  ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
-}
-
-#endif
 
 // Local Variables: ***
 // mode:C++ ***

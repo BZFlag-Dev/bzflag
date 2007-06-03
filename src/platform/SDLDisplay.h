@@ -14,14 +14,14 @@
  *	Encapsulates an SDL display
  */
 
-#ifndef BZF_SDLDISPLAY_H
-#define	BZF_SDLDISPLAY_H
+#ifndef __SDLDISPLAY_H__
+#define	__SDLDISPLAY_H__
 
+/* interface headers */
 #include "bzfSDL.h"
 #include "BzfDisplay.h"
-#include "BzfVisual.h"
-#include "BzfWindow.h"
 #include "BzfEvent.h"
+
 
 class SDLDisplay : public BzfDisplay {
  public:
@@ -60,57 +60,7 @@ class SDLDisplay : public BzfDisplay {
   int  defaultHeight;
 };
 
-class SDLVisual : public BzfVisual {
- public:
-  SDLVisual(const SDLDisplay*) { ;};
-  void setLevel(int) {;};
-  void setDoubleBuffer(bool);
-  void setIndex(int) {;};
-  void setRGBA(int minRed, int minGreen,
-	       int minBlue, int minAlpha);
-  void setDepth(int minDepth);
-  void setStencil(int minDepth);
-  void setAccum(int, int, int, int) {;};
-  void setStereo(bool);
-  void setMultisample(int) {;};
-  bool build() {return true;};
-};
-
-class SDLWindow : public BzfWindow {
- public:
-  SDLWindow(const SDLDisplay* _display, SDLVisual*);
-  bool  isValid() const {return true;};
-  void  showWindow(bool) {;};
-  void  getPosition(int &, int &) {;};
-  void  getSize(int& width, int& height) const;
-  void  setSize(int width, int height);
-  void  setTitle(const char * title);
-  void  setPosition(int, int) {;};
-  void  setMinSize(int, int) {;};
-  void  setFullscreen(bool);
-  void  iconify(void);
-  void  warpMouse(int x, int y);
-  void  getMouse(int& x, int& y) const;
-  void  grabMouse() {;};
-  void  ungrabMouse() {;};
-  void  enableGrabMouse(bool);
-  void  showMouse() {;};
-  void  hideMouse() {;};
-  void  setGamma(float newGamma);
-  float getGamma() const;
-  bool  hasGammaControl() const;
-  void  makeCurrent() {;};
-  void  swapBuffers();
-  void  makeContext() {;};
-  void  freeContext() {;};
-  bool  create(void);
- private:
-  int	  x;
-  int	  y;
-  bool	 hasGamma;
-};
-
-#endif // BZF_SDLDISPLAY_H
+#endif // __SDLDISPLAY_H__
 
 // Local Variables: ***
 // mode:C++ ***

@@ -16,6 +16,8 @@
 /* implementation headers */
 #ifdef HAVE_SDL
 #  include "SDLMedia.h"
+#  include "SDLVisual.h"
+#  include "SDLWindow.h"
 #  include "SDLDisplay.h"
 #  include "SDLJoystick.h"
 #else
