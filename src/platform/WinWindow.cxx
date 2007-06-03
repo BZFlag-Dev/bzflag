@@ -474,8 +474,8 @@ void			WinWindow::reactivateAll()
     const bool hadChild = (scan->hDCChild != NULL);
     scan->inactiveDueToDeactivateAll = false;
     scan->makeContext();
+    scan->callExposeCallbacks();
   }
-  callExposeCallbacks();
 }
 
 HWND			WinWindow::getHandle()
