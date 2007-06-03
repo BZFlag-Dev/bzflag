@@ -972,11 +972,9 @@ int			main(int argc, char** argv)
     if (last)
       *last = '\0';
     strcat(exePath,"\\data");
-    BzfMedia *media = PlatformFactory::getMedia();
-    if (media)
-      media->setMediaDirectory(exePath);
+    PlatformFactory::getMedia()->setMediaDirectory(exePath);
 #else
-    // It's only checking existence of l10n directory
+    // Only check existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
     if (localedir == NULL) {
       PlatformFactory::getMedia()->setMediaDirectory(BZFLAG_DATA);

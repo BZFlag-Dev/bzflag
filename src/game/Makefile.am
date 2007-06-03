@@ -12,7 +12,6 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 libGame_la_LDFLAGS = -static
 libGame_la_SOURCES =			\
 	BzMaterial.cxx			\
-	CacheManager.cxx		\
 	CollisionManager.cxx		\
 	CommandsStandard.cxx		\
 	DirectoryNames.cxx		\

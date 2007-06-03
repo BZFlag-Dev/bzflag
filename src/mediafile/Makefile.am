@@ -10,6 +10,9 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libMediaFile_la_LDFLAGS = -static
 libMediaFile_la_SOURCES =	\
+	AudioFile.cxx		\
+	AudioFile.h		\
+	CacheManager.cxx	\
 	ImageFile.cxx		\
 	ImageFile.h		\
 	MediaFile.cxx		\
@@ -17,10 +20,8 @@ libMediaFile_la_SOURCES =	\
 	PNGImageFile.h		\
 	SGIImageFile.cxx	\
 	SGIImageFile.h		\
-	AudioFile.cxx		\
-	AudioFile.h		\
-	WaveAudioFile.h		\
-	WaveAudioFile.cxx
+	WaveAudioFile.cxx	\
+	WaveAudioFile.h
 
 EXTRA_DIST = \
 	OggAudioFile.cxx	\
