@@ -57,6 +57,7 @@ LDADD = \
 	../common/libCommon.la	\
 	$(CURSES_LIB)		\
 	$(LIBCURL)		\
+	$(LIBCARES)		\
 	$(LIBREGEX)
 
 MAINTAINERCLEANFILES = \
