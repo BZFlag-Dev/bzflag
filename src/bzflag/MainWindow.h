@@ -99,6 +99,7 @@ class MainWindow {
     MainWindow&		operator=(const MainWindow&);
 
     static void		resizeCB(void*);
+    static void		exposeCB(void*);
 
   private:
     BzfWindow*		window;

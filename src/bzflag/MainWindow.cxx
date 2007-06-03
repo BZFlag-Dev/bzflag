@@ -38,6 +38,7 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
+  window->addExposeCallback(exposeCB, this);
   resize();
 }
 
@@ -236,6 +237,13 @@ void			MainWindow::resizeCB(void* _self)
 {
   MainWindow* self = (MainWindow*)_self;
   self->resize();
+}
+
+void			MainWindow::exposeCB(void* _self)
+{
+#ifdef WIN32
+  OpenGLGState::initContext();
+#endif
 }
 
 void			MainWindow::iconify()
