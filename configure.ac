@@ -140,7 +140,7 @@ fi
 AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
 
 # do we want bzrobots?
-AC_ARG_ENABLE(bzrobots, [  --enable-bzrobots       build bzrobots client])
+AC_ARG_ENABLE(bzrobots, [  --disable-bzrobots       build bzrobots client])
 
 # build a binary set to stop functioning after some date
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
@@ -895,8 +895,8 @@ if test x$enable_client != xno; then
     have_gl=no
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[Client build has been requested, but OpenGL is not fully available
-... disabling client generation])
+	[Client build is enabled, but OpenGL does not seem to be fully available
+... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
     else
@@ -912,20 +912,20 @@ fi
 AM_CONDITIONAL(SERVER_INCLUDED, true)
 
 
-# if the bzrobots was enabled, make sure we have GL
-if test x$enable_bzrobots == xyes; then
+# if the bzrobots was enabled, make sure we have GL (enabled by default)
+if test x$enable_bzrobots = xno; then
+    AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
+    enable_bzrobots=no
+else
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[BZRobots build has been requested, but GL is not fully available (missing gl.h)
-... disabling bzrobots generation])
+	[BZRobots build is enabled, but OpenGL does not seem to be fully available
+... disabling BZRobots client])
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
 	enable_bzrobots=no
     else
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
     fi
-else
-    AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
-    enable_bzrobots=no
 fi
 
 
