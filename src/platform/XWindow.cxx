@@ -12,7 +12,6 @@
 
 #include "XWindow.h"
 #include "XVisual.h"
-#include "OpenGLGState.h"
 #if defined(XF86VIDMODE_EXT)
 #  define USE_XF86VIDMODE_EXT
 #  define private c_private
@@ -648,10 +647,7 @@ void			XWindow::reactivateAll()
 {
   for (XWindow* scan = first; scan; scan = scan->next)
     scan->makeContext();
-
-  // reload context data
-  if (first)
-    OpenGLGState::initContext();
+  callExposeCallbacks();
 }
 
 // Local Variables: ***

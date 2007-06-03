@@ -706,6 +706,7 @@ void setupConfigs ( void )
 	}
 }
 
+
 //
 // main()
 //	initialize application and enter event loop
@@ -1079,6 +1080,8 @@ int			main(int argc, char** argv)
     pmainWindow->setFullscreen();
   else
     window->create();
+
+  OpenGLGState::initContext();
 
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.

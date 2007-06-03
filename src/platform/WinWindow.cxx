@@ -14,7 +14,6 @@
 // crs 10/26/1997 modified JM's changes
 
 #include "WinWindow.h"
-#include "OpenGLGState.h"
 #include <stdio.h>
 #include <math.h>
 #include "StateDatabase.h"
@@ -471,18 +470,12 @@ void			WinWindow::deactivateAll()
 
 void			WinWindow::reactivateAll()
 {
-  bool anyNewChildren = false;
   for (WinWindow* scan = first; scan; scan = scan->next) {
     const bool hadChild = (scan->hDCChild != NULL);
     scan->inactiveDueToDeactivateAll = false;
     scan->makeContext();
-    if (!hadChild && scan->hDCChild != NULL)
-      anyNewChildren = true;
   }
-
-  // reload context data
-  if (anyNewChildren)
-    OpenGLGState::initContext();
+  callExposeCallbacks();
 }
 
 HWND			WinWindow::getHandle()
@@ -539,9 +532,6 @@ bool			WinWindow::activate()
     grabMouse();
 
   if (!hadChild && hDCChild != NULL) {
-    // reload context data
-    OpenGLGState::initContext();
-
     // force a redraw
     callExposeCallbacks();
 

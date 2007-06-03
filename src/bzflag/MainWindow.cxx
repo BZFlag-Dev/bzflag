@@ -225,8 +225,10 @@ void			MainWindow::resize()
 {
   window->getSize(trueWidth, trueHeight);
   window->makeCurrent();
-  if (!window->create())
+  if (!window->create()) {
     faulting = true;
+  }
+  OpenGLGState::initContext();
   setQuadrant(quadrant);
 }
 

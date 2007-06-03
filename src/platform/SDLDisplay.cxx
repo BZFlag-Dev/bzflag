@@ -16,7 +16,6 @@
 #ifdef HAVE_SDL
 #include <stdio.h>
 #include "SDLDisplay.h"
-#include "OpenGLGState.h"
 #include <iostream>
 #include <math.h>
 
@@ -542,8 +541,6 @@ bool SDLDisplay::createWindow() {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
     return false;
   } else {
-    // init opengl context
-    OpenGLGState::initContext();
     return true;
   }
 }

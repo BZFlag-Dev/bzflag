@@ -27,7 +27,6 @@
 #include "BeOSWindow.h"
 #include "BeOSVisual.h"
 #include "BzfEvent.h"
-#include "OpenGLGState.h"
 
 //#define MSGDBG(a) printf a
 #define MSGDBG(a)
@@ -563,15 +562,12 @@ void					BeOSWindow::makeContext()
   oglContextInitialized = true;
   //showWindow(true);
   makeCurrent();
-  //	OpenGLGState::init();
-  OpenGLGState::initContext();
 }
 
 void					BeOSWindow::freeContext()
 {
   MSGDBG(("BeOSWindow::freeContext()\n"));
   // release context data
-  //	OpenGLGState::freeContext();
   //bWindow->ReleaseCurrent();
   releaseCurrent();
 }
