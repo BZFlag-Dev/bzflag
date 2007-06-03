@@ -16,17 +16,13 @@
 #include "CacheManager.h"
 
 // system headers
-#include <string>
-#include <vector>
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef _WIN32
+#ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 
@@ -38,34 +34,32 @@
 #include "StateDatabase.h"
 #include "DirectoryNames.h"
 
-
 // function prototypes
 static bool fileExists(const std::string& name);
 static void removeDirs(const std::string& path);
 static void removeNewlines(char* c);
 static std::string partialEncoding(const std::string& string);
-static bool compareUsedDate(const CacheManager::CacheRecord& a,
-			    const CacheManager::CacheRecord& b);
+static bool compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b);
 
 
-CacheManager CACHEMGR;
+// initialize the singleton
+template <>
+CacheManager* Singleton<CacheManager>::_instance = (CacheManager*)0;
 
 
 CacheManager::CacheManager()
 {
-  indexName = getCacheDirName();
-  indexName += "CacheIndex.txt";
-  return;
+  indexName = "CacheIndex.txt";
+  cacheDir = "./";
 }
 
 
 CacheManager::~CacheManager()
 {
-  return;
 }
 
-
-bool CacheManager::isCacheFileType(const std::string name) const
+bool
+CacheManager::isCacheFileType(const std::string name)
 {
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
     return true;
@@ -77,15 +71,22 @@ bool CacheManager::isCacheFileType(const std::string name) const
 }
 
 
-std::string CacheManager::getLocalName(const std::string name) const
+void
+CacheManager::setCacheDirectory(const std::string dir)
+{
+  cacheDir = dir;
+}
+
+std::string
+CacheManager::getLocalName(const std::string name) const
 {
   std::string local = "";
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
-    local = getCacheDirName() + "http/";
+    local = cacheDir + "http/";
     local += partialEncoding(name.substr(7));
   }
   else if (strncasecmp(name.c_str(), "ftp://", 6) == 0) {
-    local = getCacheDirName() + "ftp/";
+    local = cacheDir + "ftp/";
     local += partialEncoding(name.substr(6));
   }
 #ifdef _WIN32
@@ -95,7 +96,8 @@ std::string CacheManager::getLocalName(const std::string name) const
 }
 
 
-bool CacheManager::findURL(const std::string& url, CacheRecord& record)
+bool
+CacheManager::findURL(const std::string& url, CacheRecord& record)
 {
   int pos = findRecord(url);
   if (pos >= 0) {
@@ -108,7 +110,8 @@ bool CacheManager::findURL(const std::string& url, CacheRecord& record)
 }
 
 
-bool CacheManager::addFile(CacheRecord& record, const void* data)
+bool
+CacheManager::addFile(CacheRecord& record, const void* data)
 {
   if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0)) {
     return false;
@@ -148,7 +151,8 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
 }
 
 
-int CacheManager::findRecord(const std::string& url)
+int
+CacheManager::findRecord(const std::string& url)
 {
   for (unsigned int i = 0; i < records.size(); i++) {
     CacheRecord* rec = &(records[i]);
@@ -160,11 +164,14 @@ int CacheManager::findRecord(const std::string& url)
 }
 
 
-bool CacheManager::loadIndex()
+bool
+CacheManager::loadIndex()
 {
   records.clear();
 
-  FILE* file = fopen(indexName.c_str(), "r");
+  std::string indexFile = cacheDir + indexName;
+
+  FILE* file = fopen(indexFile.c_str(), "r");
   if (file == NULL) {
     return false;
   }
@@ -205,11 +212,13 @@ bool CacheManager::loadIndex()
 }
 
 
-bool CacheManager::saveIndex()
+bool
+CacheManager::saveIndex()
 {
   std::sort(records.begin(), records.end(), compareUsedDate);
 
-  std::string tmpIndexName = indexName + ".tmp";
+  std::string indexFile = cacheDir + indexName;
+  std::string tmpIndexName = indexFile + ".tmp";
 
   FILE* file = fopen(tmpIndexName.c_str(), "w");
   if (file == NULL) {
@@ -234,14 +243,15 @@ bool CacheManager::saveIndex()
   // Windows sucks yet again. You can't rename a file to a file that
   // already exists, you have to remove the existing file first. No
   // atomic transactions.
-  remove(indexName.c_str());
+  remove(indexFile.c_str());
 #endif
 
-  return (rename(tmpIndexName.c_str(), indexName.c_str()) == 0);
+  return (rename(tmpIndexName.c_str(), indexFile.c_str()) == 0);
 }
 
 
-void CacheManager::limitCacheSize()
+void
+CacheManager::limitCacheSize()
 {
   int maxSize = BZDB.evalInt("maxCacheMB") * 1024 * 1024;
   if (maxSize < 0) {
@@ -267,13 +277,15 @@ void CacheManager::limitCacheSize()
 }
 
 
-std::vector<CacheManager::CacheRecord> CacheManager::getCacheList() const
+std::vector<CacheManager::CacheRecord>
+CacheManager::getCacheList() const
 {
   return records;
 }
 
 
-static bool fileExists (const std::string& name)
+static bool
+fileExists (const std::string& name)
 {
   struct stat buf;
 #ifndef _WIN32
@@ -290,7 +302,8 @@ static bool fileExists (const std::string& name)
 }
 
 
-static void removeDirs(const std::string& path)
+static void
+removeDirs(const std::string& path)
 {
   unsigned int minLen = (unsigned int)getConfigDirName().size();
   std::string tmp = path;
@@ -309,7 +322,8 @@ static void removeDirs(const std::string& path)
 }
 
 
-static void removeNewlines(char* c)
+static void
+removeNewlines(char* c)
 {
   while (*c != '\0') {
     if ((*c == '\n') || (*c == '\r')) {
@@ -321,7 +335,8 @@ static void removeNewlines(char* c)
 }
 
 
-static std::string partialEncoding(const std::string& string)
+static std::string
+partialEncoding(const std::string& string)
 {
   // URL encoding removes the '/' and '.', which is
   // not acceptable. It is nice to have the directory
@@ -348,8 +363,8 @@ static std::string partialEncoding(const std::string& string)
 }
 
 
-static bool compareUsedDate(const CacheManager::CacheRecord& a,
-			    const CacheManager::CacheRecord& b)
+static bool
+compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b)
 {
   // oldest last
   return (a.usedDate > b.usedDate);

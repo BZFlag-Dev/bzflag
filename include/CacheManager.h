@@ -10,51 +10,65 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef CACHE_MANAGER_H
-#define CACHE_MANAGER_H
+#ifndef __CACHEMANAGER_H__
+#define __CACHEMANAGER_H__
 
+#include "common.h"
+
+/* system interface headers */
 #include <time.h>
 #include <string>
 #include <vector>
 
-class CacheManager {
-  public:
-    CacheManager();
-    ~CacheManager();
+/* common interface headers */
+#include "Singleton.h"
 
-    typedef struct {
-      std::string url;
-      time_t usedDate;
-      std::string name;
-      int size;
-      time_t date;
-      std::string key;
-    } CacheRecord;
 
-    bool isCacheFileType(const std::string name) const;
-    std::string getLocalName(const std::string name) const;
+#define CACHEMGR (CacheManager::instance())
 
-    bool loadIndex();
-    bool saveIndex();
 
-    bool findURL(const std::string& url, CacheRecord& record);
-    bool addFile(CacheRecord& rec, const void* data);
+class CacheManager : public Singleton<CacheManager> {
+ public:
 
-    std::vector<CacheRecord> getCacheList() const;
+  typedef struct {
+    std::string url;
+    time_t usedDate;
+    std::string name;
+    int size;
+    time_t date;
+    std::string key;
+  } CacheRecord;
 
-    void limitCacheSize();
+  static bool isCacheFileType(const std::string name);
 
-  private:
-    int findRecord(const std::string& url);
+  void setCacheDirectory(const std::string dir);
+  std::string getLocalName(const std::string name) const;
 
-  private:
-    std::string indexName;
-    std::vector<CacheRecord> records;
+  bool loadIndex();
+  bool saveIndex();
+
+  bool findURL(const std::string& url, CacheRecord& record);
+  bool addFile(CacheRecord& rec, const void* data);
+
+  std::vector<CacheRecord> getCacheList() const;
+
+  void limitCacheSize();
+
+ protected:
+  friend class Singleton<CacheManager>;
+
+ private:
+  CacheManager();
+  ~CacheManager();
+
+  int findRecord(const std::string& url);
+
+  std::string cacheDir;
+  std::string indexName;
+  std::vector<CacheRecord> records;
 };
 
-extern CacheManager CACHEMGR;
-
-#endif
+#endif  /* __CACHEMANAGER_H__ */
 
 /*
  * Local Variables: ***

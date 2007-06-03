@@ -7403,6 +7403,10 @@ void			startPlaying(BzfDisplay* _display,
     HUDDialogStack::get()->push(mainMenu);
   }
 
+  // set up the cache singleton to work in the data dir
+  std::string cacheDir = getCacheDirName();
+  CACHEMGR.setCacheDirectory(cacheDir);
+
   // start game loop
   playingLoop();
 

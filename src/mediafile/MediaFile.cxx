@@ -125,7 +125,7 @@ static bool checkExt(const std::string& base, const char* ext,
 unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
 {
   // get the absolute filename for cache textures
-  if (CACHEMGR.isCacheFileType(filename)) {
+  if (CacheManager::isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
   }
 
@@ -333,12 +333,11 @@ do {							\
   }							\
 } while (0)
 
-unsigned char*		MediaFile::readImage(
-				std::string filename,
-				int* width, int* height)
+unsigned char*		MediaFile::readImage(std::string filename,
+					     int* width, int* height)
 {
   // get the absolute filename for cache textures
-  if (CACHEMGR.isCacheFileType(filename)) {
+  if (CacheManager::isCacheFileType(filename)) {
     filename = CACHEMGR.getLocalName(filename);
   }
 
