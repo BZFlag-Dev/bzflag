@@ -645,9 +645,10 @@ void			XWindow::deactivateAll()
 
 void			XWindow::reactivateAll()
 {
-  for (XWindow* scan = first; scan; scan = scan->next)
+  for (XWindow* scan = first; scan; scan = scan->next) {
     scan->makeContext();
-  callExposeCallbacks();
+    scan->callExposeCallbacks();
+  }
 }
 
 // Local Variables: ***
