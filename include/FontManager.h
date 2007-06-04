@@ -13,15 +13,17 @@
 #ifndef _FONT_MANAGER_H_
 #define _FONT_MANAGER_H_
 
-#ifdef _MSC_VER
-  #pragma warning(disable : 4786)  // Disable warning message
-#endif
+#include "common.h"
 
+/* interface header */
+#include "Singleton.h"
+
+/* system interface headers */
 #include <map>
 #include <string>
 #include <vector>
 
-#include "Singleton.h"
+/* common interface headers */
 #include "bzfgl.h"
 #include "AnsiCodes.h"
 
@@ -31,11 +33,9 @@ typedef std::map<int, ImageFont*> FontSizeMap;
 typedef std::vector<FontSizeMap>    FontFaceList;
 typedef std::map<std::string, int>  FontFaceMap;
 
+
 class FontManager : public Singleton<FontManager> {
 public:
-  FontManager();
-  ~FontManager();
-
   void loadAll(std::string dir);
 
   void clear();
@@ -72,6 +72,9 @@ protected:
   friend class Singleton<FontManager>;
 
 private:
+  FontManager();
+  ~FontManager();
+
   void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
   ImageFont*	getClosestSize(int faceID, float size, bool bigger);
   ImageFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
