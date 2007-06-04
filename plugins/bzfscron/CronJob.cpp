@@ -17,8 +17,8 @@
 #include "CronJob.h"
 #include "TextUtils.h"
 #include "bzfsAPI.h"
+#include "bzfio.h"
 
-extern int debugLevel;
 
 // debug util func
 static std::string vector_dump(std::vector<int> &iv) {

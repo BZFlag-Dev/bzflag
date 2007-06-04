@@ -1348,8 +1348,8 @@ BZF_API void bz_resetBZDBVar( const char* variable );
 BZF_API void bz_resetALLBZDBVars( void );
 
 // logging
-BZF_API void bz_debugMessage ( int debugLevel, const char* message );
-BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
+BZF_API void bz_debugMessage ( int level, const char* message );
+BZF_API void bz_debugMessagef( int level, const char* fmt, ... );
 BZF_API int bz_getDebugLevel ( void );
 
 // admin

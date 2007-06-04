@@ -1816,24 +1816,24 @@ BZF_API void bz_resetALLBZDBVars(void)
 }
 
 // logging
-BZF_API void bz_debugMessage(int _debugLevel, const char *message)
+BZF_API void bz_debugMessage(int _level, const char *message)
 {
   if(!message)
     return ;
 
-  logDebugMessage(_debugLevel, "%s\n", message);
+  logDebugMessage(_level, "%s\n", message);
 }
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_debugMessagef(int _debugLevel, const char *fmt, ...)
+BZF_API void bz_debugMessagef(int _level, const char *fmt, ...)
 {
   char buffer[4096];
   va_list args;
   va_start(args, fmt);
   vsnprintf(buffer, 4096, fmt, args);
   va_end(args);
-  bz_debugMessage(_debugLevel, buffer);
+  bz_debugMessage(_level, buffer);
 }
 
 //-------------------------------------------------------------------------

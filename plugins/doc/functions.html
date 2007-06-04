@@ -339,10 +339,10 @@
 															Sets the BZDB database item specified to the for the specified integer value</p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Logging Functions </span></p>
-														<p><strong>BZF_API void bz_debugMessage ( int debugLevel, const char* message );</strong><br>
+														<p><strong>BZF_API void bz_debugMessage ( int level, const char* message );</strong><br>
 															Outputs the specified message if the current debug level is at least the 
 															specified level.</p>
-														<p><strong>BZF_API void bz_debugMessagef ( int debugLevel, const char* fmt, ... );</strong><br>
+														<p><strong>BZF_API void bz_debugMessagef ( int level, const char* fmt, ... );</strong><br>
 															Smae as above, but use printf-style formatting.</p>
 														<p><strong>BZF_API int bz_getDebugLevel ( void );</strong><br>
 															Returns BZFS' current debug level. You can use this for more complicated debug 

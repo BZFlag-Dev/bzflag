@@ -110,7 +110,6 @@ uint16_t maxRealPlayers = MaxPlayers;
 uint16_t maxPlayers = MaxPlayers;
 // highest active id
 uint16_t curMaxPlayers = 0;
-int debugLevel = 0;
 
 float maxWorldHeight = 0.0f;
 CheatProtectionOptions	cheatProtectionOptions;

@@ -27,7 +27,6 @@
 
 #define BCVERSION "bzfscron 1.0.0"
 
-int debugLevel;
 CronManager cron;
 
 // -- Library entry points for bzfs

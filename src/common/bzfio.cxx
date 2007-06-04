@@ -31,6 +31,9 @@
 #  include <mmsystem.h>
 #endif
 
+/** global used to control logging level across all applications */
+int debugLevel = 0;
+
 LoggingCallback	*loggingCallback = NULL;
 
 static bool doTimestamp = false;

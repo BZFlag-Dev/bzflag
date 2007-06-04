@@ -33,11 +33,9 @@
 #include "OptionParser.h"
 #include "UIMap.h"
 
-
 // causes persistent rebuilding to obtain build versioning
 #include "version.h"
 
-int debugLevel = 0;
 
 #ifdef _WIN32
 void Player::setDeadReckoning( float timestamp )

@@ -52,4 +52,3 @@ private:
 };
 
 extern CronManager cron;
-extern int debugLevel;

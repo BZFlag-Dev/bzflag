@@ -35,8 +35,6 @@
 #endif
 
 
-extern int debugLevel;
-
 /* near zero by some epsilon convenience define since relying on
  * the floating point unit for proper equivalence is not safe
  */

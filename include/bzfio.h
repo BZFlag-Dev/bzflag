@@ -10,17 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Include c++ iostream.
- */
-
-#ifndef BZF_MYIO
-#define BZF_MYIO
+#ifndef __BZFIO_H__
+#define __BZFIO_H__
 
 #include "common.h"
 
 void setDebugTimestamp (bool enable, bool doMicros);
 void logDebugMessage(int level, const char* fmt, ...);
+
+/** global debug level used by libraries and applications, provided in bzfio.cxx */
+extern int debugLevel;
+
 
 class LoggingCallback
 {
@@ -32,11 +32,7 @@ public:
 
 extern LoggingCallback	*loggingCallback;
 
-/* insert any other broken OS conditionals here */
-#include <iostream>
-
-#endif
-
+#endif /* __BZFIO_H__ */
 
 /*
  * Local Variables: ***

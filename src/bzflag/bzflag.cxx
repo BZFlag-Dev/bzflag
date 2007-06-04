@@ -99,7 +99,6 @@ static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
-int			debugLevel = 0;
 
 static BzfDisplay*	display = NULL;
 

@@ -100,7 +100,6 @@ static void *nboUnpackRRtime( void *buf, RRtime &value );
 static std::string strRRtime( RRtime timestamp );
 
 
-int debugLevel = 0;
 static int outputLevel = 0;
 
 
