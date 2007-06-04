@@ -16,8 +16,6 @@ recent bugs
   -list http://localhost (even if no local server is running) to avoid
   the hang on resolving.
 
-- Any banlist changes erase the masterban entries if a banfile is present
-
 - client side bots make the client get disconnected (read error)
 
 - idbans do not respect the antiban permission
