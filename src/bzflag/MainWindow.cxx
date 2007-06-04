@@ -239,7 +239,7 @@ void			MainWindow::resizeCB(void* _self)
   self->resize();
 }
 
-void			MainWindow::exposeCB(void* _self)
+void			MainWindow::exposeCB(void* /*_self*/)
 {
   OpenGLGState::initContext();
 }
