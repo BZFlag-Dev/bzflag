@@ -13,6 +13,8 @@
 #ifndef _ANSI_CODES_H_
 #define _ANSI_CODES_H_
 
+#include "common.h"
+
 #include <string>
 
 // Escape character to begin ANSI codes
