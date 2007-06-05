@@ -165,7 +165,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.reset();
     gstate.setShading();
     gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
-    gstate.setMaterial(defaultMaterial);
+    gstate.setMaterial(defaultMaterial, RENDERER.useQuality() > _LOW_QUALITY);
     gstate.setTexture(cloudsTexture);
     gstate.setAlphaFunc();
     cloudsGState = gstate.getState();
@@ -206,7 +206,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       gstate.reset ();
       gstate.setShading ();
       gstate.setBlending ();
-      gstate.setMaterial (defaultMaterial);
+      gstate.setMaterial (defaultMaterial, RENDERER.useQuality() > _LOW_QUALITY);
       gstate.setAlphaFunc ();
 
       if (numMountainTextures > 1) {
@@ -315,17 +315,18 @@ void BackgroundRenderer::setupGroundMaterials()
   OpenGLGStateBuilder gb;
 
   // ground gstates
+  bool quality = RENDERER.useQuality() > _LOW_QUALITY;
   gb.reset();
   groundGState[0] = gb.getState();
   gb.reset();
-  gb.setMaterial(defaultMaterial);
+  gb.setMaterial(defaultMaterial, quality);
   groundGState[1] = gb.getState();
   gb.reset();
   gb.setTexture(groundTextureID);
   gb.setTextureMatrix(groundTextureMatrix);
   groundGState[2] = gb.getState();
   gb.reset();
-  gb.setMaterial(defaultMaterial);
+  gb.setMaterial(defaultMaterial, quality);
   gb.setTexture(groundTextureID);
   gb.setTextureMatrix(groundTextureMatrix);
   groundGState[3] = gb.getState();
@@ -342,13 +343,13 @@ void BackgroundRenderer::setupGroundMaterials()
   gb.reset();
   invGroundGState[0] = gb.getState();
   gb.reset();
-  gb.setMaterial(defaultMaterial);
+  gb.setMaterial(defaultMaterial, quality);
   invGroundGState[1] = gb.getState();
   gb.reset();
   gb.setTexture(groundInvTextureID);
   invGroundGState[2] = gb.getState();
   gb.reset();
-  gb.setMaterial(defaultMaterial);
+  gb.setMaterial(defaultMaterial, quality);
   gb.setTexture(groundInvTextureID);
   invGroundGState[3] = gb.getState();
 

@@ -52,7 +52,7 @@ class OpenGLGStateState {
     void		setTexture(const int tex);
     void		setTextureMatrix(const GLfloat* matrix);
     void		setTextureEnvMode(GLenum mode);
-    void		setMaterial(const OpenGLMaterial&);
+    void		setMaterial(const OpenGLMaterial&, bool highquality);
     void		setBlending(GLenum sFactor, GLenum dFactor);
     void		setStipple(float alpha);
     void		setSmoothing(bool smooth);
@@ -365,10 +365,12 @@ void			OpenGLGStateState::setTextureEnvMode(
 }
 
 void			OpenGLGStateState::setMaterial(
-					const OpenGLMaterial& _material)
+					const OpenGLMaterial& _material,
+					bool highQuality)
 {
   sorted.hasMaterial = _material.isValid();
   sorted.material = _material;
+  sorted.material.setQuality(highQuality);
 }
 
 void			OpenGLGStateState::setBlending(
@@ -1377,9 +1379,10 @@ void			OpenGLGStateBuilder::setTextureEnvMode(
 }
 
 void			OpenGLGStateBuilder::setMaterial(
-					const OpenGLMaterial& material)
+					const OpenGLMaterial& material,
+					bool highQuality)
 {
-  state->setMaterial(material);
+  state->setMaterial(material, highQuality);
 }
 
 void			OpenGLGStateBuilder::setBlending(

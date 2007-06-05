@@ -51,6 +51,8 @@ class OpenGLMaterial {
     const GLfloat*	getEmissiveColor() const;
     GLfloat		getShininess() const;
 
+    void		setQuality(bool highQuality);
+
     bool		isValid() const;
     void		execute() const;
 
@@ -79,6 +81,7 @@ class OpenGLMaterial {
 	GLfloat		emissive[4];
 	GLfloat		shininess;
 	static Rep*	head;
+        bool		highQuality;
     };
     Rep*		rep;
 };
@@ -101,6 +104,12 @@ inline GLfloat		OpenGLMaterial::getShininess() const
 {
   return rep->shininess;
 }
+
+inline void		OpenGLMaterial::setQuality(bool highQuality)
+{
+  rep->highQuality = highQuality;
+}
+
 
 #endif // BZF_OPENGL_MATERIAL_H
 

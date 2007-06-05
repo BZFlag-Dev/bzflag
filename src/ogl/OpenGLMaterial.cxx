@@ -13,7 +13,6 @@
 #include "common.h"
 #include "OpenGLMaterial.h"
 #include "OpenGLGState.h"
-#include "SceneRenderer.h"
 
 //
 // OpenGLMaterial::Rep
@@ -113,7 +112,7 @@ void			OpenGLMaterial::Rep::execute()
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-      if (RENDERER.useQuality() > _LOW_QUALITY) {
+      if (highQuality) {
 	if  ((specular[0] > 0.0f) ||
 	     (specular[1] > 0.0f) ||
 	     (specular[2] > 0.0f)) {
@@ -168,7 +167,11 @@ OpenGLMaterial::OpenGLMaterial(const GLfloat* specular,
 OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m)
 {
   rep = m.rep;
-  if (rep) rep->ref();
+  if (rep) {
+    rep->highQuality = false;
+    rep->ref();
+  }
+  
 }
 
 OpenGLMaterial::~OpenGLMaterial()

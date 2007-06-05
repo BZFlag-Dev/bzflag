@@ -311,7 +311,7 @@ void			WallSceneNode::setNoSorting(bool value)
 void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);
-  builder.setMaterial(mat);
+  builder.setMaterial(mat, RENDERER.useQuality() > _LOW_QUALITY);
   gstate = builder.getState();
 }
 

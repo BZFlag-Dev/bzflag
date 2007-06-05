@@ -63,7 +63,7 @@ ShellSceneNode::ShellSceneNode(const GLfloat pos[3],
   setRadius(9.0f * ShellRadius * ShellRadius);
 
   OpenGLGStateBuilder builder(gstate);
-  builder.setMaterial(OpenGLMaterial(specular, emissive, 20.0f));
+  builder.setMaterial(OpenGLMaterial(specular, emissive, 20.0f), RENDERER.useQuality() > _LOW_QUALITY);
   gstate = builder.getState();
 }
 

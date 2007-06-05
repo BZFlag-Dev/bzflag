@@ -480,7 +480,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     OpenGLMaterial oglMaterial(bzmat->getSpecular(),
 			       bzmat->getEmission(),
 			       bzmat->getShininess());
-    builder.setMaterial(oglMaterial);
+    builder.setMaterial(oglMaterial, RENDERER.useQuality() > _LOW_QUALITY);
     builder.setShading(GL_SMOOTH);
   } else {
     builder.setShading(GL_FLAT);

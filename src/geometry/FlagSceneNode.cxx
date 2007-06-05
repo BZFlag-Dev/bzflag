@@ -642,7 +642,7 @@ void FlagSceneNode::notifyStyleChange()
 
   if (realFlag && BZDBCache::lighting) {
     OpenGLMaterial glmat(specular, emission, 64.0f);
-    builder.setMaterial(glmat);
+    builder.setMaterial(glmat, quality > _LOW_QUALITY);
   } else {
     builder.enableMaterial(false);
   }
