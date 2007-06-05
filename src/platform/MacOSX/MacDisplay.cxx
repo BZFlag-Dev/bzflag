@@ -304,7 +304,9 @@ char *GetMacOSXDataPath(void)
     string = basePath;
   }
   ::CFRelease(resourceURL);
+#ifdef DEBUG
   fprintf(stderr, "data path is \"%s\"\n", string);
+#endif
   return string;
 }
 
