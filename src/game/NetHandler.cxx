@@ -506,7 +506,7 @@ RxStatus NetHandler::receive(size_t length) {
       returnValue = ReadAll;
     else
       returnValue = ReadPart;
-  } else if (size < 0) {
+  } else {
     // handle errors
     // get error code
     const int err = getErrno();
@@ -520,11 +520,12 @@ RxStatus NetHandler::receive(size_t length) {
       returnValue = ReadReset;
     } else {
       netConnections.remove(this);
-      returnValue = ReadError;
+      if (size == 0) {
+	returnValue = ReadDiscon;
+      } else {
+	returnValue = ReadError;
+      }
     }
-  } else { // if (size == 0)
-    netConnections.remove(this);
-    returnValue = ReadDiscon;
   }
   return returnValue;
 }
