@@ -210,6 +210,7 @@ fi
 
 #Checks for programs.
 AC_PROG_MAKE_SET
+AM_PROG_MKDIR_P
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_LN_S
