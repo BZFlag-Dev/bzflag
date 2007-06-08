@@ -23,6 +23,7 @@
 #include "bzfgl.h"
 #include "OSFile.h"
 
+
 #define MAX_TEXTURE_FONT_CHARS	(128)
 
 class ImageFont {

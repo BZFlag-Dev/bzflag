@@ -13,14 +13,13 @@
 // Interface header
 #include "ImageFont.h"
 
-// System headers
-#include <string>
+// System implementation headers
 #include <string.h>
 
 // Common implementation headers
-#include "bzfgl.h"
 #include "bzfio.h"
 #include "MediaFile.h"
+
 
 ImageFont::ImageFont()
 {

@@ -23,11 +23,13 @@
 #include <string>
 
 // implementation headers
+#include "Singleton.h"
 #include "CallbackList.h"
 #include "bzfio.h"
-#include "Singleton.h"
+
 
 #define BZDB (StateDatabase::instance())
+
 
 /** BZDB is the generic name:value pair database within bzflag and bzfs. Its
  * useful for data that can be serialized to a string that needs to be

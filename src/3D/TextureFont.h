@@ -13,13 +13,15 @@
 #ifndef _TEXTURE_FONT_H_
 #define _TEXTURE_FONT_H_
 
-#ifdef _MSC_VER
-  #pragma warning(disable : 4786)  // Disable warning message
-#endif
+#include "common.h"
 
-#include "bzfgl.h"
+/* interface header */
 #include "ImageFont.h"
+
+/* common interface headers */
+#include "bzfgl.h"
 #include "OpenGLGState.h"
+
 
 class TextureFont : public ImageFont {
 public:

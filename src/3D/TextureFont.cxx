@@ -10,24 +10,19 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// BZFlag common header
-#include "common.h"
-
-// Interface headers
-#include "ImageFont.h"
+// interface header
 #include "TextureFont.h"
 
-// System headers
+// system implementation headers
 #include <string>
 #include <string.h>
 
-// Common implementation headers
-#include "bzfgl.h"
+// common implementation headers
 #include "bzfio.h"
-#include "OpenGLGState.h"
 
-// Local implementation headers
+// local implementation headers
 #include "TextureManager.h"
+
 
 TextureFont::TextureFont()
 {
