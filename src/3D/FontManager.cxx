@@ -237,6 +237,7 @@ const char* FontManager::getFaceName(int faceID)
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string &text, const float* resetColor)
 {
+
   if (text.size() == 0)
     return;
 
@@ -301,7 +302,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   underlineColor[3] = opacity;
 
   // FIXME - this should not be necessary, but the bitmap font renderer needs it
-  //  OpenGLGState::resetState();
+  // OpenGLGState::resetState();
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
@@ -333,7 +334,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glPushMatrix();
       glTranslatef(x, y, z);
       glDepthMask(0);
+
       pFont->drawString(scale, color, &tmpText[startSend], len);
+
       if (underline) {
 	if (canScale) {
 	  glDisable(GL_TEXTURE_2D);

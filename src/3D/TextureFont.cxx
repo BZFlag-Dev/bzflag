@@ -22,6 +22,7 @@
 
 // local implementation headers
 #include "TextureManager.h"
+#include "OpenGLMaterial.h"
 
 
 TextureFont::TextureFont()
@@ -113,6 +114,7 @@ void TextureFont::preLoadLists()
   // create GState
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(textureID);
+  builder.setShading(GL_SMOOTH);
   builder.setBlending();
   builder.setAlphaFunc();
   gstate = builder.getState();
