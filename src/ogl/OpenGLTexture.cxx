@@ -159,9 +159,13 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   while (scaledWidth < width) {
     scaledWidth <<= 1;
   }
+  std::cout << "width is " << width << std::endl;
+  std::cout << "scaledWidth is " << scaledWidth << std::endl;
   while (scaledHeight < height) {
     scaledHeight <<= 1;
   }
+  std::cout << "height is " << height << std::endl;
+  std::cout << "scaledHeight is " << scaledHeight << std::endl;
 
   // get maximum valid size for texture (boost to 2^m x 2^n)
   GLint maxTextureSize;
@@ -171,9 +175,13 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   // then this (espeically if you are using glTexSubImage2D)
   const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
   GLint bzMaxTexSize = 1;
-  // align the max size to a power of two  (wasteful)
-  while (bzMaxTexSize < dbMaxTexSize) {
-    bzMaxTexSize <<= 1;
+  if (dbMaxTexSize > 0) {
+    // align the max size to a power of two  (wasteful)
+    while (bzMaxTexSize < dbMaxTexSize) {
+      bzMaxTexSize <<= 1;
+    }
+  } else {
+    bzMaxTexSize = scaledHeight > scaledWidth ? scaledHeight : scaledWidth;
   }
 
   if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
