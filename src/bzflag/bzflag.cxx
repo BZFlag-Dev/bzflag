@@ -1096,29 +1096,8 @@ int			main(int argc, char** argv)
 
   // initialize graphics state
   pmainWindow->getWindow()->makeCurrent();
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  glClearDepth(1.0);
-  glClearStencil(0);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glEnable(GL_SCISSOR_TEST);
-//  glEnable(GL_CULL_FACE);
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-  if (!OpenGLGState::haveGLContext()) {
-    // DIE
-    printFatalError("ERROR: Unable to initialize an OpenGL context");
-    if (display != NULL) {
-      delete display;
-      display=NULL;
-    }
-	bail(1);
-    exit(1);
-  }
-  OpenGLGState::init();
 
-  // sanity check - make sure OpenGL was actually initialized or
+  // sanity check - make sure OpenGL is actually available or
   // there's no sense in continuing.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
   if (!glRenderer) {
@@ -1170,6 +1149,29 @@ int			main(int argc, char** argv)
     exit(1);
 
   }
+
+  // initialize OpenGL state
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearDepth(1.0);
+  glClearStencil(0);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glEnable(GL_SCISSOR_TEST);
+//  glEnable(GL_CULL_FACE);
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+  if (!OpenGLGState::haveGLContext()) {
+    // DIE
+    printFatalError("ERROR: Unable to initialize an OpenGL context");
+    if (display != NULL) {
+      delete display;
+      display=NULL;
+    }
+	bail(1);
+    exit(1);
+  }
+  OpenGLGState::init();
 
   // add the zbuffer callback here, after the OpenGL context is initialized
   BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
