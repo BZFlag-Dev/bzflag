@@ -161,9 +161,12 @@ inline int resizeterm(int lines, int cols) {
   return resize_term(lines, cols);
 }
 
+// PDCurses < 3.0 does not support use_default_colors
+#if (!defined(PDC_BUILD) || PDC_BUILD < 3000)
 inline void use_default_colors() {
   return;
 }
+#endif
 
 #endif // pdcurses
 
