@@ -68,8 +68,9 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 #endif // curses
 
 
-// assume pdcurses on Windows without ncurses, or if we have xcurses.h
-#if (defined(WIN32) && !defined(HAVE_NCURSES_H)) || defined(HAVE_XCURSES_H)
+// assume pdcurses on Windows without ncurses, or if we have xcurses.h.
+// old pdcurses does not define PDC_BUILD
+#if defined(PDC_BUILD) || defined(HAVE_XCURSES_H) || (defined(WIN32) && !defined(HAVE_NCURSES_H))
 
 #ifndef HAVE_PROTO
 #  define HAVE_PROTO
