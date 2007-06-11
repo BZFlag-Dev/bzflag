@@ -35,7 +35,7 @@
 
 
 // curses on Solaris
-#if (defined(HAVE_CURSES_H) && !defined(WIN32))
+#if (defined(HAVE_CURSES_H) && !defined(WIN32) && !defined(PDC_BUILD))
 #define NOMACROS
 #include <curses.h>
 
