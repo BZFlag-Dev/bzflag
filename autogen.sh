@@ -324,13 +324,24 @@ fi
 LC_ALL=C
 
 # commands that this script expects
-for __cmd in echo head tail ; do
+for __cmd in echo head tail pwd ; do
     echo "test" | $__cmd > /dev/null 2>&1
     if [ $? != 0 ] ; then
 	echo "INTERNAL ERROR: '${__cmd}' command is required"
 	exit 2
     fi
 done
+echo "test" | grep "test" > /dev/null 2>&1
+if test ! x$? = x0 ; then
+    echo "INTERNAL ERROR: grep command is required"
+    exit 1
+fi
+echo "test" | sed "s/test/test/" > /dev/null 2>&1
+if test ! x$? = x0 ; then
+    echo "INTERNAL ERROR: sed command is required"
+    exit 1
+fi
+
 
 # determine the behavior of echo
 case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
@@ -366,11 +377,6 @@ else
     fi
 fi
 
-_have_sed="`echo no | sed 's/no/yes/' 2>/dev/null`"
-if [ $? -ne 0 ] ; then
-    $ECHO "ERROR:  sed does not appear to be available."
-    exit 2
-fi
 
 # allow a recursive run to disable further recursions
 if [ "x$RUN_RECURSIVE" = "x" ] ; then
@@ -463,7 +469,7 @@ if [ "x$CONFIGURE" = "x" ] ; then
 	$ECHO "that the GNU Build System is at least not used in this directory.  In"
 	$ECHO "any case, there is nothing to do here without one of those files."
 	$ECHO
-	$ECHO "ERROR: No configure.in or configure.ac file found."
+	$ECHO "ERROR: No configure.in or configure.ac file found in `pwd`"
 	exit 1
     fi
 fi
@@ -971,7 +977,7 @@ initialize ( ) {
 	$ECHO "that the GNU Build System is at least not used in this directory.  In"
 	$ECHO "any case, there is nothing to do here without one of those files."
 	$ECHO
-	$ECHO "ERROR: No configure.in or configure.ac file found."
+	$ECHO "ERROR: No configure.in or configure.ac file found in `pwd`"
 	exit 1
     fi
 
