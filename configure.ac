@@ -179,6 +179,12 @@ AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
 # compile our own curl
 AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
 
+# compile our own freetype
+AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation of freetype2])
+
+# compile our own ftgl
+AC_ARG_ENABLE(ftgl_build, [  --enable-ftgl-build     Force compilation of ftgl])
+
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
 
@@ -192,6 +198,8 @@ AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all de
 if test "x$enable_all_builds" = "xyes" ; then
     enable_ares_build=yes
     enable_curl_build=yes
+    enable_freetype_build=yes
+    enable_ftgl_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
 fi
@@ -1022,6 +1030,41 @@ dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
 AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 
+
+dnl figure out whether we need to build the included freetype2 library
+BUILD_FREETYPE="no (using system)"
+if test "x$enable_freetype_build" != "xyes" ; then
+   # FIXME: need autodetection here
+   BUILD_FREETYPE="yes"
+fi
+AC_MSG_CHECKING(whether to build the included freetype library)
+if test "x$LIBFREETYPE" = "x" ; then
+    AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
+    BUILD_FREETYPE="yes"
+    LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+fi
+AC_SUBST(LIBFREETYPE)
+AC_MSG_RESULT($BUILD_FREETYPE)
+AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
+
+
+dnl figure out whether we need to build the included ftgl library
+BUILD_FTGL="no (using system)"
+if test "x$enable_ftgl_build" != "xyes" ; then
+   # FIXME: need autodetection here
+   BUILD_FTGL="yes"
+fi
+AC_MSG_CHECKING(whether to build the included ftgl library)
+if test "x$LIBFTGL" = "x" ; then
+    AC_DEFINE(BUILD_FTGL, 1, [Build the included ftgl library])
+    BUILD_FTGL="yes"
+    LIBFTGL='${top_builddir}/src/other/ftgl/libftgl.la'
+fi
+AC_SUBST(LIBFTGL)
+AC_MSG_RESULT($BUILD_FTGL)
+AM_CONDITIONAL(BUILD_FTGL, test "x$BUILD_FTGL" = "xyes")
+
+
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then
     ECHO=echo
@@ -1056,6 +1099,9 @@ if test "x$BUILD_ARES" = "xyes" ; then
 fi
 if test "x$BUILD_CURL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/curl)
+fi
+if test "x$BUILD_FREETYPE" = "xyes" ; then
+    AC_CONFIG_SUBDIRS(src/other/freetype/builds/unix)
 fi
 
 AC_CONFIG_FILES([
@@ -1118,6 +1164,7 @@ AC_CONFIG_FILES([
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/other/Makefile
+	src/other/ftgl/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
@@ -1262,10 +1309,12 @@ AC_MSG_RESULT([CPPFLAGS = ${CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS  = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS     = ${LIBS}])
 AC_MSG_RESULT([])
-AC_MSG_RESULT([Build ares ....: $BUILD_ARES])
-AC_MSG_RESULT([Build curl ....: $BUILD_CURL])
-AC_MSG_RESULT([Build regex ...: $BUILD_REGEX])
-AC_MSG_RESULT([Build zlib ....: $BUILD_ZLIB])
+AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
+AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
+AC_MSG_RESULT([Build freetype2 ...: $BUILD_FREETYPE])
+AC_MSG_RESULT([Build ftgl ........: $BUILD_FTGL])
+AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
+AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
