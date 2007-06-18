@@ -22,15 +22,31 @@ else
 CURL_DIR =
 endif
 
+if BUILD_FTGL
+FTGL_DIR = ftgl
+else
+FTGL_DIR =
+endif
+
+if BUILD_FREETYPE
+FREETYPE_DIR = freetype
+else
+FREETYPE_DIR =
+endif
+
 SUBDIRS = \
 	${ARES_DIR} \
 	${CURL_DIR} \
+	${FREETYPE_DIR} \
+	${FTGL_DIR} \
 	${REGEX_DIR} \
 	${ZLIB_DIR}
 
 DIST_SUBDIRS = \
 	ares \
 	curl \
+	freetype \
+	ftgl \
 	regex \
 	zlib
 
