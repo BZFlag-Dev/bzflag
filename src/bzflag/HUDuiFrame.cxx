@@ -75,8 +75,8 @@ void			HUDuiFrame::doRender()
 
   FontManager &fm = FontManager::instance();
   const float labelWidth = std::max(getLabelWidth(),
-    fm.getStringLength(fontFace, fontSize, getLabel()));
-  const float labelGap = fm.getStringLength(fontFace, fontSize, "9");
+    fm.getStringWidth(fontFace, fontSize, getLabel()));
+  const float labelGap = fm.getStringWidth(fontFace, fontSize, "9");
 
   const float frameY = y + fontSize / 2;
   const float frameX = x - labelGap;

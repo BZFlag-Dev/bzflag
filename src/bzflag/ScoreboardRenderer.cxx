@@ -150,14 +150,14 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
       break;
   }
 
-  huntArrowWidth = fm.getStringLength(minorFontFace, minorFontSize, "->");
-  huntPlusesWidth = fm.getStringLength(minorFontFace, minorFontSize, "@>");
-  huntedArrowWidth = fm.getStringLength(minorFontFace, minorFontSize, "Hunt->");
-  scoreLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, killSpacingLabel);
-  teamScoreLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
-  teamCountLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, teamCountSpacingLabel);
-  const float spacing = fm.getStringLength(minorFontFace, minorFontSize, " ");
+  huntArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "->");
+  huntPlusesWidth = fm.getStringWidth(minorFontFace, minorFontSize, "@>");
+  huntedArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "Hunt->");
+  scoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, scoreSpacingLabel);
+  killsLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, killSpacingLabel);
+  teamScoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamScoreSpacingLabel);
+  teamCountLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamCountSpacingLabel);
+  const float spacing = fm.getStringWidth(minorFontFace, minorFontSize, " ");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
 }
@@ -450,7 +450,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   float y = y0 - dy;
 
   // make room for the status marker
-  const float xs = x3 - fm.getStringLength(minorFontFace, minorFontSize, "+|");
+  const float xs = x3 - fm.getStringWidth(minorFontFace, minorFontSize, "+|");
 
   if (huntState == HUNT_SELECTING){
     std::string huntStr = ColorStrings[YellowColor];

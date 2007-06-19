@@ -168,7 +168,7 @@ void CacheMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStringLength(MainMenu::getFontFace(),
+  const float _width = fm.getStringWidth(MainMenu::getFontFace(),
 	failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
@@ -190,7 +190,7 @@ void CacheMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+    fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight =
     fm.getStringHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)_width - titleWidth);

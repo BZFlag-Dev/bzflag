@@ -121,7 +121,7 @@ void QuitMenu::resize(int _width, int _height)
   // save settings
   HUDuiList* list = (HUDuiList*)listHUD[2];
   list->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStringLength(fontFace, smallFontSize, list->getLabel() + "99");
+  const float stringWidth = fm.getStringWidth(fontFace, smallFontSize, list->getLabel() + "99");
   y = (float)_height - 7.25f * fontHeight;
   list->setPosition(x + stringWidth, y);
 
