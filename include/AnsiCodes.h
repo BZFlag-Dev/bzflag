@@ -96,6 +96,21 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
 
+
+// These RGB float values have to line up with the colors above
+static const float BrightColors[9][3] = {
+  {1.0f,1.0f,0.0f}, // yellow
+  {1.0f,0.0f,0.0f}, // red
+  {0.0f,1.0f,0.0f}, // green
+  {0.1f,0.2f,1.0f}, // blue
+  {1.0f,0.0f,1.0f}, // purple
+  {1.0f,1.0f,1.0f}, // white
+  {0.5f,0.5f,0.5f}, // grey
+  {1.0f,0.5f,0.0f}, // orange (nonstandard)
+  {0.0f,1.0f,1.0f}  // cyan
+};
+
+
 // strip ANSI codes from a string
 inline std::string stripAnsiCodes(const std::string &text)
 {
