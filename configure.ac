@@ -1041,7 +1041,7 @@ AC_MSG_CHECKING(whether to build the included freetype library)
 if test "x$LIBFREETYPE" = "x" ; then
     AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
     BUILD_FREETYPE="yes"
-    LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+    LIBFREETYPE='${top_builddir}/src/other/freetype/objs/libfreetype.la'
 fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
