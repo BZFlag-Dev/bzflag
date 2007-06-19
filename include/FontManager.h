@@ -22,7 +22,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "FTGLTextureFont.h"
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -76,12 +75,12 @@ protected:
 
   friend class Singleton<FontManager>;
 
-  FTGLTextureFont* getGLFont(int face, int size); 
+  void* getGLFont(int face, int size); 
 
   typedef struct _FontFace {
     std::string name;
     std::string path;
-    std::map<int,FTGLTextureFont*> sizes;
+    std::map<int,void*> sizes;
   } FontFace;
   
   std::map<std::string,int>	faceNames;

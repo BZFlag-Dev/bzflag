@@ -19,6 +19,7 @@
 // System headers
 #include <math.h>
 #include <string>
+#include "FTGLTextureFont.h"
 
 // Global implementation headers
 #include "bzfgl.h"
@@ -154,9 +155,9 @@ int FontManager::loadAll(std::string directory)
 void FontManager::clear(int font, int size)
 {
   // poof
-  std::map<int,FTGLTextureFont*>::iterator itr = fontFaces[font].sizes.find(size);
+  std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
   if ( itr != fontFaces[font].sizes.end() ) {
-    delete fontFaces[font].sizes[size];
+    delete (FTGLTextureFont*)fontFaces[font].sizes[size];
     fontFaces[font].sizes.erase(size);
   }
 }
@@ -172,7 +173,7 @@ void FontManager::clear(void)
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
     // iterating in reverse is essential because clear() calls
     // erase, causing the map to shift elements
-    std::map<int,FTGLTextureFont*>::reverse_iterator itr;
+    std::map<int,void*>::reverse_iterator itr;
     for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
       if ((*itr).second) {
 	clear(i, (*itr).first);
@@ -197,7 +198,7 @@ void FontManager::preloadSize ( int font, int size )
   }
 
   // make sure the font has been created
-  FTGLTextureFont *fnt = getGLFont(font, size);
+  FTGLTextureFont *fnt = (FTGLTextureFont*)getGLFont(font, size);
   if (!fnt) {
     return;
   }
@@ -237,7 +238,7 @@ void FontManager::rebuild()
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
     // iterating in reverse is essential because rebuildSize() calls
     // erase, causing the map to shift elements
-    std::map<int,FTGLTextureFont*>::reverse_iterator itr;
+    std::map<int,void*>::reverse_iterator itr;
     for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
       std::cout << "rebuilding font " << i << " with size " << (*itr).first << " hmm " << (*itr).second << std::endl;
       if ((*itr).second) {
@@ -315,14 +316,14 @@ const char* FontManager::getFaceName(int faceID)
 /**
  * return the ftgl representation for a given font of a given size
  */
-FTGLTextureFont* FontManager::getGLFont ( int face, int size )
+void* FontManager::getGLFont ( int face, int size )
 {
   if ( face < 0 || face >= (int)fontFaces.size() ) {
     std::cerr << "invalid font face specified" << std::endl;
     return NULL;
   }
 	
-  std::map<int,FTGLTextureFont*>::iterator itr = fontFaces[face].sizes.find(size);
+  std::map<int,void*>::iterator itr = fontFaces[face].sizes.find(size);
   if ( itr != fontFaces[face].sizes.end() ) {
     return itr->second;
   }
@@ -331,7 +332,7 @@ FTGLTextureFont* FontManager::getGLFont ( int face, int size )
   newFont->FaceSize(size);
   newFont->UseDisplayList(true);
 
-  fontFaces[face].sizes[size] = newFont;
+  fontFaces[face].sizes[size] = (void*)newFont;
 
   return fontFaces[face].sizes[size];
 }
@@ -347,7 +348,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   if (text.size() <= 0)
     return;
   
-  FTGLTextureFont* theFont = getGLFont(faceID ,size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
@@ -536,7 +537,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string &tex
   if (text.size() <= 0)
     return 0.0f;
 
-  FTGLTextureFont* theFont = getGLFont(faceID, size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID, size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
@@ -564,7 +565,7 @@ float FontManager::getStringWidth(const std::string &face, float size,
  */
 float FontManager::getStringHeight(int font, float size)
 {
-  FTGLTextureFont* theFont = getGLFont(font, size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(font, size);
 
   if (!theFont)
     return 0;	
