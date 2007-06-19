@@ -239,6 +239,8 @@ LDADD =	\
 	../geometry/libGeometry.la	\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
+	$(LIBFTGL)			\
+	$(LIBFREETYPE)			\
 	$(LIBCURL)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
