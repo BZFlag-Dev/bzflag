@@ -198,8 +198,8 @@ void NewVersionMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // heights
-  const float fontHeight = fm.getStringHeight(fontFace, fontSize, " ");
-  const float smallFontHeight = fm.getStringHeight(fontFace, smallFontSize, " ");
+  const float fontHeight = fm.getStringHeight(fontFace, fontSize);
+  const float smallFontHeight = fm.getStringHeight(fontFace, smallFontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();

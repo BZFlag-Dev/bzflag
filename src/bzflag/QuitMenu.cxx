@@ -100,7 +100,7 @@ void QuitMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // heights
-  const float fontHeight = fm.getStringHeight(fontFace, fontSize, " ");
+  const float fontHeight = fm.getStringHeight(fontFace, fontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -127,7 +127,7 @@ void QuitMenu::resize(int _width, int _height)
 
   // frame
   HUDuiFrame* frame = (HUDuiFrame*)listHUD[3];
-  const float gapSize = fm.getStringHeight(fontFace, fontSize, "99");
+  const float gapSize = fm.getStringHeight(fontFace, fontSize);
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
   frame->setPosition(x - gapSize, (float)_height - 4.0f * fontHeight);

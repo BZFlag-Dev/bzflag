@@ -94,7 +94,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -102,7 +102,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * ((float)_width - 0.75f * titleWidth);
   y -= 0.6f * 3 * titleHeight;
-  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count-1; i++) {

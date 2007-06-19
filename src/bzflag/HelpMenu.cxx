@@ -102,14 +102,14 @@ void HelpMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(MainMenu::getFontFace(), titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(MainMenu::getFontFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // position focus holder off screen
   listHUD[1]->setFontSize(fontSize);
-  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   y -= 1.25f * h;
   listHUD[1]->setPosition(0.5f * ((float)_width + h), y);
 

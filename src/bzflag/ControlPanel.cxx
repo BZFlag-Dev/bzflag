@@ -659,7 +659,7 @@ void			ControlPanel::resize()
     }
   }
 
-  lineHeight = fm.getStringHeight(fontFace, fontSize, " ");
+  lineHeight = fm.getStringHeight(fontFace, fontSize);
 
   maxLines = int(messageAreaPixels[3] / lineHeight);
 

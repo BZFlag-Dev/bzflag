@@ -111,7 +111,7 @@ void			HUDuiElement::onSetFont()
 {
   if (elementFontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStringHeight(elementFontFace, elementFontSize, getLabel());
+    fontHeight = fm.getStringHeight(elementFontFace, elementFontSize);
     trueLabelWidth = fm.getStringWidth(elementFontFace, elementFontSize, getLabel() + "99");
   } else {
     fontHeight = 11.0f;

@@ -217,7 +217,7 @@ void	ScoreboardRenderer::render(bool forceDisplay)
     World *world = World::getWorld();
     if (world && BZDB.isTrue("alwaysShowTeamScores") && world->allowTeams()){
       OpenGLGState::resetState();
-      renderTeamScores(winWidth, winY, FontManager::instance().getStringHeight(minorFontFace, minorFontSize, " "));
+      renderTeamScores(winWidth, winY, FontManager::instance().getStringHeight(minorFontFace, minorFontSize));
     }
   }
 
@@ -369,7 +369,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
   FontManager &fm = FontManager::instance();
   const float x = winX;
   const float y = winY;
-  const float dy = fm.getStringHeight(minorFontFace, minorFontSize, " ");
+  const float dy = fm.getStringHeight(minorFontFace, minorFontSize);
   float y0 = y - dy;
 
 
@@ -446,7 +446,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
   fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
   fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
   fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel);
-  const float dy = fm.getStringHeight(minorFontFace, minorFontSize, " ");
+  const float dy = fm.getStringHeight(minorFontFace, minorFontSize);
   float y = y0 - dy;
 
   // make room for the status marker

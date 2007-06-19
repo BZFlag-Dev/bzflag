@@ -118,7 +118,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -127,7 +127,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
   const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString());
-  const float bigHeight = fm.getStringHeight(fontFace, bigFontSize, " ");
+  const float bigHeight = fm.getStringHeight(fontFace, bigFontSize);
   x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * bigHeight;
   help->setPosition(x, y);
@@ -149,7 +149,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   x = 0.10f * (float)_width;
   const float topY = y - (0.6f * titleHeight);
   y = topY;
-  const float h = fm.getStringHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (int)navItems.size();
   const int mid = (count / 2);
 

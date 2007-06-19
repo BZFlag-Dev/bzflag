@@ -66,7 +66,7 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   }
 
   // reposition instruction text
-  const float h = fm.getStringHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const float x = getLeftSide(_width, _height);
   float y = listHUD[2]->getY();
   for (int i = 2; i < count; ++i) {

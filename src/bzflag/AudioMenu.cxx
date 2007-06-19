@@ -133,7 +133,7 @@ void			AudioMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -141,7 +141,7 @@ void			AudioMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * ((float)_width);
   y -= 0.6f * titleHeight;
-  const float h = fm.getStringHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (const int)listHUD.size();
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);

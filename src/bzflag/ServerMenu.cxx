@@ -699,7 +699,7 @@ void			ServerMenu::resize(int _width, int _height)
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
     const float titleWidth = fm.getStringWidth(title->getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize, " ");
+    const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -709,7 +709,7 @@ void			ServerMenu::resize(int _width, int _height)
   int i;
   const float y0 = y;
   float fontSize = (float)_height / 54.0f;
-  float fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+  float fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)_width;
@@ -727,7 +727,7 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition search status readout
   {
     fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
     status->setFontSize(fontSize);
     const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString());
     x = 0.5f * ((float)_width - statusWidth);
@@ -738,7 +738,7 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition find server input
   {
     fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
     search->setFontSize(fontSize);
     const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString());
     x = 0.5f * ((float)_width - searchWidth);
@@ -748,7 +748,7 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition key help
   {
     fontSize = (float)_height / 54.0f;
-    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
     help->setFontSize(fontSize);
     const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString());
     x = 0.5f * ((float)_width - searchWidth);
@@ -757,7 +757,7 @@ void			ServerMenu::resize(int _width, int _height)
 
   // position page readout and server item list
   fontSize = (float)_height / 54.0f;
-  fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+  fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
   for (i = -1; i < NumItems; ++i) {

@@ -238,7 +238,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -248,7 +248,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   help->setFontSize(bigFontSize);
   const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString());
   x = 0.5f * ((float)_width - helpWidth);
-  y -= 1.1f * fm.getStringHeight(fontFace, bigFontSize, " ");
+  y -= 1.1f * fm.getStringHeight(fontFace, bigFontSize);
   help->setPosition(x, y);
 
   // reposition options in two columns
@@ -256,7 +256,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   const float topY = y - (0.6f * titleHeight);
   y = topY;
   listHUD[2]->setFontSize(fontSize);
-  const float h = fm.getStringHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (int)listHUD.size() - 2;
   const int mid = (count / 2);
 

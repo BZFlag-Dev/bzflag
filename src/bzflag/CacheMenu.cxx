@@ -192,7 +192,7 @@ void CacheMenu::resize(int _width, int _height)
   const float titleWidth =
     fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight =
-    fm.getStringHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    fm.getStringHeight(MainMenu::getFontFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -200,7 +200,7 @@ void CacheMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {

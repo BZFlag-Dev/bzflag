@@ -154,7 +154,7 @@ void			ShotStats::resize(int _width, int _height)
   // total width / (number of columns + 3 columns extra for player name + 2 columns margin)
   const float columnWidth = _width / (columns + 5.0f);
   const float fontSize = (float) columnWidth / 6;
-  const float rowHeight = fm.getStringHeight(getFontFace(), fontSize, " ") * 1.2f;
+  const float rowHeight = fm.getStringHeight(getFontFace(), fontSize) * 1.2f;
 
   // center title
   const float titleFontSize = (float)_height / 15.0f;
@@ -162,7 +162,7 @@ void			ShotStats::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth = fm.getStringWidth(getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(getFontFace(), titleFontSize, " ");
+  const float titleHeight = fm.getStringHeight(getFontFace(), titleFontSize);
   const float titleY = (float)_height - titleHeight;
   float x = 0.5f * ((float)_width - titleWidth);
   float y = titleY;
@@ -173,7 +173,7 @@ void			ShotStats::resize(int _width, int _height)
   key->setFontSize(fontSize);
   const float keyCenter = ((columns / 2) + 4) * columnWidth;
   const float keyWidth = fm.getStringWidth(getFontFace(), fontSize, key->getString());
-  const float keyY = titleY - 2 * fm.getStringHeight(getFontFace(), fontSize, " ");
+  const float keyY = titleY - 2 * fm.getStringHeight(getFontFace(), fontSize);
   y = keyY;
   x = keyCenter - 0.5f * keyWidth;
   key->setPosition(x, y);
