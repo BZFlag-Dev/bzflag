@@ -47,7 +47,7 @@ if test "$HOSTOS"x = Darwinx; then
   LIBTOOLIZE=glibtoolize
 fi
 
-run aclocal -I . --force
+run aclocal -I . # --force
 run $LIBTOOLIZE --force --copy
 run autoconf --force
 
