@@ -29,50 +29,20 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+#include "OSFile.h"
 
-// Local implementation headers
-#include "ImageFont.h"
-#include "BitmapFont.h"
-#include "TextureFont.h"
 
-// initialize the singleton
+/** initialize the singleton */
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 
+/** initialize underline to black */
+GLfloat FontManager::underlineColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
-// ANSI code GLFloat equivalents - these should line up with the enums in AnsiCodes.h
-static GLfloat BrightColors[9][3] = {
-  {1.0f,1.0f,0.0f}, // yellow
-  {1.0f,0.0f,0.0f}, // red
-  {0.0f,1.0f,0.0f}, // green
-  {0.1f,0.2f,1.0f}, // blue
-  {1.0f,0.0f,1.0f}, // purple
-  {1.0f,1.0f,1.0f}, // white
-  {0.5f,0.5f,0.5f}, // grey
-  {1.0f,0.5f,0.0f}, // orange (nonstandard)
-  {0.0f,1.0f,1.0f}  // cyan
-};
 
-GLfloat FontManager::underlineColor[4];
-void FontManager::callback(const std::string &, void *)
-{
-  // set underline color
-  const std::string uColor = BZDB.get("underlineColor");
-  if (strcasecmp(uColor.c_str(), "text") == 0) {
-    underlineColor[0] = -1.0f;
-    underlineColor[1] = -1.0f;
-    underlineColor[2] = -1.0f;
-  } else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
-    underlineColor[0] = BrightColors[CyanColor][0];
-    underlineColor[1] = BrightColors[CyanColor][1];
-    underlineColor[2] = BrightColors[CyanColor][2];
-  } else if (strcasecmp(uColor.c_str(), "grey") == 0) {
-    underlineColor[0] = BrightColors[GreyColor][0];
-    underlineColor[1] = BrightColors[GreyColor][1];
-    underlineColor[2] = BrightColors[GreyColor][2];
-  }
-}
-
+/**
+ * default constructor, protected because of singleton
+ */
 FontManager::FontManager() : Singleton<FontManager>(),
 			     opacity(1.0f),
 			     dimFactor(0.2f),
@@ -80,12 +50,16 @@ FontManager::FontManager() : Singleton<FontManager>(),
 {
   faceNames.clear();
   fontFaces.clear();
-  BZDB.addCallback(std::string("underlineColor"), callback, NULL);
+  BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
   OpenGLGState::registerContextInitializer(freeContext, initContext,
 					   (void*)this);
 }
 
+
+/**
+ * default destructor, protected because of singleton
+ */
 FontManager::~FontManager()
 {
   clear();
@@ -95,6 +69,9 @@ FontManager::~FontManager()
 }
 
 
+/**
+ * release our context on state changes
+ */
 void FontManager::freeContext(void* data)
 {
   ((FontManager*)data)->clear();
@@ -102,6 +79,9 @@ void FontManager::freeContext(void* data)
 }
 
 
+/**
+ * initialize our context
+ */
 void FontManager::initContext(void* data)
 {
   ((FontManager*)data)->rebuild();
@@ -109,121 +89,218 @@ void FontManager::initContext(void* data)
 }
 
 
-void FontManager::clear(void)	// clear all the lists
+/**
+ * load a specified font
+ */
+int FontManager::load ( const char* file )
 {
-  // destroy all the fonts
-  faceNames.clear();
-  FontFaceList::iterator faceItr = fontFaces.begin();
-  while (faceItr != fontFaces.end()) {
-    FontSizeMap::iterator itr = faceItr->begin();
-    while (itr != faceItr->end()) {
-      delete(itr->second);
-      itr++;
-    }
-    faceItr++;
+  if (!file) {
+    return -1;
   }
+
+  std::string lower = TextUtils::tolower(std::string(file));
+  int id = getFaceID(lower);
+  if (id > 0) {
+    /* already loaded */
+    return id;
+  }
+
+  OSFile tempFile;
+  tempFile.osName(lower.c_str());
+
+  FontFace face;
+  face.name = tempFile.getFileName();
+  face.path = file;
+  face.sizes.clear();
+
+  fontFaces.push_back(face);
+  faceNames[face.name] = (int)fontFaces.size()-1;
+  return (int)fontFaces.size()-1;
+}
+
+
+/**
+ * load all fonts from a given directory, returns the number of fonts
+ * that were loaded
+ */
+int FontManager::loadAll(std::string directory)
+{
+  if (directory.size() == 0)
+    return 0;
+
+  // save this in case we have to rebuild
+  fontDirectory = directory;
+
+  OSDir dir(directory);
+  OSFile file;
+
+  int count = 0;
+  while (dir.getNextFile(file, "*.ttf", true)) {
+
+    if (load(file.getFullOSPath().c_str()) != -1) {
+      count++;
+    } else {
+      logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
+    }
+  } /* end while iteration over ttf files */
+
+  return count;
+}
+
+
+/**
+ * clear/erase a particular font size
+ */
+void FontManager::clear(int font, int size)
+{
+  // poof
+  std::map<int,FTGLTextureFont*>::iterator itr = fontFaces[font].sizes.find(size);
+  if ( itr != fontFaces[font].sizes.end() ) {
+    delete fontFaces[font].sizes[size];
+    fontFaces[font].sizes.erase(size);
+  }
+}
+
+
+/**
+ * destroy all the fonts, clear all the lists
+ */
+void FontManager::clear(void)
+{
+  faceNames.clear();
+
+  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
+    // iterating in reverse is essential because clear() calls
+    // erase, causing the map to shift elements
+    std::map<int,FTGLTextureFont*>::reverse_iterator itr;
+    for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
+      if ((*itr).second) {
+	clear(i, (*itr).first);
+      }
+    }
+  }
+
   fontFaces.clear();
   return;
 }
 
 
-void FontManager::rebuild(void)	// rebuild all the lists
+/**
+ * ask ftgl to compute their width so that the textures are loaded,
+ * gives small performance boost by loading all glyphs at once
+ * upfront.
+ */
+void FontManager::preloadSize ( int font, int size )
 {
-  clear();
+  if (font < 0 || size < 0) {
+    return;
+  }
+
+  // make sure the font has been created
+  FTGLTextureFont *fnt = getGLFont(font, size);
+  if (!fnt) {
+    return;
+  }
+
+  // preload
+  std::string charset;
+  charset = "abcdefghijklmnopqrstuvwxyz";
+  charset += TextUtils::toupper(charset);
+  charset += "1234567890";
+  charset += "`;'/.,[]\\\"";
+  charset += "<>?:{}+_)(*&^%$#@!)";
+  charset += " \t"; 
+  fnt->Advance(charset.c_str());
+}
+
+
+/**
+ * rebuild just one size of a given font
+ */
+void FontManager::rebuildSize ( int font, int size )
+{
+  if (font < 0 || size < 0) {
+    return;
+  }
+
+  clear(font, size);
+
+  preloadSize(font, size);
+}
+
+
+/**
+ * rebuild all the lists
+ */
+void FontManager::rebuild()
+{
+  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
+    // iterating in reverse is essential because rebuildSize() calls
+    // erase, causing the map to shift elements
+    std::map<int,FTGLTextureFont*>::reverse_iterator itr;
+    for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
+      std::cout << "rebuilding font " << i << " with size " << (*itr).first << " hmm " << (*itr).second << std::endl;
+      if ((*itr).second) {
+	rebuildSize(i, (*itr).first);
+      }
+    }
+  }
   loadAll(fontDirectory);
 }
 
 
-void FontManager::loadAll(std::string directory)
+/**
+ * returns a list of the loaded font names
+ */
+std::vector<std::string> FontManager::getFontList ( void )
 {
-  if (directory.size() == 0)
-    return;
+  std::vector<std::string>	fontList;
 
-  const bool bitmapRenderer = BZDB.isTrue("useBitmapFontRenderer");
-  canScale = !bitmapRenderer;
-
-  // save this in case we have to rebuild
-  fontDirectory = directory;
-
-  OSFile file;
-
-  OSDir dir(directory);
-
-  while (dir.getNextFile(file, true)) {
-    std::string ext = file.getExtension();
-
-    if (TextUtils::compare_nocase(ext, "fmt") == 0) {
-      ImageFont *pFont;
-      if (bitmapRenderer)
-	pFont = new BitmapFont;
-      else
-	pFont = new TextureFont;
-      if (pFont) {
-	if (pFont->load(file)) {
-	  std::string  str = TextUtils::toupper(pFont->getFaceName());
-
-	  FontFaceMap::iterator faceItr = faceNames.find(str);
-
-	  int faceID = 0;
-	  if (faceItr == faceNames.end()) {
-	    // it's new
-	    FontSizeMap faceList;
-	    fontFaces.push_back(faceList);
-	    faceID = (int)fontFaces.size() - 1;
-	    faceNames[str] = faceID;
-	  } else {
-	    faceID = faceItr->second;
-	  }
-
-	  fontFaces[faceID][pFont->getSize()] = pFont;
-	} else {
-	  logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
-	  delete(pFont);
-	}
-      }
-    }
+  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
+    fontList.push_back(fontFaces[i].name);
   }
+
+  return fontList;
 }
 
-int FontManager::getFaceID(std::string faceName)
+
+/**
+ * return an index to a requested font
+ */
+int FontManager::getFaceID ( const std::string font )
 {
-  if (faceName.size() == 0)
+  if (font.size() <= 0)
     return -1;
 
-  faceName = TextUtils::toupper(faceName);
+  std::string name = TextUtils::tolower(font);
 
-  FontFaceMap::iterator faceItr = faceNames.find(faceName);
-
-  if (faceItr == faceNames.end()) {
-    // see if there is a default
-    logDebugMessage(4,"Requested font %s not found, trying Default\n", faceName.c_str());
-    faceName = "DEFAULT";
-    faceItr = faceNames.find(faceName);
-    if (faceItr == faceNames.end()) {
-      // see if we have arial
-      logDebugMessage(4,"Requested font %s not found, trying Arial\n", faceName.c_str());
-      faceName = "ARIAL";
-      faceItr = faceNames.find(faceName);
-      if (faceItr == faceNames.end()) {
-	// hell we are outta luck, you just get the first one
-	logDebugMessage(4,"Requested font %s not found, trying first-loaded\n", faceName.c_str());
-	faceItr = faceNames.begin();
-	if (faceItr == faceNames.end()) {
-	  logDebugMessage(2,"No fonts loaded\n");
-	  return -1;	// we must have NO fonts, so you are screwed no matter what
-	}
-      }
-    }
+  if (faceNames.find(name) != faceNames.end()) {
+    return faceNames.find(name)->second;
   }
 
-  return faceItr->second;
+  /* no luck finding the one requested, try anything */
+  if (faceNames.size() > 0) {
+    logDebugMessage(3,"Requested font %s not found, using first font loaded\n", font.c_str());
+    return faceNames.begin()->second;
+  }
+
+  logDebugMessage(2,"No fonts loaded\n");
+  return -1;
 }
 
+
+/**
+ * returns the number of fonts loaded
+ */
 int FontManager::getNumFaces(void)
 {
   return (int)fontFaces.size();
 }
 
+
+/**
+ * given a font ID, return that font's name
+ */
 const char* FontManager::getFaceName(int faceID)
 {
   if ((faceID < 0) || (faceID > getNumFaces())) {
@@ -231,51 +308,59 @@ const char* FontManager::getFaceName(int faceID)
     return NULL;
   }
 
-  return fontFaces[faceID].begin()->second->getFaceName();
+  return fontFaces[faceID].name.c_str();
 }
 
-void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const std::string &text, const float* resetColor)
+
+/**
+ * return the ftgl representation for a given font of a given size
+ */
+FTGLTextureFont* FontManager::getGLFont ( int face, int size )
 {
+  if ( face < 0 || face >= (int)fontFaces.size() ) {
+    std::cerr << "invalid font face specified" << std::endl;
+    return NULL;
+  }
+	
+  std::map<int,FTGLTextureFont*>::iterator itr = fontFaces[face].sizes.find(size);
+  if ( itr != fontFaces[face].sizes.end() ) {
+    return itr->second;
+  }
 
-  if (text.size() == 0)
+  FTGLTextureFont* newFont = new FTGLTextureFont(fontFaces[face].path.c_str());
+  newFont->FaceSize(size);
+  newFont->UseDisplayList(true);
+
+  fontFaces[face].sizes[size] = newFont;
+
+  return fontFaces[face].sizes[size];
+}
+
+
+/**
+ * main work-horse.  render the provided text with the specified font
+ * size, optionally justifying to a particular alignment.
+ */
+void FontManager::drawString(float x, float y, float z, int faceID, float size,
+			     const std::string &text, const float* resetColor, fontJustification align)
+{
+  if (text.size() <= 0)
     return;
-
-  if ((faceID < 0) || (faceID > getNumFaces())) {
-    logDebugMessage(2,"Trying to draw with invalid Font Face ID %d\n", faceID);
+  
+  FTGLTextureFont* theFont = getGLFont(faceID ,size);
+  if ((faceID < 0) || !theFont) {
+    logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
   }
 
-  ImageFont* pFont = getClosestRealSize(faceID, size, size);
-
-  if (!pFont) {
-    logDebugMessage(2,"Could not find applicable font size for rendering; font face ID %d, "
-	   "requested size %f\n", faceID, size);
-    return;
-  }
-
-  float scale = size / (float)pFont->getSize();
-
-  // filtering is off by default for fonts.
-  // if the font is large enough, and the scaling factor
-  // is not an integer, then request filtering
-  bool filtering = false;
-  if ((size > 12.0f) && (fabsf(scale - floorf(scale + 0.5f)) > 0.001f)) {
-    pFont->filter(true);
-    filtering = true;
-  } else {
-    // no filtering - clamp to aligned coordinates
-    x = floorf(x);
-    y = floorf(y);
-    z = floorf(z);
-  }
-
+  /* clamp to aligned coordinates */
+  x = floorf(x);
+  y = floorf(y);
+  z = floorf(z);
 
   /*
-   * Colorize text based on ANSI codes embedded in it
-   * Break the text every time an ANSI code
-   * is encountered and do a separate pFont->drawString code for
-   * each segment, with the appropriate color parameter
+   * Colorize text based on ANSI codes embedded in it.  Break the text
+   * every time an ANSI code is encountered.
    */
 
   // sane defaults
@@ -300,9 +385,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 				   underlineColor[2] * darkDim,
 				   opacity };
   underlineColor[3] = opacity;
-
-  // FIXME - this should not be necessary, but the bitmap font renderer needs it
-  // OpenGLGState::resetState();
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
@@ -330,17 +412,21 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (len > 0) {
       const char* tmpText = text.c_str();
       // get substr width, we may need it a couple times
-      width = pFont->getStrLength(scale, &tmpText[startSend], len);
+      width = getStringWidth(faceID, size, &tmpText[startSend]);
       glPushMatrix();
-      glTranslatef(x, y, z);
-      glDepthMask(0);
 
-      pFont->drawString(scale, color, &tmpText[startSend], len);
+      if ( align == AlignCenter ) {
+	glTranslatef(x - (width*0.5f), y, z);
+      } else if ( align == AlignRight ) {
+	glTranslatef(x - width, y, z);
+      } else {
+	glTranslatef(x, y, z);
+      }
+      glDepthMask(0);
+      
+      theFont->Render(&tmpText[startSend]);
 
       if (underline) {
-	if (canScale) {
-	  glDisable(GL_TEXTURE_2D);
-	}
 	glEnable(GL_BLEND);
 	if (bright && underlineColor[0] >= 0) {
 	  glColor4fv(underlineColor);
@@ -355,9 +441,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glVertex2f(0.0f, 0.0f);
 	glVertex2f(width, 0.0f);
 	glEnd();
-	if (canScale) {
-	  glEnable(GL_TEXTURE_2D);
-	}
       }
       glDepthMask(BZDBCache::zbuffer);
       glPopMatrix();
@@ -429,127 +512,80 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
   }
 
-  // revert the filtering state
-  if (filtering) {
-    pFont->filter(false);
-  }
-
   return;
 }
 
+
+/**
+ * convenience routine for passing in a font id instead of font name
+ */
 void FontManager::drawString(float x, float y, float z,
 			     const std::string &face, float size,
 			     const std::string &text,
-			     const float* resetColor)
+			     const float* resetColor, fontJustification align)
 {
-  drawString(x, y, z, getFaceID(face), size, text, resetColor);
+  drawString(x, y, z, getFaceID(face), size, text, resetColor, align);
 }
 
-float FontManager::getStrLength(int faceID, float size,	const std::string &text,
-				bool alreadyStripped)
+
+/**
+ * returns the width of the given text string for the specifed font
+ */
+float FontManager::getStringWidth(int faceID, float size, const std::string &text, bool alreadyStripped)
 {
-  if (text.size() == 0)
+  if (text.size() <= 0)
     return 0.0f;
 
-  if ((faceID < 0) || (faceID > getNumFaces())) {
-    logDebugMessage(2,"Trying to find length of string for invalid Font Face ID %d\n", faceID);
-    return 0.0f;
-  }
-
-  ImageFont* pFont = getClosestRealSize(faceID, size, size);
-
-  if (!pFont) {
-    logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
-	   "requested size %f\n", faceID, size);
+  FTGLTextureFont* theFont = getGLFont(faceID, size);
+  if ((faceID < 0) || !theFont) {
+    logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
   }
 
-  float scale = size / (float)pFont->getSize();
-
-  // don't include ansi codes in the length, but allow outside funcs to skip this step
+  // don't include ansi codes in the length, but allow outside funcs to skip
   const std::string &stripped = alreadyStripped ? text : stripAnsiCodes(text);
 
-  return pFont->getStrLength(scale, stripped.c_str(), (int)stripped.size());
+  return theFont->Advance(stripped.c_str());
 }
 
-float FontManager::getStrLength(const std::string &face, float size,
+
+/**
+ * convenience routine that returns the specified font width by face name
+ */
+float FontManager::getStringWidth(const std::string &face, float size,
 				const std::string &text, bool alreadyStripped)
 {
-  return getStrLength(getFaceID(face), size, text, alreadyStripped);
+  return getStringWidth(getFaceID(face), size, text, alreadyStripped);
 }
 
-float FontManager::getStrHeight(int faceID, float size,
-				const std::string & /* text */)
+
+/**
+ * returns the height of the given font size
+ */
+float FontManager::getStringHeight(int font, float size)
 {
-  // don't scale tiny fonts
-  getClosestRealSize(faceID, size, size);
+  FTGLTextureFont* theFont = getGLFont(font, size);
 
-  return (size * 1.5f);
+  if (!theFont)
+    return 0;	
+
+  return theFont->LineHeight();
 }
 
-float FontManager::getStrHeight(std::string face, float size,
-				const std::string &text)
+
+/**
+ * convenience routine that returns the specified font's height
+ */
+float FontManager::getStringHeight(std::string face, float size)
 {
-  return getStrHeight(getFaceID(face), size, text);
+  return getStringHeight(getFaceID(face), size);
 }
 
-void FontManager::unloadAll(void)
-{
-  FontFaceList::iterator faceItr = fontFaces.begin();
 
-  while (faceItr != fontFaces.end()) {
-    FontSizeMap::iterator itr = faceItr->begin();
-    while (itr != faceItr->end()) {
-      itr->second->free();
-      itr++;
-    }
-    faceItr++;
-  }
-}
-
-ImageFont* FontManager::getClosestSize(int faceID, float size, bool bigger)
-{
-  if (fontFaces[faceID].size() == 0)
-    return NULL;
-
-  const int rsize = int(size + 0.5f);
-
-  const FontSizeMap &sizes = fontFaces[faceID];
-  FontSizeMap::const_iterator itr = sizes.lower_bound(rsize);
-  if (bigger) {
-    if (itr == sizes.end())
-      itr--;
-  } else {
-    if (itr != sizes.begin() && itr->first != rsize)
-      itr--;
-  }
-
-  return itr->second;
-}
-
-ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, float &actualSize)
-{
-  /*
-   * tiny fonts scale poorly, this function will return the nearest unscaled size of a font
-   * if the font is too tiny to scale, and a scaled size if it's big enough.
-   */
-
-  ImageFont* font = getClosestSize(faceID, desiredSize, canScale ? true : false);
-  if (!canScale || desiredSize < 14.0f) {
-    // get the next biggest font size from requested
-    if (!font) {
-      logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
-	     "requested size %f\n", faceID, desiredSize);
-      return NULL;
-    }
-    actualSize = (float)font->getSize();
-  } else {
-    actualSize = desiredSize;
-  }
-  return font;
-}
-
-void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
+/**
+ * return the pulse color
+ */
+void FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
   float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
 
@@ -566,6 +602,30 @@ void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) c
   pulseColor[1] = color[1] * pulseFactor;
   pulseColor[2] = color[2] * pulseFactor;
 }
+
+
+/**
+ * called during "underline"
+ */
+void FontManager::underlineCallback(const std::string &, void *)
+{
+  // set underline color
+  const std::string uColor = BZDB.get("underlineColor");
+  if (strcasecmp(uColor.c_str(), "text") == 0) {
+    underlineColor[0] = 0.0f;
+    underlineColor[1] = 0.0f;
+    underlineColor[2] = 0.0f;
+  } else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
+    underlineColor[0] = BrightColors[CyanColor][0];
+    underlineColor[1] = BrightColors[CyanColor][1];
+    underlineColor[2] = BrightColors[CyanColor][2];
+  } else if (strcasecmp(uColor.c_str(), "grey") == 0) {
+    underlineColor[0] = BrightColors[GreyColor][0];
+    underlineColor[1] = BrightColors[GreyColor][1];
+    underlineColor[2] = BrightColors[GreyColor][2];
+  }
+}
+
 
 // Local Variables: ***
 // mode: C++ ***
