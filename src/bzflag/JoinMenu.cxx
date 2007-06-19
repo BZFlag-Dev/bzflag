@@ -235,7 +235,7 @@ void JoinMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(MainMenu::getFontFace(),
+  const float _width = fm.getStringLength(MainMenu::getFontFace(),
 	failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
@@ -254,7 +254,7 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(status->getFontFace(),
+  const float _width = fm.getStringLength(status->getFontFace(),
 		status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * _width, status->getY());
 }
@@ -285,7 +285,7 @@ void JoinMenu::updateTeamTexture()
 
   // put it at the end of the text
   Bundle *bdl = BundleMgr::getCurrentBundle();
-  const float x = team->getX() + fm.getStrLength(team->getFontFace(),
+  const float x = team->getX() + fm.getStringLength(team->getFontFace(),
 	  team->getFontSize(),
 	  bdl->getLocalString(team->getList()[team->getIndex()]) + "x");
   teamIcon->setPosition(x, team->getY());
@@ -306,8 +306,8 @@ void JoinMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, "");
+  const float titleWidth = fm.getStringLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStringHeight(MainMenu::getFontFace(), titleFontSize, "");
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -316,7 +316,7 @@ void JoinMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width - 0.5f * titleWidth);
   y -= 0.6f * titleHeight;
   listHUD[1]->setFontSize(fontSize);
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
+  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize, "");
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);

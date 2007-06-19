@@ -583,7 +583,7 @@ void ServerStartMenu::setStatus(const char* msg, const std::vector<std::string> 
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
-  const float widt = fm.getStrLength(status->getFontFace(),
+  const float widt = fm.getStringLength(status->getFontFace(),
 				     status->getFontSize(),
 				     status->getString());
   status->setPosition(center - 0.5f * widt, status->getY());
@@ -603,8 +603,8 @@ void ServerStartMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringLength(title->getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -612,7 +612,7 @@ void ServerStartMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize, " ");
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     if (listHUD[i] == start) {

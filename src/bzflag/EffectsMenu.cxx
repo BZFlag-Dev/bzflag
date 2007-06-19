@@ -283,9 +283,9 @@ void EffectsMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+    fm.getStringLength(MainMenu::getFontFace(), titleFontSize, title->getString());
   const float titleHeight =
-    fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    fm.getStringHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -293,7 +293,7 @@ void EffectsMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {

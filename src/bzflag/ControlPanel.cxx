@@ -74,12 +74,12 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
     // how many characters will fit?
     // the unprinted ANSI codes don't count
-    if ((fm.getStrLength(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
+    if ((fm.getStringLength(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
       n = lineLen;
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStrLength(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
+	     (fm.getStringLength(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -651,15 +651,15 @@ void			ControlPanel::resize()
   if (tabs) {
     tabTextWidth.clear();
     totalTabWidth = 0;
-    const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
+    const float charWidth = fm.getStringLength(fontFace, fontSize, "-");
     for (unsigned int tab = 0; tab < tabs->size(); tab++) {
       // add space for about 2-chars on each side for padding
-      tabTextWidth.push_back(fm.getStrLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
+      tabTextWidth.push_back(fm.getStringLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
       totalTabWidth += long(tabTextWidth[tab]);
     }
   }
 
-  lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
+  lineHeight = fm.getStringHeight(fontFace, fontSize, " ");
 
   maxLines = int(messageAreaPixels[3] / lineHeight);
 

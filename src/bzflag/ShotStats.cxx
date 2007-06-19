@@ -154,15 +154,15 @@ void			ShotStats::resize(int _width, int _height)
   // total width / (number of columns + 3 columns extra for player name + 2 columns margin)
   const float columnWidth = _width / (columns + 5.0f);
   const float fontSize = (float) columnWidth / 6;
-  const float rowHeight = fm.getStrHeight(getFontFace(), fontSize, " ") * 1.2f;
+  const float rowHeight = fm.getStringHeight(getFontFace(), fontSize, " ") * 1.2f;
 
   // center title
   const float titleFontSize = (float)_height / 15.0f;
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringLength(getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStringHeight(getFontFace(), titleFontSize, " ");
   const float titleY = (float)_height - titleHeight;
   float x = 0.5f * ((float)_width - titleWidth);
   float y = titleY;
@@ -172,8 +172,8 @@ void			ShotStats::resize(int _width, int _height)
   HUDuiLabel* key = (HUDuiLabel*)listHUD[1];
   key->setFontSize(fontSize);
   const float keyCenter = ((columns / 2) + 4) * columnWidth;
-  const float keyWidth = fm.getStrLength(getFontFace(), fontSize, key->getString());
-  const float keyY = titleY - 2 * fm.getStrHeight(getFontFace(), fontSize, " ");
+  const float keyWidth = fm.getStringLength(getFontFace(), fontSize, key->getString());
+  const float keyY = titleY - 2 * fm.getStringHeight(getFontFace(), fontSize, " ");
   y = keyY;
   x = keyCenter - 0.5f * keyWidth;
   key->setPosition(x, y);

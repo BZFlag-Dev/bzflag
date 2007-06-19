@@ -76,7 +76,7 @@ void SaveWorldMenu::execute()
     }
   }
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringLength(status->getFontFace(), status->getFontSize(), status->getString());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
@@ -93,8 +93,8 @@ void SaveWorldMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringLength(title->getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -102,7 +102,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * ((float)_width - 0.75f * titleWidth);
   y -= 0.6f * 3 * titleHeight;
-  const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize, " ");
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count-1; i++) {

@@ -150,14 +150,14 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
       break;
   }
 
-  huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "->");
-  huntPlusesWidth = fm.getStrLength(minorFontFace, minorFontSize, "@>");
-  huntedArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
-  scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killSpacingLabel);
-  teamScoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
-  teamCountLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamCountSpacingLabel);
-  const float spacing = fm.getStrLength(minorFontFace, minorFontSize, " ");
+  huntArrowWidth = fm.getStringLength(minorFontFace, minorFontSize, "->");
+  huntPlusesWidth = fm.getStringLength(minorFontFace, minorFontSize, "@>");
+  huntedArrowWidth = fm.getStringLength(minorFontFace, minorFontSize, "Hunt->");
+  scoreLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, scoreSpacingLabel);
+  killsLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, killSpacingLabel);
+  teamScoreLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
+  teamCountLabelWidth = fm.getStringLength(minorFontFace, minorFontSize, teamCountSpacingLabel);
+  const float spacing = fm.getStringLength(minorFontFace, minorFontSize, " ");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
 }
@@ -217,7 +217,7 @@ void	ScoreboardRenderer::render(bool forceDisplay)
     World *world = World::getWorld();
     if (world && BZDB.isTrue("alwaysShowTeamScores") && world->allowTeams()){
       OpenGLGState::resetState();
-      renderTeamScores(winWidth, winY, FontManager::instance().getStrHeight(minorFontFace, minorFontSize, " "));
+      renderTeamScores(winWidth, winY, FontManager::instance().getStringHeight(minorFontFace, minorFontSize, " "));
     }
   }
 
@@ -369,7 +369,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
   FontManager &fm = FontManager::instance();
   const float x = winX;
   const float y = winY;
-  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
+  const float dy = fm.getStringHeight(minorFontFace, minorFontSize, " ");
   float y0 = y - dy;
 
 
@@ -446,11 +446,11 @@ void			ScoreboardRenderer::renderScoreboard(void)
   fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
   fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
   fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel);
-  const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
+  const float dy = fm.getStringHeight(minorFontFace, minorFontSize, " ");
   float y = y0 - dy;
 
   // make room for the status marker
-  const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
+  const float xs = x3 - fm.getStringLength(minorFontFace, minorFontSize, "+|");
 
   if (huntState == HUNT_SELECTING){
     std::string huntStr = ColorStrings[YellowColor];

@@ -234,8 +234,8 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+    const float titleWidth = fm.getStringLength(fontFace, titleFontSize, title->getString());
+    const float titleHeight = fm.getStringHeight(fontFace, titleFontSize, " ");
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -246,15 +246,15 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+    const float stringWidth = fm.getStringLength(fontFace, fontSize, label->getString());
     x = 0.5f * ((float)_width - stringWidth);
-    y -= 1.5f * fm.getStrHeight(fontFace, fontSize, " ");
+    y -= 1.5f * fm.getStringHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
   {
     HUDuiLabel* label = currentLabel;
     label->setFontSize(fontSize);
-    y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
+    y -= 1.0f * fm.getStringHeight(fontFace, fontSize, " ");
     label->setPosition(0.5f * (float)_width, y);
   }
 
@@ -263,9 +263,9 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = pageLabel;
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+    const float stringWidth = fm.getStringLength(fontFace, fontSize, label->getString());
     x = 0.5f * ((float)_width - stringWidth);
-    y -= 2.0f * fm.getStrHeight(fontFace, fontSize, " ");
+    y -= 2.0f * fm.getStringHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
 
@@ -282,7 +282,7 @@ void FormatMenu::resize(int _width, int _height)
 
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     label->setFontSize(fontSize);
-    y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
+    y -= 1.0f * fm.getStringHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
 }

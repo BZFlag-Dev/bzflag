@@ -156,14 +156,14 @@ void			MainMenu::resize(int _width, int _height)
   // reposition instructions
   HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
-  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
+  const float hintWidth = fm.getStringLength(fontFace, tinyFontSize, hint->getString());
+  y -= 1.25f * fm.getStringHeight(fontFace, tinyFontSize, hint->getString());
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
+  y -= 1.5f * fm.getStringHeight(fontFace, fontSize, hint->getString());
 
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
-    = fm.getStrLength(fontFace, fontSize,
+    = fm.getStringLength(fontFace, fontSize,
 		      ((HUDuiLabel*)listHUD[3])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
@@ -171,7 +171,7 @@ void			MainMenu::resize(int _width, int _height)
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
+    y -= 1.2f * fm.getStringHeight(fontFace, fontSize, label->getString());
   }
 }
 

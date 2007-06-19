@@ -51,7 +51,7 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   int fontFace = listHUD[2]->getFontFace();
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; ++i) {
-    float thisLength = fm.getStrLength(fontFace, fontSize, ((HUDuiLabel*)listHUD[i])->getString());
+    float thisLength = fm.getStringLength(fontFace, fontSize, ((HUDuiLabel*)listHUD[i])->getString());
     if (thisLength > longestLength)
     {
       longestLength = thisLength;
@@ -62,11 +62,11 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   // make the longest fit perfectly in the working width, and use that font size
   for (fontSize = ((float)_height / 5.0f); longestLength > workingWidth; --fontSize)
   {
-    longestLength = fm.getStrLength(fontFace, fontSize, longestString);
+    longestLength = fm.getStringLength(fontFace, fontSize, longestString);
   }
 
   // reposition instruction text
-  const float h = fm.getStrHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize, " ");
   const float x = getLeftSide(_width, _height);
   float y = listHUD[2]->getY();
   for (int i = 2; i < count; ++i) {

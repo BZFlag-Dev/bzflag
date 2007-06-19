@@ -698,8 +698,8 @@ void			ServerMenu::resize(int _width, int _height)
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStringLength(title->getFontFace(), titleFontSize, title->getString());
+    const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize, " ");
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -709,7 +709,7 @@ void			ServerMenu::resize(int _width, int _height)
   int i;
   const float y0 = y;
   float fontSize = (float)_height / 54.0f;
-  float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  float fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)_width;
@@ -727,9 +727,9 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition search status readout
   {
     fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
     status->setFontSize(fontSize);
-    const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
+    const float statusWidth = fm.getStringLength(status->getFontFace(), fontSize, status->getString());
     x = 0.5f * ((float)_width - statusWidth);
     y -= 0.8f * fontHt;
     status->setPosition(x, y);
@@ -738,9 +738,9 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition find server input
   {
     fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
     search->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getString());
+    const float searchWidth = fm.getStringLength(search->getFontFace(), fontSize, search->getString());
     x = 0.5f * ((float)_width - searchWidth);
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
@@ -748,16 +748,16 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition key help
   {
     fontSize = (float)_height / 54.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHt = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
     help->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(help->getFontFace(), fontSize, help->getString());
+    const float searchWidth = fm.getStringLength(help->getFontFace(), fontSize, help->getString());
     x = 0.5f * ((float)_width - searchWidth);
     help->setPosition(x, fontHt / 2 /* near bottom of screen */);
   }
 
   // position page readout and server item list
   fontSize = (float)_height / 54.0f;
-  fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  fontHeight = fm.getStringHeight(MainMenu::getFontFace(), fontSize, " ");
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
   for (i = -1; i < NumItems; ++i) {
@@ -765,7 +765,7 @@ void			ServerMenu::resize(int _width, int _height)
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     if (useIcons && (i >= 0)) {
-      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "*  J F R   ");
+      const float offset = fm.getStringLength(status->getFontFace(), fontSize, "*  J F R   ");
       label->setPosition(x - offset, y);
     } else {
       label->setPosition(x, y);
@@ -777,7 +777,7 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringLength(status->getFontFace(), status->getFontSize(), status->getString());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
