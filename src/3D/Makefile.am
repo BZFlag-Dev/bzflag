@@ -19,14 +19,8 @@ lib3D_la_LIBADD = \
 	$(top_builddir)/src/mediafile/libMediaFile.la
 
 lib3D_la_SOURCES =		\
-	BitmapFont.cxx		\
 	FontManager.cxx		\
-	ImageFont.cxx		\
-	TextureFont.cxx		\
-	TextureManager.cxx	\
-	BitmapFont.h		\
-	ImageFont.h		\
-	TextureFont.h
+	TextureManager.cxx
 
 EXTRA_DIST = \
 	README
