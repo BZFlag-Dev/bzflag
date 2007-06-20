@@ -43,16 +43,36 @@ Source Distribution
 -------------------
 
 BZFlag may be built either using the same instructions as those for
-Unix following ./autogen.sh && ./configure && make, or using the XCode
-project in the top-level directory to end up with a double-clickable
-BZFlag.app build.  See the INSTALL file for instructions.
+Unix, or by using the provided XCode project in the top-level
+directory to end up with a double-clickable BZFlag.app build.  It is
+highly recommended that sources be obtained from the Sourceforge
+project site:
 
-If you're compiling from source, it is expected that you have
-sufficient understanding of how to compile applications on the command
-line and how to perform basic compilation troubleshooting.  This holds
-true for all alpha/beta testing releases, latest development, and all
-prior stable releases.  In general, you are ON YOUR OWN if you obtain
-the sources from a checkout or from an unofficial source instead of
-using one of the posted regular source distributions.
+http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=3165
+
+For either build approach, you'll need to first install the SDL
+framework into your /Library/Frameworks folder.  The SDL framework can
+be obtained from http://libsdl.org/download.php where you will need
+the "Runtime Libraries" download for Mac OS X.  Once SDL is installed,
+you may then proceed with compilation.
+
+To compile using the command-line approach, open up Terminal (which is
+located in your /Applications/Utilities folder) and run the following:
+
+./autogen.sh && ./configure && make
+
+Alternatively, you may compile using the provided XCode project, which
+should result in a BZFlag application in the generated "build" folder
+if there were no compilation errors.
+
+NOTICE: If you're compiling from source, it is expected that you have
+sufficient/proficient understanding of how to compile applications on
+the command line or using XCode and how to perform compilation
+troubleshooting without assistance.  This holds particularly true for
+all alpha/beta testing releases as well as for any sources pulled
+directly from the Subversion source repository checkout.  In general,
+you are ON YOUR OWN if you obtain the sources from a checkout or from
+an unofficial source instead of using one of the regular source
+distributions posted to Sourceforge.
 
 See the instructions in README and INSTALL for more details.
