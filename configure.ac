@@ -1059,7 +1059,7 @@ if test "x$BUILD_CURL" = "xyes" ; then
 fi
 
 AC_CONFIG_FILES([
-	BZFlag.xcode/Makefile
+	BZFlag.xcodeproj/Makefile
 	Makefile
 	bzflag.info
 	bzflag.lsm

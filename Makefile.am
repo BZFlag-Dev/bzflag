@@ -29,7 +29,7 @@ DIST_SUBDIRS = \
 	misc \
 	plugins \
 	tools \
-	BZFlag.xcode
+	BZFlag.xcodeproj
 
 documentationdir = $(datadir)/doc/bzflag
 documentation_DATA = \
