@@ -193,7 +193,7 @@ static void		usage()
 	" [-time hh:mm:ss] [-notime]"
 	" [-v | -version | --version]"
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
-	" [-window <geometry-spec>]"
+	" [-window [<geometry-spec>]]"
 	" [-zoom <zoom-factor>]"
 	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
@@ -331,7 +331,7 @@ static void		parse(int argc, char** argv)
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
-      if (i + 1 < argc) {
+      if ((i + 1 < argc) && (argv[i + 1][0] != '-')) {
 	checkArgc(i, argc, argv[i]);
 	int w, h, x, y, count;
 	char xs = '+', ys = '+';
