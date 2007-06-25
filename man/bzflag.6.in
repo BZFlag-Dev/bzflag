@@ -35,7 +35,7 @@ BZFlag \- a tank battle game
 [\fB\-team \fR{\fIautomatic\fR | \fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 [\fB\-version\fR]
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}]
-[\fB\-window\fR]
+[\fB\-window\fR [\fR{\fIgeometry-spec\fR}]]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
 [[\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]]
 .SH "DESCRIPTION"
@@ -172,9 +172,10 @@ half. \fIanaglyph\fR supports red\-cyan stereo viewing glasses. Note that
 setting an unsupported view option will often lead to BZFlag not running
 successfully. To correct this, run with \-view normal.
 .TP 
-.B \-window\fI width\fR\fBx\fR\fIheight
-Runs the application in a window instead of full screen. Specify the widht and height of the 
-window after the option.
+.B \-window\fI [ width\fR\fBx\fR\fIheight ]
+Runs the application in a window instead of full screen.  The
+optionally specified width and height of the window follow the option,
+otherwise a default window size of 640x480 will be used.
 .TP 
 \fB\-zbuffer\fR {\fIon\fR | \fIoff\fR}
 When \fIoff\fR is chosen the game will not attempt to allocate a
