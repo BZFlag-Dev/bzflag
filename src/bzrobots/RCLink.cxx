@@ -387,6 +387,10 @@ RCRequest* RCLink::poprequest()
   }
   return req;
 }
+RCRequest* RCLink::peekrequest()
+{
+  return requests;
+}
 
 RCRequest::RCRequest() :
 			    fail(false),
@@ -411,63 +415,61 @@ RCRequest::RCRequest(int argc, char **argv) :
 			    next(NULL)
 {
   char *endptr;
-  int index;
   // TODO: give a better error message if argc is wrong.
   if (strcasecmp(argv[0], "agent") == 0 && argc == 2) {
     request_type = HelloRequest;
-  } else if (strcasecmp(argv[0], "speed") == 0 && argc == 3) {
-    request_type = Speed;
+  } else if (strcasecmp(argv[0], "execute") == 0 && argc == 2) {
+    request_type = execute;
+    set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "setSpeed") == 0 && argc == 3) {
+    request_type = setSpeed;
+    set_robotindex(argv[1]);
 
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-    speed_level = strtof(argv[2], &endptr);
+    speed = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
       fail = true;
       failstr = "Invalid parameter for desired speed.";
     }
-    if (speed_level > 1.0) {
-      speed_level = 1.0;
-    } else if (speed_level < -1.0) {
-      speed_level = -1.0;
-    }
-  } else if (strcasecmp(argv[0], "angvel") == 0 && argc == 3) {
-    request_type = AngularVel;
 
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
+    speed = clamp(speed, 0.0f, 1.0f);
+  } else if (strcasecmp(argv[0], "setTurnRate") == 0 && argc == 3) {
+    request_type = setTurnRate;
+    set_robotindex(argv[1]);
 
-    angularvel_level = strtof(argv[2], &endptr);
+    turnRate = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
       fail = true;
       failstr = "Invalid parameter for angular velocity.";
     }
-    if (angularvel_level > 1.0) {
-      angularvel_level = 1.0;
-    } else if (angularvel_level < -1.0) {
-      angularvel_level = -1.0;
-    }
-  } else if (strcasecmp(argv[0], "shoot") == 0 && argc == 2) {
-    request_type = Shoot;
 
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
+    turnRate = clamp(turnRate, 0.0f, 1.0f);
+  } else if (strcasecmp(argv[0], "setAhead") == 0 && argc == 3) {
+    request_type = setAhead;
+    set_robotindex(argv[1]);
+
+    distance = strtof(argv[2], &endptr);
+    if (endptr == argv[2]) {
       fail = true;
-      failstr = "Invalid parameter for tank.";
+      failstr = "Invalid parameter for distance.";
     }
-    set_robotindex(index);
+  } else if (strcasecmp(argv[0], "setTurnLeft") == 0 && argc == 3) {
+    request_type = setTurnLeft;
+    set_robotindex(argv[1]);
 
+    turn = strtof(argv[2], &endptr);
+    if (endptr == argv[2]) {
+      fail = true;
+      failstr = "Invalid parameter for turn.";
+    }
+  } else if (strcasecmp(argv[0], "setFire") == 0 && argc == 2) {
+    request_type = setFire;
+    set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "getDistanceRemaining") == 0 && argc == 2) {
+    request_type = getDistanceRemaining;
+    set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "getTurnRemaining") == 0 && argc == 2) {
+    request_type = getTurnRemaining;
+    set_robotindex(argv[1]);
   } else if (strcasecmp(argv[0], "teams") == 0 && argc == 1) {
     request_type = TeamListRequest;
   } else if (strcasecmp(argv[0], "bases") == 0 && argc == 1) {
@@ -494,14 +496,29 @@ void RCRequest::sendack(RCLink *link)
   float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
 
   switch (request_type) {
-    case Speed:
-      link->respondf("ack %f speed %d %f\n", elapsed, get_robotindex(), speed_level);
+    case execute:
+      link->respondf("ack %f execute %d\n", elapsed, get_robotindex());
       break;
-    case AngularVel:
-      link->respondf("ack %f angvel %d %f\n", elapsed, get_robotindex(), angularvel_level);
+    case setAhead:
+      link->respondf("ack %f setAhead %d %f\n", elapsed, get_robotindex(), distance);
       break;
-    case Shoot:
-      link->respondf("ack %f shoot %d\n", elapsed, get_robotindex());
+    case setTurnLeft:
+      link->respondf("ack %f setTurnLeft %d %f\n", elapsed, get_robotindex(), turn);
+      break;
+    case setSpeed:
+      link->respondf("ack %f setSpeed %d %f\n", elapsed, get_robotindex(), speed);
+      break;
+    case setTurnRate:
+      link->respondf("ack %f setTurnRate %d %f\n", elapsed, get_robotindex(), turnRate);
+      break;
+    case setFire:
+      link->respondf("ack %f setFire %d\n", elapsed, get_robotindex());
+      break;
+    case getDistanceRemaining:
+      link->respondf("ack %f getDistanceRemaining %d\n", elapsed, get_robotindex());
+      break;
+    case getTurnRemaining:
+      link->respondf("ack %f getTurnRemaining %d\n", elapsed, get_robotindex());
       break;
     case TeamListRequest:
       link->respondf("ack %f teams\n", elapsed);
@@ -528,7 +545,7 @@ void RCRequest::sendack(RCLink *link)
       link->respondf("ack %f constants\n", elapsed);
       break;
     default:
-      link->respondf("ack %f\n");
+      link->respondf("ack %f\n", elapsed);
   }
 }
 
@@ -548,13 +565,31 @@ int RCRequest::get_robotindex()
   return robotindex;
 }
 
-void RCRequest::set_robotindex(int index)
+void RCRequest::set_robotindex(char *arg)
 {
-  if (index >= numRobots) {
+  char *endptr;
+  robotindex = strtol(arg, &endptr, 0);
+  if (endptr == arg) {
     robotindex = -1;
-  } else {
-    robotindex = index;
+    fail = true;
+    failstr = "Invalid parameter for tank.";
   }
+  else if (robotindex >= numRobots) {
+    robotindex = -1;
+  }
+}
+
+// Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
+//  * If val is nan, the result is undefined
+//  * If high < low, the result is undefined
+template <class T>
+T RCRequest::clamp(T val, T min, T max)
+{
+  if (val > max)
+    return max;
+  if (val < min)
+    return min;
+  return val;
 }
 
 agent_req_t RCRequest::get_request_type()

@@ -34,9 +34,14 @@
 typedef enum {
 		    InvalidRequest,
 		    HelloRequest,
-		    Speed,
-		    AngularVel,
-		    Shoot,
+                    setSpeed,
+                    setTurnRate,
+		    setAhead,
+                    setTurnLeft,
+                    setFire,
+                    getDistanceRemaining,
+                    getTurnRemaining,
+                    execute,
 		    TeamListRequest,
 		    BasesListRequest,
 		    ObstacleListRequest,
@@ -44,7 +49,8 @@ typedef enum {
 		    ShotListRequest,
 		    MyTankListRequest,
 		    OtherTankListRequest,
-		    ConstListRequest
+		    ConstListRequest,
+                    RequestCount
 } agent_req_t;
 
 class RCLink;
@@ -61,12 +67,15 @@ class RCRequest {
 			void sendack(RCLink *link);
 			void sendfail(RCLink *link);
 
-			float speed_level, angularvel_level;
+			float distance, turn;
+                        float speed, turnRate;
 			bool fail;
 			char *failstr;
 
   private:
-			void set_robotindex(int index);
+			void set_robotindex(char *arg);
+                        template <class T>
+                        T clamp(T val, T min, T max);
 
 			agent_req_t request_type;
 			int robotindex;
@@ -97,6 +106,7 @@ class RCLink {
 			bool respond(char *message);
 			bool respondf(const char *format, ...);
 			RCRequest *poprequest();
+			RCRequest *peekrequest();
 
   private:
 			enum State status;

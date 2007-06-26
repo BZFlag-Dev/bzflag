@@ -34,21 +34,30 @@
 
 class RCRobotPlayer : public RobotPlayer {
   public:
-			RCRobotPlayer(const PlayerId&,
-				const char* name, ServerLink*,
-				RCLink*,
-				const char* _email);
+    RCRobotPlayer(const PlayerId&,
+        const char* name, ServerLink*,
+        RCLink*,
+        const char* _email);
 
-    void		restart(const float* pos, float azimuth);
-    void		explodeTank();
-    void		processrequest(RCRequest*, RCLink*);
+    void            restart(const float* pos, float azimuth);
+    void            explodeTank();
+    bool            processrequest(RCRequest*, RCLink*);
 
   private:
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    RCLink*		agent;
-    float		speed, angularvel;
-    bool		shoot;
+    void            doUpdate(float dt);
+    void            doUpdateMotion(float dt);
+    bool            isInTick();
+    RCLink*         agent;
+
+    double          lastTickAt;
+    double          tickDuration;
+    float           speed, nextSpeed;
+    float           turnRate, nextTurnRate;
+    bool            shoot;
+    double          distanceRemaining, nextDistance;
+    bool            distanceForward, turnLeft;
+    double          turnRemaining, nextTurn;
+    bool            receivedUpdates[RequestCount];
 };
 
 #endif // BZF_TCP_RC_ROBOT_PLAYER_H

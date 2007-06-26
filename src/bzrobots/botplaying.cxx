@@ -2623,23 +2623,31 @@ static void		doBotRequests()
   RCRobotPlayer* bot;
   int tankindex;
 
-  while ((req=rcLink->poprequest()) != NULL) {
-    req->sendack(rcLink);
+  while ((req = rcLink->peekrequest()) != NULL) {
     if (req->fail) {
+      rcLink->poprequest(); // Discard it.
       req->sendfail(rcLink);
       break;
     }
 
     switch (req->get_request_type()) {
-      case Speed:
-      case AngularVel:
-      case Shoot:
+      case execute:
+      case setSpeed:
+      case setTurnRate:
+      case setFire:
+      case setAhead:
+      case setTurnLeft:
+      case getDistanceRemaining:
+      case getTurnRemaining:
 	tankindex = req->get_robotindex();
 	if (tankindex == -1) {
 	  rcLink->respondf("fail Invalid tank index.\n");
 	} else {
 	  bot = (RCRobotPlayer*)robots[tankindex];
-	  bot->processrequest(req, rcLink);
+          // We bail out if processing isn't ready or isn't valid.
+          // This happens e.g. if the last tick isn't done.
+	  if (!bot->processrequest(req, rcLink))
+            return;
 	}
 	break;
       case TeamListRequest:
@@ -2669,6 +2677,9 @@ static void		doBotRequests()
       default:
 	break;
     }
+
+    rcLink->poprequest(); // Discard it, we're done with this one.
+    req->sendack(rcLink);
   }
 }
 
@@ -3258,7 +3269,7 @@ void doTankMotions ( const float /*dt*/ )
     }
 }
 
-void updatePostions ( const float dt )
+void updatePositions ( const float dt )
 {
   updateShots(dt);
 
@@ -3276,7 +3287,7 @@ void checkEnvironment ( const float )
 
 void doUpdates ( const float dt )
 {
-  updatePostions(dt);
+  updatePositions(dt);
   checkEnvironment(dt);
 
   // update AutoHunt

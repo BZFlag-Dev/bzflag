@@ -30,9 +30,12 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
 				const char* _email = "anonymous") :
 				RobotPlayer(_id, _name, _server, _email),
 				agent(_agent),
-				speed(0.0),
-				angularvel(0.0),
-				shoot(false)
+                                lastTickAt(0.0), tickDuration(2.0),
+				speed(1.0), nextSpeed(1.0),
+				turnRate(1.0), nextTurnRate(1.0),
+				shoot(false),
+                                distanceRemaining(0.0), nextDistance(0.0),
+                                turnRemaining(0.0), nextTurn(0.0)
 {
 }
 
@@ -45,8 +48,52 @@ void			RCRobotPlayer::doUpdate(float dt)
 void			RCRobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
-    setDesiredSpeed(speed);
-    setDesiredAngVel(angularvel);
+    double timeNow = TimeKeeper::getCurrent().getSeconds();
+    /* Is the tick still running? */
+    if (lastTickAt + tickDuration >= timeNow)
+    {
+      if (distanceRemaining > 0.0f)
+      {
+        if (distanceForward)
+        {
+          setDesiredSpeed(speed);
+          distanceRemaining -= *getVelocity() * dt;
+        }
+        else
+        {
+          setDesiredSpeed(-speed);
+          distanceRemaining += *getVelocity() * dt;
+        }
+      }
+      else
+      {
+          setDesiredSpeed(0);
+      }
+
+      if (turnRemaining > 0.0f)
+      {
+        if (turnLeft)
+        {
+          setDesiredAngVel(turnRate);
+          turnRemaining -= getAngularVelocity() * dt;
+        }
+        else
+        {
+          setDesiredAngVel(-turnRate);
+          turnRemaining += getAngularVelocity() * dt;
+        }
+      }
+      else
+      {
+          setDesiredAngVel(0);
+      }
+    }
+    else
+    {
+      setDesiredAngVel(0);
+      setDesiredSpeed(0);
+    }
+
   }
   LocalPlayer::doUpdateMotion(dt);
 }
@@ -61,21 +108,31 @@ void			RCRobotPlayer::restart(const float* pos, float _azimuth)
   LocalPlayer::restart(pos, _azimuth);
 }
 
-void			RCRobotPlayer::processrequest(RCRequest* req,
+bool                    RCRobotPlayer::isInTick()
+{
+    double timeNow = TimeKeeper::getCurrent().getSeconds();
+    /* last tick done? */
+    if (lastTickAt + tickDuration >= timeNow)
+      return true;
+    return false;
+}
+
+bool			RCRobotPlayer::processrequest(RCRequest* req,
 							    RCLink* link)
 {
+  receivedUpdates[req->get_request_type()] = true;
   switch (req->get_request_type()) {
-    case Speed:
-      speed = req->speed_level;
+    case setSpeed:
+      nextSpeed = req->speed;
       link->respond("ok\n");
       break;
 
-    case AngularVel:
-      angularvel = req->angularvel_level;
+    case setTurnRate:
+      nextTurnRate = req->turnRate;
       link->respond("ok\n");
       break;
 
-    case Shoot:
+    case setFire:
       shoot = true;
       if (fireShot()) {
 	link->respond("ok\n");
@@ -84,9 +141,71 @@ void			RCRobotPlayer::processrequest(RCRequest* req,
       }
       break;
 
+    case setAhead:
+      nextDistance = req->distance;
+      link->respond("ok\n");
+      break;
+
+    case setTurnLeft:
+      nextTurn = req->turn;
+      link->respond("ok\n");
+      break;
+
+    case getDistanceRemaining:
+      if (isInTick())
+        return false;
+      link->respondf("getDistanceRemaining %f\n", distanceRemaining);
+      break;
+
+    case getTurnRemaining:
+      if (isInTick())
+        return false;
+      link->respondf("getTurnRemaining %f\n", turnRemaining);
+      break;
+
+    case execute:
+      if (isInTick())
+        return false;
+
+      lastTickAt = TimeKeeper::getCurrent().getSeconds();
+
+      if (receivedUpdates[setTurnLeft])
+      {
+        turnRemaining = nextTurn;
+        if (turnRemaining < 0.0f)
+        {
+          turnRemaining = -turnRemaining;
+          turnLeft = false;
+        }
+        else
+          turnLeft = true;
+      }
+
+      if (receivedUpdates[setAhead])
+      {
+        distanceRemaining = nextDistance;
+        if (distanceRemaining < 0.0f)
+        {
+          distanceRemaining = -distanceRemaining;
+          distanceForward = false;
+        }
+        else
+          distanceForward = true;
+      }
+
+      if (receivedUpdates[setTurnRate])
+        turnRate = nextTurnRate;
+      if (receivedUpdates[setSpeed])
+        speed = nextSpeed;
+
+      for (int i = 0; i < RequestCount; ++i)
+        receivedUpdates[i] = false;
+      break;
+
     default:
       break;
   }
+  return true;
 }
 
 
