@@ -1,8 +1,5 @@
 SUBDIRS = models
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
-
 noinst_LTLIBRARIES = libGeometry.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
@@ -60,3 +57,6 @@ libGeometry_la_LIBADD =	\
 
 EXTRA_DIST = \
 	README
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
