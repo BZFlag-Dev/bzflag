@@ -26,7 +26,7 @@
 #include "TargetingUtils.h"
 
 RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server, RCLink* _agent,
+				ServerLink* _server, RCLinkBackend* _agent,
 				const char* _email = "anonymous") :
 				RobotPlayer(_id, _name, _server, _email),
 				agent(_agent),
@@ -108,7 +108,7 @@ void			RCRobotPlayer::restart(const float* pos, float _azimuth)
   LocalPlayer::restart(pos, _azimuth);
 }
 
-bool                    RCRobotPlayer::isInTick()
+bool                    RCRobotPlayer::isSteadyState()
 {
     double timeNow = TimeKeeper::getCurrent().getSeconds();
     /* last tick done? */
@@ -118,55 +118,55 @@ bool                    RCRobotPlayer::isInTick()
 }
 
 bool			RCRobotPlayer::processrequest(RCRequest* req,
-							    RCLink* link)
+							    RCLinkBackend* link)
 {
   receivedUpdates[req->get_request_type()] = true;
   switch (req->get_request_type()) {
     case setSpeed:
       nextSpeed = req->speed;
-      link->respond("ok\n");
+      link->send("ok\n");
       break;
 
     case setTurnRate:
       nextTurnRate = req->turnRate;
-      link->respond("ok\n");
+      link->send("ok\n");
       break;
 
     case setFire:
       shoot = true;
-      link->respond("ok\n");
+      link->send("ok\n");
       break;
 
     case getGunHeat:
-      if (isInTick())
+      if (isSteadyState())
         return false;
-      link->respondf("getGunHeat %f\n", getReloadTime());
+      link->sendf("getGunHeat %f\n", getReloadTime());
       break;
     
     case setAhead:
       nextDistance = req->distance;
-      link->respond("ok\n");
+      link->send("ok\n");
       break;
 
     case setTurnLeft:
       nextTurn = req->turn;
-      link->respond("ok\n");
+      link->send("ok\n");
       break;
 
     case getDistanceRemaining:
-      if (isInTick())
+      if (isSteadyState())
         return false;
-      link->respondf("getDistanceRemaining %f\n", distanceRemaining);
+      link->sendf("getDistanceRemaining %f\n", distanceRemaining);
       break;
 
     case getTurnRemaining:
-      if (isInTick())
+      if (isSteadyState())
         return false;
-      link->respondf("getTurnRemaining %f\n", turnRemaining);
+      link->sendf("getTurnRemaining %f\n", turnRemaining);
       break;
 
     case getTickDuration:
-      link->respondf("getTickDuration %f\n", tickDuration);
+      link->sendf("getTickDuration %f\n", tickDuration);
       break;
 
     case setTickDuration:
@@ -174,14 +174,14 @@ bool			RCRobotPlayer::processrequest(RCRequest* req,
       break;
 
     case getTickRemaining:
-      if (isInTick())
-        link->respondf("getTickRemaining %f\n", (lastTickAt + tickDuration) - TimeKeeper::getCurrent().getSeconds());
+      if (isSteadyState())
+        link->sendf("getTickRemaining %f\n", (lastTickAt + tickDuration) - TimeKeeper::getCurrent().getSeconds());
       else
-        link->respond("getTickRemaining 0.0\n");
+        link->send("getTickRemaining 0.0\n");
       break;
 
     case execute:
-      if (isInTick())
+      if (isSteadyState())
         return false;
 
       lastTickAt = TimeKeeper::getCurrent().getSeconds();

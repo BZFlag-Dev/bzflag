@@ -29,25 +29,25 @@
 #include "Region.h"
 #include "RegionPriorityQueue.h"
 #include "ServerLink.h"
-#include "RCLink.h"
+#include "RCLinkBackend.h"
 
 
 class RCRobotPlayer : public RobotPlayer {
   public:
     RCRobotPlayer(const PlayerId&,
         const char* name, ServerLink*,
-        RCLink*,
+        RCLinkBackend*,
         const char* _email);
 
     void            restart(const float* pos, float azimuth);
     void            explodeTank();
-    bool            processrequest(RCRequest*, RCLink*);
+    bool            processrequest(RCRequest*, RCLinkBackend*);
 
   private:
     void            doUpdate(float dt);
     void            doUpdateMotion(float dt);
-    bool            isInTick();
-    RCLink*         agent;
+    bool            isSteadyState();
+    RCLinkBackend*  agent;
 
     double          lastTickAt;
     double          tickDuration;

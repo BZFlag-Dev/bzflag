@@ -27,6 +27,10 @@ bzrobots_SOURCES =			\
 	botplaying.cxx			\
 	RCLink.cxx			\
 	RCLink.h			\
+	RCRequest.cxx			\
+	RCRequest.h			\
+	RCLinkBackend.cxx		\
+	RCLinkBackend.h			\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
 	../bzflag/ActionBinding.cxx		\

@@ -57,7 +57,7 @@
 #include "WordFilter.h"
 
 // local implementation headers
-#include "RCLink.h"
+#include "RCLinkBackend.h"
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
@@ -84,7 +84,7 @@ StartupInfo	startupInfo;
 ServerLink*		serverLink = NULL;
 static World	   *world = NULL;
 LocalPlayer*		observerTank = NULL;
-RCLink*		rcLink = NULL;
+RCLinkBackend*		rcLink = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
 static bool		joinRequested = false;
@@ -2308,14 +2308,14 @@ static void		sendBase(BaseBuilding *base, const char *teamname)
   float corners[4][2];
   getObsCorners(base, false, corners);
 
-  rcLink->respondf("base %s", teamname);
+  rcLink->sendf("base %s", teamname);
 
   for (int i=0; i < 4; i++) {
     float* point = corners[i];
-    rcLink->respondf(" %f %f", point[0], point[1]);
+    rcLink->sendf(" %f %f", point[0], point[1]);
   }
 
-  rcLink->respond("\n");
+  rcLink->send("\n");
 }
 
 static void		sendBasesList()
@@ -2324,7 +2324,7 @@ static void		sendBasesList()
   const ObstacleList& bases = OBSTACLEMGR.getBases();
   const int numBases = bases.size();
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i = 0; i < numBases; i++) {
     BaseBuilding* base = (BaseBuilding*) bases[i];
@@ -2332,7 +2332,7 @@ static void		sendBasesList()
     sendBase(base, Team::getShortName(color));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendObstacle(Obstacle *obs)
@@ -2342,15 +2342,15 @@ static void		sendObstacle(Obstacle *obs)
 
   getObsCorners(obs, true, corners);
 
-  rcLink->respond("obstacle");
+  rcLink->send("obstacle");
 
   for (int i=0; i < 4; i++) {
     float* point = corners[i];
-    rcLink->respondf(" %f %f", gauss(point[0], posnoise), \
+    rcLink->sendf(" %f %f", gauss(point[0], posnoise), \
 	gauss(point[1], posnoise));
   }
 
-  rcLink->respond("\n");
+  rcLink->send("\n");
 }
 
 static void		sendObsList()
@@ -2365,7 +2365,7 @@ static void		sendObsList()
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (i = 0; i < numBoxes; i++) {
     sendObstacle(boxes[i]);
@@ -2380,7 +2380,7 @@ static void		sendObsList()
     sendObstacle(meshes[i]);
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendTeamList()
@@ -2390,33 +2390,33 @@ static void		sendTeamList()
   const Team& blueteam = world->getTeam(BlueTeam);
   const Team& purpleteam = world->getTeam(PurpleTeam);
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   // Note that we only look at the first base
 
   if (redteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(RedTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(RedTeam),
 			  redteam.size);
   }
   if (greenteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(GreenTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(GreenTeam),
 			  greenteam.size);
   }
   if (blueteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(BlueTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(BlueTeam),
 			  blueteam.size);
   }
   if (purpleteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(PurpleTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(PurpleTeam),
 			  purpleteam.size);
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendFlagList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<numFlags; i++) {
     Flag& flag = world->getFlag(i);
@@ -2433,18 +2433,18 @@ static void		sendFlagList()
     }
 
     if (flag.status != FlagNoExist) {
-      rcLink->respondf("flag %s %s %f %f\n",
+      rcLink->sendf("flag %s %s %f %f\n",
 	  flagteam, possessteam,
 	  flag.position[0], flag.position[1]);
     }
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendShotList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
     Player* tank = player[i];
@@ -2458,13 +2458,13 @@ static void		sendShotList()
       const float* position = shot->getPosition();
       const float* velocity = shot->getVelocity();
 
-      rcLink->respondf("shot %f %f %f %f\n", position[0], position[1],
+      rcLink->sendf("shot %f %f %f %f\n", position[0], position[1],
 	    velocity[0], velocity[1]);
     }
 
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendMyTankList()
@@ -2474,7 +2474,7 @@ static void		sendMyTankList()
   float angnoise = atof(BZDB.get("bzrcAngNoise").c_str());
   float velnoise = atof(BZDB.get("bzrcVelNoise").c_str());
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   const int numShots = World::getWorld()->getMaxShots();
 
@@ -2531,14 +2531,14 @@ static void		sendMyTankList()
       noisy_angle += 2 * M_PI;
     }
 
-    rcLink->respondf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
+    rcLink->sendf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
 	i, callsign, statstr, shots_avail, reloadtime, flagname,
 	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
 	noisy_angle, gauss(vel[0], velnoise),
 	gauss(vel[1], velnoise), gauss(angvel, angnoise));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendOtherTankList()
@@ -2547,7 +2547,7 @@ static void		sendOtherTankList()
   float posnoise = atof(BZDB.get("bzrcPosNoise").c_str());
   float angnoise = atof(BZDB.get("bzrcAngNoise").c_str());
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
     tank = player[i];
@@ -2597,24 +2597,24 @@ static void		sendOtherTankList()
     const float *pos = tank->getPosition();
     const float angle = tank->getAngle();
 
-    rcLink->respondf("othertank %s %s %s %s %f %f %f\n",
+    rcLink->sendf("othertank %s %s %s %s %f %f %f\n",
 	callsign, colorname, statstr, flagname,
 	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
 	gauss(angle, angnoise));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendConstList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
-  rcLink->respondf("constant team %s\n", Team::getShortName(startupInfo.team));
-  rcLink->respondf("constant worldsize %f\n", BZDBCache::worldSize);
-  rcLink->respond("constant hoverbot 0\n");
+  rcLink->sendf("constant team %s\n", Team::getShortName(startupInfo.team));
+  rcLink->sendf("constant worldsize %f\n", BZDBCache::worldSize);
+  rcLink->send("constant hoverbot 0\n");
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		doBotRequests()
@@ -2645,7 +2645,7 @@ static void		doBotRequests()
       case getTickRemaining:
 	tankindex = req->get_robotindex();
 	if (tankindex == -1) {
-	  rcLink->respondf("fail Invalid tank index.\n");
+	  rcLink->sendf("fail Invalid tank index.\n");
 	} else {
 	  bot = (RCRobotPlayer*)robots[tankindex];
           // We bail out if processing isn't ready or isn't valid.
@@ -3476,10 +3476,10 @@ void			botStartPlaying()
     printError(aString);
   }
 
-  // startup an RCLink if requested
+  // startup an RCLinkBackend if requested
   if (BZDB.isSet("rcPort")) {
     int port = atoi(BZDB.get("rcPort").c_str());
-    rcLink = new RCLink(port);
+    rcLink = new RCLinkBackend(port);
   }
 
   // enter game if we have all the info we need, otherwise

@@ -11,8 +11,8 @@
  */
 
 /*
- * Remote Control Link: Encapsulates communication between local player and
- * remote agent.
+ * Remote Control Link: Encapsulates communication between backend and frontend.
+ * (This is the generic base-functionality)
  */
 
 #ifndef	BZF_RC_LINK_H
@@ -31,61 +31,6 @@
 				" reading data!\n"
 #define RC_LINK_NOHELLO_MSG "error agent expected\n"
 #define RC_LINK_HELLO_STR "bzrobots 1\n"
-typedef enum {
-		    InvalidRequest,
-		    HelloRequest,
-                    setSpeed,
-                    setTurnRate,
-		    setAhead,
-                    setTurnLeft,
-                    setFire,
-                    getGunHeat,
-                    getDistanceRemaining,
-                    getTurnRemaining,
-                    getTickRemaining,
-                    getTickDuration,
-                    setTickDuration,
-                    execute,
-		    TeamListRequest,
-		    BasesListRequest,
-		    ObstacleListRequest,
-		    FlagListRequest,
-		    ShotListRequest,
-		    MyTankListRequest,
-		    OtherTankListRequest,
-		    ConstListRequest,
-                    RequestCount
-} agent_req_t;
-
-class RCLink;
-
-class RCRequest {
-  public:
-			RCRequest();
-			RCRequest(agent_req_t reqtype);
-			RCRequest(int argc, char **argv);
-			RCRequest *getnext();
-			void append(RCRequest *newreq);
-			int get_robotindex();
-			agent_req_t get_request_type();
-			void sendack(RCLink *link);
-			void sendfail(RCLink *link);
-
-			float distance, turn;
-                        float speed, turnRate;
-                        float duration;
-			bool fail;
-			char *failstr;
-
-  private:
-			void set_robotindex(char *arg);
-                        template <class T>
-                        T clamp(T val, T min, T max);
-
-			agent_req_t request_type;
-			int robotindex;
-			RCRequest *next;
-};
 
 class RCLink {
   public:
@@ -97,30 +42,25 @@ class RCLink {
 			Connected
     };
 
-			RCLink(int port);
 			~RCLink();
 			void startListening();
 			void tryAccept();
-			void update();
-			int update_read();
-			int update_parse(int maxlines=0);
 			int update_write();
-			bool parsecommand(char *cmd);
 			void detach_agents();
 
-			bool respond(char *message);
-			bool respondf(const char *format, ...);
-			RCRequest *poprequest();
-			RCRequest *peekrequest();
+			bool send(char *message);
+			bool sendf(const char *format, ...);
 
-  private:
+  protected:
+                        /* We don't allow instanciating this directly - you have to instanciate RCLinkBackend or RClinkFrontend. */
+                        RCLink();
+
 			enum State status;
 			int listenfd, connfd;
 			int port;
 			char recvbuf[RC_LINK_RECVBUFLEN];
 			char sendbuf[RC_LINK_SENDBUFLEN];
 			int recv_amount, send_amount;
-			RCRequest *requests;
 			bool input_toolong, output_overflow;
 };
 
