@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 #include <signal.h>
 
 #if !defined(__sgi)
@@ -19,15 +21,11 @@ typedef void (*SIG_PF)(int);
 #endif
 #endif /* defined(__sgi) */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+__BEGIN_DECLS
 
 SIG_PF bzSignal(int signo, SIG_PF func);
 
-#ifdef __cplusplus
-}
-#endif
+__END_DECLS
 
 /*
  * Local Variables: ***
