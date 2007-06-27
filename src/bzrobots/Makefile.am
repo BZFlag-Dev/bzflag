@@ -150,8 +150,6 @@ bzrobots_SOURCES =			\
 	../bzflag/Roster.h			\
 	../bzflag/SaveWorldMenu.cxx		\
 	../bzflag/SaveWorldMenu.h		\
-	../bzflag/SceneBuilder.cxx		\
-	../bzflag/SceneBuilder.h		\
 	../bzflag/SceneRenderer.cxx		\
 	../bzflag/ScoreboardRenderer.cxx	\
 	../bzflag/ScoreboardRenderer.h		\
