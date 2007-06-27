@@ -833,8 +833,7 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	plugins/Makefile
-    plugins/plugin_utils/Makefile
-    plugins/Phoenix/Makefile
+    	plugins/plugin_utils/Makefile
 	plugins/HoldTheFlag/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
@@ -850,12 +849,14 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
 	plugins/recordmatch/Makefile
+	plugins/regFlag/Makefile
 	plugins/serverControl/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/timedctf/Makefile
 	plugins/torBlock/Makefile
 	plugins/vocaliser/Makefile
+    	plugins/Phoenix/Makefile
         plugins/wwzones/Makefile
 	plugins/doc/Makefile
 	plugins/vc71/Makefile

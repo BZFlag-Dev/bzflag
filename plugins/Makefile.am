@@ -1,6 +1,7 @@
 SUBDIRS = \
 	plugin_utils \
 	HoldTheFlag \
+	Phoenix \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
 	airspawn \
@@ -13,9 +14,9 @@ SUBDIRS = \
 	logDetail \
 	nagware \
 	playHistoryTracker \
-	Phoenix \
 	python \
 	recordmatch \
+	regFlag \
 	serverControl \
 	shockwaveDeath \
 	teamflagreset \
