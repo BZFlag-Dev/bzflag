@@ -22,6 +22,15 @@ else
 BZROBOTS_DIR =
 endif
 
+# needed by clients and server, always build
+core_dirs = \
+	date \
+	obstacle \
+	game \
+	net \
+	common
+
+# needed only by clients, generally requires OpenGL
 gui_dirs = \
 	mediafile \
 	ogl \
@@ -42,14 +51,10 @@ endif # BZROBOTS_INCLUDED
 
 endif # CLIENT_INCLUDED
 
-# the order matters greatly here
+# the order matters
 SUBDIRS = \
 	other \
-	date \
-	common \
-	net \
-	game \
-	obstacle \
+	$(core_dirs) \
 	$(CLIENT_DIRS) \
 	${BZFS_DIR} \
 	${BZADMIN_DIR} \
