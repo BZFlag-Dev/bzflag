@@ -2635,6 +2635,7 @@ static void		doBotRequests()
       case setSpeed:
       case setTurnRate:
       case setFire:
+      case getGunHeat:
       case setAhead:
       case setTurnLeft:
       case getDistanceRemaining:

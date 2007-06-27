@@ -134,13 +134,15 @@ bool			RCRobotPlayer::processrequest(RCRequest* req,
 
     case setFire:
       shoot = true;
-      if (fireShot()) {
-	link->respond("ok\n");
-      } else {
-	link->respond("fail\n");
-      }
+      link->respond("ok\n");
       break;
 
+    case getGunHeat:
+      if (isInTick())
+        return false;
+      link->respondf("getGunHeat %f\n", getReloadTime());
+      break;
+    
     case setAhead:
       nextDistance = req->distance;
       link->respond("ok\n");
@@ -215,6 +217,13 @@ bool			RCRobotPlayer::processrequest(RCRequest* req,
 
       for (int i = 0; i < RequestCount; ++i)
         receivedUpdates[i] = false;
+
+      if (shoot)
+      {
+        shoot = false;
+        fireShot();
+      }
+
       break;
 
     default:

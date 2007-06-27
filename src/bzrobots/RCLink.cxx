@@ -464,6 +464,9 @@ RCRequest::RCRequest(int argc, char **argv) :
   } else if (strcasecmp(argv[0], "setFire") == 0 && argc == 2) {
     request_type = setFire;
     set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "getGunHeat") == 0 && argc == 2) {
+    request_type = getGunHeat;
+    set_robotindex(argv[1]);
   } else if (strcasecmp(argv[0], "getDistanceRemaining") == 0 && argc == 2) {
     request_type = getDistanceRemaining;
     set_robotindex(argv[1]);
@@ -528,6 +531,9 @@ void RCRequest::sendack(RCLink *link)
       break;
     case setFire:
       link->respondf("ack %f setFire %d\n", elapsed, get_robotindex());
+      break;
+    case getGunHeat:
+      link->respondf("ack %f getGunHeat %d\n", elapsed, get_robotindex());
       break;
     case getDistanceRemaining:
       link->respondf("ack %f getDistanceRemaining %d\n", elapsed, get_robotindex());

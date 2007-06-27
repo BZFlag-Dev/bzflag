@@ -39,6 +39,7 @@ typedef enum {
 		    setAhead,
                     setTurnLeft,
                     setFire,
+                    getGunHeat,
                     getDistanceRemaining,
                     getTurnRemaining,
                     getTickRemaining,
