@@ -41,6 +41,9 @@ typedef enum {
                     setFire,
                     getDistanceRemaining,
                     getTurnRemaining,
+                    getTickRemaining,
+                    getTickDuration,
+                    setTickDuration,
                     execute,
 		    TeamListRequest,
 		    BasesListRequest,
@@ -69,6 +72,7 @@ class RCRequest {
 
 			float distance, turn;
                         float speed, turnRate;
+                        float duration;
 			bool fail;
 			char *failstr;
 

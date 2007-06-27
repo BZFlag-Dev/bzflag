@@ -2639,6 +2639,9 @@ static void		doBotRequests()
       case setTurnLeft:
       case getDistanceRemaining:
       case getTurnRemaining:
+      case getTickDuration:
+      case setTickDuration:
+      case getTickRemaining:
 	tankindex = req->get_robotindex();
 	if (tankindex == -1) {
 	  rcLink->respondf("fail Invalid tank index.\n");

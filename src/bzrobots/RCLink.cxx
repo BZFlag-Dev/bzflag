@@ -459,7 +459,7 @@ RCRequest::RCRequest(int argc, char **argv) :
     turn = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
       fail = true;
-      failstr = "Invalid parameter for turn.";
+      failstr = "Invalid parameter for turn angle.";
     }
   } else if (strcasecmp(argv[0], "setFire") == 0 && argc == 2) {
     request_type = setFire;
@@ -469,6 +469,21 @@ RCRequest::RCRequest(int argc, char **argv) :
     set_robotindex(argv[1]);
   } else if (strcasecmp(argv[0], "getTurnRemaining") == 0 && argc == 2) {
     request_type = getTurnRemaining;
+    set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "getTickDuration") == 0 && argc == 2) {
+    request_type = getTickDuration;
+    set_robotindex(argv[1]);
+  } else if (strcasecmp(argv[0], "setTickDuration") == 0 && argc == 3) {
+    request_type = setTickDuration;
+    set_robotindex(argv[1]);
+
+    duration = strtof(argv[2], &endptr);
+    if (endptr == argv[2]) {
+      fail = true;
+      failstr = "Invalid parameter for setTickDuration.";
+    }
+  } else if (strcasecmp(argv[0], "getTickRemaining") == 0 && argc == 2) {
+    request_type = getTickRemaining;
     set_robotindex(argv[1]);
   } else if (strcasecmp(argv[0], "teams") == 0 && argc == 1) {
     request_type = TeamListRequest;
@@ -519,6 +534,15 @@ void RCRequest::sendack(RCLink *link)
       break;
     case getTurnRemaining:
       link->respondf("ack %f getTurnRemaining %d\n", elapsed, get_robotindex());
+      break;
+    case getTickRemaining:
+      link->respondf("ack %f getTickRemaining %d\n", elapsed, get_robotindex());
+      break;
+    case getTickDuration:
+      link->respondf("ack %f getTickDuration %d\n", elapsed, get_robotindex());
+      break;
+    case setTickDuration:
+      link->respondf("ack %f setTickDuration %d %f\n", elapsed, get_robotindex(), duration);
       break;
     case TeamListRequest:
       link->respondf("ack %f teams\n", elapsed);

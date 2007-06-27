@@ -163,6 +163,21 @@ bool			RCRobotPlayer::processrequest(RCRequest* req,
       link->respondf("getTurnRemaining %f\n", turnRemaining);
       break;
 
+    case getTickDuration:
+      link->respondf("getTickDuration %f\n", tickDuration);
+      break;
+
+    case setTickDuration:
+      tickDuration = req->duration;
+      break;
+
+    case getTickRemaining:
+      if (isInTick())
+        link->respondf("getTickRemaining %f\n", (lastTickAt + tickDuration) - TimeKeeper::getCurrent().getSeconds());
+      else
+        link->respond("getTickRemaining 0.0\n");
+      break;
+
     case execute:
       if (isInTick())
         return false;
