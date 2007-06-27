@@ -45,9 +45,10 @@ to play against each other in a networked environment.
 There are five teams:  red, green, blue, purple and rogue
 (rogue tanks are black).  Destroying a player on another
 team scores a win, while being destroyed or destroying a
-teammate scores a loss.  Rogues have no teammates (not even
-other rogues), so they cannot shoot teammates and they do
-not have a team score.
+teammate scores a loss.  Because Rogues do not have other
+teammates (not even other rogues), there is no team score
+attributed to Rogues and every other tank is a legitimate
+enemy.
 .PP 
 There are three main styles of play:  capture\-the\-flag,
 free\-for\-all, and rabbit\-hunt.  In capture\-the\-flag, each team (except rogues)
@@ -64,11 +65,11 @@ remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
 .SS Joining a Game
 .PP 
-To get quickly started, select the "Join Game" menu in the BZFlag
+To quickly get started, select the "Join Game" menu in the BZFlag
 client using the arrow keys on your keyboard.  Choose the "Select a
 Server" link and pick one of the servers near the top of the menu.
 This should take you back to the "Join Game" menu where you should
-then provide a callsign.  Select the "Connect".  Within a few seconds
+then provide a callsign.  Select the "Connect."  Within a few seconds
 you should be on that server ready to play.
 .PP 
 BZFlag includes a global registration system that allows players to
