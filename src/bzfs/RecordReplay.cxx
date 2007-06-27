@@ -333,8 +333,8 @@ bool Record::setDirectory(const char *dirname)
 {
   int len = strlen(dirname);
   RecordDir = dirname;
-  if (dirname[len - 1] != DirectorySeparator) {
-    RecordDir += DirectorySeparator;
+  if (dirname[len - 1] != BZ_DIRECTORY_SEPARATOR) {
+    RecordDir += BZ_DIRECTORY_SEPARATOR;
   }
 
   if (!makeDirExist(RecordDir.c_str())) {
@@ -1916,7 +1916,7 @@ static RRpacket *loadPacket(FILE *f)
 static FILE *openFile(const char *filename, const char *mode)
 {
   std::string name = RecordDir.c_str();
-  name += DirectorySeparator;
+  name += BZ_DIRECTORY_SEPARATOR;
   name += filename;
 
   return fopen(name.c_str(), mode);

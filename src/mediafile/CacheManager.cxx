@@ -90,8 +90,8 @@ CacheManager::getLocalName(const std::string name) const
     local += partialEncoding(name.substr(6));
   }
 
-  if (DirectorySeparator != '/') {
-    std::replace(local.begin(), local.end(), '/', DirectorySeparator);
+  if (BZ_DIRECTORY_SEPARATOR != '/') {
+    std::replace(local.begin(), local.end(), '/', BZ_DIRECTORY_SEPARATOR);
   }
 
   return local;
@@ -296,7 +296,7 @@ fileExists (const std::string& name)
   // Windows sucks yet again, if there is a trailing  "\"
   // at the end of the filename, _stat will return -1.
   std::string dirname = name;
-  while (dirname.find_last_of(DirectorySeparator) == (dirname.size() - 1)) {
+  while (dirname.find_last_of(BZ_DIRECTORY_SEPARATOR) == (dirname.size() - 1)) {
     dirname.resize(dirname.size() - 1);
   }
   return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
@@ -309,7 +309,7 @@ removeDirs(unsigned int minLen, const std::string& path)
 {
   std::string tmp = path;
   while (tmp.size() > minLen) {
-    unsigned int i = (unsigned int)tmp.find_last_of(DirectorySeparator);
+    unsigned int i = (unsigned int)tmp.find_last_of(BZ_DIRECTORY_SEPARATOR);
     tmp = tmp.substr(0, i);
     if (remove(tmp.c_str()) != 0) {
       break;

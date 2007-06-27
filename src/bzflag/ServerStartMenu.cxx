@@ -233,10 +233,10 @@ ServerStartMenu::ServerStartMenu()
       }
     }
   }
-  searchDir += DirectorySeparator;
+  searchDir += BZ_DIRECTORY_SEPARATOR;
 #else
   if (searchDir.length() > 0) {
-    searchDir += DirectorySeparator;
+    searchDir += BZ_DIRECTORY_SEPARATOR;
   }
   else {
     searchDir = ".";

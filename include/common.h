@@ -271,9 +271,15 @@ typedef unsigned char	uint8_t;
 
 
 #ifdef _WIN32
-const char DirectorySeparator = '\\';
+#  define BZ_DIRECTORY_SEPARATOR '\\'
 #else
-const char DirectorySeparator = '/';
+#  define BZ_DIRECTORY_SEPARATOR '/'
+#endif
+
+#ifdef _WIN32
+#  define BZ_PATH_SEPARATOR ';'
+#else
+#  define BZ_PATH_SEPARATOR ':'
 #endif
 
 
