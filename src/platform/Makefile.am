@@ -1,6 +1,4 @@
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libPlatform.la
-endif
 
 libPlatform_la_LDFLAGS = -static
 

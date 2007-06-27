@@ -1,6 +1,4 @@
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGLKit.la
-endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
