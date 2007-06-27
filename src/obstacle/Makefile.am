@@ -8,11 +8,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libObstacle_la_LDFLAGS = -static
-libObstacle_la_LIBADD = \
-	$(top_builddir)/src/common/libCommon.la
-
-# FIXME: this library shouldn't, but does indirectly include/use stuff from lib3D and it should not
-#	$(top_builddir)/src/3D/lib3D.la
 
 if CLIENT_INCLUDED
 libObstacle_la_SOURCES =		\
