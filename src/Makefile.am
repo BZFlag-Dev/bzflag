@@ -25,10 +25,10 @@ endif
 # needed by clients and server, always build
 core_dirs = \
 	date \
-	obstacle \
-	game \
+	common \
 	net \
-	common
+	obstacle \
+	game
 
 # needed only by clients, generally requires OpenGL
 gui_dirs = \
