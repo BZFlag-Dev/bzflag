@@ -2706,6 +2706,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   bz_FlagGrabbedEventData	data;
   data.flagID = flag.getIndex();
   data.flagType = flag.flag.type->flagAbbv;
+  memcpy(data.position,fpos,sizeof(float)*3);
+  data.playerID = playerIndex;
 
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
 
