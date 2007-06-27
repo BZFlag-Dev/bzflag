@@ -3234,7 +3234,9 @@ void checkForServerBail ( void )
       // if we haven't reported the death yet then do so now
       if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
 	printError("Server has unexpectedly disconnected");
-      leaveGame();
+      else
+        printError("We were disconencted from the server, quitting.");
+      CommandsStandard::quit();
     }
 }
 
@@ -3369,10 +3371,10 @@ static void		playingLoop()
 
       callPlayingCallbacks();    // invoke callbacks
 
+      checkForServerBail();
+
       if (CommandsStandard::isQuit())     // quick out
 	break;
-
-      checkForServerBail();
 
       doUpdates(dt);
 

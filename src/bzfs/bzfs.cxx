@@ -2255,6 +2255,9 @@ void playerAlive(int playerIndex)
     int botsFound = 0;
     for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *pbData = GameKeeper::Player::getPlayerByIndex(i);
+      if (pbData == NULL)
+        continue;
+
       if ((pbData->netHandler->getIPAddress().s_addr == playerIP.s_addr) && pbData->player.isBot()) {
 	botsFound++;
 	if (botsFound >= clOptions->botsPerIP) {
