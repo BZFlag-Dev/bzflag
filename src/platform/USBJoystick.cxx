@@ -28,30 +28,33 @@
 #include <string>
 
 // Moved bodily from XWindow.h - hope it still works :)
-#ifdef __cplusplus
+
 /* Argh! usb.h has a structure with a member "class". We don't use it, so
  * let's just move it out of the way
  */
 #define class CLASS
-extern "C" {
-#endif
+
+__BEGIN_DECLS
+
 #ifdef __FreeBSD__
-#include <libusb.h>
+#  include <libusb.h>
 #else
-#include <usb.h>
+#  include <usb.h>
 #endif
 #include <dev/usb/usb.h>
 #include <dev/usb/usbhid.h>
-#ifdef __cplusplus
+
+__END_DECLS
+
 #undef class
-}
-#endif
 
 #include "USBJoystick.h"
+
 
 USBJoystick::USBJoystick() : status(false)
 {
 }
+
 USBJoystick::~USBJoystick()
 {
   if (status == true)
