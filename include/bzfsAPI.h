@@ -1392,14 +1392,14 @@ BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlash
 BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning
-BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot );
+BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 
 // dying
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
 
 // flags
-BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force );
-BZF_API bool bz_removePlayerFlag ( int playeID );
+BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force );
+BZF_API bool bz_removePlayerFlag ( int playerID );
 BZF_API void bz_resetFlags ( bool onlyUnused );
 
 BZF_API unsigned int bz_getNumFlags( void );
