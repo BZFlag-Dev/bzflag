@@ -3,7 +3,7 @@ bin_PROGRAMS = bzfs
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS) -DINSIDE_BZ
+AM_CPPFLAGS = -I$(top_srcdir)/include $(LIBCURL_CPPFLAGS) -DINSIDE_BZ
 
 if BUILD_PLUGINS
 plugin_files = bzfsPlugins.h bzfsPlugins.cxx
@@ -11,7 +11,8 @@ else
 plugin_files =
 endif
 
-bzfs_LDFLAGS = -export-dynamic
+#bzfs_LDFLAGS = -export-dynamic
+bzfs_LDFLAGS = -static
 bzfs_SOURCES = \
 	${plugin_files}	\
 	AccessControlList.cxx \
@@ -145,6 +146,7 @@ LDADD = \
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../common/libCommon.la		\
+	$(LIBCURL)			\
 	$(CARESLIB)			\
 	$(REGEX)			\
 	$(ZLIB)			\

@@ -239,11 +239,12 @@ LDADD =	\
 	$(SDL_IMAGE_LIBS)		\
 	$(GLIBS)			\
 	$(GLEW_LIBS)			\
+	$(LIBCURL)			\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CURL_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) $(CURL_CPPFLAGS)
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \

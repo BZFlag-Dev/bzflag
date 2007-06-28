@@ -22,7 +22,7 @@ REGEX = \
 endif
 
 AM_CPPFLAGS = -DBUILDING_BZADMIN -I$(top_srcdir)/include \
--I$(top_srcdir)/src/bzflag @CURL_CFLAGS@
+-I$(top_srcdir)/src/bzflag $(LIBCURL_CPPFLAGS)
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \
@@ -55,4 +55,5 @@ LDADD = \
 	../game/libGame.la	\
 	../net/libNet.la	\
 	../common/libCommon.la	\
+	$(LIBCURL)		\
 	$(REGEX)

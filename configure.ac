@@ -130,27 +130,10 @@ AC_SUBST(AR_FLAGS)
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
 AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
-  #checking for libcurl library
-  MY_CURL
-  if test $my_cv_curl_vers != NONE; then
-    CURL_CFLAGS=`curl-config --cflags`
-    CURL_LIBS=`curl-config --libs`
-    if test "x$build_vendor" = "xapple" ; then
-      if test -f /usr/bin/libcurl.a ; then
-        # prefer to link static
-        CURL_LIBS=/usr/bin/libcurl.a
-      else
-        # mac os x curl-config outputs erroneous -arch i386 in libs
-        CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
-      fi
-    fi
-  else
-    AC_MSG_ERROR([libcurl is required. You must install it. \
-See http://curl.haxx.se/])
-  fi
-  AC_SUBST(CURL_CFLAGS)
-
-LIBS="$CURL_LIBS $LIBS"
+#checking for libcurl library
+LIBCURL_CHECK_CONFIG(, , ,
+  [AC_MSG_ERROR([libcurl is required. You must install it. \
+See http://curl.haxx.se/])])
 
 # Testing if kerberos 5 is in the system
 KRB5_CONFIG=no
