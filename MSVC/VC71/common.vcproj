@@ -351,39 +351,30 @@
 				RelativePath="..\..\src\common\bzglob.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\common\bzsignal.c">
+				RelativePath="..\..\src\common\bzsignal.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="release_modern_p3|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 			</File>
 			<File
