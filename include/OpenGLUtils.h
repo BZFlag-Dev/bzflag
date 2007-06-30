@@ -13,24 +13,15 @@
 #ifndef _OPENGL_H_
 #define _OPENGL_H_
 
-#ifdef _WIN32 // this file only has windows stuff
-	#include <windows.h>
-	#include <GL/gl.h>
-	#include <GL/glu.h>
-#else
-	#ifdef __APPLE__
-		#include <Carbon/Carbon.h>
-		#include <AGL/agl.h>
-		#include <AGL/gl.h>
-		#include <AGL/glu.h>
-	#else	// linux
-		#include <GL/gl.h>
-		#include <GL/glu.h>
-	#endif
-#endif // _WIN32
+#include "common.h"
 
+/* interface system headers */
 #include <map>
 #include <vector>
+
+/* common interface headers */
+#include "bzfgl.h"
+
 
 #define GL_INVALID_ID 0xffffffff
 
