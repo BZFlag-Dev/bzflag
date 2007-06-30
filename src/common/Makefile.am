@@ -41,7 +41,7 @@ libCommon_la_SOURCES  =			\
 	bz_Locale.cxx			\
 	bzfio.cxx			\
 	bzglob.cxx			\
-	bzsignal.c			\
+	bzsignal.cxx			\
 	cURLManager.cxx			\
 	global.cxx			\
 	md5.cxx				\
