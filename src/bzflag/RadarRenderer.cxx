@@ -1030,8 +1030,8 @@ void RadarRenderer::renderBoxPyrMesh()
 	  continue;
 	}
       }
-      const float z = face->getPosition()[2];
-      const float bh = face->getHeight();
+      const float z = mesh->getPosition()[2];
+      const float bh = mesh->getSize()[2];
       const float cs = colorScale(z, bh);
       // draw death faces with a soupcon of red
       const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
