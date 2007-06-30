@@ -21,7 +21,15 @@
 #include "common.h"
 #include "bzfgl.h"
 #include "Obstacle.h"
+#include "openGLUtils.h"
 
+#include "ObstacleMgr.h"
+#include "MeshSceneNode.h"
+#include "ObstacleList.h"
+#include "WallObstacle.h"
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
+#include "MeshObstacle.h"
 
 class SceneRenderer;
 class World;
@@ -29,8 +37,10 @@ class ShotPath;
 class Player;
 
 
-class RadarRenderer {
+class RadarRenderer : public GLDisplayListCreator
+{
   public:
+    virtual		~RadarRenderer();
 			RadarRenderer(const SceneRenderer&, World* _world);
     void		setWorld(World* _world);
 
@@ -57,6 +67,9 @@ class RadarRenderer {
     void		renderBasesAndTeles();
 
     int			getFrameTriangleCount() const;
+
+    virtual void	buildGeometry ( GLDisplayList displayList );
+    void		clearRadarObjects ( void );
 
   private:
     // no copying
@@ -91,6 +104,29 @@ class RadarRenderer {
     bool		useTankDimensions;
     int			triangleCount;
     static const float	colorFactor;
+
+    bool		lastFast;
+
+    typedef enum
+    {
+      eNone,
+      eBoxPyr,
+      eMesh,
+      eMeshDeathFaces,
+      eBoxPyrOutline
+    }RadarObjectType;
+
+    typedef std::pair<RadarObjectType,Obstacle*> RadarObject;
+    typedef std::map<GLDisplayList,RadarObject> RadarObjectMap;
+    RadarObjectMap radarObjectLists;
+
+    void buildBoxPyr ( Obstacle* object );
+   // void buildBoxGeo ( BoxBuilding* box );
+   // void buildPryGeo ( PyramidBuilding* pyr );
+    void buildMeshGeo ( MeshObstacle* mesh, bool deathFaces );
+    void buildOutline ( Obstacle* object );
+ //   void buildBoxOutline ( const BoxBuilding& box );
+ //   void buildPyrOutline ( const PyramidBuilding& pyr );
 };
 
 //
