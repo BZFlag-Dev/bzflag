@@ -49,11 +49,10 @@ void RadarRenderer::clearRadarObjects ( void )
   
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
-  while (itr != radarObjectLists.end())
-    {
-      ds.freeList(itr->first);
-      itr++;
-    }
+  while (itr != radarObjectLists.end()) {
+    ds.freeList(itr->first);
+    itr++;
+  }
 
   radarObjectLists.clear();
 }
@@ -1113,22 +1112,22 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
     return;
 
   switch ( itr->second.first) {
-      case eBoxPyr:
-	buildBoxPyr(itr->second.second);
-	break;
+    case eBoxPyr:
+      buildBoxPyr(itr->second.second);
+      break;
         
-      case eMesh:
-      case eMeshDeathFaces:
-	buildMeshGeo((MeshObstacle*)itr->second.second,itr->second.first == eMeshDeathFaces);
-	break;
+    case eMesh:
+    case eMeshDeathFaces:
+      buildMeshGeo((MeshObstacle*)itr->second.second,itr->second.first == eMeshDeathFaces);
+      break;
 
-      case eBoxPyrOutline:
-	buildOutline(itr->second.second);
-	break;
+    case eBoxPyrOutline:
+      buildOutline(itr->second.second);
+      break;
 
-      default:
-	break;
-    }
+    default:
+      break;
+  }
 }
 
 // boxes and pyramids can share the same code, since they render just a box
@@ -1157,33 +1156,33 @@ void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
   int faces = mesh->getFaceCount();
 
   for (int f = 0; f < faces; f++) {
-      const MeshFace* face = mesh->getFace(f);
-      if (face->getPlane()[2] <= 0.0f)
-	continue;
+    const MeshFace* face = mesh->getFace(f);
+    if (face->getPlane()[2] <= 0.0f)
+      continue;
 
-      const BzMaterial* bzmat = face->getMaterial();
-      if ((bzmat != NULL) && bzmat->getNoRadar())
-	continue;
+    const BzMaterial* bzmat = face->getMaterial();
+    if ((bzmat != NULL) && bzmat->getNoRadar())
+      continue;
 
-      //      const float z = face->getPosition()[2];
-      //      const float bh = face->getHeight();
+    //      const float z = face->getPosition()[2];
+    //      const float bh = face->getHeight();
 
-      // draw death faces with a soupcon of red
-      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
-      bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
+    // draw death faces with a soupcon of red
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
+    bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
       
-      if (isDeath != deathFaces)
-	continue;
+    if (isDeath != deathFaces)
+      continue;
       
-      // draw the face as a triangle fan
-      int vertexCount = face->getVertexCount();
-      glBegin(GL_TRIANGLE_FAN);
-      for (int v = 0; v < vertexCount; v++) {
-	  const float* pos = face->getVertex(v);
-	  glVertex2f(pos[0], pos[1]);
-	}
-      glEnd();
+    // draw the face as a triangle fan
+    int vertexCount = face->getVertexCount();
+    glBegin(GL_TRIANGLE_FAN);
+    for (int v = 0; v < vertexCount; v++) {
+      const float* pos = face->getVertex(v);
+      glVertex2f(pos[0], pos[1]);
     }
+    glEnd();
+  }
 }
 
 void RadarRenderer::buildOutline ( Obstacle* object )
@@ -1216,106 +1215,105 @@ void RadarRenderer::renderBoxPyrMesh()
   // them in a display list, hopefully on the card
   // the display list manager will regenerate the list
   // data if needed ( context invalidation ).
-  if ( !radarObjectLists.size())
-    {
-      // add box buildings.
-      const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
-      for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
-	  if (((BoxBuilding*)boxes[i])->isInvisible())
-	    continue;
-	  radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(BoxBuilding*)boxes[i]);
-	}
-
-      // add pyramid buildings
-      const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
-      for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
-	radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(PyramidBuilding*)pyramids[i]);
-
-      // add meshes
-      const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
-      for (unsigned int i = 0; i < (unsigned int)meshes.size(); i++) {
-	  // add a list for the mesh regular faces, and one for the death faces.
-	  // if the mesh has no death faces, it'll be an empty list, no big loss.
-	  // we could flag each object if it has any death faces on load and keep
-	  // that as part of obstacle, to clean this up, but it may not be too bad.
-	  radarObjectLists[ds.newList(this)] = RadarObject(eMesh,(MeshObstacle*)meshes[i]);
-	  radarObjectLists[ds.newList(this)] = RadarObject(eMeshDeathFaces,(MeshObstacle*)meshes[i]);
-	}
-
-      // add the outlines for boxes and pyramids
-      for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
-	  if (((BoxBuilding*)boxes[i])->isInvisible())
-	    continue;
-	  radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(BoxBuilding*)boxes[i]);
-	}
-      for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
-	radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(PyramidBuilding*)pyramids[i]);
+  if ( !radarObjectLists.size()) {
+    // add box buildings.
+    const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
+    for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
+      if (((BoxBuilding*)boxes[i])->isInvisible())
+	continue;
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(BoxBuilding*)boxes[i]);
     }
-
+    
+    // add pyramid buildings
+    const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
+    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(PyramidBuilding*)pyramids[i]);
+    
+    // add meshes
+    const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+    for (unsigned int i = 0; i < (unsigned int)meshes.size(); i++) {
+      // add a list for the mesh regular faces, and one for the death faces.
+      // if the mesh has no death faces, it'll be an empty list, no big loss.
+      // we could flag each object if it has any death faces on load and keep
+      // that as part of obstacle, to clean this up, but it may not be too bad.
+      radarObjectLists[ds.newList(this)] = RadarObject(eMesh,(MeshObstacle*)meshes[i]);
+      radarObjectLists[ds.newList(this)] = RadarObject(eMeshDeathFaces,(MeshObstacle*)meshes[i]);
+    }
+    
+    // add the outlines for boxes and pyramids
+    for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
+      if (((BoxBuilding*)boxes[i])->isInvisible())
+	continue;
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(BoxBuilding*)boxes[i]);
+    }
+    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(PyramidBuilding*)pyramids[i]);
+  }
+  
   // if we have lists to render, call them,
   if (radarObjectLists.size()) {
-      RadarObjectMap::iterator itr = radarObjectLists.begin();
+    RadarObjectMap::iterator itr = radarObjectLists.begin();
 
-      RadarObjectType lastType = eNone;
+    RadarObjectType lastType = eNone;
 
-      while ( itr != radarObjectLists.end() ) {
-	  // all objcts use the same color scale
-	  const float z = itr->second.second->getPosition()[2];
-	  const float bh = itr->second.second->getHeight();
-	  const float cs = colorScale(z, bh);
+    while ( itr != radarObjectLists.end() ) {
+      // all objcts use the same color scale
+      const float z = itr->second.second->getPosition()[2];
+      const float bh = itr->second.second->getHeight();
+      const float cs = colorScale(z, bh);
 
-	  // cus lookups deep in STL are fugly
-	  RadarObjectType thisType = itr->second.first;
-	  GLDisplayList list = itr->first;
+      // cus lookups deep in STL are fugly
+      RadarObjectType thisType = itr->second.first;
+      GLDisplayList list = itr->first;
 
-	  // if the last type is difrent then this type
-	  // we have to change some of the blend modes
-	  // we want to minimise these changes to the state
-	  // so don't do them every object.
-	  if ( thisType != lastType ) {
-	      if ( thisType == eBoxPyr ) {
-		  if (!smooth) {
-		      // smoothing has blending disabled
-		      if (enhanced)
-			glEnable(GL_BLEND); // always blend the polygons if we're enhanced
-		    } else {
-		      // smoothing has blending enabled
-		      if (!enhanced)
-			glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
-		    }
-		} else if ( thisType == eBoxPyrOutline ) {
-		  if (!enhanced)
-		    glEnable(GL_CULL_FACE);
+      // if the last type is difrent then this type
+      // we have to change some of the blend modes
+      // we want to minimise these changes to the state
+      // so don't do them every object.
+      if ( thisType != lastType ) {
+	if ( thisType == eBoxPyr ) {
+	  if (!smooth) {
+	    // smoothing has blending disabled
+	    if (enhanced)
+	      glEnable(GL_BLEND); // always blend the polygons if we're enhanced
+	  } else {
+	    // smoothing has blending enabled
+	    if (!enhanced)
+	      glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
+	  }
+	} else if ( thisType == eBoxPyrOutline ) {
+	  if (!enhanced)
+	    glEnable(GL_CULL_FACE);
 
-		  if (smooth) {
-		      glDisable(GL_POLYGON_SMOOTH);
-		      glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
-		    } else if (enhanced)
-		    glDisable(GL_BLEND);
-		}
-	      else {
-		  // draw mesh obstacles
-		  if (smooth)
-		    glEnable(GL_POLYGON_SMOOTH);
-
-		  if (!enhanced)
-		    glDisable(GL_CULL_FACE);
-		}
-	    }
-
-	  // the only thing that gets difrent colors is the death faces
-	  if ( thisType == eMeshDeathFaces)
-	    glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
-	  else
-	    glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
-
-	  // draw all lists, except outlines when we arn't smoothing
-	  if ( thisType != eBoxPyrOutline || ( thisType == eBoxPyrOutline && smooth ) )
-	    ds.callList(list);
-      
-	  itr++;
+	  if (smooth) {
+	    glDisable(GL_POLYGON_SMOOTH);
+	    glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
+	  } else if (enhanced)
+	    glDisable(GL_BLEND);
 	}
+	else {
+	  // draw mesh obstacles
+	  if (smooth)
+	    glEnable(GL_POLYGON_SMOOTH);
+
+	  if (!enhanced)
+	    glDisable(GL_CULL_FACE);
+	}
+      }
+
+      // the only thing that gets difrent colors is the death faces
+      if ( thisType == eMeshDeathFaces)
+	glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
+      else
+	glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+
+      // draw all lists, except outlines when we arn't smoothing
+      if ( thisType != eBoxPyrOutline || ( thisType == eBoxPyrOutline && smooth ) )
+	ds.callList(list);
+      
+      itr++;
     }
+  }
   return;
 }
 
