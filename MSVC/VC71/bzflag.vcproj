@@ -771,6 +771,9 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDNavigationQueue.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDRenderer.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1773,6 +1776,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDDialogStack.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDNavigationQueue.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDRenderer.h">
