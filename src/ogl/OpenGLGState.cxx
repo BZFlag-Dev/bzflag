@@ -28,6 +28,8 @@
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
+#include "openGLUtils.h"
+
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
 #ifdef DEBUG
@@ -969,6 +971,8 @@ void OpenGLGState::ContextInitializer::executeFreeFuncs()
     scan = scan->prev;
   }
   executingFreeFuncs = false;
+
+  DisplayListSystem::Instance().flushLists();
   return;
 }
 

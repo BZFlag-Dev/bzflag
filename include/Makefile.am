@@ -80,11 +80,11 @@ noinst_HEADERS =			\
 	ObstacleModifier.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OccluderSceneNode.h		\
-	OpenGLDisplayList.h		\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
 	OpenGLTexture.h			\
+	OpenGLUtils.h		\
 	OSFile.h			\
 	PTSceneNode.h			\
 	Pack.h				\
