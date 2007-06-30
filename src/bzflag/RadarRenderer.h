@@ -19,6 +19,8 @@
 #define	BZF_RADAR_RENDERER_H
 
 #include "common.h"
+
+/* common interface headers */
 #include "bzfgl.h"
 #include "Obstacle.h"
 #include "OpenGLUtils.h"
