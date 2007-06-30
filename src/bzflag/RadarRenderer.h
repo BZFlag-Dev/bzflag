@@ -21,7 +21,7 @@
 #include "common.h"
 #include "bzfgl.h"
 #include "Obstacle.h"
-#include "openGLUtils.h"
+#include "OpenGLUtils.h"
 
 #include "ObstacleMgr.h"
 #include "MeshSceneNode.h"

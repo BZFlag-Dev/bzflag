@@ -11,7 +11,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "openGLUtils.h"
+#include "OpenGLUtils.h"
 
 #include <math.h>
 #define GL_INVALID_ID 0xffffffff

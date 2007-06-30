@@ -28,7 +28,7 @@
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
-#include "openGLUtils.h"
+#include "OpenGLUtils.h"
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
