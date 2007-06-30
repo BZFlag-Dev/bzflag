@@ -1139,8 +1139,8 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
 void RadarRenderer::buildBoxPyr ( Obstacle* object )
 {
   glBegin(GL_QUADS);
-  const float z = object->getPosition()[2];
-  const float bh = object->getHeight();
+  //  const float z = object->getPosition()[2];
+  //  const float bh = object->getHeight();
   const float c = cosf(object->getRotation());
   const float s = sinf(object->getRotation());
   const float wx = c * object->getWidth(), wy = s * object->getWidth();
@@ -1168,8 +1168,8 @@ void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
 	if ((bzmat != NULL) && bzmat->getNoRadar())
 	  continue;
 
-      const float z = face->getPosition()[2];
-      const float bh = face->getHeight();
+	//      const float z = face->getPosition()[2];
+	//      const float bh = face->getHeight();
 
       // draw death faces with a soupcon of red
       const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
@@ -1192,8 +1192,8 @@ void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
 
 void RadarRenderer::buildOutline ( Obstacle* object )
 {
-  const float z = object->getPosition()[2];
-  const float bh = object->getHeight();
+  //  const float z = object->getPosition()[2];
+  //  const float bh = object->getHeight();
 
   const float c = cosf(object->getRotation());
   const float s = sinf(object->getRotation());
