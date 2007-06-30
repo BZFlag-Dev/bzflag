@@ -30,18 +30,17 @@ void setColor ( float c[3], int r, int g, int b );
 void glSetColor ( float c[3], float alpha = 1.0f );
 void glTranslatefv ( float v[3] );
 
-typedef enum
-{
-	eCenter,
-	eLowerLeft,
-	eLowerRight,
-	eUpperLeft,
-	eUpperRight,
-	eCenterLeft,
-	eCenterRight,
-	eCenterTop,
-	eCenterBottom
-}eAlignment;
+typedef enum {
+  eCenter,
+  eLowerLeft,
+  eLowerRight,
+  eUpperLeft,
+  eUpperRight,
+  eCenterLeft,
+  eCenterRight,
+  eCenterTop,
+  eCenterBottom
+} eAlignment;
 
 void glQuad ( float x, float y, eAlignment align, float scale = 1.0f );
 void glLineRing ( float radius, float width = 1 );
@@ -50,42 +49,40 @@ typedef unsigned int GLDisplayList;
 
 class GLDisplayListCreator
 {
-public:
-	virtual ~GLDisplayListCreator(){};
+ public:
+  virtual ~GLDisplayListCreator(){};
 
-	virtual void buildGeometry ( GLDisplayList displayList ) = 0;
+  virtual void buildGeometry ( GLDisplayList displayList ) = 0;
 };
 
 class DisplayListSystem
 {
-public:
-	static DisplayListSystem& Instance()
-	{
-		static DisplayListSystem dls;
-		return dls;
-	}
+ public:
+  static DisplayListSystem& Instance() {
+    static DisplayListSystem dls;
+    return dls;
+  }
 
-	~DisplayListSystem();
+  ~DisplayListSystem();
 
-	GLDisplayList newList (GLDisplayListCreator *creator);
-	void freeList (GLDisplayList displayList);
+  GLDisplayList newList (GLDisplayListCreator *creator);
+  void freeList (GLDisplayList displayList);
 
-	void flushLists ( void );
+  void flushLists ( void );
 
-	void callList (GLDisplayList displayList);
-	void callListsV (std::vector<GLDisplayList> &displayLists);
+  void callList (GLDisplayList displayList);
+  void callListsV (std::vector<GLDisplayList> &displayLists);
 
-protected:
-	DisplayListSystem();
+ protected:
+  DisplayListSystem();
 
-	typedef struct 
-	{
-		GLDisplayListCreator	*creator;
-		GLuint					glList;
-	}DisplayList;
+  typedef struct _DisplayList {
+    GLDisplayListCreator	*creator;
+    GLuint			glList;
+  } DisplayList;
 
-	std::map<GLDisplayList,DisplayList>	lists;
-	GLDisplayList						lastList;
+  std::map<GLDisplayList,DisplayList>	lists;
+  GLDisplayList				lastList;
 };
 
 #endif // __OPENGLUTILS_H__
