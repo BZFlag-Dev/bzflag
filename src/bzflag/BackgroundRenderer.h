@@ -156,12 +156,12 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState	moonGState[2];
     OpenGLGState	starGState[2];
     GLuint		sunList;
-    GLuint		moonList;
     GLuint		starList;
-    GLuint		starXFormList;
 
     // display lists
     GLDisplayList	sunXFormList;
+    GLDisplayList	moonList;
+    GLDisplayList	starXFormList;
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
@@ -176,6 +176,8 @@ class BackgroundRenderer : public GLDisplayListCreator
     static const GLfloat	receiverColorInv[3];
 
     int			triangleCount;
+
+    SceneRenderer	      *lastRenderer;
 };
 
 //
