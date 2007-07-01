@@ -47,6 +47,8 @@ void glLineRing ( float radius, float width = 1 );
 
 typedef unsigned int GLDisplayList;
 
+#define _INVALID_LIST GL_INVALID_ID
+
 class GLDisplayListCreator
 {
  public:
