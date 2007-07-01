@@ -31,7 +31,7 @@
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-#include "openGLUtils.h"
+#include "OpenGLUtils.h"
 
 class BackgroundRenderer : public GLDisplayListCreator
 {
