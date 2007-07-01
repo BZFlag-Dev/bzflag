@@ -120,8 +120,8 @@ bool                    RCRobotPlayer::isSteadyState()
 bool			RCRobotPlayer::processrequest(RCRequest* req,
 							    RCLinkBackend* link)
 {
-  receivedUpdates[req->get_request_type()] = true;
-  switch (req->get_request_type()) {
+  receivedUpdates[req->getRequestType()] = true;
+  switch (req->getRequestType()) {
     case setSpeed:
       nextSpeed = req->speed;
       link->send("ok\n");

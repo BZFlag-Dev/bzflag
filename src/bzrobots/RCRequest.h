@@ -18,61 +18,75 @@
 #define	BZF_RC_REQUEST_H
 
 #include "common.h"
+#include <map>
 
 typedef enum {
-		    InvalidRequest,
-		    HelloRequest,
-                    setSpeed,
-                    setTurnRate,
-		    setAhead,
-                    setTurnLeft,
-                    setFire,
-                    getGunHeat,
-                    getDistanceRemaining,
-                    getTurnRemaining,
-                    getTickRemaining,
-                    getTickDuration,
-                    setTickDuration,
-                    execute,
-		    TeamListRequest,
-		    BasesListRequest,
-		    ObstacleListRequest,
-		    FlagListRequest,
-		    ShotListRequest,
-		    MyTankListRequest,
-		    OtherTankListRequest,
-		    ConstListRequest,
-                    RequestCount
-} agent_req_t;
+  InvalidRequest,
+  HelloRequest,
+  setSpeed,
+  setTurnRate,
+  setAhead,
+  setTurnLeft,
+  setFire,
+  getGunHeat,
+  getDistanceRemaining,
+  getTurnRemaining,
+  getTickRemaining,
+  getTickDuration,
+  setTickDuration,
+  execute,
+  TeamListRequest,
+  BasesListRequest,
+  ObstacleListRequest,
+  FlagListRequest,
+  ShotListRequest,
+  MyTankListRequest,
+  OtherTankListRequest,
+  ConstListRequest,
+  RequestCount
+} AgentReqType;
 
 class RCLink;
 
 class RCRequest {
   public:
-			RCRequest();
-			RCRequest(agent_req_t reqtype);
-			RCRequest(int argc, char **argv);
-			RCRequest *getnext();
-			void append(RCRequest *newreq);
-			int get_robotindex();
-			agent_req_t get_request_type();
-			void sendack(RCLink *link);
-			void sendfail(RCLink *link);
+    /* These are static functions to allow for instantiation
+     * of classes based on a string (the request command name) */
+    static void initializeLookup();
+    static RCRequest *getRequestInstance(std::string request);
 
-			float distance, turn;
-                        float speed, turnRate;
-                        float duration;
-			bool fail;
-			char *failstr;
+    RCRequest();
+    RCRequest(AgentReqType reqtype);
+    RCRequest(int argc, char **argv);
+
+    RCRequest *getNext();
+    void append(RCRequest *newreq);
+
+    int getRobotIndex();
+    AgentReqType getRequestType();
+    void sendAck(RCLink *link);
+    void sendFail(RCLink *link);
+
+    float distance, turn;
+    float speed, turnRate;
+    float duration;
+    bool fail;
+    char *failstr;
 
   private:
-			void set_robotindex(char *arg);
-                        template <class T>
-                        T clamp(T val, T min, T max);
+    /* These are static data and functions to allow for instantiation 
+     * of classes based on a string (the request command name) */
+    static std::map<std::string, RCRequest* (*)()> requestLookup;
+    template <typename T>
+     static RCRequest* instantiate() { return new T; }
 
-			agent_req_t request_type;
-			int robotindex;
-			RCRequest *next;
+    void setRobotIndex(char *arg);
+    template <class T>
+      T clamp(T val, T min, T max);
+
+    AgentReqType requestType;
+    int robotIndex;
+    RCRequest *next;
 };
 
 #include "RCLink.h"

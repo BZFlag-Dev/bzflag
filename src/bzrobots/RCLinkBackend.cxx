@@ -161,7 +161,7 @@ void RCLinkBackend::update()
     int ncommands = update_parse(1);
     if (ncommands) {
       RCRequest *req = poprequest();
-      if (req && req->get_request_type() == HelloRequest) {
+      if (req && req->getRequestType() == HelloRequest) {
 	status = Connected;
       } else {
 	fprintf(stderr, "RCLink: Expected a Hello.\n");
@@ -194,7 +194,7 @@ bool RCLinkBackend::parsecommand(char *cmdline)
   }
 
   req = new RCRequest(argc, argv);
-  if (req->get_request_type() == InvalidRequest) {
+  if (req->getRequestType() == InvalidRequest) {
     fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);
     delete req;
@@ -213,7 +213,7 @@ RCRequest* RCLinkBackend::poprequest()
 {
   RCRequest *req = requests;
   if (req != NULL) {
-    requests = req->getnext();
+    requests = req->getNext();
   }
   return req;
 }

@@ -1,19 +1,33 @@
 #include "RCRequest.h"
 #include "Roster.h"
 
+std::map<std::string, RCRequest *(*)()> RCRequest::requestLookup;
+/* These two are static functions that manipulate and access the lookup-
+ * table for request commands -> request instances. :-) */
+void RCRequest::initializeLookup(void)
+{
+    requestLookup["agent"] = &instantiate<RCRequest>;
+}
+RCRequest *RCRequest::getRequestInstance(std::string request)
+{
+    if (requestLookup.find(request) != requestLookup.end())
+        return requestLookup[request]();
+    return NULL;
+}
+
 RCRequest::RCRequest() :
 			    fail(false),
 			    failstr(NULL),
-			    request_type(InvalidRequest),
+			    requestType(InvalidRequest),
 			    next(NULL)
 {
-  request_type = InvalidRequest;
+  requestType = InvalidRequest;
 }
 
-RCRequest::RCRequest(agent_req_t reqtype) :
+RCRequest::RCRequest(AgentReqType reqtype) :
 			    fail(false),
 			    failstr(NULL),
-			    request_type(reqtype),
+			    requestType(reqtype),
 			    next(NULL)
 {
 }
@@ -26,13 +40,13 @@ RCRequest::RCRequest(int argc, char **argv) :
   char *endptr;
   // TODO: give a better error message if argc is wrong.
   if (strcasecmp(argv[0], "agent") == 0 && argc == 2) {
-    request_type = HelloRequest;
+    requestType = HelloRequest;
   } else if (strcasecmp(argv[0], "execute") == 0 && argc == 2) {
-    request_type = execute;
-    set_robotindex(argv[1]);
+    requestType = execute;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "setSpeed") == 0 && argc == 3) {
-    request_type = setSpeed;
-    set_robotindex(argv[1]);
+    requestType = setSpeed;
+    setRobotIndex(argv[1]);
 
     speed = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
@@ -42,8 +56,8 @@ RCRequest::RCRequest(int argc, char **argv) :
 
     speed = clamp(speed, 0.0f, 1.0f);
   } else if (strcasecmp(argv[0], "setTurnRate") == 0 && argc == 3) {
-    request_type = setTurnRate;
-    set_robotindex(argv[1]);
+    requestType = setTurnRate;
+    setRobotIndex(argv[1]);
 
     turnRate = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
@@ -53,8 +67,8 @@ RCRequest::RCRequest(int argc, char **argv) :
 
     turnRate = clamp(turnRate, 0.0f, 1.0f);
   } else if (strcasecmp(argv[0], "setAhead") == 0 && argc == 3) {
-    request_type = setAhead;
-    set_robotindex(argv[1]);
+    requestType = setAhead;
+    setRobotIndex(argv[1]);
 
     distance = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
@@ -62,8 +76,8 @@ RCRequest::RCRequest(int argc, char **argv) :
       failstr = "Invalid parameter for distance.";
     }
   } else if (strcasecmp(argv[0], "setTurnLeft") == 0 && argc == 3) {
-    request_type = setTurnLeft;
-    set_robotindex(argv[1]);
+    requestType = setTurnLeft;
+    setRobotIndex(argv[1]);
 
     turn = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
@@ -71,23 +85,23 @@ RCRequest::RCRequest(int argc, char **argv) :
       failstr = "Invalid parameter for turn angle.";
     }
   } else if (strcasecmp(argv[0], "setFire") == 0 && argc == 2) {
-    request_type = setFire;
-    set_robotindex(argv[1]);
+    requestType = setFire;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "getGunHeat") == 0 && argc == 2) {
-    request_type = getGunHeat;
-    set_robotindex(argv[1]);
+    requestType = getGunHeat;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "getDistanceRemaining") == 0 && argc == 2) {
-    request_type = getDistanceRemaining;
-    set_robotindex(argv[1]);
+    requestType = getDistanceRemaining;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "getTurnRemaining") == 0 && argc == 2) {
-    request_type = getTurnRemaining;
-    set_robotindex(argv[1]);
+    requestType = getTurnRemaining;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "getTickDuration") == 0 && argc == 2) {
-    request_type = getTickDuration;
-    set_robotindex(argv[1]);
+    requestType = getTickDuration;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "setTickDuration") == 0 && argc == 3) {
-    request_type = setTickDuration;
-    set_robotindex(argv[1]);
+    requestType = setTickDuration;
+    setRobotIndex(argv[1]);
 
     duration = strtof(argv[2], &endptr);
     if (endptr == argv[2]) {
@@ -95,69 +109,69 @@ RCRequest::RCRequest(int argc, char **argv) :
       failstr = "Invalid parameter for setTickDuration.";
     }
   } else if (strcasecmp(argv[0], "getTickRemaining") == 0 && argc == 2) {
-    request_type = getTickRemaining;
-    set_robotindex(argv[1]);
+    requestType = getTickRemaining;
+    setRobotIndex(argv[1]);
   } else if (strcasecmp(argv[0], "teams") == 0 && argc == 1) {
-    request_type = TeamListRequest;
+    requestType = TeamListRequest;
   } else if (strcasecmp(argv[0], "bases") == 0 && argc == 1) {
-    request_type = BasesListRequest;
+    requestType = BasesListRequest;
   } else if (strcasecmp(argv[0], "obstacles") == 0 && argc == 1) {
-    request_type = ObstacleListRequest;
+    requestType = ObstacleListRequest;
   } else if (strcasecmp(argv[0], "flags") == 0 && argc == 1) {
-    request_type = FlagListRequest;
+    requestType = FlagListRequest;
   } else if (strcasecmp(argv[0], "shots") == 0 && argc == 1) {
-    request_type = ShotListRequest;
+    requestType = ShotListRequest;
   } else if (strcasecmp(argv[0], "mytanks") == 0 && argc == 1) {
-    request_type = MyTankListRequest;
+    requestType = MyTankListRequest;
   } else if (strcasecmp(argv[0], "othertanks") == 0 && argc == 1) {
-    request_type = OtherTankListRequest;
+    requestType = OtherTankListRequest;
   } else if (strcasecmp(argv[0], "constants") == 0 && argc == 1) {
-    request_type = ConstListRequest;
+    requestType = ConstListRequest;
   } else {
-    request_type = InvalidRequest;
+    requestType = InvalidRequest;
   }
 }
 
-void RCRequest::sendack(RCLink *link)
+void RCRequest::sendAck(RCLink *link)
 {
   float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
 
-  switch (request_type) {
+  switch (requestType) {
     case execute:
-      link->sendf("ack %f execute %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f execute %d\n", elapsed, getRobotIndex());
       break;
     case setAhead:
-      link->sendf("ack %f setAhead %d %f\n", elapsed, get_robotindex(), distance);
+      link->sendf("ack %f setAhead %d %f\n", elapsed, getRobotIndex(), distance);
       break;
     case setTurnLeft:
-      link->sendf("ack %f setTurnLeft %d %f\n", elapsed, get_robotindex(), turn);
+      link->sendf("ack %f setTurnLeft %d %f\n", elapsed, getRobotIndex(), turn);
       break;
     case setSpeed:
-      link->sendf("ack %f setSpeed %d %f\n", elapsed, get_robotindex(), speed);
+      link->sendf("ack %f setSpeed %d %f\n", elapsed, getRobotIndex(), speed);
       break;
     case setTurnRate:
-      link->sendf("ack %f setTurnRate %d %f\n", elapsed, get_robotindex(), turnRate);
+      link->sendf("ack %f setTurnRate %d %f\n", elapsed, getRobotIndex(), turnRate);
       break;
     case setFire:
-      link->sendf("ack %f setFire %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f setFire %d\n", elapsed, getRobotIndex());
       break;
     case getGunHeat:
-      link->sendf("ack %f getGunHeat %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f getGunHeat %d\n", elapsed, getRobotIndex());
       break;
     case getDistanceRemaining:
-      link->sendf("ack %f getDistanceRemaining %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f getDistanceRemaining %d\n", elapsed, getRobotIndex());
       break;
     case getTurnRemaining:
-      link->sendf("ack %f getTurnRemaining %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f getTurnRemaining %d\n", elapsed, getRobotIndex());
       break;
     case getTickRemaining:
-      link->sendf("ack %f getTickRemaining %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f getTickRemaining %d\n", elapsed, getRobotIndex());
       break;
     case getTickDuration:
-      link->sendf("ack %f getTickDuration %d\n", elapsed, get_robotindex());
+      link->sendf("ack %f getTickDuration %d\n", elapsed, getRobotIndex());
       break;
     case setTickDuration:
-      link->sendf("ack %f setTickDuration %d %f\n", elapsed, get_robotindex(), duration);
+      link->sendf("ack %f setTickDuration %d %f\n", elapsed, getRobotIndex(), duration);
       break;
     case TeamListRequest:
       link->sendf("ack %f teams\n", elapsed);
@@ -188,7 +202,7 @@ void RCRequest::sendack(RCLink *link)
   }
 }
 
-void RCRequest::sendfail(RCLink *link)
+void RCRequest::sendFail(RCLink *link)
 {
   if (fail) {
     if (failstr) {
@@ -199,22 +213,22 @@ void RCRequest::sendfail(RCLink *link)
   }
 }
 
-int RCRequest::get_robotindex()
+int RCRequest::getRobotIndex()
 {
-  return robotindex;
+  return robotIndex;
 }
 
-void RCRequest::set_robotindex(char *arg)
+void RCRequest::setRobotIndex(char *arg)
 {
   char *endptr;
-  robotindex = strtol(arg, &endptr, 0);
+  robotIndex = strtol(arg, &endptr, 0);
   if (endptr == arg) {
-    robotindex = -1;
+    robotIndex = -1;
     fail = true;
     failstr = "Invalid parameter for tank.";
   }
-  else if (robotindex >= numRobots) {
-    robotindex = -1;
+  else if (robotIndex >= numRobots) {
+    robotIndex = -1;
   }
 }
 
@@ -231,12 +245,12 @@ T RCRequest::clamp(T val, T min, T max)
   return val;
 }
 
-agent_req_t RCRequest::get_request_type()
+AgentReqType RCRequest::getRequestType()
 {
-  return request_type;
+  return requestType;
 }
 
-RCRequest *RCRequest::getnext()
+RCRequest *RCRequest::getNext()
 {
   return next;
 }

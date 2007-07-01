@@ -2626,11 +2626,11 @@ static void		doBotRequests()
   while ((req = rcLink->peekrequest()) != NULL) {
     if (req->fail) {
       rcLink->poprequest(); // Discard it.
-      req->sendfail(rcLink);
+      req->sendFail(rcLink);
       break;
     }
 
-    switch (req->get_request_type()) {
+    switch (req->getRequestType()) {
       case execute:
       case setSpeed:
       case setTurnRate:
@@ -2643,7 +2643,7 @@ static void		doBotRequests()
       case getTickDuration:
       case setTickDuration:
       case getTickRemaining:
-	tankindex = req->get_robotindex();
+	tankindex = req->getRobotIndex();
 	if (tankindex == -1) {
 	  rcLink->sendf("fail Invalid tank index.\n");
 	} else {
@@ -2683,7 +2683,7 @@ static void		doBotRequests()
     }
 
     rcLink->poprequest(); // Discard it, we're done with this one.
-    req->sendack(rcLink);
+    req->sendAck(rcLink);
   }
 }
 
