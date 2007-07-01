@@ -82,18 +82,6 @@ void EffectsRenderer::draw(const SceneRenderer& sr)
     effectsList[i]->draw(sr);
 }
 
-void EffectsRenderer::freeContext(void)
-{
-  for (unsigned int i = 0; i < effectsList.size(); i++)
-    effectsList[i]->freeContext();
-}
-
-void EffectsRenderer::rebuildContext(void)
-{
-  for (unsigned int i = 0; i < effectsList.size(); i++)
-    effectsList[i]->rebuildContext();
-}
-
 void EffectsRenderer::addSpawnEffect ( const float* rgb, const float* pos )
 {
   if (!BZDB.isTrue("useFancyEffects"))

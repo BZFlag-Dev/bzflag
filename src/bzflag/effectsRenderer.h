@@ -46,9 +46,6 @@ public:
   virtual void setColor(const float *rgb);
   virtual void setStartTime(float time);
 
-  virtual void freeContext(void) {};
-  virtual void rebuildContext(void) {};
-
   virtual bool update(float time);
   virtual void draw(const SceneRenderer &) = 0;
 
@@ -215,12 +212,6 @@ public:
 
   // called to draw all the current effects
   void draw(const SceneRenderer& sr);
-
-  // called when the GL lists need to be deleted
-  void freeContext(void);
-
-  // called when the GL lists need to be remade
-  void rebuildContext(void);
 
   // spawn flashes
   void addSpawnEffect(const float* rgb, const float* pos );

@@ -37,7 +37,7 @@ class BackgroundRenderer : public GLDisplayListCreator
 {
   public:
 			BackgroundRenderer(const SceneRenderer&);
-			~BackgroundRenderer();
+			virtual ~BackgroundRenderer();
 
     virtual void buildGeometry ( GLDisplayList displayList );
 
@@ -155,13 +155,13 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState	sunGState;
     OpenGLGState	moonGState[2];
     OpenGLGState	starGState[2];
-    GLuint		sunList;
-    GLuint		starList;
 
     // display lists
     GLDisplayList	sunXFormList;
     GLDisplayList	moonList;
     GLDisplayList	starXFormList;
+    GLDisplayList	sunList;
+    GLDisplayList	starList;
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;

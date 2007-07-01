@@ -85,8 +85,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   lastRenderer = NULL;
 
-  sunList = INVALID_GL_LIST_ID;
-  starList = INVALID_GL_LIST_ID;
   cloudsList = INVALID_GL_LIST_ID;
   simpleGroundList[0] = INVALID_GL_LIST_ID;
   simpleGroundList[1] = INVALID_GL_LIST_ID;
@@ -97,6 +95,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   sunXFormList = _INVALID_LIST;
   moonList = _INVALID_LIST;
   starXFormList = _INVALID_LIST;
+
+  DisplayListSystem &ds = DisplayListSystem::Instance();
+  sunList = ds.newList(this);
+  starList = ds.newList(this);
 
   // initialize global to class stuff
   if (!init) {
@@ -466,13 +468,15 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   sun2[2] = sunDirection[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
+  const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
+
   if (displayList == sunXFormList)
   {
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
       0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    glCallList(sunList);
+    DisplayListSystem::Instance().callList(sunList);
     glPopMatrix();
   }
   else if ( displayList == moonList )
@@ -511,8 +515,32 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
     glScalef(worldSize, worldSize, worldSize);
-    glCallList(starList);
+    DisplayListSystem::Instance().callList(starList);
     glPopMatrix();
+  }
+  else if ( displayList == sunList )
+  {
+    glBegin(GL_TRIANGLE_FAN);
+    {
+      glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
+      for (int i = 0; i < 20; i++)
+      {
+	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
+	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
+	sunRadius * cosf(angle));
+      }
+    }
+    glEnd();
+  }
+  else if ( displayList == starList )
+  {
+    glBegin(GL_POINTS);
+    for (int i = 0; i < (int)NumStars; i++) 
+    {
+      glColor3fv(stars[i]);
+      glVertex3fv(stars[i] + 3);
+    }
+    glEnd();
   }
 }
 
@@ -1535,19 +1563,13 @@ void BackgroundRenderer::doFreeDisplayLists()
 {
   int i;
 
-  // don't forget the tag-along
-  weather.freeContext();
-  EFFECTS.freeContext();
-
   // simpleGroundList[1] && simpleGroundList[3] are copies of [0] & [2]
   simpleGroundList[1] = INVALID_GL_LIST_ID;
   simpleGroundList[3] = INVALID_GL_LIST_ID;
 
   // delete the single lists
   GLuint* const lists[] = {
-    &simpleGroundList[0], &simpleGroundList[2],
-    &cloudsList, &sunList, &starList
-  };
+    &simpleGroundList[0], &simpleGroundList[2], &cloudsList};
   const int count = countof(lists);
   for (i = 0; i < count; i++) {
     if (*lists[i] != INVALID_GL_LIST_ID) {
@@ -1575,10 +1597,6 @@ void BackgroundRenderer::doInitDisplayLists()
   int i, j;
   SceneRenderer& renderer = RENDERER;
 
-  // don't forget the tag-along
-  weather.rebuildContext();
-  EFFECTS.rebuildContext();
-
   // need some workarounds on RIVA 128
   bool isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
 						"RIVA 128", 8) == 0);
@@ -1590,35 +1608,6 @@ void BackgroundRenderer::doInitDisplayLists()
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
   const float worldSize = BZDBCache::worldSize;
-  const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
-  sunList = glGenLists(1);
-  glNewList(sunList, GL_COMPILE);
-  {
-    glBegin(GL_TRIANGLE_FAN);
-    {
-      glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
-      for (i = 0; i < 20; i++) {
-	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
-	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
-					sunRadius * cosf(angle));
-      }
-    }
-    glEnd();
-  }
-  glEndList();
-
-  // make stars list
-  starList = glGenLists(1);
-  glNewList(starList, GL_COMPILE);
-  {
-    glBegin(GL_POINTS);
-    for (i = 0; i < (int)NumStars; i++) {
-      glColor3fv(stars[i]);
-      glVertex3fv(stars[i] + 3);
-    }
-    glEnd();
-  }
-  glEndList();
 
   //
   // ground
