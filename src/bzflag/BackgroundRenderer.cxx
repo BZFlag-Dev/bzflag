@@ -87,12 +87,15 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   moonList = INVALID_GL_LIST_ID;
   starList = INVALID_GL_LIST_ID;
   cloudsList = INVALID_GL_LIST_ID;
-  sunXFormList = INVALID_GL_LIST_ID;
   starXFormList = INVALID_GL_LIST_ID;
   simpleGroundList[0] = INVALID_GL_LIST_ID;
   simpleGroundList[1] = INVALID_GL_LIST_ID;
   simpleGroundList[2] = INVALID_GL_LIST_ID;
   simpleGroundList[3] = INVALID_GL_LIST_ID;
+
+  //display lists
+  sunXFormList = _INVALID_LIST;
+
 
   // initialize global to class stuff
   if (!init) {
@@ -253,6 +256,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
 BackgroundRenderer::~BackgroundRenderer()
 {
+  DisplayListSystem &ds = DisplayListSystem::Instance();
+
+  ds.freeList(sunXFormList);
+
   BZDB.removeCallback("_skyColor", bzdbCallback, this);
   OpenGLGState::unregisterContextInitializer(freeContext, initContext,
 					     (void*)this);
@@ -407,10 +414,6 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
   moonDirection[1] = moonDir[1];
   moonDirection[2] = moonDir[2];
 
-  if (sunXFormList != INVALID_GL_LIST_ID) {
-    glDeleteLists(sunXFormList, 1);
-    sunXFormList = INVALID_GL_LIST_ID;
-  }
   if (moonList != INVALID_GL_LIST_ID) {
     glDeleteLists(moonList, 1);
     moonList = INVALID_GL_LIST_ID;
@@ -448,6 +451,19 @@ void BackgroundRenderer::setSkyColors()
   return;
 }
 
+void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
+{
+  if (displayList == sunXFormList)
+  {
+    glPushMatrix();
+    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
+      0.0f, 0.0f, 1.0f);
+    glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glCallList(sunList);
+    glPopMatrix();
+  }
+}
+
 
 void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 {
@@ -459,17 +475,8 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   doSunset = getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
-  sunXFormList = glGenLists(1);
-  glNewList(sunXFormList, GL_COMPILE);
-  {
-    glPushMatrix();
-    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
-							0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    glCallList(sunList);
-    glPopMatrix();
-  }
-  glEndList();
+  DisplayListSystem::Instance().freeList(sunXFormList);
+  sunXFormList = DisplayListSystem::Instance().newList(this);
 
   // compute display list for moon
   float coverage = (moonDirection[0] * sunDirection[0]) +
@@ -1004,11 +1011,14 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     drawSkybox();
   }
 
+  DisplayListSystem &ds = DisplayListSystem::Instance();
+
   if (BZDBCache::drawCelestial) {
     if (sunDirection[2] > -0.009f) {
       sunGState.setState();
       glColor3fv(renderer.getSunScaledColor());
-      glCallList(sunXFormList);
+
+      ds.callList(sunXFormList);
     }
 
     if (doStars) {
@@ -1537,7 +1547,7 @@ void BackgroundRenderer::doFreeDisplayLists()
   // delete the single lists
   GLuint* const lists[] = {
     &simpleGroundList[0], &simpleGroundList[2],
-    &cloudsList, &sunList, &sunXFormList,
+    &cloudsList, &sunList,
     &moonList, &starList, &starXFormList
   };
   const int count = countof(lists);

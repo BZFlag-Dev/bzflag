@@ -31,10 +31,15 @@
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-class BackgroundRenderer {
+#include "openGLUtils.h"
+
+class BackgroundRenderer : public GLDisplayListCreator
+{
   public:
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
+
+    virtual void buildGeometry ( GLDisplayList displayList );
 
     void		setupGroundMaterials();
     void		setupSkybox();
@@ -151,10 +156,12 @@ class BackgroundRenderer {
     OpenGLGState	moonGState[2];
     OpenGLGState	starGState[2];
     GLuint		sunList;
-    GLuint		sunXFormList;
     GLuint		moonList;
     GLuint		starList;
     GLuint		starXFormList;
+
+    // display lists
+    GLDisplayList	sunXFormList;
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
