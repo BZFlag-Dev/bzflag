@@ -132,32 +132,32 @@ struct GetConstantsReq : public RCRequestZeroArgument {
     void sendAck(bool newline = false); \
     bool process(RCRobotPlayer *rrp);
 
-DECLARE_REQUEST(IdentifyFrontend);
+DECLARE_REQUEST(IdentifyFrontend)
 private:
   char *version;
 };
 
-DECLARE_REQUEST(SetSpeed);
+DECLARE_REQUEST(SetSpeed)
 private:
   float speed;
 };
 
-DECLARE_REQUEST(SetTurnRate);
+DECLARE_REQUEST(SetTurnRate)
 private:
   float rate;
 };
 
-DECLARE_REQUEST(SetAhead);
+DECLARE_REQUEST(SetAhead)
 private:
   float distance;
 };
 
-DECLARE_REQUEST(SetTurnLeft);
+DECLARE_REQUEST(SetTurnLeft)
 private:
   float turn;
 };
 
-DECLARE_REQUEST(SetTickDuration);
+DECLARE_REQUEST(SetTickDuration)
 private:
   float duration;
 };
