@@ -2,6 +2,7 @@
 #include "RCRobotPlayer.h"
 
 #include "version.h"
+#include <values.h>
 
 void RCRequestZeroArgument::sendAck(bool)
 {
@@ -102,6 +103,8 @@ RCRequest::parseStatus SetSpeedReq::parse(char **arguments, int count)
     return InvalidArguments;
   if (!parseFloat(arguments[1], speed))
     return InvalidArguments;
+
+  speed = clamp(speed, 0.0f, 1.0f);
   return ParseOk;
 }
 bool SetSpeedReq::process(RCRobotPlayer *rrp)
@@ -124,6 +127,7 @@ RCRequest::parseStatus SetTurnRateReq::parse(char **arguments, int count)
     return InvalidArguments;
   if (!parseFloat(arguments[1], rate))
     return InvalidArguments;
+  rate = clamp(rate, 0.0f, 1.0f);
   return ParseOk;
 }
 bool SetTurnRateReq::process(RCRobotPlayer *rrp)
@@ -226,6 +230,8 @@ RCRequest::parseStatus SetTickDurationReq::parse(char **arguments, int count)
     return InvalidArguments;
   if (!parseFloat(arguments[1], duration))
     return InvalidArguments;
+
+  duration = clamp(duration, 0.0f, MAXFLOAT);
   return ParseOk;
 }
 bool SetTickDurationReq::process(RCRobotPlayer *rrp)

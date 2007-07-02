@@ -41,9 +41,7 @@ RCRequest *RCRequest::getRequestInstance(std::string request, RCLink *_link)
 }
 
 RCRequest::~RCRequest() { }
-RCRequest::RCRequest(RCLink *_link) :fail(false),
-                        failstr(NULL),
-                        next(NULL),
+RCRequest::RCRequest(RCLink *_link) :next(NULL),
                         link(_link)
 {
 }
@@ -61,24 +59,8 @@ void RCRequest::sendAck(bool newline)
 {
   float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   link->sendf("ack %f %s%s", elapsed, getType().c_str(), (newline ? "\n" : ""));
-  /*switch (requestType) {
-       SNIP 
-    default:
-      link->sendf("ack %f\n", elapsed);
-  }*/
 }
 bool RCRequest::process(RCRobotPlayer *rrp) { return true; }
-
-void RCRequest::sendFail()
-{
-  if (fail) {
-    if (failstr) {
-      link->sendf("fail %s\n", failstr);
-    } else {
-      link->send("fail\n");
-    }
-  }
-}
 
 int RCRequest::getRobotIndex()
 {
@@ -89,28 +71,12 @@ int RCRequest::setRobotIndex(char *arg)
 {
   char *endptr;
   robotIndex = strtol(arg, &endptr, 0);
-  if (endptr == arg) {
+  if (endptr == arg)
     robotIndex = -1;
-    fail = true;
-    failstr = "Invalid parameter for tank.";
-  }
-  else if (robotIndex >= numRobots) {
+  else if (robotIndex >= numRobots)
     robotIndex = -1;
-  }
-  return robotIndex;
-}
 
-// Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
-//  * If val is nan, the result is undefined
-//  * If high < low, the result is undefined
-template <class T>
-T RCRequest::clamp(T val, T min, T max)
-{
-  if (val > max)
-    return max;
-  if (val < min)
-    return min;
-  return val;
+  return robotIndex;
 }
 
 RCRequest *RCRequest::getNext()

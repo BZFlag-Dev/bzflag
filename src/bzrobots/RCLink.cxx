@@ -68,15 +68,15 @@ void RCLink::startListening()
   status = Listening;
 }
 
-void RCLink::tryAccept()
+bool RCLink::tryAccept()
 {
   if (status != Listening)
-    return;
+    return false;
 
   // O_NONBLOCK is set so we'll probably return immediately.
   connfd = accept(listenfd, NULL, 0);
   if (connfd == -1)
-    return;
+    return false;
 
   //BzfNetwork::setNonBlocking(connfd);
   int flags = fcntl(connfd, F_GETFL);
@@ -88,6 +88,7 @@ void RCLink::tryAccept()
   input_toolong = false;
 
   // Now we wait for them to introduce themselves.
+  return true;
 }
 
 bool RCLink::send(char* message)

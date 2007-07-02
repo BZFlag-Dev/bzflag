@@ -31,13 +31,13 @@ class RCLinkBackend : public RCLink
 
   public:
     RCLinkBackend(int port);
-    int update_read();
-    int update_parse(int maxlines = 0);
+    int updateRead();
+    int updateParse(int maxlines = 0);
     void update();
-    bool parsecommand(char *cmdline);
-    RCRequest* poprequest();
-    RCRequest* peekrequest();
-    void tryAccept();
+    bool parseCommand(char *cmdline);
+    RCRequest* popRequest();
+    RCRequest* peekRequest();
+    bool tryAccept();
 };
 
 #endif

@@ -2621,13 +2621,7 @@ static void		doBotRequests()
   RCRequest* req;
   int tankindex;
 
-  while ((req = rcLink->peekrequest()) != NULL) {
-    if (req->fail) {
-      rcLink->poprequest(); // Discard it.
-      req->sendFail();
-      break;
-    }
-
+  while ((req = rcLink->peekRequest()) != NULL) {
     tankindex = req->getRobotIndex();
     if (tankindex == -1) {
       req->process(NULL);
@@ -2666,7 +2660,7 @@ static void		doBotRequests()
     }
 #endif
 
-    rcLink->poprequest(); // Discard it, we're done with this one.
+    rcLink->popRequest(); // Discard it, we're done with this one.
     req->sendAck();
   }
 }

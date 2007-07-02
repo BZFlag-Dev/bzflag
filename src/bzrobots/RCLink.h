@@ -42,7 +42,7 @@ class RCLink {
 
     virtual ~RCLink();
     void startListening();
-    virtual void tryAccept();
+    virtual bool tryAccept();
     int updateWrite(bool sendIdentify = false);
     void detach_agents();
 

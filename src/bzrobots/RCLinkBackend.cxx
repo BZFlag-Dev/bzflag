@@ -31,7 +31,7 @@ RCLinkBackend::RCLinkBackend(int _port) :RCLink(),
  * Fill up the receive buffer with any available incoming data.  Return the
  * number of bytes of data read or -1 if the connection has died.
  */
-int RCLinkBackend::update_read()
+int RCLinkBackend::updateRead()
 {
   int prev_recv_amount = recv_amount;
 
@@ -41,9 +41,8 @@ int RCLinkBackend::update_read()
 
   // read in as much data as possible
   while (true) {
-    if (recv_amount == RC_LINK_RECVBUFLEN) {
+    if (recv_amount == RC_LINK_RECVBUFLEN)
       break;
-    }
 
     int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
     if (nread == 0) {
@@ -70,7 +69,7 @@ int RCLinkBackend::update_read()
  * Create as many RCRequest objects as possible (via parsecommand).
  * Return the number created.
  */
-int RCLinkBackend::update_parse(int maxlines)
+int RCLinkBackend::updateParse(int maxlines)
 {
   int ncommands = 0;
   char *bufptr = recvbuf;
@@ -112,7 +111,7 @@ int RCLinkBackend::update_parse(int maxlines)
           // empty line: ignore
         } else {
           *newline = '\0';
-          if (parsecommand(bufptr)) {
+          if (parseCommand(bufptr)) {
             ncommands++;
           }
         }
@@ -150,7 +149,7 @@ void RCLinkBackend::update()
   }
 
   updateWrite();
-  int amount = update_read();
+  int amount = updateRead();
 
   if (amount == -1) {
     status = Listening;
@@ -158,11 +157,11 @@ void RCLinkBackend::update()
   }
 
   if (status == Connected) {
-    update_parse();
+    updateParse();
   } else if (status == Connecting) {
-    int ncommands = update_parse(1);
+    int ncommands = updateParse(1);
     if (ncommands) {
-      RCRequest *req = poprequest();
+      RCRequest *req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
         req->sendAck();
@@ -181,7 +180,7 @@ void RCLinkBackend::update()
  * Return true if an RCRequest was successfully created.  If it failed,
  * return false.
  */
-bool RCLinkBackend::parsecommand(char *cmdline)
+bool RCLinkBackend::parseCommand(char *cmdline)
 {
   RCRequest *req;
   int argc;
@@ -189,11 +188,12 @@ bool RCLinkBackend::parsecommand(char *cmdline)
   char *s, *tkn;
 
   s = cmdline;
-  for (argc=0; argc<RC_LINK_MAXARGS; argc++) {
+  for (argc = 0; argc < RC_LINK_MAXARGS; argc++) {
     tkn = strtok(s, " \r\t");
     s = NULL;
     argv[argc] = tkn;
-    if (tkn == NULL || *tkn == '\0') break;
+    if (tkn == NULL || *tkn == '\0')
+      break;
   }
 
   req = RCRequest::getRequestInstance(argv[0], this);
@@ -225,7 +225,7 @@ bool RCLinkBackend::parsecommand(char *cmdline)
   }
 }
 
-RCRequest* RCLinkBackend::poprequest()
+RCRequest* RCLinkBackend::popRequest()
 {
   RCRequest *req = requests;
   if (req != NULL) {
@@ -233,22 +233,21 @@ RCRequest* RCLinkBackend::poprequest()
   }
   return req;
 }
-RCRequest* RCLinkBackend::peekrequest()
+RCRequest* RCLinkBackend::peekRequest()
 {
   return requests;
 }
 
-void RCLinkBackend::tryAccept()
+bool RCLinkBackend::tryAccept()
 {
-  if (status != Listening)
-    return;
-  RCLink::tryAccept();
-  if (status == Connecting)
-  {
-    write(connfd, RC_LINK_IDENTIFY_STR, strlen(RC_LINK_IDENTIFY_STR));
-    write(connfd, getRobotsProtocolVersion(), strlen(getRobotsProtocolVersion()));
-    write(connfd, "\n", 1);
-  }
+  if (!RCLink::tryAccept())
+    return false;
+
+  write(connfd, RC_LINK_IDENTIFY_STR, strlen(RC_LINK_IDENTIFY_STR));
+  write(connfd, getRobotsProtocolVersion(), strlen(getRobotsProtocolVersion()));
+  write(connfd, "\n", 1);
+
+  return true;
 }
 
 // Local Variables: ***

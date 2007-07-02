@@ -18,7 +18,8 @@
 #define	BZF_RC_REQUEST_H
 
 #include "common.h"
-#include "Factory.h"
+#include <string>
+#include <map>
 
 class RCLink;
 class RCRobotPlayer;
@@ -33,7 +34,6 @@ class RCRequest {
       InvalidArguments
     } parseStatus;
 
-    static Factory<RCRequest, std::string> requestHandlerFactory;
     /* These are static functions to allow for instantiation
      * of classes based on a string (the request command name) */
     static void initializeLookup();
@@ -47,15 +47,11 @@ class RCRequest {
     void append(RCRequest *newreq);
 
     int getRobotIndex();
-    void sendFail();
 
     virtual void sendAck(bool newline = false);
     virtual bool process(RCRobotPlayer *rrp);
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() = 0;
-
-    bool fail;
-    char *failstr;
 
   private:
     /* These are static data and functions to allow for instantiation 
@@ -70,9 +66,19 @@ class RCRequest {
     RCLink *link;
     /* Utility functions for subclasses. */
     int setRobotIndex(char *arg);
-    template <class T>
-      T clamp(T val, T min, T max);
     bool parseFloat(char *string, float &dest);
+    template <typename T>
+    T clamp(T val, T min, T max)
+    {
+      // Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
+      //  * If val is nan, the result is undefined
+      //  * If max < min, the result is undefined
+      if (val > max)
+        return max;
+      if (val < min)
+        return min;
+      return val;
+    }
 };
 
 #endif
