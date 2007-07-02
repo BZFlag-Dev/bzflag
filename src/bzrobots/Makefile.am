@@ -21,7 +21,6 @@ EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
 	../bzflag/ClientAuthentication.h
 
-bzrobots_LDFLAGS = -static
 genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
