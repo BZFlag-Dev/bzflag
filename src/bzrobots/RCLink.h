@@ -28,40 +28,38 @@
 #define RC_LINK_SENDBUFLEN 100000
 #define RC_LINK_MAXARGS 50
 #define RC_LINK_OVERFLOW_MSG "\nerror Connection Stalled.  RC stopped" \
-				" reading data!\n"
-#define RC_LINK_NOHELLO_MSG "error agent expected\n"
-#define RC_LINK_HELLO_STR "bzrobots 1\n"
+  " reading data!\n"
 
 class RCLink {
   public:
-    enum State {
-			Disconnected,
-			SocketError,
-			Listening,
-			Connecting,
-			Connected
-    };
+    typedef enum {
+      Disconnected,
+      SocketError,
+      Listening,
+      Connecting,
+      Connected
+    } State;
 
-			~RCLink();
-			void startListening();
-			void tryAccept();
-			int update_write();
-			void detach_agents();
+    virtual ~RCLink();
+    void startListening();
+    virtual void tryAccept();
+    int updateWrite(bool sendIdentify = false);
+    void detach_agents();
 
-			bool send(char *message);
-			bool sendf(const char *format, ...);
+    bool send(char *message);
+    bool sendf(const char *format, ...);
 
   protected:
-                        /* We don't allow instanciating this directly - you have to instanciate RCLinkBackend or RClinkFrontend. */
-                        RCLink();
+    /* We don't allow instanciating this directly - you have to instanciate RCLinkBackend or RClinkFrontend. */
+    RCLink();
 
-			enum State status;
-			int listenfd, connfd;
-			int port;
-			char recvbuf[RC_LINK_RECVBUFLEN];
-			char sendbuf[RC_LINK_SENDBUFLEN];
-			int recv_amount, send_amount;
-			bool input_toolong, output_overflow;
+    State status;
+    int listenfd, connfd;
+    int port;
+    char recvbuf[RC_LINK_RECVBUFLEN];
+    char sendbuf[RC_LINK_SENDBUFLEN];
+    int recv_amount, send_amount;
+    bool input_toolong, output_overflow;
 };
 
 

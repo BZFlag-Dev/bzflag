@@ -21,6 +21,9 @@
 #include "RCLink.h"
 #include "RCRequest.h"
 
+#define RC_LINK_NOIDENTIFY_MSG "error IdentifyFrontend expected\n"
+#define RC_LINK_IDENTIFY_STR "IdentifyBackend "
+
 class RCLinkBackend : public RCLink
 {
   private:
@@ -34,6 +37,7 @@ class RCLinkBackend : public RCLink
     bool parsecommand(char *cmdline);
     RCRequest* poprequest();
     RCRequest* peekrequest();
+    void tryAccept();
 };
 
 #endif

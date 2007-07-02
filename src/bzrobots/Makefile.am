@@ -29,6 +29,8 @@ bzrobots_SOURCES =			\
 	RCLink.h			\
 	RCRequest.cxx			\
 	RCRequest.h			\
+	RCRequests.cxx			\
+	RCRequests.h			\
 	RCLinkBackend.cxx		\
 	RCLinkBackend.h			\
 	RCRobotPlayer.cxx		\

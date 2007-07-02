@@ -18,8 +18,10 @@
 
 #include "RCLinkBackend.h"
 
+#include "version.h"
+
 RCLinkBackend::RCLinkBackend(int _port) :RCLink(),
-		    requests(NULL)
+                                        requests(NULL)
 {
   port = _port;
   startListening();
@@ -92,34 +94,34 @@ int RCLinkBackend::update_parse(int maxlines)
     newline = (char *)memchr(bufptr, '\n', recv_amount);
     if (newline == NULL) {
       if (input_toolong) {
-	// We're throwing out everything up to the next newline.
-	recv_amount = 0;
-	break;
+        // We're throwing out everything up to the next newline.
+        recv_amount = 0;
+        break;
       } else {
-	// We need to read more before we can do anything.
-	break;
+        // We need to read more before we can do anything.
+        break;
       }
     } else {
       // We have a full input line.
       recv_amount -= newline - bufptr + 1;
 
       if (input_toolong) {
-	input_toolong = false;
+        input_toolong = false;
       } else {
-	if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
-	  // empty line: ignore
-	} else {
-	  *newline = '\0';
-	  if (parsecommand(bufptr)) {
-	    ncommands++;
-	  }
-	}
+        if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
+          // empty line: ignore
+        } else {
+          *newline = '\0';
+          if (parsecommand(bufptr)) {
+            ncommands++;
+          }
+        }
       }
 
       bufptr = newline + 1;
 
       if (maxlines == 1) {
-	break;
+        break;
       }
     }
   }
@@ -147,7 +149,7 @@ void RCLinkBackend::update()
     return;
   }
 
-  update_write();
+  updateWrite();
   int amount = update_read();
 
   if (amount == -1) {
@@ -161,13 +163,14 @@ void RCLinkBackend::update()
     int ncommands = update_parse(1);
     if (ncommands) {
       RCRequest *req = poprequest();
-      if (req && req->getRequestType() == HelloRequest) {
-	status = Connected;
+      if (req && req->getType() == "IdentifyFrontend") {
+        status = Connected;
+        req->sendAck();
       } else {
-	fprintf(stderr, "RCLink: Expected a Hello.\n");
-	write(connfd, RC_LINK_NOHELLO_MSG, strlen(RC_LINK_NOHELLO_MSG));
-	close(connfd);
-	status = Listening;
+        fprintf(stderr, "RCLink: Expected an 'IdentifyFrontend'.\n");
+        write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
+        close(connfd);
+        status = Listening;
       }
     }
   }
@@ -193,19 +196,32 @@ bool RCLinkBackend::parsecommand(char *cmdline)
     if (tkn == NULL || *tkn == '\0') break;
   }
 
-  req = new RCRequest(argc, argv);
-  if (req->getRequestType() == InvalidRequest) {
+  req = RCRequest::getRequestInstance(argv[0], this);
+  if (req == NULL) {
     fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);
-    delete req;
     return false;
   } else {
-    if (requests == NULL) {
-      requests = req;
-    } else {
-      requests->append(req);
+    switch (req->parse(argv + 1, argc - 1))
+    {
+      case RCRequest::ParseOk:
+        if (requests == NULL)
+          requests = req;
+        else
+          requests->append(req);
+        return true;
+      case RCRequest::InvalidArgumentCount:
+        fprintf(stderr, "RCLink: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
+        sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
+        return false;
+      case RCRequest::InvalidArguments:
+        fprintf(stderr, "RCLink: Invalid arguments for request: '%s'\n", argv[0]);
+        sendf("error Invalid arguments for request: '%s'\n", argv[0]);
+        return false;
+      default:
+        fprintf(stderr, "RCLink: Parse neither succeeded or failed with a known failcode. WTF?\n");
+        return false;
     }
-    return true;
   }
 }
 
@@ -222,3 +238,23 @@ RCRequest* RCLinkBackend::peekrequest()
   return requests;
 }
 
+void RCLinkBackend::tryAccept()
+{
+  if (status != Listening)
+    return;
+  RCLink::tryAccept();
+  if (status == Connecting)
+  {
+    write(connfd, RC_LINK_IDENTIFY_STR, strlen(RC_LINK_IDENTIFY_STR));
+    write(connfd, getRobotsProtocolVersion(), strlen(getRobotsProtocolVersion()));
+    write(connfd, "\n", 1);
+  }
+}
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

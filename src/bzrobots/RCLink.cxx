@@ -75,14 +75,14 @@ void RCLink::tryAccept()
 
   // O_NONBLOCK is set so we'll probably return immediately.
   connfd = accept(listenfd, NULL, 0);
-  if (connfd == -1) return;
+  if (connfd == -1)
+    return;
 
   //BzfNetwork::setNonBlocking(connfd);
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
   status = Connecting;
-  write(connfd, RC_LINK_HELLO_STR, strlen(RC_LINK_HELLO_STR));
   send_amount = 0;
   recv_amount = 0;
   input_toolong = false;
@@ -107,7 +107,7 @@ bool RCLink::send(char* message)
   memcpy(sendbuf + send_amount, message, messagelen);
   send_amount += messagelen;
 
-  update_write();
+  updateWrite();
   return true;
 }
 
@@ -137,21 +137,20 @@ bool RCLink::sendf(const char *format, ...)
 
   send_amount += messagelen;
 
-  update_write();
+  updateWrite();
   return true;
 }
 
 /*
  * Send as much data as possible from our outgoing buffer.
  */
-int RCLink::update_write()
+int RCLink::updateWrite(bool sendIdentify)
 {
   char *bufptr = sendbuf;
   int prev_send_amount = send_amount;
 
-  if (status != Connected && status != Connecting) {
+  if (status != Connected && (sendIdentify || status != Connecting))
     return -1;
-  }
 
   if (output_overflow) {
     int errorlen = strlen(RC_LINK_OVERFLOW_MSG);

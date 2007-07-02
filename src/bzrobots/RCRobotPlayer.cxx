@@ -26,10 +26,9 @@
 #include "TargetingUtils.h"
 
 RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server, RCLinkBackend* _agent,
+				ServerLink* _server,
 				const char* _email = "anonymous") :
 				RobotPlayer(_id, _name, _server, _email),
-				agent(_agent),
                                 lastTickAt(0.0), tickDuration(2.0),
 				speed(1.0), nextSpeed(1.0),
 				turnRate(1.0), nextTurnRate(1.0),
@@ -112,7 +111,7 @@ bool                    RCRobotPlayer::isSteadyState()
 {
     double timeNow = TimeKeeper::getCurrent().getSeconds();
     /* last tick done? */
-    if (lastTickAt + tickDuration >= timeNow)
+    if (lastTickAt + tickDuration <= timeNow)
       return true;
     return false;
 }
@@ -120,6 +119,7 @@ bool                    RCRobotPlayer::isSteadyState()
 bool			RCRobotPlayer::processrequest(RCRequest* req,
 							    RCLinkBackend* link)
 {
+#if 0
   receivedUpdates[req->getRequestType()] = true;
   switch (req->getRequestType()) {
     case setSpeed:
@@ -229,6 +229,7 @@ bool			RCRobotPlayer::processrequest(RCRequest* req,
     default:
       break;
   }
+#endif
   return true;
 }
 

@@ -1,4 +1,3 @@
-
 /* bzflag
  * Copyright (c) 1993 - 2007 Tim Riker
  *
@@ -1728,7 +1727,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
 	if (rcLink) {
 	  robots[i] = new RCRobotPlayer(id, callsign, serverLink,
-				      rcLink, startupInfo.email);
+              startupInfo.email);
 	  fprintf(stderr, "new tank; type: %d\n", robots[i]->getPlayerType());
 	} else {
 	  robots[i] = new RobotPlayer(id, callsign, serverLink,
@@ -2626,10 +2625,18 @@ static void		doBotRequests()
   while ((req = rcLink->peekrequest()) != NULL) {
     if (req->fail) {
       rcLink->poprequest(); // Discard it.
-      req->sendFail(rcLink);
+      req->sendFail();
       break;
     }
 
+    tankindex = req->getRobotIndex();
+    if (tankindex == -1) {
+      req->process(NULL);
+    } else {
+      if (!req->process((RCRobotPlayer*)robots[tankindex]))
+        return;
+    }
+#if 0
     switch (req->getRequestType()) {
       case execute:
       case setSpeed:
@@ -2681,9 +2688,10 @@ static void		doBotRequests()
       default:
 	break;
     }
+#endif
 
     rcLink->poprequest(); // Discard it, we're done with this one.
-    req->sendAck(rcLink);
+    req->sendAck();
   }
 }
 
@@ -3478,6 +3486,9 @@ void			botStartPlaying()
 
   // startup an RCLinkBackend if requested
   if (BZDB.isSet("rcPort")) {
+    // here we register the various RCRequest-handlers for commands
+    // that RCLinkBackend receives. :-)
+    RCRequest::initializeLookup();
     int port = atoi(BZDB.get("rcPort").c_str());
     rcLink = new RCLinkBackend(port);
   }

@@ -20,76 +20,58 @@
 #include "common.h"
 #include <map>
 
-typedef enum {
-  InvalidRequest,
-  HelloRequest,
-  setSpeed,
-  setTurnRate,
-  setAhead,
-  setTurnLeft,
-  setFire,
-  getGunHeat,
-  getDistanceRemaining,
-  getTurnRemaining,
-  getTickRemaining,
-  getTickDuration,
-  setTickDuration,
-  execute,
-  TeamListRequest,
-  BasesListRequest,
-  ObstacleListRequest,
-  FlagListRequest,
-  ShotListRequest,
-  MyTankListRequest,
-  OtherTankListRequest,
-  ConstListRequest,
-  RequestCount
-} AgentReqType;
-
 class RCLink;
+class RCRobotPlayer;
 
 class RCRequest {
   public:
+    typedef enum {
+      ParseError,
+      ParseOk,
+      InvalidArgumentCount,
+      InvalidArguments
+    } parseStatus;
+
     /* These are static functions to allow for instantiation
      * of classes based on a string (the request command name) */
     static void initializeLookup();
-    static RCRequest *getRequestInstance(std::string request);
+    static RCRequest *getRequestInstance(std::string request, RCLink *_link);
 
-    RCRequest();
-    RCRequest(AgentReqType reqtype);
-    RCRequest(int argc, char **argv);
+    RCRequest(RCLink *_link);
+    virtual ~RCRequest();
 
+    /* This is for the linked-list aspect of RCRequest. */
     RCRequest *getNext();
     void append(RCRequest *newreq);
 
     int getRobotIndex();
-    AgentReqType getRequestType();
-    void sendAck(RCLink *link);
-    void sendFail(RCLink *link);
+    void sendFail();
 
-    float distance, turn;
-    float speed, turnRate;
-    float duration;
+    virtual void sendAck(bool newline = false);
+    virtual bool process(RCRobotPlayer *rrp);
+    virtual parseStatus parse(char **arguments, int count) = 0;
+    virtual std::string getType() = 0;
+
     bool fail;
     char *failstr;
 
   private:
     /* These are static data and functions to allow for instantiation 
      * of classes based on a string (the request command name) */
-    static std::map<std::string, RCRequest* (*)()> requestLookup;
+    static std::map<std::string, RCRequest* (*)(RCLink *)> requestLookup;
     template <typename T>
-     static RCRequest* instantiate() { return new T; }
+     static RCRequest* instantiate(RCLink *_link) { return new T(_link); }
+    RCRequest *next;
+    int robotIndex;
 
-    void setRobotIndex(char *arg);
+  protected:
+    RCLink *link;
+    /* Utility functions for subclasses. */
+    int setRobotIndex(char *arg);
     template <class T>
       T clamp(T val, T min, T max);
-
-    AgentReqType requestType;
-    int robotIndex;
-    RCRequest *next;
+    bool parseFloat(char *string, float &dest);
 };
-
-#include "RCLink.h"
 
 #endif
 
