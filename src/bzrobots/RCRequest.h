@@ -18,10 +18,11 @@
 #define	BZF_RC_REQUEST_H
 
 #include "common.h"
-#include <map>
+#include "Factory.h"
 
 class RCLink;
 class RCRobotPlayer;
+class RCRequest;
 
 class RCRequest {
   public:
@@ -32,6 +33,7 @@ class RCRequest {
       InvalidArguments
     } parseStatus;
 
+    static Factory<RCRequest, std::string> requestHandlerFactory;
     /* These are static functions to allow for instantiation
      * of classes based on a string (the request command name) */
     static void initializeLookup();

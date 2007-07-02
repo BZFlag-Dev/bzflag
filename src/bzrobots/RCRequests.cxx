@@ -3,29 +3,29 @@
 
 #include "version.h"
 
-#define ZERO_ARGUMENT_REQUEST(COMMANDNAME) void COMMANDNAME ## Req::sendAck(bool) \
-{ \
-  RCRequest::sendAck(true); \
-} \
-RCRequest::parseStatus COMMANDNAME ## Req::parse(char ** /*arguments*/, int count) \
-{ \
-  if (count != 0) \
-    return InvalidArgumentCount; \
-  return ParseOk; \
+void RCRequestZeroArgument::sendAck(bool)
+{
+  RCRequest::sendAck(true);
+}
+RCRequest::parseStatus RCRequestZeroArgument::parse(char ** /*arguments*/, int count)
+{
+  if (count != 0)
+    return InvalidArgumentCount;
+  return ParseOk;
 }
 
-#define BOTSPECIFIC_QUERY(COMMANDNAME) void COMMANDNAME ## Req::sendAck(bool) \
-{ \
-  RCRequest::sendAck(); \
-  link->sendf(" %d\n", getRobotIndex()); \
-} \
-RCRequest::parseStatus COMMANDNAME ## Req::parse(char **arguments, int count) \
-{ \
-  if (count != 1) \
-    return InvalidArgumentCount; \
-  if (setRobotIndex(arguments[0]) == -1) \
-    return InvalidArguments; \
-  return ParseOk; \
+void RCRequestBotSpecific::sendAck(bool)
+{
+  RCRequest::sendAck();
+  link->sendf(" %d\n", getRobotIndex());
+}
+RCRequest::parseStatus RCRequestBotSpecific::parse(char **arguments, int count)
+{
+  if (count != 1)
+    return InvalidArgumentCount;
+  if (setRobotIndex(arguments[0]) == -1)
+    return InvalidArguments;
+  return ParseOk;
 }
 
 void IdentifyFrontendReq::sendAck(bool)
@@ -48,7 +48,6 @@ bool IdentifyFrontendReq::process(RCRobotPlayer *)
     return true;
 }
 
-BOTSPECIFIC_QUERY(Execute);
 bool ExecuteReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
@@ -139,14 +138,12 @@ bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-BOTSPECIFIC_QUERY(SetFire);
 bool SetFireReq::process(RCRobotPlayer *rrp)
 {
   rrp->shoot = true;
   return true;
 }
 
-BOTSPECIFIC_QUERY(GetGunHeat);
 bool GetGunHeatReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
@@ -155,7 +152,6 @@ bool GetGunHeatReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-BOTSPECIFIC_QUERY(GetDistanceRemaining);
 bool GetDistanceRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
@@ -164,7 +160,6 @@ bool GetDistanceRemainingReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-BOTSPECIFIC_QUERY(GetTurnRemaining);
 bool GetTurnRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
@@ -173,7 +168,6 @@ bool GetTurnRemainingReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-BOTSPECIFIC_QUERY(GetTickDuration);
 bool GetTickDurationReq::process(RCRobotPlayer *rrp)
 {
   link->sendf("GetTickDuration %f\n", rrp->tickDuration);
@@ -201,7 +195,6 @@ bool SetTickDurationReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-BOTSPECIFIC_QUERY(GetTickRemaining);
 bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (rrp->isSteadyState())
@@ -212,49 +205,41 @@ bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-ZERO_ARGUMENT_REQUEST(GetTeams);
 bool GetTeamsReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetBases);
 bool GetBasesReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetObstacles);
 bool GetObstaclesReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetFlags);
 bool GetFlagsReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetShots);
 bool GetShotsReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetMyTanks);
 bool GetMyTanksReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetOtherTanks);
 bool GetOtherTanksReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p
   return true;
 }
-ZERO_ARGUMENT_REQUEST(GetConstants);
 bool GetConstantsReq::process(RCRobotPlayer *rrp)
 {
   // TODO: Implement this. :p

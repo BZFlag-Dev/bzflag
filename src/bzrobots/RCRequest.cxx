@@ -31,8 +31,6 @@ void RCRequest::initializeLookup(void)
     ADD_LOOKUP(GetMyTanks);
     ADD_LOOKUP(GetOtherTanks);
     ADD_LOOKUP(GetConstants);
-//    requestLookup["identifyFrontend"] = &instantiate<IdentifyFrontendReq>;
-//    requestLookup["execute"] = &instantiate<ExecuteReq>;
 }
 
 RCRequest *RCRequest::getRequestInstance(std::string request, RCLink *_link)

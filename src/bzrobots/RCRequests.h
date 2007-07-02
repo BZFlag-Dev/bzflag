@@ -23,8 +23,107 @@
 #include "RCRequest.h"
 #include "RCLink.h"
 
+struct RCRequestZeroArgument : public RCRequest
+{
+  RCRequestZeroArgument(RCLink *_link) :RCRequest(_link) { }
+  RCRequest::parseStatus parse(char **arguments, int count);
+  void sendAck(bool newline = false);
+  virtual bool process(RCRobotPlayer *rrp) = 0;
+};
+struct RCRequestBotSpecific : public RCRequest
+{
+  RCRequestBotSpecific(RCLink *_link) :RCRequest(_link) { }
+  RCRequest::parseStatus parse(char **arguments, int count);
+  void sendAck(bool newline = false);
+  virtual bool process(RCRobotPlayer *rrp) = 0;
+};
+
+struct ExecuteReq : public RCRequestBotSpecific
+{
+  ExecuteReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "Execute"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct SetFireReq : public RCRequestBotSpecific
+{
+  SetFireReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "SetFire"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetGunHeatReq : public RCRequestBotSpecific
+{
+  GetGunHeatReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "GetGunHeat"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetDistanceRemainingReq : public RCRequestBotSpecific
+{
+  GetDistanceRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "GetDistanceRemaining"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetTurnRemainingReq : public RCRequestBotSpecific
+{
+  GetTurnRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "GetTurnRemaining"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetTickDurationReq : public RCRequestBotSpecific
+{
+  GetTickDurationReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "GetTickDuration"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetTickRemainingReq : public RCRequestBotSpecific
+{
+  GetTickRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
+  std::string getType() { return "GetTickRemaining"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
+struct GetTeamsReq : public RCRequestZeroArgument {
+  GetTeamsReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetTeams"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetBasesReq : public RCRequestZeroArgument {
+  GetBasesReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetBases"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetObstaclesReq : public RCRequestZeroArgument {
+  GetObstaclesReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetObstacles"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetFlagsReq : public RCRequestZeroArgument {
+  GetFlagsReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetFlags"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetShotsReq : public RCRequestZeroArgument {
+  GetShotsReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetShots"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetMyTanksReq : public RCRequestZeroArgument {
+  GetMyTanksReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetMyTanks"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetOtherTanksReq : public RCRequestZeroArgument {
+  GetOtherTanksReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetOtherTanks"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetConstantsReq : public RCRequestZeroArgument {
+  GetConstantsReq(RCLink *l) :RCRequestZeroArgument(l) {}
+  std::string getType() { return "GetConstants"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
-#define DECLARE_REQUEST_BEGIN(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
+#define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
 { \
   public: \
     COMMANDNAME ## Req(RCLink *_link) :RCRequest(_link) { } \
@@ -32,59 +131,38 @@
     std::string getType() { return #COMMANDNAME; } \
     void sendAck(bool newline = false); \
     bool process(RCRobotPlayer *rrp);
-#define DECLARE_REQUEST_END() }
-#define DECLARE_REQUEST(classname) DECLARE_REQUEST_BEGIN(classname); \
-DECLARE_REQUEST_END()
 
-DECLARE_REQUEST_BEGIN(IdentifyFrontend);
+DECLARE_REQUEST(IdentifyFrontend);
 private:
   char *version;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST(Execute);
-
-DECLARE_REQUEST_BEGIN(SetSpeed);
+DECLARE_REQUEST(SetSpeed);
 private:
   float speed;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST_BEGIN(SetTurnRate);
+DECLARE_REQUEST(SetTurnRate);
 private:
   float rate;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST_BEGIN(SetAhead);
+DECLARE_REQUEST(SetAhead);
 private:
   float distance;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST_BEGIN(SetTurnLeft);
+DECLARE_REQUEST(SetTurnLeft);
 private:
   float turn;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST(SetFire);
-DECLARE_REQUEST(GetGunHeat);
-DECLARE_REQUEST(GetDistanceRemaining);
-DECLARE_REQUEST(GetTurnRemaining);
-DECLARE_REQUEST(GetTickDuration);
-
-DECLARE_REQUEST_BEGIN(SetTickDuration);
+DECLARE_REQUEST(SetTickDuration);
 private:
   float duration;
-DECLARE_REQUEST_END();
+};
 
-DECLARE_REQUEST(GetTickRemaining);
-DECLARE_REQUEST(GetTeams);
-DECLARE_REQUEST(GetBases);
-DECLARE_REQUEST(GetObstacles);
-DECLARE_REQUEST(GetFlags);
-DECLARE_REQUEST(GetShots);
-DECLARE_REQUEST(GetMyTanks);
-DECLARE_REQUEST(GetOtherTanks);
-DECLARE_REQUEST(GetConstants);
-
-#undef REQUEST_DEFAULT_BODY
+#undef DECLARE_REQUEST
 
 #endif
 
