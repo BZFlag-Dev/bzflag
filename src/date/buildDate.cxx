@@ -21,7 +21,11 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0050"
+#  define BZ_PROTO_VERSION	"0050"
+#endif
+// ditto for bzrobots
+#ifndef BZROBOTS_PROTO_VERSION
+#  define BZROBOTS_PROTO_VERSION    "0001"
 #endif
 
 // version numbers - also update:
@@ -116,6 +120,12 @@ const char*		getProtocolVersion()
 {
   static std::string protVersion = BZ_PROTO_VERSION;
   return protVersion.c_str();
+}
+
+const char*		getRobotsProtocolVersion()
+{
+  static std::string robotsProtVersion = BZROBOTS_PROTO_VERSION;
+  return robotsProtVersion.c_str();
 }
 
 const char*		getServerVersion()
