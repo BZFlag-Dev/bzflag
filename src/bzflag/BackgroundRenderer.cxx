@@ -476,7 +476,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
       0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    DisplayListSystem::Instance().callList(sunList);
+    buildGeometry(sunList);
     glPopMatrix();
   }
   else if ( displayList == moonList )
@@ -515,7 +515,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
     glScalef(worldSize, worldSize, worldSize);
-    DisplayListSystem::Instance().callList(starList);
+    buildGeometry(starList);
     glPopMatrix();
   }
   else if ( displayList == sunList )
