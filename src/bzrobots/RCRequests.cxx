@@ -48,9 +48,44 @@ bool IdentifyFrontendReq::process(RCRobotPlayer *)
     return true;
 }
 
-bool ExecuteReq::process(RCRobotPlayer *)
+bool ExecuteReq::process(RCRobotPlayer *rrp)
 {
-  // TODO: Implement this. :p
+  if (!rrp->isSteadyState())
+    return false;
+
+  rrp->lastTickAt = TimeKeeper::getCurrent().getSeconds();
+
+  if (rrp->pendingUpdates[RCRobotPlayer::speedUpdate])
+    rrp->speed = rrp->nextSpeed;
+  if (rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate])
+    rrp->turnRate = rrp->nextTurnRate;
+
+  if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate])
+  {
+    if (rrp->nextDistance < 0.0f)
+      rrp->distanceForward = false;
+    else 
+      rrp->distanceForward = true;
+    rrp->distanceRemaining = (rrp->distanceForward ? 1 : -1) * rrp->nextDistance;
+  }
+  if (rrp->pendingUpdates[RCRobotPlayer::turnUpdate])
+  {
+    if (rrp->nextTurn < 0.0f)
+      rrp->turnLeft = false;
+    else
+      rrp->turnLeft = true;
+    rrp->turnRemaining = (rrp->turnLeft ? 1 : -1) * rrp->nextTurn;
+  }
+
+  for (int i = 0; i < RCRobotPlayer::updateCount; ++i)
+    rrp->pendingUpdates[i] = false;
+
+  if (rrp->shoot)
+  {
+    rrp->shoot = false;
+    rrp->fireShot();
+  }
+
   return true;
 }
 
@@ -72,6 +107,7 @@ RCRequest::parseStatus SetSpeedReq::parse(char **arguments, int count)
 bool SetSpeedReq::process(RCRobotPlayer *rrp)
 {
   rrp->nextSpeed = speed;
+  rrp->pendingUpdates[RCRobotPlayer::speedUpdate] = true;
   return true;
 }
 
@@ -93,6 +129,7 @@ RCRequest::parseStatus SetTurnRateReq::parse(char **arguments, int count)
 bool SetTurnRateReq::process(RCRobotPlayer *rrp)
 {
   rrp->nextTurnRate = rate;
+  rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate] = true;
   return true;
 }
 
@@ -113,6 +150,7 @@ RCRequest::parseStatus SetAheadReq::parse(char **arguments, int count)
 }
 bool SetAheadReq::process(RCRobotPlayer *rrp)
 {
+  rrp->pendingUpdates[RCRobotPlayer::distanceUpdate] = true;
   rrp->nextDistance = distance;
   return true;
 }
@@ -134,6 +172,7 @@ RCRequest::parseStatus SetTurnLeftReq::parse(char **arguments, int count)
 }
 bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
 {
+  rrp->pendingUpdates[RCRobotPlayer::turnUpdate] = true;
   rrp->nextTurn = turn;
   return true;
 }

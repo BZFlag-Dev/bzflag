@@ -22,7 +22,7 @@ EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.h
 
 bzrobots_LDFLAGS = -static
-bzrobots_SOURCES =			\
+genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
 	RCLink.cxx			\
@@ -222,6 +222,15 @@ bzrobots_SOURCES =			\
 	../bzflag/sound.h			\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
+
+bzrobots_LDFLAGS = -static
+
+if CLIENT_INCLUDED
+bzrobots_SOURCES = $(genericfiles)
+else
+bzrobots_SOURCES = $(genericfiles) \
+	OpenGLUtils.cxx	
+endif
 
 if WIN32
 RESOURCE = bzflag.res

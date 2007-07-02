@@ -2619,7 +2619,6 @@ static void		sendConstList()
 static void		doBotRequests()
 {
   RCRequest* req;
-  RCRobotPlayer* bot;
   int tankindex;
 
   while ((req = rcLink->peekrequest()) != NULL) {
@@ -2638,29 +2637,6 @@ static void		doBotRequests()
     }
 #if 0
     switch (req->getRequestType()) {
-      case execute:
-      case setSpeed:
-      case setTurnRate:
-      case setFire:
-      case getGunHeat:
-      case setAhead:
-      case setTurnLeft:
-      case getDistanceRemaining:
-      case getTurnRemaining:
-      case getTickDuration:
-      case setTickDuration:
-      case getTickRemaining:
-	tankindex = req->getRobotIndex();
-	if (tankindex == -1) {
-	  rcLink->sendf("fail Invalid tank index.\n");
-	} else {
-	  bot = (RCRobotPlayer*)robots[tankindex];
-          // We bail out if processing isn't ready or isn't valid.
-          // This happens e.g. if the last tick isn't done.
-	  if (!bot->processrequest(req, rcLink))
-            return;
-	}
-	break;
       case TeamListRequest:
 	sendTeamList();
 	break;

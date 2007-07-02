@@ -37,10 +37,16 @@ class RCRobotPlayer : public RobotPlayer {
     RCRobotPlayer(const PlayerId&,
         const char* name, ServerLink*,
         const char* _email);
+    typedef enum {
+      speedUpdate,
+      turnRateUpdate,
+      distanceUpdate,
+      turnUpdate,
+      updateCount
+    } variableUpdates;
 
     void            restart(const float* pos, float azimuth);
     void            explodeTank();
-    bool            processrequest(RCRequest*, RCLinkBackend*);
 
     bool            isSteadyState();
 
@@ -52,6 +58,7 @@ class RCRobotPlayer : public RobotPlayer {
     double          distanceRemaining, nextDistance;
     bool            distanceForward, turnLeft;
     double          turnRemaining, nextTurn;
+    bool            pendingUpdates[updateCount];
 
   private:
     void            doUpdate(float dt);
