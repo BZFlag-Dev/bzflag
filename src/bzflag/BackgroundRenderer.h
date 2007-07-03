@@ -160,8 +160,6 @@ class BackgroundRenderer : public GLDisplayListCreator
     GLDisplayList	sunXFormList;
     GLDisplayList	moonList;
     GLDisplayList	starXFormList;
-    GLDisplayList	sunList;
-    GLDisplayList	starList;
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;

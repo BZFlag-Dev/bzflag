@@ -96,10 +96,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   moonList = _INVALID_LIST;
   starXFormList = _INVALID_LIST;
 
-  DisplayListSystem &ds = DisplayListSystem::Instance();
-  sunList = ds.newList(this);
-  starList = ds.newList(this);
-
   // initialize global to class stuff
   if (!init) {
     init = true;
@@ -476,7 +472,20 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
       0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    buildGeometry(sunList);
+    
+    glBegin(GL_TRIANGLE_FAN);
+    {
+      glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
+      for (int i = 0; i < 20; i++)
+      {
+	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
+	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
+	  sunRadius * cosf(angle));
+      }
+    }
+    glEnd();
+
+
     glPopMatrix();
   }
   else if ( displayList == moonList )
@@ -515,25 +524,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
     glScalef(worldSize, worldSize, worldSize);
-    buildGeometry(starList);
-    glPopMatrix();
-  }
-  else if ( displayList == sunList )
-  {
-    glBegin(GL_TRIANGLE_FAN);
-    {
-      glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
-      for (int i = 0; i < 20; i++)
-      {
-	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
-	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
-	sunRadius * cosf(angle));
-      }
-    }
-    glEnd();
-  }
-  else if ( displayList == starList )
-  {
+
     glBegin(GL_POINTS);
     for (int i = 0; i < (int)NumStars; i++) 
     {
@@ -541,7 +532,10 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
       glVertex3fv(stars[i] + 3);
     }
     glEnd();
+
+    glPopMatrix();
   }
+
 }
 
 void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
