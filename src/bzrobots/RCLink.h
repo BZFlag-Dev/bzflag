@@ -30,6 +30,8 @@
 #define RC_LINK_OVERFLOW_MSG "\nerror Connection Stalled.  RC stopped" \
   " reading data!\n"
 
+#include "RCMessage.h"
+
 class RCLink {
   public:
     typedef enum {
@@ -55,6 +57,10 @@ class RCLink {
     void detachAgents();
 
     bool send(char *message);
+    template<class C>
+    bool send(RCMessage<C> *);
+    template<class C>
+    bool send(RCMessage<C> &);
     bool sendf(const char *format, ...);
 
   protected:

@@ -13,6 +13,9 @@ RCRequest::parseStatus RCRequestZeroArgument::parse(char ** /*arguments*/, int c
     return InvalidArgumentCount;
   return ParseOk;
 }
+void RCRequestZeroArgument::getParameters(std::ostream &)
+{
+}
 
 void RCRequestBotSpecific::sendAck(bool)
 {
@@ -26,6 +29,10 @@ RCRequest::parseStatus RCRequestBotSpecific::parse(char **arguments, int count)
   if (setRobotIndex(arguments[0]) == -1)
     return InvalidArguments;
   return ParseOk;
+}
+void RCRequestBotSpecific::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex();
 }
 
 void IdentifyFrontendReq::sendAck(bool)
@@ -46,6 +53,10 @@ RCRequest::parseStatus IdentifyFrontendReq::parse(char **arguments, int count)
 bool IdentifyFrontendReq::process(RCRobotPlayer *)
 {
     return true;
+}
+void IdentifyFrontendReq::getParameters(std::ostream &stream)
+{
+  stream << version;
 }
 
 bool ExecuteReq::process(RCRobotPlayer *rrp)
@@ -112,6 +123,10 @@ bool SetSpeedReq::process(RCRobotPlayer *rrp)
   rrp->pendingUpdates[RCRobotPlayer::speedUpdate] = true;
   return true;
 }
+void SetSpeedReq::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex() << " " << speed;
+}
 
 void SetTurnRateReq::sendAck(bool)
 {
@@ -135,6 +150,10 @@ bool SetTurnRateReq::process(RCRobotPlayer *rrp)
   rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate] = true;
   return true;
 }
+void SetTurnRateReq::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex() << " " << rate;
+}
 
 void SetAheadReq::sendAck(bool)
 {
@@ -157,6 +176,10 @@ bool SetAheadReq::process(RCRobotPlayer *rrp)
   rrp->nextDistance = distance;
   return true;
 }
+void SetAheadReq::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex() << " " << distance;
+}
 
 void SetTurnLeftReq::sendAck(bool)
 {
@@ -178,6 +201,10 @@ bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
   rrp->pendingUpdates[RCRobotPlayer::turnUpdate] = true;
   rrp->nextTurn = turn;
   return true;
+}
+void SetTurnLeftReq::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex() << " " << turn;
 }
 
 bool SetFireReq::process(RCRobotPlayer *rrp)
@@ -237,6 +264,10 @@ bool SetTickDurationReq::process(RCRobotPlayer *rrp)
 {
   rrp->tickDuration = duration;
   return true;
+}
+void SetTickDurationReq::getParameters(std::ostream &stream)
+{
+  stream << getRobotIndex() << " " << duration;
 }
 
 bool GetTickRemainingReq::process(RCRobotPlayer *rrp)

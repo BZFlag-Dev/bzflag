@@ -38,6 +38,7 @@ class RCRequest :public RCMessage<RCRequest> {
     virtual bool process(RCRobotPlayer *rrp);
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() = 0;
+    virtual void getParameters(std::ostream &stream) = 0;
 
     static void initializeLookup(void);
 

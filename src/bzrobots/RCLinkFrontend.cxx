@@ -21,7 +21,7 @@
 #include "version.h"
 
 RCLinkFrontend::RCLinkFrontend(std::string _host, int _port) :RCLink(),
-                                        requests(NULL)
+                                        replies(NULL)
 {
   port = _port;
   host = _host.c_str();
@@ -60,19 +60,17 @@ void RCLinkFrontend::update()
       RCReply *req = popReply();
       if (req && req->getType() == "IdentifyBackend") {
         status = Connected;
-        req->sendAck();
       } else {
-        fprintf(stderr, "RCLink: Expected an 'IdentifyFrontend'.\n");
-        write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
+        fprintf(stderr, "RCLink: Expected an 'IdentifyBackend'.\n");
         close(connfd);
-        status = Listening;
+        status = Disconnected;
       }
     }
   }
 }
 
 /*
- * Parse a command, create an RCReply object, and add it to requests.
+ * Parse a command, create an RCReply object, and add it to replies.
  * Return true if an RCReply was successfully created.  If it failed,
  * return false.
  */
@@ -92,7 +90,7 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
       break;
   }
 
-  req = RCReply::getReplyInstance(argv[0], this);
+  req = RCReply::getInstance(argv[0], this);
   if (req == NULL) {
     fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);
@@ -101,10 +99,10 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
     switch (req->parse(argv + 1, argc - 1))
     {
       case RCReply::ParseOk:
-        if (requests == NULL)
-          requests = req;
+        if (replies == NULL)
+          replies = req;
         else
-          requests->append(req);
+          replies->append(req);
         return true;
       case RCReply::InvalidArgumentCount:
         fprintf(stderr, "RCLink: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
@@ -126,7 +124,7 @@ RCReply* RCLinkFrontend::popReply()
   RCReply *rep = replies;
   if (rep != NULL)
     replies = rep->getNext();
-  return req;
+  return rep;
 }
 RCReply* RCLinkFrontend::peekReply()
 {

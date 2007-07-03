@@ -11,28 +11,35 @@
  */
 
 /*
- * Remote Control Link, Frontend: Encapsulates communication between backend and
- * frontend, from the frontends point of view.
+ * Remote Control Request: Encapsulates requests between backend and frontend
  */
 
-#ifndef	BZF_RC_LINK_FRONTEND_H
-#define	BZF_RC_LINK_FRONTEND_H
+#ifndef	BZF_RC_REQUEST_H
+#define	BZF_RC_REQUEST_H
 
-#include "RCLink.h"
-#include "RCReply.h"
+#include "common.h"
+#include "RCMessage.h"
 
-class RCLinkFrontend : public RCLink
-{
-  private:
-    RCReply *replies;
+#include <string>
+#include <map>
 
+class RCLink;
+class RCRobotPlayer;
+class RCReply;
+
+class RCReply :public RCMessage<RCReply> {
   public:
-    RCLinkFrontend(std::string _host, int _port);
-    void update();
-    bool parseCommand(char *cmdline);
-    RCReply* popReply();
-    RCReply* peekReply();
-    State getDisconnectedState();
+    RCReply(RCLink *_link);
+    virtual ~RCReply();
+
+    virtual parseStatus parse(char **arguments, int count) = 0;
+    virtual std::string getType() = 0;
+    virtual void getParameters(std::ostream &stream) = 0;
+
+    static void initializeLookup(void);
+
+  protected:
+    RCLink *link;
 };
 
 #endif

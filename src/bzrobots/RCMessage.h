@@ -21,6 +21,7 @@
 #include "common.h"
 #include <string>
 #include <map>
+#include <ostream>
 
 class RCLink;
 class RCRobotPlayer;
@@ -61,6 +62,7 @@ class RCMessage {
 
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() = 0;
+    virtual void getParameters(std::ostream &stream) = 0;
 
     /* Utility functions. */
     static bool parseFloat(char *string, float &dest)

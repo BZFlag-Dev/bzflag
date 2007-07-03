@@ -24,15 +24,19 @@ EXTRA_bzrobots_SOURCES = \
 genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
-	RCMessage.h			\
 	RCLink.cxx			\
 	RCLink.h			\
+	RCMessage.h			\
 	RCRequest.cxx			\
 	RCRequest.h			\
 	RCRequests.cxx			\
 	RCRequests.h			\
+	RCReply.cxx			\
+	RCReply.h			\
 	RCLinkBackend.cxx		\
 	RCLinkBackend.h			\
+	RCLinkFrontend.cxx		\
+	RCLinkFrontend.h		\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
 	../bzflag/ActionBinding.cxx		\
