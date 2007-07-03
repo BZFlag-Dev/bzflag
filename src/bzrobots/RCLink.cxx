@@ -49,7 +49,8 @@ void RCLink::startListening()
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listenfd == -1) return;
+  if (listenfd == -1)
+    return;
 
   if (bind(listenfd, (sockaddr*)&sa, sizeof(sa)) == -1) {
     close(listenfd);
@@ -88,6 +89,36 @@ bool RCLink::tryAccept()
   input_toolong = false;
 
   // Now we wait for them to introduce themselves.
+  return true;
+}
+
+
+bool RCLink::connect()
+{
+  connfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (connfd < 0)
+    return false;
+
+  sockaddr_in remote;
+  remote.sin_port = htons(port);
+  remote.sin_family = AF_INET;
+
+  hostent *hostdata = gethostbyname(host);
+  if (hostdata == NULL)
+    return false;
+
+  memcpy(&remote.sin_addr.s_addr, hostdata->h_addr_list[0], hostdata->h_length);
+
+  if (::connect(connfd, (sockaddr *)&remote, sizeof(remote)) < 0)
+    return false;
+
+  int flags = fcntl(connfd, F_GETFL);
+  fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+
+  status = Connecting;
+  send_amount = recv_amount = 0;
+  input_toolong = false;
+
   return true;
 }
 
@@ -145,12 +176,12 @@ bool RCLink::sendf(const char *format, ...)
 /*
  * Send as much data as possible from our outgoing buffer.
  */
-int RCLink::updateWrite(bool sendIdentify)
+int RCLink::updateWrite()
 {
   char *bufptr = sendbuf;
   int prev_send_amount = send_amount;
 
-  if (status != Connected && (sendIdentify || status != Connecting))
+  if (status != Connected && status != Connecting)
     return -1;
 
   if (output_overflow) {
@@ -192,6 +223,115 @@ int RCLink::updateWrite(bool sendIdentify)
   return prev_send_amount - send_amount;
 }
 
+/*
+ * Fill up the receive buffer with any available incoming data.  Return the
+ * number of bytes of data read or -1 if the connection has died.
+ */
+int RCLink::updateRead()
+{
+  int prev_recv_amount = recv_amount;
+
+  if (status != Connected && status != Connecting) {
+    return -1;
+  }
+
+  // read in as much data as possible
+  while (true) {
+    if (recv_amount == RC_LINK_RECVBUFLEN)
+      break;
+
+    int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
+    if (nread == 0) {
+      fprintf(stderr, "RCLink: Agent Closed Connection\n");
+      status = getDisconnectedState(); 
+      return -1;
+    } else if (nread == -1 && errno != EAGAIN) {
+      perror("RCLink: Read failed.");
+      status = SocketError;
+      return -1;
+    } else if (nread == -1) {
+      // got no data (remember, read is set to be nonblocking)
+      break;
+    } else {
+      recv_amount += nread;
+    }
+  }
+
+  return recv_amount - prev_recv_amount;
+}
+
+/*
+ * Parse as many objects as possible (via parseCommand).
+ * Return the number created.
+ */
+int RCLink::updateParse(int maxlines)
+{
+  int ncommands = 0;
+  char *bufptr = recvbuf;
+  char *newline;
+
+  if (recv_amount == 0) {
+    return 0;
+  }
+
+  while (true) {
+    // Sometimes a remote agent will add unnecessary null characters after a
+    // newline.  Drop them:
+    while (recv_amount >= 1 && *bufptr == '\0') {
+      bufptr++;
+      recv_amount--;
+    }
+    if (recv_amount == 0) {
+      break;
+    }
+
+    newline = (char *)memchr(bufptr, '\n', recv_amount);
+    if (newline == NULL) {
+      if (input_toolong) {
+        // We're throwing out everything up to the next newline.
+        recv_amount = 0;
+        break;
+      } else {
+        // We need to read more before we can do anything.
+        break;
+      }
+    } else {
+      // We have a full input line.
+      recv_amount -= newline - bufptr + 1;
+
+      if (input_toolong) {
+        input_toolong = false;
+      } else {
+        if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
+          // empty line: ignore
+        } else {
+          *newline = '\0';
+          if (parseCommand(bufptr)) {
+            ncommands++;
+          }
+        }
+      }
+
+      bufptr = newline + 1;
+
+      if (maxlines == 1) {
+        break;
+      }
+    }
+  }
+
+  if (bufptr != recvbuf && recv_amount > 0) {
+    memmove(recvbuf, bufptr, recv_amount);
+  }
+
+  if (recv_amount == RC_LINK_RECVBUFLEN) {
+    input_toolong = true;
+    fprintf(stderr, "RCLink: Input line too long.  Discarding.\n");
+    recv_amount = 0;
+  }
+
+  return ncommands;
+}
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

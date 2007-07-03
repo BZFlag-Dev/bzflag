@@ -4,8 +4,7 @@
 #include "RCLink.h"
 #include "RCRequests.h"
 
-#define ADD_LOOKUP(COMMAND) requestLookup[#COMMAND] = &instantiate<COMMAND ## Req>
-std::map<std::string, RCRequest *(*)(RCLink *)> RCRequest::requestLookup;
+#define ADD_LOOKUP(COMMAND) messageLookup[#COMMAND] = &instantiate<COMMAND ## Req>
 /* These two are static functions that manipulate and access the lookup-
  * table for request commands -> request instances. :-) */
 void RCRequest::initializeLookup(void)
@@ -33,27 +32,11 @@ void RCRequest::initializeLookup(void)
     ADD_LOOKUP(GetConstants);
 }
 
-RCRequest *RCRequest::getRequestInstance(std::string request, RCLink *_link)
-{
-    if (requestLookup.find(request) != requestLookup.end())
-        return requestLookup[request](_link);
-    return NULL;
-}
-
 RCRequest::~RCRequest() { }
-RCRequest::RCRequest(RCLink *_link) :next(NULL),
-                        link(_link)
+RCRequest::RCRequest(RCLink *_link) :RCMessage<RCRequest>(_link)
 {
 }
 
-bool RCRequest::parseFloat(char *string, float &dest)
-{
-    char *endptr;
-    dest = strtof(string, &endptr);
-    if (endptr == string)
-        return false;
-    return true;
-}
 
 void RCRequest::sendAck(bool newline)
 {
@@ -77,18 +60,4 @@ int RCRequest::setRobotIndex(char *arg)
     robotIndex = -1;
 
   return robotIndex;
-}
-
-RCRequest *RCRequest::getNext()
-{
-  return next;
-}
-
-void RCRequest::append(RCRequest *newreq)
-{
-  if (next == NULL) {
-    next = newreq;
-  } else {
-    next->append(newreq);
-  }
 }

@@ -2,7 +2,6 @@
 #include "RCRobotPlayer.h"
 
 #include "version.h"
-//#include <values.h>
 
 void RCRequestZeroArgument::sendAck(bool)
 {
@@ -231,7 +230,7 @@ RCRequest::parseStatus SetTickDurationReq::parse(char **arguments, int count)
   if (!parseFloat(arguments[1], duration))
     return InvalidArguments;
 
-  duration = clamp(duration, 0.0f, MAXFLOAT);
+  duration = std::max(duration, 0.0f);
   return ParseOk;
 }
 bool SetTickDurationReq::process(RCRobotPlayer *rrp)

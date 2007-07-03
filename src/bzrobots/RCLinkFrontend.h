@@ -11,26 +11,23 @@
  */
 
 /*
- * Remote Control Link, Backend: Encapsulates communication between backend and
- * frontend, from the backends point of view.
+ * Remote Control Link, Frontend: Encapsulates communication between backend and
+ * frontend, from the frontends point of view.
  */
 
-#ifndef	BZF_RC_LINK_BACKEND_H
-#define	BZF_RC_LINK_BACKEND_H
+#ifndef	BZF_RC_LINK_FRONTEND_H
+#define	BZF_RC_LINK_FRONTEND_H
 
 #include "RCLink.h"
 #include "RCRequest.h"
 
-#define RC_LINK_NOIDENTIFY_MSG "error IdentifyFrontend expected\n"
-#define RC_LINK_IDENTIFY_STR "IdentifyBackend "
-
-class RCLinkBackend : public RCLink
+class RCLinkFrontend : public RCLink
 {
   private:
     RCRequest *requests;
 
   public:
-    RCLinkBackend(int port);
+    RCLinkFrontend(std::string _host, int _port);
     void update();
     bool parseCommand(char *cmdline);
     RCRequest* popRequest();

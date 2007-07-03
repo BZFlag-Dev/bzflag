@@ -16,28 +16,29 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include "RCLinkBackend.h"
+#include "RCLinkFrontend.h"
 
 #include "version.h"
 
-RCLinkBackend::RCLinkBackend(int _port) :RCLink(),
+RCLinkFrontend::RCLinkFrontend(std::string _host, int _port) :RCLink(),
                                         requests(NULL)
 {
   port = _port;
-  startListening();
+  host = _host.c_str();
+  connect();
 }
 
-RCLink::State RCLinkBackend::getDisconnectedState()
+RCLink::State RCLinkFrontend::getDisconnectedState()
 {
-    return RCLink::Listening;
+    return RCLink::Disconnected;
 }
 
 
 /*
  * Check for activity.  If possible, fill up the recvbuf with incoming data
- * and build up RCRequest objects as appropriate.
+ * and build up RCReply objects as appropriate.
  */
-void RCLinkBackend::update()
+void RCLinkFrontend::update()
 {
   if (status != Connected && status != Connecting) {
     return;
@@ -56,8 +57,8 @@ void RCLinkBackend::update()
   } else if (status == Connecting) {
     int ncommands = updateParse(1);
     if (ncommands) {
-      RCRequest *req = popRequest();
-      if (req && req->getType() == "IdentifyFrontend") {
+      RCReply *req = popReply();
+      if (req && req->getType() == "IdentifyBackend") {
         status = Connected;
         req->sendAck();
       } else {
@@ -71,13 +72,13 @@ void RCLinkBackend::update()
 }
 
 /*
- * Parse a command, create an RCRequest object, and add it to requests.
- * Return true if an RCRequest was successfully created.  If it failed,
+ * Parse a command, create an RCReply object, and add it to requests.
+ * Return true if an RCReply was successfully created.  If it failed,
  * return false.
  */
-bool RCLinkBackend::parseCommand(char *cmdline)
+bool RCLinkFrontend::parseCommand(char *cmdline)
 {
-  RCRequest *req;
+  RCReply *req;
   int argc;
   char *argv[RC_LINK_MAXARGS];
   char *s, *tkn;
@@ -91,7 +92,7 @@ bool RCLinkBackend::parseCommand(char *cmdline)
       break;
   }
 
-  req = RCRequest::getInstance(argv[0], this);
+  req = RCReply::getReplyInstance(argv[0], this);
   if (req == NULL) {
     fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);
@@ -99,17 +100,17 @@ bool RCLinkBackend::parseCommand(char *cmdline)
   } else {
     switch (req->parse(argv + 1, argc - 1))
     {
-      case RCRequest::ParseOk:
+      case RCReply::ParseOk:
         if (requests == NULL)
           requests = req;
         else
           requests->append(req);
         return true;
-      case RCRequest::InvalidArgumentCount:
+      case RCReply::InvalidArgumentCount:
         fprintf(stderr, "RCLink: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
-      case RCRequest::InvalidArguments:
+      case RCReply::InvalidArguments:
         fprintf(stderr, "RCLink: Invalid arguments for request: '%s'\n", argv[0]);
         sendf("error Invalid arguments for request: '%s'\n", argv[0]);
         return false;
@@ -120,29 +121,16 @@ bool RCLinkBackend::parseCommand(char *cmdline)
   }
 }
 
-RCRequest* RCLinkBackend::popRequest()
+RCReply* RCLinkFrontend::popReply()
 {
-  RCRequest *req = requests;
-  if (req != NULL) {
-    requests = req->getNext();
-  }
+  RCReply *rep = replies;
+  if (rep != NULL)
+    replies = rep->getNext();
   return req;
 }
-RCRequest* RCLinkBackend::peekRequest()
+RCReply* RCLinkFrontend::peekReply()
 {
-  return requests;
-}
-
-bool RCLinkBackend::tryAccept()
-{
-  if (!RCLink::tryAccept())
-    return false;
-
-  write(connfd, RC_LINK_IDENTIFY_STR, strlen(RC_LINK_IDENTIFY_STR));
-  write(connfd, getRobotsProtocolVersion(), strlen(getRobotsProtocolVersion()));
-  write(connfd, "\n", 1);
-
-  return true;
+  return replies;
 }
 
 // Local Variables: ***

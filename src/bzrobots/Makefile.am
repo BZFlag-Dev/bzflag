@@ -24,6 +24,7 @@ EXTRA_bzrobots_SOURCES = \
 genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
+	RCMessage.h			\
 	RCLink.cxx			\
 	RCLink.h			\
 	RCRequest.cxx			\

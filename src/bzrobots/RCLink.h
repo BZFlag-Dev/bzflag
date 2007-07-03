@@ -40,22 +40,28 @@ class RCLink {
       Connected
     } State;
 
+    RCLink();
     virtual ~RCLink();
+
+    bool connect();
     void startListening();
     virtual bool tryAccept();
-    int updateWrite(bool sendIdentify = false);
-    void detach_agents();
+    virtual State getDisconnectedState() = 0;
+
+    virtual bool parseCommand(char *cmdline) = 0;
+    int updateParse(int maxlines = 0);
+    int updateWrite();
+    int updateRead();
+    void detachAgents();
 
     bool send(char *message);
     bool sendf(const char *format, ...);
 
   protected:
-    /* We don't allow instanciating this directly - you have to instanciate RCLinkBackend or RClinkFrontend. */
-    RCLink();
-
     State status;
     int listenfd, connfd;
     int port;
+    const char *host;
     char recvbuf[RC_LINK_RECVBUFLEN];
     char sendbuf[RC_LINK_SENDBUFLEN];
     int recv_amount, send_amount;
