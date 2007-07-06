@@ -59,7 +59,7 @@ void RCLinkBackend::update()
       RCRequest *req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
-        req->sendAck();
+        sendAck(req);
       } else {
         fprintf(stderr, "RCLink: Expected an 'IdentifyFrontend'.\n");
         write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
@@ -143,6 +143,12 @@ bool RCLinkBackend::tryAccept()
   write(connfd, "\n", 1);
 
   return true;
+}
+
+void RCLinkBackend::sendAck(RCRequest *req)
+{
+  float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
+  sendf("ack %f %s\n", elapsed, getMessage(req).c_str());
 }
 
 // Local Variables: ***

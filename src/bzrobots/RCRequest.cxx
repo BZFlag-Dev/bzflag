@@ -37,12 +37,6 @@ RCRequest::RCRequest(RCLink *_link) :RCMessage<RCRequest>(_link)
 {
 }
 
-
-void RCRequest::sendAck(bool newline)
-{
-  float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
-  link->sendf("ack %f %s%s", elapsed, getType().c_str(), (newline ? "\n" : ""));
-}
 bool RCRequest::process(RCRobotPlayer *rrp) { return true; }
 
 int RCRequest::getRobotIndex()

@@ -3,10 +3,6 @@
 
 #include "version.h"
 
-void RCRequestZeroArgument::sendAck(bool)
-{
-  RCRequest::sendAck(true);
-}
 RCRequest::parseStatus RCRequestZeroArgument::parse(char ** /*arguments*/, int count)
 {
   if (count != 0)
@@ -17,11 +13,6 @@ void RCRequestZeroArgument::getParameters(std::ostream &)
 {
 }
 
-void RCRequestBotSpecific::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d\n", getRobotIndex());
-}
 RCRequest::parseStatus RCRequestBotSpecific::parse(char **arguments, int count)
 {
   if (count != 1)
@@ -35,11 +26,6 @@ void RCRequestBotSpecific::getParameters(std::ostream &stream)
   stream << getRobotIndex();
 }
 
-void IdentifyFrontendReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %s\n", version);
-}
 RCRequest::parseStatus IdentifyFrontendReq::parse(char **arguments, int count)
 {
     if (count != 1)
@@ -100,11 +86,6 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-void SetSpeedReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d %f\n", getRobotIndex(), speed);
-}
 RCRequest::parseStatus SetSpeedReq::parse(char **arguments, int count)
 {
   if (count != 2)
@@ -128,11 +109,6 @@ void SetSpeedReq::getParameters(std::ostream &stream)
   stream << getRobotIndex() << " " << speed;
 }
 
-void SetTurnRateReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d %f\n", getRobotIndex(), rate);
-}
 RCRequest::parseStatus SetTurnRateReq::parse(char **arguments, int count)
 {
   if (count != 2)
@@ -155,11 +131,6 @@ void SetTurnRateReq::getParameters(std::ostream &stream)
   stream << getRobotIndex() << " " << rate;
 }
 
-void SetAheadReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d %f\n", getRobotIndex(), distance);
-}
 RCRequest::parseStatus SetAheadReq::parse(char **arguments, int count)
 {
   if (count != 2)
@@ -181,11 +152,6 @@ void SetAheadReq::getParameters(std::ostream &stream)
   stream << getRobotIndex() << " " << distance;
 }
 
-void SetTurnLeftReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d %f\n", getRobotIndex(), turn);
-}
 RCRequest::parseStatus SetTurnLeftReq::parse(char **arguments, int count)
 {
   if (count != 2)
@@ -243,11 +209,6 @@ bool GetTickDurationReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-void SetTickDurationReq::sendAck(bool)
-{
-  RCRequest::sendAck();
-  link->sendf(" %d %f\n", getRobotIndex(), duration);
-}
 RCRequest::parseStatus SetTickDurationReq::parse(char **arguments, int count)
 {
   if (count != 1)

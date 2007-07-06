@@ -33,6 +33,8 @@ genericfiles =				\
 	RCRequests.h			\
 	RCReply.cxx			\
 	RCReply.h			\
+	RCReplies.cxx			\
+	RCReplies.h			\
 	RCLinkBackend.cxx		\
 	RCLinkBackend.h			\
 	RCLinkFrontend.cxx		\

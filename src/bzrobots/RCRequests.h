@@ -27,7 +27,6 @@ struct RCRequestZeroArgument : public RCRequest
 {
   RCRequestZeroArgument(RCLink *_link) :RCRequest(_link) { }
   RCRequest::parseStatus parse(char **arguments, int count);
-  void sendAck(bool newline = false);
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream);
 };
@@ -35,7 +34,6 @@ struct RCRequestBotSpecific : public RCRequest
 {
   RCRequestBotSpecific(RCLink *_link) :RCRequest(_link) { }
   RCRequest::parseStatus parse(char **arguments, int count);
-  void sendAck(bool newline = false);
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream);
 };
@@ -131,7 +129,6 @@ struct GetConstantsReq : public RCRequestZeroArgument {
     COMMANDNAME ## Req(RCLink *_link) :RCRequest(_link) { } \
     RCRequest::parseStatus parse(char **arguments, int count); \
     std::string getType() { return #COMMANDNAME; } \
-    void sendAck(bool newline = false); \
     bool process(RCRobotPlayer *rrp); \
     void getParameters(std::ostream &stream);
 

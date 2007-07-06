@@ -27,14 +27,14 @@ class RCLink;
 class RCRobotPlayer;
 class RCRequest;
 
-class RCRequest :public RCMessage<RCRequest> {
+class RCRequest :public RCMessage<RCRequest>
+{
   public:
     RCRequest(RCLink *_link);
     virtual ~RCRequest();
 
     int getRobotIndex();
 
-    virtual void sendAck(bool newline = false);
     virtual bool process(RCRobotPlayer *rrp);
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() = 0;

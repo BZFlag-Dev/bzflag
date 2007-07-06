@@ -37,6 +37,7 @@ class RCLinkBackend : public RCLink
     RCRequest* peekRequest();
     bool tryAccept();
     State getDisconnectedState();
+    void sendAck(RCRequest *req);
 };
 
 #endif

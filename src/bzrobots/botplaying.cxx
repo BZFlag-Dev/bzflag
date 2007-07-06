@@ -2661,7 +2661,7 @@ static void		doBotRequests()
 #endif
 
     rcLink->popRequest(); // Discard it, we're done with this one.
-    req->sendAck();
+    rcLink->sendAck(req);
   }
 }
 

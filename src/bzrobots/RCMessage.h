@@ -27,7 +27,8 @@ class RCLink;
 class RCRobotPlayer;
 
 template <class C>
-class RCMessage {
+class RCMessage
+{
   public:
     typedef enum {
       ParseError,
@@ -60,6 +61,8 @@ class RCMessage {
         next->append(newreq);
     }
 
+    /* These three are dependent on the specific packet-type, so they are
+     * left for the complete implementations. :-) */
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() = 0;
     virtual void getParameters(std::ostream &stream) = 0;

@@ -18,6 +18,8 @@
 #ifndef	BZF_RC_LINK_H
 #define	BZF_RC_LINK_H
 
+#include <sstream>
+
 #include "common.h"
 
 #include "global.h"
@@ -57,13 +59,29 @@ class RCLink {
     void detachAgents();
 
     bool send(char *message);
-    template<class C>
-    bool send(RCMessage<C> *);
-    template<class C>
-    bool send(RCMessage<C> &);
     bool sendf(const char *format, ...);
 
+    template<class C>
+    bool send(RCMessage<C> *message)
+    {
+      return send(getMessage(message).c_str());
+    }
+    template<class C>
+    bool send(RCMessage<C> &message)
+    {
+      return send(&message);
+    }
+
   protected:
+    template<class C>
+    std::string getMessage(RCMessage<C> *message)
+    {
+      std::stringstream ss;
+      ss << message->getType() << " ";
+      message->getParameters(ss);
+      return ss.str();
+    }
+
     State status;
     int listenfd, connfd;
     int port;

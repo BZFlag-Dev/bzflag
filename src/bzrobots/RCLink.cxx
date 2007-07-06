@@ -16,8 +16,6 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include <sstream>
-
 // BZFlag network
 //#include "network.h"
 
@@ -125,19 +123,6 @@ bool RCLink::connect()
   return true;
 }
 
-template<class C>
-bool RCLink::send(RCMessage<C> *message)
-{
-  std::stringstream ss;
-  ss << message->getType() << " ";
-  message->getParameters(ss);
-  return send(ss.str().c_str());
-}
-template<class C>
-bool RCLink::send(RCMessage<C> &message)
-{
-  return send(&message);
-}
 bool RCLink::send(char* message)
 {
   if (output_overflow) {
