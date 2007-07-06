@@ -69,8 +69,6 @@ HelpMenu::HelpMenu(const char* title) : HUDDialog()
   addControl(createLabel(title), false);
   addControl(createLabel("Page Down for next page",
 			 "Page Up for previous page"));
-
-  initNavigation();
 }
 
 HUDuiControl* HelpMenu::createLabel(const char* string,
@@ -86,6 +84,11 @@ HUDuiControl* HelpMenu::createLabel(const char* string,
 float HelpMenu::getLeftSide(int, int _height)
 {
   return (float)_height / 6.0f;
+}
+
+void HelpMenu::show()
+{
+  initNavigation();
 }
 
 void HelpMenu::resize(int _width, int _height)
