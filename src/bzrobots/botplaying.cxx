@@ -57,6 +57,7 @@
 
 // local implementation headers
 #include "RCLinkBackend.h"
+#include "RCFrontend.h"
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
@@ -854,10 +855,10 @@ static void handleRejectMessage ( void *msg )
 static void handleFlagNegotiation ( void *msg, uint16_t len )
 {
   if (len > 0)
-    {
-      dumpMissingFlag((char *)msg, len);
-      return;
-    }
+  {
+    dumpMissingFlag((char *)msg, len);
+    return;
+  }
   serverLink->send(MsgWantSettings, 0, NULL);
 }
 
@@ -898,14 +899,14 @@ static void handleGetWorld ( void* msg, uint16_t len )
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
   if (!last)
-    {
-      char message[MaxPacketLen];
-      // ask for next chunk
-      worldPtr += len - 4;
-      nboPackUInt(message, worldPtr);
-      serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-      return;
-    }
+  {
+    char message[MaxPacketLen];
+    // ask for next chunk
+    worldPtr += len - 4;
+    nboPackUInt(message, worldPtr);
+    serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+    return;
+  }
   if (cacheOut)
     delete cacheOut;
   cacheOut = NULL;
@@ -920,14 +921,14 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
   msg = nboUnpackInt(msg, timeLeft);
   hud->setTimeLeft(timeLeft);
   if (timeLeft == 0)
-    {
-      gameOver = true;
+  {
+    gameOver = true;
 #ifdef ROBOT
-      for (int i = 0; i < numRobots; i++)
-	if (robots[i])
-	  robots[i]->explodeTank();
+    for (int i = 0; i < numRobots; i++)
+      if (robots[i])
+        robots[i]->explodeTank();
 #endif
-    }
+  }
   else if (timeLeft < 0)
     hud->setAlert(0, "Game Paused", 10.0f, true);
 }
@@ -944,18 +945,18 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
   // make a message
   std::string msg2;
   if (team == (uint16_t)NoTeam)
+  {
+    // a player won
+    if (player)
     {
-      // a player won
-      if (player)
-	{
-	  msg2 = _player->getCallSign();
-	  msg2 += " (";
-	  msg2 += Team::getName(_player->getTeam());
-	  msg2 += ")";
-	}
-      else
-	msg2 = "[unknown player]";
+      msg2 = _player->getCallSign();
+      msg2 += " (";
+      msg2 += Team::getName(_player->getTeam());
+      msg2 += ")";
     }
+    else
+      msg2 = "[unknown player]";
+  }
   else
     msg2 = Team::getName(TeamColor(team));		// a team won
 
@@ -965,10 +966,10 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
-    {
-      if (robots[i])
-	robots[i]->explodeTank();
-    }
+  {
+    if (robots[i])
+      robots[i]->explodeTank();
+  }
 #endif
 }
 
@@ -984,11 +985,11 @@ static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
   if (id == observerTank->getId())
     enteringServer(msg);		// it's me!  should be the end of updates
   else
-    {
-      addPlayer(id, msg, entered);
-      updateNumPlayers();
-      checkScores = true;
-    }
+  {
+    addPlayer(id, msg, entered);
+    updateNumPlayers();
+    checkScores = true;
+  }
 }
 
 static void handleRemovePlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
@@ -1006,10 +1007,10 @@ static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
   uint16_t flagIndex;
   msg = nboUnpackUShort(msg, count);
   for (int i = 0; i < count; i++)
-    {
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
-    }
+  {
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = world->getFlag(int(flagIndex)).unpack(msg);
+  }
 }
 
 static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
@@ -1019,10 +1020,10 @@ static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
 
   msg = nboUnpackUByte(msg,numTeams);
   for (int i = 0; i < numTeams; i++)
-    {
-      msg = nboUnpackUShort(msg, team);
-      msg = teams[int(team)].unpack(msg);
-    }
+  {
+    msg = nboUnpackUShort(msg, team);
+    msg = teams[int(team)].unpack(msg);
+  }
   updateNumPlayers();
   checkScores = true;
 }
@@ -1038,31 +1039,31 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   int playerIndex = lookupPlayerIndex(id);
 
   if ((playerIndex >= 0) || (playerIndex == -2))
+  {
+    static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+    Player* tank = getPlayerByIndex(playerIndex);
+    if (tank->getPlayerType() == ComputerPlayer)
     {
-      static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-      Player* tank = getPlayerByIndex(playerIndex);
-      if (tank->getPlayerType() == ComputerPlayer)
-	{
-	  for (int r = 0; r < numRobots; r++)
-	    {
-	      if (robots[r] && robots[r]->getId() == playerIndex)
-		{
-		  robots[r]->restart(pos,forward);
-		  if (!rcLink)
-		    {
-		      setRobotTarget(robots[r]);
-		    }
-		  break;
-		}
-	    }
-	}
-
-      tank->setStatus(PlayerState::Alive);
-      tank->move(pos, forward);
-      tank->setVelocity(zero);
-      tank->setAngularVelocity(0.0f);
-      tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+      for (int r = 0; r < numRobots; r++)
+      {
+        if (robots[r] && robots[r]->getId() == playerIndex)
+        {
+          robots[r]->restart(pos,forward);
+          if (!rcLink)
+          {
+            setRobotTarget(robots[r]);
+          }
+          break;
+        }
+      }
     }
+
+    tank->setStatus(PlayerState::Alive);
+    tank->move(pos, forward);
+    tank->setVelocity(zero);
+    tank->setAngularVelocity(0.0f);
+    tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+  }
 }
 
 static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
@@ -1102,7 +1103,8 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
   if (!tank) {
     tank = lookupPlayer(id);
   }
-  if (!tank) return;
+  if (!tank)
+    return;
 
   if (localtank) {
     localtank->setDesiredSpeed(0.0);
@@ -1131,47 +1133,47 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   msg = nboUnpackShort(msg, shotId);
   msg = FlagType::unpack(msg, flagType);
   if (reason == (int16_t)PhysicsDriverDeath)
-    {
-      int32_t inPhyDrv;
-      msg = nboUnpackInt(msg, inPhyDrv);
-      phydrv = int(inPhyDrv);
-    }
+  {
+    int32_t inPhyDrv;
+    msg = nboUnpackInt(msg, inPhyDrv);
+    phydrv = int(inPhyDrv);
+  }
   BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);
   Player* killerPlayer = lookupPlayer(killer);
   if (victimLocal)
-    {
-      // uh oh, local player is dead
-      if (victimLocal->isAlive())
-	gotBlowedUp(victimLocal, GotKilledMsg, killer);
-    }
+  {
+    // uh oh, local player is dead
+    if (victimLocal->isAlive())
+      gotBlowedUp(victimLocal, GotKilledMsg, killer);
+  }
   else if (victimPlayer)
-    {
-      victimPlayer->setExplode(TimeKeeper::getTick());
-    }
+  {
+    victimPlayer->setExplode(TimeKeeper::getTick());
+  }
 
   if (killerLocal)
-    {
-      // local player did it
-      if (shotId >= 0)
-	killerLocal->endShot(shotId, true);				// terminate the shot
-    }
+  {
+    // local player did it
+    if (shotId >= 0)
+      killerLocal->endShot(shotId, true);				// terminate the shot
+  }
 
 #ifdef ROBOT
   // blow up robots on victim's team if shot was genocide
   if (killerPlayer && victimPlayer && shotId >= 0)
+  {
+    const ShotPath* shot = killerPlayer->getShot(int(shotId));
+    if (shot && shot->getFlag() == Flags::Genocide)
     {
-      const ShotPath* shot = killerPlayer->getShot(int(shotId));
-      if (shot && shot->getFlag() == Flags::Genocide)
-	{
-	  for (int i = 0; i < numRobots; i++)
-	    {
-	      if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
-		gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-	    }
-	}
+      for (int i = 0; i < numRobots; i++)
+      {
+        if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
+          gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+      }
     }
+  }
 #endif
 
   checkScores = true;
@@ -1237,33 +1239,33 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
 
   // player no longer has flag
   if (capturer)
-    {
-      capturer->setFlag(Flags::Null);
+  {
+    capturer->setFlag(Flags::Null);
 
-      // add message
-      if (int(capturer->getTeam()) == capturedTeam)
-	{
-	  std::string message("took my flag into ");
-	  message += Team::getName(TeamColor(team));
-	  message += " territory";
-	  addMessage(capturer, message);
-	}
-      else
-	{
-	  std::string message("captured ");
-	  message += Team::getName(TeamColor(capturedTeam));
-	  message += "'s flag";
-	  addMessage(capturer, message);
-	}
+    // add message
+    if (int(capturer->getTeam()) == capturedTeam)
+    {
+      std::string message("took my flag into ");
+      message += Team::getName(TeamColor(team));
+      message += " territory";
+      addMessage(capturer, message);
     }
+    else
+    {
+      std::string message("captured ");
+      message += Team::getName(TeamColor(capturedTeam));
+      message += "'s flag";
+      addMessage(capturer, message);
+    }
+  }
 
 #ifdef ROBOT
   //kill all my robots if they are on the captured team
   for (int r = 0; r < numRobots; r++)
-    {
-      if (robots[r] && robots[r]->getTeam() == capturedTeam)
-	gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-    }
+  {
+    if (robots[r] && robots[r]->getTeam() == capturedTeam)
+      gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+  }
 #endif
 
   checkScores = true;
@@ -1284,45 +1286,45 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
   // mode 2 == remove this person from the rabbit list
 
   if (mode == 0)	// we don't need to mod the hunters if we aren't swaping
+  {
+    for (int i = 0; i < curMaxPlayers; i++)
     {
-      for (int i = 0; i < curMaxPlayers; i++)
-	{
-	  if (player[i])
-	    player[i]->setHunted(false);
-	  if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
-	    player[i]->changeTeam(HunterTeam);
-	}
+      if (player[i])
+        player[i]->setHunted(false);
+      if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
+        player[i]->changeTeam(HunterTeam);
     }
+  }
 
   if (rabbit != NULL)
+  {
+    if (mode != 2)
     {
-      if (mode != 2)
-	{
-	  rabbit->changeTeam(RabbitTeam);
+      rabbit->changeTeam(RabbitTeam);
 
-	  if (mode == 0)
-	    addMessage(rabbit, "is now the rabbit", 3, true);
-	  else
-	    addMessage(rabbit, "is now a rabbit", 3, true);
-	}
+      if (mode == 0)
+        addMessage(rabbit, "is now the rabbit", 3, true);
       else
-	{
-	  rabbit->changeTeam(HunterTeam);
-	  addMessage(rabbit, "is no longer a rabbit", 3, true);
-	}
+        addMessage(rabbit, "is now a rabbit", 3, true);
     }
+    else
+    {
+      rabbit->changeTeam(HunterTeam);
+      addMessage(rabbit, "is no longer a rabbit", 3, true);
+    }
+  }
 
 #ifdef ROBOT
   for (int r = 0; r < numRobots; r++)
+  {
+    if (robots[r])
     {
-      if (robots[r])
-	{
-	  if (robots[r]->getId() == id)
-	    robots[r]->changeTeam(RabbitTeam);
-	  else
-	    robots[r]->changeTeam(HunterTeam);
-	}
+      if (robots[r]->getId() == id)
+        robots[r]->changeTeam(RabbitTeam);
+      else
+        robots[r]->changeTeam(HunterTeam);
     }
+  }
 #endif
 }
 
@@ -3461,6 +3463,11 @@ void			botStartPlaying()
     RCRequest::initializeLookup();
     int port = atoi(BZDB.get("rcPort").c_str());
     rcLink = new RCLinkBackend(port);
+    if (!RCFrontend::run("localhost", port))
+    {
+      fprintf(stderr, "Could not fork Frontend!\n");
+      exit(1);
+    }
   }
 
   // enter game if we have all the info we need, otherwise

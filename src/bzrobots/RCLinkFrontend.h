@@ -21,6 +21,8 @@
 #include "RCLink.h"
 #include "RCReply.h"
 
+class RCReply;
+
 class RCLinkFrontend : public RCLink
 {
   private:

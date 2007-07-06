@@ -39,6 +39,8 @@ genericfiles =				\
 	RCLinkBackend.h			\
 	RCLinkFrontend.cxx		\
 	RCLinkFrontend.h		\
+	RCFrontend.cxx			\
+	RCFrontend.h			\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
 	../bzflag/ActionBinding.cxx		\

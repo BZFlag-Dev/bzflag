@@ -48,7 +48,7 @@ void RCLinkFrontend::update()
   int amount = updateRead();
 
   if (amount == -1) {
-    status = Listening;
+    status = Disconnected;
     return;
   }
 
@@ -92,8 +92,9 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
 
   req = RCReply::getInstance(argv[0], this);
   if (req == NULL) {
-    fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
-    sendf("error Invalid request %s\n", argv[0]);
+    fprintf(stderr, "RCLink: Invalid reply: '%s'\n", argv[0]);
+    close(connfd);
+    status = Disconnected;
     return false;
   } else {
     switch (req->parse(argv + 1, argc - 1))
@@ -105,15 +106,19 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
           replies->append(req);
         return true;
       case RCReply::InvalidArgumentCount:
-        fprintf(stderr, "RCLink: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
-        sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
+        fprintf(stderr, "RCLink: Invalid number of arguments (%d) for reply: '%s'\n", argc - 1, argv[0]);
+        close(connfd);
+        status = Disconnected;
         return false;
       case RCReply::InvalidArguments:
-        fprintf(stderr, "RCLink: Invalid arguments for request: '%s'\n", argv[0]);
-        sendf("error Invalid arguments for request: '%s'\n", argv[0]);
+        fprintf(stderr, "RCLink: Invalid arguments for reply: '%s'\n", argv[0]);
+        close(connfd);
+        status = Disconnected;
         return false;
       default:
         fprintf(stderr, "RCLink: Parse neither succeeded or failed with a known failcode. WTF?\n");
+        close(connfd);
+        status = Disconnected;
         return false;
     }
   }
