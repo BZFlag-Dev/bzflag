@@ -58,23 +58,23 @@ class RCLink {
     int updateRead();
     void detachAgents();
 
-    bool send(char *message);
+    bool send(const char *message);
     bool sendf(const char *format, ...);
 
     template<class C>
-    bool send(RCMessage<C> *message)
+    bool send(const RCMessage<C> *message)
     {
-      return send(getMessage(message).c_str());
+      return sendf("%s\n", getMessage(message).c_str());
     }
     template<class C>
-    bool send(RCMessage<C> &message)
+    bool send(const RCMessage<C> &message)
     {
       return send(&message);
     }
 
   protected:
     template<class C>
-    std::string getMessage(RCMessage<C> *message)
+    std::string getMessage(const RCMessage<C> *message)
     {
       std::stringstream ss;
       ss << message->getType() << " ";

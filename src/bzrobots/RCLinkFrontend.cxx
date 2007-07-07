@@ -17,11 +17,11 @@
 #include <stdarg.h>
 
 #include "RCLinkFrontend.h"
+#include "RCMessageFactory.h"
 
 #include "version.h"
 
-RCLinkFrontend::RCLinkFrontend(std::string _host, int _port) :RCLink(),
-                                        replies(NULL)
+RCLinkFrontend::RCLinkFrontend(std::string _host, int _port) :replies(NULL)
 {
   port = _port;
   host = _host.c_str();
@@ -57,8 +57,8 @@ void RCLinkFrontend::update()
   } else if (status == Connecting) {
     int ncommands = updateParse(1);
     if (ncommands) {
-      RCReply *req = popReply();
-      if (req && req->getType() == "IdentifyBackend") {
+      RCReply *rep = popReply();
+      if (rep && rep->getType() == "IdentifyBackend") {
         status = Connected;
       } else {
         fprintf(stderr, "RCLink: Expected an 'IdentifyBackend'.\n");
@@ -76,7 +76,7 @@ void RCLinkFrontend::update()
  */
 bool RCLinkFrontend::parseCommand(char *cmdline)
 {
-  RCReply *req;
+  RCReply *rep;
   int argc;
   char *argv[RC_LINK_MAXARGS];
   char *s, *tkn;
@@ -90,20 +90,20 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
       break;
   }
 
-  req = RCReply::getInstance(argv[0], this);
-  if (req == NULL) {
+  rep = RCREPLY.Message(argv[0]);
+  if (rep == NULL) {
     fprintf(stderr, "RCLink: Invalid reply: '%s'\n", argv[0]);
     close(connfd);
     status = Disconnected;
     return false;
   } else {
-    switch (req->parse(argv + 1, argc - 1))
+    switch (rep->parse(argv + 1, argc - 1))
     {
       case RCReply::ParseOk:
         if (replies == NULL)
-          replies = req;
+          replies = rep;
         else
-          replies->append(req);
+          replies->append(rep);
         return true;
       case RCReply::InvalidArgumentCount:
         fprintf(stderr, "RCLink: Invalid number of arguments (%d) for reply: '%s'\n", argc - 1, argv[0]);

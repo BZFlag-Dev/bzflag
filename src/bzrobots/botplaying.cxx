@@ -57,7 +57,8 @@
 
 // local implementation headers
 #include "RCLinkBackend.h"
-#include "RCFrontend.h"
+#include "RCMessageFactory.h"
+#include "Frontend.h"
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
@@ -2618,21 +2619,7 @@ static void		sendConstList()
   rcLink->send("end\n");
 }
 
-static void		doBotRequests()
-{
-  RCRequest* req;
-  int tankindex;
-
-  while ((req = rcLink->peekRequest()) != NULL) {
-    tankindex = req->getRobotIndex();
-    if (tankindex == -1) {
-      req->process(NULL);
-    } else {
-      if (!req->process((RCRobotPlayer*)robots[tankindex]))
-        return;
-    }
 #if 0
-    switch (req->getRequestType()) {
       case TeamListRequest:
 	sendTeamList();
 	break;
@@ -2657,10 +2644,20 @@ static void		doBotRequests()
       case ConstListRequest:
 	sendConstList();
 	break;
-      default:
-	break;
-    }
 #endif
+static void		doBotRequests()
+{
+  RCRequest* req;
+  int tankindex;
+
+  while ((req = rcLink->peekRequest()) != NULL) {
+    tankindex = req->getRobotIndex();
+    if (tankindex == -1) {
+      req->process(NULL);
+    } else {
+      if (!req->process((RCRobotPlayer*)robots[tankindex]))
+        return;
+    }
 
     rcLink->popRequest(); // Discard it, we're done with this one.
     rcLink->sendAck(req);
@@ -3460,10 +3457,12 @@ void			botStartPlaying()
   if (BZDB.isSet("rcPort")) {
     // here we register the various RCRequest-handlers for commands
     // that RCLinkBackend receives. :-)
-    RCRequest::initializeLookup();
+    RCMessageFactory<RCRequest>::initialize();
+
     int port = atoi(BZDB.get("rcPort").c_str());
     rcLink = new RCLinkBackend(port);
-    if (!RCFrontend::run("localhost", port))
+    RCREQUEST.setLink(rcLink);
+    if (!Frontend::run("localhost", port))
     {
       fprintf(stderr, "Could not fork Frontend!\n");
       exit(1);

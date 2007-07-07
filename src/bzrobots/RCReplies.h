@@ -15,57 +15,68 @@
  * replies to the requests made by the frontend
  */
 
-#ifndef	BZF_RC_REQUESTS_H
-#define	BZF_RC_REQUESTS_H
+#ifndef	BZF_RC_REPLIES_H
+#define	BZF_RC_REPLIES_H
 
 #include <string>
 
 #include "RCReply.h"
 #include "RCLink.h"
 
+struct IdentifyBackend : public RCReply
+{
+  std::string getType() const { return "IdentifyBackend"; }
+  RCReply::parseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+
+  private: char *version;
+};
+
 struct GunHeatReply : public RCReply
 {
-  GunHeatReply(RCLink *l) :RCReply(l) {}
-  std::string getType() { return "GunHeat"; }
+  GunHeatReply() :heat(0.0f) {}
+  GunHeatReply(float _heat) :heat(_heat) {}
+  std::string getType() const { return "GunHeat"; }
   RCReply::parseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream);
-  float heat;
+  void getParameters(std::ostream &stream) const;
+  
+  private: float heat;
 };
 
 struct DistanceRemainingReply : public RCReply
 {
-  DistanceRemainingReply(RCLink *l) :RCReply(l) {}
-  std::string getType() { return "DistanceRemaining"; }
+  std::string getType() const { return "DistanceRemaining"; }
   RCReply::parseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream);
-  float distance;
+  void getParameters(std::ostream &stream) const;
+  
+  private: float distance;
 };
 
 struct TurnRemainingReply : public RCReply
 {
-  TurnRemainingReply(RCLink *l) :RCReply(l) {}
-  std::string getType() { return "TurnRemaining"; }
+  std::string getType() const { return "TurnRemaining"; }
   RCReply::parseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream);
-  float turn;
+  void getParameters(std::ostream &stream) const;
+  
+  private: float turn;
 };
 
 struct TickDurationReply : public RCReply
 {
-  TickDurationReply(RCLink *l) :RCReply(l) {}
-  std::string getType() { return "TickDuration"; }
+  std::string getType() const { return "TickDuration"; }
   RCReply::parseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream);
-  float duration;
+  void getParameters(std::ostream &stream) const;
+  
+  private: float duration;
 };
 
 struct TickRemainingReply : public RCReply
 {
-  TickRemainingReply(RCLink *l) :RCReply(l) {}
-  std::string getType() { return "TickRemaining"; }
+  std::string getType() const { return "TickRemaining"; }
   RCReply::parseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream);
-  float remaining;
+  void getParameters(std::ostream &stream) const;
+
+  private: float remaining;
 };
 
 #endif

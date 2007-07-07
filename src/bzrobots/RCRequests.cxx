@@ -1,15 +1,16 @@
 #include "RCRequests.h"
+#include "RCReplies.h"
 #include "RCRobotPlayer.h"
 
 #include "version.h"
 
-RCRequest::parseStatus RCRequestZeroArgument::parse(char ** /*arguments*/, int count)
+RCRequest::parseStatus RCRequestZeroArgument::parse(char **, int count)
 {
   if (count != 0)
     return InvalidArgumentCount;
   return ParseOk;
 }
-void RCRequestZeroArgument::getParameters(std::ostream &)
+void RCRequestZeroArgument::getParameters(std::ostream &) const
 {
 }
 
@@ -21,12 +22,12 @@ RCRequest::parseStatus RCRequestBotSpecific::parse(char **arguments, int count)
     return InvalidArguments;
   return ParseOk;
 }
-void RCRequestBotSpecific::getParameters(std::ostream &stream)
+void RCRequestBotSpecific::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex();
 }
 
-RCRequest::parseStatus IdentifyFrontendReq::parse(char **arguments, int count)
+RCRequest::parseStatus IdentifyFrontend::parse(char **arguments, int count)
 {
     if (count != 1)
         return InvalidArgumentCount;
@@ -36,11 +37,7 @@ RCRequest::parseStatus IdentifyFrontendReq::parse(char **arguments, int count)
     version = strdup(arguments[0]);
     return ParseOk;
 }
-bool IdentifyFrontendReq::process(RCRobotPlayer *)
-{
-    return true;
-}
-void IdentifyFrontendReq::getParameters(std::ostream &stream)
+void IdentifyFrontend::getParameters(std::ostream &stream) const
 {
   stream << version;
 }
@@ -104,7 +101,7 @@ bool SetSpeedReq::process(RCRobotPlayer *rrp)
   rrp->pendingUpdates[RCRobotPlayer::speedUpdate] = true;
   return true;
 }
-void SetSpeedReq::getParameters(std::ostream &stream)
+void SetSpeedReq::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex() << " " << speed;
 }
@@ -126,7 +123,7 @@ bool SetTurnRateReq::process(RCRobotPlayer *rrp)
   rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate] = true;
   return true;
 }
-void SetTurnRateReq::getParameters(std::ostream &stream)
+void SetTurnRateReq::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex() << " " << rate;
 }
@@ -147,7 +144,7 @@ bool SetAheadReq::process(RCRobotPlayer *rrp)
   rrp->nextDistance = distance;
   return true;
 }
-void SetAheadReq::getParameters(std::ostream &stream)
+void SetAheadReq::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex() << " " << distance;
 }
@@ -168,7 +165,7 @@ bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
   rrp->nextTurn = turn;
   return true;
 }
-void SetTurnLeftReq::getParameters(std::ostream &stream)
+void SetTurnLeftReq::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex() << " " << turn;
 }
@@ -183,7 +180,8 @@ bool GetGunHeatReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
     return false;
-  link->sendf("GetGunHeat %f\n", rrp->getReloadTime());
+
+  link->send(GunHeatReply(rrp->getReloadTime()));
   return true;
 }
 
@@ -226,7 +224,7 @@ bool SetTickDurationReq::process(RCRobotPlayer *rrp)
   rrp->tickDuration = duration;
   return true;
 }
-void SetTickDurationReq::getParameters(std::ostream &stream)
+void SetTickDurationReq::getParameters(std::ostream &stream) const
 {
   stream << getRobotIndex() << " " << duration;
 }
@@ -241,42 +239,42 @@ bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-bool GetTeamsReq::process(RCRobotPlayer *rrp)
+bool GetTeamsReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetBasesReq::process(RCRobotPlayer *rrp)
+bool GetBasesReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetObstaclesReq::process(RCRobotPlayer *rrp)
+bool GetObstaclesReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetFlagsReq::process(RCRobotPlayer *rrp)
+bool GetFlagsReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetShotsReq::process(RCRobotPlayer *rrp)
+bool GetShotsReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetMyTanksReq::process(RCRobotPlayer *rrp)
+bool GetMyTanksReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetOtherTanksReq::process(RCRobotPlayer *rrp)
+bool GetOtherTanksReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;
 }
-bool GetConstantsReq::process(RCRobotPlayer *rrp)
+bool GetConstantsReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
   return true;

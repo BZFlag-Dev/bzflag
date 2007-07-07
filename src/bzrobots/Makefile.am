@@ -31,18 +31,21 @@ genericfiles =				\
 	RCRequest.h			\
 	RCRequests.cxx			\
 	RCRequests.h			\
-	RCReply.cxx			\
 	RCReply.h			\
 	RCReplies.cxx			\
 	RCReplies.h			\
+	RCMessageFactory.h		\
+	RCMessageFactory.cxx		\
 	RCLinkBackend.cxx		\
 	RCLinkBackend.h			\
 	RCLinkFrontend.cxx		\
 	RCLinkFrontend.h		\
-	RCFrontend.cxx			\
-	RCFrontend.h			\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
+	Frontend.cxx			\
+	Frontend.h			\
+	AdvancedRobot.cxx		\
+	AdvancedRobot.h			\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\

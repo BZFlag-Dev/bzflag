@@ -11,11 +11,11 @@
  */
 
 /*
- * Remote Control Request: Encapsulates requests between backend and frontend
+ * Remote Control Reply: Encapsulates the reply to a request from a frontend.
  */
 
-#ifndef	BZF_RC_REQUEST_H
-#define	BZF_RC_REQUEST_H
+#ifndef	BZF_RC_REPLY_H
+#define	BZF_RC_REPLY_H
 
 #include "common.h"
 #include "RCMessage.h"
@@ -23,23 +23,11 @@
 #include <string>
 #include <map>
 
-class RCLink;
-class RCRobotPlayer;
-class RCReply;
-
 class RCReply :public RCMessage<RCReply> {
   public:
-    RCReply(RCLink *_link);
-    virtual ~RCReply();
-
     virtual parseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() = 0;
-    virtual void getParameters(std::ostream &stream) = 0;
-
-    static void initializeLookup(void);
-
-  protected:
-    RCLink *link;
+    virtual std::string getType() const = 0;
+    virtual void getParameters(std::ostream &stream) const = 0;
 };
 
 #endif

@@ -2,6 +2,22 @@
 
 #include "version.h"
 
+RCReply::parseStatus IdentifyBackend::parse(char **arguments, int count)
+{
+  if (count != 1)
+    return InvalidArgumentCount;
+  /* Version-checking, to be sure we're speaking the same language! */
+  if (strcasecmp(arguments[0], getRobotsProtocolVersion()) != 0)
+    return InvalidArguments;
+  version = strdup(arguments[0]);
+  return ParseOk;
+}
+void IdentifyBackend::getParameters(std::ostream &stream) const
+{
+    stream << version;
+} 
+
+
 RCReply::parseStatus GunHeatReply::parse(char **arguments, int count)
 {
   if (count != 1)
@@ -11,7 +27,7 @@ RCReply::parseStatus GunHeatReply::parse(char **arguments, int count)
 
   return ParseOk;
 }
-void GunHeatReply::getParameters(std::ostream &stream)
+void GunHeatReply::getParameters(std::ostream &stream) const
 {
     stream << heat;
 }
@@ -25,7 +41,7 @@ RCReply::parseStatus DistanceRemainingReply::parse(char **arguments, int count)
 
   return ParseOk;
 }
-void DistanceRemainingReply::getParameters(std::ostream &stream)
+void DistanceRemainingReply::getParameters(std::ostream &stream) const
 {
     stream << distance;
 }
@@ -39,7 +55,7 @@ RCReply::parseStatus TurnRemainingReply::parse(char **arguments, int count)
 
   return ParseOk;
 }
-void TurnRemainingReply::getParameters(std::ostream &stream)
+void TurnRemainingReply::getParameters(std::ostream &stream) const
 {
     stream << turn;
 }
@@ -53,7 +69,7 @@ RCReply::parseStatus TickDurationReply::parse(char **arguments, int count)
 
   return ParseOk;
 }
-void TickDurationReply::getParameters(std::ostream &stream)
+void TickDurationReply::getParameters(std::ostream &stream) const
 {
     stream << duration;
 }
@@ -67,7 +83,7 @@ RCReply::parseStatus TickRemainingReply::parse(char **arguments, int count)
 
   return ParseOk;
 }
-void TickRemainingReply::getParameters(std::ostream &stream)
+void TickRemainingReply::getParameters(std::ostream &stream) const
 {
     stream << remaining;
 }

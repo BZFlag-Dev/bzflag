@@ -14,18 +14,19 @@
  * Remote Control Frontend: Class to encapsulate the frontend.
  */
 
-#ifndef	BZF_RC_FRONTEND_H
-#define	BZF_RC_FRONTEND_H
+#ifndef	BZF_FRONTEND_H
+#define	BZF_FRONTEND_H
 
 #include "RCLinkFrontend.h"
 
-class RCFrontend
+class Frontend
 {
     RCLinkFrontend *link;
+    /* Should only be instantiated from run() */
+    Frontend(const char *host, int port);
     public:
       static bool run(const char *host, int port); 
 
-      RCFrontend(const char *host, int port);
       void update(void);
 };
 

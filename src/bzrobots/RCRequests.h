@@ -25,117 +25,102 @@
 
 struct RCRequestZeroArgument : public RCRequest
 {
-  RCRequestZeroArgument(RCLink *_link) :RCRequest(_link) { }
   RCRequest::parseStatus parse(char **arguments, int count);
   virtual bool process(RCRobotPlayer *rrp) = 0;
-  void getParameters(std::ostream &stream);
+  void getParameters(std::ostream &stream) const;
 };
 struct RCRequestBotSpecific : public RCRequest
 {
-  RCRequestBotSpecific(RCLink *_link) :RCRequest(_link) { }
   RCRequest::parseStatus parse(char **arguments, int count);
   virtual bool process(RCRobotPlayer *rrp) = 0;
-  void getParameters(std::ostream &stream);
+  void getParameters(std::ostream &stream) const;
 };
 
 struct ExecuteReq : public RCRequestBotSpecific
 {
-  ExecuteReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "Execute"; }
+  std::string getType() const { return "Execute"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct SetFireReq : public RCRequestBotSpecific
 {
-  SetFireReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "SetFire"; }
+  std::string getType() const { return "SetFire"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetGunHeatReq : public RCRequestBotSpecific
 {
-  GetGunHeatReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "GetGunHeat"; }
+  std::string getType() const { return "GetGunHeat"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetDistanceRemainingReq : public RCRequestBotSpecific
 {
-  GetDistanceRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "GetDistanceRemaining"; }
+  std::string getType() const { return "GetDistanceRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetTurnRemainingReq : public RCRequestBotSpecific
 {
-  GetTurnRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "GetTurnRemaining"; }
+  std::string getType() const { return "GetTurnRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetTickDurationReq : public RCRequestBotSpecific
 {
-  GetTickDurationReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "GetTickDuration"; }
+  std::string getType() const { return "GetTickDuration"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetTickRemainingReq : public RCRequestBotSpecific
 {
-  GetTickRemainingReq(RCLink *l) :RCRequestBotSpecific(l) {}
-  std::string getType() { return "GetTickRemaining"; }
+  std::string getType() const { return "GetTickRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
 
 struct GetTeamsReq : public RCRequestZeroArgument {
-  GetTeamsReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetTeams"; }
+  std::string getType() const { return "GetTeams"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetBasesReq : public RCRequestZeroArgument {
-  GetBasesReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetBases"; }
+  std::string getType() const { return "GetBases"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetObstaclesReq : public RCRequestZeroArgument {
-  GetObstaclesReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetObstacles"; }
+  std::string getType() const { return "GetObstacles"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetFlagsReq : public RCRequestZeroArgument {
-  GetFlagsReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetFlags"; }
+  std::string getType() const { return "GetFlags"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetShotsReq : public RCRequestZeroArgument {
-  GetShotsReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetShots"; }
+  std::string getType() const { return "GetShots"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetMyTanksReq : public RCRequestZeroArgument {
-  GetMyTanksReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetMyTanks"; }
+  std::string getType() const { return "GetMyTanks"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetOtherTanksReq : public RCRequestZeroArgument {
-  GetOtherTanksReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetOtherTanks"; }
+  std::string getType() const { return "GetOtherTanks"; }
   bool process(RCRobotPlayer *rrp);
 };
 struct GetConstantsReq : public RCRequestZeroArgument {
-  GetConstantsReq(RCLink *l) :RCRequestZeroArgument(l) {}
-  std::string getType() { return "GetConstants"; }
+  std::string getType() const { return "GetConstants"; }
   bool process(RCRobotPlayer *rrp);
+};
+
+struct IdentifyFrontend :public RCRequest {
+  std::string getType() const { return "IdentifyFrontend"; }
+  RCRequest::parseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+
+  private: char *version;
 };
 
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
 { \
   public: \
-    COMMANDNAME ## Req(RCLink *_link) :RCRequest(_link) { } \
     RCRequest::parseStatus parse(char **arguments, int count); \
-    std::string getType() { return #COMMANDNAME; } \
+    std::string getType() const { return #COMMANDNAME; } \
     bool process(RCRobotPlayer *rrp); \
-    void getParameters(std::ostream &stream);
-
-DECLARE_REQUEST(IdentifyFrontend)
-private:
-  char *version;
-};
+    void getParameters(std::ostream &stream) const;
 
 DECLARE_REQUEST(SetSpeed)
 private:

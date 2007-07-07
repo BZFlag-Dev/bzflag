@@ -17,11 +17,11 @@
 #include <stdarg.h>
 
 #include "RCLinkBackend.h"
+#include "RCMessageFactory.h"
 
 #include "version.h"
 
-RCLinkBackend::RCLinkBackend(int _port) :RCLink(),
-                                        requests(NULL)
+RCLinkBackend::RCLinkBackend(int _port) :requests(NULL)
 {
   port = _port;
   startListening();
@@ -91,7 +91,7 @@ bool RCLinkBackend::parseCommand(char *cmdline)
       break;
   }
 
-  req = RCRequest::getInstance(argv[0], this);
+  req = RCREQUEST.Message(argv[0]);
   if (req == NULL) {
     fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);

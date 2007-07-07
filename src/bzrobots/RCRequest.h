@@ -23,22 +23,17 @@
 #include <string>
 #include <map>
 
-class RCLink;
 class RCRobotPlayer;
-class RCRequest;
 
 class RCRequest :public RCMessage<RCRequest>
 {
   public:
-    RCRequest(RCLink *_link);
-    virtual ~RCRequest();
-
-    int getRobotIndex();
+    int getRobotIndex() const;
 
     virtual bool process(RCRobotPlayer *rrp);
     virtual parseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() = 0;
-    virtual void getParameters(std::ostream &stream) = 0;
+    virtual std::string getType() const = 0;
+    virtual void getParameters(std::ostream &stream) const = 0;
 
     static void initializeLookup(void);
 
@@ -46,7 +41,6 @@ class RCRequest :public RCMessage<RCRequest>
     int robotIndex;
 
   protected:
-    RCLink *link;
     int setRobotIndex(char *arg);
 };
 

@@ -36,20 +36,11 @@ class RCMessage
       InvalidArgumentCount,
       InvalidArguments
     } parseStatus;
-    typedef std::map<std::string, C *(*)(RCLink *)> lookupTable;
 
-    /* These are static functions to allow for instantiation
-     * of classes based on a string (the request command name) */
-    static C *getInstance(std::string message, RCLink *_link)
-    {
-        if (messageLookup.find(message) != messageLookup.end())
-            return messageLookup[message](_link);
-        return NULL;
-    }
-
-
-    RCMessage(RCLink *_link) :next(NULL), link(_link) { }
+    RCMessage() :next(NULL), link(NULL) { }
     virtual ~RCMessage() {}
+
+    void setLink(RCLink *_link) { link = _link; }
 
     /* This is for the linked-list aspect of RCMessage. */
     C *getNext() { return next; }
@@ -64,8 +55,8 @@ class RCMessage
     /* These three are dependent on the specific packet-type, so they are
      * left for the complete implementations. :-) */
     virtual parseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() = 0;
-    virtual void getParameters(std::ostream &stream) = 0;
+    virtual std::string getType() const = 0;
+    virtual void getParameters(std::ostream &stream) const = 0;
 
     /* Utility functions. */
     static bool parseFloat(char *string, float &dest)
@@ -99,16 +90,8 @@ class RCMessage
     C *next;
 
   protected:
-    /* These are static data and functions to allow for instantiation 
-     * of classes based on a string (the request command name) */
-    static lookupTable messageLookup;
-    template <typename T>
-     static C* instantiate(RCLink *_link) { return new T(_link); }
     RCLink *link;
 };
-
-template <class C>
-typename RCMessage<C>::lookupTable RCMessage<C>::messageLookup;
 
 #endif
 

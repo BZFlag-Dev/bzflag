@@ -1,22 +1,24 @@
-#include "RCFrontend.h"
+#include "Frontend.h"
 
 #include "TimeKeeper.h"
+#include "RCMessageFactory.h"
 
 #include <unistd.h>
 
-bool RCFrontend::run(const char *host, int port)
+bool Frontend::run(const char *host, int port)
 {
+    return true;
     pid_t pid = fork();
     if (pid < 0)
         return false;
     else if (pid > 0)
         return true;
 
-    RCFrontend rcFrontend(host, port);
+    Frontend frontend(host, port);
 
     while (true)
     {
-        rcFrontend.update();
+        frontend.update();
         TimeKeeper::sleep(0.01);
     }
 
@@ -24,12 +26,14 @@ bool RCFrontend::run(const char *host, int port)
     return true;
 }
 
-RCFrontend::RCFrontend(const char *host, int port)
+Frontend::Frontend(const char *host, int port)
 {
+    RCMessageFactory<RCReply>::initialize();
     link = new RCLinkFrontend(host, port);
+    RCREPLY.setLink(link);
 }
 
-void RCFrontend::update()
+void Frontend::update()
 {
     link->update();
 }

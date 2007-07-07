@@ -123,7 +123,7 @@ bool RCLink::connect()
   return true;
 }
 
-bool RCLink::send(char* message)
+bool RCLink::send(const char* message)
 {
   if (output_overflow) {
     return false;
