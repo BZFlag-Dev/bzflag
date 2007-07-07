@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #                       F O O T E R . S H
 # BRL-CAD
 #
@@ -39,7 +39,7 @@
 # the requested indentation settings.
 #
 # The script assumes one file as the argument, so example use might be:
-#   find . -type f -and \( -name \*.sh -or -name \*.c -or -name \*.h -or -name \*.tcl -or -name \*.tk -or -name \*.itcl -or -name \*.itk -or -name \*.pl -or -name \*.py \) -not -regex '.*src/other.*' -exec sh/footer.sh {} \;
+#   find . -type f -and \( -name \*.cxx -or -or -name \*.h \) -not -regex '.*src/other.*' -exec sh/footer.sh {} \;
 #
 # bash arrays are actually used for convenience, hence why bash and
 # not sh.
