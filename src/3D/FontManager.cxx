@@ -176,8 +176,6 @@ void FontManager::clear(void)
   faceNames.clear();
 
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
-    // iterating in reverse is essential because clear() calls
-    // erase, causing the map to shift elements
     std::map<int,void*>::iterator itr;
     itr = fontFaces[i].sizes.begin();
     while (itr != fontFaces[i].sizes.end()) {
@@ -247,8 +245,6 @@ void FontManager::rebuild()
   //  std::cout << "REBUILDING ALL FONTS" << std::endl;
 
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
-    // iterating in reverse is essential because rebuildSize() calls
-    // erase, causing the map to shift elements
     std::map<int,void*>::iterator itr;
     itr = fontFaces[i].sizes.begin();
     while(itr != fontFaces[i].sizes.end()) {
@@ -440,9 +436,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       }
       glDepthMask(0);
       
+      glEnable(GL_TEXTURE_2D);
       theFont->Render(&tmpText[startSend]);
-
       glDisable(GL_TEXTURE_2D);
+
       if (underline) {
 	glEnable(GL_BLEND);
 	if (bright && underlineColor[0] >= 0) {
@@ -459,7 +456,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glVertex2f(width, 0.0f);
 	glEnd();
       }
-      glEnable(GL_TEXTURE_2D);
       glDepthMask(BZDBCache::zbuffer);
       glPopMatrix();
       // x transform for next substr
