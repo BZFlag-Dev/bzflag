@@ -1241,12 +1241,18 @@ void			HUDRenderer::renderTimes(void)
 
   // draw frames per second
   if (fps > 0.0f) {
+    static TimeKeeper last = TimeKeeper::getTick();
     char buf[20];
-    sprintf(buf, "FPS: %d", int(fps));
+    snprintf(buf, 20, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		  3.0f * fm.getStringHeight(headingFontFace, headingFontSize), 0,
 		  headingFontFace, headingFontSize, buf);
+
+    if ((int)(TimeKeeper::getTick() - last) > 1) {
+      logDebugMessage(1, "%s\n", buf);
+      last = TimeKeeper::getTick();
+    }
   }
   float triCountYOffset = 4.5f;
   if (radarTriangleCount > 0) {
