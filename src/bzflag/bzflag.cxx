@@ -1080,8 +1080,6 @@ int			main(int argc, char** argv)
   else
     window->create();
 
-  OpenGLGState::initContext();
-
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.
   if (!noAudio) {
