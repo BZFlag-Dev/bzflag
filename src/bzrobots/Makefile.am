@@ -44,8 +44,14 @@ genericfiles =				\
 	RCRobotPlayer.h			\
 	Frontend.cxx			\
 	Frontend.h			\
+	BZAdvancedRobot.cxx		\
+	BZAdvancedRobot.h		\
 	AdvancedRobot.cxx		\
 	AdvancedRobot.h			\
+	BZRobot.cxx			\
+	BZRobot.h			\
+	Robot.cxx			\
+	Robot.h				\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\
