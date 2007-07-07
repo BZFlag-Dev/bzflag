@@ -49,12 +49,9 @@ FontManager::FontManager() : Singleton<FontManager>(),
 			     dimFactor(0.2f),
 			     darkness(1.0f)
 {
-  faceNames.clear();
-  fontFaces.clear();
   BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
-  OpenGLGState::registerContextInitializer(freeContext, initContext,
-					   (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
 }
 
 
@@ -63,9 +60,11 @@ FontManager::FontManager() : Singleton<FontManager>(),
  */
 FontManager::~FontManager()
 {
-  clear();
-  OpenGLGState::unregisterContextInitializer(freeContext, initContext,
-					     (void*)this);
+  //  std::cout << "DELETING FONT MANAGER" << std::endl;
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
+
+  // erm, why does this crash???
+  //  freeContext((void*)this);
   return;
 }
 
@@ -75,7 +74,10 @@ FontManager::~FontManager()
  */
 void FontManager::freeContext(void* data)
 {
-  ((FontManager*)data)->clear();
+  //  std::cout << "FREEING CONTEXT" << std::endl;
+  if (data) {
+    ((FontManager*)data)->clear();
+  }
   return;
 }
 
@@ -85,6 +87,7 @@ void FontManager::freeContext(void* data)
  */
 void FontManager::initContext(void* data)
 {
+  //  std::cout << "INITIALIZING CONTEXT" << std::endl;
   ((FontManager*)data)->rebuild();
   return;
 }
@@ -112,7 +115,7 @@ int FontManager::load ( const char* file )
   FontFace face;
   face.name = tempFile.getFileName();
   face.path = file;
-  face.sizes.clear();
+  //  face.sizes.clear();
 
   fontFaces.push_back(face);
   faceNames[face.name] = (int)fontFaces.size()-1;
@@ -157,7 +160,7 @@ void FontManager::clear(int font, int size)
   // poof
   std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
   if ( itr != fontFaces[font].sizes.end() ) {
-    delete (FTGLTextureFont*)fontFaces[font].sizes[size];
+    delete (FTGLTextureFont*)(*itr).second;
     fontFaces[font].sizes.erase(size);
   }
 }
@@ -168,16 +171,22 @@ void FontManager::clear(int font, int size)
  */
 void FontManager::clear(void)
 {
+  //  std::cout << "DESTROYING ALL FONTS" << std::endl;
+
   faceNames.clear();
 
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
     // iterating in reverse is essential because clear() calls
     // erase, causing the map to shift elements
-    std::map<int,void*>::reverse_iterator itr;
-    for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
+    std::map<int,void*>::iterator itr;
+    itr = fontFaces[i].sizes.begin();
+    while (itr != fontFaces[i].sizes.end()) {
+      std::map<int,void*>::iterator next = itr;
+      next++; // must get the next before clearing, else kaboom
       if ((*itr).second) {
 	clear(i, (*itr).first);
       }
+      itr = next;
     }
   }
 
@@ -235,15 +244,21 @@ void FontManager::rebuildSize ( int font, int size )
  */
 void FontManager::rebuild()
 {
+  //  std::cout << "REBUILDING ALL FONTS" << std::endl;
+
   for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
     // iterating in reverse is essential because rebuildSize() calls
     // erase, causing the map to shift elements
-    std::map<int,void*>::reverse_iterator itr;
-    for (itr = fontFaces[i].sizes.rbegin(); itr != fontFaces[i].sizes.rend(); itr++) {
-      std::cout << "rebuilding font " << i << " with size " << (*itr).first << " hmm " << (*itr).second << std::endl;
+    std::map<int,void*>::iterator itr;
+    itr = fontFaces[i].sizes.begin();
+    while(itr != fontFaces[i].sizes.end()) {
+      std::map<int,void*>::iterator next = itr;
+      ++next; // must get the next since rebuildSize may clear(), else .. kaboom
+      //      std::cout << "rebuilding font " << i << " with size " << (*itr).first << " hmm " << (*itr).second << std::endl;
       if ((*itr).second) {
 	rebuildSize(i, (*itr).first);
       }
+      itr = next;
     }
   }
   loadAll(fontDirectory);
@@ -427,6 +442,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       
       theFont->Render(&tmpText[startSend]);
 
+      glDisable(GL_TEXTURE_2D);
       if (underline) {
 	glEnable(GL_BLEND);
 	if (bright && underlineColor[0] >= 0) {
@@ -443,6 +459,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glVertex2f(width, 0.0f);
 	glEnd();
       }
+      glEnable(GL_TEXTURE_2D);
       glDepthMask(BZDBCache::zbuffer);
       glPopMatrix();
       // x transform for next substr
