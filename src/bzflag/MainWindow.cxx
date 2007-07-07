@@ -39,7 +39,7 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 {
   window->addResizeCallback(resizeCB, this);
   window->addExposeCallback(exposeCB, this);
-  resize();
+  //  resize();
 }
 
 MainWindow::~MainWindow()
@@ -57,7 +57,7 @@ void			MainWindow::setMinSize(int _minWidth, int _minHeight)
   minWidth = _minWidth;
   minHeight = _minHeight;
   window->setMinSize(minWidth, minHeight);
-  resize();
+  // resize();
 }
 
 void			MainWindow::setPosition(int x, int y)
