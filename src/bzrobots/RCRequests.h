@@ -31,6 +31,7 @@ struct RCRequestZeroArgument : public RCRequest
 };
 struct RCRequestBotSpecific : public RCRequest
 {
+  RCRequestBotSpecific() { robotIndex = 0; }
   RCRequest::parseStatus parse(char **arguments, int count);
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream) const;
@@ -106,11 +107,13 @@ struct GetConstantsReq : public RCRequestZeroArgument {
 };
 
 struct IdentifyFrontend :public RCRequest {
+  IdentifyFrontend() :version("") {}
+  IdentifyFrontend(std::string _version) :version(_version) {}
   std::string getType() const { return "IdentifyFrontend"; }
   RCRequest::parseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
-  private: char *version;
+  private: std::string version;
 };
 
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */

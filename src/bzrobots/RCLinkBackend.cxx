@@ -12,20 +12,16 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <stdarg.h>
 
 #include "RCLinkBackend.h"
 #include "RCMessageFactory.h"
 
-#include "version.h"
+#include "bzflag.h"
+#include "Roster.h"
 
-RCLinkBackend::RCLinkBackend(int _port) :requests(NULL)
-{
-  port = _port;
-  startListening();
-}
+#include "version.h"
 
 RCLink::State RCLinkBackend::getDisconnectedState()
 {
@@ -59,7 +55,6 @@ void RCLinkBackend::update()
       RCRequest *req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
-        sendAck(req);
       } else {
         fprintf(stderr, "RCLink: Expected an 'IdentifyFrontend'.\n");
         write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
@@ -93,7 +88,7 @@ bool RCLinkBackend::parseCommand(char *cmdline)
 
   req = RCREQUEST.Message(argv[0]);
   if (req == NULL) {
-    fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
+    fprintf(stderr, "RCLinkBackend: Invalid request: '%s'\n", argv[0]);
     sendf("error Invalid request %s\n", argv[0]);
     return false;
   } else {
@@ -106,15 +101,15 @@ bool RCLinkBackend::parseCommand(char *cmdline)
           requests->append(req);
         return true;
       case RCRequest::InvalidArgumentCount:
-        fprintf(stderr, "RCLink: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
+        fprintf(stderr, "RCLinkBackend: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
       case RCRequest::InvalidArguments:
-        fprintf(stderr, "RCLink: Invalid arguments for request: '%s'\n", argv[0]);
+        fprintf(stderr, "RCLinkBackend: Invalid arguments for request: '%s'\n", argv[0]);
         sendf("error Invalid arguments for request: '%s'\n", argv[0]);
         return false;
       default:
-        fprintf(stderr, "RCLink: Parse neither succeeded or failed with a known failcode. WTF?\n");
+        fprintf(stderr, "RCLinkBackend: Parse neither succeeded or failed with a known failcode. WTF?\n");
         return false;
     }
   }
@@ -147,8 +142,7 @@ bool RCLinkBackend::tryAccept()
 
 void RCLinkBackend::sendAck(RCRequest *req)
 {
-  float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
-  sendf("ack %f %s\n", elapsed, getMessage(req).c_str());
+  send(CommandDoneReply(req->getType()));
 }
 
 // Local Variables: ***

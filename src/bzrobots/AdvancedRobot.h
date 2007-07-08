@@ -15,8 +15,8 @@
  * RoboCode-compliant AdvancedRobot (see BZRobot for the "normal" one)
  */
 
-#ifndef	ADVANCEDROBOT_H_20070707
-#define	ADVANCEDROBOT_H_20070707
+#ifndef BZROBOTS_ADVANCEDROBOT_H
+#define BZROBOTS_ADVANCEDROBOT_H
 
 #include "BZAdvancedRobot.h"
 

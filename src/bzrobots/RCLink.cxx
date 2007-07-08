@@ -36,7 +36,37 @@ RCLink::~RCLink()
 {
 }
 
-void RCLink::startListening()
+/* Waits forever for data to come down on connfd. (NOTE: doesn't check listenfd,
+ * so only use this if you're ignoring connects.) */
+bool RCLink::waitForData()
+{
+  if (status != Connected)
+  {
+    error = "Not connected!";
+    return false;
+  }
+
+  fd_set fds;
+  int socks;
+
+  FD_ZERO(&fds);
+  FD_SET(connfd, &fds);
+
+  while (true)
+  {
+    socks = select(connfd + 1, &fds, NULL, NULL, NULL);
+    if (socks < 0)
+    {
+      status = SocketError;
+      error = strerror(errno);
+      return false;
+    }
+    else if (socks > 0)
+      return true;
+  }
+}
+
+void RCLink::startListening(int port)
 {
   struct sockaddr_in sa;
 
@@ -52,6 +82,11 @@ void RCLink::startListening()
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
   if (listenfd == -1)
     return;
+
+  int reuse_addr = 1; /* Used so we can re-bind to our port
+                         while a previous connection is still
+                         in TIME_WAIT state. */
+  setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
 
   if (bind(listenfd, (sockaddr*)&sa, sizeof(sa)) == -1) {
     close(listenfd);
@@ -73,12 +108,17 @@ void RCLink::startListening()
 bool RCLink::tryAccept()
 {
   if (status != Listening)
+  {
+    error = "Cannot accept when not listening!";
     return false;
-
+  }
   // O_NONBLOCK is set so we'll probably return immediately.
   connfd = accept(listenfd, NULL, 0);
   if (connfd == -1)
+  {
+    error = strerror(errno);
     return false;
+  }
 
   //BzfNetwork::setNonBlocking(connfd);
   int flags = fcntl(connfd, F_GETFL);
@@ -89,16 +129,22 @@ bool RCLink::tryAccept()
   recv_amount = 0;
   input_toolong = false;
 
+  fprintf(stderr, "RCLink: Accepted a new frontend connection.\n");
+
   // Now we wait for them to introduce themselves.
   return true;
 }
 
 
-bool RCLink::connect()
+bool RCLink::connect(const char *host, int port)
 {
+  status = Disconnected;
   connfd = socket(AF_INET, SOCK_STREAM, 0);
   if (connfd < 0)
+  {
+    error = strerror(errno);
     return false;
+  }
 
   sockaddr_in remote;
   remote.sin_port = htons(port);
@@ -106,12 +152,17 @@ bool RCLink::connect()
 
   hostent *hostdata = gethostbyname(host);
   if (hostdata == NULL)
+  {
+    error = hstrerror(h_errno);
     return false;
-
+  }
   memcpy(&remote.sin_addr.s_addr, hostdata->h_addr_list[0], hostdata->h_length);
 
   if (::connect(connfd, (sockaddr *)&remote, sizeof(remote)) < 0)
+  {
+    error = strerror(errno);
     return false;
+  }
 
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
@@ -126,6 +177,7 @@ bool RCLink::connect()
 bool RCLink::send(const char* message)
 {
   if (output_overflow) {
+    error = "Output overflow! (more data than buffer can take)";
     return false;
   }
 
@@ -133,6 +185,7 @@ bool RCLink::send(const char* message)
 
   if (send_amount + messagelen > RC_LINK_SENDBUFLEN) {
     fprintf(stderr, "RCLink: setting output_overflow\n");
+    error = "Output overflow! (more data than buffer can take)";
     output_overflow = true;
     return false;
   }
@@ -154,6 +207,7 @@ bool RCLink::sendf(const char *format, ...)
   int messagelen;
 
   if (output_overflow) {
+    error = "Output overflow! (more data than buffer can take)";
     return false;
   }
 
@@ -164,6 +218,7 @@ bool RCLink::sendf(const char *format, ...)
 
   if (send_amount + messagelen >= RC_LINK_SENDBUFLEN) {
     fprintf(stderr, "RCLink: setting output_overflow\n");
+    error = "Output overflow! (more data than buffer can take)";
     output_overflow = true;
     return false;
   }
@@ -247,7 +302,7 @@ int RCLink::updateRead()
       status = getDisconnectedState(); 
       return -1;
     } else if (nread == -1 && errno != EAGAIN) {
-      perror("RCLink: Read failed.");
+      perror("RCLink: Read failed");
       status = SocketError;
       return -1;
     } else if (nread == -1) {
@@ -333,6 +388,7 @@ int RCLink::updateParse(int maxlines)
 
   return ncommands;
 }
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

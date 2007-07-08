@@ -22,12 +22,15 @@
 class Frontend
 {
     RCLinkFrontend *link;
-    /* Should only be instantiated from run() */
-    Frontend(const char *host, int port);
+    bool sentStuff;
+    Frontend();
+    std::string error;
     public:
       static bool run(const char *host, int port); 
 
-      void update(void);
+      bool connect(const char *host, int port);
+      bool update(void);
+      const std::string &getError() const { return error; }
 };
 
 #endif

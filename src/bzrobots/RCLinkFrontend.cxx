@@ -12,7 +12,6 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <stdarg.h>
 
@@ -21,35 +20,58 @@
 
 #include "version.h"
 
-RCLinkFrontend::RCLinkFrontend(std::string _host, int _port) :replies(NULL)
-{
-  port = _port;
-  host = _host.c_str();
-  connect();
-}
-
 RCLink::State RCLinkFrontend::getDisconnectedState()
 {
     return RCLink::Disconnected;
 }
 
+bool RCLinkFrontend::hasReply(const std::string command) const
+{
+  if (!replies)
+    return false;
+  RCReply *reply = replies;
+  do {
+    if (reply->getType() == "CommandDone" && ((CommandDoneReply *)reply)->command == command)
+      return true;
+    reply = reply->getNext();
+  } while (reply != NULL);
+  return false;
+}
+
+bool RCLinkFrontend::waitForReply(const std::string command)
+{
+  if (status != Connected)
+    return false;
+
+  if (hasReply(command))
+    return true;
+
+  while (waitForData())
+  {
+    update();
+    if (hasReply(command))
+      return true;
+  }
+
+  // We only get here if waitForData() returns false -> an error occured.
+  return false;
+}
 
 /*
  * Check for activity.  If possible, fill up the recvbuf with incoming data
  * and build up RCReply objects as appropriate.
  */
-void RCLinkFrontend::update()
+bool RCLinkFrontend::update()
 {
-  if (status != Connected && status != Connecting) {
-    return;
-  }
+  if (status != Connected && status != Connecting)
+    return false;
 
   updateWrite();
   int amount = updateRead();
 
   if (amount == -1) {
     status = Disconnected;
-    return;
+    return false;
   }
 
   if (status == Connected) {
@@ -59,14 +81,17 @@ void RCLinkFrontend::update()
     if (ncommands) {
       RCReply *rep = popReply();
       if (rep && rep->getType() == "IdentifyBackend") {
+        send(IdentifyFrontend(getRobotsProtocolVersion()));
         status = Connected;
       } else {
         fprintf(stderr, "RCLink: Expected an 'IdentifyBackend'.\n");
         close(connfd);
         status = Disconnected;
+        return false;
       }
     }
   }
+  return true;
 }
 
 /*

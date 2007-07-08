@@ -25,11 +25,23 @@
 
 struct IdentifyBackend : public RCReply
 {
+  IdentifyBackend() :version("") {}
+  IdentifyBackend(std::string _version) :version(_version) {}
   std::string getType() const { return "IdentifyBackend"; }
   RCReply::parseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
-  private: char *version;
+  private: std::string version;
+};
+
+struct CommandDoneReply : public RCReply
+{
+  CommandDoneReply(std::string _command) :command(_command) {}
+  CommandDoneReply() :command("") {}
+  std::string getType() const { return "CommandDone"; }
+  RCReply::parseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  std::string command;
 };
 
 struct GunHeatReply : public RCReply

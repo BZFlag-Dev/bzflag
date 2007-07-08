@@ -1,15 +1,17 @@
 #include "RCReplies.h"
 
+#include "RCMessageFactory.h"
+
 #include "version.h"
 
 RCReply::parseStatus IdentifyBackend::parse(char **arguments, int count)
 {
   if (count != 1)
     return InvalidArgumentCount;
+  version = arguments[0];
   /* Version-checking, to be sure we're speaking the same language! */
-  if (strcasecmp(arguments[0], getRobotsProtocolVersion()) != 0)
+  if (version != getRobotsProtocolVersion())
     return InvalidArguments;
-  version = strdup(arguments[0]);
   return ParseOk;
 }
 void IdentifyBackend::getParameters(std::ostream &stream) const
@@ -17,6 +19,21 @@ void IdentifyBackend::getParameters(std::ostream &stream) const
     stream << version;
 } 
 
+RCReply::parseStatus CommandDoneReply::parse(char **arguments, int count)
+{
+  if (count != 1)
+    return InvalidArgumentCount;
+
+  command = arguments[0];
+  if (!RCREQUEST.IsRegistered(command))
+    return InvalidArguments;
+
+  return ParseOk;
+}
+void CommandDoneReply::getParameters(std::ostream &stream) const
+{
+    stream << command;
+}
 
 RCReply::parseStatus GunHeatReply::parse(char **arguments, int count)
 {

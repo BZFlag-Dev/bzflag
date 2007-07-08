@@ -33,6 +33,7 @@ template<>
 void RCMessageFactory<RCReply>::initialize()
 {
     RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
+    ADD_LOOKUP(CommandDone);
     ADD_LOOKUP(GunHeat);
     ADD_LOOKUP(DistanceRemaining);
     ADD_LOOKUP(TurnRemaining);

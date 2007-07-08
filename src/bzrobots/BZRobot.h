@@ -14,8 +14,8 @@
  * BZRobot: A class for simulation and implementation of a Frontend robot.
  */
 
-#ifndef	BZROBOT_H_20070707
-#define	BZROBOT_H_20070707
+#ifndef BZROBOTS_BZROBOT_H
+#define BZROBOTS_BZROBOT_H
 
 #include "BZAdvancedRobot.h"
 

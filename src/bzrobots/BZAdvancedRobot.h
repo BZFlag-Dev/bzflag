@@ -14,8 +14,8 @@
  * BZAdvancedRobot: A class for simulation and implementation of a Frontend advanced robot.
  */
 
-#ifndef	BZADVANCEDROBOT_H_20070707
-#define	BZADVANCEDROBOT_H_20070707
+#ifndef BZROBOTS_BZADVANCEDROBOT_H
+#define BZROBOTS_BZADVANCEDROBOT_H
 
 class BZAdvancedRobot
 {

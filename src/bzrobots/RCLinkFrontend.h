@@ -25,14 +25,16 @@ class RCLinkFrontend : public RCLink
 {
   private:
     RCReply *replies;
+    bool hasReply(const std::string command) const;
 
   public:
-    RCLinkFrontend(std::string _host, int _port);
-    void update();
+    RCLinkFrontend() :replies(NULL) {}
+    bool update();
     bool parseCommand(char *cmdline);
     RCReply* popReply();
     RCReply* peekReply();
     State getDisconnectedState();
+    bool waitForReply(const std::string command);
 };
 
 #endif

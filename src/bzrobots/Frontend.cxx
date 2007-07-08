@@ -5,37 +5,68 @@
 
 #include <unistd.h>
 
+#include <iostream>
+
 bool Frontend::run(const char *host, int port)
 {
+  pid_t pid = fork();
+  if (pid < 0)
+    return false;
+  else if (pid > 0)
     return true;
-    pid_t pid = fork();
-    if (pid < 0)
-        return false;
-    else if (pid > 0)
-        return true;
 
-    Frontend frontend(host, port);
+  Frontend frontend;
+  if (!frontend.connect(host, port))
+  {
+    std::cout << "Frontend failed to connect! Bailing! (" << frontend.getError() << ")" << std::endl;
+    return false;
+  }
 
-    while (true)
-    {
-        frontend.update();
-        TimeKeeper::sleep(0.01);
-    }
+  std::cout << "Frontend initialized, " << host << ":" << port << std::endl;
+  while (frontend.update())
+  {
+    TimeKeeper::sleep(0.01);
+  }
 
-    /* Yeah, right. */
-    return true;
+  std::cout << "Frontend disconnected / failed! (" << frontend.getError() << ")" << std::endl;
+  exit(1);
+
+  /* Yeah, right. */
+  return true;
 }
 
-Frontend::Frontend(const char *host, int port)
+Frontend::Frontend() :sentStuff(false)
 {
-    RCMessageFactory<RCReply>::initialize();
-    link = new RCLinkFrontend(host, port);
-    RCREPLY.setLink(link);
+  RCMessageFactory<RCReply>::initialize();
+}
+bool Frontend::connect(const char *host, int port)
+{
+  link = new RCLinkFrontend();
+  RCREPLY.setLink(link);
+  return link->connect(host, port);
 }
 
-void Frontend::update()
+bool Frontend::update()
 {
-    link->update();
+  if (!link->update())
+    return false;
+  if (link->getStatus() == RCLink::Connected && !sentStuff)
+  {
+    TimeKeeper::sleep(2.0);
+    link->send(SetFireReq());
+    link->send(ExecuteReq());
+    link->send(GetGunHeatReq());
+    std::cout << "[OK] GetGunHeat 0" << std::endl;
+
+    link->waitForReply("GetGunHeat");
+    std::cout << "[OK] Reply" << std::endl;
+
+    RCReply *reply;
+    while ((reply = link->popReply()))
+      std::cout << "Got message: " << reply->asString() << std::endl;
+    sentStuff = true;
+  }
+  return true;
 }
 
 // Local Variables: ***

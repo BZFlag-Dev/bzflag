@@ -37,10 +37,8 @@ class RCRequest :public RCMessage<RCRequest>
 
     static void initializeLookup(void);
 
-  private:
-    int robotIndex;
-
   protected:
+    int robotIndex;
     int setRobotIndex(char *arg);
 };
 

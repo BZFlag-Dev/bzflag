@@ -47,8 +47,8 @@ class RCLink {
     RCLink();
     virtual ~RCLink();
 
-    bool connect();
-    void startListening();
+    bool connect(const char *host, int port);
+    void startListening(int port);
     virtual bool tryAccept();
     virtual State getDisconnectedState() = 0;
 
@@ -57,6 +57,9 @@ class RCLink {
     int updateWrite();
     int updateRead();
     void detachAgents();
+    bool waitForData();
+    State getStatus() const { return status; }
+    const std::string &getError() const { return error; }
 
     bool send(const char *message);
     bool sendf(const char *format, ...);
@@ -64,7 +67,7 @@ class RCLink {
     template<class C>
     bool send(const RCMessage<C> *message)
     {
-      return sendf("%s\n", getMessage(message).c_str());
+      return sendf("%s\n", message->asString().c_str());
     }
     template<class C>
     bool send(const RCMessage<C> &message)
@@ -73,23 +76,13 @@ class RCLink {
     }
 
   protected:
-    template<class C>
-    std::string getMessage(const RCMessage<C> *message)
-    {
-      std::stringstream ss;
-      ss << message->getType() << " ";
-      message->getParameters(ss);
-      return ss.str();
-    }
-
     State status;
     int listenfd, connfd;
-    int port;
-    const char *host;
     char recvbuf[RC_LINK_RECVBUFLEN];
     char sendbuf[RC_LINK_SENDBUFLEN];
     int recv_amount, send_amount;
     bool input_toolong, output_overflow;
+    std::string error;
 };
 
 

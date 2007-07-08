@@ -1728,14 +1728,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
-	if (rcLink) {
-	  robots[i] = new RCRobotPlayer(id, callsign, serverLink,
-              startupInfo.email);
+        robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
 	  fprintf(stderr, "new tank; type: %d\n", robots[i]->getPlayerType());
-	} else {
-	  robots[i] = new RobotPlayer(id, callsign, serverLink,
-				      startupInfo.email);
-	}
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
 			      robots[i]->getCallSign(),
@@ -2703,11 +2697,6 @@ static void enteringServer(void *buf)
   addRobots();
 #endif
 
-  // start listening on remote control port
-  if (rcLink) {
-    rcLink->startListening();
-  }
-
   // initialize some other stuff
   updateNumPlayers();
   updateHighScores();
@@ -3342,7 +3331,9 @@ static void		playingLoop()
 
       // Communicate with remote agent if necessary
       if (rcLink) {
-	rcLink->tryAccept();
+        if (numRobots >= numRobotTanks)
+          rcLink->tryAccept();
+
 	rcLink->update();
 	doBotRequests();
       }
@@ -3460,12 +3451,13 @@ void			botStartPlaying()
     RCMessageFactory<RCRequest>::initialize();
 
     int port = atoi(BZDB.get("rcPort").c_str());
-    rcLink = new RCLinkBackend(port);
+    rcLink = new RCLinkBackend();
+    rcLink->startListening(port);
     RCREQUEST.setLink(rcLink);
     if (!Frontend::run("localhost", port))
     {
       fprintf(stderr, "Could not fork Frontend!\n");
-      exit(1);
+      exit(0);
     }
   }
 

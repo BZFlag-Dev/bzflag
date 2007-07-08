@@ -15,8 +15,8 @@
  * RoboCode-compliant AdvancedRobot (see BZRobot for the "normal" one)
  */
 
-#ifndef ROBOT_H_20070707
-#define ROBOT_H_20070707
+#ifndef BZROBOTS_ROBOT_H
+#define BZROBOTS_ROBOT_H
 
 class Robot :public BZRobot
 {

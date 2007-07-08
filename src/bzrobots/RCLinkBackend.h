@@ -30,7 +30,7 @@ class RCLinkBackend : public RCLink
     RCRequest *requests;
 
   public:
-    RCLinkBackend(int port);
+    RCLinkBackend() :requests(NULL) {}
     void update();
     bool parseCommand(char *cmdline);
     RCRequest* popRequest();

@@ -29,13 +29,13 @@ void RCRequestBotSpecific::getParameters(std::ostream &stream) const
 
 RCRequest::parseStatus IdentifyFrontend::parse(char **arguments, int count)
 {
-    if (count != 1)
-        return InvalidArgumentCount;
-    /* Version-checking, to be sure we're speaking the same language! */
-    if (strcasecmp(arguments[0], getRobotsProtocolVersion()) != 0)
-        return InvalidArguments;
-    version = strdup(arguments[0]);
-    return ParseOk;
+  if (count != 1)
+    return InvalidArgumentCount;
+  version = arguments[0];
+  /* Version-checking, to be sure we're speaking the same language! */
+  if (version != getRobotsProtocolVersion())
+    return InvalidArguments;
+  return ParseOk;
 }
 void IdentifyFrontend::getParameters(std::ostream &stream) const
 {
