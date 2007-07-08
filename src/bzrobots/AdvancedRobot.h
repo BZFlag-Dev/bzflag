@@ -22,23 +22,21 @@
 
 class AdvancedRobot :public BZAdvancedRobot
 {
-    protected:
-        double getGunTurnRemaining();
-        double getRadarTurnRemaining();
-        bool isAdjustGunForRobotTurn();
-        bool isAdjustRadarForRobotTurn();
-        void setBack(double distance);
-        void setFire(double power);
-        // TODO: Implement 'Bullet setFireBullet(double power)'?
-        void setMaxTurnRate(double maxTurnRate); // This needs to divide by the max, so we get something between 0 and 1, then pass to setTurnRate
-        void setMaxSpeed(double maxSpeed); // This needs to divide by the max, so we get something between 0 and 1, then pass to setSpeed
-        void setTurnGunLeft(double degrees);
-        void setTurnGunRight(double degrees);
-        void setTurnRadarLeft(double degrees);
-        void setTurnRadarRight(double degrees);
-        void setTurnRight(double degrees);
-    public:
-
+  protected:
+    double getGunTurnRemaining();
+    double getRadarTurnRemaining();
+    bool isAdjustGunForRobotTurn();
+    bool isAdjustRadarForRobotTurn();
+    void setBack(double distance);
+    void setFire(double power);
+    // TODO: Implement 'Bullet setFireBullet(double power)'?
+    void setMaxTurnRate(double maxTurnRate); // This needs to divide by the max, so we get something between 0 and 1, then pass to setTurnRate
+    void setMaxSpeed(double maxSpeed); // This needs to divide by the max, so we get something between 0 and 1, then pass to setSpeed
+    void setTurnGunLeft(double degrees);
+    void setTurnGunRight(double degrees);
+    void setTurnRadarLeft(double degrees);
+    void setTurnRadarRight(double degrees);
+    void setTurnRight(double degrees);
 };
 
 #endif
@@ -50,4 +48,3 @@ class AdvancedRobot :public BZAdvancedRobot
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -20,6 +20,10 @@
 
 #include "RCLink.h"
 #include "RCReply.h"
+#include "BZAdvancedRobot.h"
+
+class RCReply; class RCRequest;
+class BZAdvancedRobot;
 
 class RCLinkFrontend : public RCLink
 {
@@ -35,6 +39,7 @@ class RCLinkFrontend : public RCLink
     RCReply* peekReply();
     State getDisconnectedState();
     bool waitForReply(const std::string command);
+    bool sendAndProcess(const RCRequest &request, BZAdvancedRobot *bot);
 };
 
 #endif

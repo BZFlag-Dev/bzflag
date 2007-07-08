@@ -51,7 +51,8 @@ struct GunHeatReply : public RCReply
   std::string getType() const { return "GunHeat"; }
   RCReply::parseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  
+  bool updateBot(BZAdvancedRobot *robot) const;
+
   private: float heat;
 };
 

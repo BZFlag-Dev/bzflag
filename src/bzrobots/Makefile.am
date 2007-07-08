@@ -52,6 +52,8 @@ genericfiles =				\
 	BZRobot.h			\
 	Robot.cxx			\
 	Robot.h				\
+	TestRobot.cxx			\
+	TestRobot.h			\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\

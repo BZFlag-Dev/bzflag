@@ -11,27 +11,18 @@
  */
 
 /*
- * Remote Control Reply: Encapsulates the reply to a request from a frontend.
+ * TestRobot: Testing basic stuff.
  */
 
-#ifndef	BZF_RC_REPLY_H
-#define	BZF_RC_REPLY_H
+#ifndef BZROBOTS_TESTROBOT_H
+#define BZROBOTS_TESTROBOT_H
 
-#include "common.h"
-#include "RCMessage.h"
-#include "BZAdvancedRobot.h" 
+#include "BZAdvancedRobot.h"
 
-#include <string>
-#include <map>
-
-class BZAdvancedRobot;
-
-class RCReply :public RCMessage<RCReply> {
-  public:
-    virtual bool updateBot(BZAdvancedRobot *) const { return true; }
-    virtual parseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() const = 0;
-    virtual void getParameters(std::ostream &stream) const = 0;
+struct TestRobot :public BZAdvancedRobot
+{
+  TestRobot(RCLinkFrontend *_link) :BZAdvancedRobot(_link) {}
+  void run();
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "TimeKeeper.h"
 #include "RCMessageFactory.h"
+#include "TestRobot.h"
 
 #include <unistd.h>
 
@@ -23,11 +24,7 @@ bool Frontend::run(const char *host, int port)
   }
 
   std::cout << "Frontend initialized, " << host << ":" << port << std::endl;
-  while (frontend.update())
-  {
-    TimeKeeper::sleep(0.01);
-  }
-
+  frontend.start();
   std::cout << "Frontend disconnected / failed! (" << frontend.getError() << ")" << std::endl;
   return false;
 }
@@ -49,7 +46,6 @@ bool Frontend::update()
     return false;
   if (link->getStatus() == RCLink::Connected && !sentStuff)
   {
-    TimeKeeper::sleep(2.0);
     link->send(SetFireReq());
     link->send(ExecuteReq());
     link->send(GetGunHeatReq());
@@ -64,6 +60,11 @@ bool Frontend::update()
     sentStuff = true;
   }
   return true;
+}
+void Frontend::start()
+{
+  TestRobot bot(link);
+  bot.run();
 }
 
 // Local Variables: ***

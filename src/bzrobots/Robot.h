@@ -20,28 +20,28 @@
 
 class Robot :public BZRobot
 {
-    protected:
-        void back(double distance);
-        void fire(double power);
-        // TODO: Implement 'Bullet fireBullet(double power);' ?
+  protected:
+    void back(double distance);
+    void fire(double power);
+    // TODO: Implement 'Bullet fireBullet(double power);' ?
 
-        double getEnergy();
-        double getGunCoolingRate(); // This should return the same as getTickDuration. :-)
-        double getGunHeading();
-        double getRadarHeading();
+    double getEnergy();
+    double getGunCoolingRate(); // This should return the same as getTickDuration. :-)
+    double getGunHeading();
+    double getRadarHeading();
 
-        int getNumRounds();
-        int getRoundNum();
+    int getNumRounds();
+    int getRoundNum();
 
-        void setAdjustGunForRobotTurn(bool independent);
-        void setAdjustRadarForGunTurn(bool independent);
-        void setAdjustRadarForRobotTurn(bool independent);
+    void setAdjustGunForRobotTurn(bool independent);
+    void setAdjustRadarForGunTurn(bool independent);
+    void setAdjustRadarForRobotTurn(bool independent);
 
-        void turnGunRight(double degrees);
-        void turnGunLeft(double degrees);
-        void turnRadarRight(double degrees);
-        void turnRadarLeft(double degrees);
-        void turnRight(double degrees);
+    void turnGunRight(double degrees);
+    void turnGunLeft(double degrees);
+    void turnRadarRight(double degrees);
+    void turnRadarLeft(double degrees);
+    void turnRight(double degrees);
 };
 
 #endif
@@ -53,4 +53,3 @@ class Robot :public BZRobot
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

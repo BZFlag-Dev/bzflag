@@ -30,6 +30,7 @@ class Frontend
 
       bool connect(const char *host, int port);
       bool update(void);
+      void start(void);
       const std::string &getError() const { return error; }
 };
 

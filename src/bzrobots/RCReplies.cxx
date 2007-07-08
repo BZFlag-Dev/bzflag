@@ -48,6 +48,11 @@ void GunHeatReply::getParameters(std::ostream &stream) const
 {
     stream << heat;
 }
+bool GunHeatReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->gunHeat = heat;
+  return true;
+}
 
 RCReply::parseStatus DistanceRemainingReply::parse(char **arguments, int count)
 {

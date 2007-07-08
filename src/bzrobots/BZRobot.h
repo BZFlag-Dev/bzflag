@@ -21,18 +21,16 @@
 
 class BZRobot :public BZAdvancedRobot
 {
-    protected:
-        void ahead(double distance);
-        void doNothing();
-        void fire();
-        // TODO: Implement 'Bullet fireBullet();' ?
-        void resume();
-        void stop();
-        void stop(bool overwrite);
-        // TODO: void scan(); ?
-        void turnLeft(double degrees);
-    public:
-
+  protected:
+    void ahead(double distance);
+    void doNothing();
+    void fire();
+    // TODO: Implement 'Bullet fireBullet();' ?
+    void resume();
+    void stop();
+    void stop(bool overwrite);
+    // TODO: void scan(); ?
+    void turnLeft(double degrees);
 };
 
 #endif
@@ -44,4 +42,3 @@ class BZRobot :public BZAdvancedRobot
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

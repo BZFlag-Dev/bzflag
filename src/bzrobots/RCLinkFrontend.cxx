@@ -25,16 +25,32 @@ RCLink::State RCLinkFrontend::getDisconnectedState()
     return RCLink::Disconnected;
 }
 
+bool RCLinkFrontend::sendAndProcess(const RCRequest &request, BZAdvancedRobot *bot)
+{
+  if (!send(request))
+    return false;
+  waitForReply(request.getType());
+
+  RCReply *reply = replies;
+  while (reply != NULL)
+  {
+    reply->updateBot(bot);
+    reply = reply->getNext();
+  }
+
+  return true;
+}
+
 bool RCLinkFrontend::hasReply(const std::string command) const
 {
-  if (!replies)
-    return false;
   RCReply *reply = replies;
-  do {
+  while (reply != NULL)
+  {
     if (reply->getType() == "CommandDone" && ((CommandDoneReply *)reply)->command == command)
       return true;
     reply = reply->getNext();
-  } while (reply != NULL);
+  }
+
   return false;
 }
 
