@@ -3455,10 +3455,7 @@ void			botStartPlaying()
     rcLink->startListening(port);
     RCREQUEST.setLink(rcLink);
     if (!Frontend::run("localhost", port))
-    {
-      fprintf(stderr, "Could not fork Frontend!\n");
-      exit(0);
-    }
+      return;
   }
 
   // enter game if we have all the info we need, otherwise

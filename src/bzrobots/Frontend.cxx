@@ -29,10 +29,7 @@ bool Frontend::run(const char *host, int port)
   }
 
   std::cout << "Frontend disconnected / failed! (" << frontend.getError() << ")" << std::endl;
-  exit(1);
-
-  /* Yeah, right. */
-  return true;
+  return false;
 }
 
 Frontend::Frontend() :sentStuff(false)
