@@ -1,27 +1,27 @@
 base
 name Red
-position 40.0 40.0 0.0
+position 0.0 0.0 0.0
 size 5.0 5.0 0.0
 color 1
 end
 
 base
 name Green
-position 40.0 40.0 0.0
+position 0.0 0.0 0.0
 size 5.0 5.0 0.0
 color 2
 end
 
 base
 name Blue
-position 40.0 40.0 0.0
+position 0.0 0.0 0.0
 size 5.0 5.0 0.0
 color 3
 end
 
 base
 name Purple
-position 40.0 40.0 0.0
+position 0.0 0.0 0.0
 size 5.0 5.0 0.0
 color 4
 end
