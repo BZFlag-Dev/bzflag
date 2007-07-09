@@ -4,9 +4,10 @@
 #include "RCMessageFactory.h"
 #include "TestRobot.h"
 
-#include <unistd.h>
+#include "bzsignal.h"
 
 #include <iostream>
+#include <unistd.h>
 
 bool Frontend::run(const char *host, int port)
 {
@@ -15,6 +16,9 @@ bool Frontend::run(const char *host, int port)
     return false;
   else if (pid > 0)
     return true;
+
+  fclose(stdin); // Shouldn't mess around with that here ;-)
+  bzSignal(SIGINT, SIG_DFL);
 
   Frontend frontend;
   if (!frontend.connect(host, port))

@@ -169,7 +169,8 @@ bool GetDistanceRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
     return false;
-  link->sendf("GetDistanceRemaining %f\n", rrp->distanceRemaining);
+
+  link->send(DistanceRemainingReply(rrp->distanceRemaining));
   return true;
 }
 
@@ -177,7 +178,8 @@ bool GetTurnRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (!rrp->isSteadyState())
     return false;
-  link->sendf("GetTurnRemaining %f\n", rrp->turnRemaining);
+
+  link->send(TurnRemainingReply(rrp->turnRemaining));
   return true;
 }
 

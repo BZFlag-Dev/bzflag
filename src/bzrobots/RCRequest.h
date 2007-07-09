@@ -28,7 +28,7 @@ class RCRobotPlayer;
 class RCRequest :public RCMessage<RCRequest>
 {
   public:
-    virtual bool process(RCRobotPlayer *rrp);
+    virtual bool process(RCRobotPlayer *) { return true; }
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() const = 0;
     virtual void getParameters(std::ostream &stream) const = 0;

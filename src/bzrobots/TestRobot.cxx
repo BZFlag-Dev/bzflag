@@ -8,6 +8,17 @@ void TestRobot::run()
     {
         setFire();
         execute();
-        std::cout << "Heat: " << getGunHeat() << std::endl;
+        TimeKeeper::sleep(getGunHeat());
+        setFire();
+        setAhead(100);
+        while (getDistanceRemaining() > 0)
+        {
+            if (getGunHeat() <= 0)
+                setFire();
+            execute();
+        }
+        setTurnLeft(90);
+        while (getTurnRemaining() > 0)
+            execute();
     }
 }

@@ -9,20 +9,19 @@ void BZAdvancedRobot::execute()
 
 double BZAdvancedRobot::getDistanceRemaining()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetDistanceRemainingReq(), this);
+  return distanceRemaining;
 }
 
 double BZAdvancedRobot::getTurnRemaining()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetTurnRemainingReq(), this);
+  return turnRemaining;
 }
 
-double BZAdvancedRobot::setAhead(double distance)
+void BZAdvancedRobot::setAhead(double distance)
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(SetAheadReq(distance), this);
 }
 
 void BZAdvancedRobot::setFire()
@@ -53,6 +52,7 @@ void BZAdvancedRobot::setStop(bool overwrite)
 
 void BZAdvancedRobot::setTurnLeft(double degrees)
 {
+  link->sendAndProcess(SetTurnLeftReq(degrees), this);
 }
 
 

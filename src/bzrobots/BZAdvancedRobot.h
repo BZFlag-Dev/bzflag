@@ -28,7 +28,7 @@ class BZAdvancedRobot
     void execute();
     double getDistanceRemaining();
     double getTurnRemaining();
-    double setAhead(double distance);
+    void setAhead(double distance);
     void setFire();
     // TODO: Implement 'Bullet setFireBullet()'?
     void setTurnRate(double turnRate);
@@ -57,7 +57,7 @@ class BZAdvancedRobot
     BZAdvancedRobot(RCLinkFrontend *_link) :link(_link) {}
     virtual ~BZAdvancedRobot() {}
     
-    float gunHeat;
+    float gunHeat, distanceRemaining, turnRemaining;
 };
 
 #endif

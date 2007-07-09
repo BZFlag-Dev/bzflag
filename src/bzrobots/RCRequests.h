@@ -113,6 +113,7 @@ struct IdentifyFrontend :public RCRequest {
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
 { \
   public: \
+    COMMANDNAME ## Req() {} \
     RCRequest::parseStatus parse(char **arguments, int count); \
     std::string getType() const { return #COMMANDNAME; } \
     bool process(RCRobotPlayer *rrp); \
@@ -129,11 +130,13 @@ private:
 };
 
 DECLARE_REQUEST(SetAhead)
+  SetAheadReq(float _distance) :distance(_distance) {}
 private:
   float distance;
 };
 
 DECLARE_REQUEST(SetTurnLeft)
+  SetTurnLeftReq(float _turn) :turn(_turn) {}
 private:
   float turn;
 };

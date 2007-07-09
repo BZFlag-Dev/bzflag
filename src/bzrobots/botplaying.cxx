@@ -3441,19 +3441,22 @@ void			botStartPlaying()
     printError(aString);
   }
 
-  // startup an RCLinkBackend if requested
-  if (BZDB.isSet("rcPort")) {
-    // here we register the various RCRequest-handlers for commands
-    // that RCLinkBackend receives. :-)
-    RCMessageFactory<RCRequest>::initialize();
+  int port;
+  if (!BZDB.isSet("rcPort")) // Generate a random port between 1024 & 65536.
+    port = (int)(bzfrand() * (65536 - 1024)) + 1024;
+  else
+    port = atoi(BZDB.get("rcPort").c_str());
 
-    int port = atoi(BZDB.get("rcPort").c_str());
-    rcLink = new RCLinkBackend();
-    rcLink->startListening(port);
-    RCREQUEST.setLink(rcLink);
-    if (!Frontend::run("localhost", port))
-      return;
-  }
+  // here we register the various RCRequest-handlers for commands
+  // that RCLinkBackend receives. :-)
+  RCMessageFactory<RCRequest>::initialize();
+
+  rcLink = new RCLinkBackend();
+  rcLink->startListening(port);
+  RCREQUEST.setLink(rcLink);
+
+  if (!Frontend::run("localhost", port))
+    return;
 
   // enter game if we have all the info we need, otherwise
   joinRequested    = true;

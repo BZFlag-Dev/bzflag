@@ -67,6 +67,11 @@ void DistanceRemainingReply::getParameters(std::ostream &stream) const
 {
     stream << distance;
 }
+bool DistanceRemainingReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->distanceRemaining = distance;
+  return true;
+}
 
 RCReply::parseStatus TurnRemainingReply::parse(char **arguments, int count)
 {
@@ -81,6 +86,12 @@ void TurnRemainingReply::getParameters(std::ostream &stream) const
 {
     stream << turn;
 }
+bool TurnRemainingReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->turnRemaining = turn;
+  return true;
+}
+
 
 RCReply::parseStatus TickDurationReply::parse(char **arguments, int count)
 {

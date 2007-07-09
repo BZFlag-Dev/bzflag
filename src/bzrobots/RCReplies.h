@@ -58,18 +58,24 @@ struct GunHeatReply : public RCReply
 
 struct DistanceRemainingReply : public RCReply
 {
+  DistanceRemainingReply() {}
+  DistanceRemainingReply(float _distance) :distance(_distance) {}
   std::string getType() const { return "DistanceRemaining"; }
   RCReply::parseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
   
   private: float distance;
 };
 
 struct TurnRemainingReply : public RCReply
 {
+  TurnRemainingReply() {}
+  TurnRemainingReply(float _turn) :turn(_turn) {}
   std::string getType() const { return "TurnRemaining"; }
   RCReply::parseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
   
   private: float turn;
 };

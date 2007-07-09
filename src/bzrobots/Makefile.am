@@ -27,7 +27,6 @@ genericfiles =				\
 	RCLink.cxx			\
 	RCLink.h			\
 	RCMessage.h			\
-	RCRequest.cxx			\
 	RCRequest.h			\
 	RCRequests.cxx			\
 	RCRequests.h			\
