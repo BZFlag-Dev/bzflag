@@ -29,45 +29,38 @@ struct RCRequestZeroArgument : public RCRequest
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream) const;
 };
-struct RCRequestBotSpecific : public RCRequest
-{
-  RCRequestBotSpecific() { robotIndex = 0; }
-  RCRequest::parseStatus parse(char **arguments, int count);
-  virtual bool process(RCRobotPlayer *rrp) = 0;
-  void getParameters(std::ostream &stream) const;
-};
 
-struct ExecuteReq : public RCRequestBotSpecific
+struct ExecuteReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "Execute"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct SetFireReq : public RCRequestBotSpecific
+struct SetFireReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "SetFire"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetGunHeatReq : public RCRequestBotSpecific
+struct GetGunHeatReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetGunHeat"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetDistanceRemainingReq : public RCRequestBotSpecific
+struct GetDistanceRemainingReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetDistanceRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTurnRemainingReq : public RCRequestBotSpecific
+struct GetTurnRemainingReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetTurnRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTickDurationReq : public RCRequestBotSpecific
+struct GetTickDurationReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetTickDuration"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTickRemainingReq : public RCRequestBotSpecific
+struct GetTickRemainingReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetTickRemaining"; }
   bool process(RCRobotPlayer *rrp);

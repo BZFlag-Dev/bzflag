@@ -40,29 +40,14 @@ bool Frontend::connect(const char *host, int port)
   return link->connect(host, port);
 }
 
-bool Frontend::update()
-{
-  if (!link->update())
-    return false;
-  if (link->getStatus() == RCLink::Connected && !sentStuff)
-  {
-    link->send(SetFireReq());
-    link->send(ExecuteReq());
-    link->send(GetGunHeatReq());
-    std::cout << "[OK] GetGunHeat 0" << std::endl;
-
-    link->waitForReply("GetGunHeat");
-    std::cout << "[OK] Reply" << std::endl;
-
-    RCReply *reply;
-    while ((reply = link->popReply()))
-      std::cout << "Got message: " << reply->asString() << std::endl;
-    sentStuff = true;
-  }
-  return true;
-}
 void Frontend::start()
 {
+  while (link->getStatus() != RCLink::Connected)
+  {
+    link->update();
+    TimeKeeper::sleep(0.5);
+  }
+
   TestRobot bot(link);
   bot.run();
 }

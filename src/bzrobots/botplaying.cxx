@@ -2642,16 +2642,13 @@ static void		sendConstList()
 static void		doBotRequests()
 {
   RCRequest* req;
-  int tankindex;
+
+  if (numRobots < 1)
+    return;
 
   while ((req = rcLink->peekRequest()) != NULL) {
-    tankindex = req->getRobotIndex();
-    if (tankindex == -1) {
-      req->process(NULL);
-    } else {
-      if (!req->process((RCRobotPlayer*)robots[tankindex]))
-        return;
-    }
+    if (!req->process((RCRobotPlayer*)robots[0]))
+      return;
 
     rcLink->popRequest(); // Discard it, we're done with this one.
     rcLink->sendAck(req);

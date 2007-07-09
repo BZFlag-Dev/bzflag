@@ -142,7 +142,6 @@ static void		usage()
 	" [-m | -mute]"
 	" [-p | -rcport <remote-control-port>]"
 	" [-motd <motd-url>] [-nomotd]"
-	" [-solo <num-robots>]"
 	" [-team {red|green|blue|purple|rogue|observer}]"
 	" [-v | -version | --version]"
 	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
@@ -219,13 +218,6 @@ static void		parse(int argc, char** argv)
 		strcmp(argv[i], "-rcport") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("rcPort", argv[i]);
-    } else if (strcmp(argv[i], "-solo") == 0) {
-      checkArgc(i, argc, argv[i]);
-      numRobotTanks = atoi(argv[i]);
-      if (numRobotTanks < 1 || numRobotTanks > MAX_ROBOTS) {
-	printFatalError("Invalid argument for %s.", argv[i-1]);
-	usage();
-      }
     } else if (strcmp(argv[i], "-posnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcPosNoise", argv[i]);

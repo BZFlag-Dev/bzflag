@@ -29,7 +29,6 @@ class Frontend
       static bool run(const char *host, int port); 
 
       bool connect(const char *host, int port);
-      bool update(void);
       void start(void);
       const std::string &getError() const { return error; }
 };

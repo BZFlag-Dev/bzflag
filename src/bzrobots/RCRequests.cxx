@@ -14,18 +14,6 @@ void RCRequestZeroArgument::getParameters(std::ostream &) const
 {
 }
 
-RCRequest::parseStatus RCRequestBotSpecific::parse(char **arguments, int count)
-{
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  return ParseOk;
-}
-void RCRequestBotSpecific::getParameters(std::ostream &stream) const
-{
-  stream << getRobotIndex();
-}
 
 RCRequest::parseStatus IdentifyFrontend::parse(char **arguments, int count)
 {
@@ -85,11 +73,9 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
 
 RCRequest::parseStatus SetSpeedReq::parse(char **arguments, int count)
 {
-  if (count != 2)
+  if (count != 1)
     return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  if (!parseFloat(arguments[1], speed))
+  if (!parseFloat(arguments[0], speed))
     return InvalidArguments;
 
   speed = clamp(speed, 0.0f, 1.0f);
@@ -103,16 +89,14 @@ bool SetSpeedReq::process(RCRobotPlayer *rrp)
 }
 void SetSpeedReq::getParameters(std::ostream &stream) const
 {
-  stream << getRobotIndex() << " " << speed;
+  stream << speed;
 }
 
 RCRequest::parseStatus SetTurnRateReq::parse(char **arguments, int count)
 {
-  if (count != 2)
+  if (count != 1)
     return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  if (!parseFloat(arguments[1], rate))
+  if (!parseFloat(arguments[0], rate))
     return InvalidArguments;
   rate = clamp(rate, 0.0f, 1.0f);
   return ParseOk;
@@ -125,16 +109,14 @@ bool SetTurnRateReq::process(RCRobotPlayer *rrp)
 }
 void SetTurnRateReq::getParameters(std::ostream &stream) const
 {
-  stream << getRobotIndex() << " " << rate;
+  stream << rate;
 }
 
 RCRequest::parseStatus SetAheadReq::parse(char **arguments, int count)
 {
-  if (count != 2)
+  if (count != 1)
     return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  if (!parseFloat(arguments[1], distance))
+  if (!parseFloat(arguments[0], distance))
     return InvalidArguments;
   return ParseOk;
 }
@@ -146,16 +128,14 @@ bool SetAheadReq::process(RCRobotPlayer *rrp)
 }
 void SetAheadReq::getParameters(std::ostream &stream) const
 {
-  stream << getRobotIndex() << " " << distance;
+  stream << distance;
 }
 
 RCRequest::parseStatus SetTurnLeftReq::parse(char **arguments, int count)
 {
-  if (count != 2)
+  if (count != 1)
     return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  if (!parseFloat(arguments[1], turn))
+  if (!parseFloat(arguments[0], turn))
     return InvalidArguments;
   return ParseOk;
 }
@@ -167,7 +147,7 @@ bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
 }
 void SetTurnLeftReq::getParameters(std::ostream &stream) const
 {
-  stream << getRobotIndex() << " " << turn;
+  stream << turn;
 }
 
 bool SetFireReq::process(RCRobotPlayer *rrp)
@@ -211,9 +191,7 @@ RCRequest::parseStatus SetTickDurationReq::parse(char **arguments, int count)
 {
   if (count != 1)
     return InvalidArgumentCount;
-  if (setRobotIndex(arguments[0]) == -1)
-    return InvalidArguments;
-  if (!parseFloat(arguments[1], duration))
+  if (!parseFloat(arguments[0], duration))
     return InvalidArguments;
 
   duration = std::max(duration, 0.0f);
@@ -226,7 +204,7 @@ bool SetTickDurationReq::process(RCRobotPlayer *rrp)
 }
 void SetTickDurationReq::getParameters(std::ostream &stream) const
 {
-  stream << getRobotIndex() << " " << duration;
+  stream << duration;
 }
 
 bool GetTickRemainingReq::process(RCRobotPlayer *rrp)

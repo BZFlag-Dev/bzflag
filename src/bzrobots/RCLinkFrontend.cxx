@@ -31,11 +31,11 @@ bool RCLinkFrontend::sendAndProcess(const RCRequest &request, BZAdvancedRobot *b
     return false;
   waitForReply(request.getType());
 
-  RCReply *reply = replies;
+  RCReply *reply = popReply();
   while (reply != NULL)
   {
     reply->updateBot(bot);
-    reply = reply->getNext();
+    reply = popReply();
   }
 
   return true;

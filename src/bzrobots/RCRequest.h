@@ -28,18 +28,12 @@ class RCRobotPlayer;
 class RCRequest :public RCMessage<RCRequest>
 {
   public:
-    int getRobotIndex() const;
-
     virtual bool process(RCRobotPlayer *rrp);
     virtual parseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() const = 0;
     virtual void getParameters(std::ostream &stream) const = 0;
 
     static void initializeLookup(void);
-
-  protected:
-    int robotIndex;
-    int setRobotIndex(char *arg);
 };
 
 #endif
