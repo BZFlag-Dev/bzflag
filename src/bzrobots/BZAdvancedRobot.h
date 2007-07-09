@@ -37,11 +37,10 @@ class BZAdvancedRobot
     void setStop();
     void setStop(bool overwrite);
     void setTurnLeft(double degrees);
+    double getBattleFieldSize();
 
     // These are normally in Robot and not AdvancedRobot, but due to
     // the upside-down hierarchy we have - they're here instead ;-)
-    double getBattleFieldHeight();
-    double getBattleFieldWidth();
     double getGunHeat();
     double getHeading();
     double getHeight();
@@ -57,7 +56,7 @@ class BZAdvancedRobot
     BZAdvancedRobot(RCLinkFrontend *_link) :link(_link) {}
     virtual ~BZAdvancedRobot() {}
     
-    float gunHeat, distanceRemaining, turnRemaining;
+    float gunHeat, distanceRemaining, turnRemaining, battleFieldSize;
 };
 
 #endif

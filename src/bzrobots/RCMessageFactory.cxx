@@ -17,6 +17,7 @@ void RCMessageFactory<RCRequest>::initialize()
     ADD_LOOKUP(GetTickDuration);
     ADD_LOOKUP(SetTickDuration);
     ADD_LOOKUP(GetTickRemaining);
+    ADD_LOOKUP(GetBattleFieldSize);
     ADD_LOOKUP(GetTeams);
     ADD_LOOKUP(GetBases);
     ADD_LOOKUP(GetObstacles);
@@ -39,6 +40,7 @@ void RCMessageFactory<RCReply>::initialize()
     ADD_LOOKUP(TurnRemaining);
     ADD_LOOKUP(TickDuration);
     ADD_LOOKUP(TickRemaining);
+    ADD_LOOKUP(BattleFieldSize);
 }
 
 // Local Variables: ***

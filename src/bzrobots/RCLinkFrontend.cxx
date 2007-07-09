@@ -140,18 +140,18 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
   } else {
     switch (rep->parse(argv + 1, argc - 1))
     {
-      case RCReply::ParseOk:
+      case ParseOk:
         if (replies == NULL)
           replies = rep;
         else
           replies->append(rep);
         return true;
-      case RCReply::InvalidArgumentCount:
+      case InvalidArgumentCount:
         fprintf(stderr, "RCLink: Invalid number of arguments (%d) for reply: '%s'\n", argc - 1, argv[0]);
         close(connfd);
         status = Disconnected;
         return false;
-      case RCReply::InvalidArguments:
+      case InvalidArguments:
         fprintf(stderr, "RCLink: Invalid arguments for reply: '%s'\n", argv[0]);
         close(connfd);
         status = Disconnected;

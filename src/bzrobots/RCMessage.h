@@ -27,16 +27,17 @@
 class RCLink;
 class RCRobotPlayer;
 
+typedef enum {
+  ParseError,
+  ParseOk,
+  InvalidArgumentCount,
+  InvalidArguments
+} messageParseStatus;
+
 template <class C>
 class RCMessage
 {
   public:
-    typedef enum {
-      ParseError,
-      ParseOk,
-      InvalidArgumentCount,
-      InvalidArguments
-    } parseStatus;
 
     RCMessage() :next(NULL), link(NULL) { }
     virtual ~RCMessage() {}
@@ -55,7 +56,7 @@ class RCMessage
 
     /* These three are dependent on the specific packet-type, so they are
      * left for the complete implementations. :-) */
-    virtual parseStatus parse(char **arguments, int count) = 0;
+    virtual messageParseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() const = 0;
     virtual void getParameters(std::ostream &stream) const = 0;
 
@@ -64,34 +65,6 @@ class RCMessage
       ss << getType() << " ";
       getParameters(ss);
       return ss.str();
-    }
-
-    /* Utility functions. */
-    static bool parseFloat(char *string, float &dest)
-    {
-      char *endptr;
-      dest = strtof(string, &endptr);
-      if (endptr == string)
-          return false;
-
-      /* We don't want NaN no matter what - it's of no use in this scenario.
-       * (And strtof will allow the string "NAN" as NaN) */
-      if (isnan(dest))
-          dest = 0.0f;
-
-      return true;
-    }
-    template <typename T>
-    static T clamp(T val, T min, T max)
-    {
-      // Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
-      //  * If val is nan, the result is undefined
-      //  * If max < min, the result is undefined
-      if (val > max)
-        return max;
-      if (val < min)
-        return min;
-      return val;
     }
 
   private:

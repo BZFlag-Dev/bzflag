@@ -11,12 +11,14 @@
  */
 
 /*
- * AdvancedRobot: A class for the simulation and implementation of mostly
- * RoboCode-compliant AdvancedRobot (see BZRobot for the "normal" one)
+ * Robot: A class for simulation and implementation of a simpler
+ * RoboCode-supporting robot.
  */
 
 #ifndef BZROBOTS_ROBOT_H
 #define BZROBOTS_ROBOT_H
+
+#include "BZRobot.h"
 
 class Robot :public BZRobot
 {
@@ -36,6 +38,9 @@ class Robot :public BZRobot
     void setAdjustGunForRobotTurn(bool independent);
     void setAdjustRadarForGunTurn(bool independent);
     void setAdjustRadarForRobotTurn(bool independent);
+
+    double getBattleFieldHeight();
+    double getBattleFieldWidth();
 
     void turnGunRight(double degrees);
     void turnGunLeft(double degrees);

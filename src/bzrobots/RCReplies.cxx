@@ -1,10 +1,11 @@
 #include "RCReplies.h"
 
 #include "RCMessageFactory.h"
+#include "MessageUtilities.h"
 
 #include "version.h"
 
-RCReply::parseStatus IdentifyBackend::parse(char **arguments, int count)
+messageParseStatus IdentifyBackend::parse(char **arguments, int count)
 {
   if (count != 1)
     return InvalidArgumentCount;
@@ -16,10 +17,10 @@ RCReply::parseStatus IdentifyBackend::parse(char **arguments, int count)
 }
 void IdentifyBackend::getParameters(std::ostream &stream) const
 {
-    stream << version;
+  stream << version;
 } 
 
-RCReply::parseStatus CommandDoneReply::parse(char **arguments, int count)
+messageParseStatus CommandDoneReply::parse(char **arguments, int count)
 {
   if (count != 1)
     return InvalidArgumentCount;
@@ -32,21 +33,16 @@ RCReply::parseStatus CommandDoneReply::parse(char **arguments, int count)
 }
 void CommandDoneReply::getParameters(std::ostream &stream) const
 {
-    stream << command;
+  stream << command;
 }
 
-RCReply::parseStatus GunHeatReply::parse(char **arguments, int count)
+messageParseStatus GunHeatReply::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], heat))
-    return InvalidArguments;
-
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, heat);
 }
 void GunHeatReply::getParameters(std::ostream &stream) const
 {
-    stream << heat;
+  stream << heat;
 }
 bool GunHeatReply::updateBot(BZAdvancedRobot *robot) const
 {
@@ -54,18 +50,13 @@ bool GunHeatReply::updateBot(BZAdvancedRobot *robot) const
   return true;
 }
 
-RCReply::parseStatus DistanceRemainingReply::parse(char **arguments, int count)
+messageParseStatus DistanceRemainingReply::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], distance))
-    return InvalidArguments;
-
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, distance);
 }
 void DistanceRemainingReply::getParameters(std::ostream &stream) const
 {
-    stream << distance;
+  stream << distance;
 }
 bool DistanceRemainingReply::updateBot(BZAdvancedRobot *robot) const
 {
@@ -73,18 +64,13 @@ bool DistanceRemainingReply::updateBot(BZAdvancedRobot *robot) const
   return true;
 }
 
-RCReply::parseStatus TurnRemainingReply::parse(char **arguments, int count)
+messageParseStatus TurnRemainingReply::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], turn))
-    return InvalidArguments;
-
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, turn);
 }
 void TurnRemainingReply::getParameters(std::ostream &stream) const
 {
-    stream << turn;
+  stream << turn;
 }
 bool TurnRemainingReply::updateBot(BZAdvancedRobot *robot) const
 {
@@ -93,33 +79,39 @@ bool TurnRemainingReply::updateBot(BZAdvancedRobot *robot) const
 }
 
 
-RCReply::parseStatus TickDurationReply::parse(char **arguments, int count)
+messageParseStatus TickDurationReply::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], duration))
-    return InvalidArguments;
-
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, duration);
 }
 void TickDurationReply::getParameters(std::ostream &stream) const
 {
-    stream << duration;
+  stream << duration;
 }
 
-RCReply::parseStatus TickRemainingReply::parse(char **arguments, int count)
+messageParseStatus TickRemainingReply::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], remaining))
-    return InvalidArguments;
-
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, remaining);
 }
 void TickRemainingReply::getParameters(std::ostream &stream) const
 {
-    stream << remaining;
+  stream << remaining;
 }
+
+messageParseStatus BattleFieldSizeReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, size);
+}
+void BattleFieldSizeReply::getParameters(std::ostream &stream) const
+{
+  stream << size;
+}
+bool BattleFieldSizeReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->battleFieldSize = size;
+  return true;
+}
+
+//BZDB.set(StateDatabase::BZDB_WORLDSIZE,
 
 // Local Variables: ***
 // mode:C++ ***

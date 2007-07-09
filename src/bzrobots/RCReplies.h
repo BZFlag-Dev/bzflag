@@ -28,7 +28,7 @@ struct IdentifyBackend : public RCReply
   IdentifyBackend() :version("") {}
   IdentifyBackend(std::string _version) :version(_version) {}
   std::string getType() const { return "IdentifyBackend"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
   private: std::string version;
@@ -39,7 +39,7 @@ struct CommandDoneReply : public RCReply
   CommandDoneReply(std::string _command) :command(_command) {}
   CommandDoneReply() :command("") {}
   std::string getType() const { return "CommandDone"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   std::string command;
 };
@@ -49,7 +49,7 @@ struct GunHeatReply : public RCReply
   GunHeatReply() :heat(0.0f) {}
   GunHeatReply(float _heat) :heat(_heat) {}
   std::string getType() const { return "GunHeat"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(BZAdvancedRobot *robot) const;
 
@@ -61,7 +61,7 @@ struct DistanceRemainingReply : public RCReply
   DistanceRemainingReply() {}
   DistanceRemainingReply(float _distance) :distance(_distance) {}
   std::string getType() const { return "DistanceRemaining"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(BZAdvancedRobot *robot) const;
   
@@ -73,7 +73,7 @@ struct TurnRemainingReply : public RCReply
   TurnRemainingReply() {}
   TurnRemainingReply(float _turn) :turn(_turn) {}
   std::string getType() const { return "TurnRemaining"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(BZAdvancedRobot *robot) const;
   
@@ -83,7 +83,7 @@ struct TurnRemainingReply : public RCReply
 struct TickDurationReply : public RCReply
 {
   std::string getType() const { return "TickDuration"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   
   private: float duration;
@@ -92,10 +92,22 @@ struct TickDurationReply : public RCReply
 struct TickRemainingReply : public RCReply
 {
   std::string getType() const { return "TickRemaining"; }
-  RCReply::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
   private: float remaining;
+};
+
+struct BattleFieldSizeReply : public RCReply
+{
+  BattleFieldSizeReply() {}
+  BattleFieldSizeReply(float _size) :size(_size) {}
+  std::string getType() const { return "BattleFieldSize"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float size;
 };
 
 #endif

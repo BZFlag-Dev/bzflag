@@ -94,17 +94,17 @@ bool RCLinkBackend::parseCommand(char *cmdline)
   } else {
     switch (req->parse(argv + 1, argc - 1))
     {
-      case RCRequest::ParseOk:
+      case ParseOk:
         if (requests == NULL)
           requests = req;
         else
           requests->append(req);
         return true;
-      case RCRequest::InvalidArgumentCount:
+      case InvalidArgumentCount:
         fprintf(stderr, "RCLinkBackend: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
-      case RCRequest::InvalidArguments:
+      case InvalidArguments:
         fprintf(stderr, "RCLinkBackend: Invalid arguments for request: '%s'\n", argv[0]);
         sendf("error Invalid arguments for request: '%s'\n", argv[0]);
         return false;

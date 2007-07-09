@@ -33,6 +33,8 @@ genericfiles =				\
 	RCReply.h			\
 	RCReplies.cxx			\
 	RCReplies.h			\
+	MessageUtilities.cxx		\
+	MessageUtilities.h		\
 	RCMessageFactory.h		\
 	RCMessageFactory.cxx		\
 	RCLinkBackend.cxx		\

@@ -1,10 +1,13 @@
 #include "RCRequests.h"
+
 #include "RCReplies.h"
 #include "RCRobotPlayer.h"
+#include "MessageUtilities.h"
+#include "BZDBCache.h"
 
 #include "version.h"
 
-RCRequest::parseStatus RCRequestZeroArgument::parse(char **, int count)
+messageParseStatus RCRequestZeroArgument::parse(char **, int count)
 {
   if (count != 0)
     return InvalidArgumentCount;
@@ -15,7 +18,7 @@ void RCRequestZeroArgument::getParameters(std::ostream &) const
 }
 
 
-RCRequest::parseStatus IdentifyFrontend::parse(char **arguments, int count)
+messageParseStatus IdentifyFrontend::parse(char **arguments, int count)
 {
   if (count != 1)
     return InvalidArgumentCount;
@@ -71,15 +74,12 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-RCRequest::parseStatus SetSpeedReq::parse(char **arguments, int count)
+messageParseStatus SetSpeedReq::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], speed))
-    return InvalidArguments;
-
-  speed = clamp(speed, 0.0f, 1.0f);
-  return ParseOk;
+  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, speed);
+  if (status == ParseOk)
+    speed = MessageUtilities::clamp(speed, 0.0f, 1.0f);
+  return status;
 }
 bool SetSpeedReq::process(RCRobotPlayer *rrp)
 {
@@ -92,14 +92,12 @@ void SetSpeedReq::getParameters(std::ostream &stream) const
   stream << speed;
 }
 
-RCRequest::parseStatus SetTurnRateReq::parse(char **arguments, int count)
+messageParseStatus SetTurnRateReq::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], rate))
-    return InvalidArguments;
-  rate = clamp(rate, 0.0f, 1.0f);
-  return ParseOk;
+  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, rate);
+  if (status == ParseOk)
+    rate = MessageUtilities::clamp(rate, 0.0f, 1.0f);
+  return status;
 }
 bool SetTurnRateReq::process(RCRobotPlayer *rrp)
 {
@@ -112,13 +110,9 @@ void SetTurnRateReq::getParameters(std::ostream &stream) const
   stream << rate;
 }
 
-RCRequest::parseStatus SetAheadReq::parse(char **arguments, int count)
+messageParseStatus SetAheadReq::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], distance))
-    return InvalidArguments;
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, distance);
 }
 bool SetAheadReq::process(RCRobotPlayer *rrp)
 {
@@ -131,13 +125,9 @@ void SetAheadReq::getParameters(std::ostream &stream) const
   stream << distance;
 }
 
-RCRequest::parseStatus SetTurnLeftReq::parse(char **arguments, int count)
+messageParseStatus SetTurnLeftReq::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], turn))
-    return InvalidArguments;
-  return ParseOk;
+  return MessageUtilities::parseSingleFloat(arguments, count, turn);
 }
 bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
 {
@@ -189,15 +179,12 @@ bool GetTickDurationReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-RCRequest::parseStatus SetTickDurationReq::parse(char **arguments, int count)
+messageParseStatus SetTickDurationReq::parse(char **arguments, int count)
 {
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], duration))
-    return InvalidArguments;
-
-  duration = std::max(duration, 0.0f);
-  return ParseOk;
+  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, duration);
+  if (status == ParseOk)
+    duration = std::max(duration, 0.0f);
+  return status;
 }
 bool SetTickDurationReq::process(RCRobotPlayer *rrp)
 {
@@ -216,6 +203,12 @@ bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
   else
     link->send("GetTickRemaining 0.0\n");
 
+  return true;
+}
+
+bool GetBattleFieldSizeReq::process(RCRobotPlayer *)
+{
+  link->send(BattleFieldSizeReply(BZDBCache::worldSize));
   return true;
 }
 

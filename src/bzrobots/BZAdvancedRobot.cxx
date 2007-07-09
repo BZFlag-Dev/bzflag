@@ -29,13 +29,14 @@ void BZAdvancedRobot::setFire()
   link->sendAndProcess(SetFireReq(), this);
 }
 
-// TODO: Implement 'Bullet setFireBullet()'?
 void BZAdvancedRobot::setTurnRate(double turnRate)
 {
+  link->sendAndProcess(SetTurnRateReq(turnRate), this);
 }
 
 void BZAdvancedRobot::setSpeed(double speed)
 {
+  link->sendAndProcess(SetSpeedReq(speed), this);
 }
 
 void BZAdvancedRobot::setResume()
@@ -56,20 +57,14 @@ void BZAdvancedRobot::setTurnLeft(double degrees)
 }
 
 
+double BZAdvancedRobot::getBattleFieldSize()
+{
+  link->sendAndProcess(GetBattleFieldSizeReq(), this);
+  return battleFieldSize;
+}
+
 // These are normally in Robot and not AdvancedRobot, but due to
 // the upside-down hierarchy we have - they're here instead ;-)
-double BZAdvancedRobot::getBattleFieldHeight()
-{
-  /* TODO: Implement this. */
-  return 0.0;
-}
-
-double BZAdvancedRobot::getBattleFieldWidth()
-{
-  /* TODO: Implement this. */
-  return 0.0;
-}
-
 double BZAdvancedRobot::getGunHeat()
 {
   link->sendAndProcess(GetGunHeatReq(), this);

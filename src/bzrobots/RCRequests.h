@@ -25,7 +25,7 @@
 
 struct RCRequestZeroArgument : public RCRequest
 {
-  RCRequest::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream) const;
 };
@@ -65,7 +65,11 @@ struct GetTickRemainingReq : public RCRequestZeroArgument
   std::string getType() const { return "GetTickRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-
+struct GetBattleFieldSizeReq : public RCRequestZeroArgument
+{
+  std::string getType() const { return "GetBattleFieldSize"; }
+  bool process(RCRobotPlayer *rrp);
+};
 struct GetTeamsReq : public RCRequestZeroArgument {
   std::string getType() const { return "GetTeams"; }
   bool process(RCRobotPlayer *rrp);
@@ -103,7 +107,7 @@ struct IdentifyFrontend :public RCRequest {
   IdentifyFrontend() :version("") {}
   IdentifyFrontend(std::string _version) :version(_version) {}
   std::string getType() const { return "IdentifyFrontend"; }
-  RCRequest::parseStatus parse(char **arguments, int count);
+  messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
   private: std::string version;
@@ -114,17 +118,19 @@ struct IdentifyFrontend :public RCRequest {
 { \
   public: \
     COMMANDNAME ## Req() {} \
-    RCRequest::parseStatus parse(char **arguments, int count); \
+    messageParseStatus parse(char **arguments, int count); \
     std::string getType() const { return #COMMANDNAME; } \
     bool process(RCRobotPlayer *rrp); \
     void getParameters(std::ostream &stream) const;
 
 DECLARE_REQUEST(SetSpeed)
+  SetSpeedReq(float _speed) :speed(_speed) {}
 private:
   float speed;
 };
 
 DECLARE_REQUEST(SetTurnRate)
+  SetTurnRateReq(float _rate) :rate(_rate) {}
 private:
   float rate;
 };
