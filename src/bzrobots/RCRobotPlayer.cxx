@@ -54,15 +54,12 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
       if (distanceRemaining > 0.0f)
       {
         if (distanceForward)
-        {
           setDesiredSpeed(speed);
-          distanceRemaining -= *getVelocity() * dt;
-        }
         else
-        {
           setDesiredSpeed(-speed);
-          distanceRemaining += *getVelocity() * dt;
-        }
+
+        const float *vel = getVelocity();
+        distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
       }
       else
       {

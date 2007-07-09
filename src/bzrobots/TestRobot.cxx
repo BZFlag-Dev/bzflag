@@ -7,18 +7,16 @@ void TestRobot::run()
     while (true)
     {
         setFire();
-        execute();
-        TimeKeeper::sleep(getGunHeat());
-        setFire();
-        setAhead(100);
-        while (getDistanceRemaining() > 0)
-        {
+        setAhead(20);
+        do {
             if (getGunHeat() <= 0)
                 setFire();
             execute();
-        }
+        } while (getDistanceRemaining() > 0);
+
         setTurnLeft(90);
-        while (getTurnRemaining() > 0)
+        do {
             execute();
+        } while (getTurnRemaining() > 0);
     }
 }

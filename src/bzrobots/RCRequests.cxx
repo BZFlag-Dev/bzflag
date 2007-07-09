@@ -56,7 +56,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
       rrp->turnLeft = false;
     else
       rrp->turnLeft = true;
-    rrp->turnRemaining = (rrp->turnLeft ? 1 : -1) * rrp->nextTurn;
+    rrp->turnRemaining = (rrp->turnLeft ? 1 : -1) * rrp->nextTurn * M_PI/180.0f; /* We have to convert to radians! */
   }
 
   for (int i = 0; i < RCRobotPlayer::updateCount; ++i)
@@ -179,7 +179,7 @@ bool GetTurnRemainingReq::process(RCRobotPlayer *rrp)
   if (!rrp->isSteadyState())
     return false;
 
-  link->send(TurnRemainingReply(rrp->turnRemaining));
+  link->send(TurnRemainingReply(rrp->turnRemaining * 180.0f/M_PI));
   return true;
 }
 
