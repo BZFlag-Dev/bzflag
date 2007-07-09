@@ -45,18 +45,24 @@ class BZAdvancedRobot
     double getHeading();
     double getHeight();
     double getWidth();
+    double getLength();
     int getOthers();
     long getTime();
     double getVelocity();
     double getX();
     double getY();
+    double getZ();
 
   public:
     virtual void run() = 0;
     BZAdvancedRobot(RCLinkFrontend *_link) :link(_link) {}
     virtual ~BZAdvancedRobot() {}
     
-    float gunHeat, distanceRemaining, turnRemaining, battleFieldSize;
+    float gunHeat, distanceRemaining, turnRemaining;
+    float battleFieldSize;
+    float yPosition, xPosition, zPosition;
+    float tankWidth, tankLength, tankHeight;
+    float heading;
 };
 
 #endif

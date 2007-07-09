@@ -73,20 +73,26 @@ double BZAdvancedRobot::getGunHeat()
 
 double BZAdvancedRobot::getHeading()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetHeadingReq(), this);
+  return heading;
 }
 
 double BZAdvancedRobot::getHeight()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetHeightReq(), this);
+  return tankHeight;
 }
 
 double BZAdvancedRobot::getWidth()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetWidthReq(), this);
+  return tankWidth;
+}
+
+double BZAdvancedRobot::getLength()
+{
+  link->sendAndProcess(GetLengthReq(), this);
+  return tankLength;
 }
 
 int BZAdvancedRobot::getOthers()
@@ -109,14 +115,20 @@ double BZAdvancedRobot::getVelocity()
 
 double BZAdvancedRobot::getX()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetXReq(), this);
+  return xPosition;
 }
 
 double BZAdvancedRobot::getY()
 {
-  /* TODO: Implement this. */
-  return 0.0;
+  link->sendAndProcess(GetYReq(), this);
+  return yPosition;
+}
+
+double BZAdvancedRobot::getZ()
+{
+  link->sendAndProcess(GetZReq(), this);
+  return zPosition;
 }
 
 

@@ -103,6 +103,37 @@ struct GetConstantsReq : public RCRequestZeroArgument {
   bool process(RCRobotPlayer *rrp);
 };
 
+struct GetXReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetX"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetYReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetY"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetZReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetZ"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
+struct GetWidthReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetWidth"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetHeightReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetHeight"; }
+  bool process(RCRobotPlayer *rrp);
+};
+struct GetLengthReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetLength"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
+struct GetHeadingReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetHeading"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
 struct IdentifyFrontend :public RCRequest {
   IdentifyFrontend() :version("") {}
   IdentifyFrontend(std::string _version) :version(_version) {}

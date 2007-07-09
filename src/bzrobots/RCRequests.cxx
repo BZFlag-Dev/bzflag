@@ -253,6 +253,43 @@ bool GetConstantsReq::process(RCRobotPlayer *)
   return true;
 }
 
+bool GetXReq::process(RCRobotPlayer *rrp)
+{
+  link->send(XReply(rrp->getPosition()[0]));
+  return true;
+}
+bool GetYReq::process(RCRobotPlayer *rrp)
+{
+  link->send(YReply(rrp->getPosition()[1]));
+  return true;
+}
+bool GetZReq::process(RCRobotPlayer *rrp)
+{
+  link->send(ZReply(rrp->getPosition()[2]));
+  return true;
+}
+
+bool GetWidthReq::process(RCRobotPlayer *rrp)
+{
+  link->send(WidthReply(rrp->getDimensions()[0]));
+  return true;
+}
+bool GetLengthReq::process(RCRobotPlayer *rrp)
+{
+  link->send(LengthReply(rrp->getDimensions()[1]));
+  return true;
+}
+bool GetHeightReq::process(RCRobotPlayer *rrp)
+{
+  link->send(HeightReply(rrp->getDimensions()[2]));
+  return true;
+}
+bool GetHeadingReq::process(RCRobotPlayer *rrp)
+{
+  link->send(HeadingReply(rrp->getAngle()*180.0f/M_PI));
+  return true;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

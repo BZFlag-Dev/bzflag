@@ -110,6 +110,86 @@ struct BattleFieldSizeReply : public RCReply
   private: float size;
 };
 
+struct XReply : public RCReply
+{
+  XReply() {}
+  XReply(float _x) :x(_x) {}
+  std::string getType() const { return "X"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float x;
+};
+struct YReply : public RCReply
+{
+  YReply() {}
+  YReply(float _y) :y(_y) {}
+  std::string getType() const { return "X"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float y;
+};
+struct ZReply : public RCReply
+{
+  ZReply() {}
+  ZReply(float _z) :z(_z) {}
+  std::string getType() const { return "X"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float z;
+};
+
+struct WidthReply : public RCReply
+{
+  WidthReply() {}
+  WidthReply(float _width) :width(_width) {}
+  std::string getType() const { return "Width"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float width;
+};
+struct HeightReply : public RCReply
+{
+  HeightReply() {}
+  HeightReply(float _height) :height(_height) {}
+  std::string getType() const { return "Height"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float height;
+};
+struct LengthReply : public RCReply
+{
+  LengthReply() {}
+  LengthReply(float _length) :length(_length) {}
+  std::string getType() const { return "Length"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float length;
+};
+
+struct HeadingReply : public RCReply
+{
+  HeadingReply() {}
+  HeadingReply(float _heading) :heading(_heading) {}
+  std::string getType() const { return "Heading"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: float heading;
+};
+
 #endif
 
 // Local Variables: ***

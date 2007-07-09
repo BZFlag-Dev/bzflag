@@ -111,7 +111,100 @@ bool BattleFieldSizeReply::updateBot(BZAdvancedRobot *robot) const
   return true;
 }
 
-//BZDB.set(StateDatabase::BZDB_WORLDSIZE,
+messageParseStatus XReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, x);
+}
+void XReply::getParameters(std::ostream &stream) const
+{
+  stream << x;
+}
+bool XReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->xPosition = x;
+  return true;
+}
+
+messageParseStatus YReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, y);
+}
+void YReply::getParameters(std::ostream &stream) const
+{
+  stream << y;
+}
+bool YReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->yPosition = y;
+  return true;
+}
+messageParseStatus ZReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, z);
+}
+void ZReply::getParameters(std::ostream &stream) const
+{
+  stream << z;
+}
+bool ZReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->zPosition = z;
+  return true;
+}
+
+messageParseStatus WidthReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, width);
+}
+void WidthReply::getParameters(std::ostream &stream) const
+{
+  stream << width;
+}
+bool WidthReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->tankWidth = width;
+  return true;
+}
+messageParseStatus HeightReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, height);
+}
+void HeightReply::getParameters(std::ostream &stream) const
+{
+  stream << height;
+}
+bool HeightReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->tankHeight = height;
+  return true;
+}
+messageParseStatus LengthReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, length);
+}
+void LengthReply::getParameters(std::ostream &stream) const
+{
+  stream << length;
+}
+bool LengthReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->tankLength = length;
+  return true;
+}
+
+messageParseStatus HeadingReply::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingleFloat(arguments, count, heading);
+}
+void HeadingReply::getParameters(std::ostream &stream) const
+{
+  stream << heading;
+}
+bool HeadingReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->heading = heading;
+  return true;
+}
 
 // Local Variables: ***
 // mode:C++ ***
