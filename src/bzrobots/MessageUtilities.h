@@ -50,7 +50,7 @@ namespace MessageUtilities
         return min;
       return val;
     }
-};
+}
 
 #endif
 
