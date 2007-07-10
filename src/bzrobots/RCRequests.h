@@ -40,6 +40,11 @@ struct SetFireReq : public RCRequestZeroArgument
   std::string getType() const { return "SetFire"; }
   bool process(RCRobotPlayer *rrp);
 };
+struct SetResumeReq : public RCRequestZeroArgument
+{
+  std::string getType() const { return "SetResume"; }
+  bool process(RCRobotPlayer *rrp);
+};
 struct GetGunHeatReq : public RCRequestZeroArgument
 {
   std::string getType() const { return "GetGunHeat"; }
@@ -181,6 +186,12 @@ private:
 DECLARE_REQUEST(SetTickDuration)
 private:
   float duration;
+};
+
+DECLARE_REQUEST(SetStop)
+  SetStopReq(bool _overwrite) :overwrite(_overwrite) {}
+private:
+  bool overwrite;
 };
 
 #undef DECLARE_REQUEST

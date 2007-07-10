@@ -50,15 +50,21 @@ class RCRobotPlayer : public RobotPlayer {
 
     bool            isSteadyState();
 
+    bool            pendingUpdates[updateCount];
+
     double          lastTickAt;
     double          tickDuration;
     float           speed, nextSpeed;
     float           turnRate, nextTurnRate;
     bool            shoot;
+
     double          distanceRemaining, nextDistance;
     bool            distanceForward, turnLeft;
     double          turnRemaining, nextTurn;
-    bool            pendingUpdates[updateCount];
+
+    bool            hasStopped;
+    double          stoppedDistance, stoppedTurn;
+    bool            stoppedForward, stoppedLeft;
 
   private:
     void            doUpdate(float dt);

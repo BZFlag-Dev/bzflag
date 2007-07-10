@@ -1,6 +1,19 @@
 #include "MessageUtilities.h"
 
-bool MessageUtilities::parseFloat(char *string, float &dest)
+template <>
+bool MessageUtilities::parse(const char *string, bool &dest)
+{
+    if (strcasecmp(string, "true") == 0)
+        dest = true;
+    else if (strcasecmp(string, "false") == 0)
+        dest = false;
+    else
+        return false;
+
+    return true;
+}
+template <>
+bool MessageUtilities::parse(const char *string, float &dest)
 {
     char *endptr;
     dest = strtof(string, &endptr);
@@ -13,14 +26,4 @@ bool MessageUtilities::parseFloat(char *string, float &dest)
         dest = 0.0f;
 
     return true;
-}
-  
-messageParseStatus MessageUtilities::parseSingleFloat(char **arguments, int count, float &dest)
-{
-  if (count != 1)
-    return InvalidArgumentCount;
-  if (!parseFloat(arguments[0], dest))
-    return InvalidArguments;
-
-  return ParseOk;
 }

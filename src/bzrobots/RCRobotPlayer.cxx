@@ -34,7 +34,8 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
 				turnRate(1.0), nextTurnRate(1.0),
 				shoot(false),
                                 distanceRemaining(0.0), nextDistance(0.0),
-                                turnRemaining(0.0), nextTurn(0.0)
+                                turnRemaining(0.0), nextTurn(0.0),
+                                hasStopped(false)
 {
 }
 
@@ -63,7 +64,7 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
       }
       else
       {
-          setDesiredSpeed(0);
+        setDesiredSpeed(0);
       }
 
       if (turnRemaining > 0.0f)
@@ -81,7 +82,7 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
       }
       else
       {
-          setDesiredAngVel(0);
+        setDesiredAngVel(0);
       }
     }
     else
@@ -106,11 +107,11 @@ void			RCRobotPlayer::restart(const float* pos, float _azimuth)
 
 bool                    RCRobotPlayer::isSteadyState()
 {
-    double timeNow = TimeKeeper::getCurrent().getSeconds();
-    /* last tick done? */
-    if (lastTickAt + tickDuration <= timeNow)
-      return true;
-    return false;
+  double timeNow = TimeKeeper::getCurrent().getSeconds();
+  /* last tick done? */
+  if (lastTickAt + tickDuration <= timeNow)
+    return true;
+  return false;
 }
 
 // Local Variables: ***

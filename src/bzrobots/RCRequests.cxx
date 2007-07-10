@@ -76,7 +76,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
 
 messageParseStatus SetSpeedReq::parse(char **arguments, int count)
 {
-  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, speed);
+  messageParseStatus status = MessageUtilities::parseSingle(arguments, count, speed);
   if (status == ParseOk)
     speed = MessageUtilities::clamp(speed, 0.0f, 1.0f);
   return status;
@@ -94,7 +94,7 @@ void SetSpeedReq::getParameters(std::ostream &stream) const
 
 messageParseStatus SetTurnRateReq::parse(char **arguments, int count)
 {
-  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, rate);
+  messageParseStatus status = MessageUtilities::parseSingle(arguments, count, rate);
   if (status == ParseOk)
     rate = MessageUtilities::clamp(rate, 0.0f, 1.0f);
   return status;
@@ -112,7 +112,7 @@ void SetTurnRateReq::getParameters(std::ostream &stream) const
 
 messageParseStatus SetAheadReq::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, distance);
+  return MessageUtilities::parseSingle(arguments, count, distance);
 }
 bool SetAheadReq::process(RCRobotPlayer *rrp)
 {
@@ -127,7 +127,7 @@ void SetAheadReq::getParameters(std::ostream &stream) const
 
 messageParseStatus SetTurnLeftReq::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, turn);
+  return MessageUtilities::parseSingle(arguments, count, turn);
 }
 bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
 {
@@ -143,6 +143,22 @@ void SetTurnLeftReq::getParameters(std::ostream &stream) const
 bool SetFireReq::process(RCRobotPlayer *rrp)
 {
   rrp->shoot = true;
+  return true;
+}
+
+bool SetResumeReq::process(RCRobotPlayer *rrp)
+{
+  if (!rrp->isSteadyState())
+    return false;
+
+  if (rrp->hasStopped)
+  {
+    rrp->hasStopped = false;
+    rrp->distanceRemaining = rrp->stoppedDistance;
+    rrp->turnRemaining = rrp->stoppedTurn;
+    rrp->distanceForward = rrp->stoppedForward;
+    rrp->turnLeft = rrp->stoppedLeft;
+  }
   return true;
 }
 
@@ -181,7 +197,7 @@ bool GetTickDurationReq::process(RCRobotPlayer *rrp)
 
 messageParseStatus SetTickDurationReq::parse(char **arguments, int count)
 {
-  messageParseStatus status = MessageUtilities::parseSingleFloat(arguments, count, duration);
+  messageParseStatus status = MessageUtilities::parseSingle(arguments, count, duration);
   if (status == ParseOk)
     duration = std::max(duration, 0.0f);
   return status;
@@ -288,6 +304,30 @@ bool GetHeadingReq::process(RCRobotPlayer *rrp)
 {
   link->send(HeadingReply(rrp->getAngle()*180.0f/M_PI));
   return true;
+}
+
+messageParseStatus SetStopReq::parse(char **arguments, int count)
+{
+  return MessageUtilities::parseSingle(arguments, count, overwrite);
+}
+bool SetStopReq::process(RCRobotPlayer *rrp)
+{
+  if (!rrp->isSteadyState())
+    return false;
+
+  if (!rrp->hasStopped || overwrite)
+  {
+    rrp->hasStopped = true;
+    rrp->stoppedDistance = rrp->distanceRemaining;
+    rrp->stoppedTurn = rrp->turnRemaining;
+    rrp->stoppedForward = rrp->distanceForward;
+    rrp->stoppedLeft = rrp->turnLeft;
+  }
+  return true;
+}
+void SetStopReq::getParameters(std::ostream &stream) const
+{
+  stream << overwrite;
 }
 
 // Local Variables: ***

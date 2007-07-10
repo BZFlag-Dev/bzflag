@@ -41,14 +41,17 @@ void BZAdvancedRobot::setSpeed(double speed)
 
 void BZAdvancedRobot::setResume()
 {
+  link->sendAndProcess(SetResumeReq(), this);
 }
 
 void BZAdvancedRobot::setStop()
 {
+  setStop(false);
 }
 
 void BZAdvancedRobot::setStop(bool overwrite)
 {
+  link->sendAndProcess(SetStopReq(overwrite), this);
 }
 
 void BZAdvancedRobot::setTurnLeft(double degrees)

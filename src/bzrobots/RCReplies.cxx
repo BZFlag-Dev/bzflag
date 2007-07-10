@@ -38,7 +38,7 @@ void CommandDoneReply::getParameters(std::ostream &stream) const
 
 messageParseStatus GunHeatReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, heat);
+  return MessageUtilities::parseSingle(arguments, count, heat);
 }
 void GunHeatReply::getParameters(std::ostream &stream) const
 {
@@ -52,7 +52,7 @@ bool GunHeatReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus DistanceRemainingReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, distance);
+  return MessageUtilities::parseSingle(arguments, count, distance);
 }
 void DistanceRemainingReply::getParameters(std::ostream &stream) const
 {
@@ -66,7 +66,7 @@ bool DistanceRemainingReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus TurnRemainingReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, turn);
+  return MessageUtilities::parseSingle(arguments, count, turn);
 }
 void TurnRemainingReply::getParameters(std::ostream &stream) const
 {
@@ -81,7 +81,7 @@ bool TurnRemainingReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus TickDurationReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, duration);
+  return MessageUtilities::parseSingle(arguments, count, duration);
 }
 void TickDurationReply::getParameters(std::ostream &stream) const
 {
@@ -90,7 +90,7 @@ void TickDurationReply::getParameters(std::ostream &stream) const
 
 messageParseStatus TickRemainingReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, remaining);
+  return MessageUtilities::parseSingle(arguments, count, remaining);
 }
 void TickRemainingReply::getParameters(std::ostream &stream) const
 {
@@ -99,7 +99,7 @@ void TickRemainingReply::getParameters(std::ostream &stream) const
 
 messageParseStatus BattleFieldSizeReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, size);
+  return MessageUtilities::parseSingle(arguments, count, size);
 }
 void BattleFieldSizeReply::getParameters(std::ostream &stream) const
 {
@@ -113,7 +113,7 @@ bool BattleFieldSizeReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus XReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, x);
+  return MessageUtilities::parseSingle(arguments, count, x);
 }
 void XReply::getParameters(std::ostream &stream) const
 {
@@ -127,7 +127,7 @@ bool XReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus YReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, y);
+  return MessageUtilities::parseSingle(arguments, count, y);
 }
 void YReply::getParameters(std::ostream &stream) const
 {
@@ -140,7 +140,7 @@ bool YReply::updateBot(BZAdvancedRobot *robot) const
 }
 messageParseStatus ZReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, z);
+  return MessageUtilities::parseSingle(arguments, count, z);
 }
 void ZReply::getParameters(std::ostream &stream) const
 {
@@ -154,7 +154,7 @@ bool ZReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus WidthReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, width);
+  return MessageUtilities::parseSingle(arguments, count, width);
 }
 void WidthReply::getParameters(std::ostream &stream) const
 {
@@ -167,7 +167,7 @@ bool WidthReply::updateBot(BZAdvancedRobot *robot) const
 }
 messageParseStatus HeightReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, height);
+  return MessageUtilities::parseSingle(arguments, count, height);
 }
 void HeightReply::getParameters(std::ostream &stream) const
 {
@@ -180,7 +180,7 @@ bool HeightReply::updateBot(BZAdvancedRobot *robot) const
 }
 messageParseStatus LengthReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, length);
+  return MessageUtilities::parseSingle(arguments, count, length);
 }
 void LengthReply::getParameters(std::ostream &stream) const
 {
@@ -194,7 +194,7 @@ bool LengthReply::updateBot(BZAdvancedRobot *robot) const
 
 messageParseStatus HeadingReply::parse(char **arguments, int count)
 {
-  return MessageUtilities::parseSingleFloat(arguments, count, heading);
+  return MessageUtilities::parseSingle(arguments, count, heading);
 }
 void HeadingReply::getParameters(std::ostream &stream) const
 {

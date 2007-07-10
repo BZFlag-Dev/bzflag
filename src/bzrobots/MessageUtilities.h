@@ -21,8 +21,22 @@
 
 namespace MessageUtilities
 {
-  bool parseFloat(char *string, float &dest);
-  messageParseStatus parseSingleFloat(char **arguments, int count, float &dest);
+  template<typename T>
+    bool parse(const char *string, T &dest);
+  template<>
+  bool parse(const char *string, bool &dest);
+  template<>
+  bool parse(const char *string, float &dest);
+  template<typename T>
+    messageParseStatus parseSingle(char **arguments, int count, T &dest)
+  {
+    if (count != 1)
+      return InvalidArgumentCount;
+    if (!parse(arguments[0], dest))
+      return InvalidArguments;
+
+    return ParseOk;
+  }
 
   template <typename T>
     static T clamp(T val, T min, T max)
