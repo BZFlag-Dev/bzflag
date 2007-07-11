@@ -11,6 +11,7 @@
  */
 
 /* interface header */
+#include "common.h"
 #include "bzfio.h"
 
 /* system implementation headers */

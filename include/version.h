@@ -38,6 +38,7 @@ extern const char *bzfcopyright;
 
 // various version functions in buildDate.cxx
 extern const char* getProtocolVersion();
+extern const char* getRobotsProtocolVersion();
 extern const char* getServerVersion();
 extern const char* getMajorMinorVersion();
 extern const char* getMajorMinorRevVersion();

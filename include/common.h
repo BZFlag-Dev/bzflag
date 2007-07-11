@@ -35,6 +35,20 @@
 #endif
 
 
+/**
+ * common declaration wrapping
+ */
+#ifndef __BEGIN_DECLS
+#  ifdef __cplusplus
+#    define __BEGIN_DECLS   extern "C" {
+#    define __END_DECLS     }
+#  else
+#    define __BEGIN_DECLS
+#    define __END_DECLS
+#  endif
+#endif
+
+
 /* near zero by some epsilon convenience define since relying on
  * the floating point unit for proper equivalence is not safe
  */
@@ -257,9 +271,15 @@ typedef unsigned char	uint8_t;
 
 
 #ifdef _WIN32
-const char DirectorySeparator = '\\';
+#  define BZ_DIRECTORY_SEPARATOR '\\'
 #else
-const char DirectorySeparator = '/';
+#  define BZ_DIRECTORY_SEPARATOR '/'
+#endif
+
+#ifdef _WIN32
+#  define BZ_PATH_SEPARATOR ';'
+#else
+#  define BZ_PATH_SEPARATOR ':'
 #endif
 
 

@@ -23,22 +23,50 @@
 #include "RCLink.h"
 #include "Roster.h"
 #include "RCRobotPlayer.h"
+#include "RCMessage.h"
 
-RCLink::RCLink(int _port) :
-		      status(Disconnected),
-		      listenfd(-1),
-		      connfd(-1),
-		      requests(NULL)
+RCLink::RCLink() :
+	            status(Disconnected),
+		    listenfd(-1),
+		    connfd(-1)
 {
-  port = _port;
-  startListening();
 }
 
 RCLink::~RCLink()
 {
 }
 
-void RCLink::startListening()
+/* Waits forever for data to come down on connfd. (NOTE: doesn't check listenfd,
+ * so only use this if you're ignoring connects.) */
+bool RCLink::waitForData()
+{
+  if (status != Connected)
+  {
+    error = "Not connected!";
+    return false;
+  }
+
+  fd_set fds;
+  int socks;
+
+  FD_ZERO(&fds);
+  FD_SET(connfd, &fds);
+
+  while (true)
+  {
+    socks = select(connfd + 1, &fds, NULL, NULL, NULL);
+    if (socks < 0)
+    {
+      status = SocketError;
+      error = strerror(errno);
+      return false;
+    }
+    else if (socks > 0)
+      return true;
+  }
+}
+
+void RCLink::startListening(int port)
 {
   struct sockaddr_in sa;
 
@@ -52,7 +80,13 @@ void RCLink::startListening()
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listenfd == -1) return;
+  if (listenfd == -1)
+    return;
+
+  int reuse_addr = 1; /* Used so we can re-bind to our port
+                         while a previous connection is still
+                         in TIME_WAIT state. */
+  setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
 
   if (bind(listenfd, (sockaddr*)&sa, sizeof(sa)) == -1) {
     close(listenfd);
@@ -71,30 +105,79 @@ void RCLink::startListening()
   status = Listening;
 }
 
-void RCLink::tryAccept()
+bool RCLink::tryAccept()
 {
-  if (status != Listening) return;
-
+  if (status != Listening)
+  {
+    error = "Cannot accept when not listening!";
+    return false;
+  }
   // O_NONBLOCK is set so we'll probably return immediately.
   connfd = accept(listenfd, NULL, 0);
-  if (connfd == -1) return;
+  if (connfd == -1)
+  {
+    error = strerror(errno);
+    return false;
+  }
 
   //BzfNetwork::setNonBlocking(connfd);
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
   status = Connecting;
-  write(connfd, RC_LINK_HELLO_STR, strlen(RC_LINK_HELLO_STR));
   send_amount = 0;
   recv_amount = 0;
   input_toolong = false;
 
+  fprintf(stderr, "RCLink: Accepted a new frontend connection.\n");
+
   // Now we wait for them to introduce themselves.
+  return true;
 }
 
-bool RCLink::respond(char* message)
+
+bool RCLink::connect(const char *host, int port)
+{
+  status = Disconnected;
+  connfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (connfd < 0)
+  {
+    error = strerror(errno);
+    return false;
+  }
+
+  sockaddr_in remote;
+  remote.sin_port = htons(port);
+  remote.sin_family = AF_INET;
+
+  hostent *hostdata = gethostbyname(host);
+  if (hostdata == NULL)
+  {
+    error = hstrerror(h_errno);
+    return false;
+  }
+  memcpy(&remote.sin_addr.s_addr, hostdata->h_addr_list[0], hostdata->h_length);
+
+  if (::connect(connfd, (sockaddr *)&remote, sizeof(remote)) < 0)
+  {
+    error = strerror(errno);
+    return false;
+  }
+
+  int flags = fcntl(connfd, F_GETFL);
+  fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+
+  status = Connecting;
+  send_amount = recv_amount = 0;
+  input_toolong = false;
+
+  return true;
+}
+
+bool RCLink::send(const char* message)
 {
   if (output_overflow) {
+    error = "Output overflow! (more data than buffer can take)";
     return false;
   }
 
@@ -102,6 +185,7 @@ bool RCLink::respond(char* message)
 
   if (send_amount + messagelen > RC_LINK_SENDBUFLEN) {
     fprintf(stderr, "RCLink: setting output_overflow\n");
+    error = "Output overflow! (more data than buffer can take)";
     output_overflow = true;
     return false;
   }
@@ -109,7 +193,7 @@ bool RCLink::respond(char* message)
   memcpy(sendbuf + send_amount, message, messagelen);
   send_amount += messagelen;
 
-  update_write();
+  updateWrite();
   return true;
 }
 
@@ -117,12 +201,13 @@ bool RCLink::respond(char* message)
  * Use printf to send a message on the RCLink.  We send all or nothing
  * (if we run out of buffer space).
  */
-bool RCLink::respondf(const char *format, ...)
+bool RCLink::sendf(const char *format, ...)
 {
   va_list ap;
   int messagelen;
 
   if (output_overflow) {
+    error = "Output overflow! (more data than buffer can take)";
     return false;
   }
 
@@ -133,27 +218,27 @@ bool RCLink::respondf(const char *format, ...)
 
   if (send_amount + messagelen >= RC_LINK_SENDBUFLEN) {
     fprintf(stderr, "RCLink: setting output_overflow\n");
+    error = "Output overflow! (more data than buffer can take)";
     output_overflow = true;
     return false;
   }
 
   send_amount += messagelen;
 
-  update_write();
+  updateWrite();
   return true;
 }
 
 /*
  * Send as much data as possible from our outgoing buffer.
  */
-int RCLink::update_write()
+int RCLink::updateWrite()
 {
   char *bufptr = sendbuf;
   int prev_send_amount = send_amount;
 
-  if (status != Connected && status != Connecting) {
+  if (status != Connected && status != Connecting)
     return -1;
-  }
 
   if (output_overflow) {
     int errorlen = strlen(RC_LINK_OVERFLOW_MSG);
@@ -194,12 +279,11 @@ int RCLink::update_write()
   return prev_send_amount - send_amount;
 }
 
-
 /*
  * Fill up the receive buffer with any available incoming data.  Return the
  * number of bytes of data read or -1 if the connection has died.
  */
-int RCLink::update_read()
+int RCLink::updateRead()
 {
   int prev_recv_amount = recv_amount;
 
@@ -209,17 +293,16 @@ int RCLink::update_read()
 
   // read in as much data as possible
   while (true) {
-    if (recv_amount == RC_LINK_RECVBUFLEN) {
+    if (recv_amount == RC_LINK_RECVBUFLEN)
       break;
-    }
 
     int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
     if (nread == 0) {
       fprintf(stderr, "RCLink: Agent Closed Connection\n");
-      status = Listening;
+      status = getDisconnectedState(); 
       return -1;
     } else if (nread == -1 && errno != EAGAIN) {
-      perror("RCLink: Read failed.");
+      perror("RCLink: Read failed");
       status = SocketError;
       return -1;
     } else if (nread == -1) {
@@ -233,12 +316,11 @@ int RCLink::update_read()
   return recv_amount - prev_recv_amount;
 }
 
-
 /*
- * Create as many RCRequest objects as possible (via parsecommand).
+ * Parse as many objects as possible (via parseCommand).
  * Return the number created.
  */
-int RCLink::update_parse(int maxlines)
+int RCLink::updateParse(int maxlines)
 {
   int ncommands = 0;
   char *bufptr = recvbuf;
@@ -262,34 +344,34 @@ int RCLink::update_parse(int maxlines)
     newline = (char *)memchr(bufptr, '\n', recv_amount);
     if (newline == NULL) {
       if (input_toolong) {
-	// We're throwing out everything up to the next newline.
-	recv_amount = 0;
-	break;
+        // We're throwing out everything up to the next newline.
+        recv_amount = 0;
+        break;
       } else {
-	// We need to read more before we can do anything.
-	break;
+        // We need to read more before we can do anything.
+        break;
       }
     } else {
       // We have a full input line.
       recv_amount -= newline - bufptr + 1;
 
       if (input_toolong) {
-	input_toolong = false;
+        input_toolong = false;
       } else {
-	if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
-	  // empty line: ignore
-	} else {
-	  *newline = '\0';
-	  if (parsecommand(bufptr)) {
-	    ncommands++;
-	  }
-	}
+        if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
+          // empty line: ignore
+        } else {
+          *newline = '\0';
+          if (parseCommand(bufptr)) {
+            ncommands++;
+          }
+        }
       }
 
       bufptr = newline + 1;
 
       if (maxlines == 1) {
-	break;
+        break;
       }
     }
   }
@@ -306,276 +388,6 @@ int RCLink::update_parse(int maxlines)
 
   return ncommands;
 }
-
-/*
- * Check for activity.  If possible, fill up the recvbuf with incoming data
- * and build up RCRequest objects as appropriate.
- */
-void RCLink::update()
-{
-  if (status != Connected && status != Connecting) {
-    return;
-  }
-
-  update_write();
-  int amount = update_read();
-
-  if (amount == -1) {
-    status = Listening;
-    return;
-  }
-
-  if (status == Connected) {
-    update_parse();
-  } else if (status == Connecting) {
-    int ncommands = update_parse(1);
-    if (ncommands) {
-      RCRequest *req = poprequest();
-      if (req && req->get_request_type() == HelloRequest) {
-	status = Connected;
-      } else {
-	fprintf(stderr, "RCLink: Expected a Hello.\n");
-	write(connfd, RC_LINK_NOHELLO_MSG, strlen(RC_LINK_NOHELLO_MSG));
-	close(connfd);
-	status = Listening;
-      }
-    }
-  }
-}
-
-/*
- * Parse a command, create an RCRequest object, and add it to requests.
- * Return true if an RCRequest was successfully created.  If it failed,
- * return false.
- */
-bool RCLink::parsecommand(char *cmdline)
-{
-  RCRequest *req;
-  int argc;
-  char *argv[RC_LINK_MAXARGS];
-  char *s, *tkn;
-
-  s = cmdline;
-  for (argc=0; argc<RC_LINK_MAXARGS; argc++) {
-    tkn = strtok(s, " \r\t");
-    s = NULL;
-    argv[argc] = tkn;
-    if (tkn == NULL || *tkn == '\0') break;
-  }
-
-  req = new RCRequest(argc, argv);
-  if (req->get_request_type() == InvalidRequest) {
-    fprintf(stderr, "RCLink: Invalid request: '%s'\n", argv[0]);
-    respondf("error Invalid request %s\n", argv[0]);
-    delete req;
-    return false;
-  } else {
-    if (requests == NULL) {
-      requests = req;
-    } else {
-      requests->append(req);
-    }
-    return true;
-  }
-}
-
-RCRequest* RCLink::poprequest()
-{
-  RCRequest *req = requests;
-  if (req != NULL) {
-    requests = req->getnext();
-  }
-  return req;
-}
-
-RCRequest::RCRequest() :
-			    fail(false),
-			    failstr(NULL),
-			    request_type(InvalidRequest),
-			    next(NULL)
-{
-  request_type = InvalidRequest;
-}
-
-RCRequest::RCRequest(agent_req_t reqtype) :
-			    fail(false),
-			    failstr(NULL),
-			    request_type(reqtype),
-			    next(NULL)
-{
-}
-
-RCRequest::RCRequest(int argc, char **argv) :
-			    fail(false),
-			    failstr(NULL),
-			    next(NULL)
-{
-  char *endptr;
-  int index;
-  // TODO: give a better error message if argc is wrong.
-  if (strcasecmp(argv[0], "agent") == 0 && argc == 2) {
-    request_type = HelloRequest;
-  } else if (strcasecmp(argv[0], "speed") == 0 && argc == 3) {
-    request_type = Speed;
-
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-    speed_level = strtof(argv[2], &endptr);
-    if (endptr == argv[2]) {
-      fail = true;
-      failstr = "Invalid parameter for desired speed.";
-    }
-    if (speed_level > 1.0) {
-      speed_level = 1.0;
-    } else if (speed_level < -1.0) {
-      speed_level = -1.0;
-    }
-  } else if (strcasecmp(argv[0], "angvel") == 0 && argc == 3) {
-    request_type = AngularVel;
-
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-    angularvel_level = strtof(argv[2], &endptr);
-    if (endptr == argv[2]) {
-      fail = true;
-      failstr = "Invalid parameter for angular velocity.";
-    }
-    if (angularvel_level > 1.0) {
-      angularvel_level = 1.0;
-    } else if (angularvel_level < -1.0) {
-      angularvel_level = -1.0;
-    }
-  } else if (strcasecmp(argv[0], "shoot") == 0 && argc == 2) {
-    request_type = Shoot;
-
-    index = strtol(argv[1], &endptr, 0);
-    if (endptr == argv[1]) {
-      index = -1;
-      fail = true;
-      failstr = "Invalid parameter for tank.";
-    }
-    set_robotindex(index);
-
-  } else if (strcasecmp(argv[0], "teams") == 0 && argc == 1) {
-    request_type = TeamListRequest;
-  } else if (strcasecmp(argv[0], "bases") == 0 && argc == 1) {
-    request_type = BasesListRequest;
-  } else if (strcasecmp(argv[0], "obstacles") == 0 && argc == 1) {
-    request_type = ObstacleListRequest;
-  } else if (strcasecmp(argv[0], "flags") == 0 && argc == 1) {
-    request_type = FlagListRequest;
-  } else if (strcasecmp(argv[0], "shots") == 0 && argc == 1) {
-    request_type = ShotListRequest;
-  } else if (strcasecmp(argv[0], "mytanks") == 0 && argc == 1) {
-    request_type = MyTankListRequest;
-  } else if (strcasecmp(argv[0], "othertanks") == 0 && argc == 1) {
-    request_type = OtherTankListRequest;
-  } else if (strcasecmp(argv[0], "constants") == 0 && argc == 1) {
-    request_type = ConstListRequest;
-  } else {
-    request_type = InvalidRequest;
-  }
-}
-
-void RCRequest::sendack(RCLink *link)
-{
-  float elapsed = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
-
-  switch (request_type) {
-    case Speed:
-      link->respondf("ack %f speed %d %f\n", elapsed, get_robotindex(), speed_level);
-      break;
-    case AngularVel:
-      link->respondf("ack %f angvel %d %f\n", elapsed, get_robotindex(), angularvel_level);
-      break;
-    case Shoot:
-      link->respondf("ack %f shoot %d\n", elapsed, get_robotindex());
-      break;
-    case TeamListRequest:
-      link->respondf("ack %f teams\n", elapsed);
-      break;
-    case BasesListRequest:
-      link->respondf("ack %f bases\n", elapsed);
-      break;
-    case ObstacleListRequest:
-      link->respondf("ack %f obstacles\n", elapsed);
-      break;
-    case FlagListRequest:
-      link->respondf("ack %f flags\n", elapsed);
-      break;
-    case ShotListRequest:
-      link->respondf("ack %f shots\n", elapsed);
-      break;
-    case MyTankListRequest:
-      link->respondf("ack %f mytanks\n", elapsed);
-      break;
-    case OtherTankListRequest:
-      link->respondf("ack %f othertanks\n", elapsed);
-      break;
-    case ConstListRequest:
-      link->respondf("ack %f constants\n", elapsed);
-      break;
-    default:
-      link->respondf("ack %f\n");
-  }
-}
-
-void RCRequest::sendfail(RCLink *link)
-{
-  if (fail) {
-    if (failstr) {
-      link->respondf("fail %s\n", failstr);
-    } else {
-      link->respond("fail\n");
-    }
-  }
-}
-
-int RCRequest::get_robotindex()
-{
-  return robotindex;
-}
-
-void RCRequest::set_robotindex(int index)
-{
-  if (index >= numRobots) {
-    robotindex = -1;
-  } else {
-    robotindex = index;
-  }
-}
-
-agent_req_t RCRequest::get_request_type()
-{
-  return request_type;
-}
-
-RCRequest *RCRequest::getnext()
-{
-  return next;
-}
-
-void RCRequest::append(RCRequest *newreq)
-{
-  if (next == NULL) {
-    next = newreq;
-  } else {
-    next->append(newreq);
-  }
-}
-
 
 // Local Variables: ***
 // mode:C++ ***

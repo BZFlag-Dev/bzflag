@@ -21,14 +21,40 @@ EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
 	../bzflag/ClientAuthentication.h
 
-bzrobots_LDFLAGS = -static
-bzrobots_SOURCES =			\
+genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
 	RCLink.cxx			\
 	RCLink.h			\
+	RCMessage.h			\
+	RCRequest.h			\
+	RCRequests.cxx			\
+	RCRequests.h			\
+	RCReply.h			\
+	RCReplies.cxx			\
+	RCReplies.h			\
+	MessageUtilities.cxx		\
+	MessageUtilities.h		\
+	RCMessageFactory.h		\
+	RCMessageFactory.cxx		\
+	RCLinkBackend.cxx		\
+	RCLinkBackend.h			\
+	RCLinkFrontend.cxx		\
+	RCLinkFrontend.h		\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
+	Frontend.cxx			\
+	Frontend.h			\
+	BZAdvancedRobot.cxx		\
+	BZAdvancedRobot.h		\
+	AdvancedRobot.cxx		\
+	AdvancedRobot.h			\
+	BZRobot.cxx			\
+	BZRobot.h			\
+	Robot.cxx			\
+	Robot.h				\
+	TestRobot.cxx			\
+	TestRobot.h			\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\
@@ -150,8 +176,6 @@ bzrobots_SOURCES =			\
 	../bzflag/Roster.h			\
 	../bzflag/SaveWorldMenu.cxx		\
 	../bzflag/SaveWorldMenu.h		\
-	../bzflag/SceneBuilder.cxx		\
-	../bzflag/SceneBuilder.h		\
 	../bzflag/SceneRenderer.cxx		\
 	../bzflag/ScoreboardRenderer.cxx	\
 	../bzflag/ScoreboardRenderer.h		\
@@ -218,6 +242,15 @@ bzrobots_SOURCES =			\
 	../bzflag/sound.h			\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
+
+bzrobots_LDFLAGS = -static
+
+if CLIENT_INCLUDED
+bzrobots_SOURCES = $(genericfiles)
+else
+bzrobots_SOURCES = $(genericfiles) \
+	OpenGLUtils.cxx	
+endif
 
 if WIN32
 RESOURCE = bzflag.res

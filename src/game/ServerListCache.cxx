@@ -81,7 +81,7 @@ std::string	     ServerListCache::getCacheFilename() const
   std::string fileName = getCacheDirName();
   if (fileName == "") return "";
   std::string verString = getServerVersion();
-  fileName += DirectorySeparator;
+  fileName += BZ_DIRECTORY_SEPARATOR;
   fileName += verString + "-Servers.bzs";
   return fileName;
 }

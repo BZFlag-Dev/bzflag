@@ -191,13 +191,14 @@ code serves for examples but some rules:
   7)  macro names are all capitals, class names have the first letter
       of each word capitalized, all other names have the first letter
       of each word except the first capitalized.  only macros may use
-      underscores except a leading underscore in a method parameter
-      name is allowed to make it different from a member variable.
+      underscores, except for in the names of method parameters where
+      a leading underscore is allowed to make it different from a
+      member variable.
 
 	#define FOO bar
 	class MyClass {
 	public:
-	    void        addStuff(int addMe, int _y) { y = addMe + y; }
+	    void        addStuff(int addMe, int _y) { y = addMe + _y; }
 
 	private:
 	    int         y;

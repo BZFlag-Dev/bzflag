@@ -1,6 +1,4 @@
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libMediaFile.la
-endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

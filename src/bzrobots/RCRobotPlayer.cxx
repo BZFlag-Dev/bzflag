@@ -26,13 +26,16 @@
 #include "TargetingUtils.h"
 
 RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server, RCLink* _agent,
+				ServerLink* _server,
 				const char* _email = "anonymous") :
 				RobotPlayer(_id, _name, _server, _email),
-				agent(_agent),
-				speed(0.0),
-				angularvel(0.0),
-				shoot(false)
+                                lastTickAt(0.0), tickDuration(2.0),
+				speed(1.0), nextSpeed(1.0),
+				turnRate(1.0), nextTurnRate(1.0),
+				shoot(false),
+                                distanceRemaining(0.0), nextDistance(0.0),
+                                turnRemaining(0.0), nextTurn(0.0),
+                                hasStopped(false)
 {
 }
 
@@ -45,8 +48,49 @@ void			RCRobotPlayer::doUpdate(float dt)
 void			RCRobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
-    setDesiredSpeed(speed);
-    setDesiredAngVel(angularvel);
+    double timeNow = TimeKeeper::getCurrent().getSeconds();
+    /* Is the tick still running? */
+    if (lastTickAt + tickDuration >= timeNow)
+    {
+      if (distanceRemaining > 0.0f)
+      {
+        if (distanceForward)
+          setDesiredSpeed(speed);
+        else
+          setDesiredSpeed(-speed);
+
+        const float *vel = getVelocity();
+        distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
+      }
+      else
+      {
+        setDesiredSpeed(0);
+      }
+
+      if (turnRemaining > 0.0f)
+      {
+        if (turnLeft)
+        {
+          setDesiredAngVel(turnRate);
+          turnRemaining -= getAngularVelocity() * dt;
+        }
+        else
+        {
+          setDesiredAngVel(-turnRate);
+          turnRemaining += getAngularVelocity() * dt;
+        }
+      }
+      else
+      {
+        setDesiredAngVel(0);
+      }
+    }
+    else
+    {
+      setDesiredAngVel(0);
+      setDesiredSpeed(0);
+    }
+
   }
   LocalPlayer::doUpdateMotion(dt);
 }
@@ -61,34 +105,14 @@ void			RCRobotPlayer::restart(const float* pos, float _azimuth)
   LocalPlayer::restart(pos, _azimuth);
 }
 
-void			RCRobotPlayer::processrequest(RCRequest* req,
-							    RCLink* link)
+bool                    RCRobotPlayer::isSteadyState()
 {
-  switch (req->get_request_type()) {
-    case Speed:
-      speed = req->speed_level;
-      link->respond("ok\n");
-      break;
-
-    case AngularVel:
-      angularvel = req->angularvel_level;
-      link->respond("ok\n");
-      break;
-
-    case Shoot:
-      shoot = true;
-      if (fireShot()) {
-	link->respond("ok\n");
-      } else {
-	link->respond("fail\n");
-      }
-      break;
-
-    default:
-      break;
-  }
+  double timeNow = TimeKeeper::getCurrent().getSeconds();
+  /* last tick done? */
+  if (lastTickAt + tickDuration <= timeNow)
+    return true;
+  return false;
 }
-
 
 // Local Variables: ***
 // mode:C++ ***

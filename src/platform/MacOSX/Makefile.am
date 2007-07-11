@@ -1,7 +1,5 @@
 if MACOS
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libMac.la
-endif
 endif
 
 libMac_la_LDFLAGS = -static

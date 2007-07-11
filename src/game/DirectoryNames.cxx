@@ -125,7 +125,7 @@ static std::string		setupString(std::string dir)
 {
   std::string name = getConfigDirName();
   name += dir;
-  name += DirectorySeparator;
+  name += BZ_DIRECTORY_SEPARATOR;
   return name;
 }
 
@@ -141,7 +141,7 @@ std::string getCacheDirName()
     name += getenv("HOST");
   }
 #endif
-  name += DirectorySeparator;
+  name += BZ_DIRECTORY_SEPARATOR;
   return name;
 }
 
@@ -170,7 +170,7 @@ std::string getTempDirName()
     name = "/tmp";
   }
 #endif
-  name += DirectorySeparator;
+  name += BZ_DIRECTORY_SEPARATOR;
   return name;
 }
 

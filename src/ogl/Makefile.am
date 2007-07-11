@@ -1,6 +1,4 @@
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGLKit.la
-endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
@@ -14,7 +12,7 @@ libGLKit_la_SOURCES =			\
 	OpenGLLight.cxx			\
 	OpenGLMaterial.cxx		\
 	OpenGLTexture.cxx		\
-	OpenGLDisplayList.cxx		\
+	OpenGLUtils.cxx		\
 	RenderNode.cxx
 
 EXTRA_DIST = \

@@ -1105,7 +1105,7 @@ if test "x$BUILD_FREETYPE" = "xyes" ; then
 fi
 
 AC_CONFIG_FILES([
-	BZFlag.xcode/Makefile
+	BZFlag.xcodeproj/Makefile
 	Makefile
 	bzflag.info
 	bzflag.lsm

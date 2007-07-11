@@ -13,8 +13,6 @@
 #ifndef __BZFIO_H__
 #define __BZFIO_H__
 
-#include "common.h"
-
 void setDebugTimestamp (bool enable, bool doMicros);
 void logDebugMessage(int level, const char* fmt, ...);
 

@@ -11,12 +11,14 @@
  */
 
 /*
- * Remote Control Link: Encapsulates communication between local player and
- * remote agent.
+ * Remote Control Link: Encapsulates communication between backend and frontend.
+ * (This is the generic base-functionality)
  */
 
 #ifndef	BZF_RC_LINK_H
 #define	BZF_RC_LINK_H
+
+#include <sstream>
 
 #include "common.h"
 
@@ -28,85 +30,59 @@
 #define RC_LINK_SENDBUFLEN 100000
 #define RC_LINK_MAXARGS 50
 #define RC_LINK_OVERFLOW_MSG "\nerror Connection Stalled.  RC stopped" \
-				" reading data!\n"
-#define RC_LINK_NOHELLO_MSG "error agent expected\n"
-#define RC_LINK_HELLO_STR "bzrobots 1\n"
-typedef enum {
-		    InvalidRequest,
-		    HelloRequest,
-		    Speed,
-		    AngularVel,
-		    Shoot,
-		    TeamListRequest,
-		    BasesListRequest,
-		    ObstacleListRequest,
-		    FlagListRequest,
-		    ShotListRequest,
-		    MyTankListRequest,
-		    OtherTankListRequest,
-		    ConstListRequest
-} agent_req_t;
+  " reading data!\n"
 
-class RCLink;
-
-class RCRequest {
-  public:
-			RCRequest();
-			RCRequest(agent_req_t reqtype);
-			RCRequest(int argc, char **argv);
-			RCRequest *getnext();
-			void append(RCRequest *newreq);
-			int get_robotindex();
-			agent_req_t get_request_type();
-			void sendack(RCLink *link);
-			void sendfail(RCLink *link);
-
-			float speed_level, angularvel_level;
-			bool fail;
-			char *failstr;
-
-  private:
-			void set_robotindex(int index);
-
-			agent_req_t request_type;
-			int robotindex;
-			RCRequest *next;
-};
+#include "RCMessage.h"
 
 class RCLink {
   public:
-    enum State {
-			Disconnected,
-			SocketError,
-			Listening,
-			Connecting,
-			Connected
-    };
+    typedef enum {
+      Disconnected,
+      SocketError,
+      Listening,
+      Connecting,
+      Connected
+    } State;
 
-			RCLink(int port);
-			~RCLink();
-			void startListening();
-			void tryAccept();
-			void update();
-			int update_read();
-			int update_parse(int maxlines=0);
-			int update_write();
-			bool parsecommand(char *cmd);
-			void detach_agents();
+    RCLink();
+    virtual ~RCLink();
 
-			bool respond(char *message);
-			bool respondf(const char *format, ...);
-			RCRequest *poprequest();
+    bool connect(const char *host, int port);
+    void startListening(int port);
+    virtual bool tryAccept();
+    virtual State getDisconnectedState() = 0;
 
-  private:
-			enum State status;
-			int listenfd, connfd;
-			int port;
-			char recvbuf[RC_LINK_RECVBUFLEN];
-			char sendbuf[RC_LINK_SENDBUFLEN];
-			int recv_amount, send_amount;
-			RCRequest *requests;
-			bool input_toolong, output_overflow;
+    virtual bool parseCommand(char *cmdline) = 0;
+    int updateParse(int maxlines = 0);
+    int updateWrite();
+    int updateRead();
+    void detachAgents();
+    bool waitForData();
+    State getStatus() const { return status; }
+    const std::string &getError() const { return error; }
+
+    bool send(const char *message);
+    bool sendf(const char *format, ...);
+
+    template<class C>
+    bool send(const RCMessage<C> *message)
+    {
+      return sendf("%s\n", message->asString().c_str());
+    }
+    template<class C>
+    bool send(const RCMessage<C> &message)
+    {
+      return send(&message);
+    }
+
+  protected:
+    State status;
+    int listenfd, connfd;
+    char recvbuf[RC_LINK_RECVBUFLEN];
+    char sendbuf[RC_LINK_SENDBUFLEN];
+    int recv_amount, send_amount;
+    bool input_toolong, output_overflow;
+    std::string error;
 };
 
 

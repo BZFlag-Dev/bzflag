@@ -31,10 +31,15 @@
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 
-class WeatherRenderer {
+#include "OpenGLUtils.h"
+
+class WeatherRenderer : public GLDisplayListCreator
+{
 public:
 	WeatherRenderer();
-	~WeatherRenderer();
+	virtual ~WeatherRenderer();
+
+	virtual void buildGeometry ( GLDisplayList displayList );
 
 	// called once to setup the rain state, load lists and materials and stuff
 	void init(void);
@@ -47,12 +52,6 @@ public:
 
 	// called to draw the rain for the current frame
 	void draw(const SceneRenderer& sr);
-
-	// called when the GL lists need to be deleted
-	void freeContext(void);
-
-	// called when the GL lists need to be remade
-	void rebuildContext(void);
 
 protected:
 	OpenGLGState				rainGState;
@@ -77,8 +76,9 @@ protected:
 	float					maxPuddleTime;
 	float					puddleSpeed;
 	float					puddleColor[4];
-	GLuint					dropList;
-	GLuint					puddleList;
+
+	GLDisplayList				dropList;
+	GLDisplayList				puddleList;
 
 public:
 	typedef struct {
@@ -99,9 +99,6 @@ protected:
 	std::vector<puddle>	puddles;
 
 	float			lastRainTime;
-
-	void buildDropList(bool draw = false);
-	void buildPuddleList(bool draw = false);
 
 	bool updateDrop(std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd);
 	bool updatePuddle(std::vector<puddle>::iterator &splash, float frameTime);

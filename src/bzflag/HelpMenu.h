@@ -49,6 +49,7 @@ public:
   void execute()
   {
   }
+  void show();
   void resize(int width, int height);
 
   static HelpMenu* getHelpMenu(HUDDialog* = NULL, bool next = true);

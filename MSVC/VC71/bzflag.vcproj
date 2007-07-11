@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\src\other\zlib\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -96,7 +96,7 @@ copy debug\*.pdb ..\..\*.pdb
 				InlineFunctionExpansion="1"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\src\other\zlib\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -769,6 +769,9 @@ copy debug\*.pdb ..\..\*.pdb
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDNavigationQueue.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDRenderer.cxx">
@@ -1773,6 +1776,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDDialogStack.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDNavigationQueue.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDRenderer.h">

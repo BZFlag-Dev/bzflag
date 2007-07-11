@@ -1,6 +1,4 @@
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libSceneDB.la
-endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

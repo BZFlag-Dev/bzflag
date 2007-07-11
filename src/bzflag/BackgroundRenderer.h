@@ -31,10 +31,15 @@
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-class BackgroundRenderer {
+#include "OpenGLUtils.h"
+
+class BackgroundRenderer : public GLDisplayListCreator
+{
   public:
 			BackgroundRenderer(const SceneRenderer&);
-			~BackgroundRenderer();
+			virtual ~BackgroundRenderer();
+
+    virtual void buildGeometry ( GLDisplayList displayList );
 
     void		setupGroundMaterials();
     void		setupSkybox();
@@ -76,12 +81,8 @@ class BackgroundRenderer {
 
     void		resizeSky();
 
-    void		doFreeDisplayLists();
-    void		doInitDisplayLists();
     void		setSkyColors();
     void		makeCelestialLists(const SceneRenderer&);
-    static void		freeContext(void*);
-    static void		initContext(void*);
     static void		bzdbCallback(const std::string&, void*);
 
   private:
@@ -95,7 +96,6 @@ class BackgroundRenderer {
     // stuff for ground
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
-    GLuint		simpleGroundList[4];
     int			groundTextureID;
     const GLfloat*	groundTextureMatrix;
 
@@ -113,14 +113,12 @@ class BackgroundRenderer {
     int			numMountainTextures;
     int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
-    GLuint*		mountainsList;
 
     // stuff for clouds
     GLfloat		cloudDriftU, cloudDriftV;
     bool		cloudsAvailable;
     bool		cloudsVisible;
     OpenGLGState	cloudsGState;
-    GLuint		cloudsList;
 
     // weather
     WeatherRenderer	weather;
@@ -150,11 +148,16 @@ class BackgroundRenderer {
     OpenGLGState	sunGState;
     OpenGLGState	moonGState[2];
     OpenGLGState	starGState[2];
-    GLuint		sunList;
-    GLuint		sunXFormList;
-    GLuint		moonList;
-    GLuint		starList;
-    GLuint		starXFormList;
+
+    // display lists
+    GLDisplayList	sunXFormList;
+    GLDisplayList	moonList;
+    GLDisplayList	starXFormList;
+    GLDisplayList	lowGroundList;
+    GLDisplayList	mediumGroundList;
+    GLDisplayList	cloudsList;
+    std::vector<GLDisplayList> mountanLists;
+
 
     static GLfloat		skyPyramid[5][3];
     static const GLfloat	cloudRepeats;
@@ -169,6 +172,10 @@ class BackgroundRenderer {
     static const GLfloat	receiverColorInv[3];
 
     int			triangleCount;
+
+    SceneRenderer	      *lastRenderer;
+
+    void buildMountan ( unsigned int index );
 };
 
 //

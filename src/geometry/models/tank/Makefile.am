@@ -1,9 +1,4 @@
-MAINTAINERCLEANFILES = \
-	Makefile.in
-
-if CLIENT_INCLUDED
 noinst_LTLIBRARIES =	libTank.la
-endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
@@ -25,3 +20,6 @@ libTank_la_SOURCES =	\
 	medium_ltread.cxx	\
 	medium_rtread.cxx	\
 	medium_turret.cxx
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

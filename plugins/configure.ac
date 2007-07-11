@@ -223,6 +223,7 @@ AC_CONFIG_FILES([
 	torBlock/Makefile
 	bzfscron/Makefile
 	httpTest/Makefile
+	regFlag/Makefile
 ])
 
 AC_OUTPUT
@@ -280,4 +281,5 @@ AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
 AC_MSG_RESULT([  recordmatch - Makes countdown record games to a file])
 AC_MSG_RESULT([  torBlock - Blocks messages from the TOR network])
 AC_MSG_RESULT([  bzfscron - Allows you to run commands at time intervals])
+AC_MSG_RESULT([  regFlag - Only registered players can hold flags])
 AC_MSG_RESULT([])

@@ -19,8 +19,16 @@
 #define	BZF_RADAR_RENDERER_H
 
 #include "common.h"
+
+/* common interface headers */
 #include "bzfgl.h"
 #include "Obstacle.h"
+#include "OpenGLUtils.h"
+
+/* local implementation headers */
+#include "MeshObstacle.h"
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
 
 
 class SceneRenderer;
@@ -29,68 +37,95 @@ class ShotPath;
 class Player;
 
 
-class RadarRenderer {
-  public:
-			RadarRenderer(const SceneRenderer&, World* _world);
-    void		setWorld(World* _world);
+class RadarRenderer : public GLDisplayListCreator
+{
+public:
+  virtual	~RadarRenderer();
+  RadarRenderer(const SceneRenderer&, World* _world);
+  void		setWorld(World* _world);
 
-    void		setControlColor(const GLfloat *color = NULL);
+  void		setControlColor(const GLfloat *color = NULL);
 
-    int			getX() const;
-    int			getY() const;
-    int			getWidth() const;
-    int			getHeight() const;
+  int		getX() const;
+  int		getY() const;
+  int		getWidth() const;
+  int		getHeight() const;
 
-    void		setShape(int x, int y, int w, int h);
-    void		setJammed(bool = true);
+  void		setShape(int x, int y, int w, int h);
+  void		setJammed(bool = true);
 
-    void		setDimming(float newDimming);
+  void		setDimming(float newDimming);
 
-    void		render(SceneRenderer&, bool blank, bool observer);
+  void		render(SceneRenderer&, bool blank, bool observer);
 
-    void		renderFrame(SceneRenderer&);
+  void		renderFrame(SceneRenderer&);
 
-    void		renderObstacles(bool fastRadar, float range);
-    void		renderWalls();
-    void		renderBoxPyrMesh();
-    void		renderBoxPyrMeshFast(float range);
-    void		renderBasesAndTeles();
+  void		renderObstacles(bool fastRadar, float range);
+  void		renderWalls();
+  void		renderBoxPyrMesh();
+  void		renderBoxPyrMeshFast(float range);
+  void		renderBasesAndTeles();
 
-    int			getFrameTriangleCount() const;
+  int		getFrameTriangleCount() const;
 
-  private:
-    // no copying
-    RadarRenderer(const RadarRenderer&);
-    RadarRenderer&	operator=(const RadarRenderer&);
+  virtual void	buildGeometry ( GLDisplayList displayList );
+  void		clearRadarObjects ( void );
 
-    void		drawShot(const ShotPath*);
-    void		drawTank(const Player* player, bool allowFancy);
-    void		drawFancyTank(const Player* player);
-    void		drawHuntLevel(const Player* player,
-				      float tankSize, float heightBoxSize);
-    void		drawFlag(const float pos[3]);
-    void		drawFlagOnTank(const float pos[3]);
+private:
+  // no copying
+  RadarRenderer(const RadarRenderer&);
+  RadarRenderer& operator=(const RadarRenderer&);
 
-    static float	colorScale(const float z, const float h);
-    static float	transScale(const float z, const float h);
+  void		drawShot(const ShotPath*);
+  void		drawTank(const Player* player, bool allowFancy);
+  void		drawFancyTank(const Player* player);
+  void		drawHuntLevel(const Player* player,
+			      float tankSize, float heightBoxSize);
+  void		drawFlag(const float pos[3]);
+  void		drawFlagOnTank(const float pos[3]);
 
-  private:
-    World*		world;
-    int			x, y;
-    int			w, h;
-    float		dimming;
-    float		ps;
-    float		range;
-    double		decay;
-    GLfloat		teamColor[3];
-    bool		smooth;
-    bool		jammed;
-    bool		colorblind;
-    bool		multiSampled;
-    bool		useTankModels;
-    bool		useTankDimensions;
-    int			triangleCount;
-    static const float	colorFactor;
+  static float	colorScale(const float z, const float h);
+  static float	transScale(const float z, const float h);
+
+private:
+  World*	world;
+  int		x, y;
+  int		w, h;
+  float		dimming;
+  float		ps;
+  float		range;
+  double	decay;
+  GLfloat	teamColor[3];
+  bool		smooth;
+  bool		jammed;
+  bool		colorblind;
+  bool		multiSampled;
+  bool		useTankModels;
+  bool		useTankDimensions;
+  int		triangleCount;
+  static const float	colorFactor;
+
+  bool		lastFast;
+
+  typedef enum {
+    eNone,
+    eBoxPyr,
+    eMesh,
+    eMeshDeathFaces,
+    eBoxPyrOutline
+  } RadarObjectType;
+
+  typedef std::pair<RadarObjectType,Obstacle*> RadarObject;
+  typedef std::map<GLDisplayList,RadarObject> RadarObjectMap;
+  RadarObjectMap radarObjectLists;
+
+  void buildBoxPyr ( Obstacle* object );
+  // void buildBoxGeo ( BoxBuilding* box );
+  // void buildPryGeo ( PyramidBuilding* pyr );
+  void buildMeshGeo ( MeshObstacle* mesh, bool deathFaces );
+  void buildOutline ( Obstacle* object );
+  //   void buildBoxOutline ( const BoxBuilding& box );
+  //   void buildPyrOutline ( const PyramidBuilding& pyr );
 };
 
 //

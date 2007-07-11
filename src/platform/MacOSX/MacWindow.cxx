@@ -1,17 +1,13 @@
+#include "common.h"
+
+#include <iostream>
 #include <sys/time.h>
 
 #include "MacWindow.h"
 
-#ifdef __cplusplus
-#  define EXTERN_C_BEGIN extern "C" {
-#  define EXTERN_C_END   }
-#endif
-
-#include <iostream>
-
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 extern WindowRef GetWindowRefFromNativeWindow(void * nativeWindow);
-EXTERN_C_END
+__END_DECLS
 
 struct Settings
 {

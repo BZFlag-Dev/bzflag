@@ -16,8 +16,8 @@
 #include "common.h"
 
 /* system headers */
-#include <iostream>
 #include <map>
+#include <ostream>
 
 
 /**
@@ -40,7 +40,6 @@ protected:
   template <typename ObjectType>
   static BaseType *CreateObject()
   {
-    std::cout << "Creating a new object" << std::endl;
     return new ObjectType();
   }
 

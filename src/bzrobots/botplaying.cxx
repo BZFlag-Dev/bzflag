@@ -1,4 +1,3 @@
-
 /* bzflag
  * Copyright (c) 1993 - 2007 Tim Riker
  *
@@ -57,7 +56,9 @@
 #include "WordFilter.h"
 
 // local implementation headers
-#include "RCLink.h"
+#include "RCLinkBackend.h"
+#include "RCMessageFactory.h"
+#include "Frontend.h"
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
@@ -84,7 +85,7 @@ StartupInfo	startupInfo;
 ServerLink*		serverLink = NULL;
 static World	   *world = NULL;
 LocalPlayer*		observerTank = NULL;
-RCLink*		rcLink = NULL;
+RCLinkBackend*		rcLink = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
 static bool		joinRequested = false;
@@ -855,10 +856,10 @@ static void handleRejectMessage ( void *msg )
 static void handleFlagNegotiation ( void *msg, uint16_t len )
 {
   if (len > 0)
-    {
-      dumpMissingFlag((char *)msg, len);
-      return;
-    }
+  {
+    dumpMissingFlag((char *)msg, len);
+    return;
+  }
   serverLink->send(MsgWantSettings, 0, NULL);
 }
 
@@ -899,14 +900,14 @@ static void handleGetWorld ( void* msg, uint16_t len )
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
   if (!last)
-    {
-      char message[MaxPacketLen];
-      // ask for next chunk
-      worldPtr += len - 4;
-      nboPackUInt(message, worldPtr);
-      serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-      return;
-    }
+  {
+    char message[MaxPacketLen];
+    // ask for next chunk
+    worldPtr += len - 4;
+    nboPackUInt(message, worldPtr);
+    serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+    return;
+  }
   if (cacheOut)
     delete cacheOut;
   cacheOut = NULL;
@@ -921,14 +922,14 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
   msg = nboUnpackInt(msg, timeLeft);
   hud->setTimeLeft(timeLeft);
   if (timeLeft == 0)
-    {
-      gameOver = true;
+  {
+    gameOver = true;
 #ifdef ROBOT
-      for (int i = 0; i < numRobots; i++)
-	if (robots[i])
-	  robots[i]->explodeTank();
+    for (int i = 0; i < numRobots; i++)
+      if (robots[i])
+        robots[i]->explodeTank();
 #endif
-    }
+  }
   else if (timeLeft < 0)
     hud->setAlert(0, "Game Paused", 10.0f, true);
 }
@@ -945,18 +946,18 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
   // make a message
   std::string msg2;
   if (team == (uint16_t)NoTeam)
+  {
+    // a player won
+    if (player)
     {
-      // a player won
-      if (player)
-	{
-	  msg2 = _player->getCallSign();
-	  msg2 += " (";
-	  msg2 += Team::getName(_player->getTeam());
-	  msg2 += ")";
-	}
-      else
-	msg2 = "[unknown player]";
+      msg2 = _player->getCallSign();
+      msg2 += " (";
+      msg2 += Team::getName(_player->getTeam());
+      msg2 += ")";
     }
+    else
+      msg2 = "[unknown player]";
+  }
   else
     msg2 = Team::getName(TeamColor(team));		// a team won
 
@@ -966,10 +967,10 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
-    {
-      if (robots[i])
-	robots[i]->explodeTank();
-    }
+  {
+    if (robots[i])
+      robots[i]->explodeTank();
+  }
 #endif
 }
 
@@ -985,11 +986,11 @@ static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
   if (id == observerTank->getId())
     enteringServer(msg);		// it's me!  should be the end of updates
   else
-    {
-      addPlayer(id, msg, entered);
-      updateNumPlayers();
-      checkScores = true;
-    }
+  {
+    addPlayer(id, msg, entered);
+    updateNumPlayers();
+    checkScores = true;
+  }
 }
 
 static void handleRemovePlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
@@ -1007,10 +1008,10 @@ static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
   uint16_t flagIndex;
   msg = nboUnpackUShort(msg, count);
   for (int i = 0; i < count; i++)
-    {
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
-    }
+  {
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = world->getFlag(int(flagIndex)).unpack(msg);
+  }
 }
 
 static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
@@ -1020,10 +1021,10 @@ static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
 
   msg = nboUnpackUByte(msg,numTeams);
   for (int i = 0; i < numTeams; i++)
-    {
-      msg = nboUnpackUShort(msg, team);
-      msg = teams[int(team)].unpack(msg);
-    }
+  {
+    msg = nboUnpackUShort(msg, team);
+    msg = teams[int(team)].unpack(msg);
+  }
   updateNumPlayers();
   checkScores = true;
 }
@@ -1039,31 +1040,31 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   int playerIndex = lookupPlayerIndex(id);
 
   if ((playerIndex >= 0) || (playerIndex == -2))
+  {
+    static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+    Player* tank = getPlayerByIndex(playerIndex);
+    if (tank->getPlayerType() == ComputerPlayer)
     {
-      static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-      Player* tank = getPlayerByIndex(playerIndex);
-      if (tank->getPlayerType() == ComputerPlayer)
-	{
-	  for (int r = 0; r < numRobots; r++)
-	    {
-	      if (robots[r] && robots[r]->getId() == playerIndex)
-		{
-		  robots[r]->restart(pos,forward);
-		  if (!rcLink)
-		    {
-		      setRobotTarget(robots[r]);
-		    }
-		  break;
-		}
-	    }
-	}
-
-      tank->setStatus(PlayerState::Alive);
-      tank->move(pos, forward);
-      tank->setVelocity(zero);
-      tank->setAngularVelocity(0.0f);
-      tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+      for (int r = 0; r < numRobots; r++)
+      {
+        if (robots[r] && robots[r]->getId() == playerIndex)
+        {
+          robots[r]->restart(pos,forward);
+          if (!rcLink)
+          {
+            setRobotTarget(robots[r]);
+          }
+          break;
+        }
+      }
     }
+
+    tank->setStatus(PlayerState::Alive);
+    tank->move(pos, forward);
+    tank->setVelocity(zero);
+    tank->setAngularVelocity(0.0f);
+    tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+  }
 }
 
 static void handleAutoPilot ( void *msg, uint16_t /*len*/ )
@@ -1103,7 +1104,8 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
   if (!tank) {
     tank = lookupPlayer(id);
   }
-  if (!tank) return;
+  if (!tank)
+    return;
 
   if (localtank) {
     localtank->setDesiredSpeed(0.0);
@@ -1132,47 +1134,47 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   msg = nboUnpackShort(msg, shotId);
   msg = FlagType::unpack(msg, flagType);
   if (reason == (int16_t)PhysicsDriverDeath)
-    {
-      int32_t inPhyDrv;
-      msg = nboUnpackInt(msg, inPhyDrv);
-      phydrv = int(inPhyDrv);
-    }
+  {
+    int32_t inPhyDrv;
+    msg = nboUnpackInt(msg, inPhyDrv);
+    phydrv = int(inPhyDrv);
+  }
   BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);
   Player* killerPlayer = lookupPlayer(killer);
   if (victimLocal)
-    {
-      // uh oh, local player is dead
-      if (victimLocal->isAlive())
-	gotBlowedUp(victimLocal, GotKilledMsg, killer);
-    }
+  {
+    // uh oh, local player is dead
+    if (victimLocal->isAlive())
+      gotBlowedUp(victimLocal, GotKilledMsg, killer);
+  }
   else if (victimPlayer)
-    {
-      victimPlayer->setExplode(TimeKeeper::getTick());
-    }
+  {
+    victimPlayer->setExplode(TimeKeeper::getTick());
+  }
 
   if (killerLocal)
-    {
-      // local player did it
-      if (shotId >= 0)
-	killerLocal->endShot(shotId, true);				// terminate the shot
-    }
+  {
+    // local player did it
+    if (shotId >= 0)
+      killerLocal->endShot(shotId, true);				// terminate the shot
+  }
 
 #ifdef ROBOT
   // blow up robots on victim's team if shot was genocide
   if (killerPlayer && victimPlayer && shotId >= 0)
+  {
+    const ShotPath* shot = killerPlayer->getShot(int(shotId));
+    if (shot && shot->getFlag() == Flags::Genocide)
     {
-      const ShotPath* shot = killerPlayer->getShot(int(shotId));
-      if (shot && shot->getFlag() == Flags::Genocide)
-	{
-	  for (int i = 0; i < numRobots; i++)
-	    {
-	      if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
-		gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-	    }
-	}
+      for (int i = 0; i < numRobots; i++)
+      {
+        if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
+          gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+      }
     }
+  }
 #endif
 
   checkScores = true;
@@ -1238,33 +1240,33 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
 
   // player no longer has flag
   if (capturer)
-    {
-      capturer->setFlag(Flags::Null);
+  {
+    capturer->setFlag(Flags::Null);
 
-      // add message
-      if (int(capturer->getTeam()) == capturedTeam)
-	{
-	  std::string message("took my flag into ");
-	  message += Team::getName(TeamColor(team));
-	  message += " territory";
-	  addMessage(capturer, message);
-	}
-      else
-	{
-	  std::string message("captured ");
-	  message += Team::getName(TeamColor(capturedTeam));
-	  message += "'s flag";
-	  addMessage(capturer, message);
-	}
+    // add message
+    if (int(capturer->getTeam()) == capturedTeam)
+    {
+      std::string message("took my flag into ");
+      message += Team::getName(TeamColor(team));
+      message += " territory";
+      addMessage(capturer, message);
     }
+    else
+    {
+      std::string message("captured ");
+      message += Team::getName(TeamColor(capturedTeam));
+      message += "'s flag";
+      addMessage(capturer, message);
+    }
+  }
 
 #ifdef ROBOT
   //kill all my robots if they are on the captured team
   for (int r = 0; r < numRobots; r++)
-    {
-      if (robots[r] && robots[r]->getTeam() == capturedTeam)
-	gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-    }
+  {
+    if (robots[r] && robots[r]->getTeam() == capturedTeam)
+      gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+  }
 #endif
 
   checkScores = true;
@@ -1285,45 +1287,45 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
   // mode 2 == remove this person from the rabbit list
 
   if (mode == 0)	// we don't need to mod the hunters if we aren't swaping
+  {
+    for (int i = 0; i < curMaxPlayers; i++)
     {
-      for (int i = 0; i < curMaxPlayers; i++)
-	{
-	  if (player[i])
-	    player[i]->setHunted(false);
-	  if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
-	    player[i]->changeTeam(HunterTeam);
-	}
+      if (player[i])
+        player[i]->setHunted(false);
+      if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
+        player[i]->changeTeam(HunterTeam);
     }
+  }
 
   if (rabbit != NULL)
+  {
+    if (mode != 2)
     {
-      if (mode != 2)
-	{
-	  rabbit->changeTeam(RabbitTeam);
+      rabbit->changeTeam(RabbitTeam);
 
-	  if (mode == 0)
-	    addMessage(rabbit, "is now the rabbit", 3, true);
-	  else
-	    addMessage(rabbit, "is now a rabbit", 3, true);
-	}
+      if (mode == 0)
+        addMessage(rabbit, "is now the rabbit", 3, true);
       else
-	{
-	  rabbit->changeTeam(HunterTeam);
-	  addMessage(rabbit, "is no longer a rabbit", 3, true);
-	}
+        addMessage(rabbit, "is now a rabbit", 3, true);
     }
+    else
+    {
+      rabbit->changeTeam(HunterTeam);
+      addMessage(rabbit, "is no longer a rabbit", 3, true);
+    }
+  }
 
 #ifdef ROBOT
   for (int r = 0; r < numRobots; r++)
+  {
+    if (robots[r])
     {
-      if (robots[r])
-	{
-	  if (robots[r]->getId() == id)
-	    robots[r]->changeTeam(RabbitTeam);
-	  else
-	    robots[r]->changeTeam(HunterTeam);
-	}
+      if (robots[r]->getId() == id)
+        robots[r]->changeTeam(RabbitTeam);
+      else
+        robots[r]->changeTeam(HunterTeam);
     }
+  }
 #endif
 }
 
@@ -1726,14 +1728,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
-	if (rcLink) {
-	  robots[i] = new RCRobotPlayer(id, callsign, serverLink,
-				      rcLink, startupInfo.email);
+        robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
 	  fprintf(stderr, "new tank; type: %d\n", robots[i]->getPlayerType());
-	} else {
-	  robots[i] = new RobotPlayer(id, callsign, serverLink,
-				      startupInfo.email);
-	}
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
 			      robots[i]->getCallSign(),
@@ -2308,14 +2304,14 @@ static void		sendBase(BaseBuilding *base, const char *teamname)
   float corners[4][2];
   getObsCorners(base, false, corners);
 
-  rcLink->respondf("base %s", teamname);
+  rcLink->sendf("base %s", teamname);
 
   for (int i=0; i < 4; i++) {
     float* point = corners[i];
-    rcLink->respondf(" %f %f", point[0], point[1]);
+    rcLink->sendf(" %f %f", point[0], point[1]);
   }
 
-  rcLink->respond("\n");
+  rcLink->send("\n");
 }
 
 static void		sendBasesList()
@@ -2324,7 +2320,7 @@ static void		sendBasesList()
   const ObstacleList& bases = OBSTACLEMGR.getBases();
   const int numBases = bases.size();
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i = 0; i < numBases; i++) {
     BaseBuilding* base = (BaseBuilding*) bases[i];
@@ -2332,7 +2328,7 @@ static void		sendBasesList()
     sendBase(base, Team::getShortName(color));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendObstacle(Obstacle *obs)
@@ -2342,15 +2338,15 @@ static void		sendObstacle(Obstacle *obs)
 
   getObsCorners(obs, true, corners);
 
-  rcLink->respond("obstacle");
+  rcLink->send("obstacle");
 
   for (int i=0; i < 4; i++) {
     float* point = corners[i];
-    rcLink->respondf(" %f %f", gauss(point[0], posnoise), \
+    rcLink->sendf(" %f %f", gauss(point[0], posnoise), \
 	gauss(point[1], posnoise));
   }
 
-  rcLink->respond("\n");
+  rcLink->send("\n");
 }
 
 static void		sendObsList()
@@ -2365,7 +2361,7 @@ static void		sendObsList()
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (i = 0; i < numBoxes; i++) {
     sendObstacle(boxes[i]);
@@ -2380,7 +2376,7 @@ static void		sendObsList()
     sendObstacle(meshes[i]);
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendTeamList()
@@ -2390,33 +2386,33 @@ static void		sendTeamList()
   const Team& blueteam = world->getTeam(BlueTeam);
   const Team& purpleteam = world->getTeam(PurpleTeam);
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   // Note that we only look at the first base
 
   if (redteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(RedTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(RedTeam),
 			  redteam.size);
   }
   if (greenteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(GreenTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(GreenTeam),
 			  greenteam.size);
   }
   if (blueteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(BlueTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(BlueTeam),
 			  blueteam.size);
   }
   if (purpleteam.size > 0) {
-    rcLink->respondf("team %s %d\n", Team::getShortName(PurpleTeam),
+    rcLink->sendf("team %s %d\n", Team::getShortName(PurpleTeam),
 			  purpleteam.size);
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendFlagList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<numFlags; i++) {
     Flag& flag = world->getFlag(i);
@@ -2433,18 +2429,18 @@ static void		sendFlagList()
     }
 
     if (flag.status != FlagNoExist) {
-      rcLink->respondf("flag %s %s %f %f\n",
+      rcLink->sendf("flag %s %s %f %f\n",
 	  flagteam, possessteam,
 	  flag.position[0], flag.position[1]);
     }
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendShotList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
     Player* tank = player[i];
@@ -2458,13 +2454,13 @@ static void		sendShotList()
       const float* position = shot->getPosition();
       const float* velocity = shot->getVelocity();
 
-      rcLink->respondf("shot %f %f %f %f\n", position[0], position[1],
+      rcLink->sendf("shot %f %f %f %f\n", position[0], position[1],
 	    velocity[0], velocity[1]);
     }
 
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendMyTankList()
@@ -2474,7 +2470,7 @@ static void		sendMyTankList()
   float angnoise = atof(BZDB.get("bzrcAngNoise").c_str());
   float velnoise = atof(BZDB.get("bzrcVelNoise").c_str());
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   const int numShots = World::getWorld()->getMaxShots();
 
@@ -2531,14 +2527,14 @@ static void		sendMyTankList()
       noisy_angle += 2 * M_PI;
     }
 
-    rcLink->respondf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
+    rcLink->sendf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
 	i, callsign, statstr, shots_avail, reloadtime, flagname,
 	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
 	noisy_angle, gauss(vel[0], velnoise),
 	gauss(vel[1], velnoise), gauss(angvel, angnoise));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendOtherTankList()
@@ -2547,7 +2543,7 @@ static void		sendOtherTankList()
   float posnoise = atof(BZDB.get("bzrcPosNoise").c_str());
   float angnoise = atof(BZDB.get("bzrcAngNoise").c_str());
 
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
     tank = player[i];
@@ -2597,51 +2593,27 @@ static void		sendOtherTankList()
     const float *pos = tank->getPosition();
     const float angle = tank->getAngle();
 
-    rcLink->respondf("othertank %s %s %s %s %f %f %f\n",
+    rcLink->sendf("othertank %s %s %s %s %f %f %f\n",
 	callsign, colorname, statstr, flagname,
 	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
 	gauss(angle, angnoise));
   }
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
 static void		sendConstList()
 {
-  rcLink->respond("begin\n");
+  rcLink->send("begin\n");
 
-  rcLink->respondf("constant team %s\n", Team::getShortName(startupInfo.team));
-  rcLink->respondf("constant worldsize %f\n", BZDBCache::worldSize);
-  rcLink->respond("constant hoverbot 0\n");
+  rcLink->sendf("constant team %s\n", Team::getShortName(startupInfo.team));
+  rcLink->sendf("constant worldsize %f\n", BZDBCache::worldSize);
+  rcLink->send("constant hoverbot 0\n");
 
-  rcLink->respond("end\n");
+  rcLink->send("end\n");
 }
 
-static void		doBotRequests()
-{
-  RCRequest* req;
-  RCRobotPlayer* bot;
-  int tankindex;
-
-  while ((req=rcLink->poprequest()) != NULL) {
-    req->sendack(rcLink);
-    if (req->fail) {
-      req->sendfail(rcLink);
-      break;
-    }
-
-    switch (req->get_request_type()) {
-      case Speed:
-      case AngularVel:
-      case Shoot:
-	tankindex = req->get_robotindex();
-	if (tankindex == -1) {
-	  rcLink->respondf("fail Invalid tank index.\n");
-	} else {
-	  bot = (RCRobotPlayer*)robots[tankindex];
-	  bot->processrequest(req, rcLink);
-	}
-	break;
+#if 0
       case TeamListRequest:
 	sendTeamList();
 	break;
@@ -2666,9 +2638,20 @@ static void		doBotRequests()
       case ConstListRequest:
 	sendConstList();
 	break;
-      default:
-	break;
-    }
+#endif
+static void		doBotRequests()
+{
+  RCRequest* req;
+
+  if (numRobots < 1)
+    return;
+
+  while ((req = rcLink->peekRequest()) != NULL) {
+    if (!req->process((RCRobotPlayer*)robots[0]))
+      return;
+
+    rcLink->popRequest(); // Discard it, we're done with this one.
+    rcLink->sendAck(req);
   }
 }
 
@@ -2710,11 +2693,6 @@ static void enteringServer(void *buf)
 #if defined(ROBOT)
   addRobots();
 #endif
-
-  // start listening on remote control port
-  if (rcLink) {
-    rcLink->startListening();
-  }
 
   // initialize some other stuff
   updateNumPlayers();
@@ -3220,7 +3198,9 @@ void checkForServerBail ( void )
       // if we haven't reported the death yet then do so now
       if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
 	printError("Server has unexpectedly disconnected");
-      leaveGame();
+      else
+        printError("We were disconencted from the server, quitting.");
+      CommandsStandard::quit();
     }
 }
 
@@ -3258,7 +3238,7 @@ void doTankMotions ( const float /*dt*/ )
     }
 }
 
-void updatePostions ( const float dt )
+void updatePositions ( const float dt )
 {
   updateShots(dt);
 
@@ -3276,7 +3256,7 @@ void checkEnvironment ( const float )
 
 void doUpdates ( const float dt )
 {
-  updatePostions(dt);
+  updatePositions(dt);
   checkEnvironment(dt);
 
   // update AutoHunt
@@ -3348,17 +3328,19 @@ static void		playingLoop()
 
       // Communicate with remote agent if necessary
       if (rcLink) {
-	rcLink->tryAccept();
+        if (numRobots >= numRobotTanks)
+          rcLink->tryAccept();
+
 	rcLink->update();
 	doBotRequests();
       }
 
       callPlayingCallbacks();    // invoke callbacks
 
+      checkForServerBail();
+
       if (CommandsStandard::isQuit())     // quick out
 	break;
-
-      checkForServerBail();
 
       doUpdates(dt);
 
@@ -3459,11 +3441,22 @@ void			botStartPlaying()
     printError(aString);
   }
 
-  // startup an RCLink if requested
-  if (BZDB.isSet("rcPort")) {
-    int port = atoi(BZDB.get("rcPort").c_str());
-    rcLink = new RCLink(port);
-  }
+  int port;
+  if (!BZDB.isSet("rcPort")) // Generate a random port between 1024 & 65536.
+    port = (int)(bzfrand() * (65536 - 1024)) + 1024;
+  else
+    port = atoi(BZDB.get("rcPort").c_str());
+
+  // here we register the various RCRequest-handlers for commands
+  // that RCLinkBackend receives. :-)
+  RCMessageFactory<RCRequest>::initialize();
+
+  rcLink = new RCLinkBackend();
+  rcLink->startListening(port);
+  RCREQUEST.setLink(rcLink);
+
+  if (!Frontend::run("localhost", port))
+    return;
 
   // enter game if we have all the info we need, otherwise
   joinRequested    = true;
