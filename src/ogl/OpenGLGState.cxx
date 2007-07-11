@@ -28,6 +28,8 @@
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
+#include "OpenGLUtils.h"
+
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
 #ifdef DEBUG
@@ -473,6 +475,7 @@ void			OpenGLGStateState::setOpenGLState(
   if (oldState) {
     // texture mapping
     if (sorted.hasTexture) {
+      glEnable(GL_TEXTURE_2D);
       if (oldState->sorted.hasTexture) {
 	if (sorted.texture != oldState->sorted.texture) {
 	  tm.bind(sorted.texture);
@@ -483,7 +486,6 @@ void			OpenGLGStateState::setOpenGLState(
       }
       else {
 	tm.bind(sorted.texture);
-	glEnable(GL_TEXTURE_2D);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
       }
     }
@@ -969,6 +971,8 @@ void OpenGLGState::ContextInitializer::executeFreeFuncs()
     scan = scan->prev;
   }
   executingFreeFuncs = false;
+
+  DisplayListSystem::Instance().flushLists();
   return;
 }
 
