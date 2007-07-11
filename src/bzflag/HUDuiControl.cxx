@@ -46,7 +46,7 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
     builder.setTexture(arrow);
     builder.setBlending();
 //    builder.setSmoothing();
-    //builder.setTextureEnvMode(GL_REPLACE);
+//    builder.setTextureEnvMode(GL_TEXTURE_2D);
     *gstate = builder.getState();
 
     // get start time for animation
@@ -123,7 +123,9 @@ void			HUDuiControl::renderFocus()
     float imageXShift = 0.5f;
     float imageYShift = -fh2 * 0.2f;
     float outputSize = fh2;
-    glBegin(GL_QUADS);
+
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS); {
       glTexCoord2f(u, v);
       glVertex2f(x + imageXShift - outputSize, y + imageYShift);
       glTexCoord2f(u + du, v);
@@ -132,7 +134,7 @@ void			HUDuiControl::renderFocus()
       glVertex2f(x + imageXShift , y + outputSize + imageYShift);
       glTexCoord2f(u, v + dv);
       glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
-    glEnd();
+    } glEnd();
 
     TimeKeeper nowTime = TimeKeeper::getCurrent();
     if (nowTime - lastTime > 0.07f) {
