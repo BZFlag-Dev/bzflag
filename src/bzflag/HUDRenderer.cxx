@@ -184,7 +184,7 @@ int			HUDRenderer::getMaxMotionSize() const
 
 void			HUDRenderer::setBigFontSize(int, int height)
 {
-  const float s = (float)height / 22.0f;
+  const float s = (float)height / 11.0f;
   FontManager &fm = FontManager::instance();
   bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   bigFontSize = floorf(s);
@@ -197,7 +197,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
 void			HUDRenderer::setAlertFontSize(int, int height)
 {
-  const float s = (float)height / 36.0f;
+  const float s = (float)height / 18.0f;
   FontManager &fm = FontManager::instance();
   alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   alertFontSize = floorf(s);
@@ -210,7 +210,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 
 void			HUDRenderer::setMajorFontSize(int, int height)
 {
-  const float s = (float)height / 36.0f;
+  const float s = (float)height / 18.0f;
   FontManager &fm = FontManager::instance();
   majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
   majorFontSize = floorf(s);
@@ -224,28 +224,28 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
     case 0: { // auto
-      const float s = (float)height / 72.0f;
+      const float s = (float)height / 36.0f;
       minorFontSize = floorf(s);
       break;
     }
     case 1: // tiny
-      minorFontSize = 6;
-      break;
-    case 2: // small
-      minorFontSize = 8;
-      break;
-    case 3: // medium
       minorFontSize = 12;
       break;
-    case 4: // big
+    case 2: // small
       minorFontSize = 16;
+      break;
+    case 3: // medium
+      minorFontSize = 24;
+      break;
+    case 4: // big
+      minorFontSize = 32;
       break;
   }
 }
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
 {
-  const float s = (float)height / 144.0f;
+  const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
   headingFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   headingFontSize = floorf(s);
@@ -261,7 +261,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
 
 void			HUDRenderer::setComposeFontSize(int, int height)
 {
-  const float s = (float)height / 72.0f;
+  const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
   composeFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   composeTypeIn->setFontFace(composeFontFace);
@@ -270,7 +270,7 @@ void			HUDRenderer::setComposeFontSize(int, int height)
 
 void			HUDRenderer::setLabelsFontSize(int, int height)
 {
-  const float s = (float)height / 96.0f;
+  const float s = (float)height / 48.0f;
   FontManager &fm = FontManager::instance();
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   labelsFontSize = floorf(s);

@@ -132,21 +132,21 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
     case 0: { // auto
-      const float s = height / 72.0f;
+      const float s = height / 36.0f;
       minorFontSize = floorf(s);
       break;
     }
     case 1: // tiny
-      minorFontSize = 6;
-      break;
-    case 2: // small
-      minorFontSize = 8;
-      break;
-    case 3: // medium
       minorFontSize = 12;
       break;
-    case 4: // big
+    case 2: // small
       minorFontSize = 16;
+      break;
+    case 3: // medium
+      minorFontSize = 24;
+      break;
+    case 4: // big
+      minorFontSize = 32;
       break;
   }
 
