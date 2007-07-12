@@ -16,10 +16,15 @@
 #include "BZAdvancedRobot.h"
 
 struct ScriptLoader {
-    virtual bool load(std::string filename) = 0;
-    virtual BZAdvancedRobot *instantiate(void) = 0;
-    virtual void destroy(BZAdvancedRobot *instance) = 0;
     virtual ~ScriptLoader() {}
+
+    virtual bool load(std::string filename) = 0;
+    virtual BZAdvancedRobot *create(void) = 0;
+    virtual void destroy(BZAdvancedRobot *instance) = 0;
+
+    std::string getError() const { return error; }
+  protected:
+    std::string error;
 };
 
 #endif

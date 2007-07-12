@@ -60,14 +60,15 @@ void Frontend::start(std::string filename)
     error = "Could not find a proper ScriptLoader for extension '" + extension + "'.";
     return;
   }
+
   scriptLoader = SCRIPTLOADER.scriptLoader(extension);
   if (!scriptLoader->load(filename))
   {
-    error = "Could not load script via ScriptLoader for file '" + filename + "'.";
+    error = "Could not load script: " + scriptLoader->getError();
     return;
   }
 
-  robot = scriptLoader->instantiate();
+  robot = scriptLoader->create();
   if (robot == NULL)
   {
     error = "Could not instantiate robot via ScriptLoader for file '" + filename + "'.";

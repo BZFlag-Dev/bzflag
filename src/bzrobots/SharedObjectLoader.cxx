@@ -11,17 +11,51 @@
  */
 
 #include "SharedObjectLoader.h"
+#include "dlfcn.h"
 
 bool SharedObjectLoader::load(std::string filename)
 {
-  return false;
+  char *err;
+
+  if (filename.find('/') == std::string::npos)
+    filename = "./" + filename;
+
+  soHandle = dlopen(filename.c_str(), RTLD_LAZY);
+  if (soHandle == NULL)
+  {
+    error = dlerror();
+    return false;
+  }
+
+  dlerror(); // To clear error-var.
+  createFunction = (createHandle)dlsym(soHandle, "create");
+  if ((err = dlerror()))
+  {
+    error = err;
+    return false;
+  }
+
+  dlerror(); // To clear error-var.
+  destroyFunction = (destroyHandle)dlsym(soHandle, "destroy");
+  if ((err = dlerror()))
+  {
+    error = err;
+    return false;
+  }
+
+  return true;
 }
-BZAdvancedRobot *SharedObjectLoader::instantiate(void)
+SharedObjectLoader::~SharedObjectLoader()
 {
-  return NULL;
+  dlclose(soHandle);
+}
+BZAdvancedRobot *SharedObjectLoader::create(void)
+{
+  return (*createFunction)();
 }
 void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
 {
+  (*destroyFunction)(instance);
 }
 
 // Local Variables: ***

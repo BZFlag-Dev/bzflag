@@ -16,9 +16,18 @@
 #include "ScriptLoader.h"
 
 class SharedObjectLoader : public ScriptLoader {
+  typedef BZAdvancedRobot *(*createHandle)(void);
+  typedef void (*destroyHandle)(BZAdvancedRobot *);
+
+  createHandle createFunction;
+  destroyHandle destroyFunction;
+
+  void *soHandle;
+
   public:
+    ~SharedObjectLoader();
     bool load(std::string filename);
-    BZAdvancedRobot *instantiate(void);
+    BZAdvancedRobot *create(void);
     void destroy(BZAdvancedRobot *instance);
 };
 

@@ -1,6 +1,14 @@
-#include "TestRobot.h"
+/* Compile using:
+ * g++ -shared -fPIC -O2 -g -I. -I. -I../../include  -I../../include -I../bzflag -Wall -W TestRobot.cxx -o TestRobot.so
+ */
 
+#include "TestRobot.h"
 #include "TimeKeeper.h"
+
+extern "C" {
+    BZAdvancedRobot *create() { return new TestRobot(); }
+    void destroy(BZAdvancedRobot *robot) { delete robot; }
+}
 
 void TestRobot::run()
 {
