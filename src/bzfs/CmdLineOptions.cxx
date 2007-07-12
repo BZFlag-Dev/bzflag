@@ -81,6 +81,7 @@ const char *usageString =
 "[-handicap] "
 "[-helpmsg <file> <name>] "
 "[-i interface] "
+"[-ircConf <file>] "
 "[-j] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
@@ -181,6 +182,7 @@ const char *extraUsageString =
 "\t-handicap: give advantage based on relative playing ability\n"
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
+"\t-ircConf: IRC configuration file\n"
 "\t-j: allow jumping\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
@@ -742,6 +744,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // use a different interface
       checkArgc(1, i, argc, argv[i]);
       options.pingInterface = argv[i];
+    } else if (strcmp(argv[i], "-ircConf") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.ircConfFile = argv[i];
     } else if (strcmp(argv[i], "-j") == 0) {
       // allow jumping
       options.gameOptions |= int(JumpingGameStyle);

@@ -61,7 +61,7 @@ struct CmdLineOptions
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
-    advertiseGroups("EVERYONE"),
+    advertiseGroups("EVERYONE"), ircConfFile("");
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
@@ -117,6 +117,13 @@ struct CmdLineOptions
   std::string	publicizedTitle;
   std::string	publicizedAddress;
   std::string	advertiseGroups;
+
+  //IRC Connection info file. This option will also enable IRC features.
+  //TODO: Eventually some, if not most, of the IRC correction params will be removed and handled by the central system.
+  // Ultimately the config file will be optional and IRC connection will be mandatory for all public servers.
+  // This might not be the best way to do this- perhaps it should be processed immediately. We'll see.
+
+  std::string	ircConfFile;
 
   bool			suppressMasterBanList;
   bool			masterBanListOverridden;
