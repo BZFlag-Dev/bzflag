@@ -45,6 +45,11 @@ genericfiles =				\
 	RCRobotPlayer.h			\
 	Frontend.cxx			\
 	Frontend.h			\
+	ScriptLoader.h			\
+	ScriptLoaderFactory.cxx		\
+	ScriptLoaderFactory.h		\
+	SharedObjectLoader.cxx		\
+	SharedObjectLoader.h		\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
 	AdvancedRobot.cxx		\

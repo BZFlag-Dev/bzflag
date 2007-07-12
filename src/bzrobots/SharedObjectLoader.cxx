@@ -10,23 +10,19 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * TestRobot: Testing basic stuff.
- */
+#include "SharedObjectLoader.h"
 
-#ifndef BZROBOTS_TESTROBOT_H
-#define BZROBOTS_TESTROBOT_H
-
-#include "BZAdvancedRobot.h"
-
-struct TestRobot :public BZAdvancedRobot
+bool SharedObjectLoader::load(std::string filename)
 {
-  TestRobot() {}
-  TestRobot(RCLinkFrontend *_link) { setLink(_link); }
-  void run();
-};
-
-#endif
+  return false;
+}
+BZAdvancedRobot *SharedObjectLoader::instantiate(void)
+{
+  return NULL;
+}
+void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
+{
+}
 
 // Local Variables: ***
 // mode:C++ ***

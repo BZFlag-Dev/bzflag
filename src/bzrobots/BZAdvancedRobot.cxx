@@ -2,6 +2,11 @@
 
 #include "RCRequests.h"
 
+void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
+{
+  link = _link;
+}
+
 void BZAdvancedRobot::execute()
 {
   link->sendAndProcess(ExecuteReq(), this);
