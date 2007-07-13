@@ -296,3 +296,9 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+EXTRA_PROGRAMS = TestRobot.so
+noinst_PROGRAMS = TestRobot.so
+
+TestRobot.so: TestRobot.cxx TestRobot.h BZAdvancedRobot.h
+	$(CXX) $(AM_CPPFLAGS) -shared -fPIC -O2 -g TestRobot.cxx -o TestRobot.so
