@@ -31,12 +31,12 @@ const GLfloat		HUDuiElement::textColor[3] = { 1.0f, 1.0f, 1.0f };
 HUDuiElement::HUDuiElement()
 {
   elementFontFace = -1;
-  elementFontSize = 11;
+  elementFontSize = 10;
   elementX = 0.0f;
   elementY = 0.0f;
   elementWidth = 1.0f;
   elementHeight = 1.0f;
-  fontHeight = 11.0f;
+  fontHeight = 10.0f;
   desiredLabelWidth = 0.0f;
   trueLabelWidth = 0.0f;
   skipRenderLabel = false;
@@ -114,7 +114,7 @@ void			HUDuiElement::onSetFont()
     fontHeight = fm.getStringHeight(elementFontFace, elementFontSize);
     trueLabelWidth = fm.getStringWidth(elementFontFace, elementFontSize, getLabel() + "99");
   } else {
-    fontHeight = 11.0f;
+    fontHeight = 10.0f;
     trueLabelWidth = 0.0f;
   }
 }

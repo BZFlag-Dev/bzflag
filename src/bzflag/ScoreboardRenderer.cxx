@@ -132,12 +132,12 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
     case 0: { // auto
-      const float s = height / 36.0f;
+      const float s = height / 30.0f;
       minorFontSize = floorf(s);
       break;
     }
     case 1: // tiny
-      minorFontSize = 12;
+      minorFontSize = 8;
       break;
     case 2: // small
       minorFontSize = 16;
@@ -165,7 +165,7 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
 
 void			ScoreboardRenderer::setLabelsFontSize(float height)
 {
-  const float s = height / 96.0f;
+  const float s = height / 50.0f;
   FontManager &fm = FontManager::instance();
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   labelsFontSize = floorf(s);

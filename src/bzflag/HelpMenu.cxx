@@ -96,8 +96,8 @@ void HelpMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 23.0f;
-  const float fontSize = (float)_height / 100.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  const float fontSize = (float)_height / 60.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title

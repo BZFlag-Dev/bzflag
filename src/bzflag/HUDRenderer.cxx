@@ -184,7 +184,7 @@ int			HUDRenderer::getMaxMotionSize() const
 
 void			HUDRenderer::setBigFontSize(int, int height)
 {
-  const float s = (float)height / 11.0f;
+  const float s = (float)height / 10.0f;
   FontManager &fm = FontManager::instance();
   bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   bigFontSize = floorf(s);
@@ -197,7 +197,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
 void			HUDRenderer::setAlertFontSize(int, int height)
 {
-  const float s = (float)height / 18.0f;
+  const float s = (float)height / 15.0f;
   FontManager &fm = FontManager::instance();
   alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   alertFontSize = floorf(s);
@@ -210,7 +210,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 
 void			HUDRenderer::setMajorFontSize(int, int height)
 {
-  const float s = (float)height / 18.0f;
+  const float s = (float)height / 15.0f;
   FontManager &fm = FontManager::instance();
   majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
   majorFontSize = floorf(s);
@@ -224,12 +224,19 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
     case 0: { // auto
-      const float s = (float)height / 36.0f;
-      minorFontSize = floorf(s);
+      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
+	float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
+	
+	// try to fit at least 50 lines
+	if ((height / fontheight) > 50) {
+	  break;
+	}
+      }
+
       break;
     }
     case 1: // tiny
-      minorFontSize = 12;
+      minorFontSize = 8;
       break;
     case 2: // small
       minorFontSize = 16;
@@ -409,13 +416,15 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     float cFontSize = composeTypeIn->getFontSize();
     if (cFontFace >= 0) {
       FontManager &fm = FontManager::instance();
-      const float x = fm.getStringWidth(cFontFace, cFontSize, composeTypeIn->getLabel()) +
-	fm.getStringWidth(cFontFace, cFontSize, "99");
-      const float y = 1.0f;
+      float fontHeight = fm.getStringHeight(cFontFace, cFontSize);
+      const float x =
+	fm.getStringWidth(cFontFace, cFontSize, composeTypeIn->getLabel()) + 
+	fm.getStringWidth(cFontFace, cFontSize, "__");
+      const float y = fontHeight * 0.5f;
       composeTypeIn->setLabelWidth(x);
-      composeTypeIn->setPosition(x, y);
+      composeTypeIn->setPosition(x + 8, y); // pad prompt on the left just a smidgen
       // FIXME what is this supposed to do?
-      composeTypeIn->setSize(window.getWidth() - x, fm.getStringHeight(cFontFace, cFontSize) * 0);
+      composeTypeIn->setSize(window.getWidth() - x, 0);
     }
   } else {
     HUDui::setFocus(NULL);

@@ -319,7 +319,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 65.0f;
+  const float fontSize = (float)_height / 45.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title

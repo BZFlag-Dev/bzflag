@@ -134,8 +134,8 @@ void			MainMenu::resize(int _width, int _height)
 
   // use a big font
   const float titleSize = (float)_height / 8.0f;
-  const float tinyFontSize = (float)_height / 32.0f;
-  const float fontSize = (float)_height / 16.0f;
+  const float tinyFontSize = (float)_height / 30.0f;
+  const float fontSize = (float)_height / 15.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
 

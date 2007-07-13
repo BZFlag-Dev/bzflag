@@ -228,8 +228,8 @@ void KeyboardMapMenu::resize(int _width, int _height)
   int i;
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)_height / 15.0f;
-  const float bigFontSize = (float)_height / 42.0f;
-  const float fontSize = (float)_height / 100.0f;
+  const float bigFontSize = (float)_height / 30.0f;
+  const float fontSize = (float)_height / 50.0f;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
 

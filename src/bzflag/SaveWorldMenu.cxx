@@ -85,8 +85,8 @@ void SaveWorldMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
 
   // use a big font for the body, bigger for the title
-  const float titleFontSize = (float)_height / 18.0f;
-  float fontSize = (float)_height / 36.0f;
+  const float titleFontSize = (float)_height / 15.0f;
+  float fontSize = (float)_height / 30.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title

@@ -41,7 +41,7 @@ void HelpInstructionsMenu::resize(int _width, int _height)
 
   // find good font size
   FontManager &fm = FontManager::instance();
-  float fontSize = _height / 5.0f; // guaranteed to be too big
+  float fontSize = _height; // guaranteed to be too big
   const float workingWidth = _width - 2 * getLeftSide(_width, _height);
 
   // find the longest localized string

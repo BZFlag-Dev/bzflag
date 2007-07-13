@@ -297,7 +297,7 @@ void JoinMenu::resize(int _width, int _height)
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 36.0f;
+  const float fontSize = (float)_height / 30.0f;
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();

@@ -359,12 +359,12 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       if (tabsOnRight) {
 	// draw the tabs on the right side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
@@ -624,28 +624,39 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
+  FontManager &fm = FontManager::instance();
+  fontFace = fm.getFaceID(BZDB.get("consoleFont"));
+
   switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
   case 0: { // auto
-    const bool useBigFont = (messageAreaPixels[2] / 100.0f) > 10.0f;
-    fontSize = useBigFont ? 12.0f : 8.0f;
+    for (fontSize = 40.0f; fontSize > 8.0f; fontSize -= 8.0f) {
+      float fontheight = fm.getStringHeight(fontFace, fontSize);
+      float fontwidth = fm.getStringWidth(fontFace, fontSize, "X");
+
+      // try to fit 80 columns with at least 10 lines
+      if ((messageAreaPixels[2] / fontwidth) < 80) {
+	continue;
+      }
+      if ((messageAreaPixels[3] / fontheight) > 10) {
+	break;
+      }
+    }
+
     break;
     }
   case 1: // tiny
-    fontSize = 6;
+    fontSize = 8.0f;
     break;
   case 2: // small
-    fontSize = 8;
+    fontSize = 16.0f;
     break;
   case 3: // medium
-    fontSize = 12;
+    fontSize = 24.0f;
     break;
   case 4: // big
-    fontSize = 16;
+    fontSize = 32.0f;
     break;
   }
-
-  FontManager &fm = FontManager::instance();
-  fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   // tab widths may have changed
   if (tabs) {

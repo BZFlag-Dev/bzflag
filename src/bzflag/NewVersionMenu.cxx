@@ -192,7 +192,7 @@ void NewVersionMenu::resize(int _width, int _height)
 
   // use a big font
   float fontSize = (float)_height / 15.0f;
-  float smallFontSize = (float)_height / 45.0f;
+  float smallFontSize = (float)_height / 30.0f;
   float x, y;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
