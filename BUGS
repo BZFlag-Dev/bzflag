@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- pulsating text only pulsates if the menu is overlayed
+
 - jitter on windows servers is reported as very high, but play
   is unaffected.
 
