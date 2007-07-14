@@ -19,7 +19,8 @@
 // System headers
 #include <math.h>
 #include <string>
-#include "FTGLTextureFont.h"
+#include <string.h>
+#include <assert.h>
 
 // Global implementation headers
 #include "bzfgl.h"
@@ -31,6 +32,9 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 #include "OSFile.h"
+
+// local implementation headers
+#include "FTGLTextureFont.h"
 
 
 /** initialize the singleton */
@@ -356,9 +360,13 @@ void* FontManager::getGLFont ( int face, int size )
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string &text, const float* resetColor, fontJustification align)
 {
+  char buffer[1024] = {0};
+  memset(buffer, 0, 1024);
+
   if (text.size() <= 0)
     return;
-  
+  assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
+
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
@@ -413,6 +421,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     doneLastSection = true;
   }
 
+  float height = getStringHeight(faceID, size);
+
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
@@ -422,44 +432,59 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     // render text
     int len = endSend - startSend;
     if (len > 0) {
-      const char* tmpText = text.c_str();
+      const char* rendertext = text.c_str();
+
+      memcpy(buffer, &rendertext[startSend], len);
+      buffer[len] = '\0'; /* need terminator */
+
       // get substr width, we may need it a couple times
-      width = getStringWidth(faceID, size, &tmpText[startSend]);
-      glPushMatrix();
+      width = getStringWidth(faceID, size, buffer);
 
-      if ( align == AlignCenter ) {
-	glTranslatef(x - (width*0.5f), y, z);
-      } else if ( align == AlignRight ) {
-	glTranslatef(x - width, y, z);
-      } else {
-	glTranslatef(x, y, z);
-      }
-      glDepthMask(0);
-      
-      glEnable(GL_TEXTURE_2D);
-      theFont->Render(&tmpText[startSend]);
-      glDisable(GL_TEXTURE_2D);
+      glPushMatrix(); {
+	if ( align == AlignCenter ) {
+	  glTranslatef(x - (width*0.5f), y, z);
+	} else if ( align == AlignRight ) {
+	  glTranslatef(x - width, y, z);
+	} else {
+	  glTranslatef(x, y, z);
+	}
+	//	glDepthMask(0);
 
-      if (underline) {
-	glEnable(GL_BLEND);
-	if (bright && underlineColor[0] >= 0) {
-	  glColor4fv(underlineColor);
-	} else if (underlineColor[0] >= 0) {
-	  glColor4fv(dimUnderlineColor);
-	} else if (color[0] >= 0) {
+	// draw the underline before the text
+	if (underline) {
+	  glEnable(GL_BLEND);
+	  if (bright && underlineColor[0] >= 0) {
+	    glColor4fv(underlineColor);
+	  } else if (underlineColor[0] >= 0) {
+	    glColor4fv(dimUnderlineColor);
+	  } else if (color[0] >= 0) {
+	    glColor4fv(color);
+	  }
+
+	  glBegin(GL_LINES); {
+	    // drop below the baseline into the descent a little
+	    glVertex2f(0.0f, height * -0.1f);
+	    glVertex2f(width, height * -0.1f);
+	  } glEnd();
+	}
+
+	if (color[0] >= 0) {
 	  glColor4fv(color);
 	}
-	// still have a translated matrix, these coordinates are
-	// with respect to the string just drawn
-	glBegin(GL_LINES);
-	glVertex2f(0.0f, 0.0f);
-	glVertex2f(width, 0.0f);
-	glEnd();
-      }
-      glDepthMask(BZDBCache::zbuffer);
-      glPopMatrix();
+
+	glEnable(GL_TEXTURE_2D);
+	theFont->Render(buffer);
+	glDisable(GL_TEXTURE_2D);
+
+	//	glDepthMask(BZDBCache::zbuffer);
+      } glPopMatrix();
+
       // x transform for next substr
       x += width;
+
+      if (color[0] >= 0) {
+	glColor4f(1, 1, 1, 1);
+      }
     }
     if (!doneLastSection) {
       startSend = (int)text.find('m', endSend) + 1;
@@ -469,6 +494,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (endSend != (int)text.size()) {
       tookCareOfANSICode = false;
       std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
+
       // colors
       for (int i = 0; i <= LastColor; i++) {
 	if (tmpText == ColorStrings[i]) {
@@ -485,6 +511,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  break;
 	}
       }
+
       // didn't find a matching color
       if (!tookCareOfANSICode) {
 	// settings other than color
@@ -626,9 +653,9 @@ void FontManager::underlineCallback(const std::string &, void *)
   // set underline color
   const std::string uColor = BZDB.get("underlineColor");
   if (strcasecmp(uColor.c_str(), "text") == 0) {
-    underlineColor[0] = 0.0f;
-    underlineColor[1] = 0.0f;
-    underlineColor[2] = 0.0f;
+    underlineColor[0] = -1.0f;
+    underlineColor[1] = -1.0f;
+    underlineColor[2] = -1.0f;
   } else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
     underlineColor[0] = BrightColors[CyanColor][0];
     underlineColor[1] = BrightColors[CyanColor][1];
