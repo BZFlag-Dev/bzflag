@@ -58,7 +58,11 @@ FontSizer::getFontSize(int faceID, std::string name)
   if (!BZDB.isSet(name)) {
     return getFontSize(faceID, _medium);
   }
-  return getFontSize(faceID, BZDB.eval(name));
+  float size = BZDB.eval(name);
+  if (size <= 0 || isnan(size)) {
+    return getFontSize(faceID, _medium);
+  }
+  return getFontSize(faceID, size);
 }
 
 float
