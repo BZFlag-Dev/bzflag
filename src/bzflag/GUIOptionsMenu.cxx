@@ -405,7 +405,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'C':
       {
-	BZDB.setInt("consoleFontSize", list->getIndex());
+	BZDB.setInt("consoleFontSize", list->getIndex() * 8);
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }
@@ -418,7 +418,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'S':
       {
-	BZDB.setInt("scoreFontSize", list->getIndex());
+	BZDB.setInt("scoreFontSize", list->getIndex() * 8);
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }
