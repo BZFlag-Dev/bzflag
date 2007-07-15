@@ -47,6 +47,8 @@ bzflag_SOURCES =			\
 	ExportInformation.h		\
 	FlashClock.cxx			\
 	FlashClock.h			\
+	FontSizer.cxx			\
+	FontSizer.h			\
 	ForceFeedback.cxx		\
 	ForceFeedback.h			\
 	FormatMenu.cxx			\
