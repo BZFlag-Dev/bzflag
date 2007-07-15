@@ -245,7 +245,7 @@ void FormatMenu::resize(int _width, int _height)
   }
 
   // reposition test and current format messages
-  float fontSize = (float)_height / 30.0f;
+  float fontSize = fs.getFontSize(fontFace, "menuFontSize");
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
@@ -262,7 +262,7 @@ void FormatMenu::resize(int _width, int _height)
   }
 
   // position page readout
-  fontSize = (float)_height / 30.0f;
+  fontSize = fs.getFontSize(fontFace, "menuFontSize");
   {
     HUDuiLabel* label = pageLabel;
     label->setFontSize(fontSize);
