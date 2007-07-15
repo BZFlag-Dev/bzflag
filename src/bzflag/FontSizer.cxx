@@ -108,7 +108,6 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
       fontSize = _huge;
     }
   }
-
   
   return fontSize;
 }

@@ -17,6 +17,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "Downloads.h"
 #include "CacheManager.h"
@@ -177,13 +178,15 @@ void CacheMenu::setFailedMessage(const char* msg)
 void CacheMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
   center = 0.5f * (float)_width;
 
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 30.0f;
   FontManager &fm = FontManager::instance();
+
+  // use a big font for title, smaller font for the rest
+  const float titleFontSize = fs.getFontSize(MainMenu::getFontFace(), "headerFontSize");
+  const float fontSize = fs.getFontSize(MainMenu::getFontFace(), "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();

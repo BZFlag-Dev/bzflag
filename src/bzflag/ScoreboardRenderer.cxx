@@ -25,6 +25,7 @@
 #include "TextUtils.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "LocalPlayer.h"
 #include "AutoHunt.h"
 #include "World.h"
@@ -87,7 +88,7 @@ void  ScoreboardRenderer::setWindowSize (float x, float y, float width, float he
   winWidth = width;
   winHeight = height;
   setMinorFontSize();
-  setLabelsFontSize(winHeight);
+  setLabelsFontSize(winWidth, winHeight);
 }
 
 
@@ -130,34 +131,8 @@ void		ScoreboardRenderer::setMinorFontSize()
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  switch (static_cast<int>(BZDB.eval("scoreFontSize"))) {
-    case 1: // tiny
-      minorFontSize = 8;
-      break;
-    case 2: // small
-      minorFontSize = 16;
-      break;
-    case 3: // medium
-      minorFontSize = 24;
-      break;
-    case 4: // big
-      minorFontSize = 32;
-      break;
-    default: { // auto
-      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
-	const float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
-	const float fontwidth = fm.getStringWidth(minorFontFace, minorFontSize, "X");
-	
-	if ((winWidth / fontwidth) < 120) {
-	  continue;
-	}
-	if ((winHeight / fontheight) > 50) {
-	  break;
-	}
-      }
-      break;
-    }
-  }
+  FontSizer fs = FontSizer(winWidth, winHeight);
+  minorFontSize = fs.getFontSize(minorFontFace, "scoreFontSize");
 
   huntArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "->");
   huntPlusesWidth = fm.getStringWidth(minorFontFace, minorFontSize, "@>");
@@ -172,12 +147,13 @@ void		ScoreboardRenderer::setMinorFontSize()
 }
 
 
-void			ScoreboardRenderer::setLabelsFontSize(float height)
+void			ScoreboardRenderer::setLabelsFontSize(float width, float height)
 {
-  const float s = height / 75.0f;
   FontManager &fm = FontManager::instance();
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
-  labelsFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  labelsFontSize = fs.getFontSize(labelsFontFace, "tinyFontSize");
 }
 
 

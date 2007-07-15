@@ -86,7 +86,7 @@ protected:
 
 private:
   void		setMinorFontSize();
-  void		setLabelsFontSize(float height);
+  void		setLabelsFontSize(float width, float height);
   static int	teamScoreCompare(const void* _a, const void* _b);
   static int  sortCompareCp(const void* _a, const void* _b);
   static int  sortCompareI2(const void* _a, const void* _b);

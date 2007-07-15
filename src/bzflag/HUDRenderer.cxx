@@ -23,6 +23,7 @@
 #include "BZDBCache.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "World.h"
 #include "HUDui.h"
 #include "Roaming.h"
@@ -217,37 +218,13 @@ void			HUDRenderer::setMajorFontSize(int, int height)
   majorFontHeight = fm.getStringHeight(majorFontFace, majorFontSize);
 }
 
-void			HUDRenderer::setMinorFontSize(int, int height)
+void			HUDRenderer::setMinorFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  switch (static_cast<int>(BZDB.eval("scoreFontSize"))) {
-    case 0: { // auto
-      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
-	float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
-	
-	// try to fit at least 50 lines
-	if ((height / fontheight) > 50) {
-	  break;
-	}
-      }
-
-      break;
-    }
-    case 1: // tiny
-      minorFontSize = 8;
-      break;
-    case 2: // small
-      minorFontSize = 16;
-      break;
-    case 3: // medium
-      minorFontSize = 24;
-      break;
-    case 4: // big
-      minorFontSize = 32;
-      break;
-  }
+  FontSizer fs = FontSizer(width, height);
+  minorFontSize = fs.getFontSize(minorFontFace, "scoreFontSize");
 }
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
@@ -266,21 +243,23 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
   altitudeLabelMaxWidth = fm.getStringWidth(headingFontFace, headingFontSize, "9999");
 }
 
-void			HUDRenderer::setComposeFontSize(int, int height)
+void			HUDRenderer::setComposeFontSize(int width, int height)
 {
-  const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
   composeFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   composeTypeIn->setFontFace(composeFontFace);
-  composeTypeIn->setFontSize(floorf(s));
+
+  FontSizer fs = FontSizer(width, height);
+  composeTypeIn->setFontSize(fs.getFontSize(composeFontFace, "consoleFontSize"));
 }
 
-void			HUDRenderer::setLabelsFontSize(int, int height)
+void			HUDRenderer::setLabelsFontSize(int width, int height)
 {
-  const float s = (float)height / 48.0f;
   FontManager &fm = FontManager::instance();
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
-  labelsFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  labelsFontSize = fs.getFontSize(labelsFontFace, "tinyFontSize");
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
