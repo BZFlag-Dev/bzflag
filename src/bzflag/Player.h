@@ -92,8 +92,6 @@ public:
   const float*	getDimensions() const;
 
   const float*	getApparentVelocity() const;
-  const float	getLastUpdateTime() const;
-
 
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const
@@ -304,8 +302,11 @@ private:
   float			relativeSpeed;		// relative speed
   float			relativeAngVel;		// relative angular velocity
 
+  float			apparentVelocity[3];	// velocity of tank as derived from it's last positional update
+
   // dead reckoning stuff
   TimeKeeper inputTime;		// time of input
+  float inputTimestamp;         // input timestamp of sender
   int	inputStatus;		// tank status
   float	inputPos[3];		// tank position
   float	inputVel[3];		// tank velocity
@@ -412,12 +413,7 @@ inline const float*	Player::getVelocity() const
 
 inline const float*	Player::getApparentVelocity() const
 {
-	return state.apparentVelocity;
-}
-
-inline const float	Player::getLastUpdateTime() const
-{
-	return state.lastUpdateTime;
+  return apparentVelocity;
 }
 
 inline float		Player::getAngularVelocity() const

@@ -84,6 +84,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
 
+  apparentVelocity[0] = apparentVelocity[1] = apparentVelocity[2] = 0.0f;
+  inputTimestamp = 0.0f;
+
   reportedHits = 0;
   computedHits = 0;
 
@@ -238,16 +241,6 @@ void Player::forceReload(float time)
 
 void Player::move(const float* _pos, float _azimuth)
 {
-  // update the speed of the state
-  float currentTime = (float)TimeKeeper::getTick().getSeconds();
-  if (state.lastUpdateTime >= 0) {
-    float delta = currentTime - state.lastUpdateTime;
-    state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
-    state.apparentVelocity[1] = (_pos[1]-state.pos[1])/delta;
-    state.apparentVelocity[2] = (_pos[2]-state.pos[2])/delta;
-  }
-  state.lastUpdateTime = currentTime;
-
   // assumes _forward is normalized
   state.pos[0] = _pos[0];
   state.pos[1] = _pos[1];
@@ -1343,14 +1336,22 @@ void Player::doDeadReckoning()
 const int   DRStateStable      = 100;
 const float maxToleratedJitter = 1.0f;
 
-void Player::setDeadReckoning(float)
+void Player::setDeadReckoning(float timestamp)
 {
+  // calculate apparent speed
+  //  const float timeelapsed = TimeKeeper::getTick() - inputTime;
+  const float dt = timestamp - inputTimestamp;
+  inputTimestamp = timestamp;
+  if (dt > 0.0f && dt < MaxUpdateTime * 1.5f) {
+    apparentVelocity[0] = (inputPos[0] - state.pos[0]) / dt;
+    apparentVelocity[1] = (inputPos[1] - state.pos[1]) / dt;
+    apparentVelocity[2] = (inputPos[2] - state.pos[2]) / dt;
+  }
+
   // set the current state
   setDeadReckoning();
 
   setRelativeMotion();
-
-  return;
 }
 
 

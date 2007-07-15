@@ -45,11 +45,6 @@ PlayerState::PlayerState()
   userAngVel = 0.0f;
   jumpJetsScale = 0.0f;
   sounds = NoSounds;
-
-  apparentVelocity[0] = apparentVelocity[1] = apparentVelocity[2] = 0.0f;
-  lastUpdateTime = -1;
-
-  return;
 }
 
 

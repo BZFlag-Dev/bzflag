@@ -64,7 +64,11 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   // FIXME - with dynamic dimensions, this may not be a good idea
   //	 (flag each shot with a 'default dimensions' state?)
   move(newpos, getAngle());
-  setDeadReckoning(info.timeSent);
+  // FIXME - timestamp of shots are handled slightly different than for
+  //         tank position updates, better so ignore them for now
+  //         detail: settick | shot: current() | move | draw | tankpos: tick()
+  //setDeadReckoning(info.timeSent);
+  setDeadReckoning(-1.0f);
 }
 
 ShotPath*		RemotePlayer::getShot(int index) const
