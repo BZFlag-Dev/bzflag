@@ -151,7 +151,7 @@ void FormatMenu::setPage(int _page)
 
   // wrap from last page to first
   if (page > (int)(numFormats / NumItems))
-    page = 1;
+    page = 0;
   // wrap from first page back to last
   if (page < 0)
     page = (int)(numFormats / NumItems);
