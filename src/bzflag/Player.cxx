@@ -232,22 +232,21 @@ float Player::getMuzzleHeight() const
 
 void Player::forceReload(float time)
 {
-	jamTime = TimeKeeper::getCurrent();
-	jamTime+= time;
+  jamTime  = TimeKeeper::getCurrent();
+  jamTime += time;
 }
 
 void Player::move(const float* _pos, float _azimuth)
 {
-	// update the speed of the state
-	float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
-	if ( state.lastUpdateTime >= 0 )
-	{
-		float delta = currentTime - state.lastUpdateTime;
-		state.aperantVelocity[0] = (_pos[0]-state.pos[0])/delta;
-		state.aperantVelocity[1] = (_pos[1]-state.pos[1])/delta;
-		state.aperantVelocity[2] = (_pos[2]-state.pos[2])/delta;
-	}
-	state.lastUpdateTime = currentTime;
+  // update the speed of the state
+  float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
+  if (state.lastUpdateTime >= 0) {
+    float delta = currentTime - state.lastUpdateTime;
+    state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
+    state.apparentVelocity[1] = (_pos[1]-state.pos[1])/delta;
+    state.apparentVelocity[2] = (_pos[2]-state.pos[2])/delta;
+  }
+  state.lastUpdateTime = currentTime;
 
   // assumes _forward is normalized
   state.pos[0] = _pos[0];

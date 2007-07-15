@@ -91,7 +91,7 @@ public:
   short		getScore() const;
   const float*	getDimensions() const;
 
-  const float*	getAperantVelocity() const;
+  const float*	getApparentVelocity() const;
   const float	getLastUpdateTime() const;
 
 
@@ -410,9 +410,9 @@ inline const float*	Player::getVelocity() const
   return state.velocity;
 }
 
-inline const float*	Player::getAperantVelocity() const
+inline const float*	Player::getApparentVelocity() const
 {
-	return state.aperantVelocity;
+	return state.apparentVelocity;
 }
 
 inline const float	Player::getLastUpdateTime() const

@@ -54,8 +54,8 @@ class PlayerState
     float	angVel;		// angular velocity of tank
     int		phydrv;		// physics driver
 
-	float	aperantVelocity[3];	// velocity of tank as derived from it's last positional update
-	float	lastUpdateTime;		// the time of the last update
+    float	apparentVelocity[3];	// velocity of tank as derived from it's last positional update
+    float	lastUpdateTime;		// the time of the last update
 
     // the following are to be used only for drawing
     float	userSpeed;	// user's desired angular velocity

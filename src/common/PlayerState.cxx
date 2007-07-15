@@ -46,7 +46,7 @@ PlayerState::PlayerState()
   jumpJetsScale = 0.0f;
   sounds = NoSounds;
 
-  aperantVelocity[0] = aperantVelocity[1] = aperantVelocity[2] = 0.0f;
+  apparentVelocity[0] = apparentVelocity[1] = apparentVelocity[2] = 0.0f;
   lastUpdateTime = -1;
 
   return;
