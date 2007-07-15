@@ -64,6 +64,8 @@ FontSizer::getFontSize(int faceID, std::string name)
 float
 FontSizer::getFontSize(int faceID, float zeroToOneSize)
 {
+  float fontSize;
+
   // clamp inputs
   if (zeroToOneSize < 0.0f) {
     zeroToOneSize = 0.0f;
@@ -71,8 +73,21 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
     zeroToOneSize = 1.0f;
   }
 
-  // requested font size
-  float fontSize = _height * zeroToOneSize;
+  // make sure the font will "fit", otherwise go even smaller
+  FontManager &fm = FontManager::instance();
+
+  // approx width of a char in this font size, just need the ratio
+  const float wide = fm.getStringWidth(faceID, BZDB.eval("mediumFontSize"), "BZ") / 2.0f;
+  const float tall = fm.getStringHeight(faceID, BZDB.eval("mediumFontSize"));
+
+  // requested font size, use most limiting aspect
+  if ((_height / tall) < (_width / wide)) {
+    // font fills vertically
+    fontSize = _height * zeroToOneSize;
+  } else {
+    // font fills horizontally
+    fontSize = _width * zeroToOneSize;
+  }
 
   // don't care about biggest, but do care about smallest for readability
   if (fontSize < _smallest) {
@@ -94,15 +109,6 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
     }
   }
 
-#if 0
-  // FIXME: unimplemented
-
-  // make sure the font will "fit", otherwise go even smaller
-  FontManager &fm = FontManager::instance();
-
-  // approx width of a char in this font size
-  const float wide = fm.getStringWidth(faceID, fontSize, "BZ") / 2.0f;
-#endif
   
   return fontSize;
 }
