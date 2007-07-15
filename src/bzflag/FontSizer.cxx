@@ -55,12 +55,22 @@ FontSizer::resize(int width, int height)
 float
 FontSizer::getFontSize(int faceID, std::string name)
 {
-  if (!BZDB.isSet(name)) {
-    return getFontSize(faceID, _medium);
-  }
   float size = BZDB.eval(name);
-  if (size <= 0 || isnan(size)) {
-    return getFontSize(faceID, _medium);
+  if (size < 0.0f || isnan(size)) {
+    size = _medium;
+  }
+  if (size > 1.0f) {
+    // need to normalize
+    FontManager &fm = FontManager::instance();
+
+    // approx width of a char in this font size, just need the ratio
+    const float wide = fm.getStringWidth(faceID, size, "BZ") / 2.0f;
+    const float tall = fm.getStringHeight(faceID, size);
+
+    size = tall / _height;
+    if (size < (wide / _width)) {
+      size = (wide / _width);
+    }
   }
   return getFontSize(faceID, size);
 }

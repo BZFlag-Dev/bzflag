@@ -49,7 +49,10 @@ class FontSizer {
   void resize(int width, int height);
 
   /**
-   * returns a font point size based on a BZDB font name.
+   * returns a font point size based on a BZDB font name.  if the
+   * value is greater than 1, then it is normalized to the context
+   * size and treated as a point size.  Otherwise, it's treated as a
+   * zeroToOne value.
    */
   float getFontSize(int faceID, std::string fontName);
 
