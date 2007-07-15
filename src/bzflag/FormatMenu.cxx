@@ -33,13 +33,13 @@ bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::PageUp:
       if (HUDui::getFocus()) {
-	menu->setPage(menu->page + 1);
+	menu->setPage(menu->page - 1);
       }
       return true;
 
     case BzfKeyEvent::PageDown:
       if (HUDui::getFocus()) {
-	menu->setPage(menu->page - 1);
+	menu->setPage(menu->page + 1);
       }
       return true;
 
@@ -151,7 +151,7 @@ void FormatMenu::setPage(int _page)
 
   // wrap from last page to first
   if (page > (int)(numFormats / NumItems))
-    page = 1;
+    page = 0;
   // wrap from first page back to last
   if (page < 0)
     page = (int)(numFormats / NumItems);
