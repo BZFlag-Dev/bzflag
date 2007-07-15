@@ -58,6 +58,7 @@
 // local implementation headers
 #include "RCLinkBackend.h"
 #include "RCMessageFactory.h"
+#include "ScriptLoaderFactory.h"
 #include "Frontend.h"
 #include "AutoPilot.h"
 #include "bzflag.h"
@@ -3455,7 +3456,14 @@ void			botStartPlaying()
   rcLink->startListening(port);
   RCREQUEST.setLink(rcLink);
 
-  if (!Frontend::run("localhost", port))
+  if (!BZDB.isSet("robotScript"))
+  {
+    fprintf(stderr, "Missing script on commandline!\n");
+    exit(EXIT_FAILURE);
+  }
+
+  ScriptLoaderFactory::initialize();
+  if (!Frontend::run(BZDB.get("robotScript"), "localhost", port))
     return;
 
   // enter game if we have all the info we need, otherwise

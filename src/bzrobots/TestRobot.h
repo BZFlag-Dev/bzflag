@@ -21,7 +21,8 @@
 
 struct TestRobot :public BZAdvancedRobot
 {
-  TestRobot(RCLinkFrontend *_link) :BZAdvancedRobot(_link) {}
+  TestRobot() {}
+  TestRobot(RCLinkFrontend *_link) { setLink(_link); }
   void run();
 };
 

@@ -55,8 +55,9 @@ class BZAdvancedRobot
 
   public:
     virtual void run() = 0;
-    BZAdvancedRobot(RCLinkFrontend *_link) :link(_link) {}
+    BZAdvancedRobot() :link(NULL) {}
     virtual ~BZAdvancedRobot() {}
+    void setLink(RCLinkFrontend *_link);
     
     float gunHeat, distanceRemaining, turnRemaining;
     float battleFieldSize;

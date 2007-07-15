@@ -45,6 +45,11 @@ genericfiles =				\
 	RCRobotPlayer.h			\
 	Frontend.cxx			\
 	Frontend.h			\
+	ScriptLoader.h			\
+	ScriptLoaderFactory.cxx		\
+	ScriptLoaderFactory.h		\
+	SharedObjectLoader.cxx		\
+	SharedObjectLoader.h		\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
 	AdvancedRobot.cxx		\
@@ -53,8 +58,6 @@ genericfiles =				\
 	BZRobot.h			\
 	Robot.cxx			\
 	Robot.h				\
-	TestRobot.cxx			\
-	TestRobot.h			\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
 	../bzflag/AudioMenu.cxx			\
@@ -243,7 +246,7 @@ genericfiles =				\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
 
-bzrobots_LDFLAGS = -static
+bzrobots_LDFLAGS = -static -rdynamic
 
 if CLIENT_INCLUDED
 bzrobots_SOURCES = $(genericfiles)
@@ -295,3 +298,10 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+EXTRA_LTLIBRARIES = TestRobot.la
+TestRobot_la_LDFLAGS = -module -avoid-version
+TestRobot_la_SOURCES = \
+	BZAdvancedRobot.h \
+	TestRobot.cxx \
+	TestRobot.h

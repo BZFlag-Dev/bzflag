@@ -355,14 +355,18 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 	// Don't kick players if the world param is still changing
 	if (!worldStateChanging())
 	{
-		if (!doBoundsChecks(playerData,state))
-			return false;
+	  // exploding or dead players can do unpredictable things
+	  if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus)
+	  {
+	    if (!doBoundsChecks(playerData,state))
+	      return false;
 
-		if (!doSpeedChecks(playerData,state))
-			return false;
+	    if (!doSpeedChecks(playerData,state))
+	      return false;
+	  }
 
-		if (!doPauseChecks(playerData,state))
-			return false;
+	  if (!doPauseChecks(playerData,state))
+	    return false;
 	}
 
 	// see if the player is too high

@@ -10,32 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Frontend: Class to encapsulate the frontend.
- */
+#ifndef BZROBOTS_SCRIPTLOADER_H
+#define BZROBOTS_SCRIPTLOADER_H
 
-#ifndef	BZF_FRONTEND_H
-#define	BZF_FRONTEND_H
-
-#include "RCLinkFrontend.h"
-#include "ScriptLoader.h"
 #include "BZAdvancedRobot.h"
 
-class Frontend
-{
-    RCLinkFrontend *link;
-    bool sentStuff;
-    Frontend();
+struct ScriptLoader {
+    virtual ~ScriptLoader() {}
+
+    virtual bool load(std::string filename) = 0;
+    virtual BZAdvancedRobot *create(void) = 0;
+    virtual void destroy(BZAdvancedRobot *instance) = 0;
+
+    std::string getError() const { return error; }
+  protected:
     std::string error;
-    ScriptLoader *scriptLoader;
-    BZAdvancedRobot *robot;
-
-    public:
-      static bool run(std::string filename, const char *host, int port); 
-
-      bool connect(const char *host, int port);
-      void start(std::string filename);
-      const std::string &getError() const { return error; }
 };
 
 #endif
@@ -47,4 +36,3 @@ class Frontend
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

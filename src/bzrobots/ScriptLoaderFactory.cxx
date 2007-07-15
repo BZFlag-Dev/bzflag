@@ -10,35 +10,35 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Frontend: Class to encapsulate the frontend.
- */
+#include "ScriptLoaderFactory.h"
+#include "SharedObjectLoader.h"
 
-#ifndef	BZF_FRONTEND_H
-#define	BZF_FRONTEND_H
+// initialize the singleton
+template <>
+ScriptLoaderFactory* Singleton<ScriptLoaderFactory>::_instance = NULL;
 
-#include "RCLinkFrontend.h"
-#include "ScriptLoader.h"
-#include "BZAdvancedRobot.h"
+/* public */
 
-class Frontend
+ScriptLoader *
+ScriptLoaderFactory::scriptLoader(std::string extension)
 {
-    RCLinkFrontend *link;
-    bool sentStuff;
-    Frontend();
-    std::string error;
-    ScriptLoader *scriptLoader;
-    BZAdvancedRobot *robot;
+  std::string lcExtension = TextUtils::tolower(extension);
+  return SCRIPTLOADER.Create(lcExtension.c_str());
+}
 
-    public:
-      static bool run(std::string filename, const char *host, int port); 
+void ScriptLoaderFactory::initialize()
+{
+  SCRIPTLOADER.Register<SharedObjectLoader>("so");
+}
 
-      bool connect(const char *host, int port);
-      void start(std::string filename);
-      const std::string &getError() const { return error; }
-};
+/* private */
+ScriptLoaderFactory::ScriptLoaderFactory()
+{
+}
 
-#endif
+ScriptLoaderFactory::~ScriptLoaderFactory()
+{
+}
 
 // Local Variables: ***
 // mode:C++ ***
@@ -47,4 +47,3 @@ class Frontend
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
