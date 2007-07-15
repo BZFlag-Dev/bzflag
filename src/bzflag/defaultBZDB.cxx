@@ -140,11 +140,11 @@ DefaultDBItem	defaultDBItems[] = {
 
   // default font sizes for specific sections (relative 0 to 1)
   { "titleFontSize",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
-  { "menuFontSize",		"1/15",			true,	StateDatabase::ReadWrite,	NULL },
-  { "hudFontSize",		"1/30",			true,	StateDatabase::ReadWrite,	NULL },
-  { "alertFontSize",		"1/45",			true,	StateDatabase::ReadWrite,	NULL },
-  { "consoleFontSize",		"1/100",		true,	StateDatabase::ReadWrite,	NULL },
-  { "scoreFontSize",		"1/100",		true,	StateDatabase::ReadWrite,	NULL },
+  { "menuFontSize",		"1/16",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hudFontSize",		"1/32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "alertFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
+  { "consoleFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
+  { "scoreFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
   { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },
