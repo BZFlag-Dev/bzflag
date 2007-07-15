@@ -161,8 +161,8 @@ void OptionsMenu::resize(int _width, int _height)
   int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontFace");
-  const float fontSize = fs.getFontSize(fontFace, "menuFontFace");
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();

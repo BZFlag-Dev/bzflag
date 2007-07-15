@@ -603,8 +603,8 @@ void ServerStartMenu::resize(int _width, int _height)
   const int fontFace = title->getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontFace");
-  const float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "mainFontFace");
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
 
   // reposition title
   title->setFontSize(titleFontSize);
