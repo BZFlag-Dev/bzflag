@@ -127,9 +127,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   teleAlpha = 1.0f;
 
   haveIpAddr = false; // no IP address yet
-  lastTrackDraw = TimeKeeper::getCurrent();
+  lastTrackDraw = TimeKeeper::getTick();
 
-  spawnTime = TimeKeeper::getCurrent();
+  spawnTime = TimeKeeper::getTick();
 
   return;
 }
@@ -232,14 +232,14 @@ float Player::getMuzzleHeight() const
 
 void Player::forceReload(float time)
 {
-  jamTime  = TimeKeeper::getCurrent();
+  jamTime  = TimeKeeper::getTick();
   jamTime += time;
 }
 
 void Player::move(const float* _pos, float _azimuth)
 {
   // update the speed of the state
-  float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
+  float currentTime = (float)TimeKeeper::getTick().getSeconds();
   if (state.lastUpdateTime >= 0) {
     float delta = currentTime - state.lastUpdateTime;
     state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
@@ -441,7 +441,7 @@ void Player::updateTrackMarks()
   const float minSpeed = 0.1f; // relative speed slop
 
   if (isAlive() && !isFalling() && !isPhantomZoned()) {
-    const float lifeTime = float(TimeKeeper::getCurrent() - lastTrackDraw);
+    const float lifeTime = float(TimeKeeper::getTick() - lastTrackDraw);
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
       float markPos[3];
@@ -467,7 +467,7 @@ void Player::updateTrackMarks()
       if (drawMark) {
 	TrackMarks::addMark(markPos, dimensionsScale[1],
 			    state.azimuth, state.phydrv);
-	lastTrackDraw = TimeKeeper::getCurrent();
+	lastTrackDraw = TimeKeeper::getTick();
       }
     }
   }
@@ -1011,7 +1011,7 @@ void Player::spawnEffect()
       dimensionsScale[i] = 0.01f;
     }
   }
-  spawnTime = TimeKeeper::getCurrent();
+  spawnTime = TimeKeeper::getTick();
   return;
 }
 

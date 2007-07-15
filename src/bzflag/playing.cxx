@@ -6130,8 +6130,8 @@ static void		playingLoop()
       if (BZDB.isTrue("sendObserverHeartbeat")) {
         if (BZDB.isSet("observerHeartbeat"))
                 heartbeatTime = BZDB.eval("observerHeartbeat");
-        if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getCurrent().getSeconds()) {
-          lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
+        if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getTick().getSeconds()) {
+          lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
           sendUpdate = true;
         }
         else
@@ -6449,7 +6449,7 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer = &renderer;
   mainWindow = &sceneRenderer->getWindow();
 
-  lastObserverUpdateTime = TimeKeeper::getCurrent().getSeconds();
+  lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
 
   // register some commands
   for (unsigned int c = 0; c < countof(commandList); ++c) {

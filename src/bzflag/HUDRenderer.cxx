@@ -458,7 +458,7 @@ void			HUDRenderer::setCracks(bool _showCracks)
 {
   if ((showCracks != _showCracks) && _showCracks) {
     initCracks();
-    crackStartTime = TimeKeeper::getCurrent();
+    crackStartTime = TimeKeeper::getTick();
   }
   showCracks = _showCracks;
 }
@@ -977,7 +977,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
 void			HUDRenderer::renderCracks()
 {
-  double delta = (TimeKeeper::getCurrent() - crackStartTime) * 5.0;
+  double delta = (TimeKeeper::getTick() - crackStartTime) * 5.0;
   if (delta > 1.0)
     delta = 1.0;
   int maxLevels = (int) (HUDCrackLevels * delta);

@@ -112,10 +112,10 @@ void			LocalPlayer::doUpdate(float dt)
 
     // if we've been paused for a long time, drop our flag
     if (!wasPaused) {
-      pauseTime = TimeKeeper::getCurrent();
+      pauseTime = TimeKeeper::getTick();
       wasPaused = true;
     }
-    if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
+    if (TimeKeeper::getTick() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
       server->sendDropFlag(getPosition());
       setStatus(getStatus() & ~PlayerState::FlagActive);
       pauseTime = TimeKeeper::getSunExplodeTime();
@@ -816,12 +816,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {
-      if ((TimeKeeper::getCurrent() - bounceTime) > 0) {
+      if ((TimeKeeper::getTick() - bounceTime) > 0) {
 	doJump();
       }
     }
     else {
-      bounceTime = TimeKeeper::getCurrent();
+      bounceTime = TimeKeeper::getTick();
       bounceTime += 0.2f;
     }
   }
@@ -1061,7 +1061,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
     fracOfMaxSpeed = 0.0f;
   } else if (flag == Flags::Agility) {
-    if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
+    if ((TimeKeeper::getTick() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
       fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     } else {
       float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
@@ -1074,7 +1074,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 	limit /= 2.0f;
       if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
 	fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-	agilityTime = TimeKeeper::getCurrent();
+	agilityTime = TimeKeeper::getTick();
       }
     }
   }
@@ -1203,6 +1203,7 @@ bool			LocalPlayer::fireShot()
   shots[i] = new LocalShotPath(firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
+  // TODO should maybe use getTick() instead? must double check
   const float timeStamp = float(TimeKeeper::getCurrent() - TimeKeeper::getNullTime());
   firingInfo.timeSent = timeStamp;
 
@@ -1250,7 +1251,7 @@ float			LocalPlayer::getReloadTime() const
 		return 0.0f;
 	}
 
-	float time = float(jamTime - TimeKeeper::getCurrent());
+	float time = float(jamTime - TimeKeeper::getTick());
 	if (time > 0.0f) {
 		return time;
 	}
