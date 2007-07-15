@@ -85,7 +85,7 @@ protected:
   void   stringAppendNormalized (std::string *s, float n);
 
 private:
-  void		setMinorFontSize(float height);
+  void		setMinorFontSize();
   void		setLabelsFontSize(float height);
   static int	teamScoreCompare(const void* _a, const void* _b);
   static int  sortCompareCp(const void* _a, const void* _b);

@@ -86,8 +86,8 @@ void  ScoreboardRenderer::setWindowSize (float x, float y, float width, float he
   winY = y;
   winWidth = width;
   winHeight = height;
-  setMinorFontSize (winHeight);
-  setLabelsFontSize (winHeight);
+  setMinorFontSize();
+  setLabelsFontSize(winHeight);
 }
 
 
@@ -125,15 +125,24 @@ bool    ScoreboardRenderer::getAlwaysTeamScore ()
   return alwaysShowTeamScore;
 }
 
-void		ScoreboardRenderer::setMinorFontSize(float height)
+void		ScoreboardRenderer::setMinorFontSize()
 {
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
     case 0: { // auto
-      const float s = height / 30.0f;
-      minorFontSize = floorf(s);
+      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
+	const float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
+	const float fontwidth = fm.getStringWidth(minorFontFace, minorFontSize, "X");
+
+	if ((winWidth / fontwidth) < 120) {
+	  continue;
+	}
+	if ((winHeight / fontheight) > 50) {
+	  break;
+	}
+      }
       break;
     }
     case 1: // tiny
@@ -165,7 +174,7 @@ void		ScoreboardRenderer::setMinorFontSize(float height)
 
 void			ScoreboardRenderer::setLabelsFontSize(float height)
 {
-  const float s = height / 50.0f;
+  const float s = height / 75.0f;
   FontManager &fm = FontManager::instance();
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   labelsFontSize = floorf(s);
