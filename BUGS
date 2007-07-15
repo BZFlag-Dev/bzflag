@@ -43,6 +43,14 @@ recent bugs
   when tank is moving at constant speed. This leads to many unnecessary
   MsgPlayerUpdate packets to be sent. Maybe floating point inaccuracies?
 
+  Also, at high frame rates, the position update in BaseLocalPlyer::update
+  will be too large, because dt is artificially increased then. In 2_0
+  this was fixed by simply skipping the update function. We now have an
+  outer loop in playing.cxx (doUpdates) which divides a big dt into a
+  number of smaller steps, so the fix must be done differently here.
+
+  The DR problem is probably related to the wrong updates.
+
 - some ATI cards get font rendering to have variable alpha values
   on each letter. The gl restate was removed from the font manager.
   It should be put in and tied to a config option that defaults to
