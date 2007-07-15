@@ -17,6 +17,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MenuDefaultKey.h"
 #include "World.h"
 #include "MainMenu.h"
@@ -83,18 +84,21 @@ void SaveWorldMenu::execute()
 void SaveWorldMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font for the body, bigger for the title
-  const float titleFontSize = (float)_height / 15.0f;
-  float fontSize = (float)_height / 30.0f;
   FontManager &fm = FontManager::instance();
-
-  // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+  int fontFace = title->getFontFace();
+
+  // use a big font for the body, bigger for the title
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
+
+  // reposition title
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStringHeight(title->getFontFace(), titleFontSize);
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);

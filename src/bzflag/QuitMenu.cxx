@@ -18,6 +18,7 @@
 #include "StateDatabase.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
@@ -91,13 +92,15 @@ QuitMenu::~QuitMenu()
 void QuitMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font
-  float fontSize = (float)_height / 15.0f;
-  float smallFontSize = (float)_height / 30.0f;
-  float x, y;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
+
+  // use a big font
+  float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+  float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  float x, y;
 
   // heights
   const float fontHeight = fm.getStringHeight(fontFace, fontSize);

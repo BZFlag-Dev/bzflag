@@ -19,6 +19,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
 
@@ -103,15 +104,17 @@ void QuickKeysMenu::dismiss()
 
 void QuickKeysMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(_width, _height);
-
   int i;
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float bigFontSize = (float)_height / 30.0f;
-  const float fontSize = (float)_height / 40.0f;
+  HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
+
+  // use a big font for title, smaller font for the rest
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float bigFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  const float fontSize = fs.getFontSize(fontFace, "infoFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();

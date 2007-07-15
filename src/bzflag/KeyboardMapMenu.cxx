@@ -21,10 +21,12 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "ActionBinding.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "playing.h"
+
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
   menu(_menu)
@@ -224,14 +226,15 @@ void KeyboardMapMenu::dismiss()
 void KeyboardMapMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  int i;
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float bigFontSize = (float)_height / 30.0f;
-  const float fontSize = (float)_height / 50.0f;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
+
+  // use a big font for title, smaller font for the rest
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float bigFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  const float fontSize = fs.getFontSize(fontFace, "infoFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -260,6 +263,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   const int count = (int)listHUD.size() - 2;
   const int mid = (count / 2);
 
+  int i;
   for (i = 2; i <= mid+1; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
