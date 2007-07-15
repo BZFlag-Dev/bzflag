@@ -775,6 +775,19 @@ void			HUDRenderer::renderStatus(void)
       float vertSpeed = vel[2];
       float rotSpeed = fabs(target->getAngularVelocity());
       float apparentLinSpeed = sqrt(apparentVel[0]*apparentVel[0]+apparentVel[1]*apparentVel[1]);
+
+      // calc maximum apparent velocity value for each 0.5s interval
+      static float maxApparentLinSpeed = 0.0f;
+      static TimeKeeper maxApparentLinTime = TimeKeeper::getStartTime();
+
+      if (maxApparentLinSpeed > apparentLinSpeed &&
+          TimeKeeper::getTick() - maxApparentLinTime < 0.5f) {
+        apparentLinSpeed = maxApparentLinSpeed;
+      }
+      else {
+        maxApparentLinSpeed = apparentLinSpeed;
+        maxApparentLinTime = TimeKeeper::getTick();
+      }
   
       float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
       float drawY = y - smallZHeight;
