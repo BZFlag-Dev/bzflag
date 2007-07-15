@@ -1017,59 +1017,56 @@ void			HUDRenderer::renderStatus(void)
     y += float(1.5*h);
   }
 
-  if (roaming && BZDB.isTrue("showVelocities"))
-    {
-      Player *target = ROAM.getTargetTank();
-      if (target)
-	{
-	  float vel[3] = {0};
-	  memcpy(vel,target->getVelocity(),sizeof(float)*3);
-
-	  float aperantVel[3] = {0};
-	  memcpy(aperantVel,target->getAperantVelocity(),sizeof(float)*3);
-
-	  float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
-	  float vertSpeed = vel[2];
-	  float rotSpeed = fabs(target->getAngularVelocity());
-	  float aperantLinSpeed = sqrt(aperantVel[0]*aperantVel[0]+aperantVel[1]*aperantVel[1]);
-
-	  float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
-	  float drawY = y-smallZHeight;
-	  // draw header
-	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
-	  fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
-
-	  sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
-	  if (BZDB.evalInt("showVelocities") > 1)
-	    sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,aperantLinSpeed);
-
-	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-	  fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
-
-	  sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
-	  if (BZDB.evalInt("showVelocities") > 1)
-	    sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,aperantVel[2]);
-
-	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-	  fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
-
-	  sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
-	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-	  fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
-
-	  float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
-	  float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
-
-	  sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
-	  x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-	  fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
-
-	  scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
-	}
-      else
-	scoreboard->setTeamScoreY(0);
-
+  if (roaming && BZDB.isTrue("showVelocities")) {
+    Player *target = ROAM.getTargetTank();
+    if (target) {
+      float vel[3] = {0};
+      memcpy(vel,target->getVelocity(),sizeof(float)*3);
+  
+      float apparentVel[3] = {0};
+      memcpy(apparentVel,target->getApparentVelocity(),sizeof(float)*3);
+  
+      float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
+      float vertSpeed = vel[2];
+      float rotSpeed = fabs(target->getAngularVelocity());
+      float apparentLinSpeed = sqrt(apparentVel[0]*apparentVel[0]+apparentVel[1]*apparentVel[1]);
+  
+      float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
+      float drawY = y-smallZHeight;
+      // draw header
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
+      fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
+  
+      sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
+      if (BZDB.evalInt("showVelocities") > 1)
+        sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,apparentLinSpeed);
+  
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
+  
+      sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
+      if (BZDB.evalInt("showVelocities") > 1)
+        sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
+  
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+      fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
+  
+      sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+      fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+  
+      float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
+      float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
+  
+      sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
+  
+      scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
     }
+    else
+      scoreboard->setTeamScoreY(0);
+  }
   else
     scoreboard->setTeamScoreY(0);
 
