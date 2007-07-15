@@ -630,8 +630,8 @@ void			ControlPanel::resize()
   switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
   case 0: { // auto
     for (fontSize = 40.0f; fontSize > 8.0f; fontSize -= 8.0f) {
-      float fontheight = fm.getStringHeight(fontFace, fontSize);
-      float fontwidth = fm.getStringWidth(fontFace, fontSize, "X");
+      const float fontheight = fm.getStringHeight(fontFace, fontSize);
+      const float fontwidth = fm.getStringWidth(fontFace, fontSize, "X");
 
       // try to fit 80 columns with at least 10 lines
       if ((messageAreaPixels[2] / fontwidth) < 80) {
