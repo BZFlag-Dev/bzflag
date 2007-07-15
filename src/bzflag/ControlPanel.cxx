@@ -627,35 +627,35 @@ void			ControlPanel::resize()
   FontManager &fm = FontManager::instance();
   fontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
-  case 0: { // auto
-    for (fontSize = 40.0f; fontSize > 8.0f; fontSize -= 8.0f) {
-      const float fontheight = fm.getStringHeight(fontFace, fontSize);
-      const float fontwidth = fm.getStringWidth(fontFace, fontSize, "X");
-
-      // try to fit 80 columns with at least 10 lines
-      if ((messageAreaPixels[2] / fontwidth) < 80) {
-	continue;
+  switch (static_cast<int>(BZDB.eval("consoleFontSize"))) {
+    case 1: // tiny
+      fontSize = 8.0f;
+      break;
+    case 2: // small
+      fontSize = 16.0f;
+      break;
+    case 3: // medium
+      fontSize = 24.0f;
+      break;
+    case 4: // big
+      fontSize = 32.0f;
+      break;
+    default: { // auto
+      for (fontSize = 40.0f; fontSize > 8.0f; fontSize -= 8.0f) {
+	const float fontheight = fm.getStringHeight(fontFace, fontSize);
+	const float fontwidth = fm.getStringWidth(fontFace, fontSize, "X");
+	
+	// try to fit 80 columns with at least 10 lines
+	if ((messageAreaPixels[2] / fontwidth) < 80) {
+	  continue;
+	}
+	if ((messageAreaPixels[3] / fontheight) > 10) {
+	  break;
+	}
       }
-      if ((messageAreaPixels[3] / fontheight) > 10) {
-	break;
-      }
+      
+      break;
     }
-
-    break;
-    }
-  case 1: // tiny
-    fontSize = 8.0f;
-    break;
-  case 2: // small
-    fontSize = 16.0f;
-    break;
-  case 3: // medium
-    fontSize = 24.0f;
-    break;
-  case 4: // big
-    fontSize = 32.0f;
-    break;
   }
 
   // tab widths may have changed

@@ -130,21 +130,7 @@ void		ScoreboardRenderer::setMinorFontSize()
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
-    case 0: { // auto
-      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
-	const float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
-	const float fontwidth = fm.getStringWidth(minorFontFace, minorFontSize, "X");
-
-	if ((winWidth / fontwidth) < 120) {
-	  continue;
-	}
-	if ((winHeight / fontheight) > 50) {
-	  break;
-	}
-      }
-      break;
-    }
+  switch (static_cast<int>(BZDB.eval("scoreFontSize"))) {
     case 1: // tiny
       minorFontSize = 8;
       break;
@@ -157,6 +143,20 @@ void		ScoreboardRenderer::setMinorFontSize()
     case 4: // big
       minorFontSize = 32;
       break;
+    default: { // auto
+      for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
+	const float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
+	const float fontwidth = fm.getStringWidth(minorFontFace, minorFontSize, "X");
+	
+	if ((winWidth / fontwidth) < 120) {
+	  continue;
+	}
+	if ((winHeight / fontheight) > 50) {
+	  break;
+	}
+      }
+      break;
+    }
   }
 
   huntArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "->");

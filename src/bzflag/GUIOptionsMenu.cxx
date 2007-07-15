@@ -350,16 +350,11 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("scorefontsize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("cpanelfontsize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-		("showVelocities")));
-    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
-					       ->getPanelOpacity() + 0.5));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
-					 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("scoreFontSize")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("consoleFontSize")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showVelocities")));
+    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("linedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
@@ -369,8 +364,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("showtabs")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
     // underline color - find index of mode string in options
@@ -385,8 +379,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("pulseDepth") * 10) - 1);
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("timedate")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
 					 : 0);
     if (BZDB.isTrue("hideEmails"))
@@ -408,7 +401,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'C':
       {
-	BZDB.setInt("cpanelfontsize", list->getIndex());
+	BZDB.setInt("consoleFontSize", list->getIndex());
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }
@@ -421,7 +414,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'S':
       {
-	BZDB.setInt("scorefontsize", list->getIndex());
+	BZDB.setInt("scoreFontSize", list->getIndex());
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }

@@ -222,7 +222,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   FontManager &fm = FontManager::instance();
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
-  switch (static_cast<int>(BZDB.eval("scorefontsize"))) {
+  switch (static_cast<int>(BZDB.eval("scoreFontSize"))) {
     case 0: { // auto
       for (minorFontSize = 40.0f; minorFontSize > 8.0f; minorFontSize -= 8.0f) {
 	float fontheight = fm.getStringHeight(minorFontFace, minorFontSize);
