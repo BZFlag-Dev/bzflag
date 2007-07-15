@@ -18,6 +18,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "HelpMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
@@ -131,13 +132,15 @@ void			MainMenu::execute()
 void			MainMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font
-  const float titleSize = (float)_height / 8.0f;
-  const float tinyFontSize = (float)_height / 30.0f;
-  const float fontSize = (float)_height / 15.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
+
+  // use a big font
+  const float titleSize = fs.getFontSize(fontFace, "titleFontSize");
+  const float tinyFontSize = fs.getFontSize(fontFace, "hudFontSize");
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
