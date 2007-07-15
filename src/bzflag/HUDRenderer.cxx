@@ -183,12 +183,13 @@ int			HUDRenderer::getMaxMotionSize() const
   return maxMotionSize;
 }
 
-void			HUDRenderer::setBigFontSize(int, int height)
+void			HUDRenderer::setBigFontSize(int width, int height)
 {
-  const float s = (float)height / 10.0f;
   FontManager &fm = FontManager::instance();
   bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-  bigFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  bigFontSize = fs.getFontSize(bigFontFace, "headerFontSize");
 
   restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel);
   resumeLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, resumeLabel);
@@ -196,12 +197,13 @@ void			HUDRenderer::setBigFontSize(int, int height)
   autoPilotWidth = fm.getStringWidth(bigFontFace, bigFontSize, autoPilotLabel);
 }
 
-void			HUDRenderer::setAlertFontSize(int, int height)
+void			HUDRenderer::setAlertFontSize(int width, int height)
 {
-  const float s = (float)height / 15.0f;
   FontManager &fm = FontManager::instance();
   alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-  alertFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  alertFontSize = fs.getFontSize(alertFontFace, "alertFontSize");
   alertFontHeight = fm.getStringHeight(alertFontFace, alertFontSize);
 
   for (int i = 0; i < MaxAlerts; i++)
@@ -209,12 +211,13 @@ void			HUDRenderer::setAlertFontSize(int, int height)
       alertLabelWidth[i] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[i]);
 }
 
-void			HUDRenderer::setMajorFontSize(int, int height)
+void			HUDRenderer::setMajorFontSize(int width, int height)
 {
-  const float s = (float)height / 15.0f;
   FontManager &fm = FontManager::instance();
   majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
-  majorFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  majorFontSize = fs.getFontSize(majorFontFace, "hudFontSize");
   majorFontHeight = fm.getStringHeight(majorFontFace, majorFontSize);
 }
 
@@ -227,12 +230,13 @@ void			HUDRenderer::setMinorFontSize(int width, int height)
   minorFontSize = fs.getFontSize(minorFontFace, "scoreFontSize");
 }
 
-void			HUDRenderer::setHeadingFontSize(int, int height)
+void			HUDRenderer::setHeadingFontSize(int width, int height)
 {
-  const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
   headingFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-  headingFontSize = floorf(s);
+
+  FontSizer fs = FontSizer(width, height);
+  headingFontSize = fs.getFontSize(headingFontFace, "hudFontSize");
 
   // compute heading labels and (half) widths
   int i;
