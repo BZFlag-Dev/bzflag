@@ -44,6 +44,12 @@ int BaseLocalPlayer::getSalt()
 
 void BaseLocalPlayer::update()
 {
+  // avoid potential accuracy problems at very high framerates by
+  // simply skipping the update step until at least 1ms has passed
+  const float dt = float(TimeKeeper::getTick() - lastTime);
+  if (dt < 0.001f)
+    return;
+
   // save last position
   const float* oldPosition = getPosition();
   lastPosition[0] = oldPosition[0];
@@ -51,9 +57,7 @@ void BaseLocalPlayer::update()
   lastPosition[2] = oldPosition[2];
 
   // update by time step
-  float dt = float(TimeKeeper::getTick() - lastTime);
   lastTime = TimeKeeper::getTick();
-  if (dt < 0.001f) dt = 0.001f;
   doUpdateMotion(dt);
 
   // compute motion's bounding box around center of tank
