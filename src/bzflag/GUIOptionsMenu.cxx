@@ -350,8 +350,8 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("scoreFontSize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("consoleFontSize")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("scoreFontSize") / 8));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("consoleFontSize") / 8));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showVelocities")));
     ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
