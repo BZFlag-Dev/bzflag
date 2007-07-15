@@ -20,6 +20,7 @@
 #include "Bundle.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"
@@ -294,10 +295,11 @@ void JoinMenu::updateTeamTexture()
 void JoinMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 30.0f;
+  const float titleFontSize = fs.getFontSize(MainMenu::getFontFace(), "headerFontSize");
+  const float fontSize = fs.getFontSize(MainMenu::getFontFace(), "menuFontSize");
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();
