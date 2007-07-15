@@ -132,13 +132,13 @@ DefaultDBItem	defaultDBItems[] = {
   { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
 
   // default font sizes for fixed-size items
-  { "hugeFontSize",		"40",			true,	StateDatabase::ReadWrite,	NULL },
-  { "largeFontSize",		"32",			true,	StateDatabase::ReadWrite,	NULL },
-  { "mediumFontSize",		"24",			true,	StateDatabase::ReadWrite,	NULL },
-  { "smallFontSize",		"16",			true,	StateDatabase::ReadWrite,	NULL },
   { "tinyFontSize",		"8",			true,	StateDatabase::ReadWrite,	NULL },
+  { "smallFontSize",		"16",			true,	StateDatabase::ReadWrite,	NULL },
+  { "mediumFontSize",		"24",			true,	StateDatabase::ReadWrite,	NULL },
+  { "largeFontSize",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hugeFontSize",		"40",			true,	StateDatabase::ReadWrite,	NULL },
 
-  // default font sizes for specific sections (relative 0 to 1)
+  // default font sizes for specific sections (relative 0 to 1 percentage of smallest aspect)
   { "titleFontSize",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
   { "headerFontSize",		"1/16",			true,	StateDatabase::ReadWrite,	NULL },
   { "menuFontSize",		"1/32",			true,	StateDatabase::ReadWrite,	NULL },
