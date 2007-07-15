@@ -19,6 +19,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "playing.h"
 #include "HUDui.h"
@@ -222,11 +223,13 @@ void FormatMenu::setFormat(bool test)
 void FormatMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
   FontManager &fm = FontManager::instance();
   int fontFace = MainMenu::getFontFace();
+
+  // use a big font for title, smaller font for the rest
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
 
   // reposition title
   float x, y;

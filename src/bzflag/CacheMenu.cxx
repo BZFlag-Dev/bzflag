@@ -183,19 +183,20 @@ void CacheMenu::resize(int _width, int _height)
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = fs.getFontSize(MainMenu::getFontFace(), "headerFontSize");
-  const float fontSize = fs.getFontSize(MainMenu::getFontFace(), "menuFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString());
+    fm.getStringWidth(fontFace, titleFontSize, title->getString());
   const float titleHeight =
-    fm.getStringHeight(MainMenu::getFontFace(), titleFontSize);
+    fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -203,7 +204,7 @@ void CacheMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {
