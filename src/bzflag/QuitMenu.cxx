@@ -98,18 +98,19 @@ void QuitMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // use a big font
-  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  fs.setMin(0, 10);
   float fontSize = fs.getFontSize(fontFace, "headerFontSize");
 
   fs.setMin(0,20);
   float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
-  float x, y;
 
   // heights
   const float fontHeight = fm.getStringHeight(fontFace, fontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();
+
+  float x, y;
 
   // yes
   HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
