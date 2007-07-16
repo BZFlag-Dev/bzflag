@@ -699,9 +699,10 @@ void			ServerMenu::resize(int _width, int _height)
   float x, y;
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-    
-    // use a big font for title, smaller font for the rest
     const int fontFace = title->getFontFace();
+
+    // use a big font for title, smaller font for the rest
+    fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
     const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
     
     title->setFontSize(titleFontSize);
@@ -715,6 +716,7 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition server readouts
   int i;
   const float y0 = y;
+  fs.setMin(10, 10);
   float fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
   float fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   for (i = 1; i < NumReadouts - 2; i++) {
@@ -763,6 +765,7 @@ void			ServerMenu::resize(int _width, int _height)
   }
 
   // position page readout and server item list
+  fs.setMin(40,10);
   fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
   fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   x = 0.125f * (float)_width;

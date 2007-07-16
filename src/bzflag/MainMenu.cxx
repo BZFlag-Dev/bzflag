@@ -134,16 +134,24 @@ void			MainMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
+  std::vector<HUDuiElement*>& listHUD = getElements();
+  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
 
-  // use a big font
+  // main menu title, use a big font
+  fs.setMin(0, 6);
   const float titleSize = fs.getFontSize(fontFace, "titleFontSize");
+
+  // main menu instructions
+  fs.setMin(20, 20);
   const float tinyFontSize = fs.getFontSize(fontFace, "hudFontSize");
+
+  // main menu items
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float fontSize = fs.getFontSize(fontFace, "headerFontSize");
 
   // reposition title
-  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiImage* title = (HUDuiImage*)listHUD[0];
   title->setSize((float)_width, titleSize);
   // scale appropriately to center properly
@@ -157,7 +165,6 @@ void			MainMenu::resize(int _width, int _height)
   title->setPosition(x, y);
 
   // reposition instructions
-  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   hint->setFontSize(tinyFontSize);
   const float hintWidth = fm.getStringWidth(fontFace, tinyFontSize, hint->getString());
   y -= 1.25f * fm.getStringHeight(fontFace, tinyFontSize);

@@ -196,7 +196,10 @@ void NewVersionMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // use a big font
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
   float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
   float x, y;
 

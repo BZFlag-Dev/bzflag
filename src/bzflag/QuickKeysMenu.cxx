@@ -112,8 +112,13 @@ void QuickKeysMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
   const float bigFontSize = fs.getFontSize(fontFace, "menuFontSize");
+
+  fs.setMin(0, 40);
   const float fontSize = fs.getFontSize(fontFace, "infoFontSize");
 
   // reposition title

@@ -98,7 +98,10 @@ void QuitMenu::resize(int _width, int _height)
   const int fontFace = MainMenu::getFontFace();
 
   // use a big font
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0,20);
   float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
   float x, y;
 
@@ -111,21 +114,21 @@ void QuitMenu::resize(int _width, int _height)
   // yes
   HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
   label->setFontSize(fontSize);
-  x = _width / 4.0f;
-  y = (float)_height - 5.25f * fontHeight;
+  x = (float)_width / 4.0f;
+  y = (float)_height - 4.25f * fontHeight;
   label->setPosition(x, y);
 
   // no
   label = (HUDuiLabel*)listHUD[1];
   label->setFontSize(fontSize);
-  y = (float)_height - 6.5f * fontHeight;
+  y = (float)_height - 5.5f * fontHeight;
   label->setPosition(x, y);
 
   // save settings
   HUDuiList* list = (HUDuiList*)listHUD[2];
   list->setFontSize(smallFontSize);
   const float stringWidth = fm.getStringWidth(fontFace, smallFontSize, list->getLabel() + "99");
-  y = (float)_height - 7.25f * fontHeight;
+  y = (float)_height - 6.25f * fontHeight;
   list->setPosition(x + stringWidth, y);
 
   // frame
@@ -133,7 +136,7 @@ void QuitMenu::resize(int _width, int _height)
   const float gapSize = fm.getStringHeight(fontFace, fontSize);
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
-  frame->setPosition(x - gapSize, (float)_height - 4.0f * fontHeight);
+  frame->setPosition(x - gapSize, (float)_height - 3.0f * fontHeight);
   frame->setSize(0.5f * getWidth() + 2.0f * gapSize, fontHeight * 4.0f);
 }
 

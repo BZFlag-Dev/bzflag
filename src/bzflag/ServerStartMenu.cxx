@@ -603,7 +603,10 @@ void ServerStartMenu::resize(int _width, int _height)
   const int fontFace = title->getFontFace();
 
   // use a big font for title, smaller font for the rest
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
   const float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
 
   // reposition title

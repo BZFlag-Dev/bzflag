@@ -49,6 +49,18 @@ class FontSizer {
   void resize(int width, int height);
 
   /**
+   * ensure size returned will fit the provided character grid size.
+   */
+  void setMin(int charWide, int charTall);
+
+  /**
+   * enable/disable compile-time debugging
+   */
+  void setDebug(bool on = true) {
+    _debug = on;
+  }
+
+  /**
    * returns a font point size based on a BZDB font name.  if the
    * value is greater than 1, then it is normalized to the context
    * size and treated as a point size.  Otherwise, it's treated as a
@@ -68,6 +80,9 @@ class FontSizer {
   int _width;
   int _height;
 
+  int _charWide;
+  int _charTall;
+
  private:
   float _tiny;
   float _small;
@@ -77,6 +92,8 @@ class FontSizer {
 
   float _smallest;
   float _biggest;
+
+  bool _debug;
 };
 
 #endif /* __FONTSIZER_H__ */

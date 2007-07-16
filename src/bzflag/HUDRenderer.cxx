@@ -189,6 +189,7 @@ void			HUDRenderer::setBigFontSize(int width, int height)
   bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
 
   FontSizer fs = FontSizer(width, height);
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   bigFontSize = fs.getFontSize(bigFontFace, "headerFontSize");
 
   restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel);

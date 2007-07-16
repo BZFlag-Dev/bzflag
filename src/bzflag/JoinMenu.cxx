@@ -298,8 +298,12 @@ void JoinMenu::resize(int _width, int _height)
   FontSizer fs = FontSizer(_width, _height);
 
   // use a big font for title, smaller font for the rest
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(MainMenu::getFontFace(), "headerFontSize");
+
+  fs.setMin(0, 20);
   const float fontSize = fs.getFontSize(MainMenu::getFontFace(), "menuFontSize");
+
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();

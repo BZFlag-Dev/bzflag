@@ -161,10 +161,13 @@ void			ShotStats::resize(int _width, int _height)
 
   // center title
   const int fontFace = getFontFace();
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
+
   const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   const float titleY = (float)_height - titleHeight;

@@ -92,7 +92,10 @@ void SaveWorldMenu::resize(int _width, int _height)
   int fontFace = title->getFontFace();
 
   // use a big font for the body, bigger for the title
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
   float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
 
   // reposition title
