@@ -132,9 +132,13 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
     curWide = (float)_charWide * (fm.getStringWidth(faceID, fontSize, "BZFlag") / 6.0f);
     curTall = (float)_charTall * (fm.getStringHeight(faceID, fontSize));
 
+    if (_debug) {
+      printf("character grid is %d x %d\n", _charWide, _charTall);
+    }
+
     if ((curWide <= (float)_width) && (curTall <= (float)_height)) {
       if (_debug) {
-	printf("under min at %f (cur is %f x %f, 0to1 is %f)\n", fontSize, curWide, curTall, zeroToOneSize);
+	printf("UNDER at %f (cur is %f x %f, 0to1 is %f)\n", fontSize, curWide, curTall, zeroToOneSize);
       }
       underMin = true;
     } else {
