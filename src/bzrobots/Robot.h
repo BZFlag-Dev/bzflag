@@ -47,6 +47,12 @@ class Robot :public BZRobot
     void turnRadarRight(double degrees);
     void turnRadarLeft(double degrees);
     void turnRight(double degrees);
+
+  public:
+    /* Robots behave slightly differently. The implementor defines run, including the while-loop. */
+    void update() {}
+    void initialize() {}
+    virtual void run() = 0;
 };
 
 #endif

@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#include "RCReplies.h"
 #include "RCLinkBackend.h"
 #include "RCMessageFactory.h"
 

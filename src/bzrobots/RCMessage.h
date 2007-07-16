@@ -60,7 +60,7 @@ class RCMessage
     virtual std::string getType() const = 0;
     virtual void getParameters(std::ostream &stream) const = 0;
 
-    std::string asString() const {
+    virtual std::string asString() const {
       std::stringstream ss;
       ss << getType() << " ";
       getParameters(ss);

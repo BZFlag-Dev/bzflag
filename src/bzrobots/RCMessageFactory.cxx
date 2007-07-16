@@ -1,5 +1,10 @@
 #include "RCMessageFactory.h"
 
+
+#include "RCRequests.h"
+#include "RCReplies.h"
+#include "RCEventNotifications.h"
+
 #define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Req>( #COMMAND );
 template<>
 void RCMessageFactory<RCRequest>::initialize()
@@ -34,6 +39,7 @@ template<>
 void RCMessageFactory<RCReply>::initialize()
 {
     RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
+    ADD_LOOKUP(EventNotification);
     ADD_LOOKUP(CommandDone);
     ADD_LOOKUP(GunHeat);
     ADD_LOOKUP(DistanceRemaining);
@@ -42,6 +48,14 @@ void RCMessageFactory<RCReply>::initialize()
     ADD_LOOKUP(TickRemaining);
     ADD_LOOKUP(BattleFieldSize);
 }
+#undef ADD_LOOKUP
+
+#define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Event>( #COMMAND );
+template<>
+void RCMessageFactory<RCEventNotification>::initialize()
+{
+}
+#undef ADD_LOOKUP
 
 // Local Variables: ***
 // mode:C++ ***

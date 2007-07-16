@@ -20,6 +20,22 @@ void IdentifyBackend::getParameters(std::ostream &stream) const
   stream << version;
 } 
 
+messageParseStatus EventNotificationReply::parse(char **arguments, int count)
+{
+  if (count < 1)
+    return InvalidArgumentCount;
+  notification = RCEVENT.Message(arguments[0]);
+  return notification->parse(arguments + 1, count - 1);
+}
+void EventNotificationReply::getParameters(std::ostream &stream) const
+{
+  if (notification)
+  {
+    stream << notification->getType() << " ";
+    notification->getParameters(stream);
+  }
+}
+
 messageParseStatus CommandDoneReply::parse(char **arguments, int count)
 {
   if (count != 1)

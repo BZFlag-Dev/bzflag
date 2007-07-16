@@ -23,6 +23,8 @@
 #include "RCReply.h"
 #include "RCLink.h"
 
+#include "RCEventNotification.h"
+
 struct IdentifyBackend : public RCReply
 {
   IdentifyBackend() :version("") {}
@@ -32,6 +34,18 @@ struct IdentifyBackend : public RCReply
   void getParameters(std::ostream &stream) const;
 
   private: std::string version;
+};
+
+class EventNotificationReply : public RCReply
+{
+  RCEventNotification *notification;
+  public:
+    EventNotificationReply(RCEventNotification *_notification) :notification(_notification) {}
+    EventNotificationReply() :notification(NULL) {}
+
+    std::string getType() const { return "EventNotification"; }
+    messageParseStatus parse(char **arguments, int count);
+    void getParameters(std::ostream &stream) const;
 };
 
 struct CommandDoneReply : public RCReply

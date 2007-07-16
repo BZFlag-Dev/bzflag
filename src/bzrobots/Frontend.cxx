@@ -81,6 +81,7 @@ void Frontend::start(std::string filename)
     TimeKeeper::sleep(0.5);
   }
 
+  std::cout << "Loaded script " << filename << ", starting the bot! :-)" << std::endl;
   robot->setLink(link);
   robot->run();
 

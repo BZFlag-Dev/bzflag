@@ -10,22 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * TestRobot: Testing basic stuff.
- */
+#ifndef BZROBOTS_RCEVENTNOTIFICATION_H
+#define BZROBOTS_RCEVENTNOTIFICATION_H
 
-#ifndef BZROBOTS_TESTROBOT_H
-#define BZROBOTS_TESTROBOT_H
+#include "RCReply.h"
 
-#include "BZAdvancedRobot.h"
-
-struct TestRobot :public BZAdvancedRobot
-{
-  TestRobot() {}
-  TestRobot(RCLinkFrontend *_link) { setLink(_link); }
-  void initialize();
-  void update();
-};
+class RCEventNotification :public RCReply {};
 
 #endif
 
