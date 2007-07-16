@@ -345,6 +345,9 @@ static void		parse(int argc, char** argv)
 	      usage();
 	    }
 	    BZDB.set("geometry", argv[i]);
+	  } else {
+	    // roll back, false match
+	    i--;
 	  }
 	} else {
 	  BZDB.set("geometry", argv[i]);
