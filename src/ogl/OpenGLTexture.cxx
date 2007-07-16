@@ -167,21 +167,24 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   GLint maxTextureSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
-  // hard limit, some drivers have problems with sizes greater
-  // then this (espeically if you are using glTexSubImage2D)
-  const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
-  GLint bzMaxTexSize = 1;
-  if (dbMaxTexSize > 0) {
-    // align the max size to a power of two  (wasteful)
-    while (bzMaxTexSize < dbMaxTexSize) {
-      bzMaxTexSize <<= 1;
+  if (BZDB.isSet("forceMaxTextureSize")) // gk knows it's max size, but if they REALY want to force it, do it
+  {
+    // hard limit, some drivers have problems with sizes greater
+    // then this (espeically if you are using glTexSubImage2D)
+    const GLint dbMaxTexSize = BZDB.evalInt("forceMaxTextureSize");
+    GLint bzMaxTexSize = 1;
+    if (dbMaxTexSize > 0) {
+      // align the max size to a power of two  (wasteful)
+      while (bzMaxTexSize < dbMaxTexSize) {
+	bzMaxTexSize <<= 1;
+      }
+    } else {
+      bzMaxTexSize = scaledHeight > scaledWidth ? scaledHeight : scaledWidth;
     }
-  } else {
-    bzMaxTexSize = scaledHeight > scaledWidth ? scaledHeight : scaledWidth;
-  }
 
-  if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
-    maxTextureSize = bzMaxTexSize;
+    if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize)) {
+      maxTextureSize = bzMaxTexSize;
+    }
   }
 
   // clamp to the maximum size
