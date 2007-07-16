@@ -715,7 +715,7 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition server readouts
   int i;
   const float y0 = y;
-  float fontSize = fs.getFontSize(menuFontFace, "headerFontSize");
+  float fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
   float fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
@@ -733,18 +733,18 @@ void			ServerMenu::resize(int _width, int _height)
 
   // reposition search status readout
   {
-    fontSize = fs.getFontSize(menuFontFace, "headerFontSize");
+    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     status->setFontSize(fontSize);
     const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString());
     x = 0.5f * ((float)_width - statusWidth);
-    y -= 0.8f * fontHt;
+    y -= 1.2f * fontHt;
     status->setPosition(x, y);
   }
 
   // reposition find server input
   {
-    fontSize = fs.getFontSize(menuFontFace, "headerFontSize");
+    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     search->setFontSize(fontSize);
     const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString());
@@ -754,7 +754,7 @@ void			ServerMenu::resize(int _width, int _height)
 
   // reposition key help
   {
-    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
+    fontSize = fs.getFontSize(menuFontFace, "infoFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     help->setFontSize(fontSize);
     const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString());
@@ -763,7 +763,7 @@ void			ServerMenu::resize(int _width, int _height)
   }
 
   // position page readout and server item list
-  fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
+  fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
   fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
