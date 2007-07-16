@@ -140,7 +140,7 @@ void			MainMenu::resize(int _width, int _height)
   int fontFace = getFontFace();
 
   // main menu title, use a big font
-  fs.setMin(0, 6);
+  fs.setMin(0, 5);
   const float titleSize = fs.getFontSize(fontFace, "titleFontSize");
 
   // main menu instructions
