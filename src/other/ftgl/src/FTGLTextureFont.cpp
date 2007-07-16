@@ -63,7 +63,15 @@ FTGlyph* FTGLTextureFont::MakeGlyph( unsigned int glyphIndex)
     {
         glyphHeight = static_cast<int>( charSize.Height());
         glyphWidth = static_cast<int>( charSize.Width());
-        
+
+	/* prevent division by zero if it clamps to zero for really small sizes */
+        if (!glyphHeight) {
+	  glyphHeight = 1;
+	}
+	if (!glyphWidth) {
+	  glyphWidth = 1;
+	}
+
         if( textureIDList.empty())
         {
             textureIDList.push_back( CreateTexture());
