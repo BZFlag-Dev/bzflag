@@ -148,7 +148,7 @@ void			MainMenu::resize(int _width, int _height)
   const float tinyFontSize = fs.getFontSize(fontFace, "hudFontSize");
 
   // main menu items
-  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  fs.setMin(10, 10);
   const float fontSize = fs.getFontSize(fontFace, "headerFontSize");
 
   // reposition title
