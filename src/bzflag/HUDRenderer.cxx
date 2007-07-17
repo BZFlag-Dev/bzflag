@@ -95,7 +95,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   if (headingLabel[0].length() == 0) {
     char buf[10];
     for (i = 0; i < 36; i++) {
-      sprintf(buf, "%d", i * 10);
+      sprintf(buf, "%3d", i * 10); // align to right
       headingLabel[i] = std::string(buf);
     }
   }
@@ -1346,8 +1346,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       glEnable(GL_LINE_SMOOTH);
       glEnable(GL_BLEND);
     }
-    GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) /
-      headingOffset;
+    GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) / headingOffset;
     if (!smooth) basex = floorf(basex);
     glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
     x = smooth ? 0.0f : -0.5f;
@@ -1369,15 +1368,15 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
     glPopMatrix();
 
+    // draw horizontal direction angle values
     bool smoothLabel = smooth;
     x = (float)centerx - basex;
-    y = 7.0f + (float)(centery + maxMotionSize);
+    y = 10.0f + (float)(centery + maxMotionSize);
     if (smoothLabel) {
-      x -= 0.5f;
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basex - floorf(basex));
     }
     for (i = minMark; i <= maxMark; i++) {
-      fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
+      fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
 		    labelsFontSize, headingLabel[(i + 36) % 36]);
       x += 2.0f * headingMarkSpacing;
     }
@@ -1386,7 +1385,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       basex -= floorf(basex);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
       for (i = minMark; i <= maxMark; i++) {
-	fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
+	fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
 		      labelsFontSize, headingLabel[(i + 36) % 36]);
 	x += 2.0f * headingMarkSpacing;
       }
