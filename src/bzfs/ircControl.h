@@ -26,7 +26,8 @@
 
 struct ircChannel {
 
-  IRCClient* client;
+  ircChannel();
+
   std::string name;
   std::string pwd; //channel password, if any
 
@@ -59,9 +60,15 @@ class ircControl : public IRCBasicEventCallback {
 
  private:
 
+  IRCClient client;
+
+  bool configured;
+
   bool connected;
 
-  std::vector<ircChannel> channels; //channel data
+  ircChannel mainChannel; //mandatory bot control channel
+
+  std::map<std::string, ircChannel> channels; //channel data
 
   std::string initCommands; //commands to execute upon connecting, before joining any channels
 
