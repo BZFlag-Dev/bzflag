@@ -342,6 +342,7 @@ bool GameKeeper::Player::clean()
 #endif
 	  ) {
 	delete playerData;
+	playerList[i] = NULL;
 	ICleaned = true;
       } else {
 	empty = false;
@@ -351,9 +352,12 @@ bool GameKeeper::Player::clean()
 
 int GameKeeper::Player::getFreeIndex(int min, int max)
 {
-  for (int i = min; i < max; i++)
-    if (!playerList[i])
+  clean();
+  for (int i = min; i < max; i++) {
+    if (!playerList[i]) {
       return i;
+    }
+  }
   return max;
 }
 
