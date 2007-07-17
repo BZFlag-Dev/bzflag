@@ -88,7 +88,7 @@ class FontSizer {
   float _small;
   float _medium;
   float _large;
-  float _huge;
+  float _kingKongKahmehameha;
 
   float _smallest;
   float _biggest;

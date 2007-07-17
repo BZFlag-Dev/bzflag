@@ -39,9 +39,9 @@ FontSizer::resize(int width, int height)
   _small = BZDB.eval("smallFontSize");
   _medium = BZDB.eval("mediumFontSize");
   _large = BZDB.eval("largeFontSize");
-  _huge = BZDB.eval("hugeFontSize");
+  _kingKongKahmehameha = BZDB.eval("hugeFontSize");
 
-  _biggest = _huge; // probably, but check the rest anyways
+  _biggest = _kingKongKahmehameha; // probably, but check the rest anyways
   if (_biggest < _large) _biggest = _large;
   if (_biggest < _medium) _biggest = _medium;
   if (_biggest < _small) _biggest = _small;
@@ -51,7 +51,7 @@ FontSizer::resize(int width, int height)
   if (_smallest > _small) _smallest = _small;
   if (_smallest > _medium) _smallest = _medium;
   if (_smallest > _large) _smallest = _large;
-  if (_smallest > _huge) _smallest = _huge;
+  if (_smallest > _kingKongKahmehameha) _smallest = _kingKongKahmehameha;
 }
 
 
@@ -168,10 +168,10 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
       fontSize = _small;
     } else if ((fontSize < _medium) || (fontSize < _medium + ((_large - _medium) * 0.5f))) {
       fontSize = _medium;
-    } else if ((fontSize < _large) || (fontSize < _large + ((_huge - _large) * 0.5f))) {
+    } else if ((fontSize < _large) || (fontSize < _large + ((_kingKongKahmehameha - _large) * 0.5f))) {
       fontSize = _large;
-    } else if ((fontSize < _huge) || (fontSize < _huge + (_tiny * 0.5f))) {
-      fontSize = _huge;
+    } else if ((fontSize < _kingKongKahmehameha) || (fontSize < _kingKongKahmehameha + (_tiny * 0.5f))) {
+      fontSize = _kingKongKahmehameha;
     }
   }
 #endif
