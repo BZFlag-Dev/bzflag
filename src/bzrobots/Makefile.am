@@ -89,6 +89,8 @@ genericfiles =				\
 	../bzflag/EntryZone.h			\
 	../bzflag/FlashClock.cxx		\
 	../bzflag/FlashClock.h			\
+	../bzflag/FontSizer.cxx			\
+	../bzflag/FontSizer.h			\
 	../bzflag/ForceFeedback.cxx		\
 	../bzflag/ForceFeedback.h		\
 	../bzflag/FormatMenu.cxx		\
@@ -246,7 +248,7 @@ genericfiles =				\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
 
-bzrobots_LDFLAGS = -static -rdynamic
+bzrobots_LDFLAGS = -static -export-dynamic
 
 if CLIENT_INCLUDED
 bzrobots_SOURCES = $(genericfiles)
