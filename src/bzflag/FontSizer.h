@@ -41,7 +41,7 @@ class FontSizer {
  public:
 
   FontSizer(int width = 640, int height = 480);
-  FontSizer(float width = 640.0f, float height = 480.0f);
+  FontSizer(float width, float height);
  ~FontSizer();
 
   /**
