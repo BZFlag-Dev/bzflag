@@ -1483,11 +1483,13 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
     glPopMatrix();
 
+    /* render the vertical altimeter labels here */
+    const float fontHeight = fm.getStringHeight(headingFontFace, labelsFontSize);
     bool smoothLabel = smooth;
     x = (float)(10 + centerx + maxMotionSize);
-    y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, labelsFontSize) / 2);
+    y = (float)centery - basey + floorf(fontHeight / 2);
     if (smoothLabel) {
-      y -= 0.5f;
+      y -= fontHeight / 2.0f;
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basey - floorf(basey));
     }
     char buf[10];
@@ -1497,8 +1499,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
-      y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, labelsFontSize) / 2);
-      y += 0.5f;
+      y = (float)centery - basey + floorf(fontHeight / 2);
+      y -= fontHeight / 2.0f;
       basey -= floorf(basey);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
