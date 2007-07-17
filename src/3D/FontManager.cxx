@@ -367,7 +367,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
   assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
 
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
@@ -577,7 +577,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string &tex
   if (text.size() <= 0)
     return 0.0f;
 
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID, size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
@@ -605,7 +605,7 @@ float FontManager::getStringWidth(const std::string &face, float size,
  */
 float FontManager::getStringHeight(int font, float size)
 {
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(font, size);
+  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(font, (int)size);
 
   if (!theFont)
     return 0;	
