@@ -1240,8 +1240,8 @@ void			HUDRenderer::renderTimes(void)
     snprintf(buf, 20, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
-		  headingFontFace, labelsFontSize, buf);
+		  3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
+		  labelsFontFace, labelsFontSize, buf);
 
     if ((int)(TimeKeeper::getTick() - last) > 1) {
       logDebugMessage(1, "%s\n", buf);
@@ -1254,8 +1254,8 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "rtris: %i", radarTriangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
-		  headingFontFace, labelsFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
+		  labelsFontFace, labelsFontSize, buf);
     triCountYOffset += 1.5f;
   }
   if (triangleCount > 0) {
@@ -1263,16 +1263,16 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "tris: %i", triangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
-		  headingFontFace, labelsFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
+		  labelsFontFace, labelsFontSize, buf);
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(headingFontFace, labelsFontSize, buf),
+    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(labelsFontFace, labelsFontSize, buf),
 		  (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(headingFontFace, labelsFontSize), 0, headingFontFace, labelsFontSize, buf);
+		  3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize), 0, labelsFontFace, labelsFontSize, buf);
   }
 }
 
