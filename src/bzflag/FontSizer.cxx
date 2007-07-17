@@ -83,12 +83,8 @@ FontSizer::getFontSize(int faceID, std::string name)
 
     // approx width of a char in this font size, just need the ratio
     const float wide = fm.getStringWidth(faceID, size, "BZFlag") / 6.0f;
-    const float tall = fm.getStringHeight(faceID, size);
 
-    size = tall / (float)_height;
-    if (size < (wide / (float)_width)) {
-      size = (wide / (float)_width);
-    }
+    size = (wide / (float)_width);
   }
   return getFontSize(faceID, size);
 }
