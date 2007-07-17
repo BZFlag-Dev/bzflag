@@ -41,7 +41,8 @@ class FontSizer {
  public:
 
   FontSizer(int width = 640, int height = 480);
-  ~FontSizer();
+  FontSizer(float width = 640.0f, float height = 480.0f);
+ ~FontSizer();
 
   /**
    * adjust parameters for a different context size

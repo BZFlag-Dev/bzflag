@@ -25,6 +25,13 @@ FontSizer::FontSizer(int width, int height)
   setDebug(false);
 }
 
+FontSizer::FontSizer(float width, float height)
+{
+  resize((int)width, (int)height);
+  setMin(0, 0);
+  setDebug(false);
+}
+
 FontSizer::~FontSizer()
 {
 }
