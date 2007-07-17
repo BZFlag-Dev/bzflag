@@ -30,12 +30,12 @@ typedef struct RejoinNode {
 } RejoinNode;
 
 
-RejoinList::RejoinList ()
+RejoinList::RejoinList()
 {
   queue.clear(); // call me paranoid
 }
 
-RejoinList::~RejoinList ()
+RejoinList::~RejoinList()
 {
   std::list<struct RejoinNode*>::iterator it;
   for (it = queue.begin(); it != queue.end(); it++) {
@@ -45,7 +45,8 @@ RejoinList::~RejoinList ()
   queue.clear();
 }
 
-bool RejoinList::add (int playerIndex)
+
+bool RejoinList::add(int playerIndex)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -59,11 +60,35 @@ bool RejoinList::add (int playerIndex)
   return true;
 }
 
-float RejoinList::waitTime (int playerIndex)
+
+void RejoinList::remove(int playerIndex)
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  const char *callsign = playerData->player.getCallSign();
+  if (!playerData || !callsign) {
+    return;
+  }
+
+  std::list<struct RejoinNode*>::iterator it;
+  it = queue.begin();
+  while (it != queue.end()) {
+    RejoinNode *rn = *it;
+    if (strcasecmp (rn->callsign, callsign) == 0) {
+      delete rn;
+      it = queue.erase(it);
+      return;
+    }
+    it++;
+  }
+}
+
+
+float RejoinList::waitTime(int playerIndex)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (playerData == NULL) {
+  const char *callsign = playerData->player.getCallSign();
+  if (!playerData || !callsign) {
     return 0.0f;
   }
 
@@ -83,7 +108,6 @@ float RejoinList::waitTime (int playerIndex)
     it++;
   }
 
-  const char *callsign = playerData->player.getCallSign();
   float value = 0.0f;
   it = queue.begin();
   while (it != queue.end()) {
