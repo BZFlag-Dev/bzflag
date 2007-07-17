@@ -643,13 +643,15 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	toPosVec[0] = (float)object[0] - viewPos[0];
 	toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ )
-	{
+	if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ ) {
+	  if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+		map[0] = -halfWidth;
+		map[1] = 0;
+	  } else {
 		map[0] = -halfWidth * (fabs(map[0])/map[0]);
 		map[1] = 0;
-	}
-	else
-	{
+	  }
+	} else {
 		if ( map[0] < -halfWidth )
 			map[0] = -halfWidth;
 		if ( map[0] > halfWidth )
@@ -701,8 +703,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	glVertex3f(-triangleSize,triangleSize,0.01f);
 	glEnd();
 
-	if (friendly)
-	{
+	if (friendly) {
 	  float xFactor = 0.45f;
 
 	  // white outline
@@ -729,8 +730,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 
 	glPopMatrix();
 
-	if (name.size())
-	{
+	if (name.size()) {
 	  hudColor3Afv( color, alpha );
 	  float textOffset = 5.0f;
 	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize,name);
@@ -754,8 +754,9 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	o[1] = object[1];
 	o[2] = object[2];
 
-	float deg2Rad = 0.017453292519943295769236907684886f;
 	hudColor3Afv( color, alpha );
+
+	float deg2Rad = 0.017453292519943295769236907684886f;
 
 	glPushMatrix();
 	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
@@ -776,13 +777,15 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	toPosVec[0] = (float)object[0] - viewPos[0];
 	toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 1.0f )
-	{
-	  map[0] = -halfWidth * (fabs(map[0])/map[0]);
-	  map[1] = 0;
-	}
-	else
-	{
+	if ( vec3dot(toPosVec,headingVec) <= 1.0f ) {
+	  if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+		map[0] = -halfWidth;
+		map[1] = 0;
+	  } else {
+	    map[0] = -halfWidth * (fabs(map[0])/map[0]);
+	    map[1] = 0;
+	  }
+	} else {
 	  if ( map[0] < -halfWidth )
 	    map[0] = -halfWidth;
 	  if ( map[0] > halfWidth )
@@ -818,8 +821,7 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	glVertex2f(lockonInset,-lockonSize+lockonDeclination);
 	glEnd();
 
-	if (friendly)
-	{
+	if (friendly) {
 	  float xFactor = 0.75f;
 
 	  // white outline
@@ -848,8 +850,7 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 
 	glPopMatrix();
 
-	if (name.size())
-	{
+	if (name.size()) {
 	  hudColor3Afv( color, alpha );
 	    float textOffset = 5.0f;
 	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize,name);
@@ -1239,8 +1240,8 @@ void			HUDRenderer::renderTimes(void)
     snprintf(buf, 20, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(headingFontFace, headingFontSize), 0,
-		  headingFontFace, headingFontSize, buf);
+		  3.0f * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
+		  headingFontFace, labelsFontSize, buf);
 
     if ((int)(TimeKeeper::getTick() - last) > 1) {
       logDebugMessage(1, "%s\n", buf);
@@ -1253,8 +1254,8 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "rtris: %i", radarTriangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(headingFontFace, headingFontSize), 0,
-		  headingFontFace, headingFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
+		  headingFontFace, labelsFontSize, buf);
     triCountYOffset += 1.5f;
   }
   if (triangleCount > 0) {
@@ -1262,16 +1263,16 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "tris: %i", triangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(headingFontFace, headingFontSize), 0,
-		  headingFontFace, headingFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(headingFontFace, labelsFontSize), 0,
+		  headingFontFace, labelsFontSize, buf);
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(headingFontFace, headingFontSize, buf),
+    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(headingFontFace, labelsFontSize, buf),
 		  (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(headingFontFace, headingFontSize), 0, headingFontFace, headingFontSize, buf);
+		  3.0f * fm.getStringHeight(headingFontFace, labelsFontSize), 0, headingFontFace, labelsFontSize, buf);
   }
 }
 
@@ -1324,7 +1325,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   if (true /* always draw heading strip */) {
     // first clip to area
     glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
-	      2 * maxMotionSize, 25 + (int)(headingFontSize + 0.5f));
+	      2 * maxMotionSize, 25 + (int)(labelsFontSize + 0.5f));
 
     // draw heading mark
     glBegin(GL_LINES);
@@ -1377,7 +1378,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
     for (i = minMark; i <= maxMark; i++) {
       fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
-		    headingFontSize, headingLabel[(i + 36) % 36]);
+		    labelsFontSize, headingLabel[(i + 36) % 36]);
       x += 2.0f * headingMarkSpacing;
     }
     if (smoothLabel) {
@@ -1386,7 +1387,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
       for (i = minMark; i <= maxMark; i++) {
 	fm.drawString(x - headingLabelWidth[(i + 36) % 36], y, 0, headingFontFace,
-		      headingFontSize, headingLabel[(i + 36) % 36]);
+		      labelsFontSize, headingLabel[(i + 36) % 36]);
 	x += 2.0f * headingMarkSpacing;
       }
     }
@@ -1484,7 +1485,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 
     bool smoothLabel = smooth;
     x = (float)(10 + centerx + maxMotionSize);
-    y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, headingFontSize) / 2);
+    y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, labelsFontSize) / 2);
     if (smoothLabel) {
       y -= 0.5f;
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basey - floorf(basey));
@@ -1492,17 +1493,17 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     char buf[10];
     for (i = minMark; i <= maxMark; i++) {
       sprintf(buf, "%d", i * 5);
-      fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
+      fm.drawString(x, y, 0, headingFontFace, labelsFontSize, std::string(buf));
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
-      y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, headingFontSize) / 2);
+      y = (float)centery - basey + floorf(fm.getStringHeight(headingFontFace, labelsFontSize) / 2);
       y += 0.5f;
       basey -= floorf(basey);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
 	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
+	fm.drawString(x, y, 0, headingFontFace, labelsFontSize, std::string(buf));
 	y += altitudeMarkSpacing;
       }
     }
