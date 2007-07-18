@@ -62,8 +62,13 @@ class ircControl : public IRCBasicEventCallback {
 
   IRCClient client;
 
-  bool configured;
+  std::string server;
+  int port;
 
+  std::string nick;
+  std::string pwd;
+
+  bool configured;
   bool connected;
 
   ircChannel mainChannel; //mandatory bot control channel
