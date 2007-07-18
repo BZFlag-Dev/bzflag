@@ -3,7 +3,7 @@
 
 #include "RCRequests.h"
 #include "RCReplies.h"
-#include "RCEventNotifications.h"
+#include "RCEvents.h"
 
 #define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Req>( #COMMAND );
 template<>
@@ -39,7 +39,7 @@ template<>
 void RCMessageFactory<RCReply>::initialize()
 {
     RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
-    ADD_LOOKUP(EventNotification);
+    ADD_LOOKUP(Event);
     ADD_LOOKUP(CommandDone);
     ADD_LOOKUP(GunHeat);
     ADD_LOOKUP(DistanceRemaining);
@@ -52,7 +52,7 @@ void RCMessageFactory<RCReply>::initialize()
 
 #define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Event>( #COMMAND );
 template<>
-void RCMessageFactory<RCEventNotification>::initialize()
+void RCMessageFactory<RCEvent>::initialize()
 {
 }
 #undef ADD_LOOKUP

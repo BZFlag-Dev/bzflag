@@ -10,19 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_RCEVENTNOTIFICATION_H
-#define BZROBOTS_RCEVENTNOTIFICATION_H
+#ifndef BZROBOTS_RCEVENTS_H
+#define BZROBOTS_RCEVENTS_H
 
-#include "RCReply.h"
-
-class RCEventNotification :public RCReply {};
+#include "RCEvent.h"
 
 #endif
-
-// Local Variables: ***
-// mode:C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8
