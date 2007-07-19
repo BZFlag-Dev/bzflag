@@ -555,7 +555,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   {
     cloudsOuter[i][0] = groundPlane[i][0];
     cloudsOuter[i][1] = groundPlane[i][1];
-    cloudsOuter[i][2] = groundPlane[i][2] + 120.0f * BZDBCache::tankHeight;
+    cloudsOuter[i][2] = groundPlane[i][2] + BZDB.eval("_cloudHeightMult") * BZDBCache::tankHeight;
     cloudsInner[i][0] = uvScale * cloudsOuter[i][0];
     cloudsInner[i][1] = uvScale * cloudsOuter[i][1];
     cloudsInner[i][2] = cloudsOuter[i][2];
@@ -940,7 +940,6 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 	glPushMatrix();
 	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
 	DisplayListSystem::Instance().callList(cloudsList);
-	glCallList(cloudsList);
 	glLoadIdentity();	// maybe works around bug in some systems
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
