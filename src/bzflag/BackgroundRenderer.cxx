@@ -239,6 +239,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // reset the sky color when it changes
   BZDB.addCallback("_skyColor", bzdbCallback, this);
+  BZDB.addCallback("_cloudHeightMult", bzdbCallback, this);
 
   notifyStyleChange();
 }
@@ -266,12 +267,21 @@ BackgroundRenderer::~BackgroundRenderer()
 void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
 {
   BackgroundRenderer* br = (BackgroundRenderer*) data;
-  if (name == "_skyColor") {
+  if (name == "_skyColor")
     br->setSkyColors();
-  }
+  else if (name == "_cloudHeightMult")
+    br->resetCloudList();
   return;
 }
 
+void BackgroundRenderer::resetCloudList()
+{
+  if (cloudsList > 0)
+  {
+    DisplayListSystem::Instance().freeList(cloudsList);
+    cloudsList = DisplayListSystem::Instance().newList(this);
+  }
+}
 
 void BackgroundRenderer::setupGroundMaterials()
 {
