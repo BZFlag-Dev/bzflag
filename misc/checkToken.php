@@ -24,7 +24,7 @@
 //
 // TODO: Add some error handling/reporting
 
-function validate_token($token, $username, $groups = array())
+function validate_token($token, $username, $groups = array(), $checkIP = true)
 {
   // We should probably do a little more error checking here and
   // provide an error return code (define constants?)
@@ -37,7 +37,7 @@ function validate_token($token, $username, $groups = array())
     // Add on the action and the username
     $listserver['url'] .= '?action=CHECKTOKENS&checktokens='.urlencode($username);
     // Make sure we match the IP address of the user
-    if (false) $listserver['url'] .= '@'.$_SERVER['REMOTE_ADDR'];
+    if ($checkIP) $listserver['url'] .= '@'.$_SERVER['REMOTE_ADDR'];
     // Add the token
     $listserver['url'] .= '%3D'.$token;
     // If use have groups to check, add those now
