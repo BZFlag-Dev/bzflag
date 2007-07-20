@@ -140,8 +140,8 @@ DefaultDBItem	defaultDBItems[] = {
 
   // default font sizes for specific sections (relative 0 to 1 percentage of smallest aspect)
   { "titleFontSize",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
-  { "headerFontSize",		"1/16",			true,	StateDatabase::ReadWrite,	NULL },
-  { "menuFontSize",		"1/32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "headerFontSize",		"1/24",			true,	StateDatabase::ReadWrite,	NULL },
+  { "menuFontSize",		"1/40",			true,	StateDatabase::ReadWrite,	NULL },
   { "hudFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
   { "alertFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
   { "infoFontSize",		"1/96",			true,	StateDatabase::ReadWrite,	NULL },
