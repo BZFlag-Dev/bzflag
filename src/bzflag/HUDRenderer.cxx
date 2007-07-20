@@ -264,7 +264,7 @@ void			HUDRenderer::setLabelsFontSize(int width, int height)
   labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
 
   FontSizer fs = FontSizer(width, height);
-  labelsFontSize = fs.getFontSize(labelsFontFace, "tinyFontSize");
+  labelsFontSize = fs.getFontSize(labelsFontFace, "infoFontSize");
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
