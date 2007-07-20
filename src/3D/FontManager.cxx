@@ -360,9 +360,10 @@ void* FontManager::getGLFont ( int face, int size )
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string &text, const float* resetColor, fontJustification align)
 {
-  static char buffer[512];
+  char buffer[1024];
 
-  assert(text.size() < 512 && "drawString text is way bigger than ever expected");
+  assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
+  snprintf(buffer, 1024, "%s", text.c_str());
 
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
@@ -382,12 +383,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool pulsating = false;
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
-  GLfloat color[4] = {-1.0f, -1.0f, -1.0f, opacity};
+  GLfloat color[4];
   if (resetColor != NULL) {
     color[0] = resetColor[0] * darkness;
     color[1] = resetColor[1] * darkness;
     color[2] = resetColor[2] * darkness;
+    color[3] = opacity;
   } else {
+    color[0] = color[1] = color[2] = -1.0f;
+    color[3] = opacity;
     resetColor = BrightColors[WhiteColor];
   }
 
@@ -417,13 +421,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     // render text
     int len = endSend - startSend;
     if (len > 0) {
-      const char* rendertext = text.c_str();
-
-      memcpy(buffer, &rendertext[startSend], len);
-      buffer[len] = '\0'; /* need terminator */
+      char savechar = buffer[len];
+      buffer[endSend] = '\0'; /* need terminator */
+      const char* rendertext = &buffer[startSend];
 
       // get substr width, we may need it a couple times
-      width = getStringWidth(faceID, size, buffer);
+      width = getStringWidth(faceID, size, rendertext);
 
       glPushMatrix(); {
 	if ( align == AlignCenter ) {
@@ -457,9 +460,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glColor4fv(color);
 	}
 
-	theFont->Render(buffer);
+	theFont->Render(rendertext);
+	buffer[endSend] = savechar;
 
-	//	glDepthMask(BZDBCache::zbuffer);
       } glPopMatrix();
 
       // x transform for next substr
