@@ -421,7 +421,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     // render text
     int len = endSend - startSend;
     if (len > 0) {
-      char savechar = buffer[len];
+      char savechar = buffer[endSend];
       buffer[endSend] = '\0'; /* need terminator */
       const char* rendertext = &buffer[startSend];
 
