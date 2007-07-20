@@ -99,6 +99,9 @@ private:
   float		dimFactor; // ANSI code dimming
   float		darkness;  // darkening of all colors
 
+  // precompute colors on dim/darkness changes
+  GLfloat dimUnderlineColor[4];
+
   static void	underlineCallback(const std::string& name, void *);
   static void	freeContext(void *data);
   static void	initContext(void *data);
@@ -107,7 +110,12 @@ private:
 
 inline void FontManager::setDimFactor(float newDimFactor)
 {
+  const float darkDim = newDimFactor * darkness;
   dimFactor = newDimFactor;
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[1] = underlineColor[1] * darkDim;
+  dimUnderlineColor[2] = underlineColor[2] * darkDim;
+  dimUnderlineColor[3] = opacity;
 }
 
 inline void FontManager::setOpacity(float newOpacity)
@@ -119,6 +127,11 @@ inline void FontManager::setOpacity(float newOpacity)
 inline void FontManager::setDarkness(float newDarkness)
 {
   darkness = newDarkness;
+  const float darkDim = dimFactor * darkness;
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[1] = underlineColor[1] * darkDim;
+  dimUnderlineColor[2] = underlineColor[2] * darkDim;
+  dimUnderlineColor[3] = opacity;
 }
 
 #endif /* __FONTMANAGER_H__ */
