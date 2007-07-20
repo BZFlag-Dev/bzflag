@@ -360,12 +360,9 @@ void* FontManager::getGLFont ( int face, int size )
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string &text, const float* resetColor, fontJustification align)
 {
-  char buffer[1024] = {0};
-  memset(buffer, 0, 1024);
+  static char buffer[512];
 
-  if (text.size() <= 0)
-    return;
-  assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
+  assert(text.size() < 512 && "drawString text is way bigger than ever expected");
 
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
@@ -373,10 +370,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
   }
 
-  /* clamp to aligned coordinates */
-  x = floorf(x);
-  y = floorf(y);
-  z = floorf(z);
+  glEnable(GL_TEXTURE_2D);
 
   /*
    * Colorize text based on ANSI codes embedded in it.  Break the text
@@ -396,15 +390,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   } else {
     resetColor = BrightColors[WhiteColor];
   }
-
-  const float darkDim = dimFactor * darkness;
-
-  // underline color changes for bright == false
-  GLfloat dimUnderlineColor[4] = { underlineColor[0] * darkDim,
-				   underlineColor[1] * darkDim,
-				   underlineColor[2] * darkDim,
-				   opacity };
-  underlineColor[3] = opacity;
 
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
@@ -472,9 +457,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glColor4fv(color);
 	}
 
-	glEnable(GL_TEXTURE_2D);
 	theFont->Render(buffer);
-	glDisable(GL_TEXTURE_2D);
 
 	//	glDepthMask(BZDBCache::zbuffer);
       } glPopMatrix();
@@ -494,6 +477,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (endSend != (int)text.size()) {
       tookCareOfANSICode = false;
       std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
+
+      const float darkDim = dimFactor * darkness;
 
       // colors
       for (int i = 0; i <= LastColor; i++) {
@@ -552,6 +537,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       doneLastSection = true;
     }
   }
+
+  glDisable(GL_TEXTURE_2D);
 
   return;
 }
