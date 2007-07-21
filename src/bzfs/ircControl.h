@@ -29,7 +29,6 @@ struct ircChannel {
   ircChannel();
 
   std::string name;
-  std::string pwd; //channel password, if any
 
   bool joined;
 

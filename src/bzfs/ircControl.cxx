@@ -36,7 +36,7 @@ ircControl::ircControl() {
 
 }
 
-
+//FIXME: Some of this text wrangling could probably be added to TextUtils... 
 bool ircControl::loadConfigFile(std::string filename) {
 
   std::string errmsg;
@@ -77,20 +77,33 @@ bool ircControl::loadConfigFile(std::string filename) {
     curlineargs = TextUtils::tokenize(curline, std::string("-"), 0, true);
 
     //there should be nothing other than whitespace before the first hyphen... check.
-    std::string trimmedGarbage = TextUtils::no_whitespace(curlineargs->at(0));
+    std::string trimmedGarbage = TextUtils::no_whitespace(curlineargs.at(0));
 
     if (trimmedGarbage != "") {
       errmsg = "Unrecognized garbage \"" + trimmedGarbage + "\" in IRC config at line " + lineNum + ", ignoring";
       logDebugMessage(2, errmsg.c_str());
     }
 
-    for (unsigned int x = 1; x < curlineargs->size(); x++) {
+    for (unsigned int x = 1; x < curlineargs.size(); x++) {
 
-kl.trim(curlineargs->at(x));
+      //trim whitespace from the ends
+      //Find the last non-whitespace char...
+      int last;
+      for (last = curlineargs.at(x).length() - 1; last >= 0; last--)
+	if (!TextUtils::isWhitespace(str[x])) 
+	  break;
 
-      //not worth bothering if it's whitespace, obviously
-      if (curlineargs->at(x) != "") { 
+      if (last >= 0) { //if last gets to -1, the string is all whitespace (or empty). No reason to continue processing.
+	
+	//...otherwise, time to do the front...
+	for (unsigned int first = 0; first < curlineargs.at(x).length(); first++) 
+	  if (!TextUtils::isWhitespace(str[first]))
+	    break;
 
+	//trim the string...
+	curlineargs.at(x) = curlineargs.at(x).substr(first, last - first + 1);
+
+	//okay, split the arg into params
 	std::vector<std::string> params = TextUtils::tokenize(curlineargs->at(x), std::string(" "), 0, true);
 
 	//erase blank entries
@@ -98,8 +111,29 @@ kl.trim(curlineargs->at(x));
 	  if (*x == "") 
 	    params.erase(x);
 
-	//important processing stuff goes here
-	//TODO: add IRC configuration stuffs.
+	if (params.size() == 0) //sanity check- an empty param should have been caught already
+	  continue;
+
+	//Now we start processing the arguments (finally!)
+	if (TextUtils::compare_nocase(params.at(0), std::string("channel")) && params.size() >= 2) {
+	  ircChannel newchan;
+
+	  newchan.name = params.at(1);
+
+	  //TODO: loop and read args (quitting for the night :P )
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("server")) && params.size() == 2) {
+	  server = params.at(1);
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("port")) && params.size() == 2) {
+	  port = atoi(params.at(1).c_str());
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("nick")) && params.size() == 2) {
+	  nick = params.at(1);
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("pwd")) && params.size() == 2) {
+	  ped = params.at(1);
+
 
       }
     }
