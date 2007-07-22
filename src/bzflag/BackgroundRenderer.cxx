@@ -61,7 +61,7 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer& renderer) :
+BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				blank(false),
 				invert(false),
 				style(0),
@@ -82,7 +82,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer& renderer) :
 
   int i;
 
-  lastRenderer = &renderer;
+  lastRenderer = NULL;
 
   //display lists
   sunXFormList = _INVALID_LIST;
