@@ -61,7 +61,7 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
+BackgroundRenderer::BackgroundRenderer(const SceneRenderer& renderer) :
 				blank(false),
 				invert(false),
 				style(0),
@@ -82,7 +82,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   int i;
 
-  lastRenderer = NULL;
+  lastRenderer = &renderer;
 
   //display lists
   sunXFormList = _INVALID_LIST;
@@ -495,6 +495,9 @@ void BackgroundRenderer::setSkyColors()
 
 void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 {
+  if (!lastRenderer)
+    return;
+
   // compute display list for moon
   float coverage = (moonDirection[0] * sunDirection[0]) +
     (moonDirection[1] * sunDirection[1]) +
@@ -550,10 +553,10 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   xdist = (xmax - xmin) / (float)GROUND_DIVS;
   ydist = (ymax - ymin) / (float)GROUND_DIVS;
 
-  lastRenderer->getGroundUV (groundPlane[0], vec);
+  lastRenderer->getGroundUV(groundPlane[0], vec);
   xtexmax = vec[0];
   ytexmax = vec[1];
-  lastRenderer->getGroundUV (groundPlane[2], vec);
+  lastRenderer->getGroundUV(groundPlane[2], vec);
   xtexmin = vec[0];
   ytexmin = vec[1];
   xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
@@ -625,9 +628,6 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   }
   else if ( displayList == starXFormList )
   {
-    if (!lastRenderer)
-      return;
-
     // make pretransformed display list for stars
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
