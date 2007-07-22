@@ -139,17 +139,17 @@ class  FTPoint
         /**
          * Setters
          */
-        void X( FTGL_DOUBLE x) { values[0] = x;};
-        void Y( FTGL_DOUBLE y) { values[1] = y;};
-        void Z( FTGL_DOUBLE z) { values[2] = z;};
+        inline void X( FTGL_DOUBLE x) { values[0] = x;};
+        inline void Y( FTGL_DOUBLE y) { values[1] = y;};
+        inline void Z( FTGL_DOUBLE z) { values[2] = z;};
 
 
         /**
          * Getters
          */
-        FTGL_DOUBLE X() const { return values[0];};
-        FTGL_DOUBLE Y() const { return values[1];};
-        FTGL_DOUBLE Z() const { return values[2];};
+        inline FTGL_DOUBLE X() const { return values[0];};
+        inline FTGL_DOUBLE Y() const { return values[1];};
+        inline FTGL_DOUBLE Z() const { return values[2];};
         
     private:
         /**
