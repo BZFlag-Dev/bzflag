@@ -55,10 +55,10 @@ static GLfloat scaleFactors[LastTankSize][3] = {
   {1.0f, 1.0f, 1.0f}    // Thief
 };
 // the current scaling factors
-static const float* currentScaleFactor = scaleFactors[Normal];
+const float* TankGeometryUtils::currentScaleFactor = scaleFactors[Normal];
 
 // the current shadow mode (used to remove glNormal3f and glTexcoord2f calls)
-static TankShadow shadowMode = ShadowOn;
+TankShadow TankGeometryUtils::shadowMode = ShadowOn;
 
 // arrays of functions to avoid large switch statements
 typedef int (*partFunction)(void);
@@ -345,53 +345,6 @@ static void setupScales()
   scaleFactors[Narrow][1] = 0.001f;
   scaleFactors[Narrow][2] = scaleFactors[Normal][2];
 
-  return;
-}
-
-
-/****************************************************************************/
-
-// TankGeometryUtils Functions
-// ---------------------------
-
-
-void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
-{
-  const float* scale = currentScaleFactor;
-  x = x * scale[0];
-  y = y * scale[1];
-  z = z * scale[2];
-  glVertex3f(x, y, z);
-  return;
-}
-
-
-void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
-{
-  if (shadowMode == ShadowOn) {
-    return;
-  }
-  const float* scale = currentScaleFactor;
-  GLfloat sx = x * scale[0];
-  GLfloat sy = y * scale[1];
-  GLfloat sz = z * scale[2];
-  const GLfloat d = sqrtf ((sx * sx) + (sy * sy) + (sz * sz));
-  if (d > 1.0e-5f) {
-    x *= scale[0] / d;
-    y *= scale[1] / d;
-    z *= scale[2] / d;
-  }
-  glNormal3f(x, y, z);
-  return;
-}
-
-
-void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
-{
-  if (shadowMode == ShadowOn) {
-    return;
-  }
-  glTexCoord2f(x, y);
   return;
 }
 
