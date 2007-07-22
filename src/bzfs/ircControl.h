@@ -64,17 +64,17 @@ class ircControl : public IRCBasicEventCallback {
   std::string server;
   int port;
 
-  std::string nick;
+  std::string nick; //TODO: Er, multiple nicks would probably be a good idea. Whoops...
   std::string pwd;
 
   bool configured;
   bool connected;
 
-  ircChannel mainChannel; //mandatory bot control channel
+  ircChannel controlChannel; //mandatory bot control channel for the centralized system
 
   std::map<std::string, ircChannel> channels; //channel data
 
-  std::string initCommands; //commands to execute upon connecting, before joining any channels
+  std::vector<std::string> initCommands; //commands to execute upon connecting, before joining any channels
 
   
 

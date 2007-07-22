@@ -48,9 +48,7 @@ bool ircControl::loadConfigFile(std::string filename) {
 
   if (!ircconf.is_open()) {
 
-    errmsg = "Failed to load IRC configuration file \"";
-    errmsg += filename;
-    errmsg += "\"\n; IRC will not be used."; 
+    errmsg = "Failed to load IRC configuration file \"" + filename + "\"\n; IRC will not be used.";
     logDebugMessage(1, errmsg.c_str());
 
     return false;
@@ -114,35 +112,75 @@ bool ircControl::loadConfigFile(std::string filename) {
 	if (params.size() == 0) //sanity check- an empty param should have been caught already
 	  continue;
 
-	//Now we start processing the arguments (finally!)
+	//Now we start processing the arguments (finally!) Ordered by likely frequency in the configuration.
 	if (TextUtils::compare_nocase(params.at(0), std::string("channel")) && params.size() >= 2) {
 	  ircChannel newchan;
 
 	  newchan.name = params.at(1);
 
-	  //TODO: loop and read args (quitting for the night :P )
+	  //loop through the remaining params and configure this channel accordingly
+	  for (int i = 2; i < params.size(); i++) {
+	    if (TextUtils::compare_nocase(params.at(0), std::string("relayGameChat")) == 0) {
+	      newchan.relayGameChat = true;
 
-	} else if (TextUtils::compare_nocase(params.at(0), std::string("server")) && params.size() == 2) {
-	  server = params.at(1);
+	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayGameJoinsAndParts")) == 0) {
+	      newchan.relayGameJoinsAndParts = true;
 
-	} else if (TextUtils::compare_nocase(params.at(0), std::string("port")) && params.size() == 2) {
-	  port = atoi(params.at(1).c_str());
+	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayIRCChat")) == 0) {
+	      newchan.relayIRCChat = true;
 
-	} else if (TextUtils::compare_nocase(params.at(0), std::string("nick")) && params.size() == 2) {
+	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayIRCJoinsAndParts")) == 0) {
+	      newchan.relayIRCJoinsAndParts = true;
+
+	    } else if (TextUtils::compare_nocase(params.at(0), std::string("acceptCommands")) == 0) {
+	      newchan.acceptCommands = true;
+
+	    } else { 
+	      errmsg = "Unrecognized parameter \"" + params.at(i) + "\" for channel \"" + params.at(1) + "\" on line " + lineNum + ", ignoring.\n";
+	      logDebugMessage(2, errmsg.c_str());
+	    }
+	  }
+
+	  //our channel is configured. Add it to the system.
+	  channels[newchan.name] = newchan;
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("initCommand")) == 0 && params.size() == 2) {
+	  initCommands.push_back(params.at(1));
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("nick")) == 0 && params.size() == 2) {
 	  nick = params.at(1);
 
-	} else if (TextUtils::compare_nocase(params.at(0), std::string("pwd")) && params.size() == 2) {
-	  ped = params.at(1);
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("pwd")) == 0 && params.size() == 2) {
+	  pwd = params.at(1);
 
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("controlChannel")) == 0 && params.size() == 2) {
+	  controlChannel.name = params.at(1);
 
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("server")) == 0 && params.size() == 2) {
+	  server = params.at(1);
+
+	} else if (TextUtils::compare_nocase(params.at(0), std::string("port")) == 0 && params.size() == 2) {
+	  port = atoi(params.at(1).c_str());
+
+	} else {
+	  errmsg = "Unrecognized argument \"" + curlineargs.at(x) + "\" on line " + lineNum + ", ignoring.\n";
+	  logDebugMessage(2, errmsg.c_str());
+	}
       }
     }
 
       lineNum++;
   }
 
-  //TODO: do some checks- make sure there's a nick, at least.
+  if (nick == "") {
+    errmsg = "No nick specified. IRC will not be used.";
+    logDebugMessage(1, errmsg.c_str());
 
+    return false;
+  }
+
+  configured = true;
+  return true; 
 }
 
 bool ircControl::init(){
