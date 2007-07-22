@@ -77,7 +77,7 @@ void SaveWorldMenu::execute()
     }
   }
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString().c_str());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
@@ -100,7 +100,7 @@ void SaveWorldMenu::resize(int _width, int _height)
 
   // reposition title
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;

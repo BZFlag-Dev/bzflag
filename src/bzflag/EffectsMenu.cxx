@@ -290,7 +290,7 @@ void EffectsMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(fontFace, titleFontSize, title->getString());
+    fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight =
     fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);

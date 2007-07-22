@@ -166,7 +166,7 @@ void			MainMenu::resize(int _width, int _height)
 
   // reposition instructions
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStringWidth(fontFace, tinyFontSize, hint->getString());
+  const float hintWidth = fm.getStringWidth(fontFace, tinyFontSize, hint->getString().c_str());
   y -= 1.25f * fm.getStringHeight(fontFace, tinyFontSize);
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
   y -= 1.5f * fm.getStringHeight(fontFace, fontSize);
@@ -174,7 +174,7 @@ void			MainMenu::resize(int _width, int _height)
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
     = fm.getStringWidth(fontFace, fontSize,
-		      ((HUDuiLabel*)listHUD[3])->getString());
+		      ((HUDuiLabel*)listHUD[3])->getString().c_str());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {

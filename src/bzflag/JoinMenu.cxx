@@ -237,7 +237,7 @@ void JoinMenu::setFailedMessage(const char* msg)
 
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace(),
-	failedMessage->getFontSize(), failedMessage->getString());
+	failedMessage->getFontSize(), failedMessage->getString().c_str());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
@@ -256,7 +256,7 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
   status->setString(msg);
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(status->getFontFace(),
-		status->getFontSize(), status->getString());
+		status->getFontSize(), status->getString().c_str());
   status->setPosition(center - 0.5f * _width, status->getY());
 }
 
@@ -288,7 +288,7 @@ void JoinMenu::updateTeamTexture()
   Bundle *bdl = BundleMgr::getCurrentBundle();
   const float x = team->getX() + fm.getStringWidth(team->getFontFace(),
 	  team->getFontSize(),
-	  bdl->getLocalString(team->getList()[team->getIndex()]) + "x");
+	  std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x").c_str());
   teamIcon->setPosition(x, team->getY());
 }
 
@@ -312,7 +312,7 @@ void JoinMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleWidth = fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString().c_str());
   const float titleHeight = fm.getStringHeight(MainMenu::getFontFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;

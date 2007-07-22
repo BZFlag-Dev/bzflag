@@ -192,10 +192,10 @@ void			HUDRenderer::setBigFontSize(int width, int height)
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   bigFontSize = fs.getFontSize(bigFontFace, "headerFontSize");
 
-  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel);
-  resumeLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, resumeLabel);
-  gameOverLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, gameOverLabel);
-  autoPilotWidth = fm.getStringWidth(bigFontFace, bigFontSize, autoPilotLabel);
+  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel.c_str());
+  resumeLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, resumeLabel.c_str());
+  gameOverLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, gameOverLabel.c_str());
+  autoPilotWidth = fm.getStringWidth(bigFontFace, bigFontSize, autoPilotLabel.c_str());
 }
 
 void			HUDRenderer::setAlertFontSize(int width, int height)
@@ -209,7 +209,7 @@ void			HUDRenderer::setAlertFontSize(int width, int height)
 
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
-      alertLabelWidth[i] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[i]);
+      alertLabelWidth[i] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[i].c_str());
 }
 
 void			HUDRenderer::setMajorFontSize(int width, int height)
@@ -242,7 +242,7 @@ void			HUDRenderer::setHeadingFontSize(int width, int height)
   // compute heading labels and (half) widths
   int i;
   for (i = 0; i < 36; i++)
-    headingLabelWidth[i] = 0.5f * fm.getStringWidth(headingFontFace, headingFontSize, headingLabel[i]);
+    headingLabelWidth[i] = 0.5f * fm.getStringWidth(headingFontFace, headingFontSize, headingLabel[i].c_str());
 
   // compute maximum width over all altitude labels
   altitudeLabelMaxWidth = fm.getStringWidth(headingFontFace, headingFontSize, "9999");
@@ -347,7 +347,7 @@ void			HUDRenderer::setAlert(int index, const char* string,
   } else {
     FontManager &fm = FontManager::instance();
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
-    alertLabelWidth[index] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[index]);
+    alertLabelWidth[index] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[index].c_str());
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
   }
@@ -402,7 +402,7 @@ void			HUDRenderer::setComposing(const std::string &prompt,
       FontManager &fm = FontManager::instance();
       float fontHeight = fm.getStringHeight(cFontFace, cFontSize);
       const float x =
-	fm.getStringWidth(cFontFace, cFontSize, composeTypeIn->getLabel()) + 
+	fm.getStringWidth(cFontFace, cFontSize, composeTypeIn->getLabel().c_str()) + 
 	fm.getStringWidth(cFontFace, cFontSize, "__");
       const float y = fontHeight * 0.5f;
       composeTypeIn->setLabelWidth(x);
@@ -477,7 +477,7 @@ void			HUDRenderer::setRestartKeyLabel(const std::string& label)
   sprintf(buffer, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
   FontManager &fm = FontManager::instance();
-  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel);
+  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel.c_str());
 }
 
 void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
@@ -516,7 +516,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
 	continue;
       }
 
-      wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word);
+      wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word.c_str());
       msg += c;
       if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
 	currentLineWidth += wordWidth;
@@ -534,7 +534,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   }
 
   if (word.size() > 0) {
-    wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word);
+    wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word.c_str());
     if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
       msg += '\0';
     }
@@ -733,7 +733,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	if (name.size()) {
 	  hudColor3Afv( color, alpha );
 	  float textOffset = 5.0f;
-	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize,name);
+	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
 	  glEnable(GL_TEXTURE_2D);
 	  FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize,name);
 	  glDisable(GL_TEXTURE_2D);
@@ -853,7 +853,7 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	if (name.size()) {
 	  hudColor3Afv( color, alpha );
 	    float textOffset = 5.0f;
-	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize,name);
+	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
 	  glEnable(GL_TEXTURE_2D);
 	  FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize,name);
 	  glDisable(GL_TEXTURE_2D);

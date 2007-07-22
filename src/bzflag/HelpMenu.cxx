@@ -111,7 +111,7 @@ void HelpMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;

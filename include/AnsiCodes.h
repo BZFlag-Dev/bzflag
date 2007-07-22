@@ -112,11 +112,19 @@ static const float BrightColors[9][3] = {
 
 
 // strip ANSI codes from a string
-inline std::string stripAnsiCodes(const std::string &text)
+inline const char *stripAnsiCodes(const char *text)
 {
-  std::string str = "";
+#define SAC_MAX 1024
+  static char str[SAC_MAX] = {0};
+  int j = 0;
 
-  int length = (int)text.size();
+  if (!text) {
+    return NULL;
+  }
+
+  int length = (int)strlen(text);
+  assert(length+1 < SAC_MAX && "stripAnsiCodes string is too long");
+
   for (int i = 0; i < length; i++) {
     if (text[i] == ESC_CHAR) {
       i++;
@@ -128,12 +136,15 @@ inline std::string stripAnsiCodes(const std::string &text)
 	}
       }
     } else {
-      str += text[i];
+      str[j] = text[i];
+      j++;
     }
   }
+  str[j] = '\0';
 
   return str;
 }
+
 
 #endif //_ANSI_CODES_H_
 

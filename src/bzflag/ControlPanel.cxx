@@ -80,7 +80,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStringWidth(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
+	     (fm.getStringWidth(fontFace, fontSize, std::string(msg, n+1).c_str()) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -427,7 +427,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
 	const std::string &msg = messages[messageMode][i].lines[l];
-	std::string raw = stripAnsiCodes(msg);
+	std::string raw = stripAnsiCodes(msg.c_str());
 	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
 	  highlight = true;
 	}
@@ -466,7 +466,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
-	  newMsg += stripAnsiCodes(msg);
+	  newMsg += stripAnsiCodes(msg.c_str());
 	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
 	}
       }
@@ -798,9 +798,9 @@ void			ControlPanel::addMessage(const std::string& line,
     }
 #else
     if (echoAnsi) {
-      std::cout << line << ColorStrings[ResetColor] << std::endl;
+      std::cout << line.c_str() << ColorStrings[ResetColor] << std::endl;
     } else {
-      std::cout << stripAnsiCodes(line) << std::endl;
+      std::cout << stripAnsiCodes(line.c_str()) << std::endl;
     }
     fflush(stdout);
 #endif
@@ -826,7 +826,7 @@ void ControlPanel::saveMessages(const std::string& filename,
   for (; msg != messages[MessageAll].end(); ++msg) {
     const std::string& line = msg->string;
     if (stripAnsi) {
-      fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
+      fprintf(file, "%s\n", stripAnsiCodes(line.c_str()));
     } else {
       fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor].c_str());
     }

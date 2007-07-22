@@ -242,14 +242,14 @@ void printout(const std::string& line)
 #ifdef _WIN32
   FILE *fp = fopen ("stdout.txt", "a+");
   if (fp) {
-    fprintf(fp,"%s\n", (stripAnsiCodes(line).c_str()));
+    fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
     fclose(fp);
   }
 #else
   if (echoAnsi) {
     std::cout << line << ColorStrings[ResetColor] << std::endl;
   } else {
-    std::cout << stripAnsiCodes(line) << std::endl;
+    std::cout << stripAnsiCodes(line.c_str()) << std::endl;
   }
   fflush(stdout);
 #endif
@@ -397,7 +397,7 @@ void		addMessage(const Player *_player, const std::string& msg,
 #endif
       fullMessage += ": ";
     }
-    fullMessage += stripAnsiCodes(msg);
+    fullMessage += stripAnsiCodes(msg.c_str());
   }
   printout(fullMessage);
 }
@@ -454,7 +454,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   msg = nboUnpackString (msg, email, EmailLen);
 
   // Strip any ANSI color codes
-  strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
+  strncpy(callsign, stripAnsiCodes(callsign), 32);
 
   // id is slot, check if it's empty
   const int i = id;

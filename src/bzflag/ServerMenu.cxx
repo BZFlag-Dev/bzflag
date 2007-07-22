@@ -377,7 +377,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
-	std::string addr = stripAnsiCodes(server.description);
+	std::string addr = stripAnsiCodes(server.description.c_str());
 	std::string desc;
 	std::string::size_type pos = addr.find_first_of(';');
 	if (pos != std::string::npos) {
@@ -706,7 +706,7 @@ void			ServerMenu::resize(int _width, int _height)
     const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
     
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
     const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
@@ -738,7 +738,7 @@ void			ServerMenu::resize(int _width, int _height)
     fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     status->setFontSize(fontSize);
-    const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString());
+    const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString().c_str());
     x = 0.5f * ((float)_width - statusWidth);
     y -= 1.2f * fontHt;
     status->setPosition(x, y);
@@ -749,7 +749,7 @@ void			ServerMenu::resize(int _width, int _height)
     fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     search->setFontSize(fontSize);
-    const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString());
+    const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
@@ -759,7 +759,7 @@ void			ServerMenu::resize(int _width, int _height)
     fontSize = fs.getFontSize(menuFontFace, "infoFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     help->setFontSize(fontSize);
-    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString());
+    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     help->setPosition(x, fontHt / 2 /* near bottom of screen */);
   }
@@ -787,7 +787,7 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString().c_str());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 

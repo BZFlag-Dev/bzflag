@@ -168,7 +168,7 @@ void			ShotStats::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
 
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   const float titleY = (float)_height - titleHeight;
   float x = 0.5f * ((float)_width - titleWidth);
@@ -179,7 +179,7 @@ void			ShotStats::resize(int _width, int _height)
   HUDuiLabel* key = (HUDuiLabel*)listHUD[1];
   key->setFontSize(fontSize);
   const float keyCenter = ((columns / 2) + 4) * columnWidth;
-  const float keyWidth = fm.getStringWidth(fontFace, fontSize, key->getString());
+  const float keyWidth = fm.getStringWidth(fontFace, fontSize, key->getString().c_str());
   const float keyY = titleY - 2 * fm.getStringHeight(fontFace, fontSize);
   y = keyY;
   x = keyCenter - 0.5f * keyWidth;

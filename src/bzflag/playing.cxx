@@ -1001,7 +1001,7 @@ void		addMessage(const Player *_player, const std::string& msg,
 			   int mode, bool highlight, const char* oldColor)
 {
   std::string prefix;
-  std::string message;
+  const char *message;
 
   if (BZDB.isTrue("colorful")) {
     if (_player) {
@@ -1035,7 +1035,7 @@ void		addMessage(const Player *_player, const std::string& msg,
 #endif
       prefix += ColorStrings[DefaultColor] + ": ";
     }
-    message = msg;
+    message = msg.c_str();
   } else {
     if (oldColor != NULL)
       prefix = oldColor;
@@ -1050,11 +1050,11 @@ void		addMessage(const Player *_player, const std::string& msg,
 #endif
       prefix += ": ";
     }
-    message = stripAnsiCodes(msg);
+    message = stripAnsiCodes(msg.c_str());
   }
   controlPanel->addMessage(TextUtils::format("%s%s",
 					     prefix.c_str(),
-					     message.c_str()),
+					     message),
 			   mode);
 }
 
@@ -1216,7 +1216,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   msg = nboUnpackString (msg, email, EmailLen);
 
   // Strip any ANSI color codes
-  strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
+  strncpy(callsign, stripAnsiCodes(callsign), 32);
 
   // id is slot, check if it's empty
   const int i = id;
@@ -2851,7 +2851,7 @@ static void handleMessage(void *msg)
     wordFilter->filter((char *)msg);
   }
 
-  std::string origText = stripAnsiCodes(std::string((char*)msg));
+  const char *origText = stripAnsiCodes((char*)msg);
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
   if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||

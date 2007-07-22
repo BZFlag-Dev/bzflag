@@ -137,10 +137,10 @@ void		ScoreboardRenderer::setMinorFontSize()
   huntArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "->");
   huntPlusesWidth = fm.getStringWidth(minorFontFace, minorFontSize, "@>");
   huntedArrowWidth = fm.getStringWidth(minorFontFace, minorFontSize, "Hunt->");
-  scoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, killSpacingLabel);
-  teamScoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamScoreSpacingLabel);
-  teamCountLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamCountSpacingLabel);
+  scoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, scoreSpacingLabel.c_str());
+  killsLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, killSpacingLabel.c_str());
+  teamScoreLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamScoreSpacingLabel.c_str());
+  teamCountLabelWidth = fm.getStringWidth(minorFontFace, minorFontSize, teamCountSpacingLabel.c_str());
   const float spacing = fm.getStringWidth(minorFontFace, minorFontSize, " ");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;

@@ -238,7 +238,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
     const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
@@ -251,7 +251,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString());
+    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString().c_str());
     x = 0.5f * ((float)_width - stringWidth);
     y -= 1.5f * fm.getStringHeight(fontFace, fontSize);
     label->setPosition(x, y);
@@ -268,7 +268,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = pageLabel;
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString());
+    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString().c_str());
     x = 0.5f * ((float)_width - stringWidth);
     y -= 2.0f * fm.getStringHeight(fontFace, fontSize);
     label->setPosition(x, y);

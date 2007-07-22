@@ -361,9 +361,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string &text, const float* resetColor, fontJustification align)
 {
   char buffer[1024];
+  int textlen = text.size();
 
   assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
-  snprintf(buffer, 1024, "%s", text.c_str());
+  memcpy(buffer, text.c_str(), textlen);
 
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
@@ -406,7 +407,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   float width = 0;
   // run at least once
   if (endSend == -1) {
-    endSend = (int)text.size();
+    endSend = textlen;
     doneLastSection = true;
   }
 
@@ -477,7 +478,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
     // we stopped sending text at an ANSI code, find out what it is
     // and do something about it
-    if (endSend != (int)text.size()) {
+    if (endSend != textlen) {
       tookCareOfANSICode = false;
       std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
 
@@ -536,7 +537,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
     endSend = (int)text.find("\033[", startSend);
     if ((endSend == -1) && !doneLastSection) {
-      endSend = (int)text.size();
+      endSend = (int)textlen;
       doneLastSection = true;
     }
   }
@@ -562,9 +563,9 @@ void FontManager::drawString(float x, float y, float z,
 /**
  * returns the width of the given text string for the specifed font
  */
-float FontManager::getStringWidth(int faceID, float size, const std::string &text, bool alreadyStripped)
+float FontManager::getStringWidth(int faceID, float size, const char *text, bool alreadyStripped)
 {
-  if (text.size() <= 0)
+  if (!text || strlen(text) <= 0)
     return 0.0f;
 
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID, (int)size);
@@ -574,9 +575,9 @@ float FontManager::getStringWidth(int faceID, float size, const std::string &tex
   }
 
   // don't include ansi codes in the length, but allow outside funcs to skip
-  const std::string &stripped = alreadyStripped ? text : stripAnsiCodes(text);
+  const char *stripped = alreadyStripped ? text : stripAnsiCodes(text);
 
-  return theFont->Advance(stripped.c_str());
+  return theFont->Advance(stripped);
 }
 
 
@@ -586,7 +587,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string &tex
 float FontManager::getStringWidth(const std::string &face, float size,
 				const std::string &text, bool alreadyStripped)
 {
-  return getStringWidth(getFaceID(face), size, text, alreadyStripped);
+  return getStringWidth(getFaceID(face), size, text.c_str(), alreadyStripped);
 }
 
 

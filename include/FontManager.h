@@ -60,7 +60,7 @@ public:
   void drawString(float x, float y, float z, int faceID, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
   void drawString(float x, float y, float z, const std::string &face, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
 
-  float getStringWidth(int faceID, float size, const std::string &text, bool alreadyStripped = false);
+  float getStringWidth(int faceID, float size, const char *text, bool alreadyStripped = false);
   float getStringWidth(const std::string &face, float size, const std::string &text, bool alreadyStripped = false);
 
   float getStringHeight(int faceID, float size);

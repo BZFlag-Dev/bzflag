@@ -125,7 +125,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString());
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
@@ -134,7 +134,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   // reposition help
   HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
-  const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString());
+  const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString().c_str());
   const float bigHeight = fm.getStringHeight(fontFace, bigFontSize);
   x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * bigHeight;
