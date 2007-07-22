@@ -23,7 +23,7 @@ class  FTFace
          *
          * @param fontFilePath  font file path.
          */
-        FTFace( const char* fontFilePath);
+        FTFace( const char* fontFilePath, bool precomputeKerning = true);
 
         /**
          * Read face data from an in-memory buffer. Error is set.
@@ -136,6 +136,12 @@ class  FTFace
          * This face has kerning tables
          */
          bool hasKerningTable;
+
+	 /**
+	  * precomputed kerning matrix
+	  */
+	 float precomputedKerning[128][128][2];
+	 bool precomputedKerningAvailable;
 
         /**
          * Current error code. Zero means no error.
