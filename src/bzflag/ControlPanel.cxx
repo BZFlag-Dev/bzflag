@@ -793,7 +793,7 @@ void			ControlPanel::addMessage(const std::string& line,
     // this is cheap but it will work on windows
     FILE *fp = fopen ("stdout.txt","a+");
     if (fp){
-      fprintf(fp,"%s\n", stripAnsiCodes(line));
+      fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
       fclose(fp);
     }
 #else
