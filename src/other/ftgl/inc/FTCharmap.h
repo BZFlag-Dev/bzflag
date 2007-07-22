@@ -124,7 +124,14 @@ class  FTCharmap
          */
         typedef FTCharToGlyphIndexMap CharacterMap;
         CharacterMap charMap;
-        
+
+	static const int MAX_PRECOMPUTED = 128;
+
+        /**
+	 * precomputed font indices
+	 */
+	unsigned int characterCodeIndices[MAX_PRECOMPUTED];
+
         /**
          * Current error code.
          */
