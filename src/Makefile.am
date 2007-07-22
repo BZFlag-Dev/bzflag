@@ -57,9 +57,9 @@ SUBDIRS = \
 	$(core_dirs) \
 	$(CLIENT_DIRS) \
 	${BZFS_DIR} \
-	${BZADMIN_DIR} \
+	${BZFLAG_DIR} \
 	${BZROBOTS_DIR} \
-	${BZFLAG_DIR}
+	${BZADMIN_DIR}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
