@@ -316,7 +316,7 @@ void			ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
 
   label = bdl->getLocalString("Team Score");
   xl = xn = x - teamScoreLabelWidth;
-  fm.drawString(xl, y, 0, minorFontFace, minorFontSize, label);
+  fm.drawString(xl, y, 0, minorFontFace, minorFontSize, label.c_str());
 
   for (i = RedTeam; i < NumTeams; i++) {
     if (!Team::isColorTeam(TeamColor(i))) continue;
@@ -374,7 +374,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
 	playerInfo += ColorStrings[teamIndex];
 	playerInfo += player->getCallSign();
 
-	fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
+	fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo.c_str());
 	y0 -= dy;
       }
     }
@@ -428,9 +428,9 @@ void			ScoreboardRenderer::renderScoreboard(void)
     psLabel += "  ";
     psLabel += sortLabels[sortMode];
   }
-  fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel));
-  fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel));
-  fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel);
+  fm.drawString(x1, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(scoreLabel).c_str());
+  fm.drawString(x2, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(killLabel).c_str());
+  fm.drawString(x3, y0, 0, minorFontFace, minorFontSize, psLabel.c_str());
   const float dy = fm.getStringHeight(minorFontFace, minorFontSize);
   float y = y0 - dy;
 
@@ -441,7 +441,7 @@ void			ScoreboardRenderer::renderScoreboard(void)
     std::string huntStr = ColorStrings[YellowColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += " *SEL*";
-    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFontFace, minorFontSize, huntStr);
+    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFontFace, minorFontSize, huntStr.c_str());
   }
 
   // grab the tk warning ratio
@@ -543,12 +543,12 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   if (world && world->allowRabbit()) {
     sprintf(score, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
-	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
+	    highlightTKratio ? ColorStrings[CyanColor] : "",
 	    player->getTeamKills());
   } else {
     sprintf(score, "%4d %4d-%-4d%s[%2d]", player->getScore(),
 	    player->getWins(), player->getLosses(),
-	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
+	    highlightTKratio ? ColorStrings[CyanColor] : "",
 	    player->getTeamKills());
   }
 
@@ -682,9 +682,9 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
     hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
-  fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
+  fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo.c_str());
   if (statusInfo.size() > 0) {
-    fm.drawString(xs, y, 0, minorFontFace, minorFontSize, statusInfo);
+    fm.drawString(xs, y, 0, minorFontFace, minorFontSize, statusInfo.c_str());
   }
   if (BZDB.isTrue("debugHud")) {
     printf ("playerInfo: %s\n", playerInfo.c_str()); //FIXME

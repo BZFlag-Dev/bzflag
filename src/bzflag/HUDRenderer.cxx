@@ -735,7 +735,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	  float textOffset = 5.0f;
 	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
 	  glEnable(GL_TEXTURE_2D);
-	  FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize,name);
+	  FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize, name.c_str());
 	  glDisable(GL_TEXTURE_2D);
 	}
 
@@ -855,7 +855,7 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	    float textOffset = 5.0f;
 	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
 	  glEnable(GL_TEXTURE_2D);
-	  FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize,name);
+	  FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize, name.c_str());
 	  glDisable(GL_TEXTURE_2D);
 	}
 
@@ -933,10 +933,10 @@ void			HUDRenderer::renderAlerts(void)
       // FIXME: this assumes that there's not more than one reset in the string.
       if (dim) {
 	newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) - 1
-			     + ColorStrings[ResetColor].size(), ColorStrings[DimColor]);
+			     + strlen(ColorStrings[ResetColor]), ColorStrings[DimColor]);
       }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
-		    alertFontFace, alertFontSize, newAlertLabel);
+		    alertFontFace, alertFontSize, newAlertLabel.c_str());
       y -= fm.getStringHeight(alertFontFace, alertFontSize);
     }
   }
@@ -1124,7 +1124,7 @@ void			HUDRenderer::renderStatus(void)
 
   if (roaming) {
     statusColor = messageColor;
-    if (dim) strcat(buffer, ColorStrings[DimColor].c_str());
+    if (dim) strcat(buffer, ColorStrings[DimColor]);
     strcat(buffer, ROAM.getRoamingLabel().c_str());
   }
 
@@ -1377,7 +1377,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     }
     for (i = minMark; i <= maxMark; i++) {
       fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
-		    labelsFontSize, headingLabel[(i + 36) % 36]);
+		    labelsFontSize, headingLabel[(i + 36) % 36].c_str());
       x += 2.0f * headingMarkSpacing;
     }
     if (smoothLabel) {
@@ -1386,7 +1386,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
       for (i = minMark; i <= maxMark; i++) {
 	fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
-		      labelsFontSize, headingLabel[(i + 36) % 36]);
+		      labelsFontSize, headingLabel[(i + 36) % 36].c_str());
 	x += 2.0f * headingMarkSpacing;
       }
     }
@@ -1494,7 +1494,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     char buf[10];
     for (i = minMark; i <= maxMark; i++) {
       sprintf(buf, "%d", i * 5);
-      fm.drawString(x, y, 0, headingFontFace, labelsFontSize, std::string(buf));
+      fm.drawString(x, y, 0, headingFontFace, labelsFontSize, buf);
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
@@ -1504,7 +1504,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
 	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace, labelsFontSize, std::string(buf));
+	fm.drawString(x, y, 0, headingFontFace, labelsFontSize, buf);
 	y += altitudeMarkSpacing;
       }
     }
@@ -1651,7 +1651,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace,
-		    bigFontSize, autoPilotLabel);
+		    bigFontSize, autoPilotLabel.c_str());
     }
 
   }
@@ -1697,19 +1697,19 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel);
+		    bigFontFace, bigFontSize, gameOverLabel.c_str());
     } else if (!myTank->isAlive() && !myTank->isExploding()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, restartLabel);
+		    bigFontFace, bigFontSize, restartLabel.c_str());
     } else if (myTank->isPaused()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, resumeLabel);
+		    bigFontFace, bigFontSize, resumeLabel.c_str());
     } else if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
-		    bigFontFace, bigFontSize, autoPilotLabel);
+		    bigFontFace, bigFontSize, autoPilotLabel.c_str());
     }
   }
 
@@ -1763,7 +1763,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel);
+		    bigFontFace, bigFontSize, gameOverLabel.c_str());
     }
   }
 

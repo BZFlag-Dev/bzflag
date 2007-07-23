@@ -307,15 +307,15 @@ void warnAboutMainFlags()
       addMessage(NULL,
 		 TextUtils::format("%sFlags on field hidden, to show them "
 				   "hit \"%s%s%s\"",
-				   ColorStrings[YellowColor].c_str(),
-				   ColorStrings[WhiteColor].c_str(),
+				   ColorStrings[YellowColor],
+				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
 		 TextUtils::format("%sFlags on field hidden, to show them "
 				   "bind a key to Toggle Flags on Field",
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     }
   }
 }
@@ -329,15 +329,15 @@ void warnAboutRadarFlags()
       addMessage(NULL,
 		 TextUtils::format("%sFlags on radar hidden, to show them "
 				   "hit \"%s%s%s\"",
-				   ColorStrings[YellowColor].c_str(),
-				   ColorStrings[WhiteColor].c_str(),
+				   ColorStrings[YellowColor],
+				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
 		 TextUtils::format("Flags on radar hidden, to show them "
 				   "bind a key to Toggle Flags on Radar",
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     }
   }
 }
@@ -350,15 +350,15 @@ void warnAboutRadar()
     if (keys.size() != 0) {
       addMessage(NULL,
 		 TextUtils::format("%sTo toggle the radar hit \"%s%s%s\"",
-				   ColorStrings[YellowColor].c_str(),
-				   ColorStrings[WhiteColor].c_str(),
+				   ColorStrings[YellowColor],
+				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
 		 TextUtils::format("%sTo toggle the radar bind a key to "
 				   "Toggle Radar",
-				   ColorStrings[YellowColor].c_str()));
+				   ColorStrings[YellowColor]));
     }
   }
 }
@@ -371,15 +371,15 @@ void warnAboutConsole()
 
     if (keys.size() != 0) {
       hud->setAlert(3, TextUtils::format("%sTo toggle the console hit \"%s%s%s\"",
-					 ColorStrings[YellowColor].c_str(),
-					 ColorStrings[WhiteColor].c_str(),
+					 ColorStrings[YellowColor],
+					 ColorStrings[WhiteColor],
 					 keys[0].c_str(),
-					 ColorStrings[YellowColor].c_str()).c_str(),
+					 ColorStrings[YellowColor]).c_str(),
 		    2.0f, true);
     } else {
       hud->setAlert(3, TextUtils::format("%sTo toggle the console bind a key "
 					 "to Toggle Console",
-					 ColorStrings[YellowColor].c_str()).c_str(),
+					 ColorStrings[YellowColor]).c_str(),
 		    2.0f, true);
     }
   }
@@ -1033,7 +1033,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       prefix += Team::getName(_player->getTeam());
       prefix += ")";
 #endif
-      prefix += ColorStrings[DefaultColor] + ": ";
+      prefix += std::string(ColorStrings[DefaultColor]) + ": ";
     }
     message = msg.c_str();
   } else {
@@ -2519,7 +2519,7 @@ static void handleNearFlag(void *msg)
   msg = nboUnpackStdString(msg, flagName);
 
   std::string fullMessage = "Closest Flag: " + flagName;
-  addMessage(NULL, ColorStrings[YellowColor]+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
+  addMessage(NULL, std::string(ColorStrings[YellowColor])+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
 
   if (myTank) {
     hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
@@ -2913,16 +2913,16 @@ static void handleMessage(void *msg)
 	    fullMsg += "[->" + text + "]";
 	  } else {
 	    fullMsg += "[->" + dstName + "]";
-	    fullMsg += ColorStrings[ResetColor] + " ";
-	    fullMsg += ColorStrings[CyanColor] + text;
+	    fullMsg += std::string(ColorStrings[ResetColor]) + " ";
+	    fullMsg += std::string(ColorStrings[CyanColor]) + text;
 	  }
 	} else {
 	  if (isAction) {
 	    fullMsg += "[" + text + "->]";
 	  } else {
 	    fullMsg += "[" + srcName + "->]";
-	    fullMsg += ColorStrings[ResetColor] + " ";
-	    fullMsg += ColorStrings[CyanColor] + text;
+	    fullMsg += std::string(ColorStrings[ResetColor]) + " ";
+	    fullMsg += std::string(ColorStrings[CyanColor]) + text;
 	  }
 
 	  if (srcPlayer)
@@ -2972,7 +2972,7 @@ static void handleMessage(void *msg)
       if (isAction) {
 	fullMsg += text;
       } else {
-	fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
+	fullMsg += srcName + colorStr + ": " + std::string(ColorStrings[CyanColor]) + text;
       }
     }
 

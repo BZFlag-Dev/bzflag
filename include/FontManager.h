@@ -57,7 +57,7 @@ public:
   int getNumFaces(void);
   const char* getFaceName(int faceID);
 
-  void drawString(float x, float y, float z, int faceID, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
+  void drawString(float x, float y, float z, int faceID, float size, const char *text, const float* resetColor = NULL, fontJustification align = AlignLeft);
   void drawString(float x, float y, float z, const std::string &face, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
 
   float getStringWidth(int faceID, float size, const char *text, bool alreadyStripped = false);

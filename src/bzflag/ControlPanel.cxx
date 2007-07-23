@@ -460,14 +460,14 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg.c_str());
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg.c_str());
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg.c_str());
 	}
       }
 
@@ -828,7 +828,7 @@ void ControlPanel::saveMessages(const std::string& filename,
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line.c_str()));
     } else {
-      fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor].c_str());
+      fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
     }
   }
 

@@ -380,7 +380,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       fullMessage += Team::getName(_player->getTeam());
       fullMessage += ")";
 #endif
-      fullMessage += ColorStrings[DefaultColor] + ": ";
+      fullMessage += std::string(ColorStrings[DefaultColor]) + ": ";
     }
     fullMessage += msg;
   } else {

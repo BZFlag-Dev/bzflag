@@ -358,13 +358,17 @@ void* FontManager::getGLFont ( int face, int size )
  * size, optionally justifying to a particular alignment.
  */
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const std::string &text, const float* resetColor, fontJustification align)
+			     const char *text, const float* resetColor, fontJustification align)
 {
-  char buffer[1024];
-  int textlen = text.size();
+  if (!text) {
+    return;
+  }
 
-  assert(text.size() < 1024 && "drawString text is way bigger than ever expected");
-  memcpy(buffer, text.c_str(), textlen);
+  char buffer[1024];
+  int textlen = strlen(text);
+
+  assert(textlen < 1024 && "drawString text is way bigger than ever expected");
+  memcpy(buffer, text, textlen);
 
   FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
@@ -402,7 +406,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
    */
   bool doneLastSection = false;
   int startSend = 0;
-  int endSend = (int)text.find("\033[", startSend);
+
+  // int endSend = (int)text.find("\033[", startSend);
+  int endSend = -1;
+  for (int i = 0; i < textlen - 1; i++) {
+    if (text[i] == '\033' && text[i+1] == '[') {
+      endSend = i;
+      break;
+    }
+  }
+
   bool tookCareOfANSICode = false;
   float width = 0;
   // run at least once
@@ -416,12 +429,14 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
+
     // pulsate the text, if desired
-    if (pulsating)
+    if (pulsating) {
       getPulseColor(color, color);
+    }
+
     // render text
-    int len = endSend - startSend;
-    if (len > 0) {
+    if (endSend - startSend > 0) {
       char savechar = buffer[endSend];
       buffer[endSend] = '\0'; /* need terminator */
       const char* rendertext = &buffer[startSend];
@@ -437,10 +452,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	} else {
 	  glTranslatef(x, y, z);
 	}
-	//	glDepthMask(0);
 
 	// draw the underline before the text
 	if (underline) {
+	  glDisable(GL_TEXTURE_2D);
 	  glEnable(GL_BLEND);
 	  if (bright && underlineColor[0] >= 0) {
 	    glColor4fv(underlineColor);
@@ -452,9 +467,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
 	  glBegin(GL_LINES); {
 	    // drop below the baseline into the descent a little
-	    glVertex2f(0.0f, height * -0.1f);
-	    glVertex2f(width, height * -0.1f);
+	    glVertex2f(0.0f, height * -0.25f);
+	    glVertex2f(width, height * -0.25f);
 	  } glEnd();
+	  glEnable(GL_TEXTURE_2D);
 	}
 
 	if (color[0] >= 0) {
@@ -462,6 +478,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
 
 	theFont->Render(rendertext);
+
+	// restore
 	buffer[endSend] = savechar;
 
       } glPopMatrix();
@@ -474,19 +492,43 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       }
     }
     if (!doneLastSection) {
-      startSend = (int)text.find('m', endSend) + 1;
+      // startSend = (int)text.find('m', endSend) + 1;
+      startSend = -1;
+      for (int i = 0; i < textlen; i++) {
+	if (text[endSend + i] == 'm') {
+	  startSend = endSend + i;
+	  break;
+	}
+      }
+      startSend++;
+      assert(startSend > 0 && "drawString found an ansi sequence that didn't terminate?");
     }
-    // we stopped sending text at an ANSI code, find out what it is
-    // and do something about it
-    if (endSend != textlen) {
-      tookCareOfANSICode = false;
-      std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
+
+    /* we stopped sending text at an ANSI code, find out what it is
+     * and do something about it.
+     */
+    if (endSend < textlen) {
+
+      // int pos = text.find('m', endSend);
+      int pos = -1;
+      for (int i = 0; i < textlen; i++) {
+	if (text[endSend + i] == 'm') {
+	  pos = endSend + i;
+	  break;
+	}
+      }
+
+      // std::string tmpText = text.substr(endSend, pos - endSend + 1);
+      char savechar = buffer[pos + 1];
+      buffer[pos + 1] = '\0'; /* need terminator */
+      const char* tmpText = &buffer[endSend];
 
       const float darkDim = dimFactor * darkness;
+      tookCareOfANSICode = false;
 
       // colors
       for (int i = 0; i <= LastColor; i++) {
-	if (tmpText == ColorStrings[i]) {
+	if (strcasecmp(tmpText, ColorStrings[i]) == 0) {
 	  if (bright) {
 	    color[0] = BrightColors[i][0] * darkness;
 	    color[1] = BrightColors[i][1] * darkness;
@@ -504,38 +546,58 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       // didn't find a matching color
       if (!tookCareOfANSICode) {
 	// settings other than color
-	if (tmpText == ANSI_STR_RESET) {
+	if (strcasecmp(tmpText, ANSI_STR_RESET) == 0) {
 	  bright = true;
 	  pulsating = false;
 	  underline = false;
 	  color[0] = resetColor[0] * darkness;
 	  color[1] = resetColor[1] * darkness;
 	  color[2] = resetColor[2] * darkness;
-	} else if (tmpText == ANSI_STR_RESET_FINAL) {
+	} else if (strcasecmp(tmpText, ANSI_STR_RESET_FINAL) == 0) {
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
 	  color[0] = resetColor[0] * darkDim;
 	  color[1] = resetColor[1] * darkDim;
 	  color[2] = resetColor[2] * darkDim;
-	} else if (tmpText == ANSI_STR_BRIGHT) {
+	} else if (strcasecmp(tmpText, ANSI_STR_BRIGHT) == 0) {
 	  bright = true;
-	} else if (tmpText == ANSI_STR_DIM) {
+	} else if (strcasecmp(tmpText, ANSI_STR_DIM) == 0) {
 	  bright = false;
-	} else if (tmpText == ANSI_STR_UNDERLINE) {
+	} else if (strcasecmp(tmpText, ANSI_STR_UNDERLINE) == 0) {
 	  underline = true;
-	} else if (tmpText == ANSI_STR_PULSATING) {
+	} else if (strcasecmp(tmpText, ANSI_STR_PULSATING) == 0) {
 	  pulsating = true;
-	} else if (tmpText == ANSI_STR_NO_UNDERLINE) {
+	} else if (strcasecmp(tmpText, ANSI_STR_NO_UNDERLINE) == 0) {
 	  underline = false;
-	} else if (tmpText == ANSI_STR_NO_PULSATE) {
+	} else if (strcasecmp(tmpText, ANSI_STR_NO_PULSATE) == 0) {
 	  pulsating = false;
 	} else {
-	  logDebugMessage(2,"ANSI Code %s not supported\n", tmpText.c_str());
+	  // print out the code nicely so that it matches the C string
+	  logDebugMessage(2,"ANSI Code [");
+	  for (int i = 0; i < (int)strlen(tmpText); i++) {
+	    if (isprint(tmpText[i])) {
+	      logDebugMessage(2, "%c", tmpText[i]);
+	    } else {
+	      logDebugMessage(2, "\\%03o", tmpText[i]);
+	    }
+	  }
+	  logDebugMessage(2, "] not supported\n");
 	}
       }
+
+      // restore
+      buffer[pos + 1] = savechar;
     }
-    endSend = (int)text.find("\033[", startSend);
+
+    endSend = -1;
+    for (int i = startSend; i < textlen - 1; i++) {
+      if (text[i] == '\033' && text[i+1] == '[') {
+	endSend = i;
+	break;
+      }
+    }
+
     if ((endSend == -1) && !doneLastSection) {
       endSend = (int)textlen;
       doneLastSection = true;
@@ -556,7 +618,7 @@ void FontManager::drawString(float x, float y, float z,
 			     const std::string &text,
 			     const float* resetColor, fontJustification align)
 {
-  drawString(x, y, z, getFaceID(face), size, text, resetColor, align);
+  drawString(x, y, z, getFaceID(face), size, text.c_str(), resetColor, align);
 }
 
 

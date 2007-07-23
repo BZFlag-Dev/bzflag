@@ -127,7 +127,7 @@ void			HUDuiElement::renderLabel()
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
     fm.drawString(elementX - dx, elementY, 0,
-		  elementFontFace, elementFontSize, theLabel);
+		  elementFontFace, elementFontSize, theLabel.c_str());
   }
 }
 

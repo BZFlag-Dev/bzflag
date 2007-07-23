@@ -76,7 +76,7 @@ typedef enum {
 } ColorCodes;
 
 // These enum values have to line up with those above
-static const std::string ColorStrings[17] = {
+static const char* ColorStrings[17] = {
   ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
   ANSI_STR_FG_RED,      // 1  Red
   ANSI_STR_FG_GREEN,    // 2  Green
@@ -95,7 +95,8 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_NO_PULSATE,  // 15 No Pulsating
   ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
-
+static int ColorStringsLength = sizeof(ColorStrings);
+static bool quellAnsiCodesWarning = ColorStringsLength > 0 ? quellAnsiCodesWarning : false;
 
 // These RGB float values have to line up with the colors above
 static const float BrightColors[9][3] = {

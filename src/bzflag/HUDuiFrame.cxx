@@ -154,7 +154,7 @@ void			HUDuiFrame::doRender()
   }
 
   // render label
-  fm.drawString(x, y, 0, fontFace, fontSize, getLabel());
+  fm.drawString(x, y, 0, fontFace, fontSize, getLabel().c_str());
 }
 
 
