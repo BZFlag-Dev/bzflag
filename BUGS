@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- server list menu navigation is broken, no navigation/focus is displayed
+
 - jitter on windows servers is reported as very high, but play
   is unaffected.
 
