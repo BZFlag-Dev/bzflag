@@ -80,7 +80,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
   options->push_back(std::string("Auto"));
-  option->createSlider(4);
+  option->createSlider(10);
   option->update();
   addControl(option);
 
@@ -90,7 +90,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"C");
   options = &option->getList();
   options->push_back(std::string("Auto"));
-  option->createSlider(4);
+  option->createSlider(10);
   option->update();
   addControl(option);
 
@@ -111,7 +111,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Opacity:");
   option->setCallback(callback, (void*)"y");
-  option->createSlider(11);
+  option->createSlider(10);
+  options = &option->getList();
+  options->push_back(std::string("Opaque"));
   option->update();
   addControl(option);
 
