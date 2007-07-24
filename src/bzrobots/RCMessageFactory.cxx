@@ -50,10 +50,11 @@ void RCMessageFactory<RCReply>::initialize()
 }
 #undef ADD_LOOKUP
 
-#define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Event>( #COMMAND );
+#define ADD_LOOKUP(COMMAND) RCEVENT.Register<COMMAND ## Event>( #COMMAND );
 template<>
 void RCMessageFactory<RCEvent>::initialize()
 {
+  ADD_LOOKUP(HitWall);
 }
 #undef ADD_LOOKUP
 

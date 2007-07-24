@@ -24,11 +24,36 @@
 
 #include "version.h"
 
+using std::endl;
+
 RCLink::State RCLinkBackend::getDisconnectedState()
 {
-    return RCLink::Listening;
+  return RCLink::Listening;
 }
 
+void RCLinkBackend::pushEvent(RCEvent *event)
+{
+  if (events == NULL)
+    events = event;
+  else
+  {
+    /* TODO: Prevent duplicate items better? */
+    for (RCEvent *ev = events; ev != NULL; ev = (RCEvent *)ev->getNext())
+    {
+      if (ev->asString() == event->asString())
+        return;
+    } 
+
+    events->append(event);
+  }
+}
+RCEvent *RCLinkBackend::popEvent()
+{
+  RCEvent *event = events;
+  if (event != NULL)
+    events = (RCEvent *)event->getNext();
+  return event;
+}
 
 /*
  * Check for activity.  If possible, fill up the recvbuf with incoming data
@@ -57,7 +82,7 @@ void RCLinkBackend::update()
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
       } else {
-        fprintf(stderr, "RCLink: Expected an 'IdentifyFrontend'.\n");
+        BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << endl;
         write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
         close(connfd);
         status = Listening;
@@ -89,7 +114,7 @@ bool RCLinkBackend::parseCommand(char *cmdline)
 
   req = RCREQUEST.Message(argv[0]);
   if (req == NULL) {
-    fprintf(stderr, "RCLinkBackend: Invalid request: '%s'\n", argv[0]);
+    BACKENDLOGGER << "RCLink: Invalid request: '" << argv[0] << "'" << endl;
     sendf("error Invalid request %s\n", argv[0]);
     return false;
   } else {
@@ -102,15 +127,16 @@ bool RCLinkBackend::parseCommand(char *cmdline)
           requests->append(req);
         return true;
       case InvalidArgumentCount:
-        fprintf(stderr, "RCLinkBackend: Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
+        BACKENDLOGGER << "RCLink: Invalid number of arguments (" << argc - 1
+          << ") for request '" << argv[0] << "'." << endl;
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
       case InvalidArguments:
-        fprintf(stderr, "RCLinkBackend: Invalid arguments for request: '%s'\n", argv[0]);
+        BACKENDLOGGER << "RCLink: Invalid arguments for request '" << argv[0] << "'." << endl;
         sendf("error Invalid arguments for request: '%s'\n", argv[0]);
         return false;
       default:
-        fprintf(stderr, "RCLinkBackend: Parse neither succeeded or failed with a known failcode. WTF?\n");
+        BACKENDLOGGER << "RCLink: Parse neither succeeded nor failed with a known failcode. WTF?" << endl;
         return false;
     }
   }
@@ -143,7 +169,40 @@ bool RCLinkBackend::tryAccept()
 
 void RCLinkBackend::sendAck(RCRequest *req)
 {
-  send(CommandDoneReply(req->getType()));
+  RCLink::send(CommandDoneReply(req->getType()));
+}
+
+/* We bundle Events before normal replies by 
+ * calling sendEvent() before we send any data in send/sendf. 
+ * This again calls send, which calls sendEvent again,
+ * so it recursively loops over all pending events. */
+void RCLinkBackend::sendEvent()
+{
+  RCEvent *event = popEvent();
+  if (event != NULL)
+  {
+    RCLink::send(EventReply(event));
+    delete event;
+  }
+}
+
+bool RCLinkBackend::send(const char *message)
+{
+  sendEvent();
+  return RCLink::send(message);
+}
+bool RCLinkBackend::sendf(const char *format, ...)
+{
+  va_list ap;
+  bool ret;
+
+  sendEvent();
+
+  va_start(ap, format);
+  ret = RCLink::vsendf(format, ap);
+  va_end(ap);
+
+  return ret;
 }
 
 // Local Variables: ***

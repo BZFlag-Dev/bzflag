@@ -18,6 +18,7 @@
 #define BZROBOTS_BZADVANCEDROBOT_H
 
 #include "RCLinkFrontend.h"
+#include "RCEvents.h"
 
 class RCLinkFrontend;
 
@@ -62,6 +63,9 @@ class BZAdvancedRobot
     virtual void initialize() {}
     virtual void update() = 0;
     virtual void run();
+
+    /** These are event handlers, optional to implement them. **/
+    virtual void onHitWall(const HitWallEvent &/*event*/) {}
 
     /* These are related to the internal state/setup of the bot. */
     bool getCompatability();

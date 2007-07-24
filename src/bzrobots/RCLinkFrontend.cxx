@@ -100,7 +100,7 @@ bool RCLinkFrontend::update()
         send(IdentifyFrontend(getRobotsProtocolVersion()));
         status = Connected;
       } else {
-        fprintf(stderr, "RCLink: Expected an 'IdentifyBackend'.\n");
+        FRONTENDLOGGER << "RCLink: Expected an 'IdentifyBackend'." << std::endl;
         close(connfd);
         status = Disconnected;
         return false;
@@ -133,7 +133,7 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
 
   rep = RCREPLY.Message(argv[0]);
   if (rep == NULL) {
-    fprintf(stderr, "RCLink: Invalid reply: '%s'\n", argv[0]);
+    FRONTENDLOGGER << "RCLinkFrontend: Unregistered reply: '" << argv[0] << "'" << std::endl;
     close(connfd);
     status = Disconnected;
     return false;
@@ -147,17 +147,18 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
           replies->append(rep);
         return true;
       case InvalidArgumentCount:
-        fprintf(stderr, "RCLink: Invalid number of arguments (%d) for reply: '%s'\n", argc - 1, argv[0]);
+        FRONTENDLOGGER << "RCLinkFrontend: Invalid number of arguments (" << argc - 1
+          << ") for reply: '" << argv[0] << "'" << std::endl;
         close(connfd);
         status = Disconnected;
         return false;
       case InvalidArguments:
-        fprintf(stderr, "RCLink: Invalid arguments for reply: '%s'\n", argv[0]);
+        FRONTENDLOGGER << "RCLinkFrontend: Invalid arguments for reply: '" << argv[0] << "'" << std::endl;
         close(connfd);
         status = Disconnected;
         return false;
       default:
-        fprintf(stderr, "RCLink: Parse neither succeeded or failed with a known failcode. WTF?\n");
+        FRONTENDLOGGER << "RCLinkFrontend: Parse neither succeeded or failed with a known failcode. WTF?" << std::endl;
         close(connfd);
         status = Disconnected;
         return false;

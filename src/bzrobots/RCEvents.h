@@ -15,4 +15,27 @@
 
 #include "RCEvent.h"
 
+class BZAdvancedRobot;
+
+struct HitWallEvent : public RCEvent
+{
+  HitWallEvent() {}
+  HitWallEvent(float _bearing) :bearing(_bearing) {}
+  std::string getType() const { return "HitWall"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *bot) const;
+
+  private: float bearing;
+};
+
+
 #endif
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

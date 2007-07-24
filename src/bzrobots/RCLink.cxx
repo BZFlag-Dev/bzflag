@@ -25,10 +25,18 @@
 #include "RCRobotPlayer.h"
 #include "RCMessage.h"
 
-RCLink::RCLink() :
+/** Only valid in member methods. 
+ * This is so derived classes calling our method will get
+ * their output sent to the right place. :-) **/
+#define SPECIFICLOGGER (*specificLogger)
+
+using std::endl;
+
+RCLink::RCLink(std::ostream *logger) :
 	            status(Disconnected),
 		    listenfd(-1),
-		    connfd(-1)
+		    connfd(-1),
+                    specificLogger(logger)
 {
 }
 
@@ -59,6 +67,7 @@ bool RCLink::waitForData()
     {
       status = SocketError;
       error = strerror(errno);
+      SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << endl;
       return false;
     }
     else if (socks > 0)
@@ -129,7 +138,7 @@ bool RCLink::tryAccept()
   recv_amount = 0;
   input_toolong = false;
 
-  fprintf(stderr, "RCLink: Accepted a new frontend connection.\n");
+  SPECIFICLOGGER << "RCLink: Accepted a new connection." << endl;
 
   // Now we wait for them to introduce themselves.
   return true;
@@ -184,13 +193,16 @@ bool RCLink::send(const char* message)
   int messagelen = strlen(message);
 
   if (send_amount + messagelen > RC_LINK_SENDBUFLEN) {
-    fprintf(stderr, "RCLink: setting output_overflow\n");
-    error = "Output overflow! (more data than buffer can take)";
+    SPECIFICLOGGER << "RCLink: Setting output_overflow." << endl;
+    error = "Output overflow! (more data than the buffer can take)";
     output_overflow = true;
     return false;
   }
 
   memcpy(sendbuf + send_amount, message, messagelen);
+#ifdef PROTOCOL_DEBUG
+  SPECIFICLOGGER << "[  send] " << (sendbuf + send_amount); SPECIFICLOGGER.flush();
+#endif
   send_amount += messagelen;
 
   updateWrite();
@@ -198,12 +210,26 @@ bool RCLink::send(const char* message)
 }
 
 /*
- * Use printf to send a message on the RCLink.  We send all or nothing
- * (if we run out of buffer space).
+ * Wraps vsendf.
  */
 bool RCLink::sendf(const char *format, ...)
 {
   va_list ap;
+  bool ret;
+
+  va_start(ap, format);
+  ret = vsendf(format, ap);
+  va_end(ap);
+
+  return ret;
+}
+
+/*
+ * Use vsnprintf to send a message on the RCLink.  We send all or nothing
+ * (if we run out of buffer space).
+ */
+bool RCLink::vsendf(const char *format, va_list ap)
+{
   int messagelen;
 
   if (output_overflow) {
@@ -211,13 +237,14 @@ bool RCLink::sendf(const char *format, ...)
     return false;
   }
 
-  va_start(ap, format);
   messagelen = vsnprintf(sendbuf + send_amount,
 			RC_LINK_SENDBUFLEN - send_amount, format, ap);
-  va_end(ap);
+#ifdef PROTOCOL_DEBUG
+  SPECIFICLOGGER << "[vsendf] " << (sendbuf + send_amount); SPECIFICLOGGER.flush();
+#endif
 
   if (send_amount + messagelen >= RC_LINK_SENDBUFLEN) {
-    fprintf(stderr, "RCLink: setting output_overflow\n");
+    SPECIFICLOGGER << "RCLink: Setting output_overflow." << endl;
     error = "Output overflow! (more data than buffer can take)";
     output_overflow = true;
     return false;
@@ -247,10 +274,10 @@ int RCLink::updateWrite()
       memcpy(sendbuf + send_amount, RC_LINK_OVERFLOW_MSG, errorlen);
       send_amount += errorlen;
       output_overflow = false;
-      fprintf(stderr, "RCLink: clearing output_overflow\n");
+      SPECIFICLOGGER << "RCLink: Clearing output_overflow." << endl;
     } else {
-      fprintf(stderr, "Couldn't fix overflow.  errorlen=%d, sendamount=%d\n",
-	  errorlen, send_amount);
+      SPECIFICLOGGER << "RCLink: Couldn't fix overflow. errorlen = " << errorlen
+        << ", send_amount = " << send_amount << endl;
     }
   }
 
@@ -263,7 +290,7 @@ int RCLink::updateWrite()
     if (nwritten == -1 && errno == EAGAIN) {
       break;
     } else if (nwritten == -1) {
-      perror("RCLink: Write failed.  Disconnecting.");
+      SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << endl;
       status = SocketError;
       return -1;
     } else {
@@ -298,11 +325,11 @@ int RCLink::updateRead()
 
     int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
     if (nread == 0) {
-      fprintf(stderr, "RCLink: Agent Closed Connection\n");
+      SPECIFICLOGGER << "RCLink: Remote host closed connection." << endl;
       status = getDisconnectedState(); 
       return -1;
     } else if (nread == -1 && errno != EAGAIN) {
-      perror("RCLink: Read failed");
+      SPECIFICLOGGER << "RCLink: Read failed. Error: " << strerror(errno) << endl;
       status = SocketError;
       return -1;
     } else if (nread == -1) {
@@ -382,7 +409,7 @@ int RCLink::updateParse(int maxlines)
 
   if (recv_amount == RC_LINK_RECVBUFLEN) {
     input_toolong = true;
-    fprintf(stderr, "RCLink: Input line too long.  Discarding.\n");
+    SPECIFICLOGGER << "RCLink: Input line too long. Discarding." << endl;
     recv_amount = 0;
   }
 

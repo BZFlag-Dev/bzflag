@@ -1,6 +1,7 @@
 #include "RCReplies.h"
 
 #include "RCMessageFactory.h"
+#include "BZAdvancedRobot.h"
 #include "MessageUtilities.h"
 
 #include "version.h"
@@ -24,8 +25,12 @@ messageParseStatus EventReply::parse(char **arguments, int count)
 {
   if (count < 1)
     return InvalidArgumentCount;
+
   notification = RCEVENT.Message(arguments[0]);
-  return notification->parse(arguments + 1, count - 1);
+  if (notification)
+      return notification->parse(arguments + 1, count - 1);
+  else
+    return InvalidArguments;
 }
 void EventReply::getParameters(std::ostream &stream) const
 {
@@ -34,6 +39,12 @@ void EventReply::getParameters(std::ostream &stream) const
     stream << notification->getType() << " ";
     notification->getParameters(stream);
   }
+}
+bool EventReply::updateBot(BZAdvancedRobot *robot) const
+{
+  if (notification)
+    notification->updateBot(robot);
+  return true;
 }
 
 messageParseStatus CommandDoneReply::parse(char **arguments, int count)

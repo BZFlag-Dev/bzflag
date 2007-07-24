@@ -7,8 +7,11 @@
 
 #include "bzsignal.h"
 
-#include <iostream>
 #include <unistd.h>
+
+#include "Logger.h"
+
+using std::endl;
 
 bool Frontend::run(std::string filename, const char *host, int port)
 {
@@ -24,19 +27,20 @@ bool Frontend::run(std::string filename, const char *host, int port)
   Frontend frontend;
   if (!frontend.connect(host, port))
   {
-    std::cerr << "Frontend failed to connect! Bailing! (" << frontend.getError() << ")" << std::endl;
+    FRONTENDLOGGER << "Frontend failed to connect! Bailing! (" << frontend.getError() << ")" << endl;
     return false;
   }
 
-  std::cout << "Frontend initialized, " << host << ":" << port << std::endl;
+  FRONTENDLOGGER << "Frontend initialized, " << host << ":" << port << endl;
   frontend.start(filename);
-  std::cerr << "Frontend disconnected / failed! (" << frontend.getError() << ")" << std::endl;
+  FRONTENDLOGGER << "Frontend disconnected / failed! (" << frontend.getError() << ")" << endl;
   return false;
 }
 
 Frontend::Frontend() :sentStuff(false)
 {
   RCMessageFactory<RCReply>::initialize();
+  RCMessageFactory<RCEvent>::initialize();
 }
 bool Frontend::connect(const char *host, int port)
 {
@@ -81,7 +85,7 @@ void Frontend::start(std::string filename)
     TimeKeeper::sleep(0.5);
   }
 
-  std::cout << "Loaded script " << filename << ", starting the bot! :-)" << std::endl;
+  FRONTENDLOGGER << "Loaded script " << filename << ", starting the bot! :-)" << endl;
   robot->setLink(link);
   robot->run();
 

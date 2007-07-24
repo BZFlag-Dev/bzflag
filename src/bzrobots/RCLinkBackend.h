@@ -20,6 +20,8 @@
 
 #include "RCLink.h"
 #include "RCRequest.h"
+#include "RCEvent.h"
+#include "Logger.h"
 
 #define RC_LINK_NOIDENTIFY_MSG "error IdentifyFrontend expected\n"
 #define RC_LINK_IDENTIFY_STR "IdentifyBackend "
@@ -28,16 +30,23 @@ class RCLinkBackend : public RCLink
 {
   private:
     RCRequest *requests;
+    RCEvent *events;
+    void sendEvent();
 
   public:
-    RCLinkBackend() :requests(NULL) {}
+    RCLinkBackend() :RCLink(BackendLogger::pInstance()), requests(NULL), events(NULL) {}
     void update();
     bool parseCommand(char *cmdline);
     RCRequest* popRequest();
     RCRequest* peekRequest();
+    void pushEvent(RCEvent *event);
+    RCEvent* popEvent();
     bool tryAccept();
     State getDisconnectedState();
     void sendAck(RCRequest *req);
+
+    bool send(const char *message);
+    bool sendf(const char *format, ...);
 };
 
 #endif

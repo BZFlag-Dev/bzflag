@@ -48,6 +48,8 @@ genericfiles =				\
 	RCRobotPlayer.h			\
 	Frontend.cxx			\
 	Frontend.h			\
+	Logger.h			\
+	Logger.cxx			\
 	ScriptLoader.h			\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\

@@ -78,7 +78,8 @@
 #include "WorldBuilder.h"
 #include "SyncClock.h"
 
-//#include "messages.h"
+#include "Logger.h"
+using std::endl;
 
 bool			headless = true;
 static const float	FlagHelpDuration = 60.0f;
@@ -246,12 +247,7 @@ void printout(const std::string& line)
     fclose(fp);
   }
 #else
-  if (echoAnsi) {
-    std::cout << line << ColorStrings[ResetColor] << std::endl;
-  } else {
-    std::cout << stripAnsiCodes(line) << std::endl;
-  }
-  fflush(stdout);
+  BACKENDLOGGER << stripAnsiCodes(line) << endl;
 #endif
 }
 
@@ -1730,7 +1726,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
         robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
-	  fprintf(stderr, "new tank; type: %d\n", robots[i]->getPlayerType());
+        BACKENDLOGGER << "New tank; type" << robots[i]->getPlayerType() << endl;
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
 			      robots[i]->getCallSign(),
@@ -2142,6 +2138,8 @@ static void		updateRobots(float dt)
   for (i = 0; i < numRobots; i++)
     if (robots[i]) {
       robots[i]->update();
+      if (robots[i]->hasHitWall())
+        rcLink->pushEvent(new HitWallEvent(0.0f));
     }
 }
 
@@ -3458,7 +3456,7 @@ void			botStartPlaying()
 
   if (!BZDB.isSet("robotScript"))
   {
-    fprintf(stderr, "Missing script on commandline!\n");
+    BACKENDLOGGER << "Missing script on commandline!\n" << endl;
     exit(EXIT_FAILURE);
   }
 

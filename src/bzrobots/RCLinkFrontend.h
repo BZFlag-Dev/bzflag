@@ -21,6 +21,7 @@
 #include "RCLink.h"
 #include "RCReply.h"
 #include "BZAdvancedRobot.h"
+#include "Logger.h"
 
 class RCReply; class RCRequest;
 class BZAdvancedRobot;
@@ -32,7 +33,7 @@ class RCLinkFrontend : public RCLink
     bool hasReply(const std::string command) const;
 
   public:
-    RCLinkFrontend() :replies(NULL) {}
+    RCLinkFrontend() :RCLink(FrontendLogger::pInstance()), replies(NULL) {}
     bool update();
     bool parseCommand(char *cmdline);
     RCReply* popReply();

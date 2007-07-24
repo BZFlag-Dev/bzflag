@@ -19,7 +19,6 @@
 
 #include "common.h"
 #include "RCMessage.h"
-#include "BZAdvancedRobot.h" 
 
 #include <string>
 #include <map>

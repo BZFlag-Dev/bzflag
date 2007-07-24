@@ -24,6 +24,7 @@
 
 #include "RCRequests.h"
 #include "RCReplies.h"
+#include "RCEvents.h"
 
 /** convenience handle on the singleton instance */
 #define RCREQUEST (RCMessageFactory<RCRequest>::instance())

@@ -46,6 +46,7 @@ class EventReply : public RCReply
     std::string getType() const { return "Event"; }
     messageParseStatus parse(char **arguments, int count);
     void getParameters(std::ostream &stream) const;
+    bool updateBot(BZAdvancedRobot *robot) const;
 };
 
 struct CommandDoneReply : public RCReply

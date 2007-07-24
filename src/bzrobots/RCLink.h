@@ -18,6 +18,7 @@
 #ifndef	BZF_RC_LINK_H
 #define	BZF_RC_LINK_H
 
+#include <ostream>
 #include <sstream>
 
 #include "common.h"
@@ -34,6 +35,8 @@
 
 #include "RCMessage.h"
 
+// #define PROTOCOL_DEBUG
+
 class RCLink {
   public:
     typedef enum {
@@ -44,7 +47,7 @@ class RCLink {
       Connected
     } State;
 
-    RCLink();
+    RCLink(std::ostream *logger);
     virtual ~RCLink();
 
     bool connect(const char *host, int port);
@@ -61,8 +64,8 @@ class RCLink {
     State getStatus() const { return status; }
     const std::string &getError() const { return error; }
 
-    bool send(const char *message);
-    bool sendf(const char *format, ...);
+    virtual bool send(const char *message);
+    virtual bool sendf(const char *format, ...);
 
     template<class C>
     bool send(const RCMessage<C> *message)
@@ -83,6 +86,9 @@ class RCLink {
     int recv_amount, send_amount;
     bool input_toolong, output_overflow;
     std::string error;
+    bool vsendf(const char *format, va_list ap);
+  private:
+    std::ostream *specificLogger;
 };
 
 
