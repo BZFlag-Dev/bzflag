@@ -185,9 +185,34 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 bool ircControl::init(){
 
+  //make sure it's configured... sanity check
+  if (!configured) 
+    return false; //we don't need to explain- the conf loader will do that when it fails
+
   //register events
+  client.registerEventHandler(eIRCNoticeEvent, this);
+  client.registerEventHandler(eIRCNickNameError, this);
+  client.registerEventHandler(eIRCNickNameChange, this);
+  //client.registerEventHandler(eIRCWelcomeEvent, this);
+  //client.registerEventHandler(eIRCEndMOTDEvent, this);
+  client.registerEventHandler(eIRCChannelJoinEvent, this);
+  client.registerEventHandler(eIRCChannelPartEvent, this);
+  client.registerEventHandler(eIRCChannelBanEvent, this);
+  client.registerEventHandler(eIRCChannelMessageEvent, this);
+  client.registerEventHandler(eIRCPrivateMessageEvent, this);
+  //client.registerEventHandler(eIRCTopicEvent, this);
+  client.registerEventHandler(eIRCUserJoinEvent, this);
+  client.registerEventHandler(eIRCUserPartEvent, this);
+  client.registerEventHandler(eIRCUserKickedEvent, this);
+  //client.registerEventHandler(eIRCTopicChangeEvent, this);
+  client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
+  client.registerEventHandler(eIRCChannelModeSet, this);
+  client.registerEventHandler(eIRCChannelUserModeSet, this);
+  client.registerEventHandler(eIRCUserModeSet, this);
+  client.registerEventHandler(eIRCQuitEvent, this);
 
   //connect
+  client.connect(server, port);
 
   //send init commands and wait
 
@@ -195,9 +220,11 @@ bool ircControl::init(){
 
 }
 
-bool ircControl::terminate(){
+bool ircControl::terminate(bool forShutdown){
 
 //issue a /quit and destroy everything
+
+  client.disconnect("BZFS shutting down");
 
 }
 

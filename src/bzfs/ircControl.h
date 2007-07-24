@@ -49,7 +49,7 @@ class ircControl : public IRCBasicEventCallback {
 
   bool init(); //connect, join, etc
 
-  bool terminate(); //disconnect for server shutdown
+  bool terminate(bool forShutdown = true); //disconnect for server shutdown
 
   bool update(); //check for messages, etc
 
