@@ -32,6 +32,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_burrowAngularAd",		"0.55",				false, StateDatabase::Locked},
   { "_burrowDepth",		"-1.32",			false, StateDatabase::Locked},
   { "_burrowSpeedAd",		"0.80",				false, StateDatabase::Locked},
+  { "_cloudHeightMult",		"120.0",			false, StateDatabase::Locked},
   { "_coldetDepth",		"6",				false, StateDatabase::Locked},
   { "_coldetElements",		"4",				false, StateDatabase::Locked},
   { "_collisionLimit",		"0.5",				false, StateDatabase::Locked},

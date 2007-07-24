@@ -82,6 +82,7 @@ class BackgroundRenderer : public GLDisplayListCreator
     void		resizeSky();
 
     void		setSkyColors();
+    void		resetCloudList();
     void		makeCelestialLists(const SceneRenderer&);
     static void		bzdbCallback(const std::string&, void*);
 

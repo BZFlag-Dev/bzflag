@@ -239,6 +239,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // reset the sky color when it changes
   BZDB.addCallback("_skyColor", bzdbCallback, this);
+  BZDB.addCallback("_cloudHeightMult", bzdbCallback, this);
 
   notifyStyleChange();
 }
@@ -266,12 +267,21 @@ BackgroundRenderer::~BackgroundRenderer()
 void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
 {
   BackgroundRenderer* br = (BackgroundRenderer*) data;
-  if (name == "_skyColor") {
+  if (name == "_skyColor")
     br->setSkyColors();
-  }
+  else if (name == "_cloudHeightMult")
+    br->resetCloudList();
   return;
 }
 
+void BackgroundRenderer::resetCloudList()
+{
+  if (cloudsList > 0)
+  {
+    DisplayListSystem::Instance().freeList(cloudsList);
+    cloudsList = DisplayListSystem::Instance().newList(this);
+  }
+}
 
 void BackgroundRenderer::setupGroundMaterials()
 {
@@ -485,6 +495,9 @@ void BackgroundRenderer::setSkyColors()
 
 void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 {
+  if (!lastRenderer)
+    return;
+
   // compute display list for moon
   float coverage = (moonDirection[0] * sunDirection[0]) +
     (moonDirection[1] * sunDirection[1]) +
@@ -540,10 +553,10 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   xdist = (xmax - xmin) / (float)GROUND_DIVS;
   ydist = (ymax - ymin) / (float)GROUND_DIVS;
 
-  lastRenderer->getGroundUV (groundPlane[0], vec);
+  lastRenderer->getGroundUV(groundPlane[0], vec);
   xtexmax = vec[0];
   ytexmax = vec[1];
-  lastRenderer->getGroundUV (groundPlane[2], vec);
+  lastRenderer->getGroundUV(groundPlane[2], vec);
   xtexmin = vec[0];
   ytexmin = vec[1];
   xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
@@ -555,7 +568,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   {
     cloudsOuter[i][0] = groundPlane[i][0];
     cloudsOuter[i][1] = groundPlane[i][1];
-    cloudsOuter[i][2] = groundPlane[i][2] + 120.0f * BZDBCache::tankHeight;
+    cloudsOuter[i][2] = groundPlane[i][2] + BZDB.eval("_cloudHeightMult") * BZDBCache::tankHeight;
     cloudsInner[i][0] = uvScale * cloudsOuter[i][0];
     cloudsInner[i][1] = uvScale * cloudsOuter[i][1];
     cloudsInner[i][2] = cloudsOuter[i][2];
@@ -615,9 +628,6 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   }
   else if ( displayList == starXFormList )
   {
-    if (!lastRenderer)
-      return;
-
     // make pretransformed display list for stars
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
@@ -940,7 +950,6 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 	glPushMatrix();
 	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
 	DisplayListSystem::Instance().callList(cloudsList);
-	glCallList(cloudsList);
 	glLoadIdentity();	// maybe works around bug in some systems
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);

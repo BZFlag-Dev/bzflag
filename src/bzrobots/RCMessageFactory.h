@@ -28,6 +28,7 @@
 /** convenience handle on the singleton instance */
 #define RCREQUEST (RCMessageFactory<RCRequest>::instance())
 #define RCREPLY (RCMessageFactory<RCReply>::instance())
+#define RCEVENT (RCMessageFactory<RCEvent>::instance())
 
 template<class C>
 class RCMessageFactory : public Singleton< RCMessageFactory<C> >,

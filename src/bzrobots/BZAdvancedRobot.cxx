@@ -2,9 +2,25 @@
 
 #include "RCRequests.h"
 
+
+BZAdvancedRobot::BZAdvancedRobot() :link(NULL), compatability(true)
+{
+}
+
+bool BZAdvancedRobot::getCompatability() { return compatability; }
+void BZAdvancedRobot::setCompatability(bool newState) { compatability = newState; }
 void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
 {
   link = _link;
+}
+
+void BZAdvancedRobot::run()
+{
+  initialize();
+  while (true)
+  {
+    update();
+  }
 }
 
 void BZAdvancedRobot::execute()

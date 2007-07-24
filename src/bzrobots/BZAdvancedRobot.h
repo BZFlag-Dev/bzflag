@@ -24,7 +24,9 @@ class RCLinkFrontend;
 class BZAdvancedRobot
 {
   RCLinkFrontend *link;
+  bool compatability;
   protected:
+    /* These are related to controlling the bot. */
     void execute();
     double getDistanceRemaining();
     double getTurnRemaining();
@@ -54,9 +56,17 @@ class BZAdvancedRobot
     double getZ();
 
   public:
-    virtual void run() = 0;
-    BZAdvancedRobot() :link(NULL) {}
     virtual ~BZAdvancedRobot() {}
+    BZAdvancedRobot();
+
+    virtual void initialize() {}
+    virtual void update() = 0;
+    virtual void run();
+
+    /* These are related to the internal state/setup of the bot. */
+    bool getCompatability();
+    void setCompatability(bool newState);
+    
     void setLink(RCLinkFrontend *_link);
     
     float gunHeat, distanceRemaining, turnRemaining;

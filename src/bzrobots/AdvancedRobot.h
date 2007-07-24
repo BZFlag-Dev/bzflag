@@ -37,6 +37,11 @@ class AdvancedRobot :public BZAdvancedRobot
     void setTurnRadarLeft(double degrees);
     void setTurnRadarRight(double degrees);
     void setTurnRight(double degrees);
+  public:
+    /* AdvancedRobots behave slightly differently. The implementor defines run, including the while-loop. */
+    void update() {}
+    void initialize() {}
+    virtual void run() = 0;
 };
 
 #endif

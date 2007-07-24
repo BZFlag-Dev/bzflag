@@ -151,17 +151,20 @@ void findConfigFile(void)
 
 void updateConfigFile(void)
 {
-	int		configVersion = 0;
+	int		configVersion = 2;
 	if (BZDB.isSet("config_vers"))
 		configVersion = (int)BZDB.eval("config_vers");
 
 	switch (configVersion) {
-  case 0: // 2.1.0
+	case 0: // 2.1.0
+	case 1:// 2.1.6
+	  BZDB.unset("maxTextureSize");
+	  break;
 
-  case 1:// 2.1.6
+	case 2: // 2.1.13
 	  break; // no action, current version
 
-  default: // hm, we don't know about this one...
+	default: // hm, we don't know about this one...
 	  printError(TextUtils::format("Config file is tagged version \"%d\", "
 		  "which was not expected (too new perhaps). "
 		  "Trying to load anyhow.", configVersion));

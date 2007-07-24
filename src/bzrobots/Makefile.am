@@ -33,6 +33,9 @@ genericfiles =				\
 	RCReply.h			\
 	RCReplies.cxx			\
 	RCReplies.h			\
+	RCEvent.h			\
+	RCEvents.h			\
+	RCEvents.cxx			\
 	MessageUtilities.cxx		\
 	MessageUtilities.h		\
 	RCMessageFactory.h		\

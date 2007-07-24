@@ -76,7 +76,7 @@ public:
 
   float		getReloadTime() const;
 
-  const float*	getAperantVelocity() const;
+  const float*	getApparentVelocity() const;
   const float	getLastUpdateTime() const;
 
 #ifndef BUILDING_BZADMIN
@@ -409,12 +409,12 @@ inline float		Player::getAngularVelocity() const
 
 inline const float	Player::getLastUpdateTime() const
 {
-	return state.lastUpdateTime;
+  return state.lastUpdateTime;
 }
 
-inline const float*	Player::getAperantVelocity() const
+inline const float*	Player::getApparentVelocity() const
 {
-	return state.aperantVelocity;
+  return state.apparentVelocity;
 }
 
 inline int		Player::getPhysicsDriver() const

@@ -141,12 +141,12 @@ code serves for examples but some rules:
       up other environments. Here are the lines that should be included
       at the end of source files:
 
-	// Local Variables: ***
-	// mode: C++ ***
-	// tab-width: 8 ***
-	// c-basic-offset: 2 ***
-	// indent-tabs-mode: t ***
-	// End: ***
+	// Local Variables:
+	// mode: C++
+	// tab-width: 8
+	// c-basic-offset: 2
+	// indent-tabs-mode: t
+	// End:
 	// ex: shiftwidth=2 tabstop=8
 
   2)  the opening brace of all blocks goes on the same line as the
