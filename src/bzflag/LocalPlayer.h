@@ -106,6 +106,7 @@ public:
   int		getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
+  bool          hasHitWall();
 
 
   static LocalPlayer*	getMyTank();
@@ -170,6 +171,7 @@ private:
   std::vector<const Obstacle*> insideBuildings;
   TimeKeeper	stuckStartTime;
   TimeKeeper	lastCollisionTime;
+  bool          hitWall; // If doUpdateMotion hit a wall, this is true.
 };
 
 
@@ -243,6 +245,11 @@ inline bool LocalPlayer::isSpawning()
 inline void LocalPlayer::setSpawning( bool spawn )
 {
   spawning = spawn;
+}
+
+inline bool LocalPlayer::hasHitWall()
+{
+  return hitWall;
 }
 
 inline int LocalPlayer::getRotation() {

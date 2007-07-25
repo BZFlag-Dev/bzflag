@@ -63,7 +63,8 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   entryDrop(true),
   wantJump(false),
   jumpPressed(false),
-  deathPhyDrv(-1)
+  deathPhyDrv(-1),
+  hitWall(false)
 {
   // initialize shots array to no shots fired
   World *world = World::getWorld();
@@ -519,6 +520,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
+  hitWall = false;
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     float tmpPos[3], tmpAzimuth;
@@ -547,7 +549,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
 			      phased, expel);
 
-    if (!obstacle || !expel) break;
+    if (!obstacle || !expel)
+      break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir) && obstacle->isFlatTop() &&
@@ -568,6 +571,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	break;
       }
     }
+
+    hitWall = true;
 
     // record position when hitting
     float hitPos[3], hitAzimuth;
