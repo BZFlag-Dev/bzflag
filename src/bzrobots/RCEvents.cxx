@@ -24,8 +24,7 @@ void HitWallEvent::getParameters(std::ostream &stream) const
 }
 bool HitWallEvent::updateBot(BZAdvancedRobot *bot) const
 {
-  // FIXME: This segfaults in what gdb thinks is std::cout. o.0
-  //bot->onHitWall(*this);
+  bot->onHitWall(*this);
   return true;
 }
 

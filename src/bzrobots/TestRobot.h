@@ -25,6 +25,7 @@ struct TestRobot :public BZAdvancedRobot
   TestRobot(RCLinkFrontend *_link) { setLink(_link); }
   void initialize();
   void update();
+  void onHitWall(const HitWallEvent &hwe);
 };
 
 #endif

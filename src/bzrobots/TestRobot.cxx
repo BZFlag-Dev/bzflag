@@ -4,6 +4,7 @@
 
 #include "TestRobot.h"
 #include "TimeKeeper.h"
+#include "Logger.h"
 
 extern "C" {
     BZAdvancedRobot *create() { return new TestRobot(); }
@@ -29,4 +30,10 @@ void TestRobot::update()
     do {
         execute();
     } while (getTurnRemaining() > 0);
+}
+
+void TestRobot::onHitWall(const HitWallEvent &hwe)
+{
+    FRONTENDLOGGER << "Got a hitWallEvent, stopping!" << std::endl;
+    setAhead(0);
 }
