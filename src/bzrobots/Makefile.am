@@ -302,7 +302,7 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-EXTRA_LTLIBRARIES = TestRobot.la
+lib_LTLIBRARIES = TestRobot.la
 TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
