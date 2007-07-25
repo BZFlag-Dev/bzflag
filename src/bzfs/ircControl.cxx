@@ -185,6 +185,8 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 bool ircControl::init(){
 
+  std::string errmsg;
+
   //make sure it's configured... sanity check
   if (!configured) 
     return false; //we don't need to explain- the conf loader will do that when it fails
@@ -212,20 +214,32 @@ bool ircControl::init(){
   client.registerEventHandler(eIRCQuitEvent, this);
 
   //connect
-  client.connect(server, port);
-
+  if (!client.connect(server, port)) {
+    errmsg = "IRC Connection failed.";
+    logDebugMessage(1, errmsg.c_str());
+  
   //send init commands and wait
+  //TODO: Implement this... possibly better handled by an event, like the MOTD/welcome?
 
   //join channels
+  for (std::map::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+    if (client.join(itr->name)) {
+      itr->joined = true;
+    } else {
+      errmsg = "Unable to join channel \"" + itr->name + "\"\n";
+      logDebugMessage(1, errmsg.c_str());
+    }
+  }
 
 }
 
 bool ircControl::terminate(bool forShutdown){
 
 //issue a /quit and destroy everything
-
-  client.disconnect("BZFS shutting down");
-
+  if (forShutdown)
+    return client.disconnect("BZFS: Shutting down");
+  else
+    return client.disconnect("BZFS: Premature IRC disconnection!");
 }
 
 bool ircControl::update(){
@@ -239,6 +253,48 @@ bool ircControl::update(){
 bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBaseEventInfo &info) {
 
   //meat and potatoes of the implementation goes here
+
+  if (eventType == eIRCNoticeEvent) {
+
+  } else if eventType == eIRCNickNameError) {
+
+  } else if eventType == eIRCNickNameChange) {
+
+  } else if eventType == eIRCWelcomeEvent) {
+
+  } else if eventType == eIRCEndMOTDEvent) {
+
+  } else if eventType == eIRCChannelJoinEvent) {
+
+  } else if eventType == eIRCChannelPartEvent) {
+
+  } else if eventType == eIRCChannelBanEvent) {
+
+  } else if eventType == eIRCChannelMessageEvent) {
+
+  } else if eventType == eIRCPrivateMessageEvent) {
+
+  } else if eventType == eIRCTopicEvent) {
+
+  } else if eventType == eIRCUserJoinEvent) {
+
+  } else if eventType == eIRCUserPartEvent) {
+
+  } else if eventType == eIRCUserKickedEvent) {
+
+  } else if eventType == eIRCTopicChangeEvent) {
+
+  } else if eventType == eIRCChanInfoCompleteEvent) {
+
+  } else if eventType == eIRCChannelModeSet) {
+
+  } else if eventType == eIRCChannelUserModeSet) {
+
+  } else if eventType == eIRCUserModeSet) {
+
+  } else if eventType == eIRCQuitEvent) {
+
+  }
 
 }
 
