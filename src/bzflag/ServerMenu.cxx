@@ -20,14 +20,17 @@
 #include "AnsiCodes.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "playing.h"
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
 
+
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
+
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -374,7 +377,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
-	std::string addr = stripAnsiCodes(server.description);
+	std::string addr = stripAnsiCodes(server.description.c_str());
 	std::string desc;
 	std::string::size_type pos = addr.find_first_of(';');
 	if (pos != std::string::npos) {
@@ -686,20 +689,25 @@ void			ServerMenu::resize(int _width, int _height)
 {
   // remember size
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  std::vector<HUDuiElement*>& listHUD = getElements();
-
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
+  const int menuFontFace = MainMenu::getFontFace();
   FontManager &fm = FontManager::instance();
+  std::vector<HUDuiElement*>& listHUD = getElements();
 
   // reposition title
   float x, y;
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+    const int fontFace = title->getFontFace();
+
+    // use a big font for title, smaller font for the rest
+    fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+    const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+    
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+    const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -708,8 +716,9 @@ void			ServerMenu::resize(int _width, int _height)
   // reposition server readouts
   int i;
   const float y0 = y;
-  float fontSize = (float)_height / 54.0f;
-  float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  fs.setMin(10, 10);
+  float fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
+  float fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)_width;
@@ -726,38 +735,39 @@ void			ServerMenu::resize(int _width, int _height)
 
   // reposition search status readout
   {
-    fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     status->setFontSize(fontSize);
-    const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
+    const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString().c_str());
     x = 0.5f * ((float)_width - statusWidth);
-    y -= 0.8f * fontHt;
+    y -= 1.2f * fontHt;
     status->setPosition(x, y);
   }
 
   // reposition find server input
   {
-    fontSize = (float)_height / 36.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     search->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getString());
+    const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
 
   // reposition key help
   {
-    fontSize = (float)_height / 54.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    fontSize = fs.getFontSize(menuFontFace, "infoFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     help->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(help->getFontFace(), fontSize, help->getString());
+    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     help->setPosition(x, fontHt / 2 /* near bottom of screen */);
   }
 
   // position page readout and server item list
-  fontSize = (float)_height / 54.0f;
-  fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  fs.setMin(40,10);
+  fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
+  fontHeight = fm.getStringHeight(menuFontFace, fontSize);
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
   for (i = -1; i < NumItems; ++i) {
@@ -765,7 +775,7 @@ void			ServerMenu::resize(int _width, int _height)
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     if (useIcons && (i >= 0)) {
-      const float offset = fm.getStrLength(status->getFontFace(), fontSize, "*  J F R   ");
+      const float offset = fm.getStringWidth(status->getFontFace(), fontSize, "*  J F R   ");
       label->setPosition(x - offset, y);
     } else {
       label->setPosition(x, y);
@@ -777,7 +787,7 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString().c_str());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 

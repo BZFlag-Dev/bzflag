@@ -17,6 +17,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MenuDefaultKey.h"
 #include "World.h"
 #include "MainMenu.h"
@@ -76,25 +77,31 @@ void SaveWorldMenu::execute()
     }
   }
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
+  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString().c_str());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
 void SaveWorldMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font for the body, bigger for the title
-  const float titleFontSize = (float)_height / 18.0f;
-  float fontSize = (float)_height / 36.0f;
   FontManager &fm = FontManager::instance();
-
-  // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+  int fontFace = title->getFontFace();
+
+  // use a big font for the body, bigger for the title
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
+  float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
+
+  // reposition title
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -102,7 +109,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * ((float)_width - 0.75f * titleWidth);
   y -= 0.6f * 3 * titleHeight;
-  const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count-1; i++) {

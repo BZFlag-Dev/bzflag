@@ -41,8 +41,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
-  { "cpanelfontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "tkwarnratio",		"0.0",			true,   StateDatabase::ReadWrite,	NULL },
   { "showtabs",			"2",			true,   StateDatabase::ReadWrite,	NULL },
@@ -131,6 +129,23 @@ DefaultDBItem	defaultDBItems[] = {
   { "consoleFont",		"VeraMonoBold",		true,	StateDatabase::ReadWrite,	NULL },
   { "sansSerifFont",		"TogaSansBold",		true,	StateDatabase::ReadWrite,	NULL },
   { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
+
+  // default font sizes for fixed-size items
+  { "tinyFontSize",		"8",			true,	StateDatabase::ReadWrite,	NULL },
+  { "smallFontSize",		"16",			true,	StateDatabase::ReadWrite,	NULL },
+  { "mediumFontSize",		"24",			true,	StateDatabase::ReadWrite,	NULL },
+  { "largeFontSize",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hugeFontSize",		"40",			true,	StateDatabase::ReadWrite,	NULL },
+
+  // default font sizes for specific sections (relative 0 to 1 percentage of smallest aspect)
+  { "titleFontSize",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
+  { "headerFontSize",		"1/24",			true,	StateDatabase::ReadWrite,	NULL },
+  { "menuFontSize",		"1/40",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hudFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
+  { "alertFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
+  { "infoFontSize",		"1/96",			true,	StateDatabase::ReadWrite,	NULL },
+  { "consoleFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
+  { "scoreFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
   { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },

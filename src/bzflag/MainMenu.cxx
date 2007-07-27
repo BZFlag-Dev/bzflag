@@ -18,6 +18,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "HelpMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
@@ -131,16 +132,26 @@ void			MainMenu::execute()
 void			MainMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font
-  const float titleSize = (float)_height / 8.0f;
-  const float tinyFontSize = (float)_height / 54.0f;
-  const float fontSize = (float)_height / 22.0f;
+  std::vector<HUDuiElement*>& listHUD = getElements();
+  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   FontManager &fm = FontManager::instance();
   int fontFace = getFontFace();
 
+  // main menu title, use a big font
+  fs.setMin(0, 5);
+  const float titleSize = fs.getFontSize(fontFace, "titleFontSize");
+
+  // main menu instructions
+  fs.setMin(20, 20);
+  const float tinyFontSize = fs.getFontSize(fontFace, "hudFontSize");
+
+  // main menu items
+  fs.setMin(10, 10);
+  const float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+
   // reposition title
-  std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiImage* title = (HUDuiImage*)listHUD[0];
   title->setSize((float)_width, titleSize);
   // scale appropriately to center properly
@@ -154,24 +165,23 @@ void			MainMenu::resize(int _width, int _height)
   title->setPosition(x, y);
 
   // reposition instructions
-  HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
-  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
+  const float hintWidth = fm.getStringWidth(fontFace, tinyFontSize, hint->getString().c_str());
+  y -= 1.25f * fm.getStringHeight(fontFace, tinyFontSize);
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
+  y -= 1.5f * fm.getStringHeight(fontFace, fontSize);
 
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
-    = fm.getStrLength(fontFace, fontSize,
-		      ((HUDuiLabel*)listHUD[3])->getString());
+    = fm.getStringWidth(fontFace, fontSize,
+		      ((HUDuiLabel*)listHUD[3])->getString().c_str());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
+    y -= 1.2f * fm.getStringHeight(fontFace, fontSize);
   }
 }
 

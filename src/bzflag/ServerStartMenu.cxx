@@ -45,6 +45,7 @@
 #include "TextUtils.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
 #include "HUDuiList.h"
@@ -583,28 +584,35 @@ void ServerStartMenu::setStatus(const char* msg, const std::vector<std::string> 
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
-  const float widt = fm.getStrLength(status->getFontFace(),
+  const float widt = fm.getStringWidth(status->getFontFace(),
 				     status->getFontSize(),
-				     status->getString());
+				     status->getString().c_str());
   status->setPosition(center - 0.5f * widt, status->getY());
 }
 
 void ServerStartMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
   center = 0.5f * (float)_width;
 
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 54.0f;
   FontManager &fm = FontManager::instance();
-
-  // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+  const int fontFace = title->getFontFace();
+
+  // use a big font for title, smaller font for the rest
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
+  const float fontSize = fs.getFontSize(listHUD[1]->getFontFace(), "menuFontSize");
+
+  // reposition title
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -612,7 +620,7 @@ void ServerStartMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(listHUD[1]->getFontFace(), fontSize);
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     if (listHUD[i] == start) {

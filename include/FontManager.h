@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _FONT_MANAGER_H_
-#define _FONT_MANAGER_H_
+#ifndef __FONTMANAGER_H__
+#define __FONTMANAGER_H__
 
 #include "common.h"
 
@@ -27,59 +27,71 @@
 #include "bzfgl.h"
 #include "AnsiCodes.h"
 
-class ImageFont;
 
-typedef std::map<int, ImageFont*> FontSizeMap;
-typedef std::vector<FontSizeMap>    FontFaceList;
-typedef std::map<std::string, int>  FontFaceMap;
+typedef enum
+{
+  AlignLeft,
+  AlignCenter,
+  AlignRight
+} fontJustification;
 
 
+/**
+ * Jeff's FTGL-based font manager system, merged with BZFlag's
+ * previous Font Manager (which DTR and Jeff also worked on).
+ */
 class FontManager : public Singleton<FontManager> {
 public:
-  void loadAll(std::string dir);
+  int load ( const char* file );
+  int loadAll(std::string dir);
 
+  void clear(int font, int size);
   void clear();
 
+  void preloadSize ( int font, int size );
+  void rebuildSize ( int font, int size );
   void rebuild(void);
 
+  std::vector<std::string> getFontList ( void );
   int getFaceID(std::string faceName);
-
   int getNumFaces(void);
   const char* getFaceName(int faceID);
 
-  void drawString(float x, float y, float z, int faceID, float size,
-		  const std::string &text,
-		  const float* resetColor = NULL);
-  void drawString(float x, float y, float z, const std::string &face,
-		  float size, const std::string &text,
-		  const float* resetColor = NULL);
+  void drawString(float x, float y, float z, int faceID, float size, const char *text, const float* resetColor = NULL, fontJustification align = AlignLeft);
+  void drawString(float x, float y, float z, const std::string &face, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
 
-  float getStrLength(int faceID, float size, const std::string &text,
-		     bool alreadyStripped = false);
-  float getStrLength(const std::string &face, float size,
-		     const std::string &text, bool alreadyStripped = false);
+  float getStringWidth(int faceID, float size, const char *text, bool alreadyStripped = false);
+  float getStringWidth(const std::string &face, float size, const std::string &text, bool alreadyStripped = false);
 
-  float getStrHeight(int faceID, float size, const std::string &text);
-  float getStrHeight(std::string face, float size, const std::string &text);
+  float getStringHeight(int faceID, float size);
+  float getStringHeight(std::string face, float size);
 
   void setDimFactor(float newDimFactor);
   void setOpacity(float newOpacity);
   void setDarkness(float newDimFactor);
 
-  void unloadAll(void);
 
 protected:
+
   friend class Singleton<FontManager>;
 
+  void* getGLFont(int face, int size); 
+
+  typedef struct _FontFace {
+    std::string name;
+    std::string path;
+    std::map<int,void*> sizes;
+  } FontFace;
+  
+  std::map<std::string,int>	faceNames;
+  std::vector<FontFace>		fontFaces;
+
 private:
+
   FontManager();
   ~FontManager();
 
   void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
-  ImageFont*	getClosestSize(int faceID, float size, bool bigger);
-  ImageFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
-  FontFaceMap	faceNames;
-  FontFaceList  fontFaces;
 
   std::string	fontDirectory;
 
@@ -87,17 +99,23 @@ private:
   float		dimFactor; // ANSI code dimming
   float		darkness;  // darkening of all colors
 
-  static void	callback(const std::string& name, void *);
+  // precompute colors on dim/darkness changes
+  GLfloat dimUnderlineColor[4];
+
+  static void	underlineCallback(const std::string& name, void *);
   static void	freeContext(void *data);
   static void	initContext(void *data);
   static GLfloat underlineColor[4];
-
-  bool		canScale;
 };
 
 inline void FontManager::setDimFactor(float newDimFactor)
 {
+  const float darkDim = newDimFactor * darkness;
   dimFactor = newDimFactor;
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[1] = underlineColor[1] * darkDim;
+  dimUnderlineColor[2] = underlineColor[2] * darkDim;
+  dimUnderlineColor[3] = opacity;
 }
 
 inline void FontManager::setOpacity(float newOpacity)
@@ -109,9 +127,14 @@ inline void FontManager::setOpacity(float newOpacity)
 inline void FontManager::setDarkness(float newDarkness)
 {
   darkness = newDarkness;
+  const float darkDim = dimFactor * darkness;
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[1] = underlineColor[1] * darkDim;
+  dimUnderlineColor[2] = underlineColor[2] * darkDim;
+  dimUnderlineColor[3] = opacity;
 }
 
-#endif //_FONT_MANAGER_H_
+#endif /* __FONTMANAGER_H__ */
 
 // Local Variables: ***
 // mode:C++ ***

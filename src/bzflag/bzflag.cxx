@@ -335,11 +335,23 @@ static void		parse(int argc, char** argv)
 	checkArgc(i, argc, argv[i]);
 	int w, h, x, y, count;
 	char xs = '+', ys = '+';
-	if (strcmp(argv[i], "default") != 0 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) || (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
-	  printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
-	  usage();
+	if (strcmp(argv[i], "default") != 0) {
+	  if (TextUtils::isNumeric(argv[i][0])) {
+	    count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+	    if ((count != 6 && count != 2) || 
+		(xs != '-' && xs != '+') || 
+		(ys != '-' && ys != '+')) {
+	      printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
+	      usage();
+	    }
+	    BZDB.set("geometry", argv[i]);
+	  } else {
+	    // roll back, false match
+	    i--;
+	  }
+	} else {
+	  BZDB.set("geometry", argv[i]);
 	}
-	BZDB.set("geometry", argv[i]);
       }
     } else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -1079,8 +1091,6 @@ int			main(int argc, char** argv)
     pmainWindow->setFullscreen();
   else
     window->create();
-
-  OpenGLGState::initContext();
 
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.

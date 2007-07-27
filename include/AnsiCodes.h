@@ -76,7 +76,7 @@ typedef enum {
 } ColorCodes;
 
 // These enum values have to line up with those above
-static const std::string ColorStrings[17] = {
+static const char* ColorStrings[17] = {
   ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
   ANSI_STR_FG_RED,      // 1  Red
   ANSI_STR_FG_GREEN,    // 2  Green
@@ -95,13 +95,37 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_NO_PULSATE,  // 15 No Pulsating
   ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
+static int ColorStringsLength = sizeof(ColorStrings);
+static bool quellAnsiCodesWarning = ColorStringsLength > 0 ? quellAnsiCodesWarning : false;
+
+// These RGB float values have to line up with the colors above
+static const float BrightColors[9][3] = {
+  {1.0f,1.0f,0.0f}, // yellow
+  {1.0f,0.0f,0.0f}, // red
+  {0.0f,1.0f,0.0f}, // green
+  {0.1f,0.2f,1.0f}, // blue
+  {1.0f,0.0f,1.0f}, // purple
+  {1.0f,1.0f,1.0f}, // white
+  {0.5f,0.5f,0.5f}, // grey
+  {1.0f,0.5f,0.0f}, // orange (nonstandard)
+  {0.0f,1.0f,1.0f}  // cyan
+};
+
 
 // strip ANSI codes from a string
-inline std::string stripAnsiCodes(const std::string &text)
+inline const char *stripAnsiCodes(const char *text)
 {
-  std::string str = "";
+#define SAC_MAX 1024
+  static char str[SAC_MAX] = {0};
+  int j = 0;
 
-  int length = (int)text.size();
+  if (!text) {
+    return NULL;
+  }
+
+  int length = (int)strlen(text);
+  assert(length+1 < SAC_MAX && "stripAnsiCodes string is too long");
+
   for (int i = 0; i < length; i++) {
     if (text[i] == ESC_CHAR) {
       i++;
@@ -113,12 +137,15 @@ inline std::string stripAnsiCodes(const std::string &text)
 	}
       }
     } else {
-      str += text[i];
+      str[j] = text[i];
+      j++;
     }
   }
+  str[j] = '\0';
 
   return str;
 }
+
 
 #endif //_ANSI_CODES_H_
 

@@ -20,6 +20,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "World.h"
 #include "HUDDialogStack.h"
@@ -79,7 +80,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
   options->push_back(std::string("Auto"));
-  option->createSlider(4);
+  option->createSlider(10);
   option->update();
   addControl(option);
 
@@ -89,7 +90,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, (void*)"C");
   options = &option->getList();
   options->push_back(std::string("Auto"));
-  option->createSlider(4);
+  option->createSlider(10);
   option->update();
   addControl(option);
 
@@ -110,7 +111,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Opacity:");
   option->setCallback(callback, (void*)"y");
-  option->createSlider(11);
+  option->createSlider(10);
+  options = &option->getList();
+  options->push_back(std::string("Opaque"));
   option->update();
   addControl(option);
 
@@ -316,18 +319,24 @@ void			GUIOptionsMenu::execute()
 void			GUIOptionsMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 65.0f;
-  FontManager &fm = FontManager::instance();
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 30);
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -335,7 +344,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   // reposition options
   x = 0.54f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
@@ -350,16 +359,11 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
     ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("scorefontsize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("cpanelfontsize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-		("showVelocities")));
-    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
-					       ->getPanelOpacity() + 0.5));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
-					 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("scoreFontSize") / 8));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("consoleFontSize") / 8));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showVelocities")));
+    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("linedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
@@ -369,8 +373,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("showtabs")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
     // underline color - find index of mode string in options
@@ -385,8 +388,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("pulseDepth") * 10) - 1);
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("timedate")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
 					 : 0);
     if (BZDB.isTrue("hideEmails"))
@@ -408,7 +410,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'C':
       {
-	BZDB.setInt("cpanelfontsize", list->getIndex());
+	BZDB.setInt("consoleFontSize", list->getIndex() * 8);
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }
@@ -421,7 +423,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'S':
       {
-	BZDB.setInt("scorefontsize", list->getIndex());
+	BZDB.setInt("scoreFontSize", list->getIndex() * 8);
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }

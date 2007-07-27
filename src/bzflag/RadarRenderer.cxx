@@ -643,29 +643,27 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // draw the view angle below stuff
     // view frustum edges
-    if (!BZDB.isTrue("hideRadarViewLines"))
-      {
-	glColor3f(1.0f, 0.625f, 0.125f);
-	const float fovx = renderer.getViewFrustum().getFOVx();
-	const float viewWidth = radarRange * tanf(0.5f * fovx);
-	if (BZDB.isTrue("showShotGuide")) {
-	  glBegin(GL_LINES);
-	  glVertex2f(-viewWidth, radarRange);
-	  glVertex2f(0.0f, 0.0f);
-	  glVertex2f(viewWidth, radarRange);
-	  glVertex2f(0.0f, 0.0f);
-	  glColor3f(0.5f, 0.3125f, 0.0625f);
-	  glVertex2f(0.0f, radarRange);
-	  glVertex2f(0.0f, 0.0f);
-	}
-	else {
-	  glBegin(GL_LINE_STRIP);
-	  glVertex2f(-viewWidth, radarRange);
-	  glVertex2f(0.0f, 0.0f);
-	  glVertex2f(viewWidth, radarRange);
-	}
-	glEnd();
+    if (!BZDB.isTrue("hideRadarViewLines")) {
+      glColor3f(1.0f, 0.625f, 0.125f);
+      const float fovx = renderer.getViewFrustum().getFOVx();
+      const float viewWidth = radarRange * tanf(0.5f * fovx);
+      if (BZDB.isTrue("showShotGuide")) {
+	glBegin(GL_LINES);
+	glVertex2f(-viewWidth, radarRange);
+	glVertex2f(0.0f, 0.0f);
+	glVertex2f(viewWidth, radarRange);
+	glVertex2f(0.0f, 0.0f);
+	glColor3f(0.5f, 0.3125f, 0.0625f);
+	glVertex2f(0.0f, radarRange);
+	glVertex2f(0.0f, 0.0f);
+      }	else {
+	glBegin(GL_LINE_STRIP);
+	glVertex2f(-viewWidth, radarRange);
+	glVertex2f(0.0f, 0.0f);
+	glVertex2f(viewWidth, radarRange);
       }
+      glEnd();
+    }
 
     // transform to the observer's viewpoint
     glPushMatrix();

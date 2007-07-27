@@ -31,12 +31,12 @@ const GLfloat		HUDuiElement::textColor[3] = { 1.0f, 1.0f, 1.0f };
 HUDuiElement::HUDuiElement()
 {
   elementFontFace = -1;
-  elementFontSize = 11;
+  elementFontSize = 10;
   elementX = 0.0f;
   elementY = 0.0f;
   elementWidth = 1.0f;
   elementHeight = 1.0f;
-  fontHeight = 11.0f;
+  fontHeight = 10.0f;
   desiredLabelWidth = 0.0f;
   trueLabelWidth = 0.0f;
   skipRenderLabel = false;
@@ -90,8 +90,8 @@ void			HUDuiElement::setLabel(const std::string& _label)
   label = _label;
   if (elementFontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(elementFontFace,
-				     elementFontSize, getLabel() + "99");
+    trueLabelWidth = fm.getStringWidth(elementFontFace,
+				     elementFontSize, std::string(getLabel() + "99").c_str());
   }
 }
 
@@ -111,10 +111,10 @@ void			HUDuiElement::onSetFont()
 {
   if (elementFontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStrHeight(elementFontFace, elementFontSize, getLabel());
-    trueLabelWidth = fm.getStrLength(elementFontFace, elementFontSize, getLabel() + "99");
+    fontHeight = fm.getStringHeight(elementFontFace, elementFontSize);
+    trueLabelWidth = fm.getStringWidth(elementFontFace, elementFontSize, std::string(getLabel() + "99").c_str());
   } else {
-    fontHeight = 11.0f;
+    fontHeight = 10.0f;
     trueLabelWidth = 0.0f;
   }
 }
@@ -127,7 +127,7 @@ void			HUDuiElement::renderLabel()
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
     fm.drawString(elementX - dx, elementY, 0,
-		  elementFontFace, elementFontSize, theLabel);
+		  elementFontFace, elementFontSize, theLabel.c_str());
   }
 }
 

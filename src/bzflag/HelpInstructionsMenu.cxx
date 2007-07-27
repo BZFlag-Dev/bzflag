@@ -18,6 +18,7 @@
 #include <string>
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "FontManager.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
@@ -38,20 +39,26 @@ HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::s
 void HelpInstructionsMenu::resize(int _width, int _height)
 {
   HelpMenu::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
   // find good font size
   FontManager &fm = FontManager::instance();
-  float fontSize = _height / 5.0f; // guaranteed to be too big
+  std::vector<HUDuiElement*>& listHUD = getElements();
+  const int count = (const int)listHUD.size();
+  int fontFace = listHUD[2]->getFontFace();
+
+  float fontSize = fs.getFontSize(fontFace, "infoFontSize");
+
+#if 0  /* XXX FIXME XXX */
+  fontSize = _height; // guaranteed to be too big
   const float workingWidth = _width - 2 * getLeftSide(_width, _height);
 
   // find the longest localized string
   float longestLength = 0;
   std::string longestString = "";
   std::vector<HUDuiElement*>& listHUD = getElements();
-  int fontFace = listHUD[2]->getFontFace();
-  const int count = (const int)listHUD.size();
   for (int i = 2; i < count; ++i) {
-    float thisLength = fm.getStrLength(fontFace, fontSize, ((HUDuiLabel*)listHUD[i])->getString());
+    float thisLength = fm.getStringWidth(fontFace, fontSize, ((HUDuiLabel*)listHUD[i])->getString());
     if (thisLength > longestLength)
     {
       longestLength = thisLength;
@@ -62,11 +69,12 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   // make the longest fit perfectly in the working width, and use that font size
   for (fontSize = ((float)_height / 5.0f); longestLength > workingWidth; --fontSize)
   {
-    longestLength = fm.getStrLength(fontFace, fontSize, longestString);
+    longestLength = fm.getStringWidth(fontFace, fontSize, longestString);
   }
+#endif
 
   // reposition instruction text
-  const float h = fm.getStrHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const float x = getLeftSide(_width, _height);
   float y = listHUD[2]->getY();
   for (int i = 2; i < count; ++i) {

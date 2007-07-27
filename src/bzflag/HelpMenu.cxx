@@ -18,6 +18,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
 #include "MainMenu.h"
@@ -94,25 +95,31 @@ void HelpMenu::show()
 void HelpMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 23.0f;
-  const float fontSize = (float)_height / 100.0f;
-  FontManager &fm = FontManager::instance();
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 40);
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
   // position focus holder off screen
   listHUD[1]->setFontSize(fontSize);
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   y -= 1.25f * h;
   listHUD[1]->setPosition(0.5f * ((float)_width + h), y);
 

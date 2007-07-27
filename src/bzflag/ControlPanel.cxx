@@ -35,6 +35,7 @@
 #include "global.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "SceneRenderer.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
@@ -74,12 +75,12 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
     // how many characters will fit?
     // the unprinted ANSI codes don't count
-    if ((fm.getStrLength(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
+    if ((fm.getStringWidth(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
       n = lineLen;
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStrLength(fontFace, fontSize, std::string(msg, n+1)) < maxLength)) {
+	     (fm.getStringWidth(fontFace, fontSize, std::string(msg, n+1).c_str()) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -359,12 +360,12 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       if (tabsOnRight) {
 	// draw the tabs on the right side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
+		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
@@ -426,7 +427,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
 	const std::string &msg = messages[messageMode][i].lines[l];
-	std::string raw = stripAnsiCodes(msg);
+	std::string raw = stripAnsiCodes(msg.c_str());
 	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
 	  highlight = true;
 	}
@@ -459,14 +460,14 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg.c_str());
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
-	  newMsg += stripAnsiCodes(msg);
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg);
+	  newMsg += stripAnsiCodes(msg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg.c_str());
 	}
       }
 
@@ -624,42 +625,25 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
-  switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
-  case 0: { // auto
-    const bool useBigFont = (messageAreaPixels[2] / 100.0f) > 10.0f;
-    fontSize = useBigFont ? 12.0f : 8.0f;
-    break;
-    }
-  case 1: // tiny
-    fontSize = 6;
-    break;
-  case 2: // small
-    fontSize = 8;
-    break;
-  case 3: // medium
-    fontSize = 12;
-    break;
-  case 4: // big
-    fontSize = 16;
-    break;
-  }
-
   FontManager &fm = FontManager::instance();
   fontFace = fm.getFaceID(BZDB.get("consoleFont"));
+
+  FontSizer fs = FontSizer(w, h);
+  fontSize = fs.getFontSize(fontFace, "consoleFontSize");
 
   // tab widths may have changed
   if (tabs) {
     tabTextWidth.clear();
     totalTabWidth = 0;
-    const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
+    const float charWidth = fm.getStringWidth(fontFace, fontSize, "-");
     for (unsigned int tab = 0; tab < tabs->size(); tab++) {
       // add space for about 2-chars on each side for padding
-      tabTextWidth.push_back(fm.getStrLength(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
+      tabTextWidth.push_back(fm.getStringWidth(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
       totalTabWidth += long(tabTextWidth[tab]);
     }
   }
 
-  lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
+  lineHeight = fm.getStringHeight(fontFace, fontSize);
 
   maxLines = int(messageAreaPixels[3] / lineHeight);
 
@@ -809,14 +793,14 @@ void			ControlPanel::addMessage(const std::string& line,
     // this is cheap but it will work on windows
     FILE *fp = fopen ("stdout.txt","a+");
     if (fp){
-      fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
+      fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
       fclose(fp);
     }
 #else
     if (echoAnsi) {
-      std::cout << line << ColorStrings[ResetColor] << std::endl;
+      std::cout << line.c_str() << ColorStrings[ResetColor] << std::endl;
     } else {
-      std::cout << stripAnsiCodes(line) << std::endl;
+      std::cout << stripAnsiCodes(line.c_str()) << std::endl;
     }
     fflush(stdout);
 #endif
@@ -842,9 +826,9 @@ void ControlPanel::saveMessages(const std::string& filename,
   for (; msg != messages[MessageAll].end(); ++msg) {
     const std::string& line = msg->string;
     if (stripAnsi) {
-      fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
+      fprintf(file, "%s\n", stripAnsiCodes(line.c_str()));
     } else {
-      fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor].c_str());
+      fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
     }
   }
 

@@ -109,9 +109,9 @@ namespace TankGeometryUtils {
   float getTreadTexLen();
 
   // help to scale vertices and normals
-  void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
-  void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
-  void doTexCoord2f(GLfloat x, GLfloat y);
+  inline void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
+  inline void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
+  inline void doTexCoord2f(GLfloat x, GLfloat y);
 
   //
   // NOTE:  these all return their triangle count
@@ -145,6 +145,57 @@ namespace TankGeometryUtils {
   int buildHighRTread (int divs);
   int buildHighLWheel (int wheel, float angle, int divs);
   int buildHighRWheel (int wheel, float angle, int divs);
+
+  extern const float* currentScaleFactor;
+  extern TankGeometryEnums::TankShadow shadowMode;
+}
+
+
+
+// TankGeometryUtils Functions
+// ---------------------------
+
+inline 
+void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  const float* scale = currentScaleFactor;
+  x = x * scale[0];
+  y = y * scale[1];
+  z = z * scale[2];
+  glVertex3f(x, y, z);
+  return;
+}
+
+
+inline
+void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  const float* scale = currentScaleFactor;
+  GLfloat sx = x * scale[0];
+  GLfloat sy = y * scale[1];
+  GLfloat sz = z * scale[2];
+  const GLfloat d = sqrtf ((sx * sx) + (sy * sy) + (sz * sz));
+  if (d > 1.0e-5f) {
+    x *= scale[0] / d;
+    y *= scale[1] / d;
+    z *= scale[2] / d;
+  }
+  glNormal3f(x, y, z);
+  return;
+}
+
+
+inline
+void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  glTexCoord2f(x, y);
+  return;
 }
 
 

@@ -180,7 +180,7 @@ void Roaming::buildRoamingLabel(void) {
     const FlagType* flag = tracked->getFlag();
     if (flag != Flags::Null) {
       if (BZDBCache::colorful) {
-	playerString += ColorStrings[CyanColor] + " / ";
+	playerString += std::string(ColorStrings[CyanColor]) + " / ";
 	if (flag->flagTeam != NoTeam) {
 	  playerString += ColorStrings[flag->flagTeam];
 	} else {

@@ -19,6 +19,7 @@
 #include "StateDatabase.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "TrackMarks.h"
 #include "HUDuiList.h"
@@ -45,7 +46,7 @@ EffectsMenu::EffectsMenu()
 
   // Rain Scale
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Rain:");
   option->setCallback(callback, (void*)"r");
   options = &option->getList();
@@ -102,7 +103,7 @@ EffectsMenu::EffectsMenu()
 
   // Track Mark Fading Scale
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Track Marks:");
   option->setCallback(callback, (void*)"t");
   options = &option->getList();
@@ -113,7 +114,7 @@ EffectsMenu::EffectsMenu()
 
   // Track Mark Culling Type
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Track Mark Culling:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
@@ -125,7 +126,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects from effectsRenderer
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Fancy Effects:");
   option->setCallback(callback, (void*)"f");
   options = &option->getList();
@@ -138,7 +139,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects I: Spawn
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Spawn Effect:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
@@ -149,7 +150,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects Ia: Local spawn
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Local Spawn Effect:");
   option->setCallback(callback, (void*)"L");
   options = &option->getList();
@@ -160,7 +161,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects II: Death
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Death Effect:");
   option->setCallback(callback, (void*)"d");
   options = &option->getList();
@@ -171,7 +172,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects III: Shots
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Shot Fired Effect:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
@@ -182,7 +183,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects IV: Local shots
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Local Shot Effect:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
@@ -193,7 +194,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects V: Velocity for shot effects
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Use Velocity on Shot Effects:");
   option->setCallback(callback, (void*)"V");
   options = &option->getList();
@@ -204,7 +205,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects VI: Landing effects
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("Landing Effect:");
   option->setCallback(callback, (void*)"b");
   options = &option->getList();
@@ -215,7 +216,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects VII: GM Smoke Trail effects
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("GM Smoke Effect:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
@@ -226,7 +227,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects VIIa: GM puff timing
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("GM Effect Timing:");
   option->setCallback(callback, (void*)"g");
   option->createSlider(11);
@@ -235,7 +236,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects VIII: rico effects
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("  Ricochet Effect:");
   option->setCallback(callback, (void*)"R");
   options = &option->getList();
@@ -246,7 +247,7 @@ EffectsMenu::EffectsMenu()
 
   // Fancy effects IX: shot Teleporter effects
   option = new HUDuiList;
-  option->setFontFace(MainMenu::getFontFace());
+  option->setFontFace(fontFace);
   option->setLabel("  Teleport Shot Effect:");
   option->setCallback(callback, (void*)"7");
   options = &option->getList();
@@ -272,20 +273,26 @@ void EffectsMenu::execute()
 void EffectsMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 65.0f;
-  FontManager &fm = FontManager::instance();
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 30);
+  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+    fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
   const float titleHeight =
-    fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -293,7 +300,7 @@ void EffectsMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {

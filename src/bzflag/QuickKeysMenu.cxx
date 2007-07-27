@@ -19,6 +19,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
 
@@ -103,22 +104,29 @@ void QuickKeysMenu::dismiss()
 
 void QuickKeysMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(_width, _height);
-
   int i;
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float bigFontSize = (float)_height / 42.0f;
-  const float fontSize = (float)_height / 48.0f;
+  HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
+
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
+
+  // use a big font for title, smaller font for the rest
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0, 20);
+  const float bigFontSize = fs.getFontSize(fontFace, "menuFontSize");
+
+  fs.setMin(0, 40);
+  const float fontSize = fs.getFontSize(fontFace, "infoFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -126,8 +134,8 @@ void QuickKeysMenu::resize(int _width, int _height)
   // reposition help
   HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
-  const float helpWidth = fm.getStrLength(fontFace, bigFontSize, help->getString());
-  const float bigHeight = fm.getStrHeight(fontFace, bigFontSize, " ");
+  const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString().c_str());
+  const float bigHeight = fm.getStringHeight(fontFace, bigFontSize);
   x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * bigHeight;
   help->setPosition(x, y);
@@ -149,7 +157,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   x = 0.10f * (float)_width;
   const float topY = y - (0.6f * titleHeight);
   y = topY;
-  const float h = fm.getStrHeight(fontFace, fontSize, " ");
+  const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (int)navItems.size();
   const int mid = (count / 2);
 

@@ -445,9 +445,9 @@ static void listSetVars(const std::string& name, void* varDispPtr)
   if ((serverVar && varDisp->server) || (!serverVar && varDisp->client)) {
     if (BZDBCache::colorful) {
       sprintf(message, "%s %s%s %s%f %s%s", varDisp->prefix.c_str(),
-	      ColorStrings[RedColor].c_str(), name.c_str(),
-	      ColorStrings[GreenColor].c_str(), BZDB.eval(name),
-	      ColorStrings[BlueColor].c_str(), BZDB.get(name).c_str());
+	      ColorStrings[RedColor], name.c_str(),
+	      ColorStrings[GreenColor], BZDB.eval(name),
+	      ColorStrings[BlueColor], BZDB.get(name).c_str());
     } else {
       sprintf(message, "%s %s <%f> %s", name.c_str(), varDisp->prefix.c_str(),
 	      BZDB.eval(name), BZDB.get(name).c_str());

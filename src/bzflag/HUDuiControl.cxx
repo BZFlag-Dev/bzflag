@@ -46,7 +46,7 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
     builder.setTexture(arrow);
     builder.setBlending();
 //    builder.setSmoothing();
-    //builder.setTextureEnvMode(GL_REPLACE);
+//    builder.setTextureEnvMode(GL_TEXTURE_2D);
     *gstate = builder.getState();
 
     // get start time for animation
@@ -106,8 +106,11 @@ void			HUDuiControl::renderFocus()
   const float x = getX();
   const float y = getY();
 
-  if (gstate->isTextured()) { // assumes there are w/h frames of animation h x h in each image
+  if (gstate->isTextured()) { 
+    /* draw a fancy textured/image cursor */
+
     float imageSize = (float)info.y;
+    // assumes there are w/h frames of animation h x h in each image
     int uFrames = 1;
     if (imageSize != 0)
       uFrames = int(info.x/imageSize); // 4;
@@ -120,10 +123,12 @@ void			HUDuiControl::renderFocus()
     fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
     gstate->setState();			    // best would be to load an image for each size
     glColor3f(1.0f, 1.0f, 1.0f);
-    float imageXShift = 0.5f;
-    float imageYShift = -fh2 * 0.2f;
+    float imageXShift = 0.55f;
+    float imageYShift = -fh2 * 0.29f;
     float outputSize = fh2;
-    glBegin(GL_QUADS);
+
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS); {
       glTexCoord2f(u, v);
       glVertex2f(x + imageXShift - outputSize, y + imageYShift);
       glTexCoord2f(u + du, v);
@@ -132,7 +137,7 @@ void			HUDuiControl::renderFocus()
       glVertex2f(x + imageXShift , y + outputSize + imageYShift);
       glTexCoord2f(u, v + dv);
       glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
-    glEnd();
+    } glEnd();
 
     TimeKeeper nowTime = TimeKeeper::getCurrent();
     if (nowTime - lastTime > 0.07f) {
@@ -140,6 +145,8 @@ void			HUDuiControl::renderFocus()
       if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
     }
   } else {
+    /* draw a generic triangle cursor */
+
     fh2 = floorf(0.5f * fontHeight);
     gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);

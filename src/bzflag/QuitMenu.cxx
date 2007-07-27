@@ -18,6 +18,7 @@
 #include "StateDatabase.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
@@ -91,46 +92,52 @@ QuitMenu::~QuitMenu()
 void QuitMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
-  // use a big font
-  float fontSize = (float)_height / 25.0f;
-  float smallFontSize = (float)_height / 54.0f;
-  float x, y;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
 
+  // use a big font
+  fs.setMin(0, 10);
+  float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+
+  fs.setMin(0,20);
+  float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
+
   // heights
-  const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
+  const float fontHeight = fm.getStringHeight(fontFace, fontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();
 
+  float x, y;
+
   // yes
   HUDuiLabel* label = (HUDuiLabel*)listHUD[0];
   label->setFontSize(fontSize);
-  x = _width / 4.0f;
-  y = (float)_height - 5.25f * fontHeight;
+  x = (float)_width / 4.0f;
+  y = (float)_height - 4.25f * fontHeight;
   label->setPosition(x, y);
 
   // no
   label = (HUDuiLabel*)listHUD[1];
   label->setFontSize(fontSize);
-  y = (float)_height - 6.5f * fontHeight;
+  y = (float)_height - 5.5f * fontHeight;
   label->setPosition(x, y);
 
   // save settings
   HUDuiList* list = (HUDuiList*)listHUD[2];
   list->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStrLength(fontFace, smallFontSize, list->getLabel() + "99");
-  y = (float)_height - 7.25f * fontHeight;
+  const float stringWidth = fm.getStringWidth(fontFace, smallFontSize, std::string(list->getLabel() + "99").c_str());
+  y = (float)_height - 6.25f * fontHeight;
   list->setPosition(x + stringWidth, y);
 
   // frame
   HUDuiFrame* frame = (HUDuiFrame*)listHUD[3];
-  const float gapSize = fm.getStrHeight(fontFace, fontSize, "99");
+  const float gapSize = fm.getStringHeight(fontFace, fontSize);
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
-  frame->setPosition(x - gapSize, (float)_height - 4.0f * fontHeight);
+  frame->setPosition(x - gapSize, (float)_height - 3.0f * fontHeight);
   frame->setSize(0.5f * getWidth() + 2.0f * gapSize, fontHeight * 4.0f);
 }
 

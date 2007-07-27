@@ -20,6 +20,7 @@
 #include "Bundle.h"
 
 /* local implementation headers */
+#include "FontSizer.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"
@@ -235,8 +236,8 @@ void JoinMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(MainMenu::getFontFace(),
-	failedMessage->getFontSize(), failedMessage->getString());
+  const float _width = fm.getStringWidth(MainMenu::getFontFace(),
+	failedMessage->getFontSize(), failedMessage->getString().c_str());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
@@ -254,8 +255,8 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(status->getFontFace(),
-		status->getFontSize(), status->getString());
+  const float _width = fm.getStringWidth(status->getFontFace(),
+		status->getFontSize(), status->getString().c_str());
   status->setPosition(center - 0.5f * _width, status->getY());
 }
 
@@ -285,19 +286,24 @@ void JoinMenu::updateTeamTexture()
 
   // put it at the end of the text
   Bundle *bdl = BundleMgr::getCurrentBundle();
-  const float x = team->getX() + fm.getStrLength(team->getFontFace(),
+  const float x = team->getX() + fm.getStringWidth(team->getFontFace(),
 	  team->getFontSize(),
-	  bdl->getLocalString(team->getList()[team->getIndex()]) + "x");
+	  std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x").c_str());
   teamIcon->setPosition(x, team->getY());
 }
 
 void JoinMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
+  FontSizer fs = FontSizer(_width, _height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 36.0f;
+  fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
+  const float titleFontSize = fs.getFontSize(MainMenu::getFontFace(), "headerFontSize");
+
+  fs.setMin(0, 20);
+  const float fontSize = fs.getFontSize(MainMenu::getFontFace(), "menuFontSize");
+
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();
@@ -306,8 +312,8 @@ void JoinMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, "");
+  const float titleWidth = fm.getStringWidth(MainMenu::getFontFace(), titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(MainMenu::getFontFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -316,7 +322,7 @@ void JoinMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width - 0.5f * titleWidth);
   y -= 0.6f * titleHeight;
   listHUD[1]->setFontSize(fontSize);
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
+  const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);

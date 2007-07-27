@@ -128,12 +128,20 @@ dependencies that should be installed before running configure:
 
   OpenGL 1.0+
   libSDL 1.2+
-  libCURL 7+
 
 If you're on an operating sytem that uses a packaging system
 (e.g. apt, portage, ports, etc), be sure to install the development
 kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
-headers are made available.
+headers are made available.  You may also want to manually install
+other dependencies that BZFlag automatically provides if you do not
+have them pre-installed:
+
+  c-ares
+  libCURL
+  freetype2
+  FTGL
+  libregex (usually provided as part of libc)
+  zlib
 
 The final summary at the end of running configure will report whether
 the client will be built or not.  Once configure has been run, you may

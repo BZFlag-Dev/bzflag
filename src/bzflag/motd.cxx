@@ -96,10 +96,10 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
     }
 
   controlPanel->addMessage(ColorStrings[UnderlineColor]
-			   + ColorStrings[WhiteColor]
+			   + std::string(ColorStrings[WhiteColor])
 			   + "Message of the day: ");
   for (j = 0; j < msgs.size(); ++j)
-    controlPanel->addMessage(ColorStrings[WhiteColor] + "* " + msgs[j]);
+    controlPanel->addMessage(std::string(ColorStrings[WhiteColor]) + "* " + msgs[j]);
 }
 
 
