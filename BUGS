@@ -1,6 +1,16 @@
 recent bugs
 ------------
 
+- when the build fails in src/other/freetype, it's because there were
+  a couple files that got clobbered.  there is a TODO item to fix
+  them, but until then the fix is manual.  something like the
+  following should work
+	cd src/other/freetype/builds/unix
+	svn revert aclocal.h ftconfig.h.in
+	./configure
+	cd ../../../../..
+	make
+
 - intermittent/random client-server connection failures
 
 - missing mountains7.png and explode3.png, mountain renders discontiguous
