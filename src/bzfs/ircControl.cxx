@@ -267,6 +267,7 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
   } else if eventType == eIRCWelcomeEvent) {
 
   } else if eventType == eIRCEndMOTDEvent) {
+    //this will finish off the connection stuff, like commands and channel joins.
 
   } else if eventType == eIRCChannelJoinEvent) {
 
@@ -280,7 +281,9 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
     if (channels.count(chanMsgInfo.source) == 1) { //make sure we're actually supposed to be in this channel
     if (channels[chanMsgInfo.source].relayIRCChat) {
-      //send a message
+      //forward the chat msg to the game if we're supposed to.
+      std::string msg = "[IRC]" + chanMsgInfo.from + ": " + chanMsgInfo.message;
+      sendMessage(serverPlayer, AllPlayers, msg);
 
   } else if eventType == eIRCPrivateMessageEvent) {
 
