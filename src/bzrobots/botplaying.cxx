@@ -243,11 +243,11 @@ void printout(const std::string& line)
 #ifdef _WIN32
   FILE *fp = fopen ("stdout.txt", "a+");
   if (fp) {
-    fprintf(fp,"%s\n", (stripAnsiCodes(line).c_str()));
+    fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
     fclose(fp);
   }
 #else
-  BACKENDLOGGER << stripAnsiCodes(line) << endl;
+  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << endl;
 #endif
 }
 
@@ -376,7 +376,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       fullMessage += Team::getName(_player->getTeam());
       fullMessage += ")";
 #endif
-      fullMessage += ColorStrings[DefaultColor] + ": ";
+      fullMessage += std::string(ColorStrings[DefaultColor]) + ": ";
     }
     fullMessage += msg;
   } else {
@@ -393,7 +393,7 @@ void		addMessage(const Player *_player, const std::string& msg,
 #endif
       fullMessage += ": ";
     }
-    fullMessage += stripAnsiCodes(msg);
+    fullMessage += stripAnsiCodes(msg.c_str());
   }
   printout(fullMessage);
 }
@@ -450,7 +450,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   msg = nboUnpackString (msg, email, EmailLen);
 
   // Strip any ANSI color codes
-  strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
+  strncpy (callsign, stripAnsiCodes(callsign), 32);
 
   // id is slot, check if it's empty
   const int i = id;
