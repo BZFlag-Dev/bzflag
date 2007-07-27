@@ -15,8 +15,7 @@
 
 #include "common.h"
 
-#include "assert.h"
-
+#include <assert.h>
 #include <string>
 
 // Escape character to begin ANSI codes
