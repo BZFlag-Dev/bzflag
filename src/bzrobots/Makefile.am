@@ -253,7 +253,7 @@ genericfiles =				\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
 
-bzrobots_LDFLAGS = -static -rdynamic
+bzrobots_LDFLAGS = -export-dynamic -static
 
 if CLIENT_INCLUDED
 bzrobots_SOURCES = $(genericfiles)
