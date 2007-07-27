@@ -94,6 +94,8 @@ genericfiles =				\
 	../bzflag/EntryZone.h			\
 	../bzflag/FlashClock.cxx		\
 	../bzflag/FlashClock.h			\
+	../bzflag/FontSizer.cxx			\
+	../bzflag/FontSizer.h			\
 	../bzflag/ForceFeedback.cxx		\
 	../bzflag/ForceFeedback.h		\
 	../bzflag/FormatMenu.cxx		\
