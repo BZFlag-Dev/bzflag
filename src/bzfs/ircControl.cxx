@@ -114,6 +114,10 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 	//Now we start processing the arguments (finally!) Ordered by likely frequency in the configuration.
 	if (TextUtils::compare_nocase(params.at(0), std::string("channel")) && params.size() >= 2) {
+
+	  if (channels.count(params.at(1)) > 0) //make sure we don't have this channel already
+	    continue;
+
 	  ircChannel newchan;
 
 	  newchan.name = params.at(1);
@@ -271,6 +275,12 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
   } else if eventType == eIRCChannelBanEvent) {
 
   } else if eventType == eIRCChannelMessageEvent) {
+
+    trMessageEventInfo chanMsgInfo = (trMessageEventInfo)info;
+
+    if (channels.count(chanMsgInfo.source) == 1) { //make sure we're actually supposed to be in this channel
+    if (channels[chanMsgInfo.source].relayIRCChat) {
+      //send a message
 
   } else if eventType == eIRCPrivateMessageEvent) {
 
