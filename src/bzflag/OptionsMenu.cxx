@@ -179,7 +179,7 @@ void OptionsMenu::resize(int _width, int _height)
 
   // reposition options in two columns
   x = 0.5f * (float)_width;
-  y -= 0.6f * titleHeight;
+  y -= 1.0f * titleHeight;
   const int count = (const int)listHUD.size();
   const float h = fm.getStringHeight(fontFace, fontSize);
   for (i = 1; i < count; i++) {

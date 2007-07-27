@@ -685,7 +685,7 @@ static std::string cmdScreenshot(const std::string&,
 
   BZDB.setInt(std::string("lastScreenshot"),snap);
 
-  std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
+  std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
   if (f != NULL) {
     int w = mainWindow->getWidth(), h = mainWindow->getHeight();
@@ -702,11 +702,13 @@ static std::string cmdScreenshot(const std::string&,
       temp_paused = true;
     }
 
+    TimeKeeper tkBegin = TimeKeeper::getCurrent();
+
     //Prepare gamma table
     const bool gammaAdjust = BZDB.isSet("gamma");
     unsigned char gammaTable[256];
     if (gammaAdjust) {
-      float gamma = (float) atof(BZDB.get("gamma").c_str());
+      float gamma = BZDB.eval("gamma");
       for (int i = 0; i < 256; i++) {
 	float lum = ((float) i) / 256.0f;
 	float lumadj = pow(lum, 1.0f / gamma);
@@ -758,39 +760,65 @@ static std::string cmdScreenshot(const std::string&,
     crc = htonl(crc);
     f->write((char*) &crc, 4);    //(crc) write crc
 
-    // IDAT chunk
-    for (i = h - 1; i >= 0; i--) {
-      const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
-      b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
-      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
-      // apply gamma correction if necessary
-      if (gammaAdjust) {
-	unsigned char *ptr = b + line + 1;
-	for (int j = 1; j < w * 3 + 1; j++) {
-	  *ptr = gammaTable[*ptr];
-	  ptr++;
-	}
-      }
-    }
-
     // let the user know we're paused while saving the file
     if (temp_paused) {
       drawFrame(0.0f);
     }
 
+    // IDAT chunk
+    TimeKeeper tkReadPixels;
+    TimeKeeper tkGamma;
+    float rptime = 0.0f;
+    float gammatime = 0.0f;
+    float compresstime = 0.0f;
+    const unsigned char filterType = 0; // 0 = no filter, 1 = sub filter
     unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
     unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
-    // compress b into bz
-    compress2(bz, &zlength, b, blength, 5);
 
-    temp = htonl(zlength);			  //(length) IDAT length after compression
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
-    crc = htonl(crc32(crc, bz, zlength));
-    f->write((char*) &crc, 4);		       //(crc) write crc
+    // one scanline at a time
+    const int lineLengthBytes = (w * 3 + 1);
+    for (i = h - 1; i >= 0; --i) {
+      const unsigned long line = (h - (i + 1)) * lineLengthBytes; //beginning of this line
+      b[line] = filterType;  //filter type byte at the beginning of each scanline
+
+      tkReadPixels = TimeKeeper::getCurrent();
+      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
+      rptime += TimeKeeper::getCurrent() - tkReadPixels;
+
+      tkGamma = TimeKeeper::getCurrent();
+      if (filterType == 0) {
+	// apply gamma correction if necessary
+	if (gammaAdjust) {
+	  unsigned char *ptr = b + line + 1;
+	  for (int j = 1; j < lineLengthBytes; j++) {
+	    *ptr = gammaTable[*ptr];
+	    ptr++;
+	  }
+	}
+      } else if (filterType == 1) {
+	unsigned char *ptr;
+	for (ptr = b + line + (w * 3); ptr > b + line; --ptr)
+	{
+	  // simultaneous sub filter & gamma correct
+	  *ptr = gammaTable[*ptr] - ((ptr > b + line + 3) ? gammaTable[*(ptr-3)] : 0);
+	}
+      }
+      gammatime += TimeKeeper::getCurrent() - tkGamma;
+
+      // compress b into bz
+      TimeKeeper tkCompress = TimeKeeper::getCurrent();
+      compress2(bz, &zlength, b + line, lineLengthBytes, 5);
+      compresstime += TimeKeeper::getCurrent() - tkCompress;
+
+      temp = htonl(zlength);			  //(length) IDAT length after compression
+      f->write((char*) &temp, 4);
+      temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
+      f->write((char*) &temp, 4);
+      crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+      f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
+      crc = htonl(crc32(crc, bz, zlength));
+      f->write((char*) &crc, 4);		       //(crc) write crc
+    }
 
     // tEXt chunk containing bzflag build/version
     temp = htonl(9 + (int)strlen(getAppVersion())); //(length) tEXt is 9 + strlen(getAppVersion())
@@ -822,6 +850,8 @@ static std::string cmdScreenshot(const std::string&,
     delete f;
     char notify[128];
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
+    controlPanel->addMessage(notify);
+    snprintf(notify, 128, "time total:%f / compress:%f / glReadPixels:%f / filtering:%f", TimeKeeper::getCurrent() - tkBegin, compresstime, rptime, gammatime);
     controlPanel->addMessage(notify);
 
     // unpause to prevent dt from accumulating until done screenshotting

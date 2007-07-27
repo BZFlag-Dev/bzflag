@@ -311,7 +311,7 @@ void			InputMenu::resize(int _width, int _height)
 
   // reposition options
   x = 0.5f * ((float)_width + 0.5f * titleWidth);
-  y -= 0.6f * titleHeight;
+  y -= 1.0f * titleHeight;
   const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (int)listHUD.size();
   for (i = 1; i < count; i++) {

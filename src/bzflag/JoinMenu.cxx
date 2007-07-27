@@ -320,7 +320,7 @@ void JoinMenu::resize(int _width, int _height)
 
   // reposition options
   x = 0.5f * ((float)_width - 0.5f * titleWidth);
-  y -= 0.6f * titleHeight;
+  y -= 1.0f * titleHeight;
   listHUD[1]->setFontSize(fontSize);
   const float h = fm.getStringHeight(MainMenu::getFontFace(), fontSize);
   const int count = (const int)listHUD.size();

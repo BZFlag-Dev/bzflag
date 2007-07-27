@@ -343,7 +343,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 
   // reposition options
   x = 0.54f * (float)_width;
-  y -= 0.6f * titleHeight;
+  y -= 1.0f * titleHeight;
   const float h = fm.getStringHeight(fontFace, fontSize);
   const int count = (const int)listHUD.size();
   for (int i = 1; i < count; i++) {
