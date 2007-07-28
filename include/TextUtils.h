@@ -35,7 +35,8 @@
  */
 namespace TextUtils {
   std::string vformat(const char* fmt, va_list args);
-  std::string format(const char* fmt, ...);
+  std::string format(const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 1, 2)));
 
   /** returns a string converted to lowercase
    */
