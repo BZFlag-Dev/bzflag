@@ -19,7 +19,8 @@
 
 // text functions
 std::string tolower(const std::string& s);
-std::string format(const char* fmt, ...);
+std::string format(const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes);
 
 // Configuration file parsing functions

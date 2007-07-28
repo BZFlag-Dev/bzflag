@@ -238,7 +238,8 @@ public:
 
   const char* c_str(void) const;
 
-  void format(const char* fmt, ...);
+  void format(const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
 
   void replaceAll ( const char* target, const char* with );
 
@@ -1301,8 +1302,10 @@ BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm );
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
-BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...);
-BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...);
+BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 3, 4)));
+BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 3, 4)));
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
@@ -1349,7 +1352,8 @@ BZF_API void bz_resetALLBZDBVars( void );
 
 // logging
 BZF_API void bz_debugMessage ( int level, const char* message );
-BZF_API void bz_debugMessagef( int level, const char* fmt, ... );
+BZF_API void bz_debugMessagef( int level, const char* fmt, ... )
+  __attribute__ ((__format__ (__printf__, 2, 3)));
 BZF_API int bz_getDebugLevel ( void );
 
 // admin
@@ -1666,7 +1670,8 @@ BZF_API bool bz_startRecBuf( void );
 BZF_API bool bz_stopRecBuf( void );
 
 // cheap Text Utils
-BZF_API const char *bz_format(const char* fmt, ...);
+BZF_API const char *bz_format(const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );

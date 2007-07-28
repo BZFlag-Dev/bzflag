@@ -46,7 +46,8 @@ class RCLinkBackend : public RCLink
     void sendAck(RCRequest *req);
 
     bool send(const char *message);
-    bool sendf(const char *format, ...);
+    bool sendf(const char *format, ...)
+      __attribute__ ((__format__ (__printf__, 2, 3)));
 };
 
 #endif

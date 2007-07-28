@@ -65,7 +65,8 @@ class RCLink {
     const std::string &getError() const { return error; }
 
     virtual bool send(const char *message);
-    virtual bool sendf(const char *format, ...);
+    virtual bool sendf(const char *format, ...)
+      __attribute__ ((__format__ (__printf__, 2, 3)));
 
     template<class C>
     bool send(const RCMessage<C> *message)
