@@ -365,7 +365,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   char buffer[1024];
-  int textlen = strlen(text);
+  int textlen = (int)strlen(text);
 
   assert(textlen < 1024 && "drawString text is way bigger than ever expected");
   memcpy(buffer, text, textlen);
