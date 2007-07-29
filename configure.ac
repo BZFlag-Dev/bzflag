@@ -1016,11 +1016,12 @@ AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
 
 
 dnl figure out whether we need to build the included curl library
+BUILD_CURL="no (using system)"
+LIBCURL=""
 if test "x$enable_curl_build" != "xyes" ; then
     LIBCURL_CHECK_CONFIG
 fi
 AC_MSG_CHECKING(whether to build the included curl library)
-BUILD_CURL="no (using system)"
 if test "x$LIBCURL" = "x" ; then
     AC_DEFINE(BUILD_CURL, 1, [Build the included curl library])
     BUILD_CURL="yes"
@@ -1033,17 +1034,17 @@ AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
+LIBFREETYPE=""
 if test "x$enable_freetype_build" != "xyes" ; then
-   AC_CHECK_FT2
-   BUILD_FREETYPE="yes"
+    AC_CHECK_FT2
+    LIBFREETYPE="$FT2_LIBS"
 fi
 AC_MSG_CHECKING(whether to build the included freetype library)
-if test "x$FT2_LIBS" = "x" ; then
+if test "x$LIBFREETYPE" = "x" ; then
     AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
     BUILD_FREETYPE="yes"
     LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
 else
-    LIBFREETYPE="$FT2_LIBS"
     CFLAGS="$FT2_CFLAGS"
 fi
 AC_SUBST(LIBFREETYPE)
@@ -1053,9 +1054,9 @@ AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
 
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
+LIBFTGL=""
 if test "x$enable_ftgl_build" != "xyes" ; then
-   # FIXME: need autodetection here
-   BUILD_FTGL="yes"
+   AC_CHECK_LIB(ftgl, main, LIBFTGL="-lftgl")
 fi
 AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then
