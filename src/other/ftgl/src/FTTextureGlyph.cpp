@@ -8,6 +8,10 @@ FTTextureGlyph::FTTextureGlyph( FT_GlyphSlot glyph, int id, int xOffset, int yOf
     destHeight(0),
     glTextureID(id)
 {
+    /* FIXME: need to propagate the render mode all the way down to
+     * here in order to get FT_RENDER_MODE_MONO aliased fonts.
+     */
+  
     err = FT_Render_Glyph( glyph, FT_RENDER_MODE_NORMAL);
     if( err || glyph->format != ft_glyph_format_bitmap)
     {
