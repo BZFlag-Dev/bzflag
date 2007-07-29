@@ -153,13 +153,14 @@ main()
    else
      AC_MSG_RESULT([no])
      if test "$FT2_CONFIG" = "no" ; then
-       AC_MSG_WARN([
+#        AC_MSG_WARN([
 
-  The freetype-config script installed by FreeType 2 could not be found.
-  If FreeType 2 was installed in PREFIX, make sure PREFIX/bin is in
-  your path, or set the FT2_CONFIG environment variable to the
-  full path to freetype-config.
-       ])
+#   The freetype-config script installed by FreeType 2 could not be found.
+#   If FreeType 2 was installed in PREFIX, make sure PREFIX/bin is in
+#   your path, or set the FT2_CONFIG environment variable to the
+#   full path to freetype-config.
+#        ])
+       :
      else
        if test x$ft_config_is_lt = xyes ; then
          AC_MSG_WARN([
