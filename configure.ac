@@ -1100,9 +1100,6 @@ fi
 if test "x$BUILD_CURL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/curl)
 fi
-if test "x$BUILD_FREETYPE" = "xyes" ; then
-    AC_CONFIG_SUBDIRS(src/other/freetype/builds/unix)
-fi
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile
@@ -1164,6 +1161,7 @@ AC_CONFIG_FILES([
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/other/Makefile
+	src/other/freetype/Makefile
 	src/other/ftgl/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
