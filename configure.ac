@@ -1034,14 +1034,17 @@ AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
 if test "x$enable_freetype_build" != "xyes" ; then
-   # FIXME: need autodetection here
+   AC_CHECK_FT2
    BUILD_FREETYPE="yes"
 fi
 AC_MSG_CHECKING(whether to build the included freetype library)
-if test "x$LIBFREETYPE" = "x" ; then
+if test "x$FT2_LIBS" = "x" ; then
     AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
     BUILD_FREETYPE="yes"
-    LIBFREETYPE='${top_builddir}/src/other/freetype/objs/libfreetype.la'
+    LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+else
+    LIBFREETYPE="$FT2_LIBS"
+    CFLAGS="$FT2_CFLAGS"
 fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
