@@ -1032,9 +1032,10 @@ AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 
 
+LIBFREETYPE=""
+if test "x$have_gl" ; then
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
-LIBFREETYPE=""
 if test "x$enable_freetype_build" != "xyes" ; then
     AC_CHECK_FT2
     LIBFREETYPE="$FT2_LIBS"
@@ -1050,11 +1051,19 @@ fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
+else # have_gl
+dnl clients are not being built
+BUILD_FREETYPE="no (clients disabled)"
+AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
+AC_SUBST(LIBFREETYPE)
+AM_CONDITIONAL(BUILD_FREETYPE, false)
+fi # have_gl
 
 
+LIBFTGL=""
+if test "x$have_gl" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
-LIBFTGL=""
 if test "x$enable_ftgl_build" != "xyes" ; then
    AC_CHECK_LIB(ftgl, main, LIBFTGL="-lftgl")
 fi
@@ -1067,6 +1076,13 @@ fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
 AM_CONDITIONAL(BUILD_FTGL, test "x$BUILD_FTGL" = "xyes")
+else # have_gl
+dnl clients are not being built
+BUILD_FTGL="no (clients disabled)"
+AC_MSG_NOTICE([FTGL is disabled because no clients are being built])
+AC_SUBST(LIBFTGL)
+AM_CONDITIONAL(BUILD_FTGL, false)
+fi # have_gl
 
 
 # make sure ECHO and ECHO_N got defined and substituted
