@@ -6,6 +6,7 @@
 BZFlag 2.1.x
 ------------
 
+* fixed bug where players sometimes received duplicate messages - Joshua Bodine
 * New font system - Sean Morrison, Jeff Meyers
 * Fixed framerate jitter-inducing bug on SMP systems - Sean Morrison
 * First map no longer ignored in Start Server menu - Ravu al Hemio
