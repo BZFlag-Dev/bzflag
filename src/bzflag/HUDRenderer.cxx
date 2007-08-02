@@ -1231,7 +1231,22 @@ void			HUDRenderer::renderTimes(void)
     static TimeKeeper last = TimeKeeper::getTick();
     char buf[20];
     snprintf(buf, 20, "FPS: %d", int(fps));
-    hudColor3f(1.0f, 1.0f, 1.0f);
+
+    /* correlate the color of the fps printing to rate categories */
+    if (fps > 50.0f) {
+      /* white */
+      hudColor3f(1.0f, 1.0f, 1.0f);
+    } else if (fps > 30.0f) {
+      /* green */
+      hudColor3f(0.0f, 1.0f, 0.0f);
+    } else if (fps > 10.0f) {
+      /* yellow */
+      hudColor3f(1.0f, 1.0f, 0.0f);
+    } else {
+      /* red */
+      hudColor3f(1.0f, 0.0f, 0.0f);
+    }
+
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		  3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
 		  labelsFontFace, labelsFontSize, buf);
