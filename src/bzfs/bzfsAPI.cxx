@@ -1960,6 +1960,16 @@ BZF_API bool bz_isCountDownInProgress(void)
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_pollActive(void)
+{
+  if (votingArbiter != NULL && votingArbiter->knowsPoll())
+    return true;
+  else
+    return false;
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_pollVeto(void)
 {
   /* make sure that there is a poll arbiter */

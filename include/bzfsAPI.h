@@ -1376,6 +1376,7 @@ BZF_API bool bz_isCountDownActive( void );
 BZF_API bool bz_isCountDownInProgress( void );
 
 // polls
+BZF_API bool bz_pollActive( void );
 BZF_API bool bz_pollVeto( void );
 
 // help
