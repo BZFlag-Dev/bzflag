@@ -185,6 +185,9 @@ AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex
 # compile our own zlib
 AC_ARG_ENABLE(zlib_build, [  --enable-zlib-build     Force compilation of zlib])
 
+# compile our own libirc
+AC_ARG_ENABLE(libirc_build, [  --enable-libirc-build     Force compilation of libirc])
+
 # compile everything bz provides
 AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all dependencies])
 
@@ -194,6 +197,7 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_curl_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
+    enable_libirc_build=yes
 fi
 
 
@@ -259,6 +263,7 @@ dnl ***************************
 BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
 # FIXME: move other library checks here
+# TODO: Create a check for libIRC
 
 dnl detect a usable system zlib compression library
 if test "x$enable_zlib_build" != "xyes" ; then
@@ -278,6 +283,7 @@ if test "x$enable_regex_build" != "xyes" ; then
 	)]
     )
 fi
+
 
 # Check for the math lib
 AC_CHECK_LIB(m, sqrtf)
@@ -1057,6 +1063,9 @@ fi
 if test "x$BUILD_CURL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/curl)
 fi
+
+# FIXME: There should be a conditional here.
+AC_CONFIG_SUBDIRS(src/other/libirc)
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile

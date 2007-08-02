@@ -61,7 +61,7 @@ struct CmdLineOptions
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
-    advertiseGroups("EVERYONE"), ircConfFile("");
+    advertiseGroups("EVERYONE"), ircConfFile(""),
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
