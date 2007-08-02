@@ -60,14 +60,20 @@ EvdevJoystick::EvdevJoystick()
 {
   joystickfd = 0;
   currentJoystick = NULL;
+#ifdef EV_FF
   ff_rumble = new struct ff_effect;
+#else
+  ff_rumble = 0;
+#endif
   scanForJoysticks(joysticks);
 }
 
 EvdevJoystick::~EvdevJoystick()
 {
   initJoystick("");
+#ifdef EV_FF
   delete ff_rumble;
+#endif
 }
 
 void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
@@ -145,8 +151,10 @@ bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &i
     return false;
   if (ioctl(fd, EVIOCGBIT(EV_ABS, sizeof(info.absbit)), info.absbit) < 0)
     return false;
+#ifdef EV_FF
   if (ioctl(fd, EVIOCGBIT(EV_FF, sizeof(info.ffbit)), info.ffbit) < 0)
     return false;
+#endif
 
   /* Collect information about our absolute axes */
   int axis;
