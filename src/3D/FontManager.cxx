@@ -36,6 +36,7 @@
 // local implementation headers
 #include "FTGLTextureFont.h"
 
+#define FONT FTGLTextureFont
 
 /** initialize the singleton */
 template <>
@@ -164,7 +165,7 @@ void FontManager::clear(int font, int size)
   // poof
   std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
   if ( itr != fontFaces[font].sizes.end() ) {
-    delete (FTGLTextureFont*)(*itr).second;
+    delete (FONT*)(*itr).second;
     fontFaces[font].sizes.erase(size);
   }
 }
@@ -209,7 +210,7 @@ void FontManager::preloadSize ( int font, int size )
   }
 
   // make sure the font has been created
-  FTGLTextureFont *fnt = (FTGLTextureFont*)getGLFont(font, size);
+  FONT *fnt = (FONT*)getGLFont(font, size);
   if (!fnt) {
     return;
   }
@@ -343,7 +344,7 @@ void* FontManager::getGLFont ( int face, int size )
     return itr->second;
   }
 
-  FTGLTextureFont* newFont = new FTGLTextureFont(fontFaces[face].path.c_str());
+  FONT* newFont = new FONT(fontFaces[face].path.c_str());
   newFont->FaceSize(size);
   newFont->UseDisplayList(true);
 
@@ -370,7 +371,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   assert(textlen < 1024 && "drawString text is way bigger than ever expected");
   memcpy(buffer, text, textlen);
 
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID ,(int)size);
+  FONT* theFont = (FONT*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
@@ -630,7 +631,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
   if (!text || strlen(text) <= 0)
     return 0.0f;
 
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(faceID, (int)size);
+  FONT* theFont = (FONT*)getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
@@ -658,7 +659,7 @@ float FontManager::getStringWidth(const std::string &face, float size,
  */
 float FontManager::getStringHeight(int font, float size)
 {
-  FTGLTextureFont* theFont = (FTGLTextureFont*)getGLFont(font, (int)size);
+  FONT* theFont = (FONT*)getGLFont(font, (int)size);
 
   if (!theFont)
     return 0;	
