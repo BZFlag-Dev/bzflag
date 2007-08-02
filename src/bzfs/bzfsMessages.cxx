@@ -727,7 +727,8 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
       Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
     } else {
       if (!broadcast && !toGroup) {
-	directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
+        if (sourcePlayer != destPlayer)
+	  directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
 	directMessage(destPlayer, MsgMessage, (len + 2), bufStart);
       } else {
 	if (broadcast) {
