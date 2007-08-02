@@ -728,7 +728,12 @@ bool BzMaterial::addAlias(const std::string& alias)
     return false;
   }
   else {
-    aliases.push_back(alias);
+    for ( unsigned int i = 0; i < (unsigned int)aliases.size(); i++)
+    {
+      if ( aliases[i] == alias )
+	return true;
+    }
+    aliases.push_back(alias); // only add it if it's new
   }
   return true;
 }
