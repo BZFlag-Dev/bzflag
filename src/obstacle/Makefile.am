@@ -60,13 +60,13 @@ nogl_files = \
 	ObstacleMgr.cxx
 
 if CLIENT_INCLUDED
-  libObstacle_la_SOURCES = $(gl_files)
+libObstacle_la_SOURCES = $(gl_files)
 else
-  if BZROBOTS_INCLUDED
-    libObstacle_la_SOURCES = $(gl_files)
-  else
-    libObstacle_la_SOURCES = $(nogl_files)
-  endif
+if BZROBOTS_INCLUDED
+libObstacle_la_SOURCES = $(gl_files)
+else
+libObstacle_la_SOURCES = $(nogl_files)
+endif
 endif
 
 EXTRA_DIST =	\
