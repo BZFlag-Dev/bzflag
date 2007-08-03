@@ -172,6 +172,11 @@ fi
 
 # do we want the bzflag  client?
 AC_ARG_ENABLE(client, [  --disable-client        server-only build])
+if test "x$enable_client" = "xno" ; then
+    # sympathetic disabling since bzrobots is presently tied to all of the same dependencies as the client
+    AC_MSG_WARN([Disabling the client presently also disables bzrobots too])
+    enable_bzrobots=no
+fi
 
 # compile our own ares
 AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
