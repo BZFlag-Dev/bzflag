@@ -1520,8 +1520,8 @@ void finalizeParsing(int /*argc*/, char **argv,
   if (options.gameType == eRabbitChase)
     logDebugMessage(1,"  rabbit chase\n");
 
-  logDebugMessage(1,"options: %c\n", options.gameOptions);
-if (options.gameOptions & int(SuperFlagGameStyle))
+  logDebugMessage(1,"options: %X\n", options.gameOptions);
+  if (options.gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");
   if (options.gameOptions & int(JumpingGameStyle))
     logDebugMessage(1,"  jumping allowed\n");
@@ -1530,6 +1530,8 @@ if (options.gameOptions & int(SuperFlagGameStyle))
   if (options.gameOptions & int(ShakableGameStyle))
     logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
 	   0.1f * float(options.shakeTimeout), options.shakeWins);
+  if (options.gameOptions & int(HandicapGameStyle))
+    logDebugMessage(1,"  handicap mode on\n");
   if (options.gameOptions & int(AntidoteGameStyle))
     logDebugMessage(1,"  antidote flags\n");
 
