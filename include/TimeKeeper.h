@@ -28,6 +28,10 @@
 /* system interface headers */
 #include <string>
 
+#ifdef HAVE_SCHED_H
+#  include <sched.h>
+#endif
+
 
 /** TimeKeeper keeps time.  It's useful to determine how much time has
  * elapsed from some other point in time.  Use getCurrent() to return a
@@ -104,6 +108,10 @@ public:
   /** sleep for a given number of floating point seconds */
   static void			sleep(double secs); //const
 
+  /** try to lock the process to a given CPU to avoid timekeeper from
+      going back in time */
+  static void setProcessorAffinity();
+
 private:
   double		seconds;
 };
@@ -160,6 +168,17 @@ inline double		TimeKeeper::getSeconds(void) const
   return seconds;
 }
 
+inline void 
+TimeKeeper::setProcessorAffinity()
+{
+#ifdef HAVE_SCHED_SETAFFINITY
+  /* linuxy fix for time travel */
+  cpu_set_t mask;
+  CPU_ZERO(mask);
+  CPU_SET(1, &mask);
+  sched_setaffinity(0, sizeof(mask), &mask);
+#endif
+}    
 
 #endif // BZF_TIME_KEEPER_H
 

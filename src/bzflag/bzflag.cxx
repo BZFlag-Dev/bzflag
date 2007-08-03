@@ -1301,6 +1301,11 @@ int			main(int argc, char** argv)
     (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
   }
 
+  /* try to set the processor affinity to prevent TimeKeeper from
+   * reporting negative times
+   */
+  TimeKeeper::setProcessorAffinity();
+
   // start playing
   startPlaying(display, RENDERER);
 

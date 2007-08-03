@@ -339,15 +339,16 @@ AC_CHECK_HEADERS( \
 	X11/Xlib.h \
 	arpa/nameser_compat.h \
 	bstring.h \
+	dsound.h \
 	inttypes.h \
 	linux/input.h \
 	process.h \
+	sched.h \
 	stdint.h \
 	sys/param.h \
 	sys/types.h \
 	unistd.h \
 	values.h \
-	dsound.h \
 )
 # nameser_compat.h used by src/other/ares
 
@@ -809,6 +810,7 @@ AC_CHECK_FUNCS(\
 	atexit \
 	getrlimit \
 	glXGetCurrentContext \
+	sched_setaffinity \
 	select \
 	snooze \
 	usleep \

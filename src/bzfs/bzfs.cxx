@@ -4837,7 +4837,7 @@ static void cleanupServer ( void )
  */
 int main(int argc, char **argv)
 {
-  // setup allt he data for the server
+  // setup all the data for the server
   if (!initServer(argc,argv))
     return 1;
 
@@ -4853,6 +4853,11 @@ int main(int argc, char **argv)
   }
 
   GameKeeper::Player::passTCPMutex();
+
+  /* try to set the processor affinity to prevent TimeKeeper from
+   * reporting negative times
+   */
+  TimeKeeper::setProcessorAffinity();
 
   runMainLoop();
 

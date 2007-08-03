@@ -195,6 +195,11 @@ int main(int argc, char** argv) {
     }
   }
 
+  /* try to set the processor affinity to prevent TimeKeeper from
+   * reporting negative times
+   */
+  TimeKeeper::setProcessorAffinity();
+
   // create UI and run the main loop
   BZAdminUI* ui = uiIter->second(client);
   client.setUI(ui);

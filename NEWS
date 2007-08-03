@@ -6,6 +6,7 @@
 BZFlag 2.1.x
 ------------
 
+* fixed issues on some SMP Linux systems due to bad timekeeping - A. W. Wright
 * fixed bug where players sometimes received duplicate messages - Joshua Bodine
 * New font system - Sean Morrison, Jeff Meyers
 * Fixed framerate jitter-inducing bug on SMP systems - Sean Morrison
