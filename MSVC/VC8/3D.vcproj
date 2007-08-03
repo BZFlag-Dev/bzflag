@@ -172,7 +172,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc"
+				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -274,7 +274,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 			/>
-		</Configuration>	</Configurations>
+		</Configuration>
+	</Configurations>
 	<References>
 	</References>
 	<Files>
