@@ -8,34 +8,66 @@ AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libObstacle_la_LDFLAGS = -static
-libObstacle_la_SOURCES =		\
-	ArcObstacle.cxx			\
-	BaseBuilding.cxx		\
+
+gl_files = \
 	BaseSceneNodeGenerator.cxx	\
-	BoxBuilding.cxx			\
 	BoxSceneNodeGenerator.cxx	\
-	ConeObstacle.cxx		\
 	EmptySceneNodeGenerator.cxx	\
-	MeshDrawInfo.cxx		\
+	ObstacleSceneNodeGenerator.cxx	\
+	PyramidSceneNodeGenerator.cxx	\
+	TeleporterSceneNodeGenerator.cxx\
+	WallSceneNodeGenerator.cxx	\
+	MeshSceneNodeGenerator.cxx	\
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
+	BaseBuilding.cxx		\
+	BoxBuilding.cxx			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
-	MeshSceneNodeGenerator.cxx	\
 	MeshUtils.h			\
-	Obstacle.cxx			\
-	ObstacleList.cxx		\
-	ObstacleMgr.cxx			\
-	ObstacleModifier.cxx		\
-	ObstacleSceneNodeGenerator.cxx	\
-	PyramidBuilding.cxx		\
-	PyramidSceneNodeGenerator.cxx	\
-	SphereObstacle.cxx		\
-	Teleporter.cxx			\
-	TeleporterSceneNodeGenerator.cxx\
-	TetraBuilding.cxx		\
-	Triangulate.cxx			\
 	Triangulate.h			\
+	Triangulate.cxx			\
+	MeshDrawInfo.cxx		\
+	PyramidBuilding.cxx		\
+	Teleporter.cxx			\
+	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
-	WallSceneNodeGenerator.cxx
+	Obstacle.cxx			\
+	ObstacleModifier.cxx		\
+	ObstacleList.cxx		\
+	ObstacleMgr.cxx
+
+nogl_files = \
+	ArcObstacle.cxx			\
+	ConeObstacle.cxx		\
+	SphereObstacle.cxx		\
+	BaseBuilding.cxx		\
+	BoxBuilding.cxx			\
+	MeshFace.cxx			\
+	MeshObstacle.cxx		\
+	MeshUtils.h			\
+	Triangulate.h			\
+	Triangulate.cxx			\
+	MeshDrawInfo.cxx		\
+	PyramidBuilding.cxx		\
+	Teleporter.cxx			\
+	TetraBuilding.cxx		\
+	WallObstacle.cxx		\
+	Obstacle.cxx			\
+	ObstacleModifier.cxx		\
+	ObstacleList.cxx		\
+	ObstacleMgr.cxx
+
+if CLIENT_INCLUDED
+  libObstacle_la_SOURCES = $(gl_files)
+else
+  if BZROBOTS_INCLUDED
+    libObstacle_la_SOURCES = $(gl_files)
+  else
+    libObstacle_la_SOURCES = $(nogl_files)
+  endif
+endif
 
 EXTRA_DIST =	\
 	README
