@@ -686,7 +686,7 @@ bool BanCommand::operator() (const char	 *message,
       clOptions->acl.idBan(bzid, playerData->player.getCallSign(),
 			   banEvent.duration, banEvent.reason.c_str());
       clOptions->acl.save();
-      sendMessage(ServerPlayer, t, "Pattern added to the BZID banlist");
+      sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the BZID banlist");
     }
   }
 
@@ -700,7 +700,7 @@ bool BanCommand::operator() (const char	 *message,
 			 banEvent.reason.c_str())) {
     clOptions->acl.save();
 
-    sendMessage(ServerPlayer, t, "Pattern added to the IP banlist");
+    sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the IP banlist");
 
     for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *tmpVictim = GameKeeper::Player::getPlayerByIndex(i);
@@ -803,7 +803,7 @@ bool HostbanCommand::operator() (const char* message,
 
   GameKeeper::Player::setAllNeedHostbanChecked(true);
 
-  sendMessage(ServerPlayer, t, "Pattern added to the HOSTNAME banlist");
+  sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the HOSTNAME banlist");
 
   return true;
 }
@@ -920,7 +920,7 @@ bool IdBanCommand::operator() (const char* message,
 		       durationInt, reason.c_str());
   clOptions->acl.save();
 
-  sendMessage(ServerPlayer, t, "Pattern added to the BZID banlist");
+  sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the BZID banlist");
 
   return true;
 }
@@ -937,7 +937,7 @@ bool UnbanCommand::operator() (const char	 *message,
   }
 
   if (clOptions->acl.unban(message + 7)) {
-    sendMessage(ServerPlayer, t, "Removed IP pattern from the ban list");
+    sendMessage(ServerPlayer, AdminPlayers, "Removed IP pattern from the ban list");
     clOptions->acl.save();
   } else {
     sendMessage(ServerPlayer, t, "No pattern removed");
@@ -957,7 +957,7 @@ bool HostUnbanCommand::operator() (const char	 *message,
   }
 
   if (clOptions->acl.hostUnban(message + 11)) {
-    sendMessage(ServerPlayer, t, "Removed host pattern from the ban list");
+    sendMessage(ServerPlayer, AdminPlayers, "Removed host pattern from the ban list");
     clOptions->acl.save();
   } else {
     sendMessage(ServerPlayer, t, "No pattern removed");
@@ -977,7 +977,7 @@ bool IdUnbanCommand::operator() (const char *message,
   }
 
   if (clOptions->acl.idUnban(message + 9)) {
-    sendMessage(ServerPlayer, t, "Removed id from the ban list");
+    sendMessage(ServerPlayer, AdminPlayers, "Removed id from the ban list");
     clOptions->acl.save();
   } else {
     sendMessage(ServerPlayer, t, "No pattern removed");
