@@ -345,7 +345,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
   CPU_ZERO(&mask);
   CPU_SET(processor, &mask);
   sched_setaffinity(0, sizeof(mask), &mask);
-#else if defined(WIN32)
+#elif defined(WIN32)
   /* windowsy fix for time travel */
   HANDLE hPrc = GetCurrentProcess();
   DWORD dwMask = 1 << processor;
