@@ -67,6 +67,7 @@ struct CmdLineOptions
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), maxjitterwarn(10000), maxpacketlosswarn(10000),
+    processorAffinity(0),
     lagwarnthresh(-1.0f), jitterwarnthresh(-1.0f), packetlosswarnthresh(-1.0f),
     idlekickthresh(-1.0f), timeLimit(0.0f), timeElapsed(0.0f), addedTime(0.0f),
     useGivenPort(false),
@@ -134,6 +135,7 @@ struct CmdLineOptions
   int			maxlagwarn;
   int		   maxjitterwarn;
   int		   maxpacketlosswarn;
+  int		   processorAffinity;
 
 
   float			lagwarnthresh;

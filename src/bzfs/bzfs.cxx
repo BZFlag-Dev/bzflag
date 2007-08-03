@@ -4854,11 +4854,6 @@ int main(int argc, char **argv)
 
   GameKeeper::Player::passTCPMutex();
 
-  /* try to set the processor affinity to prevent TimeKeeper from
-   * reporting negative times
-   */
-  TimeKeeper::setProcessorAffinity();
-
   runMainLoop();
 
   cleanupServer();

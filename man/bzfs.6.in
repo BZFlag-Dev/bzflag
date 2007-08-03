@@ -67,6 +67,7 @@ bzfs \- BZFlag game server
 [\fB\-pidfile \fIfilename\fR]
 [\fB\-poll \fIvariable=value\fR]
 [\fB\-printscore\fR]
+[\fB\-processor \fIprocessor-id\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
@@ -363,6 +364,13 @@ maximum amount of time player has to vote, in seconds (default is 60)
 .TP 
 .B \-printscore
 Write score to stdout whenever it changes
+.TP 
+.B \-processor \fIprocessor-id\fR
+Set bzfs' processor affinity to a particular processor.  Useful on SMP
+machines that may have clock skew issues, or if you don't trust your
+system's scheduler.  0 is the first processor, 1 is the second, and
+so on.  Defaults to 0 (first processor).  Negative values will clear
+the affinity mask if you'd rather let your system scheduler manage it.
 .TP 
 \fB\-public \fIdescription\fR
 Advertise this server on the internet with the given \fIdescription\fR.

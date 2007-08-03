@@ -101,8 +101,9 @@ const char *usageString =
 "[-p <port>] "
 "[-passwd <password>] "
 "[-pidfile <filename>] "
-"[-poll <variable>=<value>]"
+"[-poll <variable>=<value>] "
 "[-printscore] "
+"[-processor <processor-id>] "
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -204,6 +205,7 @@ const char *extraUsageString =
 "\t-pidfile: write the process id into <filename> on startup\n"
 "\t-poll: configure several aspects of the in-game polling system\n"
 "\t-printscore: write score to stdout whenever it changes\n"
+"\t-processor: set cpu affinity to a particular processor\n"
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
@@ -835,7 +837,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-noTeamKills") == 0) {
 		// allow jumping
 		options.gameOptions |= int(NoTeamKills);
-	}else if (strcmp(argv[i], "-p") == 0) {
+    }else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
@@ -895,6 +897,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
       options.printScore = true;
+    } else if (strcmp(argv[i], "-processor") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.processorAffinity = atoi(argv[i]);
     } else if (strcmp(argv[i], "-public") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.publicizeServer = true;
@@ -1110,17 +1115,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.useTeleporters = true;
       if (options.worldFile != "")
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
-	} else if (strcmp(argv[i], "-offa") == 0)
-	{
-		// capture the flag style
-		if (options.gameType == eRabbitChase || options.gameType == eClassicCTF)
-		{
-			std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
-			std::cerr << "Open Free-for-all assumed" << std::endl;
-		}
-		options.gameType = eOpenFFA;
-	}
-	else if (strcmp(argv[i], "-tftimeout") == 0) {
+    } else if (strcmp(argv[i], "-offa") == 0) {
+      // teamless ffa style
+      if (options.gameType == eRabbitChase || options.gameType == eClassicCTF) {
+	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
+	std::cerr << "Open Free-for-all assumed" << std::endl;
+      }
+      options.gameType = eOpenFFA;
+    } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       checkArgc(1, i, argc, argv[i]);
       options.teamFlagTimeout = atoi(argv[i]);
@@ -1510,6 +1512,14 @@ void finalizeParsing(int /*argc*/, char **argv,
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
+  }
+
+  // processor affinity
+  if (options.processorAffinity >= 0) {
+    TimeKeeper::setProcessorAffinity(options.processorAffinity);
+    logDebugMessage(2, "Setting process affinity to processor %d\n", options.processorAffinity);
+  } else {
+    logDebugMessage(2, "Processor affinity is floating (managed by OS)\n");
   }
 
 
