@@ -1033,7 +1033,7 @@ AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 
 
 LIBFREETYPE=""
-if test "x$have_gl" ; then
+if test "x$enable_client" != "xno"; then
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
 if test "x$enable_freetype_build" != "xyes" ; then
@@ -1061,7 +1061,7 @@ fi # have_gl
 
 
 LIBFTGL=""
-if test "x$have_gl" ; then
+if test "x$enable_client" != "xno" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
 if test "x$enable_ftgl_build" != "xyes" ; then
