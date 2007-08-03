@@ -45,6 +45,12 @@ void setDepthBuffer(const std::string& name, void*)
   }
 }
 
+void setProcessorAffinity(const std::string& name, void*)
+{
+  if (BZDB.evalInt(name) >= 0)
+    TimeKeeper::setProcessorAffinity(BZDB.evalInt(name));
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

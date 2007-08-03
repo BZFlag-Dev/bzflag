@@ -26,6 +26,9 @@
 #  include <sys/time.h>
 #  include <sys/types.h>
 static struct timeval	lastTime = { 0, 0 };
+#  ifdef HAVE_SCHED_H
+#    include <sched.h>
+#  endif
 #else /* !defined(_WIN32) */
 #  include <mmsystem.h>
 static unsigned long int	lastTime = 0;
@@ -332,6 +335,28 @@ void TimeKeeper::sleep(double seconds)
     continue;
   }
   return;
+}
+
+void TimeKeeper::setProcessorAffinity(int processor)
+{
+#ifdef HAVE_SCHED_SETAFFINITY
+  /* linuxy fix for time travel */
+  cpu_set_t mask;
+  CPU_ZERO(&mask);
+  CPU_SET(processor, &mask);
+  sched_setaffinity(0, sizeof(mask), &mask);
+#else if defined(WIN32)
+  /* windowsy fix for time travel */
+  HANDLE hPrc = GetCurrentProcess();
+  DWORD dwMask = 1 << processor;
+  DWORD dwProcs = 0;
+  GetProcessAffinityMask(NULL, NULL, &dwProcs);
+  if (dwMask < dwProcs) {
+    logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).");
+    return;
+  }
+  SetProcessAffinityMask(hPrc, dwMask);
+#endif
 }
 
 

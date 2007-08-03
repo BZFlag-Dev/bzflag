@@ -99,6 +99,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "autohunt",			"",			true,	StateDatabase::ReadWrite,	NULL },
   { "autoFlagDisplay",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "processorAffinity",	"0",			true,	StateDatabase::ReadWrite,	setProcessorAffinity },
 
   // input
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
