@@ -174,7 +174,7 @@ TimeKeeper::setProcessorAffinity()
 #ifdef HAVE_SCHED_SETAFFINITY
   /* linuxy fix for time travel */
   cpu_set_t mask;
-  CPU_ZERO(mask);
+  CPU_ZERO(&mask);
   CPU_SET(1, &mask);
   sched_setaffinity(0, sizeof(mask), &mask);
 #endif
