@@ -523,6 +523,11 @@ int			main(int argc, char** argv)
   // initialize global objects and classes
   bzfsrand((unsigned int)time(0));
 
+  /* try to set the processor affinity to prevent TimeKeeper from
+   * reporting negative times
+   */
+  TimeKeeper::setProcessorAffinity();
+
   setupBZDB();
 
   Flags::init();
@@ -650,11 +655,6 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("serverCacheAge")) {
     (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
   }
-
-  /* try to set the processor affinity to prevent TimeKeeper from
-   * reporting negative times
-   */
-  TimeKeeper::setProcessorAffinity();
 
   // start playing
   botStartPlaying();
