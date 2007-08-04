@@ -219,7 +219,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Distrobution|Win32"
+			Name="Release_Distribution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -315,7 +315,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Distrobution|Win32"
+			Name="Debug_Distribution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -1221,7 +1221,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1231,7 +1231,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1337,7 +1337,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -1346,7 +1346,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -1438,7 +1438,7 @@
 				RelativePath="..\..\src\bzflag\ExportInformation.cxx"
 				>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1487,7 +1487,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1497,7 +1497,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1618,7 +1618,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1628,7 +1628,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1745,7 +1745,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1755,7 +1755,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1876,7 +1876,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_Distrobution|Win32"
+					Name="Release_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1886,7 +1886,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_Distrobution|Win32"
+					Name="Debug_Distribution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2018,7 +2018,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2028,7 +2028,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2137,7 +2137,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2147,7 +2147,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2260,7 +2260,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2270,7 +2270,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2383,7 +2383,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2393,7 +2393,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2502,7 +2502,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2512,7 +2512,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2621,7 +2621,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2631,7 +2631,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2740,7 +2740,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2750,7 +2750,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2871,7 +2871,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2881,7 +2881,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2990,7 +2990,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3000,7 +3000,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3109,7 +3109,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3119,7 +3119,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3228,7 +3228,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3238,7 +3238,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3347,7 +3347,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3357,7 +3357,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3466,7 +3466,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3476,7 +3476,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3585,7 +3585,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3595,7 +3595,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3704,7 +3704,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3714,7 +3714,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3839,7 +3839,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3849,7 +3849,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3958,7 +3958,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3968,7 +3968,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4077,7 +4077,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4087,7 +4087,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4200,7 +4200,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4210,7 +4210,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4319,7 +4319,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4329,7 +4329,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4450,7 +4450,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4460,7 +4460,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4573,7 +4573,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4583,7 +4583,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4707,7 +4707,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_Distrobution|Win32"
+							Name="Release_Distribution|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4717,7 +4717,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug_Distrobution|Win32"
+							Name="Debug_Distribution|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4830,7 +4830,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_Distrobution|Win32"
+							Name="Release_Distribution|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4840,7 +4840,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug_Distrobution|Win32"
+							Name="Debug_Distribution|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4998,7 +4998,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -5008,7 +5008,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -5177,7 +5177,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_Distrobution|Win32"
+						Name="Release_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -5187,7 +5187,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug_Distrobution|Win32"
+						Name="Debug_Distribution|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"

@@ -146,7 +146,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Distrobution|Win32"
+			Name="Release_Distribution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
@@ -207,7 +207,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_Distrobution|Win32"
+			Name="Debug_Distribution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
