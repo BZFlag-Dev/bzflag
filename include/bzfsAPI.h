@@ -238,8 +238,17 @@ public:
 
   const char* c_str(void) const;
 
+#ifdef _WIN32
+  #ifdef INSIDE_BZ
+    void format(const char* fmt, ...)
+      __attribute__ ((__format__ (__printf__, 2, 3)));
+  #else
+    void format(const char* fmt, ...);
+  #endif // INSIDE_BZ
+#else 
   void format(const char* fmt, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+    __attribute__ ((__format__ (__printf__, 2, 3)
+#endif // _WIN32
 
   void replaceAll ( const char* target, const char* with );
 
