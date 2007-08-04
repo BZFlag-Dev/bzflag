@@ -843,6 +843,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_getsock.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_init.c"
 				>
 			</File>
