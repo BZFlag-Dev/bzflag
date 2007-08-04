@@ -525,8 +525,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   const GLfloat gameSize = 0.5f * worldSize;
   GLfloat groundPlane[4][3];
   GLfloat gameArea[4][3];
-  int i =0;
-  for (i = 0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
   {
     groundPlane[i][0] = groundSize * squareShape[i][0];
     groundPlane[i][1] = groundSize * squareShape[i][1];
@@ -564,7 +563,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 
   GLfloat cloudsOuter[4][3], cloudsInner[4][3];
   const GLfloat uvScale = 0.25f;
-  for (i = 0; i < 4; i++) 
+  for (int i = 0; i < 4; i++) 
   {
     cloudsOuter[i][0] = groundPlane[i][0];
     cloudsOuter[i][1] = groundPlane[i][1];
@@ -645,7 +644,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   }
   else if ( displayList == mediumGroundList )
   {
-    for (i = 0; i < GROUND_DIVS; i++)
+    for (int i = 0; i < GROUND_DIVS; i++)
     {
       GLfloat yoff, ytexoff;
 

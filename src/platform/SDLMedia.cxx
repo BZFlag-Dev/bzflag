@@ -109,7 +109,7 @@ bool			SDLMedia::openAudio()
        desired.format, desired.channels, obtained.freq,
        obtained.format, obtained.channels, obtained.freq) == -1) {
     /* Check that the convert was built */
-    printFatalError("Could not build converter for audio ", SDL_GetError());
+    printFatalError("Could not build converter for audio: %s ", SDL_GetError());
     closeAudio();
     return false;
   }

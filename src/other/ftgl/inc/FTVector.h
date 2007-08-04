@@ -128,22 +128,22 @@ class  FTVector
             }
             
             reserve(n);
-            iterator begin, end;
+            iterator _begin, _end;
             
             if( n >= Size)
             {
-                begin = this->end();
-                end = this->begin() + n;
+                _begin = this->end();
+                _end = this->begin() + n;
             }
             else
             {
-                begin = this->begin() + n;
-                end = this->end();
+                _begin = this->begin() + n;
+                _end = this->end();
             }
         
-            while( begin != end)
+            while( _begin != _end)
             {
-                *begin++ = x;
+                *_begin++ = x;
             }
         
             Size = n;
@@ -164,13 +164,13 @@ class  FTVector
             
             value_type *new_items = new value_type[new_capacity];
             
-            iterator begin = this->begin();
-            iterator end = this->end();
+            iterator _begin = this->begin();
+            iterator _end = this->end();
             value_type *ptr = new_items;
             
-            while( begin != end)
+            while( _begin != _end)
             {
-                *ptr++ = *begin++;
+                *ptr++ = *_begin++;
             }
             
             if( Capacity)

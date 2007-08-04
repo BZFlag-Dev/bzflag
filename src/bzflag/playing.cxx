@@ -335,8 +335,9 @@ void warnAboutRadarFlags()
 				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
-		 TextUtils::format("Flags on radar hidden, to show them "
-				   "bind a key to Toggle Flags on Radar",
+		 TextUtils::format("%sFlags on radar hidden, to show them "
+				   "bind a key to Toggle Flags on Radar%s",
+				   ColorStrings[YellowColor],
 				   ColorStrings[YellowColor]));
     }
   }
