@@ -200,7 +200,7 @@ TimeKeeper::shortTimeStamp(void) {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
 
-  std::string result( TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min, 10) );
+  std::string result( TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min) );
   return result;
 }
 
