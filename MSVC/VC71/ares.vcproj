@@ -223,16 +223,19 @@
 				RelativePath="..\..\src\other\ares\ares_gethostbyname.c">
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_getsock.c">
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_init.c">
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_mkquery.c">
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_aaaa_reply.c">
+				RelativePath="..\..\src\other\ares\ares_parse_a_reply.c">
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_a_reply.c">
+				RelativePath="..\..\src\other\ares\ares_parse_aaaa_reply.c">
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_parse_ptr_reply.c">
