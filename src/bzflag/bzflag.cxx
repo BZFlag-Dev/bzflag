@@ -554,7 +554,7 @@ void			dumpResources()
 
   BZDB.set("email", startupInfo.email); // note email of zero length does not stick
 
-  BZDB.set("serverCacheAge", TextUtils::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
+  BZDB.set("serverCacheAge", TextUtils::format("%1d", (long)((ServerListCache::get())->getMaxCacheAge())));
 
   (ServerListCache::get())->saveCache();
 }
