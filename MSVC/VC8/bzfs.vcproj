@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
 				OutputFile=".\..\..\src\bzfs\bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
 				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

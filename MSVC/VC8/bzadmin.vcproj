@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib"
 				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="pdcurses.lib ws2_32.lib winmm.lib"
+				AdditionalDependencies="pdcurses.lib ws2_32.lib winmm.lib user32.lib shell32.lib"
 				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
