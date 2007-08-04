@@ -64,7 +64,7 @@ static void		gettruePosition(double julianDay,
 
 void			getCelestialTransform(double julianDay,
 					float latitude, float longitude,
-					float xform[4][4])
+					GLfloat (&xform)[4][4])
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
