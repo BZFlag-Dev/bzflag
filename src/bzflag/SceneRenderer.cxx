@@ -605,8 +605,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
 
   getSunPosition(julianDay, latitude, longitude, sunDir);
   getMoonPosition(julianDay, latitude, longitude, moonDir);
-  ::getCelestialTransform(julianDay, latitude, longitude,
-				(float(*)[4])celestialTransform);
+  ::getCelestialTransform(julianDay, latitude, longitude, celestialTransform);
 
   // set sun position
   if (sunDir[2] >= -0.009f) {

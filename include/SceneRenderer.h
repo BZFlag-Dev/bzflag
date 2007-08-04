@@ -203,7 +203,7 @@ private:
   GLfloat		sunDirection[3];	// or moon
   GLfloat		sunColor[4];
   GLfloat		sunScaledColor[4];
-  GLfloat		celestialTransform[16];
+  GLfloat		celestialTransform[4][4];
   GLfloat		sunBrightness;
   GLfloat		ambientColor[4];
   SceneDatabase*	scene;
@@ -316,7 +316,7 @@ inline const GLfloat* SceneRenderer::getAmbientColor() const
 
 inline const GLfloat*		SceneRenderer::getCelestialTransform() const
 {
-  return celestialTransform;
+  return &celestialTransform[0][0];
 }
 
 inline SceneDatabase*		SceneRenderer::getSceneDatabase() const
