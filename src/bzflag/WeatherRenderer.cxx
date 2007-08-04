@@ -882,11 +882,13 @@ void WeatherRenderer::addDrop(rain& drop)
 
 int WeatherRenderer::keyFromPos(float x, float y)
 {
-  short temp[2];
-  temp[0] = (short)(x * keyFactor);
-  temp[1] = (short)(y * keyFactor);
-
-  return *((int*) temp);
+  union {
+    short pos[2];
+    int   key;
+  } temp;
+  temp.pos[0] = (short)(x * keyFactor);
+  temp.pos[1] = (short)(y * keyFactor);
+  return temp.key;
 }
 
 
