@@ -561,7 +561,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
-				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew32.lib"
 				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
