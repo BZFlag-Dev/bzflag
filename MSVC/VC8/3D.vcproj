@@ -146,7 +146,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_pdcurses|Win32"
+			Name="Debug_Distrobution|Win32"
 			OutputDirectory="../../src/3D/debug/"
 			IntermediateDirectory="../../src/3D/debug/"
 			ConfigurationType="4"
@@ -214,7 +214,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_pdcurses|Win32"
+			Name="Release_Distrobution|Win32"
 			OutputDirectory="../../src/3D/"
 			IntermediateDirectory="../../src/3D/"
 			ConfigurationType="4"

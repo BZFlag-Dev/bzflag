@@ -142,7 +142,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\win32;..\..\include;..\..\src\bzflag;.\;..\..\src\other\curl\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE; _HAVE_CURSES_H;BUILDING_BZADMIN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -203,343 +203,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="KRB5 Debug|Win32"
-			OutputDirectory=".\..\..\src\bzadmin\krb5_debug"
-			IntermediateDirectory=".\..\..\src\bzadmin\krb5_debug"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\src\bzadmin\Debug/bzadmin.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\..\..\src\bzadmin\Debug/bzadmin.pch"
-				AssemblerListingLocation=".\..\..\src\bzadmin\Debug/"
-				ObjectFile=".\..\..\src\bzadmin\Debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzadmin\Debug/"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzadmin\krb5_debug/bzadmin.exe"
-				LinkIncremental="0"
-				SuppressStartupBanner="true"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzadmin\Debug/bzadmin.pdb"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="KRB5 Release|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="release_modern|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\src\bzadmin/bzadmin.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				StringPooling="true"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="1"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\..\..\src\bzadmin/bzadmin.pch"
-				AssemblerListingLocation=".\..\..\src\bzadmin/"
-				ObjectFile=".\..\..\src\bzadmin/"
-				ProgramDataBaseFileName=".\..\..\src\bzadmin/"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\..\..\src\bzadmin/bzadmin.pdb"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="release_modern_p3|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\src\bzadmin/bzadmin.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				StringPooling="true"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="1"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\..\..\src\bzadmin/bzadmin.pch"
-				AssemblerListingLocation=".\..\..\src\bzadmin/"
-				ObjectFile=".\..\..\src\bzadmin/"
-				ProgramDataBaseFileName=".\..\..\src\bzadmin/"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\..\..\src\bzadmin/bzadmin.pdb"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release_pdcurses|Win32"
+			Name="Release_Distrobution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -630,7 +294,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug_pdcurses|Win32"
+			Name="Debug_Distrobution|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -1470,18 +1134,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1491,27 +1144,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1620,18 +1253,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1641,27 +1263,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1769,38 +1371,6 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug|x64"
 					ExcludedFromBuild="true"
 					>
@@ -1862,38 +1432,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1974,18 +1512,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1995,27 +1522,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2124,18 +1631,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2145,27 +1641,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2274,18 +1750,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2295,27 +1760,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2424,18 +1869,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2445,27 +1879,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2574,18 +1988,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2595,27 +1998,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2724,18 +2107,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
+					Name="Release_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2745,27 +2117,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_pdcurses|Win32"
+					Name="Debug_Distrobution|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
