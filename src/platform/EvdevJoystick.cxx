@@ -34,9 +34,10 @@
 #include "ErrorHandler.h"
 #include "bzfio.h"
 
-#define test_bit(nr, addr) \
-	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
-
+static inline int test_bit (int nr, const volatile void *addr)
+{
+  return 1 & (((const volatile __u32 *) addr)[nr >> 5] >> (nr & 31));
+}
 
 bool	     EvdevJoystick::isEvdevAvailable()
 {
