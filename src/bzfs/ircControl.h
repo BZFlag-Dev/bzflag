@@ -82,6 +82,12 @@ class ircControl : public IRCBasicEventCallback {
 
 };
 
+#else
+
+class ircControl;
+
+#endif
+
 
 /* Local Variables: ***
  * mode: C++ ***

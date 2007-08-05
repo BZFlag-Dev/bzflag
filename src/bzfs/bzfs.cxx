@@ -52,6 +52,7 @@
 #include "bzfsClientMessages.h"
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
+#include "ircControl.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -169,6 +170,11 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
 unsigned int maxNonPlayerDataChunk = 2048;
+
+// IRC connectivity
+// TODO (?) Perhaps this and any IRC stuff should be ifdef'd with a configure option. 
+// This would eliminate any dependency on libIRC where it's not wanted (say, for private/LAN servers).
+ircControl irc;
 
 // Logging to the API
 class APILoggingCallback : public LoggingCallback
@@ -692,6 +698,11 @@ static bool serverStart()
 
   listServerLinksCount = 0;
   publicize();
+
+  //connect to IRC if it's configured
+  if (clOptions->ircConfFile != "") {
+    irc.loadConfigFile(clOptions->ircConfFile);
+    irc.init();
   return true;
 }
 
@@ -702,6 +713,9 @@ static void serverStop()
   // first ignore further attempts to kill me
   bzSignal(SIGINT, SIG_IGN);
   bzSignal(SIGTERM, SIG_IGN);
+
+  //leave IRC
+  irc.terminate();
 
   // reject attempts to talk to server
   shutdown(wksSocket, 2);

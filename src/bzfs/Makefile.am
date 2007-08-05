@@ -100,6 +100,8 @@ bzfs_SOURCES = \
 	FlagInfo.h \
 	GameKeeper.cxx \
 	GameKeeper.h \
+	ircControl.cxx \
+	ircControl.h \
 	ListServerConnection.cxx \
 	ListServerConnection.h \
 	MasterBanList.cxx \
@@ -154,6 +156,7 @@ LDADD = \
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
+	../other/libirc/src/libIRC.la	\
 	../date/libDate.la
 
 MAINTAINERCLEANFILES = \

@@ -16,6 +16,8 @@
 
 #include <fstream>
 
+#include "libIRC.h"
+
 
 // bzflag common header
 #include "TextUtils.h"
@@ -226,7 +228,7 @@ bool ircControl::init(){
   //TODO: Implement this... possibly better handled by an event, like the MOTD/welcome?
 
   //join channels
-  for (std::map::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+  for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
     if (client.join(itr->name)) {
       itr->joined = true;
     } else {
@@ -239,7 +241,10 @@ bool ircControl::init(){
 
 bool ircControl::terminate(bool forShutdown){
 
-//issue a /quit and destroy everything
+  if (!connected)
+    return false; //can't disconnect if we're not connected...
+
+  //issue a /quit and destroy everything
   if (forShutdown)
     return client.disconnect("BZFS: Shutting down");
   else
