@@ -247,7 +247,7 @@ public:
   #endif // INSIDE_BZ
 #else 
   void format(const char* fmt, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
 #endif // _WIN32
 
   void replaceAll ( const char* target, const char* with );
