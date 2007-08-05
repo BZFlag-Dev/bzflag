@@ -27,7 +27,7 @@
 #endif
 
 // common headers
-#include "md5.h"
+#include "bz_md5.h"
 #include "bzfio.h"
 #include "TextUtils.h"
 #include "FileManager.h"

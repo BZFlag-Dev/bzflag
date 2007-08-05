@@ -44,7 +44,7 @@ libCommon_la_SOURCES  =			\
 	bzsignal.cxx			\
 	cURLManager.cxx			\
 	global.cxx			\
-	md5.cxx				\
+	bz_md5.cxx				\
 	messages.cxx
 
 MAINTAINERCLEANFILES = \

@@ -57,7 +57,7 @@ typedef __int64 s64;
 #include "StateDatabase.h"
 #include "DirectoryNames.h"
 #include "NetHandler.h"
-#include "md5.h"
+#include "bz_md5.h"
 #include "Score.h"
 #include "version.h"
 

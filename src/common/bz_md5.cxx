@@ -26,7 +26,7 @@
 /* for stupid systems */
 #include <sys/types.h>
 
-#include "md5.h"
+#include "bz_md5.h"
 
 #ifdef WORDS_BIGENDIAN
 void byteSwap(uint32_t *swbuf, unsigned words)

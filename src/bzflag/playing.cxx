@@ -46,7 +46,7 @@
 #include "FlagSceneNode.h"
 #include "GameTime.h"
 #include "KeyManager.h"
-#include "md5.h"
+#include "bz_md5.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"

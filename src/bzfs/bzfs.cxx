@@ -26,7 +26,7 @@
 #include "NetHandler.h"
 #include "VotingArbiter.h"
 #include "version.h"
-#include "md5.h"
+#include "bz_md5.h"
 #include "BZDBCache.h"
 #include "ShotUpdate.h"
 #include "PhysicsDriver.h"

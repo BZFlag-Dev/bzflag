@@ -640,7 +640,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\md5.cxx"
+				RelativePath="..\..\src\common\bz_md5.cxx"
 				>
 			</File>
 			<File
@@ -805,7 +805,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\md5.h"
+				RelativePath="..\..\include\bz_md5.h"
 				>
 			</File>
 			<File
