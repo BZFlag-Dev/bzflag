@@ -140,7 +140,11 @@ public:
     buf = nboUnpackUInt(buf, ptr);
 
     sendWorldChunk(handler, ptr);
+    while ( ptr != 0 )
+      sendWorldChunk(handler, ptr);
 
+    // fire off one, let the others cycle
+    sendBufferedNetDataForPeer(netConnectedPeers[handler->getFD()]);
     return true;
   }
 };

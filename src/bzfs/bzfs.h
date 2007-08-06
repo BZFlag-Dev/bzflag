@@ -168,22 +168,27 @@ class NonPlayerDataChunk
 
   NonPlayerDataChunk( const char* d, unsigned int s )
   {
-    data = (char*)malloc(s);
+    if (s == 0)
+      data = NULL;
+   data = (char*)malloc(s);
     memcpy(data,d,s);
     size = s;
   }
 
   NonPlayerDataChunk( const NonPlayerDataChunk &t )
   {
-    data = (char*)malloc(t.size);
+    if (t.size == 0)
+      data = NULL;
+    else
+      data = (char*)malloc(t.size);
     memcpy(data,t.data,t.size);
     size = t.size;
   }
 
   ~NonPlayerDataChunk()
   {
-    if (data)
-	    free (data);
+    if (data && size>0)
+      free (data);
 
     data = NULL;
     size = 0;

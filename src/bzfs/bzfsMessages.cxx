@@ -661,14 +661,16 @@ int sendTeamUpdateDirect(NetHandler *handler)
     (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendWorldChunk(NetHandler *handler, uint32_t ptr)
+void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
 {
+  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
+
   worldWasSentToAPlayer = true;
   // send another small chunk of the world database
   assert((world != NULL) && (worldDatabase != NULL));
 
   void *buf, *bufStart = getDirectMessageBuffer();
-  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
+  buf = bufStart;
   uint32_t left = worldDatabaseSize - ptr;
 
   if (ptr >= worldDatabaseSize)
@@ -681,9 +683,16 @@ void sendWorldChunk(NetHandler *handler, uint32_t ptr)
     size = worldDatabaseSize - ptr;
     left = 0;
   }
-  buf = nboPackUInt(bufStart, uint32_t(left));
+  unsigned int len = size+4;
+  buf = nboPackUShort(buf,len);
+  buf = nboPackUShort(buf,MsgGetWorld);
+  buf = nboPackUInt(buf, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+  //directMessage(handler,MsgGetWorld,len,bufStart);
+ // handler->bufferedSend(bufStart,len);
+  //bz_sendNonPlayerData(handler->getFD(),bufStart,len+4);
+  netConnectedPeers[handler->getFD()].pendingSendChunks.push_back(NonPlayerDataChunk((char*)bufStart, len+4));
+  ptr = left;
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,

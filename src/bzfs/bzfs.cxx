@@ -734,6 +734,7 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
 
 bool defineWorld ( void )
 {
+  logDebugMessage(1,"loading world");
   // clean up old database
   if (world) {
     delete world;
@@ -767,6 +768,7 @@ bool defineWorld ( void )
 
   // make world and add buildings
   if (clOptions->worldFile.size()) {
+    logDebugMessage(1,"reading worldfile %s\n",clOptions->worldFile.c_str());
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
@@ -784,12 +786,14 @@ bool defineWorld ( void )
   } else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
+      logDebugMessage(1,"building random map\n");
       delete world;
       if (clOptions->gameType == eClassicCTF)
 	world = defineTeamWorld();
       else
 	world = defineRandomWorld();
     } else {
+      logDebugMessage(1,"loading plug-in map\n");
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0)
 	worldSize = pluginWorldSize;
@@ -818,6 +822,7 @@ bool defineWorld ( void )
 
   maxWorldHeight = world->getMaxWorldHeight();
 
+  logDebugMessage(1,"packing world database\n");
   // package up world
   world->packDatabase();
 
@@ -4355,7 +4360,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   if ( !peer.pendingSendChunks.size() )
     return;
 
-  peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+  peer.handler->send(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
 
   peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
 }
@@ -4591,6 +4596,8 @@ static void runMainLoop ( void )
 	    else
 	      playerData->handleTcpPacket(&read_set);
 	  }
+	  // check for any async data to send out
+	  sendBufferedNetDataForPeer(peerItr->second);
 	} else {
 	  // it's not a player yet ( but may be )
 	  // check for any data to send out

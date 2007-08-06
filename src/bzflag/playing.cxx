@@ -1813,12 +1813,12 @@ static void handleGetWorld(void* msg, uint16_t len)
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
   if (!last) {
-    char message[MaxPacketLen];
+  char message[MaxPacketLen];
     // ask for next chunk
-    worldPtr += len - 4;
-    nboPackUInt(message, worldPtr);
-    serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-    return;
+   // worldPtr += len - 4;
+  //  nboPackUInt(message, worldPtr);
+  //  serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+    return; 
   }
   if (cacheOut)
     delete cacheOut;

@@ -164,7 +164,7 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
   }
 
   // get maximum valid size for texture (boost to 2^m x 2^n)
-  GLint maxTextureSize;
+  GLint maxTextureSize = 1024;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
   if (BZDB.isSet("forceMaxTextureSize")) // gk knows it's max size, but if they REALY want to force it, do it

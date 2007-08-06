@@ -958,6 +958,7 @@ BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned i
   if(!data || size==0 || netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
     return false;
 
+  bool sendOneNow = netConnectedPeers[connectionID].pendingSendChunks.size() == 0;
   unsigned int pos=0;
   while(pos < size)
   {
@@ -975,8 +976,9 @@ BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned i
     pos+=thisSize;
   }
 
-  // send off at least one now
-  sendBufferedNetDataForPeer(netConnectedPeers[connectionID]);
+  // send off at least one now if it was empty
+  if (sendOneNow)
+    sendBufferedNetDataForPeer(netConnectedPeers[connectionID]);
 
   return true;
 }

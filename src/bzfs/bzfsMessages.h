@@ -28,7 +28,7 @@ bool sendAcceptPlayerMessage ( int playerID );
 void sendHandicapInfoUpdate (int playerID );
 void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
-void sendWorldChunk(NetHandler *handler, uint32_t ptr);
+void sendWorldChunk(NetHandler *handler, uint32_t &ptr);
 void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool recordOnly = false );
 void sendMessageAlive ( int playerID, float pos[3], float rot );

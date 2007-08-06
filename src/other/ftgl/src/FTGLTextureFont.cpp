@@ -107,6 +107,7 @@ void FTGLTextureFont::CalculateTextureSize()
 {
     if( !maximumGLTextureSize)
     {
+		maximumGLTextureSize = 1024;
         glGetIntegerv( GL_MAX_TEXTURE_SIZE, (GLint*)&maximumGLTextureSize);
         assert(maximumGLTextureSize); // If you hit this then you have an invalid OpenGL context.
     }
