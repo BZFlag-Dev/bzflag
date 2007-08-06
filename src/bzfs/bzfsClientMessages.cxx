@@ -131,7 +131,7 @@ public:
 class GetWorldHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /* buf */, int len )
   {
     if (len < 4)
       return false;
