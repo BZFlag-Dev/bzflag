@@ -688,9 +688,6 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
   buf = nboPackUShort(buf,MsgGetWorld);
   buf = nboPackUInt(buf, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  //directMessage(handler,MsgGetWorld,len,bufStart);
- // handler->bufferedSend(bufStart,len);
-  //bz_sendNonPlayerData(handler->getFD(),bufStart,len+4);
   netConnectedPeers[handler->getFD()].pendingSendChunks.push_back(NonPlayerDataChunk((char*)bufStart, len+4));
   ptr = left;
 }
