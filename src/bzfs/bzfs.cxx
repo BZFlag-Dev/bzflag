@@ -4811,7 +4811,8 @@ static void runMainLoop ( void )
 	  {
 	    // send 10 chunks realy fast
 	    int i = 0;
-	    while ( player->worldPointer && i < 50)
+	    int chunksPerUpdate = (int)BZDB.eval("_WorldChunksPerUpdate");
+	    while ( player->worldPointer && i < chunksPerUpdate )
 	    {
 	      sendWorldChunk(peerItr->second.handler, player->worldPointer);
 	      i++;
