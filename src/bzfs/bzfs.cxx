@@ -4360,7 +4360,11 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   if ( !peer.pendingSendChunks.size() )
     return;
 
-  peer.handler->send(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+  peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+
+  free(peer.pendingSendChunks[0].data);
+  peer.pendingSendChunks[0].data = NULL;
+  peer.pendingSendChunks[0].size = 0;
 
   peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
 }
@@ -4773,13 +4777,17 @@ static void runMainLoop ( void )
 	NetHandler::flushAllUDP();
     }
 
-    // check for any waiting conenctions if they are timed, then see if anyone wants them
+    // go thru all the connected users, see if they need any automatic handlaking
     std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
 
-    while ( peerItr != netConnectedPeers.end() ) {
-      if (!peerItr->second.sent) {
+    while ( peerItr != netConnectedPeers.end() )
+    {
+      if (!peerItr->second.sent) 
+      {
+	// check for any waiting conenctions if they are timed, then see if anyone wants them
 	// little guy hasn't sent us a thing
-	if (now - peerItr->second.startTime > tcpTimeout) {
+	if (now - peerItr->second.startTime > tcpTimeout) 
+	{
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
@@ -4791,6 +4799,24 @@ static void runMainLoop ( void )
 	  // no love for our little connection, let him go.
 	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
 	    peerItr->second.deleteMe = true;
+	}
+      }
+      else
+      {
+	if (peerItr->second.player != -1)
+	{
+	  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(peerItr->second.player);
+
+	  if (player && player->worldPointer != 0)
+	  {
+	    // send 10 chunks realy fast
+	    int i = 0;
+	    while ( player->worldPointer && i < 50)
+	    {
+	      sendWorldChunk(peerItr->second.handler, player->worldPointer);
+	      i++;
+	    }
+	  }
 	}
       }
       peerItr++;

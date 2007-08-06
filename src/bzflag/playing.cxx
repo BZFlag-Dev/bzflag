@@ -1812,14 +1812,9 @@ static void handleGetWorld(void* msg, uint16_t len)
   uint32_t bytesLeft;
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
-  if (!last) {
-  char message[MaxPacketLen];
-    // ask for next chunk
-   // worldPtr += len - 4;
-  //  nboPackUInt(message, worldPtr);
-  //  serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-    return; 
-  }
+  if (!last) // just bail cus we WILL get the last one
+     return; 
+
   if (cacheOut)
     delete cacheOut;
   cacheOut = NULL;

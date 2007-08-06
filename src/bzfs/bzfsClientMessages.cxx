@@ -136,15 +136,18 @@ public:
     if (len < 4)
       return false;
 
-    uint32_t ptr;	// data: count (bytes read so far)
-    buf = nboUnpackUInt(buf, ptr);
+ //   uint32_t ptr;	// data: count (bytes read so far)
+ //   buf = nboUnpackUInt(buf, ptr);
+    // this message ONLY comes in when they want the world, so jus send a chunk
+    // and the auto world sender will handle the rest untill there pointer is done
+    NetConnectedPeer &peer = netConnectedPeers[handler->getFD()];
+    if (peer.player == -1)
+      return true;  // wtf, you HAVE to be a player
 
-    sendWorldChunk(handler, ptr);
-    while ( ptr != 0 )
-      sendWorldChunk(handler, ptr);
+    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(peer.player);
 
-    // fire off one, let the others cycle
-    sendBufferedNetDataForPeer(netConnectedPeers[handler->getFD()]);
+    sendWorldChunk(handler, player->worldPointer);
+
     return true;
   }
 };

@@ -683,13 +683,12 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
     size = worldDatabaseSize - ptr;
     left = 0;
   }
-  unsigned int len = size+4;
-  buf = nboPackUShort(buf,len);
-  buf = nboPackUShort(buf,MsgGetWorld);
   buf = nboPackUInt(buf, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  netConnectedPeers[handler->getFD()].pendingSendChunks.push_back(NonPlayerDataChunk((char*)bufStart, len+4));
-  ptr = left;
+  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+  ptr += (char*)buf - (char*)bufStart;
+  if (left == 0)
+    ptr = 0;
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,

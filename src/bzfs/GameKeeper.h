@@ -84,7 +84,9 @@ public:
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
-    int	    getIndex();
+    uint32_t	    worldPointer;
+
+    int		   getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
     static Player *getFirstPlayer(NetHandler *_netHandler);
@@ -125,7 +127,7 @@ public:
     void	   getPlayerState(float pos[3], float &azimuth);
     void	   setPlayerState(PlayerState state, float timestamp);
 
-	void	   getPlayerCurrentPosRot(float pos[3], float &rot);
+    void	   getPlayerCurrentPosRot(float pos[3], float &rot);
 
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
@@ -146,8 +148,8 @@ public:
     void	   setLastIdFlag(int _idFlag);
     int	    getLastIdFlag();
 
-	// to handle movement
-	float getRealSpeed ( float input );
+    // to handle movement
+    float getRealSpeed ( float input );
 
     enum LSAState
       {
