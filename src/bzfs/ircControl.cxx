@@ -22,6 +22,8 @@
 // bzflag common header
 #include "TextUtils.h"
 
+#include "bzfio.h"
+
 
 
 ircControl::ircControl() {
@@ -31,7 +33,7 @@ ircControl::ircControl() {
   configured = false;
   connected = false;
 
-  server = "irc.freenode.net" //subject to change if we use our own IRCd 
+  server = "irc.freenode.net"; //subject to change if we use our own IRCd 
   port = 6667;
 
   //TODO: pick a default control channel and set it up here
@@ -50,7 +52,8 @@ bool ircControl::loadConfigFile(std::string filename) {
 
   if (!ircconf.is_open()) {
 
-    errmsg = "Failed to load IRC configuration file \"" + filename + "\"\n; IRC will not be used.";
+    errmsg = "Failed to load IRC configuration file \"";
+    errmsg += filename + "\"\n; IRC will not be used.";
     logDebugMessage(1, errmsg.c_str());
 
     return false;
@@ -80,7 +83,11 @@ bool ircControl::loadConfigFile(std::string filename) {
     std::string trimmedGarbage = TextUtils::no_whitespace(curlineargs.at(0));
 
     if (trimmedGarbage != "") {
-      errmsg = "Unrecognized garbage \"" + trimmedGarbage + "\" in IRC config at line " + lineNum + ", ignoring";
+      errmsg = "Unrecognized garbage \"";
+      errmsg += trimmedGarbage;
+      errmsg += "\" in IRC config at line ";
+      errmsg += lineNum;
+      errmsg += ", ignoring";
       logDebugMessage(2, errmsg.c_str());
     }
 
@@ -90,14 +97,15 @@ bool ircControl::loadConfigFile(std::string filename) {
       //Find the last non-whitespace char...
       int last;
       for (last = curlineargs.at(x).length() - 1; last >= 0; last--)
-	if (!TextUtils::isWhitespace(str[x])) 
+	if (!TextUtils::isWhitespace(curlineargs.at(x)[last])) 
 	  break;
 
       if (last >= 0) { //if last gets to -1, the string is all whitespace (or empty). No reason to continue processing.
 	
 	//...otherwise, time to do the front...
-	for (unsigned int first = 0; first < curlineargs.at(x).length(); first++) 
-	  if (!TextUtils::isWhitespace(str[first]))
+	int first;
+	for (first = 0; first < curlineargs.at(x).length(); first++) 
+	  if (!TextUtils::isWhitespace(curlineargs.at(x)[first]))
 	    break;
 
 	//trim the string...
@@ -142,7 +150,8 @@ bool ircControl::loadConfigFile(std::string filename) {
 	      newchan.acceptCommands = true;
 
 	    } else { 
-	      errmsg = "Unrecognized parameter \"" + params.at(i) + "\" for channel \"" + params.at(1) + "\" on line " + lineNum + ", ignoring.\n";
+	      errmsg = "Unrecognized parameter \"";
+	      errmsg += params.at(i) + "\" for channel \"" + params.at(1) + "\" on line " + lineNum + ", ignoring.\n";
 	      logDebugMessage(2, errmsg.c_str());
 	    }
 	  }
@@ -169,7 +178,8 @@ bool ircControl::loadConfigFile(std::string filename) {
 	  port = atoi(params.at(1).c_str());
 
 	} else {
-	  errmsg = "Unrecognized argument \"" + curlineargs.at(x) + "\" on line " + lineNum + ", ignoring.\n";
+	  errmsg = "Unrecognized argument \"";
+	  errmsg += curlineargs.at(x) + "\" on line " + lineNum + ", ignoring.\n";
 	  logDebugMessage(2, errmsg.c_str());
 	}
       }
@@ -232,7 +242,8 @@ bool ircControl::init(){
     if (client.join(itr->name)) {
       itr->joined = true;
     } else {
-      errmsg = "Unable to join channel \"" + itr->name + "\"\n";
+      errmsg = "Unable to join channel \"";
+      errmsg += itr->name + "\"\n";
       logDebugMessage(1, errmsg.c_str());
     }
   }

@@ -22,25 +22,17 @@ else
 CURL_DIR =
 endif
 
-if SERVER_INCLUDED
-LIBIRC_DIR = libirc
-else
-LIBIRC_DIR =
-endif
-
 SUBDIRS = \
 	${ARES_DIR} \
 	${CURL_DIR} \
 	${REGEX_DIR} \
-	${ZLIB_DIR} \
-	${LIBIRC_DIR}
+	${ZLIB_DIR}
 
 DIST_SUBDIRS = \
 	ares \
 	curl \
 	regex \
-	zlib \
-	libirc
+	zlib
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

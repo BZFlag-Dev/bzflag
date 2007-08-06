@@ -156,7 +156,7 @@ LDADD = \
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
-	../other/libirc/src/libIRC.la	\
+	/usr/local/lib/libIRC.la	\
 	../date/libDate.la
 
 MAINTAINERCLEANFILES = \

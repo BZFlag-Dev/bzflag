@@ -185,9 +185,6 @@ AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex
 # compile our own zlib
 AC_ARG_ENABLE(zlib_build, [  --enable-zlib-build     Force compilation of zlib])
 
-# compile our own libirc
-AC_ARG_ENABLE(libirc_build, [  --enable-libirc-build     Force compilation of libirc])
-
 # compile everything bz provides
 AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all dependencies])
 
@@ -1064,8 +1061,6 @@ if test "x$BUILD_CURL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/curl)
 fi
 
-# FIXME: There should be a conditional here.
-AC_CONFIG_SUBDIRS(src/other/libirc)
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile
