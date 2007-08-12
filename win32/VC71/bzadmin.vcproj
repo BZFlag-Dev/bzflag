@@ -22,7 +22,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\;$(LIBCURL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;BUILDING_BZADMIN"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -44,6 +44,7 @@
 				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(LIBCURL)"
 				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzadmin\Debug/bzadmin.pdb"

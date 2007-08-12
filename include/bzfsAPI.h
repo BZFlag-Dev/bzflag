@@ -87,6 +87,7 @@ typedef enum
 	bz_eFlagTransferredEvent,
 	bz_eFlagGrabbedEvent,
 	bz_eFlagDroppedEvent,
+	bz_eFlagResetEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -830,7 +831,7 @@ public:
 	bool		changed;
 	float		pos[3];
 	bzApiString	type;
-	int			playerID;
+	int		playerID;
 };
 
 class bz_PlayerUpdateEventData : public bz_EventData
@@ -853,8 +854,8 @@ public:
 	float	velocity[3];
 	float	azimuth;	
 	float	angVel;
-	int		phydrv;		
-	int		playerID;
+	int	phydrv;		
+	int	playerID;
 
 	double time;
 };
@@ -911,14 +912,14 @@ public:
 		eventType = bz_eShotEndedEvent;
 		playerID = -1;
 		shotID = -1;
-		exlpode = false;
+		explode = false;
 	}
 
 	virtual ~bz_ShotEndedEventData(){};
 
 	int playerID;
 	int shotID;
-	bool exlpode;
+	bool explode;
 };
 
 
@@ -957,7 +958,7 @@ public:
 		eventType = bz_eFlagGrabbedEvent;
 		playerID = -1;
 		flagID = -1;
-		position[0] = position[1] = position[2] = 0;
+		pos[0] = pos[1] = pos[2] = 0;
 	}
 
 	virtual ~bz_FlagGrabbedEventData(){};
@@ -966,28 +967,49 @@ public:
 	int flagID;
 
 	const char *flagType;
-	float	position[3];
+	float	pos[3];
 };
 
-class bz_FlagDroppedEvenData : public bz_EventData
+class bz_FlagDroppedEventData : public bz_EventData
 {
 public:
 
-	bz_FlagDroppedEvenData()
+	bz_FlagDroppedEventData()
 	{
-		eventType = bz_eFlagDroppedEvent;
-		playerID = -1;
-		flagID = -1;
-		position[0] = position[1] = position[2] = 0;
+	  eventType = bz_eFlagDroppedEvent;
+	  playerID = -1;
+	  flagID = -1;
+	  pos[0] = pos[1] = pos[2] = 0;
 	}
 
-	virtual ~bz_FlagDroppedEvenData(){};
+	virtual ~bz_FlagDroppedEventData(){};
 
 	int playerID;
 	int flagID;
 
 	const char *flagType;
-	float	position[3];
+	float	pos[3];
+};
+
+class bz_FlagResetEventData : public bz_EventData
+{
+public:
+  bz_FlagResetEventData()
+  {
+    eventType = bz_eFlagResetEvent;
+    flagID = -1;
+    pos[0] = pos[1] = pos[2] = 0;
+    changed = false;
+    teamIsEmpty = false;
+  }
+
+  virtual ~bz_FlagResetEventData(){};
+
+  int flagID;
+  bool teamIsEmpty;
+  const char *flagType;
+  bool	changed;
+  float	pos[3];
 };
 
 

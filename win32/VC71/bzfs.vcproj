@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\;$(LIBCURL)\include"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -107,7 +107,7 @@
 				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="libcurl.lib"
+				AdditionalLibraryDirectories="$(LIBCURL)"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\..\..\src\bzfs\debug/bzfs.pdb"
 				SubSystem="1"

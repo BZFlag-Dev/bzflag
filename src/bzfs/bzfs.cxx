@@ -1940,8 +1940,14 @@ void resetFlag(FlagInfo &flag)
   if (teamIndex != ::NoTeam)
     teamIsEmpty = (team[teamIndex].team.size == 0);
 
+  bz_FlagResetEventData eventData;
+  memcpy(eventData.pos,flagPos,sizeof(float)*3);
+  eventData.teamIsEmpty = teamIsEmpty;
+  eventData.flagID = flag.getIndex();
+  eventData.flagType = flag.flag.type->label().c_str();
+
   // reset a flag's info
-  flag.resetFlag(flagPos, teamIsEmpty);
+  flag.resetFlag(eventData.pos, teamIsEmpty);
 
   sendFlagUpdate(flag);
 }
@@ -2706,7 +2712,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
   bz_FlagGrabbedEventData	data;
   data.flagID = flag.getIndex();
   data.flagType = flag.flag.type->flagAbbv;
-  memcpy(data.position,fpos,sizeof(float)*3);
+  memcpy(data.pos,fpos,sizeof(float)*3);
   data.playerID = playerIndex;
 
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
@@ -2816,11 +2822,11 @@ static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3
   }
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
 
-  bz_FlagDroppedEvenData data;
+  bz_FlagDroppedEventData data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
   data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
-  memcpy(data.position, dropPos, sizeof(float)*3);
+  memcpy(data.pos, dropPos, sizeof(float)*3);
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 
@@ -3142,7 +3148,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   bz_ShotEndedEventData shotEvent;
   shotEvent.playerID = (int)id;
   shotEvent.shotID = shotIndex;
-  shotEvent.exlpode = reason == 0;
+  shotEvent.explode = reason == 0;
   worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 }
 
