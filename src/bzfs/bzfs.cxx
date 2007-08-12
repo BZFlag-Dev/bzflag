@@ -1902,8 +1902,16 @@ void resetFlag(FlagInfo &flag)
   if (teamIndex != ::NoTeam)
     teamIsEmpty = (team[teamIndex].team.size == 0);
 
+  bz_FlagResetEventData_V1 eventData;
+  memcpy(eventData.pos,flagPos,sizeof(float)*3);
+  eventData.teamIsEmpty = teamIsEmpty;
+  eventData.flagID = flag.getIndex();
+  eventData.flagType = flag.flag.type->label().c_str();
+
+  worldEventManager.callEvents(bz_eFlagResetEvent,&eventData);
+
   // reset a flag's info
-  flag.resetFlag(flagPos, teamIsEmpty);
+  flag.resetFlag(eventData.pos, teamIsEmpty);
 
   sendFlagUpdate(flag);
 }
@@ -2488,10 +2496,7 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
   eventData.players[0] = player->getIndex();
   eventData.players[1] = otherPlayer->getIndex();
   eventData.time = (float)TimeKeeper::getCurrent().getSeconds();
-  eventData.position[0] = pos[0];
-  eventData.position[1] = pos[1];
-  eventData.position[2] = pos[2];
-
+  memcpy(eventData.pos,pos,sizeof(float)*3);
   worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
 
   if ( eventData.handled )
@@ -2769,11 +2774,11 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
   playerData.efectiveShotType = StandardShot;
 
-  bz_FlagDroppedEvenData_V1 data;
+  bz_FlagDroppedEventData_V1 data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
   data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
-  memcpy(data.position, dropPos, sizeof(float)*3);
+  memcpy(data.pos, dropPos, sizeof(float)*3);
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 }

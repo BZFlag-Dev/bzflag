@@ -625,7 +625,7 @@ public:
     bz_ShotEndedEventData_V1 shotEvent;
     shotEvent.playerID = (int)player->getIndex();
     shotEvent.shotID = shot;
-    shotEvent.exlpode = reason == 0;
+    shotEvent.explode = reason == 0;
     worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 
     FiringInfo firingInfo;

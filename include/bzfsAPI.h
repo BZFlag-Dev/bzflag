@@ -98,6 +98,7 @@ typedef enum
   bz_eNewNonPlayerConnection,
   bz_eIdleNewNonPlayerConnection,
   bz_ePlayerCollision,
+  bz_eFlagResetEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1078,7 +1079,7 @@ public:
     playerID = -1;
     flagID = -1;
     shotType = eNoShot;
-    position[0] = position[1] = position[2] = 0;
+    pos[0] = pos[1] = pos[2] = 0;
   }
 
   virtual ~bz_FlagGrabbedEventData_V1(){};
@@ -1089,28 +1090,28 @@ public:
   bz_eShotType shotType;
 
   const char *flagType;
-  float	position[3];
+  float	pos[3];
 };
 
-class bz_FlagDroppedEvenData_V1 : public bz_EventData
+class bz_FlagDroppedEventData_V1 : public bz_EventData
 {
 public:
 
-  bz_FlagDroppedEvenData_V1()
+  bz_FlagDroppedEventData_V1()
   {
     eventType = bz_eFlagDroppedEvent;
     playerID = -1;
     flagID = -1;
-    position[0] = position[1] = position[2] = 0;
+    pos[0] = pos[1] = pos[2] = 0;
   }
 
-  virtual ~bz_FlagDroppedEvenData_V1(){};
+  virtual ~bz_FlagDroppedEventData_V1(){};
 
   int playerID;
   int flagID;
 
   const char *flagType;
-  float	position[3];
+  float	pos[3];
 };
 
 
@@ -1122,14 +1123,14 @@ public:
       eventType = bz_eShotEndedEvent;
       playerID = -1;
       shotID = -1;
-      exlpode = false;
+      explode = false;
     }
 
     virtual ~bz_ShotEndedEventData_V1(){};
 
     int playerID;
     int shotID;
-    bool exlpode;
+    bool explode;
 };
 
 class bz_NewNonPlayerConnectionEventData_V1 : public bz_EventData
@@ -1160,16 +1161,37 @@ public:
     eventType = bz_ePlayerCollision;
     players[0] = players[1] = -1;
     time = 0;
-    position[0] = position[1] = position[2] = 0;
+    pos[0] = pos[1] = pos[2] = 0;
     handled = false;
   }
 
   virtual ~bz_PlayerCollisionEventData_V1(){};
 
   int players[2];
-  float position[3];
+  float pos[3];
   float time;
   bool handled;
+};
+
+class bz_FlagResetEventData_V1 : public bz_EventData
+{
+public:
+  bz_FlagResetEventData_V1()
+  {
+    eventType = bz_eFlagResetEvent;
+    flagID = -1;
+    pos[0] = pos[1] = pos[2] = 0;
+    changed = false;
+    teamIsEmpty = false;
+  }
+
+  virtual ~bz_FlagResetEventData_V1(){};
+
+  int flagID;
+  bool teamIsEmpty;
+  const char *flagType;
+  bool	changed;
+  float	pos[3];
 };
 
 // event handler callback
