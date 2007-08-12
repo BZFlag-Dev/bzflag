@@ -703,6 +703,7 @@ static bool serverStart()
   if (clOptions->ircConfFile != "") {
     irc.loadConfigFile(clOptions->ircConfFile);
     irc.init();
+  }
   return true;
 }
 
@@ -1127,14 +1128,18 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   chatData.from = srcPlayer;
   chatData.to = BZ_NULLUSER;
 
-  if (dstPlayer == AllPlayers)
+  if (dstPlayer == AllPlayers) {
 	  chatData.to = BZ_ALLUSERS;
-  else if ( dstPlayer == AdminPlayers )
+	  
+	  //pass the message to the IRC controller so it can be forwarded if need be
+  	  irc.handleGameChat(playerData->player.getCallSign(), std::string(message)); 
+  } else if ( dstPlayer == AdminPlayers ) {
 	  chatData.team = eAdministrators;
-  else if ( dstPlayer > LastRealPlayer )
+  } else if ( dstPlayer > LastRealPlayer ) {
 	  chatData.team = convertTeam((TeamColor)(250-dstPlayer));
-  else
+  } else {
 	  chatData.to = dstPlayer;
+  }
 
   chatData.message = message;
   chatData.eventTime = TimeKeeper::getCurrent().getSeconds();

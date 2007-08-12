@@ -53,9 +53,11 @@ class ircControl : public IRCBasicEventCallback {
 
   bool update(); //check for messages, etc
 
-  virtual bool process (IRCClient &ircClient, teIRCEventType eventType, trBaseEventInfo &info);
+  virtual bool process(IRCClient &ircClient, teIRCEventType eventType, trBaseEventInfo &info);
 
-  ~ircControl();
+  void handleGameChat(std::string playername, std::string message);
+
+  //~ircControl(); //Don't need this...
 
  private:
 
