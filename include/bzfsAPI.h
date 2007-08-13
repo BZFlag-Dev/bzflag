@@ -46,6 +46,26 @@
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
+#ifdef _WIN32
+#define _ATTRIBUTE34 ;
+#else
+#define _ATTRIBUTE34 __attribute__ ((__format__ (__printf__, 3, 4)));
+#endif
+
+#ifdef _WIN32
+#define _ATTRIBUTE23 ;
+#else
+#define _ATTRIBUTE23 __attribute__ ((__format__ (__printf__, 2, 3)));
+#endif
+
+#ifdef _WIN32
+#define _ATTRIBUTE12 ;
+#else
+#define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)));
+#endif
+
+
+
 // versioning
 BZF_API int bz_APIVersion ( void );
 
@@ -187,6 +207,9 @@ typedef enum
 #define BZ_BZDBPERM_SERVER	2
 #define BZ_BZDBPERM_CLIENT	3
 
+#define _ATRIB34
+
+
 typedef enum
 {
   eTeamFFAGame = 0,
@@ -239,17 +262,8 @@ public:
 
   const char* c_str(void) const;
 
-#ifdef _WIN32
-  #ifdef INSIDE_BZ
-    void format(const char* fmt, ...)
-      __attribute__ ((__format__ (__printf__, 2, 3)));
-  #else
-    void format(const char* fmt, ...);
-  #endif // INSIDE_BZ
-#else 
   void format(const char* fmt, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
-#endif // _WIN32
+  _ATTRIBUTE23
 
   void replaceAll ( const char* target, const char* with );
 
@@ -1333,10 +1347,8 @@ BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm );
 // message API
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
-BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...)
-  __attribute__ ((__format__ (__printf__, 3, 4)));
-BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...)
-  __attribute__ ((__format__ (__printf__, 3, 4)));
+BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...) _ATTRIBUTE34
+BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...) _ATTRIBUTE34
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
@@ -1383,8 +1395,7 @@ BZF_API void bz_resetALLBZDBVars( void );
 
 // logging
 BZF_API void bz_debugMessage ( int level, const char* message );
-BZF_API void bz_debugMessagef( int level, const char* fmt, ... )
-  __attribute__ ((__format__ (__printf__, 2, 3)));
+BZF_API void bz_debugMessagef( int level, const char* fmt, ... ) _ATTRIBUTE34
 BZF_API int bz_getDebugLevel ( void );
 
 // admin
@@ -1702,8 +1713,7 @@ BZF_API bool bz_startRecBuf( void );
 BZF_API bool bz_stopRecBuf( void );
 
 // cheap Text Utils
-BZF_API const char *bz_format(const char* fmt, ...)
-  __attribute__ ((__format__ (__printf__, 1, 2)));
+BZF_API const char *bz_format(const char* fmt, ...)_ATTRIBUTE12
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );
