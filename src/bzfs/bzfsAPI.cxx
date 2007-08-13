@@ -40,6 +40,10 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
+std::map<std::string, std::vector<bz_ClipFiledNotifer*> > clipFieldMap;
+
+void callClipFiledCallbacks ( const char* field );
+
 class MasterBanURLHandler : public bz_URLHandler
 {
 public:
@@ -2299,39 +2303,108 @@ BZF_API int bz_getclipFieldInt( const char *_name )
 
 BZF_API bool bz_setclipFieldString ( const char *_name, const char* data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
-		return false;
+  bool existed = bz_clipFieldExists(_name);
+  if (!data)
+	  return false;
 
-	std::string name = _name;
+  std::string name = _name;
 
-	globalPluginData[name] = std::string(data);
-	return existed;
+  globalPluginData[name] = std::string(data);
+  callClipFiledCallbacks(name.c_str());
+  return existed;
 }
 
 BZF_API bool bz_setclipFieldFloat ( const char *_name, float data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
-		return false;
+  bool existed = bz_clipFieldExists(_name);
+  if (!data)
+	  return false;
 
-	std::string name = _name;
+  std::string name = _name;
 
-	globalPluginData[name] = TextUtils::format("%f",data);
-	return existed;
+  globalPluginData[name] = TextUtils::format("%f",data);
+  callClipFiledCallbacks(name.c_str());
+  return existed;
 }
 
 BZF_API bool bz_setclipFieldInt( const char *_name, int data )
 {
-	bool existed = bz_clipFieldExists(_name);
-	if (!data)
-		return false;
+  bool existed = bz_clipFieldExists(_name);
+  if (!data)
+	  return false;
 
-	std::string name = _name;
+  std::string name = _name;
 
-	globalPluginData[name] = TextUtils::format("%d",data);
-	return existed;
+  globalPluginData[name] = TextUtils::format("%d",data);
+  callClipFiledCallbacks(name.c_str());
+  return existed;
 }
+
+void callClipFiledCallbacks ( const char* field )
+{
+  if (!field)
+    return;
+
+  std::string name = field;
+
+  if (clipFieldMap.find(name) != clipFieldMap.end())
+  {
+    std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[name];
+    for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
+      vec[i]->fieldChange(field);
+  }
+
+  if (clipFieldMap.find(std::string("")) != clipFieldMap.end())
+  {
+    std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[std::string("")];
+    for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
+      vec[i]->fieldChange(field);
+  }
+}
+
+BZF_API bool bz_addclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb )
+{
+  if (!cb)
+    return false;
+
+  std::string field;
+  if (name)
+    field = name;
+
+  if (clipFieldMap.find(name) == clipFieldMap.end())
+  {
+    std::vector<bz_ClipFiledNotifer*> vec;
+    clipFieldMap[name] = vec;
+  }
+  clipFieldMap[name].push_back(cb);
+
+  return true;
+}
+
+BZF_API bool bz_removeclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb )
+{
+  if (!cb)
+    return false;
+
+  std::string field;
+  if (name)
+    field = name;
+
+  if (clipFieldMap.find(name) == clipFieldMap.end())
+    return false;
+
+  std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[name];
+  for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
+  {
+    if ( vec[i] == cb)
+    {
+      vec.erase(vec.begin()+i);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 BZF_API bzApiString bz_filterPath ( const char* path )
 {
