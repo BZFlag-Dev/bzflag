@@ -33,7 +33,7 @@ public:
 
 		if (eventData->eventType == bz_eFlagDroppedEvent)
 		{
-			bz_FlagDroppedEvenData_V1 *data = (bz_FlagDroppedEvenData_V1*)eventData;
+			bz_FlagDroppedEventData_V1 *data = (bz_FlagDroppedEventData_V1*)eventData;
 			bz_setPlayerShotType(data->playerID,shotType);
 		}
 	}
