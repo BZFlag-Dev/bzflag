@@ -1378,15 +1378,15 @@ BZF_API bool bz_setclipFieldString ( const char *name, const char* data );
 BZF_API bool bz_setclipFieldFloat ( const char *name, float data );
 BZF_API bool bz_setclipFieldInt( const char *name, int data );
 
-class bz_ClipFiledNotifer
+class bz_ClipFiledNotifier
 {
 public:
-  virtual ~bz_ClipFiledNotifer(){};
+  virtual ~bz_ClipFiledNotifier(){};
   virtual void fieldChange ( const char* /*field*/) = 0;
 };
 
-BZF_API bool bz_addClipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb );
-BZF_API bool bz_removeClipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb );
+BZF_API bool bz_addClipFieldNotifier ( const char *name, bz_ClipFiledNotifier *cb );
+BZF_API bool bz_removeClipFieldNotifier ( const char *name, bz_ClipFiledNotifier *cb );
 
 // path checks
 BZF_API bzApiString bz_filterPath ( const char* path );

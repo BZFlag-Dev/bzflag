@@ -40,7 +40,7 @@
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 
-std::map<std::string, std::vector<bz_ClipFiledNotifer*> > clipFieldMap;
+std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
 
 void callClipFiledCallbacks ( const char* field );
 
@@ -2349,20 +2349,20 @@ void callClipFiledCallbacks ( const char* field )
 
   if (clipFieldMap.find(name) != clipFieldMap.end())
   {
-    std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[name];
+    std::vector<bz_ClipFiledNotifier*> &vec = clipFieldMap[name];
     for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
       vec[i]->fieldChange(field);
   }
 
   if (clipFieldMap.find(std::string("")) != clipFieldMap.end())
   {
-    std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[std::string("")];
+    std::vector<bz_ClipFiledNotifier*> &vec = clipFieldMap[std::string("")];
     for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
       vec[i]->fieldChange(field);
   }
 }
 
-BZF_API bool bz_addclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb )
+BZF_API bool bz_addclipFieldNotifier ( const char *name, bz_ClipFiledNotifier *cb )
 {
   if (!cb)
     return false;
@@ -2373,7 +2373,7 @@ BZF_API bool bz_addclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb
 
   if (clipFieldMap.find(name) == clipFieldMap.end())
   {
-    std::vector<bz_ClipFiledNotifer*> vec;
+    std::vector<bz_ClipFiledNotifier*> vec;
     clipFieldMap[name] = vec;
   }
   clipFieldMap[name].push_back(cb);
@@ -2381,7 +2381,7 @@ BZF_API bool bz_addclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb
   return true;
 }
 
-BZF_API bool bz_removeclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer *cb )
+BZF_API bool bz_removeclipFieldNotifier ( const char *name, bz_ClipFiledNotifier *cb )
 {
   if (!cb)
     return false;
@@ -2393,7 +2393,7 @@ BZF_API bool bz_removeclipFieldNotifyer ( const char *name, bz_ClipFiledNotifer 
   if (clipFieldMap.find(name) == clipFieldMap.end())
     return false;
 
-  std::vector<bz_ClipFiledNotifer*> &vec = clipFieldMap[name];
+  std::vector<bz_ClipFiledNotifier*> &vec = clipFieldMap[name];
   for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
   {
     if ( vec[i] == cb)
