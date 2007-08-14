@@ -1837,11 +1837,10 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   bz_PlayerJoinPartEventData_V1	joinEventData;
   joinEventData.eventType = bz_ePlayerJoinEvent;
   joinEventData.playerID = playerIndex;
-  joinEventData.team = convertTeam(playerData->player.getTeam());
-  joinEventData.callsign = playerData->player.getCallSign();
+  joinEventData.record = bz_getPlayerByIndex(playerIndex);
   joinEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
+  if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
@@ -2071,13 +2070,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   bz_PlayerJoinPartEventData_V1 partEventData;
   partEventData.eventType = bz_ePlayerPartEvent;
   partEventData.playerID = playerIndex;
-  partEventData.team = convertTeam(playerData->player.getTeam());
-  partEventData.callsign = playerData->player.getCallSign();
+  partEventData.record = bz_getPlayerByIndex(playerIndex);
   partEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   if (reason)
     partEventData.reason = reason;
 
-  if ((partEventData.team != eNoTeam) && (partEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
+  if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
   if (notify) {

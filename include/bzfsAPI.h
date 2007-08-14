@@ -64,7 +64,8 @@
 #define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)))
 #endif
 
-
+class bz_BasePlayerRecord;
+BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
 // versioning
 BZF_API int bz_APIVersion ( void );
@@ -206,8 +207,6 @@ typedef enum
 #define BZ_BZDBPERM_USER	1
 #define BZ_BZDBPERM_SERVER	2
 #define BZ_BZDBPERM_CLIENT	3
-
-#define _ATRIB34
 
 
 typedef enum
@@ -512,25 +511,20 @@ public:
   bz_PlayerJoinPartEventData_V1() : bz_EventData()
   {
     eventType = bz_ePlayerJoinEvent;
-
+    eventTime  = -1.0;
     playerID = -1;
-    team = eNoTeam;
-    eventTime = 0.0;
   }
-  virtual ~bz_PlayerJoinPartEventData_V1(){};
+  virtual ~bz_PlayerJoinPartEventData_V1()
+  {
+    bz_freePlayerRecord(record);
+  }
+
   virtual void update (){bz_EventData::update();}
 
   int playerID;
-  bz_eTeamType team;
-
-  bz_ApiString callsign;
-  bz_ApiString email;
-  bool verified;
-  bz_ApiString globalUser;
-  bz_ApiString ipAddress;
-  bz_ApiString reason;
-
+  bz_BasePlayerRecord *record;
   double eventTime;
+  bz_ApiString reason;
 };
 
 class BZF_API bz_UnknownSlashCommandEventData_V1 : public bz_EventData
@@ -1075,6 +1069,7 @@ public:
   }
 
   virtual ~bz_FlagTransferredEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
 
   int fromPlayerID;
   int toPlayerID;
@@ -1096,7 +1091,7 @@ public:
   }
 
   virtual ~bz_FlagGrabbedEventData_V1(){};
-
+  virtual void update (){bz_EventData::update();}
   int playerID;
   int flagID;
 
@@ -1119,6 +1114,7 @@ public:
   }
 
   virtual ~bz_FlagDroppedEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
 
   int playerID;
   int flagID;
@@ -1140,6 +1136,7 @@ public:
     }
 
     virtual ~bz_ShotEndedEventData_V1(){};
+    virtual void update (){bz_EventData::update();}
 
     int playerID;
     int shotID;
@@ -1159,6 +1156,7 @@ public:
   }
 
   virtual ~bz_NewNonPlayerConnectionEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
 
   int connectionID;
   void *data;
@@ -1179,6 +1177,7 @@ public:
   }
 
   virtual ~bz_PlayerCollisionEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
 
   int players[2];
   float pos[3];
@@ -1199,6 +1198,7 @@ public:
   }
 
   virtual ~bz_FlagResetEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
 
   int flagID;
   bool teamIsEmpty;
@@ -1236,8 +1236,6 @@ BZF_API bool bz_disconectNonPlayerConnection ( int connectionID );
 
 // player info
 
-class bz_BasePlayerRecord;
-
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_APIIntList *bz_getPlayerIndexList ( void );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
@@ -1245,7 +1243,6 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
-BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
