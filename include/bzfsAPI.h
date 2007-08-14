@@ -1410,7 +1410,7 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 // server control
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
-BZF_API void bz_gameOver(int,int = -1);
+BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);
 BZF_API bool bz_restart ( void );
 
 BZF_API void bz_reloadLocalBans();
