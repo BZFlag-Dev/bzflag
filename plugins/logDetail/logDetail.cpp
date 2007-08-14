@@ -159,7 +159,7 @@ void LogDetail::process( bz_EventData *eventData )
 	break;
       case bz_ePlayerJoinEvent:
 	{
-	  if (player) {
+	  if (joinPartData->record) {
 	    cout << "PLAYER-JOIN ";
 	    displayCallsign( joinPartData->record->callsign );
 	    cout << " #" << joinPartData->playerID;
