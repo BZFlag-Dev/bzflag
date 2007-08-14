@@ -385,7 +385,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == eGreenTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eGreenTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.greenLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
