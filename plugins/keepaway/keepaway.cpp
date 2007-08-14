@@ -768,14 +768,14 @@ void KeepAwayPlayerJoined::process ( bz_EventData *eventData )
 			bz_sendPlayCustomLocalSound(joinData->playerID,"hunt_select");
 	}
 
-	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->team != keepaway.team || joinData->team == eRogueTeam))
+	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->record->team != keepaway.team || joinData->record->team == eRogueTeam))
 	{
 		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - kill him/her before time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str());
 		if (keepaway.soundEnabled)
 			bz_sendPlayCustomLocalSound(joinData->playerID,"flag_alert");
 	}
 
-	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->team == keepaway.team && joinData->team != eRogueTeam))
+	if (keepaway.id != -1 && keepaway.enabled && keepaway.flagToKeep != "" && (joinData->record->team == keepaway.team && joinData->record->team != eRogueTeam))
 	{
 		bz_sendTextMessagef (BZ_SERVER, joinData->playerID, "%s has Keep Away flag %s - protect him/her until time's up!", keepaway.callsign.c_str(), convertFlag(keepaway.flagToKeep).c_str());
 		if (keepaway.soundEnabled)
@@ -801,7 +801,7 @@ void KeepAwayPlayerLeft::process ( bz_EventData *eventData )
 		keepaway.toldFlagFree = false;
 	}
 
-	if (oneTeam(partData->team)) // team count check
+	if (oneTeam(partData->record->team)) // team count check
 		keepaway.notEnoughTeams = true;
 	else
 		keepaway.notEnoughTeams = false;

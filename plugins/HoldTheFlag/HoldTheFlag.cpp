@@ -274,21 +274,21 @@ void HTFscore::process ( bz_EventData *eventData )
   if (eventData->eventType == bz_ePlayerJoinEvent) {
     char msg[255];
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
-    if (htfTeam!=eNoTeam && joinData->team!=htfTeam && joinData->team != eObservers){
+bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
+    if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
-      bz_kickUser (joinData->playerID, msg, true);
+      bz_kickUser (joinData->record->playerID, msg, true);
       return;
     }
-    if (joinData->team == htfTeam)
-      listAdd (joinData->playerID, joinData->callsign.c_str());
+    if (joinData->record->team == htfTeam)
+      listAdd (joinData->playerID, joinData->record->callsign.c_str());
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
+bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
 
-    if (joinData->team == htfTeam)
+    if (joinData->record->team == htfTeam)
       listDel (joinData->playerID);
 
   // flag CAPTURE

@@ -377,7 +377,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 
 	// if teams even, notify joiner how much time is left to CTF for their team:
 
-	if (JoinData->team == eRedTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eRedTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.redLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -393,7 +393,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == eBlueTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eBlueTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.blueLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -401,7 +401,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == ePurpleTeam  && tctf.timerRunning){
+	if (JoinData->record->team == ePurpleTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.purpleLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);

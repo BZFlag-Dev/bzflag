@@ -192,9 +192,9 @@ void ServerControl::process( bz_EventData *eventData )
 	  checkMasterBanChanges();
 	break;
       case bz_ePlayerJoinEvent:
-	if (data->team >= eRogueTeam &&
-	    data->team <= eHunterTeam &&
-	    data->callsign != "")  {
+	if (data->record->team >= eRogueTeam &&
+	    data->record->team <= eHunterTeam &&
+	    data->record->callsign != "")  {
 	  serverActive = true;
 	}
 	countPlayers( join , data );

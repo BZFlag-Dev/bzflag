@@ -162,10 +162,10 @@ void LogDetail::process( bz_EventData *eventData )
 	  bz_BasePlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
 	  if (player) {
 	    cout << "PLAYER-JOIN ";
-	    displayCallsign( player->callsign );
+	    displayCallsign( player->record->callsign );
 	    cout << " #" << joinPartData->playerID;
 	    displayBZid( joinPartData->playerID );
-	    displayTeam( joinPartData->team );
+	    displayTeam( joinPartData->record->team );
 	    displayPlayerPrivs( joinPartData->playerID );
 	    cout << endl;
 	    listPlayers( join, joinPartData );

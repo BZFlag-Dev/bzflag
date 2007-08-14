@@ -199,7 +199,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
       trPlayerHistoryRecord playerRecord;
 
       playerRecord.playerID = (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID;
-      playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->callsign.c_str();
+      playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->record->callsign.c_str();
       playerRecord.spreeTotal = 0;
       playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->eventTime;
       playerRecord.startTime = playerRecord.lastUpdateTime;
