@@ -3390,9 +3390,9 @@ BZF_API void bz_superkill()
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_gameOver(int playerID, bz_eTeamType team )
+BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
 {
-  sendScoreOverMessage(playerID,convertTeam(team));
+  sendScoreOverMessage(playerID,convertTeam(_team));
 
   gameOver=true;
 
