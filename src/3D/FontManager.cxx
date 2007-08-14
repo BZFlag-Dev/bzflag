@@ -35,8 +35,10 @@
 
 // local implementation headers
 #include "FTGLTextureFont.h"
+#include "FTGLBitmapFont.h"
 
 #define FONT FTGLTextureFont
+#define CRAP_FONT FTGLBitmapFont
 
 /** initialize the singleton */
 template <>
@@ -344,9 +346,17 @@ void* FontManager::getGLFont ( int face, int size )
     return itr->second;
   }
 
-  FONT* newFont = new FONT(fontFaces[face].path.c_str());
+  FTFont* newFont = NULL;
+  if(BZDB.isTrue("UseBitmapFonts"))
+    newFont = (FTFont*)new CRAP_FONT(fontFaces[face].path.c_str());
+  else
+    newFont = (FTFont*)new FONT(fontFaces[face].path.c_str());
+
   newFont->FaceSize(size);
-  newFont->UseDisplayList(true);
+  bool doDisplayLists = true;
+  if (BZDB.isTrue("NoDisplayListsForFonts"))
+    doDisplayLists = false;
+  newFont->UseDisplayList(doDisplayLists);
 
   fontFaces[face].sizes[size] = (void*)newFont;
 
