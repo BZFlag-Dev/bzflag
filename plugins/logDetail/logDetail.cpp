@@ -159,10 +159,9 @@ void LogDetail::process( bz_EventData *eventData )
 	break;
       case bz_ePlayerJoinEvent:
 	{
-	  bz_BasePlayerRecord *player = bz_getPlayerByIndex( joinPartData->playerID );
 	  if (player) {
 	    cout << "PLAYER-JOIN ";
-	    displayCallsign( player->record->callsign );
+	    displayCallsign( joinPartData->record->callsign );
 	    cout << " #" << joinPartData->playerID;
 	    displayBZid( joinPartData->playerID );
 	    displayTeam( joinPartData->record->team );
