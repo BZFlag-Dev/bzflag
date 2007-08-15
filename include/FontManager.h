@@ -70,13 +70,13 @@ public:
   void setOpacity(float newOpacity);
   void setDarkness(float newDimFactor);
 
+  void deleteGLFont ( void* font, int size );
 
 protected:
 
   friend class Singleton<FontManager>;
 
   void* getGLFont(int face, int size); 
-  void deleteGLFont ( void* font, int size );
 
   typedef struct {
     std::string name;

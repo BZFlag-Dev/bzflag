@@ -335,7 +335,7 @@ const char* FontManager::getFaceName(int faceID)
 * a better thing would be to store if it's a bitmap or not
 * in the face info
 */
-void deleteGLFont ( void* font, int size )
+void FontManager::deleteGLFont ( void* font, int size )
 {
   bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
   if ( BZDB.isSet("MinAliasedFontSize"))
