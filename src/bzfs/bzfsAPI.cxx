@@ -2480,9 +2480,9 @@ BZF_API void bz_getWorldSize(float *size, float *wallHeight)
 
 //-------------------------------------------------------------------------
 
-BZF_API int bz_getWorldObjectCount(void)
+BZF_API unsigned int bz_getWorldObjectCount(void)
 {
-  return world->getDatabaseSize();
+  return (unsigned int)(OBSTACLEMGR.getWalls().size() + OBSTACLEMGR.getBoxes().size() + OBSTACLEMGR.getPyrs().size() + OBSTACLEMGR.getBases().size() + OBSTACLEMGR.getMeshes().size() + OBSTACLEMGR.getArcs().size() + OBSTACLEMGR.getCones().size() + OBSTACLEMGR.getSpheres().size() + OBSTACLEMGR.getTetras().size());
 }
 
 bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
@@ -2560,32 +2560,32 @@ void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obsta
 
 //-------------------------------------------------------------------------
 
+void addObjectsToListsFromObstacleList ( bz_APIWorldObjectList *solidList, const ObstacleList &list )
+{
+  for ( unsigned int i = 0; i < list.size(); i++ )
+  {
+    bz_APISolidWorldObject_V1 *solid = new bz_APISolidWorldObject_V1;
+    solid->id = buildObjectIDFromObstacle(*list[i]);
+    setSolidObjectFromObstacle(*solid,*list[i]);
+    solidList->push_back(solid);
+  }
+}
+
+
 BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
 {
-  bz_APIWorldObjectList *worldList=new bz_APIWorldObjectList;
+  bz_APIWorldObjectList *worldList = new bz_APIWorldObjectList;
 
-  unsigned short objectID[2] = {0,0};
-
-  const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
-  const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
-  const ObstacleList& bases = OBSTACLEMGR.getBases();
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
-  const ObstacleList& arcs = OBSTACLEMGR.getArcs();
-  const ObstacleList& cones = OBSTACLEMGR.getCones();
-  const ObstacleList& spheres = OBSTACLEMGR.getSpheres();
-  const ObstacleList& tetras = OBSTACLEMGR.getTetras();
-
-  objectID[0] = _Wall_ID;
-  for ( unsigned int i = 0; i < walls.size(); i++ )
-  {
-    objectID[1] = i;
-    bz_APISolidWorldObject_V1 *wall = new bz_APISolidWorldObject_V1;
-    wall->id = *(unsigned int*)objectID;
-    setSolidObjectFromObstacle(*wall,*walls[i]);
-    worldList->push_back(wall);
-  } 
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getWalls());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getBoxes());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getPyrs());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getBases());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getTeles());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getMeshes());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getArcs());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getCones());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getSpheres());
+  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getTetras());
 
   return worldList;
 }

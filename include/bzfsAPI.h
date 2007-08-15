@@ -1664,7 +1664,7 @@ protected:
 };
 
 BZF_API void bz_getWorldSize( float *size, float *wallHeight );
-BZF_API int bz_getWorldObjectCount( void );
+BZF_API unsigned int bz_getWorldObjectCount( void );
 BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void );
 BZF_API void bz_releaseWorldObjectList( bz_APIWorldObjectList* list );
 BZF_API unsigned int bz_findWorldObject ( const char *name );
