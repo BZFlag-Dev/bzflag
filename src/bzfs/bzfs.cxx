@@ -170,6 +170,36 @@ std::map<int,NetConnectedPeer> netConnectedPeers;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 
+class BZFSNetLogCB : NetworkDataLogCallback{;
+{
+public:
+  BZFSNetLogCB(){addNetworkLogCallback(this);}
+  virtual ~BZFSNetLogCB(){removeNetworkLogCallback(this);}
+
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size )
+  {
+    // let any listeners know we got net data
+    bz_NetTransferEventData_V1 eventData;
+    if (send)
+      eventData.eventType = bz_eNetDataSendEvent;
+    else
+      eventData.eventType = bz_eNetDataReceveEvent;
+    if (!worldEventManager.getEventCount(eventData.eventType))
+      removeNetworkLogCallback(;
+    )
+    eventData.send = send;
+    eventData.udp = udp;
+    eventData.iSize = size;
+    // make a copy of the data, just in case any plug-ins decide to MESS with it.
+    eventData.data = (unsigned char*)malloc(size);
+    memcpy(eventData.data,data,size);
+    worldEventManager.callEvents(eventData.eventType,&eventData);
+    free(eventData.data);
+  }
+};
+
+BZFSNetLogCB netLogCB;
+
 // Logging to the API
 class APILoggingCallback : public LoggingCallback
 {
