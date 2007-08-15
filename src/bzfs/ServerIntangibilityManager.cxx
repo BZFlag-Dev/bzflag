@@ -14,6 +14,7 @@
 
 #include "ServerIntangibilityManager.h"
 #include "ObstacleMgr.h"
+#include "bzfsMessages.h"
 
 template <>
 ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (ServerIntangibilityManager*)0;
@@ -21,15 +22,16 @@ ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (
 void ServerIntangibilityManager::setWorldObjectTangibility ( unsigned int objectGUID, bool tangible )
 {
   tangibilityMap[objectGUID] = tangible;
-  // send out the tangibility update message
+  sendMsgTanagabilityUpdate(objectGUID,tangible);
 }
 
-void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( unsigned int playeID )
+void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
 {
   std::map<unsigned int, bool>::iterator itr = tangibilityMap.begin();
   while (itr != tangibilityMap.end())
   {
     // send out the tangibility update message
+    sendMsgTanagabilityUpdate(itr->first,itr->second,playerID);
     itr++;
   }
 }
@@ -50,7 +52,7 @@ bool ServerIntangibilityManager::isWorldObjectTangable ( unsigned int objectGUID
 void ServerIntangibilityManager::resetTangibility ( void )
 {
   tangibilityMap.clear();
-  // send the reset tangability message to all clients
+  sendMsgTanagabilityReset();
 }
 
 

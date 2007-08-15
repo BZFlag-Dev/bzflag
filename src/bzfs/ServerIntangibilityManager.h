@@ -22,7 +22,7 @@ class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager
 public:
   void setWorldObjectTangibility ( unsigned int objectGUID, bool tangible );
   
-  void sendNewPlayerWorldTangibility ( unsigned int playeID );
+  void sendNewPlayerWorldTangibility ( int playerID );
   
   void resetTangibility ( void );
 
