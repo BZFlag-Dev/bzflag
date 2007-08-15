@@ -424,6 +424,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   mesh->addFace(iv, in, it, mats[ZN], phydrv[ZN], false, false,
 		drivethrough[ZN], shootthrough[ZN], false);
 
+  mesh->setName(name.c_str());
+
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);

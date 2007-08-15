@@ -28,6 +28,7 @@ const char* SphereObstacle::typeName = "SphereObstacle";
 
 SphereObstacle::SphereObstacle()
 {
+  iType = sphereType;
   return;
 }
 
@@ -56,6 +57,7 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
   useNormals = _useNormals;
   memcpy(texsize, _texsize, sizeof(texsize));
   memcpy(materials, mats, sizeof(materials));
+  iType = sphereType;
 
   finalize();
 

@@ -20,12 +20,13 @@ const char*		WallObstacle::typeName = "WallObstacle";
 
 WallObstacle::WallObstacle()
 {
-  // do nothing
+  iType = wallType;
 }
 
 WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
 				Obstacle(p, a, 0.0, b, h)
 {
+  iType = wallType;
   finalize();
 }
 

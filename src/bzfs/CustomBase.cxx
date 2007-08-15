@@ -51,6 +51,7 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
 {
   float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
   BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color);
+  base->setName(name.c_str());
   groupdef->addObstacle(base);
 
   if (triggerWorldWep)

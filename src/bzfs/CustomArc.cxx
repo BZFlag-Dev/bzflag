@@ -166,6 +166,8 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 			  smoothBounce, driveThrough, shootThrough);
   }
 
+  arc->setName(name.c_str());
+
   if (arc->isValid()) {
     groupdef->addObstacle(arc);
   } else {

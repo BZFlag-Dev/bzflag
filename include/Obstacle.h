@@ -42,6 +42,20 @@ class MeshTransform;
     All these functions have to be implemented in concrete subclasses.
 */
 
+enum ObstacleTypes {
+  wallType = 0,
+  boxType,
+  pyrType,
+  baseType,
+  teleType,
+  meshType,
+  arcType,
+  coneType,
+  sphereType,
+  tetraType,
+  ObstacleTypeCount
+};
+
 class Obstacle {
 
   friend class ObstacleModifier;
@@ -75,6 +89,9 @@ class Obstacle {
   /** This function returns a string describing what kind of obstacle this is.
    */
   virtual const char* getType() const = 0;
+
+  const char* getName() {return name.c_str();}
+  void setName( const char* n) {if (n) name = n; else name = "";}
 
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
@@ -120,6 +137,12 @@ class Obstacle {
 
   /** This function returns the obstacle's full height. */
   float getHeight() const;
+
+  int getTypeID() const { return iType;}
+
+  unsigned short getListID ( void ) const { return listID;}
+  void setListID ( unsigned short id ) {listID = id;}
+  
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is
@@ -275,6 +298,9 @@ class Obstacle {
     bool shootThrough;
     bool ZFlip;
     char source;
+    int iType;
+    std::string name;
+    unsigned short  listID;
 
   private:
     int insideNodeCount;

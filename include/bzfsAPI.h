@@ -62,7 +62,7 @@
 # endif
 #endif
 
-/** JeffM's shorthand defines. */
+/** shorthand defines to make the code cleaner. */
 #define _ATTRIBUTE34 __attribute__ ((__format__ (__printf__, 3, 4)))
 #define _ATTRIBUTE23 __attribute__ ((__format__ (__printf__, 2, 3)))
 #define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)))
@@ -1561,6 +1561,50 @@ public:
   bz_APIBaseWorldObject(){type = eNullObject;}
   virtual ~bz_APIBaseWorldObject(){};
   bz_eWorldObjectType type;
+  bz_ApiString name;
+  unsigned int id;
+};
+
+typedef enum
+{
+  eWallObject,
+  eBoxObject,
+  eBaseObject,
+  ePyramidObject,
+  eMeshObject,
+  eArcObject,
+  eConeObject,
+  eSphereObject,
+  eTetraObject,
+  eUnknownObject
+}bz_eSolidWorldObjectType;
+
+class BZF_API bz_SolidObjectPassableAtributes
+{
+public:
+  bz_SolidObjectPassableAtributes()
+  {
+    red = false;
+    green = false;
+    blue = false;
+    purple = false;
+    rogue = false;
+  }
+
+  void setAll ( bool val )
+  {
+    red = val;
+    green = val;
+    blue = val;
+    purple = val;
+    rogue = val;
+  }
+
+  bool	red;
+  bool	green;
+  bool	blue;
+  bool	purple;
+  bool	rogue;
 };
 
 class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
@@ -1569,17 +1613,19 @@ public:
   bz_APISolidWorldObject_V1();
   virtual ~bz_APISolidWorldObject_V1();
 
+  bz_eSolidWorldObjectType  solidType;
+
   float center[3];
   float maxAABBox[3];
   float minAABBox[3];
   float rotation[3];
   float maxBBox[3];
   float minBBox[3];
+  
+  bool collide ( float pos[3], float rad );
 
-  void update ( void );
-
-  class		dataBlob;
-  dataBlob	*data;
+  bz_SolidObjectPassableAtributes   shootThru;
+  bz_SolidObjectPassableAtributes   driveThru;
 };
 
 class BZF_API bz_APITeleporterField_V1 : public bz_APIBaseWorldObject
@@ -1621,6 +1667,8 @@ BZF_API void bz_getWorldSize( float *size, float *wallHeight );
 BZF_API int bz_getWorldObjectCount( void );
 BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void );
 BZF_API void bz_releaseWorldObjectList( bz_APIWorldObjectList* list );
+BZF_API unsigned int bz_findWorldObject ( const char *name );
+BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id );
 
 // collision methods
 typedef enum

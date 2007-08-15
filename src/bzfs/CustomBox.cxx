@@ -345,6 +345,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 					verts, norms, txcds, FaceCount,
 					false, false, false, false);
 
+  mesh->setName(name.c_str());
   // get the material refs
   const BzMaterial* mats[FaceCount];
   for (i = 0; i < FaceCount; i++) {

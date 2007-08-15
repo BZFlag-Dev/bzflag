@@ -45,6 +45,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   specialData = NULL;
   specialState = 0;
   phydrv = -1;
+  iType = meshType;
 
   return;
 }

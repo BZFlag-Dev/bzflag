@@ -127,6 +127,8 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
 					      phydrv,
 					      smoothBounce, driveThrough, shootThrough);
 
+  sphere->setName(name.c_str());
+
   if (sphere->isValid()) {
     groupdef->addObstacle(sphere);
   } else {

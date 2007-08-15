@@ -439,36 +439,46 @@ Obstacle* GroupDefinition::newObstacle(int type)
   return obs;
 }
 
+int obstacleTypeNameToEnum ( const char* type )
+{
+  if (WallObstacle::getClassName() == type)
+    return wallType;
+  else if (BoxBuilding::getClassName() == type)
+    return boxType;
+  else if (BaseBuilding::getClassName() == type)
+    return baseType;
+  else if (PyramidBuilding::getClassName() == type)
+    return pyrType;
+  else if (Teleporter::getClassName() == type)
+    return teleType;
+  else if (MeshObstacle::getClassName() == type)
+    return meshType;
+  else if (ArcObstacle::getClassName() == type)
+    return arcType;
+  else if (ConeObstacle::getClassName() == type)
+    return coneType;
+  else if (SphereObstacle::getClassName() == type)
+    return sphereType;
+  else if (TetraBuilding::getClassName() == type)
+    return tetraType;
+
+  return -1;
+}
 
 void GroupDefinition::addObstacle(Obstacle* obstacle)
 {
-  const char* type = obstacle->getType();
-
-  if (WallObstacle::getClassName() == type) {
-    lists[wallType].push_back(obstacle);
-  } else if (BoxBuilding::getClassName() == type) {
-    lists[boxType].push_back(obstacle);
-  } else if (BaseBuilding::getClassName() == type) {
-    lists[baseType].push_back(obstacle);
-  } else if (PyramidBuilding::getClassName() == type) {
-    lists[pyrType].push_back(obstacle);
-  } else if (Teleporter::getClassName() == type) {
-    lists[teleType].push_back(obstacle);
-  } else if (MeshObstacle::getClassName() == type) {
-    lists[meshType].push_back(obstacle);
-  } else if (ArcObstacle::getClassName() == type) {
-    lists[arcType].push_back(obstacle);
-  } else if (ConeObstacle::getClassName() == type) {
-    lists[coneType].push_back(obstacle);
-  } else if (SphereObstacle::getClassName() == type) {
-    lists[sphereType].push_back(obstacle);
-  } else if (TetraBuilding::getClassName() == type) {
-    lists[tetraType].push_back(obstacle);
-  } else {
-    printf ("GroupDefinition::addObstacle() ERROR: type = %s\n", type);
+  int listID = obstacleTypeNameToEnum(obstacle->getType());
+  
+  if (listID >= 0)
+  {
+    obstacle->setListID((unsigned short)lists[listID].size());
+    lists[listID].push_back(obstacle);
+ }
+  else 
+  {
+    printf ("GroupDefinition::addObstacle() ERROR: type = %s\n", obstacle->getType());
     exit(1);
   }
-
   return;
 }
 
@@ -483,10 +493,10 @@ void GroupDefinition::addGroupInstance(GroupInstance* group)
 static bool isContainer(int type)
 {
   switch (type) {
-    case GroupDefinition::arcType:
-    case GroupDefinition::coneType:
-    case GroupDefinition::sphereType:
-    case GroupDefinition::tetraType:
+    case arcType:
+    case coneType:
+    case sphereType:
+    case tetraType:
       return true;
     default:
       return false;
@@ -547,19 +557,19 @@ static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
   switch (type) {
-    case GroupDefinition::arcType: {
+    case arcType: {
       mesh = ((ArcObstacle*)obs)->makeMesh();
       break;
     }
-    case GroupDefinition::coneType: {
+    case coneType: {
       mesh = ((ConeObstacle*)obs)->makeMesh();
       break;
     }
-    case GroupDefinition::sphereType: {
+    case sphereType: {
       mesh = ((SphereObstacle*)obs)->makeMesh();
       break;
     }
-    case GroupDefinition::tetraType: {
+    case tetraType: {
       mesh = ((TetraBuilding*)obs)->makeMesh();
       break;
     }
@@ -1030,7 +1040,7 @@ void GroupDefinitionMgr::makeWorld()
   world.deleteInvalidObstacles();
 
   // sort from top to bottom for enhanced radar
-  for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
+  for (int type = 0; type < ObstacleTypeCount; type++) {
     world.sort(compareHeights);
   }
 

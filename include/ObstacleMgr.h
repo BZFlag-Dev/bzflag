@@ -24,6 +24,7 @@
 #include "ObstacleList.h"
 #include "MeshTransform.h"
 #include "BzMaterial.h"
+#include "Obstacle.h"
 
 // avoid nasty dependencies
 class Obstacle;
@@ -105,20 +106,6 @@ class GroupDefinition {
     GroupDefinition(const std::string& name);
     ~GroupDefinition();
 
-    enum ObstacleTypes {
-      wallType = 0,
-      boxType,
-      pyrType,
-      baseType,
-      teleType,
-      meshType,
-      arcType,
-      coneType,
-      sphereType,
-      tetraType,
-      ObstacleTypeCount
-    };
-
     void addObstacle(Obstacle* obstacle);
     void addGroupInstance(GroupInstance* group);
 
@@ -182,6 +169,15 @@ inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
   return groups;
 }
 
+#define _Wall_ID 1
+#define _Box_ID 2
+#define _Base_ID 3
+#define _Pyramid_ID 4
+#define _Mesh_ID 5
+#define _Arc_ID 6
+#define _Cone_ID 7
+#define _Sphere_ID 8
+#define _Tetra_ID 9
 
 //
 // Group Definition Manager
@@ -222,6 +218,8 @@ class GroupDefinitionMgr {
     const ObstacleList& getSpheres() const;
     const ObstacleList& getTetras() const;
 
+    Obstacle* getObstacleFromID ( unsigned int id );
+
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
@@ -240,43 +238,98 @@ inline const GroupDefinition* GroupDefinitionMgr::getWorld() const
 
 inline const ObstacleList& GroupDefinitionMgr::getWalls() const
 {
-  return world.getList(GroupDefinition::wallType);
+  return world.getList(wallType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getBoxes() const
 {
-  return world.getList(GroupDefinition::boxType);
+  return world.getList(boxType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getPyrs() const
 {
-  return world.getList(GroupDefinition::pyrType);
+  return world.getList(pyrType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getBases() const
 {
-  return world.getList(GroupDefinition::baseType);
+  return world.getList(baseType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getTeles() const
 {
-  return world.getList(GroupDefinition::teleType);
+  return world.getList(teleType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getMeshes() const
 {
-  return world.getList(GroupDefinition::meshType);
+  return world.getList(meshType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getArcs() const
 {
-  return world.getList(GroupDefinition::arcType);
+  return world.getList(arcType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getCones() const
 {
-  return world.getList(GroupDefinition::coneType);
+  return world.getList(coneType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getSpheres() const
 {
-  return world.getList(GroupDefinition::sphereType);
+  return world.getList(sphereType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getTetras() const
 {
-  return world.getList(GroupDefinition::tetraType);
+  return world.getList(tetraType);
+}
+
+inline  Obstacle* GroupDefinitionMgr::getObstacleFromID ( unsigned int id )
+{
+  unsigned short *p = (unsigned short*)(&id);
+
+  switch (p[0])
+  {
+    case _Wall_ID:
+      if (getWalls().size() > p[1] )
+	return getWalls()[p[1]];
+      break;
+
+    case _Box_ID:
+      if (getBoxes().size() > p[1] )
+	return getBoxes()[p[1]];
+      break;
+
+    case _Base_ID:
+      if (getBases().size() > p[1] )
+	return getBases()[p[1]];
+      break;
+
+    case _Pyramid_ID:
+      if (getPyrs().size() > p[1] )
+	return getPyrs()[p[1]];
+      break;
+
+    case _Mesh_ID:
+      if (getMeshes().size() > p[1] )
+	return getMeshes()[p[1]];
+      break;
+
+    case _Arc_ID:
+      if (getArcs().size() > p[1] )
+	return getArcs()[p[1]];
+      break;
+
+    case _Cone_ID:
+      if (getCones().size() > p[1] )
+	return getCones()[p[1]];
+      break;
+
+    case _Sphere_ID:
+      if (getSpheres().size() > p[1] )
+	return getSpheres()[p[1]];
+      break;
+
+    case _Tetra_ID:
+      if (getTetras().size() > p[1] )
+	return getTetras()[p[1]];
+      break;
+  }
+
+  return NULL;
 }
 
 

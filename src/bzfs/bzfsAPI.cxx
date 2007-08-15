@@ -42,6 +42,7 @@
 #include "CommandManager.h"
 
 #include "bzfsPlugins.h"
+#include "ObstacleMgr.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -2484,30 +2485,116 @@ BZF_API int bz_getWorldObjectCount(void)
   return world->getDatabaseSize();
 }
 
+bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
+{
+  switch(type)
+  {
+    case wallType:
+	return eWallObject;
+    case boxType:
+      return eBoxObject;
+    case pyrType:
+      return ePyramidObject;
+    case baseType:
+      return eBaseObject;
+    case meshType:
+      return eMeshObject;
+    case arcType:
+      return eArcObject;
+    case coneType:
+      return eConeObject;
+    case sphereType:
+      return eSphereObject;
+    case tetraType:
+      return eTetraObject;
+  }
+  return eUnknownObject;
+}
+
+const ObstacleList* obstacleListFromObstacleType ( int type )
+{
+  switch(type)
+  {
+  case wallType:
+    return &OBSTACLEMGR.getWalls();
+  case boxType:
+    return &OBSTACLEMGR.getBoxes();
+  case pyrType:
+    return &OBSTACLEMGR.getPyrs();
+  case baseType:
+    return &OBSTACLEMGR.getBases();
+  case meshType:
+    return &OBSTACLEMGR.getMeshes();
+  case arcType:
+    return &OBSTACLEMGR.getArcs();
+  case coneType:
+    return &OBSTACLEMGR.getCones();
+  case sphereType:
+    return &OBSTACLEMGR.getSpheres();
+  case tetraType:
+    return &OBSTACLEMGR.getTetras();
+  }
+  return NULL;
+}
+
+unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
+{
+  unsigned short p[2];
+  p[0] = obstacle.getTypeID();
+  p[1] = obstacle.getListID();
+
+  return *(unsigned int*)p;
+}
+
+void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle )
+{
+  object.solidType = solidTypeFromObstacleType(obstacle.getTypeID());
+
+  memcpy(object.center,obstacle.getPosition(),sizeof(float)*3);
+  object.rotation[0] = object.rotation[1] = 0;
+  object.rotation[2] = obstacle.getRotation();
+  const Extents &extents = obstacle.getExtents();
+  memcpy(object.maxAABBox,extents.maxs,sizeof(float)*3);
+  memcpy(object.minAABBox,extents.mins,sizeof(float)*3);
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
 {
   bz_APIWorldObjectList *worldList=new bz_APIWorldObjectList;
 
-  // TODO:build that shit into a world
+  unsigned short objectID[2] = {0,0};
+
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
+  const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
+  const ObstacleList& bases = OBSTACLEMGR.getBases();
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  const ObstacleList& arcs = OBSTACLEMGR.getArcs();
+  const ObstacleList& cones = OBSTACLEMGR.getCones();
+  const ObstacleList& spheres = OBSTACLEMGR.getSpheres();
+  const ObstacleList& tetras = OBSTACLEMGR.getTetras();
+
+  objectID[0] = _Wall_ID;
+  for ( unsigned int i = 0; i < walls.size(); i++ )
+  {
+    objectID[1] = i;
+    bz_APISolidWorldObject_V1 *wall = new bz_APISolidWorldObject_V1;
+    wall->id = *(unsigned int*)objectID;
+    setSolidObjectFromObstacle(*wall,*walls[i]);
+    worldList->push_back(wall);
+  } 
 
   return worldList;
 }
 
 //-----------------------bz_APISolidWorldObject-----------------
 
-class bz_APISolidWorldObject_V1::dataBlob
-{
-public:
-  const Obstacle *obstacle;
-};
 
 bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 {
-  data=new dataBlob;
-  data->obstacle=NULL;
-
   memset(center, 0, sizeof(float) *3);
   memset(maxAABBox, 0, sizeof(float) *3);
   memset(minAABBox, 0, sizeof(float) *3);
@@ -2520,17 +2607,81 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
 {
-  if(data)
-    delete (data);
 }
 
-//-------------------------------------------------------------------------
-
-
-void bz_APISolidWorldObject_V1::update(void)
+unsigned int findFirstNameInList ( const ObstacleList &list, unsigned short baseType, const std::string &name )
 {
-  if(!data || !minBBox)
-    return ;
+  unsigned short p[2] ;
+  p[0] = baseType;
+  for ( unsigned int i = 0; i < list.size(); i++ )
+  {
+    p[1] = (unsigned short)i;
+
+    Obstacle *obstacle = list[i];
+    if(obstacle->getName() == name )
+      return *(unsigned int*)p;
+  }
+  return 0;
+}
+
+BZF_API unsigned int bz_findWorldObject ( const char *name )
+{
+  if (!name)
+    return 0;
+
+  std::string nameStr = name;
+  unsigned int id = findFirstNameInList(OBSTACLEMGR.getWalls(),eWallObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getBoxes(),eBoxObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getPyrs(),ePyramidObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getBases(),eBaseObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getMeshes(),eMeshObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getArcs(),eArcObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getSpheres(),eSphereObject,nameStr);
+  if (id)
+    return id;
+
+  id = findFirstNameInList(OBSTACLEMGR.getTetras(),eTetraObject,nameStr);
+  if (id)
+    return id;
+
+  return 0;
+}
+
+BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
+{
+  if ( id = 0)
+    return NULL;
+
+  unsigned short p[2];
+  memcpy(p,&id,sizeof(int));
+  const ObstacleList  *list = obstacleListFromObstacleType(p[0]);
+  if ( p[1] >= list->size())
+    return NULL;
+
+  bz_APISolidWorldObject_V1 *solid = new bz_APISolidWorldObject_V1;
+  solid->id = id;
+  Obstacle *obj = (*list)[p[1]];
+  setSolidObjectFromObstacle(*solid,*obj);
+
+  return solid;
 }
 
 //-------------------------------------------------------------------------
@@ -2559,8 +2710,8 @@ bz_eAPIColType getAPIMapObject(InBuildingType colType, const Obstacle *obs, bz_A
       if(object)
       {
 	bz_APISolidWorldObject_V1 *solid=new bz_APISolidWorldObject_V1;
-	solid->data->obstacle=obs;
-	solid->update();
+	solid->id = buildObjectIDFromObstacle(*obs);
+	setSolidObjectFromObstacle(*solid,*obs);
 	*object=solid;
       }
       return base ? eInBase : eInSolid;

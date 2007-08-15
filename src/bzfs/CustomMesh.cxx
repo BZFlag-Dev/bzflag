@@ -236,6 +236,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     }
   }
 
+  mesh->setName(name.c_str());
+
   groupdef->addObstacle(mesh);
 
   return;

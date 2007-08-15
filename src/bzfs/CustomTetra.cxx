@@ -134,6 +134,8 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
   TetraBuilding* tetra = new TetraBuilding(transform, vertices, normals, texcoords,
 					   useNormals, useTexcoords,
 					   mats, driveThrough, shootThrough);
+  tetra->setName(name.c_str());
+
   if (tetra->isValid()) {
     groupdef->addObstacle(tetra);
   } else {

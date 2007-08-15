@@ -279,7 +279,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
   float pos[3] = {x, y, z};
 
-  for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
+  for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = OBSTACLEMGR.getWorld()->getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];

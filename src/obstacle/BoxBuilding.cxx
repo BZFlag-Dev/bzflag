@@ -22,13 +22,14 @@ const char*		BoxBuilding::typeName = "BoxBuilding";
 
 BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
 {
-  // do nothing
+  iType = boxType;
 }
 
 BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
 			 bool drive, bool shoot, bool invisible) :
   Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
 {
+  iType = boxType;
   finalize();
   return;
 }

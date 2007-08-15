@@ -172,6 +172,8 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 			    smoothBounce, driveThrough, shootThrough);
   }
 
+  cone->setName(name.c_str());
+
   if (cone->isValid()) {
     groupdef->addObstacle(cone);
   } else {
