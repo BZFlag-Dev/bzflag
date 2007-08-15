@@ -115,9 +115,10 @@ int FontManager::load ( const char* file )
   face.name = tempFile.getFileName();
   face.path = file;
 
-  int id = getFaceID(face.name);
-  if (id > 0) 
-    return id; /* already loaded */
+  std::string name = TextUtils::tolower(face.name);
+
+  if (faceNames.find(name) != faceNames.end()) 
+    return faceNames.find(name)->second;  /* already loaded */
 
   fontFaces.push_back(face);
   faceNames[face.name] = (int)fontFaces.size()-1;
