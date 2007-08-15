@@ -966,6 +966,19 @@ void sendMsgTimeUpdate( int timeLimit )
   broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
 }
 
+void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player )
+{
+  bool broadcast = player == AllPlayers;
+
+
+}
+void sendMsgTanagabilityReset ( void )
+{
+
+}
+
+
+
 void sendSetTeam ( int playerIndex, int _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();

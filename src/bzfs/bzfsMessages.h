@@ -54,6 +54,9 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
 void sendMsgTimeUpdate ( int timeLimit );
 
+void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
+void sendMsgTanagabilityReset ( void );
+
 int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
