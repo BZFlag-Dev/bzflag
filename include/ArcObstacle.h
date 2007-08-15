@@ -44,7 +44,7 @@ class ArcObstacle : public Obstacle {
 		float _rotation, float _angle, float _ratio,
 		const float _texsize[4], bool _useNormals,
 		int _divisions, const BzMaterial* mats[MaterialCount],
-		int physics, bool bounce, bool drive, bool shoot);
+		int physics, bool bounce, unsigned char drive, unsigned char shoot);
     ~ArcObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;

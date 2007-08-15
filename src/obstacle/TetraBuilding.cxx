@@ -45,7 +45,7 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 			     const bool _useNormals[4],
 			     const bool _useTexcoords[4],
 			     const BzMaterial* _materials[4],
-			     bool drive, bool shoot)
+			     unsigned char drive, unsigned char shoot)
 {
   // tetra specific parameters
   memcpy (vertices, _vertices, sizeof(vertices));

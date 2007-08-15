@@ -31,8 +31,8 @@ Obstacle::Obstacle()
   memset(pos, 0, sizeof(float) * 3);
   memset(size, 0, sizeof(float) * 3);
   angle = 0;
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
   ZFlip = false;
   source = WorldSource;
   iType = -1;
@@ -44,7 +44,7 @@ Obstacle::Obstacle()
 
 Obstacle::Obstacle(const float* _pos, float _angle,
 		   float _width, float _breadth, float _height,
-		   bool drive, bool shoot)
+		   unsigned char drive, unsigned char shoot)
 {
   pos[0] = _pos[0];
   pos[1] = _pos[1];

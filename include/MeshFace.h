@@ -38,7 +38,7 @@ class MeshFace : public Obstacle {
     MeshFace(MeshObstacle* mesh, int vertexCount,
 	     float** vertices, float** normals, float** texcoords,
 	     const BzMaterial* material, int physics,
-	     bool noclusters, bool smoothBounce, bool drive, bool shoot);
+	     bool noclusters, bool smoothBounce, unsigned char drive, unsigned char shoot);
     ~MeshFace();
 
     const char* getType() const;

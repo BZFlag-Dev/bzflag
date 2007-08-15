@@ -42,7 +42,7 @@ class ConeObstacle : public Obstacle {
 		 float _rotation, float _angle,
 		 const float _texsize[2], bool _useNormals,
 		 int _divisions, const BzMaterial* mats[MaterialCount],
-		 int physics, bool bounce, bool drive, bool shoot);
+		 int physics, bool bounce, unsigned char drive, unsigned char shoot);
     ~ConeObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;

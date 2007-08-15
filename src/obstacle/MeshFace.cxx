@@ -38,8 +38,8 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   texcoords = NULL;
   noclusters = false;
   smoothBounce = false;
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
   edges = NULL;
   edgePlanes = NULL;
   specialData = NULL;
@@ -54,7 +54,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 		   float** _vertices, float** _normals, float** _texcoords,
 		   const BzMaterial* _bzMaterial, int physics,
-		   bool _noclusters, bool bounce, bool drive, bool shoot)
+		   bool _noclusters, bool bounce, unsigned char drive, unsigned char shoot)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;

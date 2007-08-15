@@ -2511,6 +2511,15 @@ bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
   return eUnknownObject;
 }
 
+unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
+{
+  unsigned short p[2];
+  p[0] = obstacle.getTypeID();
+  p[1] = obstacle.getListID();
+
+  return *(unsigned int*)p;
+}
+
 const ObstacleList* obstacleListFromObstacleType ( int type )
 {
   switch(type)
@@ -2537,15 +2546,6 @@ const ObstacleList* obstacleListFromObstacleType ( int type )
   return NULL;
 }
 
-unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
-{
-  unsigned short p[2];
-  p[0] = obstacle.getTypeID();
-  p[1] = obstacle.getListID();
-
-  return *(unsigned int*)p;
-}
-
 void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle )
 {
   object.solidType = solidTypeFromObstacleType(obstacle.getTypeID());
@@ -2556,6 +2556,9 @@ void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obsta
   const Extents &extents = obstacle.getExtents();
   memcpy(object.maxAABBox,extents.maxs,sizeof(float)*3);
   memcpy(object.minAABBox,extents.mins,sizeof(float)*3);
+
+  object.driveThru.setAll(obstacle.isDriveThrough());
+  object.shootThru.setAll(obstacle.isShootThrough());
 }
 
 //-------------------------------------------------------------------------

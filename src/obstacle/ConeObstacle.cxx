@@ -38,7 +38,7 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
 			   float _rotation, float _sweepAngle,
 			   const float _texsize[2], bool _useNormals,
 			   int _divisions, const BzMaterial* mats[MaterialCount],
-			   int physics, bool bounce, bool drive, bool shoot)
+			   int physics, bool bounce, unsigned char drive, unsigned char shoot)
 {
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));

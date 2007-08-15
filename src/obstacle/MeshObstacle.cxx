@@ -49,8 +49,8 @@ MeshObstacle::MeshObstacle()
   texcoords = NULL;
   noclusters = false;
   smoothBounce = false;
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
   inverted = false;
   drawInfo = NULL;
   iType = meshType;
@@ -87,7 +87,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 			   const std::vector<cfvec3>& normalList,
 			   const std::vector<cfvec2>& texcoordList,
 			   int _faceCount, bool _noclusters,
-			   bool bounce, bool drive, bool shoot)
+			   bool bounce, unsigned char drive, unsigned char shoot)
 {
   unsigned int i;
 
@@ -142,7 +142,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 			   const std::vector<int>& _texcoords,
 			   const BzMaterial* _material, int phydrv,
 			   bool _noclusters,
-			   bool bounce, bool drive, bool shoot,
+			   bool bounce, unsigned char drive, unsigned char shoot,
 			   bool triangulate)
 {
   // protect the face list from overrun
@@ -183,8 +183,8 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   // override the flags if they are set for the whole mesh
   _noclusters = _noclusters || noclusters;
   bounce = bounce || smoothBounce;
-  drive = drive || driveThrough;
-  shoot = shoot || shootThrough;
+  drive = drive | driveThrough;
+  shoot = shoot | shootThrough;
 
   // override the triangulation setting depending on count
   triangulate = triangulate && (count > 3);

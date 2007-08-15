@@ -78,7 +78,7 @@ class Obstacle {
 			 can pass through it
   */
   Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
-	   float height, bool drive = false, bool shoot = false);
+	   float height, unsigned char drive = 0, unsigned char shoot = 0);
 
   /** This function makes a copy using the given transform */
   virtual Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -207,11 +207,14 @@ class Obstacle {
 
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
-  bool isDriveThrough() const;
+  unsigned char  isDriveThrough() const;
 
   /** This function returns @c true if bullets can pass through this object,
       @c false if they can't. */
-  bool isShootThrough() const;
+  unsigned char  isShootThrough() const;
+
+  void setDriveThrough ( unsigned char f ) {driveThrough = f;}
+  void setShootThrough ( unsigned char f ) {shootThrough = f;}
 
   /** This function returns @c true if tanks and bullets can pass through
       this object, @c false if either can not */
@@ -294,8 +297,8 @@ class Obstacle {
     float pos[3];
     float size[3]; // width, breadth, height
     float angle;
-    bool driveThrough;
-    bool shootThrough;
+    unsigned char driveThrough;
+    unsigned char shootThrough;
     bool ZFlip;
     char source;
     int iType;
@@ -354,12 +357,12 @@ inline void Obstacle::get3DNormal(const float *p, float *n) const
   getNormal(p, n);
 }
 
-inline bool Obstacle::isDriveThrough() const
+inline unsigned char Obstacle::isDriveThrough() const
 {
   return driveThrough;
 }
 
-inline bool Obstacle::isShootThrough() const
+inline unsigned char Obstacle::isShootThrough() const
 {
   return shootThrough;
 }

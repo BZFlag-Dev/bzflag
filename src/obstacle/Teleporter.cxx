@@ -33,7 +33,7 @@ Teleporter::Teleporter()
 
 Teleporter::Teleporter(const float* p, float a, float w,
 		       float b, float h, float _border, bool _horizontal,
-		       bool drive, bool shoot) :
+		       unsigned char drive, unsigned char shoot) :
 			 Obstacle(p, a, w, b, h, drive, shoot),
 			 border(_border), horizontal(_horizontal)
 {
