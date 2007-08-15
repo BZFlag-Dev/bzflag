@@ -17,9 +17,34 @@
 #include <errno.h>
 
 #include "bzfsAPI.h"
-#include "WorldEventManager.h"
 
 const int udpBufSize = 128000;
+
+std::vector<NetworkDataLogCallback*> logCallbacks;
+
+void addNetworkLogCallback(NetworkDataLogCallback * cb )
+{
+  if (cb)
+    logCallbacks.push_back(cb);
+}
+
+void removeNetworkLogCallback(NetworkDataLogCallback * cb )
+{
+  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
+  {
+    if ( logCallbacks[i] == cb )
+    {
+      logCallbacks.erase(logCallbacks.begin()+i);
+      return;
+    }
+  }
+}
+
+void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size )
+{
+  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
+    logCallbacks[i]->networkDataLog(send,udp,data,size);
+}
 
 bool NetHandler::pendingUDP = false;
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
@@ -182,19 +207,12 @@ than %s:%d\n",
     netPlayer[id]->countMessage(code, len, 0);
 #endif
 
-	// let any listeners know we got net data
-	bz_NetTransferEventData eventData;
-	eventData.eventType = bz_eNetDataReceveEvent;
-	eventData.send = false;
-	eventData.udp = true;
-	eventData.iSize = len;
-	eventData.data = (unsigned char*)buf;
-	worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+    callNetworkDataLog (false, true, (const unsigned char*)buf,len);
 
     if (code == MsgUDPLinkEstablished) {
       netPlayer[id]->udpout = true;
       logDebugMessage(2,"Player %s [%d] outbound UDP up\n",
-	     netPlayer[id]->info->getCallSign(), id);
+	      netPlayer[id]->info->getCallSign(), id);
     }
   }
   return id;
@@ -417,14 +435,7 @@ int NetHandler::pwrite(const void *b, int l) {
     }
   }
 
-  // let any listeners know we got net data
-  bz_NetTransferEventData eventData;
-  eventData.eventType = bz_eNetDataReceveEvent;
-  eventData.send = true;
-  eventData.udp = useUDP;
-  eventData.iSize = l;
-  eventData.data = (unsigned char*)b;
-  worldEventManager.callEvents(bz_eNetDataSendEvent,&eventData);
+  callNetworkDataLog (true, useUDP, (const unsigned char*)b,len);
 
   // always sent UDP messages and MsgUDPLinkRequest over udp with udpSend
   if (useUDP || code == MsgUDPLinkRequest) {
@@ -478,14 +489,7 @@ RxStatus NetHandler::tcpReceive() {
   countMessage(code, len, 0);
 #endif
 
-  // let any listeners know we got net data
-  bz_NetTransferEventData eventData;
-  eventData.eventType = bz_eNetDataReceveEvent;
-  eventData.send = false;
-  eventData.udp = false;
-  eventData.iSize = len;
-  eventData.data = (unsigned char*)buf;
-  worldEventManager.callEvents(bz_eNetDataReceveEvent,&eventData);
+  callNetworkDataLog (false, false, (const unsigned char*)buf,len);
 
   if (code == MsgUDPLinkEstablished) {
     udpout = true;
