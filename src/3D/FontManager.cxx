@@ -345,8 +345,16 @@ void* FontManager::getGLFont ( int face, int size )
     return itr->second;
   }
 
+  bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
+  if ( BZDB.isSet("MinAliasedFontSize"))
+  {
+    int minSize = BZDB.evalInt("MinAliasedFontSize");
+    if (size <= minSize)
+      useBitmapFont = true;
+  }
+
   FTFont* newFont = NULL;
-  if(BZDB.isTrue("UseBitmapFonts"))
+  if(useBitmapFont)
     newFont = (FTFont*)new CRAP_FONT(fontFaces[face].path.c_str());
   else
     newFont = (FTFont*)new FONT(fontFaces[face].path.c_str());
