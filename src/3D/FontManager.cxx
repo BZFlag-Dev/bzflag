@@ -105,24 +105,19 @@ void FontManager::initContext(void* data)
  */
 int FontManager::load ( const char* file )
 {
-  if (!file) {
+  if (!file)
     return -1;
-  }
-
-  std::string lower = TextUtils::tolower(std::string(file));
-  int id = getFaceID(lower);
-  if (id > 0) {
-    /* already loaded */
-    return id;
-  }
 
   OSFile tempFile;
-  tempFile.osName(lower.c_str());
+  tempFile.osName(file);
 
   FontFace face;
   face.name = tempFile.getFileName();
   face.path = file;
-  //  face.sizes.clear();
+
+  int id = getFaceID(face.name);
+  if (id > 0) 
+    return id; /* already loaded */
 
   fontFaces.push_back(face);
   faceNames[face.name] = (int)fontFaces.size()-1;
