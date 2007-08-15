@@ -69,10 +69,7 @@ FontManager::~FontManager()
 {
   //  std::cout << "DELETING FONT MANAGER" << std::endl;
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
-
-  // erm, why does this crash???
-  //  freeContext((void*)this);
-  return;
+  clear();
 }
 
 
@@ -81,11 +78,19 @@ FontManager::~FontManager()
  */
 void FontManager::freeContext(void* data)
 {
-  //  std::cout << "FREEING CONTEXT" << std::endl;
-  if (data) {
-    ((FontManager*)data)->clear();
+  FontManager * fm = (FontManager*)data;
+  for ( unsigned int i = 0; i < (unsigned int)fm->fontFaces.size(); i++ )
+  {
+    FontFace &face = fm->fontFaces[i];
+    std::map<int,void*>::iterator itr = face.sizes.begin();
+    while ( itr != face.sizes.end() )
+    {
+      if ( itr->second )
+	delete(itr->second);
+      itr++;
+    }
+    face.sizes.clear();
   }
-  return;
 }
 
 
@@ -94,11 +99,8 @@ void FontManager::freeContext(void* data)
  */
 void FontManager::initContext(void* data)
 {
-  //  std::cout << "INITIALIZING CONTEXT" << std::endl;
-  ((FontManager*)data)->rebuild();
   return;
 }
-
 
 /**
  * load a specified font
@@ -115,10 +117,8 @@ int FontManager::load ( const char* file )
   face.name = tempFile.getFileName();
   face.path = file;
 
-  std::string name = TextUtils::tolower(face.name);
-
-  if (faceNames.find(name) != faceNames.end()) 
-    return faceNames.find(name)->second;  /* already loaded */
+  if (faceNames.find(face.name) != faceNames.end()) 
+    return faceNames.find(face.name)->second;  /* already loaded */
 
   fontFaces.push_back(face);
   faceNames[face.name] = (int)fontFaces.size()-1;
@@ -207,11 +207,16 @@ void FontManager::preloadSize ( int font, int size )
     return;
   }
 
-  // make sure the font has been created
-  FONT *fnt = (FONT*)getGLFont(font, size);
-  if (!fnt) {
+  // if the font is loaded and has a GL font, reload it
+  // if it is NOT, then go allong.
+  std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
+  if ( itr == fontFaces[font].sizes.end() )
     return;
-  }
+
+  FTFont *fnt = (FTFont*)itr->second;
+
+  if (!fnt)
+    return;
 
   // preload
   std::string charset;
@@ -287,10 +292,8 @@ int FontManager::getFaceID ( const std::string font )
   if (font.size() <= 0)
     return -1;
 
-  std::string name = TextUtils::tolower(font);
-
-  if (faceNames.find(name) != faceNames.end()) {
-    return faceNames.find(name)->second;
+  if (faceNames.find(font) != faceNames.end()) {
+    return faceNames.find(font)->second;
   }
 
   /* no luck finding the one requested, try anything */
@@ -355,6 +358,18 @@ void* FontManager::getGLFont ( int face, int size )
   newFont->UseDisplayList(doDisplayLists);
 
   fontFaces[face].sizes[size] = (void*)newFont;
+
+  // preload the font
+
+  // preload
+  std::string charset;
+  charset = "abcdefghijklmnopqrstuvwxyz";
+  charset += TextUtils::toupper(charset);
+  charset += "1234567890";
+  charset += "`;'/.,[]\\\"";
+  charset += "<>?:{}+_)(*&^%$#@!)";
+  charset += " \t"; 
+  newFont->Advance(charset.c_str());
 
   return fontFaces[face].sizes[size];
 }

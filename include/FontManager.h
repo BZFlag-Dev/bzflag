@@ -77,7 +77,7 @@ protected:
 
   void* getGLFont(int face, int size); 
 
-  typedef struct _FontFace {
+  typedef struct {
     std::string name;
     std::string path;
     std::map<int,void*> sizes;
