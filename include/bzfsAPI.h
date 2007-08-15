@@ -46,23 +46,26 @@
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
-#ifdef _WIN32
-#define _ATTRIBUTE34
-#else
+/** This is so we can use gcc's "format string vs arguments"-check
+ * for various printf-like functions, and still maintain compatability.
+ * Not tested on other platforms yet, but should work. */
+#ifndef __attribute__
+/* This feature is available in gcc versions 2.5 and later.  */
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
+#  define __attribute__(Spec) /* empty */
+# endif
+/* The __-protected variants of `format' and `printf' attributes
+ *    are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
+#  define __format__ format
+#  define __printf__ printf
+# endif
+#endif
+
+/** JeffM's shorthand defines. */
 #define _ATTRIBUTE34 __attribute__ ((__format__ (__printf__, 3, 4)))
-#endif
-
-#ifdef _WIN32
-#define _ATTRIBUTE23
-#else
 #define _ATTRIBUTE23 __attribute__ ((__format__ (__printf__, 2, 3)))
-#endif
-
-#ifdef _WIN32
-#define _ATTRIBUTE12
-#else
 #define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)))
-#endif
 
 class bz_BasePlayerRecord;
 BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
