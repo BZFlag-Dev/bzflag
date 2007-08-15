@@ -118,6 +118,8 @@ bzfs_SOURCES = \
 	Score.cxx \
 	ServerCommand.cxx \
 	ServerCommand.h \
+	ServerIntangibilityManager.h \
+	ServerIntangibilityManager.cxx \
 	SpawnPolicy.cxx \
 	SpawnPolicy.h \
 	SpawnPolicyFactory.cxx \

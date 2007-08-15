@@ -589,6 +589,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\ServerCommand.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\ServerIntangibilityManager.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPolicy.cxx">
 			</File>
 			<File
@@ -1261,6 +1264,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\ServerCommand.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\ServerIntangibilityManager.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\SpawnPolicy.h">
