@@ -799,8 +799,8 @@ static void dumpMissingFlag(char *buf, uint16_t len)
 
   std::vector<std::string> args;
   args.push_back(flags);
-  printError(TextUtils::format("Flags not supported by this client: {1}",
-		       &args).c_str());
+  printError(TextUtils::format("Flags not supported by this client: %s",
+		       flags.c_str()).c_str());
 }
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
@@ -1144,7 +1144,10 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   {
     // uh oh, local player is dead
     if (victimLocal->isAlive())
+    {
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
+      rcLink->pushEvent(new DeathEvent());
+    }
   }
   else if (victimPlayer)
   {
@@ -2139,7 +2142,7 @@ static void		updateRobots(float dt)
     if (robots[i]) {
       robots[i]->update();
       if (robots[i]->hasHitWall())
-        rcLink->pushEvent(new HitWallEvent(0.0f));
+        rcLink->pushEvent(new HitWallEvent(0.0f)); // TODO: Fix 0.0f to be actual bearing (or heading?)
     }
 }
 

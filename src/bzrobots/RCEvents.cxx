@@ -28,6 +28,18 @@ bool HitWallEvent::updateBot(BZAdvancedRobot *bot) const
   return true;
 }
 
+messageParseStatus DeathEvent::parse(char **arguments, int count)
+{
+  if (count == 0)
+    return ParseOk;
+  return InvalidArgumentCount;
+}
+bool DeathEvent::updateBot(BZAdvancedRobot *bot) const
+{
+  bot->onDeath(*this);
+  return true;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

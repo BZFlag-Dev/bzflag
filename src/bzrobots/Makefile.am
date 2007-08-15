@@ -14,7 +14,8 @@ AM_CPPFLAGS = \
 	$(SDL_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
 	@X_CFLAGS@ \
-	@CONF_CPPFLAGS@
+	@CONF_CPPFLAGS@ \
+	$(shell python-config --cflags)
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 EXTRA_bzrobots_SOURCES = \
@@ -55,6 +56,8 @@ genericfiles =				\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
 	SharedObjectLoader.h		\
+	PythonLoader.cxx		\
+	PythonLoader.h			\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
 	AdvancedRobot.cxx		\
@@ -253,7 +256,7 @@ genericfiles =				\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
 
-bzrobots_LDFLAGS = -export-dynamic -static
+bzrobots_LDFLAGS = -export-dynamic -static $(shell python-config --ldflags)
 
 if CLIENT_INCLUDED
 bzrobots_SOURCES = $(genericfiles)

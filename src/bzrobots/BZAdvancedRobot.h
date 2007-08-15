@@ -66,6 +66,25 @@ class BZAdvancedRobot
 
     /** These are event handlers, optional to implement them. **/
     virtual void onHitWall(const HitWallEvent &/*event*/) {}
+    virtual void onDeath(const DeathEvent &/*event*/) {}
+    //virtual void onSkippedTurn(const SkippedTurnEvent &/*event*/) {}
+    //virtual void onBulletHit(const BulletHitEvent &/*event*/) {}
+    //This method is called when one of your bullets hits another robot.
+    //virtual void onBulletHitBullet(const BulletHitBulletEvent &/*event*/) {}
+    //This method is called when one of your bullets hits another bullet.
+    //virtual void onBulletMissed(const BulletMissedEvent &/*event*/) {}
+    //This method is called when one of your bullets misses, i.e. hits a wall.
+    //This method is called if your robot dies.
+    //virtual void onHitByBullet(const HitByBulletEvent &/*event*/) {}
+    //This method is called when your robot is hit by a bullet.
+    //virtual void onHitRobot(const HitRobotEvent &/*event*/) {}
+    //This method is called when your robot collides with another robot.
+    //virtual void onRobotDeath(const RobotDeathEvent &/*event*/) {}
+    //This method is called when another robot dies.
+    //virtual void onScannedRobot(const ScannedRobotEvent &/*event*/) {}
+    //This method is called when your robot sees another robot, i.e. when the robot's radar scan "hits" another robot.
+    //virtual void onWin(const WinEvent &/*event*/) {}
+    //This method is called if your robot wins a battle.
 
     /* These are related to the internal state/setup of the bot. */
     bool getCompatability();

@@ -29,6 +29,14 @@ struct HitWallEvent : public RCEvent
   private: float bearing;
 };
 
+struct DeathEvent : public RCEvent
+{
+  DeathEvent() {}
+  std::string getType() const { return "Death"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &/*stream*/) const {}
+  bool updateBot(BZAdvancedRobot *bot) const;
+};
 
 #endif
 

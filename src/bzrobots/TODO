@@ -1,6 +1,15 @@
 ? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully", shouldn't be happening).
 ? Make RCLink more c++-ish, by e.g. using operator << and not sendf/vsendf/send.
 ! Implement all events as per RoboCode standards.
+    onSkippedTurn(const SkippedTurnEvent &)
+    onBulletHit(const BulletHitEvent &)
+    onBulletHitBullet(const BulletHitBulletEvent &)
+    onBulletMissed(const BulletMissedEvent &)
+    onHitByBullet(const HitByBulletEvent &)
+    onHitRobot(const HitRobotEvent &)
+    onRobotDeath(const RobotDeathEvent &)
+    onScannedRobot(const ScannedRobotEvent &)
+    onWin(const WinEvent &)
 ! SWIGify BZAdvancedRobot etc.
 ! Implement a script-loader.
 ! Implement proper RoboCode compatability (radar, turret-turning, more?)
