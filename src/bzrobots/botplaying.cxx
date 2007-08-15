@@ -1729,7 +1729,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
         robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
-        BACKENDLOGGER << "New tank; type" << robots[i]->getPlayerType() << endl;
+        BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << endl;
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
 			      robots[i]->getCallSign(),

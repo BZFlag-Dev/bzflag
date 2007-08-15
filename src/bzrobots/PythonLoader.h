@@ -13,10 +13,19 @@
 #ifndef BZROBOTS_PYTHONLOADER_H
 #define BZROBOTS_PYTHONLOADER_H
 
+#include <Python.h>
+
 #include "ScriptLoader.h"
 
 class PythonLoader : public ScriptLoader {
+  PyObject *module, *ctor;
+  PyObject *robot;
+
+  bool initialized;
+  bool initialize();
+
   public:
+    PythonLoader();
     ~PythonLoader();
     bool load(std::string filename);
     BZAdvancedRobot *create(void);
