@@ -76,6 +76,7 @@ protected:
   friend class Singleton<FontManager>;
 
   void* getGLFont(int face, int size); 
+  void deleteGLFont ( void* font, int size );
 
   typedef struct {
     std::string name;

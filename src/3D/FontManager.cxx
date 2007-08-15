@@ -86,7 +86,7 @@ void FontManager::freeContext(void* data)
     while ( itr != face.sizes.end() )
     {
       if ( itr->second )
-	delete(itr->second);
+	fm->deleteGLFont(itr->second,itr->first);
       itr++;
     }
     face.sizes.clear();
@@ -163,7 +163,7 @@ void FontManager::clear(int font, int size)
   // poof
   std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
   if ( itr != fontFaces[font].sizes.end() ) {
-    delete (FONT*)(*itr).second;
+    deleteGLFont(itr->second,size);
     fontFaces[font].sizes.erase(size);
   }
 }
@@ -329,7 +329,26 @@ const char* FontManager::getFaceName(int faceID)
   return fontFaces[faceID].name.c_str();
 }
 
-
+/**
+* delete the ftgl representation for a given font of a given size
+* we do this so we call the correct distructior
+* a better thing would be to store if it's a bitmap or not
+* in the face info
+*/
+void deleteGLFont ( void* font, int size )
+{
+  bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
+  if ( BZDB.isSet("MinAliasedFontSize"))
+  {
+    int minSize = BZDB.evalInt("MinAliasedFontSize");
+    if (size <= minSize)
+      useBitmapFont = true;
+  }
+  if(useBitmapFont)
+    delete((CRAP_FONT*)font);
+  else
+    delete((FONT*)font);
+}
 /**
  * return the ftgl representation for a given font of a given size
  */
@@ -400,7 +419,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   assert(textlen < 1024 && "drawString text is way bigger than ever expected");
   memcpy(buffer, text, textlen);
 
-  FONT* theFont = (FONT*)getGLFont(faceID ,(int)size);
+  FTFont* theFont = (FTFont*)getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
@@ -660,7 +679,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
   if (!text || strlen(text) <= 0)
     return 0.0f;
 
-  FONT* theFont = (FONT*)getGLFont(faceID, (int)size);
+  FTFont* theFont = (FTFont*)getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
@@ -688,7 +707,7 @@ float FontManager::getStringWidth(const std::string &face, float size,
  */
 float FontManager::getStringHeight(int font, float size)
 {
-  FONT* theFont = (FONT*)getGLFont(font, (int)size);
+  FTFont* theFont = (FTFont*)getGLFont(font, (int)size);
 
   if (!theFont)
     return 0;	
