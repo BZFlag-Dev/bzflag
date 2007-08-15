@@ -26,7 +26,7 @@ public:
   
   void resetTangibility ( void );
 
-  bool isWorldObjectTangable ( unsigned int objectGUID );
+  bool isWorldObjectTangible ( unsigned int objectGUID );
 
 protected:
   friend class Singleton<ServerIntangibilityManager>;
