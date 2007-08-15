@@ -54,6 +54,8 @@ ircControl::ircControl() {
 //FIXME: Some of this text wrangling could probably be added to TextUtils... 
 bool ircControl::loadConfigFile(std::string filename) {
 
+  logDebugMessage(4, "starting IRC configuration\n");
+
   std::string errmsg;
 
   //open conf file
@@ -79,13 +81,17 @@ bool ircControl::loadConfigFile(std::string filename) {
 
   while (getline(ircconf, curline)) {
 
+
     //snip the comment out of the line if it exists
+    //FIXME: um, oops, DUH. IRC channels use #, so using it as a comment character is a BAD idea.
+    //Commented out until I choose another character 
+    /*
     std::string::size_type index = curline.find('#');
     if (index != std::string::npos) {
 
       curline = curline.substr(0, index);
 
-    }
+    } */
 
     //split the line into arguments
     curlineargs = TextUtils::tokenize(curline, std::string("-"), 0, true);
@@ -126,15 +132,15 @@ bool ircControl::loadConfigFile(std::string filename) {
 	std::vector<std::string> params = TextUtils::tokenize(curlineargs.at(x), std::string(" "), 0, true);
 
 	//erase blank entries
-	for (std::vector<std::string>::iterator x = params.begin(); x != params.end(); x++) 
-	  if (*x == "") 
-	    params.erase(x);
+	//for (std::vector<std::string>::iterator x = params.begin(); x != params.end(); x++) 
+	//  if (*x == "") 
+	//    params.erase(x);
 
 	if (params.size() == 0) //sanity check- an empty param should have been caught already
 	  continue;
 
 	//Now we start processing the arguments (finally!) Ordered by likely frequency in the configuration.
-	if (TextUtils::compare_nocase(params.at(0), std::string("channel")) && params.size() >= 2) {
+	if (TextUtils::compare_nocase(params.at(0), std::string("channel")) == 0 && params.size() >= 2) {
 
 	  if (channels.count(params.at(1)) > 0) //make sure we don't have this channel already
 	    continue;
@@ -145,19 +151,19 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 	  //loop through the remaining params and configure this channel accordingly
 	  for (int i = 2; i < params.size(); i++) {
-	    if (TextUtils::compare_nocase(params.at(0), std::string("relayGameChat")) == 0) {
+	    if (TextUtils::compare_nocase(params.at(i), std::string("relayGameChat")) == 0) {
 	      newchan.relayGameChat = true;
 
-	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayGameJoinsAndParts")) == 0) {
+	    } else if (TextUtils::compare_nocase(params.at(i), std::string("relayGameJoinsAndParts")) == 0) {
 	      newchan.relayGameJoinsAndParts = true;
 
-	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayIRCChat")) == 0) {
+	    } else if (TextUtils::compare_nocase(params.at(i), std::string("relayIRCChat")) == 0) {
 	      newchan.relayIRCChat = true;
 
-	    } else if (TextUtils::compare_nocase(params.at(0), std::string("relayIRCJoinsAndParts")) == 0) {
+	    } else if (TextUtils::compare_nocase(params.at(i), std::string("relayIRCJoinsAndParts")) == 0) {
 	      newchan.relayIRCJoinsAndParts = true;
 
-	    } else if (TextUtils::compare_nocase(params.at(0), std::string("acceptCommands")) == 0) {
+	    } else if (TextUtils::compare_nocase(params.at(i), std::string("acceptCommands")) == 0) {
 	      newchan.acceptCommands = true;
 
 	    } else { 
@@ -220,53 +226,47 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 bool ircControl::init(){
 
+  logDebugMessage(4, "starting IRC init\n");
+
   std::string errmsg;
 
   //make sure it's configured... sanity check
-  if (!configured) 
+  if (!configured) {
+    logDebugMessage (4, "IRC will not load (not configured)\n");
     return false; //we don't need to explain- the conf loader will do that when it fails
+  }
 
   //register events
-  client.registerEventHandler(eIRCNoticeEvent, this);
-  client.registerEventHandler(eIRCNickNameError, this);
-  client.registerEventHandler(eIRCNickNameChange, this);
+  bool allworked = true;
+  allworked = allworked && client.registerEventHandler(eIRCNoticeEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCNickNameError, this);
+  allworked = allworked && client.registerEventHandler(eIRCNickNameChange, this);
   //client.registerEventHandler(eIRCWelcomeEvent, this);
-  //client.registerEventHandler(eIRCEndMOTDEvent, this);
-  client.registerEventHandler(eIRCChannelJoinEvent, this);
-  client.registerEventHandler(eIRCChannelPartEvent, this);
-  client.registerEventHandler(eIRCChannelBanEvent, this);
-  client.registerEventHandler(eIRCChannelMessageEvent, this);
-  client.registerEventHandler(eIRCPrivateMessageEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCEndMOTDEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelJoinEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelPartEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelBanEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelMessageEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCPrivateMessageEvent, this);
   //client.registerEventHandler(eIRCTopicEvent, this);
-  client.registerEventHandler(eIRCUserJoinEvent, this);
-  client.registerEventHandler(eIRCUserPartEvent, this);
-  client.registerEventHandler(eIRCUserKickedEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCUserJoinEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCUserPartEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCUserKickedEvent, this);
   //client.registerEventHandler(eIRCTopicChangeEvent, this);
-  client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
-  client.registerEventHandler(eIRCChannelModeSet, this);
-  client.registerEventHandler(eIRCChannelUserModeSet, this);
-  client.registerEventHandler(eIRCUserModeSet, this);
-  client.registerEventHandler(eIRCQuitEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelModeSet, this);
+  allworked = allworked && client.registerEventHandler(eIRCChannelUserModeSet, this);
+  allworked = allworked && client.registerEventHandler(eIRCUserModeSet, this);
+  allworked = allworked && client.registerEventHandler(eIRCQuitEvent, this);
+
+  if (!allworked)
+    logDebugMessage (0, "Some of the events failed to register.");
 
   //connect
   if (!client.connect(server, port)) {
     errmsg = "IRC Connection failed.";
     logDebugMessage(1, errmsg.c_str());
     return false;
-  }
-
-  //send init commands and wait
-  //TODO: Implement this... possibly better handled by an event, like the MOTD/welcome?
-
-  //join channels
-  for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
-    if (client.join(itr->second.name)) {
-      itr->second.joined = true;
-    } else {
-      errmsg = "Unable to join channel \"";
-      errmsg += itr->second.name + "\"\n";
-      logDebugMessage(1, errmsg.c_str());
-    }
   }
 
   return true;
@@ -295,6 +295,11 @@ bool ircControl::update(){
 
 bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBaseEventInfo &info) {
 
+  std::string errmsg;
+
+  //debug
+  logDebugMessage(0, "IRC: Process called");
+
   //meat and potatoes of the implementation goes here
 
   /*
@@ -306,18 +311,39 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
   } else if (eventType == eIRCWelcomeEvent) {
 
-  } else if (eventType == eIRCEndMOTDEvent) {
+  } else */ if (eventType == eIRCEndMOTDEvent) {
     //this will finish off the connection stuff, like commands and channel joins.
 
-  } else if (eventType == eIRCChannelJoinEvent) {
+    //send init commands and wait
+    //TODO: Implement this... 
+
+    //join channels
+    for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+      if (client.join(itr->second.name)) {
+        itr->second.joined = true;
+      } else {
+        errmsg = "Unable to join channel \"";
+        errmsg += itr->second.name + "\"\n";
+        logDebugMessage(1, errmsg.c_str());
+      }
+    }
+  } /* else if (eventType == eIRCChannelJoinEvent) {
 
   } else if (eventType == eIRCChannelPartEvent) {
 
   } else if (eventType == eIRCChannelBanEvent) {
 
-  } else */ if (eventType == eIRCChannelMessageEvent) {
+  } */ else if (eventType == eIRCChannelMessageEvent) {
 
     trMessageEventInfo* chanMsgInfo = (trMessageEventInfo*)&info;
+
+    if (chanMsgInfo->source == controlChannel.name) {
+      //we're dealing with the bot control channel. Act accordingly.
+      //TODO: Check for a player query
+
+
+      return true;
+    }
 
     if (channels.count(chanMsgInfo->source) == 1) { //make sure we're actually supposed to be in this channel
       if (channels[chanMsgInfo->source].relayIRCChat) {
@@ -328,9 +354,13 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
       }
     }
 
-  } /* else if (eventType == eIRCPrivateMessageEvent) {
+  } else if (eventType == eIRCPrivateMessageEvent) {
 
-  } else if (eventType == eIRCTopicEvent) {
+    trMessageEventInfo* pmInfo = (trMessageEventInfo*)&info;
+
+    //we are probably getting a command, or a return for a query. 
+
+  } /* else if (eventType == eIRCTopicEvent) {
 
   } else if (eventType == eIRCUserJoinEvent) {
 
@@ -348,16 +378,27 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
   } else if (eventType == eIRCUserModeSet) {
 
-  } else if (eventType == eIRCQuitEvent) {
+  } */ else if (eventType == eIRCQuitEvent) {
+
+    logDebugMessage(4, "BORK! We've been disconnected!");
 
   }
 
-*/
+  return true;
 
 }
 
 void ircControl::handleGameChat(std::string playername, std::string message) {
 
+  for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+    if (itr->second.relayGameChat) {
+      //send the chat msg to this channel
+      std::string msg = playername;
+      msg += ": ";
+      msg += message;
+      client.sendMessage(itr->second.name, msg);
+    }
+  }
 }
 
 
