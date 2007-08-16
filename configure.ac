@@ -142,6 +142,9 @@ AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
 # do we want bzrobots?
 AC_ARG_ENABLE(bzrobots, [  --disable-bzrobots       build bzrobots client])
 
+# do we want bzrobots python support?
+AC_ARG_ENABLE(bzrobots_python, [  --enable-bzrobots-python       build bzrobots client w/ python support])
+
 # build a binary set to stop functioning after some date
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
 if test x$enable_timebomb = xyes; then
@@ -940,7 +943,23 @@ else
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
 	enable_bzrobots=no
     else
-	AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
+        AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
+        if test x$enable_bzrobots_python = xyes; then
+            AC_PYTHON_DEVEL
+            AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, true)
+            AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
+        else
+            AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
+        fi
+
+        if test x$enable_bzrobots_python = xyes; then
+            AC_PATH_PROG([SWIG],[swig])
+            if test -z "$SWIG" ; then
+                AC_MSG_WARN([No SWIG found, so cannot build Python support])
+                AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
+                enable_bzrobots_python=no
+            fi
+        fi
     fi
 fi
 
@@ -1288,7 +1307,11 @@ if test "x$enable_bzrobots" = "xno"; then
 	build_bzrobots="no bzrobots binary!"
     fi
 else
-    build_bzrobots="yes"
+    if test "x$enable_bzrobots_python" = "xyes"; then
+        build_bzrobots="yes (with python)"
+    else
+        build_bzrobots="yes (without python)"
+    fi
 fi
 
 dnl

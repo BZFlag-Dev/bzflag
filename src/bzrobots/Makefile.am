@@ -14,13 +14,26 @@ AM_CPPFLAGS = \
 	$(SDL_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
 	@X_CFLAGS@ \
-	@CONF_CPPFLAGS@ \
-	$(shell python-config --cflags)
+	@CONF_CPPFLAGS@
+
+if BZROBOTS_PYTHON_ENABLED
+AM_CXXFLAGS = @CONF_CXXFLAGS@ \
+	$(PYTHON_CPPFLAGS) \
+	-DWITH_PYTHONLOADER=1
+pythonloaderfiles =  		\
+	PythonLoader.cxx	\
+	PythonLoader.h
+bzrobots_LDFLAGS = -export-dynamic -static $(PYTHON_LDFLAGS)
+else
 AM_CXXFLAGS = @CONF_CXXFLAGS@
+pythonloaderfiles =
+bzrobots_LDFLAGS = -export-dynamic -static
+endif
 
 EXTRA_bzrobots_SOURCES = \
 	../bzflag/ClientAuthentication.cxx	\
 	../bzflag/ClientAuthentication.h
+
 
 genericfiles =				\
 	bzrobots.cxx			\
@@ -30,6 +43,7 @@ genericfiles =				\
 	RCMessage.h			\
 	RCRequest.h			\
 	RCRequests.cxx			\
+	RCRequests_Process.cxx		\
 	RCRequests.h			\
 	RCReply.h			\
 	RCReplies.cxx			\
@@ -56,8 +70,6 @@ genericfiles =				\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
 	SharedObjectLoader.h		\
-	PythonLoader.cxx		\
-	PythonLoader.h			\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
 	AdvancedRobot.cxx		\
@@ -256,12 +268,12 @@ genericfiles =				\
 	../bzflag/stars.cxx			\
 	../bzflag/stars.h
 
-bzrobots_LDFLAGS = -export-dynamic -static $(shell python-config --ldflags)
-
 if CLIENT_INCLUDED
-bzrobots_SOURCES = $(genericfiles)
+bzrobots_SOURCES = $(genericfiles)		\
+	$(pythonloaderfiles)
 else
-bzrobots_SOURCES = $(genericfiles) \
+bzrobots_SOURCES = $(genericfiles)		\
+	$(pythonloaderfiles)			\
 	OpenGLUtils.cxx	
 endif
 
@@ -309,9 +321,35 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-lib_LTLIBRARIES = TestRobot.la
 TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
 	TestRobot.cxx \
 	TestRobot.h
+
+if BZROBOTS_PYTHON_ENABLED
+lib_LTLIBRARIES = TestRobot.la _bzrobot.la
+_bzrobot_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
+_bzrobot_la_LDFLAGS = -module -avoid-version -export-dynamic
+_bzrobot_la_SOURCES = \
+	BZAdvancedRobot.cxx \
+	BZAdvancedRobot.h \
+	RCRequests.cxx \
+	RCRequests_ProcessSWIG.cxx \
+	RCRequests.h \
+	RCLink.cxx \
+	RCLink.h \
+	RCLinkFrontend.cxx \
+	RCLinkFrontend.h \
+	RCEvent.h \
+	MessageUtilities.cxx \
+	MessageUtilities.h \
+	bzrobot_python_wrap.cxx \
+	bzrobot_python_wrap.h
+_bzrobot_la_LIBADD = ../date/libDate.la
+
+bzrobot_python_wrap.cxx: bzrobot.i 
+	$(SWIG) -c++ -python -o $@ $<
+else
+lib_LTLIBRARIES = TestRobot.la
+endif

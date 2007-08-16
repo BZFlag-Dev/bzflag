@@ -12,7 +12,10 @@
 
 #include "ScriptLoaderFactory.h"
 #include "SharedObjectLoader.h"
-#include "PythonLoader.h"
+
+#ifdef WITH_PYTHONLOADER
+#   include "PythonLoader.h"
+#endif
 
 // initialize the singleton
 template <>
@@ -30,7 +33,9 @@ ScriptLoaderFactory::scriptLoader(std::string extension)
 void ScriptLoaderFactory::initialize()
 {
   SCRIPTLOADER.Register<SharedObjectLoader>("so");
+#ifdef WITH_PYTHONLOADER
   SCRIPTLOADER.Register<PythonLoader>("py");
+#endif
 }
 
 /* private */

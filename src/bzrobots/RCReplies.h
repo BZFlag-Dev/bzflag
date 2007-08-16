@@ -21,7 +21,6 @@
 #include <string>
 
 #include "RCReply.h"
-#include "RCLink.h"
 
 #include "RCEvent.h"
 
