@@ -29,7 +29,7 @@
 #include "PhysicsDriver.h"
 #include "WorldInfo.h"
 #include "BZDBCache.h"
-
+#include "ServerIntangibilityManager.h"
 
 //
 // Datatype Definitions
@@ -135,7 +135,8 @@ static inline bool isValidLanding(const Obstacle* obs)
     return false;
   }
   // drivethrough buildings are not potential landings
-  if (obs->isDriveThrough()) {
+
+  if (ServerIntangibilityManager::instance().instance().getWorldObjectTangiblity(obs->getGUID()) != 0) {
     return false;
   }
 

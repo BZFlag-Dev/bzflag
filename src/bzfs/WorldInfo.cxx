@@ -44,6 +44,7 @@
 #include "ArcObstacle.h"
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
+#include "ServerIntangibilityManager.h"
 
 /* local implementation headers */
 #include "FlagInfo.h"
@@ -360,14 +361,18 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 
 InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 {
-  if (obstacle == NULL) {
+  if (obstacle == NULL) 
+  {
     return NOT_IN_BUILDING;
   }
-  else if (obstacle->getType() == BoxBuilding::getClassName()) {
-    if (obstacle->isDriveThrough()) {
+  else if (obstacle->getType() == BoxBuilding::getClassName())
+  {
+    if (ServerIntangibilityManager::instance().getWorldObjectTangiblity(obstacle->getGUID()) != 0)
+    {
       return IN_BOX_DRIVETHROUGH;
     }
-    else {
+    else 
+    {
       return IN_BOX_NOTDRIVETHROUGH;
     }
   }

@@ -56,8 +56,15 @@ enum ObstacleTypes {
   ObstacleTypeCount
 };
 
-class Obstacle {
+#define _PASSABLE_MASK 0
+#define _INTAGIBLE 0x01
+#define _RED_PASSABLE 0x02
+#define _GREEN_PASSABLE 0x04
+#define _BLUE_PASSABLE 0x06
+#define _PURPLE_PASSABLE 0x08
+#define _ROGUE_PASSABLE 0x10
 
+class Obstacle {
   friend class ObstacleModifier;
 
   public:
@@ -142,7 +149,14 @@ class Obstacle {
 
   unsigned short getListID ( void ) const { return listID;}
   void setListID ( unsigned short id ) {listID = id;}
-  
+ 
+  unsigned int getGUID ( void ) const
+  {
+    unsigned short p[2];
+    p[0] = getTypeID();
+    p[1] = getListID();
+    return *(unsigned int*)p;
+  }
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is

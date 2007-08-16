@@ -52,6 +52,7 @@
 #include "bzfsClientMessages.h"
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
+#include "ServerIntangibilityManager.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -1861,6 +1862,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   dropAssignedFlag(playerIndex);
 
   sendPlayerInfo();
+  ServerIntangibilityManager::instance().sendNewPlayerWorldTangibility(playerIndex);
 
   // call any on join events
   bz_PlayerJoinPartEventData_V1	joinEventData;

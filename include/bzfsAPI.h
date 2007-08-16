@@ -1600,6 +1600,9 @@ public:
     rogue = val;
   }
 
+  bool allTrue ( void ) const {return red && green && blue && purple && rogue;}
+  bool allFalse ( void ) const {return !red && !green && !blue && !purple && !rogue;}
+
   bool	red;
   bool	green;
   bool	blue;
@@ -1669,6 +1672,10 @@ BZF_API bz_APIWorldObjectList* bz_getWorldObjectList( void );
 BZF_API void bz_releaseWorldObjectList( bz_APIWorldObjectList* list );
 BZF_API unsigned int bz_findWorldObject ( const char *name );
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id );
+
+BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &atribs );
+BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtributes &atribs );
+BZF_API void bz_ResetWorldObjectTangibilities ( void );
 
 // collision methods
 typedef enum

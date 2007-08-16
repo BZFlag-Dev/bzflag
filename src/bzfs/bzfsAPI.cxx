@@ -44,6 +44,8 @@
 #include "bzfsPlugins.h"
 #include "ObstacleMgr.h"
 
+#include "ServerIntangibilityManager.h"
+
 TimeKeeper synct=TimeKeeper::getCurrent();
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
@@ -2546,6 +2548,48 @@ const ObstacleList* obstacleListFromObstacleType ( int type )
   return NULL;
 }
 
+unsigned char makeTangibilityMask ( const bz_SolidObjectPassableAtributes &atribs )
+{
+  if (atribs.allFalse())
+    return 0;
+
+  if ( atribs.allTrue())
+    return 1;
+
+  unsigned char m = 0;
+  if ( atribs.red )
+    m |= _RED_PASSABLE;
+  if ( atribs.green )
+    m |= _GREEN_PASSABLE;
+  if ( atribs.blue )
+    m |= _BLUE_PASSABLE;
+  if ( atribs.purple )
+    m |= _PURPLE_PASSABLE;
+  if ( atribs.rogue )
+    m |= _ROGUE_PASSABLE;
+
+  return m;
+}
+
+void readTangibilityMask ( unsigned char m, bz_SolidObjectPassableAtributes &atribs )
+{
+  atribs.setAll(false);
+  if (m == 0)
+    return;
+
+  if ( m == 1)
+  {
+    atribs.setAll(true);
+    return;
+  }
+
+  atribs.red = m & _RED_PASSABLE;
+  atribs.green = m & _GREEN_PASSABLE;
+  atribs.blue = m & _BLUE_PASSABLE;
+  atribs.purple = m & _PURPLE_PASSABLE;
+  atribs.rogue = m & _ROGUE_PASSABLE;
+}
+
 void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle )
 {
   object.solidType = solidTypeFromObstacleType(obstacle.getTypeID());
@@ -2557,8 +2601,8 @@ void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obsta
   memcpy(object.maxAABBox,extents.maxs,sizeof(float)*3);
   memcpy(object.minAABBox,extents.mins,sizeof(float)*3);
 
-  object.driveThru.setAll(obstacle.isDriveThrough());
-  object.shootThru.setAll(obstacle.isShootThrough());
+  readTangibilityMask(ServerIntangibilityManager::instance().getWorldObjectTangiblity(obstacle.getGUID()),object.driveThru);
+  readTangibilityMask(obstacle.isShootThrough(),object.shootThru);
 }
 
 //-------------------------------------------------------------------------
@@ -2685,6 +2729,30 @@ BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
   setSolidObjectFromObstacle(*solid,*obj);
 
   return solid;
+}
+
+BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &atribs )
+{
+  ServerIntangibilityManager::instance().instance().setWorldObjectTangibility(id,makeTangibilityMask(atribs));
+  return true;
+}
+
+BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtributes &atribs )
+{
+  atribs.setAll(false);
+
+  unsigned char val =  ServerIntangibilityManager::instance().instance().getWorldObjectTangiblity(id);
+  if ( val == 255 )
+    return false;
+
+  readTangibilityMask(val,atribs);
+  
+  return true;
+}
+
+BZF_API void bz_ResetWorldObjectTangibilities ( void )
+{
+  ServerIntangibilityManager::instance().resetTangibility();
 }
 
 //-------------------------------------------------------------------------
@@ -3462,6 +3530,8 @@ BZF_API bool bz_restart(void)
   worldDatabase=NULL;
 
   bz_stopRecBuf();
+
+  ServerIntangibilityManager::instance().resetTangibility();
 
   // start up all new and stuff
   if(!defineWorld())

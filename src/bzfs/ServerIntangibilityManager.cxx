@@ -19,7 +19,7 @@
 template <>
 ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (ServerIntangibilityManager*)0;
 
-void ServerIntangibilityManager::setWorldObjectTangibility ( unsigned int objectGUID, bool tangible )
+void ServerIntangibilityManager::setWorldObjectTangibility ( unsigned int objectGUID, unsigned char tangible )
 {
   tangibilityMap[objectGUID] = tangible;
   sendMsgTanagabilityUpdate(objectGUID,tangible);
@@ -27,7 +27,7 @@ void ServerIntangibilityManager::setWorldObjectTangibility ( unsigned int object
 
 void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
 {
-  std::map<unsigned int, bool>::iterator itr = tangibilityMap.begin();
+  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.begin();
   while (itr != tangibilityMap.end())
   {
     // send out the tangibility update message
@@ -36,17 +36,17 @@ void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
   }
 }
 
-bool ServerIntangibilityManager::isWorldObjectTangible ( unsigned int objectGUID )
+unsigned char ServerIntangibilityManager::getWorldObjectTangiblity ( unsigned int objectGUID )
 {
-  std::map<unsigned int, bool>::iterator itr = tangibilityMap.find(objectGUID);
+  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(objectGUID);
   if ( itr != tangibilityMap.end())
     return itr->second;
 
   Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
   if (!obs)
-    return false;
+    return 255;
 
-  return !obs->isDriveThrough();
+  return obs->isDriveThrough();
 }
 
 void ServerIntangibilityManager::resetTangibility ( void )

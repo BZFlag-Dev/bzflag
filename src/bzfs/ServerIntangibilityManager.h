@@ -20,13 +20,13 @@
 class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager>
 {
 public:
-  void setWorldObjectTangibility ( unsigned int objectGUID, bool tangible );
+  void setWorldObjectTangibility ( unsigned int objectGUID, unsigned char tangible );
   
   void sendNewPlayerWorldTangibility ( int playerID );
   
   void resetTangibility ( void );
 
-  bool isWorldObjectTangible ( unsigned int objectGUID );
+  unsigned char getWorldObjectTangiblity ( unsigned int objectGUID );
 
 protected:
   friend class Singleton<ServerIntangibilityManager>;
@@ -35,7 +35,7 @@ private:
   ServerIntangibilityManager(){};
   ~ServerIntangibilityManager(){};
 
-  std::map<unsigned int, bool> tangibilityMap;
+  std::map<unsigned int, unsigned char> tangibilityMap;
 };
 
 #endif  /*__SERVERINTANGIBILITYMANAGER_H__ */

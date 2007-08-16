@@ -970,14 +970,21 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
 {
   bool broadcast = player == AllPlayers;
 
+  void *bufStart;
+  void *buf2 = bufStart = getDirectMessageBuffer();
+  buf2 = nboPackUInt(bufStart,object);
+  buf2 = nboPackUByte(buf2,tang);
 
+  if (broadcast)
+    broadcastMessage(MsgTangibilityUpdate, (char*)buf2 - (char*)bufStart, bufStart,false);
+  else
+    directMessage(player, MsgTangibilityUpdate, (char*)buf2 - (char*)bufStart, bufStart);
 }
+
 void sendMsgTanagabilityReset ( void )
 {
-
+  broadcastMessage(MsgTangibilityReset, 0, NULL,false);
 }
-
-
 
 void sendSetTeam ( int playerIndex, int _team )
 {
