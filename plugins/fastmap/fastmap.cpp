@@ -260,7 +260,14 @@ void FastMapClient::startTransfer ( unsigned char * d, unsigned int s )
   memcpy(data,d,s);
   size = s;
 
-  if (!updateTransfer())
+  std::string httpHeaders;
+  httpHeaders += "HTTP/1.1 200 OK\n";
+  httpHeaders += format("Content-Length: %d\n", size);
+  httpHeaders += "Connection: close\n";
+  httpHeaders += "Content-Type: application/binary\n";
+  httpHeaders += "\n";
+
+  if (!bz_sendNonPlayerData ( conID, httpHeaders.c_str(), httpHeaders.size() ) || !updateTransfer())
     disconnect(conID);
 }
 
