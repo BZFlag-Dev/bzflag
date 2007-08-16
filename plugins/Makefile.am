@@ -11,6 +11,7 @@ SUBDIRS = \
 	bzfscron \
 	chathistory \
 	flagStay \
+	fastmap \
 	hiddenAdmin \
 	keepaway \
 	killall \
