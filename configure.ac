@@ -935,6 +935,8 @@ AM_CONDITIONAL(SERVER_INCLUDED, true)
 if test x$enable_bzrobots = xno; then
     AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
     enable_bzrobots=no
+    AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
+    enable_bzrobots_python=no
 else
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
