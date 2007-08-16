@@ -97,7 +97,7 @@ void FontManager::freeContext(void* data)
 /**
  * initialize our context
  */
-void FontManager::initContext(void* data)
+void FontManager::initContext(void* /* data */ )
 {
   return;
 }
