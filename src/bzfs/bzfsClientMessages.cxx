@@ -131,22 +131,15 @@ public:
 class GetWorldHandler : public ClientNetworkMessageHandler
 {
 public:
-  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /* buf */, int len )
+  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf , int len )
   {
     if (len < 4)
       return false;
 
- //   uint32_t ptr;	// data: count (bytes read so far)
- //   buf = nboUnpackUInt(buf, ptr);
-    // this message ONLY comes in when they want the world, so jus send a chunk
-    // and the auto world sender will handle the rest untill there pointer is done
-    NetConnectedPeer &peer = netConnectedPeers[handler->getFD()];
-    if (peer.player == -1)
-      return true;  // wtf, you HAVE to be a player
+    uint32_t ptr;	// data: count (bytes read so far)
+    buf = nboUnpackUInt(buf, ptr);
 
-    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(peer.player);
-
-    sendWorldChunk(handler, player->worldPointer);
+    sendWorldChunk(handler, ptr);
 
     return true;
   }

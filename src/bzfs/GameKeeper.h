@@ -84,8 +84,6 @@ public:
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
-    uint32_t	    worldPointer;
-
     int		   getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);

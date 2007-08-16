@@ -45,7 +45,7 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 }
 
 GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
-  worldPointer(0), player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
+  player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false), idFlag(-1)
 {
@@ -75,7 +75,7 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
-  worldPointer(0), player(_playerIndex), netHandler(NULL), lagInfo(&player),
+  player(_playerIndex), netHandler(NULL), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(NULL),
   needThisHostbanChecked(false), idFlag(-1)
 {

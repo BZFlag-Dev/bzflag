@@ -662,14 +662,12 @@ int sendTeamUpdateDirect(NetHandler *handler)
 
 void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
 {
-  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
-
   worldWasSentToAPlayer = true;
   // send another small chunk of the world database
   assert((world != NULL) && (worldDatabase != NULL));
 
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = bufStart;
+  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
   uint32_t left = worldDatabaseSize - ptr;
 
   if (ptr >= worldDatabaseSize)
@@ -682,12 +680,9 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
     size = worldDatabaseSize - ptr;
     left = 0;
   }
-  buf = nboPackUInt(buf, uint32_t(left));
+  buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
   directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
-  ptr += (char*)buf - (char*)bufStart;
-  if (left == 0)
-    ptr = 0;
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
