@@ -2742,7 +2742,7 @@ BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtribu
   atribs.setAll(false);
 
   unsigned char val =  ServerIntangibilityManager::instance().instance().getWorldObjectTangiblity(id);
-  if ( val == 255 )
+  if ( val == _INVALID_TANGIBILITY )
     return false;
 
   readTangibilityMask(val,atribs);
