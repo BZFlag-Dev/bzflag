@@ -2714,7 +2714,7 @@ BZF_API unsigned int bz_findWorldObject ( const char *name )
 
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
 {
-  if ( id = 0)
+  if (id == 0)
     return NULL;
 
   unsigned short p[2];
