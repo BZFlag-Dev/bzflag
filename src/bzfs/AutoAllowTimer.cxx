@@ -50,9 +50,8 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
 
     if (!player->player.canShoot() || !player->player.canMove()) {
       if (now - player->player.allowChangeTime > autoallowtime) {
-	sendMessageAllow(player->getIndex(), true, true);
-	player->player.setAllowShooting(true);
-	player->player.setAllowMovement(true);
+	sendMessageAllow(player->getIndex(), AllowAll);
+	player->player.setAllow(AllowAll);
       }
     }
   }

@@ -1116,7 +1116,9 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   FlagType* flag = getFlag();
 
   // If we aren't allowed to move, then the desired speed is 0.
-  if (!canMove()) {
+  if (
+	  (!canMoveForward() && fracOfMaxSpeed > 0) ||
+	  (!canMoveBackward() && fracOfMaxSpeed < 0)) {
     fracOfMaxSpeed = 0.0;
   }
 
@@ -1175,19 +1177,14 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
   FlagType* flag = getFlag();
 
-  // If we aren't allowed to move, then the desired angular velocity is 0.
-  if (!canMove()) {
-    fracOfMaxAngVel = 0.0;
-  }
-
   // limit turn speed to maximum
   if (fracOfMaxAngVel > 1.0f) fracOfMaxAngVel = 1.0f;
   else if (fracOfMaxAngVel < -1.0f) fracOfMaxAngVel = -1.0f;
 
-  // further limit turn speed for certain flags
-  if (fracOfMaxAngVel < 0.0f && getFlag() == Flags::LeftTurnOnly)
+  // further limit turn speed for certain flags or when we aren't allowed to turn
+  if (fracOfMaxAngVel < 0.0f && (getFlag() == Flags::LeftTurnOnly || !canTurnLeft()))
     fracOfMaxAngVel = 0.0f;
-  else if (fracOfMaxAngVel > 0.0f && getFlag() == Flags::RightTurnOnly)
+  else if (fracOfMaxAngVel > 0.0f && (getFlag() == Flags::RightTurnOnly || !canTurnRight()))
     fracOfMaxAngVel = 0.0f;
 
   // boost turn speed for other flags
@@ -1381,6 +1378,11 @@ void			LocalPlayer::doJump()
   FlagType* flag = getFlag();
   World *world = World::getWorld();
   if (!world) {
+    return;
+  }
+
+  // Are we allowed to jump?
+  if (!canJump()) {
     return;
   }
 

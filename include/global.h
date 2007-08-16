@@ -59,6 +59,18 @@ enum TeamColor {
   HunterTeam = 7
 };
 
+// Player allow attributes for MsgAllow
+enum PlayerAllow {
+  AllowNone = 0x00,
+  AllowShoot = 0x01,
+  AllowJump = 0x02,
+  AllowTurnLeft = 0x04,
+  AllowTurnRight = 0x08,
+  AllowMoveForward = 0x10,
+  AllowMoveBackward = 0x20,
+  AllowAll = 0xFF
+};
+
 #ifdef ROBOT
 // robots
 #define MAX_ROBOTS 100

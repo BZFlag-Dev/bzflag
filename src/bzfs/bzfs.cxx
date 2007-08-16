@@ -2337,9 +2337,8 @@ void playerAlive(int playerIndex)
   sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
 
   playerData->efectiveShotType = StandardShot;
-  playerData->player.setAllowMovement(true);
-  playerData->player.setAllowShooting(true);
-  sendMessageAllow(playerIndex, true, true);
+  playerData->player.setAllow(AllowAll);
+  sendMessageAllow(playerIndex, AllowAll);
 
   // call any events for a playerspawn
   bz_PlayerSpawnEventData_V1	spawnEvent;
@@ -2483,9 +2482,8 @@ void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player 
   if (playerTeam == otherTeam) {
     // unfreeze
     if (!player->player.canShoot() || !player->player.canMove()) {
-      sendMessageAllow(player->getIndex(), true, true);
-      player->player.setAllowShooting(true);
-      player->player.setAllowMovement(true);
+      sendMessageAllow(player->getIndex(), AllowAll);
+      player->player.setAllow(AllowAll);
     }
   } else {
     float dx, dy, dist, angle, cos_angle;
@@ -2509,9 +2507,8 @@ void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player 
     float otherDist = dist * cos_angle;
 
     if ( (playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) && (player->player.canShoot() || player->player.canMove()) ) {
-      sendMessageAllow(player->getIndex(), false, false);
-      player->player.setAllowMovement(false);
-      player->player.setAllowShooting(false);
+      sendMessageAllow(player->getIndex(), AllowNone);
+      player->player.setAllow(AllowNone);
     }
   }
 }

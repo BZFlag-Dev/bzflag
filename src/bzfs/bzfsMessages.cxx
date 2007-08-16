@@ -165,8 +165,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
 			if (sendPlayerUpdateDirect(playerData->netHandler,otherData) < 0)
 				break;
 		}
-		sendMessageAllow(newPlayer, i, otherData->player.canMove(),
-				  otherData->player.canShoot());
+		sendMessageAllow(newPlayer, i, otherData->player.getAllow());
 	}
 }
 
@@ -789,21 +788,19 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 	}
 }
 
-void sendMessageAllow ( int recipID, int playerID, bool allowMovement, bool allowShooting )
+void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerID);
-	buf = nboPackUByte(buf, allowMovement);
-	buf = nboPackUByte(buf, allowShooting);
+	buf = nboPackUByte(buf, allow);
 	directMessage(recipID, MsgAllow, (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendMessageAllow ( int playerID, bool allowMovement, bool allowShooting )
+void sendMessageAllow ( int playerID, unsigned char allow )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerID);
-	buf = nboPackUByte(buf, allowMovement);
-	buf = nboPackUByte(buf, allowShooting);
+	buf = nboPackUByte(buf, allow);
 	broadcastMessage(MsgAllow, (char*)buf - (char*)bufStart, bufStart);
 
 	// Please note that non-network players do not currently receive the message.

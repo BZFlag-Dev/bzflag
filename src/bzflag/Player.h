@@ -126,6 +126,11 @@ public:
   bool		isPhantomZoned() const;
   bool		isCrossingWall() const;
   bool		canMove() const;
+  bool		canJump() const;
+  bool		canTurnLeft() const;
+  bool		canTurnRight() const;
+  bool		canMoveForward() const;
+  bool		canMoveBackward() const;
   bool		canShoot() const;
   bool		isNotResponding() const;
   void		resetNotResponding();
@@ -168,8 +173,8 @@ public:
   void	  setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
-  void		setAllowMovement(bool allow);
-  void		setAllowShooting(bool allow);
+  void		setAllow(unsigned char _allow);
+  unsigned char		getAllow();
   void		setTeleport(const TimeKeeper&, short from, short to);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
@@ -275,8 +280,7 @@ private:
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
-  bool			allowMovement;		// frozen motion
-  bool			allowShooting;		// frozen shooting
+  unsigned char			allow;		// tank allowed actions
 
   // score of local player against this player
   short			localWins;		// local player won this many
@@ -540,13 +544,38 @@ inline bool		Player::isCrossingWall() const
 inline bool		Player::canMove() const
 {
   //return (state.status & short(PlayerState::AllowMovement)) != 0;
-  return allowMovement;
+  return (canTurnLeft() && canTurnRight() && canMoveForward() && canMoveBackward());
+}
+
+inline bool		Player::canJump() const
+{
+  return allow & AllowJump;
+}
+
+inline bool		Player::canTurnLeft() const
+{
+  return allow & AllowTurnLeft;
+}
+
+inline bool		Player::canTurnRight() const
+{
+  return allow & AllowTurnRight;
+}
+
+inline bool		Player::canMoveForward() const
+{
+  return allow & AllowMoveForward;
+}
+
+inline bool		Player::canMoveBackward() const
+{
+  return allow & AllowMoveBackward;
 }
 
 inline bool		Player::canShoot() const
 {
   //return (state.status & short(PlayerState::AllowShooting)) != 0;
-  return allowShooting && getShotType() != NoShot;
+  return (allow & AllowShoot) && getShotType() != NoShot;
 }
 
 inline bool		Player::isNotResponding() const
@@ -619,14 +648,14 @@ inline void		Player::setPlayerList(bool _playerList)
   playerList = _playerList;
 }
 
-inline void		Player::setAllowMovement(bool allow)
+inline void		Player::setAllow(unsigned char _allow)
 {
-  allowMovement = allow;
+  allow = _allow;
 }
 
-inline void		Player::setAllowShooting(bool allow)
+inline unsigned char	Player::getAllow()
 {
-  allowShooting = allow;
+  return allow;
 }
 
 inline void*		Player::pack(void* buf, uint16_t& code)

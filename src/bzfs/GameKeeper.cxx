@@ -586,7 +586,10 @@ float GameKeeper::Player::getRealSpeed ( float input )
 	float fracOfMaxSpeed = input;
 
 	// If we aren't allowed to move, then the real speed is 0.
-	if (!player.canMove())
+	if (
+		(!player.canMoveForward() && fracOfMaxSpeed > 0) ||
+		(!player.canMoveBackward() && fracOfMaxSpeed < 0)
+	)
 		return 0.0f;
 
 	// can't go faster forward than at top speed, and backward at half speed

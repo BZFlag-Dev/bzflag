@@ -2019,11 +2019,8 @@ static void handleAllow(void *msg)
   LocalPlayer *localtank = NULL;
   msg = nboUnpackUByte(msg, id);
 
-  uint8_t allowMovement;
-  nboUnpackUByte(msg, allowMovement);
-
-  uint8_t allowShooting;
-  nboUnpackUByte(msg, allowShooting);
+  uint8_t allow;
+  nboUnpackUByte(msg, allow);
 
   Player* tank = NULL;
   if (myTank && myTank->getId() == id) {
@@ -2054,10 +2051,9 @@ static void handleAllow(void *msg)
 	}
   }
 
-  tank->setAllowMovement(allowMovement != 0);
-  tank->setAllowShooting(allowShooting != 0);
-  addMessage(tank, allowMovement ? "Movement allowed" : "Movement forbidden");
-  addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
+  tank->setAllow(allow);
+  //addMessage(tank, allowMovement ? "Movement allowed" : "Movement forbidden");
+  //addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
 }
 
 static void handleKilledMessage(void *msg, bool human, bool &checkScores)

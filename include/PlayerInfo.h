@@ -76,9 +76,14 @@ public:
   bool	isPaused() const;
   bool	isAutoPilot() const;
   bool  canMove() const;
+  bool  canJump() const;
+  bool  canTurnLeft() const;
+  bool  canTurnRight() const;
+  bool  canMoveForward() const;
+  bool  canMoveBackward() const;
   bool  canShoot() const;
-  void  setAllowMovement(bool allow);
-  void  setAllowShooting(bool allow);
+  void  setAllow(unsigned char _allow);
+  unsigned char getAllow();
   bool	isBot() const;
   bool	isHuman() const;
   bool  isChat() const;
@@ -176,8 +181,7 @@ private:
 
   TimeKeeper lastFlagDropTime;
 
-  bool allowMovement;
-  bool allowShooting;
+  unsigned char allow;
 
   // spam prevention
   std::string lastMsgSent;
@@ -262,24 +266,48 @@ inline bool PlayerInfo::isPaused() const {
 
 inline bool		PlayerInfo::canMove() const
 {
-  return allowMovement;
+  return (canTurnLeft() && canTurnRight() && canMoveForward() && canMoveBackward());
+}
+
+inline bool		PlayerInfo::canJump() const
+{
+  return allow & AllowJump;
+}
+
+inline bool		PlayerInfo::canTurnLeft() const
+{
+  return allow & AllowTurnLeft;
+}
+
+inline bool		PlayerInfo::canTurnRight() const
+{
+  return allow & AllowTurnRight;
+}
+
+inline bool		PlayerInfo::canMoveForward() const
+{
+  return allow & AllowMoveForward;
+}
+
+inline bool		PlayerInfo::canMoveBackward() const
+{
+  return allow & AllowMoveBackward;
 }
 
 inline bool		PlayerInfo::canShoot() const
 {
-  return allowShooting;
+  return allow & AllowShoot;
 }
 
-inline void		PlayerInfo::setAllowMovement(bool allow)
+inline void		PlayerInfo::setAllow(unsigned char _allow)
 {
-  allowMovement = allow;
+  allow = _allow;
   allowChangeTime = now;
 }
 
-inline void		PlayerInfo::setAllowShooting(bool allow)
+inline unsigned char		PlayerInfo::getAllow()
 {
-  allowShooting = allow;
-  allowChangeTime = now;
+  return allow;
 }
 
 inline bool PlayerInfo::isAutoPilot() const {
