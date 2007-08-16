@@ -988,6 +988,14 @@ BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned i
   return true;
 }
 
+BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connectionID )
+{
+  if( netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
+    return 0;
+
+  return  netConnectedPeers[connectionID].pendingSendChunks.size();
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_disconectNonPlayerConnection(int connectionID)
