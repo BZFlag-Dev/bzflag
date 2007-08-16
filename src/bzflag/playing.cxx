@@ -2058,8 +2058,9 @@ static void handleAllow(void *msg)
   }
 
   tank->setAllow(allow);
-  //addMessage(tank, allowMovement ? "Movement allowed" : "Movement forbidden");
-  //addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
+  addMessage(tank, allow & AllowShoot ? "Shooting allowed" : "Shooting forbidden");
+  addMessage(tank, allow & (AllowMoveForward | AllowMoveBackward | AllowTurnLeft | AllowTurnRight) ? "Movement allowed" : "Movement restricted");
+  addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
 
 static void handleKilledMessage(void *msg, bool human, bool &checkScores)

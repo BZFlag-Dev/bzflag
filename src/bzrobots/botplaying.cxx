@@ -1086,11 +1086,8 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
   LocalPlayer *localtank = NULL;
   msg = nboUnpackUByte(msg, id);
 
-  uint8_t allowMovement;
-  nboUnpackUByte(msg, allowMovement);
-
-  uint8_t allowShooting;
-  nboUnpackUByte(msg, allowShooting);
+  uint8_t allow;
+  nboUnpackUByte(msg, allow);
 
   Player* tank = NULL;
   for (int i = 0; i < MAX_ROBOTS; i++) {
@@ -1113,10 +1110,10 @@ static void handleAllow ( void *msg, uint16_t /*len*/ )
       serverLink->sendDropFlag(localtank->getPosition());
   }
 
-  tank->setAllowMovement(allowMovement != 0);
-  tank->setAllowShooting(allowShooting != 0);
-  addMessage(tank, allowMovement ? "Movement allowed" : "Movement forbidden");
-  addMessage(tank, allowShooting ? "Shooting allowed" : "Shooting forbidden");
+  tank->setAllow(allow);
+  addMessage(tank, allow & AllowShoot ? "Shooting allowed" : "Shooting forbidden");
+  addMessage(tank, allow & (AllowMoveForward | AllowMoveBackward | AllowTurnLeft | AllowTurnRight) ? "Movement allowed" : "Movement restricted");
+  addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
 
 static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &checkScores )
