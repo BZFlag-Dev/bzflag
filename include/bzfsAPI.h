@@ -1527,6 +1527,8 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 BZF_API void bz_setClientWorldDowloadURL( const char* URL );
 BZF_API const bz_ApiString bz_getClientWorldDowloadURL( void );
 BZF_API bool bz_saveWorldCacheFile( const char* file );
+BZF_API unsigned int bz_getWorldCacheSize ( void );
+BZF_API unsigned int bz_getWorldCacheData ( unsigned char *data );
 
 // custom map objects
 

@@ -2448,6 +2448,20 @@ BZF_API bool bz_saveWorldCacheFile(const char *file)
   return saveWorldCache(file);
 }
 
+BZF_API unsigned int bz_getWorldCacheSize ( void )
+{
+  return worldDatabaseSize;
+}
+
+BZF_API unsigned int bz_getWorldCacheData ( unsigned char *data )
+{
+  if (!data)
+    return 0;
+
+  memcpy(data,worldDatabase,worldDatabaseSize);
+  return worldDatabaseSize;
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_registerCustomMapObject(const char *object, bz_CustomMapObjectHandler *handler)
