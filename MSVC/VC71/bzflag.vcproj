@@ -418,6 +418,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\clientCommands.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ClientIntangibilityManager.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\CommandsImplementation.cxx">
 			</File>
 			<File
@@ -1711,6 +1714,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\callbacks.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ClientIntangibilityManager.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\commands.h">

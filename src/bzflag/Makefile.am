@@ -35,6 +35,8 @@ bzflag_SOURCES =			\
 	ControlPanel.h			\
 	CrackedGlass.cxx		\
 	CrackedGlass.h			\
+	ClientIntangibilityManager.h \
+	ClientIntangibilityManager.cxx \
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\
