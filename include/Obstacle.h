@@ -56,13 +56,13 @@ enum ObstacleTypes {
   ObstacleTypeCount
 };
 
-#define _PASSABLE_MASK 0
-#define _INTAGIBLE 0x01
-#define _RED_PASSABLE 0x02
-#define _GREEN_PASSABLE 0x04
-#define _BLUE_PASSABLE 0x06
-#define _PURPLE_PASSABLE 0x08
-#define _ROGUE_PASSABLE 0x10
+#define _PASSABLE_MASK     0
+#define _INTANGIBLE        0x01
+#define _RED_PASSABLE      0x02
+#define _GREEN_PASSABLE    0x04
+#define _BLUE_PASSABLE     0x08
+#define _PURPLE_PASSABLE   0x10
+#define _ROGUE_PASSABLE    0x20
 
 class Obstacle {
   friend class ObstacleModifier;
