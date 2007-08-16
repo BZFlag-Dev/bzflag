@@ -265,10 +265,11 @@ bool PlayerInfo::isCallSignReadable() {
     return false;
   }
 
-  // prevent spoofing global login indicators + and @ in the scoreboard
+  // prevent spoofing global login indicators + and @ in the scoreboard,
+  // reserve > for /msg >admin and /msg >team,
   // and reserve # for /kick or /ban #slot
-  if (*callSign=='+' || *callSign=='@' || *callSign=='#' ) {
-    errorString = "Callsigns are not allowed to start with +, @, or #.";
+  if (*callSign=='+' || *callSign=='@' || *callSign=='>' || *callSign=='#' ) {
+    errorString = "Callsigns are not allowed to start with +, @, > or #.";
     return false;
   }
 
