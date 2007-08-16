@@ -910,7 +910,7 @@ bool defineWorld ( void )
   for (i = 0; i < numFlags; i++) {
     resetFlag(*FlagInfo::get(i));
   }
-
+  worldEventManager.callEvents(bz_EventData(bz_eWorldFinalized));
   return true;
 }
 

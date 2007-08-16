@@ -123,6 +123,7 @@ typedef enum
   bz_eIdleNewNonPlayerConnection,
   bz_ePlayerCollision,
   bz_eFlagResetEvent,
+  bz_eWorldFinalized,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -395,10 +396,10 @@ typedef struct bz_PlayerUpdateState
 class BZF_API bz_EventData
 {
 public:
-  bz_EventData()
+  bz_EventData( bz_eEventType type =  bz_eNullEvent)
   {
     version = 1;
-    eventType = bz_eNullEvent;
+    eventType = type;
   }
   virtual ~bz_EventData(){};
   virtual void update (){};
