@@ -44,7 +44,7 @@ unsigned char ServerIntangibilityManager::getWorldObjectTangiblity ( unsigned in
 
   Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
   if (!obs)
-    return 255;
+    return _INVALID_TANGIBILITY;
 
   return obs->isDriveThrough();
 }
@@ -54,8 +54,6 @@ void ServerIntangibilityManager::resetTangibility ( void )
   tangibilityMap.clear();
   sendMsgTanagabilityReset();
 }
-
-
 
 
 // Local Variables: ***

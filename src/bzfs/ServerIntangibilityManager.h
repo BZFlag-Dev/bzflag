@@ -17,6 +17,8 @@
 #include "Singleton.h"
 #include <map>
 
+#define _INVALID_TANGIBILITY 255
+
 class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager>
 {
 public:
