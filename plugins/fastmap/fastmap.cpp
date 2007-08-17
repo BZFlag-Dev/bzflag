@@ -59,7 +59,6 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
   bz_debugMessage(4,"fastmap plugin loaded");
   bz_registerEvent (bz_eWorldFinalized,&fastMapEventHandler);
   bz_registerEvent (bz_eTickEvent,&fastMapEventHandler);
-  bz_registerEvent (bz_eListServerUpdateEvent,&fastMapEventHandler);
   bz_registerEvent (bz_eNewNonPlayerConnection,&fastMapEventHandler);
 return 0;
 }
@@ -71,7 +70,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_debugMessage(4,"fastmap plugin unloaded");
   bz_removeEvent (bz_eWorldFinalized,&fastMapEventHandler);
   bz_removeEvent (bz_eTickEvent,&fastMapEventHandler);
-  bz_removeEvent (bz_eListServerUpdateEvent,&fastMapEventHandler);
   bz_removeEvent (bz_eNewNonPlayerConnection,&fastMapEventHandler);
 return 0;
 }
@@ -92,12 +90,7 @@ FastMapEventHandler::~FastMapEventHandler()
 
 void FastMapEventHandler::process ( bz_EventData *eventData )
 {
-  if ( eventData->eventType == bz_eListServerUpdateEvent )
-  {
-    bz_ListServerUpdateEvent_V1 *updateData = (bz_ListServerUpdateEvent_V1*)eventData;
-    mapName = format("%s%d",updateData->address,(unsigned int)this);
-  }
-  else if ( eventData->eventType == bz_eWorldFinalized )
+  if ( eventData->eventType == bz_eWorldFinalized )
   {
     killHTTPServer();
 
