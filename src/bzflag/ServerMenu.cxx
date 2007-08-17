@@ -845,6 +845,9 @@ void			ServerMenu::updateStatus() {
       }
     }
     newfilter = false;
+
+    selectedIndex = 0;
+    setSelected(getSelected(), true);
   }
 
   // update the status label
@@ -859,9 +862,6 @@ void			ServerMenu::updateStatus() {
   else
     status->setString("Servers found: {1}/{2}", &args);
   pageLabel->setString("");
-  
-  selectedIndex = -1;
-  setSelected(getSelected());
 
   // update search labels
 
