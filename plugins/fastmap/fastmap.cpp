@@ -184,7 +184,6 @@ void FastMapEventHandler::updateHTTPServer ( void )
       double maxWait = 0;
       double minWait = 99999999.0;
 
-
       for (unsigned int k = 0; k < (unsigned int)client->updatTimes.size(); k++)
       {
 	if ( k > 1 )
