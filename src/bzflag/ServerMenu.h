@@ -70,7 +70,7 @@ public:
   static const int NumItems;
 
 private:
-  void addLabel(const char* str, const char* label, bool navigable = false);
+  HUDuiLabel* addLabel(const char* str, const char* label, bool navigable = false);
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void pick();
 
@@ -84,6 +84,8 @@ private:
   HUDuiLabel* help;
 
   HUDuiLabel* pageLabel;
+  std::vector<HUDuiLabel*> readouts;
+  std::vector<HUDuiLabel*> items;
   int selectedIndex;
   unsigned int serversFound;
   unsigned int realServersFound;
