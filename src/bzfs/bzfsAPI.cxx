@@ -2864,6 +2864,14 @@ BZF_API bz_ApiString bz_getPublicAddr(void)
   return bz_ApiString(clOptions->publicizedAddress);
 }
 
+BZF_API int bz_getPublicPort( void )
+{
+  if(clOptions->useGivenPort)
+    return clOptions->wksPort;
+
+  return ServerPort;
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API bz_ApiString bz_getPublicDescription(void)

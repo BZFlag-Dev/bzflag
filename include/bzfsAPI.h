@@ -1700,6 +1700,7 @@ void bz_freeWorldObjectPtr ( bz_APIBaseWorldObject *ptr );
 // public server info
 BZF_API bool bz_getPublic( void );
 BZF_API bz_ApiString bz_getPublicAddr( void );
+BZF_API int bz_getPublicPort( void );
 BZF_API bz_ApiString bz_getPublicDescription( void );
 
 // plug-in management
