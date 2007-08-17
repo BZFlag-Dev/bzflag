@@ -101,11 +101,15 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
     mapData = (unsigned char*)malloc(mapDataSize);
     bz_getWorldCacheData(mapData);
 
-    if (!mapName.size())
+    if (bz_getPublicAddr().size())
       mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
 
+    std::string host = "127.0.0.1";
+    if (bz_getPublicAddr().size())
+      host = bz_getPublicAddr().c_str();
+
     if (mapDataSize)
-      bz_setClientWorldDowloadURL(format("HTTP:/%s/%s",bz_getPublicAddr().c_str(),mapName.c_str()).c_str());
+      bz_setClientWorldDowloadURL(format("HTTP://%s:%d/%s",host.c_str(),bz_getPublicPort(),mapName.c_str()).c_str());
   }
   else if ( eventData->eventType == bz_eTickEvent)
   {
@@ -117,7 +121,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
     if ( mapDataSize )
     {
       bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
-      if (connData->size >= 3 && strncmp((const char*)connData->data,"GET",3))
+      if (connData->size >= 3 && strncmp((const char*)connData->data,"GET",3) == 0)
       {
 	FastMapClient * handler = new FastMapClient(connData->connectionID,this);
 	
