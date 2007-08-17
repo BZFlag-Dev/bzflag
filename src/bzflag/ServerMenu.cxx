@@ -196,11 +196,6 @@ ServerMenu::ServerMenu() : defaultKey(this),
   // short key help
   help = new HUDuiLabel;
   help->setFontFace(MainMenu::getFontFace());
-  if (serverList.size() == 0) {
-    help->setString("");
-  } else {
-    help->setString(PRESS_KEY_MSG);
-  }
   addControl(help, false);
 
   setFind(false);
@@ -232,18 +227,18 @@ HUDuiLabel* ServerMenu::addLabel(const char* msg, const char* _label, bool navig
 void ServerMenu::setFind(bool mode)
 {
   std::string oldfilter = filter;
-  if (mode) {
-    search->setLabel("Find Servers:");
-    getNav().set(search);
-  } else {
+
+  // leaving find mode - interpret results
+  if (!mode) {
+    // null search is equivalent to full wildcard
     if (search->getString() == "" || search->getString() == "*") {
       search->setString("");
       filter = "*";
     } else {
+      // no specified wildcards implies *<entered-text>*
       if (search->getString().find("*") == std::string::npos
 	&& search->getString().find("?") == std::string::npos)
 	search->setString("*" + search->getString() + "*");
-      search->setLabel("Using filter:");
       // filter is set in lower case
       filter = TextUtils::tolower(search->getString());
     }
@@ -444,6 +439,9 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
   if (serverList.size() > 0) {
     const int indexOnPage = selectedIndex % NumItems;
     getNav().set(items[indexOnPage]);
+  } else {
+    // no items, move focus to status marker
+    getNav().set(status);
   }
 
   // update readouts
@@ -787,20 +785,19 @@ void			ServerMenu::resize(int _width, int _height)
     fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     search->setFontSize(fontSize);
-    const float searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, search->getString().c_str());
-    x = 0.5f * ((float)_width - searchWidth);
+    float searchWidth = 0.0f; // center input widget
+    if (!findMode && search->getString() == "") // or center help text if input widget is empty
+      searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, (search->getLabel() + "9999").c_str());
+    x = 0.5f * ((float)_width + searchWidth);
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
 
   // reposition key help
   {
-    Bundle *bdl = BundleMgr::getCurrentBundle(); //all to make sure it's in the right place
-    std::string realtext = bdl->getLocalString(PRESS_KEY_MSG);
-    std::cout << help->getString() << std::endl;
     fontSize = fs.getFontSize(menuFontFace, "infoFontSize");
     float fontHt = fm.getStringHeight(menuFontFace, fontSize);
     help->setFontSize(fontSize);
-    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, realtext.c_str()); //otherwise, this will take the length of an empty string
+    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     help->setPosition(x, (fontHt / 2) /* near bottom of screen */); //FIXME still broken
   }
@@ -830,38 +827,29 @@ void			ServerMenu::resize(int _width, int _height)
   }
 }
 
-void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
-{
-  status->setString(msg, parms);
-  FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStringWidth(status->getFontFace(), status->getFontSize(), status->getString().c_str());
-  status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
-}
-
 void			ServerMenu::updateStatus() {
   // nothing here to see
   if (!realServerList.serverFound()) {
-    setStatus("Searching");
+    status->setString("Searching...");
     return;
   }
 
   // don't run unnecessarily
-  if (realServersFound == realServerList.size() && !newfilter)
-    return;
-
-  // do filtering
-  serverList.clear();
-  for (unsigned int i = 0; i < realServerList.size(); ++i) {
-    const ServerItem &item = realServerList.getServers()[i];
-    // filter is already lower case.  do case insensitive matching.
-    if ((glob_match(filter, TextUtils::tolower(item.description)) ||
-	 glob_match(filter, TextUtils::tolower(item.name))) &&
-	(!favView || item.favorite)
-       ) {
-      serverList.addToList(item);
+  if (!(realServersFound == realServerList.size()) || newfilter) {
+    // do filtering
+    serverList.clear();
+    for (unsigned int i = 0; i < realServerList.size(); ++i) {
+      const ServerItem &item = realServerList.getServers()[i];
+      // filter is already lower case.  do case insensitive matching.
+      if ((glob_match(filter, TextUtils::tolower(item.description)) ||
+	   glob_match(filter, TextUtils::tolower(item.name))) &&
+	  (!favView || item.favorite)
+	 ) {
+	serverList.addToList(item);
+      }
     }
+    newfilter = false;
   }
-  newfilter = false;
 
   // update the status label
   std::vector<std::string> args;
@@ -871,9 +859,9 @@ void			ServerMenu::updateStatus() {
   sprintf(buffer, "%d", (unsigned int)realServerList.size());
   args.push_back(buffer);
   if (favView)
-    setStatus("Favorite servers: {1}/{2}", &args);
+    status->setString("Favorite servers: {1}/{2}", &args);
   else
-    setStatus("Servers found: {1}/{2}", &args);
+    status->setString("Servers found: {1}/{2}", &args);
   pageLabel->setString("");
   
   if (search->getString() == "" || search->getString() == "*")
@@ -892,8 +880,32 @@ void			ServerMenu::updateStatus() {
   selectedIndex = -1;
   setSelected(getSelected());
 
+  // update search labels
+
+  // defaults
+  if (serverList.size() == 0) {
+    search->setLabel("");
+    help->setString("");
+  } else {
+    search->setLabel("Press '/' to search");
+    help->setString("Press  +/- add/remove favorites   f - toggle view   p - ping server");
+  }
+
+  // active filter
+  if (search->getString() != "")
+    search->setLabel("Using filter:");
+
+  // searching
+  if (findMode) {
+    search->setLabel("Find Servers:");
+    getNav().set(search);
+  } 
+
   serversFound = (unsigned int)serverList.size();
   realServersFound = (unsigned int)realServerList.size();
+
+  if (height && width)
+    resize(width, height);
 }
 
 void ServerMenu::pingServer(int server)

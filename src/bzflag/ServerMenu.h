@@ -75,7 +75,6 @@ public:
 
 private:
   HUDuiLabel* addLabel(const char* str, const char* label, bool navigable = false);
-  void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void pick();
 
   ServerItem& serversAt(int index);
