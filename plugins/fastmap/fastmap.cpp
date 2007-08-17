@@ -201,7 +201,7 @@ void FastMapEventHandler::updateHTTPServer ( void )
 
       bz_debugMessagef(2,"FastMap: File Transfer Complete");
       bz_debugMessagef(2,"FastMap: File Transfer Stats");
-      bz_debugMessagef(2,"FastMap:  %d bytes transfered in %f seconds (%fbps)",client->dataSent,totalTime,(double)client->dataSent/totalTime);
+      bz_debugMessagef(2,"FastMap:  %f kbytes transfered in %f seconds (%fkbps)",(double)client->dataSent/1024.0,totalTime,((double)client->dataSent/1024.0)/totalTime);
       bz_debugMessagef(3,"FastMap:  %f average wait",averageWait);
       bz_debugMessagef(3,"FastMap:  %f max wait",maxWait);
       bz_debugMessagef(3,"FastMap:  %f min wait",minWait);
