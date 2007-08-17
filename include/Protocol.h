@@ -150,6 +150,9 @@ const uint16_t		WorldCodeZoneSize = 34;    // basic size, not including lists
 const uint16_t		MsgPingCodeReply = 0x0303;
 const uint16_t		MsgPingCodeRequest = 0x0404;
 
+const uint16_t		MsgEchoRequest = 0x6572;	// 'er'
+const uint16_t		MsgEchoResponse = 0x6570; // 'ep'
+
 // rejection codes
 const uint16_t		RejectBadRequest = 0x0000;
 const uint16_t		RejectBadTeam = 0x0001;

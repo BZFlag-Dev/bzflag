@@ -186,6 +186,9 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   if (len == 2 && code == MsgPingCodeRequest)
     // Ping code request
     return 0;
+  
+  if (len == 1 && code == MsgEchoRequest) //Same sorta thing
+    return 0;
 
   std::list<NetHandler*>::const_iterator it;
 

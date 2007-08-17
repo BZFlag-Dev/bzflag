@@ -4530,8 +4530,7 @@ static void runMainLoop ( void )
 
 	  uint16_t len, code;
 	  void *buf = (char *)ubuf;
-	  buf = nboUnpackUShort(buf, len);
-	  buf = nboUnpackUShort(buf, code);
+	  getGeneralMessageInfo(&buf,code,len);
 
 	  if (code == MsgPingCodeRequest) {
 	    if (len != 2)
@@ -4543,7 +4542,15 @@ static void runMainLoop ( void )
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  }
+	  } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
+            unsigned char tag = 0;               // This could be factored into it's own function
+            buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
+            
+            sendEchoResponse(&uaddr, tag);
+            
+            continue;
+          }
+          
 
 	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
 	    // It is a UDP Link Request ... try to match it

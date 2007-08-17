@@ -20,11 +20,13 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <map>
 
 /* common interface headers */
 #include "BzfEvent.h"
 #include "ServerItem.h"
 #include "ServerList.h"
+#include "ServerPing.h"
 
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
@@ -49,7 +51,7 @@ private:
 class ServerMenu : public HUDDialog {
 public:
   ServerMenu();
-  ~ServerMenu() { }
+  ~ServerMenu();
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
   int getSelected() const;
@@ -66,6 +68,8 @@ public:
 
   void toggleFavView();
   void setFav(bool);
+  
+  void pingServer(int server);
 
   static const int NumItems;
 
@@ -97,6 +101,8 @@ private:
   bool newfilter;
 
   static const int NumReadouts;
+  
+  std::map<int, ServerPing*> activePings;
 };
 
 

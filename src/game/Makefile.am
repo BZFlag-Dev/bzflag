@@ -29,6 +29,7 @@ libGame_la_SOURCES =			\
 	ServerItem.cxx			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\
+	ServerPing.cxx			\
 	StartupInfo.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx

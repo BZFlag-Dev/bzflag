@@ -53,7 +53,8 @@ PingPacket::PingPacket() : gameType(eTeamFFA), gameOptions(0),
 				purpleCount(0),
 				purpleMax(1),
 				observerCount(0),
-				observerMax(1)
+				observerMax(1),
+                                pingTime(0)
 {
   // do nothing
 }

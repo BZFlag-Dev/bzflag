@@ -101,6 +101,11 @@ DefaultDBItem	defaultDBItems[] = {
   { "autoFlagDisplay",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "processorAffinity",	"0",			true,	StateDatabase::ReadWrite,	setProcessorAffinity },
 
+  //ping
+  { "pingLow",		        "100",			true,   StateDatabase::ReadWrite,	NULL },
+  { "pingMed",		        "200",			true,   StateDatabase::ReadWrite,	NULL },
+  { "pingHigh",                 "400",			true,   StateDatabase::ReadWrite,	NULL },
+
   // input
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
