@@ -36,9 +36,7 @@ public:
 
   unsigned int dataSent;
 
-
 };
-
 
 class FastMapEventHandler : public bz_EventHandler
 {
@@ -83,7 +81,7 @@ return 0;
 
 FastMapEventHandler::FastMapEventHandler()
 {
-   mapName = "map.bwc";
+   mapName = "fastmap/map.bwc";
   mapData = NULL;
   mapDataSize = 0;
 }
@@ -215,7 +213,7 @@ void FastMapEventHandler::updateHTTPServer ( void )
   }
 
   if (clients.size())
-    bz_setMaxWaitTime(0.000f);
+    bz_setMaxWaitTime(0.001f);
   else
     bz_setMaxWaitTime(2.0f);
 }
