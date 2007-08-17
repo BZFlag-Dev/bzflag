@@ -26,7 +26,8 @@ class BZAdvancedRobot
 {
   RCLinkFrontend *link;
   bool compatability;
-  protected:
+
+  public:
     /* These are related to controlling the bot. */
     void execute();
     double getDistanceRemaining();
@@ -56,7 +57,6 @@ class BZAdvancedRobot
     double getY();
     double getZ();
 
-  public:
     virtual ~BZAdvancedRobot() {}
     BZAdvancedRobot();
 
