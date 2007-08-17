@@ -10,11 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 #include "ServerPing.h"
 
+#if !defined(WIN32)
 #include <sys/socket.h>
 #include <sys/select.h>
+#endif
 #include <limits.h>
+#include "bzfio.h"
 #include "Pack.h"
 #include "Protocol.h"
 
@@ -93,7 +98,7 @@ void ServerPing::doPings()
   if ( (int)activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
     pingdesc pd;
     pd.senttime = TimeKeeper::getCurrent();
-    sendPing(activepings.size());
+    sendPing((unsigned char)activepings.size());
     activepings.push_back(pd);
   }
   
@@ -129,7 +134,7 @@ void ServerPing::doPings()
 
 void ServerPing::sendPing(unsigned char tag)
 {
-  char *buffer[1 + 4];
+  char buffer[1 + 4];
   void *buf = buffer;
   buf = nboPackUShort(buf, 1); //len
   buf = nboPackUShort(buf, MsgEchoRequest);
@@ -139,9 +144,9 @@ void ServerPing::sendPing(unsigned char tag)
 
 void ServerPing::openSocket()
 {
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
+  fd = (int)socket(AF_INET, SOCK_DGRAM, 0);
   if (fd < 0)
-    ; //How exactly should I crap out here
+    logDebugMessage(1, "Failed to send server ping\n");
 }
 
 void ServerPing::closeSocket()

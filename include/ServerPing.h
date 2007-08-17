@@ -49,9 +49,9 @@ private:
   
   int fd;
   
-  int recieved;
+  unsigned int recieved;
   
-  const int samples;
+  const unsigned int samples;
   
   double timeout;
   double interval;
