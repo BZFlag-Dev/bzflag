@@ -102,18 +102,24 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
       return;
 
     mapDataSize = bz_getWorldCacheSize();
-    mapData = (unsigned char*)malloc(mapDataSize);
-    bz_getWorldCacheData(mapData);
+    if (mapDataSize > 0)
+    {
+      mapData = (unsigned char*)malloc(mapDataSize);
+      bz_getWorldCacheData(mapData);
 
-    if (bz_getPublicAddr().size())
-      mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
+      if (bz_getPublicAddr().size())
+        mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
 
-    std::string host = "127.0.0.1";
-    if (bz_getPublicAddr().size())
-      host = bz_getPublicAddr().c_str();
+      std::string hostport = "127.0.0.1:5154";
+      if (bz_getPublicAddr().size())
+        hostport = bz_getPublicAddr().c_str();
 
-    if (mapDataSize)
-      bz_setClientWorldDowloadURL(format("HTTP://%s:%d/%s",host.c_str(),bz_getPublicPort(),mapName.c_str()).c_str());
+      std::string worldURL = format("http://%s/%s",hostport.c_str(),mapName.c_str());
+
+      bz_debugMessagef(2,"FastMap: ClientWorldDowloadURL set to %s\n", worldURL.c_str());
+
+      bz_setClientWorldDowloadURL(worldURL.c_str());
+    }
   }
   else if ( eventData->eventType == bz_eTickEvent)
   {
