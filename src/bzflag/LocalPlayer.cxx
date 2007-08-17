@@ -1426,6 +1426,12 @@ void			LocalPlayer::doJump()
   }  else {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
   }
+
+  /* better realism .. make it so that if you're falling, wings will
+   * just slow you down.
+   */
+  newVelocity[2] += oldVelocity[2];
+
   setVelocity(newVelocity);
   location = InAir;
 
