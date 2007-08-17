@@ -68,7 +68,7 @@ int ServerPing::calcLag()
 
 bool ServerPing::done()
 {
-  return (recieved == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
+  return (recieved == samples || ((int)activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
 }
 
 void ServerPing::setAddress(const Address& addr, int port)
@@ -90,7 +90,7 @@ void ServerPing::setInterval(double _interval)
 
 void ServerPing::doPings()
 { 
-  if ( activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
+  if ( (int)activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
     pingdesc pd;
     pd.senttime = TimeKeeper::getCurrent();
     sendPing(activepings.size());
