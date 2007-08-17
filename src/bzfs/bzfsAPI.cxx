@@ -2605,11 +2605,11 @@ void readTangibilityMask ( unsigned char m, bz_SolidObjectPassableAtributes &atr
     return;
   }
 
-  atribs.red = m & _RED_PASSABLE;
-  atribs.green = m & _GREEN_PASSABLE;
-  atribs.blue = m & _BLUE_PASSABLE;
-  atribs.purple = m & _PURPLE_PASSABLE;
-  atribs.rogue = m & _ROGUE_PASSABLE;
+  atribs.red = ((m & _RED_PASSABLE) != 0);
+  atribs.green = ((m & _GREEN_PASSABLE) != 0);
+  atribs.blue = ((m & _BLUE_PASSABLE) != 0);
+  atribs.purple = ((m & _PURPLE_PASSABLE) != 0);
+  atribs.rogue = ((m & _ROGUE_PASSABLE) != 0);
 }
 
 void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle )
