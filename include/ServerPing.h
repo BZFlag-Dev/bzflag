@@ -10,16 +10,25 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
  
-#ifndef	BZF_SERVERPING_H
-#define	BZF_SERVERPING_H
+#ifndef	__SERVERPING_H__
+#define	__SERVERPING_H__
 
+/* common comes first */
+#include "common.h"
+
+/* system interface headers */
 #include <sys/types.h>
 #include <vector>
+
+/* common interface headers */
 #include "Address.h"
 #include "TimeKeeper.h"
-//This class represents the act of pinging a server and calculating the lag
-//Create one, set the options, call doPings till it's done, then get the results
 
+/**
+ * This class represents the act of pinging a server and calculating
+ * the lag.  Create one, set the options, call doPings till it's done,
+ * then get the results.
+ */
 class ServerPing
 {
 public:
@@ -59,7 +68,7 @@ private:
   TimeKeeper starttime;
 };
 
-#endif
+#endif  /* __SERVERPING_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -10,18 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
+/* interface header */
 #include "ServerPing.h"
 
-#if !defined(WIN32)
-#include <sys/socket.h>
-#include <sys/select.h>
-#endif
+/* system implementation headers */
 #include <limits.h>
+
+/* common implementation headers */
+#include "network.h"
 #include "bzfio.h"
 #include "Pack.h"
 #include "Protocol.h"
+
 
 ServerPing::ServerPing() : fd(-1), recieved(0), samples(4),timeout(1), interval(1)
 {
