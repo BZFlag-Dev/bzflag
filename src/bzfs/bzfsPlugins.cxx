@@ -441,7 +441,7 @@ std::string getAutoLoadDir ( void )
   char* last = strrchr(exePath,'\\');
   if (last)
     *last = '\0';
-  strcat(exePath,"\\plug-ins");
+  strcat(exePath,"\\plugins");
   return std::string(exePath);
 #else
   return std::string("");
