@@ -18,8 +18,6 @@
 #include "TextUtils.h"
 #include "bzglob.h"
 #include "AnsiCodes.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -31,8 +29,6 @@
 
 const int ServerMenu::NumReadouts = 23;
 const int ServerMenu::NumItems = 10;
-
-const char *PRESS_KEY_MSG = "Press  +/- add/remove favorites   f - toggle view   p - ping server";
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -863,19 +859,6 @@ void			ServerMenu::updateStatus() {
   else
     status->setString("Servers found: {1}/{2}", &args);
   pageLabel->setString("");
-  
-  if (search->getString() == "" || search->getString() == "*")
-    if (realServerList.size() == 0) {
-      search->setLabel("");
-    } else {
-      search->setLabel("Press '/' to search");
-    }
-  
-  if (realServerList.size() == 0) {
-    help->setString("");
-  } else {
-    help->setString(PRESS_KEY_MSG);
-  }
   
   selectedIndex = -1;
   setSelected(getSelected());
