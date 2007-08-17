@@ -11,6 +11,7 @@
  */
 
 #include "PythonLoader.h"
+#include "bzrobot_python_runtime.h"
 
 PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
 {
@@ -123,7 +124,8 @@ BZAdvancedRobot *PythonLoader::create(void)
     return NULL;
   }
 
-  return NULL;
+  PySwigObject *holder = SWIG_Python_GetSwigThis(robot);
+  return static_cast<BZAdvancedRobot *>(holder ? holder->ptr : 0);
 }
 void PythonLoader::destroy(BZAdvancedRobot * /*instance*/)
 {

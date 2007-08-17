@@ -2,7 +2,6 @@
 
 #include "RCRequests.h"
 
-
 BZAdvancedRobot::BZAdvancedRobot() :link(NULL), compatability(true)
 {
 }

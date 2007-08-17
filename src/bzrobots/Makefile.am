@@ -342,10 +342,14 @@ bzrobot_la_LIBADD = ../date/libDate.la
 
 BUILT_SOURCES = \
 	bzrobot_python_wrap.cxx \
-	bzrobot_python_wrap.h
+	bzrobot_python_wrap.h \
+	bzrobot_python_runtime.h
 
 bzrobot_python_wrap.cxx: bzrobot.i 
 	$(SWIG) -c++ -python -o $@ $<
+
+bzrobot_python_runtime.h:
+	$(SWIG) -python -external-runtime $@
 else
 libbzrobot =
 endif
@@ -364,5 +368,6 @@ MAINTAINERCLEANFILES = \
 CLEANFILES = \
 	bzrobot.py \
 	bzrobot_python_wrap.cxx \
-	bzrobot_python_wrap.h
+	bzrobot_python_wrap.h \
+	bzrobot_python_runtime.h
 

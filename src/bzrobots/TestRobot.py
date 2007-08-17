@@ -1,6 +1,6 @@
 import bzrobot
 class TestRobot(bzrobot.BZAdvancedRobot):
-    def update():
+    def update(self):
         print "Hey!"
 
 def create():
