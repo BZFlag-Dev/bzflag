@@ -444,7 +444,7 @@ std::string getAutoLoadDir ( void )
   strcat(exePath,"\\plug-ins");
   return std::string(exePath);
 #else
-  return std::string("./plug-ins");
+  return std::string("");
 #endif
 }
 
@@ -458,31 +458,35 @@ void initPlugins ( void )
 
 #ifdef _WANT_AUTO_LOAD_PLUG_INS  
   OSDir	dir;
-  dir.setOSDir(getAutoLoadDir());
+  std::string path = getAutoLoadDir();
+  if (getAutoLoadDir().size())
+  {
+    dir.setOSDir(getAutoLoadDir());
 
-  OSFile file;
-  while(dir.getNextFile(file,"*.*"),false)
-    loadPlugin(file.getOSName(),std::string(""));
+    OSFile file;
+    while(dir.getNextFile(file,"*.*"),false)
+      loadPlugin(file.getOSName(),std::string(""));
+    }
 
 #endif //_WANT_AUTO_LOAD_PLUG_INS
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
 {
-	std::string ext = TextUtils::tolower(exte);
-	customPluginMap[ext] = handler;
-	return true;
+  std::string ext = TextUtils::tolower(exte);
+  customPluginMap[ext] = handler;
+  return true;
 }
 
 bool removeCustomPluginHandler ( std::string ext, bz_APIPluginHandler *handler )
 {
-	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
+  tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
-	if (itr == customPluginMap.end() || itr->second != handler)
-		return false;
+  if (itr == customPluginMap.end() || itr->second != handler)
+	  return false;
 
-	customPluginMap.erase(itr);
-	return true;
+  customPluginMap.erase(itr);
+  return true;
 }
 
 
