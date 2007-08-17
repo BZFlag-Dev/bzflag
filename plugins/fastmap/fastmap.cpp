@@ -109,7 +109,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
 
     bz_getWorldCacheData(mapData);
 
-    mapName = format("%d",(unsigned int)this);
+    mapName = format("%X",(unsigned int)this);
 
     std::string hostport = "127.0.0.1:5154";
     if (bz_getPublicAddr().size())
