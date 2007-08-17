@@ -142,6 +142,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
 	
 	if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, handler ) )
 	{
+	  bz_debugMessagef(2,"FastMap: Local HTTP connection from %d",connData->connectionID);
 	  clients[connData->connectionID] = handler;
 	  handler->pending (connData->connectionID,connData->data, connData->size);
 	}
