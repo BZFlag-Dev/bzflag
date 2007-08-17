@@ -33,7 +33,7 @@ class ServerPing
 {
 public:
   ServerPing();
-  ServerPing(const Address& addr, int port, int _samples = 4, double interval = 1, double tms = 1);
+  ServerPing(const Address& addr, int port, size_t _samples = 4, double interval = 1, double tms = 1);
   ~ServerPing();
   void start();
   int calcLag();
@@ -58,9 +58,9 @@ private:
   
   int fd;
   
-  unsigned int recieved;
+  size_t recieved;
   
-  const unsigned int samples;
+  const size_t samples;
   
   double timeout;
   double interval;

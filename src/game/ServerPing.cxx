@@ -28,7 +28,7 @@ ServerPing::ServerPing() : fd(-1), recieved(0), samples(4),timeout(1), interval(
   
 }
 
-ServerPing::ServerPing(const Address& addr, int port, int _samples, double _interval, double tms) :
+ServerPing::ServerPing(const Address& addr, int port, size_t _samples, double _interval, double tms) :
      fd(-1), recieved(0), samples(_samples), timeout(tms), interval(_interval)
 {
   saddr.sin_family = AF_INET;
@@ -52,7 +52,7 @@ int ServerPing::calcLag()
 {
   if (done()) {
     TimeKeeper total;
-    int packetslost = 0;
+    size_t packetslost = 0;
     for (std::vector<pingdesc>::iterator i = activepings.begin(); i != activepings.end(); ++i) {
       if ((*i).recvtime.getSeconds()) {
 	total += i->recvtime - i->senttime;
@@ -73,7 +73,7 @@ int ServerPing::calcLag()
 
 bool ServerPing::done()
 {
-  return (recieved == samples || ((int)activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
+  return (recieved == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
 }
 
 void ServerPing::setAddress(const Address& addr, int port)
@@ -95,7 +95,7 @@ void ServerPing::setInterval(double _interval)
 
 void ServerPing::doPings()
 { 
-  if ( (int)activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
+  if ( activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
     pingdesc pd;
     pd.senttime = TimeKeeper::getCurrent();
     sendPing((unsigned char)activepings.size());
