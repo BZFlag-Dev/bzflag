@@ -24,7 +24,7 @@ std::string format(const char* fmt, ...)_ATTRIBUTE12;
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes);
 
 // Configuration file parsing functions
-#include "PluginConfig.h"
+#include "plugin_config.h"
 
 #endif //_PLUGIN_UTILS_H_
 
