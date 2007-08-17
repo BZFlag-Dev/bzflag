@@ -267,9 +267,11 @@ void FastMapClient::pending ( int connectionID, void *s, unsigned int d )
 
     std::string thisLine = commandList[i];
 
+
     if (strncmp(thisLine.c_str(),"GET",3) == 0 && !data) // it's a get and we arn't in a transfer
     {
-      std::vector<std::string> params = tokenize(thisLine,std::string(" "),0,false);
+      bz_debugMessagef(2,"FastMap: HTTP Command: %s",thisLine.c_str());
+     std::vector<std::string> params = tokenize(thisLine,std::string(" "),0,false);
       if ( params.size() <= 3 )
       {
 	std::string urlPath = params[1];
@@ -280,6 +282,9 @@ void FastMapClient::pending ( int connectionID, void *s, unsigned int d )
 	}
       }
     }
+    else
+      bz_debugMessagef(3,"FastMap: HTTP Command: %s",thisLine.c_str());
+
   }
 }
 
