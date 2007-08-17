@@ -131,6 +131,12 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
     if ( mapDataSize )
     {
       bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
+      char *temp = (char*)malloc(connData->size+1);
+      memcpy(temp,connData->data,connData->size);
+      temp[connData->size] = 0;
+      bz_debugMessagef(2,"FastMap: Non ProtoConnection connection from %d with %s",connData->connectionID,temp);
+      free(temp);
+
       if (connData->size >= 3 && strncmp((const char*)connData->data,"GET",3) == 0)
       {
 	FastMapClient * handler = new FastMapClient(connData->connectionID,this);
