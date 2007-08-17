@@ -361,3 +361,8 @@ EXTRA_DIST = \
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+CLEANFILES = \
+	bzrobot.py \
+	bzrobot_python_wrap.cxx \
+	bzrobot_python_wrap.h
+
