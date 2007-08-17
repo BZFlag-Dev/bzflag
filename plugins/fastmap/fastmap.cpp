@@ -80,7 +80,7 @@ return 0;
 
 FastMapEventHandler::FastMapEventHandler()
 {
-   mapName = "map.bzc";
+   mapName = "map.bwc";
   mapData = NULL;
   mapDataSize = 0;
 }
