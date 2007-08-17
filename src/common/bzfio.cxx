@@ -90,6 +90,7 @@ void logDebugMessage(int level, const char* fmt, ...)
 		if (doTimestamp)
 			std::cout << timestamp (tsbuf, doMicros);
 		std::cout << buffer;
+		fflush(stdout);
 #endif
 	}
 
