@@ -25,6 +25,7 @@
 #include "commands.h"
 #include "bzfsAPI.h"
 #include "DirectoryNames.h"
+#include "OSFile.h"
 
 
 #ifdef _WIN32
@@ -427,13 +428,41 @@ public:
 
 DynamicPluginCommands	command;
 
+
+// auto load plugin dir
+
+std::string getAutoLoadDir ( void )
+{
+#if (defined(_WIN32) || defined(WIN32))
+  char exePath[MAX_PATH];
+  GetModuleFileName(NULL,exePath,MAX_PATH);
+  char* last = strrchr(exePath,'\\');
+  if (last)
+    *last = '\0';
+  strcat(exePath,"\\plug-ins");
+  return std::string(exePath);
+#else
+  return std::string("./plug-ins");
+#endif
+}
+
 void initPlugins ( void )
 {
-	customPluginMap.clear();
+  customPluginMap.clear();
 
-	registerCustomSlashCommand("loadplugin",&command);
-	registerCustomSlashCommand("unloadplugin",&command);
-	registerCustomSlashCommand("listplugins",&command);
+  registerCustomSlashCommand("loadplugin",&command);
+  registerCustomSlashCommand("unloadplugin",&command);
+  registerCustomSlashCommand("listplugins",&command);
+
+#ifdef _WANT_AUTO_LOAD_PLUG_INS  
+  OSDir	dir;
+  dir.setOSDir(getAutoLoadDir());
+
+  OSFile file;
+  while(dir.getNextFile(file,"*.*"),false)
+    loadPlugin(file.getOSName(),std::string(""));
+
+#endif //_WANT_AUTO_LOAD_PLUG_INS
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )

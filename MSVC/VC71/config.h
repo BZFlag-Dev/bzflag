@@ -89,6 +89,9 @@
 /* Define to 1 if you have the `wglGetCurrentContext' function. */
 #define HAVE_WGLGETCURRENTCONTEXT 1
 
+/* Define to 1 if you want to use an automatic plug-ins dir */
+#define _WANT_AUTO_LOAD_PLUG_INS 1
+
 /* Define to 1 if you have the `_stricmp' function */
 #define HAVE__STRICMP 1
 
