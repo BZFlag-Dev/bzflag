@@ -30,6 +30,10 @@ public:
   std::string command;
 
   FastMapEventHandler* handler;
+
+  std::vector<double> updatTimes;
+
+  unsigned int dataSent;
 };
 
 
@@ -163,7 +167,40 @@ void FastMapEventHandler::updateHTTPServer ( void )
   }
  
   for ( unsigned int i = 0; i < (unsigned int)killList.size(); i++)
-    clients.erase(clients.find(killList[i]));
+  {
+    itr = clients.find(killList[i]);
+    FastMapClient *client = itr->second;
+    if ( bz_getDebugLevel() >= 2 && client->updatTimes.size()>1)
+    {
+      double totalTime = (*(client->updatTimes.end()-1)) - (*(client->updatTimes.begin()));
+      double averageWait;
+      double maxWait = 0;
+      double minWait = 99999999.0;
+
+
+      for (unsigned int k = 0; k < (unsigned int)client->updatTimes.size(); k++)
+      {
+	if ( k > 1 )
+	{
+	  double wait = client->updatTimes[k] - client->updatTimes[k-1];
+	  averageWait + wait;
+	  if ( wait > maxWait)
+	    maxWait = wait;
+	  if ( wait < minWait)
+	    minWait = wait;
+	}
+      }
+      averageWait /= (double)client->updatTimes.size()-1;
+
+      bz_debugMessagef(2,"FastMap: File Transfer Complete");
+      bz_debugMessagef(2,"FastMap: File Transfer Stats");
+      bz_debugMessagef(2,"FastMap:  %d bytes transfered in %f seconds (%fbps)",client->dataSent,totalTime,(double)client->dataSent/totalTime);
+      bz_debugMessagef(3,"FastMap:  %f average wait",averageWait);
+      bz_debugMessagef(3,"FastMap:  %f max wait",maxWait);
+      bz_debugMessagef(3,"FastMap:  %f min wait",minWait);
+    }
+    clients.erase(itr);
+  }
 
   if (clients.size())
     bz_setMaxWaitTime(0.001f);
@@ -188,6 +225,7 @@ FastMapClient::FastMapClient( int connectionID, FastMapEventHandler *h )
   size = 0;
   currerntPos = 0;
   handler = h;
+  dataSent = 0;
 }
 
 FastMapClient::~FastMapClient()
@@ -267,6 +305,7 @@ void FastMapClient::startTransfer ( unsigned char * d, unsigned int s )
   httpHeaders += "Content-Type: application/octet-stream\n";
   httpHeaders += "\n";
 
+  dataSent += (unsigned int)httpHeaders.size();
   if (!bz_sendNonPlayerData ( conID, httpHeaders.c_str(), (unsigned int)httpHeaders.size() ) || !updateTransfer())
     disconnect(conID);
 }
@@ -278,6 +317,7 @@ bool FastMapClient::updateTransfer ( void )
   if ( currerntPos >= size )
     return false;
 
+  updatTimes.push_back(bz_getCurrentTime());
   // wait till the current data is sent
   if (bz_getNonPlayerConnectionOutboundPacketCount(conID) != 0)
     return true;
@@ -288,6 +328,7 @@ bool FastMapClient::updateTransfer ( void )
   bool worked = bz_sendNonPlayerData ( conID, data+currerntPos, chunkToSend );
 
   currerntPos += chunkToSend;
+  dataSent += chunkToSend;
 
   return worked;
 }
