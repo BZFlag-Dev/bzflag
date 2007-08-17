@@ -306,6 +306,8 @@ void FastMapClient::startTransfer ( unsigned char * d, unsigned int s )
   if (!s)
     return;
 
+  bz_debugMessagef(2,"FastMap: File Transfer for connection %d started",conID);
+
   data = (unsigned char*)malloc(s);
   memcpy(data,d,s);
   size = s;
