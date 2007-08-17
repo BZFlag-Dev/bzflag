@@ -7,6 +7,7 @@
 # ugly of all of the solutions.
 
 bin_PROGRAMS = bzrobots
+lib_LTLIBRARIES = TestRobot.la $(libbzrobot)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
@@ -311,15 +312,6 @@ LDADD =	\
 	$(GLIBS)			\
 	$(GLEW_LIBS)			\
 	../date/libDate.la
-# This is required to hook in ogg/vorbis libraries
-#	$(ALIBS)
-
-bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
-	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \
-	-O coff
-
-MAINTAINERCLEANFILES = \
-	Makefile.in
 
 TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
@@ -328,10 +320,10 @@ TestRobot_la_SOURCES = \
 	TestRobot.h
 
 if BZROBOTS_PYTHON_ENABLED
-lib_LTLIBRARIES = TestRobot.la _bzrobot.la
-_bzrobot_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
-_bzrobot_la_LDFLAGS = -module -avoid-version -export-dynamic
-_bzrobot_la_SOURCES = \
+libbzrobot = bzrobot.la
+bzrobot_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
+bzrobot_la_LDFLAGS = -module -avoid-version -export-dynamic
+bzrobot_la_SOURCES = \
 	BZAdvancedRobot.cxx \
 	BZAdvancedRobot.h \
 	RCRequests.cxx \
@@ -346,10 +338,26 @@ _bzrobot_la_SOURCES = \
 	MessageUtilities.h \
 	bzrobot_python_wrap.cxx \
 	bzrobot_python_wrap.h
-_bzrobot_la_LIBADD = ../date/libDate.la
+bzrobot_la_LIBADD = ../date/libDate.la
+
+BUILT_SOURCES = \
+	bzrobot_python_wrap.cxx \
+	bzrobot_python_wrap.h
 
 bzrobot_python_wrap.cxx: bzrobot.i 
 	$(SWIG) -c++ -python -o $@ $<
 else
-lib_LTLIBRARIES = TestRobot.la
+libbzrobot =
 endif
+
+bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
+	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \
+	-O coff
+
+EXTRA_DIST = \
+	$(BUILT_SOURCES) \
+	bzrobot.i
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
