@@ -433,6 +433,8 @@ DynamicPluginCommands	command;
 
 std::string getAutoLoadDir ( void )
 {
+  if (BZDB.isSet("PlugInAutoLoadDir"))
+    return BZDB.get("PlugInAutoLoadDir");
 #if (defined(_WIN32) || defined(WIN32))
   char exePath[MAX_PATH];
   GetModuleFileName(NULL,exePath,MAX_PATH);
