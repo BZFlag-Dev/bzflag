@@ -457,7 +457,7 @@ void initPlugins ( void )
   registerCustomSlashCommand("listplugins",&command);
 
 #ifdef _WIN32
-  #ifdef _WANT_AUTO_LOAD_PLUG_INS 
+  #ifdef _DEBUG 
     OSDir	dir;
     std::string path = getAutoLoadDir();
     if (getAutoLoadDir().size())
@@ -468,9 +468,8 @@ void initPlugins ( void )
       while(dir.getNextFile(file,"*.*"),false)
 	loadPlugin(file.getOSName(),std::string(""));
       }
-
-  #endif //_WANT_AUTO_LOAD_PLUG_INS
-#else
+  #endif //_DEBUG
+#endif
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
