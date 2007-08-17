@@ -102,24 +102,29 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
       return;
 
     mapDataSize = bz_getWorldCacheSize();
-    if (mapDataSize > 0)
-    {
-      mapData = (unsigned char*)malloc(mapDataSize);
-      bz_getWorldCacheData(mapData);
 
-      if (bz_getPublicAddr().size())
-        mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
+    mapData = (unsigned char*)malloc(mapDataSize);
+    if (!mapDataSize)
+      return;
 
-      std::string hostport = "127.0.0.1:5154";
-      if (bz_getPublicAddr().size())
-        hostport = bz_getPublicAddr().c_str();
+    bz_getWorldCacheData(mapData);
 
-      std::string worldURL = format("http://%s/%s",hostport.c_str(),mapName.c_str());
 
-      bz_debugMessagef(2,"FastMap: ClientWorldDowloadURL set to %s\n", worldURL.c_str());
+    if (bz_getPublicAddr().size())
+      mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
 
-      bz_setClientWorldDowloadURL(worldURL.c_str());
-    }
+    std::string hostport = "127.0.0.1:5154";
+    if (bz_getPublicAddr().size())
+      hostport = bz_getPublicAddr().c_str();
+
+    // make sure it has the port
+    if ( strrchr(hostport.c_str(),':') == NULL )
+      hostport += format(":%d",bz_getPublicPort());
+
+    std::string url = format("HTTP://%s/%s",hostport.c_str(),mapName.c_str());
+
+    bz_debugMessagef(2,"FastMap: Runing local HTTP server for maps using URL %s",url.c_str());
+    bz_setClientWorldDowloadURL(url.c_str());
   }
   else if ( eventData->eventType == bz_eTickEvent)
   {
