@@ -80,8 +80,7 @@ return 0;
 
 FastMapEventHandler::FastMapEventHandler()
 {
-  mapName = format("PrivateMap%d",(unsigned int)this);
-
+   mapName = "map.bzc";
   mapData = NULL;
   mapDataSize = 0;
 }
@@ -108,8 +107,6 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
       return;
 
     bz_getWorldCacheData(mapData);
-
-    mapName = format("%X",(unsigned int)this);
 
     std::string hostport = "127.0.0.1:5154";
     if (bz_getPublicAddr().size())
