@@ -55,6 +55,7 @@ bool PythonLoader::initialize()
 
   dotString = PyString_FromString(".");
   PyList_Append(path, dotString);
+  Py_XDECREF(dotString);
 
   Py_XDECREF(path); Py_XDECREF(sys); 
 
@@ -93,7 +94,8 @@ bool PythonLoader::load(std::string filename)
     /* TODO: Do the same as PyErr_Print(), just into a string? 
      * See PyErr_Fetch()
      * (prints a traceback of the error-stack when Something Bad (tm)
-     * happens. */
+     * happens.) */
+    PyErr_Print();
     error = "Could not load module from '" + modulename + "'";
     return false;
   }
