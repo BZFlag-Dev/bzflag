@@ -267,7 +267,7 @@ void FastMapClient::startTransfer ( unsigned char * d, unsigned int s )
   httpHeaders += "Content-Type: application/octet-stream\n";
   httpHeaders += "\n";
 
-  if (!bz_sendNonPlayerData ( conID, httpHeaders.c_str(), httpHeaders.size() ) || !updateTransfer())
+  if (!bz_sendNonPlayerData ( conID, httpHeaders.c_str(), (unsigned int)httpHeaders.size() ) || !updateTransfer())
     disconnect(conID);
 }
 
@@ -275,7 +275,7 @@ bool FastMapClient::updateTransfer ( void )
 {
   int chunkToSend = 1000;
 
-  if ( currerntPos <= size )
+  if ( currerntPos >= size )
     return false;
 
   // wait till the current data is sent
