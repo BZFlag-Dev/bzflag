@@ -26,7 +26,7 @@ class BoxBuilding : public Obstacle {
 			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
 					float width, float breadth, float height,
-					bool drive = false, bool shoot = false,
+					unsigned char drive = 0, unsigned char shoot = 0,
 					bool invisible = false);
 			~BoxBuilding();
 

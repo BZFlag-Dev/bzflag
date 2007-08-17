@@ -549,27 +549,27 @@ inline bool		Player::canMove() const
 
 inline bool		Player::canJump() const
 {
-  return allow & AllowJump;
+  return (allow & AllowJump) != 0;
 }
 
 inline bool		Player::canTurnLeft() const
 {
-  return allow & AllowTurnLeft;
+  return (allow & AllowTurnLeft) != 0;
 }
 
 inline bool		Player::canTurnRight() const
 {
-  return allow & AllowTurnRight;
+  return (allow & AllowTurnRight) != 0;
 }
 
 inline bool		Player::canMoveForward() const
 {
-  return allow & AllowMoveForward;
+  return (allow & AllowMoveForward) != 0;
 }
 
 inline bool		Player::canMoveBackward() const
 {
-  return allow & AllowMoveBackward;
+  return (allow & AllowMoveBackward) != 0;
 }
 
 inline bool		Player::canShoot() const

@@ -271,32 +271,32 @@ inline bool		PlayerInfo::canMove() const
 
 inline bool		PlayerInfo::canJump() const
 {
-  return allow & AllowJump;
+  return (allow & AllowJump) != 0;
 }
 
 inline bool		PlayerInfo::canTurnLeft() const
 {
-  return allow & AllowTurnLeft;
+  return (allow & AllowTurnLeft) != 0;
 }
 
 inline bool		PlayerInfo::canTurnRight() const
 {
-  return allow & AllowTurnRight;
+  return (allow & AllowTurnRight) != 0;
 }
 
 inline bool		PlayerInfo::canMoveForward() const
 {
-  return allow & AllowMoveForward;
+  return (allow & AllowMoveForward) != 0;
 }
 
 inline bool		PlayerInfo::canMoveBackward() const
 {
-  return allow & AllowMoveBackward;
+  return (allow & AllowMoveBackward) != 0;
 }
 
 inline bool		PlayerInfo::canShoot() const
 {
-  return allow & AllowShoot;
+  return (allow & AllowShoot) != 0;
 }
 
 inline void		PlayerInfo::setAllow(unsigned char _allow)

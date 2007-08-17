@@ -26,7 +26,7 @@ BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
 }
 
 BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
-			 bool drive, bool shoot, bool invisible) :
+			 unsigned char drive, unsigned char shoot, bool invisible) :
   Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
 {
   iType = boxType;
