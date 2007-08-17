@@ -207,6 +207,7 @@ AC_CONFIG_FILES([
 	doc/Makefile
 	hiddenAdmin/Makefile
 	flagStay/Makefile
+	fastmap/Makefile
 	killall/Makefile
 	logDetail/Makefile
 	m4/Makefile
