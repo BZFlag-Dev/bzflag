@@ -21,6 +21,7 @@ public:
   void startTransfer ( unsigned char * d, unsigned int s );
   bool updateTransfer ( void );
 
+  bool transfering ( void );
   int conID;
 
   unsigned char *data;
@@ -34,6 +35,8 @@ public:
   std::vector<double> updatTimes;
 
   unsigned int dataSent;
+
+
 };
 
 
@@ -137,19 +140,16 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
       bz_debugMessagef(2,"FastMap: Non ProtoConnection connection from %d with %s",connData->connectionID,temp);
       free(temp);
 
-      if (connData->size >= 3 && strncmp((const char*)connData->data,"GET",3) == 0)
+      FastMapClient * handler = new FastMapClient(connData->connectionID,this);
+      
+      if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, handler ) )
       {
-	FastMapClient * handler = new FastMapClient(connData->connectionID,this);
-	
-	if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, handler ) )
-	{
-	  bz_debugMessagef(2,"FastMap: Local HTTP connection from %d",connData->connectionID);
-	  clients[connData->connectionID] = handler;
-	  handler->pending (connData->connectionID,connData->data, connData->size);
-	}
-	else
-	  delete(handler); 
+	bz_debugMessagef(2,"FastMap: Local HTTP connection from %d",connData->connectionID);
+	clients[connData->connectionID] = handler;
+	handler->pending (connData->connectionID,connData->data, connData->size);
       }
+      else
+	delete(handler); 
     }
   }
   else if ( eventData->eventType == bz_eIdleNewNonPlayerConnection )
@@ -215,7 +215,7 @@ void FastMapEventHandler::updateHTTPServer ( void )
   }
 
   if (clients.size())
-    bz_setMaxWaitTime(0.001f);
+    bz_setMaxWaitTime(0.000f);
   else
     bz_setMaxWaitTime(2.0f);
 }
@@ -251,6 +251,9 @@ void FastMapClient::pending ( int connectionID, void *s, unsigned int d )
   if ( connectionID != conID )
     return;
 
+  if (d == 0)
+    return;
+
   char *c = (char*)malloc(d+1);
   memcpy(c,s,d);
   c[d] = 0;
@@ -269,7 +272,6 @@ void FastMapClient::pending ( int connectionID, void *s, unsigned int d )
 
     std::string thisLine = commandList[i];
 
-
     if (strncmp(thisLine.c_str(),"GET",3) == 0 && !data) // it's a get and we arn't in a transfer
     {
       bz_debugMessagef(2,"FastMap: HTTP Command: %s",thisLine.c_str());
@@ -286,7 +288,14 @@ void FastMapClient::pending ( int connectionID, void *s, unsigned int d )
     }
     else
       bz_debugMessagef(3,"FastMap: HTTP Command: %s",thisLine.c_str());
+  }
 
+  // if it wasn't an http thing, let it go, do nothing and release our
+  // hold on it, let it go
+  if ( !transfering() )
+  {
+    bz_removeNonPlayerConnectionHandler ( conID, this );
+    conID = -1;
   }
 }
 
@@ -333,7 +342,7 @@ bool FastMapClient::updateTransfer ( void )
 {
   int chunkToSend = 1000;
 
-  if ( currerntPos >= size )
+  if ( !transfering() )
     return false;
 
   updatTimes.push_back(bz_getCurrentTime());
@@ -351,6 +360,12 @@ bool FastMapClient::updateTransfer ( void )
 
   return worked;
 }
+
+bool FastMapClient::transfering ( void )
+{
+  return currerntPos < size;
+}
+
 
 
 // Local Variables: ***
