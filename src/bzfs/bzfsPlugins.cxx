@@ -465,7 +465,7 @@ void initPlugins ( void )
       dir.setOSDir(getAutoLoadDir());
 
       OSFile file;
-      while(dir.getNextFile(file,"*.*"),false)
+      while(dir.getNextFile(file,"*.dll",false) )
 	loadPlugin(file.getOSName(),std::string(""));
       }
   #endif //_DEBUG

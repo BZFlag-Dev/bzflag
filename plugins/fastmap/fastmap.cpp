@@ -108,6 +108,9 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
     mapData = (unsigned char*)malloc(mapDataSize);
     bz_getWorldCacheData(mapData);
 
+    if (!mapName.size())
+      mapName = format("%s%d",bz_getPublicAddr().c_str(),(unsigned int)this);
+
     if (mapDataSize)
       bz_setClientWorldDowloadURL(format("HTTP:/%s/%s",bz_getPublicAddr().c_str(),mapName.c_str()).c_str());
   }
