@@ -243,6 +243,9 @@
 				RelativePath="..\..\src\game\ServerListCache.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\ServerPing.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\StartupInfo.cxx">
 			</File>
 			<File
@@ -303,6 +306,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ServerListCache.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ServerPing.h">
 			</File>
 			<File
 				RelativePath="..\..\include\StartupInfo.h">
