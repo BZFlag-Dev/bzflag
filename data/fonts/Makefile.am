@@ -1,4 +1,5 @@
-EXTRA_DIST = \
+fontdir = $(pkgdatadir)/fonts
+dist_font_DATA = \
 	LuxiMono_12.fmt		\
 	LuxiMono_12.png		\
 	LuxiMono_16.fmt		\
@@ -45,15 +46,3 @@ EXTRA_DIST = \
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-install-data-local: $(EXTRA_DIST)
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag/fonts
-	@list='$(EXTRA_DIST)'; for p in $$list; do \
-	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/fonts/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/fonts/$$f; \
-	done
-
-uninstall-local:
-	rm -rf $(DESTDIR)$(datadir)/bzflag/fonts/*

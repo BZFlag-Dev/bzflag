@@ -1,6 +1,6 @@
 SUBDIRS = l10n fonts
 
-EXTRA_DIST =			\
+dist_pkgdata_DATA =		\
 	automatic_icon.png	\
 	blue_basetop.png	\
 	blue_basewall.png	\
@@ -113,15 +113,3 @@ EXTRA_DIST =			\
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
-
-install-data-local: $(EXTRA_DIST)
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
-	@list='$(EXTRA_DIST)'; for p in $$list; do \
-	if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(datadir)/bzflag/$$f; \
-	done
-
-uninstall-local:
-	rm -rf $(DESTDIR)$(datadir)/bzflag/*
