@@ -95,8 +95,6 @@ static Address serverAddress;
 static int wksSocket;
 bool handlePings = true;
 PingPacket pingReply;
-// highest fd used
-static int maxFileDescriptor;
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -644,7 +642,6 @@ static bool serverStart()
   const int optOn = 1;
   int opt = optOn;
 #endif
-  maxFileDescriptor = 0;
 
   packWorldSettings();
 
@@ -764,7 +761,7 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
 
 bool defineWorld ( void )
 {
-  logDebugMessage(1,"loading world");
+  logDebugMessage(1,"defining world\n");
   // clean up old database
   if (world) {
     delete world;
@@ -4443,7 +4440,8 @@ static void runMainLoop ( void )
     // see if the octree needs to be reloaded
     world->checkCollisionManager();
 
-    maxFileDescriptor = 0;
+    // highest fd used
+    int maxFileDescriptor = 0;
 
     // prepare select set
     fd_set read_set, write_set;
