@@ -804,10 +804,6 @@ AC_CONFIG_FILES(bzflag.info
 	include/Makefile
 	m4/Makefile
 	man/Makefile
-	man/bzadmin.6
-	man/bzflag.6
-	man/bzfs.6
-	man/bzw.5
 	misc/Makefile
 	package/Makefile
 	package/irix/Makefile

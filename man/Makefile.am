@@ -7,6 +7,18 @@ endif
 bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > bzfquery.6
 
+edit = sed \
+	-e 's|@BZFLAG_DATE[@]|$(BZFLAG_DATE)|g' \
+	-e 's|@BZFLAG_VERSION[@]|$(BZFLAG_VERSION)|g' \
+	-e 's|@INSTALL_DATA_DIR[@]|$(pkgdatadir)|g'
+
+bzflag.6 bzadmin.6 bzfs.6 bzw.5 : Makefile
+	$(edit) '$(srcdir)/$@.in' >$@
+bzflag.6: $(srcdir)/bzflag.6.in
+bzadmin.6: $(srcdir)/bzadmin.6.in
+bzfs.6: $(srcdir)/bzfs.6.in
+bzw.5: $(srcdir)/bzw.5.in
+
 DISTCLEANFILES = bzfquery.6
 
 MAINTAINERCLEANFILES = \
