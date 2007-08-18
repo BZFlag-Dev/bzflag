@@ -18,6 +18,7 @@
 #include "StateDatabase.h"
 #include "TimeKeeper.h"
 #include "Flag.h"
+#include "OpenGLUtils.h"
 
 template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
@@ -36,8 +37,6 @@ static void drawRingZ(float innerRad, float outerRad,
 		      float uScale = 1.0f);
 
 static void RadialToCartesian(float angle, float rad, float *pos);
-
-#define deg2Rad 0.017453292519943295769236907684886f
 
 
 EffectsRenderer::EffectsRenderer()
