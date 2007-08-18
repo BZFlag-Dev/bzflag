@@ -38,7 +38,8 @@ EXTRA_DIST =				\
 	ws.sh
 
 bzflag.desktop: bzflag.desktop.in
-	sed 's|\@DATADIR\@|$(DESTDIR)$(datadir)/bzflag/|' $< > $@
+	sed 's|\@DATADIR\@|$(pkgdatadir)/|' $< > $@
+desktopdir = $(datadir)/applications
 desktop_DATA = bzflag.desktop
 
 MAINTAINERCLEANFILES =	\

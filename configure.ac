@@ -450,8 +450,6 @@ esac
 if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
-desktopdir=`eval echo $datadir/applications`
-AC_SUBST(desktopdir)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
 if test x$enable_threads = xyes; then
