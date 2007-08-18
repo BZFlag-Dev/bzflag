@@ -1,11 +1,11 @@
+include $(top_srcdir)/Makefile.common
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES =	libTank.la
 endif
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libTank_la_LDFLAGS = -static
 libTank_la_SOURCES =	\

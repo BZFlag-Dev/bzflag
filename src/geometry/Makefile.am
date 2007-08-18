@@ -1,3 +1,5 @@
+include $(top_srcdir)/Makefile.common
+
 SUBDIRS = models
 
 MAINTAINERCLEANFILES = \
@@ -6,8 +8,6 @@ MAINTAINERCLEANFILES = \
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGeometry.la
 endif
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\

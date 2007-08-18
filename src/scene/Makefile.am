@@ -1,11 +1,11 @@
+include $(top_srcdir)/Makefile.common
+
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libSceneDB.la
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libSceneDB_la_LDFLAGS = -static
 libSceneDB_la_SOURCES =			\

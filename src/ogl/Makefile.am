@@ -1,11 +1,11 @@
+include $(top_srcdir)/Makefile.common
+
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGLKit.la
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =			\

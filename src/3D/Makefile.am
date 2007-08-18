@@ -1,11 +1,11 @@
+include $(top_srcdir)/Makefile.common
+
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = lib3D.la
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES =		\

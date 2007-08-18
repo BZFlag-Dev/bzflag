@@ -1,9 +1,9 @@
+include $(top_srcdir)/Makefile.common
+
 noinst_LTLIBRARIES = libDate.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 EXTRA_DIST = README
 

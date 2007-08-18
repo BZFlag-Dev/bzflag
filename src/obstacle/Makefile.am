@@ -1,10 +1,9 @@
+include $(top_srcdir)/Makefile.common
 
 noinst_LTLIBRARIES = libObstacle.la
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libObstacle_la_LDFLAGS = -static
 
