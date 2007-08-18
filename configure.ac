@@ -268,7 +268,6 @@ case $host_os in
 esac
 
 AC_PATH_XTRA
-CPPFLAGS="$CPPFLAGS $X_CFLAGS" 
 LDFLAGS="$LDFLAGS $X_LIBS"
 
 case $host_os in

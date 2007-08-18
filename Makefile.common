@@ -1,2 +1,2 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(LIBCURL_CPPFLAGS) \
-	-DINSTALL_DATA_DIR=\"$(pkgdatadir)\"
+	-DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(X_CFLAGS)
