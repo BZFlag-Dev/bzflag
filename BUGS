@@ -3,7 +3,7 @@ recent bugs
 
 - intermittent/random client-server connection failures
 
-- missing mountains7.png and explode3.png, mountain renders discontiguous
+- mountain renders discontiguous
 
 - jitter on windows servers is reported as very high, but play
   is unaffected.
