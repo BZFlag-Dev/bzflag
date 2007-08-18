@@ -1019,7 +1019,7 @@ void checkGameOn ( void )
 }
 
 
-static void acceptClient( fd_set *socketSet )
+static void acceptClient()
 {
   // client (not a player yet) is requesting service.
   // accept incoming connection on our well known port
@@ -1050,8 +1050,6 @@ static void acceptClient( fd_set *socketSet )
   peer.startTime = TimeKeeper::getCurrent().getSeconds();
 
   netConnectedPeers[fd] = peer;
-
-  FD_SET((unsigned int)fd, socketSet);
 }
 
 static void respondToPing(Address addr)
@@ -4510,7 +4508,7 @@ static void runMainLoop ( void )
       //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
       if (FD_ISSET(wksSocket, &read_set))
-	acceptClient(&read_set);
+	acceptClient();
 
       // check if we have any UDP packets pending
       if (NetHandler::isUdpFdSet(&read_set)) {
