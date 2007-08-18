@@ -32,6 +32,7 @@
 #include "Player.h"
 #include "ScoreboardRenderer.h"
 #include "LocalPlayer.h"
+#include "OpenGLUtils.h"
 
 
 const int		MaxAlerts = 3;
@@ -72,10 +73,12 @@ typedef std::vector < EnhancedHUDMarker > EnhancedMarkerList;
  * HUDRenderer:
  *	Encapsulates information about rendering the heads-up display.
  */
-class HUDRenderer {
+class HUDRenderer : public GLDisplayListCreator {
 public:
   HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
+
+  virtual void buildGeometry ( GLDisplayList displayList );
 
   int		getNoMotionSize() const;
   int		getMaxMotionSize() const;
@@ -163,6 +166,7 @@ private:
   static int	tankScoreCompare(const void* _a, const void* _b);
   static int	teamScoreCompare(const void* _a, const void* _b);
 
+  GLDisplayList	friendlyMarkerList;
 private:
   const BzfDisplay*	display;
   ScoreboardRenderer* scoreboard;

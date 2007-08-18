@@ -113,6 +113,8 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   // create scoreboard renderer
   scoreboard = new ScoreboardRenderer();
 
+  friendlyMarkerList = DisplayListSystem::Instance().newList(this);
+
   // initialize fonts
   resize(true);
 }
@@ -621,8 +623,6 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 
 	hudColor3Afv( color, alpha );
 
-	float deg2Rad = 0.017453292519943295769236907684886f;
-
 	glPushMatrix();
 	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
 	glPopMatrix();
@@ -702,30 +702,8 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 	glVertex3f(-triangleSize,triangleSize,0.01f);
 	glEnd();
 
-	if (friendly) {
-	  float xFactor = 0.45f;
-
-	  // white outline
-	  hudColor4f( 1,1,1,0.85f );
-	  glLineWidth(6.0f);
-	  glBegin(GL_LINES);
-	    glVertex3f(triangleSize*xFactor,triangleSize,0.02f);
-	    glVertex3f(-triangleSize*xFactor,0,0.02f);
-	    glVertex3f(-triangleSize*xFactor,triangleSize,0.02f);
-	    glVertex3f(triangleSize*xFactor,0,0.02f);
-	  glEnd();
-
-	  // red X
-	  hudColor4f( 1,0,0, 0.85f );
-	  glLineWidth(3.0f);
-	  glBegin(GL_LINES);
-	    glVertex3f(triangleSize*xFactor,triangleSize,0.03f);
-	    glVertex3f(-triangleSize*xFactor,0,0.02f);
-	    glVertex3f(-triangleSize*xFactor,triangleSize,0.03f);
-	    glVertex3f(triangleSize*xFactor,0,0.02f);
-	  glEnd();
-	  glLineWidth(2.0f);
-	}
+	if (friendly) 
+	  DisplayListSystem::Instance().callList(friendlyMarkerList);
 
 	glPopMatrix();
 
@@ -754,8 +732,6 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	o[2] = object[2];
 
 	hudColor3Afv( color, alpha );
-
-	float deg2Rad = 0.017453292519943295769236907684886f;
 
 	glPushMatrix();
 	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
@@ -820,30 +796,8 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 	glVertex2f(lockonInset,-lockonSize+lockonDeclination);
 	glEnd();
 
-	if (friendly) {
-	  float xFactor = 0.75f;
-
-	  // white outline
-	  hudColor4f( 1,1,1, 0.85f );
-	  glLineWidth(4.0f);
-	  glBegin(GL_LINES);
-	  glVertex3f(lockonSize*xFactor,lockonSize,0.02f);
-	  glVertex3f(-lockonSize*xFactor,0,0.02f);
-	  glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
-	  glVertex3f(lockonSize*xFactor,0,0.02f);
-	  glEnd();
-
-	  // red X
-	  hudColor4f( 1,0,0, 0.85f );
-	  glLineWidth(2.0f);
-	  glBegin(GL_LINES);
-	  glVertex3f(lockonSize*xFactor,lockonSize,0.03f);
-	  glVertex3f(-lockonSize*xFactor,0,0.02f);
-	  glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
-	  glVertex3f(lockonSize*xFactor,0,0.02f);
-	  glEnd();
-	  glLineWidth(2.0f);
-	}
+	if (friendly)
+	  DisplayListSystem::Instance().callList(friendlyMarkerList);
 
 	glLineWidth(1.0f);
 
@@ -860,6 +814,70 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
 
 	glPopMatrix();
 }
+
+void HUDRenderer::buildGeometry ( GLDisplayList displayList )
+{
+  if (displayList == friendlyMarkerList)
+  {
+    float lockonSize = 40;
+    float lockonInset = 15;
+    float lockonDeclination = 15;
+
+    float xFactor = 0.75f;
+    float segmentation = 32.0f/360.0f;
+    float rad = lockonSize * 0.5f;
+
+    // white outline
+    hudColor4f( 1,1,1, 0.85f );
+    glLineWidth(4.0f);
+    glBegin(GL_LINES);
+    glVertex3f(sinf(135*deg2Rad)*rad,cosf(135*deg2Rad),0.02f);
+    glVertex3f(sinf(-45*deg2Rad)*rad,cosf(-45*deg2Rad),0.02f);
+   // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
+   // glVertex3f(lockonSize*xFactor,0,0.02f);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    for ( float t = 0; t < 360; t += segmentation )
+    {
+      if ( t != 0 )
+      {
+	float spT = t-segmentation;
+
+	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad,0.02f);
+	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad,0.02f);
+      }
+    }
+    glEnd();
+
+    // red X
+    hudColor4f( 1,0,0, 0.85f );
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glVertex3f(sinf(135*deg2Rad)*rad,cosf(135*deg2Rad),0.03f);
+    glVertex3f(sinf(-45*deg2Rad)*rad,cosf(-45*deg2Rad),0.02f);
+   // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
+  //  glVertex3f(lockonSize*xFactor,0,0.02f);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    for ( float t = 0; t < 360; t += segmentation )
+    {
+      if ( t != 0 )
+      {
+	float spT = t-segmentation;
+
+	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad,0.02f);
+	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad,0.02f);
+      }
+    }
+    glEnd();
+
+    glLineWidth(2.0f);
+  }
+
+}
+
 
 void			HUDRenderer::render(SceneRenderer& renderer)
 {
