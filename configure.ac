@@ -450,10 +450,6 @@ esac
 if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
-INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
-# newer (read stupid) versions of autoconf need to get evaled twice
-INSTALL_DATA_DIR=`eval echo $INSTALL_DATA_DIR`
-AC_SUBST(INSTALL_DATA_DIR)
 desktopdir=`eval echo $datadir/applications`
 AC_SUBST(desktopdir)
 
@@ -573,8 +569,6 @@ if test x$enable_snapping != xno; then
   AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
 fi
 
-AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
-[Data file directory])
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])

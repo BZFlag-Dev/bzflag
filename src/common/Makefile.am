@@ -1,8 +1,8 @@
+include $(top_srcdir)/Makefile.common
+
 noinst_LTLIBRARIES = libCommon.la
 
 AM_CFLAGS = -D_XOPEN_SOURCE
-
-AM_CPPFLAGS = -I$(top_srcdir)/include $(LIBCURL_CPPFLAGS)
 
 libCommon_la_LDFLAGS = -static
 libCommon_la_SOURCES  =			\

@@ -1,9 +1,11 @@
+include $(top_srcdir)/Makefile.common
+
 bin_PROGRAMS = bzfs
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(LIBCURL_CPPFLAGS) -DINSIDE_BZ
+AM_CPPFLAGS += -DINSIDE_BZ
 
 if BUILD_PLUGINS
 plugin_files = bzfsPlugins.h bzfsPlugins.cxx

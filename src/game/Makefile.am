@@ -1,9 +1,9 @@
+include $(top_srcdir)/Makefile.common
+
 noinst_LTLIBRARIES = libGame.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-AM_CPPFLAGS = -I$(top_srcdir)/include $(LIBCURL_CPPFLAGS)
 
 libGame_la_LDFLAGS = -static
 libGame_la_SOURCES =			\

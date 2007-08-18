@@ -100,7 +100,7 @@ rpmprep:
 		cat $(RPM)/$(SPECFILE) ) | \
 		sed -e 's/%setup -q -c//' \
 		-e 's/%define version.*/%define version '$(VERSIONID)/ \
-		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
+		-e 's@%define bzdatadir.*@%define bzdatadir '$(pkgdatadir)@ > \
 						$(RPMDIR)/SPECS/$(SPECFILE)
 # make rpmrc file
 	$(ECHO) "" > $(RPM)/$(RPMRC)
@@ -122,7 +122,7 @@ newspec:
 # the config files say the data is supposed to go.
 	cat $(RPM)/$(SPECFILE) | \
 		sed -e 's/%define version.*/%define version '$(VERSIONID).$(VERSIONBUILD)/ \
-		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
+		-e 's@%define bzdatadir.*@%define bzdatadir '$(pkgdatadir)@ > \
 								newspec
 
 clean: $(COMMONPREF)clean
