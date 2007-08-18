@@ -16,7 +16,87 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "bzfsAPI.h"
+
+class BZFSHTTPServer : public bz_EventHandler, bz_NonPlayerConnectionHandler
+{
+public:
+  BZFSHTTPServer( const char * plugInName );
+  virtual ~BZFSHTTPServer();
+
+  void startupHTTP ( void );
+  void shutdownHTTP ( void );
+
+  // BZFS callback methods
+  virtual void process ( bz_EventData *eventData );
+  virtual void pending ( int connectionID, void *d, unsigned int s );
+  virtual void disconnect ( int connectionID );
+
+  // virtual functions to implement
+  virtual bool acceptURL ( const char *url ) = 0;
+  virtual void getURLData ( const char* url, int requestID ) = 0;
+
+protected:
+  // called inside getURLData to set the data for the job
+  void setURLDataSize ( unsigned int size, int requestID );
+  void setURLData ( const char * data, int requestID );
+
+  // called internaly to update any transfers
+  // but can be called externaly to force updates if need be
+  void update ( void );
+
+  // so the server can know what it's address is
+  const char * getBaseServerURL ( void );
+
+protected:
+  void userSendData ( int connID, char* d, unsigned int s );
+
+  typedef enum
+  {
+    eGet
+  }HTTPRequest;
+
+  typedef struct 
+  {
+    HTTPRequest request;
+    std::string URL;
+    char	*data;
+    unsigned int size;
+  }HTTPCommand;
+
+  class HTTPConectedUsers
+  {
+  public:
+    HTTPConectedUsers(int connectionID );
+    ~HTTPConectedUsers();
+    
+    bool transfering ( void );
+    void startTransfer ( HTTPCommand *command );
+    void update ( void );
+
+    std::vector<HTTPCommand*> pendingCommands;
+
+    std::string commandData;
+    double	aliveTime;
+
+    unsigned int pos;
+
+    int connection;
+
+    void killMe ( void );
+  };
+
+private:
+  std::map<int,HTTPConectedUsers*> users;
+
+  std::string baseURL;
+  std::string vdir;
+  bool	      listening;
+  float	      savedUpdateTime;
+
+  HTTPCommand *theCurrentCommand;
+};
 
 #endif //_PLUGIN_HTTP_H_
 
