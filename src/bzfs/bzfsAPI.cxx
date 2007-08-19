@@ -3433,7 +3433,7 @@ BZF_API bool bz_removeclipFieldNotifier ( const char *name, bz_ClipFiledNotifier
 
 BZF_API bz_ApiString bz_filterPath(const char *path)
 {
-  if(path)
+  if(!path)
     return bz_ApiString("");
 
   char *temp;
