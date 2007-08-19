@@ -1430,7 +1430,8 @@ void			LocalPlayer::doJump()
   /* better realism .. make it so that if you're falling, wings will
    * just slow you down.
    */
-  newVelocity[2] += oldVelocity[2];
+  if (oldVelocity[2] < 0)
+    newVelocity[2] += oldVelocity[2];
 
   setVelocity(newVelocity);
   location = InAir;
