@@ -42,6 +42,15 @@ protected:
   void setURLDataSize ( unsigned int size, int requestID );
   void setURLData ( const char * data, int requestID );
 
+  typedef enum
+  {
+    eText,
+    eOctetStream,
+    eBinary
+  }HTTPDocumentType;
+
+  void setURLDocType ( HTTPDocumentType docType, int requestID );
+
   // called internaly to update any transfers
   // but can be called externaly to force updates if need be
   void update ( void );
@@ -50,8 +59,6 @@ protected:
   const char * getBaseServerURL ( void );
 
 protected:
-  void userSendData ( int connID, char* d, unsigned int s );
-
   typedef enum
   {
     eGet
@@ -63,6 +70,7 @@ protected:
     std::string URL;
     char	*data;
     unsigned int size;
+    HTTPDocumentType  docType;
   }HTTPCommand;
 
   class HTTPConectedUsers
@@ -74,6 +82,8 @@ protected:
     bool transfering ( void );
     void startTransfer ( HTTPCommand *command );
     void update ( void );
+
+    std::string getMimeType ( HTTPDocumentType docType );
 
     std::vector<HTTPCommand*> pendingCommands;
 

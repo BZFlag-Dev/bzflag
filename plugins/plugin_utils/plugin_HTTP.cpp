@@ -28,11 +28,16 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
     
-    if (plugInName && tolower(std::string(plugInName)) != "BZFS")
+    if (plugInName && tolower(std::string(plugInName)) != "bzfs")
     {
       if (std::find(dirs.begin(),dirs.end(),std::string(plugInName)) != dirs.end())
 	vdir = plugInName;
     }
+  }
+  else
+  {
+    if (plugInName && tolower(std::string(plugInName)) != "bzfs")
+      vdir = plugInName;
   }
   
   clipField += "," + vdir;
@@ -112,7 +117,7 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
 	HTTPConectedUsers *user = new HTTPConectedUsers(connData->connectionID);
 
 	users[connData->connectionID] = user;
-	userSendData ( connData->connectionID, (char*)connData->data, connData->size );
+	pending ( connData->connectionID, (char*)connData->data, connData->size );
       }
     }
   }
@@ -181,14 +186,16 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
 	  if (httpCommandString == "GET")
 	  {
+	    std::string url = params[1];
 	    // make sure it's in our vdir
-	    if ( strncmp(tolower(params[1]).c_str()+1,vdir.c_str(),vdir.size()) == 0)
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
 	    {
 	      theCurrentCommand = new HTTPCommand;
 	      theCurrentCommand->request = eGet;
 	      theCurrentCommand->URL = params[1].c_str()+1+vdir.size();
 	      theCurrentCommand->data = NULL;
 	      theCurrentCommand->size = 0;
+	      theCurrentCommand->docType = eText;
 
 	      if (acceptURL(theCurrentCommand->URL.c_str()))
 	      {
@@ -258,6 +265,11 @@ void BZFSHTTPServer::setURLData ( const char * data, int requestID )
   }
 }
 
+void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int requestID )
+{
+  theCurrentCommand->docType = docType;
+}
+
 const char * BZFSHTTPServer::getBaseServerURL ( void )
 {
   return baseURL.c_str();
@@ -266,6 +278,7 @@ const char * BZFSHTTPServer::getBaseServerURL ( void )
 BZFSHTTPServer::HTTPConectedUsers::HTTPConectedUsers(int connectionID )
 {
   connection = connectionID;
+  pos = 0;
 }
 
 BZFSHTTPServer::HTTPConectedUsers::~HTTPConectedUsers()
@@ -299,6 +312,21 @@ void BZFSHTTPServer::HTTPConectedUsers::startTransfer ( HTTPCommand *command )
   pendingCommands.push_back(command);
   update();
 }
+std::string BZFSHTTPServer::HTTPConectedUsers::getMimeType ( HTTPDocumentType docType )
+{
+  std::string type = "text/plain";
+  switch(docType)
+  {
+  case eOctetStream:
+    type = "application/octet-stream";
+    break;
+
+  case eBinary:
+    type = "application/binary";
+    break;
+  }
+  return type;
+}
 
 void BZFSHTTPServer::HTTPConectedUsers::update ( void )
 {
@@ -313,32 +341,34 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
     httpHeaders += "HTTP/1.1 200 OK\n";
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
-    httpHeaders += "Content-Type: application/octet-stream\n";
+    httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
     httpHeaders += "\n";
 
     if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) )
-      killMe();
-  }
-  else	// keep it going
-  {
-    // wait till the current data is sent
-    if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0)
     {
-      int chunkToSend = 1000;
+      killMe();
+      return;
+    }
+  }
+  
+  // keep it going
+  // wait till the current data is sent
+  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0)
+  {
+    int chunkToSend = 1000;
 
-      if ( pos + chunkToSend > currentCommand->size)
-	pos = currentCommand->size-pos;
+    if ( pos + chunkToSend > currentCommand->size)
+      pos = currentCommand->size-pos;
 
-      bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
+    bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
 
-      pos += chunkToSend;
-      if (pos >= currentCommand->size) // if we are done, close this sucker
-      {
-	pos = 0;
-	free(currentCommand->data);
-	delete(currentCommand);
-	pendingCommands.erase(pendingCommands.begin());
-      }
+    pos += chunkToSend;
+    if (pos >= currentCommand->size) // if we are done, close this sucker
+    {
+      pos = 0;
+      free(currentCommand->data);
+      delete(currentCommand);
+      pendingCommands.erase(pendingCommands.begin());
     }
   }
 }
