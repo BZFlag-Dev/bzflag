@@ -50,6 +50,7 @@ public:
   void addToList(ServerItem, bool doCache=false);
   void markFav(const std::string &, bool);
   void clear();
+  void sort();
 
 private:
   void readServerList();

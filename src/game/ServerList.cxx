@@ -190,22 +190,35 @@ void ServerList::readServerList()
   memmove(theData, base, theLen);
 }
 
+
+void ServerList::sort()
+{
+  // make sure the list is sorted before we go inserting in order!
+  std::sort(servers.begin(), servers.end());
+}
+
+
+// FIXME: the list gets jacked.  maybe the stl::erase below are a
+// bunch of other things, but needs to be tested/rewritten more.
 void ServerList::addToList(ServerItem info, bool doCache)
 {
   // update if we already have it
   int i;
 
   // search and delete entry for this item if it exists
-  // (updating info in place may "unsort" the list)
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    if (server.ping.serverId.serverHost.s_addr
-	== info.ping.serverId.serverHost.s_addr
-	&& server.ping.serverId.port == info.ping.serverId.port) {
+    if ((server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr) && 
+	(server.ping.serverId.port == info.ping.serverId.port)) {
+      // retain age so it can stay sorted same agewise
+      info.setAge(server.getAgeMinutes(), server.getAgeSeconds());
       servers.erase(servers.begin() + i); // erase this item
       break;
     }
   }
+
+  // sort before iterating through
+  sort();
 
   // find point to insert new player at
   int insertPoint = -1; // point to insert server into
@@ -232,26 +245,11 @@ void ServerList::addToList(ServerItem info, bool doCache)
     servers.insert(servers.begin() + insertPoint, info);
   }
 
-  // update display
-  /*
-  char buffer [80];
-  std::vector<std::string> args;
-  sprintf(buffer, "%d", (int)servers.size());
-  args.push_back(buffer);
-  setStatus("Servers found: {1}", &args);
-  */
-
-  // force update
-  /*
-  const int oldSelectedIndex = selectedIndex;
-  selectedIndex = -1;
-  setSelected(oldSelectedIndex);
-  */
-
+  // check if we need to show cached values
   if (doCache) {
     info.cached = true; // values in cache are "cached"
     // update the last updated time to now
-    info.setUpdateTime();
+    info.resetAge();
 
     ServerListCache::SRV_STR_MAP::iterator iter;
     iter = serverCache->find(serverAddress);  // find entry to allow update
