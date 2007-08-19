@@ -2,7 +2,7 @@ include $(top_srcdir)/Makefile.common
 
 noinst_LTLIBRARIES = libCommon.la
 
-AM_CFLAGS = -D_XOPEN_SOURCE
+AM_CFLAGS += -D_XOPEN_SOURCE
 
 libCommon_la_LDFLAGS = -static
 libCommon_la_SOURCES  =			\

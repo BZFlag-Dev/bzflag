@@ -68,10 +68,16 @@ if test "x$LD" != "x" ; then
 	AC_MSG_WARN([LD cannot be set directly yet it seems to be set ($LD)])
 fi
 
+#Do not play with CFLAGS and CXXFLAGS if they are set by user
+bzflag_test_CFLAGS=${CFLAGS+set}
+bzflag_test_CXXFLAGS=${CXXFLAGS+set}
+
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+
+AM_CONDITIONAL([GNU_GCC], [test "$GCC" = yes])
 
 AC_ARG_ENABLE(ccachetest, [  --disable-ccachetest    don't try to use ccache])
 if test x$enable_ccachetest != xno; then
@@ -574,24 +580,22 @@ case $host_os in
 	#if test x$no_sdl = xyes; then
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
-	#CPPFLAGS="$CPPFLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	CPPFLAGS="$CPPFLAGS -Wall -W"
+	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
+	FLAGS="$FLAGS -Wall -W"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
-	         # silly hack, should be a proper configure compiler option test
-	         if test x$host_cpu = xx86_64; then
-		   CPPFLAGS="$CPPFLAGS -mtune=k8";
-		 fi
-	         CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
+		 FLAGS="$FLAGS -mtune"
 	       else
-	         # silly hack, should be a proper configure compiler option test
-	         if test x$host_cpu = xx86_64; then
-		   CPPFLAGS="$CPPFLAGS -mcpu=k8";
-		 fi
-	         CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
+		 FLAGS="$FLAGS -mcpu"
+	       fi
+	       # silly hack, should be a proper configure compiler option test
+	       if test x$host_cpu = xx86_64; then
+		 FLAGS="$FLAGS=k8"
+	       else
+		 FLAGS="$FLAGS=$host_cpu"
 	       fi;;
-	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
+	     ppc) FLAGS="$FLAGS -mcpu=$host_cpu";;
 	esac;;
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
@@ -599,36 +603,35 @@ case $host_os in
 	#if test x$no_sdl = xyes; then
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
-	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";;
+	FLAGS="$FLAGS -Wall -W -mcpu=$host_cpu";;
      mingw32*)
 	WINPORT=windows_port.o
 	AC_SUBST(WINPORT)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	CPPFLAGS="$CPPFLAGS -Wall -W"
+	FLAGS="$FLAGS -Wall -W"
 	if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
-	  CPPFLAGS="$CPPFLAGS -mtune=$host_cpu";
+	  FLAGS="$FLAGS -mtune=$host_cpu";
 	else
-	  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";
+	  FLAGS="$FLAGS -mcpu=$host_cpu";
 	fi;;
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if $sun_wspro; then
-	   CPPFLAGS="$CPPFLAGS -KPIC"
+	   FLAGS="$FLAGS -KPIC"
 	elif $sun_cc; then
-	   CPPFLAGS="$CPPFLAGS -fast"
+	   FLAGS="$FLAGS -fast"
 	elif $sun_gcc; then
-	   CPPFLAGS="$CPPFLAGS -fpermissive"
+	   FLAGS="$FLAGS -fpermissive"
 	fi;;
      macos|darwin*)
-	CPPFLAGS="$CPPFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import";
-	CFLAGS="$CFLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import";;
+	FLAGS="$FLAGS -pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import";;
      irix)
-	CPPFLAGS="$CPPFLAGS -Wall";
+	FLAGS="$FLAGS -Wall";
 	if test x$host_cpu = xmips64; then
-	   CPPFLAGS="CPPFLAGS -march=mips3";
+	   FLAGS="FLAGS -march=mips3";
 	else
-	   CPPFLAGS="CPPFLAGS -march=mips2";
+	   FLAGS="FLAGS -march=mips2";
 	fi;;
      beos*)
 	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
@@ -639,58 +642,54 @@ esac
 # CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$CONF_DATE"
 
 if test x$enable_debug = xyes; then
-   CFLAGS="$CFLAGS -O0";
-   CXXFLAGS="$CXXFLAGS -O0";
+   FLAGS="$FLAGS -O0"
    case $host_os in
      linux*|cygwin|mingw32*)
-	CPPFLAGS="$CPPFLAGS -Werror -Wshadow";
-	CXXFLAGS="$CXXFLAGS -Wno-deprecated -fsigned-char";
+	FLAGS="$FLAGS -Werror -Wshadow -Wno-deprecated"
 	if test x$enable_profiling = xyes; then
-	  CFLAGS="$CFLAGS -pg";
-	  CXXFLAGS="$CXXFLAGS -pg";
+	  FLAGS="$FLAGS -pg"
 	fi;;
      macos|darwin*)
 	if test x$enable_profiling = xyes; then
-	  CFLAGS="$CFLAGS -pg";
-	  CXXFLAGS="$CXXFLAGS -pg";
+	  FLAGS="$FLAGS -pg"
 	fi;;
      beos)
-	CPPFLAGS="$CPPFLAGS -Werror";;
+	FLAGS="$FLAGS -Werror";;
     esac;
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
 	 linux*|cygwin|mingw32*)
-		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions -fsigned-char";;
+		FLAGS="$FLAGS -ffast-math -fno-exceptions";;
 	 solaris*)
-		CFLAGS="$CFLAGS -O";
-		CXXFLAGS="$CXXFLAGS -O";;
+		FLAGS="$FLAGS -O";;
 	 macos|darwin*)
-		CFLAGS="$CFLAGS -O3";
-		CXXFLAGS="$CXXFLAGS -O3";
-		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
-		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";
+		FLAGS="$FLAGS -O3 -ffast-math -fomit-frame-pointer"
+		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
 		if test x$enable_profiling = xyes; then
-			CFLAGS="$CFLAGS -pg";
-			CXXFLAGS="$CXXFLAGS -pg";
+			FLAGS="$FLAGS -pg"
 		fi;;
 	 irix)
 		if test x$host_cpu = xmips64; then
-		   CFLAGS="$CFLAGS -O3";
-		   CXXFLAGS="$CXXFLAGS -O3";
-		   CPPFLAGS="$CPPFLAGS -ffast-math -fomit-frame-pointer";
-		   CPPFLAGS="$CPPFLAGS -fexpensive-optimizations -fno-exceptions";
+		   FLAGS="$FLAGS -O3 -ffast-math -fomit-frame-pointer"
+		   FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
 		else
-		   CFLAGS="$CFLAGS -O2";
-		   CXXFLAGS="$CXXFLAGS -O2";
+		   FLAGS="$FLAGS -O2"
 		fi;;
 	 beos)
-		CFLAGS="$CFLAGS -O2";
-		CXXFLAGS="$CXXFLAGS -O2";
-		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer -fno-exceptions";;
+		FLAGS="$FLAGS -O2 -ffast-math -fomit-frame-pointer"
+		FLAGS="$FLAGS -fno-exceptions";;
      esac;
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
-fi;
+fi
+
+#Do not play with CFLAGS and CXXFLAGS if they are set by user
+if test "$bzflag_test_CFLAGS" != set; then
+  CFLAGS="$CFLAGS $FLAGS"
+fi
+if test "$bzflag_test_CXXFLAGS" != set; then
+  CXXFLAGS="$CXXFLAGS $FLAGS"
+fi
 
 dnl check for -search_paths_first linker flag when making dynamic libraries
 search_paths_first_flag="-Wl,-search_paths_first -mdynamic-no-pic"
@@ -897,7 +896,6 @@ esac
 
 echo "CFLAGS are $CFLAGS"
 echo "LDFLAGS are $LDFLAGS"
-echo "CPPFLAGS are $CPPFLAGS"
 echo "LIBS are $LIBS"
 
 AC_MSG_RESULT([])
