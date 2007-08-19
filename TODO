@@ -22,9 +22,6 @@ Required for release of 2.2.:
 * bzfs intermittently drops the client (causing a client hang) after
   performing a reverse lookup on the client's IP
 
-* make sure there are no outstanding serious bugs
-  (e.g. check OO,F5, etc..)
-
 * client occasionally crashes on exit (in an ftgl destructor) 
 
 
