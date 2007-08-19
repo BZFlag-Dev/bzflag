@@ -108,7 +108,7 @@ DefaultDBItem	defaultDBItems[] = {
 
   // input
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "slowKeyboard",		"0",			false,	StateDatabase::ReadWrite,	NULL },
+  { "slowMotion",		"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "slowBinoculars",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 

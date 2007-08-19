@@ -83,7 +83,7 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   initKeymap("quit", 22);
   initKeymap("scrollpanel up_page", 23);
   initKeymap("scrollpanel down_page", 24);
-  initKeymap("toggle slowKeyboard", 25);
+  initKeymap("toggle slowMotion", 25);
   initKeymap("toggleFlags radar", 26);
   initKeymap("toggleFlags main", 27);
   initKeymap("silence", 28);

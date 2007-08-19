@@ -384,7 +384,7 @@ void warnAboutConsole()
 static void warnAboutSlowMotion()
 {
   static bool notified = false;
-  bool slow =  BZDB.isTrue("slowKeyboard");
+  bool slow =  BZDB.isTrue("slowMotion");
 
   /* if it's not slow, then nothing to warn */
   if (!slow) {
@@ -394,7 +394,7 @@ static void warnAboutSlowMotion()
 
   /* it's slow, so see if we need to warn */
   if (!notified) {
-    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle slowKeyboard", true);
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle slowMotion", true);
 
     if (keys.size() != 0) {
       addMessage(NULL,
@@ -899,7 +899,7 @@ static void		doMotion()
 
   /* slow motion modifier */
   warnAboutSlowMotion();
-  if (BZDB.isTrue("slowKeyboard")) {
+  if (BZDB.isTrue("slowMotion")) {
     rotation *= 0.5f;
     speed *= 0.5f;
   }
@@ -6109,7 +6109,7 @@ static void		setupRoamingCamera(float dt)
   }
 
   // adjust for slow keyboard
-  if (BZDB.isTrue("slowKeyboard")) {
+  if (BZDB.isTrue("slowMotion")) {
     float st = BZDB.eval("roamSmoothTime");
     if (st < 0.1f) {
       st = 0.1f;

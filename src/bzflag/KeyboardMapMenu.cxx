@@ -143,7 +143,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("scrollpanel up_page", ++i);
   initkeymap("scrollpanel down_page", ++i);
   initkeymap("scrollpanel bottom", ++i);
-  initkeymap("toggle slowKeyboard", ++i);
+  initkeymap("toggle slowMotion", ++i);
   initkeymap("toggleFlags radar", ++i);
   initkeymap("toggleFlags main", ++i);
   initkeymap("silence", ++i);

@@ -82,7 +82,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.25"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 0.5"), press));
   wayToBindActions.insert(std::make_pair(std::string("set displayRadarRange 1.0"), press));
-  wayToBindActions.insert(std::make_pair(std::string("toggle slowKeyboard"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle slowMotion"), press));
   wayToBindActions.insert(std::make_pair(std::string("hunt"), press));
   wayToBindActions.insert(std::make_pair(std::string("addhunt"), press));
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
@@ -148,7 +148,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
   					       /* T - framerate */
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
-  defaultBinding.insert(BindingTable::value_type("V", "toggle slowKeyboard"));
+  defaultBinding.insert(BindingTable::value_type("V", "toggle slowMotion"));
   defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
   					       /* X - debug rendering */
   					       /* Y - milliseconds drawing */
