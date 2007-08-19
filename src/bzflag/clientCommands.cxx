@@ -114,12 +114,10 @@ static std::string cmdViewZoom(const std::string&,
 static std::string cmdSend(const std::string&,
 			   const CommandManager::ArgList& args, bool*);
 
-#ifdef SNAPPING
 /** capture a screenshot
  */
 static std::string cmdScreenshot(const std::string&,
 				 const CommandManager::ArgList& args, bool*);
-#endif
 
 /** time
  */
@@ -181,9 +179,7 @@ const struct CommandListItem commandList[] = {
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
   { "send",	&cmdSend,	"send {all|team|nemesis|recipient|admin}:  start composing a message" },
-#ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
-#endif
   { "time",	&cmdTime,	"time {forward|backward|<seconds>}:  adjust the current time" },
   { "roam",	&cmdRoam,	"roam {zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
@@ -634,7 +630,6 @@ static std::string cmdSend(const std::string&,
   return std::string();
 }
 
-#ifdef SNAPPING
 static std::string cmdScreenshot(const std::string&,
 				 const CommandManager::ArgList& args, bool*)
 {
@@ -837,7 +832,7 @@ static std::string cmdScreenshot(const std::string&,
   }
   return std::string();
 }
-#endif
+
 
 static std::string cmdTime(const std::string&,
 			   const CommandManager::ArgList& args, bool*)

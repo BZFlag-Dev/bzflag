@@ -44,9 +44,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("fullscreen"), press));
   wayToBindActions.insert(std::make_pair(std::string("mousegrab"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
-#ifdef SNAPPING
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
-#endif
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleRadar"), press));
@@ -167,9 +165,7 @@ ActionBinding::ActionBinding() {
 
   defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
   defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
-#ifdef SNAPPING
   defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
-#endif
   defaultBinding.insert(BindingTable::value_type("F6", "roam cycle subject backward"));
   defaultBinding.insert(BindingTable::value_type("F7", "roam cycle subject forward"));
   defaultBinding.insert(BindingTable::value_type("F8", "roam cycle type forward"));
