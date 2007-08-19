@@ -107,7 +107,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
   
   else if (key.ascii == 'p') {
-    if (HUDui::getFocus() && !menu->getFind()) { //is this right?
+    if (HUDui::getFocus() && !menu->getFind()) {
       menu->pingServer(menu->getSelected());
       return true;
     }
@@ -902,6 +902,7 @@ void ServerMenu::pingServer(int server)
 
 void			ServerMenu::playingCB(void* _self)
 {
+  ((ServerMenu*)_self)->serverList.sort(); // keep it sorted
   for (std::map<int, ServerPing*>::iterator i = ((ServerMenu*)_self)->activePings.begin(); i != ((ServerMenu*)_self)->activePings.end();) {
     i->second->doPings();
     if (i->second->done()) {
