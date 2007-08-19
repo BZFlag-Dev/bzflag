@@ -25,6 +25,8 @@ Required for release of 2.2.:
 * make sure there are no outstanding serious bugs
   (e.g. check OO,F5, etc..)
 
+* client occasionally crashes on exit (in an ftgl destructor) 
+
 
 Should be considered for the release of 2.2:
 
