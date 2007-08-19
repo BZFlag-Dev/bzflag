@@ -4,6 +4,8 @@ else
 man_MANS = bzadmin.6 bzflag.6 bzfs.6 bzw.5
 endif
 
+EXTRA_DIST = bzadmin.6.in bzflag.6.in bzfs.6.in bzw.5.in
+
 bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > bzfquery.6
 
