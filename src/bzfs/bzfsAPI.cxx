@@ -2593,12 +2593,12 @@ BZF_API void bz_superkill()
 	superkillCommand(NULL,NULL);
 }
 
-BZF_API void bz_gameOver(int playerID, bz_eTeamType team )
+BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
 
 	buf = nboPackUByte(bufStart, playerID);
-	buf = nboPackUShort(buf, uint16_t( convertTeam(team) == -1 ? NoTeam : convertTeam(team) ));
+	buf = nboPackUShort(buf, uint16_t( convertTeam(_team) == -1 ? NoTeam : convertTeam(_team) ));
 	broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
 
 	gameOver = true;
