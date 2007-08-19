@@ -305,16 +305,14 @@ void warnAboutMainFlags()
 
     if (keys.size() != 0) {
       addMessage(NULL,
-		 TextUtils::format("%sFlags on field hidden, to show them "
-				   "hit \"%s%s%s\"",
+		 TextUtils::format("%sFlags on field hidden.  To show them, hit \"%s%s%s\"",
 				   ColorStrings[YellowColor],
 				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
 				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
-		 TextUtils::format("%sFlags on field hidden, to show them "
-				   "bind a key to Toggle Flags on Field",
+		 TextUtils::format("%sFlags on field hidden.  To show them, bind a key to 'Toggle Flags on Field'.",
 				   ColorStrings[YellowColor]));
     }
   }
@@ -327,16 +325,14 @@ void warnAboutRadarFlags()
 
     if (keys.size() != 0) {
       addMessage(NULL,
-		 TextUtils::format("%sFlags on radar hidden, to show them "
-				   "hit \"%s%s%s\"",
+		 TextUtils::format("%sFlags on radar hidden.  To show them, hit \"%s%s%s\"",
 				   ColorStrings[YellowColor],
 				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
 				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
-		 TextUtils::format("%sFlags on radar hidden, to show them "
-				   "bind a key to Toggle Flags on Radar%s",
+		 TextUtils::format("%sFlags on radar hidden.  To show them, bind a key to 'Toggle Flags on Radar'.%s",
 				   ColorStrings[YellowColor],
 				   ColorStrings[YellowColor]));
     }
@@ -350,15 +346,14 @@ void warnAboutRadar()
 
     if (keys.size() != 0) {
       addMessage(NULL,
-		 TextUtils::format("%sTo toggle the radar hit \"%s%s%s\"",
+		 TextUtils::format("%sTo toggle the radar, hit \"%s%s%s\"",
 				   ColorStrings[YellowColor],
 				   ColorStrings[WhiteColor],
 				   keys[0].c_str(),
 				   ColorStrings[YellowColor]));
     } else {
       addMessage(NULL,
-		 TextUtils::format("%sTo toggle the radar bind a key to "
-				   "Toggle Radar",
+		 TextUtils::format("%sTo toggle the radar, bind a key to 'Toggle Radar'",
 				   ColorStrings[YellowColor]));
     }
   }
@@ -371,17 +366,44 @@ void warnAboutConsole()
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsole", true);
 
     if (keys.size() != 0) {
-      hud->setAlert(3, TextUtils::format("%sTo toggle the console hit \"%s%s%s\"",
+      hud->setAlert(3, TextUtils::format("%sTo toggle the console, hit \"%s%s%s\"",
 					 ColorStrings[YellowColor],
 					 ColorStrings[WhiteColor],
 					 keys[0].c_str(),
 					 ColorStrings[YellowColor]).c_str(),
 		    2.0f, true);
     } else {
-      hud->setAlert(3, TextUtils::format("%sTo toggle the console bind a key "
-					 "to Toggle Console",
+      hud->setAlert(3, TextUtils::format("%sTo toggle the console, bind a key to 'Toggle Console'",
 					 ColorStrings[YellowColor]).c_str(),
 		    2.0f, true);
+    }
+  }
+}
+
+
+static void warnAboutSlowMotion()
+{
+  static bool notified = false;
+  bool slow =  BZDB.isTrue("slowKeyboard");
+
+  /* if it's not slow, then nothing to warn */
+  if (!slow) {
+    notified = false;
+    return;
+  }
+
+  /* it's slow, so see if we need to warn */
+  if (!notified) {
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle slowKeyboard", true);
+
+    if (keys.size() != 0) {
+      addMessage(NULL,
+		 TextUtils::format("%sTo toggle slow tank controls, hit \"%s%s%s\"",
+				   ColorStrings[YellowColor],
+				   ColorStrings[WhiteColor],
+				   keys[0].c_str(),
+				   ColorStrings[YellowColor]));
+      notified = true;
     }
   }
 }
@@ -870,10 +892,13 @@ static void		doMotion()
     }
   }
 
-  /* FOV/Slow modifiers */
+  /* FOV modifier */
   if (BZDB.isTrue("slowBinoculars")) {
     rotation *= BZDB.eval("displayFOV") / 60.0f;
   }
+
+  /* slow motion modifier */
+  warnAboutSlowMotion();
   if (BZDB.isTrue("slowKeyboard")) {
     rotation *= 0.5f;
     speed *= 0.5f;
