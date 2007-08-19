@@ -117,7 +117,7 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
       return 0;
 
     case WM_ACTIVATE: {
-      if (BZDB.isTrue("Win32NoMin"))
+      if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window"))
 	break;
       WinWindow* window = WinWindow::lookupWindow(hwnd);
       if (window) {
