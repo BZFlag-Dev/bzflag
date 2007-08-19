@@ -93,9 +93,17 @@ bool ServerItem::readFromFile(std::istream& in)
 }
 
 // set the last updated time to now
-void ServerItem::setUpdateTime()
+void ServerItem::resetAge()
 {
   updateTime = getNow();
+}
+
+/* set the age of this item (useful for updating entries while keeping
+ * the server list sorted)
+ */
+void ServerItem::setAge(time_t minutes, time_t seconds)
+{
+  updateTime = getNow() - (minutes * 60) - seconds;
 }
 
 // get current age in minutes
@@ -156,42 +164,6 @@ time_t ServerItem::getNow() const
 #endif
 }
 
-bool ServerItem::operator<(const ServerItem &right)
-{
-  const ServerItem & left = *this;
-  if (left.cached && right.cached){
-    if (left.getSortFactor() < right.getSortFactor()){
-      return true;
-    }
-    else if (left.getSortFactor() == right.getSortFactor()){
-      if (left.getAgeMinutes() > right.getAgeMinutes()){
-	return true;
-      }
-      else {
-	return false;
-      }
-    }
-    else {
-      return false;
-    }
-  }
-  else if (!left.cached && !right.cached) {
-    if (left.getSortFactor() < right.getSortFactor()){
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  else if (!left.cached && right.cached) {
-    return false;
-  }
-  else {
-    // left.cached && !right.cached // always less
-    return true;
-  }
-}
-
 int ServerItem::getPlayerCount() const
 {
   // if null ping we return a 0 player count
@@ -222,11 +194,48 @@ unsigned int ServerItem::getSortFactor() const
     // real players are worth a 1000
     value = ping.rogueCount + ping.redCount + ping.greenCount +
 	    ping.blueCount + ping.purpleCount;
-    value *= 1000;
+    value *= 10000;
     // include the lowly observers, 1 point each
     value += ping.observerCount;
   }
   return value;
+}
+
+
+bool operator<(const ServerItem &left, const ServerItem &right)
+{
+  if ((left.cached && right.cached) || (!left.cached && !right.cached)) {
+    if (left.getSortFactor() < right.getSortFactor()) {
+      /* more players go to top */
+      return true;
+    } else if (left.getSortFactor() == right.getSortFactor()) {
+      /* same players, go by age */
+      time_t ageLeft = (left.getAgeMinutes() * 60) + left.getAgeSeconds();
+      time_t ageRight = (right.getAgeMinutes() * 60) + right.getAgeSeconds();
+      if (ageLeft < ageRight) {
+	/* younger goes to top */
+	return true;
+      } else if (ageLeft == ageRight) {
+	/* same age, go by name */
+	if (left.name < right.name) {
+	  /* all else fails, go alphabetical */
+	  return false;
+	} else {
+	  return true;
+	}
+      } else {
+	return false;
+      }
+    } else {
+      return false;
+    }
+  } else if (!left.cached && right.cached) {
+    /* non-cached goes on top */
+    return false;
+  } else {
+    // left.cached && !right.cached // always less
+    return true;
+  }
 }
 
 

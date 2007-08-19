@@ -30,16 +30,16 @@ public:
   ServerItem();
   void		writeToFile(std::ostream& out) const; // serialize out
   bool		readFromFile(std::istream& in); // serialize in
-  void		setUpdateTime(); // set last updated to now
+  void		resetAge(); // set last updated to now
+  void		setAge(time_t minutes, time_t seconds);
   int		getPlayerCount() const;
   std::string	getAddrName() const;
   time_t	getAgeMinutes() const;
   time_t	getAgeSeconds() const;
   std::string	getAgeString() const; // nifty formated age string
   time_t	getNow() const; // current time
-  bool		operator<(const ServerItem &right);
-private:
   unsigned int	getSortFactor() const;
+
 public:
   std::string	name;
   std::string	description;
@@ -48,6 +48,8 @@ public:
   bool		cached;     // was I cached ?
   bool		favorite;   // favorite server, user selection
 };
+
+bool	operator<(const ServerItem &left, const ServerItem &right);
 
 #endif /* __SERVERITEM_H__ */
 
