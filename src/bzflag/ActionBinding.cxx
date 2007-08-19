@@ -93,7 +93,17 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel server"), press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"), press));
 
-  defaultBinding.insert(BindingTable::value_type("F12", "quit"));
+  /*
+   * NOTE: the following keys are 'hard coded' in the playing loop and shouldn't
+   * be used as part of default bindings:
+   *
+   * T - framerate
+   * X - debug rendering
+   * Y - milliseconds drawing
+   * ] and } - adjust clock +30sec
+   * [ and { - adjust clock -30sec
+   */
+
   defaultBinding.insert(BindingTable::value_type("Left Mouse", "fire"));
   defaultBinding.insert(BindingTable::value_type("Enter", "fire"));
   defaultBinding.insert(BindingTable::value_type("Middle Mouse", "drop"));
@@ -101,30 +111,48 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Right Mouse", "identify"));
   defaultBinding.insert(BindingTable::value_type("I", "identify"));
   defaultBinding.insert(BindingTable::value_type("Tab", "jump"));
-  defaultBinding.insert(BindingTable::value_type("N", "send all"));
-  defaultBinding.insert(BindingTable::value_type("M", "send team"));
-  defaultBinding.insert(BindingTable::value_type(",", "send nemesis"));
-  defaultBinding.insert(BindingTable::value_type(".", "send recipient"));
-  defaultBinding.insert(BindingTable::value_type("Z", "send admin"));
-  defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
-  defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
+  defaultBinding.insert(BindingTable::value_type("Pause", "pause"));
+  defaultBinding.insert(BindingTable::value_type("Right Mouse", "restart"));
+  defaultBinding.insert(BindingTable::value_type("I", "restart"));
+
   defaultBinding.insert(BindingTable::value_type("Ctrl+Wheel Up", "viewZoom in"));
   defaultBinding.insert(BindingTable::value_type("Ctrl+Wheel Down", "viewZoom out"));
-  defaultBinding.insert(BindingTable::value_type("Pause", "pause"));
-  defaultBinding.insert(BindingTable::value_type("P", "pause"));
-  defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
-  defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
-  defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
-  defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
-#ifdef SNAPPING
-  defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
-#endif
+
+  defaultBinding.insert(BindingTable::value_type("N", "send all"));
+  defaultBinding.insert(BindingTable::value_type("M", "send team"));
+  defaultBinding.insert(BindingTable::value_type("Z", "send admin"));
+  defaultBinding.insert(BindingTable::value_type(",", "send nemesis"));
+  defaultBinding.insert(BindingTable::value_type(".", "send recipient"));
+
   defaultBinding.insert(BindingTable::value_type("-", "time backward"));
   defaultBinding.insert(BindingTable::value_type("=", "time forward"));
+
+  					       /* A - unused */
+  defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
+  					       /* C - unused */
+  					       /* D - unused */
+  					       /* E - unused */
+  defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
+  					       /* G - unused */
   defaultBinding.insert(BindingTable::value_type("H", "toggleFlags radar"));
+  					       /* I - identify/restart (above) */
   defaultBinding.insert(BindingTable::value_type("J", "toggleFlags main"));
   defaultBinding.insert(BindingTable::value_type("K", "silence"));
   defaultBinding.insert(BindingTable::value_type("L", "toggle displayLabels"));
+  					       /* M - send team (above) */
+  					       /* N - send all (above) */
+  defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
+  defaultBinding.insert(BindingTable::value_type("P", "pause"));
+  defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
+  					       /* R - unused */
+  defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
+  					       /* T - framerate */
+  defaultBinding.insert(BindingTable::value_type("U", "hunt"));
+  defaultBinding.insert(BindingTable::value_type("V", "toggle slowKeyboard"));
+  defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
+  					       /* X - debug rendering */
+  					       /* Y - milliseconds drawing */
+  					       /* Z - send admin (above) */
   defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 
   // Default movement keys
@@ -137,14 +165,18 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+Wheel Up", "radarZoom in"));
   defaultBinding.insert(BindingTable::value_type("Shift+Wheel Down", "radarZoom out"));
 
+  defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
+  defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
+#ifdef SNAPPING
+  defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
+#endif
   defaultBinding.insert(BindingTable::value_type("F6", "roam cycle subject backward"));
   defaultBinding.insert(BindingTable::value_type("F7", "roam cycle subject forward"));
   defaultBinding.insert(BindingTable::value_type("F8", "roam cycle type forward"));
   defaultBinding.insert(BindingTable::value_type("F9", "roam zoom in"));
   defaultBinding.insert(BindingTable::value_type("F10", "roam zoom out"));
   defaultBinding.insert(BindingTable::value_type("F11", "roam zoom normal"));
-  defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
-  defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
+  defaultBinding.insert(BindingTable::value_type("F12", "quit"));
   defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up_page"));
   defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up 3"));
   defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down_page"));
@@ -155,11 +187,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("3", "set displayRadarRange 1.0"));
   defaultBinding.insert(BindingTable::value_type("4", "radarZoom in"));
   defaultBinding.insert(BindingTable::value_type("5", "radarZoom out"));
-  defaultBinding.insert(BindingTable::value_type("A", "toggle slowKeyboard"));
-  defaultBinding.insert(BindingTable::value_type("U", "hunt"));
   defaultBinding.insert(BindingTable::value_type("7", "addhunt"));
-  defaultBinding.insert(BindingTable::value_type("Right Mouse", "restart"));
-  defaultBinding.insert(BindingTable::value_type("I", "restart"));
   defaultBinding.insert(BindingTable::value_type("9", "autopilot"));
 
   defaultBinding.insert(BindingTable::value_type("Shift+F1", "messagepanel all"));
