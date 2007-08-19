@@ -10,6 +10,12 @@ so that no work is duplicated.
 
 Required for release of 2.2.:
 
+* fix the clientConfig auto-update routines so that it'll properly
+  upgrade an existing config file.  build a "patchlist" for it to
+  apply, have config files stash their revision, write a routine to
+  detect what version it is for the older files based on contents
+  (or based on the dir that the config file is in if that fails).
+
 * fix all server stat "scanning" scripts and sites to send out 
   "BZFLAG\r\n\r\n" on connect.
 
@@ -20,6 +26,7 @@ Required for release of 2.2.:
 
 * make sure there are no outstanding serious bugs
   (e.g. check OO,F5, etc..)
+
 
 Should be considered for the release of 2.2:
 
