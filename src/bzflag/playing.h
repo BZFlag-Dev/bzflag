@@ -63,23 +63,21 @@ StartupInfo*		getStartupInfo();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(PlayerId id);
-void			startPlaying(BzfDisplay* display,
-				     SceneRenderer&);
+void			startPlaying(BzfDisplay* display, SceneRenderer&);
 
-bool			addExplosion(const float* pos,
-				float size, float duration);
+bool			addExplosion(const float* pos, float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
 void			addShotPuff(const float* pos, float azimuth, float elevation);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
-void		    warnAboutRadar();
-void		    warnAboutConsole();
+void			warnAboutRadar();
+void			warnAboutConsole();
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
 void			joinGame(JoinGameCallback, void* userData);
-void		    leaveGame();
+void			leaveGame();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player,
@@ -102,31 +100,31 @@ void injectMessages(uint16_t code, uint16_t len, void *msg);
 
 extern void joinGame();
 
-extern HUDRenderer	*hud;
-extern PlayerId	 msgDestination;
+extern HUDRenderer*	hud;
+extern PlayerId		msgDestination;
 extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;
-extern DefaultCompleter completer;
-extern bool	     gameOver;
-extern ControlPanel    *controlPanel;
-extern bool	     fireButton;
-extern float	    destructCountdown;
-extern bool	     pausedByUnmap;
-extern int	      savedVolume;
-extern MainWindow      *mainWindow;
-extern float	    pauseCountdown;
-extern float	    clockAdjust;
-extern float	    roamDZoom;
-extern bool	     roamButton;
-extern WordFilter *wordFilter;
+extern DefaultCompleter	completer;
+extern bool		gameOver;
+extern ControlPanel*	controlPanel;
+extern bool		fireButton;
+extern float		destructCountdown;
+extern bool		pausedByUnmap;
+extern int		savedVolume;
+extern MainWindow*	mainWindow;
+extern float		pauseCountdown;
+extern float		clockAdjust;
+extern float		roamDZoom;
+extern bool		roamButton;
+extern WordFilter*	wordFilter;
 
 /* Any code surrounded by "if (!headless)" is unsafely assuming that it's
  * operating in a context where graphics and sound are available.
  */
 extern bool		headless;
 
-typedef struct
+typedef struct _ThirdPersonVars
 {
 	bool b3rdPerson;
 	float cameraOffsetXY;
@@ -139,7 +137,7 @@ typedef struct
 
 	void load ( void );
 	void clear ( void );
-}ThirdPersonVars;
+} ThirdPersonVars;
 
 extern ThirdPersonVars thirdPersonVars;
 
