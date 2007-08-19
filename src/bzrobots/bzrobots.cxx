@@ -129,22 +129,22 @@ static void		setRadarColor(TeamColor team, const std::string& str)
 static void		usage()
 {
   printFatalError("usage: %s"
-      " [-anonymous]"
-      " [-badwords <filterfile>]"
-      " [-config <configfile>]"
-      " [-configdir <config dir name>]"
-      " [-d | -debug]"
-      " [{-dir | -directory} <data-directory>]"
-      " [-e | -echo]"
-      " [-ea | -echoAnsi]"
-      " [-h | -help | --help]"
-      " [-locale <locale>]"
-      " [-m | -mute]"
-      " [-p | -rcport <remote-control-port>]"
-      " [-motd <motd-url>] [-nomotd]"
-      " [-team {red|green|blue|purple|rogue|observer}]"
-      " [-v | -version | --version]"
-      " [callsign[:password]@]server[:port] scriptfile\n\nExiting.", argv0);
+		  " [-anonymous]"
+		  " [-badwords <filterfile>]"
+		  " [-config <configfile>]"
+		  " [-configdir <config dir name>]"
+		  " [-d | -debug]"
+		  " [{-dir | -directory} <data-directory>]"
+		  " [-e | -echo]"
+		  " [-ea | -echoAnsi]"
+		  " [-h | -help | --help]"
+		  " [-locale <locale>]"
+		  " [-m | -mute]"
+		  " [-p | -rcport <remote-control-port>]"
+		  " [-motd <motd-url>] [-nomotd]"
+		  " [-team {red|green|blue|purple|rogue|observer}]"
+		  " [-v | -version | --version]"
+		  " [callsign[:password]@]server[:port] scriptfile\n\nExiting.", argv0);
   exit(1);
 }
 
@@ -163,10 +163,10 @@ static void		parse(int argc, char** argv)
   // Defaults
   startupInfo.team = AutomaticTeam;
   strncpy(startupInfo.serverName, "localhost", \
-      sizeof(startupInfo.serverName) - 1);
+	  sizeof(startupInfo.serverName) - 1);
   startupInfo.serverPort = 5154;
   strncpy(startupInfo.callsign, "anonymouscoward", \
-      sizeof(startupInfo.callsign) - 1);
+	  sizeof(startupInfo.callsign) - 1);
 
 
   for (int i = 1; i < argc; i++) {
@@ -180,10 +180,10 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     } else if ((strcmp(argv[i], "-d") == 0) ||
-        (strcmp(argv[i], "-debug") == 0)) {
+	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
-        (strcmp(argv[i], "-directory") == 0)) {
+	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
         BZDB.unset("directory");
@@ -195,8 +195,8 @@ static void		parse(int argc, char** argv)
       echoToConsole = true;
       echoAnsi = true;
     } else if (strcmp(argv[i], "-h") == 0 ||
-        strcmp(argv[i], "-help") == 0 ||
-        strcmp(argv[i], "--help") == 0) {
+	       strcmp(argv[i], "-help") == 0 ||
+	       strcmp(argv[i], "--help") == 0) {
       usage();
     } else if (strcmp(argv[i], "-locale") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -212,10 +212,10 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-nomotd") == 0) {
       BZDB.set("disableMOTD", "1");
     } else if (strcmp(argv[i], "-m") == 0 ||
-        strcmp(argv[i], "-mute") == 0) {
+	       strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
     } else if (strcmp(argv[i], "-p") == 0 ||
-        strcmp(argv[i], "-rcport") == 0) {
+	       strcmp(argv[i], "-rcport") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("rcPort", argv[i]);
     } else if (strcmp(argv[i], "-posnoise") == 0) {
@@ -250,12 +250,12 @@ static void		parse(int argc, char** argv)
         usage();
       }
     } else if (strcmp(argv[i], "-v") == 0 ||
-        strcmp(argv[i], "-version") == 0 ||
-        strcmp(argv[i], "--version") == 0) {
+	       strcmp(argv[i], "-version") == 0 ||
+	       strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
-          getAppVersion(),
-          getProtocolVersion(),
-          bzfcopyright);
+		      getAppVersion(),
+		      getProtocolVersion(),
+		      bzfcopyright);
       bail(0);
       exit(0);
     } else if (strncmp(argv[i], "-psn", 4) == 0) {
@@ -276,7 +276,7 @@ static void		parse(int argc, char** argv)
           if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
             printFatalError("Callsign truncated.");
           strncpy(startupInfo.callsign, argv[i],
-              sizeof(startupInfo.callsign) - 1);
+		  sizeof(startupInfo.callsign) - 1);
           startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
           if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
             *(strchr(startupInfo.callsign, ':')) = '\0';
@@ -300,7 +300,7 @@ static void		parse(int argc, char** argv)
           if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
             startupInfo.serverPort = ServerPort;
             printFatalError("Bad port, using default %d.",
-                startupInfo.serverPort);
+			    startupInfo.serverPort);
           }
         }
         if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
@@ -364,11 +364,10 @@ static void createCacheSignature ()
 bool checkTimeBomb ( void )
 {
   // check time bomb
-  if (timeBombBoom())
-  {
+  if (timeBombBoom()) {
     printFatalError("This release expired on %s. \n"
-        "Please upgrade to the latest release. \n"
-        "Exiting.", timeBombString());
+		    "Please upgrade to the latest release. \n"
+		    "Exiting.", timeBombString());
     bail(0);
     return true;
   }
@@ -378,11 +377,9 @@ bool checkTimeBomb ( void )
 void setupBZDB ( void )
 {
   // set default DB entries
-  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi)
-  {
+  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
     assert(globalDBItems[gi].name != NULL);
-    if (globalDBItems[gi].value != NULL)
-    {
+    if (globalDBItems[gi].value != NULL) {
       BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
       BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
     }
@@ -421,12 +418,12 @@ void setupConfigs ( void )
   if (startupInfo.hasConfiguration) {
     if (BZDB.isSet("callsign")) {
       strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
-          sizeof(startupInfo.callsign) - 1);
+	      sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
     if (BZDB.isSet("password")) {
       strncpy(startupInfo.password, BZDB.get("password").c_str(),
-          sizeof(startupInfo.password) - 1);
+	      sizeof(startupInfo.password) - 1);
       startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
 
@@ -436,7 +433,7 @@ void setupConfigs ( void )
     }
     if (BZDB.isSet("server")) {
       strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
-          sizeof(startupInfo.serverName) - 1);
+	      sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
     if (BZDB.isSet("port")) {
@@ -484,10 +481,11 @@ void setupConfigs ( void )
 //	initialize application and enter event loop
 //
 
+int
 #if defined(_WIN32)
-int			myMain(int argc, char** argv)
+myMain(int argc, char** argv)
 #else /* defined(_WIN32) */
-int			main(int argc, char** argv)
+  main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
 #ifdef _WIN32
@@ -501,10 +499,10 @@ int			main(int argc, char** argv)
   if (LOBYTE(wsaData.wVersion) != major ||
       HIBYTE(wsaData.wVersion) != minor) {
     printFatalError("Version mismatch in winsock;"
-        "  got %d.%d, expected %d.%d.  Terminating.\n",
-        (int)LOBYTE(wsaData.wVersion),
-        (int)HIBYTE(wsaData.wVersion),
-        major, minor);
+		    "  got %d.%d, expected %d.%d.  Terminating.\n",
+		    (int)LOBYTE(wsaData.wVersion),
+		    (int)HIBYTE(wsaData.wVersion),
+		    major, minor);
     return bail(1);
   }
 #endif
@@ -535,12 +533,12 @@ int			main(int argc, char** argv)
   if (getenv("BZFLAGID")) {
     BZDB.set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-        sizeof(startupInfo.callsign) - 1);
+	    sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   } else if (getenv("BZID")) {
     BZDB.set("callsign", getenv("BZID"));
     strncpy(startupInfo.callsign, getenv("BZID"),
-        sizeof(startupInfo.callsign) - 1);
+	    sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   }
   time_t timeNow;

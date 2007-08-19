@@ -800,7 +800,7 @@ static void dumpMissingFlag(char *buf, uint16_t len)
   std::vector<std::string> args;
   args.push_back(flags);
   printError(TextUtils::format("Flags not supported by this client: %s",
-		       flags.c_str()).c_str());
+			       flags.c_str()).c_str());
 }
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
@@ -810,8 +810,8 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   if (cacheOut)
     cacheOut->write((char *)buf, len);
   printError(TextUtils::format
-     ("Downloading World (%2d%% complete/%d kb remaining)...",
-      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
+	     ("Downloading World (%2d%% complete/%d kb remaining)...",
+	      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
@@ -824,11 +824,10 @@ static void handleSuperKill ( void *msg )
   printError("Server forced a disconnect");
 
   int i;
-  for (i = 0; i < MAX_ROBOTS; i++)
-    {
-      if (robots[i] && robots[i]->getId() == id)
-	break;
-    }
+  for (i = 0; i < MAX_ROBOTS; i++) {
+    if (robots[i] && robots[i]->getId() == id)
+      break;
+  }
   if (i >= MAX_ROBOTS)
     return;
   delete robots[i];
@@ -852,8 +851,7 @@ static void handleRejectMessage ( void *msg )
 
 static void handleFlagNegotiation ( void *msg, uint16_t len )
 {
-  if (len > 0)
-  {
+  if (len > 0) {
     dumpMissingFlag((char *)msg, len);
     return;
   }
@@ -896,8 +894,7 @@ static void handleGetWorld ( void* msg, uint16_t len )
   uint32_t bytesLeft;
   void *buf = nboUnpackUInt(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
-  if (!last)
-  {
+  if (!last) {
     char message[MaxPacketLen];
     // ask for next chunk
     worldPtr += len - 4;
@@ -918,16 +915,14 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
   int32_t timeLeft;
   msg = nboUnpackInt(msg, timeLeft);
   hud->setTimeLeft(timeLeft);
-  if (timeLeft == 0)
-  {
+  if (timeLeft == 0) {
     gameOver = true;
 #ifdef ROBOT
     for (int i = 0; i < numRobots; i++)
       if (robots[i])
-        robots[i]->explodeTank();
+	robots[i]->explodeTank();
 #endif
-  }
-  else if (timeLeft < 0)
+  } else if (timeLeft < 0)
     hud->setAlert(0, "Game Paused", 10.0f, true);
 }
 
@@ -942,20 +937,16 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
 
   // make a message
   std::string msg2;
-  if (team == (uint16_t)NoTeam)
-  {
+  if (team == (uint16_t)NoTeam) {
     // a player won
-    if (player)
-    {
+    if (player) {
       msg2 = _player->getCallSign();
       msg2 += " (";
       msg2 += Team::getName(_player->getTeam());
       msg2 += ")";
-    }
-    else
+    } else
       msg2 = "[unknown player]";
-  }
-  else
+  } else
     msg2 = Team::getName(TeamColor(team));		// a team won
 
   msg2 += " won the game";
@@ -963,8 +954,7 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
   gameOver = true;
 
 #ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-  {
+  for (int i = 0; i < numRobots; i++) {
     if (robots[i])
       robots[i]->explodeTank();
   }
@@ -980,10 +970,9 @@ static void handleAddPlayer ( void	*msg, uint16_t /*len*/, bool &checkScores )
   saveRobotInfo(id, msg);
 #endif
 
-  if (id == observerTank->getId())
+  if (id == observerTank->getId()) {
     enteringServer(msg);		// it's me!  should be the end of updates
-  else
-  {
+  } else {
     addPlayer(id, msg, entered);
     updateNumPlayers();
     checkScores = true;
@@ -1004,8 +993,7 @@ static void handleFlagUpdate ( void	*msg, uint16_t /*len*/ )
   uint16_t count;
   uint16_t flagIndex;
   msg = nboUnpackUShort(msg, count);
-  for (int i = 0; i < count; i++)
-  {
+  for (int i = 0; i < count; i++) {
     msg = nboUnpackUShort(msg, flagIndex);
     msg = world->getFlag(int(flagIndex)).unpack(msg);
   }
@@ -1017,8 +1005,7 @@ static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
   uint16_t team;
 
   msg = nboUnpackUByte(msg,numTeams);
-  for (int i = 0; i < numTeams; i++)
-  {
+  for (int i = 0; i < numTeams; i++) {
     msg = nboUnpackUShort(msg, team);
     msg = teams[int(team)].unpack(msg);
   }
@@ -1036,23 +1023,18 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
-  if ((playerIndex >= 0) || (playerIndex == -2))
-  {
+  if ((playerIndex >= 0) || (playerIndex == -2)) {
     static const float zero[3] = { 0.0f, 0.0f, 0.0f };
     Player* tank = getPlayerByIndex(playerIndex);
-    if (tank->getPlayerType() == ComputerPlayer)
-    {
-      for (int r = 0; r < numRobots; r++)
-      {
-        if (robots[r] && robots[r]->getId() == playerIndex)
-        {
-          robots[r]->restart(pos,forward);
-          if (!rcLink)
-          {
-            setRobotTarget(robots[r]);
-          }
-          break;
-        }
+    if (tank->getPlayerType() == ComputerPlayer) {
+      for (int r = 0; r < numRobots; r++) {
+	if (robots[r] && robots[r]->getId() == playerIndex) {
+	  robots[r]->restart(pos,forward);
+	  if (!rcLink) {
+	    setRobotTarget(robots[r]);
+	  }
+	  break;
+	}
       }
     }
 
@@ -1127,8 +1109,7 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   msg = nboUnpackShort(msg, reason);
   msg = nboUnpackShort(msg, shotId);
   msg = FlagType::unpack(msg, flagType);
-  if (reason == (int16_t)PhysicsDriverDeath)
-  {
+  if (reason == (int16_t)PhysicsDriverDeath) {
     int32_t inPhyDrv;
     msg = nboUnpackInt(msg, inPhyDrv);
     phydrv = int(inPhyDrv);
@@ -1137,22 +1118,18 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);
   Player* killerPlayer = lookupPlayer(killer);
-  if (victimLocal)
-  {
+  if (victimLocal) {
     // uh oh, local player is dead
-    if (victimLocal->isAlive())
-    {
+    if (victimLocal->isAlive()) {
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
       rcLink->pushEvent(new DeathEvent());
     }
   }
-  else if (victimPlayer)
-  {
+  else if (victimPlayer) {
     victimPlayer->setExplode(TimeKeeper::getTick());
   }
 
-  if (killerLocal)
-  {
+  if (killerLocal) {
     // local player did it
     if (shotId >= 0)
       killerLocal->endShot(shotId, true);				// terminate the shot
@@ -1160,15 +1137,12 @@ static void handleKilledMessage ( void *msg, uint16_t /*len*/, bool, bool &check
 
 #ifdef ROBOT
   // blow up robots on victim's team if shot was genocide
-  if (killerPlayer && victimPlayer && shotId >= 0)
-  {
+  if (killerPlayer && victimPlayer && shotId >= 0) {
     const ShotPath* shot = killerPlayer->getShot(int(shotId));
-    if (shot && shot->getFlag() == Flags::Genocide)
-    {
-      for (int i = 0; i < numRobots; i++)
-      {
-        if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
-          gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+    if (shot && shot->getFlag() == Flags::Genocide) {
+      for (int i = 0; i < numRobots; i++) {
+	if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
+	  gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
       }
     }
   }
@@ -1236,20 +1210,16 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
   int capturedTeam = capturedFlag.type->flagTeam;
 
   // player no longer has flag
-  if (capturer)
-  {
+  if (capturer) {
     capturer->setFlag(Flags::Null);
 
     // add message
-    if (int(capturer->getTeam()) == capturedTeam)
-    {
+    if (int(capturer->getTeam()) == capturedTeam) {
       std::string message("took my flag into ");
       message += Team::getName(TeamColor(team));
       message += " territory";
       addMessage(capturer, message);
-    }
-    else
-    {
+    } else {
       std::string message("captured ");
       message += Team::getName(TeamColor(capturedTeam));
       message += "'s flag";
@@ -1259,8 +1229,7 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
 
 #ifdef ROBOT
   //kill all my robots if they are on the captured team
-  for (int r = 0; r < numRobots; r++)
-  {
+  for (int r = 0; r < numRobots; r++) {
     if (robots[r] && robots[r]->getTeam() == capturedTeam)
       gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
   }
@@ -1283,44 +1252,37 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
   // mode 1 == add this person as a rabbit
   // mode 2 == remove this person from the rabbit list
 
-  if (mode == 0)	// we don't need to mod the hunters if we aren't swaping
-  {
-    for (int i = 0; i < curMaxPlayers; i++)
-    {
+  if (mode == 0) {
+    // we don't need to mod the hunters if we aren't swaping
+    for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i])
-        player[i]->setHunted(false);
+	player[i]->setHunted(false);
       if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
-        player[i]->changeTeam(HunterTeam);
+	player[i]->changeTeam(HunterTeam);
     }
   }
 
-  if (rabbit != NULL)
-  {
-    if (mode != 2)
-    {
+  if (rabbit != NULL) {
+    if (mode != 2) {
       rabbit->changeTeam(RabbitTeam);
 
       if (mode == 0)
-        addMessage(rabbit, "is now the rabbit", 3, true);
+	addMessage(rabbit, "is now the rabbit", 3, true);
       else
-        addMessage(rabbit, "is now a rabbit", 3, true);
-    }
-    else
-    {
+	addMessage(rabbit, "is now a rabbit", 3, true);
+    } else {
       rabbit->changeTeam(HunterTeam);
       addMessage(rabbit, "is no longer a rabbit", 3, true);
     }
   }
 
 #ifdef ROBOT
-  for (int r = 0; r < numRobots; r++)
-  {
-    if (robots[r])
-    {
+  for (int r = 0; r < numRobots; r++) {
+    if (robots[r]) {
       if (robots[r]->getId() == id)
-        robots[r]->changeTeam(RabbitTeam);
+	robots[r]->changeTeam(RabbitTeam);
       else
-        robots[r]->changeTeam(HunterTeam);
+	robots[r]->changeTeam(HunterTeam);
     }
   }
 #endif
@@ -1348,7 +1310,7 @@ static void		handleServerMessage(bool human, uint16_t code,
   bool checkScores = false;
 
   switch (code)
-  {
+    {
       case MsgNearFlag:
 	//handleNearFlag(msg,len);
 	break;
@@ -2342,7 +2304,7 @@ static void		sendObstacle(Obstacle *obs)
   for (int i=0; i < 4; i++) {
     float* point = corners[i];
     rcLink->sendf(" %f %f", gauss(point[0], posnoise), \
-	gauss(point[1], posnoise));
+		  gauss(point[1], posnoise));
   }
 
   rcLink->send("\n");
@@ -2391,19 +2353,19 @@ static void		sendTeamList()
 
   if (redteam.size > 0) {
     rcLink->sendf("team %s %d\n", Team::getShortName(RedTeam),
-			  redteam.size);
+		  redteam.size);
   }
   if (greenteam.size > 0) {
     rcLink->sendf("team %s %d\n", Team::getShortName(GreenTeam),
-			  greenteam.size);
+		  greenteam.size);
   }
   if (blueteam.size > 0) {
     rcLink->sendf("team %s %d\n", Team::getShortName(BlueTeam),
-			  blueteam.size);
+		  blueteam.size);
   }
   if (purpleteam.size > 0) {
     rcLink->sendf("team %s %d\n", Team::getShortName(PurpleTeam),
-			  purpleteam.size);
+		  purpleteam.size);
   }
 
   rcLink->send("end\n");
@@ -2429,8 +2391,8 @@ static void		sendFlagList()
 
     if (flag.status != FlagNoExist) {
       rcLink->sendf("flag %s %s %f %f\n",
-	  flagteam, possessteam,
-	  flag.position[0], flag.position[1]);
+		    flagteam, possessteam,
+		    flag.position[0], flag.position[1]);
     }
   }
 
@@ -2454,7 +2416,7 @@ static void		sendShotList()
       const float* velocity = shot->getVelocity();
 
       rcLink->sendf("shot %f %f %f %f\n", position[0], position[1],
-	    velocity[0], velocity[1]);
+		    velocity[0], velocity[1]);
     }
 
   }
@@ -2527,10 +2489,10 @@ static void		sendMyTankList()
     }
 
     rcLink->sendf("mytank %d %s %s %d %f %s %f %f %f %f %f %f\n",
-	i, callsign, statstr, shots_avail, reloadtime, flagname,
-	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
-	noisy_angle, gauss(vel[0], velnoise),
-	gauss(vel[1], velnoise), gauss(angvel, angnoise));
+		  i, callsign, statstr, shots_avail, reloadtime, flagname,
+		  gauss(pos[0], posnoise), gauss(pos[1], posnoise),
+		  noisy_angle, gauss(vel[0], velnoise),
+		  gauss(vel[1], velnoise), gauss(angvel, angnoise));
   }
 
   rcLink->send("end\n");
@@ -2593,9 +2555,9 @@ static void		sendOtherTankList()
     const float angle = tank->getAngle();
 
     rcLink->sendf("othertank %s %s %s %s %f %f %f\n",
-	callsign, colorname, statstr, flagname,
-	gauss(pos[0], posnoise), gauss(pos[1], posnoise),
-	gauss(angle, angnoise));
+		  callsign, colorname, statstr, flagname,
+		  gauss(pos[0], posnoise), gauss(pos[1], posnoise),
+		  gauss(angle, angnoise));
   }
 
   rcLink->send("end\n");
@@ -2613,30 +2575,30 @@ static void		sendConstList()
 }
 
 #if 0
-      case TeamListRequest:
-	sendTeamList();
-	break;
-      case BasesListRequest:
-	sendBasesList();
-	break;
-      case ObstacleListRequest:
-	sendObsList();
-	break;
-      case FlagListRequest:
-	sendFlagList();
-	break;
-      case ShotListRequest:
-	sendShotList();
-	break;
-      case MyTankListRequest:
-	sendMyTankList();
-	break;
-      case OtherTankListRequest:
-	sendOtherTankList();
-	break;
-      case ConstListRequest:
-	sendConstList();
-	break;
+case TeamListRequest:
+sendTeamList();
+break;
+case BasesListRequest:
+sendBasesList();
+break;
+case ObstacleListRequest:
+sendObsList();
+break;
+case FlagListRequest:
+sendFlagList();
+break;
+case ShotListRequest:
+sendShotList();
+break;
+case MyTankListRequest:
+sendMyTankList();
+break;
+case OtherTankListRequest:
+sendOtherTankList();
+break;
+case ConstListRequest:
+sendConstList();
+break;
 #endif
 static void		doBotRequests()
 {
@@ -3041,8 +3003,8 @@ static void joinInternetGame(const struct in_addr *inAddress)
 
       default:
 	printError(TextUtils::format
-	   ("Internal error connecting to server (error code %d).",
-	    serverLink->getState()).c_str());
+		   ("Internal error connecting to server (error code %d).",
+		    serverLink->getState()).c_str());
 	break;
     }
     return;
@@ -3098,7 +3060,7 @@ static void joinInternetGame2()
   // create observer tank.  This is necessary because the server won't
   // send messages to a bot, but they will send them to an observer.
   observerTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
-				  startupInfo.email);
+				 startupInfo.email);
   observerTank->setTeam(ObserverTeam);
   LocalPlayer::setMyTank(observerTank);
 
@@ -3115,21 +3077,19 @@ static void joinInternetGame2()
 void getAFastToken ( void )
 {
   // get token if we need to (have a password but no token)
-  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
-    {
-      ServerList* serverList = new ServerList;
-      serverList->startServerPings(&startupInfo);
-      // wait no more than 10 seconds for a token
-      for (int j = 0; j < 40; j++)
-	{
-	  serverList->checkEchos(getStartupInfo());
-	  cURLManager::perform();
-	  if (startupInfo.token[0] != '\0')
-	    break;
-	  TimeKeeper::sleep(0.25f);
-	}
-      delete serverList;
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) {
+    ServerList* serverList = new ServerList;
+    serverList->startServerPings(&startupInfo);
+    // wait no more than 10 seconds for a token
+    for (int j = 0; j < 40; j++) {
+      serverList->checkEchos(getStartupInfo());
+      cURLManager::perform();
+      if (startupInfo.token[0] != '\0')
+	break;
+      TimeKeeper::sleep(0.25f);
     }
+    delete serverList;
+  }
 
   // don't let the bad token specifier slip through to the server,
   // just erase it
@@ -3175,16 +3135,13 @@ bool dnsLookupDone ( struct in_addr &inAddress )
   ares.process(&readers, &writers);
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-  if (status == AresHandler::Failed)
-    {
-      printError("Server not found.");
-      waitingDNS = false;
-    }
-  else if (status == AresHandler::HbNSucceeded)
-    {
-      waitingDNS = false;
-      return true;
-    }
+  if (status == AresHandler::Failed) {
+    printError("Server not found.");
+    waitingDNS = false;
+  } else if (status == AresHandler::HbNSucceeded) {
+    waitingDNS = false;
+    return true;
+  }
   return false;
 }
 
@@ -3192,25 +3149,23 @@ void checkForServerBail ( void )
 {
   // if server died then leave the game (note that this may cause
   // further server errors but that's okay).
-  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup))
-    {
-      // if we haven't reported the death yet then do so now
-      if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
-	printError("Server has unexpectedly disconnected");
-      else
-        printError("We were disconencted from the server, quitting.");
-      CommandsStandard::quit();
-    }
+  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup)) {
+    // if we haven't reported the death yet then do so now
+    if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
+      printError("Server has unexpectedly disconnected");
+    else
+      printError("We were disconencted from the server, quitting.");
+    CommandsStandard::quit();
+  }
 }
 
 void updateShots ( const float dt )
 {
   // update other tank's shots
-  for (int i = 0; i < curMaxPlayers; i++)
-    {
-      if (player[i])
-	player[i]->updateShots(dt);
-    }
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i])
+      player[i]->updateShots(dt);
+  }
 
   // update servers shots
   const World *_world = World::getWorld();
@@ -3221,20 +3176,18 @@ void updateShots ( const float dt )
 void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
-  for (int i = 0; i < curMaxPlayers; i++)
-    {
-      if (player[i])
-	{
-	  const bool wasNotResponding = player[i]->isNotResponding();
-	  player[i]->doDeadReckoning();
-	  const bool isNotResponding = player[i]->isNotResponding();
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i]) {
+      const bool wasNotResponding = player[i]->isNotResponding();
+      player[i]->doDeadReckoning();
+      const bool isNotResponding = player[i]->isNotResponding();
 
-	  if (!wasNotResponding && isNotResponding)
-	    addMessage(player[i], "not responding");
-	  else if (wasNotResponding && !isNotResponding)
-	    addMessage(player[i], "okay");
-	}
+      if (!wasNotResponding && isNotResponding)
+	addMessage(player[i], "not responding");
+      else if (wasNotResponding && !isNotResponding)
+	addMessage(player[i], "okay");
     }
+  }
 }
 
 void updatePositions ( const float dt )
@@ -3275,18 +3228,16 @@ void doEnergySaver ( void )
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   const float fpsLimit = BZDB.eval("fpsLimit");
 
-  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit))
-    {
-      const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-      if (elapsed > 0.0f)
-	{
-	  const float period = (1.0f / fpsLimit);
-	  const float remaining = (period - elapsed);
+  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) {
+    const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+    if (elapsed > 0.0f) {
+      const float period = (1.0f / fpsLimit);
+      const float remaining = (period - elapsed);
 
-	  if (remaining > 0.0f)
-	    TimeKeeper::sleep(remaining);
-	}
+      if (remaining > 0.0f)
+	TimeKeeper::sleep(remaining);
     }
+  }
   lastTime = TimeKeeper::getCurrent();
 }
 
@@ -3302,55 +3253,54 @@ static void		playingLoop()
   worldDownLoader = new WorldDownLoader;
 
   // main loop
-  while (!CommandsStandard::isQuit())
-    {
-      BZDBCache::update();
+  while (!CommandsStandard::isQuit()) {
+    BZDBCache::update();
 
-      // set this step game time
-      GameTime::setStepTime();
+    // set this step game time
+    GameTime::setStepTime();
 
-      // get delta time
-      TimeKeeper prevTime = TimeKeeper::getTick();
-      TimeKeeper::setTick();
-      const float dt = float(TimeKeeper::getTick() - prevTime);
+    // get delta time
+    TimeKeeper prevTime = TimeKeeper::getTick();
+    TimeKeeper::setTick();
+    const float dt = float(TimeKeeper::getTick() - prevTime);
 
-      doMessages();    // handle incoming packets
+    doMessages();    // handle incoming packets
 
-      if (world)
-	world->checkCollisionManager();    // see if the world collision grid needs to be updated
+    if (world)
+      world->checkCollisionManager();    // see if the world collision grid needs to be updated
 
-      handlePendingJoins();
+    handlePendingJoins();
 
-      struct in_addr inAddress;
-      if (dnsLookupDone(inAddress))
-	joinInternetGame(&inAddress);
+    struct in_addr inAddress;
+    if (dnsLookupDone(inAddress))
+      joinInternetGame(&inAddress);
 
-      // Communicate with remote agent if necessary
-      if (rcLink) {
-        if (numRobots >= numRobotTanks)
-          rcLink->tryAccept();
+    // Communicate with remote agent if necessary
+    if (rcLink) {
+      if (numRobots >= numRobotTanks)
+	rcLink->tryAccept();
 
-	rcLink->update();
-	doBotRequests();
-      }
+      rcLink->update();
+      doBotRequests();
+    }
 
-      callPlayingCallbacks();    // invoke callbacks
+    callPlayingCallbacks();    // invoke callbacks
 
-      checkForServerBail();
+    checkForServerBail();
 
-      if (CommandsStandard::isQuit())     // quick out
-	break;
+    if (CommandsStandard::isQuit())     // quick out
+      break;
 
-      doUpdates(dt);
+    doUpdates(dt);
 
-      doNetworkStuff();
+    doNetworkStuff();
 
-      doEnergySaver();
+    doEnergySaver();
 
-      if (serverLink)
-	serverLink->flush();
+    if (serverLink)
+      serverLink->flush();
 
-    } // end main client loop
+  } // end main client loop
 
 
   delete worldDownLoader;
@@ -3410,9 +3360,9 @@ void			botStartPlaying()
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
     logDebugMessage(1, "Running on Windows %s%d.%d %s\n",
-	   (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
-	   info.dwMajorVersion, info.dwMinorVersion,
-	   info.szCSDVersion);
+		    (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
+		    info.dwMajorVersion, info.dwMinorVersion,
+		    info.szCSDVersion);
   }
 #endif
 
@@ -3454,8 +3404,7 @@ void			botStartPlaying()
   rcLink->startListening(port);
   RCREQUEST.setLink(rcLink);
 
-  if (!BZDB.isSet("robotScript"))
-  {
+  if (!BZDB.isSet("robotScript")) {
     BACKENDLOGGER << "Missing script on commandline!\n" << endl;
     exit(EXIT_FAILURE);
   }
