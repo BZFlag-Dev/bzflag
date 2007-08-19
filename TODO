@@ -10,6 +10,10 @@ so that no work is duplicated.
 
 Required for release of 2.2.:
 
+* server list is still mildly jacked while navigating.  requesting
+  pings seems to exacerbate the problem, and having the list change
+  after the result comes back in is pretty annoying.
+
 * fix the clientConfig auto-update routines so that it'll properly
   upgrade an existing config file.  build a "patchlist" for it to
   apply, have config files stash their revision, write a routine to
