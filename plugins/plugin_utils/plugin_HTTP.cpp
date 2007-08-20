@@ -358,7 +358,7 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
     int chunkToSend = 1000;
 
     if ( pos + chunkToSend > currentCommand->size)
-      pos = currentCommand->size-pos;
+      chunkToSend = currentCommand->size-pos;
 
     bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
 
