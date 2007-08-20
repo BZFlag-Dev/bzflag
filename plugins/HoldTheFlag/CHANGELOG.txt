@@ -1,8 +1,0 @@
-1.00.02  (2006-03-13)
-  *) Default CTF team to green if not specified on command-line
-  *) Fix tie-break logic in scoring
-  *) add configration and version display to /htf stats
-  *) add flag reset on capture (for multiple team flags)
-
-1.00.01  (2005-10-16):
-  *) fix callsigns when plugin is loaded while players are on.

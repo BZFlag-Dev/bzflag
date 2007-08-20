@@ -1,4 +1,0 @@
-SUBDIRS = VC71
-
-MAINTAINERCLEANFILES =	\
-	Makefile.in

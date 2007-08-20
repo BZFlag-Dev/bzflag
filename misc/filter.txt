@@ -1,4 +1,0 @@
-0.0.0.0/0.0.0.0 c3po ACCEPT
-127.0.0.1/255.255.255.255 _any_ ACCEPT
-0.0.0.0/0.0.0.0 _registered_ ACCEPT
-0.0.0.0/0.0.0.0 _unregistered_ DROP
