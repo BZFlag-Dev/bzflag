@@ -27,7 +27,7 @@
 
 ircChannel::ircChannel(){
 
-  joined;
+  bool joined;
 
   relayGameChat = false; 
   relayGameJoinsAndParts = false;
@@ -236,31 +236,29 @@ bool ircControl::init(){
     return false; //we don't need to explain- the conf loader will do that when it fails
   }
 
-  //register events
-  bool allworked = true;
-  allworked = allworked && client.registerEventHandler(eIRCNoticeEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCNickNameError, this);
-  allworked = allworked && client.registerEventHandler(eIRCNickNameChange, this);
-  //client.registerEventHandler(eIRCWelcomeEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCEndMOTDEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelJoinEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelPartEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelBanEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelMessageEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCPrivateMessageEvent, this);
-  //client.registerEventHandler(eIRCTopicEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCUserJoinEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCUserPartEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCUserKickedEvent, this);
-  //client.registerEventHandler(eIRCTopicChangeEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelModeSet, this);
-  allworked = allworked && client.registerEventHandler(eIRCChannelUserModeSet, this);
-  allworked = allworked && client.registerEventHandler(eIRCUserModeSet, this);
-  allworked = allworked && client.registerEventHandler(eIRCQuitEvent, this);
+  client.init();
 
-  if (!allworked)
-    logDebugMessage (0, "Some of the events failed to register.");
+  //register events
+  client.registerEventHandler(eIRCNoticeEvent, this);
+  client.registerEventHandler(eIRCNickNameError, this);
+  client.registerEventHandler(eIRCNickNameChange, this);
+  //client.registerEventHandler(eIRCWelcomeEvent, this);
+  client.registerEventHandler(eIRCEndMOTDEvent, this);
+  client.registerEventHandler(eIRCChannelJoinEvent, this);
+  client.registerEventHandler(eIRCChannelPartEvent, this);
+  client.registerEventHandler(eIRCChannelBanEvent, this);
+  client.registerEventHandler(eIRCChannelMessageEvent, this);
+  client.registerEventHandler(eIRCPrivateMessageEvent, this);
+  //client.registerEventHandler(eIRCTopicEvent, this);
+  client.registerEventHandler(eIRCUserJoinEvent, this);
+  client.registerEventHandler(eIRCUserPartEvent, this);
+  client.registerEventHandler(eIRCUserKickedEvent, this);
+  //client.registerEventHandler(eIRCTopicChangeEvent, this);
+  client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
+  client.registerEventHandler(eIRCChannelModeSet, this);
+  client.registerEventHandler(eIRCChannelUserModeSet, this);
+  client.registerEventHandler(eIRCUserModeSet, this);
+  client.registerEventHandler(eIRCQuitEvent, this);
 
   //connect
   if (!client.connect(server, port)) {
@@ -268,6 +266,11 @@ bool ircControl::init(){
     logDebugMessage(1, errmsg.c_str());
     return false;
   }
+
+  std::string host = "localhost";
+  client.login (nick, nick, nick, host);
+
+  connected = true;
 
   return true;
 
@@ -289,6 +292,7 @@ bool ircControl::update(){
 
   if (!client.process()) {
     //there seems to be a connection problem- do something
+    logDebugMessage(0, "IRC: Update returned false\n");
   }
 
 }
@@ -296,9 +300,6 @@ bool ircControl::update(){
 bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBaseEventInfo &info) {
 
   std::string errmsg;
-
-  //debug
-  logDebugMessage(0, "IRC: Process called");
 
   //meat and potatoes of the implementation goes here
 
@@ -337,7 +338,7 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
     trMessageEventInfo* chanMsgInfo = (trMessageEventInfo*)&info;
 
-    if (chanMsgInfo->source == controlChannel.name) {
+    if (chanMsgInfo->target == controlChannel.name) {
       //we're dealing with the bot control channel. Act accordingly.
       //TODO: Check for a player query
 
@@ -345,11 +346,13 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
       return true;
     }
 
-    if (channels.count(chanMsgInfo->source) == 1) { //make sure we're actually supposed to be in this channel
-      if (channels[chanMsgInfo->source].relayIRCChat) {
+    if (channels.count(chanMsgInfo->target) == 1) { //make sure we're actually supposed to be in this channel
+      if (channels[chanMsgInfo->target].relayIRCChat) {
         //forward the chat msg to the game if we're supposed to.
-        std::string msg = "[IRC]";
-        msg += chanMsgInfo->from + ": " + chanMsgInfo->message;
+        std::string msg = "[IRC] ";
+        msg += chanMsgInfo->from;
+	msg += ": ";
+	msg += chanMsgInfo->message;
         sendMessage(ServerPlayer, AllPlayers, msg.c_str());
       }
     }
@@ -362,11 +365,38 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
   } /* else if (eventType == eIRCTopicEvent) {
 
-  } else if (eventType == eIRCUserJoinEvent) {
+  } */ else if (eventType == eIRCChannelJoinEvent) {
 
+    trJoinEventInfo* joinInfo = (trJoinEventInfo*)&info;
+
+    if (channels.count(joinInfo->channel) == 1) { //make sure we're actually supposed to be in this channel
+      if (channels[joinInfo->channel].relayIRCJoinsAndParts) {
+	std::string msg = "[IRC] * ";
+	msg += joinInfo->user;
+	msg += " has joined ";
+	msg += joinInfo->channel;
+	sendMessage(ServerPlayer, AllPlayers, msg.c_str());
+      }
+    }
   } else if (eventType == eIRCUserPartEvent) {
 
-  } else if (eventType == eIRCUserKickedEvent) {
+    trPartEventInfo* partInfo = (trPartEventInfo*)&info;
+
+    if (channels.count(partInfo->channel) == 1) { //make sure we're actually supposed to be in this channel
+      if (channels[partInfo->channel].relayIRCJoinsAndParts) {
+	std::string msg = "[IRC] * ";
+	msg += partInfo->user;
+	msg += " has left ";
+	msg += partInfo->channel;
+	if (partInfo->reason != "") {
+	  msg += " (\"";
+	  msg += partInfo->reason;
+	  msg += "\")";
+	}
+	sendMessage(ServerPlayer, AllPlayers, msg.c_str());
+      }
+    }
+  } /* else if (eventType == eIRCUserKickedEvent) {
 
   } else if (eventType == eIRCTopicChangeEvent) {
 
@@ -390,12 +420,47 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
 void ircControl::handleGameChat(std::string playername, std::string message) {
 
+  if (!connected) //don't do anything if we're not actually connected
+    return; 
+
   for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
     if (itr->second.relayGameChat) {
       //send the chat msg to this channel
       std::string msg = playername;
       msg += ": ";
       msg += message;
+      client.sendMessage(itr->second.name, msg);
+    }
+  }
+}
+
+void ircControl::handleGameJoin(std::string playername) {
+
+  if (!connected) //don't do anything if we're not actually connected
+    return; 
+
+  for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+    if (itr->second.relayGameJoinsAndParts) {
+      //send the join msg to this channel
+      std::string msg = playername;
+      msg += " has joined the game.";
+      client.sendMessage(itr->second.name, msg);
+    }
+  }
+}
+
+void ircControl::handleGamePart(std::string playername, std::string reason) {
+
+  if (!connected) //don't do anything if we're not actually connected
+    return; 
+
+  for (std::map<std::string, ircChannel>::iterator itr = channels.begin(); itr != channels.end(); itr++) {
+    if (itr->second.relayGameJoinsAndParts) {
+      //send the part msg to this channel
+      std::string msg = playername;
+      msg += " has left the game. (\"";
+      msg += reason;
+      msg += "\")";
       client.sendMessage(itr->second.name, msg);
     }
   }

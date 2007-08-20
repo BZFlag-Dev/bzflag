@@ -1866,8 +1866,11 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.callsign = playerData->player.getCallSign();
   joinEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
-  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
+  if ((joinEventData.team != eNoTeam) && (joinEventData.callsign.size() != 0)) {	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
+    irc.handleGameJoin(playerData->player.getCallSign());
+  }
+
   if (spawnSoon)
     playerAlive(playerIndex);
 }
@@ -2099,8 +2102,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (reason)
     partEventData.reason = reason;
 
-  if ((partEventData.team != eNoTeam) && (partEventData.callsign.size() != 0))	// don't give events if we don't have a real player slot
+  if ((partEventData.team != eNoTeam) && (partEventData.callsign.size() != 0)) {	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
+    irc.handleGamePart(playerData->player.getCallSign(), reason);
+  }
 
   if (notify) {
     // send a super kill to be polite
@@ -4857,6 +4862,9 @@ static void runMainLoop ( void )
     cleanPendingPlayers();
 
     dontWait = dontWait || updateCurl();
+
+    //update IRC stuffs
+    irc.update();
   }
 }
 
