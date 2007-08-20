@@ -645,7 +645,7 @@ if test x$enable_debug = xyes; then
    FLAGS="$FLAGS -O0"
    case $host_os in
      linux*|cygwin|mingw32*)
-	FLAGS="$FLAGS -Werror -Wshadow -Wno-deprecated"
+	FLAGS="$FLAGS -Werror -Wshadow"
 	if test x$enable_profiling = xyes; then
 	  FLAGS="$FLAGS -pg"
 	fi;;
