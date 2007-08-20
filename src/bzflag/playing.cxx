@@ -4852,7 +4852,7 @@ static void drawUI()
   }
 
   // update the HUD (player list, alerts)
-  if (hud) {
+  if (World::getWorld() && hud) {
     hud->render(*sceneRenderer);
   }
 
