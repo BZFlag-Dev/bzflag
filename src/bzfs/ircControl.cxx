@@ -83,15 +83,12 @@ bool ircControl::loadConfigFile(std::string filename) {
 
 
     //snip the comment out of the line if it exists
-    //FIXME: um, oops, DUH. IRC channels use #, so using it as a comment character is a BAD idea.
-    //Commented out until I choose another character 
-    /*
-    std::string::size_type index = curline.find('#');
+    std::string::size_type index = curline.find(';');
     if (index != std::string::npos) {
 
       curline = curline.substr(0, index);
 
-    } */
+    }
 
     //split the line into arguments
     curlineargs = TextUtils::tokenize(curline, std::string("-"), 0, true);
@@ -132,9 +129,10 @@ bool ircControl::loadConfigFile(std::string filename) {
 	std::vector<std::string> params = TextUtils::tokenize(curlineargs.at(x), std::string(" "), 0, true);
 
 	//erase blank entries
-	//for (std::vector<std::string>::iterator x = params.begin(); x != params.end(); x++) 
-	//  if (*x == "") 
-	//    params.erase(x);
+	for (std::vector<std::string>::iterator x = params.begin(); x != params.end(); x++) 
+	  if (*x == "") {
+	    params.erase(x);
+	  }
 
 	if (params.size() == 0) //sanity check- an empty param should have been caught already
 	  continue;
@@ -239,25 +237,11 @@ bool ircControl::init(){
   client.init();
 
   //register events
-  client.registerEventHandler(eIRCNoticeEvent, this);
-  client.registerEventHandler(eIRCNickNameError, this);
-  client.registerEventHandler(eIRCNickNameChange, this);
-  //client.registerEventHandler(eIRCWelcomeEvent, this);
   client.registerEventHandler(eIRCEndMOTDEvent, this);
-  client.registerEventHandler(eIRCChannelJoinEvent, this);
-  client.registerEventHandler(eIRCChannelPartEvent, this);
-  client.registerEventHandler(eIRCChannelBanEvent, this);
   client.registerEventHandler(eIRCChannelMessageEvent, this);
   client.registerEventHandler(eIRCPrivateMessageEvent, this);
-  //client.registerEventHandler(eIRCTopicEvent, this);
   client.registerEventHandler(eIRCUserJoinEvent, this);
   client.registerEventHandler(eIRCUserPartEvent, this);
-  client.registerEventHandler(eIRCUserKickedEvent, this);
-  //client.registerEventHandler(eIRCTopicChangeEvent, this);
-  client.registerEventHandler(eIRCChanInfoCompleteEvent, this);
-  client.registerEventHandler(eIRCChannelModeSet, this);
-  client.registerEventHandler(eIRCChannelUserModeSet, this);
-  client.registerEventHandler(eIRCUserModeSet, this);
   client.registerEventHandler(eIRCQuitEvent, this);
 
   //connect
@@ -302,17 +286,7 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
   std::string errmsg;
 
   //meat and potatoes of the implementation goes here
-
-  /*
-  if (eventType == eIRCNoticeEvent) {
-
-  } else if (eventType == eIRCNickNameError) {
-
-  } else if (eventType == eIRCNickNameChange) {
-
-  } else if (eventType == eIRCWelcomeEvent) {
-
-  } else */ if (eventType == eIRCEndMOTDEvent) {
+  if (eventType == eIRCEndMOTDEvent) {
     //this will finish off the connection stuff, like commands and channel joins.
 
     //send init commands and wait
@@ -328,13 +302,7 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
         logDebugMessage(1, errmsg.c_str());
       }
     }
-  } /* else if (eventType == eIRCChannelJoinEvent) {
-
-  } else if (eventType == eIRCChannelPartEvent) {
-
-  } else if (eventType == eIRCChannelBanEvent) {
-
-  } */ else if (eventType == eIRCChannelMessageEvent) {
+  } else if (eventType == eIRCChannelMessageEvent) {
 
     trMessageEventInfo* chanMsgInfo = (trMessageEventInfo*)&info;
 
@@ -361,11 +329,9 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 
     trMessageEventInfo* pmInfo = (trMessageEventInfo*)&info;
 
-    //we are probably getting a command, or a return for a query. 
+    //we are probably getting a command, or a return for a query. Do something.
 
-  } /* else if (eventType == eIRCTopicEvent) {
-
-  } */ else if (eventType == eIRCChannelJoinEvent) {
+  } else if (eventType == eIRCChannelJoinEvent) {
 
     trJoinEventInfo* joinInfo = (trJoinEventInfo*)&info;
 
@@ -396,19 +362,7 @@ bool ircControl::process (IRCClient &ircClient, teIRCEventType eventType, trBase
 	sendMessage(ServerPlayer, AllPlayers, msg.c_str());
       }
     }
-  } /* else if (eventType == eIRCUserKickedEvent) {
-
-  } else if (eventType == eIRCTopicChangeEvent) {
-
-  } else if (eventType == eIRCChanInfoCompleteEvent) {
-
-  } else if (eventType == eIRCChannelModeSet) {
-
-  } else if (eventType == eIRCChannelUserModeSet) {
-
-  } else if (eventType == eIRCUserModeSet) {
-
-  } */ else if (eventType == eIRCQuitEvent) {
+  } else if (eventType == eIRCQuitEvent) {
 
     logDebugMessage(4, "BORK! We've been disconnected!");
 
