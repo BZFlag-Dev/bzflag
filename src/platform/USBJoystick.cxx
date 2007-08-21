@@ -21,7 +21,7 @@
 
 #ifdef USBJOYSTICK
 #ifndef BSD
-#error Native USB Joystick support requires BSD. On other platforms please enable SDL or XIJOYSTICK.
+#error Native USB Joystick support requires BSD. On other platforms please enable SDL.
 #endif
 
 #include <vector>

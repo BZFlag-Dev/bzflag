@@ -105,8 +105,6 @@ recent bugs
   available mode that is possible, lowering memory usage, or reporting
   an error and aborting.
 
-- XIJoystick does not compile
-
 - time limiter does not take jumping into consideration when holding Agility
 
 - shooting straight shots with the Agility flag while just having accelerated
@@ -178,10 +176,6 @@ older bugs in BZFlag
    messes up shadow of flag stem
 
 * can sometimes appear in front of bad guys
-
-* some linux systems get XIO error on startup
-   no idea why but it's consistent on those systems
-   (probably XIJoystick code?)
 
 * not blanking screen during win32 startup
    should black out screen before changing resolutions

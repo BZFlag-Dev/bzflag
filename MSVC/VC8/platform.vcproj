@@ -768,10 +768,6 @@
 				RelativePath="..\..\src\platform\WinWindow.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\platform\XIJoystick.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

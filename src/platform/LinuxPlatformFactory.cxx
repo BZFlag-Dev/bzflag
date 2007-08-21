@@ -17,8 +17,6 @@
 #include "LinuxMedia.h"
 #if defined(USBJOYSTICK)
   #include "USBJoystick.h"
-#elif defined(XIJOYSTICK)
-  #include "XIJoystick.h"
 #else
   #include "EvdevJoystick.h"
 #endif
@@ -67,9 +65,6 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
 #if defined(USBJOYSTICK)
   // only works for USB joysticks under *BSD
   return new USBJoystick;
-#elif defined(XIJOYSTICK)
-  // XInput Joystick
-  return new XIJoystick;
 #elif defined(HAVE_LINUX_INPUT_H)
   // Event device joystick
   return new EvdevJoystick;

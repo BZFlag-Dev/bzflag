@@ -47,8 +47,6 @@ libPlatform_la_SOURCES =			\
 	EvdevJoystick.h				\
 	USBJoystick.cxx				\
 	USBJoystick.h				\
-	XIJoystick.cxx				\
-	XIJoystick.h				\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -277,8 +275,6 @@ EXTRA_libPlatform_la_SOURCES =		\
 	WinWindow.h			\
 	XDisplay.cxx			\
 	XDisplay.h			\
-	XIJoystick.cxx			\
-	XIJoystick.h			\
 	XVisual.cxx			\
 	XVisual.h			\
 	XWindow.cxx			\

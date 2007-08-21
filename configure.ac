@@ -641,10 +641,6 @@ case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
-	# FIXME see XIJoystick.cxx
-	#if test x$no_sdl = xyes; then
-	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
-	#fi
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	FLAGS="-Wall -W -Wundef -Wshadow"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
@@ -672,9 +668,6 @@ case $host_os in
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
-	#if test x$no_sdl = xyes; then
-	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
-	#fi
 	FLAGS="-Wall -W -mcpu=$host_cpu"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
