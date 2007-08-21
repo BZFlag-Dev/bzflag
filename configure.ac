@@ -451,7 +451,6 @@ case $host_os in
 
 	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
 	    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
-	    AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
 	fi
 	;;
 esac
