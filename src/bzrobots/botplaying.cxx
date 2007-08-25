@@ -2248,6 +2248,7 @@ void getObsCorners(const Obstacle *obstacle, bool addTankRadius, float corners[4
   corners[3][1] = c[1] - xy + yy;
 }
 
+/*
 // Gaussian RVS using Box-Muller Transform
 static float		gauss(float mu, float sigma)
 {
@@ -2275,7 +2276,6 @@ static void		sendBase(BaseBuilding *base, const char *teamname)
   rcLink->send("\n");
 }
 
-/*
 static void		sendBasesList()
 {
   //if (World::getWorld()->allowTeamFlags()) {

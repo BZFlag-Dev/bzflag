@@ -251,7 +251,7 @@ bool SetStopReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-bool GetPlayersReq::process(RCRobotPlayer *rrp)
+bool GetPlayersReq::process(RCRobotPlayer *)
 {
   link->send(PlayersBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {

@@ -288,7 +288,7 @@ typedef unsigned char	uint8_t;
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
-#  define __attribute__(Spec) /* empty */
+    #  define __attribute__(Spec) /* empty */
 # endif
 /* The __-protected variants of `format' and `printf' attributes
  *    are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
@@ -296,6 +296,19 @@ typedef unsigned char	uint8_t;
 #  define __format__ format
 #  define __printf__ printf
 # endif
+#endif
+
+#ifdef __cplusplus
+    template<class To, class From>
+    inline To force_cast (From const & f)
+    {
+      union {
+        From f;
+        To t;
+      } fc;
+      fc.f = f;
+      return fc.t;
+    }
 #endif
 
 #endif /* BZF_COMMON_H */

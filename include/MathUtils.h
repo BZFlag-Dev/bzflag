@@ -30,7 +30,7 @@
 #include "TimeKeeper.h"
 
 
-#define FP_BITS(fp) (*(unsigned long *)&(fp))
+#define FP_BITS(fp) (*force_cast<unsigned long *>(&(fp)))
 #define FP_ABS_BITS(fp) (FP_BITS(fp)&0x7FFFFFFF)
 #define FP_SIGN_BIT(fp) (FP_BITS(fp)&0x80000000)
 #define FP_ONE_BITS 0x3F800000
@@ -38,13 +38,8 @@
 // r = 1/p
 #define FP_INV(r,p)							\
 {									\
-    union {                                                             \
-      float fp;                                                         \
-      int i;                                                            \
-    } _tmp, _i;                                                         \
-    _tmp.fp = p;                                                        \
-    _i.i = 2 * FP_ONE_BITS - _tmp.i;				        \
-    r = _i.fp;						                \
+    int _i = 2 * FP_ONE_BITS - *force_cast<int *>(&(p));                \
+    r = *force_cast<float *>(&_i);                                      \
     r = r * (2.0f - (p) * r);						\
 }
 
@@ -87,22 +82,14 @@ float   __two = 2.0f;
 
 inline unsigned long FP_NORM_TO_BYTE2(float p)
 {
-  union {
-    float fp;
-    unsigned long ul;
-  } tmp;
-  tmp.fp = p + 1.0f;
-  return (tmp.ul >> 15) & 0xFF;
+  float fpTmp = p + 1.0f;
+  return ((*force_cast<unsigned long *>(&fpTmp)) >> 15) & 0xFF;
 }
 
 inline unsigned long FP_NORM_TO_BYTE3(float p)
 {
-  union {
-    float fp;
-    unsigned long ul;
-  } tmp;
-  tmp.fp = p + 12582912.0f;
-  return (tmp.ul & 0xFF);
+  float fpTmp = p + 12582912.0f;
+  return ((*force_cast<unsigned long *>(&fpTmp)) & 0xFF);
 }
 
 
