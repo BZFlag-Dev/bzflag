@@ -17,7 +17,8 @@
 #ifndef	BZROBOTS_MESSAGEUTILITIES_H
 #define	BZROBOTS_MESSAGEUTILITIES_H
 
-#include "RCReply.h"
+#include "RCMessage.h"
+#include <string>
 
 namespace MessageUtilities
 {
@@ -27,16 +28,18 @@ namespace MessageUtilities
   bool parse(const char *string, bool &dest);
   template<>
   bool parse(const char *string, float &dest);
+  template<>
+  bool parse(const char *string, std::string &dest);
   template<typename T>
     messageParseStatus parseSingle(char **arguments, int count, T &dest)
-  {
-    if (count != 1)
-      return InvalidArgumentCount;
-    if (!parse(arguments[0], dest))
-      return InvalidArguments;
+    {
+      if (count != 1)
+        return InvalidArgumentCount;
+      if (!parse(arguments[0], dest))
+        return InvalidArguments;
 
-    return ParseOk;
-  }
+      return ParseOk;
+    }
 
   template <typename T>
     static T clamp(T val, T min, T max)

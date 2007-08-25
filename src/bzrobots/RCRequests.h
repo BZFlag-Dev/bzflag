@@ -149,6 +149,11 @@ struct IdentifyFrontend :public RCRequest {
   private: std::string version;
 };
 
+struct GetPlayersReq : public RCRequestZeroArgument {
+  std::string getType() const { return "GetPlayers"; }
+  bool process(RCRobotPlayer *rrp);
+};
+
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
 { \

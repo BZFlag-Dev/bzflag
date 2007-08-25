@@ -1,7 +1,3 @@
-/* Compile using:
- * g++ -shared -fPIC -O2 -g -I. -I. -I../../include  -I../../include -I../bzflag -Wall -W TestRobot.cxx -o TestRobot.so
- */
-
 #include "TestRobot.h"
 #include "TimeKeeper.h"
 #include "Logger.h"
@@ -37,3 +33,10 @@ void TestRobot::onHitWall(const HitWallEvent &hwe)
     FRONTENDLOGGER << "Got a hitWallEvent, stopping!" << std::endl;
     setAhead(0);
 }
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

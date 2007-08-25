@@ -10,9 +10,9 @@
     onRobotDeath(const RobotDeathEvent &)
     onScannedRobot(const ScannedRobotEvent &)
     onWin(const WinEvent &)
-! SWIGify BZAdvancedRobot etc.
-! Implement a script-loader.
 ! Implement proper RoboCode compatability (radar, turret-turning, more?)
+! Make various classes use operator<<(ostream, class) instead of ostream-taking methods.
+! Implement more data in Tank (e.g. velocity & angular velocity?)
 
  Legend:
   ! Definite task

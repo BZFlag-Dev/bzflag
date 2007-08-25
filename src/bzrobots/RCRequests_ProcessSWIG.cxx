@@ -32,3 +32,12 @@ SWIG_PROCESS(GetLengthReq)
 SWIG_PROCESS(GetHeightReq)
 SWIG_PROCESS(GetHeadingReq)
 SWIG_PROCESS(SetStopReq)
+SWIG_PROCESS(GetPlayersReq)
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

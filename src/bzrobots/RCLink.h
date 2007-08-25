@@ -35,7 +35,7 @@
 
 #include "RCMessage.h"
 
-// #define PROTOCOL_DEBUG
+#define PROTOCOL_DEBUG
 
 class RCLink {
   public:

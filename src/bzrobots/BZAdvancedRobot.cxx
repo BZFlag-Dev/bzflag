@@ -118,10 +118,9 @@ double BZAdvancedRobot::getLength()
   return tankLength;
 }
 
-int BZAdvancedRobot::getOthers()
+void BZAdvancedRobot::getPlayers()
 {
-  /* TODO: Implement this. */
-  return 0;
+  link->sendAndProcess(GetPlayersReq(), this);
 }
 
 long BZAdvancedRobot::getTime()

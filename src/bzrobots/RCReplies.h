@@ -21,8 +21,9 @@
 #include <string>
 
 #include "RCReply.h"
-
 #include "RCEvent.h"
+#include "Tank.h"
+#include "RemotePlayer.h"
 
 struct IdentifyBackend : public RCReply
 {
@@ -202,6 +203,27 @@ struct HeadingReply : public RCReply
   bool updateBot(BZAdvancedRobot *robot) const;
 
   private: float heading;
+};
+
+struct PlayersBeginReply : public RCReply
+{
+  PlayersBeginReply() {}
+  std::string getType() const { return "PlayersBegin"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+};
+
+struct PlayersReply : public RCReply
+{
+  PlayersReply() {}
+  PlayersReply(RemotePlayer *_tank) :tank(_tank) {}
+  std::string getType() const { return "Players"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(BZAdvancedRobot *robot) const;
+
+  private: Tank tank;
 };
 
 #endif

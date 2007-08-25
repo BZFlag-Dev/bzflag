@@ -19,6 +19,7 @@
 
 #include "RCLinkFrontend.h"
 #include "RCEvents.h"
+#include "Tank.h"
 
 class RCLinkFrontend;
 
@@ -50,7 +51,7 @@ class BZAdvancedRobot
     double getHeight();
     double getWidth();
     double getLength();
-    int getOthers();
+    void getPlayers();
     long getTime();
     double getVelocity();
     double getX();
@@ -97,6 +98,7 @@ class BZAdvancedRobot
     float yPosition, xPosition, zPosition;
     float tankWidth, tankLength, tankHeight;
     float heading;
+    std::vector<Tank> players;
 };
 
 #endif

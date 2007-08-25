@@ -4,6 +4,9 @@
 #include "RCRobotPlayer.h"
 #include "MessageUtilities.h"
 #include "BZDBCache.h"
+#include "Roster.h"
+#include "World.h"
+#include "playing.h"
 
 #include "version.h"
 
@@ -247,3 +250,30 @@ bool SetStopReq::process(RCRobotPlayer *rrp)
   }
   return true;
 }
+
+bool GetPlayersReq::process(RCRobotPlayer *rrp)
+{
+  link->send(PlayersBeginReply());
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (!player[i])
+      continue;
+
+    TeamColor team = player[i]->getTeam();
+    if (team == ObserverTeam)
+      continue;
+    if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
+      continue;
+
+    link->send(PlayersReply(player[i]));
+  }
+
+  return true;
+}
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

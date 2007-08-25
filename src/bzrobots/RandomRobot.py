@@ -22,7 +22,7 @@ class RandomRobot(bzrobot.BZAdvancedRobot):
                 break
 
     def onHitWall(self, hitwallevent):
-        self.setAhead(-50)
+        self.setAhead(-20)
         self.execute()
 
     def fireAndExecute(self):

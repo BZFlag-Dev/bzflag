@@ -3,6 +3,7 @@
 #include "RCMessageFactory.h"
 #include "BZAdvancedRobot.h"
 #include "MessageUtilities.h"
+#include "Tank.h"
 
 #include "version.h"
 
@@ -230,6 +231,33 @@ void HeadingReply::getParameters(std::ostream &stream) const
 bool HeadingReply::updateBot(BZAdvancedRobot *robot) const
 {
   robot->heading = heading;
+  return true;
+}
+
+messageParseStatus PlayersBeginReply::parse(char **, int count)
+{
+  return (count == 0 ? ParseOk : InvalidArgumentCount);
+}
+void PlayersBeginReply::getParameters(std::ostream &) const
+{
+}
+bool PlayersBeginReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->players.clear();
+  return true;
+}
+
+messageParseStatus PlayersReply::parse(char **arguments, int count)
+{
+  return tank.parse(arguments, count);
+}
+void PlayersReply::getParameters(std::ostream &stream) const
+{
+  stream << tank;
+}
+bool PlayersReply::updateBot(BZAdvancedRobot *robot) const
+{
+  robot->players.push_back(tank);
   return true;
 }
 

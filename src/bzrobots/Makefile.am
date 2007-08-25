@@ -62,6 +62,8 @@ genericfiles =				\
 	RCLinkFrontend.h		\
 	RCRobotPlayer.cxx		\
 	RCRobotPlayer.h			\
+	Tank.h				\
+	Tank.cxx			\
 	Frontend.cxx			\
 	Frontend.h			\
 	Logger.h			\
@@ -336,6 +338,8 @@ bzrobot_pyext_la_SOURCES = \
 	RCEvent.h \
 	MessageUtilities.cxx \
 	MessageUtilities.h \
+	Tank.cxx \
+	Tank.h \
 	bzrobot_python_wrap.cxx \
 	bzrobot_python_wrap.h
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
@@ -347,7 +351,7 @@ BUILT_SOURCES = \
 
 bzrobot_python_wrap.h: bzrobot_python_wrap.cxx
 
-bzrobot_python_wrap.cxx: bzrobot.i 
+bzrobot_python_wrap.cxx: bzrobot.i BZAdvancedRobot.h
 	$(SWIG) -Wall -c++ -python -o $@ -interface bzrobot_pyext $< # Consider using -O for 'optimized mode'
 
 bzrobot_python_runtime.h:
