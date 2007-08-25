@@ -152,10 +152,14 @@ class Obstacle {
  
   unsigned int getGUID ( void ) const
   {
-    unsigned short p[2];
-    p[0] = getTypeID();
-    p[1] = getListID();
-    return *(unsigned int*)p;
+    union {
+      unsigned short s[2];
+      unsigned int i;
+    } p;
+
+    p.s[0] = getTypeID();
+    p.s[1] = getListID();
+    return p.i;
   }
 
   /** This function returns the time of intersection between the obstacle

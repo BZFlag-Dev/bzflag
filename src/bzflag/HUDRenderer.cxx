@@ -820,10 +820,7 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
   if (displayList == friendlyMarkerList)
   {
     float lockonSize = 40;
-    float lockonInset = 15;
-    float lockonDeclination = 15;
 
-    float xFactor = 0.75f;
     float segmentation = 32.0f/360.0f;
     float rad = lockonSize * 0.5f;
 

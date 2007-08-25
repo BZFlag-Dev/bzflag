@@ -212,7 +212,7 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 {
   float newAngVel;
-  float frames;
+  float frames = 1.0f;
 
   if ((inputMethod != Keyboard) || (getPhysicsDriver() >= 0)) {
     // mouse and joystick users

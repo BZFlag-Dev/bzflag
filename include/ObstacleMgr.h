@@ -279,53 +279,58 @@ inline const ObstacleList& GroupDefinitionMgr::getTetras() const
 
 inline  Obstacle* GroupDefinitionMgr::getObstacleFromID ( unsigned int id )
 {
-  unsigned short *p = (unsigned short*)(&id);
+  union {
+    unsigned int i;
+    unsigned short s[2];
+  } p;
 
-  switch (p[0])
+  p.i = id;
+
+  switch (p.s[0])
   {
     case _Wall_ID:
-      if (getWalls().size() > p[1] )
-	return getWalls()[p[1]];
+      if (getWalls().size() > p.s[1] )
+	return getWalls()[p.s[1]];
       break;
 
     case _Box_ID:
-      if (getBoxes().size() > p[1] )
-	return getBoxes()[p[1]];
+      if (getBoxes().size() > p.s[1] )
+	return getBoxes()[p.s[1]];
       break;
 
     case _Base_ID:
-      if (getBases().size() > p[1] )
-	return getBases()[p[1]];
+      if (getBases().size() > p.s[1] )
+	return getBases()[p.s[1]];
       break;
 
     case _Pyramid_ID:
-      if (getPyrs().size() > p[1] )
-	return getPyrs()[p[1]];
+      if (getPyrs().size() > p.s[1] )
+	return getPyrs()[p.s[1]];
       break;
 
     case _Mesh_ID:
-      if (getMeshes().size() > p[1] )
-	return getMeshes()[p[1]];
+      if (getMeshes().size() > p.s[1] )
+	return getMeshes()[p.s[1]];
       break;
 
     case _Arc_ID:
-      if (getArcs().size() > p[1] )
-	return getArcs()[p[1]];
+      if (getArcs().size() > p.s[1] )
+	return getArcs()[p.s[1]];
       break;
 
     case _Cone_ID:
-      if (getCones().size() > p[1] )
-	return getCones()[p[1]];
+      if (getCones().size() > p.s[1] )
+	return getCones()[p.s[1]];
       break;
 
     case _Sphere_ID:
-      if (getSpheres().size() > p[1] )
-	return getSpheres()[p[1]];
+      if (getSpheres().size() > p.s[1] )
+	return getSpheres()[p.s[1]];
       break;
 
     case _Tetra_ID:
-      if (getTetras().size() > p[1] )
-	return getTetras()[p[1]];
+      if (getTetras().size() > p.s[1] )
+	return getTetras()[p.s[1]];
       break;
   }
 

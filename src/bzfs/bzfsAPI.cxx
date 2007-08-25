@@ -2537,11 +2537,14 @@ bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
 
 unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
 {
-  unsigned short p[2];
-  p[0] = obstacle.getTypeID();
-  p[1] = obstacle.getListID();
+  union {
+    unsigned short s[2];
+    unsigned int i;
+  } p;
+  p.s[0] = obstacle.getTypeID();
+  p.s[1] = obstacle.getListID();
 
-  return *(unsigned int*)p;
+  return p.i;
 }
 
 const ObstacleList* obstacleListFromObstacleType ( int type )
@@ -2680,15 +2683,19 @@ bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
 
 unsigned int findFirstNameInList ( const ObstacleList &list, unsigned short baseType, const std::string &name )
 {
-  unsigned short p[2] ;
-  p[0] = baseType;
+  union {
+    unsigned short s[2];
+    unsigned int i;
+  } p;
+
+  p.s[0] = baseType;
   for ( unsigned int i = 0; i < list.size(); i++ )
   {
-    p[1] = (unsigned short)i;
+    p.s[1] = (unsigned short)i;
 
     Obstacle *obstacle = list[i];
-    if(obstacle->getName() == name )
-      return *(unsigned int*)p;
+    if (obstacle->getName() == name )
+      return p.i;
   }
   return 0;
 }

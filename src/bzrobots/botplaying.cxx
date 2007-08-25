@@ -2275,6 +2275,7 @@ static void		sendBase(BaseBuilding *base, const char *teamname)
   rcLink->send("\n");
 }
 
+/*
 static void		sendBasesList()
 {
   //if (World::getWorld()->allowTeamFlags()) {
@@ -2573,33 +2574,8 @@ static void		sendConstList()
 
   rcLink->send("end\n");
 }
+*/
 
-#if 0
-case TeamListRequest:
-sendTeamList();
-break;
-case BasesListRequest:
-sendBasesList();
-break;
-case ObstacleListRequest:
-sendObsList();
-break;
-case FlagListRequest:
-sendFlagList();
-break;
-case ShotListRequest:
-sendShotList();
-break;
-case MyTankListRequest:
-sendMyTankList();
-break;
-case OtherTankListRequest:
-sendOtherTankList();
-break;
-case ConstListRequest:
-sendConstList();
-break;
-#endif
 static void		doBotRequests()
 {
   RCRequest* req;

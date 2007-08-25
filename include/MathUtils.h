@@ -36,10 +36,15 @@
 #define FP_ONE_BITS 0x3F800000
 
 // r = 1/p
-#define FP_INV(r,p)							  \
-{									    \
-    int _i = 2 * FP_ONE_BITS - *(int *)&(p);				 \
-    r = *(float *)&_i;						       \
+#define FP_INV(r,p)							\
+{									\
+    union {                                                             \
+      float fp;                                                         \
+      int i;                                                            \
+    } _tmp, _i;                                                         \
+    _tmp.fp = p;                                                        \
+    _i.i = 2 * FP_ONE_BITS - _tmp.i;				        \
+    r = _i.fp;						                \
     r = r * (2.0f - (p) * r);						\
 }
 
@@ -82,14 +87,22 @@ float   __two = 2.0f;
 
 inline unsigned long FP_NORM_TO_BYTE2(float p)
 {
-  float fpTmp = p + 1.0f;
-  return ((*(unsigned *)&fpTmp) >> 15) & 0xFF;
+  union {
+    float fp;
+    unsigned long ul;
+  } tmp;
+  tmp.fp = p + 1.0f;
+  return (tmp.ul >> 15) & 0xFF;
 }
 
 inline unsigned long FP_NORM_TO_BYTE3(float p)
 {
-  float ftmp = p + 12582912.0f;
-  return ((*(unsigned long *)&ftmp) & 0xFF);
+  union {
+    float fp;
+    unsigned long ul;
+  } tmp;
+  tmp.fp = p + 12582912.0f;
+  return (tmp.ul & 0xFF);
 }
 
 
