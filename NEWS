@@ -6,6 +6,7 @@
 BZFlag 2.1.x
 ------------
 
+* improved French localization - Christophe Henry
 * clean up various keypress warnings, add slow motion warning - Sean Morrison
 * changed default slow motion key binding from 'a' to 'v' - Sean Morrison
 * added the ability to query ping times on the server menu - Phillip Vaxorcist

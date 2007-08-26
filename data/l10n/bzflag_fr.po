@@ -6,8 +6,8 @@ msgstr "Rejoindre la partie"
 msgid "fr"
 msgstr "French"
 
-#msgid "translator"
-#msgstr ""
+msgid "translator"
+msgstr "traducteur"
 
 msgid "Find Server"
 msgstr "Chercher un serveur"
@@ -150,11 +150,11 @@ msgstr "Volume:"
 msgid "UDP network connection:"
 msgstr "Connexion réseau UDP"
 
-#msgid "Server List Cache:"
-#msgstr ""
+msgid "Server List Cache:"
+msgstr "Liste de serveurs en cache:"
 
-#msgid "Clear Server List Cache"
-#msgstr ""
+msgid "Clear Server List Cache"
+msgstr "Effacer le cache de la liste de serveurs"
 
 msgid "Change Key Mapping"
 msgstr "Changer l'affectation des touches"
@@ -183,20 +183,20 @@ msgstr "Tirs colorés sur le radar"
 msgid "Radar Shot Length:"
 msgstr "Longueur des tirs sur le radar"
 
-#msgid "Radar & Panel Size:"
-#msgstr ""
+msgid "Radar & Panel Size:"
+msgstr "Radar et taille du panneau:"
 
-#msgid "Mouse Box Size:"
-#msgstr ""
+msgid "Mouse Box Size:"
+msgstr "Taille du viseur de la souris:"
 
-#msgid "Control panel coloring:"
-#msgstr ""
+msgid "Control panel coloring:"
+msgstr "Coloration du panneau de contrôle:"
 
-#msgid "Underline color:"
-#msgstr ""
+msgid "Underline color:"
+msgstr "Couleur de surlignement:"
 
-#msgid "Killer Highlight:"
-#msgstr ""
+msgid "Killer Highlight:"
+msgstr "Surbrillance du tueur:"
 
 msgid "Page Down for next page"
 msgstr "Page Suiv pour la page suivante"
@@ -220,10 +220,10 @@ msgid "Purple Team"
 msgstr "Equipe Mauve"
 
 msgid "Enter to quit, Esc to resume"
-msgstr "Entrée pour quitte, Esc pour continuer"
+msgstr "Entrée pour quitter, Esc pour continuer"
 
 msgid "Really quit?"
-msgstr "Quitter ?"
+msgstr "Vraiment quitter ?"
 
 msgid "Video Format"
 msgstr "Résolution"
@@ -235,7 +235,7 @@ msgid "Key Mapping"
 msgstr "Assignation des touches"
 
 msgid "Reset Defaults"
-msgstr "Défaut"
+msgstr "Réglages par défaut"
 
 msgid "Fire shot:"
 msgstr "Tirer:"
@@ -244,7 +244,7 @@ msgid "Drop flag:"
 msgstr "Jeter un drapeau:"
 
 msgid "Identify/Lock On:"
-msgstr "Identifier/Verouiller une cible:"
+msgstr "Identifier/Verrouiller une cible:"
 
 msgid "Radar Short:"
 msgstr "Radar courte portée:"
@@ -291,8 +291,8 @@ msgstr "Reculer le temps:"
 msgid "Pause/Resume:"
 msgstr "Pause/Reprise:"
 
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
+msgid "Self Destruct/Cancel:"
+msgstr "Auto-destruction/Annuler:"
 
 msgid "SelfDestruct/Cancel:"
 msgstr "Autodestruction/Annuler:"
@@ -325,7 +325,7 @@ msgid "drops flag (if not bad)"
 msgstr "jette un drapeau (sauf les mauvais)"
 
 msgid "identifies player (locks on GM)"
-msgstr "identifie un joueur (verouille si GM)"
+msgstr "identifie un joueur (verrouille si GM)"
 
 msgid "jump (if allowed)"
 msgstr "saute (si autorisé)"
@@ -384,11 +384,11 @@ msgstr "défile les messages vers le bas"
 msgid "scroll message log forward"
 msgstr "défile les messages vers le haut"
 
-#msgid "Slow Keyboard Motion"
-#msgstr ""
+msgid "Slow Keyboard Motion"
+msgstr "Déplacement clavier lent"
 
-#msgid "Toggle Radar Flags"
-#msgstr ""
+msgid "Toggle Radar Flags"
+msgstr "Basculer les drapeaux sur le radar"
 
 #msgid "Toggle Main Flags"
 #msgstr ""
@@ -396,17 +396,17 @@ msgstr "défile les messages vers le haut"
 #msgid "Silence/UnSilence"
 #msgstr ""
 
-#msgid "Server Admin"
-#msgstr ""
+msgid "Server Admin"
+msgstr "Admin du serveur"
 
-#msgid "Hunt"
-#msgstr ""
+msgid "Hunt"
+msgstr "Chasse"
 
-#msgid "autopilot enabled"
-#msgstr ""
+msgid "autopilot enabled"
+msgstr "pilote automatique activé"
 
-#msgid "autopilot disabled"
-#msgstr ""
+msgid "autopilot disabled"
+msgstr "pilote automatique désactivé"
 
 msgid "show/dismiss menu"
 msgstr "affiche/cache le menu"
@@ -486,8 +486,8 @@ msgstr "Match à mort"
 msgid "Capture-the-Flag"
 msgstr "Capture du drapeau"
 
-#msgid "Rabbit Chase"
-#msgstr ""
+msgid "Rabbit Chase"
+msgstr "Chasse au lapin"
 
 msgid "Super Flags"
 msgstr "Super drapeaux"
@@ -519,8 +519,8 @@ msgstr "Scellé"
 msgid "Zoned"
 msgstr "Zoné"
 
-#msgid "You are now the rabbit."
-#msgstr ""
+msgid "You are now the rabbit."
+msgstr "C'est vous le lapin."
 
 msgid "Servers found: {1}"
 msgstr "Serveurs trouvés: {1}"
@@ -541,7 +541,7 @@ msgid "{1} Win Drops Bad Flag"
 msgstr "{1} victoire pour jeter le mauvais drapeau"
 
 msgid "{1} Wins Drops Bad Flag"
-msgstr "{1} victoire pour jeter le mauvais drapeau"
+msgstr "{1} victoires pour jeter le mauvais drapeau"
 
 msgid "Time limit: {1}"
 msgstr "Temps limité: {1}"
@@ -576,8 +576,8 @@ msgstr "Le serveur a envoyé les informations du port de connexion retour, {1}"
 msgid "Communication error joining game [Wrong Code {1}]."
 msgstr "Erreur de communication [Mauvais Code {1}]."
 
-#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
-#msgstr ""
+msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+msgstr "Le serveur a envoyé une requête UDP, UDP actif. Info: [{1}:{2}:{3}]"
 
 msgid "Configuration file:  Error on line {1}: Stream failure"
 msgstr "Fichier de configuration: Erreur à la ligne {1}: Erreur de flux"
@@ -624,17 +624,17 @@ msgstr "Erreur lors du téléchargement de la carte"
 #msgid "Score"
 #msgstr ""
 
-#msgid "Kills"
-#msgstr ""
+msgid "Kills"
+msgstr "Tués"
 
-#msgid "Team Score"
-#msgstr ""
+msgid "Team Score"
+msgstr "Score de l'équipe"
 
-#msgid "Locale:"
-#msgstr ""
+msgid "Locale:"
+msgstr "Langage:"
 
-#msgid "Player"
-#msgstr ""
+msgid "Player"
+msgstr "Joueur"
 
 # Super Flags
 
@@ -739,26 +739,28 @@ msgstr "Le drapeau de l'équipe adverse:  emportez-le à votre base pour le capt
 #msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
 #msgstr ""
 
-#msgid "Useless"
-#msgstr ""
+msgid "Useless"
+msgstr "Inutile"
 
-#msgid "Thief"
-#msgstr ""
+msgid "Thief"
+msgstr "Vol"
 
 #msgid "Masquerade"
 #msgstr ""
 
-#msgid "Seer"
-#msgstr ""
+msgid "Seer"
+msgstr "Vue"
 
-#msgid "Burrow"
-#msgstr ""
+msgid "Burrow"
+msgstr "Sous-marin"
 
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
+msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
+msgstr "Rapidité angulaire (A): Le tank tourne plus vite.  Ésquiver rapidement."
 
-#msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
-#msgstr ""
+msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "Drapeau d'équipe:  Si c'est le tien, empêche les autres équipes de le prendre.  Sinon, ramène-le à ta base pour le capturer"
+
+# (Sbgodin) There seem to be twice the same translation. Why?
 
 #msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
 #msgstr ""
@@ -1269,7 +1271,7 @@ msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team
 msgstr "des tanks:  les tanks les plus haut ont des points plus larges.  Les drapeaux sont de petites croix.  Les"
 
 #msgid "Toggle Radar Flags:"
-#msgstr ""
+#msgstr "Bascule"
 
 #msgid "Toggle Main Flags:"
 #msgstr ""
@@ -1297,143 +1299,143 @@ msgstr "des tanks:  les tanks les plus haut ont des points plus larges.  Les dra
 #msgid "Style:"
 #msgstr ""
 
-#msgid "Free for All"
-#msgstr ""
+msgid "Free for All"
+msgstr "Chacun pour soi"
 
-#msgid "Capture the Flag"
-#msgstr ""
+msgid "Capture the Flag"
+msgstr "Capture le drapeau"
 
-#msgid "Max Players:"
-#msgstr ""
+msgid "Max Players:"
+msgstr "Max Joueurs:"
 
-#msgid "Max Shots:"
-#msgstr ""
+msgid "Max Shots:"
+msgstr "Max Tirs:"
 
-#msgid "Teleporters:"
-#msgstr ""
+msgid "Teleporters:"
+msgstr "Téléporteurs:"
 
 #msgid "Ricochet:"
 #msgstr ""
 
-#msgid "Jumping:"
-#msgstr ""
+msgid "Jumping:"
+msgstr "Sauts:"
 
-#msgid "Superflags:"
-#msgstr ""
+msgid "Superflags:"
+msgstr "Super drapeaux:"
 
-#msgid "all flags"
-#msgstr ""
+msgid "all flags"
+msgstr "tous les drapeaux"
 
-#msgid "good flags only"
-#msgstr ""
+msgid "good flags only"
+msgstr "bon drapeaux seulement"
 
-#msgid "Max Superflags:"
-#msgstr ""
+msgid "Max Superflags:"
+msgstr "Max super drapeaux:"
 
-#msgid "Bad Flag Antidote:"
-#msgstr ""
+msgid "Bad Flag Antidote:"
+msgstr "Antidode au mauvais drapeau:"
 
-#msgid "Bad Flag Time Limit:"
-#msgstr ""
+msgid "Bad Flag Time Limit:"
+msgstr "Limite de temps du mauvais drapeau:"
 
-#msgid "no limit"
-#msgstr ""
+msgid "no limit"
+msgstr "pas de limite"
 
-#msgid "15 seconds"
-#msgstr ""
+msgid "15 seconds"
+msgstr "15 secondes"
 
-#msgid "30 seconds"
-#msgstr ""
+msgid "30 seconds"
+msgstr "30 secondes"
 
-#msgid "60 seconds"
-#msgstr ""
+msgid "60 seconds"
+msgstr "60 secondes"
 
-#msgid "180 seconds"
-#msgstr ""
+msgid "180 seconds"
+msgstr "180 secondes"
 
-#msgid "Bad Flag Win Limit:"
-#msgstr ""
+msgid "Bad Flag Win Limit:"
+msgstr "Victoire pour retrait du mauvais drapeau:"
 
-#msgid "drop after 1 win"
-#msgstr ""
+msgid "drop after 1 win"
+msgstr "Retrait après une victoire"
 
-#msgid "drop after 2 wins"
-#msgstr ""
+msgid "drop after 2 wins"
+msgstr "Retrait après deux victoires"
 
-#msgid "drop after 3 wins"
-#msgstr ""
+msgid "drop after 3 wins"
+msgstr "Retrait après deux victoires"
 
-#msgid "Server Visibility:"
-#msgstr ""
+msgid "Server Visibility:"
+msgstr "Visibilité du serveur:"
 
-#msgid "local host only (ttl=0)"
-#msgstr ""
+msgid "local host only (ttl=0)"
+msgstr "hôte local seulement (ttl=8)"
 
-#msgid "subnet only (ttl=1)"
-#msgstr ""
+msgid "subnet only (ttl=1)"
+msgstr "sous-réseau seulement (ttl=1)"
 
-#msgid "local area (ttl=8)"
-#msgstr ""
+msgid "local area (ttl=8)"
+msgstr "zone locale (ttl=8)"
 
 #msgid "site (ttl=32)"
 #msgstr ""
 
-#msgid "organization (ttl=64)"
-#msgstr ""
+msgid "organization (ttl=64)"
+msgstr "organisation (ttl=64)"
 
 #msgid "continent (ttl=128)"
 #msgstr ""
 
-#msgid "world (ttl=255)"
-#msgstr ""
+msgid "world (ttl=255)"
+msgstr "monde (ttl=255)"
 
-#msgid "Game Over:"
-#msgstr ""
+msgid "Game Over:"
+msgstr "Partie terminée:"
 
-#msgid "never"
-#msgstr ""
+msgid "never"
+msgstr "jamais"
 
-#msgid "after 5 minutes"
-#msgstr ""
+msgid "after 5 minutes"
+msgstr "après 5 minutes"
 
-#msgid "after 15 minutes"
-#msgstr ""
+msgid "after 15 minutes"
+msgstr "après 15 minutes"
 
-#msgid "after 60 minutes"
-#msgstr ""
+msgid "after 60 minutes"
+msgstr "après 60 minutes"
 
-#msgid "after 3 hours"
-#msgstr ""
+msgid "after 3 hours"
+msgstr "après 3 heures"
 
-#msgid "when a player gets +3"
-#msgstr ""
+msgid "when a player gets +3"
+msgstr "quand un joueur a +3"
 
-#msgid "when a player gets +10"
-#msgstr ""
+msgid "when a player gets +10"
+msgstr "quand un joueur a +10"
 
-#msgid "when a player gets +25"
-#msgstr ""
+msgid "when a player gets +25"
+msgstr "quand un joueur a +25"
 
-#msgid "when a team gets +3"
-#msgstr ""
+msgid "when a team gets +3"
+msgstr "quand une équipe a +3"
 
-#msgid "when a team gets +10"
-#msgstr ""
+msgid "when a team gets +10"
+msgstr "quand une équipe a +10"
 
-#msgid "when a team gets +25"
-#msgstr ""
+msgid "when a team gets +25"
+msgstr "quand une équipe a +25"
 
-#msgid "when a team gets +100"
-#msgstr ""
+msgid "when a team gets +100"
+msgstr "quand une équipe a +100"
 
-#msgid "Server Reset:"
-#msgstr ""
+msgid "Server Reset:"
+msgstr "Ràz serveur:"
 
-#msgid "no, quit after game"
-#msgstr ""
+msgid "no, quit after game"
+msgstr "non, quitter après le jeu"
 
-#msgid "yes, reset for more games"
-#msgstr ""
+msgid "yes, reset for more games"
+msgstr "oui, ràz pour d'autres jeux"
 
 msgid "flags are in the team color, superflags are white, and the antidote flag"
 msgstr "drapeaux d'équipe sont de la couleur de l'équipe, les super drapeaux sont blanc, et le drapeau antidote"
@@ -1444,123 +1446,124 @@ msgstr "est jaune.  Les tirs sont de petits points (ou des lignes ou des cercles
 #msgid "cyan"
 #msgstr ""
 
-#msgid "grey"
-#msgstr ""
+msgid "grey"
+msgstr "gris"
 
-#msgid "text"
-#msgstr ""
+msgid "text"
+msgstr "texte"
 
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "les ondes de choc, respectivement).  Votre tank est toujours au centre, et votre canon"
 
-#msgid "None"
-#msgstr ""
+msgid "None"
+msgstr "Aucun"
 
-#msgid "Pulsating"
-#msgstr ""
+msgid "Pulsating"
+msgstr "Pulsant"
 
-#msgid "Underline"
-#msgstr ""
+msgid "Underline"
+msgstr "Souligné"
 
 # Identifikace vlajek
 # Flags identification
-#msgid "Closest Flag: High Speed"
-#msgstr ""
+msgid "Closest Flag: High Speed"
+msgstr "Drapeau à proximité: Haute Vitesse"
 
-#msgid "Closest Flag: Quick Turn"
-#msgstr ""
+msgid "Closest Flag: Quick Turn"
+msgstr "Drapeau à proximité: Vitesse Angulaire"
 
-#msgid "Closest Flag: Oscillation Overthurster"
-#msgstr ""
+msgid "Closest Flag: Oscillation Overthurster"
+msgstr "Drapeau à proximité: Accélérateur d'oscillation"
 
-#msgid "Closest Flag: Rapid Fire"
-#msgstr ""
+msgid "Closest Flag: Rapid Fire"
+msgstr "Drapeau à proximité: Tir Rapide"
 
-#msgid "Closest Flag: Machine Gun"
-#msgstr ""
+msgid "Closest Flag: Machine Gun"
+msgstr "Drapeau à proximité: Mtraillette"
 
-#msgid "Closest Flag: Guided Missile"
-#msgstr ""
+msgid "Closest Flag: Guided Missile"
+msgstr "Drapeau à proximité: Missile Guidé"
 
-#msgid "Closest Flag: Laser"
-#msgstr ""
+msgid "Closest Flag: Laser"
+msgstr "Drapeau à proximité: Laser"
 
-#msgid "Closest Flag: Ricochet"
-#msgstr ""
+msgid "Closest Flag: Ricochet"
+msgstr "Drapeau à proximité: Ricocher"
 
-#msgid "Closest Flag: Super Bullet"
-#msgstr ""
+msgid "Closest Flag: Super Bullet"
+msgstr "Drapeau à proximité: Super Boulet"
 
-#msgid "Closest Flag: Stealth"
-#msgstr ""
+msgid "Closest Flag: Stealth"
+msgstr "Drapeau à proximité: Furtif"
 
-#msgid "Closest Flag: Cloaking"
-#msgstr ""
+msgid "Closest Flag: Cloaking"
+msgstr "Drapeau à proximité: Dissimulation"
 
-#msgid "Closest Flag: Invisible Bullet"
-#msgstr ""
+msgid "Closest Flag: Invisible Bullet"
+msgstr "Drapeau à proximité: Boulet Invisible"
 
-#msgid "Closest Flag: Tiny"
-#msgstr ""
+msgid "Closest Flag: Tiny"
+msgstr "Drapeau à proximité: Petit"
 
-#msgid "Closest Flag: Narrow"
-#msgstr ""
+msgid "Closest Flag: Narrow"
+msgstr "Drapeau à proximité: Plat"
 
-#msgid "Closest Flag: Shield"
-#msgstr ""
+msgid "Closest Flag: Shield"
+msgstr "Drapeau à proximité: Bouclier"
 
-#msgid "Closest Flag: Steamroller"
-#msgstr ""
+msgid "Closest Flag: Steamroller"
+msgstr "Drapeau à proximité: Rouleau Compresseur"
 
-#msgid "Closest Flag: Shock Wave"
-#msgstr ""
+msgid "Closest Flag: Shock Wave"
+msgstr "Drapeau à proximité: Onde de choc"
 
-#msgid "Closest Flag: Phantom Zone"
-#msgstr ""
+msgid "Closest Flag: Phantom Zone"
+msgstr "Drapeau à proximité: Zone Fantôme"
 
-#msgid "Closest Flag: Genocide"
-#msgstr ""
+msgid "Closest Flag: Genocide"
+msgstr "Drapeau à proximité: Génocide"
 
-#msgid "Closest Flag: Jumping"
-#msgstr ""
+msgid "Closest Flag: Jumping"
+msgstr "Drapeau à proximité: Saut"
 
-#msgid "Closest Flag: Identify"
-#msgstr ""
+msgid "Closest Flag: Identify"
+msgstr "Drapeau à proximité: Identification"
 
-#msgid "Closest Flag: Colorblindness"
-#msgstr ""
+msgid "Closest Flag: Colorblindness"
+msgstr "Drapeau à proximité: Daltonisme"
 
-#msgid "Closest Flag: Obesity"
-#msgstr ""
+msgid "Closest Flag: Obesity"
+msgstr "Drapeau à proximité: Obesité"
 
-#msgid "Closest Flag: Left Turn Only"
-#msgstr ""
+msgid "Closest Flag: Left Turn Only"
+msgstr "Drapeau à proximité: Direction bloquée à Gauche"
 
-#msgid "Closest Flag: Right Turn Only"
-#msgstr ""
+msgid "Closest Flag: Right Turn Only"
+msgstr "Drapeau à proximité: Direction bloquée à Droite"
 
-#msgid "Closest Flag: Momentum"
-#msgstr ""
+msgid "Closest Flag: Momentum"
+msgstr "Drapeau à proximité: Inertie"
 
-#msgid "Closest Flag: Blindness"
-#msgstr ""
+msgid "Closest Flag: Blindness"
+msgstr "Drapeau à proximité: Aveuglement"
 
-#msgid "Closest Flag: Jamming"
-#msgstr ""
+msgid "Closest Flag: Jamming"
+msgstr "Drapeau à proximité: Brouillage Radar"
 
-#msgid "Closest Flag: Wide Angle"
-#msgstr ""
+msgid "Closest Flag: Wide Angle"
+msgstr "Drapeau à proximité: Angle Large"
 
 # Ostatni
 # Other
-#msgid "Server started."
-#msgstr ""
+msgid "Server started."
+msgstr "Serveur démarré"
 
-#msgid "Shot myself"
-#msgstr ""
+msgid "Shot myself"
+msgstr "Je me suis tiré dessus"
 
 # !!! Hlaseni nize nelze prelozit :-(
 # !!! Messages below cannot be translated :-(
+# (Sbgodin) Why?
 
 # Informace o vlajce, kterou sebrali hraci
 # Informations about flags grabbed by opponents
@@ -1733,26 +1736,26 @@ msgstr "ou rechargement (le temps avant rechargenemt).  Il peut aussi montrer le
 
 # BZFS Messages
 
-#msgid "You are now an administrator!"
-#msgstr ""
+msgid "You are now an administrator!"
+msgstr "Tu es maintenant un administrateur!"
 
-#msgid "Wrong Password!"
-#msgstr ""
+msgid "Wrong Password!"
+msgstr "Mauvais mot de passe"
 
-#msgid "unknown command"
-#msgstr ""
+msgid "unknown command"
+msgstr "commande inconnue"
 
-#msgid "Countdown started."
-#msgstr ""
+msgid "Countdown started."
+msgstr "compte à rebours démarré"
 
-#msgid "IP pattern added to banlist"
-#msgstr ""
+msgid "IP pattern added to banlist"
+msgstr "Motif IP ajouté à la liste des bannis"
 
-#msgid "malformed address"
-#msgstr ""
+msgid "malformed address"
+msgstr "Adresse malformée"
 
-#msgid "removed IP pattern"
-#msgstr ""
+msgid "removed IP pattern"
+msgstr "Motif IP retiré"
 
 msgid "time until a bad flag is dropped (if there's a time limit)."
 msgstr "restant avant qu'un mauvais drapeau soit jeté (s'il y a une limite de temps)."
