@@ -95,7 +95,7 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 
   // limit us to the main display
   const char *sd = "SDL_SINGLEDISPLAY=1";
-  putenv(sd);
+  putenv((char*) sd);
 
   // register modes
   initResolutions(_resolutions, _numResolutions, defaultResolutionIndex);
