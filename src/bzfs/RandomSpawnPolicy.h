@@ -27,7 +27,7 @@ public:
   virtual ~RandomSpawnPolicy();
 
   virtual const char *Name() const {
-    static char *name = "Random";
+    static const char *name = "Random";
     return name;
   }
 

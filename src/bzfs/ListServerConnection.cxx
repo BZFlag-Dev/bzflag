@@ -108,10 +108,10 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     int bytes = length;
     buf[bytes]=0;
     char* base = buf;
-    static char *tokGoodIdentifier = "TOKGOOD: ";
-    static char *tokBadIdentifier = "TOKBAD: ";
-    static char *unknownPlayer = "UNK: ";
-    static char *bzIdentifier = "BZID: ";
+    const char *tokGoodIdentifier = "TOKGOOD: ";
+    const char *tokBadIdentifier = "TOKBAD: ";
+    const char *unknownPlayer = "UNK: ";
+    const char *bzIdentifier = "BZID: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline

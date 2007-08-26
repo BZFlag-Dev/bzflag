@@ -69,10 +69,10 @@ void ServerList::readServerList()
 {
   char *base = (char *)theData;
   char *endS = base + theLen;
-  static char *tokenIdentifier = "TOKEN: ";
-  static char *noTokenIdentifier = "NOTOK: ";
-  static char *errorIdentifier = "ERROR: ";
-  static char *noticeIdentifier = "NOTICE: ";
+  const char *tokenIdentifier = "TOKEN: ";
+  const char *noTokenIdentifier = "NOTOK: ";
+  const char *errorIdentifier = "ERROR: ";
+  const char *noticeIdentifier = "NOTICE: ";
   // walks entire reply including HTTP headers
   while (base < endS) {
     // find next newline

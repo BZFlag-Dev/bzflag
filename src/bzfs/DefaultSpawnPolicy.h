@@ -33,7 +33,7 @@ public:
   virtual ~DefaultSpawnPolicy();
 
   virtual const char *Name() const {
-    static char *name = "Default";
+    static const char *name = "Default";
     return name;
   }
 

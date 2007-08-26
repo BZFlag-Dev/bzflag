@@ -28,7 +28,7 @@ bool HitWallEvent::updateBot(BZAdvancedRobot *bot) const
   return true;
 }
 
-messageParseStatus DeathEvent::parse(char **arguments, int count)
+messageParseStatus DeathEvent::parse(char **, int count)
 {
   if (count == 0)
     return ParseOk;

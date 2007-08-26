@@ -27,7 +27,7 @@ public:
   virtual ~DangerousSpawnPolicy();
 
   virtual const char *Name() const {
-    static char *name = "Dangerous";
+    static const char *name = "Dangerous";
     return name;
   }
 
