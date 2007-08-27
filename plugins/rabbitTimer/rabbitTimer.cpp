@@ -43,7 +43,7 @@ void rabbitTimer::process(bz_EventData *eventData)
 			bzAPIIntList pl;
 			bz_getPlayerIndexList(&pl);
 
-			for (int i = 0; i < pl.size() && currentRabbit == -1; i++)
+			for (unsigned int i = 0; i < pl.size() && currentRabbit == -1; i++)
 			{
 				bz_PlayerRecord* pr = bz_getPlayerByIndex(pl.get(i));
 
