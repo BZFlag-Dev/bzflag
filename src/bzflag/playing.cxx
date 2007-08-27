@@ -1509,8 +1509,10 @@ static void loadCachedWorld()
   // make world
   HUDDialogStack::get()->setFailedMessage("Preparing world...");
   drawFrame(0.0f);
-  if (world)
+  if (world) {
     delete world;
+    world = NULL;
+  }
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder)
