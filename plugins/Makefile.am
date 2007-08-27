@@ -15,6 +15,7 @@ SUBDIRS = \
 	nagware \
 	playHistoryTracker \
 	python \
+	rabbitTimer \
 	recordmatch \
 	regFlag \
 	serverControl \
