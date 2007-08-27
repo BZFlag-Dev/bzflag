@@ -2563,6 +2563,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     dieEvent.killerTeam = convertTeam(killer->getTeam());
   dieEvent.flagKilledWith = flagType->flagAbbv;
   victimData->getPlayerState(dieEvent.pos, dieEvent.rot);
+  dieEvent.time = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
