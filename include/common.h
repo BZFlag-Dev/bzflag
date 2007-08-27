@@ -299,6 +299,8 @@ typedef unsigned char	uint8_t;
 #endif
 
 #ifdef __cplusplus
+#ifndef DEFINED_FORCE_CAST
+#define DEFINED_FORCE_CAST
     template<class To, class From>
     inline To force_cast (From const & f)
     {
@@ -309,6 +311,7 @@ typedef unsigned char	uint8_t;
       fc.f = f;
       return fc.t;
     }
+#endif
 #endif
 
 #endif /* BZF_COMMON_H */

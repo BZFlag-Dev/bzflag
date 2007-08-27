@@ -67,6 +67,22 @@
 #define _ATTRIBUTE23 __attribute__ ((__format__ (__printf__, 2, 3)))
 #define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)))
 
+#ifdef __cplusplus
+#ifndef DEFINED_FORCE_CAST
+#define DEFINED_FORCE_CAST
+    template<class To, class From>
+    inline To force_cast (From const & f)
+    {
+      union {
+        From f;
+        To t;
+      } fc;
+      fc.f = f;
+      return fc.t;
+    }
+#endif
+#endif
+
 class bz_BasePlayerRecord;
 BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
