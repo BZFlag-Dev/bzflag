@@ -73,6 +73,7 @@ public:
       listPerms,
       masterBan,
       mute,
+      packetlosswarn,
       playerList,
       poll,
       pollBan,

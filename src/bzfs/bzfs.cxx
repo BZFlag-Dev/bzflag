@@ -3242,6 +3242,20 @@ static void jitterKick(int playerIndex)
   removePlayer(playerIndex, "jitter", true);
 }
 
+void packetLossKick(int playerIndex)
+{
+  char message[MessageLen];
+  sprintf(message,
+	  "You have been kicked due to excessive packetloss (you have been warned %d times).",
+	  clOptions->maxpacketlosswarn);
+  sendMessage(ServerPlayer, playerIndex, message);
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  snprintf(message, MessageLen,"Packetlosskick: %s",
+	   playerData->player.getCallSign());
+  sendMessage(ServerPlayer, AdminPlayers, message);
+  removePlayer(playerIndex, "packetloss", true);
+}
 
 static void adjustTolerances()
 {
@@ -3848,8 +3862,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       break;
 
     case MsgLagPing: {
-      bool warn, kick, jittwarn, jittkick;
-      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick);
+      bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
+      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3867,6 +3881,16 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	if (jittkick)
 	  jitterKick(t);
       }
+      if (plosswarn) {
+	char message[MessageLen];
+	sprintf(message,
+		"*** Server Warning: your packetloss is too high (%d ms) ***",
+		playerData->lagInfo.getLoss());
+	sendMessage(ServerPlayer, t, message);
+	if (plosskick)
+	  packetLossKick(t);
+      }
+
       break;
     }
 
@@ -4676,6 +4700,9 @@ int main(int argc, char **argv)
   // loading jitter thresholds
   LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
 			      (float)clOptions->maxjitterwarn);
+
+  // loading packetloss thresholds
+  LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh, (float)clOptions->maxpacketlosswarn);
 
   // loading player callsign/email filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,

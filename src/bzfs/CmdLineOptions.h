@@ -66,7 +66,7 @@ struct CmdLineOptions
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
-    teamFlagTimeout(30), maxlagwarn(10000), maxjitterwarn(10000),
+    teamFlagTimeout(30), maxlagwarn(10000), maxjitterwarn(10000), maxpacketlosswarn(10000),
     lagwarnthresh(-1.0), jitterwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
     linearAcceleration(_DEFAULT_LIN_ACCEL), angularAcceleration(_DEFAULT_ANGLE_ACCELL), useGivenPort(false),
@@ -132,10 +132,12 @@ struct CmdLineOptions
   int			teamFlagTimeout;
   int			maxlagwarn;
   int			maxjitterwarn;
+  int			maxpacketlosswarn;
 
 
   float			lagwarnthresh;
   float			jitterwarnthresh;
+  float			packetlosswarnthresh;
   float			idlekickthresh;
   float			timeLimit;
   float			timeElapsed;

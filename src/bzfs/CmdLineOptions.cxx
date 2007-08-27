@@ -95,6 +95,8 @@ const char *usageString =
 "[-noMasterBanlist]"
 "[-noradar]"
 "[-p <port>] "
+"[-packetlossdrop <num>] "
+"[-packetlosswarn <%>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
 "[-pidfile <filename>] "
@@ -193,6 +195,8 @@ const char *extraUsageString =
 "\t-noMasterBanlist: has public servers ignore the master ban list\n"
 "\t-noradar: disallow the use of radar\n"
 "\t-p: use alternative port (default=5154)\n"
+"\t-packetlossdrop: drop player after this many packetloss warnings\n"
+"\t-packetlosswarn: packetloss warning threshold [%]\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
 "\t-pidfile: write the process id into <filename> on startup\n"
@@ -832,6 +836,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.wksPort = ServerPort;
       else
 	options.useGivenPort = true;
+    } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.maxpacketlosswarn = atoi(argv[i]);
+    } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-passdb") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);

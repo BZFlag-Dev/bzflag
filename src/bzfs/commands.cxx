@@ -155,22 +155,6 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LagWarnCommand : ServerCommand {
-public:
-  LagWarnCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
-class LagDropCommand : ServerCommand {
-public:
-  LagDropCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class JitterWarnCommand : ServerCommand {
 public:
   JitterWarnCommand();
@@ -182,6 +166,22 @@ public:
 class JitterDropCommand : ServerCommand {
 public:
   JitterDropCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class LagWarnCommand : ServerCommand {
+public:
+  LagWarnCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class LagDropCommand : ServerCommand {
+public:
+  LagDropCommand();
 
   virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);
@@ -222,6 +222,23 @@ public:
 class IdListCommand : ServerCommand {
 public:
   IdListCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class PacketLossWarnCommand : public ServerCommand {
+public:
+  PacketLossWarnCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+
+class PacketLossDropCommand : public ServerCommand {
+public:
+  PacketLossDropCommand();
 
   virtual bool operator() (const char	 *commandLine,
 			   GameKeeper::Player *playerData);

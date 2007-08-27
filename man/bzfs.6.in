@@ -46,6 +46,8 @@ bzfs \- BZFlag game server
 [\fB\-j\fR]
 [\fB\-lagdrop \fIwarn\-count\fR]
 [\fB\-lagwarn \fR\fImilliseconds\fR]
+[\fB\-jitterdrop \fIwarn\-count\fR]
+[\fB\-jitterwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fR\URL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
@@ -54,6 +56,8 @@ bzfs \- BZFlag game server
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
 [\fB\-p \fIport\fR]
+[\fB\-packetlossdrop \fIwarn\-count\fR]
+[\fB\-packetlosswarn \fR\fIpercent\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-pidfile \fIfilename\fR]
@@ -248,6 +252,12 @@ network. This is the TCP/UDP/IP address the server will listen on.
 .B \-j
 Allows jumping.
 .TP 
+\fB\-jitterdrop \fIwarn\-count\fR
+Kicks players after \fIwarn\-count\fR jitter warnings.
+.TP 
+\fB\-jitterwarn \fImilliseconds\fR
+Send warnings to players that jitter more than \fImilliseconds\fR.
+.TP 
 \fB\-lagdrop \fIwarn\-count\fR
 Kicks players after \fIwarn\-count\fR lag warnings.
 .TP 
@@ -288,6 +298,12 @@ Server will not attempt to load the master ban list from the internet.
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB\-help\fR to print the default port, or use \fB\-d\fR debug printing.
+.TP 
+\fB\-packetlossdrop \fIwarn\-count\fR
+Kicks players after \fIwarn\-count\fR packetloss warnings.
+.TP 
+\fB\-packetlosswarn \fIpercent\fR
+Send warnings to players that have more more than \fIpercent\fR loss.
 .TP 
 \fB\-passdb \fIfile\fR
 Load passwords from file
@@ -799,6 +815,24 @@ bans all players from foo.com for 2 minutes
 List all of the host patterns currently banned from this server.
 
 .TP 
+.B /jitterwarn [\fItime\fR]
+Change the maximum allowed jitter time. Example:
+.ft CW
+.nf
+.ne 2
+/jitterwarn 50
+.ft R
+
+.TP
+.B /jitterdrop [\fIcount\fR]
+Change the number of jitter warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/jitterdrop 3
+.ft R
+
+.TP 
 .B /kick {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
 Kick a player off the server. Example:
 .ft CW
@@ -851,6 +885,24 @@ Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
 This command removes the TALK permission that is enabled by default for all 
 players. (disabling TALK by default would let you run a "silent" server)
+
+.TP 
+.B /packetlosswarn [\fItime\fR]
+Change the maximum allowed packetloss. Example:
+.ft CW
+.nf
+.ne 2
+/packetloss 1
+.ft R
+
+.TP
+.B /packetlossdrop [\fIcount\fR]
+Change the number of packetloss warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/packetloss 3
+.ft R
 
 .TP 
 .B /playerlist
