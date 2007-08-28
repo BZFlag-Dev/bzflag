@@ -41,11 +41,14 @@ void ThiefControl::process( bz_EventData *eventData )
     return;
 
   bz_BasePlayerRecord *playerFrom = bz_getPlayerByIndex(data->fromPlayerID);
+
+  if (!playerFrom)
+    return;
+
   bz_BasePlayerRecord *playerTo = bz_getPlayerByIndex(data->toPlayerID);
 
-  if(!playerFrom || !playerTo) {
+  if(!playerTo) {
     bz_freePlayerRecord(playerFrom);
-    bz_freePlayerRecord(playerTo);
     return;
   }
 
