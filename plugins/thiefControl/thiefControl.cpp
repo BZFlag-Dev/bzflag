@@ -32,24 +32,89 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 void ThiefControl::process( bz_EventData *eventData )
 {
   bz_FlagTransferredEventData_V1 *data = (bz_FlagTransferredEventData_V1 *) eventData;
+  const std::string noStealMsg = "Flag dropped. Don't steal from teammates!";
+
+  if(!data)
+    return;
+
+  if(data->eventType != bz_eFlagTransferredEvent)
+    return;
+
   bz_BasePlayerRecord *playerFrom = bz_getPlayerByIndex(data->fromPlayerID);
   bz_BasePlayerRecord *playerTo = bz_getPlayerByIndex(data->toPlayerID);
 
-  if (eventData) {
-    switch (eventData->eventType) {
-    case bz_eFlagTransferredEvent:
+  if(!playerFrom || !playerTo) {
+    bz_freePlayerRecord(playerFrom);
+    bz_freePlayerRecord(playerTo);
+    return;
+  }
 
-      if (playerFrom && playerTo) {
-	if ((playerTo->team != eRogueTeam || bz_getGameType() == eRabbitGame) && playerFrom->team == playerTo->team) {
+
+  switch(bz_getGameType()) {
+
+    case eTeamFFAGame:
+    {
+      if(playerTo->team == playerFrom->team &&
+	 playerTo->team != eRogueTeam) {
+
+	data->action = data->DropThief;
+	bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+
+      }
+
+    }
+      break;
+
+
+    case eClassicCTFGame:
+    {
+
+      // Allow teammates to steal team flags
+      // This will allow someone to steal a team flag in order
+      // to possibly capture it faster.
+      bool allowTransfer = false;
+
+      if(playerTo->team == playerFrom->team &&
+	 playerTo->team != eRogueTeam) {
+
+	std::string flagT = data->flagType;
+
+	// Allow theft of team flags only
+	allowTransfer = (flagT == "R*" || flagT == "G*" || flagT == "B*" || flagT == "P*");
+
+	if(!allowTransfer) {
 	  data->action = data->DropThief;
-	  bz_sendTextMessage(BZ_SERVER, data->toPlayerID, "Flag dropped. Don't steal from teammates!");
+	  bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
 	}
       }
+    }
       break;
+
+
+    case eOpenFFAGame:
+    {
+    }
+      break;
+
+
+    case eRabbitGame:
+    {
+      if(playerTo->team == playerFrom->team) {
+
+	data->action = data->DropThief;
+	bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+      }
+    }
+      break;
+
+
     default:
       break;
-    }
+
   }
+
+  bz_freePlayerRecord(playerTo);
+  bz_freePlayerRecord(playerFrom);
 }
 
 // Local Variables: ***
