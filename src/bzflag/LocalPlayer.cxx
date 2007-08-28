@@ -458,6 +458,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
+  float nominalPlanarSpeed2
+    = newVelocity[0] * newVelocity[0]
+    + newVelocity[1] * newVelocity[1];
+
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     float tmpPos[3], tmpAzimuth;
@@ -653,6 +657,15 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newVelocity[0] = (newPos[0] - oldPosition[0]) * oodt;
     newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
     newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
+
+    float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
+      + newVelocity[1] * newVelocity[1];
+    float scaling = nominalPlanarSpeed2 / newPlanarSpeed2;
+    if (scaling > 1.0f) {
+      scaling = sqrtf(scaling);
+      newVelocity[0] /= scaling;
+      newVelocity[1] /= scaling;
+    }
   }
 
   // see if we teleported
