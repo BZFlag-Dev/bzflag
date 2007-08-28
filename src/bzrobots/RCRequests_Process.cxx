@@ -257,6 +257,8 @@ bool GetPlayersReq::process(RCRobotPlayer *)
   for (int i = 0; i < curMaxPlayers; i++) {
     if (!player[i])
       continue;
+    if (robots[0]->getId() == player[i]->getId())
+      continue;
 
     TeamColor team = player[i]->getTeam();
     if (team == ObserverTeam)

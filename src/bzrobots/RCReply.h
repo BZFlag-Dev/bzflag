@@ -27,7 +27,7 @@ class BZAdvancedRobot;
 
 class RCReply :public RCMessage<RCReply> {
   public:
-    virtual bool updateBot(BZAdvancedRobot *) const { return true; }
+    virtual bool updateBot(const BZAdvancedRobot *) const { return true; }
     virtual messageParseStatus parse(char **arguments, int count) = 0;
     virtual std::string getType() const = 0;
     virtual void getParameters(std::ostream &stream) const = 0;

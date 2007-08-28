@@ -46,7 +46,7 @@ class EventReply : public RCReply
     std::string getType() const { return "Event"; }
     messageParseStatus parse(char **arguments, int count);
     void getParameters(std::ostream &stream) const;
-    bool updateBot(BZAdvancedRobot *robot) const;
+    bool updateBot(const BZAdvancedRobot *robot) const;
 };
 
 struct CommandDoneReply : public RCReply
@@ -66,7 +66,7 @@ struct GunHeatReply : public RCReply
   std::string getType() const { return "GunHeat"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float heat;
 };
@@ -78,7 +78,7 @@ struct DistanceRemainingReply : public RCReply
   std::string getType() const { return "DistanceRemaining"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
   
   private: float distance;
 };
@@ -90,7 +90,7 @@ struct TurnRemainingReply : public RCReply
   std::string getType() const { return "TurnRemaining"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
   
   private: float turn;
 };
@@ -120,7 +120,7 @@ struct BattleFieldSizeReply : public RCReply
   std::string getType() const { return "BattleFieldSize"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float size;
 };
@@ -132,7 +132,7 @@ struct XReply : public RCReply
   std::string getType() const { return "X"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float x;
 };
@@ -140,10 +140,10 @@ struct YReply : public RCReply
 {
   YReply() {}
   YReply(float _y) :y(_y) {}
-  std::string getType() const { return "X"; }
+  std::string getType() const { return "Y"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float y;
 };
@@ -151,10 +151,10 @@ struct ZReply : public RCReply
 {
   ZReply() {}
   ZReply(float _z) :z(_z) {}
-  std::string getType() const { return "X"; }
+  std::string getType() const { return "Z"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float z;
 };
@@ -166,7 +166,7 @@ struct WidthReply : public RCReply
   std::string getType() const { return "Width"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float width;
 };
@@ -177,7 +177,7 @@ struct HeightReply : public RCReply
   std::string getType() const { return "Height"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float height;
 };
@@ -188,7 +188,7 @@ struct LengthReply : public RCReply
   std::string getType() const { return "Length"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float length;
 };
@@ -200,7 +200,7 @@ struct HeadingReply : public RCReply
   std::string getType() const { return "Heading"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: float heading;
 };
@@ -211,7 +211,7 @@ struct PlayersBeginReply : public RCReply
   std::string getType() const { return "PlayersBegin"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 };
 
 struct PlayersReply : public RCReply
@@ -221,7 +221,7 @@ struct PlayersReply : public RCReply
   std::string getType() const { return "Players"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  bool updateBot(BZAdvancedRobot *robot) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
 
   private: Tank tank;
 };

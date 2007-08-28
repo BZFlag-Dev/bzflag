@@ -40,7 +40,7 @@ class RCLinkFrontend : public RCLink
     RCReply* peekReply();
     State getDisconnectedState();
     bool waitForReply(const std::string command);
-    bool sendAndProcess(const RCRequest &request, BZAdvancedRobot *bot);
+    bool sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot);
 };
 
 #endif

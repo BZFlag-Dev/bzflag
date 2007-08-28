@@ -342,6 +342,7 @@ bzrobot_pyext_la_SOURCES = \
 	Tank.h \
 	bzrobot_python_wrap.cxx \
 	bzrobot_python_wrap.h
+
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
 
 BUILT_SOURCES = \

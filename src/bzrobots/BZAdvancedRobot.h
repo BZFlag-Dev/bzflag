@@ -25,14 +25,14 @@ class RCLinkFrontend;
 
 class BZAdvancedRobot
 {
-  RCLinkFrontend *link;
+  mutable RCLinkFrontend *link;
   bool compatability;
 
   public:
     /* These are related to controlling the bot. */
     void execute();
-    double getDistanceRemaining();
-    double getTurnRemaining();
+    double getDistanceRemaining() const;
+    double getTurnRemaining() const;
     void setAhead(double distance);
     void setFire();
     // TODO: Implement 'Bullet setFireBullet()'?
@@ -42,21 +42,21 @@ class BZAdvancedRobot
     void setStop();
     void setStop(bool overwrite);
     void setTurnLeft(double degrees);
-    double getBattleFieldSize();
+    double getBattleFieldSize() const;
 
     // These are normally in Robot and not AdvancedRobot, but due to
     // the upside-down hierarchy we have - they're here instead ;-)
-    double getGunHeat();
-    double getHeading();
-    double getHeight();
-    double getWidth();
-    double getLength();
-    void getPlayers();
-    long getTime();
-    double getVelocity();
-    double getX();
-    double getY();
-    double getZ();
+    double getGunHeat() const;
+    double getHeading() const;
+    double getHeight() const;
+    double getWidth() const;
+    double getLength() const;
+    void getPlayers() const;
+    long getTime() const;
+    double getVelocity() const;
+    double getX() const;
+    double getY() const;
+    double getZ() const;
 
     virtual ~BZAdvancedRobot() {}
     BZAdvancedRobot();
@@ -88,17 +88,22 @@ class BZAdvancedRobot
     //This method is called if your robot wins a battle.
 
     /* These are related to the internal state/setup of the bot. */
-    bool getCompatability();
+    bool getCompatability() const;
     void setCompatability(bool newState);
     
     void setLink(RCLinkFrontend *_link);
+
+    /* These are helper functions. */
+    /* This returns the bearing between our current angle and the location of the tank. */
+    double getBearing(const Tank &tank) const;
+    double getBearing(double x, double y) const;
     
-    float gunHeat, distanceRemaining, turnRemaining;
-    float battleFieldSize;
-    float yPosition, xPosition, zPosition;
-    float tankWidth, tankLength, tankHeight;
-    float heading;
-    std::vector<Tank> players;
+    mutable float gunHeat, distanceRemaining, turnRemaining;
+    mutable float battleFieldSize;
+    mutable float yPosition, xPosition, zPosition;
+    mutable float tankWidth, tankLength, tankHeight;
+    mutable float heading;
+    mutable std::vector<Tank> players;
 };
 
 #endif

@@ -1,12 +1,12 @@
 #include "BZAdvancedRobot.h"
-
+#include "MessageUtilities.h"
 #include "RCRequests.h"
 
 BZAdvancedRobot::BZAdvancedRobot() :link(NULL), compatability(true)
 {
 }
 
-bool BZAdvancedRobot::getCompatability() { return compatability; }
+bool BZAdvancedRobot::getCompatability() const { return compatability; }
 void BZAdvancedRobot::setCompatability(bool newState) { compatability = newState; }
 void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
 {
@@ -22,18 +22,18 @@ void BZAdvancedRobot::run()
   }
 }
 
-void BZAdvancedRobot::execute()
+void BZAdvancedRobot::execute() 
 {
   link->sendAndProcess(ExecuteReq(), this);
 }
 
-double BZAdvancedRobot::getDistanceRemaining()
+double BZAdvancedRobot::getDistanceRemaining() const 
 {
   link->sendAndProcess(GetDistanceRemainingReq(), this);
   return distanceRemaining;
 }
 
-double BZAdvancedRobot::getTurnRemaining()
+double BZAdvancedRobot::getTurnRemaining() const 
 {
   link->sendAndProcess(GetTurnRemainingReq(), this);
   return turnRemaining;
@@ -80,7 +80,7 @@ void BZAdvancedRobot::setTurnLeft(double degrees)
 }
 
 
-double BZAdvancedRobot::getBattleFieldSize()
+double BZAdvancedRobot::getBattleFieldSize() const 
 {
   link->sendAndProcess(GetBattleFieldSizeReq(), this);
   return battleFieldSize;
@@ -88,71 +88,90 @@ double BZAdvancedRobot::getBattleFieldSize()
 
 // These are normally in Robot and not AdvancedRobot, but due to
 // the upside-down hierarchy we have - they're here instead ;-)
-double BZAdvancedRobot::getGunHeat()
+double BZAdvancedRobot::getGunHeat() const 
 {
   link->sendAndProcess(GetGunHeatReq(), this);
   return gunHeat;
 }
 
-double BZAdvancedRobot::getHeading()
+double BZAdvancedRobot::getHeading() const 
 {
   link->sendAndProcess(GetHeadingReq(), this);
   return heading;
 }
 
-double BZAdvancedRobot::getHeight()
+double BZAdvancedRobot::getHeight() const 
 {
   link->sendAndProcess(GetHeightReq(), this);
   return tankHeight;
 }
 
-double BZAdvancedRobot::getWidth()
+double BZAdvancedRobot::getWidth() const 
 {
   link->sendAndProcess(GetWidthReq(), this);
   return tankWidth;
 }
 
-double BZAdvancedRobot::getLength()
+double BZAdvancedRobot::getLength() const 
 {
   link->sendAndProcess(GetLengthReq(), this);
   return tankLength;
 }
 
-void BZAdvancedRobot::getPlayers()
+void BZAdvancedRobot::getPlayers() const 
 {
   link->sendAndProcess(GetPlayersReq(), this);
 }
 
-long BZAdvancedRobot::getTime()
+long BZAdvancedRobot::getTime() const 
 {
   /* TODO: Implement this. */
   return 0;
 }
 
-double BZAdvancedRobot::getVelocity()
+double BZAdvancedRobot::getVelocity() const 
 {
   /* TODO: Implement this. */
   return 0.0;
 }
 
-double BZAdvancedRobot::getX()
+double BZAdvancedRobot::getX() const 
 {
   link->sendAndProcess(GetXReq(), this);
   return xPosition;
 }
 
-double BZAdvancedRobot::getY()
+double BZAdvancedRobot::getY() const 
 {
   link->sendAndProcess(GetYReq(), this);
   return yPosition;
 }
 
-double BZAdvancedRobot::getZ()
+double BZAdvancedRobot::getZ() const 
 {
   link->sendAndProcess(GetZReq(), this);
   return zPosition;
 }
 
+double BZAdvancedRobot::getBearing(const Tank &tank) const
+{
+  return getBearing(tank.position[0], tank.position[1]);
+}
+
+double BZAdvancedRobot::getBearing(double x, double y) const
+{
+  float vec[2] = {x - getX(), y - getY()};
+
+  if (vec[0] == 0 && vec[1] == 0)
+    return 0.0;
+
+  // Convert to a unit vector.
+  float len = sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
+  vec[0] /= len; vec[1] /= len;
+
+  return MessageUtilities::overflow(atan2(vec[1], vec[0])*180.0/M_PI - getHeading(), -180.0, 180.0);
+
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -41,7 +41,7 @@ void EventReply::getParameters(std::ostream &stream) const
     notification->getParameters(stream);
   }
 }
-bool EventReply::updateBot(BZAdvancedRobot *robot) const
+bool EventReply::updateBot(const BZAdvancedRobot *robot) const
 {
   if (notification)
     notification->updateBot(robot);
@@ -72,7 +72,7 @@ void GunHeatReply::getParameters(std::ostream &stream) const
 {
   stream << heat;
 }
-bool GunHeatReply::updateBot(BZAdvancedRobot *robot) const
+bool GunHeatReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->gunHeat = heat;
   return true;
@@ -86,7 +86,7 @@ void DistanceRemainingReply::getParameters(std::ostream &stream) const
 {
   stream << distance;
 }
-bool DistanceRemainingReply::updateBot(BZAdvancedRobot *robot) const
+bool DistanceRemainingReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->distanceRemaining = distance;
   return true;
@@ -100,7 +100,7 @@ void TurnRemainingReply::getParameters(std::ostream &stream) const
 {
   stream << turn;
 }
-bool TurnRemainingReply::updateBot(BZAdvancedRobot *robot) const
+bool TurnRemainingReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->turnRemaining = turn;
   return true;
@@ -133,7 +133,7 @@ void BattleFieldSizeReply::getParameters(std::ostream &stream) const
 {
   stream << size;
 }
-bool BattleFieldSizeReply::updateBot(BZAdvancedRobot *robot) const
+bool BattleFieldSizeReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->battleFieldSize = size;
   return true;
@@ -147,7 +147,7 @@ void XReply::getParameters(std::ostream &stream) const
 {
   stream << x;
 }
-bool XReply::updateBot(BZAdvancedRobot *robot) const
+bool XReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->xPosition = x;
   return true;
@@ -161,7 +161,7 @@ void YReply::getParameters(std::ostream &stream) const
 {
   stream << y;
 }
-bool YReply::updateBot(BZAdvancedRobot *robot) const
+bool YReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->yPosition = y;
   return true;
@@ -174,7 +174,7 @@ void ZReply::getParameters(std::ostream &stream) const
 {
   stream << z;
 }
-bool ZReply::updateBot(BZAdvancedRobot *robot) const
+bool ZReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->zPosition = z;
   return true;
@@ -188,7 +188,7 @@ void WidthReply::getParameters(std::ostream &stream) const
 {
   stream << width;
 }
-bool WidthReply::updateBot(BZAdvancedRobot *robot) const
+bool WidthReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->tankWidth = width;
   return true;
@@ -201,7 +201,7 @@ void HeightReply::getParameters(std::ostream &stream) const
 {
   stream << height;
 }
-bool HeightReply::updateBot(BZAdvancedRobot *robot) const
+bool HeightReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->tankHeight = height;
   return true;
@@ -214,7 +214,7 @@ void LengthReply::getParameters(std::ostream &stream) const
 {
   stream << length;
 }
-bool LengthReply::updateBot(BZAdvancedRobot *robot) const
+bool LengthReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->tankLength = length;
   return true;
@@ -228,7 +228,7 @@ void HeadingReply::getParameters(std::ostream &stream) const
 {
   stream << heading;
 }
-bool HeadingReply::updateBot(BZAdvancedRobot *robot) const
+bool HeadingReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->heading = heading;
   return true;
@@ -241,7 +241,7 @@ messageParseStatus PlayersBeginReply::parse(char **, int count)
 void PlayersBeginReply::getParameters(std::ostream &) const
 {
 }
-bool PlayersBeginReply::updateBot(BZAdvancedRobot *robot) const
+bool PlayersBeginReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->players.clear();
   return true;
@@ -255,7 +255,7 @@ void PlayersReply::getParameters(std::ostream &stream) const
 {
   stream << tank;
 }
-bool PlayersReply::updateBot(BZAdvancedRobot *robot) const
+bool PlayersReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->players.push_back(tank);
   return true;

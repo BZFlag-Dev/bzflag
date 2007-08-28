@@ -32,6 +32,14 @@ void RCMessageFactory<RCRequest>::initialize()
     ADD_LOOKUP(GetMyTanks);
     ADD_LOOKUP(GetOtherTanks);
     ADD_LOOKUP(GetConstants);
+    ADD_LOOKUP(GetX);
+    ADD_LOOKUP(GetY);
+    ADD_LOOKUP(GetZ);
+    ADD_LOOKUP(SetResume);
+    ADD_LOOKUP(GetWidth);
+    ADD_LOOKUP(GetHeight);
+    ADD_LOOKUP(GetLength);
+    ADD_LOOKUP(GetHeading);
 }
 #undef ADD_LOOKUP
 
@@ -48,6 +56,13 @@ void RCMessageFactory<RCReply>::initialize()
     ADD_LOOKUP(TickDuration);
     ADD_LOOKUP(TickRemaining);
     ADD_LOOKUP(BattleFieldSize);
+    ADD_LOOKUP(X);
+    ADD_LOOKUP(Y);
+    ADD_LOOKUP(Z);
+    ADD_LOOKUP(Width);
+    ADD_LOOKUP(Height);
+    ADD_LOOKUP(Length);
+    ADD_LOOKUP(Heading);
     ADD_LOOKUP(PlayersBegin);
     ADD_LOOKUP(Players);
 }
@@ -68,4 +83,3 @@ void RCMessageFactory<RCEvent>::initialize()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -53,6 +53,15 @@ namespace MessageUtilities
         return min;
       return val;
     }
+  template <typename T>
+    static T overflow(T val, T min, T max)
+    {
+      if (val > max)
+        return min + (val - max);
+      if (val < min)
+        return max + (val - min);
+      return val;
+    }
 }
 
 #endif

@@ -25,7 +25,7 @@ RCLink::State RCLinkFrontend::getDisconnectedState()
     return RCLink::Disconnected;
 }
 
-bool RCLinkFrontend::sendAndProcess(const RCRequest &request, BZAdvancedRobot *bot)
+bool RCLinkFrontend::sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot)
 {
   if (!send(request))
     return false;
