@@ -48,8 +48,13 @@ void RegFlag::process ( bz_EventData *eventData )
     }
 
   player = bz_getPlayerByIndex(playerID);
-  if (!player || player->globalUser)
+  if (!player)
     return;
+  if (player->globalUser) {
+    bz_freePlayerRecord(player);
+    return;
+  }
+  bz_freePlayerRecord(player);
 
   const char* flagAbrev = bz_getPlayerFlag(playerID);
   if (!flagAbrev)
