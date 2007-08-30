@@ -91,7 +91,7 @@ copy ..\..\src\bzadmin\debug\*.exe ..\..\*.exe
 				InlineFunctionExpansion="1"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
+				AdditionalIncludeDirectories="..\..\win32;..\..\include;..\..\src\bzflag;.\;..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -108,7 +108,7 @@ copy ..\..\src\bzadmin\debug\*.exe ..\..\*.exe
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="pdcurses.lib ws2_32.lib winmm.lib libcurl.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib libcurl.lib"
 				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -357,9 +357,21 @@ copy ..\..\src\bzadmin\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\CursesMenu.cxx">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\CursesUI.cxx">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\OptionParser.cxx">
