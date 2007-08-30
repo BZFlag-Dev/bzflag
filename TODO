@@ -403,6 +403,27 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
   Provide some way to overide and controll it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
 
+//------------------------- BZROBOTS TODO--------------------------------
+
+? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully", shouldn't be happening).
+? Make RCLink more c++-ish, by e.g. using operator << and not sendf/vsendf/send.
+! Implement all events as per RoboCode standards.
+    onSkippedTurn(const SkippedTurnEvent &)
+    onBulletHit(const BulletHitEvent &)
+    onBulletHitBullet(const BulletHitBulletEvent &)
+    onBulletMissed(const BulletMissedEvent &)
+    onHitByBullet(const HitByBulletEvent &)
+    onHitRobot(const HitRobotEvent &)
+    onRobotDeath(const RobotDeathEvent &)
+    onScannedRobot(const ScannedRobotEvent &)
+    onWin(const WinEvent &)
+! Implement proper RoboCode compatability (radar, turret-turning, more?)
+! Make various classes use operator<<(ostream, class) instead of ostream-taking methods.
+! Implement more data in Tank (e.g. velocity & angular velocity?)
+
+ Legend:
+  ! Definite task
+  ? Proposed task
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
