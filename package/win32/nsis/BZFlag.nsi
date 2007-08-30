@@ -165,7 +165,6 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
-  File ..\..\..\zlibwapi.dll
   File ..\..\..\glew32.dll
 
   ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
