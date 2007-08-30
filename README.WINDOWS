@@ -46,3 +46,8 @@ Use the VC8 projects in the MSVC directory.
 
 If you wish to build for 64 bit Windows, you must use MSVC 8.0 (visual c++ .net 2005),
 and use the 64 bit targets.
+
+Please note that due to the way BZRobots is writen it can not be built or run on windows
+using the visual C++ system. The problem comes down to how windows exports functions
+to DLLs, as compred to how unix like systems use shared objects.It is not built as part 
+of the VisualC++ projects.
