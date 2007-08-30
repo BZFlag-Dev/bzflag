@@ -660,7 +660,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
       + newVelocity[1] * newVelocity[1];
-    float scaling = nominalPlanarSpeed2 / newPlanarSpeed2;
+    float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
     if (scaling > 1.0f) {
       scaling = sqrtf(scaling);
       newVelocity[0] /= scaling;
