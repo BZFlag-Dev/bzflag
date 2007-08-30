@@ -1,5 +1,5 @@
 from bzrobot import BZAdvancedRobot
-from math import sqrt
+from math import sqrt, fabs
 from time import sleep
 
 # This bot just turn towards, then drive towards, the first player to join.
@@ -44,7 +44,7 @@ class StalkBot(BZAdvancedRobot):
                 return
 
             bearing = self.getBearing(tank)
-            if bearing > 5:
+            if fabs(bearing) > 5:
                 self.setTurnLeft(bearing)
                 while True:
                     self.execute()

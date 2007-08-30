@@ -52,15 +52,14 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
     /* Is the tick still running? */
     if (lastTickAt + tickDuration >= timeNow)
     {
+      const float *vel = getVelocity();
+      distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
       if (distanceRemaining > 0.0f)
       {
         if (distanceForward)
           setDesiredSpeed(speed);
         else
           setDesiredSpeed(-speed);
-
-        const float *vel = getVelocity();
-        distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
       }
       else
       {
@@ -71,13 +70,24 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
       {
         if (turnLeft)
         {
-          setDesiredAngVel(turnRate);
           turnRemaining -= getAngularVelocity() * dt;
+
+          if (turnRemaining <= 0.0f)
+            setDesiredAngVel(0);
+          else if (turnRate * dt > turnRemaining)
+            setDesiredAngVel(turnRemaining/dt);
+          else
+            setDesiredAngVel(turnRate);
         }
         else
         {
-          setDesiredAngVel(-turnRate);
           turnRemaining += getAngularVelocity() * dt;
+          if (turnRemaining <= 0.0f)
+            setDesiredAngVel(0);
+          else if (turnRate * dt > turnRemaining)
+            setDesiredAngVel(-turnRemaining/dt);
+          else
+            setDesiredAngVel(-turnRate);
         }
       }
       else
