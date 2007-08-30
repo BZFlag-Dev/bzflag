@@ -59,7 +59,9 @@ public:
   float		getAngle() const;
   const float*	getForward() const;
   const float*	getVelocity() const;
+  float         getUserSpeed() const;
   float		getAngularVelocity() const;
+  float         getUserAngVel() const;
   int		getPhysicsDriver() const;
   int		getDeathPhysicsDriver() const;
   float		getRadius() const;
@@ -405,10 +407,19 @@ inline const float*	Player::getVelocity() const
 {
   return state.velocity;
 }
+inline float         Player::getUserSpeed() const
+{
+  return state.userSpeed;
+}
 
 inline float		Player::getAngularVelocity() const
 {
   return state.angVel;
+}
+
+inline float         Player::getUserAngVel() const
+{
+  return state.userAngVel;
 }
 
 inline const float	Player::getLastUpdateTime() const
