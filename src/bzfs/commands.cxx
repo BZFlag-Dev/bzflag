@@ -488,6 +488,8 @@ static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
 static JitterWarnCommand  jitterWarnCommand;
 static JitterDropCommand  jitterDropCommand;
+static PacketLossWarnCommand  packetLossWarnCommand;
+static PacketLossDropCommand  packetLossDropCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static IdleTimeCommand    idleTimeCommand;
@@ -559,6 +561,10 @@ JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
   "[milliseconds] - display or set the maximum allowed jitter time") {}
 JitterDropCommand::JitterDropCommand()	 : ServerCommand("/jitterdrop",
   "[count] - display or set the number of jitter warings before a player is kicked") {}
+  PacketLossWarnCommand::PacketLossWarnCommand()	 : ServerCommand("/packetlosswarn",
+  "<%> - change the maximum allowed packetloss") {}
+PacketLossDropCommand::PacketLossDropCommand()	 : ServerCommand("/packetlossdrop",
+  "<count> - display or set the number of packetloss warnings before a player is kicked") {}
 LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
   "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
@@ -1626,6 +1632,55 @@ bool JitterDropCommand::operator() (const char	 *message,
   return true;
 }
 
+bool PacketLossWarnCommand::operator() (const char  *message,
+					GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::packetlosswarn)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the packetlosswarn command");
+    return true;
+  }
+
+  char reply[MessageLen] = {0};
+  if (message[15] == ' ') {
+    const char *maxloss = message + 16;
+    clOptions->packetlosswarnthresh = (float) (atoi(maxloss) / 1000.0);
+    snprintf(reply, MessageLen, "packetlosswarn is now %d%%",
+	     int(clOptions->packetlosswarnthresh * 1000 + 0.5));
+  } else {
+    snprintf(reply, MessageLen, "packetlosswarnthresh is set to %d%%",
+	     int(clOptions->packetlosswarnthresh * 1000 + 0.5));
+  }
+  LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh,
+				  (float)clOptions->maxpacketlosswarn);
+  sendMessage(ServerPlayer, t, reply);
+  return true;
+}
+
+bool PacketLossDropCommand::operator() (const char  *message,
+					GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::packetlosswarn)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the packetlossdrop command");
+    return true;
+  }
+
+  char reply[MessageLen] = {0};
+  if (message[15] == ' ') {
+    const char *maxlosswarn = message + 16;
+    clOptions->maxpacketlosswarn = atoi(maxlosswarn);
+    snprintf(reply, MessageLen, "packetlossdrop is now %d", clOptions->maxpacketlosswarn);
+  } else {
+    snprintf(reply, MessageLen, "packetlossdrop is set to %d", clOptions->maxpacketlosswarn);
+  }
+  LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh,
+				  (float)clOptions->maxpacketlosswarn);
+  sendMessage(ServerPlayer, t, reply);
+  return true;
+}
 
 bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 {
