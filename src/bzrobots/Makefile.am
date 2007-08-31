@@ -318,7 +318,7 @@ LDADD =	\
 TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
-	TestRobot.cxx \
+	../../bots/testbot/TestRobot.cxx \
 	TestRobot.h
 
 if BZROBOTS_PYTHON_ENABLED
