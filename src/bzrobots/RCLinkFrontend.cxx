@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#endif 
 #include <errno.h>
 #include <stdarg.h>
 

@@ -11,10 +11,15 @@
  */
 
 #include "SharedObjectLoader.h"
+#ifndef _WIN32
 #include "dlfcn.h"
+#endif
 
 bool SharedObjectLoader::load(std::string filename)
 {
+#ifdef _WIN32
+	return false;
+#else
   char *err;
 
   if (filename.find('/') == std::string::npos)
@@ -44,18 +49,29 @@ bool SharedObjectLoader::load(std::string filename)
   }
 
   return true;
+#endif
 }
 SharedObjectLoader::~SharedObjectLoader()
 {
+#ifndef _WIN32
   dlclose(soHandle);
+#endif
 }
 BZAdvancedRobot *SharedObjectLoader::create(void)
 {
+#ifdef _WIN32
+	return NULL;
+#else
   return (*createFunction)();
+#endif
 }
 void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
 {
+#ifdef _WIN32
+	return;
+#else
   (*destroyFunction)(instance);
+#endif
 }
 
 // Local Variables: ***

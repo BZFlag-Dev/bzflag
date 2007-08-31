@@ -80,6 +80,8 @@ class RCLink {
     }
 
   protected:
+	bool isFrontEnd;
+
     State status;
     int listenfd, connfd;
     char recvbuf[RC_LINK_RECVBUFLEN];
@@ -91,6 +93,68 @@ class RCLink {
   private:
     std::ostream *specificLogger;
 };
+
+// Cheap ass packet system for local only transfers
+
+class CLocalTransferPacket
+{
+public:
+	unsigned int size;
+	char		*data;
+
+	CLocalTransferPacket( unsigned int _size = 0, const char* _data = NULL )
+	{
+		size = _size;
+		if (_data)
+		{
+			data = (char*)malloc(size);
+			memcpy(data,_data,size);
+		}
+		else
+			data = NULL;
+	}
+	~CLocalTransferPacket()
+	{
+		if (data)
+			free(data);
+	}
+
+	CLocalTransferPacket(const CLocalTransferPacket& r)
+	{
+		size = r.size;
+		if (r.data)
+		{
+			data = (char*)malloc(size);
+			memcpy(data,r.data,size);
+		}
+		else
+			data = NULL;
+	}
+};
+
+extern std::vector<CLocalTransferPacket> messagesToFront,messagesToBack;
+extern bool fakeNetConnect;
+
+void fakenetConnectFrontToBack ( void );
+void fakenetDisconect ( void );
+
+void fakeNetResetFrontEnd ( void );
+void fakeNetResetBackEnd ( void );
+
+void fakeNetSendToFrontEnd( unsigned int s, const char *d );
+void fakeNetSendToBackEnd( unsigned int s, const char *d );
+
+unsigned int fakeNetPendingFrontEnd( void );
+unsigned int fakeNetPendingBackEnd( void );
+
+unsigned int fakeNetNextPacketSizeFrontEnd( void );
+unsigned int fakeNetNextPacketSizeBackEnd( void );
+
+char* fakeNetNextPacketDataFrontEnd( void );
+char* fakeNetNextPacketDataBackEnd( void );
+
+void fakeNetPopPendingPacketFrontEnd( void );
+void fakeNetPopPendingPacketBackEnd( void );
 
 
 //

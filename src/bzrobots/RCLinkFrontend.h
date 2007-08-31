@@ -33,7 +33,7 @@ class RCLinkFrontend : public RCLink
     bool hasReply(const std::string command) const;
 
   public:
-    RCLinkFrontend() :RCLink(FrontendLogger::pInstance()), replies(NULL) {}
+    RCLinkFrontend() :RCLink(FrontendLogger::pInstance()), replies(NULL) {isFrontEnd = true;}
     bool update();
     bool parseCommand(char *cmdline);
     RCReply* popReply();

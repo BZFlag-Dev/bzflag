@@ -16,11 +16,18 @@ bool MessageUtilities::parse(const char *string, bool &dest)
 template <>
 bool MessageUtilities::parse(const char *string, float &dest)
 {
-  char *endptr;
-  dest = strtof(string, &endptr);
-  if (endptr == string)
-    return false;
-
+	if (sscanf(string,"%f",&dest) != 1)
+		return false;
+#ifdef _OLD_CRAP
+	#ifndef _WIN32
+	char *endptr;
+	dest = strtof(string, &endptr);
+	if (endptr == string)
+		return false;
+	#else
+		dest = (float)atof(string);
+	#endif
+#endif
   /* We don't want NaN no matter what - it's of no use in this scenario.
    * (And strtof will allow the string "NAN" as NaN) */
   if (isnan(dest))

@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#endif
 #include <errno.h>
 #include <stdarg.h>
 
@@ -23,6 +25,8 @@
 #include "Roster.h"
 
 #include "version.h"
+
+#include "RCLink.h"
 
 using std::endl;
 
@@ -59,6 +63,20 @@ RCEvent *RCLinkBackend::popEvent()
  * Check for activity.  If possible, fill up the recvbuf with incoming data
  * and build up RCRequest objects as appropriate.
  */
+
+void RCLinkBackend::sendPacket ( const char *data, unsigned int size, bool killit )
+{
+#ifdef _USE_FAKE_NET
+	fakeNetSendToFrontEnd(size,data);
+	if (killit)
+		fakenetDisconect();
+#else
+	write(connfd, data, size);
+	close(connfd);
+#endif
+}
+
+
 void RCLinkBackend::update()
 {
   if (status != Connected && status != Connecting) {
@@ -83,8 +101,7 @@ void RCLinkBackend::update()
         status = Connected;
       } else {
         BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << endl;
-        write(connfd, RC_LINK_NOIDENTIFY_MSG, strlen(RC_LINK_NOIDENTIFY_MSG));
-        close(connfd);
+		sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
         status = Listening;
       }
     }
@@ -160,10 +177,9 @@ bool RCLinkBackend::tryAccept()
   if (!RCLink::tryAccept())
     return false;
 
-  write(connfd, RC_LINK_IDENTIFY_STR, strlen(RC_LINK_IDENTIFY_STR));
-  write(connfd, getRobotsProtocolVersion(), strlen(getRobotsProtocolVersion()));
-  write(connfd, "\n", 1);
-
+  sendPacket(RC_LINK_IDENTIFY_STR, (unsigned int)strlen(RC_LINK_IDENTIFY_STR));
+  sendPacket(getRobotsProtocolVersion(),(unsigned int)strlen(getRobotsProtocolVersion()));
+  sendPacket("\n", 1);
   return true;
 }
 

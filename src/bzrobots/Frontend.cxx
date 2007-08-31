@@ -7,7 +7,11 @@
 
 #include "bzsignal.h"
 
-#include <unistd.h>
+#ifdef _WIN32
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
 
 #include "Logger.h"
 
@@ -15,11 +19,13 @@ using std::endl;
 
 bool Frontend::run(std::string filename, const char *host, int port)
 {
+#ifndef _USE_FAKE_NET
   pid_t pid = fork();
   if (pid < 0)
     return false;
   else if (pid > 0)
     return true;
+#endif
 
   fclose(stdin); // Shouldn't mess around with that here ;-)
   bzSignal(SIGINT, SIG_DFL);

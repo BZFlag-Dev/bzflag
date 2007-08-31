@@ -45,6 +45,8 @@ class RCLinkBackend : public RCLink
     State getDisconnectedState();
     void sendAck(RCRequest *req);
 
+	void sendPacket ( const char *data, unsigned int size, bool killit = false );
+
     bool send(const char *message);
     bool sendf(const char *format, ...)
       __attribute__ ((__format__ (__printf__, 2, 3)));
