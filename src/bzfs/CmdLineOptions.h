@@ -133,14 +133,14 @@ struct CmdLineOptions
   uint16_t		shakeTimeout;
   int			teamFlagTimeout;
   int			maxlagwarn;
-  int		   maxjitterwarn;
-  int		   maxpacketlosswarn;
-  int		   processorAffinity;
+  int			maxjitterwarn;
+  int			maxpacketlosswarn;
+  int			processorAffinity;
 
 
   float			lagwarnthresh;
-  float		 jitterwarnthresh;
-  float		 packetlosswarnthresh;
+  float			jitterwarnthresh;
+  float			packetlosswarnthresh;
   float			idlekickthresh;
   float			timeLimit;
   float			timeElapsed;

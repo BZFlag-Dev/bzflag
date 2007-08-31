@@ -259,6 +259,12 @@ network. This is the TCP/UDP/IP address the server will listen on.
 .B \-j
 Allows jumping.
 .TP 
+\fB\-jitterdrop \fIwarn\-count\fR
+Kicks players after \fIwarn\-count\fR jitter warnings.
+.TP 
+\fB\-jitterwarn \fImilliseconds\fR
+Send warnings to players that jitter more than \fImilliseconds\fR.
+.TP 
 \fB\-lagdrop \fIwarn\-count\fR
 Kicks players after \fIwarn\-count\fR lag warnings.
 .TP 
@@ -270,12 +276,6 @@ loads the dynamic plugin \fIplugin\fR, it is not nessisary to have the OS
 specific plugin extension (DLL, SO) in the name, the sever will add it
 automaticly. Some plugins take a paramater after the plugin name
 it will be specified after a , after the name, i.e. -loadpluing myplugin,myoptions.
-.TP 
-\fB\-jitterdrop \fIwarn\-count\fR
-Kicks players after \fIwarn\-count\fR jitter warnings.
-.TP 
-\fB\-jitterwarn \fImilliseconds\fR
-Send warnings to players that jitter more than \fImilliseconds\fR.
 .TP 
 \fB\-masterBanURL \fIURL\fR
 Specify alternate URLs for the master ban file to be pulled from.
@@ -866,6 +866,24 @@ bans all players from foo.com for 2 minutes
 List all of the host patterns currently banned from this server.
 
 .TP 
+.B /jitterwarn [\fItime\fR]
+Change the maximum allowed jitter time. Example:
+.ft CW
+.nf
+.ne 2
+/jitterwarn 50
+.ft R
+
+.TP
+.B /jitterdrop [\fIcount\fR]
+Change the number of jitter warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/jitterdrop 3
+.ft R
+
+.TP 
 .B /kick {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
 Kick a player off the server. Example:
 .ft CW
@@ -912,30 +930,30 @@ Change the number of lag warnings given before a player is kicked. Example:
 /lagdrop 3
 .ft R
 
-.TP 
-.B /jitterwarn [\fItime\fR]
-Change the maximum allowed jitter time. Example:
-.ft CW
-.nf
-.ne 2
-/jitterwarn 50
-.ft R
-
-.TP
-.B /jitterdrop [\fIcount\fR]
-Change the number of jitter warnings given before a player is kicked. Example:
-.ft CW
-.nf
-.ne 2
-/jitterdrop 3
-.ft R
-
 .TP
 .B /mute {\fI#slot\fR|\fIcallsign\fR}
 Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
 This command removes the TALK permission that is enabled by default for all 
 players. (disabling TALK by default would let you run a "silent" server)
+
+.TP 
+.B /packetlosswarn [\fItime\fR]
+Change the maximum allowed packetloss. Example:
+.ft CW
+.nf
+.ne 2
+/packetloss 1
+.ft R
+
+.TP
+.B /packetlossdrop [\fIcount\fR]
+Change the number of packetloss warnings given before a player is kicked. Example:
+.ft CW
+.nf
+.ne 2
+/packetloss 3
+.ft R
 
 .TP 
 .B /playerlist

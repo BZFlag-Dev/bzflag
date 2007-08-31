@@ -82,12 +82,10 @@ const char *usageString =
 "[-helpmsg <file> <name>] "
 "[-i interface] "
 "[-j] "
-"[-lagdrop <num>] "
-"[-lagwarn <time/ms>] "
 "[-jitterdrop <num>] "
 "[-jitterwarn <time/ms>] "
-"[-packetlossdrop <num>] "
-"[-packetlosswarn <%>] "
+"[-lagdrop <num>] "
+"[-lagwarn <time/ms>] "
 "[-loadplugin <pluginname,commandline>] "
 "[-masterBanURL <URL>]"
 "[-maxidle <time/s>] "
@@ -99,6 +97,8 @@ const char *usageString =
 "[-noradar]"
 "[-offa] "
 "[-p <port>] "
+"[-packetlossdrop <num>] "
+"[-packetlosswarn <%>] "
 "[-passwd <password>] "
 "[-pidfile <filename>] "
 "[-poll <variable>=<value>] "
@@ -187,8 +187,6 @@ const char *extraUsageString =
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-jitterdrop: drop player after this many jitter warnings\n"
 "\t-jitterwarn: jitter warning threshhold time [ms]\n"
-"\t-packetlossdrop: drop player after this many packetloss warnings\n"
-"\t-packetlosswarn: packetloss warning threshold [%]\n"
 "\t-loadplugin: load the specified plugin with the specified commandline\n"
 "\t\tstring\n"
 "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
@@ -201,6 +199,8 @@ const char *extraUsageString =
 "\t-noradar: disallow the use of radar\n"
 "\t-offa: teamless free-for-all game stye\n"
 "\t-p: use alternative port (default=5154)\n"
+"\t-packetlossdrop: drop player after this many packetloss warnings\n"
+"\t-packetlosswarn: packetloss warning threshold [%]\n"
 "\t-passwd: specify a <password> for operator commands\n"
 "\t-pidfile: write the process id into <filename> on startup\n"
 "\t-poll: configure several aspects of the in-game polling system\n"
@@ -750,24 +750,18 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-handicap") == 0) {
       // allow handicap advantage
       options.gameOptions |= int(HandicapGameStyle);
+    } else if (strcmp(argv[i], "-jitterdrop") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.maxjitterwarn = atoi(argv[i]);
+    } else if (strcmp(argv[i], "-jitterwarn") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.jitterwarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-lagdrop") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.maxlagwarn = atoi(argv[i]);
     } else if (strcmp(argv[i], "-lagwarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.lagwarnthresh = atoi(argv[i])/1000.0f;
-    } else if (strcmp(argv[i], "-jitterdrop") == 0) {
-	checkArgc(1, i, argc, argv[i]);
-	options.maxjitterwarn = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-jitterwarn") == 0) {
-	checkArgc(1, i, argc, argv[i]);
-	options.jitterwarnthresh = atoi(argv[i])/1000.0f;
-    } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
-	checkArgc(1, i, argc, argv[i]);
-	options.maxpacketlosswarn = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
-	checkArgc(1, i, argc, argv[i]);
-	options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-loadplugin") == 0) {
       checkArgc(1, i, argc, argv[i]);
       std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
@@ -846,6 +840,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.wksPort = ServerPort;
       else
 	options.useGivenPort = true;
+    } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.maxpacketlosswarn = atoi(argv[i]);
+    } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
     }  else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
