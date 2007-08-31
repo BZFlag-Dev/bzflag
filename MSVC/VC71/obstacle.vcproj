@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="obstacle"
+	ProjectGUID="{B88D1CC1-8E01-4D34-B5D0-1D856B1689E6}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
