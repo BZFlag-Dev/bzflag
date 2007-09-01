@@ -822,14 +822,14 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     float lockonSize = 40;
 
     float segmentation = 32.0f/360.0f;
-    float rad = lockonSize * 0.25f;
+    float rad = lockonSize * 0.125f;
 
     // white outline
     hudColor4f( 1,1,1, 0.85f );
     glLineWidth(4.0f);
     glBegin(GL_LINES);
-	glVertex3f(-rad,rad,0.03f);
-	glVertex3f(rad,-rad,0.02f);
+	glVertex3f(-rad,rad+rad,0.03f);
+	glVertex3f(rad,-rad+rad,0.02f);
    // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
    // glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
@@ -841,8 +841,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
       {
 	float spT = t-segmentation;
 
-	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad,0.02f);
-	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad,0.02f);
+	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
+	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad+rad,0.02f);
       }
     }
     glEnd();
@@ -851,8 +851,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     hudColor4f( 1,0,0, 0.85f );
     glLineWidth(2.0f);
     glBegin(GL_LINES);
-    glVertex3f(-rad,rad,0.03f);
-    glVertex3f(rad,-rad,0.02f);
+    glVertex3f(-rad,rad+rad,0.03f);
+    glVertex3f(rad,-rad+rad,0.02f);
    // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
   //  glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
@@ -864,8 +864,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
       {
 	float spT = t-segmentation;
 
-	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad,0.02f);
-	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad,0.02f);
+	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
+	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad+rad,0.02f);
       }
     }
     glEnd();
