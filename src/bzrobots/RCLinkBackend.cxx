@@ -72,7 +72,8 @@ void RCLinkBackend::sendPacket ( const char *data, unsigned int size, bool killi
 		fakenetDisconect();
 #else
 	write(connfd, data, size);
-	close(connfd);
+	if (killit)
+		close(connfd);
 #endif
 }
 
