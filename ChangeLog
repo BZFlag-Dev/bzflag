@@ -10,7 +10,49 @@ HEAD as 2.1 for release as 2.2
 
 BZFlag 2.0.9
 ------------
-
+* Add /packetlosswarn and /packetlossdrop - Thomas Stauer
+* Fixed memory loss for sound sample - Tupone Alfredo
+* Fixed invalid kick speed - Tupone Alfredo
+* Add packet loss kick - Thomas Stauer
+* Fix a segfault when re-joining - Tupone Alfredo
+* Add the rabbitTimer plugin - L4m3r
+* Fix a segfault when re-joining from observer - Tupone Alfredo
+* Fix the build system to be more distro friendly - Tupone Alfredo
+* Fixed high fps problem - Frank Thilo
+* 
+* API calls to reset bzdb - Jeff Myers
+* API call to get the player pause state. - Jeff Myers
+* API calls to reload bans, and other files - Jeff Myers
+* API event for shot ends - Jeff Myers
+* API command to move a flag - Jeff Myers
+* add API exposure for lag, jitter, and packetloss - Jeff Myers
+* Add koth plugin - LouMan
+* Add timedctf plugin - LouMan
+* Add teamflagreset plugin - LouMan
+* Add keepaway plugin - LouMan
+* Add wwzones plugin - LouMan
+* fix compiler problem with gcc-4 - Tupone Alfredo
+* torBlock plugin added - Jeff Myers
+* flagStay plugin added - Jeff Myers
+* Give everyone notice of pause messages - Jeff Myers
+* Fix for /silence command - Skeeve
+* Fix mousebox edge positioning - Mark Thomas
+* Fixed on spanish localization - xukosky@yahoo.es
+* Instructions to fix sound on ALSA added - Tupone Alfredo
+* Change filename format for easier location of matches - uso
+* Adding jitterdrop - Thomas Stauer
+* Adding jitterkick - uso
+* Global banlist reload with local banlist - uso
+* Added more info for observers - Jeff Myers
+* Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
+* Ability to change the killer in a PlayerDieEvent - Matthew Marshall
+* Added shotID to bz_PlayerDieEventData - Matthew Marshall
+* Expose the countdown and game time stuff to the api - Jeff Myers
+* Backport the record stop function from 2.1 - Jeff Myers
+* Backported WW GMs from 2.1 - Matthew Marshall
+* Converts box & pyramids to mesh if required - Anonymous
+* Allows leading face specification (x+,x-,y+,y-,z+,z-) - Anonymous
+* Authorization is invariant to case - Anonymous
 
 BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
 ------------
