@@ -10,6 +10,7 @@ HEAD as 2.1 for release as 2.2
 
 BZFlag 2.0.9
 ------------
+* Add the rabidRabbit plugin - LouMan
 * Add /packetlosswarn and /packetlossdrop - Thomas Stauer
 * Fixed memory loss for sound sample - Tupone Alfredo
 * Fixed invalid kick speed - Tupone Alfredo
