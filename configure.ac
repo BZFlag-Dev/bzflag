@@ -818,6 +818,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/playHistoryTracker/Makefile
 	plugins/python/Makefile
 	plugins/rabbitTimer/Makefile
+	plugins/rabidRabbit/Makefile
 	plugins/recordmatch/Makefile
 	plugins/regFlag/Makefile
 	plugins/serverControl/Makefile

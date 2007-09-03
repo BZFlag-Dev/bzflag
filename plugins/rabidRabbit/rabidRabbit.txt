@@ -1,0 +1,10 @@
+
+-----------------------------------------------------------
+Goal of game:
+
+Hunters: Kill the rabid rabbit before it enters its burrow!
+Rabbits: Run and hide in 'active' burrow and hunters die!
+----------------------------------------------------------
+Look for expanding rings in radar - this indicates the
+'active' burrow for the rabid rabbit to run to.
+----------------------------------------------------------

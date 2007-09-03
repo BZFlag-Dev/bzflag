@@ -16,6 +16,7 @@ SUBDIRS = \
 	playHistoryTracker \
 	python \
 	rabbitTimer \
+	rabidRabbit \
 	recordmatch \
 	regFlag \
 	serverControl \
