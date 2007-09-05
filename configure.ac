@@ -931,7 +931,7 @@ else
 ... disabling BZRobots client])
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
 	enable_bzrobots=no
-	AM_CONDITIONAL(BZROBOTS_PYTHON_ENBALED, false)
+	AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
 	enable_bzrobots_python=no
     else
         AM_CONDITIONAL(BZROBOTS_INCLUDED, true)
