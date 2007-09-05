@@ -120,7 +120,7 @@ bool loadGamesFromFile ( const char* config )
 	if ( params.size() > 2 )
 	{
 	  if (endCond == eTimedGame )
-	    timeLimit = fabs(atof(params[2].c_str()));
+	    timeLimit = fabs(atof(params[2].c_str()))*60.0;
 	  else
 	    scoreCapLimit = atoi(params[2].c_str());
 
@@ -145,7 +145,19 @@ bool loadGamesFromFile ( const char* config )
       }
     }
   }
-  return gameList.size();
+  return gameList.size() >0;
+}
+
+bool anyPlayers ( void )
+{
+  bool moreThenZero = false;
+  bz_APIIntList *players = bz_getPlayerIndexList();
+  if ( players->size() )
+    moreThenZero = true;
+
+  bz_deleteIntList(players);
+
+  return moreThenZero;
 }
 
 BZ_GET_PLUGIN_VERSION
@@ -166,8 +178,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 
   bz_debugMessage(4,"mapchange plugin loaded");
 
-  bz_APIIntList *players = bz_getPlayerIndexList();
-  if ( players->size() )
+  if ( anyPlayers() )
     startTime = bz_getCurrentTime();
 
   bz_registerEvent ( bz_ePlayerJoinEvent, &handler );
@@ -175,6 +186,8 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   bz_registerEvent ( bz_ePlayerPartEvent, &handler );
   bz_registerEvent ( bz_eCaptureEvent, &handler );
   bz_registerEvent ( bz_eGetWorldEvent, &handler );
+  bz_registerEvent ( bz_eTickEvent, &handler );
+  bz_registerEvent ( bz_eListServerUpdateEvent, &handler );
 
   return 0;
 }
@@ -186,9 +199,99 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent ( bz_ePlayerPartEvent, &handler );
   bz_removeEvent ( bz_eCaptureEvent, &handler );
   bz_removeEvent ( bz_eGetWorldEvent, &handler );
+  bz_removeEvent ( bz_eTickEvent, &handler );
+  bz_removeEvent ( bz_eListServerUpdateEvent, &handler );
 
   bz_debugMessage(4,"mapchange plugin unloaded");
   return 0;
+}
+
+void resetGames ( void )
+{
+  for ( int i = 0; i < (int)gameList.size(); i++)
+    gameList[i].hasBeenPlayed = false;
+}
+
+int findRandomUnplayedGame ( void )
+{
+  int count = 1;
+
+  int randGame = rand()%(int)gameList.size();
+
+  while (gameList[randGame].hasBeenPlayed || count < (int)gameList.size())
+  {
+    count++;
+    randGame = rand()%(int)gameList.size();
+  }
+
+  if (count >= (int)gameList.size())
+    return -1;
+
+  return randGame;
+}
+
+void sendMapChangeMessage ( bool end )
+{
+  std::string message = "Map change!\n";
+  bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+
+  if (end)
+    message = "Good bye!\n";
+  else
+     message = "Please Rejoin!\n";
+  bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+}
+
+void nextMap ( void )
+{
+  bool shutdown = false;
+  // compute the next map, and set the index
+  switch(cycleMode)
+  {
+    case eLoopInf:
+      currentIndex++;
+      if (currentIndex >= (int)gameList.size())
+      {
+	resetGames();
+	currentIndex = 0;
+      }
+      break;
+    case eRandomInf:
+      currentIndex = findRandomUnplayedGame();
+      if ( currentIndex < 0 )
+      {
+	resetGames();
+	currentIndex = findRandomUnplayedGame();
+      }
+      break;
+
+    case eRandomOnce:
+       currentIndex = findRandomUnplayedGame();
+       if ( currentIndex < 0 )
+       {
+	  shutdown = true;
+	  currentIndex = -1;
+       }
+       break;
+
+    case eNoLoop:
+      currentIndex++;
+      if (currentIndex >= (int)gameList.size())
+      {
+	shutdown = true;
+	currentIndex = 0;
+      }
+      break;
+  }
+
+  sendMapChangeMessage(shutdown);
+
+  if (shutdown)
+    bz_shutdown();
+  else
+    bz_restart();
+
+  startTime = -1;
 }
 
 void MapChangeEventHandler::process ( bz_EventData *eventData )
@@ -198,14 +301,93 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
 
   switch(eventData->eventType)
   {
-  case bz_ePlayerJoinEvent:
-  case bz_ePlayerDieEvent:
-  case bz_ePlayerPartEvent:
-  case bz_eCaptureEvent:
-  case bz_eGetWorldEvent:
+    case bz_ePlayerJoinEvent:
+    case bz_ePlayerPartEvent:
+    {
+      bz_PlayerJoinPartEventData_V1 *joinPart = (bz_PlayerJoinPartEventData_V1*)eventData;
+      
+      if ( joinPart->eventType == bz_ePlayerJoinEvent )
+      {
+	if (startTime < 0)
+	  startTime = joinPart->eventTime;
+      }
+      else if (endCond == eNoPlayers)
+      {
+	if (!anyPlayers())
+	  nextMap();
+      }
+    }
     break;
+
+    case bz_ePlayerDieEvent:
+      {
+	if (endCond != eMaxKillScore)
+	  break;
+
+	bz_PlayerDieEventData_V1 *die = (bz_PlayerDieEventData_V1*)eventData;
+
+	if ( bz_getPlayerWins(die->killerID) >= scoreCapLimit )
+	  nextMap();
+      }
+      break;
+
+    case bz_eCaptureEvent:
+      {
+	if (endCond != eMaxCapScore)
+	  break;
+
+	bz_CTFCaptureEventData_V1 *cap = (bz_CTFCaptureEventData_V1*)eventData;
+
+	if ( bz_getTeamWins(cap->teamCapping) >= scoreCapLimit )
+	  nextMap();
+      }
+      break;
+
+    case bz_eTickEvent:
+      {
+	if (endCond != eTimedGame && startTime >= 0)
+	  break;
+
+	bz_TickEventData_V1 *tick = (bz_TickEventData_V1*)eventData;
+
+	double timeDelta = tick->eventTime - startTime;
+	if ( timeDelta >= timeLimit )
+	  nextMap();
+      }
+      break;
+
+    case bz_eGetWorldEvent:
+      {
+	if (currentIndex < 0 )
+	  break;
+    
+	bz_GetWorldEventData_V1 *world =(bz_GetWorldEventData_V1*)eventData;
+
+	world->generated = false;
+	world->worldFile = gameList[currentIndex].mapFile.c_str();
+	gameList[currentIndex].hasBeenPlayed = true;
+      }
+      break;
+
+    case bz_eListServerUpdateEvent:
+      {
+	if (currentIndex < 0 )
+	  break;
+
+	bz_ListServerUpdateEvent_V1 *update =(bz_ListServerUpdateEvent_V1*)eventData;
+
+	std::string desc = update->description.c_str();
+	desc = replace_all(desc,std::string("%M"),gameList[currentIndex].publicText);
+	update->description = desc.c_str();
+	update->handled = true;
+     }
+      break;
  }
 }
+/*  eTimedGame,
+eMaxKillScore,
+eMaxCapScore,
+eNoPlayers  */
 
 // Local Variables: ***
 // mode:C++ ***
