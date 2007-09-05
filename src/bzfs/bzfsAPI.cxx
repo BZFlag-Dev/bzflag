@@ -1068,6 +1068,16 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_getAdmin ( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player)
+    return false;
+  return player->accessInfo.isAdmin()
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_hasPerm(int playerID, const char *perm)
 {
   if(!perm)

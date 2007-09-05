@@ -1266,6 +1266,8 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 
+BZF_API bool bz_getAdmin ( int playerID );
+
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
 BZF_API bool bz_getPlayerCurrentState ( int playerID, bz_PlayerUpdateState &state );
