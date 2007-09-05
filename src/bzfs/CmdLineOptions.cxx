@@ -144,7 +144,8 @@ const char *usageString =
 "[-vars <filename>] "
 "[-version] "
 "[-world <filename>] "
-"[-worldsize <world size>] ";
+"[-worldsize <world size>] "
+"[-ws <number of wall sides>] ";
 
 const char *extraUsageString =
 "\n"
@@ -251,6 +252,7 @@ const char *extraUsageString =
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
 "\t-worldsize: numeric value for the size of the world (default=400)\n"
+"\t-ws: numeric value for the number off outer walls (default=4)\n"
 "\n"
 "Poll Variables:  (see -poll)\n"
 "\n"
@@ -1166,7 +1168,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
       std::cerr << "using world size of \"" << BZDBCache::worldSize << "\"" << std::endl;
-    } else {
+    }  
+    else if (strcmp(argv[i], "-ws") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.wallSides = atoi(argv[i]);
+    } 
+    else {
       std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
       usage(argv[0]);
     }
