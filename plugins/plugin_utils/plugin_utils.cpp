@@ -136,6 +136,29 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 	return tokens;
 }
 
+std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
+{
+  std::string result;
+  std::string::size_type beginPos = 0;
+  std::string::size_type endPos = 0;
+  std::ostringstream tempStream;
+
+  endPos = in.find(replaceMe);
+  if (endPos == std::string::npos)
+    return in; // can't find anything to replace
+  if (replaceMe.empty()) return in; // can't replace nothing with something -- can do reverse
+
+  while (endPos != std::string::npos) {
+    // push the  part up to
+    tempStream << in.substr(beginPos,endPos-beginPos);
+    tempStream << withMe;
+    beginPos = endPos + replaceMe.size();
+    endPos = in.find(replaceMe,beginPos);
+  }
+  tempStream << in.substr(beginPos);
+  return tempStream.str();
+}
+
 
 
 // Local Variables: ***
