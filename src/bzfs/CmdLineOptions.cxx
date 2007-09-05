@@ -151,6 +151,7 @@ const char *extraUsageString =
 "BZFS Option Descriptions\n"
 "\n"
 "\t-a: maximum acceleration settings\n"
+"\t-adminlagannounce: lag announcement threshhold time [ms]\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
 "\t-advertise: specify which groups to advertise to (list server)\n"
 "\t-autoTeam: automatically assign players to teams when they join\n"
@@ -563,6 +564,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.linearAcceleration = 0.0f;
       if (options.angularAcceleration < 0.0f)
 	options.angularAcceleration = 0.0f;
+    } else if (strcmp(argv[i], "-adminlagannounce") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.adminlagannounce = atoi(argv[i])/1000.0f;
     } else if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {

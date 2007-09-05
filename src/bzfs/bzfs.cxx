@@ -3862,8 +3862,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       break;
 
     case MsgLagPing: {
-      bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
-      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
+      bool warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn;
+      playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3871,6 +3871,13 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	sendMessage(ServerPlayer, t, message);
 	if (kick)
 	  lagKick(t);
+      }
+      if (alagannouncewarn) {
+        std::cout << "announce!!";
+	char message[MessageLen];
+	sprintf(message,"*** Server Warning: %s's lag is too high (%d ms) ***",
+		playerData->player.getCallSign(), playerData->lagInfo.getLag());
+	sendMessage(ServerPlayer, AdminPlayers, message);
       }
       if (jittwarn) {
 	char message[MessageLen];
@@ -4694,6 +4701,9 @@ int main(int argc, char **argv)
   // loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
 
+  // loading lag announcement thresholds
+  LagInfo::setAdminLagThreshold(clOptions->adminlagannounce);
+  
   // loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
 

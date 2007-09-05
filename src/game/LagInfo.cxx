@@ -13,6 +13,7 @@
 /* interface header */
 #include "LagInfo.h"
 
+float LagInfo::adminlagannouncetresh = 0.0;
 float LagInfo::threshold = 0.0;
 float LagInfo::jitterthreshold = 0.0;
 float LagInfo::lossthreshold = 0.0;
@@ -89,7 +90,8 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 
 // update absolute latency based on LagPing messages
 void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
-			    bool &jittkick, bool &plosswarn, bool &plosskick) {
+			    bool &jittkick, bool &plosswarn, bool &plosskick,
+			    bool &alagannouncewarn) {
   uint16_t _pingseqno;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
@@ -97,6 +99,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // time is smoothed exponentially using a dynamic smoothing factor
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);
+    alagcount++;
     lagcount++;
     jittercount++;
     losscount++;
@@ -112,6 +115,15 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // if loss has been good for some time, forget old warnings
     if (lostavg < lossthreshold && losscount - losslastwarn >=20)
       losswarncount = 0;
+
+    // announce players from time to time whose lag is > threshold (-lagwarn)
+    if (!info->isObserver() && (adminlagannouncetresh > 0) && lagavg > adminlagannouncetresh
+	&& alagcount - alaglastannounce > 4 * alagannouncecount) {
+      alaglastannounce = alagcount;
+      alagannouncewarn = true;
+    } else {
+      alagannouncewarn = false;
+    }
 
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
@@ -214,6 +226,10 @@ void LagInfo::updateLatency(float &waitTime) {
   float delta = (float)(nextping - info->now);
   if (delta < waitTime)
     waitTime  = delta;
+}
+
+void LagInfo::setAdminLagThreshold(float _adminlagannouncetresh) {
+  adminlagannouncetresh = _adminlagannouncetresh;
 }
 
 void LagInfo::setThreshold(float _threshold, float _max) {
