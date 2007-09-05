@@ -49,6 +49,14 @@ public:
   virtual void process ( bz_EventData *eventData );
 };
 
+class MapChangeCommandHandler : public bz_CustomSlashCommandHandler
+{
+public:
+  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params );
+  virtual const char* help ( bz_ApiString command  );
+};
+
+MapChangeCommandHandler	slash;
 MapChangeEventHandler handler;
 
 EndCond condFromString ( const std::string &str )
@@ -189,7 +197,14 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   bz_registerEvent ( bz_eTickEvent, &handler );
   bz_registerEvent ( bz_eListServerUpdateEvent, &handler );
 
-  return 0;
+  bz_registerCustomSlashCommand ( "mapnext",&slash );
+  bz_registerCustomSlashCommand ( "mapreset",&slash );
+  bz_registerCustomSlashCommand ( "mapcyclemode",&slash );
+  bz_registerCustomSlashCommand ( "mapendmode",&slash );
+  bz_registerCustomSlashCommand ( "maplist",&slash );
+  bz_registerCustomSlashCommand ( "maplimit",&slash );
+
+ return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
@@ -201,6 +216,13 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent ( bz_eGetWorldEvent, &handler );
   bz_removeEvent ( bz_eTickEvent, &handler );
   bz_removeEvent ( bz_eListServerUpdateEvent, &handler );
+
+  bz_removeCustomSlashCommand ( "mapnext" );
+  bz_removeCustomSlashCommand ( "mapreset" );
+  bz_removeCustomSlashCommand ( "mapcyclemode" );
+  bz_removeCustomSlashCommand ( "mapendmode" );
+  bz_removeCustomSlashCommand ( "maplist" );
+  bz_removeCustomSlashCommand ( "maplimit" );
 
   bz_debugMessage(4,"mapchange plugin unloaded");
   return 0;
@@ -384,10 +406,71 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
       break;
  }
 }
-/*  eTimedGame,
-eMaxKillScore,
-eMaxCapScore,
-eNoPlayers  */
+
+ bool MapChangeCommandHandler::handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
+ {
+   std::string cmd = tolower(command.c_str());
+
+   if ( cmd == "mapnext" )
+   {
+     if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
+      nextMap();
+     else
+      bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permision to change maps");
+     return true;
+   }
+   else if ( cmd == "mapreset" )
+   {
+     if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
+     {
+       resetGames();
+       currentIndex = -1;
+       nextMap();
+     }
+     else
+       bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permision to reset map rotation");
+     return true;
+   }
+   else if ( cmd == "mapcyclemode" )
+   {
+     return true;
+   }
+   else if ( cmd == "mapendmode" )
+   {
+     return true;
+   }
+   else if ( cmd == "maplist" )
+   {
+     return true;
+   }
+   else if ( cmd == "maplimit" )
+   {
+     return true;
+   }
+   return false;
+ }
+
+ const char* MapChangeCommandHandler::help ( bz_ApiString command )
+ {
+   std::string text = "No help available";
+   std::string cmd = tolower(command.c_str());
+
+   if (cmd == "mapnext")
+     text = "Usage /mapNext; Changes to the next map in the rotation";
+   if (cmd == "mapreset")
+     text = "Usage /mapReset; Resets the map rotation back to it's inital state";
+   if (cmd == "mapcyclemode")
+     text = "Usage /mapCycleMode (MODE); Changes to the cycle mode for map rotation\n  Valid params are Loop, Random, OneRand, and NoLoop\n  If no paramater is given thent he current mode is listed";
+   if (cmd == "mapendmode")
+     text = "Usage /mapEndMode (MODE); Changes to the end condition mode for map rotation\n  Valid params are Timed, MaxKill, MaxCap, and Empty\n  If no paramater is given thent he current mode is listed";
+   if (cmd == "maplist")
+     text = "Usage /mapList; lists all the maps in the rotation";
+   if (cmd == "maplimit")
+     text = "Usage /mapLimit (LIMIT); Changes the current limit to the specified value, minuets for timed games, score for others.\n  If no paramater is given thent he current limit is listed";
+  
+   return text.c_str();
+ }
+
 
 // Local Variables: ***
 // mode:C++ ***
