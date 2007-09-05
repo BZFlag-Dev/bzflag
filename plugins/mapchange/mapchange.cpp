@@ -42,7 +42,7 @@ public:
 
 MapChangeEventHandler handler;
 
-EndCond condfromString ( std::string &str )
+EndCond condfromString ( std::string str )
 {
 	if ( str == "timed")
 		return eTimedGame;
