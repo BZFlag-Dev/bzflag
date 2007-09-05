@@ -17,6 +17,7 @@ SUBDIRS = \
 	killall \
 	koth \
 	logDetail \
+	mapchange \
 	nagware \
 	playHistoryTracker \
 	python \

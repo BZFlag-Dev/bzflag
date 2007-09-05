@@ -211,6 +211,7 @@ AC_CONFIG_FILES([
 	killall/Makefile
 	logDetail/Makefile
 	m4/Makefile
+	mapchange/Makefile
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	plugin_utils/Makefile
