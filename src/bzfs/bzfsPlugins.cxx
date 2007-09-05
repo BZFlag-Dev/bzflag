@@ -57,6 +57,7 @@ typedef enum
 {
 	eLoadFailedDupe = -1,
 	eLoadFailedError = 0,
+	eLoadFailedRuntime,
 	eLoadComplete
 }PluginLoadReturn;
 
@@ -150,7 +151,12 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 			lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
 			if (lpProc)
 			{
-				lpProc(config.c_str());
+				if (lpProc(config.c_str())!= 0)
+				{
+					logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
+					FreeLibrary(hLib);
+					return eLoadFailedRuntime;
+				}
 				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
 
 				trPluginRecord pluginRecord;
@@ -212,7 +218,7 @@ int getPluginVersion ( void* hLib )
 
 PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 {
-        int (*lpProc)(const char*);
+	int (*lpProc)(const char*);
 
 	std::string realPluginName = findPlugin(plugin);
 
@@ -243,7 +249,11 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 			lpProc = force_cast<int (*)(const char*)>(dlsym(hLib,"bz_Load"));
 			if (lpProc)
 			{
-				(*lpProc)(config.c_str());
+				if((*lpProc)(config.c_str()))
+				{
+					logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
+					return eLoadFailedRuntime;
+				}
 				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
 				trPluginRecord pluginRecord;
 				pluginRecord.handle = hLib;
