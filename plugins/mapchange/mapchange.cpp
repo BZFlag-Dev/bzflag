@@ -23,7 +23,8 @@ typedef enum
   eTimedGame,
   eMaxKillScore,
   eMaxCapScore,
-  eNoPlayers
+  eNoPlayers, 
+  eManual
 }EndCond;
 
 typedef enum
@@ -69,8 +70,26 @@ EndCond condFromString ( const std::string &str )
     return eMaxCapScore;
   else if ( str == "empty")
     return eNoPlayers;
+  else if ( str == "manual")
+    return eManual;
 
   return eTimedGame;
+}
+
+const char* condToString ( EndCond cond )
+{
+  if ( cond == eTimedGame)
+    return "Timed";
+  else if ( cond == eMaxKillScore)
+    return "MaxKill";
+  else if ( cond == eMaxCapScore)
+    return "MaxCap";
+  else if ( cond == eNoPlayers)
+    return "Empty";
+  else if ( cond == eManual)
+    return "Manual";
+
+  return "Timed";
 }
 
 CycleMode cycleFromString ( const std::string &str )
@@ -83,6 +102,18 @@ CycleMode cycleFromString ( const std::string &str )
     return eRandomOnce;
 
   return eNoLoop;
+}
+
+const char* cycleToString ( CycleMode mode )
+{
+  if ( mode == eLoopInf )
+    return "Loop";
+  else if (mode == eRandomInf )
+    return "Random";
+  else if ( mode == eRandomOnce )
+    return "OneRand";
+  
+  return "NoLoop";
 }
 
 bool loadGamesFromFile ( const char* config )
@@ -411,6 +442,10 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
  {
    std::string cmd = tolower(command.c_str());
 
+   std::string param;
+   if ( params && params->size() )
+     param = params->get(0).c_str();
+
    if ( cmd == "mapnext" )
    {
      if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
@@ -433,18 +468,109 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
    }
    else if ( cmd == "mapcyclemode" )
    {
+     if (param.size())
+     {
+       if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
+       {
+	cycleMode = cycleFromString(param.c_str());
+	std::string mode = "Map Rotation Mode changed to ";
+	mode += param.c_str();
+	bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,mode.c_str());
+       }
+       else
+	 bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permision to set map modes");
+    }
+     else
+     {
+       std::string mode = "Current Map Rotation Mode:";
+       mode += cycleToString(cycleMode);
+       bz_sendTextMessage(BZ_SERVER,playerID,mode.c_str());
+     }
      return true;
    }
    else if ( cmd == "mapendmode" )
    {
+     if (param.size())
+     {
+	if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
+	{
+	  startTime = bz_getCurrentTime();
+	  endCond = condFromString(param);
+	  std::string mode = "Map End Condition changed to ";
+	  mode += param;
+	  bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,mode.c_str());
+	}
+	else
+	  bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permision to set map modes");
+     }
+     else
+     {
+       std::string mode = "Current End Condtion:";
+       mode += condToString(endCond);
+       bz_sendTextMessage(BZ_SERVER,playerID,mode.c_str());
+     }
      return true;
    }
    else if ( cmd == "maplist" )
    {
+     bz_sendTextMessage(BZ_SERVER,playerID,"Maps In Rotation");
+     for (int i = 0; i < (int)gameList.size(); i++ )
+	 bz_sendTextMessage(BZ_SERVER,playerID,gameList[i].mapFile.c_str());
      return true;
    }
    else if ( cmd == "maplimit" )
    {
+     if (endCond == eNoPlayers || endCond == eManual )
+     {
+       bz_sendTextMessage(BZ_SERVER,playerID,"The currnet mode has no numeric limit");
+       return true;
+     }
+
+     if (param.size())
+     {
+       if (bz_getAdmin (playerID) || bz_hasPerm(playerID,"mapchange"))
+       {
+	 std::string mode = "Map Change limit changed to ";
+	if (endCond == eTimedGame)
+	{
+	  startTime = bz_getCurrentTime();
+	  timeLimit = atof(param.c_str())*60;
+	  mode += param.c_str();
+	  mode += "minutes";
+	}
+	else
+	{
+	  scoreCapLimit = atoi(param.c_str());
+	  mode += param.c_str();
+	  if (endCond == eMaxKillScore)
+	    mode += " Kills";
+	  else
+	    mode += " Caps";
+	}
+	bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,mode.c_str());
+       }
+       else
+       {
+	 std::string mode = "Map Change limit is ";
+	 if (endCond == eTimedGame)
+	   mode += format("%f minutes", timeLimit/60.0);
+	 else
+	 {
+	    mode += format("%d", scoreCapLimit);
+	   if (endCond == eMaxKillScore)
+	     mode += " Kills";
+	   else
+	     mode += " Caps";
+	 }
+	 bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permision to set map limits");
+       }
+     }
+     else
+     {
+       std::string mode = "Current End Condtion:";
+       mode += condToString(endCond);
+       bz_sendTextMessage(BZ_SERVER,playerID,mode.c_str());
+     }
      return true;
    }
    return false;
@@ -462,7 +588,7 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
    if (cmd == "mapcyclemode")
      text = "Usage /mapCycleMode (MODE); Changes to the cycle mode for map rotation\n  Valid params are Loop, Random, OneRand, and NoLoop\n  If no paramater is given thent he current mode is listed";
    if (cmd == "mapendmode")
-     text = "Usage /mapEndMode (MODE); Changes to the end condition mode for map rotation\n  Valid params are Timed, MaxKill, MaxCap, and Empty\n  If no paramater is given thent he current mode is listed";
+     text = "Usage /mapEndMode (MODE); Changes to the end condition mode for map rotation\n  Valid params are Timed, MaxKill, MaxCap, Manual, and Empty\n  If no paramater is given thent he current mode is listed";
    if (cmd == "maplist")
      text = "Usage /mapList; lists all the maps in the rotation";
    if (cmd == "maplimit")
