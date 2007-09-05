@@ -25,6 +25,15 @@ typedef enum
 	eMaxCapScore,
 	eNoPlayers
 }EndCond;
+
+/*typedef enum
+{
+	eLoopInf,
+	eRandomInf,
+	eRandomOnce,
+	e
+}CycleMode; */
+
 EndCond				endCond;
 double				timeLimit;
 int					scoreCapLimit;
@@ -42,7 +51,7 @@ public:
 
 MapChangeEventHandler handler;
 
-EndCond condfromString ( std::string str )
+EndCond condfromString ( const std::string &str )
 {
 	if ( str == "timed")
 		return eTimedGame;
