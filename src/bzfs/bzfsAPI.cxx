@@ -1073,7 +1073,7 @@ BZF_API bool bz_getAdmin ( int playerID )
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player)
     return false;
-  return player->accessInfo.isAdmin()
+  return player->accessInfo.isAdmin();
 }
 
 //-------------------------------------------------------------------------
