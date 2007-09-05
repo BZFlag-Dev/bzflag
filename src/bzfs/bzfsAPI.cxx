@@ -1280,20 +1280,6 @@ BZF_API bool bz_setPlayerWins(int playerId, int wins)
 }
 
 //-------------------------------------------------------------------------
-
-BZF_API bool bz_setPlayerOperator(int playerId)
-{
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
-
-  if(!player)
-    return false;
-
-  player->accessInfo.setOperator();
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
 BZF_API bool bz_setPlayerLosses(int playerId, int losses)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
@@ -1307,7 +1293,6 @@ BZF_API bool bz_setPlayerLosses(int playerId, int losses)
 }
 
 //-------------------------------------------------------------------------
-
 BZF_API bool bz_setPlayerTKs(int playerId, int tks)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
@@ -1317,6 +1302,52 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
 
   player->score.setTKs(tks);
   broadcastPlayerScoreUpdate(playerId);
+  return true;
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerWins (int playerId)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if(!player)
+    return -1;
+
+  return player->score.getWins();
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerLosses (int playerId)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if(!player)
+    return -1;
+
+  return player->score.getLosses();
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerTKs (int playerId)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if(!player)
+    return -1;
+
+  return player->score.getTKs();
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setPlayerOperator(int playerId)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if(!player)
+    return false;
+
+  player->accessInfo.setOperator();
   return true;
 }
 

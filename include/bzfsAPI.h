@@ -1347,6 +1347,11 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs (int playerId, int tks);
 
+BZF_API int bz_getPlayerWins (int playerId);
+BZF_API int bz_getPlayerLosses (int playerId);
+BZF_API int bz_getPlayerTKs (int playerId);
+
+
 BZF_API bool bz_resetPlayerScore(int playerId);
 
 // player shots
