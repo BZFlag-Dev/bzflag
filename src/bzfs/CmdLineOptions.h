@@ -98,7 +98,6 @@ struct CmdLineOptions
     masterBanListURL.push_back(DefaultMasterBanURL);
   }
 
-  int			wallSides;
   int			wksPort;
   int			gameStyle;
   int			rabbitSelection;
@@ -204,6 +203,7 @@ struct CmdLineOptions
   std::string	   cacheOut;
 
   bool			tkAnnounce;
+  int			wallSides;
 
   // plugins
   typedef struct
