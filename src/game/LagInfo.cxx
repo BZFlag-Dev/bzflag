@@ -23,12 +23,11 @@ float LagInfo::jittermax       = 0.0;
 float LagInfo::lossmax       = 0.0;
 
 LagInfo::LagInfo(PlayerInfo *_info)
-  : info(_info), lagavg(0), jitteravg(0), lostavg(0),
-    lagalpha(1), jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0),
-    lagwarncount(0), jittercount(0), jitterlastwarn(0),
-    jitterwarncount(0), losscount(0), losslastwarn(0), losswarncount(0),
-    pingpending(false), pingseqno(0), pingssent(0), lasttimestamp(0.0f),
-    alagannouncecount(0), lagannouncecount(0) {
+  : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
+    jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
+    jittercount(0), jitterlastwarn(0), jitterwarncount(0), losscount(0),
+    losslastwarn(0), losswarncount(0), pingpending(false), pingseqno(0),
+    pingssent(0), lasttimestamp(0.0f), alagannouncecount(0), lagannouncecount(0) {
 }
 
 void LagInfo::reset()
@@ -184,7 +183,7 @@ std::cout << lagannouncetresh << "\n";
     plosswarn = false;
     plosskick = false;
     alagannouncewarn = false;
-    alagannouncewarn = false;
+    lagannouncewarn = false;
   }
 }
 
