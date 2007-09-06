@@ -221,6 +221,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->data = NULL;
 	      theCurrentCommand->size = 0;
 	      theCurrentCommand->docType = eText;
+	      theCurrentCommand->returnCode = e200OK;
 
 	      if (acceptURL(theCurrentCommand->URL.c_str()))
 	      {
@@ -296,6 +297,11 @@ void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int requestID )
   theCurrentCommand->docType = docType;
 }
 
+void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int requestID )
+{
+  theCurrentCommand->returnCode = code;
+}
+
 const char * BZFSHTTPServer::getBaseServerURL ( void )
 {
   return baseURL.c_str();
@@ -354,6 +360,23 @@ std::string BZFSHTTPServer::HTTPConectedUsers::getMimeType ( HTTPDocumentType do
   return type;
 }
 
+std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode returnCode )
+{
+  std::string code = "200";
+  switch(returnCode)
+  {
+  case e404NotFound:
+    code = "404";
+    break;
+
+  case e403Forbiden:
+    code = "403";
+    break;
+  }
+
+  return code;
+}
+
 void BZFSHTTPServer::HTTPConectedUsers::update ( void )
 {
   if (!pendingCommands.size())
@@ -368,6 +391,7 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
+    httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
     httpHeaders += "\n";
 
     if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) )

@@ -62,6 +62,7 @@ void HTTPServer::getURLData ( const char* url, int requestID, const std::map<std
     FILE *fp = fopen(path.c_str(),"rb");
     if (!fp)
     {
+      setURLReturnCode(BZFSHTTPServer::e404NotFound,requestID);
       std::string crapPage = "404: Page Not found (from BZFS)\r\n\r\n";
       setURLDataSize ( (unsigned int)crapPage.size(), requestID );
       setURLData ( crapPage.c_str(), requestID );

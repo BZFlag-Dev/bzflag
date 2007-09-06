@@ -25,7 +25,6 @@ public:
   BZFSHTTPServer( const char * plugInName );
   virtual ~BZFSHTTPServer();
 
-
   void startupHTTP ( void );
   void shutdownHTTP ( void );
 
@@ -50,7 +49,15 @@ protected:
     eBinary
   }HTTPDocumentType;
 
+  typedef enum
+  {
+    e200OK,
+    e404NotFound,
+    e403Forbiden
+  }HTTPReturnCode;
+
   void setURLDocType ( HTTPDocumentType docType, int requestID );
+  void setURLReturnCode ( HTTPReturnCode code, int requestID );
 
   // called internaly to update any transfers
   // but can be called externaly to force updates if need be
@@ -72,6 +79,7 @@ protected:
     char	*data;
     unsigned int size;
     HTTPDocumentType  docType;
+    HTTPReturnCode    returnCode;
   }HTTPCommand;
 
   class HTTPConectedUsers
@@ -85,6 +93,7 @@ protected:
     void update ( void );
 
     std::string getMimeType ( HTTPDocumentType docType );
+    std::string getReturnCode ( HTTPReturnCode returnCode );
 
     std::vector<HTTPCommand*> pendingCommands;
 
