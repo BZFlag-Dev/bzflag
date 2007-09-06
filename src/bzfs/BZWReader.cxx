@@ -429,19 +429,8 @@ WorldInfo* BZWReader::defineWorldFromFile()
     return NULL;
   }
 
-  if (!BZDB.isTrue("noWalls")) {
-    // make walls
-    float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-    float worldSize = BZDBCache::worldSize;
-    myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
-		     0.5f * worldSize, wallHeight);
-    myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
-		     wallHeight);
-    myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
-		     0.5f * worldSize, wallHeight);
-    myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
-		     wallHeight);
-  }
+  if (!BZDB.isTrue("noWalls")) 
+    makeWalls();
 
   // generate group instances
   OBSTACLEMGR.makeWorld();

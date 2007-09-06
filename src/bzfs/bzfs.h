@@ -122,6 +122,7 @@ void resumeCountdown ( const char *resumedBy );
 void resetTeamScores ( void );
 void startCountdown ( int delay, float limit, const char *buyWho );
 
+void makeWalls ( void );
 #endif
 
 // Local Variables: ***

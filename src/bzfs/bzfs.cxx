@@ -817,6 +817,48 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
   }
 }
 
+void makeWalls ( void )
+{
+  float worldSize = BZDBCache::worldSize;
+  if (pluginWorldSize > 0)
+    worldSize = pluginWorldSize;
+
+  float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  if (pluginWorldHeight > 0)
+    wallHeight = pluginWorldHeight;
+
+  double halfSize = worldSize * 0.5;
+  double angleDelta = 360.0 / clOptions->wallSides;
+  double startAngle = -angleDelta*0.5;
+  double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
+
+  double degToRad = M_PI/180.0;
+
+  double segmentLen = (sin(angleDelta*0.5*(degToRad)) * radius)*2;
+
+  if(0)
+  {
+    for ( int w = 0; w < clOptions->wallSides; w++ )
+    {
+      double midpointRad = sqrt(radius*radius-(segmentLen*0.5)*(segmentLen*0.5));
+      double midpointAngle = startAngle + (angleDelta*0.5) + (angleDelta*w);
+
+      float x = sin(midpointAngle*degToRad)*midpointRad;
+      float y = cos(midpointAngle*degToRad)*midpointRad;
+
+      world->addWall(x, y, 0.0f, (270-midpointAngle)*degToRad, segmentLen, wallHeight);
+
+    }
+  }
+  else
+  {
+    world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+    world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+    world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
+    world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+  }
+}
+
 
 bool defineWorld ( void )
 {
@@ -880,41 +922,7 @@ bool defineWorld ( void )
     }
 	else 
 	{
-      float worldSize = BZDBCache::worldSize;
-      if (pluginWorldSize > 0)
-	worldSize = pluginWorldSize;
-
-      float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-      if (pluginWorldHeight > 0)
-	wallHeight = pluginWorldHeight;
-
-      double halfSize = worldSize * 0.5;
-      double angleDelta = 360.0 / clOptions->wallSides;
-      double startAngle = -angleDelta*0.5;
-      double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
-
-      double degToRad = M_PI/180.0;
-
-      double segmentLen = (sin(angleDelta*0.5*(degToRad)) * radius)*2;
-
-      if(0)
-      {
-	for ( int w = 0; w < clOptions->wallSides; w++ )
-	{
-	  double midpointRad = sqrt(radius*radius-(segmentLen*0.5)*(segmentLen*0.5));
-	  double midpointAngle = startAngle + (angleDelta*0.5) + (angleDelta*w);
-
-	  world->addWall(sinf(midpointAngle*degToRad)*midpointRad, cosf(midpointAngle*degToRad)*midpointRad, 0.0f, midpointAngle*degToRad, segmentLen, wallHeight);
-  	
-	}
-      }
-      else
-      {
-	world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-	world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-	world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-	world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
-      }
+	makeWalls();
 
       OBSTACLEMGR.makeWorld();
       world->finishWorld();

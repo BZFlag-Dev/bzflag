@@ -43,14 +43,8 @@ WorldInfo *defineRandomWorld()
   // make walls
   float worldSize = BZDBCache::worldSize;
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
-		   0.5f * worldSize, wallHeight);
-  myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
-		   wallHeight);
-  myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
-		   0.5f * worldSize, wallHeight);
-  myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
-		   wallHeight);
+
+  makeWalls();
 
   float worldfactor = worldSize / (float)DEFAULT_WORLD;
   int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
@@ -161,17 +155,8 @@ WorldInfo *defineTeamWorld()
   const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
   const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
 
-  // make walls
+  makeWalls();
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
-		   0.5f * worldSize, wallHeight);
-  myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
-		   wallHeight);
-  myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
-		   0.5f * worldSize, wallHeight);
-  myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
-		   wallHeight);
-
   const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
   const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   // make pyramids
