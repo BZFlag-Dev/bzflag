@@ -42,7 +42,6 @@ WorldInfo *defineRandomWorld()
 
   // make walls
   float worldSize = BZDBCache::worldSize;
-  float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
 
   makeWalls();
 
@@ -156,7 +155,6 @@ WorldInfo *defineTeamWorld()
   const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
 
   makeWalls();
-  const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
   const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   // make pyramids
