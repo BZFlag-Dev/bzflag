@@ -889,7 +889,7 @@ bool defineWorld ( void )
 	wallHeight = pluginWorldHeight;
 
       double halfSize = worldSize * 0.5;
-      double angleDelta = 360.0 / wallSides;
+      double angleDelta = 360.0 / clOptions->wallSides;
       double startAngle = -angleDelta*0.5;
       double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
 
@@ -899,7 +899,7 @@ bool defineWorld ( void )
 
       if(0)
       {
-	for ( int w = 0; w < wallSides; w++ )
+	for ( int w = 0; w < clOptions->wallSides; w++ )
 	{
 	  double midpointRad = sqrt(radius*radius-(segmentLen*0.5)*(segmentLen*0.5));
 	  double midpointAngle = startAngle + (angleDelta*0.5) + (angleDelta*w);
