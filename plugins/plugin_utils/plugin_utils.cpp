@@ -178,7 +178,39 @@ std::string url_encode(const std::string &text)
   return destination;
 }
 
+std::string url_decode(const std::string &text)
+{
+  std::string destination;
 
+  std::string::iterator itr = text.begin();
+  while ( itr != text.end() )
+  {
+    if (*itr != '%')
+      destination += *itr++;
+    else
+    {
+      char hex[5] = "0x00";
+      
+      itr++;;
+      if (itr == text.end())
+	return destination;
+
+      hex[2] = *itr;
+
+      itr++;;
+      if (itr == text.end())
+	return destination;
+
+      hex[3] = *itr;
+
+      int val = 0;
+      sscanf(hex,"%x",&val);
+      if ( val != 0 )
+	destination += (char)val;
+      itr++;
+    }
+  }
+}
 
 // Local Variables: ***
 // mode:C++ ***

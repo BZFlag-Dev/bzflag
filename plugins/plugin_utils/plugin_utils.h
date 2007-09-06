@@ -24,6 +24,7 @@ std::string format(const char* fmt, ...)_ATTRIBUTE12;
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes);
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
 std::string url_encode(const std::string &text);
+std::string url_decode(const std::string &text);
 
 inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
