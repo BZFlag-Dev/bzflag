@@ -15,6 +15,7 @@ bzfs \- BZFlag game server
 .SH "SYNOPSIS"
 .B bzfs
 [\fB\-a \fIlinear\fR \fIangular\fR]
+[\fB\-adminlagannounce \fR\fImilliseconds\fR]
 [\fB\-admsg \fImessage\fR]
 [\fB\-advertise \fIgroupname\fR[\fI,groupname\fR]...]
 [\fB\-autoTeam\fR]
@@ -44,10 +45,11 @@ bzfs \- BZFlag game server
 [\fB\-helpmsg \fIfile\fR \fIname\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
-[\fB\-lagdrop \fIwarn\-count\fR]
-[\fB\-lagwarn \fR\fImilliseconds\fR]
 [\fB\-jitterdrop \fIwarn\-count\fR]
 [\fB\-jitterwarn \fR\fImilliseconds\fR]
+[\fB\-lagannounce \fR\fImilliseconds\fR]
+[\fB\-lagdrop \fIwarn\-count\fR]
+[\fB\-lagwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fR\URL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
@@ -118,6 +120,9 @@ suitable values. Positive values will set limits to the acceleration
 and lower they are, greater is the inertia.
 Zero or negative values disable acceleration limits.
 .TP 15
+\fB\-adminlagannounce \fImilliseconds\fR
+Announce players that lag more than \fImilliseconds\fR to admins.
+.TP 
 \fB\-admsg \fImessage\fR
 Define a message which will be broadcast to all players every 15 minutes.
 This option can be used multiple times to define a multiline message.
@@ -257,6 +262,9 @@ Kicks players after \fIwarn\-count\fR jitter warnings.
 .TP 
 \fB\-jitterwarn \fImilliseconds\fR
 Send warnings to players that jitter more than \fImilliseconds\fR.
+.TP 
+\fB\-lagannounce \fImilliseconds\fR
+Announce players that lag more than \fImilliseconds\fR in public.
 .TP 
 \fB\-lagdrop \fIwarn\-count\fR
 Kicks players after \fIwarn\-count\fR lag warnings.

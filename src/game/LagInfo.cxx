@@ -14,6 +14,7 @@
 #include "LagInfo.h"
 
 float LagInfo::adminlagannouncetresh = 0.0;
+float LagInfo::lagannouncetresh = 0.0;
 float LagInfo::threshold = 0.0;
 float LagInfo::jitterthreshold = 0.0;
 float LagInfo::lossthreshold = 0.0;
@@ -22,11 +23,12 @@ float LagInfo::jittermax       = 0.0;
 float LagInfo::lossmax       = 0.0;
 
 LagInfo::LagInfo(PlayerInfo *_info)
-  : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
-    jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
-    jittercount(0), jitterlastwarn(0), jitterwarncount(0), losscount(0),
-    losslastwarn(0), losswarncount(0), pingpending(false), pingseqno(0),
-    pingssent(0), lasttimestamp(0.0f) {
+  : info(_info), lagavg(0), jitteravg(0), lostavg(0),
+    lagalpha(1), jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0),
+    lagwarncount(0), jittercount(0), jitterlastwarn(0),
+    jitterwarncount(0), losscount(0), losslastwarn(0), losswarncount(0),
+    pingpending(false), pingseqno(0), pingssent(0), lasttimestamp(0.0f),
+    alagannouncecount(0), lagannouncecount(0) {
 }
 
 void LagInfo::reset()
@@ -91,7 +93,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 // update absolute latency based on LagPing messages
 void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 			    bool &jittkick, bool &plosswarn, bool &plosskick,
-			    bool &alagannouncewarn) {
+			    bool &alagannouncewarn, bool &lagannouncewarn) {
   uint16_t _pingseqno;
   nboUnpackUShort(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
@@ -100,6 +102,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);
     alagcount++;
+    laganncount++;
     lagcount++;
     jittercount++;
     losscount++;
@@ -107,6 +110,8 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // if lag has been good for some time, forget old warnings
     if (lagavg < threshold && lagcount - laglastwarn >= 20)
       lagwarncount = 0;
+    if (lagavg < threshold && lagannouncetresh - laglastannounce >= 20)
+      lagannouncecount = 0;
 
     // if jitter has been good for some time, forget old warnings
     if (jitteravg < jitterthreshold && jittercount - jitterlastwarn >= 20)
@@ -118,12 +123,20 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 
     // announce players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (adminlagannouncetresh > 0) && lagavg > adminlagannouncetresh
-	&& alagcount - alaglastannounce > 4 * alagannouncecount) {
+	&& alagcount - alaglastannounce > 2 * alagannouncecount) {
       alaglastannounce = alagcount;
       alagannouncewarn = true;
     } else {
       alagannouncewarn = false;
     }
+    if (!info->isObserver() && (lagannouncetresh > 0) && lagavg > lagannouncetresh
+	&& laganncount - laglastannounce > 2 * lagannouncecount) {
+      laglastannounce = laganncount;
+      lagannouncewarn = true;
+    } else {
+      lagannouncewarn = false;
+    }
+std::cout << lagannouncetresh << "\n";
 
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
@@ -168,6 +181,10 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     kick = false;
     jittwarn = false;
     jittkick = false;
+    plosswarn = false;
+    plosskick = false;
+    alagannouncewarn = false;
+    alagannouncewarn = false;
   }
 }
 
@@ -228,8 +245,12 @@ void LagInfo::updateLatency(float &waitTime) {
     waitTime  = delta;
 }
 
-void LagInfo::setAdminLagThreshold(float _adminlagannouncetresh) {
+void LagInfo::setAdminLagAnnounceThreshold(float _adminlagannouncetresh) {
   adminlagannouncetresh = _adminlagannouncetresh;
+}
+
+void LagInfo::setLagAnnounceThreshold(float _lagannouncetresh) {
+  lagannouncetresh = _lagannouncetresh;
 }
 
 void LagInfo::setThreshold(float _threshold, float _max) {

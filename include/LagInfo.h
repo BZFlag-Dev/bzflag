@@ -47,7 +47,7 @@ public:
   void	updatePingLag(void *buf, bool &warn, bool &kick,
 		      bool &jittwarn, bool &jittkick,
 		      bool &plosswarn, bool &plosskick,
-		      bool &alagannouncewarn);
+		      bool &alagannouncewarn, bool &lagannouncewarn);
   void	updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
@@ -57,7 +57,8 @@ public:
   void	updateLatency(float &waitTime);
   /** set the threshold for warning/kicking
    */
-  static void setAdminLagThreshold(float _adminlagannouncetresh);
+  static void setAdminLagAnnounceThreshold(float _adminlagannouncetresh);
+  static void setLagAnnounceThreshold(float _lagannouncetresh);
   static void setThreshold(float _threshold, float _max);
   static void setJitterThreshold(float _jitterthreshold, float _max);
   static void setPacketLossThreshold(float _packetlossthreshold, float _max);
@@ -93,6 +94,11 @@ private:
   int	 alagcount;
   int	 alaglastannounce;
   int	 alagannouncecount;
+  static float lagannouncetresh;
+  int	 laganncount;
+  int	 laglastannounce;
+  int	 lagannouncecount;
+
 
   // kicks
   static float threshold;
