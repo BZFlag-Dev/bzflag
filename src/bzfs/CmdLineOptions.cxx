@@ -1171,7 +1171,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }  
     else if (strcmp(argv[i], "-ws") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.wallSides = atoi(argv[i]);
+      int sides = atoi(argv[i]);
+      if (sides > 2)
+	options.wallSides = sides;
     } 
     else {
       std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
