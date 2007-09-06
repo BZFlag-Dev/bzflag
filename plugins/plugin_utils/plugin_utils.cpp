@@ -159,6 +159,25 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
   return tempStream.str();
 }
 
+std::string url_encode(const std::string &text)
+{
+  char hex[5];
+  std::string destination;
+  for (int i=0;  i < (int) text.size(); i++) {
+    char c = text[i];
+    if (isAlphanumeric(c)) {
+      destination+=c;
+    } else if (isWhitespace(c)) {
+      destination+='+';
+    } else {
+      destination+='%';
+      sprintf(hex, "%-2.2X", c);
+      destination.append(hex);
+    }
+  }
+  return destination;
+}
+
 
 
 // Local Variables: ***
