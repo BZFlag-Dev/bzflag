@@ -22,8 +22,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   std::string clipField;
   std::vector<std::string> dirs;
 
-
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS") != NULL)
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != NULL)
   {
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
@@ -43,11 +42,37 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   clipField += "," + vdir;
 
   bz_setclipFieldString ( "BZFS_HTTPD_VDIRS", clipField.c_str() );
+
+  // see if I am the indexer or not
+  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == NULL)
+    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%d",(int)this).c_str());
 }
 
 BZFSHTTPServer::~BZFSHTTPServer()
 {
   shutdownHTTP();
+
+  // clear out the 
+  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
+  {
+    std::string myThis = format("%d",(int)this);
+    if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
+       bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
+  }
+
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != NULL)
+  {
+    std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
+    std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
+
+    clipField = "";
+    for ( int i = 0; i < (int)dirs.size(); i++ )
+    {
+      if ( dirs[i] != dirs[i] )
+	clipField += vdir + ",";
+    }
+    bz_setclipFieldString("BZFS_HTTPD_VDIRS",clipField.c_str());
+  }
 }
 
 void BZFSHTTPServer::startupHTTP ( void )
@@ -201,7 +226,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      {
 		int requestID = user->connection * 100 + user->pendingCommands.size();
 
-		getURLData ( theCurrentCommand->URL.c_str(), requestID );
+		std::map<std::string,std::string> params;
+		getURLData ( theCurrentCommand->URL.c_str(), requestID, params );
 
 		if (theCurrentCommand->data)
 		{

@@ -25,6 +25,7 @@ public:
   BZFSHTTPServer( const char * plugInName );
   virtual ~BZFSHTTPServer();
 
+
   void startupHTTP ( void );
   void shutdownHTTP ( void );
 
@@ -35,7 +36,7 @@ public:
 
   // virtual functions to implement
   virtual bool acceptURL ( const char *url ) = 0;
-  virtual void getURLData ( const char* url, int requestID ) = 0;
+  virtual void getURLData ( const char* url, int requestID, const std::map<std::string,std::string> &paramaters, bool get = true ) = 0;
 
 protected:
   // called inside getURLData to set the data for the job

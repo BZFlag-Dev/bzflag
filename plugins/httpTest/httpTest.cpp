@@ -14,7 +14,7 @@ public:
   HTTPServer( const char * plugInName ): BZFSHTTPServer(plugInName){};
 
   virtual bool acceptURL ( const char *url );
-  virtual void getURLData ( const char* url, int requestID );
+  virtual void getURLData ( const char* url, int requestID, const std::map<std::string,std::string> &paramaters, bool get = true );
 
   std::string dir;
 };
@@ -44,10 +44,10 @@ bool HTTPServer::acceptURL ( const char *url )
   return true;
 }
 
-void HTTPServer::getURLData ( const char* url, int requestID )
+void HTTPServer::getURLData ( const char* url, int requestID, const std::map<std::string,std::string> &paramaters, bool get )
 {
   std::string URL = url;
-  if ( URL.size() < 2 )
+  if ( !get || URL.size() < 2 )
   {
     std::string crapPage = "This Is data from HTTP via BZFS\r\n\r\n";
     setURLDataSize ( (unsigned int)crapPage.size(), requestID );
