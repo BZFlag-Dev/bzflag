@@ -26,7 +26,7 @@
 #include <io.h>
 #include <direct.h>
 
-bool WindowsAddFileStack ( const char *szPathName, const char* fileMask, bool bRecursive,std::vector<std::string> &list )
+bool WindowsAddFileStack ( const char *szPathName, const char* fileMask, bool bRecursive,std::vector<std::string> &list, bool justDirs = false )
 {
   struct _finddata_t fileInfo;
 
@@ -64,7 +64,9 @@ bool WindowsAddFileStack ( const char *szPathName, const char* fileMask, bool bR
 	FilePath += "\\";
 	FilePath += fileInfo.name;
 
-	if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
+	if (justDirs && (fileInfo.attrib & _A_SUBDIR ))	// we neever do just dirs recrusively
+	  list.push_back(FilePath);
+	else if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
 	  WindowsAddFileStack(FilePath.c_str(),fileMask,bRecursive,list);
 	else if (!(fileInfo.attrib & _A_SUBDIR) )
 	{
@@ -193,7 +195,7 @@ static int match_mask (const char *mask, const char *string)
     return 0;
 }
 
-bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRecursive, std::vector<std::string> &list )
+bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRecursive, std::vector<std::string> &list, bool justDirs = false )
 {
   DIR	*directory;
   dirent	*fileInfo;
@@ -219,7 +221,9 @@ bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRec
 
       stat(FilePath.c_str(), &statbuf);
 
-      if (S_ISDIR(statbuf.st_mode) && bRecursive)
+      if (justDirs && S_ISDIR(statbuf.st_mode))	// we neever do just dirs recrusively
+	list.push_back(FilePath);
+      else if (S_ISDIR(statbuf.st_mode) && bRecursive)
 	LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
       else if (match_mask (fileMask, fileInfo->d_name))
 	list.push_back(FilePath);
@@ -256,6 +260,22 @@ std::vector<std::string> getFilesInDir ( const char* dir, const char* filter, bo
   WindowsAddFileStack (directory.c_str(), realFilter.c_str(),recrusive,list);
 #else
   LinuxAddFileStack(directory.c_str(), realFilter.c_str(),recrusive,list);
+#endif
+  return list;
+}
+
+std::vector<std::string> getDirsInDir ( const char* dir)
+{
+  std::vector<std::string> list;
+  if (!dir)
+    return list;
+
+  std::string directory  = convertPathToDelims(dir);
+
+#ifdef _WIN32
+  WindowsAddFileStack (directory.c_str(), "*.*",false,list,true);
+#else
+  LinuxAddFileStack (directory.c_str(), "*.*",false,list,true);
 #endif
   return list;
 }

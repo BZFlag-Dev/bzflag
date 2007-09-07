@@ -21,6 +21,9 @@
 std::vector<std::string> getFilesInDir ( const char* dir, const char* filter = "*.*", bool recursive = false );
 inline std::vector<std::string> getFilesInDir ( const std::string &dir, const char* filter = "*.*", bool recursive = false ){return getFilesInDir(dir.c_str(),filter,recursive);}
 
+std::vector<std::string> getDirsInDir ( const char* dir);
+inline std::vector<std::string> getDirsInDir ( const std::string &dir ){return getDirsInDir(dir.c_str());}
+
 std::string getFileDir ( const char* file );
 inline std::string getFileDir ( const std::string &file ){return getFileDir(file.c_str());}
 
