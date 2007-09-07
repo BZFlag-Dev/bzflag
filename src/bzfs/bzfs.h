@@ -150,6 +150,7 @@ extern RejoinList	rejoinList;
 extern bool		publiclyDisconnected;
 extern VotingArbiter	*votingArbiter;
 extern PingPacket	pingReply;
+extern Address		serverAddress;
 
 // FIXME - this should not be hangin out here
 extern bool dontWait;

@@ -1016,6 +1016,166 @@ BZF_API bool bz_disconectNonPlayerConnection(int connectionID)
   return true;
 }
 
+class APISocketListener : public NewNetworkConnectionCallback , NetworkDataPendingCallback
+{
+public:
+  bz_NetworkSocketListener  *callback;
+  NetListener		    *listener;
+  short			    port;
+
+  virtual ~APISocketListener();
+  virtual bool accept ( NetHandler *handler, int connectionID );
+  virtual bool pending ( NetHandler *handler, int connectionID, bool tcp );
+  virtual bool disconected ( NetHandler *handler, int connectionID );
+
+  void update( void );
+  std::map<int,NetHandler*> connections;
+};
+
+std::map<unsigned short,APISocketListener*> APISockets;
+std::map<int,APISocketListener*> APIConnections;
+
+class NetListernPacketBufferTicker : public bz_EventHandler
+{
+public:
+  virtual void process ( bz_EventData *eventData )
+  {
+    std::map<unsigned short,APISocketListener*>::iterator itr = APISockets.begin();
+    while (itr != APISockets.end())
+    {
+      itr->second->update();
+      itr++;
+    }
+  }
+};
+
+NetListernPacketBufferTicker netTicker;
+
+ APISocketListener::~APISocketListener()
+{
+  if (listener)
+    delete(listener);
+}
+bool APISocketListener::accept ( NetHandler *handler, int connectionID )
+{
+  if (!listener || callback)
+    return false;
+
+  if (!callback->accept(connectionID,handler->getHostname()))
+    return false;
+
+  connections[connectionID] = handler;
+  APIConnections[connectionID] = this;
+
+  return true;
+}
+
+bool APISocketListener::pending ( NetHandler *handler, int connectionID, bool tcp )
+{
+  if (!tcp || !listener || !callback)
+    return false;
+
+  // do the receive stuff here.
+  // callback->pending(connectionID,data,size);
+  return true;
+}
+
+bool APISocketListener::disconected ( NetHandler *handler, int connectionID )
+{
+  connections.erase(connections.find(connectionID));
+  APIConnections.erase(APIConnections.find(connectionID));
+
+  return true;
+}
+
+void APISocketListener::update( void )
+{
+
+}
+
+
+BZF_API bool bz_registerNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler )
+{
+  if ( !handler || APISockets.find(port) != APISockets.end() )
+    return false;
+
+  APISocketListener *listener = new APISocketListener;
+
+  listener->callback = handler;
+  listener->port = port;
+  listener->listener = new NetListener;
+
+  if (!listener->listener)
+  {
+    delete(listener);
+    return false;
+  }
+  bool worked = listener->listener->listen(serverAddress,port);
+ 
+  if (!worked)
+  {
+    delete(listener);
+    return false;
+  }
+  if (!APISockets.size())
+    bz_registerEvent(bz_eTickEvent,&netTicker);
+
+  APISockets[port] = listener;
+  return true;
+}
+
+BZF_API bool bz_removeNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler )
+{
+  if ( !handler || APISockets.find(port) == APISockets.end() )
+    return false;
+
+  APISocketListener *listener = APISockets[port];
+  if (listener->callback != handler)
+    return false;
+
+  delete(listener);
+  
+  APISockets.erase(APISockets.find(port));
+
+  if (!APISockets.size())
+    bz_removeEvent(bz_eTickEvent,&netTicker);
+
+  return true;
+}
+
+BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, unsigned int size )
+{
+  if (APIConnections.find(connectionID) == APIConnections.end())
+    return false;
+
+  APISocketListener *listener = APIConnections[connectionID];
+
+  // send the data here, should use a net connected peer class, or install an idle handler to buffer out data
+  //listener->connections[connectionID]->send()
+
+  return true;
+}
+
+BZF_API bool bz_disconectNetworkSocket ( int connectionID )
+{
+  if (APIConnections.find(connectionID) == APIConnections.end())
+    return false;
+
+  APISocketListener *listener = APIConnections[connectionID];
+
+  listener->disconected(listener->connections[connectionID],connectionID);
+  listener->listener->close(connectionID);
+
+  return true;
+}
+
+BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID )
+{
+  // use whatever we use for buffering here, 
+  return 0;
+}
+
+
 //-------------------------------------------------------------------------
 
 

@@ -796,9 +796,31 @@ NetListener::~NetListener()
 
 }
 
-bool NetListener::listen ( unsigned short /*port*/ )
+bool NetListener::listen (  Address serverAddress, unsigned short port )
 {
-  return false;
+  // init addr:port structure
+  struct sockaddr_in addr;
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr = serverAddress;
+  addr.sin_port = htons(port);
+
+  // open well known service port
+  listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+  if (listenSocket == -1)
+    return false;
+
+  if (bind(listenSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1)
+    return false;
+
+
+  if (::listen(listenSocket, 5) == -1) 
+  {
+    close(listenSocket);
+    return false;
+  }
+
+  return true;
 }
 
 bool NetListener::close ( NetHandler* /*handler*/ )
@@ -845,10 +867,6 @@ void NetListener::processConnections ( void )
   // any new clients
   if (FD_ISSET(listenSocket, &read_set))
     accept();
-
- // int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
- // if (id == -1)
- //   break;
 
   toRead = 0;
 }

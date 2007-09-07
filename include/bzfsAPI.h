@@ -1255,6 +1255,22 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned
 BZF_API bool bz_disconectNonPlayerConnection ( int connectionID );
 BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connectionID );
 
+// generic socket listener inteface
+
+class bz_NetworkSocketListener
+{
+public:
+  virtual ~bz_NetworkSocketListener(){};
+  virtual bool accept ( int connectionID, const char *ip ) = 0;
+  virtual void pending ( int connectionID, void *data, unsigned int size ) = 0;
+  virtual void disconnect ( int connectionID ){ if (connectionID) return; };
+};
+
+BZF_API bool bz_registerNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler );
+BZF_API bool bz_removeNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler );
+BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, unsigned int size );
+BZF_API bool bz_disconectNetworkSocket ( int connectionID );
+BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID );
 
 // player info
 

@@ -90,7 +90,7 @@ float speedTolerance = 1.125f;
 CmdLineOptions *clOptions;
 
 // server address to listen on
-static Address serverAddress;
+Address serverAddress;
 // well known service socket
 static int wksSocket;
 bool handlePings = true;

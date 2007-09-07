@@ -265,6 +265,7 @@ class NetworkDataPendingCallback
 public:
     virtual ~NetworkDataPendingCallback(){};
     virtual bool pending ( NetHandler *handler, int connectionID, bool tcp ) = 0;
+    virtual bool disconected ( NetHandler *handler, int connectionID ) = 0;
 };
 
 class NetListener
@@ -273,7 +274,7 @@ public:
   NetListener();
   ~NetListener();
 
-  bool listen ( unsigned short port );
+  bool listen ( Address serverAddress, unsigned short port );
 
   bool close ( NetHandler *handler );
   bool close ( int connectionID );
