@@ -210,6 +210,7 @@ std::string url_decode(const std::string &text)
       itr++;
     }
   }
+  return destination;
 }
 
 // Local Variables: ***
