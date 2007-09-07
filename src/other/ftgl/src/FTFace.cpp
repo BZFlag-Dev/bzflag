@@ -13,6 +13,8 @@ FTFace::FTFace( const char* fontFilePath, bool precomputeKerning)
 
     err = FT_New_Face( *FTLibrary::Instance().GetLibrary(), fontFilePath, DEFAULT_FACE_INDEX, ftFace);
 
+    memset(precomputedKerning, 0, sizeof(float)*128*128*2);
+
     if( err)
     {
         delete ftFace;
