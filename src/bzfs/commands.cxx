@@ -2924,12 +2924,6 @@ bool ClientQueryCommand::operator() (const char *message,
   int t = playerData->getIndex();
   logDebugMessage(2,"Clientquery requested by %s [%d]\n",
 	 playerData->player.getCallSign(), t);
-  // check for clientquery permission
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::clientquery)) {
-    sendMessage(ServerPlayer, t,
-		"You do not have permission to run the clientquery command");
-    return true;
-  }
   if (message[12] != '\0') {
     std::string name = message + 13; // assumes there is a space
     while (isspace(name[0]))
