@@ -45,7 +45,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
 
   // see if I am the indexer or not
   if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
-    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%d",(int)this).c_str());
+    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
 }
 
 BZFSHTTPServer::~BZFSHTTPServer()
@@ -55,7 +55,7 @@ BZFSHTTPServer::~BZFSHTTPServer()
   // clear out the 
   if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
   {
-    std::string myThis = format("%d",(int)this);
+    std::string myThis = format("%p",this);
     if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
        bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
   }
@@ -185,7 +185,7 @@ void BZFSHTTPServer::processTheCommand ( HTTPConectedUsers *user, int requestID,
 {
   if (acceptURL(theCurrentCommand->URL.c_str()))
   {
-    int requestID = user->connection * 100 + user->pendingCommands.size();
+    int requestID = user->connection * 100 + (int)user->pendingCommands.size();
 
     getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
 
