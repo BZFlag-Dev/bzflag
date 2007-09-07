@@ -14,7 +14,7 @@ public:
   HTTPServer( const char * plugInName ): BZFSHTTPServer(plugInName){};
 
   virtual bool acceptURL ( const char *url );
-  virtual void getURLData ( const char* url, int requestID, const std::map<std::string,std::string> &paramaters, bool get = true );
+  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
 
   std::string dir;
 };
@@ -49,7 +49,27 @@ void HTTPServer::getURLData ( const char* url, int requestID, const std::map<std
   std::string URL = url;
   if ( !get || URL.size() < 2 )
   {
-    std::string crapPage = "This Is data from HTTP via BZFS\r\n\r\n";
+    std::string crapPage = "This Is data from HTTP via BZFS\r\n";
+
+    if ( get )
+      crapPage += "this was a HTTP GET request\r\n";
+    else
+      crapPage += "this was an HTTP POST request\r\n";
+
+    if (paramaters.size())
+    {
+      crapPage += "The request had these paramaters\r\n";
+   
+      URLParams::const_iterator itr = paramaters.begin();
+      while ( itr != paramaters.end() )
+      {
+	crapPage += format("Key = \"%s\" Value = \"%s\"\r\n",itr->first.c_str(),itr->second.c_str());
+	itr++;
+      }
+    }
+    else
+      crapPage += "The request had no paramaters\r\n";
+    crapPage += "\r\n";
     setURLDataSize ( (unsigned int)crapPage.size(), requestID );
     setURLData ( crapPage.c_str(), requestID );
   }
