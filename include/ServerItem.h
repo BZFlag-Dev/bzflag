@@ -42,6 +42,7 @@ public:
 
 public:
   std::string	name;
+  unsigned int	port;
   std::string	description;
   PingPacket	ping;
   time_t	updateTime; // last time I was updated
