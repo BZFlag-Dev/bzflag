@@ -952,6 +952,19 @@ bool MsgCommand::operator() (const char	 *message,
 
   // send the message
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
+
+  // event handler goodness
+  bz_ChatEventData chatData;
+  chatData.from = playerData->getIndex();
+  chatData.to = to;
+
+  chatData.message = arguments.c_str() + messageStart + 1;
+  chatData.time = TimeKeeper::getCurrent().getSeconds();
+
+  // send any events that want to watch the chat
+  // everyone
+  worldEventManager.callEvents(bz_eChatMessageEvent,&chatData);
+
   return true;
 }
 
