@@ -21,6 +21,7 @@
 /* common implementation headers */
 #include "TextUtils.h"
 #include "Protocol.h"
+#include "bzfio.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"
@@ -208,47 +209,49 @@ bool operator<(const ServerItem &left, const ServerItem &right)
   // sorted "from least to greatest" in the list
   // so "return true" to go up, "return false" to go down
 
-  if ((left.cached && right.cached) || (!left.cached && !right.cached)) {
-    if (left.getSortFactor() > right.getSortFactor()) {
-      // more players goes to the top
-      return true;
-    } else if (left.getSortFactor() == right.getSortFactor()) {
-      time_t ageLeft = (left.getAgeMinutes() * 60) + left.getAgeSeconds();
-      time_t ageRight = (right.getAgeMinutes() * 60) + right.getAgeSeconds();
-      if (ageLeft < ageRight) {
-	// youngest first
-	return true;
-      } else if (ageLeft == ageRight) {
-	if (left.name < right.name) {
-	  // alphabetic sort - first goes first
-	  return true;
-	} else if (left.name == right.name) {
-	  // sort by port - default first, then lowest to highest
-	  if (left.port == ServerPort) {
-	    return true;
-	  } else if (right.port == ServerPort) {
-	    return false;
-	  } else if (left.port < right.port) {
-	    return true;
-	  } else {
-	    return false;
-	  }
-	} else {
-	  return false;
-	}
-      } else {
-	return false;
-      }
-    } else {
-      return false;
-    }
-  } else if (left.cached && !right.cached) {
-    // cached goes to the bottom
+  // cached servers go to the bottom of the list
+  if (left.cached && !right.cached) {
     return false;
-  } else { // !left.cached && right.cached
-    // uncached to the top
+  } else if (!left.cached && right.cached) {
     return true;
   }
+
+  // sort by player count - more first
+  if (left.getSortFactor() > right.getSortFactor()) {
+    return true;
+  } else if (left.getSortFactor() < right.getSortFactor()) {
+    return false;
+  }
+
+  // sort by age - youngest first
+  // note that noncached servers always have equal ages
+  time_t ageLeft = (left.getAgeMinutes() * 60) + left.getAgeSeconds();
+  time_t ageRight = (right.getAgeMinutes() * 60) + right.getAgeSeconds();
+  if (ageLeft < ageRight) {
+    return true;
+  } else if (ageLeft > ageRight) {
+    return false;
+  }
+
+  // hostname alphabetic sort - first goes first
+  if (left.name < right.name) {
+    return true;
+  } else if (left.name > right.name) {
+    return false;
+  }
+
+  // sort by port - default first, then lowest to highest
+  if (left.port == ServerPort) {
+    return true;
+  } else if (right.port == ServerPort) {
+    return false;
+  } else if (left.port < right.port) {
+    return true;
+  } else {
+    return false;
+  }
+
+  logDebugMessage(0, "Error: operator<: equality detected.\n");
 }
 
 
