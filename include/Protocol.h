@@ -20,10 +20,10 @@
 #include "common.h"
 
 // well known service port number for bzflag server
-const int		ServerPort = 5154;
+const unsigned int	ServerPort = 5154;
 
 // port for udp broadcasts used to find servers on local lan
-const int		BroadcastPort = 5154;
+const unsigned int	BroadcastPort = 5154;
 
 // URL for default list server
 const char* const	DefaultListServerURL = "http://my.BZFlag.org/db/";
