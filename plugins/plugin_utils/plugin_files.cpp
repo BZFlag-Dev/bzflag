@@ -217,15 +217,17 @@ bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRec
     {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
-      GetUperName(fileInfo->d_name);
+      std::string name = fileInfo->d_name;
+      for (std::string::iterator i=name.begin(), end=name.end(); i!=end; ++i)
+	*i = ::toupper(*i);
 
       stat(FilePath.c_str(), &statbuf);
 
-      if (justDirs && S_ISDIR(statbuf.st_mode))	// we neever do just dirs recrusively
+      if (justDirs && S_ISDIR(statbuf.st_mode))	// we never do just dirs recrusively
 	list.push_back(FilePath);
       else if (S_ISDIR(statbuf.st_mode) && bRecursive)
 	LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
-      else if (match_mask (fileMask, fileInfo->d_name))
+      else if (match_mask (fileMask, name.c_str()))
 	list.push_back(FilePath);
     }
   }
