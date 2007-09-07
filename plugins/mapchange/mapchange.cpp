@@ -121,11 +121,11 @@ bool loadGamesFromFile ( const char* config )
   FILE *fp = fopen(config,"rb");
   if(!fp)
     return false;
-  fseek(fp,SEEK_END,0);
+  fseek(fp,0,SEEK_END);
 
   std::string text;
   unsigned int size = ftell(fp);
-  fseek(fp,SEEK_SET,0);
+  fseek(fp,0,SEEK_SET);
 
   char *temp = (char*)malloc(size+1);
   fread(temp,size,1,fp);
