@@ -1016,6 +1016,43 @@ BZF_API bool bz_disconectNonPlayerConnection(int connectionID)
   return true;
 }
 
+class APIPendingPacket
+{
+public:
+  unsigned int	size;
+  char		*data;
+
+  APIPendingPacket(unsigned int s, const char *d)
+  {
+    size = s;
+    if (!s)
+      data = NULL;
+    else
+    {
+      data = (char*)malloc(s);
+      memcpy(data,d,s);
+    }
+  }
+
+  APIPendingPacket(const APIPendingPacket& p)
+  {
+    size = p.size;
+    if (!size)
+      data = NULL;
+    else
+    {
+      data = (char*)malloc(size);
+      memcpy(data,p.data,size);
+    }
+  }
+
+ ~APIPendingPacket()
+ {
+   if (data)
+     free(data);
+ }
+};
+
 class APISocketListener : public NewNetworkConnectionCallback , NetworkDataPendingCallback
 {
 public:
@@ -1028,8 +1065,11 @@ public:
   virtual bool pending ( NetHandler *handler, int connectionID, bool tcp );
   virtual bool disconected ( NetHandler *handler, int connectionID );
 
+  void sendData ( int connectionID, unsigned int size, const char* data );
   void update( void );
   std::map<int,NetHandler*> connections;
+
+  std::map<int, std::vector<APIPendingPacket> > pendingPackets;
 };
 
 std::map<unsigned short,APISocketListener*> APISockets;
@@ -1055,6 +1095,8 @@ NetListernPacketBufferTicker netTicker;
 {
   if (listener)
     delete(listener);
+
+  pendingPackets.clear();
 }
 bool APISocketListener::accept ( NetHandler *handler, int connectionID )
 {
@@ -1075,24 +1117,88 @@ bool APISocketListener::pending ( NetHandler *handler, int connectionID, bool tc
   if (!tcp || !listener || !callback)
     return false;
 
-  // do the receive stuff here.
-  // callback->pending(connectionID,data,size);
+  RxStatus e = handler->receive(256);
+
+  unsigned int readSize = handler->getTcpReadSize();
+  void *buf = handler->getTcpBuffer();
+
+  if ( e !=ReadAll && e != ReadPart ) 
+  {
+    // there was an error but we aren't a player yet
+    if (e == ReadError)
+      nerror("error on read");
+    listener->close(connectionID);
+  } 
+  else 
+  {
+    // ok read in all the data we may have waiting
+    void *data = malloc(readSize);
+    memcpy(data,buf,readSize);
+    unsigned int totalSize = readSize;
+
+    while (e == ReadAll)
+    {
+      handler->flushData();
+
+      e = handler->receive(256);
+      readSize = handler->getTcpReadSize();
+      buf = handler->getTcpBuffer();
+
+      unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
+      memcpy(temp,data,totalSize);
+      memcpy(temp+totalSize,buf,readSize);
+      free(data);
+      data = temp;
+      totalSize += readSize;
+    }
+
+    // we have a copy of all the data, so we can flush now
+    handler->flushData();
+    
+    // let our callback know that we got data
+    callback->pending(connectionID,data,totalSize);
+    free(data);
+  }
   return true;
 }
 
 bool APISocketListener::disconected ( NetHandler *handler, int connectionID )
 {
+  pendingPackets.erase(pendingPackets.find(connectionID));
   connections.erase(connections.find(connectionID));
   APIConnections.erase(APIConnections.find(connectionID));
 
   return true;
 }
 
-void APISocketListener::update( void )
+void APISocketListener::sendData ( int connectionID, unsigned int size, const char* data )
 {
-
+  if (pendingPackets.find(connectionID) == pendingPackets.end())
+  {
+    std::vector<APIPendingPacket> temp;
+    pendingPackets[connectionID] = temp;
+  }
+  pendingPackets[connectionID].push_back(APIPendingPacket(size,data));
 }
 
+void APISocketListener::update( void )
+{
+  // send out what we got
+  if (!listener)
+    return;
+  listener->update(0.0001f);
+
+  std::map<int, std::vector<APIPendingPacket> >::iterator itr = pendingPackets.begin();
+  while ( itr != pendingPackets.end() )
+  {
+    NetHandler *handler = connections[itr->first];
+    if ( handler && itr->second.size())
+    {
+      handler->send(itr->second[0].data,itr->second[0].size);
+      itr->second.erase(itr->second.begin());
+    }
+  }
+}
 
 BZF_API bool bz_registerNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler )
 {
@@ -1150,8 +1256,7 @@ BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, uns
 
   APISocketListener *listener = APIConnections[connectionID];
 
-  // send the data here, should use a net connected peer class, or install an idle handler to buffer out data
-  //listener->connections[connectionID]->send()
+  listener->sendData(connectionID,size,(const char*)data);
 
   return true;
 }
@@ -1171,13 +1276,18 @@ BZF_API bool bz_disconectNetworkSocket ( int connectionID )
 
 BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID )
 {
-  // use whatever we use for buffering here, 
-  return 0;
+  if (APIConnections.find(connectionID) == APIConnections.end())
+    return 0;
+
+  APISocketListener *listener = APIConnections[connectionID];
+
+  if (listener->pendingPackets.find(connectionID) == listener->pendingPackets.end())
+    return 0;
+
+  return (unsigned int)listener->pendingPackets[connectionID].size();
 }
 
-
 //-------------------------------------------------------------------------
-
 
 BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
 {
