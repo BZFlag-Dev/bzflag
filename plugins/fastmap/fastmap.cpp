@@ -161,7 +161,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
       delete(itr->second);
       clients.erase(itr);
     }
-    bz_disconectNonPlayerConnection ( connData->connectionID );
+    bz_disconnectNonPlayerConnection ( connData->connectionID );
  }
 }
 
@@ -303,7 +303,7 @@ void FastMapClient::disconnect ( int connectionID )
     return;
 
   bz_removeNonPlayerConnectionHandler ( conID, this );
-  bz_disconectNonPlayerConnection ( conID );
+  bz_disconnectNonPlayerConnection ( conID );
   conID = -1;
 
 }
