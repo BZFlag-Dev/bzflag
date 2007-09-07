@@ -85,8 +85,10 @@ void FontManager::freeContext(void* data)
     std::map<int,void*>::iterator itr = face.sizes.begin();
     while ( itr != face.sizes.end() )
     {
-      if ( itr->second )
+      if ( itr->second ) {
 	fm->deleteGLFont(itr->second,itr->first);
+	itr->second = NULL;
+      }
       itr++;
     }
     face.sizes.clear();
@@ -164,6 +166,7 @@ void FontManager::clear(int font, int size)
   std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
   if ( itr != fontFaces[font].sizes.end() ) {
     deleteGLFont(itr->second,size);
+    itr->second = NULL;
     fontFaces[font].sizes.erase(size);
   }
 }
@@ -337,17 +340,21 @@ const char* FontManager::getFaceName(int faceID)
 */
 void FontManager::deleteGLFont ( void* font, int size )
 {
-  bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
-  if ( BZDB.isSet("MinAliasedFontSize"))
-  {
-    int minSize = BZDB.evalInt("MinAliasedFontSize");
-    if (size <= minSize)
-      useBitmapFont = true;
+  if (!font) {
+    return;
   }
-  if(useBitmapFont)
+  bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
+  if ( BZDB.isSet("MinAliasedFontSize")) {
+    int minSize = BZDB.evalInt("MinAliasedFontSize");
+    if (size <= minSize) {
+      useBitmapFont = true;
+    }
+  }
+  if(useBitmapFont) {
     delete((CRAP_FONT*)font);
-  else
+  } else {
     delete((FONT*)font);
+  }
 }
 /**
  * return the ftgl representation for a given font of a given size
