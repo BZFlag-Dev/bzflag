@@ -103,6 +103,9 @@
 				RelativePath="..\plugin_config.cpp">
 			</File>
 			<File
+				RelativePath="..\plugin_files.cpp">
+			</File>
+			<File
 				RelativePath="..\plugin_HTTP.cpp">
 			</File>
 			<File
@@ -117,6 +120,9 @@
 				RelativePath="..\plugin_config.h">
 			</File>
 			<File
+				RelativePath="..\plugin_files.h">
+			</File>
+			<File
 				RelativePath="..\plugin_HTTP.h">
 			</File>
 			<File
@@ -128,6 +134,21 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
+		<File
+			RelativePath="..\Makefile.am">
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="TRUE">
+				<Tool
+					Name="VCCustomBuildTool"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				ExcludedFromBuild="TRUE">
+				<Tool
+					Name="VCCustomBuildTool"/>
+			</FileConfiguration>
+		</File>
 		<File
 			RelativePath=".\ReadMe.txt">
 		</File>
