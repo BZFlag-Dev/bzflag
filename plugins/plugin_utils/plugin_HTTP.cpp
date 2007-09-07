@@ -302,7 +302,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	    {
 	      int i = (int)commands.size();
 
-	      for ( int c = 0; c  < i; c++ )
+	      for ( int c = 1; c  < i; c++ )
 	      {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
