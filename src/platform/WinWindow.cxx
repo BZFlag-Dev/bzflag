@@ -17,6 +17,7 @@
 #include "OpenGLGState.h"
 #include <stdio.h>
 #include <math.h>
+#include "StateDatabase.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -39,7 +40,8 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				has3DFXGamma(false),
 				gammaVal(1.0f),
 				prev(NULL),
-				next(NULL)
+				next(NULL),
+				mouseGrab(false)
 {
   // make window
   hwnd = CreateWindow("BZFLAG", "bzflag",
@@ -152,24 +154,69 @@ void			WinWindow::setMinSize(int, int)
   // FIXME
 }
 
-void			WinWindow::setFullscreen()
+void			WinWindow::setFullscreen(bool on)
 {
-  DWORD style = GetWindowLong(hwnd, GWL_STYLE);
-  style &= ~(WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
-  SetWindowLong(hwnd, GWL_STYLE, style);
-  if (display->isFullScreenOnly())
-    MoveWindow(hwnd, 0, 0,
-		display->getFullWidth(),
-		display->getFullHeight(), FALSE);
-  else
-    MoveWindow(hwnd, 0, 0,
-		GetDeviceCaps(hDC, HORZRES),
-		GetDeviceCaps(hDC, VERTRES), FALSE);
+  if (on) {
+    // no window decorations
+    DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+    style &= ~(WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_THICKFRAME);
+    SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // take up the whole screen
+    if (display->isFullScreenOnly())
+      MoveWindow(hwnd, 0, 0,
+		  display->getFullWidth(),
+		  display->getFullHeight(), FALSE);
+    else
+      MoveWindow(hwnd, 0, 0,
+		  GetDeviceCaps(hDC, HORZRES),
+		  GetDeviceCaps(hDC, VERTRES), FALSE);
+
+  } else if (!display->isFullScreenOnly()) {
+    // reset the resolution if we changed it before
+    display->setDefaultResolution();
+
+    // window stuff
+    DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+    style |= (WS_BORDER | WS_CAPTION);
+    SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // size it
+    if (BZDB.isSet("geometry")) {
+      int w, h, x, y, count;
+      char xs, ys;
+      count = sscanf(BZDB.get("geometry").c_str(),
+    		 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+      if (w < 256) w = 256;
+      if (h < 192) h = 192;
+      if (count == 6) {
+        if (xs == '-') x = display->getWidth() - x - w;
+        if (ys == '-') y = display->getHeight() - y - h;
+        setPosition(x, y);
+      }
+      setSize(w, h);
+    } else {
+      // uh.... right
+      setPosition(0,0);
+      setSize(640,480);
+    }
+
+    // force windows to repaint the whole desktop
+    RECT rect;
+    GetWindowRect(NULL, &rect);
+    InvalidateRect(NULL, &rect, TRUE);
+  }
 
   // resize child
   int width, height;
   getSize(width, height);
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
+
+  // reset mouse grab
+  if (mouseGrab) {
+    ungrabMouse();
+    grabMouse();
+  }
 }
 
 void			WinWindow::iconify()
@@ -193,12 +240,41 @@ void			WinWindow::getMouse(int& x, int& y) const
 
 void			WinWindow::grabMouse()
 {
-  // FIXME
+  RECT wrect;
+  GetWindowRect(hwnd, &wrect);
+
+  int xborder = GetSystemMetrics(SM_CXDLGFRAME);
+  int yborder = GetSystemMetrics(SM_CYDLGFRAME);
+  int titlebar = GetSystemMetrics(SM_CYCAPTION);
+
+  DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+  // don't compensate for window trimmings if they're turned off
+  if (!((style & (WS_BORDER | WS_CAPTION | WS_DLGFRAME))
+        == (WS_BORDER | WS_CAPTION | WS_DLGFRAME)))
+    xborder = yborder = titlebar = 0;
+
+  RECT rect;
+  rect.top = wrect.top + titlebar + yborder;
+  rect.left = wrect.left + xborder;
+  rect.bottom = wrect.bottom - yborder;
+  rect.right = wrect.right - xborder;
+  ClipCursor(&rect);
 }
 
 void			WinWindow::ungrabMouse()
 {
-  // FIXME
+  ClipCursor(NULL);
+}
+
+void			WinWindow::enableGrabMouse(bool on)
+{
+  if (on) {
+    mouseGrab = true;
+    grabMouse();
+  } else {
+    mouseGrab = false;
+    ungrabMouse();
+  }
 }
 
 void			WinWindow::showMouse()
@@ -286,7 +362,7 @@ void			WinWindow::createChild()
   if (hwndChild == NULL) return;
 
   if (display->isFullScreenOnly())
-    setFullscreen();
+    setFullscreen(true);
 
   // get DC
   hDCChild = GetDC(hwndChild);
@@ -477,6 +553,9 @@ bool			WinWindow::activate()
   const bool hadChild = (hDCChild != NULL);
   makeContext();
 
+  if (mouseGrab)
+    grabMouse();
+
   if (!hadChild && hDCChild != NULL) {
     // reload context data
     OpenGLGState::initContext();
@@ -499,6 +578,9 @@ bool			WinWindow::deactivate()
   // destroy OpenGL context
   const bool hadChild = (hDCChild != NULL);
   freeContext();
+
+  if (mouseGrab)
+    ungrabMouse();
 
   inactiveDueToDeactivate = true;
   return hadChild;

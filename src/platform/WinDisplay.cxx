@@ -417,7 +417,7 @@ bool			WinDisplay::isNastyKey(const MSG& msg) const
   return false;
 }
 
-bool			WinDisplay::setDefaultResolution()
+bool			WinDisplay::setDefaultResolution() const
 {
   ChangeDisplaySettings(0, 0);
   return true;

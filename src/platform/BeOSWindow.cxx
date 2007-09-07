@@ -419,7 +419,7 @@ void					BeOSWindow::setMinSize(int width, int height)
   bWindow->Unlock();
 }
 
-void					BeOSWindow::setFullscreen()
+void					BeOSWindow::setFullscreen(bool on)
 {
   bWindow->Lock();
   // FIXME

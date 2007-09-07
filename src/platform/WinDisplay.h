@@ -35,7 +35,7 @@ class WinDisplay : public BzfDisplay {
     bool		hasGetKeyMode() {return true;};
     void		getModState(bool &shift, bool &control, bool &alt);
 
-    bool		setDefaultResolution();
+    bool		setDefaultResolution() const;
 
     bool		isFullScreenOnly() const;
     int			getFullWidth() const;
