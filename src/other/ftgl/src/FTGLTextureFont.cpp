@@ -51,7 +51,10 @@ FTGLTextureFont::FTGLTextureFont( const unsigned char *pBufferBytes, size_t buff
 
 FTGLTextureFont::~FTGLTextureFont()
 {
-    glDeleteTextures( (GLsizei)textureIDList.size(), (const GLuint*)&textureIDList[0]);
+  GLsizei size = (GLsizei)textureIDList.size();
+  if (size) {
+    glDeleteTextures(size , (const GLuint*)&textureIDList[0]);
+  }
 }
 
 
