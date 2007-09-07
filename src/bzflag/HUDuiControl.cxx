@@ -32,9 +32,8 @@ int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
-HUDuiControl::HUDuiControl() : showingFocus(true),
-				cb(NULL), userData(NULL),
-				navList(NULL)
+HUDuiControl::HUDuiControl() : showingFocus(true), navList(NULL), cb(NULL),
+				userData(NULL)
 {
   if (totalCount == 0) {
     // load arrow texture
