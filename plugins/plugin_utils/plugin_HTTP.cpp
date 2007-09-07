@@ -230,10 +230,12 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      if (  paramStart != NULL )
 	      {
 		std::string paramBlock = paramStart+1;
-		// trim the URL part to just the string
-		URL.erase(URL.begin()+(paramStart-URL.c_str()),URL.end());
-		// she's got params, let em fly.
+		// CHEAP but it works, and dosn't walk over memory
+		*paramStart = 0;
+		std::string temp = URL.c_str();
+		URL = temp.c_str();
 		
+		// she's got params, let em fly.
 		std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
 	      
 		for (int i =0; i < (int)rawParams.size(); i++ )
