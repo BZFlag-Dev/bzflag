@@ -135,7 +135,6 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     } else {
       lagannouncewarn = false;
     }
-std::cout << lagannouncetresh << "\n";
 
     // warn players from time to time whose lag is > threshold (-lagwarn)
     if (!info->isObserver() && (threshold > 0) && lagavg > threshold
