@@ -228,7 +228,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   // non-cached, items that have more players are more, etc..
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    if (server < info){
+    if (info < server){
       insertPoint = i;
       break;
     }

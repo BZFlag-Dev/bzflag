@@ -216,12 +216,14 @@ bool operator<(const ServerItem &left, const ServerItem &right)
 	/* younger goes to top */
 	return true;
       } else if (ageLeft == ageRight) {
-	/* same age, go by name */
-	if (left.name < right.name) {
+	/* same age, go by hostname+port */
+	std::string ldesc = left.description.substr(0, left.description.find_first_of(';')) + "\0";
+	std::string rdesc = right.description.substr(0, right.description.find_first_of(';')) + "\0";
+	if (ldesc < rdesc) {
 	  /* all else fails, go alphabetical */
-	  return false;
-	} else {
 	  return true;
+	} else {
+	  return false;
 	}
       } else {
 	return false;
