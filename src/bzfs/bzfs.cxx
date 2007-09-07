@@ -4741,7 +4741,7 @@ static void runMainLoop ( void )
 		RxStatus e = netHandler->receive(256);
 
 		if (e !=ReadAll && e != ReadPart) {
-		  // we could not read, it must have disconected
+		  // we could not read, it must have disconnected
 		  // there ewas an error
 		  for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
 		    peerItr->second.notifyList[i]->disconnect(peerItr->first);

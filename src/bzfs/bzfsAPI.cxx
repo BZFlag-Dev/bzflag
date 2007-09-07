@@ -998,7 +998,7 @@ BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connecti
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_disconectNonPlayerConnection(int connectionID)
+BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
 {
   if(netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1)
     return false;
@@ -1063,7 +1063,7 @@ public:
   virtual ~APISocketListener();
   virtual bool accept ( NetHandler *handler, int connectionID );
   virtual bool pending ( NetHandler *handler, int connectionID, bool tcp );
-  virtual bool disconected ( NetHandler *handler, int connectionID );
+  virtual bool disconnected ( NetHandler *handler, int connectionID );
 
   void sendData ( int connectionID, unsigned int size, const char* data );
   void update( void );
@@ -1162,7 +1162,7 @@ bool APISocketListener::pending ( NetHandler *handler, int connectionID, bool tc
   return true;
 }
 
-bool APISocketListener::disconected ( NetHandler * /* handler */, int connectionID )
+bool APISocketListener::disconnected ( NetHandler * /* handler */, int connectionID )
 {
   pendingPackets.erase(pendingPackets.find(connectionID));
   connections.erase(connections.find(connectionID));
@@ -1261,14 +1261,14 @@ BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, uns
   return true;
 }
 
-BZF_API bool bz_disconectNetworkSocket ( int connectionID )
+BZF_API bool bz_disconnectNetworkSocket ( int connectionID )
 {
   if (APIConnections.find(connectionID) == APIConnections.end())
     return false;
 
   APISocketListener *listener = APIConnections[connectionID];
 
-  listener->disconected(listener->connections[connectionID],connectionID);
+  listener->disconnected(listener->connections[connectionID],connectionID);
   listener->listener->close(connectionID);
 
   return true;

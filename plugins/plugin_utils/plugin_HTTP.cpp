@@ -106,7 +106,7 @@ void BZFSHTTPServer::shutdownHTTP ( void )
   bz_removeEvent (bz_eNewNonPlayerConnection,this);
 
   // kill the users;
-  std::map<int,HTTPConectedUsers*>::iterator itr = users.begin();
+  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
   while ( itr != users.end() )
   {
     bz_removeNonPlayerConnectionHandler (itr->first, this );
@@ -139,7 +139,7 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
 	if ( !users.size() )
 	  savedUpdateTime = bz_getMaxWaitTime();
 
-	HTTPConectedUsers *user = new HTTPConectedUsers(connData->connectionID);
+	HTTPConnectedUsers *user = new HTTPConnectedUsers(connData->connectionID);
 
 	users[connData->connectionID] = user;
 	pending ( connData->connectionID, (char*)connData->data, connData->size );
@@ -155,7 +155,7 @@ void BZFSHTTPServer::update ( void )
 
   std::vector<int>  killList;
 
-  std::map<int,HTTPConectedUsers*>::iterator itr = users.begin();
+  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
   while ( itr != users.end() )
   {
     double deadTime = now - itr->second->aliveTime;
@@ -181,7 +181,7 @@ void BZFSHTTPServer::update ( void )
     bz_setMaxWaitTime(savedUpdateTime);
 }
 
-void BZFSHTTPServer::processTheCommand ( HTTPConectedUsers *user, int requestID, const URLParams &params )
+void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
 {
   if (acceptURL(theCurrentCommand->URL.c_str()))
   {
@@ -244,11 +244,11 @@ std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLPara
 
 void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 {
-  std::map<int,HTTPConectedUsers*>::iterator itr = users.find(connectionID);
+  std::map<int,HTTPConnectedUsers*>::iterator itr = users.find(connectionID);
   if (itr == users.end())
     return;
 
-  HTTPConectedUsers* user = itr->second;
+  HTTPConnectedUsers* user = itr->second;
 
   char *temp = (char*)malloc(s+1);
   memcpy(temp,d,s);
@@ -398,18 +398,18 @@ const char * BZFSHTTPServer::getBaseServerURL ( void )
   return baseURL.c_str();
 }
 
-BZFSHTTPServer::HTTPConectedUsers::HTTPConectedUsers(int connectionID )
+BZFSHTTPServer::HTTPConnectedUsers::HTTPConnectedUsers(int connectionID )
 {
   connection = connectionID;
   pos = 0;
 }
 
-BZFSHTTPServer::HTTPConectedUsers::~HTTPConectedUsers()
+BZFSHTTPServer::HTTPConnectedUsers::~HTTPConnectedUsers()
 {
   killMe();
 }
 
-void BZFSHTTPServer::HTTPConectedUsers::killMe ( void )
+void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
 {
   for (int i = 0; i < (int)pendingCommands.size(); i++)
   {
@@ -420,7 +420,7 @@ void BZFSHTTPServer::HTTPConectedUsers::killMe ( void )
   aliveTime -= 10000.0;
 }
 
-bool BZFSHTTPServer::HTTPConectedUsers::transfering ( void )
+bool BZFSHTTPServer::HTTPConnectedUsers::transfering ( void )
 {
   if (!pendingCommands.size())
     return false;
@@ -429,13 +429,13 @@ bool BZFSHTTPServer::HTTPConectedUsers::transfering ( void )
   return pos < command->size;
 }
 
-void BZFSHTTPServer::HTTPConectedUsers::startTransfer ( HTTPCommand *command )
+void BZFSHTTPServer::HTTPConnectedUsers::startTransfer ( HTTPCommand *command )
 {
   aliveTime = bz_getCurrentTime();
   pendingCommands.push_back(command);
   update();
 }
-std::string BZFSHTTPServer::HTTPConectedUsers::getMimeType ( HTTPDocumentType docType )
+std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType docType )
 {
   std::string type = "text/plain";
   switch(docType)
@@ -451,7 +451,7 @@ std::string BZFSHTTPServer::HTTPConectedUsers::getMimeType ( HTTPDocumentType do
   return type;
 }
 
-std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode returnCode )
+std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode returnCode )
 {
   std::string code = "200";
   switch(returnCode)
@@ -476,7 +476,7 @@ std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode re
   return code;
 }
 
-void BZFSHTTPServer::HTTPConectedUsers::update ( void )
+void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
 {
   if (!pendingCommands.size())
     return;

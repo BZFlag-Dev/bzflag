@@ -265,7 +265,7 @@ class NetworkDataPendingCallback
 public:
     virtual ~NetworkDataPendingCallback(){};
     virtual bool pending ( NetHandler *handler, int connectionID, bool tcp ) = 0;
-    virtual bool disconected ( NetHandler *handler, int connectionID ) = 0;
+    virtual bool disconnected ( NetHandler *handler, int connectionID ) = 0;
 };
 
 class NetListener

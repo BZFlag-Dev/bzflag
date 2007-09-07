@@ -90,11 +90,11 @@ protected:
     std::string	      redirectLocation;
   }HTTPCommand;
 
-  class HTTPConectedUsers
+  class HTTPConnectedUsers
   {
   public:
-    HTTPConectedUsers(int connectionID );
-    ~HTTPConectedUsers();
+    HTTPConnectedUsers(int connectionID );
+    ~HTTPConnectedUsers();
     
     bool transfering ( void );
     void startTransfer ( HTTPCommand *command );
@@ -116,7 +116,7 @@ protected:
   };
 
 private:
-  std::map<int,HTTPConectedUsers*> users;
+  std::map<int,HTTPConnectedUsers*> users;
 
   std::string baseURL;
   std::string vdir;
@@ -127,7 +127,7 @@ private:
 
   void paramsFromString ( const std::string &string, URLParams &params );
   std::string parseURLParams ( const std::string &FullURL, URLParams &params );
-  void processTheCommand ( HTTPConectedUsers *user, int requestID, const URLParams &params );
+  void processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params );
 };
 
 #endif //_PLUGIN_HTTP_H_
