@@ -235,8 +235,8 @@ bool operator<(const ServerItem &left, const ServerItem &right)
   } else if (left.cached && !right.cached) {
     // cached goes to the bottom
     return false;
-  } else {
-    // left.cached && !right.cached // always less
+  } else { // !left.cached && right.cached
+    // uncached to the top
     return true;
   }
 }
