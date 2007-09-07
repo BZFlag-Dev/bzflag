@@ -162,6 +162,7 @@ void ServerList::readServerList()
       }
       serverInfo.ping.serverId.port = htons((int16_t)port);
       serverInfo.name = name;
+      serverInfo.port = port;
 
       // construct description
       serverInfo.description = serverInfo.name;

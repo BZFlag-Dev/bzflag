@@ -20,6 +20,7 @@
 
 /* common implementation headers */
 #include "TextUtils.h"
+#include "Protocol.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"
@@ -218,11 +219,20 @@ bool operator<(const ServerItem &left, const ServerItem &right)
 	// youngest first
 	return true;
       } else if (ageLeft == ageRight) {
-	std::string ldesc = left.description.substr(0, left.description.find_first_of(';'));
-	std::string rdesc = right.description.substr(0, right.description.find_first_of(';'));
-	if (ldesc < rdesc) {
+	if (left.name < right.name) {
 	  // alphabetic sort - first goes first
 	  return true;
+	} else if (left.name == right.name) {
+	  // sort by port - default first, then lowest to highest
+	  if (left.port == ServerPort) {
+	    return true;
+	  } else if (right.port == ServerPort) {
+	    return false;
+	  } else if (left.port < right.port) {
+	    return true;
+	  } else {
+	    return false;
+	  }
 	} else {
 	  return false;
 	}
