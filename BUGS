@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- TH is broken (says the target stole the theifs flag; theif cannot
+pick up any more flags, but doesn't seem to have one (but is drawn with
+one))
+
+- GM does not seem to lock on reliably (try against a remote client,
+bots work fine)
+
 - intermittent/random client-server connection failures
 
 - mountain renders discontiguous
