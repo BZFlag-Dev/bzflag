@@ -33,7 +33,8 @@ TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true),
-				cb(NULL), userData(NULL)
+				cb(NULL), userData(NULL),
+				navList(NULL)
 {
   if (totalCount == 0) {
     // load arrow texture
@@ -179,6 +180,8 @@ void			HUDuiControl::setNavQueue(HUDNavigationQueue* _navList)
 
 bool			HUDuiControl::doKeyPress(const BzfKeyEvent& key)
 {
+  if (!navList) return false;
+
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       navList->prev();
