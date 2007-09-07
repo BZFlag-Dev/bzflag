@@ -8,8 +8,6 @@ one))
 - GM does not seem to lock on reliably (try against a remote client,
 bots work fine)
 
-- intermittent/random client-server connection failures
-
 - mountain renders discontiguous
 
 - jitter on windows servers is reported as very high, but play
