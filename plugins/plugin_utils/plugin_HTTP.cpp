@@ -240,11 +240,16 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      
 		for (int i =0; i < (int)rawParams.size(); i++ )
 		{
-		  if (rawParams[i].size())
+		  std::string paramItem = rawParams[i];
+		  if (paramItem.size())
 		  {
-		    std::vector<std::string> paramChunks = tokenize(rawParams[i],"=",1,false);
+		    std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
 		    if (paramChunks.size() > 1 )
-		      params[url_decode(paramChunks[0])] = url_decode(paramChunks[1]);
+		    {
+		      std::string key = url_decode(paramChunks[0]);
+		      std::string value = url_decode(paramChunks[1]);
+		      params[key] = value;
+		    }
 		  }
 		}
 	      }
