@@ -31,6 +31,7 @@ SUBDIRS = \
 	timedctf \
 	torBlock \
 	weaponArena \
+	webstats \
 	wwzones
 
 DIST_SUBDIRS = \

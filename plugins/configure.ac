@@ -226,6 +226,7 @@ AC_CONFIG_FILES([
 	bzfscron/Makefile
 	httpTest/Makefile
 	regFlag/Makefile
+	webstats/Makefile
 ])
 
 AC_OUTPUT
