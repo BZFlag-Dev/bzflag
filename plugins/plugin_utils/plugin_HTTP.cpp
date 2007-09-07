@@ -223,11 +223,36 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->docType = eText;
 	      theCurrentCommand->returnCode = e200OK;
 
-	      if (acceptURL(theCurrentCommand->URL.c_str()))
+	      std::map<std::string,std::string> params;
+	      std::string URL = theCurrentCommand->URL.c_str();
+
+	      char *paramStart = strchr(URL.c_str(),'?');
+	      if (  paramStart != NULL )
+	      {
+		std::string paramBlock = paramStart+1;
+		// trim the URL part to just the string
+		URL.erase(URL.begin()+(paramStart-URL.c_str()),URL.end());
+		// she's got params, let em fly.
+		
+		std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
+	      
+		for (int i =0; i < (int)rawParams.size(); i++ )
+		{
+		  if (rawParams[i].size())
+		  {
+		    std::vector<std::string> paramChunks = tokenize(rawParams[i],"=",1,false);
+		    if (paramChunks.size() > 1 )
+		      params[url_decode(paramChunks[0])] = url_decode(paramChunks[1]);
+		  }
+		}
+	      }
+
+	      URL = url_decode(URL);
+
+	      if (acceptURL(URL.c_str()))
 	      {
 		int requestID = user->connection * 100 + user->pendingCommands.size();
 
-		std::map<std::string,std::string> params;
 		getURLData ( theCurrentCommand->URL.c_str(), requestID, params );
 
 		if (theCurrentCommand->data)

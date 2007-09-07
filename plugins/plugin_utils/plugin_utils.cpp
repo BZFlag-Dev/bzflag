@@ -182,7 +182,7 @@ std::string url_decode(const std::string &text)
 {
   std::string destination;
 
-  std::string::iterator itr = text.begin();
+  std::string::const_iterator itr = text.begin();
   while ( itr != text.end() )
   {
     if (*itr != '%')
