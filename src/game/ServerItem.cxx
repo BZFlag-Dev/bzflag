@@ -204,23 +204,24 @@ unsigned int ServerItem::getSortFactor() const
 
 bool operator<(const ServerItem &left, const ServerItem &right)
 {
+  // sorted "from least to greatest" in the list
+  // so "return true" to go up, "return false" to go down
+
   if ((left.cached && right.cached) || (!left.cached && !right.cached)) {
-    if (left.getSortFactor() < right.getSortFactor()) {
-      /* more players go to top */
+    if (left.getSortFactor() > right.getSortFactor()) {
+      // more players goes to the top
       return true;
     } else if (left.getSortFactor() == right.getSortFactor()) {
-      /* same players, go by age */
       time_t ageLeft = (left.getAgeMinutes() * 60) + left.getAgeSeconds();
       time_t ageRight = (right.getAgeMinutes() * 60) + right.getAgeSeconds();
       if (ageLeft < ageRight) {
-	/* younger goes to top */
+	// youngest first
 	return true;
       } else if (ageLeft == ageRight) {
-	/* same age, go by hostname+port */
 	std::string ldesc = left.description.substr(0, left.description.find_first_of(';'));
 	std::string rdesc = right.description.substr(0, right.description.find_first_of(';'));
 	if (ldesc < rdesc) {
-	  /* all else fails, go alphabetical */
+	  // alphabetic sort - first goes first
 	  return true;
 	} else {
 	  return false;
@@ -231,8 +232,8 @@ bool operator<(const ServerItem &left, const ServerItem &right)
     } else {
       return false;
     }
-  } else if (!left.cached && right.cached) {
-    /* non-cached goes on top */
+  } else if (left.cached && !right.cached) {
+    // cached goes to the bottom
     return false;
   } else {
     // left.cached && !right.cached // always less
