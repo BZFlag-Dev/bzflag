@@ -29,7 +29,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
     
     if (plugInName && tolower(std::string(plugInName)) != "bzfs")
     {
-      if (std::find(dirs.begin(),dirs.end(),std::string(plugInName)) != dirs.end())
+      if (std::find(dirs.begin(),dirs.end(),std::string(plugInName)) == dirs.end())
 	vdir = plugInName;
     }
   }
@@ -45,7 +45,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
 
   // see if I am the indexer or not
   if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
-    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
+    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%d",(int)this).c_str());
 }
 
 BZFSHTTPServer::~BZFSHTTPServer()
@@ -55,7 +55,7 @@ BZFSHTTPServer::~BZFSHTTPServer()
   // clear out the 
   if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
   {
-    std::string myThis = format("%p",this);
+    std::string myThis = format("%d",(int)this);
     if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
        bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
   }
@@ -83,7 +83,7 @@ void BZFSHTTPServer::startupHTTP ( void )
   bz_registerEvent (bz_eNewNonPlayerConnection,this);
 
   baseURL = "http://";
-  std::string host = "127.0.0.1:5154";
+  std::string host = "localhost:5154";
   if (bz_getPublicAddr().size())
     host = bz_getPublicAddr().c_str();
 
@@ -106,7 +106,7 @@ void BZFSHTTPServer::shutdownHTTP ( void )
   bz_removeEvent (bz_eNewNonPlayerConnection,this);
 
   // kill the users;
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
+  std::map<int,HTTPConectedUsers*>::iterator itr = users.begin();
   while ( itr != users.end() )
   {
     bz_removeNonPlayerConnectionHandler (itr->first, this );
@@ -139,7 +139,7 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
 	if ( !users.size() )
 	  savedUpdateTime = bz_getMaxWaitTime();
 
-	HTTPConnectedUsers *user = new HTTPConnectedUsers(connData->connectionID);
+	HTTPConectedUsers *user = new HTTPConectedUsers(connData->connectionID);
 
 	users[connData->connectionID] = user;
 	pending ( connData->connectionID, (char*)connData->data, connData->size );
@@ -155,11 +155,11 @@ void BZFSHTTPServer::update ( void )
 
   std::vector<int>  killList;
 
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
+  std::map<int,HTTPConectedUsers*>::iterator itr = users.begin();
   while ( itr != users.end() )
   {
     double deadTime = now - itr->second->aliveTime;
-    if ( itr->second->transferring() || deadTime < timeout )
+    if ( itr->second->transfering() || deadTime < timeout )
     {
       itr->second->update();
     }
@@ -181,11 +181,11 @@ void BZFSHTTPServer::update ( void )
     bz_setMaxWaitTime(savedUpdateTime);
 }
 
-void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
+void BZFSHTTPServer::processTheCommand ( HTTPConectedUsers *user, int requestID, const URLParams &params )
 {
   if (acceptURL(theCurrentCommand->URL.c_str()))
   {
-    int requestID = user->connection * 100 + (int)user->pendingCommands.size();
+    int requestID = user->connection * 100 + user->pendingCommands.size();
 
     getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
 
@@ -244,11 +244,11 @@ std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLPara
 
 void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 {
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.find(connectionID);
+  std::map<int,HTTPConectedUsers*>::iterator itr = users.find(connectionID);
   if (itr == users.end())
     return;
 
-  HTTPConnectedUsers* user = itr->second;
+  HTTPConectedUsers* user = itr->second;
 
   char *temp = (char*)malloc(s+1);
   memcpy(temp,d,s);
@@ -302,7 +302,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	    {
 	      int i = (int)commands.size();
 
-	      for ( int c = 1; c < i; c++ )
+	      for ( int c = 1; c  < i; c++ )
 	      {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
@@ -332,7 +332,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
   }
   else if ( user->commandData.size() > 4 )
   {
-    if ( !user->transferring() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
+    if ( !user->transfering() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
     {
       if ( strncmp(user->commandData.c_str(),"GET",3) != 0) // it is not a get
       {
@@ -389,7 +389,7 @@ void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestI
   if (!location)
     theCurrentCommand->redirectLocation = "";
   else
-    theCurrentCommand->redirectLocation = location;
+   theCurrentCommand->redirectLocation = location;
 }
 
 
@@ -398,18 +398,18 @@ const char * BZFSHTTPServer::getBaseServerURL ( void )
   return baseURL.c_str();
 }
 
-BZFSHTTPServer::HTTPConnectedUsers::HTTPConnectedUsers(int connectionID )
+BZFSHTTPServer::HTTPConectedUsers::HTTPConectedUsers(int connectionID )
 {
   connection = connectionID;
   pos = 0;
 }
 
-BZFSHTTPServer::HTTPConnectedUsers::~HTTPConnectedUsers()
+BZFSHTTPServer::HTTPConectedUsers::~HTTPConectedUsers()
 {
   killMe();
 }
 
-void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
+void BZFSHTTPServer::HTTPConectedUsers::killMe ( void )
 {
   for (int i = 0; i < (int)pendingCommands.size(); i++)
   {
@@ -420,7 +420,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
   aliveTime -= 10000.0;
 }
 
-bool BZFSHTTPServer::HTTPConnectedUsers::transferring ( void )
+bool BZFSHTTPServer::HTTPConectedUsers::transfering ( void )
 {
   if (!pendingCommands.size())
     return false;
@@ -429,13 +429,13 @@ bool BZFSHTTPServer::HTTPConnectedUsers::transferring ( void )
   return pos < command->size;
 }
 
-void BZFSHTTPServer::HTTPConnectedUsers::startTransfer ( HTTPCommand *command )
+void BZFSHTTPServer::HTTPConectedUsers::startTransfer ( HTTPCommand *command )
 {
   aliveTime = bz_getCurrentTime();
   pendingCommands.push_back(command);
   update();
 }
-std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType docType )
+std::string BZFSHTTPServer::HTTPConectedUsers::getMimeType ( HTTPDocumentType docType )
 {
   std::string type = "text/plain";
   switch(docType)
@@ -447,11 +447,15 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType d
   case eBinary:
     type = "application/binary";
     break;
+
+  case eHTML:
+    type = "text/html";
+    break;
   }
   return type;
 }
 
-std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode returnCode )
+std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode returnCode )
 {
   std::string code = "200";
   switch(returnCode)
@@ -464,7 +468,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
     code = "403";
     break;
 
-  case e301Redirect:
+  case e301Rediect:
     code = "301";
     break;
 
@@ -476,7 +480,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
   return code;
 }
 
-void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
+void BZFSHTTPServer::HTTPConectedUsers::update ( void )
 {
   if (!pendingCommands.size())
     return;
@@ -490,7 +494,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
-    if (currentCommand->returnCode != e301Redirect)
+    if (currentCommand->returnCode != e301Rediect)
       httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
     else
     {

@@ -48,7 +48,8 @@ protected:
   {
     eText,
     eOctetStream,
-    eBinary
+    eBinary,
+    eHTML
   }HTTPDocumentType;
 
   typedef enum
@@ -70,6 +71,7 @@ protected:
 
   // so the server can know what it's address is
   const char * getBaseServerURL ( void );
+  const char * getVDir ( void ) {return vdir.c_str();}
 
 protected:
   typedef enum
