@@ -25,6 +25,8 @@ public:
   BZFSHTTPServer( const char * plugInName );
   virtual ~BZFSHTTPServer();
 
+  typedef std::map<std::string,std::string> URLParams;
+
   void startupHTTP ( void );
   void shutdownHTTP ( void );
 
@@ -35,7 +37,7 @@ public:
 
   // virtual functions to implement
   virtual bool acceptURL ( const char *url ) = 0;
-  virtual void getURLData ( const char* url, int requestID, const std::map<std::string,std::string> &paramaters, bool get = true ) = 0;
+  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true ) = 0;
 
 protected:
   // called inside getURLData to set the data for the job
@@ -72,13 +74,15 @@ protected:
 protected:
   typedef enum
   {
-    eGet
+    eGet,
+    ePost
   }HTTPRequest;
 
   typedef struct 
   {
     HTTPRequest request;
     std::string URL;
+    std::string FullURL;
     char	*data;
     unsigned int size;
     HTTPDocumentType  docType;
@@ -120,6 +124,10 @@ private:
   float	      savedUpdateTime;
 
   HTTPCommand *theCurrentCommand;
+
+  void paramsFromString ( const std::string &string, URLParams &params );
+  std::string parseURLParams ( const std::string &FullURL, URLParams &params );
+  void processTheCommand ( HTTPConectedUsers *user, int requestID, const URLParams &params );
 };
 
 #endif //_PLUGIN_HTTP_H_

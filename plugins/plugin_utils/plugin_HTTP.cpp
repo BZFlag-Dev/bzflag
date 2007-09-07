@@ -181,6 +181,67 @@ void BZFSHTTPServer::update ( void )
     bz_setMaxWaitTime(savedUpdateTime);
 }
 
+void BZFSHTTPServer::processTheCommand ( HTTPConectedUsers *user, int requestID, const URLParams &params )
+{
+  if (acceptURL(theCurrentCommand->URL.c_str()))
+  {
+    int requestID = user->connection * 100 + user->pendingCommands.size();
+
+    getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
+
+    if (theCurrentCommand->data)
+    {
+      if (theCurrentCommand->size)
+	user->startTransfer ( theCurrentCommand );
+      else
+	free(theCurrentCommand->data);
+    }
+  }
+  else
+    delete(theCurrentCommand);
+
+  theCurrentCommand = NULL;
+}
+
+void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams &params )
+{
+  std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
+
+  for (int i =0; i < (int)rawParams.size(); i++ )
+  {
+    std::string paramItem = rawParams[i];
+    if (paramItem.size())
+    {
+      std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
+      if (paramChunks.size() > 1 )
+      {
+	std::string key = url_decode(paramChunks[0]);
+	std::string value = url_decode(paramChunks[1]);
+	params[key] = value;
+      }
+    }
+  }
+}
+
+std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLParams &params )
+{
+  std::string URL = FullURL;
+
+  char *paramStart = strchr(URL.c_str(),'?');
+  if (  paramStart != NULL )
+  {
+    std::string paramBlock = paramStart+1;
+    // CHEAP but it works, and dosn't walk over memory
+    *paramStart = 0;
+    std::string temp = URL.c_str();
+    URL = temp.c_str();
+
+    paramsFromString(paramBlock,params);
+  }
+
+ return url_decode(URL);
+}
+
 void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 {
   std::map<int,HTTPConectedUsers*>::iterator itr = users.find(connectionID);
@@ -194,6 +255,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
   temp[s] = 0;
   user->commandData += temp;
   free(temp);
+
+  int requestID = connectionID*100 + (int)user->pendingCommands.size();
 
   if (strstr(user->commandData.c_str(),"\r\n") != NULL )
   {
@@ -217,63 +280,50 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	    {
 	      theCurrentCommand = new HTTPCommand;
 	      theCurrentCommand->request = eGet;
-	      theCurrentCommand->URL = params[1].c_str()+1+vdir.size();
+	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
 	      theCurrentCommand->data = NULL;
 	      theCurrentCommand->size = 0;
 	      theCurrentCommand->docType = eText;
 	      theCurrentCommand->returnCode = e200OK;
 
-	      std::map<std::string,std::string> params;
-	      std::string URL = theCurrentCommand->URL.c_str();
+	      URLParams params;
+	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, params );
 
-	      char *paramStart = strchr(URL.c_str(),'?');
-	      if (  paramStart != NULL )
+	      processTheCommand(user,requestID,params);
+	    }
+	  }
+	  else if (httpCommandString == "POST")
+	  {
+	    std::string url = params[1];
+	    std::string paramData;
+
+	    // make sure it's in our vdir
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
+	    {
+	      int i = (int)commands.size();
+
+	      for ( int c = 0; c  < i; c++ )
 	      {
-		std::string paramBlock = paramStart+1;
-		// CHEAP but it works, and dosn't walk over memory
-		*paramStart = 0;
-		std::string temp = URL.c_str();
-		URL = temp.c_str();
-		
-		// she's got params, let em fly.
-		std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
-	      
-		for (int i =0; i < (int)rawParams.size(); i++ )
+		std::string line = commands[c];
+		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
 		{
-		  std::string paramItem = rawParams[i];
-		  if (paramItem.size())
-		  {
-		    std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
-		    if (paramChunks.size() > 1 )
-		    {
-		      std::string key = url_decode(paramChunks[0]);
-		      std::string value = url_decode(paramChunks[1]);
-		      params[key] = value;
-		    }
-		  }
+		  paramData += line;
 		}
 	      }
 
-	      URL = url_decode(URL);
+	      theCurrentCommand = new HTTPCommand;
+	      theCurrentCommand->request = ePost;
+	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
+	      theCurrentCommand->data = NULL;
+	      theCurrentCommand->size = 0;
+	      theCurrentCommand->docType = eText;
+	      theCurrentCommand->returnCode = e200OK;
 
-	      if (acceptURL(URL.c_str()))
-	      {
-		int requestID = user->connection * 100 + user->pendingCommands.size();
+	      theCurrentCommand->URL = url_decode( theCurrentCommand->FullURL);
+	      URLParams params;
+	      paramsFromString ( paramData, params );
 
-		getURLData ( theCurrentCommand->URL.c_str(), requestID, params );
-
-		if (theCurrentCommand->data)
-		{
-		  if (theCurrentCommand->size)
-		    user->startTransfer ( theCurrentCommand );
-		  else
-		    free(theCurrentCommand->data);
-		}
-	      }
-	      else
-		delete(theCurrentCommand);
-
-	      theCurrentCommand = NULL;
+	      processTheCommand(user,requestID,params);
 	    }
 	  }
 	}
