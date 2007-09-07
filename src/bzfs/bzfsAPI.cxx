@@ -1075,10 +1075,10 @@ public:
 std::map<unsigned short,APISocketListener*> APISockets;
 std::map<int,APISocketListener*> APIConnections;
 
-class NetListernPacketBufferTicker : public bz_EventHandler
+class NetListenerPacketBufferTicker : public bz_EventHandler
 {
 public:
-  virtual void process ( bz_EventData *eventData )
+  virtual void process ( bz_EventData * /* eventData */ )
   {
     std::map<unsigned short,APISocketListener*>::iterator itr = APISockets.begin();
     while (itr != APISockets.end())
@@ -1089,7 +1089,7 @@ public:
   }
 };
 
-NetListernPacketBufferTicker netTicker;
+NetListenerPacketBufferTicker netTicker;
 
  APISocketListener::~APISocketListener()
 {
@@ -1162,7 +1162,7 @@ bool APISocketListener::pending ( NetHandler *handler, int connectionID, bool tc
   return true;
 }
 
-bool APISocketListener::disconected ( NetHandler *handler, int connectionID )
+bool APISocketListener::disconected ( NetHandler * /* handler */, int connectionID )
 {
   pendingPackets.erase(pendingPackets.find(connectionID));
   connections.erase(connections.find(connectionID));
