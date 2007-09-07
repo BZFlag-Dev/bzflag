@@ -61,25 +61,29 @@ bool WindowsAddFileStack ( const char *szPathName, const char* fileMask, bool bR
 	(strcmp(fileInfo.name,"..") != 0))
       {
 	FilePath = szPathName;
-	FilePath += "\\";
+	//if (!(fileInfo.attrib & _A_SUBDIR ))
+	  FilePath += "\\";
 	FilePath += fileInfo.name;
 
 	if (justDirs && (fileInfo.attrib & _A_SUBDIR ))	// we neever do just dirs recrusively
 	  list.push_back(FilePath);
-	else if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
-	  WindowsAddFileStack(FilePath.c_str(),fileMask,bRecursive,list);
-	else if (!(fileInfo.attrib & _A_SUBDIR) )
+	else if (!justDirs)
 	{
-	  if (bRecursive && fileMask)	// if we are recusive we need to check extension manualy, so we get dirs and stuf
+	  if ( (fileInfo.attrib & _A_SUBDIR ) && bRecursive)
+	    WindowsAddFileStack(FilePath.c_str(),fileMask,bRecursive,list);
+	  else if (!(fileInfo.attrib & _A_SUBDIR) )
 	  {
-	    if (strrchr(FilePath.c_str(),'.'))
+	    if (bRecursive && fileMask)	// if we are recusive we need to check extension manualy, so we get dirs and stuf
 	    {
-	      if ( stricmp(strrchr(FilePath.c_str(),'.')+1, extenstionSearch.c_str() ) == 0 )
-		list.push_back(FilePath);
+	      if (strrchr(FilePath.c_str(),'.'))
+	      {
+		if ( stricmp(strrchr(FilePath.c_str(),'.')+1, extenstionSearch.c_str() ) == 0 )
+		  list.push_back(FilePath);
+	      }
 	    }
+	    else
+	      list.push_back(FilePath);
 	  }
-	  else
-	    list.push_back(FilePath);
 	}
       }
       if (_findnext(hFile,&fileInfo) == -1)
@@ -217,18 +221,19 @@ bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRec
     {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
-      std::string name = fileInfo->d_name;
-      for (std::string::iterator i=name.begin(), end=name.end(); i!=end; ++i)
-	*i = ::toupper(*i);
+
 
       stat(FilePath.c_str(), &statbuf);
 
       if (justDirs && S_ISDIR(statbuf.st_mode))	// we never do just dirs recrusively
 	list.push_back(FilePath);
-      else if (S_ISDIR(statbuf.st_mode) && bRecursive)
-	LinuxAddFileStack(FilePath.c_str(), fileMask, bRecursive, list, justDirs);
-      else if (match_mask (fileMask, name.c_str()))
-	list.push_back(FilePath);
+      else if (!justDirs)
+      {
+	if (S_ISDIR(statbuf.st_mode) && bRecursive)
+	  LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
+	else if (match_mask (fileMask, fileInfo->d_name))
+	  list.push_back(FilePath);
+      }
     }
   }
   closedir(directory);
