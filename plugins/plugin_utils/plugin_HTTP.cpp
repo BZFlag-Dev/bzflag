@@ -215,8 +215,8 @@ void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams
       std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
       if (paramChunks.size() > 1 )
       {
-	std::string key = url_decode(paramChunks[0]);
-	std::string value = url_decode(paramChunks[1]);
+	std::string key = url_decode(replace_all(paramChunks[0],"+"," "));
+	std::string value =  url_decode(replace_all(paramChunks[1],"+"," "));
 	params[key] = value;
       }
     }
