@@ -54,7 +54,7 @@ protected:
   typedef enum
   {
     e200OK,
-    e301Rediect,
+    e301Redirect,
     e404NotFound,
     e403Forbiden,
     e500ServerError

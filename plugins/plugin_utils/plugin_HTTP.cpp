@@ -464,7 +464,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
     code = "403";
     break;
 
-  case e301Rediect:
+  case e301Redirect:
     code = "301";
     break;
 
@@ -490,7 +490,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
-    if (currentCommand->returnCode != e301Rediect)
+    if (currentCommand->returnCode != e301Redirect)
       httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
     else
     {
