@@ -159,7 +159,7 @@ void BZFSHTTPServer::update ( void )
   while ( itr != users.end() )
   {
     double deadTime = now - itr->second->aliveTime;
-    if ( itr->second->transfering() || deadTime < timeout )
+    if ( itr->second->transferring() || deadTime < timeout )
     {
       itr->second->update();
     }
@@ -302,7 +302,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	    {
 	      int i = (int)commands.size();
 
-	      for ( int c = 1; c  < i; c++ )
+	      for ( int c = 1; c < i; c++ )
 	      {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
@@ -332,7 +332,7 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
   }
   else if ( user->commandData.size() > 4 )
   {
-    if ( !user->transfering() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
+    if ( !user->transferring() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
     {
       if ( strncmp(user->commandData.c_str(),"GET",3) != 0) // it is not a get
       {
@@ -389,7 +389,7 @@ void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestI
   if (!location)
     theCurrentCommand->redirectLocation = "";
   else
-   theCurrentCommand->redirectLocation = location;
+    theCurrentCommand->redirectLocation = location;
 }
 
 
@@ -420,7 +420,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
   aliveTime -= 10000.0;
 }
 
-bool BZFSHTTPServer::HTTPConnectedUsers::transfering ( void )
+bool BZFSHTTPServer::HTTPConnectedUsers::transferring ( void )
 {
   if (!pendingCommands.size())
     return false;

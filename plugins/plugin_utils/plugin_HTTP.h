@@ -96,7 +96,7 @@ protected:
     HTTPConnectedUsers(int connectionID );
     ~HTTPConnectedUsers();
     
-    bool transfering ( void );
+    bool transferring ( void );
     void startTransfer ( HTTPCommand *command );
     void update ( void );
 
