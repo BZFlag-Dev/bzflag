@@ -30,10 +30,10 @@ noinst_HEADERS = \
 	zutil.h
 
 EXTRA_DIST = \
+	ChangeLog \
 	FAQ \
 	INDEX \
 	algorithm.txt \
-	minigzip.c \
 	zlib.3
 
 MAINTAINERCLEANFILES = Makefile.in
