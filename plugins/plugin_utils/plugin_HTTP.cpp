@@ -22,7 +22,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   std::string clipField;
   std::vector<std::string> dirs;
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != NULL)
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
   {
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
@@ -44,7 +44,7 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   bz_setclipFieldString ( "BZFS_HTTPD_VDIRS", clipField.c_str() );
 
   // see if I am the indexer or not
-  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == NULL)
+  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
     bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%d",(int)this).c_str());
 }
 
@@ -60,7 +60,7 @@ BZFSHTTPServer::~BZFSHTTPServer()
        bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
   }
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != NULL)
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
   {
     std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
@@ -434,7 +434,7 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
     if (currentCommand->returnCode != e301Rediect)
-     httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
+      httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
     else
     {
       if ( currentCommand->redirectLocation.size() )
@@ -444,7 +444,6 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
       }
       else  // yeah WTF, you want a redirect but don't have a URL, dude 
 	httpHeaders += "Status-Code: "  + getReturnCode(e500ServerError) + "\n";
-
     }
     httpHeaders += "\n";
 
