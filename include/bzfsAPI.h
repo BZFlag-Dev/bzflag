@@ -1255,7 +1255,7 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned
 BZF_API bool bz_disconnectNonPlayerConnection ( int connectionID );
 BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connectionID );
 
-// generic socket listener inteface
+// generic socket listener interface
 
 class bz_NetworkSocketListener
 {

@@ -13,7 +13,7 @@
 // bzflag common header
 #include "common.h"
 
-// inteface header
+// interface header
 #include "EighthDBaseSceneNode.h"
 
 // system headers
