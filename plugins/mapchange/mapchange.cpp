@@ -3,6 +3,7 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
+#include "plugin_files.h"
 #include <math.h>
 
 class Game
@@ -118,22 +119,6 @@ const char* cycleToString ( CycleMode mode )
 
 bool loadGamesFromFile ( const char* config )
 {
-  FILE *fp = fopen(config,"rb");
-  if(!fp)
-    return false;
-  fseek(fp,0,SEEK_END);
-
-  std::string text;
-  unsigned int size = ftell(fp);
-  fseek(fp,0,SEEK_SET);
-
-  char *temp = (char*)malloc(size+1);
-  fread(temp,size,1,fp);
-  fclose(fp);
-  temp[size] = 0;
-  text = temp;
-  free(temp);
-
   endCond = eTimedGame;
   timeLimit = 30.0*60.0;
   scoreCapLimit = 10;
@@ -142,7 +127,9 @@ bool loadGamesFromFile ( const char* config )
   currentIndex = -1;
   cycleMode = eLoopInf;
 
-  std::vector<std::string> lines = tokenize(text,std::string("\r\n"),0,false);
+  std::vector<std::string> lines = getFileTextLines(config); 
+  if (!lines.size())
+    return false;
 
   for ( unsigned int i = 0; i < (unsigned int)lines.size(); i++ )
   {
