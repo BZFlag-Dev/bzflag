@@ -1,5 +1,5 @@
 /* zutil.c -- target dependent utility functions for the compression library
- * Copyright (C) 1995-2003 Jean-loup Gailly.
+ * Copyright (C) 1995-2005 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -11,19 +11,15 @@
 struct internal_state      {int dummy;}; /* for buggy compilers */
 #endif
 
-#ifndef STDC
-extern void exit OF((int));
-#endif
-
 const char * const z_errmsg[10] = {
 "need dictionary",     /* Z_NEED_DICT       2  */
-"stream end",	  /* Z_STREAM_END      1  */
-"",		    /* Z_OK	      0  */
-"file error",	  /* Z_ERRNO	 (-1) */
-"stream error",	/* Z_STREAM_ERROR  (-2) */
-"data error",	  /* Z_DATA_ERROR    (-3) */
+"stream end",          /* Z_STREAM_END      1  */
+"",                    /* Z_OK              0  */
+"file error",          /* Z_ERRNO         (-1) */
+"stream error",        /* Z_STREAM_ERROR  (-2) */
+"data error",          /* Z_DATA_ERROR    (-3) */
 "insufficient memory", /* Z_MEM_ERROR     (-4) */
-"buffer error",	/* Z_BUF_ERROR     (-5) */
+"buffer error",        /* Z_BUF_ERROR     (-5) */
 "incompatible version",/* Z_VERSION_ERROR (-6) */
 ""};
 
@@ -46,20 +42,20 @@ uLong ZEXPORT zlibCompileFlags()
     }
     switch (sizeof(uLong)) {
     case 2:     break;
-    case 4:     flags += 1 << 2;	break;
-    case 8:     flags += 2 << 2;	break;
+    case 4:     flags += 1 << 2;        break;
+    case 8:     flags += 2 << 2;        break;
     default:    flags += 3 << 2;
     }
     switch (sizeof(voidpf)) {
     case 2:     break;
-    case 4:     flags += 1 << 4;	break;
-    case 8:     flags += 2 << 4;	break;
+    case 4:     flags += 1 << 4;        break;
+    case 8:     flags += 2 << 4;        break;
     default:    flags += 3 << 4;
     }
     switch (sizeof(z_off_t)) {
     case 2:     break;
-    case 4:     flags += 1 << 6;	break;
-    case 8:     flags += 2 << 6;	break;
+    case 4:     flags += 1 << 6;        break;
+    case 8:     flags += 2 << 6;        break;
     default:    flags += 3 << 6;
     }
 #ifdef DEBUG
@@ -78,38 +74,38 @@ uLong ZEXPORT zlibCompileFlags()
     flags += 1 << 13;
 #endif
 #ifdef NO_GZCOMPRESS
-    flags += 1 << 16;
+    flags += 1L << 16;
 #endif
 #ifdef NO_GZIP
-    flags += 1 << 17;
+    flags += 1L << 17;
 #endif
 #ifdef PKZIP_BUG_WORKAROUND
-    flags += 1 << 20;
+    flags += 1L << 20;
 #endif
 #ifdef FASTEST
-    flags += 1 << 21;
+    flags += 1L << 21;
 #endif
 #ifdef STDC
 #  ifdef NO_vsnprintf
-	flags += 1 << 25;
+        flags += 1L << 25;
 #    ifdef HAS_vsprintf_void
-	flags += 1 << 26;
+        flags += 1L << 26;
 #    endif
 #  else
 #    ifdef HAS_vsnprintf_void
-	flags += 1 << 26;
+        flags += 1L << 26;
 #    endif
 #  endif
 #else
-	flags += 1 << 24;
+        flags += 1L << 24;
 #  ifdef NO_snprintf
-	flags += 1 << 25;
+        flags += 1L << 25;
 #    ifdef HAS_sprintf_void
-	flags += 1 << 26;
+        flags += 1L << 26;
 #    endif
 #  else
 #    ifdef HAS_snprintf_void
-	flags += 1 << 26;
+        flags += 1L << 26;
 #    endif
 #  endif
 #endif
@@ -141,7 +137,10 @@ const char * ZEXPORT zError(err)
 }
 
 #if defined(_WIN32_WCE)
-    /* does not exist on WCE */
+    /* The Microsoft C Run-Time Library for Windows CE doesn't have
+     * errno.  We define it as a global variable to simplify porting.
+     * Its value is always 0 and should not be used.
+     */
     int errno = 0;
 #endif
 
@@ -154,7 +153,7 @@ void zmemcpy(dest, source, len)
 {
     if (len == 0) return;
     do {
-	*dest++ = *source++; /* ??? to be unrolled */
+        *dest++ = *source++; /* ??? to be unrolled */
     } while (--len != 0);
 }
 
@@ -166,7 +165,7 @@ int zmemcmp(s1, s2, len)
     uInt j;
 
     for (j = 0; j < len; j++) {
-	if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
+        if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
     }
     return 0;
 }
@@ -177,7 +176,7 @@ void zmemzero(dest, len)
 {
     if (len == 0) return;
     do {
-	*dest++ = 0;  /* ??? to be unrolled */
+        *dest++ = 0;  /* ??? to be unrolled */
     } while (--len != 0);
 }
 #endif
@@ -223,10 +222,10 @@ voidpf zcalloc (voidpf opaque, unsigned items, unsigned size)
      * will return a usable pointer which doesn't have to be normalized.
      */
     if (bsize < 65520L) {
-	buf = farmalloc(bsize);
-	if (*(ush*)&buf != 0) return buf;
+        buf = farmalloc(bsize);
+        if (*(ush*)&buf != 0) return buf;
     } else {
-	buf = farmalloc(bsize + 16L);
+        buf = farmalloc(bsize + 16L);
     }
     if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
     table[next_ptr].org_ptr = buf;
@@ -242,19 +241,19 @@ void  zcfree (voidpf opaque, voidpf ptr)
 {
     int n;
     if (*(ush*)&ptr != 0) { /* object < 64K */
-	farfree(ptr);
-	return;
+        farfree(ptr);
+        return;
     }
     /* Find the original pointer */
     for (n = 0; n < next_ptr; n++) {
-	if (ptr != table[n].new_ptr) continue;
+        if (ptr != table[n].new_ptr) continue;
 
-	farfree(table[n].org_ptr);
-	while (++n < next_ptr) {
-	    table[n-1] = table[n];
-	}
-	next_ptr--;
-	return;
+        farfree(table[n].org_ptr);
+        while (++n < next_ptr) {
+            table[n-1] = table[n];
+        }
+        next_ptr--;
+        return;
     }
     ptr = opaque; /* just to make some compilers happy */
     Assert(0, "zcfree: ptr not found");
@@ -305,7 +304,7 @@ voidpf zcalloc (opaque, items, size)
 {
     if (opaque) items += size - size; /* make compiler happy */
     return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
-			      (voidpf)calloc(items, size);
+                              (voidpf)calloc(items, size);
 }
 
 void  zcfree (opaque, ptr)
