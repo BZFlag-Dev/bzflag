@@ -10,6 +10,8 @@ HEAD as 2.1 for release as 2.2
 
 BZFlag 2.0.9
 ------------
+
+* First map no longer ignored in Start Server menu - Ravu al Hemio
 * Add the rabidRabbit plugin - LouMan
 * Add packet loss kick and related admin commands - Thomas Stauer
 * Reclaim lost memory from sound sample - Tupone Alfredo

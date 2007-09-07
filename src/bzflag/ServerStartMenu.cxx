@@ -280,11 +280,11 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
     HANDLE h = FindFirstFile(pattern[i].c_str(), &findData);
     if (h != INVALID_HANDLE_VALUE) {
       std::string file;
-      while (FindNextFile(h, &findData)) {
+      do {
 	file = findData.cFileName;
 	worldFiles[file] = searchDir + file;
 	items->push_back(file);
-      }
+      } while (FindNextFile(h, &findData));
     }
   }
 #else
