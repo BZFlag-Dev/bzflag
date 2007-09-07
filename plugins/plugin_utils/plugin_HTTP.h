@@ -54,7 +54,8 @@ protected:
     e200OK,
     e301Rediect,
     e404NotFound,
-    e403Forbiden
+    e403Forbiden,
+    e500ServerError
   }HTTPReturnCode;
 
   void setURLDocType ( HTTPDocumentType docType, int requestID );

@@ -411,6 +411,9 @@ std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode re
     code = "301";
     break;
 
+  case e500ServerError:
+    code = "500";
+    break;
   }
 
   return code;
@@ -440,7 +443,7 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
 	httpHeaders += "Location: " + currentCommand->redirectLocation + "\n";
       }
       else  // yeah WTF, you want a redirect but don't have a URL, dude 
-	httpHeaders += "Status-Code: 500\n";
+	httpHeaders += "Status-Code: "  + getReturnCode(e500ServerError) + "\n";
 
     }
     httpHeaders += "\n";
