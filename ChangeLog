@@ -11,16 +11,29 @@ HEAD as 2.1 for release as 2.2
 BZFlag 2.0.9
 ------------
 * Add the rabidRabbit plugin - LouMan
-* Add /packetlosswarn and /packetlossdrop - Thomas Stauer
-* Fixed memory loss for sound sample - Tupone Alfredo
+* Add packet loss kick and related admin commands - Thomas Stauer
+* Reclaim lost memory from sound sample - Tupone Alfredo
 * Fixed invalid kick speed - Tupone Alfredo
-* Add packet loss kick - Thomas Stauer
-* Fix a segfault when re-joining - Tupone Alfredo
+* Fixed bashism on debian rules - Ryan Kavanagh
 * Add the rabbitTimer plugin - L4m3r
-* Fix a segfault when re-joining from observer - Tupone Alfredo
+* Fix some segfaults when re-joining - Tupone Alfredo
+* Compliance with gcc-4.2 - Tupone Alfredo
 * Fix the build system to be more distro friendly - Tupone Alfredo
+* Plugins get flag resets/spawns/grab/drop/transfer - Jeff Myers, Bernt Hansen
+* Fix compiler problem with gcc-4 - Tupone Alfredo
 * Fixed high fps problem - Frank Thilo
-* 
+* Added more info for observers - Jeff Myers, Frank Thilo
+* torBlock plugin added - Jeff Myers, blast007
+* Use mesh position and height for radar - Thomas Stauer
+* Add the regFlag plugin - Bernt Hansen
+* Fix memory leak from cURL - blast007
+* Add the Phoenix plugin - Jeff Myers
+* Add favorite server - Frank Thilo
+* SDL sound rate fix - Alfredo Tupone
+* add bzID and server status to logDetail plugin - Bernt Hansen
+* Add -tkannounce to announce tk on admin channel - Bernt Hansen
+* Add the serverControl plugin - Bernt Hansen
+* Add keepaway plugin - LouMan
 * API calls to reset bzdb - Jeff Myers
 * API call to get the player pause state. - Jeff Myers
 * API calls to reload bans, and other files - Jeff Myers
@@ -30,10 +43,7 @@ BZFlag 2.0.9
 * Add koth plugin - LouMan
 * Add timedctf plugin - LouMan
 * Add teamflagreset plugin - LouMan
-* Add keepaway plugin - LouMan
 * Add wwzones plugin - LouMan
-* fix compiler problem with gcc-4 - Tupone Alfredo
-* torBlock plugin added - Jeff Myers
 * flagStay plugin added - Jeff Myers
 * Give everyone notice of pause messages - Jeff Myers
 * Fix for /silence command - Skeeve
@@ -44,7 +54,6 @@ BZFlag 2.0.9
 * Adding jitterdrop - Thomas Stauer
 * Adding jitterkick - uso
 * Global banlist reload with local banlist - uso
-* Added more info for observers - Jeff Myers
 * Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
 * Ability to change the killer in a PlayerDieEvent - Matthew Marshall
 * Added shotID to bz_PlayerDieEventData - Matthew Marshall
