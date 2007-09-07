@@ -217,8 +217,8 @@ bool operator<(const ServerItem &left, const ServerItem &right)
 	return true;
       } else if (ageLeft == ageRight) {
 	/* same age, go by hostname+port */
-	std::string ldesc = left.description.substr(0, left.description.find_first_of(';')) + "\0";
-	std::string rdesc = right.description.substr(0, right.description.find_first_of(';')) + "\0";
+	std::string ldesc = left.description.substr(0, left.description.find_first_of(';'));
+	std::string rdesc = right.description.substr(0, right.description.find_first_of(';'));
 	if (ldesc < rdesc) {
 	  /* all else fails, go alphabetical */
 	  return true;
