@@ -226,7 +226,7 @@ bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRec
       if (justDirs && S_ISDIR(statbuf.st_mode))	// we never do just dirs recrusively
 	list.push_back(FilePath);
       else if (S_ISDIR(statbuf.st_mode) && bRecursive)
-	LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
+	LinuxAddFileStack(FilePath.c_str(), fileMask, bRecursive, list, justDirs);
       else if (match_mask (fileMask, name.c_str()))
 	list.push_back(FilePath);
     }
