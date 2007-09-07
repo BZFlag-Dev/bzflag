@@ -131,7 +131,7 @@ void ServerList::readServerList()
     while (*title &&  isspace(*title)) *title++ = 0;
 
     // extract port number from address
-    int port = ServerPort;
+    unsigned int port = ServerPort;
     scan2 = strchr(name, ':');
     if (scan2) {
       port = atoi(scan2 + 1);
@@ -340,7 +340,7 @@ void			ServerList::addToListWithLookup(ServerItem& info)
 
   // tack on port number to description if not default
   info.description = info.name;
-  const int port = (int)ntohs((unsigned short)info.ping.serverId.port);
+  const unsigned int port = (int)ntohs((unsigned short)info.ping.serverId.port);
   if (port != ServerPort) {
     char portBuf[20];
     sprintf(portBuf, "%d", port);

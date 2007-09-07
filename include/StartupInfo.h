@@ -31,7 +31,7 @@ public:
   bool hasConfiguration;
   bool autoConnect;
   char serverName[80];
-  int serverPort;
+  unsigned int serverPort;
   TeamColor team;
   char callsign[CallSignLen];
   char password[PasswordLen];
