@@ -101,7 +101,6 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);
     alagcount++;
-    laganncount++;
     lagcount++;
     jittercount++;
     losscount++;
@@ -109,7 +108,9 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     // if lag has been good for some time, forget old warnings
     if (lagavg < threshold && lagcount - laglastwarn >= 20)
       lagwarncount = 0;
-    if (lagavg < threshold && lagannouncetresh - laglastannounce >= 20)
+    if (lagavg < adminlagannouncetresh && alagcount - alaglastannounce >= 20)
+      alagannouncecount = 0;
+    if (lagavg < lagannouncetresh && ((TimeKeeper::getCurrent() - laglastannounce) > 2.0f))
       lagannouncecount = 0;
 
     // if jitter has been good for some time, forget old warnings
@@ -128,10 +129,15 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
     } else {
       alagannouncewarn = false;
     }
+
     if (!info->isObserver() && (lagannouncetresh > 0) && lagavg > lagannouncetresh
-	&& laganncount - laglastannounce > 2 * lagannouncecount) {
-      laglastannounce = laganncount;
-      lagannouncewarn = true;
+	&& (
+	(lagannouncecount == 0) ||
+	(lagannouncecount == 1 && ((TimeKeeper::getCurrent() - laglastannounce) > 5.0f)) ||
+	(lagannouncecount == 2 && ((TimeKeeper::getCurrent() - laglastannounce) > 10.0f)))) {
+        laglastannounce = TimeKeeper::getCurrent();
+	lagannouncecount++;
+        lagannouncewarn = true;
     } else {
       lagannouncewarn = false;
     }

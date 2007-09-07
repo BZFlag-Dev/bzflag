@@ -95,9 +95,8 @@ private:
   int	 alaglastannounce;
   int	 alagannouncecount;
   static float lagannouncetresh;
-  int	 laganncount;
-  int	 laglastannounce;
   int	 lagannouncecount;
+  TimeKeeper laglastannounce;
 
 
   // kicks
