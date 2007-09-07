@@ -327,6 +327,15 @@ void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int requestID )
   theCurrentCommand->returnCode = code;
 }
 
+void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestID )
+{
+  if (!location)
+    theCurrentCommand->redirectLocation = "";
+  else
+   theCurrentCommand->redirectLocation = location;
+}
+
+
 const char * BZFSHTTPServer::getBaseServerURL ( void )
 {
   return baseURL.c_str();
@@ -397,6 +406,11 @@ std::string BZFSHTTPServer::HTTPConectedUsers::getReturnCode ( HTTPReturnCode re
   case e403Forbiden:
     code = "403";
     break;
+
+  case e301Rediect:
+    code = "301";
+    break;
+
   }
 
   return code;
@@ -416,7 +430,19 @@ void BZFSHTTPServer::HTTPConectedUsers::update ( void )
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
-    httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
+    if (currentCommand->returnCode != e301Rediect)
+     httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
+    else
+    {
+      if ( currentCommand->redirectLocation.size() )
+      {
+	httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
+	httpHeaders += "Location: " + currentCommand->redirectLocation + "\n";
+      }
+      else  // yeah WTF, you want a redirect but don't have a URL, dude 
+	httpHeaders += "Status-Code: 500\n";
+
+    }
     httpHeaders += "\n";
 
     if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) )

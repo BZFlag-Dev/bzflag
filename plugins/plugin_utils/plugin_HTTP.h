@@ -52,12 +52,14 @@ protected:
   typedef enum
   {
     e200OK,
+    e301Rediect,
     e404NotFound,
     e403Forbiden
   }HTTPReturnCode;
 
   void setURLDocType ( HTTPDocumentType docType, int requestID );
   void setURLReturnCode ( HTTPReturnCode code, int requestID );
+  void setURLRedirectLocation ( const char* location, int requestID );
 
   // called internaly to update any transfers
   // but can be called externaly to force updates if need be
@@ -80,6 +82,7 @@ protected:
     unsigned int size;
     HTTPDocumentType  docType;
     HTTPReturnCode    returnCode;
+    std::string	      redirectLocation;
   }HTTPCommand;
 
   class HTTPConectedUsers
