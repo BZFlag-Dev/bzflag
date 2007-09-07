@@ -247,11 +247,12 @@ bool operator<(const ServerItem &left, const ServerItem &right)
     return false;
   } else if (left.port < right.port) {
     return true;
-  } else {
+  } else if (left.port > right.port) {
     return false;
   }
 
   logDebugMessage(0, "Error: operator<: equality detected.\n");
+  return false; // arbitrary
 }
 
 
