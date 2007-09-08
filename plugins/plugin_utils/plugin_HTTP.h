@@ -11,6 +11,16 @@
 */
 
 // a base class for plugins that want to do HTTP can use
+
+/*
+ *	
+ Notes on indexing and error handling
+ 1) make default pages for the error codes, send that page if the child dosn't set data.
+ 2) have accept and pending send in a param saying what callback is the LAST one.
+    a) If your the last one, check the URL, if the dir isn't in the vdir list, 404.
+    b) If your the last one, check the URL, if it's the root, then index the vdirs  
+ 3)Add an eOther MimeType enum, and a string to store it. Override the setmime type to take a string and set other.
+ */
 #ifndef _PLUGIN_HTTP_H_
 #define _PLUGIN_HTTP_H_
 
