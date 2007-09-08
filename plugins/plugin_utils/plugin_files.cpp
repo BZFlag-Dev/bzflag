@@ -230,7 +230,7 @@ bool LinuxAddFileStack ( const char *szPathName, const char* fileMask, bool bRec
       else if (!justDirs)
       {
 	if (S_ISDIR(statbuf.st_mode) && bRecursive)
-	  LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive);
+	  LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive, list);
 	else if (match_mask (fileMask, fileInfo->d_name))
 	  list.push_back(FilePath);
       }
