@@ -125,19 +125,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\Makefile">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCustomBuildTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCustomBuildTool"/>
-				</FileConfiguration>
+				RelativePath=".\Makefile.am">
+			</File>
+			<File
+				RelativePath=".\statTemplates.cpp">
 			</File>
 			<File
 				RelativePath=".\webstats.cpp">
@@ -152,6 +143,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\include\bzfsAPI.h">
+			</File>
+			<File
+				RelativePath=".\statTemplates.h">
 			</File>
 		</Filter>
 		<Filter

@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
+#include "statTemplates.h"
 
 class WebStats : public BZFSHTTPServer
 {
@@ -67,11 +68,7 @@ std::string teamToString ( bz_eTeamType team )
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
   std::string page;
-  page = "<HTML><HEAD></HEAD><BODY>\n<BR>\n";
-
-  std::string publicAddr = bz_getPublicAddr().c_str();
-  page = "Stats for";
-  page += publicAddr + "<br>\n";
+  page = getFileHeader();
 
   bz_APIIntList *players = bz_getPlayerIndexList();
 
@@ -103,7 +100,7 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
       else
 	page += "Observer";
 
-      page += "<br>\n";
+      page += getFileFooter();
       bz_freePlayerRecord (rec);
     }
   }
