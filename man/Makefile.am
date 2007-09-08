@@ -21,7 +21,7 @@ bzadmin.6: $(srcdir)/bzadmin.6.in
 bzfs.6: $(srcdir)/bzfs.6.in
 bzw.5: $(srcdir)/bzw.5.in
 
-DISTCLEANFILES = bzfquery.6
+CLEANFILES = bzadmin.6 bzflag.6 bzfquery.6 bzfs.6 bzw.5
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
