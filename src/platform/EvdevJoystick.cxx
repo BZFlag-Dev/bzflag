@@ -61,7 +61,11 @@ EvdevJoystick::EvdevJoystick()
 {
   joystickfd = 0;
   currentJoystick = NULL;
+#if defined(HAVE_FF_EFFECT_DIRECTIONAL || HAVE_FF_EFFECT_RUMBLE)
   ff_rumble = new struct ff_effect;
+#else
+  ff_rumble = NULL;
+#endif
   scanForJoysticks(joysticks);
 }
 
@@ -146,8 +150,10 @@ bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &i
     return false;
   if (ioctl(fd, EVIOCGBIT(EV_ABS, sizeof(info.absbit)), info.absbit) < 0)
     return false;
+#if defined(HAVE_FF_EFFECT_DIRECTIONAL) || defined(HAVE_FF_EFFECT_RUMBLE)
   if (ioctl(fd, EVIOCGBIT(EV_FF, sizeof(info.ffbit)), info.ffbit) < 0)
     return false;
+#endif
 
   /* Collect information about our absolute axes */
   int axis;
