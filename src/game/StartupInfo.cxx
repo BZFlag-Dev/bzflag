@@ -35,17 +35,7 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
 
 StartupInfo::~StartupInfo()
 {
-  hasConfiguration = false;
-  autoConnect = false;
-  memset(serverName, 0, 80);
-  serverPort = -1;
-  team = NoTeam;
-  memset(callsign, 0, CallSignLen);
   memset(password, 0, PasswordLen);
-  memset(token, 0, TokenLen);
-  memset(email, 0, EmailLen);
-  listServerURL = "";
-  listServerPort = 0;
 }
 
 // Local Variables: ***
