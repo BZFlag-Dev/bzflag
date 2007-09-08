@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<authors xmlns:html="http://www.w3.org/1999/xhtml">
+  <author uid="JeffM2501">
+    Jeff Myers &lt;JeffM2501@users.sourceforge.net&gt;
+  </author>
+  <author uid="timriker">
+    Tim Riker &lt;Tim@Rikers.org&gt;
+  </author>
+  <author uid="chestal">
+    Frank Thilo &lt;thilo@unix-ag.org&gt;
+  </author>
+  <author uid="davidtrowbridge">
+    David Trowbridge &lt;trowbrds@gmail.com&gt;
+  </author>
+  <author uid="brlcad">
+    Sean Morrison &lt;learner@brlcad.org&gt;
+  </author>
+  <author uid="atupone">
+    Alfredo Tupone &lt;alfredo@tupone.it&gt;
+  </author>
+  <author uid="dtremenak">
+    Daniel Remenak &lt;dtremenak@users.sourceforge.net&gt;
+  </author>
+</authors>
