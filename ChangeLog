@@ -56,8 +56,8 @@ BZFlag 2.0.9
 * Fixed on spanish localization - xukosky@yahoo.es
 * Instructions to fix sound on ALSA added - Tupone Alfredo
 * Change filename format for easier location of matches - uso
-* Adding jitterdrop - Thomas Stauer
-* Adding jitterkick - uso
+* Adding jitter kick and related admin commands - Thomas Stauer, backported by uso
+* Add optional delay before the countdown gets resumed - Thomas Stauer
 * Global banlist reload with local banlist - uso
 * Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
 * Ability to change the killer in a PlayerDieEvent - Matthew Marshall
