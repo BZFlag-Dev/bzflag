@@ -2017,7 +2017,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		if (!tank)
 			break;
 
-		tank->setPausedMessageState(Pause);
+		tank->setPausedMessageState(Pause == 0);
 		addMessage(tank, Pause ? "has paused" : "has unpaused" );
 		break;
 	}
