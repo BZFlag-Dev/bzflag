@@ -1430,7 +1430,7 @@ void			LocalPlayer::doJump()
   /* better realism .. make it so that if you're falling, wings will
    * just slow you down.
    */
-  if (oldVelocity[2] < 0)
+  if ((flag == Flags::Wings) && (oldVelocity[2] < 0))
     newVelocity[2] += oldVelocity[2];
 
   setVelocity(newVelocity);
