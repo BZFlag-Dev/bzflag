@@ -247,14 +247,12 @@ void			StateDatabase::set(const std::string& name,
   if (access >= index->second.permission) {
     index->second.value  = value;
     index->second.isSet  = true;
-    index->second.isTrue = (index->second.value != "0" &&
-			    index->second.value != "False" &&
-			    index->second.value != "false" &&
-			    index->second.value != "FALSE" &&
-			    index->second.value != "no" &&
-			    index->second.value != "No" &&
-			    index->second.value != "NO" &&
-			    index->second.value != "disable");
+    std::string valuelow = TextUtils::tolower(value);
+    index->second.isTrue = (valuelow != "0" &&
+			    valuelow != "off" &&
+			    valuelow != "false" &&
+			    valuelow != "no" &&
+			    valuelow != "disable");
 
 	if (saveDefault)
 		index->second.defValue = value;
