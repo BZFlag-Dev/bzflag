@@ -1055,8 +1055,10 @@ int			main(int argc, char** argv)
   // the resolution to use)
   const bool useFullscreen = needsFullscreen();
   if (useFullscreen) {
+#ifndef HAVE_SDL
     // tell window to be fullscreen
     window->setFullscreen(true);
+#endif
 
     // set the size if one was requested.  this overrides the default
     // size (which is the display or passthrough size).
