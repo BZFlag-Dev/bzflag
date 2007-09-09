@@ -3696,9 +3696,11 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	}
       }
       const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
-      if (BZDB.isTrue(StateDatabase::BZDB_ENDSHOTDETECTION) && endShotLimit > 0) && (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
+      if ((BZDB.isTrue(StateDatabase::BZDB_ENDSHOTDETECTION) && endShotLimit > 0) &&
+         (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
 	char testmessage[MessageLen];
-	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", playerData->player.getCallSign(), playerData->player.endShotCredit );
+	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", 
+                playerData->player.getCallSign(), playerData->player.endShotCredit );
 	logDebugMessage(1,"endShot Detection: %s\n", testmessage);
 	sendMessage(ServerPlayer, AdminPlayers, testmessage);
 	sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
