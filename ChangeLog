@@ -11,6 +11,7 @@ HEAD as 2.1 for release as 2.2
 BZFlag 2.0.9
 ------------
 
+* Add -adminlagannounce and -lagannounce - Thomas Stauer
 * Check for talk permission for part/quit messages  - uso
 * First map no longer ignored in Start Server menu - Ravu al Hemio
 * Implemented Confine Mouse for Windows platforms - Daniel Remenak
