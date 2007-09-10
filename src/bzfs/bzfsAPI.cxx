@@ -1333,6 +1333,7 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
   playerRecord->wins=player->score.getWins();
   playerRecord->losses=player->score.getLosses();
   playerRecord->teamKills=player->score.getTKs();
+  playerRecord->canSpawn = player->isSpawnable();
   return true;
 }
 
@@ -1494,6 +1495,45 @@ BZF_API bool bz_isPlayerPaused(int playerID)
 
   return player->player.isPaused();
 }
+
+BZF_API bool bz_canPlayerSpawn( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return false;
+
+  return player->isSpawnable();
+}
+
+BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return false;
+
+  player->setSpawnable(spawn);
+
+  return true;
+}
+
+BZF_API bool bz_setPlayerLimboText( int playerID, const char* text )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return false;
+
+  std::string realText;
+  if ( text )
+    realText = text;
+
+  sendMsgLimboText(playerID,realText);
+  return true;
+}
+
+
 
 //-------------------------------------------------------------------------
 
@@ -4063,6 +4103,9 @@ void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short){
 void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned short ){}
 
 void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
+
+void bz_ServerSidePlayerHandler::allowSpawn( bool ){}
+
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *email, const char *token, const char *clientVersion, bz_eTeamType _team)
 {

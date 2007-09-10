@@ -57,6 +57,9 @@ void sendMsgTimeUpdate ( int timeLimit );
 void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
 void sendMsgTanagabilityReset ( void );
 
+void sendMsgCanSpawn ( int player, bool canSpawn );
+void sendMsgLimboText ( int player, const std::string  &text );
+
 void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag);
 
 // messages sent to just network users ( like client query )

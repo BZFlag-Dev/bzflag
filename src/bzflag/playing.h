@@ -107,6 +107,8 @@ extern int		numFlags;
 extern StartupInfo	startupInfo;
 extern DefaultCompleter	completer;
 extern bool		gameOver;
+extern bool		canSpawn;
+extern std::string	customLimboMessage;
 extern ControlPanel*	controlPanel;
 extern bool		fireButton;
 extern float		destructCountdown;

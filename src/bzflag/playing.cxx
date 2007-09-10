@@ -131,6 +131,9 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem> playingCallbacks;
 bool			gameOver = false;
+bool			canSpawn = true;
+std::string		customLimboMessage;
+
 static std::vector<BillboardSceneNode*> explosions;
 static std::vector<BillboardSceneNode*> prototypeExplosions;
 int			savedVolume = -1;
@@ -3176,6 +3179,21 @@ static void handleTangReset ( void )
   ClientIntangibilityManager::instance().resetTangibility();
 }
 
+static void handleAllowSpawn ( uint16_t len, void* msg )
+{
+  if ( len >= 1)
+  {
+    unsigned char allow = 0;
+    msg = nboUnpackUByte(msg,allow);
+
+    canSpawn = allow != 0;
+  }
+}
+
+static void handleLimboTet ( uint16_t len, void* msg )
+{
+  nboUnpackStdString(msg,customLimboMessage);
+}
 
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
@@ -3371,6 +3389,13 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       handleTangReset();
       break;
 
+    case MsgAllowSpawn:
+      handleAllowSpawn(len,msg);
+      break;
+
+    case MsgLimboMessage:
+      handleLimboTet(len,msg);
+      break;
   }
 
   if (checkScores) updateHighScores();
@@ -5196,6 +5221,8 @@ static void joinInternetGame2()
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
+  canSpawn = true;
+
   // prep teams
   teams = world->getTeams();
 
@@ -6784,6 +6811,8 @@ static void		playingLoop()
   while (!CommandsStandard::isQuit())
     {
       BZDBCache::update();
+
+      canSpawn = true;
 
       // set this step game time
       GameTime::setStepTime();

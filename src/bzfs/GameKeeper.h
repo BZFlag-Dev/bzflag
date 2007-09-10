@@ -143,11 +143,15 @@ public:
     bool	   updateShot(int id, int salt);
 
     // To handle Identify
-    void	   setLastIdFlag(int _idFlag);
+    void    setLastIdFlag(int _idFlag);
     int	    getLastIdFlag();
 
     // to handle movement
     float getRealSpeed ( float input );
+
+    // spawnability
+    bool isSpawnable ( void ) {return canSpawn;}
+    void setSpawnable ( bool spawn ) {canSpawn = spawn;}
 
     enum LSAState
       {
@@ -172,19 +176,21 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float				stateTimeStamp;
+    float	      stateTimeStamp;
 
-	ShotType			efectiveShotType;
+    ShotType	      efectiveShotType;
 
-	void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
-	float				currentPos[3];
-	float				curentVel[3];
-	float				currentRot;
-	float				currentAngVel;
+    bool	      canSpawn;
 
-	PlayerState			getCurrentStateAsState ( void );
+    void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
+    float	      currentPos[3];
+    float	      curentVel[3];
+    float	      currentRot;
+    float	      currentAngVel;
 
-	void*	packCurrentState (void* buf, uint16_t& code, bool increment);
+    PlayerState	getCurrentStateAsState ( void );
+
+    void*	packCurrentState (void* buf, uint16_t& code, bool increment);
 
     // GameTime update
     float	      gameTimeRate;

@@ -51,6 +51,7 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
 {
   playerHandler = NULL;
   playerList[playerIndex] = this;
+  canSpawn = true;
 
   lastState.order  = 0;
   // Timestamp 0.0 -> not yet available
@@ -78,28 +79,29 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   player(_playerIndex), netHandler(NULL), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(NULL),
   needThisHostbanChecked(false), idFlag(-1)
-{
-	playerHandler = handler;
-	playerList[playerIndex] = this;
+ {
+  canSpawn = true;
+  playerHandler = handler;
+  playerList[playerIndex] = this;
 
-	lastState.order  = 0;
-	// Timestamp 0.0 -> not yet available
-	stateTimeStamp   = 0.0f;
-	gameTimeRate = GameTime::startRate;
-	gameTimeNext = TimeKeeper::getCurrent();
+  lastState.order  = 0;
+  // Timestamp 0.0 -> not yet available
+  stateTimeStamp   = 0.0f;
+  gameTimeRate = GameTime::startRate;
+  gameTimeNext = TimeKeeper::getCurrent();
 #if defined(USE_THREADS)
-	int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
-	if (result)
-		std::cerr << "Could not create thread" << std::endl;
-	refCount	 = 1;
+  int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
+  if (result)
+   std::cerr << "Could not create thread" << std::endl;
+  refCount	 = 1;
 #endif
-	_LSAState = start;
-	bzIdentifier = "";
+  _LSAState = start;
+  bzIdentifier = "";
 
-	currentPos[0] = currentPos[1] = currentPos[2] = 0;
-	curentVel[0] = curentVel[1] = curentVel[2] = 0;
-	currentRot = 0;
-	currentAngVel =0;
+  currentPos[0] = currentPos[1] = currentPos[2] = 0;
+  curentVel[0] = curentVel[1] = curentVel[2] = 0;
+  currentRot = 0;
+  currentAngVel =0;
 }
 
 GameKeeper::Player::~Player()

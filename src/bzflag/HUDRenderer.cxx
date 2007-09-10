@@ -1721,9 +1721,21 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
 		    bigFontFace, bigFontSize, gameOverLabel.c_str());
     } else if (!myTank->isAlive() && !myTank->isExploding()) {
-      hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, restartLabel.c_str());
+      if (canSpawn)
+      {
+	hudColor3fv(messageColor);
+	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
+	  bigFontFace, bigFontSize, restartLabel.c_str());
+      }
+      else
+      {
+	if (customLimboMessage.size())
+	{
+	  hudColor3fv(messageColor);
+	  fm.drawString(0.5f * ((float)width - fm.getStringWidth(bigFontFace,bigFontSize,customLimboMessage.c_str())), y, 0,
+	    bigFontFace, bigFontSize, customLimboMessage.c_str());
+	}	
+      }
     } else if (myTank->isPaused()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,

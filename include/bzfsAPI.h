@@ -1290,6 +1290,10 @@ BZF_API bool bz_getPlayerCurrentState ( int playerID, bz_PlayerUpdateState &stat
 
 BZF_API bool bz_isPlayerPaused( int playerID );
 
+BZF_API bool bz_canPlayerSpawn( int playerID );
+BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn );
+BZF_API bool bz_setPlayerLimboText( int playerID, const char* text );
+
 class BZF_API bz_BasePlayerRecord
 {
 public:
@@ -1303,6 +1307,7 @@ public:
     globalUser = false;
     admin = false;
     op = false;
+    canSpawn = false;
 
     lag = 0;
     jitter = 0;
@@ -1344,6 +1349,7 @@ public:
   bz_ApiString bzID;
   bool admin;
   bool op;
+  bool canSpawn;
   bz_APIStringList groups;
 
   int lag;
@@ -1977,6 +1983,7 @@ public:
   virtual void shotEnded( int player, unsigned short shotID, unsigned short reason );
   virtual void playerTeleported( int player, unsigned short from, unsigned short to );
   virtual void playerAutopilot( int player, bool autopilot );
+  virtual void allowSpawn( bool canSpawn );
 
   int playerID;
 

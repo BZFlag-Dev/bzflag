@@ -978,6 +978,38 @@ void sendMsgTanagabilityReset ( void )
   broadcastMessage(MsgTangibilityReset, 0, NULL,false);
 }
 
+void sendMsgCanSpawn ( int player, bool canSpawn )
+{
+  char t= 0;
+  if (canSpawn)
+    t = 1;
+
+  GameKeeper::Player* p = GameKeeper::Player::getPlayerByIndex(player);
+  if (!p)
+    return;
+
+  if (!p->playerHandler)
+  {
+    void *bufStart;
+    void *buf2 = bufStart = getDirectMessageBuffer();
+    buf2 = nboPackUByte(buf2,t);
+
+    directMessage(player, MsgAllowSpawn, (char*)buf2 - (char*)bufStart, bufStart);
+  }
+  else
+    p->playerHandler->allowSpawn(canSpawn);
+}
+
+void sendMsgLimboText ( int player, const std::string  &text )
+{
+  void *bufStart;
+  void *buf2 = bufStart = getDirectMessageBuffer();
+  buf2 = nboPackStdString(buf2,text);
+  directMessage(player, MsgLimboMessage, (char*)buf2 - (char*)bufStart, bufStart);
+
+}
+
+
 void sendSetTeam ( int playerIndex, int _team )
 {
 	void *buf, *bufStart = getDirectMessageBuffer();

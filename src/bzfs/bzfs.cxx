@@ -2233,7 +2233,7 @@ bool areFoes(TeamColor team1, TeamColor team2)
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  if (!playerData && !playerData->isSpawnable())
     return;
 
   if (!playerData->player.isPlaying()) {

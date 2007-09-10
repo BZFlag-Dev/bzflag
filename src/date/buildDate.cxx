@@ -21,7 +21,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0054"
+#  define BZ_PROTO_VERSION	"0055"
 #endif
 // ditto for bzrobots
 #ifndef BZROBOTS_PROTO_VERSION
@@ -42,7 +42,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		14
+#  define BZ_REV		15
 #endif
 
 // DEVEL | STABLE | MAINT
