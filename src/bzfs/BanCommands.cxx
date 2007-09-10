@@ -387,7 +387,7 @@ bool KillCommand::operator() (const char	 *message,
   i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (i >= 0) {
-    // call any plugin events registered for /kick
+    // call any plugin events registered for /kill
     bz_KillEventData killEvent;
     killEvent.killerID = t;
     killEvent.killedID = i;
