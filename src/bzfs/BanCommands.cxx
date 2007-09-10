@@ -386,6 +386,18 @@ bool KillCommand::operator() (const char	 *message,
 
   i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
+  // Don't kill players who aren't alive
+  GameKeeper::Player *p
+    = GameKeeper::Player::getPlayerByIndex(i);
+  if (p != NULL && !p->player.isAlive()) {
+    char buffer[MessageLen];
+    snprintf(buffer, MessageLen,
+	     "%s is not alive.",
+	     p->player.getCallSign());
+    sendMessage(ServerPlayer, t, buffer);
+    return true;
+  }
+
   if (i >= 0) {
     // call any plugin events registered for /kill
     bz_KillEventData killEvent;
@@ -408,8 +420,7 @@ bool KillCommand::operator() (const char	 *message,
     // operators can override antiperms
     if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
-      GameKeeper::Player *p
-	= GameKeeper::Player::getPlayerByIndex(killEvent.killedID);
+      p = GameKeeper::Player::getPlayerByIndex(killEvent.killedID);
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
 	snprintf(killmessage, MessageLen, "%s is protected from being killed.",
 		 p->player.getCallSign());
