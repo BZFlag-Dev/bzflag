@@ -1,6 +1,6 @@
 # Info.pm
 #
-# Copyright (c) 2003 - 2006 Tucker McLean, Tim Riker.
+# Copyright (c) 2003 - 2007 Tucker McLean, Tim Riker.
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -432,7 +432,7 @@ Tucker McLean, tuckerm@noodleroni.com
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 - 2006 Tucker McLean, Tim Riker.
+Copyright (c) 2003 - 2007 Tucker McLean, Tim Riker.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

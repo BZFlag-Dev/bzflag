@@ -1343,8 +1343,8 @@ msgstr "Agradecimientos especiales:"
 msgid "BZFlag Home Page:"
 msgstr "Página principal de BZFlag:"
 
-msgid "Copyright (c) 1993 - 2006"
-msgstr "Copyright (c) 1993 - 2006"
+msgid "Copyright (c) 1993 - 2007"
+msgstr "Copyright (c) 1993 - 2007"
 
 ####################
 ## HUD RENDERERER ##
