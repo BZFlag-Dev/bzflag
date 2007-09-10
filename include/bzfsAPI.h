@@ -140,6 +140,7 @@ typedef enum
   bz_ePlayerCollision,
   bz_eFlagResetEvent,
   bz_eWorldFinalized,
+  bz_eAllowCTFCaptureEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -446,6 +447,32 @@ public:
   double eventTime;
 };
 
+class BZF_API bz_AllowCTFCaptureEventData_V1 : public bz_EventData
+{
+public:
+  bz_AllowCTFCaptureEventData_V1() : bz_EventData()
+  {
+    eventType = bz_eAllowCTFCaptureEvent;
+    teamCapped = eNoTeam;
+    teamCapping = eNoTeam;
+    playerCapping = -1;
+    allow = false;
+    killTeam = true;
+  }
+  virtual ~bz_AllowCTFCaptureEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
+
+  bz_eTeamType teamCapped;
+  bz_eTeamType teamCapping;
+  int playerCapping;
+
+  float pos[3];
+  float rot;
+  double eventTime;
+
+  bool allow;
+  bool killTeam;
+};
 class BZF_API bz_PlayerDieEventData_V1 : public bz_EventData
 {
 public:

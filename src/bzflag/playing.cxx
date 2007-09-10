@@ -2412,37 +2412,7 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
   else if (capturer && capturer->getTeam() == myTank->getTeam())
     playLocalSound(SFX_CAPTURE);
 
-
-  // blow up if my team flag captured
-  if (capturedTeam == int(myTank->getTeam()))
-    gotBlowedUp(myTank, GotCaptured, id);
-
-#ifdef ROBOT
-  //kill all my robots if they are on the captured team
-  for (int r = 0; r < numRobots; r++) {
-    if (robots[r] && robots[r]->getTeam() == capturedTeam) {
-      gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-    }
-  }
-#endif
-
-  // everybody who's alive on capture team will be blowing up
-  // but we're not going to get an individual notification for
-  // each of them, so add an explosion for each now.  don't
-  // include me, though;  I already blew myself up.
-  for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i] && player[i]->isAlive() && player[i]->getTeam() == capturedTeam) {
-      const float* pos = player[i]->getPosition();
-      playWorldSound(SFX_EXPLOSION, pos, false);
-      float explodePos[3];
-      explodePos[0] = pos[0];
-      explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
-      addTankExplosion(explodePos);
-
-      EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle());
-    }
-  }
+  // no need to kill myself, the server will kill everyone involved.
 
   checkScores = true;
 }

@@ -2635,6 +2635,8 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
     if (winningTeam != (int)NoTeam)
       checkTeamScore(killerIndex, winningTeam);
+
+     victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
   }
 }
 
@@ -2826,7 +2828,23 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   if (teamIndex == ::NoTeam)
     return;
 
-  checkFlagCheats(playerData,teamIndex);
+  if (checkFlagCheats(playerData,teamIndex))
+    return;
+
+  bz_AllowCTFCaptureEventData_V1  allowData;
+
+  allowData.teamCapped = convertTeam((TeamColor)teamIndex);
+  allowData.teamCapping = convertTeam(teamCaptured);
+  allowData.playerCapping = playerIndex;
+  playerData->getPlayerCurrentPosRot(allowData.pos, allowData.rot);
+  allowData.eventTime = TimeKeeper::getCurrent().getSeconds();
+  allowData.allow = true;
+  allowData.killTeam = true;
+
+  worldEventManager.callEvents(bz_eAllowCTFCaptureEvent,&allowData);
+
+  if (!allowData.allow)
+    return;
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
@@ -2844,17 +2862,16 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
-  // everyone on losing team is dead
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-    if ((p == NULL) || (teamIndex != (int)p->player.getTeam())) {
-      continue;
+  if (allowData.killTeam)
+  {
+    // everyone on losing team is dead, KILL THEM.
+    for (int i = 0; i < curMaxPlayers; i++) 
+    {
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p == NULL) || (teamIndex != (int)p->player.getTeam()))
+	continue;
+      playerKilled(i, playerIndex, GotCaptured, -1, Flags::Null, -1, true);
     }
-    p->player.setDead();
-    p->player.setRestartOnBase(true);
-    zapFlagByPlayer(i);
-    // stop pausing attempts as you can not pause when being dead
-    p->player.pauseRequestTime = TimeKeeper::getNullTime();
   }
 
   // update score (rogues can't capture flags)
