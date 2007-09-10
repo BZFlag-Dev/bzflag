@@ -90,6 +90,7 @@
 #include "WorldBuilder.h"
 #include "HUDui.h"
 #include "SyncClock.h"
+#include "ClientIntangibilityManager.h"
 //#include "messages.h"
 
 static const float	FlagHelpDuration = 60.0f;
@@ -3156,6 +3157,26 @@ static void handleNewPlayer(void* msg)
 #endif
 }
 
+
+static void handleTangUpdate ( uint16_t len, void* msg )
+{
+  if ( len >= 5)
+  {
+    unsigned int objectID = 0;
+      msg = nboUnpackUInt(msg,objectID);
+    unsigned char tang = 0;
+    msg = nboUnpackUByte(msg,tang);
+
+    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID,tang);
+  }
+}
+
+static void handleTangReset ( void )
+{
+  ClientIntangibilityManager::instance().resetTangibility();
+}
+
+
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
@@ -3341,6 +3362,15 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
+
+    case MsgTangibilityUpdate:
+      handleTangUpdate(len,msg);
+      break;
+    
+    case MsgTangibilityReset:
+      handleTangReset();
+      break;
+
   }
 
   if (checkScores) updateHighScores();

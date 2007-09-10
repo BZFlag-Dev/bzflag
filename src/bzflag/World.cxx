@@ -35,6 +35,7 @@
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
 #include "LocalPlayer.h"
+#include "ClientIntangibilityManager.h"
 
 //
 // World
@@ -243,7 +244,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    if (!obs->isDriveThrough() && obs->inBox(pos, angle, dx, dy, dz)) {
+    if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) && obs->inBox(pos, angle, dx, dy, dz)) {
       return obs;
     }
   }
@@ -376,7 +377,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 	(type == MeshObstacle::getClassName())) {
       break;
     }
-    if (!obs->isDriveThrough() &&
+    if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) &&
 	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
     }
@@ -400,7 +401,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     if (type == MeshObstacle::getClassName()) {
       break;
     }
-    if (!obs->isDriveThrough() &&
+    if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) &&
 	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       const MeshFace* face = (const MeshFace*) obs;
       const float facePos2 = face->getPosition()[2];
@@ -439,7 +440,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   // check mesh obstacles
   for (/* do nothing */; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    if (!obs->isDriveThrough() &&
+    if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) &&
 	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
     }

@@ -31,7 +31,7 @@
 #include "effectsRenderer.h"
 #include "playing.h"
 #include "SyncClock.h"
-
+#include "ClientIntangibilityManager.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -1024,12 +1024,12 @@ void LocalPlayer::collectInsideBuildings()
 	  }
 	}
 	// add the mesh if not already present
-	if (!obs->isDriveThrough() &&
+	if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) &&
 	    notInObstacleList(mesh, insideBuildings)) {
 	  insideBuildings.push_back(mesh);
 	}
       }
-      else if (!obs->isDriveThrough()) {
+      else if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID())) {
 	if (obs->getType() == MeshObstacle::getClassName()) {
 	  // add the mesh if not already present
 	  if (notInObstacleList(obs, insideBuildings)) {
