@@ -88,6 +88,7 @@ typedef enum
 	bz_eFlagGrabbedEvent,
 	bz_eFlagDroppedEvent,
 	bz_eFlagResetEvent,
+	bz_eAllowCTFCapEvent,
 	bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -322,22 +323,22 @@ public:
 class bz_CTFCaptureEventData : public bz_EventData
 {
 public:
-	bz_CTFCaptureEventData()
-	{
-		eventType = bz_eCaptureEvent;
-		teamCapped = eNoTeam;
-		teamCapping = eNoTeam;
-		playerCapping = -1;
-	}
-	virtual ~bz_CTFCaptureEventData(){};
+  bz_CTFCaptureEventData()
+  {
+    eventType = bz_eCaptureEvent;
+    teamCapped = eNoTeam;
+    teamCapping = eNoTeam;
+    playerCapping = -1;
+  }
+  virtual ~bz_CTFCaptureEventData(){};
 
-	bz_eTeamType teamCapped;
-	bz_eTeamType teamCapping;
-	int playerCapping;
+  bz_eTeamType teamCapped;
+  bz_eTeamType teamCapping;
+  int playerCapping;
 
-	float pos[3];
-	float rot;
-	double time;
+  float pos[3];
+  float rot;
+  double time;
 };
 
 class bz_PlayerDieEventData : public bz_EventData
@@ -1010,6 +1011,30 @@ public:
   const char *flagType;
   bool	changed;
   float	pos[3];
+};
+
+class bz_AllowCTFCapEventData : public bz_EventData
+{
+public:
+  bz_AllowCTFCapEventData()
+  {
+    eventType = bz_eAllowCRTFCapEvent;
+    teamCapped = eNoTeam;
+    teamCapping = eNoTeam;
+    playerCapping = -1;
+    allow = false;
+  }
+  virtual ~bz_AllowCTFCapEventData(){};
+
+  bz_eTeamType teamCapped;
+  bz_eTeamType teamCapping;
+  int playerCapping;
+
+  float	    pos[3];
+  float	    rot;
+  double    time;
+  
+  bool	    allow;
 };
 
 

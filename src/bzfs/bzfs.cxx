@@ -2945,6 +2945,21 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     }
   }
 
+  bz_AllowCTFCapEventData allowCap;
+
+  allowCap.teamCapped = convertTeam((TeamColor)teamIndex);
+  allowCap.teamCapping = convertTeam(teamCaptured);
+  allowCap.playerCapping = playerIndex;
+  playerData->getPlayerState(allowCap.pos, allowCap.rot);
+  allowCap.time = TimeKeeper::getCurrent().getSeconds();
+
+  allowCap.allow = true;
+
+  worldEventManager.callEvents(bz_eAllowCTFCapEvent,&allowCap);
+
+  if (!allowCap.allow)
+    return;
+
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
   resetFlag(flag);
