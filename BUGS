@@ -1,14 +1,23 @@
 recent bugs
 ------------
 
+- Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP
+  The message doesn't display on the client and the client crashes
+  Possibly related to 
+  - client side bots make the client get disconnected (read error)
+  below.
+
+- Segfault - two clients connecting to the server then leaving causes the 
+  server to crash
+
 - jumping is broken; heigth and direction of jumping affected.
 
 - TH is broken (says the target stole the theifs flag; theif cannot
-pick up any more flags, but doesn't seem to have one (but is drawn with
-one))
+  pick up any more flags, but doesn't seem to have one (but is drawn with
+  one))
 
 - GM does not seem to lock on reliably (try against a remote client,
-bots work fine)
+  bots work fine)
 
 - jitter on windows servers is reported as very high, but play
   is unaffected.
