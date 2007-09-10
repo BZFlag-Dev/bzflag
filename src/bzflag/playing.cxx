@@ -4039,7 +4039,7 @@ bool inLookRange ( float angle, float distance, float bestDistance, RemotePlayer
   if (distance > bestDistance)
     return false;
 
-  if (_player->getFlag() == Flags::Stealth)
+  if (_player->getFlag() == Flags::Stealth || _player->getFlag() == Flags::Cloaking)
     return myTank->getFlag() == Flags::Seer;
 
   return true;
