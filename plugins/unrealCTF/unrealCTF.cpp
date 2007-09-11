@@ -31,6 +31,7 @@ UnrealCTFEventHandler unrealCTFEventHandler;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
+  bz_registerEvent ( bz_eAllowFlagGrabEvent, &unrealCTFEventHandler );
   bz_registerEvent ( bz_eFlagGrabbedEvent, &unrealCTFEventHandler );
   bz_registerEvent ( bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler );
   bz_registerEvent ( bz_eWorldFinalized, &unrealCTFEventHandler );
@@ -45,6 +46,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
   gotFlags = false;
+  bz_removeEvent ( bz_eAllowFlagGrabEvent, &unrealCTFEventHandler );
   bz_removeEvent ( bz_ePlayerJoinEvent, &unrealCTFEventHandler );
   bz_removeEvent ( bz_eFlagGrabbedEvent, &unrealCTFEventHandler );
   bz_removeEvent ( bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler );
@@ -76,25 +78,25 @@ void zapTeamFlagToBase ( bz_eTeamType team )
   if ( team == eRedTeam )
   {
     redFlag.caried = -1;
-    bz_moveFlag ( redFlag.id, redFlag.basePos);
+    bz_resetFlag(redFlag.id);
   }
 
   if ( team == eGreenTeam  )
   {
     greenFlag.caried = -1;
-    bz_moveFlag ( greenFlag.id, greenFlag.basePos);
+    bz_resetFlag ( greenFlag.id);
   }
 
   if ( team == eBlueTeam  )
   {
     blueFlag.caried = -1;
-    bz_moveFlag ( blueFlag.id, blueFlag.basePos);
+    bz_resetFlag ( blueFlag.id);
   }
 
   if ( team == ePurpleTeam  )
   {
     purpleFlag.caried = -1;
-    bz_moveFlag ( purpleFlag.id, purpleFlag.basePos);
+    bz_resetFlag ( purpleFlag.id);
   }
 }
 
@@ -103,6 +105,7 @@ void checkFlags ( void )
   if (gotFlags)
     return;
 
+  bz_setBZDBBool("_grabOwnFlag",true);
   bz_APIWorldObjectList* worldObjects = bz_getWorldObjectList();
 
   for ( int i = 0; i < (int)worldObjects->size(); i++)
@@ -117,22 +120,22 @@ void checkFlags ( void )
 	{
 	  case eRedTeam:
 	    memcpy(redFlag.basePos,base->center,sizeof(float)*3);
-	    redFlag.basePos[2] = base->maxAABBox[2]+0.1;
+	    redFlag.basePos[2] = base->maxAABBox[2]+0.1f;
 	    break;
 
 	  case eGreenTeam:
 	    memcpy(greenFlag.basePos,base->center,sizeof(float)*3);
-	    greenFlag.basePos[2] = base->maxAABBox[2]+0.1;
+	    greenFlag.basePos[2] = base->maxAABBox[2]+0.1f;
 	    break;
 
 	  case eBlueTeam:
 	    memcpy(blueFlag.basePos,base->center,sizeof(float)*3);
-	    blueFlag.basePos[2] = base->maxAABBox[2]+0.1;
+	    blueFlag.basePos[2] = base->maxAABBox[2]+0.1f;
 	    break;
 
 	   case ePurpleTeam:
 	     memcpy(purpleFlag.basePos,base->center,sizeof(float)*3);
-	     purpleFlag.basePos[2] = base->maxAABBox[2]+0.1;
+	     purpleFlag.basePos[2] = base->maxAABBox[2]+0.1f;
 	     break;
 	}
       }
@@ -162,6 +165,8 @@ void checkFlags ( void )
 
     zapTeamFlagToBase(team);
   }
+
+  gotFlags = true;
 }
 
 
@@ -208,6 +213,23 @@ void UnrealCTFEventHandler::process ( bz_EventData *eventData )
     case bz_ePlayerJoinEvent: // just in case we loaded, noone was here, and we didn't check the flags
       if (!gotFlags)
 	checkFlags();
+      break;
+
+    case bz_eAllowFlagGrabEvent:
+      {
+	bz_AllowFlagGrabEventData_V1 *allowGrab = (bz_AllowFlagGrabEventData_V1*)eventData;
+	bz_eTeamType flagTeam = teamFromFlag(allowGrab->flagID);
+	if ( flagTeam == eNoTeam)
+	  break;
+
+	bz_eTeamType playerTeam = bz_getPlayerTeam(allowGrab->playerID);
+	if (playerTeam == eRogueTeam || playerTeam == flagTeam)
+	{
+	  zapTeamFlagToBase(flagTeam);
+	  allowGrab->allow = false;
+	}
+
+      }
       break;
 
     case bz_eFlagGrabbedEvent:
