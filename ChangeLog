@@ -19,7 +19,6 @@ BZFlag 2.0.9
 * Add the rabidRabbit plugin - LouMan
 * Add packet loss kick and related admin commands - Thomas Stauer
 * Reclaim lost memory from sound sample - Tupone Alfredo
-* Fixed invalid kick speed - Tupone Alfredo
 * Fixed bashism on debian rules - Ryan Kavanagh
 * Add the rabbitTimer plugin - L4m3r
 * Fix some segfaults when re-joining - Tupone Alfredo
@@ -57,7 +56,7 @@ BZFlag 2.0.9
 * Fixed on spanish localization - xukosky@yahoo.es
 * Instructions to fix sound on ALSA added - Tupone Alfredo
 * Change filename format for easier location of matches - uso
-* Adding jitter kick and related admin commands - Thomas Stauer, backported by uso
+* Adding jitter kick and related admin commands - Thomas Stauer
 * Add optional delay before the countdown gets resumed - Thomas Stauer
 * Global banlist reload with local banlist - uso
 * Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
