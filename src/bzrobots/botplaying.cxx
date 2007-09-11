@@ -82,7 +82,7 @@
 #include "Logger.h"
 using std::endl;
 
-bool			botCanSpawn = true;
+bool			canSpawn = true;
 bool			headless = true;
 static const float	FlagHelpDuration = 60.0f;
 StartupInfo	startupInfo;
@@ -101,9 +101,12 @@ static double		lastEpochOffset;
 static std::vector<PlayingCallbackItem> playingCallbacks;
 bool			gameOver = false;
 static FlashClock	pulse;
-static bool		justJoined = false;
+static bool	        justJoined = false;
 
 float			roamDZoom = 0.0f;
+
+// We don't use this; but playing.h has an extern for it
+std::string             customLimboMessage;
 
 static MessageOfTheDay		*motd = NULL;
 DefaultCompleter	completer;
@@ -1265,7 +1268,7 @@ static void handleAllowSpawn ( uint16_t len, void* msg )
     unsigned char allow = 0;
     msg = nboUnpackUByte(msg,allow);
 
-    botCanSpawn = allow != 0;
+    canSpawn = allow != 0;
   }
 }
 
