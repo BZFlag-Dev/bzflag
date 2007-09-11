@@ -1252,7 +1252,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 		eventData.rawMessage = message;
 		eventData.filteredMessage = filtered;
 
-		worldEventManager.callEvents(bz_eMessagFilteredEvent,&eventData);
+		worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
 	}
   }
 
