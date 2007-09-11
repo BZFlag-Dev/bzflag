@@ -23,7 +23,7 @@ void ClientIntangibilityManager::setWorldObjectTangibility ( unsigned int object
   tangibilityMap[objectGUID] = tangible;
 }
 
-unsigned char ClientIntangibilityManager::getWorldObjectTangiblity ( unsigned int objectGUID )
+unsigned char ClientIntangibilityManager::getWorldObjectTangibility ( unsigned int objectGUID )
 {
   std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(objectGUID);
   if ( itr != tangibilityMap.end())

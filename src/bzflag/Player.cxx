@@ -624,7 +624,7 @@ bool Player::hitObstacleResizing()
     const Obstacle* obs = olist->list[i];
     const bool onTop = obs->isFlatTop() &&
       ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
-    if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) && !onTop &&
+    if (!ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID()) && !onTop &&
 	obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
       return true;
     }

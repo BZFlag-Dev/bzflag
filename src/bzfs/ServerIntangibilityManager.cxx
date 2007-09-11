@@ -36,7 +36,7 @@ void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
   }
 }
 
-unsigned char ServerIntangibilityManager::getWorldObjectTangiblity ( unsigned int objectGUID )
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility ( unsigned int objectGUID )
 {
   std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(objectGUID);
   if ( itr != tangibilityMap.end())

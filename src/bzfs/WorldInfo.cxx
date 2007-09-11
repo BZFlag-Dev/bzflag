@@ -367,7 +367,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
   }
   else if (obstacle->getType() == BoxBuilding::getClassName())
   {
-    if (ServerIntangibilityManager::instance().getWorldObjectTangiblity(obstacle->getGUID()) != 0)
+    if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0)
     {
       return IN_BOX_DRIVETHROUGH;
     }

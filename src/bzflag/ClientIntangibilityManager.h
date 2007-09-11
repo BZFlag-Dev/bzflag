@@ -26,7 +26,7 @@ public:
     
   void resetTangibility ( void );
 
-  unsigned char getWorldObjectTangiblity ( unsigned int objectGUID );
+  unsigned char getWorldObjectTangibility ( unsigned int objectGUID );
 
 protected:
   friend class Singleton<ClientIntangibilityManager>;

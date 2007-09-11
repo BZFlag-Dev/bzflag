@@ -2974,7 +2974,7 @@ void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obsta
   memcpy(object.maxAABBox,extents.maxs,sizeof(float)*3);
   memcpy(object.minAABBox,extents.mins,sizeof(float)*3);
 
-  readTangibilityMask(ServerIntangibilityManager::instance().getWorldObjectTangiblity(obstacle.getGUID()),object.driveThru);
+  readTangibilityMask(ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle.getGUID()),object.driveThru);
   readTangibilityMask(obstacle.isShootThrough(),object.shootThru);
 }
 
@@ -3115,7 +3115,7 @@ BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtribu
 {
   atribs.setAll(false);
 
-  unsigned char val =  ServerIntangibilityManager::instance().instance().getWorldObjectTangiblity(id);
+  unsigned char val =  ServerIntangibilityManager::instance().instance().getWorldObjectTangibility(id);
   if ( val == _INVALID_TANGIBILITY )
     return false;
 

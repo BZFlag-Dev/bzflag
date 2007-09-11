@@ -1024,12 +1024,12 @@ void LocalPlayer::collectInsideBuildings()
 	  }
 	}
 	// add the mesh if not already present
-	if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID()) &&
+	if (!ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID()) &&
 	    notInObstacleList(mesh, insideBuildings)) {
 	  insideBuildings.push_back(mesh);
 	}
       }
-      else if (!ClientIntangibilityManager::instance().getWorldObjectTangiblity(obs->getGUID())) {
+      else if (!ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())) {
 	if (obs->getType() == MeshObstacle::getClassName()) {
 	  // add the mesh if not already present
 	  if (notInObstacleList(obs, insideBuildings)) {
