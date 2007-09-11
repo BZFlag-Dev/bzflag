@@ -2590,7 +2590,7 @@ BZF_API unsigned int bz_getNumFlags(void)
 
 //-------------------------------------------------------------------------
 
-BZF_API const bz_ApiString bz_getName(int flag)
+BZF_API const bz_ApiString bz_getFlagName(int flag)
 {
   FlagInfo *pFlag=FlagInfo::get(flag);
   if(!pFlag)
