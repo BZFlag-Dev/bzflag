@@ -48,6 +48,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
   bz_registerEvent(bz_ePlayerJoinEvent, &logDetailHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &logDetailHandler);
   bz_registerEvent(bz_ePlayerAuthEvent, &logDetailHandler);
+  bz_registerEvent(bz_eMessageFilteredEvent, &logDetailHandler);
   bz_debugMessage(4, "logDetail plugin loaded");
   return 0;
 }
@@ -60,6 +61,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerJoinEvent, &logDetailHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &logDetailHandler);
   bz_removeEvent(bz_ePlayerAuthEvent, &logDetailHandler);
+  bz_removeEvent(bz_eMessageFilteredEvent, &logDetailHandler);
   bz_debugMessage(4, "logDetail plugin unloaded");
   return 0;
 }
@@ -83,6 +85,7 @@ void LogDetail::process( bz_EventData *eventData )
   bz_SlashCommandEventData *cmdData = (bz_SlashCommandEventData *) eventData;
   bz_PlayerJoinPartEventData *joinPartData = (bz_PlayerJoinPartEventData *) eventData;
   bz_PlayerAuthEventData *authData = (bz_PlayerAuthEventData *) eventData;
+  bz_MessageFilteredEventData *filteredData = (bz_MessageFilteredEventData *) eventData;
   char temp[9] = {0};
 
   if (eventData) {
@@ -128,6 +131,11 @@ void LogDetail::process( bz_EventData *eventData )
 	  displayCallsign( chatData->to );
 	  cout << " " << chatData->message.c_str() << endl;
 	}
+	break;
+      case bz_eMessageFilteredEvent:
+	cout << "MSG-FILTERED ";
+	displayCallsign( filteredData->player );
+	cout << " " << filteredData->rawMessage.c_str() << endl;
 	break;
       case bz_eServerMsgEvent:
 	if ((serverMsgData->to == BZ_ALLUSERS) and (serverMsgData->team == eNoTeam)) {
