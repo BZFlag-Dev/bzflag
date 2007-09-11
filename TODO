@@ -405,6 +405,7 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 
 //------------------------- BZROBOTS TODO--------------------------------
 
+! Hook up the botCanSpawn boolean to prevent the bots from spawning when they can't
 ? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully", shouldn't be happening).
 ? Make RCLink more c++-ish, by e.g. using operator << and not sendf/vsendf/send.
 ! Implement all events as per RoboCode standards.

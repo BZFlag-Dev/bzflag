@@ -77,10 +77,12 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "SyncClock.h"
+#include "ClientIntangibilityManager.h"
 
 #include "Logger.h"
 using std::endl;
 
+bool			botCanSpawn = true;
 bool			headless = true;
 static const float	FlagHelpDuration = 60.0f;
 StartupInfo	startupInfo;
@@ -98,9 +100,7 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static std::vector<PlayingCallbackItem> playingCallbacks;
 bool			gameOver = false;
-bool			canSpawn = true;        // FIXME: implement?
-std::string		customLimboMessage;     // FIXME: implement?
-static FlashClock		pulse;
+static FlashClock	pulse;
 static bool		justJoined = false;
 
 float			roamDZoom = 0.0f;
@@ -1240,6 +1240,35 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
   checkScores = true;
 }
 
+static void handleTangUpdate ( uint16_t len, void* msg )
+{
+  if ( len >= 5)
+  {
+    unsigned int objectID = 0;
+    msg = nboUnpackUInt(msg,objectID);
+    unsigned char tang = 0;
+    msg = nboUnpackUByte(msg,tang);
+
+    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID,tang);
+  }
+}
+
+static void handleTangReset ( void )
+{
+  ClientIntangibilityManager::instance().resetTangibility();
+}
+
+static void handleAllowSpawn ( uint16_t len, void* msg )
+{
+  if ( len >= 1)
+  {
+    unsigned char allow = 0;
+    msg = nboUnpackUByte(msg,allow);
+
+    botCanSpawn = allow != 0;
+  }
+}
+
 static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
 {
   PlayerId id;
@@ -1415,6 +1444,18 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       case MsgGrabFlag:
 	handleGrabFlag(msg,len);
+	break;
+
+      case MsgTangibilityUpdate:
+	handleTangUpdate(len,msg);
+	break;
+
+      case MsgTangibilityReset:
+	handleTangReset();
+	break;
+
+      case MsgAllowSpawn:
+	handleAllowSpawn(len,msg);
 	break;
 
       case MsgDropFlag:
