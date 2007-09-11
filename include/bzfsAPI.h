@@ -1892,7 +1892,10 @@ BZF_API void bz_removeRabbit( int player );
 // team control
 BZF_API void bz_changeTeam( int player, bz_eTeamType team );
 
+// player listing
 BZF_API bz_APIIntList* bz_getPlayerIndexList ( void );
+BZF_API int bz_getPlayerCount ( void );
+BZF_API bool bz_anyPlayers ( void );
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

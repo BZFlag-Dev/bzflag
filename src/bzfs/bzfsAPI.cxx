@@ -1435,6 +1435,17 @@ BZF_API bool bz_getPlayerIndexList(bz_APIIntList *playerList)
   return playerList->size() > 0;
 }
 
+BZF_API int bz_getPlayerCount ( void )
+{
+  return curMaxPlayers;
+}
+
+BZF_API bool bz_anyPlayers ( void )
+{
+  return curMaxPlayers > 0;
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API bz_APIIntList *bz_getPlayerIndexList(void)
