@@ -98,6 +98,8 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static std::vector<PlayingCallbackItem> playingCallbacks;
 bool			gameOver = false;
+bool			canSpawn = true;        // FIXME: implement?
+std::string		customLimboMessage;     // FIXME: implement?
 static FlashClock		pulse;
 static bool		justJoined = false;
 

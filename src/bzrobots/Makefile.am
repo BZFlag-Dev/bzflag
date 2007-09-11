@@ -95,6 +95,7 @@ genericfiles =				\
 	../bzflag/BaseLocalPlayer.h		\
 	../bzflag/CacheMenu.cxx			\
 	../bzflag/CacheMenu.h			\
+	../bzflag/ClientIntangibilityManager.cxx	\
 	../bzflag/CommandsImplementation.cxx	\
 	../bzflag/ComposeDefaultKey.cxx		\
 	../bzflag/ComposeDefaultKey.h		\
