@@ -366,7 +366,7 @@
 														<p><strong>BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase );</strong><br>
 															Kills the specified player. If spawnOnBase is true, then the user will respawn 
 															back at his CTF base.</p>
-														<p><strong>BZF_API std::vector&lt;std::string&gt; bz_getReports( void );</strong><br>
+														<p><strong>BZF_API bzAPIStringList *bz_getReports( void );</strong><br>
 															Returns a vector of strings containing the raw contents of the reports. Only works when 
                               reports are output to a file, not to a report pipe.</p>
 														<p>&nbsp;</p>
@@ -384,10 +384,10 @@
 														</p>
 														<p>&nbsp;</p>
 														<p><span class="style4 style7">Help Functions </span></p>
-														<p><strong>BZF_API const std::vector<std::string> *bz_getHelpTopic( std::string name );</strong><br>
+														<p><strong>BZF_API bzAPIStringList *bz_getHelpTopics( void );</strong><br>
 															Returns a list of help topics.
 														</p>
-														<p><strong>BZF_API const std::vector&lt;std::string&gt; &bz_getHelpTopic( std::string name );</strong><br>
+														<p><strong>BZF_API bzAPIStringList *bz_getHelpTopic( std::string name );</strong><br>
 															Returns the contents of a help topic
                             </p>
 														<p>&nbsp;</p>
