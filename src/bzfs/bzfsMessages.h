@@ -43,7 +43,7 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 void sendRabbitUpdate ( int playerIndex, unsigned char mode );
 void sendSetTeam ( int playerIndex, int team );
 void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
-void sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
+bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
 void sendSetShotType ( int playerIndex, ShotType type );
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo );

@@ -498,68 +498,82 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
 
 }
 
-void sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
+bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 {
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!playerData)
-		return;
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return false;
 
-	flag.grab(playerIndex);
-	playerData->player.setFlag(flag.getIndex());
+  bz_AllowFlagGrabEventData_V1	allow;
+  allow.flagID = flag.getIndex();
+  allow.flagType = flag.flag.type->flagAbbv;
+  allow.shotType = (bz_eShotType)flag.flag.type->flagShot;
+  allow.playerID = playerIndex;
+  allow.allow = true;
 
-	// send MsgGrabFlag
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
-	buf = flag.pack(buf);
+  worldEventManager.callEvents(bz_eAllowFlagGrabEvent,&allow);
 
-	bz_FlagGrabbedEventData_V1	data;
-	data.flagID = flag.getIndex();
-	data.flagType = flag.flag.type->flagAbbv;
-	data.shotType = (bz_eShotType)flag.flag.type->flagShot;
+  if (!allow.allow)
+    return false;
 
-	worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
+  flag.grab(playerIndex);
+  playerData->player.setFlag(flag.getIndex());
 
-	// pack in the shot type, it may have been modified
-	buf = nboPackUByte(buf,data.shotType);
-	playerData->efectiveShotType = (ShotType)data.shotType;
+  // send MsgGrabFlag
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = flag.pack(buf);
 
-	broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+  bz_FlagGrabbedEventData_V1	data;
+  data.flagID = flag.getIndex();
+  data.flagType = flag.flag.type->flagAbbv;
+  data.shotType = (bz_eShotType)flag.flag.type->flagShot;
+  data.playerID = playerIndex;
 
-	// now do everyone who dosn't have network
-	for (int i = 0; i < curMaxPlayers; i++)
-	{
-		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv,(bz_eShotType)playerData->efectiveShotType);
-	}
+  worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
 
-	playerData->flagHistory.add(flag.flag.type);
+  // pack in the shot type, it may have been modified
+  buf = nboPackUByte(buf,data.shotType);
+  playerData->efectiveShotType = (ShotType)data.shotType;
+
+  broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv,(bz_eShotType)playerData->efectiveShotType);
+  }
+
+  playerData->flagHistory.add(flag.flag.type);
+  return true;
 }
 
 void sendSetShotType ( int playerIndex, ShotType type )
 {
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (!playerData)
-		return;
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
 
-	if (type == playerData->efectiveShotType )
-		return; // it's the same as what they have
+  if (type == playerData->efectiveShotType )
+    return; // it's the same as what they have
 
-	playerData->efectiveShotType = type;
+  playerData->efectiveShotType = type;
 
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUByte(buf,type);
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUByte(buf,type);
 
-	broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);
+  broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);
 
-	// now do everyone who dosn't have network
-	for (int i = 0; i < curMaxPlayers; i++)
-	{
-		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->playerHandler)
-			otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->efectiveShotType);
-	}
+  // now do everyone who dosn't have network
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData && otherData->playerHandler)
+      otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->efectiveShotType);
+  }
 }
 
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )

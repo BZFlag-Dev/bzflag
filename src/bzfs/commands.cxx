@@ -1490,7 +1490,8 @@ bool FlagCommand::operator() (const char *message,
       }
 
       // Send the grab message to the player
-	  sendGrabFlagMessage(gkPlayer->getIndex(), *fi);
+      if (!sendGrabFlagMessage(gkPlayer->getIndex(), *fi))
+	return false;
 
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",

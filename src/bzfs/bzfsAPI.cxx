@@ -2558,10 +2558,7 @@ BZF_API bool bz_givePlayerFlag(int playeID, const char *flagType, bool force)
     gkPlayer->player.setFlag(fi->getIndex());
 
     // send MsgGrabFlag
-    sendGrabFlagMessage(gkPlayer->getIndex(),  *fi);
-
-    //flag successfully given to player
-    return true;
+    return sendGrabFlagMessage(gkPlayer->getIndex(),  *fi);
   }
   //just in case? (a "wtf" case)
   return false;
@@ -3049,6 +3046,7 @@ BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
 
 bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 {
+  type = eSolidObject;
   memset(center, 0, sizeof(float) *3);
   memset(maxAABBox, 0, sizeof(float) *3);
   memset(minAABBox, 0, sizeof(float) *3);
@@ -3060,6 +3058,10 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 //-------------------------------------------------------------------------
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
+{
+}
+
+bz_CTFBaseWorldObject_V1::bz_CTFBaseWorldObject_V1() : bz_APISolidWorldObject_V1()
 {
 }
 

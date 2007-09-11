@@ -141,6 +141,7 @@ typedef enum
   bz_eFlagResetEvent,
   bz_eWorldFinalized,
   bz_eAllowCTFCaptureEvent,
+  bz_eAllowFlagGrabEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1124,6 +1125,7 @@ public:
   enum Action action;
 };
 
+
 class bz_FlagGrabbedEventData_V1 : public bz_EventData
 {
 public:
@@ -1148,6 +1150,31 @@ public:
   float	pos[3];
 };
 
+class bz_AllowFlagGrabEventData_V1 : public bz_EventData
+{
+public:
+
+  bz_AllowFlagGrabEventData_V1()
+  {
+    eventType = bz_eAllowFlagGrabEvent;
+    playerID = -1;
+    flagID = -1;
+    shotType = eNoShot;
+    pos[0] = pos[1] = pos[2] = 0;
+    allow = false;
+  }
+
+  virtual ~bz_AllowFlagGrabEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
+  int playerID;
+  int flagID;
+  bool allow;
+
+  bz_eShotType shotType;
+
+  const char *flagType;
+  float	pos[3];
+};
 class bz_FlagDroppedEventData_V1 : public bz_EventData
 {
 public:
@@ -1713,7 +1740,8 @@ public:
 class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
 {
 public:
-  virtual ~bz_CTFBaseWorldObject_V1();
+ bz_CTFBaseWorldObject_V1();
+ virtual ~bz_CTFBaseWorldObject_V1();
   
   bz_eTeamType	team;
 };

@@ -2697,8 +2697,14 @@ void searchFlag(GameKeeper::Player &playerData)
       playerData.setLastIdFlag(closestFlag);
     }
   } else {
-    if (BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG) || flag.flag.type->flagTeam != playerData.player.getTeam())
+    if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG))
+    {
+      if (flag.flag.type->flagTeam != playerData.player.getTeam())
+	sendGrabFlagMessage(playerIndex,flag);
+    }
+    else
       sendGrabFlagMessage(playerIndex,flag);
+      
   }
 }
 
