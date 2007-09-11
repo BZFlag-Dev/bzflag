@@ -1200,7 +1200,7 @@ BZF_API int bz_getDebugLevel ( void );
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
-BZF_API std::vector<std::string> bz_getReports( void );
+BZF_API  bzAPIStringList *bz_getReports( void );
 
 // lagwarn
 BZF_API int bz_getLagWarn( void );
@@ -1219,8 +1219,8 @@ BZF_API bool bz_isCountDownInProgress( void );
 BZF_API bool bz_pollVeto( void );
 
 // help
-BZF_API const std::vector<std::string> &bz_getHelpTopics( void );
-BZF_API const std::vector<std::string> *bz_getHelpTopic( std::string name );
+BZF_API bzAPIStringList *bz_getHelpTopics( void );
+BZF_API bzAPIStringList *bz_getHelpTopic( std::string name );
 
 // custom commands
 

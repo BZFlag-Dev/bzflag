@@ -1455,26 +1455,26 @@ BZF_API bool bz_IPUnbanUser ( const char* ip )
 	return true;
 }
 
-BZF_API std::vector<std::string> bz_getReports( void )
+BZF_API  bzAPIStringList *bz_getReports( void )
 {
-  std::vector<std::string> buffers;
+  bzAPIStringList *buffer = new bzAPIStringList;
 
   // Are we reporting to a file?
   if (clOptions->reportFile.size() == 0)
-    return buffers;
+    return buffer;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
-    return buffers;
+    return buffer;
   }
 
   std::string line;
 
   while (std::getline(ifs, line)) {
-    buffers.push_back(line);
+    buffer->push_back(line);
   }
 
-  return buffers;
+  return buffer;
 }
 
 BZF_API int bz_getLagWarn( void ) {
@@ -1534,14 +1534,14 @@ BZF_API bool bz_pollVeto( void )
 	return true;
 }
 
-BZF_API const std::vector<std::string> &bz_getHelpTopics( void )
+BZF_API bzAPIStringList *bz_getHelpTopics( void )
 {
-	return clOptions->textChunker.getChunkNames();
+  return new bzAPIStringList(clOptions->textChunker.getChunkNames());
 }
 
-BZF_API const std::vector<std::string> *bz_getHelpTopic(std::string name)
+BZF_API bzAPIStringList *bz_getHelpTopic(std::string name)
 {
-	return clOptions->textChunker.getTextChunk(name);
+  return new bzAPIStringList(*clOptions->textChunker.getTextChunk(name));
 }
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
