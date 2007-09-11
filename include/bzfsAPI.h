@@ -1707,6 +1707,15 @@ public:
   bz_SolidObjectPassableAtributes   driveThru;
 };
 
+class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
+{
+public:
+  virtual ~bz_CTFBaseWorldObject_V1();
+  
+  bz_eTeamType	team;
+};
+
+
 class BZF_API bz_APITeleporterField_V1 : public bz_APIBaseWorldObject
 {
 public:

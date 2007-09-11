@@ -43,6 +43,7 @@
 
 #include "bzfsPlugins.h"
 #include "ObstacleMgr.h"
+#include "BaseBuilding.h"
 
 #include "ServerIntangibilityManager.h"
 
@@ -2991,6 +2992,18 @@ void addObjectsToListsFromObstacleList ( bz_APIWorldObjectList *solidList, const
   }
 }
 
+void addCTFBasesToListsFromObstacleList ( bz_APIWorldObjectList *solidList, const ObstacleList &list )
+{
+  for ( unsigned int i = 0; i < list.size(); i++ )
+  {
+    bz_CTFBaseWorldObject_V1 *solid = new bz_CTFBaseWorldObject_V1;
+    solid->id = buildObjectIDFromObstacle(*list[i]);
+    setSolidObjectFromObstacle(*solid,*list[i]);
+    BaseBuilding* base = (BaseBuilding*)list[i];
+    solid->team = convertTeam((TeamColor)base->getTeam());
+    solidList->push_back(solid);
+  }
+}
 
 BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
 {
@@ -2999,7 +3012,7 @@ BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getWalls());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getBoxes());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getPyrs());
-  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getBases());
+  addCTFBasesToListsFromObstacleList(worldList,OBSTACLEMGR.getBases());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getTeles());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getMeshes());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getArcs());
@@ -3026,6 +3039,10 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
 //-------------------------------------------------------------------------
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
+{
+}
+
+bz_CTFBaseWorldObject_V1::~bz_CTFBaseWorldObject_V1()
 {
 }
 
