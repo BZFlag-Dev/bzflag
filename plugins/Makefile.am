@@ -32,7 +32,8 @@ SUBDIRS = \
 	torBlock \
 	weaponArena \
 	webstats \
-	wwzones
+	wwzones \
+	unrealCTF
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \

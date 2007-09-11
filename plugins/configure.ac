@@ -227,6 +227,7 @@ AC_CONFIG_FILES([
 	httpTest/Makefile
 	regFlag/Makefile
 	webstats/Makefile
+	unrealCTF/Makefile
 ])
 
 AC_OUTPUT
