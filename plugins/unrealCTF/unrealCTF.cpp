@@ -16,7 +16,6 @@ typedef struct
 {
   int id;
   int caried;
-  float basePos[3];
 }TeamFlagStatusRecord;
 
 TeamFlagStatusRecord  redFlag;
@@ -106,44 +105,7 @@ void checkFlags ( void )
     return;
 
   bz_setBZDBBool("_grabOwnFlag",true);
-  bz_APIWorldObjectList* worldObjects = bz_getWorldObjectList();
-
-  for ( int i = 0; i < (int)worldObjects->size(); i++)
-  {
-    if ( worldObjects->get(i)->type == eSolidObject)
-    {
-      bz_APISolidWorldObject_V1 *solid = (bz_APISolidWorldObject_V1*)worldObjects->get(i);
-      if ( solid->solidType == eBaseObject )
-      {
-	bz_CTFBaseWorldObject_V1 *base = (bz_CTFBaseWorldObject_V1*)solid;
-	switch(base->team)
-	{
-	  case eRedTeam:
-	    memcpy(redFlag.basePos,base->center,sizeof(float)*3);
-	    redFlag.basePos[2] = base->maxAABBox[2]+0.1f;
-	    break;
-
-	  case eGreenTeam:
-	    memcpy(greenFlag.basePos,base->center,sizeof(float)*3);
-	    greenFlag.basePos[2] = base->maxAABBox[2]+0.1f;
-	    break;
-
-	  case eBlueTeam:
-	    memcpy(blueFlag.basePos,base->center,sizeof(float)*3);
-	    blueFlag.basePos[2] = base->maxAABBox[2]+0.1f;
-	    break;
-
-	   case ePurpleTeam:
-	     memcpy(purpleFlag.basePos,base->center,sizeof(float)*3);
-	     purpleFlag.basePos[2] = base->maxAABBox[2]+0.1f;
-	     break;
-	}
-      }
-    }
-  }
-
-  bz_releaseWorldObjectList(worldObjects);
-
+ 
   int flagCount = bz_getNumFlags();
   for ( int i = 0; i < flagCount; i++ )
   {
@@ -168,7 +130,6 @@ void checkFlags ( void )
 
   gotFlags = true;
 }
-
 
 void setTeamFlagPickup ( bz_eTeamType team, int player )
 {
@@ -201,7 +162,6 @@ int getTeamFlagCarier ( bz_eTeamType team)
 
   return -1;
 }
-
 
 void UnrealCTFEventHandler::process ( bz_EventData *eventData )
 {
