@@ -1518,6 +1518,16 @@ BZF_API bool bz_canPlayerSpawn( int playerID )
   return player->isSpawnable();
 }
 
+BZF_API bz_eTeamType bz_setPlayerTeam( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return eNoTeam;
+
+  return convertTeam(player->player.getTeam());
+}
+
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
