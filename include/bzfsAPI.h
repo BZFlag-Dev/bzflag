@@ -1018,7 +1018,7 @@ class bz_AllowCTFCapEventData : public bz_EventData
 public:
   bz_AllowCTFCapEventData()
   {
-    eventType = bz_eAllowCRTFCapEvent;
+    eventType = bz_eAllowCTFCapEvent;
     teamCapped = eNoTeam;
     teamCapping = eNoTeam;
     playerCapping = -1;
