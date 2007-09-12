@@ -52,6 +52,8 @@ void rabbitTimer::process(bz_EventData *eventData)
 					if (pr->team == eRabbitTeam)
 					{
 						currentRabbit = pr->playerID;
+						int limit = (int)rabbitKillTimeLimit;
+						bz_sendTextMessage(BZ_SERVER, currentRabbit, bz_format("You have %d seconds to make a kill!", limit));
 					}
 					bz_freePlayerRecord(pr);
 				}
@@ -61,17 +63,13 @@ void rabbitTimer::process(bz_EventData *eventData)
 	else if (eventData->eventType == bz_ePlayerDieEvent)
 	{
 
-		//FIXME: Ideally, all calls of bz_getCurrentTime() should be replaced with killdata->time.
-		//unfortunately there seems to be a bug for this event... someone probably forgot to set the time when calling the event handler.
-		//I'm going to fix it asap, but I'm leaving bz_getCurrentTime() for a while until most 2.0.9 servers catch up.
-
 		bz_PlayerDieEventData* killdata = (bz_PlayerDieEventData*)eventData;
 
 		if (killdata->team == eRabbitTeam)
 		{
 			currentRabbit = -1; //we will sort this out on the next tick
 
-			rabbitDeathTime = bz_getCurrentTime() + rabbitKillTimeLimit;
+			rabbitDeathTime = killdata->time + rabbitKillTimeLimit;
 		}
 		else if (killdata->killerTeam == eRabbitTeam && currentRabbit != -1)
 		{
@@ -80,17 +78,28 @@ void rabbitTimer::process(bz_EventData *eventData)
 				rabbitDeathTime += rabbitKillTimeLimit;
 
 				int limit = (int)rabbitKillTimeLimit;
-				int timeremaining = (int)(rabbitDeathTime - bz_getCurrentTime());
+				int timeremaining = (int)(rabbitDeathTime - killdata->time);
 
 				bz_sendTextMessage(BZ_SERVER, currentRabbit, bz_format("+%d seconds: %d seconds remaining.", limit, timeremaining));
 			}
 			else
 			{
-				rabbitDeathTime = bz_getCurrentTime() + rabbitKillTimeLimit;
+				rabbitDeathTime = killdata->time + rabbitKillTimeLimit;
 
 				int limit = (int)rabbitKillTimeLimit;
 				bz_sendTextMessage(BZ_SERVER, currentRabbit, bz_format("%d seconds remaining.", limit));
 			}
+		}
+	}
+	else if (eventData->eventType == bz_ePlayerDieEvent) 
+	{
+		bz_PlayerJoinPartEventData* partdata = (bz_PlayerJoinPartEventData*)eventData;
+
+		if (partdata->team == eRabbitTeam) //we need to select a new rabbit if the rabbit leaves.
+		{
+			currentRabbit = -1; //we will sort this out on the next tick
+
+			rabbitDeathTime = partdata->time + rabbitKillTimeLimit;
 		}
 	}
 }
@@ -119,6 +128,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 	}
 
 	bz_registerEvent(bz_ePlayerDieEvent,&rabbittimer);
+	bz_registerEvent(bz_ePlayerPartEvent,&rabbittimer);
 	bz_registerEvent(bz_eTickEvent,&rabbittimer);
 
 	bz_debugMessage(4, "rabbitTimer plugin loaded");
@@ -129,11 +139,14 @@ BZF_PLUGIN_CALL int bz_Unload()
 {
 
 	bz_removeEvent(bz_ePlayerDieEvent,&rabbittimer);
+	bz_removeEvent(bz_ePlayerPartEvent,&rabbittimer);
 	bz_removeEvent(bz_eTickEvent,&rabbittimer);
 
 	bz_debugMessage(4, "rabbitTimer plugin unloaded");
 	return 0;
 }
+
+
 
 // Local Variables: ***
 // mode:C++ ***
