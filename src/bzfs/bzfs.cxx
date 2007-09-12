@@ -5315,7 +5315,11 @@ int main(int argc, char **argv)
 
 	      // go ahead and reset the poll (don't bother waiting for veto timeout)
 	      votingarbiter->forgetPoll();
+
+	      // reset all announcement flags
+	      announcedOpening = false;
 	      announcedClosure = false;
+	      announcedResults = false;
 	    }
 	  }
 
