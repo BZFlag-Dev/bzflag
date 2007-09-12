@@ -12,7 +12,7 @@ std::string getFileHeader ( void )
   std::string page ="<HTML><HEAD></HEAD><BODY>\n<BR>\n";
 
   std::string publicAddr = bz_getPublicAddr().c_str();
-  page = "Stats for";
+  page = "Stats for ";
   page += publicAddr + "<br>\n";
 
   return page;
