@@ -172,7 +172,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 	&& losscount - losslastwarn > 2 * losswarncount) {
       losslastwarn = losscount;
       plosswarn = true;
-      plosskick = (++losswarncount > lossmax);
+      plosskick = (losswarncount++ > lossmax);
     } else {
       plosswarn = false;
       plosskick = false;
