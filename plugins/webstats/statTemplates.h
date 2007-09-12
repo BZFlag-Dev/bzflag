@@ -3,11 +3,23 @@
 
 #ifndef _STAT_TEMPLATE_H_
 #define _STAT_TEMPLATE_H_
+#include "bzfsAPI.h"
 
 #include <string>
 
 std::string getFileHeader ( void );
 std::string getFileFooter ( void );
+
+std::string getPlayersHeader ( void );
+std::string getPlayersFooter ( void );
+
+std::string getTeamHeader ( bz_eTeamType team );
+std::string getTeamFooter ( bz_eTeamType team );
+
+std::string getPlayerLineItem ( bz_BasePlayerRecord *rec );
+
+std::string getTeamFontCode ( bz_eTeamType team );
+std::string getTeamTextName ( bz_eTeamType team );
 
 #endif //_STAT_TEMPLATE_H_
 

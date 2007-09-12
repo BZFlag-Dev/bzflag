@@ -34,37 +34,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-std::string teamToString ( bz_eTeamType team )
-{
-  std::string name = "Unknown Team";
-  switch(team)
-  {
-    case eRogueTeam:
-      name = "Rogue";
-      break;
-    case eRedTeam:
-      name = "Red";
-      break;
-    case eGreenTeam:
-      name = "Green";
-      break;
-    case eBlueTeam:
-      name = "Blue";
-      break;
-    case ePurpleTeam:
-      name = "Purple";
-      break;
-    case eRabbitTeam:
-      name = "Rabbit";
-      break;
-    case eHunterTeam:
-      name = "Hunter";
-      break;
-  }
-
-  return name;
-}
-
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
   std::string page;
@@ -75,43 +44,56 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
   if ( !players->size() )
     page += "There are no players :(\n";
 
+  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
+
   for ( int i = 0; i < (int)players->size(); i++ )
   {
     int player = players->get(i);
-
     bz_BasePlayerRecord *rec = bz_getPlayerByIndex (player);
+
     if (rec)
     {
-      page += rec->callsign.c_str();
-      page += " ";
-      if ( rec->team != eObservers )
+      if (teamSort.find(rec->team) == teamSort.end())
       {
-	page += teamToString(rec->team);
-	page += format(" Wins=%d Losses=%d TKs=%d",rec->wins,rec->losses,rec->teamKills);
-	if ( rec->admin )
-	  page += " Admin";
-
-	if ( rec->spawned )
-	   page += " Spawned";
-
-	if ( rec->verified )
-	  page += " Verified";
+	std::vector<bz_BasePlayerRecord*> temp;
+	teamSort[rec->team] = temp;
       }
-      else
-	page += "Observer";
+      teamSort[rec->team].push_back(rec);
+    } 
+  }
 
-      page += getFileFooter();
-      bz_freePlayerRecord (rec);
+  // generate the team  info
+  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator itr = teamSort.begin();
+
+  page += getPlayersHeader();
+
+  while (itr != teamSort.end())
+  {
+    page += getTeamHeader(itr->first);
+    for ( int i = 0; i < (int)itr->second.size(); i++)
+    {
+      bz_BasePlayerRecord *rec = itr->second[i];
+      int player = rec->playerID;
+      if (rec)
+      {
+	page += getPlayerLineItem ( rec );
+
+	bz_freePlayerRecord (rec);
+      }
     }
+    page += getTeamFooter(itr->first);
+    itr++;
   }
   bz_deleteIntList(players);
 
-  page += "<BR></body></HTML>";
+  page += getPlayersFooter();
+
+  page += getFileFooter();
+  page += "</body></HTML>";
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
   setURLData ( page.c_str(), requestID );
-
 }
 
 
