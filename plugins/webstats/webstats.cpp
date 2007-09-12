@@ -62,7 +62,7 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
     } 
   }
 
-  // generate the team  info
+  // generate the list of players
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator itr = teamSort.begin();
 
   page += getPlayersHeader();
@@ -87,7 +87,11 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
   bz_deleteIntList(players);
 
   page += getPlayersFooter();
+  // end player list
 
+  // TODO, do the team scores, flag stats, do the last chat lines, etc..
+
+  // finish the document
   page += getFileFooter();
   page += "</body></HTML>";
 

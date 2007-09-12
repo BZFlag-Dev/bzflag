@@ -76,9 +76,9 @@ std::string getPlayersFooter ( void )
 
 std::string getTeamHeader ( bz_eTeamType team )
 {
-  std::string code = "<br><font";
+  std::string code = "<b><font";
   code += getTeamFontCode(team);
-  code += ">" + getTeamTextName(team) = "</font><br>";
+  code += ">" + getTeamTextName(team) = "</font></b><br>";
 
   return code;
 }
