@@ -3591,7 +3591,6 @@ static void		checkEnvironment()
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
-	  !player[i]->isNotResponding() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) ||
 	   ((myPos[2] < 0.0f) && player[i]->isAlive() &&
 	    !player[i]->isPhantomZoned()))) {
