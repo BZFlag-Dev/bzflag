@@ -4032,12 +4032,12 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  }
 	}
 
+        bool InBounds = true;
 	// exploding or dead players can do unpredictable things
 	if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus) {
 	  // make sure the player is still in the map
 	  // test all the map bounds + some fudge factor, just in case
 	  static const float positionFudge = 10.0f; /* linear distance */
-	  bool InBounds = true;
 	  float worldSize = BZDBCache::worldSize;
 	  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
 	    std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
