@@ -1014,7 +1014,7 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
     p->playerHandler->allowSpawn(canSpawn);
 }
 
-void sendMsgLimboText ( int player, const std::string  &text )
+void sendMsgLimboMessage ( int player, const std::string  &text )
 {
   void *bufStart;
   void *buf2 = bufStart = getDirectMessageBuffer();

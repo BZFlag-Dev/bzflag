@@ -1540,7 +1540,7 @@ BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
   return true;
 }
 
-BZF_API bool bz_setPlayerLimboText( int playerID, const char* text )
+BZF_API bool bz_setPlayerLimboMessage( int playerID, const char* text )
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -1551,7 +1551,7 @@ BZF_API bool bz_setPlayerLimboText( int playerID, const char* text )
   if ( text )
     realText = text;
 
-  sendMsgLimboText(playerID,realText);
+  sendMsgLimboMessage(playerID,realText);
   return true;
 }
 

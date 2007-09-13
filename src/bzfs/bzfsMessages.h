@@ -58,7 +58,7 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
 void sendMsgTanagabilityReset ( void );
 
 void sendMsgCanSpawn ( int player, bool canSpawn );
-void sendMsgLimboText ( int player, const std::string  &text );
+void sendMsgLimboMessage ( int player, const std::string  &text );
 
 void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag);
 

@@ -3160,7 +3160,7 @@ static void handleAllowSpawn ( uint16_t len, void* msg )
   }
 }
 
-static void handleLimboTet ( uint16_t len, void* msg )
+static void handleLimboMessage ( void* msg )
 {
   nboUnpackStdString(msg,customLimboMessage);
 }
@@ -3364,7 +3364,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       break;
 
     case MsgLimboMessage:
-      handleLimboTet(len,msg);
+      handleLimboMessage(msg);
       break;
   }
 
