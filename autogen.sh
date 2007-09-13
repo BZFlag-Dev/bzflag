@@ -50,10 +50,26 @@
 # autoreconf.
 #
 # The AUTORECONF, AUTOCONF, AUTOMAKE, LIBTOOLIZE, ACLOCAL, AUTOHEADER
-# environment variables may be used to override the default detected
-# applications.
+# environment variables and corresponding _OPTIONS variables (e.g.
+# AUTORECONF_OPTIONS) may be used to override the default automatic
+# detection behaviors.  Similarly the _VERSION variables will override
+# the minimum required version numbers.
 #
-# Author: Christopher Sean Morrison
+# Examples:
+#
+#   To obtain help on usage:
+#     ./autogen.sh --help
+#
+#   To obtain verbose output:
+#     ./autogen.sh --verbose
+#
+#   To skip autoreconf and prepare manually:
+#     AUTORECONF=false ./autogen.sh
+#
+#   To verbosely try running with an older (unsupported) autoconf:
+#     AUTOCONF_VERSION=2.50 ./autogen.sh --verbose
+#
+# Author: Christopher Sean Morrison <morrison@brlcad.org>
 #
 ######################################################################
 
@@ -83,7 +99,7 @@ ident ( ) {
 
     # extract version from CVS Id string
     __id="$Id$"
-    __version="`echo $__id | sed 's/.*\([0-9][0-9][0-9][0-9]\)\/\([0-9][0-9]\)\/\([0-9][0-9]\).*/\1\2\3/'`"
+    __version="`echo $__id | sed 's/.*\([0-9][0-9][0-9][0-9]\)[-\/]\([0-9][0-9]\)[-\/]\([0-9][0-9]\).*/\1\2\3/'`"
     if [ "x$__version" = "x" ] ; then
 	__version=""
     fi
@@ -159,13 +175,17 @@ version_check ( ) {
     fi
     _cur="$2"
 
-    _min_major="`echo ${_min}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
-    _min_minor="`echo ${_min}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
-    _min_patch="`echo ${_min}. | cut -d. -f3 | sed 's/[^0-9]//g'`"
+    # needed to handle versions like 1.10 and 1.4-p6
+    _min="`echo ${_min}. | sed 's/[^0-9]/./g' | sed 's/\.\././g'`"
+    _cur="`echo ${_cur}. | sed 's/[^0-9]/./g' | sed 's/\.\././g'`"
 
-    _cur_major="`echo ${_cur}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
-    _cur_minor="`echo ${_cur}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
-    _cur_patch="`echo ${_cur}. | cut -d. -f3 | sed 's/[^0-9]//g'`"
+    _min_major="`echo $_min | cut -d. -f1`"
+    _min_minor="`echo $_min | cut -d. -f2`"
+    _min_patch="`echo $_min | cut -d. -f3`"
+
+    _cur_major="`echo $_cur | cut -d. -f1`"
+    _cur_minor="`echo $_cur | cut -d. -f2`"
+    _cur_patch="`echo $_cur | cut -d. -f3`"
 
     if [ "x$_min_major" = "x" ] ; then
 	_min_major=0
@@ -186,6 +206,8 @@ version_check ( ) {
 	_cur_patch=0
     fi
 
+    $VERBOSE_ECHO "Checking if ${_cur_major}.${_cur_minor}.${_cur_patch} is greater than ${_min_major}.${_min_minor}.${_min_patch}"
+
     if [ $_min_major -lt $_cur_major ] ; then
 	return 0
     elif [ $_min_major -eq $_cur_major ] ; then
@@ -193,6 +215,8 @@ version_check ( ) {
 	    return 0
 	elif [ $_min_minor -eq $_cur_minor ] ; then
 	    if [ $_min_patch -lt $_cur_patch ] ; then
+		return 0
+	    elif [ $_min_patch -eq $_cur_patch ] ; then
 		return 0
 	    fi
 	fi
@@ -300,13 +324,24 @@ fi
 LC_ALL=C
 
 # commands that this script expects
-for __cmd in echo head tail ; do
+for __cmd in echo head tail pwd ; do
     echo "test" | $__cmd > /dev/null 2>&1
     if [ $? != 0 ] ; then
 	echo "INTERNAL ERROR: '${__cmd}' command is required"
 	exit 2
     fi
 done
+echo "test" | grep "test" > /dev/null 2>&1
+if test ! x$? = x0 ; then
+    echo "INTERNAL ERROR: grep command is required"
+    exit 1
+fi
+echo "test" | sed "s/test/test/" > /dev/null 2>&1
+if test ! x$? = x0 ; then
+    echo "INTERNAL ERROR: sed command is required"
+    exit 1
+fi
+
 
 # determine the behavior of echo
 case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
@@ -342,11 +377,6 @@ else
     fi
 fi
 
-_have_sed="`echo no | sed 's/no/yes/' 2>/dev/null`"
-if [ $? -ne 0 ] ; then
-    $ECHO "ERROR:  sed does not appear to be available."
-    exit 2
-fi
 
 # allow a recursive run to disable further recursions
 if [ "x$RUN_RECURSIVE" = "x" ] ; then
@@ -368,16 +398,81 @@ if [ "x$HELP" = "xyes" ] ; then
 fi
 
 
+#######################
+# set up signal traps #
+#######################
+untrap_abnormal ( ) {
+    for sig in 1 2 13 15; do
+	trap - $sig
+    done
+}
+
+# do this cleanup whenever we exit.
+trap '
+    # start from the root
+    if test -d "$START_PATH" ; then
+	cd "$START_PATH"
+    fi
+
+    # restore/delete backup files
+    if test "x$PFC_INIT" = "x1" ; then
+	recursive_restore
+    fi
+' 0
+
+# trap SIGHUP (1), SIGINT (2), SIGPIPE (13), SIGTERM (15)
+for sig in 1 2 13 15; do
+    trap '
+	$ECHO ""
+	$ECHO "Aborting $NAME_OF_AUTOGEN: caught signal '$sig'"
+
+	# start from the root
+	if test -d "$START_PATH" ; then
+	    cd "$START_PATH"
+	fi
+
+	# clean up on abnormal exit
+	$VERBOSE_ECHO "rm -rf autom4te.cache"
+	rm -rf autom4te.cache
+
+	if test -f "acinclude.m4.$$.backup" ; then
+	    $VERBOSE_ECHO "cat acinclude.m4.$$.backup > acinclude.m4"
+	    chmod u+w acinclude.m4
+	    cat acinclude.m4.$$.backup > acinclude.m4
+
+	    $VERBOSE_ECHO "rm -f acinclude.m4.$$.backup"
+	    rm -f acinclude.m4.$$.backup
+        fi
+
+	{ (exit 1); exit 1; }
+' $sig
+done
+
+
 #############################
 # look for a configure file #
 #############################
 if [ "x$CONFIGURE" = "x" ] ; then
     CONFIGURE="`locate_configure_template`"
-    $VERBOSE_ECHO "Found a configure template: $CONFIGURE"
+    if [ ! "x$CONFIGURE" = "x" ] ; then
+	$VERBOSE_ECHO "Found a configure template: $CONFIGURE"
+    fi
 else
     $ECHO "Using CONFIGURE environment variable override: $CONFIGURE"
 fi
-
+if [ "x$CONFIGURE" = "x" ] ; then
+    if [ "x$VERSION_ONLY" = "xyes" ] ; then
+	CONFIGURE=/dev/null
+    else
+	$ECHO
+	$ECHO "A configure.ac or configure.in file could not be located implying"
+	$ECHO "that the GNU Build System is at least not used in this directory.  In"
+	$ECHO "any case, there is nothing to do here without one of those files."
+	$ECHO
+	$ECHO "ERROR: No configure.in or configure.ac file found in `pwd`"
+	exit 1
+    fi
+fi
 
 ####################
 # get project name #
@@ -647,31 +742,244 @@ if [ "x$VERSION_ONLY" = "xyes" ] ; then
 fi
 
 
+#################################
+# PROTECT_FROM_CLOBBER FUNCTION #
+#################################
+protect_from_clobber ( ) {
+    PFC_INIT=1
+
+    # protect COPYING & INSTALL from overwrite by automake.  the
+    # automake force option will (inappropriately) ignore the existing
+    # contents of a COPYING and/or INSTALL files (depending on the
+    # version) instead of just forcing *missing* files like it does
+    # for AUTHORS, NEWS, and README. this is broken but extremely
+    # prevalent behavior, so we protect against it by keeping a backup
+    # of the file that can later be restored.
+
+    if test -f COPYING ; then
+	if test -f COPYING.$$.protect_from_automake.backup ; then
+	    $VERBOSE_ECHO "Already backed up COPYING in `pwd`"
+	else
+	    $VERBOSE_ECHO "Backing up COPYING in `pwd`"
+	    $VERBOSE_ECHO "cp -p COPYING COPYING.$$.protect_from_automake.backup"
+	    cp -p COPYING COPYING.$$.protect_from_automake.backup
+	fi
+    fi
+    if test -f INSTALL ; then
+	if test -f INSTALL.$$.protect_from_automake.backup ; then
+	    $VERBOSE_ECHO "Already backed up INSTALL in `pwd`"
+	else
+	    $VERBOSE_ECHO "Backing up INSTALL in `pwd`"
+	    $VERBOSE_ECHO "cp -p INSTALL INSTALL.$$.protect_from_automake.backup"
+	    cp -p INSTALL INSTALL.$$.protect_from_automake.backup
+	fi
+    fi
+}
+
+
+##############################
+# RECURSIVE_PROTECT FUNCTION #
+##############################
+recursive_protect ( ) {
+
+    # for projects using recursive configure, run the build
+    # preparation steps for the subdirectories.  this function assumes
+    # START_PATH was set to pwd before recursion begins so that
+    # relative paths work.
+
+    # git 'r done, protect COPYING and INSTALL from being clobbered
+    protect_from_clobber
+
+    if test -d autom4te.cache ; then
+	$VERBOSE_ECHO "Found an autom4te.cache directory, deleting it"
+	$VERBOSE_ECHO "rm -rf autom4te.cache"
+	rm -rf autom4te.cache
+    fi
+
+    # find configure template
+    _configure="`locate_configure_template`"
+    if [ "x$_configure" = "x" ] ; then
+	return
+    fi
+    # $VERBOSE_ECHO "Looking for configure template found `pwd`/$_configure"
+
+    # look for subdirs
+    # $VERBOSE_ECHO "Looking for subdirs in `pwd`"
+    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $_configure | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+    CHECK_DIRS=""
+    for dir in $_det_config_subdirs ; do
+	if test -d "`pwd`/$dir" ; then
+	    CHECK_DIRS="$CHECK_DIRS \"`pwd`/$dir\""
+	fi
+    done
+
+    # process subdirs
+    if [ ! "x$CHECK_DIRS" = "x" ] ; then
+	$VERBOSE_ECHO "Recursively scanning the following directories:"
+	$VERBOSE_ECHO "  $CHECK_DIRS"
+	for dir in $CHECK_DIRS ; do
+	    $VERBOSE_ECHO "Protecting files from automake in $dir"
+	    cd "$START_PATH"
+	    eval "cd $dir"
+
+	    # recursively git 'r done
+	    recursive_protect
+	done
+    fi
+} # end of recursive_protect
+
+
+#############################
+# RESTORE_CLOBBERED FUNCION #
+#############################
+restore_clobbered ( ) {
+
+    # The automake (and autoreconf by extension) -f/--force-missing
+    # option may overwrite COPYING and INSTALL even if they do exist.
+    # Here we restore the files if necessary.
+
+    spacer=no
+
+    # COPYING
+    if test -f COPYING.$$.protect_from_automake.backup ; then
+	if test -f COPYING ; then
+	    # compare entire content, restore if needed
+	    if test "x`cat COPYING`" != "x`cat COPYING.$$.protect_from_automake.backup`" ; then
+		if test "x$spacer" = "xno" ; then
+		    $VERBOSE_ECHO
+		    spacer=yes
+		fi
+		# restore the backup
+		$VERBOSE_ECHO "Restoring COPYING from backup (automake -f likely clobbered it)"
+		$VERBOSE_ECHO "rm -f COPYING"
+		rm -f COPYING
+		$VERBOSE_ECHO "mv COPYING.$$.protect_from_automake.backup COPYING"
+		mv COPYING.$$.protect_from_automake.backup COPYING
+	    fi # check contents
+	elif test -f COPYING.$$.protect_from_automake.backup ; then
+	    $VERBOSE_ECHO "mv COPYING.$$.protect_from_automake.backup COPYING"
+	    mv COPYING.$$.protect_from_automake.backup COPYING
+	fi # -f COPYING
+
+	# just in case
+	$VERBOSE_ECHO "rm -f COPYING.$$.protect_from_automake.backup"
+	rm -f COPYING.$$.protect_from_automake.backup
+    fi # -f COPYING.$$.protect_from_automake.backup
+
+    # INSTALL
+    if test -f INSTALL.$$.protect_from_automake.backup ; then
+	if test -f INSTALL ; then
+	    # compare entire content, restore if needed
+	    if test "x`cat INSTALL`" != "x`cat INSTALL.$$.protect_from_automake.backup`" ; then
+		if test "x$spacer" = "xno" ; then
+		    $VERBOSE_ECHO
+		    spacer=yes
+		fi
+		# restore the backup
+		$VERBOSE_ECHO "Restoring INSTALL from backup (automake -f likely clobbered it)"
+		$VERBOSE_ECHO "rm -f INSTALL"
+		rm -f INSTALL
+		$VERBOSE_ECHO "mv INSTALL.$$.protect_from_automake.backup INSTALL"
+		mv INSTALL.$$.protect_from_automake.backup INSTALL
+	    fi # check contents
+	elif test -f INSTALL.$$.protect_from_automake.backup ; then
+	    $VERBOSE_ECHO "mv INSTALL.$$.protect_from_automake.backup INSTALL"
+	    mv INSTALL.$$.protect_from_automake.backup INSTALL
+	fi # -f INSTALL
+
+	# just in case
+	$VERBOSE_ECHO "rm -f INSTALL.$$.protect_from_automake.backup"
+	rm -f INSTALL.$$.protect_from_automake.backup
+    fi # -f INSTALL.$$.protect_from_automake.backup
+
+    CONFIGURE="`locate_configure_template`"
+    if [ "x$CONFIGURE" = "x" ] ; then
+	return
+    fi
+
+    _aux_dir="`grep AC_CONFIG_AUX_DIR $CONFIGURE | grep -v '.*#.*AC_CONFIG_AUX_DIR' | tail -${TAIL_N}1 | sed 's/^[ 	]*AC_CONFIG_AUX_DIR(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+    if test ! -d "$_aux_dir" ; then
+	_aux_dir=.
+    fi
+
+    for file in config.guess config.sub ltmain.sh ; do
+	if test -f "${_aux_dir}/${file}" ; then
+	    $VERBOSE_ECHO "rm -f \"${_aux_dir}/${file}.backup\""
+	    rm -f "${_aux_dir}/${file}.backup"
+	fi
+    done
+} # end of restore_clobbered
+
+
+##############################
+# RECURSIVE_RESTORE FUNCTION #
+##############################
+recursive_restore ( ) {
+
+    # restore COPYING and INSTALL from backup if they were clobbered
+    # for each directory recursively.
+
+    # git 'r undone
+    restore_clobbered
+
+    # find configure template
+    _configure="`locate_configure_template`"
+    if [ "x$_configure" = "x" ] ; then
+	return
+    fi
+
+    # look for subdirs
+    _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $_configure | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
+    CHECK_DIRS=""
+    for dir in $_det_config_subdirs ; do
+	if test -d "`pwd`/$dir" ; then
+	    CHECK_DIRS="$CHECK_DIRS \"`pwd`/$dir\""
+	fi
+    done
+
+    # process subdirs
+    if [ ! "x$CHECK_DIRS" = "x" ] ; then
+	$VERBOSE_ECHO "Recursively scanning the following directories:"
+	$VERBOSE_ECHO "  $CHECK_DIRS"
+	for dir in $CHECK_DIRS ; do
+	    $VERBOSE_ECHO "Checking files for automake damage in $dir"
+	    cd "$START_PATH"
+	    eval "cd $dir"
+
+	    # recursively git 'r undone
+	    recursive_restore
+	done
+    fi
+} # end of recursive_restore
+
+
 #######################
 # INITIALIZE FUNCTION #
 #######################
 initialize ( ) {
 
+    # this routine performs a variety of directory-specific
+    # initializations.  some are sanity checks, some are preventive,
+    # and some are necessary setup detection.
+    #
+    # this function sets:
+    #   CONFIGURE
+    #   SEARCH_DIRS
+    #   CONFIG_SUBDIRS
+
     ##################################
     # check for a configure template #
     ##################################
     CONFIGURE="`locate_configure_template`"
-    config_fail=no
     if [ "x$CONFIGURE" = "x" ] ; then
-	config_fail=yes
-    elif ! test -f $CONFIGURE ; then
-	config_fail=yes
-    fi
-    if [ "x$config_fail" = "xyes" ] ; then
 	$ECHO
 	$ECHO "A configure.ac or configure.in file could not be located implying"
 	$ECHO "that the GNU Build System is at least not used in this directory.  In"
 	$ECHO "any case, there is nothing to do here without one of those files."
 	$ECHO
-	$ECHO "ERROR: No configure.in or configure.ac file found."
+	$ECHO "ERROR: No configure.in or configure.ac file found in `pwd`"
 	exit 1
     fi
-
 
     #####################
     # detect an aux dir #
@@ -683,19 +991,17 @@ initialize ( ) {
 	$VERBOSE_ECHO "Detected auxillary directory: $_aux_dir"
     fi
 
-
     ################################
     # detect a recursive configure #
     ################################
     CONFIG_SUBDIRS=""
     _det_config_subdirs="`grep AC_CONFIG_SUBDIRS $CONFIGURE | grep -v '.*#.*AC_CONFIG_SUBDIRS' | sed 's/^[ 	]*AC_CONFIG_SUBDIRS(\(.*\)).*/\1/' | sed 's/.*\[\(.*\)\].*/\1/'`"
     for dir in $_det_config_subdirs ; do
-	if test -d "$dir" ; then
-	    $VERBOSE_ECHO "Detected recursive configure directory: $dir"
-	    CONFIG_SUBDIRS="$CONFIG_SUBDIRS $dir"
+	if test -d "`pwd`/$dir" ; then
+	    $VERBOSE_ECHO "Detected recursive configure directory: `pwd`/$dir"
+	    CONFIG_SUBDIRS="$CONFIG_SUBDIRS `pwd`/$dir"
 	fi
     done
-
 
     ##########################################
     # make sure certain required files exist #
@@ -707,33 +1013,6 @@ initialize ( ) {
 	fi
     done
 
-
-    ########################################################
-    # protect COPYING & INSTALL from overwrite by automake #
-    ########################################################
-    COPYING_BACKUP=__none__
-    if test -f COPYING ; then
-        # determine if they actually fit in memory
-	COPYING_BACKUP="`cat COPYING`"
-	if [ "x$COPYING_BACKUP" = "x`cat COPYING`" ] ; then
-	    $VERBOSE_ECHO "Stashing an in-memory backup of COPYING"
-	    export COPYING_BACKUP
-	else
-	    COPYING_BACKUP="__none__"
-	fi
-    fi
-    INSTALL_BACKUP=__none__
-    if test -f INSTALL ; then
-	INSTALL_BACKUP="`cat INSTALL`"
-	if [ "x$INSTALL_BACKUP" = "x`cat INSTALL`" ] ; then
-	    $VERBOSE_ECHO "Stashing an in-memory backup of INSTALL"
-	    export INSTALL_BACKUP
-	else
-	    INSTALL_BACKUP="__none__"
-	fi
-    fi
-
-
     ##################################################
     # make sure certain generated files do not exist #
     ##################################################
@@ -743,7 +1022,6 @@ initialize ( ) {
 	    mv -f "${_aux_dir}/${file}" "${_aux_dir}/${file}.backup"
 	fi
     done
-
 
     ############################
     # search alternate m4 dirs #
@@ -756,7 +1034,6 @@ initialize ( ) {
 	fi
     done
 
-
     ######################################
     # remove any previous build products #
     ######################################
@@ -765,11 +1042,12 @@ initialize ( ) {
 	$VERBOSE_ECHO "rm -rf autom4te.cache"
 	rm -rf autom4te.cache
     fi
-    if test -f aclocal.m4 ; then
-	$VERBOSE_ECHO "Found an aclocal.m4 file, deleting it"
-	$VERBOSE_ECHO "rm -f aclocal.m4"
-	rm -f aclocal.m4
-    fi
+# tcl/tk (and probably others) have a customized aclocal.m4, so can't delete it
+#     if test -f aclocal.m4 ; then
+# 	$VERBOSE_ECHO "Found an aclocal.m4 file, deleting it"
+# 	$VERBOSE_ECHO "rm -f aclocal.m4"
+# 	rm -f aclocal.m4
+#     fi
 
 } # end of initialize()
 
@@ -779,10 +1057,18 @@ initialize ( ) {
 ##############
 
 # stash path
-_prev_path="`pwd`"
+START_PATH="`pwd`"
 
 # Before running autoreconf or manual steps, some prep detection work
-# is necessary or useful.  Only needs to occur once per directory.
+# is necessary or useful.  Only needs to occur once per directory, but
+# does need to traverse the entire subconfigure hierarchy to protect
+# files from being clobbered even by autoreconf.
+recursive_protect
+
+# start from where we started
+cd "$START_PATH"
+
+# get ready to process
 initialize
 
 
@@ -803,16 +1089,18 @@ if [ "x$HAVE_AUTORECONF" = "xyes" ] ; then
 	if [ "x$HAVE_ALT_LIBTOOLIZE" = "xyes" ] ; then
 	    if [ ! "x`echo \"$autoreconf_output\" | grep libtoolize | grep \"No such file or directory\"`" = "x" ] ; then
 		$ECHO
-		$ECHO "Warning: autoreconf failed but for for a reason that seems to be"
-		$ECHO "a common libtool misconfiguration issue.  This problem is commonly"
-		$ECHO "found on systems that have installed libtoolize under a different"
-		$ECHO "name without providing a symbolic link or a LIBTOOLIZE environment"
-		$ECHO "variable."
+		$ECHO "Warning: autoreconf failed but due to what is usually a common libtool"
+		$ECHO "misconfiguration issue.  This problem is encountered on systems that"
+		$ECHO "have installed libtoolize under a different name without providing a"
+		$ECHO "symbolic link or without setting the LIBTOOLIZE environment variable."
 		$ECHO
 		$ECHO "Restarting the preparation steps with LIBTOOLIZE set to $LIBTOOLIZE"
+
 		export LIBTOOLIZE
 		RUN_RECURSIVE=no
 		export RUN_RECURSIVE
+		untrap_abnormal
+
 		$VERBOSE_ECHO sh $AUTOGEN_SH "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 		sh "$AUTOGEN_SH" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 		exit $?
@@ -837,30 +1125,39 @@ fi
 # LIBTOOL_FAILURE FUNCTION #
 ############################
 libtool_failure ( ) {
+
+    # libtool is rather error-prone in comparison to the other
+    # autotools and this routine attempts to compensate for some
+    # common failures.  the output after a libtoolize failure is
+    # parsed for an error related to AC_PROG_LIBTOOL and if found, we
+    # attempt to inject a project-provided libtool.m4 file.
+
     _autoconf_output="$1"
 
     if [ "x$RUN_RECURSIVE" = "xno" ] ; then
-	exit 5
+	# we already tried the libtool.m4, don't try again
+	return 1
     fi
 
     if test -f "$LIBTOOL_M4" ; then
 	found_libtool="`$ECHO $_autoconf_output | grep AC_PROG_LIBTOOL`"
 	if test ! "x$found_libtool" = "x" ; then
 	    if test -f acinclude.m4 ; then
-		if test ! -f acinclude.m4.backup ; then
-		    $VERBOSE_ECHO cp acinclude.m4 acinclude.m4.backup
-		    cp acinclude.m4 acinclude.m4.backup
-		fi
+		rm -f acinclude.m4.$$.backup
+		$VERBOSE_ECHO "cat acinclude.m4 > acinclude.m4.$$.backup"
+		cat acinclude.m4 > acinclude.m4.$$.backup
 	    fi
-	    $VERBOSE_ECHO cat "$LIBTOOL_M4" >> acinclude.m4
+	    $VERBOSE_ECHO "cat \"$LIBTOOL_M4\" >> acinclude.m4"
+	    chmod u+w acinclude.m4
 	    cat "$LIBTOOL_M4" >> acinclude.m4
 
 	    # don't keep doing this
 	    RUN_RECURSIVE=no
 	    export RUN_RECURSIVE
+	    untrap_abnormal
 
 	    $ECHO
-	    $ECHO "Restarting the preparation steps with a local libtool.m4"
+	    $ECHO "Restarting the preparation steps with libtool macros in acinclude.m4"
 	    $VERBOSE_ECHO sh $AUTOGEN_SH "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 	    sh "$AUTOGEN_SH" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
 	    exit $?
@@ -873,6 +1170,7 @@ libtool_failure ( ) {
 # MANUAL_AUTOGEN FUNCTION #
 ###########################
 manual_autogen ( ) {
+
     ##################################################
     # Manual preparation steps taken are as follows: #
     #   aclocal [-I m4]                              #
@@ -941,13 +1239,12 @@ manual_autogen ( ) {
 		$ECHO "Fortunately, the problem can be worked around by simply copying the"
 		$ECHO "file to the appropriate location (${_aux_dir}/).  This has been done for you."
 		$ECHO
-		$VERBOSE_ECHO "cp ltmain.sh \"${_aux_dir}/ltmain.sh\""
-		cp ltmain.sh "${_aux_dir}/ltmain.sh"
+		$VERBOSE_ECHO "cp -p ltmain.sh \"${_aux_dir}/ltmain.sh\""
+		cp -p ltmain.sh "${_aux_dir}/ltmain.sh"
 		$ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
 	    fi
 	fi # ltmain.sh
     fi # need_libtoolize
-
 
     ############
     # autoconf #
@@ -965,14 +1262,17 @@ manual_autogen ( ) {
 	ac2_54_macros="AC_C_BACKSLASH_A AC_CONFIG_LIBOBJ_DIR AC_GNU_SOURCE AC_PROG_EGREP AC_PROG_FGREP AC_REPLACE_FNMATCH AC_FUNC_FNMATCH_GNU AC_FUNC_REALLOC AC_TYPE_MBSTATE_T"
 
 	macros_to_search=""
-	if [ $AUTOCONF_MAJOR_VERSION -lt 2 ] ; then
+	ac_major="`echo ${AUTOCONF_VERSION}. | cut -d. -f1 | sed 's/[^0-9]//g'`"
+	ac_minor="`echo ${AUTOCONF_VERSION}. | cut -d. -f2 | sed 's/[^0-9]//g'`"
+	
+	if [ $ac_major -lt 2 ] ; then
 	    macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
 	else
-	    if [ $AUTOCONF_MINOR_VERSION -lt 54 ] ; then
+	    if [ $ac_minor -lt 54 ] ; then
 		macros_to_search="$ac2_59_macros $ac2_55_macros $ac2_54_macros"
-	    elif [ $AUTOCONF_MINOR_VERSION -lt 55 ] ; then
+	    elif [ $ac_minor -lt 55 ] ; then
 		macros_to_search="$ac2_59_macros $ac2_55_macros"
-	    elif [ $AUTOCONF_MINOR_VERSION -lt 59 ] ; then
+	    elif [ $ac_minor -lt 59 ] ; then
 		macros_to_search="$ac2_59_macros"
 	    fi
 	fi
@@ -1072,10 +1372,11 @@ EOF
 	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
 	found="`grep \"^$feature.*\" $CONFIGURE`"
 	if [ ! "x$found" = "x" ] ; then
-	    config_header=yes
+	    need_automake=yes
 	    break
 	fi
     done
+
     if [ "x$need_automake" = "xyes" ] ; then
 	$VERBOSE_ECHO "$AUTOMAKE $AUTOMAKE_OPTIONS"
 	automake_output="`$AUTOMAKE $AUTOMAKE_OPTIONS 2>&1`"
@@ -1083,6 +1384,7 @@ EOF
 	$VERBOSE_ECHO "$automake_output"
 	
 	if [ ! $ret = 0 ] ; then
+
 	    ###################
 	    # automake, retry #
 	    ###################
@@ -1094,7 +1396,6 @@ EOF
 	    $VERBOSE_ECHO "$automake_output"
 	    
 	    if [ ! $ret = 0 ] ; then
-		
 	 	# test if libtool is busted
 		libtool_failure "$automake_output"
 
@@ -1102,56 +1403,21 @@ EOF
 		cat <<EOF
 $automake_output
 EOF
-	    fi
-	    $ECHO "ERROR: $AUTOMAKE failed"
-	    exit 2
+		$ECHO "ERROR: $AUTOMAKE failed"
+		exit 2
+	    fi # automake retry
 	fi # automake ret = 0
     fi # need_automake
-}
+} # end of manual_autogen
 
 
+#####################################
+# RECURSIVE_MANUAL_AUTOGEN FUNCTION #
+#####################################
 recursive_manual_autogen ( ) {
+
     # run the build preparation steps manually for this directory
     manual_autogen
-
-    #########################################
-    # restore COPYING & INSTALL from backup #
-    #########################################
-    spacer=no
-    if test -f COPYING ; then
-    # compare entire content, restore if needed
-	if test "x$COPYING_BACKUP" != "x__none__" -a "x`cat COPYING`" != "x$COPYING_BACKUP" ; then
-	    if test "x$spacer" = "xno" ; then
-		$VERBOSE_ECHO
-		spacer=yes
-	    fi
-	# restore the backup
-	    $VERBOSE_ECHO "Restoring COPYING from backup (automake -f likely clobbered it)"
-	    $VERBOSE_ECHO "echo \"\$COPYING_BACKUP\" > COPYING"
-	    rm -f COPYING
-	    echo "$COPYING_BACKUP" > COPYING
-	# release content
-	    COPYING_BACKUP=""
-	    export COPYING_BACKUP
-	fi
-    fi
-    if test -f INSTALL ; then
-    # compare entire content, restore if needed
-	if test "x$INSTALL_BACKUP" != "x__none__" -a "x`cat INSTALL`" != "x$INSTALL_BACKUP" ; then
-	    if test "x$spacer" = "xno" ; then
-		$VERBOSE_ECHO
-		spacer=yes
-	    fi
-	# restore the backup
-	    $VERBOSE_ECHO "Restoring INSTALL from backup (automake -f likely clobbered it)"
-	    $VERBOSE_ECHO "echo \"\$INSTALL_BACKUP\" > INSTALL"
-	    rm -f INSTALL
-	    echo "$INSTALL_BACKUP" > INSTALL
-	# release content
-	    INSTALL_BACKUP=""
-	    export INSTALL_BACKUP
-	fi
-    fi
 
     # for projects using recursive configure, run the build
     # preparation steps for the subdirectories.
@@ -1160,9 +1426,13 @@ recursive_manual_autogen ( ) {
 	$VERBOSE_ECHO "  $CONFIG_SUBDIRS"
 	for dir in $CONFIG_SUBDIRS ; do
 	    $VERBOSE_ECHO "Processing recursive configure in $dir"
-	    cd "$_prev_path"
+	    cd "$START_PATH"
 	    cd "$dir"
+
+	    # new directory, prepare
 	    initialize
+
+	    # run manual steps for the subdir and any others below
 	    recursive_manual_autogen
 	done
     fi
@@ -1183,19 +1453,22 @@ fi
 #########################
 # restore and summarize #
 #########################
-cd "$_prev_path"
+cd "$START_PATH"
+
+# restore COPYING and INSTALL from backup if necessary
+recursive_restore
+
+# make sure we end up with a configure script
 config_ac="`locate_configure_template`"
 config="`echo $config_ac | sed 's/\.ac$//' | sed 's/\.in$//'`"
 if [ "x$config" = "x" ] ; then
-    $VERBOSE_ECHO "WARNING: path to configure could not be found"
+    $VERBOSE_ECHO "Could not locate the configure template (from `pwd`)"
 fi
-if [ ! -f "$config" ] ; then
-    $VERBOSE_ECHO "WARNING: expected configure file does not exist"
-    config=""
-fi
+
+# summarize
 $ECHO "done"
 $ECHO
-if [ "x$config" = "x" ] ; then
+if test "x$config" = "x" -o ! -f "$config" ; then
     $ECHO "WARNING: The $PROJECT build system should now be prepared but there"
     $ECHO "does not seem to be a resulting configure file.  This is unexpected"
     $ECHO "and likely the result of an error.  You should run $NAME_OF_AUTOGEN"
