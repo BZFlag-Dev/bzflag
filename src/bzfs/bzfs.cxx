@@ -3944,7 +3944,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (plosswarn) {
 	char message[MessageLen];
 	sprintf(message,
-		"*** Server Warning: your packetloss is too high (%d ms) ***",
+		"*** Server Warning: your packetloss is too high (%d packets) ***",
 		playerData->lagInfo.getLoss());
 	sendMessage(ServerPlayer, t, message);
 	if (plosskick)
