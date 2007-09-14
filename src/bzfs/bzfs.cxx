@@ -3867,7 +3867,9 @@ float getAPIMaxWaitTime ( void )
   }
 
   if ( min >= 100 )
-    return 0;
+    return 100;
+  else
+    return min;
 }
 
 static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
