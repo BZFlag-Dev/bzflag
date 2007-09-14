@@ -133,7 +133,6 @@ private:
   std::string baseURL;
   std::string vdir;
   bool	      listening;
-  float	      savedUpdateTime;
 
   HTTPCommand *theCurrentCommand;
 

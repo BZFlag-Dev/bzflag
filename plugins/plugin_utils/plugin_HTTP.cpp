@@ -136,8 +136,6 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
 
       if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, this ) )
       {
-	if ( !users.size() )
-	  savedUpdateTime = bz_getMaxWaitTime();
 
 	HTTPConnectedUsers *user = new HTTPConnectedUsers(connData->connectionID);
 
@@ -178,7 +176,7 @@ void BZFSHTTPServer::update ( void )
   if ( users.size())
     bz_setMaxWaitTime(0.001f);
   else
-    bz_setMaxWaitTime(savedUpdateTime);
+    bz_setMaxWaitTime(2.0f);
 }
 
 void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )

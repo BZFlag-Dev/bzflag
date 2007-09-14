@@ -1990,8 +1990,8 @@ BZF_API float bz_getMaxWaitTime(void)
 
 BZF_API void bz_setMaxWaitTime(float maxTime)
 {
-  if(pluginMaxWait > maxTime)
-    pluginMaxWait=maxTime;
+  if (maxTime > 0)
+    pluginMaxWait = maxTime;
 }
 
 //-------------------------------------------------------------------------

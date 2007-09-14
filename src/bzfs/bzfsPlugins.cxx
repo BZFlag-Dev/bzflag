@@ -133,7 +133,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 	std::string realPluginName = findPlugin(plugin);
 	if (pluginExists(realPluginName))
 	{
-		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
+		logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
 		return eLoadFailedDupe;
 	}
 
@@ -224,7 +224,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 
 	if (pluginExists(realPluginName))
 	{
-		logDebugMessage(1,"LoadPlugin fialed:%s is already loaded\n",realPluginName.c_str());
+		logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
 		return eLoadFailedDupe;
 	}
 
