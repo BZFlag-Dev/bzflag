@@ -120,6 +120,9 @@ BZF_PLUGIN_CALL int bz_Unload (void)
 	bz_removeCustomSlashCommand("kasoundoff");
 	bz_removeCustomSlashCommand("kaflagreseton");
 	bz_removeCustomSlashCommand("kaflagresetoff");
+
+	bz_clearMaxWaitTime ( "KEEPAWAY" );
+
 	return 0;
 }
 
@@ -348,7 +351,7 @@ bool KeepAwayMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *d
 		keepaway.flagToKeepIndex = 0;
 	}
 
-	bz_setMaxWaitTime ( 0.5 );
+	bz_setMaxWaitTime ( 0.5, "KEEPAWAY" );
 
 	return true;
 }

@@ -137,7 +137,6 @@ uint32_t  worldDatabaseSize = 0;
 char	  *worldSettings = NULL;
 float	  pluginWorldSize = -1;
 float	  pluginWorldHeight = -1;
-float	  pluginMaxWait = 1000.0;
 Filter	  filter;
 
 VotingArbiter *votingArbiter = NULL;
@@ -3856,6 +3855,21 @@ static void doTickEvent(void)
   worldEventManager.callEvents(bz_eTickEvent,&tickData);
 }
 
+float getAPIMaxWaitTime ( void )
+{
+  float min = 99999999999.00;
+  std::map<std::string,float>::iterator itr = APIWaitTimes.begin();
+  while(itr != APIWaitTimes.end())
+  {
+    if ( itr->second < min )
+      min = itr->second;
+    itr++;
+  }
+
+  if ( min >= 100 )
+    return 0;
+}
+
 static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
 {
   if ((countdownDelay >= 0) || (countdownResumeTime >= 0))
@@ -3902,6 +3916,11 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
       waitTime = nextGT;
   }
 
+  // see if we are within the plug requested max wait time
+  float plugInWait = getAPIMaxWaitTime();
+  if (waitTime > plugInWait)
+    waitTime = plugInWait;
+
   // minmal waitTime
   if (waitTime < 0.0f)
     waitTime = 0.0f;
@@ -3910,9 +3929,6 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
   if (NetHandler::anyUDPPending())
     waitTime = 0.0f;
 
-  // see if we are within the plug requested max wait time
-  if (waitTime > pluginMaxWait)
-    waitTime = pluginMaxWait;
 
   // don't wait (used by CURL and MsgEnter)
   if (dontWait) {

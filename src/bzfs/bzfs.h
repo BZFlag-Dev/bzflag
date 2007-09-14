@@ -143,7 +143,7 @@ extern uint16_t		maxPlayers;
 extern uint16_t		maxRealPlayers;
 extern float		pluginWorldSize;
 extern float		pluginWorldHeight;
-extern float		pluginMaxWait;
+extern std::map<std::string,float> APIWaitTimes;
 extern bool		isIdentifyFlagIn;
 extern bool		worldWasSentToAPlayer;
 extern RejoinList	rejoinList;

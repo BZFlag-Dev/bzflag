@@ -108,6 +108,7 @@ BZF_PLUGIN_CALL int bz_Unload (void){
 	bz_removeCustomSlashCommand("kothautotimeon");
 	bz_removeCustomSlashCommand("kothautotimeoff");
 	bz_removeCustomSlashCommand("kingsay");
+	bz_clearMaxWaitTime ("KOTH" );
 	return 0;
 }
 
@@ -268,7 +269,7 @@ bool KOTHMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data 
 		}
 		bz_deleteStringList(nubs);
 	}
-	bz_setMaxWaitTime ( 0.5 );
+	bz_setMaxWaitTime ( 0.5, "KOTH" );
 	return true;
 }
 

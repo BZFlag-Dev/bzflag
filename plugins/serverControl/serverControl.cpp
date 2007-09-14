@@ -62,7 +62,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* cmdLine)
   bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_registerEvent(bz_eTickEvent, &serverControlHandler);
-  bz_setMaxWaitTime( 3.0 );
+  bz_setMaxWaitTime( 3.0,"SERVER_CONTROL" );
   return 0;
 }
 
@@ -71,6 +71,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_removeEvent(bz_eTickEvent, &serverControlHandler);
+  bz_clearMaxWaitTime("SERVER_CONTROL");
   return 0;
 }
 

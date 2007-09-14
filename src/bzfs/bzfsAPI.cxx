@@ -53,6 +53,8 @@ std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
 
 void callClipFiledCallbacks ( const char* field );
 
+std::map<std::string,float> APIWaitTimes;
+
 class MasterBanURLHandler: public bz_BaseURLHandler
 {
 public:
@@ -1981,17 +1983,39 @@ BZF_API double bz_getCurrentTime(void)
 
 //-------------------------------------------------------------------------
 
-BZF_API float bz_getMaxWaitTime(void)
+BZF_API float bz_getMaxWaitTime ( const char *name )
 {
-  return pluginMaxWait;
+  std::string timeName;
+  if (name)
+    timeName = name;
+
+  if ( APIWaitTimes.find(timeName) != APIWaitTimes.end() )
+    return APIWaitTimes[timeName];
+
+  return -1;
 }
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_setMaxWaitTime(float maxTime)
+BZF_API void bz_setMaxWaitTime ( float maxTime, const char *name )
 {
-  if (maxTime > 0)
-    pluginMaxWait = maxTime;
+  std::string timeName;
+  if (name)
+    timeName = name;
+
+  APIWaitTimes[timeName] = maxTime;
+}
+
+BZF_API void bz_clearMaxWaitTime ( const char *name )
+{
+  std::string timeName;
+  if (name)
+    timeName = name;
+
+  if ( APIWaitTimes.find(timeName) == APIWaitTimes.end() )
+    return;
+
+  APIWaitTimes.erase(APIWaitTimes.find(timeName));
 }
 
 //-------------------------------------------------------------------------

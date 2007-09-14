@@ -411,7 +411,7 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
   bz_registerEvent(bz_eGameStartEvent, &nagware);
   bz_registerEvent(bz_eGameEndEvent, &nagware);
   bz_registerEvent(bz_eTickEvent, &nagware);
-  bz_setMaxWaitTime (1.0f);
+  bz_setMaxWaitTime (1.0f<"NAGWARE");
 
   bz_debugMessagef(0, "+++ nagware plugin loaded - v%s", NAGWAREPLUG_VER);
   return 0;
@@ -426,6 +426,8 @@ BZF_PLUGIN_CALL int bz_Unload (void)
   bz_removeEvent (bz_eGameEndEvent, &nagware);
   bz_removeEvent (bz_eTickEvent, &nagware);
   bz_debugMessage(0, "+++ nagware plugin unloaded");
+  bz_clearMaxWaitTime ("NAGWARE" );
+
   return 0;
 }
 

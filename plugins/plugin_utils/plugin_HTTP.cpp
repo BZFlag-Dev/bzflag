@@ -73,6 +73,7 @@ BZFSHTTPServer::~BZFSHTTPServer()
     }
     bz_setclipFieldString("BZFS_HTTPD_VDIRS",clipField.c_str());
   }
+  bz_clearMaxWaitTime(vdir.c_str());
 }
 
 void BZFSHTTPServer::startupHTTP ( void )
@@ -174,9 +175,9 @@ void BZFSHTTPServer::update ( void )
   }
 
   if ( users.size())
-    bz_setMaxWaitTime(0.001f);
+    bz_setMaxWaitTime(0.01f,vdir.c_str());
   else
-    bz_setMaxWaitTime(2.0f);
+    bz_clearMaxWaitTime(vdir.c_str());
 }
 
 void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )

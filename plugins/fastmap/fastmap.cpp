@@ -213,15 +213,17 @@ void FastMapEventHandler::updateHTTPServer ( void )
   }
 
   if (clients.size())
-    bz_setMaxWaitTime(0.001f);
+    bz_setMaxWaitTime(0.01f,"FASTMAP");
   else
-    bz_setMaxWaitTime(2.0f);
+    bz_clearMaxWaitTime("FASTMAP");
 }
 
 void FastMapEventHandler::killHTTPServer ( void )
 {
   if ( mapData )
     free(mapData);
+
+  bz_clearMaxWaitTime("FASTMAP");
 
   mapData = NULL;
   mapDataSize = 0;
