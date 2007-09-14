@@ -11,12 +11,12 @@ std::string getFileHeader ( void );
 std::string getFileFooter ( void );
 
 std::string getPlayersHeader ( void );
+std::string getPlayersLineItem ( bz_BasePlayerRecord *rec );
+std::string getPlayersNoPlayers ( void );
 std::string getPlayersFooter ( void );
 
 std::string getTeamHeader ( bz_eTeamType team );
 std::string getTeamFooter ( bz_eTeamType team );
-
-std::string getPlayerLineItem ( bz_BasePlayerRecord *rec );
 
 std::string getTeamFontCode ( bz_eTeamType team );
 std::string getTeamTextName ( bz_eTeamType team );

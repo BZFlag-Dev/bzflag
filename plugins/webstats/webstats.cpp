@@ -41,9 +41,6 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
 
   bz_APIIntList *players = bz_getPlayerIndexList();
 
-  if ( !players->size() )
-    page += "There are no players :(\n";
-
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
 
   for ( int i = 0; i < (int)players->size(); i++ )
@@ -67,21 +64,22 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
 
   page += getPlayersHeader();
 
+  if ( !players->size() )
+    page += getPlayersNoPlayers();
+
   while (itr != teamSort.end())
   {
-    page += getTeamHeader(itr->first);
     for ( int i = 0; i < (int)itr->second.size(); i++)
     {
       bz_BasePlayerRecord *rec = itr->second[i];
       int player = rec->playerID;
       if (rec)
       {
-	page += getPlayerLineItem ( rec );
+	page += getPlayersLineItem ( rec );
 
 	bz_freePlayerRecord (rec);
       }
     }
-    page += getTeamFooter(itr->first);
     itr++;
   }
   bz_deleteIntList(players);
@@ -93,7 +91,6 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
 
   // finish the document
   page += getFileFooter();
-  page += "</body></HTML>";
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
