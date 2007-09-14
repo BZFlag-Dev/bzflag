@@ -36,6 +36,8 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
+  bool evenLine = false;
+
   std::string page;
   page = getFileHeader();
 
@@ -75,7 +77,9 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
       int player = rec->playerID;
       if (rec)
       {
-	page += getPlayersLineItem ( rec );
+	if (rec->callsign.size() == 0) continue;
+	page += getPlayersLineItem ( rec, evenLine );
+	evenLine = !evenLine;
 
 	bz_freePlayerRecord (rec);
       }

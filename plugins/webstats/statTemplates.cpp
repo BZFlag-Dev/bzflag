@@ -20,6 +20,21 @@ std::string getFileHeader ( void )
   page += "<html>\n";
   page += "<head>\n";
   page += "<title>Webstats for " + serverName + "</title>\n";
+  page += "<style type=\"text/css\">\n";
+  page += "th { border: 1px solid black; }\n";
+  page += ".odd td { border: 1px solid gray; }\n";
+  page += ".even td { border: 1px solid black; }\n";
+
+  page += ".unknown td { background-color: white; }\n";
+  page += ".red td { background-color: #FF6347; }\n";
+  page += ".blue td { background-color: #6495ED; }\n";
+  page += ".green td { background-color: #7FFF00; }\n";
+  page += ".purple td { background-color: #EE82EE; }\n";
+  page += ".rogue td { background-color: #FFFF00; }\n";
+  page += ".observer td { background-color: white; color: #666666; }\n";
+  page += ".rabbit td { background-color: #999999; color: white; }\n";
+  page += ".hunter td { background-color: #FFA500; }\n";
+  page += "</style>\n";
   page += "</head>\n";
   page += "<body>\n";
   page += "<p>Statistics for " + serverName + "</p>\n";
@@ -37,8 +52,7 @@ std::string getPlayersHeader ( void )
   return std::string ("<hr><h2>Players</h2>\n<table>\n\t<tr><th>Callsign</th><th>Email</th><th>Wins</th><th>Losses</th><th>TKs</th><th>Status</th></tr>\n");
 }
 
-bool evenLine = false;
-std::string getPlayersLineItem ( bz_BasePlayerRecord *rec )
+std::string getPlayersLineItem ( bz_BasePlayerRecord *rec, bool evenLine )
 {
   std::string code = "";
 
@@ -56,7 +70,9 @@ std::string getPlayersLineItem ( bz_BasePlayerRecord *rec )
 
   if ( rec->team != eObservers )
   {
-    code += format("\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>", rec->wins, rec->losses, rec->teamKills);
+    code += format("\t\t<td>%d</td>\n\t\t<td>%d</td>\n\t\t<td>%d</td>\n", rec->wins, rec->losses, rec->teamKills);
+
+	code += "\t\t<td>";
     if ( rec->admin )
       code += "Admin";
 
@@ -71,6 +87,11 @@ std::string getPlayersLineItem ( bz_BasePlayerRecord *rec )
 	  if (rec->admin || rec->spawned) code += "/";
       code += "Verified";
 	}
+
+	if (!rec->admin && !rec->spawned && !rec->verified)
+	  code += "&nbsp;";
+
+	code += "</td>\n";
   }
   else
   {
@@ -78,9 +99,6 @@ std::string getPlayersLineItem ( bz_BasePlayerRecord *rec )
   }
 
   code += "\n\t</tr>\n";
-
-  // Toggle our variable that controls every-other-line coloring
-  evenLine = !evenLine;
 
   return code;
 }
@@ -177,7 +195,7 @@ std::string getTeamTextName ( bz_eTeamType team )
     break;
 
   case eObservers:
-    name = "Observers";
+    name = "Observer";
     break;
 
   case eRabbitTeam:

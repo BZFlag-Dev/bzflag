@@ -11,7 +11,7 @@ std::string getFileHeader ( void );
 std::string getFileFooter ( void );
 
 std::string getPlayersHeader ( void );
-std::string getPlayersLineItem ( bz_BasePlayerRecord *rec );
+std::string getPlayersLineItem ( bz_BasePlayerRecord *rec, bool evenLine );
 std::string getPlayersNoPlayers ( void );
 std::string getPlayersFooter ( void );
 
