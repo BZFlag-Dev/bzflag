@@ -61,15 +61,15 @@ MAINTAINERCLEANFILES = \
 	INSTALL \
 	Makefile.in
 
-.PHONY: package debian-cvs debian-release
+.PHONY: package debian-svn debian-release
 
 package:
 	cd package && $(MAKE) targets
 
-debian-cvs: dist
+debian-svn: dist
 	-rm -rf $(distdir)
 	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
-	(cd $(distdir) && debian/buildsnap cvs)
+	(cd $(distdir) && debian/buildsnap svn)
 
 debian-release: debian/changelog dist
 	-rm -rf $(distdir)

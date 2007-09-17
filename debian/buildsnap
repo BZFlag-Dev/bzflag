@@ -1,7 +1,7 @@
 #!/bin/sh
-# build release or cvs snapshop debian packages
+# build release or svn snapshop debian packages
 if [ -z "$1" -o ! -r configure.ac ] ; then
- echo "$0 { cvs | release } - must be run in the project home directory"
+ echo "$0 { svn | release } - must be run in the project home directory"
  exit 1
 fi
 if [ "$1" == "release" ] ; then
@@ -31,7 +31,7 @@ head -n 1 debian/changelog
 ./autogen.sh
 ./configure --quiet
 chmod +x debian/rules misc/tar
-# cvs/non-cvs builds should conflict and replace each other.
+# svn/non-svn builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
 if [ "$1" == "release" ] ; then
