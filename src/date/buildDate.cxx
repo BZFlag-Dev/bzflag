@@ -43,9 +43,9 @@
 #  define BZ_REV		9
 #endif
 
-// DEVEL | STABLE | MAINT
+// DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"DEVEL"
+#  define BZ_BUILD_TYPE		"RC1"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993 - 2007 Tim Riker";
