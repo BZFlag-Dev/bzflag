@@ -222,14 +222,47 @@ non-conformant code should follow the non-conformant code's style if
 following the rules would cause an ugly mess.
 
 
-CVS commit
-=======
+Committing Changes
+==================
 
 Make atomic changes in a way that a system will be working, or at
-least will be buildable, before and after the commit.
-(CVS does not enforce atomic changes)
-Try to separate big commit, involving multiple functionality changes,
-in smaller coherent chunk; in case of bug, they can be simply undone.
+least will be buildable, before and after committing a set of changes.
+
+Try to separate out bigger commits into smaller ones.  In particular,
+if a change involves multiple functionality changes, the commit should
+be broken up into smaller coherent chunks.  This way if a bug or other
+issue with a particular commit is later encountered, the change can be
+more easily isolated and undone or fixed.
+
+Making Patches
+--------------
+
+If you do not have source code commit access and would like to propose
+a change for inclusion, you should create a patch.  Patches should be
+submitted to the Sourceforge project site patches tracker at:
+
+https://sourceforge.net/tracker/?func=add&group_id=3248&atid=303248
+
+You can create a patch for submission to Sourceforge from a source
+checkout using the following command:
+
+svn diff -u > my_patch_name.diff
+
+If your patch results in the deletion of existing files, you can
+annotate that deletion by adding it to the patch like this:
+
+diff -u src/bzfs/somefile.cxx /dev/null >> my_patch_name.diff
+
+If your patch requires the addition of new files, simply include these
+new files individually or in a tarball as part of the patch submission.
+
+In general, patches should be relatively small succint changes that
+can be readily reviewed, tested, and applied.  Patches that are
+difficult to review, test, or apply will likely not be accepted.  That
+said, creating useful patches that have been discussed with the
+existing developers is one of the more immediate means to become a
+developer for BZFlag yourself.
+
 
 Testing
 =======
@@ -327,7 +360,7 @@ on systems that use the automake build system this is automatically
 generated.
 
 BuildType is a string that represents the intended use of the build.
-For development releases, the build type is normally "CVS".  For
+For development releases, the build type is normally "SVN".  For
 testing releases, the build type can be "testing", "beta",
 "releasecandidate", etc.  For final release versions the build type
 should be "release".  The build type provides a human readable keyword
@@ -344,7 +377,7 @@ In order to make a release, there are handful of steps that need to be
 taken.  If any step fails to be completed successfully, the release
 cannot proceed.  A checklist of items to be completed follows:
 
-- All code is committed to CVS
+- All code is committed to the repository.
 
 - ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
@@ -381,8 +414,8 @@ cannot proceed.  A checklist of items to be completed follows:
 - Post the source tarball, zip and platform-specific binaries to
   SourceForge.
 
-- Increment and commit the version number in the CVS source
-  configure.in file so that later builds are immediately
+- Increment and commit the version number in configure.ac to the
+  source repository so that later builds are immediately
   distinguished.
 
 - Notify the following (at least):

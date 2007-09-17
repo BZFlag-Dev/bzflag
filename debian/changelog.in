@@ -1,6 +1,6 @@
 bzflag (@VERSION@) unstable; urgency=medium
 
-  * CVS Build
+  * SVN Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
 bzflag (2.0.8.20060605) unstable; urgency=medium

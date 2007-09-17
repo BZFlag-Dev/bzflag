@@ -9,7 +9,7 @@ the "new" OpenGL kit that was to be in R5.1d0, the configure
 detects libGL2, though one should then have to replace
 src/platform/BeOSWindow.cxx by src/platform/BeOSWindow2.cxx.
 Note there are many issues with this beta GL stuff, and it's
-totally unsupported. I keep this one in CVS because I don't
+totally unsupported. I keep this one in SVN because I don't
 know which API will survive the other.
 
 net_server isn't supported yet, and I don't think it will ever

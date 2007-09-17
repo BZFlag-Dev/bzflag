@@ -59,13 +59,12 @@ http://curl.haxx.se
 
 *** Part III: Obtain BZFlag
 
-If you get bzflag files from CVS be sure to check them out with UNIX linebreaks,
-or MSYS will choke.  In WinCVS, this can be done with the "Check out text files
-with the Unix LF (0xA)" option in Global Preferences; in TortoiseCVS, use the
-"Unix line endings" option in Advanced Preferences.
+If you get bzflag files from SVN be sure to check them out with UNIX linebreaks,
+or MSYS will choke.   In TortoiseSVN, use the "Unix line endings" option in
+Advanced Preferences.
 
 If you get the bzflag files from a released source tarball, or using MSYS' own
-cvs utility, they should already be in the correct format.
+subversion utility, they should already be in the correct format.
 
 It's easiest to check out BZFlag into a subdirectory of wherever you installed
 MSYS, such as <MSYS>/bzflag.
@@ -117,9 +116,9 @@ Q. When I run ./configure, sed dumps the contents of version.h, configure
    continues normally for a while, and then I get repeated sed errors like
    "sed: <file>: unterminated `s' command" and others.  Make fails with
    "*** No targets.  Stop." or similar.
-A. When checking out the bzflag sources from CVS, you must check them out with
-   UNIX line breaks.  For instructions for TortoiseCVS or WinCVS, see Part IV.
-   Alternatively, use mingw's or cygwin's built-in CVS to check out the files.
+A. When checking out the bzflag sources from SVN, you must check them out with
+   UNIX line breaks.  For instructions for TortoiseSVN, see Part IV.
+   Alternatively, use mingw's or cygwin's built-in SVN to check out the files.
    If you're using a source package, you need to use the tarball (.tar.bz2) not
    the zip package.  You can extract it from within MSYS with "bunzip2 <file>"
    and "tar -xvf <file>".

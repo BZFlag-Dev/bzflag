@@ -23,6 +23,12 @@ if [ -d "$1/CVS" ] ; then
     rm -rf $1/CVS
 fi
 
+# Don't copy .svn dir
+if [ -d "$PATH_TO_HERE/$ARG1/.svn" ] ; then
+    echo "rm -rf $PATH_TO_HERE/$ARG1/.svn"
+    rm -rf $PATH_TO_HERE/$ARG1/.svn
+fi
+
 # replace $SAMPLE_PLUGIN within files
 #echo "find $1 -type f -exec perl -pi -e \"s/$SAMPLE_PLUGIN/$1/g\" '{}' \;"
 find $1 -type f -exec perl -pi -e "s/$SAMPLE_PLUGIN/$1/g" '{}' \;
