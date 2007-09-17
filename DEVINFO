@@ -94,7 +94,7 @@ interface header if there is one, or common.h otherwise, system
 headers, common implementation headers, and then local implementation
 headers.
 
- Adhering to this order will avoid nasty
+Adhering to this order will avoid nasty
 ordering dependencies and makes it easy to change things down the road.
 
 Ideally, there should be one class per file.  There are, of course,
