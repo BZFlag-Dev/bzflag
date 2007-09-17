@@ -637,6 +637,13 @@ void startCountdown ( int delay, float limit, const char *buyWho )
 
 PingPacket getTeamCounts()
 {
+  pingReply.rogueCount = 0;
+  pingReply.redCount = 0;
+  pingReply.greenCount = 0;
+  pingReply.blueCount = 0;
+  pingReply.purpleCount = 0;
+  pingReply.observerCount = 0;
+
   if (gameOver && clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
     // pretend there are no players if the game is over, but only
     // for servers with automatic countdown because we want the server
@@ -646,20 +653,41 @@ PingPacket getTeamCounts()
     // (FIXME: the countdown/gameover handling really needs a new concept,
     //         originally it was not possible to even join a server when gameover
     //         was reached, but this was changed for manual countdown (match) servers)
-    pingReply.rogueCount = 0;
-    pingReply.redCount = 0;
-    pingReply.greenCount = 0;
-    pingReply.blueCount = 0;
-    pingReply.purpleCount = 0;
-    pingReply.observerCount = 0;
   } else {
     // update player counts in ping reply.
-    pingReply.rogueCount = (uint8_t)team[0].team.size;
-    pingReply.redCount = (uint8_t)team[1].team.size;
-    pingReply.greenCount = (uint8_t)team[2].team.size;
-    pingReply.blueCount = (uint8_t)team[3].team.size;
-    pingReply.purpleCount = (uint8_t)team[4].team.size;
-    pingReply.observerCount = (uint8_t)team[5].team.size;
+
+    for (int i = 0; i < curMaxPlayers; i++)
+    {
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p == NULL))
+	continue;
+
+      if (p->player.isHuman())
+      {
+	switch(p->player.getTeam())
+	{
+	  case RabbitTeam:
+	  case RogueTeam:
+	    pingReply.rogueCount++;
+	    break;
+	  case RedTeam:
+	    pingReply.redCount++;
+	    break;
+
+	  case GreenTeam:
+	    pingReply.greenCount++;
+	    break;
+
+	  case BlueTeam:
+	    pingReply.blueCount++;
+	    break;
+
+	  case PurpleTeam:
+	    pingReply.purpleCount++;
+	    break;
+	}
+      }
+    }
   }
   return pingReply;
 }
