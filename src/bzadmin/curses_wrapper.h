@@ -46,8 +46,8 @@
 #define COLOR_BGDEFAULT COLOR_BLACK
 #define COLOR_FGDEFAULT COLOR_WHITE
 
-inline int use_default_colors() {
-  return ERR;
+inline void use_default_colors() {
+  return;
 }
 
 inline int resizeterm(int, int) {
@@ -161,10 +161,6 @@ inline int pd_endwin() {
 
 inline int resizeterm(int lines, int cols) {
   return resize_term(lines, cols);
-}
-
-inline void use_default_colors() {
-  return;
 }
 
 #endif // pdcurses
