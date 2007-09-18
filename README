@@ -138,7 +138,7 @@ have them pre-installed:
 
   c-ares
   libCURL
-  freetype2
+  Freetype2
   FTGL
   libregex (usually provided as part of libc)
   zlib
