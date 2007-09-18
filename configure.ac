@@ -803,6 +803,7 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/nsis/Makefile
 	plugins/Makefile
     	plugins/plugin_utils/Makefile
+	plugins/plugin_utils/VC71/Makefile
 	plugins/HoldTheFlag/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
