@@ -670,6 +670,7 @@ PingPacket getTeamCounts()
 	  case RogueTeam:
 	    pingReply.rogueCount++;
 	    break;
+
 	  case RedTeam:
 	    pingReply.redCount++;
 	    break;
@@ -685,6 +686,12 @@ PingPacket getTeamCounts()
 	  case PurpleTeam:
 	    pingReply.purpleCount++;
 	    break;
+
+          case AutomaticTeam:
+          case NoTeam:
+          case ObserverTeam:
+            // don't count these
+            break;
 	}
       }
     }
