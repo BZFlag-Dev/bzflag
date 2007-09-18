@@ -7,7 +7,7 @@ libplugin_utils_la_SOURCES = \
 	PluginConfig.h
 libplugin_utils_la_LDFLAGS = -avoid-version
 
-SUBDIRS = VC71
+DIST_SUBDIRS = VC71
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
