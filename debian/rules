@@ -16,12 +16,12 @@ build-stamp:
 	# compile for i486 cause GL on i386 is hopeless
 	echo DEB_BUILD_OPTIONS=$(DEB_BUILD_OPTIONS)
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	./configure --prefix=/usr --enable-debug
+	./configure --prefix=/usr --enable-robots --enable-bzadmin --enable-client --enable-debug
 else
 	case "$(DEB_BUILD_ARCH)" in \
-		i386) ./configure --disable-ccachetest --prefix=/usr --host=i486-pc-linux-gnu ;; \
-		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --disable-ccachetest --prefix=/usr ;; \
-		*) ./configure --disable-ccachetest --prefix=/usr ;; \
+		i386) ./configure --disable-ccachetest --prefix=/usr --host=i486-pc-linux-gnu --enable-robots --enable-bzadmin --enable-client ;; \
+		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --disable-ccachetest --prefix=/usr --enable-robots --enable-bzadmin --enable-client ;; \
+		*) ./configure --disable-ccachetest --prefix=/usr --enable-robots --enable-bzadmin --enable-client ;; \
 	esac
 endif
 
