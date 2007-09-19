@@ -333,7 +333,7 @@ public:
 			return true;
 		}
 
-		if ( !record.admin )
+		if (!record.hasPerm("PLUGINS"))
 		{
 			bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to (un)load plug-ins.");
 			return true;
