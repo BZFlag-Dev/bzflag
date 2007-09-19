@@ -64,6 +64,7 @@ GameKeeper::Player::Player(int _playerIndex,
 #endif
   _LSAState = start;
   bzIdentifier = "";
+  isParting = false;
 }
 
 GameKeeper::Player::~Player()

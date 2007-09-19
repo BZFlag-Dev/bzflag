@@ -137,6 +137,9 @@ public:
     // Authentication
     Authentication    authentication;
 
+    // flag to let us know the player is on it's way out
+    bool  isParting;
+
   private:
     static Player    *playerList[PlayerSlot];
     int		      playerIndex;
@@ -151,6 +154,7 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
+
   };
 
   class Flag {

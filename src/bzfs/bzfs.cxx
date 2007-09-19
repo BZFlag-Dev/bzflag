@@ -213,7 +213,7 @@ int getCurMaxPlayers()
 static bool realPlayer(const PlayerId& id)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
-  return playerData && playerData->player.isPlaying();
+  return playerData && playerData->player.isPlaying() && !playerData->isParting;
 }
 
 static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
@@ -236,6 +236,8 @@ char *getDirectMessageBuffer()
 static int directMessage(GameKeeper::Player &playerData,
 			 uint16_t code, int len, const void *msg)
 {
+  if (playerData.isParting)
+    return -1;
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(uint16_t);
 
@@ -2208,6 +2210,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
+
+  playerData->isParting = true;
 
   // call any on part events
   bz_PlayerJoinPartEventData partEventData;
