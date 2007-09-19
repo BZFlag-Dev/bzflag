@@ -299,6 +299,8 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
     return;
   if (!playerData->netHandler || playerData->playerHandler)
     return;
+  if (playerData->isParting)
+    return;
 
   directMessage(playerData->netHandler, code, len, msg);
 }
@@ -2125,6 +2127,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
+
+  playerData->isParting = true;
 
   // call any on part events
   bz_PlayerJoinPartEventData_V1 partEventData;

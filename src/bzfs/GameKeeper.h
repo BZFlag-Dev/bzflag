@@ -204,6 +204,9 @@ public:
     // Capabilities
     PlayerCaps			caps;
 
+    // flag to let us know the player is on it's way out
+    bool isParting;
+
     // logic class for server side players
     bz_ServerSidePlayerHandler	*playerHandler;
 

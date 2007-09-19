@@ -73,6 +73,7 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
  currentAngVel =0;
 
  efectiveShotType = StandardShot;
+ isParting = false;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
