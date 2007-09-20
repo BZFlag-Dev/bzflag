@@ -105,7 +105,7 @@ std::string getPlayersLineItem ( bz_BasePlayerRecord *rec, bool evenLine )
 
 std::string getPlayersNoPlayers ( void )
 {
-  return std::string("\t<tr class=\"odd unknown\"><td colspan=\"6\">There is current no players online.</td></tr>\n");
+  return std::string("\t<tr class=\"odd unknown\"><td colspan=\"6\">There are currently no players online.</td></tr>\n");
 }
 
 std::string getPlayersFooter ( void )
