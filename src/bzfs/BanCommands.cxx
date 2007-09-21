@@ -387,6 +387,8 @@ bool KillCommand::operator() (const char	 *message,
   i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
   if (i >= 0) {
+    char killmessage[MessageLen];
+
     // call any plugin events registered for /kick
     bz_KillEventData_V1 killEvent;
     killEvent.killerID = t;
@@ -394,28 +396,31 @@ bool KillCommand::operator() (const char	 *message,
     if (argv.size() > 2)
       killEvent.reason = argv[2].c_str();
 
-    worldEventManager.callEvents(bz_eKillEvent,&killEvent);
+    bz_AllowKillCommandEventData_V1 allow;
+    allow.playerToKill = i;
+    allow.playerKilling = t;
+    allow.allow = true;
 
-    // need to update playerIndex ?
-    if (t != killEvent.killerID) {
-      playerData = GameKeeper::Player::getPlayerByIndex(killEvent.killerID);
-      if (!playerData)
-	return true;
-    }
-
-    char killmessage[MessageLen];
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 
     // operators can override antiperms
-    if (!playerData->accessInfo.isOperator()) {
+    if (!playerData->accessInfo.isOperator()) 
+    {
       // otherwise make sure the player is not protected with an antiperm
-      GameKeeper::Player *p
-	= GameKeeper::Player::getPlayerByIndex(killEvent.killedID);
-      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) {
-	snprintf(killmessage, MessageLen, "%s is protected from being killed.",
-		 p->player.getCallSign());
-	sendMessage(ServerPlayer, t, killmessage);
-	return true;
-      }
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) 
+	allow.allow = false;
+    }
+
+    // check the API to see if anyone wants to have anything to say about this kill
+    worldEventManager.callEvents(bz_eAllowKillCommandEvent,&allow);
+
+    // plug-ins can ovride ANYONE even the gods
+    if (p && !allow.allow)
+    {
+      snprintf(killmessage, MessageLen, "%s is protected from being killed.",
+	p->player.getCallSign());
+      sendMessage(ServerPlayer, t, killmessage);
+      return true;
     }
 
     snprintf(killmessage, MessageLen, "You were killed by %s",
@@ -428,6 +433,10 @@ bool KillCommand::operator() (const char	 *message,
     }
     // kill the player
     playerKilled(killEvent.killedID, ServerPlayer, GotKilledMsg, -1, Flags::Null, -1);
+
+
+    worldEventManager.callEvents(bz_eKillEvent,&killEvent);
+
 
   } else {
     char errormessage[MessageLen];

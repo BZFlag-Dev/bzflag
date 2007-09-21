@@ -142,6 +142,7 @@ typedef enum
   bz_eWorldFinalized,
   bz_eAllowCTFCaptureEvent,
   bz_eAllowFlagGrabEvent,
+  bz_eAllowKillCommandEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1279,6 +1280,25 @@ public:
   const char *flagType;
   bool	changed;
   float	pos[3];
+};
+
+class bz_AllowKillCommandEventData_V1 : public bz_EventData
+{
+public:
+  bz_AllowKillCommandEventData_V1()
+  {
+    eventType = bz_eAllowKillCommandEvent;
+    playerToKill = -1;
+    playerKilling = -1;
+    allow = false;
+  }
+
+  virtual ~bz_AllowKillCommandEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
+
+  int playerToKill;
+  int playerKilling;
+  bool	allow;
 };
 
 // event handler callback
