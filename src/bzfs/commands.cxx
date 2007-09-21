@@ -1565,12 +1565,18 @@ bool LagWarnCommand::operator() (const char	 *message,
 
   char reply[MessageLen] = {0};
 
-  if (message[8] == ' ') {
+  if (message[8] == ' ' && isdigit(message[9])) {
+    // message is a parseable digit string
+    // atoi() only requires 1st character to be digit
     const char *maxlag = message + 9;
     clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
     snprintf(reply, MessageLen, "lagwarn is now %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
-  } else {
+  } else if (message[8] == '\0' || strcmp (message + 8, " ") == 0) {
+    // Command by itself, or with one trailing space
     snprintf(reply, MessageLen, "lagwarn is set to %d ms", int(clOptions->lagwarnthresh * 1000 + 0.5));
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /lagwarn [time]");
   }
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
   sendMessage(ServerPlayer, t, reply);
@@ -1589,13 +1595,19 @@ bool LagDropCommand::operator() (const char      *message,
 
   char reply[MessageLen] = {0};
 
-  if (message[8] == ' ') {
+  if (message[8] == ' ' && isdigit(message[9])) {
+    // message is a parseable digit string
     const char *maxwarn = message + 9;
     clOptions->maxlagwarn = atoi(maxwarn);
     snprintf(reply, MessageLen, "lagdrop is now %d", clOptions->maxlagwarn);
-  } else {
+  } else if (message[8] == '\0' || strcmp (message + 8, " ") == 0) {
+    // Command by itself, or with one trailing space
     snprintf(reply, MessageLen, "lagdrop is set to %d", clOptions->maxlagwarn);
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /lagdrop [num]");
   }
+
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
   sendMessage(ServerPlayer, t, reply);
   return true;
@@ -1614,14 +1626,17 @@ bool JitterWarnCommand::operator() (const char	 *message,
   
   char reply[MessageLen] = {0};
 
-  if (message[11] == ' ') {
+  if (message[11] == ' ' && isdigit(message[12])) {
     const char *maxjit = message + 12;
     clOptions->jitterwarnthresh = (float) (atoi(maxjit) / 1000.0);
     snprintf(reply, MessageLen, "jitterwarn is now %d ms",
 	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
-  } else {
+  } else if (message[11] == '\0' || strcmp (message + 11, " ") == 0) {
     snprintf(reply, MessageLen, "jitterwarn is set to %d ms",
 	     int(clOptions->jitterwarnthresh * 1000 + 0.5));
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /jitterwarn [num]");
   }
   LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
 			      (float)clOptions->maxjitterwarn);
@@ -1642,14 +1657,18 @@ bool JitterDropCommand::operator() (const char	 *message,
 
   char reply[MessageLen] = {0};
 
-  if (message[11] == ' ') {
+  if (message[11] == ' ' && isdigit(message[12])) {
     const char *maxwarn = message + 12;
     clOptions->maxjitterwarn = atoi(maxwarn);
     snprintf(reply, MessageLen, "jitterdrop is now %d",
 	     clOptions->maxjitterwarn);
-  } else {
+  } else if (message[11] == '\0' || strcmp (message + 11, " ") == 0) {
+    // Command by itself, or with one trailing space
     snprintf(reply, MessageLen, "jitterdrop is set to %d",
 	     clOptions->maxjitterwarn);
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /jitterdrop [num]");
   }
   LagInfo::setJitterThreshold(clOptions->jitterwarnthresh,
 			(float)clOptions->maxjitterwarn);
@@ -1668,14 +1687,17 @@ bool PacketLossWarnCommand::operator() (const char  *message,
   }
 
   char reply[MessageLen] = {0};
-  if (message[15] == ' ') {
+  if (message[15] == ' ' && isdigit(message[16])) {
     const char *maxloss = message + 16;
     clOptions->packetlosswarnthresh = (float) (atoi(maxloss) / 1000.0);
     snprintf(reply, MessageLen, "packetlosswarn is now %d%%",
 	     int(clOptions->packetlosswarnthresh * 1000 + 0.5));
-  } else {
+  } else if (message[15] == '\0' || strcmp (message + 15, " ") == 0) {
     snprintf(reply, MessageLen, "packetlosswarnthresh is set to %d%%",
 	     int(clOptions->packetlosswarnthresh * 1000 + 0.5));
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /packetlosswarn [percent]");
   }
   LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh,
 				  (float)clOptions->maxpacketlosswarn);
@@ -1694,12 +1716,16 @@ bool PacketLossDropCommand::operator() (const char  *message,
   }
 
   char reply[MessageLen] = {0};
-  if (message[15] == ' ') {
+  if (message[15] == ' ' && isdigit(message[16])) {
     const char *maxlosswarn = message + 16;
     clOptions->maxpacketlosswarn = atoi(maxlosswarn);
     snprintf(reply, MessageLen, "packetlossdrop is now %d", clOptions->maxpacketlosswarn);
-  } else {
+  } else if (message[15] == '\0' || strcmp (message + 15, " ") == 0) {
+    // Command by itself, or with one trailing space
     snprintf(reply, MessageLen, "packetlossdrop is set to %d", clOptions->maxpacketlosswarn);
+  } else {
+    // arguments not parseable by atoi(); send syntax information
+    snprintf(reply, MessageLen, "Syntax: /packetlossdrop [num]");
   }
   LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh,
 				  (float)clOptions->maxpacketlosswarn);
