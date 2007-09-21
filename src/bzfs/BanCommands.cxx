@@ -406,8 +406,6 @@ bool KillCommand::operator() (const char	 *message,
     if (argv.size() > 2)
       killEvent.reason = argv[2].c_str();
 
-    worldEventManager.callEvents(bz_eKillEvent,&killEvent);
-
     // need to update playerIndex ?
     if (t != killEvent.killerID) {
       playerData = GameKeeper::Player::getPlayerByIndex(killEvent.killerID);
@@ -437,6 +435,10 @@ bool KillCommand::operator() (const char	 *message,
 	       killEvent.reason.c_str());
       sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     }
+
+    // call the event
+    worldEventManager.callEvents(bz_eKillEvent,&killEvent);
+
     // kill the player
     playerKilled(killEvent.killedID, ServerPlayer, 0, -1, Flags::Null, -1);
 
