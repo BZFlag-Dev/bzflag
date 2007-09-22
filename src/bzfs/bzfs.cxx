@@ -3960,6 +3960,29 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (!toData)
 	return;
 
+      // verify that the player stealing HAS thief
+      int toPlayersFlag = toData->player.getFlag();
+      bool cheater = false;
+      if (!toData->player.haveFlag())
+	cheater = true;
+
+      FlagInfo *toFlag = FlagInfo::get(toPlayersFlag);
+      if (!toFlag)
+	cheater = true;
+
+      if (toFlag->flag.type != Flags::Thief)
+	cheater = true;
+
+      // TODO, check thief radius here
+
+      if (cheater)
+      {
+	logDebugMessage(1,"Kicking Player %s [%d] Player trying to transfer flag(no thief)\n",
+	  playerData->player.getCallSign(), t);
+	removePlayer(t, "Non Thief Cheat");
+	return;
+      }
+
       bz_FlagTransferredEventData eventData;
 
       eventData.fromPlayerID = fromData->player.getPlayerIndex();
