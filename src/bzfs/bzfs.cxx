@@ -869,7 +869,7 @@ void makeWalls ( void )
   double startAngle = -angleDelta*0.5;
   double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
 
-  double degToRad = M_PI/180.0;
+  float degToRad = (float)(M_PI/180.0);
 
   double segmentLen = (sin(angleDelta*0.5*(degToRad)) * radius)*2;
 
@@ -877,13 +877,13 @@ void makeWalls ( void )
   {
     for ( int w = 0; w < clOptions->wallSides; w++ )
     {
-      double midpointRad = sqrt(radius*radius-(segmentLen*0.5)*(segmentLen*0.5));
-      double midpointAngle = startAngle + (angleDelta*0.5) + (angleDelta*w);
+      float midpointRad = sqrtf(radius*radius-(segmentLen*0.5f)*(segmentLen*0.5f));
+      float midpointAngle = startAngle + (angleDelta*0.5f) + (angleDelta*w);
 
-      float x = sin(midpointAngle*degToRad)*midpointRad;
-      float y = cos(midpointAngle*degToRad)*midpointRad;
+      float x = sinf(midpointAngle*degToRad)*midpointRad;
+      float y = cosf(midpointAngle*degToRad)*midpointRad;
 
-      world->addWall(x, y, 0.0f, (270-midpointAngle)*degToRad, segmentLen, wallHeight);
+      world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*degToRad, segmentLen, wallHeight);
 
     }
   }
@@ -3357,8 +3357,8 @@ static void adjustTolerances()
   }
 
   // check for physics driver disabling
-  disableHeightChecks = false;
-  bool disableSpeedChecks = false;
+  disableHeightChecks = BZDB.isTrue("_disableHeightChecks");
+  bool disableSpeedChecks = BZDB.isTrue("_disableSpeedChecks");
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
@@ -3376,6 +3376,7 @@ static void adjustTolerances()
     i++;
     phydrv = PHYDRVMGR.getDriver(i);
   }
+
 
   if (disableSpeedChecks) {
     doSpeedChecks = false;
@@ -3475,52 +3476,69 @@ bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
   return false;
 }
 
+float squareAndAdd ( float v1, float v2 )
+{
+  return v1*v1+v2*v2;
+}
+
+static bool isTeleporterMotion ( GameKeeper::Player &playerData, PlayerState &state, float maxSquaredMovement, float realDist2 )
+{
+  const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
+  unsigned int i;
+  unsigned int maxTele = teleporterList.size();
+  float finalDist2   = realDist2;
+  float initialDist2   = realDist2;
+
+  // find the porter they WERE close to, and the porter they ARE close too
+  // and save off the distances from each.
+  for (i = 0; i < maxTele; i++)
+  {
+    Obstacle *currentTele = teleporterList[i];
+    const float *telePosition = currentTele->getPosition();
+    float deltaInitial2 = squareAndAdd(state.pos[0] - telePosition[0],state.pos[1] - telePosition[1]);
+    float deltaFinal2 = squareAndAdd(playerData.lastState.pos[0] - telePosition[0],playerData.lastState.pos[1] - telePosition[1]);
+
+    if (deltaInitial2 < initialDist2)
+      initialDist2 = deltaInitial2;
+
+    if (deltaFinal2 < finalDist2)
+      finalDist2 = deltaFinal2;
+  }
+
+  // if the distance from where you were, to your probable entry porter
+  // plus the distance from where you are to your probable exit porter
+  // is greater then the max move, your a cheater.
+  if (sqrt(initialDist2) + sqrt(finalDist2) <= sqrt(maxSquaredMovement))
+    return false;
+
+  return true;
+}
+
 // check the distance to see if they went WAY too far
-static bool isCheatingMovement(GameKeeper::Player &playerData,
-			       PlayerState &state,
-			       float maxSquaredMovement,
-			       int t) {
+static bool isCheatingMovement(GameKeeper::Player &playerData, PlayerState &state, float maxMovement, int t)
+{
+  // easy out, if we arn't doing distance checks.
+  if (!BZDB.isTrue("_enableDistanceCheck"))
+    return false;
+
   float movementDelta[2];
   movementDelta[0] = state.pos[0] - playerData.lastState.pos[0];
   movementDelta[1] = state.pos[1] - playerData.lastState.pos[1];
 
-  float realDist2 = movementDelta[0] * movementDelta[0]
-    + movementDelta[1] * movementDelta[1];
-  if (realDist2 <= maxSquaredMovement)
+  float realDist2 = squareAndAdd(movementDelta[0], movementDelta[1]);
+  logDebugMessage(4,"isCheatingMovement: dist %f, maxDist %f\n",sqrt(realDist2),maxMovement);
+
+  // if the movement is less then the max, they are cool
+  if (realDist2 <= (maxMovement*maxMovement))
     return false;
 
-  const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
-  unsigned int i;
-  unsigned int maxTele = teleporterList.size();
-  float initialDist2 = realDist2;
-  float finalDist2   = realDist2;
-  for (i = 0; i < maxTele; i++) {
-    Obstacle *currentTele = teleporterList[i];
-    const float *telePosition = currentTele->getPosition();
-    float deltaInitial2 = (state.pos[0] - telePosition[0])
-      * (state.pos[0] - telePosition[0])
-      + (state.pos[1] - telePosition[1])
-      * (state.pos[1] - telePosition[1]);
-    float deltaFinal2 = (playerData.lastState.pos[0] - telePosition[0])
-      * (playerData.lastState.pos[0] - telePosition[0])
-      + (playerData.lastState.pos[1] - telePosition[1])
-      * (playerData.lastState.pos[1] - telePosition[1]);
-    if (deltaInitial2 < initialDist2)
-      initialDist2 = deltaInitial2;
-    if (deltaFinal2 < finalDist2)
-      finalDist2 = deltaFinal2;
-  }
-  if (sqrt(initialDist2) + sqrt(finalDist2) <= sqrt(maxSquaredMovement))
-    return false;
+  bool kickem = false;
 
-  logDebugMessage
-    (1,
-     "Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n",
-     playerData.player.getCallSign(),
-     t,
-     sqrt(realDist2),
-     sqrt(maxSquaredMovement));
-  return true;
+  kickem =  !isTeleporterMotion(playerData,state,maxMovement*maxMovement,realDist2);
+
+  if (kickem)
+   logDebugMessage(1,"Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n", playerData.player.getCallSign(),t,sqrt(realDist2),maxMovement);
+  return kickem;
 }
 
 static void handleCommand(int t, const void *rawbuf, bool udp)
@@ -4218,41 +4236,46 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	      float realtol = 1.1f;
 	      if (speedTolerance > 1.0f)
 		      realtol = speedTolerance;
-	      maxPlanarSpeedSqr *= realtol;
-	      if (curPlanarSpeedSqr > maxPlanarSpeedSqr) 
+
+	      if (realtol < 100.0f )
 	      {
-		if (logOnly)
+		maxPlanarSpeedSqr *= realtol;
+		maxPlanarSpeed *= realtol;
+
+		if (curPlanarSpeedSqr > maxPlanarSpeedSqr) 
 		{
-		  logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
-		  playerData->player.getCallSign(), t,
-		  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		} 
-		else
+		  if (logOnly)
+		  {
+		    logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+		    playerData->player.getCallSign(), t,
+		    sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		  } 
+		  else
+		  {
+		    logDebugMessage(1,  "Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+					playerData->player.getCallSign(), t, sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		    sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
+		    removePlayer(t, "too fast");
+		  }
+		  break;
+		}
+
+
+		// check the distance to see if they went WAY too far
+		// max time since last update
+		float timeDelta = (float)now.getSeconds() - playerData->serverTimeStamp;
+		if (timeDelta < 0.005f)
+		  timeDelta = 0.005f;
+
+		// the maximum distance they could have moved (assume 0 lag)
+		float maxDist = maxPlanarSpeed * timeDelta;
+		logDebugMessage(4,"Speed log, max %f, time %f, dist %f\n",maxPlanarSpeed,timeDelta,maxDist);
+
+		if (isCheatingMovement(*playerData, state, maxDist, t) && !logOnly)
 		{
-		  logDebugMessage(1,  "Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-				      playerData->player.getCallSign(), t,
-				      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 		  sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
 		  removePlayer(t, "too fast");
 		}
-		break;
-	      }
-
-	      // check the distance to see if they went WAY too far
-	      // max time since last update
-	      float timeDelta = (float)now.getSeconds()
-		- playerData->serverTimeStamp;
-	      if (timeDelta < 0.5f)
-		timeDelta = 0.5f;
-
-	      // the maximum distance they could have moved (assume 0 lag)
-	      float maxDist2 = maxPlanarSpeedSqr * timeDelta * timeDelta;
-
-	      if (isCheatingMovement(*playerData, state, maxDist2 * 1.21, t)
-		  && !logOnly) {
-		sendMessage(ServerPlayer, t,
-			    "Autokick: Player tank is moving too fast.");
-		removePlayer(t, "too fast");
 	      }
 	    }
 	  }
