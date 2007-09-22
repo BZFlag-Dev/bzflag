@@ -438,12 +438,13 @@ static std::string cmdAutoPilot(const std::string&,
   if (args.size() != 0)
     return "usage: autopilot";
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) || ! myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
   }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
 
