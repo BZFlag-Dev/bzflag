@@ -3977,9 +3977,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       if (cheater)
       {
-	logDebugMessage(1,"Kicking Player %s [%d] Player trying to transfer flag(no thief)\n",
+	logDebugMessage(1,"No Theif check %s [%d] Player trying to transfer to target with out thief\n",
 	  playerData->player.getCallSign(), t);
-	removePlayer(t, "Non Thief Cheat");
+	if (0)
+	  removePlayer(playerData->getIndex(), "Non Thief Cheat");
 	return;
       }
 
