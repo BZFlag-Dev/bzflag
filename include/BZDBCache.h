@@ -63,6 +63,7 @@ class BZDBCache
     static Float pulseDepth;
     static Bool  showCollisionGrid;
     static Bool  showCullingGrid;
+    static Bool  useMeshForRadar;
 
     static Bool drawCelestial;
     static Bool drawClouds;
