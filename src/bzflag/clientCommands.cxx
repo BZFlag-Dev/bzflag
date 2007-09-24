@@ -434,7 +434,15 @@ static std::string cmdAutoPilot(const std::string&,
   if (args.size() != 0)
     return "usage: autopilot";
 
+  // don't enable autopilot until we've fully joined and checked the value
+  // of the server-side _disableBots
+  if (! BZDB.isSet(StateDatabase::BZDB_DISABLEBOTS))
+    return std::string();
+
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  if (!BZDB.isTrue(StateDatabase::BZDB_TANKWIDTH))
+    return std::string();
 
   if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && ! myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);

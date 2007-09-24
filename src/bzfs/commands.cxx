@@ -471,6 +471,15 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ModCountCommand : ServerCommand {
+public:
+  ModCountCommand();
+
+  virtual bool operator() (const char *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
@@ -523,6 +532,7 @@ static ReplayCommand      replayCommand;
 static SayCommand	  sayCommand;
 static CmdList		  cmdList;
 static CmdHelp		  cmdHelp;
+static ModCountCommand    modCountCommand;
 
 CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
 CmdList::CmdList()			 : ServerCommand("/?",
@@ -625,6 +635,9 @@ SayCommand::SayCommand()		 : ServerCommand("/say",
   "[message] - generate a public message sent by the server") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
+ModCountCommand::ModCountCommand() : ServerCommand("/modcount",
+  "[+-seconds] - adjust countdown (if any)") {}
+
 
 class NoDigit {
 public:
@@ -3487,6 +3500,53 @@ bool DateTimeCommand::operator() (const char	 *,
   sendMessage(ServerPlayer, t, timeStr);
   return true;
 }
+
+bool ModCountCommand::operator() (const char*message,
+				     GameKeeper::Player *playerData)
+{
+  size_t messageStart = 0;
+  int t = playerData->getIndex();
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::modCount)) {
+    char reply[MessageLen] = {0};
+    snprintf(reply, MessageLen, "You do not have permission to run the /modcount command");
+    sendMessage(ServerPlayer, t, reply);
+    return true;
+  }
+    
+  std::string messageText = &message[9];
+ 
+  // skip any leading whitespace
+  while ((messageStart < messageText.size()) &&
+	 (isspace(messageText[messageStart]))) {
+    messageStart++;
+  }
+
+  if (messageStart == messageText.size()) {
+    sendMessage(ServerPlayer, t, "Usage: /modcount {+|-} SECONDS");
+    return true;
+  }
+  if (!countdownActive && countdownDelay <= 0) {
+    char reply[MessageLen] = {0};
+    snprintf(reply, MessageLen, "%s, there is no current countdown in progress", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, t, reply);
+    return true;
+  }
+  
+  messageText.erase(0, --messageStart);
+  clOptions->addedTime += atof((messageText.c_str())); //remember to add the time
+ 
+  if (countdownDelay > 0) { //we are currently counting down to start
+    char reply[MessageLen] = {0};
+    snprintf(reply, MessageLen, "%s, the countdown will be adjusted by %f when the match starts",
+	     playerData->player.getCallSign(), clOptions->addedTime);
+    sendMessage(ServerPlayer, t, reply);
+    return true;
+  }
+  
+  return true;
+}
+
 
 
 // parse server comands

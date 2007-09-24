@@ -72,6 +72,7 @@ public:
       jitterwarn,
       listPerms,
       masterBan,
+      modCount,
       mute,
       packetlosswarn,
       playerList,
