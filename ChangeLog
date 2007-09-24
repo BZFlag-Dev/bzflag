@@ -11,6 +11,10 @@ HEAD as 2.1 for release as 2.2
 BZFlag 2.0.9
 ------------
 
+* Add /modcount command - Joshua Bodine
+* Fix bug where users get locked into autopilot mode - Joshua Bodine
+* Fix bug where poll results would not be announced - Joshua Bodine
+* Fix antikill notice bug - Joshua Bodine
 * Add -adminlagannounce and -lagannounce - Thomas Stauer
 * Check for talk permission for part/quit messages  - uso
 * First map no longer ignored in Start Server menu - Ravu al Hemio
