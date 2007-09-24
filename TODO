@@ -31,6 +31,21 @@ Required for release of 2.2.:
 
 Should be considered for the release of 2.2:
 
+* Remove all uses of GetDirectMessage buffer. Replace with a new class that
+  allocates it's own buffer, and has it's own pack and unpack methods.
+  Store these message classes in a list and send them out when needed,
+  so that we don't have people walking over each others buffers. This will
+  also be nice to eventualy throw the networking send/receive into a thread.
+  
+* Don't call "got blowed up" on the local client when it gets shot, send 
+  a new "I got hit" message asking the server what to do. Then have the 
+  server send out the death, flag transfer, or flag drop for shield message.
+  This will fix a number of cheats, and allow the API to modify the game play
+  in a number of intersting ways (real freeze tag, etc ).
+  
+* Move all the flag effects ( wings, OO, and other non shot effects ) into
+  an enumeration that is sent with the flag, to allow for truely custom flags.
+
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
   or just say it's global or nothing
