@@ -629,10 +629,7 @@ PingPacket getTeamCounts()
 	  pingReply.purpleCount++;
 	  break;
 
-	case AutomaticTeam:
-	case NoTeam:
-	case ObserverTeam:
-	  // don't count these
+	default:
 	  break;
 	}
       }
