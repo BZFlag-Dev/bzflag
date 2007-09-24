@@ -538,7 +538,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
   broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
 
-  // now do everyone who dosn't have network
+  // now do everyone who doesn't have network
   for (int i = 0; i < curMaxPlayers; i++)
   {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);

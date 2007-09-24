@@ -257,6 +257,13 @@ typedef enum
   eLastShotType
 }bz_eShotType;
 
+typedef enum
+{
+  eGoodFlag = 0,
+  eBadFlag,
+  eLastFlagQuality
+}bz_eFlagQuality;
+
 //utility classes
 class BZF_API bz_ApiString
 {
@@ -2140,6 +2147,11 @@ private:
 BZF_API int bz_addServerSidePlayer ( bz_ServerSidePlayerHandler *handler );
 BZF_API bool bz_removeServerSidePlayer ( int playerID, bz_ServerSidePlayerHandler *handler ); // you have to pass in the handler to ensure you "own" the player
 
+// Note: there is NO bz_UnregisterCustomFlag, 'cause that would jack up connected clients.
+// If you really need to unregister a flag, shut down the server.
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
+				   const char* helpString, bz_eShotType shotType, 
+				   bz_eFlagQuality quality);
 
 #endif //_BZFS_API_H_
 

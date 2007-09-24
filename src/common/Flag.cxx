@@ -18,6 +18,8 @@
 /* system implementation headers */
 #include <math.h>
 #include <string>
+#include <assert.h>
+#include <string.h>
 
 /* common implementation headers */
 #include "Team.h"
@@ -25,9 +27,9 @@
 #include "TextUtils.h"
 
 
-int FlagType::flagCount = 0;
 FlagSet *FlagType::flagSets = NULL;
 const int FlagType::packSize = FlagPackSize;
+FlagSet FlagType::customFlags;
 
 static const char NullString[2] = { '\0', '\0' };
 
@@ -185,6 +187,8 @@ namespace Flags {
 
   void kill()
   {
+    clearCustomFlags();
+
     /* alphabetical order */
     delete Agility;
     delete Blindness;
@@ -237,6 +241,27 @@ namespace Flags {
 
     delete[] FlagType::flagSets;
   }
+
+  void clearCustomFlags()
+  {
+    FlagSet::iterator itr, nitr;
+    for (int q = 0; q < (int)NumQualities; ++q) {
+      for (itr = FlagType::flagSets[q].begin(); itr != FlagType::flagSets[q].end(); ++itr) {
+	if ((*itr)->custom) {
+	  nitr = itr;
+	  ++nitr;
+	  delete (*itr)->flagAbbv;
+	  delete (*itr)->flagName;
+	  delete (*itr)->flagHelp;
+	  delete (*itr);
+	  FlagType::flagSets[q].erase(itr);
+	  itr = nitr;
+	  if (itr == FlagType::flagSets[q].end()) break;
+	}
+      }
+    }
+    FlagType::customFlags.clear();
+  }
 }
 
 void* FlagType::pack(void* buf) const
@@ -259,6 +284,48 @@ void* FlagType::unpack(void* buf, FlagType* &type)
   buf = nboUnpackUByte(buf, abbv[0]);
   buf = nboUnpackUByte(buf, abbv[1]);
   type = Flag::getDescFromAbbreviation((const char *)abbv);
+  return buf;
+}
+
+void* FlagType::packCustom(void* buf) const
+{
+  buf = pack(buf);
+  buf = nboPackUByte(buf, uint8_t(flagQuality));
+  buf = nboPackUByte(buf, uint8_t(flagShot));
+  buf = nboPackStdString(buf, flagName);
+  buf = nboPackStdString(buf, flagHelp);
+  return buf;
+}
+
+void* FlagType::unpackCustom(void* buf, FlagType* &type)
+{
+  uint8_t *abbv = new uint8_t[3];
+  abbv[0]=abbv[1]=abbv[2]=0;
+  buf = nboUnpackUByte(buf, abbv[0]);
+  buf = nboUnpackUByte(buf, abbv[1]);
+
+  uint8_t quality, shot;
+  buf = nboUnpackUByte(buf, quality);
+  buf = nboUnpackUByte(buf, shot);
+
+  // make copies to keep - note that these will need to be deleted.
+  std::string sName, sHelp;
+  buf = nboUnpackStdString(buf, sName);
+  buf = nboUnpackStdString(buf, sHelp);
+  char* name = new char[33];
+  char* help = new char[129];
+  strcpy(name, sName.c_str());
+  strcpy(help, sHelp.c_str());
+
+  FlagEndurance e = FlagUnstable;
+  switch((FlagQuality)quality) {
+    case FlagGood: e = FlagUnstable; break;
+    case FlagBad: e = FlagSticky; break;
+    default: assert(false); // shouldn't happen
+  }
+
+  type = new FlagType(name, reinterpret_cast<const char*>(&abbv[0]),
+    e, (ShotType)shot, (FlagQuality)quality, NoTeam, help, true);
   return buf;
 }
 

@@ -3218,6 +3218,14 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       handleFlagNegotiation(msg, len);
       break;
 
+    case MsgFlagType: 
+      {
+      FlagType* typ = NULL;
+      FlagType::unpackCustom(msg, typ);
+      logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
+      break;
+      }
+
     case MsgGameSettings:
       handleGameSettings(msg);
       break;
@@ -5053,6 +5061,9 @@ void		leaveGame()
 
   // reset the BZDB variables
   BZDB.iterate(resetServerVar, NULL);
+
+  // purge any custom flags we may have accumulated
+  Flags::clearCustomFlags();
 
   return;
 }

@@ -4504,6 +4504,50 @@ BZF_API void bz_changeTeam(int player, bz_eTeamType _team)
   sendSetTeam(playerIndex, realTeam);
 }
 
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
+				   const char* helpString, bz_eShotType shotType, 
+				   bz_eFlagQuality quality)
+{
+  // require defined fields
+  if (!abbr || !name || !helpString)
+    return false;
+
+  // length limits
+  if ((strlen(abbr) > 2) || (strlen(name) > 32) || (strlen(helpString) > 128))
+    return false;
+
+  // don't register an existing flag (i.e. can't override builtins)
+  if (Flag::getDescFromAbbreviation(abbr) != Flags::Null)
+    return false;
+
+  FlagEndurance e = FlagUnstable;
+  switch(quality) {
+    case eGoodFlag: e = FlagUnstable; break;
+    case eBadFlag: e = FlagSticky; break;
+    default: return false; // shouldn't happen
+  }
+
+  /* let this pointer dangle.  the constructor has taken care of all the real 
+     work on the server side. */
+  FlagType* tmp = new FlagType(name, abbr, e, (ShotType)shotType, (FlagQuality)quality,
+			       NoTeam, helpString, true);
+
+  /* default the shot limit.  note that -sl will still take effect, if this plugin is
+     loaded from the command line or config file, since it's processed in finalization */
+  clOptions->flagLimit[tmp] = -1;
+
+  /* notify existing players (if any) about the new flag type.
+     this behavior is a bit questionable, but seems to be the Right Thing(tm) to do.
+     new clients will get the notification during flag negotiation, which is better. */
+  char* buf = getDirectMessageBuffer();
+  char* bufStart = buf;
+  buf = (char*)tmp->packCustom(buf);
+  broadcastMessage(MsgFlagType, buf-bufStart, bufStart);
+
+  return true;
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -3895,7 +3895,7 @@ static void doTickEvent(void)
 
 float getAPIMaxWaitTime ( void )
 {
-  float min = 99999999999.00;
+  float min = (float)TimeKeeper::getSunExplodeTime().getSeconds();
   std::map<std::string,float>::iterator itr = APIWaitTimes.begin();
   while(itr != APIWaitTimes.end())
   {

@@ -6,7 +6,7 @@
 BZFlag 2.1.x
 ------------
 
-
+* Allow plugins to register custom flag types - Daniel Remenak
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * improved French localization - Christophe Henry
 * clean up various keypress warnings, add slow motion warning - Sean Morrison
