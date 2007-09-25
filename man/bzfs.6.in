@@ -930,6 +930,15 @@ Change the number of lag warnings given before a player is kicked. Example:
 /lagdrop 3
 .ft R
 
+.TP 
+.B /modcount [\fIseconds\fR]
+Change the time on the clock by the specified number of seconds. Example:
+.ft CW
+.nf
+.ne 2
+/modcount +320
+.ft R
+
 .TP
 .B /mute {\fI#slot\fR|\fIcallsign\fR}
 Allows a server admin to remove the ability for a player to communicate with
