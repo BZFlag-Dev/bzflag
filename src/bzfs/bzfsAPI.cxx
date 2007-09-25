@@ -2824,7 +2824,7 @@ BZF_API bool bz_setWorldSize(float size, float wallHeight)
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_setClientWorldDowloadURL(const char *URL)
+BZF_API void bz_setClientWorldDownloadURL(const char *URL)
 {
   clOptions->cacheURL.clear();
   if(URL)
@@ -2833,7 +2833,7 @@ BZF_API void bz_setClientWorldDowloadURL(const char *URL)
 
 //-------------------------------------------------------------------------
 
-BZF_API const bz_ApiString bz_getClientWorldDowloadURL(void)
+BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
 {
   bz_ApiString URL;
   if(clOptions->cacheURL.size())

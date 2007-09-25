@@ -1655,8 +1655,8 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
 BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays );
 
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
-BZF_API void bz_setClientWorldDowloadURL( const char* URL );
-BZF_API const bz_ApiString bz_getClientWorldDowloadURL( void );
+BZF_API void bz_setClientWorldDownloadURL( const char* URL );
+BZF_API const bz_ApiString bz_getClientWorldDownloadURL( void );
 BZF_API bool bz_saveWorldCacheFile( const char* file );
 BZF_API unsigned int bz_getWorldCacheSize ( void );
 BZF_API unsigned int bz_getWorldCacheData ( unsigned char *data );
