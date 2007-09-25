@@ -1898,14 +1898,14 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight )
 	return true;
 }
 
-BZF_API void bz_setClientWorldDowloadURL( const char* URL )
+BZF_API void bz_setClientWorldDownloadURL( const char* URL )
 {
 	clOptions->cacheURL.clear();
 	if(URL)
 		clOptions->cacheURL = URL;
 }
 
-BZF_API const bzApiString bz_getClientWorldDowloadURL( void )
+BZF_API const bzApiString bz_getClientWorldDownloadURL( void )
 {
 	bzApiString URL;
 	if (clOptions->cacheURL.size())
