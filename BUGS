@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Looks like onspawn/ondeath world weapon events get ignored by the event
+  handler.  Probably ought to handle them since they're doc'ed.
+
 - Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP
   The message doesn't display on the client and the client crashes
   Possibly related to 
