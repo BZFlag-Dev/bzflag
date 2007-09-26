@@ -98,7 +98,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
   {
     killHTTPServer();
 
-    if (!bz_getPublic() || bz_getClientWorldDowloadURL().size())
+    if (!bz_getPublic() || bz_getClientWorldDownloadURL().size())
       return;
 
     mapDataSize = bz_getWorldCacheSize();
@@ -120,7 +120,7 @@ void FastMapEventHandler::process ( bz_EventData *eventData )
     std::string url = format("HTTP://%s/%s",hostport.c_str(),mapName.c_str());
 
     bz_debugMessagef(2,"FastMap: Running local HTTP server for maps using URL %s",url.c_str());
-    bz_setClientWorldDowloadURL(url.c_str());
+    bz_setClientWorldDownloadURL(url.c_str());
   }
   else if ( eventData->eventType == bz_eTickEvent)
   {
