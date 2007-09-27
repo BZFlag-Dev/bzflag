@@ -35,6 +35,3 @@ lod 0.2 "lowerResFile.obj"
 // Note due to how LODs work, only the material of the first face in each
 // obj group will be used for all faces in that group if the OBJ is used
 // as an LOD
-
-// Also, flip z and the XZ swaps do not work for the LOD generator
-// make sure your model is totaly in world space (Z UP) before you export.
