@@ -90,6 +90,43 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file );
 void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes );
 void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file );
 
+std::string writeMaterial ( CMaterial &material, const std::string &name )
+{
+  std::string out;
+
+  out += TextUtils::format("material\n  name %s\n",name.c_str());
+  if ( material.texture.size())
+  {
+    std::string texName = texdir + material.texture;
+    // change the extension to png
+    char *p = strrchr(texName.c_str(), '.');
+    if (p) 
+    {
+      texName.resize(p - texName.c_str());
+      texName += ".png";
+    }
+    else 
+      texName += ".png";
+    out += TextUtils::format("  texture %s\n", texName.c_str());
+  }
+  else
+    out += TextUtils::format("  notextures\n");
+
+  if (useAmbient)
+    out += TextUtils::format("  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+  if (useDiffuse)
+    out += TextUtils::format("  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+  if (useSpecular)
+    out += TextUtils::format("  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+  if (useShininess)
+    out += TextUtils::format("  shininess %f\n", material.shine);
+  if (useEmission)
+    out += TextUtils::format("  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
+
+  out += TextUtils::format("end\n\n");
+  return out;
+}
+
 static void writeBZW  ( CModel &model, std::string file )
 {
   if (model.meshes.size() < 1 )
@@ -104,38 +141,7 @@ static void writeBZW  ( CModel &model, std::string file )
     tmMaterialMap::iterator materialItr = model.materials.begin();
     while ( materialItr != model.materials.end() )
     {
-      CMaterial &material = materialItr->second;
-      fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
-      if ( material.texture.size())
-      {
-	std::string texName = texdir + material.texture;
-	  // change the extension to png
-	  char *p = strrchr(texName.c_str(), '.');
-	  if (p) 
-	  {
-	    texName.resize(p - texName.c_str());
-	    texName += ".png";
-	  }
-	  else 
-	    texName += ".png";
-	fprintf (fp,"  texture %s\n", texName.c_str());
-      }
-      else
-	fprintf (fp,"  notextures\n");
-
-    if (useAmbient)
-      fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
-    if (useDiffuse)
-      fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
-    if (useSpecular)
-      fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
-    if (useShininess)
-      fprintf (fp,"  shininess %f\n", material.shine);
-    if (useEmission)
-      fprintf (fp,"  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
-
-      fprintf (fp,"end\n\n");
-
+      fprintf (fp,"%s",writeMaterial(materialItr->second,materialItr->first).c_str());
       materialItr++;
     }
     fprintf (fp,"\n");
@@ -707,6 +713,22 @@ bool computeExtents ( CModel &model, CMesh &subMesh, MeshExtents &extents )
   return didOne;
 }
 
+
+int computeCorner ( CMesh &mesh, CFace &face, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+{
+  int vertIndex = getNewIndex(mesh.verts[face.verts[index]],v);
+  int normalIndex = getNewIndex(mesh.normals[face.normals[index]],n);
+  int uvIndex = getNewIndex(mesh.texCoords[face.texCoords[index]],u);
+
+
+  CVertex vert;
+  vert.x = (float)vertIndex;
+  vert.y = (float)normalIndex;
+  vert.z = (float)uvIndex;
+
+  return getNewIndex(vert,c);
+}
+
 void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 {
   if (!drawInfoMeshes.valid())
@@ -724,6 +746,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   std::string boundingGeoSection;
   std::string drawInfoSection;
 
+  std::string invisibleMatName = "bounding.invisible";
+
   // the 3 major lists
   tvVertList  verts;
   tvVertList  norms;
@@ -734,8 +758,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   // to leverage the existing functions for sorting indexes.
   tvVertList  corners;
 
-  // build the static geo into
-
+  // build the static geo into it's buffer
   if ( drawInfoMeshes.staticMesh.meshes.size())
   {
     CModel &staticModel = drawInfoMeshes.staticMesh;
@@ -769,10 +792,211 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     }
   }
 
+  // write the bounding geo to the bufer, with the invisible mesh
   if ( drawInfoMeshes.boundingMesh.meshes.size() )
   {
+    CModel &boundingMesh = drawInfoMeshes.boundingMesh;
+    for ( int m = 0; m < (int)boundingMesh.meshes.size(); m++ )
+    {
+      CMesh &subMesh = boundingMesh.meshes[m];
+      for (int f = 0; f < (int)subMesh.faces.size();f++)
+      {
+	CFace &face = subMesh.faces[f];
 
+	staticGeoSection += "face\n";
+	std::string vert = "vertices";
+	std::string norm = "normals";
+
+	for ( int v = 0; v < (int)face.verts.size(); v++ )
+	{
+	  vert += TextUtils::format(" %d",getNewIndex(subMesh.verts[face.verts[v]],verts));
+	  norm += TextUtils::format(" %d",getNewIndex(subMesh.normals[face.normals[v]],norms));
+	}
+	staticGeoSection += vert + "\n" + norm + "\n";
+
+	staticGeoSection += "matref " + invisibleMatName + "\n";
+	staticGeoSection += "endface\n\n";
+      }
+    }
   }
+
+  // now we are doing the real draw info part
+  // the first model must be valid, since we use that as lod 0, and for bounds calcs
+ if (drawInfoMeshes.lodMeshes.size() && drawInfoMeshes.lodMeshes[0].meshes.size() )
+  {
+    // use the bounds of the first LOD for the bounds of the draw info
+    
+    std::string cornerSection;
+    std::vector<std::string> lodSections;
+
+    MeshExtents	lod0Extents;
+    if (computeExtents(drawInfoMeshes.lodMeshes[0],lod0Extents))
+    {
+      drawInfoSection += "drawInfo\n";
+      drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
+      drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
+
+      // compute the LOD sections
+      for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
+      {
+	CModel &lodModel = drawInfoMeshes.lodMeshes[l];
+	std::string section;
+	if ( lodModel.meshes.size() )
+	{
+	  section += TextUtils::format("lod #%d\n",l );
+	  if (l == 0)
+	    section += "lengthPerPixel 0\n";
+	  else
+	    section += TextUtils::format("lengthPerPixel %f\n",drawInfoMeshes.lodPixelDistances[l]);
+	  
+	  for ( int m = 0; m < (int)lodModel.meshes.size(); m++ )
+	  {
+	    CMesh &mesh = lodModel.meshes[m];
+	    if ( mesh.faces.size())
+	    {
+	      // we always use the first face's material for the lod
+	      section += "matref " + mesh.faces[0].material + "\n";
+	      section += "dlist\n";
+
+	      MeshExtents subMeshExtents;
+
+	      computeExtents(lodModel,mesh,subMeshExtents);
+	      section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
+
+	      bool lastTriangles = false;
+	      for ( int f = 0; f < (int)mesh.faces.size(); f++ )
+	      {
+		CFace &face = mesh.faces[f];
+		if ( f = 0 )
+		{
+		  lastTriangles = face.verts.size() == 3;
+
+		  if (lastTriangles)
+		    section += "tris";
+		  else
+		    section += "polygon";
+
+		  for ( int v = 0; v < (int)face.verts.size(); v++ )
+		    section += TextUtils::format(" %d",computeCorner(mesh,face,v,verts,norms,uvs,corners));
+
+		  if (!lastTriangles)
+		    section += "\n";
+		}
+		else
+		{
+		  bool trianglesThisTime = face.verts.size() == 3;
+		  if (lastTriangles && !trianglesThisTime)
+		    section += "\n";
+
+		  if ( !trianglesThisTime )
+		    section += "polygon";
+		  else if ( !lastTriangles && trianglesThisTime )
+		    section += "tris";
+
+		  for ( int v = 0; v < (int)face.verts.size(); v++ )
+		    section += TextUtils::format(" %d",computeCorner(mesh,face,v,verts,norms,uvs,corners));
+
+		  if (!trianglesThisTime)
+		    section += "\n";
+      
+		  lastTriangles = trianglesThisTime;
+		}
+	      }
+	      section += "\nend\n"; // this ends the material!
+	    }
+	  }
+	  section += TextUtils::format("end #lod %d\n",l );
+
+	  lodSections.push_back(section);
+	}
+      }
+    
+      // build up the corners
+      
+      for ( int c = 0; c < (int)corners.size(); c++ )
+	cornerSection += TextUtils::format("corner %d %d %d\n",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
+    
+      drawInfoSection += "\n#corners\n" + cornerSection;
+      if (lodSections.size())
+	drawInfoSection += "\n#lods\n";
+      for ( int l = 0; l < (int)lodSections.size(); l++ )
+      {
+	drawInfoSection += "\n";
+	drawInfoSection += lodSections[l];
+	drawInfoSection += "\n";
+      }
+      drawInfoSection += "end #drawinfo\n";
+    }
+  }
+
+  // generate the indexes section
+  // first verts
+  inxexesSection += "#indexes\n";
+  for ( int v = 0; v < (int)verts.size(); v++ )
+    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x,verts[v].y,verts[v].z);
+  for ( int n = 0; n < (int)norms.size(); n++ )
+    inxexesSection += TextUtils::format("normal %f %f %f\n",norms[n].x,norms[n].y,norms[n].z);
+  for ( int u = 0; u < (int)uvs.size(); u++ )
+    inxexesSection += TextUtils::format("texcoord %f %f\n",uvs[u].u,uvs[u].v);
+
+  if ( boundingGeoSection.size() )
+    materialsSection += "\nmaterial\nname " + invisibleMatName + "diffuse 0 0 0 0\nnoradar\nnoshadow\nnoculling\nnosorting\nend\n";
+
+  tmMaterialMap::iterator matItr = drawInfoMeshes.staticMesh.materials.begin();
+  while (matItr != drawInfoMeshes.staticMesh.materials.end())
+  {
+    materialsSection += writeMaterial(matItr->second,matItr->first) + "\n";
+    matItr++;
+  }
+  
+  for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
+  {
+    matItr = drawInfoMeshes.lodMeshes[l].materials.begin();
+    while (matItr != drawInfoMeshes.lodMeshes[l].materials.end())
+    {
+      materialsSection += writeMaterial(matItr->second,matItr->first) + "\n";
+      matItr++;
+    }
+  }
+
+  FILE *fp = fopen (file.c_str(),"wt");
+  if (!fp)
+    return;
+
+  if (useMaterials)
+    fprintf(fp,"%s",materialsSection.c_str());
+
+  if (groupName.size() > 0)
+    fprintf (fp, "define %s\n", groupName.c_str());
+
+  fprintf (fp,"mesh\n");
+
+  fprintf (fp,"# vertices: %d\n", (int)verts.size());
+  fprintf (fp,"# normals: %d\n", (int)norms.size());
+  fprintf (fp,"# texcoords: %d\n", (int)uvs.size());
+
+  if (useSmoothBounce)
+    fprintf (fp,"  smoothbounce\n");
+
+  fprintf(fp,"%s",inxexesSection.c_str());
+  fprintf(fp,"%s",staticGeoSection.c_str());
+  fprintf(fp,"%s",drawInfoSection.c_str());
+
+  fprintf (fp,"end # mesh\n");
+
+  if (groupName.size() > 0) 
+    fprintf (fp, "enddef # %s\n", groupName.c_str());
+
+  // do the custom objects.
+  for ( unsigned int i = 0; i < drawInfoMeshes.staticMesh.customObjects.size(); i++ )
+  {
+    fprintf (fp, "%s\n", drawInfoMeshes.staticMesh.customObjects[i].name.c_str());
+    for (unsigned int j = 0; j < drawInfoMeshes.staticMesh.customObjects[i].params.size(); j++ )
+      fprintf (fp, "  %s\n", drawInfoMeshes.staticMesh.customObjects[i].params[j].c_str());
+    fprintf (fp, "end\n\n");
+  }
+
+  fclose(fp);
 }
 
 
