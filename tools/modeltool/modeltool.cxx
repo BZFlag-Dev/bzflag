@@ -58,6 +58,37 @@ float globalScale = 1.0f;
 float globalShift[3] = {0,0,0};
 std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
 
+typedef struct
+{
+  std::string staticFile;
+  std::string boundingFile;
+  std::vector<std::string> lodFiles;
+  std::vector<float> lodPixelDistances;
+}DrawInfoConfig;
+
+typedef struct
+{
+  CModel staticMesh;
+  CModel boundingMesh;
+  std::vector<CModel> lodMeshes;
+  std::vector<float>  lodPixelDistances;
+
+  bool valid ( void  )
+  {
+    if (staticMesh.meshes.size())
+      return true;
+    if (boundingMesh.meshes.size())
+      return true;
+    if (lodMeshes.size())
+      return true;
+
+    return false;
+  }
+}DrawInfoMeshes;
+
+void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file );
+void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes );
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file );
 
 static void writeBZW  ( CModel &model, std::string file )
 {
@@ -276,7 +307,7 @@ int main(int argc, char* argv[])
     command = TextUtils::tolower(command);
 
     if (command == "-yz")
-	    flipYZ = true;
+      flipYZ = true;
     else if (command == "-g")
     {
       if ((i + 1) < argc)
@@ -301,21 +332,21 @@ int main(int argc, char* argv[])
 	printf ("missing -tx argument\n");
     }
     else if (command == "-sm") 
-	    useSmoothBounce = true;
+      useSmoothBounce = true;
     else if (command == "-n") 
-	    useNormals = false;
+      useNormals = false;
     else if (command == "-t")
-	    useTexcoords = false;
+      useTexcoords = false;
     else if (command == "-m")
-	    useMaterials = false;
+      useMaterials = false;
     else if (command == "-a") 
-	    useAmbient = false;
+      useAmbient = false;
     else if (command == "-d") 
-	    useDiffuse = false;
+      useDiffuse = false;
     else if (command == "-s")
-	    useSpecular = false;
+      useSpecular = false;
     else if (command == "-sh") 
-	    useShininess = false;
+      useShininess = false;  
     else if (command == "-sf")
     {
       if ((i + 1) < argc)
@@ -390,6 +421,19 @@ int main(int argc, char* argv[])
     Quake3Level	level;
     level.loadFromFile(input.c_str());
     level.dumpToModel(model);
+  }
+  else if ( TextUtils::tolower(extenstion) == "diconf" )
+  {
+    DrawInfoConfig  config;
+    DrawInfoMeshes  meshes;
+    parseDrawInfoConfig(config,input);
+    buildDrawInfoMeshesFromConfig(config,meshes);
+
+    if ( meshes.valid())
+      printf("no valid meshes written from %s\n", input.c_str());
+    else
+      printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
+    return 0; 
   }
   else
   {
@@ -475,6 +519,144 @@ void CMesh::reindex ( void )
   normals = temp_normals;
   texCoords = temp_texCoords;
 }
+
+void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
+{
+  std::string text;
+  FILE	*fp = fopen(file.c_str(),"rb");
+  if (!fp)
+    return;
+
+  fseek(fp,0,SEEK_END);
+  int size = ftell(fp);
+  fseek(fp,0,SEEK_SET);
+
+  if(size)
+  {
+    char *t =(char*)malloc(size+1);
+    fread(t,size,1,fp);
+    t[size] = 0;
+    text = t;
+    free(t);
+  }
+  fclose(fp);
+
+  if (!size)
+    return;
+
+  text = TextUtils::replace_all(text,std::string("\n"),std::string(""));
+  std::vector<std::string> lines = TextUtils::tokenize(text,std::string("\r"));
+  if (!lines.size())
+    return;
+
+  for ( int i = 0; i < (int)lines.size(); i++ )
+  {
+    std::string &line = lines[i];
+    if (!line.size())
+      continue;
+
+    std::vector<std::string> chunks = TextUtils::tokenize(line,std::string(" "),0,true);
+    if (!chunks.size())
+      continue;
+
+    if (TextUtils::tolower(chunks[i]) == "static")
+      config.staticFile = chunks[1];
+    else if (TextUtils::tolower(chunks[i]) == "bounding")
+      config.boundingFile = chunks[1];
+    else if (TextUtils::tolower(chunks[i]) == "lod")
+    {
+      if ( chunks.size() > 2 )
+      {
+	config.lodPixelDistances.push_back((float)atof(chunks[1].c_str()));
+	config.lodFiles.push_back(chunks[2].c_str());
+      }
+    }
+  }
+}
+
+void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes )
+{
+  if (config.staticFile.size())
+    readOBJ(drawInfoMeshes.staticMesh,config.staticFile);
+
+  if (config.boundingFile.size())
+    readOBJ(drawInfoMeshes.boundingMesh,config.boundingFile);
+
+  for ( int i = 0; i < (int)config.lodFiles.size(); i++ )
+  {
+    CModel  model;
+    readOBJ(model,config.lodFiles[i]);
+    if (model.meshes.size())
+    {
+      drawInfoMeshes.lodMeshes.push_back(model);
+      drawInfoMeshes.lodPixelDistances.push_back(config.lodPixelDistances[i]);
+    }
+  }
+}
+
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
+{
+  if (!drawInfoMeshes.valid())
+    return;
+
+// the idea here is to go and output each of the mesh sections into 
+  // seperate buffers, bulding up the actual used vert and index lists.
+  // then dump out those lists to a buffer, and composite the entire
+  // thing into one bzw.
+  // This way we can do things in any order and not worry about
+  // duplicating indexes.
+  std::string materialsSection;
+  std::string inxexesSection;
+  std::string staticGeoSection;
+  std::string boundingGeoSection;
+  std::string drawInfoSection;
+
+  // the 3 major lists
+  tvVertList  verts;
+  tvVertList  norms;
+  tvTexCoordList  uvs;
+
+  // this is cheap, each corner is unique instance of a vert, normal, and uv coordinate.
+  // even tho they are ints we can store them like a vert, and just cast them to ints.
+  // to leverage the existing functions for sorting indexes.
+  tvVertList  corners;
+
+  // build the static geo into
+
+  if ( drawInfoMeshes.staticMesh.meshes.size())
+  {
+    CModel &staticModel = drawInfoMeshes.staticMesh;
+    for ( int m = 0; m < (int)staticModel.meshes.size(); m++ )
+    {
+      CMesh &subMesh = staticModel.meshes[m];
+      for (int f = 0; f < (int)subMesh.faces.size();f++)
+      {
+	CFace &face = subMesh.faces[f];
+
+	staticGeoSection += "face\n";
+	std::string vert = "vertices";
+	std::string norm = "normals";
+	std::string uv = "texcoords";
+
+	for ( int v = 0; v < (int)face.verts.size(); v++ )
+	{
+	  vert += TextUtils::format(" %d",getNewIndex(subMesh.verts[face.verts[v]],verts));
+	  norm += TextUtils::format(" %d",getNewIndex(subMesh.normals[face.normals[v]],norms));
+	  if (face.texCoords.size())
+	    uv += TextUtils::format(" %d",getNewIndex(subMesh.texCoords[face.texCoords[v]],uvs));
+	}
+	staticGeoSection += vert + "\n" + norm + "\n";
+	if ( face.texCoords.size())
+	  staticGeoSection += uv + "\n";
+
+	if (useMaterials)
+	  staticGeoSection += "matref " + face.material + "\n";
+	staticGeoSection += "end\n\n";
+      }
+    }
+  }
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
