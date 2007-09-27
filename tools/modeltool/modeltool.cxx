@@ -865,7 +865,13 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	    if ( mesh.faces.size())
 	    {
 	      // we always use the first face's material for the lod
-	      section += "matref " + mesh.faces[0].material + "\n";
+	      section += "matref ";
+	      if (mesh.faces[0].material.size())
+		section += mesh.faces[0].material.size();
+	      else
+		section += "-1";
+	      section += "\n";
+
 	      section += "dlist\n";
 
 	      MeshExtents subMeshExtents;
