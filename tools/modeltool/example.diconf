@@ -24,6 +24,8 @@ bounding "boundingGeo.obj"
 // right here in the config
 // they will simply be copied to the file
 // they must be in double quotes (")
+// you can have more then one, just put each on it's own
+// line starting with the anim keyword
 anim "angvel 40"
 
 // lastly you can add a list of models to be used as the LOD
