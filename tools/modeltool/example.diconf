@@ -1,0 +1,40 @@
+// This is a sample draw info config file
+// you use them to define a complex mesh that uses more then
+// one input model ( obj file ).
+
+// all file names should be relitive to the current working dir
+
+// The first option is for static geometry
+// all faces and materials in the static file
+// will be added as normal mesh faces to the resulting
+// bzw file. They can not be animated.
+
+static "staticGeo.obj"
+
+// the next option is for bounding geometry
+// all faces in this file will be added
+// as 'invisible' faces used for collisions only
+// like the static geometry, they will be done
+// as standard faces, and can not be animated.
+
+bounding "boundingGeo.obj"
+
+// lastly you can add a list of models to be used as the LOD
+// geometric representations. the first model you define as
+// an LOD will be the "top" or "0" LOD, and will be used to
+// compute visibility extents. LOD meshes are used for drawing
+// only, and are not collideable. They will be sorted into
+// openGL display lists for speed.
+
+lod 0 "highResFile.obj"
+lod 0.2 "lowerResFile.obj"
+
+// The numeric paramater after the LOD word is the pixel distance
+// used by the LOD
+
+// Note due to how LODs work, only the material of the first face in each
+// obj group will be used for all faces in that group if the OBJ is used
+// as an LOD
+
+// Also, flip z and the XZ swaps do not work for the LOD generator
+// make sure your model is totaly in world space (Z UP) before you export.
