@@ -594,6 +594,119 @@ void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &dra
   }
 }
 
+typedef struct 
+{
+  float cpx,cpy,cpz;
+  float rad;
+  float minx,miny,minz,maxx,maxy,maxz;
+}MeshExtents;
+
+bool computeExtents ( CModel &model, MeshExtents &extents )
+{
+  bool didOne = false;
+  for ( int m = 0; m < (int)model.meshes.size(); m++ )
+  {
+    CMesh &subMesh = model.meshes[m];
+    for (int f = 0; f < (int)subMesh.faces.size();f++)
+    {
+      didOne = true;
+      CFace &face = subMesh.faces[f];
+      if (f == 0 && m ==0)
+      {
+	extents.minx = subMesh.verts[face.verts[0]].x;
+	extents.miny = subMesh.verts[face.verts[0]].y;
+	extents.minz = subMesh.verts[face.verts[0]].z;
+
+	extents.maxx = extents.minx;
+	extents.maxy = extents.miny;
+	extents.maxz = extents.minz;
+      }
+  
+      for ( int v = 0; v < (int)face.verts.size(); v++ )
+      {
+	CVertex &vert = subMesh.verts[face.verts[v]];
+	if ( vert.x < extents.minx )
+	  extents.minx = vert.x;
+	if ( vert.y < extents.miny )
+	  extents.miny = vert.y;
+	if ( vert.z < extents.minz )
+	  extents.minz = vert.z;
+
+	if ( vert.x > extents.maxx )
+	  extents.maxx = vert.x;
+	if ( vert.y > extents.maxy )
+	  extents.maxy = vert.y;
+	if ( vert.z > extents.maxz )
+	  extents.maxz = vert.z;
+      }
+    }
+  }
+
+  float dx,dy,dz;
+
+  dx = extents.maxx-extents.minx;
+  dy = extents.maxy-extents.miny;
+  dz = extents.maxz-extents.minz;
+
+  extents.cpx = extents.minx + dx*0.5f;
+  extents.cpy = extents.miny + dy*0.5f;
+  extents.cpz = extents.minz + dz*0.5f;
+
+  extents.rad = sqrtf(dx*dx+dy*dy+dz*dz)*0.5f;
+  return didOne;
+}
+
+bool computeExtents ( CModel &model, CMesh &subMesh, MeshExtents &extents )
+{
+  bool didOne = false;
+  for (int f = 0; f < (int)subMesh.faces.size();f++)
+  {
+    CFace &face = subMesh.faces[f];
+    didOne = true;
+    if (f == 0)
+    {
+      extents.minx = subMesh.verts[face.verts[0]].x;
+      extents.miny = subMesh.verts[face.verts[0]].y;
+      extents.minz = subMesh.verts[face.verts[0]].z;
+
+      extents.maxx = extents.minx;
+      extents.maxy = extents.miny;
+      extents.maxz = extents.minz;
+    }
+
+    for ( int v = 0; v < (int)face.verts.size(); v++ )
+    {
+      CVertex &vert = subMesh.verts[face.verts[v]];
+      if ( vert.x < extents.minx )
+	extents.minx = vert.x;
+      if ( vert.y < extents.miny )
+	extents.miny = vert.y;
+      if ( vert.z < extents.minz )
+	extents.minz = vert.z;
+
+      if ( vert.x > extents.maxx )
+	extents.maxx = vert.x;
+      if ( vert.y > extents.maxy )
+	extents.maxy = vert.y;
+      if ( vert.z > extents.maxz )
+	extents.maxz = vert.z;
+    }
+  }
+
+  float dx,dy,dz;
+
+  dx = extents.maxx-extents.minx;
+  dy = extents.maxy-extents.miny;
+  dz = extents.maxz-extents.minz;
+
+  extents.cpx = extents.minx + dx*0.5f;
+  extents.cpy = extents.miny + dy*0.5f;
+  extents.cpz = extents.minz + dz*0.5f;
+
+  extents.rad = sqrtf(dx*dx+dy*dy+dz*dz)*0.5f;
+  return didOne;
+}
+
 void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 {
   if (!drawInfoMeshes.valid())
@@ -654,6 +767,11 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	staticGeoSection += "end\n\n";
       }
     }
+  }
+
+  if ( drawInfoMeshes.boundingMesh.meshes.size() )
+  {
+
   }
 }
 
