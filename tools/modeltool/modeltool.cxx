@@ -437,6 +437,8 @@ int main(int argc, char* argv[])
     parseDrawInfoConfig(config,input);
     buildDrawInfoMeshesFromConfig(config,meshes);
 
+    writeDrawInfoBZW(meshes,output);
+
     if ( meshes.valid())
       printf("no valid meshes written from %s\n", input.c_str());
     else
@@ -877,7 +879,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      for ( int f = 0; f < (int)mesh.faces.size(); f++ )
 	      {
 		CFace &face = mesh.faces[f];
-		if ( f = 0 )
+		if ( f == 0 )
 		{
 		  lastTriangles = face.verts.size() == 3;
 
