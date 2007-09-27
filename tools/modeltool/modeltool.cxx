@@ -947,7 +947,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   // first verts
   inxexesSection += "#indexes\n";
   for ( int v = 0; v < (int)verts.size(); v++ )
-    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x,verts[v].y,verts[v].z);
+    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x*globalScale+globalShift[0],verts[v].y*globalScale+globalShift[1],verts[v].z*globalScale+globalShift[2]);
   for ( int n = 0; n < (int)norms.size(); n++ )
     inxexesSection += TextUtils::format("normal %f %f %f\n",norms[n].x,norms[n].y,norms[n].z);
   for ( int u = 0; u < (int)uvs.size(); u++ )
