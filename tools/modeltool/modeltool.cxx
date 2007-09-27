@@ -64,6 +64,7 @@ typedef struct
   std::string boundingFile;
   std::vector<std::string> lodFiles;
   std::vector<float> lodPixelDistances;
+  std::vector<std::string>  animComands;
 }DrawInfoConfig;
 
 typedef struct
@@ -72,6 +73,7 @@ typedef struct
   CModel boundingMesh;
   std::vector<CModel> lodMeshes;
   std::vector<float>  lodPixelDistances;
+  std::vector<std::string>  animComands;
 
   bool valid ( void  )
   {
@@ -565,11 +567,13 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
     if (!chunks.size())
       continue;
 
-    if (TextUtils::tolower(chunks[i]) == "static")
+    if (TextUtils::tolower(chunks[0]) == "static")
       config.staticFile = chunks[1];
-    else if (TextUtils::tolower(chunks[i]) == "bounding")
+    else if (TextUtils::tolower(chunks[0]) == "bounding")
       config.boundingFile = chunks[1];
-    else if (TextUtils::tolower(chunks[i]) == "lod")
+    else if (TextUtils::tolower(chunks[0]) == "anim" )
+      config.animComands.push_back(chunks[1]);
+    else if (TextUtils::tolower(chunks[0]) == "lod")
     {
       if ( chunks.size() > 2 )
       {
@@ -598,6 +602,7 @@ void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &dra
       drawInfoMeshes.lodPixelDistances.push_back(config.lodPixelDistances[i]);
     }
   }
+  drawInfoMeshes.animComands = config.animComands;
 }
 
 typedef struct 
@@ -835,6 +840,9 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       drawInfoSection += "drawInfo\n";
       drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
       drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
+
+      for ( int a = 0; a < drawInfoMeshes.animComands.size(); a++ )
+	drawInfoSection += drawInfoMeshes.animComands[a] + "\n";
 
       // compute the LOD sections
       for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )

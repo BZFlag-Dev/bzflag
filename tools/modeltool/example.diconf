@@ -3,6 +3,7 @@
 // one input model ( obj file ).
 
 // all file names should be relitive to the current working dir
+// and must be in double quotes (") if they contain a space
 
 // The first option is for static geometry
 // all faces and materials in the static file
@@ -18,6 +19,12 @@ static "staticGeo.obj"
 // as standard faces, and can not be animated.
 
 bounding "boundingGeo.obj"
+
+// you can also give the draw info anim commands
+// right here in the config
+// they will simply be copied to the file
+// they must be in double quotes (")
+anim "angvel 40"
 
 // lastly you can add a list of models to be used as the LOD
 // geometric representations. the first model you define as
