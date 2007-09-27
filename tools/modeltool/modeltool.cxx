@@ -864,6 +864,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
 
 	      bool lastTriangles = false;
+	      int   maxTrianglesOnALine = 15;
+	      int   triangleCount = 0;
 	      for ( int f = 0; f < (int)mesh.faces.size(); f++ )
 	      {
 		CFace &face = mesh.faces[f];
@@ -881,23 +883,35 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 		  if (!lastTriangles)
 		    section += "\n";
+		  else
+		    triangleCount++;
 		}
 		else
 		{
 		  bool trianglesThisTime = face.verts.size() == 3;
-		  if (lastTriangles && !trianglesThisTime)
+		  if ( (lastTriangles && !trianglesThisTime) || (trianglesThisTime && triangleCount > maxTrianglesOnALine) )
 		    section += "\n";
 
 		  if ( !trianglesThisTime )
 		    section += "polygon";
-		  else if ( !lastTriangles && trianglesThisTime )
+		  else if ( (!lastTriangles && trianglesThisTime) || (trianglesThisTime && triangleCount > maxTrianglesOnALine) )
 		    section += "tris";
 
 		  for ( int v = 0; v < (int)face.verts.size(); v++ )
 		    section += TextUtils::format(" %d",computeCorner(mesh,face,v,verts,norms,uvs,corners));
 
 		  if (!trianglesThisTime)
+		  {
 		    section += "\n";
+		    triangleCount = 0;
+		  }
+		  else
+		  {
+		    if ( triangleCount > maxTrianglesOnALine)
+		      triangleCount = 0;
+		    else
+		      triangleCount++;
+		  }
       
 		  lastTriangles = trianglesThisTime;
 		}
