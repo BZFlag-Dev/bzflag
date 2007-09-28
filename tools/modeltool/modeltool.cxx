@@ -35,7 +35,7 @@
 #include "Q3BSP.h"
 
 // globals/
-const char VersionString[] = "ModelTool v1.8  (WaveFront OBJ/BZW to BZFlag BZW converter)";
+const char VersionString[] = "ModelTool v1.8.1  (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
 std::string texdir = "";
 std::string groupName = "";
