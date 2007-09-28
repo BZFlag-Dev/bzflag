@@ -834,7 +834,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       {
 	CFace &face = subMesh.faces[f];
 
-	staticGeoSection += "face\n";
+	boundingGeoSection += "face\n";
 	std::string vert = "vertices";
 	std::string norm = "normals";
 
@@ -843,10 +843,10 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	  vert += TextUtils::format(" %d",getNewIndex(subMesh.verts[face.verts[v]],verts));
 	  norm += TextUtils::format(" %d",getNewIndex(subMesh.normals[face.normals[v]],norms));
 	}
-	staticGeoSection += vert + "\n" + norm + "\n";
+	boundingGeoSection += vert + "\n" + norm + "\n";
 
-	staticGeoSection += "matref " + invisibleMatName + "\n";
-	staticGeoSection += "endface\n\n";
+	boundingGeoSection += "matref " + invisibleMatName + "\n";
+	boundingGeoSection += "endface\n\n";
       }
     }
   }
@@ -1042,6 +1042,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
   fprintf(fp,"%s",inxexesSection.c_str());
   fprintf(fp,"%s",staticGeoSection.c_str());
+  fprintf(fp,"%s",boundingGeoSection.c_str());
   fprintf(fp,"%s",drawInfoSection.c_str());
 
   fprintf (fp,"end # mesh\n");
