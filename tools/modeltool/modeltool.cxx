@@ -845,7 +845,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
       drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
 
-      for ( int a = 0; a < drawInfoMeshes.animComands.size(); a++ )
+      for ( int a = 0; a < (int)drawInfoMeshes.animComands.size(); a++ )
 	drawInfoSection += drawInfoMeshes.animComands[a] + "\n";
 
       // compute the LOD sections
