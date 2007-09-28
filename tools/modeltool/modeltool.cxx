@@ -88,6 +88,22 @@ typedef struct
   }
 }DrawInfoMeshes;
 
+void progressLog ( int value, int total, const std::string &text )
+{
+  printf("Working %d/%d(%f): %s\n",value,total,(float)value/(float)total,text.c_str());
+}
+
+void progressLog ( const std::string &text )
+{
+  printf("Working: %s\n",text.c_str());
+}
+
+void progressLog ( const  char* text )
+{
+  printf("Working: %s\n",text);
+}
+
+
 void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file );
 void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes );
 void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file );
@@ -439,7 +455,7 @@ int main(int argc, char* argv[])
 
     writeDrawInfoBZW(meshes,output);
 
-    if ( meshes.valid())
+    if ( !meshes.valid())
       printf("no valid meshes written from %s\n", input.c_str());
     else
       printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
@@ -767,6 +783,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   // to leverage the existing functions for sorting indexes.
   tvVertList  corners;
 
+  progressLog("starting drawInfo Mesh");
+
   // build the static geo into it's buffer
   if ( drawInfoMeshes.staticMesh.meshes.size())
   {
@@ -774,6 +792,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     for ( int m = 0; m < (int)staticModel.meshes.size(); m++ )
     {
       CMesh &subMesh = staticModel.meshes[m];
+      progressLog(TextUtils::format("static model sub mesh%d",m));
+
       for (int f = 0; f < (int)subMesh.faces.size();f++)
       {
 	CFace &face = subMesh.faces[f];
@@ -808,6 +828,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     for ( int m = 0; m < (int)boundingMesh.meshes.size(); m++ )
     {
       CMesh &subMesh = boundingMesh.meshes[m];
+      progressLog(TextUtils::format("bounding model sub mesh%d",m));
+
       for (int f = 0; f < (int)subMesh.faces.size();f++)
       {
 	CFace &face = subMesh.faces[f];
@@ -864,6 +886,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	  for ( int m = 0; m < (int)lodModel.meshes.size(); m++ )
 	  {
 	    CMesh &mesh = lodModel.meshes[m];
+	    progressLog(TextUtils::format("LOD %d model sub mesh%d",l,m));
+
 	    if ( mesh.faces.size())
 	    {
 	      // we always use the first face's material for the lod
@@ -963,6 +987,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
   // generate the indexes section
   // first verts
+  progressLog("Generating indexes");
+
   inxexesSection += "#indexes\n";
   for ( int v = 0; v < (int)verts.size(); v++ )
     inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x*globalScale+globalShift[0],verts[v].y*globalScale+globalShift[1],verts[v].z*globalScale+globalShift[2]);
@@ -970,6 +996,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += TextUtils::format("normal %f %f %f\n",norms[n].x,norms[n].y,norms[n].z);
   for ( int u = 0; u < (int)uvs.size(); u++ )
     inxexesSection += TextUtils::format("texcoord %f %f\n",uvs[u].u,uvs[u].v);
+
+  progressLog("Generating materials");
 
   if ( boundingGeoSection.size() )
     materialsSection += "\nmaterial\nname " + invisibleMatName + "diffuse 0 0 0 0\nnoradar\nnoshadow\nnoculling\nnosorting\nend\n";
@@ -990,6 +1018,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       matItr++;
     }
   }
+
+  progressLog("writing BZW file");
 
   FILE *fp = fopen (file.c_str(),"wt");
   if (!fp)
