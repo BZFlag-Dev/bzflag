@@ -1000,7 +1000,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   progressLog("Generating materials");
 
   if ( boundingGeoSection.size() )
-    materialsSection += "\nmaterial\nname " + invisibleMatName + "diffuse 0 0 0 0\nnoradar\nnoshadow\nnoculling\nnosorting\nend\n";
+    materialsSection += "\nmaterial\nname " + invisibleMatName + "\ndiffuse 0 0 0 0\nnoradar\nnoshadow\nnoculling\nnosorting\nend\n";
 
   tmMaterialMap::iterator matItr = drawInfoMeshes.staticMesh.materials.begin();
   while (matItr != drawInfoMeshes.staticMesh.materials.end())
