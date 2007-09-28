@@ -554,12 +554,13 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
   if (!size)
     return;
 
-  text = TextUtils::replace_all(text,std::string("\n"),std::string(""));
-  std::vector<std::string> lines = TextUtils::tokenize(text,std::string("\r"));
+  text = TextUtils::replace_all(text,std::string("\r"),std::string(""));
+  std::vector<std::string> lines = TextUtils::tokenize(text,std::string("\n"));
   if (!lines.size())
     return;
 
-  for ( int i = 0; i < (int)lines.size(); i++ )
+  int numLines = (int)lines.size();
+  for ( int i = 0; i < numLines; i++ )
   {
     std::string &line = lines[i];
     if (!line.size())
@@ -569,13 +570,14 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
     if (!chunks.size())
       continue;
 
-    if (TextUtils::tolower(chunks[0]) == "static")
+    std::string key = TextUtils::tolower(chunks[0]);
+    if (key == "static")
       config.staticFile = chunks[1];
-    else if (TextUtils::tolower(chunks[0]) == "bounding")
+    else if (key == "bounding")
       config.boundingFile = chunks[1];
-    else if (TextUtils::tolower(chunks[0]) == "anim" )
+    else if (key == "anim" )
       config.animComands.push_back(chunks[1]);
-    else if (TextUtils::tolower(chunks[0]) == "lod")
+    else if (key == "lod")
     {
       if ( chunks.size() > 2 )
       {
