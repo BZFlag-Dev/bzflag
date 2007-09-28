@@ -816,7 +816,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 	if (useMaterials)
 	  staticGeoSection += "matref " + face.material + "\n";
-	staticGeoSection += "end\n\n";
+	staticGeoSection += "endface\n\n";
       }
     }
   }
@@ -958,7 +958,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		  lastTriangles = trianglesThisTime;
 		}
 	      }
-	      section += "\nend\n"; // this ends the material!
+	      section += "\nend #matref\n"; // this ends the material!
 	    }
 	  }
 	  section += TextUtils::format("end #lod %d\n",l );
@@ -1055,7 +1055,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     fprintf (fp, "%s\n", drawInfoMeshes.staticMesh.customObjects[i].name.c_str());
     for (unsigned int j = 0; j < drawInfoMeshes.staticMesh.customObjects[i].params.size(); j++ )
       fprintf (fp, "  %s\n", drawInfoMeshes.staticMesh.customObjects[i].params[j].c_str());
-    fprintf (fp, "end\n\n");
+    fprintf (fp, "end #custom\n\n");
   }
 
   fclose(fp);
