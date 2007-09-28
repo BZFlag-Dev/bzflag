@@ -893,7 +893,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      // we always use the first face's material for the lod
 	      section += "matref ";
 	      if (mesh.faces[0].material.size())
-		section += mesh.faces[0].material.size();
+		section += mesh.faces[0].material;
 	      else
 		section += "-1";
 	      section += "\n";
