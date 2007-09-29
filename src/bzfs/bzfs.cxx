@@ -3302,7 +3302,7 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
 static void lagKick(int playerIndex)
 {
   char message[MessageLen];
-  sprintf(message,
+  snprintf(message, MessageLen,
 	  "You have been kicked due to excessive lag (you have been warned %d times).",
 	  clOptions->maxlagwarn);
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3317,7 +3317,7 @@ static void lagKick(int playerIndex)
 static void jitterKick(int playerIndex)
 {
   char message[MessageLen];
-  sprintf(message,
+  snprintf(message, MessageLen,
 	  "You have been kicked due to excessive jitter"
 	  " (you have been warned %d times).",
 	  clOptions->maxjitterwarn);
@@ -3335,7 +3335,7 @@ static void jitterKick(int playerIndex)
 void packetLossKick(int playerIndex)
 {
   char message[MessageLen];
-  sprintf(message,
+  snprintf(message, MessageLen,
 	  "You have been kicked due to excessive packetloss (you have been warned %d times).",
 	  clOptions->maxpacketlosswarn);
   GameKeeper::Player *playerData
