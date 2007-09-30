@@ -23,6 +23,7 @@ class PythonLoader : public ScriptLoader {
 
   bool initialized;
   bool initialize();
+  bool addSysPath(std::string path);
 
   public:
     PythonLoader();

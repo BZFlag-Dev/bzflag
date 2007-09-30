@@ -11,6 +11,7 @@
  */
 
 #include "PythonLoader.h"
+
 #include "bzrobot_python_runtime.h"
 
 PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
@@ -30,7 +31,20 @@ PythonLoader::~PythonLoader()
 
 bool PythonLoader::initialize()
 {
-  /* We basically do: import sys; sys.path.append(".");
+  addSysPath(".");
+
+  /* TODO:
+   * I assume we should make it load (using PyImport_Import) the various
+   * SWIGified APIs, so that they'll be "easily" accessible from the 
+   * loaded modules, whopee. :-) */
+
+  initialized = true;
+  return true;
+}
+
+bool PythonLoader::addSysPath(std::string new_path)
+{
+  /* We basically do: import sys; sys.path.append(path);
    * This is so it'll look in . for scripts to load. */
   PyObject *sys, *path;
   PyObject *sysString, *dotString;
@@ -53,22 +67,16 @@ bool PythonLoader::initialize()
     return false;
   }
 
-  dotString = PyString_FromString(".");
+  dotString = PyString_FromString(new_path.c_str());
   PyList_Append(path, dotString);
   Py_XDECREF(dotString);
 
   Py_XDECREF(path); Py_XDECREF(sys); 
 
-  /* TODO:
-   * I assume we should make it load (using PyImport_Import) the various
-   * SWIGified APIs, so that they'll be "easily" accessible from the 
-   * loaded modules, whopee. :-) */
-
-  initialized = true;
   return true;
 }
 
-bool PythonLoader::load(std::string filename)
+bool PythonLoader::load(std::string filepath)
 {
   if (!initialized)
   {
@@ -76,6 +84,25 @@ bool PythonLoader::load(std::string filename)
       return false;
   }
 
+
+  std::string filename;
+
+  /* We check if the passed filepath contains a /, if so we add the
+   * part of the filepath up to the / to sys.path, so that our import 
+   * will find the module ("the bot"). */
+  std::string::size_type separator_pos = filepath.find_last_of("/");
+  if (separator_pos != std::string::npos && separator_pos <= filepath.length())
+  {
+    addSysPath(filepath.substr(0, separator_pos));
+    filename = filepath.substr(separator_pos + 1);
+  }
+  else
+    filename = filepath;
+
+  /* We find the last "." in the filename, and use what is before the last "."
+   * as the module name - calling "import modulename". (We can assume this "."
+   * is followed by "py" because the factory only registers this class
+   * for .py files. :-) */
   std::string::size_type extension_pos = filename.find_last_of(".");
   if (extension_pos == std::string::npos || extension_pos >= filename.length())
   {
