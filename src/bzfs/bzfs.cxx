@@ -3968,10 +3968,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	cheater = true;
 
       FlagInfo *toFlag = FlagInfo::get(toPlayersFlag);
-      if (!toFlag)
-	cheater = true;
-
-      if (toFlag && toFlag->flag.type != Flags::Thief)
+      // without flag or with a non thief flag? Then is probably cheating
+      if (!toFlag || toFlag->flag.type != Flags::Thief)
 	cheater = true;
 
       // TODO, check thief radius here
@@ -3980,8 +3978,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       {
 	logDebugMessage(1,"No Thief check %s [%d] Player trying to transfer to target without thief\n",
 	  playerData->player.getCallSign(), t);
-	if (0)
-	  removePlayer(playerData->getIndex(), "Non Thief Cheat");
+	// There is a lot of reason why the player could not have thief, 
+	// network delay is one of this.
+	// Don't kick then, just discard the message
 	return;
       }
 
