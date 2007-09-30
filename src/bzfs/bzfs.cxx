@@ -3971,7 +3971,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (!toFlag)
 	cheater = true;
 
-      if (toFlag->flag.type != Flags::Thief)
+      if (toFlag && toFlag->flag.type != Flags::Thief)
 	cheater = true;
 
       // TODO, check thief radius here
