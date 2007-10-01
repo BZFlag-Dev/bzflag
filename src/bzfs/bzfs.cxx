@@ -1206,7 +1206,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // don't bother with empty messages
     if (message[3] == '\0' || (isspace(message[3]) && message[4] == '\0')) {
       char reply[MessageLen] = {0};
-      sprintf(reply, "%s, the /me command requires an argument", playerData->player.getCallSign());
+      snprintf(reply, MessageLen, "%s, the /me command requires an argument", playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
       return;
     }
@@ -1220,7 +1220,8 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // check for permissions
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
       char reply[MessageLen] = {0};
-      sprintf(reply, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
+      snprintf(reply, MessageLen, "%s, you are not presently authorized to perform /me actions",
+             playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
       return;
     }
@@ -1911,7 +1912,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   char message[MessageLen] = {0};
 
 #ifdef SERVERLOGINMSG
-  sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
+  snprintf(message, MessageLen, "BZFlag server %s, http://BZFlag.org/", getAppVersion());
   sendMessage(ServerPlayer, playerIndex, message);
 
   if (clOptions->servermsg != "") {
@@ -2671,7 +2672,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     killerData->score.tK();
     char message[MessageLen];
     if (clOptions->tkAnnounce) {
-      snprintf(message, MessageLen, "Team kill: %s killed %s", killerData->player.getCallSign(), victimData->player.getCallSign());
+      snprintf(message, MessageLen, "Team kill: %s killed %s", 
+              killerData->player.getCallSign(), victimData->player.getCallSign());
       sendMessage(ServerPlayer, AdminPlayers, message);
     }
     if (killerData->score.isTK()) {
@@ -3223,7 +3225,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	// give message each shot below 5, each 5th shot & at start
 	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
 	  if (shotsLeft > 1)
-	    sprintf(message,"%d shots left",shotsLeft);
+	    snprintf(message, MessageLen, "%d shots left",shotsLeft);
 	  else
 	    strcpy(message,"1 shot left");
 	  sendMessage(ServerPlayer, playerIndex, message);
@@ -3326,7 +3328,7 @@ static void jitterKick(int playerIndex)
   if (playerData != NULL) {
     sendMessage(ServerPlayer, playerIndex, message);
     snprintf(message, MessageLen,"Jitterkick: %s",
-	   playerData->player.getCallSign());
+	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, AdminPlayers, message);
     removePlayer(playerIndex, "jitter", true);
   }
@@ -3343,7 +3345,7 @@ void packetLossKick(int playerIndex)
   if (playerData != NULL) {
     sendMessage(ServerPlayer, playerIndex, message);
     snprintf(message, MessageLen,"Packetlosskick: %s",
-	   playerData->player.getCallSign());
+	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, AdminPlayers, message);
     removePlayer(playerIndex, "packetloss", true);
   }
@@ -3825,7 +3827,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if ((BZDB.isTrue(StateDatabase::BZDB_ENDSHOTDETECTION) && endShotLimit > 0) &&
          (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
 	char testmessage[MessageLen];
-	sprintf(testmessage, "Kicking Player %s EndShot credit: %d \n", 
+	snprintf(testmessage, MessageLen, "Kicking Player %s EndShot credit: %d \n", 
                 playerData->player.getCallSign(), playerData->player.endShotCredit );
 	logDebugMessage(1,"endShot Detection: %s\n", testmessage);
 	sendMessage(ServerPlayer, AdminPlayers, testmessage);
@@ -4048,7 +4050,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn);
       if (warn) {
 	char message[MessageLen];
-	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
+	snprintf(message, MessageLen, "*** Server Warning: your lag is too high (%d ms) ***",
 		playerData->lagInfo.getLag());
 	sendMessage(ServerPlayer, t, message);
 	if (kick)
@@ -4056,19 +4058,19 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       if (alagannouncewarn) {
 	char message[MessageLen];
-	sprintf(message,"*** Server Warning: player %s has too high lag (%d ms) ***",
+	snprintf(message, MessageLen, "*** Server Warning: player %s has too high lag (%d ms) ***",
 		playerData->player.getCallSign(), playerData->lagInfo.getLag());
 	sendMessage(ServerPlayer, AdminPlayers, message);
       }
       if (lagannouncewarn) {
 	char message[MessageLen];
-	sprintf(message,"*** Server Warning:player %s has too high lag (%d ms) ***",
+	snprintf(message, MessageLen, "*** Server Warning:player %s has too high lag (%d ms) ***",
 		playerData->player.getCallSign(), playerData->lagInfo.getLag());
 	sendMessage(ServerPlayer, AllPlayers, message);
       }
       if (jittwarn) {
 	char message[MessageLen];
-	sprintf(message,
+	snprintf(message, MessageLen, 
 		"*** Server Warning: your jitter is too high (%d ms) ***",
 		playerData->lagInfo.getJitter());
 	sendMessage(ServerPlayer, t, message);
@@ -4077,7 +4079,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       if (plosswarn) {
 	char message[MessageLen];
-	sprintf(message,
+	snprintf(message, MessageLen, 
 		"*** Server Warning: your packetloss is too high (%d%%) ***",
 		playerData->lagInfo.getLoss());
 	sendMessage(ServerPlayer, t, message);
@@ -4411,13 +4413,13 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
       char message[MessageLen];
-      sprintf(message,"Your end is not using UDP, turn on udp");
+      snprintf(message, MessageLen, "Your end is not using UDP, turn on udp");
       sendMessage(ServerPlayer, i, message);
 
-      sprintf(message,"upgrade your client http://BZFlag.org/ or");
+      snprintf(message, MessageLen, "upgrade your client http://BZFlag.org/ or");
       sendMessage(ServerPlayer, i, message);
 
-      sprintf(message,"Try another server, Bye!");
+      snprintf(message, MessageLen, "Try another server, Bye!");
       sendMessage(ServerPlayer, i, message);
       removePlayer(i, "no UDP");
       return;
@@ -4592,7 +4594,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       return;
     if (warn) {
       char message[MessageLen];
-      sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
+      snprintf(message, MessageLen, "*** Server Warning: your lag is too high (failed to return ping) ***");
       sendMessage(ServerPlayer, p, message);
       // Should recheck if player is still available
       if (!GameKeeper::Player::getPlayerByIndex(p))
