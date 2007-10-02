@@ -595,7 +595,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
       ROAM.resetCamera();
     } else if (TextUtils::tolower(tokens[0]) == "send") {
       LocalPlayer* myTank = LocalPlayer::getMyTank();
-      if (myTank != NULL) {
+      if ((myTank != NULL) && (myTank->getTeam() == ObserverTeam)) {
 	const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
 	float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
 	myTank->move(camPtr->pos, camPtr->theta);
