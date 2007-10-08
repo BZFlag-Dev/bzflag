@@ -232,10 +232,11 @@ static void		parse(int argc, char** argv)
     } else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
-      if (strlen(argv[i]) == 0)
+      if (strlen(argv[i]) == 0) {
 	BZDB.unset("directory");
-	  else
-		BZDB.set("directory", argv[i]);
+      } else {
+	BZDB.set("directory", argv[i]);
+      }
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
