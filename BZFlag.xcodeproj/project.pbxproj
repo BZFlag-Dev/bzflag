@@ -1,0 +1,337 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1492F4E7079631460008E0BD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1492F4E6079631460008E0BD /* bzadmin */; };
+		1492F4F3079631710008E0BD /* bzflag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1492F4F2079631710008E0BD /* bzflag */; };
+		1492F4F90796318B0008E0BD /* bzfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1492F4F80796318B0008E0BD /* bzfs */; };
+		1492F52C079634140008E0BD /* MacBZFlag.icns in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1492F51E079633E10008E0BD /* MacBZFlag.icns */; };
+		14CF6EB00798FF7A0071D7DA /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CF6EAF0798FF7A0071D7DA /* SDL.framework */; };
+		14CF6ED50798FF880071D7DA /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 14CF6EAF0798FF7A0071D7DA /* SDL.framework */; };
+		14CF6EFD0799EA370071D7DA /* libcrypto.0.9.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */; };
+		14CF6EFE0799EA370071D7DA /* libcurl.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */; };
+		14CF6F0A0799EA940071D7DA /* libcrypto.0.9.7.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */; };
+		14CF6F0B0799EA940071D7DA /* libcurl.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1492F4DA079630A30008E0BD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				1492F4E7079631460008E0BD /* bzadmin in CopyFiles */,
+				1492F4F3079631710008E0BD /* bzflag in CopyFiles */,
+				1492F4F90796318B0008E0BD /* bzfs in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1492F527079634040008E0BD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				1492F52C079634140008E0BD /* MacBZFlag.icns in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1492F62B07978AF80008E0BD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				14CF6F0A0799EA940071D7DA /* libcrypto.0.9.7.dylib in CopyFiles */,
+				14CF6F0B0799EA940071D7DA /* libcurl.3.dylib in CopyFiles */,
+				14CF6ED50798FF880071D7DA /* SDL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1492F48D07962F620008E0BD /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1492F4E6079631460008E0BD /* bzadmin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = bzadmin; path = src/bzadmin/bzadmin; sourceTree = "<group>"; };
+		1492F4F2079631710008E0BD /* bzflag */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = bzflag; path = src/bzflag/bzflag; sourceTree = "<group>"; };
+		1492F4F80796318B0008E0BD /* bzfs */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = bzfs; path = src/bzfs/bzfs; sourceTree = "<group>"; };
+		1492F51E079633E10008E0BD /* MacBZFlag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MacBZFlag.icns; path = src/platform/MacOSX/MacBZFlag.icns; sourceTree = "<group>"; };
+		14CF6D6B0798A1510071D7DA /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; name = "BZFlag-Info.plist"; path = "src/platform/MacOSX/BZFlag-Info.plist"; sourceTree = "<group>"; };
+		14CF6EAF0798FF7A0071D7DA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcrypto.0.9.7.dylib; path = /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libcrypto.0.9.7.dylib; sourceTree = "<absolute>"; };
+		14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcurl.3.dylib; path = /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libcurl.3.dylib; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1492F48B07962F620008E0BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CF6EB00798FF7A0071D7DA /* SDL.framework in Frameworks */,
+				14CF6EFD0799EA370071D7DA /* libcrypto.0.9.7.dylib in Frameworks */,
+				14CF6EFE0799EA370071D7DA /* libcurl.3.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		147C9C3B0794FB1800910F8C = {
+			isa = PBXGroup;
+			children = (
+				1492F5CB079788480008E0BD /* Frameworks & Libraries */,
+				1492F48E07962F620008E0BD /* Products */,
+				1492F51E079633E10008E0BD /* MacBZFlag.icns */,
+				14CF6D6B0798A1510071D7DA /* BZFlag-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		1492F48E07962F620008E0BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1492F4F2079631710008E0BD /* bzflag */,
+				1492F4F80796318B0008E0BD /* bzfs */,
+				1492F4E6079631460008E0BD /* bzadmin */,
+				1492F48D07962F620008E0BD /* BZFlag.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1492F5CB079788480008E0BD /* Frameworks & Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */,
+				14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */,
+				14CF6EAF0798FF7A0071D7DA /* SDL.framework */,
+			);
+			name = "Frameworks & Libraries";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1492F48C07962F620008E0BD /* BZFlag */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EF4667F0CB999BC00B52624 /* Build configuration list for PBXNativeTarget "BZFlag" */;
+			buildPhases = (
+				1492F4C10796300E0008E0BD /* ShellScript */,
+				1492F4DA079630A30008E0BD /* CopyFiles */,
+				1492F527079634040008E0BD /* CopyFiles */,
+				1492F62B07978AF80008E0BD /* CopyFiles */,
+				1492F546079634740008E0BD /* ShellScript */,
+				1492F48807962F620008E0BD /* Resources */,
+				1492F48A07962F620008E0BD /* Rez */,
+				1492F48B07962F620008E0BD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BZFlag;
+			productName = BZFlag;
+			productReference = 1492F48D07962F620008E0BD /* BZFlag.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		147C9C3F0794FB1800910F8C /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 4EF466830CB999BC00B52624 /* Build configuration list for PBXProject "BZFlag" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 147C9C3B0794FB1800910F8C;
+			productRefGroup = 1492F48E07962F620008E0BD /* Products */;
+			projectDirPath = "";
+			targets = (
+				1492F48C07962F620008E0BD /* BZFlag */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1492F48807962F620008E0BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		1492F48A07962F620008E0BD /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1492F4C10796300E0008E0BD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./autogen.sh 2>&1\n./configure --enable-universal --enable-shared --enable-debug 2>&1\nncpu=`sysctl hw.ncpu | awk '{print $2}'`\nif test \"x$ncpu\" = \"x\" ; then\n\tncpu=1\nfi\nmake -j$ncpu\nexit $?\n";
+		};
+		1492F546079634740008E0BD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"Creating dirs\"\nmkdir -p ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\necho \"Copying data files\"\ncd ${PROJECT_DIR}/data\nfind . -type d -not -regex '.*\\.svn.*' -exec mkdir -p ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/{} \\;\nfind . -type f -not -regex '.*\\.svn.*' -exec cp -pR {} ${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/{} \\;\necho \"Copying plugins\"\nmkdir -p ${BUILT_PRODUCTS_DIR}/${PLUGINS_FOLDER_PATH}\ncd ${PROJECT_DIR}\nfind plugins -name \\*.so -exec cp {} ${BUILT_PRODUCTS_DIR}/${PLUGINS_FOLDER_PATH}/. \\;\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4EF466800CB999BC00B52624 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_CPU = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = BZFlag;
+				REZ_EXECUTABLE = NO;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = Development;
+		};
+		4EF466810CB999BC00B52624 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_CPU = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = BZFlag;
+				REZ_EXECUTABLE = NO;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = Deployment;
+		};
+		4EF466820CB999BC00B52624 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_MODEL_CPU = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = BZFlag;
+				REZ_EXECUTABLE = NO;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = Default;
+		};
+		4EF466840CB999BC00B52624 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		4EF466850CB999BC00B52624 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		4EF466860CB999BC00B52624 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4EF4667F0CB999BC00B52624 /* Build configuration list for PBXNativeTarget "BZFlag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EF466800CB999BC00B52624 /* Development */,
+				4EF466810CB999BC00B52624 /* Deployment */,
+				4EF466820CB999BC00B52624 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		4EF466830CB999BC00B52624 /* Build configuration list for PBXProject "BZFlag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EF466840CB999BC00B52624 /* Development */,
+				4EF466850CB999BC00B52624 /* Deployment */,
+				4EF466860CB999BC00B52624 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 147C9C3F0794FB1800910F8C /* Project object */;
+}
