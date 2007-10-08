@@ -1,9 +1,72 @@
 #include "MacMedia.h"
 
 #include <QuickTime/QuickTime.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+/* ugh, more mixing with libCommon */
+#include "StateDatabase.h"
+
 
 static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;
+
+
+// if -directory is not used, this function is used to get the default path
+// to the data directory which is located in the same directory as the
+// application bundle
+char *GetMacOSXDataPath(void)
+{
+  ::CFBundleRef	appBundle		= NULL;
+  ::CFURLRef	resourceURL		= NULL;
+  char *		string			= NULL;
+  static char	basePath[2048]	= "<undefined resource path>";
+
+  if ((appBundle = ::CFBundleGetMainBundle()) == NULL
+      || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL) {
+    return NULL;
+  }
+  if(!::CFURLGetFileSystemRepresentation(resourceURL,
+					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
+    string = NULL;
+  } else {
+    string = basePath;
+  }
+  ::CFRelease(resourceURL);
+  fprintf(stderr, "data path is \"%s\"\n", string);
+  return string;
+}
+
+
+void MacMedia::setMediaDirectory(const std::string& _dir)
+{
+  struct stat statbuf;
+  const char *mdir = _dir.c_str();
+
+  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+    /* try the Resource folder if invoked from a .app bundled */
+    mdir = GetMacOSXDataPath();
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+    /* try a simple 'data' dir in current directory (source build invocation) */
+    mdir = "data";
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+    /* give up, revert to passed in directory */
+    mdir = _dir.c_str();
+  }
+
+  mediaDir = std::string(mdir);
+}
+
 
 static pascal void callbackProc(SndChannelPtr, SndCommand *)
 {
