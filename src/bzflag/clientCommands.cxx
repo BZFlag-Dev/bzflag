@@ -789,7 +789,7 @@ static std::string cmdScreenshot(const std::string&,
     f->write((char*) &crc, 4);		       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
-    temp = htonl(9 + (int)strlen(getAppVersion())); //(length) tEXt is 9 + strlen(getAppVersion())
+    temp = htonl(9 + (int)strlen(getAppVersion())); //(length) tEXt is strlen("Software") + 1 + strlen(getAppVersion())
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
@@ -809,7 +809,7 @@ static std::string cmdScreenshot(const std::string&,
 	std::string renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); renderer += ": ";
 	renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); renderer += " (OpenGL ";
 	renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); renderer += ")";
-    temp = htonl(9 + (int)renderer.size()); //(length) tEXt is 9 + strlen(getAppVersion())
+    temp = htonl(12 + (int)renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size())
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
