@@ -789,7 +789,8 @@ static std::string cmdScreenshot(const std::string&,
     f->write((char*) &crc, 4);		       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
-    temp = htonl(9 + (int)strlen(getAppVersion())); //(length) tEXt is strlen("Software") + 1 + strlen(getAppVersion())
+	std::string version = "BZFlag "; version += getAppVersion();
+    temp = htonl(9 + (int)version.size()); //(length) tEXt is strlen("Software") + 1 + version.size()
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
@@ -800,7 +801,7 @@ static std::string cmdScreenshot(const std::string&,
     tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, getAppVersion());	       //(data) Text contents (build/version)
+    strcpy((char*) b, version.c_str());	       //(data) Text contents (build/version)
     f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
@@ -809,7 +810,7 @@ static std::string cmdScreenshot(const std::string&,
 	std::string renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); renderer += ": ";
 	renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); renderer += " (OpenGL ";
 	renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); renderer += ")";
-    temp = htonl(12 + (int)renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size())
+    temp = htonl(12 + (int)renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size()
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
