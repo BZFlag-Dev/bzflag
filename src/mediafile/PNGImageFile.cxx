@@ -31,7 +31,7 @@
 
 unsigned char		PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
-const unsigned char	PNGImageFile::MAX_COMPONENTS = 4;
+const unsigned char	PNGImageFile::MAX_COMPONENTS = 8;
 
 const unsigned char	PNGImageFile::FILTER_NONE = 0;
 const unsigned char	PNGImageFile::FILTER_SUB = 1;
@@ -89,7 +89,7 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
 
     case 3:
       lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
-      channels = 3;
+      channels = 3; // 1 input channel turns into 3 output.  nasty, probably should have two values.
     break;
 
     case 4:
@@ -107,7 +107,7 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
   }
 
   realBufferSize = channels * myWidth + 1;
-  int allocSize = ((realBufferSize > lineBufferSize) ? realBufferSize : lineBufferSize) + MAX_COMPONENTS;
+  int allocSize = lineBufferSize + MAX_COMPONENTS;
   lineBuffers[0] = new unsigned char[allocSize];
   lineBuffers[1] = new unsigned char[allocSize];
   memset(lineBuffers[0], 0, MAX_COMPONENTS);
@@ -197,14 +197,15 @@ bool					PNGImageFile::read(void* buffer)
     err = inflate(&zStream, Z_SYNC_FLUSH);
     while (((err == Z_OK) || err == Z_STREAM_END)  && (zStream.avail_out == 0)) {
 
-      expand();
-
       if (!filter()) {
 	delete c;
 	return false;
       }
 
-      memcpy(((unsigned char *)buffer)+bufferPos, line+1, realBufferSize-1);
+      if (!expand((unsigned char*)buffer+bufferPos)) {
+	delete c;
+	return false;
+      }
       bufferPos -= realBufferSize-1;
 
       switchLineBuffers();
@@ -283,13 +284,14 @@ bool PNGImageFile::expand()
   Expand data to 8 bits. If the original data is indexed color, convert to rgb data.
 */
 
-bool PNGImageFile::expand()
+bool PNGImageFile::expand(unsigned char* destination)
 {
   // all indexed color modes require a palette
   if (colorDepth == 3 && palette == NULL)
     return false;
 
-  unsigned char *pData = getLineBuffer();
+  // don't write to this
+  const unsigned char * const pData = getLineBuffer();
 
   int myWidth = getWidth();
   int channels = getNumChannels();
@@ -300,12 +302,12 @@ bool PNGImageFile::expand()
 	int byteOffset = i/8 + 1;
 	int bit = 7 - i%8;
 	if (colorDepth != 3) {
-	  *(pData+i+1) = ((*(pData+byteOffset) >> bit) & 0x01) ? 0xFF : 0x00;
+	  *(destination + i) = ((*(pData+byteOffset) >> bit) & 0x01) ? 0xFF : 0x00;
 	} else {
 	  PNGRGB &rgb = palette->get(((*(pData+byteOffset) >> bit) & 0x01));
-	  *(pData + i*3 + 1) = rgb.red;
-	  *(pData + i*3 + 2) = rgb.green;
-	  *(pData + i*3 + 3) = rgb.blue;
+	  *(destination + i*3) = rgb.red;
+	  *(destination + i*3 + 1) = rgb.green;
+	  *(destination + i*3 + 2) = rgb.blue;
 	}
       }
     }
@@ -317,12 +319,12 @@ bool PNGImageFile::expand()
 	int byteOffset = i/4 + 1;
 	int bitShift = 6-2*(i%4);
 	if (colorDepth != 3) {
-	  *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+	  *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
 	} else {
 	  PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x03);
-	  *(pData + i*3 + 1) = rgb.red;
-	  *(pData + i*3 + 2) = rgb.green;
-	  *(pData + i*3 + 3) = rgb.blue;
+	  *(destination + i*3) = rgb.red;
+	  *(destination + i*3 + 1) = rgb.green;
+	  *(destination + i*3 + 2) = rgb.blue;
 	}
       }
     }
@@ -334,12 +336,12 @@ bool PNGImageFile::expand()
 	int byteOffset = i/2+1;
 	int bitShift = 4-4*(i%2);
 	if (colorDepth != 3) {
-	  *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+	  *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
 	} else {
 	  PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x0F);
-	  *(pData + i*3 + 1) = rgb.red;
-	  *(pData + i*3 + 2) = rgb.green;
-	  *(pData + i*3 + 3) = rgb.blue;
+	  *(destination + i*3) = rgb.red;
+	  *(destination + i*3 + 1) = rgb.green;
+	  *(destination + i*3 + 2) = rgb.blue;
 	}
       }
     }
@@ -351,13 +353,13 @@ bool PNGImageFile::expand()
 	// colormapped
 	for (int i = myWidth-1; i >= 0; i--) {
 	  PNGRGB &rgb = palette->get(*(pData+i+1));
-	  *(pData + i*3 + 1) = rgb.red;
-	  *(pData + i*3 + 2) = rgb.green;
-	  *(pData + i*3 + 3) = rgb.blue;
+	  *(destination + i*3) = rgb.red;
+	  *(destination + i*3 + 1) = rgb.green;
+	  *(destination + i*3 + 2) = rgb.blue;
 	}
       } else {
 	// already in native color
-	return true;
+	memcpy(destination, pData+1, realBufferSize-1);
       }
     }
     break;
@@ -365,7 +367,7 @@ bool PNGImageFile::expand()
     case 16:
     {
       for (int i = 0; i < myWidth*channels; i++) {
-	*(pData+i+1) = (*(pData + 2*i + 1));
+	*(destination+i) = (*(pData + 2*i + 1));
       }
     }
     break;
@@ -391,15 +393,27 @@ bool PNGImageFile::filter()
   unsigned char filterType = *pData;
   *(pData++) = 0;
 
+  // images are filtered by "corresponding bytes in the pixel"
+  // this implies:
+  //   <8-bit-per-sample are filtered by whole byte
+  //    8-bit-per-sample are filtered by sample
+  //   >8-bit-per-sample are filtered by semi-sample
+  // indexed are always filtered by byte
+  //  (only 1 real input channel)
+  int filterUnitsPerPixel = getNumChannels();
+  if ((colorDepth & 0x1) || (bitDepth < 8))
+    filterUnitsPerPixel = 1;
+  if (bitDepth > 8)
+    filterUnitsPerPixel *= (bitDepth / 8);
+
   switch (filterType) {
     case FILTER_NONE:
       return true;
 
     case FILTER_SUB:
     {
-      int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++)
-	*pData += *(pData-channels);
+	*pData += *(pData-filterUnitsPerPixel);
       return true;
       break;
     }
@@ -416,9 +430,8 @@ bool PNGImageFile::filter()
     case FILTER_AVERAGE:
     {
       unsigned char *pUp = getLineBuffer(false)+1;
-      int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-	int last = *(pData-channels);
+	int last = *(pData-filterUnitsPerPixel);
 	int up = *pUp;
 
 	*pData += (last + up)/2;
@@ -430,11 +443,10 @@ bool PNGImageFile::filter()
     case FILTER_PAETH:
     {
       unsigned char *pUp = getLineBuffer(false)+1;
-      int channels = getNumChannels();
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-	int a = *(pData-channels);
+	int a = *(pData-filterUnitsPerPixel);
 	int b = *pUp;
-	int c = *(pUp-channels);
+	int c = *(pUp-filterUnitsPerPixel);
 
 	int p = b - c;
 	int pc = a - c;

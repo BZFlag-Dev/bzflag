@@ -36,7 +36,7 @@ private:
   unsigned char *getLineBuffer(bool active=true);
   void switchLineBuffers();
   bool filter();
-  bool expand();
+  bool expand(unsigned char * destination);
 
   static unsigned char			PNGHEADER[8];
   static const unsigned char		MAX_COMPONENTS;
