@@ -805,6 +805,26 @@ static std::string cmdScreenshot(const std::string&,
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
 
+	// tEXt chunk containing gl renderer information
+	std::string renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); renderer += ": ";
+	renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); renderer += " (OpenGL ";
+	renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); renderer += ")";
+    temp = htonl(9 + (int)renderer.size()); //(length) tEXt is 9 + strlen(getAppVersion())
+    f->write((char*) &temp, 4);
+    temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
+    f->write((char*) &temp, 4);
+    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+    strcpy(reinterpret_cast<char*>(b), "GL Renderer"); //(data) Keyword
+    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
+    crc = crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b)));
+    tempByte = 0;				    //(data) Null character separator
+    f->write(&tempByte, 1);
+    crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    strcpy((char*) b, renderer.c_str());	       //(data) Text contents (GL information)
+    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
+    crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
+    f->write((char*) &crc, 4);		       //(crc) write crc
+
     // IEND chunk
     temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
     f->write((char*) &temp, 4);
