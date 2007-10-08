@@ -137,8 +137,7 @@ std::string		customLimboMessage;
 static std::vector<BillboardSceneNode*> explosions;
 static std::vector<BillboardSceneNode*> prototypeExplosions;
 int			savedVolume = -1;
-static bool		grabMouseAlways = false;
-static FlashClock		pulse;
+static FlashClock	pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
 
