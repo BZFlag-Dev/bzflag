@@ -220,6 +220,8 @@ void			WinWindow::setFullscreen(bool on)
 void			WinWindow::iconify()
 {
   ShowWindow(hwnd, SW_MINIMIZE);
+  if (mouseGrab)
+    ungrabMouse();
 }
 
 void			WinWindow::warpMouse(int x, int y)
@@ -519,17 +521,26 @@ bool			WinWindow::activate()
 {
   inactiveDueToDeactivate = false;
 
+  // don't do unwindowing stuff if we don't need to
+  if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window")) {
+    // still have the window, just regrab the mouse
+    if (mouseGrab)
+      grabMouse();
+    return true;
+  }
+
   // restore window
   ShowWindow(hwnd, SW_RESTORE);
   SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0,
 				SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 
+  // regrab the mouse with the new window size
+  if (mouseGrab)
+    grabMouse();
+
   // recreate OpenGL context
   const bool hadChild = (hDCChild != NULL);
   makeContext();
-
-  if (mouseGrab)
-    grabMouse();
 
   if (!hadChild && hDCChild != NULL) {
     // force a redraw
@@ -543,6 +554,14 @@ bool			WinWindow::activate()
 
 bool			WinWindow::deactivate()
 {
+  // ungrab the mouse when we lose focus
+  if (mouseGrab)
+    ungrabMouse();
+
+  // don't do unwindowing stuff if we don't need to
+  if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window"))
+    return true;
+
   // minimize window while not active.  skip if being destroyed.
   if (!inDestroy)
     ShowWindow(hwnd, SW_MINIMIZE);
@@ -550,9 +569,6 @@ bool			WinWindow::deactivate()
   // destroy OpenGL context
   const bool hadChild = (hDCChild != NULL);
   freeContext();
-
-  if (mouseGrab)
-    ungrabMouse();
 
   inactiveDueToDeactivate = true;
   return hadChild;
