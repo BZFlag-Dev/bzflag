@@ -286,14 +286,9 @@ void selectNextRecipient(bool forward, bool robotIn)
 // should we grab the mouse?
 //
 
-static void		setGrabMouse(bool grab)
-{
-  grabMouseAlways = grab;
-}
-
 bool		shouldGrabMouse()
 {
-  return grabMouseAlways && !unmapped &&
+  return mainWindow->getFullscreen() && !unmapped &&
     (myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
 }
 
@@ -7188,14 +7183,6 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("radarStyle", "0");
     TextureManager::instance().setMaxFilter(OpenGLTexture::Off);
   }
-
-  // should we grab the mouse?  yes if fullscreen.
-  if (!BZDB.isSet("_window"))
-    setGrabMouse(true);
-#if defined(__linux__) && !defined(DEBUG)
-  // linux usually has a virtual root window so grab mouse always
-  setGrabMouse(true);
-#endif
 
   // show window and clear it immediately
   mainWindow->showWindow(true);
