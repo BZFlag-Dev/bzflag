@@ -30,7 +30,7 @@ DIST_SUBDIRS = \
 	plugins \
 	tools \
 	win32 \
-	BZFlag.xcode
+	BZFlag.xcodeproj
 
 EXTRA_DIST = \
 	autogen.sh \

@@ -813,7 +813,7 @@ AC_SUBST(LIBDIR)
 
 
 AC_CONFIG_FILES(bzflag.info
-	BZFlag.xcode/Makefile
+	BZFlag.xcodeproj/Makefile
 	Dev-C++/Makefile
 	Makefile
 	bzflag.lsm
