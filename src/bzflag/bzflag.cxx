@@ -969,17 +969,11 @@ int			main(int argc, char** argv)
 
   // set data directory if user specified
   if (BZDB.isSet("directory")) {
+    /* already specified, so just set/use it */
     PlatformFactory::getMedia()->setMediaDirectory(BZDB.get("directory"));
   } else {
 
-    // !!! fix this stupid check.. GetMacOSXDataPath() is NULL without app bundle.
-
-#if defined(__APPLE__)
-    extern char *GetMacOSXDataPath(void);
-    PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
-    BZDB.set("directory", GetMacOSXDataPath());
-    BZDB.setPersistent("directory", false);
-#elif (defined(_WIN32) || defined(WIN32))
+#if (defined(_WIN32) || defined(WIN32))
     char exePath[MAX_PATH];
     GetModuleFileName(NULL,exePath,MAX_PATH);
     char* last = strrchr(exePath,'\\');
@@ -992,10 +986,13 @@ int			main(int argc, char** argv)
 #else
     // It's only checking existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
-    if (localedir == NULL) {
-      PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
-    } else {
+    if (localedir != NULL) {
+      /* found 'data' dir */
+      PlatformFactory::getMedia()->setMediaDirectory("data");
       closedir(localedir);
+    } else {
+      /* bah, just set the compile-time path */
+      PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
     }
 #endif
   }
