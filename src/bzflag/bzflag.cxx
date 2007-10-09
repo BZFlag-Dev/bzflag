@@ -985,10 +985,14 @@ int			main(int argc, char** argv)
       media->setMediaDirectory(exePath);
 #else
     // It's only checking existence of l10n directory
-    DIR *localedir = opendir("data/l10n/");
+    std::string mediadir = DEFAULT_MEDIA_DIR;
+    mediadir += "/l10n";
+    DIR *localedir = opendir(mediadir.c_str());
     if (localedir != NULL) {
       /* found 'data' dir */
-      PlatformFactory::getMedia()->setMediaDirectory("data");
+      BzfMedia *media = PlatformFactory::getMedia();
+      if (media)
+	media->setMediaDirectory(DEFAULT_MEDIA_DIR);
       closedir(localedir);
     } else {
       /* bah, just set the compile-time path */
