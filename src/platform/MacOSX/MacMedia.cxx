@@ -43,7 +43,7 @@ void MacMedia::setMediaDirectory(const std::string& _dir)
   struct stat statbuf;
   const char *mdir = _dir.c_str();
 
-  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
     /* try the Resource folder if invoked from a .app bundled */
     mdir = GetMacOSXDataPath();
     if (mdir) {
@@ -51,15 +51,16 @@ void MacMedia::setMediaDirectory(const std::string& _dir)
       BZDB.setPersistent("directory", false);
     }
   }
-  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
     /* try a simple 'data' dir in current directory (source build invocation) */
-    mdir = "data";
+    std::string defaultdir = DEFAULT_MEDIA_DIR;
+    mdir = defaultdir.c_str();
     if (mdir) {
       BZDB.set("directory", mdir);
       BZDB.setPersistent("directory", false);
     }
   }
-  if (stat(mdir, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)) {
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
     /* give up, revert to passed in directory */
     mdir = _dir.c_str();
   }
