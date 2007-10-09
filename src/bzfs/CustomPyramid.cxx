@@ -63,8 +63,8 @@ CustomPyramid::CustomPyramid()
     texoffset[i][0] = 0.0f;
     texoffset[i][1] = 0.0f;
     phydrv[i] = -1;
-    drivethrough[i] = false;
-    shootthrough[i] = false;
+    drivethrough[i] = 0;
+    shootthrough[i] = 0;
   }
 
   return;
@@ -135,24 +135,24 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "drivethrough") == 0) {
     for (int i = 0; i < (int)faceList.size(); i++) {
       const int f = faceList[i];
-      drivethrough[f] = true;
+      drivethrough[f] = 0xFF;
     }
-    driveThrough = true; // for old pyramids
+    driveThrough = 0xFF; // for old pyramids
     return true;
   }
   else if (strcasecmp(cmd, "shootthrough") == 0) {
     for (int i = 0; i < (int)faceList.size(); i++) {
       const int f = faceList[i];
-      shootthrough[f] = true;
+      shootthrough[f] = 0xFF;
     }
-    shootThrough = true; // for old pyramids
+    shootThrough = 0xFF; // for old pyramids
     return true;
   }
   else if (strcasecmp(cmd, "passable") == 0) {
     for (int i = 0; i < (int)faceList.size(); i++) {
       const int f = faceList[i];
-      drivethrough[f] = true;
-      shootthrough[f] = true;
+      drivethrough[f] = 0xFF;
+      shootthrough[f] = 0xFF;
     }
     driveThrough = true; // for old pyramids
     shootThrough = true; // for old pyramids

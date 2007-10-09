@@ -90,8 +90,8 @@ class GroupInstance {
     int phydrv;
     bool modifyMaterial;
     const BzMaterial* material;
-    bool driveThrough;
-    bool shootThrough;
+    unsigned char driveThrough;
+    unsigned char shootThrough;
     MaterialMap matMap;
 };
 

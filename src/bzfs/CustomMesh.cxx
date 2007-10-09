@@ -34,8 +34,8 @@ CustomMesh::CustomMesh()
   phydrv = -1;
   noclusters = false;
   smoothBounce = false;
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
   decorative = false;
   drawInfo = NULL;
   material.setTexture("mesh");

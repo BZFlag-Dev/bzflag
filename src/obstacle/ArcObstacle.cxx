@@ -686,8 +686,8 @@ void* ArcObstacle::unpack(void* buf)
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  driveThrough = (stateByte & (1 << 0)) != 0;
-  shootThrough = (stateByte & (1 << 1)) != 0;
+  driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
+  shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
 

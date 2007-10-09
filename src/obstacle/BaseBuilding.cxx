@@ -259,8 +259,8 @@ void* BaseBuilding::unpack(void* buf)
 
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  driveThrough = (stateByte & _DRIVE_THRU) != 0;
-  shootThrough = (stateByte & _SHOOT_THRU) != 0;
+  driveThrough = (stateByte & _DRIVE_THRU) != 0 ? 0xFF : 0;
+  shootThrough = (stateByte & _SHOOT_THRU) != 0 ? 0xFF : 0;
 
   finalize();
 

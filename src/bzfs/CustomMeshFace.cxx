@@ -28,7 +28,7 @@
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
 			       bool _noclusters,
-			       bool bounce, bool drive, bool shoot)
+			       bool bounce, unsigned char drive, unsigned char shoot)
 {
   phydrv = physics;
   noclusters = _noclusters;
@@ -101,13 +101,13 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
     noclusters = true;
   }
   else if (strcasecmp(cmd, "drivethrough") == 0) {
-    driveThrough = true;
+    driveThrough = 0xFF;
   }
   else if (strcasecmp(cmd, "shootthrough") == 0) {
-    shootThrough = true;
+    shootThrough = 0xFF;
   }
   else if (strcasecmp(cmd, "passable") == 0) {
-    driveThrough = shootThrough = true;
+    driveThrough = shootThrough = 0xFF;
   }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {

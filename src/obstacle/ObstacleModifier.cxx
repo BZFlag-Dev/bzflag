@@ -44,8 +44,8 @@ void ObstacleModifier::init()
   modifyMaterial = false;
   material = NULL;
   // passable bits
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
 
   return;
 }
@@ -133,8 +133,8 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
     matMap = grpinst.matMap;
   }
 
-  driveThrough = grpinst.driveThrough || obsMod.driveThrough;
-  shootThrough = grpinst.shootThrough || obsMod.shootThrough;
+  driveThrough = grpinst.driveThrough | obsMod.driveThrough;
+  shootThrough = grpinst.shootThrough | obsMod.shootThrough;
 
   return;
 }
@@ -207,22 +207,22 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     }
   }
   if (driveThrough) {
-    obstacle->driveThrough = true;
+    obstacle->driveThrough = 0xFF;
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
-	face->driveThrough = true;
+	face->driveThrough = 0xFF;
       }
     }
   }
   if (shootThrough) {
-    obstacle->shootThrough = true;
+    obstacle->shootThrough = 0xFF;
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
-	face->shootThrough = true;
+	face->shootThrough = 0xFF;
       }
     }
   }

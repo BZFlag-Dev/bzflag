@@ -47,8 +47,8 @@ class ObstacleModifier {
     const BzMaterial* material;
     MaterialMap matMap;
 
-    bool driveThrough;
-    bool shootThrough;
+    unsigned char driveThrough;
+    unsigned char shootThrough;
 };
 
 

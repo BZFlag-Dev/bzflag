@@ -25,8 +25,8 @@ public:
   virtual bool read(const char *cmd, std::istream&);
 
 protected:
-  bool driveThrough;
-  bool shootThrough;
+  unsigned char driveThrough;
+  unsigned char shootThrough;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

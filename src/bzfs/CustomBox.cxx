@@ -64,8 +64,8 @@ CustomBox::CustomBox()
     texoffset[i][0] = 0.0f;
     texoffset[i][1] = 0.0f;
     phydrv[i] = -1;
-    drivethrough[i] = false;
-    shootthrough[i] = false;
+    drivethrough[i] = 0;
+    shootthrough[i] = 0;
   }
 
   return;
@@ -135,27 +135,27 @@ bool CustomBox::read(const char *cmd, std::istream& input)
   if (strcasecmp(cmd, "drivethrough") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      drivethrough[f] = true;
+      drivethrough[f] = 0xFF;
     }
-    driveThrough = true; // for old boxes
+    driveThrough = 0xFF; // for old boxes
     return true;
   }
   else if (strcasecmp(cmd, "shootthrough") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      shootthrough[f] = true;
+      shootthrough[f] = 0xFF;
     }
-    shootThrough = true; // for old boxes
+    shootThrough = 0xFF; // for old boxes
     return true;
   }
   else if (strcasecmp(cmd, "passable") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      drivethrough[f] = true;
-      shootthrough[f] = true;
+      drivethrough[f] = 0xFF;
+      shootthrough[f] = 0xFF;
     }
-    driveThrough = true; // for old boxes
-    shootThrough = true; // for old boxes
+    driveThrough = 0xFF; // for old boxes
+    shootThrough = 0xFF; // for old boxes
     return true;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {

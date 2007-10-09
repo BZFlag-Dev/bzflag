@@ -21,17 +21,17 @@
 
 WorldFileObstacle::WorldFileObstacle()
 {
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
 }
 
 
 bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp(cmd, "drivethrough") == 0)
-    driveThrough = true;
+    driveThrough = 0xFF;
   else if (strcasecmp(cmd, "shootthrough") == 0)
-    shootThrough = true;
+    shootThrough = 0xFF;
   else if (strcasecmp(cmd, "passable") == 0)
     driveThrough = shootThrough = true;
   else

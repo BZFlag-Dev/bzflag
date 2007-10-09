@@ -63,8 +63,8 @@ void GroupInstance::init()
   phydrv = -1;
   modifyMaterial = false;
   material = NULL;
-  driveThrough = false;
-  shootThrough = false;
+  driveThrough = 0;
+  shootThrough = 0;
 
   return;
 }
@@ -145,14 +145,14 @@ void GroupInstance::setMaterial(const BzMaterial* _material)
 
 void GroupInstance::setDriveThrough()
 {
-  driveThrough = true;
+  driveThrough = 0xFF;
   return;
 }
 
 
 void GroupInstance::setShootThrough()
 {
-  shootThrough = true;
+  shootThrough = 0xFF;
   return;
 }
 
@@ -272,8 +272,8 @@ void* GroupInstance::unpack(void* buf)
   modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
   modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
   modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
-  driveThrough =	((bits & (1 << 4)) == 0) ? false : true;
-  shootThrough =	((bits & (1 << 5)) == 0) ? false : true;
+  driveThrough =	((bits & (1 << 4)) == 0) ? 0 : 0xFF;
+  shootThrough =	((bits & (1 << 5)) == 0) ? 0 : 0xFF;
 
   if (modifyTeam) {
     uint16_t tmpTeam;
