@@ -45,7 +45,7 @@ class BzfMedia {
 
     // get and set default directory to look for media files in
     std::string		getMediaDirectory() const;
-    void		setMediaDirectory(const std::string&);
+    virtual void	setMediaDirectory(const std::string&);
 
     // images are stored RGBARGBA..., left to right, bottom to top.
     // depth indicates how many channels were in the stored image.
