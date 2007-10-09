@@ -25,6 +25,7 @@ class SDLMedia : public BzfMedia {
 			SDLMedia();
 			~SDLMedia() {};
 
+    void		setMediaDirectory(const std::string&);
     double		stopwatch(bool);
     bool		openAudio();
     void		closeAudio();
