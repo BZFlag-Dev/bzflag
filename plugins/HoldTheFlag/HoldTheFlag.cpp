@@ -300,7 +300,7 @@ bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->time, msgData
 
 
 
-bool checkPerms (int playerID, char *htfCmd, const char *permName)
+bool checkPerms (int playerID, const char *htfCmd, const char *permName)
 {
   if (bz_hasPerm (playerID, permName))
     return true;
