@@ -666,7 +666,7 @@ inline void KOTHEventHandler::process ( bz_EventData *eventData )
 
 				if (timeStanding >= koth.adjustedTime && koth.id != -1) // time's up - kill 'em
 				{
-					if (koth.teamPlay && (getTeamColor(koth.team) != "ROGUE"))
+					if (koth.teamPlay && strcmp(getTeamColor(koth.team), "ROGUE") == 0)
 						killTeams(koth.team, koth.callsign);
 					else
 						killPlayers(koth.id, koth.callsign);
