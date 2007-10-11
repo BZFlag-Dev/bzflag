@@ -4131,12 +4131,12 @@ void setLookAtMarker(void)
       // get the list of objects that fall in this ray
       const ObsList* olist = COLLISIONMGR.rayTest (&ray, d);
 
-      float dist = d;
+      bool blocked = false;
       if ( olist && olist->count > 0)
       {
-	for (i = 0; i < (unsigned int)olist->count; i++)
+	for (int o = 0; o < olist->count; o++)
 	{
-	  const Obstacle* obs = olist->list[i];
+	  const Obstacle* obs = olist->list[o];
 
 	  if (obs->getType() != Teleporter::getClassName())
 	  {
@@ -4145,14 +4145,15 @@ void setLookAtMarker(void)
 	    const float timet = obs->intersect(ray);
 	    if ( timet > 1.0f )
 	    {
-	      dist = d * timet;
+	      blocked = true;
+	       o = olist->count;
 	    }
 	  }
 	}
       }
 
       // if there is nothing between us then go and add it to the list
-      if ( dist >= d )
+      if ( !blocked )
       {
 	// is it better?
 	bestTarget = player[i];
