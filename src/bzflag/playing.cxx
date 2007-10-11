@@ -4127,7 +4127,6 @@ void setLookAtMarker(void)
 
       Ray ray = Ray(myTank->getPosition(), vec);
 
-      float t;
       // get the list of objects that fall in this ray
       const ObsList* olist = COLLISIONMGR.rayTest (&ray, d);
 
