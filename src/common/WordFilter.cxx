@@ -49,6 +49,9 @@ bool WordFilter::simpleFilter(char *input) const
       endPosition = line.length();
 
     word = line.substr(startPosition, endPosition-startPosition);
+    // transform to lowercase
+    transform (word.begin(), word.end(), word.begin(), tolower);
+
     findWord.word = word;
     firstchar = (unsigned char)word[0];
     if (filters[firstchar].find(findWord) != \
@@ -756,6 +759,9 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 	counter=100;
       }
     }
+
+    // convert the word to lowercase
+    transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
 
     bool added = addToFilter(filterWord, std::string(""));
     if ((!added) && (verbose)) {
