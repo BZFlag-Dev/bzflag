@@ -91,6 +91,7 @@
 #include "HUDui.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
+#include "CollisionManager.h"
 //#include "messages.h"
 
 static const float	FlagHelpDuration = 60.0f;
@@ -4091,6 +4092,7 @@ void setLookAtMarker(void)
   const float s = sinf(  - myTank->getAngle());
   const float x0 = myTank->getPosition()[0];
   const float y0 = myTank->getPosition()[1];
+  const float z0 = myTank->getPosition()[2];
 
   // initialize best target
   Player *bestTarget = NULL;
@@ -4114,10 +4116,48 @@ void setLookAtMarker(void)
     const float d = hypotf( x, y );
     const float a = fabsf( y / d );
 
-    if (inLookRange(a, d, bestDistance, player[i])) {
-      // is it better?
-      bestTarget = player[i];
-      bestDistance = d;
+
+    if (inLookRange(a, d, bestDistance, player[i]))
+    {
+      // check and see if we can cast a ray from our point to the object
+      float vec[3];
+      vec[0] = pos[0]-x0;
+      vec[1] = pos[1]-y0;
+      vec[2] = (pos[2]-z0);//+(BZDBCache::tankHeight*0.5f);
+
+      Ray ray = Ray(myTank->getPosition(), vec);
+
+      float t;
+      // get the list of objects that fall in this ray
+      const ObsList* olist = COLLISIONMGR.rayTest (&ray, d);
+
+      float dist = d;
+      if ( olist && olist->count > 0)
+      {
+	for (i = 0; i < (unsigned int)olist->count; i++)
+	{
+	  const Obstacle* obs = olist->list[i];
+
+	  if (obs->getType() != Teleporter::getClassName())
+	  {
+	    // if it's not a teleporter (they are too thin to hide things )
+	    // then see if it's closer to us then the other tank
+	    const float timet = obs->intersect(ray);
+	    if ( timet > 1.0f )
+	    {
+	      dist = d * timet;
+	    }
+	  }
+	}
+      }
+
+      // if there is nothing between us then go and add it to the list
+      if ( dist >= d )
+      {
+	// is it better?
+	bestTarget = player[i];
+	bestDistance = d;
+      }
     }
   }
 
