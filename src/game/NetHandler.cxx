@@ -806,7 +806,7 @@ bool NetListener::listen (  Address serverAddress, unsigned short port )
   addr.sin_port = htons(port);
 
   // open well known service port
-  listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+  listenSocket = (int)socket(AF_INET, SOCK_STREAM, 0);
   if (listenSocket == -1)
     return false;
 

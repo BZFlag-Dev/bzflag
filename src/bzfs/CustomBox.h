@@ -46,8 +46,8 @@ class CustomBox : public WorldFileObstacle {
     int phydrv[FaceCount];
     float texsize[FaceCount][2];
     float texoffset[FaceCount][2];
-    bool drivethrough[FaceCount];
-    bool shootthrough[FaceCount];
+    unsigned char drivethrough[FaceCount];
+    unsigned char shootthrough[FaceCount];
     BzMaterial materials[FaceCount];
 
     static const char* faceNames[FaceCount];
