@@ -730,14 +730,14 @@ public:
   bz_GetAutoTeamEventData_V1() : bz_EventData()
   {
     eventType = bz_eGetAutoTeamEvent;
-    playeID = -1;
+    playerID = -1;
     team = eNoTeam;
     handled = false;
   }
   virtual ~bz_GetAutoTeamEventData_V1(){};
   virtual void update (){bz_EventData::update();}
 
-  int playeID;
+  int playerID;
   bz_ApiString callsign;
   bz_eTeamType team;
 
