@@ -41,6 +41,9 @@ StandardTankAvatar::~StandardTankAvatar ( void )
 
   if (tankNode)
     delete(tankNode);
+
+  if (pausedSphere)
+    delete(pausedSphere);
 }
 
 void StandardTankAvatar::move ( const float pos[3], const float forward[3] )
