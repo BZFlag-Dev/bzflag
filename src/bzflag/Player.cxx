@@ -14,12 +14,8 @@
 #include "Player.h"
 
 // common interface headers
-#include "playerAvatarManager.h"
 #include "SceneRenderer.h"
-#include "SphereSceneNode.h"
-#include "OpenGLMaterial.h"
 #include "BZDBCache.h"
-#include "TextureManager.h"
 #include "CollisionManager.h"
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
@@ -96,25 +92,17 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(email, _email, EmailLen);
   email[EmailLen-1] = '\0';
 
-  if (id != ServerPlayer && !headless) {
-    // make scene nodes
-    tankNode = getTankSceneNode(id,state.pos, forward);
-    tankIDLNode = getTankIDLSceneNode(id,tankNode);
-    changeTeam(team);
-    const float sphereRad = (1.5f * BZDBCache::tankRadius);
-    if (RENDERER.useQuality() >= _HIGH_QUALITY) {
-      pausedSphere = new SphereLodSceneNode(state.pos, sphereRad);
-    } else {
-      pausedSphere = new SphereBspSceneNode(state.pos, sphereRad);
-    }
-    pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
-  }
+  // only get an avtar if it can be drawn
+  if (id != ServerPlayer && !headless) 
+    avatar = getPlayerAvatar(id,state.pos,forward);
 
   // setup the dimension properties
   dimensions[0] = 0.5f * BZDBCache::tankLength;
   dimensions[1] = 0.5f * BZDBCache::tankWidth;
   dimensions[2] = BZDBCache::tankHeight;
-  for (int i = 0; i < 3; i++) {
+
+  for (int i = 0; i < 3; i++)
+  {
     dimensionsRate[i] = 0.0f;
     dimensionsScale[i] = 1.0f;
     dimensionsTarget[i] = 1.0f;
@@ -142,24 +130,25 @@ Player::~Player()
   // free shots
   const int numShots = getMaxShots();
   for (int i = 0; i < numShots; i++)
+  {
     if (shots[i])
       delete shots[i];
-
-  if (id != ServerPlayer && !headless) {
-    delete tankIDLNode;
-    delete tankNode;
-    delete pausedSphere;
   }
+
+  freePlayerAvatar (avatar);
 }
 
 // Take into account the quality of player wins/(wins+loss)
 // Try to penalize winning casuality
-static float rabbitRank (int wins, int losses) {
+static float rabbitRank (int wins, int losses) 
+{
   // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)
     return 0.5;
+
   float average = (float)wins/(float)sum;
+
   // IIRC that is how wide is the gaussian
   float penalty = (1.0f - 0.5f / sqrt((float)sum));
   return average * penalty;
@@ -167,12 +156,10 @@ static float rabbitRank (int wins, int losses) {
 
 float Player::getTKRatio() const
 {
-  if (wins == 0) {
-    // well, we have to return *something* if they have no wins
-    return (float)tks/1.0f;
-  } else {
+  if (wins == 0)
+    return (float)tks/1.0f;    // well, we have to return *something* if they have no wins
+  else
     return (float)tks/(float)wins;
-  }
 }
 
 // returns a value between 1.0 and -1.0
@@ -183,50 +170,45 @@ float Player::getNormalizedScore() const
 
 void Player::forceReload(float time)
 {
-	jamTime = TimeKeeper::getCurrent();
-	jamTime+= time;
+  jamTime = TimeKeeper::getCurrent();
+  jamTime+= time;
 }
 
-float			Player::getReloadTime() const
+float Player::getReloadTime() const
 {
-	World *world = World::getWorld();
-	if (!world) {
-		return 0.0f;
-	}
-	const int numShots = world->getMaxShots();
-	if (numShots <= 0) {
-		return 0.0f;
-	}
+  World *world = World::getWorld();
+  if (!world)
+    return 0.0f;
 
-	float time = float(jamTime - TimeKeeper::getCurrent());
-	if (time > 0.0f) {
-		return time;
-	}
+  const int numShots = world->getMaxShots();
+  if (numShots <= 0) 
+    return 0.0f;
 
-	// look for an empty slot
-	int i;
-	for (i = 0; i < numShots; i++) {
-		if (!shots[i]) {
-			return 0.0f;
-		}
-	}
+  float time = float(jamTime - TimeKeeper::getCurrent());
+  if (time > 0.0f)
+    return time;
 
-	// look for the shot fired least recently
-	float minTime = float(shots[0]->getReloadTime() -
-		(shots[0]->getCurrentTime() - shots[0]->getStartTime()));
-	for (i = 1; i < numShots; i++) {
-		const float t = float(shots[i]->getReloadTime() -
-			(shots[i]->getCurrentTime() - shots[i]->getStartTime()));
-		if (t < minTime) {
-			minTime = t;
-		}
-	}
+  // look for an empty slot
+  int i;
+  for (i = 0; i < numShots; i++)
+  {
+    if (!shots[i])
+      return 0.0f;
+  }
 
-	if (minTime < 0.0f) {
-		minTime = 0.0f;
-	}
+  // look for the shot fired least recently
+  float minTime = float(shots[0]->getReloadTime() - (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
+  for (i = 1; i < numShots; i++)
+  {
+    const float t = float(shots[i]->getReloadTime() - (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
+    if (t < minTime)
+      minTime = t;
+  }
 
-	return minTime;
+  if (minTime < 0.0f)
+    minTime = 0.0f;
+
+  return minTime;
 }
 
 float Player::getLocalNormalizedScore() const
@@ -251,15 +233,14 @@ float Player::getRadius() const
 
 float Player::getMaxSpeed ( void ) const
 {
-	// BURROW and AGILITY will not be taken into account
-	const FlagType* flag = getFlag();
-	float maxSpeed = BZDBCache::tankSpeed;
-	if (flag == Flags::Velocity) {
-		maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	} else if (flag == Flags::Thief) {
-		maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	}
-	return maxSpeed;
+  // BURROW and AGILITY will not be taken into account
+  const FlagType* flag = getFlag();
+  float maxSpeed = BZDBCache::tankSpeed;
+  if (flag == Flags::Velocity) 
+    maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+  else if (flag == Flags::Thief) 
+    maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+  return maxSpeed;
 }
 
 
@@ -270,13 +251,14 @@ void Player::getMuzzle(float* m) const
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
   float front = (dimensionsScale[0] * BZDBCache::tankRadius);
-  if (dimensionsRate[0] > 0.0f) {
+  if (dimensionsRate[0] > 0.0f) 
     front = front + (dimensionsRate[0] * 0.1f);
-  }
+
   front = front + 0.1f;
 
   m[0] = state.pos[0] + (front * forward[0]);
   m[1] = state.pos[1] + (front * forward[1]);
+  
   const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   m[2] = state.pos[2] + (height * dimensionsScale[2]);
   return;
@@ -293,7 +275,8 @@ void Player::move(const float* _pos, float _azimuth)
 {
   // update the speed of the state
   float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
-  if ( state.lastUpdateTime >= 0 ) {
+  if ( state.lastUpdateTime >= 0 )
+  {
     float delta = currentTime - state.lastUpdateTime;
     state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
     state.apparentVelocity[1] = (_pos[1]-state.pos[1])/delta;
@@ -301,19 +284,17 @@ void Player::move(const float* _pos, float _azimuth)
   }
   state.lastUpdateTime = currentTime;
 
-	// assumes _forward is normalized
+  // assumes _forward is normalized
   state.pos[0] = _pos[0];
   state.pos[1] = _pos[1];
   state.pos[2] = _pos[2];
   state.azimuth = _azimuth;
 
   // limit angle
-  if (state.azimuth < 0.0f) {
+  if (state.azimuth < 0.0f)
     state.azimuth = (float)((2.0 * M_PI) - fmodf(-state.azimuth, (float)(2.0 * M_PI)));
-  }
-  else if (state.azimuth >= (2.0f * M_PI)) {
+  else if (state.azimuth >= (2.0f * M_PI))
     state.azimuth = fmodf(state.azimuth, (float)(2.0 * M_PI));
-  }
 
   // update forward vector (always in horizontal plane)
   forward[0] = cosf(state.azimuth);
@@ -321,10 +302,8 @@ void Player::move(const float* _pos, float _azimuth)
   forward[2] = 0.0f;
 
   // compute teleporter proximity
-  if (World::getWorld()) {
-    teleporterProximity =
-      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
-  }
+  if (World::getWorld()) 
+    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
 }
 
 
@@ -347,11 +326,10 @@ void Player::setPhysicsDriver(int driver)
   state.phydrv = driver;
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-  if (phydrv != NULL) {
+  if (phydrv != NULL) 
     state.status |= PlayerState::OnDriver;
-  } else {
+  else
     state.status &= ~PlayerState::OnDriver;
-  }
 
   return;
 }
@@ -360,10 +338,8 @@ void Player::setPhysicsDriver(int driver)
 void Player::setRelativeMotion()
 {
   bool falling = (state.status & short(PlayerState::Falling)) != 0;
-  if (falling && (getFlag() != Flags::Wings)) {
-    // no adjustments while falling
-    return;
-  }
+  if (falling && (getFlag() != Flags::Wings)) 
+    return;    // no adjustments while falling
 
   // set 'relativeSpeed' and 'relativeAngVel'
   float relativeVel[2];
@@ -446,10 +422,10 @@ void Player::setExplode(const TimeKeeper& t)
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
-  if (!headless) {
-    tankNode->rebuildExplosion();
-    // setup the flag effect to revert to normal
-    updateFlagEffect(Flags::Null);
+  if (!avatar)
+  {
+    avatar->explode();
+    updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
   }
 }
 
@@ -706,7 +682,8 @@ void Player::updateTreads(float dt)
   const float leftOff = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
 
-  tankNode->addTreadOffsets(leftOff, rightOff);
+  if (avatar)
+    avatar->setTurnOffsets(leftOff,rightOff);
 
   return;
 }
@@ -807,54 +784,14 @@ void Player::endShot(int index, bool isHit, bool showExplosion)
 
 void Player::setVisualTeam (TeamColor visualTeam)
 {
-  // only do all this junk when the effective team color actually changes
-  if (visualTeam == lastVisualTeam)
-    return;
-  lastVisualTeam = visualTeam;
-
-  static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-  static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
-  static float		tankShininess = 20.0f;
-  static GLfloat	rabbitEmissive[3] = { 0.0f, 0.0f, 0.0f };
-  static float		rabbitShininess = 100.0f;
-
-  GLfloat *emissive;
-  GLfloat shininess;
-
-  if (visualTeam == RabbitTeam) {
-    emissive = rabbitEmissive;
-    shininess = rabbitShininess;
-  } else {
-    emissive = tankEmissive;
-    shininess = tankShininess;
-  }
-
-  TextureManager &tm = TextureManager::instance();
-  std::string texName;
-  texName = Team::getImagePrefix(visualTeam);
-
-  texName += BZDB.get("tankTexture");
-
-  // now after we did all that, see if they have a user texture
-  tankTexture = -1;
-  if (userTexture.size())
-    tankTexture = tm.getTextureID(userTexture.c_str(),false);
-
-  // if the user load failed try our calculated texture
-  if (tankTexture < 0)
-    tankTexture = tm.getTextureID(texName.c_str(),false);
-
   const float* _color = Team::getTankColor(visualTeam);
   color[0] = _color[0];
   color[1] = _color[1];
   color[2] = _color[2];
-  tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
-  tankNode->setTexture(tankTexture);
 
-  int jumpJetsTexture = tm.getTextureID("jumpjets", false);
-  tankNode->setJumpJetsTexture(jumpJetsTexture);
+  if (avatar)
+    avatar->setVisualTeam(visualTeam,color);
 }
-
 
 void Player::fireJumpJets()
 {
@@ -875,9 +812,8 @@ void Player::clearRemoteSounds()
 void Player::addRemoteSound(int sound)
 {
   state.sounds |= sound;
-  if (state.sounds != PlayerState::NoSounds) {
+  if (state.sounds != PlayerState::NoSounds) 
     state.status |= PlayerState::PlaySound;
-  }
   return;
 }
 
@@ -888,71 +824,72 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 {
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
-  if (!isAlive() && !isExploding()) {
+  if (!isAlive() && !isExploding()) 
     return; // don't draw anything
-  }
 
   World *world = World::getWorld();
-  if (!world) {
+  if (!world) 
     return; /* no world, shouldn't add to scene */
-  }
+
+  if (!avatar)
+    return;
 
   // place the tank
-  tankNode->move(state.pos, forward);
+  avatar->move(state.pos, forward);
 
   // only use dimensions if we aren't at steady state.
   // this is done because it's more expensive to use
   // GL_NORMALIZE then to use precalculated normals.
-  if (useDimensions) {
-    tankNode->setDimensions(dimensionsScale);
-  } else {
-    if (flagType == Flags::Obesity) tankNode->setObese();
-    else if (flagType == Flags::Tiny) tankNode->setTiny();
-    else if (flagType == Flags::Narrow) tankNode->setNarrow();
-    else if (flagType == Flags::Thief) tankNode->setThief();
-    else tankNode->setNormal();
+  if (useDimensions)
+    avatar->setScale(dimensionsScale);
+  else 
+  {
+    teAvatarScaleModes mode = eNormal;	// TODO, have the server set a player scale for these things, so it's not up to the client
+   
+    if (flagType == Flags::Obesity)
+      mode = eFat;
+    else if (flagType == Flags::Tiny)
+      mode = eTiny;
+    else if (flagType == Flags::Narrow)
+      mode = eThin;
+    else if (flagType == Flags::Thief)
+      mode = eThief;
+    avatar->setScale(mode);
   }
 
   // is this tank fully cloaked?
   const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
 
-  if (cloaked && !seerView) {
+  if (cloaked && !seerView) 
     return; // don't draw anything
-  }
 
-  // setup the visibility properties
-  if (inCockpit && !showTreads) {
-    tankNode->setOnlyShadows(true);
-  } else {
-    tankNode->setOnlyShadows(false);
-  }
+  avatar->setVisualMode(inCockpit,showTreads);
 
   // adjust alpha for seerView
-  if (seerView) {
-    if (isPhantomZoned()) {
+  if (seerView)
+  {
+    if (isPhantomZoned()) 
+    {
       color[3] = 0.25f;
-    } else {
+    } 
+    else
+    {
       color[3] = teleAlpha;
     }
   }
 
-  // setup the color and material
   setVisualTeam(effectiveTeam);
-  tankNode->setColor(color);
 
-  tankNode->setInTheCockpit(inCockpit);
+  if (isAlive())
+  {
+    avatar->setAnimationValues(0,state.jumpJetsScale);
 
-  // reset the clipping plane
-  tankNode->setClipPlane(NULL);
+    std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
+    for ( int i = 0; i < (int)nodeList.size(); i++ )
+      scene->addDynamicNode(nodeList[i]);
 
-  tankNode->setJumpJets(0.0f);
-
-  if (isAlive()) {
-    tankNode->setExplodeFraction(0.0f);
-    tankNode->setJumpJets(state.jumpJetsScale);
-    scene->addDynamicNode(tankNode);
-
-    if (isCrossingWall()) {
+    if (isCrossingWall()) 
+    {
       // get which plane to compute IDL against
       GLfloat plane[4];
       const GLfloat a = atan2f(forward[1], forward[0]);
@@ -967,20 +904,23 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 				    dimensions[0], dimensions[1],
 				    dimensions[2], plane)) {
 	// stick in interdimensional lights node
-	if (showIDL) {
-	  tankIDLNode->move(plane);
-	  scene->addDynamicNode(tankIDLNode);
+	if (showIDL) 
+	{
+	  avatar->moveIDL(plane);
+	  nodeList = avatar->getIDLSceneNodes();
+	  for ( int i = 0; i < (int)nodeList.size(); i++ )
+	    scene->addDynamicNode(nodeList[i]);
 	}
 
 	// add clipping plane to tank node
 	if (!inCockpit) {
-	  tankNode->setClipPlane(plane);
+	  avatar->setClipingPlane(plane);
 	}
       }
     }
     else if (getPosition()[2] < 0.0f) {
       // this should only happen with Burrow flags
-      tankNode->setClipPlane(groundPlane);
+      avatar->setClipingPlane(groundPlane);
     } // isCrossingWall()
   }   // isAlive()
   else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
@@ -1000,17 +940,23 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       memcpy(newColor, color, sizeof(float[3]));
       const float fadeFactor = (1.0f - t) / (1.0f - fadeRatio);
       newColor[3] = color[3] * fadeFactor;
-      tankNode->setColor(newColor);
+      avatar->setColor(newColor);
     }
-    tankNode->setExplodeFraction(t);
-    tankNode->setClipPlane(groundPlane); // shadows are not clipped
-    scene->addDynamicNode(tankNode);
+    avatar->setAnimationValues(t,0);
+    avatar->setClipingPlane(groundPlane); // shadows are not clipped
+
+    std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
+    for ( int i = 0; i < (int)nodeList.size(); i++ )
+      scene->addDynamicNode(nodeList[i]);
   }
 
-  if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos,
-		       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
-    scene->addDynamicSphere(pausedSphere);
+  if (isAlive() && (isPaused() || isNotResponding())) 
+  {
+    avatar->movePause(state.pos, 1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
+
+    std::vector<SceneNode*> nodeList = avatar->getPauseSceneNodes();
+    for ( int i = 0; i < (int)nodeList.size(); i++ )
+      scene->addDynamicNode(nodeList[i]);
   }
 }
 
@@ -1450,13 +1396,11 @@ void Player::setDeadReckoning(float timestamp )
 
 void Player::renderRadar() const
 {
-  if (!isAlive() && !isExploding()) {
+  if (!isAlive() && !isExploding())
     return; // don't draw anything
-  }
-  if (tankNode) {
-    ((TankSceneNode*)tankNode)->renderRadar();
-  }
-  return;
+ 
+  if (avatar)
+    avatar->renderRadar();
 }
 
 

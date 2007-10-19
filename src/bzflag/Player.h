@@ -28,13 +28,11 @@
 #include "Flag.h"
 #include "PlayerState.h"
 #include "ShotStatistics.h"
+#include "playerAvatarManager.h"
 
 /* local interface headers */
 class ShotPath;
 class SceneDatabase;
-class TankSceneNode;
-class TankIDLSceneNode;
-class SphereSceneNode;
 class Obstacle;
 struct FiringInfo;
 
@@ -242,9 +240,7 @@ private:
   bool			haveIpAddr;
 
   // data use for drawing
-  TankSceneNode*	tankNode;
-  TankIDLSceneNode*	tankIDLNode;
-  SphereSceneNode*	pausedSphere;
+  PlayerAvatar		*avatar;
 #ifndef BUILDING_BZADMIN
   GLfloat		color[4];
   GLfloat		teleAlpha;
