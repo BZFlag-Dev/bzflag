@@ -15,7 +15,6 @@
 
 #include "common.h"
 #include "global.h"
-#include "SceneNode.h"
 
 typedef enum
 {
@@ -25,6 +24,8 @@ typedef enum
   eThin,
   eThief
 }teAvatarScaleModes;
+
+class SceneNode;
 
 class PlayerAvatar
 {

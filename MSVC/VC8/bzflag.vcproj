@@ -743,6 +743,11 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\StandardTankAvatar.cxx"
+				>
+			</File>
+
+			<File
 				RelativePath="..\..\src\bzflag\Region.cxx"
 				>
 			</File>
@@ -1337,6 +1342,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\playerAvatarManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\StandardTankAvatar.h"
 				>
 			</File>
 			<File
