@@ -886,7 +886,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ )
-      scene->addDynamicNode(nodeList[i]);
+    {
+      if (nodeList[i])
+	scene->addDynamicNode(nodeList[i]);
+    }
 
     if (isCrossingWall()) 
     {
@@ -909,7 +912,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	  avatar->moveIDL(plane);
 	  nodeList = avatar->getIDLSceneNodes();
 	  for ( int i = 0; i < (int)nodeList.size(); i++ )
-	    scene->addDynamicNode(nodeList[i]);
+	  {
+	    if (nodeList[i])
+	      scene->addDynamicNode(nodeList[i]);
+	  }
 	}
 
 	// add clipping plane to tank node
@@ -947,7 +953,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ )
-      scene->addDynamicNode(nodeList[i]);
+    {
+      if (nodeList[i])
+	scene->addDynamicNode(nodeList[i]);
+    }
   }
 
   if (isAlive() && (isPaused() || isNotResponding())) 
@@ -956,7 +965,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     std::vector<SceneNode*> nodeList = avatar->getPauseSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ )
+    {
+      if ( nodeList[i] )
       scene->addDynamicNode(nodeList[i]);
+    }
   }
 }
 
