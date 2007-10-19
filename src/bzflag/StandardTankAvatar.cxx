@@ -138,11 +138,6 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[
   tankNode->setJumpJetsTexture(jumpJetsTexture);
 
   tankNode->setColor(color);
-
-  // reset the clipping plane
-  tankNode->setClipPlane(NULL);
-
-  tankNode->setJumpJets(0.0f);
 }
 
 void StandardTankAvatar::setColor ( const float color[4] )
@@ -159,6 +154,11 @@ void StandardTankAvatar::setVisualMode ( bool inCockpit, bool showTreads )
     tankNode->setOnlyShadows(false);
 
   tankNode->setInTheCockpit(inCockpit);
+
+  // reset the clipping plane
+  tankNode->setClipPlane(NULL);
+
+  tankNode->setJumpJets(0.0f);
 }
 
 void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpParam )
