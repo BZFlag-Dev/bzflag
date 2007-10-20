@@ -95,6 +95,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   // only get an avtar if it can be drawn
   if (id != ServerPlayer && !headless) 
     avatar = getPlayerAvatar(id,state.pos,forward);
+  else
+    avatar = NULL;
 
   // setup the dimension properties
   dimensions[0] = 0.5f * BZDBCache::tankLength;
@@ -134,7 +136,6 @@ Player::~Player()
     if (shots[i])
       delete shots[i];
   }
-
   freePlayerAvatar (avatar);
 }
 
