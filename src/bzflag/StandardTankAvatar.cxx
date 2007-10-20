@@ -18,7 +18,7 @@
 #include "Team.h"
 #include "OpenGLMaterial.h"
 
-StandardTankAvatar::StandardTankAvatar ( int playerID, const float pos[3], const float forward[3] )
+StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const float pos[3], const float forward[3] )
 {
   tankNode = new TankSceneNode(pos,forward);
   IDLNode = new TankIDLSceneNode(tankNode);
