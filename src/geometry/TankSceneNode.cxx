@@ -18,6 +18,8 @@
 // interface header
 #include "TankSceneNode.h"
 
+#include "TextureManager.h"
+
 // system headers
 #include <math.h>
 
@@ -46,7 +48,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
 				useDimensions(false), useOverride(false),
 				onlyShadows(false), clip(false),
-				inTheCockpit(false), tankRenderNode(this),
+				inTheCockpit(false), tankRenderNode(this),treadRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
@@ -175,7 +177,6 @@ void TankSceneNode::addTreadOffsets(float left, float right)
   return;
 }
 
-
 void TankSceneNode::notifyStyleChange()
 {
   sort = !BZDBCache::zbuffer;
@@ -191,6 +192,9 @@ void TankSceneNode::notifyStyleChange()
     builder.setStipple(transparent ? 0.5f : 1.0f);
   }
   gstate = builder.getState();
+
+  builder.setTexture(TextureManager::instance().getTextureID("treads.png"));
+  treadState = builder.getState();
 
   OpenGLGStateBuilder builder2(lightsGState);
   if (BZDBCache::smooth) {
@@ -269,6 +273,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
 
   renderer.addRenderNode(&tankRenderNode, &gstate);
+  renderer.addRenderNode(&treadRenderNode, &treadState);
 }
 
 
@@ -1416,6 +1421,36 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
   return;
 }
+
+TankSceneNode::TreadRenderNode::TreadRenderNode(const TankSceneNode*)
+{
+}
+
+TankSceneNode::TreadRenderNode::~TreadRenderNode()
+{
+}
+
+void TankSceneNode::TreadRenderNode::setTankLOD(TankGeometryEnums::TankLOD)
+{
+}
+
+void TankSceneNode::TreadRenderNode::setTankSize(TankGeometryEnums::TankSize)
+{
+}
+
+void TankSceneNode::TreadRenderNode::sortOrder(bool above, bool towards, bool left)
+{
+}
+
+void TankSceneNode::TreadRenderNode::setNarrowWithDepth(bool narrow)
+{
+}
+
+void TankSceneNode::TreadRenderNode::render()
+{
+  
+}
+
 
 
 // Local Variables: ***

@@ -154,6 +154,27 @@ class TankSceneNode : public SceneNode {
     };
     friend class TankRenderNode;
 
+    class TreadRenderNode : public RenderNode {
+    public:
+      TreadRenderNode(const TankSceneNode*);
+      ~TreadRenderNode();
+      void		setTankLOD(TankGeometryEnums::TankLOD);
+      void		setTankSize(TankGeometryEnums::TankSize);
+      void		sortOrder(bool above, bool towards, bool left);
+      void		setNarrowWithDepth(bool narrow);
+      const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+
+      void		render();
+
+    protected:
+      const TankSceneNode* sceneNode;
+      bool		isExploding;
+      bool		narrowWithDepth;
+      GLfloat		explodeFraction;
+      static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
+    };
+    friend class TreadRenderNode;
+
   protected:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
@@ -174,8 +195,10 @@ class TankSceneNode : public SceneNode {
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     OpenGLGState	gstate;
+    OpenGLGState	treadState;
     OpenGLGState	lightsGState;
     TankRenderNode	tankRenderNode;
+    TreadRenderNode	treadRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
     GLfloat vel[TankGeometryEnums::LastTankPart][3];
