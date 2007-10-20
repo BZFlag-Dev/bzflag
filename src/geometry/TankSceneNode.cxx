@@ -1300,7 +1300,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case LeftTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(0.125f,1,1);
+      glScalef(4.0f,1,1);
       glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1308,7 +1308,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case RightTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(0.125f,1,1);
+      glScalef(4.0f,1,1);
       glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
