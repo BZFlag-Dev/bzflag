@@ -1296,11 +1296,13 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 {
   bool usingTexMat = true;
 
+  float treadUScale = 12.0f;
+
   switch (part) {
     case LeftTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(4.0f,1,1);
+      glScalef(treadUScale,1,1);
       glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1308,7 +1310,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case RightTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(4.0f,1,1);
+      glScalef(treadUScale,1,1);
       glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
