@@ -234,6 +234,8 @@ genericfiles =				\
 	../bzflag/ShotStrategy.h		\
 	../bzflag/SilenceDefaultKey.cxx		\
 	../bzflag/SilenceDefaultKey.h		\
+	../bzflag/StandardTankAvatar.cxx	\
+	../bzflag/StandardTankAvatar.h		\
 	../bzflag/SyncClock.cxx			\
 	../bzflag/SyncClock.h			\
 	../bzflag/TargetingUtils.cxx		\

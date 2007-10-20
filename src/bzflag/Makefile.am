@@ -172,10 +172,10 @@ bzflag_SOURCES =			\
 	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\
 	SilenceDefaultKey.h		\
-	SandardTankAvatar.h		\
-	StanadardTankAvatar.h	\
-	SyncClock.cxx		\
-	SyncClock.h		\
+	StandardTankAvatar.cxx		\
+	StandardTankAvatar.h		\
+	SyncClock.cxx			\
+	SyncClock.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
 	TrackMarks.cxx			\
