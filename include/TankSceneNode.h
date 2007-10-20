@@ -118,6 +118,7 @@ class TankSceneNode : public SceneNode {
 			~TankRenderNode();
 	void		setShadow();
 	void		setRadar(bool);
+	void		setTreads(bool);
 	void		setTankLOD(TankGeometryEnums::TankLOD);
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
@@ -143,6 +144,7 @@ class TankSceneNode : public SceneNode {
 	const GLfloat*	color;
 	GLfloat		alpha;
 	bool		isRadar;
+	bool		isTreads;
 	bool		isShadow;
 	bool		left;
 	bool		above;
@@ -153,28 +155,6 @@ class TankSceneNode : public SceneNode {
 	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
-
-    class TreadRenderNode : public RenderNode {
-    public:
-      TreadRenderNode(const TankSceneNode*);
-      ~TreadRenderNode();
-      void		setTankLOD(TankGeometryEnums::TankLOD);
-      void		setTankSize(TankGeometryEnums::TankSize);
-      void		sortOrder(bool above, bool towards, bool left);
-      void		setNarrowWithDepth(bool narrow);
-      const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-
-      void		render();
-
-    protected:
-      const TankSceneNode* sceneNode;
-      bool		isExploding;
-      bool		narrowWithDepth;
-      GLfloat		explodeFraction;
-      static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
-    };
-    friend class TreadRenderNode;
-
   protected:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
@@ -198,7 +178,7 @@ class TankSceneNode : public SceneNode {
     OpenGLGState	treadState;
     OpenGLGState	lightsGState;
     TankRenderNode	tankRenderNode;
-    TreadRenderNode	treadRenderNode;
+    TankRenderNode	treadsRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
     GLfloat vel[TankGeometryEnums::LastTankPart][3];

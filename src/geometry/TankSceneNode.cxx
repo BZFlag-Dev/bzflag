@@ -48,7 +48,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
 				useDimensions(false), useOverride(false),
 				onlyShadows(false), clip(false),
-				inTheCockpit(false), tankRenderNode(this),treadRenderNode(this),
+				inTheCockpit(false), tankRenderNode(this),treadsRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
@@ -193,7 +193,7 @@ void TankSceneNode::notifyStyleChange()
   }
   gstate = builder.getState();
 
-  builder.setTexture(TextureManager::instance().getTextureID("treads.png"));
+  builder.setTexture(TextureManager::instance().getTextureID("treads"));
   treadState = builder.getState();
 
   OpenGLGStateBuilder builder2(lightsGState);
@@ -240,9 +240,11 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     mode = LowTankLOD;
   }
   tankRenderNode.setTankLOD(mode);
+  treadsRenderNode.setTankLOD(mode);
 
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
+  treadsRenderNode.setTankSize(tankSize);
 
   bool narrow = false;
   if ((tankSize == Narrow) &&
@@ -251,6 +253,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     narrow = true;
   }
   tankRenderNode.setNarrowWithDepth(narrow);
+  treadsRenderNode.setNarrowWithDepth(narrow);
 
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
@@ -270,10 +273,12 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const bool above = eye[2] > mySphere[2];
 
     tankRenderNode.sortOrder(above, towards, left);
+    treadsRenderNode.sortOrder(above, towards, left);
   }
 
+  treadsRenderNode.setTreads(true);
   renderer.addRenderNode(&tankRenderNode, &gstate);
-  renderer.addRenderNode(&treadRenderNode, &treadState);
+  renderer.addRenderNode(&treadsRenderNode, &treadState);
 }
 
 
@@ -823,6 +828,7 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
   drawLOD = LowTankLOD;
   drawSize = Normal;
   isRadar = false;
+  isTreads = false;
   return;
 }
 
@@ -838,6 +844,12 @@ void TankSceneNode::TankRenderNode::setRadar(bool radar)
   isRadar = radar;
   return;
 }
+
+void TankSceneNode::TankRenderNode::setTreads(bool treads )
+{
+  isTreads = treads;
+}
+
 
 
 void TankSceneNode::TankRenderNode::setShadow()
@@ -1160,6 +1172,17 @@ void TankSceneNode::TankRenderNode::renderParts()
 
 void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 {
+  if (isTreads)
+  {
+    if ( part != RightTread && part != LeftTread )
+      return;
+  }
+  else
+  {
+    if ( part == RightTread || part == LeftTread )
+      return;
+  }
+
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
@@ -1277,6 +1300,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case LeftTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
+      glScalef(0.125f,1,1);
       glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1284,6 +1308,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case RightTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
+      glScalef(0.125f,1,1);
       glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1324,6 +1349,9 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 
 void TankSceneNode::TankRenderNode::renderLights()
 {
+  if (isTreads)
+    return;
+
   static const GLfloat lights[3][6] = {
     { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
     { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
@@ -1369,6 +1397,9 @@ GLfloat TankSceneNode::jumpJetsModel[4][3] = {
 
 void TankSceneNode::TankRenderNode::renderJumpJets()
 {
+  if (isTreads)
+    return;
+
   if (!sceneNode->jumpJetsOn) {
     return;
   }
@@ -1422,34 +1453,6 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   return;
 }
 
-TankSceneNode::TreadRenderNode::TreadRenderNode(const TankSceneNode*)
-{
-}
-
-TankSceneNode::TreadRenderNode::~TreadRenderNode()
-{
-}
-
-void TankSceneNode::TreadRenderNode::setTankLOD(TankGeometryEnums::TankLOD)
-{
-}
-
-void TankSceneNode::TreadRenderNode::setTankSize(TankGeometryEnums::TankSize)
-{
-}
-
-void TankSceneNode::TreadRenderNode::sortOrder(bool above, bool towards, bool left)
-{
-}
-
-void TankSceneNode::TreadRenderNode::setNarrowWithDepth(bool narrow)
-{
-}
-
-void TankSceneNode::TreadRenderNode::render()
-{
-  
-}
 
 
 
