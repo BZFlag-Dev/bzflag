@@ -100,6 +100,8 @@ void StandardTankAvatar::explode ( void )
 
 void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[4] )
 {
+  tankNode->setColor(color);
+
   // only do all this junk when the effective team color actually changes
   if (visualTeam == lastVisualTeam)
     return;
@@ -136,8 +138,6 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[
 
   int jumpJetsTexture = tm.getTextureID("jumpjets", false);
   tankNode->setJumpJetsTexture(jumpJetsTexture);
-
-  tankNode->setColor(color);
 }
 
 void StandardTankAvatar::setColor ( const float color[4] )
