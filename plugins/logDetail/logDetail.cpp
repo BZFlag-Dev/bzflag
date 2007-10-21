@@ -169,6 +169,7 @@ void LogDetail::process( bz_EventData *eventData )
 	    displayPlayerPrivs( joinPartData->playerID );
 	    cout << endl;
 	    listPlayers( join, joinPartData);
+	    bz_freePlayerRecord( player );
 	  }
 	}
 	break;
@@ -197,8 +198,11 @@ void LogDetail::process( bz_EventData *eventData )
 void LogDetail::displayBZid( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
-  if (player && player->globalUser)
-    cout << " BZid:" << player->bzID.c_str();
+  if (player) {
+    if (player->globalUser)
+      cout << " BZid:" << player->bzID.c_str();
+    bz_freePlayerRecord( player );
+  }
 }
 
 void LogDetail::displayPlayerPrivs( int playerID )
@@ -210,6 +214,7 @@ void LogDetail::displayPlayerPrivs( int playerID )
     if (player->globalUser ) cout << " GLOBALUSER";
     if (player->admin ) cout << " ADMIN";
     if (player->op ) cout << " OPERATOR";
+    bz_freePlayerRecord( player );
   } else {
     cout << " IP:0.0.0.0";
   }
@@ -227,6 +232,7 @@ void LogDetail::displayCallsign( int playerID )
   if (player) {
     cout << strlen( player->callsign.c_str() ) << ":";
     cout << player->callsign.c_str();
+    bz_freePlayerRecord( player );
   } else {
     cout << "7:UNKNOWN";
   }

@@ -255,9 +255,9 @@ void KillTeam(bz_eTeamType TeamToKill){
 				}
 				else if (tctf.soundEnabled)
 					bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
+				bz_freePlayerRecord(player);
 			}
 		
-		bz_freePlayerRecord(player);
 	}
 	bz_deleteIntList(playerList); 
 
@@ -603,11 +603,14 @@ bool TCTFCommands::handle ( int playerID, bzApiString _command, bzApiString _mes
 
 	bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
-	if ( !fromPlayer->admin ){
-    
-		bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the ctfcaptime commands.");
-		bz_freePlayerRecord(fromPlayer);
-		return true;
+	if (fromPlayer) {
+	  if (!fromPlayer->admin) {
+	    bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the ctfcaptime commands.");
+	    bz_freePlayerRecord(fromPlayer);
+	    return true;
+	  }
+
+	  bz_freePlayerRecord(fromPlayer);
 	}
 
 	if ( command == "tctfon"){
@@ -618,8 +621,6 @@ bool TCTFCommands::handle ( int playerID, bzApiString _command, bzApiString _mes
 		bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Timed CTF is enabled.");
 		return true;
 	}
-
-	bz_freePlayerRecord(fromPlayer);
 
 	if ( command == "tctfoff"){
 	

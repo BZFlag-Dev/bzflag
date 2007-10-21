@@ -420,6 +420,8 @@ bool PlaysndCommand::handle ( int playerID, bzApiString _command, bzApiString _m
     bz_sendTextMessage(playerID,target,item.text.c_str());
     bz_sendPlayCustomLocalSound (target, item.sound.c_str());
 
+    bz_freePlayerRecord(playerInfo);
+
     return true;
   }
 

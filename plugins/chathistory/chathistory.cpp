@@ -201,11 +201,15 @@ bool LastChatCommand::handle ( int playerID, bzApiString _command, bzApiString _
 
   bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
+  if (!fromPlayer) return false;
+
   if ( !fromPlayer->admin )
   {
     bz_sendTextMessage(BZ_SERVER,playerID,"You must be admin to use the ChatHistory plugin");
+    bz_freePlayerRecord(fromPlayer);
     return true;
   }
+  bz_freePlayerRecord(fromPlayer);
 
   if ( command == "last")
   {
@@ -262,7 +266,10 @@ void ChatEvents::process ( bz_EventData *eventData )
 
   std::string message = chatEventData->message.c_str();
 
-  std::string callsign = fromPlayer->callsign.c_str();
+  std::string callsign = "";
+  if (fromPlayer)
+    callsign = fromPlayer->callsign.c_str();
+
   callsign = tolower(callsign);
 
   switch( eventData->eventType)

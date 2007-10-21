@@ -313,8 +313,10 @@ void Nagware::process ( bz_EventData *eventData )
     bz_debugMessagef(4, "+++ nagware: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
     bz_PlayerRecord *pr;
     pr = bz_getPlayerByIndex ( joinData->playerID );
-    listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->time);
-    bz_freePlayerRecord (pr);
+    if (pr) {
+      listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->time);
+      bz_freePlayerRecord (pr);
+    }
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
