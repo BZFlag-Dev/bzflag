@@ -327,8 +327,8 @@ void WWZEventHandler::process ( bz_EventData *eventData )
 					else
 						notHere(i, player->playerID);
 				}
+				bz_freePlayerRecord(player);
 			}
-			bz_freePlayerRecord(player);
 	}
 
 	bz_deleteIntList(playerList);

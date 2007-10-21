@@ -961,14 +961,15 @@ bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiStrin
 
 	bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
-	if ( !fromPlayer->admin )
-	{
-	bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the keepaway commands.");
-		bz_freePlayerRecord(fromPlayer);
-		return true;
-	}
+	if (fromPlayer) {
+	  if (!fromPlayer->admin) {
+	    bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the keepaway commands.");
+	    bz_freePlayerRecord(fromPlayer);
+	    return true;
+	  }
 
-	bz_freePlayerRecord(fromPlayer);
+	  bz_freePlayerRecord(fromPlayer);
+	}
 
 	if ( command == "kasoundoff" )
 	{
