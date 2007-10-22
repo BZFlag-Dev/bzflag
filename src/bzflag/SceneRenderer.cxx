@@ -174,9 +174,10 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   // check if we're running OpenGL 1.1.  if so we'll use the fog hack
   // to fade the screen;  otherwise fall back on a full screen blended
   // polygon.
-  if (version != NULL && strncmp(version, "1.1", 3) == 0) {
+  // NOTE, the 1.1 check seems stupid as some cards do it fine, check the config
+  // people with crap cards can just turn it on
+    if (BZDB.isTrue("useFogHack"))
     useFogHack = true;
-  }
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
