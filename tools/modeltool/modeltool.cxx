@@ -860,7 +860,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 	boundingGeoSection += "face";
 	if (outputComments)
-	  staticGeoSection += TextUtils::format("\t#%d",f);
+	  boundingGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
 
 	std::string vert = "vertices";
@@ -1008,8 +1008,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	cornerSection += TextUtils::format("corner %d %d %d",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
 
 	if (outputComments)
-	  staticGeoSection += TextUtils::format("\t#%d",c);
-	staticGeoSection += "\n";
+	  cornerSection += TextUtils::format("\t#%d",c);
+	cornerSection += "\n";
 
       }
     
