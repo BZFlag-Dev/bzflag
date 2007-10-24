@@ -35,7 +35,7 @@
 #include "Q3BSP.h"
 
 // globals/
-const char VersionString[] = "ModelTool v1.8.3  (WaveFront OBJ/BZW to BZFlag BZW converter)";
+const char VersionString[] = "ModelTool v1.8.4 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
 std::string texdir = "";
 std::string groupName = "";
@@ -52,9 +52,9 @@ bool useSmoothBounce = false;
 float shineFactor = 1.0f;
 
 bool computeBounds = false;
+bool outputComments = false;
 
 float maxShineExponent = 128.0f; // OpenGL minimum shininess
-
 
 float globalScale = 1.0f;
 float globalShift[3] = {0,0,0};
@@ -180,43 +180,56 @@ static void writeBZW  ( CModel &model, std::string file )
 
     fprintf (fp,"mesh # %s\n", mesh.name.c_str());
 
-    fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
-    fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
-    fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
-    fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
+    if (outputComments)
+    {
+      fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
+      fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
+      fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
+      fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
+    }
 
     if (useSmoothBounce)
       fprintf (fp,"  smoothbounce\n");
 
-    tvVertList::iterator vertItr = mesh.verts.begin();
-    while ( vertItr != mesh.verts.end() )
+    for ( int v = 0; v < (int)mesh.verts.size();v++)
     {
-      fprintf (fp,"  vertex %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
-      vertItr++;
+      CVertex *vert = &mesh.verts[v];
+      fprintf (fp,"  vertex %f %f %f", vert->x,vert->y,vert->z);
+      if (outputComments)
+	fprintf(fp,"\t# %d",v);
+      fprintf(fp,"\n");
     }
 
-    vertItr = mesh.normals.begin();
-    while ( vertItr != mesh.normals.end() )
+    for ( int n = 0; n < (int)mesh.normals.size();n++)
     {
+      CVertex *norm = &mesh.normals[n];
+
       // normalise all normals before writing them
-      float dist = sqrt(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
-      fprintf (fp,"  normal %f %f %f\n", vertItr->x/dist,vertItr->y/dist,vertItr->z/dist);
-      vertItr++;
+      float dist = sqrt(norm->x*norm->x+norm->y*norm->y+norm->z*norm->z);
+      fprintf (fp,"  normal %f %f %f", norm->x/dist,norm->y/dist,norm->z/dist);
+      if (outputComments)
+	fprintf(fp,"\t# %d",n);
+      fprintf(fp,"\n");
     }
 
-    tvTexCoordList::iterator uvItr = mesh.texCoords.begin();
-    while ( uvItr != mesh.texCoords.end() )
+    for ( int t = 0; t < (int)mesh.texCoords.size(); t++)
     {
-      fprintf (fp,"  texcoord %f %f\n", uvItr->u,uvItr->v);
-      uvItr++;
+      CTexCoord *coord = &mesh.texCoords[t];
+      fprintf (fp,"  texcoord %f %f", coord->u,coord->v);
+      if (outputComments)
+	fprintf(fp,"\t# %d",t);
+      fprintf(fp,"\n");
     }
 
     tvFaceList::iterator	faceItr = mesh.faces.begin();
-    while ( faceItr != mesh.faces.end() )
+    for ( int f = 0; f < (int)mesh.faces.size(); f++)
     {
-      CFace	&face = *faceItr;
+      CFace	&face = mesh.faces[f];
 
-      fprintf (fp,"  face\n");
+      fprintf (fp,"  face");
+      if (outputComments)
+	fprintf(fp,"\t# %d",f);
+      fprintf(fp,"\n");
 
       tvIndexList::iterator	indexItr = face.verts.begin();
       fprintf (fp,"    vertices");
@@ -248,7 +261,6 @@ static void writeBZW  ( CModel &model, std::string file )
 	fprintf (fp, "    matref %s\n", face.material.c_str());
 
       fprintf (fp,"  endface\n");
-      faceItr++;
     }
     fprintf (fp,"end\n\n");
     meshItr++;
@@ -293,6 +305,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
   printf("       -gsz <val> : shift the map by this value in Z\n\n");
   printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
   printf("       -bounds : compute the bounds and sphere for draw info meshes and write them to the map\n\n");
+  printf("       -comments: add comments to the resulting bzw file (will make it a lot larger )\n\n");
  return 1;
 }
 
@@ -376,6 +389,8 @@ int main(int argc, char* argv[])
       useShininess = false;  
     else if (command == "-bounds") 
       computeBounds = true;  
+    else if (command == "-comments") 
+      outputComments = true;  
     else if (command == "-sf")
     {
       if ((i + 1) < argc)
@@ -803,7 +818,11 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       {
 	CFace &face = subMesh.faces[f];
 
-	staticGeoSection += "face\n";
+	staticGeoSection += "face";
+	if (outputComments)
+	  staticGeoSection += TextUtils::format("\t#%d",f);
+	staticGeoSection += "\n";
+
 	std::string vert = "vertices";
 	std::string norm = "normals";
 	std::string uv = "texcoords";
@@ -839,7 +858,11 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       {
 	CFace &face = subMesh.faces[f];
 
-	boundingGeoSection += "face\n";
+	boundingGeoSection += "face";
+	if (outputComments)
+	  staticGeoSection += TextUtils::format("\t#%d",f);
+	staticGeoSection += "\n";
+
 	std::string vert = "vertices";
 	std::string norm = "normals";
 
@@ -981,11 +1004,24 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       // build up the corners
       
       for ( int c = 0; c < (int)corners.size(); c++ )
-	cornerSection += TextUtils::format("corner %d %d %d\n",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
+      {
+	cornerSection += TextUtils::format("corner %d %d %d",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
+
+	if (outputComments)
+	  staticGeoSection += TextUtils::format("\t#%d",c);
+	staticGeoSection += "\n";
+
+      }
     
-      drawInfoSection += "\n#corners\n" + cornerSection;
-      if (lodSections.size())
-	drawInfoSection += "\n#lods\n";
+      drawInfoSection += "\n";
+      if (outputComments)
+	drawInfoSection = "#corners\n";
+      drawInfoSection += cornerSection;
+
+      drawInfoSection += "\n";
+      if (lodSections.size() && outputComments)
+	drawInfoSection += "#lods\n";
+
       for ( int l = 0; l < (int)lodSections.size(); l++ )
       {
 	drawInfoSection += "\n";
@@ -1000,13 +1036,34 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   // first verts
   progressLog("Generating indexes");
 
-  inxexesSection += "#indexes\n";
+  if (outputComments)
+    inxexesSection += "#indexes\n";
   for ( int v = 0; v < (int)verts.size(); v++ )
-    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x,verts[v].y,verts[v].z);
+  {
+    inxexesSection += TextUtils::format("vertex %f %f %f",verts[v].x,verts[v].y,verts[v].z);
+
+    if (outputComments)
+      staticGeoSection += TextUtils::format("\t#%d",v);
+    staticGeoSection += "\n";
+  }
+
   for ( int n = 0; n < (int)norms.size(); n++ )
-    inxexesSection += TextUtils::format("normal %f %f %f\n",norms[n].x,norms[n].y,norms[n].z);
+  {
+    inxexesSection += TextUtils::format("normal %f %f %f",norms[n].x,norms[n].y,norms[n].z);
+
+    if (outputComments)
+      staticGeoSection += TextUtils::format("\t#%d",n);
+    staticGeoSection += "\n";
+  }
+
   for ( int u = 0; u < (int)uvs.size(); u++ )
-    inxexesSection += TextUtils::format("texcoord %f %f\n",uvs[u].u,uvs[u].v);
+  {
+    inxexesSection += TextUtils::format("texcoord %f %f",uvs[u].u,uvs[u].v);
+
+    if (outputComments)
+      staticGeoSection += TextUtils::format("\t#%d",u);
+    staticGeoSection += "\n";
+  }
 
   progressLog("Generating materials");
 
