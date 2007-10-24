@@ -241,17 +241,17 @@ void readOBJ ( CModel &model, std::string file )
 	else if (TextUtils::tolower(lineParts[0]) == "v" && lineParts.size()>3)
 	{
 	  CVertex vert;
-	  vert.x = (float)atof(lineParts[1].c_str());
+	  vert.x = (float)atof(lineParts[1].c_str())*globalScale+globalShift[0];
 
 	  if (flipYZ)
 	  {
-	    vert.y = -1.0f*(float)atof(lineParts[3].c_str());
-	    vert.z = (float)atof(lineParts[2].c_str());
+	    vert.y = -1.0f*(float)atof(lineParts[3].c_str())*globalScale+globalShift[1];
+	    vert.z = (float)atof(lineParts[2].c_str())*globalScale+globalShift[2];
 	  }
 	  else
 	  {
-	    vert.y = (float)atof(lineParts[2].c_str());
-	    vert.z = (float)atof(lineParts[3].c_str());
+	    vert.y = (float)atof(lineParts[2].c_str())*globalScale+globalShift[1];
+	    vert.z = (float)atof(lineParts[3].c_str())*globalScale+globalShift[2];
 	  }
 	  
 	  temp_verts.push_back(vert);

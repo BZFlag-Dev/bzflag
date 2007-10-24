@@ -189,7 +189,7 @@ static void writeBZW  ( CModel &model, std::string file )
     tvVertList::iterator vertItr = mesh.verts.begin();
     while ( vertItr != mesh.verts.end() )
     {
-      fprintf (fp,"  vertex %f %f %f\n", vertItr->x*globalScale+globalShift[0],vertItr->y*globalScale+globalShift[1],vertItr->z*globalScale+globalShift[2]);
+      fprintf (fp,"  vertex %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
       vertItr++;
     }
 
@@ -991,7 +991,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
   inxexesSection += "#indexes\n";
   for ( int v = 0; v < (int)verts.size(); v++ )
-    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x*globalScale+globalShift[0],verts[v].y*globalScale+globalShift[1],verts[v].z*globalScale+globalShift[2]);
+    inxexesSection += TextUtils::format("vertex %f %f %f\n",verts[v].x,verts[v].y,verts[v].z);
   for ( int n = 0; n < (int)norms.size(); n++ )
     inxexesSection += TextUtils::format("normal %f %f %f\n",norms[n].x,norms[n].y,norms[n].z);
   for ( int u = 0; u < (int)uvs.size(); u++ )
