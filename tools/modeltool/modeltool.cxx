@@ -707,7 +707,7 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
   return didOne;
 }
 
-bool computeExtents ( CModel &model, CMesh &subMesh, MeshExtents &extents )
+bool computeExtents ( CModel &/*model*/, CMesh &subMesh, MeshExtents &extents )
 {
   bool didOne = false;
   for (int f = 0; f < (int)subMesh.faces.size();f++)
@@ -1043,8 +1043,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += TextUtils::format("vertex %f %f %f",verts[v].x,verts[v].y,verts[v].z);
 
     if (outputComments)
-      staticGeoSection += TextUtils::format("\t#%d",v);
-    staticGeoSection += "\n";
+      inxexesSection += TextUtils::format("\t#%d",v);
+    inxexesSection += "\n";
   }
 
   for ( int n = 0; n < (int)norms.size(); n++ )
@@ -1052,8 +1052,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += TextUtils::format("normal %f %f %f",norms[n].x,norms[n].y,norms[n].z);
 
     if (outputComments)
-      staticGeoSection += TextUtils::format("\t#%d",n);
-    staticGeoSection += "\n";
+      inxexesSection += TextUtils::format("\t#%d",n);
+    inxexesSection += "\n";
   }
 
   for ( int u = 0; u < (int)uvs.size(); u++ )
@@ -1061,8 +1061,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += TextUtils::format("texcoord %f %f",uvs[u].u,uvs[u].v);
 
     if (outputComments)
-      staticGeoSection += TextUtils::format("\t#%d",u);
-    staticGeoSection += "\n";
+      inxexesSection += TextUtils::format("\t#%d",u);
+    inxexesSection += "\n";
   }
 
   progressLog("Generating materials");
