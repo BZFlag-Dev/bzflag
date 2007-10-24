@@ -35,7 +35,7 @@
 #include "Q3BSP.h"
 
 // globals/
-const char VersionString[] = "ModelTool v1.8.2  (WaveFront OBJ/BZW to BZFlag BZW converter)";
+const char VersionString[] = "ModelTool v1.8.3  (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
 std::string texdir = "";
 std::string groupName = "";
@@ -50,6 +50,8 @@ bool useTexcoords = true;
 bool flipYZ = false;
 bool useSmoothBounce = false;
 float shineFactor = 1.0f;
+
+bool computeBounds = false;
 
 float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
@@ -290,7 +292,8 @@ static int  dumpUsage ( char *exeName, const char* reason )
   printf("       -gsy <val> : shift the map by this value in Y\n\n");
   printf("       -gsz <val> : shift the map by this value in Z\n\n");
   printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
-  return 1;
+  printf("       -bounds : compute the bounds and sphere for draw info meshes and write them to the map\n\n");
+ return 1;
 }
 
 int main(int argc, char* argv[])
@@ -371,6 +374,8 @@ int main(int argc, char* argv[])
       useSpecular = false;
     else if (command == "-sh") 
       useShininess = false;  
+    else if (command == "-bounds") 
+      computeBounds = true;  
     else if (command == "-sf")
     {
       if ((i + 1) < argc)
@@ -864,8 +869,11 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     if (computeExtents(drawInfoMeshes.lodMeshes[0],lod0Extents))
     {
       drawInfoSection += "drawInfo\n";
-      drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
-      drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
+      if (computeBounds)
+      {
+	drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
+	drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
+      }
 
       for ( int a = 0; a < (int)drawInfoMeshes.animComands.size(); a++ )
 	drawInfoSection += drawInfoMeshes.animComands[a] + "\n";
@@ -900,10 +908,13 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 	      section += "dlist\n";
 
-	      MeshExtents subMeshExtents;
+	      if (computeBounds)
+	      {
+		MeshExtents subMeshExtents;
 
-	      computeExtents(lodModel,mesh,subMeshExtents);
-	      section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
+		computeExtents(lodModel,mesh,subMeshExtents);
+		section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
+	      }
 
 	      bool lastTriangles = false;
 	      int   maxTrianglesOnALine = 15;
