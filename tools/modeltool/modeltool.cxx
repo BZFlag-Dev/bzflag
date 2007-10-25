@@ -51,7 +51,7 @@ bool flipYZ = false;
 bool useSmoothBounce = false;
 float shineFactor = 1.0f;
 
-bool computeBounds = false;
+bool outputBounds = false;
 bool outputComments = false;
 
 float maxShineExponent = 128.0f; // OpenGL minimum shininess
@@ -388,7 +388,7 @@ int main(int argc, char* argv[])
     else if (command == "-sh") 
       useShininess = false;  
     else if (command == "-bounds") 
-      computeBounds = true;  
+      outputBounds = true;  
     else if (command == "-comments") 
       outputComments = true;  
     else if (command == "-sf")
@@ -892,7 +892,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     if (computeExtents(drawInfoMeshes.lodMeshes[0],lod0Extents))
     {
       drawInfoSection += "drawInfo\n";
-      if (computeBounds)
+      if (outputBounds)
       {
 	drawInfoSection += TextUtils::format("extents %f %f %f %f %f %f\n",lod0Extents.minx,lod0Extents.miny,lod0Extents.minz,lod0Extents.maxx,lod0Extents.maxy,lod0Extents.maxz);
 	drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
@@ -931,7 +931,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 	      section += "dlist\n";
 
-	      if (computeBounds)
+	      if (outputBounds)
 	      {
 		MeshExtents subMeshExtents;
 
