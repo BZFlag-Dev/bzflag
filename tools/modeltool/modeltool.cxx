@@ -1015,7 +1015,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     
       drawInfoSection += "\n";
       if (outputComments)
-	drawInfoSection = "#corners\n";
+	drawInfoSection += "#corners\n";
       drawInfoSection += cornerSection;
 
       drawInfoSection += "\n";
