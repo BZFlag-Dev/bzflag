@@ -1037,7 +1037,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   progressLog("Generating indexes");
 
   if (outputComments)
-    inxexesSection += "#indexes\n";
+    inxexesSection += TextUtils::format("#indexes: %d\n",(int)verts.size());
+
   for ( int v = 0; v < (int)verts.size(); v++ )
   {
     inxexesSection += TextUtils::format("vertex %f %f %f",verts[v].x,verts[v].y,verts[v].z);
