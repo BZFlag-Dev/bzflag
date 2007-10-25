@@ -35,7 +35,7 @@
 #include "Q3BSP.h"
 
 // globals/
-const char VersionString[] = "ModelTool v1.8.4 (WaveFront OBJ/BZW to BZFlag BZW converter)";
+const char VersionString[] = "ModelTool v1.8.4.2 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
 std::string texdir = "";
 std::string groupName = "";
@@ -50,6 +50,7 @@ bool useTexcoords = true;
 bool flipYZ = false;
 bool useSmoothBounce = false;
 float shineFactor = 1.0f;
+bool  supressMats = false;
 
 bool outputBounds = false;
 bool outputComments = false;
@@ -114,6 +115,8 @@ std::string writeMaterial ( CMaterial &material, const std::string &name )
 {
   std::string out;
 
+  if (supressMats)
+    return out;
   out += TextUtils::format("material\n  name %s\n",name.c_str());
   if ( material.texture.size())
   {
@@ -389,9 +392,10 @@ int main(int argc, char* argv[])
       useShininess = false;  
     else if (command == "-bounds") 
       outputBounds = true;  
+    else if (command == "-nomats") 
+      supressMats = true;  
     else if (command == "-comments") 
-      outputComments = true;  
-    else if (command == "-sf")
+      outputComments = true;     else if (command == "-sf")
     {
       if ((i + 1) < argc)
       {
