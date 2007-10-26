@@ -20,6 +20,7 @@
 #include <vector>
 #include <map>
 
+
 extern std::string texdir;
 extern std::string groupName;
 extern bool useMaterials;
@@ -113,8 +114,8 @@ public:
   CFace(){};
   ~CFace(){};
 
-  std::string material;
-  tvIndexList verts;
+  std::string	material;
+  tvIndexList	verts;
   tvIndexList	normals;
   tvIndexList	texCoords;
 
@@ -165,6 +166,10 @@ public:
 
   std::string name;
   tvFaceList	faces;
+
+#ifdef _MODEL_TOOL_GFX
+  void draw ( void );
+#endif
 
   float getMaxAxisValue ( teModelAxis axis )
   {
@@ -239,6 +244,10 @@ public:
   tmMaterialMap	materials;
   tvMeshList		meshes;
   tvCustomObjectList	customObjects;
+
+#ifdef _MODEL_TOOL_GFX
+  void draw ( void );
+#endif
 
   void pushAboveAxis ( teModelAxis axis )
   {

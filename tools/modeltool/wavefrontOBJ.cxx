@@ -26,7 +26,6 @@
 #include "TextUtils.h"
 #include "wavefrontOBJ.h"
 
-
 static void underscoreBeforeNumbers(std::string& name)
 {
   const char first = name[0];

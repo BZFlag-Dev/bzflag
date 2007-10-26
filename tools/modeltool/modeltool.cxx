@@ -1157,9 +1157,35 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 // all the stuff for a the graphic display
 #ifdef _MODEL_TOOL_GFX
 
+void CMesh::draw ( void )
+{
+  // do the material here
+  glColor4f(1,1,1,1);
+
+  for ( int f =0; f < (int)faces.size(); f++)
+  {
+    CFace &face = faces[f];
+      
+    glBegin(GL_POLYGON);
+    for (int v = 0; v < (int)face.verts.size(); v++ )
+    {
+      glNormal3f(normals[face.normals[v]].x,normals[face.normals[v]].y,normals[face.normals[v]].z);
+      glVertex3f(verts[face.verts[v]].x,verts[face.verts[v]].y,verts[face.verts[v]].z);
+    }
+    glEnd();
+  }
+}
+
+void CModel::draw ( void )
+{
+  for ( int i =0; i < (int)meshes.size(); i++)
+    meshes[i].draw();
+}
+
 class ModelToolApp : public GraphicApplication
 {
 public:
+  void init ( int argc, char* argv[] );
   virtual void setupDisplay ( void );
   virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title );
   virtual bool drawView ( void );
@@ -1170,6 +1196,7 @@ public:
   virtual void inputEvent ( int id, float value );
 
 protected:
+  CModel	model;
 
 };
 
@@ -1178,9 +1205,26 @@ ModelToolApp	app;
 int GFXMain(int argc, char* argv[])
 {
   app.args.Set(argc,argv);
+  app.init (argc,argv);
   app.run();
 
   return 0;
+}
+
+void ModelToolApp::init ( int argc, char* argv[] )
+{
+  std::string input;
+  std::string extenstion = "OBJ";
+  std::string output;
+
+  if (!setupArgs(argc, argv, input,extenstion,output))
+  {
+    quit();
+    return;
+  }
+
+  if ( TextUtils::tolower(extenstion) == "obj" )
+    readOBJ(model,input);
 }
 
 bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title )
@@ -1200,6 +1244,15 @@ void ModelToolApp::setupDisplay ( void )
 
 bool ModelToolApp::drawView ( void )
 {
+  glEnable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+
+  glPushMatrix();
+  glRotatef(-90,1,0,0);
+  glTranslatef(0,10,0);
+  model.draw();
+
+  glPopMatrix();
   return true;
 }
 
@@ -1208,11 +1261,17 @@ bool ModelToolApp::drawOverlay ( void )
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
 
+  glColor4f(1,0,0,1);
+  glBegin(GL_LINES);
+  glVertex3f(0,0,-0.5f);
+  glVertex3f(100,100,-0.5f);
+  glEnd();
   return true;
 }
 
 void ModelToolApp::inputEvent ( int id, float value )
 {
+  // do stuff here
  
 }
 #endif
