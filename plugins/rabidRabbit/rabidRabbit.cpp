@@ -20,13 +20,22 @@ public:
 
 RabidRabbitEventHandler rabidrabbiteventHandler;
 
+class RabidRabbitDieEventHandler:public bz_EventHandler {
+public:
+  virtual void process(bz_EventData * eventData);
+};
+
+RabidRabbitDieEventHandler rabidrabbitdieeventhandler;
+
 BZF_PLUGIN_CALL int
 bz_Load(const char * /*commandLineParameter */ )
 {
   bz_debugMessage(4, "rabidRabbit plugin loaded");
   bz_registerCustomMapObject("RABIDRABBITZONE", &rabidrabbithandler);
   bz_registerCustomMapObject("RRSOUNDOFF", &rabidrabbithandler);
+  bz_registerCustomMapObject("RRCYCLEONDIE", &rabidrabbithandler);
   bz_registerEvent(bz_eTickEvent, &rabidrabbiteventHandler);
+  bz_registerEvent(bz_ePlayerDieEvent, &rabidrabbitdieeventhandler);
   return 0;
 }
 
@@ -34,9 +43,11 @@ BZF_PLUGIN_CALL int
 bz_Unload(void)
 {
   bz_removeEvent(bz_eTickEvent, &rabidrabbiteventHandler);
-  bz_debugMessage(4, "rabidRabbit plugin unloaded");
+  bz_removeEvent(bz_ePlayerDieEvent, &rabidrabbitdieeventhandler);
   bz_removeCustomMapObject("RABIDRABBITZONE");
   bz_removeCustomMapObject("RRSOUNDOFF");
+  bz_removeCustomMapObject("RRCYCLEONDIE");
+  bz_debugMessage(4, "rabidRabbit plugin unloaded");
   return 0;
 }
 
@@ -47,8 +58,10 @@ public:
     rabbitNotifiedWrongZone = false;
     rabbitNotifiedWrongZoneNum = 0;
     soundEnabled = true;
-  } int currentKillZone, rabbitNotifiedWrongZoneNum;
-  bool rabbitNotifiedWrongZone, soundEnabled;
+    cycleOnDie = false;
+  }
+  int currentKillZone, rabbitNotifiedWrongZoneNum;
+  bool rabbitNotifiedWrongZone, soundEnabled, cycleOnDie;
 };
 
 RRZoneInfo rrzoneinfo;
@@ -115,11 +128,13 @@ public:
 
 std::vector < RabidRabbitZone > zoneList;
 
-bool
-RabidRabbitHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * data)
+bool RabidRabbitHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * data)
 {
   if (object == "RRSOUNDOFF")
     rrzoneinfo.soundEnabled = false;
+
+  if (object == "RRCYCLEONDIE")
+    rrzoneinfo.cycleOnDie = true;
 
   if (object != "RABIDRABBITZONE" || !data)
     return false;
@@ -198,8 +213,9 @@ killAllHunters(std::string messagepass)
 	if (rrzoneinfo.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
       }
-      if (player->team == eRabbitTeam && rrzoneinfo.soundEnabled)
+      if (player->team == eRabbitTeam && rrzoneinfo.soundEnabled && bz_getTeamCount(eHunterTeam) > 0)
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+
     }
 
     bz_freePlayerRecord(player);
@@ -251,7 +267,7 @@ RabidRabbitEventHandler::process(bz_EventData * eventData)
 	  rrzoneinfo.rabbitNotifiedWrongZone = false;
 
 	if (zoneList[i].pointIn(player->currentState.pos) && player->spawned && player->team == eRabbitTeam
-	    && rrzoneinfo.currentKillZone == i) {
+	    && rrzoneinfo.currentKillZone == i && bz_getTeamCount(eHunterTeam) > 0) {
 	  killAllHunters(zoneList[i].servermessage);
 
 	  rrzoneinfo.rabbitNotifiedWrongZone = true;
@@ -277,6 +293,25 @@ RabidRabbitEventHandler::process(bz_EventData * eventData)
   }
 
   bz_deleteIntList(playerList);
+  return;
+}
+
+void
+RabidRabbitDieEventHandler::process(bz_EventData * eventData)
+{
+  if (eventData->eventType != bz_ePlayerDieEvent)
+    return;
+
+  bz_PlayerDieEventData_V1 *DieData = (bz_PlayerDieEventData_V1 *) eventData;
+
+  if (rrzoneinfo.cycleOnDie && DieData->team == eRabbitTeam) {
+    int i = rrzoneinfo.currentKillZone;
+    if (i == (zoneList.size() - 1))
+      rrzoneinfo.currentKillZone = 0;
+    else
+      rrzoneinfo.currentKillZone++;
+  }
+
   return;
 }
 
