@@ -8,7 +8,8 @@
 
 BZ_GET_PLUGIN_VERSION
 
-class KeepAwayMapHandler:public bz_CustomMapObjectHandler {
+class KeepAwayMapHandler:public bz_CustomMapObjectHandler
+{
 public:
   virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo * data);
 };

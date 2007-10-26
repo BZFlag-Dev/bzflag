@@ -8,7 +8,8 @@
 
 BZ_GET_PLUGIN_VERSION
 
-class KOTHMapHandler:public bz_CustomMapObjectHandler {
+class KOTHMapHandler:public bz_CustomMapObjectHandler
+{
 public:
   virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo * data);
 };
