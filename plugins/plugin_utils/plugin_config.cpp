@@ -25,7 +25,8 @@
  * Default section if none is specified is [global]
  */
 
-PluginConfig::PluginConfig(string filename) {
+PluginConfig::PluginConfig(string filename)
+{
   configFilename = filename;
   whitespace = " \t\r";
   errors = 0;
@@ -56,8 +57,7 @@ void PluginConfig::parse(void)
   iniFile.open(configFilename.c_str(), ios::in);
 
   if (!iniFile.is_open()) {
-    bz_debugMessagef(1, "PluginConfig: Can't open configuration file: %s",
-		     configFilename.c_str());
+    bz_debugMessagef(1, "PluginConfig: Can't open configuration file: %s", configFilename.c_str());
     errors++;
     return;
   }
@@ -79,12 +79,12 @@ void PluginConfig::parse(void)
      * Look for a section tag
      */
     if (line[start] == '[') {
-      start = line.find_first_not_of(whitespace, start+1);
+      start = line.find_first_not_of(whitespace, start + 1);
 
       /* Check if the last non whitespace character is a close bracket */
       end = line.find_last_not_of(whitespace);
       if (line[end] == ']') {
-	end = line.find_last_not_of(whitespace, end-1);
+	end = line.find_last_not_of(whitespace, end - 1);
 	/* Got a section header - save it */
 	section = line.substr(start, end - start + 1);
 	bz_debugMessagef(4, "PluginConfig: Found section [%s]", section.c_str());
@@ -126,8 +126,7 @@ void PluginConfig::parse(void)
 
     /* Save the section, key and value in the map for later retrieval */
     sections[tolower(section)][tolower(key)] = value;
-    bz_debugMessagef(4, "PluginConfig: Found key [%s].%s = %s",
-		     section.c_str(), key.c_str(), value.c_str());
+    bz_debugMessagef(4, "PluginConfig: Found key [%s].%s = %s", section.c_str(), key.c_str(), value.c_str());
   }
 
   iniFile.close();
