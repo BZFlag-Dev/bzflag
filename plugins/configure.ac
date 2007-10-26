@@ -217,6 +217,7 @@ AC_CONFIG_FILES([
 	plugin_utils/Makefile
 	Phoenix/Makefile
 	python/Makefile
+	rabidRabbit/Makefile
 	recordmatch/Makefile
 	serverSideBotSample/Makefile
 	shockwaveDeath/Makefile

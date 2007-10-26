@@ -21,6 +21,7 @@ SUBDIRS = \
 	nagware \
 	playHistoryTracker \
 	python \
+	rabidRabbit \
 	recordmatch \
 	regFlag \
 	serverControl \
