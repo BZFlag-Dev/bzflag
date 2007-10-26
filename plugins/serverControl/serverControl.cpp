@@ -26,21 +26,22 @@ BZ_GET_PLUGIN_VERSION
 
 using namespace std;
 
-enum action { join , part };
+enum action
+{ join, part };
 
-class ServerControl : public bz_EventHandler
+class ServerControl:public bz_EventHandler
 {
 public:
   ServerControl() {};
   virtual ~ServerControl() {};
-  virtual void process( bz_EventData *eventData );
+  virtual void process(bz_EventData * eventData);
   int loadConfig(const char *cmdLine);
 private:
-  void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
-  void checkShutdown( void );
-  void checkBanChanges( void );
-  void checkMasterBanChanges( void );
-  void fileAccessTime(const std::string filename, time_t *mtime);
+  void countPlayers(action act, bz_PlayerJoinPartEventData_V1 * data);
+  void checkShutdown(void);
+  void checkBanChanges(void);
+  void checkMasterBanChanges(void);
+  void fileAccessTime(const std::string filename, time_t * mtime);
   string banFilename;
   string masterBanFilename;
   string resetServerOnceFilename;
@@ -55,18 +56,19 @@ private:
 
 ServerControl serverControlHandler;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* cmdLine)
+BZF_PLUGIN_CALL int bz_Load(const char *cmdLine)
 {
-  if (serverControlHandler.loadConfig(cmdLine) < 0) return -1;
+  if (serverControlHandler.loadConfig(cmdLine) < 0)
+    return -1;
 
   bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_registerEvent(bz_eTickEvent, &serverControlHandler);
-  bz_setMaxWaitTime( 3.0,"SERVER_CONTROL" );
+  bz_setMaxWaitTime(3.0, "SERVER_CONTROL");
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
   bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
@@ -80,10 +82,11 @@ int ServerControl::loadConfig(const char *cmdLine)
   PluginConfig config = PluginConfig(cmdLine);
   string section = "ServerControl";
 
-  if (config.errors) return -1;
+  if (config.errors)
+    return -1;
 
   serverActive = false;
-  countPlayers( join , NULL );
+  countPlayers(join, NULL);
 
   /*
    * Set up options from the configuration file
@@ -138,7 +141,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   return 0;
 }
 
-void ServerControl::fileAccessTime(const std::string filename, time_t *mtime)
+void ServerControl::fileAccessTime(const std::string filename, time_t * mtime)
 {
   struct stat buf;
 
@@ -146,12 +149,12 @@ void ServerControl::fileAccessTime(const std::string filename, time_t *mtime)
     *mtime = buf.st_mtime;
   } else {
     *mtime = 0;
-    bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s",
-		     filename.c_str());
+    bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s", filename.c_str());
   }
 }
 
-void ServerControl::checkShutdown( void ) {
+void ServerControl::checkShutdown(void)
+{
   // Check for server shutdown
   //
   // We shutdown the server in the following cases:
@@ -159,17 +162,17 @@ void ServerControl::checkShutdown( void ) {
   //     the reset server once file exists OR
   //     the reset server always file exists and someone was on the server
   //
-  if (numPlayers <= 0) { // No players
+  if (numPlayers <= 0) {	// No players
     if (resetServerOnceFilename != "") {
-      std::ifstream resetOnce( resetServerOnceFilename.c_str() );
-      if (resetOnce) { // Reset server once exists
+      std::ifstream resetOnce(resetServerOnceFilename.c_str());
+      if (resetOnce) {		// Reset server once exists
 	resetOnce.close();
-	remove( resetServerOnceFilename.c_str() );
+	remove(resetServerOnceFilename.c_str());
 	bz_shutdown();
       } else if (resetServerAlwaysFilename != "" && serverActive) {
 	// Server was active - some non-observer player connected
-	std::ifstream resetAlways( resetServerAlwaysFilename.c_str() );
-	if (resetAlways) { // Reset server always exists
+	std::ifstream resetAlways(resetServerAlwaysFilename.c_str());
+	if (resetAlways) {	// Reset server always exists
 	  resetAlways.close();
 	  bz_shutdown();
 	}
@@ -178,39 +181,37 @@ void ServerControl::checkShutdown( void ) {
   }
 }
 
-void ServerControl::process( bz_EventData *eventData )
+void ServerControl::process(bz_EventData * eventData)
 {
   ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eTickEvent:
-	checkShutdown();
-	if (banFilename != "" )
-	  checkBanChanges();
-	if (masterBanFilename != "")
-	  checkMasterBanChanges();
-	break;
-      case bz_ePlayerJoinEvent:
-	if (data->record->team >= eRogueTeam &&
-	    data->record->team <= eHunterTeam &&
-	    data->record->callsign != "")  {
-	  serverActive = true;
-	}
-	countPlayers( join , data );
-	break;
-      case bz_ePlayerPartEvent:
-	countPlayers( part , data );
-	checkShutdown();
-	break;
-      default :
-	break;
+    case bz_eTickEvent:
+      checkShutdown();
+      if (banFilename != "")
+	checkBanChanges();
+      if (masterBanFilename != "")
+	checkMasterBanChanges();
+      break;
+    case bz_ePlayerJoinEvent:
+      if (data->record->team >= eRogueTeam && data->record->team <= eHunterTeam && data->record->callsign != "") {
+	serverActive = true;
+      }
+      countPlayers(join, data);
+      break;
+    case bz_ePlayerPartEvent:
+      countPlayers(part, data);
+      checkShutdown();
+      break;
+    default:
+      break;
     }
   }
 }
 
-void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
+void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_BasePlayerRecord *player;
@@ -218,17 +219,16 @@ void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *dat
   string str;
   int numLines = 0;
 
-  bz_getPlayerIndexList( playerList );
+  bz_getPlayerIndexList(playerList);
 
-  for ( unsigned int i = 0; i < playerList->size(); i++ ) {
-    player = bz_getPlayerByIndex( playerList->get(i));
+  for (unsigned int i = 0; i < playerList->size(); i++) {
+    player = bz_getPlayerByIndex(playerList->get(i));
     if (player) {
-      if (act == join || (data && (player->playerID != data->playerID) &&
-			  (player->callsign != ""))) {
+      if (act == join || (data && (player->playerID != data->playerID) && (player->callsign != ""))) {
 	if (player->callsign != "")
 	  numLines++;
       }
-      bz_freePlayerRecord( player );
+      bz_freePlayerRecord(player);
     }
   }
   numPlayers = numLines;
@@ -236,7 +236,7 @@ void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *dat
   bz_deleteIntList(playerList);
 }
 
-void ServerControl::checkBanChanges( void )
+void ServerControl::checkBanChanges(void)
 {
   time_t mtime;
   fileAccessTime(banFilename, &mtime);
@@ -249,7 +249,7 @@ void ServerControl::checkBanChanges( void )
   }
 }
 
-void ServerControl::checkMasterBanChanges( void )
+void ServerControl::checkMasterBanChanges(void)
 {
   time_t mtime;
   fileAccessTime(masterBanFilename, &mtime);
