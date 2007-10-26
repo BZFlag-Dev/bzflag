@@ -1261,11 +1261,13 @@ bool ModelToolApp::drawOverlay ( void )
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
 
-  glColor4f(1,0,0,1);
-  glBegin(GL_LINES);
-  glVertex3f(0,0,-0.5f);
-  glVertex3f(100,100,-0.5f);
-  glEnd();
+  glPushMatrix();
+  glTranslatef(5,5,-90.0f);
+  glRotatef(-90,1,0,0);
+  float rot[3] = {0,0,0};
+  glAxesWidget(100,rot);
+  glPopMatrix();
+
   return true;
 }
 
