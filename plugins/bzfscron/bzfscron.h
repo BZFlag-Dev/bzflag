@@ -17,7 +17,8 @@
 #include "bzfsAPI.h"
 
 // -- Event handler class
-class CronPlayer : public bz_ServerSidePlayerHandler {
+class CronPlayer : public bz_ServerSidePlayerHandler
+{
 public:
   CronPlayer(); // c'tor
   void added(int player);
@@ -25,7 +26,8 @@ public:
   void sendCommand(std::string message); // expose inherited protected member sendChatMessage
 };
 
-class CronManager : public bz_EventHandler {
+class CronManager : public bz_EventHandler
+{
 public:
   CronManager();
   ~CronManager();

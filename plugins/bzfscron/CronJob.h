@@ -16,7 +16,8 @@
 #include <vector>
 #include <string>
 
-class CronJob {
+class CronJob
+{
 public:
   CronJob();
   CronJob(std::string job);
