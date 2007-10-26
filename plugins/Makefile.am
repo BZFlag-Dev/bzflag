@@ -29,7 +29,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)	\
-	doc \
 	vc71
 
 EXTRA_DIST = \
