@@ -6,29 +6,33 @@
 #include <map>
 #include <math.h>
 
-BZ_GET_PLUGIN_VERSION class RabidRabbitHandler:public bz_CustomMapObjectHandler {
+BZ_GET_PLUGIN_VERSION
+
+class RabidRabbitHandler:public bz_CustomMapObjectHandler
+{
 public:
   virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo * data);
 };
 
 RabidRabbitHandler rabidrabbithandler;
 
-class RabidRabbitEventHandler:public bz_EventHandler {
+class RabidRabbitEventHandler:public bz_EventHandler
+{
 public:
   virtual void process(bz_EventData * eventData);
 };
 
 RabidRabbitEventHandler rabidrabbiteventHandler;
 
-class RabidRabbitDieEventHandler:public bz_EventHandler {
+class RabidRabbitDieEventHandler:public bz_EventHandler
+{
 public:
   virtual void process(bz_EventData * eventData);
 };
 
 RabidRabbitDieEventHandler rabidrabbitdieeventhandler;
 
-BZF_PLUGIN_CALL int
-bz_Load(const char * /*commandLineParameter */ )
+BZF_PLUGIN_CALL int bz_Load(const char * /*commandLineParameter */ )
 {
   bz_debugMessage(4, "rabidRabbit plugin loaded");
   bz_registerCustomMapObject("RABIDRABBITZONE", &rabidrabbithandler);
@@ -39,8 +43,7 @@ bz_Load(const char * /*commandLineParameter */ )
   return 0;
 }
 
-BZF_PLUGIN_CALL int
-bz_Unload(void)
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
   bz_removeEvent(bz_eTickEvent, &rabidrabbiteventHandler);
   bz_removeEvent(bz_ePlayerDieEvent, &rabidrabbitdieeventhandler);
@@ -51,9 +54,11 @@ bz_Unload(void)
   return 0;
 }
 
-class RRZoneInfo {
+class RRZoneInfo
+{
 public:
-  RRZoneInfo() {
+  RRZoneInfo()
+  {
     currentKillZone = 0;
     rabbitNotifiedWrongZone = false;
     rabbitNotifiedWrongZoneNum = 0;
@@ -67,9 +72,11 @@ public:
 
 RRZoneInfo rrzoneinfo;
 
-class RabidRabbitZone {
+class RabidRabbitZone
+{
 public:
-  RabidRabbitZone() {
+  RabidRabbitZone()
+  {
     zonekillhunter = false;
     box = false;
     xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
@@ -100,7 +107,8 @@ public:
   std::string playermessage;
   std::string servermessage;
 
-  bool pointIn(float pos[3]) {
+  bool pointIn(float pos[3])
+  {
     if (box) {
       if (pos[0] > xMax || pos[0] < xMin)
 	return false;
@@ -196,8 +204,7 @@ bool RabidRabbitHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * da
   return true;
 }
 
-void
-killAllHunters(std::string messagepass)
+void killAllHunters(std::string messagepass)
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList(playerList);
@@ -227,8 +234,7 @@ killAllHunters(std::string messagepass)
 }
 
 
-void
-RabidRabbitEventHandler::process(bz_EventData * eventData)
+void RabidRabbitEventHandler::process(bz_EventData * eventData)
 {
   if ((eventData->eventType != bz_eTickEvent) || (zoneList.size() < 2))
     return;
@@ -296,8 +302,7 @@ RabidRabbitEventHandler::process(bz_EventData * eventData)
   return;
 }
 
-void
-RabidRabbitDieEventHandler::process(bz_EventData * eventData)
+void RabidRabbitDieEventHandler::process(bz_EventData * eventData)
 {
   if (eventData->eventType != bz_ePlayerDieEvent)
     return;
