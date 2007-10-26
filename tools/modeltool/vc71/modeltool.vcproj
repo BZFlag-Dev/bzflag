@@ -115,7 +115,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../include/;../../../MSVC/vc71"
+				AdditionalIncludeDirectories="../../../include/;../../../MSVC/vc71;$(GPLIB_DIR)/inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_MODEL_TOOL_GFX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -128,8 +128,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gpLib.lib opengl32.lib glu32.lib sdl.lib devil.lib ilut.lib"
 				OutputFile="$(OutDir)/modeltool.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(GPLIB_DIR)/vc71/debug"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/modeltool.pdb"
 				SubSystem="1"

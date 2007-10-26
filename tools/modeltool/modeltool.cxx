@@ -34,6 +34,12 @@
 #include "wavefrontOBJ.h"
 #include "Q3BSP.h"
 
+#ifdef _MODEL_TOOL_GFX
+#include "graphicApplication.h"
+
+int GFXMain(int argc, char* argv[]);
+#endif
+
 // globals/
 const char VersionString[] = "ModelTool v1.8.4.2 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
@@ -312,15 +318,14 @@ static int  dumpUsage ( char *exeName, const char* reason )
  return 1;
 }
 
-int main(int argc, char* argv[])
+bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenstion, std::string &output )
 {
-  std::string input;
-  std::string extenstion = "OBJ";
-  std::string output;
-
   // make sure we have all the right stuff
   if ( argc < 2)
-    return dumpUsage(argv[0],"No input file specified");
+  {
+    dumpUsage(argv[0],"No input file specified");
+    return false;
+  }
 
   // get the input file
   // check argv for
@@ -331,10 +336,10 @@ int main(int argc, char* argv[])
   }
   input = argv[1];
 
-    // see if it has an extenstion
-    char *p = strrchr(argv[1],'.');
-    if (p)
-	    extenstion = p+1;
+  // see if it has an extenstion
+  char *p = strrchr(argv[1],'.');
+  if (p)
+    extenstion = p+1;
 
   if (!p) 
     output = input + ".bzw";
@@ -405,60 +410,74 @@ int main(int argc, char* argv[])
       else
 	printf ("missing -sf argument\n");
     }
-    else if (command == "-e") 
-	    useEmission = false;
-    else if (command == "-gx")
-    {
-      if ((i + 1) < argc)
+      else if (command == "-e") 
+	useEmission = false;
+      else if (command == "-gx")
       {
-	i++;
-	globalScale = (float)atof(argv[i]);
+	if ((i + 1) < argc)
+	{
+	  i++;
+	  globalScale = (float)atof(argv[i]);
+	}
+	else
+	  printf ("missing -gx argument\n");
       }
-      else
-	printf ("missing -gx argument\n");
-    }
-    else if (command == "-gsx")
-    {
-      if ((i + 1) < argc)
+      else if (command == "-gsx")
       {
-	i++;
-	globalShift[0] = (float)atof(argv[i]);
+	if ((i + 1) < argc)
+	{
+	  i++;
+	  globalShift[0] = (float)atof(argv[i]);
+	}
+	else 
+	  printf ("missing -gsx argument\n");
       }
-      else 
-	printf ("missing -gsx argument\n");
-    }
-    else if (command == "-gsy")
-    {
-      if ((i + 1) < argc) 
+      else if (command == "-gsy")
       {
-	i++;
-	globalShift[1] = (float)atof(argv[i]);
+	if ((i + 1) < argc) 
+	{
+	  i++;
+	  globalShift[1] = (float)atof(argv[i]);
+	}
+	else
+	  printf ("missing -gsy argument\n");
       }
-      else
-	printf ("missing -gsy argument\n");
-    }
-    else if (command == "-gsz")
-    {
-      if ((i + 1) < argc)
+      else if (command == "-gsz")
       {
-	i++;
-	globalShift[2] = (float)atof(argv[i]);
+	if ((i + 1) < argc)
+	{
+	  i++;
+	  globalShift[2] = (float)atof(argv[i]);
+	}
+	else
+	  printf ("missing -gsz argument\n");
       }
-      else
-	printf ("missing -gsz argument\n");
-    }
-    else if (command == "-bspskip")
-    {
-      if ((i + 1) < argc)
+      else if (command == "-bspskip")
       {
-	i++;
-	bspMaterialSkips.push_back(std::string(argv[i]));
+	if ((i + 1) < argc)
+	{
+	  i++;
+	  bspMaterialSkips.push_back(std::string(argv[i]));
+	}
+	else
+	  printf ("missing -bspskip argument\n");
       }
-      else
-	printf ("missing -bspskip argument\n");
-    }
   }
-  // make a model
+  return true;
+}
+
+int main(int argc, char* argv[])
+{
+#ifdef  _MODEL_TOOL_GFX
+  return GFXMain(argc,argv);
+#endif
+
+  std::string input;
+  std::string extenstion = "OBJ";
+  std::string output;
+
+  if (!setupArgs(argc, argv, input,extenstion,output))
+    return 1;
 
   CModel	model;
 
@@ -1134,6 +1153,69 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
   fclose(fp);
 }
+
+// all the stuff for a the graphic display
+#ifdef _MODEL_TOOL_GFX
+
+class ModelToolApp : public GraphicApplication
+{
+public:
+  virtual void setupDisplay ( void );
+  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title );
+  virtual bool drawView ( void );
+  virtual bool drawOverlay ( void );
+
+  virtual void contextInvalidated ( bool release ){};
+
+  virtual void inputEvent ( int id, float value );
+
+protected:
+
+};
+
+ModelToolApp	app;
+
+int GFXMain(int argc, char* argv[])
+{
+  app.args.Set(argc,argv);
+  app.run();
+
+  return 0;
+}
+
+bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title )
+{
+  x = 640;
+  y = 480;
+  fullScreen = false;
+  title = "";
+
+  return true;
+}
+
+void ModelToolApp::setupDisplay ( void )
+{
+  GraphicApplication::setupDisplay();
+}
+
+bool ModelToolApp::drawView ( void )
+{
+  return true;
+}
+
+bool ModelToolApp::drawOverlay ( void )
+{
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+
+  return true;
+}
+
+void ModelToolApp::inputEvent ( int id, float value )
+{
+ 
+}
+#endif
 
 
 // Local Variables: ***
