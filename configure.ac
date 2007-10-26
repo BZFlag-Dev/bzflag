@@ -871,7 +871,6 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/vocaliser/Makefile
     	plugins/Phoenix/Makefile
         plugins/wwzones/Makefile
-	plugins/doc/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile
 	src/Makefile
