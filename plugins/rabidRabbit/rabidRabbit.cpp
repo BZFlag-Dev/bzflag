@@ -60,7 +60,8 @@ public:
     soundEnabled = true;
     cycleOnDie = false;
   }
-  int currentKillZone, rabbitNotifiedWrongZoneNum;
+  unsigned int currentKillZone;
+  unsigned int rabbitNotifiedWrongZoneNum;
   bool rabbitNotifiedWrongZone, soundEnabled, cycleOnDie;
 };
 
@@ -305,7 +306,7 @@ RabidRabbitDieEventHandler::process(bz_EventData * eventData)
   bz_PlayerDieEventData_V1 *DieData = (bz_PlayerDieEventData_V1 *) eventData;
 
   if (rrzoneinfo.cycleOnDie && DieData->team == eRabbitTeam) {
-    int i = rrzoneinfo.currentKillZone;
+    unsigned int i = rrzoneinfo.currentKillZone;
     if (i == (zoneList.size() - 1))
       rrzoneinfo.currentKillZone = 0;
     else
