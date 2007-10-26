@@ -217,9 +217,8 @@ killAllHunters(std::string messagepass)
       if (player->team == eRabbitTeam && rrzoneinfo.soundEnabled && bz_getTeamCount(eHunterTeam) > 0)
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
 
+      bz_freePlayerRecord(player);
     }
-
-    bz_freePlayerRecord(player);
   }
 
   bz_deleteIntList(playerList);
@@ -289,8 +288,8 @@ RabidRabbitEventHandler::process(bz_EventData * eventData)
 	  bz_sendTextMessage(BZ_SERVER, player->playerID, zoneList[i].playermessage.c_str());
 	}
       }
+      bz_freePlayerRecord(player);
     }
-    bz_freePlayerRecord(player);
   }
 
   bz_deleteIntList(playerList);
