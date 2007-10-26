@@ -740,7 +740,7 @@ BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 BZF_API bool bz_hasPerm ( int playerID, const char* perm )
 {
 	if (!perm)
-		return false;
+	  return false;
 
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 	if (!player)
@@ -752,10 +752,13 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm )
 
 	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
 
+	if (player->accessInfo.hasALLPerm)
+	  return true;
+
 	if (realPerm != PlayerAccessInfo::lastPerm)
-		return player->accessInfo.hasPerm(realPerm);
+	  return player->accessInfo.hasPerm(realPerm);
 	else
-		return player->accessInfo.hasCustomPerm(permName.c_str());
+	  return player->accessInfo.hasCustomPerm(permName.c_str());
 }
 
 BZF_API bool bz_grantPerm ( int playerID, const char* perm  )

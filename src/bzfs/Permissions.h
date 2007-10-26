@@ -171,7 +171,9 @@ public:
   std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
 
-	std::vector<std::string> customPerms;
+  bool				hasALLPerm;
+
+  std::vector<std::string> customPerms;
 private:
   bool				verified;
   TimeKeeper			loginTime;

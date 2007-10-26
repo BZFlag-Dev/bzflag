@@ -54,6 +54,7 @@ PlayerAccessInfo::PlayerAccessInfo()
     serverop(false), passwordAttempts(0)
 {
   groups.push_back("EVERYONE");
+  hasALLPerm = false;
 }
 
 void PlayerAccessInfo::setName(const char* callSign) {
@@ -571,7 +572,10 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	  info.explicitAllows.reset(perm);
 	} else {
 	  if (word == "ALL")
+	  {
 	    info.explicitAllows.reset();
+	    info.hasALLPerm = true;
+	  }
 	  else
 	    logDebugMessage(1,"groupdb: Cannot remove unknown permission %s\n", word.c_str());
 	}
@@ -595,6 +599,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
       if (word == "ALL") {
 	info.explicitAllows.set();
 	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
+	info.hasALLPerm = true;
       } else {
 	//logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
 				info.customPerms.push_back(word);
