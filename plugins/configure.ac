@@ -204,7 +204,6 @@ AC_CONFIG_FILES([
 	thiefControl/Makefile
 	airspawn/Makefile
 	chathistory/Makefile
-	doc/Makefile
 	hiddenAdmin/Makefile
 	flagStay/Makefile
 	fastmap/Makefile
