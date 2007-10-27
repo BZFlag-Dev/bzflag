@@ -13,6 +13,7 @@ Global
 		Debug = Debug
 		Debug_GFX = Debug_GFX
 		Release = Release
+		Release_GFX = Release_GFX
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug.ActiveCfg = Debug|Win32
@@ -21,12 +22,16 @@ Global
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug_GFX.Build.0 = Debug_GFX|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Release.ActiveCfg = Release|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Release.Build.0 = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_GFX.ActiveCfg = Release_GFX|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_GFX.Build.0 = Release_GFX|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug.ActiveCfg = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug.Build.0 = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug_GFX.ActiveCfg = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug_GFX.Build.0 = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release.ActiveCfg = Release|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release.Build.0 = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release_GFX.ActiveCfg = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release_GFX.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
