@@ -38,7 +38,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \
-	doc \
 	m4 \
 	serverSideBotSample \
 	MSVC
