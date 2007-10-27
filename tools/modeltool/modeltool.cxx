@@ -1191,13 +1191,28 @@ public:
   virtual bool drawView ( void );
   virtual bool drawOverlay ( void );
 
+  virtual void preFrameUpdate ( void );
+
   virtual void contextInvalidated ( bool release ){};
 
   virtual void inputEvent ( int id, float value );
+  virtual void mouseMovedEvent ( float x, float y, float z );
+  virtual void keyEvent ( int key, bool down, ModiferKeys mods );
+  virtual void mouseButtonEvent ( int button, bool down );
 
 protected:
   CModel	model;
 
+  void drawZZeroGrid ( void );
+
+  bool buttonStates[3];
+  float dragPos[2];
+  float xRot;
+  float zRot;
+  float zoom;
+  float pan[3];
+  float gridSpacing;
+  float gridExtents;
 };
 
 ModelToolApp	app;
@@ -1213,6 +1228,16 @@ int GFXMain(int argc, char* argv[])
 
 void ModelToolApp::init ( int argc, char* argv[] )
 {
+  xRot = 45;
+  zRot = 0;
+  zoom = 15;
+  pan[0] = pan[1] = pan[2] = 0.0f;
+  buttonStates[0] = buttonStates[1] = buttonStates[2] = false;
+  dragPos[0] = dragPos[1] = 0;
+
+  gridSpacing = 1.0f;
+  gridExtents = 15.0f;
+
   std::string input;
   std::string extenstion = "OBJ";
   std::string output;
@@ -1234,6 +1259,8 @@ bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::strin
   fullScreen = false;
   title = "";
 
+  orthoDepth = 1000.0;
+
   return true;
 }
 
@@ -1242,14 +1269,68 @@ void ModelToolApp::setupDisplay ( void )
   GraphicApplication::setupDisplay();
 }
 
+void ModelToolApp::preFrameUpdate ( void )
+{
+  // do animation stuff here
+}
+
+void ModelToolApp::mouseMovedEvent ( float x, float y, float z )
+{
+  if(z != 0)
+    zoom += z * 0.125f;
+
+  if ( buttonStates[2] )
+  {
+    float delta[2];
+    delta[0] = x - dragPos[0];
+    delta[1] = y - dragPos[1];
+
+    zRot -= delta[0] * 0.25f;
+    xRot -= delta[1] * 0.125f;
+  }
+
+  dragPos[0] = x;
+  dragPos[1] = y;
+}
+
+void ModelToolApp::keyEvent ( int key, bool down, ModiferKeys mods )
+{
+}
+
+void ModelToolApp::mouseButtonEvent ( int button, bool down )
+{
+  int x,y,z;
+  getMouseCursorPos(x,y,z);
+  dragPos[0] = (float)x;
+  dragPos[1] = (float)y;
+
+  if( button > 3 )
+  {
+    if ( button == 4 )
+      zoom += 0.125f;
+    else
+      zoom -= 0.125f;
+  }
+  else
+    buttonStates[button-1] = down;
+}
+
+
 bool ModelToolApp::drawView ( void )
 {
+  glPushMatrix();
+
+  glTranslatef(0,0,-zoom);						// pull back on allong the zoom vector
+  glRotatef(xRot, 1.0f, 0.0f, 0.0f);					// pops us to the tilt
+  glRotatef(-zRot, 0.0f, 1.0f, 0.0f);					// gets us on our rot
+  glTranslatef(-pan[0],-pan[2],pan[1]);					// take us to the pos
+  glRotatef(-90, 1.0f, 0.0f, 0.0f);					// gets us into XY
+
+  drawZZeroGrid();
+
   glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
 
-  glPushMatrix();
-  glRotatef(-90,1,0,0);
-  glTranslatef(0,10,0);
   model.draw();
 
   glPopMatrix();
@@ -1262,10 +1343,10 @@ bool ModelToolApp::drawOverlay ( void )
   glDisable(GL_TEXTURE_2D);
 
   glPushMatrix();
-  glTranslatef(5,5,-90.0f);
+  glTranslatef(25,25,-50.0f);
   glRotatef(-90,1,0,0);
-  float rot[3] = {0,0,0};
-  glAxesWidget(100,rot);
+  float rot[3] = {xRot,0,-zRot};
+  glAxesWidget(50,rot);
   glPopMatrix();
 
   return true;
@@ -1276,6 +1357,24 @@ void ModelToolApp::inputEvent ( int id, float value )
   // do stuff here
  
 }
+
+void ModelToolApp::drawZZeroGrid ( void )
+{
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+
+  glColor4f(1,1,1,0.5f);
+  glBegin(GL_LINES);
+  for (float f = -gridExtents; f <= gridExtents; f += gridSpacing)
+  {
+    glVertex3f(-gridExtents,f,0);
+    glVertex3f(gridExtents,f,0);
+    glVertex3f(f,-gridExtents,0);
+    glVertex3f(f,gridExtents,0);
+  }
+  glEnd();
+}
+
 #endif
 
 
