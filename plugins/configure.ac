@@ -272,7 +272,8 @@ AC_MSG_RESULT([Plugins Configured for Compilation])
 AC_MSG_RESULT([----------------------------------])
 for i in ${srcdir}/* ; do
     if test -d $i && test -f $i/$i.cpp -o -f $i/$i.cxx ; then
-       AC_MSG_RESULT([  $i])
+       plugin="`basename $i`"
+       AC_MSG_RESULT([  $plugin])
     fi
 done
 AC_MSG_RESULT([])
