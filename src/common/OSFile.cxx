@@ -760,7 +760,7 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
     {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
-      strncpy(fileInfo->d_name, TextUtils::toupper(fileInfo->d_name).c_str(), fileInfo->d_namlen );
+      strncpy(fileInfo->d_name, TextUtils::toupper(fileInfo->d_name).c_str(), strlen(fileInfo->d_name) );
 
       stat(FilePath.c_str(), &statbuf);
 
