@@ -79,7 +79,7 @@ int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
   char monthStr[512];
-  sscanf(buildDate, "%s %d %d", monthStr, &day, &year);
+  sscanf(buildDate, "%512s %d %d", monthStr, &day, &year);
 
   // we want it not as a name but a number
   if (strcmp(monthStr, "Jan") == 0)
