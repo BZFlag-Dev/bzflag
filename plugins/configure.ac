@@ -261,29 +261,3 @@ case $host_os in
 	done
 	;;
 esac
-
-dnl **********************
-dnl *** Report Summary ***
-dnl **********************
-
-AC_MSG_RESULT([])
-AC_MSG_RESULT([Plugins Configured for Compilation])
-AC_MSG_RESULT([----------------------------------])
-AC_MSG_RESULT([  HoldTheFlag - Support for the popular playing style])
-AC_MSG_RESULT([  RogueGenocide - Makes Genocide flag kill all rogues])
-AC_MSG_RESULT([  SAMPLE_PLUGIN - Example Plugin])
-AC_MSG_RESULT([  airspawn - Always spawn in the air])
-AC_MSG_RESULT([  chathistory - Saves a transcript of chat to a file])
-AC_MSG_RESULT([  hiddenAdmin - Allows admins to be invisible])
-AC_MSG_RESULT([  flagStay - Drops flags if the player leave the zone])
-AC_MSG_RESULT([  killall - Simple means to kill everyone on demand])
-AC_MSG_RESULT([  logDetail - Extensive logging support])
-AC_MSG_RESULT([  nagware - Annoy users until they register])
-AC_MSG_RESULT([  playHistoryTracker - Maintain statistics on players])
-AC_MSG_RESULT([  plugin_utils - static lib for shared code between plug-ins])
-AC_MSG_RESULT([  shockwaveDeath - Creates deadly shockwaves when players die])
-AC_MSG_RESULT([  recordmatch - Makes countdown record games to a file])
-AC_MSG_RESULT([  torBlock - Blocks messages from the TOR network])
-AC_MSG_RESULT([  bzfscron - Allows you to run commands at time intervals])
-AC_MSG_RESULT([  regFlag - Only registered players can hold flags])
-AC_MSG_RESULT([])
