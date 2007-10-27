@@ -64,7 +64,7 @@ void			printFatalError(const char* fmt, ...)
   char buffer[1024];
   va_list args;
   va_start(args, fmt);
-  vsprintf(buffer, fmt, args);
+  vsnprintf(buffer, 1024, fmt, args);
   va_end(args);
 #if defined(_WIN32)
   MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);

@@ -450,7 +450,7 @@ static void		parse(int argc, char** argv)
 	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
 	  printFatalError("Server name too long.  Ignoring.");
 	} else {
-	  strcpy(startupInfo.serverName, serverName);
+	  strncpy(startupInfo.serverName, serverName, ServerNameLen-1);
 	  startupInfo.autoConnect = true;
 	}
       } else {
@@ -933,7 +933,7 @@ int			main(int argc, char** argv)
     }
   }
   email = email.substr(0, sizeof(startupInfo.email) - 1);
-  strcpy(startupInfo.email, email.c_str());
+  strncpy(startupInfo.email, email.c_str(), EmailLen-1);
 
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();

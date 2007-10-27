@@ -369,7 +369,7 @@ void			ScoreboardRenderer::renderCtfFlags (){
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
 	std::string playerInfo = ColorStrings[flagd->flagTeam];
-	sprintf (flagColor, "%-12s", flagd->flagName);
+	snprintf (flagColor, 200, "%-12s", flagd->flagName);
 	playerInfo += flagColor;
 	playerInfo += ColorStrings[teamIndex];
 	playerInfo += player->getCallSign();
@@ -541,12 +541,12 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   World *world = World::getWorld();
   if (world && world->allowRabbit()) {
-    sprintf(score, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
+    snprintf(score, 40, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor] : "",
 	    player->getTeamKills());
   } else {
-    sprintf(score, "%4d %4d-%-4d%s[%2d]", player->getScore(),
+    snprintf(score, 40, "%4d %4d-%-4d%s[%2d]", player->getScore(),
 	    player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor] : "",
 	    player->getTeamKills());

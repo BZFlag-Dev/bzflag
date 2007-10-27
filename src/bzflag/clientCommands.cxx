@@ -801,7 +801,7 @@ static std::string cmdScreenshot(const std::string&,
     tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, version.c_str());	       //(data) Text contents (build/version)
+    strncpy((char*) b, version.c_str(), blength-1);	       //(data) Text contents (build/version)
     f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
@@ -821,7 +821,7 @@ static std::string cmdScreenshot(const std::string&,
     tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, renderer.c_str());	       //(data) Text contents (GL information)
+    strncpy((char*) b, renderer.c_str(), blength-1);	       //(data) Text contents (GL information)
     f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc

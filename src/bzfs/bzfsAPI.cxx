@@ -3854,14 +3854,15 @@ BZF_API bz_ApiString bz_filterPath(const char *path)
 
   char *temp;
   temp=(char*)malloc(strlen(path)+1);
-
-  strcpy(temp, path);
+  if (temp) {
+    strncpy(temp, path, strlen(path)+1);
+  }
 
   // replace anything but alphanumeric charcters or dots in filename by '_'
   // should be safe on every supported platform
 
   char *buf=temp;
-  while(*buf!='\0')
+  while(buf && *buf!='\0')
   {
     if(!isalnum(*buf) ||  *buf!='.')
       *buf='_';
@@ -3869,7 +3870,7 @@ BZF_API bz_ApiString bz_filterPath(const char *path)
     buf++;
   }
   bz_ApiString ret(temp);
-  free(temp);
+  if (temp) free(temp);
   return ret;
 }
 

@@ -96,8 +96,8 @@ std::string		getConfigDirName( const char* versionName )
     if(err == ::noErr) {
       std::strcat(buff, "/BZFlag/");
       if (versionName) {
-	std::strcat(buff, versionName);
-	std::strcat(buff, "/");
+	std::strncat(buff, versionName, 1024 - strlen(buff) - 1);
+	std::strncat(buff, "/", 1024 - strlen(buff) - 1);
       }
      name = buff;
     }

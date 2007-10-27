@@ -3392,7 +3392,7 @@ void			botStartPlaying()
   if (timeBombString()) {
     // add message about date of expiration
     char bombMessage[80];
-    sprintf(bombMessage, "This release will expire on %s", timeBombString());
+    snprintf(bombMessage, 80, "This release will expire on %s", timeBombString());
     printError(bombMessage);
   }
 

@@ -317,7 +317,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   if (debugLevel >= 1) {
     char cServerVersion[128];
-    sprintf(cServerVersion,"Server version: '%8s'",version);
+    snprintf(cServerVersion, 128, "Server version: '%8s'",version);
     printError(cServerVersion);
   }
 

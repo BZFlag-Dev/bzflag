@@ -186,12 +186,12 @@ bool OSFile::open(const char *mode)
 {
   close();
 
-  char  modeToUse[32];
+  char  modeToUse[33];
 
   if (!mode)
-    sprintf(modeToUse, "rb");
+    snprintf(modeToUse, 32, "rb");
   else
-    strcpy(modeToUse, mode);
+    strncpy(modeToUse, mode, 32);
 
   std::string fileName;
 
@@ -270,7 +270,7 @@ const char* OSFile::scanStr()
     return 0;
 
   static char temp[1024] = {0};
-  if (fscanf(info->fp,"%s",temp)!=1)
+  if (fscanf(info->fp,"%1024s",temp)!=1)
     return NULL;
   return temp;
 }
@@ -743,10 +743,10 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
   DIR  *directory;
   dirent  *fileInfo;
   struct stat  statbuf;
-  char   searchstr[1024];
+  char   searchstr[1025];
   std::string  FilePath;
 
-  strcpy(searchstr, pathName.c_str());
+  strncpy(searchstr, pathName.c_str(), 1024);
   if (searchstr[strlen(searchstr) - 1] != '/')
     strcat(searchstr, "/");
   directory = opendir(searchstr);
@@ -760,7 +760,7 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
     {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
-      strcpy(fileInfo->d_name, TextUtils::toupper(fileInfo->d_name).c_str());
+      strncpy(fileInfo->d_name, TextUtils::toupper(fileInfo->d_name).c_str(), fileInfo->d_namlen );
 
       stat(FilePath.c_str(), &statbuf);
 

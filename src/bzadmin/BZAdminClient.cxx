@@ -654,7 +654,7 @@ void BZAdminClient::showMessageType(std::string type) {
 void BZAdminClient::listSetVars(const std::string& name, void* thisObject) {
   char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
+    snprintf(message, MessageLen, "/set %s %f", name.c_str(), BZDB.eval(name));
     ((BZAdminClient*)thisObject)->ui->outputMessage(message, Default);
   }
 }

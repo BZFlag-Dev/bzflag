@@ -30,10 +30,10 @@ void FlagHistory::get(char message[]) {
     while (fhIt != flagHistory.end()) {
       FlagType * fDesc = (FlagType*)(*fhIt);
       if (fDesc->endurance == FlagNormal)
-	sprintf(flag, "(*%c) ", fDesc->flagName[0]);
+	snprintf(flag, MessageLen, "(*%c) ", fDesc->flagName[0]);
       else
-	sprintf(flag, "(%s) ", fDesc->flagAbbv);
-      strcat(message, flag);
+	snprintf(flag, MessageLen, "(%s) ", fDesc->flagAbbv);
+      strncat(message, flag, sizeof(message) - strlen(message) - 1);
       fhIt++;
     }
 }

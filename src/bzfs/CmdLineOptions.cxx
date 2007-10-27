@@ -298,7 +298,7 @@ static void extraUsage(const char *pname)
   std::cout << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
   std::cout << std::endl << extraUsageString << std::endl << "Flag codes:" << std::endl;
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
-    sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+    snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
     std::cout << buffer;
   }
   exit(0);

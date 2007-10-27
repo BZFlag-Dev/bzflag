@@ -65,7 +65,7 @@ Resolution::Resolution(XSGIvcVideoFormatInfo* format) :
 				valid(true), data(NULL)
 {
   name = new char[strlen(format->name) + 1];
-  strcpy(name, format->name);
+  strncpy(name, format->name, strlen(format->name));
 
   numChannels = 1;
   config = new Config[numChannels];
@@ -82,7 +82,7 @@ Resolution::Resolution(const char* comboName, int numFormats,
 				valid(true), data(NULL)
 {
   name = new char[strlen(comboName) + 1];
-  strcpy(name, comboName);
+  strncpy(name, comboName, strlen(comboName));
 
   numChannels = numFormats;
   config = new Config[numChannels];
@@ -91,7 +91,7 @@ Resolution::Resolution(const char* comboName, int numFormats,
 
   combination = true;
   char* _data = new char[strlen(comboName) + 1];
-  strcpy(_data, comboName);
+  strncpy(_data, comboName, strlen(comboName));
   data = _data;
 }
 
@@ -360,7 +360,7 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
 	    bestMatch = match;
 	    delete[] defaultVideoCombo;
 	    defaultVideoCombo = new char[strlen(comboNames[i]) + 1];
-	    strcpy(defaultVideoCombo, comboNames[i]);
+	    strncpy(defaultVideoCombo, comboNames[i], strlen(comboNames[i]));
 	  }
 	}
 

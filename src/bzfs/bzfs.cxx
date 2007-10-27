@@ -916,7 +916,7 @@ bool defineWorld ( void )
     strcpy(hexDigest, "p");
   }
   std::string digest = md5.hexdigest();
-  strcat(hexDigest, digest.c_str());
+  strncat(hexDigest, digest.c_str(), 49);
   TimeKeeper endTime = TimeKeeper::getCurrent();
   logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
 
@@ -1110,7 +1110,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // don't bother with empty messages
     if (message[3] == '\0' || (isspace(message[3]) && message[4] == '\0')) {
       char reply[MessageLen] = {0};
-      sprintf(reply, "%s, the /me command requires an argument", playerData->player.getCallSign());
+      snprintf(reply, MessageLen, "%s, the /me command requires an argument", playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
       return;
     }
@@ -1124,7 +1124,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // check for permissions
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
       char reply[MessageLen] = {0};
-      sprintf(reply, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
+      snprintf(reply, MessageLen, "%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
       return;
     }
@@ -1839,7 +1839,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   char message[MessageLen] = {0};
 
 #ifdef SERVERLOGINMSG
-  sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
+  snprintf(message, MessageLen, "BZFlag server %s, http://BZFlag.org/", getAppVersion());
   sendMessage(ServerPlayer, playerIndex, message);
 
   if (clOptions->servermsg != "") {

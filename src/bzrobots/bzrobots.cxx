@@ -645,7 +645,7 @@ myMain(int argc, char** argv)
     }
   }
   email = email.substr(0, sizeof(startupInfo.email) - 1);
-  strcpy(startupInfo.email, email.c_str());
+  strncpy(startupInfo.email, email.c_str(), EmailLen-1);
 
   std::string locale = BZDB.isSet("locale") ? BZDB.get("locale") : "default";
   World::setLocale(locale);

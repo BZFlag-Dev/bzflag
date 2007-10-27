@@ -637,13 +637,15 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 
   for (int row = 0; row < rows; row++) {
     cptr = buffer;
+    int remaining = MessageLen;
     for (int col = 0; col < cols; col++) {
       const int index = (col * rows) + row;
       if (index >= cmdCount) {
 	break;
       }
-      sprintf(cptr, format, commands[index]->c_str());
+      snprintf(cptr, remaining, format, commands[index]->c_str());
       cptr += maxCmdLen;
+      remaining -= maxCmdLen;
     }
     sendMessage(ServerPlayer, playerId, buffer);
   }
@@ -1878,7 +1880,7 @@ bool PlayerListCommand::operator() (const char *,
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     if (playerData->player.isPlaying()) {
       playerData->netHandler->getPlayerList(hostInfo);
-      sprintf(reply, "[%d]%-16s: %s",
+      snprintf(reply, MessageLen, "[%d]%-16s: %s",
 	      t, playerData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
     }
@@ -1895,7 +1897,7 @@ bool PlayerListCommand::operator() (const char *,
       } else if (otherData->playerHandler) {
 	strcpy(hostInfo, "server-side player");
       }
-      sprintf(reply, "[%d]%-16s: %s",
+      snprintf(reply, MessageLen, "[%d]%-16s: %s",
 	      i, otherData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
     }
@@ -3065,7 +3067,7 @@ bool RecordCommand::operator() (const char *message,
     }
 
     // get the filename
-    sscanf (buf, "%s", filename);
+    sscanf (buf, "%128s", filename);
 
     // FIXME - do this a little better? use quotations for strings?
     while ((*buf != '\0') && !isspace (*buf)) buf++; // eat filename

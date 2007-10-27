@@ -109,10 +109,7 @@ void PlayerInfo::setCallsign(const char *text)
     return;
 
   memset(callSign, 0, CallSignLen);
-  if ((int)strlen(text) >= CallSignLen)
-    strncpy(callSign, text, CallSignLen - 1);
-  else
-    strcpy(callSign, text);
+  strncpy(callSign, text, CallSignLen - 1);
 }
 
 void PlayerInfo::setEmail(const char *text)
@@ -121,10 +118,7 @@ void PlayerInfo::setEmail(const char *text)
     return;
 
   memset(email, 0, EmailLen);
-  if ((int)strlen(text) >= EmailLen)
-    strncpy(email, text, EmailLen - 1);
-  else
-    strcpy(email, text);
+  strncpy(email, text, EmailLen - 1);
 }
 
 void PlayerInfo::setToken(const char *text)
@@ -133,10 +127,7 @@ void PlayerInfo::setToken(const char *text)
     return;
 
   memset(token, 0, TokenLen);
-  if ((int)strlen(text) >= TokenLen)
-    strncpy(token, text, TokenLen - 1);
-  else
-    strcpy(token, text);
+  strncpy(token, text, TokenLen - 1);
 }
 
 void PlayerInfo::setClientVersion(const char *text)
@@ -145,10 +136,7 @@ void PlayerInfo::setClientVersion(const char *text)
     return;
 
   memset(clientVersion, 0, VersionLen);
-  if ((int)strlen(text) >= VersionLen)
-    strncpy(clientVersion, text, VersionLen - 1);
-  else
-    strcpy(clientVersion, text);
+  strncpy(clientVersion, text, VersionLen - 1);
 }
 
 void PlayerInfo::setType ( PlayerType playerType )
@@ -177,19 +165,19 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 	if (!isCallSignReadable()) {
 		logDebugMessage(2,"rejecting unreadable callsign: %s\n", callSign);
 		rejectCode   = RejectBadCallsign;
-		strcpy(rejectMsg, errorString.c_str());
+		strncpy(rejectMsg, errorString.c_str(), MessageLen);
 		return false;
 	}
 	// no spoofing the server name
 	if (serverSpoofingFilter.filter(callSign)) {
 		rejectCode   = RejectRepeatCallsign;
-		strcpy(rejectMsg, "The callsign specified is already in use.");
+		strncpy(rejectMsg, "The callsign specified is already in use.", MessageLen);
 		return false;
 	}
 	if (!isEMailReadable()) {
 		logDebugMessage(2,"rejecting unreadable player email: %s (%s)\n", callSign, email);
 		rejectCode   = RejectBadEmail;
-		strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
+		strncpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.", MessageLen);
 		return false;
 	}
 
@@ -201,8 +189,8 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 		memcpy(cs, callSign, sizeof(char) * CallSignLen);
 		if (filterData->filter(cs, simpleFiltering)) {
 			rejectCode = RejectBadCallsign;
-			strcpy(rejectMsg,
-				"The callsign was rejected. Try a different callsign.");
+			strncpy(rejectMsg,
+				"The callsign was rejected. Try a different callsign.", MessageLen);
 			return false;
 		}
 	}
@@ -214,7 +202,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 		memcpy(em, email, sizeof(char) * EmailLen);
 		if (filterData->filter(em, simpleFiltering)) {
 			rejectCode = RejectBadEmail;
-			strcpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.");
+			strncpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.", MessageLen);
 			return false;
 		}
 	}

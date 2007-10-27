@@ -48,7 +48,7 @@ main(int argc, char *argv[])
   if (argc > 1)
     filename = argv[1];
 
-  versionsize = sprintf(versionstring, "%s", getAppVersion());
+  versionsize = snprintf(versionstring, 128, "%s", getAppVersion());
   versionstring[versionsize] = 0;
   /* Open the plist file */
   fd = open(filename, O_RDONLY);
@@ -83,7 +83,7 @@ main(int argc, char *argv[])
   for (i = 0; i < statbuf.st_size; i++) {
     if (*inp == 'V'){
       if (strncmp(inp, "VERSION", 7) == 0){
-	strcpy(outp, versionstring);
+	strncpy(outp, versionstring, statbuf.st_size+63);
 	outp += versionsize;
 	inp +=7;
 	i+=6;
@@ -94,12 +94,12 @@ main(int argc, char *argv[])
   }
   /* Write out each line replacing VERSION with the current version */
   close(fd);
-  tempname = (char *)malloc(64);
+  tempname = (char *)malloc(65);
   if (tempname == NULL){
     perror("tempname");
     exit(-1);
   }
-  strcpy(tempname, TEMPNAME);
+  strncpy(tempname, TEMPNAME, 64);
   fd = mkstemps(tempname, 6);
   if (fd < 0) {
     perror(tempname);

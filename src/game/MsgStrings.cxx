@@ -321,11 +321,7 @@ static void listPush (MsgStringList &list, int level, const char *fmt, ...)
   char buffer[256];
   va_list args;
   va_start(args, fmt);
-#ifdef HAVE_VSNPRINTF
   vsnprintf (buffer, 256, fmt, args);
-#else
-  vsprintf (buffer, fmt, args);
-#endif
   va_end(args);
   mstr.text += buffer;
   if (Colorize) {

@@ -376,23 +376,30 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
     }
 
     char *pMsg = banlistmessage;
-    sprintf(pMsg, "%s", bi.hostpat.c_str());
+    snprintf(pMsg, MessageLen, "%s", bi.hostpat.c_str());
 
     // print duration when < 1 year
     double duration = bi.banEnd - TimeKeeper::getCurrent();
-    if (duration < 365.0f * 24 * 3600)
-      sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
-    if (bi.bannedBy.length())
-      sprintf(pMsg + strlen(pMsg), " banned by: %s", bi.bannedBy.c_str());
-    if (bi.fromMaster)
-      sprintf(pMsg + strlen(pMsg), "(m)");
+    int remaining;
+    remaining = MessageLen - strlen(pMsg);
+    if (duration < 365.0f * 24 * 3600) {
+      snprintf(pMsg + strlen(pMsg), remaining, " (%.1f minutes)", duration / 60);
+    }
+    remaining = MessageLen - strlen(pMsg);
+    if (bi.bannedBy.length()) {
+      snprintf(pMsg + strlen(pMsg), remaining, " banned by: %s", bi.bannedBy.c_str());
+    }
+    remaining = MessageLen - strlen(pMsg);
+    if (bi.fromMaster) {
+      snprintf(pMsg + strlen(pMsg), remaining, "(m)");
+    }
 
     sendMessage(ServerPlayer, id, banlistmessage);
 
     // add reason, if any
     if (bi.reason.size()) {
       pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", bi.reason.c_str());
+      snprintf(pMsg, MessageLen, "   reason: %s", bi.reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }
   }
@@ -421,26 +428,33 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
     bool useQuotes = (bi.idpat.find_first_of(" \t") != std::string::npos);
     if (useQuotes) {
-      sprintf(pMsg, "\"%s\"", bi.idpat.c_str());
+      snprintf(pMsg, MessageLen, "\"%s\"", bi.idpat.c_str());
     } else {
-      sprintf(pMsg, "%s", bi.idpat.c_str());
+      snprintf(pMsg, MessageLen, "%s", bi.idpat.c_str());
     }
 
     // print duration when < 1 year
     double duration = bi.banEnd - TimeKeeper::getCurrent();
-    if (duration < 365.0f * 24 * 3600)
-      sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
-    if (bi.bannedBy.length())
-      sprintf(pMsg + strlen(pMsg), " banned by: %s", bi.bannedBy.c_str());
-    if (bi.fromMaster)
-      sprintf(pMsg + strlen(pMsg), "(m)");
+    int remaining;
+    remaining = MessageLen - strlen(pMsg);
+    if (duration < 365.0f * 24 * 3600) {
+      snprintf(pMsg + strlen(pMsg), remaining, " (%.1f minutes)", duration / 60);
+    }
+    remaining = MessageLen - strlen(pMsg);
+    if (bi.bannedBy.length()) {
+      snprintf(pMsg + strlen(pMsg), remaining, " banned by: %s", bi.bannedBy.c_str());
+    }
+    remaining = MessageLen - strlen(pMsg);
+    if (bi.fromMaster) {
+      snprintf(pMsg + strlen(pMsg), remaining, "(m)");
+    }
 
     sendMessage(ServerPlayer, id, banlistmessage);
 
     // add reason, if any
     if (bi.reason.size()) {
       pMsg = banlistmessage;
-      sprintf(pMsg, "   reason: %s", bi.reason.c_str());
+      snprintf(pMsg, MessageLen, "   reason: %s", bi.reason.c_str());
       sendMessage(ServerPlayer, id, banlistmessage);
     }
   }

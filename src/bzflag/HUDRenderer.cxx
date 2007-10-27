@@ -476,7 +476,7 @@ void HUDRenderer::AddLockOnMarker ( const float* pos, std::string name, bool fri
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
   char buffer[250];
-  sprintf(buffer, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
+  snprintf(buffer, 250, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
   FontManager &fm = FontManager::instance();
   restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel.c_str());
@@ -975,14 +975,14 @@ void			HUDRenderer::renderStatus(void)
 
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    sprintf(buffer, "%s: %d", myTank->getCallSign(), myTank->getScore());
+    snprintf(buffer, 80, "%s: %d", myTank->getCallSign(), myTank->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
   }
 
   // print flag if player has one in upper right
   if (flag != Flags::Null) {
-    sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
+    snprintf(buffer, 80, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
     x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace, majorFontSize, buffer);
     if (flag->endurance == FlagSticky)
       hudColor3fv(warningColor);
@@ -1098,7 +1098,7 @@ void			HUDRenderer::renderStatus(void)
   if (!roaming) {
     switch (myTank->getFiringStatus()) {
       case LocalPlayer::Deceased:
-	strcat(buffer, bdl->getLocalString("Dead").c_str());
+	strncat(buffer, bdl->getLocalString("Dead").c_str(), 79);
 	break;
 
       case LocalPlayer::Ready:
@@ -1109,7 +1109,7 @@ void			HUDRenderer::renderStatus(void)
 	  sprintf(buffer, "%.1f", myTank->getFlagShakingTime());
 	} else {
 	  statusColor = greenColor;
-	  strcat(buffer, bdl->getLocalString("Ready").c_str());
+	  strncat(buffer, bdl->getLocalString("Ready").c_str(), 79);
 	}
 	break;
 
@@ -1117,24 +1117,24 @@ void			HUDRenderer::renderStatus(void)
 
 	if (world->getMaxShots() != 0) {
 	  statusColor = redColor;
-	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
+	  snprintf(buffer, 80, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
 	}
 	break;
 
       case LocalPlayer::Sealed:
-	strcat(buffer, bdl->getLocalString("Sealed").c_str());
+	strncat(buffer, bdl->getLocalString("Sealed").c_str(), 79);
 	break;
 
       case LocalPlayer::Zoned:
-	strcat(buffer, bdl->getLocalString("Zoned").c_str());
+	strncat(buffer, bdl->getLocalString("Zoned").c_str(), 79);
 	break;
     }
   }
 
   if (roaming) {
     statusColor = messageColor;
-    if (dim) strcat(buffer, ColorStrings[DimColor]);
-    strcat(buffer, ROAM.getRoamingLabel().c_str());
+    if (dim) strncat(buffer, ColorStrings[DimColor], 79);
+    strncat(buffer, ROAM.getRoamingLabel().c_str(), 79);
   }
 
   x = 0.5f * ((float)window.getWidth() - fm.getStringWidth(majorFontFace, majorFontSize, buffer));

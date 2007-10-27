@@ -314,8 +314,8 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
   buf = nboUnpackStdString(buf, sHelp);
   char* name = new char[33];
   char* help = new char[129];
-  strcpy(name, sName.c_str());
-  strcpy(help, sHelp.c_str());
+  strncpy(name, sName.c_str(), 32);
+  strncpy(help, sHelp.c_str(), 128);
 
   FlagEndurance e = FlagUnstable;
   switch((FlagQuality)quality) {

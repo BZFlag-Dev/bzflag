@@ -317,10 +317,10 @@ HUDuiDefaultKey* ServerStartMenu::getDefaultKey()
 }
 
 
-void ServerStartMenu::setSettings(const char* _settings)
+void ServerStartMenu::setSettings(const char *_settings)
 {
   if (strlen(_settings) != strlen(settings)) return;
-  strcpy(settings, _settings);
+  strncpy(settings, _settings, sizeof(settings));
 }
 
 void ServerStartMenu::loadSettings()
@@ -364,8 +364,10 @@ void ServerStartMenu::execute()
     // get path to server from path to client
     // add 256 for flags room
     char serverCmd[PATH_MAX + 256];
-    strcpy(serverCmd, argv0);
+    strncpy(serverCmd, argv0, PATH_MAX+255);
     char* base = strrchr(serverCmd, '/');
+    int lenrem = PATH_MAX+256 - (strlen(base)+1);
+
 #if defined(_WIN32)
     char* base2 = strrchr(serverCmd, '\\');
     if (base2 && (!base || base2 - serverCmd > base - serverCmd))
@@ -373,7 +375,7 @@ void ServerStartMenu::execute()
 #endif
     if (!base) base = serverCmd;
     else base++;
-    strcpy(base, serverApp);
+    strncpy(base, serverApp, lenrem-1);
 
     // prepare arguments for starting server
     const char* args[30];

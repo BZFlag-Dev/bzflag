@@ -138,7 +138,7 @@ class GLContext
       fprintf(stderr, "Extensions:\n");
       const GLubyte * extensions = glGetString(GL_EXTENSIONS);
       char * tmp = new char[strlen((const char *)extensions)+2];
-      strcpy(tmp, (const char *)extensions);
+      strncpy(tmp, (const char *)extensions, strlen((const char *)extensions)+1);
       char * word;
       char * sep = " \t";
       for(word = strtok(tmp, sep); word != NULL; word = strtok(NULL, sep)) {

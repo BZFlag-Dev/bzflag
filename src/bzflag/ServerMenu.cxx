@@ -702,7 +702,7 @@ void			ServerMenu::execute()
 
   // update startup info
   StartupInfo* info = getStartupInfo();
-  strcpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str());
+  strncpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str(), ServerNameLen-1);
   info->serverPort = ntohs((unsigned short)
 				serverList.getServers()[selectedIndex].ping.serverId.port);
 
