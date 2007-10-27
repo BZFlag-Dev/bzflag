@@ -34,6 +34,7 @@ const int EmailLen = 128;		// including terminating NUL
 const int TokenLen = 22;		// opaque string (now int(10)) and terminating NUL
 const int VersionLen = 60;	// including terminating NUL
 const int MessageLen = 128;	// including terminating NUL
+const int ServerNameLen = 80;
 
 // types of things we can be
 enum PlayerType {
