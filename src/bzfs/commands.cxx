@@ -2147,41 +2147,60 @@ bool GhostCommand::operator() (const char	 *message,
 			       GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!passFile.size()){
+
+  if (!passFile.size())
+  {
     sendMessage(ServerPlayer, t, "/ghost command disabled");
     return true;
   }
+
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
-  if (p1) p2 = strchr(p1 + 1, '\"');
-  if (!p2) {
+
+  if (p1)
+    p2 = strchr(p1 + 1, '\"');
+
+  if (!p2) 
+  {
     sendMessage(ServerPlayer, t, "not enough parameters, usage"
 		" /ghost \"CALLSIGN\" PASSWORD");
-  } else {
+  }
+  else
+  {
     std::string ghostie(p1 + 1, p2 - p1 - 1);
     std::string ghostPass = p2 + 2;
 
     makeupper(ghostie);
 
     int user = GameKeeper::Player::getPlayerIDByName(ghostie);
-    if (user == -1) {
+    if (user == -1) 
       sendMessage(ServerPlayer, t, "There is no user logged in by that name");
-    } else {
-      if (!userExists(ghostie)) {
-	sendMessage(ServerPlayer, t, "That callsign is not registered");
-      } else {
-	if (!verifyUserPassword(ghostie, ghostPass)) {
-	  sendMessage(ServerPlayer, t, "Invalid Password");
-	} else {
-	  sendMessage(ServerPlayer, t, "Ghosting User");
-	  char temp[MessageLen];
-	  snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
-		  " You have been ghosted by %s",
-		  playerData->player.getCallSign());
-	  sendMessage(ServerPlayer, user, temp);
-	  removePlayer(user, "Ghost");
+    else
+    {
+      GameKeeper::Player *ghostiePlayer = GameKeeper::Player::getPlayerByIndex(user);
+      
+      if ( ghostiePlayer && !ghostiePlayer->accessInfo.isRegistered() )
+	sendMessage(ServerPlayer, t, "That callsign was not registered when it joined.");
+      else
+      {
+	if (!userExists(ghostie)) 
+	  sendMessage(ServerPlayer, t, "That callsign is not registered");
+	else 
+	{
+	  if (!verifyUserPassword(ghostie, ghostPass))
+	    sendMessage(ServerPlayer, t, "Invalid Password");
+	  else
+	  {
+	    sendMessage(ServerPlayer, t, "Ghosting User");
+	    char temp[MessageLen];
+	    snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
+		    " You have been ghosted by %s",
+		    playerData->player.getCallSign());
+	    sendMessage(ServerPlayer, user, temp);
+	    removePlayer(user, "Ghost");
+	  }
 	}
-      }
+      } 
     }
   }
   return true;
@@ -3534,7 +3553,7 @@ bool ModCountCommand::operator() (const char*message,
   }
   
   messageText.erase(0, --messageStart);
-  clOptions->addedTime += atof((messageText.c_str())); //remember to add the time
+  clOptions->addedTime += (float)atof((messageText.c_str())); //remember to add the time
  
   if (countdownDelay > 0) { //we are currently counting down to start
     char reply[MessageLen] = {0};
