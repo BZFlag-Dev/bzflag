@@ -1566,21 +1566,32 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!resultEnter) {
     // Find the user already logged on and kick it. The new player
     // has been globally authenticated.
-    for (int i = 0; i < curMaxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++)
+    {
       // don't kick _us_, kick the other guy
       if (playerIndex == i)
 	continue;
-      GameKeeper::Player *otherPlayer
-	= GameKeeper::Player::getPlayerByIndex(i);
+
+      GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
       if (!otherPlayer)
 	continue;
+
       if (TextUtils::compare_nocase(otherPlayer->player.getCallSign(),
-				    playerData->player.getCallSign()) == 0) {
-	sendMessage(ServerPlayer, i ,
-		    "Another client has demonstrated ownership of your "
-		    "callsign with the correct password.  You have been "
-		    "ghosted.");
-	removePlayer(i, "Ghost", true);
+				    playerData->player.getCallSign()) == 0)
+      {
+	if ( !otherPlayer->accessInfo.regAtJoin )  // if the player was not reged at join they have done nothing wrong
+	{
+	  rejectPlayer(playerIndex, RejectBadCallsign, "Ghostie was not registered on join");
+	  return;
+	}
+	else
+	{
+	  sendMessage(ServerPlayer, i ,
+		      "Another client has demonstrated ownership of your "
+		      "callsign with the correct password.  You have been "
+		      "ghosted.");
+	  removePlayer(i, "Ghost", true);
+	}
 	break;
       }
     }
@@ -1873,6 +1884,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
+  playerData->accessInfo.regAtJoin = playerData->accessInfo.isRegistered();
 
   if (GameKeeper::Player::getPlayerByIndex(playerIndex)
       && playerData->accessInfo.isRegistered()

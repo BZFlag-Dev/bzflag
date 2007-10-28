@@ -54,6 +54,8 @@ PlayerAccessInfo::PlayerAccessInfo()
     serverop(false), passwordAttempts(0)
 {
   groups.push_back("EVERYONE");
+  hasALLPerm = false;
+  regAtJoin = false;
 }
 
 void PlayerAccessInfo::setName(const char* callSign) {
@@ -256,7 +258,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
 	  }
   }
 
-  return isAllowed;
+  return isAllowed || hasALLPerm;
 }
 
 // grant and revoke perms used with /mute and /unmute
@@ -276,7 +278,7 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 // custom perms are ONLY on groups
 bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 {
-  if (serverop)
+  if (serverop || hasALLPerm)
     return true;
 
   std::string perm = TextUtils::toupper(std::string(right));
@@ -555,6 +557,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	  if (word == "ALL") {
 	    info.explicitDenys.set();
 	    info.explicitDenys[PlayerAccessInfo::lastPerm] = false;
+	    info.hasALLPerm = false;
 	  } else {
 	    logDebugMessage(1,"groupdb: Cannot forbid unknown permission %s\n", word.c_str());
 	  }
@@ -570,7 +573,10 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	  info.explicitAllows.reset(perm);
 	} else {
 	  if (word == "ALL")
+	  {
 	    info.explicitAllows.reset();
+	    info.hasALLPerm = false;
+	  }
 	  else
 	    logDebugMessage(1,"groupdb: Cannot remove unknown permission %s\n", word.c_str());
 	}
@@ -594,6 +600,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
       if (word == "ALL") {
 	info.explicitAllows.set();
 	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
+	info.hasALLPerm = true;
       } else {
 	//logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
 	info.customPerms.push_back(word);

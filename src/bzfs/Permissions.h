@@ -170,6 +170,8 @@ public:
   std::bitset<lastState>	groupState;
   std::vector<std::string>	groups;
   std::vector<std::string>	customPerms;
+  bool				hasALLPerm;
+  bool				regAtJoin;
 
 private:
   bool				verified;
