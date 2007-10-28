@@ -1279,14 +1279,19 @@ void ModelToolApp::mouseMovedEvent ( float x, float y, float z )
   if(z != 0)
     zoom += z * 0.125f;
 
+  float delta[2];
+  delta[0] = x - dragPos[0];
+  delta[1] = y - dragPos[1];
+
   if ( buttonStates[2] )
   {
-    float delta[2];
-    delta[0] = x - dragPos[0];
-    delta[1] = y - dragPos[1];
-
     zRot -= delta[0] * 0.25f;
     xRot -= delta[1] * 0.125f;
+  }
+  else if ( buttonStates[1] )
+  {
+    pan[0] -= delta[0] * 0.0125f;
+    pan[1] -= delta[1] * 0.0125f;
   }
 
   dragPos[0] = x;
