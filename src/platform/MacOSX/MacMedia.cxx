@@ -1,3 +1,15 @@
+/* bzflag
+ * Copyright (c) 1993 - 2007 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 #include "MacMedia.h"
 
 #include <QuickTime/QuickTime.h>
@@ -12,37 +24,12 @@ static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;
 
 
-// if -directory is not used, this function is used to get the default path
-// to the data directory which is located in the same directory as the
-// application bundle
-char *GetMacOSXDataPath(void)
-{
-  ::CFBundleRef	appBundle		= NULL;
-  ::CFURLRef	resourceURL		= NULL;
-  char *		string			= NULL;
-  static char	basePath[2048]	= "<undefined resource path>";
-
-  if ((appBundle = ::CFBundleGetMainBundle()) == NULL
-      || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL) {
-    return NULL;
-  }
-  if(!::CFURLGetFileSystemRepresentation(resourceURL,
-					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
-    string = NULL;
-  } else {
-    string = basePath;
-  }
-  ::CFRelease(resourceURL);
-  fprintf(stderr, "data path is \"%s\"\n", string);
-  return string;
-}
-
-
 void MacMedia::setMediaDirectory(const std::string& _dir)
 {
   struct stat statbuf;
   const char *mdir = _dir.c_str();
 
+  extern char *GetMacOSXDataPath(void);
   if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
     /* try the Resource folder if invoked from a .app bundled */
     mdir = GetMacOSXDataPath();

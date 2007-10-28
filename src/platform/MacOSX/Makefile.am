@@ -5,7 +5,19 @@ endif
 endif
 
 libMac_la_LDFLAGS = -static
+
+if HAVE_SDL
+
 libMac_la_SOURCES =			\
+	MacDataPath.cxx			\
+	SDLMain.h
+libMac_la_LIBADD = SDLMain.lo
+all: SDLMain.lo
+
+else
+
+libMac_la_SOURCES =			\
+	MacDataPath.cxx			\
 	MacDisplay.cxx			\
 	MacDisplay.h			\
 	MacMedia.cxx			\
@@ -18,9 +30,6 @@ libMac_la_SOURCES =			\
 	MacWindow.h			\
 	SDLMain.h
 
-if HAVE_SDL
-libMac_la_LIBADD = SDLMain.lo
-all: SDLMain.lo
 endif
 
 SDLMain.lo:
