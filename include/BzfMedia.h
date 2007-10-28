@@ -45,7 +45,7 @@ class BzfMedia {
 
     // get and set default directory to look for media files in
     std::string		getMediaDirectory() const;
-    void		setMediaDirectory(const std::string&);
+    virtual void	setMediaDirectory(const std::string&);
 
     // images are stored RGBARGBA..., left to right, bottom to top.
     // depth indicates how many channels were in the stored image.
@@ -148,17 +148,14 @@ class BzfMedia {
     // it cannot be found.
     virtual int		findExtension(const std::string& pathname) const;
 
+    std::string		mediaDir;
+
   private:
     static int16_t	getShort(const void*);
     static uint16_t	getUShort(const void*);
     static int32_t	getLong(const void*);
-    static bool		doReadVerbatim(FILE*, int, int, int,
-				unsigned char*);
-    static bool		doReadRLE(FILE*, int, int, int,
-				unsigned char*);
-
-  private:
-    std::string		mediaDir;
+    static bool		doReadVerbatim(FILE*, int, int, int, unsigned char*);
+    static bool		doReadRLE(FILE*, int, int, int, unsigned char*);
 };
 
 #endif // __BZFMEDIA_H__
