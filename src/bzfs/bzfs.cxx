@@ -1643,13 +1643,23 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	= GameKeeper::Player::getPlayerByIndex(i);
       if (!otherPlayer)
 	continue;
-      if (strcasecmp(otherPlayer->player.getCallSign(),
-		     playerData->player.getCallSign()) == 0) {
-	sendMessage(ServerPlayer, i ,
-		    "Another client has demonstrated ownership of your "
-		    "callsign with the correct password.  You have been "
-		    "ghosted.");
-	removePlayer(i, "Ghost");
+
+      // check and see if the other player was reged
+      if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0) 
+      {
+	if ( !otherPlayer->accessInfo.isRegistered() )
+	{
+	  rejectPlayer(playerIndex, RejectBadCallsign, "Ghostie was not registered on join");
+	  return;
+	}
+	else
+	{
+	  sendMessage(ServerPlayer, i ,
+		      "Another client has demonstrated ownership of your "
+		      "callsign with the correct password.  You have been "
+		      "ghosted.");
+	  removePlayer(i, "Ghost");
+	}
 	break;
       }
     }
