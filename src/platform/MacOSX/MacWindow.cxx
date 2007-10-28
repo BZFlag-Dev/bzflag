@@ -103,7 +103,7 @@ class GLContext
 
     bool Init(u_int32_t display_id, const CGRect& display_rect) {
       CGLPixelFormatObj pixel_format;
-      long num_pixel_formats;
+      GLint num_pixel_formats;
 
       CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24),
 	  &pixel_format, &num_pixel_formats);
@@ -185,7 +185,7 @@ class GLContext
     }
 
     void SetVBLSynch(bool synch) {
-      long params[] = { synch ? 1 : 0 };
+      GLint params[] = { synch ? 1 : 0 };
       CGLSetParameter(cgl_context, kCGLCPSwapInterval, params);
 
       settings.VBL_Synch = synch;
