@@ -283,33 +283,6 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
   }
 }
 
-// if -directory is not used, this function is used to get the default path
-// to the data directory which is located in the same directory as the
-// application bundle
-char *GetMacOSXDataPath(void)
-{
-  ::CFBundleRef	appBundle		= NULL;
-  ::CFURLRef	resourceURL		= NULL;
-  char *		string			= NULL;
-  static char	basePath[2048]	= "<undefined resource path>";
-
-  if ((appBundle = ::CFBundleGetMainBundle()) == NULL
-      || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL) {
-    return NULL;
-  }
-  if(!::CFURLGetFileSystemRepresentation(resourceURL,
-					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
-    string = NULL;
-  } else {
-    string = basePath;
-  }
-  ::CFRelease(resourceURL);
-#ifdef DEBUG
-  fprintf(stderr, "data path is \"%s\"\n", string);
-#endif
-  return string;
-}
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

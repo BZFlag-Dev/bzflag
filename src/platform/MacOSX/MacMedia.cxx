@@ -1,9 +1,60 @@
+/* bzflag
+ * Copyright (c) 1993 - 2007 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 #include "MacMedia.h"
 
 #include <QuickTime/QuickTime.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+/* ugh, more mixing with libCommon */
+#include "StateDatabase.h"
+
 
 static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;
+
+
+void MacMedia::setMediaDirectory(const std::string& _dir)
+{
+  struct stat statbuf;
+  const char *mdir = _dir.c_str();
+
+  extern char *GetMacOSXDataPath(void);
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* try the Resource folder if invoked from a .app bundled */
+    mdir = GetMacOSXDataPath();
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* try a simple 'data' dir in current directory (source build invocation) */
+    std::string defaultdir = DEFAULT_MEDIA_DIR;
+    mdir = defaultdir.c_str();
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* give up, revert to passed in directory */
+    mdir = _dir.c_str();
+  }
+
+  mediaDir = std::string(mdir);
+}
+
 
 static pascal void callbackProc(SndChannelPtr, SndCommand *)
 {

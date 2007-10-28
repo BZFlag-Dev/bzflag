@@ -24,6 +24,8 @@ class MacMedia : public BzfMedia {
     MacMedia();
     ~MacMedia();
 
+    void setMediaDirectory(const std::string&);
+
     double stopwatch(bool);
 
     bool openAudio();
