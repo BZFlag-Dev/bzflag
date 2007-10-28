@@ -752,9 +752,6 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm )
 
 	PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
 
-	if (player->accessInfo.hasALLPerm)
-	  return true;
-
 	if (realPerm != PlayerAccessInfo::lastPerm)
 	  return player->accessInfo.hasPerm(realPerm);
 	else
