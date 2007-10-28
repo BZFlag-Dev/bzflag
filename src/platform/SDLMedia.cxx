@@ -16,8 +16,15 @@
 #ifdef HAVE_SDL
 #include <stdlib.h>
 #include <string>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "SDLMedia.h"
 #include "ErrorHandler.h"
+
+/* ugh, more mixing with libCommon */
+#include "StateDatabase.h"
+
 
 static const int defaultAudioRate=22050;
 
@@ -30,6 +37,39 @@ SDLMedia::SDLMedia() : BzfMedia()
   cmdFill       = 0;
   audioReady    = false;
   convert.buf   = 0;
+}
+
+void SDLMedia::setMediaDirectory(const std::string& _dir)
+{
+  struct stat statbuf;
+  const char *mdir = _dir.c_str();
+
+#ifdef __APPLE__
+  extern char *GetMacOSXDataPath(void);
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* try the Resource folder if invoked from a .app bundled */
+    mdir = GetMacOSXDataPath();
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+#endif
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* try a simple 'data' dir in current directory (source build invocation) */
+    std::string defaultdir = DEFAULT_MEDIA_DIR;
+    mdir = defaultdir.c_str();
+    if (mdir) {
+      BZDB.set("directory", mdir);
+      BZDB.setPersistent("directory", false);
+    }
+  }
+  if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    /* give up, revert to passed in directory */
+    mdir = _dir.c_str();
+  }
+
+  mediaDir = mdir;
 }
 
 double			SDLMedia::stopwatch(bool start)

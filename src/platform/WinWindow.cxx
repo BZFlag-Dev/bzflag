@@ -542,6 +542,9 @@ bool			WinWindow::activate()
   const bool hadChild = (hDCChild != NULL);
   makeContext();
 
+  if (mouseGrab)
+    grabMouse();
+
   if (!hadChild && hDCChild != NULL) {
     // force a redraw
     callExposeCallbacks();
@@ -569,6 +572,9 @@ bool			WinWindow::deactivate()
   // destroy OpenGL context
   const bool hadChild = (hDCChild != NULL);
   freeContext();
+
+  if (mouseGrab)
+    ungrabMouse();
 
   inactiveDueToDeactivate = true;
   return hadChild;

@@ -115,6 +115,8 @@ libPlatform_la_SOURCES =			\
 	PlatformFactory.cxx			\
 	SDLDisplay.cxx				\
 	SDLDisplay.h				\
+	SDLPlatformFactory.cxx			\
+	SDLPlatformFactory.h			\
 	SDLJoystick.cxx				\
 	SDLJoystick.h				\
 	SDLMedia.cxx				\
