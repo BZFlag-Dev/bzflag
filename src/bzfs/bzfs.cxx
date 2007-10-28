@@ -878,13 +878,13 @@ void makeWalls ( void )
   {
     for ( int w = 0; w < clOptions->wallSides; w++ )
     {
-      float midpointRad = sqrtf(radius*radius-(segmentLen*0.5f)*(segmentLen*0.5f));
-      float midpointAngle = startAngle + (angleDelta*0.5f) + (angleDelta*w);
+      float midpointRad = sqrtf(radius*radius-((float)segmentLen*0.5f)*((float)segmentLen*0.5f));
+      float midpointAngle = startAngle + (angleDelta*0.5f) + ((float)angleDelta*w);
 
       float x = sinf(midpointAngle*degToRad)*midpointRad;
       float y = cosf(midpointAngle*degToRad)*midpointRad;
 
-      world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*degToRad, segmentLen, wallHeight);
+      world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*degToRad, (float)segmentLen, wallHeight);
 
     }
   }
@@ -1647,7 +1647,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       // check and see if the other player was reged
       if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0) 
       {
-	if ( !otherPlayer->accessInfo.isRegistered() )
+	if ( !otherPlayer->accessInfo.regAtJoin )  // if the player was not reged at join they have done nothing wrong
 	{
 	  rejectPlayer(playerIndex, RejectBadCallsign, "Ghostie was not registered on join");
 	  return;
@@ -1956,6 +1956,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
+  playerData->accessInfo.regAtJoin = playerData->accessInfo.isRegistered();
 
   if (GameKeeper::Player::getPlayerByIndex(playerIndex)
       && playerData->accessInfo.isRegistered()

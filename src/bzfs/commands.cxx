@@ -2179,7 +2179,7 @@ bool GhostCommand::operator() (const char	 *message,
     {
       GameKeeper::Player *ghostiePlayer = GameKeeper::Player::getPlayerByIndex(user);
       
-      if ( ghostiePlayer && !ghostiePlayer->accessInfo.isRegistered() )
+      if ( ghostiePlayer && !ghostiePlayer->accessInfo.regAtJoin )
 	sendMessage(ServerPlayer, t, "That callsign was not registered when it joined.");
       else
       {
