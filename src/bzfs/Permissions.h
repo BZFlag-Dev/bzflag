@@ -173,8 +173,6 @@ public:
 
   bool				hasALLPerm;
 
-  bool				regAtJoin;
-
   std::vector<std::string> customPerms;
 private:
   bool				verified;

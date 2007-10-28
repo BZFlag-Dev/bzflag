@@ -55,7 +55,6 @@ PlayerAccessInfo::PlayerAccessInfo()
 {
   groups.push_back("EVERYONE");
   hasALLPerm = false;
-  regAtJoin = false;
 }
 
 void PlayerAccessInfo::setName(const char* callSign) {

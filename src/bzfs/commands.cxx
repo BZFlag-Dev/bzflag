@@ -2177,28 +2177,21 @@ bool GhostCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, "There is no user logged in by that name");
     else
     {
-      GameKeeper::Player *ghostiePlayer = GameKeeper::Player::getPlayerByIndex(user);
-      
-      if ( ghostiePlayer && !ghostiePlayer->accessInfo.regAtJoin )
-	sendMessage(ServerPlayer, t, "That callsign was not registered when it joined.");
-      else
+      if (!userExists(ghostie)) 
+	sendMessage(ServerPlayer, t, "That callsign is not registered");
+      else 
       {
-	if (!userExists(ghostie)) 
-	  sendMessage(ServerPlayer, t, "That callsign is not registered");
-	else 
+	if (!verifyUserPassword(ghostie, ghostPass))
+	  sendMessage(ServerPlayer, t, "Invalid Password");
+	else
 	{
-	  if (!verifyUserPassword(ghostie, ghostPass))
-	    sendMessage(ServerPlayer, t, "Invalid Password");
-	  else
-	  {
-	    sendMessage(ServerPlayer, t, "Ghosting User");
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
-		    " You have been ghosted by %s",
-		    playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, user, temp);
-	    removePlayer(user, "Ghost");
-	  }
+	  sendMessage(ServerPlayer, t, "Ghosting User");
+	  char temp[MessageLen];
+	  snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
+		  " You have been ghosted by %s",
+		  playerData->player.getCallSign());
+	  sendMessage(ServerPlayer, user, temp);
+	  removePlayer(user, "Ghost");
 	}
       } 
     }
