@@ -2148,7 +2148,7 @@ bool GhostCommand::operator() (const char	 *message,
 {
   int t = playerData->getIndex();
 
-  if (!passFile.size())
+  if (!passFile.size() && !clOptions->publicizeServer)
   {
     sendMessage(ServerPlayer, t, "/ghost command disabled");
     return true;
