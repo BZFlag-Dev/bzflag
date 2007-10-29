@@ -600,7 +600,12 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   bool  useColorTexture = false;
 
   // try object, standard, then default
-  if (o.userTextures[0].size())
+  //check for material, then preset textures.
+  const BzMaterial *frameMat = MATERIALMGR.findMaterial(std::string("TeleFrame"));
+  if (frameMat)
+    teleporterTexture = tm.getTextureID(frameMat->getTexture(0).c_str(),true);
+
+  if (teleporterTexture < 0 && o.userTextures[0].size())
     teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
   if (teleporterTexture < 0)
     teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
