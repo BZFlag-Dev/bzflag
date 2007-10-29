@@ -33,7 +33,7 @@ BZFlag 2.0.9
 * Fixed high fps problem - Frank Thilo
 * Added more info for observers - Jeff Myers, Frank Thilo
 * torBlock plugin added - Jeff Myers, blast007
-* Use mesh position and height for radar - Thomas Stauer
+* Optionally use mesh position and height for radar - Thomas Stauer
 * Add the regFlag plugin - Bernt Hansen
 * Fix memory leak from cURL - blast007
 * Add the Phoenix plugin - Jeff Myers
@@ -61,7 +61,6 @@ BZFlag 2.0.9
 * Instructions to fix sound on ALSA added - Tupone Alfredo
 * Change filename format for easier location of matches - uso
 * Adding jitter kick and related admin commands - Thomas Stauer
-* Add optional delay before the countdown gets resumed - Thomas Stauer
 * Global banlist reload with local banlist - uso
 * Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
 * Ability to change the killer in a PlayerDieEvent - Matthew Marshall
