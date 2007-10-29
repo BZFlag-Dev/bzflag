@@ -22,6 +22,7 @@
 #include "ParseColor.h"
 #include "Intersect.h"
 #include "Extents.h"
+#include "BzMaterial.h"
 
 // local impl headers
 #include "RoofTops.h"
@@ -264,9 +265,16 @@ void WeatherRenderer::set(void)
     }
 
     // see if the texture is specificly overiden
-    if (dbItemSet("_rainTexture")) {
-      gstate.setTexture (
-	tm.getTextureID(BZDB.get("_rainTexture").c_str()));
+    if (dbItemSet("_rainTexture"))
+    {
+      int textureID = tm.getTextureID(BZDB.get("_rainTexture").c_str());
+      if (textureID < 0 ) // try it as a materil
+      {
+	const BzMaterial * mat = MATERIALMGR.findMaterial(BZDB.get("_rainTexture"));
+	if (mat)
+	 textureID = tm.getTextureID(mat->getTexture(0).c_str());
+      }
+      gstate.setTexture(textureID);
     }
 
     texturedRainState = gstate.getState();
