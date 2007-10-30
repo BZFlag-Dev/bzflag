@@ -753,12 +753,12 @@ void			HUDRenderer::renderStatus(void)
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-    y -= float(1.5*h);
+    y -= float(1.0*h);
     sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
 	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, buffer);
     fm.drawString(x, y, 0, minorFontFace, minorFontSize, buffer);
-    y -= float(1.5*h);
+   // y -= float(1.5*h);
   }
 
   if (roaming && BZDB.isTrue("showVelocities"))
