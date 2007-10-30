@@ -756,8 +756,8 @@ void			HUDRenderer::renderStatus(void)
     y -= float(1.5*h);
     sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
 	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
-    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, buffer);
+    fm.drawString(x, y, 0, minorFontFace, minorFontSize, buffer);
     y += float(1.5*h);
   }
 
