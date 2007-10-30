@@ -758,7 +758,7 @@ void			HUDRenderer::renderStatus(void)
 	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, buffer);
     fm.drawString(x, y, 0, minorFontFace, minorFontSize, buffer);
-    y += float(1.5*h);
+    y -= float(1.5*h);
   }
 
   if (roaming && BZDB.isTrue("showVelocities"))
