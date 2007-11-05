@@ -1046,6 +1046,7 @@ void TankSceneNode::TankRenderNode::renderRightParts()
 
 void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
 {
+  glDepthFunc(GL_LEQUAL);
   // render the middle stuff
   renderPart(Body);
   renderPart(Turret);
@@ -1064,8 +1065,6 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
 
   const float offsetFactor = -0.1f;
   const float offsetDepth = -1.0f;
-
-  glDepthFunc(GL_LEQUAL);
 
   glPolygonOffset(1.0f * offsetFactor, 1.0f * offsetDepth);
   if (left) {
@@ -1093,13 +1092,12 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
     renderPart(RightTread);
   }
 
-  glDepthFunc(GL_LESS);
-
   if (usingPolyOffset) {
     glPolygonOffset(factor, units);
   } else {
     glDisable(GL_POLYGON_OFFSET_FILL);
   }
+  glDepthFunc(GL_LESS);
 
   return;
 }
