@@ -412,9 +412,28 @@ case $host_os in
 	;;
 esac
 
-AC_PATH_XTRA
-CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
-LDFLAGS="$LDFLAGS $X_LIBS"
+AC_LANG(C++)
+
+ac_cv_search_glBegin=no
+ac_cv_search_gluScaleImage=no
+ac_func_search_save_LIBS=$LIBS
+
+dnl check whether the OpenGL framework is available
+AC_MSG_CHECKING([for OpenGL framework (Darwin-specific)])
+FRAMEWORK_OPENGL=""
+PRELIBS="$LIBS"
+LIBS="$LIBS -framework OpenGL"
+AC_TRY_LINK([#include <OpenGL/gl.h>], [glBegin(GL_POINTS)],
+    [FRAMEWORK_OPENGL="-framework OpenGL" ; ac_cv_search_glBegin="-framework OpenGL" ; AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
+LIBS="$PRELIBS"
+AC_SUBST(FRAMEWORK_OPENGL)
+
+# don't use X11 flags if we have an OpenGL framework
+if test "x$FRAMEWORK_OPENGL" = "x" ; then
+    AC_PATH_XTRA
+    CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
+    LDFLAGS="$LDFLAGS $X_LIBS"
+fi
 
 case $host_os in
     solaris*)
@@ -455,16 +474,6 @@ case $host_os in
 	;;
 esac
 
-AC_LANG(C++)
-
-ac_cv_search_glBegin=no
-ac_cv_search_gluScaleImage=no
-ac_func_search_save_LIBS=$LIBS
-
-LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
-				[[glBegin(GL_POINTS)]])],
-	       [ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
