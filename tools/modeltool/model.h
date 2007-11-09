@@ -125,6 +125,36 @@ public:
 typedef std::vector<CFace> tvFaceList;
 
 
+class CTriStrip
+{
+public:
+  CTriStrip(){};
+  ~CTriStrip(){};
+
+  std::string	material;
+  tvIndexList	verts;
+  tvIndexList	normals;
+  tvIndexList	texCoords;
+
+  void clear ( void ) {verts.clear();normals.clear();texCoords.clear();}
+};
+typedef std::vector<CTriStrip> tvTriStripList;
+
+class CTriFan
+{
+public:
+  CTriFan(){};
+  ~CTriFan(){};
+
+  std::string	material;
+  tvIndexList	verts;
+  tvIndexList	normals;
+  tvIndexList	texCoords;
+
+  void clear ( void ) {verts.clear();normals.clear();texCoords.clear();}
+};
+typedef std::vector<CTriFan> tvTriFanList;
+
 class CMaterial
 {
 public:
@@ -167,6 +197,8 @@ public:
 
   std::string name;
   tvFaceList	faces;
+  tvTriFanList	fans;
+  tvTriStripList strips;
 
 #ifdef _MODEL_TOOL_GFX
   void draw ( void );

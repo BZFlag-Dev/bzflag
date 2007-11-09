@@ -10,6 +10,8 @@ modeltool_SOURCES =	\
 	modeltool.cxx	\
 	Q3BSP.cxx	\
 	Q3BSP.h		\
+	stripeOBJ.cxx\
+	stripeOBJ.h\
 	wavefrontOBJ.cxx\
 	wavefrontOBJ.h
 

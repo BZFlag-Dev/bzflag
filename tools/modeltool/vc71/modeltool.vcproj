@@ -221,6 +221,9 @@
 				RelativePath="..\Q3BSP.cxx">
 			</File>
 			<File
+				RelativePath="..\stripeOBJ.cxx">
+			</File>
+			<File
 				RelativePath="..\..\..\src\common\TextUtils.cxx">
 			</File>
 			<File
@@ -236,6 +239,9 @@
 			</File>
 			<File
 				RelativePath="..\Q3BSP.h">
+			</File>
+			<File
+				RelativePath="..\stripeOBJ.h">
 			</File>
 			<File
 				RelativePath="..\..\..\include\TextUtils.h">
