@@ -678,11 +678,14 @@ typedef struct
 bool computeExtents ( CModel &model, MeshExtents &extents )
 {
   bool didOne = false;
+
   for ( int m = 0; m < (int)model.meshes.size(); m++ )
   {
     CMesh &subMesh = model.meshes[m];
+    bool extentsSet = false;
     for (int f = 0; f < (int)subMesh.faces.size();f++)
     {
+      extentsSet = true;
       didOne = true;
       CFace &face = subMesh.faces[f];
       if (f == 0 && m ==0)
@@ -699,6 +702,76 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
       for ( int v = 0; v < (int)face.verts.size(); v++ )
       {
 	CVertex &vert = subMesh.verts[face.verts[v]];
+	if ( vert.x < extents.minx )
+	  extents.minx = vert.x;
+	if ( vert.y < extents.miny )
+	  extents.miny = vert.y;
+	if ( vert.z < extents.minz )
+	  extents.minz = vert.z;
+
+	if ( vert.x > extents.maxx )
+	  extents.maxx = vert.x;
+	if ( vert.y > extents.maxy )
+	  extents.maxy = vert.y;
+	if ( vert.z > extents.maxz )
+	  extents.maxz = vert.z;
+      }
+    }
+  
+    for (int s = 0; s < (int)subMesh.strips.size();s++)
+    {
+      didOne = true;
+      CTriStrip &strip = subMesh.strips[s];
+      if (!extentsSet && s == 0 && m ==0)
+      {
+	extentsSet = true;
+	extents.minx = subMesh.verts[strip.verts[0]].x;
+	extents.miny = subMesh.verts[strip.verts[0]].y;
+	extents.minz = subMesh.verts[strip.verts[0]].z;
+
+	extents.maxx = extents.minx;
+	extents.maxy = extents.miny;
+	extents.maxz = extents.minz;
+      }
+
+      for ( int v = 0; v < (int)strip.verts.size(); v++ )
+      {
+	CVertex &vert = subMesh.verts[strip.verts[v]];
+	if ( vert.x < extents.minx )
+	  extents.minx = vert.x;
+	if ( vert.y < extents.miny )
+	  extents.miny = vert.y;
+	if ( vert.z < extents.minz )
+	  extents.minz = vert.z;
+
+	if ( vert.x > extents.maxx )
+	  extents.maxx = vert.x;
+	if ( vert.y > extents.maxy )
+	  extents.maxy = vert.y;
+	if ( vert.z > extents.maxz )
+	  extents.maxz = vert.z;
+      }
+    }
+
+    for (int f = 0; f < (int)subMesh.fans.size();s++)
+    {
+      didOne = true;
+      CTriFan &fan = subMesh.fans[f];
+      if (!extentsSet && f == 0 && m ==0)
+      {
+	extentsSet = true;
+	extents.minx = subMesh.verts[fan.verts[0]].x;
+	extents.miny = subMesh.verts[fan.verts[0]].y;
+	extents.minz = subMesh.verts[fan.verts[0]].z;
+
+	extents.maxx = extents.minx;
+	extents.maxy = extents.miny;
+	extents.maxz = extents.minz;
+      }
+
+      for ( int v = 0; v < (int)fan.verts.size(); v++ )
+      {
+	CVertex &vert = subMesh.verts[fan.verts[v]];
 	if ( vert.x < extents.minx )
 	  extents.minx = vert.x;
 	if ( vert.y < extents.miny )
@@ -791,6 +864,43 @@ int computeCorner ( CMesh &mesh, CFace &face, int index, tvVertList &v, tvVertLi
     uvIndex = getNewIndex(CTexCoord(0,0),u);
   else
     uvIndex = getNewIndex(mesh.texCoords[face.texCoords[index]],u);
+
+  CVertex vert;
+  vert.x = (float)vertIndex;
+  vert.y = (float)normalIndex;
+  vert.z = (float)uvIndex;
+
+  return getNewIndex(vert,c);
+}
+
+int computeCorner ( CMesh &mesh, CTriStrip &strip, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+{
+  int vertIndex = getNewIndex(mesh.verts[strip.verts[index]],v);
+  int normalIndex = getNewIndex(mesh.normals[strip.normals[index]],n);
+  int uvIndex;
+  if (!strip.texCoords.size())
+    uvIndex = getNewIndex(CTexCoord(0,0),u);
+  else
+    uvIndex = getNewIndex(mesh.texCoords[strip.texCoords[index]],u);
+
+  CVertex vert;
+  vert.x = (float)vertIndex;
+  vert.y = (float)normalIndex;
+  vert.z = (float)uvIndex;
+
+  return getNewIndex(vert,c);
+}
+
+
+int computeCorner ( CMesh &mesh, CTriFan &fan, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+{
+  int vertIndex = getNewIndex(mesh.verts[fan.verts[index]],v);
+  int normalIndex = getNewIndex(mesh.normals[fan.normals[index]],n);
+  int uvIndex;
+  if (!fan.texCoords.size())
+    uvIndex = getNewIndex(CTexCoord(0,0),u);
+  else
+    uvIndex = getNewIndex(mesh.texCoords[fan.texCoords[index]],u);
 
   CVertex vert;
   vert.x = (float)vertIndex;
@@ -1020,6 +1130,76 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      }
 	      section += "\nend #matref\n"; // this ends the material!
 	    }
+	  
+	    // now do any tristrips we happen to have
+	    if ( mesh.strips.size())
+	    {
+	      // we always use the first strips's material for the lod
+	      section += "\nmatref ";
+	      if (mesh.strips[0].material.size())
+		section += mesh.strips[0].material;
+	      else
+		section += "-1";
+	      section += "\n";
+
+	      section += "dlist\n";
+
+	      if (outputBounds)
+	      {
+		MeshExtents subMeshExtents;
+
+		computeExtents(lodModel,mesh,subMeshExtents);
+		section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
+	      }
+
+	      for ( int s = 0; s < (int)mesh.strips.size(); s++ )
+	      {
+		CTriStrip &strip = mesh.strips[s];
+		section += "tristrip";
+
+		for ( int v = 0; v < (int)strip.verts.size(); v++ )
+		  section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		section += "\n";
+	      }
+	      section += "\nend #matref\n"; // this ends the material!
+
+	    }
+	 
+	    // now do any fans we happen to have
+	    if ( mesh.fans.size())
+	    {
+	      // we always use the first strips's material for the lod
+	      section += "\nmatref ";
+	      if (mesh.fans[0].material.size())
+		section += mesh.fans[0].material;
+	      else
+		section += "-1";
+	      section += "\n";
+
+	      section += "dlist\n";
+
+	      if (outputBounds)
+	      {
+		MeshExtents subMeshExtents;
+
+		computeExtents(lodModel,mesh,subMeshExtents);
+		section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
+	      }
+
+	      for ( int f = 0; f < (int)mesh.fans.size(); f++ )
+	      {
+		CTriFan &fan = mesh.fans[f];
+		section += "trifan";
+
+		for ( int v = 0; v < (int)fan.verts.size(); v++ )
+		  section += TextUtils::format(" %d",computeCorner(mesh,fan,v,verts,norms,uvs,corners));
+		section += "\n";
+	      }
+	      section += "\nend #matref\n"; // this ends the material!
+
+	    }
+
+	    
 	  }
 	  section += TextUtils::format("end #lod %d\n",l );
 
