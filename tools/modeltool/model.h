@@ -54,7 +54,8 @@ class CTexCoord
 {
 public:
   CTexCoord(){u = v = 0;}
-  ~CTexCoord(){};
+  CTexCoord( float _u, float _v){u = _u; v = _v;}
+ ~CTexCoord(){};
   float u,v;
 
   bool same ( const CTexCoord &c )

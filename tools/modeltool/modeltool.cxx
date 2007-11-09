@@ -786,8 +786,11 @@ int computeCorner ( CMesh &mesh, CFace &face, int index, tvVertList &v, tvVertLi
 {
   int vertIndex = getNewIndex(mesh.verts[face.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[face.normals[index]],n);
-  int uvIndex = getNewIndex(mesh.texCoords[face.texCoords[index]],u);
-
+  int uvIndex;
+  if (!face.texCoords.size())
+    uvIndex = getNewIndex(CTexCoord(0,0),u);
+  else
+    uvIndex = getNewIndex(mesh.texCoords[face.texCoords[index]],u);
 
   CVertex vert;
   vert.x = (float)vertIndex;
