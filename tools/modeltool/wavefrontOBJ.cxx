@@ -167,6 +167,65 @@ static void readMTL ( CModel &model, std::string file )
   }
 }
 
+void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int &uv, int &vCount, int &tCount, int &nCount )
+{
+  // TextUtils::tokenize() does not make 3
+  // strings from "1//2", so do it the hard way
+  const std::string::size_type npos = std::string::npos;
+  std::string::size_type pos1, pos2 = npos;
+  pos1 = section.find_first_of('/');
+
+  if (pos1 != npos)
+    pos2 = section.find_first_of('/', pos1 + 1);
+
+  std::string vertPart, uvPart, normPart;
+
+  if (pos1 == npos)
+    vertPart = section;
+  else 
+  {
+    vertPart = section.substr(0, pos1);
+
+    if (pos2 == npos)
+      uvPart = section.substr(pos1 + 1, npos);
+    else 
+    {
+      uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
+      normPart = section.substr(pos2 + 1, npos);
+    }
+  }
+
+  if (vertPart.size() > 0) 
+  {
+    int index = atoi(vertPart.c_str());
+
+    if (index < 0)
+      index = (vCount + 1) + index;
+
+    vert = index - 1;
+  }
+
+  if (uvPart.size() > 0)
+  {
+    int index = atoi(uvPart.c_str());
+
+    if (index < 0) 
+      index = (tCount + 1) + index;
+
+    uv = index - 1;
+  }
+
+  if (normPart.size() > 0) 
+  {
+    int index = atoi(normPart.c_str());
+
+    if (index < 0)
+      index = (nCount + 1) + index;
+
+    norm = index - 1;
+  }
+}
+
 void readOBJ ( CModel &model, std::string file )
 {
   model.clear();
@@ -310,64 +369,19 @@ void readOBJ ( CModel &model, std::string file )
 	  
 	  for ( int i = 1; i < partCount; i++ )
 	  {
-	    std::string section = lineParts[i];
+	    int invalidValue = -2000000000;
+	    int v,n,u;
+	    v = n = u = invalidValue;
+	    parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
 
-	    // TextUtils::tokenize() does not make 3
-	    // strings from "1//2", so do it the hard way
-	    const std::string::size_type npos = std::string::npos;
-	    std::string::size_type pos1, pos2 = npos;
-	    pos1 = section.find_first_of('/');
+	    if (v != invalidValue)
+	      face.verts.push_back(v);
+
+	    if (u != invalidValue)
+	      face.texCoords.push_back(u);
 	    
-	    if (pos1 != npos)
-	      pos2 = section.find_first_of('/', pos1 + 1);
-
-	    std::string vertPart, uvPart, normPart;
-	    
-	    if (pos1 == npos)
-	      vertPart = section;
-	    else 
-	    {
-	      vertPart = section.substr(0, pos1);
-	     
-	      if (pos2 == npos)
-		uvPart = section.substr(pos1 + 1, npos);
-	      else 
-	      {
-		uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
-		normPart = section.substr(pos2 + 1, npos);
-	      }
-	    }
-
-	    if (vertPart.size() > 0) 
-	    {
-	      int index = atoi(vertPart.c_str());
-	      
-	      if (index < 0)
-		index = (vCount + 1) + index;
-	     
-	      face.verts.push_back(index - 1);
-	    }
-
-	    if (uvPart.size() > 0)
-	    {
-	      int index = atoi(uvPart.c_str());
-	     
-	      if (index < 0) 
-		index = (tCount + 1) + index;
-	     
-	      face.texCoords.push_back(index - 1);
-	    }
-
-	    if (normPart.size() > 0) 
-	    {
-	      int index = atoi(normPart.c_str());
-	     
-	      if (index < 0)
-		index = (nCount + 1) + index;
-	      
-	      face.normals.push_back(index - 1);
-	    }
-
+	    if (n != invalidValue)
+	      face.normals.push_back(n);
 	  }
 
 	  bool valid = true;
@@ -387,6 +401,90 @@ void readOBJ ( CModel &model, std::string file )
 	  }
 	  if (valid)
 	    mesh.faces.push_back(face);
+	}
+	else if (TextUtils::tolower(lineParts[0]) == "t" && lineParts.size()>1)
+	{
+	  CTriStrip strip;
+	  strip.material = currentMaterial;
+
+	  int partCount = (int)lineParts.size();
+
+	  for ( int i = 1; i < partCount; i++ )
+	  {
+	    int invalidValue = -2000000000;
+	      int v,n,u;
+	    v = n = u = invalidValue;
+	    parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
+
+	    if (v != invalidValue)
+	      strip.verts.push_back(v);
+
+	    if (u != invalidValue)
+	      strip.texCoords.push_back(u);
+
+	    if (n != invalidValue)
+	      strip.normals.push_back(n);
+	  }
+
+	  bool valid = true;
+	  const int vSize = (int)strip.verts.size();
+	  const int nSize = (int)strip.normals.size();
+	  const int tSize = (int)strip.texCoords.size();
+
+	  if ((nSize != 0) && (nSize != vSize))
+	  {
+	    printf ("vertex/normal count mismatch\n");
+	    valid = false;
+	  }
+	  if ((tSize != 0) && (tSize != vSize))
+	  {
+	    printf ("vertex/texcoord count mismatch\n");
+	    valid = false;
+	  }
+	  if (valid)
+	    mesh.strips.push_back(strip);
+	}
+	else if (TextUtils::tolower(lineParts[0]) == "q" && lineParts.size()>1)
+	{
+	  if (mesh.strips.size()) // there has to be a last strip
+	  {
+	    CTriStrip &strip = mesh.strips[mesh.strips.size()-1];
+
+	    int partCount = (int)lineParts.size();
+
+	    for ( int i = 1; i < partCount; i++ )
+	    {
+	      int invalidValue = -2000000000;
+		int v,n,u;
+	      v = n = u = invalidValue;
+	      parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
+
+	      if (v != invalidValue)
+		strip.verts.push_back(v);
+
+	      if (u != invalidValue)
+		strip.texCoords.push_back(u);
+
+	      if (n != invalidValue)
+		strip.normals.push_back(n);
+	    }
+
+	    bool valid = true;
+	    const int vSize = (int)strip.verts.size();
+	    const int nSize = (int)strip.normals.size();
+	    const int tSize = (int)strip.texCoords.size();
+
+	    if ((nSize != 0) && (nSize != vSize))
+	    {
+	      printf ("vertex/normal count mismatch\n");
+	      valid = false;
+	    }
+	    if ((tSize != 0) && (tSize != vSize))
+	    {
+	      printf ("vertex/texcoord count mismatch\n");
+	      valid = false;
+	    }
+	  }
 	}
       }
     }
