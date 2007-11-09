@@ -246,6 +246,8 @@ public:
   void clear ( void )
   {
     faces.clear();
+    strips.clear();
+    fans.clear();
     verts.clear();
     normals.clear();
     texCoords.clear();
