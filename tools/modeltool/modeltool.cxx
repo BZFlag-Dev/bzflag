@@ -128,7 +128,7 @@ std::string writeMaterial ( CMaterial &material, const std::string &name )
   {
     std::string texName = texdir + material.texture;
     // change the extension to png
-    char *p = strrchr(texName.c_str(), '.');
+    const char *p = strrchr(texName.c_str(), '.');
     if (p) 
     {
       texName.resize(p - texName.c_str());
@@ -753,7 +753,7 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
       }
     }
 
-    for (int f = 0; f < (int)subMesh.fans.size();s++)
+    for (int f = 0; f < (int)subMesh.fans.size();f++)
     {
       didOne = true;
       CTriFan &fan = subMesh.fans[f];

@@ -1,0 +1,34 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcproj", "{75BC8894-499A-441C-B21B-875CA252507A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\MSVC\VC8\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_GFX|Win32 = Debug_GFX|Win32
+		Debug|Win32 = Debug|Win32
+		Release_GFX|Win32 = Release_GFX|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75BC8894-499A-441C-B21B-875CA252507A}.Debug_GFX|Win32.ActiveCfg = Debug_GFX|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Debug_GFX|Win32.Build.0 = Debug_GFX|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.Build.0 = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_GFX|Win32.ActiveCfg = Release_GFX|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release_GFX|Win32.Build.0 = Release_GFX|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release|Win32.ActiveCfg = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release|Win32.Build.0 = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug_GFX|Win32.ActiveCfg = Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release_GFX|Win32.ActiveCfg = Release|Win32
+		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
