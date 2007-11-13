@@ -1219,6 +1219,7 @@ AC_CONFIG_FILES([
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/vc71/Makefile
+	tools/modeltool/vc8/Makefile
 	MSVC/Makefile
 	MSVC/VC71/Makefile
 	MSVC/VC8/Makefile
