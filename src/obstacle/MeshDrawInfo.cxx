@@ -246,7 +246,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 	if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
 	  unsigned short* array = (unsigned short*)drawCmd.indices;
 	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if ((int)array[idx] >= cornerCount) {
+	    if (array[idx] >= cornerCount && array[idx] < vCount) {
 	      logDebugMessage(0,"ERROR: Bad cmd\n");
 	      return false;
 	    }
@@ -255,7 +255,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 	else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
 	  unsigned int* array = (unsigned int*)drawCmd.indices;
 	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if ((int)array[idx] >= cornerCount) {
+	    if ((int)array[idx] >= cornerCount && (int)array[idx] < vCount) {
 	      logDebugMessage(0,"ERROR: Bad cmd\n");
 	      return false;
 	    }
