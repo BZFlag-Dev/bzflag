@@ -70,7 +70,8 @@ class CVertex
 {
 public:
   CVertex(){x = y = z = 0;}
-  ~CVertex(){};
+  CVertex( float _x, float _y, float _z){x = _x;y = _y;z = _z;}
+ ~CVertex(){};
   float x,y,z;
 
   float get ( teModelAxis axis )

@@ -36,6 +36,7 @@
 
 #ifdef _MODEL_TOOL_GFX
 #include "graphicApplication.h"
+#include "camera.h"
 
 int GFXMain(int argc, char* argv[]);
 #endif
@@ -875,11 +876,30 @@ int computeCorner ( const CMesh &mesh, const CFace &face, int index, tvVertList 
 
 int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
 {
+  // it's highly likely that the strip will use
+  // the vert index for both the normal and UV, so try those
+  // if the strip has no indexes. if not use a dummy one
+
   int vertIndex = getNewIndex(mesh.verts[strip.verts[index]],v);
-  int normalIndex = getNewIndex(mesh.normals[strip.normals[index]],n);
+  int normalIndex;
+  if (!strip.normals.size())
+  {
+    if (mesh.normals.size() && (strip.verts[index] < (int)mesh.normals.size()) )
+      normalIndex = getNewIndex(mesh.normals[strip.verts[index]],n);
+    else
+      normalIndex = getNewIndex(CVertex(0,0,1),n);
+  }
+  else
+    normalIndex = getNewIndex(mesh.normals[strip.normals[index]],n);
+
   int uvIndex;
   if (!strip.texCoords.size())
-    uvIndex = getNewIndex(CTexCoord(0,0),u);
+  {
+    if (mesh.normals.size() && (strip.verts[index] < (int)mesh.texCoords.size()) )
+      uvIndex = getNewIndex(mesh.texCoords[strip.verts[index]],u);
+    else
+      uvIndex = getNewIndex(CTexCoord(0,0),u);
+  }
   else
     uvIndex = getNewIndex(mesh.texCoords[strip.texCoords[index]],u);
 
@@ -1370,7 +1390,7 @@ class ModelToolApp : public GraphicApplication
 public:
   void init ( int argc, char* argv[] );
   virtual void setupDisplay ( void );
-  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title );
+  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable );
   virtual bool drawView ( void );
   virtual bool drawOverlay ( void );
 
@@ -1385,6 +1405,8 @@ public:
 
 protected:
   CModel	model;
+
+  Camera	camera;
 
   void drawZZeroGrid ( void );
 
@@ -1435,7 +1457,7 @@ void ModelToolApp::init ( int argc, char* argv[] )
     readOBJ(model,input);
 }
 
-bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title )
+bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable )
 {
   x = 640;
   y = 480;
@@ -1443,6 +1465,8 @@ bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::strin
   title = "";
 
   orthoDepth = 1000.0;
+
+  camera.setTargetMode(true);
 
   return true;
 }
@@ -1467,15 +1491,9 @@ void ModelToolApp::mouseMovedEvent ( float x, float y, float z )
   delta[1] = y - dragPos[1];
 
   if ( buttonStates[2] )
-  {
-    zRot -= delta[0] * 0.25f;
-    xRot -= delta[1] * 0.125f;
-  }
+    camera.rotate(delta[0] * 0.25f,delta[1] * -0.125f);
   else if ( buttonStates[1] )
-  {
-    pan[0] -= delta[0] * 0.0125f;
-    pan[1] -= delta[1] * 0.0125f;
-  }
+    camera.pan(delta[0] * -0.0125f,delta[1]* -0.0125f,0);
 
   dragPos[0] = x;
   dragPos[1] = y;
@@ -1494,10 +1512,11 @@ void ModelToolApp::mouseButtonEvent ( int button, bool down )
 
   if( button > 3 )
   {
-    if ( button == 4 )
-      zoom += 0.125f;
-    else
-      zoom -= 0.125f;
+    float scale = 0.125f;
+
+    if ( button == 5 )
+      scale *= -1;
+    camera.setTargetPullback(scale);
   }
   else
     buttonStates[button-1] = down;
@@ -1508,12 +1527,14 @@ bool ModelToolApp::drawView ( void )
 {
   glPushMatrix();
 
+  camera.execute();
+  /*
   glTranslatef(0,0,-zoom);						// pull back on allong the zoom vector
   glRotatef(xRot, 1.0f, 0.0f, 0.0f);					// pops us to the tilt
   glRotatef(-zRot, 0.0f, 1.0f, 0.0f);					// gets us on our rot
   glTranslatef(-pan[0],-pan[2],pan[1]);					// take us to the pos
   glRotatef(-90, 1.0f, 0.0f, 0.0f);					// gets us into XY
-
+  */
   drawZZeroGrid();
 
   glEnable(GL_LIGHTING);
