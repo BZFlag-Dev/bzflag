@@ -523,7 +523,7 @@ int main(int argc, char* argv[])
   return 0; 
 }
 
-static int getNewIndex ( CVertex &vert, tvVertList &vertList )
+static int getNewIndex ( const CVertex &vert, tvVertList &vertList )
 {
   tvVertList::iterator itr = vertList.begin();
 
@@ -539,7 +539,7 @@ static int getNewIndex ( CVertex &vert, tvVertList &vertList )
   return count;
 }
 
-static int getNewIndex ( CTexCoord &vert, tvTexCoordList &vertList )
+static int getNewIndex ( const CTexCoord &vert, tvTexCoordList &vertList )
 {
   tvTexCoordList::iterator itr = vertList.begin();
 
@@ -855,7 +855,7 @@ bool computeExtents ( CModel &/*model*/, CMesh &subMesh, MeshExtents &extents )
 }
 
 
-int computeCorner ( CMesh &mesh, CFace &face, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CFace &face, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
 {
   int vertIndex = getNewIndex(mesh.verts[face.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[face.normals[index]],n);
@@ -873,7 +873,7 @@ int computeCorner ( CMesh &mesh, CFace &face, int index, tvVertList &v, tvVertLi
   return getNewIndex(vert,c);
 }
 
-int computeCorner ( CMesh &mesh, CTriStrip &strip, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
 {
   int vertIndex = getNewIndex(mesh.verts[strip.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[strip.normals[index]],n);
@@ -892,7 +892,7 @@ int computeCorner ( CMesh &mesh, CTriStrip &strip, int index, tvVertList &v, tvV
 }
 
 
-int computeCorner ( CMesh &mesh, CTriFan &fan, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CTriFan &fan, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
 {
   int vertIndex = getNewIndex(mesh.verts[fan.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[fan.normals[index]],n);
