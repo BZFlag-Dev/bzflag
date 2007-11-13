@@ -1216,7 +1216,6 @@ AC_CONFIG_FILES([
 	src/platform/Makefile
 	src/scene/Makefile
 	tools/Makefile
-	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/vc71/Makefile
 	tools/modeltool/vc8/Makefile
