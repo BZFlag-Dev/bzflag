@@ -240,7 +240,7 @@ public:
 
   bool valid ( void )
   {
-    return faces.size() != 0;
+    return faces.size() || strips.size() || fans.size();
   }
 
   void clear ( void )
