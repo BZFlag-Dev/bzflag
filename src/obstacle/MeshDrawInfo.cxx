@@ -26,6 +26,7 @@
 #include <sstream>
 #include <iostream>
 #include <ctype.h>
+#include <assert.h>
 
 // common implementation headers
 #include "Pack.h"
@@ -394,7 +395,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	  else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
 	    unsigned int* array = (unsigned int*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      assert(array[idx] < vCount && "ERROR: UInt Vertex out of bounds");
+	      assert(array[idx] < (unsigned int)vCount && "ERROR: UInt Vertex out of bounds");
 	      const float* v = verts[array[idx]];
 	      exts.expandToPoint(v);
 	    }
