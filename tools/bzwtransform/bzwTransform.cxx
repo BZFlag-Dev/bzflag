@@ -4,10 +4,10 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <strstream>
 #include <stack>
 #include <vector>
 #include <math.h>
+#include <exception>
 
 typedef int foo;
 
@@ -30,7 +30,7 @@ public:
 	float *operator[]( int index )
 	{
 		if ((index < 0) || (index >= 4))
-			throw exception();
+			throw std::exception();
 
 		return matrix[index];
 	}
@@ -136,7 +136,7 @@ public:
 	float operator[]( int index ) const
 	{
 		if ((index < 0) || (index >= 4))
-			throw exception();
+			throw std::exception();
 
 		return points[index];
 	}
@@ -255,11 +255,11 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 			lineNo++;
 
 			if (line.length() == 0) continue;
-			int start = line.find_first_not_of( " \t\n\r" );
+			std::size_t start = line.find_first_not_of( " \t\n\r" );
 			if (start == std::string::npos) continue;
 			if (line.at(start) == '#') continue;
 
-			std::istrstream lineStream( line.c_str() );
+			std::stringstream lineStream( line.c_str() );
 
 			while (!lineStream.eof())
 			{
@@ -282,7 +282,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							objects.clear();
 						}
 						else
-							throw exception( "expecting transform" );
+							throw std::exception( "expecting transform" );
 					break;
 
 					case IN_TRANSFORM:
@@ -303,7 +303,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							state = FREE;
 						}
 						else
-							throw exception( "expecting transform subitem, or end" );
+							throw std::exception( "expecting transform subitem, or end" );
 					break;
 
 					case IN_BOX:
@@ -332,7 +332,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							rotation = 0.0f;
 						}
 						else
-							throw exception( "expecting transform subitem, or end" );
+							throw std::exception( "expecting transform subitem, or end" );
 					break;
 
 					case IN_PYRAMID:
@@ -362,7 +362,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							rotation = 0.0f;
 						}
 						else
-							throw exception( "expecting transform subitem, or end" );
+							throw std::exception( "expecting transform subitem, or end" );
 					break;
 
 					case IN_MATRIX:
@@ -375,7 +375,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 						else if (token == "end")
 							state = IN_TRANSFORM;
 						else
-							throw exception( "expecting transform matrix subitem, or end" );
+							throw std::exception( "expecting transform matrix subitem, or end" );
 					break;
 
 					case IN_COUNT:
@@ -444,7 +444,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							state = IN_MATRIX;
 						}
 						else
-							throw exception( "expecting a matrix operation, or end" );
+							throw std::exception( "expecting a matrix operation, or end" );
 					break;
 
 					case IN_MATRIX_SIZE:
@@ -468,7 +468,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 							state = IN_MATRIX;
 						}
 						else
-							throw exception( "expecting a matrix operation, or end" );
+							throw std::exception( "expecting a matrix operation, or end" );
 					break;
 
 					case IN_MATRIX_ROTATION:
@@ -531,14 +531,14 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 
 
 					default:
-						throw exception( "UnHandled state" );
+						throw std::exception( "UnHandled state" );
 					break;
 
 				}
 			}
 		}
 	}
-	catch (exception &e)
+	catch (std::exception &e)
 	{
 	  std::cerr << "Parse error: line: " << lineNo << " " << e.what() << std::endl;
 	  std::cerr << line << std::endl;
