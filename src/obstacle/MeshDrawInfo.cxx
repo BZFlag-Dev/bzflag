@@ -1461,6 +1461,8 @@ void DrawCmd::finalize()
 
   int i;
   const unsigned int* tmp = (unsigned int*)indices;
+  unsigned short* shortArray = new unsigned short[count];
+  bool leaveAsUInt = false;
 
   // setup the minimum and maximum indices
   minIndex = 0xFFFFFFFF;
@@ -1473,20 +1475,21 @@ void DrawCmd::finalize()
     if (value > maxIndex) {
       maxIndex = value;
     }
-  }
-
-  // check if they can be convert to unsigned shorts
-  for (i = 0; i < count; i++) {
-    if (tmp[i] > (unsigned int)MaxUShort) {
-      return; // leave them as unsigned ints
+    if (value > (unsigned int)MaxUShort) {
+      leaveAsUInt = true;
+    }
+    if (!leaveAsUInt) {
+      shortArray[i] = tmp[i];
     }
   }
 
-  // convert to unsigned shorts
-  unsigned short* shortArray = new unsigned short[count];
-  for (i = 0; i < count; i++) {
-    shortArray[i] = tmp[i];
+  // check if they can be convert to unsigned shorts
+  if (leaveAsUInt) {
+    delete shortArray; // don't need it
+    return; // leave them as unsigned ints
   }
+
+  // convert to unsigned shorts
   indexType = DrawIndexUShort;
   delete[] (unsigned int*)indices;
   indices = shortArray;
