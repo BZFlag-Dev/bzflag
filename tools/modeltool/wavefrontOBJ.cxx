@@ -45,6 +45,8 @@ static void readMTL ( CModel &model, std::string file )
     printf ("Could not open MTL file %s\n", file.c_str());
     return;
   }
+  else
+    printf ("Loading MTL file %s\n", file.c_str());
 
   fseek(fp,0,SEEK_END);
   int size = ftell(fp);
