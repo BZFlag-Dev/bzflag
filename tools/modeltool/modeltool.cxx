@@ -59,6 +59,8 @@ bool useSmoothBounce = false;
 float shineFactor = 1.0f;
 bool  supressMats = false;
 
+int   triStripLimit = 16;
+
 bool outputBounds = false;
 bool outputComments = false;
 
@@ -316,6 +318,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
   printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
   printf("       -bounds : compute the bounds and sphere for draw info meshes and write them to the map\n\n");
   printf("       -comments: add comments to the resulting bzw file (will make it a lot larger )\n\n");
+  printf("       -striplimit <val>: the longest triangle strip to use for LODs )\n\n");
  return 1;
 }
 
@@ -453,6 +456,16 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
 	else
 	  printf ("missing -gsz argument\n");
       }
+      else if (command == "-striplimit")
+      {
+	if ((i + 1) < argc)
+	{
+	  i++;
+	  triStripLimit = (int)atoi(argv[i]);
+	}
+	else
+	  printf ("missing -striplimit argument\n");
+      }  
       else if (command == "-bspskip")
       {
 	if ((i + 1) < argc)
@@ -1175,11 +1188,55 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      for ( int s = 0; s < (int)mesh.strips.size(); s++ )
 	      {
 		CTriStrip &strip = mesh.strips[s];
-		section += "tristrip";
 
-		for ( int v = 0; v < (int)strip.verts.size(); v++ )
-		  section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
-		section += "\n";
+		if ( strip.verts.size() <= triStripLimit)
+		{
+		  section += "tristrip";
+
+		  for ( int v = 0; v < (int)strip.verts.size(); v++ )
+		    section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		  section += "\n";
+		}
+		else
+		{
+		  std::vector<tvIndexList>  stripChunks;
+		  int pos = 0;
+		  int listSise = (int)strip.verts.size();
+		  while ( pos < strip.verts.size() )
+		  {
+		    if ( pos + triStripLimit < listSise-3 ) // see if there is at least a full iteration, leaving 3 verts at the end ( min strip size)
+		    {
+		      section += "tristrip";
+		      for ( int v = pos; v < pos + triStripLimit; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      section += "\n";
+		      pos += triStripLimit;
+		    }
+		    else if ( listSise - pos <= triStripLimit ) // there are less then a limit left, just dump them
+		    {
+		      section += "tristrip";
+		      for ( int v = pos; v < listSise; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      section += "\n";
+		      pos = listSise;
+		    }
+		    else // there is more then the limit left but there weould be less then 3 left
+		    {
+		      section += "tristrip";
+		      for ( int v = pos; v < listSise-3; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      section += "\n";
+		      pos = listSise-3;
+
+		      section += "tristrip";
+		      for ( int v = pos; v < listSise; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      section += "\n";
+		      pos = listSise;
+		    }
+		  }
+		}
+
 	      }
 	      section += "\nend #matref\n"; // this ends the material!
 
