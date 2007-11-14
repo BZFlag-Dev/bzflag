@@ -10,6 +10,11 @@ so that no work is duplicated.
 
 Required for release of 2.2.:
 
+* change the external camera settings to use the radar drawing rules
+  if the camera extends outside of the hit volume, i.e. don't draw
+  stealth, but draw cloaked, so that 3rd person view can't be used
+  as an exploit
+
 * server list is still mildly jacked while navigating.  requesting
   pings seems to exacerbate the problem, and having the list change
   after the result comes back in is pretty annoying.
