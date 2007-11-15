@@ -391,26 +391,24 @@ file is (can be) used by clients of the library.
 Frequently Asked Questions
 ==========================
 
-UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
-
-BZFlag implements UDP unicast relay networking. This provides much
-better timing and stability compared to just TCP.
-
-One of the more frequent questions, UDP does not work, why?
-
 - When I connect to a newer server with this client others report they
   can see me but I get 'black caps' after a few seconds for all other
   players?
 
-Two possibilities:
+BZFlag requires both TCP and UDP unicast relay networking for most
+servers.  Make sure that your router and any configured firewall is
+forwarding UDP traffic over the port you are connecting to on the
+server.
 
-a) you are behind a NAT router that is not forwarding UDP traffic to
-   your system. Try reconfiguring the router to do NAT on UDP packets.
+- Every now and then the client seems to randomly crash.  Is there
+  anything that can be done about it?
 
-b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
-   that is blocking incoming UDP traffic. Please reconfigure or disable
-   your firewall(extreme solution) for the game, for more intelligent
-   desktop firewalls set them up to let UDP port 17200 to 17220 through.
+There are LOTS of reasons why the client might crash and unfortunately
+no means to readily diagnose the cause without developer tools.  You
+can try to disable the 'Lighting' option in the menu, which is a known
+cause of issues on some platforms (e.g. Mac OS X).  Otherwise, please
+report the issue and, if possible, provide a stack trace of the crash
+(these are auto-generated for Windows and Mac OS X platforms).
 
 
 Notes on "CHEAT" servers and network abuse
