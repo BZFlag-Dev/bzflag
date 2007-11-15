@@ -43,12 +43,14 @@ Source Distribution
 -------------------
 
 BZFlag may be built either using the same instructions as those for
-Unix, or by using the provided XCode project in the top-level
-directory to end up with a double-clickable BZFlag.app build.  It is
-highly recommended that sources be obtained from the Sourceforge
-project site:
+Unix (i.e. README.UNIX), or by using the provided XCode project in the
+top-level directory to end up with a double-clickable BZFlag.app
+build.  It is highly recommended that sources be obtained from the
+Sourceforge project site:
 
 http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=3165
+
+You'll want the .tar.gz source tarball, NOT the .zip source file.
 
 For either build approach, you'll need to first install the SDL
 framework into your /Library/Frameworks folder.  The SDL framework can
