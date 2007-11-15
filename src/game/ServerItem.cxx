@@ -81,7 +81,7 @@ bool ServerItem::readFromFile(std::istream& in, int subrevision)
     uint8_t fav;
     in.read(buffer, 1);
     nboUnpackUByte(buffer, fav);
-    favorite = fav != 0;
+    favorite = (fav != 0);
   }
 
   // read in time
