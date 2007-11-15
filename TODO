@@ -37,6 +37,9 @@ Required for release of 2.2.:
 
 Should be considered for the release of 2.2:
 
+* Change the title image to not have the flag with the version in it. Add
+  ether the flag, or some version number to the image at run time using GL
+
 * Remove all uses of GetDirectMessage buffer. Replace with a new class that
   allocates it's own buffer, and has it's own pack and unpack methods.
   Store these message classes in a list and send them out when needed,
