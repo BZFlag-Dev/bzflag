@@ -86,8 +86,7 @@ BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
 ----------------------------------------------------
 
 * Add a plugin to record matches - Jeff Myers
-* Add an option to send out a UDP heartbeat message for observers behind flakey
-  routers - Jeff Myers
+* Send out UDP heartbeat message for observers behind buggy routers - Jeff Myers
 * Replaced admin message sound - Sean Morrison
 * Client and server now close http connections correctly - Daniel Remenak
 * Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
@@ -754,11 +753,11 @@ BZFlag 1.7e2 (2001-04-17)
 BZFlag 1.7e1 (2001-03-10)
 -------------------------
 
-* optional UDP unicast networking, back-compatible w/ old TCP method - frank
-* GM now leave smoke trail - frank
-* Explosions are larger - frank
+* optional UDP unicast networking, back-compatible w/ TCP method - Frank Siegert
+* GM now leave smoke trail - Frank Siegert
+* Explosions are larger - Frank Siegert
 * Scrollback and Line wrap (use pageup/down keys) - Digit1
-* radar tank dots are larger - frank
+* radar tank dots are larger - Frank Siegert
 * robots have playerxx names and player's email - Tim Riker
 * colorize console messages - Tim Riker
 * robots score when killing 'owner' - Frank Thilo
@@ -770,11 +769,11 @@ BZFlag 1.7e1 (2001-03-10)
 * stop using signal() as suggested by Frank Thilo - Tim Riker
 * Triple buffering support (actually n way buffering) - XiGraphics
 * Joystick support - XiGraphics
-* teleporter shot handling improved - chestal
+* teleporter shot handling improved - Frank Thilo
 * udp network code reworking to select() on one server port - Tim Riker
-* rogue tank placement on enter - chestal
+* rogue tank placement on enter - Frank Thilo
 * pseudo variable height buildings in cf mode - Tim Riker
-* don't drain and flush audio on solaris - frank
+* don't drain and flush audio on solaris - Frank Siegert
 * alpha Macintosh port - Darrell Walisser
 * quick message support - Kris Verbeeck
 * /kick and /lagstats server messages, -passwd - Frank Thilo
