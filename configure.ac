@@ -1374,7 +1374,6 @@ AC_MSG_RESULT([---])
 AC_MSG_RESULT([$0 complete, type 'make' to begin building])
 AC_MSG_RESULT([])
 
-
 # Local Variables:
 # tab-width: 8
 # mode: autoconf
