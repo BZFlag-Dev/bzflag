@@ -123,7 +123,7 @@ void sendNagMessage (int who, std::string *msg ){
   std::string fullMsg = *msg + Config.msgSuffix;
   unsigned int idx=0, x;
   
-  while ((x = fullMsg.find("\\n", idx)) != (unsigned int)std::string::npos){
+  while ((x = (unsigned int)fullMsg.find("\\n", idx)) != (unsigned int)std::string::npos){
     bz_sendTextMessage(BZ_SERVER, who, fullMsg.substr(idx, x-idx).c_str());
     idx = x+2;
   }
