@@ -1,19 +1,12 @@
 			     BZFlag Release Notes
 			     ====================
 
-				 
-*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-No development is scheduled to continue on this branch.  Only SUPER
-critical bug fixes should be applied. New development goes into
-HEAD as 2.1 for release as 2.2
-*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-
-BZFlag 2.0.9
-------------
+BZFlag 2.0.10  "Never Say Never" (2007-11-16)
+---------------------------------------------
 
 * Added a work around for buggy DRI open source ATI drivers and the 
   narrow flag - Jeff Myers
-* Add /modcount command - Joshua Bodine
+* Add /modcount command - Joshua Bodine, Anonymous
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * Fix bug where poll results would not be announced - Joshua Bodine
 * Fix antikill notice bug - Joshua Bodine
@@ -75,7 +68,7 @@ BZFlag 2.0.9
 * Authorization is invariant to case - Anonymous
 
 BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
-------------
+----------------------------------------------------
 
 * Add a plugin to record matches - Jeff Myers.
 * Add an option to send out a UDP heartbeat message for observers behind flakey
