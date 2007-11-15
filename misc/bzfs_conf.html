@@ -136,6 +136,11 @@
 						d.writeln("-tk<br/><br/>");
 					}
 
+					if (mainform.team_kills_announce.checked) {
+						d.writeln("#Announce team kills to the admin channel <br/>");
+						d.writeln("-tkannounce <br/><br/>");
+					}
+
 					if (mainform.team_killer_kick_ratio.value != 0) {
 						d.writeln("#Team killer to wins percentage (1-100) above which player is kicked<br/>");
 						d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/><br/>");
@@ -452,7 +457,36 @@
 						}
 
 						d.writeln("<br/><br/>");
+					}
 
+					if (mainform.lag_announce.checked) {
+						d.writeln("#Announce lag<br/>");
+						d.writeln("-lagannounce<br/><br/>");
+					}
+
+					if (mainform.admin_lag_announce.checked) {
+						d.writeln("#Announce lag to admin channel<br/>");
+						d.writeln("-adminlagannounce<br/><br/>");
+					}
+
+					if (mainform.jitter_warn_time.value.length > 0) {
+						d.writeln("#Jitter warn time<br/>");
+						d.writeln("-jitterwarn " + mainform.jitter_warn_time.value + "<br/><br/>");
+					}
+
+					if (mainform.jitter_drop.value.length > 0) {
+						d.writeln("#Jitter drop number<br/>");
+						d.writeln("-jitterdrop " + mainform.jitter_drop.value + "<br/><br/>");
+					}
+
+					if (mainform.packet_loss_percent.value.length > 0) {
+						d.writeln("#Packet loss percentage<br/>");
+						d.writeln("-packetlosswarn " + mainform.packet_loss_percent.value + "<br/><br/>");
+					}
+
+					if (mainform.packet_loss_drop.value.length > 0) {
+						d.writeln("#Packet loss drop after warnings<br/>");
+						d.writeln("-packetlossdrop " + mainform.packet_loss_drop.value + "<br/><br/>");
 					}
 
 					commentWritten = false;
@@ -632,6 +666,24 @@
 							<td>Lag Warn Drop Count</td>
 							<td><input type="text" name="lag_drop_time" value="0" size="30" title="Drop player after this many lag warnings"/></td>
 						</tr>
+						<tr>
+							<td>Announce Lag</td>
+							<td><input type="checkbox" name="lag_announce" title="Whether or not to announce high laggers"/></td>
+							<td>Announce Lag to Admin Channel</td>
+							<td><input type="checkbox" name="admin_lag_announce" title="Whether or not to announce high laggers to the admin channel"/></td>
+						</tr>
+						<tr>
+							<td>Jitter Warn Time</td>
+							<td><input type="text" name="jitter_warn_time" value="0" size="30" title="Jitter Warning threshold time [ms]"/></td>
+							<td>Jitter Warn Drop Count</td>
+							<td><input type="text" name="jitter_drop" value="0" size="30" title="Drop player after this many jitter warnings"/></td>
+						</tr>
+						<tr>
+							<td>Packet Loss percentage</td>
+							<td><input type="text" name="packet_loss_percent" value="0" size="30" title="Packet loss threshold percentage"/></td>
+							<td>Packet Loss Warn Drop Count</td>
+							<td><input type="text" name="packet_loss_drop" value="0" size="30" title="Drop player after this many packet loss warnings"/></td>
+						</tr>
 						<tr span="2">
 							<td>Ban List</td>
 							<td colspan="3"><input type="text" name="ban_list" size="100" title="Ban players based on ip addresses"/></td>
@@ -640,12 +692,18 @@
 							<td>Ban File</td>
 							<td colspan="3"><input type="file" name="ban_file" size="100" title="Ban file"/></td>
 						</tr>
-						<tr>
+						<tr span="2">
 							<td>Idle Kick Time</td>
 							<td><input type="text" name="idle_kick_time" value="0" size="30" title="Idle Kick Threshold [s]"/></td>
+						</tr>
+						<tr>
 							<td>Team Killers Die</td>
 							<td>
 								<input type="checkbox" name="team_killers_die" title="Whether or not Player dies when killing a teammate" CHECKED/>
+							</td>
+							<td>Announce Team Kills</td>
+							<td>
+								<input type="checkbox" name="team_kills_announce" title="Whether or not to announce team kills to the admin channel"/>
 							</td>
 						</tr>
 						<tr>
