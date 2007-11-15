@@ -4,7 +4,7 @@
    manifestVersion="1.0">
 <assemblyIdentity 
     processorArchitecture="x86" 
-    version="2.0.6.0"
+    version="2.0.10.0"
     type="win32"
     name="bzflag.exe"/>
     <description>BZFlag</description>
