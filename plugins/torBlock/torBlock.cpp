@@ -198,7 +198,7 @@ public:
 class mySlashCommand : public bz_CustomSlashCommandHandler
 {
 public:
-  virtual bool handle ( int playerID, bzApiString /*command*/, bzApiString /*message*/, bzAPIStringList */*params*/ )
+  virtual bool handle ( int playerID, bzApiString /*command*/, bzApiString /*message*/, bzAPIStringList * /*params*/ )
   {
     bz_sendTextMessage(BZ_SERVER,playerID,"torBlock List");
     for ( unsigned int i = 0; i < exitNodes.size(); i++ )
