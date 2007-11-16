@@ -3,6 +3,19 @@ bzflag (@VERSION@) unstable; urgency=medium
   * SVN Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.10.20071115) unstable; urgency=medium
+
+  * fix network and timing issues on newer hardware
+  * fix bashisms in debian/rules  (Closes: #439075)
+  * stability improvements (Closes: #288684)
+  * newer gcc support (Closes: #417128)
+  * list server, and map selection fixes (Closes: #326498)
+  * memory corruption fixes (Closes: #377116)
+  * alsa sound help and fixes (Closes: #381425)
+  * include missing man pages (Closes: #408907)
+  * upstream release - see ChangeLog
+ -- Tim Riker <Tim@Rikers.org>  Thu, 15 Nov 2007 23:10:51 +0000
+
 bzflag (2.0.8.20060605) unstable; urgency=medium
 
   * work around broken autoconf prefix handling (Closes: #370304)
