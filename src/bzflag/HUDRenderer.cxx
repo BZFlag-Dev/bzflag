@@ -796,7 +796,7 @@ void			HUDRenderer::renderStatus(void)
       fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
 
       // draw the postion
-      sprintf(buffer, "Postion [%d %d %d]", (int)myTank->getPosition()[0], (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
+      sprintf(buffer, "Position [%d %d %d]", (int)myTank->getPosition()[0], (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
       fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
 
