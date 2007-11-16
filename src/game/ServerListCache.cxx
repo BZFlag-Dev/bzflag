@@ -84,7 +84,6 @@ std::string             ServerListCache::getCacheFilename(int subrevision) const
   // subrevision to differentiate file formats for same protocol version
   if (subrevision > 0)
     verString += TextUtils::format("_%d", subrevision);
-  fileName += DirectorySeparator;
   fileName += verString + "-Servers.bzs";
   return fileName;
 }
