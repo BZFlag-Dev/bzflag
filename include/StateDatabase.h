@@ -215,6 +215,7 @@ public:
   static const std::string	BZDB_BURROWANGULARAD;
   static const std::string	BZDB_COLDETDEPTH;
   static const std::string	BZDB_COLDETELEMENTS;
+  static const std::string	BZDB_COUNTDOWNRESDELAY;
   static const std::string	BZDB_CULLDEPTH;
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;

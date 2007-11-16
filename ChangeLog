@@ -7,6 +7,10 @@ critical bug fixes should be applied.  New development goes into
 HEAD as 2.1 for release as 2.2 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
 
+BZFlag 2.0.11
+----------------------------------------------------
+* Added _countdownResumeDelay to control resume delay. - Thomas Stauer
+
 
 BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 ---------------------------------------------

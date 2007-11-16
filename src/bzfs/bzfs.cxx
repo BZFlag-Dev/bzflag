@@ -117,6 +117,7 @@ TimeKeeper gameStartTime;
 TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
+int countdownResumeDelay = -1;
 
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
@@ -577,6 +578,7 @@ void pauseCountdown ( const char *pausedBy )
 		return;
 
 	clOptions->countdownPaused = true;
+	countdownResumeDelay = -1; // reset back to "unset"
 	if (pausedBy)
 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
 	else
@@ -589,10 +591,22 @@ void resumeCountdown ( const char *resumedBy )
 		return;
 
 	clOptions->countdownPaused = false;
-	if (resumedBy)
+	countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
+	
+	if (countdownResumeDelay <= 0) {
+	    // resume instantly
+	    countdownResumeDelay = -1; // reset back to "unset"
+	    if (resumedBy)
 		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
-	else
+	    else
 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+	    } else {
+		// resume after number of seconds in countdownResumeDelay
+		if (resumedBy)
+		    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
+		else
+		    sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+	    }
 }
 
 void resetTeamScores ( void )
@@ -5099,7 +5113,7 @@ int main(int argc, char **argv)
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
 
-    if (countdownDelay >= 0) {
+    if ((countdownDelay >= 0) || (countdownResumeDelay >= 0)) {
       // 3 seconds too slow for match countdowns
       waitTime = 0.5f;
     } else if (countdownActive && clOptions->timeLimit > 0.0f) {
@@ -5207,11 +5221,12 @@ int main(int argc, char **argv)
       if (readySetGo == -1)
 	readySetGo = countdownDelay;
 
-      if (tm - timePrevious > 1.0f) {
+      if (tm - timePrevious > 0.9f) {
 	timePrevious = tm;
 	if (readySetGo == 0) {
 	  sendMessage(ServerPlayer, AllPlayers, "The match has started!...Good Luck Teams!");
 	  countdownDelay = -1; // reset back to "unset"
+	  countdownResumeDelay = -1; // reset back to "unset"
 	  readySetGo = -1; // reset back to "unset"
 	  countdownActive = true;
 	  gameOver = false;
@@ -5280,6 +5295,25 @@ int main(int argc, char **argv)
       } // end check if second has elapsed
     } // end check if countdown delay is active
 
+    // players see the announce of resuming the countdown
+    if (countdownResumeDelay >= 0) {
+	static TimeKeeper timePrevious = tm;
+	if (tm - timePrevious > 0.9f) {
+	    timePrevious = tm;
+	    if (gameOver) {
+		countdownResumeDelay = -1; // reset back to "unset"
+	    } else if (countdownResumeDelay == 0) {
+		countdownResumeDelay = -1; // reset back to "unset"
+		clOptions->countdownPaused = false;
+		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+	    } else {
+		sendMessage(ServerPlayer, AllPlayers,
+			      TextUtils::format("%i...", countdownResumeDelay).c_str());
+		--countdownResumeDelay;
+	    }
+	} // end check if second has elapsed
+    } // end check if countdown resuming delay is active
+
     // see if game time ran out or if we are paused
     if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
       float newTimeElapsed = (float)(tm - gameStartTime);
@@ -5307,7 +5341,8 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if (countdownActive && !clOptions->countdownPaused && countdownPauseStart) {
+      if (countdownActive && !clOptions->countdownPaused
+          && (countdownResumeDelay < 0) && countdownPauseStart) {
 	// resumed
 	gameStartTime += (tm - countdownPauseStart);
 	countdownPauseStart = TimeKeeper::getNullTime ();
@@ -5320,7 +5355,7 @@ int main(int argc, char **argv)
 
       if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f ||
 	   clOptions->addedTime != 0.0f)
-	  && !clOptions->countdownPaused) {
+	  && !clOptions->countdownPaused && (countdownResumeDelay < 0)) {
 	// send update every 30 seconds, when the game is over, or when time adjusted
 	if (clOptions->addedTime != 0.0f) {
 	  (timeLeft + clOptions->addedTime <= 0.0f) ? timeLeft = 0.0f : clOptions->timeLimit += clOptions->addedTime;

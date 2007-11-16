@@ -1671,8 +1671,8 @@ bool JitterDropCommand::operator() (const char	 *message,
   char reply[MessageLen] = {0};
 
   if (message[11] == ' ' && isdigit(message[12])) {
-    const char *maxwarn = message + 12;
-    clOptions->maxjitterwarn = atoi(maxwarn);
+    const char *maxjittwarn = message + 12;
+    clOptions->maxjitterwarn = atoi(maxjittwarn);
     snprintf(reply, MessageLen, "jitterdrop is now %d",
 	     clOptions->maxjitterwarn);
   } else if (message[11] == '\0' || strcmp (message + 11, " ") == 0) {

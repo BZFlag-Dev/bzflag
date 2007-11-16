@@ -60,7 +60,7 @@ public:
   static void setAdminLagAnnounceThreshold(float _adminlagannouncetresh);
   static void setLagAnnounceThreshold(float _lagannouncetresh);
   static void setThreshold(float _threshold, float _max);
-  static void setJitterThreshold(float _jitterthreshold, float _max);
+  static void setJitterThreshold(float _jitterthreshold, float _jittermax);
   static void setPacketLossThreshold(float _packetlossthreshold, float _max);
 private:
   PlayerInfo *info;
