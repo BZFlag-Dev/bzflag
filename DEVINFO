@@ -440,3 +440,28 @@ An example line to use for bzfs testing is:
 
 src/bzfs/bzfs -c -d -d -d +f good +f bad -fb -j -ms 3 -password \
  password -s 10 -sa -sb -sw 1 -st 15 -world misc/hix.bzw
+
+Tarball Naming Convention
+=========================
+
+The name of the tarball of a normal release should be
+
+bzflag-x.y.z.tar.bz2 (or .gz or .zip)
+
+At times it happens that post release change should be uploaded,
+while not changing the release, or a prerelease is made for testing
+purpose. The naming convention, then, should adhere to this selection:
+bzflag-x.y.z_alpha.tar.bz2
+bzflag-x.y.z_beta.tar.bz2
+bzflag-x.y.z_pre.tar.bz2
+bzflag-x.y.z_rc.tar.bz2
+bzflag-x.y.z_p.tar.bz2
+
+where the word alpha, beta, pre, rc and p can have a trailing number.
+Assuming identical version parts, the suffixes are ordered as follows
+(lower means older): _alpha < _beta < _pre < _rc < (no suffix) < _p.
+
+When comparing identical suffixes with trailing integers, the one with
+the larger integer will be considered most recent.
+
+Never upload different tarball with the same name.
