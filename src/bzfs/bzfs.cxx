@@ -3004,11 +3004,14 @@ void lagKick(int playerIndex)
   sprintf(message,
 	  "You have been kicked due to excessive lag (you have been warned %d times).",
 	  clOptions->maxlagwarn);
-  sendMessage(ServerPlayer, playerIndex, message);
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
-  sendMessage(ServerPlayer, AdminPlayers, message);
-  removePlayer(playerIndex, "lag", true);
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (playerData != NULL) {
+    sendMessage(ServerPlayer, playerIndex, message);
+    snprintf(message, MessageLen,"Lagkick: %s", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, message);
+    removePlayer(playerIndex, "lag", true);
+  }
 }
 
 void jitterKick(int playerIndex)
@@ -3017,13 +3020,15 @@ void jitterKick(int playerIndex)
   sprintf(message,
 	  "You have been kicked due to excessive jitter (you have been warned %d times).",
 	  clOptions->maxjitterwarn);
-  sendMessage(ServerPlayer, playerIndex, message);
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  snprintf(message, MessageLen,"Jitterkick: %s",
-	   playerData->player.getCallSign());
-  sendMessage(ServerPlayer, AdminPlayers, message);
-  removePlayer(playerIndex, "jitter", true);
+  if (playerData != NULL) {
+    sendMessage(ServerPlayer, playerIndex, message);
+    snprintf(message, MessageLen,"Jitterkick: %s",
+	     playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, message);
+    removePlayer(playerIndex, "jitter", true);
+  }
 }
 
 void packetLossKick(int playerIndex)
@@ -3032,13 +3037,15 @@ void packetLossKick(int playerIndex)
   sprintf(message,
 	  "You have been kicked due to excessive packetloss (you have been warned %d times).",
 	  clOptions->maxpacketlosswarn);
-  sendMessage(ServerPlayer, playerIndex, message);
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  snprintf(message, MessageLen,"Packetlosskick: %s",
-	   playerData->player.getCallSign());
-  sendMessage(ServerPlayer, AdminPlayers, message);
-  removePlayer(playerIndex, "packetloss", true);
+  if (playerData != NULL) {
+    sendMessage(ServerPlayer, playerIndex, message);
+    snprintf(message, MessageLen,"Packetlosskick: %s",
+	     playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, message);
+    removePlayer(playerIndex, "packetloss", true);
+  }
 }
 
 static void adjustTolerances()
