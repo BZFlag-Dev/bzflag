@@ -50,7 +50,7 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     // transform to lowercase
-    transform (word.begin(), word.end(), word.begin(), tolower);
+    std::transform (word.begin(), word.end(), word.begin(), tolower);
 
     findWord.word = word;
     firstchar = (unsigned char)word[0];
@@ -761,7 +761,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     }
 
     // convert the word to lowercase
-    transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
+    std::transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
 
     bool added = addToFilter(filterWord, std::string(""));
     if ((!added) && (verbose)) {
