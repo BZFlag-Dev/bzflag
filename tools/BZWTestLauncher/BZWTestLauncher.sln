@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZWTestLauncher", "BZWTestLauncher.csproj", "{44ED819B-A2CA-4C49-A640-15DF6321E137}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{44ED819B-A2CA-4C49-A640-15DF6321E137}.Debug.ActiveCfg = Debug|.NET
+		{44ED819B-A2CA-4C49-A640-15DF6321E137}.Debug.Build.0 = Debug|.NET
+		{44ED819B-A2CA-4C49-A640-15DF6321E137}.Release.ActiveCfg = Release|.NET
+		{44ED819B-A2CA-4C49-A640-15DF6321E137}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
