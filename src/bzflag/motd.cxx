@@ -61,12 +61,15 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 	msg.date    = lines[i++];
 	msg.text    = lines[i++];
 	msg.version = lines[i].substr(lines[i].find(':') + 2);
-	// prep for regex
-	if (msg.version == "0.0")
-	  msg.version = "[a-z0-9\\.-]*";
-	else
-	  msg.version += "[a-z0-9\\.-]*";
-	msg.version.insert(0, "^");
+	// backwards compatibility - if it's not a regex already, go by our old rules
+	if (isdigit(msg.version[0])) {
+	  if (msg.version == "0.0") {
+	    msg.version = "[a-z0-9\\.-]*";
+	  } else {
+	    msg.version.insert(0, "^");
+	    msg.version += "[a-z0-9\\.-]*";
+	  }
+	}
 	messages.push_back(msg);
       }
     }
