@@ -61,11 +61,12 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 	msg.date    = lines[i++];
 	msg.text    = lines[i++];
 	msg.version = lines[i].substr(lines[i].find(':') + 2);
-	// prep for globbing
+	// prep for regex
 	if (msg.version == "0.0")
-		msg.version = "[:print:]*";
+	  msg.version = "[a-z0-9\\.-]*";
 	else
-	  msg.version += "[:print:]*";
+	  msg.version += "[a-z0-9\\.-]*";
+	msg.version.insert(0, "^");
 	messages.push_back(msg);
       }
     }
@@ -77,7 +78,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
   } else {
     MOTD_message msg;
     msg.text    = "<not available>";
-    msg.version = "[:print:]*";
+    msg.version = "[a-z0-9\\.-]*";
     messages.push_back(msg);
   }
 
@@ -85,17 +86,17 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 
   std::vector<std::string> msgs;
   for (i = 0; i < messages.size(); ++i)
-    if ((regcomp(&re, messages[i].version.c_str(), REG_EXTENDED | REG_ICASE) == 0) &&
-	    (regexec(&re, getAppVersion(), 0, NULL, 0) == 0)) {
-      if (messages[i].title.substr(0, 9) == "UPGRADE: ") {
-	// new version released.  handle appropriately.
-	std::string announce = messages[i].title.substr(9, messages[i].title.length() - 9);
-	nvMenu = new NewVersionMenu(announce, messages[i].text, messages[i].date);
-	HUDDialogStack::get()->push(nvMenu);
-	return;
-      } else {
-	// standard MOTD
-	msgs.push_back(messages[i].text);
+    if (regcomp(&re, messages[i].version.c_str(), REG_EXTENDED | REG_ICASE) == 0) {
+      if (regexec(&re, getAppVersion(), 0, NULL, 0) == 0) {
+	if (messages[i].title.substr(0, 9) == "UPGRADE: ") {
+	  // new version released.  handle appropriately.
+	  std::string announce = messages[i].title.substr(9, messages[i].title.length() - 9);
+	  nvMenu = new NewVersionMenu(announce, messages[i].text, messages[i].date);
+	  HUDDialogStack::get()->push(nvMenu);
+	} else {
+	  // standard MOTD
+	  msgs.push_back(messages[i].text);
+	}
       }
     }
 
