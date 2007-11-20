@@ -298,15 +298,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\include\bzregex.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\regex\cclass.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\regex\cname.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\regex.h"
 				>
 			</File>
 			<File
