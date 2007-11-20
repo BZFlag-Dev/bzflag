@@ -38,13 +38,13 @@
 #if defined(WIN32)
   #define AUTOUPGRADE 1
 #else
-  #define AUTOUPGRADE 0
+  #undef AUTOUPGRADE
 #endif
 
 NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) :
 cURLManager(), byteTransferred(0)
 {
-#if AUTOUPGRADE
+#ifdef AUTOUPGRADE
   // prep for possible download
   setURL(url);
   long timeout = 15;
