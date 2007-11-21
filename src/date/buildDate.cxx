@@ -38,11 +38,11 @@
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#  define BZ_MINOR_VERSION	1
+#  define BZ_MINOR_VERSION	99
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		16
+#  define BZ_REV		01
 #endif
 
 // DEVEL | STABLE | MAINT
