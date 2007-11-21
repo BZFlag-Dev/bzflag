@@ -44,9 +44,9 @@
 NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) :
 cURLManager(), byteTransferred(0)
 {
-#ifdef AUTOUPGRADE
   // prep for possible download
   setURL(url);
+#ifdef AUTOUPGRADE
   long timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
     timeout = (long)BZDB.eval("httpTimeout");
