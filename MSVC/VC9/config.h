@@ -77,17 +77,17 @@
 		#ifdef _DEBUG
 			#define DEBUG
 			#define DEBUG_RENDERING
-			#define BZ_BUILD_OS			"W64VC8D"
+			#define BZ_BUILD_OS			"W64VC9D"
 		#else
-			#define BZ_BUILD_OS			"W64VC8"
+			#define BZ_BUILD_OS			"W64VC9"
 		#endif //_DEBUG
 	#else
 		#ifdef _DEBUG
 			#define DEBUG
 			#define DEBUG_RENDERING
-			#define BZ_BUILD_OS			"W32VC8D"
+			#define BZ_BUILD_OS			"W32VC9D"
 		#else
-			#define BZ_BUILD_OS			"W32VC8"
+			#define BZ_BUILD_OS			"W32VC9"
 		#endif //_DEBUG
 	#endif // WIN64
 #endif //BZ_BUILD_OS
