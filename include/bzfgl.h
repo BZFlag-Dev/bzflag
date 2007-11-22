@@ -19,7 +19,7 @@
 
 // glew.h needs to come before gl.h, etc...
 #ifdef HAVE_GLEW
-#  include <GL/glew.h>
+#include <GL/glew.h>
 #endif
 
 #ifdef __APPLE__
