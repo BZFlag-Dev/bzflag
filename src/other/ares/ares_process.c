@@ -164,7 +164,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
               sendreq = server->qhead;
               if ((size_t)wcount >= sendreq->len)
                 {
-                  wcount -= sendreq->len;
+                  wcount -= (ssize_t)sendreq->len;
                   server->qhead = sendreq->next;
                   if (server->qhead == NULL)
                     {
@@ -281,7 +281,7 @@ static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now)
                * prepare to read another length word.
                */
               process_answer(channel, server->tcp_buffer, server->tcp_length,
-                             i, 1, now);
+                             i, 1, (int)now);
           if (server->tcp_buffer)
                         free(server->tcp_buffer);
               server->tcp_buffer = NULL;
@@ -316,7 +316,7 @@ static void read_udp_packets(ares_channel channel, fd_set *read_fds,
       else if (count <= 0)
         handle_error(channel, i, now);
 
-      process_answer(channel, buf, (int)count, i, 0, now);
+      process_answer(channel, buf, (int)count, i, 0, (int)now);
     }
 }
 

@@ -240,7 +240,7 @@ static int single_domain(ares_channel channel, const char *name, char **s)
               while ((status = ares__read_line(fp, &line, &linesize))
                      == ARES_SUCCESS)
                 {
-                  if (strncasecmp(line, name, len) != 0 ||
+                  if (strncasecmp(line, name, (int)len) != 0 ||
                       !ISSPACE(line[len]))
                     continue;
                   p = line + len;

@@ -44,7 +44,7 @@ struct timeval *ares_timeout(ares_channel channel, struct timeval *maxtv,
     {
       if (query->timeout == 0)
         continue;
-      offset = query->timeout - now;
+      offset = (int)(query->timeout - now);
       if (offset < 0)
         offset = 0;
       if (min_offset == -1 || offset < min_offset)
