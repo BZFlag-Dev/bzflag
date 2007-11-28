@@ -2387,7 +2387,7 @@ void playerAlive(int playerIndex)
   spawnEvent.playerID = playerIndex;
   spawnEvent.team = convertTeam(playerData->player.getTeam());
 
-  playerStateToAPIState(spawnEvent.state,playerData->player->lastState);
+  playerStateToAPIState(spawnEvent.state,playerData->lastState);
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
@@ -2615,7 +2615,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
   dieEvent.flagKilledWith = flagType->flagAbbv;
 
-  playerStateToAPIState(dieEvent.state, player->lastState);
+  playerStateToAPIState(dieEvent.state, victim->lastState);
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
