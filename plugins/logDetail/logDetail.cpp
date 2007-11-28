@@ -132,7 +132,7 @@ void LogDetail::process(bz_EventData *eventData)
     case bz_eMessageFilteredEvent:
       bz_debugMessagef(0, "MSG-FILTERED %s %s",
 		       displayCallsign(filteredData->player).c_str(),
-		       filteredData->rawMessage.c_str());
+		       filteredData->filteredMessage.c_str());
       break;
     case bz_eServerMsgEvent:
       if ((serverMsgData->to == BZ_ALLUSERS) and (serverMsgData->team == eNoTeam)) {
