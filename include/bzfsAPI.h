@@ -507,8 +507,7 @@ public:
   bz_ApiString flagKilledWith;
   int shotID;
 
-  float pos[3];
-  float rot;
+  bz_PlayerUpdateState state;
   double eventTime;
 };
 

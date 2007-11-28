@@ -2614,7 +2614,8 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     dieEvent.killerTeam = convertTeam(killer->getTeam());
 
   dieEvent.flagKilledWith = flagType->flagAbbv;
-  victimData->getPlayerCurrentPosRot(dieEvent.pos, dieEvent.rot);
+
+  playerStateToAPIState(dieEvent.state, player->lastState);
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
