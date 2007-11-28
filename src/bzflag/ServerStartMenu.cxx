@@ -366,7 +366,7 @@ void ServerStartMenu::execute()
     char serverCmd[PATH_MAX + 256];
     strncpy(serverCmd, argv0, PATH_MAX+255);
     char* base = strrchr(serverCmd, '/');
-    int lenrem = PATH_MAX+256 - (strlen(base)+1);
+    int lenrem = PATH_MAX+256 - ((int)strlen(base)+1);
 
 #if defined(_WIN32)
     char* base2 = strrchr(serverCmd, '\\');
