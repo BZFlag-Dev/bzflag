@@ -493,8 +493,6 @@ public:
     killerID = -1;
     killerTeam = eNoTeam;
 
-    pos[0] = pos[1] = pos[2] = 0.0f;
-    rot = 0.0f;
     eventTime = 0.0;
   }
   virtual ~bz_PlayerDieEventData_V1(){};
@@ -520,8 +518,6 @@ public:
     playerID = -1;
     team = eNoTeam;
 
-    pos[0] = pos[1] = pos[2] = 0.0f;
-    rot = 0.0f;
     eventTime = 0.0;
   }
 
@@ -530,9 +526,8 @@ public:
 
   int playerID;
   bz_eTeamType team;
+  bz_PlayerUpdateState state;
 
-  float pos[3];
-  float rot;
   double eventTime;
 };
 

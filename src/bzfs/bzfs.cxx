@@ -2387,7 +2387,7 @@ void playerAlive(int playerIndex)
   spawnEvent.playerID = playerIndex;
   spawnEvent.team = convertTeam(playerData->player.getTeam());
 
-  playerData->getPlayerCurrentPosRot(spawnEvent.pos, spawnEvent.rot);
+  playerStateToAPIState(spawnEvent.state,playerData->player->lastState);
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
