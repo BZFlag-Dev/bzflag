@@ -19,24 +19,21 @@
 
 BZ_GET_PLUGIN_VERSION
 
-using namespace std;
-
-enum action
-{ join, auth, part };
+enum action {join , auth , part};
 
 class LogDetail:public bz_EventHandler
 {
 public:
   LogDetail();
-  virtual ~ LogDetail();
-  virtual void process(bz_EventData * eventData);
+  virtual ~LogDetail();
+  virtual void process(bz_EventData *eventData);
 private:
-  void displayPlayerPrivs(int playerID);
-  void displayCallsign(bz_ApiString callsign);
-  void displayCallsign(int playerID);
-  void displayBZid(int playerID);
-  void displayTeam(bz_eTeamType team);
-  virtual void listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data);
+  std::string displayPlayerPrivs(int playerID);
+  std::string displayCallsign(bz_ApiString callsign);
+  std::string displayCallsign(int playerID);
+  std::string displayBZid(int playerID);
+  std::string displayTeam(bz_eTeamType team);
+  virtual void listPlayers(action act, bz_PlayerJoinPartEventData_V1 *data);
 };
 
 LogDetail logDetailHandler;
@@ -69,17 +66,17 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 
 LogDetail::LogDetail()
 {
-  cout << "SERVER-STATUS Running" << endl;
+  bz_debugMessage(0, "SERVER-STATUS Running");
   listPlayers(join, NULL);
 }
 
 LogDetail::~LogDetail()
 {
   listPlayers(part, NULL);
-  cout << "SERVER-STATUS Stopped" << endl;
+  bz_debugMessage(0, "SERVER-STATUS Stopped");
 }
 
-void LogDetail::process(bz_EventData * eventData)
+void LogDetail::process(bz_EventData *eventData)
 {
   bz_ChatEventData_V1 *chatData = (bz_ChatEventData_V1 *) eventData;
   bz_ServerMsgEventData_V1 *serverMsgData = (bz_ServerMsgEventData_V1 *) eventData;
@@ -100,93 +97,88 @@ void LogDetail::process(bz_EventData * eventData)
       strncpy(temp, cmdData->message.c_str(), 8);
 
       if (strcasecmp(temp, "/REPORT ") == 0) {
-	cout << "MSG-REPORT ";
-	displayCallsign(cmdData->from);
-	cout << " " << cmdData->message.c_str() + 8 << endl;
+	bz_debugMessagef(0, "MSG-REPORT %s %s",
+			 displayCallsign(cmdData->from).c_str(),
+			 cmdData->message.c_str()+8);
       } else {
-	cout << "MSG-COMMAND ";
-	displayCallsign(cmdData->from);
-	cout << " " << cmdData->message.c_str() + 1 << endl;
+	bz_debugMessagef(0, "MSG-COMMAND %s %s",
+			 displayCallsign(cmdData->from).c_str(),
+			 cmdData->message.c_str()+1);
       }
       break;
     case bz_eRawChatMessageEvent:
-      if ((chatData->to == BZ_ALLUSERS) and(chatData->team == eNoTeam)) {
-	cout << "MSG-BROADCAST ";
-	displayCallsign(chatData->from);
-	cout << " " << chatData->message.c_str() << endl;
+      if ((chatData->to == BZ_ALLUSERS) and (chatData->team == eNoTeam)) {
+	bz_debugMessagef(0, "MSG-BROADCAST %s %s",
+			 displayCallsign(chatData->from).c_str(),
+			 chatData->message.c_str());
       } else if (chatData->to == BZ_NULLUSER) {
 	if (chatData->team == eAdministrators) {
-	  cout << "MSG-ADMIN ";
-	  displayCallsign(chatData->from);
-	  cout << " " << chatData->message.c_str() << endl;
+	  bz_debugMessagef(0, "MSG-ADMIN %s %s",
+			   displayCallsign(chatData->from).c_str(),
+			   chatData->message.c_str());
 	} else {
-	  cout << "MSG-TEAM ";
-	  displayCallsign(chatData->from);
-	  displayTeam(chatData->team);
-	  cout << " " << chatData->message.c_str() << endl;
+	  bz_debugMessagef(0, "MSG-TEAM %s %s %s",
+			   displayCallsign(chatData->from).c_str(),
+			   displayTeam(chatData->team).c_str(),
+			   chatData->message.c_str());
 	}
       } else {
-	cout << "MSG-DIRECT ";
-	displayCallsign(chatData->from);
-	cout << " ";
-	displayCallsign(chatData->to);
-	cout << " " << chatData->message.c_str() << endl;
+	  bz_debugMessagef(0, "MSG-DIRECT %s %s %s",
+			   displayCallsign(chatData->from).c_str(),
+			   displayCallsign(chatData->to).c_str(),
+			   chatData->message.c_str());
       }
       break;
     case bz_eMessageFilteredEvent:
-      cout << "MSG-FILTERED ";
-      displayCallsign(filteredData->player);
-      cout << " " << filteredData->filteredMessage.c_str() << endl;
+      bz_debugMessagef(0, "MSG-FILTERED %s %s",
+		       displayCallsign(filteredData->player).c_str(),
+		       filteredData->rawMessage.c_str());
       break;
     case bz_eServerMsgEvent:
-      if ((serverMsgData->to == BZ_ALLUSERS) and(serverMsgData->team == eNoTeam)) {
-	cout << "MSG-BROADCAST 6:SERVER";
-	cout << " " << serverMsgData->message.c_str() << endl;
+      if ((serverMsgData->to == BZ_ALLUSERS) and (serverMsgData->team == eNoTeam)) {
+	bz_debugMessagef(0, "MSG-BROADCAST 6:SERVER %s",
+			 serverMsgData->message.c_str());
       } else if (serverMsgData->to == BZ_NULLUSER) {
 	if (serverMsgData->team == eAdministrators) {
-	  cout << "MSG-ADMIN 6:SERVER";
-	  cout << " " << serverMsgData->message.c_str() << endl;
+	  bz_debugMessagef(0, "MSG-ADMIN 6:SERVER %s",
+			   serverMsgData->message.c_str());
 	} else {
-	  cout << "MSG-TEAM 6:SERVER";
-	  displayTeam(serverMsgData->team);
-	  cout << " " << chatData->message.c_str() << endl;
+	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
+			   displayTeam(serverMsgData->team ).c_str(),
+			   chatData->message.c_str());
 	}
       } else {
-	cout << "MSG-DIRECT 6:SERVER";
-	cout << " ";
-	displayCallsign(serverMsgData->to);
-	cout << " " << serverMsgData->message.c_str() << endl;
+	bz_debugMessagef(0, "MSG-DIRECT 6:SERVER %s %s",
+			 displayCallsign(serverMsgData->to ).c_str(),
+			 serverMsgData->message.c_str());
       }
       break;
     case bz_ePlayerJoinEvent:
       {
 	if (joinPartData->record) {
-	  cout << "PLAYER-JOIN ";
-	  displayCallsign(joinPartData->record->callsign);
-	  cout << " #" << joinPartData->playerID;
-	  displayBZid(joinPartData->playerID);
-	  displayTeam(joinPartData->record->team);
-	  displayPlayerPrivs(joinPartData->playerID);
-	  cout << endl;
+	  bz_debugMessagef(0, "PLAYER-JOIN %s #%d%s %s %s",
+			   displayCallsign(joinPartData->record->callsign).c_str(),
+			   joinPartData->playerID,
+			   displayBZid(joinPartData->playerID).c_str(),
+			   displayTeam(joinPartData->record->team).c_str(),
+			   displayPlayerPrivs(joinPartData->playerID).c_str());
 	  listPlayers(join, joinPartData);
 	}
       }
       break;
     case bz_ePlayerPartEvent:
-      cout << "PLAYER-PART ";
-      displayCallsign(joinPartData->playerID);
-      cout << " #" << joinPartData->playerID;
-      displayBZid(joinPartData->playerID);
-      cout << " " << joinPartData->reason.c_str();
-      cout << endl;
+      bz_debugMessagef(0, "PLAYER-PART %s #%d%s %s",
+		       displayCallsign(joinPartData->playerID).c_str(),
+		       joinPartData->playerID,
+		       displayBZid(joinPartData->playerID).c_str(),
+		       joinPartData->reason.c_str());
       listPlayers(part, joinPartData);
       break;
     case bz_ePlayerAuthEvent:
-      cout << "PLAYER-AUTH ";
-      displayCallsign(authData->playerID);
-      displayPlayerPrivs(authData->playerID);
-      cout << endl;
-      listPlayers(join, joinPartData);
+      bz_debugMessagef(0, "PLAYER-AUTH %s %s",
+		       displayCallsign(authData->playerID).c_str(),
+		       displayPlayerPrivs(authData->playerID).c_str()),
+	listPlayers(join, joinPartData);
       break;
     default:
       break;
@@ -194,85 +186,85 @@ void LogDetail::process(bz_EventData * eventData)
   }
 }
 
-void LogDetail::displayBZid(int playerID)
+std::string LogDetail::displayBZid(int playerID)
 {
+  std::ostringstream bzid;
+
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
   if (player) {
     if (player->globalUser)
-      cout << " BZid:" << player->bzID.c_str();
-    bz_freePlayerRecord(player);
+      bzid << " BZid:" << player->bzID.c_str();
+    bz_freePlayerRecord( player );
   }
+
+  return bzid.str();
 }
 
-void LogDetail::displayPlayerPrivs(int playerID)
+std::string LogDetail::displayPlayerPrivs(int playerID)
 {
+  std::ostringstream playerPrivs;
+
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
   if (player) {
-    cout << " IP:" << player->ipAddress.c_str();
-    if (player->verified)
-      cout << " VERIFIED";
-    if (player->globalUser)
-      cout << " GLOBALUSER";
-    if (player->admin)
-      cout << " ADMIN";
-    if (player->op)
-      cout << " OPERATOR";
+    playerPrivs << " IP:" << player->ipAddress.c_str();
+    if (player->verified) playerPrivs << " VERIFIED";
+    if (player->globalUser) playerPrivs << " GLOBALUSER";
+    if (player->admin) playerPrivs << " ADMIN";
+    if (player->op) playerPrivs << " OPERATOR";
     bz_freePlayerRecord(player);
   } else {
-    cout << " IP:0.0.0.0";
+    playerPrivs << " IP:0.0.0.0";
   }
+
+  return playerPrivs.str();
 }
 
-void LogDetail::displayCallsign(bz_ApiString callsign)
+std::string LogDetail::displayCallsign(bz_ApiString callsign)
 {
-  cout << strlen(callsign.c_str()) << ":";
-  cout << callsign.c_str();
+  std::ostringstream result;
+
+  result << strlen(callsign.c_str()) << ":" << callsign.c_str();
+
+  return result.str();
 }
 
-void LogDetail::displayCallsign(int playerID)
+std::string LogDetail::displayCallsign(int playerID)
 {
+  std::ostringstream callsign;
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
   if (player) {
-    cout << strlen(player->callsign.c_str()) << ":";
-    cout << player->callsign.c_str();
+    callsign << strlen(player->callsign.c_str()) << ":";
+    callsign << player->callsign.c_str();
     bz_freePlayerRecord(player);
   } else {
-    cout << "7:UNKNOWN";
+    callsign << "7:UNKNOWN";
   }
+  return callsign.str();
 }
 
 
-void LogDetail::displayTeam(bz_eTeamType team)
+std::string LogDetail::displayTeam(bz_eTeamType team)
 {
   // Display the player team
   switch (team) {
-  case eRogueTeam:
-    cout << " ROGUE";
-    break;
-  case eRedTeam:
-    cout << " RED";
-    break;
-  case eGreenTeam:
-    cout << " GREEN";
-    break;
-  case eBlueTeam:
-    cout << " BLUE";
-    break;
-  case ePurpleTeam:
-    cout << " PURPLE";
-    break;
-  case eRabbitTeam:
-    cout << " RABBIT";
-    break;
-  case eHunterTeam:
-    cout << " HUNTER";
-    break;
-  case eObservers:
-    cout << " OBSERVER";
-    break;
-  default:
-    cout << " NOTEAM";
-    break;
+    case eRogueTeam:
+      return std::string("ROGUE");
+    case eRedTeam:
+      return std::string("RED");
+    case eGreenTeam:
+      return std::string("GREEN");
+    case eBlueTeam:
+      return std::string("BLUE");
+    case ePurpleTeam:
+      return std::string("PURPLE");
+    case eRabbitTeam:
+      return std::string("RABBIT");
+    case eHunterTeam:
+      return std::string("HUNTER");
+    case eObservers:
+      return std::string("OBSERVER");
+    default :
+      return std::string("NOTEAM");
   }
 }
 
@@ -280,8 +272,7 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_BasePlayerRecord *player;
-  ostringstream msg;
-  string str;
+  std::ostringstream msg;
   char playerStatus;
   int numPlayers;
 
@@ -339,8 +330,7 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
       bz_freePlayerRecord(player);
     }
   }
-  str = msg.str();
-  cout << str << endl;
+  bz_debugMessage(0, msg.str().c_str());
 
   bz_deleteIntList(playerList);
 }
