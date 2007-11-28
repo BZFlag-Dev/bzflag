@@ -2615,7 +2615,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
   dieEvent.flagKilledWith = flagType->flagAbbv;
 
-  playerStateToAPIState(dieEvent.state, victim->lastState);
+  playerStateToAPIState(dieEvent.state, victimData->lastState);
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 

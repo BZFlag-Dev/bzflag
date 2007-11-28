@@ -27,10 +27,10 @@ class PhoenixEvents : public bz_EventHandler
 	  bz_PlayerDieEventData_V1* data = (bz_PlayerDieEventData_V1*)eventData;
 
 	  trDeathPos pos;
-	  pos.x = data->pos[0];
-	  pos.y = data->pos[1];
-	  pos.z = data->pos[2];
-	  pos.a = data->rot;
+	  pos.x = data->state.pos[0];
+	  pos.y = data->state.pos[1];
+	  pos.z = data->state.pos[2];
+	  pos.a = data->state.rotation;
 
 	  lastDeaded[data->playerID] = pos;
 	}

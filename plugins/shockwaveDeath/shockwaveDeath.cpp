@@ -43,7 +43,7 @@ void SWDeathHandler::process ( bz_EventData *eventData )
   if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
     reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
 
-  bz_fireWorldWep("SW",reloadTime,dieData->pos,0,0,0,0.0f);
+  bz_fireWorldWep("SW",reloadTime,dieData->state.pos,0,0,0,0.0f);
 }
 
 // Local Variables: ***
