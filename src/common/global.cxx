@@ -65,7 +65,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_fogEnd",			"_worldSize",			false, StateDatabase::Locked},
   { "_fogColor",		"0.25 0.25 0.25",		false, StateDatabase::Locked},
   { "_fogNoSky",		"0",				false, StateDatabase::Locked},
-  { "_fogEnforce",		"0",				false, StateDatabase::Locked},
   { "_grabOwnFlag",		"1",				false, StateDatabase::Locked},
   { "_gmActivationTime",	"0.5",				false, StateDatabase::Locked},
   { "_gmAdLife",		"0.95",				false, StateDatabase::Locked},

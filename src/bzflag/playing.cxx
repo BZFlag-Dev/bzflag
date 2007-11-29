@@ -5471,8 +5471,7 @@ static void setupFarPlane()
   FarPlaneCull = false;
   FarDeepPlane = FarPlane * FarDeepPlaneScale;
 
-  const bool mapFog = (BZDB.eval(StateDatabase::BZDB_FOGENFORCE) == 1) ||
-    ((BZDB.get(StateDatabase::BZDB_FOGMODE) != "none") && BZDB.isTrue("fogEffect"));
+  const bool mapFog = BZDB.get(StateDatabase::BZDB_FOGMODE) != "none";
 
   float farDist = FarPlane;
 

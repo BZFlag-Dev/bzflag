@@ -72,7 +72,6 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Fog:");
   option->setCallback(callback, (void*)"F");
   options = &option->getList();
-  options->push_back(std::string("Off"));
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Nice"));
   option->update();
@@ -363,18 +362,14 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.setFloat("userRainScale", float(scale) / 10.0f);
       break;
     }
-    case 'm': {
+    case 'm': 
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
       break;
-    }
-    case 'F': {
-      if (BZDB.eval(StateDatabase::BZDB_FOGENFORCE) == 1) {
-	BZDB.setInt("fogEffect", (list->getIndex() < 1) ? 1 : list->getIndex());
-      } else {
+
+    case 'F': 
 	BZDB.setInt("fogEffect", list->getIndex());
-      }
       break;
-    }
+
     case 'T': {
       BZDB.set("showTreads", list->getIndex() ? "1" : "0");
       break;
