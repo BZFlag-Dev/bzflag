@@ -3,7 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* The 2.0 branch should be considered "done".
+* The 2.0 branch should be considered "done", do not plan for new
+  features or bug fixes on this branch.  Use trunk sources for new
+  development.
 
 
 THESE ARE LOWER PRIORITY
