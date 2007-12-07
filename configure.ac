@@ -537,7 +537,7 @@ LIBS=$SDL_IMAGE_LIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
                                 [[IMG_Load(NULL)]])],
                [sdl_image_check="yes"], [sdl_image_check="no"])
-if test "x$sdl_image_check" = "yes" ; then
+if test "x$sdl_image_check" = "xyes" ; then
   AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
 else
   SDL_IMAGE_LIBS=""
