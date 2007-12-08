@@ -398,21 +398,24 @@ LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
 
 # Check for the GLEW library (GL Extension Wrangler)
-AC_MSG_CHECKING([for GLEW library])
-tmpLIBS=$LIBS
-GLEW_LIBS="-lGLEW"
-LIBS=$GLEW_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-                                [[glewInit()]])],
-               [glew_check="yes"], [glew_check="no"])
-if test x$glew_check = xyes ; then
-  AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
-else
-  GLEW_LIBS=""
+AC_ARG_WITH(glew, [  --with-glew             use GL Extension Wrangler])
+if test x$with_glew != xno ; then
+  AC_MSG_CHECKING([for GLEW library])
+  tmpLIBS=$LIBS
+  GLEW_LIBS="-lGLEW"
+  LIBS=$GLEW_LIBS
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
+                                  [[glewInit()]])],
+                 [glew_check="yes"], [glew_check="no"])
+  if test x$glew_check = xyes ; then
+    AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
+  else
+    GLEW_LIBS=""
+  fi
+  AC_MSG_RESULT([$glew_check])
+  LIBS=$tmpLIBS
 fi
-AC_MSG_RESULT([$glew_check])
 AC_SUBST(GLEW_LIBS)
-LIBS=$tmpLIBS
 
 case $host_os in
   mingw32*)
