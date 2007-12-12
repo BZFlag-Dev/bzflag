@@ -109,7 +109,7 @@ void LogDetail::process( bz_EventData *eventData )
 	}
 	break;
       case bz_eChatMessageEvent:
-	if ((chatData->to == BZ_ALLUSERS) and (chatData->team == eNoTeam)) {
+	if ((chatData->to == BZ_ALLUSERS) && (chatData->team == eNoTeam)) {
 	  cout << "MSG-BROADCAST ";
 	  displayCallsign( chatData->from );
 	  cout << " " << chatData->message.c_str() << endl;
@@ -138,7 +138,7 @@ void LogDetail::process( bz_EventData *eventData )
 	cout << " " << filteredData->rawMessage.c_str() << endl;
 	break;
       case bz_eServerMsgEvent:
-	if ((serverMsgData->to == BZ_ALLUSERS) and (serverMsgData->team == eNoTeam)) {
+	if ((serverMsgData->to == BZ_ALLUSERS) && (serverMsgData->team == eNoTeam)) {
 	  cout << "MSG-BROADCAST 6:SERVER";
 	  cout << " " << serverMsgData->message.c_str() << endl;
 	} else if (serverMsgData->to == BZ_NULLUSER) {
@@ -222,7 +222,7 @@ void LogDetail::displayPlayerPrivs( int playerID )
 
 void LogDetail::displayCallsign( bzApiString callsign )
 {
-  cout << strlen( callsign.c_str() ) << ":";
+  cout << (unsigned int)strlen( callsign.c_str() ) << ":";
   cout << callsign.c_str();
 }
 
@@ -230,7 +230,7 @@ void LogDetail::displayCallsign( int playerID )
 {
   bz_PlayerRecord *player = bz_getPlayerByIndex( playerID );
   if (player) {
-    cout << strlen( player->callsign.c_str() ) << ":";
+    cout << (unsigned int)strlen( player->callsign.c_str() ) << ":";
     cout << player->callsign.c_str();
     bz_freePlayerRecord( player );
   } else {
@@ -321,7 +321,7 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData *data )
 	playerStatus = ' ';
 	if (player->globalUser) playerStatus = '+';
 	if (player->verified) playerStatus = '+';
-	if (player->admin and !bz_hasPerm(player->playerID, bz_perm_hideAdmin)) playerStatus = '@';
+	if (player->admin && !bz_hasPerm(player->playerID, bz_perm_hideAdmin)) playerStatus = '@';
 	msg << "[" << playerStatus << "]";
 	msg << player->callsign.size() << ':';
 	msg << player->callsign.c_str();
