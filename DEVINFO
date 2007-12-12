@@ -128,6 +128,12 @@ of single implementation inheritance and multiple interface
 inheritance.  Multiple inheritance otherwise can quickly lead to very
 hard to understand code.
 
+Only use standard C++ language features, at no time should any compiler
+specific extensions be used (GNU or VisualC++ extensions). If an extension 
+can not be avoided then it must be able to be disabled or replaced using a
+#define in config.h. BZFlag is a cross platform applicaton so it is
+important to remember that not all builds will use your specefic compiler.
+
 Formatting
 ----------
 Everybody has their own style and has things they don't like about any
