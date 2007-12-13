@@ -61,6 +61,7 @@
 #include "AnsiCodes.h"
 #include "GameTime.h"
 #include "bzfsAPI.h"
+#include "BufferedNetworkMessage.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
@@ -225,8 +226,9 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying();
 }
 
-static void dropHandler(NetHandler *handler, const char *reason)
+void dropHandler(NetHandler *handler, const char *reason)
 {
+  MSGMGR.purgeMessages(handler);
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
@@ -4962,6 +4964,7 @@ static void runMainLoop ( void )
     // Fire world weapons
     world->getWorldWeapons().fire();
 
+    MSGMGR.sendPendingMessages();
     sendPendingChatMessages();
 
     cleanPendingPlayers();
