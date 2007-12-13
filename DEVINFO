@@ -132,7 +132,7 @@ Only use standard C++ language features, at no time should any compiler
 specific extensions be used (GNU or VisualC++ extensions). If an extension 
 can not be avoided then it must be able to be disabled or replaced using a
 #define in config.h. BZFlag is a cross platform applicaton so it is
-important to remember that not all builds will use your specefic compiler.
+important to remember that not all builds will use your specific compiler.
 
 Formatting
 ----------
