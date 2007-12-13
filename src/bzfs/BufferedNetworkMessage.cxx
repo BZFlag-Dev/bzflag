@@ -14,6 +14,12 @@
 #include "pack.h"
 #include "GameKeeper.h"
 #include "bzfs.h"
+#include "bzfsMessages.h"
+
+// initialize the singleton
+template <>
+BufferedNetworkMessageManager* Singleton<BufferedNetworkMessageManager>::_instance = (BufferedNetworkMessageManager*)0;
+
 
 BufferedNetworkMessage::BufferedNetworkMessage()
 {
@@ -171,9 +177,9 @@ void BufferedNetworkMessage::allocateInitialData ( void )
 
 void BufferedNetworkMessage::growData ( size_t s )
 {
-  char *p = (char*)malloc(size + s);
+  char *p = (char*)malloc(dataSize + s);
   memcpy(p,data,dataSize);
-  size += s;
+  dataSize += s;
   free(data);
   data = p;
 }
@@ -220,7 +226,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
     if (handler == (*itr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
-      *itr == NULL;
+      *itr = NULL;
     }
     itr++;
   }

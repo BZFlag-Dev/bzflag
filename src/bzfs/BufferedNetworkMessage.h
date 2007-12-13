@@ -63,7 +63,7 @@ protected:
   NetHandler  *recipent;  // NULL if broadcast;
 };
 
-class BufferedNetworkMessageManager
+class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
 {
 public:
   BufferedNetworkMessage  *newMessage ( void );
@@ -72,13 +72,9 @@ public:
 
   void purgeMessages ( NetHandler *handler );
 
-  BufferedNetworkMessageManager& instance ( void )
-  {
-    static BufferedNetworkMessageManager mgr;
-    return mgr;
-  }
-
 protected:
+  friend class Singleton<BufferedNetworkMessageManager>;
+
   std::list<BufferedNetworkMessage*> messages;
 
 private:
@@ -86,7 +82,7 @@ private:
   ~BufferedNetworkMessageManager();
 };  
 
-#define MSGMGR BufferedNetworkMessageManager
+#define MSGMGR (BufferedNetworkMessageManager::instance())
 
 #endif //_BUFFERED_NETWORK_MESSAGE_H_
 
