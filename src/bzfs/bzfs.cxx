@@ -282,6 +282,8 @@ char *getDirectMessageBuffer()
 // for MsgShotBegin the receiving buffer gets used directly
 int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
+  if (handler)
+    return 0;
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(uint16_t);
 
@@ -291,18 +293,22 @@ int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
   return bz_pwrite(handler, bufStart, len + 4);
 }
 
+NetHandler* getPlayerNetHandler( int playerIndex )
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return NULL;
+  if (!playerData->netHandler || playerData->playerHandler)
+    return NULL;
+  if (playerData->isParting)
+    return NULL;
+
+  return playerData->netHandler;
+}
+
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-  if (!playerData->netHandler || playerData->playerHandler)
-    return;
-  if (playerData->isParting)
-    return;
-
-  directMessage(playerData->netHandler, code, len, msg);
+  directMessage(getPlayerNetHandler(playerIndex), code, len, msg);
 }
 
 // relay message only for human. Bots will get message locally.

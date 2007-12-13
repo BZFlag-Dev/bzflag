@@ -93,8 +93,11 @@ extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  dropFlag(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
-extern void  directMessage(int playerIndex, uint16_t code, int len, const void *msg);
-extern int   directMessage(NetHandler *handler, uint16_t code, int len, const void *msg);
+extern void  directMessage( int playerIndex, uint16_t code, int len, const void *msg );
+extern int   directMessage( NetHandler *handler, uint16_t code, int len, const void *msg );
+
+NetHandler *getPlayerNetHandler ( int playerIndex );
+
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
