@@ -1239,9 +1239,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\MasterBanList.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\PackVars.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\ParseMaterial.h">
 			</File>
 			<File
