@@ -5766,6 +5766,15 @@ int main(int argc, char **argv)
     // Fire world weapons
     world->getWorldWeapons().fire();
 
+    // send out any pending chat messages
+    std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
+    while ( itr != pendingChatMessages.end() )
+    {
+      sendMessage(itr->from, itr->to, itr->text.c_str());
+      itr++;
+    }
+    pendingChatMessages.clear();
+
     // fire off a tick event
     bz_TickEventData	tickData;
     tickData.time = TimeKeeper::getCurrent().getSeconds();
