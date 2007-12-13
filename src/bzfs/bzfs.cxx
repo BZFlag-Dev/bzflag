@@ -4511,6 +4511,18 @@ bool updateCurl ( void )
   return cURLManager::perform();
 }
 
+void sendPendingChatMessages ( void )
+{
+  // send out any pending chat messages
+  std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
+  while ( itr != pendingChatMessages.end() )
+  {
+    sendMessage(itr->from, itr->to, itr->text.c_str());
+    itr++;
+  }
+  pendingChatMessages.clear();
+}
+
 static void runMainLoop ( void )
 {
   /* MAIN SERVER RUN LOOP
@@ -4943,6 +4955,8 @@ static void runMainLoop ( void )
     }
     // Fire world weapons
     world->getWorldWeapons().fire();
+
+    sendPendingChatMessages();
 
     cleanPendingPlayers();
 

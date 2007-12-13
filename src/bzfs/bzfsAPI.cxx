@@ -48,6 +48,7 @@
 #include "ServerIntangibilityManager.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
+std::list<PendingChatMessages> pendingChatMessages;
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
 
@@ -1838,7 +1839,10 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char *message)
   else
     playerIndex=from;
 
-  sendMessage(playerIndex, dstPlayer, message);
+  pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message));
+
+  if (0)
+    sendMessage(playerIndex, dstPlayer, message);
   return true;
 }
 
