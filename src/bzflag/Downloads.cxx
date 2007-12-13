@@ -55,6 +55,7 @@ static const char DownloadContent[] =
   "#\n"
   "\n"
   "allow *.images.bzflag.org\n"
+  "allow images.bzflag.org\n"
   "deny *\n";
 
 static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
