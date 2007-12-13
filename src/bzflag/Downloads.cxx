@@ -54,8 +54,7 @@ static const char DownloadContent[] =
   "# To authorize all servers, remove the last 3 lines.\n"
   "#\n"
   "\n"
-  "allow *.bzflag.bz\n"
-  "allow *.bzflag.org\n"
+  "allow *.images.bzflag.org\n"
   "deny *\n";
 
 static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
