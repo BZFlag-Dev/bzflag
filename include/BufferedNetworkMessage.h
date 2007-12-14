@@ -50,7 +50,7 @@ public:
     size_t size ( void );
 
 protected:
-  friend BufferedNetworkMessageManager;
+  friend class BufferedNetworkMessageManager;
   bool process ( void );
 
   void checkData ( size_t s );
