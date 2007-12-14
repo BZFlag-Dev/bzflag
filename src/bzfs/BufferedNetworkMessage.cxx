@@ -167,32 +167,10 @@ bool BufferedNetworkMessage::process ( void )
   return true;
 }
 
-void BufferedNetworkMessage::allocateInitialData ( void )
-{
-  if (data)
-    free(data);
-
-  packedSize = 0;
-  dataSize = 256;
-  data = (char*)malloc(256);
-}
-
-void BufferedNetworkMessage::growData ( size_t s )
-{
-  char *p = (char*)malloc(dataSize + s);
-  memcpy(p,data,dataSize);
-  dataSize += s;
-  free(data);
-  data = p;
-}
-
 void BufferedNetworkMessage::checkData ( size_t s )
 {
-  if ( !data || dataSize == 0 )
-    allocateInitialData();
-
   if ( packedSize + s > dataSize )
-    growData(s);
+    data = reinterpret_cast<char*>(realloc(data, dataSize + ((s % 256) + 1) * 256));
 }
 
 

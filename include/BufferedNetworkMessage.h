@@ -53,9 +53,6 @@ protected:
   friend BufferedNetworkMessageManager;
   bool process ( void );
 
-  void allocateInitialData ( void );
-  void growData ( size_t s );
-
   void checkData ( size_t s );
 
   char *data;
