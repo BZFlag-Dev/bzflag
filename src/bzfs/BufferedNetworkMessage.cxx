@@ -170,7 +170,7 @@ bool BufferedNetworkMessage::process ( void )
 void BufferedNetworkMessage::checkData ( size_t s )
 {
   if ( packedSize + s > dataSize )
-    data = reinterpret_cast<char*>(realloc(data, dataSize + ((s % 256) + 1) * 256));
+    data = reinterpret_cast<char*>(realloc(data, dataSize + ((int)ceil(s / 256.0f)) * 256));
 }
 
 
