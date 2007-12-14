@@ -533,21 +533,30 @@ fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 
 # Check for the SDL_image library
-AC_MSG_CHECKING([for SDL_image library])
-tmpLIBS=$LIBS
-SDL_IMAGE_LIBS="-lSDL_image"
-LIBS=$SDL_IMAGE_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
-                                [[IMG_Load(NULL)]])],
-               [sdl_image_check="yes"], [sdl_image_check="no"])
-if test "x$sdl_image_check" = "xyes" ; then
-  AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
+AC_ARG_ENABLE([sdl_image],
+	      [AC_HELP_STRING([--enable-sdl-image],
+	      		[use SDL_Image library if available (default is no)])],
+	      [use_sdl_image=$enableval],
+	      [use_sdl_image=no])
+if test $use_sdl_image = "yes"; then
+  AC_MSG_CHECKING([for SDL_image library])
+  tmpLIBS=$LIBS
+  SDL_IMAGE_LIBS="-lSDL_image"
+  LIBS=$SDL_IMAGE_LIBS
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
+                                  [[IMG_Load(NULL)]])],
+                 [sdl_image_check="yes"], [sdl_image_check="no"])
+  if test "x$sdl_image_check" = "xyes" ; then
+    AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
+  else
+    SDL_IMAGE_LIBS=""
+  fi
+  AC_MSG_RESULT([$sdl_image_check])
+  LIBS=$tmpLIBS
 else
   SDL_IMAGE_LIBS=""
 fi
-AC_MSG_RESULT([$sdl_image_check])
 AC_SUBST(SDL_IMAGE_LIBS)
-LIBS=$tmpLIBS
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging])
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
