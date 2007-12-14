@@ -42,9 +42,9 @@ void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
 
 void sendRemovePlayerMessage ( int playerID )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerID);
-  broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerID);
+  msg->broadcast(MsgRemovePlayer);
 
   for (int i = 0; i < curMaxPlayers; i++)
   {
@@ -90,6 +90,17 @@ void sendFlagUpdateMessage ( int playerID )
   }
   else
   {
+    NetMsg msg = MSGMGR.newMessage();
+
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+    {
+      FlagInfo &flag = *FlagInfo::get(flagIndex);
+      if (flag.exist())
+      {
+	//nboPackUShort(bufStart, cnt);
+      }
+    }
+    
     void *buf, *bufStart = getDirectMessageBuffer();
 
     buf = nboPackUShort(bufStart,0); //placeholder
