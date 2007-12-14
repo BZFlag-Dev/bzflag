@@ -13,8 +13,11 @@
 #ifndef _BUFFERED_NETWORK_MESSAGE_H_
 #define _BUFFERED_NETWORK_MESSAGE_H_
 
-#include "NetHandler.h"
+#include "common.h"
+#include "Singleton.h"
 #include <list>
+
+class NetHandler;
 
 class BufferedNetworkMessageManager;
 
@@ -83,6 +86,8 @@ private:
 };  
 
 #define MSGMGR (BufferedNetworkMessageManager::instance())
+
+#define NetMsg BufferedNetworkMessage*
 
 #endif //_BUFFERED_NETWORK_MESSAGE_H_
 

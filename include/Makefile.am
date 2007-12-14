@@ -8,6 +8,7 @@ noinst_HEADERS =			\
 	AnsiCodes.h			\
 	ArcObstacle.h			\
 	AutoCompleter.h			\
+	BufferedNetworkMessage.h	\
 	BaseSceneNodeGenerator.h	\
 	BoxSceneNodeGenerator.h		\
 	BSPSceneDatabase.h		\

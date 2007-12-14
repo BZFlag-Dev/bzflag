@@ -22,6 +22,7 @@ bzflag_SOURCES =			\
 	AutoHunt.h			\
 	AutoPilot.cxx			\
 	AutoPilot.h			\
+	BufferedNetworkMessage_stub.cxx	\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\

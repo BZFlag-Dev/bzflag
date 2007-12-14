@@ -1326,7 +1326,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.h">
+				RelativePath="..\..\include\BufferedNetworkMessage.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx">

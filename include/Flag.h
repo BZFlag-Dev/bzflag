@@ -54,6 +54,7 @@
 /* common interface headers */
 #include "global.h"
 #include "Address.h"
+#include "BufferedNetworkMessage.h"
 
 
 /** This enum says where a flag is. */
@@ -164,6 +165,9 @@ public:
   void* pack(void* buf) const;
   void* fakePack(void* buf) const;
   void* packCustom(void* buf) const;
+  size_t pack(BufferedNetworkMessage *msg) const;
+  size_t fakePack(BufferedNetworkMessage *msg) const;
+  size_t packCustom(BufferedNetworkMessage *msg) const;
 
   /** network deserialization */
   static void* unpack(void* buf, FlagType* &desc);
@@ -197,10 +201,12 @@ public:
   /** This function serializes this object into a @c void* buffer for network
       transfer. */
   void* pack(void*) const;
-  /** This function serializes this object into a @c void* buffer for network
+  size_t pack(BufferedNetworkMessage *msg) const;
+ /** This function serializes this object into a @c void* buffer for network
       transfer. */
   void* fakePack(void*) const;
-  /** This function uses the given serialization to set the member variables
+  size_t fakePack(BufferedNetworkMessage *msg) const;
+ /** This function uses the given serialization to set the member variables
       of this object. This really hide the type of flag */
   void* unpack(void*);
 

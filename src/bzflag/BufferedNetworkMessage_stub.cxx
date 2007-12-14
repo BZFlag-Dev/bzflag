@@ -11,12 +11,6 @@
 */
 
 #include "BufferedNetworkMessage.h"
-#include "pack.h"
-#include "GameKeeper.h"
-#include "bzfs.h"
-#include "bzfsMessages.h"
-#include "NetHandler.h"
-
 
 // initialize the singleton
 template <>
@@ -51,90 +45,54 @@ BufferedNetworkMessage::~BufferedNetworkMessage()
 
 void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
 {
-  recipent = to;
-  code = messageCode;
 }
 
 void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
 {
-  recipent = getPlayerNetHandler(to);
-  code = messageCode;
 }
 
 void BufferedNetworkMessage::broadcast ( uint16_t messageCode )
 {
-  recipent = NULL;
-  code = messageCode;
 }
 
 void BufferedNetworkMessage::packUByte( uint8_t val )
 {
-  checkData(sizeof(uint8_t));
-  nboPackUByte(data+packedSize,val);
-  packedSize += sizeof(uint8_t);
 }
 
 void BufferedNetworkMessage::packShort( int16_t val )
 {
-  checkData(sizeof(int16_t));
-  nboPackShort(data+packedSize,val);
-  packedSize += sizeof(int16_t);
 }
 
 void BufferedNetworkMessage::packInt( int32_t val )
 {
-  checkData(sizeof(int32_t));
-  nboPackInt(data+packedSize,val);
-  packedSize += sizeof(int32_t);
 }
 
 void BufferedNetworkMessage::packUShort( uint16_t val )
 {
-  checkData(sizeof(uint16_t));
-  nboPackUShort(data+packedSize,val);
-  packedSize += sizeof(uint16_t);
 }
 
 void BufferedNetworkMessage::packUInt( uint32_t val )
 {
-  checkData(sizeof(uint32_t));
-  nboPackUInt(data+packedSize,val);
-  packedSize += sizeof(uint32_t);
 }
 
 void BufferedNetworkMessage::packFloat( float val )
 {
-  checkData(sizeof(float));
-  nboPackFloat(data+packedSize,val);
-  packedSize += sizeof(float);
 }
 
 void BufferedNetworkMessage::packVector( const float* val )
 {
-  checkData(sizeof(float)*3);
-  nboPackVector(data+packedSize,val);
-  packedSize += sizeof(float)*3;
 }
 
 void BufferedNetworkMessage::packString( const char* val, int len )
 {
-  checkData(len);
-  nboPackString(data+packedSize,val,len);
-  packedSize += len;
 }
 
 void BufferedNetworkMessage::packStdString( const std::string& str )
 {
-  checkData(str.size()+sizeof(uint32_t));
-  nboPackStdString(data+packedSize,str);
-  packedSize += str.size()+sizeof(uint32_t);
 }
 
 void BufferedNetworkMessage::addPackedData ( const char* d, size_t s )
 {
-  checkData(s);
-  memcpy(data+packedSize,d,s);
-  packedSize += s;
 }
 
 void BufferedNetworkMessage::clear ( void )
@@ -156,14 +114,6 @@ size_t BufferedNetworkMessage::size ( void )
 
 bool BufferedNetworkMessage::process ( void )
 {
-  if (!recipent && code == 0)
-    return false;
-
-  if (recipent)
-    return directMessage(recipent, code, (int)packedSize, data) == (int)packedSize;
-   
-  broadcastMessage(code, (int)packedSize, data);
-
   return true;
 }
 

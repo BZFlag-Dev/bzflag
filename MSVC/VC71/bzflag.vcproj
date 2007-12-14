@@ -312,6 +312,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\AutoPilot.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\BufferedNetworkMessage_stub.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\bzflag.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">

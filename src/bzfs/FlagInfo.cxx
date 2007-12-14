@@ -153,6 +153,23 @@ void *FlagInfo::pack(void *buf, bool hide)
   return buf;
 }
 
+size_t FlagInfo::pack(BufferedNetworkMessage *msg , bool hide )
+{
+  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam != ::NoTeam)
+    hide = false;
+  if (FlagInfo::flagList[flagIndex].player != -1)
+    hide = false;
+
+  size_t s = msg->size();
+  msg->packUShort(flagIndex);
+
+  if (hide)
+    FlagInfo::flagList[flagIndex].flag.fakePack(msg);
+  else
+    FlagInfo::flagList[flagIndex].flag.pack(msg);
+  return msg->size() - s;
+}
+
 void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
   numFlagsInAir++;
