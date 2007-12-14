@@ -11,7 +11,7 @@
 */
 
 #include "BufferedNetworkMessage.h"
-#include "pack.h"
+#include "Pack.h"
 #include "GameKeeper.h"
 #include "bzfs.h"
 #include "bzfsMessages.h"
