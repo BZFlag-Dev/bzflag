@@ -529,9 +529,10 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   playerData->player.setFlag(flag.getIndex());
 
   // send MsgGrabFlag
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = flag.pack(buf);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(playerIndex);
+  flag.pack(msg);
 
   bz_FlagGrabbedEventData_V1	data;
   data.flagID = flag.getIndex();
@@ -542,10 +543,10 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
 
   // pack in the shot type, it may have been modified
-  buf = nboPackUByte(buf,data.shotType);
+  msg->packUByte(data.shotType);
   playerData->efectiveShotType = (ShotType)data.shotType;
 
-  broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+  msg->broadcast(MsgGrabFlag);
 
   // now do everyone who doesn't have network
   for (int i = 0; i < curMaxPlayers; i++)
@@ -570,11 +571,12 @@ void sendSetShotType ( int playerIndex, ShotType type )
 
   playerData->efectiveShotType = type;
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf,type);
+  NetMsg msg = MSGMGR.newMessage();
 
-  broadcastMessage(MsgSetShot, (char*)buf - (char*)bufStart, bufStart);
+  msg->packUByte(playerIndex);
+  msg->packUByte(type);
+
+  msg->broadcast(MsgSetShot);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
