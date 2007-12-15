@@ -895,11 +895,12 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason re
 
 void sendPlayerScoreUpdate( GameKeeper::Player *player )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, 1);
-  buf = nboPackUByte(buf, player->getIndex());
-  buf = player->score.pack(buf);
-  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte( 1);
+  msg->packUByte(player->getIndex());
+  player->score.pack(msg);
+  msg->broadcast(MsgScore);
 
   for (int i = 0; i < curMaxPlayers; i++)
   {
