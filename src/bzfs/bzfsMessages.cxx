@@ -982,20 +982,19 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot )
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
 {
   /* Pack a message with the given time */
-  void *bufStart;
-  void *buf2 = bufStart = getDirectMessageBuffer();
-  buf2 = nboPackUByte(bufStart,tag);
-  buf2 = nboPackFloat(buf2,time);
-
-  directMessage(handler, MsgWhatTimeIsIt, (char*)buf2-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(tag);
+  msg->packFloat(time);
+  msg->send(handler,MsgWhatTimeIsIt);
 }
 
 void sendMsgTimeUpdate( int timeLimit )
 {
   // start client's clock
-  void *msg = getDirectMessageBuffer();
-  nboPackInt(msg, timeLimit);
-  broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packInt(timeLimit);
+  msg->broadcast(MsgTimeUpdate);
 }
 
 void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player )
