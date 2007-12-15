@@ -393,11 +393,12 @@ void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData )
   if (!playerData)
     return;
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, 1);
-  buf = nboPackUByte(buf, playerData->getIndex());
-  buf = nboPackShort(buf, playerData->score.getHandicap());
-  broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(1);
+  msg->packUByte(playerData->getIndex());
+  msg->packShort(playerData->score.getHandicap());
+  msg->broadcast(MsgHandicap);
 
   bz_HandicapUpdateRecord *handyData = new bz_HandicapUpdateRecord;
   handyData->player = playerData->getIndex();
@@ -437,21 +438,22 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
     }
   }
 
-  void *buf, *bufStart = getDirectMessageBuffer();
+  NetMsg msg = MSGMGR.newMessage();
+
   if (toPlayerData || record)
   {
-    buf = nboPackUByte(bufStart, 1);
-    buf = aboutPlayerData->packAdminInfo(buf);
+    msg->packUByte(1);
+    aboutPlayerData->packAdminInfo(msg);
   }
 
   if (toPlayerData)
   {
     if (!toPlayerData->playerHandler)
-      directMessage(toPlayer, MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart);
+      msg->send(toPlayerData->netHandler,MsgAdminInfo);
   }
 
   if (record)
-    Record::addPacket(MsgAdminInfo,(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
+    Record::addPacket(MsgAdminInfo,(int)msg->size(), msg->buffer(), HiddenPacket);
 }
 
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )

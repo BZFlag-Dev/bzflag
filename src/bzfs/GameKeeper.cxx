@@ -44,6 +44,12 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
   return buf;
 }
 
+void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties )
+{
+  msg->packUByte(playerIndex);
+  msg->packUByte(properties);
+}
+
 GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
   player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
@@ -214,10 +220,24 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
   return buf;
 }
 
+void GameKeeper::Player::packAdminInfo(BufferedNetworkMessage *msg)
+{
+  msg->packUByte(netHandler->sizeOfIP());
+  msg->packUByte(playerIndex);
+  char temp[128];
+  char* p = (char*)netHandler->packAdminInfo(temp);
+  msg->addPackedData(temp,p-temp);
+}
+
 void *GameKeeper::Player::packPlayerInfo(void *buf)
 {
   buf = PackPlayerInfo(buf, playerIndex, accessInfo.getPlayerProperties());
   return buf;
+}
+
+void GameKeeper::Player::packPlayerInfo(BufferedNetworkMessage *msg)
+{
+  PackPlayerInfo(msg,playerIndex, accessInfo.getPlayerProperties());
 }
 
 void *GameKeeper::Player::packPlayerUpdate(void *buf)
