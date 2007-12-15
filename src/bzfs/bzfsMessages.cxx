@@ -309,10 +309,11 @@ bool sendAcceptPlayerMessage ( int playerID )
     playerData->playerHandler->playerAccepted();
   else
   {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerID);
-    int result = directMessage(playerData->netHandler, MsgAccept,(char*)buf-(char*)bufStart, bufStart);
-    if (result < 0)
+    NetMsg msg = MSGMGR.newMessage();
+
+    msg->packUByte(playerID);
+    msg->send(playerData->netHandler, MsgAccept);
+    if (!msg->size())
       return false;
   }
 
