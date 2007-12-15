@@ -912,10 +912,10 @@ void sendPlayerScoreUpdate( GameKeeper::Player *player )
 
 void sendScoreOverMessage(int playerID, TeamColor _team)
 {
-  void *buf,*bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerID);
-  buf = nboPackUShort(buf, uint16_t(_team));
-  broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerID);
+  msg->packUShort(uint16_t(_team));
+  msg->broadcast(MsgScoreOver);
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
