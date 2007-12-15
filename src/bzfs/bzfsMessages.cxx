@@ -195,32 +195,33 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
   // If teamIndex2 is -1, just send teamIndex1 team
   // else send both teamIndex1 and teamIndex2 teams
 
-  void *buf, *bufStart = getDirectMessageBuffer();
+  NetMsg msg = MSGMGR.newMessage();
+
   if (teamIndex1 == -1)
   {
-    buf = nboPackUByte(bufStart, CtfTeams);
+    msg->packUByte(CtfTeams);
     for (int t = 0; t < CtfTeams; t++)
     {
-      buf = nboPackUShort(buf, t);
-      buf = team[t].team.pack(buf);
+      msg->packUShort(t);
+      team[t].team.pack(msg);
     }
   }
   else if (teamIndex2 == -1)
   {
-    buf = nboPackUByte(bufStart, 1);
-    buf = nboPackUShort(buf, teamIndex1);
-    buf = team[teamIndex1].team.pack(buf);
+    msg->packUByte(1);
+    msg->packUShort(teamIndex1);
+    team[teamIndex1].team.pack(msg);
   }
   else
   {
-    buf = nboPackUByte(bufStart, 2);
-    buf = nboPackUShort(buf, teamIndex1);
-    buf = team[teamIndex1].team.pack(buf);
-    buf = nboPackUShort(buf, teamIndex2);
-    buf = team[teamIndex2].team.pack(buf);
+    msg->packUByte(2);
+    msg->packUShort(teamIndex1);
+    team[teamIndex1].team.pack(msg);
+    msg->packUShort(teamIndex2);
+    team[teamIndex2].team.pack(msg);
   }
 
-  broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart, false);
+  msg->broadcast(MsgTeamUpdate);
 
   bz_TeamInfoRecord	**teams = NULL;
 
