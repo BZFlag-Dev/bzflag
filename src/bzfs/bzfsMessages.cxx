@@ -927,10 +927,10 @@ void sendScoreOverMessage(int playerID, TeamColor _team)
 
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
 {
-  void *bufStart = getDirectMessageBuffer();
-  void *buf      = nboPackUByte(bufStart, playerIndex);
-  buf	    = flag.pack(buf);
-  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerIndex);
+  flag.pack(msg);
+  msg->broadcast(MsgDropFlag);
 
   bz_FlagUpdateRecord		*flagRecord = new bz_FlagUpdateRecord;
   flagToAPIFlag(flag,flagRecord);
