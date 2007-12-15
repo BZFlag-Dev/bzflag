@@ -34,6 +34,16 @@ void*			ShotUpdate::pack(void* buf) const
   return buf;
 }
 
+void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
+{
+  msg->packUByte(player);
+  msg->packUShort(id);
+  msg->packVector(pos);
+  msg->packVector(vel);
+  msg->packFloat(dt);
+  msg->packShort(team);
+}
+
 void*			ShotUpdate::unpack(void* buf)
 {
   buf = nboUnpackUByte(buf, player);
@@ -64,6 +74,15 @@ void*			FiringInfo::pack(void* buf) const
   buf = nboPackFloat(buf, lifetime);
   buf = nboPackUByte(buf, shotType);
   return buf;
+}
+
+void			FiringInfo::pack(BufferedNetworkMessage *msg) const
+{
+  msg->packFloat(timeSent);
+  shot.pack(msg);
+  flagType->pack(msg);
+  msg->packFloat(lifetime);
+  msg->packUByte(shotType);
 }
 
 void*			FiringInfo::unpack(void* buf)

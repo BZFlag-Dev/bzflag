@@ -30,6 +30,7 @@
 #include "common.h"
 #include "Address.h"
 #include "Flag.h"
+#include "BufferedNetworkMessage.h"
 
 const int		ShotUpdatePLen = PlayerIdPLen + 32;
 const int		FiringInfoPLen = ShotUpdatePLen + 10;
@@ -39,6 +40,7 @@ class BaseLocalPlayer;
 struct ShotUpdate {
   public:
     void*		pack(void*) const;
+    void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
 
   public:
@@ -55,6 +57,7 @@ struct FiringInfo {
 			FiringInfo();
 
     void*		pack(void*) const;
+    void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
     void*		unpackW(void*);
 
