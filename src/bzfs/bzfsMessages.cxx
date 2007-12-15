@@ -1038,21 +1038,18 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
 
 void sendMsgLimboMessage ( int player, const std::string  &text )
 {
-  void *bufStart;
-  void *buf2 = bufStart = getDirectMessageBuffer();
-  buf2 = nboPackStdString(buf2,text);
-  directMessage(player, MsgLimboMessage, (char*)buf2 - (char*)bufStart, bufStart);
-
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packStdString(text);
+  msg->send(player, MsgLimboMessage);
 }
-
 
 void sendSetTeam ( int playerIndex, int _team )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
+  NetMsg msg = MSGMGR.newMessage();
 
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, _team);
-  broadcastMessage(MsgSetTeam, (char*)buf - (char*)bufStart, bufStart);
+  msg->packUByte(playerIndex);
+  msg->packUByte(_team);
+  msg->broadcast(MsgSetTeam);
 }
 
 void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
