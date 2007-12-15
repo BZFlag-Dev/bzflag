@@ -20,6 +20,7 @@
 // general messages sent to players ( local and remove )
 void sendRemovePlayerMessage ( int playerID );
 void sendFlagUpdateMessage ( int playerID );
+void sendFlagUpdateMessage ( FlagInfo &flag );
 void sendExistingPlayerUpdates ( int newPlayer );
 bool sendTeamUpdateMessage( int newPlayer );
 void sendTeamUpdateMessageBroadcast( int teamIndex1 = -1, int teamIndex2 = -1 );

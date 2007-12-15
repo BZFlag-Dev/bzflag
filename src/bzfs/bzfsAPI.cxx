@@ -2679,7 +2679,7 @@ BZF_API bool bz_moveFlag(int flag, float pos[3], bool reset)
   else
     memcpy(pFlag->flag.position, pos, sizeof(float) *3);
 
-  sendFlagUpdate(*pFlag);
+  sendFlagUpdateMessage(*pFlag);
 
   return true;
 }

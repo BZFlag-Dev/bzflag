@@ -1262,7 +1262,7 @@ bool FlagCommand::operator() (const char *message,
 	if (!flag.required) {
 	  flag.flag.type = Flags::Null;
 	}
-	sendFlagUpdate(flag);
+	sendFlagUpdateMessage(flag);
       }
     }
   }

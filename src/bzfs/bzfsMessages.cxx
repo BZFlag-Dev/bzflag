@@ -114,6 +114,17 @@ void sendFlagUpdateMessage ( int playerID )
   }
 }
 
+void sendFlagUpdateMessage(FlagInfo &flag)
+{
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUShort(1);
+
+  bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
+  flag.pack(msg, hide);
+
+  msg->broadcast(MsgFlagUpdate);
+}
+
 void sendExistingPlayerUpdates ( int newPlayer )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(newPlayer);

@@ -338,13 +338,14 @@ static void onGlobalChanged(const std::string& name, void*)
   // well, the /set and /reset commands are blocked.
 
   std::string value = BZDB.get(name);
-  void *bufStart = getDirectMessageBuffer();
-  void *buf = nboPackUShort(bufStart, 1);
-  buf = nboPackUByte(buf, name.length());
-  buf = nboPackString(buf, name.c_str(), name.length());
-  buf = nboPackUByte(buf, value.length());
-  buf = nboPackString(buf, value.c_str(), value.length());
-  broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUShort(1);
+  msg->packUByte(name.length());
+  msg->packString(name.c_str(), name.length());
+  msg->packUByte(value.length());
+  msg->packString(value.c_str(), value.length());
+  msg->broadcast(MsgSetVar);
 }
 
 //
@@ -358,11 +359,10 @@ void addBzfsCallback(const std::string& name, void* data)
 
 static void sendUDPupdate(NetHandler *handler)
 {
-  // confirm inbound UDP with a TCP message
-  directMessage(handler, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
-
-  // request/test outbound UDP with a UDP back to where we got client's packet
-  directMessage(handler, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(0);
+  MSGMGR.newMessage(msg)->send(handler, MsgUDPLinkEstablished);
+  msg->send(handler, MsgUDPLinkRequest);
 }
 
 int lookupPlayer(const PlayerId& id)
@@ -376,16 +376,6 @@ int lookupPlayer(const PlayerId& id)
   return id;
 }
 
-void sendFlagUpdate(FlagInfo &flag)
-{
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart,1);
-
-  bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-  buf = flag.pack(buf, hide);
-
-  broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, false);
-}
 
 static float nextGameTime()
 {
@@ -1991,7 +1981,7 @@ void resetFlag(FlagInfo &flag)
   // reset a flag's info
   flag.resetFlag(eventData.pos, teamIsEmpty);
 
-  sendFlagUpdate(flag);
+  sendFlagUpdateMessage(flag);
 }
 
 
@@ -2847,7 +2837,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   dropFlag(drpFlag);
 
   // notify of new flag state
-  sendFlagUpdate(drpFlag);
+  sendFlagUpdateMessage(drpFlag);
 }
 
 
@@ -3950,7 +3940,7 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.landing(tm)) {
 	if (flag.flag.status == FlagOnGround)
-	  sendFlagUpdate(flag);
+	  sendFlagUpdateMessage(flag);
 	else
 	  resetFlag(flag);
       }
@@ -4451,7 +4441,7 @@ static void doSuperFlags ( TimeKeeper &tm )
       if (flag.flag.type == Flags::Null) {
 	// flag in now entering game
 	flag.addFlag();
-	sendFlagUpdate(flag);
+	sendFlagUpdateMessage(flag);
 	break;
       }
     }
