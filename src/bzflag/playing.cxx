@@ -3460,14 +3460,15 @@ static void		handlePlayerMessage(uint16_t code, uint16_t len,
 
 static void		doMessages()
 {
-  char msg[MaxPacketLen];
+  //char msg[MaxPacketLen];
+  ServerMessageBuffer msg;
   uint16_t code, len;
   int e = 0;
 
   // handle server messages
   if (serverLink) {
-    while (!serverError && (e = serverLink->read(code, len, msg, 0)) == 1)
-      handleServerMessage(true, code, len, msg);
+    while (!serverError && (e = serverLink->read(code,msg, 0)) == 1)
+      handleServerMessage(true, code, (uint16_t)msg.size(), msg.data());
     if (e == -2) {
       printError("Server communication error");
       serverError = true;
