@@ -963,20 +963,20 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 
 void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
+  NetMsg msg = MSGMGR.newMessage();
 
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, mode);
-  broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+  msg->packUByte(playerIndex);
+  msg->packUByte(mode);
+  msg->broadcast(MsgNewRabbit);
 }
 
 void sendMsgGMUpdate ( int player, ShotUpdate *shot )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
+  NetMsg msg = MSGMGR.newMessage();
 
-  buf = nboPackUByte(bufStart, player);
-  buf = shot->pack(buf);
-  broadcastMessage(MsgGMUpdate, (char*)buf-(char*)bufStart, bufStart);
+  msg->packUByte(player);
+  shot->pack(msg);
+  msg->broadcast(MsgGMUpdate);
 }
 
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
