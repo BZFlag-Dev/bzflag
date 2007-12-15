@@ -26,6 +26,26 @@
 #include "ShotPath.h"
 #include "Flag.h"
 
+class ServerMessageBuffer
+{
+public:
+  ServerMessageBuffer();
+  ServerMessageBuffer( const ServerMessageBuffer &msg );
+ ~ServerMessageBuffer();
+
+  void clear ( void );
+
+  void add ( char *d, size_t s);
+  
+  char* data ( void );
+  size_t size ( void );
+
+protected:
+  char *messageData;
+  size_t messageSize;
+  size_t bufferSize;
+};
+
 class ServerLink {
   public:
     enum State {
@@ -58,8 +78,8 @@ class ServerLink {
 
     void		send(uint16_t code, uint16_t len, const void* msg);
     // if millisecondsToBlock < 0 then block forever
-    int			read(uint16_t& code, uint16_t& len, void* msg,
-						int millisecondsToBlock = 0);
+    int			read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0);
+    int			read(uint16_t& code, ServerMessageBuffer& msg, int millisecondsToBlock = 0);
 
 	void		sendCaps(PlayerId id, bool downloads, bool sounds );
     void		sendEnter(PlayerId, PlayerType, TeamColor,

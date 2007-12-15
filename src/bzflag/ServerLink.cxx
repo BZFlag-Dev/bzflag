@@ -1,16 +1,16 @@
 /* bzflag
- * Copyright (c) 1993 - 2007 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993 - 2007 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 #if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
+#pragma warning(disable: 4786)
 #endif
 
 // interface header
@@ -94,11 +94,11 @@ static const unsigned long endPacket = 0;
 ServerLink*		ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
-				state(SocketError),	// assume failure
-				fd(-1),			// assume failure
-				udpLength(0),
-				oldNeedForSpeed(false),
-				previousFill(0)
+state(SocketError),	// assume failure
+fd(-1),			// assume failure
+udpLength(0),
+oldNeedForSpeed(false),
+previousFill(0)
 {
   int i;
 
@@ -189,15 +189,15 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   int       connectError;
   socklen_t errorLen = sizeof(int);
   if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
-      < 0) {
-    close(query);
-    return;
-  }
-  if (connectError != 0) {
-    logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
-    close(query);
-    return;
-  }
+    < 0) {
+      close(query);
+      return;
+    }
+    if (connectError != 0) {
+      logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
+      close(query);
+      return;
+    }
 #else // Connection timeout for Windows
 
   // winsock connection
@@ -277,7 +277,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
       logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
-     gotNetData = true;
+      gotNetData = true;
     }
     else
     {
@@ -292,7 +292,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
       TimeKeeper::sleep(0.25f);
     }
- }
+  }
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
@@ -406,13 +406,13 @@ ServerLink::~ServerLink()
   urecvfd = -1;
   ulinkup = false;
 
-// FIXME -- packet recording
-if (packetStream) {
-  long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-  fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
-  fwrite(&dt, sizeof(dt), 1, packetStream);
-  fclose(packetStream);
-}
+  // FIXME -- packet recording
+  if (packetStream) {
+    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
+    fwrite(&dt, sizeof(dt), 1, packetStream);
+    fclose(packetStream);
+  }
 
 #if defined(NETWORK_STATS)
   const float dt = float(TimeKeeper::getCurrent() - startTime);
@@ -448,7 +448,7 @@ void ServerLink::flush()
     if ((random()%TESTQUALTIY) != 0)
 #endif
       sendto(urecvfd, (const char *)txbuf, previousFill, 0,
-	     &usendaddr, sizeof(usendaddr));
+      &usendaddr, sizeof(usendaddr));
     // we don't care about errors yet
   } else {
     int r = ::send(fd, (const char *)txbuf, previousFill, 0);
@@ -457,7 +457,7 @@ void ServerLink::flush()
     if (r == SOCKET_ERROR) {
       const int e = WSAGetLastError();
       if (e == WSAENETRESET || e == WSAECONNABORTED ||
-	  e == WSAECONNRESET || e == WSAETIMEDOUT)
+	e == WSAECONNRESET || e == WSAETIMEDOUT)
 	state = Hungup;
       r = 0;
     }
@@ -472,7 +472,7 @@ void ServerLink::flush()
 }
 
 void			ServerLink::send(uint16_t code, uint16_t len,
-							const void* msg)
+					 const void* msg)
 {
   bool needForSpeed=false;
   if (state != Okay) return;
@@ -487,7 +487,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
       case MsgGMUpdate:
       case MsgUDPLinkRequest:
       case MsgUDPLinkEstablished:
-	  case MsgWhatTimeIsIt:
+      case MsgWhatTimeIsIt:
 	needForSpeed=true;
 	break;
     }
@@ -497,7 +497,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
     needForSpeed=true;
 
   if ((needForSpeed != oldNeedForSpeed)
-      || (previousFill + len + 4 > MaxPacketLen))
+    || (previousFill + len + 4 > MaxPacketLen))
     flush();
   oldNeedForSpeed = needForSpeed;
 
@@ -511,21 +511,19 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 
 #ifdef WIN32
 /* This is a really really fugly hack to get around winsock sillyness
- * The newer versions of winsock have a socken_t typedef, and there
- * doesn't seem to be any way to tell the versions apart. However,
- * VC++ helps us out here by treating typedef as #define
- * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
- * avoid #define'ing it in common.h */
+* The newer versions of winsock have a socken_t typedef, and there
+* doesn't seem to be any way to tell the versions apart. However,
+* VC++ helps us out here by treating typedef as #define
+* If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
+* avoid #define'ing it in common.h */
 
 #ifndef socklen_t
-	#define socklen_t int
+#define socklen_t int
 #endif
 #endif //WIN32
 
-int			ServerLink::read(uint16_t& code, uint16_t& len,
-						void* msg, int blockTime)
+int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 {
-
   code = MsgNull;
   len = 0;
 
@@ -537,7 +535,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     if (!udpLength) {
       AddrLen recvlen = sizeof(urecvaddr);
       n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr,
-		   (socklen_t*) &recvlen);
+	(socklen_t*) &recvlen);
       if (n > 0) {
 	udpLength    = n;
 	udpBufferPtr = ubuf;
@@ -579,7 +577,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   FD_ZERO(&read_set);
   FD_SET((unsigned int)fd, &read_set);
   int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
-			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+    (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
   if (nfound == 0) return 0;
   if (nfound < 0) return -1;
 
@@ -658,22 +656,223 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       // Socket shutdown Server side
       return -2;
 #if defined(NETWORK_STATS)
-  if (rlen >= 0) bytesReceived += rlen;
+    if (rlen >= 0) bytesReceived += rlen;
 #endif
   }
   if (tlen < int(len)) return -1;
 
 success:
-// FIXME -- packet recording
-if (packetStream) {
-  long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-  fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
-  fwrite(&dt, sizeof(dt), 1, packetStream);
-  fwrite(headerBuffer, 4, 1, packetStream);
-  fwrite(msg, len, 1, packetStream);
-}
+  // FIXME -- packet recording
+  if (packetStream) {
+    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
+    fwrite(&dt, sizeof(dt), 1, packetStream);
+    fwrite(headerBuffer, 4, 1, packetStream);
+    fwrite(msg, len, 1, packetStream);
+  }
   return 1;
 }
+
+int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
+{
+  code = MsgNull;
+  msg.clear();
+
+  uint16_t len;
+
+  if (state != Okay)
+    return -1;
+
+  if ((urecvfd >= 0) /* && ulinkup */) 
+  {
+    int n;
+
+    if (!udpLength) 
+    {
+      AddrLen recvlen = sizeof(urecvaddr);
+      n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr, (socklen_t*) &recvlen);
+      if (n > 0)
+      {
+	udpLength    = n;
+	udpBufferPtr = ubuf;
+      }
+    }
+    if (udpLength) 
+    {
+      // unpack header and get message
+      udpLength -= 4;
+      if (udpLength < 0)
+      {
+	udpLength = 0;
+	return -1;
+      }
+      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
+      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+
+      if (len > udpLength) 
+      {
+	udpLength = 0;
+	return -1;
+      }
+      msg.add(udpBufferPtr,len);
+      udpBufferPtr += len;
+      udpLength    -= len;
+      return 1;
+    }
+    if (UDEBUGMSG) printError("Fallback to normal TCP receive");
+    len = 0;
+    code = MsgNull;
+
+    blockTime = 0;
+  }
+
+  // block for specified period.  default is no blocking (polling)
+  struct timeval timeout;
+  timeout.tv_sec = blockTime / 1000;
+  timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
+
+  // only check server
+  fd_set read_set;
+  FD_ZERO(&read_set);
+
+  FD_SET((unsigned int)fd, &read_set);
+  int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+  
+  if (nfound == 0)
+    return 0;
+ 
+  if (nfound < 0)
+    return -1;
+
+  // printError("<** TCP Packet Code Received %d", time(0));
+  // FIXME -- don't really want to take the chance of waiting forever
+  // on the remaining select() calls, but if the server and network
+  // haven't been hosed then the data will get here soon.  And if the
+  // server or network is down then we don't really care anyway.
+
+  // get packet header -- keep trying until we get 4 bytes or an error
+  char headerBuffer[4];
+
+  int rlen = 0;
+  rlen = recv(fd, (char*)headerBuffer, 4, 0);
+ 
+  if (!rlen)
+    return -2;// Socket shutdown Server side
+
+  int tlen = rlen;
+
+  while (rlen >= 1 && tlen < 4) 
+  {
+    printError("ServerLink::read() loop");
+    FD_ZERO(&read_set);
+    FD_SET((unsigned int)fd, &read_set);
+    nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
+
+    if (nfound == 0)
+      continue;
+    if (nfound < 0)
+      return -1;
+
+    rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
+    if (rlen > 0)
+      tlen += rlen;
+    else if (rlen == 0)
+      return -2; // Socket shutdown Server side
+  }
+
+  if (tlen < 4)
+    return -1;
+
+#if defined(NETWORK_STATS)
+  bytesReceived += 4;
+  packetsReceived++;
+#endif
+
+  // unpack header and get message
+  void* buf = headerBuffer;
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
+
+  //printError("Code is %02x",code);
+//  if (len > MaxPacketLen)
+ //   return -1;
+
+  if (len > 0)
+  {
+    // no more max packet len, our buffer is dynamic
+    char *tmpBuffer = (char*) malloc(len);
+    rlen = recv(fd, tmpBuffer, int(len), 0);
+    if (!rlen)
+    {
+      // Socket shutdown Server side
+      free(tmpBuffer);
+      return -2;
+    }
+    msg.add(tmpBuffer,rlen);
+    free(tmpBuffer);
+  } 
+  else
+    rlen = 0;
+
+
+#if defined(NETWORK_STATS)
+  if (rlen >= 0) bytesReceived += rlen;
+#endif
+  if (rlen == int(len))
+    goto success;	// got whole thing
+
+  // keep reading until we get the whole message
+  tlen = rlen;
+  while (rlen >= 1 && tlen < int(len))
+  {
+    FD_ZERO(&read_set);
+    FD_SET((unsigned int)fd, &read_set);
+    nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
+    if (nfound == 0)
+      continue;
+
+    if (nfound < 0)
+      return -1;
+
+    char *tmpBuffer = (char*)malloc(int(len) - tlen);
+
+    rlen = recv(fd, tmpBuffer, int(len) - tlen, 0);
+    if (rlen > 0)
+    {
+      msg.add(tmpBuffer,rlen);
+      free(tmpBuffer);
+      tlen += rlen;
+    }
+    else if (rlen == 0)
+    {
+      // Socket shutdown Server side
+      free(tmpBuffer);
+      return -2;
+    }
+
+#if defined(NETWORK_STATS)
+    if (rlen >= 0)
+      bytesReceived += rlen;
+#endif
+  }
+  if (tlen < int(len))
+    return -1;
+
+success:
+  // FIXME -- packet recording
+  if (packetStream)
+  {
+    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
+    fwrite(&dt, sizeof(dt), 1, packetStream);
+    fwrite(headerBuffer, 4, 1, packetStream);
+    fwrite(msg.data(), len, 1, packetStream);
+  }
+  return 1;
+}
+
 void ServerLink::sendCaps(PlayerId _id,bool downloads, bool sounds )
 {
   if (state != Okay)
@@ -830,7 +1029,7 @@ void			ServerLink::sendBeginShot(const FiringInfo& info)
 }
 
 void			ServerLink::sendEndShot(const PlayerId& source,
-							int shotId, int reason)
+						int shotId, int reason)
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
@@ -905,10 +1104,10 @@ void			ServerLink::sendPaused(bool paused)
 
 void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
 {
-	char msg[2];
-	void* buf = msg;
-	buf = nboPackUByte(buf, tag);
-	send(MsgWhatTimeIsIt, 1, msg);
+  char msg[2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, tag);
+  send(MsgWhatTimeIsIt, 1, msg);
 }
 
 void ServerLink::sendNewPlayer()
@@ -926,7 +1125,7 @@ void ServerLink::sendExit()
 }
 
 void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
-			      const float *pos)
+			     const float *pos)
 {
   char msg[14];
 
@@ -1045,6 +1244,53 @@ void			ServerLink::confirmIncomingUDP()
   if (debugLevel >= 1)
     printError("Got server's UDP packet back, server using UDP");
   send(MsgUDPLinkEstablished, 0, NULL);
+}
+
+
+ServerMessageBuffer::ServerMessageBuffer()
+{
+  messageData = NULL;
+  messageSize = 0;
+  bufferSize = 0;
+}
+
+ServerMessageBuffer::ServerMessageBuffer( const ServerMessageBuffer &msg )
+{
+  messageSize = msg.messageSize;
+  bufferSize = msg.bufferSize;
+  messageData = (char*) malloc(bufferSize);
+  memcpy(messageData,msg.messageData,messageSize);
+}
+
+ServerMessageBuffer::~ServerMessageBuffer()
+{
+  if (messageData)
+    free (messageData);
+}
+
+void ServerMessageBuffer::clear ( void )
+{
+  messageSize = 0;
+}
+
+void ServerMessageBuffer::add ( char *d, size_t s)
+{
+  if (s + messageSize > bufferSize )
+    messageData = (char*)realloc(messageData,s+messageSize);
+
+  memcpy(messageData+messageSize,d,s);
+  messageSize += s;
+  bufferSize = messageSize;
+}
+
+char* ServerMessageBuffer::data ( void )
+{
+  return messageData;
+}
+
+size_t ServerMessageBuffer::size ( void )
+{
+  return messageSize;
 }
 
 
