@@ -293,10 +293,11 @@ void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason 
     playerData->playerHandler->playerRejected ( (bz_eRejectCodes)code,reason );
   else
   {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, code);
-    buf = nboPackString(buf, reason, strlen(reason) + 1);
-    directMessage(playerID, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
+    NetMsg msg = MSGMGR.newMessage();
+
+    msg->packUShort(code);
+    msg->packString(reason, strlen(reason) + 1);
+    msg->send(playerData->netHandler,MsgReject);
   }
 }
 
