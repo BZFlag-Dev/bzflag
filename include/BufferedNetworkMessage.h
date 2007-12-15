@@ -48,6 +48,7 @@ public:
     void clear ( void );
 
     size_t size ( void );
+    char * buffer ( void ) {return data;}
 
 protected:
   friend class BufferedNetworkMessageManager;
