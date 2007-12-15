@@ -61,7 +61,6 @@ void sendFlagUpdateMessage ( int playerID )
   if (!playerData)
     return;
 
-  int result;
   int cnt = 0;
 
   std::vector<bz_FlagUpdateRecord*> flagRecordList;
@@ -639,11 +638,12 @@ int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
   if (!otherData->player.isPlaying())
     return 0;
 
-  void *bufStart = getDirectMessageBuffer();
-  void *buf      = otherData->packPlayerUpdate(bufStart);
+  NetMsg msg = MSGMGR.newMessage();
 
-  return directMessage(handler, MsgAddPlayer,
-    (char*)buf - (char*)bufStart, bufStart);
+  otherData->packPlayerUpdate(msg);
+
+  msg->send(handler,MsgAddPlayer);
+  return (int)msg->size();
 }
 
 int sendTeamUpdateDirect(NetHandler *handler)

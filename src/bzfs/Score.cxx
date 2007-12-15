@@ -70,6 +70,12 @@ void *Score::pack(void *buf) const {
   return buf;
 }
 
+void Score::pack(BufferedNetworkMessage *msg) const {
+  msg->packUShort(wins);
+  msg->packUShort(losses);
+  msg->packUShort(tks);
+}
+
 void Score::setTeamKillRatio(int _tkKickRatio) {
   tkKickRatio = (float)_tkKickRatio;
 }

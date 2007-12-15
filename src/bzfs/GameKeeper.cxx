@@ -229,6 +229,14 @@ void *GameKeeper::Player::packPlayerUpdate(void *buf)
   return buf;
 }
 
+void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
+{
+  msg->packUByte(playerIndex);
+  player.packUpdate(msg);
+  score.pack(msg);
+  player.packId(msg);
+}
+
 void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
 {
 	msg.playerID = playerIndex;

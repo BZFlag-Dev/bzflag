@@ -41,6 +41,7 @@
 #include "Authentication.h"
 #include "messages.h"
 #include "ShotUpdate.h"
+#include "BufferedNetworkMessage.h"
 
 
 struct FiringInfo;
@@ -102,8 +103,9 @@ public:
     void	  *packAdminInfo(void *buf);
     void	  *packPlayerInfo(void *buf);
     void	  *packPlayerUpdate(void *buf);
+    void	  packPlayerUpdate(BufferedNetworkMessage *msg);
 
-    void		setPlayerAddMessage ( PlayerAddMessage &msg );
+    void	  setPlayerAddMessage ( PlayerAddMessage &msg );
 
     void	   signingOn(bool ctf);
     void	   close();

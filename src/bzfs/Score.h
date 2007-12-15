@@ -15,7 +15,7 @@
 
 // bzflag common header
 #include "common.h"
-
+#include "BufferedNetworkMessage.h"
 
 class Score {
 public:
@@ -32,6 +32,7 @@ public:
   void  killedBy();
   void  kill();
   void *pack(void *buf) const;
+  void pack(BufferedNetworkMessage *msg) const;
 
   bool  reached() const {
     return wins - losses >= score;

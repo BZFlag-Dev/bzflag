@@ -431,7 +431,7 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgGMUpdate:
     case MsgLagPing:
     case MsgGameTime:
-	case MsgWhatTimeIsIt:
+    case MsgWhatTimeIsIt:
       useUDP = true;
 	  break;
     }

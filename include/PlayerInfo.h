@@ -29,6 +29,7 @@
 #include "Protocol.h"
 #include "Flag.h"
 #include "WordFilter.h"
+#include "BufferedNetworkMessage.h"
 
 
 enum ClientState {
@@ -88,7 +89,9 @@ public:
   bool	isHuman() const;
   bool  isChat() const;
   void  *packUpdate(void *buf);
+  void  packUpdate(BufferedNetworkMessage *msg);
   void  *packId(void *buf);
+  void  packId(BufferedNetworkMessage *msg);
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getEMail() const;

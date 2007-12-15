@@ -97,10 +97,22 @@ void *PlayerInfo::packUpdate(void *buf) {
   return buf;
 }
 
+void PlayerInfo::packUpdate(BufferedNetworkMessage *msg) 
+{
+  msg->packUShort(uint16_t(type));
+  msg->packUShort(uint16_t(team));
+}
+
 void *PlayerInfo::packId(void *buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
   buf = nboPackString(buf, email, EmailLen);
   return buf;
+}
+
+void PlayerInfo::packId(BufferedNetworkMessage *msg)
+{
+  msg->packString(callSign, CallSignLen);
+  msg->packString(email, EmailLen);
 }
 
 void PlayerInfo::setCallsign(const char *text)
