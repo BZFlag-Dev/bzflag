@@ -607,11 +607,11 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 
 void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, player);
-  buf = nboPackShort(buf, id);
-  buf = nboPackUShort(buf, reason);
-  relayMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(player);
+  msg->packShort(id);
+  msg->packUShort(reason);
+  msg->broadcast(MsgShotEnd);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
