@@ -786,19 +786,18 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerID);
-  buf = nboPackUByte(buf, allow);
-  directMessage(recipID, MsgAllow, (char*)buf - (char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerID);
+  msg->packUByte(allow);
+  msg->send(recipID, MsgAllow);
 }
 
 void sendMessageAllow ( int playerID, unsigned char allow )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerID);
-  buf = nboPackUByte(buf, allow);
-  broadcastMessage(MsgAllow, (char*)buf - (char*)bufStart, bufStart);
-
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerID);
+  msg->packUByte(allow);
+  msg->broadcast(MsgAllow);
   // Please note that non-network players do not currently receive the message.
 }
 
