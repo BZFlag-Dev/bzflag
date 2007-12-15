@@ -1028,11 +1028,9 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
 
   if (!p->playerHandler)
   {
-    void *bufStart;
-    void *buf2 = bufStart = getDirectMessageBuffer();
-    buf2 = nboPackUByte(buf2,t);
-
-    directMessage(player, MsgAllowSpawn, (char*)buf2 - (char*)bufStart, bufStart);
+    NetMsg msg = MSGMGR.newMessage();
+    msg->packUByte(t);
+    msg->send(player, MsgAllowSpawn);
   }
   else
     p->playerHandler->allowSpawn(canSpawn);
