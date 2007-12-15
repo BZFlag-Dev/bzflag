@@ -872,17 +872,18 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv)
 {
   // send MsgKilled
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, victimIndex);
-  buf = nboPackUByte(buf, killerIndex);
-  buf = nboPackShort(buf, reason);
-  buf = nboPackShort(buf, shotIndex);
-  buf = flagType->pack(buf);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(victimIndex);
+  msg->packUByte(killerIndex);
+  msg->packShort(reason);
+  msg->packShort(shotIndex);
+  flagType->pack(msg);
 
   if (reason == PhysicsDriverDeath)
-    buf = nboPackInt(buf, phydrv);
+    msg->packInt(phydrv);
 
-  broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+  msg->broadcast(MsgKilled);
 
   for (int i = 0; i < curMaxPlayers; i++)
   {
