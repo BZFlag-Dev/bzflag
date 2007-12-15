@@ -740,48 +740,62 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 
   if (recordOnly || (destPlayerData && !destPlayerData->playerHandler)
     || broadcast || toGroup) {
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, sourcePlayer);
-      buf = nboPackUByte(buf, destPlayer);
-      buf = nboPackString(buf, localtext, len);
+      NetMsg msg = MSGMGR.newMessage();
 
-      ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
+      msg->packUByte(sourcePlayer);
+      msg->packUByte(destPlayer);
+      msg->packString(localtext, len);
+      msg->packUByte(0);
 
-      if (recordOnly) {
-	Record::addPacket(MsgMessage, len+2, bufStart, HiddenPacket);
-      } else {
-	if (!broadcast && !toGroup) {
+      if (recordOnly) 
+      {
+	Record::addPacket(MsgMessage, (int)msg->size(), msg->buffer(), HiddenPacket);
+      }
+      else
+      {
+	if (!broadcast && !toGroup)
+	{
 	  if (sourcePlayer != destPlayer)
-	    directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
-	  directMessage(destPlayer, MsgMessage, (len + 2), bufStart);
-	} else {
-	  if (broadcast) {
-	    broadcastMessage(MsgMessage, (len + 2), bufStart);
+	    MSGMGR.newMessage(msg)->send(sourcePlayer,MsgMessage);
+	  
+	  msg->send(destPlayer,MsgMessage);
+	}
+	else 
+	{
+	  if (broadcast)
+	  {
+	    msg->broadcast(MsgMessage);
 
 	    // now do everyone who isn't a net player
-	    for (int i = 0; i < curMaxPlayers; i++) {
+	    for (int i = 0; i < curMaxPlayers; i++)
+	    {
 	      GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-	      if (otherData && otherData->playerHandler) {
+	      if (otherData && otherData->playerHandler)
 		otherData->playerHandler->textMessage(destPlayer, sourcePlayer, localtext);
-	      }
 	    }
-	  } else {
-	    if (toGroup) {
-	      if (destPlayer == AdminPlayers) {
-		directMessage(sourcePlayer, MsgMessage, (len + 2), bufStart);
+	  }
+	  else
+	  {
+	    if (toGroup)
+	    {
+	      if (destPlayer == AdminPlayers)
+	      {
+		msg->send(sourcePlayer,MsgMessage);
 		std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
-		for (unsigned int i = 0; i < admins.size(); ++i) {
-		  if (admins[i] != sourcePlayer) {
-		    directMessage(admins[i], MsgMessage, (len + 2), bufStart);
-		  }
+		for (unsigned int i = 0; i < admins.size(); ++i)
+		{
+		  if (admins[i] != sourcePlayer) 
+		     MSGMGR.newMessage(msg)->send(admins[i],MsgMessage);
 		}
-	      } else { // to a team
+	      }
+	      else
+	      { // to a team
 		TeamColor destTeam = TeamColor(250 - destPlayer);	// FIXME this teamcolor <-> player id conversion is in several files now
-		for (int i = 0; i < curMaxPlayers; i++) {
+		for (int i = 0; i < curMaxPlayers; i++)
+		{
 		  GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		  if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam)) {
-		    directMessage(i, MsgMessage, (len + 2), bufStart);
-		  }
+		  if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam))
+		     MSGMGR.newMessage(msg)->send(i,MsgMessage);
 		}
 	      }
 	    }
@@ -793,11 +807,12 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 
 void sendMessageAlive ( int playerID, float pos[3], float rot )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerID);
-  buf = nboPackVector(buf, pos);
-  buf = nboPackFloat(buf, rot);
-  broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(playerID);
+  msg->packVector(pos);
+  msg->packFloat(rot);
+  msg->broadcast(MsgAlive);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
