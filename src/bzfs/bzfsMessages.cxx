@@ -999,22 +999,21 @@ void sendMsgTimeUpdate( int timeLimit )
 
 void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player )
 {
-  bool broadcast = player == AllPlayers;
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUInt(object);
+  msg->packUByte(tang);
 
-  void *bufStart;
-  void *buf2 = bufStart = getDirectMessageBuffer();
-  buf2 = nboPackUInt(bufStart,object);
-  buf2 = nboPackUByte(buf2,tang);
-
-  if (broadcast)
-    broadcastMessage(MsgTangibilityUpdate, (char*)buf2 - (char*)bufStart, bufStart,false);
+  if (player == AllPlayers)
+    msg->broadcast(MsgTangibilityUpdate);
   else
-    directMessage(player, MsgTangibilityUpdate, (char*)buf2 - (char*)bufStart, bufStart);
+    msg->send(player, MsgTangibilityUpdate);
 }
 
 void sendMsgTanagabilityReset ( void )
 {
-  broadcastMessage(MsgTangibilityReset, 0, NULL,false);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(0);
+  msg->broadcast(MsgTangibilityReset);
 }
 
 void sendMsgCanSpawn ( int player, bool canSpawn )
