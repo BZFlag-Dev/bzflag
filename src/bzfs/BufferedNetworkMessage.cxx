@@ -175,9 +175,13 @@ void BufferedNetworkMessage::checkData ( size_t s )
 
 
 //BufferedNetworkMessageManager
-BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( void )
+BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage* msgToCopy )
 {
-  BufferedNetworkMessage *msg = new BufferedNetworkMessage;
+  BufferedNetworkMessage *msg = NULL;
+  if (msgToCopy)
+    msg = new BufferedNetworkMessage(*msgToCopy);
+  else
+    msg = new BufferedNetworkMessage;
   messages.push_back(msg);
   return msg;
 }

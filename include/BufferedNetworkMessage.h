@@ -67,7 +67,7 @@ protected:
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
 {
 public:
-  BufferedNetworkMessage  *newMessage ( void );
+  BufferedNetworkMessage  *newMessage ( BufferedNetworkMessage *msgToCopy = NULL );
 
   void sendPendingMessages ( void );
 
