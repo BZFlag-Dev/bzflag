@@ -357,20 +357,33 @@ void sendHandicapInfoUpdate(int playerID)
       int numHandicaps = 0;
 
       // Send handicap for all players
-      void *bufStart = getDirectMessageBuffer();
-      void *buf      = nboPackUByte(bufStart, numHandicaps);
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (i != playerID) {
+      NetMsg msg = MSGMGR.newMessage();
+
+      for (int i = 0; i < curMaxPlayers; i++)
+      {
+	if (i != playerID)
+	{
 	  otherData = GameKeeper::Player::getPlayerByIndex(i);
-	  if (otherData) {
+	  if (otherData)
 	    numHandicaps++;
-	    buf = nboPackUByte(buf, i);
-	    buf = nboPackShort(buf, otherData->score.getHandicap());
+	}
+      }
+
+      msg->packUByte(numHandicaps);
+
+      for (int i = 0; i < curMaxPlayers; i++)
+      {
+	if (i != playerID)
+	{
+	  otherData = GameKeeper::Player::getPlayerByIndex(i);
+	  if (otherData)
+	  {
+	    msg->packUByte(i);
+	    msg->packShort(otherData->score.getHandicap());
 	  }
 	}
       }
-      nboPackUByte(bufStart, numHandicaps);
-      broadcastMessage(MsgHandicap, (char*)buf - (char*)bufStart, bufStart);
+      msg->broadcast(MsgHandicap);
     }
   }
 }
