@@ -624,12 +624,11 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 
 void sendMsgTeleport( int player, unsigned short from, unsigned short to )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, player);
-  buf = nboPackUShort(buf, from);
-  buf = nboPackUShort(buf, to);
-
-  broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart, false);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(player);
+  msg->packUShort(from);
+  msg->packUShort(to);
+  msg->broadcast(MsgTeleport);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
@@ -642,11 +641,10 @@ void sendMsgTeleport( int player, unsigned short from, unsigned short to )
 
 void sendMsgAutoPilot( int player, unsigned char autopilot )
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, player);
-  buf = nboPackUByte(buf, autopilot);
-
-  broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte( player);
+  msg->packUByte( autopilot);
+  msg->broadcast(MsgAutoPilot);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
@@ -692,7 +690,6 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
   // send another small chunk of the world database
   assert((world != NULL) && (worldDatabase != NULL));
 
-  void *buf, *bufStart = getDirectMessageBuffer();
   uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
   uint32_t left = worldDatabaseSize - ptr;
 
@@ -706,9 +703,11 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
     size = worldDatabaseSize - ptr;
     left = 0;
   }
-  buf = nboPackUInt(bufStart, uint32_t(left));
-  buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(handler, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUInt( uint32_t(left));
+  msg->packString((char*)worldDatabase + ptr, size);
+  msg->send(handler, MsgGetWorld);
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
