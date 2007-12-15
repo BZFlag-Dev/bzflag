@@ -50,6 +50,13 @@ void*			Team::pack(void* buf) const
   return buf;
 }
 
+void			Team::pack(BufferedNetworkMessage *msg) const
+{
+  msg->packUShort(uint16_t(size));
+  msg->packUShort(uint16_t(won));
+  msg->packUShort(uint16_t(lost));
+}
+
 void*			Team::unpack(void* buf)
 {
   uint16_t inSize, inWon, inLost;

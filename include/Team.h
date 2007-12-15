@@ -22,6 +22,8 @@
 #include "global.h"
 #include <string>
 
+#include "BufferedNetworkMessage.h"
+
 const int		TeamPLen = 10;
 
 struct Team {
@@ -29,6 +31,7 @@ struct Team {
     Team();
 
     void*		pack(void*) const;
+    void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
 
     static const std::string  getImagePrefix(TeamColor); // const

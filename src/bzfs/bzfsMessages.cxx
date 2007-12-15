@@ -649,16 +649,16 @@ int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 int sendTeamUpdateDirect(NetHandler *handler)
 {
   // send all teams
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, CtfTeams);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(CtfTeams);
 
   for (int t = 0; t < CtfTeams; t++)
   {
-    buf = nboPackUShort(buf, t);
-    buf = team[t].team.pack(buf);
+    msg->packUShort(t);
+    team[t].team.pack(msg);
   }
-  return directMessage(handler, MsgTeamUpdate,
-    (char*)buf - (char*)bufStart, bufStart);
+  msg->send(handler,MsgTeamUpdate);
+  return (int)msg->size();
 }
 
 void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
