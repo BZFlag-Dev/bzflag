@@ -64,7 +64,6 @@ static float clampedValue(float input, float max)
   }
 }
 
-
 void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
 {
 	if (increment)
@@ -147,6 +146,90 @@ void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
   }
 
   return buf;
+}
+
+
+
+void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment)
+{
+  if (increment)
+    order++;
+
+  msg->packInt(int32_t(order));
+  msg->packShort(int16_t(status));
+
+  if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
+      (fabsf (pos[0]) >= smallMaxDist)      ||
+      (fabsf (pos[1]) >= smallMaxDist)      ||
+      (fabsf (pos[2]) >= smallMaxDist)      ||
+      (fabsf (velocity[0]) >= smallMaxVel)  ||
+      (fabsf (velocity[1]) >= smallMaxVel)  ||
+      (fabsf (velocity[2]) >= smallMaxVel)  ||
+      (fabsf (angVel) >= smallMaxAngVel)) {
+
+    code = MsgPlayerUpdate;
+
+    msg->packVector(pos);
+    msg->packVector(velocity);
+    msg->packFloat(azimuth);
+    msg->packFloat(angVel);
+  }
+  else {
+
+    code = MsgPlayerUpdateSmall;
+
+    int16_t posShort[3], velShort[3], aziShort, angVelShort;
+
+    for (int i=0; i<3; i++) {
+      posShort[i] = (int16_t) ((pos[i] * smallScale) / smallMaxDist);
+      velShort[i] = (int16_t) ((velocity[i] * smallScale) / smallMaxVel);
+    }
+
+    // put the angle between -M_PI and +M_PI
+    float angle = fmodf (azimuth, (float)M_PI * 2.0f);
+    if (angle > M_PI) {
+      angle -= (float)(M_PI * 2.0);
+    }
+    else if (angle < -M_PI) {
+      angle += (float)(M_PI * 2.0);
+    }
+    aziShort = (int16_t) ((angle * smallScale) / M_PI);
+    angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
+
+    msg->packShort(posShort[0]);
+    msg->packShort(posShort[1]);
+    msg->packShort(posShort[2]);
+    msg->packShort(velShort[0]);
+    msg->packShort(velShort[1]);
+    msg->packShort(velShort[2]);
+    msg->packShort(aziShort);
+    msg->packShort(angVelShort);
+  }
+
+  if ((status & JumpJets) != 0) {
+    float tmp = clampedValue(jumpJetsScale, 1.0f);
+    msg->packShort((int16_t) (tmp * smallScale));
+  }
+
+  if ((status & OnDriver) != 0) {
+    msg->packInt(phydrv);
+  }
+
+  if ((status & UserInputs) != 0) {
+    float tmp;
+    // pack userSpeed
+    tmp = clampedValue(userSpeed, smallMaxVel);
+    int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
+    msg->packShort(speed);
+    // pack userAngVel
+    tmp = clampedValue(userAngVel, smallMaxAngVel);
+    int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
+    msg->packShort(angvel);
+  }
+
+  if ((status & PlaySound) != 0) {
+    msg->packUByte(sounds);
+  }
 }
 
 

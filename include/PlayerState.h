@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include "Address.h"
+#include "BufferedNetworkMessage.h"
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
@@ -63,6 +64,7 @@ class PlayerState
 
     PlayerState();
     void*	pack(void*, uint16_t& code, bool increment = true);
+    void	pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment = true);
     void*	unpack(void*, uint16_t code);
 
     long	order;		// packet ordering

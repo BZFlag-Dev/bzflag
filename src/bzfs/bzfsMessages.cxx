@@ -847,15 +847,14 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   // pack up the data and send it to the net players
   uint16_t len = PlayerUpdatePLenMax;	// this len is dumb, it shoudl be the REAl len of the packet
   uint16_t code = shortState ? MsgPlayerUpdateSmall : MsgPlayerUpdate;
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = bufStart;
-  setGeneralMessageInfo(&buf,code,len);
-  buf = nboPackUByte(buf, playerData->getIndex());
-  buf = nboPackFloat(buf, playerData->stateTimeStamp);
-  buf = playerData->lastState.pack(buf,code,false);	// don't increment the order cus this is just a relay
 
-  // send the packet to everyone else who is playing and NOT a server side bot
-  relayPlayerPacket(playerData->getIndex(), len, bufStart, code);
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(playerData->getIndex());
+  msg->packFloat(playerData->stateTimeStamp);
+  playerData->lastState.pack(msg,code,false);	// don't increment the order cus this is just a relay
+
+  msg->broadcast(code);
 
   // bots need love too
   bz_PlayerUpdateState	apiState;
