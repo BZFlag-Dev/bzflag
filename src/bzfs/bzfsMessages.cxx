@@ -947,11 +947,11 @@ void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
 void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 {
   // send MsgCaptureFlag
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, uint16_t(flagIndex));
-  buf = nboPackUShort(buf, uint16_t(teamCaptured));
-  broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart,false);
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(playerIndex);
+  msg->packUShort(uint16_t(flagIndex));
+  msg->packUShort(uint16_t(teamCaptured));
+  msg->broadcast(MsgCaptureFlag);
 
   for (int i = 0; i < curMaxPlayers; i++)
   {
