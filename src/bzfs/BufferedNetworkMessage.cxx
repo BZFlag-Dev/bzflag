@@ -31,6 +31,7 @@ BufferedNetworkMessage::BufferedNetworkMessage()
 
   code = 0;
   recipent = NULL;
+  toAdmins = false;
 }
 
 BufferedNetworkMessage::BufferedNetworkMessage( const BufferedNetworkMessage &msg )
@@ -41,6 +42,7 @@ BufferedNetworkMessage::BufferedNetworkMessage( const BufferedNetworkMessage &ms
   memcpy(data,msg.data,dataSize);
   code = msg.code;
   recipent = msg.recipent;
+  toAdmins = msg.toAdmins;
 }
 
 BufferedNetworkMessage::~BufferedNetworkMessage()
@@ -61,79 +63,80 @@ void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
   code = messageCode;
 }
 
-void BufferedNetworkMessage::broadcast ( uint16_t messageCode )
+void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
 {
   recipent = NULL;
   code = messageCode;
+  toAdmins = toAdminClients;
 }
 
 void BufferedNetworkMessage::packUByte( uint8_t val )
 {
   checkData(sizeof(uint8_t));
-  nboPackUByte(data+packedSize,val);
+  nboPackUByte(getWriteBuffer(),val);
   packedSize += sizeof(uint8_t);
 }
 
 void BufferedNetworkMessage::packShort( int16_t val )
 {
   checkData(sizeof(int16_t));
-  nboPackShort(data+packedSize,val);
+  nboPackShort(getWriteBuffer(),val);
   packedSize += sizeof(int16_t);
 }
 
 void BufferedNetworkMessage::packInt( int32_t val )
 {
   checkData(sizeof(int32_t));
-  nboPackInt(data+packedSize,val);
+  nboPackInt(getWriteBuffer(),val);
   packedSize += sizeof(int32_t);
 }
 
 void BufferedNetworkMessage::packUShort( uint16_t val )
 {
   checkData(sizeof(uint16_t));
-  nboPackUShort(data+packedSize,val);
+  nboPackUShort(getWriteBuffer(),val);
   packedSize += sizeof(uint16_t);
 }
 
 void BufferedNetworkMessage::packUInt( uint32_t val )
 {
   checkData(sizeof(uint32_t));
-  nboPackUInt(data+packedSize,val);
+  nboPackUInt(getWriteBuffer(),val);
   packedSize += sizeof(uint32_t);
 }
 
 void BufferedNetworkMessage::packFloat( float val )
 {
   checkData(sizeof(float));
-  nboPackFloat(data+packedSize,val);
+  nboPackFloat(getWriteBuffer(),val);
   packedSize += sizeof(float);
 }
 
 void BufferedNetworkMessage::packVector( const float* val )
 {
   checkData(sizeof(float)*3);
-  nboPackVector(data+packedSize,val);
+  nboPackVector(getWriteBuffer(),val);
   packedSize += sizeof(float)*3;
 }
 
 void BufferedNetworkMessage::packString( const char* val, int len )
 {
   checkData(len);
-  nboPackString(data+packedSize,val,len);
+  nboPackString(getWriteBuffer(),val,len);
   packedSize += len;
 }
 
 void BufferedNetworkMessage::packStdString( const std::string& str )
 {
   checkData(str.size()+sizeof(uint32_t));
-  nboPackStdString(data+packedSize,str);
+  nboPackStdString(getWriteBuffer(),str);
   packedSize += str.size()+sizeof(uint32_t);
 }
 
 void BufferedNetworkMessage::addPackedData ( const char* d, size_t s )
 {
   checkData(s);
-  memcpy(data+packedSize,d,s);
+  memcpy(getWriteBuffer(),d,s);
   packedSize += s;
 }
 
@@ -159,10 +162,23 @@ bool BufferedNetworkMessage::process ( void )
   if (!recipent && code == 0)
     return false;
 
+  nboPackUShort(data, uint16_t(packedSize));
+  nboPackUShort(data+sizeof(uint16_t), code);
+
   if (recipent)
-    return directMessage(recipent, code, (int)packedSize, data) == (int)packedSize;
+  {
+    return bz_pwrite(recipent, data, packedSize + 4) == packedSize+4;
+  }
    
-  broadcastMessage(code, (int)packedSize, data);
+  // send message to everyone
+  int mask = NetHandler::clientBZFlag;
+  if (toAdmins)
+    mask |= NetHandler::clientBZAdmin;
+  pwriteBroadcast(data, packedSize + 4, mask);
+
+  // record the packet
+  if (Record::enabled())
+    Record::addPacket(code, packedSize, data+4);
 
   return true;
 }
@@ -170,7 +186,15 @@ bool BufferedNetworkMessage::process ( void )
 void BufferedNetworkMessage::checkData ( size_t s )
 {
   if ( packedSize + s > dataSize )
-    data = reinterpret_cast<char*>(realloc(data, dataSize + ((int)ceil(s / 256.0f)) * 256));
+    data = reinterpret_cast<char*>(realloc(data, dataSize + ((int)ceil((s+4) / 256.0f)) * 256));
+}
+
+char* BufferedNetworkMessage::getWriteBuffer ( void )
+{
+  if (!data)
+    return NULL;
+
+  return data + 4 + packedSize;
 }
 
 

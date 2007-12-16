@@ -20,7 +20,7 @@
 #define	BZF_GAME_TIME_H
 
 #include "common.h"
-
+#include "BufferedNetworkMessage.h"
 
 namespace GameTime {
   void reset();
@@ -31,6 +31,7 @@ namespace GameTime {
 
   int packSize();
   void* pack(void *, float lag);
+  void pack(BufferedNetworkMessage *msg, float lag);
   void* unpack(void *);
 
   const float startRate = 1.0f;

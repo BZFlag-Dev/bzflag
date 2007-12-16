@@ -122,7 +122,7 @@ void sendFlagUpdateMessage(FlagInfo &flag)
   bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
   flag.pack(msg, hide);
 
-  msg->broadcast(MsgFlagUpdate);
+  msg->broadcast(MsgFlagUpdate,false);
 }
 
 void sendExistingPlayerUpdates ( int newPlayer )
@@ -232,7 +232,7 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     team[teamIndex2].team.pack(msg);
   }
 
-  msg->broadcast(MsgTeamUpdate);
+  msg->broadcast(MsgTeamUpdate,false);
 
   bz_TeamInfoRecord	**teams = NULL;
 
@@ -639,7 +639,7 @@ void sendMsgTeleport( int player, unsigned short from, unsigned short to )
   msg->packUByte(player);
   msg->packUShort(from);
   msg->packUShort(to);
-  msg->broadcast(MsgTeleport);
+  msg->broadcast(MsgTeleport,false);
 
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++)
@@ -962,7 +962,7 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
   msg->packUByte(playerIndex);
   msg->packUShort(uint16_t(flagIndex));
   msg->packUShort(uint16_t(teamCaptured));
-  msg->broadcast(MsgCaptureFlag);
+  msg->broadcast(MsgCaptureFlag,false);
 
   for (int i = 0; i < curMaxPlayers; i++)
   {
@@ -1015,7 +1015,7 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
   msg->packUByte(tang);
 
   if (player == AllPlayers)
-    msg->broadcast(MsgTangibilityUpdate);
+    msg->broadcast(MsgTangibilityUpdate,false);
   else
     msg->send(player, MsgTangibilityUpdate);
 }
@@ -1024,7 +1024,7 @@ void sendMsgTanagabilityReset ( void )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(0);
-  msg->broadcast(MsgTangibilityReset);
+  msg->broadcast(MsgTangibilityReset,false);
 }
 
 void sendMsgCanSpawn ( int player, bool canSpawn )
@@ -1133,23 +1133,6 @@ void PackVars::sendPackVars(const std::string &key)
   count++;
 }
 
-// net utils
-void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty)
-{
-  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-  void *buf = nboPackUShort(bufStart, uint16_t(len));
-  nboPackUShort(buf, code);
-
-  // send message to everyone
-  int mask = NetHandler::clientBZFlag;
-  if (alsoTty)
-    mask |= NetHandler::clientBZAdmin;
-  pwriteBroadcast(bufStart, len + 4, mask);
-
-  // record the packet
-  if (Record::enabled())
-    Record::addPacket(code, len, msg);
-}
 
 //utils
 bool isUDPAttackMessage ( uint16_t &code )

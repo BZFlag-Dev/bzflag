@@ -236,6 +236,21 @@ void* GameTime::pack(void *buf, float lag)
   return buf;
 }
 
+void GameTime::pack(BufferedNetworkMessage *msg, float lag)
+{
+  double halfLag;
+  if ((lag <= 0.0f) || (lag > 10.0f)) {
+    // assume a 150ms delay
+    halfLag = 0.075;
+  } else {
+    halfLag = (double)(lag * 0.5f);
+  }
+  const s64 nowTime = getRawTime() + (s64)(halfLag * 1.0e6);
+  msg->packUInt((u32)(nowTime >> 32));		// msb's
+  msg->packUInt((u32)(nowTime & 0xFFFFFFFF));	// lsb's
+}
+
+
 
 void* GameTime::unpack(void *buf)
 {

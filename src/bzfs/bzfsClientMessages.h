@@ -49,9 +49,6 @@ void cleanupDefaultHandlers ( void );
 // util functions
 bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);
 
-// using from bzfs
-extern int bz_pwrite(NetHandler *handler, const void *b, int l);
-extern void pwriteBroadcast(const void *b, int l, int mask);
 
 #endif //_BZFS_CLIENT_MESSAGES_H_
 

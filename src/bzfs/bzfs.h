@@ -93,7 +93,6 @@ extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  dropFlag(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
-extern void  directMessage( int playerIndex, uint16_t code, int len, const void *msg );
 extern int   directMessage( NetHandler *handler, uint16_t code, int len, const void *msg );
 
 NetHandler *getPlayerNetHandler ( int playerIndex );
@@ -128,12 +127,15 @@ extern void pauseCountdown ( const char *pausedBy );
 extern void resumeCountdown ( const char *resumedBy );
 extern void resetTeamScores ( void );
 extern void startCountdown ( int delay, float limit, const char *buyWho );
-void relayMessage(uint16_t code, int len, const void *msg);
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
 void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int playerID = -1 );
 void zapFlag(FlagInfo &flag);
 void anointNewRabbit( int killerId = NoPlayer);
+
+extern int bz_pwrite(NetHandler *handler, const void *b, int l);
+extern void pwriteBroadcast(const void *b, int l, int mask);
+
 
 void lagKick(int playerIndex);
 void jitterKick(int playerIndex);

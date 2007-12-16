@@ -1295,11 +1295,12 @@ bool Replay::sendPackets()
 	  PlayerReplayState state = pi->getReplayState();
 	  // send the packets
 	  if (((p->mode == StatePacket) && (state == ReplayReceiving)) ||
-	      ((p->mode == RealPacket) && (state == ReplayStateful))) {
+	      ((p->mode == RealPacket) && (state == ReplayStateful)))
+	  {
 	    // the 4 bytes before p->data need to be allocated
-	    void *buf = getDirectMessageBuffer();
-	    memcpy(buf, p->data, p->len);
-	    directMessage(i, p->code, p->len, buf);
+	    NetMsg msg = MSGMGR.newMessage();
+	    msg->addPackedData(p->data, p->len);
+	    msg->send(i, p->code);
 	  }
 	}
 
@@ -1778,34 +1779,38 @@ static bool saveGameTimeState()
 static bool resetStates()
 {
   int i;
-  void *buf, *bufStart = getDirectMessageBuffer();
+
+  NetMsg msg = MSGMGR.newMessage();
 
   // reset team scores
-  buf = nboPackUByte(bufStart, CtfTeams);
-  for (i = 0; i < CtfTeams; i++) {
-    buf = nboPackUShort(buf, i);
-    buf = team[i].team.pack(buf);
+  msg->packUByte(CtfTeams);
+  for (i = 0; i < CtfTeams; i++) 
+  {
+    msg->packUShort(i);
+    team[i].team.pack(msg);
   }
-  for (i = MaxPlayers; i < curMaxPlayers; i++) {
+
+  for (i = MaxPlayers; i < curMaxPlayers; i++)
+  {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer == NULL) {
+    if (gkPlayer == NULL) 
       continue;
-    }
-    if (gkPlayer->player.isPlaying()) {
-      directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
-    }
+
+    if (gkPlayer->player.isPlaying())
+      MSGMGR.newMessage(msg)->send(i, MsgTeamUpdate);
   }
 
   // reset players and flags using MsgReplayReset
-  buf = nboPackUByte(bufStart, MaxPlayers); // the last player to remove
-  for (i = MaxPlayers; i < curMaxPlayers; i++) {
+  msg = MSGMGR.newMessage();
+  msg->packUByte(MaxPlayers); // the last player to remove
+  for (i = MaxPlayers; i < curMaxPlayers; i++)
+  {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer == NULL) {
+    if (gkPlayer == NULL)
       continue;
-    }
-    if (gkPlayer->player.isPlaying()) {
-      directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
-    }
+
+    if (gkPlayer->player.isPlaying())
+      MSGMGR.newMessage(msg)->send(i, MsgReplayReset);
   }
 
   // reset the local view of the players' state

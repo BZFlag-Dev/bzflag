@@ -31,7 +31,7 @@ public:
 
     void send ( NetHandler *to, uint16_t messageCode );
     void send ( int to, uint16_t messageCode );
-    void broadcast ( uint16_t messageCode );
+    void broadcast ( uint16_t messageCode, bool toAdminClients = true );
 
     void packUByte( uint8_t val );
     void packShort( int16_t val );
@@ -48,11 +48,13 @@ public:
     void clear ( void );
 
     size_t size ( void );
-    char * buffer ( void ) {return data;}
+    char * buffer ( void ) {return data+4;}
 
 protected:
   friend class BufferedNetworkMessageManager;
   bool process ( void );
+
+  char* getWriteBuffer ( void );
 
   void checkData ( size_t s );
 
@@ -62,6 +64,7 @@ protected:
 
   uint16_t    code;
   NetHandler  *recipent;  // NULL if broadcast;
+  bool	      toAdmins;
 };
 
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>

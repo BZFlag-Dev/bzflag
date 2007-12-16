@@ -68,14 +68,10 @@ int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
 // net message utils
-void broadcastMessage(uint16_t code, int len, const void *msg, bool alsoTty = true);
 void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
-
-// using from bzfs
-extern void pwriteBroadcast(const void *b, int l, int mask);
 
 // utils
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
