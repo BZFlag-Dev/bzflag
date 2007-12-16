@@ -29,6 +29,7 @@
 #include "StateDatabase.h"
 #include "bzfsAPI.h"
 #include "bzfsMessages.h"
+#include "BufferedNetworkMessage.h"
 
 // bzfs specific headers
 #include "bzfs.h"
@@ -70,9 +71,6 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
 	lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
 	float dt)
 {
-
-    void *buf, *bufStart = getDirectMessageBuffer();
-
     FiringInfo firingInfo;
     firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
     firingInfo.flagType = type;
@@ -89,23 +87,21 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
 
     firingInfo.shot.team = RogueTeam;
 
-    buf = firingInfo.pack(bufStart);
+    NetMsg msg = MSGMGR.newMessage();
+    firingInfo.pack(msg);
 
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-	broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
-			 bufStart);
-    }
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
+	msg->broadcast(MsgShotBegin);
 
     // Target the gm.
     // construct and send packet
 
-    char packet[ShotUpdatePLen + PlayerIdPLen];
-    buf = (void*)packet;
-    buf = firingInfo.shot.pack(buf);
-    buf = nboPackUByte(buf, targetPlayerID);
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-	broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
-    }
+    msg = MSGMGR.newMessage();
+
+    firingInfo.shot.pack(msg);
+    msg->packUByte(targetPlayerID);
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
+      msg->broadcast(MsgGMUpdate);
 
     return shotID;
 }
