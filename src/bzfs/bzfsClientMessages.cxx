@@ -179,14 +179,15 @@ class WantWHashHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
-    void *obuf, *obufStart = getDirectMessageBuffer();
     if (clOptions->cacheURL.size() > 0)
     {
-      obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
-      directMessage(handler, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
+      NetMsg   msg = MSGMGR.newMessage();
+      msg->packString(clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
+      msg->send(handler, MsgCacheURL);
     }
-    obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
-    directMessage(handler, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
+    NetMsg   msg = MSGMGR.newMessage();
+    msg->packString(hexDigest, strlen(hexDigest)+1);
+    msg->send(handler, MsgWantWHash);
     return true;
   }
 };
@@ -199,33 +200,33 @@ public:
     // much like a ping packet but leave out useless stuff (like
     // the server address, which must already be known, and the
     // server version, which was already sent).
-    void *buffer, *bufStart = getDirectMessageBuffer();
-    buffer = nboPackUShort(bufStart, pingReply.gameType);
-    buffer = nboPackUShort(buffer, pingReply.gameOptions);
-    buffer = nboPackUShort(buffer, pingReply.maxPlayers);
-    buffer = nboPackUShort(buffer, pingReply.maxShots);
-    buffer = nboPackUShort(buffer, team[0].team.size);
-    buffer = nboPackUShort(buffer, team[1].team.size);
-    buffer = nboPackUShort(buffer, team[2].team.size);
-    buffer = nboPackUShort(buffer, team[3].team.size);
-    buffer = nboPackUShort(buffer, team[4].team.size);
-    buffer = nboPackUShort(buffer, team[5].team.size);
-    buffer = nboPackUShort(buffer, pingReply.rogueMax);
-    buffer = nboPackUShort(buffer, pingReply.redMax);
-    buffer = nboPackUShort(buffer, pingReply.greenMax);
-    buffer = nboPackUShort(buffer, pingReply.blueMax);
-    buffer = nboPackUShort(buffer, pingReply.purpleMax);
-    buffer = nboPackUShort(buffer, pingReply.observerMax);
-    buffer = nboPackUShort(buffer, pingReply.shakeWins);
+    NetMsg   msg = MSGMGR.newMessage();
+    msg->packUShort(pingReply.gameType);
+    msg->packUShort(pingReply.gameOptions);
+    msg->packUShort(pingReply.maxPlayers);
+    msg->packUShort(pingReply.maxShots);
+    msg->packUShort(team[0].team.size);
+    msg->packUShort(team[1].team.size);
+    msg->packUShort(team[2].team.size);
+    msg->packUShort(team[3].team.size);
+    msg->packUShort(team[4].team.size);
+    msg->packUShort(team[5].team.size);
+    msg->packUShort(pingReply.rogueMax);
+    msg->packUShort(pingReply.redMax);
+    msg->packUShort(pingReply.greenMax);
+    msg->packUShort(pingReply.blueMax);
+    msg->packUShort(pingReply.purpleMax);
+    msg->packUShort(pingReply.observerMax);
+    msg->packUShort(pingReply.shakeWins);
     // 1/10ths of second
-    buffer = nboPackUShort(buffer, pingReply.shakeTimeout);
-    buffer = nboPackUShort(buffer, pingReply.maxPlayerScore);
-    buffer = nboPackUShort(buffer, pingReply.maxTeamScore);
-    buffer = nboPackUShort(buffer, pingReply.maxTime);
-    buffer = nboPackUShort(buffer, (uint16_t)clOptions->timeElapsed);
+    msg->packUShort(pingReply.shakeTimeout);
+    msg->packUShort(pingReply.maxPlayerScore);
+    msg->packUShort(pingReply.maxTeamScore);
+    msg->packUShort(pingReply.maxTime);
+    msg->packUShort((uint16_t)clOptions->timeElapsed);
 
     // send it
-    directMessage(handler, MsgQueryGame, (char*)buffer-(char*)bufStart, bufStart);
+    msg->send(handler, MsgQueryGame);
 
     return true;
   }
@@ -240,12 +241,12 @@ public:
     int numPlayers = GameKeeper::Player::count();
 
     // first send number of teams and players being sent
-    void *buffer, *bufStart = getDirectMessageBuffer();
-    buffer = nboPackUShort(bufStart, NumTeams);
-    buffer = nboPackUShort(buffer, numPlayers);
+    NetMsg   msg = MSGMGR.newMessage();
 
-    if (directMessage(handler, MsgQueryPlayers,(char*)buffer-(char*)bufStart, bufStart) < 0)
-      return true;
+    msg->packUShort(NumTeams);
+    msg->packUShort(numPlayers);
+
+    msg->send(handler, MsgQueryPlayers);
 
     if (sendTeamUpdateDirect(handler) < 0)
       return true;
@@ -284,9 +285,10 @@ public:
     if (id == 0xff)
       return false;
 
-    void *buffer, *bufStart = getDirectMessageBuffer();
-    buffer = nboPackUByte(bufStart, id);
-    directMessage(handler, MsgNewPlayer, (char*)buffer - (char*)bufStart, bufStart);
+    NetMsg   msg = MSGMGR.newMessage();
+
+    msg->packUByte(id);
+    msg->send(handler, MsgNewPlayer);
 
     return true;
   }
