@@ -177,7 +177,7 @@ void LogDetail::process( bz_EventData *eventData )
 	listPlayers( part, joinPartData);
 	break;
       case bz_ePlayerAuthEvent:
-	bz_debugMessagef(0, "PLAYER-AUTH %d %s",
+	bz_debugMessagef(0, "PLAYER-AUTH %s %s",
 			 displayCallsign( authData->playerID ).c_str(),
 			 displayPlayerPrivs( authData->playerID ).c_str()),
 	listPlayers( join, joinPartData);
