@@ -44,6 +44,7 @@
 #include "bzfsPlugins.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
+#include "BufferedNetworkMessage.h"
 
 #include "ServerIntangibilityManager.h"
 
@@ -222,12 +223,12 @@ void broadcastPlayerScoreUpdate(int playerID)
   if(!player)
     return ;
 
-  void *buf,  *bufStart;
-  bufStart=getDirectMessageBuffer();
-  buf=nboPackUByte(bufStart, 1);
-  buf=nboPackUByte(buf, playerID);
-  buf=player->score.pack(buf);
-  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+  NetMsg   msg = MSGMGR.newMessage();
+
+  msg->packUByte(1);
+  msg->packUByte(playerID);
+  player->score.pack(msg);
+  msg->broadcast(MsgScore);
 }
 
 //******************************Versioning********************************************
@@ -1911,11 +1912,12 @@ BZF_API bool bz_sentFetchResMessage(int playerID, const char *URL)
   if(ext=="wav")
     resType=eSound;
 
-  void *buf,  *bufStart=getDirectMessageBuffer();
-  buf=nboPackUShort(bufStart, 1); // the count
-  buf=nboPackUShort(buf, (short)resType);
-  buf=nboPackUShort(buf, (unsigned short)strlen(URL));
-  buf=nboPackString(buf, URL, strlen(URL));
+  NetMsg   msg = MSGMGR.newMessage();
+
+  msg->packUShort(1); // the count
+  msg->packUShort((short)resType);
+  msg->packUShort((unsigned short)strlen(URL));
+  msg->packString(URL, strlen(URL));
 
   if(playerID==BZ_ALLUSERS)
   {
@@ -1923,14 +1925,14 @@ BZF_API bool bz_sentFetchResMessage(int playerID, const char *URL)
     {
       GameKeeper::Player *p=GameKeeper::Player::getPlayerByIndex(i);
       if(p && p->caps.canDownloadResources)
-	directMessage(i, MsgFetchResources, (char*)buf-(char*)bufStart, bufStart);
+	MSGMGR.newMessage(msg)->send(i, MsgFetchResources);
     }
   }
   else
   {
     GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
     if(player && player->caps.canDownloadResources)
-      directMessage(playerID, MsgFetchResources, (char*)buf-(char*)bufStart, bufStart);
+      MSGMGR.newMessage(msg)->send(playerID, MsgFetchResources);
   }
   return true;
 }
@@ -3349,10 +3351,11 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName)
   if(playerID==BZ_SERVER || !soundName)
     return false;
 
-  void *buf,  *bufStart=getDirectMessageBuffer();
-  buf=nboPackUShort(bufStart, LocalCustomSound);
-  buf=nboPackUShort(buf, (unsigned short)strlen(soundName));
-  buf=nboPackString(buf, soundName, strlen(soundName));
+  NetMsg   msg = MSGMGR.newMessage();
+
+  msg->packUShort(LocalCustomSound);
+  msg->packUShort((unsigned short)strlen(soundName));
+  msg->packString(soundName, strlen(soundName));
 
   if(playerID==BZ_ALLUSERS)
   {
@@ -3360,14 +3363,14 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName)
     {
       GameKeeper::Player *p=GameKeeper::Player::getPlayerByIndex(i);
       if(p && p->caps.canPlayRemoteSounds)
-	directMessage(i, MsgCustomSound, (char*)buf-(char*)bufStart, bufStart);
+	MSGMGR.newMessage(msg)->send(i, MsgCustomSound);
     }
   }
   else
   {
     GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
     if(player && player->caps.canPlayRemoteSounds)
-      directMessage(playerID, MsgCustomSound, (char*)buf-(char*)bufStart, bufStart);
+      MSGMGR.newMessage(msg)->send(playerID, MsgCustomSound);
   }
 
   return true;
@@ -4546,10 +4549,11 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
   /* notify existing players (if any) about the new flag type.
      this behavior is a bit questionable, but seems to be the Right Thing(tm) to do.
      new clients will get the notification during flag negotiation, which is better. */
-  char* buf = getDirectMessageBuffer();
-  char* bufStart = buf;
-  buf = (char*)tmp->packCustom(buf);
-  broadcastMessage(MsgFlagType, buf-bufStart, bufStart);
+
+  NetMsg   msg = MSGMGR.newMessage();
+
+  tmp->packCustom(msg);
+  msg->broadcast(MsgFlagType);
 
   return true;
 }
