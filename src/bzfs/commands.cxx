@@ -1076,12 +1076,14 @@ bool GameOverCommand::operator() (const char *,
     return true;
   }
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, t);
-  buf = nboPackUShort(buf, uint16_t(NoTeam));
-  broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+  NetMsg  msg = MSGMGR.newMessage();
+  msg->packUByte(t);
+  msg->packUShort(uint16_t(NoTeam));
+  msg->broadcast(MsgScoreOver);
+
   gameOver = true;
-  if (clOptions->timeManualStart) {
+  if (clOptions->timeManualStart)
+  {
     countdownActive = false;
     countdownPauseStart = TimeKeeper::getNullTime();
     clOptions->countdownPaused = false;
@@ -1480,13 +1482,15 @@ bool FlagCommand::operator() (const char *message,
       }
 
       // deal with the flag's current player (for forced gives)
-      if (fi->player >= 0) {
+      if (fi->player >= 0) 
+      {
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
-	if (fPlayer) {
-	  void *bufStart = getDirectMessageBuffer();
-	  void *buf = nboPackUByte(bufStart, fi->player);
-	  buf = fi->pack(buf);
-	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+	if (fPlayer)
+	{
+	  NetMsg msg = MSGMGR.newMessage();
+	  msg->packUByte(fi->player);
+	  fi->pack(msg);
+	  msg->broadcast(MsgDropFlag);
 	}
 	fPlayer->player.setFlag(-1);
       }
