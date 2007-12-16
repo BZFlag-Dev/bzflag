@@ -88,7 +88,6 @@ class NegotiateFlagHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
   {
-    void *bufStart;
     FlagTypeMap::iterator it;
     FlagSet::iterator m_it;
     FlagOptionMap hasFlag;
@@ -117,24 +116,30 @@ public:
     }
 
     /* Pack a message with the list of missing flags */
-    void *buf2 = bufStart = getDirectMessageBuffer();
+    NetMsg msg = MSGMGR.newMessage();
     for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
     {
-      if ((*m_it) != Flags::Null) {
-	if ((*m_it)->custom) {
+      if ((*m_it) != Flags::Null)
+      {
+	if ((*m_it)->custom) 
+	{
 	  // custom flag, tell the client about it
 	  static char cfbuffer[MaxPacketLen];
 	  char *cfbufStart = &cfbuffer[0] + 2 * sizeof(uint16_t);
 	  char *cfbuf = cfbufStart;
 	  cfbuf = (char*)(*m_it)->packCustom(cfbuf);
-	  directMessage(handler, MsgFlagType, cfbuf-cfbufStart, cfbufStart);
-	} else {
+	  NetMsg flagMsg = MSGMGR.newMessage();
+	  flagMsg->addPackedData(cfbufStart,cfbuf-cfbufStart);
+	  flagMsg->send(handler, MsgFlagType);
+	}
+	else
+	{
 	  // they should already know about this one, dump it back to them
-	  buf2 = (*m_it)->pack(buf2); 
+	  (*m_it)->pack(msg); 
 	}
       }
     }
-    directMessage(handler, MsgNegotiateFlags, (char*)buf2-(char*)bufStart, bufStart);
+    msg->send(handler, MsgNegotiateFlags);
     return true;
   }
 };
