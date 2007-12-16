@@ -41,8 +41,6 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    TeamColor teamColor, float *pos, float tilt, float dir,
 			    int shotID, float dt)
 {
-  void *buf, *bufStart = getDirectMessageBuffer();
-
   FiringInfo firingInfo;
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
@@ -59,11 +57,12 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 
   firingInfo.shot.team = teamColor;
 
-  buf = firingInfo.pack(bufStart);
+  NetMsg msg = MSGMGR.newMessage();
+  firingInfo.pack(msg);
 
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgWShotBegin, (char *)buf - (char *)bufStart, bufStart);
-  }
+  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
+    msg->broadcast(MsgWShotBegin);
+
   return shotID;
 }
 
