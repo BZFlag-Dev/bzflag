@@ -1323,12 +1323,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			Name="NetMessages"
 			Filter="">
 			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.cxx">
-			</File>
-			<File
-				RelativePath="..\..\include\BufferedNetworkMessage.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx">
 			</File>
 			<File

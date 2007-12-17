@@ -3462,7 +3462,7 @@ static void		doMessages()
 {
   //char msg[MaxPacketLen];
   ServerMessageBuffer msg;
-  uint16_t code, len;
+  uint16_t code;
   int e = 0;
 
   // handle server messages

@@ -12,9 +12,9 @@
 
 #include "BufferedNetworkMessage.h"
 #include "Pack.h"
-#include "GameKeeper.h"
-#include "bzfs.h"
-#include "bzfsMessages.h"
+//#include "GameKeeper.h"
+//#include "bzfs.h"
+//#include "bzfsMessages.h"
 #include "NetHandler.h"
 
 
@@ -57,11 +57,11 @@ void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
   code = messageCode;
 }
 
-void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
+/*void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
 {
   recipent = getPlayerNetHandler(to);
   code = messageCode;
-}
+} */
 
 void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
 {
@@ -159,7 +159,9 @@ size_t BufferedNetworkMessage::size ( void )
 
 bool BufferedNetworkMessage::process ( void )
 {
-  if (!recipent && code == 0)
+  NetworkMessageTransferCallback *transferCallback = MSGMGR.getTransferCallback();
+
+  if (!transferCallback || !recipent && code == 0)
     return false;
 
   nboPackUShort(data, uint16_t(packedSize));
@@ -167,18 +169,18 @@ bool BufferedNetworkMessage::process ( void )
 
   if (recipent)
   {
-    return bz_pwrite(recipent, data, packedSize + 4) == packedSize+4;
+    return transferCallback->send(recipent, data, packedSize + 4) == packedSize+4;
   }
    
   // send message to everyone
   int mask = NetHandler::clientBZFlag;
   if (toAdmins)
     mask |= NetHandler::clientBZAdmin;
-  pwriteBroadcast(data, packedSize + 4, mask);
+  transferCallback->broadcast(data, packedSize + 4, mask, code);
 
   // record the packet
-  if (Record::enabled())
-    Record::addPacket(code, packedSize, data+4);
+ // if (Record::enabled())
+ //   Record::addPacket(code, packedSize, data+4);
 
   return true;
 }
@@ -242,6 +244,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 
 BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 {
+  transferCallback = NULL;
 }
 
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()

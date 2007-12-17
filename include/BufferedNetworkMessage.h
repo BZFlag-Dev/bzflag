@@ -30,7 +30,7 @@ public:
     virtual ~BufferedNetworkMessage();
 
     void send ( NetHandler *to, uint16_t messageCode );
-    void send ( int to, uint16_t messageCode );
+   // void send ( int to, uint16_t messageCode );
     void broadcast ( uint16_t messageCode, bool toAdminClients = true );
 
     void packUByte( uint8_t val );
@@ -67,6 +67,15 @@ protected:
   bool	      toAdmins;
 };
 
+class NetworkMessageTransferCallback
+{
+public:
+  virtual ~NetworkMessageTransferCallback(){};
+
+  virtual int send ( NetHandler *handler, void *data, size_t size ) = 0;
+  virtual int broadcast ( void *data, size_t size, int mask, int code  ) = 0;
+};
+
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
 {
 public:
@@ -76,11 +85,15 @@ public:
 
   void purgeMessages ( NetHandler *handler );
 
+  void setTransferCallback ( NetworkMessageTransferCallback *cb ){ transferCallback = cb;}
+  NetworkMessageTransferCallback* getTransferCallback ( void ){return transferCallback;}
+
 protected:
   friend class Singleton<BufferedNetworkMessageManager>;
 
   std::list<BufferedNetworkMessage*> messages;
 
+  NetworkMessageTransferCallback *transferCallback;
 private:
   BufferedNetworkMessageManager();
   ~BufferedNetworkMessageManager();

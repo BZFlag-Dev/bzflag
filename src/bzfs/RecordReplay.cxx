@@ -1300,7 +1300,7 @@ bool Replay::sendPackets()
 	    // the 4 bytes before p->data need to be allocated
 	    NetMsg msg = MSGMGR.newMessage();
 	    msg->addPackedData(p->data, p->len);
-	    msg->send(i, p->code);
+	    msg->send(gkPlayer->netHandler, p->code);
 	  }
 	}
 
@@ -1797,7 +1797,7 @@ static bool resetStates()
       continue;
 
     if (gkPlayer->player.isPlaying())
-      MSGMGR.newMessage(msg)->send(i, MsgTeamUpdate);
+      MSGMGR.newMessage(msg)->send(gkPlayer->netHandler, MsgTeamUpdate);
   }
 
   // reset players and flags using MsgReplayReset
@@ -1810,7 +1810,7 @@ static bool resetStates()
       continue;
 
     if (gkPlayer->player.isPlaying())
-      MSGMGR.newMessage(msg)->send(i, MsgReplayReset);
+      MSGMGR.newMessage(msg)->send(gkPlayer->netHandler, MsgReplayReset);
   }
 
   // reset the local view of the players' state

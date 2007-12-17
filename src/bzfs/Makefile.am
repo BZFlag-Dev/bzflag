@@ -27,7 +27,6 @@ bzfs_SOURCES = \
 	AutoAllowTimer.cxx \
 	AutoAllowTimer.h \
 	BanCommands.cxx \
-	BufferedNetworkMessage.cxx\
 	bzfsAPI.cxx \
 	bzfsChatVerify.h \
 	bzfsChatVerify.cxx \

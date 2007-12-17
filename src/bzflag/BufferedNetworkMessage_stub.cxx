@@ -19,28 +19,14 @@ BufferedNetworkMessageManager* Singleton<BufferedNetworkMessageManager>::_instan
 
 BufferedNetworkMessage::BufferedNetworkMessage()
 {
-  data = NULL;
-  dataSize = 0;
-  packedSize = 0;
-
-  code = 0;
-  recipent = NULL;
 }
 
 BufferedNetworkMessage::BufferedNetworkMessage( const BufferedNetworkMessage &msg )
 {
-  packedSize = msg.packedSize;
-  dataSize = msg.dataSize;
-  data = (char*)malloc(dataSize);
-  memcpy(data,msg.data,dataSize);
-  code = msg.code;
-  recipent = msg.recipent;
 }
 
 BufferedNetworkMessage::~BufferedNetworkMessage()
 {
-  if (data)
-    free(data);
 }
 
 void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
@@ -51,7 +37,7 @@ void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
 {
 }
 
-void BufferedNetworkMessage::broadcast ( uint16_t messageCode )
+void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAll )
 {
 }
 
@@ -97,19 +83,11 @@ void BufferedNetworkMessage::addPackedData ( const char* d, size_t s )
 
 void BufferedNetworkMessage::clear ( void )
 {
-  if (data)
-    free(data);
-
-  data = NULL;
-  dataSize = 0;
-  packedSize = 0;
-  recipent = NULL;
-  code = 0;
 }
 
 size_t BufferedNetworkMessage::size ( void )
 {
-  return packedSize;
+  return 0;
 }
 
 bool BufferedNetworkMessage::process ( void )
@@ -117,71 +95,25 @@ bool BufferedNetworkMessage::process ( void )
   return true;
 }
 
-void BufferedNetworkMessage::allocateInitialData ( void )
-{
-  if (data)
-    free(data);
-
-  packedSize = 0;
-  dataSize = 256;
-  data = (char*)malloc(256);
-}
-
-void BufferedNetworkMessage::growData ( size_t s )
-{
-  char *p = (char*)malloc(dataSize + s);
-  memcpy(p,data,dataSize);
-  dataSize += s;
-  free(data);
-  data = p;
-}
 
 void BufferedNetworkMessage::checkData ( size_t s )
 {
-  if ( !data || dataSize == 0 )
-    allocateInitialData();
-
-  if ( packedSize + s > dataSize )
-    growData(s);
 }
 
-
 //BufferedNetworkMessageManager
-BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( void )
+BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage */*msg*/ )
 {
-  BufferedNetworkMessage *msg = new BufferedNetworkMessage;
-  messages.push_back(msg);
-  return msg;
+  return NULL;
 }
 
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
-  {
-    if (*itr)
-    {
-      (*itr)->process();
-      delete(*itr);
-    }
-    itr++;
-  }
 
-  messages.clear();
 }
 
 void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
-  {
-    if (handler == (*itr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
-    {
-      delete(*itr);
-      *itr = NULL;
-    }
-    itr++;
-  }
+
 }
 
 BufferedNetworkMessageManager::BufferedNetworkMessageManager()
@@ -190,13 +122,7 @@ BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
-  {
-    if (*itr)
-      delete(*itr);
-    itr++;
-  }
+ 
 }
 
 

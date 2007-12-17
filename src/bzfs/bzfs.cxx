@@ -169,6 +169,33 @@ std::map<int,NetConnectedPeer> netConnectedPeers;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 
+class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
+{
+public:
+  BZFSNetworkMessageTransferCallback()
+  {
+    MSGMGR.setTransferCallback(this);
+  }
+
+  virtual int send ( NetHandler *handler, void *data, size_t size )
+  {
+    return bz_pwrite(handler,data,int(size));
+  }
+
+  virtual int broadcast ( void *data, size_t size, int mask, int code )
+  {
+    pwriteBroadcast(data, int(size), mask);
+
+     //record the packet
+     if (Record::enabled())
+       Record::addPacket(code, size-4, ((char*)data)+4);
+
+     return int(size);
+  }
+};
+
+BZFSNetworkMessageTransferCallback bzfsTransferCallback;
+
 class BZFSNetLogCB : NetworkDataLogCallback
 {
 public:
@@ -1755,6 +1782,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
 
   // if new player connection was closed (because of an error) then stop here
+
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
@@ -1777,7 +1805,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     msg->packUByte(rabbitIndex);
     // swap mode
     msg->packUByte(0);
-    msg->send(playerIndex, MsgNewRabbit);
+    msg->send(playerData->netHandler, MsgNewRabbit);
   }
 
   // again check if player was disconnected
@@ -1796,7 +1824,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     NetMsg msg = MSGMGR.newMessage();
 
     msg->packInt((int32_t)timeLeft);
-    msg->send(playerIndex, MsgNewRabbit);
+    msg->send(playerData->netHandler, MsgNewRabbit);
   }
 
   // if first player on team add team's flag

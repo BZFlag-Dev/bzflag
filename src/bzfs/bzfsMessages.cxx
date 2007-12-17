@@ -727,6 +727,8 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   bool broadcast = false;
   bool toGroup   = false;
   GameKeeper::Player *destPlayerData = NULL;
+  GameKeeper::Player *srcPlayerData = NULL;
+  srcPlayerData = GameKeeper::Player::getPlayerByIndex(sourcePlayer);
 
   if (destPlayer == AllPlayers) {
     broadcast = true;
@@ -767,9 +769,9 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 	if (!broadcast && !toGroup)
 	{
 	  if (sourcePlayer != destPlayer)
-	    MSGMGR.newMessage(msg)->send(sourcePlayer,MsgMessage);
+	    MSGMGR.newMessage(msg)->send(srcPlayerData->netHandler,MsgMessage);
 	  
-	  msg->send(destPlayer,MsgMessage);
+	  msg->send(destPlayerData->netHandler,MsgMessage);
 	}
 	else 
 	{
@@ -791,12 +793,12 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 	    {
 	      if (destPlayer == AdminPlayers)
 	      {
-		msg->send(sourcePlayer,MsgMessage);
+		msg->send(srcPlayerData->netHandler,MsgMessage);
 		std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
 		for (unsigned int i = 0; i < admins.size(); ++i)
 		{
 		  if (admins[i] != sourcePlayer) 
-		     MSGMGR.newMessage(msg)->send(admins[i],MsgMessage);
+		     MSGMGR.newMessage(msg)->send(GameKeeper::Player::getPlayerByIndex(admins[i])->netHandler,MsgMessage);
 		}
 	      }
 	      else
@@ -806,7 +808,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 		{
 		  GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
 		  if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam))
-		     MSGMGR.newMessage(msg)->send(i,MsgMessage);
+		     MSGMGR.newMessage(msg)->send(otherData->netHandler,MsgMessage);
 		}
 	      }
 	    }
@@ -839,7 +841,10 @@ void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(playerID);
   msg->packUByte(allow);
-  msg->send(recipID, MsgAllow);
+  
+  GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(recipID);
+  if(otherData)
+    msg->send(otherData->netHandler, MsgAllow);
 }
 
 void sendMessageAllow ( int playerID, unsigned char allow )
@@ -1017,7 +1022,11 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
   if (player == AllPlayers)
     msg->broadcast(MsgTangibilityUpdate,false);
   else
-    msg->send(player, MsgTangibilityUpdate);
+  {
+    GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(player);
+    if (otherData)
+      msg->send(otherData->netHandler, MsgTangibilityUpdate);
+  }
 }
 
 void sendMsgTanagabilityReset ( void )
@@ -1041,7 +1050,7 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
   {
     NetMsg msg = MSGMGR.newMessage();
     msg->packUByte(t);
-    msg->send(player, MsgAllowSpawn);
+    msg->send(p->netHandler, MsgAllowSpawn);
   }
   else
     p->playerHandler->allowSpawn(canSpawn);
@@ -1051,7 +1060,10 @@ void sendMsgLimboMessage ( int player, const std::string  &text )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packStdString(text);
-  msg->send(player, MsgLimboMessage);
+
+  GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(player);
+  if (otherData)
+    msg->send(otherData->netHandler, MsgLimboMessage);
 }
 
 void sendSetTeam ( int playerIndex, int _team )

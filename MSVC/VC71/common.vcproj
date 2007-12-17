@@ -235,6 +235,9 @@
 				RelativePath="..\..\src\common\AutoCompleter.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\common\BufferedNetworkMessage.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\Bundle.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -966,6 +969,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\AutoCompleter.h">
+			</File>
+			<File
+				RelativePath="..\..\include\BufferedNetworkMessage.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Bundle.h">
