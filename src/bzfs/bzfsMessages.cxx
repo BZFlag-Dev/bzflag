@@ -61,8 +61,6 @@ void sendFlagUpdateMessage ( int playerID )
   if (!playerData)
     return;
 
-  int cnt = 0;
-
   std::vector<bz_FlagUpdateRecord*> flagRecordList;
   if (playerData->playerHandler)
   {
@@ -90,9 +88,6 @@ void sendFlagUpdateMessage ( int playerID )
   else
   {
     NetMsg msg = MSGMGR.newMessage();
-
-    uint16_t numFlags = 0;
-
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
       if (FlagInfo::get(flagIndex)->exist())
@@ -861,7 +856,6 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   playerData->doPlayerDR();
 
   // pack up the data and send it to the net players
-  uint16_t len = PlayerUpdatePLenMax;	// this len is dumb, it shoudl be the REAl len of the packet
   uint16_t code = shortState ? MsgPlayerUpdateSmall : MsgPlayerUpdate;
 
   NetMsg msg = MSGMGR.newMessage();
