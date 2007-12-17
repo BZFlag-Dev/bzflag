@@ -177,12 +177,12 @@ public:
     MSGMGR.setTransferCallback(this);
   }
 
-  virtual int send ( NetHandler *handler, void *data, size_t size )
+  virtual size_t send ( NetHandler *handler, void *data, size_t size )
   {
-    return bz_pwrite(handler,data,int(size));
+    return (size_t)bz_pwrite(handler,data,int(size));
   }
 
-  virtual int broadcast ( void *data, size_t size, int mask, int code )
+  virtual size_t broadcast ( void *data, size_t size, int mask, int code )
   {
     pwriteBroadcast(data, int(size), mask);
 
@@ -190,7 +190,7 @@ public:
      if (Record::enabled())
        Record::addPacket(code, size-4, ((char*)data)+4);
 
-     return int(size);
+     return size;
   }
 };
 

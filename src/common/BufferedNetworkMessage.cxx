@@ -178,10 +178,6 @@ bool BufferedNetworkMessage::process ( void )
     mask |= NetHandler::clientBZAdmin;
   transferCallback->broadcast(data, packedSize + 4, mask, code);
 
-  // record the packet
- // if (Record::enabled())
- //   Record::addPacket(code, packedSize, data+4);
-
   return true;
 }
 

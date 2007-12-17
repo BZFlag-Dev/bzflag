@@ -72,8 +72,8 @@ class NetworkMessageTransferCallback
 public:
   virtual ~NetworkMessageTransferCallback(){};
 
-  virtual int send ( NetHandler *handler, void *data, size_t size ) = 0;
-  virtual int broadcast ( void *data, size_t size, int mask, int code  ) = 0;
+  virtual size_t send ( NetHandler *handler, void *data, size_t size ) = 0;
+  virtual size_t broadcast ( void *data, size_t size, int mask, int code  ) = 0;
 };
 
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
