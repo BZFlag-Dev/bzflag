@@ -1487,10 +1487,10 @@ bool FlagCommand::operator() (const char *message,
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
 	if (fPlayer)
 	{
-	  NetMsg msg = MSGMGR.newMessage();
-	  msg->packUByte(fi->player);
-	  fi->pack(msg);
-	  msg->broadcast(MsgDropFlag);
+	  NetMsg newMsg = MSGMGR.newMessage();
+	  newMsg->packUByte(fi->player);
+	  fi->pack(newMsg);
+	  newMsg->broadcast(MsgDropFlag);
 	}
 	fPlayer->player.setFlag(-1);
       }
