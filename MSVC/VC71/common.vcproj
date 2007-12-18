@@ -1090,6 +1090,9 @@
 			<File
 				RelativePath="..\..\include\WordFilter.h">
 			</File>
+			<File
+				RelativePath="..\..\include\WorldInfo.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
