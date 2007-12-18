@@ -2535,13 +2535,10 @@ static void handleWhatTimeIsIt(void *msg)
   syncedClock.timeMessage(tag,time);
 }
 
-static void handleSetShotType(void *msg)
+static void handleSetShotType(BufferedNetworkMessage *msg)
 {
-  PlayerId id;
-  msg = nboUnpackUByte(msg, id);
-
-  unsigned char shotType = 0;
-  msg = nboUnpackUByte(msg, shotType);
+  PlayerId id = msg->unpackUByte();
+  unsigned char shotType = msg->unpackUByte();
 
   Player *p = lookupPlayer(id);
   if (!p)
@@ -3166,16 +3163,26 @@ static void handleLimboMessage ( void* msg )
   nboUnpackStdString(msg,customLimboMessage);
 }
 
+static bool handleServerMessage(bool human, BufferedNetworkMessage *msg )
+{
+  switch (msg->getCode())
+  {
+    default:
+      return false;
+
+     case MsgSetShot:
+      handleSetShotType(msg);
+      break;
+  }
+  return true;
+}
+
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
 
   switch (code) {
-    case MsgSetShot:
-      handleSetShotType(msg);
-      break;
-
     case MsgWhatTimeIsIt:
       handleWhatTimeIsIt(msg);
       break;
@@ -3463,23 +3470,49 @@ static void		handlePlayerMessage(uint16_t code, uint16_t len,
 //
 // message handling
 //
+class ClientReceiveCallback : public NetworkMessageTransferCallback
+{
+public:
+  virtual size_t receive ( BufferedNetworkMessage * message )
+  {
+    if (!serverLink || serverError)
+      return 0;
+   
+    int e = 0;
+
+    e = serverLink->read(message, 0);
+
+    if (e == -2)
+    {
+      printError("Server communication error");
+      return 0;
+    }
+
+    if ( e == 1)
+      return message->size();
+
+    return 0;
+  }
+};
 
 static void		doMessages()
 {
-  //char msg[MaxPacketLen];
-  ServerMessageBuffer msg;
-  uint16_t code;
-  int e = 0;
+  static ClientReceiveCallback clientMessageCallback;
 
-  // handle server messages
-  if (serverLink) {
-    while (!serverError && (e = serverLink->read(code,msg, 0)) == 1)
-      handleServerMessage(true, code, (uint16_t)msg.size(), msg.data());
-    if (e == -2) {
-      printError("Server communication error");
-      serverError = true;
-      return;
-    }
+  BufferedNetworkMessageManager::MessageList messageList;
+
+  MSGMGR.update();
+  MSGMGR.receiveMessages(&clientMessageCallback,messageList);
+
+  BufferedNetworkMessageManager::MessageList::iterator itr = messageList.begin();
+
+  while (itr != messageList.end())
+  {
+    if (!handleServerMessage(true,*itr))
+      handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
+
+    (*itr)->clear(); // blow it out so it gets cleared at the end
+    itr++;
   }
 }
 
