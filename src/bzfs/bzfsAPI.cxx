@@ -2486,12 +2486,7 @@ BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, int killerID, const c
     return false;
 
   if(killerID==-1)
-  {
-    player->player.setDead();
-    player->player.setRestartOnBase(spawnOnBase);
-    zapFlagByPlayer(playerID);
-    return true;
-  }
+    killerID = ServerPlayer;
 
   FlagType *flag=NULL;
   if(flagType)
