@@ -4962,7 +4962,7 @@ static void runMainLoop ( void )
     // Fire world weapons
     world->getWorldWeapons().fire();
 
-    MSGMGR.sendPendingMessages();
+    MSGMGR.update();
     sendPendingChatMessages();
 
     cleanPendingPlayers();
