@@ -2107,21 +2107,26 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);
   Player* killerPlayer = lookupPlayer(killer);
-#ifdef ROBOT
-  if (victimPlayer == myTank) {
+
+  if (victimPlayer == myTank) 
+  {
     // uh oh, i'm dead
-    if (myTank->isAlive()) {
+    if (myTank->isAlive()) 
+    {
       serverLink->sendDropFlag(myTank->getPosition());
-	  myTank->setShotType(StandardShot);
+      myTank->setShotType(StandardShot);
       handleMyTankKilled(reason);
     }
   }
-#endif
-  if (victimLocal) {
+
+  if (victimLocal)
+  {
     // uh oh, local player is dead
     if (victimLocal->isAlive())
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
-  } else if (victimPlayer) {
+  }
+  else if (victimPlayer)
+  {
     victimPlayer->setExplode(TimeKeeper::getTick());
     const float* pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
@@ -2139,7 +2144,8 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,victimPlayer->getAngle());
   }
 
-  if (killerLocal) {
+  if (killerLocal) 
+  {
     // local player did it
     if (shotId >= 0)
       killerLocal->endShot(shotId, true); // terminate the shot
