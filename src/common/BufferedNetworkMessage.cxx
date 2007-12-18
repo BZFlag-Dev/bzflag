@@ -29,6 +29,7 @@ BufferedNetworkMessage::BufferedNetworkMessage()
   data = NULL;
   dataSize = 0;
   packedSize = 0;
+  readPoint = 0;
 
   code = 0;
   recipent = NULL;
@@ -131,6 +132,77 @@ void BufferedNetworkMessage::packStdString( const std::string& str )
   packedSize += str.size()+sizeof(uint32_t);
 }
 
+uint8_t BufferedNetworkMessage::unpackUByte( void )
+{
+  uint8_t v = 0;
+  char *p = getReadBuffer();
+  if (p)  
+    packedSize += (char*)(nboUnpackUByte(p,v))-p;
+  return v;
+}
+
+int16_t BufferedNetworkMessage::unpackShort( void )
+{
+  int16_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackShort(p,v))-p;
+  return v;
+}
+
+int32_t BufferedNetworkMessage::unpackInt( void )
+{
+  int32_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackInt(p,v))-p;
+  return v;
+}
+
+uint16_t BufferedNetworkMessage::unpackUShort( void )
+{
+  uint16_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackUShort(p,v))-p;
+  return v;
+}
+
+uint32_t BufferedNetworkMessage::unpackUInt( void )
+{
+  uint32_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackUInt(p,v))-p;
+  return v;
+}
+
+float BufferedNetworkMessage::unpackFloat( void )
+{
+  float v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackFloat(p,v))-p;
+  return v;
+}
+
+float* BufferedNetworkMessage::unpackVector( float* val )
+{
+  memset(val,0,sizeof(float)*3);
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackVector(p,val))-p;
+  return val;
+}
+
+const std::string& BufferedNetworkMessage::unpackStdString( std::string& str )
+{
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackStdString(p,str))-p;
+  return str;
+}
+
 void BufferedNetworkMessage::addPackedData ( const char* d, size_t s )
 {
   checkData(s);
@@ -147,7 +219,13 @@ void BufferedNetworkMessage::clear ( void )
   dataSize = 0;
   packedSize = 0;
   recipent = NULL;
+  readPoint = 0;
   code = 0;
+}
+
+void BufferedNetworkMessage::reset ( void )
+{
+  readPoint = 0;
 }
 
 size_t BufferedNetworkMessage::size ( void )
@@ -193,6 +271,18 @@ char* BufferedNetworkMessage::getWriteBuffer ( void )
   return data + 4 + packedSize;
 }
 
+char* BufferedNetworkMessage::getReadBuffer ( void )
+{
+  if (!data)
+    return NULL;
+
+  if (readPoint >= packedSize)
+    return NULL;
+
+  return data + 4 + readPoint;
+}
+
+
 
 //BufferedNetworkMessageManager
 BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage* msgToCopy )
@@ -209,17 +299,35 @@ BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetw
 size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages )
 {
   BufferedNetworkMessage * msg = new BufferedNetworkMessage;
-  uint16_t  code;
 
-  while (callback->receive(code,msg))
-  {
-    msg->setCode(code);
+  while (callback->receive(msg))
     incomingMessages.push_back(msg);
-  }
 
   return incomingMessages.size();
 }
 
+void BufferedNetworkMessageManager::update ( void )
+{
+  if (transferCallback)
+    sendPendingMessages();
+
+  clearDeadIncomingMessages();
+}
+
+void BufferedNetworkMessageManager::clearDeadIncomingMessages ( void )
+{
+  MessageList::iterator itr = incomingMesages.begin();
+  while (itr != incomingMesages.end() )
+  {
+    if ( !(*itr)->buffer() )
+    {
+      delete(*itr);
+      incomingMesages.erase(itr++);
+    }
+    else
+      itr++;
+  }
+}
 
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
 {

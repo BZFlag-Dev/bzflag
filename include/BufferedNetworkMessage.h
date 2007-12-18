@@ -44,37 +44,38 @@ public:
     void packString( const char* val, int len );
     void packStdString( const std::string& str );
 
- /*   uint8_t unpackUByte( uint8_t val );
-    int16_t unpackShort( int16_t val );
-    int32_t unpackInt( int32_t val );
-    uint16_t unpackUShort( uint16_t val );
-    uint32_t unpackUInt( uint32_t val );
-    float unpackFloat( float val );
+    uint8_t unpackUByte( void );
+    int16_t unpackShort( void );
+    int32_t unpackInt( void );
+    uint16_t unpackUShort( void );
+    uint32_t unpackUInt( void );
+    float unpackFloat( void );
     float* unpackVector( float* val );
-    const std::string& unpackStdString( std::string& str ); */
-
-    void addPackedData ( const char* d, size_t s );
+    const std::string& unpackStdString( std::string& str ); 
 
     void clear ( void );
-   // void reset ( void );
-   // void flush ( void );
+    void reset ( void );
 
     size_t size ( void );
     char * buffer ( void ) {return data+4;}
+    void addPackedData ( const char* d, size_t s );
 
     void setCode ( uint16_t c ) { code = c; }
+    uint16_t getCode ( void ) { return code; }
 
 protected:
   friend class BufferedNetworkMessageManager;
   bool process ( void );
 
   char* getWriteBuffer ( void );
+  char* getReadBuffer ( void );
 
   void checkData ( size_t s );
 
   char *data;
   size_t dataSize;
   size_t packedSize;
+  size_t readPoint;
 
   uint16_t    code;
   NetHandler  *recipent;  // NULL if broadcast;
@@ -87,9 +88,9 @@ public:
   virtual ~NetworkMessageTransferCallback(){};
 
   virtual size_t send ( NetHandler* /*handler*/, void * /*data*/, size_t /*size*/ ){return 0;}
-  virtual size_t broadcast ( void */*data*/, size_t /*size*/, int/* mask*/, int /*code*/  ){return 0;}
+  virtual size_t broadcast ( void * /*data*/, size_t /*size*/, int/* mask*/, int /*code*/  ){return 0;}
 
-  virtual size_t receive ( uint16_t &/*code*/, BufferedNetworkMessage */*message*/ ){return 0;}
+  virtual size_t receive ( BufferedNetworkMessage * /*message*/ ){return 0;}
 };
 
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
@@ -97,9 +98,14 @@ class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageMan
 public:
   BufferedNetworkMessage  *newMessage ( BufferedNetworkMessage *msgToCopy = NULL );
 
-  size_t receiveMessages ( NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages );
+  typedef std::list<BufferedNetworkMessage*> MessageList;
+
+  size_t receiveMessages ( NetworkMessageTransferCallback *callback,  MessageList &incomingMessages );
+
+  void update ( void );
 
   void sendPendingMessages ( void );
+  void clearDeadIncomingMessages ( void );
 
   void purgeMessages ( NetHandler *handler );
 
@@ -111,13 +117,12 @@ public:
 protected:
   friend class Singleton<BufferedNetworkMessageManager>;
 
-  typedef std::list<BufferedNetworkMessage*> MessageList;
   MessageList pendingOutgingMesages;
 
   typedef std::deque<BufferedNetworkMessage*> MessageDeque;
   MessageDeque outgoingQue;
 
-  std::list<BufferedNetworkMessage*> incomingMesages;
+  MessageList incomingMesages;
 
   NetworkMessageTransferCallback *transferCallback;
 private:
