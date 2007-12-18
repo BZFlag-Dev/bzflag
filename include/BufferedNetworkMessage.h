@@ -86,10 +86,10 @@ class NetworkMessageTransferCallback
 public:
   virtual ~NetworkMessageTransferCallback(){};
 
-  virtual size_t send ( NetHandler *handler, void *data, size_t size ){return 0;}
-  virtual size_t broadcast ( void *data, size_t size, int mask, int code  ){return 0;}
+  virtual size_t send ( NetHandler* /*handler*/, void * /*data*/, size_t /*size*/ ){return 0;}
+  virtual size_t broadcast ( void */*data*/, size_t /*size*/, int/* mask*/, int /*code*/  ){return 0;}
 
-  virtual size_t receive ( uint16_t &code, BufferedNetworkMessage *message ){return 0;}
+  virtual size_t receive ( uint16_t /*&code*/, BufferedNetworkMessage */*message*/ ){return 0;}
 };
 
 class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageManager>
