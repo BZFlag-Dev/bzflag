@@ -16,6 +16,7 @@
 //#include "bzfs.h"
 //#include "bzfsMessages.h"
 #include "NetHandler.h"
+#include <algorithm>
 
 
 // initialize the singleton
@@ -55,19 +56,16 @@ void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
 {
   recipent = to;
   code = messageCode;
-}
 
-/*void BufferedNetworkMessage::send ( int to, uint16_t messageCode )
-{
-  recipent = getPlayerNetHandler(to);
-  code = messageCode;
-} */
+  MSGMGR.queMessage(this);
+}
 
 void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
 {
   recipent = NULL;
   code = messageCode;
   toAdmins = toAdminClients;
+  MSGMGR.queMessage(this);
 }
 
 void BufferedNetworkMessage::packUByte( uint8_t val )
@@ -204,37 +202,73 @@ BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetw
     msg = new BufferedNetworkMessage(*msgToCopy);
   else
     msg = new BufferedNetworkMessage;
-  messages.push_back(msg);
+  pendingOutgingMesages.push_back(msg);
   return msg;
 }
 
+size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages )
+{
+  BufferedNetworkMessage * msg = new BufferedNetworkMessage;
+  uint16_t  code;
+
+  while (callback->receive(code,msg))
+  {
+    msg->setCode(code);
+    incomingMessages.push_back(msg);
+  }
+
+  return incomingMessages.size();
+}
+
+
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
+  while ( outgoingQue.size() )
   {
+    MessageDeque::iterator itr = outgoingQue.begin();
     if (*itr)
     {
       (*itr)->process();
       delete(*itr);
     }
-    itr++;
+    outgoingQue.pop_front();
   }
-
-  messages.clear();
 }
+
+void BufferedNetworkMessageManager::queMessage ( BufferedNetworkMessage *msg )
+{
+  MessageList::iterator itr = std::find(pendingOutgingMesages.begin(),pendingOutgingMesages.end(),msg);
+  if ( itr != pendingOutgingMesages.end() )
+    pendingOutgingMesages.erase(itr);
+
+  outgoingQue.push_back(msg);
+}
+
 
 void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
+  MessageList::iterator itr = pendingOutgingMesages.begin();
+  while ( itr != pendingOutgingMesages.end() )
   {
     if (handler == (*itr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
-      *itr = NULL;
+      pendingOutgingMesages.erase(itr++);
     }
-    itr++;
+    else
+      itr++;
+  }
+
+  MessageDeque::iterator qItr = outgoingQue.begin();
+  while (qItr != outgoingQue.end())
+  {
+    if (handler == (*qItr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
+    {
+      delete(*qItr);
+      outgoingQue.erase(qItr++);
+    }
+    else
+      qItr++;
   }
 }
 
@@ -245,12 +279,18 @@ BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()
 {
-  std::list<BufferedNetworkMessage*>::iterator itr = messages.begin();
-  while ( itr != messages.end() )
+  MessageList::iterator itr = pendingOutgingMesages.begin();
+  while ( itr != pendingOutgingMesages.end() )
   {
-    if (*itr)
       delete(*itr);
-    itr++;
+      itr++;
+  }
+
+  MessageDeque::iterator qItr = outgoingQue.begin();
+  while (qItr != outgoingQue.end())
+  {
+      delete(*qItr);
+      qItr++;
   }
 }
 
