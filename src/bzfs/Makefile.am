@@ -151,5 +151,4 @@ LDADD = \
 	$(CARESLIB)			\
 	$(REGEX)			\
 	$(ZLIB)			\
-	$(KRB5_LIBS)			\
 	../date/libDate.la

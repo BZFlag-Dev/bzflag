@@ -20,12 +20,6 @@
 #include "common.h"
 
 #include <string>
-#ifdef HAVE_KRB5
-	#ifdef MAXHOSTNAMELEN
-		#undef MAXHOSTNAMELEN
-	#endif
-#include <krb5.h>
-#endif
 
 #include "global.h"
 #include "Address.h"
@@ -76,10 +70,6 @@ class ServerLink {
     void		sendCaptureFlag(TeamColor);
     void		sendGrabFlag(int flagIndex);
     void		sendDropFlag(const float* position);
-#ifdef HAVE_KRB5
-    void		sendKerberosTicket(const char      *principal,
-					   const krb5_data *ticket);
-#endif
     void		sendKilled(const PlayerId&, int reason,
 				   int shotId, const FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.

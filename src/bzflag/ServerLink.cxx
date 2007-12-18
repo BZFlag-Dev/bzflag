@@ -792,16 +792,6 @@ void			ServerLink::confirmIncomingUDP()
   send(MsgUDPLinkEstablished, 0, NULL);
 }
 
-#ifdef HAVE_KRB5
-void ServerLink::sendKerberosTicket(const char      *principal,
-				    const krb5_data *ticket)
-{
-  logDebugMessage(3,"Sent authentication ticket to server : \n");
-  send(MsgKrbPrincipal, strlen(principal), principal);
-  send(MsgKrbTicket, ticket->length, ticket->data);
-}
-#endif
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

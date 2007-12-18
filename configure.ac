@@ -148,19 +148,6 @@ LIBCURL_CHECK_CONFIG(, , ,
   [AC_MSG_ERROR([libcurl is required. You must install it. \
 See http://curl.haxx.se/])])
 
-# Testing if kerberos 5 is in the system
-KRB5_CONFIG=no
-if test "x$with_kerberos" = "xyes" ; then
-  AC_PATH_PROG(KRB5_CONFIG, krb5-config, no)
-  if test "x$KRB5_CONFIG" != "xno" ; then
-    KRB5_CFLAGS=`$KRB5_CONFIG --cflags`
-    KRB5_LIBS=`$KRB5_CONFIG --libs`
-  fi
-fi
-AC_SUBST(KRB5_CFLAGS)
-AC_SUBST(KRB5_LIBS)
-
-
 # Just for kicks
 AC_MSG_CHECKING([for artificial intelligence for bz's robots])
 AC_MSG_RESULT([not found])
@@ -173,12 +160,6 @@ AC_CHECK_HEADERS( \
 	cstdio \
 	cstring \
 )
-if test "x$with_kerberos" = "xyes" ; then
-  AC_CHECK_HEADERS(\
-	krb5.h\
-	Kerberos/Kerberos.h \
-  )
-fi
 AC_LANG(C)
 AC_CHECK_HEADERS( \
 	GL/glx.h \
@@ -799,26 +780,6 @@ int i = std::count(array, array + 5, 't'); i = i;
 ]])],[AC_DEFINE(HAVE_STD__COUNT, 1, [Define to 1 if you have a conforming
 std::count, otherwise old version of count template is assumed])],[])
 
-
-if test "x$with_kerberos" = "xyes" ; then
-  have_krb5=no
-  AC_MSG_CHECKING([for Kerberos functionality])
-  if test "x$KRB5_CONFIG" != "xno" ; then
-    have_krb5=yes
-  elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
-    have_krb5=yes
-  elif test "x$ac_cv_header_Kerberos_Kerberos_h" = "xyes" ; then
-    have_krb5=yes
-  fi
-  if test "x$have_krb5" = "xyes" ; then
-    AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
-    AC_MSG_RESULT([yes])
-  else
-    AC_MSG_RESULT([no])
-    AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
-  fi
-fi
-AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)

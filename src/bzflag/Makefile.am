@@ -5,19 +5,6 @@ bin_PROGRAMS = bzflag
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-EXTRA_bzflag_SOURCES = \
-	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
-
-if HAVE_KRB5
-KRB5 =	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
-	LoginMenu.cxx			\
-	LoginMenu.h
-endif
-
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\
@@ -188,8 +175,7 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.cxx			\
-	stars.h				\
-	$(KRB5)
+	stars.h
 
 
 if WIN32
@@ -235,7 +221,6 @@ LDADD =	\
 	$(CARESLIB)			\
 	$(REGEX)			\
 	$(ZLIB)				\
-	$(KRB5_LIBS)			\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\

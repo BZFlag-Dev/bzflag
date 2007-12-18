@@ -77,16 +77,8 @@ Filter::Action Filter::check(GameKeeper::Player &player, int &index)
   for (unsigned int i = index; i < filterList.size(); i++) {
     filterItem   = filterList[i];
     bool anyName = filterItem.principal == "_any_";
-    if (player.authentication.isTrusted()) {
-      if (filterItem.principal == "_unregistered_")
-	continue;
-      if (!anyName && (filterItem.principal != "_registered_")
-	  && (filterItem.principal != player.authentication.getPrincipal()))
-	continue;
-    } else {
       if ((filterItem.principal != "_unregistered_") && !anyName)
 	continue;
-    }
     if ((addr & filterItem.netMask) != filterItem.hostId)
       continue;
     action = filterItem.action;

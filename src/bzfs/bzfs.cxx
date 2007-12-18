@@ -844,9 +844,6 @@ static void serverStop()
 
   // close connections
   NetHandler::destroyHandlers();
-
-  // clean up Kerberos
-  Authentication::cleanUp();
 }
 
 
@@ -4350,16 +4347,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       break;
 
     case MsgKrbPrincipal:
-      playerData->authentication.setPrincipalName((char *)buf, len);
       break;
 
     case MsgKrbTicket:
-      playerData->freeTCPMutex();
-      playerData->authentication.verifyCredential((char *)buf, len);
-      playerData->passTCPMutex();
-      // Not really the place here, but for initial testing we need something
-      if (playerData->authentication.isTrusted())
-	sendMessage(ServerPlayer, t, "Welcome, we trust you");
       break;
 
     // unknown msg type
@@ -4934,11 +4924,6 @@ int main(int argc, char **argv)
       logDebugMessage(1,"Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
   }
-
-  // loading authentication parameters
-  Authentication::init(clOptions->publicizedAddress.c_str(),
-		       clOptions->wksPort,
-		       clOptions->password.c_str());
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {

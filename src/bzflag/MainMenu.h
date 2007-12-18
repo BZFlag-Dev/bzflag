@@ -20,9 +20,6 @@
 #include "HUDuiDefaultKey.h"
 
 class JoinMenu;
-#ifdef HAVE_KRB5
-class LoginMenu;
-#endif
 class OptionsMenu;
 class QuitMenu;
 
@@ -53,9 +50,6 @@ private:
   HUDuiControl*	quit;
 
   JoinMenu*	joinMenu;
-#ifdef HAVE_KRB5
-  LoginMenu*	loginMenu;
-#endif
   OptionsMenu*	optionsMenu;
   QuitMenu*	quitMenu;
 };
