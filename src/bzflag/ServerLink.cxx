@@ -673,12 +673,12 @@ success:
   return 1;
 }
 
-int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
+int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 {
-  code = MsgNull;
-  msg.clear();
+  uint16_t len,code;
 
-  uint16_t len;
+  code = MsgNull;
+  msg->clear();
 
   if (state != Okay)
     return -1;
@@ -708,6 +708,8 @@ int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
       }
       udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
       udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      msg->setCode(code);
+
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
 
       if (len > udpLength) 
@@ -715,7 +717,7 @@ int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
 	udpLength = 0;
 	return -1;
       }
-      msg.add(udpBufferPtr,len);
+      msg->addPackedData(udpBufferPtr,len);
       udpBufferPtr += len;
       udpLength    -= len;
       return 1;
@@ -793,6 +795,7 @@ int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
   void* buf = headerBuffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+  msg->setCode(code);
 
 
   //printError("Code is %02x",code);
@@ -810,7 +813,7 @@ int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
       free(tmpBuffer);
       return -2;
     }
-    msg.add(tmpBuffer,rlen);
+    msg->addPackedData(tmpBuffer,rlen);
     free(tmpBuffer);
   } 
   else
@@ -841,7 +844,7 @@ int			ServerLink::read(uint16_t& code, ServerMessageBuffer &msg, int blockTime)
     rlen = recv(fd, tmpBuffer, int(len) - tlen, 0);
     if (rlen > 0)
     {
-      msg.add(tmpBuffer,rlen);
+      msg->addPackedData(tmpBuffer,rlen);
       free(tmpBuffer);
       tlen += rlen;
     }
@@ -868,7 +871,7 @@ success:
     fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
     fwrite(&dt, sizeof(dt), 1, packetStream);
     fwrite(headerBuffer, 4, 1, packetStream);
-    fwrite(msg.data(), len, 1, packetStream);
+    fwrite(msg->buffer(), len, 1, packetStream);
   }
   return 1;
 }
@@ -1244,53 +1247,6 @@ void			ServerLink::confirmIncomingUDP()
   if (debugLevel >= 1)
     printError("Got server's UDP packet back, server using UDP");
   send(MsgUDPLinkEstablished, 0, NULL);
-}
-
-
-ServerMessageBuffer::ServerMessageBuffer()
-{
-  messageData = NULL;
-  messageSize = 0;
-  bufferSize = 0;
-}
-
-ServerMessageBuffer::ServerMessageBuffer( const ServerMessageBuffer &msg )
-{
-  messageSize = msg.messageSize;
-  bufferSize = msg.bufferSize;
-  messageData = (char*) malloc(bufferSize);
-  memcpy(messageData,msg.messageData,messageSize);
-}
-
-ServerMessageBuffer::~ServerMessageBuffer()
-{
-  if (messageData)
-    free (messageData);
-}
-
-void ServerMessageBuffer::clear ( void )
-{
-  messageSize = 0;
-}
-
-void ServerMessageBuffer::add ( char *d, size_t s)
-{
-  if (s + messageSize > bufferSize )
-    messageData = (char*)realloc(messageData,s+messageSize);
-
-  memcpy(messageData+messageSize,d,s);
-  messageSize += s;
-  bufferSize = messageSize;
-}
-
-char* ServerMessageBuffer::data ( void )
-{
-  return messageData;
-}
-
-size_t ServerMessageBuffer::size ( void )
-{
-  return messageSize;
 }
 
 
