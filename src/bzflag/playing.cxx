@@ -3173,7 +3173,6 @@ static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg )
      case MsgSetShot:
       handleSetShotType(msg);
       break;
-
   }
   return true;
 }
@@ -3291,6 +3290,10 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
     case MsgAllow:
       handleAllow(msg);
       break;
+
+    case MsgKilled:
+      handleKilledMessage(msg, human, checkScores);
+      break;;
 
     case MsgGrabFlag:
       handleGrabFlag(msg);
