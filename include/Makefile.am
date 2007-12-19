@@ -159,6 +159,7 @@ noinst_HEADERS =			\
 	resource.h			\
 	vectors.h			\
 	version.h			\
+	WorldInfo.h			\
 	win32.h
 
 CLEANFILES = datestamp

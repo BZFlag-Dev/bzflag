@@ -37,7 +37,8 @@ public:
 
   void clear ( void );
 
-  void read ( )
+  void send ( NetHandler *handler );
+  void receive ( BufferedNetworkMessage *msg );
 };
 
 
