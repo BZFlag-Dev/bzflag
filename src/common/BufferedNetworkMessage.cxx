@@ -235,6 +235,9 @@ size_t BufferedNetworkMessage::size ( void )
 
 bool BufferedNetworkMessage::process ( void )
 {
+  if (!data)
+    checkData(4);
+
   NetworkMessageTransferCallback *transferCallback = MSGMGR.getTransferCallback();
 
   if (!transferCallback || !recipent && code == 0)
