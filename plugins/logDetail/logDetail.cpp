@@ -206,14 +206,14 @@ std::string LogDetail::displayPlayerPrivs(int playerID)
 
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
   if (player) {
-    playerPrivs << " IP:" << player->ipAddress.c_str();
+    playerPrivs << "IP:" << player->ipAddress.c_str();
     if (player->verified) playerPrivs << " VERIFIED";
     if (player->globalUser) playerPrivs << " GLOBALUSER";
     if (player->admin) playerPrivs << " ADMIN";
     if (player->op) playerPrivs << " OPERATOR";
     bz_freePlayerRecord(player);
   } else {
-    playerPrivs << " IP:0.0.0.0";
+    playerPrivs << "IP:0.0.0.0";
   }
 
   return playerPrivs.str();
