@@ -112,15 +112,15 @@ public:
   void setTransferCallback ( NetworkMessageTransferCallback *cb ){ transferCallback = cb;}
   NetworkMessageTransferCallback* getTransferCallback ( void ){return transferCallback;}
 
-  void queMessage ( BufferedNetworkMessage *msg );
+  void queueMessage ( BufferedNetworkMessage *msg );
 
 protected:
   friend class Singleton<BufferedNetworkMessageManager>;
 
-  MessageList pendingOutgingMesages;
+  MessageList pendingOutgoingMesages;
 
   typedef std::deque<BufferedNetworkMessage*> MessageDeque;
-  MessageDeque outgoingQue;
+  MessageDeque outgoingQueue;
 
   MessageList incomingMesages;
 

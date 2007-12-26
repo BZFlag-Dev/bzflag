@@ -58,7 +58,7 @@ void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
   recipent = to;
   code = messageCode;
 
-  MSGMGR.queMessage(this);
+  MSGMGR.queueMessage(this);
 }
 
 void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
@@ -66,7 +66,7 @@ void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClien
   recipent = NULL;
   code = messageCode;
   toAdmins = toAdminClients;
-  MSGMGR.queMessage(this);
+  MSGMGR.queueMessage(this);
 }
 
 void BufferedNetworkMessage::packUByte( uint8_t val )
@@ -295,7 +295,7 @@ BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetw
     msg = new BufferedNetworkMessage(*msgToCopy);
   else
     msg = new BufferedNetworkMessage;
-  pendingOutgingMesages.push_back(msg);
+  pendingOutgoingMesages.push_back(msg);
   return msg;
 }
 
@@ -339,49 +339,49 @@ void BufferedNetworkMessageManager::clearDeadIncomingMessages ( void )
 
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
 {
-  while ( outgoingQue.size() )
+  while ( outgoingQueue.size() )
   {
-    MessageDeque::iterator itr = outgoingQue.begin();
+    MessageDeque::iterator itr = outgoingQueue.begin();
     if (*itr)
     {
       (*itr)->process();
       delete(*itr);
     }
-    outgoingQue.pop_front();
+    outgoingQueue.pop_front();
   }
 }
 
-void BufferedNetworkMessageManager::queMessage ( BufferedNetworkMessage *msg )
+void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
 {
-  MessageList::iterator itr = std::find(pendingOutgingMesages.begin(),pendingOutgingMesages.end(),msg);
-  if ( itr != pendingOutgingMesages.end() )
-    pendingOutgingMesages.erase(itr);
+  MessageList::iterator itr = std::find(pendingOutgoingMesages.begin(),pendingOutgoingMesages.end(),msg);
+  if ( itr != pendingOutgoingMesages.end() )
+    pendingOutgoingMesages.erase(itr);
 
-  outgoingQue.push_back(msg);
+  outgoingQueue.push_back(msg);
 }
 
 
 void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 {
-  MessageList::iterator itr = pendingOutgingMesages.begin();
-  while ( itr != pendingOutgingMesages.end() )
+  MessageList::iterator itr = pendingOutgoingMesages.begin();
+  while ( itr != pendingOutgoingMesages.end() )
   {
     if (handler == (*itr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
-      pendingOutgingMesages.erase(itr++);
+      pendingOutgoingMesages.erase(itr++);
     }
     else
       itr++;
   }
 
-  MessageDeque::iterator qItr = outgoingQue.begin();
-  while (qItr != outgoingQue.end())
+  MessageDeque::iterator qItr = outgoingQueue.begin();
+  while (qItr != outgoingQueue.end())
   {
     if (handler == (*qItr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*qItr);
-      outgoingQue.erase(qItr++);
+      outgoingQueue.erase(qItr++);
     }
     else
       qItr++;
@@ -395,15 +395,15 @@ BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()
 {
-  MessageList::iterator itr = pendingOutgingMesages.begin();
-  while ( itr != pendingOutgingMesages.end() )
+  MessageList::iterator itr = pendingOutgoingMesages.begin();
+  while ( itr != pendingOutgoingMesages.end() )
   {
       delete(*itr);
       itr++;
   }
 
-  MessageDeque::iterator qItr = outgoingQue.begin();
-  while (qItr != outgoingQue.end())
+  MessageDeque::iterator qItr = outgoingQueue.begin();
+  while (qItr != outgoingQueue.end())
   {
       delete(*qItr);
       qItr++;
