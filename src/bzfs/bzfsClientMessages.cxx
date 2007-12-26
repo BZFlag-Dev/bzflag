@@ -17,8 +17,8 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 
-std::map<uint16_t,ClientNetworkMessageHandler*> clientNeworkHandlers;
-std::map<uint16_t,PlayerNetworkMessageHandler*> playerNeworkHandlers;
+std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
+std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 
 void packWorldSettings ( void )
@@ -266,7 +266,7 @@ public:
   }
 };
 
-class UDPLinkExtablishedHandler : public ClientNetworkMessageHandler
+class UDPLinkEstablishedHandler : public ClientNetworkMessageHandler
 {
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
@@ -984,53 +984,53 @@ public:
 
 void registerDefaultHandlers ( void )
 {
-  clientNeworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
-  clientNeworkHandlers[MsgSetVar] = new SetVarHandler;
-  clientNeworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;
-  clientNeworkHandlers[MsgGetWorld] = new GetWorldHandler;
-  clientNeworkHandlers[MsgWantSettings] = new WantSettingsHandler;
-  clientNeworkHandlers[MsgWantWHash] = new WantWHashHandler;
-  clientNeworkHandlers[MsgQueryGame] = new QueryGameHandler;
-  clientNeworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
-  clientNeworkHandlers[MsgUDPLinkEstablished] = new UDPLinkExtablishedHandler;
-  clientNeworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
+  clientNetworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
+  clientNetworkHandlers[MsgSetVar] = new SetVarHandler;
+  clientNetworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;
+  clientNetworkHandlers[MsgGetWorld] = new GetWorldHandler;
+  clientNetworkHandlers[MsgWantSettings] = new WantSettingsHandler;
+  clientNetworkHandlers[MsgWantWHash] = new WantWHashHandler;
+  clientNetworkHandlers[MsgQueryGame] = new QueryGameHandler;
+  clientNetworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
+  clientNetworkHandlers[MsgUDPLinkEstablished] = new UDPLinkEstablishedHandler;
+  clientNetworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
 
-  playerNeworkHandlers[MsgCapBits] = new CapBitsHandler;
-  playerNeworkHandlers[MsgEnter] = new EnterHandler;
-  playerNeworkHandlers[MsgExit] = new ExitHandler;
-  playerNeworkHandlers[MsgAlive] = new AliveHandler;
-  playerNeworkHandlers[MsgKilled] = new KilledHandler;
-  playerNeworkHandlers[MsgDropFlag] = new DropFlagHandler;
-  playerNeworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
-  playerNeworkHandlers[MsgCollide] = new CollideHandler;
-  playerNeworkHandlers[MsgShotBegin] = new ShotBeginHandler;
-  playerNeworkHandlers[MsgShotEnd] = new ShotEndHandler;
-  playerNeworkHandlers[MsgHit] = new HitHandler;
-  playerNeworkHandlers[MsgTeleport] = new TeleportHandler;
-  playerNeworkHandlers[MsgMessage] = new MessageHandler;
-  playerNeworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
-  playerNeworkHandlers[MsgNewRabbit] = new NewRabbitHandler;
-  playerNeworkHandlers[MsgPause] = new PauseHandler;
-  playerNeworkHandlers[MsgAutoPilot] = new AutoPilotHandler;
-  playerNeworkHandlers[MsgLagPing] = new LagPingHandler;
-  playerNeworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
-  playerNeworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
-  playerNeworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
+  playerNetworkHandlers[MsgCapBits] = new CapBitsHandler;
+  playerNetworkHandlers[MsgEnter] = new EnterHandler;
+  playerNetworkHandlers[MsgExit] = new ExitHandler;
+  playerNetworkHandlers[MsgAlive] = new AliveHandler;
+  playerNetworkHandlers[MsgKilled] = new KilledHandler;
+  playerNetworkHandlers[MsgDropFlag] = new DropFlagHandler;
+  playerNetworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
+  playerNetworkHandlers[MsgCollide] = new CollideHandler;
+  playerNetworkHandlers[MsgShotBegin] = new ShotBeginHandler;
+  playerNetworkHandlers[MsgShotEnd] = new ShotEndHandler;
+  playerNetworkHandlers[MsgHit] = new HitHandler;
+  playerNetworkHandlers[MsgTeleport] = new TeleportHandler;
+  playerNetworkHandlers[MsgMessage] = new MessageHandler;
+  playerNetworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
+  playerNetworkHandlers[MsgNewRabbit] = new NewRabbitHandler;
+  playerNetworkHandlers[MsgPause] = new PauseHandler;
+  playerNetworkHandlers[MsgAutoPilot] = new AutoPilotHandler;
+  playerNetworkHandlers[MsgLagPing] = new LagPingHandler;
+  playerNetworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
+  playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
+  playerNetworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
 }
 
 void cleanupDefaultHandlers ( void )
 {
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerIter = playerNeworkHandlers.begin();
-  while(playerIter != playerNeworkHandlers.end())
+  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerIter = playerNetworkHandlers.begin();
+  while(playerIter != playerNetworkHandlers.end())
     delete((playerIter++)->second);
 
-  playerNeworkHandlers.clear();
+  playerNetworkHandlers.clear();
 
-  std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientIter = clientNeworkHandlers.begin();
-  while(clientIter != clientNeworkHandlers.end())
+  std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientIter = clientNetworkHandlers.begin();
+  while(clientIter != clientNetworkHandlers.end())
     delete((clientIter++)->second);
 
-  clientNeworkHandlers.clear();
+  clientNetworkHandlers.clear();
 }
 
 // Local Variables: ***

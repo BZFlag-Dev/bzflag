@@ -32,7 +32,7 @@ protected:
   GameKeeper::Player *player;
 };
 
-extern std::map<uint16_t,PlayerNetworkMessageHandler*> playerNeworkHandlers;
+extern std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 class ClientNetworkMessageHandler
 {
@@ -41,7 +41,7 @@ public:
   virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len ) = 0;
 };
 
-extern std::map<uint16_t,ClientNetworkMessageHandler*> clientNeworkHandlers;
+extern std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
 
 void registerDefaultHandlers ( void );
 void cleanupDefaultHandlers ( void );

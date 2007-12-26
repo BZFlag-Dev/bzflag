@@ -3115,8 +3115,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   // see if we have any registered handlers for this message type
   bool handled = false;
 
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNeworkHandlers.find(code);
-  if (playerItr != playerNeworkHandlers.end()) {
+  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNetworkHandlers.find(code);
+  if (playerItr != playerNetworkHandlers.end()) {
     // player messages all start with the player ID first
     // so get it, and verify that the sender IS the player.
     // TODO, punish the person who owns handler, as they are up to no good
@@ -3126,8 +3126,8 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   } else {
     // try a non player message
     // they don't start with a player
-    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNeworkHandlers.find(code);
-    if (clientItr != clientNeworkHandlers.end())
+    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNetworkHandlers.find(code);
+    if (clientItr != clientNetworkHandlers.end())
       handled = clientItr->second->execute(handler,code,buf,len);
   }
 
