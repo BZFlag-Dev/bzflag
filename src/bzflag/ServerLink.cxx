@@ -862,7 +862,7 @@ success:
   return 1;
 }
 
-void ServerLink::sendCaps(PlayerId _id,bool downloads, bool sounds )
+void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
 {
   if (state != Okay)
     return;

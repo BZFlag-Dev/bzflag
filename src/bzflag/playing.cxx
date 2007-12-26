@@ -3434,7 +3434,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t len,
   switch (code) {
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
-		handleMovementUpdate(code,len,msg);
+      handleMovementUpdate(code,len,msg);
       break;
 
     case MsgGMUpdate: {
