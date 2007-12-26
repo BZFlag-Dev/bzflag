@@ -3131,7 +3131,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       handled = clientItr->second->execute(handler,code,buf,len);
   }
 
-  if (!handled)	// somone got it, don't need to do the old way
+  if (!handled)	// someone got it, don't need to do the old way
     logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
 }
 
