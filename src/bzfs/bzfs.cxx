@@ -186,11 +186,11 @@ public:
   {
     pwriteBroadcast(data, int(size), mask);
 
-     //record the packet
-     if (Record::enabled())
-       Record::addPacket(code, size-4, ((char*)data)+4);
+    //record the packet
+    if (Record::enabled())
+      Record::addPacket(code, size-4, ((char*)data)+4);
 
-     return size;
+    return size;
   }
 };
 

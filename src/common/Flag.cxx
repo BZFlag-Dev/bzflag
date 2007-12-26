@@ -402,7 +402,7 @@ size_t Flag::fakePack(BufferedNetworkMessage *msg) const
   msg->packVector(landingPosition);
   msg->packFloat(flightTime);
   msg->packFloat(flightEnd);
- msg->packFloat(initialVelocity);
+  msg->packFloat(initialVelocity);
   return msg->size()-s;
 }
 
