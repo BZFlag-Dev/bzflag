@@ -1168,12 +1168,6 @@
 				RelativePath="..\..\src\bzfs\bzfsMessages.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="StateVerification"

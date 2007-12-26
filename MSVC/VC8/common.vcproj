@@ -568,6 +568,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BufferedNetworkMessage.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\Bundle.cxx"
 				>
 			</File>
@@ -577,6 +581,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\bz_Locale.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\common\bz_md5.cxx"
 				>
 			</File>
 			<File
@@ -637,10 +645,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\Language.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\bz_md5.cxx"
 				>
 			</File>
 			<File
@@ -721,6 +725,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\BufferedNetworkMessage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\Bundle.h"
 				>
 			</File>
@@ -730,6 +738,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\bz_Locale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\bz_md5.h"
 				>
 			</File>
 			<File
@@ -802,10 +814,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Language.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\bz_md5.h"
 				>
 			</File>
 			<File
