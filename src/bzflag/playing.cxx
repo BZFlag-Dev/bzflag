@@ -3489,7 +3489,7 @@ public:
     }
 
     if ( e == 1)
-      return message->size();
+      return message->size() + 4;
 
     return 0;
   }
