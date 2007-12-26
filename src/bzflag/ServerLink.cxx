@@ -683,26 +683,21 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
   if (state != Okay)
     return -1;
 
-  if ((urecvfd >= 0) /* && ulinkup */) 
-  {
+  if ((urecvfd >= 0) /* && ulinkup */) {
     int n;
 
-    if (!udpLength) 
-    {
+    if (!udpLength) {
       AddrLen recvlen = sizeof(urecvaddr);
       n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr, (socklen_t*) &recvlen);
-      if (n > 0)
-      {
+      if (n > 0) {
 	udpLength    = n;
 	udpBufferPtr = ubuf;
       }
     }
-    if (udpLength) 
-    {
+    if (udpLength) {
       // unpack header and get message
       udpLength -= 4;
-      if (udpLength < 0)
-      {
+      if (udpLength < 0) {
 	udpLength = 0;
 	return -1;
       }
@@ -712,8 +707,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
 
-      if (len > udpLength) 
-      {
+      if (len > udpLength) {
 	udpLength = 0;
 	return -1;
       }
@@ -764,8 +758,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
   int tlen = rlen;
 
-  while (rlen >= 1 && tlen < 4) 
-  {
+  while (rlen >= 1 && tlen < 4) {
     printError("ServerLink::read() loop");
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
@@ -802,13 +795,11 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 //  if (len > MaxPacketLen)
  //   return -1;
 
-  if (len > 0)
-  {
+  if (len > 0) {
     // no more max packet len, our buffer is dynamic
     char *tmpBuffer = (char*) malloc(len);
     rlen = recv(fd, tmpBuffer, int(len), 0);
-    if (!rlen)
-    {
+    if (!rlen) {
       // Socket shutdown Server side
       free(tmpBuffer);
       return -2;
@@ -828,8 +819,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
   // keep reading until we get the whole message
   tlen = rlen;
-  while (rlen >= 1 && tlen < int(len))
-  {
+  while (rlen >= 1 && tlen < int(len)) {
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
@@ -842,14 +832,11 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
     char *tmpBuffer = (char*)malloc(int(len) - tlen);
 
     rlen = recv(fd, tmpBuffer, int(len) - tlen, 0);
-    if (rlen > 0)
-    {
+    if (rlen > 0) {
       msg->addPackedData(tmpBuffer,rlen);
       free(tmpBuffer);
       tlen += rlen;
-    }
-    else if (rlen == 0)
-    {
+    } else if (rlen == 0) {
       // Socket shutdown Server side
       free(tmpBuffer);
       return -2;
@@ -865,8 +852,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
 success:
   // FIXME -- packet recording
-  if (packetStream)
-  {
+  if (packetStream) {
     long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
     fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
     fwrite(&dt, sizeof(dt), 1, packetStream);
