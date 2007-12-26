@@ -304,7 +304,12 @@ size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCa
   BufferedNetworkMessage * msg = new BufferedNetworkMessage;
 
   while (callback->receive(msg))
+  {
     incomingMessages.push_back(msg);
+    msg = new BufferedNetworkMessage;
+  }
+  // clean up the extra at the end
+  delete msg;
 
   return incomingMessages.size();
 }
