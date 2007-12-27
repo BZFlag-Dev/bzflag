@@ -20,6 +20,7 @@
 #include "common.h"
 #include "BufferedNetworkMessage.h"
 
+#include <vector>
 #include <string>
 
 class WorldInfo
