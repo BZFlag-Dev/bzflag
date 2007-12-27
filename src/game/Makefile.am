@@ -33,7 +33,7 @@ libGame_la_SOURCES =			\
 	StartupInfo.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx		\
-	WorldInfo.cxx
+	WorldContentInfo.cxx
 
 
 EXTRA_DIST = \
