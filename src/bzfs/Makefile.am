@@ -136,6 +136,8 @@ bzfs_SOURCES = \
 	WorldFileObstacle.h \
 	WorldGenerators.cxx \
 	WorldGenerators.h \
+	WorldInfo.cxx \
+	WorldInfo.h \
 	WorldWeapons.cxx \
 	WorldWeapons.h \
 	WorldEventManager.cxx \
