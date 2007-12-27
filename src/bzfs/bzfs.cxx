@@ -5068,7 +5068,6 @@ int main(int argc, char **argv)
    * substantially (about x10)
    **/
 
-  GameKeeper::Player::passTCPMutex();
   int i;
   int readySetGo = -1; // match countdown timer
   while (!done) {
@@ -5176,7 +5175,6 @@ int main(int argc, char **argv)
     // wait for an incoming communication, a flag to hit the ground,
     // a game countdown to end, a world weapon needed to be fired,
     // or a replay packet waiting to be sent.
-    GameKeeper::Player::freeTCPMutex();
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
@@ -5186,7 +5184,6 @@ int main(int argc, char **argv)
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
-    GameKeeper::Player::passTCPMutex();
     if (Replay::playing()) {
       Replay::sendPackets ();
     }
@@ -5785,7 +5782,6 @@ int main(int argc, char **argv)
   logDebugMessage(1,"Shutting down server: uptime %s\n",
     TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());
 
-  GameKeeper::Player::freeTCPMutex();
   serverStop();
 
   // remove from list server and disconnect

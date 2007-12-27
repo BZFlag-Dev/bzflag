@@ -23,17 +23,6 @@
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
 
-#if defined(USE_THREADS)
-pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;
-
-static void *tcpRx(void* arg) {
-  GameKeeper::Player *playerData = (GameKeeper::Player *)arg;
-  playerData->handleTcpPacketT();
-  return NULL;
-}
-#endif
-
-
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 {
   buf = nboPackUByte(buf, playerIndex);
@@ -56,12 +45,6 @@ GameKeeper::Player::Player(int _playerIndex,
   gameTimeRate = GameTime::startRate;
   gameTimeNext = TimeKeeper::getCurrent();
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
-#if defined(USE_THREADS)
-  int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
-  if (result)
-    std::cerr << "Could not create thread" << std::endl;
-  refCount	 = 1;
-#endif
   _LSAState = start;
   bzIdentifier = "";
   isParting = false;
@@ -71,12 +54,6 @@ GameKeeper::Player::~Player()
 {
   flagHistory.clear();
   delete netHandler;
-#if defined(USE_THREADS)
-  int result = pthread_join(thread, NULL);
-  if (result)
-    std::cerr << "Could not join thread" << std::endl;
-#endif
-
   playerList[playerIndex] = NULL;
 }
 
@@ -294,11 +271,7 @@ bool GameKeeper::Player::clean()
   bool ICleaned = false;
   for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]))
-      if (playerData->closed
-#if defined(USE_THREADS)
-	  && !playerData->refCount
-#endif
-	  ) {
+      if (playerData->closed) {
 	delete playerData;
 	ICleaned = true;
       } else {
@@ -315,20 +288,6 @@ int GameKeeper::Player::getFreeIndex(int min, int max)
   return max;
 }
 
-#if defined(USE_THREADS)
-void GameKeeper::Player::handleTcpPacketT()
-{
-  while (!closed) {
-    const RxStatus e = netHandler->tcpReceive();
-    if (e == ReadPart)
-      continue;
-    passTCPMutex();
-    clientCallback(*netHandler, playerIndex, e);
-    freeTCPMutex();
-  }
-  refCount = 0;
-}
-#else
 void GameKeeper::Player::handleTcpPacket(fd_set *set)
 {
   if (netHandler->isFdSet(set)) {
@@ -338,8 +297,6 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
     clientCallback(*netHandler, playerIndex, e);
   }
 }
-
-#endif
 
 void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
 {

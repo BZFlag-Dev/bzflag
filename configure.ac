@@ -446,13 +446,6 @@ if test "x$prefix" = "xNONE" ; then
 	prefix=$ac_default_prefix
 fi
 
-AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
-if test x$enable_threads = xyes ; then
-   AC_DEFINE(USE_THREADS, 1, [Use threads])
-   CPPFLAGS="$CPPFLAGS -D_REENTRANT"
-   LDFLAGS="$LDFLAGS -lpthread"
-fi
-
 AC_CHECK_LIB(cares, ares_init, BUILDCARES=no, BUILDCARES=yes)
 AM_CONDITIONAL(BUILDCARES, test $BUILDCARES = yes)
 if test "x$BUILDCARES" = "xyes" ; then

@@ -19,9 +19,6 @@
 // system headers
 #include <vector>
 #include <string>
-#if defined(USE_THREADS)
-#include <pthread.h>
-#endif
 
 // common interface headers
 #include "PlayerInfo.h"
@@ -79,11 +76,6 @@ public:
     void	   close();
     static bool    clean();
     void	   handleTcpPacket(fd_set *set);
-#if defined(USE_THREADS)
-    void	   handleTcpPacketT();
-#endif
-    static void    passTCPMutex();
-    static void    freeTCPMutex();
 
     // For hostban checking, to avoid check and check again
     static void    setAllNeedHostbanChecked(bool set);
@@ -146,11 +138,6 @@ public:
     bool	      closed;
     tcpCallback       clientCallback;
     std::string	      bzIdentifier;
-#if defined(USE_THREADS)
-    pthread_t		   thread;
-    static pthread_mutex_t mutex;
-    int			   refCount;
-#endif
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
@@ -179,28 +166,6 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 }
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
-
-#if defined(USE_THREADS)
-inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
-#endif
-
-inline void GameKeeper::Player::passTCPMutex()
-{
-#if defined(USE_THREADS)
-  int result = pthread_mutex_lock(&mutex);
-  if (result)
-    std::cerr << "Could not lock mutex" << std::endl;
-#endif
-}
-
-inline void GameKeeper::Player::freeTCPMutex()
-{
-#if defined(USE_THREADS)
-  int result = pthread_mutex_unlock(&mutex);
-  if (result)
-    std::cerr << "Could not unlock mutex" << std::endl;
-#endif
-}
 
 // For hostban checking, to avoid check and check again
 inline void GameKeeper::Player::setAllNeedHostbanChecked(bool set)
