@@ -611,6 +611,10 @@
 				RelativePath="..\..\src\game\VotingArbiter.cxx"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\game\WorldContentInfo.cxx"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -691,6 +695,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\WorldContentInfo.h"
 				>
 			</File>
 		</Filter>
