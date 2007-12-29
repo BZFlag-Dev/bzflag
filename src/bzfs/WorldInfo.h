@@ -109,7 +109,7 @@ public:
   void finishWorld();
   int packDatabase();
 
-	bool isFinisihed() { return finished;}
+	bool isFinished() { return finished;}
 
 private:
 

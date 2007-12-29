@@ -2719,7 +2719,7 @@ BZF_API bool bz_getFlagPosition(int flag, float *pos)
 
 BZF_API bool bz_addWorldBox(float *pos, float rot, float *scale, bz_WorldObjectOptions options)
 {
-  if(!world || world->isFinisihed() || !pos || !scale)
+  if(!world || world->isFinished() || !pos || !scale)
     return false;
 
   world->addBox(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru);
@@ -2730,7 +2730,7 @@ BZF_API bool bz_addWorldBox(float *pos, float rot, float *scale, bz_WorldObjectO
 
 BZF_API bool bz_addWorldPyramid(float *pos, float rot, float *scale, bool fliped, bz_WorldObjectOptions options)
 {
-  if(!world || world->isFinisihed() || !pos || !scale)
+  if(!world || world->isFinished() || !pos || !scale)
     return false;
 
   world->addPyramid(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru, fliped);
@@ -2741,7 +2741,7 @@ BZF_API bool bz_addWorldPyramid(float *pos, float rot, float *scale, bool fliped
 
 BZF_API bool bz_addWorldBase(float *pos, float rot, float *scale, int teamIndex, bz_WorldObjectOptions options)
 {
-  if(!world || world->isFinisihed() || !pos || !scale)
+  if(!world || world->isFinished() || !pos || !scale)
     return false;
 
   world->addBase(pos, rot, scale, teamIndex, options.driveThru, options.shootThru);
@@ -2752,7 +2752,7 @@ BZF_API bool bz_addWorldBase(float *pos, float rot, float *scale, int teamIndex,
 
 BZF_API bool bz_addWorldTeleporter(float *pos, float rot, float *scale, float border, bz_WorldObjectOptions options)
 {
-  if(!world || world->isFinisihed() || !pos || !scale)
+  if(!world || world->isFinished() || !pos || !scale)
     return false;
 
   world->addTeleporter(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], border, false, options.driveThru, options.shootThru);
@@ -2763,7 +2763,7 @@ BZF_API bool bz_addWorldTeleporter(float *pos, float rot, float *scale, float bo
 
 BZF_API bool bz_addWorldLink(int from, int to)
 {
-  if(!world || world->isFinisihed())
+  if(!world || world->isFinished())
     return false;
 
   world->addLink(from, to);
@@ -2774,7 +2774,7 @@ BZF_API bool bz_addWorldLink(int from, int to)
 
 BZF_API bool bz_addWorldWaterLevel(float level, bz_MaterialInfo *material)
 {
-  if(!world || world->isFinisihed())
+  if(!world || world->isFinished())
     return false;
 
   if(!material)
@@ -2793,7 +2793,7 @@ BZF_API bool bz_addWorldWaterLevel(float level, bz_MaterialInfo *material)
 
 BZF_API bool bz_addWorldWeapon(const char *_flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays)
 {
-  if(!world || world->isFinisihed() || !_flagType)
+  if(!world || world->isFinished() || !_flagType)
     return false;
 
   std::string flagType=_flagType;
