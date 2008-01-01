@@ -26,8 +26,8 @@ BufferedNetworkMessageManager* Singleton<BufferedNetworkMessageManager>::_instan
 
 BufferedNetworkMessage::BufferedNetworkMessage()
 {
+  dataSize = 4;
   data = NULL;
-  dataSize = 0;
   packedSize = 0;
   readPoint = 0;
 
@@ -215,8 +215,8 @@ void BufferedNetworkMessage::clear ( void )
   if (data)
     free(data);
 
+  dataSize = 4;
   data = NULL;
-  dataSize = 0;
   packedSize = 0;
   recipent = NULL;
   readPoint = 0;
@@ -236,34 +236,42 @@ size_t BufferedNetworkMessage::size ( void )
 bool BufferedNetworkMessage::process ( void )
 {
   if (!data)
-    checkData(4);
+    checkData(0);
 
   NetworkMessageTransferCallback *transferCallback = MSGMGR.getTransferCallback();
 
   if (!transferCallback || !recipent && code == 0)
     return false;
 
+  // +4 here is for these two uints
+  packedSize += 4;
   nboPackUShort(data, uint16_t(packedSize));
   nboPackUShort(data+sizeof(uint16_t), code);
 
   if (recipent)
   {
-    return transferCallback->send(recipent, data, packedSize + 4) == packedSize+4;
+    return transferCallback->send(recipent, data, packedSize) == packedSize;
   }
    
   // send message to everyone
   int mask = NetHandler::clientBZFlag;
   if (toAdmins)
     mask |= NetHandler::clientBZAdmin;
-  transferCallback->broadcast(data, packedSize + 4, mask, code);
+  transferCallback->broadcast(data, packedSize, mask, code);
 
   return true;
 }
 
 void BufferedNetworkMessage::checkData ( size_t s )
 {
-  if ( packedSize + s > dataSize )
-    data = reinterpret_cast<char*>(realloc(data, dataSize + ((int)ceil((s+4) / 256.0f)) * 256));
+  if (!data || (packedSize + s + 4 > dataSize)) {
+    dataSize = dataSize + ((int)ceil(s / 256.0f)) * 256;
+    data = reinterpret_cast<char*>(realloc(data, dataSize));
+  }
+  if (!data) { // hmm, couldn't realloc - out of memory?
+    logDebugMessage(1, "Error - out of memory reallocating buffered network message; size %d, error %d.", dataSize, errno);
+    exit(2);
+  }
 }
 
 char* BufferedNetworkMessage::getWriteBuffer ( void )
