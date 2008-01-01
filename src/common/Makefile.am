@@ -14,7 +14,7 @@ libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
 	BZDBCache.cxx			\
-	BufferedNetworkMessage.cxx \
+	BufferedNetworkMessage.cxx 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	CommandManager.cxx		\
@@ -45,7 +45,7 @@ libCommon_la_SOURCES  =			\
 	bzsignal.cxx			\
 	cURLManager.cxx			\
 	global.cxx			\
-	bz_md5.cxx				\
+	bz_md5.cxx			\
 	messages.cxx
 
 MAINTAINERCLEANFILES = \
