@@ -61,7 +61,7 @@ typedef unsigned int	uint32_t;
 #endif
 
 /* stuff specific to visual studio */
-#if (_MSC_VER)
+#if defined(_MSC_VER)
 // turn off bogus `this used in base member initialization list'
 #  pragma warning(disable: 4786)
 #  pragma warning(disable: 4503)
