@@ -123,6 +123,7 @@ void			MainMenu::execute()
     leaveGame();
     // myTank should be NULL now, recreate menu
     createControls();
+    resize(width, height);
   } else if (_focus == quit) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);
