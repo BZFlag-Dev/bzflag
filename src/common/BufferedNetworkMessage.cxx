@@ -10,13 +10,19 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// Interface header
 #include "BufferedNetworkMessage.h"
-#include "Pack.h"
-//#include "GameKeeper.h"
-//#include "bzfs.h"
-//#include "bzfsMessages.h"
-#include "NetHandler.h"
+
+// BZFlag common header
+#include "common.h"
+
+// System headers
 #include <algorithm>
+#include <errno.h>
+
+// Common headers
+#include "Pack.h"
+#include "NetHandler.h"
 
 
 // initialize the singleton
