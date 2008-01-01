@@ -13,8 +13,6 @@
 #ifndef __CUSTOMBASE_H__
 #define __CUSTOMBASE_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObstacle.h"
 

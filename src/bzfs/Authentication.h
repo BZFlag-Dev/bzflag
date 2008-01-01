@@ -18,6 +18,7 @@
 
 #include <string>
 
+
 class Authentication {
  public:
   Authentication();

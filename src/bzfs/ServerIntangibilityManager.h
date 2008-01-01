@@ -14,8 +14,13 @@
 #define __SERVERINTANGIBILITYMANAGER_H__
 
 #include "common.h"
-#include "Singleton.h"
+
+/* system headers */
 #include <map>
+
+/* common headers */
+#include "Singleton.h"
+
 
 #define _INVALID_TANGIBILITY 255
 

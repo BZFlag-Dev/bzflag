@@ -13,11 +13,12 @@
 #ifndef __TEAMBASES_H__
 #define __TEAMBASES_H__
 
+#include "common.h"
+
 /* system interface headers */
 #include <vector>
 #include <map>
 
-/* common interface headers */
 #include "global.h"
 
 

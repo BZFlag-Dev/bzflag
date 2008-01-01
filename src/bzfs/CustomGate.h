@@ -13,8 +13,6 @@
 #ifndef __CUSTOMGATE_H__
 #define __CUSTOMGATE_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObstacle.h"
 

@@ -12,11 +12,13 @@
 #ifndef __WORLDFILELOCATION_H__
 #define __WORLDFILELOCATION_H__
 
+/* interface header */
+#include "WorldFileObject.h"
+
 // system headers
 #include <iostream>
 
 // bzfs-specific headers
-#include "WorldFileObject.h"
 #include "MeshTransform.h"
 
 

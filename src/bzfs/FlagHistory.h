@@ -13,8 +13,7 @@
 #ifndef __FLAGHISTORY_H__
 #define __FLAGHISTORY_H__
 
-// bzflag global header
-#include "global.h"
+#include "common.h"
 
 // system headers
 #include <vector>

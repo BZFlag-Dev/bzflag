@@ -13,11 +13,14 @@
 #ifndef __ACCESSCONTROLLIST_H__
 #define __ACCESSCONTROLLIST_H__
 
+#include "common.h"
+
 #include <vector>
 #include <string>
 
 #include "TimeKeeper.h"
 #include "Address.h"
+
 
 /** This struct contains information about a ban - the address that was banned,
     the time the ban will expire, the callsign of the player who performed the

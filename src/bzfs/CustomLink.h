@@ -13,8 +13,6 @@
 #ifndef __CUSTOMLINK_H__
 #define __CUSTOMLINK_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObject.h"
 

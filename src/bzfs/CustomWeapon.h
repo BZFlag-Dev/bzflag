@@ -13,7 +13,8 @@
 #ifndef __CUSTOMWEAPON_H__
 #define __CUSTOMWEAPON_H__
 
-#include "common.h"
+/* interface header */
+#include "WorldFileLocation.h"
 
 /* system interface headers */
 #include <iostream>
@@ -24,7 +25,6 @@
 #include "TimeKeeper.h"
 
 /* local interface headers */
-#include "WorldFileLocation.h"
 #include "WorldInfo.h"
 #include "WorldEventManager.h"
 

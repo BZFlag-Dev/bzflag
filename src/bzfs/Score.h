@@ -13,8 +13,9 @@
 #ifndef __SCORE_H__
 #define __SCORE_H__
 
-// bzflag common header
 #include "common.h"
+
+/* common interface headers */
 #include "BufferedNetworkMessage.h"
 
 class Score {

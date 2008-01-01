@@ -10,9 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
 #ifndef __PARSE_MATERIAL_H__
 #define __PARSE_MATERIAL_H__
+
+#include "common.h"
 
 /* system interface headers */
 #include <iostream>

@@ -13,8 +13,8 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-/* common header */
-#include "common.h"
+/* interface header */
+#include "ServerCommand.h"
 
 /* system headers */
 #include <string>
@@ -24,9 +24,6 @@
 #include "bzfsAPI.h"
 #include "GameKeeper.h"
 #include "TextUtils.h"
-
-/* bzfs-specific headers */
-#include "ServerCommand.h"
 
 
 // command classes used by the API

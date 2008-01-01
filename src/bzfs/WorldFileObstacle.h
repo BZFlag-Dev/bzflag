@@ -12,11 +12,11 @@
 #ifndef __WORLDFILEOBSTACLE_H__
 #define __WORLDFILEOBSTACLE_H__
 
+// interface header
+#include "WorldFileLocation.h"
+
 // system headers
 #include <iostream>
-
-// bzfs-specific headers
-#include "WorldFileLocation.h"
 
 
 class WorldFileObstacle : public WorldFileLocation {

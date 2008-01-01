@@ -13,7 +13,8 @@
 #ifndef __CUSTOM_GROUP_H__
 #define __CUSTOM_GROUP_H__
 
-#include "common.h"
+/* interface header */
+#include "WorldFileObstacle.h"
 
 /* system interface headers */
 #include <string>
@@ -22,7 +23,6 @@
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "WorldFileObstacle.h"
 
 class GroupInstance;
 

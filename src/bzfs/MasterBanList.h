@@ -13,7 +13,7 @@
 #ifndef __MASTER_BAN_LIST_H__
 #define __MASTER_BAN_LIST_H__
 
-// common implementation headers
+// interace header
 #include "cURLManager.h"
 
 class MasterBanList : private cURLManager {

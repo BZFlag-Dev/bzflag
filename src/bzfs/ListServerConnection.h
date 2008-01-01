@@ -15,8 +15,8 @@
 #ifndef __LISTSERVERCONNECTION_H__
 #define __LISTSERVERCONNECTION_H__
 
-/* common header */
-#include "common.h"
+/* inteface header */
+#include "cURLManager.h"
 
 /* system headers */
 #include <string>
@@ -25,7 +25,6 @@
 #include "Address.h"
 #include "Ping.h"
 #include "TimeKeeper.h"
-#include "cURLManager.h"
 
 class ListServerLink : private cURLManager {
 public:

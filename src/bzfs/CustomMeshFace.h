@@ -13,14 +13,16 @@
 #ifndef __CUSTOM_MESH_FACE_H__
 #define __CUSTOM_MESH_FACE_H__
 
-/* common interface header */
-#include "MeshObstacle.h"
-#include "MeshFace.h"
-#include "BzMaterial.h"
+#include "common.h"
 
 /* system header */
 #include <string>
 #include <vector>
+
+/* common interface header */
+#include "MeshObstacle.h"
+#include "MeshFace.h"
+#include "BzMaterial.h"
 
 
 class CustomMeshFace {

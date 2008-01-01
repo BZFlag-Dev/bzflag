@@ -13,8 +13,6 @@
 #ifndef __CUSTOMWORLD_H__
 #define __CUSTOMWORLD_H__
 
-#include "common.h"
-
 /* interface header */
 #include "WorldFileObject.h"
 

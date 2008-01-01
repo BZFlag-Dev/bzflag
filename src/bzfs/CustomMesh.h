@@ -16,18 +16,18 @@
 /* interface header */
 #include "WorldFileObstacle.h"
 
-/* local interface headers */
-#include "WorldInfo.h"
-#include "CustomMeshFace.h"
+/* system headers */
+#include <string>
+#include <vector>
 
 /* common interface headers */
 #include "BzMaterial.h"
 #include "MeshObstacle.h"
 #include "vectors.h"
 
-/* system headers */
-#include <string>
-#include <vector>
+/* local interface headers */
+#include "WorldInfo.h"
+#include "CustomMeshFace.h"
 
 
 class CustomMesh : public WorldFileObstacle {
