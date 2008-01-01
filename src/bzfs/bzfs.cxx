@@ -72,6 +72,7 @@
 #  define BUFSIZE 2048
 #endif
 
+
 // pass through the SELECT loop
 bool dontWait = true;
 
@@ -88,18 +89,18 @@ static const int InvalidPlayer = -1;
 float speedTolerance = 1.125f;
 
 // Command Line Options
-CmdLineOptions *clOptions;
+CmdLineOptions *clOptions = NULL;
 
 // server address to listen on
 Address serverAddress;
 // well known service socket
-static int wksSocket;
+static int wksSocket = -1;
 bool handlePings = true;
 PingPacket pingReply;
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
-int numFlags;
+int numFlags = 0;
 bool done = false;
 // true if hit time/score limit
 bool gameOver = true;
@@ -116,11 +117,11 @@ CheatProtectionOptions	cheatProtectionOptions;
 
 bool publiclyDisconnected = false;
 
-char hexDigest[50];
+char hexDigest[50] = {0};
 
-TimeKeeper gameStartTime;
+TimeKeeper gameStartTime = TimeKeeper::getNullTime();
 TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
-TimeKeeper nextSuperFlagInsertion;
+TimeKeeper nextSuperFlagInsertion = TimeKeeper::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
 int countdownResumeTime = -1;
@@ -157,17 +158,18 @@ uint8_t rabbitIndex = NoPlayer;
 
 RejoinList rejoinList;
 
-static TimeKeeper lastWorldParmChange;
+static TimeKeeper lastWorldParmChange = TimeKeeper::getNullTime();
 bool worldWasSentToAPlayer   = false;
+
+unsigned int maxNonPlayerDataChunk = 2048;
+std::map<int,NetConnectedPeer> netConnectedPeers;
+
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
-std::map<int,NetConnectedPeer> netConnectedPeers;
-
-unsigned int maxNonPlayerDataChunk = 2048;
 
 class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
 {
