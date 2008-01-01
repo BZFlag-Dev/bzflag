@@ -212,11 +212,9 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  std::string("discarding incomplete object"), line);
 	if (object != fakeObject) {
 	  delete object;
-	}
-	else if (customObject.size())
-	{
-		customObject = "";
-		customLines.clear();
+	} else if (customObject.size()) {
+  	  customObject = "";
+	  customLines.clear();
 	}
       }
       object = newObject;

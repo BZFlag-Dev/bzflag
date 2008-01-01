@@ -13,7 +13,7 @@
 // bzflag global header
 #include "global.h"
 
-// implementation wrapers for all the bzf_ API functions
+// implementation wrappers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
 #ifndef BZ_PLUGINS
