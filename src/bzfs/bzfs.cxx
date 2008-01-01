@@ -165,12 +165,6 @@ unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
 
-void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-static void dropAssignedFlag(int playerIndex);
-static std::string evaluateString(const std::string&);
-static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
-
-
 class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
 {
 public:
@@ -1006,6 +1000,128 @@ static void dumpScore()
   std::cout << "#end" << std::endl;
 }
 
+
+static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
+{
+  if (!rawbuf) {
+    std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
+    return;
+  }
+
+  if (!handler)	// WTF?
+    return;
+
+  // pull off the BZFS code and size that packs all BZFS fomat comunication
+  uint16_t len, code;
+  void *buf = (char *)rawbuf;
+  getGeneralMessageInfo(&buf,code,len);
+
+  // make sure it's not an attack
+  if (udp && isUDPAttackMessage(code))
+    logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
+
+  // see if we have any registered handlers for this message type
+  bool handled = false;
+
+  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNetworkHandlers.find(code);
+  if (playerItr != playerNetworkHandlers.end()) {
+    // player messages all start with the player ID first
+    // so get it, and verify that the sender IS the player.
+    // TODO, punish the person who owns handler, as they are up to no good
+    buf = playerItr->second->unpackPlayer(buf,len);
+    if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
+      handled = playerItr->second->execute(code,buf,len);
+  } else {
+    // try a non player message
+    // they don't start with a player
+    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNetworkHandlers.find(code);
+    if (clientItr != clientNetworkHandlers.end())
+      handled = clientItr->second->execute(handler,code,buf,len);
+  }
+
+  if (!handled)	// someone got it, don't need to do the old way
+    logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
+}
+
+
+static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
+{
+  if (e != ReadAll) {
+    if (e == ReadReset) {
+      dropHandler(&netPlayer, "ECONNRESET/EPIPE");
+    } else if (e == ReadError) {
+      // dump other errors and remove the player
+      nerror("error on read");
+      dropHandler(&netPlayer, "Read error");
+    } else if (e == ReadDiscon) {
+      // disconnected
+      dropHandler(&netPlayer, "Disconnected");
+    } else if (e == ReadHuge) {
+      logDebugMessage(1,"Player [%d] sent huge packet length, possible attack\n", i);
+      dropHandler(&netPlayer, "large packet recvd");
+    }
+    return;
+  }
+
+  uint16_t len, code;
+  void *buf = netPlayer.getTcpBuffer();
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
+  // trying to get the real player from the message: bots share tcp
+  // connection with the player
+  PlayerId t = i;
+  switch (code) {
+    case MsgShotBegin: {
+      nboUnpackUByte(buf, t);
+      break;
+    }
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall: {
+      float timestamp;
+      buf = nboUnpackUByte(buf, t);
+      buf = nboUnpackFloat(buf, timestamp);
+      break;
+    }
+    default:
+      break;
+  }
+  // Make sure is a bot
+  GameKeeper::Player *playerData;
+  if (t != i) {
+    playerData = GameKeeper::Player::getPlayerByIndex(t);
+    if (!playerData || !playerData->player.isBot()) {
+      t = i;
+      playerData = GameKeeper::Player::getPlayerByIndex(t);
+    }
+    // Should check also if bot and player are related
+  } else {
+    playerData = GameKeeper::Player::getPlayerByIndex(t);
+  }
+
+  // simple ruleset, if player sends a MsgShotBegin over TCP he/she
+  // must not be using the UDP link
+  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
+    if (code == MsgShotBegin) {
+      char message[MessageLen];
+      sprintf(message,"Your end is not using UDP, turn on udp");
+      sendMessage(ServerPlayer, i, message);
+
+      sprintf(message,"upgrade your client http://BZFlag.org/ or");
+      sendMessage(ServerPlayer, i, message);
+
+      sprintf(message,"Try another server, Bye!");
+      sendMessage(ServerPlayer, i, message);
+      removePlayer(i, "no UDP", true);
+      return;
+    }
+  }
+
+  // handle the command
+  handleCommand(netPlayer.getTcpBuffer(), false, &netPlayer);
+}
+
+
 PlayerId getNewPlayer(NetHandler *netHandler)
 {
   PlayerId playerIndex = getNewPlayerID();
@@ -1101,6 +1217,85 @@ static void respondToPing(Address addr)
 }
 
 
+void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
+{
+  const char* msg = message;
+  char filtered[MessageLen] = {0};
+  char adminmsg[MessageLen] = {0};
+  bool msgWasFiltered = false;
+
+  if (clOptions->filterChat) {
+    strncpy(filtered, message, MessageLen);
+    if (clOptions->filterSimple) {
+      clOptions->filter.filter(filtered, true);
+    } else {
+      clOptions->filter.filter(filtered, false);
+    }
+    msg = filtered;
+
+    if (strcmp(message,filtered) != 0) {	// the filter did do something so barf a message
+      bz_MessageFilteredEventData_V1	eventData;
+
+      msgWasFiltered = true;
+      eventData.player = sendingPlayer;
+      eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
+      eventData.rawMessage = message;
+      eventData.filteredMessage = filtered;
+
+      worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
+    }
+  }
+
+  // check that the player has the talk permission
+  GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
+
+  if (!senderData) {
+    return;
+  }
+  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+
+    // if the player were sending to is an admin
+    GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
+
+    // don't care if they're real, just care if they're an admin
+    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers)) {
+      sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
+      return;
+    }
+  }
+
+  bz_ChatEventData_V1 chatData;
+  chatData.eventType = bz_eFilteredChatMessageEvent;
+  chatData.from = sendingPlayer;
+  chatData.to = BZ_NULLUSER;
+
+  if (recipientPlayer == AllPlayers)
+    chatData.to = BZ_ALLUSERS;
+  else if ( recipientPlayer == AdminPlayers )
+    chatData.team = eAdministrators;
+  else if ( recipientPlayer > LastRealPlayer )
+    chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
+  else
+    chatData.to = recipientPlayer;
+
+  chatData.message = msg;
+  chatData.eventTime = TimeKeeper::getCurrent().getSeconds();
+
+  // send any events that want to watch the chat
+  if (chatData.message.size())
+    worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
+
+  if (chatData.message.size())
+    sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+
+  // If the message was filtered report it on the admin channel
+  if (msgWasFiltered && clOptions->filterAnnounce) {
+    snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
+    sendMessage(ServerPlayer, AdminPlayers, adminmsg);
+  }
+}
+
+
 void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
@@ -1192,84 +1387,6 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 
   if (chatData.message.size())
     sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
-}
-
-void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
-{
-  const char* msg = message;
-  char filtered[MessageLen] = {0};
-  char adminmsg[MessageLen] = {0};
-  bool msgWasFiltered = false;
-
-  if (clOptions->filterChat) {
-    strncpy(filtered, message, MessageLen);
-    if (clOptions->filterSimple) {
-      clOptions->filter.filter(filtered, true);
-    } else {
-      clOptions->filter.filter(filtered, false);
-    }
-    msg = filtered;
-
-    if (strcmp(message,filtered) != 0) {	// the filter did do something so barf a message
-      bz_MessageFilteredEventData_V1	eventData;
-
-      msgWasFiltered = true;
-      eventData.player = sendingPlayer;
-      eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
-      eventData.rawMessage = message;
-      eventData.filteredMessage = filtered;
-
-      worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
-    }
-  }
-
-  // check that the player has the talk permission
-  GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
-
-  if (!senderData) {
-    return;
-  }
-  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-
-    // if the player were sending to is an admin
-    GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
-
-    // don't care if they're real, just care if they're an admin
-    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers)) {
-      sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
-      return;
-    }
-  }
-
-  bz_ChatEventData_V1 chatData;
-  chatData.eventType = bz_eFilteredChatMessageEvent;
-  chatData.from = sendingPlayer;
-  chatData.to = BZ_NULLUSER;
-
-  if (recipientPlayer == AllPlayers)
-    chatData.to = BZ_ALLUSERS;
-  else if ( recipientPlayer == AdminPlayers )
-    chatData.team = eAdministrators;
-  else if ( recipientPlayer > LastRealPlayer )
-    chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
-  else
-    chatData.to = recipientPlayer;
-
-  chatData.message = msg;
-  chatData.eventTime = TimeKeeper::getCurrent().getSeconds();
-
-  // send any events that want to watch the chat
-  if (chatData.message.size())
-    worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
-
-  if (chatData.message.size())
-    sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
-
-  // If the message was filtered report it on the admin channel
-  if (msgWasFiltered && clOptions->filterAnnounce) {
-    snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
-    sendMessage(ServerPlayer, AdminPlayers, adminmsg);
-  }
 }
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
@@ -1552,6 +1669,19 @@ bool validPlayerCallsign ( int playerIndex )
   }
   return true;
 }
+
+
+// try to get over a bug where extraneous flag are attached to a tank
+// not really found why, but this should fix
+// Should be called when we sure that tank does not hold any
+static void dropAssignedFlag(int playerIndex) {
+  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+    FlagInfo &flag = *FlagInfo::get(flagIndex);
+    if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
+      resetFlag(flag);
+  }
+} // dropAssignedFlag
+
 
 void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
@@ -2019,16 +2149,6 @@ void zapFlag(FlagInfo &flag)
   resetFlag(flag);
 }
 
-// try to get over a bug where extraneous flag are attached to a tank
-// not really found why, but this should fix
-// Should be called when we sure that tank does not hold any
-static void dropAssignedFlag(int playerIndex) {
-  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
-      resetFlag(flag);
-  }
-} // dropAssignedFlag
 
 void anointNewRabbit( int killerId )
 {
@@ -3095,124 +3215,6 @@ static void adjustTolerances()
   return;
 }
 
-static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
-{
-  if (!rawbuf) {
-    std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
-    return;
-  }
-
-  if (!handler)	// WTF?
-    return;
-
-  // pull off the BZFS code and size that packs all BZFS fomat comunication
-  uint16_t len, code;
-  void *buf = (char *)rawbuf;
-  getGeneralMessageInfo(&buf,code,len);
-
-  // make sure it's not an attack
-  if (udp && isUDPAttackMessage(code))
-    logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
-
-  // see if we have any registered handlers for this message type
-  bool handled = false;
-
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNetworkHandlers.find(code);
-  if (playerItr != playerNetworkHandlers.end()) {
-    // player messages all start with the player ID first
-    // so get it, and verify that the sender IS the player.
-    // TODO, punish the person who owns handler, as they are up to no good
-    buf = playerItr->second->unpackPlayer(buf,len);
-    if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
-      handled = playerItr->second->execute(code,buf,len);
-  } else {
-    // try a non player message
-    // they don't start with a player
-    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNetworkHandlers.find(code);
-    if (clientItr != clientNetworkHandlers.end())
-      handled = clientItr->second->execute(handler,code,buf,len);
-  }
-
-  if (!handled)	// someone got it, don't need to do the old way
-    logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
-}
-
-static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
-{
-  if (e != ReadAll) {
-    if (e == ReadReset) {
-      dropHandler(&netPlayer, "ECONNRESET/EPIPE");
-    } else if (e == ReadError) {
-      // dump other errors and remove the player
-      nerror("error on read");
-      dropHandler(&netPlayer, "Read error");
-    } else if (e == ReadDiscon) {
-      // disconnected
-      dropHandler(&netPlayer, "Disconnected");
-    } else if (e == ReadHuge) {
-      logDebugMessage(1,"Player [%d] sent huge packet length, possible attack\n", i);
-      dropHandler(&netPlayer, "large packet recvd");
-    }
-    return;
-  }
-
-  uint16_t len, code;
-  void *buf = netPlayer.getTcpBuffer();
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
-
-  // trying to get the real player from the message: bots share tcp
-  // connection with the player
-  PlayerId t = i;
-  switch (code) {
-    case MsgShotBegin: {
-      nboUnpackUByte(buf, t);
-      break;
-    }
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      float timestamp;
-      buf = nboUnpackUByte(buf, t);
-      buf = nboUnpackFloat(buf, timestamp);
-      break;
-    }
-    default:
-      break;
-  }
-  // Make sure is a bot
-  GameKeeper::Player *playerData;
-  if (t != i) {
-    playerData = GameKeeper::Player::getPlayerByIndex(t);
-    if (!playerData || !playerData->player.isBot()) {
-      t = i;
-      playerData = GameKeeper::Player::getPlayerByIndex(t);
-    }
-    // Should check also if bot and player are related
-  } else {
-    playerData = GameKeeper::Player::getPlayerByIndex(t);
-  }
-
-  // simple ruleset, if player sends a MsgShotBegin over TCP he/she
-  // must not be using the UDP link
-  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
-    if (code == MsgShotBegin) {
-      char message[MessageLen];
-      sprintf(message,"Your end is not using UDP, turn on udp");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"upgrade your client http://BZFlag.org/ or");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"Try another server, Bye!");
-      sendMessage(ServerPlayer, i, message);
-      removePlayer(i, "no UDP", true);
-      return;
-    }
-  }
-
-  // handle the command
-  handleCommand(netPlayer.getTcpBuffer(), false, &netPlayer);
-}
 
 static void terminateServer(int /*sig*/)
 {
