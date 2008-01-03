@@ -808,7 +808,6 @@ AC_CHECK_FUNCS(\
 	_strnicmp \
 	_vsnprintf \
 	atexit \
-	glXGetCurrentContext \
 	sched_setaffinity \
 	select \
 	snooze \
