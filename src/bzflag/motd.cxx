@@ -19,12 +19,16 @@
 
 // system headers
 #include <vector>
+#if defined(BUILD_REGEX)
+#  include "bzregex.h"
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
+#endif
 
 // common implementation headers
 #include "TextUtils.h"
 #include "AnsiCodes.h"
 #include "version.h"
-#include "bzregex.h"
 
 // local implementation headers
 #include "playing.h"
