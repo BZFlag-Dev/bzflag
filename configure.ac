@@ -337,6 +337,7 @@ AC_CHECK_HEADERS( \
 	X11/Xlib.h \
 	arpa/nameser_compat.h \
 	bstring.h \
+	dlfcn.h \
 	dsound.h \
 	inttypes.h \
 	linux/input.h \
