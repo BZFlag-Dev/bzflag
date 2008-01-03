@@ -19,13 +19,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#if defined(BUILD_REGEX)
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#endif
-
 // common headers
+#include "bzregex.h"
 #include "bzfio.h"
 #include "bzglob.h"
 #include "TextUtils.h"

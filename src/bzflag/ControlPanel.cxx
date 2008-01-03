@@ -21,13 +21,8 @@
 #include <assert.h>
 #include <time.h>
 
-#if defined(BUILD_REGEX)
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#endif
-
 /* common implementation headers */
+#include "bzregex.h"
 #include "BZDBCache.h"
 #include "FontManager.h"
 #include "TextUtils.h"

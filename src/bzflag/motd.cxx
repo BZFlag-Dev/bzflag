@@ -10,22 +10,14 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
-
 // interface header
 #include "motd.h"
 
 // system headers
 #include <vector>
-#if defined(BUILD_REGEX)
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#endif
 
 // common implementation headers
+#include "bzregex.h"
 #include "TextUtils.h"
 #include "AnsiCodes.h"
 #include "version.h"

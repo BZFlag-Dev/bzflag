@@ -32,6 +32,8 @@
  *	@(#)regex.h	8.1 (Berkeley) 6/2/93
  */
 
+#if defined(BUILD_REGEX)
+
 #ifndef _REGEX_H_
 #define	_REGEX_H_
 
@@ -116,3 +118,7 @@ void	regfree (regex_t *);
 __END_DECLS
 
 #endif /* !_REGEX_H_ */
+
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
+#endif /* !BUILD_REGEX & !HAVE_REGEX_H */
