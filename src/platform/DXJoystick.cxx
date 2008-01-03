@@ -19,6 +19,9 @@
 // Don't try compile this if we don't have an up-to-date, working DX
 #if defined(USE_DINPUT)
 
+#pragma comment(lib, "dinput.lib")
+#pragma comment(lib, "dxguid.lib")
+
 /* system headers */
 #include <vector>
 #include <string>
