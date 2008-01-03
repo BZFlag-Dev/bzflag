@@ -332,10 +332,7 @@ AC_CHECK_HEADERS( \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
-	GL/glx.h \
 	SDL/SDL.h \
-	X11/Xlib.h \
-	arpa/nameser_compat.h \
 	bstring.h \
 	dlfcn.h \
 	dsound.h \
