@@ -10,10 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
+/* interface header */
 #include "SharedObjectLoader.h"
-#ifndef _WIN32
-#include "dlfcn.h"
+
+/* system headers */
+#include <sys/types.h>
+#include <stdint.h>
+#ifdef HAVE_DLFCN_H
+#  include <dlfcn.h>
 #endif
+
 
 bool SharedObjectLoader::load(std::string filename)
 {
@@ -21,31 +29,64 @@ bool SharedObjectLoader::load(std::string filename)
 	return false;
 #else
   char *err;
+  void *createSymbol;
+  void *destroySymbol;
+
+  int32_t createAddr32, destroyAddr32;
+  int64_t createAddr64, destroyAddr64;
 
   if (filename.find('/') == std::string::npos)
     filename = "./" + filename;
 
   soHandle = dlopen(filename.c_str(), RTLD_LAZY);
-  if (soHandle == NULL)
-  {
+  if (soHandle == NULL) {
     error = dlerror();
     return false;
   }
 
   dlerror(); // To clear error-var.
-  createFunction = (createHandle)dlsym(soHandle, "create");
-  if ((err = dlerror()))
-  {
+  createSymbol = dlsym(soHandle, "create");
+  if ((err = dlerror())) {
     error = err;
     return false;
   }
 
+  /* extract the address in a posixly-pleasing fugly way */
+  switch (sizeof(createSymbol)) {
+    case (sizeof(int32_t)):
+      createAddr32 = (int32_t)createSymbol;
+      createFunction = (createHandle)createAddr32;
+      break;
+    case (sizeof(int64_t)):
+      createAddr64 = (int64_t)createSymbol;
+      createFunction = (createHandle)createAddr64;
+      break;
+    default:
+      error = "Unknown pointer address size!\n";
+      return false;
+  }
+
+
   dlerror(); // To clear error-var.
-  destroyFunction = (destroyHandle)dlsym(soHandle, "destroy");
-  if ((err = dlerror()))
-  {
+  destroySymbol = dlsym(soHandle, "destroy");
+  if ((err = dlerror())) {
     error = err;
     return false;
+  }
+
+  /* extract the address in a posixly-pleasing fugly way */
+  switch (sizeof(createSymbol)) {
+    case (sizeof(int32_t)):
+      destroyAddr32 = (int32_t)destroySymbol;
+      destroyFunction = (destroyHandle)destroyAddr32;
+      break;
+    case (sizeof(int64_t)):
+      destroyAddr64 = (int64_t)destroySymbol;
+      destroyFunction = (destroyHandle)destroyAddr64;
+      break;
+    default:
+      error = "Unknown pointer address size!\n";
+      return false;
   }
 
   return true;
