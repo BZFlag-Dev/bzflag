@@ -177,7 +177,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

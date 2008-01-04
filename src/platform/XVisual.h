@@ -64,7 +64,7 @@ class XVisual : public BzfVisual {
 #endif // BZF_XVISUAL_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

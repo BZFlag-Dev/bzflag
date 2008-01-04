@@ -54,7 +54,7 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

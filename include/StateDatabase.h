@@ -428,7 +428,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
 #endif // BZF_STATE_DATABASE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

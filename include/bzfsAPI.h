@@ -2150,7 +2150,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
 #endif //_BZFS_API_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

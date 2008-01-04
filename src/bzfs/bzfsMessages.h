@@ -106,7 +106,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

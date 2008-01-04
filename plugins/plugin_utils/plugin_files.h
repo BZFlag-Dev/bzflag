@@ -50,7 +50,7 @@ inline unsigned int getFileLen ( std::string &file ){return getFileLen(file.c_st
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

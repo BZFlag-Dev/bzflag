@@ -46,7 +46,7 @@ public:
 #endif // BZF_WORLD_INFO_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

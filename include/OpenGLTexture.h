@@ -152,7 +152,7 @@ inline int		OpenGLTexture::getHeight() const
 #endif // BZF_OPENGL_TEXTURE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

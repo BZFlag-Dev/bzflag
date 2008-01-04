@@ -203,7 +203,7 @@ void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

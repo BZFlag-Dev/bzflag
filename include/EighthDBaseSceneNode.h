@@ -49,7 +49,7 @@ class EighthDBaseSceneNode : public EighthDimSceneNode {
 #endif // BZF_EIGHTHD_BASE_SCENE_NODE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

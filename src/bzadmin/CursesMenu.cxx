@@ -456,7 +456,7 @@ void CursesMenu::handleNewPacket(uint16_t msgType) {
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

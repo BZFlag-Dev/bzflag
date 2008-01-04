@@ -224,7 +224,7 @@ inline void MeshObstacle::setName(const std::string& str)
 #endif // BZF_MESH_OBSTACLE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -33,7 +33,7 @@ extern int numRobotTanks;
 #endif // BZF_BZFLAG_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

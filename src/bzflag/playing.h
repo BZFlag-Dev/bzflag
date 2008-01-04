@@ -146,7 +146,7 @@ extern ThirdPersonVars thirdPersonVars;
 #endif // BZF_PLAYING_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

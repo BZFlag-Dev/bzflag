@@ -1005,7 +1005,7 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

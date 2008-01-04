@@ -74,7 +74,7 @@ class RCRobotPlayer : public RobotPlayer {
 #endif // BZF_TCP_RC_ROBOT_PLAYER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

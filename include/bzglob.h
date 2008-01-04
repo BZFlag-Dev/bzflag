@@ -22,7 +22,7 @@ extern bool glob_match(const std::string& pattern, const std::string& string);
 
 /*
  * Local Variables: ***
- * mode:C ***
+ * mode: C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***

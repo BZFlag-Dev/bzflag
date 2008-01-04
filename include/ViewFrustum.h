@@ -39,7 +39,7 @@ class ViewFrustum : public Frustum {
 #endif // BZF_VIEW_FRUSTUM_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

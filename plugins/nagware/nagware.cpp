@@ -553,7 +553,7 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

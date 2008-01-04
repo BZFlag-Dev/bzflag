@@ -893,7 +893,7 @@ int TankGeometryUtils::buildHighRWheel(int number, float angle, int divs)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

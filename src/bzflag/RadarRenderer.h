@@ -155,7 +155,7 @@ inline int		RadarRenderer::getHeight() const
 #endif // BZF_RADAR_RENDERER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

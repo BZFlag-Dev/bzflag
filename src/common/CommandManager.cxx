@@ -198,7 +198,7 @@ const char*			CommandManager::skipWhitespace(const char* string)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

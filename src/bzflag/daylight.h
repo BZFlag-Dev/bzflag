@@ -61,7 +61,7 @@ bool			getSunsetTop(const float sunDir[3], float& topAltitude);
 #endif // BZF_DAYLIGHT_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -93,7 +93,7 @@ void OptionParser::printUsage(std::ostream& os, const std::string& progName) con
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

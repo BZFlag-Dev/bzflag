@@ -73,7 +73,7 @@ class LinkManager {
 #endif // BZF_LINK_MANAGER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

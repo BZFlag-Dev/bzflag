@@ -147,7 +147,7 @@ void AresHandler::process(fd_set *read_set, fd_set *write_set)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -692,7 +692,7 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) cons
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

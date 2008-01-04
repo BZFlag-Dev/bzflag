@@ -146,7 +146,7 @@ bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *targ
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

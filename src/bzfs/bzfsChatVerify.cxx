@@ -102,7 +102,7 @@ bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

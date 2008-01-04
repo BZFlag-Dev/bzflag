@@ -237,7 +237,7 @@ void LagInfo::setPacketLossThreshold(float _lossthreshold, float _lossmax) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

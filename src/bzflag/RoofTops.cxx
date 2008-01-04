@@ -81,7 +81,7 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

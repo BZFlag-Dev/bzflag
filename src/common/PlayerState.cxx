@@ -306,7 +306,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

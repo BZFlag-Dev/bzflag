@@ -38,7 +38,7 @@ class SGIPlatformFactory : public PlatformFactory {
 #endif // BZF_SGIPLATFORM_FACTORY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

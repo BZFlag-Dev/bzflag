@@ -214,7 +214,7 @@ void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

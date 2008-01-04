@@ -108,7 +108,7 @@ bool				ConfigFileManager::write(const std::string& filename)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
