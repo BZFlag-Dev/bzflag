@@ -27,8 +27,8 @@ struct Tank {
   std::string callsign, team, flag;
   bool paused, alive, frozen, super;
 
-  float position[3], angle;
-  float velocity[3], angularVelocity;
+  double position[3], angle;
+  double velocity[3], angularVelocity;
 };
 
 std::ostream& operator<<(std::ostream& os, const Tank& tank);

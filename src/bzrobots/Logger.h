@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_LOGGER_H
-#define BZROBOTS_LOGGER_H
+#ifndef __LOGGER_H__
+#define __LOGGER_H__
 
 #include "common.h"
 
@@ -22,34 +22,39 @@
 /* common interface headers */
 #include "Singleton.h"
 
-/** convenience handle on the singleton instance */
+/** convenience handle on the frontend logger singleton */
 #define FRONTENDLOGGER (FrontendLogger::instance())
+
+/** convenience handle on the backedn logger singleton */
 #define BACKENDLOGGER (BackendLogger::instance())
 
+
 class FrontendLogger : public Singleton< FrontendLogger >,
-                        public std::ofstream
+		       public std::ofstream
 {
 protected:
   friend class Singleton<FrontendLogger>;
 
 private:
-  FrontendLogger() :std::ofstream("frontend.log") {}
+  FrontendLogger() : std::ofstream("frontend.log") {}
   ~FrontendLogger() { }
 };
 
 
 class BackendLogger : public Singleton< BackendLogger >,
-                        public std::ofstream
+		      public std::ofstream
 {
 protected:
   friend class Singleton<BackendLogger>;
 
 private:
-  BackendLogger() :std::ofstream("backend.log") {}
+  BackendLogger() : std::ofstream("backend.log") {}
   ~BackendLogger() { }
 };
 
-#endif
+#else
+class FrontendLogger;
+#endif  /* __LOGGER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

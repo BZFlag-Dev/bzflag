@@ -13,11 +13,11 @@
 #include "MessageUtilities.h"
 
 template <>
-bool MessageUtilities::parse(const char *string, bool &dest)
+bool MessageUtilities::parse(const char *str, bool &dest)
 {
-  if (strcasecmp(string, "true") == 0 || strcasecmp(string, "1") == 0)
+  if (strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0)
     dest = true;
-  else if (strcasecmp(string, "false") == 0 || strcasecmp(string, "0") == 0)
+  else if (strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0)
     dest = false;
   else
     return false;
@@ -26,32 +26,24 @@ bool MessageUtilities::parse(const char *string, bool &dest)
 }
 
 template <>
-bool MessageUtilities::parse(const char *string, float &dest)
+bool MessageUtilities::parse(const char *str, double &dest)
 {
-	if (sscanf(string,"%f",&dest) != 1)
-		return false;
-#ifdef _OLD_CRAP
-	#ifndef _WIN32
-	char *endptr;
-	dest = strtof(string, &endptr);
-	if (endptr == string)
-		return false;
-	#else
-		dest = (float)atof(string);
-	#endif
-#endif
-  /* We don't want NaN no matter what - it's of no use in this scenario.
-   * (And strtof will allow the string "NAN" as NaN) */
+  if (sscanf(str,"%lf",&dest) != 1)
+    return false;
+
+  /* We don't want NaN no matter what - it's of no use in this
+   * scenario.  (And strtof will allow the string "NAN" as NaN)
+   */
   if (isnan(dest))
-    dest = 0.0f;
+    dest = 0.0;
 
   return true;
 }
 
 template <>
-bool MessageUtilities::parse(const char *string, std::string &dest)
+bool MessageUtilities::parse(const char *str, std::string &dest)
 {
-  dest = string;
+  dest = str;
   return true;
 }
 

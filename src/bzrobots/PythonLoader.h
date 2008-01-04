@@ -10,12 +10,19 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_PYTHONLOADER_H
-#define BZROBOTS_PYTHONLOADER_H
+#ifndef __PYTHONLOADER_H__
+#define __PYTHONLOADER_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <string>
 #include <Python.h>
 
+/* local interface headers */
 #include "ScriptLoader.h"
+#include "BZAdvancedRobot.h"
+
 
 class PythonLoader : public ScriptLoader {
   PyObject *module, *ctor;
@@ -33,7 +40,7 @@ class PythonLoader : public ScriptLoader {
     void destroy(BZAdvancedRobot *instance);
 };
 
-#endif
+#endif /* __PYTHONLOADER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

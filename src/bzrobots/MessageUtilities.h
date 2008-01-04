@@ -10,61 +10,67 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * MessageUtilities: A namespace of useful functions for messages.
- */
+#ifndef	__MESSAGEUTILITIES_H__
+#define	__MESSAGEUTILITIES_H__
 
-#ifndef	BZROBOTS_MESSAGEUTILITIES_H
-#define	BZROBOTS_MESSAGEUTILITIES_H
+#include "common.h"
 
-#include "RCMessage.h"
+/* system interface headers */
 #include <string>
 
+/* local interface header */
+#include "RCMessage.h"
+
+
+/**
+ * MessageUtilities: A namespace of useful functions for messages.
+ */
 namespace MessageUtilities
 {
   template<typename T>
-    bool parse(const char *string, T &dest);
+  bool parse(const char *string, T &dest);
   template<>
   bool parse(const char *string, bool &dest);
   template<>
-  bool parse(const char *string, float &dest);
+  bool parse(const char *string, double &dest);
   template<>
   bool parse(const char *string, std::string &dest);
+
   template<typename T>
-    messageParseStatus parseSingle(char **arguments, int count, T &dest)
-    {
-      if (count != 1)
-        return InvalidArgumentCount;
-      if (!parse(arguments[0], dest))
-        return InvalidArguments;
+  messageParseStatus parseSingle(char **arguments, int count, T &dest)
+  {
+    if (count != 1)
+      return InvalidArgumentCount;
+    if (!parse(arguments[0], dest))
+      return InvalidArguments;
 
-      return ParseOk;
-    }
+    return ParseOk;
+  }
 
   template <typename T>
-    static T clamp(T val, T min, T max)
-    {
-      // Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
-      //  * If val is nan, the result is undefined
-      //  * If max < min, the result is undefined
-      if (val > max)
-        return max;
-      if (val < min)
-        return min;
-      return val;
-    }
+  static T clamp(T val, T min, T max)
+  {
+    // Mad cred to _neon_/#scene.no and runehol/#scene.no for these two sentences:
+    //  * If val is nan, the result is undefined
+    //  * If max < min, the result is undefined
+    if (val > max)
+      return max;
+    if (val < min)
+      return min;
+    return val;
+  }
   template <typename T>
-    static T overflow(T val, T min, T max)
-    {
-      if (val > max)
-        return min + (val - max);
-      if (val < min)
-        return max + (val - min);
-      return val;
-    }
+  static T overflow(T val, T min, T max)
+  {
+    if (val > max)
+      return min + (val - max);
+    if (val < min)
+      return max + (val - min);
+    return val;
+  }
 }
 
-#endif
+#endif /* __MESSAGEUTILITIES_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

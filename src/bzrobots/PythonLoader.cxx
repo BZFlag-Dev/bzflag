@@ -14,11 +14,13 @@
 
 #include "bzrobot_python_runtime.h"
 
+
 PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
 {
   Py_SetProgramName("bzrobots");
   Py_Initialize();
 }
+
 PythonLoader::~PythonLoader()
 {
   /* Is this neccessary when we're calling Py_Finalize()? Can't hurt. :-) */
@@ -53,15 +55,13 @@ bool PythonLoader::addSysPath(std::string new_path)
   sys = PyImport_Import(sysString);
   Py_XDECREF(sysString);
 
-  if (!sys)
-  {
+  if (!sys) {
     error = "Could not import 'sys'.";
     return false;
   }
 
   path = PyObject_GetAttrString(sys, "path");
-  if (!path)
-  {
+  if (!path) {
     Py_XDECREF(sys); 
     error = "Could not get 'sys.path'.";
     return false;
@@ -78,8 +78,7 @@ bool PythonLoader::addSysPath(std::string new_path)
 
 bool PythonLoader::load(std::string filepath)
 {
-  if (!initialized)
-  {
+  if (!initialized) {
     if (!initialize())
       return false;
   }
@@ -91,21 +90,19 @@ bool PythonLoader::load(std::string filepath)
    * part of the filepath up to the / to sys.path, so that our import 
    * will find the module ("the bot"). */
   std::string::size_type separator_pos = filepath.find_last_of("/");
-  if (separator_pos != std::string::npos && separator_pos <= filepath.length())
-  {
+  if (separator_pos != std::string::npos && separator_pos <= filepath.length()) {
     addSysPath(filepath.substr(0, separator_pos));
     filename = filepath.substr(separator_pos + 1);
-  }
-  else
+  } else {
     filename = filepath;
+  }
 
   /* We find the last "." in the filename, and use what is before the last "."
    * as the module name - calling "import modulename". (We can assume this "."
    * is followed by "py" because the factory only registers this class
    * for .py files. :-) */
   std::string::size_type extension_pos = filename.find_last_of(".");
-  if (extension_pos == std::string::npos || extension_pos >= filename.length())
-  {
+  if (extension_pos == std::string::npos || extension_pos >= filename.length()) {
     error = "Could not find a valid extension in filename '" + filename + "'.";
     return false;
   }
@@ -116,8 +113,7 @@ bool PythonLoader::load(std::string filepath)
   Py_XDECREF(module);
   module = PyImport_Import(file);
 
-  if (!module)
-  {
+  if (!module) {
     /* TODO: Do the same as PyErr_Print(), just into a string? 
      * See PyErr_Fetch()
      * (prints a traceback of the error-stack when Something Bad (tm)
@@ -130,8 +126,7 @@ bool PythonLoader::load(std::string filepath)
   Py_XDECREF(ctor);
   ctor = PyObject_GetAttrString(module, "create");
 
-  if (!ctor || !PyCallable_Check(ctor))
-  {
+  if (!ctor || !PyCallable_Check(ctor)) {
     Py_XDECREF(ctor);
     ctor = NULL;
     error = "Can't find function 'create' in module from '" + filename + "'";
@@ -147,8 +142,7 @@ BZAdvancedRobot *PythonLoader::create(void)
   Py_XDECREF(robot);
 
   robot = PyObject_CallObject(ctor, NULL);
-  if (!robot)
-  {
+  if (!robot) {
     error = "Could not call constructor.";
     return NULL;
   }
@@ -156,6 +150,7 @@ BZAdvancedRobot *PythonLoader::create(void)
   PySwigObject *holder = SWIG_Python_GetSwigThis(robot);
   return static_cast<BZAdvancedRobot *>(holder ? holder->ptr : 0);
 }
+
 void PythonLoader::destroy(BZAdvancedRobot * /*instance*/)
 {
   Py_XDECREF(robot);

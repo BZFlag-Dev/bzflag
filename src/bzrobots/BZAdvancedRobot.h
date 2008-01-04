@@ -13,6 +13,11 @@
 #ifndef __BZADVANCEDROBOT_H__
 #define __BZADVANCEDROBOT_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <vector>
+
 /* local interface headers */
 #include "RCLinkFrontend.h"
 #include "RCEvents.h"

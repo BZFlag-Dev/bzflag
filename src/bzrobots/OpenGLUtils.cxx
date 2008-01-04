@@ -11,13 +11,16 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+/* interface header */
 #include "OpenGLUtils.h"
 
+/* system headers */
 #include <math.h>
+
 
 float getFloatColor ( int )
 {
-	return 0.0f;
+  return 0.0f;
 }
 
 void setColor ( float [3], int, int, int )
@@ -52,7 +55,7 @@ void DisplayListSystem::flushLists ( void )
 
 GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *)
 {
-    return GLDisplayList();
+  return GLDisplayList();
 }
 
 void DisplayListSystem::freeList (GLDisplayList)
