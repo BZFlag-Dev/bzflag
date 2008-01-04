@@ -219,4 +219,3 @@ void CronPlayer::sendCommand(std::string message)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

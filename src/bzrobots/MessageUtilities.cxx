@@ -49,4 +49,4 @@ bool MessageUtilities::parse(const char *string, std::string &dest)
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8 
+// ex: shiftwidth=2 tabstop=8
