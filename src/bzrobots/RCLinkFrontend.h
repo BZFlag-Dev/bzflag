@@ -15,8 +15,8 @@
  * frontend, from the frontends point of view.
  */
 
-#ifndef	BZF_RC_LINK_FRONTEND_H
-#define	BZF_RC_LINK_FRONTEND_H
+#ifndef	__RCLINKFRONTEND_H__
+#define	__RCLINKFRONTEND_H__
 
 #include "RCLink.h"
 #include "RCReply.h"
@@ -28,22 +28,24 @@ class BZAdvancedRobot;
 
 class RCLinkFrontend : public RCLink
 {
-  private:
-    RCReply *replies;
-    bool hasReply(const std::string command) const;
-
-  public:
-    RCLinkFrontend() :RCLink(FrontendLogger::pInstance()), replies(NULL) {isFrontEnd = true;}
-    bool update();
-    bool parseCommand(char *cmdline);
-    RCReply* popReply();
-    RCReply* peekReply();
-    State getDisconnectedState();
-    bool waitForReply(const std::string command);
-    bool sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot);
+private:
+  RCReply *replies;
+  bool hasReply(const std::string command) const;
+  
+public:
+  RCLinkFrontend() : RCLink(FrontendLogger::pInstance()), replies(NULL) { isFrontEnd = true; }
+  bool update();
+  bool parseCommand(char *cmdline);
+  RCReply* popReply();
+  RCReply* peekReply();
+  State getDisconnectedState();
+  bool waitForReply(const std::string command);
+  bool sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot);
 };
 
-#endif
+#else
+class RCLinkFrontend;
+#endif /* __RCLINKFRONTEND_H__ */
 
 // Local Variables: ***
 // mode:C++ ***
