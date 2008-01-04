@@ -343,7 +343,6 @@ AC_CHECK_HEADERS( \
 	stdint.h \
 	sys/param.h \
 	sys/socket.h \
-	sys/types.h \
 	unistd.h \
 	values.h \
 )
