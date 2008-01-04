@@ -20,10 +20,12 @@ messageParseStatus HitWallEvent::parse(char **arguments, int count)
 {
   return MessageUtilities::parseSingle(arguments, count, bearing);
 }
+
 void HitWallEvent::getParameters(std::ostream &stream) const
 {
   stream << bearing;
 }
+
 bool HitWallEvent::updateBot(BZAdvancedRobot *bot) const
 {
   bot->onHitWall(*this);
@@ -36,6 +38,7 @@ messageParseStatus DeathEvent::parse(char **, int count)
     return ParseOk;
   return InvalidArgumentCount;
 }
+
 bool DeathEvent::updateBot(BZAdvancedRobot *bot) const
 {
   bot->onDeath(*this);

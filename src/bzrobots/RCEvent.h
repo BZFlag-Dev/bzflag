@@ -10,14 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_RCEVENT_H
-#define BZROBOTS_RCEVENT_H
+#ifndef __RCEVENT_H__
+#define __RCEVENT_H__
 
+/* local interface headers */
 #include "RCReply.h"
 
-class RCEvent :public RCReply {};
+class RCEvent : public RCReply
+{
+  /* stubbed base class */
+};
 
-#endif
+#else
+class RCEvent;
+#endif /* __RCEVENT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
