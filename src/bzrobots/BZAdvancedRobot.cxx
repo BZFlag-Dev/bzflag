@@ -1,8 +1,24 @@
+/* bzflag
+ * Copyright (c) 1993 - 2007 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/* interface header */
 #include "BZAdvancedRobot.h"
+
+/* implementation headers */
 #include "MessageUtilities.h"
 #include "RCRequests.h"
 
-BZAdvancedRobot::BZAdvancedRobot() :link(NULL), compatability(true)
+
+BZAdvancedRobot::BZAdvancedRobot() : link(NULL), compatability(true)
 {
 }
 
@@ -16,8 +32,7 @@ void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
 void BZAdvancedRobot::run()
 {
   initialize();
-  while (true)
-  {
+  while (true) {
     update();
   }
 }
@@ -160,14 +175,15 @@ double BZAdvancedRobot::getBearing(const Tank &tank) const
 
 double BZAdvancedRobot::getBearing(double x, double y) const
 {
-  float vec[2] = {x - getX(), y - getY()};
+  double vec[2] = {x - getX(), y - getY()};
 
   if (vec[0] == 0 && vec[1] == 0)
     return 0.0;
 
   // Convert to a unit vector.
-  float len = sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
-  vec[0] /= len; vec[1] /= len;
+  double len = 1.0 / sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
+  vec[0] *= len;
+  vec[1] *= len;
 
   return MessageUtilities::overflow(atan2(vec[1], vec[0])*180.0/M_PI - getHeading(), -180.0, 180.0);
 
