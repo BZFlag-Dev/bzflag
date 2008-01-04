@@ -1,9 +1,9 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993 - 2007 Tim Riker
-OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2006'
+# Copyright (c) 1993 - 2008 Tim Riker
+OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
 # NOTE: update just this line and then run the script
-NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2008'
 #
 # update copyright in all files
 #
@@ -14,15 +14,15 @@ for root in . .. ; do
   fi
 done
 
-if [ -r $root/include/config.h ] ; then
-  echo "$0 should be run only after a make maintainer-clean!"
-  exit 1
-fi
+#if [ -r $root/include/config.h ] ; then
+#  echo "$0 should be run only after a make maintainer-clean!"
+#  exit 1
+#fi
 myname=touchcopyright
 tmpfile=$root/$myname.tmp
 rm -f $tmpfile
 # touch myself last
-files="`find $root -type f | grep -v 'png$' | grep -v misc/$myname` misc/$myname"
+files="`find $root -type f -not -regex '.*\.svn.*' -not -regex '.*src/other.*' | grep -v 'png$' | grep -v misc/$myname` misc/$myname"
 
 # do replacement
 for file in $files; do
