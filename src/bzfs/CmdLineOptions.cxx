@@ -21,26 +21,27 @@
 
 /* system implementation headers */
 #include <iostream>
-#include <vector>  /* FIXME implementation specific header for global that should eventually go away */
+#include <vector>
 #include <set>
 
-/* implementation-specific bzflag headers */
+// for -pidfile option
+#include <sys/types.h>
+#ifdef HAVE_PROCESS_H
+#  include <process.h>
+#  include "time.h"
+#endif
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
+/* common implementation headers */
 #include "version.h"
 #include "Team.h"
 #include "TextUtils.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 
-// for -pidfile option
-#ifdef HAVE_PROCESS_H
-#  include <process.h>
-#  include "time.h"
-#else
-#  include <sys/types.h>
-#  include <unistd.h>
-#endif
-
-// implementation-specific bzfs-specific headers
+/* local implementation headers */
 #include "bzfs.h"
 #include "RecordReplay.h"
 #include "BZWError.h"

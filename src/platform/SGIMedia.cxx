@@ -10,26 +10,31 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "SGIMedia.h"
+
+/* system implementation headers */
+#include <stddef.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/prctl.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <math.h>
 #include <fcntl.h>
 #include <invent.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/time.h>
+#include <limits.h>
+#include <sys/schedctl.h>
+#include <sys/mman.h>
+#include <sys/syssgi.h>
+
 #ifdef HAVE_BSTRING_H
 #  include <bstring.h>
 #endif
-#include <sys/prctl.h>
-#include <sys/wait.h>
-#include "bzsignal.h"
-#include <limits.h>
-#include <sys/schedctl.h>
 
-#include <stddef.h>
-#include <sys/mman.h>
-#include <sys/syssgi.h>
+/* common implementation headers */
+#include "bzsignal.h"
+
 
 //
 // SGIMedia

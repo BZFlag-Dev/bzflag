@@ -18,9 +18,11 @@
 
 // system headers
 #include <string>
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/socket.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
 #endif
 
 // common interface headers

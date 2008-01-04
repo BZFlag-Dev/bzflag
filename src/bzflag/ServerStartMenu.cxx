@@ -14,13 +14,12 @@
 #include "ServerStartMenu.h"
 
 /* system implementation headers */
-#include <sys/types.h>
 #include <vector>
 #include <string>
+#include <sys/types.h>
 #include <string.h>
 #include <errno.h>
 #ifndef _WIN32
-#  include <unistd.h>
 #  include <signal.h>
 #  include <dirent.h>
 #  include <pwd.h>
@@ -36,6 +35,9 @@
 #  include <limits.h>
 #  undef _POSIX_
 #  include <process.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
 #endif
 
 /* common implementation headers */

@@ -15,18 +15,21 @@
 #include "TextUtils.h"
 
 /* implementation system headers */
-#ifndef _WIN32
-#  include <stdlib.h>
-#  include <unistd.h>
-#  include <sys/types.h>
-#  include <pwd.h>
-#else   // _WIN32
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifdef _WIN32
 #  include <direct.h>
 #  include <shlobj.h>
 #endif  // _WIN32
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#  include <pwd.h>
+#endif
+
 #if defined(__APPLE__)
 #  include <CoreServices/CoreServices.h>
 #endif

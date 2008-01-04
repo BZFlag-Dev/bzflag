@@ -33,10 +33,13 @@
 #include <vector>
 #include <string>
 
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
 #if !defined(_WIN32)
 
 #include <sys/time.h>
-#include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 

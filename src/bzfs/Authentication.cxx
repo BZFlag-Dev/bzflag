@@ -13,20 +13,15 @@
 /* interface header */
 #include "Authentication.h"
 
-
-// because kebos dosn't asume anyone else but them has defines.
-#ifdef MAXHOSTNAMELEN
-#undef MAXHOSTNAMELEN
-#endif
-
 /* system implementation headers */
-#include <sys/types.h>
-#ifndef _WIN32
-#include <unistd.h>
-#endif
 #include <assert.h>
+#include <sys/types.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
 
 #include "DirectoryNames.h"
+
 
 bool	   Authentication::authentication = false;
 

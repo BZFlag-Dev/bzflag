@@ -10,28 +10,28 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 #if defined(_MSC_VER)
-#pragma warning(disable: 4786)
+#  pragma warning(disable: 4786)
 #endif
 
 // interface header
 #include "ServerLink.h"
 
 #if defined(DEBUG)
-#define NETWORK_STATS
+#  define NETWORK_STATS
 #endif
 
 // system headers
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
 #include <vector>
-#if !defined(_WIN32)
-#include <unistd.h>
 #include <errno.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
 #endif
-#include <stdio.h>
-#include <stdlib.h>
 
 // common implementation headers
 #include "ErrorHandler.h"

@@ -19,25 +19,27 @@
 
 /* system headers */
 #ifdef _WIN32
-  #ifdef _MSC_VER
-    #pragma warning(disable : 4786)  // Disable warning message
-  #endif
-  #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
-  #include <windows.h>
-  #include <io.h>
-  #include <direct.h>
+#  ifdef _MSC_VER
+#    pragma warning(disable : 4786)  // Disable warning message
+#  endif
+#  define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
+#  include <windows.h>
+#  include <io.h>
+#  include <direct.h>
 #else
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <unistd.h>
-  #include <dirent.h>
-  #include <ctype.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <dirent.h>
+#  include <ctype.h>
 #endif
 
 #include <string>
 #include <vector>
-
 #include <stdio.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
 
 typedef enum
 {

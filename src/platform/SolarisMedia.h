@@ -17,10 +17,11 @@
 #ifndef BZF_SOLARISMEDIA_H
 #define	BZF_SOLARISMEDIA_H
 
+#include "BzfMedia.h"
+
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "bzsignal.h"
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -29,7 +30,8 @@
 #include <sys/audioio.h>
 #include <sys/stropts.h>
 
-#include "BzfMedia.h"
+#include "bzsignal.h"
+
 
 class SolarisMedia : public BzfMedia {
   public:

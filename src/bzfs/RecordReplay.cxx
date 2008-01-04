@@ -34,19 +34,20 @@ static const int HEADER_SIZE_STUFFING = 0;
 #include <sys/types.h>
 #include <time.h>
 #include <vector>
-#ifndef _WIN32
-#  include <sys/time.h>
+#include <sys/time.h>
+#ifdef HAVE_UNISTD_H
 #  include <unistd.h>
-typedef int64_t s64;
-#else
+#  include <dirent.h>
+#endif
+
+#ifdef _WIN32
 #  include <direct.h>
 typedef __int64 s64;
 #  ifndef S_ISDIR
 #    define S_ISDIR(m) ((m) & _S_IFDIR)
 #  endif
-#endif
-#ifndef _MSC_VER
-#  include <dirent.h>
+#else
+typedef int64_t s64;
 #endif
 
 // common headers

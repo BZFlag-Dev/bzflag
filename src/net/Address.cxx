@@ -20,9 +20,9 @@
 #include <string.h>
 #include <string>
 #include <sys/types.h>
-#if !defined(_WIN32)
-#include <unistd.h>
-#include <setjmp.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#  include <setjmp.h>
 #endif
 
 // common implementation headers
