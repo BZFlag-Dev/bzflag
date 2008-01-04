@@ -10,35 +10,43 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Frontend: Class to encapsulate the frontend.
- */
+#ifndef	__FRONTEND_H__
+#define	__FRONTEND_H__
 
-#ifndef	BZF_FRONTEND_H
-#define	BZF_FRONTEND_H
+#include "common.h"
 
+/* system interface headers */
+#include <string>
+
+/* local interface headers */
 #include "RCLinkFrontend.h"
 #include "ScriptLoader.h"
 #include "BZAdvancedRobot.h"
 
+
+/**
+ * Remote Control Frontend: Class to encapsulate the frontend.
+ */
 class Frontend
 {
-    RCLinkFrontend *link;
-    bool sentStuff;
-    Frontend();
-    std::string error;
-    ScriptLoader *scriptLoader;
-    BZAdvancedRobot *robot;
-
-    public:
-      static bool run(std::string filename, const char *host, int port); 
-
-      bool connect(const char *host, int port);
-      void start(std::string filename);
-      const std::string &getError() const { return error; }
+  RCLinkFrontend *link;
+  bool sentStuff;
+  Frontend();
+  std::string error;
+  ScriptLoader *scriptLoader;
+  BZAdvancedRobot *robot;
+  
+public:
+  static bool run(std::string filename, const char *host, int port); 
+  
+  bool connect(const char *host, int port);
+  void start(std::string filename);
+  const std::string &getError() const { return error; }
 };
 
-#endif
+#else
+class Frontend;
+#endif /* __FRONTEND_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
@@ -47,4 +55,3 @@ class Frontend
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
