@@ -34,7 +34,6 @@ static const int HEADER_SIZE_STUFFING = 0;
 #include <sys/types.h>
 #include <time.h>
 #include <vector>
-#include <sys/time.h>
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #  include <dirent.h>
@@ -47,6 +46,7 @@ typedef __int64 s64;
 #    define S_ISDIR(m) ((m) & _S_IFDIR)
 #  endif
 #else
+#include <sys/time.h>
 typedef int64_t s64;
 #endif
 
