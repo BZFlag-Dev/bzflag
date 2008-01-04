@@ -10,33 +10,36 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * BZRobot: A class for simulation and implementation of a Frontend robot.
- */
-
-#ifndef BZROBOTS_BZROBOT_H
-#define BZROBOTS_BZROBOT_H
+#ifndef __BZROBOT_H__
+#define __BZROBOT_H__
 
 #include "BZAdvancedRobot.h"
 
+
+/**
+ * BZRobot: A class for simulation and implementation of a Frontend
+ * robot.
+ */
 class BZRobot :public BZAdvancedRobot
 {
-  protected:
-    void ahead(double distance);
-    void doNothing();
-    void fire();
-    // TODO: Implement 'Bullet fireBullet();' ?
-    void resume();
-    void stop();
-    void stop(bool overwrite);
-    // TODO: void scan(); ?
-    void turnLeft(double degrees);
+protected:
+  void ahead(double distance);
+  void doNothing();
+  void fire();
+  // TODO: Implement 'Bullet fireBullet();' ?
+  void resume();
+  void stop();
+  void stop(bool overwrite);
+  // TODO: void scan(); ?
+  void turnLeft(double degrees);
 };
 
-#endif
+#else
+class BZRobot;
+#endif /* __BZROBOT_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
