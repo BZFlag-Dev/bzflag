@@ -33,42 +33,42 @@
 
 
 class RCRobotPlayer : public RobotPlayer {
-  public:
-    RCRobotPlayer(const PlayerId&,
-        const char* name, ServerLink*,
-        const char* _email);
-    typedef enum {
-      speedUpdate,
-      turnRateUpdate,
-      distanceUpdate,
-      turnUpdate,
-      updateCount
-    } variableUpdates;
-
-    void            restart(const float* pos, float azimuth);
-    void            explodeTank();
-
-    bool            isSteadyState();
-
-    bool            pendingUpdates[updateCount];
-
-    double          lastTickAt;
-    double          tickDuration;
-    float           speed, nextSpeed;
-    float           turnRate, nextTurnRate;
-    bool            shoot;
-
-    double          distanceRemaining, nextDistance;
-    bool            distanceForward, turnLeft;
-    double          turnRemaining, nextTurn;
-
-    bool            hasStopped;
-    double          stoppedDistance, stoppedTurn;
-    bool            stoppedForward, stoppedLeft;
-
-  private:
-    void            doUpdate(float dt);
-    void            doUpdateMotion(float dt);
+public:
+  RCRobotPlayer(const PlayerId&,
+		const char* name, ServerLink*,
+		const char* _email);
+  typedef enum {
+    speedUpdate,
+    turnRateUpdate,
+    distanceUpdate,
+    turnUpdate,
+    updateCount
+  } variableUpdates;
+  
+  void            restart(const double* pos, double azimuth);
+  void            explodeTank();
+  
+  bool            isSteadyState();
+  
+  bool            pendingUpdates[updateCount];
+  
+  double          lastTickAt;
+  double          tickDuration;
+  double           speed, nextSpeed;
+  double           turnRate, nextTurnRate;
+  bool            shoot;
+  
+  double          distanceRemaining, nextDistance;
+  bool            distanceForward, turnLeft;
+  double          turnRemaining, nextTurn;
+  
+  bool            hasStopped;
+  double          stoppedDistance, stoppedTurn;
+  bool            stoppedForward, stoppedLeft;
+  
+private:
+  void            doUpdate(double dt);
+  void            doUpdateMotion(double dt);
 };
 
 #endif // BZF_TCP_RC_ROBOT_PLAYER_H

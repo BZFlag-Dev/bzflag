@@ -40,12 +40,12 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
 }
 
 
-void			RCRobotPlayer::doUpdate(float dt)
+void			RCRobotPlayer::doUpdate(double dt)
 {
   LocalPlayer::doUpdate(dt);
 }
 
-void			RCRobotPlayer::doUpdateMotion(float dt)
+void			RCRobotPlayer::doUpdateMotion(double dt)
 {
   if (isAlive()) {
     double timeNow = TimeKeeper::getCurrent().getSeconds();
@@ -54,7 +54,7 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
     {
       const float *vel = getVelocity();
       distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
-      if (distanceRemaining > 0.0f)
+      if (distanceRemaining > 0.0)
       {
         if (distanceForward)
           setDesiredSpeed(speed);
@@ -66,13 +66,13 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
         setDesiredSpeed(0);
       }
 
-      if (turnRemaining > 0.0f)
+      if (turnRemaining > 0.0)
       {
         if (turnLeft)
         {
           turnRemaining -= getAngularVelocity() * dt;
 
-          if (turnRemaining <= 0.0f)
+          if (turnRemaining <= 0.0)
             setDesiredAngVel(0);
           else if (turnRate * dt > turnRemaining)
             setDesiredAngVel(turnRemaining/dt);
@@ -82,7 +82,7 @@ void			RCRobotPlayer::doUpdateMotion(float dt)
         else
         {
           turnRemaining += getAngularVelocity() * dt;
-          if (turnRemaining <= 0.0f)
+          if (turnRemaining <= 0.0)
             setDesiredAngVel(0);
           else if (turnRate * dt > turnRemaining)
             setDesiredAngVel(-turnRemaining/dt);
@@ -110,9 +110,13 @@ void			RCRobotPlayer::explodeTank()
   LocalPlayer::explodeTank();
 }
 
-void			RCRobotPlayer::restart(const float* pos, float _azimuth)
+void			RCRobotPlayer::restart(const double* _pos, double _azimuth)
 {
-  LocalPlayer::restart(pos, _azimuth);
+  float pos[3];
+  pos[0] = _pos[0];
+  pos[1] = _pos[1];
+  pos[2] = _pos[2];
+  LocalPlayer::restart(pos, (float)_azimuth);
 }
 
 bool                    RCRobotPlayer::isSteadyState()

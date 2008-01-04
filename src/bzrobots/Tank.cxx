@@ -30,7 +30,7 @@ Tank::Tank(RemotePlayer *tank)
   :callsign(tank->getCallSign()), team(Team::getShortName(tank->getTeam())),
     flag(tank->getFlag()->flagName), paused(tank->isPaused()),
     alive(tank->isAlive()), frozen(tank->canMove()),
-    super(tank->isFlagActive()), angle(tank->getAngle()*180.0f/M_PI),
+    super(tank->isFlagActive()), angle(tank->getAngle()*180.0/M_PI),
     angularVelocity(tank->getAngularVelocity())
 {
   const float *pos = tank->getPosition();
