@@ -10,32 +10,47 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _WIN32
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#endif
+/* interface header */
+#include "RCLinkBackend.h"
+
+/* system implementation headers */
 #include <errno.h>
 #include <stdarg.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+#  include <arpa/inet.h>
+#endif
 
+/* common implementation headers */
+#include "version.h"
+
+/* local implementation headers */
 #include "RCReplies.h"
-#include "RCLinkBackend.h"
 #include "RCMessageFactory.h"
+#include "Logger.h"
+#include "RCLink.h"
 
+/* client headers */
 #include "bzflag.h"
 #include "Roster.h"
 
-#include "version.h"
 
-#include "RCLink.h"
+RCLinkBackend::RCLinkBackend() : RCLink(BackendLogger::pInstance()), requests(NULL), events(NULL)
+{
+}
 
-using std::endl;
+RCLinkBackend::~RCLinkBackend()
+{
+}
 
-RCLink::State RCLinkBackend::getDisconnectedState()
+RCLink::State
+RCLinkBackend::getDisconnectedState()
 {
   return RCLink::Listening;
 }
 
-void RCLinkBackend::pushEvent(RCEvent *event)
+void
+RCLinkBackend::pushEvent(RCEvent *event)
 {
   if (events == NULL)
     events = event;
@@ -51,7 +66,9 @@ void RCLinkBackend::pushEvent(RCEvent *event)
     events->append(event);
   }
 }
-RCEvent *RCLinkBackend::popEvent()
+
+RCEvent *
+RCLinkBackend::popEvent()
 {
   RCEvent *event = events;
   if (event != NULL)
@@ -64,7 +81,8 @@ RCEvent *RCLinkBackend::popEvent()
  * and build up RCRequest objects as appropriate.
  */
 
-void RCLinkBackend::sendPacket ( const char *data, unsigned int size, bool killit )
+void
+RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
 {
 #ifdef _USE_FAKE_NET
 	fakeNetSendToFrontEnd(size,data);
@@ -78,7 +96,8 @@ void RCLinkBackend::sendPacket ( const char *data, unsigned int size, bool killi
 }
 
 
-void RCLinkBackend::update()
+void
+RCLinkBackend::update()
 {
   if (status != Connected && status != Connecting) {
     return;
@@ -101,7 +120,7 @@ void RCLinkBackend::update()
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
       } else {
-        BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << endl;
+        BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << std::endl;
 		sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
         status = Listening;
       }
@@ -109,12 +128,13 @@ void RCLinkBackend::update()
   }
 }
 
-/*
+/**
  * Parse a command, create an RCRequest object, and add it to requests.
  * Return true if an RCRequest was successfully created.  If it failed,
  * return false.
  */
-bool RCLinkBackend::parseCommand(char *cmdline)
+bool
+RCLinkBackend::parseCommand(char *cmdline)
 {
   RCRequest *req;
   int argc;
@@ -132,7 +152,7 @@ bool RCLinkBackend::parseCommand(char *cmdline)
 
   req = RCREQUEST.Message(argv[0]);
   if (req == NULL) {
-    BACKENDLOGGER << "RCLink: Invalid request: '" << argv[0] << "'" << endl;
+    BACKENDLOGGER << "RCLink: Invalid request: '" << argv[0] << "'" << std::endl;
     sendf("error Invalid request %s\n", argv[0]);
     return false;
   } else {
@@ -146,21 +166,22 @@ bool RCLinkBackend::parseCommand(char *cmdline)
         return true;
       case InvalidArgumentCount:
         BACKENDLOGGER << "RCLink: Invalid number of arguments (" << argc - 1
-          << ") for request '" << argv[0] << "'." << endl;
+          << ") for request '" << argv[0] << "'." << std::endl;
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
       case InvalidArguments:
-        BACKENDLOGGER << "RCLink: Invalid arguments for request '" << argv[0] << "'." << endl;
+        BACKENDLOGGER << "RCLink: Invalid arguments for request '" << argv[0] << "'." << std::endl;
         sendf("error Invalid arguments for request: '%s'\n", argv[0]);
         return false;
       default:
-        BACKENDLOGGER << "RCLink: Parse neither succeeded nor failed with a known failcode. WTF?" << endl;
+        BACKENDLOGGER << "RCLink: Parse neither succeeded nor failed with a known failcode. WTF?" << std::endl;
         return false;
     }
   }
 }
 
-RCRequest* RCLinkBackend::popRequest()
+RCRequest*
+RCLinkBackend::popRequest()
 {
   RCRequest *req = requests;
   if (req != NULL) {
@@ -168,12 +189,15 @@ RCRequest* RCLinkBackend::popRequest()
   }
   return req;
 }
-RCRequest* RCLinkBackend::peekRequest()
+
+RCRequest*
+RCLinkBackend::peekRequest()
 {
   return requests;
 }
 
-bool RCLinkBackend::tryAccept()
+bool
+RCLinkBackend::tryAccept()
 {
   if (!RCLink::tryAccept())
     return false;
@@ -184,16 +208,20 @@ bool RCLinkBackend::tryAccept()
   return true;
 }
 
-void RCLinkBackend::sendAck(RCRequest *req)
+void
+RCLinkBackend::sendAck(RCRequest *req)
 {
   RCLink::send(CommandDoneReply(req->getType()));
 }
 
-/* We bundle Events before normal replies by 
- * calling sendEvent() before we send any data in send/sendf. 
- * This again calls send, which calls sendEvent again,
- * so it recursively loops over all pending events. */
-void RCLinkBackend::sendEvent()
+/**
+ * We bundle Events before normal replies by calling sendEvent()
+ * before we send any data in send/sendf.  This again calls send,
+ * which calls sendEvent again, so it recursively loops over all
+ * pending events.
+ */
+void
+RCLinkBackend::sendEvent()
 {
   RCEvent *event = popEvent();
   if (event != NULL)
@@ -203,12 +231,15 @@ void RCLinkBackend::sendEvent()
   }
 }
 
-bool RCLinkBackend::send(const char *message)
+bool
+RCLinkBackend::send(const char *message)
 {
   sendEvent();
   return RCLink::send(message);
 }
-bool RCLinkBackend::sendf(const char *format, ...)
+
+bool
+RCLinkBackend::sendf(const char *format, ...)
 {
   va_list ap;
   bool ret;

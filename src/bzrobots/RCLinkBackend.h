@@ -10,49 +10,52 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Link, Backend: Encapsulates communication between backend and
- * frontend, from the backends point of view.
- */
+#ifndef	__RCLINKBACKEND_H__
+#define	__RCLINKBACKEND_H__
 
-#ifndef	BZF_RC_LINK_BACKEND_H
-#define	BZF_RC_LINK_BACKEND_H
+#include "common.h"
 
+/* local interface headers */
 #include "RCLink.h"
 #include "RCRequest.h"
 #include "RCEvent.h"
-#include "Logger.h"
 
 #define RC_LINK_NOIDENTIFY_MSG "error IdentifyFrontend expected\n"
 #define RC_LINK_IDENTIFY_STR "IdentifyBackend "
 
+
+/**
+ * Remote Control Link, Backend: Encapsulates communication between backend and
+ * frontend, from the backends point of view.
+ */
 class RCLinkBackend : public RCLink
 {
-  private:
-    RCRequest *requests;
-    RCEvent *events;
-    void sendEvent();
 
-  public:
-    RCLinkBackend() :RCLink(BackendLogger::pInstance()), requests(NULL), events(NULL) {}
-    void update();
-    bool parseCommand(char *cmdline);
-    RCRequest* popRequest();
-    RCRequest* peekRequest();
-    void pushEvent(RCEvent *event);
-    RCEvent* popEvent();
-    bool tryAccept();
-    State getDisconnectedState();
-    void sendAck(RCRequest *req);
+private:
+  RCRequest *requests;
+  RCEvent *events;
+  void sendEvent();
 
-	void sendPacket ( const char *data, unsigned int size, bool killit = false );
+public:
+  RCLinkBackend();
+  ~RCLinkBackend();
 
-    bool send(const char *message);
-    bool sendf(const char *format, ...)
-      __attribute__ ((__format__ (__printf__, 2, 3)));
+  void update();
+  bool parseCommand(char *cmdline);
+  RCRequest* popRequest();
+  RCRequest* peekRequest();
+  void pushEvent(RCEvent *event);
+  RCEvent* popEvent();
+  bool tryAccept();
+  State getDisconnectedState();
+  void sendAck(RCRequest *req);
+  void sendPacket ( const char *data, unsigned int size, bool killit = false );
+
+  bool send(const char *message);
+  bool sendf(const char *format, ...) __attribute__ ((__format__ (__printf__, 2, 3)));
 };
 
-#endif
+#endif /* __RCLINKBACKEND_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
