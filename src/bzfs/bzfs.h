@@ -14,13 +14,12 @@
 
 #include "common.h"
 
+// system headers
 // fstream must be before network.h because that defines a close()
 // macro which messes up fstreams. luckily, we don't need to call the
 // close() method on any fstream.
-#ifdef _MSC_VER
-#  pragma warning( 4 : 4786 )
-#endif
 #include <fstream>
+#include <list>
 
 // must be before windows.h
 #include "network.h"
@@ -41,7 +40,7 @@
 
 #include "bzfsAPI.h"
 
-#include <list>
+
 class PendingChatMessages
 {
 public:
