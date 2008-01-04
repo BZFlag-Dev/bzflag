@@ -9,10 +9,12 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */ 
+
+/* interface header */
 #include "RCEvents.h"
+
 #include "MessageUtilities.h"
 
-#include "BZAdvancedRobot.h"
 
 messageParseStatus HitWallEvent::parse(char **arguments, int count)
 {

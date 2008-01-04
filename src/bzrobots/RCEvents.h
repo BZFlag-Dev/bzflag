@@ -10,23 +10,32 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_RCEVENTS_H
-#define BZROBOTS_RCEVENTS_H
+#ifndef __RCEVENTS_H__
+#define __RCEVENTS_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <string>
+#include <ostream>
+
+/* local interface headers */
 #include "RCEvent.h"
+#include "RCMessage.h"
+#include "BZAdvancedRobot.h"
 
-class BZAdvancedRobot;
 
 struct HitWallEvent : public RCEvent
 {
   HitWallEvent() {}
-  HitWallEvent(float _bearing) :bearing(_bearing) {}
+  HitWallEvent(double _bearing) : bearing(_bearing) {}
   std::string getType() const { return "HitWall"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(BZAdvancedRobot *bot) const;
 
-  private: float bearing;
+private:
+  double bearing;
 };
 
 struct DeathEvent : public RCEvent
@@ -38,7 +47,10 @@ struct DeathEvent : public RCEvent
   bool updateBot(BZAdvancedRobot *bot) const;
 };
 
-#endif
+#else
+struct HitWallEvent;
+struct DeathEvent;
+#endif /* __RCEVENTS_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
