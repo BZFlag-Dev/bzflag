@@ -139,14 +139,15 @@ struct GetHeadingReq : public RCRequestZeroArgument {
   bool process(RCRobotPlayer *rrp);
 };
 
-struct IdentifyFrontend :public RCRequest {
-  IdentifyFrontend() :version("") {}
-  IdentifyFrontend(std::string _version) :version(_version) {}
+struct IdentifyFrontend : public RCRequest {
+  IdentifyFrontend() : version("") {}
+  IdentifyFrontend(std::string _version) : version(_version) {}
   std::string getType() const { return "IdentifyFrontend"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
-  private: std::string version;
+private:
+  std::string version;
 };
 
 struct GetPlayersReq : public RCRequestZeroArgument {
@@ -165,36 +166,36 @@ struct GetPlayersReq : public RCRequestZeroArgument {
     void getParameters(std::ostream &stream) const;
 
 DECLARE_REQUEST(SetSpeed)
-  SetSpeedReq(float _speed) :speed(_speed) {}
+  SetSpeedReq(double _speed) : speed(_speed) {}
 private:
-  float speed;
+  double speed;
 };
 
 DECLARE_REQUEST(SetTurnRate)
-  SetTurnRateReq(float _rate) :rate(_rate) {}
+  SetTurnRateReq(double _rate) : rate(_rate) {}
 private:
-  float rate;
+  double rate;
 };
 
 DECLARE_REQUEST(SetAhead)
-  SetAheadReq(float _distance) :distance(_distance) {}
+  SetAheadReq(double _distance) : distance(_distance) {}
 private:
-  float distance;
+  double distance;
 };
 
 DECLARE_REQUEST(SetTurnLeft)
-  SetTurnLeftReq(float _turn) :turn(_turn) {}
+  SetTurnLeftReq(double _turn) : turn(_turn) {}
 private:
-  float turn;
+  double turn;
 };
 
 DECLARE_REQUEST(SetTickDuration)
 private:
-  float duration;
+  double duration;
 };
 
 DECLARE_REQUEST(SetStop)
-  SetStopReq(bool _overwrite) :overwrite(_overwrite) {}
+  SetStopReq(bool _overwrite) : overwrite(_overwrite) {}
 private:
   bool overwrite;
 };

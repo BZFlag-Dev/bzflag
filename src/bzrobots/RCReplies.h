@@ -62,37 +62,37 @@ struct CommandDoneReply : public RCReply
 struct GunHeatReply : public RCReply
 {
   GunHeatReply() :heat(0.0f) {}
-  GunHeatReply(float _heat) :heat(_heat) {}
+  GunHeatReply(double _heat) :heat(_heat) {}
   std::string getType() const { return "GunHeat"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float heat;
+  private: double heat;
 };
 
 struct DistanceRemainingReply : public RCReply
 {
   DistanceRemainingReply() {}
-  DistanceRemainingReply(float _distance) :distance(_distance) {}
+  DistanceRemainingReply(double _distance) :distance(_distance) {}
   std::string getType() const { return "DistanceRemaining"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
   
-  private: float distance;
+  private: double distance;
 };
 
 struct TurnRemainingReply : public RCReply
 {
   TurnRemainingReply() {}
-  TurnRemainingReply(float _turn) :turn(_turn) {}
+  TurnRemainingReply(double _turn) :turn(_turn) {}
   std::string getType() const { return "TurnRemaining"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
   
-  private: float turn;
+  private: double turn;
 };
 
 struct TickDurationReply : public RCReply
@@ -101,7 +101,7 @@ struct TickDurationReply : public RCReply
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   
-  private: float duration;
+  private: double duration;
 };
 
 struct TickRemainingReply : public RCReply
@@ -110,99 +110,99 @@ struct TickRemainingReply : public RCReply
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
 
-  private: float remaining;
+  private: double remaining;
 };
 
 struct BattleFieldSizeReply : public RCReply
 {
   BattleFieldSizeReply() {}
-  BattleFieldSizeReply(float _size) :size(_size) {}
+  BattleFieldSizeReply(double _size) :size(_size) {}
   std::string getType() const { return "BattleFieldSize"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float size;
+  private: double size;
 };
 
 struct XReply : public RCReply
 {
   XReply() {}
-  XReply(float _x) :x(_x) {}
+  XReply(double _x) :x(_x) {}
   std::string getType() const { return "X"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float x;
+  private: double x;
 };
 struct YReply : public RCReply
 {
   YReply() {}
-  YReply(float _y) :y(_y) {}
+  YReply(double _y) :y(_y) {}
   std::string getType() const { return "Y"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float y;
+  private: double y;
 };
 struct ZReply : public RCReply
 {
   ZReply() {}
-  ZReply(float _z) :z(_z) {}
+  ZReply(double _z) :z(_z) {}
   std::string getType() const { return "Z"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float z;
+  private: double z;
 };
 
 struct WidthReply : public RCReply
 {
   WidthReply() {}
-  WidthReply(float _width) :width(_width) {}
+  WidthReply(double _width) :width(_width) {}
   std::string getType() const { return "Width"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float width;
+  private: double width;
 };
 struct HeightReply : public RCReply
 {
   HeightReply() {}
-  HeightReply(float _height) :height(_height) {}
+  HeightReply(double _height) :height(_height) {}
   std::string getType() const { return "Height"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float height;
+  private: double height;
 };
 struct LengthReply : public RCReply
 {
   LengthReply() {}
-  LengthReply(float _length) :length(_length) {}
+  LengthReply(double _length) :length(_length) {}
   std::string getType() const { return "Length"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float length;
+  private: double length;
 };
 
 struct HeadingReply : public RCReply
 {
   HeadingReply() {}
-  HeadingReply(float _heading) :heading(_heading) {}
+  HeadingReply(double _heading) :heading(_heading) {}
   std::string getType() const { return "Heading"; }
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
 
-  private: float heading;
+  private: double heading;
 };
 
 struct PlayersBeginReply : public RCReply

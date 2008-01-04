@@ -48,7 +48,7 @@ messageParseStatus SetSpeedReq::parse(char **arguments, int count)
 {
   messageParseStatus status = MessageUtilities::parseSingle(arguments, count, speed);
   if (status == ParseOk)
-    speed = MessageUtilities::clamp(speed, 0.0f, 1.0f);
+    speed = MessageUtilities::clamp(speed, 0.0, 1.0);
   return status;
 }
 void SetSpeedReq::getParameters(std::ostream &stream) const
@@ -60,7 +60,7 @@ messageParseStatus SetTurnRateReq::parse(char **arguments, int count)
 {
   messageParseStatus status = MessageUtilities::parseSingle(arguments, count, rate);
   if (status == ParseOk)
-    rate = MessageUtilities::clamp(rate, 0.0f, 1.0f);
+    rate = MessageUtilities::clamp(rate, 0.0, 1.0);
   return status;
 }
 void SetTurnRateReq::getParameters(std::ostream &stream) const
@@ -90,7 +90,7 @@ messageParseStatus SetTickDurationReq::parse(char **arguments, int count)
 {
   messageParseStatus status = MessageUtilities::parseSingle(arguments, count, duration);
   if (status == ParseOk)
-    duration = std::max(duration, 0.0f);
+    duration = std::max(duration, 0.0);
   return status;
 }
 void SetTickDurationReq::getParameters(std::ostream &stream) const
