@@ -10,82 +10,87 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "RCMessageFactory.h"
 
+/* local implementation headers */
 #include "RCRequests.h"
 #include "RCReplies.h"
 #include "RCEvents.h"
 
-#define ADD_LOOKUP(COMMAND) RCREQUEST.Register<COMMAND ## Req>( #COMMAND );
+
+#define ADD_REQUEST(COMMAND) RCREQUEST.Register<COMMAND ## Req>( #COMMAND );
+#define ADD_REPLY(COMMAND) RCREPLY.Register<COMMAND ## Reply>( #COMMAND );
+#define ADD_EVENT(COMMAND) RCEVENT.Register<COMMAND ## Event>( #COMMAND );
+
+
 template<>
 void RCMessageFactory<RCRequest>::initialize()
 {
-    RCREQUEST.Register<IdentifyFrontend>("IdentifyFrontend");
-    ADD_LOOKUP(Execute);
-    ADD_LOOKUP(SetSpeed);
-    ADD_LOOKUP(SetTurnRate);
-    ADD_LOOKUP(SetAhead);
-    ADD_LOOKUP(SetTurnLeft);
-    ADD_LOOKUP(SetFire);
-    ADD_LOOKUP(GetGunHeat);
-    ADD_LOOKUP(GetDistanceRemaining);
-    ADD_LOOKUP(GetTurnRemaining);
-    ADD_LOOKUP(GetTickDuration);
-    ADD_LOOKUP(SetTickDuration);
-    ADD_LOOKUP(GetTickRemaining);
-    ADD_LOOKUP(GetBattleFieldSize);
-    ADD_LOOKUP(GetPlayers);
-    ADD_LOOKUP(GetTeams);
-    ADD_LOOKUP(GetBases);
-    ADD_LOOKUP(GetObstacles);
-    ADD_LOOKUP(GetFlags);
-    ADD_LOOKUP(GetShots);
-    ADD_LOOKUP(GetMyTanks);
-    ADD_LOOKUP(GetOtherTanks);
-    ADD_LOOKUP(GetConstants);
-    ADD_LOOKUP(GetX);
-    ADD_LOOKUP(GetY);
-    ADD_LOOKUP(GetZ);
-    ADD_LOOKUP(SetResume);
-    ADD_LOOKUP(GetWidth);
-    ADD_LOOKUP(GetHeight);
-    ADD_LOOKUP(GetLength);
-    ADD_LOOKUP(GetHeading);
+  RCREQUEST.Register<IdentifyFrontend>("IdentifyFrontend");
+  ADD_REQUEST(Execute);
+  ADD_REQUEST(SetSpeed);
+  ADD_REQUEST(SetTurnRate);
+  ADD_REQUEST(SetAhead);
+  ADD_REQUEST(SetTurnLeft);
+  ADD_REQUEST(SetFire);
+  ADD_REQUEST(GetGunHeat);
+  ADD_REQUEST(GetDistanceRemaining);
+  ADD_REQUEST(GetTurnRemaining);
+  ADD_REQUEST(GetTickDuration);
+  ADD_REQUEST(SetTickDuration);
+  ADD_REQUEST(GetTickRemaining);
+  ADD_REQUEST(GetBattleFieldSize);
+  ADD_REQUEST(GetPlayers);
+  ADD_REQUEST(GetTeams);
+  ADD_REQUEST(GetBases);
+  ADD_REQUEST(GetObstacles);
+  ADD_REQUEST(GetFlags);
+  ADD_REQUEST(GetShots);
+  ADD_REQUEST(GetMyTanks);
+  ADD_REQUEST(GetOtherTanks);
+  ADD_REQUEST(GetConstants);
+  ADD_REQUEST(GetX);
+  ADD_REQUEST(GetY);
+  ADD_REQUEST(GetZ);
+  ADD_REQUEST(SetResume);
+  ADD_REQUEST(GetWidth);
+  ADD_REQUEST(GetHeight);
+  ADD_REQUEST(GetLength);
+  ADD_REQUEST(GetHeading);
 }
-#undef ADD_LOOKUP
 
-#define ADD_LOOKUP(COMMAND) RCREPLY.Register<COMMAND ## Reply>( #COMMAND );
+
 template<>
 void RCMessageFactory<RCReply>::initialize()
 {
-    RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
-    ADD_LOOKUP(Event);
-    ADD_LOOKUP(CommandDone);
-    ADD_LOOKUP(GunHeat);
-    ADD_LOOKUP(DistanceRemaining);
-    ADD_LOOKUP(TurnRemaining);
-    ADD_LOOKUP(TickDuration);
-    ADD_LOOKUP(TickRemaining);
-    ADD_LOOKUP(BattleFieldSize);
-    ADD_LOOKUP(X);
-    ADD_LOOKUP(Y);
-    ADD_LOOKUP(Z);
-    ADD_LOOKUP(Width);
-    ADD_LOOKUP(Height);
-    ADD_LOOKUP(Length);
-    ADD_LOOKUP(Heading);
-    ADD_LOOKUP(PlayersBegin);
-    ADD_LOOKUP(Players);
+  RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
+  ADD_REPLY(Event);
+  ADD_REPLY(CommandDone);
+  ADD_REPLY(GunHeat);
+  ADD_REPLY(DistanceRemaining);
+  ADD_REPLY(TurnRemaining);
+  ADD_REPLY(TickDuration);
+  ADD_REPLY(TickRemaining);
+  ADD_REPLY(BattleFieldSize);
+  ADD_REPLY(X);
+  ADD_REPLY(Y);
+  ADD_REPLY(Z);
+  ADD_REPLY(Width);
+  ADD_REPLY(Height);
+  ADD_REPLY(Length);
+  ADD_REPLY(Heading);
+  ADD_REPLY(PlayersBegin);
+  ADD_REPLY(Players);
 }
-#undef ADD_LOOKUP
 
-#define ADD_LOOKUP(COMMAND) RCEVENT.Register<COMMAND ## Event>( #COMMAND );
+
 template<>
 void RCMessageFactory<RCEvent>::initialize()
 {
-  ADD_LOOKUP(HitWall);
+  ADD_EVENT(HitWall);
 }
-#undef ADD_LOOKUP
+
 
 // Local Variables: ***
 // mode: C++ ***
