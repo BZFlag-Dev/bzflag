@@ -10,25 +10,30 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
+#ifndef __TESTROBOT_H__
+#define __TESTROBOT_H__
+
+/* local interface headers */
+#include "BZAdvancedRobot.h"
+#include "RCLinkFrontend.h"
+#include "RCEvents.h"
+
+
+/**
  * TestRobot: Testing basic stuff.
  */
-
-#ifndef BZROBOTS_TESTROBOT_H
-#define BZROBOTS_TESTROBOT_H
-
-#include "BZAdvancedRobot.h"
-
-struct TestRobot :public BZAdvancedRobot
+class TestRobot : public BZAdvancedRobot
 {
+public:
   TestRobot() {}
   TestRobot(RCLinkFrontend *_link) { setLink(_link); }
+
   void initialize();
   void update();
   void onHitWall(const HitWallEvent &hwe);
 };
 
-#endif
+#endif /* __TESTROBOT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

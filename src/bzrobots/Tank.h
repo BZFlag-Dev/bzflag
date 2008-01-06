@@ -10,15 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_TANK_H
-#define BZROBOTS_TANK_H
+#ifndef __TANK_H__
+#define __TANK_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <ostream>
+
+/* local interface headers */
 #include "RemotePlayer.h"
 #include "RCMessage.h"
 
-#include <ostream>
 
-struct Tank {
+class Tank {
+public:
   Tank();
   Tank(RemotePlayer *tank);
 
@@ -33,7 +39,7 @@ struct Tank {
 
 std::ostream& operator<<(std::ostream& os, const Tank& tank);
 
-#endif
+#endif /* __TANK_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -10,11 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "Tank.h"
 
+/* local implementation headers */
 #include "MessageUtilities.h"
 #include "Team.h"
 #include "Flag.h"
+
 
 std::ostream& operator<<(std::ostream& os, const Tank& tank)
 {
@@ -25,18 +28,25 @@ std::ostream& operator<<(std::ostream& os, const Tank& tank)
     << tank.angularVelocity;
 }
 
+
 Tank::Tank() {}
-Tank::Tank(RemotePlayer *tank)
-  :callsign(tank->getCallSign()), team(Team::getShortName(tank->getTeam())),
-    flag(tank->getFlag()->flagName), paused(tank->isPaused()),
-    alive(tank->isAlive()), frozen(tank->canMove()),
-    super(tank->isFlagActive()), angle(tank->getAngle()*180.0/M_PI),
-    angularVelocity(tank->getAngularVelocity())
+
+Tank::Tank(RemotePlayer *tank) :
+  callsign(tank->getCallSign()),
+  team(Team::getShortName(tank->getTeam())),
+  flag(tank->getFlag()->flagName),
+  paused(tank->isPaused()),
+  alive(tank->isAlive()),
+  frozen(tank->canMove()),
+  super(tank->isFlagActive()),
+  angle(tank->getAngle()*180.0/M_PI),
+  angularVelocity(tank->getAngularVelocity())
 {
   const float *pos = tank->getPosition();
   position[0] = pos[0];
   position[1] = pos[1];
   position[2] = pos[2];
+
   const float *vel = tank->getVelocity();
   velocity[0] = vel[0];
   velocity[1] = vel[1];
