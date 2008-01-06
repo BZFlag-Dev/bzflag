@@ -26,7 +26,6 @@
 #  include <dirent.h>
 #  include <utime.h>
 #endif
-#include <cmath>
 
 // common headers
 #include "AccessList.h"
@@ -78,9 +77,8 @@
 #include "WorldBuilder.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
-
 #include "Logger.h"
-using std::endl;
+
 
 bool			canSpawn = true;
 bool			headless = true;
@@ -252,7 +250,7 @@ void printout(const std::string& line)
     fclose(fp);
   }
 #else
-  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << endl;
+  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
 #endif
 }
 
@@ -463,8 +461,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   // sanity check
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
-    std::
-      cerr <<
+    std::cerr <<
       "WARNING: invalid player identification when adding player with id "
 	   << i << std::endl;
     return NULL;
@@ -1734,7 +1731,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
         robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
-        BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << endl;
+        BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
 			      robots[i]->getCallSign(),
@@ -3427,7 +3424,7 @@ void			botStartPlaying()
   RCREQUEST.setLink(rcLink);
 
   if (!BZDB.isSet("robotScript")) {
-    BACKENDLOGGER << "Missing script on commandline!\n" << endl;
+    BACKENDLOGGER << "Missing script on commandline!\n" << std::endl;
     exit(EXIT_FAILURE);
   }
 
