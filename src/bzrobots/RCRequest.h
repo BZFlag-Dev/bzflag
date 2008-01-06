@@ -10,33 +10,38 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Request: Encapsulates requests between backend and frontend
- */
-
-#ifndef	BZF_RC_REQUEST_H
-#define	BZF_RC_REQUEST_H
+#ifndef	__RCREQUEST_H__
+#define	__RCREQUEST_H__
 
 #include "common.h"
-#include "RCMessage.h"
 
+/* system interface headers */
 #include <string>
-#include <map>
+#include <ostream>
 
-class RCRobotPlayer;
+/* local interface headers */
+#include "RCMessage.h"
+#include "RCRobotPlayer.h"
 
-class RCRequest :public RCMessage<RCRequest>
+
+/**
+ * Remote Control Request: Encapsulates requests between backend and frontend
+ */
+class RCRequest : public RCMessage<RCRequest>
 {
-  public:
-    virtual bool process(RCRobotPlayer *) { return true; }
-    virtual messageParseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() const = 0;
-    virtual void getParameters(std::ostream &stream) const = 0;
-
-    static void initializeLookup(void);
+public:
+  virtual bool process(RCRobotPlayer *) { return true; }
+  virtual messageParseStatus parse(char **arguments, int count) = 0;
+  virtual std::string getType() const = 0;
+  virtual void getParameters(std::ostream &stream) const = 0;
+  
+  static void initializeLookup(void);
 };
 
-#endif
+
+#else
+class RCRequest;
+#endif /* __RCREQUEST_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
