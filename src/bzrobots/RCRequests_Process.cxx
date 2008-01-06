@@ -10,15 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* inteface header */
 #include "RCRequests.h"
 
-#include "RCReplies.h"
-#include "RCRobotPlayer.h"
-#include "MessageUtilities.h"
+/* common implementation headers */
 #include "BZDBCache.h"
+
+/* bzflag implementation headers */
 #include "Roster.h"
 #include "World.h"
 #include "playing.h"
+
+/* local implementation headers */
+#include "RCReplies.h"
+#include "RCRobotPlayer.h"
+#include "MessageUtilities.h"
 
 
 bool ExecuteReq::process(RCRobotPlayer *rrp)
@@ -33,16 +39,14 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   if (rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate])
     rrp->turnRate = rrp->nextTurnRate;
 
-  if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate])
-  {
+  if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate]) {
     if (rrp->nextDistance < 0.0f)
       rrp->distanceForward = false;
     else 
       rrp->distanceForward = true;
     rrp->distanceRemaining = (rrp->distanceForward ? 1 : -1) * rrp->nextDistance;
   }
-  if (rrp->pendingUpdates[RCRobotPlayer::turnUpdate])
-  {
+  if (rrp->pendingUpdates[RCRobotPlayer::turnUpdate]) {
     if (rrp->nextTurn < 0.0f)
       rrp->turnLeft = false;
     else
@@ -53,8 +57,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   for (int i = 0; i < RCRobotPlayer::updateCount; ++i)
     rrp->pendingUpdates[i] = false;
 
-  if (rrp->shoot)
-  {
+  if (rrp->shoot) {
     rrp->shoot = false;
     rrp->fireShot();
   }
@@ -101,8 +104,7 @@ bool SetResumeReq::process(RCRobotPlayer *rrp)
   if (!rrp->isSteadyState())
     return false;
 
-  if (rrp->hasStopped)
-  {
+  if (rrp->hasStopped) {
     rrp->hasStopped = false;
     rrp->distanceRemaining = rrp->stoppedDistance;
     rrp->turnRemaining = rrp->stoppedTurn;
@@ -250,8 +252,7 @@ bool SetStopReq::process(RCRobotPlayer *rrp)
   if (!rrp->isSteadyState())
     return false;
 
-  if (!rrp->hasStopped || overwrite)
-  {
+  if (!rrp->hasStopped || overwrite) {
     rrp->hasStopped = true;
     rrp->stoppedDistance = rrp->distanceRemaining;
     rrp->stoppedTurn = rrp->turnRemaining;

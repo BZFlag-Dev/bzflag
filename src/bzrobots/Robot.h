@@ -10,52 +10,53 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
+#ifndef __ROBOT_H__
+#define __ROBOT_H__
+
+/* local interface headers */
+#include "BZRobot.h"
+
+
+/**
  * Robot: A class for simulation and implementation of a simpler
  * RoboCode-supporting robot.
  */
-
-#ifndef BZROBOTS_ROBOT_H
-#define BZROBOTS_ROBOT_H
-
-#include "BZRobot.h"
-
-class Robot :public BZRobot
+class Robot : public BZRobot
 {
-  protected:
-    void back(double distance);
-    void fire(double power);
-    // TODO: Implement 'Bullet fireBullet(double power);' ?
+protected:
+  void back(double distance);
+  void fire(double power);
+  // TODO: Implement 'Bullet fireBullet(double power);' ?
 
-    double getEnergy();
-    double getGunCoolingRate(); // This should return the same as getTickDuration. :-)
-    double getGunHeading();
-    double getRadarHeading();
+  double getEnergy();
+  double getGunCoolingRate(); // This should return the same as getTickDuration. :-)
+  double getGunHeading();
+  double getRadarHeading();
 
-    int getNumRounds();
-    int getRoundNum();
+  int getNumRounds();
+  int getRoundNum();
 
-    void setAdjustGunForRobotTurn(bool independent);
-    void setAdjustRadarForGunTurn(bool independent);
-    void setAdjustRadarForRobotTurn(bool independent);
+  void setAdjustGunForRobotTurn(bool independent);
+  void setAdjustRadarForGunTurn(bool independent);
+  void setAdjustRadarForRobotTurn(bool independent);
 
-    double getBattleFieldHeight();
-    double getBattleFieldWidth();
+  double getBattleFieldHeight();
+  double getBattleFieldWidth();
 
-    void turnGunRight(double degrees);
-    void turnGunLeft(double degrees);
-    void turnRadarRight(double degrees);
-    void turnRadarLeft(double degrees);
-    void turnRight(double degrees);
+  void turnGunRight(double degrees);
+  void turnGunLeft(double degrees);
+  void turnRadarRight(double degrees);
+  void turnRadarLeft(double degrees);
+  void turnRight(double degrees);
 
-  public:
-    /* Robots behave slightly differently. The implementor defines run, including the while-loop. */
-    void update() {}
-    void initialize() {}
-    virtual void run() = 0;
+public:
+  /* Robots behave slightly differently. The implementor defines run, including the while-loop. */
+  void update() {}
+  void initialize() {}
+  virtual void run() = 0;
 };
 
-#endif
+#endif /* __ROBOT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
