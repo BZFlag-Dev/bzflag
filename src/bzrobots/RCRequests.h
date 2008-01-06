@@ -15,131 +15,162 @@
  * requests from the frontend to the backend.
  */
 
-#ifndef	BZF_RC_REQUESTS_H
-#define	BZF_RC_REQUESTS_H
+#ifndef __RCREQUESTS_H__
+#define	__RCREQUESTS_H__
 
+#include "common.h"
+
+/* system implementation headers */
 #include <string>
 
+/* local implementation headers */
 #include "RCRequest.h"
 #include "RCLink.h"
 
-struct RCRequestZeroArgument : public RCRequest
+
+class RCRequestZeroArgument : public RCRequest
 {
+public:
   messageParseStatus parse(char **arguments, int count);
   virtual bool process(RCRobotPlayer *rrp) = 0;
   void getParameters(std::ostream &stream) const;
 };
 
-struct ExecuteReq : public RCRequestZeroArgument
+class ExecuteReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "Execute"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct SetFireReq : public RCRequestZeroArgument
+class SetFireReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "SetFire"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct SetResumeReq : public RCRequestZeroArgument
+class SetResumeReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "SetResume"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetGunHeatReq : public RCRequestZeroArgument
+class GetGunHeatReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetGunHeat"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetDistanceRemainingReq : public RCRequestZeroArgument
+class GetDistanceRemainingReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetDistanceRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTurnRemainingReq : public RCRequestZeroArgument
+class GetTurnRemainingReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetTurnRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTickDurationReq : public RCRequestZeroArgument
+class GetTickDurationReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetTickDuration"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTickRemainingReq : public RCRequestZeroArgument
+class GetTickRemainingReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetTickRemaining"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetBattleFieldSizeReq : public RCRequestZeroArgument
+class GetBattleFieldSizeReq : public RCRequestZeroArgument
 {
+public:
   std::string getType() const { return "GetBattleFieldSize"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetTeamsReq : public RCRequestZeroArgument {
+class GetTeamsReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetTeams"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetBasesReq : public RCRequestZeroArgument {
+class GetBasesReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetBases"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetObstaclesReq : public RCRequestZeroArgument {
+class GetObstaclesReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetObstacles"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetFlagsReq : public RCRequestZeroArgument {
+class GetFlagsReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetFlags"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetShotsReq : public RCRequestZeroArgument {
+class GetShotsReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetShots"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetMyTanksReq : public RCRequestZeroArgument {
+class GetMyTanksReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetMyTanks"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetOtherTanksReq : public RCRequestZeroArgument {
+class GetOtherTanksReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetOtherTanks"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetConstantsReq : public RCRequestZeroArgument {
+class GetConstantsReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetConstants"; }
   bool process(RCRobotPlayer *rrp);
 };
 
-struct GetXReq : public RCRequestZeroArgument {
+class GetXReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetX"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetYReq : public RCRequestZeroArgument {
+class GetYReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetY"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetZReq : public RCRequestZeroArgument {
+class GetZReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetZ"; }
   bool process(RCRobotPlayer *rrp);
 };
 
-struct GetWidthReq : public RCRequestZeroArgument {
+class GetWidthReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetWidth"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetHeightReq : public RCRequestZeroArgument {
+class GetHeightReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetHeight"; }
   bool process(RCRobotPlayer *rrp);
 };
-struct GetLengthReq : public RCRequestZeroArgument {
+class GetLengthReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetLength"; }
   bool process(RCRobotPlayer *rrp);
 };
 
-struct GetHeadingReq : public RCRequestZeroArgument {
+class GetHeadingReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetHeading"; }
   bool process(RCRobotPlayer *rrp);
 };
 
-struct IdentifyFrontend : public RCRequest {
+class IdentifyFrontend : public RCRequest {
+public:
   IdentifyFrontend() : version("") {}
   IdentifyFrontend(std::string _version) : version(_version) {}
   std::string getType() const { return "IdentifyFrontend"; }
@@ -150,10 +181,12 @@ private:
   std::string version;
 };
 
-struct GetPlayersReq : public RCRequestZeroArgument {
+class GetPlayersReq : public RCRequestZeroArgument {
+public:
   std::string getType() const { return "GetPlayers"; }
   bool process(RCRobotPlayer *rrp);
 };
+
 
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \
@@ -202,7 +235,7 @@ private:
 
 #undef DECLARE_REQUEST
 
-#endif
+#endif /* __RCREQUESTS_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

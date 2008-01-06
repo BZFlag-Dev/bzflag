@@ -25,8 +25,9 @@
 #include "BZAdvancedRobot.h"
 
 
-struct HitWallEvent : public RCEvent
+class HitWallEvent : public RCEvent
 {
+public:
   HitWallEvent() {}
   HitWallEvent(double _bearing) : bearing(_bearing) {}
   std::string getType() const { return "HitWall"; }
@@ -38,8 +39,9 @@ private:
   double bearing;
 };
 
-struct DeathEvent : public RCEvent
+class DeathEvent : public RCEvent
 {
+public:
   DeathEvent() {}
   std::string getType() const { return "Death"; }
   messageParseStatus parse(char **arguments, int count);
@@ -48,8 +50,8 @@ struct DeathEvent : public RCEvent
 };
 
 #else
-struct HitWallEvent;
-struct DeathEvent;
+class HitWallEvent;
+class DeathEvent;
 #endif /* __RCEVENTS_H__ */
 
 // Local Variables: ***
