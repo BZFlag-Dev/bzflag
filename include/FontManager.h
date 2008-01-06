@@ -15,9 +15,6 @@
 
 #include "common.h"
 
-/* interface header */
-#include "Singleton.h"
-
 /* system interface headers */
 #include <map>
 #include <string>
@@ -26,6 +23,7 @@
 /* common interface headers */
 #include "bzfgl.h"
 #include "AnsiCodes.h"
+#include "Singleton.h"
 
 
 typedef enum
