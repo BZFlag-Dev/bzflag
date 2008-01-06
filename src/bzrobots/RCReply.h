@@ -10,30 +10,35 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Reply: Encapsulates the reply to a request from a frontend.
- */
-
-#ifndef	BZF_RC_REPLY_H
-#define	BZF_RC_REPLY_H
+#ifndef	__RCREPLY_H__
+#define	__RCREPLY_H__
 
 #include "common.h"
-#include "RCMessage.h"
 
+/* system interface headers */
 #include <string>
-#include <map>
+#include <ostream>
 
-class BZAdvancedRobot;
+/* local interface headers */
+#include "RCMessage.h"
+//#include "BZAdvancedRobot.h" 
+class BZAdvancedRobot; /* avoid nasty cycle */
 
-class RCReply :public RCMessage<RCReply> {
-  public:
-    virtual bool updateBot(const BZAdvancedRobot *) const { return true; }
-    virtual messageParseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() const = 0;
-    virtual void getParameters(std::ostream &stream) const = 0;
+/**
+ * Remote Control Reply: pure virtual encapsulation of the reply to a
+ * request from the frontend.
+ */
+class RCReply : public RCMessage<RCReply> {
+public:
+  virtual bool updateBot(const BZAdvancedRobot *) const { return true; }
+  virtual messageParseStatus parse(char **arguments, int count) = 0;
+  virtual std::string getType() const = 0;
+  virtual void getParameters(std::ostream &stream) const = 0;
 };
 
-#endif
+#else
+class RCReply;
+#endif /* __RCREPLY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
