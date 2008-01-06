@@ -161,6 +161,7 @@ void fakeNetPopPendingPacketBackEnd( void );
 
 #else
 class RCLink;
+class CLocalTransferPacket;
 #endif /* __RCLINK_H__ */
 
 // Local Variables: ***
