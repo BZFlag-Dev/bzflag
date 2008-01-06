@@ -22,9 +22,9 @@
 #include <sstream>
 
 /* local interface headers */
-#include <RCLink.h>
-#include <RCRobotPlayer.h>
 
+class RCLink;
+class RCRobotPlayer;
 
 typedef enum {
   ParseError,
