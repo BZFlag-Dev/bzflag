@@ -20,8 +20,6 @@
 #include "World.h"
 #include "playing.h"
 
-#include "version.h"
-
 
 bool ExecuteReq::process(RCRobotPlayer *rrp)
 {
