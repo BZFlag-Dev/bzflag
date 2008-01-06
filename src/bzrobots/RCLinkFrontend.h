@@ -10,22 +10,26 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Link, Frontend: Encapsulates communication between backend and
- * frontend, from the frontends point of view.
- */
-
 #ifndef	__RCLINKFRONTEND_H__
 #define	__RCLINKFRONTEND_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <string>
+
+/* local interface headers */
 #include "RCLink.h"
 #include "RCReply.h"
-#include "BZAdvancedRobot.h"
 #include "Logger.h"
+#include "BZAdvancedRobot.h"
+#include "RCRequest.h"
 
-class RCReply; class RCRequest;
-class BZAdvancedRobot;
 
+/**
+ * Remote Control Link, Frontend: Encapsulates communication between
+ * backend and frontend, from the frontends point of view.
+ */
 class RCLinkFrontend : public RCLink
 {
 private:

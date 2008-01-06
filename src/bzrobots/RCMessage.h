@@ -10,22 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Message: Encapsulates generic messages between
- * frontends and backends.
- */
-
-#ifndef	BZF_RC_MESSAGE_H
-#define	BZF_RC_MESSAGE_H
+#ifndef	__RCMESSAGE_H__
+#define	__RCMESSAGE_H__
 
 #include "common.h"
+
+/* system interface headers */
 #include <string>
 #include <map>
 #include <ostream>
 #include <sstream>
 
-class RCLink;
-class RCRobotPlayer;
+/* local interface headers */
+#include <RCLink.h>
+#include <RCRobotPlayer.h>
+
 
 typedef enum {
   ParseError,
@@ -34,47 +33,51 @@ typedef enum {
   InvalidArguments
 } messageParseStatus;
 
+
+/**
+ * Remote Control Message: Encapsulates generic messages between
+ * frontends and backends.
+ */
 template <class C>
 class RCMessage
 {
-  public:
+public:
 
-    RCMessage() :next(NULL), link(NULL) { }
-    virtual ~RCMessage() {}
+  RCMessage() :next(NULL), link(NULL) { }
+  virtual ~RCMessage() {}
 
-    void setLink(RCLink *_link) { link = _link; }
+  void setLink(RCLink *_link) { link = _link; }
 
-    /* This is for the linked-list aspect of RCMessage. */
-    C *getNext() { return next; }
-    void append(C *newreq)
-    {
-      if (next == NULL)
-        next = newreq;
-      else
-        next->append(newreq);
-    }
+  /* This is for the linked-list aspect of RCMessage. */
+  C *getNext() { return next; }
+  void append(C *newreq) {
+    if (next == NULL)
+      next = newreq;
+    else
+      next->append(newreq);
+  }
 
-    /* These three are dependent on the specific packet-type, so they are
-     * left for the complete implementations. :-) */
-    virtual messageParseStatus parse(char **arguments, int count) = 0;
-    virtual std::string getType() const = 0;
-    virtual void getParameters(std::ostream &stream) const = 0;
+  /* These three are dependent on the specific packet-type, so they are
+   * left for the complete implementations. :-) */
+  virtual messageParseStatus parse(char **arguments, int count) = 0;
+  virtual std::string getType() const = 0;
+  virtual void getParameters(std::ostream &stream) const = 0;
 
-    virtual std::string asString() const {
-      std::stringstream ss;
-      ss << getType() << " ";
-      getParameters(ss);
-      return ss.str();
-    }
+  virtual std::string asString() const {
+    std::stringstream ss;
+    ss << getType() << " ";
+    getParameters(ss);
+    return ss.str();
+  }
 
-  private:
-    C *next;
+private:
+  C *next;
 
-  protected:
-    RCLink *link;
+protected:
+  RCLink *link;
 };
 
-#endif
+#endif /* __RCMESSAGE_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_RCMESSAGEFACTORY_H
-#define BZROBOTS_RCMESSAGEFACTORY_H
+#ifndef __RCMESSAGEFACTORY_H__
+#define __RCMESSAGEFACTORY_H__
 
 #include "common.h"
 
@@ -31,9 +31,10 @@
 #define RCREPLY (RCMessageFactory<RCReply>::instance())
 #define RCEVENT (RCMessageFactory<RCEvent>::instance())
 
+
 template<class C>
 class RCMessageFactory : public Singleton< RCMessageFactory<C> >,
-                            public Factory<C, std::string>
+			 public Factory<C, std::string>
 {
 
 public:
@@ -66,7 +67,7 @@ private:
 template<class T>
 T* Singleton<T>::_instance = NULL;
 
-#endif
+#endif /* __RCMESSAGEFACTORY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
