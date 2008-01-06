@@ -287,6 +287,8 @@ void			ServerList::checkEchos(StartupInfo *info)
 
     std::string msg = "action=LIST&version=";
     msg	    += getServerVersion();
+    msg	    += "&clientvers=";
+    msg	    += TextUtils::url_encode(std::string(getAppVersion()));
     msg	    += "&callsign=";
     msg	    += TextUtils::url_encode(info->callsign);
     msg	    += "&password=";
