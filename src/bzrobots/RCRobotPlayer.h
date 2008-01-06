@@ -10,12 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Robot Player
- */
-
-#ifndef	BZF_TCP_RC_ROBOT_PLAYER_H
-#define	BZF_TCP_RC_ROBOT_PLAYER_H
+#ifndef	__RCROBOTPLAYER_H__
+#define	__RCROBOTPLAYER_H__
 
 #include "common.h"
 
@@ -25,18 +21,25 @@
 /* interface header */
 #include "RobotPlayer.h"
 
+/* common interface headers */
+#include "ServerLink.h"
+
 /* local interface headers */
 #include "Region.h"
 #include "RegionPriorityQueue.h"
-#include "ServerLink.h"
 #include "RCLinkBackend.h"
 
 
-class RCRobotPlayer : public RobotPlayer {
+/**
+ * Remote Control Robot Player
+ */
+class RCRobotPlayer : public RobotPlayer
+{
 public:
   RCRobotPlayer(const PlayerId&,
 		const char* name, ServerLink*,
-		const char* _email);
+		const char* _email = "anonymous");
+
   typedef enum {
     speedUpdate,
     turnRateUpdate,
@@ -71,7 +74,9 @@ private:
   void            doUpdateMotion(double dt);
 };
 
-#endif // BZF_TCP_RC_ROBOT_PLAYER_H
+#else
+class RCRobotPlayer;
+#endif // __RCROBOTPLAYER_H__
 
 // Local Variables: ***
 // mode: C++ ***

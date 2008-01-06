@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Robot Player
- */
-
 // interface header
 #include "RCRobotPlayer.h"
 
@@ -25,51 +21,53 @@
 #include "Intersect.h"
 #include "TargetingUtils.h"
 
-RCRobotPlayer::RCRobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server,
-				const char* _email = "anonymous") :
-				RobotPlayer(_id, _name, _server, _email),
-                                lastTickAt(0.0), tickDuration(2.0),
-				speed(1.0), nextSpeed(1.0),
-				turnRate(1.0), nextTurnRate(1.0),
-				shoot(false),
-                                distanceRemaining(0.0), nextDistance(0.0),
-                                turnRemaining(0.0), nextTurn(0.0),
-                                hasStopped(false)
+
+RCRobotPlayer::RCRobotPlayer(const PlayerId& _id,
+			     const char* _name,
+			     ServerLink* _server,
+			     const char* _email) :
+  RobotPlayer(_id, _name, _server, _email),
+  lastTickAt(0.0),
+  tickDuration(2.0),
+  speed(1.0),
+  nextSpeed(1.0),
+  turnRate(1.0),
+  nextTurnRate(1.0),
+  shoot(false),
+  distanceRemaining(0.0),
+  nextDistance(0.0),
+  turnRemaining(0.0),
+  nextTurn(0.0),
+  hasStopped(false)
 {
 }
 
 
-void			RCRobotPlayer::doUpdate(double dt)
+void RCRobotPlayer::doUpdate(double dt)
 {
   LocalPlayer::doUpdate(dt);
 }
 
-void			RCRobotPlayer::doUpdateMotion(double dt)
+
+void RCRobotPlayer::doUpdateMotion(double dt)
 {
   if (isAlive()) {
     double timeNow = TimeKeeper::getCurrent().getSeconds();
     /* Is the tick still running? */
-    if (lastTickAt + tickDuration >= timeNow)
-    {
+    if (lastTickAt + tickDuration >= timeNow) {
       const float *vel = getVelocity();
       distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
-      if (distanceRemaining > 0.0)
-      {
+      if (distanceRemaining > 0.0) {
         if (distanceForward)
           setDesiredSpeed(speed);
         else
           setDesiredSpeed(-speed);
-      }
-      else
-      {
+      } else {
         setDesiredSpeed(0);
       }
 
-      if (turnRemaining > 0.0)
-      {
-        if (turnLeft)
-        {
+      if (turnRemaining > 0.0) {
+        if (turnLeft) {
           turnRemaining -= getAngularVelocity() * dt;
 
           if (turnRemaining <= 0.0)
@@ -78,9 +76,7 @@ void			RCRobotPlayer::doUpdateMotion(double dt)
             setDesiredAngVel(turnRemaining/dt);
           else
             setDesiredAngVel(turnRate);
-        }
-        else
-        {
+        } else {
           turnRemaining += getAngularVelocity() * dt;
           if (turnRemaining <= 0.0)
             setDesiredAngVel(0);
@@ -89,14 +85,10 @@ void			RCRobotPlayer::doUpdateMotion(double dt)
           else
             setDesiredAngVel(-turnRate);
         }
-      }
-      else
-      {
+      } else {
         setDesiredAngVel(0);
       }
-    }
-    else
-    {
+    } else {
       setDesiredAngVel(0);
       setDesiredSpeed(0);
     }
@@ -105,12 +97,14 @@ void			RCRobotPlayer::doUpdateMotion(double dt)
   LocalPlayer::doUpdateMotion(dt);
 }
 
-void			RCRobotPlayer::explodeTank()
+
+void RCRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
 }
 
-void			RCRobotPlayer::restart(const double* _pos, double _azimuth)
+
+void RCRobotPlayer::restart(const double* _pos, double _azimuth)
 {
   float pos[3];
   pos[0] = _pos[0];
@@ -119,7 +113,8 @@ void			RCRobotPlayer::restart(const double* _pos, double _azimuth)
   LocalPlayer::restart(pos, (float)_azimuth);
 }
 
-bool                    RCRobotPlayer::isSteadyState()
+
+bool RCRobotPlayer::isSteadyState()
 {
   double timeNow = TimeKeeper::getCurrent().getSeconds();
   /* last tick done? */
