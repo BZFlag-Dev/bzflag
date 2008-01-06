@@ -22,9 +22,8 @@
 #include <sstream>
 
 /* local interface headers */
+#include "RCLink.h"
 
-class RCLink;
-class RCRobotPlayer;
 
 typedef enum {
   ParseError,
@@ -43,7 +42,7 @@ class RCMessage
 {
 public:
 
-  RCMessage() :next(NULL), link(NULL) { }
+  RCMessage() : next(NULL), link(NULL) { }
   virtual ~RCMessage() {}
 
   void setLink(RCLink *_link) { link = _link; }
@@ -77,6 +76,9 @@ protected:
   RCLink *link;
 };
 
+#else
+template <class C>
+class RCMessage;
 #endif /* __RCMESSAGE_H__ */
 
 // Local Variables: ***
