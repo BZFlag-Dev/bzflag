@@ -10,32 +10,27 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Remote Control Replies: Encapsulates data and logic associated with
- * replies to the requests made by the frontend
- */
+#ifndef	__RCREPLIES_H__
+#define	__RCREPLIES_H__
 
-#ifndef	BZF_RC_REPLIES_H
-#define	BZF_RC_REPLIES_H
+#include "common.h"
 
+/* common interface headers */
 #include <string>
 
+/* local interface headers */
 #include "RCReply.h"
 #include "RCEvent.h"
 #include "Tank.h"
+
+/* bzflag interface headers */
 #include "RemotePlayer.h"
 
-struct IdentifyBackend : public RCReply
-{
-  IdentifyBackend() :version("") {}
-  IdentifyBackend(std::string _version) :version(_version) {}
-  std::string getType() const { return "IdentifyBackend"; }
-  messageParseStatus parse(char **arguments, int count);
-  void getParameters(std::ostream &stream) const;
 
-  private: std::string version;
-};
-
+/**
+ * Remote Control Replies: Encapsulates data and logic associated with
+ * replies to the requests made by the frontend
+ */
 class EventReply : public RCReply
 {
   RCEvent *notification;
@@ -47,6 +42,17 @@ class EventReply : public RCReply
     messageParseStatus parse(char **arguments, int count);
     void getParameters(std::ostream &stream) const;
     bool updateBot(const BZAdvancedRobot *robot) const;
+};
+
+struct IdentifyBackend : public RCReply
+{
+  IdentifyBackend() :version("") {}
+  IdentifyBackend(std::string _version) :version(_version) {}
+  std::string getType() const { return "IdentifyBackend"; }
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+
+  private: std::string version;
 };
 
 struct CommandDoneReply : public RCReply
@@ -226,7 +232,8 @@ struct PlayersReply : public RCReply
   private: Tank tank;
 };
 
-#endif
+
+#endif /* __RCREPLIES_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
