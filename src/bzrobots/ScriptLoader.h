@@ -10,24 +10,33 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_SCRIPTLOADER_H
-#define BZROBOTS_SCRIPTLOADER_H
+#ifndef __SCRIPTLOADER_H__
+#define __SCRIPTLOADER_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <string>
+
+/* local interface headers */
 #include "BZAdvancedRobot.h"
 
-struct ScriptLoader {
-    virtual ~ScriptLoader() {}
 
-    virtual bool load(std::string filename) = 0;
-    virtual BZAdvancedRobot *create(void) = 0;
-    virtual void destroy(BZAdvancedRobot *instance) = 0;
-
-    std::string getError() const { return error; }
-  protected:
-    std::string error;
+class ScriptLoader
+{
+public:
+  virtual ~ScriptLoader() {}
+  
+  virtual bool load(std::string filename) = 0;
+  virtual BZAdvancedRobot *create(void) = 0;
+  virtual void destroy(BZAdvancedRobot *instance) = 0;
+  
+  std::string getError() const { return error; }
+protected:
+  std::string error;
 };
 
-#endif
+#endif /* __SCRIPTLOADER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

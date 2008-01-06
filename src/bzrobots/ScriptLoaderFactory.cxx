@@ -10,12 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "ScriptLoaderFactory.h"
+
+/* local implementation headers */
 #include "SharedObjectLoader.h"
 
 #ifdef WITH_PYTHONLOADER
 #   include "PythonLoader.h"
 #endif
+
 
 // initialize the singleton
 template <>

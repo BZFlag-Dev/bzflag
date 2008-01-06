@@ -10,12 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZROBOTS_SHAREDOBJECTLOADER_H
-#define BZROBOTS_SHAREDOBJECTLOADER_H
+#ifndef __SHAREDOBJECTLOADER_H__
+#define __SHAREDOBJECTLOADER_H__
 
+#include "common.h"
+
+/* system interface headers */
+#include <string>
+
+/* local interface headers */
 #include "ScriptLoader.h"
+#include "BZAdvancedRobot.h"
 
-class SharedObjectLoader : public ScriptLoader {
+
+class SharedObjectLoader : public ScriptLoader
+{
   typedef BZAdvancedRobot *(*createHandle)(void);
   typedef void (*destroyHandle)(BZAdvancedRobot *);
 
@@ -31,7 +40,7 @@ class SharedObjectLoader : public ScriptLoader {
     void destroy(BZAdvancedRobot *instance);
 };
 
-#endif
+#endif /* __SHAREDOBJECTLOADER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

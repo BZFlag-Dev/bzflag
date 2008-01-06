@@ -25,9 +25,11 @@
 
 bool SharedObjectLoader::load(std::string filename)
 {
+
 #ifdef _WIN32
-	return false;
+  return false;
 #else
+
   char *err;
   void *createSymbol;
   void *destroySymbol;
@@ -90,29 +92,35 @@ bool SharedObjectLoader::load(std::string filename)
   }
 
   return true;
-#endif
+#endif /* _WIN32 */
 }
+
+
 SharedObjectLoader::~SharedObjectLoader()
 {
 #ifndef _WIN32
   dlclose(soHandle);
-#endif
+#endif /* _WIN32 */
 }
+
+
 BZAdvancedRobot *SharedObjectLoader::create(void)
 {
 #ifdef _WIN32
-	return NULL;
+  return NULL;
 #else
   return (*createFunction)();
-#endif
+#endif /* _WIN32 */
 }
+
+
 void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
 {
 #ifdef _WIN32
-	return;
+  return;
 #else
   (*destroyFunction)(instance);
-#endif
+#endif /* _WIN32 */
 }
 
 // Local Variables: ***
