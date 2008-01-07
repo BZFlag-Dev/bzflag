@@ -511,11 +511,12 @@ static std::string cmdViewZoom(const std::string&,
     return "usage: viewZoom {in|out|toggle}";
 
   float fov = BZDB.eval("displayFOV");
+  float defFov = BZDB.eval("defaultOV");
 
   if (args[0] == "out") {
     fov += 1.0f;
-    if (fov > 60.0f)
-      fov = 60.0f;
+    if (fov > defFov)
+      fov = defFov;
     BZDB.setFloat("displayFOV", fov);
   } else if (args[0] == "in") {
     fov -= 1.0f;
@@ -523,21 +524,21 @@ static std::string cmdViewZoom(const std::string&,
       fov = 15.0f;
     BZDB.setFloat("displayFOV", fov);
   } else if (args[0] == "toggle") {
-    if (fov < 37.5) { // 60+15/2
-      fov = 60.0f;
+    if (fov < (defFov+15.0f)*0.5f) { // 60+15/2
+      fov = defFov;
     } else {
       fov = 15.0f;
     }
     BZDB.setFloat("displayFOV", fov);
     // also toggle the observer fov
-    if (ROAM.getZoom() != 60.0f) {
-      ROAM.setZoom(60.0f);
+    if (ROAM.getZoom() != defFov) {
+      ROAM.setZoom(defFov);
     } else {
       ROAM.setZoom(15.0f);
     }
   } else if (args[0] == "reset") {
-    fov = 60.0f;
-    ROAM.setZoom(60.0f);
+    fov = defFov;
+    ROAM.setZoom(defFov);
     BZDB.setFloat("displayFOV", fov);
   } else {
     return "usage: viewZoom {in|out|toggle|reset}";

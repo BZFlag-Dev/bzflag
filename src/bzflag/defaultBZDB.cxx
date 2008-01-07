@@ -58,6 +58,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "displayReloadTimer",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayRadar",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
+  { "defaultFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
   { "displayFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
