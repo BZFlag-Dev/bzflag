@@ -5044,7 +5044,7 @@ void drawFrame(const float dt)
       myTankPos = defaultPos;
       myTankDir = defaultDir;
       muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      fov = 60.0f;
+      fov = BZDB.eval("defaultFOV");
     } else {
       myTankPos = myTank->getPosition();
       myTankDir = myTank->getForward();
