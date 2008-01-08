@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- Clients can not connect to the server.  The server broadcasts out
+  the MsgAddPlayer with the connecting player's id. but the message
+  comes out on the client garbaled ( code is wong ). The data is
+  correct at the time the buffered network message class passes it of
+  the old broadcast code that just calls buffered send.
+
 - Looks like onspawn/ondeath world weapon events get ignored by the event
   handler.  Probably ought to handle them since they're doc'ed.
 
