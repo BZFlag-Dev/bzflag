@@ -626,9 +626,6 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ClientAuthentication.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\clientCommands.cxx">
 			</File>
 			<File
@@ -2355,9 +2352,6 @@ copy debug\*.pdb ..\..\*.pdb
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\KeyboardMapMenu.cxx">
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\LoginMenu.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\MainMenu.cxx">
