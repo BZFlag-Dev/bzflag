@@ -40,10 +40,10 @@ void removeNetworkLogCallback(NetworkDataLogCallback * cb )
   }
 }
 
-void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size )
+void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size, void *param = NULL )
 {
   for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-    logCallbacks[i]->networkDataLog(send,udp,data,size);
+    logCallbacks[i]->networkDataLog(send,udp,data,size,param);
 }
 
 bool NetHandler::pendingUDP = false;
@@ -205,7 +205,7 @@ than %s:%d\n",
     netPlayer[id]->countMessage(code, len, 0);
 #endif
 
-    callNetworkDataLog (false, true, (const unsigned char*)buf,len);
+    callNetworkDataLog (false, true, (const unsigned char*)buf,len,netPlayer[id]);
 
     if (code == MsgUDPLinkEstablished) {
       netPlayer[id]->udpout = true;
@@ -433,7 +433,7 @@ int NetHandler::pwrite(const void *b, int l) {
     }
   }
 
-  callNetworkDataLog (true, useUDP, (const unsigned char*)b,len);
+  callNetworkDataLog (true, useUDP, (const unsigned char*)b,len,this);
 
   // always sent UDP messages and MsgUDPLinkRequest over udp with udpSend
   if (useUDP || code == MsgUDPLinkRequest) {
@@ -479,7 +479,7 @@ RxStatus NetHandler::tcpReceive() {
   countMessage(code, len, 0);
 #endif
 
-  callNetworkDataLog (false, false, (const unsigned char*)buf,len);
+  callNetworkDataLog (false, false, (const unsigned char*)buf,len,this);
 
   if (code == MsgUDPLinkEstablished) {
     udpout = true;

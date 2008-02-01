@@ -39,7 +39,7 @@ class NetworkDataLogCallback
 public:
   virtual ~NetworkDataLogCallback(){};
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size ) = 0;
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL ) = 0;
 };
 
 void addNetworkLogCallback(NetworkDataLogCallback * cb );
@@ -141,6 +141,8 @@ public:
   in_addr	getIPAddress();
   const char*	getHostname();
   bool	  reverseDNSDone();
+
+  int getPlayerID ( void ){ return playerIndex;}
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.

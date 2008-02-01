@@ -183,9 +183,11 @@ public:
   BZFSNetLogCB(){addNetworkLogCallback(this);}
   virtual ~BZFSNetLogCB(){removeNetworkLogCallback(this);}
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size )
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param )
   {
     // let any listeners know we got net data
+    NetHandler *h = (NetHandler*)param;
+
     bz_NetTransferEventData eventData;
     if (send)
       eventData.eventType = bz_eNetDataSendEvent;
@@ -196,6 +198,9 @@ public:
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;
+    if (h)
+      eventData.playerID = h->getPlayerID();
+
     // make a copy of the data, just in case any plug-ins decide to MESS with it.
     eventData.data = (unsigned char*)malloc(size);
     memcpy(eventData.data,data,size);

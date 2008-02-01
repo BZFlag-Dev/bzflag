@@ -866,13 +866,14 @@ class bz_NetTransferEventData : public bz_EventData
 public:
 	bz_NetTransferEventData()
 	{
-		eventType = bz_eNetDataReceveEvent;
-		send = false;
-		udp = false;
-		iSize = 0;
-		data = NULL;
+	  eventType = bz_eNetDataReceveEvent;
+	  send = false;
+	  udp = false;
+	  iSize = 0;
+	  data = NULL;
+	  playerID = -1;
 
-		time = 0;
+	  time = 0;
 	}
 
 	virtual ~bz_NetTransferEventData(){};
@@ -881,6 +882,7 @@ public:
 	bool udp;
 	unsigned int iSize;
 
+	int	    playerID;
 	double time;
 
 	// DON'T CHANGE THIS!!!
