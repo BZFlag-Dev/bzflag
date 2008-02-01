@@ -198,8 +198,10 @@ public:
   BZFSNetLogCB(){addNetworkLogCallback(this);}
   virtual ~BZFSNetLogCB(){removeNetworkLogCallback(this);}
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size )
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL )
   {
+    NetHandler *h = (NetHandler*)param;
+
     // let any listeners know we got net data
     bz_NetTransferEventData_V1 eventData;
     if (send)
@@ -211,6 +213,17 @@ public:
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;
+    if (h)
+    { 
+      for(int i=0; i < curMaxPlayers; i++)
+      {
+	if(GameKeeper::Player::getPlayerByIndex(i)->netHandler == h )
+	{
+	  eventData.playerID = i;
+	  i = curMaxPlayers+1;
+	}
+      }
+    }
     // make a copy of the data, just in case any plug-ins decide to MESS with it.
     eventData.data = (unsigned char*)malloc(size);
     memcpy(eventData.data,data,size);

@@ -1065,7 +1065,7 @@ public:
     udp = false;
     iSize = 0;
     data = NULL;
-
+    playerID = -1;
     eventTime = 0;
   }
 
@@ -1075,6 +1075,7 @@ public:
   bool send;
   bool udp;
   unsigned int iSize;
+  int playerID;
 
   double eventTime;
 

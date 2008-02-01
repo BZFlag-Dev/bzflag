@@ -52,7 +52,7 @@ class NetworkDataLogCallback
 public:
   virtual ~NetworkDataLogCallback(){};
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size ) = 0;
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param = NULL ) = 0;
 };
 
 void addNetworkLogCallback(NetworkDataLogCallback * cb );
@@ -139,7 +139,7 @@ public:
   static NetHandler *whoIsAtIP(const std::string& IP);
   in_addr	getIPAddress();
   const char*	getHostname();
-  bool	  reverseDNSDone();
+  bool		reverseDNSDone();
 
   static const int     clientNone    = 0;
   static const int     clientBZAdmin = 1;
