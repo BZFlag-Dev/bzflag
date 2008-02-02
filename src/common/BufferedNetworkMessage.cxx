@@ -37,6 +37,8 @@ BufferedNetworkMessage::BufferedNetworkMessage()
   packedSize = 0;
   readPoint = 0;
 
+  checkData(0);
+
   code = 0;
   recipent = NULL;
   toAdmins = false;
