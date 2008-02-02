@@ -5598,10 +5598,9 @@ void drawFrame(const float dt)
       myTankDir = myTank->getForward();
       muzzleHeight = myTank->getMuzzleHeight();
 
+      fov = BZDB.eval("displayFOV");
       if (myTank->getFlag() == Flags::WideAngle) {
-	fov = 120.0f;
-      } else {
-	fov = BZDB.eval("displayFOV");
+	fov *= 2.0f;
       }
       if (viewType == SceneRenderer::ThreeChannel) {
 	fov *= 0.75f;
