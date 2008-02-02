@@ -511,7 +511,7 @@ static std::string cmdViewZoom(const std::string&,
     return "usage: viewZoom {in|out|toggle}";
 
   float fov = BZDB.eval("displayFOV");
-  float defFov = BZDB.eval("defaultOV");
+  float defFov = BZDB.eval("defaultFOV");
 
   if (args[0] == "out") {
     fov += 1.0f;
