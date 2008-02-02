@@ -11,6 +11,9 @@ so that no work is duplicated.
 
 Required for release of 2.2.:
 
+* MsgNewRabbit packs and unpacks a zeroed byte.  Find out why and remove
+  it if possible.
+
 * change the external camera settings to use the radar drawing rules
   if the camera extends outside of the hit volume, i.e. don't draw
   stealth, but draw cloaked, so that 3rd person view can't be used
