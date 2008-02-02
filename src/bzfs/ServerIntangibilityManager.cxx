@@ -22,7 +22,7 @@ ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (
 void ServerIntangibilityManager::setWorldObjectTangibility ( unsigned int objectGUID, unsigned char tangible )
 {
   tangibilityMap[objectGUID] = tangible;
-  sendMsgTanagabilityUpdate(objectGUID,tangible);
+  sendMsgTangibilityUpdate(objectGUID,tangible);
 }
 
 void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
@@ -31,7 +31,7 @@ void ServerIntangibilityManager::sendNewPlayerWorldTangibility ( int playerID )
   while (itr != tangibilityMap.end())
   {
     // send out the tangibility update message
-    sendMsgTanagabilityUpdate(itr->first,itr->second,playerID);
+    sendMsgTangibilityUpdate(itr->first,itr->second,playerID);
     itr++;
   }
 }
@@ -52,7 +52,7 @@ unsigned char ServerIntangibilityManager::getWorldObjectTangibility ( unsigned i
 void ServerIntangibilityManager::resetTangibility ( void )
 {
   tangibilityMap.clear();
-  sendMsgTanagabilityReset();
+  sendMsgTangibilityReset();
 }
 
 

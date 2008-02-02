@@ -55,8 +55,8 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
 void sendMsgTimeUpdate ( int timeLimit );
 
-void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
-void sendMsgTanagabilityReset ( void );
+void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
+void sendMsgTangibilityReset ( void );
 
 void sendMsgCanSpawn ( int player, bool canSpawn );
 void sendMsgLimboMessage ( int player, const std::string  &text );

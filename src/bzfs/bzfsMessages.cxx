@@ -989,7 +989,7 @@ void sendMsgTimeUpdate( int timeLimit )
   msg->broadcast(MsgTimeUpdate);
 }
 
-void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int player )
+void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt(object);
@@ -1005,7 +1005,7 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
   }
 }
 
-void sendMsgTanagabilityReset ( void )
+void sendMsgTangibilityReset ( void )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->broadcast(MsgTangibilityReset,false);
