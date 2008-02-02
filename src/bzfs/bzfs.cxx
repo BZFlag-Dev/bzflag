@@ -373,7 +373,6 @@ void addBzfsCallback(const std::string& name, void* data)
 static void sendUDPupdate(NetHandler *handler)
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(0);
   MSGMGR.newMessage(msg)->send(handler, MsgUDPLinkEstablished);
   msg->send(handler, MsgUDPLinkRequest);
 }
