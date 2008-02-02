@@ -597,7 +597,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   playerInfo += teamColor;
   //Slot number only for admins
   LocalPlayer* localPlayer = LocalPlayer::getMyTank();
-  if (localPlayer->isAdmin()){
+  if (localPlayer->hasPlayerList()) {
     char slot[10];
     sprintf(slot, "%3d",player->getId());
     playerInfo += slot;
