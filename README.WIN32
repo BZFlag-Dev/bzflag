@@ -24,7 +24,13 @@ You also need to have libCurl installed.
 Download it from http://curl.haxx.se/libcurl/
 It is best if you do not get the SSL versions. Bzflag does not
 need or use SSL, and the SSL versions of libCurl have additional
-library dependencies that need to be meet.
+library dependencies that need to be meet. If you are not building
+your own copy of libCurl and want to use one of the premade
+binary distrobutions then you should download the one that is
+made for "MSVC". You should note that the binary versions
+of libCurl may link to a zlib dll that you will have to aquire
+as well.
+
 Add the include directory and the lib to your visual c++
 configuration.  See the SDL section at the end of the file for
 details.
