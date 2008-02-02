@@ -1008,7 +1008,6 @@ void sendMsgTanagabilityUpdate ( unsigned int object, unsigned char tang, int pl
 void sendMsgTanagabilityReset ( void )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(0);
   msg->broadcast(MsgTangibilityReset,false);
 }
 
