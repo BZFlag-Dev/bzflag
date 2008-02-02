@@ -595,9 +595,10 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
   std::string playerInfo;
   // team color
   playerInfo += teamColor;
-  //Slot number only for admins
+  // Slot number only for admins (playerList perm check, in case they have
+  // hideAdmin)
   LocalPlayer* localPlayer = LocalPlayer::getMyTank();
-  if (localPlayer->hasPlayerList()) {
+  if (localPlayer->isAdmin() || localPlayer->hasPlayerList()) {
     char slot[10];
     sprintf(slot, "%3d",player->getId());
     playerInfo += slot;
