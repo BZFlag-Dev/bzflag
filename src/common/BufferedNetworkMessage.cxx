@@ -249,21 +249,19 @@ bool BufferedNetworkMessage::process ( void )
   if (!transferCallback || !recipent && code == 0)
     return false;
 
-  // +4 here is for these two uints
-  packedSize += 4;
   nboPackUShort(data, uint16_t(packedSize));
   nboPackUShort(data+sizeof(uint16_t), code);
 
   if (recipent)
   {
-    return transferCallback->send(recipent, data, packedSize) == packedSize;
+    return transferCallback->send(recipent, data, packedSize+4) == packedSize+4;
   }
    
   // send message to everyone
   int mask = NetHandler::clientBZFlag;
   if (toAdmins)
     mask |= NetHandler::clientBZAdmin;
-  transferCallback->broadcast(data, packedSize, mask, code);
+  transferCallback->broadcast(data, packedSize+4, mask, code);
 
   return true;
 }
