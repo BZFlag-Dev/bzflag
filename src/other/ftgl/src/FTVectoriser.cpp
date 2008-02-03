@@ -6,7 +6,7 @@
 #endif
 
 #ifdef __APPLE_CC__    
-    typedef GLvoid (*GLUTesselatorFunction)(...);
+    typedef GLvoid (*GLUTesselatorFunction)();
 #elif defined( __mips ) || defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __OpenBSD__ ) || defined( __sun ) || defined (__CYGWIN__)
     typedef GLvoid (*GLUTesselatorFunction)();
 #elif defined ( WIN32)
