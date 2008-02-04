@@ -5,7 +5,8 @@
 
 BZFlag 2.1.x
 ------------
-
+* Player slots now appear in the clients of admins with hideAdmin (assuming
+  they have playerList) - Joshua Bodine
 * Allow plugins to register custom flag types - Daniel Remenak
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * improved French localization - Christophe Henry
