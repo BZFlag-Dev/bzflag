@@ -3,10 +3,9 @@
 			     ====================
 
 
-BZFlag 2.1.x
+BZFlag 2.99.x
 ------------
-* Player slots now appear in the clients of admins with hideAdmin (assuming
-  they have playerList) - Joshua Bodine
+* Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 * Allow plugins to register custom flag types - Daniel Remenak
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * improved French localization - Christophe Henry
@@ -82,6 +81,72 @@ BZFlag 2.1.x
 * All scores are controlled completely by the server - Daniel Remenak
 * bzadmin require less network bandwidth - Alfredo Tupone
 * Inertia setting are bzdb vars now - Alfredo Tupone
+
+BZFlag 2.0.10  "Never Say Never" (2007-11-16)
+---------------------------------------------
+
+* Added a work around for buggy DRI open source ATI drivers and the 
+  narrow flag - Jeff Myers
+* Add /modcount command - Joshua Bodine, Anonymous
+* Fix bug where users get locked into autopilot mode - Joshua Bodine
+* Fix bug where poll results would not be announced - Joshua Bodine
+* Fix antikill notice bug - Joshua Bodine
+* Add -adminlagannounce and -lagannounce - Thomas Stauer
+* Check for talk permission for part/quit messages  - uso
+* First map no longer ignored in Start Server menu - Ravu al Hemio
+* Implemented Confine Mouse for Windows platforms - Daniel Remenak
+* Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
+* Add the rabidRabbit plugin - LouMan
+* Add packet loss kick and related admin commands - Thomas Stauer
+* Reclaim lost memory from sound sample - Tupone Alfredo
+* Fixed bashism on debian rules - Ryan Kavanagh
+* Add the rabbitTimer plugin - L4m3r
+* Fix some segfaults when re-joining - Tupone Alfredo
+* Compliance with gcc-4.2 - Tupone Alfredo
+* Fix the build system to be more distro friendly - Tupone Alfredo
+* Plugins get flag resets/spawns/grab/drop/transfer - Jeff Myers, Bernt Hansen
+* Fix compiler problem with gcc-4 - Tupone Alfredo
+* Fixed high fps problem - Frank Thilo
+* Added more info for observers - Jeff Myers, Frank Thilo
+* torBlock plugin added - Jeff Myers, blast007
+* Optionally use mesh position and height for radar - Thomas Stauer
+* Add the regFlag plugin - Bernt Hansen
+* Fix memory leak from cURL - blast007
+* Add the Phoenix plugin - Jeff Myers
+* Add favorite server - Frank Thilo
+* SDL sound rate fix - Alfredo Tupone
+* add bzID and server status to logDetail plugin - Bernt Hansen
+* Add -tkannounce to announce tk on admin channel - Bernt Hansen
+* Add the serverControl plugin - Bernt Hansen
+* Add keepaway plugin - LouMan
+* API calls to reset bzdb - Jeff Myers
+* API call to get the player pause state. - Jeff Myers
+* API calls to reload bans, and other files - Jeff Myers
+* API event for shot ends - Jeff Myers
+* API command to move a flag - Jeff Myers
+* add API exposure for lag, jitter, and packetloss - Jeff Myers
+* Add koth plugin - LouMan
+* Add timedctf plugin - LouMan
+* Add teamflagreset plugin - LouMan
+* Add wwzones plugin - LouMan
+* flagStay plugin added - Jeff Myers
+* Give everyone notice of pause messages - Jeff Myers
+* Fix for /silence command - Skeeve
+* Fix mousebox edge positioning - Mark Thomas
+* Fixed on spanish localization - xukosky@yahoo.es
+* Instructions to fix sound on ALSA added - Tupone Alfredo
+* Change filename format for easier location of matches - uso
+* Adding jitter kick and related admin commands - Thomas Stauer
+* Global banlist reload with local banlist - uso
+* Fix to spawned and lag attributes in bz_updatePlayerData - Matthew Marshall
+* Ability to change the killer in a PlayerDieEvent - Matthew Marshall
+* Added shotID to bz_PlayerDieEventData - Matthew Marshall
+* Expose the countdown and game time stuff to the api - Jeff Myers
+* Backport the record stop function from 2.1 - Jeff Myers
+* Backported WW GMs from 2.1 - Matthew Marshall
+* Converts box & pyramids to mesh if required - Anonymous
+* Allows leading face specification (x+,x-,y+,y-,z+,z-) - Anonymous
+* Authorization is invariant to case - Anonymous
 
 BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
 ----------------------------------------------------
