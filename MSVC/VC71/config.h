@@ -20,7 +20,7 @@
 #define BUILD_REGEX 1
 
 /* GLEW library is available */
-#define HAVE_GLEW 1
+//#define HAVE_GLEW 1
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
