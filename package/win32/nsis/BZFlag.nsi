@@ -117,8 +117,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\src\bzflag\bzflag.exe
-  File bzflag.exe.manifest
+  File ..\..\..\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
@@ -169,8 +168,8 @@ Section "!BZFlag (Required)" BZFlag
 
   ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
   ; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."
-  File ..\..\..\msvcr71.dll
-  File ..\..\..\msvcp71.dll
+  File ..\..\..\msvcr80.dll
+  File ..\..\..\msvcp80.dll
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
@@ -203,7 +202,7 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\src\bzadmin\bzadmin.exe
+  File ..\..\..\bzadmin.exe
 
   ; Add some DLL files
   ;SetOutPath $INSTDIR\
@@ -232,7 +231,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\src\bzfs\bzfs.exe
+    File ..\..\..\bzfs.exe
     File ..\..\..\misc\bzfs.conf
 
     ; add to the data dir
@@ -276,7 +275,7 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\src\bzfs\bzfs.lib
+    File ..\..\..\bzfs.lib
     File ..\..\..\include\bzfsAPI.h
   SectionEnd
 SectionGroupEnd
