@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\src\bzflag\debug"
-			IntermediateDirectory=".\..\..\src\bzflag\debug"
+			OutputDirectory="./bzflag_debug/"
+			IntermediateDirectory="./bzflag_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -59,10 +59,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\..\..\src\bzflag\debug/bzflag.pch"
-				AssemblerListingLocation=".\..\..\src\bzflag\debug/"
-				ObjectFile=".\..\..\src\bzflag\debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzflag\debug/"
+				PrecompiledHeaderFile="./bzflag_debug/bzflag.pch"
+				AssemblerListingLocation="./bzflag_debug/debug/"
+				ObjectFile="./bzflag_debug/debug/"
+				ProgramDataBaseFileName="./bzflag_debug/debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -85,12 +85,12 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib"
-				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
+				OutputFile="./bzflag_debug/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_debug"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
+				ProgramDatabaseFile="./bzflag_debug/bzflag.pdb"
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
@@ -118,13 +118,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy..\..\src\bzflag\debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;"
+				Description="Copying BZFlag to root..."
+				CommandLine="copy .\bzflag_debug\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\src\bzflag\"
-			IntermediateDirectory=".\..\..\src\bzflag\"
+			OutputDirectory="./bzflag_release/"
+			IntermediateDirectory="./bzflag_release/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -162,10 +163,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\Release/bzflag.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./bzflag_release/bzflag.pch"
+				AssemblerListingLocation="./bzflag_release/"
+				ObjectFile="./bzflag_release/"
+				ProgramDataBaseFileName="./bzflag_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -184,12 +185,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib"
-				OutputFile="..\..\src\bzflag\bzflag.exe"
+				OutputFile="./bzflag_release/bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_release"
 				IgnoreDefaultLibraryNames="LIBCMT"
-				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
+				ProgramDatabaseFile="./bzflag_release/bzflag.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -216,13 +217,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzflag\*.exe ..\..\*.exe"
+				Description="Copying BZFlag to root..."
+				CommandLine="copy .\bzflag_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./bzflag_release/"
+			IntermediateDirectory="./bzflag_release/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -260,10 +262,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\Release/bzflag.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./bzflag_release/bzflag.pch"
+				AssemblerListingLocation="./bzflag_release/"
+				ObjectFile="./bzflag_release/"
+				ProgramDataBaseFileName="./bzflag_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -282,11 +284,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew.lib  Advapi32.lib user32.lib Gdi32.lib shell32.lib"
-				OutputFile="..\..\src\bzflag\bzflag.exe"
+				OutputFile="./bzflag_release/bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_release"
-				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
+				ProgramDatabaseFile="./bzflag_release/bzflag.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -313,13 +315,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzflag\*.exe ..\..\*.exe"
+				Description="Copying BZFlag to root..."
+				CommandLine="copy .\bzflag_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./bzflag_debug/"
+			IntermediateDirectory="./bzflag_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -358,10 +361,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\..\..\src\bzflag\debug/bzflag.pch"
-				AssemblerListingLocation=".\..\..\src\bzflag\debug/"
-				ObjectFile=".\..\..\src\bzflag\debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzflag\debug/"
+				PrecompiledHeaderFile="./bzflag_debug/bzflag.pch"
+				AssemblerListingLocation="./bzflag_debug/"
+				ObjectFile="./bzflag_debug/"
+				ProgramDataBaseFileName="./bzflag_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -389,7 +393,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_debug"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
+				ProgramDatabaseFile="./bzflag_debug/bzflag.pdb"
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
@@ -417,7 +421,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy..\..\src\bzflag\debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy ..\..\src\bzflag\debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;"
+				Description="Copying BZFlag to root..."
+				CommandLine="copy .\bzflag_debug\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
