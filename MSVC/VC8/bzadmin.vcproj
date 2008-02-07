@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\src\bzadmin\Debug"
-			IntermediateDirectory=".\..\..\src\bzadmin\Debug"
+			OutputDirectory="./bzadmin_debug/"
+			IntermediateDirectory="./bzadmin_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -53,10 +53,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\..\..\src\bzadmin\Debug/bzadmin.pch"
-				AssemblerListingLocation=".\..\..\src\bzadmin\Debug/"
-				ObjectFile=".\..\..\src\bzadmin\Debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzadmin\Debug/"
+				PrecompiledHeaderFile="./bzadmin_debug/bzadmin.pch"
+				AssemblerListingLocation="./bzadmin_debug/"
+				ObjectFile="./bzadmin_debug/"
+				ProgramDataBaseFileName="./bzadmin_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -77,11 +77,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib"
-				OutputFile=".\..\..\src\bzadmin\Debug/bzadmin.exe"
+				OutputFile="./bzadmin_debug/bzadmin.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzadmin\Debug/bzadmin.pdb"
+				ProgramDatabaseFile="./bzadmin_debug/bzadmin.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -108,12 +108,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy bzadmin_debug\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\src\bzadmin"
-			IntermediateDirectory=".\..\..\src\bzadmin"
+			OutputDirectory="./bzadmin_release/"
+			IntermediateDirectory="./bzadmin_release/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -147,10 +148,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\..\..\src\bzadmin/bzadmin.pch"
-				AssemblerListingLocation=".\..\..\src\bzadmin/"
-				ObjectFile=".\..\..\src\bzadmin/"
-				ProgramDataBaseFileName=".\..\..\src\bzadmin/"
+				PrecompiledHeaderFile="./bzadmin_release/bzadmin.pch"
+				AssemblerListingLocation="./bzadmin_release/"
+				ObjectFile="./bzadmin_release/"
+				ProgramDataBaseFileName="./bzadmin_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -169,7 +170,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib user32.lib shell32.lib"
-				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
+				OutputFile="./bzadmin_release/bzadmin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="libcmt"
@@ -200,6 +201,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copying BZAdmin to root..."
+				CommandLine="copy bzadmin_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
@@ -291,6 +294,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy bzadmin_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
@@ -384,6 +388,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy bzadmin_debug\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration

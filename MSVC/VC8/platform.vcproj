@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\platform\Debug\"
-			IntermediateDirectory="..\..\src\platform\Debug\"
+			OutputDirectory="./platform_debug/"
+			IntermediateDirectory="./platform_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -50,10 +50,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BROKEN_DINPUT"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/platform.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./platform_debug/platform.pch"
+				AssemblerListingLocation="./platform_debug/"
+				ObjectFile="./platform_debug/"
+				ProgramDataBaseFileName="./platform_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -73,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\platform\Debug\platform.lib"
+				OutputFile="./platform_debug/platform.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -94,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\platform\"
-			IntermediateDirectory="..\..\src\platform\"
+			OutputDirectory="./platform_release/"
+			IntermediateDirectory="./platform_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -126,10 +127,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/platform.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./platform_release/platform.pch"
+				AssemblerListingLocation="./platform_release/"
+				ObjectFile="./platform_release/"
+				ProgramDataBaseFileName="./platform_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -147,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\platform\platform.lib"
+				OutputFile="./platform_release/platform.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -168,8 +169,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./platform_release/"
+			IntermediateDirectory="./platform_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -200,10 +201,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/platform.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./platform_release/platform.pch"
+				AssemblerListingLocation="./platform_release/"
+				ObjectFile="./platform_release/"
+				ProgramDataBaseFileName="./platform_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -221,7 +222,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\platform\platform.lib"
+				OutputFile="./platform_release/platform.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -242,8 +243,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./platform_debug/"
+			IntermediateDirectory="./platform_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -273,10 +274,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/platform.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./platform_debug/platform.pch"
+				AssemblerListingLocation="./platform_debug/"
+				ObjectFile="./platform_debug/"
+				ProgramDataBaseFileName="./platform_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -296,7 +298,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\platform\Debug\platform.lib"
+				OutputFile="./platform_debug/platform.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
