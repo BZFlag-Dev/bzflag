@@ -204,7 +204,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib"
 			/>
 		</Configuration>
 		<Configuration
