@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe"
+				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_release\*.lib ..\..\*.lib&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -204,7 +204,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib"
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -297,7 +297,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe"
+				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_release\*.lib ..\..\*.lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -393,7 +393,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib"
 			/>
 		</Configuration>
 		<Configuration
