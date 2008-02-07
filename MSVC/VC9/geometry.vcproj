@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\geometry\"
-			IntermediateDirectory="..\..\src\geometry\"
+			OutputDirectory="./geometry_release/"
+			IntermediateDirectory="./geometry_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -51,10 +51,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/geometry.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./geometry_release/geometry.pch"
+				AssemblerListingLocation="./geometry_release/"
+				ObjectFile="./geometry_release/"
+				ProgramDataBaseFileName="./geometry_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\geometry\geometry.lib"
+				OutputFile="./geometry_release/geometry.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -93,8 +93,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\geometry\Debug\"
-			IntermediateDirectory="..\..\src\geometry\Debug\"
+			OutputDirectory="./geometry_debug/"
+			IntermediateDirectory="./geometry_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -124,10 +124,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/geometry.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./geometry_debug/geometry.pch"
+				AssemblerListingLocation="./geometry_debug/"
+				ObjectFile="./geometry_debug/"
+				ProgramDataBaseFileName="./geometry_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -147,7 +147,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\geometry\Debug\geometry.lib"
+				OutputFile="./geometry_debug/geometry.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -168,8 +168,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./geometry_release/"
+			IntermediateDirectory="./geometry_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -200,10 +200,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/geometry.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./geometry_release/geometry.pch"
+				AssemblerListingLocation="./geometry_release/"
+				ObjectFile="./geometry_release/"
+				ProgramDataBaseFileName="./geometry_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -221,7 +221,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\geometry\geometry.lib"
+				OutputFile="./geometry_release/geometry.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -242,8 +242,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./geometry_debug/"
+			IntermediateDirectory="./geometry_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -273,10 +273,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/geometry.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./geometry_debug/geometry.pch"
+				AssemblerListingLocation="./geometry_debug/"
+				ObjectFile="./geometry_debug/"
+				ProgramDataBaseFileName="./geometry_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -296,7 +296,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\geometry\Debug\geometry.lib"
+				OutputFile="./geometry_debug/geometry.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

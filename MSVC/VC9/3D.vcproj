@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../src/3D/debug/"
-			IntermediateDirectory="../../src/3D/debug/"
+			OutputDirectory="./3d_debug"
+			IntermediateDirectory="./3d_debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -44,11 +44,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
@@ -65,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/3D/debug/3D.lib"
+				OutputFile="./3d_debug/3D.lib"
 				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
@@ -86,8 +87,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../src/3D/"
-			IntermediateDirectory="../../src/3D/"
+			OutputDirectory="./3d_release"
+			IntermediateDirectory="./3d_release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -110,7 +111,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -128,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/3D/3D.lib"
+				OutputFile="./3d_release/3D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -148,8 +149,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="../../src/3D/debug/"
-			IntermediateDirectory="../../src/3D/debug/"
+			OutputDirectory="./3d_debug"
+			IntermediateDirectory="./3d_debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -174,11 +175,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
@@ -195,7 +197,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/3D/debug/3D.lib"
+				OutputFile="./3d_debug/3D.lib"
 				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
@@ -216,8 +218,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="../../src/3D/"
-			IntermediateDirectory="../../src/3D/"
+			OutputDirectory="./3d_release"
+			IntermediateDirectory="./3d_release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -240,7 +242,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -258,7 +260,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/3D/3D.lib"
+				OutputFile="./3d_release/3D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\common\Debug\"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="./common_debug/"
+			IntermediateDirectory="./common_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -51,10 +51,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/common.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./common_debug/common.pch"
+				AssemblerListingLocation="./common_debug/"
+				ObjectFile="./common_debug/"
+				ProgramDataBaseFileName="./common_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -73,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\common\Debug\common.lib"
+				OutputFile="./common_debug/common.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -94,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\common\"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="./common_release/"
+			IntermediateDirectory="./common_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -126,10 +127,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/common.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./common_release/common.pch"
+				AssemblerListingLocation="./common_release/"
+				ObjectFile="./common_release/"
+				ProgramDataBaseFileName="./common_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -146,7 +147,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\common\common.lib"
+				OutputFile="./common_release/common.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -167,8 +168,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./common_release/"
+			IntermediateDirectory="./common_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -199,10 +200,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/common.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./common_release/common.pch"
+				AssemblerListingLocation="./common_release/"
+				ObjectFile="./common_release/"
+				ProgramDataBaseFileName="./common_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -219,7 +220,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\common\common.lib"
+				OutputFile="./common_release/common.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -240,8 +241,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./common_debug/"
+			IntermediateDirectory="./common_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -271,10 +272,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/common.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./common_debug/common.pch"
+				AssemblerListingLocation="./common_debug/"
+				ObjectFile="./common_debug/"
+				ProgramDataBaseFileName="./common_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -293,7 +295,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\common\Debug\common.lib"
+				OutputFile="./common_debug/common.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -569,6 +571,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BufferedNetworkMessage.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\Bundle.cxx"
 				>
 			</File>
@@ -719,6 +725,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\AutoCompleter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\BufferedNetworkMessage.h"
 				>
 			</File>
 			<File

@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\lib\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="./date_debug/"
+			IntermediateDirectory="./date_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -51,10 +51,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/date.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./date_debug/date.pch"
+				AssemblerListingLocation="./date_debug/"
+				ObjectFile="./date_debug/"
+				ProgramDataBaseFileName="./date_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\date\Debug\date.lib"
+				OutputFile="./date_debug/date.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -95,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\lib\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="./date_release/"
+			IntermediateDirectory="./date_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -128,10 +128,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/date.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./date_release/date.pch"
+				AssemblerListingLocation="./date_release/"
+				ObjectFile="./date_release/"
+				ProgramDataBaseFileName="./date_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\date\date.lib"
+				OutputFile="./date_release/date.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -171,8 +171,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./date_release/"
+			IntermediateDirectory="./date_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -204,10 +204,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/date.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./date_release/date.pch"
+				AssemblerListingLocation="./date_release/"
+				ObjectFile="./date_release/"
+				ProgramDataBaseFileName="./date_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -224,7 +224,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\date\date.lib"
+				OutputFile="./date_release/date.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../src/game/debug"
-			IntermediateDirectory="../../src/game/debug"
+			OutputDirectory="./game_debug/"
+			IntermediateDirectory="./game_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -52,6 +52,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
@@ -68,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/game/debug/game.lib"
+				OutputFile="./game_debug/game.lib"
 				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
@@ -89,8 +90,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../src/game/"
-			IntermediateDirectory="../../src/game/"
+			OutputDirectory="./game_release/"
+			IntermediateDirectory="./game_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -131,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/game/game.lib"
+				OutputFile="./game_release/game.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -151,8 +152,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./game_release/"
+			IntermediateDirectory="./game_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -193,7 +194,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/game/game.lib"
+				OutputFile="./game_release/game.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -213,8 +214,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./game_debug/"
+			IntermediateDirectory="./game_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -244,6 +245,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
@@ -260,7 +262,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/game/debug/game.lib"
+				OutputFile="./game_debug/game.lib"
 				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
@@ -612,6 +614,10 @@
 				RelativePath="..\..\src\game\VotingArbiter.cxx"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\game\WorldContentInfo.cxx"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -692,6 +698,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\WorldContentInfo.h"
 				>
 			</File>
 		</Filter>

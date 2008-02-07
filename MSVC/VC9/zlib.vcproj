@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\other\zlib\Debug\"
-			IntermediateDirectory="..\..\src\other\zlib\Debug\"
+			OutputDirectory="./zlib_debug/"
+			IntermediateDirectory="./zlib_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -47,14 +47,15 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB; _CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/zlib.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./zlib_debug/zlib.pch"
+				AssemblerListingLocation="./zlib_debug/"
+				ObjectFile="./zlib_debug/"
+				ProgramDataBaseFileName="./zlib_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -74,7 +75,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\other\zlib\Debug\zlib.lib"
+				OutputFile="./zlib_debug/zlib.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -95,8 +96,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\other\zlib\"
-			IntermediateDirectory="..\..\src\other\zlib\"
+			OutputDirectory="./zlib_release/"
+			IntermediateDirectory="./zlib_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -123,15 +124,15 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB; _CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/zlib.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./zlib_release/zlib.pch"
+				AssemblerListingLocation="./zlib_release/"
+				ObjectFile="./zlib_release/"
+				ProgramDataBaseFileName="./zlib_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -149,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\other\zlib\zlib.lib"
+				OutputFile="./zlib_release/zlib.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

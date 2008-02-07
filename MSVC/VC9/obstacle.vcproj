@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\obstacle\"
-			IntermediateDirectory="..\..\src\obstacle\"
+			OutputDirectory="./obstacle_release/"
+			IntermediateDirectory="./obstacle_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -51,10 +51,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/obstacle.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./obstacle_release/obstacle.pch"
+				AssemblerListingLocation="./obstacle_release/"
+				ObjectFile="./obstacle_release/"
+				ProgramDataBaseFileName="./obstacle_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\obstacle\obstacle.lib"
+				OutputFile="./obstacle_release/obstacle.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -93,8 +93,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\obstacle\Debug\"
-			IntermediateDirectory="..\..\src\obstacle\Debug\"
+			OutputDirectory="./obstacle_debug/"
+			IntermediateDirectory="./obstacle_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -124,10 +124,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/obstacle.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./obstacle_debug/obstacle.pch"
+				AssemblerListingLocation="./obstacle_debug/"
+				ObjectFile="./obstacle_debug/"
+				ProgramDataBaseFileName="./obstacle_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -147,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\obstacle\Debug\obstacle.lib"
+				OutputFile="./obstacle_debug/obstacle.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -168,8 +169,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./obstacle_release/"
+			IntermediateDirectory="./obstacle_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -200,10 +201,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/obstacle.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./obstacle_release/obstacle.pch"
+				AssemblerListingLocation="./obstacle_release/"
+				ObjectFile="./obstacle_release/"
+				ProgramDataBaseFileName="./obstacle_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -221,7 +222,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\obstacle\obstacle.lib"
+				OutputFile="./obstacle_release/obstacle.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -242,8 +243,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./obstacle_debug/"
+			IntermediateDirectory="./obstacle_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -273,10 +274,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/obstacle.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./obstacle_debug/obstacle.pch"
+				AssemblerListingLocation="./obstacle_debug/"
+				ObjectFile="./obstacle_debug/"
+				ProgramDataBaseFileName="./obstacle_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -296,7 +297,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\obstacle\Debug\obstacle.lib"
+				OutputFile="./obstacle_debug/obstacle.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\src\bzfs\"
-			IntermediateDirectory=".\..\..\src\bzfs\"
+			OutputDirectory="./bzfs_release/"
+			IntermediateDirectory="./bzfs_release/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -54,10 +54,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/bzfs.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./bzfs_release/bzfs.pch"
+				AssemblerListingLocation="./bzfs_release/"
+				ObjectFile="./bzfs_release/"
+				ProgramDataBaseFileName="./bzfs_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -76,12 +76,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
-				OutputFile=".\..\..\src\bzfs\bzfs.exe"
+				OutputFile="./bzfs_release/bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="libcurl.lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
-				ProgramDatabaseFile="../src/bzfs/bzfs.pdb"
+				ProgramDatabaseFile="./bzfs_release/bzfs.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -107,13 +107,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzfs\*.exe ..\..\*.exe"
+				Description="Copying BZFS to root..."
+				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\src\bzfs\debug"
-			IntermediateDirectory=".\..\..\src\bzfs\debug"
+			OutputDirectory="./bzfs_debug/"
+			IntermediateDirectory="./bzfs_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -145,10 +146,11 @@
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\src\bzfs\debug/bzfs.pch"
-				AssemblerListingLocation=".\..\..\src\bzfs\debug/"
-				ObjectFile=".\..\..\src\bzfs\debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzfs\debug/"
+				PrecompiledHeaderFile="./bzfs_debug/bzfs.pch"
+				AssemblerListingLocation="./bzfs_debug/"
+				ObjectFile="./bzfs_debug/"
+				ProgramDataBaseFileName="./bzfs_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -169,12 +171,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
-				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
+				OutputFile="./bzfs_debug/bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="libcurl.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzfs\debug/bzfs.pdb"
+				ProgramDatabaseFile="./bzfs_debug/bzfs.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -200,13 +202,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzfs\debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
+				Description="Copying BZFS to root..."
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./bzfs_release/"
+			IntermediateDirectory="./bzfs_release/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -239,10 +242,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/bzfs.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./bzfs_release/bzfs.pch"
+				AssemblerListingLocation="./bzfs_release/"
+				ObjectFile="./bzfs_release/"
+				ProgramDataBaseFileName="./bzfs_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -291,13 +294,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzfs\*.exe ..\..\*.exe"
+				Description="Copying BZFS to root..."
+				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./bzfs_debug/"
+			IntermediateDirectory="./bzfs_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -329,10 +333,11 @@
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\src\bzfs\debug/bzfs.pch"
-				AssemblerListingLocation=".\..\..\src\bzfs\debug/"
-				ObjectFile=".\..\..\src\bzfs\debug/"
-				ProgramDataBaseFileName=".\..\..\src\bzfs\debug/"
+				PrecompiledHeaderFile="./bzfs_debug/bzfs.pch"
+				AssemblerListingLocation="./bzfs_debug/"
+				ObjectFile="./bzfs_debug/"
+				ProgramDataBaseFileName="./bzfs_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -353,12 +358,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
-				OutputFile=".\..\..\src\bzfs\debug\bzfs.exe"
+				OutputFile="./bzfs_debug/bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\src\bzfs\debug/bzfs.pdb"
+				ProgramDatabaseFile="./bzfs_debug/bzfs.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -384,7 +389,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\src\bzfs\debug\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
+				Description="Copying BZFS to root..."
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -1164,12 +1170,6 @@
 			<File
 				RelativePath="..\..\src\bzfs\bzfsMessages.h"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\BufferedNetworkMessage.h">
 			</File>
 		</Filter>
 		<Filter

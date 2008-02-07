@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../src/other/regex/Debug"
-			IntermediateDirectory="../../src/other/regex/Debug"
+			OutputDirectory="./regex_debug/"
+			IntermediateDirectory="./regex_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -51,6 +51,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
@@ -67,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/other/regex/debug/regex.lib"
+				OutputFile="./regex_debug/regex.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -87,8 +88,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../src/other/regex/"
-			IntermediateDirectory="../../src/other/regex/"
+			OutputDirectory="./regex_release/"
+			IntermediateDirectory="./regex_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -129,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../src/other/regex/regex.lib"
+				OutputFile="./regex_release/regex.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -299,15 +300,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\include\bzregex.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\regex\cclass.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\regex\cname.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\regex.h"
 				>
 			</File>
 			<File

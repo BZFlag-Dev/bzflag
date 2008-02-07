@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\scene\Debug\"
-			IntermediateDirectory="..\..\src\scene\Debug\"
+			OutputDirectory="./scene_debug/"
+			IntermediateDirectory="./scene_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -50,10 +50,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/scene.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./scene_debug/scene.pch"
+				AssemblerListingLocation="./scene_debug/"
+				ObjectFile="./scene_debug/"
+				ProgramDataBaseFileName="./scene_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -73,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\scene\Debug\scene.lib"
+				OutputFile="./scene_debug/scene.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -94,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\scene\"
-			IntermediateDirectory="..\..\src\scene\"
+			OutputDirectory="./scene_release/"
+			IntermediateDirectory="./scene_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -126,10 +127,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/scene.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./scene_release/scene.pch"
+				AssemblerListingLocation="./scene_release/"
+				ObjectFile="./scene_release/"
+				ProgramDataBaseFileName="./scene_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -147,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\scene\scene.lib"
+				OutputFile="./scene_release/scene.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -168,8 +169,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./scene_release/"
+			IntermediateDirectory="./scene_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -200,10 +201,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/scene.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./scene_release/scene.pch"
+				AssemblerListingLocation="./scene_release/"
+				ObjectFile="./scene_release/"
+				ProgramDataBaseFileName="./scene_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -221,7 +222,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\scene\scene.lib"
+				OutputFile="./scene_release/scene.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -242,8 +243,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./scene_debug/"
+			IntermediateDirectory="./scene_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -273,10 +274,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/scene.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./scene_debug/scene.pch"
+				AssemblerListingLocation="./scene_debug/"
+				ObjectFile="./scene_debug/"
+				ProgramDataBaseFileName="./scene_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -296,7 +298,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\scene\Debug\scene.lib"
+				OutputFile="./scene_debug/scene.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

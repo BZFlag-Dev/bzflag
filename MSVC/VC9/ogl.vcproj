@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\ogl\Debug\"
-			IntermediateDirectory="..\..\src\ogl\Debug\"
+			OutputDirectory="./ogl_debug/"
+			IntermediateDirectory="./ogl_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -51,10 +51,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/ogl.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./ogl_debug/ogl.pch"
+				AssemblerListingLocation="./ogl_debug/"
+				ObjectFile="./ogl_debug/"
+				ProgramDataBaseFileName="./ogl_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -74,7 +75,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\ogl\Debug\ogl.lib"
+				OutputFile="./ogl_debug/ogl.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -95,8 +96,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\ogl\"
-			IntermediateDirectory="..\..\src\ogl\"
+			OutputDirectory="./ogl_release/"
+			IntermediateDirectory="./ogl_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -127,10 +128,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/ogl.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./ogl_release/ogl.pch"
+				AssemblerListingLocation="./ogl_release/"
+				ObjectFile="./ogl_release/"
+				ProgramDataBaseFileName="./ogl_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -148,7 +149,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\ogl\Release\ogl.lib"
+				OutputFile="./ogl_release/ogl.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -169,8 +170,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./ogl_release/"
+			IntermediateDirectory="./ogl_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -201,10 +202,10 @@
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/ogl.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./ogl_release/ogl.pch"
+				AssemblerListingLocation="./ogl_release/"
+				ObjectFile="./ogl_release/"
+				ProgramDataBaseFileName="./ogl_release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -222,7 +223,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\ogl\Release\ogl.lib"
+				OutputFile="./ogl_release/ogl.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -243,8 +244,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="./ogl_debug/"
+			IntermediateDirectory="./ogl_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -274,10 +275,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/ogl.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./ogl_debug/ogl.pch"
+				AssemblerListingLocation="./ogl_debug/"
+				ObjectFile="./ogl_debug/"
+				ProgramDataBaseFileName="./ogl_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
@@ -297,7 +299,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\ogl\Debug\ogl.lib"
+				OutputFile="./ogl_debug/ogl.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

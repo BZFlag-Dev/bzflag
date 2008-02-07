@@ -53,7 +53,7 @@
 				AssemblerListingLocation=".\..\..\..\objs\release/"
 				ObjectFile=".\..\..\..\objs\release/"
 				ProgramDataBaseFileName=".\..\..\..\objs\release/"
-				WarningLevel="4"
+				WarningLevel="0"
 				DebugInformationFormat="0"
 				CompileAs="0"
 			/>
@@ -126,7 +126,7 @@
 				AssemblerListingLocation=".\..\..\..\objs\debug/"
 				ObjectFile=".\..\..\..\objs\debug/"
 				ProgramDataBaseFileName=".\..\..\..\objs\debug/"
-				WarningLevel="4"
+				WarningLevel="0"
 				DebugInformationFormat="3"
 				CompileAs="0"
 			/>

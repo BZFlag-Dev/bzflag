@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\src\mediafile\"
-			IntermediateDirectory="..\..\src\mediafile\"
+			OutputDirectory=".\mediafile_release\"
+			IntermediateDirectory=".\mediafile_release\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -53,10 +53,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/mediafile.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\mediafile_release\mediafile.pch"
+				AssemblerListingLocation=".\mediafile_release\"
+				ObjectFile=".\mediafile_release\"
+				ProgramDataBaseFileName=".\mediafile_release\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Release\mediafile.lib"
+				OutputFile=".\mediafile_release\mediafile.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -95,8 +95,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\src\mediafile\debug\"
-			IntermediateDirectory="..\..\src\mediafile\debug\"
+			OutputDirectory=".\mediafile_debug\"
+			IntermediateDirectory=".\mediafile_debug\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -127,10 +127,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/mediafile.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\mediafile_debug\mediafile.pch"
+				AssemblerListingLocation=".\mediafile_debug\"
+				ObjectFile=".\mediafile_debug\"
+				ProgramDataBaseFileName=".\mediafile_debug\"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="true"
 				SuppressStartupBanner="true"
@@ -150,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\mediafile\debug\mediafile.lib"
+				OutputFile=".\mediafile_debug\mediafile.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -171,8 +172,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\mediafile_release\"
+			IntermediateDirectory=".\mediafile_release\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -204,10 +205,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/mediafile.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\mediafile_release\mediafile.pch"
+				AssemblerListingLocation=".\mediafile_release\"
+				ObjectFile=".\mediafile_release\"
+				ProgramDataBaseFileName=".\mediafile_release\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -225,7 +226,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Release\mediafile.lib"
+				OutputFile=".\mediafile_release\mediafile.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -246,8 +247,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Distribution|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\mediafile_debug\"
+			IntermediateDirectory=".\mediafile_debug\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -278,10 +279,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/mediafile.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\mediafile_debug\mediafile.pch"
+				AssemblerListingLocation=".\mediafile_debug\"
+				ObjectFile=".\mediafile_debug\"
+				ProgramDataBaseFileName=".\mediafile_debug\"
+				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="true"
 				SuppressStartupBanner="true"
@@ -301,7 +303,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\src\mediafile\debug\mediafile.lib"
+				OutputFile=".\mediafile_debug\mediafile.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
