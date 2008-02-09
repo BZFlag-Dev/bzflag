@@ -148,6 +148,9 @@ namespace TankGeometryUtils {
 
   extern const float* currentScaleFactor;
   extern TankGeometryEnums::TankShadow shadowMode;
+
+  bool buildGeoFromObj ( const char* path, int &count );
+
 }
 
 

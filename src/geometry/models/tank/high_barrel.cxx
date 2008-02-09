@@ -15,6 +15,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildHighBarrel ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("geometry/tank/std/barrel.obj",count))
+		return count;
+
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_FAN);
     doNormal3f(1.000000f, 0.000000f, 0.000000f);

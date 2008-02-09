@@ -13,6 +13,7 @@
 // bzflag common headers
 #include "common.h"
 #include "global.h"
+#include "TextUtils.h"
 
 // interface header
 #include "TankGeometryMgr.h"
@@ -279,6 +280,100 @@ const float* TankGeometryMgr::getScaleFactor(TankSize size)
 {
   return scaleFactors[size];
 }
+
+class OBJVert
+{
+public:
+	float x,y,z;
+
+	OBJVert()
+	{
+		x = y = z = 0;
+	}
+
+	void glVertex ( void ) const
+	{
+		glVertex3f(x,y,z);
+	}
+
+	void glNormal ( void ) const
+	{
+		glNormal3f(x,y,z);
+	}
+
+	void glTexCoord ( void ) const
+	{
+		glTexCoord2f(x,y);
+	}
+};
+
+class OBJFace
+{
+public:
+	std::vector<size_t> verts;
+	std::vector<size_t> norms;
+	std::vector<size_t> uvs;
+
+	void draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJVert> &normList, const std::vector<OBJVert> &uvList )
+	{
+		if (verts.size() == 3)
+		{
+			glBegin(GL_TRIANGLES);
+		}
+		else
+		{
+			glBegin(GL_POLYGON);
+		}
+
+		for ( size_t i = 0; i < verts.size(); i++ )
+		{
+			if ( vertList.size() < verts[i] )
+				vertList[verts[i]].glVertex();
+			if ( i < norms.size() && norms[i] < normList.size() )
+				normList[norms[i]].glNormal();
+			if ( i < uvs.size() &&  uvs[i] < uvList.size() )
+				uvList[uvs[i]].glTexCoord();
+		}
+
+		glEnd();
+	}
+};
+
+bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
+{
+	count = 0;
+	FILE *fp = fopen(path,"rt");
+	if (!fp)
+		return false;
+
+	bool gotAnyGeo = false;
+
+	std::vector<OBJVert>	vertList,normList,uvList;
+	std::vector<OBJFace>	faces;
+
+	char *temp = NULL;
+	fseek(fp,0,SEEK_END);
+	size_t s = ftell(fp);
+	temp = (char*)malloc(s+1);
+	temp[s] = NULL;
+	fseek(fp,0,SEEK_SET);
+	fread(temp,s,1,fp);
+	fclose(fp);
+
+	std::vector<std::string> lines = TextUtils::tokenize(TextUtils::replace_all(std::string(temp),std::string("\r"),std::string()),std::string("\n"));
+	free(temp);
+
+	for ( size_t i = 0; i < lines.size(); i++ )
+	{
+		std::string &line = lines[i];
+		if ( line.size() )
+		{
+			// parse it
+		}
+	}
+	return gotAnyGeo;
+}
+
 
 
 /****************************************************************************/
