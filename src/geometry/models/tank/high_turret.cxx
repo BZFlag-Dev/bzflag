@@ -14,6 +14,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildHighTurret ( void )
 {
+  int count = 0;
+  if (buildGeoFromObj("geometry/tank/std/turret.obj",count))
+    return count;
+
   int tris = 0;
 
   glShadeModel(GL_FLAT);

@@ -14,6 +14,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildHighRCasing ( void )
 {
+  int count = 0;
+  if (buildGeoFromObj("geometry/tank/std/rcasing.obj",count))
+    return count;
+
   int tris = 0;
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
