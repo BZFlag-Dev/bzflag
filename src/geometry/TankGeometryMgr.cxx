@@ -304,6 +304,16 @@ public:
   {
     glTexCoord2f(x,y);
   }
+
+  void read3 ( const char* t )
+  {
+    sscanf(t,"%f %f %f",&x,&y,&z);
+  }
+
+  void read2 ( const char* t )
+  {
+    sscanf(t,"%f %f",&x,&y);
+  }
 };
 
 class OBJFace
@@ -371,18 +381,66 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
       switch(line[0])
       {
       case 'v':
+	if ( line.size() > 5 ) // there have to be enough charactes for a full vert
+	{
+	  OBJVert v;
+
+	  switch (line[1])
+	  {
+	    case 'n':
+	      v.read3(line.c_str()+2);
+	      normList.push_back(v);
+	      break;
+
+	    case 't':
+	      v.read2(line.c_str()+2);
+	      uvList.push_back(v);
+	      break;
+
+	    default:
+	      v.read3(line.c_str()+1);
+	      vertList.push_back(v);
+	      break;
+	  }
+	}
 	break;
 
-      case 'n':
+      case 'f':
+	{
+	  std::vector<std::string> verts = TextUtils::tokenize(std::string(line.c_str()+2),std::string(" "));
+	  OBJFace face;
+	  for ( size_t v = 0; v < verts.size(); v++ )
+	  {
+	    std::vector<std::string> indexes = TextUtils::tokenize(verts[v],std::string("/"));
+	    if (indexes.size())
+	    {
+	      face.verts.push_back(atoi(indexes[0].c_str())-1);
+	      if ( indexes.size() > 1 && indexes[1].size() )
+		face.uvs.push_back(atoi(indexes[1].c_str())-1);
+	      else
+		face.uvs.push_back(0);
+
+	      if ( indexes.size() > 2 && indexes[2].size() )
+		face.norms.push_back(atoi(indexes[2].c_str())-1);
+	      else
+		face.norms.push_back(0);
+	    }
+	  }
+	  if (face.verts.size())
+	    faces.push_back(face);
+	}
 	break;
+
       }
     }
   }
   if ( faces.size() )
   {
-
+    for ( size_t i = 0; i < faces.size(); i++ )
+      faces[i].draw(vertList,normList,uvList);
   }
-  return faces.size();
+  count = (int)faces.size();
+  return count > 0;
 }
 
 
