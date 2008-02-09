@@ -386,7 +386,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew32.lib  Advapi32.lib user32.lib Gdi32.lib shell32.lib"
-				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
+				OutputFile="./bzflag_debug/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_debug"
