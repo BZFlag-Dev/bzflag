@@ -1,0 +1,5 @@
+SUBDIRS = \
+	std \
+	low	\
+	medium
+	

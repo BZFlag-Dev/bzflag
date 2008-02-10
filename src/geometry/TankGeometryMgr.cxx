@@ -29,6 +29,9 @@
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 
+#include "PlatformFactory.h"
+#include "BzfMedia.h"
+
 
 // use the namespaces
 using namespace TankGeometryMgr;
@@ -348,10 +351,20 @@ public:
   }
 };
 
-bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
+std::string convertPathToNative ( const char* path )
 {
+#ifdef _WIN32
+  return TextUtils::replace_all(std::string(path),std::string("/"),std::string("\\"));
+#endif
+  return std::string (path);
+}
+
+bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
+{ 
+  std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
+  mediaPath += convertPathToNative(path);
   count = 0;
-  FILE *fp = fopen(path,"rt");
+  FILE *fp = fopen(mediaPath.c_str(),"rt");
   if (!fp)
     return false;
 
