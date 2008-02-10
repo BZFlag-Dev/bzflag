@@ -1,9 +1,5 @@
-geodir = $(BZFLAG_DATA)/geometry/tank/std
-std_tank_DATA = \
-	barrel.obj
+tankdir = $(BZFLAG_DATA)/geometry/tank/std
+tank_DATA = barrel.obj
+EXTRA_DIST = $(std_tank_DATA)
 
-EXTRA_DIST =		\
-	$(std_tank_DATA)
-
-MAINTAINERCLEANFILES =	\
-	Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
