@@ -351,55 +351,59 @@ public:
   }
 };
 
-std::string convertPathToNative ( const char* path )
+class OBJModel
 {
-#ifdef _WIN32
-  return TextUtils::replace_all(std::string(path),std::string("/"),std::string("\\"));
-#endif
-  return std::string (path);
-}
-
-bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
-{ 
-  std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
-  mediaPath += convertPathToNative(path);
-  count = 0;
-  FILE *fp = fopen(mediaPath.c_str(),"rt");
-  if (!fp)
-    return false;
-
-  bool gotAnyGeo = false;
+public:
+  std::vector<OBJFace> faces;
 
   std::vector<OBJVert>	vertList,normList,uvList;
-  std::vector<OBJFace>	faces;
 
-  char *temp = NULL;
-  fseek(fp,0,SEEK_END);
-  size_t s = ftell(fp);
-  temp = (char*)malloc(s+1);
-  temp[s] = NULL;
-  fseek(fp,0,SEEK_SET);
-  fread(temp,s,1,fp);
-  fclose(fp);
-
-  std::vector<std::string> lines = TextUtils::tokenize(TextUtils::replace_all(std::string(temp),std::string("\r"),std::string()),std::string("\n"));
-  free(temp);
-
-  for ( size_t i = 0; i < lines.size(); i++ )
+  int draw ( void )
   {
-    std::string &line = lines[i];
-    if ( line.size() )
-    {
-      // parse it
-      switch(line[0])
-      {
-      case 'v':
-	if ( line.size() > 5 ) // there have to be enough charactes for a full vert
-	{
-	  OBJVert v;
+    for ( size_t i = 0; i < faces.size(); i++ )
+      faces[i].draw(vertList,normList,uvList);
 
-	  switch (line[1])
+    return (int) faces.size();
+  }
+
+  bool read ( const char *fileName )
+  {
+    FILE *fp = fopen(fileName,"rt");
+    if (!fp)
+      return false;
+
+    faces.clear();
+    vertList.clear();
+    normList.clear();
+    uvList.clear();
+
+    char *temp = NULL;
+    fseek(fp,0,SEEK_END);
+    size_t s = ftell(fp);
+    temp = (char*)malloc(s+1);
+    temp[s] = NULL;
+    fseek(fp,0,SEEK_SET);
+    fread(temp,s,1,fp);
+    fclose(fp);
+
+    std::vector<std::string> lines = TextUtils::tokenize(TextUtils::replace_all(std::string(temp),std::string("\r"),std::string()),std::string("\n"));
+    free(temp);
+
+    for ( size_t i = 0; i < lines.size(); i++ )
+    {
+      std::string &line = lines[i];
+      if ( line.size() )
+      {
+	// parse it
+	switch(line[0])
+	{
+	case 'v':
+	  if ( line.size() > 5 ) // there have to be enough charactes for a full vert
 	  {
+	    OBJVert v;
+
+	    switch (line[1])
+	    {
 	    case 'n':
 	      v.read3(line.c_str()+2);
 	      normList.push_back(v);
@@ -414,50 +418,73 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
 	      v.read3(line.c_str()+1);
 	      vertList.push_back(v);
 	      break;
-	  }
-	}
-	break;
-
-      case 'f':
-	{
-	  std::vector<std::string> verts = TextUtils::tokenize(std::string(line.c_str()+2),std::string(" "));
-	  OBJFace face;
-	  for ( size_t v = 0; v < verts.size(); v++ )
-	  {
-	    std::vector<std::string> indexes = TextUtils::tokenize(verts[v],std::string("/"));
-	    if (indexes.size())
-	    {
-	      face.verts.push_back(atoi(indexes[0].c_str())-1);
-	      if ( indexes.size() > 1 && indexes[1].size() )
-		face.uvs.push_back(atoi(indexes[1].c_str())-1);
-	      else
-		face.uvs.push_back(0);
-
-	      if ( indexes.size() > 2 && indexes[2].size() )
-		face.norms.push_back(atoi(indexes[2].c_str())-1);
-	      else
-		face.norms.push_back(0);
 	    }
 	  }
-	  if (face.verts.size())
-	    faces.push_back(face);
-	}
-	break;
+	  break;
 
+	case 'f':
+	  {
+	    std::vector<std::string> verts = TextUtils::tokenize(std::string(line.c_str()+2),std::string(" "));
+	    OBJFace face;
+	    for ( size_t v = 0; v < verts.size(); v++ )
+	    {
+	      std::vector<std::string> indexes = TextUtils::tokenize(verts[v],std::string("/"));
+	      if (indexes.size())
+	      {
+		face.verts.push_back(atoi(indexes[0].c_str())-1);
+		if ( indexes.size() > 1 && indexes[1].size() )
+		  face.uvs.push_back(atoi(indexes[1].c_str())-1);
+		else
+		  face.uvs.push_back(0);
+
+		if ( indexes.size() > 2 && indexes[2].size() )
+		  face.norms.push_back(atoi(indexes[2].c_str())-1);
+		else
+		  face.norms.push_back(0);
+	      }
+	    }
+	    if (face.verts.size())
+	      faces.push_back(face);
+	  }
+	  break;
+	}
       }
     }
+    return true;
   }
-  if ( faces.size() )
-  {
-    for ( size_t i = 0; i < faces.size(); i++ )
-      faces[i].draw(vertList,normList,uvList);
-  }
-  count = (int)faces.size();
-  return count > 0;
+
+};
+
+std::map<std::string,OBJModel> modelMap;
+
+std::string convertPathToNative ( const char* path )
+{
+#ifdef _WIN32
+  return TextUtils::replace_all(std::string(path),std::string("/"),std::string("\\"));
+#endif
+  return std::string (path);
 }
 
+bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
+{ 
+  std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
+  mediaPath += convertPathToNative(path);
+  count = 0;
 
+  if (modelMap.find(mediaPath) != modelMap.end())
+  {
+    count = modelMap[mediaPath].draw();
+    return count > 0;
+  }  
 
+  OBJModel model;
+  if(model.read(mediaPath.c_str()))
+  {
+    modelMap[mediaPath] = model;
+    count = model.draw();
+  }
+  return count > 0;
+}
 
 /****************************************************************************/
 
