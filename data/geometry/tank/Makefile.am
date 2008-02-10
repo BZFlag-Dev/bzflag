@@ -1,5 +1,6 @@
 SUBDIRS = \
-	std \
-	low	\
+	std
+
+EXTRA_DIST = \
+	low \
 	medium
-	
