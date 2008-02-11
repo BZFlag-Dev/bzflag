@@ -24,8 +24,10 @@
 #include <vector>
 #include <stdio.h>
 
+#ifndef _TEXT_UTIL_NO_REGEX_
 // common headers
 #include "bzregex.h"
+#endif //_TEXT_UTIL_NO_REGEX_
 
 
 namespace TextUtils
@@ -201,6 +203,7 @@ namespace TextUtils
 
   bool parseDuration(const char *duration, int &durationInt)
   {
+#ifndef _TEXT_UTIL_NO_REGEX_
     if (strcasecmp(duration,"short") == 0
 	|| strcasecmp(duration,"default") == 0) {
       durationInt = -1;
@@ -242,6 +245,9 @@ namespace TextUtils
     }
     durationInt += t;
     return true;
+#else
+    return false;
+#endif //_TEXT_UTIL_NO_REGEX_
   }
 
   std::string url_encode(const std::string &text)
