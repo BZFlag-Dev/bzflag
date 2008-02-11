@@ -369,7 +369,7 @@ public:
 
   bool read ( const char *fileName )
   {
-    std::ifstream ifs(fileName, std::ios_base::in);
+    std::ifstream ifs(fileName, std::ios::in);
     std::string line;
     while (ifs.good() && !ifs.eof())
     {
