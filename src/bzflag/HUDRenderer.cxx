@@ -1326,10 +1326,10 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glVertex2i(centerx - noMotionSize, centery + noMotionSize);
   } glEnd();
   glBegin(GL_POINTS); {
-    glVertex2i(centerx - noMotionSize-1, centery - noMotionSize-1);
-    glVertex2i(centerx + noMotionSize-1, centery - noMotionSize-1);
-    glVertex2i(centerx + noMotionSize-1, centery + noMotionSize-1);
-    glVertex2i(centerx - noMotionSize-1, centery + noMotionSize-1);
+    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
+    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
   } glEnd();
   glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
@@ -1338,10 +1338,10 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
   } glEnd();
   glBegin(GL_POINTS); {
-    glVertex2i(centerx - maxMotionSize-1, centery - maxMotionSize-1);
-    glVertex2i(centerx + maxMotionSize-1, centery - maxMotionSize-1);
-    glVertex2i(centerx + maxMotionSize-1, centery + maxMotionSize-1);
-    glVertex2i(centerx - maxMotionSize-1, centery + maxMotionSize-1);
+    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
+    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
   } glEnd();
 
   // draw heading strip
