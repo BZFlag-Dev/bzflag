@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
+#include <fstream>
 
 // common implementation headers
 #include "SceneRenderer.h"
@@ -368,37 +369,18 @@ public:
 
   bool read ( const char *fileName )
   {
-    FILE *fp = fopen(fileName,"rt");
-    if (!fp)
-      return false;
-
-    faces.clear();
-    vertList.clear();
-    normList.clear();
-    uvList.clear();
-
-    char *temp = NULL;
-    fseek(fp,0,SEEK_END);
-    size_t s = ftell(fp);
-    temp = (char*)malloc(s+1);
-    temp[s] = NULL;
-    fseek(fp,0,SEEK_SET);
-    fread(temp,s,1,fp);
-    fclose(fp);
-
-    std::vector<std::string> lines = TextUtils::tokenize(TextUtils::replace_all(std::string(temp),std::string("\r"),std::string()),std::string("\n"));
-    free(temp);
-
-    for ( size_t i = 0; i < lines.size(); i++ )
+    std::ifstream ifs(fileName, std::ios_base::in);
+    std::string line;
+    while (ifs.good() && !ifs.eof())
     {
-      std::string &line = lines[i];
+      std::getline(ifs, line);
       if ( line.size() )
       {
 	// parse it
 	switch(line[0])
 	{
 	case 'v':
-	  if ( line.size() > 5 ) // there have to be enough charactes for a full vert
+	  if ( line.size() > 5 ) // there have to be enough characters for a full vert
 	  {
 	    OBJVert v;
 
@@ -450,6 +432,7 @@ public:
 	}
       }
     }
+    ifs.close();
     return true;
   }
 
