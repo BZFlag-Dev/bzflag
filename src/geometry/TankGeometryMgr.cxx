@@ -339,7 +339,7 @@ public:
 
     for ( size_t i = 0; i < verts.size(); i++ )
     {
-      if ( vertList.size() < verts[i] )
+      if ( verts[i] < vertList.size() )
 	vertList[verts[i]].glVertex();
       if ( i < norms.size() && norms[i] < normList.size() )
 	normList[norms[i]].glNormal();
