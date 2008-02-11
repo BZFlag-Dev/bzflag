@@ -147,13 +147,10 @@ static void		setVisual(BzfVisual* visual)
 
   // ask for a zbuffer if not disabled.  we might
   // choose not to use it if we do ask for it.
-  if (!BZDB.isSet("zbuffer") || (BZDB.get("zbuffer") != "disable")) {
-    int depthLevel = 16;
-    if (BZDB.isSet("forceDepthBits")) {
-      depthLevel = BZDB.evalInt("forceDepthBits");
-    }
-    visual->setDepth(depthLevel);
-  }
+  int depthLevel = 32;
+  if (BZDB.isSet("forceDepthBits")) 
+    depthLevel = BZDB.evalInt("forceDepthBits");
+  visual->setDepth(depthLevel);
 
   // optional
 #if defined(DEBUG_RENDERING)
@@ -717,7 +714,65 @@ void setupConfigs ( void )
 	}
 }
 
+void setupXFire ( void )
+{
+#if defined(_WIN32)
+  if (!headless) {
+    /* write HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath with the
+    * current path.  this lets Xfire know that this bzflag.exe running from
+    * here really is bzflag, not some imposter.
+    * since it may be useful to someone else, it's not protected by USE_XFIRE
+    */
 
+    // get our path
+    char temppath[MAX_PATH], temppath2[MAX_PATH];
+    char tempdrive[10];
+    GetModuleFileName(NULL, temppath, MAX_PATH);
+    // strip filename/extension
+    _splitpath(temppath, tempdrive, temppath2, NULL, NULL);
+    _makepath(temppath, tempdrive, temppath2, NULL, NULL);
+
+    // write the registry key in question
+    HKEY key = NULL;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
+      0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
+      &key, NULL) == ERROR_SUCCESS) {
+	RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
+	  (DWORD)strlen(temppath));
+    }
+  }
+#endif
+}
+
+void checkStartupEnvirons()
+{
+  if (getenv("BZFLAGID")) {
+    BZDB.set("callsign", getenv("BZFLAGID"));
+    strncpy(startupInfo.callsign, getenv("BZFLAGID"),
+      sizeof(startupInfo.callsign) - 1);
+    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+  } else if (getenv("BZID")) {
+    BZDB.set("callsign", getenv("BZID"));
+    strncpy(startupInfo.callsign, getenv("BZID"),
+      sizeof(startupInfo.callsign) - 1);
+    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+  }
+}
+
+void clearWindowsStdOut()
+{
+#ifdef _WIN32
+  // this is cheap but it will work on windows
+  // clear out the stdout file
+  if (echoToConsole){
+    FILE	*fp = fopen ("stdout.txt","w");
+    if (fp) {
+      fprintf(fp,"stdout started\r\n" );
+      fclose(fp);
+    }
+  }
+#endif
+}
 //
 // main()
 //	initialize application and enter event loop
@@ -755,34 +810,9 @@ int			main(int argc, char** argv)
   //init_packetcompression();
 
   if (checkTimeBomb())
-	  return 0;
+    return 0;
 
-#if defined(_WIN32)
-  if (!headless) {
-    /* write HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath with the
-     * current path.  this lets Xfire know that this bzflag.exe running from
-     * here really is bzflag, not some imposter.
-     * since it may be useful to someone else, it's not protected by USE_XFIRE
-     */
-
-    // get our path
-    char temppath[MAX_PATH], temppath2[MAX_PATH];
-    char tempdrive[10];
-    GetModuleFileName(NULL, temppath, MAX_PATH);
-    // strip filename/extension
-    _splitpath(temppath, tempdrive, temppath2, NULL, NULL);
-    _makepath(temppath, tempdrive, temppath2, NULL, NULL);
-
-    // write the registry key in question
-    HKEY key = NULL;
-    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-	0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
-	&key, NULL) == ERROR_SUCCESS) {
-      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
-		   (DWORD)strlen(temppath));
-    }
-  }
-#endif
+  setupXFire();
 
   createCacheSignature();
 
@@ -798,17 +828,8 @@ int			main(int argc, char** argv)
 
   Flags::init();
 
-  if (getenv("BZFLAGID")) {
-    BZDB.set("callsign", getenv("BZFLAGID"));
-    strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  } else if (getenv("BZID")) {
-    BZDB.set("callsign", getenv("BZID"));
-    strncpy(startupInfo.callsign, getenv("BZID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  }
+  checkStartupEnvirons();
+
   time_t timeNow;
   time(&timeNow);
   userTime = *localtime(&timeNow);
@@ -833,17 +854,7 @@ int			main(int argc, char** argv)
   // parse arguments
   parse(argc, argv);
 
-#ifdef _WIN32
-  // this is cheap but it will work on windows
-  // clear out the stdout file
-  if (echoToConsole){
-	  FILE	*fp = fopen ("stdout.txt","w");
-	  if (fp) {
-		  fprintf(fp,"stdout started\r\n" );
-		  fclose(fp);
-	  }
-  }
-#endif
+  clearWindowsStdOut();
 
   if (BZDB.isSet("directory")) {
     //Convert to unix paths so that escaping isn't an issue
