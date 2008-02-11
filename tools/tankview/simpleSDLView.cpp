@@ -136,6 +136,8 @@ void SimpleDisplayCamera::rotateGlob ( float deg, float x, float y, float z )
 
 //--------------------SimpleDisplay------------------------------//
 
+#define _INVALID_ID 0xFFFFFFFF
+
 SimpleDisplay::SimpleDisplay ( size_t width , size_t height, bool full, const char* caption )
 {
   size[0] = size[1] = 0;
@@ -147,6 +149,8 @@ SimpleDisplay::SimpleDisplay ( size_t width , size_t height, bool full, const ch
   valid = false;
 
   create(width,height,full,caption);
+
+  lastImageID = 0;
 }
 
 SimpleDisplay::~SimpleDisplay ()
@@ -190,6 +194,21 @@ bool SimpleDisplay::create ( size_t width, size_t height, bool full, const char*
 
 void SimpleDisplay::kill ( void )
 {
+  imageNameMap.clear();
+  std::map<unsigned int,LoadedImage>::iterator itr = images.begin();
+
+  while (itr != images.end() )
+  {
+    //clear the image
+    if (itr->second.boundID != _INVALID_ID)
+      glDeleteTextures(1,&itr->second.boundID);
+  }
+  images.clear();
+
+  lastImageID = 0;
+
+  callbacks.clear();
+
   if ( valid )
   {
     valid = false;
@@ -199,6 +218,125 @@ void SimpleDisplay::kill ( void )
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
   }
 }
+
+unsigned int  SimpleDisplay::loadImage ( const char* file )
+{
+  if (!file)
+    return _INVALID_ID;
+
+  std::string path = file;
+  if (imageNameMap.find(path) != imageNameMap.end())
+    return imageNameMap[path];
+
+  LoadedImage image;
+  image.boundID = _INVALID_ID;
+  image.name = path;
+  image.id = lastImageID++;
+
+  imageNameMap[path] = image.id;
+  images[image.id] = image;
+
+  return image.id;
+}
+
+void  SimpleDisplay::unloadImage ( unsigned int imageID )
+{
+  std::map<unsigned int,LoadedImage>::iterator itr = images.find(imageID);
+
+  if ( itr == images.end() )
+    return;
+
+  if (imageNameMap.find(itr->second.name) != imageNameMap.end())
+    imageNameMap.erase(imageNameMap.find(itr->second.name));
+
+  if (itr->second.boundID != _INVALID_ID)
+    glDeleteTextures(1,&itr->second.boundID);
+
+  images.erase(itr);
+}
+
+void  SimpleDisplay::bindImage ( unsigned int imageID )
+{
+  std::map<unsigned int,LoadedImage>::iterator itr = images.find(imageID);
+
+  glEnable(GL_TEXTURE_2D);
+
+  if ( itr == images.end() )
+    return;
+
+  if (itr->second.boundID == _INVALID_ID)
+  {
+    // load the image
+
+    SDL_Surface* surface = IMG_Load(itr->second.name.c_str());
+    if (surface == NULL)
+      return;
+
+    const int origWidth = surface->w;
+    const int origHeight = surface->h;
+    const int origBpp = surface->format->BitsPerPixel;
+
+    SDL_PixelFormat fmt;
+    fmt.palette = NULL;
+    fmt.BitsPerPixel = 32;
+    fmt.BytesPerPixel = 4;
+    fmt.Rloss = fmt.Gloss = fmt.Bloss = fmt.Aloss = 0;
+    fmt.Rshift = fmt.Gshift = fmt.Bshift = fmt.Ashift = 0;
+    fmt.colorkey = 0;
+    fmt.alpha = 0;
+    fmt.Rmask = fmt.Gmask = fmt.Bmask = fmt.Amask = 0;    // handle endianess
+    ((unsigned char*)&fmt.Rmask)[0] = 0xff;
+    ((unsigned char*)&fmt.Gmask)[1] = 0xff;
+    ((unsigned char*)&fmt.Bmask)[2] = 0xff;
+    ((unsigned char*)&fmt.Amask)[3] = 0xff;
+
+    SDL_Surface* rgba = SDL_ConvertSurface(surface, &fmt, SDL_SWSURFACE);
+    SDL_FreeSurface(surface);
+
+    // bail if the conversion failed
+    if (rgba == NULL) 
+      return;
+
+    int width = rgba->w;
+    int height = rgba->h;
+
+    const int rowlen = (rgba->w * 4);
+    const int imageSize = (rowlen * rgba->h);
+    unsigned char* image = new unsigned char[imageSize];
+    const unsigned char* source = (unsigned char*) rgba->pixels;
+
+    for (int i = 0; i < rgba->h; i++)
+    {
+      memcpy(image + (rowlen * i), source + (rowlen * (rgba->h - 1 - i)), rowlen);
+    }
+
+    SDL_FreeSurface(rgba);
+
+    // bind the image to GL
+    glGenTextures(1,(GLuint*)&itr->second.boundID );
+    glBindTexture(GL_TEXTURE_2D,itr->second.boundID );
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); 
+
+    gluBuild2DMipmaps(GL_TEXTURE_2D,4,rgba->w,rgba->h,GL_RGBA,GL_UNSIGNED_BYTE,image);
+    free(image);
+  }
+
+  glBindTexture(GL_TEXTURE_2D,itr->second.boundID);
+
+}
+
+unsigned int  SimpleDisplay::bindImage ( const char* file )
+{
+  unsigned int id = loadImage(file);
+  bindImage(id);
+  return id;
+}
+
 
 void SimpleDisplay::clear ( void )
 {
@@ -386,6 +524,19 @@ void SimpleDisplay::activate ( void )
 
 void SimpleDisplay::deactivate ( void )
 {
+
+  // blow out any texture IDs
+  std::map<unsigned int,LoadedImage>::iterator itr = images.begin();
+
+  while (itr != images.end() )
+  {
+    //clear the image
+    if (itr->second.boundID != _INVALID_ID)
+      glDeleteTextures(1,&itr->second.boundID);
+
+    itr->second.boundID = _INVALID_ID;
+  }
+
   if (!callbacks.size())
     return;
 
@@ -431,6 +582,29 @@ void SimpleDisplay::key ( int key, bool down, const ModiferKeys& mods )
       callbacks[i]->key(key,down,mods);
   }
 }
+
+void SimpleDisplay::addEventCallback ( SimpleDisplayEventCallbacks *callback )
+{
+  if (callback)
+    callbacks.push_back(callback);
+}
+
+void SimpleDisplay::removeEventCallback ( SimpleDisplayEventCallbacks *callback )
+{
+  if (callback)
+  {
+    std::vector<SimpleDisplayEventCallbacks*>::iterator itr = callbacks.begin();
+    while (itr != callbacks.end())
+    {
+      if ( *itr == callback)
+      {
+	callbacks.erase(itr);
+	return;
+      }
+    }
+  }
+}
+
 
 
 // Local Variables: ***

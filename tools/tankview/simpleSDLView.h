@@ -1,8 +1,9 @@
 #ifndef _SIMPLE_SDL_VIEW_H_
 #define _SIMPLE_SDL_VIEW_H_
 
-#include <SDL/SDL.h>
-#include <sdl/SDL_keysym.h>
+#include <SDL.h>
+#include <SDL_keysym.h>
+#include <SDL_image.h>
 
 #ifdef _WIN32 // this file only has windows stuff
 #include <windows.h>
@@ -12,7 +13,8 @@
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
-#pragma comment(lib, "sdl.lib")
+#pragma comment(lib, "SDL.lib")
+#pragma comment(lib, "SDL_image.lib")
 
 #else
 #include <unistd.h>
@@ -28,6 +30,8 @@
 #endif // _WIN32
 
 #include <vector>
+#include <map>
+#include <string>
 
 class SimpleDisplayCamera 
 {
@@ -121,6 +125,11 @@ public:
   void addEventCallback ( SimpleDisplayEventCallbacks *callback );
   void removeEventCallback ( SimpleDisplayEventCallbacks *callback );
 
+  unsigned int loadImage ( const char* file );
+  void unloadImage ( unsigned int imageID );
+  void bindImage ( unsigned int imageID );
+  unsigned int bindImage ( const char* file );
+
 protected:
   void initGL ( void );
   void setViewport ( void );
@@ -141,6 +150,18 @@ protected:
   void resize ( size_t x, size_t y );
   void key ( int key, bool down, const ModiferKeys& mods );
 
+  // textures
+  unsigned int lastImageID;
+
+  typedef struct  
+  {
+    std::string name;
+    unsigned int id;
+    unsigned int boundID;
+  }LoadedImage;
+
+  std::map<std::string,unsigned int> imageNameMap;
+  std::map<unsigned int,LoadedImage> images;
 };
 
 // key defs
@@ -363,7 +384,9 @@ Skip uppercase letters
 #define SD_KEY_F12	293
 #define SD_KEY_F13	294
 #define SD_KEY_F14	295
-#define SD_KEY_F15	296#endif //_SIMPLE_SDL_VIEW_H_
+#define SD_KEY_F15	296
+
+#endif //_SIMPLE_SDL_VIEW_H_
 
 // Local Variables: ***
 // mode:C++ ***
