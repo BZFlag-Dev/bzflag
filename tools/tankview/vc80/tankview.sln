@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tankview", "tankview.vcproj", "{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Distribution|Win32 = Debug_Distribution|Win32
+		Debug|Win32 = Debug|Win32
+		Release_Distribution|Win32 = Release_Distribution|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug_Distribution|Win32.ActiveCfg = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug_Distribution|Win32.Build.0 = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug|Win32.Build.0 = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release_Distribution|Win32.ActiveCfg = Release|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release_Distribution|Win32.Build.0 = Release|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release|Win32.ActiveCfg = Release|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
