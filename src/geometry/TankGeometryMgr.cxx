@@ -357,19 +357,19 @@ class OBJModel
 public:
   std::vector<OBJFace> faces;
 
-  std::vector<OBJVert>	vertList,normList,uvList;
+  std::vector<OBJVert> vertList, normList, uvList;
 
-  int draw ( void )
+  int draw(void)
   {
-    for ( size_t i = 0; i < faces.size(); i++ )
-      faces[i].draw(vertList,normList,uvList);
+    for (size_t i = 0; i < faces.size(); i++)
+      faces[i].draw(vertList, normList, uvList);
 
     return (int) faces.size();
   }
 
-  bool read ( const char *fileName )
+  bool read(const std::string& fileName)
   {
-    std::ifstream ifs(fileName, std::ios::in);
+    std::ifstream ifs(fileName.c_str(), std::ios::in);
     std::string line;
     while (ifs.good() && !ifs.eof())
     {
@@ -440,28 +440,20 @@ public:
 
 std::map<std::string,OBJModel> modelMap;
 
-std::string convertPathToNative ( const char* path )
-{
-#ifdef _WIN32
-  return TextUtils::replace_all(std::string(path),std::string("/"),std::string("\\"));
-#endif
-  return std::string (path);
-}
-
 bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
 { 
   std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
-  mediaPath += convertPathToNative(path);
+  mediaPath += path;
   count = 0;
 
   if (modelMap.find(mediaPath) != modelMap.end())
   {
     count = modelMap[mediaPath].draw();
     return count > 0;
-  }  
+  }
 
   OBJModel model;
-  if(model.read(mediaPath.c_str()))
+  if (model.read(mediaPath))
   {
     modelMap[mediaPath] = model;
     count = model.draw();
