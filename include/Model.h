@@ -49,6 +49,8 @@ public:
 
   int draw ( void );
   bool read ( const std::string &fileName );
+  bool read ( const  char* fileName ) {return read(std::string(fileName));}
+
 };
 
 #endif // _MODEL_H_
