@@ -68,7 +68,7 @@ LogDetail::LogDetail()
 {
   bz_debugMessage(0, "SERVER-STATUS Running");
   bz_debugMessagef(0, "SERVER-MAPNAME %s", bz_getPublicDescription().c_str());
-  listPlayers(join , NULL);
+  listPlayers(join, NULL);
 }
 
 LogDetail::~LogDetail()
