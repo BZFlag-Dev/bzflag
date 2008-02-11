@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="../../../include;../../../MSVC/VC8/;../../../src/other/zlib"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_TEXT_UTIL_NO_REGEX_;_PNG_NO_LOG_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/tankview.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(GPLIB_DIR)/lib/debug/"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/tankview.pdb"
 				SubSystem="2"
@@ -119,8 +119,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(GPLIB_DIR)/inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="../../../include;../../../MSVC/VC8/;../../../src/other/zlib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_TEXT_UTIL_NO_REGEX_;_PNG_NO_LOG_"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -138,10 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GPCore.lib"
 				OutputFile="$(OutDir)/tankview.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(GPLIB_DIR)/lib/release/"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -183,11 +182,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\src\3D\Model.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\simpleSDLView.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\tankview.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\common\TextUtils.cxx"
 				>
 			</File>
 		</Filter>
@@ -197,11 +204,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\..\include\Model.h"
+				>
+			</File>
+			<File
 				RelativePath="..\simpleSDLView.h"
 				>
 			</File>
 			<File
 				RelativePath="..\tankview.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\TextUtils.h"
 				>
 			</File>
 		</Filter>
