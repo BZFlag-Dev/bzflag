@@ -1,5 +1,141 @@
 #include "simpleSDLView.h"
 
+SimpleDisplayCamera::SimpleDisplayCamera( float x, float y, float z )
+{
+  memset(matrix, 0, 16*sizeof(float));
+  matrix[0] = 1.0f;
+  matrix[5] = 1.0f;
+  matrix[10] = -1.0f;
+  matrix[15] = 1.0f;
+  matrix[12] = x; matrix[13] = y; matrix[14] = z;
+
+  right = &matrix[0];
+  up = &matrix[4];
+  forward = &matrix[8];
+  pos = &matrix[12];
+
+  viewport[0] = viewport[1] = viewport[2] = viewport[3] = 0.0f;
+  setOrthoViewport();
+  setOrthoHitherYon(0.001f,1000.0f);
+}
+
+void SimpleDisplayCamera::setOrthoViewport ( void )
+{
+  glGetFloatv(GL_VIEWPORT,viewport);
+}
+
+void SimpleDisplayCamera::setOrthoHitherYon ( float hither, float yon )
+{
+  hitherYon[0] = hither;
+  hitherYon[1] = yon;
+}
+
+SimpleDisplayCamera::~SimpleDisplayCamera()
+{
+}
+
+void SimpleDisplayCamera::applyView()
+{
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  float viewmatrix[16]={//Remove the three - for non-inverted z-axis
+    matrix[0], matrix[4], -matrix[8], 0,
+    matrix[1], matrix[5], -matrix[9], 0,
+    matrix[2], matrix[6], -matrix[10], 0,
+
+    -(matrix[0]*matrix[12] +
+    matrix[1]*matrix[13] +
+    matrix[2]*matrix[14]),
+
+    -(matrix[4]*matrix[12] +
+    matrix[5]*matrix[13] +
+    matrix[6]*matrix[14]),
+
+    //add a - like above for non-inverted z-axis
+    (matrix[8]*matrix[12] +
+    matrix[9]*matrix[13] +
+    matrix[10]*matrix[14]), 1};
+    glLoadMatrixf(viewmatrix);
+}
+
+void SimpleDisplayCamera::removeView ( void )
+{
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+}
+
+void SimpleDisplayCamera::applyOrtho ( void )
+{
+  glMatrixMode (GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity ();
+  glOrtho(0.0,(double)viewport[2],0.0,(double)viewport[3],hitherYon[0],hitherYon[1]);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glDisable(GL_LIGHTING);
+}
+
+void SimpleDisplayCamera::removeOrtho ( void )
+{
+  glEnable(GL_LIGHTING);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode (GL_PROJECTION);
+  glPopMatrix();
+
+  glMatrixMode (GL_PROJECTION);
+}
+
+void SimpleDisplayCamera::moveLoc (float x, float y, float z, float distance ) 
+{
+  float dx=x*matrix[0] + y*matrix[4] + z*matrix[8];
+  float dy=x*matrix[1] + y*matrix[5] + z*matrix[9];
+  float dz=x*matrix[2] + y*matrix[6] + z*matrix[10];
+  matrix[12] += dx * distance;
+  matrix[13] += dy * distance;
+  matrix[14] += dz * distance;
+}
+
+void SimpleDisplayCamera::moveGlob ( float x, float y, float z, float distance )
+{
+  matrix[12] += x * distance;
+  matrix[13] += y * distance;
+  matrix[14] += z * distance;
+}
+
+void SimpleDisplayCamera::rotateLoc ( float deg, float x, float y, float z )
+{
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadMatrixf(matrix);
+  glRotatef(deg, x,y,z);
+  glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
+  glPopMatrix();
+}
+
+
+void SimpleDisplayCamera::rotateGlob ( float deg, float x, float y, float z ) 
+{
+  float dx=x*matrix[0] + y*matrix[1] + z*matrix[2];
+  float dy=x*matrix[4] + y*matrix[5] + z*matrix[6];
+  float dz=x*matrix[8] + y*matrix[9] + z*matrix[10];
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadMatrixf(matrix);
+  glRotatef(deg, dx,dy,dz);
+  glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
+  glPopMatrix();
+}
+
+//--------------------SimpleDisplay------------------------------//
+
 SimpleDisplay::SimpleDisplay ( size_t width , size_t height, bool full, const char* caption )
 {
   size[0] = size[1] = 0;
