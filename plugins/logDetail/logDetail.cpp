@@ -67,7 +67,8 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 LogDetail::LogDetail()
 {
   bz_debugMessage(0, "SERVER-STATUS Running");
-  listPlayers(join, NULL);
+  bz_debugMessagef(0, "SERVER-MAPNAME %s", bz_getPublicDescription().c_str());
+  listPlayers(join , NULL);
 }
 
 LogDetail::~LogDetail()
