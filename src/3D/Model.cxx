@@ -70,8 +70,17 @@ void OBJFace::draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJ
 
 int OBJModel::draw ( void )
 {
+  glMatrixMode(GL_TEXTURE);
+  glPushMatrix();
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+
   for ( size_t i = 0; i < faces.size(); i++ )
     faces[i].draw(vertList,normList,uvList);
+
+  glMatrixMode(GL_TEXTURE);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
 
   return (int) faces.size();
 }
