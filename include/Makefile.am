@@ -74,6 +74,7 @@ noinst_HEADERS =			\
 	MeshSceneNode.h			\
 	MeshTransform.h			\
 	MsgStrings.h			\
+	Model.h					\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleList.h			\

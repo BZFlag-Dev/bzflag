@@ -198,6 +198,10 @@
 			<File
 				RelativePath="..\..\src\3d\TextureManager.cxx">
 			</File>
+			<File
+				RelativePath="..\..\src\3d\Model.cxx">
+			</File>
+
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -208,6 +212,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TextureManager.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Model.h">
 			</File>
 		</Filter>
 		<Filter

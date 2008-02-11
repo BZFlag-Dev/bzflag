@@ -291,6 +291,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\3D\Model.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\3d\TextureManager.cxx"
 				>
 			</File>
@@ -302,6 +306,10 @@
 			>
 			<File
 				RelativePath="..\..\include\FontManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Model.h"
 				>
 			</File>
 			<File

@@ -13,7 +13,8 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES =		\
 	FontManager.cxx		\
-	TextureManager.cxx
+	TextureManager.cxx	\
+	Model.cxx
 
 EXTRA_DIST = \
 	README
