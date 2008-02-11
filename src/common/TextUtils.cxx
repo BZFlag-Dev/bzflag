@@ -29,7 +29,6 @@
 #include "bzregex.h"
 #endif //_TEXT_UTIL_NO_REGEX_
 
-
 namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {

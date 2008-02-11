@@ -44,8 +44,6 @@ void OBJVert::read2 ( const char* t )
   sscanf(t,"%f %f",&x,&y);
 }
 
-
-
 void OBJFace::draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJVert> &normList, const std::vector<OBJVert> &uvList )
 {
   if (verts.size() == 3)
