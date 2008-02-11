@@ -1027,7 +1027,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       {
 	CFace &face = subMesh.faces[f];
 
-	boundingGeoSection += "face" +"\n";
+	boundingGeoSection += "face\n";
 	if (outputComments)
 	  boundingGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
