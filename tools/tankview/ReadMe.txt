@@ -30,3 +30,16 @@ tank.
  * option to spin the tank.
  * linux build system
 
+*dependencies
+
+all the cpp and h files in /tools/tankview/
+/src/3d/Model.cxx
+/include/Model.h
+/src/common/TextUtils.h
+/include/TextUtils.h
+
+sdl, and sdl_image
+openGL, and glu
+
+
+
