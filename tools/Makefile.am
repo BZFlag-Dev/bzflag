@@ -1,6 +1,6 @@
 SUBDIRS = \
-	modeltool
-
+	modeltool \
+	tankview
 
 .PHONY : modeltool
 
