@@ -517,14 +517,14 @@ bool SimpleDisplay::update ( void )
       {
 	int x,y;
 	SDL_GetMouseState(&x,&y);
-	y = size[1]-y;
+	y = (int)size[1]-y;
 
    	mouseButton(event.button.button,x,y,event.type == SDL_MOUSEBUTTONDOWN);
       }
       break;
 
     case SDL_MOUSEMOTION:
-	mouseMoved(event.motion.x,size[1]-event.motion.y);
+	mouseMoved(event.motion.x,(int)size[1]-event.motion.y);
       break;
 
     }
