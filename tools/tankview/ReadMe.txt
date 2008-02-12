@@ -18,7 +18,7 @@ in game, and they will be textured with the standard tank texture. This
 can let you see how your model will look in game.
 
 you can move the view arround by tapping the arrow keys. Use alt and ctl
-to do various ban and rotate movements.
+to do various pan and rotate movements.
 
 The gray grid is the ground. The 3 colored lines in the middle is the
 tank's origin. The light blue box is the bounding box of the standard
