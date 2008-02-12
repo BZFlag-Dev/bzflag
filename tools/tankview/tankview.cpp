@@ -305,8 +305,8 @@ void Application::mouseMoved( int x, int y )
 
   if ( moveKeysDown[2] )
   {
-    camera->rotateLoc(mouseDelta[1]*0.125f,-1,0,0);
-    camera->rotateGlob(mouseDelta[0]*0.125f,0,0,1);
+    camera->rotateLoc(mouseDelta[1]*0.025f,1,0,0);
+    camera->rotateGlob(mouseDelta[0]*0.025f,0,0,-1);
  }
 
   mousePos[0] = x;
