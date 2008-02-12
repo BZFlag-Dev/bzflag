@@ -291,8 +291,9 @@ std::map<std::string,OBJModel> modelMap;
 bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
 { 
   std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
-  mediaPath += path;
-  count = 0;
+  mediaPath += "/models/";
+  mediaPath + BZDB.get("playerModel") + path;
+      count = 0;
 
   if (modelMap.find(mediaPath) != modelMap.end())
   {

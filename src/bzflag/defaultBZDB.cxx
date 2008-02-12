@@ -208,6 +208,10 @@ DefaultDBItem	defaultDBItems[] = {
   { "3rdPersonFarTargetSize",		"1.5",		true,	StateDatabase::ReadWrite,	NULL },
   { "3rdPersonFarTargetDistance",	"180.0",	true,	StateDatabase::ReadWrite,	NULL },
 
+  // models
+  { "playerModel",			"tank",		true,	StateDatabase::ReadWrite,	NULL },
+
+
 #ifdef USE_XFIRE
   /* Xfire support
    * 0: Disable: prevent Xfire from detecting that BZFlag is running

@@ -14,6 +14,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedBarrel ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("/medium/barrel.obj",count))
+		return count;
+
   glShadeModel(GL_SMOOTH);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.0f, -1.0f, 0.0f);

@@ -1,4 +1,4 @@
-SUBDIRS = l10n fonts skins geometry
+SUBDIRS = l10n fonts skins models
 
 bzflagdir = $(BZFLAG_DATA)
 bzflag_DATA = \

@@ -15,6 +15,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildLowRCasing ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("/low/rcasing.obj",count))
+		return count;
+
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.020362f, 0.000000f, 0.999793f);

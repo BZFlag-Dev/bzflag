@@ -15,6 +15,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildLowBody ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("/low/body.obj",count))
+		return count;
+
   glShadeModel(GL_FLAT);
 
   glBegin(GL_TRIANGLE_STRIP);

@@ -14,6 +14,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedTurret ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("/medium/turret.obj",count))
+		return count;
+
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(-0.235964f, 0.967658f, 0.089216f);

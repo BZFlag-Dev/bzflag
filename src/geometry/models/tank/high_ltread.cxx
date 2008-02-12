@@ -15,7 +15,7 @@ using namespace TankGeometryUtils;
 int TankGeometryUtils::buildHighLCasing( void )
 {
   int count = 0;
-  if (buildGeoFromObj("/geometry/tank/std/lcasing.obj",count))
+  if (buildGeoFromObj("/std/lcasing.obj",count))
     return count;
 
   int tris = 0;

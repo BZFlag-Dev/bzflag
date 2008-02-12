@@ -280,7 +280,7 @@ static int DrawLeftRearExaust ( void )
 int TankGeometryUtils::buildHighBody (void)
 {
   int count = 0;
-  if (buildGeoFromObj("/geometry/tank/std/body.obj",count))
+  if (buildGeoFromObj("/model/tank/std/body.obj",count))
     return count;
 
   int tris = 0;

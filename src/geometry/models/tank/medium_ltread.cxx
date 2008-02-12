@@ -14,6 +14,10 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedLCasing ( void )
 {
+	int count = 0;
+	if (buildGeoFromObj("/medium/lcasing.obj",count))
+		return count;
+
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.998233f, 0.000000f, 0.059419f);

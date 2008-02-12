@@ -141,11 +141,11 @@ void Application::drawGridAndBounds ( void )
 
 void Application::loadModels ( void )
 {
-  barrel.read(convertPath("./data/geometry/tank/std/barrel.obj"));
-  base.read(convertPath("./data/geometry/tank/std/body.obj"));
-  turret.read(convertPath("./data/geometry/tank/std/turret.obj"));
-  lTread.read(convertPath("./data/geometry/tank/std/lcasing.obj"));
-  rTread.read(convertPath("/.data/geometry/tank/std/rcasing.obj"));
+  barrel.read(convertPath("./data/models/tank/std/barrel.obj"));
+  base.read(convertPath("./data/models/tank/std/body.obj"));
+  turret.read(convertPath("./data/models/tank/std/turret.obj"));
+  lTread.read(convertPath("./data/models/tank/std/lcasing.obj"));
+  rTread.read(convertPath("/.data/models/tank/std/rcasing.obj"));
 
   red = display.loadImage(convertPath("./data/skins/red/tank.png"));
   green = display.loadImage(convertPath("./data/skins/green/tank.png"));
