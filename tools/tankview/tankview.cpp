@@ -37,6 +37,7 @@ protected:
 
   bool moveKeysDown[3];
   int mousePos[2];
+  bool drawDebugNormals;
 };
 
 const char* convertPath ( const char* path )
@@ -56,6 +57,7 @@ const char* convertPath ( const char* path )
 Application::Application() : display(800,600,false,"tankview")
 {
   camera = NULL;
+  drawDebugNormals = false;
 
   for (int i = 0; i<3; i++)
     moveKeysDown[i] = false;
@@ -232,18 +234,19 @@ int Application::run ( void )
 
     // draw normals
 
-    glColor4f(1,0,0,1);
-
-    drawObjectNormals(base);
-    glColor4f(1,1,0,1);
-    drawObjectNormals(barrel);
-    glColor4f(0,1,1,1);
-    drawObjectNormals(turret);
-
-    glColor4f(0,0,1,1);
-    drawObjectNormals(lTread);
-    glColor4f(0,1,0,1);
-    drawObjectNormals(lTread);
+    if (drawDebugNormals)
+    {
+      glColor4f(1,0,0,1);
+      drawObjectNormals(base);
+      glColor4f(1,1,0,1);
+      drawObjectNormals(barrel);
+      glColor4f(0,1,1,1);
+      drawObjectNormals(turret);
+      glColor4f(0,0,1,1);
+      drawObjectNormals(lTread);
+      glColor4f(0,1,0,1);
+      drawObjectNormals(lTread);  
+    }
 
 
     glColor4f(1,1,1,1);
