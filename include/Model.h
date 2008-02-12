@@ -13,8 +13,11 @@
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
+#include "common.h"
+
 #include <vector>
 #include <string>
+#include <fstream>
 
 class OBJVert
 {
