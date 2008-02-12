@@ -11,21 +11,28 @@
 int __beginendCount;
 #endif
 
-SimpleDisplay display;
-
-class DisplayCallback : public SimpleDisplayEventCallbacks
+class Application : public SimpleDisplayEventCallbacks
 {
 public:
-  DisplayCallback()
-  {
-    camera = NULL;
-  }
-  ~DisplayCallback(){};
+  Application();
   virtual void key ( int key, bool down, const ModiferKeys& mods );
+  
+  int run ( void );
 
+protected:
+  bool init ( void );
+  void drawGridAndBounds ( void );
+  void loadModels ( void );
+  void drawModels ( void );
+
+  SimpleDisplay display;
   SimpleDisplayCamera *camera;
-};
 
+  OBJModel base,turret,barrel,lTread,rTread;
+  unsigned int red,green,blue,purple,black,current;
+
+  bool moveKeysDown[4];
+};
 
 const char* convertPath ( const char* path )
 {
@@ -41,7 +48,15 @@ const char* convertPath ( const char* path )
   return temp.c_str();
 }
 
-void drawGridAndBounds ( void )
+Application::Application()
+{
+  camera = NULL;
+
+  for (int i = 0; i<4; i++)
+    moveKeysDown[i] = false;
+}
+
+void Application::drawGridAndBounds ( void )
 {
   glDisable(GL_TEXTURE_2D);
   glDisable(GL_LIGHTING);
@@ -117,11 +132,7 @@ void drawGridAndBounds ( void )
   glColor4f(1,1,1,1);
 }
 
-OBJModel base,turret,barrel,lTread,rTread;
-
-unsigned int red,green,blue,purple,black,current;
-
-void loadModels ( void )
+void Application::loadModels ( void )
 {
   barrel.read(convertPath("./data/geometry/tank/std/barrel.obj"));
   base.read(convertPath("./data/geometry/tank/std/body.obj"));
@@ -138,7 +149,7 @@ void loadModels ( void )
   current = green;
 }
 
-void drawModels ( void )
+void Application::drawModels ( void )
 {
   base.draw();
   lTread.draw();
@@ -147,27 +158,18 @@ void drawModels ( void )
   barrel.draw();
 }
 
-#ifdef _WIN32
-int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hPInst, LPSTR lpCmdLine, int nShowCmd )
+bool Application::init ( void )
 {
-#else
-int main ( int argc, char* argv[] )
-{
-#endif
+  display.addEventCallback(this);
 
-  DisplayCallback  callback;
-  display.addEventCallback(&callback);
-
-  SimpleDisplayCamera camera;
-
-  callback.camera = &camera;
+  camera = new SimpleDisplayCamera;
 
   // load up the models
   loadModels();
 
-  camera.rotateGlob(-90,1,0,0);
-  camera.moveLoc(0,0,-20);
-  camera.moveLoc(0,1.5f,0);
+  camera->rotateGlob(-90,1,0,0);
+  camera->moveLoc(0,0,-20);
+  camera->moveLoc(0,1.5f,0);
 
   //setup light
   glEnable(GL_LIGHTING);
@@ -181,11 +183,18 @@ int main ( int argc, char* argv[] )
   v[0] = v[1] = v[2] = 0;
   glLightfv (GL_LIGHT0, GL_SPECULAR,v);
 
+  return true;
+}
+
+int Application::run ( void )
+{
+  if (!init())
+    return -1;
 
   while (display.update())
   {
     display.clear();
-    camera.applyView();
+    camera->applyView();
 
     drawGridAndBounds();
 
@@ -193,13 +202,14 @@ int main ( int argc, char* argv[] )
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
-     v[0] = v[1] = v[2] = 20.f;
+    float v[4] = {1};
+    v[0] = v[1] = v[2] = 20.f;
     glLightfv (GL_LIGHT0, GL_POSITION,v);
 
     display.bindImage(current);
     drawModels();
 
-    camera.removeView();
+    camera->removeView();
     display.flip();
     display.yeld(0.5f);
   }
@@ -209,13 +219,17 @@ int main ( int argc, char* argv[] )
   return 0;
 }
 
-void DisplayCallback::key ( int key, bool down, const ModiferKeys& mods )
+void Application::key ( int key, bool down, const ModiferKeys& mods )
 {
   if (!camera || !down)
     return;
 
   switch(key)
   {
+  case SD_KEY_ESCAPE:
+    display.quit();
+    break;
+
   case SD_KEY_UP:
     if (mods.alt)
       camera->rotateLoc(1,1,0,0);
@@ -238,18 +252,46 @@ void DisplayCallback::key ( int key, bool down, const ModiferKeys& mods )
     if (mods.alt)
       camera->rotateLoc(1,0,1,0);
     else
-      camera->moveLoc(0.125f,0,0);
+      camera->moveLoc(-0.125f,0,0);
     break;
 
   case SD_KEY_RIGHT:
     if (mods.alt)
       camera->rotateLoc(-1,0,1,0);
     else
-      camera->moveLoc(-0.125f,0,0);
+      camera->moveLoc(0.125f,0,0);
     break;
 
+  case SD_KEY_F1:
+    current = red;
+    break;
+  case SD_KEY_F2:
+    current = green;
+    break;
+  case SD_KEY_F3:
+    current = blue;
+    break;
+  case SD_KEY_F4:
+    current = purple;
+    break;
+  case SD_KEY_F5:
+    current = black;
+    break;
   }
 }
+
+#ifdef _WIN32
+int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hPInst, LPSTR lpCmdLine, int nShowCmd )
+{
+#else
+int main ( int argc, char* argv[] )
+{
+#endif
+
+  Application app;
+  return app.run();
+}
+
 
 
 
