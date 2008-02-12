@@ -165,6 +165,7 @@ bool SimpleDisplay::create ( size_t width, size_t height, bool full, const char*
 
   kill();
 
+  run = true;
   size[0] = width;
   size[1] = height;
   fullscreen = full;
@@ -202,6 +203,8 @@ void SimpleDisplay::kill ( void )
     //clear the image
     if (itr->second.boundID != _INVALID_ID)
       glDeleteTextures(1,&itr->second.boundID);
+
+    itr++;
   }
   images.clear();
 
@@ -217,6 +220,8 @@ void SimpleDisplay::kill ( void )
 
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
   }
+
+  run = false;
 }
 
 unsigned int  SimpleDisplay::loadImage ( const char* file )
@@ -466,6 +471,8 @@ void SimpleDisplay::yeld ( float time )
 bool SimpleDisplay::update ( void )
 {
   yeld();
+  if (!run)
+    return false;
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) 

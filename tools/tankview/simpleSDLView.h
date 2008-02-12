@@ -107,6 +107,8 @@ public:
   bool create ( size_t width = 800, size_t height = 600, bool full = false, const char* caption = NULL );
   void kill ( void );
 
+  void quit ( void ) {run = false;}
+
   void clear ( void );
   void flip ( void );
 
@@ -141,6 +143,7 @@ protected:
   float clearColor[3];
   bool fullscreen;
   bool valid;
+  bool run;
 
   std::vector<SimpleDisplayEventCallbacks*> callbacks;
 
