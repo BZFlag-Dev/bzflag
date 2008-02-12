@@ -1,55 +1,32 @@
 ========================================================================
-    WIN32 APPLICATION : tankview Project Overview
+    tankview Project Overview
 ========================================================================
 
-AppWizard has created this tankview application for you.  
+tankview is a very simple app. It will show you, graphicaly what a tank
+model will look like. Simply build it, drop it into a folder with a data
+dir, and run. The applicaiton will then load the 5 obj files from the
+data dir for the standard high res tank;
 
-This file contains a summary of what you will find in each of the files that
-make up your tankview application.
+ * data/geometry/tank/std/body.obj
+ * data/geometry/tank/std/turret.obj
+ * data/geometry/tank/std/barrel.obj
+ * data/geometry/tank/std/rcasing.obj
+ * data/geometry/tank/std/lcasing.obj
 
+These 5 models will be displaed in the same postions that they would be
+in game, and they will be textured with the standard tank texture. This
+can let you see how your model will look in game.
 
-tankview.vcproj
-    This is the main project file for VC++ projects generated using an Application Wizard. 
-    It contains information about the version of Visual C++ that generated the file, and 
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+you can move the view arround by tapping the arrow keys. Use alt and ctl
+to do various ban and rotate movements.
 
-tankview.cpp
-    This is the main application source file.
+The gray grid is the ground. The 3 colored lines in the middle is the
+tank's origin. The light blue box is the bounding box of the standard
+tank.
 
-/////////////////////////////////////////////////////////////////////////////
-AppWizard has created the following resources:
+*TODO*
+ * Keys to change the team texture
+ * code to draw the standard tank parts if an obj is missing
+ * option to spin the tank.
+ * linux build system
 
-tankview.rc
-    This is a listing of all of the Microsoft Windows resources that the
-    program uses.  It includes the icons, bitmaps, and cursors that are stored
-    in the RES subdirectory.  This file can be directly edited in Microsoft
-    Visual C++.
-
-Resource.h
-    This is the standard header file, which defines new resource IDs.
-    Microsoft Visual C++ reads and updates this file.
-
-tankview.ico
-    This is an icon file, which is used as the application's icon (32x32).
-    This icon is included by the main resource file tankview.rc.
-
-small.ico
-    This is an icon file, which contains a smaller version (16x16)
-    of the application's icon. This icon is included by the main resource
-    file tankview.rc.
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named tankview.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
