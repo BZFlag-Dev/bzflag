@@ -56,7 +56,7 @@ bool SharedObjectLoader::load(std::string filename)
   /* extract the address in a posixly-pleasing fugly way */
   switch (sizeof(createSymbol)) {
     case (sizeof(int32_t)):
-      createAddr32 = (int32_t)createSymbol;
+      createAddr32 = (int32_t)((int64_t)createSymbol);
       createFunction = (createHandle)createAddr32;
       break;
     case (sizeof(int64_t)):
@@ -79,7 +79,7 @@ bool SharedObjectLoader::load(std::string filename)
   /* extract the address in a posixly-pleasing fugly way */
   switch (sizeof(createSymbol)) {
     case (sizeof(int32_t)):
-      destroyAddr32 = (int32_t)destroySymbol;
+      destroyAddr32 = (int32_t)((int64_t)destroySymbol);
       destroyFunction = (destroyHandle)destroyAddr32;
       break;
     case (sizeof(int64_t)):
