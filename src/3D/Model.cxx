@@ -14,10 +14,33 @@
 #include "bzfgl.h"
 #include "TextUtils.h"
 
-OBJVert::OBJVert()
+OBJVert::OBJVert( float _x, float _y, float _z )
 {
-  x = y = z = 0;
+  x = _x;
+  y = _y;
+  z = _z;
 }
+
+OBJVert::OBJVert ( const OBJVert& vert )
+{
+  x = vert.x;
+  y = vert.y;
+  z = vert.z;
+}
+
+OBJVert OBJVert::operator + ( const OBJVert& vert )
+{
+  return OBJVert(x+vert.x, y+vert.y,z+vert.z);
+}
+
+OBJVert& OBJVert::operator += ( const OBJVert& vert )
+{
+  x += vert.x;
+  y += vert.y;
+  z += vert.z;
+  return *this;
+}
+
 
 void OBJVert::glVertex ( void ) const
 {
@@ -58,11 +81,11 @@ void OBJFace::draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJ
   for ( size_t i = 0; i < verts.size(); i++ )
   {
     if ( verts[i] < vertList.size() )
-	vertList[verts[i]].glVertex();
+	vertList[ verts[i ]].glVertex();
     if ( i < norms.size() && norms[i] < normList.size() )
-	normList[norms[i]].glNormal();
+	normList[ norms[i] ].glNormal();
     if ( i < uvs.size() &&  uvs[i] < uvList.size() )
-	uvList[uvs[i]].glTexCoord();
+	uvList[ uvs[i] ].glTexCoord();
   }
 
   glEnd();
@@ -137,6 +160,7 @@ bool OBJModel::read ( const std::string &fileName )
 	      if (indexes.size())
 	      {
 		face.verts.push_back(atoi(indexes[0].c_str())-1);
+
 		if ( indexes.size() > 1 && indexes[1].size() )
 		  face.uvs.push_back(atoi(indexes[1].c_str())-1);
 		else

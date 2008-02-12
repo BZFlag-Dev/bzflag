@@ -24,7 +24,12 @@ class OBJVert
 public:
   float x,y,z;
 
-  OBJVert();
+  OBJVert( float _x = 0, float _y = 0, float _z = 0 );
+
+  OBJVert ( const OBJVert& vert );
+
+  OBJVert operator + ( const OBJVert& vert );
+  OBJVert& operator += ( const OBJVert& vert );
 
   void glVertex ( void ) const;
   void glNormal ( void ) const;
