@@ -124,7 +124,7 @@ unsigned int red,green,blue,purple,black,current;
 void loadModels ( void )
 {
   barrel.read(convertPath("./data/geometry/tank/std/barrel.obj"));
-  base.read(convertPath("./data/geometry/tank/std/base.obj"));
+  base.read(convertPath("./data/geometry/tank/std/body.obj"));
   turret.read(convertPath("./data/geometry/tank/std/turret.obj"));
   lTread.read(convertPath("./data/geometry/tank/std/lcasing.obj"));
   rTread.read(convertPath("/.data/geometry/tank/std/rcasing.obj"));
