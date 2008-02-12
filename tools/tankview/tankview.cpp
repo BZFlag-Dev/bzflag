@@ -27,6 +27,8 @@ protected:
   void loadModels ( void );
   void drawModels ( void );
 
+  void drawObjectNormals ( OBJModel &model );
+
   SimpleDisplay display;
   SimpleDisplayCamera *camera;
 
@@ -161,6 +163,34 @@ void Application::drawModels ( void )
   barrel.draw();
 }
 
+void Application::drawObjectNormals ( OBJModel &model )
+{
+  glBegin(GL_LINES);
+
+  for ( size_t f = 0; f < model.faces.size(); f++ )
+  {
+    for ( size_t v = 0; v < model.faces[f].verts.size(); v++ )
+    {
+      size_t vIndex = model.faces[f].verts[v];
+      if ( vIndex < model.vertList.size() )
+      {
+	OBJVert vert = model.vertList[vIndex];
+
+	size_t nIndex = model.faces[f].norms[v];
+	if ( nIndex < model.normList.size() )
+	{
+	  vert.glVertex();
+	  vert += model.normList[nIndex];
+	  vert.glVertex();
+	}
+      }
+    }
+  }
+
+  glEnd();
+}
+
+
 bool Application::init ( void )
 {
   camera = new SimpleDisplayCamera;
@@ -200,6 +230,23 @@ int Application::run ( void )
 
     drawGridAndBounds();
 
+    // draw normals
+
+    glColor4f(1,0,0,1);
+
+    drawObjectNormals(base);
+    glColor4f(1,1,0,1);
+    drawObjectNormals(barrel);
+    glColor4f(0,1,1,1);
+    drawObjectNormals(turret);
+
+    glColor4f(0,0,1,1);
+    drawObjectNormals(lTread);
+    glColor4f(0,1,0,1);
+    drawObjectNormals(lTread);
+
+
+    glColor4f(1,1,1,1);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
