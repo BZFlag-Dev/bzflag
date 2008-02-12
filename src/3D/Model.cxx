@@ -80,12 +80,12 @@ void OBJFace::draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJ
 
   for ( size_t i = 0; i < verts.size(); i++ )
   {
-    if ( verts[i] < vertList.size() )
-	vertList[ verts[i ]].glVertex();
     if ( i < norms.size() && norms[i] < normList.size() )
-	normList[ norms[i] ].glNormal();
+      normList[norms[i]].glNormal();
     if ( i < uvs.size() &&  uvs[i] < uvList.size() )
-	uvList[ uvs[i] ].glTexCoord();
+      uvList[uvs[i]].glTexCoord();
+    if ( verts[i] < vertList.size() )
+	vertList[verts[i]].glVertex();
   }
 
   glEnd();
