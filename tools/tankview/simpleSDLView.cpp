@@ -511,6 +511,22 @@ bool SimpleDisplay::update ( void )
     case SDL_VIDEORESIZE:
       resize((size_t)event.resize.h,(size_t)event.resize.w);
       break;
+
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP:
+      {
+	int x,y;
+	SDL_GetMouseState(&x,&y);
+	y = size[1]-y;
+
+   	mouseButton(event.button.button,x,y,event.type == SDL_MOUSEBUTTONDOWN);
+      }
+      break;
+
+    case SDL_MOUSEMOTION:
+	mouseMoved(event.motion.x,size[1]-event.motion.y);
+      break;
+
     }
   }
 
@@ -589,6 +605,31 @@ void SimpleDisplay::key ( int key, bool down, const ModiferKeys& mods )
       callbacks[i]->key(key,down,mods);
   }
 }
+
+void SimpleDisplay::mouseButton( int key, int x, int y, bool down )
+{
+  if (!callbacks.size())
+    return;
+
+  for ( size_t i = 0; i< callbacks.size(); i++ )
+  {
+    if (callbacks[i])
+      callbacks[i]->mouseButton(key,x,y,down);
+  }
+}
+
+void SimpleDisplay::mouseMoved( int x, int y )
+{
+  if (!callbacks.size())
+    return;
+
+  for ( size_t i = 0; i< callbacks.size(); i++ )
+  {
+    if (callbacks[i])
+      callbacks[i]->mouseMoved(x,y);
+  }
+}
+
 
 void SimpleDisplay::addEventCallback ( SimpleDisplayEventCallbacks *callback )
 {

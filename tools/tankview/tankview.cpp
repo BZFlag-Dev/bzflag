@@ -16,7 +16,9 @@ class Application : public SimpleDisplayEventCallbacks
 public:
   Application();
   virtual void key ( int key, bool down, const ModiferKeys& mods );
-  
+  virtual void mouseButton( int key, int x, int y, bool down );
+  virtual void mouseMoved( int x, int y );
+
   int run ( void );
 
 protected:
@@ -31,7 +33,8 @@ protected:
   OBJModel base,turret,barrel,lTread,rTread;
   unsigned int red,green,blue,purple,black,current;
 
-  bool moveKeysDown[4];
+  bool moveKeysDown[3];
+  int mousePos[2];
 };
 
 const char* convertPath ( const char* path )
@@ -52,7 +55,7 @@ Application::Application() : display(800,600,false,"tankview")
 {
   camera = NULL;
 
-  for (int i = 0; i<4; i++)
+  for (int i = 0; i<3; i++)
     moveKeysDown[i] = false;
 }
 
@@ -160,9 +163,8 @@ void Application::drawModels ( void )
 
 bool Application::init ( void )
 {
-  display.addEventCallback(this);
-
   camera = new SimpleDisplayCamera;
+  display.addEventCallback(this);
 
   // load up the models
   loadModels();
@@ -279,6 +281,38 @@ void Application::key ( int key, bool down, const ModiferKeys& mods )
     break;
   }
 }
+
+void Application::mouseButton( int key, int x, int y, bool down )
+{
+  mousePos[0] = x;
+  mousePos[1] = y;
+
+  moveKeysDown[key-1] = down;
+}
+
+void Application::mouseMoved( int x, int y )
+{
+  int mouseDelta[2];
+  mouseDelta[0] = x - mousePos[0];
+  mouseDelta[1] = y - mousePos[1];
+
+  if ( moveKeysDown[0] )
+  {
+    camera->moveLoc(-mouseDelta[0]*0.0125f,-mouseDelta[1]*0.0125f,0);
+  }
+  else if ( moveKeysDown[1] )
+    camera->moveLoc(0,0,mouseDelta[1]*0.025f);
+
+  if ( moveKeysDown[2] )
+  {
+    camera->rotateLoc(mouseDelta[1]*0.125f,-1,0,0);
+    camera->rotateGlob(mouseDelta[0]*0.125f,0,0,1);
+ }
+
+  mousePos[0] = x;
+  mousePos[1] = y;
+}
+
 
 #ifdef _WIN32
 int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hPInst, LPSTR lpCmdLine, int nShowCmd )

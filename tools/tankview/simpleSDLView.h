@@ -95,7 +95,8 @@ public:
   virtual void focus ( bool lost ){};
   virtual void resize ( size_t x, size_t y ){};
   virtual void key ( int key, bool down, const ModiferKeys& mods ){};
-
+  virtual void mouseButton( int key, int x, int y, bool down ){};
+  virtual void mouseMoved( int x, int y ){};
 };
 
 class SimpleDisplay
@@ -152,6 +153,8 @@ protected:
   void focus ( bool lost );
   void resize ( size_t x, size_t y );
   void key ( int key, bool down, const ModiferKeys& mods );
+  void mouseButton( int key, int x, int y, bool down );
+  void mouseMoved( int x, int y );
 
   // textures
   unsigned int lastImageID;
