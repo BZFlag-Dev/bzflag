@@ -48,7 +48,7 @@ const char* convertPath ( const char* path )
   return temp.c_str();
 }
 
-Application::Application()
+Application::Application() : display(800,600,false,"tankview")
 {
   camera = NULL;
 
@@ -211,7 +211,7 @@ int Application::run ( void )
 
     camera->removeView();
     display.flip();
-    display.yeld(0.5f);
+    //display.yeld(0.5f);
   }
 
   display.kill();
@@ -232,34 +232,34 @@ void Application::key ( int key, bool down, const ModiferKeys& mods )
 
   case SD_KEY_UP:
     if (mods.alt)
-      camera->rotateLoc(1,1,0,0);
+      camera->rotateLoc(2.5f,1,0,0);
     else if (mods.ctl)
-      camera->moveLoc(0,0,0.125f);
+      camera->moveLoc(0,0,0.25f);
     else
-      camera->moveLoc(0,0.125f,0);
+      camera->moveLoc(0,0.25f,0);
     break;
 
   case SD_KEY_DOWN:
     if (mods.alt)
-      camera->rotateLoc(-1,1,0,0);
+      camera->rotateLoc(-2.5f,1,0,0);
     else if (mods.ctl)
-      camera->moveLoc(0,0,-0.125f);
+      camera->moveLoc(0,0,-0.25f);
     else
-      camera->moveLoc(0,-0.125f,0);
+      camera->moveLoc(0,-0.25f,0);
     break;
 
   case SD_KEY_LEFT:
     if (mods.alt)
-      camera->rotateLoc(1,0,1,0);
+      camera->rotateLoc(2.5f,0,1,0);
     else
-      camera->moveLoc(-0.125f,0,0);
+      camera->moveLoc(-0.25f,0,0);
     break;
 
   case SD_KEY_RIGHT:
     if (mods.alt)
-      camera->rotateLoc(-1,0,1,0);
+      camera->rotateLoc(-2.5f,0,1,0);
     else
-      camera->moveLoc(0.125f,0,0);
+      camera->moveLoc(0.25f,0,0);
     break;
 
   case SD_KEY_F1:
