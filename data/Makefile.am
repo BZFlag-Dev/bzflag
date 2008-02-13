@@ -1,4 +1,8 @@
-SUBDIRS = l10n fonts skins models
+SUBDIRS = \
+	fonts \
+	models \
+	l10n \
+	skins
 
 bzflagdir = $(BZFLAG_DATA)
 bzflag_DATA = \
@@ -75,8 +79,7 @@ bzflag_DATA = \
 	water.png		\
 	zone_ground.png
 
-EXTRA_DIST = \
-	$(bzflag_DATA)
+EXTRA_DIST = $(bzflag_DATA)
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
