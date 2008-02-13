@@ -46,7 +46,7 @@ static float wheelOutsideTexRad;
 
 void TankGeometryUtils::setTreadStyle(int style)
 {
-  if (style == TankGeometryUtils::Exposed) {
+  if (0)//(style == TankGeometryUtils::Exposed) {
     fullLength = 6.0f;
     treadHeight = 1.2f;
     treadInside = 0.875f;
@@ -473,7 +473,7 @@ int TankGeometryUtils::buildHighLCasingAnim()
 
   tris += buildCasing(+treadYCenter);
 
-  if (treadStyle == TankGeometryUtils::Covered) {
+  if (1 )//treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
       //draw the left tread cover
@@ -669,7 +669,7 @@ int TankGeometryUtils::buildHighRCasingAnim()
 
   tris += buildCasing(-treadYCenter);
 
-  if (treadStyle == TankGeometryUtils::Covered) {
+  if (1)//treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
       //draw the right tread cover
