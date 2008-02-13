@@ -862,11 +862,19 @@ int TankGeometryUtils::buildHighRCasingAnim()
 
 int TankGeometryUtils::buildHighLTread(int divs)
 {
+  int count = 0;
+  if (buildGeoFromObj("/std/ltread.obj",count))
+    return count;
+
   return buildTread(+treadYCenter, divs);
 }
 
 int TankGeometryUtils::buildHighRTread(int divs)
 {
+  int count = 0;
+  if (buildGeoFromObj("/std/rtread.obj",count))
+    return count;
+
   return buildTread(-treadYCenter, divs);
 }
 

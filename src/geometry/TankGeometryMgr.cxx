@@ -222,10 +222,10 @@ void TankGeometryMgr::buildLists()
 	  // setup the scale factor
 	  currentScaleFactor = scaleFactors[size];
 
-	  if ((part <= Turret) || (!animated)) {
+	  if ((part <= RightTread)) { // || (!animated)) {
 	    // the basic parts
 	    count = partFunctions[lod][part]();
-	  } else {
+	  } else  if (0){
 	    // the animated parts
 	    if (part == LeftCasing) {
 	      count = buildHighLCasingAnim();
