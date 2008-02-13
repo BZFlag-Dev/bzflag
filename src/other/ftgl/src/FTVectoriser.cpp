@@ -2,18 +2,19 @@
 #include    "FTGL.h"
 
 #ifndef CALLBACK
-#define CALLBACK
+#  define CALLBACK
 #endif
 
-#ifdef __APPLE_CC__    
-    typedef GLvoid (*GLUTesselatorFunction)(...);
-#elif defined( __mips ) || defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __OpenBSD__ ) || defined( __sun ) || defined (__CYGWIN__)
-    typedef GLvoid (*GLUTesselatorFunction)(...);
-#elif defined ( WIN32)
-    typedef GLvoid (CALLBACK *GLUTesselatorFunction)(...);
-#else
-    #error "Error - need to define type GLUTesselatorFunction for this platform/compiler"
+#ifdef __APPLE__
+#  if defined(__APPLE_CC__) && __APPLE_CC__ == 5367
+#    define CBARGS ...
+#  endif
 #endif
+#ifndef CBARGS
+#  define CBARGS GL_void
+#endif
+
+typedef GLvoid (CALLBACK *GLUTesselatorFunction)(CBARGS);
 
 
 void CALLBACK ftglError( GLenum errCode, FTMesh* mesh)
