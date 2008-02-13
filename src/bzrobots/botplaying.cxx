@@ -1269,6 +1269,8 @@ static void handleAllowSpawn ( uint16_t len, void* msg )
   }
 }
 
+// changing the rabbit
+
 static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
 {
   PlayerId id;
