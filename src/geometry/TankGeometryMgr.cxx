@@ -222,24 +222,25 @@ void TankGeometryMgr::buildLists()
 	  // setup the scale factor
 	  currentScaleFactor = scaleFactors[size];
 
-	  if ((part <= RightTread)) { // || (!animated)) {
+	  if ((part <= RightCasing)) { // || (!animated)) {
 	    // the basic parts
 	    count = partFunctions[lod][part]();
-	  } else  if (0){
+	  } else if (lod == HighTankLOD){
 	    // the animated parts
-	    if (part == LeftCasing) {
+/*	    if (part == LeftCasing) {
 	      count = buildHighLCasingAnim();
 	    }
 	    else if (part == RightCasing) {
 	      count = buildHighRCasingAnim();
 	    }
-	    else if (part == LeftTread) {
+	    else */
+	    if (part == LeftTread) {
 	      count = buildHighLTread(treadDivs);
 	    }
 	    else if (part == RightTread) {
 	      count = buildHighRTread(treadDivs);
 	    }
-	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
+	  /*  else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
 	      int wheel = part - LeftWheel0;
 	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
 				      wheelDivs);
@@ -248,7 +249,7 @@ void TankGeometryMgr::buildLists()
 	      int wheel = part - RightWheel0;
 	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
 				      wheelDivs);
-	    }
+	    } */
 	  }
 
 	  // end of the list
