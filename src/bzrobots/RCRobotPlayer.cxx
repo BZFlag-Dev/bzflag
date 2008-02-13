@@ -43,13 +43,13 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id,
 }
 
 
-void RCRobotPlayer::doUpdate(double dt)
+void RCRobotPlayer::doUpdate(float dt)
 {
   LocalPlayer::doUpdate(dt);
 }
 
 
-void RCRobotPlayer::doUpdateMotion(double dt)
+void RCRobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
     double timeNow = TimeKeeper::getCurrent().getSeconds();

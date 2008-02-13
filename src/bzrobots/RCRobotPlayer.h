@@ -70,8 +70,8 @@ public:
   bool            stoppedForward, stoppedLeft;
   
 private:
-  void            doUpdate(double dt);
-  void            doUpdateMotion(double dt);
+  void            doUpdate(float dt);
+  void            doUpdateMotion(float dt);
 };
 
 #else

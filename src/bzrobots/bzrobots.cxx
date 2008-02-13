@@ -59,6 +59,8 @@
 #include "WordFilter.h"
 #include "World.h"
 #include "bzfio.h"
+#include "PlatformFactory.h"
+#include "BzfMedia.h"
 
 /* local headers */
 #include "ActionBinding.h"
@@ -647,8 +649,12 @@ myMain(int argc, char** argv)
   email = email.substr(0, sizeof(startupInfo.email) - 1);
   strncpy(startupInfo.email, email.c_str(), EmailLen-1);
 
+  BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzrobots");
+  World::setBundleMgr(bm);
+
   std::string locale = BZDB.isSet("locale") ? BZDB.get("locale") : "default";
   World::setLocale(locale);
+  bm->getBundle(World::getLocale());
 
   if (BZDB.isSet("serverCacheAge")) {
     (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
