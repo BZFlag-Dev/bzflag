@@ -11,7 +11,7 @@
 #  endif
 #endif
 #ifndef CBARGS
-#  define CBARGS GLvoid
+#  define CBARGS void
 #endif
 
 typedef GLvoid (CALLBACK *GLUTesselatorFunction)(CBARGS);
