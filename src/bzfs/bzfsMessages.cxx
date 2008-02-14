@@ -87,13 +87,15 @@ void sendFlagUpdateMessage ( int playerID )
   }
   else
   {
+    int totalFlags = 0;
     NetMsg msg = MSGMGR.newMessage();
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
-      if (FlagInfo::get(flagIndex)->exist())
-	numFlags++;
+      FlagInfo *info = FlagInfo::get(flagIndex);
+      if (info && info->exist())
+	totalFlags++;
     }
-    msg->packUShort(numFlags);
+    msg->packUShort(totalFlags);
 
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
