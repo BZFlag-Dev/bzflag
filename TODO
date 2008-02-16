@@ -9,7 +9,7 @@ so that no work is duplicated.
 
 ----------------------------------------
 
-Required for release of 2.2.:
+Required for release of 3.0:
 
 * MsgNewRabbit packs and unpacks a zeroed byte.  Find out why and remove
   it if possible.
@@ -38,7 +38,7 @@ Required for release of 2.2.:
 * client occasionally crashes on exit (in an ftgl destructor) 
 
 
-Should be considered for the release of 2.2:
+Should be considered for the release of 3.0:
 
 * Change the title image to not have the flag with the version in it. Add
   ether the flag, or some version number to the image at run time using GL
@@ -81,7 +81,7 @@ Should be considered for the release of 2.2:
 
 * Verify player updates with Serer State for movement and death (JeffM2501)
 
-Would be nice to have but are not critical for 2.2
+Would be nice to have but are not critical for 3.0
 
 * Force feedback joystick support for Mac OS X
   http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
