@@ -15,6 +15,7 @@
 
 /* common implementation headers */
 #include "BZDBCache.h"
+#include "ObstacleMgr.h"
 
 /* bzflag implementation headers */
 #include "Roster.h"
@@ -179,11 +180,6 @@ bool GetBasesReq::process(RCRobotPlayer *)
   // TODO: Implement this. :p
   return true;
 }
-bool GetObstaclesReq::process(RCRobotPlayer *)
-{
-  // TODO: Implement this. :p
-  return true;
-}
 bool GetFlagsReq::process(RCRobotPlayer *)
 {
   // TODO: Implement this. :p
@@ -280,6 +276,42 @@ bool GetPlayersReq::process(RCRobotPlayer *)
     link->send(PlayersReply(player[i]));
   }
 
+  return true;
+}
+
+bool GetObstaclesReq::process(RCRobotPlayer *)
+{
+  unsigned int i;
+  link->send(ObstaclesBeginReply());
+  const ObstacleList &boxes = OBSTACLEMGR.getBoxes();
+  for (i = 0; i < boxes.size(); i++) {
+    Obstacle *obs = boxes[i];
+    link->send(ObstacleReply(obs, boxType));
+  }
+
+  const ObstacleList &pyrs = OBSTACLEMGR.getPyrs();
+  for (i = 0; i < pyrs.size(); i++) {
+    Obstacle *obs = pyrs[i];
+    link->send(ObstacleReply(obs, pyrType));
+  }
+
+  const ObstacleList &bases = OBSTACLEMGR.getBases();
+  for (i = 0; i < bases.size(); i++) {
+    Obstacle *obs = bases[i];
+    link->send(ObstacleReply(obs, baseType));
+  }
+
+  const ObstacleList &meshes = OBSTACLEMGR.getMeshes();
+  for (i = 0; i < meshes.size(); i++) {
+    Obstacle *obs = meshes[i];
+    link->send(ObstacleReply(obs, meshType));
+  }
+
+  const ObstacleList &walls = OBSTACLEMGR.getWalls();
+  for (i = 0; i < walls.size(); i++) {
+    Obstacle *obs = walls[i];
+    link->send(ObstacleReply(obs, wallType));
+  }
   return true;
 }
 

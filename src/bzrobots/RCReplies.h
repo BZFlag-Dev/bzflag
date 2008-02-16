@@ -320,6 +320,41 @@ private:
   Tank tank;
 };
 
+class ObstaclesBeginReply : public RCReply
+{
+public:
+  ObstaclesBeginReply() {}
+
+  std::string getType() const { return "ObstaclesBegin"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+};
+
+class ObstacleReply : public RCReply
+{
+public:
+  ObstacleReply() {}
+  ObstacleReply(Obstacle *_obs, enum ObstacleTypes _type) : obs(_obs), type(_type) {}
+  
+  std::string getType() const { return "Obstacle"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+
+private:
+  messageParseStatus parseBox(char **arguments, int count);
+  messageParseStatus parsePyr(char **arguments, int count);
+  messageParseStatus parseWall(char **arguments, int count);
+  messageParseStatus parseBase(char **arguments, int count);
+  messageParseStatus parseTele(char **arguments, int count);
+
+  Obstacle *obs;
+  enum ObstacleTypes type;
+};
+
 
 #endif /* __RCREPLIES_H__ */
 
@@ -329,4 +364,4 @@ private:
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// vim: shiftwidth=2 tabstop=8

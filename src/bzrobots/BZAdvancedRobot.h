@@ -58,13 +58,14 @@ public:
   double getWidth() const;
   double getLength() const;
   void getPlayers() const;
+  void getObstacles() const;
   long getTime() const;
   double getVelocity() const;
   double getX() const;
   double getY() const;
   double getZ() const;
 
-  virtual ~BZAdvancedRobot() {}
+  virtual ~BZAdvancedRobot();
   BZAdvancedRobot();
 
   virtual void initialize() {}
@@ -111,6 +112,7 @@ public:
   mutable double tankWidth, tankLength, tankHeight;
   mutable double heading;
   mutable std::vector<Tank> players;
+  mutable std::vector<Obstacle *> obstacles;
 };
 
 #else

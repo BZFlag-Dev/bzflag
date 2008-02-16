@@ -41,6 +41,29 @@ bool MessageUtilities::parse(const char *str, double &dest)
 }
 
 template <>
+bool MessageUtilities::parse(const char *str, float &dest)
+{
+  if (sscanf(str,"%f",&dest) != 1)
+    return false;
+
+  /* We don't want NaN no matter what - it's of no use in this
+   * scenario.  (And strtof will allow the string "NAN" as NaN)
+   */
+  if (isnan(dest))
+    dest = 0.0;
+
+  return true;
+}
+
+template <>
+bool MessageUtilities::parse(const char *str, int &dest)
+{
+  if (sscanf(str,"%d",&dest) != 1)
+    return false;
+  return true;
+}
+
+template <>
 bool MessageUtilities::parse(const char *str, std::string &dest)
 {
   dest = str;

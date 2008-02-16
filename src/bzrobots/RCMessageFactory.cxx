@@ -58,6 +58,7 @@ void RCMessageFactory<RCRequest>::initialize()
   ADD_REQUEST(GetHeight);
   ADD_REQUEST(GetLength);
   ADD_REQUEST(GetHeading);
+  ADD_REQUEST(GetObstacles);
 }
 
 
@@ -82,6 +83,8 @@ void RCMessageFactory<RCReply>::initialize()
   ADD_REPLY(Heading);
   ADD_REPLY(PlayersBegin);
   ADD_REPLY(Players);
+  ADD_REPLY(ObstaclesBegin);
+  ADD_REPLY(Obstacle);
 }
 
 
@@ -89,6 +92,7 @@ template<>
 void RCMessageFactory<RCEvent>::initialize()
 {
   ADD_EVENT(HitWall);
+  ADD_EVENT(Death);
 }
 
 

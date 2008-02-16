@@ -15,6 +15,11 @@
 
 /* common implementation headers */
 #include "version.h"
+#include "BoxBuilding.h"
+#include "PyramidBuilding.h"
+#include "WallObstacle.h"
+#include "BaseBuilding.h"
+#include "Teleporter.h"
 
 /* local implementation headers */
 #include "RCMessageFactory.h"
@@ -360,6 +365,317 @@ void PlayersReply::getParameters(std::ostream &stream) const
 bool PlayersReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->players.push_back(tank);
+  return true;
+}
+
+messageParseStatus ObstaclesBeginReply::parse(char **, int count)
+{
+  return (count == 0 ? ParseOk : InvalidArgumentCount);
+}
+
+void ObstaclesBeginReply::getParameters(std::ostream &) const
+{
+}
+
+bool ObstaclesBeginReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  robot->obstacles.clear();
+  return true;
+}
+
+void ObstacleReply::getParameters(std::ostream &stream) const
+{
+  const float *pos;
+  Teleporter *tele;
+  switch (type) {
+    case boxType:
+      pos = obs->getPosition();
+      stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
+      stream << obs->getRotation() << " " << obs->getWidth() << " ";
+      stream << obs->getBreadth() << " " << obs->getHeight() << " ";
+      stream << (bool)obs->isDriveThrough() << " " << (bool)obs->isShootThrough() << " ";
+      stream << dynamic_cast<BoxBuilding *>(obs)->isInvisible();
+      break;
+    case pyrType:
+      pos = obs->getPosition();
+      stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
+      stream << obs->getRotation() << " " << obs->getWidth() << " ";
+      stream << obs->getBreadth() << " " << obs->getHeight() << " ";
+      stream << (bool)obs->isDriveThrough() << " " << (bool)obs->isShootThrough();
+      break;
+    case wallType:
+      pos = obs->getPosition();
+      stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
+      stream << obs->getRotation() << " " << obs->getBreadth() << " ";
+      stream << obs->getHeight();
+      break;
+    case baseType:
+      pos = obs->getPosition();
+      stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
+      stream << obs->getRotation() << " " << obs->getWidth() << " ";
+      stream << obs->getBreadth() << " " << obs->getHeight() << " ";
+      stream << ((BaseBuilding *)obs)->getTeam();
+    case teleType:
+      pos = obs->getPosition();
+      stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
+      stream << obs->getRotation() << " " << obs->getWidth() << " ";
+      stream << obs->getBreadth() << " " << obs->getHeight() << " ";
+      tele = (Teleporter *)obs;
+      stream << tele->getBorder() << " " << tele->isHorizontal() << " ";
+      stream << (bool)tele->isDriveThrough() << " ";
+      stream << (bool)tele->isShootThrough();
+      break;
+    case meshType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case arcType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case coneType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case sphereType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case tetraType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+  }
+}
+
+messageParseStatus ObstacleReply::parse(char **arguments, int count)
+{
+
+  if (count == 0)
+    return InvalidArgumentCount;
+
+  int t;
+
+  if (!MessageUtilities::parse(arguments[0], t))
+    return InvalidArguments;
+
+  type = (ObstacleTypes)t;
+
+  switch (type) {
+    case boxType:
+      return parseBox(arguments+1, count-1);
+      break;
+    case pyrType:
+      return parsePyr(arguments+1, count-1);
+      break;
+    case wallType:
+      return parseWall(arguments+1, count-1);
+      break;
+    case baseType:
+      return parseBase(arguments+1, count-1);
+      break;
+    case teleType:
+      return parseTele(arguments+1, count-1);
+      break;
+    case meshType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case arcType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case coneType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case sphereType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    case tetraType:
+      /*
+       * TODO: Implement this.
+       */
+      break;
+    default:
+      break;
+  }
+  return InvalidArguments;
+}
+
+messageParseStatus ObstacleReply::parseBox(char **arguments, int count)
+{
+  if (count != 10)
+    return InvalidArgumentCount;
+
+  float p[3];
+  float rot, width, breadth, height;
+  bool drive, shoot;
+  bool invisible;
+
+  if (!MessageUtilities::parse(arguments[0], p[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], p[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], p[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], rot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[4], width))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[5], breadth))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[6], height))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[7], drive))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[8], shoot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[9], invisible))
+    return InvalidArguments;
+
+
+  obs = new BoxBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot, invisible);
+  return ParseOk;
+}
+
+messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
+{
+  if (count != 9)
+    return InvalidArgumentCount;
+  float p[3];
+  float rot, width, breadth, height;
+  bool drive, shoot;
+
+  if (!MessageUtilities::parse(arguments[0], p[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], p[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], p[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], rot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[4], width))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[5], breadth))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[6], height))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[7], drive))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[8], shoot))
+    return InvalidArguments;
+  
+  obs = new PyramidBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot);
+  return ParseOk;
+}
+
+messageParseStatus ObstacleReply::parseWall(char **arguments, int count)
+{
+  if (count != 6)
+    return InvalidArgumentCount;
+
+  float p[3];
+  float rot, breadth, height;
+
+  if (!MessageUtilities::parse(arguments[0], p[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], p[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], p[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], rot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[4], breadth))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[5], height))
+    return InvalidArguments;
+
+  obs = new WallObstacle(p, rot, breadth, height);
+  return ParseOk;
+}
+
+messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
+{
+  if (count != 8)
+    return InvalidArgumentCount;
+
+  float p[3];
+  float s[3];
+  float rot;
+  int team;
+
+  if (!MessageUtilities::parse(arguments[0], p[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], p[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], p[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], rot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[4], s[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[5], s[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[6], s[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[7], team))
+    return InvalidArguments;
+
+  obs = new BaseBuilding(p, rot, s, team);
+  return ParseOk;
+}
+
+messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
+{
+  if (count != 11)
+    return InvalidArgumentCount;
+
+  float p[3];
+  float s[3];
+  float rot, border;
+  bool horiz, drive, shoot;
+
+  if (!MessageUtilities::parse(arguments[0], p[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], p[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], p[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], rot))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[4], s[0]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[5], s[1]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[6], s[2]))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[7], border))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[8], horiz))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[9], drive))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[10], shoot))
+    return InvalidArguments;
+
+  obs = new Teleporter(p, rot, s[0], s[1], s[2], border, horiz, (unsigned char)drive, (unsigned char)shoot);
+  return ParseOk;
+}
+
+bool ObstacleReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  robot->obstacles.push_back(obs);
   return true;
 }
 

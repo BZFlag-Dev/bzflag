@@ -22,6 +22,13 @@ BZAdvancedRobot::BZAdvancedRobot() : link(NULL), compatability(true)
 {
 }
 
+BZAdvancedRobot::~BZAdvancedRobot()
+{
+  for (std::vector<Obstacle *>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
+    delete (*i);
+  }
+}
+
 bool BZAdvancedRobot::getCompatability() const { return compatability; }
 void BZAdvancedRobot::setCompatability(bool newState) { compatability = newState; }
 void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
@@ -136,6 +143,11 @@ double BZAdvancedRobot::getLength() const
 void BZAdvancedRobot::getPlayers() const 
 {
   link->sendAndProcess(GetPlayersReq(), this);
+}
+
+void BZAdvancedRobot::getObstacles() const
+{
+  link->sendAndProcess(GetObstaclesReq(), this);
 }
 
 long BZAdvancedRobot::getTime() const 
