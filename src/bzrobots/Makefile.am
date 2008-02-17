@@ -294,6 +294,7 @@ NACLIB = ../platform/MacOSX/libMac.la
 endif
 
 LDADD =	\
+	../geometry/libGeometry.la	\
 	../3D/lib3D.la			\
 	../game/libGame.la		\
 	../net/libNet.la		\
@@ -302,7 +303,6 @@ LDADD =	\
 	../platform/libPlatform.la	\
 	../ogl/libGLKit.la		\
 	../scene/libSceneDB.la		\
-	../geometry/libGeometry.la	\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
 	$(LIBFTGL)			\
