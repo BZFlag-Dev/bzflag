@@ -450,6 +450,11 @@ void ObstacleReply::getParameters(std::ostream &stream) const
        * TODO: Implement this.
        */
       break;
+    default:
+      /*
+       * TODO: Implement this.
+       */
+      break;
   }
 }
 
