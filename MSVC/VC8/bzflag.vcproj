@@ -256,7 +256,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG;HAVE_GLEW"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -283,7 +283,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew.lib  Advapi32.lib user32.lib Gdi32.lib shell32.lib"
+				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib glew32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib"
 				OutputFile="./bzflag_release/bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

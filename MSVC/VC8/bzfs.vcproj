@@ -238,7 +238,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -297,7 +297,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_release\*.lib ..\..\*.lib"
+				CommandLine="copy .\bzfs_release\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_release\*.lib ..\..\*.lib&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -393,7 +393,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib"
+				CommandLine="copy .\bzfs_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzfs_debug\*.lib ..\..\*.lib&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
