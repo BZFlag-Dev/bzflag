@@ -145,9 +145,10 @@ static void		setVisual(BzfVisual* visual)
   visual->setDoubleBuffer(true);
   visual->setRGBA(1, 1, 1, 0);
 
-  // ask for a zbuffer if not disabled.  we might
-  // choose not to use it if we do ask for it.
-  int depthLevel = 24;
+  // always ask for the max depth buffer
+  // GL's PFD will return a lower depth
+  // if the max is unsuported.
+  int depthLevel = 32;
   if (BZDB.isSet("forceDepthBits")) 
     depthLevel = BZDB.evalInt("forceDepthBits");
   visual->setDepth(depthLevel);
