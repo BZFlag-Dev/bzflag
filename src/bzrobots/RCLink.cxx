@@ -128,7 +128,7 @@ void RCLink::startListening(int port)
   fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 
   BzfNetwork::setNonBlocking(listenfd);
-  setNoDelay(connfd);
+  setNoDelay(listenfd);
 
   status = Listening;
 #endif
