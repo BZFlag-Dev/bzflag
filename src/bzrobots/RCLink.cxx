@@ -124,9 +124,11 @@ void RCLink::startListening(int port)
     return;
   }
 
-  BzfNetwork::setNonBlocking(listenfd);
   int flags = fcntl(listenfd, F_GETFL);
   fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
+
+  BzfNetwork::setNonBlocking(listenfd);
+  setNoDelay(connfd);
 
   status = Listening;
 #endif
@@ -149,9 +151,11 @@ bool RCLink::tryAccept()
     return false;
   }
 
-  //BzfNetwork::setNonBlocking(connfd);
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+
+  BzfNetwork::setNonBlocking(connfd);
+  setNoDelay(connfd);
 
   status = Connecting;
   send_amount = 0;
@@ -198,7 +202,7 @@ bool RCLink::connect(const char *host, int port)
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
-  // libGame's NetHandler.cxx
+  BzfNetwork::setNonBlocking(connfd);
   setNoDelay(connfd);
 
   status = Connecting;
