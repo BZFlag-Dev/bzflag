@@ -22,6 +22,9 @@
 #  include <arpa/inet.h>
 #endif 
 
+/* common implementation headers */
+#include "NetHandler.h"
+
 /* local implementation headers */
 #include "Roster.h"
 #include "RCRobotPlayer.h"
@@ -194,6 +197,9 @@ bool RCLink::connect(const char *host, int port)
 
   int flags = fcntl(connfd, F_GETFL);
   fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+
+  // libGame's NetHandler.cxx
+  setNoDelay(connfd);
 
   status = Connecting;
   send_amount = recv_amount = 0;
