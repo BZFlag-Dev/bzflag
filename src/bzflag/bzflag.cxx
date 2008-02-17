@@ -147,7 +147,7 @@ static void		setVisual(BzfVisual* visual)
 
   // ask for a zbuffer if not disabled.  we might
   // choose not to use it if we do ask for it.
-  int depthLevel = 32;
+  int depthLevel = 24;
   if (BZDB.isSet("forceDepthBits")) 
     depthLevel = BZDB.evalInt("forceDepthBits");
   visual->setDepth(depthLevel);
