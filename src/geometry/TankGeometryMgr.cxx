@@ -194,7 +194,7 @@ void TankGeometryMgr::buildLists()
   } else if (quality > _EXPERIMENTAL_QUALITY) {
     quality = _EXPERIMENTAL_QUALITY;
   }
-  int wheelDivs = divisionLevels[quality][0];
+  /*  int wheelDivs = divisionLevels[quality][0]; */
   int treadDivs = divisionLevels[quality][1];
 
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
