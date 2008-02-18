@@ -48,7 +48,7 @@ addition to the base compiler. These libraries are the Windows Platform
 SDK, and the Direct X 9 SDK.
 
 You will need the windows platform SDK
-  (download at http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx)
+  (download at http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB&displaylang=en)
 You will need the windows DirectX SDK (April 2007)
   (download at http://www.microsoft.com/downloads/details.aspx?DisplayLang=en&FamilyID=86cf7fa2-e953-475c-abde-f016e4f7b61a )
   
