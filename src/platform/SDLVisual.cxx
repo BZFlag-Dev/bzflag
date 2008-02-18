@@ -27,8 +27,11 @@ void SDLVisual::setRGBA(int minRed, int minGreen,
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, minAlpha);
 }
+#define SDL_BUGGY_MAX_DEPTH 24
 
 void SDLVisual::setDepth(int minDepth) {
+  if (minDepth > SDL_BUGGY_MAX_DEPTH)
+    minDepth = SDL_BUGGY_MAX_DEPTH;
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
 }
 
