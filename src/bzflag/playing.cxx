@@ -4612,6 +4612,9 @@ static void		checkEnvironment(RobotPlayer* tank)
     if (hit->isStoppedByHit())
       serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
 
+    // play the I got shot sound
+    playLocalSound(SFX_HIT);
+
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;
 
