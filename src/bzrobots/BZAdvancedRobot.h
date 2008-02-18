@@ -48,6 +48,7 @@ public:
   void setStop();
   void setStop(bool overwrite);
   void setTurnLeft(double degrees);
+  void setTickDuration(double duration);
   double getBattleFieldSize() const;
 
   // These are normally in Robot and not AdvancedRobot, but due to

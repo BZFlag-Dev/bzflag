@@ -223,6 +223,7 @@ private:
 };
 
 DECLARE_REQUEST(SetTickDuration)
+  SetTickDurationReq(double _duration) : duration(_duration) {}
 private:
   double duration;
 };

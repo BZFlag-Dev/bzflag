@@ -101,6 +101,10 @@ void BZAdvancedRobot::setTurnLeft(double degrees)
   link->sendAndProcess(SetTurnLeftReq(degrees), this);
 }
 
+void BZAdvancedRobot::setTickDuration(double duration)
+{
+  link->sendAndProcess(SetTickDurationReq(duration), this);
+}
 
 double BZAdvancedRobot::getBattleFieldSize() const 
 {
