@@ -33,6 +33,7 @@ bzflag_DATA = \
 	frog.png		\
 	hunt.wav		\
 	hunt_select.wav		\
+	hit.wav				\
 	jump.wav		\
 	jumpjets.png		\
 	killteam.wav		\

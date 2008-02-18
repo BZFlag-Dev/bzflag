@@ -53,6 +53,7 @@
 #define SFX_MESSAGE_ADMIN	29	/* admin message received */
 #define SFX_FLAP	30		/* wings flapping sound  */
 #define SFX_BOUNCE	31		/* bouncing sound */
+#define SFX_HIT		32		/* struck by a shot but not dead yet sound */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

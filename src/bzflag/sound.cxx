@@ -178,7 +178,8 @@ static const char*	soundFiles[] = {
 				"message_team",
 				"message_admin",
 				"flap",
-				"bounce"
+				"bounce",
+				"hit"
 			};
 #define	STD_SFX_COUNT	((int)(countof(soundFiles)))	// the number of "Standard" sounds
 
