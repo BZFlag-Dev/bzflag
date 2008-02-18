@@ -106,7 +106,11 @@ public:
   /* This returns the bearing between our current angle and the location of the tank. */
   double getBearing(const Tank &tank) const;
   double getBearing(double x, double y) const;
-    
+
+  /* This returns the distance between us and the location of the tank. */
+  double getDistance(const Tank &tank) const;
+  double getDistance(double x, double y) const;
+ 
   mutable double gunHeat, distanceRemaining, turnRemaining;
   mutable double battleFieldSize;
   mutable double yPosition, xPosition, zPosition;

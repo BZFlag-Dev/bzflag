@@ -202,7 +202,19 @@ double BZAdvancedRobot::getBearing(double x, double y) const
   vec[1] *= len;
 
   return MessageUtilities::overflow(atan2(vec[1], vec[0])*180.0/M_PI - getHeading(), -180.0, 180.0);
+}
 
+double BZAdvancedRobot::getDistance(const Tank &tank) const
+{
+  return getDistance(tank.position[0], tank.position[1]);
+}
+
+double BZAdvancedRobot::getDistance(double x, double y) const
+{
+  double x0, y0;
+  x0 = getX() - x;
+  y0 = getY() - y;
+  return sqrt(x0*x0 + y0*y0);
 }
 
 // Local Variables: ***
