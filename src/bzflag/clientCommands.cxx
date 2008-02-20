@@ -870,6 +870,9 @@ static std::string cmdScreenshot(const std::string&,
   int w = mainWindow->getWidth(), h = mainWindow->getHeight();
   ssdata->rawPixels = new unsigned char[h * w * 3];
   glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->rawPixels);
+  ssdata->renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); ssdata->renderer += ": ";
+  ssdata->renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); ssdata->renderer += " (OpenGL ";
+  ssdata->renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); ssdata->renderer += ")";
 
 #if defined(HAVE_PTHREADS)
   pthread_t thread;
