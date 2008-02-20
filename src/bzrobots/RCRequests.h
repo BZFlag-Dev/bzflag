@@ -205,8 +205,8 @@ private:
 
 class GetShotVelocityReq : public RCRequest {
 public:
-  GetShotVelocityReq() : id(0) {}
-  GetShotVelocityReq(uint64_t _id) : id(_id) {}
+  GetShotVelocityReq() : id(0), dt(0) {}
+  GetShotVelocityReq(uint64_t _id, double _dt) : id(_id), dt(_dt) {}
 
   std::string getType() const { return "GetShotVelocity"; }
 
@@ -216,6 +216,7 @@ public:
 
 private:
   uint64_t id;
+  double dt;
 };
 
 
