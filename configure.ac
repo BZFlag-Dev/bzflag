@@ -516,6 +516,7 @@ if test "x$enable_threads" != "xno" ; then
     else
 	LIBS=tmpLIBS
     fi
+    AC_MSG_RESULT([$pthread_check])
 fi
 
 # Check for the GLEW library (GL Extension Wrangler)
