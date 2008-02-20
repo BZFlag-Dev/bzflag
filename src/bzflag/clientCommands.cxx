@@ -19,6 +19,9 @@
 #  include <sys/types.h>
 #  include <dirent.h>
 #endif
+#ifdef HAVE_PTHREADS
+#  include <pthread.h>
+#endif
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -632,14 +635,36 @@ static std::string cmdSend(const std::string&,
   return std::string();
 }
 
-static std::string cmdScreenshot(const std::string&,
-				 const CommandManager::ArgList& args, bool*)
-{
-  int snap = atoi(BZDB.get(std::string("lastScreenshot")).c_str());
-  snap++;
+// yeah, we reuse the mutex for different crit sections.  so shoot me.
+#if defined(HAVE_PTHREADS)
+static pthread_mutex_t screenshot_mutex;
+#define LOCK_SCREENSHOT_MUTEX pthread_mutex_lock(&screenshot_mutex);
+#define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
+#elif defined(_WIN32)
+static CRITICAL_SECTION screenshot_critical;
+#define LOCK_SCREENSHOT_MUTEX EnterCriticalSection(&screenshot_critical);
+#define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
+#else
+#define LOCK_SCREENSHOT_MUTEX
+#define UNLOCK_SCREENSHOT_MUTEX
+#endif
 
-  if (args.size() != 0)
-    return "usage: screenshot";
+struct ScreenshotData
+{
+  unsigned char* rawPixels;
+  std::string renderer;
+};
+
+#ifdef _WIN32
+static DWORD WINAPI writeScreenshot(void* data)
+#else
+static void* writeScreenshot(void* data)
+#endif
+{
+  ScreenshotData* ssdata = (ScreenshotData*)data;
+
+  LOCK_SCREENSHOT_MUTEX // prevent simultaneous access to BZDB var
+  int snap = atoi(BZDB.get(std::string("lastScreenshot")).c_str());
 
   std::string filename = getScreenShotDirName();
   const std::string prefix = "bzfi";
@@ -681,6 +706,7 @@ static std::string cmdScreenshot(const std::string&,
   filename += prefix + TextUtils::format("%04d", ++snap) + ext;
 
   BZDB.setInt(std::string("lastScreenshot"),snap);
+  UNLOCK_SCREENSHOT_MUTEX
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
 
@@ -689,17 +715,7 @@ static std::string cmdScreenshot(const std::string&,
     const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
     unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
 
-    // pause to prevent dt from accumulating until done screenshotting
-    LocalPlayer *myTank = LocalPlayer::getMyTank();
-    bool temp_paused = false;
-    if (myTank && !myTank->isPaused())
-	{
-    //  myTank->setDeadStop();
-	//  serverLink->sendPlayerUpdate(myTank);
-      temp_paused = true;
-    }
-
-    //Prepare gamma table
+    // Prepare gamma table
     const bool gammaAdjust = BZDB.isSet("gamma");
     unsigned char gammaTable[256];
     if (gammaAdjust) {
@@ -759,7 +775,7 @@ static std::string cmdScreenshot(const std::string&,
     for (i = h - 1; i >= 0; i--) {
       const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
       b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
-      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
+      memcpy(b + line + 1, ssdata->rawPixels + i * w * 3, w * 3); //copy captured line
       // apply gamma correction if necessary
       if (gammaAdjust) {
 	unsigned char *ptr = b + line + 1;
@@ -768,11 +784,6 @@ static std::string cmdScreenshot(const std::string&,
 	  ptr++;
 	}
       }
-    }
-
-    // let the user know we're paused while saving the file
-    if (temp_paused) {
-      drawFrame(0.0f);
     }
 
     unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
@@ -790,7 +801,7 @@ static std::string cmdScreenshot(const std::string&,
     f->write((char*) &crc, 4);		       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
-	std::string version = "BZFlag "; version += getAppVersion();
+    std::string version = "BZFlag "; version += getAppVersion();
     temp = htonl(9 + (int)version.size()); //(length) tEXt is strlen("Software") + 1 + version.size()
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
@@ -807,11 +818,8 @@ static std::string cmdScreenshot(const std::string&,
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
 
-	// tEXt chunk containing gl renderer information
-	std::string renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); renderer += ": ";
-	renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); renderer += " (OpenGL ";
-	renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); renderer += ")";
-    temp = htonl(12 + (int)renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size()
+    // tEXt chunk containing gl renderer information
+    temp = htonl(12 + (int)ssdata->renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size()
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
@@ -822,7 +830,7 @@ static std::string cmdScreenshot(const std::string&,
     tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strncpy((char*) b, renderer.c_str(), blength-1);	       //(data) Text contents (GL information)
+    strncpy((char*) b, ssdata->renderer.c_str(), blength-1);  //(data) Text contents (GL information)
     f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
     f->write((char*) &crc, 4);		       //(crc) write crc
@@ -838,21 +846,61 @@ static std::string cmdScreenshot(const std::string&,
     delete [] bz;
     delete [] b;
     delete f;
+
     char notify[128];
     snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
+    LOCK_SCREENSHOT_MUTEX // prevent simultaneous access to the control panel messages array
     controlPanel->addMessage(notify);
-
-    // unpause to prevent dt from accumulating until done screenshotting
-    if (myTank && temp_paused)
-	{
-		// do a micro update to prevent DT overuns
-	//  myTank->update(0.001f);
-	//	myTank->setDeadStop();
-	//	serverLink->sendPlayerUpdate(myTank);
-    }
-    // update the display regardless of pausing
-    drawFrame(0.0f);
+    UNLOCK_SCREENSHOT_MUTEX
   }
+
+  delete ssdata->rawPixels;
+  delete ssdata;
+
+  return NULL;
+}
+
+static std::string cmdScreenshot(const std::string&,
+				 const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 0)
+    return "usage: screenshot";
+
+  ScreenshotData* ssdata = new ScreenshotData;
+  int w = mainWindow->getWidth(), h = mainWindow->getHeight();
+  ssdata->rawPixels = new unsigned char[h * w * 3];
+  glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->rawPixels);
+
+#if defined(HAVE_PTHREADS)
+  pthread_t thread;
+  static bool inited = false;
+
+  if (!inited) {
+    pthread_mutex_init(&screenshot_mutex, NULL);
+    inited = true;
+  }
+
+  pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
+#elif defined(_WIN32)
+  static bool inited = false;
+
+  if (!inited) {
+    InitializeCriticalSection(&screenshot_critical);
+    inited = true;
+  }
+
+  CreateThread(
+            NULL, // Security attributes
+            0, // Stack size (0 -> default)
+            writeScreenshot,
+            ssdata,
+            0, // creation flags (0 -> run immediately)
+            NULL); // thread id return value (NULL -> don't care)
+#else
+  // no threads?  sucks to be you, but we'll still write the screenshot
+  writeScreenshot(&ssdata);
+#endif
+
   return std::string();
 }
 
