@@ -347,6 +347,17 @@ bool GetShotPositionReq::process(RCRobotPlayer *)
   return true;
 }
 
+bool GetShotVelocityReq::process(RCRobotPlayer *)
+{
+  Shot shot(id);
+  double x, y, z;
+
+  shot.getVelocity(x, y, z, dt);
+
+  link->send(ShotVelocityReply(id, x, y, z));
+  return true;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

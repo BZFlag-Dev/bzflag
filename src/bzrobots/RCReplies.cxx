@@ -755,6 +755,43 @@ bool ShotPositionReply::updateBot(const BZAdvancedRobot *robot) const
   return true;
 }
 
+messageParseStatus ShotVelocityReply::parse(char **arguments, int count)
+{
+  if (count != 4)
+    return InvalidArgumentCount;
+
+  if (!MessageUtilities::parse(arguments[0], id))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], x))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], y))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], z))
+    return InvalidArguments;
+
+  return ParseOk;
+}
+
+void ShotVelocityReply::getParameters(std::ostream &stream) const
+{
+  stream << id << " " << x << " " << y << " " << z;
+}
+
+bool ShotVelocityReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  const FrontendShot *shot = robot->getShot(id);
+  
+  if(!shot)
+    return false;
+
+  shot->vx = x;
+  shot->vy = y;
+  shot->vz = z;
+
+  return true;
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

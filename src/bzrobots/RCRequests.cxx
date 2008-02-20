@@ -125,6 +125,24 @@ void GetShotPositionReq::getParameters(std::ostream &stream) const
   stream << id << " " << dt;
 }
 
+messageParseStatus GetShotVelocityReq::parse(char **arguments, int count)
+{
+  if (count != 2)
+    return InvalidArgumentCount;
+
+  if (!MessageUtilities::parse(arguments[0], id))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], dt))
+    return InvalidArguments;
+
+  return ParseOk;
+}
+
+void GetShotVelocityReq::getParameters(std::ostream &stream) const
+{
+  stream << id << " " << dt;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

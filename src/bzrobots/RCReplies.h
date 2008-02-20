@@ -404,6 +404,26 @@ private:
   double x, y, z;
 };
 
+class ShotVelocityReply : public RCReply
+{
+public:
+  ShotVelocityReply() {}
+  ShotVelocityReply(uint64_t _id, double _dt) : id(_id), dt(_dt) {}
+  ShotVelocityReply(uint64_t _id, double _x, double _y, double _z) : id(_id), x(_x), y(_y), z(_z) {}
+
+  std::string getType() const { return "ShotVelocity"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+
+private:
+  uint64_t id;
+  double dt;
+
+  double x, y, z;
+};
+
 #endif /* __RCREPLIES_H__ */
 
 // Local Variables: ***

@@ -203,6 +203,22 @@ private:
   double dt;
 };
 
+class GetShotVelocityReq : public RCRequest {
+public:
+  GetShotVelocityReq() : id(0), dt(0) {}
+  GetShotVelocityReq(uint64_t _id, double _dt) : id(_id), dt(_dt) {}
+
+  std::string getType() const { return "GetShotVelocity"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  bool process(RCRobotPlayer *rrp);
+  void getParameters(std::ostream &stream) const;
+
+private:
+  uint64_t id;
+  double dt;
+};
+
 
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \

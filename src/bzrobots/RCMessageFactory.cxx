@@ -60,6 +60,7 @@ void RCMessageFactory<RCRequest>::initialize()
   ADD_REQUEST(GetHeading);
   ADD_REQUEST(GetObstacles);
   ADD_REQUEST(GetShotPosition);
+  ADD_REQUEST(GetShotVelocity);
 }
 
 
@@ -89,6 +90,7 @@ void RCMessageFactory<RCReply>::initialize()
   ADD_REPLY(ShotsBegin);
   ADD_REPLY(Shot);
   ADD_REPLY(ShotPosition);
+  ADD_REPLY(ShotVelocity);
 }
 
 

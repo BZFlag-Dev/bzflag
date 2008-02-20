@@ -31,12 +31,15 @@ public:
   Shot(PlayerId _plr, uint16_t _sid);
 
   PlayerId getPlayerId(void) const;
+  uint16_t getShotId(void) const;
+
   uint64_t getId(void) const;
   void setId(uint64_t id);
 
   messageParseStatus parse(char **arguments, int count);
 
   virtual void getPosition(double &x, double &y, double &z, double dt = 0) const; //Return the shots position in dt seconds
+  virtual void getVelocity(double &x, double &y, double &z, double dt = 0) const;
 
 protected:
   uint64_t id;
@@ -52,8 +55,10 @@ class FrontendShot : public Shot
     void setRobot(const BZAdvancedRobot *_robot);
 
     void getPosition(double &x, double &y, double &z, double dt = 0) const;
+    void getVelocity(double &x, double &y, double &z, double dt = 0) const;
 
     mutable double x, y, z;
+    mutable double vx, vy, vz;
 
   protected:
     const BZAdvancedRobot *robot;
