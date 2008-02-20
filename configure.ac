@@ -292,6 +292,12 @@ AC_CHECK_LIB(m, sqrtf)
 AC_CHECK_LIB([socket], [socket])
 AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
 
+# see if pthreads are in libc_r (as on FreeBSD) or libpthread
+AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r", 
+    [AC_CHECK_LIB([pthread], [pthread_create], LIBPTHREAD="-lpthread",
+     LIBPTHREAD="")]
+)
+
 # check for various IEEE and c99 standard math functions in libm
 AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
 AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
@@ -503,7 +509,7 @@ AC_SUBST(GLIBS)
 AC_MSG_CHECKING([for working pthreads])
 if test "x$enable_threads" != "xno" ; then
     tmpLIBS=$LIBS
-    LIBS="-lpthread"
+    LIBS=$LIBPTHREAD
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
 				    [[pthread_t thread;
 				      pthread_create(&thread, NULL, NULL, NULL);]])],
