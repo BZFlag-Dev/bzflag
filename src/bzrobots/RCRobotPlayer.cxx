@@ -89,8 +89,8 @@ void RCRobotPlayer::doUpdateMotion(float dt)
         setDesiredAngVel(0);
       }
     } else {
-      setDesiredAngVel(0);
-      setDesiredSpeed(0);
+      /*setDesiredAngVel(0);
+      setDesiredSpeed(0);*/
     }
 
   }

@@ -22,6 +22,7 @@
 #include "RCReply.h"
 #include "RCEvent.h"
 #include "Tank.h"
+#include "Shot.h"
 
 /* bzflag interface headers */
 #include "RemotePlayer.h"
@@ -355,6 +356,53 @@ private:
   enum ObstacleTypes type;
 };
 
+class ShotsBeginReply : public RCReply
+{
+public:
+  ShotsBeginReply() {}
+
+  std::string getType() const { return "ShotsBegin"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+};
+
+class ShotReply : public RCReply
+{
+public:
+  ShotReply() {}
+  ShotReply(Shot _shot) : shot(_shot) {}
+  
+  std::string getType() const { return "Shot"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+
+private:
+  Shot shot;
+};
+
+class ShotPositionReply : public RCReply
+{
+public:
+  ShotPositionReply() {}
+  ShotPositionReply(uint64_t _id, double _dt) : id(_id), dt(_dt) {}
+  ShotPositionReply(uint64_t _id, double _x, double _y, double _z) : id(_id), x(_x), y(_y), z(_z) {}
+
+  std::string getType() const { return "ShotPosition"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  void getParameters(std::ostream &stream) const;
+  bool updateBot(const BZAdvancedRobot *robot) const;
+
+private:
+  uint64_t id;
+  double dt;
+
+  double x, y, z;
+};
 
 #endif /* __RCREPLIES_H__ */
 

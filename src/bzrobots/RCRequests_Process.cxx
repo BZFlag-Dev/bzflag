@@ -187,7 +187,28 @@ bool GetFlagsReq::process(RCRobotPlayer *)
 }
 bool GetShotsReq::process(RCRobotPlayer *)
 {
-  // TODO: Implement this. :p
+  link->send(ShotsBeginReply());
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (!player[i])
+      continue;
+
+    /*TeamColor team = player[i]->getTeam();
+    if (team == ObserverTeam)
+      continue;
+    if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
+      continue;*/
+
+    for (int j = 0; j < player[i]->getMaxShots(); j++) {
+      ShotPath *path = player[i]->getShot(j);
+      if (!path || path->isExpired())
+        continue;
+
+      const FiringInfo &info = path->getFiringInfo();
+
+      link->send(ShotReply(Shot(info.shot.player, info.shot.id)));
+    }
+  }
+
   return true;
 }
 bool GetMyTanksReq::process(RCRobotPlayer *)
@@ -312,6 +333,17 @@ bool GetObstaclesReq::process(RCRobotPlayer *)
     Obstacle *obs = walls[i];
     link->send(ObstacleReply(obs, wallType));
   }
+  return true;
+}
+
+bool GetShotPositionReq::process(RCRobotPlayer *)
+{
+  Shot shot(id);
+  double x, y, z;
+
+  shot.getPosition(x, y, z, dt);
+
+  link->send(ShotPositionReply(id, x, y, z));
   return true;
 }
 

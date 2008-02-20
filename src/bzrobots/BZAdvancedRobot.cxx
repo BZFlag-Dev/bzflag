@@ -35,6 +35,10 @@ void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
 {
   link = _link;
 }
+RCLinkFrontend *BZAdvancedRobot::getLink(void) const
+{
+  return link;
+}
 
 void BZAdvancedRobot::run()
 {
@@ -154,6 +158,11 @@ void BZAdvancedRobot::getObstacles() const
   link->sendAndProcess(GetObstaclesReq(), this);
 }
 
+void BZAdvancedRobot::getShots() const
+{
+  link->sendAndProcess(GetShotsReq(), this);
+}
+
 long BZAdvancedRobot::getTime() const 
 {
   /* TODO: Implement this. */
@@ -215,6 +224,16 @@ double BZAdvancedRobot::getDistance(double x, double y) const
   x0 = getX() - x;
   y0 = getY() - y;
   return sqrt(x0*x0 + y0*y0);
+}
+
+const FrontendShot *BZAdvancedRobot::getShot(uint64_t id) const
+{
+  for (unsigned int i = 0; i < shots.size(); i++) {
+    if (shots[i].getId() == id)
+      return &shots[i];
+  }
+
+  return NULL;
 }
 
 // Local Variables: ***

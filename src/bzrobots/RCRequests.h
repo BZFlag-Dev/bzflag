@@ -187,6 +187,22 @@ public:
   bool process(RCRobotPlayer *rrp);
 };
 
+class GetShotPositionReq : public RCRequest {
+public:
+  GetShotPositionReq() : id(0), dt(0) {}
+  GetShotPositionReq(uint64_t _id, double _dt) : id(_id), dt(_dt) {}
+
+  std::string getType() const { return "GetShotPosition"; }
+
+  messageParseStatus parse(char **arguments, int count);
+  bool process(RCRobotPlayer *rrp);
+  void getParameters(std::ostream &stream) const;
+
+private:
+  uint64_t id;
+  double dt;
+};
+
 
 /* This is just a shorthand to not repeat a bunch of typing. ;-) */
 #define DECLARE_REQUEST(COMMANDNAME) class COMMANDNAME ## Req : public RCRequest \

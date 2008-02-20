@@ -59,6 +59,7 @@ void RCMessageFactory<RCRequest>::initialize()
   ADD_REQUEST(GetLength);
   ADD_REQUEST(GetHeading);
   ADD_REQUEST(GetObstacles);
+  ADD_REQUEST(GetShotPosition);
 }
 
 
@@ -85,6 +86,9 @@ void RCMessageFactory<RCReply>::initialize()
   ADD_REPLY(Players);
   ADD_REPLY(ObstaclesBegin);
   ADD_REPLY(Obstacle);
+  ADD_REPLY(ShotsBegin);
+  ADD_REPLY(Shot);
+  ADD_REPLY(ShotPosition);
 }
 
 

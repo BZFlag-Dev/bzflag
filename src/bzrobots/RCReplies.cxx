@@ -20,12 +20,14 @@
 #include "WallObstacle.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
+#include "Roster.h"
 
 /* local implementation headers */
 #include "RCMessageFactory.h"
 #include "BZAdvancedRobot.h"
 #include "MessageUtilities.h"
 #include "Tank.h"
+#include "Shot.h"
 
 
 messageParseStatus IdentifyBackend::parse(char **arguments, int count)
@@ -464,7 +466,7 @@ messageParseStatus ObstacleReply::parse(char **arguments, int count)
   if (count == 0)
     return InvalidArgumentCount;
 
-  int t;
+  uint32_t t;
 
   if (!MessageUtilities::parse(arguments[0], t))
     return InvalidArguments;
@@ -618,7 +620,7 @@ messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
   float p[3];
   float s[3];
   float rot;
-  int team;
+  uint32_t team;
 
   if (!MessageUtilities::parse(arguments[0], p[0]))
     return InvalidArguments;
@@ -681,6 +683,75 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
 bool ObstacleReply::updateBot(const BZAdvancedRobot *robot) const
 {
   robot->obstacles.push_back(obs);
+  return true;
+}
+
+messageParseStatus ShotsBeginReply::parse(char **, int count)
+{
+  return (count == 0 ? ParseOk : InvalidArgumentCount);
+}
+
+void ShotsBeginReply::getParameters(std::ostream &) const
+{
+}
+
+bool ShotsBeginReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  robot->shots.clear();
+  return true;
+}
+
+void ShotReply::getParameters(std::ostream &stream) const
+{
+  stream << shot;
+}
+
+messageParseStatus ShotReply::parse(char **arguments, int count)
+{
+  return shot.parse(arguments, count);
+}
+
+bool ShotReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  FrontendShot s(shot);
+  s.setRobot(robot);
+  robot->shots.push_back(s);
+  return true;
+}
+
+messageParseStatus ShotPositionReply::parse(char **arguments, int count)
+{
+  if (count != 4)
+    return InvalidArgumentCount;
+
+  if (!MessageUtilities::parse(arguments[0], id))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[1], x))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[2], y))
+    return InvalidArguments;
+  if (!MessageUtilities::parse(arguments[3], z))
+    return InvalidArguments;
+
+  return ParseOk;
+}
+
+void ShotPositionReply::getParameters(std::ostream &stream) const
+{
+  stream << id << " " << x << " " << y << " " << z;
+}
+
+bool ShotPositionReply::updateBot(const BZAdvancedRobot *robot) const
+{
+  const FrontendShot *shot = robot->getShot(id);
+  
+  if(!shot)
+    return false;
+
+  shot->x = x;
+  shot->y = y;
+  shot->z = z;
+
   return true;
 }
 

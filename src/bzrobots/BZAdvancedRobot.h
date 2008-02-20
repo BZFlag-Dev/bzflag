@@ -22,6 +22,7 @@
 #include "RCLinkFrontend.h"
 #include "RCEvents.h"
 #include "Tank.h"
+#include "Shot.h"
 
 
 /**
@@ -60,6 +61,7 @@ public:
   double getLength() const;
   void getPlayers() const;
   void getObstacles() const;
+  void getShots() const;
   long getTime() const;
   double getVelocity() const;
   double getX() const;
@@ -101,6 +103,7 @@ public:
   void setCompatability(bool newState);
     
   void setLink(RCLinkFrontend *_link);
+  RCLinkFrontend *getLink(void) const;
 
   /* These are helper functions. */
   /* This returns the bearing between our current angle and the location of the tank. */
@@ -110,6 +113,9 @@ public:
   /* This returns the distance between us and the location of the tank. */
   double getDistance(const Tank &tank) const;
   double getDistance(double x, double y) const;
+
+  /* This returns the shot by given id */
+  const FrontendShot *getShot(uint64_t id) const;
  
   mutable double gunHeat, distanceRemaining, turnRemaining;
   mutable double battleFieldSize;
@@ -118,6 +124,7 @@ public:
   mutable double heading;
   mutable std::vector<Tank> players;
   mutable std::vector<Obstacle *> obstacles;
+  mutable std::vector<FrontendShot> shots;
 };
 
 #else

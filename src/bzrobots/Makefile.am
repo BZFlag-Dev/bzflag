@@ -64,6 +64,8 @@ genericfiles =				\
 	RCRobotPlayer.h			\
 	Tank.h				\
 	Tank.cxx			\
+	Shot.h				\
+	Shot.cxx			\
 	Frontend.cxx			\
 	Frontend.h			\
 	Logger.h			\
