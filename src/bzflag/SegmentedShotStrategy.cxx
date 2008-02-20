@@ -168,6 +168,39 @@ void			SegmentedShotStrategy::update(float dt)
   }
 }
 
+bool			SegmentedShotStrategy::predictPosition(float dt, float p[3]) const
+{
+  float ctime = currentTime + dt;
+  int cur=0;
+  // see if we've moved to another segment
+  const int numSegments = (const int)segments.size();
+  while (cur < numSegments && segments[cur].end < ctime) cur++;
+  if (cur >= numSegments) return false;
+
+  segments[segment].ray.getPoint(float(ctime - segments[segment].start), p);
+
+  return true;
+}
+
+
+bool			SegmentedShotStrategy::predictVelocity(float dt, float p[3]) const
+{
+  float ctime = currentTime + dt;
+  int cur=0;
+  // see if we've moved to another segment
+  const int numSegments = (const int)segments.size();
+  while (cur < numSegments && segments[cur].end < ctime) cur++;
+  if (cur >= numSegments) return false;
+
+  const float *pos;
+  pos = segments[segment].ray.getDirection();
+
+  p[0] = pos[0]; p[1] = pos[1]; p[2] = pos[2];
+
+  return true;
+}
+
+
 void			SegmentedShotStrategy::setCurrentTime(const
 						double _currentTime)
 {

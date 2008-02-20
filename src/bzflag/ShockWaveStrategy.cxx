@@ -99,6 +99,30 @@ void ShockWaveStrategy::update(float dt)
   if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
 
+bool        ShockWaveStrategy::predictPosition(float dt, float p[3]) const
+{
+  float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+  if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
+
+  const float *pos = getPath().getPosition();
+  p[0] = pos[0];
+  p[1] = pos[1];
+  p[2] = pos[2];
+  return true;
+}
+
+bool        ShockWaveStrategy::predictVelocity(float dt, float p[3]) const
+{
+  float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+  if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
+
+  p[0] = (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+  p[1] = 0;
+  p[2] = 0;
+
+  return true;
+}
+
 
 float ShockWaveStrategy::checkHit(const ShotCollider& tank, float position[3]) const
 {

@@ -261,6 +261,141 @@ void GuidedMissileStrategy::update(float dt)
   setVelocity(newDirection);
 }
 
+bool GuidedMissileStrategy::predictPosition(float dt, float p[3]) const
+{
+  float v[3];
+  return _predict(dt, p, v);
+}
+
+bool GuidedMissileStrategy::predictVelocity(float dt, float v[3]) const
+{
+  float p[3];
+  return _predict(dt, p, v);
+}
+
+bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
+{
+  const bool isRemote = (getPath().getPlayer() !=
+			 LocalPlayer::getMyTank()->getId());
+
+  float ctime = currentTime + dt;
+
+  /*
+   * If it expires there we'll return false.
+   */
+  if (ctime - getPath().getStartTime() >= getPath().getLifetime())
+    return false;
+
+  // get target
+  const Player* target = NULL;
+  if (isRemote)
+  {
+    if (lastTarget != NoPlayer)
+      target = lookupPlayer(lastTarget);
+  }
+  else
+  {
+    LocalPlayer* myTank = LocalPlayer::getMyTank();
+    if (myTank)
+      target = myTank->getTarget();
+  }
+
+  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+    target = NULL;
+
+  float tmpAzimuth = azimuth, tmpElevation = elevation;
+  // compute next segment's ray
+  if (target)
+  {
+    // turn towards target
+    // find desired direction
+    const float* targetPos = target->getPosition();
+    float desiredDir[3];
+    desiredDir[0] = targetPos[0] - nextPos[0];
+    desiredDir[1] = targetPos[1] - nextPos[1];
+    desiredDir[2] = targetPos[2] - nextPos[2];
+    desiredDir[2] += target->getMuzzleHeight(); // right between the eyes
+
+    // compute desired angles
+    float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
+    float newElevation = atan2f(desiredDir[2], hypotf(desiredDir[1], desiredDir[0]));
+
+    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
+
+    // compute new azimuth
+    float deltaAzimuth = limitAngle(newAzimuth - azimuth);
+    if (fabsf(deltaAzimuth) <= dt * gmissileAng)
+      tmpAzimuth = limitAngle(newAzimuth);
+    else if (deltaAzimuth > 0.0f)
+      tmpAzimuth = limitAngle(azimuth + dt * gmissileAng);
+    else
+      tmpAzimuth = limitAngle(azimuth - dt * gmissileAng);
+
+    // compute new elevation
+    float deltaElevation = limitAngle(newElevation - elevation);
+    if (fabsf(deltaElevation) <= dt * gmissileAng)
+      tmpElevation = limitAngle(newElevation);
+    else if (deltaElevation > 0.0f)
+      tmpElevation = limitAngle(elevation + dt * gmissileAng);
+    else
+      tmpElevation = limitAngle(elevation - dt * gmissileAng);
+  }
+
+  float newDirection[3];
+  newDirection[0] = cosf(tmpAzimuth) * cosf(tmpElevation);
+  newDirection[1] = sinf(tmpAzimuth) * cosf(tmpElevation);
+  newDirection[2] = sinf(tmpElevation);
+  Ray ray = Ray(nextPos, newDirection);
+
+  // get next position
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  ray.getPoint(dt * shotSpeed, p);
+
+  // see if we hit something
+  if (p[2] <= 0.0f)
+    return false;
+  else
+  {
+    // see if we hit a building
+    float t = float((currentTime - prevTime) * shotSpeed);
+    int face;
+    const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
+    const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
+
+    World *world = World::getWorld();
+    if (!world) {
+      return false;
+    }
+
+    // check in reverse order to see what we hit first
+    if (teleporter) {
+      // entered teleporter -- teleport it
+      unsigned int seed = getPath().getShotId();
+      int source = world->getTeleporter(teleporter, face);
+      int teletarget = world->getTeleportTarget(source, seed);
+
+      int outFace;
+      const Teleporter* outTeleporter = world->getTeleporter(teletarget, outFace);
+      teleporter->getPointWRT(*outTeleporter, face, outFace, p, NULL, tmpAzimuth, p, NULL, &tmpAzimuth);
+    } else if (building) {
+      // expire on next update
+      return false;
+    }
+  }
+
+  // update shot
+  newDirection[0] *= shotSpeed;
+  newDirection[1] *= shotSpeed;
+  newDirection[2] *= shotSpeed;
+
+  v[0] = newDirection[0];
+  v[1] = newDirection[1];
+  v[2] = newDirection[2];
+
+  return true;
+}
+
+
 float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);

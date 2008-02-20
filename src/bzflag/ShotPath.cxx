@@ -157,6 +157,16 @@ void			ShotPath::boostReloadTime(float dt)
   reloadTime += dt;
 }
 
+bool                    ShotPath::predictPosition(float dt, float p[3]) const
+{
+  return getStrategy()->predictPosition(dt, p);
+}
+
+bool                    ShotPath::predictVelocity(float dt, float p[3]) const
+{
+  return getStrategy()->predictVelocity(dt, p);
+}
+
 //
 // LocalShotPath
 //

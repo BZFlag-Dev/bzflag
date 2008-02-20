@@ -35,6 +35,9 @@ class GuidedMissileStrategy : public ShotStrategy {
 			~GuidedMissileStrategy();
 
     void		update(float dt);
+    bool                predictPosition(float dt, float p[3]) const;
+    bool                predictVelocity(float dt, float p[3]) const;
+
     float		checkHit(const ShotCollider&, float[3]) const;
     void		sendUpdate(const FiringInfo&) const;
     void		readUpdate(uint16_t, void*);
@@ -44,6 +47,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
   private:
     float		checkBuildings(const Ray& ray);
+    bool                _predict(float dt, float p[3], float v[3]) const;
 
   private:
     double		prevTime;

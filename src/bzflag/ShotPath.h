@@ -72,6 +72,10 @@ class ShotPath {
 
   virtual void	  update(float) {};
 
+  //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
+  bool    predictPosition(float dt, float p[3]) const;
+  bool    predictVelocity(float dt, float p[3]) const;
+
   protected:
 			ShotPath(const FiringInfo&, double);
     void		updateShot(float dt);

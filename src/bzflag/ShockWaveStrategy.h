@@ -31,6 +31,8 @@ class ShockWaveStrategy : public ShotStrategy {
 			~ShockWaveStrategy();
 
     void		update(float dt);
+    bool        predictPosition(float dt, float p[3]) const;
+    bool        predictVelocity(float dt, float p[3]) const;
     float		checkHit(const ShotCollider&, float[3]) const;
     bool		isStoppedByHit() const;
     void		addShot(SceneDatabase*, bool colorblind);
