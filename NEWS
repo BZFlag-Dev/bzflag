@@ -5,6 +5,7 @@
 
 BZFlag 2.99.x
 ------------
+* Screenshot compression is done in a new thread - Daniel Remenak, randomparticle
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 * Allow plugins to register custom flag types - Daniel Remenak
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
