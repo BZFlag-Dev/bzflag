@@ -36,7 +36,9 @@ namespace MessageUtilities
   template<>
   bool parse(const char *string, float &dest);
   template<>
-  bool parse(const char *string, int &dest);
+  bool parse(const char *string, uint64_t &dest);
+  template<>
+  bool parse(const char *string, uint32_t &dest);
   template<>
   bool parse(const char *string, std::string &dest);
 

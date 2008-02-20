@@ -44,11 +44,10 @@ template <>
 bool MessageUtilities::parse(const char *str, float &dest)
 {
   double tmp;
-  bool res;
 
   // Use double parsing and convert
-  res = parse(str, tmp);
-  if (!res) return false;
+  if (!MessageUtilities::parse(str, tmp))
+    return false;
 
   dest = (float)tmp;
 
@@ -56,10 +55,23 @@ bool MessageUtilities::parse(const char *str, float &dest)
 }
 
 template <>
-bool MessageUtilities::parse(const char *str, int &dest)
+bool MessageUtilities::parse(const char *str, uint64_t &dest)
 {
-  if (sscanf(str,"%d",&dest) != 1)
+  if (sscanf(str,"%lld",(long long int *)&dest) != 1)
     return false;
+  return true;
+}
+
+template<>
+bool MessageUtilities::parse(const char *str, uint32_t &dest)
+{
+  uint64_t tmp;
+
+  if (!MessageUtilities::parse(str, tmp))
+    return false;
+
+  dest = (uint32_t) tmp;
+
   return true;
 }
 
