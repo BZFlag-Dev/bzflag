@@ -134,7 +134,7 @@ void*			nboPackString(void* b, const void* m, int len)
 
 void*			nboPackStdString(void* b, const std::string& str)
 {
-  uint32_t strSize = str.size();
+  uint32_t strSize = (uint32_t)str.size();
   b = nboPackUInt(b, strSize);
   b = nboPackString(b, str.c_str(), strSize);
   return b;
@@ -330,7 +330,7 @@ void*			nboUnpackStdStringRaw(void* b, std::string& str)
 
 unsigned int nboStdStringPackSize(const std::string& str)
 {
-  return (sizeof(uint32_t) + str.size());
+  return (unsigned int)(sizeof(uint32_t) + str.size());
 }
 
 
