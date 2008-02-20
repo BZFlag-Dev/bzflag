@@ -129,12 +129,7 @@ fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
 # check whether threads are desired
-AC_ARG_ENABLE(threads, [  --enable-threads        build with thread])
-if test x$enable_threads = xyes; then
-    AC_DEFINE(USE_THREADS, 1, [Use threads])
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
-    LDFLAGS="$LDFLAGS -lpthread"
-fi
+AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
 
 # do we want bzadmin?
 AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
@@ -503,6 +498,25 @@ fi
 
 LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
+
+# try out pthreads if it's enabled, disable it if we don't have it
+AC_MSG_CHECKING([for working pthreads])
+if test "x$enable_threads" != "xno" ; then
+    tmpLIBS=$LIBS
+    LIBS="-lpthread"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
+				    [[pthread_t thread;
+				      pthread_create(&thread, NULL, NULL, NULL);]])],
+		   [pthread_check="yes"], [pthread_check="no"])
+    if test $pthread_check = "yes"; then
+	AC_DEFINE(HAVE_PTHREADS, 1, [posix-compliant threading is available])
+	LIBS="$tmpLIBS $LIBS"
+	CONF_CXXFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
+	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
+    else
+	LIBS=tmpLIBS
+    fi
+fi
 
 # Check for the GLEW library (GL Extension Wrangler)
 AC_MSG_CHECKING([for GLEW library])
