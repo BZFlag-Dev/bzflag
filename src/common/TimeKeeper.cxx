@@ -347,7 +347,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
   sched_setaffinity(0, sizeof(mask), &mask);
 #elif defined(WIN32)
   /* windowsy fix for time travel */
-  HANDLE hPrc = GetCurrentProcess();
+  HANDLE hThread = GetCurrentThread();
   DWORD dwMask = 1 << processor;
   DWORD dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
@@ -355,7 +355,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
     logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).");
     return;
   }
-  SetProcessAffinityMask(hPrc, dwMask);
+  SetThreadAffinityMask(hThread, dwMask);
 #endif
 }
 
