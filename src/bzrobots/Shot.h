@@ -39,7 +39,7 @@ public:
   messageParseStatus parse(char **arguments, int count);
 
   virtual void getPosition(double &x, double &y, double &z, double dt = 0) const; //Return the shots position in dt seconds
-  virtual void getVelocity(double &x, double &y, double &z, double dt = 0) const;
+  virtual void getVelocity(double &x, double &y, double &z) const;
 
 protected:
   uint64_t id;
@@ -55,7 +55,7 @@ class FrontendShot : public Shot
     void setRobot(const BZAdvancedRobot *_robot);
 
     void getPosition(double &x, double &y, double &z, double dt = 0) const;
-    void getVelocity(double &x, double &y, double &z, double dt = 0) const;
+    void getVelocity(double &x, double &y, double &z) const;
 
     mutable double x, y, z;
     mutable double vx, vy, vz;
