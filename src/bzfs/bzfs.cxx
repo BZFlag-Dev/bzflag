@@ -2640,6 +2640,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (!victim->isAlive()) return;
 
   victim->setRestartOnBase(respawnOnBase);
+  victim->setSpawnDelay((double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
   victim->setDead();
 
   // call any events for a playerdeath
@@ -2788,6 +2789,22 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 #endif
     if (winningTeam != (int)NoTeam)
       checkTeamScore(killerIndex, winningTeam);
+  }
+}
+
+void doSpawns()
+{
+  TimeKeeper curTime = TimeKeeper::getCurrent();
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p == NULL) {
+      continue;
+    }
+    if (p->player.waitingToSpawn() && (p->player.getNextSpawnTime() <= curTime))
+    {
+      // Let them live!
+      playerAlive(i);
+    }
   }
 }
 
@@ -3041,12 +3058,14 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
   // everyone on losing team is dead
+  double spawnDelay = (double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
     if ((p == NULL) || (teamIndex != (int)p->player.getTeam())) {
       continue;
     }
     p->player.setDead();
+    p->player.setSpawnDelay(spawnDelay);
     p->player.setRestartOnBase(true);
     zapFlagByPlayer(i);
   }
@@ -3741,9 +3760,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
 	sendMessage(ServerPlayer, t, buffer);
 
-	// Make them pay dearly for trying to rejoin quickly
-	playerAlive(t);
-	playerKilled(t, t, 0, -1, Flags::Null, -1);
+	// Make them wait for trying to rejoin quickly
+	playerData->player.setSpawnDelay((double)waitTime);
+	playerData->player.queueSpawn();
 
 	break;
       }
@@ -3752,7 +3771,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (clOptions->timeLimit>0.0f && !countdownActive) {
 	playerData->player.setPlayedEarly();
       }
-      playerAlive(t);
+      playerData->player.queueSpawn();
       break;
     }
 
@@ -5776,6 +5795,9 @@ int main(int argc, char **argv)
     bz_TickEventData	tickData;
     tickData.time = TimeKeeper::getCurrent().getSeconds();
     worldEventManager.callEvents(bz_eTickEvent,&tickData);
+
+    // Spawn waiting players
+    doSpawns();
 
     // Clean pending players
     bool resetGame = GameKeeper::Player::clean();

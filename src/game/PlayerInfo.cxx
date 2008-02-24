@@ -43,6 +43,8 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   clientVersionMinor = -1;
   clientVersionRevision = -1;
   validEnter = false;
+  nextSpawnTime = TimeKeeper::getSunGenesisTime();
+  wantsToSpawn = false;
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
@@ -82,6 +84,7 @@ void PlayerInfo::signingOn() {
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;
+  wantsToSpawn = false;
   flag = -1;
 }
 

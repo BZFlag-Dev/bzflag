@@ -29,6 +29,7 @@
 #include "Protocol.h"
 #include "Flag.h"
 #include "WordFilter.h"
+#include "StateDatabase.h"
 
 
 enum ClientState {
@@ -108,6 +109,10 @@ public:
   void	hasSent();
   bool	hasPlayedEarly();
   bool	hasSentEnter() {return validEnter;}
+  TimeKeeper  getNextSpawnTime() const;
+  void	setSpawnDelay(double delay);
+  bool	waitingToSpawn() const;
+  void	queueSpawn();
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
@@ -161,6 +166,12 @@ private:
   bool validEnter;
 
   TimeKeeper lastFlagDropTime;
+
+  // time of player's next allowed spawn
+  TimeKeeper nextSpawnTime;
+
+  // Requested a spawn?
+  bool wantsToSpawn;
 
 
   // spam prevention
@@ -255,6 +266,24 @@ inline bool PlayerInfo::isBot() const {
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {
   return wasRabbit || victim.team == RabbitTeam;
 }
+
+inline TimeKeeper PlayerInfo::getNextSpawnTime() const {
+  return nextSpawnTime;
+}
+
+inline void PlayerInfo::setSpawnDelay(double delay) {
+  nextSpawnTime = TimeKeeper::getCurrent();
+  nextSpawnTime += delay;
+}
+
+inline bool PlayerInfo::waitingToSpawn() const {
+  return wantsToSpawn;
+}
+
+inline void PlayerInfo::queueSpawn() {
+  wantsToSpawn = true;
+}
+
 
 #endif
 

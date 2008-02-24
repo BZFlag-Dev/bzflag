@@ -91,6 +91,7 @@ extern void playerKilled(int	     victimIndex,
 			 const FlagType *flagType,
 			 int	     phydrv,
 			 bool	    respawnOnBase = false);
+extern void doSpawns();
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
