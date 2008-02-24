@@ -1526,7 +1526,7 @@ BZF_API int bz_getDebugLevel ( void );
 
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
-BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int durration, const char* reason );
+BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int duration, const char* reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
 BZF_API bz_APIStringList* bz_getReports( void );
 

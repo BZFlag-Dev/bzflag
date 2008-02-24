@@ -2283,7 +2283,7 @@ BZF_API bool bz_kickUser(int playerIndex, const char *reason, bool notify)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int durration, const char *reason)
+BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const char *reason)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
   if(!player || !reason || !ip)
@@ -2292,7 +2292,7 @@ BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int durration, const 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
 
-  if(clOptions->acl.ban(ip, player->player.getCallSign(), durration, reason))
+  if(clOptions->acl.ban(ip, player->player.getCallSign(), duration, reason))
     clOptions->acl.save();
   else
     return false;
