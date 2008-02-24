@@ -3619,6 +3619,15 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  }
   }
 
+  bz_MsgDebugEventData eventData;
+  eventData.code[0] = ((char*)&code)[0];
+  eventData.code[1] = ((char*)&code)[1];
+  eventData.time = TimeKeeper::getCurrent().getSeconds();
+  eventData.len = (size_t)len;
+  eventData.msg = (unsigned char*)buf;
+
+  worldEventManager.callEvents(&eventData);
+
   switch (code) {
     // player joining
     case MsgEnter: {

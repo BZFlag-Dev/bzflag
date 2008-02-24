@@ -25,81 +25,92 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
-	tmEventTypeList::iterator eventItr = eventList.begin();
-	while (eventItr != eventList.end())
-	{
-		tvEventList::iterator itr = eventItr->second.begin();
-		while ( itr != eventItr->second.end() )
-		{
-			if ((*itr) && (*itr)->autoDelete())
-				delete (*itr);
-			*itr = NULL;
+  tmEventTypeList::iterator eventItr = eventList.begin();
+  while (eventItr != eventList.end())
+  {
+    tvEventList::iterator itr = eventItr->second.begin();
+    while ( itr != eventItr->second.end() )
+    {
+      if ((*itr) && (*itr)->autoDelete())
+	delete (*itr);
+      *itr = NULL;
 
-			itr++;
-		}
-		eventItr++;
-	}
+      itr++;
+    }
+    eventItr++;
+  }
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-	if (!theEvent)
-		return;
+  if (!theEvent)
+    return;
 
-	if (eventList.find(eventType) == eventList.end())
-	{
-		tvEventList newList;
-		eventList[eventType] = newList;
-	}
+  if (eventList.find(eventType) == eventList.end())
+  {
+    tvEventList newList;
+    eventList[eventType] = newList;
+  }
 
-	eventList.find(eventType)->second.push_back(theEvent);
+  eventList.find(eventType)->second.push_back(theEvent);
 }
 
 void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-	if (!theEvent)
-		return;
+  if (!theEvent)
+    return;
 
-	tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
-	if (eventTypeItr == eventList.end())
-		return;
+  tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
+  if (eventTypeItr == eventList.end())
+    return;
 
-	tvEventList::iterator itr = eventTypeItr->second.begin();
-	while (itr != eventTypeItr->second.end())
-	{
-		if (*itr == theEvent)
-			itr = eventTypeItr->second.erase(itr);
-		else
-			itr++;
-	}
+  tvEventList::iterator itr = eventTypeItr->second.begin();
+  while (itr != eventTypeItr->second.end())
+  {
+    if (*itr == theEvent)
+      itr = eventTypeItr->second.erase(itr);
+    else
+      itr++;
+  }
 }
 
 tvEventList WorldEventManager::getEventList ( bz_eEventType eventType)
 {
-	tvEventList	eList;
+  tvEventList	eList;
 
-	tmEventTypeList::iterator itr = eventList.find(eventType);
-	if ( itr == eventList.end() )
-		return eList;
+  tmEventTypeList::iterator itr = eventList.find(eventType);
+  if ( itr == eventList.end() )
+    return eList;
 
-	eList = itr->second;
-	return eList;
+  eList = itr->second;
+  return eList;
 }
 
-void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData	*eventData )
+void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eventData )
 {
-	if (!eventData || getEventCount(eventType)==0 )
-		return;
+  if (!eventData || getEventCount(eventType)==0 )
+    return;
 
-	tvEventList	eList = getEventList(eventType);
+  tvEventList	eList = getEventList(eventType);
 
-	for ( unsigned int i = 0; i < eList.size(); i++)
-		eList[i]->process(eventData);
+  for ( unsigned int i = 0; i < eList.size(); i++)
+    eList[i]->process(eventData);
+}
+
+void WorldEventManager::callEvents (  bz_EventData  *eventData )
+{
+  if (!eventData || getEventCount(eventData->eventType)==0 )
+    return;
+
+  tvEventList	eList = getEventList(eventData->eventType);
+
+  for ( unsigned int i = 0; i < eList.size(); i++)
+    eList[i]->process(eventData);
 }
 
 int WorldEventManager::getEventCount ( bz_eEventType eventType )
 {
-	return (int)getEventList(eventType).size();
+  return (int)getEventList(eventType).size();
 }
 
 
