@@ -3625,6 +3625,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
   eventData.time = TimeKeeper::getCurrent().getSeconds();
   eventData.len = (size_t)len;
   eventData.msg = (unsigned char*)buf;
+  eventData.playerID = playerData->getIndex();
 
   worldEventManager.callEvents(&eventData);
 

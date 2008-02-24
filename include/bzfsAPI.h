@@ -1048,6 +1048,7 @@ public:
     eventType = bz_eMsgDebugEvent;
     receive = true;
     time = 0.0;
+    playerID = -1;
   }
   virtual ~bz_MsgDebugEventData(){};
 
@@ -1057,6 +1058,7 @@ public:
 
   double    time;
   bool	    receive;
+  int playerID;
 };
 
 // event handler callback
