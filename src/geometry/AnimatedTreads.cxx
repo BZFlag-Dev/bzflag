@@ -44,7 +44,7 @@ static float wheelInsideTexRad;
 static float wheelOutsideTexRad;
 
 
-void TankGeometryUtils::setTreadStyle(int style)
+void TankGeometryUtils::setTreadStyle(int /* style */)
 {
   if (0){//(style == TankGeometryUtils::Exposed) {
     fullLength = 6.0f;
