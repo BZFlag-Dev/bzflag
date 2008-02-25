@@ -1464,20 +1464,19 @@ BZF_API bz_APIIntList *bz_getPlayerIndexList(void)
   return playerList;
 }
 
-//-------------------------------------------------------------------------
-
-BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex(int index)
+bz_BasePlayerRecord *APIPlayerFromRecord ( GameKeeper::Player *player )
 {
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(index);
+  if (!player)
+    return NULL;
 
   bz_BasePlayerRecord *playerRecord=new bz_BasePlayerRecord;
 
-  if(!player || !playerRecord)
+  if (!playerRecord)
     return NULL;
 
   playerRecord->callsign=player->player.getCallSign();
   playerRecord->email=player->player.getEMail();
-  playerRecord->playerID=index;
+  playerRecord->playerID=player->getIndex();
   playerRecord->bzID=player->getBzIdentifier();
   playerRecord->team=convertTeam(player->player.getTeam());
 
@@ -1488,6 +1487,52 @@ BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex(int index)
   playerRecord->ipAddress=player->netHandler->getTargetIP();
   playerRecord->update();
   return playerRecord;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex(int index)
+{
+  return APIPlayerFromRecord(GameKeeper::Player::getPlayerByIndex(index));
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bz_BasePlayerRecord *bz_getPlayerByCallsign(const char* callsign)
+{
+  if (!callsign)
+    return NULL;
+
+  std::string upperName = TextUtils::toupper(std::string(callsign));
+
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if ((p == NULL))
+      continue;
+
+    if (upperName == TextUtils::toupper(std::string(p->player.getCallSign())) )
+      return APIPlayerFromRecord(p);
+  }
+
+  return NULL;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bz_BasePlayerRecord * bz_getPlayerByBZID ( int BZID )
+{
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if ((p == NULL))
+      continue;
+
+    if (BZID == atoi(p->getBzIdentifier().c_str()))
+      return APIPlayerFromRecord(p);
+  }
+
+  return NULL;
 }
 
 //-------------------------------------------------------------------------

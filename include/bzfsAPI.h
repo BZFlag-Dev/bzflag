@@ -1353,6 +1353,8 @@ BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID )
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_APIIntList *bz_getPlayerIndexList ( void );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
+BZF_API bz_BasePlayerRecord *bz_getPlayerByCallsign( const char* name );
+BZF_API bz_BasePlayerRecord *bz_getPlayerByBZID ( int BZID );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
