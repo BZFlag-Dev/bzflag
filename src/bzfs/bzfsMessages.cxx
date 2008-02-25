@@ -775,7 +775,8 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 	  } else {
 	    if (toGroup) {
 	      if (destPlayer == AdminPlayers) {
-		msg->send(srcPlayerData->netHandler,MsgMessage);
+		if (srcPlayerData)
+		  msg->send(srcPlayerData->netHandler,MsgMessage);
 		std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
 		for (unsigned int i = 0; i < admins.size(); ++i) {
 		  GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(admins[i]);
