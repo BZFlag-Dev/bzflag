@@ -774,16 +774,8 @@ void clearWindowsStdOut()
   }
 #endif
 }
-//
-// main()
-//	initialize application and enter event loop
-//
 
-#if defined(_WIN32) && !defined(HAVE_SDL)
-int			myMain(int argc, char** argv)
-#else /* defined(_WIN32) */
-int			main(int argc, char** argv)
-#endif /* defined(_WIN32) */
+int initWinsoc ( void )
 {
 #ifdef _WIN32
   // startup winsock
@@ -794,19 +786,24 @@ int			main(int argc, char** argv)
     return 1;
   }
   if (LOBYTE(wsaData.wVersion) != major ||
-      HIBYTE(wsaData.wVersion) != minor) {
-    printFatalError("Version mismatch in winsock;"
-		    "  got %d.%d, expected %d.%d.  Terminating.\n",
-		    (int)LOBYTE(wsaData.wVersion),
-		    (int)HIBYTE(wsaData.wVersion),
-		    major, minor);
-    return bail(1);
+    HIBYTE(wsaData.wVersion) != minor) {
+      printFatalError("Version mismatch in winsock;"
+	"  got %d.%d, expected %d.%d.  Terminating.\n",
+	(int)LOBYTE(wsaData.wVersion),
+	(int)HIBYTE(wsaData.wVersion),
+	major, minor);
+      return bail(1);
   }
 #endif
+  return 0;
+}
 
-  argv0 = argv[0];
+int initClient ( int argc, char** argv )
+{
 
   // init libs
+  if (initWinsoc() != 0)
+    return 1;
 
   //init_packetcompression();
 
@@ -821,8 +818,8 @@ int			main(int argc, char** argv)
   bzfsrand((unsigned int)time(0));
 
   /* try to set the processor affinity to prevent TimeKeeper from
-   * reporting negative times
-   */
+  * reporting negative times
+  */
   TimeKeeper::setProcessorAffinity();
 
   setupBZDB();
@@ -836,7 +833,6 @@ int			main(int argc, char** argv)
   userTime = *localtime(&timeNow);
 
   CommandsStandard::add();
-  unsigned int i;
 
   initConfigData();
   loadBZDBDefaults();
@@ -873,10 +869,10 @@ int			main(int argc, char** argv)
     char dbTime[256];
     strncpy(dbTime, BZDB.get("fixedTime").c_str(), sizeof(dbTime) - 1);
     if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
-	hours < 0 || hours > 23 ||
-	minutes < 0 || minutes > 59 ||
-	seconds < 0 || seconds > 59) {
-      printFatalError("Invalid argument for fixedTime = %s", dbTime);
+      hours < 0 || hours > 23 ||
+      minutes < 0 || minutes > 59 ||
+      seconds < 0 || seconds > 59) {
+	printFatalError("Invalid argument for fixedTime = %s", dbTime);
     }
     userTime.tm_sec = seconds;
     userTime.tm_min = minutes;
@@ -946,35 +942,11 @@ int			main(int argc, char** argv)
   }
   email = email.substr(0, sizeof(startupInfo.email) - 1);
   strncpy(startupInfo.email, email.c_str(), EmailLen-1);
+  return 0;
+}
 
-  // make platform factory
-  PlatformFactory* platformFactory = PlatformFactory::getInstance();
-
-  // open display
-  display = platformFactory->createDisplay(NULL, NULL);
-  if (!display) {
-    printFatalError("Can't open display.  Exiting.");
-    return bail(1);
-  }
-
-  // choose visual
-  BzfVisual* visual = platformFactory->createVisual(display);
-  setVisual(visual);
-
-  // make the window
-  BzfWindow* window = platformFactory->createWindow(display, visual);
-  if (!window->isValid()) {
-    printFatalError("Can't create window.  Exiting.");
-    return bail(1);
-  }
-  window->setTitle("bzflag");
-
-  // create & initialize the joystick
-  BzfJoystick* joystick = platformFactory->createJoystick();
-  joystick->initJoystick(BZDB.get("joystickname").c_str());
-  joystick->setXAxis(BZDB.get("jsXAxis"));
-  joystick->setYAxis(BZDB.get("jsYAxis"));
-
+void initAudio ( void )
+{
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
     PlatformFactory::getMedia()->setDriver(BZDB.get("audioDriver"));
@@ -1012,6 +984,47 @@ int			main(int argc, char** argv)
     }
 #endif
   }
+}
+
+// globals
+BzfVisual* visual = NULL;
+BzfWindow* window = NULL;
+BzfJoystick* joystick = NULL;
+MainWindow* pmainWindow = NULL;
+PlatformFactory* platformFactory = NULL;
+BundleMgr *bm = NULL;
+
+int initDisplay ( void )
+{
+  // make platform factory
+  platformFactory = PlatformFactory::getInstance();
+
+  // open display
+  display = platformFactory->createDisplay(NULL, NULL);
+  if (!display) {
+    printFatalError("Can't open display.  Exiting.");
+    return bail(1);
+  }
+
+  // choose visual
+  visual = platformFactory->createVisual(display);
+  setVisual(visual);
+
+  // make the window
+  window = platformFactory->createWindow(display, visual);
+  if (!window->isValid()) {
+    printFatalError("Can't create window.  Exiting.");
+    return bail(1);
+  }
+  window->setTitle("bzflag");
+
+  // create & initialize the joystick
+  joystick = platformFactory->createJoystick();
+  joystick->initJoystick(BZDB.get("joystickname").c_str());
+  joystick->setXAxis(BZDB.get("jsXAxis"));
+  joystick->setYAxis(BZDB.get("jsYAxis"));
+
+  initAudio();
 
   // initialize font system
   FontManager &fm = FontManager::instance();
@@ -1022,15 +1035,6 @@ int			main(int argc, char** argv)
     printFatalError("No fonts found  (the -directory option may help).  Exiting");
     return bail(1);
   }
-
-  // initialize locale system
-
-  BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
-  World::setBundleMgr(bm);
-
-  std::string locale = BZDB.isSet("locale") ? BZDB.get("locale") : "default";
-  World::setLocale(locale);
-  bm->getBundle(World::getLocale());
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
@@ -1085,7 +1089,7 @@ int			main(int argc, char** argv)
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  MainWindow* pmainWindow = new MainWindow(window, joystick);
+  pmainWindow = new MainWindow(window, joystick);
   if (pmainWindow->isInFault()) {
     printFatalError("Error creating window - Exiting");
     return bail(1);
@@ -1109,13 +1113,6 @@ int			main(int argc, char** argv)
   else
     window->create();
 
-  // get sound files.  must do this after creating the window because
-  // DirectSound is a bonehead API.
-  if (!noAudio) {
-    openSound("bzflag");
-    if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
-      setSoundVolume(static_cast<int>(BZDB.eval("volume")));
-  }
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
@@ -1172,7 +1169,7 @@ int			main(int argc, char** argv)
       delete display;
       display=NULL;
     }
-	bail(1);
+    bail(1);
     exit(1);
 
   }
@@ -1186,7 +1183,7 @@ int			main(int argc, char** argv)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glEnable(GL_SCISSOR_TEST);
-//  glEnable(GL_CULL_FACE);
+  //  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   if (!OpenGLGState::haveGLContext()) {
     // DIE
@@ -1195,7 +1192,7 @@ int			main(int argc, char** argv)
       delete display;
       display=NULL;
     }
-	bail(1);
+    bail(1);
     exit(1);
   }
   OpenGLGState::init();
@@ -1207,7 +1204,7 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("gamma")) {
     if (pmainWindow->getWindow()->hasGammaControl())
       pmainWindow->getWindow()->setGamma
-	((float)atof(BZDB.get("gamma").c_str()));
+      ((float)atof(BZDB.get("gamma").c_str()));
   }
 
   // set the scene renderer's window
@@ -1234,12 +1231,12 @@ int			main(int argc, char** argv)
     BZDB.set("texture", tm.getMaxFilterName());
 
     BZDB.set("texturereplace", (!BZDBCache::lighting &&
-	      RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+      RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
     BZDB.setPersistent("texturereplace", false);
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);
       std::string value = BZDB.get("view");
-      for (i = 0; i < configViewValues.size(); i++)
+      for (size_t i = 0; i < configViewValues.size(); i++)
 	if (value == configViewValues[i]) {
 	  RENDERER.setViewType((SceneRenderer::ViewType)i);
 	  break;
@@ -1285,6 +1282,29 @@ int			main(int argc, char** argv)
   }
 #endif
 
+  return 0;
+}
+
+int postWindowInit ( void )
+{
+  // initialize locale system
+
+  bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
+  World::setBundleMgr(bm);
+
+  std::string locale = BZDB.isSet("locale") ? BZDB.get("locale") : "default";
+  World::setLocale(locale);
+  bm->getBundle(World::getLocale());
+
+
+  // get sound files.  must do this after creating the window because
+  // DirectSound is a bonehead API.
+  if (!noAudio) {
+    openSound("bzflag");
+    if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
+      setSoundVolume(static_cast<int>(BZDB.eval("volume")));
+  }
+
   // set server list URL
   if (BZDB.isSet("list"))
     startupInfo.listServerURL = BZDB.get("list");
@@ -1318,19 +1338,11 @@ int			main(int argc, char** argv)
     (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
   }
 
-  // start playing
-  startPlaying(display, RENDERER);
+  return 0;
+}
 
-  // save resources
-  if (BZDB.isTrue("saveSettings")) {
-    dumpResources();
-    if (alternateConfig == "") {
-      CFGMGR.write(getCurrentConfigFileName());
-    } else {
-      CFGMGR.write(alternateConfig);
-    }
-  }
-
+void cleanupClient ( void )
+{
   // shut down
   if (wordFilter != NULL)
     delete wordFilter;
@@ -1349,11 +1361,11 @@ int			main(int argc, char** argv)
 #if defined(_WIN32)
   {
     /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it
-     * exists */
+    * exists */
     HKEY key = NULL;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-	0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
-      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
+      0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
+	RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
     }
   }
 #endif
@@ -1363,6 +1375,50 @@ int			main(int argc, char** argv)
   WSACleanup();
 #endif
 
+}
+
+void saveSettings ( void )
+{
+  // save resources
+  if (BZDB.isTrue("saveSettings")) {
+    dumpResources();
+    if (alternateConfig == "") {
+      CFGMGR.write(getCurrentConfigFileName());
+    } else {
+      CFGMGR.write(alternateConfig);
+    }
+  }
+}
+
+
+//
+// main()
+//	initialize application and enter event loop
+//
+
+#if defined(_WIN32) && !defined(HAVE_SDL)
+int			myMain(int argc, char** argv)
+#else /* defined(_WIN32) */
+int			main(int argc, char** argv)
+#endif /* defined(_WIN32) */
+{
+  argv0 = argv[0];
+
+  if (initClient(argc,argv)!= 0)
+    return -1;
+
+  if (initDisplay()!= 0)
+    return -1;
+
+  if (postWindowInit()!= 0)
+    return -1;
+  
+  // start playing
+  startPlaying(display, RENDERER);
+
+  // cleanup and die
+  saveSettings();
+  cleanupClient();
   // clean up singletons
   //  delete FILEMGR;
   //  delete CMDMGR;
