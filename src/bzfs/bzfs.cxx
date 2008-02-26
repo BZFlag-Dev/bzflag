@@ -3638,15 +3638,15 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  }
   }
 
-  bz_MsgDebugEventData eventData;
-  eventData.code[0] = ((char*)&code)[0];
-  eventData.code[1] = ((char*)&code)[1];
-  eventData.time = TimeKeeper::getCurrent().getSeconds();
-  eventData.len = (size_t)len;
-  eventData.msg = (unsigned char*)buf;
-  eventData.playerID = playerData->getIndex();
+  bz_MsgDebugEventData debugEventData;
+  debugEventData.code[0] = ((char*)&code)[0];
+  debugEventData.code[1] = ((char*)&code)[1];
+  debugEventData.time = TimeKeeper::getCurrent().getSeconds();
+  debugEventData.len = (size_t)len;
+  debugEventData.msg = (unsigned char*)buf;
+  debugEventData.playerID = playerData->getIndex();
 
-  worldEventManager.callEvents(&eventData);
+  worldEventManager.callEvents(&debugEventData);
 
   switch (code) {
     // player joining
@@ -4032,22 +4032,22 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	return;
       }
 
-      bz_FlagTransferredEventData eventData;
+      bz_FlagTransferredEventData ftEventData;
 
-      eventData.fromPlayerID = fromData->player.getPlayerIndex();
-      eventData.toPlayerID = toData->player.getPlayerIndex();
-      eventData.flagType = NULL;
-      eventData.action = eventData.ContinueSteal;
+      ftEventData.fromPlayerID = fromData->player.getPlayerIndex();
+      ftEventData.toPlayerID = toData->player.getPlayerIndex();
+      ftEventData.flagType = NULL;
+      ftEventData.action = ftEventData.ContinueSteal;
 
-      worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
+      worldEventManager.callEvents(bz_eFlagTransferredEvent,&ftEventData);
 
-      if (eventData.action != eventData.CancelSteal) {
+      if (ftEventData.action != ftEventData.CancelSteal) {
         int oFlagIndex = toData->player.getFlag();
         if (oFlagIndex >= 0)
           zapFlag (*FlagInfo::get(oFlagIndex));
       }
 
-      if (eventData.action == eventData.ContinueSteal) {
+      if (ftEventData.action == ftEventData.ContinueSteal) {
         void *obufStart = getDirectMessageBuffer();
         void *obuf = nboPackUByte(obufStart, from);
         obuf = nboPackUByte(obuf, to);
@@ -4155,15 +4155,15 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 		}
 	// tell the API that they moved.
 
-	bz_PlayerUpdateEventData eventData;
-	memcpy(eventData.pos,state.pos,sizeof(float)*3);
-	memcpy(eventData.velocity,state.velocity,sizeof(float)*3);
-	eventData.angVel = state.angVel;
-	eventData.azimuth = state.azimuth;
-	eventData.phydrv = state.phydrv;
-	eventData.time = TimeKeeper::getCurrent().getSeconds();
-	eventData.playerID = id;
-	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
+	bz_PlayerUpdateEventData puEventData;
+	memcpy(puEventData.pos,state.pos,sizeof(float)*3);
+	memcpy(puEventData.velocity,state.velocity,sizeof(float)*3);
+	puEventData.angVel = state.angVel;
+	puEventData.azimuth = state.azimuth;
+	puEventData.phydrv = state.phydrv;
+	puEventData.time = TimeKeeper::getCurrent().getSeconds();
+	puEventData.playerID = id;
+	worldEventManager.callEvents(bz_ePlayerUpdateEvent,&puEventData);
 
       // silently drop old packet
       if (state.order <= playerData->lastState.order) {
