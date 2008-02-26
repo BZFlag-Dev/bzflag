@@ -34,6 +34,8 @@ Shot::Shot(PlayerId _plr, uint16_t _id)
   id = ((uint64_t)_plr << 16) + _id;
 }
 
+Shot::~Shot() {}
+
 PlayerId Shot::getPlayerId(void) const
 {
   return id >> 16;

@@ -29,6 +29,7 @@ public:
   Shot();
   Shot(uint64_t _id);
   Shot(PlayerId _plr, uint16_t _sid);
+  virtual ~Shot();
 
   PlayerId getPlayerId(void) const;
   uint16_t getShotId(void) const;
