@@ -119,7 +119,7 @@ public:
   void		setComposing(const std::string &prompt);
   void		setComposing(const std::string &prompt, bool _allowEdit);
 
-  void		render(SceneRenderer&);
+  void		render(void);
   ScoreboardRenderer *getScoreboard();
 
 protected:

@@ -876,7 +876,7 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
 }
 
 
-void			HUDRenderer::render(SceneRenderer& renderer)
+void			HUDRenderer::render(void)
 {
   if (firstRender) {
     firstRender = false;
@@ -886,13 +886,13 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   if (!BZDB.isTrue("noGUI")) {
     if (playing) {
-      renderPlaying(renderer);
+      renderPlaying(RENDERER);
     }
     else if (roaming) {
-      renderRoaming(renderer);
+      renderRoaming(RENDERER);
     }
     else {
-      renderNotPlaying(renderer);
+      renderNotPlaying(RENDERER);
     }
   }
   else {
@@ -917,13 +917,13 @@ void			HUDRenderer::render(SceneRenderer& renderer)
       glLoadIdentity();
 
       if (showCompose) {
-	renderCompose(renderer);
+	renderCompose(RENDERER);
       }
       if (showTimes) {
 	renderTimes();
       }
       if (showTankLabels) {
-	renderTankLabels(renderer);
+	renderTankLabels(RENDERER);
       }
       glPopMatrix();
     }

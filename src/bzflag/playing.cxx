@@ -100,9 +100,7 @@ static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
 static World	   *world = NULL;
 static LocalPlayer     *myTank = NULL;
-static BzfDisplay*	display = NULL;
 MainWindow*		mainWindow = NULL;
-static SceneRenderer*	sceneRenderer = NULL;
 ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
@@ -428,16 +426,11 @@ MainWindow*		getMainWindow()
   return mainWindow;
 }
 
-SceneRenderer*		getSceneRenderer()
-{
-  return sceneRenderer;
-}
-
 void			setSceneDatabase()
 {
   // FIXME - test the zbuffer here
   // delete the old database
-  sceneRenderer->setSceneDatabase(NULL);
+  RENDERER.setSceneDatabase(NULL);
 
   // make the scene, and record the processing time
   TimeKeeper startTime = TimeKeeper::getCurrent();
@@ -452,7 +445,7 @@ void			setSceneDatabase()
   }
 
   // set the scene
-  sceneRenderer->setSceneDatabase(scene);
+  RENDERER.setSceneDatabase(scene);
 }
 
 StartupInfo*		getStartupInfo()
@@ -544,7 +537,8 @@ void			joinGame()
 static void		dying(int sig)
 {
   bzSignal(sig, SIG_DFL);
-  display->setDefaultResolution();
+  if (display)
+   display->setDefaultResolution();
   raise(sig);
 }
 
@@ -926,7 +920,7 @@ static void		doEvent(BzfDisplay *disply)
 
     case BzfEvent::Redraw:
       mainWindow->getWindow()->callExposeCallbacks();
-      sceneRenderer->setExposed();
+      RENDERER.setExposed();
       break;
 
     case BzfEvent::Resize:
@@ -3542,7 +3536,7 @@ bool			addExplosion(const float* _pos,
   if (prototypeExplosions.size() == 0) return false;
 
   // don't show explosions if quality isn't at least medium
-  if (sceneRenderer->useQuality() < _MEDIUM_QUALITY) return false;
+  if (RENDERER.useQuality() < _MEDIUM_QUALITY) return false;
 
   // don't add explosion if blending or texture mapping are off
   if (!BZDBCache::blend || !BZDBCache::texture)
@@ -4379,12 +4373,12 @@ static void		setHuntTarget()
   }
 }
 
-static void		updateDaylight(double offset, SceneRenderer& renderer)
+static void		updateDaylight(double offset)
 {
   static const double SecondsInDay = 86400.0;
 
   // update sun, moon & sky
-  renderer.setTimeOfDay(unixEpoch + offset / SecondsInDay);
+  RENDERER.setTimeOfDay(unixEpoch + offset / SecondsInDay);
 }
 
 #ifdef ROBOT
@@ -4805,13 +4799,13 @@ static void enteringServer(void *buf)
 
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
-  sceneRenderer->getBackground()->resize();
+  RENDERER.getBackground()->resize();
   float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
   if (syncTime < 0.0f) {
-    updateDaylight(epochOffset, *sceneRenderer);
+    updateDaylight(epochOffset);
   } else {
     epochOffset = (double)syncTime;
-    updateDaylight(epochOffset, *sceneRenderer);
+    updateDaylight(epochOffset);
   }
   lastEpochOffset = epochOffset;
 
@@ -5079,7 +5073,7 @@ void		leaveGame()
     // revert back to when the client was started?
     epochOffset = userTimeEpochOffset;
   }
-  updateDaylight(epochOffset, *sceneRenderer);
+  updateDaylight(epochOffset);
   lastEpochOffset = epochOffset;
   BZDB.set(StateDatabase::BZDB_SYNCTIME,
 	   BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
@@ -5119,14 +5113,14 @@ void		leaveGame()
   targetPoint[0] = eyePoint[0] - 1.0f;
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
-  sceneRenderer->getViewFrustum().setProjection((float)(60.0 * M_PI / 180.0),
+  RENDERER.getViewFrustum().setProjection((float)(60.0 * M_PI / 180.0),
 						NearPlaneNormal,
 						FarPlaneDefault,
 						FarDeepPlaneDefault,
 						mainWindow->getWidth(),
 						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
-  sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
+  RENDERER.getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
   gameOver = false;
@@ -5134,7 +5128,7 @@ void		leaveGame()
   serverDied = false;
 
   // delete scene database (after the world has been destroyed)
-  sceneRenderer->setSceneDatabase(NULL);
+  RENDERER.setSceneDatabase(NULL);
 
   // reset the BZDB variables
   BZDB.iterate(resetServerVar, NULL);
@@ -5386,7 +5380,7 @@ static void drawUI()
 {
   // setup the triangle counts  (FIXME: hackish)
   if (showFPS && showDrawTime) {
-    hud->setFrameTriangleCount(sceneRenderer->getFrameTriangleCount());
+    hud->setFrameTriangleCount(RENDERER.getFrameTriangleCount());
     // NOTE:  the radar triangle count is actually from the previous frame
     if (radar) {
       hud->setFrameRadarTriangleCount(radar->getFrameTriangleCount());
@@ -5400,19 +5394,19 @@ static void drawUI()
 
   // update the HUD (player list, alerts)
   if (hud) {
-    hud->render(*sceneRenderer);
+    hud->render();
   }
 
   // draw the control panel
   if (controlPanel) {
-    controlPanel->render(*sceneRenderer);
+    controlPanel->render(RENDERER);
   }
 
   // draw the radar
   if (radar) {
     const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
     const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
-    radar->render(*sceneRenderer, showBlankRadar, observer);
+    radar->render(RENDERER, showBlankRadar, observer);
   }
 
   // update the HUD (menus)
@@ -5558,7 +5552,7 @@ static void setupFarPlane()
 void drawFrame(const float dt)
 {
   // get view type (constant for entire game)
-  static SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
+  static SceneRenderer::ViewType viewType = RENDERER.getViewType();
   // get media object
   static BzfMedia* media = PlatformFactory::getMedia();
 
@@ -5587,7 +5581,7 @@ void drawFrame(const float dt)
     }
 
     // drift clouds
-    sceneRenderer->getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
+    RENDERER.getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
 
     // get tank camera info
     float muzzleHeight;
@@ -5725,7 +5719,7 @@ void drawFrame(const float dt)
     // based on fog and _cullDist
     setupFarPlane();
 
-    ViewFrustum& viewFrustum = sceneRenderer->getViewFrustum();
+    ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
     viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane,
 			      mainWindow->getWidth(),
@@ -5740,7 +5734,7 @@ void drawFrame(const float dt)
 		hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
 
     // add dynamic nodes
-    SceneDatabase* scene = sceneRenderer->getSceneDatabase();
+    SceneDatabase* scene = RENDERER.getSceneDatabase();
     if (scene && myTank) {
 
       const bool seerView = (myTank->getFlag() == Flags::Seer);
@@ -5816,9 +5810,9 @@ void drawFrame(const float dt)
     }
 
     // turn blanking and inversion on/off as appropriate
-    sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
+    RENDERER.setBlank(myTank && (myTank->isPaused() ||
 				       myTank->getFlag() == Flags::Blindness));
-    sceneRenderer->setInvert(myTank && myTank->isPhantomZoned());
+    RENDERER.setInvert(myTank && myTank->isPhantomZoned());
 
     // turn on scene dimming when showing menu, when we're dead
     // and no longer exploding, or when we are in a building.
@@ -5837,7 +5831,7 @@ void drawFrame(const float dt)
 	insideDim = true;
       }
     }
-    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
+    RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
 			  (myTank && !ROAM.isRoaming() && !devDriving) &&
 			  !myTank->isAlive() && !myTank->isExploding());
 
@@ -5886,7 +5880,7 @@ void drawFrame(const float dt)
     // draw frame
     if (viewType == SceneRenderer::ThreeChannel) {
       // draw center channel
-      sceneRenderer->render(false);
+      RENDERER.render(false);
       drawUI();
 
       // set up for drawing left channel
@@ -5900,7 +5894,7 @@ void drawFrame(const float dt)
       viewFrustum.setView(eyePoint, targetPoint);
 
       // draw left channel
-      sceneRenderer->render(false, true, true);
+      RENDERER.render(false, true, true);
 
       // set up for drawing right channel
       mainWindow->setQuadrant(MainWindow::LowerRight);
@@ -5911,7 +5905,7 @@ void drawFrame(const float dt)
       viewFrustum.setView(eyePoint, targetPoint);
 
       // draw right channel
-      sceneRenderer->render(true, true, true);
+      RENDERER.render(true, true, true);
 
 #if defined(DEBUG_RENDERING)
       // set up for drawing rear channel
@@ -5923,7 +5917,7 @@ void drawFrame(const float dt)
       viewFrustum.setView(eyePoint, targetPoint);
 
       // draw rear channel
-      sceneRenderer->render(true, true, true);
+      RENDERER.render(true, true, true);
 #endif
       // back to center channel
       mainWindow->setQuadrant(MainWindow::UpperRight);
@@ -5939,7 +5933,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
       // draw left eye's view
-      sceneRenderer->render(false);
+      RENDERER.render(false);
       drawUI();
 
       // set up view for right eye
@@ -5947,7 +5941,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
       // draw right eye's view
-      sceneRenderer->render(true, true);
+      RENDERER.render(true, true);
       drawUI();
 
       // draw common stuff
@@ -5969,7 +5963,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
       // draw left eye's view
-      sceneRenderer->render(false);
+      RENDERER.render(false);
 #ifndef USE_GL_STEREO
       drawUI();
 #endif
@@ -5983,7 +5977,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
       // draw right eye's view
-      sceneRenderer->render(true, true);
+      RENDERER.render(true, true);
 #ifndef USE_GL_STEREO
       drawUI();
 #endif
@@ -6011,7 +6005,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
       // draw left eye's view
-      sceneRenderer->render(false);
+      RENDERER.render(false);
       drawUI();
 
       // set up view for right eye
@@ -6021,7 +6015,7 @@ void drawFrame(const float dt)
       viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
       // draw right eye's view
-      sceneRenderer->render(true, true);
+      RENDERER.render(true, true);
       drawUI();
     } else if (viewType == SceneRenderer::Interlaced) {
       float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
@@ -6065,7 +6059,7 @@ void drawFrame(const float dt)
       // setup view for left eye
       viewFrustum.setOffset(EyeDisplacement, FocalPlane);
       // draw left eye's view
-      sceneRenderer->render(false);
+      RENDERER.render(false);
 
       // draw where the stencil pattern is 0x1
       // do not change the stencil buffer
@@ -6074,7 +6068,7 @@ void drawFrame(const float dt)
       // set up view for right eye
       viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
       // draw right eye's view
-      sceneRenderer->render(true, true);
+      RENDERER.render(true, true);
 
       glStencilFunc(GL_ALWAYS, 0x1, 0x1);
       glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -6091,7 +6085,7 @@ void drawFrame(const float dt)
 	const int h = mainWindow->getHeight();
 	const int vh = mainWindow->getViewHeight();
 	viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane, w, h, vh);
-	sceneRenderer->render();
+	RENDERER.render();
 
 	// set entire window
 	mainWindow->setQuadrant(MainWindow::FullWindow);
@@ -6117,7 +6111,7 @@ void drawFrame(const float dt)
 	if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
       } else {
 	// normal rendering
-	sceneRenderer->render();
+	RENDERER.render();
       }
 
       // draw other stuff
@@ -6582,7 +6576,7 @@ void updateTimeOfDay ( const float dt )
     }
   if (fabs(epochOffset - lastEpochOffset) >= 4.0)
     {
-      updateDaylight(epochOffset, *sceneRenderer);
+      updateDaylight(epochOffset);
       lastEpochOffset = epochOffset;
     }
 }
@@ -6859,7 +6853,7 @@ static void		playingLoop()
 
   // start timing
   TimeKeeper::setTick();
-  updateDaylight(epochOffset, *sceneRenderer);
+  updateDaylight(epochOffset);
 
   worldDownLoader = new WorldDownLoader;
 
@@ -6970,8 +6964,8 @@ static float		timeConfiguration(bool useZBuffer)
   // use glFinish() to get accurate timings
   //glFinish();
   TimeKeeper startTime = TimeKeeper::getCurrent();
-  sceneRenderer->setExposed();
-  sceneRenderer->render();
+  RENDERER.setExposed();
+  RENDERER.render();
   // glFinish();
   TimeKeeper endTime = TimeKeeper::getCurrent();
 
@@ -6991,7 +6985,7 @@ static void		timeConfigurations()
   BZDB.set("smooth", "0");
   BZDB.set("lighting", "0");
   BZDB.set("texture", "0");
-  sceneRenderer->setQuality(0);
+  RENDERER.setQuality(0);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "0");
   BZDB.set("radarStyle", "0");
@@ -7045,13 +7039,13 @@ static void		timeConfigurations()
   // lowest quality and return.
   tm.setMaxFilter(OpenGLTexture::Nearest);
   BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(1);
+  RENDERER.setQuality(1);
   printError("  lowest quality with texture");
   if (timeConfiguration(false) > MaxFrameTime ||
       timeConfiguration(true) > MaxFrameTime) {
     BZDB.set("texture", "0");
     tm.setMaxFilter(OpenGLTexture::Off);
-    sceneRenderer->setQuality(0);
+    RENDERER.setQuality(0);
     return;
   }
 
@@ -7062,7 +7056,7 @@ static void		timeConfigurations()
   BZDB.set("lighting", "1");
   tm.setMaxFilter(OpenGLTexture::LinearMipmapLinear);
   BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(2);
+  RENDERER.setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
   BZDB.set("radarStyle", "3");
@@ -7076,11 +7070,11 @@ static void		timeConfigurations()
 
   // no high quality
   printError("  medium quality");
-  sceneRenderer->setQuality(1);
+  RENDERER.setQuality(1);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
   printError("  low quality");
-  sceneRenderer->setQuality(0);
+  RENDERER.setQuality(0);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -7138,14 +7132,14 @@ static void		findFastConfiguration()
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
-  sceneRenderer->getViewFrustum().setProjection((float)(45.0 * M_PI / 180.0),
+  RENDERER.getViewFrustum().setProjection((float)(45.0 * M_PI / 180.0),
 						NearPlaneNormal,
 						FarPlaneDefault,
 						FarDeepPlaneDefault,
 						mainWindow->getWidth(),
 						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
-  sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
+  RENDERER.getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important
   // because once textures are off, the background won't draw much of
@@ -7167,12 +7161,12 @@ static void		findFastConfiguration()
   node->setMaterial(OpenGLMaterial(color, color));
   timingScene->addStaticNode(node, false);
   timingScene->finalizeStatics();
-  sceneRenderer->setSceneDatabase(timingScene);
-  sceneRenderer->setDim(false);
+  RENDERER.setSceneDatabase(timingScene);
+  RENDERER.setDim(false);
 
   timeConfigurations();
 
-  sceneRenderer->setSceneDatabase(NULL);
+  RENDERER.setSceneDatabase(NULL);
 }
 
 static void		defaultErrorCallback(const char* msg)
@@ -7187,18 +7181,15 @@ static void		startupErrorCallback(const char* msg)
   controlPanel->addMessage(msg);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  controlPanel->render(*sceneRenderer);
+  controlPanel->render(RENDERER);
   mainWindow->getWindow()->swapBuffers();
 }
 
 
-void			startPlaying(BzfDisplay* _display,
-				     SceneRenderer& renderer)
+void			startPlaying()
 {
   // initalization
-  display = _display;
-  sceneRenderer = &renderer;
-  mainWindow = &sceneRenderer->getWindow();
+  mainWindow = &RENDERER.getWindow();
 
   // register some commands
   for (unsigned int c = 0; c < countof(commandList); ++c) {
@@ -7211,11 +7202,11 @@ void			startPlaying(BzfDisplay* _display,
   SphereLodSceneNode::init();
 
   // make control panel
-  ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
+  ControlPanel _controlPanel(*mainWindow, RENDERER);
   controlPanel = &_controlPanel;
 
   // make the radar
-  RadarRenderer _radar(*sceneRenderer, world);
+  RadarRenderer _radar(RENDERER, world);
   radar = &_radar;
 
   // tie the radar to the control panel
@@ -7232,7 +7223,7 @@ void			startPlaying(BzfDisplay* _display,
   // but this works on every system so far.
   {
     int n = 3;	// assume triple buffering
-    switch (sceneRenderer->getViewType()) {
+    switch (RENDERER.getViewType()) {
       case SceneRenderer::Stacked:
       case SceneRenderer::Stereo:
 #ifndef USE_GL_STEREO
@@ -7257,7 +7248,7 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("lighting", "0");
     BZDB.set("tesselation", "1");  // lighting set to 0 overrides
     BZDB.set("texture", "0");
-    sceneRenderer->setQuality(0);
+    RENDERER.setQuality(0);
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
     BZDB.set("radarStyle", "0");
@@ -7275,8 +7266,8 @@ void			startPlaying(BzfDisplay* _display,
   glClear(GL_COLOR_BUFFER_BIT);
   glEnable(GL_SCISSOR_TEST);
   controlPanel->resize();
-  sceneRenderer->render();
-  controlPanel->render(*sceneRenderer);
+  RENDERER.render();
+  controlPanel->render(RENDERER);
   mainWindow->getWindow()->swapBuffers();
 
   // startup error callback adds message to control panel and
@@ -7286,7 +7277,7 @@ void			startPlaying(BzfDisplay* _display,
   // initialize epoch offset (time)
   userTimeEpochOffset = (double)mktime(&userTime);
   epochOffset = userTimeEpochOffset;
-  updateDaylight(epochOffset, *sceneRenderer);
+  updateDaylight(epochOffset);
   lastEpochOffset = epochOffset;
 
   // catch kill signals before changing video mode so we can
@@ -7358,13 +7349,13 @@ void			startPlaying(BzfDisplay* _display,
 
   // draw again
   glClear(GL_COLOR_BUFFER_BIT);
-  sceneRenderer->render();
-  controlPanel->render(*sceneRenderer);
+  RENDERER.render();
+  controlPanel->render(RENDERER);
   mainWindow->getWindow()->swapBuffers();
   mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display
-  HUDRenderer _hud(display, renderer);
+  HUDRenderer _hud(display, RENDERER);
   hud = &_hud;
   scoreboard = hud->getScoreboard();
 
@@ -7375,8 +7366,8 @@ void			startPlaying(BzfDisplay* _display,
   notifyBzfKeyMapChanged();
 
   // make background renderer
-  BackgroundRenderer background(renderer);
-  sceneRenderer->setBackground(&background);
+  BackgroundRenderer background(RENDERER);
+  RENDERER.setBackground(&background);
 
   // if no configuration file try to determine rendering settings
   // that yield reasonable performance.
@@ -7413,7 +7404,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // let other stuff do initialization
-  sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
+  sceneBuilder = new SceneDatabaseBuilder();
   World::init();
 
   // prepare dialogs
@@ -7556,11 +7547,10 @@ void			startPlaying(BzfDisplay* _display,
     HUDDialogStack::get()->pop();
   delete mainMenu;
   delete sceneBuilder;
-  sceneRenderer->setBackground(NULL);
-  sceneRenderer->setSceneDatabase(NULL);
+  RENDERER.setBackground(NULL);
+  RENDERER.setSceneDatabase(NULL);
   World::done();
   mainWindow = NULL;
-  sceneRenderer = NULL;
   display = NULL;
   cleanWorldCache();
 }

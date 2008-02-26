@@ -100,7 +100,7 @@ struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
 
-static BzfDisplay*	display = NULL;
+BzfDisplay*	display = NULL;
 
 
 #ifdef ROBOT
@@ -1414,7 +1414,7 @@ int			main(int argc, char** argv)
     return -1;
   
   // start playing
-  startPlaying(display, RENDERER);
+  startPlaying();
 
   // cleanup and die
   saveSettings();

@@ -63,7 +63,7 @@ StartupInfo*		getStartupInfo();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(PlayerId id);
-void			startPlaying(BzfDisplay* display, SceneRenderer&);
+void			startPlaying(void);
 
 bool			addExplosion(const float* pos, float size, float duration);
 void			addTankExplosion(const float* pos);
@@ -114,6 +114,7 @@ extern bool		fireButton;
 extern float		destructCountdown;
 extern bool		pausedByUnmap;
 extern int		savedVolume;
+extern BzfDisplay*	display;
 extern MainWindow*	mainWindow;
 extern float		pauseCountdown;
 extern float		clockAdjust;

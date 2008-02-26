@@ -33,7 +33,7 @@ class World;
 
 class SceneDatabaseBuilder {
   public:
-			SceneDatabaseBuilder(const SceneRenderer*);
+			SceneDatabaseBuilder();
 			~SceneDatabaseBuilder();
 
     SceneDatabase*	make(const World*);
@@ -53,8 +53,6 @@ class SceneDatabaseBuilder {
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
   private:
-    const SceneRenderer	*renderer;
-
     OpenGLMaterial	wallMaterial;
     float		wallTexWidth, wallTexHeight;
     bool		wallLOD;

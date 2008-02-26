@@ -156,8 +156,7 @@ const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
 			};
 
 
-SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
-				renderer(_renderer),
+SceneDatabaseBuilder::SceneDatabaseBuilder() :
 				wallMaterial(black, black, 0.0f),
 				boxMaterial(black, black, 0.0f),
 				pyramidMaterial(black, black, 0.0f),
@@ -183,7 +182,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
 
   // lower maximum tank lod if lowdetail is true
-  if (renderer->useQuality() == _LOW_QUALITY)
+  if (RENDERER.useQuality() == _LOW_QUALITY)
     TankSceneNode::setMaxLOD(2);
 }
 
@@ -385,7 +384,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   useColorTexture[1] = boxTopTexture >= 0;
 
   float textureFactor = BZDB.eval("boxWallTexRepeat");
-  if (renderer->useQuality() >= _HIGH_QUALITY)
+  if (RENDERER.useQuality() >= _HIGH_QUALITY)
     textureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
   while ((node = ((part < 4) ? nodeGen->getNextNode(
@@ -457,7 +456,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (renderer->useQuality() >= _HIGH_QUALITY)
+  if (RENDERER.useQuality() >= _HIGH_QUALITY)
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,

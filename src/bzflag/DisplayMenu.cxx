@@ -298,48 +298,45 @@ void			DisplayMenu::resize(int _width, int _height)
 
   i = 1;
   // load current settings
-  SceneRenderer* renderer = getSceneRenderer();
-  if (renderer) {
-    TextureManager& tm = TextureManager::instance();
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
-    if (BZDBCache::lighting) {
-      if (BZDB.isTrue("tesselation")) {
-	((HUDuiList*)listHUD[i++])->setIndex(2);
-      } else {
-	((HUDuiList*)listHUD[i++])->setIndex(1);
-      }
+  TextureManager& tm = TextureManager::instance();
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
+  if (BZDBCache::lighting) {
+    if (BZDB.isTrue("tesselation")) {
+      ((HUDuiList*)listHUD[i++])->setIndex(2);
     } else {
-      ((HUDuiList*)listHUD[i++])->setIndex(0);
+      ((HUDuiList*)listHUD[i++])->setIndex(1);
     }
-    ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
-    int aniso = BZDB.evalInt("aniso");
-    aniso = (aniso < 1) ? 1 : aniso;
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
-    int shadowVal = 0;
-    if (BZDBCache::shadows) {
-      shadowVal++;
-      if (BZDBCache::stencilShadows) {
-	shadowVal++;
-      }
-    }
-    ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
-#if !defined(DEBUG_RENDERING)
-    if (debugLevel > 0) {
-#endif
-      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-      ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
-      ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
-					   : 0);
-      ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
-      ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
-					   : 0);
-#if !defined(DEBUG_RENDERING)
-    }
-#endif
+  } else {
+    ((HUDuiList*)listHUD[i++])->setIndex(0);
   }
+  ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+  int aniso = BZDB.evalInt("aniso");
+  aniso = (aniso < 1) ? 1 : aniso;
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+  ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useQuality());
+  int shadowVal = 0;
+  if (BZDBCache::shadows) {
+    shadowVal++;
+    if (BZDBCache::stencilShadows) {
+      shadowVal++;
+    }
+  }
+  ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
+#if !defined(DEBUG_RENDERING)
+  if (debugLevel > 0) {
+#endif
+    ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useHiddenLine() ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useDepthComplexity() ? 1
+      : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
+      : 0);
+#if !defined(DEBUG_RENDERING)
+  }
+#endif
 
   // brightness
   BzfWindow* window = getMainWindow()->getWindow();
@@ -364,19 +361,18 @@ float DisplayMenu::indexToGamma(int index)
 
 void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
-  SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
   case '1':
     BZDB.set("dither", list->getIndex() ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   case '2':
     BZDB.set("blend", list->getIndex() ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   case '3':
     BZDB.set("smooth", list->getIndex() ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   case '4': {
     bool oldLighting = BZDBCache::lighting;
@@ -384,9 +380,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
     if (oldLighting != BZDBCache::lighting) {
       BZDB.set("texturereplace", (!BZDBCache::lighting &&
-				   sceneRenderer->useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+				   RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
       BZDB.setPersistent("texturereplace", false);
-      sceneRenderer->notifyStyleChange();
+      RENDERER.notifyStyleChange();
     }
     break;
   }
@@ -394,7 +390,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     TextureManager& tm = TextureManager::instance();
     tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
     BZDB.set("texture", tm.getMaxFilterName());
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   }
   case 'A': {
@@ -402,35 +398,35 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.setInt("aniso", aniso);
     TextureManager& tm = TextureManager::instance();
     tm.setMaxFilter(tm.getMaxFilter());
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   }
   case '6':
-    sceneRenderer->setQuality(list->getIndex());
+    RENDERER.setQuality(list->getIndex());
     if (list->getIndex() > 3) {
       BZDB.set("zbuffer","1");
       setSceneDatabase();
     }
     BZDB.set("texturereplace", (!BZDBCache::lighting &&
-				 sceneRenderer->useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+				 RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
     BZDB.setPersistent("texturereplace", false);
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   case '7': {
     const int shadowVal = list->getIndex();
     BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
     BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
-    sceneRenderer->notifyStyleChange();
+    RENDERER.notifyStyleChange();
     break;
   }
   case 'a':
-    sceneRenderer->setHiddenLine(list->getIndex() != 0);
+    RENDERER.setHiddenLine(list->getIndex() != 0);
     break;
   case 'b':
     BZDB.setBool("wireframe", (list->getIndex() != 0));
     break;
   case 'c':
-    sceneRenderer->setDepthComplexity(list->getIndex() != 0);
+    RENDERER.setDepthComplexity(list->getIndex() != 0);
     break;
   case 'd':
     BZDB.setBool("showCullingGrid", list->getIndex() != 0);
