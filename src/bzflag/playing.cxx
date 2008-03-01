@@ -7551,7 +7551,6 @@ void			startPlaying()
   RENDERER.setSceneDatabase(NULL);
   World::done();
   mainWindow = NULL;
-  display = NULL;
   cleanWorldCache();
 }
 
