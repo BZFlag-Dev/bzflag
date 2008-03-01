@@ -21,6 +21,20 @@ recent bugs
    
 - client crashes upon receipt of a corrupted MsgFlagUpdate message.
   (See http://bzflag.secretplace.us/packet.txt for an example)
+  
+-- simulation --
+- at high frame rates (approx. > 500), isDeadReckoningWrong() often returns true
+  when tank is moving at constant speed. This leads to many unnecessary
+  MsgPlayerUpdate packets to be sent. Maybe floating point inaccuracies?
+
+  Also, at high frame rates, the position update in BaseLocalPlyer::update
+  will be too large, because dt is artificially increased then. In 2_0
+  this was fixed by simply skipping the update function. We now have an
+  outer loop in playing.cxx (doUpdates) which divides a big dt into a
+  number of smaller steps, so the fix must be done differently here.
+
+  The DR problem is probably related to the wrong updates.
+  simple fix is just a fps cap.
 
 -- regressions--
 - jumping is broken; heigth and direction of jumping affected.
@@ -93,6 +107,13 @@ recent bugs
 - error dialogs on win32 may appear off screen
    only when display resolution was changed
    
+- jitter on windows servers is reported as very high, but play
+  is unaffected.
+  
+- Windows BZFS will not let clients connect when 'too many' flags
+  are specified.
+
+   
 -- platform (SDL) --
 - if you start the client windowed on a multidisplay system, and then
   move the window to a secondary monitor, you cannot control the
@@ -106,10 +127,11 @@ recent bugs
 -- bzfs --
 - ANSI codes can be used in the server -public messages
   The best solution is probably to strip the codes at the listserver
-
+  
+- bzfs sometimes gets into a mode where CTF team flags spawn at random places,
+  not on bases.  Also, players spawn at random spots after flag cap.
+  
 -- unsorted --
-- jitter on windows servers is reported as very high, but play
-  is unaffected.
 
 - if there is a network connection (e.g. a lan) yet no external
   access, the client hangs hard in cURLManager.cxx:291 and later in
@@ -117,21 +139,6 @@ recent bugs
   (default Mac libcurl).  simple workaround is to invoke client with
   -list http://localhost (even if no local server is running) to avoid
   the hang on resolving.
-
-- bzfs sometimes gets into a mode where CTF team flags spawn at random places,
-  not on bases.  Also, players spawn at random spots after flag cap.
-
-- at high frame rates (approx. > 500), isDeadReckoningWrong() often returns true
-  when tank is moving at constant speed. This leads to many unnecessary
-  MsgPlayerUpdate packets to be sent. Maybe floating point inaccuracies?
-
-  Also, at high frame rates, the position update in BaseLocalPlyer::update
-  will be too large, because dt is artificially increased then. In 2_0
-  this was fixed by simply skipping the update function. We now have an
-  outer loop in playing.cxx (doUpdates) which divides a big dt into a
-  number of smaller steps, so the fix must be done differently here.
-
-  The DR problem is probably related to the wrong updates.
 
 - teleporting is blocking when going from a ground teleporter to
   a teleporter sitting on a mesh object. fix during next protocol
