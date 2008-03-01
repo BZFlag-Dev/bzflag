@@ -230,8 +230,8 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   addControl(option);
 
-  BzfDisplay* display = getDisplay();
-  int numFormats = display->getNumResolutions();
+  BzfDisplay* thisDisplay = getDisplay();
+  int numFormats = thisDisplay->getNumResolutions();
   if (numFormats < 2) {
     videoFormat = NULL;
   } else {
