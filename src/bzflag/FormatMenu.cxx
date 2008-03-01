@@ -98,7 +98,6 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
 {
   int i;
 
-  BzfDisplay* display = getDisplay();
   numFormats = display->getNumResolutions();
   badFormats = new bool[numFormats];
   for (i = 0; i < numFormats; i++)
@@ -160,7 +159,6 @@ void FormatMenu::setPage(int _page)
   // fill items
   const int base = page * NumItems;
   std::vector<HUDuiElement*>& listHUD = getElements();
-  BzfDisplay* display = getDisplay();
   for (int i = 0; i < NumItems; ++i) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     if (base + i < numFormats)
@@ -193,7 +191,6 @@ void FormatMenu::show()
   setPage(_page);
   getNav().set(selectedIndex - (_page * NumItems));
   // set current format
-  BzfDisplay* display = getDisplay();
   currentLabel->setString(display->getResolution(display->getResolution())->name);
 }
 
@@ -216,7 +213,6 @@ void FormatMenu::setFormat(bool test)
     printError((const char*)glGetString(GL_RENDERER));
   }
 
-  BzfDisplay* display = getDisplay();
   currentLabel->setString(display->getResolution(display->getResolution())->name);
 }
 
