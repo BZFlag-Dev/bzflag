@@ -1347,7 +1347,8 @@ void cleanupClient ( void )
   if (wordFilter != NULL)
     delete wordFilter;
   wordFilter = NULL;
-  display->setDefaultResolution();
+  if (display)
+    display->setDefaultResolution();
   delete pmainWindow;
   delete joystick;
   delete window;
