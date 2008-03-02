@@ -1520,7 +1520,7 @@ void Player::updateShot ( FiringInfo &info, int id, double time )
     }
   }
   else
-    shots.resize(id+1);
+    returnl
 
   // build a new shot with the new info
   prepareShotInfo(info);
