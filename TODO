@@ -40,6 +40,9 @@ Required for release of 3.0:
 
 Should be considered for the release of 3.0:
 
+* send the shot limits to the client so we don't shoot the wrong shot
+  and can do interactive ammo display instead of chat messages.
+
 * Change the title image to not have the flag with the version in it. Add
   ether the flag, or some version number to the image at run time using GL
 
