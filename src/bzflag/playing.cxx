@@ -2573,58 +2573,67 @@ static void handleShotBegin(bool human, void *msg)
   if (shooterid >= playerSize)
     return;
 
-  RemotePlayer* shooter = player[shooterid];
-
-  if (shooterid != ServerPlayer)
+  if (shooterid == myTank->getId())
   {
-    if (shooter && player[shooterid]->getId() == shooterid)
+    // the shot is ours, find the shot we made, and kill it
+    // then rebuild the shot with the info from the server
+    myTank->updateShot(firingInfo,id,firingInfo.timeSent);
+  }
+  else
+  {
+    RemotePlayer* shooter = player[shooterid];
+
+    if (shooterid != ServerPlayer)
     {
-      shooter->addShot(firingInfo);
-
-      if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
+      if (shooter && player[shooterid]->getId() == shooterid)
       {
-	float shotPos[3];
-	shooter->getMuzzle(shotPos);
+	shooter->addShot(firingInfo);
 
-	if (showShotEffects(shooterid))
-	  EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
+	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
+	{
+	  float shotPos[3];
+	  shooter->getMuzzle(shotPos);
+
+	  if (showShotEffects(shooterid))
+	    EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
+	}
+      }
+      else
+      {
+	return;
       }
     }
-    else
+
+    if (human)
     {
-      return;
+      const float* pos = firingInfo.shot.pos;
+      const bool importance = false;
+      const bool localSound = isViewTank(shooter);
+
+      switch (firingInfo.shotType)
+      {
+	default:
+	  playSound(SFX_FIRE, pos, importance, localSound);
+	  break;
+
+	case ShockWaveShot:
+	  playSound(SFX_SHOCK, pos, importance, localSound);
+	  break;
+
+	case LaserShot:
+	  playSound(SFX_LASER, pos, importance, localSound);
+	  break;
+
+	case GMShot:
+	  playSound(SFX_MISSILE, pos, importance, localSound);
+	  break;
+
+	case ThiefShot:
+	  playSound(SFX_THIEF, pos, importance, localSound);
+	  break;
+      }
     }
-  }
-
-  if (human)
-  {
-    const float* pos = firingInfo.shot.pos;
-    const bool importance = false;
-    const bool localSound = isViewTank(shooter);
-
-    switch (firingInfo.shotType)
-    {
-      default:
-	playSound(SFX_FIRE, pos, importance, localSound);
-	break;
-
-      case ShockWaveShot:
-	playSound(SFX_SHOCK, pos, importance, localSound);
-	break;
-
-      case LaserShot:
-	playSound(SFX_LASER, pos, importance, localSound);
-	break;
-
-      case GMShot:
-	playSound(SFX_MISSILE, pos, importance, localSound);
-	break;
-
-      case ThiefShot:
-	playSound(SFX_THIEF, pos, importance, localSound);
-	break;
-    }
-  }
+   }
 }
 
 static void handleShotEnd(void *msg)

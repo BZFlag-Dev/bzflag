@@ -1508,6 +1508,26 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 }
 
+void Player::updateShot ( FiringInfo &info, int id, double time )
+{
+  // kill the old shot
+  if (id < (int)shots.size())
+  {
+    if ( shots[id] != NULL )
+    {
+      delete shots[id];
+      shots[id] = NULL;
+    }
+  }
+  else
+    shots.resize(id+1);
+
+  // build a new shot with the new info
+  prepareShotInfo(info);
+  shots[id] = new LocalShotPath(info,time);
+}
+
+
 void Player::setHandicap(float _handicap)
 {
     handicap = _handicap;
