@@ -278,7 +278,7 @@ bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
   const bool isRemote = (getPath().getPlayer() !=
 			 LocalPlayer::getMyTank()->getId());
 
-  float ctime = currentTime + dt;
+  float ctime = (float)currentTime + dt;
 
   /*
    * If it expires there we'll return false.

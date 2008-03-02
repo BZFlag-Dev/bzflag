@@ -170,7 +170,7 @@ void			SegmentedShotStrategy::update(float dt)
 
 bool			SegmentedShotStrategy::predictPosition(float dt, float p[3]) const
 {
-  float ctime = currentTime + dt;
+  float ctime = (float)currentTime + dt;
   int cur=0;
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
@@ -185,7 +185,7 @@ bool			SegmentedShotStrategy::predictPosition(float dt, float p[3]) const
 
 bool			SegmentedShotStrategy::predictVelocity(float dt, float p[3]) const
 {
-  float ctime = currentTime + dt;
+  float ctime = (float)currentTime + dt;
   int cur=0;
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
