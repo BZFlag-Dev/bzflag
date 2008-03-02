@@ -292,14 +292,6 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
   } else {
     inverted = false;
   }
-
-  // FIXME - remove this check when protocol changes from "0026"
-  const float badcheck_2_0_0 = vm[0][0] * vm[1][1] * vm[2][2];
-  if ((determinant * badcheck_2_0_0) < 0.0f) {
-    printf ("WARNING:  MeshTransform::Tool::Tool()  2.0.0 inversion bug\n");
-    printf ("	  The most likely cause is a 'spin' transformation\n");
-  }
-
   return;
 }
 
