@@ -85,8 +85,6 @@ genericfiles =				\
 	Robot.h				\
 	../bzflag/ActionBinding.cxx		\
 	../bzflag/ActionBinding.h		\
-	../bzflag/AudioMenu.cxx			\
-	../bzflag/AudioMenu.h			\
 	../bzflag/AutoHunt.cxx			\
 	../bzflag/AutoHunt.h			\
 	../bzflag/AutoPilot.cxx			\
@@ -95,8 +93,6 @@ genericfiles =				\
 	../bzflag/BackgroundRenderer.h		\
 	../bzflag/BaseLocalPlayer.cxx		\
 	../bzflag/BaseLocalPlayer.h		\
-	../bzflag/CacheMenu.cxx			\
-	../bzflag/CacheMenu.h			\
 	../bzflag/ClientIntangibilityManager.cxx	\
 	../bzflag/CommandsImplementation.cxx	\
 	../bzflag/ComposeDefaultKey.cxx		\
@@ -105,12 +101,8 @@ genericfiles =				\
 	../bzflag/ControlPanel.h		\
 	../bzflag/CrackedGlass.cxx		\
 	../bzflag/CrackedGlass.h		\
-	../bzflag/DisplayMenu.cxx		\
-	../bzflag/DisplayMenu.h			\
 	../bzflag/Downloads.cxx			\
 	../bzflag/Downloads.h			\
-	../bzflag/EffectsMenu.cxx		\
-	../bzflag/EffectsMenu.h			\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
 	../bzflag/FlashClock.cxx		\
@@ -119,10 +111,6 @@ genericfiles =				\
 	../bzflag/FontSizer.h			\
 	../bzflag/ForceFeedback.cxx		\
 	../bzflag/ForceFeedback.h		\
-	../bzflag/FormatMenu.cxx		\
-	../bzflag/FormatMenu.h			\
-	../bzflag/GUIOptionsMenu.cxx		\
-	../bzflag/GUIOptionsMenu.h		\
 	../bzflag/GuidedMissleStrategy.cxx	\
 	../bzflag/GuidedMissleStrategy.h	\
 	../bzflag/HUDDialog.cxx			\
@@ -151,44 +139,16 @@ genericfiles =				\
 	../bzflag/HUDuiList.h			\
 	../bzflag/HUDuiTypeIn.cxx		\
 	../bzflag/HUDuiTypeIn.h			\
-	../bzflag/HelpCreditsMenu.cxx		\
-	../bzflag/HelpCreditsMenu.h		\
-	../bzflag/HelpFlagsMenu.cxx		\
-	../bzflag/HelpFlagsMenu.h		\
-	../bzflag/HelpInstructionsMenu.cxx	\
-	../bzflag/HelpInstructionsMenu.h	\
-	../bzflag/HelpKeymapMenu.cxx		\
-	../bzflag/HelpKeymapMenu.h		\
-	../bzflag/HelpMenu.cxx			\
-	../bzflag/HelpMenu.h			\
-	../bzflag/InputMenu.cxx			\
-	../bzflag/InputMenu.h			\
-	../bzflag/JoinMenu.cxx			\
-	../bzflag/JoinMenu.h			\
-	../bzflag/KeyboardMapMenu.cxx		\
-	../bzflag/KeyboardMapMenu.h		\
 	../bzflag/LocalCommand.cxx		\
 	../bzflag/LocalCommand.h		\
 	../bzflag/LocalPlayer.cxx		\
 	../bzflag/LocalPlayer.h			\
-	../bzflag/MainMenu.cxx			\
-	../bzflag/MainMenu.h			\
 	../bzflag/MainWindow.cxx		\
 	../bzflag/MainWindow.h			\
-	../bzflag/MenuDefaultKey.cxx		\
-	../bzflag/MenuDefaultKey.h		\
-	../bzflag/NewVersionMenu.cxx		\
-	../bzflag/NewVersionMenu.h		\
-	../bzflag/OptionsMenu.cxx		\
-	../bzflag/OptionsMenu.h			\
 	../bzflag/Plan.cxx			\
 	../bzflag/Plan.h			\
 	../bzflag/Player.cxx			\
 	../bzflag/Player.h			\
-	../bzflag/QuickKeysMenu.cxx		\
-	../bzflag/QuickKeysMenu.h		\
-	../bzflag/QuitMenu.cxx			\
-	../bzflag/QuitMenu.h			\
 	../bzflag/RadarRenderer.cxx		\
 	../bzflag/RadarRenderer.h		\
 	../bzflag/Region.cxx			\
@@ -205,8 +165,6 @@ genericfiles =				\
 	../bzflag/RoofTops.h			\
 	../bzflag/Roster.cxx			\
 	../bzflag/Roster.h			\
-	../bzflag/SaveWorldMenu.cxx		\
-	../bzflag/SaveWorldMenu.h		\
 	../bzflag/SceneRenderer.cxx		\
 	../bzflag/ScoreboardRenderer.cxx	\
 	../bzflag/ScoreboardRenderer.h		\
@@ -216,10 +174,6 @@ genericfiles =				\
 	../bzflag/ServerCommandKey.h		\
 	../bzflag/ServerLink.cxx		\
 	../bzflag/ServerLink.h			\
-	../bzflag/ServerMenu.cxx		\
-	../bzflag/ServerMenu.h			\
-	../bzflag/ServerStartMenu.cxx		\
-	../bzflag/ServerStartMenu.h		\
 	../bzflag/ShockWaveStrategy.cxx		\
 	../bzflag/ShockWaveStrategy.h		\
 	../bzflag/ShotPath.cxx			\
@@ -266,8 +220,6 @@ genericfiles =				\
 	../bzflag/defaultBZDB.h			\
 	../bzflag/effectsRenderer.cxx		\
 	../bzflag/effectsRenderer.h		\
-	../bzflag/motd.cxx			\
-	../bzflag/motd.h			\
 	../bzflag/playerAvatarManager.cxx	\
 	../bzflag/playerAvatarManager.h		\
 	../bzflag/playing.h			\
