@@ -291,7 +291,7 @@ double MXpr::solve(std::string what)
 		return 0;
 	}
     { //main solving scope; it is a valid expression, so far
-	unsigned int pos = (unsigned int)what.find('('), amt = 1;
+	size_t pos = (unsigned int)what.find('('), amt = 1;
 	while (pos != std::string::npos) //there are parenthesis; solve these first
 	{
 	    const unsigned int old = pos;
@@ -333,8 +333,7 @@ double MXpr::solve(std::string what)
 	}
 	std::string arg1, arg2;
 	char oper;
-	while ((amt = (unsigned int)what.find_first_of("^")) != std::string::npos &&
-	    (unsigned int)what.find_first_of("*/%+-") != std::string::npos) //if we have exponent and others
+	while ((amt = what.find_first_of("^")) != std::string::npos && what.find_first_of("*/%+-") != std::string::npos) //if we have exponent and others
 	{
 	    --amt;
 	    if (ismath(what[amt]))
@@ -349,8 +348,7 @@ double MXpr::solve(std::string what)
 	    else if (arg2 == "") return 0;
 	    what.insert(amt, dtos((quickSolve(arg1, arg2, oper))));
 	}
-	while ((amt = (unsigned int)what.find_first_of("*/%")) != std::string::npos &&
-	    (unsigned int)what.find_first_of("+-") != std::string::npos) //if we have mult/div and +/-
+	while ((amt = what.find_first_of("*/%")) != std::string::npos && what.find_first_of("+-") != std::string::npos) //if we have mult/div and +/-
 	{
 	    --amt;
 	    if (ismath(what[amt]))
