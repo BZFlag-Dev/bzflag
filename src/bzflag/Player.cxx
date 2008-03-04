@@ -1508,15 +1508,15 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 }
 
-void Player::updateShot ( FiringInfo &info, int id, double time )
+void Player::updateShot ( FiringInfo &info, int shotID, double time )
 {
   // kill the old shot
-  if (id < (int)shots.size())
+  if (shotID < (int)shots.size())
   {
-    if ( shots[id] != NULL )
+    if ( shots[shotID] != NULL )
     {
-      delete shots[id];
-      shots[id] = NULL;
+      delete shots[shotID];
+      shots[shotID] = NULL;
     }
   }
   else
@@ -1524,7 +1524,7 @@ void Player::updateShot ( FiringInfo &info, int id, double time )
 
   // build a new shot with the new info
   prepareShotInfo(info);
-  shots[id] = new LocalShotPath(info,time);
+  shots[shotID] = new LocalShotPath(info,time);
 }
 
 
