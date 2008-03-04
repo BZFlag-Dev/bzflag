@@ -1093,7 +1093,7 @@ bool MasterBanCommand::operator() (const char	 *message,
     if (bans.size() > 20) {
       sendMessage(ServerPlayer, t,
 		  TextUtils::format("There are %d bans, only displaying the "
-				    "first 20", bans.size()).c_str());
+				    "first 20", (int)bans.size()).c_str());
 
     } else if (bans.size() == 0) {
       sendMessage(ServerPlayer, t, "There are no master bans loaded.");
