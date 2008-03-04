@@ -63,13 +63,15 @@ bzflag: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs -p$@ usr/games usr/share/bzflag/l10n usr/share/bzflag/fonts usr/share/man/man6
+	dh_installdirs -p$@ usr/games usr/share/bzflag/l10n usr/share/bzflag/fonts usr/share/man/man6 usr/share/applications usr/share/pixmaps
 	# copy files into debian/$@/ here
 	-cp -p data/[!CM]* debian/$@/usr/share/bzflag/
 	cp -p data/l10n/[!CM]* debian/$@/usr/share/bzflag/l10n/
 	cp -p data/fonts/[!CM]* debian/$@/usr/share/bzflag/fonts/
 	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
 	cp -p src/bzflag/bzflag debian/$@/usr/games/
+	cp -p data/bzflag.desktop debian/$@/usr/share/applications/
+	cp -p data/bzflag-48x48.png debian/$@/usr/share/pixmaps/
 #	dh_installdebconf -p$@
 	dh_installdocs -p$@
 	dh_installmenu -p$@
