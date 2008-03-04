@@ -33,7 +33,7 @@ included in this source package. The rest of this document will
 refer to the build process using Visual C++ 8.0 and 9.0
 (.net 2005 and 2008).
 
-**Targetss**
+**Targets**
 There are a total of 4 build targets in the VC projects.
 Release and Debug targets are configured so that they will
 "build out of the box" for the majority of users. The 
