@@ -89,6 +89,25 @@ debian-release: debian/changelog dist
 	(cd $(distdir) && debian/buildsnap release)
 
 
+# make sure all files are in the repository are also in the dist.
+# make sure files that should not be in the distribution in fact are
+# not included.
+dist-hook:
+	files="`find . -name entries -exec grep 'name=' {} /dev/null \; | sed 's/:[[:space:]]*name=\"\(.*\)\"/\1/g' | sed 's/\/\.svn\/entries/\//g' | grep -v 'bzflag-' | grep -v '\/$$'`" ; \
+	missing=0 ; \
+	for file in $$files ; do \
+		if test ! -e $(distdir)/$$file ; then \
+			missing=1 ; \
+			echo "MISSING FROM DIST: $$file" ; \
+		fi ; \
+	done ; \
+	if test "x$$missing" = "x1" ; then \
+		exit 1 ; \
+	fi
+	find $(distdir) -type f \( -name '.cvsignore' \) -exec rm -f {} \;
+	find $(distdir) -type d \( -name 'CVS' -or -name '.svn' \) -prune -exec rm -rf {} \;
+
+
 # Print out an informative summary.
 all-local:
 	@$(ECHO) "Done."
