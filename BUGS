@@ -101,6 +101,11 @@ recent bugs
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
   (this is probably a bug in automake 1.4, not in our files)
+  
+- build system for bzrobots is not happy.
+
+- many warnings that are treated as errors on 64bit GCC builds 
+  (lots of format issues).
 
 -- platform (windows) --
 - not blanking screen during win32 startup
