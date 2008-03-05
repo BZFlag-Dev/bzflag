@@ -218,8 +218,6 @@ bzflag_SOURCES =			\
 	stars.h
 
 EXTRA_bzflag_SOURCES = \
-	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
 	LoginMenu.cxx			\
 	LoginMenu.h
 

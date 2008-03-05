@@ -31,11 +31,6 @@ pythonloaderfiles =
 bzrobots_LDFLAGS = -export-dynamic -static
 endif
 
-EXTRA_bzrobots_SOURCES = \
-	../bzflag/ClientAuthentication.cxx	\
-	../bzflag/ClientAuthentication.h
-
-
 genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
