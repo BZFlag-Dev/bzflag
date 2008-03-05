@@ -5,8 +5,8 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
 man_MANS = curl.1 curl-config.1
-GENHTMLPAGES = curl.html curl-config.html
-PDFPAGES = curl.pdf curl-config.pdf
+GENHTMLPAGES = # curl.html curl-config.html
+PDFPAGES = # curl.pdf curl-config.pdf
 
 HTMLPAGES = $(GENHTMLPAGES) index.html
 
@@ -30,7 +30,7 @@ pdf: $(PDFPAGES)
 	cd libcurl; make pdf
 
 .1.html:
-	$(MAN2HTML)
+#	$(MAN2HTML)
 
 .1.pdf:
 	@(foo=`echo $@ | sed -e 's/\.[0-9]$$//g'`; \

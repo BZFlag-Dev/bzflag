@@ -20,7 +20,7 @@ man_MANS = curl_easy_cleanup.3 curl_easy_getinfo.3 curl_easy_init.3	 \
  curl_easy_unescape.3 curl_multi_setopt.3 curl_multi_socket.3		 \
  curl_multi_timeout.3 curl_formget.3 curl_multi_assign.3
 
-HTMLPAGES = curl_easy_cleanup.html curl_easy_getinfo.html		  \
+HTMLPAGES = # curl_easy_cleanup.html curl_easy_getinfo.html		  \
  curl_easy_init.html curl_easy_perform.html curl_easy_setopt.html	  \
  curl_easy_duphandle.html curl_formadd.html curl_formfree.html		  \
  curl_getdate.html curl_getenv.html curl_slist_append.html		  \
@@ -38,7 +38,7 @@ HTMLPAGES = curl_easy_cleanup.html curl_easy_getinfo.html		  \
  curl_multi_setopt.html curl_multi_socket.html curl_multi_timeout.html	  \
  curl_formget.html curl_multi_assign.html
 
-PDFPAGES = curl_easy_cleanup.pdf curl_easy_getinfo.pdf curl_easy_init.pdf \
+PDFPAGES = # curl_easy_cleanup.pdf curl_easy_getinfo.pdf curl_easy_init.pdf \
  curl_easy_perform.pdf curl_easy_setopt.pdf curl_easy_duphandle.pdf	  \
  curl_formadd.pdf curl_formfree.pdf curl_getdate.pdf curl_getenv.pdf	  \
  curl_slist_append.pdf curl_slist_free_all.pdf curl_version.pdf		  \
