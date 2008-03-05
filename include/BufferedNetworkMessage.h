@@ -14,13 +14,17 @@
 #define _BUFFERED_NETWORK_MESSAGE_H_
 
 #include "common.h"
-#include "Singleton.h"
+
+// System headers
 #include <list>
 #include <deque>
 
-class NetHandler;
+// Common headers
+#include "Singleton.h"
 
+class NetHandler;
 class BufferedNetworkMessageManager;
+
 
 class BufferedNetworkMessage
 {

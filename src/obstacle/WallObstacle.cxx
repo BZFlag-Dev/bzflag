@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
 #include "common.h"
+
+#include <math.h>
+
 #include "Pack.h"
 #include "WallObstacle.h"
 #include "Intersect.h"

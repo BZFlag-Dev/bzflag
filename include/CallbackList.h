@@ -13,13 +13,13 @@
 #ifndef BZF_CALLBACK_LIST_H
 #define BZF_CALLBACK_LIST_H
 
+#include "common.h"
+
 // system headers
 #include <utility>
 #include <list>
 #include <map>
 
-// local implementation headers
-#include "common.h"
 
 template <class F>
 class CallbackList {

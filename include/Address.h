@@ -21,13 +21,14 @@
 #ifndef	BZF_INET_ADDR_H
 #define	BZF_INET_ADDR_H
 
+#include "common.h"
+
 // system headers
 #include <sys/types.h>
 #include <vector>
 #include <string>
 
 // local headers
-#include "common.h"
 #include "network.h"
 #include "Pack.h"
 

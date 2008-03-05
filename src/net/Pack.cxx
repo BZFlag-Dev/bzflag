@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <string.h>
 #include "common.h"
+
+#include <string.h>
+
 #include "Pack.h"
 #include "network.h"
 

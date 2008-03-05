@@ -13,9 +13,6 @@
 // Interface header
 #include "BufferedNetworkMessage.h"
 
-// BZFlag common header
-#include "common.h"
-
 // System headers
 #include <algorithm>
 #include <errno.h>

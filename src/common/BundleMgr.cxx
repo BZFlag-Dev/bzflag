@@ -14,14 +14,13 @@
 #include "BundleMgr.h"
 
 // system headers
-#if (!defined(_WIN32) && !defined(WIN32))
-#include <sys/types.h>
-#include <dirent.h>
+#ifndef _WIN32
+#  include <sys/types.h>
+#  include <dirent.h>
 #endif
 #include <string>
 
 // local implementation headers
-#include "common.h"
 #include "Bundle.h"
 
 Bundle		*BundleMgr::currentBundle	= NULL;
@@ -118,7 +117,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
 
   do {
 
-#if (defined(_WIN32) || defined(WIN32))
+#ifdef _WIN32
     char fileName[255];
 
     // Prepare the wildcarded file path to search for and copy it to fileName

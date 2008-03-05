@@ -10,9 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 #include <math.h>
 #include <assert.h>
-#include "common.h"
+
 #include "global.h"
 #include "Pack.h"
 #include "vectors.h"

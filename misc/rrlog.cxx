@@ -17,6 +17,8 @@
 //  examine their record/replay files in detail.
 //
 
+#include "common.h"
+
 // system headers
 #include <iostream>
 #include <stdio.h>
@@ -33,7 +35,6 @@ typedef __int64 s64;
 #endif
 
 // common headers
-#include "common.h"
 #include "global.h"
 #include "Protocol.h"
 #include "Pack.h"

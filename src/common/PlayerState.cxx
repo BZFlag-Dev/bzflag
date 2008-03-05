@@ -17,7 +17,6 @@
 #include <math.h>
 
 // local implementation headers
-#include "common.h"
 #include "Pack.h"
 #include "Protocol.h"
 #include "StateDatabase.h"
