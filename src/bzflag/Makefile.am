@@ -217,10 +217,6 @@ bzflag_SOURCES =			\
 	stars.cxx			\
 	stars.h
 
-EXTRA_bzflag_SOURCES = \
-	LoginMenu.cxx			\
-	LoginMenu.h
-
 if WIN32
 RESOURCE = bzflag.res
 else
