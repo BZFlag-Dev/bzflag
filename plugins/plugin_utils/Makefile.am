@@ -12,9 +12,6 @@ libplugin_utils_la_SOURCES = \
 
 libplugin_utils_la_LDFLAGS = -avoid-version
 
-EXTRA_DIST = \
-	README.txt
-
 DIST_SUBDIRS = VC71
 
 MAINTAINERCLEANFILES =	\
