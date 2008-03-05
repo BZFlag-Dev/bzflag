@@ -442,7 +442,7 @@ void BZAdminClient::outputServerList() const {
       if (!serverList.serverFound()) {
 	ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
       } else {
-	ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
+	ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", (int)serverList.size()), Yellow);
       }
     }
     serverList.checkEchos(&startupInfo);
