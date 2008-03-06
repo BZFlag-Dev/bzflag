@@ -34,6 +34,7 @@ EXTRA_DIST = \
 	FAQ \
 	INDEX \
 	algorithm.txt \
+	zconf.in.h \
 	zlib.3
 
 MAINTAINERCLEANFILES = Makefile.in

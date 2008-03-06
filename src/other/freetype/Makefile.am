@@ -61,14 +61,17 @@ EXTRA_DIST = \
 	ChangeLog.22 \
 	Jamfile \
 	Jamrules \
+	Makefile.original \
 	README \
 	README.CVS \
 	autogen.sh \
 	builds \
+	config.mk \
 	devel \
 	docs \
 	include \
 	modules.cfg \
+	objs \
 	src \
 	version.sed \
 	vms_make.com
