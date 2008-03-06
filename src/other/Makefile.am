@@ -43,47 +43,15 @@ SUBDIRS = \
 	${ZLIB_DIR}
 
 DIST_SUBDIRS = \
-	ares \
-	curl \
-	freetype \
 	ftgl \
 	regex \
 	zlib
 
 # include the files for subconfigured packages as needed left out of the dist
 EXTRA_DIST = \
-	ares/FILES \
-	ares/Makefile.dj \
-	ares/Makefile.m32 \
-	ares/Makefile.netware \
-	ares/Makefile.vc6 \
-	ares/ares_getopt.c \
-	ares/ares_getopt.h \
-	ares/buildconf \
-	ares/maketgz \
-	curl/CHANGES.0 \
-	curl/CHANGES.1999 \
-	curl/CHANGES.2000 \
-	curl/CHANGES.2001 \
-	curl/CHANGES.2002 \
-	curl/CHANGES.2003 \
-	curl/CHANGES.2004 \
-	curl/CHANGES.2005 \
-	curl/CVS-INFO \
-	curl/Makefile.dist \
-	curl/TODO-RELEASE \
-	curl/docs/examples/adddocsref.pl \
-	curl/docs/libcurl/curl_multi_socket_all.3 \
-	curl/docs/libcurl/curl_strnequal.3 \
-	curl/docs/libcurl/getinfo-times \
-	curl/hiper \
-	curl/lib/Makefile.inc \
-	curl/lib/libcurl.def \
-	curl/lib/vc8proj.foot \
-	curl/lib/vc8proj.head \
-	curl/perl \
-	curl/src/hugehelp.c.cvs \
-	curl/src/stamp-h2
+	ares \
+	curl \
+	freetype
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
