@@ -17,18 +17,20 @@ AM_CPPFLAGS = \
 	@X_CFLAGS@ \
 	@CONF_CPPFLAGS@
 
+PYTHON_LOADER = \
+	PythonLoader.cxx	\
+	PythonLoader.h
+
 if BZROBOTS_PYTHON_ENABLED
 AM_CXXFLAGS = @CONF_CXXFLAGS@ \
 	$(PYTHON_CPPFLAGS) \
 	-DWITH_PYTHONLOADER=1
-pythonloaderfiles =  		\
-	PythonLoader.cxx	\
-	PythonLoader.h
 bzrobots_LDFLAGS = -export-dynamic -static $(PYTHON_LDFLAGS)
+pythonloaderfiles = $(PYTHON_LOADER)
 else
 AM_CXXFLAGS = @CONF_CXXFLAGS@
-pythonloaderfiles =
 bzrobots_LDFLAGS = -export-dynamic -static
+pythonloaderfiles =
 endif
 
 genericfiles =				\
@@ -319,6 +321,9 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 
 EXTRA_DIST = \
 	$(BUILT_SOURCES) \
+	$(PYTHON_LOADER) \
+	OpenGLUtils.cxx	\
+	RCRequests_ProcessSWIG.cxx \
 	bzrobot.i
 
 MAINTAINERCLEANFILES = \
