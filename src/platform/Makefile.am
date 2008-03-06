@@ -227,6 +227,8 @@ EXTRA_libPlatform_la_SOURCES =		\
 	BeOSWindow.cxx			\
 	BeOSWindow.h			\
 	BeOSWindow2.cxx			\
+	DXJoystick.cxx			\
+	DXJoystick.h			\
 	EvdevJoystick.cxx		\
 	EvdevJoystick.h			\
 	HPUXMedia.cxx			\
@@ -239,6 +241,8 @@ EXTRA_libPlatform_la_SOURCES =		\
 	LinuxMedia.h			\
 	LinuxPlatformFactory.cxx	\
 	LinuxPlatformFactory.h		\
+	NewMedia.cxx			\
+	NewMedia.h			\
 	SDLDisplay.cxx			\
 	SDLDisplay.h			\
 	SDLJoystick.cxx			\
@@ -287,11 +291,7 @@ EXTRA_libPlatform_la_SOURCES =		\
 AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
-
-EXTRA_DIST = \
-	NewMedia.cxx \
-	NewMedia.h \
-	README
+EXTRA_DIST = README
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

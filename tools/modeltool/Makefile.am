@@ -26,4 +26,6 @@ modeltool_SOURCES =	\
 modeltool_CPPFLAGS = -I$(top_srcdir)/include
 modeltool_LDADD = $(top_builddir)/src/common/libCommon.la
 
+EXTRA_DIST = example.diconf
+
 MAINTAINERCLEANFILES = Makefile.in
