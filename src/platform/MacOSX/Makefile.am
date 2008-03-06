@@ -4,6 +4,19 @@ endif
 
 libMac_la_LDFLAGS = -static
 
+MAC_FILES =				\
+	MacDataPath.cxx			\
+	MacDisplay.cxx			\
+	MacDisplay.h			\
+	MacMedia.cxx			\
+	MacMedia.h			\
+	MacPlatformFactory.cxx		\
+	MacPlatformFactory.h		\
+	MacVisual.cxx			\
+	MacVisual.h			\
+	MacWindow.cxx			\
+	MacWindow.h
+
 if HAVE_SDL
 
 libMac_la_SOURCES =			\
@@ -15,17 +28,7 @@ all: SDLMain.lo
 else
 
 libMac_la_SOURCES =			\
-	MacDataPath.cxx			\
-	MacDisplay.cxx			\
-	MacDisplay.h			\
-	MacMedia.cxx			\
-	MacMedia.h			\
-	MacPlatformFactory.cxx		\
-	MacPlatformFactory.h		\
-	MacVisual.cxx			\
-	MacVisual.h			\
-	MacWindow.cxx			\
-	MacWindow.h			\
+	$(MAC_FILES)			\
 	SDLMain.h
 
 endif
@@ -39,6 +42,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =				\
+	$(MAC_FILES)			\
 	BZFlag-Info.plist		\
 	MacBZFlag.icns			\
 	SDLMain.m			\
