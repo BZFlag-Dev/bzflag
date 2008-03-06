@@ -9,5 +9,7 @@ bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 
 DISTCLEANFILES = bzfquery.6
 
+EXTRA_DIST = makeHTML.bat
+
 MAINTAINERCLEANFILES = \
 	Makefile.in

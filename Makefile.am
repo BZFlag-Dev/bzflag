@@ -62,6 +62,7 @@ EXTRA_DIST = \
 	bzflag.lsm.in \
 	bzflag.spec \
 	bzflag.spec.in \
+	bots \
 	INSTALL \
 	PORTING
 

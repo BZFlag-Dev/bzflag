@@ -78,6 +78,7 @@ bzflag_DATA = \
 	title.png		\
 	wall.png		\
 	water.png		\
+	wavy_flare.png		\
 	zone_ground.png
 
 EXTRA_DIST = $(bzflag_DATA)

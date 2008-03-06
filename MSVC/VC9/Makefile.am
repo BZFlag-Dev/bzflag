@@ -11,6 +11,7 @@ EXTRA_DIST =	\
 	game.vcproj	\
 	geometry.vcproj	\
 	installer.vcproj	\
+	libcurl.vcproj	\
 	makehtml.vcproj	\
 	man2html.vcproj	\
 	mediafile.vcproj	\

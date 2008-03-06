@@ -62,19 +62,20 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
 	ListServer.h			\
+	MXpr.h				\
 	MathUtils.h			\
 	MediaFile.h			\
-	MeshFace.h			\
-	MeshFragSceneNode.h		\
 	MeshDrawInfo.h			\
 	MeshDrawMgr.h			\
+	MeshFace.h			\
+	MeshFragSceneNode.h		\
 	MeshObstacle.h			\
 	MeshPolySceneNode.h		\
-	MeshSceneNodeGenerator.h	\
 	MeshSceneNode.h			\
+	MeshSceneNodeGenerator.h	\
 	MeshTransform.h			\
+	Model.h				\
 	MsgStrings.h			\
-	Model.h					\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleList.h			\
@@ -86,7 +87,7 @@ noinst_HEADERS =			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
 	OpenGLTexture.h			\
-	OpenGLUtils.h		\
+	OpenGLUtils.h			\
 	OSFile.h			\
 	PTSceneNode.h			\
 	Pack.h				\
@@ -140,7 +141,7 @@ noinst_HEADERS =			\
 	WallSceneNode.h			\
 	WallSceneNodeGenerator.h	\
 	WordFilter.h			\
-	WorldEventManager.h			\
+	WorldEventManager.h		\
 	ZSceneDatabase.h		\
 	ares.h				\
 	bz_Locale.h			\
@@ -152,7 +153,7 @@ noinst_HEADERS =			\
 	common.h			\
 	cURLManager.h			\
 	global.h			\
-	bz_md5.h				\
+	bz_md5.h			\
 	messages.h			\
 	multicast.h			\
 	network.h			\
@@ -160,7 +161,7 @@ noinst_HEADERS =			\
 	resource.h			\
 	vectors.h			\
 	version.h			\
-	WorldContentInfo.h			\
+	WorldContentInfo.h		\
 	win32.h
 
 CLEANFILES = datestamp
