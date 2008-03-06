@@ -7,7 +7,9 @@ EXTRA_DIST = \
 	README.txt \
 	koth.def \
 	koth.sln \
-	koth.vcproj
+	koth.vcproj \
+	koth_admin.txt \
+	koth_rules.txt
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

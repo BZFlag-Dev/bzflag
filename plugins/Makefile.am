@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
-	plugin_utils\
+	plugin_utils \
 	HoldTheFlag \
 	Phoenix \
 	RogueGenocide \
@@ -10,9 +10,11 @@ SUBDIRS = \
 	airspawn \
 	bzfscron \
 	chathistory \
-	flagStay \
+	customflagsample \
 	fastmap \
+	flagStay \
 	hiddenAdmin \
+	httpTest \
 	keepaway \
 	killall \
 	koth \
@@ -31,10 +33,10 @@ SUBDIRS = \
 	thiefControl \
 	timedctf \
 	torBlock \
+	unrealCTF \
 	weaponArena \
 	webstats \
-	wwzones \
-	unrealCTF
+	wwzones
 
 DIST_SUBDIRS = \
 	$(SUBDIRS) \

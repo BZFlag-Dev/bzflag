@@ -7,7 +7,9 @@ EXTRA_DIST = \
 	README.txt \
 	keepaway.def \
 	keepaway.sln \
-	keepaway.vcproj
+	keepaway.vcproj \
+	keepaway_admin.txt \
+	keepaway_rules.txt
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

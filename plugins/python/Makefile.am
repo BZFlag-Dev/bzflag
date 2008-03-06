@@ -32,6 +32,7 @@ EXTRA_SCRIPTS = \
 	BZReactor.py
 
 EXTRA_DIST = \
+	$(EXTRA_SCRIPTS) \
 	SConstruct \
 	binding-thoughts \
 	python.def \

@@ -193,41 +193,43 @@ AC_CONFIG_FILES([
 	MSVC/Makefile
 	MSVC/VC71/Makefile
 	Makefile
+	Phoenix/Makefile
 	RogueGenocide/Makefile
 	SAMPLE_PLUGIN/Makefile
-	serverControl/Makefile
-	wwzones/Makefile
-	timedctf/Makefile
-	teamflagreset/Makefile
-	koth/Makefile
-	keepaway/Makefile
-	thiefControl/Makefile
 	airspawn/Makefile
+	bzfscron/Makefile
 	chathistory/Makefile
-	hiddenAdmin/Makefile
-	flagStay/Makefile
+	customflagsample/Makefile
 	fastmap/Makefile
+	flagStay/Makefile
+	hiddenAdmin/Makefile
+	httpTest/Makefile
+	keepaway/Makefile
 	killall/Makefile
+	koth/Makefile
 	logDetail/Makefile
 	m4/Makefile
 	mapchange/Makefile
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	plugin_utils/Makefile
-	Phoenix/Makefile
+	plugin_utils/VC71/Makefile
 	python/Makefile
 	rabidRabbit/Makefile
 	recordmatch/Makefile
+	regFlag/Makefile
+	serverControl/Makefile
 	serverSideBotSample/Makefile
 	shockwaveDeath/Makefile
 	soundTest/Makefile
-	weaponArena/Makefile
+	teamflagreset/Makefile
+	thiefControl/Makefile
+	timedctf/Makefile
 	torBlock/Makefile
-	bzfscron/Makefile
-	httpTest/Makefile
-	regFlag/Makefile
-	webstats/Makefile
 	unrealCTF/Makefile
+	weaponArena/Makefile
+	webstats/Makefile
+	wwzones/Makefile
 ])
 
 AC_OUTPUT

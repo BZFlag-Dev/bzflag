@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	README.txt \
 	rabidRabbit.def \
 	rabidRabbit.sln \
+	rabidRabbit.txt \
 	rabidRabbit.vcproj
 
 MAINTAINERCLEANFILES =	\
