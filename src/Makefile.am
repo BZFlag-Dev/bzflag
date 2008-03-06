@@ -61,5 +61,8 @@ SUBDIRS = \
 	${BZROBOTS_DIR} \
 	${BZADMIN_DIR}
 
+EXTRA_DIST = \
+	world
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
