@@ -20,6 +20,7 @@
 
 // system headers
 #include <math.h>
+#include <string.h>
 
 // common implementation headers
 #include "StateDatabase.h"
@@ -350,7 +351,7 @@ void TankSceneNode::setThief()
 void TankSceneNode::setDimensions(const float dims[3])
 {
   tankSize = Normal;
-  memcpy (dimensions, dims, sizeof(float[3]));
+  memcpy(dimensions, dims, sizeof(float[3]));
   useDimensions = true;
   return;
 }

@@ -10,16 +10,19 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "JoinMenu.h"
 
-/* common implementation headers */
+// system headers
+#include <string.h>
+
+// common implementation headers
 #include "FontManager.h"
 #include "Protocol.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-/* local implementation headers */
+// local implementation headers
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"

@@ -477,7 +477,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
       key.button = BzfKeyEvent::NoButton;
   }
 
-  if (key.button == BzfKeyEvent::NoButton)
+  if (key.button == BzfKeyEvent::NoButton) {
     if (unicode) {
       if ((unicode & 0xFF80))
 	return false;
@@ -492,6 +492,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
       else
 	return false;
     }
+  }
 
   key.shift = 0;
   if (mod & KMOD_SHIFT)

@@ -10,10 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "CustomBase.h"
 
-/* common implementation headers */
+// system includes
+#include <string.h>
+
+// common implementation headers
 #include "global.h" // for CtfTeams
 #include "BaseBuilding.h"
 #include "ObstacleMgr.h"

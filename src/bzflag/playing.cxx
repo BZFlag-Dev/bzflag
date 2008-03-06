@@ -245,13 +245,14 @@ void selectNextRecipient (bool forward, bool robotIn)
   while (true) {
     if (forward) {
       i++;
-      if (i == curMaxPlayers)
+      if (i == curMaxPlayers) {
 	// if no old rec id we have just ended our search
 	if (recipient == NULL)
 	  break;
 	else
 	  // wrap around
 	  i = 0;
+      }
     } else {
       if (i == 0)
 	// wrap around
@@ -365,8 +366,8 @@ void warnAboutConsole()
 
 inline bool isViewTank(Player* tank)
 {
-  return ((tank != NULL) &&
-	  (tank == LocalPlayer::getMyTank()) ||
+  return (((tank != NULL) &&
+	  (tank == LocalPlayer::getMyTank())) ||
 	  (ROAM.isRoaming()
 	   && (ROAM.getMode() == Roaming::roamViewFP)
 	   && (ROAM.getTargetTank() == tank)));
@@ -1145,7 +1146,8 @@ static void		updateFlag(FlagType* flag)
   if (BZDB.isTrue("displayFlagHelp"))
     hud->setFlagHelp(flag, FlagHelpDuration);
 
-  if (!radar && !myTank || !World::getWorld()) return;
+  if ((!radar && !myTank) || !World::getWorld())
+    return;
 
   radar->setJammed(flag == Flags::Jamming);
   hud->setAltitudeTape(flag == Flags::Jumping || World::getWorld()->allowJumping());
@@ -2423,11 +2425,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 #ifdef ROBOT
       for (int r = 0; r < numRobots; r++)
-	if (robots[r])
+	if (robots[r]) {
 	  if (robots[r]->getId() == id)
 	    robots[r]->changeTeam(RabbitTeam);
 	  else
 	    robots[r]->changeTeam(RogueTeam);
+	}
 #endif
       break;
     }
@@ -3006,8 +3009,8 @@ static void		doMessages()
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
-    while (robotServer[i]
-	   && (e = robotServer[i]->read(code, len, msg, 0)) == 1);
+    while (robotServer[i] && (e = robotServer[i]->read(code, len, msg, 0)) == 1)
+      ;
     if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
       handleServerMessage(false, code, len, msg);
   }
@@ -3478,8 +3481,8 @@ static void		checkEnvironment()
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) &&
-	(flagd->flagTeam == team && base != team) ||
-	(flagd->flagTeam != team && base == team))
+	((flagd->flagTeam == team && base != team) ||
+	(flagd->flagTeam != team && base == team)))
       serverLink->sendCaptureFlag(base);
   }
   else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
@@ -3935,10 +3938,10 @@ static void		setRobotTarget(RobotPlayer* robot)
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+	  ((robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
 	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
 	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
-	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
+	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam))) {
 	bestTarget = player[j];
 	break;
       }
@@ -4135,8 +4138,7 @@ static void		addRobots()
     }
   for (j = 0; j < numRobots; j++) {
     // wait for response
-    if (robotServer[j]
-	&& robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
+    if (robotServer[j] && (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept)) {
       delete robots[j];
       delete robotServer[j];
       robots[j] = NULL;
@@ -5274,8 +5276,8 @@ void drawFrame(const float dt)
       }
     }
     sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
-			  (myTank && !ROAM.isRoaming() && !devDriving) &&
-			  !myTank->isAlive() && !myTank->isExploding());
+			  ((myTank && !ROAM.isRoaming() && !devDriving) &&
+			  !myTank->isAlive() && !myTank->isExploding()));
 
     // turn on panel dimming when showing the menu (both radar and chat)
     if (HUDDialogStack::get()->isActive()) {
@@ -6280,8 +6282,8 @@ static void		timeConfigurations()
   }
 
   // leave blending on if blending clearly faster than stippling
-  if (timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ &&
-      timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ) {
+  if ((timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ) &&
+      (timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ)) {
     BZDB.set("blend", "0");
   }
 

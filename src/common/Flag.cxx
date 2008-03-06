@@ -18,6 +18,7 @@
 /* system implementation headers */
 #include <math.h>
 #include <string>
+#include <string.h>
 
 /* common implementation headers */
 #include "Team.h"

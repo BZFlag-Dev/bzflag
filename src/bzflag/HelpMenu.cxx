@@ -13,6 +13,9 @@
 /* interface header */
 #include "HelpMenu.h"
 
+// system headers
+#include <string.h>
+
 /* common implementation headers */
 #include "KeyManager.h"
 #include "Flag.h"

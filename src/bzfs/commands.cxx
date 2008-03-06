@@ -707,7 +707,8 @@ bool CmdHelp::operator() (const char	 *message,
 {
 
   int i;
-  for (i = 0; message[i] && !isspace(message[i]); i++);
+  for (i = 0; message[i] && !isspace(message[i]); i++)
+    ;
   if (!i)
     return false;
   i--;
@@ -741,13 +742,14 @@ bool CmdHelp::operator() (const char	 *message,
     for (it = commandMap.begin(); it != commandMap.end(); it++) {
       std::string master = it->first;
       master.resize(i);
-      if (master == commandToken)
+      if (master == commandToken) {
 	if (matching > 1 || listOnly) {
 	  sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
 	} else {
 	  std::string commandLine = it->first + (message + i + 1);
 	  return (*(it->second))(commandLine.c_str(), playerData);
 	}
+      }
     }
   return true;
 }

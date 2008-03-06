@@ -89,7 +89,7 @@ public:
 
   /** converts a time difference into an array of integers
       representing days, hours, minutes, seconds */
-  static const void		convertTime(double raw, long int convertedTimes[]);
+  static void			convertTime(double raw, long int convertedTimes[]);
   /** prints an integer-array time difference in human-readable form */
   static const std::string	printTime(long int timeValue[]);
   /** prints an float time difference in human-readable form */

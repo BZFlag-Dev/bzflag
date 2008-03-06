@@ -270,13 +270,14 @@ bool GameKeeper::Player::clean()
   bool empty    = true;
   bool ICleaned = false;
   for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]))
+    if ((playerData = playerList[i])) {
       if (playerData->closed) {
 	delete playerData;
 	ICleaned = true;
       } else {
 	empty = false;
       }
+    }
   return empty && ICleaned;
 }
 

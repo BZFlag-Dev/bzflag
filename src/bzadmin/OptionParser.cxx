@@ -17,6 +17,8 @@
 /* interface header */
 #include "OptionParser.h"
 
+// system header
+#include <string.h>
 
 OptionParser::OptionParser(const std::string& helpPrefix,
 			   const std::string& usageSuffix)

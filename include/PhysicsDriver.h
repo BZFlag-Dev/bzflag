@@ -38,13 +38,13 @@ class PhysicsDriver {
 
     const std::string& getName() const;
     const float* getLinearVel() const;
-    const float getAngularVel() const;
+    float getAngularVel() const;
     const float* getAngularPos() const;
-    const float getRadialVel() const;
+    float getRadialVel() const;
     const float* getRadialPos() const;
-    const bool getIsSlide() const;
-    const float getSlideTime() const;
-    const bool getIsDeath() const;
+    bool getIsSlide() const;
+    float getSlideTime() const;
+    bool getIsDeath() const;
     const std::string& getDeathMsg() const;
 
     int packSize() const;
@@ -72,7 +72,7 @@ inline const float* PhysicsDriver::getLinearVel() const
 {
   return linear;
 }
-inline const float PhysicsDriver::getAngularVel() const
+inline float PhysicsDriver::getAngularVel() const
 {
   return angularVel;
 }
@@ -80,7 +80,7 @@ inline const float* PhysicsDriver::getAngularPos() const
 {
   return angularPos;
 }
-inline const float PhysicsDriver::getRadialVel() const
+inline float PhysicsDriver::getRadialVel() const
 {
   return radialVel;
 }
@@ -88,15 +88,15 @@ inline const float* PhysicsDriver::getRadialPos() const
 {
   return radialPos;
 }
-inline const bool PhysicsDriver::getIsSlide() const
+inline bool PhysicsDriver::getIsSlide() const
 {
   return slide;
 }
-inline const float PhysicsDriver::getSlideTime() const
+inline float PhysicsDriver::getSlideTime() const
 {
   return slideTime;
 }
-inline const bool PhysicsDriver::getIsDeath() const
+inline bool PhysicsDriver::getIsDeath() const
 {
   return death;
 }

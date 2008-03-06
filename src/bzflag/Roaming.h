@@ -71,7 +71,7 @@ public:
   /* note that dc is a camera structure of *changes* (thus dc)
      not new values */
   void updatePosition(RoamingCamera* dc, float dt);
-  const RoamingCamera* const getCamera(void) const;
+  const RoamingCamera* getCamera(void) const;
   void setZoom(float newZoom);
   float getZoom(void) const;
 
@@ -124,7 +124,7 @@ inline Flag* Roaming::getTargetFlag() const {
     return &(world->getFlag(targetFlag));
 }
 
-inline const Roaming::RoamingCamera* const Roaming::getCamera() const {
+inline const Roaming::RoamingCamera* Roaming::getCamera() const {
   return &camera;
 }
 

@@ -35,7 +35,7 @@ public:
   void resize(int width, int height);
   void createControls();
 
-  static const int getFontFace();
+  static int getFontFace();
 
 private:
 

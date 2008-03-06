@@ -19,6 +19,7 @@
 /* system headers */
 #include <assert.h>
 #include <time.h>
+#include <string.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"

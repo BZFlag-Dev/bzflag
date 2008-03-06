@@ -20,6 +20,7 @@
 // system headers
 #include <fstream>
 #include <stdio.h>
+#include <string.h>
 
 // local implementation headers
 #include "StateDatabase.h"

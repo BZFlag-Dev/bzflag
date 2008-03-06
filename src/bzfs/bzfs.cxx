@@ -2767,11 +2767,12 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam()) {
-	if (!killer->isTeam(RogueTeam))
+	if (!killer->isTeam(RogueTeam)) {
 	  if (killerIndex == victimIndex)
 	    team[int(victim->getTeam())].team.lost += 1;
 	  else
 	    team[int(victim->getTeam())].team.lost += 2;
+	}
       } else {
 	if (killer && !killer->isTeam(RogueTeam)) {
 	  winningTeam = int(killer->getTeam());

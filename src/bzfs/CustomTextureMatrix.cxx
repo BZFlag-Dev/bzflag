@@ -17,6 +17,7 @@
 
 /* system implementation headers */
 #include <math.h>
+#include <string.h>
 
 /* common implementation headers */
 #include "TextureMatrix.h"

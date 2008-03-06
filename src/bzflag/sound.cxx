@@ -16,6 +16,7 @@
 // system headers
 #include <vector>
 #include <map>
+#include <string.h>
 
 // common headers
 #include "BzfMedia.h"
@@ -111,7 +112,7 @@ AudioSamples& AudioSamples::operator = ( const AudioSamples& r)
 	duration = r.duration;
 
 	mono = monoRaw + (r.mono-r.monoRaw);
-  	file = r.file;
+	file = r.file;
 	return *this;
 }
 
@@ -127,7 +128,7 @@ AudioSamples::AudioSamples ( const AudioSamples& r)
 	memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
 	mono = monoRaw + (r.mono-r.monoRaw);
 	duration = r.duration;
-  	file = r.file;
+	file = r.file;
 }
 
 /*

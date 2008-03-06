@@ -40,7 +40,8 @@ bool LocalCommand::execute(const char *commandLine)
   if (!mapOfCommands)
     return false;
   int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
+  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
+    ;
   std::string commandToken(commandLine, i);
 
   std::map<std::string, LocalCommand *>::iterator it

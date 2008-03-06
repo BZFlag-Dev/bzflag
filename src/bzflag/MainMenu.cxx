@@ -114,7 +114,7 @@ MainMenu::~MainMenu()
   HelpMenu::done();
 }
 
-const int		MainMenu::getFontFace()
+int			MainMenu::getFontFace()
 {
   // create font
   return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));

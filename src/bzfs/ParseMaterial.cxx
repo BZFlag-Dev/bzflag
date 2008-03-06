@@ -16,6 +16,7 @@
 
 /* system headers */
 #include <sstream>
+#include <string.h>
 
 /* common implementation headers */
 #include "ParseColor.h"

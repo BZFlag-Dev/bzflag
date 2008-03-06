@@ -33,7 +33,7 @@ public:
   void execute(void);
   void addStats(Player* player, std::vector<HUDuiControl*>& list);
 
-  static const int getFontFace();
+  static int getFontFace();
 
 private:
 

@@ -19,21 +19,23 @@
 // get angle of normal vector to axis aligned rect centered at origin by point p
 static float getNormalOrigRect(const float* p, float dx, float dy)
 {
-  if (p[0] > dx)					// east of box
+  if (p[0] > dx) {					// east of box
     if (p[1] > dy)					//  ne corner
       return atan2f(p[1] - dy, p[0] - dx);
     else if (p[1] < -dy)				//  se corner
       return atan2f(p[1] + dy, p[0] - dx);
     else						//  east side
       return 0.0f;
+  }
 
-  if (p[0] < -dx)					// west of box
+  if (p[0] < -dx) {					// west of box
     if (p[1] > dy)					//  nw corner
       return atan2f(p[1] - dy, p[0] + dx);
     else if (p[1] < -dy)				//  sw corner
       return atan2f(p[1] + dy, p[0] + dx);
     else						//  west side
       return (float)M_PI;
+  }
 
   if (p[1] > dy)					// north of box
     return (float)(0.5 * M_PI);
@@ -571,16 +573,17 @@ static bool testOrigRectRect(const float* p, float angle,
 
     // if the edge lies completely to one side of rect2 then continue
     // if it crosses the center then return true
-    if (region[i][0] == region[j][0])
+    if (region[i][0] == region[j][0]) {
       if (region[i][0] == 0 && region[i][1] != region[j][1])
 	return true;
       else
 	continue;
-    else if (region[i][1] == region[j][1])
+    } else if (region[i][1] == region[j][1]) {
       if (region[i][1] == 0)
 	return true;
       else
 	continue;
+    }
 
     // determine corners of rect2 the edge might pass between
     if (region[i][0] == 0) {

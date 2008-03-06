@@ -80,7 +80,7 @@ bool BzfRegion::isInside(const float p[2]) const
   const float* p2 = NULL;
   for (int i = 0; i < count; p1 = p2, i++) {
     p2 = corners[i].get();
-    if (p1[1] >= p[1] && p2[1] >= p[1] || p1[1] < p[1] && p2[1] < p[1])
+    if ((p1[1] >= p[1] && p2[1] >= p[1]) || (p1[1] < p[1] && p2[1] < p[1]))
       continue;
     if (p1[0] < p[0] && p2[0] < p[0])
       continue;

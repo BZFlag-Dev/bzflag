@@ -35,7 +35,7 @@ class Extents {
     void expandToPoint(const float[3]); // expand to contain the point
     void addMargin(float margin);     // widen the extents by "margin"
 
-    const float getWidth(int axis) const;
+    float getWidth(int axis) const;
 
     bool touches(const Extents& orig) const;
     bool contains(const Extents& orig) const;
@@ -184,7 +184,7 @@ inline void Extents::addMargin(float margin)
 }
 
 
-inline const float Extents::getWidth(int axis) const
+inline float Extents::getWidth(int axis) const
 {
   return (maxs[axis] - mins[axis]);
 }

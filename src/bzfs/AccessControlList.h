@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <string.h>
 
 #include "TimeKeeper.h"
 #include "Address.h"

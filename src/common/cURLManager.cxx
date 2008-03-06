@@ -14,6 +14,9 @@
 
 #include "cURLManager.h"
 
+// system includes
+#include <string.h>
+
 // common implementation headers
 #include "bzfio.h"
 

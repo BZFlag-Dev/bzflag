@@ -17,6 +17,7 @@
 
 /* system implementation headers */
 #include <sstream>
+#include <string.h>
 
 /* common implementation headers */
 #include "MeshTransform.h"

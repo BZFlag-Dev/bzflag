@@ -18,6 +18,7 @@
 /* system implementation headers */
 #include <sstream>
 #include <vector>
+#include <string.h>
 
 /* common implementation headers */
 #include "DynamicColor.h"

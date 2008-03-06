@@ -62,7 +62,7 @@ class MeshPolySceneNode : public WallSceneNode {
 	void renderShadow();
 	const GLfloat* getVertex(int i) const;
 	const GLfloat (*getVertices() const)[3];
-	const int getVertexCount() const;
+	int getVertexCount() const;
 	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
       private:
 	void drawV() const; // draw with just vertices
@@ -109,7 +109,7 @@ class MeshPolySceneNode : public WallSceneNode {
     bool noShadow;
 };
 
-inline const int MeshPolySceneNode::Geometry::getVertexCount() const
+inline int MeshPolySceneNode::Geometry::getVertexCount() const
 {
   return vertices.getSize();
 }

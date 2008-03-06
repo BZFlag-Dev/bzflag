@@ -159,7 +159,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     uint8_t index;
     buf = nboUnpackUByte(buf, index);
     if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
-	&& !netPlayer[index]->udpin)
+	&& !netPlayer[index]->udpin) {
       if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
 		  sizeof(uaddr->sin_addr))) {
 	id = index;
@@ -180,6 +180,7 @@ than %s:%d\n",
 	   ntohs(netPlayer[index]->uaddr.sin_port),
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
       }
+    }
   }
 
   if (id == -1) {

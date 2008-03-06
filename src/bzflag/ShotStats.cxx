@@ -129,7 +129,7 @@ void ShotStats::addStats(Player *_player, std::vector<HUDuiControl*> &_list)
   ++rows;
 }
 
-const int		ShotStats::getFontFace()
+int			ShotStats::getFontFace()
 {
   // create font
   return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));

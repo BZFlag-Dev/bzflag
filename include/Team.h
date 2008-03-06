@@ -33,7 +33,7 @@ struct Team {
 
     static const std::string  getImagePrefix(TeamColor); // const
     static const char*	getName(TeamColor); // const
-    static const TeamColor	getTeam(const std::string name); // const
+    static TeamColor	getTeam(const std::string name); // const
     static const float*	getTankColor(TeamColor); // const
     static const float*	getRadarColor(TeamColor team, bool rabbitMode = false); // const
     static bool	isColorTeam(TeamColor); // const

@@ -17,6 +17,7 @@
 /* system headers */
 #include <sstream>
 #include <string>
+#include <string.h>
 #include <math.h>
 
 /* local implementation headers */

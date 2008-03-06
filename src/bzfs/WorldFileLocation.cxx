@@ -16,6 +16,7 @@
 #include "common.h"
 #include "Pack.h"
 #include <math.h>
+#include <string.h>
 #include <sstream>
 
 #include "WorldFileObject.h"

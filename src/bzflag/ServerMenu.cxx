@@ -13,6 +13,9 @@
 /* interface header */
 #include "ServerMenu.h"
 
+// system headers
+#include <string.h>
+
 /* common implementation headers */
 #include "FontManager.h"
 #include "TextUtils.h"

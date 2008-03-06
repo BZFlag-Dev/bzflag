@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <string.h>
 #if !defined(_WIN32)
 #include <errno.h>
 #endif

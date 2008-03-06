@@ -18,6 +18,7 @@
 // system headers
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 
 // common headers
 #include "bzfio.h"
