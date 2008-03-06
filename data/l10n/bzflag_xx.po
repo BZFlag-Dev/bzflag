@@ -1367,7 +1367,7 @@ msgstr ""
 msgid "BZFlag Home Page:"
 msgstr ""
 
-msgid "Copyright (c) 1993 - 2007"
+msgid "Copyright (c) 1993 - 2008"
 msgstr ""
 
 ####################

@@ -1,9 +1,9 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993 - 2007 Tim Riker
-OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
+# Copyright (c) 1993 - 2008 Tim Riker
+OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2008'
 # NOTE: update just this line and then run the script
-NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2007'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2008'
 #
 # update copyright in all files
 #
@@ -22,7 +22,7 @@ myname=touchcopyright
 tmpfile=$root/$myname.tmp
 rm -f $tmpfile
 # touch myself last
-files="`find $root -type f | grep -v 'png$' | grep -v misc/$myname` misc/$myname"
+files="`find $root -type f | grep -v 'png$' | grep -v .svn | grep -v misc/$myname` misc/$myname"
 
 # do replacement
 for file in $files; do
