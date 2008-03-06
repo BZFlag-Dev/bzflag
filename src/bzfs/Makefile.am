@@ -158,5 +158,7 @@ LDADD = \
 	$(LIBZ)				\
 	../date/libDate.la
 
+EXTRA_DIST = TimerStrategy.h
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
