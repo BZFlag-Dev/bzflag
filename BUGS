@@ -25,8 +25,6 @@ recent bugs
 - client crashes upon receipt of a corrupted MsgFlagUpdate message.
   (See http://bzflag.secretplace.us/packet.txt for an example)
   
-- EXC_BAD_ACCESS (SIGBUS) - at quit client, see http://pastebin.bzflag.bz/f7743262b
-  
 -- simulation --
 - at high frame rates (approx. > 500), isDeadReckoningWrong() often returns true
   when tank is moving at constant speed. This leads to many unnecessary
