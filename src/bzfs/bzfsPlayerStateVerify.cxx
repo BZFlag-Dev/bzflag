@@ -218,9 +218,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 		wingsMaxHeight *= BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 		wingsMaxHeight /= (-wingsGravity * 2.0f);
 	} else if (hasLG) {
-		lgMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY) * lgGravity / normalGravity;
+		lgMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 		lgMaxHeight *= lgMaxHeight;
-		lgMaxHeight /= (-normalGravity * 2.0f);;
+		lgMaxHeight /= (-lgGravity * 2.0f);;
 	} else {
 		normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 		normalMaxHeight *= normalMaxHeight;

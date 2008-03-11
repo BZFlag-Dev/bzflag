@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+-- BZDB --
+- Using -set (at least on the command line) does not actually set anything
+
+- Using /reset in game after a /set does not reset the variables
+
 -- events --
 - Looks like onspawn/ondeath world weapon events get ignored by the event
   handler.  Probably ought to handle them since they're doc'ed.

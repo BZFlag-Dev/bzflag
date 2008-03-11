@@ -392,6 +392,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
 	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
 	lastSpeed = speed;
+		} else if (getFlag() == Flags::LowGravity) {
+			newVelocity[2] += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
+			newAngVel = oldAngVel;
       } else {
 	newVelocity[2] += BZDBCache::gravity * dt;
 	newAngVel = oldAngVel;
@@ -1417,9 +1420,6 @@ void			LocalPlayer::doJump()
   newVelocity[1] = oldVelocity[1];
   if (flag == Flags::Wings) {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-  } else if (flag == Flags::LowGravity) {
-    newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY) * ( BZDB.eval(StateDatabase::BZDB_LGGRAVITY)
-    / BZDB.eval(StateDatabase::BZDB_GRAVITY));
   } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
