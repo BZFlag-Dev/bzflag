@@ -559,9 +559,9 @@ void resetTeamScores ( void )
   sendTeamUpdateMessageBroadcast();
 }
 
-void startCountdown ( int delay, float limit, const char *buyWho )
+void startCountdown ( int delay, float limit, const char *byWho )
 {
-  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",buyWho).c_str());
+  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",byWho).c_str());
 
   clOptions->timeLimit = limit;
   countdownDelay = delay;
