@@ -475,7 +475,17 @@ public:
     float pos[3];
     buf = nboUnpackVector(buf, pos);
 
+    const float halfSize = BZDBCache::worldSize * 0.5f;
+    if (fabsf(pos[0]) > halfSize || fabsf(pos[1]) > halfSize) {
+      // client may be cheating
+      const PlayerId id = player->getIndex();
+      logDebugMessage(1,"Player %s [%d] dropped flag out of bounds to %f %f %f\n",
+		      player->player.getCallSign(), id, pos[0], pos[1], pos[2]);
+      sendMessage(ServerPlayer, id, "Autokick: Flag dropped out of bounds.");
+    }
+
     dropPlayerFlag(*player, pos);
+
     return true;
   }
 };

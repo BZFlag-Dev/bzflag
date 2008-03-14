@@ -2896,7 +2896,8 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 {
   assert(world != NULL);
 
-  const float size = BZDBCache::worldSize;
+  // maximum X or Y coordinate is 1/2 of worldsize
+  const float size = BZDBCache::worldSize * 0.5f;
   float pos[3];
   pos[0] = ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0];
   pos[1] = ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1];
