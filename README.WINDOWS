@@ -62,6 +62,7 @@ Once you have these SDKs, you must configure VC to include them.
 This can be done using the Tools Menu, Options item, then opening the
 'projects' sub item, and selecting the 'vc++ directories' item. Using that
 dialog you must set the paths to the include and lib dirs of any SDKs.
+Be sure that you use the correct lib dir for your platform (x68 or x64)
 
 You may wish to also install curses and glew if you wish to do a full 
 distrobution build.
