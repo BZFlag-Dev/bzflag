@@ -1419,7 +1419,7 @@ void			LocalPlayer::doJump()
 
   // check to see if it's possible for us to jump
   // i.e. appropriate flags, world settings, permissions
-  if (!canJump) {
+  if (!canJump()) {
     return;
   }
 
