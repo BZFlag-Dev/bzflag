@@ -175,10 +175,8 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 	float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
 	float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-	if (((world->allowJumping() || (myTank->getFlag()) == Flags::Jumping
-	|| (myTank->getFlag()) == Flags::Wings))
-	&& (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
-	&& (myTank->getFlag() != Flags::NoJumping)) {
+	if ((myTank->canJump())
+	&& (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))) {
 		myTank->setJump();
 		return (myTank->getFlag() != Flags::Wings);
 	} else if (dotProd > 0.96f) {

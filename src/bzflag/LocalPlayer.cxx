@@ -508,8 +508,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       newVelocity[0] = movementMax * normalStuck[0];
       newVelocity[1] = movementMax * normalStuck[1];
-      if ((world->allowJumping() || (getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)) &&
-	  (getFlag() != Flags::NoJumping))
+      if (canJump())
 	newVelocity[2] = movementMax * normalStuck[2];
       else
 	newVelocity[2] = 0.0f;
@@ -922,6 +921,40 @@ void			LocalPlayer::doUpdateMotion(float dt)
 			 (newPos[1] - oldPosition[1]) / dt,
 			 (newPos[2] - oldPosition[2]) / dt);
     }
+  }
+}
+
+bool LocalPlayer::canJump() const
+{
+  // does the world exist
+  World *world = World::getWorld();
+  if (!world) {
+    return false;
+  }
+  
+  // are we allowed by the server to jump?
+  if (!Player::canJump()) {
+    return false;
+  }
+
+  // can't jump while burrowed
+  if (getPosition()[2] < 0.0f) {
+    return false;
+  }
+
+  if (world->allowJumping()) {
+    // if all tanks may jump, then you may jump unless you hold NJ
+    if (getFlag() == Flags::NoJumping)
+      return false;
+    else
+      return true;
+  } else {
+    // otherwise, you may not jump unless you hold J, WG, B, or LG
+    if ((getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings) 
+        || (getFlag() == Flags::Bouncy) || (getFlag() == Flags::LowGravity))
+      return true;
+    else
+      return false;
   }
 }
 
@@ -1384,13 +1417,9 @@ void			LocalPlayer::doJump()
     return;
   }
 
-  // Are we allowed to jump?
-  if (!canJump()) {
-    return;
-  }
-
-  // can't jump while burrowed
-  if (getPosition()[2] < 0.0f) {
+  // check to see if it's possible for us to jump
+  // i.e. appropriate flags, world settings, permissions
+  if (!canJump) {
     return;
   }
 
@@ -1400,16 +1429,12 @@ void			LocalPlayer::doJump()
     }
     wingsFlapCount--;
   } else if ((location != OnGround) && (location != OnBuilding)) {
-    // can't jump unless on the ground or a building
+    // can't jump without wings unless on the ground or a building
     if (flag != Flags::Wings)
       return;
     if (wingsFlapCount <= 0)
       return;
     wingsFlapCount--;
-  } else if ((flag != Flags::Bouncy) &&
-	     ((flag != Flags::Jumping && !world->allowJumping()) ||
-	      (flag == Flags::NoJumping))) {
-    return;
   }
 
   // add jump velocity (actually, set the vertical component since you

@@ -74,6 +74,7 @@ public:
   void		activateAutoPilot(bool = true);
   bool		fireShot();
   void		explodeTank();
+  bool		canJump() const;
   void		doJump();
   void		setJump();
   void		setJumpPressed(bool value);

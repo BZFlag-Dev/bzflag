@@ -235,10 +235,8 @@ static bool avoidBullet(float &rotation, float &speed)
     return false;
   }
 
-  if (((world->allowJumping() || (myTank->getFlag()) == Flags::Jumping
-   || (myTank->getFlag()) == Flags::Wings))
-   && (minDistance < ( std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))
-   && (myTank->getFlag() != Flags::NoJumping)) {
+  if ((myTank->canJump())
+   && (minDistance < (std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))) {
     wantJump = true;
     return (myTank->getFlag() != Flags::Wings);
   } else if (dotProd > 0.96f) {

@@ -1173,7 +1173,7 @@ static void		updateFlag(FlagType* flag)
   if (!radar && !myTank || !_world) return;
 
   radar->setJammed(flag == Flags::Jamming);
-  hud->setAltitudeTape(flag == Flags::Jumping || _world->allowJumping());
+  hud->setAltitudeTape(myTank->canJump());
 }
 
 
@@ -1985,7 +1985,7 @@ static void handleAliveMessage(void *msg)
       if (!myTank->isAutoPilot())
 	mainWindow->warpMouse();
 
-      hud->setAltitudeTape(World::getWorld()->allowJumping());
+      hud->setAltitudeTape(myTank->canJump());
 #ifdef ROBOT
     } else if (tank->getPlayerType() == ComputerPlayer) {
       for (int r = 0; r < numRobots; r++) {
