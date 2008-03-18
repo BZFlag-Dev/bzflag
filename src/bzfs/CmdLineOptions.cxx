@@ -1240,7 +1240,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
   if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
-    std::out << "WARNING: flags on boxes without jumping is potentially unsafe" << std::endl;
+    std::cout << "WARNING: flags on boxes without jumping is potentially unsafe" << std::endl;
   }
 
   if (options.gameType == eRabbitChase) {
