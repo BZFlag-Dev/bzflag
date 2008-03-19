@@ -443,7 +443,7 @@ static std::string cmdAutoPilot(const std::string&,
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) || ! myTank->isAutoPilot()) {
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
   }
