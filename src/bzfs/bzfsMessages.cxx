@@ -468,8 +468,8 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(toPlayer);
   msg->packUByte(fromPlayer);
+  msg->packUByte(toPlayer);
 
   GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(toPlayer);
   GameKeeper::Player *fromData = GameKeeper::Player::getPlayerByIndex(fromPlayer);
