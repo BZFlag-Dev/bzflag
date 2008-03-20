@@ -73,9 +73,6 @@ recent bugs
   on each letter. The gl restate was removed from the font manager.
   It should be put in and tied to a config option that defaults to
   off.
-
-- do all Riva128 systems require "noMeshClusers"? Is there a 
-  workaround to make vertex array work on those cards?
   
 - Burrowed tank shadows should be ground clipped
   (the shadow perspective matrix messes with the clip plane?)
