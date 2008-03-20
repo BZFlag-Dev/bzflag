@@ -271,16 +271,30 @@ WorldWeaponGlobalEventHandler::~WorldWeaponGlobalEventHandler()
 
 void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 {
-  if (!eventData || eventData->eventType != bz_eCaptureEvent)
+  if (!eventData )
     return;
 
-  bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
+  switch(eventData->eventType)
+  {
+    case bz_eCaptureEvent:
+      {
+	bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
 
-  if ( capEvent->teamCapped != team )
+	if ( capEvent->teamCapped != team )
 	  return;
+      }
+    break;
+
+    case bz_ePlayerDieEvent:
+    case bz_ePlayerSpawnEvent:
+      break;
+
+    default:
+      return;
+  }
 
   fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		   ServerPlayer, RogueTeam, origin, tilt, direction,
+		   ServerPlayer, convertTeam(team), origin, tilt, direction,
 		   world->getWorldWeapons().getNewWorldShotID(),0);
 }
 
