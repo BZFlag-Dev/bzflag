@@ -3065,8 +3065,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     if ((p == NULL) || (teamIndex != (int)p->player.getTeam())) {
       continue;
     }
-    p->player.setDead();
-    p->player.setSpawnDelay(spawnDelay);
+    if (p->player.isAlive()) {
+      p->player.setDead();
+      p->player.setSpawnDelay(spawnDelay);
+    }
     p->player.setRestartOnBase(true);
     zapFlagByPlayer(i);
   }
