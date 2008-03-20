@@ -122,6 +122,7 @@ recent bugs
 -- platform (X11) --
 
 -- platform (OSX) --
+- Reported lockup on OSX when swaping from fullscreen to windowed mode(ts)
 
 -- bzfs --
 - ANSI codes can be used in the server -public messages
