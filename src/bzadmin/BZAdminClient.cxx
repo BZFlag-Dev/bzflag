@@ -154,8 +154,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgNewRabbit:
       if (messageMask[MsgNewRabbit]) {
 	vbuf = nboUnpackUByte(vbuf, p);
-	lastMessage.first = std::string("*** '") + players[p].name +
-	  "' is now the rabbit.";
+	if (p != NoPlayer)
+	  lastMessage.first = std::string("*** '") + players[p].name +
+	    "' is now the rabbit.";
       }
       break;
 
