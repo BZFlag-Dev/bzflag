@@ -148,15 +148,20 @@ std::ostream*			FileManager::createDataOutStream(
 #else
     // create all directories above the file
     i = 2; // don't stat on a drive, it will fail
-    while ((i = filename.find('\\', i+1)) != -1) {
+    while ((i = filename.find('\\', i+1)) != -1)
+    {
       struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
-	    (_S_IFDIR & statbuf.st_mode))) {
-	successMkdir = _mkdir(filename.substr(0, i).c_str());
-	if (successMkdir != 0) {
+      std::string subDir = filename.substr(0, i);
+
+      if (!(stat(subDir.c_str(), &statbuf) == 0 && (_S_IFDIR & statbuf.st_mode)))
+      {
+	successMkdir = _mkdir(subDir.c_str());
+
+	/*if (successMkdir != 0)
+	{
 	  perror("Unable to make directory");
 	  return NULL;
-	}
+	} */
       }
     }
     std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
