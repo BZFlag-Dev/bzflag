@@ -19,7 +19,7 @@
 // System headers
 #include <math.h>
 #include <string>
-#include <strings.h>
+#include <string.h>
 
 // Global implementation headers
 #include "bzfgl.h"
