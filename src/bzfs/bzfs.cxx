@@ -2225,6 +2225,11 @@ void pausePlayer(int playerIndex, bool paused = true)
       anointNewRabbit();
     }
   }
+  
+  FlagInfo* playerFlag = FlagInfo::get(playerData->player.getFlag());
+
+  if (playerFlag && playerFlag->flag.type->flagQuality != FlagBad)
+    zapFlag(*playerFlag);
 
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(playerIndex);
