@@ -2825,7 +2825,8 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     if (winningTeam != (int)NoTeam)
       checkTeamScore(killerIndex, winningTeam);
 
-     victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
+    victimData->player.setPaused(false);
+    victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
   }
 }
 
