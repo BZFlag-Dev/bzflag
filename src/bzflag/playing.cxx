@@ -6833,20 +6833,25 @@ void doEnergySaver ( void )
     return;
 
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
-  const float fpsLimit = BZDB.eval("fpsLimit");
+  float fpsLimit = BZDB.eval("fpsLimit");
 
-  if ((fpsLimit >= 25.0f) && !isnan(fpsLimit))
-  {
-    const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-    if (elapsed > 0.0f)
-    {
-      const float period = (1.0f / fpsLimit);
-      const float remaining = (period - elapsed);
+#ifndef DEBUG
+  if (fpsLimit < 25.0f || isnan(fpsLimit))
+    fpsLimit = 25.0f;
+#else
+  if (fpsLimit < 0.0f)
+    fpsLimit = 0.0;
+#endif
 
-      if (remaining > 0.0f)
-	TimeKeeper::sleep(remaining);
-    }
+  const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+  if (elapsed > 0.0f) {
+    const float period = (1.0f / fpsLimit);
+    const float remaining = (period - elapsed);
+    
+    if (remaining > 0.0f)
+      TimeKeeper::sleep(remaining);
   }
+
   lastTime = TimeKeeper::getCurrent();
 }
 
