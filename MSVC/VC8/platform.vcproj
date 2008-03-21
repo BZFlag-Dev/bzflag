@@ -691,10 +691,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfString.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\BzfVisual.h"
 				>
 			</File>
