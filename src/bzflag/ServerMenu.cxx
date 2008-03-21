@@ -560,7 +560,7 @@ void ServerMenu::pick()
 					    &dropArgs);
   }
   else
-    (listHUD[13])->setString("");
+    (listHUD[12])->setString("");
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
     std::vector<std::string> dropArgs;
@@ -568,10 +568,10 @@ void ServerMenu::pick()
     dropArgs.push_back(buf);
     dropArgs.push_back(ping.shakeWins == 1 ? "" : "s");
     if (ping.shakeWins == 1)
-      (listHUD[12])->setString("{1} Win Drops Bad Flag",
+      (listHUD[13])->setString("{1} Win Drops Bad Flag",
 					    &dropArgs);
     else
-      (listHUD[12])->setString("{1} Wins Drops Bad Flag",
+      (listHUD[13])->setString("{1} Wins Drops Bad Flag",
 					    &dropArgs);
   }
   else
