@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "StateDatabase.h"
+#include "DirectoryNames.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -347,6 +348,40 @@ void			WinWindow::freeContext()
     destroyChild();
 }
 
+bool checkGammaRampsFile( WORD ramps[6*256] )
+{
+  std::string gammaFile = getConfigDirName() + "bzflag.gamma";
+
+  FILE *fp = fopen(gammaFile.c_str(),"rb");
+  if (!fp)
+    return false; // no crash
+
+  fread(ramps,sizeof(WORD)*6*256,1,fp);
+  fclose(fp);
+
+  return true;
+}
+
+bool saveGammaRampsFile( WORD ramps[6*256] )
+{
+  std::string gammaFile = getConfigDirName() + "bzflag.gamma";
+
+  FILE *fp = fopen(gammaFile.c_str(),"wb");
+  if (!fp)
+    return false; // BAD
+
+  fwrite(ramps,sizeof(WORD)*6*256,1,fp);
+  fclose(fp);
+
+  return true;
+}
+
+void deleteGammaRampsFile ( void )
+{
+  std::string gammaFile = getConfigDirName() + "bzflag.gamma";
+  DeleteFile(gammaFile.c_str());
+}
+
 void			WinWindow::createChild()
 {
   // get parent size
@@ -393,7 +428,10 @@ void			WinWindow::createChild()
 
   // if no colormap then adjust gamma ramps
   if (!useColormap) {
-    getGammaRamps(origGammaRamps);
+    if (!checkGammaRampsFile(origGammaRamps))
+      getGammaRamps(origGammaRamps);
+
+    saveGammaRampsFile(origGammaRamps);
     setGamma(gammaVal);
   }
 
@@ -417,6 +455,7 @@ void			WinWindow::createChild()
 void			WinWindow::destroyChild()
 {
   setGammaRamps(origGammaRamps);
+  deleteGammaRampsFile();
   if (hRC != NULL) {
     if (wglGetCurrentContext() == hRC)
       wglMakeCurrent(NULL, NULL);
