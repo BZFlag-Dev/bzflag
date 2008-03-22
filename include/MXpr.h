@@ -294,7 +294,7 @@ double MXpr::solve(std::string what)
 	size_t pos = (unsigned int)what.find('('), amt = 1;
 	while (pos != std::string::npos) //there are parenthesis; solve these first
 	{
-	    const unsigned int old = pos;
+	    const size_t old = pos;
 	    ++pos;
 	    std::string excerpt = "";
 	    what += "\n"; //marker for the end
@@ -317,7 +317,7 @@ double MXpr::solve(std::string what)
 		pos++;
 		continue;
 		end: //(amt == 0)
-		    for (unsigned int c = old + 1;c <= pos - 1;c++)
+		    for (size_t c = old + 1;c <= pos - 1;c++)
 			excerpt += what[c];
 		    what.erase(beg + old, beg + pos);
 		    break;

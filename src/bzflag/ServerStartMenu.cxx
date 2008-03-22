@@ -378,7 +378,7 @@ void ServerStartMenu::execute()
     if (!base) base = serverCmd;
     else base++;
 
-    int lenrem = PATH_MAX+256 - (base - serverCmd);
+    size_t lenrem = PATH_MAX+256 - (base - serverCmd);
     strncpy(base, serverApp, lenrem-1);
 
     // prepare arguments for starting server

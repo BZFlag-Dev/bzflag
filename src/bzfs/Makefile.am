@@ -104,6 +104,8 @@ bzfs_SOURCES = \
 	ListServerConnection.h \
 	MasterBanList.cxx \
 	MasterBanList.h \
+	MatchManager.cxx \
+	MatchManager.h \
 	ParseMaterial.cxx \
 	ParseMaterial.h \
 	Permissions.h \
