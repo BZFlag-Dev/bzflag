@@ -1131,11 +1131,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
-		</Filter>
-		<Filter
 			Name="API"
 			>
 			<File
@@ -1196,6 +1191,18 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\bzfsChatVerify.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Matches"
+			>
+			<File
+				RelativePath="..\..\src\bzfs\MatchManager.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\MatchManager.h"
 				>
 			</File>
 		</Filter>
