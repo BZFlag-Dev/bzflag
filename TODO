@@ -11,6 +11,14 @@ so that no work is duplicated.
 
 Required for release of 3.0:
 
+* Change countdown stuff to be "/match" functions
+   When a match is over, make everyone non shoot and non move
+   then start an internal clock for _matchResetTime (5min default)
+   then respawn everyone and reset scores. If a new match is started,
+   then reset imideately. Add a /match report that dumps the results
+   out to the report file, as well as calling an API event for further
+   processing.
+
 * MsgNewRabbit packs and unpacks a zeroed byte.  Find out why and remove
   it if possible.
 
