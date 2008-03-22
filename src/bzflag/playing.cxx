@@ -6834,14 +6834,28 @@ void doEnergySaver ( void )
 
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   float fpsLimit = BZDB.eval("fpsLimit");
+  static bool notify = false;
 
 #ifndef DEBUG
-  if (fpsLimit < 25.0f || isnan(fpsLimit))
+  if (fpsLimit < 25.0f || isnan(fpsLimit)) {
     fpsLimit = 25.0f;
+    BZDB.setFloat("fpsLimit", fpsLimit);
+    notify = true;
+  }
 #else
-  if (fpsLimit < 0.0f)
+  if (fpsLimit < 0.0f) {
     fpsLimit = 0.0;
+    BZDB.setFloat("fpsLimit", fpsLimit);
+    notify = true;
+  }
 #endif
+
+  if (notify) {
+    char clamped[80] = {0};
+    snprintf(clamped, sizeof(clamped), "WARNING: fpsLimit is set too low, clamped to %f", fpsLimit);
+    controlPanel->addMessage(clamped);
+    notify = false;
+  }
 
   const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
   if (elapsed > 0.0f) {
