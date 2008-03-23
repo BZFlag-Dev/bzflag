@@ -123,12 +123,6 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
-class CalcCommand : LocalCommand {
-  public:
-    CalcCommand();
-    bool operator() (const char *commandLine);
-};
-
 // class instantiations
 static CommandList	  commandList;
 static BindCommand	  bindCommand;
@@ -144,12 +138,10 @@ static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
-static CalcCommand	  calcCommand;
 
 
 // class constructors
 BindCommand::BindCommand() :		LocalCommand("/bind") {}
-CalcCommand::CalcCommand() :		LocalCommand("/calc") {}
 CommandList::CommandList() :		LocalCommand("/cmds") {}
 DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
 DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
@@ -763,21 +755,6 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   }
   addMessage(NULL, buffer);
 
-  return true;
-}
-
-bool CalcCommand::operator() (const char *commandLine)
-{
-  static MXpr calc;
-  const double result = calc.solve(std::string(commandLine + 5));
-  if (calc.checkErr()) {
-		addMessage(NULL, calc.getLastError());
-		calc.clearError();
-	}
-	else {
-		std::string msg = "Result: " + dtos(result);
-		addMessage(NULL, msg);
-	}
   return true;
 }
 
