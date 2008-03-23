@@ -58,10 +58,14 @@ void MatchManager::process ( bz_EventData *eventData )
 	 {
 	 }
 	 break;
+	default:
+	 {
+	 }
+	 break;
  }
 }
 
-bool MatchManager::handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
+bool MatchManager::handle ( int playerID, bz_ApiString command, bz_ApiString /* message */, bz_APIStringList *params )
 {
 	double now = TimeKeeper::getCurrent().getSeconds();
 
