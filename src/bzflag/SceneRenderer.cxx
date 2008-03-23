@@ -47,11 +47,11 @@ static bool setupMapFog();
 #ifdef GL_ABGR_EXT
 static int		strrncmp(const char* s1, const char* s2, int num)
 {
-  size_t len1 = strlen(s1) - 1;
-  size_t len2 = strlen(s2) - 1;
+  int len1 = strlen(s1) - 1;
+  int len2 = strlen(s2) - 1;
   for (; len1 >= 0 && len2 >= 0 && num > 0; len1--, len2--, num--) {
-    const size_t d = s1[len1] - s2[len2];
-    if (d != 0) return (int)d;
+    const int d = s1[len1] - s2[len2];
+    if (d != 0) return d;
   }
   return 0;
 }
