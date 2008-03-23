@@ -168,8 +168,6 @@ recent bugs
   available mode that is possible, lowering memory usage, or reporting
   an error and aborting.
 
-- time limiter does not take jumping into consideration when holding Agility
-
 - shooting straight shots with the Agility flag while just having accelerated
   forward (common tactic to shoot "fast shots") will miss targets that are
   rather stationary and directly in the shot's path.
