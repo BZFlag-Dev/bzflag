@@ -2743,7 +2743,6 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     return;
 
   victim->setRestartOnBase(respawnOnBase);
-  victim->setSpawnDelay((double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
   victim->setDead();
 
   // call any events for a playerdeath
@@ -2828,22 +2827,6 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
 
     victimData->player.setPaused(false);
     victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
-  }
-}
-
-void doSpawns()
-{
-  TimeKeeper curTime = TimeKeeper::getCurrent();
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-    if (p == NULL) {
-      continue;
-    }
-    if (p->player.waitingToSpawn() && (p->player.getNextSpawnTime() <= curTime))
-    {
-      // Let them live!
-      playerAlive(i);
-    }
   }
 }
 

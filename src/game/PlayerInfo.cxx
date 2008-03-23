@@ -84,7 +84,6 @@ void PlayerInfo::signingOn() {
 void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;
-  wantsToSpawn = false;
   flag = -1;
 }
 

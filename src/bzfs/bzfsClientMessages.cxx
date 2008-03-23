@@ -403,9 +403,9 @@ public:
       snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
       sendMessage(ServerPlayer, player->getIndex(), buffer);
 
-      // Make them wait for trying to rejoin quickly
-      player->player.setSpawnDelay((double)waitTime);
-      player->player.queueSpawn();
+      // Make them pay dearly for trying to rejoin quickly
+      playerAlive(player->getIndex());
+      playerKilled(player->getIndex(), player->getIndex(), GotKilledMsg, -1, Flags::Null, -1);
       return true;
     }
 
@@ -413,7 +413,7 @@ public:
     if (clOptions->timeLimit>0.0f && !countdownActive)
       player->player.setPlayedEarly();
 
-    player->player.queueSpawn();
+    playerAlive(player->getIndex());
     return true;
   }
 };

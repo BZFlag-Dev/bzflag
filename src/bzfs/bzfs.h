@@ -117,7 +117,6 @@ extern void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
 extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
-extern void doSpawns();
 extern void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 extern void captureFlag(int playerIndex, TeamColor teamCaptured);
 extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);

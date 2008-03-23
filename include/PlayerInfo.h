@@ -120,10 +120,6 @@ public:
   bool	isTooMuchIdling(float kickThresh);
   bool	hasStartedToNotRespond();
   void	hasSent();
-  TimeKeeper  getNextSpawnTime() const;
-  void	setSpawnDelay(double delay);
-  bool	waitingToSpawn() const;
-  void	queueSpawn();
   bool	hasPlayedEarly();
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
@@ -189,12 +185,6 @@ private:
   int flag;
 
   TimeKeeper lastFlagDropTime;
-
-  // time of player's next allowed spawn
-  TimeKeeper nextSpawnTime;
-
-  // Requested a spawn?
-  bool wantsToSpawn;
 
   unsigned char allow;
 
@@ -339,23 +329,6 @@ inline bool PlayerInfo::isChat() const {
 
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {
   return wasRabbit || victim.team == RabbitTeam;
-}
-
-inline TimeKeeper PlayerInfo::getNextSpawnTime() const {
-  return nextSpawnTime;
-}
-
-inline void PlayerInfo::setSpawnDelay(double delay) {
-  nextSpawnTime = TimeKeeper::getCurrent();
-  nextSpawnTime += delay;
-}
-
-inline bool PlayerInfo::waitingToSpawn() const {
-  return wantsToSpawn;
-}
-
-inline void PlayerInfo::queueSpawn() {
-  wantsToSpawn = true;
 }
 
 #endif
