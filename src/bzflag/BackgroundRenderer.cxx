@@ -1312,7 +1312,7 @@ void BackgroundRenderer::drawGround()
     if (RENDERER.useQuality() >= _HIGH_QUALITY)
       drawGroundCentered();
     else if (RENDERER.useQuality() == _LOW_QUALITY)
-     DisplayListSystem::Instance().callList(lowGroundList);
+      DisplayListSystem::Instance().callList(lowGroundList);
     else 
       DisplayListSystem::Instance().callList(mediumGroundList);
   }

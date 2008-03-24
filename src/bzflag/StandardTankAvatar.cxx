@@ -167,7 +167,7 @@ void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpPara
   tankNode->setJumpJets(jumpParam);
 }
 
-void StandardTankAvatar::setClipingPlane (  const float plane[4] )
+void StandardTankAvatar::setClippingPlane (  const float plane[4] )
 {
   tankNode->setClipPlane(plane);
 }

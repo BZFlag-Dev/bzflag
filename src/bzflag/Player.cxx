@@ -921,13 +921,13 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 	// add clipping plane to tank node
 	if (!inCockpit) {
-	  avatar->setClipingPlane(plane);
+	  avatar->setClippingPlane(plane);
 	}
       }
     }
     else if (getPosition()[2] < 0.0f) {
       // this should only happen with Burrow flags
-      avatar->setClipingPlane(groundPlane);
+      avatar->setClippingPlane(groundPlane);
     } // isCrossingWall()
   }   // isAlive()
   else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
@@ -950,7 +950,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       avatar->setColor(newColor);
     }
     avatar->setAnimationValues(t,0);
-    avatar->setClipingPlane(groundPlane); // shadows are not clipped
+    avatar->setClippingPlane(groundPlane); // shadows are not clipped
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ )

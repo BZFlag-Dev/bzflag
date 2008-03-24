@@ -33,7 +33,7 @@ public:
   virtual void setVisualTeam (TeamColor visualTeam, const float color[4] );
   virtual void setVisualMode ( bool inCockpit, bool showTreads );
   virtual void setAnimationValues ( float explodeParam, float jumpParam );
-  virtual void setClipingPlane (  const float plane[4] );
+  virtual void setClippingPlane (  const float plane[4] );
   virtual void setColor ( const float color[4] );
 
   virtual void renderRadar ( void );

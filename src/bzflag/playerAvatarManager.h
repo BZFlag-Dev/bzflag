@@ -48,7 +48,7 @@ public:
   virtual void setVisualMode ( bool inCockpit, bool showTreads ) = 0;
   virtual void setAnimationValues ( float explodeParam, float jumpParam ) = 0;
 
-  virtual void setClipingPlane (  const float plane[4] ) = 0;
+  virtual void setClippingPlane (  const float plane[4] ) = 0;
 
   virtual void renderRadar ( void ) = 0;
 
