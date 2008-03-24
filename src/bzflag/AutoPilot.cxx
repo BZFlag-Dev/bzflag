@@ -500,15 +500,24 @@ static bool lookForFlag(float &rotation, float &speed)
     return false;
   }
 
+  // if I don't have a base, don't try to pick up a team flag
+  bool takeTeamFlag = true;
+  if (world->getBase(myTank->getTeam()) == NULL)
+    takeTeamFlag = false;
+
   float minDist = Infinity;
-	int teamFlag = -1;
+  int teamFlag = -1;
   for (int i = 0; i < numFlags; i++) {
     if ((world->getFlag(i).type == Flags::Null)
      || (world->getFlag(i).status != FlagOnGround))
       continue;
 
-    if (world->getFlag(i).type->flagTeam != NoTeam)
-      teamFlag = i;
+    if (world->getFlag(i).type->flagTeam != NoTeam) {
+      if (takeTeamFlag)
+	teamFlag = i;
+      else
+	continue;
+    }
     const float* fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
@@ -548,6 +557,7 @@ static bool navigate(float &rotation, float &speed)
 {
   static TimeKeeper lastNavChange;
   static float navRot = 0.0f, navSpeed = 0.0f;
+  static const float baseEpsilon = 1.0f;
 
   if ((TimeKeeper::getTick() - lastNavChange) < 1.0f) {
     rotation = navRot;
@@ -586,19 +596,22 @@ static bool navigate(float &rotation, float &speed)
       return false;
     }
 
-    const float *temp = world->getBase(myTank->getTeam());
-    if (temp == NULL) {
+    // FIXME: team flag handling does not account for Z distance
+    const float *base = world->getBase(myTank->getTeam());
+    if (base == NULL) {
+      // I don't have a team base (rogue maybe) - don't want the flag
       serverLink->sendDropFlag(myTank->getPosition());
       handleFlagDropped(myTank);
     } else {
-      if ((((int) *(world->getBase(myTank->getTeam())) + 2
-	    >= (int) *(myTank->getPosition()))
-	   || (temp[0] == pos[0] && temp[1] == pos[1])) &&
-	  myTank->getFlag()->flagTeam == myTank->getTeam()) {
+      if ((fabs(base[0] - pos[0]) < baseEpsilon) &&
+	  (fabs(base[1] - pos[1]) < baseEpsilon) &&
+	  (myTank->getFlag()->flagTeam == myTank->getTeam())) {
+	// I am near the center of my team base, drop the flag
 	serverLink->sendDropFlag(myTank->getPosition());
 	handleFlagDropped(myTank);
       } else {
-	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, temp);
+	// Move towards my base
+	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, base);
 	rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
 	speed = (float)(M_PI/2.0 - fabs(rotation));
       }
