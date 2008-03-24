@@ -385,9 +385,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
 	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
 	lastSpeed = speed;
-		} else if (getFlag() == Flags::LowGravity) {
-			newVelocity[2] += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
-			newAngVel = oldAngVel;
+      } else if (getFlag() == Flags::LowGravity) {
+  	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
+	newAngVel = oldAngVel;
       } else {
 	newVelocity[2] += BZDBCache::gravity * dt;
 	newAngVel = oldAngVel;
@@ -428,8 +428,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (phydrv->getIsSlide()) {
       const float slideTime = phydrv->getSlideTime();
       doSlideMotion(dt, slideTime, newAngVel, newVelocity);
-    }
-    else {
+    } else {
       // adjust the horizontal velocity
       newVelocity[0] += v[0];
       newVelocity[1] += v[1];
