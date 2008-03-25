@@ -109,8 +109,8 @@ bool MatchManager::handle ( int playerID, bz_ApiString command, bz_ApiString /* 
 
 			if (params[1].size())
 			{
-				std::string command = TextUtils::tolower(std::string(params->get(0).c_str()));
-				if (command == "start")
+				std::string cmd = TextUtils::tolower(std::string(params->get(0).c_str()));
+				if (cmd == "start")
 				{
 					if (matchState == eOn || matchState == ePregame )
 						bz_sendTextMessage (BZ_SERVER, playerID, "A match is currently in progress");

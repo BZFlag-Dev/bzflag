@@ -2534,8 +2534,8 @@ static void handleWhatTimeIsIt(void *msg)
   {
     float afterServerTime = syncedClock.GetServerSeconds();
 
-    std::string msg = TextUtils::format("whatTimeIsIt: packet time %f, delta %f",time,afterServerTime-beforeServerTime);
-    addMessage(NULL,msg);
+    std::string message = TextUtils::format("whatTimeIsIt: packet time %f, delta %f",time,afterServerTime-beforeServerTime);
+    addMessage(NULL,message);
   }
 }
 
