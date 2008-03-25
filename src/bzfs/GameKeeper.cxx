@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993 - 2008 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named LICENSE that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 /* interface header */
 #include "GameKeeper.h"
@@ -51,9 +51,9 @@ void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t proper
 }
 
 GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
-  player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
-  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-  needThisHostbanChecked(false), idFlag(-1)
+player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
+playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+needThisHostbanChecked(false), idFlag(-1)
 {
   playerHandler = NULL;
   playerList[playerIndex] = this;
@@ -73,20 +73,20 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
   _LSAState = start;
   bzIdentifier = "";
 
- currentPos[0] = currentPos[1] = currentPos[2] = 0;
- curentVel[0] = curentVel[1] = curentVel[2] = 0;
- currentRot = 0;
- currentAngVel =0;
+  currentPos[0] = currentPos[1] = currentPos[2] = 0;
+  curentVel[0] = curentVel[1] = curentVel[2] = 0;
+  currentRot = 0;
+  currentAngVel =0;
 
- efectiveShotType = StandardShot;
- isParting = false;
+  efectiveShotType = StandardShot;
+  isParting = false;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
-  player(_playerIndex), netHandler(NULL), lagInfo(&player),
-  playerIndex(_playerIndex), closed(false), clientCallback(NULL),
-  needThisHostbanChecked(false), idFlag(-1)
- {
+player(_playerIndex), netHandler(NULL), lagInfo(&player),
+playerIndex(_playerIndex), closed(false), clientCallback(NULL),
+needThisHostbanChecked(false), idFlag(-1)
+{
   canSpawn = true;
   playerHandler = handler;
   playerList[playerIndex] = this;
@@ -99,7 +99,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
-   std::cerr << "Could not create thread" << std::endl;
+    std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
   _LSAState = start;
@@ -130,7 +130,7 @@ int GameKeeper::Player::count()
 
   for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && !playerData->closed
-	&& playerData->player.isPlaying())
+      && playerData->player.isPlaying())
       count++;
   return count;
 }
@@ -156,9 +156,9 @@ void GameKeeper::Player::dumpScore()
   int p;
   for (p = 0; p < PlayerSlot; p++)
     if ((playerData = playerList[p]) && !playerData->closed
-	&& playerData->player.isPlaying()) {
-      playerData->score.dump();
-      std::cout << ' ' << playerData->player.getCallSign() << std::endl;
+      && playerData->player.isPlaying()) {
+	playerData->score.dump();
+	std::cout << ' ' << playerData->player.getCallSign() << std::endl;
     }
 }
 
@@ -173,7 +173,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 
   for (i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && !playerData->closed
-	&& playerData->player.canBeRabbit(true)) {
+      && playerData->player.canBeRabbit(true)) {
 	bool  goodRabbit = i != oldRabbit && playerData->player.isAlive();
 	float ratio      = playerData->score.ranking();
 	bool  select     = false;
@@ -194,8 +194,8 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 	  topRatio = ratio;
 	  rabbitIndex = i;
 	}
-      }
-  return rabbitIndex;
+    }
+    return rabbitIndex;
 }
 
 void GameKeeper::Player::updateNextGameTime()
@@ -259,14 +259,14 @@ void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
 
 void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
 {
-	msg.playerID = playerIndex;
-	msg.team = player.getTeam();
-	msg.type = player.getType();
-	msg.wins = score.getWins();
-	msg.losses = score.getLosses();
-	msg.tks = score.getTKs();
-	msg.callsign =  player.getCallSign();
-	msg.email =  player.getEMail();
+  msg.playerID = playerIndex;
+  msg.team = player.getTeam();
+  msg.type = player.getType();
+  msg.wins = score.getWins();
+  msg.losses = score.getLosses();
+  msg.tks = score.getTKs();
+  msg.callsign =  player.getCallSign();
+  msg.email =  player.getEMail();
 }
 
 
@@ -278,12 +278,12 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 
   if (targetPlayer != -1) {
     if ((playerData = playerList[targetPlayer]) && !playerData->closed
-	&& playerData->accessInfo.hasPerm(right))
+      && playerData->accessInfo.hasPerm(right))
       receivers.push_back(targetPlayer);
   } else {
     for (int i = 0; i < PlayerSlot; i++)
       if ((playerData = playerList[i]) && !playerData->closed
-	  && playerData->accessInfo.hasPerm(right))
+	&& playerData->accessInfo.hasPerm(right))
 	receivers.push_back(i);
   }
 
@@ -316,7 +316,7 @@ void GameKeeper::Player::signingOn(bool ctf)
   player.signingOn();
   lagInfo.reset();
   if (!netHandler)
-	  return;
+    return;
   if (player.isChat())
     netHandler->setClientKind(NetHandler::clientBZAdmin);
   else
@@ -356,7 +356,7 @@ void GameKeeper::Player::close()
 {
   closed = true;
   if (playerHandler)		// noone "owns" use anymore
-	playerHandler = NULL;
+    playerHandler = NULL;
 }
 
 bool GameKeeper::Player::clean()
@@ -369,16 +369,16 @@ bool GameKeeper::Player::clean()
     if ((playerData = playerList[i]))
       if (playerData->closed
 #if defined(USE_THREADS)
-	  && !playerData->refCount
+	&& !playerData->refCount
 #endif
-	  ) {
-	delete playerData;
-	playerList[i] = NULL;
-	ICleaned = true;
+	) {
+	  delete playerData;
+	  playerList[i] = NULL;
+	  ICleaned = true;
       } else {
 	empty = false;
       }
-  return empty && ICleaned;
+      return empty && ICleaned;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)
@@ -452,46 +452,46 @@ void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
 
 void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
 {
-	doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
 
-	memcpy(pos, currentPos, sizeof(float) * 3);
-	rot = currentRot;
+  memcpy(pos, currentPos, sizeof(float) * 3);
+  rot = currentRot;
 }
 
 void GameKeeper::Player::doPlayerDR ( float time )
 {
-	float delta = time - stateTimeStamp;
+  float delta = time - stateTimeStamp;
 
-	currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
-	currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
-	currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
-	if ( currentPos[2] < 0 )
-		currentPos[2] = 0;	// burrow depth maybe?
+  currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
+  currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
+  currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
+  if ( currentPos[2] < 0 )
+    currentPos[2] = 0;	// burrow depth maybe?
 
-	currentRot = lastState.azimuth + (lastState.angVel * delta);
+  currentRot = lastState.azimuth + (lastState.angVel * delta);
 
-	// clamp us to +- 180, makes math easy
-	while (currentRot > 180.0)
-		currentRot -= 180.0;
+  // clamp us to +- 180, makes math easy
+  while (currentRot > 180.0)
+    currentRot -= 180.0;
 
-	while (currentRot < -180.0)
-		currentRot += 180.0;
+  while (currentRot < -180.0)
+    currentRot += 180.0;
 }
 
 PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
 {
-	PlayerState	newState = lastState;
-	doPlayerDR();
+  PlayerState	newState = lastState;
+  doPlayerDR();
 
-	memcpy(newState.pos, currentPos, sizeof(float) * 3);
-	newState.azimuth = currentRot;
+  memcpy(newState.pos, currentPos, sizeof(float) * 3);
+  newState.azimuth = currentRot;
 
-	return newState;
+  return newState;
 }
 
 void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool increment)
 {
-	return getCurrentStateAsState().pack(buf,code,increment);
+  return getCurrentStateAsState().pack(buf,code,increment);
 }
 
 
@@ -505,15 +505,15 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
-      && now < shotsInfo[id].expireTime) {
-    logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
-	   player.getCallSign(), playerIndex, id);
-    return false;
+    && now < shotsInfo[id].expireTime) {
+      logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
+	player.getCallSign(), playerIndex, id);
+      return false;
   }
   // verify shot number
   if (id > maxShots - 1) {
     logDebugMessage(2,"Player %s [%d] shot id %d out of range %d\n",
-	   player.getCallSign(), playerIndex, id, maxShots);
+      player.getCallSign(), playerIndex, id, maxShots);
     return false;
   }
 
@@ -548,14 +548,14 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
-      || now >= shotsInfo[id].expireTime) {
-    logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
-	   player.getCallSign(), playerIndex, id);
-    return false;
+    || now >= shotsInfo[id].expireTime) {
+      logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
+	player.getCallSign(), playerIndex, id);
+      return false;
   }
   if (shotsInfo[id].salt != salt) {
     logDebugMessage(2,"Player %s [%d] trying to stop a mismatched shot id %d\n",
-	   player.getCallSign(), playerIndex, id);
+      player.getCallSign(), playerIndex, id);
     return false;
   }
   if (!shotsInfo[id].running)
@@ -569,14 +569,14 @@ bool GameKeeper::Player::updateShot(int id, int salt)
 {
   float now = (float)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
-      || now >= shotsInfo[id].expireTime) {
-    logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
-	   player.getCallSign(), playerIndex, id);
-    return false;
+    || now >= shotsInfo[id].expireTime) {
+      logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
+	player.getCallSign(), playerIndex, id);
+      return false;
   }
   if (shotsInfo[id].salt != salt) {
     logDebugMessage(2,"Player %s [%d] trying to update a mismatched shot id %d\n",
-	   player.getCallSign(), playerIndex, id);
+      player.getCallSign(), playerIndex, id);
     return false;
   }
   if (!shotsInfo[id].running)
@@ -584,7 +584,7 @@ bool GameKeeper::Player::updateShot(int id, int salt)
   // only GM can be updated
   if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
     logDebugMessage(2,"Player %s [%d] trying to update a non GM shot id %d\n",
-	   player.getCallSign(), playerIndex, id);
+      player.getCallSign(), playerIndex, id);
     return false;
   }
   return true;
@@ -608,72 +608,72 @@ int GameKeeper::Player::getLastIdFlag() {
 
 float GameKeeper::Player::getRealSpeed ( float input )
 {
-	FlagInfo* flag = FlagInfo::get(player.getFlag());
+  FlagInfo* flag = FlagInfo::get(player.getFlag());
 
-	FlagType* flagType = NULL;
-	if ( flagType )
-		flagType = flag->flag.type;
+  FlagType* flagType = NULL;
+  if ( flagType )
+    flagType = flag->flag.type;
 
-	float fracOfMaxSpeed = input;
+  float fracOfMaxSpeed = input;
 
-	// If we aren't allowed to move, then the real speed is 0.
-	if (
-		(!player.canMoveForward() && fracOfMaxSpeed > 0) ||
-		(!player.canMoveBackward() && fracOfMaxSpeed < 0)
-	)
-		return 0.0f;
+  // If we aren't allowed to move, then the real speed is 0.
+  if (
+    (!player.canMoveForward() && fracOfMaxSpeed > 0) ||
+    (!player.canMoveBackward() && fracOfMaxSpeed < 0)
+    )
+    return 0.0f;
 
-	// can't go faster forward than at top speed, and backward at half speed
-	if (fracOfMaxSpeed > 1.0f)
-		fracOfMaxSpeed = 1.0f;
-	else if (fracOfMaxSpeed < -0.5f)
-		fracOfMaxSpeed = -0.5f;
+  // can't go faster forward than at top speed, and backward at half speed
+  if (fracOfMaxSpeed > 1.0f)
+    fracOfMaxSpeed = 1.0f;
+  else if (fracOfMaxSpeed < -0.5f)
+    fracOfMaxSpeed = -0.5f;
 
-	// oscillation overthruster tank in building can't back up
-	if (fracOfMaxSpeed < 0.0f && (lastState.status & PlayerState::InBuilding) && flagType == Flags::OscillationOverthruster)
-		fracOfMaxSpeed = 0.0f;
+  // oscillation overthruster tank in building can't back up
+  if (fracOfMaxSpeed < 0.0f && (lastState.status & PlayerState::InBuilding) && flagType == Flags::OscillationOverthruster)
+    fracOfMaxSpeed = 0.0f;
 
-	// boost speed for certain flags
-	if (flagType == Flags::Velocity)
-		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	else if (flagType == Flags::Thief)
-		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	else if ((flagType == Flags::Burrow) && (lastState.pos[2] < 0.0f))
-		fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-	else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
-		fracOfMaxSpeed = 0.0f;
-	else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
-		fracOfMaxSpeed = 0.0f;
-	else if (flagType == Flags::Agility)
-	{
-	/*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
-			fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-		else
-		{
-			float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
-			if (oldFrac > 1.0f)
-				oldFrac = 1.0f;
-			else if (oldFrac < -0.5f)
-				oldFrac = -0.5f;
+  // boost speed for certain flags
+  if (flagType == Flags::Velocity)
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+  else if (flagType == Flags::Thief)
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+  else if ((flagType == Flags::Burrow) && (lastState.pos[2] < 0.0f))
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
+    fracOfMaxSpeed = 0.0f;
+  else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
+    fracOfMaxSpeed = 0.0f;
+  else if (flagType == Flags::Agility)
+  {
+    /*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    else
+    {
+    float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
+    if (oldFrac > 1.0f)
+    oldFrac = 1.0f;
+    else if (oldFrac < -0.5f)
+    oldFrac = -0.5f;
 
-			float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+    float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
 
-			if (fracOfMaxSpeed < 0.0f)
-				limit /= 2.0f;
-			if (fabs(fracOfMaxSpeed - oldFrac) > limit)
-			{
-				fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-				agilityTime = TimeKeeper::getCurrent();
-			}
-		} */
-	}
-	float handicap = 1.0f;
+    if (fracOfMaxSpeed < 0.0f)
+    limit /= 2.0f;
+    if (fabs(fracOfMaxSpeed - oldFrac) > limit)
+    {
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    agilityTime = TimeKeeper::getCurrent();
+    }
+    } */
+  }
+  float handicap = 1.0f;
 
-	// apply handicap advantage to tank speed
-	fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
+  // apply handicap advantage to tank speed
+  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
 
-	// set desired speed
-	return BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
+  // set desired speed
+  return BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
 }
 
 // Local Variables: ***
