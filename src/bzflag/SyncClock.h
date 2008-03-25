@@ -19,7 +19,7 @@
 #include "TimeKeeper.h"
 #include <map>
 
-#define _DEFAULT_SYNC_INTERVAL 60.0
+#define _DEFAULT_SYNC_INTERVAL 10.0
 
 class ServerSyncedClock
 {

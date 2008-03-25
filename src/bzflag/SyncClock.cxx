@@ -27,13 +27,13 @@ ServerSyncedClock::ServerSyncedClock( double interval )
 void ServerSyncedClock::update ( ServerLink *link )
 {
 	double current = TimeKeeper::getCurrent().getSeconds();
-	if ( current - lastPingTime >= pingInterval)
+	if ( (lastPingTime < 0) || ((current - lastPingTime) >= pingInterval) )
 	{
 		// send a pingout
 		if (!link)
 		{
 			// make sure that when we DO have a link we will update first thing
-			lastPingTime = -pingInterval*2;
+			lastPingTime = -1;
 			return;
 		}
 

@@ -2524,9 +2524,19 @@ static void handleWhatTimeIsIt(void *msg)
   float time = -1;
   unsigned char tag = 0;
 
+  float beforeServerTime = syncedClock.GetServerSeconds();
+
   msg = nboUnpackUByte(msg, tag);
   msg = nboUnpackFloat(msg, time);
   syncedClock.timeMessage(tag,time);
+
+  if (myTank)
+  {
+    float afterServerTime = syncedClock.GetServerSeconds();
+
+    std::string msg = TextUtils::format("whatTimeIsIt: packet time %f, delta %f",time,afterServerTime-beforeServerTime);
+    addMessage(NULL,msg);
+  }
 }
 
 static void handleSetShotType(BufferedNetworkMessage *msg)
@@ -5175,6 +5185,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
     return;
   }
 
+  syncedClock.update(NULL);
   // open server
   ServerLink* _serverLink = new ServerLink(serverAddress,
     startupInfo.serverPort);
@@ -5259,6 +5270,7 @@ default:
   joiningGame = true;
   scoreboard->huntReset();
   GameTime::reset();
+  syncedClock.update(serverLink);
 }
 
 
