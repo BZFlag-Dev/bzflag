@@ -54,11 +54,9 @@ void MatchManager::process ( bz_EventData *eventData )
 {
  switch(eventData->eventType)
  {
-	case bz_eGetAutoTeamEvent:
-	 {
-	 }
-	 break;
 	default:
+	 break;
+	case bz_eGetAutoTeamEvent:
 	 {
 	 }
 	 break;
@@ -100,6 +98,36 @@ bool MatchManager::handle ( int playerID, bz_ApiString command, bz_ApiString /* 
 			}
 
 			bz_sendTextMessage (BZ_SERVER, playerID, msg.c_str());
+		}
+		else	// there is a command
+		{
+			if (!bz_hasPerm(playerID,"MATCH"))
+			{
+				bz_sendTextMessage (BZ_SERVER, playerID, "You do not have permision to run the match command");
+				return true;
+			}
+
+			if (params[1].size())
+			{
+				std::string command = TextUtils::tolower(std::string(params->get(0).c_str()));
+				if (command == "start")
+				{
+					if (matchState == eOn || matchState == ePregame )
+						bz_sendTextMessage (BZ_SERVER, playerID, "A match is currently in progress");
+					else
+					{
+						if (matchState == eOff)	// new match
+						{
+						
+						}
+						else // postgame, just reset everyone and start a new one
+						{
+
+						}
+					}
+
+				}
+			}
 		}
 	}
 	return false;
