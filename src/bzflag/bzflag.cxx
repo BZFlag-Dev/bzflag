@@ -89,7 +89,6 @@
 // client prefrences
 #include "clientConfig.h"
 
-int beginendCount = 0;
 
 const char*		argv0;
 static bool		anonymous = false;
