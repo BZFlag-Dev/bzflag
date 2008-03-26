@@ -706,6 +706,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\Vector4D.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\VotingBooth.cxx"
 				>
 			</File>
@@ -884,6 +888,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Vector3D.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Vector4D.h"
 				>
 			</File>
 			<File
