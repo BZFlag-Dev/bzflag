@@ -1244,7 +1244,6 @@ AC_CONFIG_FILES([
 	MSVC/Makefile
 	MSVC/VC71/Makefile
 	MSVC/VC8/Makefile
-	MSVC/VC9/Makefile
 ])
 AC_OUTPUT
 
