@@ -154,7 +154,7 @@ namespace Flags {
     Agility	= new FlagType( "Agility", "A", FlagUnstable, StandardShot, FlagGood, NoTeam,
       "Tank is quick and nimble making it easier to dodge.");
     LowGravity	= new FlagType( "Low Gravity", "LG", FlagUnstable, StandardShot, FlagGood, NoTeam,
-      "The gravity is reduced. Tank jumps higher.");
+      "The gravity is reduced. Tank jumps higher, falls slower.");
     ReverseControls	= new FlagType( "ReverseControls", "RC", FlagSticky, StandardShot, FlagBad, NoTeam,
       "Tank driving controls are reversed.");
     Colorblindness	= new FlagType( "Colorblindness", "CB", FlagSticky, StandardShot, FlagBad, NoTeam,
