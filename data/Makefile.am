@@ -71,6 +71,7 @@ bzflag_DATA = \
 	tetrawall.png		\
 	thief.png		\
 	thief.wav		\
+	treads.png	\
 	title.png		\
 	wall.png		\
 	water.png		\
