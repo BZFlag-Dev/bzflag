@@ -698,18 +698,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Vector2D.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\Vector3D.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\Vector4D.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\VotingBooth.cxx"
 				>
 			</File>
@@ -880,18 +868,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TimeKeeper.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Vector2D.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Vector3D.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Vector4D.h"
 				>
 			</File>
 			<File
