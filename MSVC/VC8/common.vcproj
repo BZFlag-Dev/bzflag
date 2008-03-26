@@ -698,6 +698,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\Vector2D.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\Vector3D.cxx"
 				>
 			</File>
@@ -872,6 +876,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TimeKeeper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Vector2D.h"
 				>
 			</File>
 			<File
