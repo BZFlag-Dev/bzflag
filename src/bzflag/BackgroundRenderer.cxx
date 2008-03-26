@@ -126,12 +126,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setCulling((GLenum)GL_NONE);
   sunShadowsGState = gstate.getState();
 
- /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
-  int moonTexture = -1;
-  if (useMoonTexture){
-    moonTexture = tm.getTextureID( "moon" );
-    useMoonTexture = moonTexture>= 0;
-  }*/
   // sky stuff
   gstate.reset();
   gstate.setShading();
@@ -140,13 +134,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   sunGState = gstate.getState();
   gstate.reset();
   gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
- // if (useMoonTexture)
- //   gstate.setTexture(*moonTexture);
-  moonGState[0] = gstate.getState();
-  gstate.reset();
- // if (useMoonTexture)
- //   gstate.setTexture(*moonTexture);
-  moonGState[1] = gstate.getState();
+
   gstate.reset();
   starGState[0] = gstate.getState();
   gstate.reset();
@@ -1242,6 +1230,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     }
   }
 
+
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
@@ -1273,18 +1262,17 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     }
 
     if (moonDirection[2] > -0.009f) {
-      moonGState[doStars ? 1 : 0].setState();
       glColor3f(1.0f, 1.0f, 1.0f);
-   //   if (useMoonTexture)
-   //     glEnable(GL_TEXTURE_2D);
       ds.callList(moonList);
     }
 
   }
 
+
   if (useClipPlane) {
     glDisable(GL_CLIP_PLANE0);
   }
+
 
   glPopMatrix();
 }
