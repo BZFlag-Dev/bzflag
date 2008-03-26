@@ -7,11 +7,11 @@ releases (Visual C++ 7.1 aka ".NET 2003" was used versions
 pre 3.0, and Visual C++ 8.0 aka ".Net 2005" is used for 
 3.0 and later). Project files are also provided for Visual C++ 
 versions ranging from 7.1 to 9.0. The VC 8.0 project files are
-useable by the free "visual C++ .net 2005 express edition"
-thgat is very popular.
+usable by the free "visual C++ .net 2005 express edition"
+that is very popular.
 
 Visual Studio 6.0 support has been discontinued, and no
-proecjts are provide for that version.
+projects are provide for that version.
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;
@@ -22,10 +22,10 @@ The most common way to build on windows is to use VisualC++.
 The Freely available VC8 EE edition is well suited to users
 who wish to compile the client for personal use. It can be found at
 http://www.microsoft.com/express/2005/. Please note that the
-free versions of Visual C++ do not allow for the re-distrobution
+free versions of Visual C++ do not allow for the re-distribution
 of compiled applications, and link to runtime libraries that only
 exist on systems that have the same VC EE version. If you wish to 
-distribute premade binary images of bzflag, then you will have to
+distribute pre-made binary images of bzflag, then you will have to
 ether use the full (retail, or student) versions of the compiler
 or use one of the other free solutions (minGW). For more info
 on compiling with minGW please see the README.MINGW32 that was
@@ -43,7 +43,7 @@ that the project distributes.
 
 **Required Libraries**
 If you are using one of the Visual C++ EXPRESS editions, you will need 
-to install at least 2 microsoft SDKs (Software development kits) in
+to install at least 2 Microsoft SDKs (Software development kits) in
 addition to the base compiler. These libraries are the Windows Platform
 SDK, and the Direct X 9 SDK.
 
@@ -53,9 +53,9 @@ You will need the windows DirectX SDK (April 2007)
   (download at http://www.microsoft.com/downloads/details.aspx?DisplayLang=en&FamilyID=86cf7fa2-e953-475c-abde-f016e4f7b61a )
   
   *note*
-  If you get a direct X SDK that is newer then april 2007, you will not 
+  If you get a direct X SDK that is newer then April 2007, you will not 
   have the dinput.h file that bzflag needs and will not be able to build with joystick support.
-  We are working on creating a build target for newer versions of directX that will
+  We are working on creating a build target for newer versions of DirectX that will
   support joysticks.
   
 Once you have these SDKs, you must configure VC to include them.
@@ -65,9 +65,9 @@ dialog you must set the paths to the include and lib dirs of any SDKs.
 Be sure that you use the correct lib dir for your platform (x68 or x64)
 
 You may wish to also install curses and glew if you wish to do a full 
-distrobution build.
+distribution build.
 
-**Running and Debuging**
+**Running and Debugging**
 By default the compiler will copy the compiled executables to the root level
 of the source drive ( the same place that the data dir is at). From there
 you can simply double click the application to run it. If you wish to debug
@@ -83,7 +83,7 @@ installer builder is found.
 The built installer will be placed in the dist folder.
 
 **BZRobots**
-Please note that due to the way BZRobots is writen it can not be built or run on windows
+Please note that due to the way BZRobots is written it can not be built or run on windows
 using the visual C++ system. The problem comes down to how windows exports functions
-to DLLs, as compred to how unix like systems use shared objects.It is not built as part 
+to DLLs, as compared to how unix like systems use shared objects.It is not built as part 
 of the VisualC++ projects.
