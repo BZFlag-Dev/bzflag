@@ -144,7 +144,7 @@ namespace Flags {
     Masquerade	= new FlagType( "Masquerade", "MQ", FlagUnstable, StandardShot, FlagGood, NoTeam,
       "In opponent's hud, you appear as a teammate.");
     Seer	= new FlagType( "Seer", "SE", FlagUnstable, StandardShot, FlagGood, NoTeam,
-      "See stealthed, cloaked and masquerading tanks as normal.");
+      "See stealthed, cloaked and masquerading tanks as normal.  See invisible bullets.");
     Thief	= new FlagType( "Thief", "TH", FlagUnstable, ThiefShot, FlagGood, NoTeam,
       "Steal flags.  Small and fast but can't kill.");
     Burrow	= new FlagType( "Burrow", "BU", FlagUnstable, StandardShot, FlagGood, NoTeam,
