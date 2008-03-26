@@ -37,6 +37,9 @@ class BoltSceneNode : public ShotSceneNode {
     bool		getColorblind() const;
     void		setColorblind(bool);
 
+    bool		getInvisible() const;
+    void		setInvisible(bool);
+
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
 
@@ -86,6 +89,7 @@ class BoltSceneNode : public ShotSceneNode {
     bool		drawFlares;
     bool		texturing;
     bool		colorblind;
+	bool        invisible;
     float		size;
     GLfloat		color[4];
     OpenGLLight		light;

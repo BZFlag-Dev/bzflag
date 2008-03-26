@@ -132,6 +132,7 @@ class SuperBulletStrategy : public SegmentedShotStrategy {
 			~SuperBulletStrategy();
 };
 
+
 class PhantomBulletStrategy : public SegmentedShotStrategy {
   public:
 			PhantomBulletStrategy(ShotPath*);

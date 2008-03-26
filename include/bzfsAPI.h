@@ -253,6 +253,7 @@ typedef enum
   eRicoShot,
   eMachineGunShot,
   eInvisibleShot,
+  eCloakedShot,
   eRapidFireShot,
   eLastShotType
 }bz_eShotType;

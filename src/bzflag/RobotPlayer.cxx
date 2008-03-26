@@ -241,7 +241,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	if (!shot || shot->isExpired())
 	  continue;
 	// ignore invisible bullets completely for now (even when visible)
-	if (shot->getShotType() == InvisibleShot)
+	if ((shot->getShotType() == InvisibleShot) || (shot->getShotType() == CloakedShot))
 	  continue;
 
 	const float* shotPos = shot->getPosition();

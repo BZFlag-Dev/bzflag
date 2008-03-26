@@ -505,6 +505,9 @@ Tank becomes invisible out\-the\-window but is still visible on radar.
 Shots are invisible on radar (except your own).  They are visible
 out\-the\-window.  Sort of stealth for shots.
 .TP 
+.B Cloaked Shot (CS)
+Shots are invisible out\-the\-window, but still visible on radar.
+.TP 
 .B Tiny (T)
 Tank becomes much smaller and harder to hit.
 .TP 

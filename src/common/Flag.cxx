@@ -41,6 +41,7 @@ namespace Flags {
   FlagType *BlueTeam;
   FlagType *Bouncy;
   FlagType *Burrow;
+  FlagType *CloakedBullet;
   FlagType *Cloaking;
   FlagType *Colorblindness;
   FlagType *ForwardOnly;
@@ -117,6 +118,8 @@ namespace Flags {
       "Shoots through buildings.  Can kill Phantom Zone." );
     InvisibleBullet	= new FlagType( "Invisible Bullet", "IB", FlagUnstable, InvisibleShot, FlagGood, NoTeam,
       "Your shots don't appear on other radars.  Can still see them out window.");
+	CloakedBullet	= new FlagType( "Cloaked Shot", "CS", FlagUnstable, CloakedShot, FlagGood, NoTeam,
+      "Shots are invisible out-the-window. Still visible on radar. Glow is still visible out-the-window. Watch out for ricochet!");
     Stealth	= new FlagType( "Stealth", "ST", FlagUnstable, StandardShot, FlagGood, NoTeam,
       "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!");
     Tiny	= new FlagType( "Tiny", "T", FlagUnstable, StandardShot, FlagGood, NoTeam,
@@ -195,6 +198,7 @@ namespace Flags {
     delete BlueTeam;
     delete Bouncy;
     delete Burrow;
+	delete CloakedBullet;
     delete Cloaking;
     delete Colorblindness;
     delete ForwardOnly;

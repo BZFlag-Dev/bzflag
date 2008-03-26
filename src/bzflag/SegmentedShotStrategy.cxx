@@ -57,9 +57,11 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     if (faint) {
       boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
       boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-    } else {
+	} else {
       boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
     }
+	if((_path->getShotType() == CloakedShot) && (LocalPlayer::getMyTank()->getFlag() != Flags::Seer))
+		boltSceneNode->setInvisible(true);
 
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(team);

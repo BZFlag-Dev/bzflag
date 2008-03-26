@@ -106,6 +106,7 @@ enum ShotType {
 	RicoShot,
 	MachineGunShot,
 	InvisibleShot,
+	CloakedShot,
 	RapidFireShot
 };
 
@@ -256,6 +257,7 @@ namespace Flags {
     *BlueTeam,
     *Bouncy,
     *Burrow,
+	*CloakedBullet,
     *Cloaking,
     *Colorblindness,
     *ForwardOnly,

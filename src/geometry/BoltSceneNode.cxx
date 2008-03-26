@@ -33,6 +33,7 @@
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]) :
 				phasingShot(false),
 				drawFlares(false),
+				invisible(false),
 				texturing(false),
 				colorblind(false),
 				size(1.0f),
@@ -107,6 +108,17 @@ bool			BoltSceneNode::getColorblind() const
 void			BoltSceneNode::setColorblind(bool _colorblind)
 {
   colorblind = _colorblind;
+}
+
+
+bool			BoltSceneNode::getInvisible() const
+{
+  return invisible;
+}
+
+void			BoltSceneNode::setInvisible(bool _invisible)
+{
+  invisible = _invisible;
 }
 
 void			BoltSceneNode::setTexture(const int texture)
@@ -477,6 +489,8 @@ void		BoltSceneNode::BoltRenderNode::renderGeoBolt()
 
 void			BoltSceneNode::BoltRenderNode::render()
 {
+  if(sceneNode->invisible)
+	  return;
   const float u0 = (float)u * du;
   const float v0 = (float)v * dv;
 
