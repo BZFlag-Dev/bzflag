@@ -101,6 +101,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "autohunt",			"",			true,	StateDatabase::ReadWrite,	NULL },
   { "autoFlagDisplay",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "processorAffinity",	"0",			true,	StateDatabase::ReadWrite,	setProcessorAffinity },
+  { "pauseOnMinimize",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   //ping
   { "pingLow",		        "100",			true,   StateDatabase::ReadWrite,	NULL },
@@ -121,7 +122,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "lightLists",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "noMeshClusters",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "multisamples",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

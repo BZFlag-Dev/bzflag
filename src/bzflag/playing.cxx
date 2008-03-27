@@ -967,15 +967,18 @@ static void		doEvent(BzfDisplay *disply)
       // paused because of an unmap (shouldn't happen), we're not
       // already counting down to pausing, we're alive, and we're not
       // already paused.
-      if (!pausedByUnmap && (pauseCountdown == 0.0f) &&
-	myTank && myTank->isAlive() &&
-	!myTank->isPaused() && !myTank->isAutoPilot() &&
-	!BZDB.isTrue("noUnmapPause")) { // handy for testing
-	  // get ready to pause (no cheating through instantaneous pausing)
-	  pauseCountdown = 5.0f;
+      if (!pausedByUnmap &&
+	  (pauseCountdown == 0.0f) &&
+	  myTank && myTank->isAlive() &&
+	  !myTank->isPaused() &&
+	  !myTank->isAutoPilot() &&
+	  BZDB.isTrue("pauseOnMinimize")) {
 
-	  // set this even though we haven't really paused yet
-	  pausedByUnmap = true;
+	// get ready to pause (no cheating through instantaneous pausing)
+	pauseCountdown = 5.0f;
+	
+	// set this even though we haven't really paused yet
+	pausedByUnmap = true;
       }
 
       // ungrab the mouse if we're running full screen
