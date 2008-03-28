@@ -377,7 +377,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
   MessageList::iterator itr = pendingOutgoingMesages.begin();
   while ( itr != pendingOutgoingMesages.end() )
   {
-    if (handler == (*itr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
+    if ((*itr) && (handler == (*itr)->recipent))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
       pendingOutgoingMesages.erase(itr++);
@@ -389,7 +389,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
   MessageDeque::iterator qItr = outgoingQueue.begin();
   while (qItr != outgoingQueue.end())
   {
-    if (handler == (*qItr)->recipent)  // just kill the message and data, it'll be pulled from the list on the next update pass
+    if ((*qItr) && (handler == (*qItr)->recipent))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*qItr);
       outgoingQueue.erase(qItr++);
