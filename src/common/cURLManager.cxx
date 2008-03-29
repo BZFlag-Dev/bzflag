@@ -23,6 +23,7 @@ CURLM		  *cURLManager::multiHandle = NULL;
 std::map<CURL*,
 	 cURLManager*>  cURLManager::cURLMap;
 char		    cURLManager::errorBuffer[CURL_ERROR_SIZE];
+int		    cURLManager::refs = 0;
 
 cURLManager::cURLManager()
 {
@@ -37,6 +38,8 @@ cURLManager::cURLManager()
 
   if (!inited)
     setup();
+
+  refs++;
 
   easyHandle = curl_easy_init();
   if (!easyHandle) {
@@ -84,6 +87,11 @@ cURLManager::~cURLManager()
     removeHandle();
   cURLMap.erase(easyHandle);
   curl_easy_cleanup(easyHandle);
+  refs--;
+  if (multiHandle && refs == 0) {
+    curl_multi_cleanup(multiHandle);
+    inited = false;
+  }
   free(theData);
 }
 

@@ -73,6 +73,7 @@ private:
   static bool   inited;
   static bool   justCalled;
   CURL	       *easyHandle;
+  static int	refs;
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
   bool		added;
