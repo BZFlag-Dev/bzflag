@@ -32,8 +32,9 @@ bool	PlayerInfo::simpleFiltering   = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), hasDoneEntering(false),
-  team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now), paused(false),
-  pausedSince(TimeKeeper::getNullTime()), autopilot(false), tracker(0)
+  type(TankPlayer), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
+  paused(false), pausedSince(TimeKeeper::getNullTime()), autopilot(false),
+  tracker(0)
 {
   notResponding = false;
   memset(email, 0, EmailLen);
