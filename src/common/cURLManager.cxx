@@ -90,6 +90,7 @@ cURLManager::~cURLManager()
   refs--;
   if (multiHandle && refs == 0) {
     curl_multi_cleanup(multiHandle);
+    multiHandle = NULL;
     inited = false;
   }
   free(theData);
