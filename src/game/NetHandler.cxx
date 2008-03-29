@@ -543,7 +543,7 @@ void *NetHandler::getTcpBuffer() {
 
 unsigned int NetHandler::getTcpReadSize ( void  )
 {
-	return tcplen;
+  return tcplen;
 }
 
 void NetHandler::flushUDP()
