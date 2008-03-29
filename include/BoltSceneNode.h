@@ -87,9 +87,9 @@ class BoltSceneNode : public ShotSceneNode {
 
   private:
     bool		drawFlares;
+	bool        invisible;
     bool		texturing;
     bool		colorblind;
-	bool        invisible;
     float		size;
     GLfloat		color[4];
     OpenGLLight		light;
