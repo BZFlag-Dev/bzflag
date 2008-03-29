@@ -50,19 +50,21 @@ teammates (not even other rogues), there is no team score
 attributed to Rogues and every other tank is a legitimate
 enemy.
 .PP 
-There are three main styles of play:  capture\-the\-flag,
-free\-for\-all, and rabbit\-hunt.  In capture\-the\-flag, each team (except rogues)
-has a team base and each team with at least one player has a team
-flag.  The object is to capture an enemy team's flag by bringing
-it to your team's base.  This destroys every player on the captured
-team, subtracts one from that team's score, and adds one to your
-team's score.  In free\-for\-all, there are no team flags or team
-bases.  The object is simply to get as high a score as possible.
-In rabbit\-hunt, the lead player is chosen as the target for all
-other players. When the rabbit (target) is destroyed, the live player
-with the next highest score becomes the rabbit. The object is to
-remain the rabbit for as long as possible. The rabbit is marked as
-a white tank.
+There are four main styles of play:  capture\-the\-flag, free\
+-for\-all, open\-free\-for\-all and rabbit\-hunt.  In capture\
+-the\-flag, each team (except rogues) has a team base and each
+team with at least one player has a team flag.  The object is 
+to capture an enemy team's flag by bringing it to your team's 
+base.  This destroys every player on the captured team, subtracts
+one from that team's score, and adds one to your team's score.  
+In free\-for\-all, there are no team flags or team bases.  The 
+object is simply to get as high a score as possible.  In  open\
+-free\-for\-all, gameplay is similar to free\-for\-all except there
+are no teams.  In rabbit\-hunt, the lead player is chosen as the
+target for all other players.  When the rabbit (target) is destroyed,
+the live player with the next highest score becomes the rabbit.  
+The object is to remain the rabbit for as long as possible.  
+The rabbit is marked as a white tank.
 .SS Joining a Game
 .PP 
 To quickly get started, select the "Join Game" menu in the BZFlag
@@ -357,7 +359,8 @@ Capturing your own flag (by taking it onto an enemy base) counts as a
 loss.  In the free\-for\-all style, the team score is sum of the wins of
 all the players on the team minus the sum of the losses of all the
 players on the team. In the rabbit\-hunt style, scoring is similar to
-free\-for\-all.
+free\-for\-all.  Open\-free\-for\-all, being devoid of teams, is absent
+of team scoring.   
 .PP 
 The score sheet also lists the number times you have destroyed or been
 destroyed by each other player under the \fIKills\fR heading.  This
@@ -543,6 +546,9 @@ Destroying any tank on a team destroys every player on that team.
 .TP 
 .B Jumping (JP)
 Allows the tank to jump.  You cannot steer while in the air.
+.TP 
+.B Low Gravity (LG)
+Allows for reduced effect of world gravity on your tank. Very long jumps.
 .TP 
 .B Identify (ID)
 Displays the identity of the closest flag in the vicinity.

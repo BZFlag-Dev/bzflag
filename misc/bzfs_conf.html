@@ -19,7 +19,7 @@
 		</style>
 		<script language="JavaScript">
 			var flags = new Array(	"V", "QT", "OO", "F", "MG", "GM", "L", "R", "SB",
-						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
+						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G", "CS",
 						"JP", "ID", "CL", "US", "MQ", "SE", "TH", "BU", "WG", "LG",
 						"CB", "LT", "RT", "FO", "RO", "M", "B", "JM", "WA", "NJ",
 						"TR", "BY", "RC", "A" );
@@ -278,6 +278,11 @@
 					if (mainform.voterepeattime.value != 300) {
 						d.writeln("#Minimum seconds required before a player may request another vote<br/>");
 						d.writeln("-poll voteRepeatTime=" + mainform.voterepeattime.value + "<br/><br/>");
+					}
+
+					if (mainform.game_style.value == "offa") {
+						d.writeln("#Open Free for All<br/>");
+						d.writeln("-offa<br/><br/>");
 					}
 
 					if (mainform.game_style.value == "ctf") {
@@ -773,6 +778,7 @@
 							<td>
 								<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
 									<option value="ffa">Free for All</option>
+									<option value="offa">Open Free for All</option>
 									<option value="ctf">Capture the Flag</option>
 									<option value="bc">Uniform world Capture the Flag</option>
 									<option value="rc">Rabbit Chase</option>
@@ -964,18 +970,19 @@
 							</tr>
 							<tr>
 								<td align="right">(JP)</td><td><input type="text" name="jp_mand_flag" value="0" size="3" title="Jumping"/></td>
+								<td align="right">(LG)</td><td><input type="text" name="lg_mand_flag" value="0" size="3" title="Low Gravity"/></td>
 								<td align="right">(ID)</td><td><input type="text" name="id_mand_flag" value="0" size="3" title="Identify"/></td>
 								<td align="right">(CL)</td><td><input type="text" name="cl_mand_flag" value="0" size="3" title="Cloaking"/></td>
+								<td align="right">(CS)</td><td><input type="text" name="cs_mand_flag" value="0" size="3" title="Cloaked Shot"/></td>
 								<td align="right">(US)</td><td><input type="text" name="us_mand_flag" value="0" size="3" title="Useless"/></td>
-								<td align="right">(MQ)</td><td><input type="text" name="mq_mand_flag" value="0" size="3" title="Masquerade"/></td>
-								<td align="right">(SE)</td><td><input type="text" name="se_mand_flag" value="0" size="3" title="Seer"/></td>
 							</tr>
 							<tr>
+								<td align="right">(MQ)</td><td><input type="text" name="mq_mand_flag" value="0" size="3" title="Masquerade"/></td>
+								<td align="right">(SE)</td><td><input type="text" name="se_mand_flag" value="0" size="3" title="Seer"/></td>
 								<td align="right">(TH)</td><td><input type="text" name="th_mand_flag" value="0" size="3" title="Thief"/></td>
 								<td align="right">(BU)</td><td><input type="text" name="bu_mand_flag" value="0" size="3" title="Burrow"/></td>
 								<td align="right">(WG)</td><td><input type="text" name="wg_mand_flag" value="0" size="3" title="Wings"/></td>
 								<td align="right">(A)</td><td><input type="text" name="a_mand_flag" value="0" size="3" title="Agility"/></td>
-								<td align="right">(LG)</td><td><input type="text" name="lg_mand_flag" value="0" size="3" title="Low Gravity"/></td>
 							</tr>
 							<tr>
 								<td align="right">(CB)</td><td><input type="text" name="cb_mand_flag" value="0" size="3" title="Colorblind"/></td>
@@ -1029,20 +1036,21 @@
 								<td align="right">(PZ)</td><td><input type="checkbox" name="pz_forbid_flag" title="Phantom Zone"/></td>
 								<td align="right">(G)</td><td><input type="checkbox" name="g_forbid_flag" title="Genocide"/></td>
 								<td align="right">(JP)</td><td><input type="checkbox" name="jp_forbid_flag" title="Jumping"/></td>
-								<td align="right">(ID)</td><td><input type="checkbox" name="id_forbid_flag" title="Identify"/></td>
+								<td align="right">(LG)</td><td><input type="checkbox" name="lg_forbid_flag" title="Low Gravity"/></td>
 							</tr>
 							<tr>
+								<td align="right">(ID)</td><td><input type="checkbox" name="id_forbid_flag" title="Identify"/></td>
 								<td align="right">(CL)</td><td><input type="checkbox" name="cl_forbid_flag" title="Cloaking"/></td>
+								<td align="right">(CS)</td><td><input type="checkbox" name="cs_forbid_flag" title="Cloaked Shot"/></td>
 								<td align="right">(US)</td><td><input type="checkbox" name="us_forbid_flag" title="Useless"/></td>
 								<td align="right">(MQ)</td><td><input type="checkbox" name="mq_forbid_flag" title="Masquerade"/></td>
-								<td align="right">(SE)</td><td><input type="checkbox" name="se_forbid_flag" title="Seer"/></td>
-								<td align="right">(TH)</td><td><input type="checkbox" name="th_forbid_flag" title="Thief"/></td>
 							</tr>
 							<tr>
+								<td align="right">(SE)</td><td><input type="checkbox" name="se_forbid_flag" title="Seer"/></td>
+								<td align="right">(TH)</td><td><input type="checkbox" name="th_forbid_flag" title="Thief"/></td>
 								<td align="right">(BU)</td><td><input type="checkbox" name="bu_forbid_flag" title="Burrow"/></td>
 								<td align="right">(WG)</td><td><input type="checkbox" name="wg_forbid_flag" title="Wings"/></td>
 								<td align="right">(A)</td><td><input type="checkbox" name="a_forbid_flag" title="Agility"/></td>
-								<td align="right">(LG)</td><td><input type="checkbox" name="lg_forbid_flag" title="Low Gravity"/></td>
 							</tr>
 							<tr>
 								<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag" title="Colorblind"/></td>
@@ -1092,20 +1100,21 @@
 								<td align="right">(PZ)</td><td><input type="text" size="5" name="pz_limit_flag" title="Phantom Zone"/></td>
 								<td align="right">(G)</td><td><input type="text" size="5" name="g_limit_flag" title="Genocide"/></td>
 								<td align="right">(JP)</td><td><input type="text" size="5" name="jp_limit_flag" title="Jumping"/></td>
-								<td align="right">(ID)</td><td><input type="text" size="5" name="id_limit_flag" title="Identify"/></td>
+								<td align="right">(LG)</td><td><input type="text" size="5" name="lg_limit_flag" title="Low Gravity"/></td>
 							</tr>
 							<tr>
+								<td align="right">(ID)</td><td><input type="text" size="5" name="id_limit_flag" title="Identify"/></td>
 								<td align="right">(CL)</td><td><input type="text" size="5" name="cl_limit_flag" title="Cloaking"/></td>
+								<td align="right">(CS)</td><td><input type="text" size="5" name="cs_limit_flag" title="Cloaked Shot"/></td>
 								<td align="right">(US)</td><td><input type="text" size="5" name="us_limit_flag" title="Useless"/></td>
 								<td align="right">(MQ)</td><td><input type="text" size="5" name="mq_limit_flag" title="Masquerade"/></td>
-								<td align="right">(SE)</td><td><input type="text" size="5" name="se_limit_flag" title="Seer"/></td>
-								<td align="right">(TH)</td><td><input type="text" size="5" name="th_limit_flag" title="Thief"/></td>
 							</tr>
 							<tr>
+								<td align="right">(SE)</td><td><input type="text" size="5" name="se_limit_flag" title="Seer"/></td>
+								<td align="right">(TH)</td><td><input type="text" size="5" name="th_limit_flag" title="Thief"/></td>
 								<td align="right">(BU)</td><td><input type="text" size="5" name="bu_limit_flag" title="Burrow"/></td>
 								<td align="right">(WG)</td><td><input type="text" size="5" name="wg_limit_flag" title="Wings"/></td>
 								<td align="right">(A)</td><td><input type="text" size="5" name="a_limit_flag" title="Agility"/></td>
-								<td align="right">(LG)</td><td><input type="text" size="5" name="lg_limit_flag" title="Low Gravity"/></td>
 							</tr>
 							<tr>
 								<td align="right">(CB)</td><td><input type="text" size="5" name="cb_limit_flag" title="Colorblind"/></td>
