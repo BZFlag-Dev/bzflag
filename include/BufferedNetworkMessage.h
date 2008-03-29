@@ -121,12 +121,12 @@ public:
 protected:
   friend class Singleton<BufferedNetworkMessageManager>;
 
-  MessageList pendingOutgoingMesages;
+  MessageList pendingOutgoingMessages;
 
   typedef std::deque<BufferedNetworkMessage*> MessageDeque;
   MessageDeque outgoingQueue;
 
-  MessageList incomingMesages;
+  MessageList incomingMessages;
 
   NetworkMessageTransferCallback *transferCallback;
 private:

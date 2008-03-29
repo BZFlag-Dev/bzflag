@@ -306,7 +306,7 @@ BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetw
     msg = new BufferedNetworkMessage(*msgToCopy);
   else
     msg = new BufferedNetworkMessage;
-  pendingOutgoingMesages.push_back(msg);
+  pendingOutgoingMessages.push_back(msg);
   return msg;
 }
 
@@ -335,13 +335,14 @@ void BufferedNetworkMessageManager::update ( void )
 
 void BufferedNetworkMessageManager::clearDeadIncomingMessages ( void )
 {
-  MessageList::iterator itr = incomingMesages.begin();
-  while (itr != incomingMesages.end() )
+  MessageList::iterator itr = incomingMessages.begin();
+  while (itr != incomingMessages.end() )
   {
     if ( !(*itr)->buffer() )
     {
       delete(*itr);
-      incomingMesages.erase(itr++);
+      incomingMessages.erase(itr);
+      itr = incomingMessages.begin();
     }
     else
       itr++;
@@ -364,9 +365,9 @@ void BufferedNetworkMessageManager::sendPendingMessages ( void )
 
 void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
 {
-  MessageList::iterator itr = std::find(pendingOutgoingMesages.begin(),pendingOutgoingMesages.end(),msg);
-  if ( itr != pendingOutgoingMesages.end() )
-    pendingOutgoingMesages.erase(itr);
+  MessageList::iterator itr = std::find(pendingOutgoingMessages.begin(),pendingOutgoingMessages.end(),msg);
+  if ( itr != pendingOutgoingMessages.end() )
+    pendingOutgoingMessages.erase(itr);
 
   outgoingQueue.push_back(msg);
 }
@@ -374,14 +375,14 @@ void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
 
 void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 {
-  MessageList::iterator itr = pendingOutgoingMesages.begin();
-  while ( itr != pendingOutgoingMesages.end() )
+  MessageList::iterator itr = pendingOutgoingMessages.begin();
+  while ( itr != pendingOutgoingMessages.end() )
   {
     if ((*itr) && (handler == (*itr)->recipent))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
-      pendingOutgoingMesages.erase(itr);
-      itr = pendingOutgoingMesages.begin();
+      pendingOutgoingMessages.erase(itr);
+      itr = pendingOutgoingMessages.begin();
     }
     else
       itr++;
@@ -408,8 +409,8 @@ BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()
 {
-  MessageList::iterator itr = pendingOutgoingMesages.begin();
-  while ( itr != pendingOutgoingMesages.end() )
+  MessageList::iterator itr = pendingOutgoingMessages.begin();
+  while ( itr != pendingOutgoingMessages.end() )
   {
       delete(*itr);
       itr++;
