@@ -132,7 +132,7 @@ const uint16_t		WorldCodeGroupDefStart = 0x6473;	// 'ds'
 const uint16_t		WorldCodeGroupDefEnd = 0x6465;		// 'de'
 
 // world database sizes
-const uint16_t		WorldSettingsSize = 30;
+const uint16_t		WorldSettingsSize = 18;
 const uint16_t		WorldCodeHeaderSize = 10;
 const uint16_t		WorldCodeBaseSize = 31;
 const uint16_t		WorldCodeWallSize = 24;
