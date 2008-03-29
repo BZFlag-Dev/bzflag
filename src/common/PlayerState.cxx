@@ -38,7 +38,7 @@ PlayerState::PlayerState()
   : order(0), status(DeadStatus), azimuth(0.0f), angVel(0.0f)
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
-  velocity[0] = velocity[0] = velocity[2] = 0.0f;
+  velocity[0] = velocity[1] = velocity[2] = 0.0f;
   phydrv = -1;
   userSpeed = 0.0f;
   userAngVel = 0.0f;
