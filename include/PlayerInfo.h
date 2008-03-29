@@ -141,7 +141,7 @@ public:
   int endShotCredit;
   TimeKeeper allowChangeTime;
 
-  PlayerType getType( void ) {return type;}
+  PlayerType getType( void ) const {return type;}
 
   // only used by the server side bot API
   void setCallsign ( const char* text );
