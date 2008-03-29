@@ -2527,18 +2527,18 @@ static void handleWhatTimeIsIt(void *msg)
   float time = -1;
   unsigned char tag = 0;
 
-  float beforeServerTime = syncedClock.GetServerSeconds();
+  double beforeServerTime = syncedClock.GetServerSeconds();
 
   msg = nboUnpackUByte(msg, tag);
   msg = nboUnpackFloat(msg, time);
-  syncedClock.timeMessage(tag,time);
+  syncedClock.timeMessage(tag, time);
 
   if (myTank)
   {
-    float afterServerTime = syncedClock.GetServerSeconds();
+    double afterServerTime = syncedClock.GetServerSeconds();
 
-    std::string message = TextUtils::format("whatTimeIsIt: packet time %f, delta %f",time,afterServerTime-beforeServerTime);
-    addMessage(NULL,message);
+    std::string message = TextUtils::format("whatTimeIsIt: packet time %lf, delta %lf", time, afterServerTime-beforeServerTime);
+    addMessage(NULL, message);
   }
 }
 
