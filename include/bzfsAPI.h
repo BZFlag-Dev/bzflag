@@ -677,6 +677,7 @@ public:
     generated = false;
     openFFA = rabbit = ctf = false;
     eventTime = 0.0;
+    worldBlob = NULL;
   }
   virtual ~bz_GetWorldEventData_V1(){};
   virtual void update (){bz_EventData::update();}
@@ -687,6 +688,7 @@ public:
   bool openFFA;
 
   bz_ApiString	worldFile;
+  char* worldBlob;
 
   double eventTime;
 };

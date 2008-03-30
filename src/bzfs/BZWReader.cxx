@@ -55,7 +55,8 @@
 #include "bzfs.h"
 
 
-BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
+BZWReader::BZWReader(const std::string &filename) : cURLManager(),
+					     location(filename),
 					     input(NULL)
 {
   static const std::string httpProtocol("http://");
@@ -82,6 +83,15 @@ BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
       "world file extension is not .bzw, trying to load anyway"), 0);
   }
 
+  if (input->peek() == EOF) {
+    errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
+  }
+}
+
+BZWReader::BZWReader(std::istream &in) : cURLManager(),
+					     location("blob"),
+					     input(&in)
+{
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
   }

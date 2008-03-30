@@ -32,7 +32,8 @@ class WorldInfo;
 
 class BZWReader : private cURLManager {
 public:
-  BZWReader(std::string filename);
+  BZWReader(const std::string &filename);
+  BZWReader(std::istream &in);
   ~BZWReader();
 
   // external interface

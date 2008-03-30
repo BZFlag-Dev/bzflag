@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#include <sstream>
 
 // implementation-specific bzflag headers
 #include "NetHandler.h"
@@ -800,6 +801,20 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
   }
 }
 
+static bool allBasesDefined(void)
+{
+  if (clOptions->gameType == eClassicCTF) {
+    for (int i = RedTeam; i <= PurpleTeam; i++) {
+      if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
+	std::cerr << "base was not defined for "
+		  << Team::getName((TeamColor)i)
+		  << std::endl;
+	return false;
+      }
+    }
+  }
+  return true;
+}
 
 bool defineWorld ( void )
 {
@@ -836,22 +851,21 @@ bool defineWorld ( void )
   }
 
   // make world and add buildings
-  if (clOptions->worldFile.size()) {
+  if (worldData.worldBlob != NULL) {
+    logDebugMessage(1,"reading worldfile from memory\n");
+    std::istringstream in(worldData.worldBlob);
+    BZWReader* reader = new BZWReader(in);
+    world = reader->defineWorldFromFile();
+    delete reader;
+
+    if (!allBasesDefined()) return false;
+  } else if (clOptions->worldFile.size()) {
     logDebugMessage(1,"reading worldfile %s\n",clOptions->worldFile.c_str());
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (clOptions->gameType == eClassicCTF) {
-      for (int i = RedTeam; i <= PurpleTeam; i++) {
-	if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
-	  std::cerr << "base was not defined for "
-		    << Team::getName((TeamColor)i)
-		    << std::endl;
-	  return false;
-	}
-      }
-    }
+    if (!allBasesDefined()) return false;
   } else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
