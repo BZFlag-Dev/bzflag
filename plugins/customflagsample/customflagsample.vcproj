@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include;../plugin_utils"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;CUSTOMFLAGSAMPLE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="bzfs.lib plugin_utils.lib"
+				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/customflagsample.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc71/debug/"

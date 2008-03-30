@@ -2,7 +2,6 @@
 //
 
 #include "bzfsAPI.h"
-#include "plugin_utils.h"
 
 BZ_GET_PLUGIN_VERSION
 
@@ -21,28 +20,22 @@ public:
 
     case bz_eFlagTransferredEvent: {
       bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;
-      /* Sending messages during these events is a REALLY BAD idea
       if (fte->flagType == "CF")
 	bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag transferred!");
-	*/
       break;
     }
 
     case bz_eFlagGrabbedEvent: {
       bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;
-      /*
       if (fge->flagType == "CF")
         bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag grabbed!");
-	*/
       break;
     }
 
     case bz_eFlagDroppedEvent: {
       bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;
-      /*
       if (fde->flagType == "CF")
         bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag dropped!");
-	*/
       break;
     }
 
@@ -51,11 +44,11 @@ public:
       int p = sfed->player;
       bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(p);
       if (!playerRecord) break;
-      if (playerRecord->currentFlag == "CF")
+      if (playerRecord->currentFlag == "Custom Flag (+CF)")
       {
-	//bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Shot fired by %s with Custom Flag!", playerRecord->callsign);
+	bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Shot fired by %s with Custom Flag!", playerRecord->callsign.c_str());
 	// this user must be cool, add 10 to their score
-	//bz_setPlayerWins(p, bz_getPlayerWins(p)+10);
+	bz_setPlayerWins(p, bz_getPlayerWins(p)+10);
       }
       break;
     }
