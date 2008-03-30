@@ -127,5 +127,5 @@
 
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
-inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
+inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer); fflush(stdout);}
 #endif
