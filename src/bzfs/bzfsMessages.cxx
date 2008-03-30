@@ -759,7 +759,7 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
   msg->packFloat(rot);
   msg->broadcast(MsgAlive);
 
-  // now do everyone who dosn't have network
+  // now do everyone who doesn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)

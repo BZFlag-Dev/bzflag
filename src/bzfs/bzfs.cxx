@@ -1204,7 +1204,7 @@ static void acceptClient()
   if (n < 0)
     nerror("couldn't set keepalive");
 
-  // they arn't a player yet till they send us the connection string
+  // they aren't a player yet till they send us the connection string
   NetConnectedPeer	peer;
   peer.handler = new NetHandler(clientAddr, fd);
   peer.player = -1;
