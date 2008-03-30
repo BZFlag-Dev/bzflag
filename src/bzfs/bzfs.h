@@ -40,39 +40,6 @@
 
 #include "bzfsAPI.h"
 
-
-class PendingChatMessages
-{
-public:
-  int to;
-  int from;
-  std::string text;
-
-  PendingChatMessages ( int t, int f, const std::string &m )
-  {
-    to = t;
-    from = f;
-    text = m;
-  }
-
-  PendingChatMessages ( int t, int f, const char* m )
-  {
-    to = t;
-    from = f;
-    if (m)
-      text = m;
-  }
-
-  PendingChatMessages ( const PendingChatMessages &m )
-  {
-    to = m.to;
-    from = m.from;
-    text = m.text;
-  }
-};
-
-extern std::list<PendingChatMessages> pendingChatMessages;
-
 // to dump score info to stdout
 #define SERVERLOGINMSG true
 

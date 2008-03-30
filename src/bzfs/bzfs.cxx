@@ -1458,9 +1458,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   sendTextMessage(dstPlayer, playerIndex, msg, msglen);
 
   if (Record::enabled() && !(dstPlayer == AllPlayers)) // don't record twice
-    {
-      sendTextMessage(-1, playerIndex, msg, msglen, true);
-    }
+    sendTextMessage(-1, playerIndex, msg, msglen, true);
 }
 
 void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
@@ -4553,18 +4551,6 @@ bool updateCurl ( void )
   return cURLManager::perform();
 }
 
-void sendPendingChatMessages ( void )
-{
-  // send out any pending chat messages
-  std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
-  while ( itr != pendingChatMessages.end() )
-  {
-    sendMessage(itr->from, itr->to, itr->text.c_str());
-    itr++;
-  }
-  pendingChatMessages.clear();
-}
-
 static void runMainLoop ( void )
 {
   /* MAIN SERVER RUN LOOP
@@ -4999,7 +4985,6 @@ static void runMainLoop ( void )
     world->getWorldWeapons().fire();
 
     MSGMGR.update();
-    sendPendingChatMessages();
 
     cleanPendingPlayers();
 
