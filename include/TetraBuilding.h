@@ -73,6 +73,7 @@ class TetraBuilding : public Obstacle {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+    virtual int getTypeID() const {return tetraType;}
 
   private:
     void checkVertexOrder();

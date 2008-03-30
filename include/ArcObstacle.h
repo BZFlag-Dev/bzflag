@@ -81,6 +81,9 @@ class ArcObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
+    virtual int getTypeID() const {return arcType;}
+
+
   private:
     void finalize();
     MeshObstacle* makePie(bool isCircle, float a, float r, float h,

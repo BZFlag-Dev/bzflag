@@ -28,7 +28,6 @@ const char* ConeObstacle::typeName = "ConeObstacle";
 
 ConeObstacle::ConeObstacle()
 {
-  iType = coneType;
   return;
 }
 
@@ -58,7 +57,6 @@ ConeObstacle::ConeObstacle(const MeshTransform& xform,
   memcpy(texsize, _texsize, sizeof(texsize));
   memcpy(materials, mats, sizeof(materials));
 
-  iType = coneType;
   finalize();
 
   return;

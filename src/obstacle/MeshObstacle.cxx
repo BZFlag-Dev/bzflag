@@ -53,7 +53,6 @@ MeshObstacle::MeshObstacle()
   shootThrough = 0;
   inverted = false;
   drawInfo = NULL;
-  iType = meshType;
   return;
 }
 

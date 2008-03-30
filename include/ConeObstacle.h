@@ -78,6 +78,8 @@ class ConeObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
+    virtual int getTypeID() const {return coneType;}
+
   private:
     void finalize();
 

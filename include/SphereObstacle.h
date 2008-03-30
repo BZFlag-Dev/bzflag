@@ -80,6 +80,8 @@ public:
   void *unpack(void*);
 
   void print(std::ostream& out, const std::string& indent) const;
+  virtual int getTypeID() const {return sphereType;}
+
 
 private:
   void finalize();

@@ -145,7 +145,7 @@ class Obstacle {
   /** This function returns the obstacle's full height. */
   float getHeight() const;
 
-  int getTypeID() const { return iType;}
+  virtual int getTypeID() const = 0;
 
   unsigned short getListID ( void ) const { return listID;}
   void setListID ( unsigned short id ) {listID = id;}
@@ -319,7 +319,6 @@ class Obstacle {
     unsigned char shootThrough;
     bool ZFlip;
     char source;
-    int iType;
     std::string name;
     unsigned short  listID;
 

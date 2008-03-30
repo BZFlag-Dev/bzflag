@@ -22,15 +22,12 @@ const char*		PyramidBuilding::typeName = "PyramidBuilding";
 
 PyramidBuilding::PyramidBuilding()
 {
-  iType = pyrType;
-
 }
 
 PyramidBuilding::PyramidBuilding(const float* p, float a,
 				float w, float b, float h, unsigned char drive, unsigned char shoot) :
 				Obstacle(p, a, w, b, h,drive,shoot)
 {
-  iType = pyrType;
   finalize();
   return;
 }

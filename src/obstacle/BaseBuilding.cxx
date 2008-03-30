@@ -23,7 +23,6 @@ const char*		BaseBuilding::typeName = "BaseBuilding";
 
 BaseBuilding::BaseBuilding()
 {
-  iType = baseType;
 }
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
@@ -31,7 +30,6 @@ BaseBuilding::BaseBuilding(const float *p, float rotation,
 		Obstacle(p, rotation, _size[0], _size[1], _size[2]),
 		team(_team)
 {
-  iType = baseType;
   finalize();
   return;
 }

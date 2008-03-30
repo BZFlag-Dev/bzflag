@@ -35,7 +35,6 @@ Obstacle::Obstacle()
   shootThrough = 0;
   ZFlip = false;
   source = WorldSource;
-  iType = -1;
   listID = 0;
 
   insideNodeCount = 0;
@@ -61,7 +60,6 @@ Obstacle::Obstacle(const float* _pos, float _angle,
 
   insideNodeCount = 0;
   insideNodes = NULL;
-  iType = -1;
   listID = 0;
 }
 

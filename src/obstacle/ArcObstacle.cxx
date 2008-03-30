@@ -28,7 +28,6 @@ const char* ArcObstacle::typeName = "ArcObstacle";
 
 ArcObstacle::ArcObstacle()
 {
-  iType = arcType;
   return;
 }
 
@@ -58,8 +57,6 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
   useNormals = _useNormals;
   memcpy(texsize, _texsize, sizeof(texsize));
   memcpy(materials, mats, sizeof(materials));
-
-  iType = arcType;
   finalize();
 
   return;

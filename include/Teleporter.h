@@ -81,6 +81,7 @@ class Teleporter : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
+    virtual int getTypeID() const {return teleType;}
 
     std::string		userTextures[1];
 

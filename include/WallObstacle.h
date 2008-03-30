@@ -53,6 +53,7 @@ class WallObstacle : public Obstacle {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+    virtual int getTypeID() const {return wallType;}
 
     std::string		userTextures[1];
 

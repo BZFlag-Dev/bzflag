@@ -94,6 +94,8 @@ class MeshFace : public Obstacle {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+    virtual int getTypeID() const {return meshType;}
+
 
   public:
     mutable float scratchPad;

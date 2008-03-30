@@ -35,7 +35,6 @@ const char* TetraBuilding::typeName = "TetraBuilding";
 
 TetraBuilding::TetraBuilding()
 {
-  iType = tetraType;
   return;
 }
 
@@ -63,7 +62,6 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
   shootThrough = shoot;
 
   finalize();
-  iType = tetraType;
 
   return;
 }

@@ -64,6 +64,7 @@ class PyramidBuilding : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
+    virtual int getTypeID() const {return pyrType;}
 
     std::string		userTextures[1];
 

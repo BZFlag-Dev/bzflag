@@ -24,7 +24,6 @@ const char* Teleporter::typeName = "Teleporter";
 
 Teleporter::Teleporter()
 {
-  iType = teleType;
   backLink = NULL;
   frontLink = NULL;
   return;
@@ -37,7 +36,6 @@ Teleporter::Teleporter(const float* p, float a, float w,
 			 Obstacle(p, a, w, b, h, drive, shoot),
 			 border(_border), horizontal(_horizontal)
 {
-  iType = teleType;
   finalize();
   return;
 }

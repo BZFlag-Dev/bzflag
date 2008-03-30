@@ -42,7 +42,7 @@ class MeshObstacle : public Obstacle {
 		 bool bounce, unsigned char drive, unsigned char shoot);
 
     bool addFace (const std::vector<int>& vertices,
-		  const std::vector<int>& normals,
+      const std::vector<int>& normals,
 		  const std::vector<int>& texcoords,
 		  const BzMaterial* bzMaterial, int physics,
 		  bool noclusters, bool bounce, unsigned char drive, unsigned char shoot,
@@ -113,6 +113,8 @@ class MeshObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
+
+    virtual int getTypeID() const {return meshType;}
 
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
