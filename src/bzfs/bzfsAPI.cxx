@@ -4577,10 +4577,19 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
     default: return false; // shouldn't happen
   }
 
+  /* copy the flag information to memory we own, so we won't crash if someone unloads
+     the plugin without purging the flags; the flags will just no longer function */
+  char* localName = new char[strlen(name)+1];
+  strcpy(localName, name);
+  char* localAbbr = new char[strlen(abbr)+1];
+  strcpy(localAbbr, abbr);
+  char* localHelpString = new char[strlen(helpString)+1];
+  strcpy(localHelpString, helpString);
+
   /* let this pointer dangle.  the constructor has taken care of all the real 
      work on the server side. */
-  FlagType* tmp = new FlagType(name, abbr, e, (ShotType)shotType, (FlagQuality)quality,
-			       NoTeam, helpString, true);
+  FlagType* tmp = new FlagType(localName, localAbbr, e, (ShotType)shotType, (FlagQuality)quality,
+			       NoTeam, localHelpString, true);
 
   /* default the shot limit.  note that -sl will still take effect, if this plugin is
      loaded from the command line or config file, since it's processed in finalization */
