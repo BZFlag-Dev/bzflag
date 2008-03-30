@@ -1411,7 +1411,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ScoreboardRenderer.h"
+				RelativePath="..\..\src\bzflag\ScoreboardRenderer.h"
 				>
 			</File>
 			<File
