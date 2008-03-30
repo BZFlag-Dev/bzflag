@@ -124,6 +124,9 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     }
     sane = false;
 
+    // make sure we're at our best timer resolution possible
+    timeBeginPeriod(1);
+
     LARGE_INTEGER freq;
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
@@ -133,9 +136,6 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       timeLastCalibration = timeGetTime();
     } else {
       logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
-
-      // make sure we're at our best timer resolution possible
-      timeBeginPeriod(1);
 
       lastTime = (unsigned long int)timeGetTime();
     }
