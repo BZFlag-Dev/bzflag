@@ -86,6 +86,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 
     LONGLONG diff     = now.QuadPart - qpcLastTime.QuadPart;
     LONGLONG clkSpent = now.QuadPart - qpcLastCalibration;
+    qpcLastTime = now;
 
     if (clkSpent > qpcFrequency) {
       // Recalibrate Frequency
@@ -97,13 +98,12 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 	LONGLONG oldqpcfreq = qpcFrequency;
 	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
 	if (qpcFrequency != oldqpcfreq)
-	  logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+	  logDebugMessage(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
 			  (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
 
     currentTime += (double) diff / (double) qpcFrequency;
-    qpcLastTime = now;
   } else if (lastTime != 0) {
     unsigned long int now = (unsigned long int)timeGetTime();
     unsigned long int diff;
