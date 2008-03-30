@@ -252,6 +252,7 @@ namespace Flags {
     for (int q = 0; q < (int)NumQualities; ++q) {
       for (itr = FlagType::flagSets[q].begin(); itr != FlagType::flagSets[q].end(); ++itr) {
 	if ((*itr)->custom) {
+	  FlagType::getFlagMap().erase((*itr)->flagAbbv);
 	  nitr = itr;
 	  ++nitr;
 	  delete (*itr)->flagAbbv;
