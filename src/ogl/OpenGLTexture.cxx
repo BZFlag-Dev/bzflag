@@ -150,6 +150,13 @@ void OpenGLTexture::initContext()
   return;
 }
 
+void OpenGLTexture::replateImageData(const GLvoid* pixels)
+{
+  freeContext();
+  memcpy(image,pixels,internalFormat*scaledWidth*scaledHeight);
+  initContext();
+}
+
 
 bool OpenGLTexture::setupImage(const GLubyte* pixels)
 {

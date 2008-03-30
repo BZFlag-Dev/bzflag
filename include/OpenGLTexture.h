@@ -82,6 +82,8 @@ class OpenGLTexture {
     void		freeContext();
     void		initContext();
 
+    // MUST be in the final scaled format
+    void		replateImageData(const GLvoid* pixels);
 
     static int		getFilterCount();
     static const char*	getFilterName(Filter id);
@@ -89,6 +91,9 @@ class OpenGLTexture {
 
     static Filter	getMaxFilter();
     static void		setMaxFilter(Filter);
+
+    int			getScaledHeight ( void ) { return scaledHeight;}
+    int			getScaledWidth ( void ) { return scaledHeight;}
 
   private:
 			OpenGLTexture(const OpenGLTexture&);
