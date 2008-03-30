@@ -2294,10 +2294,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   {
     // send a super kill to be polite
     // send message to one player
-    if (playerData->playerHandler)
+    if (playerData->playerHandler) {
       playerData->playerHandler->removed();
-    else
-    {
+    } else {
       // do not use message system, remove the player NOW
       char tempBuf[5];
       void *buf  = tempBuf;
