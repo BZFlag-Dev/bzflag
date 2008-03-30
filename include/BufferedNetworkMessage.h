@@ -126,8 +126,6 @@ protected:
   typedef std::deque<BufferedNetworkMessage*> MessageDeque;
   MessageDeque outgoingQueue;
 
-  MessageList incomingMessages;
-
   NetworkMessageTransferCallback *transferCallback;
 private:
   BufferedNetworkMessageManager();

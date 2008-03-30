@@ -329,24 +329,6 @@ void BufferedNetworkMessageManager::update ( void )
 {
   if (transferCallback)
     sendPendingMessages();
-
-  clearDeadIncomingMessages();
-}
-
-void BufferedNetworkMessageManager::clearDeadIncomingMessages ( void )
-{
-  MessageList::iterator itr = incomingMessages.begin();
-  while (itr != incomingMessages.end() )
-  {
-    if ( !(*itr)->buffer() )
-    {
-      delete(*itr);
-      incomingMessages.erase(itr);
-      itr = incomingMessages.begin();
-    }
-    else
-      itr++;
-  }
 }
 
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
