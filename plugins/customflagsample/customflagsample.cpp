@@ -61,7 +61,7 @@ CustomFlagSampleHandler cfs;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"customflagsample plugin loaded");
+  bz_debugMessage(4, "customflagsample plugin loaded");
 
   // register our special custom flag
   bz_RegisterCustomFlag("CF", "Custom Flag", "A simple sample custom flag from the customflagsample plugin", eSuperShot, eGoodFlag);
@@ -77,7 +77,13 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  bz_debugMessage(4,"customflagsample plugin unloaded");
+  // unregister our events
+  bz_removeEvent(bz_eFlagTransferredEvent, &cfs);
+  bz_removeEvent(bz_eFlagGrabbedEvent, &cfs);
+  bz_removeEvent(bz_eFlagDroppedEvent, &cfs);
+  bz_removeEvent(bz_eShotFiredEvent, &cfs);
+
+  bz_debugMessage(4, "customflagsample plugin unloaded");
   return 0;
 }
 
