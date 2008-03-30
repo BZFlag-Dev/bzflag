@@ -198,7 +198,7 @@ namespace Flags {
     delete BlueTeam;
     delete Bouncy;
     delete Burrow;
-	delete CloakedBullet;
+    delete CloakedBullet;
     delete Cloaking;
     delete Colorblindness;
     delete ForwardOnly;
