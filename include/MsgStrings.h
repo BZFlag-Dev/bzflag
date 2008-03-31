@@ -38,7 +38,6 @@ namespace MsgStrings {
   void init();
   void reset();			// clean up all tracked state
   void useDNS(bool);		// look up hostnames based on IPs?
-  void showEmail(bool);		// show player emails next to names?
   void colorize(bool);		// use ANSI color codes?
   void trackState(bool);	// track game state?
 

@@ -570,6 +570,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\MsgStrings.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\NetHandler.cxx"
 				>
 			</File>
@@ -657,6 +661,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\messages.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\MsgStrings.h"
 				>
 			</File>
 			<File

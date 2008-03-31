@@ -53,7 +53,6 @@ static FlagListType   FlagList;
 static PlayerListType PlayerList;
 // static bool UseDNS = true;
 static bool Colorize = true;
-// static bool ShowEmail = true;
 static bool TrackState = true;
 
 static MsgStringList listMsgBasics (PacketInfo *pi);
@@ -67,7 +66,6 @@ static std::string strKillReason (int16_t reason);
 static std::string strAddress (Address& address);
 
 /*
-static std::string strEmail ();
 static std::string strHostName (); // ew, ADNS ?
 */
 
@@ -186,7 +184,6 @@ void MsgStrings::reset ()
 
   //  UseDNS = true;
   Colorize = true;
-  //  ShowEmail = true;
   TrackState = true;
 
   FlagList.clear();
@@ -221,14 +218,6 @@ void MsgStrings::useDNS (bool /*value*/)
   //  UseDNS = value;
   return;
 }
-
-
-void MsgStrings::showEmail (bool /*value*/)
-{
-  //  ShowEmail = value;
-  return;
-}
-
 
 void MsgStrings::colorize (bool value)
 {
@@ -507,7 +496,6 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
   u8 index;
   u16 type, team, wins, losses, tks;
   char callsign[CallSignLen];
-  char email[EmailLen];
 
   d = nboUnpackUByte (d, index);
   d = nboUnpackUShort (d, type);
@@ -516,13 +504,11 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
   d = nboUnpackUShort (d, losses);
   d = nboUnpackUShort (d, tks);
   d = nboUnpackString (d, callsign, CallSignLen);
-  d = nboUnpackString (d, email, EmailLen);
 
   if (TrackState) {
     PlayerList[index] = callsign;
   }
   listPush (list, 1, "player: %s", strPlayer(index).c_str());
-  listPush (list, 1, "email:  %s", email);
   listPush (list, 1, "team:   %s", strTeam(team).c_str());
   listPush (list, 1, "type:   %i", type);
   listPush (list, 2, "wins:   %i", wins);
