@@ -352,11 +352,11 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 {
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  for (unsigned int w = 0; w < walls.size(); w++) {
+  for (unsigned int w = 0; w < walls.size(); w++)
+  {
     const WallObstacle* wall = (const WallObstacle*) walls[w];
-    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return wall;
-    }
   }
 
   // get the list of potential hits from the collision manager
@@ -366,25 +366,22 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   // sort the list by type and height
   qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
 
-
   int i;
 
   // check non-mesh obstacles
-  for (i = 0; i < olist->count; i++) {
+  for (i = 0; i < olist->count; i++)
+  {
     const Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
-    if ((type == MeshFace::getClassName()) ||
-	(type == MeshObstacle::getClassName())) {
+    if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
       break;
-    }
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 &&
-	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+   
+    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;
-    }
   }
-  if (i == olist->count) {
+
+  if (i == olist->count) 
     return NULL; // no more obstacles, we are done
-  }
 
   // do some prep work for mesh faces
   int hitCount = 0;
@@ -395,12 +392,13 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   bool goingDown = (vel[2] <= 0.0f);
 
   // check mesh faces
-  for (/* do nothing */; i < olist->count; i++) {
+  for (/* do nothing */; i < olist->count; i++) 
+  {
     const Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
-    if (type == MeshObstacle::getClassName()) {
+    if (type == MeshObstacle::getClassName())
       break;
-    }
+
     const MeshFace* face = (const MeshFace*) obs;
 
     // first check the face
@@ -412,14 +410,12 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
     {
       const float facePos2 = face->getPosition()[2];
-      if (face->isUpPlane() &&
-	  (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
+      if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
 	continue;
-      }
-      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
+      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) 
 	continue;
-      }
-      else {
+      else
+      {
 	// add the face to the hitlist
 	olist->list[hitCount] = (Obstacle*) obs;
 	hitCount++;
@@ -434,27 +430,27 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
 
   // see if there as a valid meshface hit
-  if (hitCount > 0) {
+  if (hitCount > 0)
+  {
     const MeshFace* face = (const MeshFace*) olist->list[0];
-    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
+    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
       return face;
-    }
   }
-  if (i == olist->count) {
+  if (i == olist->count)
     return NULL; // no more obstacles, we are done
-  }
 
   // JeffM, I have NO clue why we do this again, we just got done checking all the faces in the thing
   // all this seems to do is screw us up by testing the same thing again with worse paramaters
 
   // check mesh obstacles
-/*  for (; i < olist->count; i++) {
+  for (; i < olist->count; i++)
+  {
     const Obstacle* obs = olist->list[i];
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 &&
-	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
+
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;
-    }
-  } */
+  }
 
   return NULL; // no more obstacles, we are done
 }
