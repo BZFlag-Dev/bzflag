@@ -611,8 +611,8 @@ void *MeshFace::unpack(void *buf)
   buf = nboUnpackUByte(buf, stateByte);
   tmpNormals   = (stateByte & (1 << 0)) != 0;
   tmpTexcoords = (stateByte & (1 << 1)) != 0;
-  driveThrough = (stateByte & (1 << 2)) != 0;
-  shootThrough = (stateByte & (1 << 3)) != 0;
+  driveThrough = ((stateByte & (1 << 2)) != 0) ? 0xFF : 0;
+  shootThrough = ((stateByte & (1 << 3)) != 0) ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 4)) != 0;
   noclusters   = (stateByte & (1 << 5)) != 0;
 
