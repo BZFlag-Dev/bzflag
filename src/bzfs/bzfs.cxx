@@ -806,10 +806,13 @@ static bool allBasesDefined(void)
   if (clOptions->gameType == eClassicCTF) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
-	std::cerr << "base was not defined for "
-		  << Team::getName((TeamColor)i)
-		  << std::endl;
-	return false;
+	// If this team has been set by some form of -mp, then warn.
+	if (clOptions->maxTeam[i] < MaxPlayers)
+	  std::cerr << "WARNING: A base was not defined for "
+		    << Team::getName((TeamColor)i)
+		    << ". This team has been disabled."
+		    << std::endl;
+	clOptions->maxTeam[i] = 0;
       }
     }
   }
@@ -3553,7 +3556,7 @@ static void checkForWorldDeaths(void)
     for (int i = 0; i < curMaxPlayers; i++) {
       // kill anyone under the water level
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
-      if ( player && player->currentPos[0] <= waterLevel)
+      if ( player && player->player.isAlive() && player->lastState.pos[2] <= waterLevel)
 	playerKilled(player->getIndex(), ServerPlayer, WaterDeath, -1, Flags::Null, -1);
     }
   }

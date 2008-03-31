@@ -874,6 +874,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   setAngularVelocity(newAngVel);
   setRelativeMotion();
   newAzimuth = getAngle(); // pickup the limited angle range from move()
+  // If we are at or below the water level, send a player update now
+  if (newPos[2] <= world->getWaterLevel())
+    server->sendPlayerUpdate(this);
 
   // see if I'm over my antidote
   if (antidoteFlag && location == OnGround) {
