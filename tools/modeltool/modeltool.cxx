@@ -59,7 +59,7 @@ bool useSmoothBounce = false;
 float shineFactor = 1.0f;
 bool  supressMats = false;
 
-int   triStripLimit = 16;
+size_t   triStripLimit = 16;
 
 bool outputBounds = false;
 bool outputComments = false;
@@ -1200,37 +1200,37 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		else
 		{
 		  std::vector<tvIndexList>  stripChunks;
-		  int pos = 0;
-		  int listSise = (int)strip.verts.size();
+		  size_t pos = 0;
+		  size_t listSise = strip.verts.size();
 		  while ( pos < strip.verts.size() )
 		  {
 		    if ( pos + triStripLimit < listSise-3 ) // see if there is at least a full iteration, leaving 3 verts at the end ( min strip size)
 		    {
 		      section += "tristrip";
-		      for ( int v = pos; v < pos + triStripLimit; v++ )
-			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      for ( size_t v = pos; v < pos + triStripLimit; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos += triStripLimit;
 		    }
 		    else if ( listSise - pos <= triStripLimit ) // there are less then a limit left, just dump them
 		    {
 		      section += "tristrip";
-		      for ( int v = pos; v < listSise; v++ )
-			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      for ( size_t v = pos; v < listSise; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise;
 		    }
 		    else // there is more then the limit left but there weould be less then 3 left
 		    {
 		      section += "tristrip";
-		      for ( int v = pos; v < listSise-3; v++ )
-			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      for ( size_t v = pos; v < listSise-3; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise-3;
 
 		      section += "tristrip";
-		      for ( int v = pos; v < listSise; v++ )
-			section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
+		      for ( size_t v = pos; v < listSise; v++ )
+			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise;
 		    }
