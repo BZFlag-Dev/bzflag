@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 	-DINSIDE_BZ \
 	-I$(top_srcdir)/include \
 	$(LIBCURL_CPPFLAGS) \
+	-DINSTALL_LIB_DIR=\"$(pkglibdir)/\" \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
