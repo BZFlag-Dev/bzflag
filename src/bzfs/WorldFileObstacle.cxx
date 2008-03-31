@@ -33,7 +33,7 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "shootthrough") == 0)
     shootThrough = 0xFF;
   else if (strcasecmp(cmd, "passable") == 0)
-    driveThrough = shootThrough = true;
+    driveThrough = shootThrough = 0xFF;
   else
     return WorldFileLocation::read(cmd, input);
   return true;
