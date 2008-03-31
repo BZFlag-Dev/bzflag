@@ -228,6 +228,15 @@ follow suit.  Non-conformant code may be fixed.  Patches to
 non-conformant code should follow the non-conformant code's style if
 following the rules would cause an ugly mess.
 
+Performance
+-----------
+
+If the code you are editing is in a performance-critical section of bzflag
+(that is, if it is called multiple times per frame on the client, or
+per server loop on the server), you should profile the proposed changes.
+The new code does not necessarily need to be faster, but a quantitative
+analysis is required.
+
 
 Committing Changes
 ==================
