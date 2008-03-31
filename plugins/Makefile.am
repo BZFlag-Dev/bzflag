@@ -54,5 +54,11 @@ EXTRA_DIST = \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
+	Makefile.in \
+	aclocal.m4 \
+	config.guess \
+	config.sub \
 	configure \
-	Makefile.in
+	depcomp \
+	install-sh \
+	missing

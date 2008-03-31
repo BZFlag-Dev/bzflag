@@ -26,6 +26,9 @@ AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = CHANGES COPYING maketgz reconf Makefile.dist curl-config.in \
  curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat libcurl.pc.in
 
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
+ configure depcomp install-sh
+
 bin_SCRIPTS = curl-config
 
 SUBDIRS = lib src

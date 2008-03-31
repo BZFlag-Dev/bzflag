@@ -14,5 +14,7 @@ EXTRA_DIST = README curlgtk.c sepheaders.c simple.c postit2.c		\
  cookie_interface.c cacertinmem.c synctime.c sampleconv.c ftpuploadresume.c \
  10-at-a-time.c hiperfifo.c ghiper.c
 
+MAINTAINERCLEANFILES = Makefile.in
+
 all:
 	@echo "done"

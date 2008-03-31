@@ -7,3 +7,6 @@ SUBDIRS = \
 	rabbit \
 	red \
 	rogue
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

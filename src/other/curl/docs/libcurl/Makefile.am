@@ -59,6 +59,8 @@ CLEANFILES = $(HTMLPAGES) $(PDFPAGES)
 
 EXTRA_DIST = $(man_MANS) $(HTMLPAGES) index.html $(PDFPAGES) libcurl.m4
 
+MAINTAINERCLEANFILES = Makefile.in
+
 MAN2HTML= roffit --mandir=. < $< >$@
 
 SUFFIXES = .3 .html

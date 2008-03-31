@@ -4,3 +4,6 @@ SUBDIRS = \
 EXTRA_DIST = \
 	low \
 	medium
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

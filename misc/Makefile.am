@@ -49,6 +49,7 @@ MAINTAINERCLEANFILES =	\
 	config.guess.backup \
 	config.sub \
 	config.sub.backup \
+	depcomp \
 	install-sh \
 	ltmain.sh \
 	ltmain.sh.backup \

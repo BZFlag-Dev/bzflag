@@ -3,3 +3,5 @@ pkginclude_HEADERS = \
 pkgincludedir= $(includedir)/curl
 
 CLEANFILES = *dist
+
+MAINTAINERCLEANFILES = Makefile.in

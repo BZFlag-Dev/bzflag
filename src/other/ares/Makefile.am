@@ -69,3 +69,6 @@ dist-hook:
 	  strip=`echo $$file | sed -e s/^$(srcdir)// -e s/\.dist//`; \
 	  cp $$file $(distdir)$$strip; \
 	done)
+
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
+ config.h.in~ config.sub configure depcomp install-sh missing

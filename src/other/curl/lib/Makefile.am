@@ -38,6 +38,8 @@ EXTRA_DIST = Makefile.b32 Makefile.m32 Makefile.vc6 Makefile.riscos	\
 
 CLEANFILES = $(DSP) $(VCPROJ)
 
+MAINTAINERCLEANFILES = Makefile.in config.h.in
+
 lib_LTLIBRARIES = libcurl.la
 LIBCURL_LIBS = @LIBCURL_LIBS@
 

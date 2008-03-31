@@ -67,6 +67,8 @@ EXTRA_DIST = \
 	PORTING
 
 MAINTAINERCLEANFILES = \
+	aclocal.m4 \
+	config.cache.* \
 	configure \
 	bzflag.info \
 	bzflag.spec \
