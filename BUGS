@@ -129,13 +129,13 @@ recent bugs
 -- platform (SDL) --
 - if you start the client windowed on a multidisplay system, and then
   move the window to a secondary monitor, you cannot control the
-  brightness of the (SDL) window since it presently modifying the
+  brightness of the (SDL) window since it's presently modifying the
   gamma of the display that started it.
 
 -- platform (X11) --
 
 -- platform (OSX) --
-- Reported lockup on OSX when swaping from fullscreen to windowed mode(ts)
+- Reported lockup on OSX when swapping from fullscreen to windowed mode(ts)
 
 -- bzfs --
 - ANSI codes can be used in the server -public messages
@@ -143,6 +143,12 @@ recent bugs
   
 - bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
+
+- Have flag spawn zones set in 2.0.x world. Same world in trunk produces an 
+  "Unable to position flags on this world." for each zone specified by world.
+  However I have the zoned flags appearing to be in the places I specified.
+  Message origin? Screenshot available from -spldart- if needed.
+
   
 -- unsorted --
 
@@ -152,7 +158,7 @@ recent bugs
   access, the client hangs hard in cURLManager.cxx:291 and later in
   some odd corrupted stack space elsewhere.  this was with CURL 7.13.1
   (default Mac libcurl).  simple workaround is to invoke client with
-  -list http://localhost (even if no local server is running) to avoid
+  -list e://localhost (even if no local server is running) to avoid
   the hang on resolving.
 
 - teleporting is blocking when going from a ground teleporter to
@@ -228,8 +234,9 @@ recent bugs
 
 - can sometimes appear in front of bad guys
 
-- -set _wingsJumpCount <#> in map, .bzw,  under options -set variable end 
-  fails to set that specific variable.
+- -set _wingsJumpCount <#> in a world.bzw, under options -set (the variable in 
+  question) end fails to actually set that specific variable. -spldart-
+  Same map under 2.0.x sets jump count properly.
 
 ---
 see the bug tracker on SourceForge for more
