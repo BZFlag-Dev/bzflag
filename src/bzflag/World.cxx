@@ -375,8 +375,10 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     const char* type = obs->getType();
     if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
       break;
+    
+    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
    
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;
   }
 
