@@ -401,9 +401,16 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     if (type == MeshObstacle::getClassName()) {
       break;
     }
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 &&
-	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
-      const MeshFace* face = (const MeshFace*) obs;
+    const MeshFace* face = (const MeshFace*) obs;
+
+    // first check the face
+    // if the face is drive thru, then we don't care about the tangibility of the mesh
+    bool driveThru = obs->isDriveThrough() != 0;
+    if (!driveThru)
+      driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
+
+   if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    {
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() &&
 	  (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
@@ -437,14 +444,17 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     return NULL; // no more obstacles, we are done
   }
 
+  // JeffM, I have NO clue why we do this again, we just got done checking all the faces in the thing
+  // all this seems to do is screw us up by testing the same thing again with worse paramaters
+
   // check mesh obstacles
-  for (/* do nothing */; i < olist->count; i++) {
+/*  for (; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 &&
 	obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
     }
-  }
+  } */
 
   return NULL; // no more obstacles, we are done
 }
