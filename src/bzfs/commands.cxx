@@ -1804,7 +1804,7 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
       attrstr.erase(attrstr.length()-1);
     }
 
-    reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t(%s)",
+    reply = TextUtils::format("%d (%d-%d)[%d]\t%s\t%s\t(%s)",
 			      player->score.getWins() - player->score.getLosses(),
 			      player->score.getWins(),
 			      player->score.getLosses(),
