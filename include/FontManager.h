@@ -35,77 +35,177 @@ typedef enum
 
 
 /**
- * Jeff's FTGL-based font manager system, merged with BZFlag's
- * previous Font Manager (which DTR and Jeff also worked on).
+ * An FTGL-based font manager system with enhancements for font
+ * decorations like underline and opacity factors.
  */
 class FontManager : public Singleton<FontManager> {
+
 public:
-  int load ( const char* file );
+
+  /**
+   * load a specified font
+   */
+  int load(const char* file);
+
+  /**
+   * load all fonts from a given directory, returns the number of
+   * fonts that were loaded
+   */
   int loadAll(std::string dir);
 
+  /**
+   * clear/erase a particular font size
+   */
   void clear(int font, int size);
+
+  /**
+   * destroy all the fonts, clear all the lists
+   */
   void clear();
 
-  void preloadSize ( int font, int size );
-  void rebuildSize ( int font, int size );
+  /**
+   * ask ftgl to compute their width so that the textures are loaded,
+   * gives small performance boost by loading all glyphs at once
+   * upfront.
+   */
+  void preloadSize(int font, int size);
+
+  /**
+   * rebuild just one size of a given font
+   */
+  void rebuildSize(int font, int size);
+
+  /**
+   * rebuild all the lists
+   */
   void rebuild(void);
 
-  std::vector<std::string> getFontList ( void );
-  int getFaceID(std::string faceName);
+  /**
+   * returns a list of the loaded font names
+   */
+  std::vector<std::string> getFontList(void);
+
+  /**
+   * return an index to the requested font if it's been loaded or the
+   * first loaded font otherwise.
+   */
+  int getFaceID(const std::string faceName);
+
+  /**
+   * returns the number of fonts loaded
+   */
   int getNumFaces(void);
+
+  /**
+   * given a font ID, return that font's name
+   */
   const char* getFaceName(int faceID);
 
+  /**
+   * main work-horse.  render the provided text with the specified
+   * font size, optionally justifying to a particular alignment.
+   */
   void drawString(float x, float y, float z, int faceID, float size, const char *text, const float* resetColor = NULL, fontJustification align = AlignLeft);
+
+  /**
+   * convenience routine for passing in a font id instead of font name
+   */
   void drawString(float x, float y, float z, const std::string &face, float size, const std::string &text, const float* resetColor = NULL, fontJustification align = AlignLeft);
 
+  /**
+   * returns the width of the given text string for the specifed font
+   */
   float getStringWidth(int faceID, float size, const char *text, bool alreadyStripped = false);
+
+  /**
+   * convenience routine that returns the specified font width by a
+   * given face name
+   */
   float getStringWidth(const std::string &face, float size, const std::string &text, bool alreadyStripped = false);
 
+  /**
+   * returns the height of the given font size
+   */
   float getStringHeight(int faceID, float size);
+
+  /**
+   * convenience routine that returns the specified font's height
+   */
   float getStringHeight(std::string face, float size);
 
   void setDimFactor(float newDimFactor);
   void setOpacity(float newOpacity);
   void setDarkness(float newDimFactor);
 
-  void deleteGLFont ( void* font, int size );
+  /**
+   * delete the ftgl representation for a given font of a given size
+   * we do this so we call the correct distructior. a better thing
+   * would be to store if it's a bitmap or not in the face info
+   */
+  void deleteGLFont(void* font, int size);
 
 protected:
 
   friend class Singleton<FontManager>;
 
-  void* getGLFont(int face, int size); 
+  static const int MAX_SIZE = 200;
 
   typedef struct {
     std::string name;
     std::string path;
-    std::map<int,void*> sizes;
+    void* sizes[MAX_SIZE+1];
   } FontFace;
-  
-  std::map<std::string,int>	faceNames;
-  std::vector<FontFace>		fontFaces;
+
+  /**
+   * lookup the font ID for a given font, or -1 on failure
+   */
+  int lookupID(const std::string faceName);
+
+  /**
+   * return the ftgl representation for a given font of a given size
+   */
+  void* getGLFont(int face, int size); 
+
+  /**
+   * return the pulse color
+   */
+  void getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
 
 private:
 
+  /**
+   * default constructor, protected because of singleton
+   */
   FontManager();
+
+  /**
+   * default destructor, protected because of singleton
+   */
   ~FontManager();
 
-  void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
 
+  /** location of fonts */
   std::string	fontDirectory;
-
+  /** font opacity */
   float		opacity;
-  float		dimFactor; // ANSI code dimming
-  float		darkness;  // darkening of all colors
-
-  // precompute colors on dim/darkness changes
+  /** ANSI code dimming */
+  float		dimFactor; 
+  /** darkening of all colors */
+  float		darkness;
+  /** precompute colors on dim/darkness changes */
   GLfloat dimUnderlineColor[4];
+  /** loaded fonts */
+  std::vector<FontFace> fontFaces;
 
+  /**
+   * STATIC: called during "underline"
+   */
   static void	underlineCallback(const std::string& name, void *);
-  static void	freeContext(void *data);
-  static void	initContext(void *data);
+
+  /** STATIC: underline color */
   static GLfloat underlineColor[4];
 };
+
 
 inline void FontManager::setDimFactor(float newDimFactor)
 {

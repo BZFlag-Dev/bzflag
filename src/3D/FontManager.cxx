@@ -40,6 +40,9 @@
 #define FONT FTGLTextureFont
 #define CRAP_FONT FTGLBitmapFont
 
+#define debugging 1
+
+
 /** initialize the singleton */
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
@@ -48,69 +51,54 @@ FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 GLfloat FontManager::underlineColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 
-/**
- * default constructor, protected because of singleton
- */
 FontManager::FontManager() : Singleton<FontManager>(),
 			     opacity(1.0f),
 			     dimFactor(0.2f),
 			     darkness(1.0f)
 {
+#if debugging
+  printf("CONSTRUCTING FONT MANAGER\n");
+  fflush(stdout);
+#endif
+
   BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
-  OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
+
+#if debugging
+  printf("fontFaces size is %d\n", (int)fontFaces.size());
+#endif
 }
 
 
-/**
- * default destructor, protected because of singleton
- */
 FontManager::~FontManager()
 {
-  //  std::cout << "DELETING FONT MANAGER" << std::endl;
-  OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
-  clear();
+#if debugging
+  printf("DELETING FONT MANAGER\n");
+  printf("fontFaces size is %d\n", (int)fontFaces.size());
+  fflush(stdout);
+#endif
+
+  // total cop-out for now
+  //  clear();
+
+#if debugging
+  printf("fontFaces size is %d\n", (int)fontFaces.size());
+  fflush(stdout);
+#endif
 }
 
 
-/**
- * release our context on state changes
- */
-void FontManager::freeContext(void* data)
+int FontManager::load(const char* file)
 {
-  FontManager * fm = (FontManager*)data;
-  for ( unsigned int i = 0; i < (unsigned int)fm->fontFaces.size(); i++ )
-  {
-    FontFace &face = fm->fontFaces[i];
-    std::map<int,void*>::iterator itr = face.sizes.begin();
-    while ( itr != face.sizes.end() )
-    {
-      if ( itr->second ) {
-	fm->deleteGLFont(itr->second,itr->first);
-	itr->second = NULL;
-      }
-      itr++;
-    }
-    face.sizes.clear();
-  }
-}
+  int id = -1;
 
+#if debugging
+  printf("FontManager::load entry file:%s\n", file);
+  fflush(stdout);
+#endif
 
-/**
- * initialize our context
- */
-void FontManager::initContext(void* /* data */ )
-{
-  return;
-}
-
-/**
- * load a specified font
- */
-int FontManager::load ( const char* file )
-{
   if (!file)
-    return -1;
+    return id;
 
   OSFile tempFile;
   tempFile.osName(file);
@@ -118,20 +106,25 @@ int FontManager::load ( const char* file )
   FontFace face;
   face.name = tempFile.getFileName();
   face.path = file;
+  memset(face.sizes, 0, 200*sizeof(void*));
 
-  if (faceNames.find(face.name) != faceNames.end()) 
-    return faceNames.find(face.name)->second;  /* already loaded */
+  id = lookupID(face.name);
+  if (id >= 0) {
+    return id;
+  }
 
+#if debugging
+  printf("FontManager::load file:%s\n", file);
+  fflush(stdout);
+#endif
+
+  /* not found, add it */
   fontFaces.push_back(face);
-  faceNames[face.name] = (int)fontFaces.size()-1;
-  return (int)fontFaces.size()-1;
+  id = lookupID(face.name);
+  return id;
 }
 
 
-/**
- * load all fonts from a given directory, returns the number of fonts
- * that were loaded
- */
 int FontManager::loadAll(std::string directory)
 {
   if (directory.size() == 0)
@@ -157,66 +150,107 @@ int FontManager::loadAll(std::string directory)
 }
 
 
-/**
- * clear/erase a particular font size
- */
 void FontManager::clear(int font, int size)
 {
-  // poof
-  std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
-  if ( itr != fontFaces[font].sizes.end() ) {
-    deleteGLFont(itr->second,size);
-    itr->second = NULL;
-    fontFaces[font].sizes.erase(size);
+#if debugging
+  printf("FontManager::clear font:%d size:%d\n", font, size);
+  fflush(stdout);
+  abort();
+#endif
+
+  if (size > MAX_SIZE)
+    size = MAX_SIZE;
+
+  // poof if non-bitmap
+  if (fontFaces[font].sizes[size]) {
+    deleteGLFont(fontFaces[font].sizes[size], size);
+    fontFaces[font].sizes[size] = NULL;
   }
 }
 
 
-/**
- * destroy all the fonts, clear all the lists
- */
 void FontManager::clear(void)
 {
-  //  std::cout << "DESTROYING ALL FONTS" << std::endl;
+#if debugging
+  printf("FontManager::clear\n");
+  fflush(stdout);
+#endif
 
-  faceNames.clear();
-
-  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
-    std::map<int,void*>::iterator itr;
-    itr = fontFaces[i].sizes.begin();
-    while (itr != fontFaces[i].sizes.end()) {
-      std::map<int,void*>::iterator next = itr;
-      next++; // must get the next before clearing, else kaboom
-      if ((*itr).second) {
-	clear(i, (*itr).first);
-      }
-      itr = next;
-    }
+  bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
+  int minSize = 2;
+  if (BZDB.isSet("MinAliasedFontSize")) {
+    minSize = BZDB.evalInt("MinAliasedFontSize");
   }
 
-  fontFaces.clear();
+#if debugging
+  printf("FontManager::clear preface loop size: %d\n", (int)fontFaces.size());
+  fflush(stdout);
+#endif
+
+  std::vector<FontFace>::iterator faceItr;
+  faceItr = fontFaces.begin();
+  while (faceItr != fontFaces.end()) {
+    std::vector<FontFace>::iterator nextFaceItr = faceItr;
+    nextFaceItr++; // must get the next before clearing, else kaboom
+
+    for (int i = 0; i < 200; i++) {
+      if (i==26) continue;
+
+      if ((*faceItr).sizes[i]) {
+
+#if debugging
+	printf("FontManager::clear font:%p size:%d\n", (*faceItr).sizes[i], i);
+	fflush(stdout);
+#endif
+
+	if (useBitmapFont || i <= minSize) {
+	  delete ((CRAP_FONT*)(*faceItr).sizes[i]);
+	} else {
+	  delete ((FONT*)(*faceItr).sizes[i]);
+	}
+
+	(*faceItr).sizes[i] = NULL;
+      }
+    }
+    
+#if debugging
+    printf("FontManager::clear preerase\n");
+    fflush(stdout);
+#endif
+
+    fontFaces.erase(faceItr);
+
+#if debugging
+    printf("FontManager::clear posterase\n");
+    fflush(stdout);
+#endif
+
+    faceItr = nextFaceItr;
+  }
+
   return;
 }
 
 
-/**
- * ask ftgl to compute their width so that the textures are loaded,
- * gives small performance boost by loading all glyphs at once
- * upfront.
- */
-void FontManager::preloadSize ( int font, int size )
+void FontManager::preloadSize(int font, int size)
 {
-  if (font < 0 || size < 0) {
+#if debugging
+  printf("FontManager::preloadSize font:%d size:%d\n", font, size);
+  fflush(stdout);
+#endif
+
+  if (font < 0 || size < 0)
     return;
-  }
+
+  if (size > MAX_SIZE)
+    size = MAX_SIZE;
 
   // if the font is loaded and has a GL font, reload it
-  // if it is NOT, then go allong.
-  std::map<int,void*>::iterator itr = fontFaces[font].sizes.find(size);
-  if ( itr == fontFaces[font].sizes.end() )
+  // if it is NOT, then go along.
+  if (!fontFaces[font].sizes[size])
     return;
 
-  FTFont *fnt = (FTFont*)itr->second;
+  FTFont *fnt = (FTFont*)fontFaces[font].sizes[size];
 
   if (!fnt)
     return;
@@ -233,14 +267,19 @@ void FontManager::preloadSize ( int font, int size )
 }
 
 
-/**
- * rebuild just one size of a given font
- */
-void FontManager::rebuildSize ( int font, int size )
+void FontManager::rebuildSize(int font, int size)
 {
+#if debugging
+  printf("FontManager::rebuildSize font:%d size:%d\n", font, size);
+  fflush(stdout);
+#endif
+
   if (font < 0 || size < 0) {
     return;
   }
+
+  if (size > MAX_SIZE)
+    size = MAX_SIZE;
 
   clear(font, size);
 
@@ -248,38 +287,31 @@ void FontManager::rebuildSize ( int font, int size )
 }
 
 
-/**
- * rebuild all the lists
- */
 void FontManager::rebuild()
 {
-  //  std::cout << "REBUILDING ALL FONTS" << std::endl;
+#if debugging
+  printf("FontManager::rebuild\n");
+  fflush(stdout);
+#endif
 
-  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
-    std::map<int,void*>::iterator itr;
-    itr = fontFaces[i].sizes.begin();
-    while(itr != fontFaces[i].sizes.end()) {
-      std::map<int,void*>::iterator next = itr;
-      ++next; // must get the next since rebuildSize may clear(), else .. kaboom
-      //      std::cout << "rebuilding font " << i << " with size " << (*itr).first << " hmm " << (*itr).second << std::endl;
-      if ((*itr).second) {
-	rebuildSize(i, (*itr).first);
+  for (unsigned int i = 0; i < fontFaces.size(); i++) {
+    for (int j = 0; j < 200; j++) {
+
+      //      std::cout << "rebuilding font " << i << " with size " << j << " hmm " << fontFaces[i].sizes[j] << std::endl;
+      if (fontFaces[i].sizes[j]) {
+	rebuildSize(i, j);
       }
-      itr = next;
     }
   }
   loadAll(fontDirectory);
 }
 
 
-/**
- * returns a list of the loaded font names
- */
-std::vector<std::string> FontManager::getFontList ( void )
+std::vector<std::string> FontManager::getFontList(void)
 {
-  std::vector<std::string>	fontList;
+  std::vector<std::string> fontList;
 
-  for ( unsigned int i = 0; i < fontFaces.size(); i++ ) {
+  for (unsigned int i = 0; i < fontFaces.size(); i++) {
     fontList.push_back(fontFaces[i].name);
   }
 
@@ -287,22 +319,31 @@ std::vector<std::string> FontManager::getFontList ( void )
 }
 
 
-/**
- * return an index to a requested font
- */
-int FontManager::getFaceID ( const std::string font )
+int FontManager::lookupID(const std::string name)
 {
-  if (font.size() <= 0)
+  if (name.size() <= 0)
     return -1;
 
-  if (faceNames.find(font) != faceNames.end()) {
-    return faceNames.find(font)->second;
+  for (int i = 0; i < (int)fontFaces.size(); i++) {
+    if (name == fontFaces[i].name)
+      return i;
+  }
+
+  return -1;
+}
+
+
+int FontManager::getFaceID(const std::string name)
+{
+  int id = lookupID(name);
+  if (id >= 0) {
+    return id;
   }
 
   /* no luck finding the one requested, try anything */
-  if (faceNames.size() > 0) {
-    logDebugMessage(3,"Requested font %s not found, using first font loaded\n", font.c_str());
-    return faceNames.begin()->second;
+  if (fontFaces.size() > 0) {
+    logDebugMessage(3,"Requested font %s not found, using %s instead\n", name.c_str(), fontFaces[0].name.c_str());
+    return 0;
   }
 
   logDebugMessage(2,"No fonts loaded\n");
@@ -310,18 +351,12 @@ int FontManager::getFaceID ( const std::string font )
 }
 
 
-/**
- * returns the number of fonts loaded
- */
 int FontManager::getNumFaces(void)
 {
   return (int)fontFaces.size();
 }
 
 
-/**
- * given a font ID, return that font's name
- */
 const char* FontManager::getFaceName(int faceID)
 {
   if ((faceID < 0) || (faceID > getNumFaces())) {
@@ -332,48 +367,56 @@ const char* FontManager::getFaceName(int faceID)
   return fontFaces[faceID].name.c_str();
 }
 
-/**
-* delete the ftgl representation for a given font of a given size
-* we do this so we call the correct distructior
-* a better thing would be to store if it's a bitmap or not
-* in the face info
-*/
-void FontManager::deleteGLFont ( void* font, int size )
+
+void FontManager::deleteGLFont(void* font, int size)
 {
+  if (size > MAX_SIZE)
+    size = MAX_SIZE;
+
+#if debugging
+  printf("FontManager::deleteGLFont %p size:%d\n", font, size);
+  fflush(stdout);
+#endif
+
   if (!font) {
+#if debugging
+    printf("FontManager::deleteGLFont invalid %p size:%d\n", font, size);
+    fflush(stdout);
+#endif
     return;
   }
+
   bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
-  if ( BZDB.isSet("MinAliasedFontSize")) {
+  if (BZDB.isSet("MinAliasedFontSize")) {
     int minSize = BZDB.evalInt("MinAliasedFontSize");
     if (size <= minSize) {
       useBitmapFont = true;
     }
   }
+
   if(useBitmapFont) {
     delete((CRAP_FONT*)font);
   } else {
     delete((FONT*)font);
   }
 }
-/**
- * return the ftgl representation for a given font of a given size
- */
-void* FontManager::getGLFont ( int face, int size )
+
+
+void* FontManager::getGLFont(int face, int size)
 {
-  if ( face < 0 || face >= (int)fontFaces.size() ) {
+  if (face < 0 || face >= (int)fontFaces.size()) {
     std::cerr << "invalid font face specified" << std::endl;
     return NULL;
   }
-	
-  std::map<int,void*>::iterator itr = fontFaces[face].sizes.find(size);
-  if ( itr != fontFaces[face].sizes.end() ) {
-    return itr->second;
-  }
+
+  if (size > MAX_SIZE)
+    size = MAX_SIZE;
+
+  if (fontFaces[face].sizes[size])
+    return fontFaces[face].sizes[size];
 
   bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
-  if ( BZDB.isSet("MinAliasedFontSize"))
-  {
+  if (BZDB.isSet("MinAliasedFontSize")) {
     int minSize = BZDB.evalInt("MinAliasedFontSize");
     if (size <= minSize)
       useBitmapFont = true;
@@ -384,6 +427,11 @@ void* FontManager::getGLFont ( int face, int size )
     newFont = (FTFont*)new CRAP_FONT(fontFaces[face].path.c_str());
   else
     newFont = (FTFont*)new FONT(fontFaces[face].path.c_str());
+
+#if debugging
+  printf("FontManager::getGLFont CREATED face:%d size:%d %p\n", face, size, (void*)newFont);
+  fflush(stdout);
+#endif
 
   newFont->FaceSize(size);
   bool doDisplayLists = true;
@@ -409,10 +457,6 @@ void* FontManager::getGLFont ( int face, int size )
 }
 
 
-/**
- * main work-horse.  render the provided text with the specified font
- * size, optionally justifying to a particular alignment.
- */
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const char *text, const float* resetColor, fontJustification align)
 {
@@ -501,9 +545,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       width = getStringWidth(faceID, size, rendertext);
 
       glPushMatrix(); {
-	if ( align == AlignCenter ) {
+	if (align == AlignCenter) {
 	  glTranslatef(x - (width*0.5f), y, z);
-	} else if ( align == AlignRight ) {
+	} else if (align == AlignRight) {
 	  glTranslatef(x - width, y, z);
 	} else {
 	  glTranslatef(x, y, z);
@@ -666,9 +710,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 }
 
 
-/**
- * convenience routine for passing in a font id instead of font name
- */
 void FontManager::drawString(float x, float y, float z,
 			     const std::string &face, float size,
 			     const std::string &text,
@@ -678,9 +719,6 @@ void FontManager::drawString(float x, float y, float z,
 }
 
 
-/**
- * returns the width of the given text string for the specifed font
- */
 float FontManager::getStringWidth(int faceID, float size, const char *text, bool alreadyStripped)
 {
   if (!text || strlen(text) <= 0)
@@ -699,9 +737,6 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
 }
 
 
-/**
- * convenience routine that returns the specified font width by face name
- */
 float FontManager::getStringWidth(const std::string &face, float size,
 				const std::string &text, bool alreadyStripped)
 {
@@ -709,9 +744,6 @@ float FontManager::getStringWidth(const std::string &face, float size,
 }
 
 
-/**
- * returns the height of the given font size
- */
 float FontManager::getStringHeight(int font, float size)
 {
   FTFont* theFont = (FTFont*)getGLFont(font, (int)size);
@@ -723,18 +755,12 @@ float FontManager::getStringHeight(int font, float size)
 }
 
 
-/**
- * convenience routine that returns the specified font's height
- */
 float FontManager::getStringHeight(std::string face, float size)
 {
   return getStringHeight(getFaceID(face), size);
 }
 
 
-/**
- * return the pulse color
- */
 void FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
   float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
@@ -754,9 +780,6 @@ void FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 }
 
 
-/**
- * called during "underline"
- */
 void FontManager::underlineCallback(const std::string &, void *)
 {
   // set underline color
