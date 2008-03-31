@@ -26,7 +26,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "saveSettings",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "timedate",			"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
   { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
   { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
   { "motdServer",		DefaultMOTDServer,	true,	StateDatabase::ReadWrite,	NULL },
@@ -194,8 +193,6 @@ DefaultDBItem	defaultDBItems[] = {
 
   // hud drawing
   { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL },
-  { "hideEmails",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "emailDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "hudWayPMarkerSize",	"15",			true,	StateDatabase::ReadWrite,	NULL },
 
   // 3rdPerson Camera

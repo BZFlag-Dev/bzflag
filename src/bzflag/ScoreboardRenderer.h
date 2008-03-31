@@ -78,7 +78,7 @@ protected:
   void		renderScoreboard(void);
   void	  renderCtfFlags (void);
   void		drawPlayerScore(const Player*,
-		    float x1, float x2, float x3, float xs, float y, int emailLen, bool huntInd);
+		    float x1, float x2, float x3, float xs, float y, bool huntInd);
   static const char* sortLabels[SortTypeCount + 1];
   static int  sortMode;
   static bool alwaysShowTeamScore;

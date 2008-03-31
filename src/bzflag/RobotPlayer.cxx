@@ -28,9 +28,8 @@
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server,
-				const char* _email = "anonymous") :
-				LocalPlayer(_id, _name, _email, ComputerPlayer),
+				ServerLink* _server) :
+				LocalPlayer(_id, _name, ComputerPlayer),
 				target(NULL),
 				pathIndex(0),
 				timerForShot(0.0f),

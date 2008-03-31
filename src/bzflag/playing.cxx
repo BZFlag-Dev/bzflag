@@ -1228,14 +1228,12 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
   uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
-  char email[EmailLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
   msg = nboUnpackString (msg, callsign, CallSignLen);
-  msg = nboUnpackString (msg, email, EmailLen);
 
   // Strip any ANSI color codes
   strncpy(callsign, stripAnsiCodes(callsign), 32);
@@ -1271,16 +1269,14 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   if (PlayerType (type) == TankPlayer
     || PlayerType (type) == ComputerPlayer
     || PlayerType (type) == ChatPlayer) {
-      player[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
-	PlayerType (type));
+      player[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
       player[i]->changeScore (short (wins), short (losses), short (tks));
   }
 
 #ifdef ROBOT
   if (PlayerType (type) == ComputerPlayer)
     for (int j = 0; j < numRobots; j++)
-      if (robots[j] && !strncmp (robots[j]->getCallSign (), callsign,
-	CallSignLen)) {
+      if (robots[j] && !strncmp (robots[j]->getCallSign (), callsign, CallSignLen)) {
 	  robots[j]->setTeam (TeamColor (team));
 	  break;
       }
@@ -3130,12 +3126,10 @@ static void handleNewPlayer(void* msg)
   robots[i] = new RobotPlayer(id,
     TextUtils::format("%s%2.2d", myTank->getCallSign(),
     i).c_str(),
-    serverLink,
-    myTank->getEmailAddress());
+    serverLink);
   robots[i]->setTeam(AutomaticTeam);
   serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-    robots[i]->getCallSign(),
-    robots[i]->getEmailAddress(), "");
+    robots[i]->getCallSign(), "");
   if (!numRobots) {
     makeObstacleList();
     RobotPlayer::setObstacleList(&obstacleList);
@@ -5000,14 +4994,12 @@ static void saveRobotInfo(Playerid id, void *msg)
       void *tmpbuf = msg;
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      char email[EmailLen];
       tmpbuf = nboUnpackUShort(tmpbuf, type);
       tmpbuf = nboUnpackUShort(tmpbuf, team);
       tmpbuf = nboUnpackUShort(tmpbuf, wins);
       tmpbuf = nboUnpackUShort(tmpbuf, losses);
       tmpbuf = nboUnpackUShort(tmpbuf, tks);
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-      tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
       std::cerr << "id " << id.port << ':' <<
 	id.number << ':' <<
 	callsign << ' ' <<
@@ -5326,8 +5318,7 @@ static void joinInternetGame2()
   controlPanel->resize();
 
   // make local player
-  myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
-    startupInfo.email);
+  myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign);
   myTank->setTeam(startupInfo.team);
   LocalPlayer::setMyTank(myTank);
 
@@ -5338,7 +5329,6 @@ static void joinInternetGame2()
   bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
   serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
     myTank->getCallSign(),
-    myTank->getEmailAddress(),
     startupInfo.token);
   startupInfo.token[0] = '\0';
 
@@ -5348,7 +5338,6 @@ static void joinInternetGame2()
   ExportInformation &ei = ExportInformation::instance();
   ei.setInformation("Callsign", myTank->getCallSign(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
   ei.setInformation("Team", Team::getName(myTank->getTeam()), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
-  ei.setInformation("Email String", myTank->getEmailAddress(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
   ei.setInformation("Server", TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
     ExportInformation::eitServerInfo, ExportInformation::eipStandard);
 

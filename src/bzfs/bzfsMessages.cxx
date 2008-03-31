@@ -137,9 +137,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
       playerRecord.score.losses = otherData->score.getLosses();
       playerRecord.score.tks = otherData->score.getTKs();
       memset(playerRecord.callsign,32,0);
-      memset(playerRecord.email,128,0);
       strncpy(playerRecord.callsign,otherData->player.getCallSign(),31);
-      strncpy(playerRecord.email,otherData->player.getEMail(),127);
 
       playerData->playerHandler->playerInfoUpdate(&playerRecord);
     } else {

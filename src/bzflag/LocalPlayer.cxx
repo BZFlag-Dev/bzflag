@@ -36,9 +36,9 @@
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
 LocalPlayer::LocalPlayer(const PlayerId& _id,
-			 const char* name, const char* _email,
+			 const char* name,
 			 const PlayerType _type) :
-  BaseLocalPlayer(_id, name, _email, _type),
+  BaseLocalPlayer(_id, name, _type),
   gettingSound(true),
   server(ServerLink::getServer()),
   location(Dead),

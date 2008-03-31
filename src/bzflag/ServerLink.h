@@ -64,7 +64,7 @@ class ServerLink {
 
 	void		sendCaps(PlayerId id, bool downloads, bool sounds );
     void		sendEnter(PlayerId, PlayerType, TeamColor,
-				  const char* name, const char* email, const char* token);
+				  const char* name, const char* token);
     bool		readEnter(std::string& reason,
 				  uint16_t& code, uint16_t& rejcode);
 

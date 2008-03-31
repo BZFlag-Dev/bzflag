@@ -72,8 +72,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     // won't really output anything, just gets token
     outputServerList();
   }
-  sLink.sendEnter(sLink.getId(), ChatPlayer, myTeam, startupInfo.callsign,
-		  "bzadmin", startupInfo.token);
+  sLink.sendEnter(sLink.getId(), ChatPlayer, myTeam, startupInfo.callsign, startupInfo.token);
   sLink.flush();
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr << "Rejected." << std::endl;
@@ -212,7 +211,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgAddPlayer:
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      char email[EmailLen];
       vbuf = nboUnpackUByte(vbuf, p);
       vbuf = nboUnpackUShort(vbuf, type);
       vbuf = nboUnpackUShort(vbuf, team);
@@ -220,7 +218,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUShort(vbuf, losses);
       vbuf = nboUnpackUShort(vbuf, tks);
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
-      vbuf = nboUnpackString(vbuf, email, EmailLen);
       players[p].name = callsign;
       players[p].team = TeamColor(team);
       players[p].wins = wins;

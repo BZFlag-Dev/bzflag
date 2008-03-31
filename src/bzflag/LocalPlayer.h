@@ -54,7 +54,7 @@ public:
   };
 
   LocalPlayer(const PlayerId&,
-	      const char* name, const char* email,
+	      const char* name,
 	      const PlayerType _type=TankPlayer);
   ~LocalPlayer();
 

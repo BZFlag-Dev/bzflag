@@ -19,9 +19,9 @@
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
-			   const char* _name, const char* _email,
+			   const char* _name,
 			   const PlayerType _type) :
-  Player(_id, _team, _name, _email, _type)
+  Player(_id, _team, _name, _type)
 {
   if (World::getWorld()) {
     numShots = World::getWorld()->getMaxShots();

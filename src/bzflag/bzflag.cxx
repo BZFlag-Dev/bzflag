@@ -549,8 +549,6 @@ void			dumpResources()
     BZDB.set(TextUtils::format("silencedPerson%d", i), list[i]);
   }
 
-  BZDB.set("email", startupInfo.email); // note email of zero length does not stick
-
   BZDB.set("serverCacheAge", TextUtils::format("%1d", (int)(ServerListCache::get())->getMaxCacheAge()));
 
   (ServerListCache::get())->saveCache();
@@ -911,36 +909,6 @@ int initClient ( int argc, char** argv )
     }
   }
 
-  // get email address if not anonymous
-  std::string email = "default";
-  if (!anonymous) {
-    if (BZDB.isSet("email")) {
-      email = BZDB.get("email");
-    }
-
-    if (email == "default") {
-      email = anonymousName;
-      std::string hostname = Address::getHostName();
-#if defined(_WIN32)
-      char username[256];
-      DWORD usernameLen = sizeof(username);
-      GetUserName(username, &usernameLen);
-#else
-      struct passwd* pwent = getpwuid(getuid());
-      const char* username = pwent ? pwent->pw_name : NULL;
-#endif
-      if (hostname == "") {
-	hostname = "unknown";
-      }
-      if (username) {
-	email = username;
-	email += "@";
-	email += hostname;
-      }
-    }
-  }
-  email = email.substr(0, sizeof(startupInfo.email) - 1);
-  strncpy(startupInfo.email, email.c_str(), EmailLen-1);
   return 0;
 }
 

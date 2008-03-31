@@ -3896,7 +3896,7 @@ static bool initServer(int argc, char **argv)
   // loading packetloss thresholds
   LagInfo::setPacketLossThreshold(clOptions->packetlosswarnthresh, (float)clOptions->maxpacketlosswarn);
 
-  // loading player callsign/email filters
+  // loading player callsign filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns, clOptions->filter,clOptions->filterSimple);
 
   GameKeeper::Player::setMaxShots(clOptions->maxShots);

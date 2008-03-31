@@ -25,7 +25,6 @@
 
 #define _CallSignLen		32		// including terminating NUL
 #define _PasswordLen		32		// including terminating NUL
-#define _EmailLen				128		// including terminating NUL
 #define _TokenLen				22		// opaque string (now int(10)) and terminating NUL
 #define _VersionLen			60		// including terminating NUL
 #define _MessageLen			128		// including terminating NUL
@@ -45,7 +44,6 @@ public:
 	int losses;
 	int	tks;
 	std::string callsign;
-	std::string email;
 };
 
 #endif // BZF_MESSAGES_H

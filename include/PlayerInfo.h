@@ -96,7 +96,6 @@ public:
   void  packId(BufferedNetworkMessage *msg);
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
-  const char *getEMail() const;
   const char *getToken() const;
   void	clearToken();
   void       *packVirtualFlagCapture(void *buf);
@@ -145,7 +144,6 @@ public:
 
   // only used by the server side bot API
   void setCallsign ( const char* text );
-  void setEmail ( const char* text );
   void setToken ( const char* text );
   void setClientVersion ( const char* text );
   void setType ( PlayerType playerType );
@@ -154,9 +152,7 @@ public:
 
 private:
 
-  void	cleanEMail();
   bool	isCallSignReadable();
-  bool	isEMailReadable();
 
   int	 playerIndex;
 
@@ -172,8 +168,6 @@ private:
   char callSign[CallSignLen];
   // token from db server
   char token[TokenLen];
-  // player's email address
-  char email[EmailLen];
   // version information from client
   char clientVersion[VersionLen];
 

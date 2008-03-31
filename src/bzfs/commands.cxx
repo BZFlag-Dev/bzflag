@@ -1804,20 +1804,12 @@ bool GameStatsCommand::operator() (const char*, GameKeeper::Player *playerData)
       attrstr.erase(attrstr.length()-1);
     }
 
-    std::string emailstr = "(";
-    emailstr += player->player.getEMail();
-    if (emailstr == "(")
-      emailstr = "";
-    else
-      emailstr += ")";
-
     reply = TextUtils::format("%d (%d-%d)[%d]\t%s %s\t%s\t(%s)",
 			      player->score.getWins() - player->score.getLosses(),
 			      player->score.getWins(),
 			      player->score.getLosses(),
 			      player->score.getTKs(),
 			      player->player.getCallSign(),
-			      emailstr.c_str(),
 			      Team::getName(player->player.getTeam()),
 			      attrstr.c_str());
 

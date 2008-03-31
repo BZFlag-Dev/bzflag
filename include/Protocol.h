@@ -160,7 +160,7 @@ const uint16_t		MsgEchoResponse = 0x6570; // 'ep'
 const uint16_t		RejectBadRequest = 0x0000;
 const uint16_t		RejectBadTeam = 0x0001;
 const uint16_t		RejectBadType = 0x0002;
-const uint16_t		RejectBadEmail = 0x0003;
+const uint16_t		RejectUNUSED = 0x0003;
 const uint16_t		RejectTeamFull = 0x0004;
 const uint16_t		RejectServerFull = 0x0005;
 const uint16_t		RejectBadCallsign = 0x0006;
@@ -202,7 +202,7 @@ const uint16_t		MsgLagPing = 0x7069;			// 'pi'
 
 player to server messages:
   MsgEnter		player is joining game
-			--> id, type, team, name, email address
+			--> id, type, team, name
 			<-- MsgReject (if rejected)
 			<-- MsgAccept (if accepted)
 			if accepted, new player is sent (following MsgAccept):
@@ -273,7 +273,7 @@ server to player messages:
   MsgReject		player request is rejected
 			<== <none>
   MsgAddPlayer		notification of new tank in game
-			<== id, type, team, name, email
+			<== id, type, team, name
   MsgRemovePlayer	player has exited the server
 			<== id
   MsgAdminInfo		update of players' IP addresses

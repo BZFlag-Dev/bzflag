@@ -1414,7 +1414,6 @@ public:
   int version;
   int playerID;
   bz_ApiString callsign;
-  bz_ApiString email;
 
   bz_eTeamType team;
 
@@ -2000,7 +1999,6 @@ typedef struct
   bz_eTeamType team;
   bz_ScoreRecord	score;
   char			callsign[32];
-  char			email[128];
 }bz_PlayerInfoUpdateRecord;
 
 typedef struct
@@ -2016,7 +2014,7 @@ typedef enum
   eRejectBadRequest,
   eRejectBadTeam,
   eRejectBadType,
-  eRejectBadEmail,
+  eRejectUNUSED,
   eRejectTeamFull,
   eRejectServerFull,
   eRejectBadCallsign,
@@ -2090,7 +2088,7 @@ public:
   virtual bool think ( void );	// return true to kill and delete the bot;
 
 protected:
-  void setPlayerData(const char *callsign, const char *email,
+  void setPlayerData(const char *callsign,
 		     const char *token, const char *clientVersion,
 		     bz_eTeamType team);
   void joinGame(void);

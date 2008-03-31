@@ -112,7 +112,6 @@ typedef struct {
   u32 flagsSize;		// size of the flags data
   u32 worldSize;		// size of world database
   char callSign[CallSignLen];   // player's callsign
-  char email[EmailLen];	 // player's email
   char serverVersion[8];	// BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];	    // hash of worldDatabase
@@ -125,7 +124,7 @@ typedef struct {
 static const unsigned int ReplayHeaderSize =
   HEADER_SIZE_STUFFING +
   (sizeof(u32) * 6) + sizeof(RRtime) +
-  CallSignLen + EmailLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
+  CallSignLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 typedef struct {
   std::string file;
@@ -841,8 +840,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  author:     %s (%s)",
-	    header.callSign, header.email);
+  snprintf(buffer, MessageLen, "  author:     %s",
+	    header.callSign);
   sendMessage(ServerPlayer, playerIndex, buffer);
   snprintf(buffer, MessageLen, "  protocol:   %.8s", header.serverVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
@@ -2029,9 +2028,8 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     return false;
   }
 
-  // player callsign and email
+  // player callsign 
   const char* callsign = "SERVER";
-  const char* email = "";
   if (p != ServerPlayer) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);
     if (gkPlayer == NULL) {
@@ -2039,14 +2037,12 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     } else {
       PlayerInfo *pi = &gkPlayer->player;
       callsign = pi->getCallSign();
-      email = pi->getEMail();
     }
   }
 
   // setup the data
   memset(&hdr, 0, sizeof(hdr));
   strncpy(hdr.callSign, callsign, sizeof(hdr.callSign));
-  strncpy(hdr.email, email, sizeof(hdr.email));
   strncpy(hdr.serverVersion, getServerVersion(), sizeof(hdr.serverVersion));
   strncpy(hdr.appVersion, getAppVersion(), sizeof(hdr.appVersion));
   strncpy(hdr.realHash, hexDigest, sizeof(hdr.realHash));
@@ -2064,7 +2060,6 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
   buf = nboPackUInt(buf, hdr.flagsSize);
   buf = nboPackUInt(buf, worldDatabaseSize);
   buf = nboPackString(buf, hdr.callSign, sizeof(hdr.callSign));
-  buf = nboPackString(buf, hdr.email, sizeof(hdr.email));
   buf = nboPackString(buf, hdr.serverVersion, sizeof(hdr.serverVersion));
   buf = nboPackString(buf, hdr.appVersion, sizeof(hdr.appVersion));
   buf = nboPackString(buf, hdr.realHash, sizeof(hdr.realHash));
@@ -2106,7 +2101,6 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   buf = nboUnpackUInt(buf, h->flagsSize);
   buf = nboUnpackUInt(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
-  buf = nboUnpackString(buf, h->email, sizeof(h->email));
   buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));

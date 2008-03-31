@@ -39,7 +39,7 @@ struct FiringInfo;
 class Player {
 public:
   Player(const PlayerId&, TeamColor,
-	 const char* callsign, const char* emailAddress,
+	 const char* callsign,
 	 const PlayerType);
   virtual	~Player();
 
@@ -48,7 +48,6 @@ public:
   void		setTeam(TeamColor);
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
-  const char*	getEmailAddress() const;
   PlayerType	getPlayerType() const;
   FlagType*	getFlag() const;
   long		getOrder() const;
@@ -257,7 +256,6 @@ private:
   TeamColor		team;			// my team
 
   char			callSign[CallSignLen];	// my pseudonym
-  char			email[EmailLen];	// my email address
   PlayerType		type;			// Human/Computer
 
   // relatively stable data
@@ -354,11 +352,6 @@ inline void		Player::setTeam(TeamColor _team)
 inline const char*	Player::getCallSign() const
 {
   return callSign;
-}
-
-inline const char*	Player::getEmailAddress() const
-{
-  return email;
 }
 
 inline PlayerType	Player::getPlayerType() const

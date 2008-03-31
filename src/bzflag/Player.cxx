@@ -43,7 +43,7 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 int		Player::tankTexture = -1;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
-	       const char* name, const char* _email, const PlayerType _type) :
+	       const char* name, const PlayerType _type) :
   lastObstacle(NULL),
   handicap(0.0f),
   notResponding(false),
@@ -87,10 +87,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
-
-  // set email address
-  ::strncpy(email, _email, EmailLen);
-  email[EmailLen-1] = '\0';
 
   // only get an avtar if it can be drawn
   if (id != ServerPlayer && !headless) 

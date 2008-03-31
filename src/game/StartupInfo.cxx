@@ -30,7 +30,6 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
   strcpy(serverName, "");
   strcpy(callsign, "");
   strcpy(password, "");
-  strcpy(email, "default");
 }
 
 StartupInfo::~StartupInfo()

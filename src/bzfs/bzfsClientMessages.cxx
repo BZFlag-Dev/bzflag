@@ -340,7 +340,7 @@ class EnterHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 247)
+    if (!player || len < 119)
       return false;
 
     uint16_t rejectCode;

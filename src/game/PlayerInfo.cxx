@@ -37,7 +37,6 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   tracker(0)
 {
   notResponding = false;
-  memset(email, 0, EmailLen);
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
@@ -106,14 +105,12 @@ void PlayerInfo::packUpdate(BufferedNetworkMessage *msg)
 
 void *PlayerInfo::packId(void *buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
-  buf = nboPackString(buf, email, EmailLen);
   return buf;
 }
 
 void PlayerInfo::packId(BufferedNetworkMessage *msg)
 {
   msg->packString(callSign, CallSignLen);
-  msg->packString(email, EmailLen);
 }
 
 void PlayerInfo::setCallsign(const char *text)
@@ -123,15 +120,6 @@ void PlayerInfo::setCallsign(const char *text)
 
   memset(callSign, 0, CallSignLen);
   strncpy(callSign, text, CallSignLen - 1);
-}
-
-void PlayerInfo::setEmail(const char *text)
-{
-  if (!text)
-    return;
-
-  memset(email, 0, EmailLen);
-  strncpy(email, text, EmailLen - 1);
 }
 
 void PlayerInfo::setToken(const char *text)
@@ -162,10 +150,8 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 {
 	// terminate the strings
 	callSign[CallSignLen - 1] = '\0';
-	email[EmailLen - 1] = '\0';
 	token[TokenLen - 1] = '\0';
 	clientVersion[VersionLen - 1] = '\0';
-	cleanEMail();
 
 	logDebugMessage(2,"Player %s [%d] sent version string: %s\n",
 		callSign, playerIndex, clientVersion);
@@ -187,12 +173,6 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 		strncpy(rejectMsg, "The callsign specified is already in use.", MessageLen);
 		return false;
 	}
-	if (!isEMailReadable()) {
-		logDebugMessage(2,"rejecting unreadable player email: %s (%s)\n", callSign, email);
-		rejectCode   = RejectBadEmail;
-		strncpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.", MessageLen);
-		return false;
-	}
 
 	// make sure the callsign is not obscene/filtered
 	if (callSignFiltering) {
@@ -208,18 +188,6 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 		}
 	}
 
-	// make sure the email is not obscene/filtered
-	if (callSignFiltering) {
-		logDebugMessage(2,"checking email: %s\n", email);
-		char em[EmailLen];
-		memcpy(em, email, sizeof(char) * EmailLen);
-		if (filterData->filter(em, simpleFiltering)) {
-			rejectCode = RejectBadEmail;
-			strncpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.", MessageLen);
-			return false;
-		}
-	}
-
 	if (token[0] == 0) {
 		strcpy(token, "NONE");
 	}
@@ -230,7 +198,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 
 bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
-  // data: type, team, name, email
+  // data: type, team, name,
   uint16_t _type;
   int16_t _team;
   buf = nboUnpackUShort(buf, _type);
@@ -238,7 +206,6 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   type = PlayerType(_type);
   team = TeamColor(_team);
   buf = nboUnpackString(buf, callSign, CallSignLen);
-  buf = nboUnpackString(buf, email, EmailLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
@@ -308,45 +275,6 @@ bool PlayerInfo::isCallSignReadable() {
   if (!readable)
     errorString = "Callsign rejected. Please use mostly letters and numbers.";
   return readable;
-}
-
-const char *PlayerInfo::getEMail() const {
-  return email;
-}
-
-void PlayerInfo::cleanEMail() {
-  // strip leading whitespace from email
-  char *sp = email;
-  char *tp = sp;
-  while (isspace(*sp))
-    sp++;
-
-  // strip any non-printable characters and ' and " from email
-  do {
-    if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
-      *tp++ = *sp;
-    }
-  } while (*++sp);
-  *tp = *sp;
-
-  // strip trailing whitespace from email
-  while (isspace(*--tp)) {
-    *tp=0;
-  }
-}
-
-bool PlayerInfo::isEMailReadable() {
-  // email/"team" readability filter, make sure there are more
-  // alphanum than non
-  int emailAlnumCount = 0;
-  char *sp = email;
-  do {
-    if (isalnum(*sp)) {
-      emailAlnumCount++;
-    }
-  } while (*++sp);
-  int emaillen = (int)strlen(email);
-  return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
 }
 
 const char *PlayerInfo::getToken() const {

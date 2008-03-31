@@ -877,7 +877,7 @@ void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
 }
 
 void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
-			   const char* name, const char* email,
+			   const char* name,
 			   const char* token)
 {
   if (state != Okay) return;
@@ -890,8 +890,6 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
   buf = nboPackUShort(buf, uint16_t(team));
   ::strncpy((char*)buf, name, CallSignLen - 1);
   buf = (void*)((char*)buf + CallSignLen);
-  ::strncpy((char*)buf, email, EmailLen - 1);
-  buf = (void*)((char*)buf + EmailLen);
   ::strncpy((char*)buf, token, TokenLen - 1);
   buf = (void*)((char*)buf + TokenLen);
   ::strncpy((char*)buf, getAppVersion(), VersionLen - 1);

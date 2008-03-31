@@ -19,9 +19,9 @@
 #include "playing.h"
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
-				 const char* name, const char* _email,
+				 const char* name,
 				 const PlayerType _type) :
-  Player(_id, RogueTeam, name, _email, _type),
+  Player(_id, RogueTeam, name, _type),
   lastTime(TimeKeeper::getTick()),
   salt(0)
 {

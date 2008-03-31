@@ -1474,7 +1474,6 @@ bz_BasePlayerRecord *APIPlayerFromRecord ( GameKeeper::Player *player )
     return NULL;
 
   playerRecord->callsign=player->player.getCallSign();
-  playerRecord->email=player->player.getEMail();
   playerRecord->playerID=player->getIndex();
   playerRecord->bzID=player->getBzIdentifier();
   playerRecord->team=convertTeam(player->player.getTeam());
@@ -4215,7 +4214,7 @@ void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
 void bz_ServerSidePlayerHandler::allowSpawn( bool ){}
 
 
-void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *email, const char *token, const char *clientVersion, bz_eTeamType _team)
+void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -4225,7 +4224,6 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
   player->player.setType(TankPlayer); // because we like to lie :)
   player->player.setTeam(convertTeam(_team));
   player->player.setCallsign(callsign);
-  player->player.setEmail(email);
   player->player.setToken(token);
   player->player.setClientVersion(clientVersion);
 

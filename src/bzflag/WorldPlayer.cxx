@@ -15,7 +15,7 @@
 #include "SyncClock.h"
 
 WorldPlayer::WorldPlayer() :
-   Player(ServerPlayer, RogueTeam, "world weapon", "", ComputerPlayer)
+   Player(ServerPlayer, RogueTeam, "world weapon", ComputerPlayer)
 {
 }
 
