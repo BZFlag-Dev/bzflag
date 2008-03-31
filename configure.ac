@@ -571,7 +571,7 @@ esac
 if test $prefix = NONE; then
     prefix=$ac_default_prefix
 fi
-BZFLAG_DATA=`eval echo $datadir/bzflag`
+BZFLAG_DATA=`eval eval echo $datadir/bzflag`
 AC_SUBST(BZFLAG_DATA)
 AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA", [Data file directory])
 
@@ -1089,7 +1089,7 @@ if test "x$LIBFREETYPE" = "x" ; then
     BUILD_FREETYPE="yes"
     LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
 else
-    CFLAGS="$FT2_CFLAGS"
+    CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
 fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
