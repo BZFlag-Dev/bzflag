@@ -360,8 +360,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   }
 
   // get the list of potential hits from the collision manager
-  const ObsList* olist =
-    COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+  const ObsList* olist = COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
 
   // sort the list by type and height
   qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);

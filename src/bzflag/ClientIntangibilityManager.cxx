@@ -31,7 +31,7 @@ unsigned char ClientIntangibilityManager::getWorldObjectTangibility ( unsigned i
 
   Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
   if (!obs)
-    return _INVALID_TANGIBILITY;
+    return 0; // we don't know what it is, so it's not setable ( like a teleporter or custom object) assume it's solid as a rock
 
   return obs->isDriveThrough();
 }
