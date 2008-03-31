@@ -21,6 +21,7 @@ BzfDisplay::ResInfo::ResInfo(const char* _name, int w, int h, int r)
 {
   name = new char[strlen(_name) + 1];
   strncpy(name, _name, strlen(_name));
+  name[strlen(_name)] = '\0';
   width = w;
   height = h;
   refresh = r;
