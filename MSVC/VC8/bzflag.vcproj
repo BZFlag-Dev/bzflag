@@ -968,6 +968,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\bzflag\ShotList.cxx"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\ShotList.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\bzflag\ShotPath.cxx"
 						>
 					</File>

@@ -167,6 +167,12 @@ bool                    ShotPath::predictVelocity(float dt, float p[3]) const
   return getStrategy()->predictVelocity(dt, p);
 }
 
+void			ShotPath::update(float dt)
+{
+  // update shot
+  updateShot(dt);
+}
+
 //
 // LocalShotPath
 //

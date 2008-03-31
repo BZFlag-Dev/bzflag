@@ -41,15 +41,16 @@ class ShotCollider;
 
 class ShotPath {
   public:
-    virtual		~ShotPath();
+    ShotPath(const FiringInfo&, double);
+   virtual		~ShotPath();
 
     bool		isExpiring() const;
     bool		isExpired() const;
     bool		isReloaded() const;
     const PlayerId&	getPlayer() const;
     uint16_t		getShotId() const;
-	ShotType		getShotType() const;
-	FlagType*		getFlag() const;
+    ShotType		getShotType() const;
+    FlagType*		getFlag() const;
     float		getLifetime() const;
     float		getReloadTime() const;
     const double	getStartTime() const;
@@ -69,14 +70,13 @@ class ShotPath {
     FiringInfo&		getFiringInfo();
     TeamColor		getTeam() const;
 
-  virtual void	  update(float) {};
+  virtual void	  update(float);
 
   //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
   bool    predictPosition(float dt, float p[3]) const;
   bool    predictVelocity(float dt, float p[3]) const;
 
   protected:
-			ShotPath(const FiringInfo&, double);
     void		updateShot(float dt);
     const ShotStrategy*	getStrategy() const;
     ShotStrategy*	getStrategy();
