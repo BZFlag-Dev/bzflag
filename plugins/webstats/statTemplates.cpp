@@ -49,7 +49,7 @@ std::string getFileFooter ( void )
 
 std::string getPlayersHeader ( void )
 {
-  return std::string ("<hr><h2>Players</h2>\n<table>\n\t<tr><th>Callsign</th><th>Email</th><th>Wins</th><th>Losses</th><th>TKs</th><th>Status</th></tr>\n");
+  return std::string ("<hr><h2>Players</h2>\n<table>\n\t<tr><th>Callsign</th><th>Wins</th><th>Losses</th><th>TKs</th><th>Status</th></tr>\n");
 }
 
 std::string getPlayersLineItem ( bz_BasePlayerRecord *rec, bool evenLine )
@@ -63,9 +63,6 @@ std::string getPlayersLineItem ( bz_BasePlayerRecord *rec, bool evenLine )
   code += tolower(getTeamTextName(rec->team)) + "\">\n";
   code += "\t\t<td>";
   code += rec->callsign.c_str();
-  code += "</td>\n";
-  code += "\t\t<td>";
-  code += rec->email.c_str();
   code += "</td>\n";
 
   if ( rec->team != eObservers )

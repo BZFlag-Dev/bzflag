@@ -294,18 +294,16 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
   }
 
   //
-  // Display number of players, callsign, and email string in the following format:
+  // Display number of players and callsign in the following format:
   //
-  // PLAYERS (nn) [G]cc:callsign(ee:emailstring)
+  // PLAYERS (nn) [G]cc:callsign
   // nn - number of players
   // G  - global auth identifier (+|-| |@)
   // cc - count of characters in player callsign
   // callsign - player callsign
-  // ee - count of characters in email string
-  // emailstring - player email string
   //
   // eg.
-  // PLAYERS (2) [@]7:Thumper(16:me@somewhere.net) [ ]3:xxx()
+  // PLAYERS (2) [@]7:Thumper [ ]3:xxx()
   //
   msg.str("");
   msg << "PLAYERS (" << numPlayers << ") ";
@@ -323,10 +321,6 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
 	msg << "[" << playerStatus << "]";
 	msg << player->callsign.size() << ':';
 	msg << player->callsign.c_str();
-	msg << "(";
-	if (player->email != "")
-	  msg << player->email.size() << ":" << player->email.c_str();
-	msg << ") ";
       }
       bz_freePlayerRecord(player);
     }

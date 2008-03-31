@@ -190,7 +190,7 @@ void CronPlayer::added(int player)
 {
   if (player == playerID) { // oh look, it's ME!
     // set my information
-    setPlayerData("bzfscron", "" /*email*/, "" /*token*/, BCVERSION, eObservers);
+    setPlayerData("bzfscron", "" /*token*/, BCVERSION, eObservers);
 
     // I think I'll make myself admin, so I can run all sorts of fun commands
     if (!bz_setPlayerOperator(playerID))
