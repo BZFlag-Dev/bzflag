@@ -31,7 +31,7 @@ std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
 #else
 std::string extension = ".so";
-std::string globalPluginDir = "$(prefix)/lib/bzflag/";
+std::string globalPluginDir = INSTALL_LIB_DIR;
 #endif
 
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
