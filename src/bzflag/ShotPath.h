@@ -63,6 +63,8 @@ class ShotPath {
     void		setExpired();
     bool		isStoppedByHit() const;
     void		boostReloadTime(float dt);
+    void		setLocal (bool loc) {local = loc;}
+    bool		isLocal ( void ){return local;}
 
     void		addShot(SceneDatabase*, bool colorblind);
 
@@ -94,6 +96,7 @@ class ShotPath {
     double		currentTime;		// current time
     bool		expiring;		// shot has almost terminated
     bool		expired;		// shot has terminated
+    bool		local;			// shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
 };
 
 class LocalShotPath : public ShotPath {

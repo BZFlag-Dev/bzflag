@@ -57,6 +57,20 @@ std::vector<ShotPath*> ShotList::getShotList ( void )
   return outShots;
 }
 
+std::vector<ShotPath*> ShotList::getLocalShotList ( void )
+{
+  std::vector<ShotPath*> outShots;
+  std::map<int,ShotPath*>::iterator itr = shots.begin();
+  while(itr != shots.end())
+  {
+    if (itr->second && itr->second->isLocal())
+      outShots.push_back(itr->second);
+    itr++;
+  }
+
+  return outShots;
+}
+
 std::vector<int> ShotList::getExpiredShotList ( void )
 {
   std::vector<int> outShots;
@@ -74,6 +88,7 @@ int ShotList::addLocalShot ( FiringInfo * info )
 {
   lastLocalShot--;
   ShotPath *shot = new ShotPath(*info,syncedClock.GetServerSeconds());
+  shot->setLocal(true);
   shots[lastLocalShot] = shot;
   return lastLocalShot;
 }
@@ -116,6 +131,14 @@ void ShotList::updateAllShots ( float dt )
     itr++;
   }
 }
+
+void ShotList::flushExpiredShots( void )
+{
+  std::vector<int> expiredList = getExpiredShotList();
+  for (size_t i = 0; i < expiredList.size(); i++)
+    shots.erase(shots.find(expiredList[i]));
+}
+
 
 
 // Local Variables: ***

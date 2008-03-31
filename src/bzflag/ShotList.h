@@ -30,6 +30,7 @@ public:
 
   ShotPath* getShot ( int GUID );
   std::vector<ShotPath*> getShotList ( void );
+  std::vector<ShotPath*> getLocalShotList ( void );
   std::vector<int> getExpiredShotList ( void );
 
   int addLocalShot ( FiringInfo * info );
@@ -39,6 +40,7 @@ public:
   bool removeShot ( int GUID );
 
   void updateAllShots ( float dt );
+  void flushExpiredShots ( void );
 
 protected:
   std::map<int,ShotPath*> shots;

@@ -33,6 +33,7 @@ ShotPath::ShotPath(const FiringInfo& info, double now) :
 {
   startTime = info.timeSent;
   currentTime = now;
+  local = false;
 
   switch(info.shotType)
   {
@@ -181,6 +182,7 @@ LocalShotPath::LocalShotPath(const FiringInfo& info, double now) :
 				ShotPath(info,now)
 {
   // do nothing
+  setLocal(true);
 }
 
 LocalShotPath::~LocalShotPath()
