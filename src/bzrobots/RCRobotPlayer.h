@@ -37,8 +37,7 @@ class RCRobotPlayer : public RobotPlayer
 {
 public:
   RCRobotPlayer(const PlayerId&,
-		const char* name, ServerLink*,
-		const char* _email = "anonymous");
+		const char* name, ServerLink*);
 
   typedef enum {
     speedUpdate,

@@ -443,14 +443,12 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
 {
   uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
-  char email[EmailLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
   msg = nboUnpackString (msg, callsign, CallSignLen);
-  msg = nboUnpackString (msg, email, EmailLen);
 
   // Strip any ANSI color codes
   strncpy (callsign, stripAnsiCodes(callsign), 32);
@@ -486,7 +484,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   if (PlayerType (type) == TankPlayer
       || PlayerType (type) == ComputerPlayer
       || PlayerType (type) == ChatPlayer) {
-    player[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
+    player[i] = new RemotePlayer (id, TeamColor (team), callsign,
 				  PlayerType (type));
     player[i]->changeScore (short (wins), short (losses), short (tks));
   }
@@ -1732,12 +1730,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	char callsign[CallSignLen];
 	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
-        robots[i] = new RCRobotPlayer(id, callsign, serverLink, startupInfo.email);
+        robots[i] = new RCRobotPlayer(id, callsign, serverLink);
         BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
 	robots[i]->setTeam(startupInfo.team);
 	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-			      robots[i]->getCallSign(),
-			      robots[i]->getEmailAddress(), "");
+			      robots[i]->getCallSign(), "");
 	if (!numRobots) {
 	  makeObstacleList();
 	  RobotPlayer::setObstacleList(&obstacleList);
@@ -2848,14 +2845,12 @@ static void saveRobotInfo(Playerid id, void *msg)
       void *tmpbuf = msg;
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      char email[EmailLen];
       tmpbuf = nboUnpackUShort(tmpbuf, type);
       tmpbuf = nboUnpackUShort(tmpbuf, team);
       tmpbuf = nboUnpackUShort(tmpbuf, wins);
       tmpbuf = nboUnpackUShort(tmpbuf, losses);
       tmpbuf = nboUnpackUShort(tmpbuf, tks);
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-      tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
       std::cerr << "id " << id.port << ':' <<
 	id.number << ':' <<
 	callsign << ' ' <<
@@ -3080,15 +3075,13 @@ static void joinInternetGame2()
 
   // create observer tank.  This is necessary because the server won't
   // send messages to a bot, but they will send them to an observer.
-  observerTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
-				 startupInfo.email);
+  observerTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign);
   observerTank->setTeam(ObserverTeam);
   LocalPlayer::setMyTank(observerTank);
 
   // tell the server that the observer tank wants to join
   serverLink->sendEnter(observerTank->getId(), TankPlayer,
 			observerTank->getTeam(), observerTank->getCallSign(),
-			observerTank->getEmailAddress(),
 			startupInfo.token);
   startupInfo.token[0] = '\0';
 

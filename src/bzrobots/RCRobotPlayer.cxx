@@ -24,9 +24,8 @@
 
 RCRobotPlayer::RCRobotPlayer(const PlayerId& _id,
 			     const char* _name,
-			     ServerLink* _server,
-			     const char* _email) :
-  RobotPlayer(_id, _name, _server, _email),
+			     ServerLink* _server) :
+  RobotPlayer(_id, _name, _server),
   lastTickAt(0.0),
   tickDuration(2.0),
   speed(1.0),
