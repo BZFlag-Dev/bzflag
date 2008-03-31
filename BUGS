@@ -215,6 +215,9 @@ recent bugs
 
 - can sometimes appear in front of bad guys
 
+- -set _wingsJumpCount <#> in map, .bzw,  under options -set variable end 
+  fails to set that specific variable.
+
 ---
 see the bug tracker on SourceForge for more
 http://SourceForge.net/tracker/?group_id=3248&atid=103248
