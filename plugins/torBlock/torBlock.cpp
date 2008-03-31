@@ -133,7 +133,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
 BZ_GET_PLUGIN_VERSION
 
-std::string torMasterList("http://belegost.mit.edu/tor/status/authority");
+std::string torMasterList("http://moria.seul.org:9032/tor/status/authority");
 
 double lastUpdateTime = -99999.0;
 double updateInterval = 3600.0;
@@ -264,6 +264,7 @@ void Handler::process ( bz_EventData *eventData )
 				{
 					data->allow = false;
 					data->reason = "Proxy Network Ban";
+					bz_debugMessage(0, "Proxy Network Ban: Rejected");
 				}
 			}
 			break;
