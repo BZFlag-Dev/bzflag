@@ -55,6 +55,7 @@ EXTRA_DIST = \
 	RELNOTES
 
 MAINTAINERCLEANFILES = \
+	aclocal.m4 \
 	configure \
 	bzflag.info \
 	bzflag.spec \
