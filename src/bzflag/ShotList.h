@@ -19,15 +19,14 @@
 #include <map>
 #include <vector>
 
+/* common interface headers */
+#include "Singleton.h"
 #include "ShotPath.h"
 #include "ShotUpdate.h"
 
-class ShotList
+class ShotList : public Singleton<ShotList>
 {
 public:
-  ShotList();
-  ~ShotList();
-
   ShotPath* getShot ( int GUID );
   std::vector<ShotPath*> getShotList ( void );
   std::vector<ShotPath*> getLocalShotList ( void );
@@ -42,10 +41,20 @@ public:
   void updateAllShots ( float dt );
   void flushExpiredShots ( void );
 
+  void clear ( void );
+
 protected:
+  friend class Singleton<ShotList>;
+
   std::map<int,ShotPath*> shots;
 
   int lastLocalShot;
+
+private:
+  // default constructor/destructor protected because of singleton
+  ShotList();
+  ~ShotList();
+
 };
 
 #endif /* __SHOT_LIST_H__ */

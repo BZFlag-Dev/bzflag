@@ -17,6 +17,10 @@
 //
 // ShotList
 //
+/** initialize the singleton */
+template <>
+ShotList* Singleton<ShotList>::_instance = (ShotList*)0;
+
 
 ShotList::ShotList()
 {
@@ -25,12 +29,7 @@ ShotList::ShotList()
 
 ShotList::~ShotList()
 {
-  std::map<int,ShotPath*>::iterator itr = shots.begin();
-  while(itr != shots.end())
-  {
-    if (itr->second)
-    itr++;
-  }
+  clear();
 }
 
 ShotPath* ShotList::getShot ( int GUID )
@@ -139,6 +138,17 @@ void ShotList::flushExpiredShots( void )
     shots.erase(shots.find(expiredList[i]));
 }
 
+void ShotList::clear ( void )
+{
+  std::map<int,ShotPath*>::iterator itr = shots.begin();
+  while(itr != shots.end())
+  {
+    if (itr->second)
+      itr++;
+  }
+  shots.clear();
+  lastLocalShot = 0;
+}
 
 
 // Local Variables: ***
