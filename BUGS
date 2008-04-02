@@ -41,7 +41,7 @@ recent bugs
 - GM does not seem to lock on reliably (try against a remote client,
   bots work fine)
   
-- bullets do no longer bounce off the walls in replays
+- bullets no longer bounce off the walls in replays
   even when ricochets have been enabled
   
 -- documentation --
@@ -132,6 +132,11 @@ recent bugs
   the transporter on the ground linked to that transporter on that 
   box. Screenshot available on request. Linux clients on two boxen
   do not have this issue. 
+  PS:
+  This differs from the latter "teleporting is blocking" bug in 
+  misc directory further down this list in that the sky teleport is
+  on regular box, not mesh, and it localized the bug to windows 
+  builds currently. But could obviously be related.
   @ r16889 -spldart-
    
 -- platform (SDL) --
