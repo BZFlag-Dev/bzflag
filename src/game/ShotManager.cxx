@@ -70,8 +70,8 @@ ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p = 0)
     startTime = TimeKeeper::getCurrent().getSeconds();
 
   // team = LastTeam;
-  flag = Flags::Null;
-  type = NoShot;
+  //flag = Flags::Null;
+  //type = NoShot;
 
   lastUpdateTime = startTime;
 

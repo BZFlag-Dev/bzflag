@@ -70,9 +70,9 @@ public:
     int param;
     int id;
 
-    TeamColor team;
-    FlagType flag;
-    ShotType type;
+   // TeamColor team;
+  //  FlagType flag;
+ //   ShotType type;
     ObstacleMode mode;
 
     double startTime;
