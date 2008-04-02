@@ -22,11 +22,23 @@ template <>
 ShotManager* Singleton<ShotManager>::_instance = (ShotManager*)0;
 
 
-ShotManager::ShotManager();
-ShotManager::~ShotManager();
+ShotManager::ShotManager()
+{
 
-  int ShotManager::newShot ( FiringInfo *info, int param );
-  void ShotManager::update ( double dt );
+}
+ShotManager::~ShotManager()
+{
+
+}
+
+  int ShotManager::newShot ( FiringInfo *info, int param )
+  {
+    return 0;
+  }
+  void ShotManager::update ( double dt )
+  {
+
+  }
 
   void ShotManager::addEventHandler ( ShotEventCallbacks *cb )
   {
@@ -56,7 +68,7 @@ ShotManager::~ShotManager();
     else
 	startTime = TimeKeeper::getCurrent().getSeconds();
 
-    team = LastTeam;
+   // team = LastTeam;
     flag = Flags::Null;
     type = NoShot;
 
