@@ -606,6 +606,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\ShotManager.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\StartupInfo.cxx"
 				>
 			</File>
@@ -697,6 +701,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ServerPing.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShotManager.h"
 				>
 			</File>
 			<File
