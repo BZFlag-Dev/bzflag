@@ -59,7 +59,7 @@ void ShotManager::removeEventHandler ( ShotEventCallbacks *cb )
   }
 }
 
-ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p = 0)
+ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p )
 {
   int param = p;
   int id = GUID;
