@@ -31,55 +31,56 @@ ShotManager::~ShotManager()
 
 }
 
-  int ShotManager::newShot ( FiringInfo *info, int param )
-  {
-    return 0;
-  }
-  void ShotManager::update ( double dt )
-  {
+int ShotManager::newShot ( FiringInfo *info, int param )
+{
+  return 0;
+}
 
-  }
+void ShotManager::update ( double dt )
+{
 
-  void ShotManager::addEventHandler ( ShotEventCallbacks *cb )
-  {
-    callbacks.push_back(cb);
-  }
+}
 
-  void ShotManager::removeEventHandler ( ShotEventCallbacks *cb )
+void ShotManager::addEventHandler ( ShotEventCallbacks *cb )
+{
+  callbacks.push_back(cb);
+}
+
+void ShotManager::removeEventHandler ( ShotEventCallbacks *cb )
+{
+  for (size_t i = 0; i < callbacks.size(); i++ )
   {
-    for (size_t i = 0; i < callbacks.size(); i++ )
+    if (cb == callbacks[i])
     {
-      if (cb == callbacks[i])
-      {
-	callbacks.erase(callbacks.begin()+i);
-	return;
-      }
+      callbacks.erase(callbacks.begin()+i);
+      return;
     }
   }
+}
 
-  ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p = 0)
+ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p = 0)
+{
+  int param = p;
+  int id = GUID;
+  if (info)
   {
-    int param = p;
-    int id = GUID;
-    if (info)
-    {
-	startTime = info->timeSent;
-    }
-    else
-	startTime = TimeKeeper::getCurrent().getSeconds();
-
-   // team = LastTeam;
-    flag = Flags::Null;
-    type = NoShot;
-
-    lastUpdateTime = startTime;
-
-    lifetime = 0;
-    range = 0;
-
-    for ( size_t i = 0; i < 3 i++)
-	pos[i] = vec[i] = 0;
+    startTime = info->timeSent;
   }
+  else
+    startTime = TimeKeeper::getCurrent().getSeconds();
+
+  // team = LastTeam;
+  flag = Flags::Null;
+  type = NoShot;
+
+  lastUpdateTime = startTime;
+
+  lifetime = 0;
+  range = 0;
+
+  for ( size_t i = 0; i < 3 i++)
+    pos[i] = vec[i] = 0;
+}
 
 
 // Local Variables: ***
