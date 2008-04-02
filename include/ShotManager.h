@@ -27,6 +27,76 @@
 
 #include "common.h"
 
+/* system interface headers */
+#include <map>
+#include <vector>
+
+/* common interface headers */
+#include "Singleton.h"
+#include "ShotUpdate.h"
+
+class ShotEventCallbacks
+{
+public:
+  virtual ~ShotEventCallbacks(){};
+
+  virtual void shotEnded ( int id ) = 0;
+  virtual void shotStarted ( int id ) = 0;
+  virtual void shotUpdated ( int id ) = 0;
+};
+
+class ShotManager  : public Singleton<ShotManager>
+{
+public:
+  int newShot ( FiringInfo *info, int param );
+  void update ( double dt );
+
+  void addEventHandler ( ShotEventCallbacks *cb );
+  void removeEventHandler ( ShotEventCallbacks *cb );
+
+  class Shot
+  {
+  public:
+    Shot(FiringInfo* info, int GUID, int p = 0);
+
+    typedef enum
+    {
+      Stop,
+      Ignore,
+      Reflect
+    }ObstacleMode;
+
+  protected:
+    int param;
+    int id;
+
+    TeamColor team;
+    FlagType flag;
+    ShotType type;
+    ObstacleMode mode;
+
+    double startTime;
+    double lastUpdateTime;
+
+    double lifetime;
+    double range;
+    
+    float pos[3];
+    float vec[3];
+  };
+
+protected:
+  friend class Singleton<ShotManager>;
+ 
+private:
+  ShotManager();
+  ~ShotManager();
+
+  std::map<int,Shot> shots;
+
+  std::vector<ShotEventCallbacks*> callbacks;
+};
+
 #endif /* __SHOTMANAGERH__ */
 
 // Local Variables: ***
