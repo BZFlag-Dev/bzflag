@@ -12,6 +12,7 @@
 
 // interface header
 #include "ShotManager.h"
+#include "TimeKeeper.h"
 
 //
 // ShotManager
