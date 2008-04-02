@@ -56,7 +56,7 @@ recent bugs
   idBanList is not listed in the latter on a idbanlist yet prevented
   from joining even after the ban is removed from the banList.
   
--- controlls --
+-- controls --
 - someone broke the key-driving rotational acceleration dampening,
   feels like 1.7 driving again.
   
@@ -125,6 +125,14 @@ recent bugs
 - Windows BZFS will not let clients connect when 'too many' flags
   are specified.
 
+- Two seperate boxen, windows build with vc8, nvidia vid cards.
+  When jumping on box "name Box - position 250 250 118 - rotation 0
+   - size 15 15 0.1 - end" on my WarTowers map, the one with the
+  transporter on it, tanks stick to the box and lock coming through 
+  the transporter on the ground linked to that transporter on that 
+  box. Screenshot available on request. Linux clients on two boxen
+  do not have this issue. 
+  @ r16889 -spldart-
    
 -- platform (SDL) --
 - if you start the client windowed on a multidisplay system, and then
@@ -147,7 +155,7 @@ recent bugs
 - Have flag spawn zones set in 2.0.x world. Same world in trunk produces an 
   "Unable to position flags on this world." for each zone specified by world.
   However I have the zoned flags appearing to be in the places I specified.
-  Message origin? Screenshot available from -spldart- if needed.
+  Message origin? Screenshot available if needed. -spldart-
 
   
 -- unsorted --
