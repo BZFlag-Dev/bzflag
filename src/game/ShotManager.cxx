@@ -32,12 +32,12 @@ ShotManager::~ShotManager()
 
 }
 
-int ShotManager::newShot ( FiringInfo *info, int param )
+int ShotManager::newShot ( FiringInfo * /*info*/, int /*param*/ )
 {
   return 0;
 }
 
-void ShotManager::update ( double dt )
+void ShotManager::update ( double /*dt*/ )
 {
 
 }
@@ -59,10 +59,8 @@ void ShotManager::removeEventHandler ( ShotEventCallbacks *cb )
   }
 }
 
-ShotManager::Shot::Shot(FiringInfo* info, int GUID, int p )
+ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/ )
 {
-  int param = p;
-  int id = GUID;
   if (info)
   {
     startTime = info->timeSent;
