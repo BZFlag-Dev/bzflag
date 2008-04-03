@@ -133,12 +133,13 @@ static void readMTL ( CModel &model, std::string file )
 	  if (lineParts.size() > 1)
 	  {
 	    float shine = (float)atof(lineParts[1].c_str());
-	    // convert MTL "Ns" to OpenGL shininess  [0 - 1000] => [0 - 128]
-	    shine = shine / 1000.0f;
+	    // convert MTL "Ns" to OpenGL shininess  [0 - 100] => [0 - 128]
+	    shine = shine / 100.0f;
 	    if (shine < 0.0f) 
 	      shine = 0.0f;
 	    else if (shine > 1.0f) 
 	      shine = 1.0f;
+
 	    model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
 	  }
 	}
