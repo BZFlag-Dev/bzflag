@@ -737,6 +737,9 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
 
   // don't include ansi codes in the length, but allow outside funcs to skip
   const char *stripped = alreadyStripped ? text : stripAnsiCodes(text);
+  if (!stripped) {
+    return 0.0f;
+  }
 
   return theFont->Advance(stripped);
 }
