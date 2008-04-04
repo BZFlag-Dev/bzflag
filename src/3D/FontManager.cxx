@@ -40,6 +40,11 @@
 #define FONT FTGLTextureFont
 #define CRAP_FONT FTGLBitmapFont
 
+/* FIXME: this debugging crap and all associated printfs disappear
+ * when fontmanager is verified to be working.  there is still a
+ * problem in the destructor that needs to be further investigated and
+ * fixed.
+ */
 #define debugging 1
 
 
@@ -78,8 +83,8 @@ FontManager::~FontManager()
   fflush(stdout);
 #endif
 
-  // total cop-out for now
-  //  clear();
+  // FIXME: total cop-out for now.  this should work.
+  // clear();
 
 #if debugging
   printf("fontFaces size is %d\n", (int)fontFaces.size());
