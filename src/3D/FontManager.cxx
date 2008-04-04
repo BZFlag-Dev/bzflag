@@ -217,7 +217,7 @@ void FontManager::clear(void)
 	(*faceItr).sizes[i] = NULL;
       }
     }
-    
+
 #if debugging
     printf("FontManager::clear preerase\n");
     fflush(stdout);
@@ -267,7 +267,7 @@ void FontManager::preloadSize(int font, int size)
   charset += "1234567890";
   charset += "`;'/.,[]\\\"";
   charset += "<>?:{}+_)(*&^%$#@!)";
-  charset += " \t"; 
+  charset += " \t";
   fnt->Advance(charset.c_str());
 }
 
@@ -455,7 +455,7 @@ void* FontManager::getGLFont(int face, int size)
   charset += "1234567890";
   charset += "`;'/.,[]\\\"";
   charset += "<>?:{}+_)(*&^%$#@!)";
-  charset += " \t"; 
+  charset += " \t";
   newFont->Advance(charset.c_str());
 
   return fontFaces[face].sizes[size];
@@ -757,7 +757,7 @@ float FontManager::getStringHeight(int font, float size)
   FTFont* theFont = (FTFont*)getGLFont(font, (int)size);
 
   if (!theFont)
-    return 0;	
+    return 0;
 
   return theFont->LineHeight();
 }
