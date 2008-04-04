@@ -43,7 +43,9 @@ Required for release of 3.0:
 * bzfs intermittently drops the client (causing a client hang) after
   performing a reverse lookup on the client's IP
 
-* client occasionally crashes on exit (in an ftgl destructor) 
+* client occasionally crashes on exit in the FontManager destructor if
+  clear(); is performed.  it shouldn't crash. (may be ftgl bug, may be
+  some entirely unrelated bug elsewhere in a static)
 
 
 Should be considered for the release of 3.0:
