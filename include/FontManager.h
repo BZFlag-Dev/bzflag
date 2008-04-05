@@ -159,11 +159,6 @@ protected:
   void rebuild(void);
 
   /**
-   * returns a list of the loaded font names
-   */
-  std::vector<std::string> getFontList(void);
-
-  /**
    * returns the number of fonts loaded
    */
   int getNumFaces(void);

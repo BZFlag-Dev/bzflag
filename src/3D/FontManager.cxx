@@ -369,18 +369,6 @@ void FontManager::rebuild()
 }
 
 
-std::vector<std::string> FontManager::getFontList(void)
-{
-  std::vector<std::string> fontList;
-
-  for (unsigned int i = 0; i < fontFaces.size(); i++) {
-    fontList.push_back(fontFaces[i].name);
-  }
-
-  return fontList;
-}
-
-
 int FontManager::lookupID(const std::string name)
 {
   if (name.size() <= 0)
