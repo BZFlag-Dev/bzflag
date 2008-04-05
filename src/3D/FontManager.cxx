@@ -84,7 +84,7 @@ FontManager::~FontManager()
 #endif
 
   // FIXME: total cop-out for now.  this should work.
-  // clear();
+  //  clear();
 
 #if debugging
   printf("fontFaces size is %d\n", (int)fontFaces.size());
@@ -111,7 +111,10 @@ int FontManager::load(const char* file)
   FontFace face;
   face.name = tempFile.getFileName();
   face.path = file;
-  memset(face.sizes, 0, (MAX_SIZE+1)*sizeof(void*));
+
+  for (int i = 0; i < MAX_SIZE; i++) {
+    face.sizes[i] = (void*)NULL;
+  }
 
   id = lookupID(face.name);
   if (id >= 0) {
@@ -163,13 +166,13 @@ void FontManager::clear(int font, int size)
   abort();
 #endif
 
-  if (size > MAX_SIZE)
-    size = MAX_SIZE;
+  if (size >= MAX_SIZE)
+    size = MAX_SIZE-1;
 
   // poof if non-bitmap
-  if (fontFaces[font].sizes[size]) {
+  if (fontFaces[font].sizes[size] != (void*)NULL) {
     deleteGLFont(fontFaces[font].sizes[size], size);
-    fontFaces[font].sizes[size] = NULL;
+    fontFaces[font].sizes[size] = (void*)NULL;
   }
 }
 
@@ -201,7 +204,7 @@ void FontManager::clear(void)
     for (int i = 0; i < MAX_SIZE; i++) {
       if (i==26) continue;
 
-      if ((*faceItr).sizes[i]) {
+      if ((*faceItr).sizes[i] != (void*)NULL) {
 
 #if debugging
 	printf("FontManager::clear font:%p size:%d\n", (*faceItr).sizes[i], i);
@@ -214,7 +217,7 @@ void FontManager::clear(void)
 	  delete ((FONT*)(*faceItr).sizes[i]);
 	}
 
-	(*faceItr).sizes[i] = NULL;
+	(*faceItr).sizes[i] = (void*)NULL;
       }
     }
 
@@ -247,12 +250,12 @@ void FontManager::preloadSize(int font, int size)
   if (font < 0 || size < 0)
     return;
 
-  if (size > MAX_SIZE)
-    size = MAX_SIZE;
+  if (size >= MAX_SIZE)
+    size = MAX_SIZE-1;
 
   // if the font is loaded and has a GL font, reload it
   // if it is NOT, then go along.
-  if (!fontFaces[font].sizes[size])
+  if (fontFaces[font].sizes[size] != (void*)NULL)
     return;
 
   FTFont *fnt = (FTFont*)fontFaces[font].sizes[size];
@@ -283,8 +286,8 @@ void FontManager::rebuildSize(int font, int size)
     return;
   }
 
-  if (size > MAX_SIZE)
-    size = MAX_SIZE;
+  if (size >= MAX_SIZE)
+    size = MAX_SIZE-1;
 
   clear(font, size);
 
@@ -303,7 +306,7 @@ void FontManager::rebuild()
     for (int j = 0; j < MAX_SIZE; j++) {
 
       //      std::cout << "rebuilding font " << i << " with size " << j << " hmm " << fontFaces[i].sizes[j] << std::endl;
-      if (fontFaces[i].sizes[j]) {
+      if (fontFaces[i].sizes[j] != (void*)NULL) {
 	rebuildSize(i, j);
       }
     }
@@ -366,7 +369,7 @@ const char* FontManager::getFaceName(int faceID)
 {
   if ((faceID < 0) || (faceID > getNumFaces())) {
     logDebugMessage(2,"Trying to fetch name for invalid Font Face ID %d\n", faceID);
-    return NULL;
+    return (char*)NULL;
   }
 
   return fontFaces[faceID].name.c_str();
@@ -375,8 +378,8 @@ const char* FontManager::getFaceName(int faceID)
 
 void FontManager::deleteGLFont(void* font, int size)
 {
-  if (size > MAX_SIZE)
-    size = MAX_SIZE;
+  if (size >= MAX_SIZE)
+    size = MAX_SIZE-1;
 
 #if debugging
   printf("FontManager::deleteGLFont %p size:%d\n", font, size);
@@ -411,13 +414,13 @@ void* FontManager::getGLFont(int face, int size)
 {
   if (face < 0 || face >= (int)fontFaces.size()) {
     std::cerr << "invalid font face specified" << std::endl;
-    return NULL;
+    return (void*)NULL;
   }
 
-  if (size > MAX_SIZE)
-    size = MAX_SIZE;
+  if (size >= MAX_SIZE)
+    size = MAX_SIZE-1;
 
-  if (fontFaces[face].sizes[size])
+  if (fontFaces[face].sizes[size] != (void*)NULL)
     return fontFaces[face].sizes[size];
 
   bool useBitmapFont = BZDB.isTrue("UseBitmapFonts");
@@ -494,7 +497,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[4];
-  if (resetColor != NULL) {
+  if (resetColor != (float*)NULL) {
     color[0] = resetColor[0] * darkness;
     color[1] = resetColor[1] * darkness;
     color[2] = resetColor[2] * darkness;

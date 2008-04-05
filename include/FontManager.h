@@ -153,7 +153,7 @@ protected:
   typedef struct {
     std::string name;
     std::string path;
-    void* sizes[MAX_SIZE+1];
+    void* sizes[MAX_SIZE];
   } FontFace;
 
   /**
