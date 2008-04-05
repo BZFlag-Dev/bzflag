@@ -5,6 +5,7 @@
 
 BZFlag 2.99.x
 ------------
+* New tank explosion pattern - Luke Rewega
 * Exposed pauseOnMinimize local variable for iconify pausing - Sean Morrison
 * Added a new flag, Cloaked Shot - Alexander Boyd
 * Screenshot compression is done in a new thread - Daniel Remenak, randomparticle

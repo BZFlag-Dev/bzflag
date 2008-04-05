@@ -467,17 +467,14 @@ void TankSceneNode::rebuildExplosion()
     // now an angular velocity -- make sure we get at least 2 complete turns
     spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
 
-    // cheezy spheroid explosion pattern
+    // different cheezy spheroid explosion pattern
     const float vhMax = maxExplosionVel;
-    const float vhMag = vhMax * sinf((float)(M_PI * 0.5 * bzfrand()));
+    const float vhAngleVert = (float)(0.25 * M_PI * bzfrand());
+    const float vhMag = vhMax * cosf(vhAngleVert);
     const float vhAngle = (float)(2.0 * M_PI * bzfrand());
-    vel[i][0] = cosf(vhAngle) * vhMag;
-    vel[i][1] = sinf(vhAngle) * vhMag;
-    const float vz = sqrtf(fabsf((vhMax*vhMax) - (vhMag*vhMag)));
-    vel[i][2] = vz * vertExplosionRatio; // flatten it a little
-    if (bzfrand() > 0.5) {
-      vel[i][2] = -vel[i][2];
-    }
+    vel[i][2] = vhMax * sinf(vhAngleVert) * vertExplosionRatio;
+    vel[i][1] = vhMag * cosf(vhAngle);
+    vel[i][0] = vhMag * sinf(vhAngle);
   }
   return;
 }
