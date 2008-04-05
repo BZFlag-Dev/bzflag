@@ -25,9 +25,9 @@
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
 
-const int		FormatMenu::NumReadouts = 4;
-const int		FormatMenu::NumItems = 30;
-const int		FormatMenu::NumColumns = 3;
+const int FormatMenu::NumReadouts = 4;
+const int FormatMenu::NumItems = 30;
+const int FormatMenu::NumColumns = 3;
 
 bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
