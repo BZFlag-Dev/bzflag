@@ -32,18 +32,22 @@ typedef enum
   AlignRight
 } fontJustification;
 
-// This class (currently just an interface) will become the token that
-// is passed around instead of font id. The functions defined are
-// those of FontManager used by other classes
+/**
+ * This class (currently just an interface) will become the token that
+ * is passed around instead of font id. The functions defined are
+ * those of FontManager used by other classes
+ */
 class BZFontFace
 {
 public:
   BZFontFace();
   BZFontFace(std::string const& name_, std::string const& path_);
 
-  // Rather than let the destructor release all the fonts, make an
-  // explicit call here, until I can prove that there isn't an issue
-  // with dangling references
+  /**
+   * Rather than let the destructor release all the fonts, make an
+   * explicit call here, until I can prove that there isn't an issue
+   * with dangling references
+   */
   void destroy();
 
   /**
