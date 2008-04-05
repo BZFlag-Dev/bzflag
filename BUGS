@@ -12,6 +12,10 @@ recent bugs
 - client side bots don't even show as tanks.
 
 -- crashes ---
+
+- two clients connecting (at least from the same IP) causes the second
+  to have communication failures and get disconnected.
+
 - Segfault - two clients connecting to the server then leaving causes the 
   server to crash
   
