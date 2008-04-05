@@ -242,7 +242,7 @@ void FormatMenu::resize(int _width, int _height)
   }
 
   // reposition test and current format messages
-  fs.setMin(0, 20);
+  fs.setMin(24*NumColumns, std::max(NumItems / NumColumns, 10));
   float fontSize = fs.getFontSize(fontFace, "menuFontSize");
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
