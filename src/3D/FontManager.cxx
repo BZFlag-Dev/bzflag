@@ -111,7 +111,7 @@ int FontManager::load(const char* file)
   FontFace face;
   face.name = tempFile.getFileName();
   face.path = file;
-  memset(face.sizes, 0, 200*sizeof(void*));
+  memset(face.sizes, 0, (MAX_SIZE+1)*sizeof(void*));
 
   id = lookupID(face.name);
   if (id >= 0) {
@@ -198,7 +198,7 @@ void FontManager::clear(void)
     std::vector<FontFace>::iterator nextFaceItr = faceItr;
     nextFaceItr++; // must get the next before clearing, else kaboom
 
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < MAX_SIZE; i++) {
       if (i==26) continue;
 
       if ((*faceItr).sizes[i]) {
@@ -300,7 +300,7 @@ void FontManager::rebuild()
 #endif
 
   for (unsigned int i = 0; i < fontFaces.size(); i++) {
-    for (int j = 0; j < 200; j++) {
+    for (int j = 0; j < MAX_SIZE; j++) {
 
       //      std::cout << "rebuilding font " << i << " with size " << j << " hmm " << fontFaces[i].sizes[j] << std::endl;
       if (fontFaces[i].sizes[j]) {
