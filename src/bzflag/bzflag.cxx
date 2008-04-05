@@ -996,9 +996,7 @@ int initDisplay ( void )
   // initialize font system
   FontManager &fm = FontManager::instance();
   // load fonts from data directory
-  fm.loadAll(PlatformFactory::getMedia()->getMediaDirectory() + "/fonts");
-  // try to get a font - only returns -1 if there are no fonts at all
-  if (fm.getFaceID(BZDB.get("consoleFont")) < 0) {
+  if (fm.loadAll(PlatformFactory::getMedia()->getMediaDirectory() + "/fonts") == 0) {
     printFatalError("No fonts found  (the -directory option may help).  Exiting");
     return bail(1);
   }
