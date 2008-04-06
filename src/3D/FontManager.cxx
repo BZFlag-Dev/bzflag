@@ -55,24 +55,128 @@ FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 /** initialize underline to black */
 GLfloat FontManager::underlineColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
+/**
+ * This class encapsulates implementation details that we don't want
+ * exposed in the header
+ */
+class BZFontFace_impl
+{
+  // Public for now... encapsulation continues incrementally
+public:
+  static const int MAX_SIZE = 200;
+  std::string name;
+  std::string path;
+  FTFont* sizes[MAX_SIZE];
+
+public:
+  /**
+   * Default constructor (required to allow this in a vector)
+   */
+  BZFontFace_impl() {
+    for (unsigned int i=0; i < sizeof(sizes)/sizeof(sizes[0]); ++i) sizes[i] = 0;    
+  }
+  /**
+   * Preferred constructor
+   */
+  BZFontFace_impl(std::string const& name_, std::string const& path_)
+    : name(name_), path(path_)
+  {
+    for (unsigned int i=0; i < sizeof(sizes)/sizeof(sizes[0]); ++i) sizes[i] = 0;    
+  }
+
+  /**
+   * Functionality moved from FontManager::clear without full understanding
+   * (why don't we clear font size 26?)
+   */
+  void clear() {
+    for (int i = 0; i < MAX_SIZE; i++) {
+      if (i==26) continue;
+
+#if debugging
+      if (sizes[i] != 0) {
+	printf("BZFontFace_impl::clear font:%p size:%d\n", (void*)(sizes[i]), i);
+	fflush(stdout);
+      }
+#endif
+
+      setSize(i, 0);
+    }
+  }
+
+  /**
+   * Rebuild all sizes of this family
+   */
+  void rebuild()
+  {
+    for (int j = 0; j < MAX_SIZE; j++) {
+
+      if (sizes[j] != 0) {
+	// When stolen from FontManager, this originally called
+	// rebuildSize(), but that simply called clear() and
+	// preloadSize(). This is logically identical and illustrates
+	// my confusion
+	setSize(j, 0);
+	preloadSize(j);
+      }
+    }
+  }
+
+  /**
+   * Dutifully moved from FontManager, although I can't see where this
+   * is actually doing anything useful (as called)
+   */
+  void preloadSize(int size)
+  {
+    // If the call to getSize() is replaced with the not-yet-written
+    // loadSize() call, this will always return a valid "preloaded"
+    // font
+    FTFont* font( getSize(size) );
+    if (! font) 
+      return;
+
+    // preload
+    std::string charset;
+    charset = "abcdefghijklmnopqrstuvwxyz";
+    charset += TextUtils::toupper(charset);
+    charset += "1234567890";
+    charset += "`;'/.,[]\\\"";
+    charset += "<>?:{}+_)(*&^%$#@!)";
+    charset += " \t";
+    font->Advance(charset.c_str());
+  }
+
+  /**
+   * Accessor to retrieve a particular font size from this face
+   */
+  FTFont* getSize(int size) {
+    if (size >= MAX_SIZE) size = MAX_SIZE-1;
+    return sizes[size];
+  }
+
+  /**
+   * Mutator to set a particular font size from this face.
+   * Takes over ownership of the allocated memory
+   */
+  void setSize(int size, FTFont* font) {
+    if (size >= MAX_SIZE) size = MAX_SIZE-1;
+
+    // TBR: need to verify that there is not a memory management issue
+    // if somehow this pointer has ever been given to someone
+    // else. However, this is still the right way to do it.
+    delete sizes[size];
+    sizes[size] = font;
+  }
+};
+
 // Note: this was originally part of the class, but it exposes more
 // implementation than we want to. Since this class is a singleton,
 // there's no harm in putting the set of loaded fonts here at file
 // scope rather than as a class member.
 namespace {
-  const int MAX_SIZE = 200;
-
-  struct FontFace {
-    std::string name;
-    std::string path;
-    FTFont* sizes[MAX_SIZE];
-    FontFace() {
-      for (unsigned int i=0; i < sizeof(sizes)/sizeof(sizes[0]); ++i) sizes[i] = 0;
-    }
-  };
 
   /** loaded fonts */
-  std::vector<FontFace> fontFaces;
+  typedef std::vector<BZFontFace_impl> FontFamilies;
+  FontFamilies fontFaces;
 
   /**
    * return the ftgl representation for a given font of a given size
@@ -85,10 +189,7 @@ namespace {
       return font;
     }
 
-    if (size >= MAX_SIZE)
-      size = MAX_SIZE-1;
-
-    font = fontFaces[face].sizes[size];
+    font = fontFaces[face].getSize(size);
     if (font) {
       return font;
     }
@@ -106,7 +207,7 @@ namespace {
       font = new FONT(fontFaces[face].path.c_str());
 
 #if debugging
-    printf("FontManager::getGLFont CREATED face:%d size:%d %p\n", face, size, (void*)font);
+    printf("getGLFont CREATED face:%d size:%d %p\n", face, size, (void*)font);
     fflush(stdout);
 #endif
 
@@ -174,9 +275,7 @@ int FontManager::load(const char* file)
   OSFile tempFile;
   tempFile.osName(file);
 
-  FontFace face;
-  face.name = tempFile.getFileName();
-  face.path = file;
+  BZFontFace_impl face(tempFile.getFileName(), file);
 
   id = lookupID(face.name);
   if (id >= 0) {
@@ -228,12 +327,8 @@ void FontManager::clear(int font, int size)
   abort();
 #endif
 
-  if (size >= MAX_SIZE)
-    size = MAX_SIZE-1;
-
   // poof if non-bitmap
-  delete fontFaces[font].sizes[size];
-  fontFaces[font].sizes[size] = 0;
+  fontFaces[font].setSize(size, 0);
 }
 
 
@@ -254,24 +349,13 @@ void FontManager::clear(void)
   fflush(stdout);
 #endif
 
-  std::vector<FontFace>::iterator faceItr;
+  FontFamilies::iterator faceItr;
   faceItr = fontFaces.begin();
   while (faceItr != fontFaces.end()) {
-    std::vector<FontFace>::iterator nextFaceItr = faceItr;
+    FontFamilies::iterator nextFaceItr = faceItr;
     nextFaceItr++; // must get the next before clearing, else kaboom
 
-    for (int i = 0; i < MAX_SIZE; i++) {
-      if ((*faceItr).sizes[i] != 0) {
-
-#if debugging
-	printf("FontManager::clear font:%p size:%d\n", (void*)((*faceItr).sizes[i]), i);
-	fflush(stdout);
-#endif
-
-	delete (*faceItr).sizes[i];
-	(*faceItr).sizes[i] = 0;
-      }
-    }
+    (*faceItr).clear();
 
 #if debugging
     printf("FontManager::clear preerase\n");
@@ -302,15 +386,9 @@ void FontManager::preloadSize(int font, int size)
   if (font < 0 || size < 0)
     return;
 
-  if (size >= MAX_SIZE)
-    size = MAX_SIZE-1;
-
   // if the font is loaded and has a GL font, reload it
   // if it is NOT, then go along.
-  if (fontFaces[font].sizes[size] != 0)
-    return;
-
-  FTFont *fnt = fontFaces[font].sizes[size];
+  FTFont *fnt = fontFaces[font].getSize(size);
 
   if (!fnt)
     return;
@@ -338,9 +416,6 @@ void FontManager::rebuildSize(int font, int size)
     return;
   }
 
-  if (size >= MAX_SIZE)
-    size = MAX_SIZE-1;
-
   clear(font, size);
 
   preloadSize(font, size);
@@ -355,13 +430,7 @@ void FontManager::rebuild()
 #endif
 
   for (unsigned int i = 0; i < fontFaces.size(); i++) {
-    for (int j = 0; j < MAX_SIZE; j++) {
-
-      //      std::cout << "rebuilding font " << i << " with size " << j << " hmm " << fontFaces[i].sizes[j] << std::endl;
-      if (fontFaces[i].sizes[j] != 0) {
-	rebuildSize(i, j);
-      }
-    }
+    fontFaces[i].rebuild();
   }
   loadAll(fontDirectory);
 }

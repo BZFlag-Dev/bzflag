@@ -32,6 +32,7 @@ typedef enum
   AlignRight
 } fontJustification;
 
+class BZFontFace_impl;
 /**
  * This class (currently just an interface) will become the token that
  * is passed around instead of font id. The functions defined are
@@ -67,7 +68,8 @@ public:
   void drawString(float x, float y, float z, float size,
 		  const char *text,
 		  const float* resetColor = NULL, fontJustification align = AlignLeft);
-
+private:
+  BZFontFace_impl*      impl;
 };
 
 /**
