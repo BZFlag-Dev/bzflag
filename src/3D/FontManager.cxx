@@ -261,8 +261,6 @@ void FontManager::clear(void)
     nextFaceItr++; // must get the next before clearing, else kaboom
 
     for (int i = 0; i < MAX_SIZE; i++) {
-      if (i==26) continue;
-
       if ((*faceItr).sizes[i] != 0) {
 
 #if debugging
