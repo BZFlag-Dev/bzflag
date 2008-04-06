@@ -1266,7 +1266,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
       bz_MessageFilteredEventData_V1	eventData;
 
       msgWasFiltered = true;
-      eventData.player = sendingPlayer;
+      eventData.playerID = sendingPlayer;
       eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
       eventData.rawMessage = message;
       eventData.filteredMessage = filtered;
@@ -2252,7 +2252,7 @@ void pausePlayer(int playerIndex, bool paused = true)
   msg->broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1	pauseEventData;
-  pauseEventData.player = playerIndex;
+  pauseEventData.playerID = playerIndex;
   pauseEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   pauseEventData.pause = paused;
 
@@ -2720,7 +2720,7 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
   bz_PlayerCollisionEventData_V1  eventData;
   eventData.players[0] = player->getIndex();
   eventData.players[1] = otherPlayer->getIndex();
-  eventData.time = (float)TimeKeeper::getCurrent().getSeconds();
+  eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   memcpy(eventData.pos,pos,sizeof(float)*3);
   worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
 
@@ -3114,7 +3114,7 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, flo
   playerStateToAPIState(eventData.state,state);
   eventData.stateTime = timeStamp;
   eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
-  eventData.player = playerData->getIndex();
+  eventData.playerID = playerData->getIndex();
   worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
   // silently drop old packet

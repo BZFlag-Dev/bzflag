@@ -156,14 +156,14 @@ void EventHandler::process(bz_EventData * eventData)
     pos[0] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[0];
     pos[1] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[1];
     pos[2] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[2];
-    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->player;
+    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->playerID;
     break;
 
   case bz_eShotFiredEvent:
     pos[0] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[0];
     pos[1] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[1];
     pos[2] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[2];
-    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->player;
+    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->playerID;
     break;
 
   default:

@@ -41,7 +41,7 @@ public:
 
     case bz_eShotFiredEvent: {
       bz_ShotFiredEventData_V1* sfed = (bz_ShotFiredEventData_V1*)eventData;
-      int p = sfed->player;
+      int p = sfed->playerID;
       bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(p);
       if (!playerRecord) break;
       if (playerRecord->currentFlag == "Custom Flag (+CF)")

@@ -445,6 +445,8 @@ public:
     teamCapped = eNoTeam;
     teamCapping = eNoTeam;
     playerCapping = -1;
+
+    eventTime = 0.0;
   }
   virtual ~bz_CTFCaptureEventData_V1(){};
   virtual void update (){bz_EventData::update();}
@@ -469,6 +471,8 @@ public:
     playerCapping = -1;
     allow = false;
     killTeam = true;
+
+    eventTime = 0.0;
   }
   virtual ~bz_AllowCTFCaptureEventData_V1(){};
   virtual void update (){bz_EventData::update();}
@@ -563,7 +567,7 @@ public:
   bz_PlayerJoinPartEventData_V1() : bz_EventData()
   {
     eventType = bz_ePlayerJoinEvent;
-    eventTime  = -1.0;
+    eventTime  = 0.0;
     playerID = -1;
   }
   virtual ~bz_PlayerJoinPartEventData_V1()
@@ -587,7 +591,7 @@ public:
     eventType = bz_eUnknownSlashCommand;
     from = -1;
     handled = false;
-    eventTime = 0;
+    eventTime = 0.0;
   }
 
   virtual ~bz_UnknownSlashCommandEventData_V1(){};
@@ -867,14 +871,14 @@ public:
     bz_PlayerPausedEventData_V1() : bz_EventData()
     {
       eventType = bz_ePlayerPausedEvent;
-      player = -1;
+      playerID = -1;
       eventTime = 0.0;
       pause = false;
     }
     virtual ~bz_PlayerPausedEventData_V1(){};
     virtual void update (){bz_EventData::update();}
 
-    int player;
+    int playerID;
     double eventTime;
     bool pause;
 };
@@ -885,13 +889,13 @@ public:
   bz_MessageFilteredEventData_V1() : bz_EventData()
   {
     eventType = bz_eMessageFilteredEvent;
-    player = -1;
+    playerID = -1;
     eventTime = 0.0;
   }
   virtual ~bz_MessageFilteredEventData_V1(){};
   virtual void update (){bz_EventData::update();}
 
-  int player;
+  int playerID;
   double eventTime;
 
   bz_ApiString		rawMessage;
@@ -921,7 +925,7 @@ public:
   {
     eventType = bz_eSlashCommandEvent;
     from = -1;
-    eventTime = 0;
+    eventTime = 0.0;
   }
 
   virtual ~bz_SlashCommandEventData_V1(){};
@@ -978,6 +982,7 @@ public:
     bz_ShotFiredEventData_V1() : bz_EventData()
     {
       eventType = bz_eShotFiredEvent;
+      playerID = -1;
       pos[0] = pos[1] = pos[2] = 0;
       changed = false;
     }
@@ -988,7 +993,7 @@ public:
     bool		changed;
     float		pos[3];
     bz_ApiString	type;
-    int			player;
+    int			playerID;
 };
 
 class bz_AnointRabbitEventData_V1 : public bz_EventData
@@ -1029,13 +1034,13 @@ public:
   bz_ReloadEventData_V1() : bz_EventData()
   {
     eventType = bz_eReloadEvent;
-    player = -1;
+    playerID = -1;
   }
 
   virtual ~bz_ReloadEventData_V1(){};
   virtual void update (){bz_EventData::update();}
 
-  int player;
+  int playerID;
 };
 
 class bz_PlayerUpdateEventData_V1 : public bz_EventData
@@ -1044,15 +1049,15 @@ public:
   bz_PlayerUpdateEventData_V1()
   {
     eventType = bz_ePlayerUpdateEvent;
-    eventTime = 0;
-    stateTime = 0;
-    player = -1;
+    eventTime = 0.0;
+    stateTime = 0.0;
+    playerID = -1;
   }
 
   virtual ~bz_PlayerUpdateEventData_V1(){};
   virtual void update (){bz_EventData::update();}
 
-  int		player;
+  int		playerID;
   bz_PlayerUpdateState state;
   double stateTime;
 
@@ -1094,7 +1099,7 @@ public:
   {
     eventType = bz_eLoggingEvent;
     level = 0;
-    eventTime = 0;
+    eventTime = 0.0;
   }
 
   virtual ~bz_LoggingEventData_V1(){};
@@ -1252,7 +1257,7 @@ public:
   {
     eventType = bz_ePlayerCollision;
     players[0] = players[1] = -1;
-    time = 0;
+    eventTime = 0.0;
     pos[0] = pos[1] = pos[2] = 0;
     handled = false;
   }
@@ -1262,7 +1267,7 @@ public:
 
   int players[2];
   float pos[3];
-  float time;
+  double eventTime;
   bool handled;
 };
 
@@ -1497,7 +1502,7 @@ BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
 BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
 BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...) _ATTRIBUTE34;
 BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...) _ATTRIBUTE34;
-BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
+BZF_API bool bz_sendFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt );
@@ -1529,7 +1534,7 @@ BZF_API bool bz_getBZDBBool( const char* variable );
 BZF_API int bz_getBZDBInt( const char* variable );
 
 BZF_API int bz_getBZDBItemPerms( const char* variable );
-BZF_API bool bz_getBZDBItemPesistent( const char* variable );
+BZF_API bool bz_getBZDBItemPersistent( const char* variable );
 BZF_API bool bz_BZDBItemExists( const char* variable );
 
 BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms = 0, bool persistent = false );

@@ -698,7 +698,7 @@ void KeepAwayPlayerPaused::process(bz_EventData * eventData)
 
   bz_PlayerPausedEventData_V1 *PauseData = (bz_PlayerPausedEventData_V1 *) eventData;
 
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(PauseData->player);
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(PauseData->playerID);
 
   if (player) {
     const char *flagHeld = bz_getPlayerFlag(player->playerID);
@@ -706,7 +706,7 @@ void KeepAwayPlayerPaused::process(bz_EventData * eventData)
     if (flagHeld) {
       if (flagHeld == keepaway.flagToKeep) {
 	bz_removePlayerFlag(player->playerID);
-	bz_sendTextMessage(BZ_SERVER, PauseData->player, "Flag removed - cannot pause while holding flag.");
+	bz_sendTextMessage(BZ_SERVER, PauseData->playerID, "Flag removed - cannot pause while holding flag.");
 	keepaway.id = -1;
 	keepaway.team = eNoTeam;
 	keepaway.toldFlagFree = false;

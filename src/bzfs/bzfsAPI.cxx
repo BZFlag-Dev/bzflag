@@ -1939,7 +1939,7 @@ BZF_API bool bz_sendTextMessagef(int from, int to, const char *fmt, ...)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_sentFetchResMessage(int playerID, const char *URL)
+BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 {
   if(playerID==BZ_SERVER || !URL)
     return false;
@@ -2132,7 +2132,7 @@ BZF_API int bz_getBZDBItemPerms(const char *variable)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_getBZDBItemPesistent(const char *variable)
+BZF_API bool bz_getBZDBItemPersistent(const char *variable)
 {
   if(!bz_BZDBItemExists(variable))
     return false;

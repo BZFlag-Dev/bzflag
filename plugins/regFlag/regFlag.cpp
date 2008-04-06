@@ -35,11 +35,11 @@ void RegFlag::process(bz_EventData * eventData)
 
   switch (eventData->eventType) {
   case bz_ePlayerUpdateEvent:
-    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->player;
+    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->playerID;
     break;
 
   case bz_eShotFiredEvent:
-    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->player;
+    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->playerID;
     break;
 
   default:

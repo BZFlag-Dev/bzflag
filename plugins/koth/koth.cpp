@@ -526,12 +526,12 @@ void KOTHPlayerPaused::process(bz_EventData * eventData)
     return;
 
   bz_PlayerPausedEventData_V1 *PauseData = (bz_PlayerPausedEventData_V1 *) eventData;
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(PauseData->player);
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(PauseData->playerID);
 
   if (player) {
     if (kothzone.pointIn(player->currentState.pos)) {
-      bz_killPlayer(PauseData->player, true, BZ_SERVER);
-      bz_sendTextMessage(BZ_SERVER, PauseData->player, "Cannot pause while on the Hill.");
+      bz_killPlayer(PauseData->playerID, true, BZ_SERVER);
+      bz_sendTextMessage(BZ_SERVER, PauseData->playerID, "Cannot pause while on the Hill.");
     }
   }
   bz_freePlayerRecord(player);
@@ -598,14 +598,14 @@ inline void KOTHEventHandler::process(bz_EventData * eventData)
     pos[0] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[0];
     pos[1] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[1];
     pos[2] = ((bz_PlayerUpdateEventData_V1 *) eventData)->state.pos[2];
-    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->player;
+    playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->playerID;
     break;
 
   case bz_eShotFiredEvent:
     pos[0] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[0];
     pos[1] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[1];
     pos[2] = ((bz_ShotFiredEventData_V1 *) eventData)->pos[2];
-    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->player;
+    playerID = ((bz_ShotFiredEventData_V1 *) eventData)->playerID;
     break;
 
   default:

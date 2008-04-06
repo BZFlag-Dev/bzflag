@@ -2422,7 +2422,7 @@ bool ReloadCommand::operator() (const char *,
   rescanForBans(playerData->accessInfo.isOperator(),playerData->player.getCallSign(),t);
 
   bz_ReloadEventData_V1 data;
-  data.player = t;
+  data.playerID = t;
 
   worldEventManager.callEvents(bz_eReloadEvent,&data);
 

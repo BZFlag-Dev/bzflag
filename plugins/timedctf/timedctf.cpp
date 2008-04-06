@@ -566,7 +566,7 @@ void TCTFPlayerUpdates::process(bz_EventData * eventData)
   // no CTF if teams not balanced, drop team flags asap:
 
   if (!tctf.fairCTF) {
-    int playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->player;
+    int playerID = ((bz_PlayerUpdateEventData_V1 *) eventData)->playerID;
     const char *FlagHeld = bz_getPlayerFlag(playerID);
 
     if (FlagHeld != NULL) {

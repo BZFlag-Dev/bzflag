@@ -219,7 +219,7 @@ Player_fetchResource (Player *self, PyObject *args)
     return NULL;
   }
 
-  bool result = bz_sentFetchResMessage (self->record->playerID, url);
+  bool result = bz_sendFetchResMessage (self->record->playerID, url);
   return (result ? Py_True : Py_False);
 }
 
