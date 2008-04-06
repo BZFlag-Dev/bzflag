@@ -240,14 +240,6 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class ReportCommand : public ServerCommand {
-public:
-  ReportCommand();
-
-  virtual bool operator() (const char *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class HelpCommand : public ServerCommand {
 public:
   HelpCommand();
@@ -460,7 +452,7 @@ static GameStatsCommand   gameStatsCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
-static ReportCommand      ReportCommand;
+ReportCommand      reportCommand;	// used by the API
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static GhostCommand       ghostCommand;
@@ -1905,57 +1897,86 @@ bool PlayerListCommand::operator() (const char *,
 bool ReportCommand::operator() (const char *message,
 				GameKeeper::Player *playerData)
 {
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
-    return true;
+ 
+  int t;
+  std::string callsign;
+  std::string msg;
+
+  // If no playerData - dont perfom real player checks, since it is probably the API
+  if ( playerData ) {
+    t = playerData->getIndex();
+
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+        sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
+        return true;
+    }
+
+    if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
+        sendMessage(ServerPlayer, t, "The report command is disabled on this server");
+        return true;
+    }
+
+    if (strlen(message + 1) < 8) {
+        sendMessage(ServerPlayer, t, "Nothing reported");
+        return true;
+    }
+
+    msg = (message + 8);
+    callsign = playerData->player.getCallSign();
+  }
+  else { 
+	      t = ServerPlayer;
+	      msg = message;
+		  callsign = "SERVER";
   }
 
-  if (strlen(message + 1) < 8) {
-    sendMessage(ServerPlayer, t, "Nothing reported");
-  } else {
-    time_t now = time(NULL);
-    char* timeStr = ctime(&now);
-    std::string reportStr;
-    reportStr = reportStr + timeStr + "Reported by " +
-      playerData->player.getCallSign() + ": " + (message + 8);
-    if (clOptions->reportFile.size() > 0) {
+  time_t now = time(NULL);
+  char* timeStr = ctime(&now);
+  std::string reportStr;
+  reportStr = reportStr + timeStr + "Reported by " + callsign + ": " + msg;
+
+  if (clOptions->reportFile.size() > 0) {
       std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
       ofs << reportStr << std::endl << std::endl;
-    }
-    if (clOptions->reportPipe.size() > 0) {
+  }
+
+  if (clOptions->reportPipe.size() > 0) {
       FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
       if (pipeWrite != NULL) {
-	fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
+	      fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
       } else {
-	logDebugMessage(1,"Couldn't write report to the pipe\n");
-      }
+	            logDebugMessage(1,"Couldn't write report to the pipe\n");
+        }
       pclose(pipeWrite);
-    }
-    if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-      sendMessage(ServerPlayer, t, "The report command is disabled on this server");
-    } else {
-      std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
-	(message + 8);
-      const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
-      unsigned int cur = 0;
-      const unsigned int wordsize = words.size();
-      std::string temp2;
-      while (cur != wordsize) {
-	temp2.clear();
-	while (cur != wordsize &&
-	       (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
-	  temp2 += words[cur] + " ";
-	  ++cur;
-	}
-	sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
-      }
-      logDebugMessage(1,"Player %s [%d] has filed a report (time: %s).\n",
-	     playerData->player.getCallSign(), t, timeStr);
-
-      sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
-    }
   }
+
+  std::string temp = std::string("**\"") + callsign + "\" reports: " + msg;
+  const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
+  unsigned int cur = 0;
+  const unsigned int wordsize = words.size();
+  std::string temp2;
+
+  while (cur != wordsize) {
+      temp2.clear();
+      while (cur != wordsize &&
+          (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
+	      temp2 += words[cur] + " ";
+	      ++cur;
+      }
+      sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
+  }
+
+  logDebugMessage(1,"Player %s [%d] has filed a report (time: %s).\n", callsign.c_str(), t, timeStr);
+
+  if ( playerData )
+       sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
+
+  // Notify plugins of the report filed
+  bz_ReportFiledEventData_V1 reportData;
+  reportData.playerID = t;
+  reportData.message = msg;
+  reportData.eventTime = TimeKeeper::getCurrent().getSeconds(); 
+  worldEventManager.callEvents(bz_eReportFiledEvent, &reportData);
 
   return true;
 }

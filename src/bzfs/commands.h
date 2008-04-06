@@ -43,6 +43,15 @@ public:
 		GameKeeper::Player *playerData);
 };
 
+class ReportCommand : private ServerCommand {
+public:
+	ReportCommand();
+
+	virtual bool operator() (const char *commandLine,
+		GameKeeper::Player *playerData);
+};
+
+
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId);
 
@@ -53,6 +62,7 @@ void removeCustomSlashCommand ( std::string command );
 
 extern ShutdownCommand shutdownCommand;
 extern SuperkillCommand superkillCommand;
+extern ReportCommand reportCommand;
 
 #endif
 

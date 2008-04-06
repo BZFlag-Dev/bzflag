@@ -143,6 +143,7 @@ typedef enum
   bz_eAllowCTFCaptureEvent,
   bz_eAllowFlagGrabEvent,
   bz_eAllowKillCommandEvent,
+  bz_eReportFiledEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1306,6 +1307,24 @@ public:
   bool	allow;
 };
 
+class bz_ReportFiledEventData_V1 : public bz_EventData
+{
+public:
+  bz_ReportFiledEventData_V1()
+  {
+    eventType = bz_eReportFiledEvent;
+    playerID = -1;
+    eventTime = 0.0;
+  }
+
+  virtual ~bz_ReportFiledEventData_V1(){};
+  virtual void update (){bz_EventData::update();}
+
+  int playerID;
+  bz_ApiString message;
+  double eventTime;
+}; 
+
 // event handler callback
 class bz_EventHandler
 {
@@ -1532,7 +1551,10 @@ BZF_API int bz_getDebugLevel ( void );
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int duration, const char* reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
+
+// report
 BZF_API bz_APIStringList* bz_getReports( void );
+BZF_API bool bz_fileReport(const char* message);
 
 // lagwarn
 BZF_API int bz_getLagWarn( void );

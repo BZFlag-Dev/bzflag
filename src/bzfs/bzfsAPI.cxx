@@ -2364,6 +2364,16 @@ BZF_API bz_APIStringList *bz_getReports(void)
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_fileReport(const char* message)
+{
+  if ( !message )
+ 	 return false;
+
+  return reportCommand(message,NULL);
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API int bz_getLagWarn(void)
 {
   return (int)(clOptions->lagwarnthresh *1000+0.5);
@@ -4600,6 +4610,8 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
 
   return true;
 }
+
+
 
 // Local Variables: ***
 // mode: C++ ***
