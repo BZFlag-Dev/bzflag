@@ -72,7 +72,8 @@ public:
   /**
    * Default constructor (required to allow this in a vector)
    */
-  BZFontFace_impl() {
+  BZFontFace_impl()
+  {
     for (unsigned int i=0; i < sizeof(sizes)/sizeof(sizes[0]); ++i) sizes[i] = 0;    
   }
   /**
@@ -85,13 +86,11 @@ public:
   }
 
   /**
-   * Functionality moved from FontManager::clear without full understanding
-   * (why don't we clear font size 26?)
+   * release all loaded sizes
    */
-  void clear() {
+  void clear()
+  {
     for (int i = 0; i < MAX_SIZE; i++) {
-      if (i==26) continue;
-
 #if debugging
       if (sizes[i] != 0) {
 	printf("BZFontFace_impl::clear font:%p size:%d\n", (void*)(sizes[i]), i);
@@ -109,12 +108,7 @@ public:
   void rebuild()
   {
     for (int j = 0; j < MAX_SIZE; j++) {
-
       if (sizes[j] != 0) {
-	// When stolen from FontManager, this originally called
-	// rebuildSize(), but that simply called clear() and
-	// preloadSize(). This is logically identical and illustrates
-	// my confusion
 	setSize(j, 0);
 	preloadSize(j);
       }
@@ -148,7 +142,8 @@ public:
   /**
    * Accessor to retrieve a particular font size from this face
    */
-  FTFont* getSize(int size) {
+  FTFont* getSize(int size)
+  {
     if (size >= MAX_SIZE) size = MAX_SIZE-1;
     return sizes[size];
   }
@@ -157,12 +152,13 @@ public:
    * Mutator to set a particular font size from this face.
    * Takes over ownership of the allocated memory
    */
-  void setSize(int size, FTFont* font) {
+  void setSize(int size, FTFont* font)
+  {
     if (size >= MAX_SIZE) size = MAX_SIZE-1;
 
-    // TBR: need to verify that there is not a memory management issue
-    // if somehow this pointer has ever been given to someone
-    // else. However, this is still the right way to do it.
+    // TODO: need to verify that there is not a memory management
+    // issue if somehow this pointer has ever been given to someone
+    // else.
     delete sizes[size];
     sizes[size] = font;
   }
@@ -220,8 +216,6 @@ namespace {
     fontFaces[face].sizes[size] = font;
 
     // preload the font
-
-    // preload
     static const std::string charset("abcdefghijklmnopqrstuvwxyz"
 				     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 				     "1234567890"
