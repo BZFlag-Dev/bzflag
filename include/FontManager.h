@@ -201,6 +201,12 @@ private:
 
   /** STATIC: underline color */
   static GLfloat underlineColor[4];
+
+  /**
+   * STATIC: GL Context callbacks
+   */
+  static void initContext(void*);
+  static void freeContext(void*);
 };
 
 

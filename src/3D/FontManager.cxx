@@ -244,13 +244,15 @@ FontManager::FontManager() : Singleton<FontManager>(),
   BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
 
+  OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
 }
 
 
 FontManager::~FontManager()
 {
-  // FIXME: total cop-out for now.  this should work.
-  //  clear();
+  // boom, this is still problematic
+  clear();
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
 }
 
 
@@ -353,8 +355,9 @@ void FontManager::clear(void)
     fflush(stdout);
 #endif
 
-    fontFaces.erase(faceItr);
-    faceItr = fontFaces.begin();
+    //    fontFaces.erase(faceItr);
+    //    faceItr = fontFaces.begin();
+    faceItr++;
 
 #if debugging
     printf("FontManager::clear posterase\n");
@@ -795,6 +798,17 @@ void FontManager::underlineCallback(const std::string &, void *)
   }
 }
 
+void FontManager::initContext(void*)
+{
+  std::cout << "initContext called\n" << fontFaces.size() << " faces loaded" << std::endl;
+}
+ 
+void FontManager::freeContext(void* data)
+{
+  std::cout << "freeContext called\n" << "clearing " << fontFaces.size() << " fonts" << std::endl;
+  FontManager* fm( static_cast<FontManager*>(data) );
+  fm->clear();
+}
 
 // Local Variables: ***
 // mode: C++ ***
