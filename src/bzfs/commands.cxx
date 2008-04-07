@@ -1049,7 +1049,6 @@ bool SuperkillCommand::operator() (const char *,
       // fire off a game end event
       bz_GameStartEndEventData_V1	gameData;
       gameData.eventType = bz_eGameEndEvent;
-      gameData.eventTime = TimeKeeper::getCurrent().getSeconds();
       gameData.duration = clOptions->timeLimit;
       worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
     }
@@ -1084,7 +1083,6 @@ bool GameOverCommand::operator() (const char *,
   // fire off a game end event
   bz_GameStartEndEventData_V1	gameData;
   gameData.eventType = bz_eGameEndEvent;
-  gameData.eventTime = TimeKeeper::getCurrent().getSeconds();
   gameData.duration = clOptions->timeLimit;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 
@@ -1975,7 +1973,6 @@ bool ReportCommand::operator() (const char *message,
   bz_ReportFiledEventData_V1 reportData;
   reportData.playerID = t;
   reportData.message = msg;
-  reportData.eventTime = TimeKeeper::getCurrent().getSeconds(); 
   worldEventManager.callEvents(bz_eReportFiledEvent, &reportData);
 
   return true;
@@ -3322,7 +3319,6 @@ void parseServerCommand(const char *message, int t)
 	bz_SlashCommandEventData_V1 commandData;
 	commandData.from = t;
 	commandData.message = message;
-	commandData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
 	worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
@@ -3368,7 +3364,6 @@ void parseServerCommand(const char *message, int t)
 	bz_UnknownSlashCommandEventData_V1 commandData1;
 	commandData1.from = t;
 	commandData1.message = message;
-	commandData1.eventTime = TimeKeeper::getCurrent().getSeconds();
 
 	worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
 	if (commandData1.handled) // did anyone do it?

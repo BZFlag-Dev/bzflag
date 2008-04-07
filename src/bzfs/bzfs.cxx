@@ -244,7 +244,6 @@ public:
     bz_LoggingEventData_V1 data;
     data.level = level;
     data.message = message;
-    data.eventTime = TimeKeeper::getCurrent().getSeconds();
 
     worldEventManager.callEvents(bz_eLoggingEvent,&data);
   }
@@ -832,7 +831,6 @@ bool defineWorld ( void )
 
   bz_GetWorldEventData_V1	worldData;
   worldData.ctf = clOptions->gameType == eClassicCTF;
-  worldData.eventTime = TimeKeeper::getCurrent().getSeconds();
   worldData.rabbit = clOptions->gameType == eRabbitChase;
   worldData.worldFile = clOptions->worldFile;
 
@@ -1267,7 +1265,6 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 
       msgWasFiltered = true;
       eventData.playerID = sendingPlayer;
-      eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
       eventData.rawMessage = message;
       eventData.filteredMessage = filtered;
 
@@ -1308,7 +1305,6 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     chatData.to = recipientPlayer;
 
   chatData.message = msg;
-  chatData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   // send any events that want to watch the chat
   if (chatData.message.size())
@@ -1408,7 +1404,6 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     chatData.to = dstPlayer;
 
   chatData.message = message;
-  chatData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   // send any events that want to watch the chat
   if (chatData.message.size())
@@ -1454,7 +1449,6 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 	}
     }
     serverMsgData.message = message;
-    serverMsgData.eventTime = TimeKeeper::getCurrent().getSeconds();
     worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
   }
 
@@ -1835,7 +1829,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     allowData.ipAddress = "local.player";
 
   allowData.playerID = playerIndex;
-  allowData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eAllowPlayer,&allowData);
   if (!allowData.allow) {
@@ -2068,7 +2061,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.eventType = bz_ePlayerJoinEvent;
   joinEventData.playerID = playerIndex;
   joinEventData.record = bz_getPlayerByIndex(playerIndex);
-  joinEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
@@ -2253,7 +2245,6 @@ void pausePlayer(int playerIndex, bool paused = true)
 
   bz_PlayerPausedEventData_V1	pauseEventData;
   pauseEventData.playerID = playerIndex;
-  pauseEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   pauseEventData.pause = paused;
 
   worldEventManager.callEvents(bz_ePlayerPausedEvent,&pauseEventData);
@@ -2298,7 +2289,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   partEventData.eventType = bz_ePlayerPartEvent;
   partEventData.playerID = playerIndex;
   partEventData.record = bz_getPlayerByIndex(playerIndex);
-  partEventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   if (reason)
     partEventData.reason = reason;
 
@@ -2720,7 +2710,6 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
   bz_PlayerCollisionEventData_V1  eventData;
   eventData.players[0] = player->getIndex();
   eventData.players[1] = otherPlayer->getIndex();
-  eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   memcpy(eventData.pos,pos,sizeof(float)*3);
   worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
 
@@ -3048,7 +3037,6 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   allowData.teamCapping = convertTeam(teamCaptured);
   allowData.playerCapping = playerIndex;
   playerData->getPlayerCurrentPosRot(allowData.pos, allowData.rot);
-  allowData.eventTime = TimeKeeper::getCurrent().getSeconds();
   allowData.allow = true;
   allowData.killTeam = true;
 
@@ -3069,7 +3057,6 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
   playerData->getPlayerCurrentPosRot(eventData.pos, eventData.rot);
-  eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
@@ -3113,7 +3100,6 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, flo
   bz_PlayerUpdateEventData_V1 eventData;
   playerStateToAPIState(eventData.state,state);
   eventData.stateTime = timeStamp;
-  eventData.eventTime = TimeKeeper::getCurrent().getSeconds();
   eventData.playerID = playerData->getIndex();
   worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
@@ -3949,7 +3935,6 @@ static void doTickEvent(void)
 {
   // fire off a tick event
   bz_TickEventData_V1 tickData;
-  tickData.eventTime = TimeKeeper::getCurrent().getSeconds();
   worldEventManager.callEvents(bz_eTickEvent,&tickData);
 }
 
@@ -4096,7 +4081,6 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	// fire off a game start event
 	bz_GameStartEndEventData_V1 gameData;
 	gameData.eventType = bz_eGameStartEvent;
-	gameData.eventTime = TimeKeeper::getCurrent().getSeconds();
 	gameData.duration = clOptions->timeLimit;
 	worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
@@ -4142,7 +4126,6 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
       // fire off a game end event
       bz_GameStartEndEventData_V1 gameData;
       gameData.eventType = bz_eGameEndEvent;
-      gameData.eventTime = TimeKeeper::getCurrent().getSeconds();
       gameData.duration = clOptions->timeLimit;
       worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
     }
