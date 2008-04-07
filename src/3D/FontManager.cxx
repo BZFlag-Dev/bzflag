@@ -346,9 +346,6 @@ void FontManager::clear(void)
   FontFamilies::iterator faceItr;
   faceItr = fontFaces.begin();
   while (faceItr != fontFaces.end()) {
-    FontFamilies::iterator nextFaceItr = faceItr;
-    nextFaceItr++; // must get the next before clearing, else kaboom
-
     (*faceItr).clear();
 
 #if debugging
@@ -357,13 +354,12 @@ void FontManager::clear(void)
 #endif
 
     fontFaces.erase(faceItr);
+    faceItr = fontFaces.begin();
 
 #if debugging
     printf("FontManager::clear posterase\n");
     fflush(stdout);
 #endif
-
-    faceItr = nextFaceItr;
   }
 
   return;
