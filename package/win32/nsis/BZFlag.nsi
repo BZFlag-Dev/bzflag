@@ -31,6 +31,9 @@
   Name "BZFlag ${VER_MAJOR}${VER_MINOR}"
   OutFile "..\..\..\dist\bzflag-${VER_MAJOR}${VER_MINOR}.exe"
 
+  ;Read in the program files path (localized)
+  ReadEnvStr $PROGRAMFILES "PROGRAMFILES"
+
   ;Default installation folder
   InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}"
 
