@@ -3452,17 +3452,14 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getIPAddress())) {
-      // operators can override antiperms
-      if (!isOperator) {
-	// make sure this player isn't protected
-	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	  if (playerID != -1) {
-	    snprintf(kickmessage, MessageLen, "%s is protected from being banned (skipped).", p->player.getCallSign());
-	    sendMessage(ServerPlayer, playerID, kickmessage);
-	  }
-	  continue;
-	}
+      // make sure this player isn't protected
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+        if (playerID != -1) {
+          snprintf(kickmessage, MessageLen, "%s is protected from being banned (skipped).", p->player.getCallSign());
+          sendMessage(ServerPlayer, playerID, kickmessage);
+        }
+        continue;
       }
 
       snprintf(kickmessage, MessageLen, "You were banned from this server by %s", banner.c_str());
