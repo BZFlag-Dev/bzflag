@@ -5,6 +5,7 @@
 
 BZFlag 2.99.x
 ------------
+* Server operators no longer automatically override antiban - Daniel Remenak
 * New tank explosion pattern - Luke Rewega
 * Exposed pauseOnMinimize local variable for iconify pausing - Sean Morrison
 * Added a new flag, Cloaked Shot - Alexander Boyd
