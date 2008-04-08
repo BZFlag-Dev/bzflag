@@ -52,8 +52,6 @@ recent bugs
 - doc/guide/NetworkProtocol.xml is not up to date
 
 -- bans --
-- idbans do not respect the antiban permission
-
 - idbans report the wrong time remaining on a idbanlist
 
 - a banned registered player that gets added to both the banList and
@@ -99,10 +97,7 @@ recent bugs
 - line stipple doesn't (can't) match polygon stipple
    messes up shadow of flag stem
    
-- exploding tank parts sometimes move along the ground instead of
-   flying up into the air.
-   
-- untextured pause mode, textures only show up while paused when opening menus
+   - untextured pause mode, textures only show up while paused when opening menus
 
 -- build system --
 - make maintainer-clean does not enter DIST_SUBDIRS
