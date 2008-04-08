@@ -862,8 +862,7 @@ bool IdBanCommand::operator() (const char* message,
 	}
       }
     }
-  }
-  else {
+  } else {
     // looking for a specific player
     victim = GameKeeper::Player::getPlayerIDByName(idpat);
     victimPlayer = GameKeeper::Player::getPlayerByIndex(victim);
@@ -1067,7 +1066,7 @@ bool MasterBanCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t,
 		  "Previous master ban list entries have been flushed, reloading in background");
 
-	  bz_reloadMasterBans();
+      bz_reloadMasterBans();
 
     } else {
       sendMessage(ServerPlayer, t, "No action taken.");
