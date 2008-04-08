@@ -545,17 +545,13 @@ static bool doBanKick(GameKeeper::Player *victim,
   const int victimID = victim->getIndex();
   const int bannerID = banner->getIndex();
 
-  // operators can override antiperms, except for other operators
-  if (victim->accessInfo.isOperator() ||
-      !banner->accessInfo.isOperator()) {
-    // make sure this player isn't protected
-    if (victim->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
-      snprintf(buffer, MessageLen,
-	       "%s is protected from being banned (skipped).",
-	       victim->player.getCallSign());
-      sendMessage(ServerPlayer, bannerID, buffer);
-      return false; // do not use the ban
-    }
+  // make sure this player isn't protected
+  if (victim->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
+    snprintf(buffer, MessageLen,
+             "%s is protected from being banned (skipped).",
+             victim->player.getCallSign());
+    sendMessage(ServerPlayer, bannerID, buffer);
+    return false; // do not use the ban
   }
 
   // send a notice to the victim

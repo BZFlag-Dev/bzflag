@@ -95,7 +95,7 @@ extern void resetTeamScores ( void );
 extern void startCountdown ( int delay, float limit, const char *buyWho );
 bool defineWorld ( void );
 bool saveWorldCache ( const char* fileName = NULL );
-void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int playerID = -1 );
+void rescanForBans ( const char* callsign = NULL, int playerID = -1 );
 void zapFlag(FlagInfo &flag);
 void anointNewRabbit( int killerId = NoPlayer);
 

@@ -2416,7 +2416,7 @@ bool ReloadCommand::operator() (const char *,
   GameKeeper::Player::reloadAccessDatabase();
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
-  rescanForBans(playerData->accessInfo.isOperator(),playerData->player.getCallSign(),t);
+  rescanForBans(playerData->player.getCallSign(), t);
 
   bz_ReloadEventData_V1 data;
   data.playerID = t;

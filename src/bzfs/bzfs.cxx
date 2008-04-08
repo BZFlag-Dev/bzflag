@@ -3434,7 +3434,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 }
 
-void rescanForBans ( bool isOperator, const char* callsign, int playerID )
+void rescanForBans ( const char* callsign, int playerID )
 {
   // Validate all of the current players
 
