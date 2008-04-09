@@ -621,6 +621,15 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     keyboardMovement = Down;
   }
 
+  if (myTank &&
+      myTank->isAlive() &&
+      !HUDDialogStack::get()->isActive() &&
+      (myTank->getInputMethod() != LocalPlayer::Keyboard) &&
+      pressed &&
+      keyboardMovement != None &&
+      BZDB.isTrue("allowInputChange") )
+    myTank->setInputMethod(LocalPlayer::Keyboard);
+
   if (myTank && myTank->getInputMethod() == LocalPlayer::Keyboard)
     switch (keyboardMovement) {
       case Left:
@@ -769,13 +778,6 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 	  serverLink->sendMessage(to, messageBuffer);
 	}
       }
-  } else if (myTank->isAlive() && !HUDDialogStack::get()->isActive()) {
-    // Might be a direction key. Save it for later.
-    if ((myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed) {
-      if (keyboardMovement != None)
-	if (BZDB.isTrue("allowInputChange"))
-	  myTank->setInputMethod(LocalPlayer::Keyboard);
-    }
   }
 }
 
