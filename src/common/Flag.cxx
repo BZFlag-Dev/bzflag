@@ -118,7 +118,7 @@ namespace Flags {
       "Shoots through buildings.  Can kill Phantom Zone." );
     InvisibleBullet	= new FlagType( "Invisible Bullet", "IB", FlagUnstable, InvisibleShot, FlagGood, NoTeam,
       "Your shots don't appear on other radars.  Can still see them out window.");
-	CloakedBullet	= new FlagType( "Cloaked Shot", "CS", FlagUnstable, CloakedShot, FlagGood, NoTeam,
+    CloakedBullet	= new FlagType( "Cloaked Shot", "CS", FlagUnstable, CloakedShot, FlagGood, NoTeam,
       "Shots are invisible out-the-window. Still visible on radar. Glow is still visible out-the-window. Watch out for ricochet!");
     Stealth	= new FlagType( "Stealth", "ST", FlagUnstable, StandardShot, FlagGood, NoTeam,
       "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!");
@@ -147,7 +147,7 @@ namespace Flags {
     Masquerade	= new FlagType( "Masquerade", "MQ", FlagUnstable, StandardShot, FlagGood, NoTeam,
       "In opponent's hud, you appear as a teammate.");
     Seer	= new FlagType( "Seer", "SE", FlagUnstable, StandardShot, FlagGood, NoTeam,
-      "See stealthed, cloaked and masquerading tanks as normal.  See invisible bullets.");
+      "See stealthed, cloaked and masquerading tanks as normal.  See invisible bullets and cloaked shots.");
     Thief	= new FlagType( "Thief", "TH", FlagUnstable, ThiefShot, FlagGood, NoTeam,
       "Steal flags.  Small and fast but can't kill.");
     Burrow	= new FlagType( "Burrow", "BU", FlagUnstable, StandardShot, FlagGood, NoTeam,
