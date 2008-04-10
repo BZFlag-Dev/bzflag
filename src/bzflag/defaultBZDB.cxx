@@ -94,7 +94,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "lodScale",			"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxFlagLOD",		"8",			true,	StateDatabase::ReadWrite,	NULL },
-  { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "stencilShadows",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "autohunt",			"",			true,	StateDatabase::ReadWrite,	NULL },

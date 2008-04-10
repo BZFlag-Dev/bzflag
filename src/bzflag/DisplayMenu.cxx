@@ -139,17 +139,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   addControl(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Shadows:");
-  option->setCallback(callback, (void*)"7");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("Stipple"));
-  options->push_back(std::string("Stencil"));
-  option->update();
-  addControl(option);
-
 #if !defined(DEBUG_RENDERING)
   if (debugLevel > 0) {
 #endif
@@ -411,13 +400,6 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.setPersistent("texturereplace", false);
     RENDERER.notifyStyleChange();
     break;
-  case '7': {
-    const int shadowVal = list->getIndex();
-    BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
-    BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
-    RENDERER.notifyStyleChange();
-    break;
-  }
   case 'a':
     RENDERER.setHiddenLine(list->getIndex() != 0);
     break;
