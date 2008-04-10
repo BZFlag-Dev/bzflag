@@ -29,7 +29,7 @@ extern int getBuildDate();
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	1
+#define BZ_CONFIG_FILE_VERSION	3
 #endif
 
 #define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"

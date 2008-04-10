@@ -151,30 +151,34 @@ void findConfigFile(void)
 
 void updateConfigFile(void)
 {
-	int		configVersion = 2;
-	if (BZDB.isSet("config_vers"))
-		configVersion = (int)BZDB.eval("config_vers");
+  int configVersion = BZ_CONFIG_FILE_VERSION;
+  if (BZDB.isSet("config_vers"))
+    configVersion = (int)BZDB.eval("config_vers");
 
-	switch (configVersion) {
+  switch (configVersion) {
 	case 0: // 2.1.0
 	case 1:// 2.1.6
 	  BZDB.unset("maxTextureSize");
 	  break;
 
 	case 2: // 2.1.13
-	  break; // no action, current version
+	  BZDB.set("stencilShadows", "1");
+	  break; 
+
+	case 3: // 2.99.1 current
+	  break;
 
 	default: // hm, we don't know about this one...
 	  printError(TextUtils::format("Config file is tagged version \"%d\", "
-		  "which was not expected (too new perhaps). "
-		  "Trying to load anyhow.", configVersion));
+	    "which was not expected (too new perhaps). "
+	    "Trying to load anyhow.", configVersion));
 	  break;
-	}
+  }
 
-	// set us as the updated version
-	configVersion = BZ_CONFIG_FILE_VERSION;
-	BZDB.setInt("config_vers", configVersion);
-	BZDB.unset("config_version");// pull the old version, we are updated
+  // set us as the updated version
+  configVersion = BZ_CONFIG_FILE_VERSION;
+  BZDB.setInt("config_vers", configVersion);
+  BZDB.unset("config_version");// pull the old version, we are updated
 }
 
 // Local Variables: ***
