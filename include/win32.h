@@ -60,6 +60,14 @@ typedef signed int	int32_t;
 typedef unsigned int	uint32_t;
 #endif
 
+#ifndef uint64_t
+typedef LONGLONG	int64_t;
+#endif
+
+#ifndef uint64_t
+typedef ULONGLONG	uint64_t;
+#endif
+
 /* stuff specific to visual studio */
 #if defined(_MSC_VER)
 // turn off bogus `this used in base member initialization list'
