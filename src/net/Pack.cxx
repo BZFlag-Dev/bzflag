@@ -121,7 +121,7 @@ void*			nboPackFloat(void* b, float v)
 void*			nboPackDouble(void* b, double v)
 {
   // hope the double is a 8 byte IEEE 754 standard encoding
-  htond(b, (const unsigned char *)&v, 1);
+  htond((unsigned char*)b, (const unsigned char *)&v, 1);
   return ADV(b, uint64_t);
 }
 
