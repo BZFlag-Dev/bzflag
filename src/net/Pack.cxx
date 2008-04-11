@@ -121,10 +121,7 @@ void*			nboPackFloat(void* b, float v)
 void*			nboPackDouble(void* b, double v)
 {
   // hope the double is a 8 byte IEEE 754 standard encoding
-  unsigned char *dptr = NULL;
-
-  htond(dptr, (const unsigned char *)&v, 1);
-  ::memcpy(b, &dptr, sizeof(uint64_t));
+  htond(b, (const unsigned char *)&v, 1);
   return ADV(b, uint64_t);
 }
 
