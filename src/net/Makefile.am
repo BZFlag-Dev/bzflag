@@ -19,6 +19,7 @@ libNet_la_SOURCES =			\
 	AresHandler.cxx			\
 	Pack.cxx			\
 	Ping.cxx			\
+	htond.cxx			\
 	multicast.cxx			\
 	network.cxx
 

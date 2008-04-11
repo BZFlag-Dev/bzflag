@@ -19,6 +19,12 @@
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
 
+
+/* provided by htond.c */
+void ntohd(register unsigned char *out, register const unsigned char *in, int count);
+void htond(register unsigned char *out, register const unsigned char *in, int count);
+
+
 //
 // Unions
 //
@@ -110,6 +116,16 @@ void*			nboPackFloat(void* b, float v)
   uint32_t x = (uint32_t)htonl(u.intval);
   ::memcpy(b, &x, sizeof(uint32_t));
   return ADV(b, uint32_t);
+}
+
+void*			nboPackDouble(void* b, double v)
+{
+  // hope the double is a 8 byte IEEE 754 standard encoding
+  unsigned char *dptr;
+
+  htond(dptr, (const unsigned char *)&v, 1);
+  ::memcpy(b, &dptr, sizeof(uint64_t));
+  return ADV(b, uint64_t);
 }
 
 void*			nboPackVector(void* b, const float *v)
@@ -241,6 +257,7 @@ void*			nboUnpackFloat(void* b, float& v)
       Length -= sizeof(float);
     }
   }
+
   // hope that float is a 4 byte IEEE 754 standard encoding
   uint32_t x;
   ::memcpy(&x, b, sizeof(uint32_t));
@@ -248,6 +265,23 @@ void*			nboUnpackFloat(void* b, float& v)
   u.intval = (uint32_t)ntohl(x);
   v = u.floatval;
   return ADV(b, uint32_t);
+}
+
+void*			nboUnpackDouble(void* b, double& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(double)) {
+      Error = true;
+      v = 0.0f;
+      return b;
+    } else {
+      Length -= sizeof(double);
+    }
+  }
+
+  // hope that double is 8 byte IEEE 754 standard encoding
+  ntohd((unsigned char *)&v, (unsigned char *)b, 1);
+  return ADV(b, uint64_t);
 }
 
 void*			nboUnpackVector(void* b, float *v)
@@ -261,6 +295,7 @@ void*			nboUnpackVector(void* b, float *v)
       Length -= sizeof(float[3]);
     }
   }
+
   // hope that float is a 4 byte IEEE 754 standard encoding
   uint32_t data[3];
   floatintuni u;

@@ -157,6 +157,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\net\htond.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\net\multicast.cxx"
 				>
 			</File>
