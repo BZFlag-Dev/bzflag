@@ -67,24 +67,20 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   hitWall(false)
 {
   // initialize shots array to no shots fired
-  World *world = World::getWorld();
-  int numShots = 0;
-  if (world) {
-    numShots = world->getMaxShots();
-  }
-  shots.resize(numShots);
-  for (int i = 0; i < numShots; i++)
-    shots[i] = NULL;
-  // set input method
-  if (BZDB.isTrue("allowInputChange")) {
-    inputMethod = Mouse;
-  } else {
-    setInputMethod(BZDB.get("activeInputDevice"));
+  if (World::getWorld())
+  {
+    for ( size_t i = 0; i < World::getWorld()->getMaxShots(); i++ )
+      shotSlots.push_back(ShotSlot());
   }
 
-  if (headless) {
+  // set input method
+  if (BZDB.isTrue("allowInputChange"))
+    inputMethod = Mouse;
+  else 
+    setInputMethod(BZDB.get("activeInputDevice"));
+
+  if (headless) 
     gettingSound = false;
-  }
 
   stuckStartTime = TimeKeeper::getNullTime();
 }
@@ -110,39 +106,55 @@ void			LocalPlayer::doUpdate(float dt)
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
   int i;
-  if (isPaused()) {
-    for (i = 0; i < numShots; i++) {
-      if (shots[i]) {
-	shots[i]->boostReloadTime(dt);
-      }
-    }
+  if (isPaused())
+  {
+    for (size_t s = 0; s < shotSlots.size(); s++)
+	shotSlots[s]->boostReloadTime(dt);
 
     // if we've been paused for a long time, drop our flag
-    if (!wasPaused) {
+    if (!wasPaused)
+    {
       pauseTime = TimeKeeper::getCurrent();
       wasPaused = true;
     }
-  } else {
+  }
+  else 
+  {
     pauseTime = TimeKeeper::getNullTime();
     wasPaused = false;
   }
 
-  // reap dead (reloaded) shots
-  for (i = 0; i < numShots; i++)
-    if (shots[i] && shots[i]->isReloaded()) {
-      if (!shots[i]->isExpired())
-	shots[i]->setExpired();
-      delete shots[i];
-      shots[i] = NULL;
-    }
+  // reload expired shot slots
+  for (size_t s = 0; s < shotSlots.size(); s++)
+  {
+    if (shotSlots[s].isReloaded())  // if the shot has reloaded
+    {
+      int shotID = shotSlots[s].getShotID();
 
-  // update shots
-  anyShotActive = false;
-  for (i = 0; i < numShots; i++)
-    if (shots[i]) {
-      shots[i]->update(dt);
-      if (!shots[i]->isExpired()) anyShotActive = true;
+      // if the shot exists int he world, kill it
+      ShotList &shotList = ShotList::instance();
+      ShotPath* shot = shotList.getShot(shotID);
+      if (shot)
+      {
+	shot->setExpired();
+	shotList.removeShot(shotID);
+      }
+      
+      // reload the slot so it can be fired again
+      shotSlots[s].reload();
     }
+  }
+
+  // update shot slots
+  // the prediction on the full shot list happens in the main loop
+  anyShotActive = false;
+  for (size_t s = 0; s < shotSlots.size(); s++)
+  {
+      shotSlots[s].update(dt);
+      if (!shotSlots[s].isExpired())
+	anyShotActive = true;
+    }
+  }
 
   // if no shots now out (but there had been) then reset target
   if (!anyShotActive && hadShotActive)

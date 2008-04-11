@@ -428,7 +428,6 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgShotEnd:
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
-    case MsgGMUpdate:
     case MsgLagPing:
     case MsgGameTime:
     case MsgWhatTimeIsIt:

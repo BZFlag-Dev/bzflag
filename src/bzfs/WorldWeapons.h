@@ -85,9 +85,7 @@ protected:
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
-
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt);
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float dt );
 
 #endif
 

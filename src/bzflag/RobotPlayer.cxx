@@ -24,6 +24,7 @@
 #include "World.h"
 #include "Intersect.h"
 #include "TargetingUtils.h"
+#include "ShotList.h"
 
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 
@@ -206,7 +207,8 @@ void			RobotPlayer::doUpdate(float dt)
 
 void			RobotPlayer::doUpdateMotion(float dt)
 {
-  if (isAlive()) {
+  if (isAlive())
+  {
     bool evading = false;
     // record previous position
     const float oldAzimuth = getAngle();
@@ -220,65 +222,62 @@ void			RobotPlayer::doUpdateMotion(float dt)
     float tankSpeed = BZDBCache::tankSpeed;
 
     World *world = World::getWorld();
-    if (!world) {
+    if (!world)
       return;
-    }
 
     // basically a clone of Roger's evasive code
-    for (int t=0; t <= world->getCurMaxPlayers(); t++)
+    std::vector<ShotPath*> shots = ShotList::instance().getShotList();
+
+    for ( size_t s = 0; s < shots.size(); s++ )
     {
-      Player *p = 0;
-      if (t < world->getCurMaxPlayers())
-	p = world->getPlayer(t);
-      else
-	p = LocalPlayer::getMyTank();
-      if (!p || p->getId() == getId())
+      ShotPath* shot = shots[s];
+
+      if (!shot || shot->isExpired())
 	continue;
-      const int maxShots = p->getMaxShots();
-      for (int s = 0; s < maxShots; s++) {
-	ShotPath* shot = p->getShot(s);
-	if (!shot || shot->isExpired())
-	  continue;
-	// ignore invisible bullets completely for now (even when visible)
-	if ((shot->getShotType() == InvisibleShot) || (shot->getShotType() == CloakedShot))
-	  continue;
 
-	const float* shotPos = shot->getPosition();
-	if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
-	  continue;
-	const float dist = TargetingUtils::getTargetDistance(position, shotPos);
-	if (dist < 150.0f) {
-	  const float *shotVel = shot->getVelocity();
-	  float shotAngle = atan2f(shotVel[1], shotVel[0]);
-	  float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
+      // ignore invisible bullets completely for now (even when visible)
+      if ((shot->getShotType() == InvisibleShot) || (shot->getShotType() == CloakedShot))
+	continue;
 
-	  float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
-	  float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+      const float* shotPos = shot->getPosition();
+      if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
+	continue;
 
-	  if (dotProd > 0.97f) {
-	    float rotation;
-	    float rotation1 = (float)((shotAngle + M_PI/2.0) - azimuth);
-	    if (rotation1 < -1.0f * M_PI) rotation1 += (float)(2.0 * M_PI);
-	    if (rotation1 > 1.0f * M_PI) rotation1 -= (float)(2.0 * M_PI);
+      const float dist = TargetingUtils::getTargetDistance(position, shotPos);
+      if (dist < 150.0f)
+      {
+	const float *shotVel = shot->getVelocity();
+	float shotAngle = atan2f(shotVel[1], shotVel[0]);
+	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
-	    float rotation2 = (float)((shotAngle - M_PI/2.0) - azimuth);
-	    if (rotation2 < -1.0f * M_PI) rotation2 += (float)(2.0 * M_PI);
-	    if (rotation2 > 1.0f * M_PI) rotation2 -= (float)(2.0 * M_PI);
+	float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
+	float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-	    if (fabs(rotation1) < fabs(rotation2))
-	      rotation = rotation1;
-	    else
-	      rotation = rotation2;
-	    setDesiredSpeed(1.0f);
-	    setDesiredAngVel(rotation);
-	    evading = true;
-	  }
+	if (dotProd > 0.97f)
+	{
+	  float rotation;
+	  float rotation1 = (float)((shotAngle + M_PI/2.0) - azimuth);
+	  if (rotation1 < -1.0f * M_PI) rotation1 += (float)(2.0 * M_PI);
+	  if (rotation1 > 1.0f * M_PI) rotation1 -= (float)(2.0 * M_PI);
+
+	  float rotation2 = (float)((shotAngle - M_PI/2.0) - azimuth);
+	  if (rotation2 < -1.0f * M_PI) rotation2 += (float)(2.0 * M_PI);
+	  if (rotation2 > 1.0f * M_PI) rotation2 -= (float)(2.0 * M_PI);
+
+	  if (fabs(rotation1) < fabs(rotation2))
+	    rotation = rotation1;
+	  else
+	    rotation = rotation2;
+	  setDesiredSpeed(1.0f);
+	  setDesiredAngVel(rotation);
+	  evading = true;
 	}
       }
     }
 
     // when we are not evading, follow the path
-    if (!evading && dt > 0.0 && pathIndex < (int)path.size()) {
+    if (!evading && dt > 0.0 && pathIndex < (int)path.size())
+    {
       float distance;
       float v[2];
       const float* endPoint = path[pathIndex].get();

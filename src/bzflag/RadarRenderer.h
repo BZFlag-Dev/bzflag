@@ -87,6 +87,8 @@ private:
   static float	colorScale(const float z, const float h);
   static float	transScale(const float z, const float h);
 
+  bool renderNoise ( SceneRenderer& renderer );
+
 private:
   World*	world;
   int		x, y;

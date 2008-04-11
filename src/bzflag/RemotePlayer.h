@@ -34,10 +34,6 @@ public:
   ~RemotePlayer();
 
   void addShot(FiringInfo&);
-  void updateShots(float dt);
-
-private:
-  bool doEndShot(int index, bool isHit, float* pos);
 
 private:
   int numShots;

@@ -317,7 +317,7 @@ char *getDirectMessageBuffer()
 
 int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
-  if (!handler)
+  if (handler)
     return 0;
   
   // send message to one player
@@ -2720,33 +2720,60 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
     processFreezeTagCollision(player,otherPlayer,pos);
 }
 
-// FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
-// (was broken before); it turns out that killerIndex=-1 for world weapon?
-// No need to check on victimIndex.
-//   It is taken as the index of the udp table when called by incoming message
-//   It is taken by killerIndex when autocalled, but only if != -1
-// killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
+bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respawnOnBase )
 {
-  GameKeeper::Player *killerData = NULL;
   GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
-  if (!victimData || !victimData->player.isPlaying())
+  // verify that we can kill this bastard
+  if (!victimData || !victimData->player.isPlaying() || !victim->isAlive())
+    return false;
+
+  // ok so no mater what, he's dead so set him as dead
+  victimData->setRestartOnBase(respawnOnBase);
+  victimData->setDead();
+
+  PlayerId killer = ServerPlayer;
+
+  // now figure how he died
+  switch ( reason )
+  {
+  default:
+    // an invalid reason, bail
     return;
 
-  if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
-    killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
+    // reasons with shots
+  case GotShot:
+  case GotRunOver:
+  case GotCaptured:
+  case GenocideEffect:
+    {
+      // ok try to find the shot
+      if ( id < 0 ) // damn it's a local shot, search the shooter and see what the global shotID for this guy is. it has to be his local shot
+      {
+	id = victimData->findShot(id);
+	if (id < 0 )
+	  return false;	  // we don't have track of that local shot anymore, so go and tell him to stuff it.
+      }
+      ShotManager::Shot *shot = ShotManager::instance().getShot(id);
+      if (!shot)
+	return false; // yeah bad shot screw it
 
-  // aliases for convenience
-  // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
-  PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0, *victim = &victimData->player;
+      killer = shot->player;
+      
+    }
+    break;
 
-  // victim was already dead. keep score.
-  if (!victim->isAlive())
-    return;
+    // reasons with no info
+  case SelfDestruct:
+  case WaterDeath:
+      // valid so just let em path
+    break;
 
-  victim->setRestartOnBase(respawnOnBase);
-  victim->setDead();
+    // reason with a driverID
+  case PhysicsDriverDeath:
+    break;
+
+  }
 
   // call any events for a playerdeath
   bz_PlayerDieEventData_V1	dieEvent;

@@ -16,6 +16,7 @@
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
+#include "ShotManager.h"
 
 std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
 std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
@@ -423,39 +424,23 @@ class KilledHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 7)
+    if (!player)
       return false;
 
+    // you can't die stupid!
     if (player->player.isObserver())
       return true;
 
-    // data: id of killer, shot id of killer
-    PlayerId killer;
-    FlagType* flagType;
-    int16_t shot, reason;
-    int phydrv = -1;
+    // data: reason and shot, that's it
+    // the server knows everything else
+    int16_t reason;
+    int id = -1;
 
-    buf = nboUnpackUByte(buf, killer);
     buf = nboUnpackShort(buf, reason);
-    buf = nboUnpackShort(buf, shot);
-    buf = FlagType::unpack(buf, flagType);
-
-    if (reason == PhysicsDriverDeath)
-    {
-      int32_t inPhyDrv;
-      buf = nboUnpackInt(buf, inPhyDrv);
-      phydrv = int(inPhyDrv);
-    }
-
-    if (killer != ServerPlayer)	// Sanity check on shot: Here we have the killer
-    {
-      int si = (shot == -1 ? -1 : shot & 0x00FF);
-      if ((si < -1) || (si >= clOptions->maxShots))
-	return true;
-    }
+    buf = nboUnpackShort(buf, id);
 
     player->player.endShotCredit--;
-    playerKilled(player->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
+    playerKilled(player->getIndex(), (BlowedUpReason)reason, id);
 
     // stop pausing attempts as you can not pause when being dead
     player->player.pauseRequestTime = TimeKeeper::getNullTime();
@@ -558,8 +543,25 @@ public:
     else
       firingInfo.flagType = Flags::Null;
 
-    if (!player->addShot(id & 0xff, id >> 8, firingInfo))
+    if (!player->canShoot())
+    {
+      logDebugMessage(2,"Player %s [%d] can not shoot yet\n", shooter.getCallSign(), firingInfo.shot.player);
       return true;
+    }
+
+    int guid = ShotManager::instance().newShot(&firingInfo);
+
+    // send the player back a message that gives them the new GUID from the temp id they gave us
+    sendMsgShotID(player->getIndex(),id,guid);
+    firingInfo.shot.id = guid;
+
+    // add the shot, send the GUID and the local ID in case we have to look it up
+    if (!player->addShot(guid,id, firingInfo.timeSent))
+    {
+      // if it was no good for some reason, remove it before we track it
+      ShotManager::instance().removeShot(guid,false);
+      return true;
+    }
 
     char message[MessageLen];
     if (shooter.haveFlag())
@@ -608,7 +610,7 @@ public:
       } // end is limit
     } // end of player has flag
 
-    // ask the API if it wants to modify this shot
+    // tell the API a shot was fired, it can not modify it at all
     bz_ShotFiredEventData_V1 shotEvent;
 
     shotEvent.pos[0] = firingInfo.shot.pos[0];
@@ -617,10 +619,11 @@ public:
     shotEvent.playerID = (int)player->getIndex();
 
     shotEvent.type = firingInfo.flagType->flagAbbv;
+    shotEvent.shotID = guid;
 
     worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
 
-    sendMsgShotBegin(player->getIndex(),id,firingInfo);
+    sendMsgShotBegin(player->getIndex(),guid,firingInfo);
 
     return true;
   }
@@ -637,9 +640,9 @@ public:
     if (player->player.isObserver())
       return true;
 
-    int16_t shot;
+    int shot;
     uint16_t reason;
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackInt(buf, shot);
     buf = nboUnpackUShort(buf, reason);
 
     // ask the API if it wants to modify this shot
@@ -650,7 +653,8 @@ public:
     worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 
     FiringInfo firingInfo;
-    player->removeShot(shot & 0xff, shot >> 8, firingInfo);
+    player->removeShot(shot);
+    ShotManager::instance().removeShot(shot,false);
 
     sendMsgShotEnd(player->getIndex(),shot,reason);
 
@@ -672,16 +676,19 @@ public:
     PlayerId hitPlayer = player->getIndex();
     PlayerId shooterPlayer;
     FiringInfo firingInfo;
-    int16_t shot;
+    int shot;
 
     buf = nboUnpackUByte(buf, shooterPlayer);
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackInt(buf, shot);
     GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
 
     if (!shooterData)
       return true;
 
-    if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo))
+    // TODO verify the shot, make sure the shot is near them etc..
+
+    ShotManager::instance().removeShot(shot,false);
+    if (shooterData->removeShot(shot))
     {
       sendMsgShotEnd(shooterPlayer, shot, 1);
 
@@ -973,30 +980,6 @@ public:
   }
 };
 
-class GMUpdateHandler : public PlayerFirstNoBumpHandler
-{
-public:
-  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
-  {
-    if (!player || len < 33)
-      return false;
-
-    ShotUpdate shot;
-    shot.unpack(buf);
-
-    unsigned char temp = 0;
-    nboUnpackUByte(buf, temp);
-
-    PlayerId target = temp;
-
-    if (!player->player.isAlive() || player->player.isObserver() || !player->updateShot(shot.id & 0xff, shot.id >> 8))
-      return true ;
-
-    sendMsgGMUpdate( player->getIndex(), &shot, target );
-    return true;
-  }
-};
-
 void registerDefaultHandlers ( void )
 {
   clientNetworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
@@ -1030,7 +1013,6 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgLagPing] = new LagPingHandler;
   playerNetworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
-  playerNetworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
 }
 
 void cleanupDefaultHandlers ( void )

@@ -134,7 +134,6 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgFlagUpdate),
   PACKET_LIST_ENTRY (MsgGameTime),
   PACKET_LIST_ENTRY (MsgGrabFlag),
-  PACKET_LIST_ENTRY (MsgGMUpdate),
   PACKET_LIST_ENTRY (MsgGetWorld),
   PACKET_LIST_ENTRY (MsgKilled),
   PACKET_LIST_ENTRY (MsgMessage),

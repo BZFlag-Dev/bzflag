@@ -36,6 +36,35 @@ class SceneDatabase;
 class Obstacle;
 struct FiringInfo;
 
+class ShotSlot
+{
+public:
+  ShotSlot();
+  void		fire(int id);
+  void		setID (int id){shotID = id;}
+  void		update (float dt);
+  void		boostReloadTime(float dt);
+  void		setReloadTime(float);
+  bool		isExpiring() const;
+  bool		isExpired() const;
+  bool		isReloaded() const; 
+  float		getReloadTime() const;
+  const double	getStartTime() const;
+  const double	getCurrentTime() const;
+  const int	getShotID() const {return shotID;}
+
+  void		reload ();
+
+protected:
+  float		reloadTime;		// time to reload
+  double	startTime;		// time of firing
+  double	currentTime;		// current time
+  bool		expiring;		// shot has almost terminated
+  bool		expired;		// shot has terminated
+  int		shotID;			// the global shot that was fired
+
+};
+
 class Player {
 public:
   Player(const PlayerId&, TeamColor,
@@ -95,8 +124,9 @@ public:
   float		getTeleporterProximity() const;
 
   // shots
-  int		getMaxShots() const;
-  ShotPath*	getShot(int index) const;
+  size_t		getShotSlotCount() const;
+  std::vector<ShotSlot> getShotSlots() const {return shotSlots;}
+
   ShotType	getShotType ( void ) const {return shotType;}
   void		setShotType ( ShotType _shotType ) {shotType = _shotType;}
 
@@ -109,7 +139,6 @@ public:
   bool		getIpAddress(Address&);
   void		setIpAddress(const Address& addr);
 
-  virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
   void		fireJumpJets();
@@ -169,7 +198,7 @@ public:
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
-  void	  setHandicap(float handicap);
+  void		setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
   void		setAllow(unsigned char _allow);
@@ -198,12 +227,14 @@ protected:
   void    prepareShotInfo(FiringInfo &info);
   void    addShot(ShotPath *shot, const FiringInfo &info);
 
+  void	  shoot ( void );
+
 protected:
   // shot statistics
   ShotStatistics	  shotStatistics;
   const Obstacle*	  lastObstacle; // last obstacle touched
 
-  std::vector<ShotPath*>  shots;
+  std::vector<ShotSlot>	  shotSlots;
   float			  handicap;
   TimeKeeper		  jamTime;
 
@@ -212,7 +243,6 @@ private:
   // was already terminated.  position must be set to the shot's
   // position if you return true (it's okay to return false if
   // there's no meaningful shot position).
-  virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
   void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 			float* predictedVel, float time) const;
   void calcRelativeMotion(float vel[2], float& speed, float& angvel);
@@ -671,9 +701,9 @@ inline void Player::setZpos (float z)
   state.pos[2] = z;
 }
 
-inline int Player::getMaxShots() const
+inline size_t Player::getShotSlotCount() const
 {
-  return (int)shots.size();
+  return shotSlots.size();
 }
 
 #endif /* __PLAYER_H__ */

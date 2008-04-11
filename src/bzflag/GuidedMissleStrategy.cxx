@@ -537,13 +537,16 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   void *buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
   buf = nboPackUByte(buf, lastTarget);
-  ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
+ 
+  //TODO, remove all this stuff and move it to the server, we should NEVER send this again
+  // ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
 void GuidedMissileStrategy::readUpdate(uint16_t code, void* msg)
 {
   // ignore non-guided missile messages (we shouldn't get them)
-  if (code != MsgGMUpdate) return;
+ // if (code != MsgGMUpdate)
+  return;
 
   // position and velocity have been replaced by the remote system's
   // concept of the position and velocity.  this may cause a discontinuity

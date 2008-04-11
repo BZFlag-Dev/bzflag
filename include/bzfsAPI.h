@@ -939,16 +939,16 @@ public:
       eventType = bz_eShotFiredEvent;
       playerID = -1;
       pos[0] = pos[1] = pos[2] = 0;
-      changed = false;
+      shotID = 0;
     }
 
     virtual ~bz_ShotFiredEventData_V1(){};
     virtual void update (){bz_EventData::update();}
 
-    bool		changed;
     float		pos[3];
     bz_ApiString	type;
     int			playerID;
+    int			shotID;
 };
 
 class bz_AnointRabbitEventData_V1 : public bz_EventData
@@ -1448,8 +1448,7 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sendFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt );
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt);
+BZF_API int bz_fireWorldWep ( const char* flagType, float *pos, float tilt = 0.0f, float direction = 0.0f, float lifetime = -1.0f, int player = -1 );
 
 // time API
 BZF_API float bz_getMaxWaitTime ( const char *name = NULL );
@@ -2044,8 +2043,8 @@ public:
   virtual void nearestFlag ( const char* flagName, float pos[3] );
   virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shotType );
   virtual void setShotType ( int player, bz_eShotType shotType );
-  virtual void shotFired ( int player, unsigned short shotID, bz_eShotType shotType );
-  virtual void shotEnded( int player, unsigned short shotID, unsigned short reason );
+  virtual void shotFired ( int player, int shotID, bz_eShotType shotType );
+  virtual void shotEnded( int player, int shotID, unsigned short reason );
   virtual void playerTeleported( int player, unsigned short from, unsigned short to );
   virtual void playerAutopilot( int player, bool autopilot );
   virtual void allowSpawn( bool canSpawn );

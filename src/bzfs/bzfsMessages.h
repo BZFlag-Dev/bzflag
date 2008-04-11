@@ -47,13 +47,15 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
 bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
 void sendSetShotType ( int playerIndex, ShotType type );
-void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo );
-void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason );
+void sendMsgShotBegin ( int player, int id, FiringInfo &firingInfo );
+void sendMsgShotEnd ( int player, int id, unsigned short reason );
 void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
-void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target );
+void sendMsgShotUpdate ( int player, FiringInfo *shot );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
 void sendMsgTimeUpdate ( int timeLimit );
+
+void sendMsgShotID ( int playerIndex, int tempID, int GUID );
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
 void sendMsgTangibilityReset ( void );

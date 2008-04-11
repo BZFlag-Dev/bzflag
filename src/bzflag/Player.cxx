@@ -32,9 +32,97 @@
 #include "Roaming.h"
 
 #include "SyncClock.h"
+#include "ShotList.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
+
+//
+// ShotSlot
+//
+
+ShotSlot::ShotSlot()
+{
+  startTime = TimeKeeper::getCurrent().getSeconds();
+  reloadTime = -1;
+  currentTime = startTime;
+
+  expiring = true;
+  expired = true;
+
+  shotID = 0;
+}
+
+void		ShotSlot::fire(int id)
+{
+  shotID = id;
+  startTime = TimeKeeper::getCurrent().getSeconds();
+  currentTime = startTime;
+  expired = false;
+  expiring = false;
+}
+
+void ShotSlot::update ( float dt )
+{
+  // get new time step and set current time
+  currentTime += dt;
+
+  // update shot
+  if (!expired)
+  {
+    if (expiring)
+    {
+	expiring = true;
+	expired = true;
+    }
+  }
+}
+
+void ShotSlot::reload()
+{
+  expired = true;
+  shotID = 0;
+}
+
+void	ShotSlot::boostReloadTime(float dt)
+{
+  reloadTime += dt;
+}
+
+void	ShotSlot::setReloadTime(float rt)
+{
+  reloadTime = rt;
+}
+bool	ShotSlot::isExpiring() const
+{
+  return expiring;
+}
+
+bool	ShotSlot::isExpired() const
+{
+  return expired; 
+}
+
+bool	ShotSlot::isReloaded() const
+{
+  return (currentTime - startTime >= reloadTime);
+}
+
+float	ShotSlot::getReloadTime() const
+{
+  return reloadTime;
+}
+
+const double	ShotSlot::getStartTime() const
+{
+  return startTime;
+}
+
+const double	ShotSlot::getCurrentTime() const
+{
+  return currentTime;
+}
+
 
 //
 // Player
@@ -125,13 +213,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
 Player::~Player()
 {
-  // free shots
-  const int numShots = getMaxShots();
-  for (int i = 0; i < numShots; i++)
-  {
-    if (shots[i])
-      delete shots[i];
-  }
+  ShotList::instance().flushShotsFromPlayer(getId());
   freePlayerAvatar (avatar);
 }
 
@@ -177,7 +259,7 @@ float Player::getReloadTime() const
   if (!world)
     return 0.0f;
 
-  const int numShots = world->getMaxShots();
+  const size_t numShots = shotSlots.size();
   if (numShots <= 0) 
     return 0.0f;
 
@@ -186,18 +268,17 @@ float Player::getReloadTime() const
     return time;
 
   // look for an empty slot
-  int i;
-  for (i = 0; i < numShots; i++)
+  for (size_t s = 0; s < numShots; s++)
   {
-    if (!shots[i])
+    if (!shotSlots[s].isExpired())
       return 0.0f;
   }
 
   // look for the shot fired least recently
-  float minTime = float(shots[0]->getReloadTime() - (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
-  for (i = 1; i < numShots; i++)
+  float minTime = float(shotSlots[0].getReloadTime() - (shotSlots[0].getCurrentTime() - shotSlots[0].getStartTime()));
+  for (size_t s = 1; s < numShots; s++)
   {
-    const float t = float(shots[i]->getReloadTime() - (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
+    const float t = float(shotSlots[s].getReloadTime() - (shotSlots[s].getCurrentTime() - shotSlots[s].getStartTime()));
     if (t < minTime)
       minTime = t;
   }
@@ -1031,18 +1112,6 @@ void Player::spawnEffect()
   return;
 }
 
-
-void Player::addShots(SceneDatabase* scene, bool colorblind) const
-{
-  const int count = getMaxShots();
-  for (int i = 0; i < count; i++) {
-    ShotPath* shot = getShot(i);
-    if (shot && !shot->isExpiring() && !shot->isExpired())
-      shot->addShot(scene, colorblind);
-  }
-}
-
-
 void* Player::unpack(void* buf, uint16_t code)
 {
   float timestamp;
@@ -1429,13 +1498,6 @@ void Player::setIpAddress(const Address& addr)
   haveIpAddr = true;
 }
 
-ShotPath* Player::getShot(int index) const
-{
-  index &= 0x00FF;
-  if (index >= (int)shots.size())
-    return NULL;
-  return shots[index];
-}
 
 void Player::prepareShotInfo(FiringInfo &firingInfo)
 {

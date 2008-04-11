@@ -22,13 +22,7 @@ class WorldPlayer : public Player {
   public:
 			WorldPlayer();
 			~WorldPlayer();
-
-    void		addShot(const FiringInfo&);
-    void		updateShots(float dt);
-    void		addShots(SceneDatabase* scene, bool colorblind) const;
-
   private:
-    bool		doEndShot(int index, bool isHit, float* pos);
 };
 
 #endif // BZF_WORLD_PLAYER_H

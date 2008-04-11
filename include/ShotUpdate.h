@@ -46,7 +46,7 @@ struct ShotUpdate {
 
   public:
     PlayerId		player;			// who's shot
-    uint16_t		id;			// shot id unique to player
+    int			id;			// global Shot ID on outbound shots, local shotID on inbound
     float		pos[3];			// shot position
     float		vel[3];			// shot velocity
     float		dt;			// time shot has existed

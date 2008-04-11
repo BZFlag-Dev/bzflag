@@ -17,6 +17,7 @@
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
+#include "ShotList.h"
 
 /**
  * Plan
@@ -221,67 +222,39 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	const float *pos = myTank->getPosition();
 	ShotPath *minPath = NULL;
 
+	std::vector<ShotPath*> shots = ShotList::instance().getShotList();
+
 	minDistance = Infinity;
-	for (int t = 0; t < curMaxPlayers; t++) {
-		if (t == myTank->getId() || !player[t])
-			continue;
-
-		const int maxShots = player[t]->getMaxShots();
-		for (int s = 0; s < maxShots; s++) {
-			ShotPath* shot = player[t]->getShot(s);
-			if (!shot || shot->isExpired())
-				continue;
-
-			if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) &&
-				(myTank->getFlag() != Flags::Seer))
-				continue; //Theoretically Roger could triangulate the sound
-			if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
-				continue;
-			if ((shot->getShotType() == LaserShot) &&
-				(myTank->getFlag() == Flags::Cloaking))
-				continue; //cloaked tanks can't die from lasers
-
-			const float* shotPos = shot->getPosition();
-			if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
-				(shot->getShotType() != GMShot))
-				continue;
-
-			const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
-			if (dist < minDistance) {
-				const float *shotVel = shot->getVelocity();
-				float shotAngle = atan2f(shotVel[1], shotVel[0]);
-				float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
-
-				float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
-				float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
-
-				if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
-					continue;
-
-				minDistance = dist;
-				minPath = shot;
-			}
-		}
-	}
-
-	float oldDistance = minDistance;
-	WorldPlayer *wp = world->getWorldWeapons();
-	for (int w = 0; w < wp->getMaxShots(); w++) {
-		ShotPath* shot = wp->getShot(w);
+	for (size_t s = 0; s < shots.size(); s++)
+	{
+		ShotPath* shot = shots[s];
 		if (!shot || shot->isExpired())
 			continue;
 
-		if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) && myTank->getFlag() != Flags::Seer)
+		PlayerId t = shot->getPlayer();
+
+		if (t == myTank->getId())
+			continue;
+
+		if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) && (myTank->getFlag() != Flags::Seer))
 			continue; //Theoretically Roger could triangulate the sound
-		if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
+
+		if (t != ServerPlayer && t != myTank->getId())
+		{
+			if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+				continue;
+		}
+
+		if ((shot->getShotType() == LaserShot) && (myTank->getFlag() == Flags::Cloaking))
 			continue; //cloaked tanks can't die from lasers
 
 		const float* shotPos = shot->getPosition();
 		if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
 			continue;
 
-		const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
-		if (dist < minDistance) {
+		const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
+		if (dist < minDistance) 
+		{
 			const float *shotVel = shot->getVelocity();
 			float shotAngle = atan2f(shotVel[1], shotVel[0]);
 			float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
@@ -296,8 +269,6 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 			minPath = shot;
 		}
 	}
-	if (oldDistance < minDistance)
-		minDistance = oldDistance; //pick the closer bullet
 	return minPath;
 }
 

@@ -34,6 +34,7 @@
 /* common interface headers */
 #include "Singleton.h"
 #include "ShotUpdate.h"
+#include "Flag.h"
 
 class ShotEventCallbacks
 {
@@ -48,16 +49,27 @@ public:
 class ShotManager  : public Singleton<ShotManager>
 {
 public:
-  int newShot ( FiringInfo *info, int param );
+  int newShot ( FiringInfo *info );
+  bool updateShot ( int id, float *pos, float *vec, double st, double l, double r );
   void update ( double dt );
+  void removeShot ( int id, bool notify = true );
 
   void addEventHandler ( ShotEventCallbacks *cb );
   void removeEventHandler ( ShotEventCallbacks *cb );
 
+  void clear ( void );
+
+  Shot *getShot ( int id );
+
   class Shot
   {
   public:
-    Shot(FiringInfo* info, int GUID, int p = 0);
+    Shot( FiringInfo* info = NULL );
+   
+    Shot( const Shot& shot );
+    Shot& operator = (const Shot& shot);
+
+    bool update ( double dt );
 
     typedef enum
     {
@@ -66,16 +78,13 @@ public:
       Reflect
     }ObstacleMode;
 
-  protected:
-    int param;
-    int id;
-
-   // TeamColor team;
-  //  FlagType flag;
- //   ShotType type;
+    TeamColor team;
+    FlagType *flag;
+    ShotType type;
     ObstacleMode mode;
 
     double startTime;
+    double currentTime;
     double lastUpdateTime;
 
     double lifetime;
@@ -83,6 +92,8 @@ public:
     
     float pos[3];
     float vec[3];
+
+    int	  player;
   };
 
 protected:
@@ -95,6 +106,8 @@ private:
   std::map<int,Shot> shots;
 
   std::vector<ShotEventCallbacks*> callbacks;
+
+  int lastShotID;
 };
 
 #endif /* __SHOTMANAGERH__ */

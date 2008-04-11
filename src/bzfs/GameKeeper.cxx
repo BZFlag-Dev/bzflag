@@ -17,11 +17,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 /* common headers */
 #include "GameTime.h"
 #include "FlagInfo.h"
 #include "StateDatabase.h"
+#include "ShotManager.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -494,98 +496,103 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
 }
 
 
-int GameKeeper::Player::maxShots = 0;
-void GameKeeper::Player::setMaxShots(int _maxShots)
+size_t GameKeeper::Player::totalShotSlots = 0;
+void GameKeeper::Player::setMaxShots(size_t maxShots)
 {
-  maxShots = _maxShots;
+  totalShotSlots = maxShots;
 }
 
-bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
+bool GameKeeper::Player::canShoot ( void )
 {
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
-  if (id < (int)shotsInfo.size() && shotsInfo[id].present
-    && now < shotsInfo[id].expireTime) {
-      logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
-	player.getCallSign(), playerIndex, id);
-      return false;
-  }
-  // verify shot number
-  if (id > maxShots - 1) {
-    logDebugMessage(2,"Player %s [%d] shot id %d out of range %d\n",
-      player.getCallSign(), playerIndex, id, maxShots);
-    return false;
+  if (shotSlots.size() > totalShotSlots)
+  {
+    ShotSlot slot;
+    slot.expireTime = -1;
+    slot.present = false;
+    slot.running = false;
+
+    shotSlots.push_back(slot);
+    return true;
   }
 
-  shotsInfo.resize(maxShots);
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
+
+  for ( size_t s = 0; s < shotSlots.size(); s++ )
+  {
+    if (!shotSlots[s].present || now >= shotSlots[s].expireTime)
+    {
+      shotSlots[s].present = false;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+int GameKeeper::Player::findShot ( int localID )
+{
+  std::map<int,int>::iterator itr = liveShots.begin();
+  while (itr != liveShots.end())
+  {
+    if (itr->second == localID)
+      return itr->first;
+
+    itr++;
+  }
+  return -1;
+}
+
+bool GameKeeper::Player::addShot( int globalID, int localID, double startTime )
+{
+  size_t freeSlot = shotSlots.size();
+
+  // find the free slot we know we should have from "can shoot"
+  for ( size_t s = 0; s < shotSlots.size(); s++ )
+  {
+    if (!shotSlots[s].present)
+    {
+      freeSlot = s;
+      s = shotSlots.size();
+    }
+  }
+
+  if (freeSlot >= shotSlots.size())
+    return false;
+
+  FlagType * flagType = ShotManager::instance().getShot(globalID)->flag;
 
   float lifeTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-  if (firingInfo.flagType == Flags::RapidFire)
+  if (flagType == Flags::RapidFire)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
-  else if (firingInfo.flagType == Flags::MachineGun)
+  else if (flagType == Flags::MachineGun)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
-  else if (firingInfo.flagType == Flags::GuidedMissile)
+  else if (flagType == Flags::GuidedMissile)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
-  else if (firingInfo.flagType == Flags::Laser)
+  else if (flagType == Flags::Laser)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
-  else if (firingInfo.flagType == Flags::ShockWave)
+  else if (flagType == Flags::ShockWave)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
-  else if (firingInfo.flagType == Flags::Thief)
+  else if (flagType == Flags::Thief)
     lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
 
-  ShotInfo myShot;
-  myShot.firingInfo  = firingInfo;
-  myShot.salt	= salt;
-  myShot.expireTime  = now + lifeTime;
-  myShot.present     = true;
-  myShot.running     = true;
+  // fill up the slot
+  shotSlots[s].expireTime  = startTime + lifeTime;
+  shotSlots[s].present     = true;
+  shotSlots[s].running     = true;
 
-  shotsInfo[id] = myShot;
+  // track our live shots by global ID, keep the local ID around for the rare case where we die from our own shot before we get the globalID
+  liveShots.push_back(globalID) = localID;
   return true;
 }
 
-bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
+bool GameKeeper::Player::removeShot( int id )
 {
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
-  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
-    || now >= shotsInfo[id].expireTime) {
-      logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
-	player.getCallSign(), playerIndex, id);
-      return false;
-  }
-  if (shotsInfo[id].salt != salt) {
-    logDebugMessage(2,"Player %s [%d] trying to stop a mismatched shot id %d\n",
-      player.getCallSign(), playerIndex, id);
-    return false;
-  }
-  if (!shotsInfo[id].running)
-    return false;
-  shotsInfo[id].running = false;
-  firingInfo = shotsInfo[id].firingInfo;
-  return true;
-}
+  std::map<int,int>::iterator itr = liveShots.find(id);
+  if (itr != liveShots.end())
+    liveShots.erase(itr);
 
-bool GameKeeper::Player::updateShot(int id, int salt)
-{
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
-  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
-    || now >= shotsInfo[id].expireTime) {
-      logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
-	player.getCallSign(), playerIndex, id);
-      return false;
-  }
-  if (shotsInfo[id].salt != salt) {
-    logDebugMessage(2,"Player %s [%d] trying to update a mismatched shot id %d\n",
-      player.getCallSign(), playerIndex, id);
-    return false;
-  }
-  if (!shotsInfo[id].running)
-    return false;
-  // only GM can be updated
-  if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
-    logDebugMessage(2,"Player %s [%d] trying to update a non GM shot id %d\n",
-      player.getCallSign(), playerIndex, id);
-    return false;
-  }
+  ShotManager::instance().removeShot(id,false);
+
   return true;
 }
 

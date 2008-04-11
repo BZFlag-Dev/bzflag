@@ -56,7 +56,8 @@ enum TeamColor {
   PurpleTeam = 4,
   ObserverTeam = 5,
   RabbitTeam = 6,
-  HunterTeam = 7
+  HunterTeam = 7,
+  LastTeam
 };
 
 // Player allow attributes for MsgAllow

@@ -70,6 +70,20 @@ std::vector<ShotPath*> ShotList::getLocalShotList ( void )
   return outShots;
 }
 
+std::vector<ShotPath*> ShotList::getShotsFromPlayer ( PlayerId player )
+{
+  std::vector<ShotPath*> outShots;
+  std::map<int,ShotPath*>::iterator itr = shots.begin();
+  while(itr != shots.end())
+  {
+    if (itr->second && itr->second->getPlayer() == player)
+      outShots.push_back(itr->second);
+    itr++;
+  }
+
+  return outShots;
+}
+
 std::vector<int> ShotList::getExpiredShotList ( void )
 {
   std::vector<int> outShots;
@@ -98,15 +112,45 @@ int ShotList::addShot ( int GUID, FiringInfo * info )
   return GUID;
 }
 
-int ShotList::updateShot( int GUID, int param, FiringInfo * info )
+int ShotList::updateShot( int GUID, FiringInfo * info )
 {
+  bool local = false;
+  if (getShot(GUID) && getShot(GUID)->isLocal())
+    local = true;
+
   if (!removeShot(GUID))
-    removeShot(param);
+    return 0;
 
   addShot(GUID,info);
+  getShot(GUID)->setLocal(local);
 
   return GUID;
 }
+
+int ShotList::updateShotID( int oldID, int newID )
+{
+  if (oldID == newID)
+    return oldID;
+
+  std::map<int,ShotPath*>::iterator itr = shots.find(oldID);
+
+  if (itr == shots.end())
+    return 0;
+
+  ShotPath *shot = itr->second;
+  if (!shot)
+    return 0;
+
+  itr = shots.find(newID);
+  if (itr != shots.end())
+    removeShot(newID);
+
+  shots.erase(itr);
+  shots[newID] = shot;
+
+  return newID;
+}
+
 
 bool ShotList::removeShot ( int GUID )
 {
@@ -134,6 +178,21 @@ void ShotList::updateAllShots ( float dt )
 void ShotList::flushExpiredShots( void )
 {
   std::vector<int> expiredList = getExpiredShotList();
+  for (size_t i = 0; i < expiredList.size(); i++)
+    shots.erase(shots.find(expiredList[i]));
+}
+
+void ShotList::flushShotsFromPlayer( PlayerId player )
+{
+  std::vector<int> expiredList;
+  std::map<int,ShotPath*>::iterator itr = shots.begin();
+  while(itr != shots.end())
+  {
+    if (itr->second && itr->second->getPlayer() == player)
+      expiredList.push_back(itr->first);
+    itr++;
+  }
+
   for (size_t i = 0; i < expiredList.size(); i++)
     shots.erase(shots.find(expiredList[i]));
 }

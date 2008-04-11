@@ -63,7 +63,7 @@ class World {
     int			getMaxPlayers() const;
     int			getCurMaxPlayers() const;
     void		setCurMaxPlayers(int curMaxPlayers);
-    int			getMaxShots() const;
+    size_t		getMaxShots() const;
     int			getMaxFlags() const;
     float		getShakeTimeout() const;
     int			getShakeWins() const;
@@ -74,7 +74,7 @@ class World {
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
     void		setPlayersSize(int _playersSize);
-    int		 getPlayersSize();
+    int			getPlayersSize();
     RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
@@ -152,7 +152,7 @@ class World {
     short		gameOptions;
     int			maxPlayers;
     int			curMaxPlayers;
-    int			maxShots;
+    size_t			maxShots;
     int			maxFlags;
     float		shakeTimeout;
     int			shakeWins;
@@ -293,7 +293,7 @@ inline void		World::setCurMaxPlayers(int _curMaxPlayers)
   curMaxPlayers = _curMaxPlayers;
 }
 
-inline int		World::getMaxShots() const
+inline size_t		World::getMaxShots() const
 {
   return maxShots;
 }

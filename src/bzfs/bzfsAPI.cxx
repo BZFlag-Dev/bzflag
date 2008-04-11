@@ -1979,7 +1979,7 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, float tilt, float direction, int shotID, float dt)
+BZF_API int bz_fireWorldWep ( const char* flagType, float *pos, float tilt, float direction, float lifetime, int player )
 {
   if(!pos || !flagType)
     return false;
@@ -1988,37 +1988,16 @@ BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, f
   if(flagMap.find(std::string(flagType))==flagMap.end())
     return false;
 
-  FlagType *flag=flagMap.find(std::string(flagType))->second;
-
-  int realShotID=shotID;
-  if(realShotID==0)
-    realShotID=world->getWorldWeapons().getNewWorldShotID();
-
-  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, realShotID, dt)==realShotID;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt)
-{
-  const char *flagType="GM";
-
-  if(!pos || !flagType)
-    return false;
-
-  FlagTypeMap &flagMap=FlagType::getFlagMap();
-  if(flagMap.find(std::string(flagType))==flagMap.end())
-    return false;
+  if (lifetime  < 0 )
+    lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 
   FlagType *flag=flagMap.find(std::string(flagType))->second;
 
-  PlayerId player=ServerPlayer;
+  PlayerId playerID = ServerPlayer;
+  if (GameKeeper::Player::getPlayerByIndex(player))
+    playerID = player;
 
-  int shotID=world->getWorldWeapons().getNewWorldShotID();
-
-  fireWorldGM(flag, targetPlayerID, lifetime, player, pos, tilt, direction, shotID, dt);
-
-  return shotID;
+  return fireWorldWep(flag, lifetime, player, pos, tilt, direction, 0);
 }
 
 // time API
@@ -4213,9 +4192,9 @@ void bz_ServerSidePlayerHandler::grabFlag(int, int, const char *, bz_eShotType )
 
 void bz_ServerSidePlayerHandler::setShotType(int, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::shotFired(int, unsigned short, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::shotFired(int, int, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short){}
+void bz_ServerSidePlayerHandler::shotEnded(int, int, unsigned short){}
 
 void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned short ){}
 

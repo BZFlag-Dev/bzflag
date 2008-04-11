@@ -484,7 +484,6 @@ void			ServerLink::send(uint16_t code, uint16_t len,
       case MsgHit:
       case MsgPlayerUpdate:
       case MsgPlayerUpdateSmall:
-      case MsgGMUpdate:
       case MsgUDPLinkRequest:
       case MsgUDPLinkEstablished:
       case MsgWhatTimeIsIt:
@@ -962,24 +961,14 @@ void			ServerLink::sendDropFlag(const float* position)
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendKilled(const PlayerId victim,
-					       const PlayerId killer,
-					       int reason, int shotId,
-					       const FlagType* flagType,
-					       int phydrv)
+void			ServerLink::sendKilled(const PlayerId victim, int reason, int id)
 {
-  char msg[6 + FlagPackSize + 4];
+  char msg[7];
   void* buf = msg;
 
   buf = nboPackUByte(buf, uint8_t(victim));
-  buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
-  buf = nboPackShort(buf, int16_t(shotId));
-  buf = flagType->pack(buf);
-
-  if (reason == PhysicsDriverDeath) {
-    buf = nboPackInt(buf, phydrv);
-  }
+  buf = nboPackInt(buf, id);
 
   send(MsgKilled, (uint16_t)((char*)buf - (char*)msg), msg);
 }
@@ -1021,7 +1010,7 @@ void			ServerLink::sendEndShot(const PlayerId& source,
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
   buf = nboPackUByte(buf, source);
-  buf = nboPackShort(buf, int16_t(shotId));
+  buf = nboPackInt(buf, shotId);
   buf = nboPackUShort(buf, uint16_t(reason));
   send(MsgShotEnd, sizeof(msg), msg);
 }
@@ -1033,7 +1022,7 @@ void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
   void* buf = msg;
   buf = nboPackUByte(buf, source);
   buf = nboPackUByte(buf, shooter);
-  buf = nboPackShort(buf, int16_t(shotId));
+  buf = nboPackInt(buf, shotId);
   send(MsgHit, sizeof(msg), msg);
 }
 #endif

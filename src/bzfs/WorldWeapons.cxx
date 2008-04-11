@@ -30,6 +30,7 @@
 #include "bzfsAPI.h"
 #include "bzfsMessages.h"
 #include "BufferedNetworkMessage.h"
+#include "ShotManager.h"
 
 // bzfs specific headers
 #include "bzfs.h"
@@ -38,8 +39,7 @@ extern bz_eTeamType convertTeam ( TeamColor team );
 extern TeamColor convertTeam( bz_eTeamType team );
 
 static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
-			    TeamColor teamColor, float *pos, float tilt, float dir,
-			    int shotID, float dt)
+			    TeamColor teamColor, float *pos, float tilt, float dir, float dt)
 {
   FiringInfo firingInfo;
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
@@ -52,57 +52,20 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
   firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
   firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-  firingInfo.shot.id = shotID;
+  firingInfo.shot.id = 0;
   firingInfo.shot.dt = dt;
+  firingInfo.shotType = type->flagShot;
 
   firingInfo.shot.team = teamColor;
+  firingInfo.shot.id = ShotManager::instance().newShot(firingInfo);
 
   NetMsg msg = MSGMGR.newMessage();
   firingInfo.pack(msg);
 
   if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
-    msg->broadcast(MsgWShotBegin);
+    msg->broadcast(MsgShotBegin);
 
-  return shotID;
-}
-
-static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
-	lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
-	float dt)
-{
-    FiringInfo firingInfo;
-    firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
-    firingInfo.flagType = type;
-    firingInfo.lifetime = lifetime;
-    firingInfo.shot.player = player;
-    memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
-    const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    const float tiltFactor = cosf(tilt);
-    firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
-    firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
-    firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-    firingInfo.shot.id = shotID;
-    firingInfo.shot.dt = dt;
-
-    firingInfo.shot.team = RogueTeam;
-
-    NetMsg msg = MSGMGR.newMessage();
-    firingInfo.pack(msg);
-
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
-	msg->broadcast(MsgShotBegin);
-
-    // Target the gm.
-    // construct and send packet
-
-    msg = MSGMGR.newMessage();
-
-    firingInfo.shot.pack(msg);
-    msg->packUByte(targetPlayerID);
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
-      msg->broadcast(MsgGMUpdate);
-
-    return shotID;
+  return firingInfo.shot.id;
 }
 
 WorldWeapons::WorldWeapons()
@@ -152,8 +115,7 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
 
       fireWorldWepReal((FlagType*)w->type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction,
-		       getNewWorldShotID(), 0);
+		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction, 0);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -236,15 +198,6 @@ int WorldWeapons::packSize(void) const
 }
 
 
-int WorldWeapons::getNewWorldShotID(void)
-{
-  if (worldShotId > _MAX_WORLD_SHOTS) {
-    worldShotId = 0;
-  }
-  return worldShotId++;
-}
-
-
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
@@ -294,27 +247,18 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   }
 
   fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		   ServerPlayer, convertTeam(team), origin, tilt, direction,
-		   world->getWorldWeapons().getNewWorldShotID(),0);
+		   ServerPlayer, convertTeam(team), origin, tilt, direction, 0);
 }
 
 
 // for bzfsAPI: it needs to be global
 int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
-			float *pos, float tilt, float direction,
-			int shotID, float dt)
+			float *pos, float tilt, float direction, float dt)
 {
   return fireWorldWepReal(type, lifetime, player, RogueTeam,
-			  pos, tilt, direction, shotID, dt);
+			  pos, tilt, direction, dt);
 }
 
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
-		PlayerId player, float *pos, float tilt, float direction, int
-		shotID, float dt)
-{
-    return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-			   direction, shotID, dt);
-}
 
 // Local Variables: ***
 // mode: C++ ***

@@ -43,19 +43,6 @@
 #include "ShotUpdate.h"
 #include "BufferedNetworkMessage.h"
 
-
-struct FiringInfo;
-class ShotInfo {
-public:
-  ShotInfo() : present(false) {};
-
-  FiringInfo firingInfo;
-  int	salt;
-  float      expireTime;
-  bool       present;
-  bool       running;
-};
-
 class PlayerCaps
 {
 public:
@@ -141,10 +128,15 @@ public:
     void		updateNextGameTime();
 
     // To handle shot
-    static void    setMaxShots(int _maxShots);
-    bool	   addShot(int id, int salt, FiringInfo &firingInfo);
-    bool	   removeShot(int id, int salt, FiringInfo &firingInfo);
-    bool	   updateShot(int id, int salt);
+    static void    setShotSlots ( size_t maxShots );
+
+    bool	   canShoot ( void );
+
+    bool	   addShot ( int GUID, int localID, double startTime );
+    bool	   removeShot ( int GUID );
+
+    // find a shot based on a local ID
+    int		   findShot ( int localID );
 
     // To handle Identify
     void    setLastIdFlag(int _idFlag);
@@ -228,11 +220,25 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
-    static int	     maxShots;
-    std::vector<ShotInfo> shotsInfo;
 
-    int						idFlag;
-	TimeKeeper				agilityTime;
+    // shot tracking
+    class ShotSlot {
+    public:
+      ShotSlot() : present(false) {};
+
+      float      expireTime;
+      bool       present;
+      bool       running;
+    };
+
+    static size_t	  totalShotSlots;
+    std::vector<ShotSlot> shotSlots;
+
+    // list of the live shots, and the temp IDs they used when they were shot
+    std::map<int,int>	  liveShots;
+
+    int			    idFlag;
+    TimeKeeper		    agilityTime;
   };
 
   class Flag {

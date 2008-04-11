@@ -2086,18 +2086,22 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 {
   PlayerId victim, killer;
   FlagType* flagType;
-  int16_t shotId, reason;
-  int phydrv = -1;
+  int16_t reason;
+  int	  shotId = 0;
+  int	  phydrv = -1;
   msg = nboUnpackUByte(msg, victim);
   msg = nboUnpackUByte(msg, killer);
   msg = nboUnpackShort(msg, reason);
-  msg = nboUnpackShort(msg, shotId);
+  msg = nboUnpackInt(msg, shotId);
   msg = FlagType::unpack(msg, flagType);
-  if (reason == (int16_t)PhysicsDriverDeath){
+
+  if (reason == (int16_t)PhysicsDriverDeath)
+  {
     int32_t inPhyDrv;
     msg = nboUnpackInt(msg, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
+
   BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);
@@ -2125,6 +2129,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     victimPlayer->setExplode(TimeKeeper::getTick());
     const float* pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
+
     if (reason == GotRunOver)
       playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
     else
@@ -2145,25 +2150,31 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     if (shotId >= 0)
       killerLocal->endShot(shotId, true); // terminate the shot
 
-    if (victimPlayer && killerLocal != victimPlayer) {
-      if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams()) {
+    if (victimPlayer && killerLocal != victimPlayer) 
+    {
+      if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams())
+      {
 	// teamkill
-	if (killerPlayer == myTank) {
+	if (killerPlayer == myTank)
+	{
 	  hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
 	  playLocalSound(SFX_KILL_TEAM);
-	  if (myTank->isAutoPilot()) {
+	  if (myTank->isAutoPilot())
+	  {
 	    char meaculpa[MessageLen];
 	    memset(meaculpa, 0, MessageLen);
-	    strncpy(meaculpa,
-	      "sorry, i'm just a silly machine",
-	      MessageLen);
+	    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
 	    serverLink->sendMessage(victimPlayer->getId(), meaculpa);
 	  }
 	}
-      } else {
+      } 
+      else 
+      {
 	// enemy
-	if (myTank->isAutoPilot()) {
-	  if (killerPlayer) {
+	if (myTank->isAutoPilot())
+	{
+	  if (killerPlayer)
+	  {
 	    const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	    if (shot != NULL)
 	      teachAutoPilot(shot->getFlag(), 1);
@@ -2558,29 +2569,43 @@ static bool showShotEffects ( int shooterid )
   return true;
 }
 
+static void handleMsgShotID ( void * msg )
+{
+  int oldID = 0;
+  int newID = 0;
+  msg = nboUnpackInt(msg, oldID);
+  msg = nboUnpackInt(msg, newID);
+
+  // transfer the old local shotID to the new shotID
+  ShotList.instance().updateShotID(oldID,newID);
+}
+
 static void handleShotBegin(bool human, void *msg)
 {
   PlayerId shooterid;
-  uint16_t id;
+  int id;
 
   msg = nboUnpackUByte(msg, shooterid);
-  msg = nboUnpackUShort(msg, id);
+  msg = nboUnpackInt(msg, id);
 
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
   firingInfo.shot.player = shooterid;
   firingInfo.shot.id     = id;
 
+  ShotList &shotList = ShotList.instance();
+  
+  // if the shot exists, just update it
+  // otherwise it's new
+  if ( shotList.getShot(id))
+    shotList.updateShot(id,&firingInfo);
+  else
+    shotList.addShot(id,&firingInfo);
+
   if (shooterid >= playerSize)
     return;
 
-  if (shooterid == myTank->getId())
-  {
-    // the shot is ours, find the shot we made, and kill it
-    // then rebuild the shot with the info from the server
-    myTank->updateShot(firingInfo,id,firingInfo.timeSent);
-  }
-  else
+  if (shooterid != myTank->getId())
   {
     RemotePlayer* shooter = player[shooterid];
 
@@ -2588,7 +2613,7 @@ static void handleShotBegin(bool human, void *msg)
     {
       if (shooter && player[shooterid]->getId() == shooterid)
       {
-	shooter->addShot(firingInfo);
+	shooter->shoot();
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
 	{
@@ -3313,6 +3338,10 @@ case MsgNewRabbit:
   handleNewRabbit(msg);
   break;
 
+case MsgShotID:
+  handleMsgShotID(msg);
+  break;
+
 case MsgShotBegin:
   handleShotBegin(human, msg);
   break;
@@ -3773,24 +3802,23 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
   addMessage(toTank, message);
 }
 
-static bool		gotBlowedUp(BaseLocalPlayer* tank,
-				    BlowedUpReason reason,
-				    PlayerId killer,
-				    const ShotPath* hit, int phydrv)
+static bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId killer, const ShotPath* hit, int phydrv)
 {
   if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
 
   int shotId = -1;
   FlagType* flagType = Flags::Null;
-  if (hit) {
+  if (hit)
+  {
     shotId = hit->getShotId();
     flagType = hit->getFlag();
   }
 
   // you can't take it with you
   const FlagType* flag = tank->getFlag();
-  if (flag != Flags::Null) {
+  if (flag != Flags::Null) 
+  {
     if (myTank->isAutoPilot())
       teachAutoPilot( myTank->getFlag(), -1 );
 
@@ -3804,7 +3832,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
   // restore the sound, this happens when paused tank dies
   // (genocide or team flag captured)
-  if (savedVolume != -1) {
+  if (savedVolume != -1) 
+  {
     setSoundVolume(savedVolume);
     savedVolume = -1;
   }
@@ -3816,30 +3845,33 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   // message when it gets back to us -- do this by ignoring killed
   // message if we're already dead.
   // don't die if we had the shield flag and we've been shot.
-  if (reason != GotShot || flag != Flags::Shield) {
+  if (reason != GotShot || flag != Flags::Shield)
+  {
     // blow me up
     tank->explodeTank();
     EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
 
-    if (isViewTank(tank)) {
-      if (reason == GotRunOver) {
+    if (isViewTank(tank)) 
+    {
+      if (reason == GotRunOver)
 	playLocalSound(SFX_RUNOVER);
-      } else {
+      else
 	playLocalSound(SFX_DIE);
-      }
+
       ForceFeedback::death();
-    } else {
+
+    } 
+    else
+    {
       const float* pos = tank->getPosition();
-      if (reason == GotRunOver) {
-	playWorldSound(SFX_RUNOVER, pos,
-	  getLocalPlayer(killer) == myTank);
-      } else {
-	playWorldSound(SFX_EXPLOSION, pos,
-	  getLocalPlayer(killer) == myTank);
-      }
+      if (reason == GotRunOver) 
+	playWorldSound(SFX_RUNOVER, pos,getLocalPlayer(killer) == myTank);
+      else 
+	playWorldSound(SFX_EXPLOSION, pos, getLocalPlayer(killer) == myTank);
     }
 
-    if (tank != myTank) {
+    if (tank != myTank)
+    {
       const float* pos = tank->getPosition();
       float explodePos[3];
       explodePos[0] = pos[0];
@@ -3849,22 +3881,34 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     }
 
     // tell server I'm dead in case it doesn't already know
-    if (reason == GotShot || reason == GotRunOver ||
-      reason == GenocideEffect || reason == SelfDestruct ||
-      reason == WaterDeath || reason == PhysicsDriverDeath)
-      serverLink->sendKilled(tank->getId(), killer, reason, shotId, flagType,
-      phydrv);
+    // we only need to send the reason and the shot
+    if (reason != GotKilledMsg && reason != GotCaptured && reason != LastReason)
+      serverLink->sendKilled(tank->getId(), reason, reason ==PhysicsDriverDeath ? phydrv : shotId );
+
+    GotKilledMsg,
+      GotShot,
+      GotRunOver,
+      GotCaptured,
+      GenocideEffect,
+      SelfDestruct,
+      WaterDeath,
+      PhysicsDriverDeath,
+      LastReason
   }
 
   // print reason if it's my tank
-  if ((tank == myTank) && (reason < LastReason )) {
+  if ((tank == myTank) && (reason < LastReason ))
+  {
     std::string blowedUpNotice;
-    if (reason < PhysicsDriverDeath) {
+    if (reason < PhysicsDriverDeath) 
+    {
       if (blowedUpMessage[reason])
 	blowedUpNotice = blowedUpMessage[reason];
       else
 	blowedUpNotice = "Invalid reason";
-    } else {
+    }
+    else 
+    {
       const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
       if (driver)
 	blowedUpNotice = driver->getDeathMsg();
@@ -3873,29 +3917,35 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     }
 
     // first, check if i'm the culprit
-    if (reason == GotShot && getLocalPlayer(killer) == myTank) {
+    if (reason == GotShot && getLocalPlayer(killer) == myTank)
       blowedUpNotice = "Shot myself";
-    } else {
+    else
+    {
       // 1-4 are messages sent when the player dies because of someone else
-      if (reason >= GotShot && reason <= GenocideEffect) {
+      if (reason >= GotShot && reason <= GenocideEffect)
+      {
 	Player *killerPlayer = lookupPlayer(killer);
-	if (!killerPlayer) {
+	if (!killerPlayer)
 	  blowedUpNotice = "Killed by the server";
-	} else {
-
+	else 
+	{
 	  // matching the team-display style of other kill messages
 	  TeamColor team = killerPlayer->getTeam();
 	  if (hit)
 	    team = hit->getTeam();
-	  if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam)) {
+	  if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam))
+	  {
 	    blowedUpNotice += "teammate " ;
 	    blowedUpNotice += killerPlayer->getCallSign();
-	  } else {
+	  }
+	  else
+	  {
 	    blowedUpNotice += killerPlayer->getCallSign();
 	    blowedUpNotice += " (";
 	    blowedUpNotice += Team::getName(killerPlayer->getTeam());
 	    blowedUpNotice += ")";
-	    if (flagType != Flags::Null) {
+	    if (flagType != Flags::Null) 
+	    {
 	      blowedUpNotice += " with ";
 	      blowedUpNotice += flagType->flagAbbv;
 	    }
@@ -5747,19 +5797,8 @@ void drawFrame(const float dt)
 
       // add my tank if required
       const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
-      const bool showMyTreads = showTreads ||
-	(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
-      myTank->addToScene(scene, myTank->getTeam(),
-	inCockpit, seerView,
-	showMyTreads, showMyTreads /*showIDL*/);
-
-      // add my shells
-      myTank->addShots(scene, false);
-
-      // add server shells
-      if (world) {
-	world->getWorldWeapons()->addShots(scene, false);
-      }
+      const bool showMyTreads = showTreads || (devDriving && (ROAM.getMode() != Roaming::roamViewFP));
+      myTank->addToScene(scene, myTank->getTeam(), inCockpit, seerView, showMyTreads, showMyTreads /*showIDL*/);
 
       // add antidote flag
       myTank->addAntidote(scene);
@@ -5767,13 +5806,20 @@ void drawFrame(const float dt)
       // add flags
       world->addFlags(scene, seerView);
 
+      // add all the shots in the world
+      std::vector<ShotPath*> shots = ShotList::instance().getShotList();
+      const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+
+      for ( size_t s = 0; s < shots.size(); s++ )
+      {
+	ShotPath* shot = shots[s];
+	if (shot && !shot->isExpiring() && !shot->isExpired())
+	  shot->addShot(scene, colorblind && !shot->isLocal());
+      }
 
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i]) {
-	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  player[i]->addShots(scene, colorblind);
-
 	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind){
 	    if ((player[i]->getFlag() == Flags::Masquerade)

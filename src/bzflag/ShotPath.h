@@ -48,7 +48,7 @@ class ShotPath {
     bool		isExpired() const;
     bool		isReloaded() const;
     const PlayerId&	getPlayer() const;
-    uint16_t		getShotId() const;
+    int		getShotId() const;
     ShotType		getShotType() const;
     FlagType*		getFlag() const;
     float		getLifetime() const;
@@ -141,7 +141,7 @@ inline const PlayerId&	ShotPath::getPlayer() const
   return firingInfo.shot.player;
 }
 
-inline uint16_t		ShotPath::getShotId() const
+inline int		ShotPath::getShotId() const
 {
   return firingInfo.shot.id;
 }

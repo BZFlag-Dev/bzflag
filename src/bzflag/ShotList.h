@@ -30,16 +30,19 @@ public:
   ShotPath* getShot ( int GUID );
   std::vector<ShotPath*> getShotList ( void );
   std::vector<ShotPath*> getLocalShotList ( void );
+  std::vector<ShotPath*> getShotsFromPlayer ( PlayerId player );
   std::vector<int> getExpiredShotList ( void );
 
   int addLocalShot ( FiringInfo * info );
   int addShot ( int GUID, FiringInfo * info );
-  int updateShot( int GUID, int param, FiringInfo * info );
-  
+  int updateShot( int GUID, FiringInfo * info );
+  int updateShotID( int oldID, int newID );
+ 
   bool removeShot ( int GUID );
 
   void updateAllShots ( float dt );
   void flushExpiredShots ( void );
+  void flushShotsFromPlayer( PlayerId player );
 
   void clear ( void );
 

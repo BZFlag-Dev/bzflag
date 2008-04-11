@@ -548,11 +548,24 @@ void sendSetShotType ( int playerIndex, ShotType type )
   }
 }
 
-void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
+void sendMsgShotID ( int playerIndex, int tempID, int GUID )
+{
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packInt(tempID);
+  msg->packInt(GUID);
+
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  msg->send(playerData->netHandler,MsgShotID);
+}
+
+void sendMsgShotBegin ( int player, int id, FiringInfo &firingInfo )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(player);
-  msg->packUShort(id);
+  msg->packInt(id);
   firingInfo.pack(msg);
 
   msg->broadcast(MsgShotBegin);
@@ -565,11 +578,11 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
   }
 }
 
-void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
+void sendMsgShotEnd ( int player, int id, unsigned short reason )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(player);
-  msg->packShort(id);
+  msg->packInt(id);
   msg->packUShort(reason);
   msg->broadcast(MsgShotEnd);
 
@@ -909,14 +922,14 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
   msg->broadcast(MsgNewRabbit);
 }
 
-void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
+
+void sendMsgShotUpdate ( int player, FiringInfo *shot )
 {
   NetMsg msg = MSGMGR.newMessage();
 
   //msg->packUByte(player);
   shot->pack(msg);
-  msg->packUByte(target);
-  msg->broadcast(MsgGMUpdate);
+  msg->broadcast(MsgShotUpdate);
 }
 
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
@@ -1075,7 +1088,6 @@ bool isUDPAttackMessage ( uint16_t &code )
   case MsgShotEnd:
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall:
-  case MsgGMUpdate:
   case MsgUDPLinkRequest:
   case MsgUDPLinkEstablished:
   case MsgHit:
