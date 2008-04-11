@@ -317,7 +317,7 @@ char *getDirectMessageBuffer()
 
 int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
-  if (handler)
+  if (!handler)
     return 0;
   
   // send message to one player
