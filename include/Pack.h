@@ -33,7 +33,7 @@ extern void* nboPackUShort(void*, uint16_t);
 extern void* nboPackUInt(void*, uint32_t);
 extern void* nboPackFloat(void*, float);
 extern void* nboPackDouble(void*, double);
-extern void* nboPackVector(void*, const float*);
+extern void* nboPackFloatVector(void*, const float*);
 extern void* nboPackString(void*, const void*, int len);
 extern void* nboPackStdString(void*, const std::string& str);
 
@@ -44,7 +44,7 @@ extern void* nboUnpackUShort(void*, uint16_t&);
 extern void* nboUnpackUInt(void*, uint32_t&);
 extern void* nboUnpackFloat(void*, float&);
 extern void* nboUnpackDouble(void*, double&);
-extern void* nboUnpackVector(void*, float*);
+extern void* nboUnpackFloatVector(void*, float*);
 extern void* nboUnpackString(void*, void*, int len);
 extern void* nboUnpackStdString(void*, std::string& str);
 extern void* nboUnpackStdStringRaw(void*, std::string& str);

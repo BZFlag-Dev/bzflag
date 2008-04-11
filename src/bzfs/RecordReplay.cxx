@@ -1697,7 +1697,7 @@ static bool savePlayersState()
       float pos[3] = {0.0f, 0.0f, 0.0f};
       // Complete MsgAlive
       buf = nboPackUByte(bufStart, i);
-      buf = nboPackVector(buf, pos);
+      buf = nboPackFloatVector(buf, pos);
       buf = nboPackFloat(buf, pos[0]); // azimuth
       routePacket(MsgAlive,
 		   (char*)buf - (char*)bufStart, bufStart, StatePacket);

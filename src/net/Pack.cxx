@@ -109,7 +109,7 @@ void*			nboPackUInt(void* b, uint32_t v)
 
 void*			nboPackFloat(void* b, float v)
 {
-  // hope that float is a 4 byte IEEE 754 standard encoding
+  // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
   u.floatval = v;
 
@@ -120,14 +120,14 @@ void*			nboPackFloat(void* b, float v)
 
 void*			nboPackDouble(void* b, double v)
 {
-  // hope the double is a 8 byte IEEE 754 standard encoding
+  // hope the double is 8-byte IEEE 754 standard encoding
   htond((unsigned char*)b, (const unsigned char *)&v, 1);
   return ADV(b, uint64_t);
 }
 
-void*			nboPackVector(void* b, const float *v)
+void*			nboPackFloatVector(void* b, const float* v)
 {
-  // hope that float is a 4 byte IEEE 754 standard encoding
+  // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
   uint32_t data[3];
 
@@ -139,6 +139,13 @@ void*			nboPackVector(void* b, const float *v)
   ::memcpy( b, data, 3*sizeof(uint32_t));
   return (void*) (((char*)b)+3*sizeof(uint32_t));
 }
+
+#if 0
+void*			nboPackDoubleVector(void* b, const double* v)
+{
+  // hope that double is 8-byte IEEE 754 standard encoding
+}
+#endif
 
 void*			nboPackString(void* b, const void* m, int len)
 {
@@ -255,7 +262,7 @@ void*			nboUnpackFloat(void* b, float& v)
     }
   }
 
-  // hope that float is a 4 byte IEEE 754 standard encoding
+  // hope that float is 4-byte IEEE 754 standard encoding
   uint32_t x;
   ::memcpy(&x, b, sizeof(uint32_t));
   floatintuni u;
@@ -276,12 +283,12 @@ void*			nboUnpackDouble(void* b, double& v)
     }
   }
 
-  // hope that double is 8 byte IEEE 754 standard encoding
+  // hope that double is 8-byte IEEE 754 standard encoding
   ntohd((unsigned char *)&v, (unsigned char *)b, 1);
   return ADV(b, uint64_t);
 }
 
-void*			nboUnpackVector(void* b, float *v)
+void*			nboUnpackFloatVector(void* b, float* v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
@@ -293,7 +300,7 @@ void*			nboUnpackVector(void* b, float *v)
     }
   }
 
-  // hope that float is a 4 byte IEEE 754 standard encoding
+  // hope that float is 4-byte IEEE 754 standard encoding
   uint32_t data[3];
   floatintuni u;
   ::memcpy( data, b, 3*sizeof(uint32_t));
@@ -305,6 +312,13 @@ void*			nboUnpackVector(void* b, float *v)
 
   return (void *) (((char*)b) + 3*sizeof(float));
 }
+
+#if 0
+void*			nboUnpackDoubleVector(void* b, double* v)
+{
+  // hope that double is 8-byte IEEE 754 standard encoding
+}
+#endif
 
 void*			nboUnpackString(void* b, void* m, int len)
 {

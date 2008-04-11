@@ -453,7 +453,7 @@ static MsgStringList handleMsgAlive (PacketInfo *pi)
   u8 player;
   float pos[3], azimuth;
   d = nboUnpackUByte (d, player);
-  d = nboUnpackVector (d, pos);
+  d = nboUnpackFloatVector (d, pos);
   d = nboUnpackFloat (d, azimuth);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 2, "pos:    %s", strVector(pos).c_str());

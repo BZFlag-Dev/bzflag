@@ -599,7 +599,7 @@ void * MeshTransform::pack(void *buf) const
     if (transform.type == IndexTransform) {
       buf = nboPackInt (buf, transform.index);
     } else {
-      buf = nboPackVector (buf, transform.data);
+      buf = nboPackFloatVector (buf, transform.data);
       if (transform.type == SpinTransform) {
 	buf = nboPackFloat (buf, transform.data[3]);
       }
@@ -630,7 +630,7 @@ void * MeshTransform::unpack(void *buf)
       d[0] = d[1] = d[2] = d[3] = 0.0f;
     } else {
       transform.index = -1;
-      buf = nboUnpackVector (buf, transform.data);
+      buf = nboUnpackFloatVector(buf, transform.data);
       if (transform.type == SpinTransform) {
 	buf = nboUnpackFloat (buf, transform.data[3]);
       } else {

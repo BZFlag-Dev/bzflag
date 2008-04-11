@@ -82,8 +82,8 @@ void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
 
     code = MsgPlayerUpdate;
 
-    buf = nboPackVector(buf, pos);
-    buf = nboPackVector(buf, velocity);
+    buf = nboPackFloatVector(buf, pos);
+    buf = nboPackFloatVector(buf, velocity);
     buf = nboPackFloat(buf, azimuth);
     buf = nboPackFloat(buf, angVel);
   }
@@ -242,8 +242,8 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
   status = short(inStatus);
 
   if (code == MsgPlayerUpdate) {
-    buf = nboUnpackVector(buf, pos);
-    buf = nboUnpackVector(buf, velocity);
+    buf = nboUnpackFloatVector(buf, pos);
+    buf = nboUnpackFloatVector(buf, velocity);
     buf = nboUnpackFloat(buf, azimuth);
     buf = nboUnpackFloat(buf, angVel);
   }

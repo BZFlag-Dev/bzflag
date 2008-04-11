@@ -473,7 +473,7 @@ public:
 
     // data: position of drop
     float pos[3];
-    buf = nboUnpackVector(buf, pos);
+    buf = nboUnpackFloatVector(buf, pos);
 
     const float halfSize = BZDBCache::worldSize * 0.5f;
     if (fabsf(pos[0]) > halfSize || fabsf(pos[1]) > halfSize) {
@@ -518,7 +518,7 @@ public:
     PlayerId otherPlayer;
     buf = nboUnpackUByte(buf, otherPlayer);
     float collpos[3];
-    buf = nboUnpackVector(buf, collpos);
+    buf = nboUnpackFloatVector(buf, collpos);
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
 
     processCollision(player,otherData,collpos);

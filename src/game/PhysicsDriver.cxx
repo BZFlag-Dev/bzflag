@@ -280,7 +280,7 @@ void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackVector (buf, linear);
+  buf = nboPackFloatVector (buf, linear);
   buf = nboPackFloat (buf, angularVel);
   buf = nboPackFloat (buf, angularPos[0]);
   buf = nboPackFloat (buf, angularPos[1]);
@@ -299,7 +299,7 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackVector (buf, linear);
+  buf = nboUnpackFloatVector (buf, linear);
   buf = nboUnpackFloat (buf, angularVel);
   buf = nboUnpackFloat (buf, angularPos[0]);
   buf = nboUnpackFloat (buf, angularPos[1]);
