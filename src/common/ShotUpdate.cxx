@@ -38,8 +38,8 @@ void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
 {
   msg->packUByte(player);
   msg->packUShort(id);
-  msg->packVector(pos);
-  msg->packVector(vel);
+  msg->packFloatVector(pos);
+  msg->packFloatVector(vel);
   msg->packFloat(dt);
   msg->packShort(team);
 }

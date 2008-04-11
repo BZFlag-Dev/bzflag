@@ -168,8 +168,8 @@ void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
 
     code = MsgPlayerUpdate;
 
-    msg->packVector(pos);
-    msg->packVector(velocity);
+    msg->packFloatVector(pos);
+    msg->packFloatVector(velocity);
     msg->packFloat(azimuth);
     msg->packFloat(angVel);
   }

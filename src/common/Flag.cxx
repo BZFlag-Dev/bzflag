@@ -386,9 +386,9 @@ size_t Flag::pack(BufferedNetworkMessage *msg) const
   msg->packUShort(uint16_t(status));
   msg->packUShort(uint16_t(endurance));
   msg->packUByte(owner);
-  msg->packVector(position);
-  msg->packVector(launchPosition);
-  msg->packVector(landingPosition);
+  msg->packFloatVector(position);
+  msg->packFloatVector(launchPosition);
+  msg->packFloatVector(landingPosition);
   msg->packFloat(flightTime);
   msg->packFloat(flightEnd);
   msg->packFloat(initialVelocity);
@@ -402,9 +402,9 @@ size_t Flag::fakePack(BufferedNetworkMessage *msg) const
   msg->packUShort(uint16_t(status));
   msg->packUShort(uint16_t(endurance));
   msg->packUByte(owner);
-  msg->packVector(position);
-  msg->packVector(launchPosition);
-  msg->packVector(landingPosition);
+  msg->packFloatVector(position);
+  msg->packFloatVector(launchPosition);
+  msg->packFloatVector(landingPosition);
   msg->packFloat(flightTime);
   msg->packFloat(flightEnd);
   msg->packFloat(initialVelocity);
