@@ -51,9 +51,9 @@
 
 
 typedef enum {
-    BU_LITTLE_ENDIAN    = 1234, /* LSB first: i386, VAX order */
-    BU_BIG_ENDIAN       = 4321, /* MSB first: 68000, IBM, network order */
-    BU_PDP_ENDIAN       = 3412  /* LSB first in word, MSW first in long */
+    BZ_LITTLE_ENDIAN    = 1234, /* LSB first: i386, VAX order */
+    BZ_BIG_ENDIAN       = 4321, /* MSB first: 68000, IBM, network order */
+    BZ_PDP_ENDIAN       = 3412  /* LSB first in word, MSW first in long */
 } bz_endian_t;
 
 static const int SIZEOF_NETWORK_DOUBLE = 8;
