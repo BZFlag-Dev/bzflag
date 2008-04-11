@@ -919,12 +919,12 @@ void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
   msg->broadcast(MsgGMUpdate);
 }
 
-void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
 {
   /* Pack a message with the given time */
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(tag);
-  msg->packFloat(time);
+  msg->packDouble(time);
   msg->send(handler,MsgWhatTimeIsIt);
 }
 
@@ -933,7 +933,7 @@ void sendMsgTimeUpdate( int timeLimit )
   // start client's clock
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packInt(timeLimit);
+  msg->packInt(timeLimit); 
   msg->broadcast(MsgTimeUpdate);
 }
 

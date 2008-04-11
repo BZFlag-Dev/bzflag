@@ -52,7 +52,7 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason );
 void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target );
-void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time );
 void sendMsgTimeUpdate ( int timeLimit );
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );

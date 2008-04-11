@@ -2522,11 +2522,11 @@ static void handleNearFlag(void *msg)
 
 static void handleWhatTimeIsIt(void *msg)
 {
-  float time = -1;
+  double time = -1;
   unsigned char tag = 0;
 
   msg = nboUnpackUByte(msg, tag);
-  msg = nboUnpackFloat(msg, time);
+  msg = nboUnpackDouble(msg, time);
   syncedClock.timeMessage(tag, time);
 }
 

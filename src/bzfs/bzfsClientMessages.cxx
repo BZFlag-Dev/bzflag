@@ -61,7 +61,7 @@ public:
     if (len >= 1)
       buf = nboUnpackUByte(buf,tag);
 
-    float time = (float)TimeKeeper::getCurrent().getSeconds();
+    double time = TimeKeeper::getCurrent().getSeconds();
 
     logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
 
