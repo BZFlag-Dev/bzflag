@@ -913,7 +913,7 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(player);
+  //msg->packUByte(player);
   shot->pack(msg);
   msg->packUByte(target);
   msg->broadcast(MsgGMUpdate);
