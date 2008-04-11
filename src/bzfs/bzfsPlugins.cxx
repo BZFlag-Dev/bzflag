@@ -33,7 +33,11 @@ std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
 #else
 std::string extension = ".so";
+#  ifdef INSTALL_LIB_DIR
 std::string globalPluginDir = INSTALL_LIB_DIR;
+#  else
+std::string globalPluginDir = ".";
+#  endif
 #endif
 
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
