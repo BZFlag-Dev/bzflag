@@ -60,7 +60,7 @@ typedef signed int	int32_t;
 typedef unsigned int	uint32_t;
 #endif
 
-#ifndef uint64_t
+#ifndef int64_t
 typedef LONGLONG	int64_t;
 #endif
 
