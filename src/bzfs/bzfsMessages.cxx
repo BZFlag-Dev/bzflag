@@ -909,12 +909,13 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
   msg->broadcast(MsgNewRabbit);
 }
 
-void sendMsgGMUpdate ( int player, ShotUpdate *shot )
+void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target )
 {
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(player);
   shot->pack(msg);
+  msg->packUByte(target);
   msg->broadcast(MsgGMUpdate);
 }
 

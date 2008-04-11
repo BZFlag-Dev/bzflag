@@ -984,10 +984,15 @@ public:
     ShotUpdate shot;
     shot.unpack(buf);
 
+    unsigned char temp = 0;
+    nboUnpackUByte(buf, temp);
+
+    PlayerId target = temp;
+
     if (!player->player.isAlive() || player->player.isObserver() || !player->updateShot(shot.id & 0xff, shot.id >> 8))
       return true ;
 
-    sendMsgGMUpdate( player->getIndex(), &shot );
+    sendMsgGMUpdate( player->getIndex(), &shot, target );
     return true;
   }
 };
