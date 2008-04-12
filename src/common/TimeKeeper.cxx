@@ -356,6 +356,8 @@ void TimeKeeper::setProcessorAffinity(int processor)
     return;
   }
   SetThreadAffinityMask(hThread, dwMask);
+#else
+  logDebugMessage(1, "Unable to set processor affinity to %d - function not implemented on this platform.", processor);
 #endif
 }
 
