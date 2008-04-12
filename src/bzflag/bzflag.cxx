@@ -1420,7 +1420,23 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;
+    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // as one argument
+    if (*scan == 34) {
+      // Move past the starting double quote
+      scan++;
+      // Keep going until we reach the end, or we hit another double quote
+      // FIXME: Support escaping the double quotes
+      while (*scan != 0 && *scan != 34)
+	scan++;
+      // Move past the ending double quote
+      scan++;
+    }
+    // Not a double quote, so just make sure we aren't hitting any spaces.
+    else
+      while (!isspace(*scan) && *scan != 0) scan++;
+    
+    // Skip past any spaces
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
@@ -1435,9 +1451,29 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   scan = cmdLine;
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
-    argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    if (*scan) *scan++ = 0;
+    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // as one argument
+    if (*scan == 34) {
+      // Move past the starting double quote
+      // Set the double quote to null just in case
+      *scan++ = 0;
+  
+      argv[argc++] = scan;
+      // Keep going until we reach the end, or we hit another double quote
+      // FIXME: Support escaping the double quotes
+      while (*scan != 0 && *scan != 34)
+	scan++;
+      // Move past the ending double quote
+      // Set it to null so we end this paramater
+      if (*scan) *scan++ = 0;
+    }
+    // Not a double quote, so just make sure we aren't hitting any spaces.
+    else {
+      argv[argc++] = scan;
+      while (!isspace(*scan) && *scan != 0) scan++;
+      if (*scan) *scan++ = 0;
+    }
+    // Skip past spaces
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
