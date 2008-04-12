@@ -982,7 +982,7 @@ public:
       return false;
 
     ShotUpdate shot;
-    shot.unpack(buf);
+    buf = shot.unpack(buf);
 
     unsigned char temp = 0;
     nboUnpackUByte(buf, temp);
