@@ -12,7 +12,6 @@ BZFlag 2.99.x
 * Screenshot compression is done in a new thread - Daniel Remenak, randomparticle
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 * Allow plugins to register custom flag types - Daniel Remenak
-* Fix bug where users get locked into autopilot mode - Joshua Bodine
 * improved French localization - Christophe Henry
 * clean up various keypress warnings, add slow motion warning - Sean Morrison
 * changed default slow motion key binding from 'a' to 'v' - Sean Morrison
@@ -22,10 +21,6 @@ BZFlag 2.99.x
 * fixed bug where players sometimes received duplicate messages - Joshua Bodine
 * New font system - Sean Morrison, Jeff Myers
 * Fixed framerate jitter-inducing bug on SMP systems - Sean Morrison
-* First map no longer ignored in Start Server menu - Ravu al Hemio
-* Check for talk permission for part/quit messages  - uso
-* Implemented Confine Mouse for Windows platforms - Daniel Remenak
-* Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
 * Add -filterAnnounce server option - Bernt Hansen
 * framerate independent keyboard turn dampening - Sean Morrison, randomparticle
 * Added new bzfs -botsPerIP option to limit bot connections - Sean Morrison
@@ -37,7 +32,6 @@ BZFlag 2.99.x
 * increased joystick button support to 32 buttons - Markus
 * Added a new optional height check - Thomas Stauer
 * Added optional delay before the countdown gets resumed - Thomas Stauer
-* Add -tkannounce server option - Bernt Hansen
 * Fixed map line ending parse bug for flag zones - Jeff Myers
 * Add client statistics output option - Daniel Remenak
 * Add full support for Xfire on Windows - Daniel Remenak
