@@ -169,7 +169,6 @@ static void		usage()
   printFatalError("usage: %s"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
-	" [-config <configfile>]"
 	" [-configdir <config dir name>]"
 	" [-d | -debug]"
 	" [-date mm/dd/yyyy]"
@@ -214,15 +213,12 @@ static void		parse(int argc, char** argv)
 // = 9;
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
-		strcmp(argv[i], "-anonymous") == 0) {
+	strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strcmp(argv[i], "-config") == 0) {
+    } else if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-	} else if (strcmp(argv[i], "-configdir") == 0) {
-		checkArgc(i, argc, argv[i]);
-		// the setting has already been done in parseConfigName()
-	} else if ((strcmp(argv[i], "-d") == 0) ||
+    } else if ((strcmp(argv[i], "-d") == 0) ||
 	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
@@ -230,8 +226,8 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
 	BZDB.unset("directory");
-	  else
-		BZDB.set("directory", argv[i]);
+      else
+	BZDB.set("directory", argv[i]);
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
@@ -462,18 +458,11 @@ static void		parse(int argc, char** argv)
 
 static void		parseConfigName(int argc, char** argv)
 {
-	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-configdir") == 0) {
-			checkArgc(i, argc, argv[i]);
-			setCustomConfigDir(argv[i]);
-			alternateConfig += argv[i];
-		}
-	}
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-config") == 0) {
+    if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
-      alternateConfig = getConfigDirName();
-      alternateConfig += argv[i];
+      setCustomConfigDir(argv[i]);
+      alternateConfig = getCurrentConfigFileName();
     }
   }
 }

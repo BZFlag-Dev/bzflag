@@ -58,7 +58,7 @@ static const char DownloadContent[] =
   "allow images.bzflag.org\n"
   "deny *\n";
 
-static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
+AccessList* DownloadAccessList;
 
 static bool       textureDownloading = false;
 
@@ -198,7 +198,10 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
 
-  DownloadAccessList.reload();
+  if (!DownloadAccessList)
+    DownloadAccessList = new AccessList("DownloadAccess.txt", DownloadContent);
+
+  DownloadAccessList->reload();
 
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
@@ -255,6 +258,7 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
     printAuthNotice();
   }
   textureDownloading = true;
+  delete DownloadAccessList;
 }
 
 void Downloads::finalizeDownloads()
@@ -303,7 +307,7 @@ static void printAuthNotice()
   msg += ColorStrings[GreyColor];
   msg += "download access is controlled by ";
   msg += ColorStrings[YellowColor];
-  msg += DownloadAccessList.getFileName();
+  msg += DownloadAccessList->getFileName();
   addMessage(NULL, msg);
   return;
 }
@@ -320,7 +324,7 @@ bool authorizedServer(const std::string& hostname)
     nameAndIp.push_back(hostname);
   }
 
-  return DownloadAccessList.authorized(nameAndIp);
+  return DownloadAccessList->authorized(nameAndIp);
 }
 
 
@@ -340,7 +344,7 @@ bool parseHostname(const std::string& url, std::string& hostname)
 static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
 {
   // avoid the DNS lookup
-  if (DownloadAccessList.alwaysAuthorized()) {
+  if (DownloadAccessList->alwaysAuthorized()) {
     return false;
   }
 
