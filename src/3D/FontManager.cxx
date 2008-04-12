@@ -468,17 +468,13 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
   float scale = size / (float)pFont->getSize();
 
   // don't include ansi codes in the length, but allow outside funcs to skip this step
-  const char *stripped_ptr;
-  size_t      stripped_size;
+  float strippedLength;
   if (alreadyStripped) {
-    stripped_ptr  = text.c_str();
-    stripped_size = text.size();
+    strippedLength = pFont->getStrLength(scale, text);
   } else {
-    const std::string stripped = stripAnsiCodes(text);
-    stripped_ptr  = stripped.c_str();
-    stripped_size = stripped.size();
+    strippedLength = pFont->getStrLength(scale, stripAnsiCodes(text));
   }
-  return pFont->getStrLength(scale, stripped_ptr, (int)stripped_size);
+  return strippedLength;
 }
 
 float FontManager::getStrLength(const std::string &face, float size,

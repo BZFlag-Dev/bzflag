@@ -184,6 +184,10 @@ float ImageFont::getStrLength(float scale, const char *str, int len) const
   return totalLen * scale;
 }
 
+float ImageFont::getStrLength(float scale, const std::string &str) const
+{
+  return getStrLength(scale, str.c_str(), str.size());
+}
 
 // Local Variables: ***
 // mode: C++ ***
