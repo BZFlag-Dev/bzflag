@@ -309,12 +309,6 @@ void pwriteBroadcast(const void *b, int l, int mask)
   }
 }
 
-static char sMsgBuf[MaxPacketLen];
-char *getDirectMessageBuffer()
-{
-  return &sMsgBuf[2*sizeof(uint16_t)];
-}
-
 int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
   if (!handler)
@@ -2308,13 +2302,14 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       buf	= nboPackUShort(buf, 1);
       buf	= nboPackUShort(buf, MsgSuperKill);
       buf	= nboPackUByte(buf, uint8_t(playerIndex));
-      playerData->netHandler->pwrite(sMsgBuf, 5);
+      playerData->netHandler->pwrite(tempBuf, 5);
     }
   }
 
   // flush the connection
   if (playerData->netHandler)
     netConnectedPeers[playerData->netHandler->getFD()].deleteMe = true;
+  playerData->netHandler->flushAllUDP();
 
 
   // if there is an active poll, cancel any vote this player may have made
