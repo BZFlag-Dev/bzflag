@@ -309,6 +309,12 @@ void pwriteBroadcast(const void *b, int l, int mask)
   }
 }
 
+static char sMsgBuf[MaxPacketLen];
+char *getDirectMessageBuffer()
+{
+  return &sMsgBuf[2*sizeof(uint16_t)];
+}
+
 int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
 {
   if (!handler)
