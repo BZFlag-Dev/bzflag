@@ -933,13 +933,13 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   if (isRadar && !isExploding) {
- //   if (BZDBCache::animatedTreads) {
-  //    renderPart(LeftTread);
- //     renderPart(RightTread);
- //   } else {
+   if (BZDBCache::animatedTreads) {
+    renderPart(LeftTread);
+     renderPart(RightTread);
+    } else {
       renderPart(LeftCasing);
       renderPart(RightCasing);
-//    }
+    }
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
@@ -976,14 +976,14 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Barrel);
     renderPart(LeftCasing);
     renderPart(RightCasing);
-    if (1) {// BZDBCache::animatedTreads) {
-    /*  for (int i = 0; i < 4; i++) {
+    if ( BZDBCache::animatedTreads) {
+      for (int i = 0; i < 4; i++) {
 	if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
 	  continue;
 	}
 	renderPart((TankPart)(LeftWheel0 + i));
 	renderPart((TankPart)(RightWheel0 + i));
-      } */
+      } 
       renderPart(LeftTread);
       renderPart(RightTread);
     }
@@ -1027,9 +1027,6 @@ void TankSceneNode::TankRenderNode::render()
 void TankSceneNode::TankRenderNode::renderLeftParts()
 {
   renderPart(LeftCasing);
-  renderPart(LeftTread);
-
-  return;
 
   if (BZDBCache::animatedTreads) {
     for (int i = 0; i < 4; i++) {
@@ -1048,8 +1045,6 @@ void TankSceneNode::TankRenderNode::renderLeftParts()
 void TankSceneNode::TankRenderNode::renderRightParts()
 {
   renderPart(RightCasing);
-  renderPart(RightTread);
-  return;
 
   if (BZDBCache::animatedTreads) {
     for (int i = 0; i < 4; i++) {
@@ -1202,7 +1197,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
   // setup the animation texture matrix
   bool usingTexMat = false;
-  if (!isShadow /*&&BZDBCache::animatedTreads */ && (part >= BasicTankParts)) {
+  if (!isShadow && BZDBCache::animatedTreads && (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
 
