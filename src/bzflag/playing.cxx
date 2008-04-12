@@ -3450,7 +3450,7 @@ case MsgGMUpdate: {
   if (shotPath) shotPath->update(shot, code, msg);
   PlayerId targetId;
   msg = nboUnpackUByte(msg, targetId);
-  Player* targetTank = lookupPlayer(targetId);
+  Player* targetTank = getPlayerByIndex(targetId);
   if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
     static TimeKeeper lastLockMsg;
     if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
@@ -6822,14 +6822,15 @@ bool checkForCompleteDownloads ( void )
   return false;
 }
 
-void doEnergySaver ( void )
+void doFPSLimit ( void )
 {
-  // limit the fps to save battery life by minimizing cpu usage
-  if (!BZDB.isTrue("saveEnergy"))
-    return;
-
+  // always cap out at 200 fps unless a limit is set.
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
-  float fpsLimit = BZDB.eval("fpsLimit");
+  float fpsLimit = 200;
+
+  if (BZDB.isTrue("saveEnergy"))  // limit the fps to save battery life by minimizing cpu usage
+    fpsLimit = BZDB.eval("fpsLimit");
+
   static bool notify = false;
 
 #ifndef DEBUG
@@ -6949,7 +6950,7 @@ static void		playingLoop()
     if (checkForCompleteDownloads())
       joinInternetGame2(); // we did the inital downloads, so we should join
 
-    doEnergySaver();
+    doFPSLimit();
 
 
     if (serverLink)
