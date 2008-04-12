@@ -1172,9 +1172,6 @@ AC_CONFIG_FILES([
 	bzflag.spec
 	data/Makefile
 	data/fonts/Makefile
-	data/models/Makefile
-	data/models/tank/Makefile
-	data/models/tank/std/Makefile
 	data/l10n/Makefile
 	data/skins/Makefile
 	data/skins/red/Makefile
