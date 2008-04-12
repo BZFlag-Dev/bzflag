@@ -452,6 +452,7 @@ if test "x$BUILDCARES" = "xyes" ; then
       AC_MSG_WARN([using an internal c-ares lib.])
       AC_MSG_WARN([Consider installing an updated library at system level])
       AC_MSG_WARN([link is http://daniel.haxx.se/projects/c-ares/])
+      AC_DEFINE(LOCAL_CARES, [], [Using a local version of c-ares.])
 fi
 
 

@@ -20,7 +20,13 @@
 #include "network.h"
 
 extern "C" {
+#ifdef LOCAL_CARES
+#include "bzares.h"
+#include "bzares_version.h"
+#else
 #include "ares.h"
+#include "ares_version.h"
+#endif
 }
 
 class AresHandler {
@@ -45,8 +51,13 @@ class AresHandler {
   void		process(fd_set *read_set, fd_set *write_set);
   ResolutionStatus getStatus() {return status;};
  private:
+#if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
+  static void	staticCallback(void *arg, int statusCallback, int timeouts,
+			     struct hostent *hostent);
+#else
   static void	staticCallback(void *arg, int statusCallback,
 			     struct hostent *hostent);
+#endif
   void		callback(int status, struct hostent *hostent);
   int		index;
   // peer's network hostname (malloc/free'd)

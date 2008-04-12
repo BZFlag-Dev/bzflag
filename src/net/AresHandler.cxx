@@ -89,8 +89,13 @@ void AresHandler::queryHost(char *hostName)
 		     (void *)this);
 }
 
+#if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
+void AresHandler::staticCallback(void *arg, int callbackStatus,
+				 int, struct hostent *hostent)
+#else
 void AresHandler::staticCallback(void *arg, int callbackStatus,
 				 struct hostent *hostent)
+#endif
 {
   ((AresHandler *)arg)->callback(callbackStatus, hostent);
 }
