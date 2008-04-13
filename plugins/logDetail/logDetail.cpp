@@ -303,7 +303,8 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
   // callsign - player callsign
   //
   // eg.
-  // PLAYERS (2) [@]7:Thumper [ ]3:xxx()
+  // PLAYERS (2) [@]7:Thumper() [ ]3:xxx()
+  // Extra data codes in between the parenthesis (currently empty)
   //
   msg.str("");
   msg << "PLAYERS (" << numPlayers << ") ";
@@ -321,6 +322,7 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
 	msg << "[" << playerStatus << "]";
 	msg << player->callsign.size() << ':';
 	msg << player->callsign.c_str();
+	msg << "() ";
       }
       bz_freePlayerRecord(player);
     }
