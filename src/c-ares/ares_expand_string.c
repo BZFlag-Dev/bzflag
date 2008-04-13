@@ -28,7 +28,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h" /* for the memdebug */
 
 /* Simply decodes a length-encoded character string. The first byte of the

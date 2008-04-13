@@ -20,7 +20,7 @@
 #include <unistd.h>
 #endif
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 void ares__close_sockets(struct server_state *server)

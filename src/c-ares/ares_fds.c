@@ -20,7 +20,7 @@
 #include <sys/time.h>
 #endif
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 int ares_fds(ares_channel channel, fd_set *read_fds, fd_set *write_fds)

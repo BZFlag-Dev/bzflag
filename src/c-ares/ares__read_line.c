@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 /* This is an internal function.  Its contract is to read a line from

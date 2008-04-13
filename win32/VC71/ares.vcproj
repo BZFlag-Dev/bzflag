@@ -19,7 +19,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="../../include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LOCAL_CARES"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,7 +63,8 @@
 				Name="VCCLCompilerTool"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="../../include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LOCAL_CARES"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -104,6 +106,7 @@
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="1"
@@ -147,6 +150,7 @@
 				InlineFunctionExpansion="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="1"
@@ -188,6 +192,7 @@
 				Name="VCCLCompilerTool"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -304,9 +309,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\src\c-ares\ares.h">
-			</File>
-			<File
 				RelativePath="..\..\src\c-ares\ares_dns.h">
 			</File>
 			<File
@@ -314,6 +316,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\c-ares\ares_version.h">
+			</File>
+			<File
+				RelativePath="..\..\include\bzares.h">
 			</File>
 			<File
 				RelativePath="..\..\src\c-ares\nameser.h">

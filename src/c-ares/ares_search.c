@@ -23,7 +23,7 @@
 #include "nameser.h"
 #endif
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 struct search_query {

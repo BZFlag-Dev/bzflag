@@ -22,7 +22,7 @@
 
 #include <time.h>
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 struct timeval *ares_timeout(ares_channel channel, struct timeval *maxtv,

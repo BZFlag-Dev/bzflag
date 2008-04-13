@@ -15,7 +15,7 @@
 #else
 #include "nameser.h"
 #endif
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 #ifndef __MINGW32__

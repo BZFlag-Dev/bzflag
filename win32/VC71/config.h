@@ -98,6 +98,9 @@
 /* Define if you wish to build exporting the bzflag API for plugins */
 #define _USE_BZ_API 1
 
+/* Define if you wish to use an internal ares */
+#define LOCAL_CARES 1
+
 // define all the direct X stuff because we want it, not the crapy STL stuff
 #define HAVE_DSOUND_H 1
 

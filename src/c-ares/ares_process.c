@@ -41,7 +41,7 @@
 #include <time.h>
 #include <errno.h>
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_dns.h"
 #include "ares_private.h"
 

@@ -13,7 +13,7 @@
 
 #include "setup.h"
 #include <stdlib.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 /*

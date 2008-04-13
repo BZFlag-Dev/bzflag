@@ -69,6 +69,16 @@
 
 #endif
 
+#ifdef LOCAL_CARES
+#include "bzares.h"
+#include "bzares_version.h"
+#else
+#include "bzares.h"
+#include "ares_version.h"
+#endif
+
+
+
 struct send_request {
   /* Remaining data to send */
   const unsigned char *data;

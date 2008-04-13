@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 #ifdef WATT32

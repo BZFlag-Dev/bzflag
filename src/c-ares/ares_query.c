@@ -27,7 +27,7 @@
 #endif
 
 #include <stdlib.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_dns.h"
 #include "ares_private.h"
 

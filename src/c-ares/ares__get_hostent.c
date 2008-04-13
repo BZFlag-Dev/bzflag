@@ -28,7 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 int ares__get_hostent(FILE *fp, struct hostent **host)

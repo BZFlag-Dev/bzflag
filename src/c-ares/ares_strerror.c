@@ -15,7 +15,7 @@
 
 #include "setup.h"
 #include <assert.h>
-#include "ares.h"
+#include "bzares.h"
 
 const char *ares_strerror(int code)
 {

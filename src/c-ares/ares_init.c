@@ -45,7 +45,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <errno.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h"
 
 #ifdef WATT32

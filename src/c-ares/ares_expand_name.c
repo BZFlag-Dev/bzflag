@@ -27,7 +27,7 @@
 #endif
 
 #include <stdlib.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_private.h" /* for the memdebug */
 
 static int name_length(const unsigned char *encoded, const unsigned char *abuf,

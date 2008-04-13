@@ -28,7 +28,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "ares.h"
+#include "bzares.h"
 #include "ares_dns.h"
 
 /* Header format, from RFC 1035:

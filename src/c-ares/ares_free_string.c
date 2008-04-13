@@ -15,7 +15,7 @@
 
 #include "setup.h"
 #include <stdlib.h>
-#include "ares.h"
+#include "bzares.h"
 
 void ares_free_string(void *str)
 {
