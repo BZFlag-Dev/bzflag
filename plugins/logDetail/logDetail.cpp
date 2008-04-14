@@ -304,7 +304,7 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
   //
   // eg.
   // PLAYERS (2) [@]7:Thumper() [ ]3:xxx()
-  // Extra data codes in between the parenthesis (currently empty)
+  // Extra data goes in between the parenthesis (currently empty)
   //
   msg.str("");
   msg << "PLAYERS (" << numPlayers << ") ";
