@@ -57,7 +57,8 @@
 
 BZWReader::BZWReader(const std::string &filename) : cURLManager(),
 					     location(filename),
-					     input(NULL)
+					     input(NULL), 
+					     fromBlob(false)
 {
   static const std::string httpProtocol("http://");
   static const std::string ftpProtocol("ftp://");
@@ -90,8 +91,10 @@ BZWReader::BZWReader(const std::string &filename) : cURLManager(),
 
 BZWReader::BZWReader(std::istream &in) : cURLManager(),
 					     location("blob"),
-					     input(&in)
+					     input(&in),
+					     fromBlob(true)
 {
+  errorHandler = new BZWError(location);
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
   }
@@ -102,7 +105,7 @@ BZWReader::~BZWReader()
 {
   // clean up
   delete errorHandler;
-  delete input;
+  if (!fromBlob) delete input;
 }
 
 
