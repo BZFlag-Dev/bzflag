@@ -197,9 +197,8 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
-
-  if (!DownloadAccessList)
-    DownloadAccessList = new AccessList("DownloadAccess.txt", DownloadContent);
+  
+  DownloadAccessList = new AccessList("DownloadAccess.txt", DownloadContent);
 
   DownloadAccessList->reload();
 
