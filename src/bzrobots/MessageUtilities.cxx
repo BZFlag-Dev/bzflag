@@ -57,7 +57,7 @@ bool MessageUtilities::parse(const char *str, float &dest)
 template <>
 bool MessageUtilities::parse(const char *str, uint64_t &dest)
 {
-  if (sscanf(str,"%lld",(intmax_t *)&dest) != 1)
+  if (sscanf(str,"%jd",(intmax_t *)&dest) != 1)
     return false;
   return true;
 }
