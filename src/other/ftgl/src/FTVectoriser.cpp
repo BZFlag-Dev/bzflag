@@ -6,7 +6,7 @@
 #endif
 
 #ifdef __APPLE__
-#  if defined(__APPLE_CC__) && __APPLE_CC__ == 5367
+#  if defined(__APPLE_CC__) && __APPLE_CC__ < 5465
 #    define CBARGS ...
 #  endif
 #endif
