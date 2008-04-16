@@ -37,7 +37,7 @@ BufferedNetworkMessage::BufferedNetworkMessage()
   checkData(0);
 
   code = 0;
-  recipent = NULL;
+  recipient = NULL;
   toAdmins = false;
 }
 
@@ -48,7 +48,7 @@ BufferedNetworkMessage::BufferedNetworkMessage( const BufferedNetworkMessage &ms
   data = (char*)malloc(dataSize);
   memcpy(data,msg.data,dataSize);
   code = msg.code;
-  recipent = msg.recipent;
+  recipient = msg.recipient;
   toAdmins = msg.toAdmins;
 }
 
@@ -60,7 +60,7 @@ BufferedNetworkMessage::~BufferedNetworkMessage()
 
 void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
 {
-  recipent = to;
+  recipient = to;
   code = messageCode;
 
   MSGMGR.queueMessage(this);
@@ -68,7 +68,7 @@ void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
 
 void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
 {
-  recipent = NULL;
+  recipient = NULL;
   code = messageCode;
   toAdmins = toAdminClients;
   MSGMGR.queueMessage(this);
@@ -239,7 +239,7 @@ void BufferedNetworkMessage::clear ( void )
   dataSize = 4;
   data = NULL;
   packedSize = 0;
-  recipent = NULL;
+  recipient = NULL;
   readPoint = 0;
   code = 0;
 }
@@ -261,15 +261,15 @@ bool BufferedNetworkMessage::process ( void )
 
   NetworkMessageTransferCallback *transferCallback = MSGMGR.getTransferCallback();
 
-  if (!transferCallback || !recipent && code == 0)
+  if (!transferCallback || !recipient && code == 0)
     return false;
 
   nboPackUShort(data, uint16_t(packedSize));
   nboPackUShort(data+sizeof(uint16_t), code);
 
-  if (recipent)
+  if (recipient)
   {
-    return transferCallback->send(recipent, data, packedSize+4) == packedSize+4;
+    return transferCallback->send(recipient, data, packedSize+4) == packedSize+4;
   }
    
   // send message to everyone
@@ -376,7 +376,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
   MessageList::iterator itr = pendingOutgoingMessages.begin();
   while ( itr != pendingOutgoingMessages.end() )
   {
-    if ((*itr) && (handler == (*itr)->recipent))  // just kill the message and data, it'll be pulled from the list on the next update pass
+    if ((*itr) && (handler == (*itr)->recipient))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*itr);
       pendingOutgoingMessages.erase(itr);
@@ -389,7 +389,7 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
   MessageDeque::iterator qItr = outgoingQueue.begin();
   while (qItr != outgoingQueue.end())
   {
-    if ((*qItr) && (handler == (*qItr)->recipent))  // just kill the message and data, it'll be pulled from the list on the next update pass
+    if ((*qItr) && (handler == (*qItr)->recipient))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
       delete(*qItr);
       outgoingQueue.erase(qItr);

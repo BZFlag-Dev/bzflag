@@ -84,7 +84,7 @@ protected:
   size_t readPoint;
 
   uint16_t    code;
-  NetHandler  *recipent;  // NULL if broadcast;
+  NetHandler  *recipient;  // NULL if broadcast;
   bool	      toAdmins;
 };
 
