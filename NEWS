@@ -5,6 +5,7 @@
 
 BZFlag 2.99.x
 ------------
+* Fix -configdir on client - Scott Wichser, Steven Mertens
 * Server operators no longer automatically override antiban - Daniel Remenak
 * New tank explosion pattern - Luke Rewega
 * Exposed pauseOnMinimize local variable for iconify pausing - Sean Morrison
