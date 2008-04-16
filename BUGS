@@ -62,7 +62,6 @@ recent bugs
 - doc/guide/NetworkProtocol.xml is not up to date
 
 -- bans --
-- idbans report the wrong time remaining on a idbanlist
 
 - a banned registered player that gets added to both the banList and
   idBanList is not listed in the latter on a idbanlist yet prevented

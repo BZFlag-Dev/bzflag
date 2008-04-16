@@ -31,7 +31,7 @@ struct BanInfo
   /** This constructor creates a new BanInfo with the address @c banAddr,
       the ban performer @c bannedBy, and the expiration time @c period
       minutes from now. */
-  BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, int period = 0,
+  BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, double period = 0,
 	  bool isFromMaster = false ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
     if (_bannedBy)
@@ -71,7 +71,7 @@ struct HostBanInfo
       @c hostpat, the ban performer @c bannedBy, and the expiration time
       @c period minutes from now. */
   HostBanInfo(std::string _hostpat, const char *_bannedBy = NULL,
-	      int period = 0, bool isFromMaster = false ) {
+	      double period = 0, bool isFromMaster = false ) {
     hostpat = _hostpat;
     if (_bannedBy)
       bannedBy = _bannedBy;
@@ -110,7 +110,7 @@ struct IdBanInfo
       @c idpat, the ban performer @c bannedBy, and the expiration time
       @c period minutes from now. */
   IdBanInfo(std::string _idpat, const char *_bannedBy = NULL,
-	    int period = 0, bool isFromMaster = false ) {
+	    double period = 0, bool isFromMaster = false ) {
     idpat = _idpat;
     if (_bannedBy)
       bannedBy = _bannedBy;
@@ -155,31 +155,31 @@ public:
   /** This function will add a ban for the address @c ipAddr with the given
       parameters. If that address already is banned the old ban will be
       replaced. */
-  void ban(in_addr &ipAddr, const char *bannedBy, int period = 0,
+  void ban(in_addr &ipAddr, const char *bannedBy, double period = 0,
 	   const char *reason=NULL, bool fromMaster = false);
 
   /** This function takes a list of addresses as a string and tries to ban them
       using the given parameters. The string should be comma separated,
       like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
-  bool ban(std::string &ipList, const char *bannedBy=NULL, int period = 0,
+  bool ban(std::string &ipList, const char *bannedBy=NULL, double period = 0,
 	   const char *reason=NULL, bool fromMaster = false);
 
   /** This function takes a list of addresses as a <code>const char*</code>
       and tries to ban them using the given parameters. The string should be
       comma separated, like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
-  bool ban(const char *ipList, const char *bannedBy=NULL, int period = 0,
+  bool ban(const char *ipList, const char *bannedBy=NULL, double period = 0,
 	   const char *reason=NULL, bool fromMaster = false);
 
   /** This function adds a hostban for the host pattern @c hostpat with the
       given parameters. If the host pattern already is banned the old ban will
       be replaced. */
-  void hostBan(std::string hostpat, const char *bannedBy, int period = 0,
+  void hostBan(std::string hostpat, const char *bannedBy, double period = 0,
 	       const char *reason = NULL, bool fromMaster = false);
 
   /** This function adds an idban for the id pattern @c idpat with the
       given parameters. If the idban pattern already is banned the old ban will
       be replaced. */
-  void idBan(std::string hostpat, const char *bannedBy, int period = 0,
+  void idBan(std::string hostpat, const char *bannedBy, double period = 0,
 	     const char *reason = NULL, bool fromMaster = false);
 
   /** This function removes any ban for the address @c ipAddr.
