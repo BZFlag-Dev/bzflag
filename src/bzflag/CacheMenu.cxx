@@ -145,7 +145,7 @@ void CacheMenu::execute()
     }
   } else if (_focus == updateDownloadCache) {
     controlPanel->addMessage("Updating Downloads");
-    Downloads::startDownloads(true, true, true);
+    Downloads::instance().startDownloads(true, true, true);
   } else if (_focus == clearDownloadCache) {
     const std::string oldSize = BZDB.get("maxCacheMB");
     BZDB.set("maxCacheMB", "0");

@@ -1558,7 +1558,7 @@ static void loadCachedWorld()
 
   const bool doDownloads =	BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
-  Downloads::startDownloads(doDownloads, updateDownloads, false);
+  Downloads::instance().startDownloads(doDownloads, updateDownloads, false);
   downloadingInitialTexture  = true;
 }
 
@@ -1709,7 +1709,7 @@ static void handleResourceFetch (void* msg)
 
     std::string hostname;
     parseHostname (item.URL, hostname);
-    if (authorizedServer (hostname)) {
+    if (Downloads::instance().authorizedServer (hostname)) {
       if (!resourceDownloader) {
 	resourceDownloader = new ResourceGetter;
       }
@@ -5085,7 +5085,7 @@ void		leaveGame()
     BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
   // flush downloaded textures (before the BzMaterials are nuked)
-  Downloads::removeTextures();
+  Downloads::instance().removeTextures();
 
   // delete world
   World::setWorld(NULL);
@@ -6806,11 +6806,11 @@ void doNetworkStuff ( void )
 bool checkForCompleteDownloads ( void )
 {
   // check if we are waiting for initial texture downloading
-  if (!Downloads::requestFinalized())
+  if (!Downloads::instance().requestFinalized())
     return false;
 
   // downloading is terminated. go!
-  Downloads::finalizeDownloads();
+  Downloads::instance().finalizeDownloads();
   if (downloadingInitialTexture)
   {
     downloadingInitialTexture = false;

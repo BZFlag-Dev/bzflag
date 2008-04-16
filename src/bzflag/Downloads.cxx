@@ -14,9 +14,7 @@
 #include "Downloads.h"
 
 /* common implementation headers */
-#include "AccessList.h"
 #include "CacheManager.h"
-#include "BzMaterial.h"
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "cURLManager.h"
@@ -58,15 +56,8 @@ static const char DownloadContent[] =
   "allow images.bzflag.org\n"
   "deny *\n";
 
-AccessList* DownloadAccessList;
-
-static bool       textureDownloading = false;
-
-
-// Function Prototypes
-static void printAuthNotice();
-static bool checkAuthorizations(BzMaterialManager::TextureSet& set);
-
+template <>
+Downloads* Singleton<Downloads>::_instance = (Downloads*)0;
 
 class CachedTexture : private cURLManager {
 public:
@@ -188,6 +179,17 @@ void CachedTexture::collectData(char* ptr, int len)
 
 static std::vector<CachedTexture*> cachedTexVector;
 
+Downloads::Downloads()
+{
+  downloadAccessList = new AccessList("DownloadAccess.txt", DownloadContent);
+  textureDownloading = false;
+}
+
+Downloads::~Downloads()
+{
+  delete downloadAccessList;
+}
+
 void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 			       bool referencing)
 {
@@ -197,10 +199,8 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
-  
-  DownloadAccessList = new AccessList("DownloadAccess.txt", DownloadContent);
 
-  DownloadAccessList->reload();
+  downloadAccessList->reload();
 
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
@@ -257,7 +257,6 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
     printAuthNotice();
   }
   textureDownloading = true;
-  delete DownloadAccessList;
 }
 
 void Downloads::finalizeDownloads()
@@ -299,20 +298,20 @@ void Downloads::removeTextures()
 }
 
 
-static void printAuthNotice()
+void Downloads::printAuthNotice()
 {
   std::string msg = ColorStrings[WhiteColor];
   msg += "NOTE: ";
   msg += ColorStrings[GreyColor];
   msg += "download access is controlled by ";
   msg += ColorStrings[YellowColor];
-  msg += DownloadAccessList->getFileName();
+  msg += downloadAccessList->getFileName();
   addMessage(NULL, msg);
   return;
 }
 
 
-bool authorizedServer(const std::string& hostname)
+bool Downloads::authorizedServer(const std::string& hostname)
 {
   // Don't do here a DNS lookup, it can block the client
   // DNS is temporary removed until someone code it unblocking
@@ -323,7 +322,7 @@ bool authorizedServer(const std::string& hostname)
     nameAndIp.push_back(hostname);
   }
 
-  return DownloadAccessList->authorized(nameAndIp);
+  return downloadAccessList->authorized(nameAndIp);
 }
 
 
@@ -340,10 +339,10 @@ bool parseHostname(const std::string& url, std::string& hostname)
 }
 
 
-static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
+bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& set)
 {
   // avoid the DNS lookup
-  if (DownloadAccessList->alwaysAuthorized()) {
+  if (downloadAccessList->alwaysAuthorized()) {
     return false;
   }
 
