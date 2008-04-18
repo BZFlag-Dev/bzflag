@@ -62,6 +62,9 @@ recent bugs
 - doc/guide/NetworkProtocol.xml is not up to date
 
 -- bans --
+- The reason why a player got banned is not displayed, only a
+  'Server forced disconnection' is displayed. The above
+  occures at bantime or when trying to reconnect after a ban.
 
 - a banned registered player that gets added to both the banList and
   idBanList is not listed in the latter on a idbanlist yet prevented
