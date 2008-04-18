@@ -229,6 +229,7 @@ AC_CONFIG_FILES([
 	unrealCTF/Makefile
 	weaponArena/Makefile
 	webstats/Makefile
+	webReport/Makefile
 	wwzones/Makefile
 ])
 
