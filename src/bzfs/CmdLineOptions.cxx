@@ -444,22 +444,30 @@ static char **parseConfFile( const char *file, int &ac)
 {
   std::vector<std::string> tokens;
   ac = 0;
+  char delim = '\n';
 
   BZWError errorHandler(file);
 
   std::ifstream confStrm(file);
   if (confStrm.is_open()) {
     char buffer[1024];
-    confStrm.getline(buffer,1024);
+    confStrm.getline(buffer,1024,delim);
 
     if (!confStrm.good()) {
-      errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
-      exit(1);
+      //maybe its a Mac file and delim is \r
+      delim = '\r';
+      confStrm.seekg(0, std::ifstream::beg);
+      confStrm.clear();
+      confStrm.getline(buffer,1024,delim);
+      if(!confStrm.good()){
+        errorHandler.fatalError(std::string("could not find bzflag configuration file on open"), 0);
+        exit(1);
+      }
     }
 
     confStrm.seekg(0, std::ifstream::beg);
     while (confStrm.good()) {
-      confStrm.getline(buffer,1024);
+      confStrm.getline(buffer,1024,delim);
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
       while ((startPos >= 0) && (line.at(startPos) != '#')) {
