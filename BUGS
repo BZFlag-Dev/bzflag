@@ -32,20 +32,6 @@ recent bugs
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
   fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
--- simulation --
-- at high frame rates (approx. > 500), isDeadReckoningWrong() often returns true
-  when tank is moving at constant speed. This leads to many unnecessary
-  MsgPlayerUpdate packets to be sent. Maybe floating point inaccuracies?
-
-  Also, at high frame rates, the position update in BaseLocalPlyer::update
-  will be too large, because dt is artificially increased then. In 2_0
-  this was fixed by simply skipping the update function. We now have an
-  outer loop in playing.cxx (doUpdates) which divides a big dt into a
-  number of smaller steps, so the fix must be done differently here.
-
-  The DR problem is probably related to the wrong updates.
-  simple fix is just a fps cap.
-
 -- regressions--
 - jumping is broken; heigth and direction of jumping affected.
 
