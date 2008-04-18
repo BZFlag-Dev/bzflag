@@ -429,18 +429,18 @@ void* Flag::fakePack(void* buf) const
 void* Flag::unpack(void* buf)
 {
   uint16_t data;
-
-  buf = FlagType::unpack(buf, type);
-  buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
-  buf = nboUnpackUShort(buf, data); endurance = FlagEndurance(data);
-  buf = nboUnpackUByte(buf, owner);
-  buf = nboUnpackFloatVector(buf, position);
-  buf = nboUnpackFloatVector(buf, launchPosition);
-  buf = nboUnpackFloatVector(buf, landingPosition);
-  buf = nboUnpackFloat(buf, flightTime);
-  buf = nboUnpackFloat(buf, flightEnd);
-  buf = nboUnpackFloat(buf, initialVelocity);
-  return buf;
+								      // bytes
+  buf = FlagType::unpack(buf, type);				      // 2 
+  buf = nboUnpackUShort(buf, data); status = FlagStatus(data);	      // 2
+  buf = nboUnpackUShort(buf, data); endurance = FlagEndurance(data);  // 2
+  buf = nboUnpackUByte(buf, owner);				      // 1
+  buf = nboUnpackFloatVector(buf, position);			      // 12 (3x4)
+  buf = nboUnpackFloatVector(buf, launchPosition);		      // 12 (3x4)
+  buf = nboUnpackFloatVector(buf, landingPosition);		      // 12 (3x4)
+  buf = nboUnpackFloat(buf, flightTime);			      // 4
+  buf = nboUnpackFloat(buf, flightEnd);				      // 4
+  buf = nboUnpackFloat(buf, initialVelocity);			      // 4
+  return buf;						// total        55 
 }
 
 FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)

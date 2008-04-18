@@ -20,9 +20,6 @@ recent bugs
   
 - starting for the first time on a new install seems to geek on the config
   creation on at least 2 OSs, ( linux and OSX ).
-   
-- client crashes upon receipt of a corrupted MsgFlagUpdate message.
-  (See http://bzflag.secretplace.us/packet.txt for an example)
   
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a

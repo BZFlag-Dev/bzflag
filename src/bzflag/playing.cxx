@@ -1937,15 +1937,22 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
     checkScores = true;
 }
 
-static void handleFlagUpdate(void *msg)
+static void handleFlagUpdate(void *msg, size_t len)
 {
   uint16_t count;
   uint16_t flagIndex;
-  msg = nboUnpackUShort(msg, count);
-  for (int i = 0; i < count; i++) {
-    msg = nboUnpackUShort(msg, flagIndex);
-    msg = world->getFlag(int(flagIndex)).unpack(msg);
-    world->initFlag(int(flagIndex));
+  if ( len > 2)
+   msg = nboUnpackUShort(msg, count);
+
+  size_t perFlagSize = 2 + 55;
+
+  if ( len >= (2 + (perFlagSize*count)) )
+  {
+    for (int i = 0; i < count; i++) {
+      msg = nboUnpackUShort(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      world->initFlag(int(flagIndex));
+    }
   }
 }
 
@@ -2009,7 +2016,7 @@ static void handleAliveMessage(void *msg)
 	}
       }
     }
-    tank->setStatus(PlayerState::Alive);
+    tank->setStatus(tank->getStatus() | PlayerState::Alive);
     tank->move(pos, forward);
     tank->setVelocity(zero);
     tank->setAngularVelocity(0.0f);
@@ -3274,7 +3281,7 @@ case MsgRemovePlayer:
   break;
 
 case MsgFlagUpdate:
-  handleFlagUpdate(msg);
+  handleFlagUpdate(msg,len);
   break;
 
 case MsgTeamUpdate:
