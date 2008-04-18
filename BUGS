@@ -121,10 +121,7 @@ recent bugs
    should black out screen before changing resolutions
    should raise on top of task bar
    also black out screen when quitting until resolution restored
-
-- error dialogs on win32 may appear off screen
-   only when display resolution was changed
-   
+      
 - jitter on windows servers is reported as very high, but play
   is unaffected.
   

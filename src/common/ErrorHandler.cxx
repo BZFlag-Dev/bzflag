@@ -59,6 +59,24 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 // special error handler.  shows a message box on Windows.
 //
 
+std::vector<FatalErrorCallback*> fatalCallbacks;
+
+void addFatalErrorCallback ( FatalErrorCallback* callback )
+{
+  fatalCallbacks.push_back(callback);
+}
+void removeFatalErrorCallback ( FatalErrorCallback* callback )
+{
+  for ( size_t s = 0; s < fatalCallbacks.size(); s++ )
+  {
+    if ( callback == fatalCallbacks[s])
+    {
+      fatalCallbacks.erase(fatalCallbacks.begin()+s);
+      return;
+    }
+  }
+}
+
 void			printFatalError(const char* fmt, ...)
 {
   char buffer[1024];
@@ -66,11 +84,14 @@ void			printFatalError(const char* fmt, ...)
   va_start(args, fmt);
   vsnprintf(buffer, 1024, fmt, args);
   va_end(args);
-#if defined(_WIN32)
-  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
+
+  for ( size_t s = 0; s < fatalCallbacks.size(); s++ )
+  {
+    if ( fatalCallbacks[s])
+      fatalCallbacks[s]->error("BZFlag Error",buffer);
+  }
+
   std::cerr << buffer << std::endl;
-#endif
 }
 
 

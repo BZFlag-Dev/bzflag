@@ -189,13 +189,21 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
     // register modes
     initResolutions(resInfo, numModes, currentMode);
   }
+
+  addFatalErrorCallback(this);
 }
 
 WinDisplay::~WinDisplay()
 {
+  removeFatalErrorCallback(this);
   setDefaultResolution();
   delete[] resolutions;
   rep->unref();
+}
+
+void WinDisplay::error ( const char* title, const char* message )
+{
+  MessageBox(hwnd,message,title,MB_OK | MB_ICONERROR | MB_TASKMODAL);
 }
 
 bool			WinDisplay::isFullScreenOnly() const
