@@ -2921,12 +2921,21 @@ typedef struct
 {
   std::vector<std::string> items;
   int playerID;
+  GameKeeper::Player* player;
   size_t i;
 }ReportCommandParams;
 
 bool viewReport ( void * param )
 {
   ReportCommandParams *p = (ReportCommandParams*)param;
+
+  // verify that the player is still active, AND still who we think they are
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
+  if (!player || player != p->player )
+  {
+    delete(p);
+    return false;
+  }
 
   if (p->i < p->items.size() )
     sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
@@ -2975,6 +2984,7 @@ bool ViewReportCommand::operator() (const char* message,
   ReportCommandParams *params = new ReportCommandParams;
   params->i = 0;
   params->playerID = t;
+  params->player = playerData;
 
   // assumes that empty lines separate the reports
   std::string line;
