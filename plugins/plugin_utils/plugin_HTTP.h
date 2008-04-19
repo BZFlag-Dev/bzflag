@@ -37,6 +37,9 @@ public:
 
   typedef std::map<std::string,std::string> URLParams;
 
+  std::string getParam ( const URLParams &params, const char* param );
+  std::string getParam ( const URLParams &params, const std::string &param ) {return getParam(params,param.c_str());}
+
   void startupHTTP ( void );
   void shutdownHTTP ( void );
 

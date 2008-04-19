@@ -117,6 +117,15 @@ void BZFSHTTPServer::shutdownHTTP ( void )
   users.clear();
 }
 
+std::string BZFSHTTPServer::getParam ( const URLParams &params, const char* param )
+{
+  if ( params.find(tolower(std::string(param))) != params.end() )
+    return params.find(tolower(std::string(param)))->second;
+
+  return std::string("");
+}
+
+
 void BZFSHTTPServer::process ( bz_EventData *eventData )
 {
   if ( eventData->eventType == bz_eTickEvent)
@@ -216,7 +225,7 @@ void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams
       {
 	std::string key = url_decode(replace_all(paramChunks[0],"+"," "));
 	std::string value =  url_decode(replace_all(paramChunks[1],"+"," "));
-	params[key] = value;
+	params[tolower(key)] = value;
       }
     }
   }
