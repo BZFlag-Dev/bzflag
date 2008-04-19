@@ -27,6 +27,14 @@
 
 static bool			quitFlag = false;
 
+bool isValidKey ( const std::string & key )
+{
+#ifdef _WIN32
+  if (key == "alt+f4")
+    return false;
+#endif
+  return true;
+}
 //
 // command handlers
 //
@@ -200,6 +208,9 @@ static std::string		cmdBind(const std::string&,
   } else if (args.size() < 3) {
     return "usage: bind <button-name> {up|down} <command> <args>...";
   }
+
+  if (isValidKey(TextUtils::tolower(args[0])))
+    return std::string("bind error: OS can not bind \"") + args[0] + "\"";
 
   BzfKeyEvent key;
   if (!KEYMGR.stringToKeyEvent(args[0], key))
