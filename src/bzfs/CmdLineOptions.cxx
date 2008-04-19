@@ -1544,8 +1544,8 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // processor affinity
   if (options.processorAffinity >= 0) {
-    TimeKeeper::setProcessorAffinity(options.processorAffinity);
     logDebugMessage(2, "Setting process affinity to processor %d\n", options.processorAffinity);
+    TimeKeeper::setProcessorAffinity(options.processorAffinity);
   } else {
     logDebugMessage(2, "Processor affinity is floating (managed by OS)\n");
   }
