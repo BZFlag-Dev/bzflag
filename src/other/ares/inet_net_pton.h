@@ -1,9 +1,10 @@
 #ifndef __ARES_INET_NET_PTON_H
 #define __ARES_INET_NET_PTON_H
 
-/* $Id: inet_net_pton.h,v 1.4 2006-07-26 10:43:15 yangtse Exp $ */
+/* $Id: inet_net_pton.h,v 1.5 2007-11-19 15:47:01 bagder Exp $ */
 
-/*
+/* Copyright (C) 2005 by Daniel Stenberg
+ *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
  * fee is hereby granted, provided that the above copyright

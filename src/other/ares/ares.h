@@ -18,13 +18,24 @@
 #ifndef ARES__H
 #define ARES__H
 
+/*
+ * Define WIN32 when build target is Win32 API
+ */
+
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
+#define WIN32
+#endif
+
 #include <sys/types.h>
 
-#if defined(_AIX) || defined(NETWARE)
+#if defined(_AIX) || (defined(NETWARE) && defined(__NOVELL_LIBC__))
 /* HP-UX systems version 9, 10 and 11 lack sys/select.h and so does oldish
    libc5-based Linux systems. Only include it on system that are known to
    require it! */
 #include <sys/select.h>
+#endif
+#if (defined(NETWARE) && !defined(__NOVELL_LIBC__))
+#include <sys/bsdskt.h>
 #endif
 
 #if defined(WATT32)
@@ -32,8 +43,12 @@
   #include <sys/socket.h>
   #include <tcp.h>
 #elif defined(WIN32)
-  #include <winsock2.h>
-  #include <windows.h>
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 #else
   #include <netinet/in.h>
   #include <sys/socket.h>
@@ -94,6 +109,9 @@ extern "C" {
 #define ARES_OPT_DOMAINS        (1 << 7)
 #define ARES_OPT_LOOKUPS        (1 << 8)
 #define ARES_OPT_SOCK_STATE_CB  (1 << 9)
+#define ARES_OPT_SORTLIST       (1 << 10)
+#define ARES_OPT_SOCK_SNDBUF    (1 << 11)
+#define ARES_OPT_SOCK_RCVBUF    (1 << 12)
 
 /* Nameinfo flag values */
 #define ARES_NI_NOFQDN                  (1 << 0)
@@ -136,17 +154,28 @@ extern "C" {
 #define ARES_GETSOCK_WRITABLE(bits,num) (bits & (1 << ((num) + \
                                          ARES_GETSOCK_MAXNUM)))
 
+
+/*
+ * Typedef our socket type
+ */
+
+#ifndef ares_socket_typedef
 #ifdef WIN32
-typedef void (*ares_sock_state_cb)(void *data,
-                                   SOCKET socket,
-                                   int readable,
-                                   int writable);
+typedef SOCKET ares_socket_t;
+#define ARES_SOCKET_BAD INVALID_SOCKET
 #else
+typedef int ares_socket_t;
+#define ARES_SOCKET_BAD -1
+#endif
+#define ares_socket_typedef
+#endif /* ares_socket_typedef */
+
 typedef void (*ares_sock_state_cb)(void *data,
-                                   int socket,
+                                   ares_socket_t socket_fd,
                                    int readable,
                                    int writable);
-#endif
+
+struct apattern;
 
 struct ares_options {
   int flags;
@@ -155,6 +184,8 @@ struct ares_options {
   int ndots;
   unsigned short udp_port;
   unsigned short tcp_port;
+  int socket_send_buffer_size;
+  int socket_receive_buffer_size;
   struct in_addr *servers;
   int nservers;
   char **domains;
@@ -162,6 +193,8 @@ struct ares_options {
   char *lookups;
   ares_sock_state_cb sock_state_cb;
   void *sock_state_cb_data;
+  struct apattern *sortlist;
+  int nsort;
 };
 
 struct hostent;
@@ -169,16 +202,18 @@ struct timeval;
 struct sockaddr;
 struct ares_channeldata;
 typedef struct ares_channeldata *ares_channel;
-typedef void (*ares_callback)(void *arg, int status, unsigned char *abuf,
-                              int alen);
-typedef void (*ares_host_callback)(void *arg, int status,
+typedef void (*ares_callback)(void *arg, int status, int timeouts,
+                              unsigned char *abuf, int alen);
+typedef void (*ares_host_callback)(void *arg, int status, int timeouts,
                                    struct hostent *hostent);
-typedef void (*ares_nameinfo_callback)(void *arg, int status,
+typedef void (*ares_nameinfo_callback)(void *arg, int status, int timeouts,
                                        char *node, char *service);
 
 int ares_init(ares_channel *channelptr);
 int ares_init_options(ares_channel *channelptr, struct ares_options *options,
                       int optmask);
+int ares_save_options(ares_channel channel, struct ares_options *options, int *optmask);
+void ares_destroy_options(struct ares_options *options);
 void ares_destroy(ares_channel channel);
 void ares_cancel(ares_channel channel);
 void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
@@ -200,6 +235,8 @@ int ares_getsock(ares_channel channel, int *socks, int numsocks);
 struct timeval *ares_timeout(ares_channel channel, struct timeval *maxtv,
                              struct timeval *tv);
 void ares_process(ares_channel channel, fd_set *read_fds, fd_set *write_fds);
+void ares_process_fd(ares_channel channel, ares_socket_t read_fd,
+                     ares_socket_t write_fd);
 
 int ares_mkquery(const char *name, int dnsclass, int type, unsigned short id,
                  int rd, unsigned char **buf, int *buflen);
@@ -207,10 +244,38 @@ int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
                      int alen, char **s, long *enclen);
 int ares_expand_string(const unsigned char *encoded, const unsigned char *abuf,
                      int alen, unsigned char **s, long *enclen);
+
+#ifndef s6_addr
+struct in6_addr {
+  union {
+    unsigned char _S6_u8[16];
+  } _S6_un;
+};
+#define s6_addr _S6_un._S6_u8
+#endif
+
+struct addrttl {
+  struct in_addr ipaddr;
+  int            ttl;
+};
+struct addr6ttl {
+  struct in6_addr ip6addr;
+  int             ttl;
+};
+
+/*
+** Parse the buffer, starting at *abuf and of length alen bytes, previously
+** obtained from an ares_search call.  Put the results in *host, if nonnull.
+** Also, if addrttls is nonnull, put up to *naddrttls IPv4 addresses along with
+** their TTLs in that array, and set *naddrttls to the number of addresses
+** so written.
+*/
 int ares_parse_a_reply(const unsigned char *abuf, int alen,
-                       struct hostent **host);
+                       struct hostent **host,
+                       struct addrttl *addrttls, int *naddrttls);
 int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
-                       struct hostent **host);
+                       struct hostent **host,
+                       struct addr6ttl *addrttls, int *naddrttls);
 int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
                          int addrlen, int family, struct hostent **host);
 int ares_parse_ns_reply(const unsigned char *abuf, int alen,

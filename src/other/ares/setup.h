@@ -3,7 +3,7 @@
 
 /* $Id$ */
 
-/* Copyright (C) 2004 - 2005 by Daniel Stenberg et al
+/* Copyright (C) 2004 - 2007 by Daniel Stenberg et al
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
@@ -16,13 +16,11 @@
  * without express or implied warranty.
  */
 
-#if !defined(WIN32) && defined(__WIN32__)
-/* Borland fix */
-#define WIN32
-#endif
+/*
+ * Define WIN32 when build target is Win32 API
+ */
 
-#if !defined(WIN32) && defined(_WIN32)
-/* VS2005 on x64 fix */
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
 #define WIN32
 #endif
 
@@ -97,10 +95,6 @@
 #define ssize_t int
 #endif
 
-#ifndef HAVE_WS2TCPIP_H
-#define socklen_t int
-#endif
-
 #endif /* HAVE_CONFIG_H */
 
 /*
@@ -116,18 +110,6 @@
 #undef PACKAGE_NAME
 #undef VERSION
 #undef PACKAGE
-
-/*
- * Typedef our socket type
- */
-
-#ifdef USE_WINSOCK
-typedef SOCKET ares_socket_t;
-#define ARES_SOCKET_BAD INVALID_SOCKET
-#else
-typedef int ares_socket_t;
-#define ARES_SOCKET_BAD -1
-#endif
 
 /*
  * Assume a few thing unless they're set by configure
@@ -156,6 +138,11 @@ int ares_strcasecmp(const char *s1, const char *s2);
    same */
 #define strncasecmp(a,b,c) ares_strncasecmp(a,b,c)
 #define strcasecmp(a,b) ares_strcasecmp(a,b)
+#ifdef _MSC_VER
+#  if _MSC_VER >= 1400
+#    define strdup(a) _strdup(a)
+#  endif
+#endif
 #endif
 
 /* IPv6 compatibility */

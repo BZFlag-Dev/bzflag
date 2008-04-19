@@ -21,13 +21,24 @@
 #include "nameser.h"
 
 #else
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
 #ifdef HAVE_SYS_UIO_H
 #include <sys/uio.h>
 #endif
-#include <netinet/in.h>
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h> /* <netinet/tcp.h> may need it */
+#endif
+#ifdef HAVE_NETINET_TCP_H
+#include <netinet/tcp.h> /* for TCP_NODELAY */
+#endif
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
 #include <arpa/nameser.h>
+#endif
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
 #endif
@@ -43,6 +54,7 @@
 #include <sys/filio.h>
 #endif
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -56,20 +68,27 @@
 
 static int try_again(int errnum);
 static void write_tcp_data(ares_channel channel, fd_set *write_fds,
-                           time_t now);
-static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now);
+                           ares_socket_t write_fd, time_t now);
+static void read_tcp_data(ares_channel channel, fd_set *read_fds,
+                          ares_socket_t read_fd, time_t now);
 static void read_udp_packets(ares_channel channel, fd_set *read_fds,
-                             time_t now);
+                             ares_socket_t read_fd, time_t now);
+static void advance_tcp_send_queue(ares_channel channel, int whichserver,
+                                   ssize_t num_bytes);
 static void process_timeouts(ares_channel channel, time_t now);
+static void process_broken_connections(ares_channel channel, time_t now);
 static void process_answer(ares_channel channel, unsigned char *abuf,
-                           int alen, int whichserver, int tcp, int now);
+                           int alen, int whichserver, int tcp, time_t now);
 static void handle_error(ares_channel channel, int whichserver, time_t now);
-static struct query *next_server(ares_channel channel, struct query *query, time_t now);
+static void skip_server(ares_channel channel, struct query *query,
+                        int whichserver);
+static void next_server(ares_channel channel, struct query *query, time_t now);
+static int configure_socket(int s, ares_channel channel);
 static int open_tcp_socket(ares_channel channel, struct server_state *server);
 static int open_udp_socket(ares_channel channel, struct server_state *server);
 static int same_questions(const unsigned char *qbuf, int qlen,
                           const unsigned char *abuf, int alen);
-static struct query *end_query(ares_channel channel, struct query *query, int status,
+static void end_query(ares_channel channel, struct query *query, int status,
                       unsigned char *abuf, int alen);
 
 /* Something interesting happened on the wire, or there was a timeout.
@@ -80,17 +99,36 @@ void ares_process(ares_channel channel, fd_set *read_fds, fd_set *write_fds)
   time_t now;
 
   time(&now);
-  write_tcp_data(channel, write_fds, now);
-  read_tcp_data(channel, read_fds, now);
-  read_udp_packets(channel, read_fds, now);
+  write_tcp_data(channel, write_fds, ARES_SOCKET_BAD, now);
+  read_tcp_data(channel, read_fds, ARES_SOCKET_BAD, now);
+  read_udp_packets(channel, read_fds, ARES_SOCKET_BAD, now);
+  process_timeouts(channel, now);
+  process_broken_connections(channel, now);
+}
+
+/* Something interesting happened on the wire, or there was a timeout.
+ * See what's up and respond accordingly.
+ */
+void ares_process_fd(ares_channel channel,
+                     ares_socket_t read_fd, /* use ARES_SOCKET_BAD or valid
+                                               file descriptors */
+                     ares_socket_t write_fd)
+{
+  time_t now;
+
+  time(&now);
+  write_tcp_data(channel, NULL, write_fd, now);
+  read_tcp_data(channel, NULL, read_fd, now);
+  read_udp_packets(channel, NULL, read_fd, now);
   process_timeouts(channel, now);
 }
+
 
 /* Return 1 if the specified error number describes a readiness error, or 0
  * otherwise. This is mostly for HP-UX, which could return EAGAIN or
  * EWOULDBLOCK. See this man page
  *
- * 	http://devrsrc1.external.hp.com/STKS/cgi-bin/man2html?manpage=/usr/share/man/man2.Z/send.2
+ *      http://devrsrc1.external.hp.com/STKS/cgi-bin/man2html?manpage=/usr/share/man/man2.Z/send.2
  */
 static int try_again(int errnum)
 {
@@ -114,7 +152,10 @@ static int try_again(int errnum)
 /* If any TCP sockets select true for writing, write out queued data
  * we have for them.
  */
-static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
+static void write_tcp_data(ares_channel channel,
+                           fd_set *write_fds,
+                           ares_socket_t write_fd,
+                           time_t now)
 {
   struct server_state *server;
   struct send_request *sendreq;
@@ -124,13 +165,34 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
   ssize_t wcount;
   size_t n;
 
+  if(!write_fds && (write_fd == ARES_SOCKET_BAD))
+    /* no possible action */
+    return;
+
   for (i = 0; i < channel->nservers; i++)
     {
-      /* Make sure server has data to send and is selected in write_fds. */
+      /* Make sure server has data to send and is selected in write_fds or
+         write_fd. */
       server = &channel->servers[i];
-      if (!server->qhead || server->tcp_socket == ARES_SOCKET_BAD
-          || !FD_ISSET(server->tcp_socket, write_fds))
+      if (!server->qhead || server->tcp_socket == ARES_SOCKET_BAD || server->is_broken)
         continue;
+
+      if(write_fds) {
+        if(!FD_ISSET(server->tcp_socket, write_fds))
+          continue;
+      }
+      else {
+        if(server->tcp_socket != write_fd)
+          continue;
+      }
+
+      if(write_fds)
+        /* If there's an error and we close this socket, then open
+         * another with the same fd to talk to another server, then we
+         * don't want to think that it was the new socket that was
+         * ready. This is not disastrous, but is likely to result in
+         * extra system calls and confusion. */
+        FD_CLR(server->tcp_socket, write_fds);
 
       /* Count the number of send queue items. */
       n = 0;
@@ -159,27 +221,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
             }
 
           /* Advance the send queue by as many bytes as we sent. */
-          while (wcount)
-            {
-              sendreq = server->qhead;
-              if ((size_t)wcount >= sendreq->len)
-                {
-                  wcount -= (ssize_t)sendreq->len;
-                  server->qhead = sendreq->next;
-                  if (server->qhead == NULL)
-                    {
-                      SOCK_STATE_CALLBACK(channel, server->tcp_socket, 1, 0);
-                      server->qtail = NULL;
-                    }
-                  free(sendreq);
-                }
-              else
-                {
-                  sendreq->data += wcount;
-                  sendreq->len -= wcount;
-                  break;
-                }
-            }
+          advance_tcp_send_queue(channel, i, wcount);
         }
       else
         {
@@ -195,22 +237,39 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
             }
 
           /* Advance the send queue by as many bytes as we sent. */
-          if ((size_t)scount == sendreq->len)
-            {
-              server->qhead = sendreq->next;
-              if (server->qhead == NULL)
-                {
-                  SOCK_STATE_CALLBACK(channel, server->tcp_socket, 1, 0);
-                  server->qtail = NULL;
-                }
-              free(sendreq);
-            }
-          else
-            {
-              sendreq->data += scount;
-              sendreq->len -= scount;
-            }
+          advance_tcp_send_queue(channel, i, scount);
         }
+    }
+}
+
+/* Consume the given number of bytes from the head of the TCP send queue. */
+static void advance_tcp_send_queue(ares_channel channel, int whichserver,
+                                   ssize_t num_bytes)
+{
+  struct send_request *sendreq;
+  struct server_state *server = &channel->servers[whichserver];
+  while (num_bytes > 0)
+    {
+      sendreq = server->qhead;
+      if ((size_t)num_bytes >= sendreq->len)
+       {
+         num_bytes -= sendreq->len;
+         server->qhead = sendreq->next;
+         if (server->qhead == NULL)
+           {
+             SOCK_STATE_CALLBACK(channel, server->tcp_socket, 1, 0);
+             server->qtail = NULL;
+           }
+         if (sendreq->data_storage != NULL)
+           free(sendreq->data_storage);
+         free(sendreq);
+       }
+      else
+       {
+         sendreq->data += num_bytes;
+         sendreq->len -= num_bytes;
+         num_bytes = 0;
+       }
     }
 }
 
@@ -218,19 +277,40 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
  * allocate a buffer if we finish reading the length word, and process
  * a packet if we finish reading one.
  */
-static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now)
+static void read_tcp_data(ares_channel channel, fd_set *read_fds,
+                          ares_socket_t read_fd, time_t now)
 {
   struct server_state *server;
   int i;
   ssize_t count;
 
+  if(!read_fds && (read_fd == ARES_SOCKET_BAD))
+    /* no possible action */
+    return;
+
   for (i = 0; i < channel->nservers; i++)
     {
       /* Make sure the server has a socket and is selected in read_fds. */
       server = &channel->servers[i];
-      if (server->tcp_socket == ARES_SOCKET_BAD ||
-          !FD_ISSET(server->tcp_socket, read_fds))
+      if (server->tcp_socket == ARES_SOCKET_BAD || server->is_broken)
         continue;
+
+      if(read_fds) {
+        if(!FD_ISSET(server->tcp_socket, read_fds))
+          continue;
+      }
+      else {
+        if(server->tcp_socket != read_fd)
+          continue;
+      }
+
+      if(read_fds)
+        /* If there's an error and we close this socket, then open
+         * another with the same fd to talk to another server, then we
+         * don't want to think that it was the new socket that was
+         * ready. This is not disastrous, but is likely to result in
+         * extra system calls and confusion. */
+        FD_CLR(server->tcp_socket, read_fds);
 
       if (server->tcp_lenbuf_pos != 2)
         {
@@ -281,7 +361,7 @@ static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now)
                * prepare to read another length word.
                */
               process_answer(channel, server->tcp_buffer, server->tcp_length,
-                             i, 1, (int)now);
+                             i, 1, now);
           if (server->tcp_buffer)
                         free(server->tcp_buffer);
               server->tcp_buffer = NULL;
@@ -294,54 +374,97 @@ static void read_tcp_data(ares_channel channel, fd_set *read_fds, time_t now)
 
 /* If any UDP sockets select true for reading, process them. */
 static void read_udp_packets(ares_channel channel, fd_set *read_fds,
-                             time_t now)
+                             ares_socket_t read_fd, time_t now)
 {
   struct server_state *server;
   int i;
   ssize_t count;
   unsigned char buf[PACKETSZ + 1];
 
+  if(!read_fds && (read_fd == ARES_SOCKET_BAD))
+    /* no possible action */
+    return;
+
   for (i = 0; i < channel->nservers; i++)
     {
       /* Make sure the server has a socket and is selected in read_fds. */
       server = &channel->servers[i];
 
-      if (server->udp_socket == ARES_SOCKET_BAD ||
-          !FD_ISSET(server->udp_socket, read_fds))
+      if (server->udp_socket == ARES_SOCKET_BAD || server->is_broken)
         continue;
 
-      count = sread(server->udp_socket, buf, sizeof(buf));
-      if (count == -1 && try_again(SOCKERRNO))
-        continue;
-      else if (count <= 0)
-        handle_error(channel, i, now);
+      if(read_fds) {
+        if(!FD_ISSET(server->udp_socket, read_fds))
+          continue;
+      }
+      else {
+        if(server->udp_socket != read_fd)
+          continue;
+      }
 
-      process_answer(channel, buf, (int)count, i, 0, (int)now);
+      if(read_fds)
+        /* If there's an error and we close this socket, then open
+         * another with the same fd to talk to another server, then we
+         * don't want to think that it was the new socket that was
+         * ready. This is not disastrous, but is likely to result in
+         * extra system calls and confusion. */
+        FD_CLR(server->udp_socket, read_fds);
+
+      /* To reduce event loop overhead, read and process as many
+       * packets as we can. */
+      do {
+        count = sread(server->udp_socket, buf, sizeof(buf));
+        if (count == -1 && try_again(SOCKERRNO))
+          continue;
+        else if (count <= 0)
+          handle_error(channel, i, now);
+        else
+          process_answer(channel, buf, (int)count, i, 0, now);
+       } while (count > 0);
     }
 }
 
 /* If any queries have timed out, note the timeout and move them on. */
 static void process_timeouts(ares_channel channel, time_t now)
 {
-  struct query *query, *next;
+  time_t t;  /* the time of the timeouts we're processing */
+  struct query *query;
+  struct list_node* list_head;
+  struct list_node* list_node;
 
-  for (query = channel->queries; query; query = next)
+  /* Process all the timeouts that have fired since the last time we
+   * processed timeouts. If things are going well, then we'll have
+   * hundreds/thousands of queries that fall into future buckets, and
+   * only a handful of requests that fall into the "now" bucket, so
+   * this should be quite quick.
+   */
+  for (t = channel->last_timeout_processed; t <= now; t++)
     {
-      next = query->next;
-      if (query->timeout != 0 && now >= query->timeout)
+      list_head = &(channel->queries_by_timeout[t % ARES_TIMEOUT_TABLE_SIZE]);
+      for (list_node = list_head->next; list_node != list_head; )
         {
-          query->error_status = ARES_ETIMEOUT;
-          next = next_server(channel, query, now);
+          query = list_node->data;
+          list_node = list_node->next;  /* in case the query gets deleted */
+          if (query->timeout != 0 && now >= query->timeout)
+            {
+              query->error_status = ARES_ETIMEOUT;
+              ++query->timeouts;
+              next_server(channel, query, now);
+            }
         }
-    }
+     }
+  channel->last_timeout_processed = now;
 }
 
 /* Handle an answer from a server. */
 static void process_answer(ares_channel channel, unsigned char *abuf,
-                           int alen, int whichserver, int tcp, int now)
+                           int alen, int whichserver, int tcp, time_t now)
 {
-  int id, tc, rcode;
+  int tc, rcode;
+  unsigned short id;
   struct query *query;
+  struct list_node* list_head;
+  struct list_node* list_node;
 
   /* If there's no room in the answer for a header, we can't do much
    * with it. */
@@ -353,11 +476,24 @@ static void process_answer(ares_channel channel, unsigned char *abuf,
   tc = DNS_HEADER_TC(abuf);
   rcode = DNS_HEADER_RCODE(abuf);
 
-  /* Find the query corresponding to this packet. */
-  for (query = channel->queries; query; query = query->next)
+  /* Find the query corresponding to this packet. The queries are
+   * hashed/bucketed by query id, so this lookup should be quick.
+   * Note that both the query id and the questions must be the same;
+   * when the query id wraps around we can have multiple outstanding
+   * queries with the same query id, so we need to check both the id and
+   * question.
+   */
+  query = NULL;
+  list_head = &(channel->queries_by_qid[id % ARES_QID_TABLE_SIZE]);
+  for (list_node = list_head->next; list_node != list_head;
+       list_node = list_node->next)
     {
-      if (query->qid == id)
-        break;
+      struct query *q = list_node->data;
+      if ((q->qid == id) && same_questions(q->qbuf, q->qlen, abuf, alen))
+        {
+          query = q;
+          break;
+        }
     }
   if (!query)
     return;
@@ -389,13 +525,7 @@ static void process_answer(ares_channel channel, unsigned char *abuf,
     {
       if (rcode == SERVFAIL || rcode == NOTIMP || rcode == REFUSED)
         {
-          query->skip_server[whichserver] = 1;
-          if (query->server == whichserver)
-            next_server(channel, query, now);
-          return;
-        }
-      if (!same_questions(query->qbuf, query->qlen, abuf, alen))
-        {
+          skip_server(channel, query, whichserver);
           if (query->server == whichserver)
             next_server(channel, query, now);
           return;
@@ -405,29 +535,72 @@ static void process_answer(ares_channel channel, unsigned char *abuf,
   end_query(channel, query, ARES_SUCCESS, abuf, alen);
 }
 
-static void handle_error(ares_channel channel, int whichserver, time_t now)
+/* Close all the connections that are no longer usable. */
+static void process_broken_connections(ares_channel channel, time_t now)
 {
-  struct query *query, *next;
-
-  /* Reset communications with this server. */
-  ares__close_sockets(channel, &channel->servers[whichserver]);
-
-  /* Tell all queries talking to this server to move on and not try
-   * this server again.
-   */
-
-  for (query = channel->queries; query; query = next)
+  int i;
+  for (i = 0; i < channel->nservers; i++)
     {
-      next = query->next;
-      if (query->server == whichserver)
+      struct server_state *server = &channel->servers[i];
+      if (server->is_broken)
         {
-          query->skip_server[whichserver] = 1;
-          next = next_server(channel, query, now);
+          handle_error(channel, i, now);
         }
     }
 }
 
-static struct query *next_server(ares_channel channel, struct query *query, time_t now)
+static void handle_error(ares_channel channel, int whichserver, time_t now)
+{
+  struct server_state *server;
+  struct query *query;
+  struct list_node list_head;
+  struct list_node* list_node;
+
+  server = &channel->servers[whichserver];
+
+  /* Reset communications with this server. */
+  ares__close_sockets(channel, server);
+
+  /* Tell all queries talking to this server to move on and not try
+   * this server again. We steal the current list of queries that were
+   * in-flight to this server, since when we call next_server this can
+   * cause the queries to be re-sent to this server, which will
+   * re-insert these queries in that same server->queries_to_server
+   * list.
+   */
+  ares__init_list_head(&list_head);
+  ares__swap_lists(&list_head, &(server->queries_to_server));
+  for (list_node = list_head.next; list_node != &list_head; )
+    {
+      query = list_node->data;
+      list_node = list_node->next;  /* in case the query gets deleted */
+      assert(query->server == whichserver);
+      skip_server(channel, query, whichserver);
+      next_server(channel, query, now);
+    }
+  /* Each query should have removed itself from our temporary list as
+   * it re-sent itself or finished up...
+   */
+  assert(ares__is_list_empty(&list_head));
+}
+
+static void skip_server(ares_channel channel, struct query *query,
+                        int whichserver) {
+  /* The given server gave us problems with this query, so if we have
+   * the luxury of using other servers, then let's skip the
+   * potentially broken server and just use the others. If we only
+   * have one server and we need to retry then we should just go ahead
+   * and re-use that server, since it's our only hope; perhaps we
+   * just got unlucky, and retrying will work (eg, the server timed
+   * out our TCP connection just as we were sending another request).
+   */
+  if (channel->nservers > 1)
+    {
+      query->server_info[whichserver].skip_server = 1;
+    }
+}
+
+static void next_server(ares_channel channel, struct query *query, time_t now)
 {
   /* Advance to the next server or try. */
   query->server++;
@@ -435,19 +608,33 @@ static struct query *next_server(ares_channel channel, struct query *query, time
     {
       for (; query->server < channel->nservers; query->server++)
         {
-          if (!query->skip_server[query->server])
+          struct server_state *server = &channel->servers[query->server];
+          /* We don't want to use this server if (1) we decided this
+           * connection is broken, and thus about to be closed, (2)
+           * we've decided to skip this server because of earlier
+           * errors we encountered, or (3) we already sent this query
+           * over this exact connection.
+           */
+          if (!server->is_broken &&
+               !query->server_info[query->server].skip_server &&
+               !(query->using_tcp &&
+                 (query->server_info[query->server].tcp_connection_generation ==
+                  server->tcp_connection_generation)))
             {
-              ares__send_query(channel, query, now);
-              return (query->next);
+               ares__send_query(channel, query, now);
+               return;
             }
         }
       query->server = 0;
 
-      /* Only one try if we're using TCP. */
-      if (query->using_tcp)
-        break;
+      /* You might think that with TCP we only need one try. However,
+       * even when using TCP, servers can time-out our connection just
+       * as we're sending a request, or close our connection because
+       * they die, or never send us a reply because they get wedged or
+       * tickle a bug that drops our request.
+       */
     }
-  return end_query(channel, query, query->error_status, NULL, 0);
+  end_query(channel, query, query->error_status, NULL, 0);
 }
 
 void ares__send_query(ares_channel channel, struct query *query, time_t now)
@@ -465,7 +652,7 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
         {
           if (open_tcp_socket(channel, server) == -1)
             {
-              query->skip_server[query->server] = 1;
+              skip_server(channel, query, query->server);
               next_server(channel, query, now);
               return;
             }
@@ -476,8 +663,16 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
         end_query(channel, query, ARES_ENOMEM, NULL, 0);
           return;
         }
+      /* To make the common case fast, we avoid copies by using the
+       * query's tcpbuf for as long as the query is alive. In the rare
+       * case where the query ends while it's queued for transmission,
+       * then we give the sendreq its own copy of the request packet
+       * and put it in sendreq->data_storage.
+       */
+      sendreq->data_storage = NULL;
       sendreq->data = query->tcpbuf;
       sendreq->len = query->tcplen;
+      sendreq->owner_query = query;
       sendreq->next = NULL;
       if (server->qtail)
         server->qtail->next = sendreq;
@@ -487,7 +682,8 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
           server->qhead = sendreq;
         }
       server->qtail = sendreq;
-      query->timeout = 0;
+      query->server_info[query->server].tcp_connection_generation =
+        server->tcp_connection_generation;
     }
   else
     {
@@ -495,7 +691,7 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
         {
           if (open_udp_socket(channel, server) == -1)
             {
-              query->skip_server[query->server] = 1;
+              skip_server(channel, query, query->server);
               next_server(channel, query, now);
               return;
             }
@@ -503,21 +699,36 @@ void ares__send_query(ares_channel channel, struct query *query, time_t now)
       if (swrite(server->udp_socket, query->qbuf, query->qlen) == -1)
         {
           /* FIXME: Handle EAGAIN here since it likely can happen. */
-          query->skip_server[query->server] = 1;
+          skip_server(channel, query, query->server);
           next_server(channel, query, now);
           return;
         }
-      query->timeout = now
-          + ((query->try == 0) ? channel->timeout
-             : channel->timeout << query->try / channel->nservers);
     }
+    query->timeout = now
+        + ((query->try == 0) ? channel->timeout
+           : channel->timeout << query->try / channel->nservers);
+    /* Keep track of queries bucketed by timeout, so we can process
+     * timeout events quickly.
+     */
+    ares__remove_from_list(&(query->queries_by_timeout));
+    ares__insert_in_list(
+        &(query->queries_by_timeout),
+        &(channel->queries_by_timeout[query->timeout %
+                                      ARES_TIMEOUT_TABLE_SIZE]));
+
+    /* Keep track of queries bucketed by server, so we can process server
+     * errors quickly.
+     */
+    ares__remove_from_list(&(query->queries_to_server));
+    ares__insert_in_list(&(query->queries_to_server),
+                         &(server->queries_to_server));
 }
 
 /*
- * nonblock() set the given socket to either blocking or non-blocking mode
+ * setsocknonblock sets the given socket to either blocking or non-blocking mode
  * based on the 'nonblock' boolean argument. This function is highly portable.
  */
-static int nonblock(ares_socket_t sockfd,    /* operate on this */
+static int setsocknonblock(ares_socket_t sockfd,    /* operate on this */
                     int nonblock   /* TRUE or FALSE */)
 {
 #undef SETBLOCK
@@ -585,9 +796,36 @@ static int nonblock(ares_socket_t sockfd,    /* operate on this */
 #endif
 }
 
+static int configure_socket(int s, ares_channel channel)
+{
+  setsocknonblock(s, TRUE);
+
+#if defined(FD_CLOEXEC) && !defined(MSDOS)
+  /* Configure the socket fd as close-on-exec. */
+  if (fcntl(s, F_SETFD, FD_CLOEXEC) == -1)
+    return -1;
+#endif
+
+  /* Set the socket's send and receive buffer sizes. */
+  if ((channel->socket_send_buffer_size > 0) &&
+      setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+                 (void *)&channel->socket_send_buffer_size,
+                 sizeof(channel->socket_send_buffer_size)) == -1)
+    return -1;
+
+  if ((channel->socket_receive_buffer_size > 0) &&
+      setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+                 (void *)&channel->socket_receive_buffer_size,
+                 sizeof(channel->socket_receive_buffer_size)) == -1)
+    return -1;
+
+  return 0;
+ }
+
 static int open_tcp_socket(ares_channel channel, struct server_state *server)
 {
   ares_socket_t s;
+  int opt;
   struct sockaddr_in sockin;
 
   /* Acquire a socket. */
@@ -595,8 +833,26 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
   if (s == ARES_SOCKET_BAD)
     return -1;
 
-  /* Set the socket non-blocking. */
-  nonblock(s, TRUE);
+  /* Configure it. */
+  if (configure_socket(s, channel) < 0)
+    {
+       close(s);
+       return -1;
+    }
+
+  /*
+   * Disable the Nagle algorithm (only relevant for TCP sockets, and thus not in
+   * configure_socket). In general, in DNS lookups we're pretty much interested
+   * in firing off a single request and then waiting for a reply, so batching
+   * isn't very interesting in general.
+   */
+  opt = 1;
+  if (setsockopt(s, IPPROTO_TCP, TCP_NODELAY,
+                 (void *)&opt, sizeof(opt)) == -1)
+    {
+       close(s);
+       return -1;
+    }
 
   /* Connect to the server. */
   memset(&sockin, 0, sizeof(sockin));
@@ -615,6 +871,7 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
   SOCK_STATE_CALLBACK(channel, s, 1, 0);
   server->tcp_buffer_pos = 0;
   server->tcp_socket = s;
+  server->tcp_connection_generation = ++channel->tcp_connection_generation;
   return 0;
 }
 
@@ -629,7 +886,11 @@ static int open_udp_socket(ares_channel channel, struct server_state *server)
     return -1;
 
   /* Set the socket non-blocking. */
-  nonblock(s, TRUE);
+  if (configure_socket(s, channel) < 0)
+    {
+       close(s);
+       return -1;
+    }
 
   /* Connect to the server. */
   memset(&sockin, 0, sizeof(sockin));
@@ -727,34 +988,92 @@ static int same_questions(const unsigned char *qbuf, int qlen,
   return 1;
 }
 
-static struct query *end_query (ares_channel channel, struct query *query, int status,
-                      unsigned char *abuf, int alen)
+static void end_query (ares_channel channel, struct query *query, int status,
+                       unsigned char *abuf, int alen)
 {
-  struct query **q, *next;
   int i;
 
-  query->callback(query->arg, status, abuf, alen);
-  for (q = &channel->queries; *q; q = &(*q)->next)
+  /* First we check to see if this query ended while one of our send
+   * queues still has pointers to it.
+   */
+  for (i = 0; i < channel->nservers; i++)
     {
-      if (*q == query)
-        break;
+      struct server_state *server = &channel->servers[i];
+      struct send_request *sendreq;
+      for (sendreq = server->qhead; sendreq; sendreq = sendreq->next)
+        if (sendreq->owner_query == query)
+          {
+            sendreq->owner_query = NULL;
+            assert(sendreq->data_storage == NULL);
+            if (status == ARES_SUCCESS)
+              {
+                /* We got a reply for this query, but this queued
+                 * sendreq points into this soon-to-be-gone query's
+                 * tcpbuf. Probably this means we timed out and queued
+                 * the query for retransmission, then received a
+                 * response before actually retransmitting. This is
+                 * perfectly fine, so we want to keep the connection
+                 * running smoothly if we can. But in the worst case
+                 * we may have sent only some prefix of the query,
+                 * with some suffix of the query left to send. Also,
+                 * the buffer may be queued on multiple queues. To
+                 * prevent dangling pointers to the query's tcpbuf and
+                 * handle these cases, we just give such sendreqs
+                 * their own copy of the query packet.
+                 */
+               sendreq->data_storage = malloc(sendreq->len);
+               if (sendreq->data_storage != NULL)
+                 {
+                   memcpy(sendreq->data_storage, sendreq->data, sendreq->len);
+                   sendreq->data = sendreq->data_storage;
+                 }
+              }
+            if ((status != ARES_SUCCESS) || (sendreq->data_storage == NULL))
+              {
+                /* We encountered an error (probably a timeout,
+                 * suggesting the DNS server we're talking to is
+                 * probably unreachable, wedged, or severely
+                 * overloaded) or we couldn't copy the request, so
+                 * mark the connection as broken. When we get to
+                 * process_broken_connections() we'll close the
+                 * connection and try to re-send requests to another
+                 * server.
+                 */
+               server->is_broken = 1;
+               /* Just to be paranoid, zero out this sendreq... */
+               sendreq->data = NULL;
+               sendreq->len = 0;
+             }
+          }
     }
-  *q = query->next;
-  if (*q)
-    next = (*q)->next;
-  else
-    next = NULL;
-  free(query->tcpbuf);
-  free(query->skip_server);
-  free(query);
+
+  /* Invoke the callback */
+  query->callback(query->arg, status, query->timeouts, abuf, alen);
+  ares__free_query(query);
 
   /* Simple cleanup policy: if no queries are remaining, close all
    * network sockets unless STAYOPEN is set.
    */
-  if (!channel->queries && !(channel->flags & ARES_FLAG_STAYOPEN))
+  if (!(channel->flags & ARES_FLAG_STAYOPEN) &&
+      ares__is_list_empty(&(channel->all_queries)))
     {
       for (i = 0; i < channel->nservers; i++)
         ares__close_sockets(channel, &channel->servers[i]);
     }
-  return (next);
+}
+
+void ares__free_query(struct query *query)
+{
+  /* Remove the query from all the lists in which it is linked */
+  ares__remove_from_list(&(query->queries_by_qid));
+  ares__remove_from_list(&(query->queries_by_timeout));
+  ares__remove_from_list(&(query->queries_to_server));
+  ares__remove_from_list(&(query->all_queries));
+  /* Zero out some important stuff, to help catch bugs */
+  query->callback = NULL;
+  query->arg = NULL;
+  /* Deallocate the memory associated with the query */
+  free(query->tcpbuf);
+  free(query->server_info);
+  free(query);
 }

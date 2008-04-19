@@ -41,10 +41,12 @@ struct search_query {
   int status_as_is;             /* error status from trying as-is */
   int next_domain;              /* next search domain to try */
   int trying_as_is;             /* current query is for name as-is */
+  int timeouts;                 /* number of timeouts we saw for this request */
+  int ever_got_nodata;          /* did we ever get ARES_ENODATA along the way? */
 };
 
-static void search_callback(void *arg, int status, unsigned char *abuf,
-                            int alen);
+static void search_callback(void *arg, int status, int timeouts,
+                            unsigned char *abuf, int alen);
 static void end_squery(struct search_query *squery, int status,
                        unsigned char *abuf, int alen);
 static int cat_domain(const char *name, const char *domain, char **s);
@@ -57,14 +59,14 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   char *s;
   const char *p;
   int status, ndots;
-
+            
   /* If name only yields one domain to search, then we don't have
    * to keep extra state, so just do an ares_query().
    */
   status = single_domain(channel, name, &s);
   if (status != ARES_SUCCESS)
     {
-      callback(arg, status, NULL, 0);
+      callback(arg, status, 0, NULL, 0);
       return;
     }
   if (s)
@@ -80,7 +82,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   squery = malloc(sizeof(struct search_query));
   if (!squery)
     {
-      callback(arg, ARES_ENOMEM, NULL, 0);
+      callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
   squery->channel = channel;
@@ -88,7 +90,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   if (!squery->name)
     {
       free(squery);
-      callback(arg, ARES_ENOMEM, NULL, 0);
+      callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
   squery->dnsclass = dnsclass;
@@ -96,6 +98,8 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   squery->status_as_is = -1;
   squery->callback = callback;
   squery->arg = arg;
+  squery->timeouts = 0;
+  squery->ever_got_nodata = 0;
 
   /* Count the number of dots in name. */
   ndots = 0;
@@ -132,17 +136,19 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
         /* failed, free the malloc()ed memory */
         free(squery->name);
         free(squery);
-        callback(arg, status, NULL, 0);
+        callback(arg, status, 0, NULL, 0);
       }
     }
 }
 
-static void search_callback(void *arg, int status, unsigned char *abuf,
-                            int alen)
+static void search_callback(void *arg, int status, int timeouts,
+                            unsigned char *abuf, int alen)
 {
   struct search_query *squery = (struct search_query *) arg;
   ares_channel channel = squery->channel;
   char *s;
+                
+  squery->timeouts += timeouts;
 
   /* Stop searching unless we got a non-fatal error. */
   if (status != ARES_ENODATA && status != ARES_ESERVFAIL
@@ -153,6 +159,17 @@ static void search_callback(void *arg, int status, unsigned char *abuf,
       /* Save the status if we were trying as-is. */
       if (squery->trying_as_is)
         squery->status_as_is = status;
+
+      /* 
+       * If we ever get ARES_ENODATA along the way, record that; if the search
+       * should run to the very end and we got at least one ARES_ENODATA,
+       * then callers like ares_gethostbyname() may want to try a T_A search
+       * even if the last domain we queried for T_AAAA resource records
+       * returned ARES_ENOTFOUND.
+       */
+      if (status == ARES_ENODATA)
+        squery->ever_got_nodata = 1;
+
       if (squery->next_domain < channel->ndomains)
         {
           /* Try the next domain. */
@@ -176,15 +193,20 @@ static void search_callback(void *arg, int status, unsigned char *abuf,
           ares_query(channel, squery->name, squery->dnsclass, squery->type,
                      search_callback, squery);
         }
-      else
-        end_squery(squery, squery->status_as_is, NULL, 0);
+      else {
+        if (squery->status_as_is == ARES_ENOTFOUND && squery->ever_got_nodata) {
+          end_squery(squery, ARES_ENODATA, NULL, 0);
+        }
+        else
+          end_squery(squery, squery->status_as_is, NULL, 0);
+      }
     }
 }
 
 static void end_squery(struct search_query *squery, int status,
                        unsigned char *abuf, int alen)
 {
-  squery->callback(squery->arg, status, abuf, alen);
+  squery->callback(squery->arg, status, squery->timeouts, abuf, alen);
   free(squery->name);
   free(squery);
 }
@@ -240,7 +262,7 @@ static int single_domain(ares_channel channel, const char *name, char **s)
               while ((status = ares__read_line(fp, &line, &linesize))
                      == ARES_SUCCESS)
                 {
-                  if (strncasecmp(line, name, (int)len) != 0 ||
+                  if (strncasecmp(line, name, len) != 0 ||
                       !ISSPACE(line[len]))
                     continue;
                   p = line + len;

@@ -1,4 +1,4 @@
-.\" $Id: ares_free_hostent.3,v 1.4 2007-07-14 23:01:49 bagder Exp $
+.\" $Id: ares_destroy_options.3,v 1.1 2007-06-02 19:32:30 bagder Exp $
 .\"
 .\" Copyright 1998 by the Massachusetts Institute of Technology.
 .\"
@@ -14,33 +14,26 @@
 .\" this software for any purpose.  It is provided "as is"
 .\" without express or implied warranty.
 .\"
-.TH ARES_FREE_HOSTENT 3 "23 July 1998"
+.TH ARES_DESTROY_OPTIONS 3 "1 June 2007"
 .SH NAME
-ares_free_hostent \- Free host structure allocated by ares functions
+ares_destroy_options \- Destroy options initialized with ares_save_options
 .SH SYNOPSIS
 .nf
 .B #include <ares.h>
 .PP
-.B void ares_free_hostent(struct hostent *\fIhost\fP)
+.B void ares_destroy_options(struct ares_options *\fIoptions\fP)
 .fi
 .SH DESCRIPTION
 The
-.I ares_free_hostent
-function frees a
-.B struct hostent
-allocated by one of the functions \fIares_parse_a_reply(3)\fP,
-\fIares_parse_aaaa_reply(3)\fP, or \fIares_parse_ptr_reply(3)\fP.
-.SH NOTES
-It is not necessary (and is not correct) to free the host structure passed to
-the callback functions for \fIares_gethostbyname(3)\fP or
-\fIares_gethostbyaddr(3)\fP. c-ares will automatically free such host
-structures when the callback returns.
+.B ares_destroy_options
+function destroys the options struct identified by
+.IR options ,
+freeing all memory allocated by ares_save_options.
+
 .SH SEE ALSO
-.BR ares_parse_a_reply (3),
-.BR ares_parse_aaaa_reply (3),
-.BR ares_parse_ptr_reply (3),
-.BR ares_parse_ns_reply (3)
+.BR ares_save_options (3),
+.BR ares_init_options (3)
 .SH AUTHOR
-Greg Hudson, MIT Information Systems
+Brad House
 .br
 Copyright 1998 by the Massachusetts Institute of Technology.

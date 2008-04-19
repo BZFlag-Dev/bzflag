@@ -229,6 +229,9 @@
 				RelativePath="..\..\src\other\ares\ares_init.c">
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_llist.c">
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_mkquery.c">
 			</File>
 			<File
@@ -280,6 +283,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_dns.h">
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_llist.h">
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_private.h">

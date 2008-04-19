@@ -1,9 +1,10 @@
 #ifndef __ARES_BITNCMP_H
 #define __ARES_BITNCMP_H
 
-/* $Id: bitncmp.h,v 1.2 2006-07-26 10:47:11 yangtse Exp $ */
+/* $Id: bitncmp.h,v 1.3 2007-11-19 15:47:01 bagder Exp $ */
 
-/*
+/* Copyright (C) 2005 by Dominick Meglio
+ *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
  * fee is hereby granted, provided that the above copyright
