@@ -18,6 +18,7 @@ else
 plugin_files =
 endif
 
+
 bzfs_LDFLAGS = -export-dynamic -static
 bzfs_SOURCES = \
 	${plugin_files}	\
