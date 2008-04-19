@@ -117,6 +117,7 @@ typedef enum
   bz_eListServerUpdateEvent,
   bz_eBanEvent,
   bz_eHostBanEvent,
+  bz_eIdBanEvent,
   bz_eKickEvent,
   bz_eKillEvent,
   bz_ePlayerPausedEvent,
@@ -796,6 +797,26 @@ public:
   int duration;
   bz_ApiString hostPattern;
   bz_ApiString reason;
+};
+
+class BZF_API bz_IdBanEventData_V1 : public bz_EventData
+{
+public:
+    bz_IdBanEventData_V1() : bz_EventData()
+    {
+      eventType = bz_eIdBanEvent;
+      bannerID = -1;
+      banneeID = -1;
+      duration = -1;
+    }
+    virtual ~bz_IdBanEventData_V1(){};
+    virtual void update (){bz_EventData::update();}
+
+    int bannerID;
+    int banneeID;
+    int duration;
+    bz_ApiString bzId;
+    bz_ApiString reason;
 };
 
 class BZF_API bz_KickEventData_V1 : public bz_EventData

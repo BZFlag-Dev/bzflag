@@ -879,6 +879,16 @@ bool IdBanCommand::operator() (const char* message,
     idpat = bzId; // success
   }
 
+  // check if victim has antiban perms, if so cancel idban
+
+  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {  
+    char buffer[MessageLen];
+	snprintf(buffer, MessageLen, "%s is protected from being banned (skipped).",
+	victimPlayer->player.getCallSign());
+	sendMessage(ServerPlayer, t, buffer);
+	return true;
+  }
+
   // setup the ban duration
   int durationInt = clOptions->banTime;
   int specifiedDuration;
@@ -889,6 +899,7 @@ bool IdBanCommand::operator() (const char* message,
 		"1w2d1m");
     return true;
   }
+
   if (specifiedDuration >= 0) {
     if ((durationInt > 0) &&
 	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
@@ -906,22 +917,28 @@ bool IdBanCommand::operator() (const char* message,
     addNamePrefix(reason, victimPlayer->player.getCallSign());
   }
 
+  // call any plugin events registered for /idban
+  bz_IdBanEventData_V1 idBanEvent;
+  idBanEvent.bannerID = t;
+  idBanEvent.banneeID = victim;
+  idBanEvent.bzId = idpat.c_str();
+  idBanEvent.reason = reason.c_str();
+  idBanEvent.duration = durationInt;
+
+  worldEventManager.callEvents(bz_eIdBanEvent,&idBanEvent);
+
   // remove the victim if we have one
   if (victimPlayer) {
-    if (!doBanKick(victimPlayer, playerData, reason.c_str())) {
+    if (!doBanKick(victimPlayer, playerData, idBanEvent.reason.c_str())) {
       return true; // could not ban, bail
     }
   }
 
-  //
-  // FIXME: add to the plugin system
-  //
-
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
 
-  clOptions->acl.idBan(idpat, playerData->player.getCallSign(),
-		       durationInt, reason.c_str());
+  clOptions->acl.idBan(idBanEvent.bzId.c_str(), playerData->player.getCallSign(),
+		       idBanEvent.duration, idBanEvent.reason.c_str());
   clOptions->acl.save();
 
   sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the BZID banlist");
