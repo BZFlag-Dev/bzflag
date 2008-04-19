@@ -12,6 +12,9 @@
 #ifndef __BACKGROUND_TASK_H__
 #define __BACKGROUND_TASK_H__
 
+#include "common.h"
+#include "Singleton.h"
+
 #include <vector>
 
 class BackgroundTask
@@ -23,11 +26,9 @@ public:
 
 typedef bool (*BackgroundTaskFunc) ( void *param );
 
-class BackgroundTaskManager
+class BackgroundTaskManager: public Singleton<BackgroundTaskManager>
 {
 public:
-  BackgroundTaskManager();
-  ~BackgroundTaskManager();
 
   void addTask ( BackgroundTask *task, void *param );
   void addTask ( BackgroundTaskFunc task, void *param );
@@ -38,6 +39,11 @@ public:
   void processTasks ( void );
 
 protected:
+  friend class Singleton<BackgroundTaskManager>;
+
+private:
+  BackgroundTaskManager();
+  ~BackgroundTaskManager();
 
   typedef struct 
   {

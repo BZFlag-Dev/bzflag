@@ -11,10 +11,12 @@
 */
 
 // bzflag global header
-#include "common.h"
 #include "BackgroundTask.h"
 
-typedef bool (*BackgroundTaskFunc) ( void *param );
+// initialize the singleton
+template <>
+BackgroundTaskManager* Singleton<BackgroundTaskManager>::_instance = (BackgroundTaskManager*)0;
+
 
 BackgroundTaskManager::BackgroundTaskManager()
 {
