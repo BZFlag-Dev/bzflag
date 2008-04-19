@@ -1939,9 +1939,9 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
 
 static void handleFlagUpdate(void *msg, size_t len)
 {
-  uint16_t count;
+  uint16_t count = 0;
   uint16_t flagIndex;
-  if ( len > 2)
+  if ( len >= 2)
    msg = nboUnpackUShort(msg, count);
 
   size_t perFlagSize = 2 + 55;
