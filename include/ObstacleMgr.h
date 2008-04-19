@@ -169,15 +169,17 @@ inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
   return groups;
 }
 
-#define _Wall_ID 1
-#define _Box_ID 2
+#define _Wall_ID 0
+#define _Box_ID 1
+#define _Pyramid_ID 2
 #define _Base_ID 3
-#define _Pyramid_ID 4
+#define _Teleporter_ID 4
 #define _Mesh_ID 5
 #define _Arc_ID 6
 #define _Cone_ID 7
 #define _Sphere_ID 8
 #define _Tetra_ID 9
+
 
 //
 // Group Definition Manager
