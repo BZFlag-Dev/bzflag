@@ -54,6 +54,52 @@
 
 #include "BackgroundTask.h"
 
+// generic text buffer callback
+
+class BufferedChatParams
+{
+public:
+  std::vector<std::string> items;
+  int playerID,from;
+  GameKeeper::Player* player;
+  size_t i;
+
+  BufferedChatParams(GameKeeper::Player* p = NULL)
+  {
+    i = 0;
+    from = ServerPlayer;
+    player = p;
+    if(p)
+      playerID = p->getIndex();
+    else
+      playerID = ServerPlayer;
+  }
+};
+
+bool bufferChat ( void * param )
+{
+  BufferedChatParams *p = (BufferedChatParams*)param;
+
+  // verify that the player is still active, AND still who we think they are
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
+  if (!player || player != p->player )
+  {
+    delete(p);
+    return false;
+  }
+
+  if (p->i < p->items.size() )
+    sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
+  else
+  {
+    delete(p);
+    return false;
+  }
+
+  p->i++;
+  return true;
+}
+
 
 tmCustomSlashCommandMap	customCommands;
 
@@ -1224,7 +1270,6 @@ static bool checkFlagMod(GameKeeper::Player* playerData)
   return true;
 }
 
-
 static bool checkFlagMaster(GameKeeper::Player* playerData)
 {
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
@@ -1234,7 +1279,6 @@ static bool checkFlagMaster(GameKeeper::Player* playerData)
   }
   return true;
 }
-
 
 bool FlagCommand::operator() (const char *message,
 			      GameKeeper::Player *playerData)
@@ -1260,12 +1304,15 @@ bool FlagCommand::operator() (const char *message,
       }
     }
   }
-  else if (strncasecmp(msg, "show", 4) == 0) {
+  else if (strncasecmp(msg, "show", 4) == 0)
+  {
+    BufferedChatParams *params = new BufferedChatParams(playerData);
     for (int i = 0; i < numFlags; i++) {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
-      sendMessage(ServerPlayer, t, showMessage);
+      params->items.push_back(showMessage);
     }
+    BGTM.addTask(&bufferChat,params);
   }
   else if (strncasecmp(msg, "reset", 5) == 0) {
     msg += 5;
@@ -2917,39 +2964,6 @@ bool PollCommand::operator() (const char *message,
   return true;
 }
 
-typedef struct  
-{
-  std::vector<std::string> items;
-  int playerID;
-  GameKeeper::Player* player;
-  size_t i;
-}ReportCommandParams;
-
-bool viewReport ( void * param )
-{
-  ReportCommandParams *p = (ReportCommandParams*)param;
-
-  // verify that the player is still active, AND still who we think they are
-  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
-  if (!player || player != p->player )
-  {
-    delete(p);
-    return false;
-  }
-
-  if (p->i < p->items.size() )
-    sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
-  else
-  {
-    delete(p);
-    return false;
-  }
-
-  p->i++;
-  return true;
-}
-
-
 bool ViewReportCommand::operator() (const char* message,
 				    GameKeeper::Player* playerData)
 {
@@ -2981,10 +2995,7 @@ bool ViewReportCommand::operator() (const char* message,
     }
   }
 
-  ReportCommandParams *params = new ReportCommandParams;
-  params->i = 0;
-  params->playerID = t;
-  params->player = playerData;
+  BufferedChatParams *params = new BufferedChatParams(playerData);
 
   // assumes that empty lines separate the reports
   std::string line;
@@ -3015,7 +3026,7 @@ bool ViewReportCommand::operator() (const char* message,
     }
   }
 
-  BGTM.addTask(&viewReport,params);
+  BGTM.addTask(&bufferChat,params);
 
   return true;
 }
