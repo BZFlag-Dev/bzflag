@@ -111,6 +111,63 @@ void glLineRing ( float radius, float width )
 	glEnable(GL_TEXTURE_2D);
 }
 
+void glOutlineBoxCP ( float thickness, float centerX, float centerY, float width, float height, float depth )
+{
+	glPushMatrix();
+	glTranslatef(centerX,centerY,depth);
+
+	if (thickness <= 0)
+		thickness = 1.0f;
+	
+	// ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
+
+	glNormal3f(0,0,1);
+	glBegin(GL_QUADS);
+
+	// draw the top
+	glVertex2f(width,height);
+	glVertex2f(-width,height);
+	glVertex2f(-width+thickness,height-thickness);
+	glVertex2f(width-thickness,height-thickness);
+
+	// draw the bottom
+	glVertex2f(width,-height);
+	glVertex2f(width-thickness,-height+thickness);
+	glVertex2f(-width+thickness,-height+thickness);
+	glVertex2f(-width,-height);
+
+	// draw the right
+	glVertex2f(width,height);
+	glVertex2f(width-thickness,height-thickness);
+	glVertex2f(width-thickness,-height+thickness);
+	glVertex2f(width,-height);
+
+	// draw the left
+	glVertex2f(-width,height);
+	glVertex2f(-width,-height);
+	glVertex2f(-width+thickness,-height+thickness);
+	glVertex2f(-width+thickness,height-thickness);
+
+	glEnd();
+
+	glPopMatrix();
+}
+
+void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float maxY, float depth )
+{
+	float size[2];
+	float cp[2];
+
+	size[0] = maxX-minX;
+	size[1] = maxY-minY;
+
+	cp[0] = minX + size[0]*0.5f;
+	cp[1] = minY + size[1]*0.5f;
+
+	glOutlineBoxCP(thickness,cp[0],cp[1],size[0],size[1],depth);
+}
+
+
 // DisplayListSystem
 
 DisplayListSystem::~DisplayListSystem()

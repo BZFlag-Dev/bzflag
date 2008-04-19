@@ -46,6 +46,12 @@ typedef enum {
 void glQuad ( float x, float y, eAlignment align, float scale = 1.0f );
 void glLineRing ( float radius, float width = 1 );
 
+// draw an outline box with the outside at the bounds, and inset by the thickness
+void glOutlineBoxCP ( float thickness, float centerX, float centerY, float width, float height, float depth = 0 );
+inline void glOutlineBoxCP ( float t, int x, int y, int w, int h, int d = 0 ){glOutlineBoxCP(t,(float)x,(float)y,(float)w,(float)h,(float)d);}
+void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float maxY, float depth = 0 );
+inline void glOutlineBoxHV ( float t, int minX, int minY, int maxX, int maxY, int d = 0 ){glOutlineBoxHV(t,(float)minX,(float)minY,(float)maxX,(float)maxY,(float)d);}
+
 typedef unsigned int GLDisplayList;
 
 #define _INVALID_LIST GL_INVALID_ID
