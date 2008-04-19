@@ -184,17 +184,59 @@ void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float
 	glVertex2f(maxX-thickness,minY+thickness);
 	glVertex2f(maxX,minY);
 
-
 	// draw the right
 	glVertex2f(minX,maxY);
 	glVertex2f(minX,minY);
 	glVertex2f(minX+thickness,minY+thickness);
 	glVertex2f(minX+thickness,maxY-thickness);
 
+	glEnd();
+
+	glPopMatrix();
+}
+
+void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabHeight, float depth )
+{
+	glPushMatrix();
+	glTranslatef(0,0,depth);
+
+	if (thickness <= 0)
+		thickness = 1.0f;
+
+	// ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
+
+	glNormal3f(0,0,1);
+	glBegin(GL_QUADS);
+
+	// draw the bottom
+	glVertex2f(maxX,minY);
+	glVertex2f(maxX-thickness,minY+thickness);
+	glVertex2f(minX+thickness,minY+thickness);
+	glVertex2f(minX,minY);
+
+	// draw the left
+	glVertex2f(minX,maxY);
+	glVertex2f(minX,minY);
+	glVertex2f(minX+thickness,minY+thickness);
+	glVertex2f(minX+thickness,maxY-thickness);
+
+	// draw the right
+	glVertex2f(maxX,maxY);
+	glVertex2f(maxX-thickness,maxY-thickness);
+	glVertex2f(maxX-thickness,minY+thickness);
+	glVertex2f(maxX,minY);
+
+
+	// draw the top
+	glVertex2f(maxX,maxY);
+	glVertex2f(minX,maxY);
+	glVertex2f(minX+thickness,maxY-thickness);
+	glVertex2f(maxX-thickness,maxY-thickness);
 
 	glEnd();
 
 	glPopMatrix();
+
 }
 
 
