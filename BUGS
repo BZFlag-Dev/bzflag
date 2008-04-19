@@ -64,12 +64,6 @@ recent bugs
   as a square, and indents the line as much as 28 characters.
   Example: http://static.bzexcess.com/bzfi1003.png
   
-- Font sizes are wrong. For instance, in the Change Video Format menu, the
-  columns overlap because the font is too large. In other areas, the font
-  defaults to being too small.
-  Example: http://static.bzexcess.com/fontsize.png
-  Example: http://static.bzexcess.com/bzfi1004.png (Fonts set to auto size)
-  
 - At low screen resolutions, small text becomes very blurry.
   Example: http://static.bzexcess.com/bzfi1005.png
 
