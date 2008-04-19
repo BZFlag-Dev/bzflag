@@ -528,7 +528,7 @@ if test "x$enable_threads" != "xno" ; then
 	CONF_CXXFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
 	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
     else
-	LIBS=tmpLIBS
+	LIBS=$tmpLIBS
     fi
     AC_MSG_RESULT([$pthread_check])
 fi
