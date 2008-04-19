@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = webReport.la
 
-webstats_la_SOURCES = \
+webReport_la_SOURCES = \
 	webReport.cpp \
 	reportTemplates.cpp \
 	reportTemplates.h
