@@ -195,13 +195,26 @@ void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float
 	glPopMatrix();
 }
 
-void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabHeight, float depth )
+void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabWidth, float tabHeight, float depth )
 {
 	glPushMatrix();
 	glTranslatef(0,0,depth);
 
 	if (thickness <= 0)
 		thickness = 1.0f;
+
+	float width = maxX - minX;
+	// can't have a tab larger then the width for now
+	// this is realy just for errors
+	if (tabWidth > width)
+		tabWidth = width;
+
+	// if for some reason the tab inset would push the tab off the end, clamp it to the end
+	if (tabInset > width-tabWidth)
+		tabInset = width-tabWidth;
+
+	if (tabHeight < 0 )
+		tabHeight = 0;
 
 	// ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
 

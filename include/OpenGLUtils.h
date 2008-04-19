@@ -53,7 +53,7 @@ void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float
 inline void glOutlineBoxHV ( float t, int minX, int minY, int maxX, int maxY, int d = 0 ){glOutlineBoxHV(t,(float)minX,(float)minY,(float)maxX,(float)maxY,(float)d);}
 
 // draw an outline tabbed box
-void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabHeight, float depth = 0);
+void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabWidth, float tabHeight, float depth = 0);
 
 // display list system
 typedef unsigned int GLDisplayList;
