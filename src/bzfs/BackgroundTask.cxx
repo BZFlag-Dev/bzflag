@@ -13,6 +13,8 @@
 // bzflag global header
 #include "BackgroundTask.h"
 
+#define BGTM_MAX_TICK 0.01f
+
 // initialize the singleton
 template <>
 BackgroundTaskManager* Singleton<BackgroundTaskManager>::_instance = (BackgroundTaskManager*)0;
@@ -35,6 +37,7 @@ void BackgroundTaskManager::addTask ( BackgroundTask *task, void *param )
   newTask.classCB = task;
   newTask.param = param;
   tasks.push_back(newTask);
+  bz_setMaxWaitTime(BGTM_MAX_TICK,"BackgroundTaskManager");
 }
 
 void BackgroundTaskManager::addTask ( BackgroundTaskFunc task, void *param )
@@ -44,6 +47,7 @@ void BackgroundTaskManager::addTask ( BackgroundTaskFunc task, void *param )
   newTask.classCB = NULL;
   newTask.param = param;
   tasks.push_back(newTask);
+  bz_setMaxWaitTime(BGTM_MAX_TICK,"BackgroundTaskManager");
 }
 
 void BackgroundTaskManager::removeTask ( BackgroundTask *task, void *param )
@@ -107,7 +111,7 @@ void BackgroundTaskManager::process ( bz_EventData *eventData )
   processTasks();
 
   if ( tasks.size() )
-    bz_setMaxWaitTime(0.01f,"BackgroundTaskManager");
+    bz_setMaxWaitTime(BGTM_MAX_TICK,"BackgroundTaskManager");
   else
     bz_clearMaxWaitTime("BackgroundTaskManager");
 }
