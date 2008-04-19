@@ -54,9 +54,6 @@ To get the needed DirectX header files from the Microsoft DirectX SDK:
 
 Note that we cannot redistribute these files separate of the entire SDK.
 
-You must also get and install libcurl.  It can be obtained from
-http://curl.haxx.se
-
 *** Part III: Obtain BZFlag
 
 Make sure that your BZFlag sources have correct line endings.  Use the source
