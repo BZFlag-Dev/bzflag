@@ -35,12 +35,12 @@ FREETYPE_DIR =
 endif
 
 SUBDIRS = \
+	${ZLIB_DIR} \
 	${ARES_DIR} \
 	${CURL_DIR} \
 	${FREETYPE_DIR} \
 	${FTGL_DIR} \
-	${REGEX_DIR} \
-	${ZLIB_DIR}
+	${REGEX_DIR}
 
 DIST_SUBDIRS = \
 	ftgl \
