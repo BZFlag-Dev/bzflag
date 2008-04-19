@@ -397,21 +397,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glEnable(GL_BLEND);
 
   glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
-
-  glBegin(GL_LINE_LOOP); {
-    glVertex2f(left, top);
-    glVertex2f(right, top);
-    glVertex2f(right, bottom);
-    glVertex2f(left, bottom);
-  } glEnd();
-
-  glBegin(GL_POINTS); {
-    glVertex2f(left, top);
-    glVertex2f(right, top);
-    glVertex2f(right, bottom);
-    glVertex2f(left, bottom);
-  } glEnd();
-
+  glOutlineBoxHV(1,left,top,right,bottom);
   if (BZDBCache::blend)
     glDisable(GL_BLEND);
 
