@@ -211,7 +211,7 @@ static std::string		cmdBind(const std::string&,
     return "usage: bind <button-name> {up|down} <command> <args>...";
   }
 
-  if (isValidKey(TextUtils::tolower(args[0])))
+  if (!isValidKey(TextUtils::tolower(args[0])))
     return std::string("bind error: OS can not bind \"") + args[0] + "\"";
 
   BzfKeyEvent key;
