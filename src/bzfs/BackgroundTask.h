@@ -57,6 +57,8 @@ private:
   std::vector<Task> tasks;
 };
 
+#define BGTM BackgroundTaskManager::instance()
+
 #endif /* __BACKGROUND_TASK_H__ */
 
 // Local variables: ***

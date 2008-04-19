@@ -52,6 +52,8 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 
+#include "BackgroundTask.h"
+
 
 tmCustomSlashCommandMap	customCommands;
 
@@ -2915,6 +2917,29 @@ bool PollCommand::operator() (const char *message,
   return true;
 }
 
+typedef struct  
+{
+  std::vector<std::string> items;
+  int playerID;
+  size_t i;
+}ReportCommandParams;
+
+bool viewReport ( void * param )
+{
+  ReportCommandParams *p = (ReportCommandParams*)param;
+
+  if (p->i < p->items.size() )
+    sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
+  else
+  {
+    delete(p);
+    return false;
+  }
+
+  p->i++;
+  return true;
+}
+
 
 bool ViewReportCommand::operator() (const char* message,
 				    GameKeeper::Player* playerData)
@@ -2947,6 +2972,10 @@ bool ViewReportCommand::operator() (const char* message,
     }
   }
 
+  ReportCommandParams *params = new ReportCommandParams;
+  params->i = 0;
+  params->playerID = t;
+
   // assumes that empty lines separate the reports
   std::string line;
   std::vector<std::string> buffers;
@@ -2957,7 +2986,7 @@ bool ViewReportCommand::operator() (const char* message,
       // blank line
       if (matched) {
 	for (int i = 0; i < (int)buffers.size(); i++) {
-	  sendMessage(ServerPlayer, t, buffers[i].c_str());
+	  params->items.push_back(buffers[i]);
 	}
       }
       buffers.clear();
@@ -2972,9 +3001,11 @@ bool ViewReportCommand::operator() (const char* message,
   // in case the file doesn't end with a blank line
   if (matched) {
     for (int i = 0; i < (int)buffers.size(); i++) {
-      sendMessage(ServerPlayer, t, buffers[i].c_str());
+      params->items.push_back(buffers[i]);
     }
   }
+
+  BGTM.addTask(&viewReport,params);
 
   return true;
 }
