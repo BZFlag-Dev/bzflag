@@ -1206,6 +1206,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Tasks"
+			>
+			<File
+				RelativePath="..\..\src\bzfs\BackgroundTask.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\BackgroundTask.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
