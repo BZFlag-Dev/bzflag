@@ -157,18 +157,18 @@ AC_CHECK_FUNCS([memcpy memmove])
 
 # Check for system zlib
 
-# don't quote AS_HELP_STRING!
-AC_ARG_WITH([zlib],
-  AS_HELP_STRING([--without-zlib],
-                 [use internal zlib instead of system-wide]))
-if test x$with_zlib != xno && test -z "$LIBZ"; then
-  AC_CHECK_LIB([z], [gzsetparams], [AC_CHECK_HEADER([zlib.h], [LIBZ='-lz'])])
-fi
-if test x$with_zlib != xno && test -n "$LIBZ"; then
-  CFLAGS="$CFLAGS -DFT_CONFIG_OPTION_SYSTEM_ZLIB"
-  LDFLAGS="$LDFLAGS $LIBZ"
-  SYSTEM_ZLIB=yes
-fi
+dnl # don't quote AS_HELP_STRING!
+dnl AC_ARG_WITH([zlib],
+dnl   AS_HELP_STRING([--without-zlib],
+dnl                  [use internal zlib instead of system-wide]))
+dnl if test x$with_zlib != xno && test -z "$LIBZ"; then
+dnl   AC_CHECK_LIB([z], [gzsetparams], [AC_CHECK_HEADER([zlib.h], [LIBZ='-lz'])])
+dnl fi
+dnl if test x$with_zlib != xno && test -n "$LIBZ"; then
+dnl   CFLAGS="$CFLAGS -DFT_CONFIG_OPTION_SYSTEM_ZLIB"
+dnl   LDFLAGS="$LDFLAGS $LIBZ"
+dnl   SYSTEM_ZLIB=yes
+dnl fi
 
 
 # Whether to use Mac OS resource-based fonts.
@@ -488,7 +488,7 @@ case "$CFLAGS" in
 esac
 
 
-AC_SUBST([LIBZ])
+dnl AC_SUBST([LIBZ])
 AC_SUBST([CFLAGS])
 AC_SUBST([LDFLAGS])
 AC_SUBST([FT2_EXTRA_LIBS])

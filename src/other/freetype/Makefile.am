@@ -51,6 +51,8 @@ libfreetype_la_SOURCES = \
 	src/type42/type42.c \
 	src/winfonts/winfnt.c
 
+libfreetype_la_LIBADD = ${LIBZ}
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
