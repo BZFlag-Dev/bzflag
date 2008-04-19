@@ -35,7 +35,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/webReport.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc71/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc71/debug/"
 				ModuleDefinitionFile="webReport.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/webReport.pdb"
