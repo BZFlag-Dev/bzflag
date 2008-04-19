@@ -29,6 +29,8 @@ static bool			quitFlag = false;
 
 bool isValidKey ( const std::string & key )
 {
+  if (!key.size())
+    return false;
 #ifdef _WIN32
   if (key == "alt+f4")
     return false;
