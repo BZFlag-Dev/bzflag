@@ -59,12 +59,11 @@ http://curl.haxx.se
 
 *** Part III: Obtain BZFlag
 
-If you get bzflag files from SVN be sure to check them out with UNIX linebreaks,
-or MSYS will choke.   In TortoiseSVN, use the "Unix line endings" option in
-Advanced Preferences.
-
-If you get the bzflag files from a released source tarball, or using MSYS' own
-cvs utility, they should already be in the correct format.
+Make sure that your BZFlag sources have correct line endings.  Use the source
+tarballs rather than zipfiles if you're building from a release.  If you are
+using subversion, the line endings should be correct automatically except for
+src/date/buildDate.cxx, which you will need to convert with dos2unix or a
+similar tool before attempting to run ./configure.
 
 It's easiest to check out BZFlag into a subdirectory of wherever you installed
 MSYS, such as <MSYS>/bzflag.
@@ -79,7 +78,8 @@ from the top bzflag directory, from inside the MSYS shell (run msys.bat from
 the MSYS directory).
 
 You should have all the automake, autoconf, m4, perl stuff - they
-are in DTK kit.
+are in DTK kit.  They may not be up to date; there are sometimes more updated
+versions available if autogen refuses to run.
 
 If you are able to find a bzflag dist kit, just run the configure script,
 looking at the help (configure --help) for options.
