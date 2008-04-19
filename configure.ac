@@ -370,6 +370,15 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 		#include <sys/socket.h>]],
  [[socklen_t len = 42; return 0;]])],
  [ac_cv_type_socklen_t=yes],[ac_cv_type_socklen_t=no])
+AC_MSG_RESULT([$ac_cv_type_socklen_t])
+if test $ac_cv_type_socklen_t != yes; then
+    AC_MSG_CHECKING([elsewhere for socklen_t type])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <winsock2.h>
+		#include <ws2tcpip.h>]],
+     [[socklen_t len = 42; return 0;]])],
+     [ac_cv_type_socklen_t=yes],[ac_cv_type_socklen_t=no])
+    AC_MSG_RESULT([$ac_cv_type_socklen_t])
+fi
 if test $ac_cv_type_socklen_t != yes; then
     AC_MSG_CHECKING([for socklen_t equivalent])
     AC_CACHE_VAL([cv_socklen_t_equiv],
@@ -401,7 +410,6 @@ if test $ac_cv_type_socklen_t != yes; then
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
-AC_MSG_RESULT([$ac_cv_type_socklen_t])
 
 #CONFIG is only used for irix packaging
 case $host_os in
