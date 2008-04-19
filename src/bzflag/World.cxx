@@ -244,7 +244,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())==0 && obs->inBox(pos, angle, dx, dy, dz)) {
+    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)==0 && obs->inBox(pos, angle, dx, dy, dz)) {
       return obs;
     }
   }
@@ -375,7 +375,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
       break;
     
-    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
+    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
    
     if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;
@@ -406,7 +406,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     // if the face is drive thru, then we don't care about the tangibility of the mesh
     bool driveThru = obs->isDriveThrough() != 0;
     if (!driveThru)
-      driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
+      driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
     {
@@ -447,7 +447,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   for (; i < olist->count; i++)
   {
     const Obstacle* obs = olist->list[i];
-    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs->getGUID())!=0;
+    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
     if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;

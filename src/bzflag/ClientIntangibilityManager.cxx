@@ -13,7 +13,6 @@
 /* interface header */
 
 #include "ClientIntangibilityManager.h"
-#include "ObstacleMgr.h"
 
 template <>
 ClientIntangibilityManager* Singleton<ClientIntangibilityManager>::_instance = (ClientIntangibilityManager*)0;
@@ -23,15 +22,14 @@ void ClientIntangibilityManager::setWorldObjectTangibility ( unsigned int object
   tangibilityMap[objectGUID] = tangible;
 }
 
-unsigned char ClientIntangibilityManager::getWorldObjectTangibility ( unsigned int objectGUID )
+unsigned char ClientIntangibilityManager::getWorldObjectTangibility ( const Obstacle *obs )
 {
-  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(objectGUID);
-  if ( itr != tangibilityMap.end())
-    return itr->second;
-
-  Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
   if (!obs)
     return 0; // we don't know what it is, so it's not setable ( like a teleporter or custom object) assume it's solid as a rock
+
+  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(obs->getGUID());
+  if ( itr != tangibilityMap.end())
+    return itr->second;
 
   return obs->isDriveThrough();
 }

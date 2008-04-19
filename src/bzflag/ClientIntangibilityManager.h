@@ -17,6 +17,9 @@
 #include "Singleton.h"
 #include <map>
 
+#include "ObstacleMgr.h"
+
+
 #define _INVALID_TANGIBILITY 255
 
 class ClientIntangibilityManager :   public Singleton<ClientIntangibilityManager>
@@ -26,7 +29,7 @@ public:
     
   void resetTangibility ( void );
 
-  unsigned char getWorldObjectTangibility ( unsigned int objectGUID );
+  unsigned char getWorldObjectTangibility ( const Obstacle *obs );
 
 protected:
   friend class Singleton<ClientIntangibilityManager>;
