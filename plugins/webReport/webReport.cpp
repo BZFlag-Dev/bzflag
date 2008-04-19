@@ -41,16 +41,39 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
   std::string page;
   page = getFileHeader();
 
-  bz_APIStringList *reports = bz_getReports();
-  if (reports)
+  std::string action = getParam(paramaters,"action");
+  if (!action.size())
   {
-    for (size_t i = 0; i < reports->size(); i++ )
+    // print the form
+    page += "password<br>";
+    page += "<form name=\"input\" action=\"";
+    page += getBaseServerURL();
+    page += "?action=report\" method=\"put\">";
+    page += "<input type =\"text\" name=\"pass\"><br><input type=\"submit\" value = \"submit\"></form>";
+  }
+  else
+  {
+    if (tolower(action) == "report")
     {
-      std::string report = reports->get((unsigned int)i).c_str();
-      page += report;
-      page += "<br>";
+      if (bz_validAdminPassword(getParam(paramaters,"pass").c_str()))
+      {
+	bz_APIStringList *reports = bz_getReports();
+	if (reports)
+	{
+	  for (size_t i = 0; i < reports->size(); i++ )
+	  {
+	    std::string report = reports->get((unsigned int)i).c_str();
+	    page += report;
+	    page += "<br>";
+	  }
+	  bz_deleteStringList(reports);
+	}
+      }
+      else
+      {
+	page += "invalid";
+      }
     }
-    bz_deleteStringList(reports);
   }
 
   // TODO, do the team scores, flag stats, do the last chat lines, etc..
