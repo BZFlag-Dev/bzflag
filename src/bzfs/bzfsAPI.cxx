@@ -1240,6 +1240,16 @@ BZF_API bool bz_getAdmin ( int playerID )
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_validAdminPassword ( const char* passwd )
+{
+  if (!passwd || !clOptions->password.size())
+    return false;
+
+  return clOptions->password == passwd;
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_hasPerm(int playerID, const char *perm)
 {
   if(!perm)
