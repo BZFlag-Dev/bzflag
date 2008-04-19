@@ -28,7 +28,7 @@ bzfs_SOURCES = \
 	AutoAllowTimer.cxx \
 	AutoAllowTimer.h \
 	BackgroundTask.cxx \
-	BackgroundTask.cxx \
+	BackgroundTask.h \
 	BanCommands.cxx \
 	bzfsAPI.cxx \
 	bzfsChatVerify.h \
