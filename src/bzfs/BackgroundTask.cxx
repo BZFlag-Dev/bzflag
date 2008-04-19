@@ -20,10 +20,12 @@ BackgroundTaskManager* Singleton<BackgroundTaskManager>::_instance = (Background
 
 BackgroundTaskManager::BackgroundTaskManager()
 {
+  bz_registerEvent(bz_eTickEvent,this);
 }
 
 BackgroundTaskManager::~BackgroundTaskManager()
 {
+  bz_removeEvent(bz_eTickEvent,this);
 }
 
 void BackgroundTaskManager::addTask ( BackgroundTask *task, void *param )
@@ -43,7 +45,6 @@ void BackgroundTaskManager::addTask ( BackgroundTaskFunc task, void *param )
   newTask.param = param;
   tasks.push_back(newTask);
 }
-
 
 void BackgroundTaskManager::removeTask ( BackgroundTask *task, void *param )
 {
@@ -97,6 +98,20 @@ void BackgroundTaskManager::processTasks ( void )
     itr++;
   }
 }
+
+void BackgroundTaskManager::process ( bz_EventData *eventData )
+{
+  if (eventData->eventType != bz_eTickEvent)
+    return; // WTF mate?
+
+  processTasks();
+
+  if ( tasks.size() )
+    bz_setMaxWaitTime(0.01f,"BackgroundTaskManager");
+  else
+    bz_clearMaxWaitTime("BackgroundTaskManager");
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -14,6 +14,7 @@
 
 #include "common.h"
 #include "Singleton.h"
+#include "bzfsAPI.h"
 
 #include <vector>
 
@@ -26,9 +27,11 @@ public:
 
 typedef bool (*BackgroundTaskFunc) ( void *param );
 
-class BackgroundTaskManager: public Singleton<BackgroundTaskManager>
+class BackgroundTaskManager: public Singleton<BackgroundTaskManager> , bz_EventHandler
 {
 public:
+
+  virtual void process ( bz_EventData *eventData );
 
   void addTask ( BackgroundTask *task, void *param );
   void addTask ( BackgroundTaskFunc task, void *param );
