@@ -143,8 +143,8 @@ noinst_HEADERS =			\
 	WordFilter.h			\
 	WorldEventManager.h		\
 	ZSceneDatabase.h		\
-	ares.h				\
 	bz_Locale.h			\
+	bzares.h			\
 	bzfSDL.h			\
 	bzfgl.h				\
 	bzfio.h				\
