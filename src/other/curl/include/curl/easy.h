@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.h,v 1.13 2004-11-09 14:02:58 giva Exp $
+ * $Id: easy.h,v 1.13 2004/11/09 14:02:58 giva Exp $
  ***************************************************************************/
 #ifdef  __cplusplus
 extern "C" {

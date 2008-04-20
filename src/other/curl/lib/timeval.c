@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: timeval.c,v 1.26 2006-01-09 13:17:14 bagder Exp $
+ * $Id: timeval.c,v 1.28 2007-06-30 23:45:57 gknauf Exp $
  ***************************************************************************/
 
 #include "timeval.h"

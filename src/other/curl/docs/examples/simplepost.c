@@ -5,10 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: simplepost.c,v 1.2 2004-11-24 16:11:35 bagder Exp $
+ * $Id: simplepost.c,v 1.3 2007-07-12 21:11:10 danf Exp $
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <curl/curl.h>
 
 int main(void)
@@ -16,7 +17,7 @@ int main(void)
   CURL *curl;
   CURLcode res;
 
-  char *postthis="moo mooo moo moo";
+  static const char *postthis="moo mooo moo moo";
 
   curl = curl_easy_init();
   if(curl) {

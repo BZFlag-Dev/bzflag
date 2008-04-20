@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: arpa_telnet.h,v 1.12 2004-12-20 18:23:43 danf Exp $
+ * $Id: arpa_telnet.h,v 1.12 2004/12/20 18:23:43 danf Exp $
  ***************************************************************************/
 #ifndef CURL_DISABLE_TELNET
 /*

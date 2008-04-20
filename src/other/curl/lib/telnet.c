@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: telnet.c,v 1.90 2007-03-25 02:30:58 yangtse Exp $
+ * $Id: telnet.c,v 1.98 2007-12-08 22:50:55 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -86,7 +86,7 @@
 #define CURL_SB_CLEAR(x)  x->subpointer = x->subbuffer;
 #define CURL_SB_TERM(x)   { x->subend = x->subpointer; CURL_SB_CLEAR(x); }
 #define CURL_SB_ACCUM(x,c) \
-  if (x->subpointer < (x->subbuffer+sizeof x->subbuffer)) { \
+  if(x->subpointer < (x->subbuffer+sizeof x->subbuffer)) { \
     *x->subpointer++ = (c); \
   }
 
@@ -96,7 +96,7 @@
 #define  CURL_SB_LEN(x) (x->subend - x->subpointer)
 
 #ifdef CURL_DISABLE_VERBOSE_STRINGS
-#define printoption(a,b,c,d)  do { } while (0)
+#define printoption(a,b,c,d)  do { } while(0)
 #endif
 
 #ifdef USE_WINSOCK
@@ -106,7 +106,7 @@ static CURLcode check_wsock2 ( struct SessionHandle *data );
 
 static
 void telrcv(struct connectdata *,
-            unsigned char *inbuf,       /* Data received from socket */
+            const unsigned char *inbuf, /* Data received from socket */
             ssize_t count);             /* Number of bytes received */
 
 #ifndef CURL_DISABLE_VERBOSE_STRINGS
@@ -124,6 +124,10 @@ static void printsub(struct SessionHandle *data,
                      int direction, unsigned char *pointer,
                      size_t length);
 static void suboption(struct connectdata *);
+
+static CURLcode telnet_do(struct connectdata *conn, bool *done);
+static CURLcode telnet_done(struct connectdata *conn,
+                                 CURLcode, bool premature);
 
 /* For negotiation compliant to RFC 1143 */
 #define CURL_NO          0
@@ -170,6 +174,28 @@ struct TELNET {
   TelnetReceive telrcv_state;
 };
 
+
+/*
+ * TELNET protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_telnet = {
+  "TELNET",                             /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  telnet_do,                            /* do_it */
+  telnet_done,                          /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                            /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_TELNET,                          /* defport */
+  PROT_TELNET                           /* protocol */
+};
+
+
 #ifdef USE_WINSOCK
 static CURLcode
 check_wsock2 ( struct SessionHandle *data )
@@ -187,7 +213,7 @@ check_wsock2 ( struct SessionHandle *data )
 
   /* We must've called this once already, so this call */
   /* should always succeed.  But, just in case... */
-  if (err != 0) {
+  if(err != 0) {
     failf(data,"WSAStartup failed (%d)",err);
     return CURLE_FAILED_INIT;
   }
@@ -197,7 +223,7 @@ check_wsock2 ( struct SessionHandle *data )
   WSACleanup();
 
   /* Check that our version is supported */
-  if (LOBYTE(wsaData.wVersion) != LOBYTE(wVersionRequested) ||
+  if(LOBYTE(wsaData.wVersion) != LOBYTE(wVersionRequested) ||
       HIBYTE(wsaData.wVersion) != HIBYTE(wVersionRequested)) {
       /* Our version isn't supported */
       failf(data,"insufficient winsock version to support "
@@ -219,7 +245,7 @@ CURLcode init_telnet(struct connectdata *conn)
   if(!tn)
     return CURLE_OUT_OF_MEMORY;
 
-  conn->data->reqdata.proto.telnet = (void *)tn; /* make us known */
+  conn->data->state.proto.telnet = (void *)tn; /* make us known */
 
   tn->telrcv_state = CURL_TS_DATA;
 
@@ -238,7 +264,7 @@ CURLcode init_telnet(struct connectdata *conn)
 static void negotiate(struct connectdata *conn)
 {
   int i;
-  struct TELNET *tn = (struct TELNET *) conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *) conn->data->state.proto.telnet;
 
   for(i = 0;i < CURL_NTELOPTS;i++)
   {
@@ -257,11 +283,11 @@ static void printoption(struct SessionHandle *data,
   const char *fmt;
   const char *opt;
 
-  if (data->set.verbose)
+  if(data->set.verbose)
   {
-    if (cmd == CURL_IAC)
+    if(cmd == CURL_IAC)
     {
-      if (CURL_TELCMD_OK(option))
+      if(CURL_TELCMD_OK(option))
         infof(data, "%s IAC %s\n", direction, CURL_TELCMD(option));
       else
         infof(data, "%s IAC %d\n", direction, option);
@@ -270,11 +296,11 @@ static void printoption(struct SessionHandle *data,
     {
       fmt = (cmd == CURL_WILL) ? "WILL" : (cmd == CURL_WONT) ? "WONT" :
         (cmd == CURL_DO) ? "DO" : (cmd == CURL_DONT) ? "DONT" : 0;
-      if (fmt)
+      if(fmt)
       {
-        if (CURL_TELOPT_OK(option))
+        if(CURL_TELOPT_OK(option))
           opt = CURL_TELOPT(option);
-        else if (option == CURL_TELOPT_EXOPL)
+        else if(option == CURL_TELOPT_EXOPL)
           opt = "EXOPL";
         else
           opt = NULL;
@@ -314,7 +340,7 @@ static void send_negotiation(struct connectdata *conn, int cmd, int option)
 static
 void set_remote_option(struct connectdata *conn, int option, int newstate)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   if(newstate == CURL_YES)
   {
     switch(tn->him[option])
@@ -396,7 +422,7 @@ void set_remote_option(struct connectdata *conn, int option, int newstate)
 static
 void rec_will(struct connectdata *conn, int option)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   switch(tn->him[option])
   {
     case CURL_NO:
@@ -449,7 +475,7 @@ void rec_will(struct connectdata *conn, int option)
 static
 void rec_wont(struct connectdata *conn, int option)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   switch(tn->him[option])
   {
     case CURL_NO:
@@ -494,7 +520,7 @@ void rec_wont(struct connectdata *conn, int option)
 static void
 set_local_option(struct connectdata *conn, int option, int newstate)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   if(newstate == CURL_YES)
   {
     switch(tn->us[option])
@@ -576,7 +602,7 @@ set_local_option(struct connectdata *conn, int option, int newstate)
 static
 void rec_do(struct connectdata *conn, int option)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   switch(tn->us[option])
   {
     case CURL_NO:
@@ -629,7 +655,7 @@ void rec_do(struct connectdata *conn, int option)
 static
 void rec_dont(struct connectdata *conn, int option)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   switch(tn->us[option])
   {
     case CURL_NO:
@@ -679,30 +705,30 @@ static void printsub(struct SessionHandle *data,
 {
   unsigned int i = 0;
 
-  if (data->set.verbose)
+  if(data->set.verbose)
   {
-    if (direction)
+    if(direction)
     {
       infof(data, "%s IAC SB ", (direction == '<')? "RCVD":"SENT");
-      if (length >= 3)
+      if(length >= 3)
       {
         int j;
 
         i = pointer[length-2];
         j = pointer[length-1];
 
-        if (i != CURL_IAC || j != CURL_SE)
+        if(i != CURL_IAC || j != CURL_SE)
         {
           infof(data, "(terminated by ");
-          if (CURL_TELOPT_OK(i))
+          if(CURL_TELOPT_OK(i))
             infof(data, "%s ", CURL_TELOPT(i));
-          else if (CURL_TELCMD_OK(i))
+          else if(CURL_TELCMD_OK(i))
             infof(data, "%s ", CURL_TELCMD(i));
           else
             infof(data, "%d ", i);
-          if (CURL_TELOPT_OK(j))
+          if(CURL_TELOPT_OK(j))
             infof(data, "%s", CURL_TELOPT(j));
-          else if (CURL_TELCMD_OK(j))
+          else if(CURL_TELCMD_OK(j))
             infof(data, "%s", CURL_TELCMD(j));
           else
             infof(data, "%d", j);
@@ -711,13 +737,13 @@ static void printsub(struct SessionHandle *data,
       }
       length -= 2;
     }
-    if (length < 1)
+    if(length < 1)
     {
       infof(data, "(Empty suboption?)");
       return;
     }
 
-    if (CURL_TELOPT_OK(pointer[0])) {
+    if(CURL_TELOPT_OK(pointer[0])) {
       switch(pointer[0]) {
         case CURL_TELOPT_TTYPE:
         case CURL_TELOPT_XDISPLOC:
@@ -777,7 +803,7 @@ static void printsub(struct SessionHandle *data,
         break;
     }
 
-    if (direction)
+    if(direction)
     {
       infof(data, "\n");
     }
@@ -791,7 +817,7 @@ static CURLcode check_telnet_options(struct connectdata *conn)
   char option_arg[256];
   char *buf;
   struct SessionHandle *data = conn->data;
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
 
   /* Add the user name as an environment variable if it
      was given on the command line */
@@ -862,7 +888,7 @@ static void suboption(struct connectdata *conn)
   char varname[128];
   char varval[128];
   struct SessionHandle *data = conn->data;
-  struct TELNET *tn = (struct TELNET *)data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)data->state.proto.telnet;
 
   printsub(data, '<', (unsigned char *)tn->subbuffer, CURL_SB_LEN(tn)+2);
   switch (CURL_SB_GET(tn)) {
@@ -923,107 +949,122 @@ static void suboption(struct connectdata *conn)
 
 static
 void telrcv(struct connectdata *conn,
-            unsigned char *inbuf,       /* Data received from socket */
+            const unsigned char *inbuf, /* Data received from socket */
             ssize_t count)              /* Number of bytes received */
 {
   unsigned char c;
   int in = 0;
+  int startwrite=-1;
   struct SessionHandle *data = conn->data;
-  struct TELNET *tn = (struct TELNET *)data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)data->state.proto.telnet;
+
+#define startskipping() \
+    if(startwrite >= 0) \
+       Curl_client_write(conn, CLIENTWRITE_BODY, (char *)&inbuf[startwrite], in-startwrite); \
+    startwrite = -1
+
+#define writebyte() \
+    if(startwrite < 0) \
+      startwrite = in
+
+#define bufferflush() startskipping()
 
   while(count--)
   {
-    c = inbuf[in++];
+    c = inbuf[in];
 
+    /*infof(data,"In rcv state %d char %d\n", tn->telrcv_state, c);*/
     switch (tn->telrcv_state)
     {
       case CURL_TS_CR:
         tn->telrcv_state = CURL_TS_DATA;
-        if (c == '\0')
+        if(c == '\0')
         {
+          startskipping();
           break;   /* Ignore \0 after CR */
         }
-
-        Curl_client_write(conn, CLIENTWRITE_BODY, (char *)&c, 1);
-        continue;
+        writebyte();
+        break;
 
       case CURL_TS_DATA:
-        if (c == CURL_IAC)
+        if(c == CURL_IAC)
         {
           tn->telrcv_state = CURL_TS_IAC;
+          startskipping();
           break;
         }
         else if(c == '\r')
         {
           tn->telrcv_state = CURL_TS_CR;
         }
-
-        Curl_client_write(conn, CLIENTWRITE_BODY, (char *)&c, 1);
-        continue;
+        writebyte();
+        break;
 
       case CURL_TS_IAC:
       process_iac:
+      DEBUGASSERT(startwrite < 0);
       switch (c)
       {
         case CURL_WILL:
           tn->telrcv_state = CURL_TS_WILL;
-          continue;
+          break;
         case CURL_WONT:
           tn->telrcv_state = CURL_TS_WONT;
-          continue;
+          break;
         case CURL_DO:
           tn->telrcv_state = CURL_TS_DO;
-          continue;
+          break;
         case CURL_DONT:
           tn->telrcv_state = CURL_TS_DONT;
-          continue;
+          break;
         case CURL_SB:
           CURL_SB_CLEAR(tn);
           tn->telrcv_state = CURL_TS_SB;
-          continue;
+          break;
         case CURL_IAC:
-          Curl_client_write(conn, CLIENTWRITE_BODY, (char *)&c, 1);
+          tn->telrcv_state = CURL_TS_DATA;
+          writebyte();
           break;
         case CURL_DM:
         case CURL_NOP:
         case CURL_GA:
         default:
+          tn->telrcv_state = CURL_TS_DATA;
           printoption(data, "RCVD", CURL_IAC, c);
           break;
       }
-      tn->telrcv_state = CURL_TS_DATA;
-      continue;
+      break;
 
       case CURL_TS_WILL:
         printoption(data, "RCVD", CURL_WILL, c);
         tn->please_negotiate = 1;
         rec_will(conn, c);
         tn->telrcv_state = CURL_TS_DATA;
-        continue;
+        break;
 
       case CURL_TS_WONT:
         printoption(data, "RCVD", CURL_WONT, c);
         tn->please_negotiate = 1;
         rec_wont(conn, c);
         tn->telrcv_state = CURL_TS_DATA;
-        continue;
+        break;
 
       case CURL_TS_DO:
         printoption(data, "RCVD", CURL_DO, c);
         tn->please_negotiate = 1;
         rec_do(conn, c);
         tn->telrcv_state = CURL_TS_DATA;
-        continue;
+        break;
 
       case CURL_TS_DONT:
         printoption(data, "RCVD", CURL_DONT, c);
         tn->please_negotiate = 1;
         rec_dont(conn, c);
         tn->telrcv_state = CURL_TS_DATA;
-        continue;
+        break;
 
       case CURL_TS_SB:
-        if (c == CURL_IAC)
+        if(c == CURL_IAC)
         {
           tn->telrcv_state = CURL_TS_SE;
         }
@@ -1031,12 +1072,12 @@ void telrcv(struct connectdata *conn,
         {
           CURL_SB_ACCUM(tn,c);
         }
-        continue;
+        break;
 
       case CURL_TS_SE:
-        if (c != CURL_SE)
+        if(c != CURL_SE)
         {
-          if (c != CURL_IAC)
+          if(c != CURL_IAC)
           {
             /*
              * This is an error.  We only expect to get "IAC IAC" or "IAC SE".
@@ -1071,24 +1112,27 @@ void telrcv(struct connectdata *conn,
         }
         break;
     }
+    ++in;
   }
+  bufferflush();
 }
 
-CURLcode Curl_telnet_done(struct connectdata *conn, CURLcode status, bool premature)
+static CURLcode telnet_done(struct connectdata *conn,
+                                 CURLcode status, bool premature)
 {
-  struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
+  struct TELNET *tn = (struct TELNET *)conn->data->state.proto.telnet;
   (void)status; /* unused */
   (void)premature; /* not used */
 
   curl_slist_free_all(tn->telnet_vars);
 
-  free(conn->data->reqdata.proto.telnet);
-  conn->data->reqdata.proto.telnet = NULL;
+  free(conn->data->state.proto.telnet);
+  conn->data->state.proto.telnet = NULL;
 
   return CURLE_OK;
 }
 
-CURLcode Curl_telnet(struct connectdata *conn, bool *done)
+static CURLcode telnet_do(struct connectdata *conn, bool *done)
 {
   CURLcode code;
   struct SessionHandle *data = conn->data;
@@ -1116,13 +1160,13 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
   char *buf = data->state.buffer;
   struct TELNET *tn;
 
-  *done = TRUE; /* uncontionally */
+  *done = TRUE; /* unconditionally */
 
   code = init_telnet(conn);
   if(code)
     return code;
 
-  tn = (struct TELNET *)data->reqdata.proto.telnet;
+  tn = (struct TELNET *)data->state.proto.telnet;
 
   code = check_telnet_options(conn);
   if(code)
@@ -1134,20 +1178,20 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
   ** make sure have it.
   */
   code = check_wsock2(data);
-  if (code)
+  if(code)
     return code;
 
   /* OK, so we have WinSock 2.0.  We need to dynamically */
   /* load ws2_32.dll and get the function pointers we need. */
   wsock2 = LoadLibrary("WS2_32.DLL");
-  if (wsock2 == NULL) {
+  if(wsock2 == NULL) {
     failf(data,"failed to load WS2_32.DLL (%d)", ERRNO);
     return CURLE_FAILED_INIT;
   }
 
   /* Grab a pointer to WSACreateEvent */
   create_event_func = GetProcAddress(wsock2,"WSACreateEvent");
-  if (create_event_func == NULL) {
+  if(create_event_func == NULL) {
     failf(data,"failed to find WSACreateEvent function (%d)",
           ERRNO);
     FreeLibrary(wsock2);
@@ -1156,7 +1200,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 
   /* And WSACloseEvent */
   close_event_func = GetProcAddress(wsock2,"WSACloseEvent");
-  if (close_event_func == NULL) {
+  if(close_event_func == NULL) {
     failf(data,"failed to find WSACloseEvent function (%d)",
           ERRNO);
     FreeLibrary(wsock2);
@@ -1165,7 +1209,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 
   /* And WSAEventSelect */
   event_select_func = GetProcAddress(wsock2,"WSAEventSelect");
-  if (event_select_func == NULL) {
+  if(event_select_func == NULL) {
     failf(data,"failed to find WSAEventSelect function (%d)",
           ERRNO);
     FreeLibrary(wsock2);
@@ -1174,7 +1218,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 
   /* And WSAEnumNetworkEvents */
   enum_netevents_func = GetProcAddress(wsock2,"WSAEnumNetworkEvents");
-  if (enum_netevents_func == NULL) {
+  if(enum_netevents_func == NULL) {
     failf(data,"failed to find WSAEnumNetworkEvents function (%d)",
           ERRNO);
     FreeLibrary(wsock2);
@@ -1188,7 +1232,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 
   /* First, create a sockets event object */
   event_handle = (WSAEVENT)create_event_func();
-  if (event_handle == WSA_INVALID_EVENT) {
+  if(event_handle == WSA_INVALID_EVENT) {
     failf(data,"WSACreateEvent failed (%d)", SOCKERRNO);
     FreeLibrary(wsock2);
     return CURLE_FAILED_INIT;
@@ -1316,7 +1360,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
   }
 
   /* We called WSACreateEvent, so call WSACloseEvent */
-  if (close_event_func(event_handle) == FALSE) {
+  if(close_event_func(event_handle) == FALSE) {
     infof(data,"WSACloseEvent failed (%d)", SOCKERRNO);
   }
 
@@ -1327,7 +1371,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
   enum_netevents_func = NULL;
 
   /* We called LoadLibrary, so call FreeLibrary */
-  if (!FreeLibrary(wsock2))
+  if(!FreeLibrary(wsock2))
     infof(data,"FreeLibrary(wsock2) failed (%d)", ERRNO);
 #else
   pfd[0].fd = sockfd;
@@ -1336,7 +1380,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
   pfd[1].events = POLLIN;
   interval_ms = 1 * 1000;
 
-  while (keepon) {
+  while(keepon) {
     switch (Curl_poll(pfd, 2, interval_ms)) {
     case -1:                    /* error, stop reading */
       keepon = FALSE;
@@ -1369,7 +1413,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 
         /* if we receive 0 or less here, the server closed the connection and
            we bail out from this! */
-        if (nread <= 0) {
+        if(nread <= 0) {
           keepon = FALSE;
           break;
         }
@@ -1390,7 +1434,7 @@ CURLcode Curl_telnet(struct connectdata *conn, bool *done)
       now = Curl_tvnow();
       if(Curl_tvdiff(now, conn->created) >= data->set.timeout) {
         failf(data, "Time-out");
-        code = CURLE_OPERATION_TIMEOUTED;
+        code = CURLE_OPERATION_TIMEDOUT;
         keepon = FALSE;
       }
     }

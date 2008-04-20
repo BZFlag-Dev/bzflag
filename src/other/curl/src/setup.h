@@ -20,18 +20,16 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.50 2007-02-28 14:45:49 yangtse Exp $
+ * $Id: setup.h,v 1.52 2007-11-08 18:13:55 yangtse Exp $
  ***************************************************************************/
 
 #define CURL_NO_OLDIES
 
-#if !defined(WIN32) && defined(__WIN32__)
-/* Borland fix */
-#define WIN32
-#endif
+/*
+ * Define WIN32 when build target is Win32 API
+ */
 
-#if !defined(WIN32) && defined(_WIN32)
-/* VS2005 on x64 fix */
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
 #define WIN32
 #endif
 
@@ -174,6 +172,10 @@ int fileno( FILE *stream);
 
 #ifdef __BEOS__
 #define typedef_bool
+#endif
+
+#if (defined(NETWARE) && !defined(__NOVELL_LIBC__))
+#include <sys/timeval.h>
 #endif
 
 #ifndef SIZEOF_CURL_OFF_T

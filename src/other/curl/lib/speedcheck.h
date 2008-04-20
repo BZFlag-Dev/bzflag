@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: speedcheck.h,v 1.12 2004-01-07 09:19:35 bagder Exp $
+ * $Id: speedcheck.h,v 1.12 2004/01/07 09:19:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

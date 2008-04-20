@@ -90,7 +90,7 @@ void AresHandler::queryHost(char *hostName)
 		     (void *)this);
 }
 
-void AresHandler::staticCallback(void *arg, int callbackStatus,
+void AresHandler::staticCallback(void *arg, int callbackStatus, int /* timeouts */,
 				 struct hostent *hostent)
 {
   ((AresHandler *)arg)->callback(callbackStatus, hostent);

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strtoofft.h,v 1.14 2004-12-17 18:33:09 giva Exp $
+ * $Id: strtoofft.h,v 1.16 2007-11-06 16:20:54 giva Exp $
  ***************************************************************************/
 
 /*
@@ -39,12 +39,13 @@
  * 'strtoofft' such that it can be used to work with curl_off_t's regardless.
  */
 #if (SIZEOF_CURL_OFF_T > 4) && (SIZEOF_LONG < 8)
-#if HAVE_STRTOLL
+#ifdef HAVE_STRTOLL
 #define curlx_strtoofft strtoll
 #else /* HAVE_STRTOLL */
 
 /* For MSVC7 we can use _strtoi64() which seems to be a strtoll() clone */
 #if defined(_MSC_VER) && (_MSC_VER >= 1300)
+_CRTIMP __int64 __cdecl _strtoi64(const char *, char **, int);  /* in <crt/stdlib.h> */
 #define curlx_strtoofft _strtoi64
 #else /* MSVC7 or later */
 curl_off_t curlx_strtoll(const char *nptr, char **endptr, int base);

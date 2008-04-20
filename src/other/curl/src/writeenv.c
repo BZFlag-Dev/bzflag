@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: writeenv.c,v 1.9 2004-12-15 01:38:25 danf Exp $
+ * $Id: writeenv.c,v 1.9 2004/12/15 01:38:25 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"

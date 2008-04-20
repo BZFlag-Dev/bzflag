@@ -1,4 +1,4 @@
-.\" $Id: curl_multi_timeout.3,v 1.3 2006-06-24 21:49:40 bagder Exp $
+.\" $Id: curl_multi_timeout.3,v 1.5 2008-02-03 10:10:00 bagder Exp $
 .\"
 .TH curl_multi_timeout 3 "2 Jan 2006" "libcurl 7.16.0" "libcurl Manual"
 .SH NAME
@@ -23,6 +23,10 @@ The timeout value returned in the long \fBtimeout\fP points to, is in number
 of milliseconds at this very moment. If 0, it means you should proceed
 immediately without waiting for anything. If it returns -1, there's no timeout
 at all set.
+
+Note: if libcurl returns a -1 timeout here, it just means that libcurl
+currently has no stored timeout value. You must not wait too long (more than a
+few seconds perhaps) before you call curl_multi_perform() again.
 .SH "RETURN VALUE"
 The standard CURLMcode for multi interface error codes.
 .SH "TYPICAL USAGE"
@@ -30,7 +34,7 @@ Call \fBcurl_multi_timeout(3)\fP, then wait for action on the sockets. You
 figure out which sockets to wait for by calling \fBcurl_multi_fdset(3)\fP or
 by a previous call to \fBcurl_multi_socket(3)\fP.
 .SH AVAILABILITY
-This function was added in libcurl 7.15.4, although not deemed stable yet.
+This function was added in libcurl 7.15.4.
 .SH "SEE ALSO"
 .BR curl_multi_cleanup "(3), " curl_multi_init "(3), "
 .BR curl_multi_fdset "(3), " curl_multi_info_read "(3), "

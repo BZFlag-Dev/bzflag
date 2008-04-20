@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.56 2005-11-16 07:20:58 bagder Exp $
+# $Id: Makefile.am,v 1.61 2008-02-10 01:32:43 gknauf Exp $
 ###########################################################################
 
 AUTOMAKE_OPTIONS = foreign
@@ -26,18 +26,16 @@ AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = CHANGES COPYING maketgz reconf Makefile.dist curl-config.in \
  curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat libcurl.pc.in
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
- configure depcomp install-sh
-
 bin_SCRIPTS = curl-config
 
 SUBDIRS = lib src
-DIST_SUBDIRS = $(SUBDIRS) include docs
+DIST_SUBDIRS = $(SUBDIRS) tests include packages docs
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libcurl.pc
 
 dist-hook:
+	rm -rf $(top_builddir)/tests/log
 	find $(distdir) -name "*.dist" -exec rm {} \;
 	(distit=`find $(srcdir) -name "*.dist"`; \
 	for file in $$distit; do \
@@ -51,8 +49,30 @@ html:
 pdf:
 	cd docs; make pdf
 
-check:
+check: test examples
 
+if CROSSCOMPILING
+test-full: test
+test-torture: test
+
+test:
+	@echo "NOTICE: we can't run the tests when cross-compiling!"
+
+else
+
+test:
+	@(cd tests; $(MAKE) all quiet-test)
+
+test-full:
+	@(cd tests; $(MAKE) all full-test)
+
+test-torture:
+	@(cd tests; $(MAKE) all torture-test)
+
+endif
+
+examples:
+	@(cd docs/examples; $(MAKE) all)
 
 #
 # Build source and binary rpms. For rpm-3.0 and above, the ~/.rpmmacros
@@ -69,6 +89,39 @@ check:
 # AM_CONFIGFLAGS='--with-uri=/home/users/loic/local/RedHat-6.2' make rpm
 #
 
+rpms:
+	$(MAKE) RPMDIST=curl rpm
+	$(MAKE) RPMDIST=curl-ssl rpm
+
+rpm:
+	RPM_TOPDIR=`rpm --showrc | $(PERL) -n -e 'print if(s/.*_topdir\s+(.*)/$$1/)'` ; \
+	cp $(srcdir)/packages/Linux/RPM/$(RPMDIST).spec $$RPM_TOPDIR/SPECS ; \
+	cp $(PACKAGE)-$(VERSION).tar.gz $$RPM_TOPDIR/SOURCES ; \
+	rpm -ba --clean --rmsource $$RPM_TOPDIR/SPECS/$(RPMDIST).spec ; \
+	mv $$RPM_TOPDIR/RPMS/i386/$(RPMDIST)-*.rpm . ; \
+	mv $$RPM_TOPDIR/SRPMS/$(RPMDIST)-*.src.rpm .
+
+#
+# Build a Solaris pkkgadd format file
+# run 'make pkgadd' once you've done './configure' and 'make' to make a Solaris pkgadd format
+# file (which ends up back in this directory).
+# The pkgadd file is in 'pkgtrans' format, so to install on Solaris, do
+# pkgadd -d ./HAXXcurl-*
+#
+
+# gak - libtool requires an absoulte directory, hence the pwd below...
+pkgadd:
+	umask 022 ; \
+	make install DESTDIR=`/bin/pwd`/packages/Solaris/root ; \
+	cat COPYING > $(srcdir)/packages/Solaris/copyright ; \
+	cd $(srcdir)/packages/Solaris && $(MAKE) package
+
+#
+# Build a cygwin binary tarball installation file
+# resulting .tar.bz2 file will end up at packages/Win32/cygwin
+cygwinbin:
+	$(MAKE) -C packages/Win32/cygwin cygwinbin
+
 # We extend the standard install with a custom hook:
 install-data-hook:
 	cd include && $(MAKE) install
@@ -78,3 +131,7 @@ install-data-hook:
 uninstall-hook:
 	cd include && $(MAKE) uninstall
 	cd docs && $(MAKE) uninstall
+
+ca-bundle: lib/mk-ca-bundle.pl
+	@echo "generate a fresh ca-bundle.crt"
+	@perl $< -b -l -u lib/ca-bundle.crt

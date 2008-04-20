@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strdup.c,v 1.2 2006-07-17 15:25:37 yangtse Exp $
+ * $Id: strdup.c,v 1.5 2008-02-06 19:01:13 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,18 +27,22 @@
 #ifndef HAVE_STRDUP
 char *curlx_strdup(const char *str)
 {
-  int len;
+  size_t len;
   char *newstr;
 
-  if (!str)
+  if(!str)
     return (char *)NULL;
 
   len = strlen(str);
-  newstr = (char *) malloc((len+1)*sizeof(char));
-  if (!newstr)
+
+  if(len >= ((size_t)-1) / sizeof(char))
     return (char *)NULL;
 
-  strcpy(newstr,str);
+  newstr = (char *) malloc((len+1)*sizeof(char));
+  if(!newstr)
+    return (char *)NULL;
+
+  memcpy(newstr,str,(len+1)*sizeof(char));
 
   return newstr;
 

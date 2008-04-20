@@ -21,11 +21,9 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.h,v 1.2 2007-01-16 22:22:24 bagder Exp $
+ * $Id: tftp.h,v 1.3 2007-10-12 13:36:38 patrickm Exp $
  ***************************************************************************/
 #ifndef CURL_DISABLE_TFTP
-CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done);
-CURLcode Curl_tftp(struct connectdata *conn, bool *done);
-CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode, bool premature);
+extern const struct Curl_handler Curl_handler_tftp;
 #endif
 #endif

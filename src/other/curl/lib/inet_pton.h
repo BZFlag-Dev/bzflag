@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_pton.h,v 1.7 2005-11-28 20:21:36 bagder Exp $
+ * $Id: inet_pton.h,v 1.7 2005/11/28 20:21:36 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

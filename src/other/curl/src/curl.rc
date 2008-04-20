@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl.rc,v 1.8 2007-04-13 08:22:57 yangtse Exp $
+ * $Id: curl.rc,v 1.11 2008-01-24 14:14:34 gknauf Exp $
  ***************************************************************************/
 #include <winver.h>
 #include "version.h"
@@ -52,7 +52,8 @@ BEGIN
       VALUE "OriginalFilename", "curl.exe\0"
       VALUE "ProductName",      "The cURL executable\0"
       VALUE "ProductVersion",   CURL_VERSION "\0"
-      VALUE "LegalCopyright",   "Copyright 1996-2007 by Daniel Stenberg. http://curl.haxx.se/docs/copyright.html\0"
+      VALUE "LegalCopyright",   "© " CURL_COPYRIGHT "\0"
+      VALUE "License",          "http://curl.haxx.se/docs/copyright.html\0"
     END
   END
 

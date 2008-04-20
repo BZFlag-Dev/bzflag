@@ -6,7 +6,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 2001 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 2001 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -19,7 +19,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: curl-config.in,v 1.28 2007-02-17 17:55:19 danf Exp $
+# $Id: curl-config.in,v 1.32 2008-01-10 22:14:02 bagder Exp $
 ###########################################################################
 #
 # The idea to this kind of setup info script was stolen from numerous
@@ -41,10 +41,11 @@ Available values for OPTION include:
   --cflags    pre-processor and compiler flags
   --checkfor [version] check for (lib)curl of the specified version
   --features  newline separated list of enabled features
-  --protocols newline separated list of enabled protocols
   --help      display this help and exit
   --libs      library linking information
   --prefix    curl install prefix
+  --protocols newline separated list of enabled protocols
+  --static-libs static libcurl library linking information
   --version   output version information
   --vernum    output the version information as a number (hexadecimal)
 EOF
@@ -82,7 +83,7 @@ while test $# -gt 0; do
 	if test "@USE_SSLEAY@" = "1"; then
           echo "SSL"
           NTLM=1 # OpenSSL implies NTLM
-        elif test -n "@USE_GNUTLS@"; then
+        elif test -n "@SSL_ENABLED@"; then
           echo "SSL"
         fi
 	if test "@KRB4_ENABLED@" = "1"; then
@@ -112,13 +113,13 @@ while test $# -gt 0; do
     --protocols)
 	if test "@CURL_DISABLE_HTTP@" != "1"; then
           echo "HTTP"
-	  if test "@USE_SSLEAY@" = "1"; then
+	  if test "@SSL_ENABLED@" = "1"; then
             echo "HTTPS"
           fi
         fi
 	if test "@CURL_DISABLE_FTP@" != "1"; then
           echo "FTP"
-	  if test "@USE_SSLEAY@" = "1"; then
+	  if test "@SSL_ENABLED@" = "1"; then
             echo "FTPS"
           fi
         fi
@@ -131,11 +132,18 @@ while test $# -gt 0; do
 	if test "@CURL_DISABLE_LDAP@" != "1"; then
           echo "LDAP"
         fi
+	if test "@CURL_DISABLE_LDAPS@" != "1"; then
+          echo "LDAPS"
+        fi
 	if test "@CURL_DISABLE_DICT@" != "1"; then
           echo "DICT"
         fi
 	if test "@CURL_DISABLE_TFTP@" != "1"; then
           echo "TFTP"
+        fi
+	if test "@USE_LIBSSH2@" = "1"; then
+          echo "SCP"
+          echo "SFTP"
         fi
 	;;
     --version)
@@ -181,7 +189,7 @@ while test $# -gt 0; do
        	;;
 
     --libs)
-	if test "X@libdir@" != "X/usr/lib"; then
+	if test "X@libdir@" != "X/usr/lib" -a "X@libdir@" != "X/usr/lib64"; then
 	   CURLLIBDIR="-L@libdir@ "
 	else
 	   CURLLIBDIR=""
@@ -191,6 +199,10 @@ while test $# -gt 0; do
 	else
 	  echo ${CURLLIBDIR}-lcurl @LDFLAGS@ @LIBS@
 	fi
+	;;
+
+    --static-libs)
+	echo @libdir@/libcurl.@libext@ @LDFLAGS@ @LIBCURL_LIBS@ @LIBS@
 	;;
 
     *)

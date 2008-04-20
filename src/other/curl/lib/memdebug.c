@@ -19,7 +19,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memdebug.c,v 1.51 2007-02-21 19:03:20 yangtse Exp $
+ * $Id: memdebug.c,v 1.55 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -47,7 +47,10 @@
 
 struct memdebug {
   size_t size;
-  double mem[1];
+  union {
+    double d;
+    void * p;
+  } mem[1];
   /* I'm hoping this is the thing with the strictest alignment
    * requirements.  That also means we waste some space :-( */
 };
@@ -68,11 +71,15 @@ static long memsize = 0;  /* set number of mallocs allowed */
 /* this sets the log file name */
 void curl_memdebug(const char *logname)
 {
-  if (!logfile) {
+  if(!logfile) {
     if(logname)
       logfile = fopen(logname, "w");
     else
       logfile = stderr;
+#ifdef MEMDEBUG_LOG_SYNC
+    /* Flush the log file after every line so the log isn't lost in a crash */
+    setvbuf(logfile, (char *)NULL, _IOLBF, 0);
+#endif
   }
 }
 
@@ -80,7 +87,7 @@ void curl_memdebug(const char *logname)
    successfully! */
 void curl_memlimit(long limit)
 {
-  if (!memlimit) {
+  if(!memlimit) {
     memlimit = TRUE;
     memsize = limit;
   }
@@ -178,8 +185,8 @@ char *curl_dostrdup(const char *str, int line, const char *source)
   len=strlen(str)+1;
 
   mem=curl_domalloc(len, 0, NULL); /* NULL prevents logging */
-  if (mem)
-  memcpy(mem, str, len);
+  if(mem)
+    memcpy(mem, str, len);
 
   if(logfile)
     fprintf(logfile, "MEM %s:%d strdup(%p) (%zd) = %p\n",
@@ -273,6 +280,16 @@ FILE *curl_fopen(const char *file, const char *mode,
   if(logfile)
     fprintf(logfile, "FILE %s:%d fopen(\"%s\",\"%s\") = %p\n",
             source, line, file, mode, res);
+  return res;
+}
+
+FILE *curl_fdopen(int filedes, const char *mode,
+                  int line, const char *source)
+{
+  FILE *res=(fdopen)(filedes, mode);
+  if(logfile)
+    fprintf(logfile, "FILE %s:%d fdopen(\"%d\",\"%s\") = %p\n",
+            source, line, filedes, mode, res);
   return res;
 }
 

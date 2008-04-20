@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.55 2007-02-17 01:29:01 danf Exp $
+# $Id: Makefile.am,v 1.56 2007-12-19 21:19:01 danf Exp $
 ###########################################################################
 AUTOMAKE_OPTIONS = foreign nostdinc
 
@@ -41,15 +41,15 @@ curl_LDADD = ../lib/libcurl.la @CURL_LIBS@
 curl_DEPENDENCIES = ../lib/libcurl.la
 BUILT_SOURCES = hugehelp.c
 CLEANFILES = hugehelp.c
-NROFF=@NROFF@ @MANOPT@ # figured out by the configure script
+# Use the C locale to ensure that only ASCII characters appear in the
+# embedded text.
+NROFF=env LC_ALL=C @NROFF@ @MANOPT@ # figured out by the configure script
 
 EXTRA_DIST = mkhelp.pl makefile.dj Makefile.vc6 Makefile.b32 Makefile.m32 \
 	Makefile.riscos config.h.in macos/curl.mcp.xml.sit.hqx		  \
 	macos/MACINSTALL.TXT macos/src/curl_GUSIConfig.cpp		  \
 	macos/src/macos_main.cpp config-amigaos.h makefile.amiga curl.rc  \
 	Makefile.netware Makefile.inc Makefile.Watcom
-
-MAINTAINERCLEANFILES = Makefile.in
 
 MANPAGE=$(top_srcdir)/docs/curl.1
 README=$(top_srcdir)/docs/MANUAL

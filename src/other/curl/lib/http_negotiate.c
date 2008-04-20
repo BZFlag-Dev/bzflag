@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_negotiate.c,v 1.19 2007-04-04 23:41:35 danf Exp $
+ * $Id: http_negotiate.c,v 1.25 2008-03-01 22:32:03 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -49,9 +49,10 @@
 #include "memdebug.h"
 
 static int
-get_gss_name(struct connectdata *conn, gss_name_t *server)
+get_gss_name(struct connectdata *conn, bool proxy, gss_name_t *server)
 {
-  struct negotiatedata *neg_ctx = &conn->data->state.negotiate;
+  struct negotiatedata *neg_ctx = proxy?&conn->data->state.proxyneg:
+    &conn->data->state.negotiate;
   OM_uint32 major_status, minor_status;
   gss_buffer_desc token = GSS_C_EMPTY_BUFFER;
   char name[2048];
@@ -64,16 +65,18 @@ get_gss_name(struct connectdata *conn, gss_name_t *server)
 
   /* IIS uses the <service>@<fqdn> form but uses 'http' as the service name */
 
-  if (neg_ctx->gss)
+  if(neg_ctx->gss)
     service = "KHTTP";
   else
     service = "HTTP";
 
-  token.length = strlen(service) + 1 + strlen(conn->host.name) + 1;
-  if (token.length + 1 > sizeof(name))
+  token.length = strlen(service) + 1 + strlen(proxy ? conn->proxy.name :
+                                              conn->host.name) + 1;
+  if(token.length + 1 > sizeof(name))
     return EMSGSIZE;
 
-  snprintf(name, sizeof(name), "%s@%s", service, conn->host.name);
+  snprintf(name, sizeof(name), "%s@%s", service, proxy ? conn->proxy.name :
+           conn->host.name);
 
   token.value = (void *) name;
   major_status = gss_import_name(&minor_status,
@@ -96,26 +99,28 @@ log_gss_error(struct connectdata *conn, OM_uint32 error_status, char *prefix)
   snprintf(buf, sizeof(buf), "%s", prefix);
   len = strlen(buf);
   do {
-    maj_stat = gss_display_status (&min_stat,
-                                   error_status,
-                                   GSS_C_MECH_CODE,
-                                   GSS_C_NO_OID,
-                                   &msg_ctx,
-                                   &status_string);
-      if (sizeof(buf) > len + status_string.length + 1) {
+    maj_stat = gss_display_status(&min_stat,
+                                  error_status,
+                                  GSS_C_MECH_CODE,
+                                  GSS_C_NO_OID,
+                                  &msg_ctx,
+                                  &status_string);
+      if(sizeof(buf) > len + status_string.length + 1) {
         snprintf(buf + len, sizeof(buf) - len,
                  ": %s", (char*) status_string.value);
       len += status_string.length;
     }
     gss_release_buffer(&min_stat, &status_string);
-  } while (!GSS_ERROR(maj_stat) && msg_ctx != 0);
+  } while(!GSS_ERROR(maj_stat) && msg_ctx != 0);
 
   infof(conn->data, "%s", buf);
 }
 
-int Curl_input_negotiate(struct connectdata *conn, char *header)
+int Curl_input_negotiate(struct connectdata *conn, bool proxy,
+                         const char *header)
 {
-  struct negotiatedata *neg_ctx = &conn->data->state.negotiate;
+  struct negotiatedata *neg_ctx = proxy?&conn->data->state.proxyneg:
+    &conn->data->state.negotiate;
   OM_uint32 major_status, minor_status, minor_status2;
   gss_buffer_desc input_token = GSS_C_EMPTY_BUFFER;
   gss_buffer_desc output_token = GSS_C_EMPTY_BUFFER;
@@ -130,15 +135,15 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
     protocol = "GSS-Negotiate";
     gss = TRUE;
   }
-  else if (checkprefix("Negotiate", header)) {
+  else if(checkprefix("Negotiate", header)) {
     protocol = "Negotiate";
     gss = FALSE;
   }
   else
     return -1;
 
-  if (neg_ctx->context) {
-    if (neg_ctx->gss != gss) {
+  if(neg_ctx->context) {
+    if(neg_ctx->gss != gss) {
       return -1;
     }
   }
@@ -147,7 +152,7 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
     neg_ctx->gss = gss;
   }
 
-  if (neg_ctx->context && neg_ctx->status == GSS_S_COMPLETE) {
+  if(neg_ctx->context && neg_ctx->status == GSS_S_COMPLETE) {
     /* We finished succesfully our part of authentication, but server
      * rejected it (since we're again here). Exit with an error since we
      * can't invent anything better */
@@ -155,8 +160,8 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
     return -1;
   }
 
-  if (neg_ctx->server_name == NULL &&
-      (ret = get_gss_name(conn, &neg_ctx->server_name)))
+  if(neg_ctx->server_name == NULL &&
+      (ret = get_gss_name(conn, proxy, &neg_ctx->server_name)))
     return ret;
 
   header += strlen(neg_ctx->protocol);
@@ -164,14 +169,15 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
     header++;
 
   len = strlen(header);
-  if (len > 0) {
-    int rawlen = Curl_base64_decode(header, (unsigned char **)&input_token.value);
-    if (rawlen < 0)
+  if(len > 0) {
+    int rawlen = Curl_base64_decode(header,
+                                    (unsigned char **)&input_token.value);
+    if(rawlen < 0)
       return -1;
     input_token.length = rawlen;
 
 #ifdef HAVE_SPNEGO /* Handle SPNEGO */
-    if (checkprefix("Negotiate", header)) {
+    if(checkprefix("Negotiate", header)) {
         ASN1_OBJECT *   object            = NULL;
         int             rc                = 1;
         unsigned char * spnegoToken       = NULL;
@@ -180,12 +186,12 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
         size_t          mechTokenLength   = 0;
 
         spnegoToken = malloc(input_token.length);
-        if (input_token.value == NULL)
+        if(input_token.value == NULL)
           return ENOMEM;
         spnegoTokenLength = input_token.length;
 
         object = OBJ_txt2obj ("1.2.840.113554.1.2.2", 1);
-        if (!parseSpnegoTargetToken(spnegoToken,
+        if(!parseSpnegoTargetToken(spnegoToken,
                                     spnegoTokenLength,
                                     NULL,
                                     NULL,
@@ -224,17 +230,17 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
                                       &output_token,
                                       NULL,
                                       NULL);
-  if (input_token.length > 0)
+  if(input_token.length > 0)
     gss_release_buffer(&minor_status2, &input_token);
   neg_ctx->status = major_status;
-  if (GSS_ERROR(major_status)) {
+  if(GSS_ERROR(major_status)) {
     /* Curl_cleanup_negotiate(conn->data) ??? */
     log_gss_error(conn, minor_status,
                   (char *)"gss_init_sec_context() failed: ");
     return -1;
   }
 
-  if (output_token.length == 0) {
+  if(output_token.length == 0) {
     return -1;
   }
 
@@ -245,15 +251,15 @@ int Curl_input_negotiate(struct connectdata *conn, char *header)
 }
 
 
-CURLcode Curl_output_negotiate(struct connectdata *conn)
+CURLcode Curl_output_negotiate(struct connectdata *conn, bool proxy)
 {
-  struct negotiatedata *neg_ctx = &conn->data->state.negotiate;
-  OM_uint32 minor_status;
+  struct negotiatedata *neg_ctx = proxy?&conn->data->state.proxyneg:
+    &conn->data->state.negotiate;
   char *encoded = NULL;
   int len;
 
 #ifdef HAVE_SPNEGO /* Handle SPNEGO */
-  if (checkprefix("Negotiate",neg_ctx->protocol)) {
+  if(checkprefix("Negotiate", neg_ctx->protocol)) {
     ASN1_OBJECT *   object            = NULL;
     int             rc                = 1;
     unsigned char * spnegoToken       = NULL;
@@ -262,14 +268,14 @@ CURLcode Curl_output_negotiate(struct connectdata *conn)
     size_t          responseTokenLength = 0;
 
     responseToken = malloc(neg_ctx->output_token.length);
-    if ( responseToken == NULL)
+    if( responseToken == NULL)
       return CURLE_OUT_OF_MEMORY;
     memcpy(responseToken, neg_ctx->output_token.value,
            neg_ctx->output_token.length);
     responseTokenLength = neg_ctx->output_token.length;
 
     object=OBJ_txt2obj ("1.2.840.113554.1.2.2", 1);
-    if (!makeSpnegoInitialToken (object,
+    if(!makeSpnegoInitialToken (object,
                                  responseToken,
                                  responseTokenLength,
                                  &spnegoToken,
@@ -295,31 +301,36 @@ CURLcode Curl_output_negotiate(struct connectdata *conn)
                            neg_ctx->output_token.length,
                            &encoded);
 
-  if (len == 0)
+  if(len == 0)
     return CURLE_OUT_OF_MEMORY;
 
   conn->allocptr.userpwd =
-    aprintf("Authorization: %s %s\r\n", neg_ctx->protocol, encoded);
+    aprintf("%sAuthorization: %s %s\r\n", proxy ? "Proxy-" : "",
+            neg_ctx->protocol, encoded);
   free(encoded);
-  gss_release_buffer(&minor_status, &neg_ctx->output_token);
+  Curl_cleanup_negotiate (conn->data);
   return (conn->allocptr.userpwd == NULL) ? CURLE_OUT_OF_MEMORY : CURLE_OK;
+}
+
+static void cleanup(struct negotiatedata *neg_ctx)
+{
+  OM_uint32 minor_status;
+  if(neg_ctx->context != GSS_C_NO_CONTEXT)
+    gss_delete_sec_context(&minor_status, &neg_ctx->context, GSS_C_NO_BUFFER);
+
+  if(neg_ctx->output_token.length != 0)
+    gss_release_buffer(&minor_status, &neg_ctx->output_token);
+
+  if(neg_ctx->server_name != GSS_C_NO_NAME)
+    gss_release_name(&minor_status, &neg_ctx->server_name);
+
+  memset(neg_ctx, 0, sizeof(*neg_ctx));
 }
 
 void Curl_cleanup_negotiate(struct SessionHandle *data)
 {
-  OM_uint32 minor_status;
-  struct negotiatedata *neg_ctx = &data->state.negotiate;
-
-  if (neg_ctx->context != GSS_C_NO_CONTEXT)
-    gss_delete_sec_context(&minor_status, &neg_ctx->context, GSS_C_NO_BUFFER);
-
-  if (neg_ctx->output_token.length != 0)
-    gss_release_buffer(&minor_status, &neg_ctx->output_token);
-
-  if (neg_ctx->server_name != GSS_C_NO_NAME)
-    gss_release_name(&minor_status, &neg_ctx->server_name);
-
-  memset(neg_ctx, 0, sizeof(*neg_ctx));
+  cleanup(&data->state.negotiate);
+  cleanup(&data->state.proxyneg);
 }
 
 

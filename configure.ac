@@ -1002,11 +1002,29 @@ AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
 
-# assume ares works if we found it.
+# see if our ares callbacks match (they won't on ares <1.5)
+if test "x$enable_ares_build" != "xyes" ; then
+    AC_MSG_CHECKING(for ares DNS lookup functionality)
+    PRELDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $LIBCARES"
+    AC_TRY_LINK([#include <ares.h>], [
+void callback(void * /*arg*/, int /*callbackStatus*/, int /*timeouts*/,
+				 struct hostent * /*hostent*/) {}
+int main() {
+  ares_channel aresChannel;
+  in_addr requestedAddress;
+  
+  ares_gethostbyaddr(aresChannel, &requestedAddress,
+		     sizeof(in_addr), AF_INET, callback, NULL);
+}
+    ], [ares_works=yes], [ares_works=no])
+    LDFLAGS="$PRELDFLAGS"
+    AC_MSG_RESULT($ares_works)
+fi # enable_ares_build
 dnl figure out whether we need to build the included ares library
 AC_MSG_CHECKING(whether to build the included ares lookup library)
 BUILD_ARES="no (using system)"
-if test "x$LIBCARES" = "x" ; then
+if test "x$ares_works" = "xno" ; then
     AC_DEFINE(BUILD_ARES, 1, [Build the included ares lookup library])
     BUILD_ARES="yes"
     LIBCARES='${top_builddir}/src/other/ares/libcares.la'

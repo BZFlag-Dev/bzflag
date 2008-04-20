@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: file.c,v 1.85 2007-02-26 04:24:26 giva Exp $
+ * $Id: file.c,v 1.106 2008-01-31 12:04:33 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -70,6 +70,7 @@
 
 #endif
 
+#include "strtoofft.h"
 #include "urldata.h"
 #include <curl/curl.h>
 #include "progress.h"
@@ -89,14 +90,100 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+
 /*
- * Curl_file_connect() gets called from Curl_protocol_connect() to allow us to
+ * Forward declarations.
+ */
+
+static CURLcode file_do(struct connectdata *, bool *done);
+static CURLcode file_done(struct connectdata *conn,
+                          CURLcode status, bool premature);
+static CURLcode file_connect(struct connectdata *conn, bool *done);
+
+/*
+ * FILE scheme handler.
+ */
+
+const struct Curl_handler Curl_handler_file = {
+  "FILE",                               /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  file_do,                              /* do_it */
+  file_done,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  file_connect,                         /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  0,                                    /* defport */
+  PROT_FILE                             /* protocol */
+};
+
+
+ /*
+  Check if this is a range download, and if so, set the internal variables
+  properly. This code is copied from the FTP implementation and might as
+  well be factored out.
+ */
+static CURLcode file_range(struct connectdata *conn)
+{
+  curl_off_t from, to;
+  curl_off_t totalsize=-1;
+  char *ptr;
+  char *ptr2;
+  struct SessionHandle *data = conn->data;
+
+  if(data->state.use_range && data->state.range) {
+    from=curlx_strtoofft(data->state.range, &ptr, 0);
+    while(ptr && *ptr && (isspace((int)*ptr) || (*ptr=='-')))
+      ptr++;
+    to=curlx_strtoofft(ptr, &ptr2, 0);
+    if(ptr == ptr2) {
+      /* we didn't get any digit */
+      to=-1;
+    }
+    if((-1 == to) && (from>=0)) {
+      /* X - */
+      data->state.resume_from = from;
+      DEBUGF(infof(data, "RANGE %" FORMAT_OFF_T " to end of file\n",
+                   from));
+    }
+    else if(from < 0) {
+      /* -Y */
+      totalsize = -from;
+      data->req.maxdownload = -from;
+      data->state.resume_from = from;
+      DEBUGF(infof(data, "RANGE the last %" FORMAT_OFF_T " bytes\n",
+                   totalsize));
+    }
+    else {
+      /* X-Y */
+      totalsize = to-from;
+      data->req.maxdownload = totalsize+1; /* include last byte */
+      data->state.resume_from = from;
+      DEBUGF(infof(data, "RANGE from %" FORMAT_OFF_T
+                   " getting %" FORMAT_OFF_T " bytes\n",
+                   from, data->req.maxdownload));
+    }
+    DEBUGF(infof(data, "range-download from %" FORMAT_OFF_T
+                 " to %" FORMAT_OFF_T ", totally %" FORMAT_OFF_T " bytes\n",
+                 from, to, data->req.maxdownload));
+  }
+  else
+    data->req.maxdownload = -1;
+  return CURLE_OK;
+}
+
+/*
+ * file_connect() gets called from Curl_protocol_connect() to allow us to
  * do protocol-specific actions at connect-time.  We emulate a
  * connect-then-transfer protocol and "connect" to the file here
  */
-CURLcode Curl_file_connect(struct connectdata *conn)
+static CURLcode file_connect(struct connectdata *conn, bool *done)
 {
-  char *real_path = curl_easy_unescape(conn->data, conn->data->reqdata.path, 0, NULL);
+  struct SessionHandle *data = conn->data;
+  char *real_path = curl_easy_unescape(data, data->state.path, 0, NULL);
   struct FILEPROTO *file;
   int fd;
 #if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
@@ -107,17 +194,28 @@ CURLcode Curl_file_connect(struct connectdata *conn)
   if(!real_path)
     return CURLE_OUT_OF_MEMORY;
 
-  file = (struct FILEPROTO *)calloc(sizeof(struct FILEPROTO), 1);
-  if(!file) {
-    free(real_path);
-    return CURLE_OUT_OF_MEMORY;
-  }
+  /* If there already is a protocol-specific struct allocated for this
+     sessionhandle, deal with it */
+  Curl_reset_reqproto(conn);
 
-  if (conn->data->reqdata.proto.file) {
-    free(conn->data->reqdata.proto.file);
+  if(!data->state.proto.file) {
+    file = (struct FILEPROTO *)calloc(sizeof(struct FILEPROTO), 1);
+    if(!file) {
+      free(real_path);
+      return CURLE_OUT_OF_MEMORY;
+    }
+    data->state.proto.file = file;
   }
-
-  conn->data->reqdata.proto.file = file;
+  else {
+    /* file is not a protocol that can deal with "persistancy" */
+    file = data->state.proto.file;
+    Curl_safefree(file->freepath);
+    if(file->fd != -1)
+      close(file->fd);
+    file->path = NULL;
+    file->freepath = NULL;
+    file->fd = -1;
+  }
 
 #if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
   /* If the first character is a slash, and there's
@@ -135,7 +233,7 @@ CURLcode Curl_file_connect(struct connectdata *conn)
      with a drive letter.
   */
   actual_path = real_path;
-  if ((actual_path[0] == '/') &&
+  if((actual_path[0] == '/') &&
       actual_path[1] &&
       (actual_path[2] == ':' || actual_path[2] == '|'))
   {
@@ -145,7 +243,7 @@ CURLcode Curl_file_connect(struct connectdata *conn)
 
   /* change path separators from '/' to '\\' for DOS, Windows and OS/2 */
   for (i=0; actual_path[i] != '\0'; ++i)
-    if (actual_path[i] == '/')
+    if(actual_path[i] == '/')
       actual_path[i] = '\\';
 
   fd = open(actual_path, O_RDONLY | O_BINARY);  /* no CR/LF translation! */
@@ -157,19 +255,20 @@ CURLcode Curl_file_connect(struct connectdata *conn)
   file->freepath = real_path; /* free this when done */
 
   file->fd = fd;
-  if(!conn->data->set.upload && (fd == -1)) {
-    failf(conn->data, "Couldn't open file %s", conn->data->reqdata.path);
-    Curl_file_done(conn, CURLE_FILE_COULDNT_READ_FILE, FALSE);
+  if(!data->set.upload && (fd == -1)) {
+    failf(data, "Couldn't open file %s", data->state.path);
+    file_done(conn, CURLE_FILE_COULDNT_READ_FILE, FALSE);
     return CURLE_FILE_COULDNT_READ_FILE;
   }
+  *done = TRUE;
 
   return CURLE_OK;
 }
 
-CURLcode Curl_file_done(struct connectdata *conn,
-                        CURLcode status, bool premature)
+static CURLcode file_done(struct connectdata *conn,
+                               CURLcode status, bool premature)
 {
-  struct FILEPROTO *file = conn->data->reqdata.proto.file;
+  struct FILEPROTO *file = conn->data->state.proto.file;
   (void)status; /* not used */
   (void)premature; /* not used */
   Curl_safefree(file->freepath);
@@ -188,8 +287,8 @@ CURLcode Curl_file_done(struct connectdata *conn,
 
 static CURLcode file_upload(struct connectdata *conn)
 {
-  struct FILEPROTO *file = conn->data->reqdata.proto.file;
-  char *dir = strchr(file->path, DIRSEP);
+  struct FILEPROTO *file = conn->data->state.proto.file;
+  const char *dir = strchr(file->path, DIRSEP);
   FILE *fp;
   CURLcode res=CURLE_OK;
   struct SessionHandle *data = conn->data;
@@ -198,14 +297,16 @@ static CURLcode file_upload(struct connectdata *conn)
   size_t nwrite;
   curl_off_t bytecount = 0;
   struct timeval now = Curl_tvnow();
+  struct_stat file_stat;
+  const char* buf2;
 
   /*
    * Since FILE: doesn't do the full init, we need to provide some extra
    * assignments here.
    */
-  conn->fread = data->set.fread;
+  conn->fread_func = data->set.fread_func;
   conn->fread_in = data->set.in;
-  conn->data->reqdata.upload_fromhere = buf;
+  conn->data->req.upload_fromhere = buf;
 
   if(!dir)
     return CURLE_FILE_COULDNT_READ_FILE; /* fix: better error code */
@@ -213,7 +314,25 @@ static CURLcode file_upload(struct connectdata *conn)
   if(!dir[1])
      return CURLE_FILE_COULDNT_READ_FILE; /* fix: better error code */
 
-  fp = fopen(file->path, "wb");
+  if(data->state.resume_from)
+    fp = fopen( file->path, "ab" );
+  else {
+    int fd;
+
+#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+    fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,
+              conn->data->set.new_file_perms);
+#else /* !(WIN32 || MSDOS || __EMX__) */
+    fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC,
+              conn->data->set.new_file_perms);
+#endif /* !(WIN32 || MSDOS || __EMX__) */
+    if(fd < 0) {
+      failf(data, "Can't open %s for writing", file->path);
+      return CURLE_WRITE_ERROR;
+    }
+    fp = fdopen(fd, "wb");
+  }
+
   if(!fp) {
     failf(data, "Can't open %s for writing", file->path);
     return CURLE_WRITE_ERROR;
@@ -223,19 +342,46 @@ static CURLcode file_upload(struct connectdata *conn)
     /* known size of data to "upload" */
     Curl_pgrsSetUploadSize(data, data->set.infilesize);
 
-  while (res == CURLE_OK) {
+  /* treat the negative resume offset value as the case of "-" */
+  if(data->state.resume_from < 0) {
+    if(stat(file->path, &file_stat)) {
+      fclose(fp);
+      failf(data, "Can't get the size of %s", file->path);
+      return CURLE_WRITE_ERROR;
+    }
+    else
+      data->state.resume_from = (curl_off_t)file_stat.st_size;
+  }
+
+  while(res == CURLE_OK) {
     int readcount;
     res = Curl_fillreadbuffer(conn, BUFSIZE, &readcount);
     if(res)
       break;
 
-    if (readcount <= 0)  /* fix questionable compare error. curlvms */
+    if(readcount <= 0)  /* fix questionable compare error. curlvms */
       break;
 
     nread = (size_t)readcount;
 
+    /*skip bytes before resume point*/
+    if(data->state.resume_from) {
+      if( (curl_off_t)nread <= data->state.resume_from ) {
+        data->state.resume_from -= nread;
+        nread = 0;
+        buf2 = buf;
+      }
+      else {
+        buf2 = buf + data->state.resume_from;
+        nread -= (size_t)data->state.resume_from;
+        data->state.resume_from = 0;
+      }
+    }
+    else
+      buf2 = buf;
+
     /* write the data to the target */
-    nwrite = fwrite(buf, 1, nread, fp);
+    nwrite = fwrite(buf2, 1, nread, fp);
     if(nwrite != nread) {
       res = CURLE_SEND_ERROR;
       break;
@@ -259,14 +405,14 @@ static CURLcode file_upload(struct connectdata *conn)
 }
 
 /*
- * Curl_file() is the protocol-specific function for the do-phase, separated
+ * file_do() is the protocol-specific function for the do-phase, separated
  * from the connect-phase above. Other protocols merely setup the transfer in
  * the do-phase, to have it done in the main transfer loop but since some
  * platforms we support don't allow select()ing etc on file handles (as
  * opposed to sockets) we instead perform the whole do-operation in this
  * function.
  */
-CURLcode Curl_file(struct connectdata *conn, bool *done)
+static CURLcode file_do(struct connectdata *conn, bool *done)
 {
   /* This implementation ignores the host name in conformance with
      RFC 1738. Only local files (reachable via the standard file system)
@@ -280,6 +426,7 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
   curl_off_t expected_size=0;
   bool fstated=FALSE;
   ssize_t nread;
+  size_t bytestoread;
   struct SessionHandle *data = conn->data;
   char *buf = data->state.buffer;
   curl_off_t bytecount = 0;
@@ -288,7 +435,6 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
 
   *done = TRUE; /* unconditionally */
 
-  Curl_readwrite_init(conn);
   Curl_initinfo(data);
   Curl_pgrsStartNow(data);
 
@@ -296,7 +442,7 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
     return file_upload(conn);
 
   /* get the fd from the connection phase */
-  fd = conn->data->reqdata.proto.file->fd;
+  fd = conn->data->state.proto.file->fd;
 
   /* VMS: This only works reliable for STREAMLF files */
   if( -1 != fstat(fd, &statbuf)) {
@@ -308,7 +454,7 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
   /* If we have selected NOBODY and HEADER, it means that we only want file
      information. Which for FILE can't be much more than the file size and
      date. */
-  if(conn->bits.no_body && data->set.include_header && fstated) {
+  if(data->set.opt_no_body && data->set.include_header && fstated) {
     CURLcode result;
     snprintf(buf, sizeof(data->state.buffer),
              "Content-Length: %" FORMAT_OFF_T "\r\n", expected_size);
@@ -322,13 +468,13 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
       return result;
 
     if(fstated) {
-      struct tm *tm;
-      time_t clock = (time_t)statbuf.st_mtime;
+      const struct tm *tm;
+      time_t filetime = (time_t)statbuf.st_mtime;
 #ifdef HAVE_GMTIME_R
       struct tm buffer;
-      tm = (struct tm *)gmtime_r(&clock, &buffer);
+      tm = (const struct tm *)gmtime_r(&filetime, &buffer);
 #else
-      tm = gmtime(&clock);
+      tm = gmtime(&filetime);
 #endif
       /* format: "Tue, 15 Nov 1994 12:45:26 GMT" */
       snprintf(buf, BUFSIZE-1,
@@ -345,14 +491,32 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
     return result;
   }
 
-  if (data->reqdata.resume_from <= expected_size)
-    expected_size -= data->reqdata.resume_from;
+  /* Check whether file range has been specified */
+  file_range(conn);
+
+  /* Adjust the start offset in case we want to get the N last bytes
+   * of the stream iff the filesize could be determined */
+  if(data->state.resume_from < 0) {
+    if(!fstated) {
+      failf(data, "Can't get the size of file.");
+      return CURLE_READ_ERROR;
+    }
+    else
+      data->state.resume_from += (curl_off_t)statbuf.st_size;
+  }
+
+  if(data->state.resume_from <= expected_size)
+    expected_size -= data->state.resume_from;
   else {
     failf(data, "failed to resume file:// transfer");
     return CURLE_BAD_DOWNLOAD_RESUME;
   }
 
-  if (fstated && (expected_size == 0))
+  /* A high water mark has been specified so we obey... */
+  if (data->req.maxdownload > 0)
+    expected_size = data->req.maxdownload;
+
+  if(fstated && (expected_size == 0))
     return CURLE_OK;
 
   /* The following is a shortcut implementation of file reading
@@ -362,24 +526,27 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
   if(fstated)
     Curl_pgrsSetDownloadSize(data, expected_size);
 
-  if(data->reqdata.resume_from) {
-    if(data->reqdata.resume_from !=
-       lseek(fd, data->reqdata.resume_from, SEEK_SET))
+  if(data->state.resume_from) {
+    if(data->state.resume_from !=
+       lseek(fd, data->state.resume_from, SEEK_SET))
       return CURLE_BAD_DOWNLOAD_RESUME;
   }
 
   Curl_pgrsTime(data, TIMER_STARTTRANSFER);
 
-  while (res == CURLE_OK) {
-    nread = read(fd, buf, BUFSIZE-1);
+  while(res == CURLE_OK) {
+    /* Don't fill a whole buffer if we want less than all data */
+    bytestoread = (expected_size < BUFSIZE-1)?(size_t)expected_size:BUFSIZE-1;
+    nread = read(fd, buf, bytestoread);
 
-    if ( nread > 0)
+    if( nread > 0)
       buf[nread] = 0;
 
-    if (nread <= 0)
+    if (nread <= 0 || expected_size == 0)
       break;
 
     bytecount += nread;
+    expected_size -= nread;
 
     res = Curl_client_write(conn, CLIENTWRITE_BODY, buf, nread);
     if(res)

@@ -1,11 +1,11 @@
 /*****************************************************************************
- *                                  _   _ ____  _     
- *  Project                     ___| | | |  _ \| |    
- *                             / __| | | | |_) | |    
- *                            | (__| |_| |  _ <| |___ 
+ *                                  _   _ ____  _
+ *  Project                     ___| | | |  _ \| |
+ *                             / __| | | | |_) | |
+ *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: ftpgetresp.c,v 1.2 2003-12-08 14:13:19 bagder Exp $
+ * $Id: ftpgetresp.c,v 1.4 2007-07-16 21:22:12 danf Exp $
  */
 
 #include <stdio.h>
@@ -21,7 +21,7 @@
  * This functionality was introduced in libcurl 7.9.3.
  */
 
-size_t
+static size_t
 write_response(void *ptr, size_t size, size_t nmemb, void *data)
 {
   FILE *writehere = (FILE *)data;
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   CURLcode res;
   FILE *ftpfile;
   FILE *respfile;
-  
+
   /* local file name to store the file as */
   ftpfile = fopen("ftp-list", "wb"); /* b is binary, needed on win32 */
 
@@ -46,6 +46,8 @@ int main(int argc, char **argv)
     /* Get a file listing from sunet */
     curl_easy_setopt(curl, CURLOPT_URL, "ftp://ftp.sunet.se/");
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, ftpfile);
+    /* If you intend to use this on windows with a libcurl DLL, you must use
+       CURLOPT_WRITEFUNCTION as well */
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, write_response);
     curl_easy_setopt(curl, CURLOPT_WRITEHEADER, respfile);
     res = curl_easy_perform(curl);

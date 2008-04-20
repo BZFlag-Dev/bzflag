@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: getinfo.c,v 1.2 2004-11-22 16:24:46 bagder Exp $
+ * $Id: getinfo.c,v 1.2 2004/11/22 16:24:46 bagder Exp $
  */
 
 #include <stdio.h>

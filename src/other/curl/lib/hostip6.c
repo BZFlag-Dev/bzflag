@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip6.c,v 1.39 2007-02-26 04:24:26 giva Exp $
+ * $Id: hostip6.c,v 1.41 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -185,7 +185,7 @@ bool Curl_ipvalid(struct SessionHandle *data)
   if(data->set.ip_version == CURL_IPRESOLVE_V6) {
     /* see if we have an IPv6 stack */
     curl_socket_t s = socket(PF_INET6, SOCK_DGRAM, 0);
-    if (s == CURL_SOCKET_BAD)
+    if(s == CURL_SOCKET_BAD)
       /* an ipv6 address was requested and we can't get/use one */
       return FALSE;
     sclose(s);
@@ -204,7 +204,7 @@ static void dump_addrinfo(struct connectdata *conn, const struct addrinfo *ai)
 
     printf("    fam %2d, CNAME %s, ",
            ai->ai_family, ai->ai_canonname ? ai->ai_canonname : "<none>");
-    if (Curl_printable_address(ai, buf, sizeof(buf)))
+    if(Curl_printable_address(ai, buf, sizeof(buf)))
       printf("%s\n", buf);
     else
       printf("failed; %s\n", Curl_strerror(conn, SOCKERRNO));
@@ -241,7 +241,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 
   /* see if we have an IPv6 stack */
   s = socket(PF_INET6, SOCK_DGRAM, 0);
-  if (s == CURL_SOCKET_BAD) {
+  if(s == CURL_SOCKET_BAD) {
     /* Some non-IPv6 stacks have been found to make very slow name resolves
      * when PF_UNSPEC is used, so thus we switch to a mere PF_INET lookup if
      * the stack seems to be a non-ipv6 one. */
@@ -279,9 +279,10 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     /* the given address is numerical only, prevent a reverse lookup */
     hints.ai_flags = AI_NUMERICHOST;
   }
-#if 0 /* removed nov 8 2005 before 7.15.1 */
-  else
-    hints.ai_flags = AI_CANONNAME;
+#ifdef HAVE_GSSAPI
+  if(conn->data->set.krb)
+    /* if krb is used, we (might) need the canonical host name */
+    hints.ai_flags |= AI_CANONNAME;
 #endif
 
   if(port) {
@@ -289,7 +290,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     sbufptr=sbuf;
   }
   error = getaddrinfo(hostname, sbufptr, &hints, &res);
-  if (error) {
+  if(error) {
     infof(data, "getaddrinfo(3) failed for %s:%d\n", hostname, port);
     return NULL;
   }

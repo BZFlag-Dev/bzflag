@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curlutil.c,v 1.1 2007-02-20 12:13:15 yangtse Exp $
+ * $Id: curlutil.c,v 1.3 2007-06-30 23:45:57 gknauf Exp $
  ***************************************************************************/
 
 #include "setup.h"

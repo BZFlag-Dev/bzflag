@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.h,v 1.40 2007-03-27 04:17:26 yangtse Exp $
+ * $Id: sendf.h,v 1.42 2007-10-29 20:57:03 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"

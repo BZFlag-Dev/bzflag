@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: simplessl.c,v 1.6 2004-08-12 07:01:20 bagder Exp $
+ * $Id: simplessl.c,v 1.8 2007-08-30 20:34:57 danf Exp $
  */
 
 #include <stdio.h>
@@ -38,9 +38,10 @@ int main(int argc, char **argv)
   CURL *curl;
   CURLcode res;
   FILE *headerfile;
+  const char *pPassphrase = NULL;
 
-  const char *pCertFile = "testcert.pem";
-  const char *pCACertFile="cacert.pem";
+  static const char *pCertFile = "testcert.pem";
+  static const char *pCACertFile="cacert.pem";
 
   const char *pKeyName;
   const char *pKeyType;
@@ -56,8 +57,6 @@ int main(int argc, char **argv)
   pKeyType  = "PEM";
   pEngine   = NULL;
 #endif
-
-  const char *pPassphrase = NULL;
 
   headerfile = fopen("dumpit", "w");
 
@@ -96,7 +95,7 @@ int main(int argc, char **argv)
       /* sorry, for engine we must set the passphrase
          (if the key has one...) */
       if (pPassphrase)
-        curl_easy_setopt(curl,CURLOPT_SSLKEYPASSWD,pPassphrase);
+        curl_easy_setopt(curl,CURLOPT_KEYPASSWD,pPassphrase);
 
       /* if we use a key stored in a crypto engine,
          we must set the key type to "ENG" */

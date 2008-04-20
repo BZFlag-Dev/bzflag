@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.118 2007-04-03 18:25:18 yangtse Exp $
+# $Id: Makefile.am,v 1.124 2008-03-20 08:09:24 mmarek Exp $
 ###########################################################################
 AUTOMAKE_OPTIONS = foreign nostdinc
 
@@ -30,15 +30,14 @@ DOCS = README.encoding README.memoryleak README.ares README.curlx	\
 
 EXTRA_DIST = Makefile.b32 Makefile.m32 Makefile.vc6 Makefile.riscos	\
  $(DSP) curllib.dsw config-win32.h config-win32ce.h config-riscos.h	\
- config-mac.h config.h.in ca-bundle.crt makefile.dj config.dos		\
+ config-mac.h config.h.in makefile.dj config.dos		\
  libcurl.framework.make libcurl.plist libcurl.rc config-amigaos.h	\
- amigaos.c amigaos.h makefile.amiga Makefile.netware nwlib.c		\
+ amigaos.c amigaos.h makefile.amiga Makefile.netware nwlib.c nwos.c	\
  libcurl.imp msvcproj.head msvcproj.foot config-win32ce.h		\
- Makefile.Watcom config-tpf.h $(DOCS) $(VCPROJ)
+ config-os400.h setup-os400.h \
+ Makefile.Watcom config-tpf.h $(DOCS) $(VCPROJ) mk-ca-bundle.pl
 
 CLEANFILES = $(DSP) $(VCPROJ)
-
-MAINTAINERCLEANFILES = Makefile.in config.h.in
 
 lib_LTLIBRARIES = libcurl.la
 LIBCURL_LIBS = @LIBCURL_LIBS@
@@ -51,7 +50,7 @@ INCLUDES = -I$(top_srcdir)/include \
            -I$(top_builddir)/lib   \
            -I$(top_srcdir)/lib
 
-VERSION=-version-info 4:0:0
+VERSION=-version-info 4:1:0
 
 # This flag accepts an argument of the form current[:revision[:age]]. So,
 # passing -version-info 3:12:1 sets current to 3, revision to 12, and age to
@@ -112,14 +111,13 @@ $(top_builddir)/lib/ca-bundle.h: Makefile.in Makefile
 if CABUNDLE
 	echo '#define CURL_CA_BUNDLE @CURL_CA_BUNDLE@' >> $@
 else
-	echo '#undef CURL_CA_BUNDLE /* unknown */' >> $@
+	echo '#undef CURL_CA_BUNDLE /* unknown default path */' >> $@
 endif
-
-install-data-hook:
-	@if test -n "@CURL_CA_BUNDLE@"; then \
-	  $(mkinstalldirs) `dirname $(DESTDIR)@CURL_CA_BUNDLE@`; \
-	  @INSTALL_DATA@ $(srcdir)/ca-bundle.crt $(DESTDIR)@CURL_CA_BUNDLE@; \
-        fi
+if CAPATH
+	echo '#define CURL_CA_PATH @CURL_CA_PATH@' >> $@
+else
+	echo '#undef CURL_CA_PATH /* unknown default path */' >>$@
+endif
 
 # this hook is mainly for non-unix systems to build even if configure
 # isn't run

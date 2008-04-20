@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostasyn.c,v 1.18 2007-04-03 18:25:18 yangtse Exp $
+ * $Id: hostasyn.c,v 1.19 2007-09-28 21:48:28 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -151,19 +151,31 @@ static CURLcode addrinfo_callback(void *arg, /* "struct connectdata *" */
 
 CURLcode Curl_addrinfo4_callback(void *arg, /* "struct connectdata *" */
                                  int status,
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+                                 int timeouts,
+#endif
                                  struct hostent *hostent)
 {
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+  (void)timeouts; /* ignored */
+#endif
   return addrinfo_callback(arg, status, hostent);
 }
 
 #ifdef CURLRES_IPV6
 CURLcode Curl_addrinfo6_callback(void *arg, /* "struct connectdata *" */
                                  int status,
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+                                 int timeouts,
+#endif
                                  struct addrinfo *ai)
 {
  /* NOTE: for CURLRES_ARES, the 'ai' argument is really a
   * 'struct hostent' pointer.
   */
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+  (void)timeouts; /* ignored */
+#endif
   return addrinfo_callback(arg, status, ai);
 }
 #endif

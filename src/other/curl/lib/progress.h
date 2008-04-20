@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: progress.h,v 1.21 2004-11-15 11:27:03 bagder Exp $
+ * $Id: progress.h,v 1.21 2004/11/15 11:27:03 bagder Exp $
  ***************************************************************************/
 
 #include "timeval.h"

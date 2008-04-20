@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.102 2007-04-28 20:27:07 bagder Exp $
+ * $Id: easy.c,v 1.116 2008-03-20 08:09:24 mmarek Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -127,7 +127,7 @@ static CURLcode win32_init(void)
 
   err = WSAStartup(wVersionRequested, &wsaData);
 
-  if (err != 0)
+  if(err != 0)
     /* Tell the user that we couldn't find a useable */
     /* winsock.dll.     */
     return CURLE_FAILED_INIT;
@@ -138,7 +138,7 @@ static CURLcode win32_init(void)
   /* wVersionRequested in wVersion. wHighVersion contains the */
   /* highest supported version. */
 
-  if ( LOBYTE( wsaData.wVersion ) != LOBYTE(wVersionRequested) ||
+  if( LOBYTE( wsaData.wVersion ) != LOBYTE(wVersionRequested) ||
        HIBYTE( wsaData.wVersion ) != HIBYTE(wVersionRequested) ) {
     /* Tell the user that we couldn't find a useable */
 
@@ -168,7 +168,7 @@ static void idna_init (void)
   char buf[60];
   UINT cp = GetACP();
 
-  if (!getenv("CHARSET") && cp > 0) {
+  if(!getenv("CHARSET") && cp > 0) {
     snprintf(buf, sizeof(buf), "CHARSET=cp%u", cp);
     putenv(buf);
   }
@@ -212,7 +212,7 @@ curl_calloc_callback Curl_ccalloc = (curl_calloc_callback)calloc;
  */
 CURLcode curl_global_init(long flags)
 {
-  if (initialized++)
+  if(initialized++)
     return CURLE_OK;
 
   /* Setup the default memory functions here (again) */
@@ -222,14 +222,14 @@ CURLcode curl_global_init(long flags)
   Curl_cstrdup = (curl_strdup_callback)system_strdup;
   Curl_ccalloc = (curl_calloc_callback)calloc;
 
-  if (flags & CURL_GLOBAL_SSL)
-    if (!Curl_ssl_init()) {
+  if(flags & CURL_GLOBAL_SSL)
+    if(!Curl_ssl_init()) {
       DEBUGF(fprintf(stderr, "Error: Curl_ssl_init failed\n"));
       return CURLE_FAILED_INIT;
     }
 
-  if (flags & CURL_GLOBAL_WIN32)
-    if (win32_init() != CURLE_OK) {
+  if(flags & CURL_GLOBAL_WIN32)
+    if(win32_init() != CURLE_OK) {
       DEBUGF(fprintf(stderr, "Error: win32_init failed\n"));
       return CURLE_FAILED_INIT;
     }
@@ -238,6 +238,12 @@ CURLcode curl_global_init(long flags)
   if(!amiga_init()) {
     DEBUGF(fprintf(stderr, "Error: amiga_init failed\n"));
     return CURLE_FAILED_INIT;
+  }
+#endif
+
+#ifdef NETWARE
+  if(netware_init()) {
+    DEBUGF(fprintf(stderr, "Warning: LONG namespace not available\n"));
   }
 #endif
 
@@ -261,16 +267,16 @@ CURLcode curl_global_init_mem(long flags, curl_malloc_callback m,
   CURLcode code = CURLE_OK;
 
   /* Invalid input, return immediately */
-  if (!m || !f || !r || !s || !c)
+  if(!m || !f || !r || !s || !c)
     return CURLE_FAILED_INIT;
 
   /* Already initialized, don't do it again */
-  if ( initialized )
+  if( initialized )
     return CURLE_OK;
 
   /* Call the actual init function first */
   code = curl_global_init(flags);
-  if (code == CURLE_OK) {
+  if(code == CURLE_OK) {
     Curl_cmalloc = m;
     Curl_cfree = f;
     Curl_cstrdup = s;
@@ -287,18 +293,18 @@ CURLcode curl_global_init_mem(long flags, curl_malloc_callback m,
  */
 void curl_global_cleanup(void)
 {
-  if (!initialized)
+  if(!initialized)
     return;
 
-  if (--initialized)
+  if(--initialized)
     return;
 
   Curl_global_host_cache_dtor();
 
-  if (init_flags & CURL_GLOBAL_SSL)
+  if(init_flags & CURL_GLOBAL_SSL)
     Curl_ssl_cleanup();
 
-  if (init_flags & CURL_GLOBAL_WIN32)
+  if(init_flags & CURL_GLOBAL_WIN32)
     win32_cleanup();
 
 #ifdef __AMIGA__
@@ -318,7 +324,7 @@ CURL *curl_easy_init(void)
   struct SessionHandle *data;
 
   /* Make sure we inited the global SSL stuff */
-  if (!initialized) {
+  if(!initialized) {
     res = curl_global_init(CURL_GLOBAL_DEFAULT);
     if(res) {
       /* something in the global init failed, return nothing */
@@ -342,6 +348,7 @@ CURL *curl_easy_init(void)
  * easy handle.
  */
 
+#undef curl_easy_setopt
 CURLcode curl_easy_setopt(CURL *curl, CURLoption tag, ...)
 {
   va_list arg;
@@ -420,10 +427,13 @@ CURLcode curl_easy_perform(CURL *easy)
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
 
-    /* get file descriptors from the transfers */
+    /* Old deprecated style: get file descriptors from the transfers */
     curl_multi_fdset(multi, &fdread, &fdwrite, &fdexcep, &maxfd);
-
     rc = Curl_select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
+
+    /* The way is to extract the sockets and wait for them without using
+       select. This whole alternative version should probably rather use the
+       curl_multi_socket() approach. */
 
     if(rc == -1)
       /* select error */
@@ -456,17 +466,27 @@ CURLcode curl_easy_perform(CURL *curl)
   if(!data)
     return CURLE_BAD_FUNCTION_ARGUMENT;
 
-  if ( ! (data->share && data->share->hostcache) ) {
+  if( ! (data->share && data->share->hostcache) ) {
+    /* this handle is not using a shared dns cache */
 
-    if (Curl_global_host_cache_use(data) &&
-        (data->dns.hostcachetype != HCACHE_GLOBAL)) {
-      if (data->dns.hostcachetype == HCACHE_PRIVATE)
+    if(data->set.global_dns_cache &&
+       (data->dns.hostcachetype != HCACHE_GLOBAL)) {
+      /* global dns cache was requested but still isn't */
+      struct curl_hash *ptr;
+
+      if(data->dns.hostcachetype == HCACHE_PRIVATE)
+        /* if the current cache is private, kill it first */
         Curl_hash_destroy(data->dns.hostcache);
-      data->dns.hostcache = Curl_global_host_cache_get();
-      data->dns.hostcachetype = HCACHE_GLOBAL;
+
+      ptr = Curl_global_host_cache_init();
+      if(ptr) {
+        /* only do this if the global cache init works */
+        data->dns.hostcache = ptr;
+        data->dns.hostcachetype = HCACHE_GLOBAL;
+      }
     }
 
-    if (!data->dns.hostcache) {
+    if(!data->dns.hostcache) {
       data->dns.hostcachetype = HCACHE_PRIVATE;
       data->dns.hostcache = Curl_mk_dnscache();
 
@@ -511,7 +531,7 @@ void Curl_easy_addmulti(struct SessionHandle *data,
                         void *multi)
 {
   data->multi = multi;
-  if (multi == NULL)
+  if(multi == NULL)
     /* the association is cleared, mark the easy handle as not used by an
        interface */
     data->state.used_interface = Curl_if_none;
@@ -519,15 +539,16 @@ void Curl_easy_addmulti(struct SessionHandle *data,
 
 void Curl_easy_initHandleData(struct SessionHandle *data)
 {
-    memset(&data->reqdata, 0, sizeof(struct HandleData));
+    memset(&data->req, 0, sizeof(struct SingleRequest));
 
-    data->reqdata.maxdownload = -1;
+    data->req.maxdownload = -1;
 }
 
 /*
  * curl_easy_getinfo() is an external interface that allows an app to retrieve
  * information from a performed transfer and similar.
  */
+#undef curl_easy_getinfo
 CURLcode curl_easy_getinfo(CURL *curl, CURLINFO info, ...)
 {
   va_list arg;
@@ -570,7 +591,8 @@ CURL *curl_easy_duphandle(CURL *incurl)
     outcurl->state.headersize=HEADERSIZE;
 
     /* copy all userdefined values */
-    outcurl->set = data->set;
+    if(Curl_dupset(outcurl, data) != CURLE_OK)
+      break;
 
     if(data->state.used_interface == Curl_if_multi)
       outcurl->state.connc = data->state.connc;
@@ -590,9 +612,9 @@ CURL *curl_easy_duphandle(CURL *incurl)
       /* If cookies are enabled in the parent handle, we enable them
          in the clone as well! */
       outcurl->cookies = Curl_cookie_init(data,
-                                            data->cookies->filename,
-                                            outcurl->cookies,
-                                            data->set.cookiesession);
+                                          data->cookies->filename,
+                                          outcurl->cookies,
+                                          data->set.cookiesession);
       if(!outcurl->cookies) {
         break;
       }
@@ -649,6 +671,7 @@ CURL *curl_easy_duphandle(CURL *incurl)
         free(outcurl->change.url);
       if(outcurl->change.referer)
         free(outcurl->change.referer);
+      Curl_freeset(outcurl);
       free(outcurl); /* free the memory again */
       outcurl = NULL;
     }
@@ -665,13 +688,14 @@ void curl_easy_reset(CURL *curl)
 {
   struct SessionHandle *data = (struct SessionHandle *)curl;
 
-  Curl_safefree(data->reqdata.pathbuffer);
-  data->reqdata.pathbuffer=NULL;
+  Curl_safefree(data->state.pathbuffer);
+  data->state.pathbuffer=NULL;
 
-  Curl_safefree(data->reqdata.proto.generic);
-  data->reqdata.proto.generic=NULL;
+  Curl_safefree(data->state.proto.generic);
+  data->state.proto.generic=NULL;
 
   /* zero out UserDefined data: */
+  Curl_freeset(data);
   memset(&data->set, 0, sizeof(struct UserDefined));
 
   /* zero out Progress data: */
@@ -687,10 +711,10 @@ void curl_easy_reset(CURL *curl)
   data->set.err  = stderr;  /* default stderr to stderr */
 
   /* use fwrite as default function to store output */
-  data->set.fwrite = (curl_write_callback)fwrite;
+  data->set.fwrite_func = (curl_write_callback)fwrite;
 
   /* use fread as default function to read input */
-  data->set.fread = (curl_read_callback)fread;
+  data->set.fread_func = (curl_read_callback)fread;
 
   data->set.infilesize = -1; /* we don't know any size */
   data->set.postfieldsize = -1;
@@ -721,13 +745,118 @@ void curl_easy_reset(CURL *curl)
    */
   data->set.ssl.verifypeer = TRUE;
   data->set.ssl.verifyhost = 2;
-#ifdef CURL_CA_BUNDLE
-  /* This is our prefered CA cert bundle since install time */
-  data->set.ssl.CAfile = (char *)CURL_CA_BUNDLE;
+  /* This is our prefered CA cert bundle/path since install time */
+#if defined(CURL_CA_BUNDLE)
+  (void) curl_easy_setopt(curl, CURLOPT_CAINFO, (char *) CURL_CA_BUNDLE);
+#elif defined(CURL_CA_PATH)
+  (void) curl_easy_setopt(curl, CURLOPT_CAPATH, (char *) CURL_CA_PATH);
 #endif
 
   data->set.ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
                                                       type */
+  data->set.new_file_perms = 0644;    /* Default permissions */
+  data->set.new_directory_perms = 0755; /* Default permissions */
+}
+
+/*
+ * curl_easy_pause() allows an application to pause or unpause a specific
+ * transfer and direction. This function sets the full new state for the
+ * current connection this easy handle operates on.
+ *
+ * NOTE: if you have the receiving paused and you call this function to remove
+ * the pausing, you may get your write callback called at this point.
+ *
+ * Action is a bitmask consisting of CURLPAUSE_* bits in curl/curl.h
+ */
+CURLcode curl_easy_pause(CURL *curl, int action)
+{
+  struct SessionHandle *data = (struct SessionHandle *)curl;
+  struct SingleRequest *k = &data->req;
+  CURLcode result = CURLE_OK;
+
+  /* first switch off both pause bits */
+  int newstate = k->keepon &~ (KEEP_READ_PAUSE| KEEP_WRITE_PAUSE);
+
+  /* set the new desired pause bits */
+  newstate |= ((action & CURLPAUSE_RECV)?KEEP_READ_PAUSE:0) |
+    ((action & CURLPAUSE_SEND)?KEEP_WRITE_PAUSE:0);
+
+  /* put it back in the keepon */
+  k->keepon = newstate;
+
+  if(!(newstate & KEEP_READ_PAUSE) && data->state.tempwrite) {
+    /* we have a buffer for writing that we now seem to be able to deliver since
+       the receive pausing is lifted! */
+
+    /* get the pointer, type and length in local copies since the function may
+       return PAUSE again and then we'll get a new copy allocted and stored in
+       the tempwrite variables */
+    char *tempwrite = data->state.tempwrite;
+    size_t tempsize = data->state.tempwritesize;
+    int temptype = data->state.tempwritetype;
+    size_t chunklen;
+
+    /* clear tempwrite here just to make sure it gets cleared if there's no
+       further use of it, and make sure we don't clear it after the function
+       invoke as it may have been set to a new value by then */
+    data->state.tempwrite = NULL;
+
+    /* since the write callback API is define to never exceed
+       CURL_MAX_WRITE_SIZE bytes in a single call, and since we may in fact
+       have more data than that in our buffer here, we must loop sending the
+       data in multiple calls until there's no data left or we get another
+       pause returned.
+
+       A tricky part is that the function we call will "buffer" the data
+       itself when it pauses on a particular buffer, so we may need to do some
+       extra trickery if we get a pause return here.
+    */
+    do {
+      chunklen = (tempsize > CURL_MAX_WRITE_SIZE)?CURL_MAX_WRITE_SIZE:tempsize;
+
+      result = Curl_client_write(data->state.current_conn,
+                                 temptype, tempwrite, chunklen);
+      if(!result)
+        /* failures abort the loop at once */
+        break;
+
+      if(data->state.tempwrite && (tempsize - chunklen)) {
+        /* Ouch, the reading is again paused and the block we send is now
+           "cached". If this is the final chunk we can leave it like this, but
+           if we have more chunks that is cached after this, we need to free
+           the newly cached one and put back a version that is truly the entire
+           contents that is saved for later
+        */
+        char *newptr;
+
+        free(data->state.tempwrite); /* free the one just cached as it isn't
+                                        enough */
+
+        /* note that tempsize is still the size as before the callback was
+           used, and thus the whole piece of data to keep */
+        newptr = malloc(tempsize);
+        if(!newptr) {
+          result = CURLE_OUT_OF_MEMORY;
+          /* tempwrite will be freed further down */
+          break;
+        }
+        data->state.tempwrite = newptr; /* store new pointer */
+        memcpy(newptr, tempwrite, tempsize);
+        data->state.tempwritesize = tempsize; /* store new size */
+        /* tempwrite will be freed further down */
+        break; /* go back to pausing until further notice */
+      }
+      else {
+        tempsize -= chunklen;  /* left after the call above */
+        tempwrite += chunklen; /* advance the pointer */
+      }
+
+    } while((result == CURLE_OK) && tempsize);
+
+    free(tempwrite); /* this is unconditionally no longer used */
+  }
+
+  return result;
 }
 
 #ifdef CURL_DOES_CONVERSIONS
@@ -775,7 +904,7 @@ CURLcode Curl_convert_to_network(struct SessionHandle *data,
     in_bytes = out_bytes = length;
     rc = iconv(data->outbound_cd, (const char**)&input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
-    if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+    if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
         "The Curl_convert_to_network iconv call failed with errno %i: %s",
@@ -835,7 +964,7 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
     in_bytes = out_bytes = length;
     rc = iconv(data->inbound_cd, (const char **)&input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
-    if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+    if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
         "The Curl_convert_from_network iconv call failed with errno %i: %s",
@@ -872,7 +1001,8 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
   } else {
 #ifdef HAVE_ICONV
     /* do the translation ourselves */
-    char *input_ptr, *output_ptr;
+    const char *input_ptr;
+    char *output_ptr;
     size_t in_bytes, out_bytes, rc;
     int error;
 
@@ -893,16 +1023,16 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     /* call iconv */
     input_ptr = output_ptr = buffer;
     in_bytes = out_bytes = length;
-    rc = iconv(data->utf8_cd, (const char**)&input_ptr, &in_bytes,
+    rc = iconv(data->utf8_cd, &input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
-    if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+    if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
         "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
              error, strerror(error));
       return CURLE_CONV_FAILED;
     }
-    if (output_ptr < input_ptr) {
+    if(output_ptr < input_ptr) {
       /* null terminate the now shorter output string */
       *output_ptr = 0x00;
     }

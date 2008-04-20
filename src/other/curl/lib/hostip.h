@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,20 +20,24 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip.h,v 1.57 2006-09-08 05:18:07 yangtse Exp $
+ * $Id: hostip.h,v 1.61 2008-01-15 22:44:12 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
 #include "hash.h"
 
-#if (defined(NETWARE) && defined(__NOVELL_LIBC__))
+#ifdef NETWARE
 #undef in_addr_t
-#define in_addr_t uint32_t
+#define in_addr_t unsigned long
 #endif
 
 /*
  * Setup comfortable CURLRES_* defines to use in the host*.c sources.
  */
+
+#ifdef USE_ARES
+#include <ares_version.h>
+#endif
 
 #ifdef USE_ARES
 #define CURLRES_ASYNCH
@@ -85,6 +89,10 @@
 
 #ifdef CURLRES_ARES
 #define CURL_ASYNC_SUCCESS ARES_SUCCESS
+#if ARES_VERSION >= 0x010500
+/* c-ares 1.5.0 or later, the callback proto is modified */
+#define HAVE_CARES_CALLBACK_TIMEOUTS 1
+#endif
 #else
 #define CURL_ASYNC_SUCCESS CURLE_OK
 #define ares_cancel(x) do {} while(0)
@@ -117,11 +125,15 @@ struct hostent;
 struct SessionHandle;
 struct connectdata;
 
-void Curl_global_host_cache_init(void);
+/*
+ * Curl_global_host_cache_init() initializes and sets up a global DNS cache.
+ * Global DNS cache is general badness. Do not use. This will be removed in
+ * a future version. Use the share interface instead!
+ *
+ * Returns a struct curl_hash pointer on success, NULL on failure.
+ */
+struct curl_hash *Curl_global_host_cache_init(void);
 void Curl_global_host_cache_dtor(void);
-struct curl_hash *Curl_global_host_cache_get(void);
-
-#define Curl_global_host_cache_use(__p) ((__p)->set.global_dns_cache)
 
 struct Curl_dns_entry {
   Curl_addrinfo *addr;
@@ -216,11 +228,17 @@ int curl_dogetnameinfo(GETNAMEINFO_QUAL_ARG1 GETNAMEINFO_TYPE_ARG1 sa,
    resolve, ipv4 */
 CURLcode Curl_addrinfo4_callback(void *arg,
                                  int status,
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+                                 int timeouts,
+#endif
                                  struct hostent *hostent);
 /* This is the callback function that is used when we build with asynch
    resolve, ipv6 */
 CURLcode Curl_addrinfo6_callback(void *arg,
                                  int status,
+#ifdef HAVE_CARES_CALLBACK_TIMEOUTS
+                                 int timeouts,
+#endif
                                  struct addrinfo *ai);
 
 

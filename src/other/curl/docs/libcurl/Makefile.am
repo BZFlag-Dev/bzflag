@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.am,v 1.25 2006-07-26 22:19:42 bagder Exp $
+# $Id: Makefile.am,v 1.27 2008-01-08 14:52:07 bagder Exp $
 #
 
 AUTOMAKE_OPTIONS = foreign no-dependencies
@@ -18,9 +18,10 @@ man_MANS = curl_easy_cleanup.3 curl_easy_getinfo.3 curl_easy_init.3	 \
  curl_multi_strerror.3 curl_share_strerror.3 curl_global_init_mem.3	 \
  libcurl-tutorial.3 curl_easy_reset.3 curl_easy_escape.3		 \
  curl_easy_unescape.3 curl_multi_setopt.3 curl_multi_socket.3		 \
- curl_multi_timeout.3 curl_formget.3 curl_multi_assign.3
+ curl_multi_timeout.3 curl_formget.3 curl_multi_assign.3		 \
+ curl_easy_pause.3
 
-HTMLPAGES = # curl_easy_cleanup.html curl_easy_getinfo.html		  \
+HTMLPAGES = curl_easy_cleanup.html curl_easy_getinfo.html		  \
  curl_easy_init.html curl_easy_perform.html curl_easy_setopt.html	  \
  curl_easy_duphandle.html curl_formadd.html curl_formfree.html		  \
  curl_getdate.html curl_getenv.html curl_slist_append.html		  \
@@ -36,9 +37,9 @@ HTMLPAGES = # curl_easy_cleanup.html curl_easy_getinfo.html		  \
  curl_share_strerror.html curl_global_init_mem.html libcurl-tutorial.html \
  curl_easy_reset.html curl_easy_escape.html curl_easy_unescape.html	  \
  curl_multi_setopt.html curl_multi_socket.html curl_multi_timeout.html	  \
- curl_formget.html curl_multi_assign.html
+ curl_formget.html curl_multi_assign.html curl_easy_pause.html
 
-PDFPAGES = # curl_easy_cleanup.pdf curl_easy_getinfo.pdf curl_easy_init.pdf \
+PDFPAGES = curl_easy_cleanup.pdf curl_easy_getinfo.pdf curl_easy_init.pdf \
  curl_easy_perform.pdf curl_easy_setopt.pdf curl_easy_duphandle.pdf	  \
  curl_formadd.pdf curl_formfree.pdf curl_getdate.pdf curl_getenv.pdf	  \
  curl_slist_append.pdf curl_slist_free_all.pdf curl_version.pdf		  \
@@ -53,13 +54,11 @@ PDFPAGES = # curl_easy_cleanup.pdf curl_easy_getinfo.pdf curl_easy_init.pdf \
  curl_share_strerror.pdf curl_global_init_mem.pdf libcurl-tutorial.pdf	  \
  curl_easy_reset.pdf curl_easy_escape.pdf curl_easy_unescape.pdf	  \
  curl_multi_setopt.pdf curl_multi_socket.pdf curl_multi_timeout.pdf	  \
- curl_formget.pdf curl_multi_assign.pdf
+ curl_formget.pdf curl_multi_assign.pdf curl_easy_pause.pdf
 
 CLEANFILES = $(HTMLPAGES) $(PDFPAGES)
 
-EXTRA_DIST = $(man_MANS) $(HTMLPAGES) index.html $(PDFPAGES) libcurl.m4
-
-MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST = $(man_MANS) $(HTMLPAGES) index.html $(PDFPAGES) libcurl.m4 ABI
 
 MAN2HTML= roffit --mandir=. < $< >$@
 

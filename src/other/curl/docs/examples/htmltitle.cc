@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: htmltitle.cc,v 1.3 2005-02-09 15:15:01 giva Exp $
+ * $Id: htmltitle.cc,v 1.3 2005/02/09 15:15:01 giva Exp $
  */
 
 // Get a web page, parse it with libxml.

@@ -69,12 +69,17 @@ static char *inet_ntop4 (const unsigned char *src, char *dst, size_t size)
   return (char *)memmove(dst, ptr, strlen(ptr)+1);
 
 #elif defined(HAVE_INET_NTOA_R)
+
+#if defined(HAVE_INT_INET_NTOA_R)
+  return inet_ntoa_r(*(struct in_addr*)src, dst, size)? NULL: dst;
+#else
   return inet_ntoa_r(*(struct in_addr*)src, dst, size);
+#endif
 
 #else
   const char *addr = inet_ntoa(*(struct in_addr*)src);
 
-  if (strlen(addr) >= size)
+  if(strlen(addr) >= size)
   {
     SET_ERRNO(ENOSPC);
     return (NULL);
@@ -120,23 +125,23 @@ static char *inet_ntop6 (const unsigned char *src, char *dst, size_t size)
 
   for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++)
   {
-    if (words[i] == 0)
+    if(words[i] == 0)
     {
-      if (cur.base == -1)
+      if(cur.base == -1)
         cur.base = i, cur.len = 1;
       else
         cur.len++;
     }
-    else if (cur.base != -1)
+    else if(cur.base != -1)
     {
-      if (best.base == -1 || cur.len > best.len)
+      if(best.base == -1 || cur.len > best.len)
          best = cur;
       cur.base = -1;
     }
   }
-  if ((cur.base != -1) && (best.base == -1 || cur.len > best.len))
+  if((cur.base != -1) && (best.base == -1 || cur.len > best.len))
      best = cur;
-  if (best.base != -1 && best.len < 2)
+  if(best.base != -1 && best.len < 2)
      best.base = -1;
 
   /* Format the result.
@@ -146,24 +151,24 @@ static char *inet_ntop6 (const unsigned char *src, char *dst, size_t size)
   {
     /* Are we inside the best run of 0x00's?
      */
-    if (best.base != -1 && i >= best.base && i < (best.base + best.len))
+    if(best.base != -1 && i >= best.base && i < (best.base + best.len))
     {
-      if (i == best.base)
+      if(i == best.base)
          *tp++ = ':';
       continue;
     }
 
     /* Are we following an initial run of 0x00s or any real hex?
      */
-    if (i != 0)
+    if(i != 0)
        *tp++ = ':';
 
     /* Is this address an encapsulated IPv4?
      */
-    if (i == 6 && best.base == 0 &&
+    if(i == 6 && best.base == 0 &&
         (best.len == 6 || (best.len == 5 && words[5] == 0xffff)))
     {
-      if (!inet_ntop4(src+12, tp, sizeof(tmp) - (tp - tmp)))
+      if(!inet_ntop4(src+12, tp, sizeof(tmp) - (tp - tmp)))
       {
         SET_ERRNO(ENOSPC);
         return (NULL);
@@ -176,13 +181,13 @@ static char *inet_ntop6 (const unsigned char *src, char *dst, size_t size)
 
   /* Was it a trailing run of 0x00's?
    */
-  if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ))
+  if(best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ))
      *tp++ = ':';
   *tp++ = '\0';
 
   /* Check for overflow, copy, and we're done.
    */
-  if ((size_t)(tp - tmp) > size)
+  if((size_t)(tp - tmp) > size)
   {
     SET_ERRNO(ENOSPC);
     return (NULL);

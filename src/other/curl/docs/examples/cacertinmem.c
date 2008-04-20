@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: cacertinmem.c,v 1.1 2005-08-24 17:07:27 bagder Exp $
+ * $Id: cacertinmem.c,v 1.2 2007-07-12 21:11:10 danf Exp $
  *
  * Example using a "in core" PEM certificate to retrieve a https page.
  * Written by Theo Borm
@@ -135,4 +135,5 @@ int main(void)
 
   curl_easy_cleanup(ch);
   curl_global_cleanup();
+  return rv;
 }

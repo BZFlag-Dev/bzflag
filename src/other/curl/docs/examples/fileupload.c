@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: fileupload.c,v 1.2 2004-10-16 13:17:15 giva Exp $
+ * $Id: fileupload.c,v 1.3 2007-07-12 21:11:10 danf Exp $
  */
 
 #include <stdio.h>
@@ -17,7 +17,6 @@ int main(void)
 {
   CURL *curl;
   CURLcode res;
-  curl_off_t size;
   struct stat file_info;
   double speed_upload, total_time;
   FILE *fd;

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: writeenv.h,v 1.5 2004-01-07 09:19:36 bagder Exp $
+ * $Id: writeenv.h,v 1.5 2004/01/07 09:19:36 bagder Exp $
  ***************************************************************************/
 
 void ourWriteEnv(CURL *curl);

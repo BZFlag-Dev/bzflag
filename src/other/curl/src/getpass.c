@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getpass.c,v 1.18 2007-04-14 16:55:17 gknauf Exp $
+ * $Id: getpass.c,v 1.21 2007-07-20 16:01:05 gknauf Exp $
  ***************************************************************************/
 
 /* This file is a reimplementation of the previous one, due to license
@@ -115,6 +115,8 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
            previous one as well */
         i = i - (i>=1?2:1);
   }
+  /* since echo is disabled, print a newline */
+  fputs("\n", stderr);
   /* if user didn't hit ENTER, terminate buffer */
   if (i==buflen)
     buffer[buflen-1]=0;
@@ -126,11 +128,40 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
 
 #ifdef NETWARE
 /* NetWare implementation */
+#ifdef __NOVELL_LIBC__
 #include <screen.h>
 char *getpass_r(const char *prompt, char *buffer, size_t buflen)
 {
   return getpassword(prompt, buffer, buflen);
 }
+#else
+#include <nwconio.h>
+char *getpass_r(const char *prompt, char *buffer, size_t buflen)
+{
+  size_t i = 0;
+
+  printf("%s", prompt);
+  do {
+    buffer[i++] = getch();
+    if (buffer[i-1] == '\b') {
+      /* remove this letter and if this is not the first key,
+         remove the previous one as well */
+      if (i > 1) {   
+        printf("\b \b");
+        i = i - 2;
+      } else {
+        RingTheBell();
+        i = i - 1;
+      }
+    } else if (buffer[i-1] != 13) {
+      putchar('*');
+    }
+  } while ((buffer[i-1] != 13) && (i < buflen));
+  buffer[i-1] = 0;
+  printf("\r\n");
+  return buffer;
+}
+#endif /* __NOVELL_LIBC__ */
 #define DONE
 #endif /* NETWARE */
 

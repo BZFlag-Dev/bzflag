@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.h,v 1.28 2007-01-05 23:11:16 bagder Exp $
+ * $Id: ssluse.h,v 1.29 2007-07-29 12:54:05 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -32,10 +32,14 @@ CURLcode Curl_ossl_connect(struct connectdata *conn, int sockindex);
 CURLcode Curl_ossl_connect_nonblocking(struct connectdata *conn,
                                        int sockindex,
                                        bool *done);
-void Curl_ossl_close(struct connectdata *conn); /* close a SSL connection */
+
+/* close a SSL connection */
+void Curl_ossl_close(struct connectdata *conn, int sockindex);
+
 /* tell OpenSSL to close down all open information regarding connections (and
    thus session ID caching etc) */
 int Curl_ossl_close_all(struct SessionHandle *data);
+
 /* Sets an OpenSSL engine */
 CURLcode Curl_ossl_set_engine(struct SessionHandle *data, const char *engine);
 

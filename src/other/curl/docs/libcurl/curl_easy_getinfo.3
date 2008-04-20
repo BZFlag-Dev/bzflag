@@ -18,7 +18,7 @@
 .\" * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 .\" * KIND, either express or implied.
 .\" *
-.\" * $Id: curl_easy_getinfo.3,v 1.30 2007-03-31 20:19:02 bagder Exp $
+.\" * $Id: curl_easy_getinfo.3,v 1.32 2007-08-01 21:20:01 bagder Exp $
 .\" **************************************************************************
 .\"
 .TH curl_easy_getinfo 3 "21 Mar 2006" "libcurl 7.15.4" "libcurl Manual"
@@ -39,7 +39,7 @@ this function AFTER a performed transfer if you want to get transfer- oriented
 data.
 
 You should not free the memory returned by this function unless it is
-explictly mentioned below.
+explicitly mentioned below.
 .SH AVAILABLE INFORMATION
 The following information can be extracted:
 .IP CURLINFO_EFFECTIVE_URL
@@ -133,7 +133,9 @@ protocol used doesn't support this.
 .IP CURLINFO_PRIVATE
 Pass a pointer to a 'char *' to receive the pointer to the private data
 associated with the curl handle (set with the CURLOPT_PRIVATE option to
-\fIcurl_easy_setopt(3)\fP). (Added in 7.10.3)
+\fIcurl_easy_setopt(3)\fP). Please note that for internal reasons, the
+value is returned as a 'char *', although effectively being a 'void *'.
+(Added in 7.10.3)
 .IP CURLINFO_HTTPAUTH_AVAIL
 Pass a pointer to a long to receive a bitmask indicating the authentication
 method(s) available. The meaning of the bits is explained in the

@@ -5,7 +5,7 @@
 .\" *                            | (__| |_| |  _ <| |___
 .\" *                             \___|\___/|_| \_\_____|
 .\" *
-.\" * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+.\" * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
 .\" *
 .\" * This software is licensed as described in the file COPYING, which
 .\" * you should have received as part of this distribution. The terms
@@ -18,10 +18,10 @@
 .\" * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 .\" * KIND, either express or implied.
 .\" *
-.\" * $Id: curl_easy_setopt.3,v 1.176 2007-03-23 17:59:40 danf Exp $
+.\" * $Id: curl_easy_setopt.3,v 1.215 2008-03-25 19:17:26 bagder Exp $
 .\" **************************************************************************
 .\"
-.TH curl_easy_setopt 3 "22 Feb 2007" "libcurl 7.16.2" "libcurl Manual"
+.TH curl_easy_setopt 3 "5 Jan 2008" "libcurl 7.18.0" "libcurl Manual"
 .SH NAME
 curl_easy_setopt \- set options for a curl easy handle
 .SH SYNOPSIS
@@ -44,11 +44,13 @@ between transfers, so if you want subsequent transfers with different options,
 you must change them between the transfers. You can optionally reset all
 options back to internal default with \fIcurl_easy_reset(3)\fP.
 
-Strings passed to libcurl as 'char *' arguments, will not be copied by the
-library. Instead you should keep them available until libcurl no longer needs
-them. Failing to do so will cause very odd behavior or even crashes. libcurl
-will need them until you call \fIcurl_easy_cleanup(3)\fP or you set the same
-option again to use a different pointer.
+Strings passed to libcurl as 'char *' arguments, are copied by the library;
+thus the string storage associated to the pointer argument may be overwritten
+after curl_easy_setopt() returns. Exceptions to this rule are described in
+the option details below.
+
+NOTE: before 7.17.0 strings were not copied. Instead the user was forced keep
+them available until libcurl no longer needed them.
 
 The \fIhandle\fP is the return code from a \fIcurl_easy_init(3)\fP or
 \fIcurl_easy_duphandle(3)\fP call.
@@ -92,6 +94,10 @@ multiplied with \fInmemb\fP, it will not be zero terminated. Return the number
 of bytes actually taken care of. If that amount differs from the amount passed
 to your function, it'll signal an error to the library and it will abort the
 transfer and return \fICURLE_WRITE_ERROR\fP.
+
+From 7.18.0, the function can return CURL_WRITEFUNC_PAUSE which then will
+cause writing to this connection to become paused. See
+\fIcurl_easy_pause(3)\fP for further details.
 
 This function may be called with zero bytes data if the transfered file is
 empty.
@@ -140,6 +146,10 @@ The read callback may return \fICURL_READFUNC_ABORT\fP to stop the current
 operation immediately, resulting in a \fICURLE_ABORTED_BY_CALLBACK\fP error
 code from the transfer (Added in 7.12.1)
 
+From 7.18.0, the function can return CURL_READFUNC_PAUSE which then will cause
+reading from this connection to become paused. See \fIcurl_easy_pause(3)\fP
+for further details.
+
 If you set the callback pointer to NULL, or doesn't set it at all, the default
 internal read function will be used. It is simply doing an fread() on the FILE
 * stream set with \fICURLOPT_READDATA\fP.
@@ -161,11 +171,32 @@ something special I/O-related needs to be done that the library can't do by
 itself. For now, rewinding the read data stream is the only action it can
 request. The rewinding of the read data stream may be necessary when doing a
 HTTP PUT or POST with a multi-pass authentication method.  (Option added in
-7.12.3)
+7.12.3).
+
+Use \fICURLOPT_SEEKFUNCTION\fP instead to provide seeking!
 .IP CURLOPT_IOCTLDATA
 Pass a pointer that will be untouched by libcurl and passed as the 3rd
 argument in the ioctl callback set with \fICURLOPT_IOCTLFUNCTION\fP.  (Option
 added in 7.12.3)
+.IP CURLOPT_SEEKFUNCTION
+Function pointer that should match the following prototype: \fIint
+function(void *instream, curl_off_t offset, int origin);\fP This function gets
+called by libcurl to seek to a certain position in the input stream and can be
+used to fast forward a file in a resumed upload (instead of reading all
+uploaded bytes with the normal read function/callback). It is also called to
+rewind a stream when doing a HTTP PUT or POST with a multi-pass authentication
+method. The function shall work like "fseek" or "lseek" and accepted SEEK_SET,
+SEEK_CUR and SEEK_END as argument for origin, although (in 7.18.0) libcurl
+only passes SEEK_SET. The callback must return 0 on success as returning
+non-zero will cause the upload operation to fail.
+
+If you forward the input arguments directly to "fseek" or "lseek", note that
+the data type for \fIoffset\fP is not the same as defined for curl_off_t on
+many systems! (Option added in 7.18.0)
+.IP CURLOPT_SEEKDATA
+Data pointer to pass to the file read function. If you use the
+\fICURLOPT_SEEKFUNCTION\fP option, this is the pointer you'll get as input. If
+you don't specify a seek callback, NULL is passed. (Option added in 7.18.0)
 .IP CURLOPT_SOCKOPTFUNCTION
 Function pointer that should match the \fIcurl_sockopt_callback\fP prototype
 found in \fI<curl/curl.h>\fP. This function gets called by libcurl after the
@@ -182,6 +213,30 @@ unrecoverable error to the library and it will close the socket and return
 Pass a pointer that will be untouched by libcurl and passed as the first
 argument in the sockopt callback set with \fICURLOPT_SOCKOPTFUNCTION\fP.
 (Option added in 7.15.6.)
+.IP CURLOPT_OPENSOCKETFUNCTION
+Function pointer that should match the \fIcurl_opensocket_callback\fP
+prototype found in \fI<curl/curl.h>\fP. This function gets called by libcurl
+instead of the \fIsocket(2)\fP call. The callback's \fIpurpose\fP argument
+identifies the exact purpose for this particular socket, and currently only
+one value is supported: \fICURLSOCKTYPE_IPCXN\fP for the primary connection
+(meaning the control connection in the FTP case). Future versions of libcurl
+may support more purposes. It passes the resolved peer address as a
+\fIaddress\fP argument so the callback can modify the address or refuse to
+connect at all. The callback function should return the socket or
+\fICURL_SOCKET_BAD\fP in case no connection should be established or any error
+detected. Any additional \fIsetsockopt(2)\fP calls can be done on the socket
+at the user's discretion.  \fICURL_SOCKET_BAD\fP return value from the
+callback function will signal an unrecoverable error to the library and it
+will return \fICURLE_COULDNT_CONNECT\fP.  This return code can be used for IP
+address blacklisting.  The default behavior is:
+.Bd -literal -offset indent
+   return socket(addr->family, addr->socktype, addr->protocol);
+.Ed
+(Option added in 7.17.1.)
+.IP CURLOPT_OPENSOCKETDATA
+Pass a pointer that will be untouched by libcurl and passed as the first
+argument in the opensocket callback set with \fICURLOPT_OPENSOCKETFUNCTION\fP.
+(Option added in 7.17.1.)
 .IP CURLOPT_PROGRESSFUNCTION
 Function pointer that should match the \fIcurl_progress_callback\fP prototype
 found in \fI<curl/curl.h>\fP. This function gets called by libcurl instead of
@@ -194,8 +249,7 @@ this callback will cause libcurl to abort the transfer and return
 
 If you transfer data with the multi interface, this function will not be
 called during periods of idleness unless you call the appropriate libcurl
-function that performs transfers. Usage of the \fBCURLOPT_PROGRESSFUNCTION\fP
-callback is not recommended when using the multi interface.
+function that performs transfers.
 
 \fICURLOPT_NOPROGRESS\fP must be set to FALSE to make this function actually
 get called.
@@ -256,6 +310,9 @@ Pass a pointer to whatever you want passed in to your
 \fICURLOPT_DEBUGFUNCTION\fP in the last void * argument. This pointer is not
 used by libcurl, it is only passed to the callback.
 .IP CURLOPT_SSL_CTX_FUNCTION
+This option does only function for libcurl powered by OpenSSL. If libcurl was
+built against another SSL library, this functionality is absent.
+
 Function pointer that should match the following prototype: \fBCURLcode
 sslctxfun(CURL *curl, void *sslctx, void *parm);\fP This function gets called
 by libcurl just before the initialization of an SSL connection after having
@@ -330,6 +387,12 @@ system.
 Pass a char * to a buffer that the libcurl may store human readable error
 messages in. This may be more helpful than just the return code from
 \fIcurl_easy_perform\fP. The buffer must be at least CURL_ERROR_SIZE big.
+Although this argument is a 'char *', it does not describe an input string.
+Therefore the (probably undefined) contents of the buffer is NOT copied
+by the library. You should keep the associated storage available until
+libcurl no longer needs it. Failing to do so will cause very odd behavior
+or even crashes. libcurl will need it until you call \fIcurl_easy_cleanup(3)\fP
+or you set the same option again to use a different pointer. 
 
 Use \fICURLOPT_VERBOSE\fP and \fICURLOPT_DEBUGFUNCTION\fP to better
 debug/trace why errors happen.
@@ -345,7 +408,7 @@ A non-zero parameter tells the library to fail silently if the HTTP code
 returned is equal to or larger than 400. The default action would be to return
 the page normally, ignoring that code.
 
-This method is not fail-safe and there are occasions where non-succesful
+This method is not fail-safe and there are occasions where non-successful
 response codes will slip through, especially when authentication is involved
 (response codes 401 and 407).
 
@@ -355,8 +418,7 @@ POST/PUT and a 401 or 407 is received immediately afterwards.
 .SH NETWORK OPTIONS
 .IP CURLOPT_URL
 The actual URL to deal with. The parameter should be a char * to a zero
-terminated string. The string must remain present until curl no longer needs
-it, as it doesn't copy the string.
+terminated string.
 
 If the given URL lacks the protocol part ("http://" or "ftp://" etc), it will
 attempt to guess which protocol to use based on the given host name. If the
@@ -400,13 +462,21 @@ Pass a long with this option to set the proxy port to connect to unless it is
 specified in the proxy string \fICURLOPT_PROXY\fP.
 .IP CURLOPT_PROXYTYPE
 Pass a long with this option to set type of the proxy. Available options for
-this are \fICURLPROXY_HTTP\fP, \fICURLPROXY_SOCKS4\fP (added in 7.15.2)
-\fICURLPROXY_SOCKS5\fP. The HTTP type is default. (Added in 7.10)
+this are \fICURLPROXY_HTTP\fP, \fICURLPROXY_SOCKS4\fP (added in 7.15.2),
+\fICURLPROXY_SOCKS5\fP, \fICURLPROXY_SOCKS4A\fP (added in 7.18.0) and
+\fICURLPROXY_SOCKS5_HOSTNAME\fP (added in 7.18.0). The HTTP type is
+default. (Added in 7.10)
 .IP CURLOPT_HTTPPROXYTUNNEL
 Set the parameter to non-zero to get the library to tunnel all operations
 through a given HTTP proxy. There is a big difference between using a proxy
 and to tunnel through it. If you don't know what this means, you probably
 don't want this tunneling option.
+.IP CURLOPT_SOCKS5_RESOLVE_LOCAL
+Set the parameter to 1 to get the library to resolve the host name locally
+instead of passing it to the proxy to resolve, when using a SOCKS5 proxy.
+
+Note that libcurl before 7.18.0 always resolved the host name locally even
+when SOCKS5 was used. (Added in 7.18.0)
 .IP CURLOPT_INTERFACE
 Pass a char * as parameter. This set the interface name to use as outgoing
 network interface. The name can be an interface name, an IP address or a host
@@ -445,7 +515,7 @@ not an order. You cannot be guaranteed to actually get the given size. (Added
 in 7.10)
 
 This size is by default set as big as possible (CURL_MAX_WRITE_SIZE), so it
-only makse sense to use this option if you want it smaller.
+only makes sense to use this option if you want it smaller.
 .IP CURLOPT_PORT
 Pass a long specifying what remote port number to connect to, instead of the
 one specified in the URL or the default port for the used protocol.
@@ -612,6 +682,13 @@ redirections have been followed, the next redirect will cause an error
 \fICURLOPT_FOLLOWLOCATION\fP is used at the same time. Added in 7.15.1:
 Setting the limit to 0 will make libcurl refuse any redirect. Set it to -1 for
 an infinite number of redirects (which is the default)
+.IP CURLOPT_POST301
+A non-zero parameter tells the library to respect RFC 2616/10.3.2 and not
+convert POST requests into GET requests when following a 301 redirection. The
+non-RFC behaviour is ubiquitous in web browsers, so the library does the
+conversion by default to maintain consistency. However, a server may requires
+a POST to remain a POST after such a redirection. This option is meaningful
+only when setting \fICURLOPT_FOLLOWLOCATION\fP.  (Added in 7.17.1)
 .IP CURLOPT_PUT
 A non-zero parameter tells the library to use HTTP PUT to transfer data. The
 data should be set with \fICURLOPT_READDATA\fP and \fICURLOPT_INFILESIZE\fP.
@@ -624,14 +701,18 @@ also make the library use the a "Content-Type:
 application/x-www-form-urlencoded" header. (This is by far the most commonly
 used POST method).
 
-Use the \fICURLOPT_POSTFIELDS\fP option to specify what data to post and
-\fICURLOPT_POSTFIELDSIZE\fP to set the data size.
+Use one of \fICURLOPT_POSTFIELDS\fP or \fICURLOPT_COPYPOSTFIELDS\fP options to
+specify what data to post and \fICURLOPT_POSTFIELDSIZE\fP or
+\fICURLOPT_POSTFIELDSIZE_LARGE\fP to set the data size.
 
 Optionally, you can provide data to POST using the \fICURLOPT_READFUNCTION\fP
 and \fICURLOPT_READDATA\fP options but then you must make sure to not set
 \fICURLOPT_POSTFIELDS\fP to anything but NULL. When providing data with a
 callback, you must transmit it using chunked transfer-encoding or you must set
-the size of the data with the \fICURLOPT_POSTFIELDSIZE\fP option.
+the size of the data with the \fICURLOPT_POSTFIELDSIZE\fP or
+\fICURLOPT_POSTFIELDSIZE_LARGE\fP option. To enable chunked encoding, you
+simply pass in the appropriate Transfer-Encoding header, see the
+post-callback.c example.
 
 You can override the default POST Content-Type: header by setting your own
 with \fICURLOPT_HTTPHEADER\fP.
@@ -649,18 +730,27 @@ When setting \fICURLOPT_POST\fP to a non-zero value, it will automatically set
 \fICURLOPT_NOBODY\fP to 0 (since 7.14.1).
 
 If you issue a POST request and then want to make a HEAD or GET using the same
-re-used handle, you must explictly set the new request type using
+re-used handle, you must explicitly set the new request type using
 \fICURLOPT_NOBODY\fP or \fICURLOPT_HTTPGET\fP or similar.
 .IP CURLOPT_POSTFIELDS
-Pass a char * as parameter, which should be the full data to post in an HTTP
+Pass a void * as parameter, which should be the full data to post in an HTTP
 POST operation. You must make sure that the data is formatted the way you want
 the server to receive it. libcurl will not convert or encode it for you. Most
 web servers will assume this data to be url-encoded. Take note.
+
+The pointed data are NOT copied by the library: as a consequence, they must
+be preserved by the calling application until the transfer finishes.
 
 This POST is a normal application/x-www-form-urlencoded kind (and libcurl will
 set that Content-Type by default when this option is used), which is the most
 commonly used one by HTML forms. See also the \fICURLOPT_POST\fP. Using
 \fICURLOPT_POSTFIELDS\fP implies \fICURLOPT_POST\fP.
+
+If you want to do a zero-byte POST, you need to set
+\fICURLOPT_POSTFIELDSIZE\fP explicitly to zero, as simply setting
+\fICURLOPT_POSTFIELDS\fP to NULL or "" just effectively disables the sending
+of the specified string. libcurl will instead assume that you'll send the POST
+data using the read callback!
 
 Using POST with HTTP 1.1 implies the use of a "Expect: 100-continue" header.
 You can disable this header with \fICURLOPT_HTTPHEADER\fP as usual.
@@ -677,6 +767,22 @@ Pass a curl_off_t as parameter. Use this to set the size of the
 \fICURLOPT_POSTFIELDS\fP data to prevent libcurl from doing strlen() on the
 data to figure out the size. This is the large file version of the
 \fICURLOPT_POSTFIELDSIZE\fP option. (Added in 7.11.1)
+.IP CURLOPT_COPYPOSTFIELDS
+Pass a char * as parameter, which should be the full data to post in an HTTP
+POST operation. It behaves as the \fICURLOPT_POSTFIELDS\fP option, but the
+original data are copied by the library, allowing the application to overwrite
+the original data after setting this option.
+
+Because data are copied, care must be taken when using this option in
+conjunction with \fICURLOPT_POSTFIELDSIZE\fP or
+\fICURLOPT_POSTFIELDSIZE_LARGE\fP: If the size has not been set prior to
+\fICURLOPT_COPYPOSTFIELDS\fP, the data are assumed to be a NUL-terminated
+string; else the stored size informs the library about the data byte count to
+copy. In any case, the size must not be changed after
+\fICURLOPT_COPYPOSTFIELDS\fP, unless another \fICURLOPT_POSTFIELDS\fP or
+\fICURLOPT_COPYPOSTFIELDS\fP option is issued.
+(Added in 7.17.1)
+
 .IP CURLOPT_HTTPPOST
 Tells libcurl you want a multipart/formdata HTTP POST to be made and you
 instruct what data to pass on to the server.  Pass a pointer to a linked list
@@ -736,10 +842,9 @@ The linked list should be a fully valid list of struct curl_slist structs, and
 be properly filled in.  Use \fIcurl_slist_append(3)\fP to create the list and
 \fIcurl_slist_free_all(3)\fP to clean up an entire list.
 
-The alias itself is not parsed for any version strings.  So if your alias is
-\&"MYHTTP/9.9", Libcurl will not treat the server as responding with HTTP
-version 9.9.  Instead Libcurl will use the value set by option
-\fICURLOPT_HTTP_VERSION\fP.
+The alias itself is not parsed for any version strings. Before libcurl 7.16.3,
+Libcurl used the value set by option \fICURLOPT_HTTP_VERSION\fP, but starting
+with 7.16.3 the protocol is assumed to match HTTP 1.0 when an alias matched.
 .IP CURLOPT_COOKIE
 Pass a pointer to a zero terminated string as parameter. It will be used to
 set a cookie in the http request. The format of the string should be
@@ -752,7 +857,7 @@ multiple cookies in one string like this: "name1=content1; name2=content2;"
 etc.
 
 Using this option multiple times will only make the latest string override the
-previously ones.
+previous ones.
 .IP CURLOPT_COOKIEFILE
 Pass a pointer to a zero terminated string as parameter. It should contain the
 name of your file holding cookie data to read. The cookie data may be in
@@ -791,7 +896,9 @@ format or just regular HTTP-style header (Set-Cookie: ...) format. If cURL
 cookie engine was not enabled it will enable its cookie engine.  Passing a
 magic string \&"ALL" will erase all cookies known by cURL. (Added in 7.14.1)
 Passing the special string \&"SESS" will only erase all session cookies known
-by cURL. (Added in 7.15.4)
+by cURL. (Added in 7.15.4) Passing the special string \&"FLUSH" will write
+all cookies known by cURL to the file specified by \fICURLOPT_COOKIEJAR\fP.
+(Added in 7.17.1)
 .IP CURLOPT_HTTPGET
 Pass a long. If the long is non-zero, this forces the HTTP request to get back
 to GET. usable if a POST, HEAD, PUT or a custom request have been used
@@ -811,6 +918,7 @@ it thinks fit.
 Enforce HTTP 1.0 requests.
 .IP CURL_HTTP_VERSION_1_1
 Enforce HTTP 1.1 requests.
+.RE
 .IP CURLOPT_IGNORE_CONTENT_LENGTH
 Ignore the Content-Length header. This is useful for Apache 1.x (and similar
 servers) which will report incorrect content length for files over 2
@@ -827,7 +935,6 @@ Pass a long to tell libcurl how to act on transfer decoding. If set to zero,
 transfer decoding will be disabled, if set to 1 it is enabled
 (default). libcurl does chunked transfer decoding by default unless this
 option is set to zero. (added in 7.16.2)
-.RE
 .SH FTP OPTIONS
 .IP CURLOPT_FTPPORT
 Pass a pointer to a zero terminated string as parameter. It will be used to
@@ -840,19 +947,22 @@ address. Default FTP operations are passive, and thus won't use PORT.
 You disable PORT again and go back to using the passive version by setting
 this option to NULL.
 .IP CURLOPT_QUOTE
-Pass a pointer to a linked list of FTP commands to pass to the server prior to
-your ftp request. This will be done before any other FTP commands are issued
-(even before the CWD command). The linked list should be a fully valid list of
-'struct curl_slist' structs properly filled in. Use \fIcurl_slist_append(3)\fP
-to append strings (commands) to the list, and clear the entire list afterwards
-with \fIcurl_slist_free_all(3)\fP. Disable this operation again by setting a
-NULL to this option.
+Pass a pointer to a linked list of FTP or SFTP commands to pass to
+the server prior to your ftp request. This will be done before any
+other commands are issued (even before the CWD command for FTP). The
+linked list should be a fully valid list of 'struct curl_slist' structs
+properly filled in with text strings. Use \fIcurl_slist_append(3)\fP
+to append strings (commands) to the list, and clear the entire list
+afterwards with \fIcurl_slist_free_all(3)\fP. Disable this operation
+again by setting a NULL to this option.
+The valid SFTP commands are: chgrp, chmod, chown, ln, mkdir, pwd,
+rename, rm, rmdir, symlink. (SFTP support added in 7.16.3)
 .IP CURLOPT_POSTQUOTE
-Pass a pointer to a linked list of FTP commands to pass to the server after
-your ftp transfer request. The linked list should be a fully valid list of
-struct curl_slist structs properly filled in as described for
-\fICURLOPT_QUOTE\fP. Disable this operation again by setting a NULL to this
-option.
+Pass a pointer to a linked list of FTP or SFTP commands to pass to the
+server after your ftp transfer request. The linked list should be a
+fully valid list of struct curl_slist structs properly filled in as
+described for \fICURLOPT_QUOTE\fP. Disable this operation again by
+setting a NULL to this option.
 .IP CURLOPT_PREQUOTE
 Pass a pointer to a linked list of FTP commands to pass to the server after
 the transfer type is set. The linked list should be a fully valid list of
@@ -860,17 +970,21 @@ struct curl_slist structs properly filled in as described for
 \fICURLOPT_QUOTE\fP. Disable this operation again by setting a NULL to this
 option. Before version 7.15.6, if you also set \fICURLOPT_NOBODY\fP non-zero,
 this option didn't work.
-.IP CURLOPT_FTPLISTONLY
-A non-zero parameter tells the library to just list the names of an ftp
+.IP CURLOPT_DIRLISTONLY
+A non-zero parameter tells the library to just list the names of files in a
 directory, instead of doing a full directory listing that would include file
-sizes, dates etc.
+sizes, dates etc. This works for FTP and SFTP URLs.
 
-This causes an FTP NLST command to be sent.  Beware that some FTP servers list
-only files in their response to NLST; they might not include subdirectories
-and symbolic links.
-.IP CURLOPT_FTPAPPEND
+This causes an FTP NLST command to be sent on an FTP server.  Beware
+that some FTP servers list only files in their response to NLST; they
+might not include subdirectories and symbolic links.
+
+(This option was known as CURLOPT_FTPLISTONLY up to 7.16.4)
+.IP CURLOPT_APPEND
 A non-zero parameter tells the library to append to the remote file instead of
 overwrite it. This is only useful when uploading to an ftp site.
+
+(This option was known as CURLOPT_FTPAPPEND up to 7.16.4)
 .IP CURLOPT_FTP_USE_EPRT
 Pass a long. If the value is non-zero, it tells curl to use the EPRT (and
 LPRT) command when doing active FTP downloads (which is enabled by
@@ -890,6 +1004,11 @@ If the server is an IPv6 host, this option will have no effect as of 7.12.3.
 Pass a long. If the value is non-zero, curl will attempt to create any remote
 directory that it fails to CWD into. CWD is the command that changes working
 directory. (Added in 7.10.7)
+
+This setting also applies to SFTP-connections. curl will attempt to create
+the remote directory if it can't obtain a handle to the target-location. The
+creation will fail if a file of the same name as the directory to create
+already exists or lack of permissions prevents creation. (Added in 7.16.3)
 .IP CURLOPT_FTP_RESPONSE_TIMEOUT
 Pass a long.  Causes curl to set a timeout period (in seconds) on the amount
 of time that the server is allowed to take in order to generate a response
@@ -912,18 +1031,21 @@ same IP address it already uses for the control connection. But it will use
 the port number from the 227-response. (Added in 7.14.2)
 
 This option has no effect if PORT, EPRT or EPSV is used instead of PASV.
-.IP CURLOPT_FTP_SSL
+.IP CURLOPT_USE_SSL
 Pass a long using one of the values from below, to make libcurl use your
 desired level of SSL for the ftp transfer. (Added in 7.11.0)
+
+(This option was known as CURLOPT_FTP_SSL up to 7.16.4, and the constants
+were known as CURLFTPSSL_*)
 .RS
-.IP CURLFTPSSL_NONE
+.IP CURLUSESSL_NONE
 Don't attempt to use SSL.
-.IP CURLFTPSSL_TRY
+.IP CURLUSESSL_TRY
 Try using SSL, proceed as normal otherwise.
-.IP CURLFTPSSL_CONTROL
-Require SSL for the control connection or fail with \fICURLE_FTP_SSL_FAILED\fP.
-.IP CURLFTPSSL_ALL
-Require SSL for all communication or fail with \fICURLE_FTP_SSL_FAILED\fP.
+.IP CURLUSESSL_CONTROL
+Require SSL for the control connection or fail with \fICURLE_USE_SSL_FAILED\fP.
+.IP CURLUSESSL_ALL
+Require SSL for all communication or fail with \fICURLE_USE_SSL_FAILED\fP.
 .RE
 .IP CURLOPT_FTPSSLAUTH
 Pass a long using one of the values from below, to alter how libcurl issues
@@ -984,6 +1106,13 @@ or similar.
 libcurl does not do a complete ASCII conversion when doing ASCII transfers
 over FTP. This is a known limitation/flaw that nobody has rectified. libcurl
 simply sets the mode to ascii and performs a standard transfer.
+.IP CURLOPT_PROXY_TRANSFER_MODE
+Pass a long. If the value is set to 1 (one), it tells libcurl to set the
+transfer mode (binary or ASCII) for FTP transfers done via an HTTP proxy, by
+appending ;type=a or ;type=i to the URL. Without this setting, or it being
+set to 0 (zero, the default), \fICURLOPT_TRANSFERTEXT\fP has no effect when
+doing FTP via a proxy. Beware that not all proxies support this feature.
+(Added in 7.18.0)
 .IP CURLOPT_CRLF
 Convert Unix newlines to CRLF newlines on transfers.
 .IP CURLOPT_RANGE
@@ -993,6 +1122,8 @@ transfers also support several intervals, separated with commas as in
 \fI"X-Y,N-M"\fP. Using this kind of multiple intervals will cause the HTTP
 server to send the response document in pieces (using standard MIME separation
 techniques). Pass a NULL to this option to disable the use of ranges.
+
+Ranges work on HTTP, FTP and FILE (since 7.18.0) transfers only.
 .IP CURLOPT_RESUME_FROM
 Pass a long as parameter. It contains the offset in number of bytes that you
 want the transfer to start from. Set this option to 0 to make the transfer
@@ -1003,11 +1134,18 @@ option to -1 to make the transfer start from the end of the target file
 Pass a curl_off_t as parameter. It contains the offset in number of bytes that
 you want the transfer to start from. (Added in 7.11.0)
 .IP CURLOPT_CUSTOMREQUEST
-Pass a pointer to a zero terminated string as parameter. It will be user
+Pass a pointer to a zero terminated string as parameter. It will be used
 instead of GET or HEAD when doing an HTTP request, or instead of LIST or NLST
 when doing an ftp directory listing. This is useful for doing DELETE or other
 more or less obscure HTTP requests. Don't do this at will, make sure your
 server supports the command first.
+
+Note that libcurl will still act and assume the keyword it would use if you
+didn't set your custom one is the one in use and it will act according to
+that. Thus, changing this to a HEAD when libcurl otherwise would do a GET
+might cause libcurl to act funny, and similar. To switch to a proper HEAD, use
+\fICURLOPT_NOBODY\fP, to switch to a proper POST, use \fICURLOPT_POST\fP or
+\fICURLOPT_POSTFIELDS\fP and so on.
 
 Restore to the internal default by setting this to NULL.
 
@@ -1036,12 +1174,17 @@ When uploading a file to a remote site, this option should be used to tell
 libcurl what the expected size of the infile is. This value should be passed
 as a long. See also \fICURLOPT_INFILESIZE_LARGE\fP.
 
+For uploading using SCP, this option or \fICURLOPT_INFILESIZE_LARGE\fP is
+mandatory.
+
 Note that this option does not limit how much data libcurl will actually send,
 as that is controlled entirely by what the read callback returns.
 .IP CURLOPT_INFILESIZE_LARGE
 When uploading a file to a remote site, this option should be used to tell
 libcurl what the expected size of the infile is.  This value should be passed
 as a curl_off_t. (Added in 7.11.0)
+
+For uploading using SCP, this option or \fICURLOPT_INFILESIZE\fP is mandatory.
 
 Note that this option does not limit how much data libcurl will actually send,
 as that is controlled entirely by what the read callback returns.
@@ -1124,10 +1267,10 @@ speed. (Added in 7.15.5)
 .IP CURLOPT_MAXCONNECTS
 Pass a long. The set number will be the persistent connection cache size. The
 set amount will be the maximum amount of simultaneously open connections that
-libcurl may cache. Default is 5, and there isn't much point in changing this
-value unless you are perfectly aware of how this work and changes libcurl's
-behaviour. This concerns connection using any of the protocols that support
-persistent connections.
+libcurl may cache in this easy handle. Default is 5, and there isn't much
+point in changing this value unless you are perfectly aware of how this work
+and changes libcurl's behaviour. This concerns connection using any of the
+protocols that support persistent connections.
 
 When reaching the maximum limit, curl closes the oldest one in the cache to
 prevent the number of open connections to increase.
@@ -1135,6 +1278,10 @@ prevent the number of open connections to increase.
 If you already have performed transfers with this curl handle, setting a
 smaller MAXCONNECTS than before may cause open connections to get closed
 unnecessarily.
+
+Note that if you add this easy handle to a multi handle, this setting is not
+being acknowledged, but you must instead use \fIcurl_multi_setopt(3)\fP and
+the \fICURLMOPT_MAXCONNECTS\fP option.
 .IP CURLOPT_CLOSEPOLICY
 (Obsolete) This option does nothing.
 .IP CURLOPT_FRESH_CONNECT
@@ -1196,13 +1343,6 @@ with.
 Pass a pointer to a zero terminated string as parameter. The string should be
 the format of your certificate. Supported formats are "PEM" and "DER".  (Added
 in 7.9.3)
-.IP CURLOPT_SSLCERTPASSWD
-Pass a pointer to a zero terminated string as parameter. It will be used as
-the password required to use the \fICURLOPT_SSLCERT\fP certificate.
-
-This option is replaced by \fICURLOPT_SSLKEYPASSWD\fP and should only be used
-for backward compatibility. You never needed a pass phrase to load a
-certificate but you need one to load your private key.
 .IP CURLOPT_SSLKEY
 Pass a pointer to a zero terminated string as parameter. The string should be
 the file name of your private key. The default format is "PEM" and can be
@@ -1215,10 +1355,15 @@ The format "ENG" enables you to load the private key from a crypto engine. In
 this case \fICURLOPT_SSLKEY\fP is used as an identifier passed to the
 engine. You have to set the crypto engine with \fICURLOPT_SSLENGINE\fP.
 \&"DER" format key file currently does not work because of a bug in OpenSSL.
-.IP CURLOPT_SSLKEYPASSWD
+.IP CURLOPT_KEYPASSWD
 Pass a pointer to a zero terminated string as parameter. It will be used as
 the password required to use the \fICURLOPT_SSLKEY\fP or
 \fICURLOPT_SSH_PRIVATE_KEYFILE\fP private key.
+You never needed a pass phrase to load a certificate but you need one to
+load your private key.
+
+(This option was known as CURLOPT_SSLKEYPASSWD up to 7.16.4 and
+CURLOPT_SSLCERTPASSWD up to 7.9.2)
 .IP CURLOPT_SSLENGINE
 Pass a pointer to a zero terminated string as parameter. It will be used as
 the identifier for the crypto engine you want to use for your private
@@ -1232,15 +1377,19 @@ operations.
 
 If the crypto device cannot be set, \fICURLE_SSL_ENGINE_SETFAILED\fP is
 returned.
+
+Note that even though this option doesn't need any parameter, in some
+configurations \fIcurl_easy_setopt\fP might be defined as a macro taking
+exactly three arguments. Therefore, it's recommended to pass 1 as parameter to
+this option.
 .IP CURLOPT_SSLVERSION
 Pass a long as parameter to control what version of SSL/TLS to attempt to use.
 The available options are:
 .RS
 .IP CURL_SSLVERSION_DEFAULT
-The default action. When libcurl built with OpenSSL or NSS, this will attempt
-to figure out the remote SSL protocol version. Unfortunately there are a lot of
-ancient and broken servers in use which cannot handle this technique and will
-fail to connect. When libcurl is built with GnuTLS, this will mean SSLv3.
+The default action. This will attempt to figure out the remote SSL protocol
+version, i.e. either SSLv3 or TLSv1 (but not SSLv2, which became disabled
+by default with 7.18.1).
 .IP CURL_SSLVERSION_TLSv1
 Force TLSv1
 .IP CURL_SSLVERSION_SSLv2
@@ -1356,27 +1505,37 @@ this to 1 to enable it. By default all transfers are done using the
 cache. Note that while nothing ever should get hurt by attempting to reuse SSL
 session-IDs, there seem to be broken SSL implementations in the wild that may
 require you to disable this in order for you to succeed. (Added in 7.16.0)
-.IP CURLOPT_KRB4LEVEL
-Pass a char * as parameter. Set the krb4 security level, this also enables
-krb4 awareness.  This is a string, 'clear', 'safe', 'confidential' or
-\&'private'.  If the string is set but doesn't match one of these, 'private'
-will be used. Set the string to NULL to disable kerberos4. The kerberos
-support only works for FTP.
+.IP CURLOPT_KRBLEVEL
+Pass a char * as parameter. Set the kerberos security level for FTP; this
+also enables kerberos awareness.  This is a string, 'clear', 'safe',
+'confidential' or \&'private'.  If the string is set but doesn't match one
+of these, 'private' will be used. Set the string to NULL to disable kerberos
+support for FTP.
+
+(This option was known as CURLOPT_KRB4LEVEL up to 7.16.3)
 .SH SSH OPTIONS
 .IP CURLOPT_SSH_AUTH_TYPES
 Pass a long set to a bitmask consisting of one or more of
 CURLSSH_AUTH_PUBLICKEY, CURLSSH_AUTH_PASSWORD, CURLSSH_AUTH_HOST,
 CURLSSH_AUTH_KEYBOARD. Set CURLSSH_AUTH_ANY to let libcurl pick one.
+(Added in 7.16.1)
+.IP CURLOPT_SSH_HOST_PUBLIC_KEY_MD5
+Pass a char * pointing to a string containing 32 hexadecimal digits. The
+string should be the 128 bit MD5 cheksum of the remote host's public key, and
+libcurl will reject the connection to the host unless the md5sums match. This
+option is only for SCP and SFTP transfers. (Added in 7.17.1)
 .IP CURLOPT_SSH_PUBLIC_KEYFILE
 Pass a char * pointing to a file name for your public key. If not used,
 libcurl defaults to using \fB~/.ssh/id_dsa.pub\fP.
+(Added in 7.16.1)
 .IP CURLOPT_SSH_PRIVATE_KEYFILE
 Pass a char * pointing to a file name for your private key. If not used,
 libcurl defaults to using \fB~/.ssh/id_dsa\fP.
-If the file is password-protected, set the password with \fICURLOPT_SSLKEYPASSWD\fP.
+If the file is password-protected, set the password with \fICURLOPT_KEYPASSWD\fP.
+(Added in 7.16.1)
 .SH OTHER OPTIONS
 .IP CURLOPT_PRIVATE
-Pass a char * as parameter, pointing to data that should be associated with
+Pass a void * as parameter, pointing to data that should be associated with
 this curl handle.  The pointer can subsequently be retrieved using
 \fIcurl_easy_getinfo(3)\fP with the CURLINFO_PRIVATE option. libcurl itself
 does nothing with this data. (Added in 7.10.3)
@@ -1387,6 +1546,25 @@ this curl handle use the data from the shared handle instead of keeping the
 data to itself. This enables several curl handles to share data. If the curl
 handles are used simultaneously, you \fBMUST\fP use the locking methods in the
 share handle. See \fIcurl_share_setopt(3)\fP for details.
+
+If you add a share that is set to share cookies, your easy handle will use
+that cookie cache and get the cookie engine enabled. If you unshare an object
+that were using cookies (or change to another object that doesn't share
+cookies), the easy handle will get its cookie engine disabled.
+
+Data that the share object is not set to share will be dealt with the usual
+way, as if no share was used.
+.IP CURLOPT_NEW_FILE_PERMS
+Pass a long as a parameter, containing the value of the permissions that will
+be assigned to newly created files on the remote server.  The default value is
+\fI0644\fP, but any valid value can be used.  The only protocols that can use
+this are \fIsftp://\fP, \fIscp://\fP and \fIfile://\fP. (Added in 7.16.4)
+.IP CURLOPT_NEW_DIRECTORY_PERMS
+Pass a long as a parameter, containing the value of the permissions that will
+be assigned to newly created directories on the remote server.  The default
+value is \fI0755\fP, but any valid value can be used.  The only protocols that
+can use this are \fIsftp://\fP, \fIscp://\fP and \fIfile://\fP.
+(Added in 7.16.4)
 .SH TELNET OPTIONS
 .IP CURLOPT_TELNETOPTIONS
 Provide a pointer to a curl_slist with variables to pass to the telnet
