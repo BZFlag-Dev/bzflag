@@ -790,12 +790,7 @@ bool HostbanCommand::operator() (const char* message,
 
   worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
 
-  // a plugin might have changed bannerID
-  if (t != hostBanEvent.bannerID) {
-    playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
-    if (!playerData)
-      return true;
-  }
+  // FIXME : add new plugin modification event
 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
