@@ -29,7 +29,7 @@ EXTRA_DIST = CHANGES COPYING maketgz reconf Makefile.dist curl-config.in \
 bin_SCRIPTS = curl-config
 
 SUBDIRS = lib src
-DIST_SUBDIRS = $(SUBDIRS) tests include packages docs
+DIST_SUBDIRS = $(SUBDIRS) include docs
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libcurl.pc
@@ -49,27 +49,7 @@ html:
 pdf:
 	cd docs; make pdf
 
-check: test examples
-
-if CROSSCOMPILING
-test-full: test
-test-torture: test
-
-test:
-	@echo "NOTICE: we can't run the tests when cross-compiling!"
-
-else
-
-test:
-	@(cd tests; $(MAKE) all quiet-test)
-
-test-full:
-	@(cd tests; $(MAKE) all full-test)
-
-test-torture:
-	@(cd tests; $(MAKE) all torture-test)
-
-endif
+check: examples
 
 examples:
 	@(cd docs/examples; $(MAKE) all)
