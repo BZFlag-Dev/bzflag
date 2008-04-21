@@ -2242,13 +2242,43 @@ BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const c
 BZF_API bool bz_IDBanUser(int playerIndex, const char *bzID , int duration, const char *reason)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if(!player || !reason || !bzID)
+  if(!player || !reason || !bzID || std::string(bzID).size() <= 0)
     return false;
 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
   clOptions->acl.idBan(bzID, player->player.getCallSign(), duration, reason);
   clOptions->acl.save();
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IPUnbanUser ( const char* ip )
+{
+  if(!ip)
+    return false;
+
+  if(clOptions->acl.unban(ip))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IDUnbanUser ( const char* bzID )
+{
+  if(!bzID)
+    return false;
+
+  if(clOptions->acl.idUnban(bzID))
+    clOptions->acl.save();
+  else
+    return false;
 
   return true;
 }
