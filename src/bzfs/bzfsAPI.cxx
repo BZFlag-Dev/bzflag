@@ -2239,6 +2239,22 @@ BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const c
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_IDBanUser(int playerIndex, const char *bzID , int duration, const char *reason)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if(!player || !reason || !bzID)
+    return false;
+
+  // reload the banlist in case anyone else has added
+  clOptions->acl.load();
+  clOptions->acl.idBan(bzID, player->player.getCallSign(), duration, reason);
+  clOptions->acl.save();
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bz_APIStringList *bz_getReports(void)
 {
   bz_APIStringList *list=new bz_APIStringList;
