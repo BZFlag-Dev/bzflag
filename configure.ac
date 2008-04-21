@@ -1003,6 +1003,7 @@ AC_SUBST(CURSES_LIB)
 
 
 # see if our ares callbacks match (they won't on ares <1.5)
+ares_works=no
 if test "x$enable_ares_build" != "xyes" ; then
     AC_MSG_CHECKING(for ares DNS lookup functionality)
     PRELDFLAGS="$LDFLAGS"
