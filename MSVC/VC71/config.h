@@ -19,6 +19,9 @@
 /* Building regex */
 #define BUILD_REGEX 1
 
+/* Building ares */
+#define BUILD_ARES 1
+
 /* GLEW library is available */
 //#define HAVE_GLEW 1
 
