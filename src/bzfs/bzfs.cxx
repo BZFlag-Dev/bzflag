@@ -832,6 +832,7 @@ bool defineWorld ( void )
   bz_GetWorldEventData_V1	worldData;
   worldData.ctf = clOptions->gameType == eClassicCTF;
   worldData.rabbit = clOptions->gameType == eRabbitChase;
+  worldData.openFFA = clOptions->gameType == eOpenFFA;
   worldData.worldFile = clOptions->worldFile;
 
   world = new WorldInfo;
