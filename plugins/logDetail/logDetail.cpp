@@ -146,7 +146,7 @@ void LogDetail::process(bz_EventData *eventData)
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
 			   displayTeam(serverMsgData->team ).c_str(),
-			   chatData->message.c_str());
+			   serverMsgData->message.c_str());
 	}
       } else {
 	bz_debugMessagef(0, "MSG-DIRECT 6:SERVER %s %s",
