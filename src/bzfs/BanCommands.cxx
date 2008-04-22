@@ -788,9 +788,13 @@ bool HostbanCommand::operator() (const char* message,
   hostBanEvent.reason = reason.c_str();
   hostBanEvent.duration = durationInt;
 
-  worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
+  worldEventManager.callEvents(bz_eHostBanModifyEvent,&hostBanEvent);
 
-  // FIXME : add new plugin modification event
+  if ( t != hostBanEvent.bannerID ) { 
+    playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
+    if (!playerData)
+      return true;
+  }
 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
@@ -802,6 +806,9 @@ bool HostbanCommand::operator() (const char* message,
   clOptions->acl.save();
 
   GameKeeper::Player::setAllNeedHostbanChecked(true);
+
+  hostBanEvent.eventType = bz_eHostBanNotifyEvent;
+  worldEventManager.callEvents(bz_eHostBanNotifyEvent,&hostBanEvent);
 
   sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the HOSTNAME banlist");
 

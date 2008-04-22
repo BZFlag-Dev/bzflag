@@ -116,7 +116,8 @@ typedef enum
   bz_eAllowSpawn,
   bz_eListServerUpdateEvent,
   bz_eBanEvent,
-  bz_eHostBanEvent,
+  bz_eHostBanNotifyEvent,
+  bz_eHostBanModifyEvent,
   bz_eIdBanEvent,
   bz_eKickEvent,
   bz_eKillEvent,
@@ -786,7 +787,7 @@ class BZF_API bz_HostBanEventData_V1 : public bz_EventData
 public:
   bz_HostBanEventData_V1() : bz_EventData()
   {
-    eventType = bz_eHostBanEvent;
+    eventType = bz_eHostBanModifyEvent;
     bannerID = -1;
     duration = -1;
   }
