@@ -639,26 +639,7 @@ public:
     if (!player || len < 3)
       return false;
 
-    if (player->player.isObserver())
-      return true;
-
-    int shot;
-    uint16_t reason;
-    buf = nboUnpackInt(buf, shot);
-    buf = nboUnpackUShort(buf, reason);
-
-    // ask the API if it wants to modify this shot
-    bz_ShotEndedEventData_V1 shotEvent;
-    shotEvent.playerID = (int)player->getIndex();
-    shotEvent.shotID = shot;
-    shotEvent.explode = reason == 0;
-    worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
-
-    FiringInfo firingInfo;
-    player->removeShot(shot);
-    ShotManager::instance().removeShot(shot,false);
-
-    sendMsgShotEnd(player->getIndex(),shot,reason);
+    // we never get these anymore, the server ends them
 
     return true;
   }
@@ -726,10 +707,10 @@ public:
       ShotManager::instance().removeShot(id,false);
       if (shooterData->removeShot(id))
       {
-	sendMsgShotEnd( shot, 1);
+	sendMsgShotEnd( id, 1);
 
 	FlagInfo *flagInfo = FlagInfo::get(player->player.getFlag());
-	if (!flagInfo || flagInfo != Flags::Shield)
+	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
 	  playerKilled(hitPlayer, GotShot, id, false);
 	else
 	  zapFlagByPlayer(hitPlayer);

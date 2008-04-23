@@ -589,7 +589,7 @@ void sendMsgShotEnd ( int id, unsigned short reason )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->shotEnded(player,id,reason);
+      otherData->playerHandler->shotEnded(id,reason);
   }
 }
 

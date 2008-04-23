@@ -57,7 +57,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   firingInfo.shotType = type->flagShot;
 
   firingInfo.shot.team = teamColor;
-  firingInfo.shot.id = ShotManager::instance().newShot(firingInfo);
+  firingInfo.shot.id = ShotManager::instance().newShot(&firingInfo);
 
   NetMsg msg = MSGMGR.newMessage();
   firingInfo.pack(msg);

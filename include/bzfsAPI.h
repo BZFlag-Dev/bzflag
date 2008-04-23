@@ -1540,7 +1540,7 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 
 // dying
-BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase );
 
 // flags
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force );
@@ -2042,7 +2042,7 @@ public:
   virtual void grabFlag ( int player, int flagID, const char* flagType, bz_eShotType shotType );
   virtual void setShotType ( int player, bz_eShotType shotType );
   virtual void shotFired ( int player, int shotID, bz_eShotType shotType );
-  virtual void shotEnded( int player, int shotID, unsigned short reason );
+  virtual void shotEnded( int shotID, unsigned short reason );
   virtual void playerTeleported( int player, unsigned short from, unsigned short to );
   virtual void playerAutopilot( int player, bool autopilot );
   virtual void allowSpawn( bool canSpawn );

@@ -13,7 +13,7 @@
 // interface header
 #include "ShotList.h"
 #include "SyncClock.h"
-
+#include "playing.h"
 //
 // ShotList
 //
@@ -161,7 +161,7 @@ bool ShotList::removeShot ( int GUID, bool explode )
     return false;
 
   if(explode)
-    addShotExplosion(itr->second.getPosition());
+    addShotExplosion(itr->second->getPosition());
 
   delete(itr->second);
   shots.erase(itr);

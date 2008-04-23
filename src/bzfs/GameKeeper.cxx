@@ -495,13 +495,6 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
   return getCurrentStateAsState().pack(buf,code,increment);
 }
 
-
-size_t GameKeeper::Player::totalShotSlots = 0;
-void GameKeeper::Player::setMaxShots(size_t maxShots)
-{
-  totalShotSlots = maxShots;
-}
-
 bool GameKeeper::Player::canShoot ( void )
 {
   if (shotSlots.size() > totalShotSlots)
@@ -576,12 +569,12 @@ bool GameKeeper::Player::addShot( int globalID, int localID, double startTime )
     lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
 
   // fill up the slot
-  shotSlots[s].expireTime  = startTime + lifeTime;
-  shotSlots[s].present     = true;
-  shotSlots[s].running     = true;
+  shotSlots[freeSlot].expireTime  = startTime + lifeTime;
+  shotSlots[freeSlot].present     = true;
+  shotSlots[freeSlot].running     = true;
 
   // track our live shots by global ID, keep the local ID around for the rare case where we die from our own shot before we get the globalID
-  liveShots.push_back(globalID) = localID;
+  liveShots[globalID)] = localID;
   return true;
 }
 

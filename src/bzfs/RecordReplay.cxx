@@ -2585,7 +2585,6 @@ static const char *msgString(u16 code)
       STRING_CASE (MsgExit);
       STRING_CASE (MsgFlagUpdate);
       STRING_CASE (MsgGrabFlag);
-      STRING_CASE (MsgGMUpdate);
       STRING_CASE (MsgGetWorld);
       STRING_CASE (MsgKilled);
       STRING_CASE (MsgMessage);

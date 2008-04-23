@@ -16,6 +16,7 @@
 /* common implementation headers */
 #include "World.h"
 #include "SyncClock.h"
+#include "playing.h"
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
@@ -25,7 +26,7 @@ RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
 {
   if (World::getWorld()) 
   {
-    for ( int i = 0; i < World::getWorld()->getMaxShots(); i++ )
+    for ( size_t i = 0; i < World::getWorld()->getMaxShots(); i++ )
       shotSlots.push_back(ShotSlot());
   }
  }

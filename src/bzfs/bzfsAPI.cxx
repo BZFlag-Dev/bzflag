@@ -2505,7 +2505,7 @@ BZF_API bool bz_getStandardSpawn(int playerID, float pos[3], float *rot)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, int killerID, const char *flagType)
+BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player)
@@ -2514,20 +2514,7 @@ BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, int killerID, const c
   if(!player->player.isAlive())
     return false;
 
-  if(killerID==-1)
-    killerID = ServerPlayer;
-
-  FlagType *flag=NULL;
-  if(flagType)
-  {
-    FlagTypeMap &flagMap=FlagType::getFlagMap();
-    if(flagMap.find(std::string(flagType))==flagMap.end())
-      return false;
-
-    flag=flagMap.find(std::string(flagType))->second;
-  }
-
-  playerKilled(playerID, killerID, GotKilledMsg, -1, flag ? flag : Flags::Null, -1, spawnOnBase);
+  smitePlayer(playerID, GotKilledMsg, spawnOnBase);
 
   return true;
 }
@@ -4194,7 +4181,7 @@ void bz_ServerSidePlayerHandler::setShotType(int, bz_eShotType ){}
 
 void bz_ServerSidePlayerHandler::shotFired(int, int, bz_eShotType ){}
 
-void bz_ServerSidePlayerHandler::shotEnded(int, int, unsigned short){}
+void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short){}
 
 void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned short ){}
 
