@@ -82,8 +82,9 @@ class ServerLink {
 #endif
     void		sendEndShot(const PlayerId&, int shotId, int reason);
 
-  void sendHit(const PlayerId &source, int id, bool shot = true);
-  void sendVarRequest();
+    void sendHit(const PlayerId &source, int id, bool shot = true);
+    void sendHitDriver(const PlayerId &source, int id );
+    void sendVarRequest();
 
     void		sendAlive(const PlayerId playerId);
     void		sendTeleport(int from, int to);

@@ -1017,7 +1017,7 @@ void			ServerLink::sendEndShot(const PlayerId& source,
 
 void ServerLink::sendHit(const PlayerId &source, int id, bool shot)
 {
-  char msg[80];
+  char msg[6];
   unsigned char s = 0;
   if (shot)
     s = 1;
@@ -1027,6 +1027,19 @@ void ServerLink::sendHit(const PlayerId &source, int id, bool shot)
   buf = nboPackInt(buf, id);
   send(MsgHit, sizeof(msg), msg);
 }
+
+void ServerLink::sendHitDriver(const PlayerId &source, int id )
+{
+  char msg[5];
+  unsigned char s = 0;
+  if (shot)
+    s = 1;
+  void* buf = msg;
+  buf = nboPackUByte(buf, source);
+  buf = nboPackInt(buf, id);
+  send(MsgHitDriver, sizeof(msg), msg);
+}
+
 #endif
 
 void ServerLink::sendVarRequest()

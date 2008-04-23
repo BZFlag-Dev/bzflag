@@ -662,13 +662,32 @@ public:
     return true;
   }
 };
+class HitDriverHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
+  {
+    if (!player || len < 4)
+      return false;
+
+    int	driverID = -1;
+    buf = nboUnpackInt(buf, driverID);
+
+    PhysicsDriver *driver = PHYDRVMGR.getDriver(driverID);
+    if (!driver)
+      return true;
+
+    if (driver->getIsDeath())
+      playerKilled(player->getIndex(),PhysicsDriverDeath,driverID);
+  }
+}
 
 class HitHandler : public PlayerFirstHandler
 {
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 3)
+    if (!player || len < 5)
       return false;
 
     if (player->player.isObserver() || !player->player.isAlive())
@@ -1017,6 +1036,7 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgShotBegin] = new ShotBeginHandler;
   playerNetworkHandlers[MsgShotEnd] = new ShotEndHandler;
   playerNetworkHandlers[MsgHit] = new HitHandler;
+  playerNetworkHandlers[MsgHitDriver] = new HitDriverHandler;
   playerNetworkHandlers[MsgTeleport] = new TeleportHandler;
   playerNetworkHandlers[MsgMessage] = new MessageHandler;
   playerNetworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
