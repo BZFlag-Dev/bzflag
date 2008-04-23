@@ -1078,6 +1078,14 @@ void			ServerLink::sendPaused(bool paused)
   send(MsgPause, sizeof(msg), msg);
 }
 
+void ServerLink::sendSelfDestruct ( void )
+{
+  char msg[1];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  send(MsgSelfDestruct, sizeof(msg), msg);
+}
+
 void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
 {
   char msg[2];

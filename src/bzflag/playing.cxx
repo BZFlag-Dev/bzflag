@@ -6411,20 +6411,23 @@ static void		updatePauseCountdown(float dt)
 
 static void		updateDestructCountdown(float dt)
 {
-  if (!myTank) {
+  if (!myTank) 
+  {
     destructCountdown = 0.0f;
   }
-  if (destructCountdown > 0.0f && !myTank->isAlive()) {
+  if (destructCountdown > 0.0f && !myTank->isAlive())
+  {
     destructCountdown = 0.0f;
     hud->setAlert(1, NULL, 0.0f, true);
   }
-  if (destructCountdown > 0.0f) {
+  if (destructCountdown > 0.0f) 
+  {
     const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
     destructCountdown -= dt;
     if (destructCountdown <= 0.0f) 
     {
-      // now actually destruct
-      gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
+      // now actually tell the server to kill us
+      serverLink->sendSelfDestruct();
 
       hud->setAlert(1, NULL, 0.0f, true);
     }
