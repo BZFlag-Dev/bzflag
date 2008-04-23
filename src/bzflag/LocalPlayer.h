@@ -109,6 +109,9 @@ public:
   void		setSpawning( bool spawn );
   bool          hasHitWall();
 
+  virtual void gotShot ( unsigned int shotID );
+  virtual void dropFlag ( void );
+  virtual void died ( void );
 
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);

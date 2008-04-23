@@ -129,6 +129,13 @@ const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
   return bbox;
 }
 
+void BaseLocalPlayer::gotShot ( unsigned int shotID )
+{
+  // standard shots
+  setShotType(StandardShot);
+
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

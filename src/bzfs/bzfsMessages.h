@@ -55,6 +55,8 @@ void sendMsgShotUpdate ( int player, FiringInfo *shot );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
 void sendMsgTimeUpdate ( int timeLimit );
 
+void broadcastDeathMessage ( int victim, int killer,  BlowedUpReason reason, int id, const FlagType*flagType );
+
 void sendMsgShotID ( int playerIndex, int tempID, int GUID );
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );

@@ -59,8 +59,6 @@ public:
 
   void clear ( void );
 
-  Shot *getShot ( int id );
-
   class Shot
   {
   public:
@@ -95,6 +93,8 @@ public:
 
     int	  player;
   };
+
+  Shot *getShot ( int id );
 
 protected:
   friend class Singleton<ShotManager>;

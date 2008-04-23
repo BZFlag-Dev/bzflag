@@ -1282,6 +1282,35 @@ void			LocalPlayer::activateAutoPilot(bool autopilot)
   }
 }
 
+void			LocalPlayer::gotShot ( unsigned int shotID )
+{
+  if (isAutoPilot())
+    teachAutoPilot( getFlag(), -1 );
+
+  BaseLocalPlayer::gotShot(shotID);
+}
+
+void			LocalPlayer::dropFlag ( void )
+{
+  // make sure the player must reload after theft
+  if (getFlag() == Flags::Thief)
+    forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
+  updateFlag(Flags::Null);
+
+  BaseLocalPlayer::dropFlag();
+} 
+
+void 			LocalPlayer::died ( void )
+{
+  BaseLocalPlayer::died();
+
+  if (savedVolume != -1) 
+  {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+}
+
 bool			LocalPlayer::fireShot()
 {
   if (! (firingStatus == Ready || firingStatus == Zoned))

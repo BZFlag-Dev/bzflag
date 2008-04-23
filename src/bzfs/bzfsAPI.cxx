@@ -4164,7 +4164,7 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
 
 void bz_ServerSidePlayerHandler::textMessage(int, int, const char*){}
 
-void bz_ServerSidePlayerHandler::playerKilledMessage(int, int, bz_ePlayerDeathReason, int, const char *, int){}
+void bz_ServerSidePlayerHandler::playerKilledMessage(int, bz_ePlayerDeathReason, unsigned int){}
 
 void bz_ServerSidePlayerHandler::scoreLimitReached(int, bz_eTeamType){}
 

@@ -2720,17 +2720,32 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
     processFreezeTagCollision(player,otherPlayer,pos);
 }
 
+// player has been forced to die
+void smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
+{
+  GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
+
+ // verify that we can kill this bastard
+  if (!victimData || !victimData->player.isPlaying() || !victimData->player.isAlive())
+    return false;
+
+  // ok so no mater what, he's dead so set him as dead
+  victimData->player->setRestartOnBase(respawnOnBase);
+  victimData->player->setDead();
+}
+
+// player killed by shot or world. this is a normal death
 bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respawnOnBase )
 {
   GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
   // verify that we can kill this bastard
-  if (!victimData || !victimData->player.isPlaying() || !victim->isAlive())
+  if (!victimData || !victimData->player.isPlaying() || !victimData->player.isAlive())
     return false;
 
   // ok so no mater what, he's dead so set him as dead
-  victimData->setRestartOnBase(respawnOnBase);
-  victimData->setDead();
+  victimData->player->setRestartOnBase(respawnOnBase);
+  victimData->player->setDead();
 
   PlayerId killer = ServerPlayer;
 
@@ -2775,29 +2790,23 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
 
   }
 
-  // call any events for a playerdeath
+  // notify the API that we are killing someone
   bz_PlayerDieEventData_V1	dieEvent;
   dieEvent.playerID = victimIndex;
-  dieEvent.team = convertTeam(victim->getTeam());
-  dieEvent.killerID = killerIndex;
-  dieEvent.shotID = shotIndex;
+  dieEvent.team = convertTeam(victimData->player.getTeam());
+  dieEvent.killerID = killer;
+  dieEvent.shotID = id;
 
-  if (killer)
+  if (killer != ServerPlayer)
     dieEvent.killerTeam = convertTeam(killer->getTeam());
+  else
+    dieEvent.killerTeam
 
   dieEvent.flagKilledWith = flagType->flagAbbv;
 
   playerStateToAPIState(dieEvent.state, victimData->lastState);
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
-
-  // If a plugin changed the killer, we need to update the data.
-  if (dieEvent.killerID != killerIndex) {
-    killerIndex = dieEvent.killerID;
-    if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
-      killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
-    killer = realPlayer(killerIndex) ? &killerData->player : 0;
-  }
 
   sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
 
@@ -3563,11 +3572,12 @@ static void checkForWorldDeaths(void)
   float waterLevel = world->getWaterLevel();
 
   if (waterLevel > 0.0f) {
-    for (int i = 0; i < curMaxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++)
+    {
       // kill anyone under the water level
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
       if ( player && player->player.isAlive() && player->lastState.pos[2] <= waterLevel)
-	playerKilled(player->getIndex(), ServerPlayer, WaterDeath, -1, Flags::Null, -1);
+	smitePlayer(player->getIndex(), WaterDeath);
     }
   }
 }
@@ -4049,15 +4059,18 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
 static void doCountdown(int &readySetGo, TimeKeeper &tm)
 {
   // players see a countdown
-  if (countdownDelay >= 0) {
+  if (countdownDelay >= 0)
+  {
     static TimeKeeper timePrevious = tm;
     if (readySetGo == -1)
       readySetGo = countdownDelay;
 
-    if (tm - timePrevious > 1.0f) {
+    if (tm - timePrevious > 1.0f)
+    {
       timePrevious = tm;
 
-      if (readySetGo == 0) {
+      if (readySetGo == 0) 
+      {
 	sendMessage(ServerPlayer, AllPlayers, "The match has started!...Good Luck Teams!");
 	countdownDelay = -1; // reset back to "unset"
 	countdownResumeTime = -1; // reset back to "unset"
@@ -4074,21 +4087,23 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	// kill any players that are playing already
 	GameKeeper::Player *player;
 
-	if (clOptions->gameType == eClassicCTF) {
+	if (clOptions->gameType == eClassicCTF)
+	{
 	  // cap all the flags
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(RedTeam),RedTeam);
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(GreenTeam),GreenTeam);
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(BlueTeam),BlueTeam);
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(PurpleTeam),PurpleTeam);
 
-	  for (int j = 0; j < curMaxPlayers; j++) {
+	  for (int j = 0; j < curMaxPlayers; j++) 
+	  {
 	    player = GameKeeper::Player::getPlayerByIndex(j);
 
 	    if (!player || player->player.isObserver() || !player->player.isPlaying())
 	      continue;
 
 	    // kick 'em while they're down
-	    playerKilled(j, curMaxPlayers, GotKilledMsg, -1, Flags::Null, -1);
+	    smitePlayer(j);
 
 	    // be sure to reset the player!
 	    player->player.setDead();
@@ -4098,7 +4113,8 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	}
 
 	// reset all flags
-	for (int j = 0; j < numFlags; j++) {
+	for (int j = 0; j < numFlags; j++)
+	{
 	  zapFlag(*FlagInfo::get(j));
 	}
 
@@ -4108,7 +4124,9 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	gameData.duration = clOptions->timeLimit;
 	worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
-      } else {
+      }
+      else
+      {
 	if ((readySetGo == countdownDelay) && (countdownDelay > 0))
 	  sendMessage(ServerPlayer, AllPlayers, "Start your engines!......");
 

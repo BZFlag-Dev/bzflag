@@ -493,6 +493,47 @@ void Player::setStatus(short _status)
   state.status = _status;
 }
 
+void Player::gotShot ( unsigned int /*shotID*/ )
+{
+  setExplode(TimeKeeper::getTick());
+  const float* pos = getPosition();
+
+  float explodePos[3];
+  explodePos[0] = pos[0];
+  explodePos[1] = pos[1];
+  explodePos[2] = pos[2] + getMuzzleHeight();
+  addTankExplosion(explodePos);
+
+  EFFECTS.addDeathEffect(getColor(), pos,getAngle());
+}
+
+void Player::dropFlag ( void )
+{ 
+  setShotType(StandardShot);
+
+  // skip it if player doesn't actually have a flag
+  if (getFlag() == Flags::Null)
+    return;
+
+  if (isViewTank(this)) 
+    playLocalSound(SFX_DROP_FLAG);
+
+  // add message
+  std::string message("dropped ");
+  message += getFlag()->flagName;
+  message += " flag";
+  addMessage(this, message);
+
+  // player no longer has flag
+  setFlag(Flags::Null);
+}
+
+void Player::died ( void )
+{
+  // can't take it with you
+  dropFlag();
+}
+
 
 void Player::setExplode(const TimeKeeper& t)
 {

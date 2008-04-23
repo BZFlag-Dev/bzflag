@@ -1159,7 +1159,7 @@ static void		updateHighScores()
       }
 }
 
-static void		updateFlag(FlagType* flag)
+void		updateFlag(FlagType* flag)
 {
   if (flag == Flags::Null) {
     hud->setColor(1.0f, 0.625f, 0.125f);
@@ -2082,66 +2082,91 @@ static void handleAllow(void *msg)
   addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
 
+void playSoundForPlayer ( playerID playerID, int soundID )
+{
+  Player *player = getPlayerByIndex(playerID);
+  if (player == myTank)
+    playLocalSound(soundID);
+  else
+    playSound(soundID, player->getPosition(),true,isViewTank(player));
+}
+
+void printDeathMessage ( const std::string &message )
+{
+  hud->setAlert(0, message.c_str(), 4.0f, true);
+  controlPanel->addMessage(message);
+}
+
+static void handleDeathByShot ( int playerID, bool human, unsigned int shotID )
+{
+  Player* player = getPlayerByIndex(playerID);
+
+  if (!player)
+    return;
+
+  player->gotShot(shotID);
+
+  if (player == myTank)
+    printDeathMessage(std::string("Shot Myself"));
+  else
+  {
+      // get the death message
+  }
+  playSoundForPlayer(playerID,SFX_EXPLOSION);
+}
+
+static void handleDeathBySquish ( int playerID, bool human, int squiser )
+{
+
+}
+
+static void handleDeathByDriver ( int playerID, bool human, int id )
+{
+
+}
+
+static void handleDeathByDrowning ( int playerID, bool human )
+{
+
+}
+
+static void handleDeathBySmite ( int playerID, bool human )
+{
+
+}
+
 static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 {
-  PlayerId victim, killer;
-  FlagType* flagType;
-  int16_t reason;
-  int	  shotId = 0;
-  int	  phydrv = -1;
+  PlayerId victim;
+  unsigned char reason;
+  unsigned int id;
   msg = nboUnpackUByte(msg, victim);
-  msg = nboUnpackUByte(msg, killer);
-  msg = nboUnpackShort(msg, reason);
-  msg = nboUnpackInt(msg, shotId);
-  msg = FlagType::unpack(msg, flagType);
+  msg = nboUnpackUByte(msg, reason);
+  msg = nboUnpackUInt(msg, id);
 
-  if (reason == (int16_t)PhysicsDriverDeath)
+  // now handle the way the death happened
+  switch ((BlowedUpReason)reason)
   {
-    int32_t inPhyDrv;
-    msg = nboUnpackInt(msg, inPhyDrv);
-    phydrv = int(inPhyDrv);
-  }
+    default:
+	handleDeathBySmite(victim,human);
+	break;
 
-  BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
-  BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
-  Player* victimPlayer = lookupPlayer(victim);
-  Player* killerPlayer = lookupPlayer(killer);
+    case GotShot:
+    case GenocideEffect:
+      handleDeathByShot(victim,human,id);
+      break;
 
-  if (victimPlayer == myTank) 
-  {
-    // uh oh, i'm dead
-    if (myTank->isAlive()) 
-    {
-      serverLink->sendDropFlag(myTank->getPosition());
-      myTank->setShotType(StandardShot);
-      handleMyTankKilled(reason);
-    }
-  }
+    case GotRunOver:
+      handleDeathBySquish(victim,human,(int)id);
+      break;
 
-  if (victimLocal)
-  {
-    // uh oh, local player is dead
-    if (victimLocal->isAlive())
-      gotBlowedUp(victimLocal, GotKilledMsg, killer);
-  }
-  else if (victimPlayer)
-  {
-    victimPlayer->setExplode(TimeKeeper::getTick());
-    const float* pos = victimPlayer->getPosition();
-    const bool localView = isViewTank(victimPlayer);
+    case WaterDeath:
+      handleDeathByDrowning(victim,human);
+      break;
 
-    if (reason == GotRunOver)
-      playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
-    else
-      playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
-
-    float explodePos[3];
-    explodePos[0] = pos[0];
-    explodePos[1] = pos[1];
-    explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
-    addTankExplosion(explodePos);
-
-    EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,victimPlayer->getAngle());
+    case PhysicsDriverDeath:
+      handleDeathByDriver(victim,human,(int)id);
+      break;
   }
 
   if (killerLocal) 
@@ -3707,18 +3732,6 @@ static void		addExplosions(SceneDatabase* scene)
     scene->addDynamicNode(explosions[i]);
 }
 
-#ifdef ROBOT
-static void		handleMyTankKilled(int reason)
-{
-  // blow me up
-  myTank->explodeTank();
-  if (reason == GotRunOver)
-    playLocalSound(SFX_RUNOVER);
-  else
-    playLocalSound(SFX_DIE);
-}
-#endif
-
 static void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
@@ -3884,16 +3897,6 @@ static bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId k
     // we only need to send the reason and the shot
     if (reason != GotKilledMsg && reason != GotCaptured && reason != LastReason)
       serverLink->sendKilled(tank->getId(), reason, reason ==PhysicsDriverDeath ? phydrv : shotId );
-
-    GotKilledMsg,
-      GotShot,
-      GotRunOver,
-      GotCaptured,
-      GenocideEffect,
-      SelfDestruct,
-      WaterDeath,
-      PhysicsDriverDeath,
-      LastReason
   }
 
   // print reason if it's my tank

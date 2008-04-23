@@ -825,26 +825,21 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   return true;
 }
 
-void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv)
+void sendPlayerKilledMessage(int victimIndex, BlowedUpReason reason, unsigned int id )
 {
   // send MsgKilled
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(victimIndex);
-  msg->packUByte(killerIndex);
-  msg->packShort(reason);
-  msg->packShort(shotIndex);
-  flagType->pack(msg);
-
-  if (reason == PhysicsDriverDeath)
-    msg->packInt(phydrv);
-
+  msg->packUByte(reason);
+  msg->packUInt(id);
   msg->broadcast(MsgKilled);
 
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++)
+  {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-      otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv,phydrv);
+      otherData->playerHandler->playerKilledMessage(victimIndex,(bz_ePlayerDeathReason)reason,id);
   }
 }
 

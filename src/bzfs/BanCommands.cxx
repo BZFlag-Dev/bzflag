@@ -366,27 +366,28 @@ bool KillCommand::operator() (const char	 *message,
 			      GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill)) {
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill)) 
+  {
     sendMessage(ServerPlayer, t,
 		"You do not have permission to run the kill command");
     return true;
   }
+
   int i;
+
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
-  if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t,
-		"Syntax: /kill <#slot | PlayerName | \"Player Name\">  "
-		"[reason]");
-    sendMessage(ServerPlayer, t,
-		"	Please keep in mind that reason is displayed to the "
-		"user.");
+  if (argv.size() < 2) 
+  {
+    sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\">  "[reason]");
+    sendMessage(ServerPlayer, t,"	Please keep in mind that reason is displayed to the user.");
     return true;
   }
 
   i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
-  if (i >= 0) {
+  if (i >= 0)
+  {
     char killmessage[MessageLen];
 
     // call any plugin events registered for /kick
@@ -426,19 +427,19 @@ bool KillCommand::operator() (const char	 *message,
     snprintf(killmessage, MessageLen, "You were killed by %s",
 	     playerData->player.getCallSign());
     sendMessage(ServerPlayer, killEvent.killedID, killmessage);
-    if (killEvent.reason.size() > 0) {
-      snprintf(killmessage, MessageLen, " reason given : %s",
-	       killEvent.reason.c_str());
+    if (killEvent.reason.size() > 0) 
+    {
+      snprintf(killmessage, MessageLen, " reason given : %s", killEvent.reason.c_str());
       sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     }
+
     // kill the player
     playerKilled(killEvent.killedID, ServerPlayer, GotKilledMsg, -1, Flags::Null, -1);
 
-
     worldEventManager.callEvents(bz_eKillEvent,&killEvent);
-
-
-  } else {
+  }
+  else 
+  {
     char errormessage[MessageLen];
     snprintf(errormessage, MessageLen, "player \"%s\" not found",
 	     argv[1].c_str());

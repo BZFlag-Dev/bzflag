@@ -59,6 +59,8 @@ class RobotPlayer : public LocalPlayer {
      void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
      void		getProjectedPosition(const Player *targ, float *projpos) const;
 
+     virtual void gotShot ( unsigned int shotID );
+
   private:
     const Player*	target;
     std::vector<RegionPoint>	path;

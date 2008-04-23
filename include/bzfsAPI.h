@@ -2008,7 +2008,7 @@ typedef enum
   eGenocideEffect,
   eSelfDestruct,
   eWaterDeath,
-  ePhysicsDriverDeath
+  ePhysicsDriverDeath,
 }bz_ePlayerDeathReason;
 
 class BZF_API bz_ServerSidePlayerHandler
@@ -2024,9 +2024,7 @@ public:
   virtual void playerAccepted(void){};
   virtual void playerSpawned(int player, float pos[3], float rot);
   virtual void textMessage(int dest, int source, const char *text);
-  virtual void playerKilledMessage(int victimIndex, int killerIndex,
-				   bz_ePlayerDeathReason reason, int shotIndex,
-				   const char *flagType, int phydrv);
+  virtual void playerKilledMessage(int victimIndex, bz_ePlayerDeathReason reason, unsigned int id);
   virtual void scoreLimitReached(int player, bz_eTeamType team);
   virtual void flagCaptured(int player, int flag, bz_eTeamType team);
 

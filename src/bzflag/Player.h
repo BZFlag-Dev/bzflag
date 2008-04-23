@@ -107,6 +107,10 @@ public:
   const float*	getApparentVelocity() const;
   const float	getLastUpdateTime() const;
 
+  virtual void gotShot ( unsigned int shotID );
+  virtual void died ( void );
+  virtual void dropFlag ( void );
+
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const
   {
