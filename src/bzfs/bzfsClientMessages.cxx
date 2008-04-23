@@ -448,6 +448,23 @@ public:
   }
 };
 
+class SelfDestructHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
+  {
+    if (!player)
+      return false;
+
+    // you can't die stupid, you are dead
+    if (!player->player.isAlive())
+      return true;
+
+    smitePlayer(player->getIndex(),SelfDestruct);
+    return true;
+  }
+};
+
 class DropFlagHandler : public PlayerFirstHandler
 {
 public:
