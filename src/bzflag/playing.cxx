@@ -2680,21 +2680,12 @@ static void handleShotBegin(bool human, void *msg)
 
 static void handleShotEnd(void *msg)
 {
-  PlayerId id;
-  int16_t shotId;
+  unsigned int shotId;
   uint16_t reason;
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackShort(msg, shotId);
+  msg = nboUnpackUInt(msg, shotId);
   msg = nboUnpackUShort(msg, reason);
-  BaseLocalPlayer* localPlayer = getLocalPlayer(id);
 
-  if (localPlayer) {
-    localPlayer->endShot(int(shotId), false, reason == 0);
-  } else {
-    Player *pl = lookupPlayer(id);
-    if (pl)
-      pl->endShot(int(shotId), false, reason == 0);
-  }
+  ShotList::instance().removeShot(shotId,reason != 0);
 }
 
 static void handleHandicap(void *msg)

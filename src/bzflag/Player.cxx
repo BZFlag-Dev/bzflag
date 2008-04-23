@@ -907,17 +907,6 @@ void Player::updateFlagEffect(FlagType* effectFlag)
   return;
 }
 
-
-void Player::endShot(int index, bool isHit, bool showExplosion)
-{
-  float pos[3];
-  if (doEndShot(index, isHit, pos) && showExplosion) {
-    addShotExplosion(pos);
-  }
-  return;
-}
-
-
 void Player::setVisualTeam (TeamColor visualTeam)
 {
   const float* _color = Team::getTankColor(visualTeam);

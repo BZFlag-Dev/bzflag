@@ -152,12 +152,16 @@ int ShotList::updateShotID( int oldID, int newID )
 }
 
 
-bool ShotList::removeShot ( int GUID )
+bool ShotList::removeShot ( int GUID, bool explode )
 {
+
   std::map<int,ShotPath*>::iterator itr = shots.find(GUID);
 
   if (itr == shots.end())
     return false;
+
+  if(explode)
+    addShotExplosion(itr->second.getPosition());
 
   delete(itr->second);
   shots.erase(itr);

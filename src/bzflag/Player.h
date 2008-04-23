@@ -210,8 +210,6 @@ public:
   void		setAllow(unsigned char _allow);
   unsigned char		getAllow();
   void		setTeleport(const TimeKeeper&, short from, short to);
-  void		endShot(int index, bool isHit = false,
-			bool showExplosion = false);
 
   void*		pack(void*, uint16_t& code);
   void*		unpack(void*, uint16_t code);

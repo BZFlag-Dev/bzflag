@@ -38,7 +38,7 @@ public:
   int updateShot( int GUID, FiringInfo * info );
   int updateShotID( int oldID, int newID );
  
-  bool removeShot ( int GUID );
+  bool removeShot ( int GUID ,bool explode = true );
 
   void updateAllShots ( float dt );
   void flushExpiredShots ( void );
