@@ -1147,10 +1147,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\BaseLocalPlayer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\CacheMenu.h"
 				>
 			</File>
@@ -1319,10 +1315,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\LocalPlayer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\MainMenu.h"
 				>
 			</File>
@@ -1348,10 +1340,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Plan.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\Player.h"
 				>
 			</File>
 			<File
@@ -1387,15 +1375,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\RemotePlayer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\roaming.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\RobotPlayer.h"
 				>
 			</File>
 			<File
@@ -1534,6 +1514,30 @@
 				RelativePath="..\..\src\bzflag\XfireGameClient.h"
 				>
 			</File>
+			<Filter
+				Name="Players"
+				>
+				<File
+					RelativePath="..\..\src\bzflag\BaseLocalPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\LocalPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\Player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\RemotePlayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\RobotPlayer.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
