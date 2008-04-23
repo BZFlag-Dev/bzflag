@@ -1015,6 +1015,7 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgExit] = new ExitHandler;
   playerNetworkHandlers[MsgAlive] = new AliveHandler;
   playerNetworkHandlers[MsgKilled] = new KilledHandler;
+  playerNetworkHandlers[MsgSelfDestruct] = new SelfDestructHandler;
   playerNetworkHandlers[MsgDropFlag] = new DropFlagHandler;
   playerNetworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
   playerNetworkHandlers[MsgCollide] = new CollideHandler;
