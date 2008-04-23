@@ -2747,6 +2747,9 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
   victimData->player->setRestartOnBase(respawnOnBase);
   victimData->player->setDead();
 
+  // stop pausing attempts as you can not pause when being dead
+  victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
+
   PlayerId killer = ServerPlayer;
 
   // now figure how he died
@@ -2757,8 +2760,11 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
     return;
 
     // reasons with shots
-  case GotShot:
   case GotRunOver:
+    killer = id;
+    break;
+
+  case GotShot:
   case GotCaptured:
   case GenocideEffect:
     {

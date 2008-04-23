@@ -4075,7 +4075,7 @@ static void		checkEnvironment()
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
-      serverLink->sendHit(myTank->getId(), hit->getPlayer(), hit->getShotId());
+      serverLink->sendHit(myTank->getId(), hit->getShotId());
 
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;
@@ -4661,7 +4661,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
-      serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
+      serverLink->sendHit(tank->getId(),hit->getShotId());
 
     // play the I got shot sound
     playLocalSound(SFX_HIT);
@@ -4685,51 +4685,27 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
   }
   // if not dead yet, see if i'm sitting on death
-  else if (tank->getDeathPhysicsDriver() >= 0) {
-    gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,
-      tank->getDeathPhysicsDriver());
+  else if (tank->getDeathPhysicsDriver() >= 0)
+  {
+    gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,  tank->getDeathPhysicsDriver());
   }
-  // if not dead yet, see if the robot dropped below the death level
-  else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
-    gotBlowedUp(tank, WaterDeath, ServerPlayer);
-  }
-
-  // if not dead yet, see if i got run over by the steamroller
-  else {
+  else   // if not dead yet, see if i got run over by the steamroller
+  {
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (((myTank->getFlag() == Flags::Steamroller) ||
-      ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
-      !myTank->isPhantomZoned()))
-      && !myTank->isPaused()) {
-	const float* pos = myTank->getPosition();
-	if (pos[2] >= 0.0f) {
-	  const float radius = myRadius +
-	    (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius());
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-	    myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(tank, GotRunOver, myTank->getId());
-	    dead = true;
-	  }
-	}
-    }
-    for (i = 0; !dead && i < curMaxPlayers; i++) {
-      if (player[i] && !player[i]->isPaused() &&
-	((player[i]->getFlag() == Flags::Steamroller) ||
-	((tank->getFlag() == Flags::Burrow) && player[i]->isAlive() &&
-	!player[i]->isPhantomZoned()))) {
+
+    for (i = 0; !dead && i < curMaxPlayers; i++)
+    {
+      if (player[i] && !player[i]->isPaused() && ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive() && !player[i]->isPhantomZoned())))
+      {
 	  const float* pos = player[i]->getPosition();
 	  if (pos[2] < 0.0f) continue;
-	  const float radius = myRadius +
-	    (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-	    myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(tank, GotRunOver, player[i]->getId());
+	  const float radius = myRadius + (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
+	  const float distSquared = hypotf(hypotf(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	  if (distSquared < radius)
+	  {
+	    serverLink->sendHit(myTank->getId(),player[i]->getId(),false);
 	    dead = true;
 	  }
       }

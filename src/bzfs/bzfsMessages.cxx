@@ -581,7 +581,6 @@ void sendMsgShotBegin ( int player, int id, FiringInfo &firingInfo )
 void sendMsgShotEnd ( int player, int id, unsigned short reason )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(player);
   msg->packInt(id);
   msg->packUShort(reason);
   msg->broadcast(MsgShotEnd);

@@ -422,28 +422,12 @@ public:
 class KilledHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (!player)
       return false;
 
-    // you can't die stupid!
-    if (player->player.isObserver())
-      return true;
-
-    // data: reason and shot, that's it
-    // the server knows everything else
-    int16_t reason;
-    int id = -1;
-
-    buf = nboUnpackShort(buf, reason);
-    buf = nboUnpackShort(buf, id);
-
-    player->player.endShotCredit--;
-    playerKilled(player->getIndex(), (BlowedUpReason)reason, id);
-
-    // stop pausing attempts as you can not pause when being dead
-    player->player.pauseRequestTime = TimeKeeper::getNullTime();
+    logDebugMessage(0,"KilledHandler called from %d",player->getIndex());
     return true;
   }
 };
@@ -688,39 +672,50 @@ public:
       return false;
 
     if (player->player.isObserver() || !player->player.isAlive())
-      return true;
+      return true; // you can't be hit stupid
 
     PlayerId hitPlayer = player->getIndex();
-    PlayerId shooterPlayer;
+    unsigned char isAShot;
     FiringInfo firingInfo;
-    int shot;
 
-    buf = nboUnpackUByte(buf, shooterPlayer);
-    buf = nboUnpackInt(buf, shot);
-    GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
+    int id = 0;
 
-    if (!shooterData)
-      return true;
+    buf = nboUnpackUByte(buf, isAShot);
+    buf = nboUnpackInt(buf, id);
 
-    // TODO verify the shot, make sure the shot is near them etc..
-
-    ShotManager::instance().removeShot(shot,false);
-    if (shooterData->removeShot(shot))
+    if (isAShot)
     {
-      sendMsgShotEnd(shooterPlayer, shot, 1);
-
-      const int flagIndex = player->player.getFlag();
-      FlagInfo *flagInfo  = NULL;
-
-      if (flagIndex >= 0)
+      // ok try to find the shot
+      if ( id < 0 ) // damn it's a local shot, search the shooter and see what the global shotID for this guy is. it has to be his local shot
       {
-	flagInfo = FlagInfo::get(flagIndex);
-	dropFlag(*flagInfo);
+	id = player->findShot(id);
+	if (id < 0 )
+	  return false;	  // we don't have track of that local shot anymore, so go and tell him to stuff it.
       }
+      ShotManager::Shot *shot = ShotManager::instance().getShot(id);
+      if (!shot)
+	return true; // yeah bad shot screw it
 
-      if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-	playerKilled(hitPlayer, shooterPlayer, GotShot, shot, firingInfo.flagType, false, false);
+      GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shot->player);
+
+      if (!shooterData)
+	return true;
+
+      // TODO verify the shot, make sure the shot is near them etc..
+
+      ShotManager::instance().removeShot(shot,false);
+      if (shooterData->removeShot(shot))
+      {
+	sendMsgShotEnd( shot, 1);
+
+	FlagInfo *flagInfo = FlagInfo::get(player->player.getFlag());
+	if (!flagInfo || flagInfo != Flags::Shield)
+	  playerKilled(hitPlayer, GotShot, id, false);
+	else
+	  zapFlagByPlayer(hitPlayer);
     }
+    else // steam roller
+      playerKilled(hitPlayer,GotRunOver,id);
 
     return true;
   }

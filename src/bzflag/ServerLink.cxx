@@ -1015,14 +1015,16 @@ void			ServerLink::sendEndShot(const PlayerId& source,
   send(MsgShotEnd, sizeof(msg), msg);
 }
 
-void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
-			 int shotId)
+void ServerLink::sendHit(const PlayerId &source, int id, bool shot)
 {
   char msg[80];
+  unsigned char s = 0;
+  if (shot)
+    s = 1;
   void* buf = msg;
   buf = nboPackUByte(buf, source);
-  buf = nboPackUByte(buf, shooter);
-  buf = nboPackInt(buf, shotId);
+  buf = nboPackUByte(buf, shot);
+  buf = nboPackInt(buf, id);
   send(MsgHit, sizeof(msg), msg);
 }
 #endif

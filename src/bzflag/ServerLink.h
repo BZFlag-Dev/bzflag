@@ -82,7 +82,7 @@ class ServerLink {
 #endif
     void		sendEndShot(const PlayerId&, int shotId, int reason);
 
-  void sendHit(const PlayerId &source, const PlayerId &shooter, int shotId);
+  void sendHit(const PlayerId &source, int id, bool shot = true);
   void sendVarRequest();
 
     void		sendAlive(const PlayerId playerId);
