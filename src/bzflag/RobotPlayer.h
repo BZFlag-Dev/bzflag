@@ -44,6 +44,10 @@ class RobotPlayer : public LocalPlayer {
     void		restart(const float* pos, float azimuth);
     void		explodeTank();
 
+    virtual void gotShot ( unsigned int shotID );
+    virtual void killTeammate ( PlayerId player );
+    virtual void died ( void );
+
   private:
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
@@ -59,7 +63,6 @@ class RobotPlayer : public LocalPlayer {
      void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
      void		getProjectedPosition(const Player *targ, float *projpos) const;
 
-     virtual void gotShot ( unsigned int shotID );
 
   private:
     const Player*	target;

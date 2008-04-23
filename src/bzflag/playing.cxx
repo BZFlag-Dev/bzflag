@@ -2097,6 +2097,17 @@ void printDeathMessage ( const std::string &message )
   controlPanel->addMessage(message);
 }
 
+bool teamKill ( Player* killer, Player* victim )
+{
+  if (killer == victim )
+    return false;
+
+  if (!allowTeams() || !World::getWorld()->allowTeamKills() || killer->getTeam() == RogueTeam )
+    return false;
+
+  return killer->getTeam() == victim->getTeam();
+}
+
 static void handleDeathByShot ( int playerID, bool human, unsigned int shotID )
 {
   Player* player = getPlayerByIndex(playerID);
@@ -2105,34 +2116,173 @@ static void handleDeathByShot ( int playerID, bool human, unsigned int shotID )
     return;
 
   player->gotShot(shotID);
+  playSoundForPlayer(playerID,SFX_EXPLOSION);
 
-  if (player == myTank)
+  ShotPath *shot = ShotList::instance().getShot(shotID);
+
+  if(player->isAutoPilot())
+    teachAutoPilot(shot->getFlag(), 1);
+
+  Player *killer = getPlayerByIndex(shot->getPlayer());
+  if (!killer)
+  {
+    addMessage(player, "destroyed by a (GHOST)");
+    return;
+  }
+
+  killer->killPlayer(playerID);
+
+  bool tk = teamKill(killer,player);
+
+  if(tk)
+    killer->killTeammate(playerID);
+
+  if (player == myTank && killer == myTank)
     printDeathMessage(std::string("Shot Myself"));
   else
   {
-      // get the death message
+    std::string playerStr;
+    if (tk)
+      playerStr += "teammate ";
+
+    if (player == myTank)
+    {
+      if (BZDB.get("killerhighlight") == "1") 
+	playerStr += ColorStrings[PulsatingColor];
+      else if (BZDB.get("killerhighlight") == "2")
+	playerStr += ColorStrings[UnderlineColor];
+    }
+
+    int color = killerPlayer->getTeam();
+    playerStr += ColorStrings[color];
+    playerStr += killerPlayer->getCallSign();
+
+    if (victimPlayer == myTank)
+      playerStr += ColorStrings[ResetColor];
+
+    playerStr += ColorStrings[WhiteColor];
+
+    FlagType *flagType = shot->getFlag();
+
+    // Give more informative kill messages
+    if (flagType == Flags::Laser)
+      message += "was fried by " + playerStr + "'s laser";
+    else if (flagType == Flags::GuidedMissile)
+      message += "was destroyed by " + playerStr + "'s guided missile";
+    else if (flagType == Flags::ShockWave)
+      message += "felt the effects of " + playerStr + "'s shockwave";
+    else if (flagType == Flags::InvisibleBullet)
+      message += "didn't see " + playerStr + "'s bullet";
+    else if (flagType == Flags::MachineGun)
+      message += "was turned into swiss cheese by " + playerStr + "'s machine gun";
+    else if (flagType == Flags::SuperBullet)
+      message += "got skewered by " + playerStr + "'s super bullet";
+    else
+      message += "killed by " + playerStr;
+
+    addMessage(player, message, 3, killer==myTank);
   }
-  playSoundForPlayer(playerID,SFX_EXPLOSION);
 }
 
-static void handleDeathBySquish ( int playerID, bool human, int squiser )
+static void handleDeathBySquish ( int playerID, bool human, int squisher )
 {
+  Player* player = getPlayerByIndex(playerID);
 
+  if (!player)
+    return;
+
+  player->died();
+
+  playSoundForPlayer(playerID,SFX_RUNOVER);
+
+  Player *killer = getPlayerByIndex(squisher);
+  if (!killer)
+  {
+    addMessage(player, "destroyed by a (GHOST)");
+    return;
+  }
+
+  killer->killPlayer(playerID);
+
+  bool tk = teamKill(killer,player);
+
+  if(tk)
+    killer->killTeammate(playerID);
+
+  if (player == myTank && killer == myTank)
+    printDeathMessage(std::string("Shot Myself")); // HOW?
+  else
+  {
+    std::string playerStr;
+    if (tk)
+      playerStr += "teammate ";
+
+    if (player == myTank)
+    {
+      if (BZDB.get("killerhighlight") == "1") 
+	playerStr += ColorStrings[PulsatingColor];
+      else if (BZDB.get("killerhighlight") == "2")
+	playerStr += ColorStrings[UnderlineColor];
+    }
+
+    int color = killerPlayer->getTeam();
+    playerStr += ColorStrings[color];
+    playerStr += killerPlayer->getCallSign();
+
+    if (victimPlayer == myTank)
+      playerStr += ColorStrings[ResetColor];
+
+    playerStr += ColorStrings[WhiteColor];
+
+    message += "run over by " + playerStr;
+
+    addMessage(player, message, 3, killer==myTank);
+  }
 }
 
 static void handleDeathByDriver ( int playerID, bool human, int id )
 {
+  Player* player = getPlayerByIndex(playerID);
 
+  if (!player)
+    return;
+
+  player->died();
+
+  std::string message(ColorStrings[WhiteColor]);
+  const PhysicsDriver* driver = PHYDRVMGR.getDriver(id);
+  if (driver == NULL)
+    message += "Unknown Deadly Obstacle";
+  else 
+    message += driver->getDeathMsg();
+
+  addMessage(victimPlayer, message);
 }
 
 static void handleDeathByDrowning ( int playerID, bool human )
 {
+  Player* player = getPlayerByIndex(playerID);
 
+  if (!player)
+    return;
+
+  player->died();
+
+  std::string message(ColorStrings[WhiteColor]);
+  message += "fell in the water";
+  addMessage(player, message);
 }
 
 static void handleDeathBySmite ( int playerID, bool human )
 {
+  Player* player = getPlayerByIndex(playerID);
 
+  if (!player)
+    return;
+
+  player->died();
+
+ addMessage(player, "destroyed by the server");
 }
 
 static void handleKilledMessage(void *msg, bool human, bool &checkScores)
@@ -2148,8 +2298,8 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   switch ((BlowedUpReason)reason)
   {
     default:
-	handleDeathBySmite(victim,human);
-	break;
+      handleDeathBySmite(victim,human);
+      break;
 
     case GotShot:
     case GenocideEffect:
@@ -2168,160 +2318,6 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
       handleDeathByDriver(victim,human,(int)id);
       break;
   }
-
-  if (killerLocal) 
-  {
-    // local player did it
-    if (shotId >= 0)
-      killerLocal->endShot(shotId, true); // terminate the shot
-
-    if (victimPlayer && killerLocal != victimPlayer) 
-    {
-      if ((victimPlayer->getTeam() == killerLocal->getTeam()) && (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit) && World::getWorld()->allowTeams())
-      {
-	// teamkill
-	if (killerPlayer == myTank)
-	{
-	  hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-	  playLocalSound(SFX_KILL_TEAM);
-	  if (myTank->isAutoPilot())
-	  {
-	    char meaculpa[MessageLen];
-	    memset(meaculpa, 0, MessageLen);
-	    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
-	    serverLink->sendMessage(victimPlayer->getId(), meaculpa);
-	  }
-	}
-      } 
-      else 
-      {
-	// enemy
-	if (myTank->isAutoPilot())
-	{
-	  if (killerPlayer)
-	  {
-	    const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	    if (shot != NULL)
-	      teachAutoPilot(shot->getFlag(), 1);
-	  }
-	}
-      }
-    }
-  }
-
-  // handle my personal score against other players
-  if ((killerPlayer == myTank || victimPlayer == myTank) && !(killerPlayer == myTank && victimPlayer == myTank)) {
-    if (killerLocal == myTank) {
-      if (victimPlayer)
-	victimPlayer->changeLocalScore(1, 0, 0);
-
-      myTank->setNemesis(victimPlayer);
-    } else {
-      if (killerPlayer)
-	killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
-
-      myTank->setNemesis(killerPlayer);
-    }
-  }
-
-  // add message
-  if (human && victimPlayer) {
-    std::string message(ColorStrings[WhiteColor]);
-    if (killerPlayer == victimPlayer) {
-      message += "blew myself up";
-      addMessage(victimPlayer, message);
-    } else if (killer >= LastRealPlayer) {
-      addMessage(victimPlayer, "destroyed by the server");
-    } else if (!killerPlayer) {
-      addMessage(victimPlayer, "destroyed by a (GHOST)");
-    } else if (reason == WaterDeath) {
-      message += "fell in the water";
-      addMessage(victimPlayer, message);
-    } else if (reason == PhysicsDriverDeath) {
-      const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-      if (driver == NULL) {
-	message += "Unknown Deadly Obstacle";
-      } else {
-	message += driver->getDeathMsg();
-      }
-
-      addMessage(victimPlayer, message);
-    } else {
-      std::string playerStr;
-      if (World::getWorld()->allowTeams() && (killerPlayer->getTeam() == victimPlayer->getTeam()) && (killerPlayer->getTeam() != RogueTeam) && (killerPlayer->getTeam() != ObserverTeam)) {
-	playerStr += "teammate ";
-      }
-
-      if (victimPlayer == myTank) {
-	if (BZDB.get("killerhighlight") == "1") {
-	  playerStr += ColorStrings[PulsatingColor];
-	} else if (BZDB.get("killerhighlight") == "2") {
-	  playerStr += ColorStrings[UnderlineColor];
-	}
-      }
-
-      int color = killerPlayer->getTeam();
-      playerStr += ColorStrings[color];
-      playerStr += killerPlayer->getCallSign();
-
-      if (victimPlayer == myTank)
-	playerStr += ColorStrings[ResetColor];
-
-      playerStr += ColorStrings[WhiteColor];
-
-      // Give more informative kill messages
-      if (flagType == Flags::Laser)
-	message += "was fried by " + playerStr + "'s laser";
-      else if (flagType == Flags::GuidedMissile)
-	message += "was destroyed by " + playerStr + "'s guided missile";
-      else if (flagType == Flags::ShockWave)
-	message += "felt the effects of " + playerStr + "'s shockwave";
-      else if (flagType == Flags::InvisibleBullet)
-	message += "didn't see " + playerStr + "'s bullet";
-      else if (flagType == Flags::MachineGun)
-	message += "was turned into swiss cheese by " + playerStr + "'s machine gun";
-      else if (flagType == Flags::SuperBullet)
-	message += "got skewered by " + playerStr + "'s super bullet";
-      else
-	message += "killed by " + playerStr;
-
-      addMessage(victimPlayer, message, 3, killerPlayer==myTank);
-    }
-  }
-
-  // geno only works in team games :)
-  if (World::getWorld()->allowTeams()) {
-    // blow up if killer has genocide flag and i'm on same team as victim
-    // (and we're not rogues, unless in rabbit mode)
-    if (human && killerPlayer && victimPlayer &&
-      victimPlayer != myTank &&
-      (victimPlayer->getTeam() == myTank->getTeam()) &&
-      (myTank->getTeam() != RogueTeam) &&
-      (shotId >= 0)) {
-	// now see if shot was fired with a GenocideFlag
-	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-
-	//but make sure that if we are not allowing teamkills, the victim was not a suicide
-	if (shot && shot->getFlag() == Flags::Genocide &&
-	  (killerPlayer != victimPlayer || World::getWorld()->allowTeamKills())) {
-	    // go boom
-	    gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-	}
-    }
-  }
-
-#ifdef ROBOT
-  // blow up robots on victim's team if shot was genocide
-  if (killerPlayer && victimPlayer && shotId >= 0) {
-    const ShotPath* shot = killerPlayer->getShot(int(shotId));
-    if (shot && shot->getFlag() == Flags::Genocide) {
-      for (int i = 0; i < numRobots; i++) {
-	if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
-	  gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-      }
-    }
-  }
-#endif
 
   checkScores = true;
 }
@@ -6425,12 +6421,15 @@ static void		updateDestructCountdown(float dt)
   if (destructCountdown > 0.0f) {
     const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
     destructCountdown -= dt;
-    if (destructCountdown <= 0.0f) {
+    if (destructCountdown <= 0.0f) 
+    {
       // now actually destruct
       gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
 
       hud->setAlert(1, NULL, 0.0f, true);
-    } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
+    }
+    else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown)
+    {
       // update countdown alert
       char msgBuf[40];
       sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));

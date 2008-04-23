@@ -110,6 +110,8 @@ public:
   virtual void gotShot ( unsigned int shotID );
   virtual void died ( void );
   virtual void dropFlag ( void );
+  virtual void killTeammate ( PlayerId player );
+  virtual void killPlayer ( PlayerId player );
 
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const

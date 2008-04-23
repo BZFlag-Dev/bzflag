@@ -34,6 +34,7 @@ public:
   ~RemotePlayer();
 
   void addShot(FiringInfo&);
+  virtual void died ( void );
 
 private:
   int numShots;

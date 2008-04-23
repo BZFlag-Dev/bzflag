@@ -112,6 +112,8 @@ public:
   virtual void gotShot ( unsigned int shotID );
   virtual void dropFlag ( void );
   virtual void died ( void );
+  virtual void killTeammate ( PlayerId player );
+  virtual void killPlayer ( PlayerId player );
 
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);

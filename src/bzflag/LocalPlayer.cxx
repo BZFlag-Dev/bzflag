@@ -1311,6 +1311,31 @@ void 			LocalPlayer::died ( void )
   }
 }
 
+void  			LocalPlayer::killTeammate ( PlayerId player )
+{
+  BaseLocalPlayer::killTeammate();
+
+  hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
+  playLocalSound(SFX_KILL_TEAM);
+
+  if (isAutoPilot())
+  {
+    char meaculpa[MessageLen];
+    memset(meaculpa, 0, MessageLen);
+    strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+    serverLink->sendMessage(player, meaculpa);
+  }
+}
+
+void  			LocalPlayer::killPlayer ( PlayerId player )
+{
+  if (player = getId())
+    return; // yeah, I'm stupid
+
+  setNemesis(getPlayerByIndex(player));
+}
+
+
 bool			LocalPlayer::fireShot()
 {
   if (! (firingStatus == Ready || firingStatus == Zoned))

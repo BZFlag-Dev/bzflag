@@ -512,6 +512,23 @@ void			RobotPlayer::findPath(RegionPriorityQueue& queue,
   }
 }
 
+void  			RobotPlayer::gotShot ( unsigned int shotID )
+{
+  BaseLocalPlayer::gotShot(shotID);
+}
+
+void 			RobotPlayer::killTeammate ( PlayerId player )
+{
+  BaseLocalPlayer::killTeammate(player);
+
+  char meaculpa[MessageLen];
+  memset(meaculpa, 0, MessageLen);
+  strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+  serverLink->sendMessage(player, meaculpa);
+
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

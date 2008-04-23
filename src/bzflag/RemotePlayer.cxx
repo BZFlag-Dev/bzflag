@@ -40,6 +40,18 @@ void			RemotePlayer::addShot(FiringInfo& info)
   Player::addShot(new RemoteShotPath(info,syncedClock.GetServerSeconds()), info);
 }
 
+void			RemotePlayer::died( void)
+{
+  Player::died();
+
+  const float* pos = getPosition();
+  float explodePos[3];
+  explodePos[0] = pos[0];
+  explodePos[1] = pos[1];
+  explodePos[2] = pos[2] + getMuzzleHeight();
+  addTankExplosion(explodePos);
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

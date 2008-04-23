@@ -532,6 +532,23 @@ void Player::died ( void )
 {
   // can't take it with you
   dropFlag();
+
+  explodeTank();
+  EFFECTS.addDeathEffect(getColor(), getPosition(), getAngle());
+
+  if (isViewTank())
+    ForceFeedback::death();
+}
+
+
+void Player::killTeammate ( PlayerId player )
+{
+  // jack
+}
+
+void Player::killPlayer ( PlayerId player )
+{
+ // jack
 }
 
 
