@@ -17,6 +17,7 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 #include "ShotManager.h"
+#include "PhysicsDriver.h"
 
 std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
 std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
@@ -406,7 +407,7 @@ public:
 
       // Make them pay dearly for trying to rejoin quickly
       playerAlive(player->getIndex());
-      playerKilled(player->getIndex(), player->getIndex(), GotKilledMsg, -1, Flags::Null, -1);
+      smitePlayer(player->getIndex());
       return true;
     }
 
@@ -673,14 +674,14 @@ public:
     int	driverID = -1;
     buf = nboUnpackInt(buf, driverID);
 
-    PhysicsDriver *driver = PHYDRVMGR.getDriver(driverID);
+    const PhysicsDriver *driver = PHYDRVMGR.getDriver(driverID);
     if (!driver)
       return true;
 
     if (driver->getIsDeath())
       playerKilled(player->getIndex(),PhysicsDriverDeath,driverID);
   }
-}
+};
 
 class HitHandler : public PlayerFirstHandler
 {
@@ -722,8 +723,8 @@ public:
 
       // TODO verify the shot, make sure the shot is near them etc..
 
-      ShotManager::instance().removeShot(shot,false);
-      if (shooterData->removeShot(shot))
+      ShotManager::instance().removeShot(id,false);
+      if (shooterData->removeShot(id))
       {
 	sendMsgShotEnd( shot, 1);
 
@@ -732,6 +733,7 @@ public:
 	  playerKilled(hitPlayer, GotShot, id, false);
 	else
 	  zapFlagByPlayer(hitPlayer);
+      }
     }
     else // steam roller
       playerKilled(hitPlayer,GotRunOver,id);

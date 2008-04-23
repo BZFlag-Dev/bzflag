@@ -48,7 +48,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
 void sendSetShotType ( int playerIndex, ShotType type );
 void sendMsgShotBegin ( int player, int id, FiringInfo &firingInfo );
-void sendMsgShotEnd ( int player, int id, unsigned short reason );
+void sendMsgShotEnd ( int id, unsigned short reason );
 void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgShotUpdate ( int player, FiringInfo *shot );

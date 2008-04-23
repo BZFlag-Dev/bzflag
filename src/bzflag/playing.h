@@ -53,6 +53,7 @@ class Player;
 class ServerLink;
 class HUDRenderer;
 class WordFilter;
+class FlagType;
 
 void			initPlaying();
 BzfDisplay*		getDisplay();
