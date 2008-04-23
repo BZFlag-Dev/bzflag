@@ -184,11 +184,6 @@ static const char*	blowedUpMessage[] = {
   "Tank Self Destructed",
   "Tank Rusted"
 };
-static bool		gotBlowedUp(BaseLocalPlayer* tank,
-				    BlowedUpReason reason,
-				    PlayerId killer,
-				    const ShotPath *hit = NULL,
-				    int physicsDriver = -1);
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
@@ -3811,158 +3806,6 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
   addMessage(toTank, message);
 }
 
-static bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId killer, const ShotPath* hit, int phydrv)
-{
-  if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
-    return false;
-
-  int shotId = -1;
-  FlagType* flagType = Flags::Null;
-  if (hit)
-  {
-    shotId = hit->getShotId();
-    flagType = hit->getFlag();
-  }
-
-  // you can't take it with you
-  const FlagType* flag = tank->getFlag();
-  if (flag != Flags::Null) 
-  {
-    if (myTank->isAutoPilot())
-      teachAutoPilot( myTank->getFlag(), -1 );
-
-    // tell other players I've dropped my flag
-    serverLink->sendDropFlag(tank->getPosition());
-    tank->setShotType(StandardShot);
-
-    // drop it
-    handleFlagDropped(tank);
-  }
-
-  // restore the sound, this happens when paused tank dies
-  // (genocide or team flag captured)
-  if (savedVolume != -1) 
-  {
-    setSoundVolume(savedVolume);
-    savedVolume = -1;
-  }
-
-  // take care of explosion business -- don't want to wait for
-  // round trip of killed message.  waiting would simplify things,
-  // but the delay (2-3 frames usually) can really fool and irritate
-  // the player.  we have to be careful to ignore our own Killed
-  // message when it gets back to us -- do this by ignoring killed
-  // message if we're already dead.
-  // don't die if we had the shield flag and we've been shot.
-  if (reason != GotShot || flag != Flags::Shield)
-  {
-    // blow me up
-    tank->explodeTank();
-    EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
-
-    if (isViewTank(tank)) 
-    {
-      if (reason == GotRunOver)
-	playLocalSound(SFX_RUNOVER);
-      else
-	playLocalSound(SFX_DIE);
-
-      ForceFeedback::death();
-
-    } 
-    else
-    {
-      const float* pos = tank->getPosition();
-      if (reason == GotRunOver) 
-	playWorldSound(SFX_RUNOVER, pos,getLocalPlayer(killer) == myTank);
-      else 
-	playWorldSound(SFX_EXPLOSION, pos, getLocalPlayer(killer) == myTank);
-    }
-
-    if (tank != myTank)
-    {
-      const float* pos = tank->getPosition();
-      float explodePos[3];
-      explodePos[0] = pos[0];
-      explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + tank->getMuzzleHeight();
-      addTankExplosion(explodePos);
-    }
-
-    // tell server I'm dead in case it doesn't already know
-    // we only need to send the reason and the shot
-    if (reason != GotKilledMsg && reason != GotCaptured && reason != LastReason)
-      serverLink->sendKilled(tank->getId(), reason, reason ==PhysicsDriverDeath ? phydrv : shotId );
-  }
-
-  // print reason if it's my tank
-  if ((tank == myTank) && (reason < LastReason ))
-  {
-    std::string blowedUpNotice;
-    if (reason < PhysicsDriverDeath) 
-    {
-      if (blowedUpMessage[reason])
-	blowedUpNotice = blowedUpMessage[reason];
-      else
-	blowedUpNotice = "Invalid reason";
-    }
-    else 
-    {
-      const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-      if (driver)
-	blowedUpNotice = driver->getDeathMsg();
-      else
-	blowedUpNotice = "Killed by unknown obstacle";
-    }
-
-    // first, check if i'm the culprit
-    if (reason == GotShot && getLocalPlayer(killer) == myTank)
-      blowedUpNotice = "Shot myself";
-    else
-    {
-      // 1-4 are messages sent when the player dies because of someone else
-      if (reason >= GotShot && reason <= GenocideEffect)
-      {
-	Player *killerPlayer = lookupPlayer(killer);
-	if (!killerPlayer)
-	  blowedUpNotice = "Killed by the server";
-	else 
-	{
-	  // matching the team-display style of other kill messages
-	  TeamColor team = killerPlayer->getTeam();
-	  if (hit)
-	    team = hit->getTeam();
-	  if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam))
-	  {
-	    blowedUpNotice += "teammate " ;
-	    blowedUpNotice += killerPlayer->getCallSign();
-	  }
-	  else
-	  {
-	    blowedUpNotice += killerPlayer->getCallSign();
-	    blowedUpNotice += " (";
-	    blowedUpNotice += Team::getName(killerPlayer->getTeam());
-	    blowedUpNotice += ")";
-	    if (flagType != Flags::Null) 
-	    {
-	      blowedUpNotice += " with ";
-	      blowedUpNotice += flagType->flagAbbv;
-	    }
-	  }
-	}
-      }
-    }
-    hud->setAlert(0, blowedUpNotice.c_str(), 4.0f, true);
-    controlPanel->addMessage(blowedUpNotice);
-  }
-
-  // make sure shot is terminated locally (if not globally) so it can't
-  // hit me again if I had the shield flag.  this is important for the
-  // shots that aren't stopped by a hit and so may stick around to hit
-  // me on the next update, making the shield useless.
-  return (reason == GotShot && flag == Flags::Shield && shotId != -1);
-}
-
 static bool		canSquishMe(int id)
 {
   // I must be playing
@@ -4070,31 +3913,9 @@ static void		checkEnvironment()
 
   if (hit)
   {
-    // i got shot!  terminate the shot that hit me and blow up.
-    // force shot to terminate locally immediately (no server round trip);
-    // this is to ensure that we don't get shot again by the same shot
-    // after dropping our shield flag.
-    if (hit->isStoppedByHit())
+      // i got shot!  tell the server and it can tell me waht to do
       serverLink->sendHit(myTank->getId(), hit->getShotId());
-
-    FlagType* killerFlag = hit->getFlag();
-    bool stopShot;
-
-    if (killerFlag == Flags::Thief)
-    {
-      if (myTank->getFlag() != Flags::Null)
-	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
-      stopShot = true;
-    }
-    else
-      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
-
-    if (stopShot || hit->isStoppedByHit())
-    {
-      Player* hitter = lookupPlayer(hit->getPlayer());
-      if (hitter)
-	hitter->endShot(hit->getShotId());
-    }
+      playLocalSound(SFX_HIT);
   }
   else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
     serverLink->sendHitDriver(myTank,myTank->getDeathPhysicsDriver());
@@ -4102,8 +3923,10 @@ static void		checkEnvironment()
   {
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (canSquishMe(i)) {
+    for (i = 0; i < curMaxPlayers; i++)
+    {
+      if (canSquishMe(i))
+      {
 	const float* pos = player[i]->getPosition();
 
 	const float radius = myRadius
@@ -4113,7 +3936,7 @@ static void		checkEnvironment()
 	const float dz = (myPos[2] - pos[2]) * 2.0f;
 	const float distSquared = dx*dx + dy*dy + dz*dz;
 	if (distSquared < radius * radius)
-	  gotBlowedUp(myTank, GotRunOver, player[i]->getId());
+	  serverLink->sendHit(myTank,player[i]->getId(),false);
       }
     }
   }
@@ -4652,40 +4475,14 @@ static void		checkEnvironment(RobotPlayer* tank)
 
   float waterLevel = World::getWorld()->getWaterLevel();
 
-  if (hit) {
-    // i got shot!  terminate the shot that hit me and blow up.
-    // force shot to terminate locally immediately (no server round trip);
-    // this is to ensure that we don't get shot again by the same shot
-    // after dropping our shield flag.
-    if (hit->isStoppedByHit())
-      serverLink->sendHit(tank->getId(),hit->getShotId());
-
-    // play the I got shot sound
-    playLocalSound(SFX_HIT);
-
-    FlagType* killerFlag = hit->getFlag();
-    bool stopShot;
-
-    if (killerFlag == Flags::Thief) {
-      if (tank->getFlag() != Flags::Null) {
-	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
-      }
-      stopShot = true;
-    }
-    else {
-      stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
-    }
-
-    if (stopShot || hit->isStoppedByHit()) {
-      Player* hitter = lookupPlayer(hit->getPlayer());
-      if (hitter) hitter->endShot(hit->getShotId());
-    }
+  if (hit)
+  {
+    // i got shot!  
+    serverLink->sendHit(tank->getId(),hit->getShotId());
   }
   // if not dead yet, see if i'm sitting on death
   else if (tank->getDeathPhysicsDriver() >= 0)
-  {
-    gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,  tank->getDeathPhysicsDriver());
-  }
+    serverLink->sendHitDriver(tank,tank->getDeathPhysicsDriver());
   else   // if not dead yet, see if i got run over by the steamroller
   {
     bool dead = false;
