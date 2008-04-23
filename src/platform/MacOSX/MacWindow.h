@@ -25,7 +25,7 @@ class MacWindow : public BzfWindow {
     void setPosition(int x, int y);
     void setSize(int width, int height);
     void setMinSize(int width, int height);
-    void setFullscreen();
+    void setFullscreen(bool);
 
     void warpMouse(int x, int y);
     void getMouse(int& x, int& y) const;
