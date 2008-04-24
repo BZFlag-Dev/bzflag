@@ -2738,7 +2738,7 @@ bool smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
 }
 
 // player killed by shot or world. this is a normal death
-bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respawnOnBase )
+bool playerKilled(int victimIndex, BlowedUpReason reason, int id, bool respawnOnBase )
 {
   GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
@@ -2754,23 +2754,33 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
   victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
 
   PlayerId killer = ServerPlayer;
+  bool teamkill = false;
+  GameKeeper::Player *killerData = NULL;
+
+  bz_PlayerDieEventData_V1	*dieEvent = NULL;
 
   // now figure how he died
   switch ( reason )
   {
   default:
     // an invalid reason, bail
+    dieEvent = new bz_PlayerDieEventData_V1;
     return false;
 
     // reasons with shots
   case GotRunOver:
+    dieEvent = new bz_PlayerRunOverDieEvenDatat_V1;
     killer = (PlayerId)id;
+    killerData = GameKeeper::Player::getPlayerByIndex(killer);
+    ((bz_PlayerRunOverDieEvenDatat_V1*)dieEvent)->killerID = killer;
     break;
 
   case GotShot:
-  case GotCaptured:
   case GenocideEffect:
-    {
+   {
+     dieEvent = new bz_PlayerShotDieEventData_V1;
+ 
+     if(reason)
       // ok try to find the shot
       if ( id < 0 ) // damn it's a local shot, search the shooter and see what the global shotID for this guy is. it has to be his local shot
       {
@@ -2783,100 +2793,115 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
 	return false; // yeah bad shot screw it
 
       killer = shot->player;
-      
+
+      killerData = GameKeeper::Player::getPlayerByIndex(killer);
+
+      ((bz_PlayerShotDieEventData_V1*)dieEvent)->killerID = killer;
+      ((bz_PlayerShotDieEventData_V1*)dieEvent)->shotID = id;
+      ((bz_PlayerShotDieEventData_V1*)dieEvent)->flagKilledWith = shot->flag->flagAbbv;
+
+      checkForTeamKill(killerData,victimData,teamkill);
+
+      if (killer == victimIndex)
+	teamkill = false;
     }
     break;
 
     // reasons with no info
-  case SelfDestruct:
-  case WaterDeath:
+    case SelfDestruct:
+    case GotCaptured:
+    case WaterDeath:
+      dieEvent = new bz_PlayerDieEventData_V1;
       // valid so just let em path
     break;
 
     // reason with a driverID
   case PhysicsDriverDeath:
+    dieEvent = new bz_PlayerDriverDieEventData_V1;
     break;
-
   }
 
-  // notify the API that we are killing someone
-  bz_PlayerDieEventData_V1	dieEvent;
-  dieEvent.playerID = victimIndex;
-  dieEvent.team = convertTeam(victimData->player.getTeam());
-  dieEvent.killerID = killer;
-  dieEvent.shotID = id;
+  if (dieEvent)
+  {
+    dieEvent->reason = (bz_ePlayerDeathReason)reason;
+    dieEvent->playerID = victimIndex;
+    dieEvent->team = convertTeam(victimData->player.getTeam());
+    playerStateToAPIState(dieEvent->state, victimData->lastState);
 
-  if (killer != ServerPlayer)
-    dieEvent.killerTeam = convertTeam(killer->getTeam());
-  else
-    dieEvent.killerTeam
+    worldEventManager.callEvents(bz_ePlayerDieEvent,dieEvent);
 
-  dieEvent.flagKilledWith = flagType->flagAbbv;
+    delete(dieEvent);
+  }
 
-  playerStateToAPIState(dieEvent.state, victimData->lastState);
-
-  worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
-
-  sendPlayerKilledMessage(victimIndex,killerIndex,reason,shotIndex,flagType,phydrv);
-
-  bool teamkill = false;
-  if (checkForTeamKill(killerData,victimData,teamkill))
-    killerData = NULL;
+  sendPlayerKilledMessage(victimIndex,reason,id);
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
   zapFlagByPlayer(victimIndex);
 
-  // if weTKed, and we didn't suicide, and we are killing TKers, then kill that bastard
-  if (teamkill &&  (victimIndex != killerIndex) && clOptions->teamKillerDies)
-    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);;
+  // all this is done for just cases where we have a real killer, aka a shot or steamroll
+  if (killerData)
+  {
+    // if weTKed, and we didn't suicide, and we are killing TKers, then kill that bastard
+    if (teamkill && clOptions->teamKillerDies)
+      smitePlayer(killer);
 
-  if (!respawnOnBase){
-    updateScoresForKill(victimData,killerData,teamkill);
-    updateHandicaps(victimData,killerData);
-    checkForScoreLimit(killerData);
-  }
-
-  if (clOptions->gameType == eRabbitChase) {
-    if (victimIndex == rabbitIndex)
-      anointNewRabbit(killerIndex);
-  } else {
-    // change the team scores -- rogues don't have team scores.  don't
-    // change team scores for individual player's kills in capture the
-    // flag mode.
-    // Team score is even not used on RabbitChase
-    int winningTeam = (int)NoTeam;
-    if ( clOptions->gameType == eClassicCTF || clOptions->gameType == eTeamFFA ) {
-      int killerTeam = -1;
-      if (killer && victim->getTeam() == killer->getTeam()) {
-	if (!killer->isTeam(RogueTeam)) {
-	  if (killerIndex == victimIndex)
-	    team[int(victim->getTeam())].team.lost += 1;
-	  else
-	    team[int(victim->getTeam())].team.lost += 2;
-	}
-      } else {
-	if (killer && !killer->isTeam(RogueTeam)) {
-	  winningTeam = int(killer->getTeam());
-	  team[winningTeam].team.won++;
-	}
-	if (!victim->isTeam(RogueTeam))
-	  team[int(victim->getTeam())].team.lost++;
-	if (killer)
-	  killerTeam = killer->getTeam();
-      }
-      sendTeamUpdateMessageBroadcast(int(victim->getTeam()), killerTeam);
+    if (!respawnOnBase && killerData)
+    {
+      updateScoresForKill(victimData,killerData,teamkill);
+      updateHandicaps(victimData,killerData);
+      checkForScoreLimit(killerData);
     }
 
-    dumpScore();
+    if (clOptions->gameType == eRabbitChase)
+    {
+      if (victimIndex == rabbitIndex)
+	anointNewRabbit(killer);
+    }
+    else
+    {
+      // change the team scores -- rogues don't have team scores.  don't
+      // change team scores for individual player's kills in capture the
+      // flag mode.
+      // Team score is even not used on RabbitChase
+      int winningTeam = (int)NoTeam;
+      if ( clOptions->gameType == eClassicCTF || clOptions->gameType == eTeamFFA )
+      {
+	int killerTeam = -1;
+	if (killer && victimData->player.getTeam() == killerData->player.getTeam())
+	{
+	  if (!killerData->player.isTeam(RogueTeam))
+	  {
+	    if (killer == victimIndex)
+	      team[int(victimData->player.getTeam())].team.lost += 1;
+	    else
+	      team[int(victimData->player.getTeam())].team.lost += 2;
+	  }
+	} 
+	else
+	{
+	  if (!killerData->player.isTeam(RogueTeam)) 
+	  {
+	    winningTeam = int(killerData->player.getTeam());
+	    team[winningTeam].team.won++;
+	  }
+	  if (!victimData->player.isTeam(RogueTeam))
+	    team[int(victimData->player.getTeam())].team.lost++;
+	  if (killerData)
+	    killerTeam = killerData->player.getTeam();
+	}
+	sendTeamUpdateMessageBroadcast(int(victimData->player.getTeam()), killerTeam);
+      }
 
-    if (winningTeam != (int)NoTeam)
-      checkTeamScore(killerIndex, winningTeam);
+      dumpScore();
 
-    victimData->player.setPaused(false);
-    victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
+      if (winningTeam != (int)NoTeam)
+	checkTeamScore(killer, winningTeam);
+
+      victimData->player.setPaused(false);
+      victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
+    }
   }
-
   return true;
 }
 
@@ -3115,7 +3140,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
       if ((p == NULL) || (teamIndex != (int)p->player.getTeam()))
 	continue;
-      playerKilled(i, playerIndex, GotCaptured, -1, Flags::Null, -1, true);
+      smitePlayer(i, GotCaptured);
     }
   }
 
@@ -3932,8 +3957,6 @@ static bool initServer(int argc, char **argv)
 
   // loading player callsign filters
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns, clOptions->filter,clOptions->filterSimple);
-
-  GameKeeper::Player::setMaxShots(clOptions->maxShots);
 
   enableReplayServer();
   setupBadWordFilter();

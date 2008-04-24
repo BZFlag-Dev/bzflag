@@ -24,6 +24,7 @@
 #include "FlagInfo.h"
 #include "StateDatabase.h"
 #include "ShotManager.h"
+#include "bzfs.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -497,7 +498,7 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
 
 bool GameKeeper::Player::canShoot ( void )
 {
-  if (shotSlots.size() > totalShotSlots)
+  if (shotSlots.size() < clOptions->maxShots)
   {
     ShotSlot slot;
     slot.expireTime = -1;

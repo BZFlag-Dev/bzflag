@@ -824,14 +824,14 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   return true;
 }
 
-void sendPlayerKilledMessage(int victimIndex, BlowedUpReason reason, unsigned int id )
+void sendPlayerKilledMessage(int victimIndex, BlowedUpReason reason, int id )
 {
   // send MsgKilled
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(victimIndex);
   msg->packUByte(reason);
-  msg->packUInt(id);
+  msg->packInt(id);
   msg->broadcast(MsgKilled);
 
   for (int i = 0; i < curMaxPlayers; i++)

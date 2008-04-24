@@ -2138,6 +2138,7 @@ static void handleDeathByShot ( int playerID, bool human, unsigned int shotID )
   else
   {
     std::string playerStr;
+    std::string message;
     if (tk)
       playerStr += "teammate ";
 
@@ -2149,11 +2150,11 @@ static void handleDeathByShot ( int playerID, bool human, unsigned int shotID )
 	playerStr += ColorStrings[UnderlineColor];
     }
 
-    int color = killerPlayer->getTeam();
+    int color = killer->getTeam();
     playerStr += ColorStrings[color];
-    playerStr += killerPlayer->getCallSign();
+    playerStr += killer->getCallSign();
 
-    if (victimPlayer == myTank)
+    if (player == myTank)
       playerStr += ColorStrings[ResetColor];
 
     playerStr += ColorStrings[WhiteColor];
@@ -2210,6 +2211,7 @@ static void handleDeathBySquish ( int playerID, bool human, int squisher )
   else
   {
     std::string playerStr;
+    std::string message;
     if (tk)
       playerStr += "teammate ";
 
@@ -2221,11 +2223,11 @@ static void handleDeathBySquish ( int playerID, bool human, int squisher )
 	playerStr += ColorStrings[UnderlineColor];
     }
 
-    int color = killerPlayer->getTeam();
+    int color = killer->getTeam();
     playerStr += ColorStrings[color];
-    playerStr += killerPlayer->getCallSign();
+    playerStr += killer->getCallSign();
 
-    if (victimPlayer == myTank)
+    if (player == myTank)
       playerStr += ColorStrings[ResetColor];
 
     playerStr += ColorStrings[WhiteColor];
@@ -2252,7 +2254,7 @@ static void handleDeathByDriver ( int playerID, bool human, int id )
   else 
     message += driver->getDeathMsg();
 
-  addMessage(victimPlayer, message);
+  addMessage(player, message);
 }
 
 static void handleDeathByDrowning ( int playerID, bool human )
@@ -2594,7 +2596,7 @@ static void handleMsgShotID ( void * msg )
   msg = nboUnpackInt(msg, newID);
 
   // transfer the old local shotID to the new shotID
-  ShotList.instance().updateShotID(oldID,newID);
+  ShotList::instance().updateShotID(oldID,newID);
 }
 
 static void handleShotBegin(bool human, void *msg)
@@ -2610,7 +2612,7 @@ static void handleShotBegin(bool human, void *msg)
   firingInfo.shot.player = shooterid;
   firingInfo.shot.id     = id;
 
-  ShotList &shotList = ShotList.instance();
+  ShotList &shotList = ShotList::instance();
   
   // if the shot exists, just update it
   // otherwise it's new
@@ -2630,7 +2632,7 @@ static void handleShotBegin(bool human, void *msg)
     {
       if (shooter && player[shooterid]->getId() == shooterid)
       {
-	shooter->shoot();
+	//shooter->shoot();
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
 	{
@@ -3401,7 +3403,6 @@ case MsgNewPlayer:
   // inter-player relayed message
 case MsgPlayerUpdate:
 case MsgPlayerUpdateSmall:
-case MsgGMUpdate:
 case MsgLagPing:
   handlePlayerMessage(code, 0, msg);
   break;
@@ -3470,40 +3471,12 @@ static void handleMovementUpdate ( uint16_t code, uint16_t, void* msg )
 static void		handlePlayerMessage(uint16_t code, uint16_t len,
 					    void* msg)
 {
-  switch (code) {
-case MsgPlayerUpdate:
-case MsgPlayerUpdateSmall:
+  if (code == MsgLagPing)		  // just echo lag ping message
+  {
+    serverLink->sendLagPing((char *)msg);
+   return;
+  }
   handleMovementUpdate(code,len,msg);
-  break;
-
-case MsgGMUpdate: {
-  ShotUpdate shot;
-  msg = shot.unpack(msg);
-  Player* tank = lookupPlayer(shot.player);
-  if (!tank || tank == myTank) break;
-  RemotePlayer* remoteTank = (RemotePlayer*)tank;
-  RemoteShotPath* shotPath =
-    (RemoteShotPath*)remoteTank->getShot(shot.id);
-  if (shotPath) shotPath->update(shot, code, msg);
-  PlayerId targetId;
-  msg = nboUnpackUByte(msg, targetId);
-  Player* targetTank = lookupPlayer(targetId);
-  if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
-    static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-      playWorldSound(SFX_LOCK, shot.pos);
-      lastLockMsg=TimeKeeper::getTick();
-      addMessage(tank, "locked on me");
-    }
-  }
-  break;
-		  }
-
-		  // just echo lag ping message
-case MsgLagPing:
-  serverLink->sendLagPing((char *)msg);
-  break;
-  }
 }
 
 //
@@ -3910,7 +3883,7 @@ static void		checkEnvironment()
       playLocalSound(SFX_HIT);
   }
   else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
-    serverLink->sendHitDriver(myTank,myTank->getDeathPhysicsDriver());
+    serverLink->sendHitDriver(myTank->getId(),myTank->getDeathPhysicsDriver());
   else  // if not dead yet, see if i got squished
   {
     const float* myPos = myTank->getPosition();
@@ -3928,7 +3901,7 @@ static void		checkEnvironment()
 	const float dz = (myPos[2] - pos[2]) * 2.0f;
 	const float distSquared = dx*dx + dy*dy + dz*dz;
 	if (distSquared < radius * radius)
-	  serverLink->sendHit(myTank,player[i]->getId(),false);
+	  serverLink->sendHit(myTank->getId(),player[i]->getId(),false);
       }
     }
   }
@@ -3937,12 +3910,12 @@ static void		checkEnvironment()
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
 {
-  const int maxShots = tank->getMaxShots();
-  for (int i = 0; i < maxShots; i++) {
-    const ShotPath* sp = tank->getShot(i);
-    if ((sp != NULL) && (sp->getFlag() == ft)) {
+  std::vector<ShotPath*> playerShots = ShotList::instance().getShotsFromPlayer(tank->getId());
+  for (size_t i = 0; i < playerShots.size(); i++)
+  {
+    const ShotPath* sp = playerShots[i];
+    if ((sp != NULL) && (sp->getFlag() == ft)) 
       return true;
-    }
   }
   return false;
 }
@@ -4474,7 +4447,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   }
   // if not dead yet, see if i'm sitting on death
   else if (tank->getDeathPhysicsDriver() >= 0)
-    serverLink->sendHitDriver(tank,tank->getDeathPhysicsDriver());
+    serverLink->sendHitDriver(tank->getId(),tank->getDeathPhysicsDriver());
   else   // if not dead yet, see if i got run over by the steamroller
   {
     bool dead = false;
@@ -4491,7 +4464,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	  const float distSquared = hypotf(hypotf(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	  if (distSquared < radius)
 	  {
-	    serverLink->sendHit(myTank->getId(),player[i]->getId(),false);
+	    serverLink->sendHit(tank->getId(),player[i]->getId(),false);
 	    dead = true;
 	  }
       }
@@ -5240,32 +5213,39 @@ static bool trackPlayerShot(Player* target,
 			    float* eyePoint, float* targetPoint)
 {
   // follow the first shot
-  if (BZDB.isTrue("trackShots")) {
-    const int maxShots = target->getMaxShots();
+  if (BZDB.isTrue("trackShots"))
+  {
+    std::vector<ShotPath*> playerShots = ShotList::instance().getShotsFromPlayer(target->getId());
+
     const ShotPath* sp = NULL;
     // look for the oldest active shot
     float remaining = +MAXFLOAT;
-    for (int s = 0; s < maxShots; s++) {
-      const ShotPath* spTmp = target->getShot(s);
-      if (spTmp != NULL) {
-	const float t = float(spTmp->getReloadTime() -
-	  (spTmp->getCurrentTime() - spTmp->getStartTime()));
-	if ((t > 0.0f) && (t < remaining)) {
+    for (size_t s = 0; s < playerShots.size(); s++)
+    {
+      const ShotPath* spTmp = playerShots[s];
+      if (spTmp != NULL) 
+      {
+	const float t = float(spTmp->getReloadTime() - (spTmp->getCurrentTime() - spTmp->getStartTime()));
+	if ((t > 0.0f) && (t < remaining)) 
+	{
 	  sp = spTmp;
 	  remaining = t;
 	}
       }
     }
-    if (sp != NULL) {
+    if (sp != NULL)
+    {
       const float* pos = sp->getPosition();
       const float* vel = sp->getVelocity();
       const float speed = sqrtf(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]);
-      if (speed > 0.0f) {
+      if (speed > 0.0f)
+      {
 	const float ilen = 1.0f / speed;
 	const float dir[3] = {ilen * vel[0], ilen * vel[1], ilen * vel[2]};
 	float topDir[3] = {1.0f, 0.0f, 0.0f};
 	const float hlen = sqrtf(dir[0]*dir[0] + dir[1]*dir[1]);
-	if (hlen > 0.0f) {
+	if (hlen > 0.0f)
+	{
 	  topDir[2] = hlen;
 	  const float hfactor = -fabsf(dir[2] / hlen);
 	  topDir[0] = hfactor * dir[0];
@@ -6428,17 +6408,7 @@ void updateVideoFormatTimer ( const float dt )
 
 void updateShots ( const float dt )
 {
-  // update other tank's shots
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
-    if (player[i])
-      player[i]->updateShots(dt);
-  }
-
-  // update servers shots
-  const World *_world = World::getWorld();
-  if (_world)
-    _world->getWorldWeapons()->updateShots(dt);
+  ShotList::instance().updateAllShots(dt);
 }
 
 void moveRoamingCamera ( const float dt )

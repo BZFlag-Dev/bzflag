@@ -264,6 +264,19 @@ typedef enum
 
 typedef enum
 {
+  eServerKill,
+  eGotShot,
+  eGotRunOver,
+  eFlagCapture,
+  eGenocide,
+  eSelfDestruct,
+  eWaterDeath,
+  eHitDriver,
+  eLastDeathReason
+}bz_ePlayerDeathReason;
+
+typedef enum
+{
   eGoodFlag = 0,
   eBadFlag,
   eLastFlagQuality
@@ -494,22 +507,57 @@ public:
   bz_PlayerDieEventData_V1() : bz_EventData()
   {
     eventType = bz_ePlayerDieEvent;
+    reason = eServerKill;
     playerID = -1;
     team = eNoTeam;
-    killerID = -1;
-    killerTeam = eNoTeam;
   }
   virtual ~bz_PlayerDieEventData_V1(){};
   virtual void update (){bz_EventData::update();}
 
   int playerID;
+  bz_ePlayerDeathReason reason;
+  bz_PlayerUpdateState state;
   bz_eTeamType team;
+};
+
+class BZF_API bz_PlayerShotDieEventData_V1 : public bz_PlayerDieEventData_V1
+{
+public:
+  bz_PlayerShotDieEventData_V1() : bz_PlayerDieEventData_V1()
+  {
+    reason = eServerKill;
+    killerID = -1;
+    shotID = -1;
+  }
+  virtual void update (){bz_EventData::update();}
+
   int killerID;
-  bz_eTeamType killerTeam;
   bz_ApiString flagKilledWith;
   int shotID;
+};
 
-  bz_PlayerUpdateState state;
+class BZF_API bz_PlayerDriverDieEventData_V1 : public bz_PlayerDieEventData_V1
+{
+public:
+  bz_PlayerDriverDieEventData_V1() : bz_PlayerDieEventData_V1()
+  {
+    reason = eHitDriver;
+    id = -1;
+  }
+  virtual void update (){bz_EventData::update();}
+  int id;
+};
+
+class BZF_API bz_PlayerRunOverDieEvenDatat_V1 : public bz_PlayerDieEventData_V1
+{
+public:
+  bz_PlayerRunOverDieEvenDatat_V1() : bz_PlayerDieEventData_V1()
+  {
+    reason = eHitDriver;
+    killerID = -1;
+  }
+  virtual void update (){bz_EventData::update();}
+  int killerID;
 };
 
 class BZF_API bz_PlayerSpawnEventData_V1 : public bz_EventData
@@ -1998,18 +2046,6 @@ typedef struct
   int player;
   int handicap;
 }bz_HandicapUpdateRecord;
-
-typedef enum
-{
-  eGotKilled,
-  eGotShot,
-  eGotRunOver,
-  eGotCaptured,
-  eGenocideEffect,
-  eSelfDestruct,
-  eWaterDeath,
-  ePhysicsDriverDeath,
-}bz_ePlayerDeathReason;
 
 class BZF_API bz_ServerSidePlayerHandler
 {

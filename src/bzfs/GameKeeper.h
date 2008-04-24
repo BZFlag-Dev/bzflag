@@ -231,7 +231,6 @@ public:
       bool       running;
     };
 
-    static size_t	  totalShotSlots;
     std::vector<ShotSlot> shotSlots;
 
     // list of the live shots, and the temp IDs they used when they were shot

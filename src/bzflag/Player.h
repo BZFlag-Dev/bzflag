@@ -225,13 +225,14 @@ public:
 
   void		updateShot ( FiringInfo &info, int shotID, double time );
 
+  void		shoot ( void );
+
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);
   void    prepareShotInfo(FiringInfo &info);
   void    addShot(ShotPath *shot, const FiringInfo &info);
 
-  void	  shoot ( void );
 
 protected:
   // shot statistics

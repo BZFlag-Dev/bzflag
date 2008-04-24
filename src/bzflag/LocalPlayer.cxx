@@ -33,6 +33,11 @@
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
 #include "ShotList.h"
+#include "AutoPilot.h"
+
+#include "playing.h"
+#include "Roster.h"
+
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -1312,7 +1317,7 @@ void 			LocalPlayer::died ( void )
 
 void  			LocalPlayer::killTeammate ( PlayerId player )
 {
-  BaseLocalPlayer::killTeammate();
+  BaseLocalPlayer::killTeammate(player);
 
   hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
   playLocalSound(SFX_KILL_TEAM);
@@ -1343,26 +1348,28 @@ bool			LocalPlayer::fireShot()
   if (!canShoot())
     return false;
 
-  // find an empty slot
-  const int numShots = getMaxShots();
-  int i;
-  for (i = 0; i < numShots; i++)
-    if (!shots[i])
-      break;
-  if (i == numShots) return false;
-
   // make sure we're allowed to shoot
-  if (!isAlive() || isPaused() ||
-      ((location == InBuilding) && !isPhantomZoned())) {
+  if (!isAlive() || isPaused() || ((location == InBuilding) && !isPhantomZoned()))
     return false;
+
+  // find the next empty slot
+  int slot = -1;
+
+  for ( size_t s = 0; s < shotSlots.size(); s++ )
+  {
+    if ( shotSlots[s].isExpired() )
+      slot = (int)s;
   }
+
+  if (slot < 0 )
+    return false;
 
   // prepare shot
   FiringInfo firingInfo;
   firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
   firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
-  firingInfo.shot.id     = uint16_t(i + getSalt());
+  firingInfo.shot.id     = slot * -1;
   prepareShotInfo(firingInfo);
   // make shot and put it in the table
   addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
@@ -1381,81 +1388,40 @@ bool			LocalPlayer::fireShot()
 
   if (gettingSound)
   {
-	  switch(firingInfo.shotType)
-	  {
-		case ShockWaveShot:
-			playLocalSound(SFX_SHOCK);
-			ForceFeedback::shockwaveFired();
-			break;
+    switch(firingInfo.shotType)
+    {
+    case ShockWaveShot:
+      playLocalSound(SFX_SHOCK);
+      ForceFeedback::shockwaveFired();
+      break;
 
-		case LaserShot:
-			playLocalSound(SFX_LASER);
-			ForceFeedback::laserFired();
-			break;
+    case LaserShot:
+      playLocalSound(SFX_LASER);
+      ForceFeedback::laserFired();
+      break;
 
-		case GMShot:
-			playLocalSound(SFX_MISSILE);
-			ForceFeedback::shotFired();
-			break;
+    case GMShot:
+      playLocalSound(SFX_MISSILE);
+      ForceFeedback::shotFired();
+      break;
 
-		case ThiefShot:
-			playLocalSound(SFX_THIEF);
-			ForceFeedback::shotFired();
-			break;
+    case ThiefShot:
+      playLocalSound(SFX_THIEF);
+      ForceFeedback::shotFired();
+      break;
 
-		default:
-			playLocalSound(SFX_FIRE);
-			ForceFeedback::shotFired();
-			break;
-	  }
+    default:
+      playLocalSound(SFX_FIRE);
+      ForceFeedback::shotFired();
+      break;
+    }
   }
 
-  if (getFlag() == Flags::TriggerHappy) {
+  if (getFlag() == Flags::TriggerHappy)
+  {
     // make sure all the shots don't go off at once
-    forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
+    forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / shotSlots.size());
   }
-  return true;
-}
-
-
-bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
-{
-  const int index = ident & 255;
-  const int slt   = (ident >> 8) & 127;
-
-  // special id used in some messages (and really shouldn't be sent here)
-  if (ident == -1)
-    return false;
-
-  // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= getMaxShots() || !shots[index])
-    return false;
-
-  // ignore shots that already ending
-  if (shots[index]->isExpired() || shots[index]->isExpiring())
-    return false;
-
-  // ignore shots that have the wrong salt.  since we reuse shot indices
-  // it's possible for an old MsgShotEnd to arrive after we've started a
-  // new shot.  that's where the salt comes in.  it changes for each shot
-  // so we can identify an old shot from a new one.
-  if (slt != ((shots[index]->getShotId() >> 8) & 127))
-    return false;
-
-  // keep shot statistics
-  shotStatistics.recordHit(shots[index]->getFlag());
-
-  // don't stop if it's because were hitting something and we don't stop
-  // when we hit something.
-  if (isHit && !shots[index]->isStoppedByHit())
-    return false;
-
-  // end it
-  const float* shotPos = shots[index]->getPosition();
-  pos[0] = shotPos[0];
-  pos[1] = shotPos[1];
-  pos[2] = shotPos[2];
-  shots[index]->setExpired();
   return true;
 }
 
@@ -1654,15 +1620,19 @@ bool			LocalPlayer::checkHit(const Player* source,
   // if firing tank is paused then it doesn't count
   if (source->isPaused()) return goodHit;
 
-  const int maxShots = source->getMaxShots();
-  for (int i = 0; i < maxShots; i++) {
+  std::vector<ShotPath*> shotList = ShotList::instance().getShotList();
+
+  for (size_t i = 0; i < shotList.size(); i++)
+  {
     // get shot
-    const ShotPath* shot = source->getShot(i);
-    if (!shot || shot->isExpired()) continue;
+    const ShotPath* shot = shotList[i];
+    if (!shot || shot->isExpired()) 
+      continue;
     ShotType	_shotType = shot->getShotType();
 
     // my own shock wave cannot kill me
-    if (source == this && ((_shotType == ShockWaveShot) || (_shotType == ThiefShot))) continue;
+    if (source == this && ((_shotType == ShockWaveShot) || (_shotType == ThiefShot)))
+      continue;
 
     // if no team kills, shots of my team can't kill me
     if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
@@ -1681,9 +1651,8 @@ bool			LocalPlayer::checkHit(const Player* source,
       continue;
 
     // zoned shots only kill zoned tanks
-    if ((_shotType == PhantomShot) && !isPhantomZoned()) {
+    if ((_shotType == PhantomShot) && !isPhantomZoned())
       continue;
-    }
 
     // test myself against shot
     float position[3];
@@ -1701,7 +1670,8 @@ bool			LocalPlayer::checkHit(const Player* source,
     memcpy(collider.bbox,bbox,sizeof(bbox));
 
     const float t = shot->checkHit(collider, position);
-    if (t >= minTime) continue;
+    if (t >= minTime)
+      continue;
 
     // test if shot hit a part of my tank that's through a teleporter.
     // hit is no good if hit point is behind crossing plane.

@@ -129,7 +129,6 @@ public:
 			     float* normal) const;
 
 protected:
-  bool		doEndShot(int index, bool isHit, float* pos);
   void		doUpdate(float dt);
   void		doUpdateMotion(float dt);
   void		doMomentum(float dt, float& speed, float& angVel);

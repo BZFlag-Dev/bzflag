@@ -36,7 +36,7 @@ void sendMessageAlive ( int playerID, float pos[3], float rot );
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow );
 void sendMessageAllow ( int playerID, unsigned char allow );
 bool sendPlayerStateMessage ( GameKeeper::Player *playerData, bool shortState);
-void sendPlayerKilledMessage (int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv);
+void sendPlayerKilledMessage (int victimIndex,  BlowedUpReason reason, int shotIndex);
 void sendPlayerScoreUpdate ( GameKeeper::Player *player );
 void sendScoreOverMessage ( int playerID, TeamColor team  );
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag );

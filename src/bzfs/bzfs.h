@@ -83,7 +83,7 @@ extern void searchFlag(GameKeeper::Player &playerData);
 extern void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
-extern bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respawnOnBase = false);
+extern bool playerKilled(int victimIndex, BlowedUpReason reason, int id, bool respawnOnBase = false);
 extern bool smitePlayer(int victimIndex, BlowedUpReason reason = GotKilledMsg, bool respawnOnBase = false);
 extern void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 extern void captureFlag(int playerIndex, TeamColor teamCaptured);

@@ -32,6 +32,8 @@
 #include "MainWindow.h"
 #include "ControlPanel.h"
 
+#include "HUDRenderer.h"
+
 #define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
 
@@ -51,7 +53,6 @@ class MainWindow;
 class SceneRenderer;
 class Player;
 class ServerLink;
-class HUDRenderer;
 class WordFilter;
 class FlagType;
 
