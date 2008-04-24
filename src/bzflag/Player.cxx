@@ -33,6 +33,7 @@
 
 #include "SyncClock.h"
 #include "ShotList.h"
+#include "ForceFeedback.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -533,10 +534,9 @@ void Player::died ( void )
   // can't take it with you
   dropFlag();
 
-  explodeTank();
   EFFECTS.addDeathEffect(getColor(), getPosition(), getAngle());
 
-  if (isViewTank())
+  if (isViewTank(this))
     ForceFeedback::death();
 }
 
@@ -1545,7 +1545,6 @@ void Player::setIpAddress(const Address& addr)
   haveIpAddr = true;
 }
 
-
 void Player::prepareShotInfo(FiringInfo &firingInfo)
 {
   firingInfo.shot.dt = 0.0f;
@@ -1602,36 +1601,8 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
 
 void Player::addShot(ShotPath *shot, const FiringInfo &info)
 {
-  int shotNum = int(shot->getShotId() & 255);
-
-  if (shotNum >= (int)shots.size())
-    shots.resize(shotNum+1);
-  else if (shots[shotNum] != NULL)
-    delete shots[shotNum];
-
-  shots[shotNum] = shot;
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 }
-
-void Player::updateShot ( FiringInfo &info, int shotID, double time )
-{
-  // kill the old shot
-  if (shotID < (int)shots.size())
-  {
-    if ( shots[shotID] != NULL )
-    {
-      delete shots[shotID];
-      shots[shotID] = NULL;
-    }
-  }
-  else
-    return;
-
-  // build a new shot with the new info
-  prepareShotInfo(info);
-  shots[shotID] = new LocalShotPath(info,time);
-}
-
 
 void Player::setHandicap(float _handicap)
 {

@@ -574,7 +574,7 @@ bool GameKeeper::Player::addShot( int globalID, int localID, double startTime )
   shotSlots[freeSlot].running     = true;
 
   // track our live shots by global ID, keep the local ID around for the rare case where we die from our own shot before we get the globalID
-  liveShots[globalID)] = localID;
+  liveShots[globalID] = localID;
   return true;
 }
 

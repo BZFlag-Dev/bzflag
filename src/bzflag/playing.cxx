@@ -92,6 +92,7 @@
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
 #include "CollisionManager.h"
+#include "ShotList.h"
 //#include "messages.h"
 
 static const float	FlagHelpDuration = 60.0f;
@@ -2077,7 +2078,7 @@ static void handleAllow(void *msg)
   addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
 
-void playSoundForPlayer ( playerID playerID, int soundID )
+void playSoundForPlayer ( PlayerId playerID, int soundID )
 {
   Player *player = getPlayerByIndex(playerID);
   if (player == myTank)
@@ -2097,7 +2098,7 @@ bool teamKill ( Player* killer, Player* victim )
   if (killer == victim )
     return false;
 
-  if (!allowTeams() || !World::getWorld()->allowTeamKills() || killer->getTeam() == RogueTeam )
+  if (World::getWorld()->allowTeamKills() || killer->getTeam() == RogueTeam )
     return false;
 
   return killer->getTeam() == victim->getTeam();

@@ -379,7 +379,7 @@ bool KillCommand::operator() (const char	 *message,
 
   if (argv.size() < 2) 
   {
-    sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\">  "[reason]");
+    sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\"> [reason]");
     sendMessage(ServerPlayer, t,"	Please keep in mind that reason is displayed to the user.");
     return true;
   }
@@ -434,7 +434,7 @@ bool KillCommand::operator() (const char	 *message,
     }
 
     // kill the player
-    playerKilled(killEvent.killedID, ServerPlayer, GotKilledMsg, -1, Flags::Null, -1);
+    smitePlayer(killEvent.killedID, GotKilledMsg);
 
     worldEventManager.callEvents(bz_eKillEvent,&killEvent);
   }

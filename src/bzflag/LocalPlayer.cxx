@@ -32,6 +32,7 @@
 #include "playing.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
+#include "ShotList.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -99,17 +100,15 @@ void			LocalPlayer::setMyTank(LocalPlayer* player)
 void			LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
-  const int numShots = getMaxShots();
   static TimeKeeper pauseTime = TimeKeeper::getNullTime();
   static bool wasPaused = false;
 
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
-  int i;
   if (isPaused())
   {
     for (size_t s = 0; s < shotSlots.size(); s++)
-	shotSlots[s]->boostReloadTime(dt);
+	shotSlots[s].boostReloadTime(dt);
 
     // if we've been paused for a long time, drop our flag
     if (!wasPaused)
@@ -153,11 +152,11 @@ void			LocalPlayer::doUpdate(float dt)
       shotSlots[s].update(dt);
       if (!shotSlots[s].isExpired())
 	anyShotActive = true;
-    }
   }
 
   // if no shots now out (but there had been) then reset target
-  if (!anyShotActive && hadShotActive)
+
+  if ( !anyShotActive && hadShotActive )
     target = NULL;
 
   // drop bad flag if timeout has expired
@@ -1111,14 +1110,13 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   // can't have a flag
   setFlag(Flags::Null);
 
-  // get rid of existing shots
-  const int numShots = getMaxShots();
-  // get rid of existing shots
-  for (int i = 0; i < numShots; i++)
-    if (shots[i]) {
-      delete shots[i];
-      shots[i] = NULL;
-    }
+  // initialize shots array to no shots fired
+  shotSlots.clear();
+  if (World::getWorld())
+  {
+    for ( size_t i = 0; i < World::getWorld()->getMaxShots(); i++ )
+      shotSlots.push_back(ShotSlot());
+  }
   anyShotActive = false;
 
   // no target
@@ -1303,6 +1301,7 @@ void			LocalPlayer::dropFlag ( void )
 void 			LocalPlayer::died ( void )
 {
   BaseLocalPlayer::died();
+  explodeTank();
 
   if (savedVolume != -1) 
   {

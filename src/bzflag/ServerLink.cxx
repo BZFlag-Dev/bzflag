@@ -1028,12 +1028,9 @@ void ServerLink::sendHit(const PlayerId &source, int id, bool shot)
   send(MsgHit, sizeof(msg), msg);
 }
 
-void ServerLink::sendHitDriver(const PlayerId &source, int id )
+void ServerLink::sendHitDriver(const PlayerId &source, int id)
 {
   char msg[5];
-  unsigned char s = 0;
-  if (shot)
-    s = 1;
   void* buf = msg;
   buf = nboPackUByte(buf, source);
   buf = nboPackInt(buf, id);

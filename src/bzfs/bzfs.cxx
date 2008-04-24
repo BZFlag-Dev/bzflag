@@ -63,6 +63,7 @@
 #include "GameTime.h"
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
+#include "ShotManager.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
@@ -2721,7 +2722,7 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
 }
 
 // player has been forced to die
-void smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
+bool smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
 {
   GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
@@ -2730,8 +2731,10 @@ void smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
     return false;
 
   // ok so no mater what, he's dead so set him as dead
-  victimData->player->setRestartOnBase(respawnOnBase);
-  victimData->player->setDead();
+  victimData->player.setRestartOnBase(respawnOnBase);
+  victimData->player.setDead();
+
+  return true;
 }
 
 // player killed by shot or world. this is a normal death
@@ -2744,8 +2747,8 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
     return false;
 
   // ok so no mater what, he's dead so set him as dead
-  victimData->player->setRestartOnBase(respawnOnBase);
-  victimData->player->setDead();
+  victimData->player.setRestartOnBase(respawnOnBase);
+  victimData->player.setDead();
 
   // stop pausing attempts as you can not pause when being dead
   victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
@@ -2757,11 +2760,11 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
   {
   default:
     // an invalid reason, bail
-    return;
+    return false;
 
     // reasons with shots
   case GotRunOver:
-    killer = id;
+    killer = (PlayerId)id;
     break;
 
   case GotShot:
@@ -2873,6 +2876,8 @@ bool playerKilled(int victimIndex, BlowedUpReason reason, int16_t id, bool respa
     victimData->player.setPaused(false);
     victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
   }
+
+  return true;
 }
 
 void searchFlag(GameKeeper::Player &playerData)

@@ -532,6 +532,7 @@ void 			RobotPlayer::killTeammate ( PlayerId player )
 void 			RobotPlayer::died ( void )
 {
   BaseLocalPlayer::died();
+  explodeTank();
 
   const float* pos = getPosition();
   float explodePos[3];
