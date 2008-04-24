@@ -704,17 +704,17 @@ public:
 
       // TODO verify the shot, make sure the shot is near them etc..
 
-      ShotManager::instance().removeShot(id,false);
-      if (shooterData->removeShot(id))
+      if (shotTypeEndsOnHit(shot->type))
       {
 	sendMsgShotEnd( id, 1);
-
-	FlagInfo *flagInfo = FlagInfo::get(player->player.getFlag());
-	if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-	  playerKilled(hitPlayer, GotShot, id, false);
-	else
-	  zapFlagByPlayer(hitPlayer);
+	shooterData->removeShot(id);
+	ShotManager::instance().removeShot(id,false);
       }
+      FlagInfo *flagInfo = FlagInfo::get(player->player.getFlag());
+      if (!flagInfo || flagInfo->flag.type != Flags::Shield)
+	playerKilled(hitPlayer, GotShot, id, false);
+      else
+	zapFlagByPlayer(hitPlayer);
     }
     else // steam roller
       playerKilled(hitPlayer,GotRunOver,id);

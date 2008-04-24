@@ -94,7 +94,7 @@ enum FlagQuality {
 
 /** This enum says if the flag type gives the carrier a special shooting
     ability. */
-enum ShotType {
+typedef enum  {
 	NoShot = 0,
 	StandardShot,
 	GMShot,
@@ -108,8 +108,12 @@ enum ShotType {
 	InvisibleShot,
 	CloakedShot,
 	RapidFireShot
-};
+}ShotType;
 
+inline bool shotTypeEndsOnHit ( ShotType shotType )
+{
+  return shotType == LaserShot || shotType == ThiefShot;
+}
 
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
 

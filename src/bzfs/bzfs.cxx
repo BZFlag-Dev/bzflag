@@ -74,6 +74,13 @@
 #  define BUFSIZE 2048
 #endif
 
+class BZFSShotCallbacks : public ShotEventCallbacks
+{
+public:
+  virtual void shotEnded ( int id );
+  virtual void shotStarted ( int id );
+  virtual void shotUpdated ( int id );
+};
 
 // pass through the SELECT loop
 bool dontWait = true;
@@ -4628,6 +4635,8 @@ static void runMainLoop ( void )
   int readySetGo = -1; // match countdown timer
   int nfound; 
   bool firstRun = true;
+  double  lastLoopTime =  TimeKeeper::getCurrent().getSeconds();
+
   while (!done) {
     if (firstRun)
     {
@@ -4662,6 +4671,9 @@ static void runMainLoop ( void )
     checkWaitTime(tm,waitTime);
 
     double now = tm.getSeconds();
+    double deltaT = now - lastLoopTime;
+    lastLoopTime = now;
+
     double tcpTimeout = BZDB.eval(StateDatabase::BZDB_TCPTIMEOUT);
 
     /**************
@@ -5046,7 +5058,9 @@ static void runMainLoop ( void )
     // Fire world weapons
     world->getWorldWeapons().fire();
 
+    // update the various singletons
     MSGMGR.update();
+    ShotManager::instance().update(deltaT);
 
     cleanPendingPlayers();
 
@@ -5100,6 +5114,8 @@ int main(int argc, char **argv)
 
   registerDefaultHandlers();
 
+  ShotManager::instance().addEventHandler(new BZFSShotCallbacks);
+
   // start the server
   if (!serverStart()) {
 #if defined(_WIN32)
@@ -5125,6 +5141,23 @@ bool worldStateChanging ( void )
   TimeKeeper now = TimeKeeper::getCurrent();
   return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f;
 }
+
+
+void BZFSShotCallbacks::shotEnded ( int id )
+{
+  sendMsgShotEnd(id,1);
+}
+
+void BZFSShotCallbacks::shotStarted ( int id )
+{
+
+}
+
+void BZFSShotCallbacks::shotUpdated ( int id )
+{
+
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

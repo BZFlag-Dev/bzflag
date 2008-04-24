@@ -570,7 +570,7 @@ bool GameKeeper::Player::addShot( int globalID, int localID, double startTime )
     lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
 
   // fill up the slot
-  shotSlots[freeSlot].expireTime  = startTime + lifeTime;
+  shotSlots[freeSlot].expireTime  = (float)startTime + lifeTime;
   shotSlots[freeSlot].present     = true;
   shotSlots[freeSlot].running     = true;
 
