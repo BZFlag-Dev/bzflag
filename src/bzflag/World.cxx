@@ -48,7 +48,7 @@ int			World::flagTexture(-1);
 
 
 World::World() :
-  gameType(eTeamFFA),
+  gameType(TeamFFA),
   gameOptions(0),
   maxPlayers(0),
   curMaxPlayers(0),
@@ -172,7 +172,7 @@ const Teleporter* World::getTeleporter(int source, int& face) const
 
 TeamColor		World::whoseBase(const float* pos) const
 {
-  if (gameType != eClassicCTF)
+  if (gameType != ClassicCTF)
     return NoTeam;
 
   for (int i = 1; i < NumTeams; i++) {

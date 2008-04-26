@@ -802,7 +802,7 @@ void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t cod
 
 static bool allBasesDefined(void)
 {
-  if (clOptions->gameType == eClassicCTF) {
+  if (clOptions->gameType == ClassicCTF) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if ((clOptions->maxTeam[i] > 0) && bases.find(i) == bases.end()) {
 	// If this team has been set by some form of -mp, then warn.
@@ -830,9 +830,9 @@ bool defineWorld ( void )
   }
 
   bz_GetWorldEventData_V1	worldData;
-  worldData.ctf = clOptions->gameType == eClassicCTF;
-  worldData.rabbit = clOptions->gameType == eRabbitChase;
-  worldData.openFFA = clOptions->gameType == eOpenFFA;
+  worldData.ctf = clOptions->gameType == ClassicCTF;
+  worldData.rabbit = clOptions->gameType == RabbitChase;
+  worldData.openFFA = clOptions->gameType == OpenFFA;
   worldData.worldFile = clOptions->worldFile;
 
   world = new WorldInfo;
@@ -841,13 +841,13 @@ bool defineWorld ( void )
   if (!worldData.generated && worldData.worldFile.size()) {
     clOptions->worldFile = worldData.worldFile.c_str();
     if (worldData.ctf)
-      clOptions->gameType = eClassicCTF;
+      clOptions->gameType = ClassicCTF;
     else if (worldData.rabbit)
-      clOptions->gameType = eRabbitChase;
+      clOptions->gameType = RabbitChase;
     else if (worldData.openFFA)
-      clOptions->gameType = eOpenFFA;
+      clOptions->gameType = OpenFFA;
     else
-      clOptions->gameType = eTeamFFA;
+      clOptions->gameType = TeamFFA;
 
     // todo.. load this maps options and vars and stuff.
   }
@@ -873,7 +873,7 @@ bool defineWorld ( void )
     if (!worldData.generated) {
       logDebugMessage(1,"building random map\n");
       delete world;
-      if (clOptions->gameType == eClassicCTF)
+      if (clOptions->gameType == ClassicCTF)
 	world = defineTeamWorld();
       else
 	world = defineRandomWorld();
@@ -991,7 +991,7 @@ bool saveWorldCache ( const char* fileName )
 
 TeamColor whoseBase(float x, float y, float z)
 {
-  if (clOptions->gameType!= eClassicCTF)
+  if (clOptions->gameType!= ClassicCTF)
     return NoTeam;
 
   float highest = -1;
@@ -1546,7 +1546,7 @@ static TeamColor autoTeamSelect(TeamColor t)
     return ObserverTeam;
 
   // if we're running rabbit chase, all non-observers start as hunters
-  if (clOptions->gameType == eRabbitChase)
+  if (clOptions->gameType == RabbitChase)
     return HunterTeam;
 
   // If tank ask for rogues, and rogues are allowed, give it
@@ -1910,7 +1910,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
 
   // player is signing on (has already connected via addClient).
-  playerData->signingOn(clOptions->gameType == eClassicCTF);
+  playerData->signingOn(clOptions->gameType == ClassicCTF);
 
   // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());
@@ -1951,7 +1951,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendIPUpdate(playerIndex, -1);
 
   // send rabbit information
-  if (clOptions->gameType == eRabbitChase)
+  if (clOptions->gameType == RabbitChase)
   {
     NetMsg msg = MSGMGR.newMessage();
 
@@ -1983,7 +1983,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    if (clOptions->gameType == eClassicCTF) {
+    if (clOptions->gameType == ClassicCTF) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
       if (flagid >= 0 && !FlagInfo::get(flagid)->exist()) {
 	// reset those flags
@@ -2226,7 +2226,7 @@ void pausePlayer(int playerIndex, bool paused = true)
     return;
 
   playerData->player.setPaused(paused);
-  if (clOptions->gameType == eRabbitChase) {
+  if (clOptions->gameType == RabbitChase) {
     if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();
     } else if (!paused && (rabbitIndex == NoPlayer)) {
@@ -2355,7 +2355,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // is carrying it
     if (Team::isColorTeam((TeamColor)teamNum)
 	&& team[teamNum].team.size == 0 &&
-	(clOptions->gameType == eClassicCTF)) {
+	(clOptions->gameType == ClassicCTF)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
 	GameKeeper::Player *otherData;
@@ -2383,7 +2383,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     listServerLink->queueMessage(ListServerLink::ADD);
   }
 
-  if (clOptions->gameType == eRabbitChase)
+  if (clOptions->gameType == RabbitChase)
     if (playerIndex == rabbitIndex)
       anointNewRabbit();
 
@@ -2500,7 +2500,7 @@ void playerAlive(int playerIndex)
   SpawnPosition spawnPosition
     (playerIndex,
      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-     clOptions->gameType == eClassicCTF);
+     clOptions->gameType == ClassicCTF);
 
   // see if there is anyone to handle the spawn event, and if they want to change it.
   bz_GetPlayerSpawnPosEventData_V1	spawnData;
@@ -2531,7 +2531,7 @@ void playerAlive(int playerIndex)
 
   worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
 
-  if (clOptions->gameType == eRabbitChase) {
+  if (clOptions->gameType == RabbitChase) {
     playerData->player.wasNotARabbit();
     if (rabbitIndex == NoPlayer) {
       anointNewRabbit();
@@ -2558,7 +2558,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 
 bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )
 {
-  if (clOptions->gameType == eOpenFFA || !victim || !killer)
+  if (clOptions->gameType == OpenFFA || !victim || !killer)
     return false;
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
@@ -2781,7 +2781,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     checkForScoreLimit(killerData);
   }
 
-  if (clOptions->gameType == eRabbitChase) {
+  if (clOptions->gameType == RabbitChase) {
     if (victimIndex == rabbitIndex)
       anointNewRabbit(killerIndex);
   } else {
@@ -2790,7 +2790,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16
     // flag mode.
     // Team score is even not used on RabbitChase
     int winningTeam = (int)NoTeam;
-    if ( clOptions->gameType == eClassicCTF || clOptions->gameType == eTeamFFA ) {
+    if ( clOptions->gameType == ClassicCTF || clOptions->gameType == TeamFFA ) {
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam()) {
 	if (!killer->isTeam(RogueTeam)) {
@@ -4036,7 +4036,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	// kill any players that are playing already
 	GameKeeper::Player *player;
 
-	if (clOptions->gameType == eClassicCTF) {
+	if (clOptions->gameType == ClassicCTF) {
 	  // cap all the flags
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(RedTeam),RedTeam);
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(GreenTeam),GreenTeam);
@@ -4422,7 +4422,7 @@ static void doTextBroadcasts ( TimeKeeper &tm )
 static void doTeamFlagTimeouts ( TimeKeeper &tm )
 {
   // check team flag timeouts
-  if (clOptions->gameType == eClassicCTF) {
+  if (clOptions->gameType == ClassicCTF) {
     for (int i = RedTeam; i < CtfTeams; ++i) {
       if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
 	int flagid = FlagInfo::lookupFirstTeamFlag(i);

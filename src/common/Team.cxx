@@ -169,7 +169,7 @@ void			Team::setColors(TeamColor team,
 // are the two teams foes with the current game style?
 bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style)
 {
-  if (style == eOpenFFA)
+  if (style == OpenFFA)
     return true;
 
   return team1!=team2 || (team1==RogueTeam) || (team2==RogueTeam);

@@ -91,10 +91,10 @@ const int MaxMotionSize = 37;		// motion zone size
 
 typedef enum GameType
 {
-  eTeamFFA,	  // normal teamed FFA
-  eClassicCTF,	  // your normal CTF
-  eOpenFFA,	  // teamless FFA
-  eRabbitChase	  // hunt the rabbit mode
+  TeamFFA,	  // normal teamed FFA
+  ClassicCTF,	  // your normal CTF
+  OpenFFA,	  // teamless FFA
+  RabbitChase	  // hunt the rabbit mode
 };
 // game styles
 enum GameOptions {

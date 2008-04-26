@@ -605,11 +605,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.botsPerIP = atoi(argv[i]);
     } else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
-      if (options.gameType == eRabbitChase) {
+      if (options.gameType == RabbitChase) {
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 	std::cerr << "Capture the flag assumed" << std::endl;
       }
-      options.gameType = eClassicCTF;
+      options.gameType = ClassicCTF;
     } else if (strcmp(argv[i], "-cache") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
@@ -633,11 +633,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // CTF with random world
       options.randomCTF = true;
       // capture the flag style
-      if (options.gameType == eRabbitChase)  {
+      if (options.gameType == RabbitChase)  {
 		std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 		std::cerr << "Capture the flag assumed" << std::endl;
       }
-      options.gameType = eClassicCTF;
+      options.gameType = ClassicCTF;
     } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
@@ -898,12 +898,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-rabbit") == 0)
 	{
       // rabbit chase style
-      if (options.gameType == eClassicCTF)
+      if (options.gameType == ClassicCTF)
 	  {
 		std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
 		std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
-	  options.gameType = eRabbitChase;
+	  options.gameType = RabbitChase;
 
       // default selection style
       options.rabbitSelection = ScoreRabbitSelection;
@@ -1075,11 +1075,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
     } else if (strcmp(argv[i], "-offa") == 0) {
       // teamless ffa style
-      if (options.gameType == eRabbitChase || options.gameType == eClassicCTF) {
+      if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
 	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
 	std::cerr << "Open Free-for-all assumed" << std::endl;
       }
-      options.gameType = eOpenFFA;
+      options.gameType = OpenFFA;
     } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       checkArgc(1, i, argc, argv[i]);
@@ -1251,7 +1251,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     std::cout << "WARNING: flags on boxes without jumping is potentially unsafe" << std::endl;
   }
 
-  if (options.gameType == eRabbitChase) {
+  if (options.gameType == RabbitChase) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
       if (options.maxTeam[j] > 0
 	  && options.maxTeam[RogueTeam] != maxRealPlayers)
@@ -1347,7 +1347,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     forbidden.insert(Flags::Colorblindness);
     forbidden.insert(Flags::Masquerade);
   }
-  if ((options.gameType == eClassicCTF) == 0) {
+  if ((options.gameType == ClassicCTF) == 0) {
     forbidden.insert(Flags::RedTeam);
     forbidden.insert(Flags::GreenTeam);
     forbidden.insert(Flags::BlueTeam);
@@ -1384,7 +1384,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   };
 
   // make sure there is at least one team flag for each active team
-  if (options.gameType == eClassicCTF) {
+  if (options.gameType == ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if ((options.maxTeam[col] > 0) &&
 	  (options.numTeamFlags[col] <= 0) &&
@@ -1428,7 +1428,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   // allocate space for extra flags
   numFlags = options.numExtraFlags;
   // allocate space for team flags
-  if (options.gameType & eClassicCTF) {
+  if (options.gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if (options.maxTeam[col] > 0) {
 	numFlags += options.numTeamFlags[col];
@@ -1456,7 +1456,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // add team flags (ordered)
   int f = 0;
-  if (options.gameType == eClassicCTF) {
+  if (options.gameType == ClassicCTF) {
     if (options.maxTeam[RedTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
@@ -1536,7 +1536,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   }
 
   // sum the sources of team flags
-  if (options.gameType & eClassicCTF) {
+  if (options.gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
@@ -1553,9 +1553,9 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // debugging
   logDebugMessage(1,"type: %d\n", options.gameType);
-  if (options.gameType == eClassicCTF)
+  if (options.gameType == ClassicCTF)
     logDebugMessage(1,"  capture the flag\n");
-  if (options.gameType == eRabbitChase)
+  if (options.gameType == RabbitChase)
     logDebugMessage(1,"  rabbit chase\n");
 
   logDebugMessage(1,"options: %X\n", options.gameOptions);

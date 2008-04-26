@@ -1623,7 +1623,7 @@ static bool saveFlagsState()
 
 static bool saveRabbitState()
 {
-  if (clOptions->gameType == eRabbitChase) {
+  if (clOptions->gameType == RabbitChase) {
     char bufStart[MaxPacketLen];
     void *buf;
     buf = nboPackUByte(bufStart, rabbitIndex);

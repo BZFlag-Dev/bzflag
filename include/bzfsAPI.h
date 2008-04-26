@@ -240,10 +240,10 @@ typedef enum
 
 typedef enum
 {
-  eTeamFFAGame = 0,
-  eClassicCTFGame,
+  TeamFFAGame = 0,
+  ClassicCTFGame,
   eRabbitGame,
-  eOpenFFAGame
+  OpenFFAGame
 }bz_eGameType;
 
 typedef enum

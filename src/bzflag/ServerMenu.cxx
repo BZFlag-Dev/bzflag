@@ -320,9 +320,9 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  if ((server.ping.observerMax == 16) &&
 	      (server.ping.maxPlayers == 200)) {
 	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-	  } else if (gameType == eClassicCTF) {
+	  } else if (gameType == ClassicCTF) {
 	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
-	  } else if (gameType == eRabbitChase) {
+	  } else if (gameType == RabbitChase) {
 	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
 	  } else {
 	    fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
@@ -393,7 +393,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
 	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
 	  const float gf = gameOptions & JumpingGameStyle ? 1.0f : 0.0f;
-	  const float bf = (gameType == eClassicCTF) ? 1.0f : 0.0f;
+	  const float bf = (gameType == ClassicCTF) ? 1.0f : 0.0f;
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
@@ -529,11 +529,11 @@ void ServerMenu::pick()
   else
     (listHUD[8])->setString("{1} Shots", &args );
 
-  if (ping.gameType == eClassicCTF)
+  if (ping.gameType == ClassicCTF)
     (listHUD[9])->setString("Classic Capture-the-Flag");
-  else if (ping.gameType == eRabbitChase)
+  else if (ping.gameType == RabbitChase)
     (listHUD[9])->setString("Rabbit Chase");
-  else if (ping.gameType == eOpenFFA)
+  else if (ping.gameType == OpenFFA)
 	  (listHUD[9])->setString("Open (Teamless) Free-For-All");
   else
     (listHUD[9])->setString("Team Free-For-All");

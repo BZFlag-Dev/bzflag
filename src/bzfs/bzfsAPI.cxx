@@ -2456,7 +2456,7 @@ BZF_API bool bz_getStandardSpawn(int playerID, float pos[3], float *rot)
     return false;
 
   // get the spawn position
-  SpawnPosition *spawnPosition=new SpawnPosition(playerID, (!clOptions->respawnOnBuildings) || (player->player.isBot()), clOptions->gameType==eClassicCTF);
+  SpawnPosition *spawnPosition=new SpawnPosition(playerID, (!clOptions->respawnOnBuildings) || (player->player.isBot()), clOptions->gameType==ClassicCTF);
 
   pos[0]=spawnPosition->getX();
   pos[1]=spawnPosition->getY();
@@ -3983,14 +3983,14 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint(float pos[3])
 
 BZF_API bz_eGameType bz_getGameType(void)
 {
-  if(clOptions->gameType==eClassicCTF)
-    return eClassicCTFGame;
-  else if(clOptions->gameType==eRabbitChase)
+  if(clOptions->gameType==ClassicCTF)
+    return ClassicCTFGame;
+  else if(clOptions->gameType==RabbitChase)
     return eRabbitGame;
-  else if(clOptions->gameType==eOpenFFA)
-    return eOpenFFAGame;
+  else if(clOptions->gameType==OpenFFA)
+    return OpenFFAGame;
 
-  return eTeamFFAGame;
+  return TeamFFAGame;
 }
 
 // server side bot API
