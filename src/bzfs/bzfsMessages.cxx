@@ -179,7 +179,7 @@ bool sendTeamUpdateMessage( int newPlayer )
 
 void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 {
-  if (!allowTeams())
+  if (clOptions->gameType == eOpenFFA)
     return;
 
   // If teamIndex1 is -1, send all teams

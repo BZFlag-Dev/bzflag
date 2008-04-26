@@ -166,6 +166,15 @@ void			Team::setColors(TeamColor team,
   radarColor[teamIndex][2] = radar[2];
 }
 
+// are the two teams foes with the current game style?
+bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style)
+{
+  if (style == eOpenFFA)
+    return true;
+
+  return team1!=team2 || (team1==RogueTeam) || (team2==RogueTeam);
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

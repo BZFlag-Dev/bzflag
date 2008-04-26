@@ -2416,15 +2416,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
-// are the two teams foes with the current game style?
-bool areFoes(TeamColor team1, TeamColor team2)
-{
-  if (!allowTeams())
-    return true;
-
-  return team1!=team2 || (team1==RogueTeam);
-}
-
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2564,18 +2555,14 @@ static void checkTeamScore(int playerIndex, int teamIndex)
   }
 }
 
-bool allowTeams ( void )
-{
-  return clOptions->gameType != eOpenFFA;
-}
 
 bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim, bool &teamkill  )
 {
-  if (!allowTeams() || !victim || !killer)
+  if (clOptions->gameType == eOpenFFA || !victim || !killer)
     return false;
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
-  teamkill = !areFoes(victim->player.getTeam(), killer->player.getTeam()) && !killer->player.isARabbitKill(victim->player);
+  teamkill = !Team::areFoes(victim->player.getTeam(), killer->player.getTeam(), clOptions->gameType) && !killer->player.isARabbitKill(victim->player);
 
   // update tk-score
   if ((victim->getIndex() != killer->getIndex()) && teamkill) {

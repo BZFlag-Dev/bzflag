@@ -64,7 +64,6 @@ extern int   directMessage( NetHandler *handler, uint16_t code, int len, const v
 NetHandler *getPlayerNetHandler ( int playerIndex );
 
 extern int   getCurMaxPlayers();
-extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
 extern void  zapFlagByPlayer(int playerIndex);
 extern void  resetFlag(FlagInfo &flag);
