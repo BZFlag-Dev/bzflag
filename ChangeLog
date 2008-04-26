@@ -2,13 +2,33 @@
 			     ====================
 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
-No development is scheduled to continue on this branch.  Only SUPER 
-critical bug fixes should be applied.  New development goes into 
-HEAD as 2.1 for release as 2.2 
+No development is scheduled to continue on this branch.  Only
+critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
 
 BZFlag 2.0.11
 ----------------------------------------------------
+* Fix for memory leaks - 
+* libGLEW requirement controlled by --with-glew - Alfredo Tupone
+* Actually build with SDL_Image, if required - Alfredo Tupone
+* Remove extra dir separator from cache entries - Jeff Myers
+* Configurable "defaultFOV" (60 deg) for widescreen users - Jeff Myers
+* Adjust shown coordinate for observers - Jeff Myers
+* Use the foghack only if the config says - Jeff Myers
+* Queue spawns after flag captures - 
+* Fix kill callback when is coming from server - Jeff Myers
+* Fix intermix of chat messages and api callback - Jeff Myers
+* Various permission fixes - Jeff Myers
+* Plugins path fixed - 
+* Kerberos and thread removed (never used) - Alfredo Tupone
+* Event log fixed - Jeff Myers
+* Workaroung to a driver bug - Jeff Myers
+* Word filtering is case unsensitive -
+* Correctly interface with c-ares 1.5.1 and lower - Alfredo Tupone
+* Not showing a "new rabbit" message when player ID == NoPlayer - blast007
+* gcc-4.3 fixes - Tim Riker, Alfredo Tupone
+* MacOSX: Consistent search of resource files - Sean Morrison
+* MacOSX: update the project to XCode 2.4.1 - Sean Morrison
 * Added _countdownResumeDelay to control resume delay. - Thomas Stauer
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 
