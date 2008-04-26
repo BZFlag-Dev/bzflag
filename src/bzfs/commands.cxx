@@ -601,7 +601,7 @@ RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
 							 "- reload the user, group, and password files") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
-							 "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
+							 "<ban|kick|kill|set|flagreset|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
 							 "<yes|no> - place a vote in favor or in opposition to the poll") {}
 VetoCommand::VetoCommand()		 : ServerCommand("/veto",
