@@ -2686,9 +2686,10 @@ bool PollCommand::operator() (const char *message,
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
     // any registered/known users on the server (including observers)
-    // are eligible to vote
+    // are eligible to vote as long as they have the poll permission.
+    // if you can start a poll you can vote in a poll
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->accessInfo.exists()) {
+    if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
       available++;
     }
   }
