@@ -193,18 +193,19 @@ static std::vector<std::string> GetGeneralText()
   retval.push_back("Rogues have no teammates (not even other rogues), so they cannot shoot");
   retval.push_back("teammates and they don't have a team score.");
   retval.push_back("");
-  retval.push_back("There are three styles of play, determined by the server configuration:  capture-");
-  retval.push_back("the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the");
-  retval.push_back("highest score by shooting opponents.  In rabbit chase, the white tank tries to stay alive");
-  retval.push_back("while all other tanks try to hunt and kill it. The object in capture-the-flag is to");
-  retval.push_back("capture enemy flags while preventing opponents from capturing yours.  In this");
-  retval.push_back("style, each team (but not rogues) has a team base and each team with at least");
-  retval.push_back("one player has a team flag which has the color of the team.  To capture a flag,");
-  retval.push_back("you must grab it and bring it back to your team base (you must be on the ground");
-  retval.push_back("in your base to register the capture).  Capturing a flag destroys all the players");
-  retval.push_back("on that team and gives your team score a bonus;  the players will restart on");
-  retval.push_back("their team base.  Taking your flag onto an enemy base counts as a capture against");
-  retval.push_back("your team but not for the enemy team.");
+  retval.push_back("There are four styles of play, determined by the server configuration:  capture-");
+  retval.push_back("the-flag, rabbit-chase, free-for-all and open-free-for-all.  In free-for-all the");
+  retval.push_back("object is simply to get the highest score by shooting opponents.  In open-free-");
+  retval.push_back("for-all highest score is still the goal but there are no teams.  In rabbit chase,");
+  retval.push_back("the white tank tries to stay alive while all other tanks try to hunt and kill it.");
+  retval.push_back("The object in capture-the-flag is to capture enemy flags while preventing opponents");
+  retval.push_back(" from capturing yours.  In this style, each team (but not rogues) has a team base");
+  retval.push_back("and each team with at least one player has a team flag which has the color of the team.");
+  retval.push_back("To capture a flag, you must grab it and bring it back to your team base (you must be");
+  retval.push_back("on the ground in your base to register the capture).  Capturing a flag destroys");
+  retval.push_back("all the players on that team and gives your team score a bonus;  the players will");
+  retval.push_back("restart on their team base.  Taking your flag onto an enemy base counts as a capture");
+  retval.push_back("against your team but not for the enemy team.");
   return retval;
 }
 
