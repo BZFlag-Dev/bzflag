@@ -2685,9 +2685,10 @@ bool PollCommand::operator() (const char *message,
   // get available voter count
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
-    // any registered/known users on the server (including observers)
+    // any registered/known users on the server (including observers).
     // are eligible to vote as long as they have the poll permission.
-    // if you can start a poll you can vote in a poll
+    // if you can start a poll you can vote in a poll.  this section
+    // must be kept in sync with the suffrage granting that follows.
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
       available++;
@@ -2917,10 +2918,12 @@ bool PollCommand::operator() (const char *message,
 
     // keep track of who is allowed to vote
     for (int j = 0; j < curMaxPlayers; j++) {
-      // any registered/known users on the server (including
-      // observers) are eligible to vote
+      // any registered/known users on the server (including observers).
+      // are eligible to vote as long as they have the poll permission.
+      // if you can start a poll you can vote in a poll.  this section
+      // must be kept in sync with the "available" count that preceeds.
       GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(j);
-      if (otherData && otherData->accessInfo.exists()) {
+      if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
 	votingArbiter->grantSuffrage(otherData->player.getCallSign());
       }
     }
