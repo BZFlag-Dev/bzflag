@@ -114,6 +114,7 @@ public:
   void clearDeadIncomingMessages ( void );
 
   void purgeMessages ( NetHandler *handler );
+  void flushMessages ( NetHandler *handler );
 
   void setTransferCallback ( NetworkMessageTransferCallback *cb ){ transferCallback = cb;}
   NetworkMessageTransferCallback* getTransferCallback ( void ){return transferCallback;}

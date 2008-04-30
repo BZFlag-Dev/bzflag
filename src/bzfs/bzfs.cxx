@@ -2283,6 +2283,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (!playerData)
     return;
 
+  // flush all pending messages for the player immediatley
+
+  MSGMGR.flushMessages(playerData->netHandler);
+
   playerData->isParting = true;
 
   // call any on part events

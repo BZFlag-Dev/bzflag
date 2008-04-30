@@ -370,7 +370,6 @@ void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
   outgoingQueue.push_back(msg);
 }
 
-
 void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
 {
   MessageList::iterator itr = pendingOutgoingMessages.begin();
@@ -391,6 +390,23 @@ void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
   {
     if ((*qItr) && (handler == (*qItr)->recipient))  // just kill the message and data, it'll be pulled from the list on the next update pass
     {
+      delete(*qItr);
+      outgoingQueue.erase(qItr);
+      qItr = outgoingQueue.begin();
+    }
+    else
+      qItr++;
+  }
+}
+
+void BufferedNetworkMessageManager::flushMessages ( NetHandler *handler )
+{
+  MessageDeque::iterator qItr = outgoingQueue.begin();
+  while (qItr != outgoingQueue.end())
+  {
+    if ((*qItr) && (handler == (*qItr)->recipient)) // process the message and data for that specific nethandler
+    {
+      (*qItr)->process();
       delete(*qItr);
       outgoingQueue.erase(qItr);
       qItr = outgoingQueue.begin();
