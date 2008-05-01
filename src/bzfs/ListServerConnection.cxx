@@ -166,7 +166,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       }
 
       if (authReply) {
-	logDebugMessage(3,"Got: %s", base);
+	logDebugMessage(3,"Got: %s\n", base);
 	char *group = (char *)NULL;
 
 	// Isolate callsign from groups
