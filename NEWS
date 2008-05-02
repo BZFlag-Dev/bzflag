@@ -1060,3 +1060,10 @@ preliminary open source release.
 ---
 See the SVN log for more detailed information on BZFlag changes.
 NEWS items should be formatted to column 80, one per line, no tabs.
+
+// Local Variables:
+// mode: Text
+// tab-width: 8
+// fill-column: 80
+// End:
+// ex: shiftwidth=2 tabstop=8
