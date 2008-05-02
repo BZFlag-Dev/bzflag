@@ -376,6 +376,7 @@ AC_CHECK_HEADERS(
        net/if.h \
        errno.h \
        stdbool.h \
+       xti.h \
        arpa/nameser.h \
        arpa/nameser_compat.h \
        arpa/inet.h,

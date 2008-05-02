@@ -21,6 +21,9 @@
 #include "nameser.h"
 
 #else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -52,6 +55,13 @@
 #endif
 #ifdef NETWARE
 #include <sys/filio.h>
+#endif
+#ifdef HAVE_XTI_H
+#include <xti.h>
+#endif
+
+#ifndef TCP_NODELAY
+#define TCP_NODELAY 1
 #endif
 
 #include <assert.h>
