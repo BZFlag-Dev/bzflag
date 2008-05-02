@@ -1109,6 +1109,7 @@ void ServerLink::sendExit()
   msg[0] = getId();
 
   send(MsgExit, sizeof(msg), msg);
+  flush();
 }
 
 void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
