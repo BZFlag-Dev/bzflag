@@ -92,16 +92,6 @@ recent bugs
   
  - Flaghelp falls into the radar area when radar is 'bigger'
 
--- build system --
-- make maintainer-clean does not enter DIST_SUBDIRS
-  so all Makefile.in and Makefile files are not removed correctly
-  (this is probably a bug in automake 1.4, not in our files)
-  
-- build system for bzrobots is not happy.
-
-- many warnings that are treated as errors on 64bit GCC builds 
-  (lots of format issues).
-
 -- platform (multiple) --
 - Shift+Tab seems to be bound to jump without being bound to jump
   It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
