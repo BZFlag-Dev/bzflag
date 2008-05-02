@@ -2,7 +2,6 @@
 			     BZFlag Release Notes                           
 			     ====================
 
-
 BZFlag 2.99.x
 ------------
 * Added new BZFS API event bz_eIdBanEvent - Steven Mertens
@@ -86,8 +85,7 @@ BZFlag 2.99.x
 BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 ---------------------------------------------
 
-* Added a work around for buggy DRI open source ATI drivers and the 
-  narrow flag - Jeff Myers
+* Fixed narrow flag rendering bug related to DRI and ATI drivers - Jeff Myers
 * Add /modcount command - Joshua Bodine, Anonymous
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * Fix bug where poll results would not be announced - Joshua Bodine
@@ -1058,8 +1056,13 @@ preliminary open source release.
 
 
 ---
-See the SVN log for more detailed information on BZFlag changes.
-NEWS items should be formatted to column 80, one per line, no tabs.
+See the Subversion revision control log for more detailed historic information
+on BZFlag changes.
+
+NEWS items should be formatted to column 80, use no tabs, and include credits to
+all significant contributors.  Multiple contributors may be listed on the
+following line but the summary description itself should never exceed column 80
+or one line.
 
 // Local Variables:
 // mode: Text
