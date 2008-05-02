@@ -99,8 +99,6 @@ recent bugs
   
 - build system for bzrobots is not happy.
 
-- builds fail in ares (ares_process.c:850: error: 'TCP_NODELAY' undeclared)
-
 - many warnings that are treated as errors on 64bit GCC builds 
   (lots of format issues).
 
