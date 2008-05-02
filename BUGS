@@ -1,5 +1,21 @@
-recent bugs
-------------
+BZFlag Bugs
+===========
+
+Users should report bugs to our bug tracker on the project website at
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
+
+The bugs and issues listed in this file may or may not be the same as
+or related to the bugs reported to the bug tracker.  In general, users
+should not look to this file for information regarding the status of
+bugs.  The BUGS file contains informal bug-related information that is
+intended only as notes for developers.  This may include short term
+issues that are in active development as well as long term and
+on-going issues.  These notes are completely independent of any bugs
+formally reported on the bug tracker.
+
+
+Recent Bugs
+-----------
 
 -- bots--
 - Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP
@@ -204,5 +220,5 @@ recent bugs
   removed it the queue went up to at least 64kB)
 
 ---
-see the bug tracker on SourceForge for more
-http://SourceForge.net/tracker/?group_id=3248&atid=103248
+Users should report bugs to our bug tracker on the project website at
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
