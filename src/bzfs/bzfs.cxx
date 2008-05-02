@@ -3456,7 +3456,7 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 	  || clOptions->spamWarnMax == 0) {
 	sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
 	logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
-	       "2 messages sent within %fs after %d warnings",
+	       "2 messages sent within %fs after %d warnings\n",
 	       player.getCallSign(), t, dt, player.getSpamWarns());
 	removePlayer(t, "spam");
 	return true;
@@ -3505,7 +3505,7 @@ bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
      */
     if (badChars > 5) {
       sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars",
+      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
 	     player.getCallSign(), t, badChars, totalChars);
       removePlayer(t, "garbage");
 
@@ -3986,7 +3986,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (from != t) {
 	logDebugMessage(1,"Kicking Player %s [%d] Player trying to transfer flag\n",
 	       playerData->player.getCallSign(), t);
-	removePlayer(t, "Player shot mismatch");
+	removePlayer(t, "flag transfer");
 	break;
       }
       buf = nboUnpackUByte(buf, to);
