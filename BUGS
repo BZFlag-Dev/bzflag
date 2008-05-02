@@ -208,9 +208,6 @@ recent bugs
   for causing it to queue too many packages (there's a limit at 20kB, when I
   removed it the queue went up to at least 64kB)
 
--- Dubious --
-- can sometimes appear in front of bad guys
-
 ---
 see the bug tracker on SourceForge for more
 http://SourceForge.net/tracker/?group_id=3248&atid=103248
