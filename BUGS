@@ -129,11 +129,6 @@ recent bugs
   brightness of the (SDL) window since it's presently modifying the
   gamma of the display that started it.
 
--- platform (X11) --
-
--- platform (OSX) --
-- Reported lockup on OSX when swapping from fullscreen to windowed mode(ts)
-
 -- bzfs --
 - ANSI codes can be used in the server -public messages
   The best solution is probably to strip the codes at the listserver
