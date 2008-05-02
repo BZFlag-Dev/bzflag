@@ -4,221 +4,244 @@ BZFlag Bugs
 Users should report bugs to our bug tracker on the project website at
 http://sourceforge.net/tracker/?group_id=3248&atid=103248
 
-The bugs and issues listed in this file may or may not be the same as
-or related to the bugs reported to the bug tracker.  In general, users
-should not look to this file for information regarding the status of
-bugs.  The BUGS file contains informal bug-related information that is
-intended only as notes for developers.  This may include short term
-issues that are in active development as well as long term and
-on-going issues.  These notes are completely independent of any bugs
-formally reported on the bug tracker.
+The bugs and issues listed in this file may or may not be the same as or related
+to the bugs reported to the bug tracker.  In general, users should not look to
+this file for information regarding the status of bugs.  The BUGS file contains
+informal bug-related information that is intended only as notes for developers.
+This may include short term issues that are in active development as well as
+long term and on-going issues.  These notes are completely independent of any
+bugs formally reported on the bug tracker.
 
 
-Recent Bugs
------------
+Bots
+----
 
--- bots--
-- Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP
-  The message doesn't display on the client and the client crashes
-  Possibly related to 
+* Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP. The
+  message doesn't display on the client and the client crashes. Possibly related
+  to client-side bots getting disconnected.
   
-- client side bots make the client get disconnected (read error)
-  below.
+* client side bots make the client get disconnected (read error) below.
   
-- client side bots don't even show as tanks.
+* client side bots don't even show as tanks.
 
--- crashes ---
-- two clients connecting (at least from the same IP) causes the second
-  to have communication failures and get disconnected.
+Crashes
+-------
 
-- Segfault - two clients connecting to the server then leaving causes the 
-  server to crash
+* two clients connecting (at least from the same IP) causes the second to have
+  communication failures and get disconnected.
+
+* Segfault - two clients connecting to the server then leaving causes the server
+  to crash
   
-- starting for the first time on a new install seems to geek on the config
+* starting for the first time on a new install seems to geek on the config
   creation on at least 2 OSs, ( linux and OSX ).
   
-- reached assertion on either World::getTeleportTarget() or
-  World::getTeleporter() after getting killed while jumping towards a
-  teleporter (and landing in front of the teleporter, albeit dead).  i
-  didn't respawn, waited a couple sec (was chatting), then the assertion was
-  raised.
+* reached assertion on either World::getTeleportTarget() or
+  World::getTeleporter() after getting killed while jumping towards a teleporter
+  (and landing in front of the teleporter, albeit dead).  i didn't respawn,
+  waited a couple sec (was chatting), then the assertion was raised.
   
-- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
+* Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
   client in Rabbit game. The reported message buffer address was bad (ie
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
   fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
--- regressions--
-- jumping is broken; heigth and direction of jumping affected.
+Regressions
+-----------
 
-- GM does not seem to lock on reliably (try against a remote client,
-  bots work fine)
-  
-- bullets no longer bounce off the walls in replays
-  even when ricochets have been enabled
-  
--- documentation --
-- doc/guide/NetworkProtocol.xml is not up to date
+* jumping is broken; heigth and direction of jumping affected.
 
--- bans --
+* GM does not seem to lock on reliably (try against a remote client, bots work
+  fine)
+  
+* bullets no longer bounce off the walls in replays even when ricochets have
+  been enabled
+  
+Documentation
+-------------
 
-- a banned registered player that gets added to both the banList and
-  idBanList is not listed in the latter on a idbanlist yet prevented
-  from joining even after the ban is removed from the banList.
-  
--- controls --
-- someone broke the key-driving rotational acceleration dampening,
-  feels like 1.7 driving again.
-  
-- Observer movement controls seems to get locked-up in Hunt mode.
-  
--- rendering --
-- New font system renders tabs (such as those from the /ban command usage)
-  as a square, and indents the line as much as 28 characters.
-  Example: http://static.bzexcess.com/bzfi1003.png
-  
-- At low screen resolutions, small text becomes very blurry.
-  Example: http://static.bzexcess.com/bzfi1005.png
+* doc/guide/NetworkProtocol.xml is not up to date
 
-- Zbuffer flickering with Narrow and Covered animated treads
+Bans
+----
 
-- some ATI cards get font rendering to have variable alpha values
-  on each letter. The gl restate was removed from the font manager.
-  It should be put in and tied to a config option that defaults to
-  off.
+* a banned registered player that gets added to both the banList and idBanList
+  is not listed in the latter on a idbanlist yet prevented from joining even
+  after the ban is removed from the banList.
   
-- Burrowed tank shadows should be ground clipped
-  (the shadow perspective matrix messes with the clip plane?)
+Controls
+--------
+
+* someone broke the key-driving rotational acceleration dampening, feels like
+  1.7 driving again.
   
-- Material properties for mesh containers are not adjusted by
-  ObstacleModifier, and will not save correctly if using saveFlatFile.
+* Observer movement controls seems to get locked-up in Hunt mode.
+  
+Rendering
+---------
+
+* New font system renders tabs (such as those from the /ban command usage) as a
+  square, and indents the line as much as 28 characters.  Example:
+  http://static.bzexcess.com/bzfi1003.png
+  
+* At low screen resolutions, small text becomes very blurry.  Example:
+  http://static.bzexcess.com/bzfi1005.png
+
+* Zbuffer flickering with Narrow and Covered animated treads
+
+* some ATI cards get font rendering to have variable alpha values on each
+  letter. The gl restate was removed from the font manager.  It should be put in
+  and tied to a config option that defaults to off.
+  
+* Burrowed tank shadows should be ground clipped (the shadow perspective matrix
+  messes with the clip plane?)
+  
+* Material properties for mesh containers are not adjusted by ObstacleModifier,
+  and will not save correctly if using saveFlatFile.
  
-- same stipple on teleporters and phantom zone, making phatom
-   tank behind teleporter virtually invisible when blending is off.
+* same stipple on teleporters and phantom zone, making phatom tank behind
+   teleporter virtually invisible when blending is off.
 
-- line stipple doesn't (can't) match polygon stipple
-   messes up shadow of flag stem
+* line stipple doesn't (can't) match polygon stipple messes up shadow of flag
+  stem
    
-- untextured pause mode, textures only show up while paused when opening menus
+* untextured pause mode, textures only show up while paused when opening menus
 
-- if the display cannot initialize properly, it will start bzflag with a
-  black screen.  need to prevent this by either detecting if there is an
-  available mode that is possible, lowering memory usage, or reporting
-  an error and aborting.
+* if the display cannot initialize properly, it will start bzflag with a black
+  screen.  need to prevent this by either detecting if there is an available
+  mode that is possible, lowering memory usage, or reporting an error and
+  aborting.
   
- - Flaghelp falls into the radar area when radar is 'bigger'
+* Flaghelp falls into the radar area when radar is 'bigger'
 
--- platform (multiple) --
-- Shift+Tab seems to be bound to jump without being bound to jump
-  It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
-  (xfree86 4.3), so need custom code to go into bzflag.
+Platform (multiple)
+-------------------
+
+* Shift+Tab seems to be bound to jump without being bound to jump It doesn't
+  happen on Linux. Shift+Tab action is untranslated by XLookupString (xfree86
+  4.3), so need custom code to go into bzflag.
   
--- platform (windows) --
-- not blanking screen during win32 startup
-   should black out screen before changing resolutions
-   should raise on top of task bar
-   also black out screen when quitting until resolution restored
+Platform (Windows)
+------------------
+
+* not blanking screen during win32 startup should black out screen before
+  changing resolutions should raise on top of task bar also black out screen
+  when quitting until resolution restored
       
-- jitter on windows servers is reported as very high, but play
-  is unaffected.
+* jitter on windows servers is reported as very high, but play is unaffected.
   
-- Windows BZFS will not let clients connect when 'too many' flags
-  are specified.
+* Windows BZFS will not let clients connect when 'too many' flags are specified.
 
-- Two seperate boxen, windows build with vc8, nvidia vid cards.
-  When jumping on box "name Box - position 250 250 118 - rotation 0
-   - size 15 15 0.1 - end" on my WarTowers map, the one with the
-  transporter on it, tanks stick to the box and lock coming through 
-  the transporter on the ground linked to that transporter on that 
-  box. Screenshot available on request. Linux clients on two boxen
-  do not have this issue. 
-  PS:
-  This differs from the latter "teleporting is blocking" bug in 
-  misc directory further down this list in that the sky teleport is
-  on regular box, not mesh, and it localized the bug to windows 
-  builds currently. But could obviously be related.
-  @ r16889 -spldart-
+* Two seperate boxen, windows build with vc8, nvidia vid cards.
+
+  When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
+  0.1 - end" on my WarTowers map, the one with the transporter on it, tanks
+  stick to the box and lock coming through the transporter on the ground linked
+  to that transporter on that box. Screenshot available on request. Linux
+  clients on two boxen do not have this issue.
+
+  PS: This differs from the latter "teleporting is blocking" bug in misc
+  directory further down this list in that the sky teleport is on regular box,
+  not mesh, and it localized the bug to windows builds currently. But could
+  obviously be related.  @ r16889 -spldart-
    
--- platform (SDL) --
-- if you start the client windowed on a multidisplay system, and then
-  move the window to a secondary monitor, you cannot control the
-  brightness of the (SDL) window since it's presently modifying the
-  gamma of the display that started it.
+Platform (SDL)
+--------------
 
--- bzfs --
-- ANSI codes can be used in the server -public messages
-  The best solution is probably to strip the codes at the listserver
+* if you start the client windowed on a multidisplay system, and then move the
+  window to a secondary monitor, you cannot control the brightness of the (SDL)
+  window since it's presently modifying the gamma of the display that started
+  it.
+
+bzfs
+----
+
+* ANSI codes can be used in the server -public messages.  The best solution is
+  probably to strip the codes at the listserver
   
-- bzfs sometimes gets into a mode where CTF team flags spawn at random places,
+* bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
-- Have flag spawn zones set in 2.0.x world. Same world in trunk produces an 
+* Have flag spawn zones set in 2.0.x world. Same world in trunk produces an
   "Unable to position flags on this world." for each zone specified by world.
   However I have the zoned flags appearing to be in the places I specified.
   Message origin? Screenshot available if needed. -spldart-
   
-- maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
+* maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
 
-- Too many flags caused "drop, unresponsive with 16687 bytes queued"
-  (+f good{40} was the breaking point, linux, local bzfs server)
-  admittedly, an unreasonable number of flags
+* Too many flags caused "drop, unresponsive with 16687 bytes queued" (+f
+  good{40} was the breaking point, linux, local bzfs server) admittedly, an
+  unreasonable number of flags
   
-- Bad BZDB: some BZDB variables are not range checked:
-  "/set _syncTime -" goes boom on the client side.
+* Bad BZDB: some BZDB variables are not range checked: "/set _syncTime -" goes
+  boom on the client side.
   (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
 
--- Gameplay --
-- not dropping a flag grabbed just before being destroyed
+Gameplay
+--------
 
-- the last shot fired with a shot-limited flag doesn't carry the flag
-  type (or is dropped by the server?)...e.g. if I have G, limited to
-  5 shots, and kill someone with the fifth shot, only that player dies
-  because the flag was dropped by the time the kill was scored...
-  even though the shot was fired while I still had the flag.
+* not dropping a flag grabbed just before being destroyed
+
+* the last shot fired with a shot-limited flag doesn't carry the flag type (or
+  is dropped by the server?)...e.g. if I have G, limited to 5 shots, and kill
+  someone with the fifth shot, only that player dies because the flag was
+  dropped by the time the kill was scored...  even though the shot was fired
+  while I still had the flag.
  
-- dropping a team flag, when the related team is empty, start a timeout.
-  The related code does not take into account that we can have now
-  multiple team flags.
+* dropping a team flag, when the related team is empty, start a timeout.  The
+  related code does not take into account that we can have now multiple team
+  flags.
   
-- teleporting is blocking when going from a ground teleporter to
-  a teleporter sitting on a mesh object. fix during next protocol
-  breakage  (workaround by dropping the ground teleporter by a
-  small amount... causing the burrow sound)
+* teleporting is blocking when going from a ground teleporter to a teleporter
+  sitting on a mesh object. fix during next protocol breakage (workaround by
+  dropping the ground teleporter by a small amount... causing the burrow sound)
   
-- shooting straight shots with the Agility flag while just having accelerated
+* shooting straight shots with the Agility flag while just having accelerated
   forward (common tactic to shoot "fast shots") will miss targets that are
   rather stationary and directly in the shot's path.
   
-- bullets now travel through the top of a block instead of reflecting off.
-  The bullets appear to be half(or more) submerged into the block.
+* bullets now travel through the top of a block instead of reflecting off.  The
+  bullets appear to be half(or more) submerged into the block.
   
-- world weapons seem to lag the server when there are many players joined.
-  might be related to a rapidly repeating world weapon as well (like once
-  a second, use _weapons BZDB var to test...)
+* world weapons seem to lag the server when there are many players joined.
+  might be related to a rapidly repeating world weapon as well (like once a
+  second, use _weapons BZDB var to test...)
 
--- 3rd party libs --
-- if there is a network connection (e.g. a lan) yet no external
-  access, the client hangs hard in cURLManager.cxx:291 and later in
-  some odd corrupted stack space elsewhere.  this was with CURL 7.13.1
-  (default Mac libcurl).  simple workaround is to invoke client with
-  -list e://localhost (even if no local server is running) to avoid
-  the hang on resolving.
+3rd party libs
+--------------
 
--- services --
-- list server includes counts for players running on non-public/mis-configured
+* if there is a network connection (e.g. a lan) yet no external access, the
+  client hangs hard in cURLManager.cxx:291 and later in some odd corrupted stack
+  space elsewhere.  this was with CURL 7.13.1 (default Mac libcurl).  simple
+  workaround is to invoke client with -list e://localhost (even if no local
+  server is running) to avoid the hang on resolving.
+
+Services
+--------
+
+* list server includes counts for players running on non-public/mis-configured
   servers on the same machine on different ports.  if server runs on port 5156
   with publicaddr set to machine:5156 and then also runs another on 59999 with
   publicaddr set to machine:5156 (by accident or otherwise), then player joins
   to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
-  expected behavior, but I expect one can also trojan any server's counts
-  using this same technique..
+  expected behavior, but I expect one can also trojan any server's counts using
+  this same technique..
   
--- tools --
-- bzadmin seems to be less responsive over the network than bzflag - a
-  bzadmin client can get kicked from a very active game by the server
-  for causing it to queue too many packages (there's a limit at 20kB, when I
-  removed it the queue went up to at least 64kB)
+Tools
+-----
+
+* bzadmin seems to be less responsive over the network than bzflag - a bzadmin
+  client can get kicked from a very active game by the server for causing it to
+  queue too many packages (there's a limit at 20kB, when I removed it the queue
+  went up to at least 64kB)
 
 ---
 Users should report bugs to our bug tracker on the project website at
 http://sourceforge.net/tracker/?group_id=3248&atid=103248
+
+// Local Variables:
+// mode: Text
+// tab-width: 8
+// fill-column: 80
+// End:
+// ex: shiftwidth=2 tabstop=8
