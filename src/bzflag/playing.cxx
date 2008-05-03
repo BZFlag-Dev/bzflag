@@ -5197,61 +5197,60 @@ static void joinInternetGame(const struct in_addr *inAddress)
     return;
   }
 
-  // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-case ServerLink::BadVersion: {
-  static char versionError[] = "Incompatible server version XXXXXXXX";
-  strncpy(versionError + strlen(versionError) - 8,
-    serverLink->getVersion(), 8);
-  HUDDialogStack::get()->setFailedMessage(versionError);
-  break;
-			     }
+      case ServerLink::BadVersion: {
+	static char versionError[] = "Incompatible server version XXXXXXXX";
+	strncpy(versionError + strlen(versionError) - 8,
+	  serverLink->getVersion(), 8);
+	HUDDialogStack::get()->setFailedMessage(versionError);
+	break;
+      }
 
-			     // you got banned
-case ServerLink::Refused:{
-  const std::string& rejmsg = serverLink->getRejectionMessage();
+      case ServerLink::Refused: {
+        // you got banned
+	const std::string& rejmsg = serverLink->getRejectionMessage();
 
-  // add to the HUD
-  std::string msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server";
-  HUDDialogStack::get()->setFailedMessage(msg.c_str());
+	// add to the HUD
+	std::string msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server";
+	HUDDialogStack::get()->setFailedMessage(msg.c_str());
 
-  // add to the console
-  msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server:";
-  addMessage(NULL, msg);
-  msg = ColorStrings[YellowColor];
-  msg += rejmsg;
-  addMessage(NULL, msg);
+	// add to the console
+	msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server:";
+	addMessage(NULL, msg);
+	msg = ColorStrings[YellowColor];
+	msg += rejmsg;
+	addMessage(NULL, msg);
 
-  break;
-			 }
+	break;
+      }
 
-case ServerLink::Rejected:
-  // the server is probably full or the game is over.  if not then
-  // the server is having network problems.
-  HUDDialogStack::get()->setFailedMessage
-    ("Game is full or over.  Try again later.");
-  break;
+      case ServerLink::Rejected:
+	// the server is probably full or the game is over.  if not then
+	// the server is having network problems.
+	HUDDialogStack::get()->setFailedMessage
+	  ("Game is full or over.  Try again later.");
+	break;
 
-case ServerLink::SocketError:
-  HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
-  break;
+      case ServerLink::SocketError:
+	HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
+	break;
 
-case ServerLink::CrippledVersion:
-  // can't connect to (otherwise compatible) non-crippled server
-  HUDDialogStack::get()->setFailedMessage
-    ("Cannot connect to full version server.");
-  break;
+      case ServerLink::CrippledVersion:
+	// can't connect to (otherwise compatible) non-crippled server
+	HUDDialogStack::get()->setFailedMessage
+	  ("Cannot connect to full version server.");
+	break;
 
-default:
-  HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format
-    ("Internal error connecting to server (error code %d).",
-    serverLink->getState()).c_str());
-  break;
+      default:
+	HUDDialogStack::get()->setFailedMessage
+	  (TextUtils::format
+	  ("Internal error connecting to server (error code %d).",
+	  serverLink->getState()).c_str());
+	break;
     }
     return;
   }
