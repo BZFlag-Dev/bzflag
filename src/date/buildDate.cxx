@@ -73,41 +73,24 @@ const char *bzfcopyright = "Copyright (c) 1993 - 2008 Tim Riker";
 /* yes this is horible but it needs to be done to get it right */
 /* windows should pull from a resouce */
 /* *nix gets this from the passed from my the Makefile */
-char buildDate[] = {__DATE__};
+static const char buildDate[] = {__DATE__};
+
+static const char monthsOfYear[][4] = {"Jan","Feb","Mar","Apr","May","Jun",
+                                       "Jul","Aug","Sep","Oct","Nov","Dec"};
 
 int getBuildDate()
 {
-  int year = 1900, month = 0, day = 0;
-  char monthStr[512];
-  sscanf(buildDate, "%512s %d %d", monthStr, &day, &year);
+  int year = 1900, month, day = 0;
+  char monthStr[4];
 
-  // we want it not as a name but a number
-  if (strcmp(monthStr, "Jan") == 0)
-    month = 1;
-  else if (strcmp(monthStr, "Feb") == 0)
-    month = 2;
-  else if (strcmp(monthStr, "Mar") == 0)
-    month = 3;
-  else if (strcmp(monthStr, "Apr") == 0)
-    month = 4;
-  else if (strcmp(monthStr, "May") == 0)
-    month = 5;
-  else if (strcmp(monthStr, "Jun") == 0)
-    month = 6;
-  else if (strcmp(monthStr, "Jul") == 0)
-    month = 7;
-  else if (strcmp(monthStr, "Aug") == 0)
-    month = 8;
-  else if (strcmp(monthStr, "Sep") == 0)
-    month = 9;
-  else if (strcmp(monthStr, "Oct") == 0)
-    month = 10;
-  else if (strcmp(monthStr, "Nov") == 0)
-    month = 11;
-  else if (strcmp(monthStr, "Dec") == 0)
-    month = 12;
+  sscanf(buildDate, "%4s %d %d", monthStr, &day, &year);
 
-  return (year*10000) + (month*100)+ day;
+  for (month = 12; month > 1; --month) {
+    if (strcmp(monthStr, monthsOfYear[month-1]) == 0)
+      break;
+  }
+
+  return 10000*year + 100*month + day;
 }
 #endif
 // down here so above gets created
