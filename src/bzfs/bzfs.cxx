@@ -763,26 +763,6 @@ static void serverStop()
   Authentication::cleanUp();
 }
 
-
-void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
-{
-  if (Record::enabled()) {
-    Record::addPacket(code, len, (char*)rawbuf + 4);
-  }
-
-  // relay packet to all players except origin
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    PlayerInfo& pi = playerData->player;
-
-    if (i != index && pi.isPlaying() && playerData->netHandler) {
-      bz_pwrite(playerData->netHandler, rawbuf, len + 4);
-    }
-  }
-}
-
 static bool allBasesDefined(void)
 {
   if (clOptions->gameType == ClassicCTF) {

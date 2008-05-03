@@ -77,7 +77,6 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, flo
 extern void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
 extern bool worldStateChanging ( void );
 extern void searchFlag(GameKeeper::Player &playerData);
-extern void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code);
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
 extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
