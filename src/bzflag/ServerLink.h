@@ -132,7 +132,7 @@ class ServerLink {
     char		ubuf[MaxPacketLen];
 
   bool oldNeedForSpeed;
-  int  previousFill;
+  unsigned int  previousFill;
   char txbuf[MaxPacketLen];
 
 };

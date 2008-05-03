@@ -187,7 +187,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       std::string value;
 
       vbuf = nboUnpackUShort(vbuf, numVars);
-      for (int i = 0; i < numVars; i++) {
+      for (i = 0; i < numVars; i++) {
 	vbuf = nboUnpackStdString(vbuf, name);
 	vbuf = nboUnpackStdString(vbuf, value);
 
