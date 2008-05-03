@@ -68,8 +68,7 @@ class SetVarHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
-    void *bufStart = getDirectMessageBuffer();
-    PackVars pv(bufStart, handler);
+    PackVars pv(handler);
     BZDB.iterate(PackVars::packIt, &pv);
 
     return true;

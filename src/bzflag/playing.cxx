@@ -3698,20 +3698,13 @@ static void		handleMyTankKilled(int reason)
 static void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
-  uint8_t nameLen, valueLen;
-
-  char name[MaxPacketLen];
-  char value[MaxPacketLen];
+  std::string name;
+  std::string value;
 
   msg = nboUnpackUShort(msg, numVars);
   for (int i = 0; i < numVars; i++) {
-    msg = nboUnpackUByte(msg, nameLen);
-    msg = nboUnpackString(msg, name, nameLen);
-    name[nameLen] = '\0';
-
-    msg = nboUnpackUByte(msg, valueLen);
-    msg = nboUnpackString(msg, value, valueLen);
-    value[valueLen] = '\0';
+    msg = nboUnpackStdString(msg, name);
+    msg = nboUnpackStdString(msg, value);
 
     BZDB.set(name, value);
     BZDB.setPersistent(name, false);

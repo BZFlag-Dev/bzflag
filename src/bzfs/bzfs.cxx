@@ -312,26 +312,6 @@ void pwriteBroadcast(const void *b, int l, int mask)
   }
 }
 
-static char sMsgBuf[MaxPacketLen];
-char *getDirectMessageBuffer()
-{
-  return &sMsgBuf[2*sizeof(uint16_t)];
-}
-
-int directMessage(NetHandler *handler, uint16_t code, int len, const void *msg)
-{
-  if (!handler)
-    return 0;
-  
-  // send message to one player
-  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-
-  void *buf = bufStart;
-  buf = nboPackUShort(buf, uint16_t(len));
-  buf = nboPackUShort(buf, code);
-  return bz_pwrite(handler, bufStart, len + 4);
-}
-
 NetHandler* getPlayerNetHandler( int playerIndex )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);

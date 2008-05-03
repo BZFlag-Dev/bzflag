@@ -1024,20 +1024,16 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
   *buffer = nboUnpackUShort(*buffer, code);
 }
 
-PackVars::PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
+PackVars::PackVars(NetHandler* _handler) : handler(_handler)
 {
-  buf = nboPackUShort(bufStart, 0);//placeholder
-  handler = _handler;
-  len = sizeof(uint16_t);
-  count = 0;
+  // start the first message
+  startMessage();
 }
 
 PackVars::~PackVars()
 {
-  if (len > sizeof(uint16_t)) {
-    nboPackUShort(bufStart, count);
-    directMessage(handler, MsgSetVar, len, bufStart);
-  }
+  // end the last message
+  endMessage();
 }
 
 // callback forwarder
@@ -1046,23 +1042,35 @@ void PackVars::packIt(const std::string &key, void *pv)
   reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
 }
 
+void PackVars::startMessage()
+{
+  // reset count
+  count = 0;
+  // placeholder
+  msg = MSGMGR.newMessage();
+  msg->packUShort(0);
+}
+
+void PackVars::endMessage()
+{
+  // repack the placeholder short at the beginning of 
+  // the buffer with the total count
+  nboPackUShort(msg->buffer(), count);
+  // send the message
+  msg->send(handler, MsgSetVar);
+}
+
 void PackVars::sendPackVars(const std::string &key)
 {
   std::string value = BZDB.get(key);
-  int pairLen = key.length() + 1 + value.length() + 1;
-  if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
-    nboPackUShort(bufStart, count);
-    count = 0;
-    directMessage(handler, MsgSetVar, len, bufStart);
-    buf = nboPackUShort(bufStart, 0); //placeholder
-    len = sizeof(uint16_t);
+  int pairLen = key.length() + value.length() + 2 * sizeof(uint32_t);
+  if ((pairLen + msg->size()) > MaxPacketLen) {
+    endMessage();
+    startMessage();
   }
 
-  buf = nboPackUByte(buf, key.length());
-  buf = nboPackString(buf, key.c_str(), key.length());
-  buf = nboPackUByte(buf, value.length());
-  buf = nboPackString(buf, value.c_str(), value.length());
-  len += pairLen;
+  msg->packStdString(key);
+  msg->packStdString(value);
   count++;
 }
 

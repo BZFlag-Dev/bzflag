@@ -77,23 +77,23 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
 
-/** class to send a bunch of BZDB variables via MsgSetVar.
-* dtor does the actual send
-*/
+/** class to pack a bunch of variables into one or more BufferedNetworkMessage.
+ *  they are then automatically sent as they complete, or in the destructor.
+ */
 class PackVars
 {
 public:
-	PackVars(void *buffer, NetHandler *_handler);
+	PackVars(NetHandler* _handler);
 	~PackVars();
 	// callback forwarder
 	static void packIt(const std::string &key, void *pv);
-	void sendPackVars(const std::string &key);
 
 private:
-	void * const bufStart;
-	void *buf;
-	NetHandler *handler;
-	unsigned int len;
+	void sendPackVars(const std::string &key);
+	void startMessage();
+	void endMessage();
+	NetHandler* handler;
+	NetMsg msg;
 	unsigned int count;
 };
 

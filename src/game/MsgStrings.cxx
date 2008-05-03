@@ -923,7 +923,6 @@ static MsgStringList handleMsgSuperKill (PacketInfo *pi)
 }
 
 
-static std::string n, v;
 static MsgStringList handleMsgSetVar (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
@@ -931,25 +930,19 @@ static MsgStringList handleMsgSetVar (PacketInfo *pi)
   void *d = (void*)pi->data;
   u16 i;
   u16 count;
-  u8 nameLen, valueLen;
   d = nboUnpackUShort(d, count);
   listPush (list, 1, "count: %i", count);
 
-  char name[256] = {0}, value[256] = {0};
+  std::string name;
+  std::string value;
   for (i = 0; i < count; i++) {
-    d = nboUnpackUByte(d, nameLen);
-    d = nboUnpackString(d, name, nameLen);
-    d = nboUnpackUByte(d, valueLen);
-    d = nboUnpackString(d, value, valueLen);
-    value[valueLen] = '\0';
-    listPush (list, 2, "%-20s = \"%s\"", name, value);
+    d = nboUnpackStdString(d, name);
+    d = nboUnpackStdString(d, value);
+    listPush (list, 2, "%-20s = \"%s\"", name.c_str(), value.c_str());
 
     if (TrackState) {
-      n = name;
-      v = value;
-      BZDB.set (n, v, StateDatabase::Locked);
+      BZDB.set (name, value, StateDatabase::Locked);
     }
-
   }
 
   return list;

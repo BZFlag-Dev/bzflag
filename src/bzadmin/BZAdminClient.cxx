@@ -180,34 +180,29 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	lastMessage.first = "*** Received lag ping from server.";
       break;
 
-    case MsgSetVar:
+    case MsgSetVar: {
       // code stolen from playing.cxx
       uint16_t numVars;
-      uint8_t nameLen, valueLen;
-
-      char name[MaxPacketLen];
-      char value[MaxPacketLen];
+      std::string name;
+      std::string value;
 
       vbuf = nboUnpackUShort(vbuf, numVars);
-      for (i = 0; i < numVars; i++) {
-	vbuf = nboUnpackUByte(vbuf, nameLen);
-	vbuf = nboUnpackString(vbuf, name, nameLen);
-	name[nameLen] = '\0';
-
-	vbuf = nboUnpackUByte(vbuf, valueLen);
-	vbuf = nboUnpackString(vbuf, value, valueLen);
-	value[valueLen] = '\0';
+      for (int i = 0; i < numVars; i++) {
+	vbuf = nboUnpackStdString(vbuf, name);
+	vbuf = nboUnpackStdString(vbuf, value);
 
 	BZDB.set(name, value);
 	BZDB.setPersistent(name, false);
 	BZDB.setPermission(name, StateDatabase::Locked);
       }
+
       if (messageMask[MsgSetVar]) {
 	lastMessage.first = std::string("*** Received BZDB update, ") +
 	  TextUtils::format("%d", numVars) + " variable" +
 	  (numVars == 1 ? "" : "s") + " updated.";
       }
       break;
+    }
 
     case MsgAddPlayer:
       uint16_t team, type, wins, losses, tks;
@@ -229,7 +224,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       players[p].isAdmin = false;
       if (ui != NULL)
 	ui->addedPlayer(p);
-	  // If you are an admin, then MsgAdminInfo will output the message
+      // If you are an admin, then MsgAdminInfo will output the message
       if (messageMask[MsgAddPlayer] && !players[getMyId()].isAdmin) {
 	Team temp;
 	std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
