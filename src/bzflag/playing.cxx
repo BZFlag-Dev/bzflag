@@ -3053,15 +3053,15 @@ static void handleAdminInfo(void* msg)
       message += "an observer";
     } else {
       switch (tank->getPlayerType()) {
-case TankPlayer:
-  message += "a tank";
-  break;
-case ComputerPlayer:
-  message += "a robot tank";
-  break;
-default:
-  message += "an unknown type";
-  break;
+	case TankPlayer:
+	  message += "a tank";
+	  break;
+	case ComputerPlayer:
+	  message += "a robot tank";
+	  break;
+	default:
+	  message += "an unknown type";
+	  break;
       }
     }
     message += " from " + ip.getDotNotation();
@@ -3140,8 +3140,7 @@ static void handleNewPlayer(void* msg)
 
 static void handleTangUpdate ( uint16_t len, void* msg )
 {
-  if ( len >= 5)
-  {
+  if (len >= 5) {
     unsigned int objectID = 0;
     msg = nboUnpackUInt(msg,objectID);
     unsigned char tang = 0;
@@ -3174,14 +3173,13 @@ static void handleLimboMessage ( void* msg )
 
 static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg )
 {
-  switch (msg->getCode())
-  {
-  default:
-    return false;
+  switch (msg->getCode()) {
+    default:
+      return false;
 
-  case MsgSetShot:
-    handleSetShotType(msg);
-    break;
+    case MsgSetShot:
+      handleSetShotType(msg);
+      break;
   }
   return true;
 }
@@ -3192,205 +3190,205 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
   bool checkScores = false;
 
   switch (code) {
-case MsgWhatTimeIsIt:
-  handleWhatTimeIsIt(msg);
-  break;
+    case MsgWhatTimeIsIt:
+      handleWhatTimeIsIt(msg);
+      break;
 
-case MsgNearFlag:
-  handleNearFlag(msg);
-  break;
+    case MsgNearFlag:
+      handleNearFlag(msg);
+      break;
 
-case MsgSetTeam:
-  handleSetTeam(msg,len);
-  break;
+    case MsgSetTeam:
+      handleSetTeam(msg,len);
+      break;
 
-case MsgFetchResources:
-  handleResourceFetch(msg);
-  break;
+    case MsgFetchResources:
+      handleResourceFetch(msg);
+      break;
 
-case MsgCustomSound:
-  handleCustomSound(msg);
-  break;
+    case MsgCustomSound:
+      handleCustomSound(msg);
+      break;
 
-case MsgUDPLinkEstablished:
-  serverLink->enableOutboundUDP();      // server got our initial UDP packet
-  break;
+    case MsgUDPLinkEstablished:
+      serverLink->enableOutboundUDP();      // server got our initial UDP packet
+      break;
 
-case MsgUDPLinkRequest:
-  serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
-  break;
+    case MsgUDPLinkRequest:
+      serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
+      break;
 
-case MsgSuperKill:
-  handleSuperKill(msg);
-  break;
+    case MsgSuperKill:
+      handleSuperKill(msg);
+      break;
 
-case MsgAccept:
-  break;
+    case MsgAccept:
+      break;
 
-case MsgReject:
-  handleRejectMessage(msg);
-  break;
+    case MsgReject:
+      handleRejectMessage(msg);
+      break;
 
-case MsgNegotiateFlags:
-  handleFlagNegotiation(msg, len);
-  break;
+    case MsgNegotiateFlags:
+      handleFlagNegotiation(msg, len);
+      break;
 
-case MsgFlagType: 
-  {
-    FlagType* typ = NULL;
-    FlagType::unpackCustom(msg, typ);
-    logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
-    break;
-  }
+    case MsgFlagType: 
+      {
+	FlagType* typ = NULL;
+	FlagType::unpackCustom(msg, typ);
+	logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
+	break;
+      }
 
-case MsgGameSettings:
-  handleGameSettings(msg);
-  break;
+    case MsgGameSettings:
+      handleGameSettings(msg);
+      break;
 
-case MsgCacheURL:
-  handleCacheURL(msg, len);
-  break;
+    case MsgCacheURL:
+      handleCacheURL(msg, len);
+      break;
 
-case MsgWantWHash:
-  handleWantHash(msg, len);
-  break;
+    case MsgWantWHash:
+      handleWantHash(msg, len);
+      break;
 
-case MsgGetWorld:
-  handleGetWorld(msg, len);
-  break;
+    case MsgGetWorld:
+      handleGetWorld(msg, len);
+      break;
 
-case MsgGameTime:
-  GameTime::unpack(msg);
-  GameTime::update();
-  break;
+    case MsgGameTime:
+      GameTime::unpack(msg);
+      GameTime::update();
+      break;
 
-case MsgTimeUpdate:
-  handleTimeUpdate(msg);
-  break;
+    case MsgTimeUpdate:
+      handleTimeUpdate(msg);
+      break;
 
-case MsgScoreOver:
-  handleScoreOver(msg);
-  break;
+    case MsgScoreOver:
+      handleScoreOver(msg);
+      break;
 
-case MsgAddPlayer:
-  handleAddPlayer(msg, checkScores);
-  break;
+    case MsgAddPlayer:
+      handleAddPlayer(msg, checkScores);
+      break;
 
-case MsgRemovePlayer:
-  handleRemovePlayer(msg, checkScores);
-  break;
+    case MsgRemovePlayer:
+      handleRemovePlayer(msg, checkScores);
+      break;
 
-case MsgFlagUpdate:
-  handleFlagUpdate(msg,len);
-  break;
+    case MsgFlagUpdate:
+      handleFlagUpdate(msg,len);
+      break;
 
-case MsgTeamUpdate:
-  handleTeamUpdate(msg, checkScores);
-  break;
+    case MsgTeamUpdate:
+      handleTeamUpdate(msg, checkScores);
+      break;
 
-case MsgAlive:
-  handleAliveMessage(msg);
-  break;;
+    case MsgAlive:
+      handleAliveMessage(msg);
+      break;;
 
-case MsgAutoPilot:
-  handleAutoPilot(msg);
-  break;;
+    case MsgAutoPilot:
+      handleAutoPilot(msg);
+      break;;
 
-case MsgAllow:
-  handleAllow(msg);
-  break;
+    case MsgAllow:
+      handleAllow(msg);
+      break;
 
-case MsgKilled:
-  handleKilledMessage(msg, human, checkScores);
-  break;;
+    case MsgKilled:
+      handleKilledMessage(msg, human, checkScores);
+      break;;
 
-case MsgGrabFlag:
-  handleGrabFlag(msg);
-  break;
+    case MsgGrabFlag:
+      handleGrabFlag(msg);
+      break;
 
-case MsgDropFlag:
-  handleDropFlag(msg);
-  break;
+    case MsgDropFlag:
+      handleDropFlag(msg);
+      break;
 
-case MsgCaptureFlag:
-  handleCaptureFlag(msg, checkScores);
-  break;
+    case MsgCaptureFlag:
+      handleCaptureFlag(msg, checkScores);
+      break;
 
-case MsgNewRabbit:
-  handleNewRabbit(msg);
-  break;
+    case MsgNewRabbit:
+      handleNewRabbit(msg);
+      break;
 
-case MsgShotBegin:
-  handleShotBegin(human, msg);
-  break;
+    case MsgShotBegin:
+      handleShotBegin(human, msg);
+      break;
 
-case MsgShotEnd:
-  handleShotEnd(msg);
-  break;
+    case MsgShotEnd:
+      handleShotEnd(msg);
+      break;
 
-case MsgHandicap:
-  handleHandicap(msg);
-  break;
+    case MsgHandicap:
+      handleHandicap(msg);
+      break;
 
-case MsgScore:
-  handleScore(msg);
-  break;
+    case MsgScore:
+      handleScore(msg);
+      break;
 
-case MsgSetVar:
-  handleMsgSetVars(msg);
-  break;
+    case MsgSetVar:
+      handleMsgSetVars(msg);
+      break;
 
-case MsgTeleport:
-  handleTeleport(msg);
-  break;
+    case MsgTeleport:
+      handleTeleport(msg);
+      break;
 
-case MsgTransferFlag:
-  handleTransferFlag(msg);
-  break;
+    case MsgTransferFlag:
+      handleTransferFlag(msg);
+      break;
 
-case MsgMessage:
-  handleMessage(msg);
-  break;
+    case MsgMessage:
+      handleMessage(msg);
+      break;
 
-case MsgReplayReset:
-  handleReplayReset(msg, checkScores);
-  break;
+    case MsgReplayReset:
+      handleReplayReset(msg, checkScores);
+      break;
 
-case MsgAdminInfo:
-  handleAdminInfo(msg);
-  break;
+    case MsgAdminInfo:
+      handleAdminInfo(msg);
+      break;
 
-case MsgPlayerInfo:
-  handlePlayerInfo(msg);
-  break;
+    case MsgPlayerInfo:
+      handlePlayerInfo(msg);
+      break;
 
-case MsgNewPlayer:
-  handleNewPlayer(msg);
-  break;
+    case MsgNewPlayer:
+      handleNewPlayer(msg);
+      break;
 
-  // inter-player relayed message
-case MsgPlayerUpdate:
-case MsgPlayerUpdateSmall:
-case MsgGMUpdate:
-case MsgLagPing:
-  handlePlayerMessage(code, 0, msg);
-  break;
+      // inter-player relayed message
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+    case MsgGMUpdate:
+    case MsgLagPing:
+      handlePlayerMessage(code, 0, msg);
+      break;
 
-case MsgTangibilityUpdate:
-  handleTangUpdate(len,msg);
-  break;
+    case MsgTangibilityUpdate:
+      handleTangUpdate(len,msg);
+      break;
 
-case MsgTangibilityReset:
-  handleTangReset();
-  break;
+    case MsgTangibilityReset:
+      handleTangReset();
+      break;
 
-case MsgAllowSpawn:
-  handleAllowSpawn(len,msg);
-  break;
+    case MsgAllowSpawn:
+      handleAllowSpawn(len,msg);
+      break;
 
-case MsgLimboMessage:
-  handleLimboMessage(msg);
-  break;
+    case MsgLimboMessage:
+      handleLimboMessage(msg);
+      break;
   }
 
   if (checkScores) updateHighScores();
@@ -3441,38 +3439,38 @@ static void		handlePlayerMessage(uint16_t code, uint16_t len,
 					    void* msg)
 {
   switch (code) {
-case MsgPlayerUpdate:
-case MsgPlayerUpdateSmall:
-  handleMovementUpdate(code,len,msg);
-  break;
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+      handleMovementUpdate(code,len,msg);
+      break;
 
-case MsgGMUpdate: {
-  ShotUpdate shot;
-  msg = shot.unpack(msg);
-  Player* tank = lookupPlayer(shot.player);
-  if (!tank || tank == myTank) break;
-  RemotePlayer* remoteTank = (RemotePlayer*)tank;
-  RemoteShotPath* shotPath =
-    (RemoteShotPath*)remoteTank->getShot(shot.id);
-  if (shotPath) shotPath->update(shot, code, msg);
-  PlayerId targetId;
-  msg = nboUnpackUByte(msg, targetId);
-  Player* targetTank = getPlayerByIndex(targetId);
-  if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
-    static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-      playWorldSound(SFX_LOCK, shot.pos);
-      lastLockMsg=TimeKeeper::getTick();
-      addMessage(tank, "locked on me");
+    case MsgGMUpdate: {
+      ShotUpdate shot;
+      msg = shot.unpack(msg);
+      Player* tank = lookupPlayer(shot.player);
+      if (!tank || tank == myTank) break;
+      RemotePlayer* remoteTank = (RemotePlayer*)tank;
+      RemoteShotPath* shotPath =
+	(RemoteShotPath*)remoteTank->getShot(shot.id);
+      if (shotPath) shotPath->update(shot, code, msg);
+      PlayerId targetId;
+      msg = nboUnpackUByte(msg, targetId);
+      Player* targetTank = getPlayerByIndex(targetId);
+      if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
+	static TimeKeeper lastLockMsg;
+	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+	  playWorldSound(SFX_LOCK, shot.pos);
+	  lastLockMsg=TimeKeeper::getTick();
+	  addMessage(tank, "locked on me");
+	}
+      }
+      break;
     }
-  }
-  break;
-		  }
 
-		  // just echo lag ping message
-case MsgLagPing:
-  serverLink->sendLagPing((char *)msg);
-  break;
+    // just echo lag ping message
+    case MsgLagPing:
+      serverLink->sendLagPing((char *)msg);
+      break;
   }
 }
 
@@ -3491,8 +3489,7 @@ public:
 
     e = serverLink->read(message, 0);
 
-    if (e == -2)
-    {
+    if (e == -2) {
       printError("Server communication error");
       return 0;
     }
@@ -7255,18 +7252,18 @@ void			startPlaying()
   {
     int n = 3;	// assume triple buffering
     switch (RENDERER.getViewType()) {
-case SceneRenderer::Stacked:
-case SceneRenderer::Stereo:
-#ifndef USE_GL_STEREO
-  // control panel drawn twice per frame
-  n *= 2;
-#endif
-  break;
+      case SceneRenderer::Stacked:
+      case SceneRenderer::Stereo:
+      #ifndef USE_GL_STEREO
+	// control panel drawn twice per frame
+	n *= 2;
+      #endif
+	break;
 
-case SceneRenderer::ThreeChannel:
-default:
-  // only one copy of control panel visible
-  break;
+      case SceneRenderer::ThreeChannel:
+      default:
+	// only one copy of control panel visible
+	break;
     }
     controlPanel->setNumberOfFrameBuffers(n);
   }
