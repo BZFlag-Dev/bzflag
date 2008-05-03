@@ -4541,12 +4541,7 @@ static void runMainLoop ( void )
 
   int readySetGo = -1; // match countdown timer
   int nfound; 
-  bool firstRun = true;
   while (!done) {
-    if (firstRun)
-    {
-      firstRun = false;
-    }
     doTickEvent();
     updatePlayerPositions();
     checkForWorldDeaths();
