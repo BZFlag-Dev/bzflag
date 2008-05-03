@@ -3491,6 +3491,7 @@ public:
 
     if (e == -2) {
       printError("Server communication error");
+      serverError = true;
       return 0;
     }
 
