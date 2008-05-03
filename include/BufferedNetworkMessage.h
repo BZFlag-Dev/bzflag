@@ -106,6 +106,7 @@ class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageMan
 {
 public:
   BufferedNetworkMessage  *newMessage ( BufferedNetworkMessage *msgToCopy = NULL );
+  template <class T> T* newMessage ( T* msgToCopy = NULL );
 
   typedef std::list<BufferedNetworkMessage*> MessageList;
 
