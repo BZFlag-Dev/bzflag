@@ -168,6 +168,7 @@ CLEANFILES = datestamp
 
 MAINTAINERCLEANFILES =	\
 	config.h.in	\
+	config.h.in~	\
 	stamp-h.in	\
 	Makefile.in
 

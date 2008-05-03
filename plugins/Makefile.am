@@ -62,4 +62,5 @@ MAINTAINERCLEANFILES =	\
 	configure \
 	depcomp \
 	install-sh \
+	ltmain.sh \
 	missing
