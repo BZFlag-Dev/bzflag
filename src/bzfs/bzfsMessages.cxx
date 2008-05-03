@@ -1063,7 +1063,7 @@ void PackVars::endMessage()
 void PackVars::sendPackVars(const std::string &key)
 {
   std::string value = BZDB.get(key);
-  int pairLen = key.length() + value.length() + 2 * sizeof(uint32_t);
+  size_t pairLen = key.length() + value.length() + 2 * sizeof(uint32_t);
   if ((pairLen + msg->size()) > MaxPacketLen) {
     endMessage();
     startMessage();
