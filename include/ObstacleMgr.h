@@ -169,17 +169,6 @@ inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
   return groups;
 }
 
-#define _Wall_ID 0
-#define _Box_ID 1
-#define _Pyramid_ID 2
-#define _Base_ID 3
-#define _Teleporter_ID 4
-#define _Mesh_ID 5
-#define _Arc_ID 6
-#define _Cone_ID 7
-#define _Sphere_ID 8
-#define _Tetra_ID 9
-
 
 //
 // Group Definition Manager
@@ -288,51 +277,59 @@ inline  Obstacle* GroupDefinitionMgr::getObstacleFromID ( unsigned int id )
 
   p.i = id;
 
-  switch (p.s[0])
+  switch ((ObstacleTypes)p.s[0])
   {
-    case _Wall_ID:
+    case wallType:
       if (getWalls().size() > p.s[1] )
 	return getWalls()[p.s[1]];
       break;
 
-    case _Box_ID:
+    case boxType:
       if (getBoxes().size() > p.s[1] )
 	return getBoxes()[p.s[1]];
       break;
 
-    case _Base_ID:
-      if (getBases().size() > p.s[1] )
-	return getBases()[p.s[1]];
-      break;
-
-    case _Pyramid_ID:
+    case pyrType:
       if (getPyrs().size() > p.s[1] )
 	return getPyrs()[p.s[1]];
       break;
 
-    case _Mesh_ID:
+    case baseType:
+      if (getBases().size() > p.s[1] )
+	return getBases()[p.s[1]];
+      break;
+
+    case teleType:
+      if (getTeles().size() > p.s[1] )
+	return getTeles()[p.s[1]];
+      break;
+
+    case meshType:
       if (getMeshes().size() > p.s[1] )
 	return getMeshes()[p.s[1]];
       break;
 
-    case _Arc_ID:
+    case arcType:
       if (getArcs().size() > p.s[1] )
 	return getArcs()[p.s[1]];
       break;
 
-    case _Cone_ID:
+    case coneType:
       if (getCones().size() > p.s[1] )
 	return getCones()[p.s[1]];
       break;
 
-    case _Sphere_ID:
+    case sphereType:
       if (getSpheres().size() > p.s[1] )
 	return getSpheres()[p.s[1]];
       break;
 
-    case _Tetra_ID:
+    case tetraType:
       if (getTetras().size() > p.s[1] )
 	return getTetras()[p.s[1]];
+      break;
+
+    case ObstacleTypeCount: // prevent unhandled enumeration value warnings
       break;
   }
 
