@@ -98,10 +98,6 @@ void rescanForBans ( const char* callsign = NULL, int playerID = -1 );
 void zapFlag(FlagInfo &flag);
 void anointNewRabbit( int killerId = NoPlayer);
 
-extern int bz_pwrite(NetHandler *handler, const void *b, int l);
-extern void pwriteBroadcast(const void *b, int l, int mask);
-
-
 void lagKick(int playerIndex);
 void jitterKick(int playerIndex);
 void packetLossKick(int playerIndex);
@@ -138,7 +134,7 @@ extern char		hexDigest[50];
 extern WorldInfo	*world;
 extern char		*worldDatabase;
 extern uint32_t		worldDatabaseSize;
-extern char		*worldSettings;
+extern char		worldSettings[WorldSettingsSize];
 extern uint8_t		rabbitIndex;
 extern float		speedTolerance;
 extern bool		handlePings;

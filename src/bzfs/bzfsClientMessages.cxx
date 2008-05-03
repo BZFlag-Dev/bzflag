@@ -23,14 +23,7 @@ std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 void packWorldSettings ( void )
 {
-  if (!worldSettings)	// this stuff is static, so cache it once.
-    worldSettings = (char*) malloc(4 + WorldSettingsSize);
-
   void* buffer = worldSettings;
-
-  // the header
-  buffer = nboPackUShort (buffer, WorldSettingsSize); // length
-  buffer = nboPackUShort (buffer, MsgGameSettings);   // code
 
   // the settings
   buffer = nboPackFloat  (buffer, BZDBCache::worldSize);
@@ -166,10 +159,10 @@ class WantSettingsHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
-    if (!worldSettings)
-      packWorldSettings();
+    NetMsg setMsg = MSGMGR.newMessage();
+    setMsg->addPackedData(worldSettings, WorldSettingsSize);
+    setMsg->send(handler, MsgGameSettings);
 
-    bz_pwrite(handler, worldSettings, 4 + WorldSettingsSize);
     return true;
   }
 };

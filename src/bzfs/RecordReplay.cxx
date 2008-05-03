@@ -115,7 +115,7 @@ typedef struct {
   char serverVersion[8];	// BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];	    // hash of worldDatabase
-  char worldSettings[4 + WorldSettingsSize]; // the game settings
+  char worldSettings[WorldSettingsSize]; // the game settings
   char *flags;		  // a list of the flags types
   char *world;		  // the world
 } ReplayHeader;
@@ -124,7 +124,7 @@ typedef struct {
 static const unsigned int ReplayHeaderSize =
   HEADER_SIZE_STUFFING +
   (sizeof(u32) * 6) + sizeof(RRtime) +
-  CallSignLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
+  CallSignLen + 8 + MessageLen + 64 + WorldSettingsSize;
 
 typedef struct {
   std::string file;
@@ -2288,13 +2288,10 @@ static bool replaceSettings(ReplayHeader *h)
 
   // change the settings maxPlayer size to the current value
   const int maxPlayersOffset =
-    sizeof(uint16_t) + // packet len
-    sizeof(uint16_t) + // packet code
     sizeof(float)    + // world size
     sizeof(uint16_t);  // gamestyle
   char *hdrMaxPlayersPtr = h->worldSettings + maxPlayersOffset;
   nboPackUShort(hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
-
 
   // compare the settings (now that maxPlayer has been adjusted)
   if (memcmp(worldSettings, h->worldSettings, length) == 0) {

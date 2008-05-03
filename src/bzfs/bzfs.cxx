@@ -137,7 +137,7 @@ WorldInfo *world = NULL;
 // FIXME: should be static, but needed by RecordReplay
 char	  *worldDatabase = NULL;
 uint32_t  worldDatabaseSize = 0;
-char	  *worldSettings = NULL;
+char	  worldSettings[WorldSettingsSize];
 float	  pluginWorldSize = -1;
 float	  pluginWorldHeight = -1;
 Filter	  filter;
@@ -165,6 +165,9 @@ bool worldWasSentToAPlayer   = false;
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
+// FIXME forward declarations probably unnecessary
+int bz_pwrite(NetHandler *handler, const void *b, int l);
+void pwriteBroadcast(const void *b, int l, int mask);
 
 class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
 {
@@ -4988,9 +4991,6 @@ static void cleanupServer ( void )
   Record::kill();
   Replay::kill();
   Flags::kill();
-
-  if (worldSettings)
-    free(worldSettings);
 
 #if defined(_WIN32)
   WSACleanup();
