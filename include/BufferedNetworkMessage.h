@@ -29,10 +29,7 @@ class BufferedNetworkMessageManager;
 class BufferedNetworkMessage
 {
 public:
-    BufferedNetworkMessage();
-    BufferedNetworkMessage( const BufferedNetworkMessage &msg );
-
-    virtual ~BufferedNetworkMessage();
+    ~BufferedNetworkMessage();
 
     // sending
     void send ( NetHandler *to, uint16_t messageCode );
@@ -71,6 +68,12 @@ public:
 
 protected:
   friend class BufferedNetworkMessageManager;
+
+  // BufferedNetworkMessages should never be created directly.
+  // Use MSGMGR->newMessage instead.
+  BufferedNetworkMessage();
+  BufferedNetworkMessage( const BufferedNetworkMessage &msg );
+
   bool process ( void );
 
   char* getWriteBuffer ( void );
