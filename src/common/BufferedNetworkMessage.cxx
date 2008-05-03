@@ -315,7 +315,7 @@ char* BufferedNetworkMessage::getReadBuffer ( void )
 
 
 //BufferedNetworkMessageManager
-template <class T> T* newMessage ( T* msgToCopy )
+template <class T> T* BufferedNetworkMessageManager::newMessage ( T* msgToCopy )
 {
   T* msg = NULL;
   if (msgToCopy)
