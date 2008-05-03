@@ -139,6 +139,23 @@ private:
   ~BufferedNetworkMessageManager();
 };  
 
+template <class T>
+inline T* BufferedNetworkMessageManager::newMessage ( T* msgToCopy )
+{
+  T* msg = NULL;
+  if (msgToCopy)
+    msg = new T(*msgToCopy);
+  else
+    msg = new T;
+  pendingOutgoingMessages.push_back(msg);
+  return msg;
+}
+
+inline BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage* msgToCopy )
+{
+  return newMessage<BufferedNetworkMessage>(msgToCopy);
+}
+
 #define MSGMGR (BufferedNetworkMessageManager::instance())
 
 typedef BufferedNetworkMessage* NetMsg;

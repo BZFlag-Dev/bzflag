@@ -315,22 +315,6 @@ char* BufferedNetworkMessage::getReadBuffer ( void )
 
 
 //BufferedNetworkMessageManager
-template <class T> T* BufferedNetworkMessageManager::newMessage ( T* msgToCopy )
-{
-  T* msg = NULL;
-  if (msgToCopy)
-    msg = new T(*msgToCopy);
-  else
-    msg = new T;
-  pendingOutgoingMessages.push_back(msg);
-  return msg;
-}
-
-BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage* msgToCopy )
-{
-  return newMessage<BufferedNetworkMessage>(msgToCopy);
-}
-
 size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages )
 {
   BufferedNetworkMessage * msg = new BufferedNetworkMessage;
