@@ -141,7 +141,7 @@ private:
 
 #define MSGMGR (BufferedNetworkMessageManager::instance())
 
-#define NetMsg BufferedNetworkMessage*
+typedef BufferedNetworkMessage* NetMsg;
 
 #endif //_BUFFERED_NETWORK_MESSAGE_H_
 
