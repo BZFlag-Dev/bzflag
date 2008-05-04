@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src/other/freetype/include \
-	-I$(top_srcdir)/src/other/ftgl/inc \
+	-I$(top_srcdir)/src/other/ftgl/src \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 

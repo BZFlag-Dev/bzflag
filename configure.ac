@@ -1140,7 +1140,7 @@ AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then
     AC_DEFINE(BUILD_FTGL, 1, [Build the included ftgl library])
     BUILD_FTGL="yes"
-    LIBFTGL='${top_builddir}/src/other/ftgl/libftgl.la'
+    LIBFTGL='${top_builddir}/src/other/ftgl/src/libftgl.la'
 fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
@@ -1178,6 +1178,9 @@ bz_configure_args="$ac_configure_args"
 
 if test x$enable_plugins != xno ; then
     AC_CONFIG_SUBDIRS(plugins)
+fi
+if test "x$BUILD_FTGL" = "xyes" ; then
+    AC_CONFIG_SUBDIRS(src/other/ftgl)
 fi
 if test "x$BUILD_ARES" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ares)
@@ -1251,7 +1254,6 @@ AC_CONFIG_FILES([
 	src/ogl/Makefile
 	src/other/Makefile
 	src/other/freetype/Makefile
-	src/other/ftgl/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist

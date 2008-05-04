@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libfreetype.la
+lib_LTLIBRARIES = libfreetype.la
 
 AM_CPPFLAGS = \
 	-I${top_srcdir}/src/other/freetype/include \

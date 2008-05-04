@@ -34,11 +34,10 @@
 #include "OSFile.h"
 
 // local implementation headers
-#include "FTGLTextureFont.h"
-#include "FTGLBitmapFont.h"
+#include "FTGL/ftgl.h"
 
-typedef FTGLTextureFont FONT;
-typedef FTGLBitmapFont CRAP_FONT;
+typedef FTTextureFont FONT;
+typedef FTBitmapFont CRAP_FONT;
 
 /* FIXME: this debugging crap and all associated printfs disappear
  * when fontmanager is verified to be working.  there is still a

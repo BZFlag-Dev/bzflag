@@ -1,40 +1,36 @@
-noinst_LTLIBRARIES = libftgl.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/other/ftgl/inc -I$(top_srcdir)/src/other/freetype/include
+ACLOCAL_AMFLAGS = -I m4
 
-libftgl_la_LDFLAGS = -static
-libftgl_la_SOURCES = \
-	src/FTBitmapGlyph.cpp	\
-	src/FTCharmap.cpp	\
-	src/FTContour.cpp	\
-	src/FTExtrdGlyph.cpp	\
-	src/FTFace.cpp		\
-	src/FTFont.cpp		\
-	src/FTGLBitmapFont.cpp	\
-	src/FTGLExtrdFont.cpp	\
-	src/FTGLOutlineFont.cpp	\
-	src/FTGLPixmapFont.cpp	\
-	src/FTGLPolygonFont.cpp	\
-	src/FTGLTextureFont.cpp	\
-	src/FTGlyph.cpp		\
-	src/FTGlyphContainer.cpp	\
-	src/FTLibrary.cpp	\
-	src/FTOutlineGlyph.cpp	\
-	src/FTPixmapGlyph.cpp	\
-	src/FTPoint.cpp		\
-	src/FTPolyGlyph.cpp	\
-	src/FTSize.cpp		\
-	src/FTTextureGlyph.cpp	\
-	src/FTVectoriser.cpp
+SUBDIRS = src test demo docs
+DIST_SUBDIRS = $(SUBDIRS) msvc
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = ftgl.pc
+
+DISTCLEANFILES = ftgl.pc
 
 EXTRA_DIST = \
-	COPYING.txt \
-	HISTORY.txt \
-	README.txt \
-	docs \
-	inc \
-	license.txt \
-	src
+	AUTHORS \
+	BUGS \
+	COPYING \
+	ChangeLog \
+	INSTALL \
+	NEWS \
+	README \
+	TODO \
+	autogen.sh \
+	configure.ac \
+	ftgl.pc.in \
+	$(NULL)
+
+# Print out an informative summary.
+all-local:
+	@$(ECHO) "Done."
+	@$(ECHO)
+	@if test "x$(MAKECMDGOALS)" = "xall-am" -o "x$(.TARGETS)" = "xall-am" -o "x$(MAKECMDGOALS)" = "x" -o "x$(.TARGETS)" = "x" ; then \
+	  $(ECHO) "---" ;\
+	  $(ECHO) "Run 'make install' to begin installation into $(prefix)" ;\
+	fi
+	@$(ECHO)
+
+NULL =

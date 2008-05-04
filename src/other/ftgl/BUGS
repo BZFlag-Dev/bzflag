@@ -1,0 +1,16 @@
+BUGS
+====
+
+* FTExtrdGlyph - Some glyph contours are 'wound' in reverse causing
+  the 'sides' of the extrusions to be culled. First fix only half
+  worked. When calculating the winding using the summed area I need to
+  use the outside contour only. How do I know it's an outside contour?
+  A workaround is to disable face culling.
+
+* FTGLTextureFonts can't be used inside display lists. This because
+  the glGet call to check the current texture id can't be used in a
+  display list. It is only a valid call when the list is compiled and
+  is ignore after that.
+
+* The texture co-ords in the Texture Font may be wrong for non
+  scalable fonts.
