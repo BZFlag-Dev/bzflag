@@ -35,12 +35,13 @@ class FTPolygonFontImpl : public FTFontImpl
     friend class FTPolygonFont;
 
     protected:
-        FTPolygonFontImpl(const char* fontFilePath) :
-            FTFontImpl(fontFilePath), outset(0.0f) {};
+        FTPolygonFontImpl(FTFont *ftFont, const char* fontFilePath) :
+            FTFontImpl(ftFont, fontFilePath), outset(0.0f) {};
 
-        FTPolygonFontImpl(const unsigned char *pBufferBytes,
+        FTPolygonFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                           size_t bufferSizeInBytes) :
-            FTFontImpl(pBufferBytes, bufferSizeInBytes), outset(0.0f) {};
+            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
+            outset(0.0f) {};
 
         /**
          * Set the outset distance for the font. Only implemented by
@@ -51,14 +52,6 @@ class FTPolygonFontImpl : public FTFontImpl
         virtual void Outset(float o) { outset = o; }
 
     private:
-        /**
-         * Construct a FTPolygonGlyph.
-         *
-         * @param g The glyph index NOT the char code.
-         * @return  An FTPolygonGlyph or <code>null</code> on failure.
-         */
-        virtual FTGlyph* MakeGlyph(unsigned int g);
-
         /**
          * The outset distance (front and back) for the font.
          */

@@ -35,12 +35,12 @@ class FTPixmapFontImpl : public FTFontImpl
     friend class FTPixmapFont;
 
     protected:
-        FTPixmapFontImpl(const char* fontFilePath) :
-            FTFontImpl(fontFilePath) {};
+        FTPixmapFontImpl(FTFont *ftFont, const char* fontFilePath) :
+            FTFontImpl(ftFont, fontFilePath) {};
 
-        FTPixmapFontImpl(const unsigned char *pBufferBytes,
+        FTPixmapFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                          size_t bufferSizeInBytes) :
-            FTFontImpl(pBufferBytes, bufferSizeInBytes) {};
+            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes) {};
 
         /**
          * Renders a string of characters
@@ -73,14 +73,6 @@ class FTPixmapFontImpl : public FTFontImpl
         virtual void Render(const wchar_t *string, int renderMode);
 
     private:
-        /**
-         * Construct a FTPixmapGlyph.
-         *
-         * @param g The glyph index NOT the char code.
-         * @return  An FTPixmapGlyph or <code>null</code> on failure.
-         */
-        inline virtual FTGlyph* MakeGlyph(unsigned int g);
-
         /* Internal generic Render() implementation */
         template <typename T>
         inline void RenderI(const T* string);

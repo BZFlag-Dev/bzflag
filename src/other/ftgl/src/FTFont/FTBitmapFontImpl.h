@@ -35,26 +35,18 @@ class FTBitmapFontImpl : public FTFontImpl
     friend class FTBitmapFont;
 
     protected:
-        FTBitmapFontImpl(const char* fontFilePath) :
-            FTFontImpl(fontFilePath) {};
+        FTBitmapFontImpl(FTFont *ftFont, const char* fontFilePath) :
+            FTFontImpl(ftFont, fontFilePath) {};
 
-        FTBitmapFontImpl(const unsigned char *pBufferBytes,
+        FTBitmapFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                          size_t bufferSizeInBytes) :
-            FTFontImpl(pBufferBytes, bufferSizeInBytes) {};
+            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes) {};
 
         virtual void Render(const char* string);
 
         virtual void Render(const wchar_t* string);
 
     private:
-        /**
-         * Construct a FTBitmapGlyph.
-         *
-         * @param g The glyph index NOT the char code.
-         * @return  An FTBitmapGlyph or <code>null</code> on failure.
-         */
-        inline virtual FTGlyph* MakeGlyph(unsigned int g);
-
         /* Internal generic Render() implementation */
         template <typename T>
         inline void RenderI(const T* string);

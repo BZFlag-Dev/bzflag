@@ -35,12 +35,13 @@ class FTOutlineFontImpl : public FTFontImpl
     friend class FTOutlineFont;
 
     protected:
-        FTOutlineFontImpl(const char* fontFilePath) :
-            FTFontImpl(fontFilePath), outset(0.0f) {};
+        FTOutlineFontImpl(FTFont *ftFont, const char* fontFilePath) :
+            FTFontImpl(ftFont, fontFilePath), outset(0.0f) {};
 
-        FTOutlineFontImpl(const unsigned char *pBufferBytes,
+        FTOutlineFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                           size_t bufferSizeInBytes) :
-            FTFontImpl(pBufferBytes, bufferSizeInBytes), outset(0.0f) {};
+            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
+            outset(0.0f) {};
 
         /**
          * Set the outset distance for the font. Only implemented by
@@ -81,14 +82,6 @@ class FTOutlineFontImpl : public FTFontImpl
         virtual void Render(const wchar_t *string, int renderMode);
 
     private:
-        /**
-         * Construct a FTOutlineGlyph.
-         *
-         * @param g The glyph index NOT the char code.
-         * @return  An FTOutlineGlyph or <code>null</code> on failure.
-         */
-        inline virtual FTGlyph* MakeGlyph(unsigned int g);
-
         /**
          * The outset distance for the font.
          */

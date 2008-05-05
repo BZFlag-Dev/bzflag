@@ -37,9 +37,9 @@ class FTTextureFontImpl : public FTFontImpl
     friend class FTTextureFont;
 
     protected:
-        FTTextureFontImpl(const char* fontFilePath);
+        FTTextureFontImpl(FTFont *ftFont, const char* fontFilePath);
 
-        FTTextureFontImpl(const unsigned char *pBufferBytes,
+        FTTextureFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                           size_t bufferSizeInBytes);
 
         virtual ~FTTextureFontImpl();
@@ -86,12 +86,9 @@ class FTTextureFontImpl : public FTFontImpl
 
     private:
         /**
-         * Construct a FTTextureGlyph.
-         *
-         * @param glyphIndex The glyph index NOT the char code.
-         * @return  An FTTextureGlyph or <code>null</code> on failure.
+         * Create an FTTextureGlyph object for the base class.
          */
-        inline virtual FTGlyph* MakeGlyph(unsigned int glyphIndex);
+        FTGlyph* MakeGlyph(FT_GlyphSlot ftGlyph);
 
         /**
          * Get the size of a block of memory required to layout the glyphs

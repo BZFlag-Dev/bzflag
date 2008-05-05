@@ -100,6 +100,8 @@ AC_TRY_COMPILE([
                 AC_MSG_ERROR([GLU >= 1.2 is needed to compile this library])
                ])
 
+if test "x$FRAMEWORK_OPENGL" = "x" ; then
+
 AC_MSG_CHECKING([for GLU library])
 LIBS="-lGLU $GL_LIBS"
 AC_LINK_IFELSE([AC_LANG_CALL([],[gluNewTess])],[HAVE_GLU=yes], [HAVE_GLU=no])
@@ -115,6 +117,8 @@ if test "x$HAVE_GLU" = xyes ; then
 else
     AC_MSG_RESULT([no])
     AC_MSG_ERROR([GLU library could not be found, please specify its location with --with-gl-lib.  If this still fails, please contact henryj@paradise.net.nz, include the string FTGL somewhere in the subject line and provide a copy of the config.log file that was left behind.])
+fi
+
 fi
 
 AC_SUBST(GL_CFLAGS)

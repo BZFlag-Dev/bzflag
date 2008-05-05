@@ -38,14 +38,14 @@
 
 FTPolygonFont::FTPolygonFont(char const *fontFilePath)
 {
-    impl = new FTPolygonFontImpl(fontFilePath);
+    impl = new FTPolygonFontImpl(this, fontFilePath);
 }
 
 
 FTPolygonFont::FTPolygonFont(const unsigned char *pBufferBytes,
                              size_t bufferSizeInBytes)
 {
-    impl = new FTPolygonFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTPolygonFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -55,23 +55,21 @@ FTPolygonFont::~FTPolygonFont()
 }
 
 
+FTGlyph* FTPolygonFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    FTPolygonFontImpl *myimpl = dynamic_cast<FTPolygonFontImpl *>(impl);
+    if(!myimpl)
+    {
+        return NULL;
+    }
+
+    return new FTPolygonGlyph(ftGlyph, myimpl->outset,
+                              myimpl->useDisplayLists);
+}
+
+
 //
 //  FTPolygonFontImpl
 //
 
-
-FTGlyph* FTPolygonFontImpl::MakeGlyph(unsigned int g)
-{
-    FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_NO_HINTING);
-
-    if(ftGlyph)
-    {
-        FTPolygonGlyph* tempGlyph = new FTPolygonGlyph(ftGlyph, outset,
-                                                       useDisplayLists);
-        return tempGlyph;
-    }
-
-    err = face.Error();
-    return NULL;
-}
 

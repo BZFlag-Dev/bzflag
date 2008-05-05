@@ -38,14 +38,14 @@
 
 FTExtrudeFont::FTExtrudeFont(char const *fontFilePath)
 {
-    impl = new FTExtrudeFontImpl(fontFilePath);
+    impl = new FTExtrudeFontImpl(this, fontFilePath);
 }
 
 
 FTExtrudeFont::FTExtrudeFont(const unsigned char *pBufferBytes,
                              size_t bufferSizeInBytes)
 {
-    impl = new FTExtrudeFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTExtrudeFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -55,23 +55,21 @@ FTExtrudeFont::~FTExtrudeFont()
 }
 
 
+FTGlyph* FTExtrudeFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    FTExtrudeFontImpl *myimpl = dynamic_cast<FTExtrudeFontImpl *>(impl);
+    if(!myimpl)
+    {
+        return NULL;
+    }
+
+    return new FTExtrudeGlyph(ftGlyph, myimpl->depth, myimpl->front,
+                              myimpl->back, myimpl->useDisplayLists);
+}
+
+
 //
 //  FTExtrudeFontImpl
 //
 
-
-FTGlyph* FTExtrudeFontImpl::MakeGlyph(unsigned int glyphIndex)
-{
-    FT_GlyphSlot ftGlyph = face.Glyph(glyphIndex, FT_LOAD_NO_HINTING);
-
-    if(ftGlyph)
-    {
-        FTExtrudeGlyph* tempGlyph = new FTExtrudeGlyph(ftGlyph, depth, front,
-                                                       back, useDisplayLists);
-        return tempGlyph;
-    }
-
-    err = face.Error();
-    return NULL;
-}
 

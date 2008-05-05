@@ -38,14 +38,14 @@
 
 FTOutlineFont::FTOutlineFont(char const *fontFilePath)
 {
-    impl = new FTOutlineFontImpl(fontFilePath);
+    impl = new FTOutlineFontImpl(this, fontFilePath);
 }
 
 
 FTOutlineFont::FTOutlineFont(const unsigned char *pBufferBytes,
                              size_t bufferSizeInBytes)
 {
-    impl = new FTOutlineFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTOutlineFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -55,24 +55,22 @@ FTOutlineFont::~FTOutlineFont()
 }
 
 
+FTGlyph* FTOutlineFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    FTOutlineFontImpl *myimpl = dynamic_cast<FTOutlineFontImpl *>(impl);
+    if(!myimpl)
+    {
+        return NULL;
+    }
+
+    return new FTOutlineGlyph(ftGlyph, myimpl->outset,
+                              myimpl->useDisplayLists);
+}
+
+
 //
 //  FTOutlineFontImpl
 //
-
-
-FTGlyph* FTOutlineFontImpl::MakeGlyph(unsigned int g)
-{
-    FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_NO_HINTING);
-
-    if(ftGlyph)
-    {
-        FTOutlineGlyph* tempGlyph = new FTOutlineGlyph(ftGlyph, outset, useDisplayLists);
-        return tempGlyph;
-    }
-
-    err = face.Error();
-    return NULL;
-}
 
 
 template <typename T>

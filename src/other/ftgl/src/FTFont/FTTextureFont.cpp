@@ -43,20 +43,32 @@
 
 FTTextureFont::FTTextureFont(char const *fontFilePath)
 {
-    impl = new FTTextureFontImpl(fontFilePath);
+    impl = new FTTextureFontImpl(this, fontFilePath);
 }
 
 
 FTTextureFont::FTTextureFont(const unsigned char *pBufferBytes,
                              size_t bufferSizeInBytes)
 {
-    impl = new FTTextureFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTTextureFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
 FTTextureFont::~FTTextureFont()
 {
     ;
+}
+
+
+FTGlyph* FTTextureFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    FTTextureFontImpl *myimpl = dynamic_cast<FTTextureFontImpl *>(impl);
+    if(!myimpl)
+    {
+        return NULL;
+    }
+
+    return myimpl->MakeGlyph(ftGlyph);
 }
 
 
@@ -79,8 +91,8 @@ static inline GLuint NextPowerOf2(GLuint in)
 }
 
 
-FTTextureFontImpl::FTTextureFontImpl(const char* fontFilePath)
-:   FTFontImpl(fontFilePath),
+FTTextureFontImpl::FTTextureFontImpl(FTFont *ftFont, const char* fontFilePath)
+:   FTFontImpl(ftFont, fontFilePath),
     maximumGLTextureSize(0),
     textureWidth(0),
     textureHeight(0),
@@ -94,9 +106,10 @@ FTTextureFontImpl::FTTextureFontImpl(const char* fontFilePath)
 }
 
 
-FTTextureFontImpl::FTTextureFontImpl(const unsigned char *pBufferBytes,
-                                         size_t bufferSizeInBytes)
-:   FTFontImpl(pBufferBytes, bufferSizeInBytes),
+FTTextureFontImpl::FTTextureFontImpl(FTFont *ftFont,
+                                     const unsigned char *pBufferBytes,
+                                     size_t bufferSizeInBytes)
+:   FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
     maximumGLTextureSize(0),
     textureWidth(0),
     textureHeight(0),
@@ -120,47 +133,39 @@ FTTextureFontImpl::~FTTextureFontImpl()
 }
 
 
-FTGlyph* FTTextureFontImpl::MakeGlyph(unsigned int glyphIndex)
+FTGlyph* FTTextureFontImpl::MakeGlyph(FT_GlyphSlot ftGlyph)
 {
-    FT_GlyphSlot ftGlyph = face.Glyph(glyphIndex, FT_LOAD_NO_HINTING
-                                                   | FT_LOAD_NO_BITMAP);
+    glyphHeight = static_cast<int>(charSize.Height() + 0.5);
+    glyphWidth = static_cast<int>(charSize.Width() + 0.5);
 
-    if(ftGlyph)
+    if(glyphHeight < 1) glyphHeight = 1;
+    if(glyphWidth < 1) glyphWidth = 1;
+
+    if(textureIDList.empty())
     {
-        glyphHeight = static_cast<int>(charSize.Height() + 0.5);
-        glyphWidth = static_cast<int>(charSize.Width() + 0.5);
-
-        if(glyphHeight < 1) glyphHeight = 1;
-        if(glyphWidth < 1) glyphWidth = 1;
-
-        if(textureIDList.empty())
-        {
-            textureIDList.push_back(CreateTexture());
-            xOffset = yOffset = padding;
-        }
-
-        if(xOffset > (textureWidth - glyphWidth))
-        {
-            xOffset = padding;
-            yOffset += glyphHeight;
-
-            if(yOffset > (textureHeight - glyphHeight))
-            {
-                textureIDList.push_back(CreateTexture());
-                yOffset = padding;
-            }
-        }
-
-        FTTextureGlyph* tempGlyph = new FTTextureGlyph(ftGlyph, textureIDList[textureIDList.size() - 1],
-                                                        xOffset, yOffset, textureWidth, textureHeight);
-        xOffset += static_cast<int>(tempGlyph->BBox().Upper().X() - tempGlyph->BBox().Lower().X() + padding + 0.5);
-
-        --remGlyphs;
-        return tempGlyph;
+        textureIDList.push_back(CreateTexture());
+        xOffset = yOffset = padding;
     }
 
-    err = face.Error();
-    return NULL;
+    if(xOffset > (textureWidth - glyphWidth))
+    {
+        xOffset = padding;
+        yOffset += glyphHeight;
+
+        if(yOffset > (textureHeight - glyphHeight))
+        {
+            textureIDList.push_back(CreateTexture());
+            yOffset = padding;
+        }
+    }
+
+    FTTextureGlyph* tempGlyph = new FTTextureGlyph(ftGlyph, textureIDList[textureIDList.size() - 1],
+                                                    xOffset, yOffset, textureWidth, textureHeight);
+    xOffset += static_cast<int>(tempGlyph->BBox().Upper().X() - tempGlyph->BBox().Lower().X() + padding + 0.5);
+
+    --remGlyphs;
+
+    return tempGlyph;
 }
 
 

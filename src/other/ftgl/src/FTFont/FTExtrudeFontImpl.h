@@ -35,13 +35,14 @@ class FTExtrudeFontImpl : public FTFontImpl
     friend class FTExtrudeFont;
 
     protected:
-        FTExtrudeFontImpl(const char* fontFilePath) :
-          FTFontImpl(fontFilePath), depth(0.0f), front(0.0f), back(0.0f) {};
+        FTExtrudeFontImpl(FTFont *ftFont, const char* fontFilePath) :
+            FTFontImpl(ftFont, fontFilePath),
+            depth(0.0f), front(0.0f), back(0.0f) {};
 
-        FTExtrudeFontImpl(const unsigned char *pBufferBytes,
+        FTExtrudeFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                           size_t bufferSizeInBytes) :
-          FTFontImpl(pBufferBytes, bufferSizeInBytes),
-          depth(0.0f), front(0.0f), back(0.0f) {};
+            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
+            depth(0.0f), front(0.0f), back(0.0f) {};
 
         /**
          * Set the extrusion distance for the font.
@@ -68,14 +69,6 @@ class FTExtrudeFontImpl : public FTFontImpl
         virtual void Outset(float f, float b) { front = f; back = b; }
 
     private:
-        /**
-         * Construct a FTPolygonGlyph.
-         *
-         * @param glyphIndex The glyph index NOT the char code.
-         * @return An FTExtrudeGlyph or <code>null</code> on failure.
-         */
-        virtual FTGlyph* MakeGlyph(unsigned int glyphIndex);
-
         /**
          * The extrusion distance for the font.
          */

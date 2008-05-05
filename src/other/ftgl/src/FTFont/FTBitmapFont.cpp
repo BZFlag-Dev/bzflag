@@ -38,14 +38,14 @@
 
 FTBitmapFont::FTBitmapFont(char const *fontFilePath)
 {
-    impl = new FTBitmapFontImpl(fontFilePath);
+    impl = new FTBitmapFontImpl(this, fontFilePath);
 }
 
 
 FTBitmapFont::FTBitmapFont(unsigned char const *pBufferBytes,
                            size_t bufferSizeInBytes)
 {
-    impl = new FTBitmapFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTBitmapFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -55,24 +55,15 @@ FTBitmapFont::~FTBitmapFont()
 }
 
 
+FTGlyph* FTBitmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    return new FTBitmapGlyph(ftGlyph);
+}
+
+
 //
 //  FTBitmapFontImpl
 //
-
-
-FTGlyph* FTBitmapFontImpl::MakeGlyph(unsigned int g)
-{
-    FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_DEFAULT);
-
-    if(ftGlyph)
-    {
-        FTBitmapGlyph* tempGlyph = new FTBitmapGlyph(ftGlyph);
-        return tempGlyph;
-    }
-
-    err = face.Error();
-    return NULL;
-}
 
 
 template <typename T>

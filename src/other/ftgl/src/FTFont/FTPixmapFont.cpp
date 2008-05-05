@@ -38,14 +38,14 @@
 
 FTPixmapFont::FTPixmapFont(char const *fontFilePath)
 {
-    impl = new FTPixmapFontImpl(fontFilePath);
+    impl = new FTPixmapFontImpl(this, fontFilePath);
 }
 
 
 FTPixmapFont::FTPixmapFont(const unsigned char *pBufferBytes,
                            size_t bufferSizeInBytes)
 {
-    impl = new FTPixmapFontImpl(pBufferBytes, bufferSizeInBytes);
+    impl = new FTPixmapFontImpl(this, pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -55,25 +55,15 @@ FTPixmapFont::~FTPixmapFont()
 }
 
 
+FTGlyph* FTPixmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
+{
+    return new FTPixmapGlyph(ftGlyph);
+}
+
+
 //
 //  FTPixmapFontImpl
 //
-
-
-FTGlyph* FTPixmapFontImpl::MakeGlyph(unsigned int g)
-{
-    FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_NO_HINTING
-                                          | FT_LOAD_NO_BITMAP);
-
-    if(ftGlyph)
-    {
-        FTPixmapGlyph* tempGlyph = new FTPixmapGlyph(ftGlyph);
-        return tempGlyph;
-    }
-
-    err = face.Error();
-    return NULL;
-}
 
 
 template <typename T>

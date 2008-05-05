@@ -62,31 +62,13 @@ FTFont::~FTFont()
 
 bool FTFont::Attach(const char* fontFilePath)
 {
-    if(impl->face.Attach(fontFilePath))
-    {
-        impl->err = 0;
-        return true;
-    }
-    else
-    {
-        impl->err = impl->face.Error();
-        return false;
-    }
+    return impl->Attach(fontFilePath);
 }
 
 
 bool FTFont::Attach(const unsigned char *pBufferBytes, size_t bufferSizeInBytes)
 {
-    if(impl->face.Attach(pBufferBytes, bufferSizeInBytes))
-    {
-        impl->err = 0;
-        return true;
-    }
-    else
-    {
-        impl->err = impl->face.Error();
-        return false;
-    }
+    return impl->Attach(pBufferBytes, bufferSizeInBytes);
 }
 
 
@@ -104,86 +86,85 @@ unsigned int FTFont::FaceSize() const
 
 void FTFont::Depth(float depth)
 {
-    impl->Depth(depth);
+    return impl->Depth(depth);
 }
 
 
 void FTFont::Outset(float outset)
 {
-    impl->Outset(outset);
+    return impl->Outset(outset);
 }
 
 
 void FTFont::Outset(float front, float back)
 {
-    impl->Outset(front, back);
+    return impl->Outset(front, back);
 }
 
 
 bool FTFont::CharMap(FT_Encoding encoding)
 {
-    bool result = impl->glyphList->CharMap(encoding);
-    impl->err = impl->glyphList->Error();
-    return result;
+    return impl->CharMap(encoding);
 }
 
 
 unsigned int FTFont::CharMapCount()
 {
-    return impl->face.CharMapCount();
+    return impl->CharMapCount();
 }
 
 
 FT_Encoding* FTFont::CharMapList()
 {
-    return impl->face.CharMapList();
+    return impl->CharMapList();
 }
 
 
 void FTFont::UseDisplayList(bool useList)
 {
-    impl->useDisplayLists = useList;
+    return impl->UseDisplayList(useList);
 }
+
 
 float FTFont::Ascender() const
 {
-    return impl->charSize.Ascender();
+    return impl->Ascender();
 }
 
 
 float FTFont::Descender() const
 {
-    return impl->charSize.Descender();
+    return impl->Descender();
 }
 
 
 float FTFont::LineHeight() const
 {
-    return impl->charSize.Height();
+    return impl->LineHeight();
 }
 
 
 void FTFont::Render(const wchar_t* string)
 {
-    impl->Render(string);
+    return impl->Render(string);
 }
 
 
 void FTFont::Render(const char * string)
 {
-    impl->Render(string);
+    return impl->Render(string);
 }
 
 
 void FTFont::Render(const char * string, int renderMode)
 {
-    impl->Render(string, renderMode);
+    return impl->Render(string, renderMode);
 }
 
 
 void FTFont::Render(const wchar_t* string, int renderMode)
 {
-    impl->Render(string, renderMode);
+    return impl->Render(string, renderMode);
 }
 
 
@@ -218,14 +199,14 @@ void FTFont::BBox(const wchar_t* string, const int start, const int end,
 void FTFont::BBox(const char* string, float& llx, float& lly, float& llz,
                   float& urx, float& ury, float& urz)
 {
-    impl->BBox(string, 0, -1, llx, lly, llz, urx, ury, urz);
+    return impl->BBox(string, 0, -1, llx, lly, llz, urx, ury, urz);
 }
 
 
 void FTFont::BBox(const wchar_t* string, float& llx, float& lly, float& llz,
                   float& urx, float& ury, float& urz)
 {
-    impl->BBox(string, 0, -1, llx, lly, llz, urx, ury, urz);
+    return impl->BBox(string, 0, -1, llx, lly, llz, urx, ury, urz);
 }
 
 
@@ -240,9 +221,10 @@ FT_Error FTFont::Error() const
 //
 
 
-FTFontImpl::FTFontImpl(char const *fontFilePath) :
+FTFontImpl::FTFontImpl(FTFont *ftFont, char const *fontFilePath) :
     face(fontFilePath),
     useDisplayLists(true),
+    base(ftFont),
     glyphList(0)
 {
     err = face.Error();
@@ -253,10 +235,11 @@ FTFontImpl::FTFontImpl(char const *fontFilePath) :
 }
 
 
-FTFontImpl::FTFontImpl(const unsigned char *pBufferBytes,
+FTFontImpl::FTFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                        size_t bufferSizeInBytes) :
     face(pBufferBytes, bufferSizeInBytes),
     useDisplayLists(true),
+    base(ftFont),
     glyphList(0)
 {
     err = face.Error();
@@ -302,16 +285,16 @@ inline void FTFontImpl::RenderI(const T* string, int renderMode)
 }
 
 
-void FTFontImpl::Render(const wchar_t* string)
-{
-    RenderI(string, FTGL::RENDER_FRONT | FTGL::RENDER_BACK | FTGL::RENDER_SIDE);
-}
-
-
 void FTFontImpl::Render(const char * string)
 {
     RenderI((const unsigned char *)string,
             FTGL::RENDER_FRONT | FTGL::RENDER_BACK | FTGL::RENDER_SIDE);
+}
+
+
+void FTFontImpl::Render(const wchar_t* string)
+{
+    RenderI(string, FTGL::RENDER_FRONT | FTGL::RENDER_BACK | FTGL::RENDER_SIDE);
 }
 
 
@@ -324,6 +307,33 @@ void FTFontImpl::Render(const char * string, int renderMode)
 void FTFontImpl::Render(const wchar_t* string, int renderMode)
 {
     RenderI(string, renderMode);
+}
+
+
+bool FTFontImpl::Attach(const char* fontFilePath)
+{
+    if(!face.Attach(fontFilePath))
+    {
+        err = face.Error();
+        return false;
+    }
+
+    err = 0;
+    return true;
+}
+
+
+bool FTFontImpl::Attach(const unsigned char *pBufferBytes,
+                        size_t bufferSizeInBytes)
+{
+    if(!face.Attach(pBufferBytes, bufferSizeInBytes))
+    {
+        err = face.Error();
+        return false;
+    }
+
+    err = 0;
+    return true;
 }
 
 
@@ -368,6 +378,50 @@ void FTFontImpl::Outset(float outset)
 void FTFontImpl::Outset(float front, float back)
 {
     ;
+}
+
+
+bool FTFontImpl::CharMap(FT_Encoding encoding)
+{
+    bool result = glyphList->CharMap(encoding);
+    err = glyphList->Error();
+    return result;
+}
+
+
+unsigned int FTFontImpl::CharMapCount()
+{
+    return face.CharMapCount();
+}
+
+
+FT_Encoding* FTFontImpl::CharMapList()
+{
+    return face.CharMapList();
+}
+
+
+void FTFontImpl::UseDisplayList(bool useList)
+{
+    useDisplayLists = useList;
+}
+
+
+float FTFontImpl::Ascender() const
+{
+    return charSize.Ascender();
+}
+
+
+float FTFontImpl::Descender() const
+{
+    return charSize.Descender();
+}
+
+
+float FTFontImpl::LineHeight() const
+{
+    return charSize.Height();
 }
 
 
@@ -418,7 +472,9 @@ void FTFontImpl::BBox(const char* string, const int start, const int end,
                       float& llx, float& lly, float& llz,
                       float& urx, float& ury, float& urz)
 {
-    return BBoxI(string, start, end, llx, lly, llz, urx, ury, urz);
+    /* The chars need to be unsigned because they are cast to int later */
+    return BBoxI((const unsigned char *)string, start, end,
+                 llx, lly, llz, urx, ury, urz);
 }
 
 
@@ -449,35 +505,55 @@ inline float FTFontImpl::AdvanceI(const T* string)
 }
 
 
+float FTFontImpl::Advance(const char* string)
+{
+    /* The chars need to be unsigned because they are cast to int later */
+    return AdvanceI((const unsigned char *)string);
+}
+
+
 float FTFontImpl::Advance(const wchar_t* string)
 {
     return AdvanceI(string);
 }
 
 
-float FTFontImpl::Advance(const char* string)
-{
-    return AdvanceI((const unsigned char *)string);
-}
-
-
 bool FTFontImpl::CheckGlyph(const unsigned int characterCode)
 {
-    if(NULL == glyphList->Glyph(characterCode))
+    if(glyphList->Glyph(characterCode))
     {
-        unsigned int glyphIndex = glyphList->FontIndex(characterCode);
-        FTGlyph* tempGlyph = MakeGlyph(glyphIndex);
-        if(NULL == tempGlyph)
-        {
-            if(0 == err)
-            {
-                err = 0x13;
-            }
-
-            return false;
-        }
-        glyphList->Add(tempGlyph, characterCode);
+        return true;
     }
+
+    /*
+     * FIXME: load options are not the same for all subclasses:
+     *  FTBitmapGlyph: FT_LOAD_DEFAULT
+     *  FTExtrudeGlyph: FT_LOAD_NO_HINTING
+     *  FTOutlineGlyph: FT_LOAD_NO_HINTING
+     *  FTPixmapGlyph: FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP
+     *  FTPolygonGlyph: FT_LOAD_NO_HINTING
+     *  FTTextureGlyph: FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP
+     */
+    unsigned int glyphIndex = glyphList->FontIndex(characterCode);
+    FT_GlyphSlot ftGlyph = face.Glyph(glyphIndex, FT_LOAD_NO_HINTING);
+
+    if(!ftGlyph)
+    {
+        err = face.Error();
+        return false;
+    }
+
+    FTGlyph* tempGlyph = base->MakeGlyph(ftGlyph);
+    if(NULL == tempGlyph)
+    {
+        if(0 == err)
+        {
+            err = 0x13;
+        }
+
+        return false;
+    }
+    glyphList->Add(tempGlyph, characterCode);
 
     return true;
 }
