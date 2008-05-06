@@ -168,7 +168,7 @@ C_FUN(void, ftglSetFontOutset, (FTGLfont *f, float front, float back),
 
 // void FTFont::UseDisplayList(bool useList);
 C_FUN(void, ftglSetFontDisplayList, (FTGLfont *f, int l),
-      return, UseDisplayList, (true));
+      return, UseDisplayList, (l != 0));
 
 // float FTFont::Ascender() const;
 C_FUN(float, ftglGetFontAscender, (FTGLfont *f), return 0.f, Ascender, ());
