@@ -91,7 +91,7 @@ unsigned int FTCharmap::FontIndex(const unsigned int characterCode)
 
 
 void FTCharmap::InsertIndex(const unsigned int characterCode,
-                            const unsigned int containerIndex)
+                            const size_t containerIndex)
 {
-    charMap.insert(characterCode, containerIndex);
+	charMap.insert(characterCode, static_cast<FTCharToGlyphIndexMap::GlyphIndex>(containerIndex));
 }

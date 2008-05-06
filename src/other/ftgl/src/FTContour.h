@@ -70,7 +70,7 @@ class FTContour
          * @param index of the point in the curve.
          * @return const point reference
          */
-        const FTPoint& Point(unsigned int index) const { return pointList[index]; }
+        const FTPoint& Point(size_t index) const { return pointList[index]; }
 
         /**
          * Return a point at index.
@@ -78,7 +78,7 @@ class FTContour
          * @param index of the point in the outset curve.
          * @return const point reference
          */
-        const FTPoint& Outset(unsigned int index) const { return outsetPointList[index]; }
+        const FTPoint& Outset(size_t index) const { return outsetPointList[index]; }
 
         /**
          * Return a point at index of the front outset contour.
@@ -86,7 +86,7 @@ class FTContour
          * @param index of the point in the curve.
          * @return const point reference
          */
-        const FTPoint& FrontPoint(unsigned int index) const
+        const FTPoint& FrontPoint(size_t index) const
         {
             if(frontPointList.size() == 0)
                 return Point(index);
@@ -100,7 +100,7 @@ class FTContour
          * @param index of the point in the curve.
          * @return const point reference
          */
-        const FTPoint& BackPoint(unsigned int index) const
+        const FTPoint& BackPoint(size_t index) const
         {
             if(backPointList.size() == 0)
                 return Point(index);

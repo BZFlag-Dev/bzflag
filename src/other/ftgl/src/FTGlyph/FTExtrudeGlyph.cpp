@@ -216,7 +216,7 @@ void FTExtrudeGlyphImpl::RenderSide()
     for(size_t c = 0; c < vectoriser->ContourCount(); ++c)
     {
         const FTContour* contour = vectoriser->Contour(c);
-        unsigned int n = contour->PointCount();
+        size_t n = contour->PointCount();
 
         if(n < 2)
         {
@@ -224,10 +224,10 @@ void FTExtrudeGlyphImpl::RenderSide()
         }
 
         glBegin(GL_QUAD_STRIP);
-            for(unsigned int j = 0; j <= n; ++j)
+            for(size_t j = 0; j <= n; ++j)
             {
-                unsigned int cur = (j == n) ? 0 : j;
-                unsigned int next = (cur == n - 1) ? 0 : cur + 1;
+                size_t cur = (j == n) ? 0 : j;
+                size_t next = (cur == n - 1) ? 0 : cur + 1;
 
                 FTPoint frontPt = contour->FrontPoint(cur);
                 FTPoint nextPt = contour->FrontPoint(next);

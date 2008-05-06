@@ -149,12 +149,12 @@ class FTMesh
         /**
          * The number of tesselations in the mesh
          */
-        unsigned int TesselationCount() const { return tesselationList.size(); }
+        size_t TesselationCount() const { return tesselationList.size(); }
 
         /**
          * Get a tesselation by index
          */
-        const FTTesselation* const Tesselation(unsigned int index) const;
+        const FTTesselation* const Tesselation(size_t index) const;
 
         /**
          * Return the temporary point list. For testing only.
@@ -256,7 +256,7 @@ class FTVectoriser
          *
          * @return the number of contours
          */
-         const FTContour* const Contour(unsigned int index) const;
+         const FTContour* const Contour(size_t index) const;
 
         /**
          * Get the number of points in a specific contour in this outline

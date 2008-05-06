@@ -121,7 +121,7 @@ class FTCharmap
          *                       character code.
          */
         void InsertIndex(const unsigned int characterCode,
-                         const unsigned int containerIndex);
+                         const size_t containerIndex);
 
         /**
          * Queries for errors.

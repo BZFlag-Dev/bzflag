@@ -69,7 +69,7 @@ FTFace::FTFace(const unsigned char *pBufferBytes, size_t bufferSizeInBytes,
     ftFace = new FT_Face;
 
     err = FT_New_Memory_Face(*FTLibrary::Instance().GetLibrary(),
-                             (FT_Byte const *)pBufferBytes, bufferSizeInBytes,
+                             (FT_Byte const *)pBufferBytes, (FT_Long)bufferSizeInBytes,
                              DEFAULT_FACE_INDEX, ftFace);
     if(err)
     {
@@ -118,7 +118,7 @@ bool FTFace::Attach(const unsigned char *pBufferBytes,
 
     open.flags = FT_OPEN_MEMORY;
     open.memory_base = (FT_Byte const *)pBufferBytes;
-    open.memory_size = bufferSizeInBytes;
+    open.memory_size = (FT_Long)bufferSizeInBytes;
 
     err = FT_Attach_Stream(*ftFace, &open);
     return !err;

@@ -191,7 +191,7 @@ size_t FTVectoriser::PointCount()
 }
 
 
-const FTContour* const FTVectoriser::Contour(unsigned int index) const
+const FTContour* const FTVectoriser::Contour(size_t index) const
 {
     return (index < ContourCount()) ? contourList[index] : NULL;
 }
