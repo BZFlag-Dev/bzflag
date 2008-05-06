@@ -43,10 +43,10 @@ bool operator != (const FTPoint &a, const FTPoint &b)
 
 FTPoint FTPoint::Normalise()
 {
-    float norm = sqrt(values[0] * values[0]
+    double norm = sqrt(values[0] * values[0]
                        + values[1] * values[1]
                        + values[2] * values[2]);
-    if(norm == 0.f)
+    if(norm == 0.0)
     {
         return *this;
     }
