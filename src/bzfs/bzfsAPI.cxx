@@ -4442,9 +4442,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
   /* notify existing players (if any) about the new flag type.
      this behavior is a bit questionable, but seems to be the Right Thing(tm) to do.
      new clients will get the notification during flag negotiation, which is better. */
-
-  NetMsg   msg = MSGMGR.newMessage();
-
+  NetMsg msg = MSGMGR.newMessage();
   tmp->packCustom(msg);
   msg->broadcast(MsgFlagType);
 

@@ -164,8 +164,6 @@ public:
 
   /** network serialization */
   void* pack(void* buf) const;
-  void* fakePack(void* buf) const;
-  void* packCustom(void* buf) const;
   size_t pack(BufferedNetworkMessage *msg) const;
   size_t fakePack(BufferedNetworkMessage *msg) const;
   size_t packCustom(BufferedNetworkMessage *msg) const;
@@ -199,13 +197,11 @@ public:
     all good or bad flags, and maps flag abbreviations to FlagType objects. */
 class Flag {
 public:
-  /** This function serializes this object into a @c void* buffer for network
-      transfer. */
-  void* pack(void*) const;
+  /** This function serializes this object into a @c BufferedNetworkMessage*
+      for network transfer. */
   size_t pack(BufferedNetworkMessage *msg) const;
- /** This function serializes this object into a @c void* buffer for network
-      transfer. */
-  void* fakePack(void*) const;
+ /** This function serializes this object into a @c BufferedNetworkMessage*
+      for network transfer. */
   size_t fakePack(BufferedNetworkMessage *msg) const;
  /** This function uses the given serialization to set the member variables
       of this object. This really hide the type of flag */

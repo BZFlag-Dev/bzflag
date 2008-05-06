@@ -116,12 +116,8 @@ public:
 	if ((*m_it)->custom) 
 	{
 	  // custom flag, tell the client about it
-	  static char cfbuffer[MaxPacketLen];
-	  char *cfbufStart = &cfbuffer[0] + 2 * sizeof(uint16_t);
-	  char *cfbuf = cfbufStart;
-	  cfbuf = (char*)(*m_it)->packCustom(cfbuf);
 	  NetMsg flagMsg = MSGMGR.newMessage();
-	  flagMsg->addPackedData(cfbufStart,cfbuf-cfbufStart);
+	  (*m_it)->packCustom(flagMsg);
 	  flagMsg->send(handler, MsgFlagType);
 	}
 	else
