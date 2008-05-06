@@ -93,8 +93,8 @@ float FTGlyphContainer::Advance(const unsigned int characterCode, const unsigned
     unsigned int left = charMap->FontIndex(characterCode);
     unsigned int right = charMap->FontIndex(nextCharacterCode);
 
-    float width = face->KernAdvance(left, right).X();
-    width += glyphs[charMap->GlyphListIndex(characterCode)]->Advance().X();
+    float width = face->KernAdvance(left, right).Xf();
+    width += glyphs[charMap->GlyphListIndex(characterCode)]->Advance().Xf();
 
     return width;
 }

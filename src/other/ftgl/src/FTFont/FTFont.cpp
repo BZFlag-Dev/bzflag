@@ -459,12 +459,12 @@ inline void FTFontImpl::BBoxI(const T* string, const int start, const int end,
     }
 
     // TODO: The Z values do not follow the proper ordering.  I'm not sure why.
-    llx = totalBBox.Lower().X() < totalBBox.Upper().X() ? totalBBox.Lower().X() : totalBBox.Upper().X();
-    lly = totalBBox.Lower().Y() < totalBBox.Upper().Y() ? totalBBox.Lower().Y() : totalBBox.Upper().Y();
-    llz = totalBBox.Lower().Z() < totalBBox.Upper().Z() ? totalBBox.Lower().Z() : totalBBox.Upper().Z();
-    urx = totalBBox.Lower().X() > totalBBox.Upper().X() ? totalBBox.Lower().X() : totalBBox.Upper().X();
-    ury = totalBBox.Lower().Y() > totalBBox.Upper().Y() ? totalBBox.Lower().Y() : totalBBox.Upper().Y();
-    urz = totalBBox.Lower().Z() > totalBBox.Upper().Z() ? totalBBox.Lower().Z() : totalBBox.Upper().Z();
+    llx = totalBBox.Lower().Xf() < totalBBox.Upper().Xf() ? totalBBox.Lower().Xf() : totalBBox.Upper().Xf();
+    lly = totalBBox.Lower().Yf() < totalBBox.Upper().Yf() ? totalBBox.Lower().Yf() : totalBBox.Upper().Yf();
+    llz = totalBBox.Lower().Zf() < totalBBox.Upper().Zf() ? totalBBox.Lower().Zf() : totalBBox.Upper().Zf();
+    urx = totalBBox.Lower().Xf() > totalBBox.Upper().Xf() ? totalBBox.Lower().Xf() : totalBBox.Upper().Xf();
+    ury = totalBBox.Lower().Yf() > totalBBox.Upper().Yf() ? totalBBox.Lower().Yf() : totalBBox.Upper().Yf();
+    urz = totalBBox.Lower().Zf() > totalBBox.Upper().Zf() ? totalBBox.Lower().Zf() : totalBBox.Upper().Zf();
 }
 
 

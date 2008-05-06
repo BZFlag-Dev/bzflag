@@ -174,8 +174,8 @@ void ftglGetGlyphBBox(FTGLglyph *g, float bounds[6])
 {
     FTBBox ret = _ftglGetGlyphBBox(g);
     FTPoint lower = ret.Lower(), upper = ret.Upper();
-    bounds[0] = lower.X(); bounds[1] = lower.Y(); bounds[2] = lower.Z();
-    bounds[3] = upper.X(); bounds[4] = upper.Y(); bounds[5] = upper.Z();
+    bounds[0] = lower.Xf(); bounds[1] = lower.Yf(); bounds[2] = lower.Zf();
+    bounds[3] = upper.Xf(); bounds[4] = upper.Yf(); bounds[5] = upper.Zf();
 }
 
 // FT_Error FTGlyph::Error() const;

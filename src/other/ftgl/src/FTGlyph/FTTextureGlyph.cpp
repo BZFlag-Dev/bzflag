@@ -126,20 +126,20 @@ const FTPoint& FTTextureGlyphImpl::Render(const FTPoint& pen, int renderMode)
         activeTextureID = glTextureID;
     }
 
-    dx = floor(pen.X() + pos.X());
-    dy = floor(pen.Y() + pos.Y());
+    dx = floor(pen.Xf() + pos.Xf());
+    dy = floor(pen.Yf() + pos.Yf());
 
     glBegin(GL_QUADS);
-        glTexCoord2f(uv[0].X(), uv[0].Y());
+        glTexCoord2f(uv[0].Xf(), uv[0].Yf());
         glVertex2f(dx, dy);
 
-        glTexCoord2f(uv[0].X(), uv[1].Y());
+        glTexCoord2f(uv[0].Xf(), uv[1].Yf());
         glVertex2f(dx, dy - destHeight);
 
-        glTexCoord2f(uv[1].X(), uv[1].Y());
+        glTexCoord2f(uv[1].Xf(), uv[1].Yf());
         glVertex2f(dx + destWidth, dy - destHeight);
 
-        glTexCoord2f(uv[1].X(), uv[0].Y());
+        glTexCoord2f(uv[1].Xf(), uv[0].Yf());
         glVertex2f(dx + destWidth, dy);
     glEnd();
 

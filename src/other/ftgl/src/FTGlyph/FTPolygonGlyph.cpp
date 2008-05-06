@@ -111,7 +111,7 @@ FTPolygonGlyphImpl::~FTPolygonGlyphImpl()
 
 const FTPoint& FTPolygonGlyphImpl::Render(const FTPoint& pen, int renderMode)
 {
-    glTranslatef(pen.X(), pen.Y(), 0.0f);
+    glTranslatef(pen.Xf(), pen.Yf(), 0.0f);
     if(glList)
     {
         glCallList(glList);
@@ -120,7 +120,7 @@ const FTPoint& FTPolygonGlyphImpl::Render(const FTPoint& pen, int renderMode)
     {
         DoRender();
     }
-    glTranslatef(-pen.X(), -pen.Y(), 0.0f);
+    glTranslatef(-pen.Xf(), -pen.Yf(), 0.0f);
 
     return advance;
 }
@@ -141,8 +141,8 @@ void FTPolygonGlyphImpl::DoRender()
             for(unsigned int i = 0; i < subMesh->PointCount(); ++i)
             {
                 FTPoint point = subMesh->Point(i);
-                glTexCoord2f(point.X() / hscale, point.Y() / vscale);
-                glVertex3f(point.X() / 64.0f, point.Y() / 64.0f, 0.0f);
+                glTexCoord2f(point.Xf() / hscale, point.Yf() / vscale);
+                glVertex3f(point.Xf() / 64.0f, point.Yf() / 64.0f, 0.0f);
             }
         glEnd();
     }

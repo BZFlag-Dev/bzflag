@@ -116,8 +116,8 @@ const FTPoint& FTPixmapGlyphImpl::Render(const FTPoint& pen, int renderMode)
     {
         float dx, dy;
 
-        dx = floor(pen.X() + pos.X());
-        dy = floor(pen.Y() - pos.Y());
+        dx = floor(pen.Xf() + pos.Xf());
+        dy = floor(pen.Yf() - pos.Yf());
 
         glBitmap(0, 0, 0.0f, 0.0f, dx, dy, (const GLubyte*)0);
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);

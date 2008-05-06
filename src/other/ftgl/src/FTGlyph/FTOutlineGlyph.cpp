@@ -108,7 +108,7 @@ FTOutlineGlyphImpl::~FTOutlineGlyphImpl()
 
 const FTPoint& FTOutlineGlyphImpl::Render(const FTPoint& pen, int renderMode)
 {
-    glTranslatef(pen.X(), pen.Y(), 0.0f);
+    glTranslatef(pen.Xf(), pen.Yf(), 0.0f);
     if(glList)
     {
         glCallList(glList);
@@ -117,7 +117,7 @@ const FTPoint& FTOutlineGlyphImpl::Render(const FTPoint& pen, int renderMode)
     {
         DoRender();
     }
-    glTranslatef(-pen.X(), -pen.Y(), 0.0f);
+    glTranslatef(-pen.Xf(), -pen.Yf(), 0.0f);
 
     return advance;
 }
@@ -135,7 +135,7 @@ void FTOutlineGlyphImpl::DoRender()
                 FTPoint point = FTPoint(contour->Point(i).X() + contour->Outset(i).X() * outset,
                                         contour->Point(i).Y() + contour->Outset(i).Y() * outset,
                                         0);
-                glVertex2f(point.X() / 64.0f, point.Y() / 64.0f);
+                glVertex2f(point.Xf() / 64.0f, point.Yf() / 64.0f);
             }
         glEnd();
     }

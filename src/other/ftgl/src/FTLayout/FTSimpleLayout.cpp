@@ -126,8 +126,8 @@ inline void FTSimpleLayoutImpl::BBoxI(const T* string,
     FTBBox bounds;
 
     WrapText(string, 0, &bounds);
-    llx = bounds.Lower().X(); lly = bounds.Lower().Y(); llz = bounds.Lower().Z();
-    urx = bounds.Upper().X(); ury = bounds.Upper().Y(); urz = bounds.Upper().Z();
+    llx = bounds.Lower().Xf(); lly = bounds.Lower().Yf(); llz = bounds.Lower().Zf();
+    urx = bounds.Upper().Xf(); ury = bounds.Upper().Yf(); urz = bounds.Upper().Zf();
 }
 
 
@@ -224,7 +224,7 @@ inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, int renderMode,
         // Find the width of the current glyph
         CheckGlyph(currentFont, buf[i]);
         glyphBounds = GetGlyphs(currentFont)->BBox(buf[i]);
-        glyphWidth = glyphBounds.Upper().X() - glyphBounds.Lower().X();
+        glyphWidth = glyphBounds.Upper().Xf() - glyphBounds.Lower().Xf();
 
         advance = GetGlyphs(currentFont)->Advance(buf[i], buf[i + 1]);
         prevWidth = currentWidth;
