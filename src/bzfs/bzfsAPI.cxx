@@ -190,15 +190,10 @@ TeamColor convertTeam(bz_eTeamType _team)
 void broadcastPlayerScoreUpdate(int playerID)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player)
-    return ;
+  if (!player)
+    return;
 
-  NetMsg   msg = MSGMGR.newMessage();
-
-  msg->packUByte(1);
-  msg->packUByte(playerID);
-  player->score.pack(msg);
-  msg->broadcast(MsgScore);
+  sendPlayerScoreUpdate(player);
 }
 
 //******************************Versioning********************************************
