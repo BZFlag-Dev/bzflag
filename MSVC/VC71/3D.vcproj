@@ -20,8 +20,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/src;../../src/other/freetype/include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,8 +65,8 @@
 				Name="VCCLCompilerTool"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/inc;../../src/other/freetype/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="../../include;./;../../src/other/ftgl/src;../../src/other/freetype/include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -196,12 +196,11 @@
 				RelativePath="..\..\src\3d\FontManager.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\3d\TextureManager.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\3d\Model.cxx">
 			</File>
-
+			<File
+				RelativePath="..\..\src\3d\TextureManager.cxx">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -211,10 +210,10 @@
 				RelativePath="..\..\include\FontManager.h">
 			</File>
 			<File
-				RelativePath="..\..\include\TextureManager.h">
+				RelativePath="..\..\include\Model.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Model.h">
+				RelativePath="..\..\include\TextureManager.h">
 			</File>
 		</Filter>
 		<Filter
@@ -229,7 +228,10 @@
 				Name="sources"
 				Filter="">
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTBitmapGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTBitmapFont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTBitmapGlyph.cpp">
 				</File>
 				<File
 					RelativePath="..\..\src\other\ftgl\src\FTCharmap.cpp">
@@ -238,58 +240,67 @@
 					RelativePath="..\..\src\other\ftgl\src\FTContour.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTExtrdGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTExtrudeFont.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTFace.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTExtrudeGlyph.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTFont.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTFont.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLBitmapFont.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTFontGlue.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLExtrdFont.cpp">
-				</File>
-				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLOutlineFont.cpp">
-				</File>
-				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLPixmapFont.cpp">
-				</File>
-				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLPolygonFont.cpp">
-				</File>
-				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGLTextureFont.cpp">
-				</File>
-				<File
-					RelativePath="..\..\src\other\ftgl\src\FTGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTGlyph.cpp">
 				</File>
 				<File
 					RelativePath="..\..\src\other\ftgl\src\FTGlyphContainer.cpp">
 				</File>
 				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTGlyphGlue.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTLayout\FTLayout.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTLayout\FTLayoutGlue.cpp">
+				</File>
+				<File
 					RelativePath="..\..\src\other\ftgl\src\FTLibrary.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTOutlineGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTOutlineFont.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTPixmapGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTOutlineGlyph.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTPixmapFont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTPixmapGlyph.cpp">
 				</File>
 				<File
 					RelativePath="..\..\src\other\ftgl\src\FTPoint.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTPolyGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTPolygonFont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTPolygonGlyph.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTLayout\FTSimpleLayout.cpp">
 				</File>
 				<File
 					RelativePath="..\..\src\other\ftgl\src\FTSize.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\src\FTTextureGlyph.cpp">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTTextureFont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTTextureGlyph.cpp">
 				</File>
 				<File
 					RelativePath="..\..\src\other\ftgl\src\FTVectoriser.cpp">
@@ -299,85 +310,145 @@
 				Name="headers"
 				Filter="">
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTBBox.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTBBox.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTBitmapGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTBitmapFontImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTCharmap.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTBitmapGlyph.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTCharToGlyphIndexMap.h">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTBitmapGlyphImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTContour.h">
+					RelativePath="..\..\src\other\ftgl\src\FTCharmap.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTExtrdGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\FTCharToGlyphIndexMap.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTFace.h">
+					RelativePath="..\..\src\other\ftgl\src\FTContour.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTFont.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTExtrdGlyph.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGL.h">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTExtrudeFontImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLBitmapFont.h">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTExtrudeGlyphImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLExtrdFont.h">
+					RelativePath="..\..\src\other\ftgl\src\FTFace.cpp">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLOutlineFont.h">
+					RelativePath="..\..\src\other\ftgl\src\FTFace.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLPixmapFont.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLPolygonFont.h">
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTFontImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGLTextureFont.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\ftgl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLBitmapFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTGlyphContainer.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLExtrdFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTLibrary.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLOutlineFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTList.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLPixmapFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTOutlineGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLPolygonFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTPixmapGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGLTextureFont.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTPoint.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTGlyph.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTPolyGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyphContainer.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTSize.h">
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTGlyphImpl.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTTextureGlyph.h">
+					RelativePath="..\..\src\other\ftgl\src\FTInternals.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTVector.h">
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTLayout.h">
 				</File>
 				<File
-					RelativePath="..\..\src\other\ftgl\inc\FTVectoriser.h">
+					RelativePath="..\..\src\other\ftgl\src\FTLayout\FTLayoutImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTLibrary.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTList.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTOutlineFontImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTOutlineGlyph.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTOutlineGlyphImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTPixmapFontImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTPixmapGlyph.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTPixmapGlyphImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTPoint.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTPolyGlyph.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTPolygonFontImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTPolygonGlyphImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTSimpleLayout.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTLayout\FTSimpleLayoutImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTSize.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTFont\FTTextureFontImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\Ftgl\FTTextureGlyph.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTGlyph\FTTextureGlyphImpl.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTVector.h">
+				</File>
+				<File
+					RelativePath="..\..\src\other\ftgl\src\FTVectoriser.h">
 				</File>
 			</Filter>
 		</Filter>
