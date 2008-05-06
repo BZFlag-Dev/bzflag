@@ -67,9 +67,6 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag);
 int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
-// net message utils
-void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
-
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
