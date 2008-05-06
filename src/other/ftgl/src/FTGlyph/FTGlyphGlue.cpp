@@ -57,13 +57,13 @@ C_TOR(ftglCreateBitmapGlyph, (FT_GlyphSlot glyph),
 // FTExtrudeGlyph::FTExtrudeGlyph();
 C_TOR(ftglCreateExtrudeGlyph, (FT_GlyphSlot glyph, float depth,
                    float frontOutset, float backOutset, int useDisplayList),
-      FTExtrudeGlyph, (glyph, depth, frontOutset, backOutset, useDisplayList),
+      FTExtrudeGlyph, (glyph, depth, frontOutset, backOutset, (useDisplayList != 0)),
       GLYPH_EXTRUDE);
 
 // FTOutlineGlyph::FTOutlineGlyph();
 C_TOR(ftglCreateOutlineGlyph, (FT_GlyphSlot glyph, float outset,
                                int useDisplayList),
-      FTOutlineGlyph, (glyph, outset, useDisplayList), GLYPH_OUTLINE);
+      FTOutlineGlyph, (glyph, outset, (useDisplayList != 0)), GLYPH_OUTLINE);
 
 // FTPixmapGlyph::FTPixmapGlyph();
 C_TOR(ftglCreatePixmapGlyph, (FT_GlyphSlot glyph),
@@ -72,7 +72,7 @@ C_TOR(ftglCreatePixmapGlyph, (FT_GlyphSlot glyph),
 // FTPolygonGlyph::FTPolygonGlyph();
 C_TOR(ftglCreatePolyGlyph, (FT_GlyphSlot glyph, float outset,
                             int useDisplayList),
-      FTPolygonGlyph, (glyph, outset, useDisplayList), GLYPH_OUTLINE);
+      FTPolygonGlyph, (glyph, outset, (useDisplayList != 0)), GLYPH_OUTLINE);
 
 // FTTextureGlyph::FTTextureGlyph();
 C_TOR(ftglCreateTextureGlyph, (FT_GlyphSlot glyph, int id, int xOffset,
