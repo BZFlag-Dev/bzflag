@@ -25,6 +25,28 @@
 
 #include "bzfsAPI.h"
 
+class CountDown
+{
+public:
+  CountDown( double interval=1, int count=10 );
+  ~CountDown(){};
+
+  int getCounter();
+  void setCounter(int count);
+  void doReset();
+  bool doCountdown();
+  bool inProgress();
+
+private:
+
+  double _interval;
+  double _currentTime;
+  double _previousTime;
+  int _startCount, _counter;
+  
+};
+
+
 class MatchManager : public Singleton<MatchManager> , bz_EventHandler , bz_CustomSlashCommandHandler
 {
 public:
@@ -35,6 +57,9 @@ public:
   virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params );
 
   virtual bool autoDelete ( void ) { return true; }
+
+  void init();
+
 protected:
   friend class Singleton<MatchManager>;
 
@@ -50,17 +75,52 @@ protected:
   MatchState matchState;
 
   bool paused;
+  bool report;
   double resumeTime;
-
   double startTime;
+  double pauseTime;
   double duration;
   double resetTime;
+  double endTime;
 
+  double currentTime;
 private:
+
   MatchManager();
   ~MatchManager();
-};
 
+  // countdown timers
+
+  CountDown preGameTimer;
+  CountDown endTimer;
+
+  // start future BZDB vars
+  double _matchPregameTime;
+  double _matchDuration;
+  double _matchEndCountdown;
+  double _matchResetTime;
+  
+  bool _matchDisallowJoins;
+  bool _matchResetScoreOnEnd;
+  bool _matchReportMatches;
+  // end future BZDB vars
+ 
+  // methods
+  void start ( int playerID, bz_APIStringList *params );	
+  void end ( int playerID, bz_APIStringList *params );	
+  void pause ( int playerID, bz_APIStringList *params );	
+  void substitute ( int playerID, bz_APIStringList *params );	
+  
+  void doPregame();
+  void doOngame();
+  void doPostgame();
+  void doReportgame();
+  
+  void disablePlayerSpawn();
+  void resetTeamScores();
+  void resetPlayerScores();
+
+};
 
 #endif /* __MATCHMANAGER_H__ */
 
