@@ -117,7 +117,7 @@ void FTMesh::End()
 }
 
 
-const FTTesselation* const FTMesh::Tesselation(unsigned int index) const
+const FTTesselation* const FTMesh::Tesselation(size_t index) const
 {
     return (index < tesselationList.size()) ? tesselationList[index] : NULL;
 }
