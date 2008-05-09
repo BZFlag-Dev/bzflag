@@ -404,8 +404,7 @@ bool KillCommand::operator() (const char	 *message,
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 
     // operators can override antiperms
-    if (!playerData->accessInfo.isOperator()) 
-    {
+    if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) 
 	allow.allow = false;
@@ -415,8 +414,7 @@ bool KillCommand::operator() (const char	 *message,
     worldEventManager.callEvents(bz_eAllowKillCommandEvent,&allow);
 
     // plug-ins can ovride ANYONE even the gods
-    if (p && !allow.allow)
-    {
+    if (p && !allow.allow) {
       snprintf(killmessage, MessageLen, "%s is protected from being killed.",
 	p->player.getCallSign());
       sendMessage(ServerPlayer, t, killmessage);

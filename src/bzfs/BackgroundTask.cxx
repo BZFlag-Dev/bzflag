@@ -52,10 +52,8 @@ void BackgroundTaskManager::addTask ( BackgroundTaskFunc task, void *param )
 
 void BackgroundTaskManager::removeTask ( BackgroundTask *task, void *param )
 {
-  for (size_t i = 0; i < tasks.size(); i++ )
-  {
-    if (tasks[i].classCB == task && tasks[i].param == param)
-    {
+  for (size_t i = 0; i < tasks.size(); i++ ) {
+    if (tasks[i].classCB == task && tasks[i].param == param) {
       tasks.erase(tasks.begin()+i);
       return;
     }
@@ -64,10 +62,8 @@ void BackgroundTaskManager::removeTask ( BackgroundTask *task, void *param )
 
 void BackgroundTaskManager::removeTask ( BackgroundTaskFunc task, void *param )
 {
-  for (size_t i = 0; i < tasks.size(); i++ )
-  {
-    if (tasks[i].funcCB == task && tasks[i].param == param)
-    {
+  for (size_t i = 0; i < tasks.size(); i++ ) {
+    if (tasks[i].funcCB == task && tasks[i].param == param) {
 	tasks.erase(tasks.begin()+i);
 	return;
     }
@@ -78,8 +74,7 @@ void BackgroundTaskManager::processTasks ( void )
 {
   std::vector<size_t> itemsToKill;
 
-  for (size_t i = 0; i < tasks.size(); i++ )
-  {
+  for (size_t i = 0; i < tasks.size(); i++ ) {
     Task &task = tasks[i];
 
     bool kill = false;
@@ -96,8 +91,7 @@ void BackgroundTaskManager::processTasks ( void )
 
   std::vector<size_t>::reverse_iterator itr = itemsToKill.rbegin();
 
-  while ( itr != itemsToKill.rend() )
-  {
+  while ( itr != itemsToKill.rend() ) {
     tasks.erase(tasks.begin()+*itr);
     itr++;
   }

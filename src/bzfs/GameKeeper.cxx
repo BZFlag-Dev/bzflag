@@ -643,12 +643,10 @@ float GameKeeper::Player::getRealSpeed ( float input )
     fracOfMaxSpeed = 0.0f;
   else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
     fracOfMaxSpeed = 0.0f;
-  else if (flagType == Flags::Agility)
-  {
+  else if (flagType == Flags::Agility) {
     /*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-    else
-    {
+    else {
     float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
     if (oldFrac > 1.0f)
     oldFrac = 1.0f;
@@ -659,8 +657,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
 
     if (fracOfMaxSpeed < 0.0f)
     limit /= 2.0f;
-    if (fabs(fracOfMaxSpeed - oldFrac) > limit)
-    {
+    if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     agilityTime = TimeKeeper::getCurrent();
     }
