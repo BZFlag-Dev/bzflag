@@ -563,10 +563,10 @@ void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
 
 void HUDRenderer::hudColor3Afv( const GLfloat*c , const float a)
 {
-	if( dim )
-		glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
-	else
-		glColor4f( c[0],c[1],c[2],a );
+  if( dim )
+    glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
+  else
+    glColor4f( c[0],c[1],c[2],a );
 }
 
 void			HUDRenderer::hudColor4f(
@@ -604,119 +604,119 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 
 void HUDRenderer::saveMatrixes ( const float *mm, const float *pm )
 {
-	// ssave off the stuff before we reset it
-	for(int i = 0; i < 16; i++) {
-		modelMatrix[i] = mm[i];
-		projMatrix[i] = pm[i];
-	}
-	glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
+  // ssave off the stuff before we reset it
+  for(int i = 0; i < 16; i++) {
+    modelMatrix[i] = mm[i];
+    projMatrix[i] = pm[i];
+  }
+  glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
 }
 
 
 void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly )
 {
-	double map[3] = {0,0,0};
-	double o[3];
-	o[0] = object[0];
-	o[1] = object[1];
-	o[2] = object[2];
+  double map[3] = {0,0,0};
+  double o[3];
+  o[0] = object[0];
+  o[1] = object[1];
+  o[2] = object[2];
 
-	hudColor3Afv( color, alpha );
+  hudColor3Afv( color, alpha );
 
-	glPushMatrix();
-	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
-	glPopMatrix();
+  glPushMatrix();
+  gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
+  glPopMatrix();
 
-	float halfWidth = window.getWidth( )* 0.5f;
-	float halfHeight = window.getHeight() * 0.5f;
+  float halfWidth = window.getWidth( )* 0.5f;
+  float halfHeight = window.getHeight() * 0.5f;
 
-	// comp us back to the view
-	map[0] -= halfWidth;
-	map[1] -= halfHeight;
+  // comp us back to the view
+  map[0] -= halfWidth;
+  map[1] -= halfHeight;
 
-	float headingVec[3] = {0,0,0};
-	headingVec[0] = sinf( heading *deg2Rad );
-	headingVec[1] = cosf( heading *deg2Rad );
+  float headingVec[3] = {0,0,0};
+  headingVec[0] = sinf( heading *deg2Rad );
+  headingVec[1] = cosf( heading *deg2Rad );
 
-	float toPosVec[3] = {0,0,0};
-	toPosVec[0] = (float)object[0] - viewPos[0];
-	toPosVec[1] = (float)object[1] - viewPos[1];
+  float toPosVec[3] = {0,0,0};
+  toPosVec[0] = (float)object[0] - viewPos[0];
+  toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ ) {
-	  if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
-		map[0] = -halfWidth;
-		map[1] = 0;
-	  } else {
-		map[0] = -halfWidth * (fabs(map[0])/map[0]);
-		map[1] = 0;
-	  }
-	} else {
-		if ( map[0] < -halfWidth )
-			map[0] = -halfWidth;
-		if ( map[0] > halfWidth )
-			map[0] = halfWidth;
+  if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ ) {
+    if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+      map[0] = -halfWidth;
+      map[1] = 0;
+    } else {
+      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+      map[1] = 0;
+    }
+  } else {
+    if ( map[0] < -halfWidth )
+      map[0] = -halfWidth;
+    if ( map[0] > halfWidth )
+      map[0] = halfWidth;
 
-		if ( map[1] < -halfHeight )
-			map[1] = -halfHeight;
-		if ( map[1] > halfHeight )
-			map[1] = halfHeight;
-	}
+    if ( map[1] < -halfHeight )
+      map[1] = -halfHeight;
+    if ( map[1] > halfHeight )
+      map[1] = halfHeight;
+  }
 
-	glPushMatrix();
-	glTranslatef((float)map[0],(float)map[1],0);
-	glPushMatrix();
-	float triangleSize = BZDB.eval("hudWayPMarkerSize");
-	if (name.size())
-		triangleSize *= 0.75f;
+  glPushMatrix();
+  glTranslatef((float)map[0],(float)map[1],0);
+  glPushMatrix();
+  float triangleSize = BZDB.eval("hudWayPMarkerSize");
+  if (name.size())
+    triangleSize *= 0.75f;
 
-	if ( map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
-		glRotatef(90,0,0,1);
+  if ( map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
+    glRotatef(90,0,0,1);
 
-	if ( map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
-		glRotatef(-90,0,0,1);
+  if ( map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
+    glRotatef(-90,0,0,1);
 
-	if ( map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
-		glRotatef(180,0,0,1);
+  if ( map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
+    glRotatef(180,0,0,1);
 
-	if ( map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
-		glRotatef(45,0,0,1);
+  if ( map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
+    glRotatef(45,0,0,1);
 
-	if ( map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
-		glRotatef(-45,0,0,1);
+  if ( map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
+    glRotatef(-45,0,0,1);
 
-	if ( map[0] == halfWidth && map[1] == halfHeight)	// upper right
-		glRotatef(180-45,0,0,1);
+  if ( map[0] == halfWidth && map[1] == halfHeight)	// upper right
+    glRotatef(180-45,0,0,1);
 
-	if ( map[0] == -halfWidth && map[1] == halfHeight)	// upper left
-		glRotatef(180+45,0,0,1);
+  if ( map[0] == -halfWidth && map[1] == halfHeight)	// upper left
+    glRotatef(180+45,0,0,1);
 
-	glBegin(GL_TRIANGLES);
-	glVertex2f(0,0);
-	glVertex2f(triangleSize,triangleSize);
-	glVertex2f(-triangleSize,triangleSize);
-	glEnd();
+  glBegin(GL_TRIANGLES);
+  glVertex2f(0,0);
+  glVertex2f(triangleSize,triangleSize);
+  glVertex2f(-triangleSize,triangleSize);
+  glEnd();
 
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0,0,0.01f);
-	glVertex3f(triangleSize,triangleSize,0.01f);
-	glVertex3f(-triangleSize,triangleSize,0.01f);
-	glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex3f(0,0,0.01f);
+  glVertex3f(triangleSize,triangleSize,0.01f);
+  glVertex3f(-triangleSize,triangleSize,0.01f);
+  glEnd();
 
-	if (friendly) 
-	  DisplayListSystem::Instance().callList(friendlyMarkerList);
+  if (friendly) 
+    DisplayListSystem::Instance().callList(friendlyMarkerList);
 
-	glPopMatrix();
+  glPopMatrix();
 
-	if (name.size()) {
-	  hudColor3Afv( color, alpha );
-	  float textOffset = 5.0f;
-	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
-	  glEnable(GL_TEXTURE_2D);
-	  FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize, name.c_str());
-	  glDisable(GL_TEXTURE_2D);
-	}
+  if (name.size()) {
+    hudColor3Afv( color, alpha );
+    float textOffset = 5.0f;
+    float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
+    glEnable(GL_TEXTURE_2D);
+    FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize, name.c_str());
+    glDisable(GL_TEXTURE_2D);
+  }
 
-	glPopMatrix();
+  glPopMatrix();
 }
 
 //-------------------------------------------------------------------------
@@ -725,100 +725,99 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
 
 void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, const float *viewPos, std::string name, bool friendly )
 {
-	double map[3] = {0,0,0};
-	double o[3];
-	o[0] = object[0];
-	o[1] = object[1];
-	o[2] = object[2];
+  double map[3] = {0,0,0};
+  double o[3];
+  o[0] = object[0];
+  o[1] = object[1];
+  o[2] = object[2];
 
-	hudColor3Afv( color, alpha );
+  hudColor3Afv( color, alpha );
 
-	glPushMatrix();
-	gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
-	glPopMatrix();
+  glPushMatrix();
+  gluProject(o[0],o[1],o[2],modelMatrix,projMatrix,(GLint*)viewport,&map[0],&map[1],&map[2]);
+  glPopMatrix();
 
-	float halfWidth = window.getWidth( )* 0.5f;
-	float halfHeight = window.getHeight() * 0.5f;
+  float halfWidth = window.getWidth( )* 0.5f;
+  float halfHeight = window.getHeight() * 0.5f;
 
-	// comp us back to the view
-	map[0] -= halfWidth;
-	map[1] -= halfHeight;
+  // comp us back to the view
+  map[0] -= halfWidth;
+  map[1] -= halfHeight;
 
-	float headingVec[3] = {0,0,0};
-	headingVec[0] = sinf( heading *deg2Rad );
-	headingVec[1] = cosf( heading *deg2Rad );
+  float headingVec[3] = {0,0,0};
+  headingVec[0] = sinf( heading *deg2Rad );
+  headingVec[1] = cosf( heading *deg2Rad );
 
-	float toPosVec[3] = {0,0,0};
-	toPosVec[0] = (float)object[0] - viewPos[0];
-	toPosVec[1] = (float)object[1] - viewPos[1];
+  float toPosVec[3] = {0,0,0};
+  toPosVec[0] = (float)object[0] - viewPos[0];
+  toPosVec[1] = (float)object[1] - viewPos[1];
 
-	if ( vec3dot(toPosVec,headingVec) <= 1.0f ) {
-	  if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
-		map[0] = -halfWidth;
-		map[1] = 0;
-	  } else {
-	    map[0] = -halfWidth * (fabs(map[0])/map[0]);
-	    map[1] = 0;
-	  }
-	} else {
-	  if ( map[0] < -halfWidth )
-	    map[0] = -halfWidth;
-	  if ( map[0] > halfWidth )
-	    map[0] = halfWidth;
+  if ( vec3dot(toPosVec,headingVec) <= 1.0f ) {
+    if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+      map[0] = -halfWidth;
+      map[1] = 0;
+    } else {
+      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+      map[1] = 0;
+    }
+  } else {
+    if ( map[0] < -halfWidth )
+      map[0] = -halfWidth;
+    if ( map[0] > halfWidth )
+      map[0] = halfWidth;
 
-	  if ( map[1] < -halfHeight )
-	    map[1] = -halfHeight;
-	  if ( map[1] > halfHeight )
-	    map[1] = halfHeight;
-	}
+    if ( map[1] < -halfHeight )
+      map[1] = -halfHeight;
+    if ( map[1] > halfHeight )
+      map[1] = halfHeight;
+  }
 
-	glPushMatrix();
-	glTranslatef((float)map[0],(float)map[1],0);
-	glPushMatrix();
+  glPushMatrix();
+  glTranslatef((float)map[0],(float)map[1],0);
+  glPushMatrix();
 
-	float lockonSize = 40;
-	float lockonInset = 15;
-	float lockonDeclination = 15;
+  float lockonSize = 40;
+  float lockonInset = 15;
+  float lockonDeclination = 15;
 
-	glLineWidth(3.0f);
+  glLineWidth(3.0f);
 
-	glBegin(GL_LINE_STRIP);
-	glVertex2f(-lockonInset,lockonSize-lockonDeclination);
-	glVertex2f(-lockonSize,lockonSize);
-	glVertex2f(-lockonSize,-lockonSize);
-	glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
-	glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(-lockonInset,lockonSize-lockonDeclination);
+  glVertex2f(-lockonSize,lockonSize);
+  glVertex2f(-lockonSize,-lockonSize);
+  glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
+  glEnd();
 
-	glBegin(GL_LINE_STRIP);
-	glVertex2f(lockonInset,lockonSize-lockonDeclination);
-	glVertex2f(lockonSize,lockonSize);
-	glVertex2f(lockonSize,-lockonSize);
-	glVertex2f(lockonInset,-lockonSize+lockonDeclination);
-	glEnd();
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(lockonInset,lockonSize-lockonDeclination);
+  glVertex2f(lockonSize,lockonSize);
+  glVertex2f(lockonSize,-lockonSize);
+  glVertex2f(lockonInset,-lockonSize+lockonDeclination);
+  glEnd();
 
-	if (friendly)
-	  DisplayListSystem::Instance().callList(friendlyMarkerList);
+  if (friendly)
+    DisplayListSystem::Instance().callList(friendlyMarkerList);
 
-	glLineWidth(1.0f);
+  glLineWidth(1.0f);
 
-	glPopMatrix();
+  glPopMatrix();
 
-	if (name.size()) {
-	  hudColor3Afv( color, alpha );
-	    float textOffset = 5.0f;
-	  float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
-	  glEnable(GL_TEXTURE_2D);
-	  FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize, name.c_str());
-	  glDisable(GL_TEXTURE_2D);
-	}
+  if (name.size()) {
+    hudColor3Afv( color, alpha );
+    float textOffset = 5.0f;
+    float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
+    glEnable(GL_TEXTURE_2D);
+    FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize, name.c_str());
+    glDisable(GL_TEXTURE_2D);
+  }
 
-	glPopMatrix();
+  glPopMatrix();
 }
 
 void HUDRenderer::buildGeometry ( GLDisplayList displayList )
 {
-  if (displayList == friendlyMarkerList)
-  {
+  if (displayList == friendlyMarkerList) {
     float lockonSize = 40;
 
     float segmentation = 32.0f/360.0f;
@@ -828,17 +827,15 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     hudColor4f( 1,1,1, 0.85f );
     glLineWidth(4.0f);
     glBegin(GL_LINES);
-	glVertex3f(-rad,rad+rad,0.03f);
-	glVertex3f(rad,-rad+rad,0.02f);
-   // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
-   // glVertex3f(lockonSize*xFactor,0,0.02f);
+    glVertex3f(-rad,rad+rad,0.03f);
+    glVertex3f(rad,-rad+rad,0.02f);
+    // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
+    // glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
 
     glBegin(GL_LINE_LOOP);
-    for ( float t = 0; t < 360; t += segmentation )
-    {
-      if ( t != 0 )
-      {
+    for ( float t = 0; t < 360; t += segmentation ) {
+      if ( t != 0 ) {
 	float spT = t-segmentation;
 
 	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
@@ -853,15 +850,13 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     glBegin(GL_LINES);
     glVertex3f(-rad,rad+rad,0.03f);
     glVertex3f(rad,-rad+rad,0.02f);
-   // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
-  //  glVertex3f(lockonSize*xFactor,0,0.02f);
+    // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
+    //  glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
 
     glBegin(GL_LINE_LOOP);
-    for ( float t = 0; t < 360; t += segmentation )
-    {
-      if ( t != 0 )
-      {
+    for ( float t = 0; t < 360; t += segmentation ) {
+      if ( t != 0 ) {
 	float spT = t-segmentation;
 
 	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
@@ -887,15 +882,12 @@ void			HUDRenderer::render(void)
   if (!BZDB.isTrue("noGUI")) {
     if (playing) {
       renderPlaying(RENDERER);
-    }
-    else if (roaming) {
+    } else if (roaming) {
       renderRoaming(RENDERER);
-    }
-    else {
+    } else {
       renderNotPlaying(RENDERER);
     }
-  }
-  else {
+  } else {
     const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
       (triangleCount > 0) || (radarTriangleCount > 0);
     const bool showTankLabels = BZDB.isTrue("displayLabels");
@@ -1628,7 +1620,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   drawMarkersInView(centerx,centery,myTank);
 
   if (enableTex)
-	  glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1700,19 +1692,15 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
 		    bigFontFace, bigFontSize, gameOverLabel.c_str());
     } else if (!myTank->isAlive() && !myTank->isExploding()) {
-      if (canSpawn)
-      {
+      if (canSpawn) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-	  bigFontFace, bigFontSize, restartLabel.c_str());
-      }
-      else
-      {
-	if (customLimboMessage.size())
-	{
+		      bigFontFace, bigFontSize, restartLabel.c_str());
+      } else {
+	if (customLimboMessage.size()) {
 	  hudColor3fv(messageColor);
 	  fm.drawString(0.5f * ((float)width - fm.getStringWidth(bigFontFace,bigFontSize,customLimboMessage.c_str())), y, 0,
-	    bigFontFace, bigFontSize, customLimboMessage.c_str());
+			bigFontFace, bigFontSize, customLimboMessage.c_str());
 	}	
       }
     } else if (myTank->isPaused()) {

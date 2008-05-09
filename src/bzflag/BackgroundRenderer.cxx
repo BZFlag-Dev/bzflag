@@ -33,8 +33,8 @@
 #include "effectsRenderer.h"
 
 static const GLfloat	squareShape[4][2] =
-				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
-				  { -1.0f, -1.0f }, {  1.0f, -1.0f } };
+  { {  1.0f,  1.0f }, { -1.0f,  1.0f },
+    { -1.0f, -1.0f }, {  1.0f, -1.0f } };
 
 
 GLfloat			BackgroundRenderer::skyPyramid[5][3];
@@ -45,33 +45,33 @@ GLfloat			BackgroundRenderer::groundColor[4][4];
 GLfloat			BackgroundRenderer::groundColorInv[4][4];
 
 const GLfloat		BackgroundRenderer::defaultGroundColor[4][4] = {
-				{ 0.0f, 0.35f, 0.0f, 1.0f },
-				{ 0.0f, 0.20f, 0.0f, 1.0f },
-				{ 1.0f, 1.00f, 1.0f, 1.0f },
-				{ 1.0f, 1.00f, 1.0f, 1.0f }
-			};
+  { 0.0f, 0.35f, 0.0f, 1.0f },
+  { 0.0f, 0.20f, 0.0f, 1.0f },
+  { 1.0f, 1.00f, 1.0f, 1.0f },
+  { 1.0f, 1.00f, 1.0f, 1.0f }
+};
 const GLfloat		BackgroundRenderer::defaultGroundColorInv[4][4] = {
-				{ 0.35f, 0.00f, 0.35f, 1.0f },
-				{ 0.20f, 0.00f, 0.20f, 1.0f },
-				{ 1.00f, 1.00f, 1.00f, 1.0f },
-				{ 1.00f, 1.00f, 1.00f, 1.0f }
-			};
+  { 0.35f, 0.00f, 0.35f, 1.0f },
+  { 0.20f, 0.00f, 0.20f, 1.0f },
+  { 1.00f, 1.00f, 1.00f, 1.0f },
+  { 1.00f, 1.00f, 1.00f, 1.0f }
+};
 const GLfloat		BackgroundRenderer::receiverColor[3] =
-				{ 0.3f, 0.55f, 0.3f };
+  { 0.3f, 0.55f, 0.3f };
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
-				{ 0.55f, 0.3f, 0.55f };
+  { 0.55f, 0.3f, 0.55f };
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
-				blank(false),
-				invert(false),
-				style(0),
-				gridSpacing(60.0f),	// meters
-				gridCount(4.0f),
-				mountainsAvailable(false),
-				numMountainTextures(0),
-				mountainsGState(NULL),
-				cloudDriftU(0.0f),
-				cloudDriftV(0.0f)
+  blank(false),
+  invert(false),
+  style(0),
+  gridSpacing(60.0f),	// meters
+  gridCount(4.0f),
+  mountainsAvailable(false),
+  numMountainTextures(0),
+  mountainsGState(NULL),
+  cloudDriftU(0.0f),
+  cloudDriftV(0.0f)
 {
   static bool init = false;
   OpenGLGStateBuilder gstate;
@@ -178,8 +178,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	height = info.y;
 	width += info.x;
 	numMountainTextures++;
-      }
-      else {
+      } else {
 	done = true;
       }
     }
@@ -213,8 +212,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
       mountanLists.clear();
-      for (i = 0; i < numMountainTextures; i++) 
-      {
+      for (i = 0; i < numMountainTextures; i++) {
 	char text[256];
 	sprintf (text, "mountain%d", i + 1);
 	gstate.setTexture (tm.getTextureID (text));
@@ -243,7 +241,7 @@ BackgroundRenderer::~BackgroundRenderer()
   ds.freeList(mediumGroundList);
   ds.freeList(cloudsList);
   for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++ )
-   ds.freeList(mountanLists[i]);
+    ds.freeList(mountanLists[i]);
 
   mountanLists.clear();
 
@@ -264,8 +262,7 @@ void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
 
 void BackgroundRenderer::resetCloudList()
 {
-  if (cloudsList > 0)
-  {
+  if (cloudsList > 0) {
     DisplayListSystem::Instance().freeList(cloudsList);
     cloudsList = DisplayListSystem::Instance().newList(this);
   }
@@ -285,8 +282,7 @@ void BackgroundRenderer::setupGroundMaterials()
     // default ground material
     memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
     groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
-  }
-  else {
+  } else {
     // map specified material
     ((BzMaterial*)bzmat)->setReference();
     for (int i = 0; i < 4; i++) {
@@ -426,37 +422,35 @@ void BackgroundRenderer::buildMountan( unsigned int index )
   float hightScale = mountainsMinWidth / 256.0f;
 
   int i = 0;
-  glBegin(GL_TRIANGLE_STRIP);
-  for (i = 0; i <= numFacesPerTexture; i++)
-  {
-    const float angle = angleScale * (float)(i + n);
-    float frac = (float)i / (float)numFacesPerTexture;
-    if (numMountainTextures != 1)
-      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
-    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
-    glTexCoord2f(frac, 0.02f);
-    glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.0f);
-    glTexCoord2f(frac, 0.99f);
-    glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize * hightScale);
-  }
-  glEnd();
+  glBegin(GL_TRIANGLE_STRIP); {
+    for (i = 0; i <= numFacesPerTexture; i++) {
+      const float angle = angleScale * (float)(i + n);
+      float frac = (float)i / (float)numFacesPerTexture;
+      if (numMountainTextures != 1)
+	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+      glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
+      glTexCoord2f(frac, 0.02f);
+      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.0f);
+      glTexCoord2f(frac, 0.99f);
+      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize * hightScale);
+    }
+  } glEnd();
 
-  glBegin(GL_TRIANGLE_STRIP);
-  for (i = 0; i <= numFacesPerTexture; i++) 
-  {
-    const float angle = (float)(M_PI + angleScale * (double)(i + n));
-    float frac = (float)i / (float)numFacesPerTexture;
-
-    if (numMountainTextures != 1)
-      frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
-
-    glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
-    glTexCoord2f(frac, 0.02f);
-    glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle),  0.0f);
-    glTexCoord2f(frac, 0.99f);
-    glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize*hightScale);
-  }
-  glEnd();
+  glBegin(GL_TRIANGLE_STRIP); {
+    for (i = 0; i <= numFacesPerTexture; i++) {
+      const float angle = (float)(M_PI + angleScale * (double)(i + n));
+      float frac = (float)i / (float)numFacesPerTexture;
+      
+      if (numMountainTextures != 1)
+	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+    
+      glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
+      glTexCoord2f(frac, 0.02f);
+      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle),  0.0f);
+      glTexCoord2f(frac, 0.99f);
+      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize*hightScale);
+    }
+  } glEnd();
 }
 
 void BackgroundRenderer::setSkyColors()
@@ -513,8 +507,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   const GLfloat gameSize = 0.5f * worldSize;
   GLfloat groundPlane[4][3];
   GLfloat gameArea[4][3];
-  for (int i = 0; i < 4; i++)
-  {
+  for (int i = 0; i < 4; i++) {
     groundPlane[i][0] = groundSize * squareShape[i][0];
     groundPlane[i][1] = groundSize * squareShape[i][1];
     groundPlane[i][2] = 0.0f;
@@ -551,8 +544,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 
   GLfloat cloudsOuter[4][3], cloudsInner[4][3];
   const GLfloat uvScale = 0.25f;
-  for (int i = 0; i < 4; i++) 
-  {
+  for (int i = 0; i < 4; i++) {
     cloudsOuter[i][0] = groundPlane[i][0];
     cloudsOuter[i][1] = groundPlane[i][1];
     cloudsOuter[i][2] = groundPlane[i][2] + BZDB.eval("_cloudHeightMult") * BZDBCache::tankHeight;
@@ -565,185 +557,164 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
   // so on that system use full alpha everywhere.
   GLfloat minAlpha = 0.0f;
 
-  if (displayList == sunXFormList)
-  {
+  if (displayList == sunXFormList) {
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
-      0.0f, 0.0f, 1.0f);
+	      0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
     
-    glBegin(GL_TRIANGLE_FAN);
-    {
+    glBegin(GL_TRIANGLE_FAN); {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
-      for (int i = 0; i < 20; i++)
-      {
+      for (int i = 0; i < 20; i++) {
 	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
 	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
-	  sunRadius * cosf(angle));
+		   sunRadius * cosf(angle));
       }
-    }
-    glEnd();
+    } glEnd();
 
     glPopMatrix();
-  }
-  else if ( displayList == moonList )
-  {
-      int moonSegements = (int)BZDB.eval("moonSegments");
+  } else if ( displayList == moonList ) {
+    int moonSegements = (int)BZDB.eval("moonSegments");
    
-      glPushMatrix();
-      glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-      glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-      glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
-      glBegin(GL_TRIANGLE_STRIP);
+    glPushMatrix();
+    glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
+    glBegin(GL_TRIANGLE_STRIP); {
       // glTexCoord2f(0,-1);
       glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
-      for (int i = 0; i < moonSegements-1; i++) 
-      {
+      for (int i = 0; i < moonSegements-1; i++) {
 	const float angle = (float)(0.5 * M_PI * double(i-(moonSegements/2)-1) / (moonSegements/2.0));
 	float sinAngle = sinf(angle);
 	float cosAngle = cosf(angle);
 	// glTexCoord2f(coverage*cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
-
+	  
 	// glTexCoord2f(cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
       // glTexCoord2f(0,1);
       glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
-      glEnd();
-      glPopMatrix();
-  }
-  else if ( displayList == starXFormList )
-  {
+    } glEnd();
+    glPopMatrix();
+  } else if ( displayList == starXFormList ) {
     // make pretransformed display list for stars
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
     glScalef(worldSize, worldSize, worldSize);
 
-    glBegin(GL_POINTS);
-    for (int i = 0; i < (int)NumStars; i++) 
-    {
-      glColor3fv(stars[i]);
-      glVertex3fv(stars[i] + 3);
-    }
-    glEnd();
+    glBegin(GL_POINTS); {
+      for (int i = 0; i < (int)NumStars; i++) {
+	glColor3fv(stars[i]);
+	glVertex3fv(stars[i] + 3);
+      }
+    } glEnd();
 
     glPopMatrix();
-  }
-  else if ( displayList == mediumGroundList )
-  {
-    for (int i = 0; i < GROUND_DIVS; i++)
-    {
+  } else if ( displayList == mediumGroundList ) {
+    for (int i = 0; i < GROUND_DIVS; i++) {
       GLfloat yoff, ytexoff;
 
       yoff = ymin + ydist * (GLfloat)i;
       ytexoff = ytexmin + ytexdist * (GLfloat)i;
 
-      glBegin(GL_TRIANGLE_STRIP);
+      glBegin(GL_TRIANGLE_STRIP); {
 
-      glTexCoord2f(xtexmin, ytexoff + ytexdist);
-      glVertex2f(xmin, yoff + ydist);
-      glTexCoord2f(xtexmin, ytexoff);
-      glVertex2f(xmin, yoff);
+	glTexCoord2f(xtexmin, ytexoff + ytexdist);
+	glVertex2f(xmin, yoff + ydist);
+	glTexCoord2f(xtexmin, ytexoff);
+	glVertex2f(xmin, yoff);
 
-      for (int j = 0; j < GROUND_DIVS; j++)
-      {
-	GLfloat xoff, xtexoff;
-
-	xoff = xmin + xdist * (GLfloat)(j + 1);
-	xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
-
-	glTexCoord2f(xtexoff, ytexoff + ytexdist);
-	glVertex2f(xoff, yoff + ydist);
-	glTexCoord2f(xtexoff, ytexoff);
-	glVertex2f(xoff, yoff);
-      }
-      glEnd();
+	for (int j = 0; j < GROUND_DIVS; j++) {
+	  GLfloat xoff, xtexoff;
+	  
+	  xoff = xmin + xdist * (GLfloat)(j + 1);
+	  xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
+	  
+	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
+	  glVertex2f(xoff, yoff + ydist);
+	  glTexCoord2f(xtexoff, ytexoff);
+	  glVertex2f(xoff, yoff);
+	}
+      } glEnd();
     }
-  }
-  else if ( displayList == lowGroundList )
-  {
-    glBegin(GL_TRIANGLE_STRIP);
+  } else if ( displayList == lowGroundList ) {
+    glBegin(GL_TRIANGLE_STRIP); {
       glVertex2fv(groundPlane[0]);
       glVertex2fv(groundPlane[1]);
       glVertex2fv(groundPlane[3]);
       glVertex2fv(groundPlane[2]);
-    glEnd();
-  }
-  else if ( displayList == cloudsList )
-  {
+    } glEnd();
+  } else if ( displayList == cloudsList ) {
     glNormal3f(0.0f, 0.0f, 1.0f);
     // inner clouds -- full opacity
-    glBegin(GL_QUADS);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
-      uvScale * cloudRepeats * squareShape[3][1]);
-    glVertex3fv(cloudsInner[3]);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
-      uvScale * cloudRepeats * squareShape[2][1]);
-    glVertex3fv(cloudsInner[2]);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-      uvScale * cloudRepeats * squareShape[1][1]);
-    glVertex3fv(cloudsInner[1]);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
-      uvScale * cloudRepeats * squareShape[0][1]);
-    glVertex3fv(cloudsInner[0]);
-    glEnd();
+    glBegin(GL_QUADS); {
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
+		   uvScale * cloudRepeats * squareShape[3][1]);
+      glVertex3fv(cloudsInner[3]);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
+		   uvScale * cloudRepeats * squareShape[2][1]);
+      glVertex3fv(cloudsInner[2]);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
+		   uvScale * cloudRepeats * squareShape[1][1]);
+      glVertex3fv(cloudsInner[1]);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
+		   uvScale * cloudRepeats * squareShape[0][1]);
+      glVertex3fv(cloudsInner[0]);
+    } glEnd();
 
     // outer clouds -- fade to zero opacity at outer edge
-    glBegin(GL_TRIANGLE_STRIP);
-    glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-    glTexCoord2f(cloudRepeats * squareShape[1][0],
-      cloudRepeats * squareShape[1][1]);
-    glVertex3fv(cloudsOuter[1]);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-      uvScale * cloudRepeats * squareShape[1][1]);
-    glVertex3fv(cloudsInner[1]);
+    glBegin(GL_TRIANGLE_STRIP); {
+      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+      glTexCoord2f(cloudRepeats * squareShape[1][0],
+		   cloudRepeats * squareShape[1][1]);
+      glVertex3fv(cloudsOuter[1]);
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
+		   uvScale * cloudRepeats * squareShape[1][1]);
+      glVertex3fv(cloudsInner[1]);
 
-    glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-    glTexCoord2f(cloudRepeats * squareShape[2][0],
-      cloudRepeats * squareShape[2][1]);
-    glVertex3fv(cloudsOuter[2]);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
-      uvScale * cloudRepeats * squareShape[2][1]);
-    glVertex3fv(cloudsInner[2]);
+      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+      glTexCoord2f(cloudRepeats * squareShape[2][0],
+		   cloudRepeats * squareShape[2][1]);
+      glVertex3fv(cloudsOuter[2]);
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
+		   uvScale * cloudRepeats * squareShape[2][1]);
+      glVertex3fv(cloudsInner[2]);
+      
+      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+      glTexCoord2f(cloudRepeats * squareShape[3][0],
+		   cloudRepeats * squareShape[3][1]);
+      glVertex3fv(cloudsOuter[3]);
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
+		   uvScale * cloudRepeats * squareShape[3][1]);
+      glVertex3fv(cloudsInner[3]);
 
-    glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-    glTexCoord2f(cloudRepeats * squareShape[3][0],
-      cloudRepeats * squareShape[3][1]);
-    glVertex3fv(cloudsOuter[3]);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
-      uvScale * cloudRepeats * squareShape[3][1]);
-    glVertex3fv(cloudsInner[3]);
-
-    glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-    glTexCoord2f(cloudRepeats * squareShape[0][0],
-      cloudRepeats * squareShape[0][1]);
-    glVertex3fv(cloudsOuter[0]);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
-      uvScale * cloudRepeats * squareShape[0][1]);
-    glVertex3fv(cloudsInner[0]);
-
-    glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-    glTexCoord2f(cloudRepeats * squareShape[1][0],
-      cloudRepeats * squareShape[1][1]);
-    glVertex3fv(cloudsOuter[1]);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-      uvScale * cloudRepeats * squareShape[1][1]);
-    glVertex3fv(cloudsInner[1]);
-    glEnd();
-  }
-  else // check for mountans
-  {
-    for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++)
-    {
-      if ( displayList == mountanLists[i] )
-      {
+      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+      glTexCoord2f(cloudRepeats * squareShape[0][0],
+		   cloudRepeats * squareShape[0][1]);
+      glVertex3fv(cloudsOuter[0]);
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
+		   uvScale * cloudRepeats * squareShape[0][1]);
+      glVertex3fv(cloudsInner[0]);
+      
+      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+      glTexCoord2f(cloudRepeats * squareShape[1][0],
+		   cloudRepeats * squareShape[1][1]);
+      glVertex3fv(cloudsOuter[1]);
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
+		   uvScale * cloudRepeats * squareShape[1][1]);
+      glVertex3fv(cloudsInner[1]);
+    } glEnd();
+  } else {
+    // check for mountans
+    for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
+      if ( displayList == mountanLists[i] ) {
 	buildMountan(i);
       }
     }
@@ -912,7 +883,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     if (BZDBCache::blend && BZDBCache::lighting &&
 	!drawingMirror && BZDBCache::drawGroundLights) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
-//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
+	//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
 	// avoid on foggy maps, because the blending function accumulates
 	// too much brightness.
@@ -1077,75 +1048,63 @@ void BackgroundRenderer::drawSkybox()
     tm.bind(skyboxTexID[5]); // bottom
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
-    {
+    glBegin(GL_QUADS); {
       glTexCoord2fv(txcds[0]); glColor3fv(color[2]); glVertex3fv(verts[2]);
       glTexCoord2fv(txcds[1]); glColor3fv(color[3]); glVertex3fv(verts[3]);
       glTexCoord2fv(txcds[2]); glColor3fv(color[0]); glVertex3fv(verts[0]);
       glTexCoord2fv(txcds[3]); glColor3fv(color[1]); glVertex3fv(verts[1]);
-    }
-    glEnd();
+    } glEnd();
   }
 
   tm.bind(skyboxTexID[4]); // top
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-  glBegin(GL_QUADS);
-  {
+  glBegin(GL_QUADS); {
     glTexCoord2fv(txcds[0]); glColor3fv(color[5]); glVertex3fv(verts[5]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[4]); glVertex3fv(verts[4]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[7]); glVertex3fv(verts[7]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[6]); glVertex3fv(verts[6]);
-  }
-  glEnd();
+  } glEnd();
 
   tm.bind(skyboxTexID[0]); // left
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-  glBegin(GL_QUADS);
-  {
+  glBegin(GL_QUADS); {
     glTexCoord2fv(txcds[0]); glColor3fv(color[0]); glVertex3fv(verts[0]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[3]); glVertex3fv(verts[3]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[7]); glVertex3fv(verts[7]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[4]); glVertex3fv(verts[4]);
-  }
-  glEnd();
+  } glEnd();
 
   tm.bind(skyboxTexID[1]); // front
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-  glBegin(GL_QUADS);
-  {
+  glBegin(GL_QUADS); {
     glTexCoord2fv(txcds[0]); glColor3fv(color[1]); glVertex3fv(verts[1]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[0]); glVertex3fv(verts[0]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[4]); glVertex3fv(verts[4]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[5]); glVertex3fv(verts[5]);
-  }
-  glEnd();
+  } glEnd();
 
   tm.bind(skyboxTexID[2]); // right
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-  glBegin(GL_QUADS);
-  {
+  glBegin(GL_QUADS); {
     glTexCoord2fv(txcds[0]); glColor3fv(color[2]); glVertex3fv(verts[2]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[1]); glVertex3fv(verts[1]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[5]); glVertex3fv(verts[5]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[6]); glVertex3fv(verts[6]);
-  }
-  glEnd();
+  } glEnd();
 
   tm.bind(skyboxTexID[3]); // back
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-  glBegin(GL_QUADS);
-  {
+  glBegin(GL_QUADS); {
     glTexCoord2fv(txcds[0]); glColor3fv(color[3]); glVertex3fv(verts[3]);
     glTexCoord2fv(txcds[1]); glColor3fv(color[2]); glVertex3fv(verts[2]);
     glTexCoord2fv(txcds[2]); glColor3fv(color[6]); glVertex3fv(verts[6]);
     glTexCoord2fv(txcds[3]); glColor3fv(color[7]); glVertex3fv(verts[7]);
-  }
-  glEnd();
+  } glEnd();
 
   glShadeModel(GL_FLAT);
   glEnable(GL_CULL_FACE);
@@ -1169,7 +1128,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     skyGState.setState();
     if (!doSunset) {
       // just a pyramid
-      glBegin(GL_TRIANGLE_FAN);
+      glBegin(GL_TRIANGLE_FAN); {
 	glColor3fv(skyZenithColor);
 	glVertex3fv(skyPyramid[4]);
 	glColor3fv(skyCrossSunDirColor);
@@ -1182,13 +1141,12 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 	glVertex3fv(skyPyramid[1]);
 	glColor3fv(skyCrossSunDirColor);
 	glVertex3fv(skyPyramid[0]);
-      glEnd();
-    }
-    else {
+      } glEnd();
+    } else {
       // overall shape is a pyramid, but the solar sides are two
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
-      glBegin(GL_TRIANGLE_FAN);
+      glBegin(GL_TRIANGLE_FAN); {
 	glColor3fv(skyZenithColor);
 	glVertex3fv(skyPyramid[4]);
 	glColor3fv(skyCrossSunDirColor);
@@ -1197,13 +1155,13 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 	glVertex3fv(skyPyramid[1]);
 	glColor3fv(skyCrossSunDirColor);
 	glVertex3fv(skyPyramid[0]);
-      glEnd();
+      } glEnd();
 
       GLfloat sunsetTopPoint[3];
       sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
-      glBegin(GL_TRIANGLES);
+      glBegin(GL_TRIANGLES); {
 	glColor3fv(skyZenithColor);
 	glVertex3fv(skyPyramid[4]);
 	glColor3fv(skyCrossSunDirColor);
@@ -1226,7 +1184,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 	glVertex3fv(sunsetTopPoint);
 	glColor3fv(skySunDirColor);
 	glVertex3fv(skyPyramid[3]);
-      glEnd();
+      } glEnd();
     }
   }
 
@@ -1336,26 +1294,24 @@ void BackgroundRenderer::drawGroundCentered()
     {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
   };
 
-//  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
+  //  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
 
   glNormal3f(0.0f, 0.0f, 1.0f);
-  glBegin(GL_TRIANGLE_FAN);
-  {
+  glBegin(GL_TRIANGLE_FAN); {
     for (int i = 0; i < 5; i++) {
       glTexCoord2fv(texcoords[i]);
       glVertex2fv(vertices[i]);
     }
     glTexCoord2fv(texcoords[1]);
     glVertex2fv(vertices[1]);
-  }
-  glEnd();
+  } glEnd();
 
   return;
 }
 
 
 void			BackgroundRenderer::drawGroundGrid(
-						SceneRenderer& renderer)
+							   SceneRenderer& renderer)
 {
   const GLfloat* pos = renderer.getViewFrustum().getEye();
   const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
@@ -1369,26 +1325,26 @@ void			BackgroundRenderer::drawGroundGrid(
   // x lines
   if (doShadows) glColor3f(0.0f, 0.75f, 0.5f);
   else glColor3f(0.0f, 0.4f, 0.3f);
-  glBegin(GL_LINES);
+  glBegin(GL_LINES); {
     for (i = -xhalf; i <= xhalf; i += gridSpacing) {
       glVertex2f(x0 + i, y0 - yhalf);
       glVertex2f(x0 + i, y0 + yhalf);
     }
-  glEnd();
+  } glEnd();
 
   /* z lines */
   if (doShadows) glColor3f(0.5f, 0.75f, 0.0f);
   else glColor3f(0.3f, 0.4f, 0.0f);
-  glBegin(GL_LINES);
+  glBegin(GL_LINES); {
     for (i = -yhalf; i <= yhalf; i += gridSpacing) {
       glVertex2f(x0 - xhalf, y0 + i);
       glVertex2f(x0 + xhalf, y0 + i);
     }
-  glEnd();
+  } glEnd();
 }
 
 void			BackgroundRenderer::drawGroundShadows(
-						SceneRenderer& renderer)
+							      SceneRenderer& renderer)
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
@@ -1397,11 +1353,11 @@ void			BackgroundRenderer::drawGroundShadows(
   shadowProjection[8] = -sunDirection[0] / sunDirection[2];
   shadowProjection[9] = -sunDirection[1] / sunDirection[2];
   shadowProjection[1] = shadowProjection[2] =
-  shadowProjection[3] = shadowProjection[4] =
-  shadowProjection[6] = shadowProjection[7] =
-  shadowProjection[10] = shadowProjection[11] =
-  shadowProjection[12] = shadowProjection[13] =
-  shadowProjection[14] = 0.0f;
+    shadowProjection[3] = shadowProjection[4] =
+    shadowProjection[6] = shadowProjection[7] =
+    shadowProjection[10] = shadowProjection[11] =
+    shadowProjection[12] = shadowProjection[13] =
+    shadowProjection[14] = 0.0f;
   glPushMatrix();
   glMultMatrixf(shadowProjection);
 
@@ -1504,10 +1460,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
     // maximum value
     const float maxVal = (lightColor[0] > lightColor[1]) ?
-			 ((lightColor[0] > lightColor[2]) ?
-			  lightColor[0] : lightColor[2]) :
-			 ((lightColor[1] > lightColor[2]) ?
-			  lightColor[1] : lightColor[2]);
+      ((lightColor[0] > lightColor[2]) ?
+       lightColor[0] : lightColor[2]) :
+      ((lightColor[1] > lightColor[2]) ?
+       lightColor[1] : lightColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < 0.02f) {
@@ -1525,8 +1481,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     color[3] = I;
 
     // draw ground receiver, computing lighting at each vertex ourselves
-    glBegin(GL_TRIANGLE_FAN);
-    {
+    glBegin(GL_TRIANGLE_FAN); {
       glColor4fv(color);
       glVertex2f(0.0f, 0.0f);
 
@@ -1540,8 +1495,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 	glVertex2f(receiverRingSize * angle[j][0],
 		   receiverRingSize * angle[j][1]);
       }
-    }
-    glEnd();
+    } glEnd();
     triangleCount += receiverSlices;
 
     for (i = 1; i < receiverRings; i++) {
@@ -1563,8 +1517,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       }
       float outerAlpha = I;
 
-      glBegin(GL_QUAD_STRIP);
-      {
+      glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
 	  color[3] = innerAlpha;
 	  glColor4fv(color);
@@ -1573,8 +1526,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
-      }
-      glEnd();
+      } glEnd();
     }
     triangleCount += (receiverSlices * receiverRings * 2);
 
@@ -1669,10 +1621,10 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
     // maximum value
     const float maxVal = (baseColor[0] > baseColor[1]) ?
-			 ((baseColor[0] > baseColor[2]) ?
-			  baseColor[0] : baseColor[2]) :
-			 ((baseColor[1] > baseColor[2]) ?
-			  baseColor[1] : baseColor[2]);
+      ((baseColor[0] > baseColor[2]) ?
+       baseColor[0] : baseColor[2]) :
+      ((baseColor[1] > baseColor[2]) ?
+       baseColor[1] : baseColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < minLuminance) {
@@ -1688,8 +1640,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     float outerColor[3];
 
     // draw ground receiver, computing lighting at each vertex ourselves
-    glBegin(GL_TRIANGLE_FAN);
-    {
+    glBegin(GL_TRIANGLE_FAN); {
       // center point
       innerColor[0] = I * baseColor[0];
       innerColor[1] = I * baseColor[1];
@@ -1710,8 +1661,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 	glVertex2f(outerSize * angle[j][0],
 		   outerSize * angle[j][1]);
       }
-    }
-    glEnd();
+    } glEnd();
     triangleCount += receiverSlices;
 
     bool moreRings = true;
@@ -1733,16 +1683,14 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       outerColor[1] = I * baseColor[1];
       outerColor[2] = I * baseColor[2];
 
-      glBegin(GL_QUAD_STRIP);
-      {
+      glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
 	  glColor3fv(innerColor);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
 	  glColor3fv(outerColor);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
-      }
-      glEnd();
+      } glEnd();
     }
     triangleCount += (receiverSlices * 2 * (i - 2));
 
@@ -1760,8 +1708,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 void BackgroundRenderer::drawMountains(void)
 {
   glColor3f(1.0f, 1.0f, 1.0f);
-  for (int i = 0; i < numMountainTextures; i++)
-  {
+  for (int i = 0; i < numMountainTextures; i++) {
     mountainsGState[i].setState();
     DisplayListSystem::Instance().callList(mountanLists[i]);
   }

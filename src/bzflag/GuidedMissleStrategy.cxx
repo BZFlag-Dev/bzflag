@@ -120,8 +120,7 @@ void GuidedMissileStrategy::update(float dt)
 
   // if shot life ran out then send notification and expire shot.
   // only local shots are expired.
-  if (!isRemote && currentTime - getPath().getStartTime() >= getPath().getLifetime())
-  {
+  if (!isRemote && currentTime - getPath().getStartTime() >= getPath().getLifetime()) {
     /* NOTE -- comment out to not explode when shot expires */
     addShotExplosion(nextPos);
     setExpiring();
@@ -130,46 +129,36 @@ void GuidedMissileStrategy::update(float dt)
 
   // get target
   const Player* target = NULL;
-  if (isRemote)
-  {
+  if (isRemote) {
     if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
-  }
-  else
-  {
+  } else {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank)
       target = myTank->getTarget();
 
     // see if the target changed
-    if (target)
-    {
-      if (lastTarget != target->getId())
-      {
+    if (target) {
+      if (lastTarget != target->getId()) {
 	needUpdate = true;
 	lastTarget = target->getId();
       }
-    }
-    else
-    {
-      if (lastTarget != NoPlayer)
-      {
+    } else {
+      if (lastTarget != NoPlayer) {
 	needUpdate = true;
 	lastTarget = NoPlayer;
       }
     }
   }
 
-  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
-  {
+  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
     lastTarget = NoPlayer;
     needUpdate = true;
   }
 
   // compute next segment's ray
-  if (target)
-  {
+  if (target) {
     // turn towards target
     // find desired direction
     const float* targetPos = target->getPosition();
@@ -213,8 +202,7 @@ void GuidedMissileStrategy::update(float dt)
   renderTimes++;
 
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
-  if (currentTime - lastPuff > puffTime )
-  {
+  if (currentTime - lastPuff > puffTime ) {
     lastPuff = currentTime;
     addShotPuff(nextPos,azimuth,elevation);
   }
@@ -226,8 +214,7 @@ void GuidedMissileStrategy::update(float dt)
   // see if we hit something
   double segmentEndTime = currentTime;
 
-  if (nextPos[2] <= 0.0f)
-  {
+  if (nextPos[2] <= 0.0f) {
     // hit ground -- expire it and shorten life of segment to time of impact
     setExpiring();
     float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
@@ -235,13 +222,10 @@ void GuidedMissileStrategy::update(float dt)
     segmentEndTime += t * (currentTime - prevTime);
     ray.getPoint(t / shotSpeed, nextPos);
     addShotExplosion(nextPos);
-  }
-  else
-  {
+  } else {
     // see if we hit a building
     const float t = checkBuildings(ray);
-    if (t >= 0.0f)
-    {
+    if (t >= 0.0f) {
       segmentEndTime = prevTime;
       segmentEndTime += t;
     }
@@ -288,13 +272,10 @@ bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
 
   // get target
   const Player* target = NULL;
-  if (isRemote)
-  {
+  if (isRemote) {
     if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
-  }
-  else
-  {
+  } else {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank)
       target = myTank->getTarget();
@@ -305,8 +286,7 @@ bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
 
   float tmpAzimuth = azimuth, tmpElevation = elevation;
   // compute next segment's ray
-  if (target)
-  {
+  if (target) {
     // turn towards target
     // find desired direction
     const float* targetPos = target->getPosition();
@@ -354,8 +334,7 @@ bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
   // see if we hit something
   if (p[2] <= 0.0f)
     return false;
-  else
-  {
+  else {
     // see if we hit a building
     float t = float((currentTime - prevTime) * shotSpeed);
     int face;
@@ -483,15 +462,12 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
 
     // get closest approach time
     float t;
-    if (tank.test2D)
-    {
+    if (tank.test2D) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
       t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.length, shotRadius, tankHeight);
-    }
-    else
-    {
+    } else {
       // find time when shot hits sphere around tank
       t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
@@ -602,37 +578,37 @@ void GuidedMissileStrategy::radarRender() const
     dir[0] = vel[0] * d * shotTailLength * length;
     dir[1] = vel[1] * d * shotTailLength * length;
     dir[2] = vel[2] * d * shotTailLength * length;
-    glBegin(GL_LINES);
-    glVertex2fv(orig);
-    if (BZDBCache::leadingShotLine) {
-      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-    } else {
-      glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
-    }
-    glEnd();
+    glBegin(GL_LINES); {
+      glVertex2fv(orig);
+      if (BZDBCache::leadingShotLine) {
+	glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+      } else {
+	glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+      }
+    } glEnd();
 
     // draw a "bright reddish" missle tip
     if (size > 0) {
       glColor3f(1.0f, 0.75f, 0.75f);
       glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2f(orig[0], orig[1]);
-      glEnd();
+      glBegin(GL_POINTS); {
+	glVertex2f(orig[0], orig[1]);
+      } glEnd();
       glPointSize(1.0f);
     }
   } else {
     if (size > 0) {
       // draw a sized missle
       glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
+      glBegin(GL_POINTS); {
+	glVertex2fv(orig);
+      } glEnd();
       glPointSize(1.0f);
     } else {
       // draw the tiny missle
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
+      glBegin(GL_POINTS); {
+	glVertex2fv(orig);
+      } glEnd();
     }
   }
 }

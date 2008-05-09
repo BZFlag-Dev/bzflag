@@ -1946,8 +1946,7 @@ static void handleFlagUpdate(void *msg, size_t len)
 
   size_t perFlagSize = 2 + 55;
 
-  if ( len >= (2 + (perFlagSize*count)) )
-  {
+  if ( len >= (2 + (perFlagSize*count)) ) {
     for (int i = 0; i < count; i++) {
       msg = nboUnpackUShort(msg, flagIndex);
       msg = world->getFlag(int(flagIndex)).unpack(msg);
@@ -2076,8 +2075,7 @@ static void handleAllow(void *msg)
     localtank->setDesiredAngVel(0.0);
     // drop any team flag we may have, as would happen if we paused
     const FlagType* flagd = localtank->getFlag();
-    if (flagd->flagTeam != NoTeam)
-    {
+    if (flagd->flagTeam != NoTeam) {
       serverLink->sendDropFlag(localtank->getPosition());
       localtank->setShotType(StandardShot);
     }
@@ -2110,25 +2108,20 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   Player* victimPlayer = lookupPlayer(victim);
   Player* killerPlayer = lookupPlayer(killer);
 
-  if (victimPlayer == myTank) 
-  {
+  if (victimPlayer == myTank) {
     // uh oh, i'm dead
-    if (myTank->isAlive()) 
-    {
+    if (myTank->isAlive()) {
       serverLink->sendDropFlag(myTank->getPosition());
       myTank->setShotType(StandardShot);
       handleMyTankKilled(reason);
     }
   }
 
-  if (victimLocal)
-  {
+  if (victimLocal) {
     // uh oh, local player is dead
     if (victimLocal->isAlive())
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
-  }
-  else if (victimPlayer)
-  {
+  } else if (victimPlayer) {
     victimPlayer->setExplode(TimeKeeper::getTick());
     const float* pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
@@ -2146,8 +2139,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,victimPlayer->getAngle());
   }
 
-  if (killerLocal) 
-  {
+  if (killerLocal) {
     // local player did it
     if (shotId >= 0)
       killerLocal->endShot(shotId, true); // terminate the shot
@@ -2581,45 +2573,35 @@ static void handleShotBegin(bool human, void *msg)
   if (shooterid >= playerSize)
     return;
 
-  if (shooterid == myTank->getId())
-  {
+  if (shooterid == myTank->getId()) {
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
     myTank->updateShot(firingInfo,id,firingInfo.timeSent);
-  }
-  else
-  {
+  } else {
     RemotePlayer* shooter = player[shooterid];
 
-    if (shooterid != ServerPlayer)
-    {
-      if (shooter && player[shooterid]->getId() == shooterid)
-      {
+    if (shooterid != ServerPlayer) {
+      if (shooter && player[shooterid]->getId() == shooterid) {
 	shooter->addShot(firingInfo);
 
-	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
-	{
+	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
 	  float shotPos[3];
 	  shooter->getMuzzle(shotPos);
 
 	  if (showShotEffects(shooterid))
 	    EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
 	}
-      }
-      else
-      {
+      } else {
 	return;
       }
     }
 
-    if (human)
-    {
+    if (human) {
       const float* pos = firingInfo.shot.pos;
       const bool importance = false;
       const bool localSound = isViewTank(shooter);
 
-      switch (firingInfo.shotType)
-      {
+      switch (firingInfo.shotType) {
       default:
 	playSound(SFX_FIRE, pos, importance, localSound);
 	break;
@@ -3157,8 +3139,7 @@ static void handleTangReset ( void )
 
 static void handleAllowSpawn ( uint16_t len, void* msg )
 {
-  if ( len >= 1)
-  {
+  if ( len >= 1) {
     unsigned char allow = 0;
     msg = nboUnpackUByte(msg,allow);
 
@@ -3423,8 +3404,7 @@ static void handleMovementUpdate ( uint16_t code, uint16_t, void* msg )
   if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
     addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
 
-  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0)
-  {
+  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
     // message yet -- set explosion now, play sound later (when we
     // get killed message).  status is already !Alive so make player
@@ -3513,8 +3493,7 @@ static void		doMessages()
 
   BufferedNetworkMessageManager::MessageList::iterator itr = messageList.begin();
 
-  while (itr != messageList.end())
-  {
+  while (itr != messageList.end()) {
     if (!handleServerMessage(true,*itr))
       handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
 
@@ -3948,32 +3927,26 @@ static void		checkEnvironment()
 
   FlagType* flagd = myTank->getFlag();
 
-  if (flagd->flagTeam != NoTeam)
-  {
+  if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) && (flagd->flagTeam == team && base != team) || (flagd->flagTeam != team && base == team))
       serverLink->sendCaptureFlag(base);
-  }
-  else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding))
-  {
+  } else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
-    if (TimeKeeper::getTick()-lastGrabSent > 0.2)
-    {
+    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
       // grab any and all flags i'm driving over
       const float* tpos = myTank->getPosition();
       const float radius = myTank->getRadius();
       const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
-      for (int i = 0; i < numFlags; i++)
-      {
+      for (int i = 0; i < numFlags; i++) {
 	if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;
 
 	const float* fpos = world->getFlag(i).position;
-	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2))
-	{
+	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendPlayerUpdate(myTank);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
@@ -3987,8 +3960,7 @@ static void		checkEnvironment()
 
   myTank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-  {
+  for (i = 0; i < curMaxPlayers; i++) {
     if (player[i])
       myTank->checkHit(player[i], hit, minTime);
   }
@@ -3999,8 +3971,7 @@ static void		checkEnvironment()
   // Check if I've been tagged (freeze tag).  Note that we alternate the
   // direction that we go through the list to avoid a pathological case.
   static int upwards = 1;
-  for (i = 0; i < curMaxPlayers; i ++)
-  {
+  for (i = 0; i < curMaxPlayers; i ++) {
     int tankid;
     if (upwards)
       tankid = i;
@@ -4017,8 +3988,7 @@ static void		checkEnvironment()
   // used later
   //	float waterLevel = World::getWorld()->getWaterLevel();
 
-  if (hit)
-  {
+  if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
     // this is to ensure that we don't get shot again by the same shot
@@ -4029,8 +3999,7 @@ static void		checkEnvironment()
     FlagType* killerFlag = hit->getFlag();
     bool stopShot;
 
-    if (killerFlag == Flags::Thief)
-    {
+    if (killerFlag == Flags::Thief) {
       if (myTank->getFlag() != Flags::Null)
 	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
       stopShot = true;
@@ -4038,8 +4007,7 @@ static void		checkEnvironment()
     else
       stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
 
-    if (stopShot || hit->isStoppedByHit())
-    {
+    if (stopShot || hit->isStoppedByHit()) {
       Player* hitter = lookupPlayer(hit->getPlayer());
       if (hitter)
 	hitter->endShot(hit->getShotId());
@@ -4050,8 +4018,8 @@ static void		checkEnvironment()
   // this is done on the server now, we should remove this when we are sure its ok.
   /*	else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
   gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
-  else  // if not dead yet, see if i got squished
-  {
+  else {
+    // if not dead yet, see if i got squished
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
@@ -4157,8 +4125,7 @@ void setLookAtMarker(void)
     const float a = fabsf( y / d );
 
 
-    if (inLookRange(a, d, bestDistance, player[i]))
-    {
+    if (inLookRange(a, d, bestDistance, player[i])) {
       // check and see if we can cast a ray from our point to the object
       float vec[3];
       vec[0] = pos[0]-x0;
@@ -4171,19 +4138,15 @@ void setLookAtMarker(void)
       const ObsList* olist = COLLISIONMGR.rayTest (&ray, d);
 
       bool blocked = false;
-      if ( olist && olist->count > 0)
-      {
-	for (int o = 0; o < olist->count; o++)
-	{
+      if ( olist && olist->count > 0) {
+	for (int o = 0; o < olist->count; o++) {
 	  const Obstacle* obs = olist->list[o];
 
-	  if (obs->getType() != Teleporter::getClassName())
-	  {
+	  if (obs->getType() != Teleporter::getClassName()) {
 	    // if it's not a teleporter (they are too thin to hide things )
 	    // then see if it's closer to us then the other tank
 	    const float timet = obs->intersect(ray);
-	    if ( timet > 1.0f )
-	    {
+	    if ( timet > 1.0f ) {
 	      blocked = true;
 	      o = olist->count;
 	    }
@@ -4192,8 +4155,7 @@ void setLookAtMarker(void)
       }
 
       // if there is nothing between us then go and add it to the list
-      if ( !blocked )
-      {
+      if ( !blocked ) {
 	// is it better?
 	bestTarget = player[i];
 	bestDistance = d;
@@ -5615,8 +5577,7 @@ void drawFrame(const float dt)
     targetPoint[1] = eyePoint[1] + myTankDir[1];
     targetPoint[2] = eyePoint[2] + myTankDir[2];
 
-    if ( myTank && thirdPersonVars.b3rdPerson )
-    {
+    if ( myTank && thirdPersonVars.b3rdPerson ) {
       targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
       targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
       targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
@@ -6325,8 +6286,7 @@ static void		updatePauseCountdown(float dt)
       } else {
 	// okay, now we pause.  first drop any team flag we may have.
 	const FlagType* flagd = myTank->getFlag();
-	if (flagd->flagTeam != NoTeam)
-	{
+	if (flagd->flagTeam != NoTeam) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	  myTank->setShotType(StandardShot);
 	}
@@ -6391,13 +6351,11 @@ static void		updateDestructCountdown(float dt)
 void getAFastToken ( void )
 {
   // get token if we need to (have a password but no token)
-  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
-  {
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) {
     ServerList* serverList = new ServerList;
     serverList->startServerPings(&startupInfo);
     // wait no more than 10 seconds for a token
-    for (int j = 0; j < 40; j++)
-    {
+    for (int j = 0; j < 40; j++) {
       serverList->checkEchos(getStartupInfo());
       cURLManager::perform();
       if (startupInfo.token[0] != '\0')
@@ -6451,13 +6409,10 @@ bool dnsLookupDone ( struct in_addr &inAddress )
   ares.process(&readers, &writers);
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-  if (status == AresHandler::Failed)
-  {
+  if (status == AresHandler::Failed) {
     HUDDialogStack::get()->setFailedMessage("Server not found");
     waitingDNS = false;
-  }
-  else if (status == AresHandler::HbNSucceeded)
-  {
+  } else if (status == AresHandler::HbNSucceeded) {
     waitingDNS = false;
     return true;
   }
@@ -6507,12 +6462,9 @@ void handleJoyStick ( void )
   static unsigned long old_buttons = 0;
   const int button_count = countof(button_map);
   unsigned long new_buttons = mainWindow->getJoyButtonSet();
-  if (old_buttons != new_buttons)
-  {
-    for (int j = 0; j < button_count; j++)
-    {
-      if ((old_buttons & (1<<j)) != (new_buttons & (1<<j)))
-      {
+  if (old_buttons != new_buttons) {
+    for (int j = 0; j < button_count; j++) {
+      if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	BzfKeyEvent ev;
 	ev.button = button_map[j];
 	ev.ascii = 0;
@@ -6538,16 +6490,12 @@ void handleJoyStick ( void )
   // How many are there really
   int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(), (unsigned int)countof(old_direction));
 
-  for (int j = 0; j < hatswitch_count; j++)
-  {
+  for (int j = 0; j < hatswitch_count; j++) {
     unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
-    if (hat_direction != old_direction[j])
-    {
+    if (hat_direction != old_direction[j]) {
       int mask = 1;
-      for (int k = j; k < 4; ++k, mask <<= 1)
-      {
-	if (((old_direction[j] ^ hat_direction) & mask) != 0)
-	{
+      for (int k = j; k < 4; ++k, mask <<= 1) {
+	if (((old_direction[j] ^ hat_direction) & mask) != 0) {
 	  BzfKeyEvent ev;
 	  ev.button = hatswitch_map[j * 4 + k];
 	  ev.ascii = 0;
@@ -6564,20 +6512,16 @@ void updateTimeOfDay ( const float dt )
 {
   // update time of day -- update sun and sky every few seconds
   float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
-  if (syncTime < 0.0f)
-  {
+  if (syncTime < 0.0f) {
     if (!BZDB.isSet("fixedTime"))
       epochOffset += (double)dt;
 
     epochOffset += (double)(50.0f * dt * clockAdjust);
-  }
-  else
-  {
+  } else {
     epochOffset = (double)syncTime;
     lastEpochOffset += (double)dt;
   }
-  if (fabs(epochOffset - lastEpochOffset) >= 4.0)
-  {
+  if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
     updateDaylight(epochOffset);
     lastEpochOffset = epochOffset;
   }
@@ -6587,8 +6531,7 @@ void checkForServerBail ( void )
 {
   // if server died then leave the game (note that this may cause
   // further server errors but that's okay).
-  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup))
-  {
+  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup)) {
     // if we haven't reported the death yet then do so now
     if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
       printError("Server has unexpectedly disconnected");
@@ -6599,11 +6542,9 @@ void checkForServerBail ( void )
 void updateVideoFormatTimer ( const float dt )
 {
   // update test video format timer
-  if (testVideoFormatTimer > 0.0f)
-  {
+  if (testVideoFormatTimer > 0.0f) {
     testVideoFormatTimer -= dt;
-    if (testVideoFormatTimer <= 0.0f)
-    {
+    if (testVideoFormatTimer <= 0.0f) {
       testVideoFormatTimer = 0.0f;
       setVideoFormat(testVideoPrevFormat);
     }
@@ -6613,8 +6554,7 @@ void updateVideoFormatTimer ( const float dt )
 void updateShots ( const float dt )
 {
   // update other tank's shots
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i])
       player[i]->updateShots(dt);
   }
@@ -6638,10 +6578,8 @@ void moveRoamingCamera ( const float dt )
 void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
-    if (player[i])
-    {
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i]) {
       const bool wasNotResponding = player[i]->isNotResponding();
       player[i]->doDeadReckoning();
       const bool isNotResponding = player[i]->isNotResponding();
@@ -6654,10 +6592,8 @@ void doTankMotions ( const float /*dt*/ )
   }
 
   // do motion
-  if (myTank)
-  {
-    if (myTank->isAlive() && !myTank->isPaused())
-    {
+  if (myTank) {
+    if (myTank->isAlive() && !myTank->isPaused()) {
       doMotion();
       if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
 	setHuntTarget(); //spot hunt target
@@ -6671,9 +6607,7 @@ void doTankMotions ( const float /*dt*/ )
       if (myTank->getTarget())
 	hud->AddLockOnMarker(myTank->getTarget()->getPosition(),myTank->getTarget()->getCallSign(),!isKillable(myTank->getTarget()));
 
-    }
-    else
-    {
+    } else {
       int mx, my;
       mainWindow->getMousePosition(mx, my);
     }
@@ -6734,8 +6668,7 @@ void updateTanks ( const float dt )
   if (myTank)
     myTank->updateTank(dt, true);
 
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i])
       player[i]->updateTank(dt, false);
   }
@@ -6760,14 +6693,12 @@ void doUpdates ( const float dt )
   float dtLimit = MAX_DT_LIMIT;
   float realDT = dt;
 
-  if ( doneDT > dtLimit )
-  {
+  if ( doneDT > dtLimit ) {
     realDT = dtLimit;
     doneDT -= dtLimit;
   }
 
-  while ( doneDT > 0 )
-  {
+  while ( doneDT > 0 ) {
     updateTimes(realDT);
     updatePostions(realDT);
     checkEnvironment(realDT);
@@ -6808,8 +6739,7 @@ bool checkForCompleteDownloads ( void )
 
   // downloading is terminated. go!
   Downloads::instance().finalizeDownloads();
-  if (downloadingInitialTexture)
-  {
+  if (downloadingInitialTexture) {
     downloadingInitialTexture = false;
     return true;
   }
@@ -6880,8 +6810,7 @@ static void		playingLoop()
   worldDownLoader = new WorldDownLoader;
 
   // main loop
-  while (!CommandsStandard::isQuit())
-  {
+  while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
 
     canSpawn = true;

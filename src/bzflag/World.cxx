@@ -352,8 +352,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 {
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  for (unsigned int w = 0; w < walls.size(); w++)
-  {
+  for (unsigned int w = 0; w < walls.size(); w++) {
     const WallObstacle* wall = (const WallObstacle*) walls[w];
     if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return wall;
@@ -368,8 +367,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   int i;
 
   // check non-mesh obstacles
-  for (i = 0; i < olist->count; i++)
-  {
+  for (i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
     if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
@@ -393,8 +391,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   bool goingDown = (vel[2] <= 0.0f);
 
   // check mesh faces
-  for (/* do nothing */; i < olist->count; i++) 
-  {
+  for (/* do nothing */; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
     if (type == MeshObstacle::getClassName())
@@ -408,15 +405,13 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     if (!driveThru)
       driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
-   if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-    {
+   if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
 	continue;
       else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) 
 	continue;
-      else
-      {
+      else {
 	// add the face to the hitlist
 	olist->list[hitCount] = (Obstacle*) obs;
 	hitCount++;
@@ -431,8 +426,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
 
   // see if there as a valid meshface hit
-  if (hitCount > 0)
-  {
+  if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
     if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
       return face;
@@ -444,8 +438,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
   // all this seems to do is screw us up by testing the same thing again with worse paramaters
 
   // check mesh obstacles
-  for (; i < olist->count; i++)
-  {
+  for (; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
@@ -758,8 +751,7 @@ void			World::updateFlag(int index, float dt)
 	flag.position[0] = flag.landingPosition[0];
 	flag.position[1] = flag.landingPosition[1];
 	flag.position[2] = flag.landingPosition[2];
-      }
-      else {
+      } else {
 	// still flying
 	float t = flag.flightTime / flag.flightEnd;
 	flag.position[0] = (1.0f - t) * flag.launchPosition[0] +
@@ -780,14 +772,12 @@ void			World::updateFlag(int index, float dt)
 	flag.status = FlagOnGround;
 	flag.position[2] = 0.0f;
 	alpha = 1.0f;
-      }
-      else if (flag.flightTime >= 0.5f * flag.flightEnd) {
+      } else if (flag.flightTime >= 0.5f * flag.flightEnd) {
 	// falling
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
 	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
-      }
-      else {
+      } else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
 	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
@@ -802,8 +792,7 @@ void			World::updateFlag(int index, float dt)
 						(0.25f * flag.flightEnd);
 	  alpha = 1.0f;
 	  flagWarpNodes[index]->setSizeFraction(1.0f - t);
-	}
-	else {
+	} else {
 	  // first half
 	  float t = flag.flightTime / (0.25f * flag.flightEnd);
 	  alpha = t;
@@ -817,14 +806,12 @@ void			World::updateFlag(int index, float dt)
       if (flag.flightTime >= flag.flightEnd) {
 	// all gone
 	flag.status = FlagNoExist;
-      }
-      else if (flag.flightTime < 0.5f * flag.flightEnd) {
+      } else if (flag.flightTime < 0.5f * flag.flightEnd) {
 	// rising
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
 	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
-      }
-      else {
+      } else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
 	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
@@ -839,8 +826,7 @@ void			World::updateFlag(int index, float dt)
 						(0.25f * flag.flightEnd);
 	  alpha = 1.0f;
 	  flagWarpNodes[index]->setSizeFraction(1.0f - t);
-	}
-	else {
+	} else {
 	  // second half
 	  float t = (flag.flightEnd - flag.flightTime) /
 						(0.25f * flag.flightEnd);
@@ -863,14 +849,12 @@ void			World::updateFlag(int index, float dt)
   if (flag.status != FlagOnTank) {
     flagNode->setWind(wind, dt);
     flagNode->setFlat(false);
-  }
-  else {
+  } else {
     const Player* flagPlayer = NULL;
     const Player* myTank = (const Player*) LocalPlayer::getMyTank();
     if (myTank && (myTank->getId() == flag.owner)) {
       flagPlayer = myTank;
-    }
-    else {
+    } else {
       for (int i = 0; i < curMaxPlayers; i++) {
 	const Player* p = players[i];
 	if (p && p->getId() == flag.owner) {
@@ -1099,8 +1083,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     float worldSize = BZDBCache::worldSize;
     float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
     if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
-    ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
-    {
+	||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str()))) {
       out << indent << "world" << std::endl;
       if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) {
 	out << indent << "  size " << worldSize / 2.0f << std::endl;
@@ -1143,92 +1126,82 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   TRANSFORMMGR.print(out, indent);
 
   // Write water level
-  {
-    if (waterLevel >= 0.0f) {
-      out << indent << "waterLevel" << std::endl;
-      out << indent << "  height " << waterLevel << std::endl;
-      out << indent << "  matref ";
-      MATERIALMGR.printReference(out, waterMaterial);
-      out << std::endl;
-      out << indent << "end" << std::endl << std::endl;
-    }
+  if (waterLevel >= 0.0f) {
+    out << indent << "waterLevel" << std::endl;
+    out << indent << "  height " << waterLevel << std::endl;
+    out << indent << "  matref ";
+    MATERIALMGR.printReference(out, waterMaterial);
+    out << std::endl;
+    out << indent << "end" << std::endl << std::endl;
   }
 
   // Write the world obstacles
-  {
-    if (saveAsOBJ) {
-      writeOBJGround(out);
-    }
-    OBSTACLEMGR.print(out, indent);
+  if (saveAsOBJ) {
+    writeOBJGround(out);
   }
+  OBSTACLEMGR.print(out, indent);
 
   // Write links
-  {
-    links.print(out, indent);
-  }
+  links.print(out, indent);
 
   // Write weapons
-  {
-    for (std::vector<Weapon>::iterator it = weapons.begin();
-	 it != weapons.end(); ++it) {
-      Weapon weapon = *it;
-      out << indent << "weapon" << std::endl;
-      if (weapon.type != Flags::Null) {
-	out << indent << "  type " << weapon.type->flagAbbv << std::endl;
-      }
-      out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
-			   << weapon.pos[2] << std::endl;
-      out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
-      out << indent << "  initdelay " << weapon.initDelay << std::endl;
-      if (weapon.delay.size() > 0) {
-	out << indent << "  delay";
-	for (std::vector<float>::iterator dit = weapon.delay.begin();
-	     dit != weapon.delay.end(); ++dit) {
-	  out << " " << (float)*dit;
-	}
-	out << std::endl;
-      }
-      out << indent << "end" << std::endl << std::endl;
+  for (std::vector<Weapon>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
+    Weapon weapon = *it;
+    out << indent << "weapon" << std::endl;
+    if (weapon.type != Flags::Null) {
+      out << indent << "  type " << weapon.type->flagAbbv << std::endl;
     }
+    out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
+	<< weapon.pos[2] << std::endl;
+    out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
+    out << indent << "  initdelay " << weapon.initDelay << std::endl;
+    if (weapon.delay.size() > 0) {
+      out << indent << "  delay";
+      for (std::vector<float>::iterator dit = weapon.delay.begin();
+	   dit != weapon.delay.end(); ++dit) {
+	out << " " << (float)*dit;
+      }
+      out << std::endl;
+    }
+    out << indent << "end" << std::endl << std::endl;
   }
 
   // Write entry zones
-  {
-    for (std::vector<EntryZone>::iterator it = entryZones.begin();
-	 it != entryZones.end(); ++it) {
-      EntryZone zone = *it;
-      out << indent << "zone" << std::endl;
-      out << indent << "  position " << zone.pos[0] << " " << zone.pos[1] << " "
-			   << zone.pos[2] << std::endl;
-      out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
-		       << zone.size[2] << std::endl;
-      out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
-      if (zone.flags.size() > 0) {
-	out << indent << "  flag";
-	std::vector<FlagType*>::iterator fit;
-	for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
-	  out << " " << (*fit)->flagAbbv;
-	}
-	out << std::endl;
+  for (std::vector<EntryZone>::iterator it = entryZones.begin();
+       it != entryZones.end(); ++it) {
+    EntryZone zone = *it;
+    out << indent << "zone" << std::endl;
+    out << indent << "  position " << zone.pos[0] << " " << zone.pos[1] << " "
+	<< zone.pos[2] << std::endl;
+    out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
+	<< zone.size[2] << std::endl;
+    out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
+    if (zone.flags.size() > 0) {
+      out << indent << "  flag";
+      std::vector<FlagType*>::iterator fit;
+      for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
+	out << " " << (*fit)->flagAbbv;
       }
-      if (zone.teams.size() > 0) {
-	out << indent << "  team";
-	std::vector<TeamColor>::iterator tit;
-	for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
-	  out << " " << (*tit);
-	}
-	out << std::endl;
-      }
-      if (zone.safety.size() > 0) {
-	out << indent << "  safety";
-	std::vector<TeamColor>::iterator sit;
-	for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
-	  out << " " << (*sit);
-	}
-	out << std::endl;
-      }
-      out << indent << "end" << std::endl << std::endl;
+      out << std::endl;
     }
+    if (zone.teams.size() > 0) {
+      out << indent << "  team";
+      std::vector<TeamColor>::iterator tit;
+      for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
+	out << " " << (*tit);
+      }
+      out << std::endl;
+    }
+    if (zone.safety.size() > 0) {
+      out << indent << "  safety";
+      std::vector<TeamColor>::iterator sit;
+      for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
+	out << " " << (*sit);
+      }
+      out << std::endl;
+    }
+    out << indent << "end" << std::endl << std::endl;
   }
 
   delete stream;
@@ -1248,17 +1221,16 @@ static void drawLines (int count, float (*vertices)[3], int color)
 
   if (color < 0) {
     color = 0;
-  }
-  else if (color >= colorCount) {
+  } else if (color >= colorCount) {
     color = colorCount - 1;
   }
   glColor4fv (colors[color]);
 
-  glBegin (GL_LINE_STRIP);
-  for (int i = 0; i < count; i++) {
-    glVertex3fv (vertices[i]);
-  }
-  glEnd ();
+  glBegin (GL_LINE_STRIP); {
+    for (int i = 0; i < count; i++) {
+      glVertex3fv (vertices[i]);
+    }
+  } glEnd ();
 
   return;
 }

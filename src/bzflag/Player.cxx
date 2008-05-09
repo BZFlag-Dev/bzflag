@@ -99,8 +99,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   dimensions[1] = 0.5f * BZDBCache::tankWidth;
   dimensions[2] = BZDBCache::tankHeight;
 
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     dimensionsRate[i] = 0.0f;
     dimensionsScale[i] = 1.0f;
     dimensionsTarget[i] = 1.0f;
@@ -127,8 +126,7 @@ Player::~Player()
 {
   // free shots
   const int numShots = getMaxShots();
-  for (int i = 0; i < numShots; i++)
-  {
+  for (int i = 0; i < numShots; i++) {
     if (shots[i])
       delete shots[i];
   }
@@ -187,16 +185,14 @@ float Player::getReloadTime() const
 
   // look for an empty slot
   int i;
-  for (i = 0; i < numShots; i++)
-  {
+  for (i = 0; i < numShots; i++) {
     if (!shots[i])
       return 0.0f;
   }
 
   // look for the shot fired least recently
   float minTime = float(shots[0]->getReloadTime() - (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
-  for (i = 1; i < numShots; i++)
-  {
+  for (i = 1; i < numShots; i++) {
     const float t = float(shots[i]->getReloadTime() - (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
     if (t < minTime)
       minTime = t;
@@ -211,7 +207,7 @@ float Player::getReloadTime() const
 float Player::getLocalNormalizedScore() const
 {
   return ((float)localWins - localLosses)
-	/ ((localWins+localLosses>5) ? localWins+localLosses : 5);
+    / ((localWins+localLosses>5) ? localWins+localLosses : 5);
 }
 
 short Player::getRabbitScore() const
@@ -272,8 +268,7 @@ void Player::move(const float* _pos, float _azimuth)
 {
   // update the speed of the state
   float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
-  if ( state.lastUpdateTime >= 0 )
-  {
+  if ( state.lastUpdateTime >= 0 ) {
     float delta = currentTime - state.lastUpdateTime;
     state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
     state.apparentVelocity[1] = (_pos[1]-state.pos[1])/delta;
@@ -420,10 +415,10 @@ void Player::setExplode(const TimeKeeper& t)
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
   if (avatar)
-  {
-    avatar->explode();
-    updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
-  }
+    {
+      avatar->explode();
+      updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
+    }
 }
 
 
@@ -628,8 +623,7 @@ void Player::updateTranslucency(float dt)
   if (isPhantomZoned()) {
     teleAlpha = 1.0f;
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
-  }
-  else {
+  } else {
     World *world = World::getWorld();
     if (!world) {
       return;
@@ -709,7 +703,7 @@ void Player::setFlag(FlagType* _flag)
   // set the type
   flagType = _flag;
   if (_flag == NULL)
-	  setShotType(StandardShot);
+    setShotType(StandardShot);
   updateFlagEffect(flagType);
   return;
 }
@@ -839,8 +833,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   // GL_NORMALIZE then to use precalculated normals.
   if (useDimensions)
     avatar->setScale(dimensionsScale);
-  else 
-  {
+  else {
     teAvatarScaleModes mode = eNormal;	// TODO, have the server set a player scale for these things, so it's not up to the client
    
     if (flagType == Flags::Obesity)
@@ -863,33 +856,26 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   avatar->setVisualMode(inCockpit,showTreads);
 
   // adjust alpha for seerView
-  if (seerView)
-  {
-    if (isPhantomZoned()) 
-    {
+  if (seerView) {
+    if (isPhantomZoned()) {
       color[3] = 0.25f;
-    } 
-    else
-    {
+    } else {
       color[3] = teleAlpha;
     }
   }
 
   setVisualTeam(effectiveTeam);
 
-  if (isAlive())
-  {
+  if (isAlive()) {
     avatar->setAnimationValues(0,state.jumpJetsScale);
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
-    for ( int i = 0; i < (int)nodeList.size(); i++ )
-    {
+    for ( int i = 0; i < (int)nodeList.size(); i++ ) {
       if (nodeList[i])
 	scene->addDynamicNode(nodeList[i]);
     }
 
-    if (isCrossingWall()) 
-    {
+    if (isCrossingWall()) {
       // get which plane to compute IDL against
       GLfloat plane[4];
       const GLfloat a = atan2f(forward[1], forward[0]);
@@ -904,12 +890,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 				    dimensions[0], dimensions[1],
 				    dimensions[2], plane)) {
 	// stick in interdimensional lights node
-	if (showIDL) 
-	{
+	if (showIDL) {
 	  avatar->moveIDL(plane);
 	  nodeList = avatar->getIDLSceneNodes();
-	  for ( int i = 0; i < (int)nodeList.size(); i++ )
-	  {
+	  for ( int i = 0; i < (int)nodeList.size(); i++ ) {
 	    if (nodeList[i])
 	      scene->addDynamicNode(nodeList[i]);
 	  }
@@ -920,15 +904,14 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	  avatar->setClippingPlane(plane);
 	}
       }
-    }
-    else if (getPosition()[2] < 0.0f) {
+    } else if (getPosition()[2] < 0.0f) {
       // this should only happen with Burrow flags
       avatar->setClippingPlane(groundPlane);
     } // isCrossingWall()
-  }   // isAlive()
-  else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
+  } else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
+    // isAlive()
     float t = float((TimeKeeper::getTick() - explodeTime) /
-	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
+		    BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
     if (t > 1.0f) {
       // FIXME - setStatus(DeadStatus);
       t = 1.0f;
@@ -949,22 +932,19 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     avatar->setClippingPlane(groundPlane); // shadows are not clipped
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
-    for ( int i = 0; i < (int)nodeList.size(); i++ )
-    {
+    for ( int i = 0; i < (int)nodeList.size(); i++ ) {
       if (nodeList[i])
 	scene->addDynamicNode(nodeList[i]);
     }
   }
 
-  if (isAlive() && (isPaused() || isNotResponding())) 
-  {
+  if (isAlive() && (isPaused() || isNotResponding())) {
     avatar->movePause(state.pos, 1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
 
     std::vector<SceneNode*> nodeList = avatar->getPauseSceneNodes();
-    for ( int i = 0; i < (int)nodeList.size(); i++ )
-    {
+    for ( int i = 0; i < (int)nodeList.size(); i++ ) {
       if ( nodeList[i] )
-      scene->addDynamicNode(nodeList[i]);
+	scene->addDynamicNode(nodeList[i]);
     }
   }
 }
@@ -1103,9 +1083,8 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     // following the parabola
     predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
     predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
-		      (0.5f * BZDBCache::gravity * dt * dt);
-  }
-  else {
+      (0.5f * BZDBCache::gravity * dt * dt);
+  } else {
     // velocity[2] is zero when not falling, except for Burrow flag
     predictedVel[2] = inputVel[2];
     predictedPos[2] = inputPos[2] + (inputVel[2] * dt);
@@ -1141,8 +1120,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 	predictedVel[1] = inputRelVel[1];
 	predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
 	predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
-      }
-      else {
+      } else {
 	// angular velocity adjustment
 	const float pdAngVel = phydrv->getAngularVel();
 	if (pdAngVel != 0.0f) {
@@ -1251,7 +1229,7 @@ bool Player::isDeadReckoningWrong() const
   float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
     logDebugMessage(4,"state.azimuth = %f, predictedAzimuth = %f\n",
-	    state.azimuth, predictedAzimuth);
+		    state.azimuth, predictedAzimuth);
     return true;
   }
 
@@ -1357,49 +1335,49 @@ const float maxToleratedJitter = 1.0f;
 void Player::setDeadReckoning(float timestamp )
 {
   // set the current state
-	inputTime = TimeKeeper::getTick();
+  inputTime = TimeKeeper::getTick();
 
-	// how long ago was the pos valid
+  // how long ago was the pos valid
 
-	double currentServerTime = syncedClock.GetServerSeconds();
+  double currentServerTime = syncedClock.GetServerSeconds();
 
-	if (timestamp < 0)
-		timestamp = (float)currentServerTime;
-	double delta = currentServerTime - timestamp;
-	if ( delta < 0 )
-		delta = 0;
+  if (timestamp < 0)
+    timestamp = (float)currentServerTime;
+  double delta = currentServerTime - timestamp;
+  if ( delta < 0 )
+    delta = 0;
 
-	inputPos[0] += inputVel[0] * (float)delta;
-	inputPos[1] += inputVel[1] * (float)delta;
-	inputPos[2] += inputVel[2] * (float)delta;
+  inputPos[0] += inputVel[0] * (float)delta;
+  inputPos[1] += inputVel[1] * (float)delta;
+  inputPos[2] += inputVel[2] * (float)delta;
 
-	// copy stuff for dead reckoning
-	inputStatus = state.status;
-	inputAzimuth = state.azimuth;
-	inputAngVel = state.angVel;
-	memcpy(inputPos, state.pos, sizeof(float[3]));
-	memcpy(inputVel, state.velocity, sizeof(float[3]));
-	inputPhyDrv = state.phydrv;
+  // copy stuff for dead reckoning
+  inputStatus = state.status;
+  inputAzimuth = state.azimuth;
+  inputAngVel = state.angVel;
+  memcpy(inputPos, state.pos, sizeof(float[3]));
+  memcpy(inputVel, state.velocity, sizeof(float[3]));
+  inputPhyDrv = state.phydrv;
 
-	//
-	// pre-calculate some stuff for dead reckoning
-	//
+  //
+  // pre-calculate some stuff for dead reckoning
+  //
 
-	// the relative motion information (with respect to the physics drivers)
-	calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
+  // the relative motion information (with respect to the physics drivers)
+  calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
 
-	// setup the turning parameters
-	inputTurning = false;
-	if (fabsf(inputRelAngVel) > 0.001f) {
-		inputTurning = true;
-		const float radius = (inputRelSpeed / inputRelAngVel);
-		inputTurnVector[0] = +sinf(inputAzimuth) * radius;
-		inputTurnVector[1] = -cosf(inputAzimuth) * radius;
-		inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
-		inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
-	}
+  // setup the turning parameters
+  inputTurning = false;
+  if (fabsf(inputRelAngVel) > 0.001f) {
+    inputTurning = true;
+    const float radius = (inputRelSpeed / inputRelAngVel);
+    inputTurnVector[0] = +sinf(inputAzimuth) * radius;
+    inputTurnVector[1] = -cosf(inputAzimuth) * radius;
+    inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
+    inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
+  }
 
-	setRelativeMotion ();
+  setRelativeMotion ();
 }
 
 
@@ -1453,8 +1431,7 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   // for rabbit mode to correctly calculate team kills when rabbit changes
   firingInfo.shot.team = getTeam();
 
-  if (firingInfo.shotType == ShockWaveShot)
-  {
+  if (firingInfo.shotType == ShockWaveShot) {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];
@@ -1463,17 +1440,14 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
     firingInfo.shot.vel[0] = 0.0f;
     firingInfo.shot.vel[1] = 0.0f;
     firingInfo.shot.vel[2] = 0.0f;
-  }
-  else
-  {
+  } else {
     getMuzzle(firingInfo.shot.pos);
 
     const float* dir     = getForward();
     const float* tankVel = getVelocity();
     float shotSpeed      = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
 
-    if (handicap > 0.0f)
-    {
+    if (handicap > 0.0f) {
       // apply any handicap advantage to shot speed
       const float speedAd = 1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
       shotSpeed *= speedAd;
@@ -1507,10 +1481,8 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
 void Player::updateShot ( FiringInfo &info, int shotID, double time )
 {
   // kill the old shot
-  if (shotID < (int)shots.size())
-  {
-    if ( shots[shotID] != NULL )
-    {
+  if (shotID < (int)shots.size()) {
+    if ( shots[shotID] != NULL ) {
       delete shots[shotID];
       shots[shotID] = NULL;
     }
@@ -1526,7 +1498,7 @@ void Player::updateShot ( FiringInfo &info, int shotID, double time )
 
 void Player::setHandicap(float _handicap)
 {
-    handicap = _handicap;
+  handicap = _handicap;
 }
 
 // Local Variables: ***
