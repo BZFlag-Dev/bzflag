@@ -29,7 +29,7 @@ class CountDown
 {
 public:
   CountDown( double interval=1, int count=10 );
-  ~CountDown(){};
+  ~CountDown() {};
 
   int getCounter();
   void setCounter(int count);
@@ -63,14 +63,12 @@ public:
 protected:
   friend class Singleton<MatchManager>;
 
-  typedef enum
-  {
+  typedef enum {
     eOff,
     ePregame,
     eOn,
     ePostgame
-  }
-  MatchState;
+  } MatchState;
 
   MatchState matchState;
 
