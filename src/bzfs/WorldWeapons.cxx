@@ -274,8 +274,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   if (!eventData )
     return;
 
-  switch(eventData->eventType)
-  {
+  switch(eventData->eventType) {
     case bz_eCaptureEvent:
       {
 	bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
@@ -283,7 +282,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 	if ( capEvent->teamCapped != team )
 	  return;
       }
-    break;
+      break;
 
     case bz_ePlayerDieEvent:
     case bz_ePlayerSpawnEvent:

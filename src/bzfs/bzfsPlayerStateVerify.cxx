@@ -27,14 +27,12 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
   // Speed problems occur around flag drops, so don't check for
   // a short period of time after player drops a flag. Currently
   // 2 second, adjust as needed.
-  if (playerData->player.isFlagTransitSafe())
-  {
+  if (playerData->player.isFlagTransitSafe()) {
     // we'll be checking against the player's flag type
     int pFlag = playerData->player.getFlag();
 
     // check for highspeed cheat; if inertia is enabled, skip test for now
-    if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f)
-    {
+    if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f) {
       // Doesn't account for going fast backwards, or jumping/falling
       float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] + state.velocity[1]*state.velocity[1];
 
@@ -50,8 +48,7 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
       // if tank is not alive cannot be sure it didn't just toss
       // (V)
-      if (pFlag >= 0)
-      {
+      if (pFlag >= 0) {
 	FlagInfo &flag = *FlagInfo::get(pFlag);
 	if (flag.flag.type == Flags::Velocity)
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -59,8 +56,8 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	else if (flag.flag.type == Flags::Agility)
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-	else if ((flag.flag.type == Flags::Burrow) && (playerData->lastState.pos[2] == state.pos[2]) && (playerData->lastState.velocity[2] == state.velocity[2]) && (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
-	{	// if we have burrow and are not actively burrowing
+	else if ((flag.flag.type == Flags::Burrow) && (playerData->lastState.pos[2] == state.pos[2]) && (playerData->lastState.velocity[2] == state.velocity[2]) && (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH))) {
+	  // if we have burrow and are not actively burrowing.
 	  // You may have burrow and still be above ground. Must
 	  // check z in ground!!
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
@@ -76,19 +73,16 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	logOnly = true;
 
       // allow a 10% tolerance level for speed if -speedtol is not sane
-      if (cheatProtectionOptions.doSpeedChecks)
-      {
+      if (cheatProtectionOptions.doSpeedChecks) {
 	float realtol = 1.1f;
 	if (speedTolerance > 1.0f)
 	  realtol = speedTolerance;
 	maxPlanarSpeedSqr *= realtol;
 
-	if (curPlanarSpeedSqr > maxPlanarSpeedSqr)
-	{
+	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly)
 	    logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	  else
-	  {
+	  else {
 	    logDebugMessage(1,"Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	    sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player tank is moving too fast.");
 	    removePlayer(playerData->getIndex(), "too fast");
@@ -109,26 +103,22 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
   bool InBounds = true;
   float worldSize = BZDBCache::worldSize;
 
-  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge))
-  {
+  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
     std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
     InBounds = false;
-  } else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge))
-  {
+  } else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
     std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
     InBounds = false;
   }
 
   static const float burrowFudge = 1.0f; /* linear distance */
-  if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge)
-  {
+  if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
     std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
     InBounds = false;
   }
 
   // kick em cus they are most likely cheating or using a buggy client
-  if (!InBounds)
-  {
+  if (!InBounds) {
     logDebugMessage(1,"Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", playerData->player.getCallSign(), playerData->getIndex(), state.pos[0], state.pos[1], state.pos[2]);
     sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was outside the playing area.");
     removePlayer(playerData->getIndex(), "Out of map bounds", true);
@@ -202,8 +192,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
   bool hasWings = false;
   bool hasLG = false;
 
-  if (pFlag >= 0)
-  {
+  if (pFlag >= 0) {
     FlagInfo &flag = *FlagInfo::get(pFlag);
     if (flag.flag.type == Flags::Wings) {
       hasWings = true;
@@ -353,11 +342,9 @@ bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
 bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 {
   // Don't kick players if the world param is still changing
-  if (!worldStateChanging())
-  {
+  if (!worldStateChanging()) {
     // exploding or dead players can do unpredictable things
-    if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus)
-    {
+    if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus) {
       if (!doBoundsChecks(playerData,state))
 	return false;
 
@@ -383,16 +370,14 @@ bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
 {
   bool foundACheat = false;
   TeamColor base = whoseBase(playerData->currentPos[0], playerData->currentPos[1], playerData->currentPos[2]);
-  if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam()))
-  {
+  if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam())) {
     logDebugMessage(1,"Player %s [%d] might have sent MsgCaptureFlag for taking their own "
       "flag onto their own base\n",
       playerData->player.getCallSign(), playerData->getIndex());
     foundACheat = true;
   }
 
-  if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam()))
-  {
+  if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam())) {
     logDebugMessage(1,"Player %s [%d] (%s) might have tried to capture %s flag without "
       "reaching their own base. (Player position: %f %f %f)\n",
       playerData->player.getCallSign(), playerData->getIndex(),

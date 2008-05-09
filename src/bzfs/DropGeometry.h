@@ -17,8 +17,8 @@
 class WorldInfo;
 
 
-namespace DropGeometry {
-
+namespace DropGeometry
+{
   bool dropFlag (float pos[3], float minZ, float maxZ);
   bool dropPlayer (float pos[3], float minZ, float maxZ);
   bool dropTeamFlag (float pos[3], float minZ, float maxZ, int team);

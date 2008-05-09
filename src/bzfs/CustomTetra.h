@@ -26,20 +26,20 @@
 #include "WorldInfo.h"
 
 class CustomTetra : public WorldFileObstacle {
-  public:
-    CustomTetra();
-    virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+public:
+  CustomTetra();
+  virtual bool read(const char *cmd, std::istream& input);
+  virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    int vertexCount;
+private:
+  int vertexCount;
 
-    float vertices[4][3];
-    float normals[4][3][3];
-    float texcoords[4][3][2];
-    bool useNormals[4];
-    bool useTexcoords[4];
-    BzMaterial materials[4];
+  float vertices[4][3];
+  float normals[4][3][3];
+  float texcoords[4][3][2];
+  bool useNormals[4];
+  bool useTexcoords[4];
+  BzMaterial materials[4];
 };
 
 #endif  /* __CUSTOMTETRA_H__ */

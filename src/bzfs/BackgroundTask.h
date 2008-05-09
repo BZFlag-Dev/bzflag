@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 #ifndef __BACKGROUND_TASK_H__
 #define __BACKGROUND_TASK_H__
 
@@ -21,7 +21,7 @@
 class BackgroundTask
 {
 public:
-  virtual ~BackgroundTask(){};
+  virtual ~BackgroundTask() {};
   virtual bool process ( void *param ) = 0;
 };
 
@@ -48,12 +48,12 @@ private:
   BackgroundTaskManager();
   ~BackgroundTaskManager();
 
-  typedef struct 
-  {
+  typedef struct {
     BackgroundTask* classCB;
     BackgroundTaskFunc funcCB;
     void *	      param;
-  }Task;
+  } Task;
+
   std::vector<Task> tasks;
 };
 

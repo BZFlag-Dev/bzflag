@@ -217,12 +217,9 @@ public:
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;
-    if (h)
-    { 
-      for(int i=0; i < curMaxPlayers; i++)
-      {
-	if(GameKeeper::Player::getPlayerByIndex(i)->netHandler == h )
-	{
+    if (h) { 
+      for(int i=0; i < curMaxPlayers; i++) {
+	if(GameKeeper::Player::getPlayerByIndex(i)->netHandler == h ) {
 	  eventData.playerID = i;
 	  i = curMaxPlayers+1;
 	}
@@ -393,8 +390,7 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
   if (Replay::enabled() || gkPlayer->playerHandler)
     return;
 
-  if (gkPlayer != NULL)
-  {
+  if (gkPlayer != NULL) {
     NetMsg msg = MSGMGR.newMessage();
    
     GameTime::pack(msg, gkPlayer->lagInfo.getLagAvg());
@@ -408,8 +404,7 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
 static void sendPendingGameTime()
 {
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
+  for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
       sendGameTime(gkPlayer);
@@ -437,14 +432,12 @@ void sendPlayerInfo()
     numPlayers += team[i].team.size;
 
   msg->packUByte(numPlayers);
-  for (i = 0; i < curMaxPlayers; ++i)
-  {
+  for (i = 0; i < curMaxPlayers; ++i) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
 
-    if (playerData->player.isPlaying())
-    {
+    if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
       bz_GetPlayerInfoEventData_V1 playerInfoData;
       playerInfoData.playerID = i;
@@ -590,16 +583,13 @@ PingPacket getTeamCounts()
     //         originally it was not possible to even join a server when gameover
     //         was reached, but this was changed for manual countdown (match) servers)
   } else {
-    for (int i = 0; i < curMaxPlayers; i++)
-    {
+    for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
       if ((p == NULL))
 	continue;
 
-      if (p->player.isHuman())
-      {
-	switch(p->player.getTeam())
-	{
+      if (p->player.isHuman()) {
+	switch(p->player.getTeam()) {
 	case HunterTeam:
 	case RabbitTeam:
 	case RogueTeam:
@@ -1326,8 +1316,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   // check for a server command
   else if ((message[0] == '/') && (isalpha(message[1]) || message[1] == '?')) {
     // record server commands
-    if (Record::enabled())
-    {
+    if (Record::enabled()) {
       NetMsg msg = MSGMGR.newMessage();
       msg->packUByte(srcPlayer);
       msg->packUByte(dstPlayer);
@@ -1685,8 +1674,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!resultEnter) {
     // Find the user already logged on and kick it. The new player
     // has been globally authenticated.
-    for (int i = 0; i < curMaxPlayers; i++)
-    {
+    for (int i = 0; i < curMaxPlayers; i++) {
       // don't kick _us_, kick the other guy
       if (playerIndex == i)
 	continue;
@@ -1696,15 +1684,12 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	continue;
 
       if (TextUtils::compare_nocase(otherPlayer->player.getCallSign(),
-				    playerData->player.getCallSign()) == 0)
-      {
-	if ( !otherPlayer->accessInfo.regAtJoin )  // if the player was not reged at join they have done nothing wrong
-	{
+				    playerData->player.getCallSign()) == 0) {
+	if ( !otherPlayer->accessInfo.regAtJoin ) {
+	  // if the player was not reged at join they have done nothing wrong
 	  rejectPlayer(playerIndex, RejectBadCallsign, "Ghostie was not registered on join");
 	  return;
-	}
-	else
-	{
+	} else {
 	  sendMessage(ServerPlayer, i ,
 		      "Another client has demonstrated ownership of your "
 		      "callsign with the correct password.  You have been "
@@ -1914,8 +1899,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   sendIPUpdate(playerIndex, -1);
 
   // send rabbit information
-  if (clOptions->gameType == RabbitChase)
-  {
+  if (clOptions->gameType == RabbitChase) {
     NetMsg msg = MSGMGR.newMessage();
 
     msg->packUByte(rabbitIndex);
@@ -2263,8 +2247,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
-  if (notify)
-  {
+  if (notify) {
     // send a super kill to be polite
     // send message to one player
     if (playerData->playerHandler) {
@@ -2846,8 +2829,7 @@ void searchFlag(GameKeeper::Player &playerData)
       playerData.setLastIdFlag(closestFlag);
     }
   } else {
-    if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG))
-    {
+    if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG)) {
       if (flag.flag.type->flagTeam != playerData.player.getTeam())
 	sendGrabFlagMessage(playerIndex,flag);
     }
@@ -3016,11 +2998,9 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
-  if (allowData.killTeam)
-  {
+  if (allowData.killTeam) {
     // everyone on losing team is dead, KILL THEM.
-    for (int i = 0; i < curMaxPlayers; i++) 
-    {
+    for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
       if ((p == NULL) || (teamIndex != (int)p->player.getTeam()))
 	continue;
@@ -3352,28 +3332,24 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
   }
 
-  if (playerData.netHandler)
-  {
+  if (playerData.netHandler) {
     // send lag pings
     bool warn;
     bool kick;
     int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
-    if (nextPingSeqno > 0)
-    {
+    if (nextPingSeqno > 0) {
       NetMsg msg = MSGMGR.newMessage();
       msg->packUShort(nextPingSeqno);
       msg->send(playerData.netHandler, MsgLagPing);
 
-      if (warn)
-      {
+      if (warn) {
 	char message[MessageLen];
 	sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
 	sendMessage(ServerPlayer, p, message);
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;
-	if (kick)
-	{
+	if (kick) {
 	  lagKick(p);
 	  return;
 	}
@@ -3382,8 +3358,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
     // kick any clients that need to be
     std::string reasonToKick = playerData.netHandler->reasonToKick();
-    if (reasonToKick != "")
-    {
+    if (reasonToKick != "") {
       removePlayer(p, reasonToKick.c_str(), false);
       return;
     }
@@ -3537,8 +3512,7 @@ static void initStartupPrams(int argc, char **argv)
   // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
     assert(globalDBItems[gi].name != NULL);
-    if (globalDBItems[gi].value != NULL)
-      {
+    if (globalDBItems[gi].value != NULL) {
 	BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
 	BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
       }
@@ -3820,11 +3794,9 @@ static bool initServer(int argc, char **argv)
   // make flags, check sanity, etc...
   // (do this after the world has been loaded)
   finalizeParsing(argc, argv, *clOptions, world->getEntryZones());
-  {
-    FlagInfo::setNoFlagInAir();
-    for (int i = 0; i < numFlags; i++)
-      resetFlag(*FlagInfo::get(i));
-  }
+  FlagInfo::setNoFlagInAir();
+  for (int i = 0; i < numFlags; i++)
+    resetFlag(*FlagInfo::get(i));
 
   // loading extra flag number
   FlagInfo::setExtra(clOptions->numExtraFlags);
@@ -3895,8 +3867,7 @@ float getAPIMaxWaitTime ( void )
 {
   float min = (float)TimeKeeper::getSunExplodeTime().getSeconds();
   std::map<std::string,float>::iterator itr = APIWaitTimes.begin();
-  while(itr != APIWaitTimes.end())
-  {
+  while(itr != APIWaitTimes.end()) {
     if ( itr->second < min )
       min = itr->second;
     itr++;
@@ -4299,8 +4270,7 @@ static void doVoteArbiter(TimeKeeper &tm)
 		StateDatabase::Permission permission = BZDB.getPermission(args[0]);
 		if (!(BZDB.isSet(args[0]) && (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked)))
 		  logDebugMessage(1,"Poll set taking action: no action taken, variable cannot be set\n");
-		else
-		  {
+		else {
 		    logDebugMessage(1,"Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
 		    BZDB.set(args[0], args[1], StateDatabase::Server);
 		  }
@@ -4889,14 +4859,11 @@ static void runMainLoop ( void )
     // go thru all the connected users, see if they need any automatic handlaking
     std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
 
-    while ( peerItr != netConnectedPeers.end() )
-    {
-      if (!peerItr->second.sent) 
-      {
+    while ( peerItr != netConnectedPeers.end() ) {
+      if (!peerItr->second.sent) {
 	// check for any waiting conenctions if they are timed, then see if anyone wants them
 	// little guy hasn't sent us a thing
-	if (now - peerItr->second.startTime > tcpTimeout) 
-	{
+	if (now - peerItr->second.startTime > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
@@ -4909,9 +4876,6 @@ static void runMainLoop ( void )
 	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
 	    peerItr->second.deleteMe = true;
 	}
-      }
-      else
-      {
       }
       peerItr++;
     }

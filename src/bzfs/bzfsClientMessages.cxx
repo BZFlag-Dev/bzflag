@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag global header
 #include "bzfsClientMessages.h"
@@ -87,8 +87,7 @@ public:
     unsigned short numClientFlags = len/2;
 
     /* Unpack incoming message containing the list of flags our client supports */
-    for (int i = 0; i < numClientFlags; i++)
-    {
+    for (int i = 0; i < numClientFlags; i++) {
       FlagType *fDesc;
       buf = FlagType::unpack(buf, fDesc);
       if (fDesc != Flags::Null)
@@ -96,10 +95,8 @@ public:
     }
 
     /* Compare them to the flags this game might need, generating a list of missing flags */
-    for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
-    {
-      if (!hasFlag[it->second])
-      {
+    for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
+      if (!hasFlag[it->second]) {
 	if (clOptions->flagCount[it->second] > 0)
 	  missingFlags.insert(it->second);
 	if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
@@ -109,19 +106,14 @@ public:
 
     /* Pack a message with the list of missing flags */
     NetMsg msg = MSGMGR.newMessage();
-    for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
-    {
-      if ((*m_it) != Flags::Null)
-      {
-	if ((*m_it)->custom) 
-	{
+    for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
+      if ((*m_it) != Flags::Null) {
+	if ((*m_it)->custom) {
 	  // custom flag, tell the client about it
 	  NetMsg flagMsg = MSGMGR.newMessage();
 	  (*m_it)->packCustom(flagMsg);
 	  flagMsg->send(handler, MsgFlagType);
-	}
-	else
-	{
+	} else {
 	  // they should already know about this one, dump it back to them
 	  (*m_it)->pack(msg); 
 	}
@@ -167,8 +159,7 @@ class WantWHashHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
-    if (clOptions->cacheURL.size() > 0)
-    {
+    if (clOptions->cacheURL.size() > 0) {
       NetMsg   msg = MSGMGR.newMessage();
       msg->packString(clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
       msg->send(handler, MsgCacheURL);
@@ -240,8 +231,7 @@ public:
       return true;
 
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers; i++)
-    {
+    for (int i = 0; i < curMaxPlayers; i++) {
       otherData = GameKeeper::Player::getPlayerByIndex(i);
 
       if (!otherData)
@@ -291,8 +281,8 @@ public:
   {
     player = NULL;
 
-    if ( len >= 1 ) // byte * 3
-    {
+    // byte * 3
+    if ( len >= 1 ) {
       unsigned char temp = 0;
       buf  = nboUnpackUByte(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);
@@ -334,8 +324,7 @@ public:
     uint16_t rejectCode;
     char     rejectMsg[MessageLen];
 
-    if (!player->player.unpackEnter(buf, rejectCode, rejectMsg))
-    {
+    if (!player->player.unpackEnter(buf, rejectCode, rejectMsg)) {
       rejectPlayer(player->getIndex(), rejectCode, rejectMsg);
       return true;
     }
@@ -347,9 +336,9 @@ public:
       playerIP = player->netHandler->getTargetIP();
 
     logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
-      player->player.getCallSign(),
-      player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
-      player->player.getToken());
+		    player->player.getCallSign(),
+		    player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
+		    player->player.getToken());
 
     if (!clOptions->publicizeServer)
       player->_LSAState = GameKeeper::Player::notRequired;
@@ -386,8 +375,7 @@ public:
     char buffer[MessageLen];
     float waitTime = rejoinList.waitTime(player->getIndex());
 
-    if (waitTime > 0.0f)
-    {
+    if (waitTime > 0.0f) {
       snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
       sendMessage(ServerPlayer, player->getIndex(), buffer);
 
@@ -428,15 +416,14 @@ public:
     buf = nboUnpackShort(buf, shot);
     buf = FlagType::unpack(buf, flagType);
 
-    if (reason == PhysicsDriverDeath)
-    {
+    if (reason == PhysicsDriverDeath) {
       int32_t inPhyDrv;
       buf = nboUnpackInt(buf, inPhyDrv);
       phydrv = int(inPhyDrv);
     }
 
-    if (killer != ServerPlayer)	// Sanity check on shot: Here we have the killer
-    {
+    if (killer != ServerPlayer) {
+      // Sanity check on shot: Here we have the killer
       int si = (shot == -1 ? -1 : shot & 0x00FF);
       if ((si < -1) || (si >= clOptions->maxShots))
 	return true;
@@ -550,21 +537,17 @@ public:
       return true;
 
     char message[MessageLen];
-    if (shooter.haveFlag())
-    {
+    if (shooter.haveFlag()) {
       fInfo.numShots++; // increase the # shots fired
       int limit = clOptions->flagLimit[fInfo.flag.type];
-      if (limit != -1)
-      {
+      if (limit != -1) {
 	// if there is a limit for players flag
 	int shotsLeft = limit -  fInfo.numShots;
 
-	if (shotsLeft > 0)
-	{
+	if (shotsLeft > 0) {
 	  //still have some shots left
 	  // give message each shot below 5, each 5th shot & at start
-	  if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
-	  {
+	  if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1) {
 	    if (shotsLeft > 1)
 	      sprintf(message,"%d shots left",shotsLeft);
 	    else
@@ -572,12 +555,9 @@ public:
 
 	    sendMessage(ServerPlayer, player->getIndex(), message);
 	  }
-	}
-	else
-	{
+	} else {
 	  // no shots left
-	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
-	  {
+	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)) {
 	    // drop flag at last known position of player
 	    // also handle case where limit was set to 0
 	    float lastPos [3];
@@ -586,9 +566,7 @@ public:
 
 	    fInfo.grabs = 0; // recycle this flag now
 	    dropPlayerFlag(*player, lastPos);
-	  }
-	  else
-	  {
+	  } else {
 	    // more shots fired than allowed
 	    // do nothing for now -- could return and not allow shot
 	  }
@@ -669,15 +647,13 @@ public:
     if (!shooterData)
       return true;
 
-    if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo))
-    {
+    if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo)) {
       sendMsgShotEnd(shooterPlayer, shot, 1);
 
       const int flagIndex = player->player.getFlag();
       FlagInfo *flagInfo  = NULL;
 
-      if (flagIndex >= 0)
-      {
+      if (flagIndex >= 0) {
 	flagInfo = FlagInfo::get(flagIndex);
 	dropFlag(*flagInfo);
       }
@@ -727,18 +703,15 @@ public:
     message[MessageLen - 1] = '\0';
 
     player->player.hasSent();
-    if (dstPlayer == AllPlayers)
+    if (dstPlayer == AllPlayers) {
       logDebugMessage(1,"Player %s [%d] -> All: %s\n", player->player.getCallSign(), player->getIndex(), message);
-    else
-    {
-      if (dstPlayer == AdminPlayers)
+    } else {
+      if (dstPlayer == AdminPlayers) {
 	logDebugMessage(1,"Player %s [%d] -> Admin: %s\n",player->player.getCallSign(), player->getIndex(), message);
-      else
-      {
-	if (dstPlayer > LastRealPlayer)
+      } else {
+	if (dstPlayer > LastRealPlayer) {
 	  logDebugMessage(1,"Player %s [%d] -> Team: %s\n",player->player.getCallSign(),  player->getIndex(), message);
-	else
-	{
+	} else {
 	  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
 	  if (p != NULL)
 	    logDebugMessage(1,"Player %s [%d] -> Player %s [%d]: %s\n",player->player.getCallSign(), player->getIndex(), p->player.getCallSign(), dstPlayer, message);
@@ -770,8 +743,7 @@ public:
     buf = nboUnpackUByte(buf, to);
 
     int flagIndex = player->player.getFlag();
-    if (to == ServerPlayer)
-    {
+    if (to == ServerPlayer) {
       if (flagIndex >= 0)
 	zapFlag (*FlagInfo::get(flagIndex));
       return true;
@@ -794,8 +766,7 @@ public:
 
     worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
 
-    if (eventData.action != eventData.CancelSteal)
-    {
+    if (eventData.action != eventData.CancelSteal) {
       int oFlagIndex = toData->player.getFlag();
       if (oFlagIndex >= 0)
 	zapFlag (*FlagInfo::get(oFlagIndex));
@@ -830,14 +801,11 @@ public:
     if (!player)
       return false;
 
-    if (player->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)
-    {
+    if (player->player.pauseRequestTime - TimeKeeper::getNullTime() != 0) {
       // player wants to unpause
       player->player.pauseRequestTime = TimeKeeper::getNullTime();
       pausePlayer(player->getIndex(), false);
-    }
-    else
-    {
+    } else {
       // player wants to pause
       player->player.pauseRequestTime = TimeKeeper::getCurrent();
 
@@ -887,8 +855,7 @@ public:
 
     player->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
 
-    if (warn)
-    {
+    if (warn) {
       sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", player->lagInfo.getLag());
       sendMessage(ServerPlayer, player->getIndex(), message);
 
@@ -896,8 +863,7 @@ public:
 	lagKick(player->getIndex());
     }
 
-    if (jittwarn)
-    {
+    if (jittwarn) {
       sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", player->lagInfo.getJitter());
       sendMessage(ServerPlayer, player->getIndex(), message);
 
@@ -905,8 +871,7 @@ public:
 	jitterKick(player->getIndex());
     }
 
-    if (plosswarn)
-    {
+    if (plosswarn) {
       sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", player->lagInfo.getLoss());
       sendMessage(ServerPlayer, player->getIndex(), message);
 
@@ -949,8 +914,8 @@ public:
   {
     player = NULL;
 
-    if ( len >= 1 ) // byte * 3
-    {
+    // byte * 3
+    if ( len >= 1 ) {
       unsigned char temp = 0;
       nboUnpackUByte(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);

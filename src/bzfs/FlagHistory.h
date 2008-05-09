@@ -21,13 +21,14 @@
 // bzflag library headers
 #include "Flag.h"
 
-class FlagHistory {
- public:
+class FlagHistory
+{
+public:
   void clear();
   void get(char message[]);
   void add(FlagType* type);
   std::vector<FlagType*> get(void) { return flagHistory;}
- private:
+private:
   std::vector<FlagType*> flagHistory;
 };
 

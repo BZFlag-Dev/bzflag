@@ -40,83 +40,81 @@ public:
   PlayerAccessInfo();
 
   // player access info
-  enum AccessPerm
-    {
-      actionMessage = 0,
-      adminMessageReceive,
-      adminMessageSend,
-      antiban,
-      antikick,
-      antikill,
-      antipoll,
-      antipollban,
-      antipollkick,
-      antipollkill,
-      ban,
-      banlist,
-      countdown,
-      date,
-      endGame,
-      flagHistory,
-      flagMaster,
-      flagMod,
-      hideAdmin,
-      idleStats,
-      info,
-      jitterwarn,
-      kick,
-      kill,
-      lagStats,
-      lagwarn,
-      listPlugins,
-      listPerms,
-      masterBan,
-      modCount,
-      mute,
-      packetlosswarn,
-      playerList,
-      poll,
-      pollBan,
-      pollKick,
-      pollKill,
-      pollSet,
-      pollFlagReset,
-      privateMessage,
-      record,
-      rejoin,
-      removePerms,
-      replay,
-      requireIdentify,
-      say,
-      sendHelp,
-      setAll,
-      setPassword,
-      setPerms,
-      setVar,
-      shortBan,
-      showOthers,
-      shutdownServer,
-      spawn,
-      superKill,
-      talk,
-      unban,
-      unmute,
-      veto,
-      viewReports,
-      vote,
-      // just so we know how many rights there
-      // are this dosn't do anything really, just
-      // make sure it's the last real right
-      lastPerm
-    };
+  enum AccessPerm {
+    actionMessage = 0,
+    adminMessageReceive,
+    adminMessageSend,
+    antiban,
+    antikick,
+    antikill,
+    antipoll,
+    antipollban,
+    antipollkick,
+    antipollkill,
+    ban,
+    banlist,
+    countdown,
+    date,
+    endGame,
+    flagHistory,
+    flagMaster,
+    flagMod,
+    hideAdmin,
+    idleStats,
+    info,
+    jitterwarn,
+    kick,
+    kill,
+    lagStats,
+    lagwarn,
+    listPlugins,
+    listPerms,
+    masterBan,
+    modCount,
+    mute,
+    packetlosswarn,
+    playerList,
+    poll,
+    pollBan,
+    pollKick,
+    pollKill,
+    pollSet,
+    pollFlagReset,
+    privateMessage,
+    record,
+    rejoin,
+    removePerms,
+    replay,
+    requireIdentify,
+    say,
+    sendHelp,
+    setAll,
+    setPassword,
+    setPerms,
+    setVar,
+    shortBan,
+    showOthers,
+    shutdownServer,
+    spawn,
+    superKill,
+    talk,
+    unban,
+    unmute,
+    veto,
+    viewReports,
+    vote,
+    // just so we know how many rights there
+    // are this dosn't do anything really, just
+    // make sure it's the last real right
+    lastPerm
+  };
 
-  enum GroupStates
-    {
-      isGroup,  // we can check if this is a group or a player
-      isDefault,   // mark default groups
-      isReferenced, // do not allow to alter group perms once it's referenced
-      lastState
-    };
+  enum GroupStates {
+    isGroup,  // we can check if this is a group or a player
+    isDefault,   // mark default groups
+    isReferenced, // do not allow to alter group perms once it's referenced
+    lastState
+  };
 
   void	setName(const char* callSign);
 

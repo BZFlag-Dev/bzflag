@@ -46,8 +46,7 @@ CustomWeapon::CustomWeapon()
 bool CustomWeapon::read(const char *cmd, std::istream& input) {
   if (strcasecmp(cmd, "initdelay") == 0) {
     input >> initdelay;
-  }
-  else if (strcasecmp(cmd, "delay") == 0) {
+  } else if (strcasecmp(cmd, "delay") == 0) {
     std::string args;
     float d;
 
@@ -66,30 +65,26 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     input.putback('\n');
     if (delay.size() == 0)
       return false;
-  }
-  else if (strcasecmp(cmd, "type") == 0) {
+  } else if (strcasecmp(cmd, "type") == 0) {
     std::string abbv;
     input >> abbv;
     type = Flag::getDescFromAbbreviation(abbv.c_str());
     if (type == NULL)
       return false;
-  }
-  else if (strcasecmp(cmd, "color") == 0) {
+  } else if (strcasecmp(cmd, "color") == 0) {
     int team;
     if (!(input >> team)) {
       std::cout << "weapon color requires a team number" << std::endl;
     } else {
       teamColor = (TeamColor)team;
     }
-  }
-  else if (strcasecmp(cmd, "tilt") == 0) {
+  } else if (strcasecmp(cmd, "tilt") == 0) {
     if (!(input >> tilt)) {
       std::cout << "weapon tilt requires a value" << std::endl;
     }
     // convert to radians
     tilt = (float)(tilt * (M_PI / 180.0));
-  }
-  else if (strcasecmp(cmd, "trigger") == 0) {
+  } else if (strcasecmp(cmd, "trigger") == 0) {
     std::string triggerName;
     input >> triggerName;
 
@@ -107,11 +102,9 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       return true;
     }
     logDebugMessage(4,"Adding world weapon triggered '%s'\n", triggerName.c_str());
-  }
-  else if (strcasecmp(cmd, "eventteam") == 0) {
+  } else if (strcasecmp(cmd, "eventteam") == 0) {
     input >> eventTeam;
-  }
-  else if (!WorldFileLocation::read(cmd, input)) {
+  } else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
 

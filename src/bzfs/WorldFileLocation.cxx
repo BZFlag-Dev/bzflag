@@ -49,52 +49,42 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     if (!(input >> size[0] >> size[1] >> size[2])) {
       return false;
     }
-  }
-  else if ((strcasecmp(cmd, "rot") == 0) ||
+  } else if ((strcasecmp(cmd, "rot") == 0) ||
 	   (strcasecmp(cmd, "rotation") == 0)) {
     if (!(input >> rotation)) {
       return false;
     }
     // convert to radians
     rotation = (float)(rotation * (M_PI / 180.0));
-  }
-
-  //
-  // Shift, Scale, Shear, Spin, and MatrixMult
-  //
-  else if (strcasecmp ("shift", cmd) == 0) {
+  } else if (strcasecmp ("shift", cmd) == 0) {
     float data[3];
     if (!(input >> data[0] >> data[1] >> data[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShift(data);
-  }
-  else if (strcasecmp ("scale", cmd) == 0) {
+  } else if (strcasecmp ("scale", cmd) == 0) {
     float data[3];
     if (!(input >> data[0] >> data[1] >> data[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addScale(data);
-  }
-  else if (strcasecmp ("shear", cmd) == 0) {
+  } else if (strcasecmp ("shear", cmd) == 0) {
     float data[3];
     if (!(input >> data[0] >> data[1] >> data[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShear(data);
-  }
-  else if (strcasecmp ("spin", cmd) == 0) {
+  } else if (strcasecmp ("spin", cmd) == 0) {
     float angle, normal[3];
     if (!(input >> angle >> normal[0] >> normal[1] >> normal[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addSpin(angle, normal);
-  }
-  else if (strcasecmp ("xform", cmd) == 0) {
+  } else if (strcasecmp ("xform", cmd) == 0) {
     std::string _name;
     if (!(input >> _name)) {
       std::cout << "parameters errors " << std::endl;
@@ -106,8 +96,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     } else {
       transform.addReference(xform);
     }
-  }
-  else {
+  } else {
     return WorldFileObject::read(cmd, input);
   }
 

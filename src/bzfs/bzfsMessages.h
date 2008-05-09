@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #ifndef _BZFS_MESSAGES_H_
 #define _BZFS_MESSAGES_H_
@@ -80,18 +80,18 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 class PackVars
 {
 public:
-	PackVars(NetHandler* _handler);
-	~PackVars();
-	// callback forwarder
-	static void packIt(const std::string &key, void *pv);
+  PackVars(NetHandler* _handler);
+  ~PackVars();
+  // callback forwarder
+  static void packIt(const std::string &key, void *pv);
 
 private:
-	void sendPackVars(const std::string &key);
-	void startMessage();
-	void endMessage();
-	NetHandler* handler;
-	NetMsg msg;
-	unsigned int count;
+  void sendPackVars(const std::string &key);
+  void startMessage();
+  void endMessage();
+  NetHandler* handler;
+  NetMsg msg;
+  unsigned int count;
 };
 
 // utilities

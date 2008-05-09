@@ -19,11 +19,13 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-void FlagHistory::clear() {
+void FlagHistory::clear()
+{
   flagHistory.clear();
 }
 
-void FlagHistory::get(char message[]) {
+void FlagHistory::get(char message[])
+{
     char flag[MessageLen];
     std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
 
@@ -38,7 +40,8 @@ void FlagHistory::get(char message[]) {
     }
 }
 
-void FlagHistory::add(FlagType* type) {
+void FlagHistory::add(FlagType* type)
+{
   if (flagHistory.size() >= MAX_FLAG_HISTORY)
     flagHistory.erase(flagHistory.begin());
   flagHistory.push_back(type);

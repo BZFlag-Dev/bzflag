@@ -157,18 +157,17 @@ public:
     bool isSpawnable ( void ) {return canSpawn;}
     void setSpawnable ( bool spawn ) {canSpawn = spawn;}
 
-    enum LSAState
-      {
-	start,
-	notRequired,
-	required,
-	requesting,
-	checking,
-	timedOut,
-	failed,
-	verified,
-	done
-      } _LSAState;
+    enum LSAState {
+      start,
+      notRequired,
+      required,
+      requesting,
+      checking,
+      timedOut,
+      failed,
+      verified,
+      done
+    } _LSAState;
 
     // players
     PlayerInfo	      player;

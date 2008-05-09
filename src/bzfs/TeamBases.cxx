@@ -36,27 +36,26 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 
     teamBases.resize(1);
     TeamBase &teamBase = teamBases[0];
-    switch (team)
-    {
+    switch (team) {
       case RedTeam:
 	teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-      break;
+	break;
 
       case GreenTeam:
 	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-      break;
+	break;
 
       case BlueTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
-      break;
+	break;
 
       case PurpleTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
-      break;
+	break;
 
       default:
 	// no valid team, should throw here if we could

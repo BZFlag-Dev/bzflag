@@ -45,14 +45,12 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
     if (!(input >> height)) {
       return false;
     }
-  }
-  else if (parseMaterials(cmd, input, &material, 1, materror)) {
+  } else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
     }
     modedMaterial = true;
-  }
-  else {
+  } else {
     // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);
   }

@@ -1110,27 +1110,26 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState )
 {
   playerState.status = 0;
-  switch(apiState.status)
-  {
-  case eAlive:
-    playerState.status |= PlayerState::Alive;
-    break;
-  case eDead:
-    playerState.status |= PlayerState::DeadStatus;
-    break;
-  case ePaused:
-    playerState.status |= PlayerState::Paused;
-    break;
-  case eExploding:
-    playerState.status |= PlayerState::Exploding;
-    break;
-  case eTeleporting:
-    playerState.status |= PlayerState::Teleporting;
-    break;
-
-  case eInBuilding:
-    playerState.status |= PlayerState::InBuilding;
-    break;
+  switch(apiState.status) {
+    case eAlive:
+      playerState.status |= PlayerState::Alive;
+      break;
+    case eDead:
+      playerState.status |= PlayerState::DeadStatus;
+      break;
+    case ePaused:
+      playerState.status |= PlayerState::Paused;
+      break;
+    case eExploding:
+      playerState.status |= PlayerState::Exploding;
+      break;
+    case eTeleporting:
+      playerState.status |= PlayerState::Teleporting;
+      break;
+      
+    case eInBuilding:
+      playerState.status |= PlayerState::InBuilding;
+      break;
   }
 
   if (apiState.inPhantomZone)
@@ -1142,8 +1141,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
   if (apiState.crossingWall)
     playerState.status |=  PlayerState::CrossingWall;
 
-  if (apiState.phydrv != -1)
-  {
+  if (apiState.phydrv != -1) {
     playerState.status |=  PlayerState::OnDriver;
     playerState.phydrv = apiState.phydrv;
   }

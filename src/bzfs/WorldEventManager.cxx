@@ -21,8 +21,8 @@
 #include "bzfsAPI.h"
 
 
-extern bz_eTeamType convertTeam ( TeamColor team );
-extern TeamColor convertTeam( bz_eTeamType team );
+extern bz_eTeamType convertTeam(TeamColor team);
+extern TeamColor convertTeam(bz_eTeamType team);
 
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
@@ -32,11 +32,9 @@ WorldEventManager::WorldEventManager()
 WorldEventManager::~WorldEventManager()
 {
 	tmEventTypeList::iterator eventItr = eventList.begin();
-	while (eventItr != eventList.end())
-	{
+	while (eventItr != eventList.end()) {
 		tvEventList::iterator itr = eventItr->second.begin();
-		while ( itr != eventItr->second.end() )
-		{
+		while (itr != eventItr->second.end()) {
 			if ((*itr) && (*itr)->autoDelete())
 				delete (*itr);
 			*itr = NULL;
@@ -47,13 +45,12 @@ WorldEventManager::~WorldEventManager()
 	}
 }
 
-void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
+void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
 {
 	if (!theEvent)
 		return;
 
-	if (eventList.find(eventType) == eventList.end())
-	{
+	if (eventList.find(eventType) == eventList.end()) {
 		tvEventList newList;
 		eventList[eventType] = newList;
 	}
@@ -61,7 +58,7 @@ void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* the
 	eventList.find(eventType)->second.push_back(theEvent);
 }
 
-void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
+void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
 {
 	if (!theEvent)
 		return;
@@ -71,8 +68,7 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
 		return;
 
 	tvEventList::iterator itr = eventTypeItr->second.begin();
-	while (itr != eventTypeItr->second.end())
-	{
+	while (itr != eventTypeItr->second.end()) {
 		if (*itr == theEvent)
 			itr = eventTypeItr->second.erase(itr);
 		else
@@ -80,30 +76,30 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
 	}
 }
 
-tvEventList WorldEventManager::getEventList ( bz_eEventType eventType)
+tvEventList WorldEventManager::getEventList (bz_eEventType eventType)
 {
 	tvEventList	eList;
 
 	tmEventTypeList::iterator itr = eventList.find(eventType);
-	if ( itr == eventList.end() )
+	if (itr == eventList.end())
 		return eList;
 
 	eList = itr->second;
 	return eList;
 }
 
-void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData	*eventData )
+void WorldEventManager::callEvents(bz_eEventType eventType, bz_EventData *eventData)
 {
 	if (!eventData)
 		return;
 
 	tvEventList	eList = getEventList(eventType);
 
-	for ( unsigned int i = 0; i < eList.size(); i++)
+	for (unsigned int i = 0; i < eList.size(); i++)
 		eList[i]->process(eventData);
 }
 
-int WorldEventManager::getEventCount ( bz_eEventType eventType)
+int WorldEventManager::getEventCount(bz_eEventType eventType)
 {
 	return (int)getEventList(eventType).size();
 }

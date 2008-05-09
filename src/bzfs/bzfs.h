@@ -196,8 +196,7 @@ class NonPlayerDataChunk
 };
 
 // peer list
-typedef struct
-{
+typedef struct {
   int socket;
   int player;
   NetHandler *handler;
@@ -208,7 +207,7 @@ typedef struct
   double    startTime;
   bool	    sent;
   bool	    deleteMe;
-}NetConnectedPeer;
+} NetConnectedPeer;
 
 extern std::map<int,NetConnectedPeer> netConnectedPeers;
 
