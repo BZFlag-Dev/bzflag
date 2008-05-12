@@ -30,6 +30,9 @@
 /* Building ares */
 #define BUILD_ARES 1
 
+/* Building FTGL */
+#define BUILD_FTGL 1
+
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
 

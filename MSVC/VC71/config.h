@@ -22,6 +22,9 @@
 /* Building ares */
 #define BUILD_ARES 1
 
+/* Building FTGL */
+#define BUILD_FTGL 1
+
 /* GLEW library is available */
 //#define HAVE_GLEW 1
 
