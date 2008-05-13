@@ -163,11 +163,6 @@ bzfs
 * bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
-* Have flag spawn zones set in 2.0.x world. Same world in trunk produces an
-  "Unable to position flags on this world." for each zone specified by world.
-  However I have the zoned flags appearing to be in the places I specified.
-  Message origin? Screenshot available if needed. -spldart-
-  
 * maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
 
 * Too many flags caused "drop, unresponsive with 16687 bytes queued" (+f
