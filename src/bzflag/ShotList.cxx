@@ -100,6 +100,8 @@ std::vector<int> ShotList::getExpiredShotList ( void )
 int ShotList::addLocalShot ( ShotPath * shot )
 {
   lastLocalShot--;
+  if (lastLocalShot < -2000000)
+    lastLocalShot = -1;
   shot->setLocal(true);
   shots[lastLocalShot] = shot;
   return lastLocalShot;
