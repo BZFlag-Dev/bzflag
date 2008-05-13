@@ -45,7 +45,7 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 ShotSlot::ShotSlot()
 {
   startTime = TimeKeeper::getCurrent().getSeconds();
-  reloadTime = -1;
+  reloadTime = 0;
   currentTime = startTime;
 
   expiring = true;
@@ -1601,7 +1601,14 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
 
 void Player::addShot(ShotPath *shot, const FiringInfo &info)
 {
+  ShotList::instance().addLocalShot(shot);
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
+
+  ShotSlot &slot = shotSlots[abs(shot->getShotId())];
+
+  slot.fire(shot->getShotId());
+  slot.setReloadTime(shot->getReloadTime());
+
 }
 
 void Player::setHandicap(float _handicap)

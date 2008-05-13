@@ -97,10 +97,9 @@ std::vector<int> ShotList::getExpiredShotList ( void )
   return outShots;
 }
 
-int ShotList::addLocalShot ( FiringInfo * info )
+int ShotList::addLocalShot ( ShotPath * shot )
 {
   lastLocalShot--;
-  ShotPath *shot = new ShotPath(*info,syncedClock.GetServerSeconds());
   shot->setLocal(true);
   shots[lastLocalShot] = shot;
   return lastLocalShot;

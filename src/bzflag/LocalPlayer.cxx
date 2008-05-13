@@ -1347,7 +1347,7 @@ bool			LocalPlayer::fireShot()
 
   if (!canShoot())
     return false;
-
+  
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() || ((location == InBuilding) && !isPhantomZoned()))
     return false;

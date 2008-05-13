@@ -33,7 +33,7 @@ public:
   std::vector<ShotPath*> getShotsFromPlayer ( PlayerId player );
   std::vector<int> getExpiredShotList ( void );
 
-  int addLocalShot ( FiringInfo * info );
+  int addLocalShot ( ShotPath * shot );
   int addShot ( int GUID, FiringInfo * info );
   int updateShot( int GUID, FiringInfo * info );
   int updateShotID( int oldID, int newID );
