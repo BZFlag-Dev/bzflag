@@ -40,7 +40,7 @@ class ShotSlot
 {
 public:
   ShotSlot();
-  void		fire(int id);
+  void		fire(ShotPath* shot);
   void		setID (int id){shotID = id;}
   void		update (float dt);
   void		boostReloadTime(float dt);
@@ -231,7 +231,7 @@ protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);
   void    prepareShotInfo(FiringInfo &info);
-  void    addShot(ShotPath *shot, const FiringInfo &info);
+  void    addShot(ShotPath *shot);
 
 
 protected:

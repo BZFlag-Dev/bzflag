@@ -54,9 +54,13 @@ ShotSlot::ShotSlot()
   shotID = 0;
 }
 
-void		ShotSlot::fire(int id)
+void		ShotSlot::fire(ShotPath *shot)
 {
-  shotID = id;
+
+  ShotList::instance().addLocalShot(shot);
+  setReloadTime(shot->getReloadTime());
+
+  shotID = shot->getShotId();
   startTime = TimeKeeper::getCurrent().getSeconds();
   currentTime = startTime;
   expired = false;
@@ -1599,16 +1603,9 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   }
 }
 
-void Player::addShot(ShotPath *shot, const FiringInfo &info)
+void Player::addShot(ShotPath *shot)
 {
-  ShotList::instance().addLocalShot(shot);
-  shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
-
-  ShotSlot &slot = shotSlots[abs(shot->getShotId())];
-
-  slot.fire(shot->getShotId());
-  slot.setReloadTime(shot->getReloadTime());
-
+  shotStatistics.recordFire(shot->getFiringInfo().flagType,getForward(),shot->getVelocity());
 }
 
 void Player::setHandicap(float _handicap)

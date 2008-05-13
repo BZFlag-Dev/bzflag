@@ -33,7 +33,7 @@ public:
 	       const PlayerType);
   ~RemotePlayer();
 
-  void addShot(FiringInfo&);
+  void addShot(int id);
   virtual void died ( void );
 
 private:
