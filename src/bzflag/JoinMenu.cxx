@@ -24,14 +24,13 @@
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"
-#include "ServerStartMenu.h"
 #include "TextureManager.h"
 #include "playing.h"
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 
 
-JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
+JoinMenu::JoinMenu() : serverMenu(NULL)
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
@@ -102,11 +101,6 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   port->setString(buffer);
   addControl(port);
 
-  startServer = new HUDuiLabel;
-  startServer->setFontFace(fontFace);
-  startServer->setString("Start Server");
-  addControl(startServer);
-
   status = new HUDuiLabel;
   status->setFontFace(fontFace);
   status->setString("");
@@ -126,7 +120,6 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
 
 JoinMenu::~JoinMenu()
 {
-  delete serverStartMenu;
   delete serverMenu;
 }
 
@@ -182,12 +175,7 @@ void JoinMenu::loadInfo()
 void JoinMenu::execute()
 {
   HUDuiControl* _focus = getNav().get();
-  if (_focus == startServer) {
-
-    if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
-    HUDDialogStack::get()->push(serverStartMenu);
-
-  } else if (_focus == findServer) {
+  if (_focus == findServer) {
 
     if (!serverMenu) serverMenu = new ServerMenu;
     HUDDialogStack::get()->push(serverMenu);

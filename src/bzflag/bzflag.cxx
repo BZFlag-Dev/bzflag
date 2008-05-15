@@ -73,7 +73,6 @@
 /* local headers */
 #include "ActionBinding.h"
 #include "ExportInformation.h"
-#include "ServerStartMenu.h"
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"
@@ -510,8 +509,6 @@ void			dumpResources()
       display->getResolution(display->getResolution())) {
     BZDB.set("resolution", display->getResolution(display->getResolution())->name);
   }
-  BZDB.set("startcode", ServerStartMenu::getSettings());
-
   BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
 
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
@@ -1201,9 +1198,6 @@ int initDisplay ( void )
 	  break;
 	}
     }
-
-    if (BZDB.isSet("startcode"))
-      ServerStartMenu::setSettings(BZDB.get("startcode").c_str());
 
     if (BZDB.isSet("panelopacity"))
       RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));

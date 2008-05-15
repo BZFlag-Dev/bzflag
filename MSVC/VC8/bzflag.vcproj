@@ -1092,10 +1092,6 @@
 					RelativePath="..\..\src\bzflag\ServerMenu.cxx"
 					>
 				</File>
-				<File
-					RelativePath="..\..\src\bzflag\ServerStartMenu.cxx"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="bzdb"
