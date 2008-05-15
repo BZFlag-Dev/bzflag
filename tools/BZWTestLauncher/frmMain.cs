@@ -52,6 +52,7 @@ namespace BZWTestLauncher
 		private System.ComponentModel.Container components = null;
 
 		private Process procBZFS;
+		private System.Windows.Forms.CheckBox chkRunClient;
 		private Process procBZFlag;
 
 		public frmMain()
@@ -126,6 +127,7 @@ namespace BZWTestLauncher
 			this.btnRun = new System.Windows.Forms.Button();
 			this.btnStop = new System.Windows.Forms.Button();
 			this.txtOutput = new System.Windows.Forms.TextBox();
+			this.chkRunClient = new System.Windows.Forms.CheckBox();
 			this.grpGameMode.SuspendLayout();
 			this.grpMiscSettings.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nudDebugLevel)).BeginInit();
@@ -337,18 +339,19 @@ namespace BZWTestLauncher
 			// 
 			// grpClientSettings
 			// 
+			this.grpClientSettings.Controls.Add(this.chkRunClient);
 			this.grpClientSettings.Controls.Add(this.nudSoloBots);
 			this.grpClientSettings.Controls.Add(this.label6);
 			this.grpClientSettings.Location = new System.Drawing.Point(8, 200);
 			this.grpClientSettings.Name = "grpClientSettings";
-			this.grpClientSettings.Size = new System.Drawing.Size(120, 48);
+			this.grpClientSettings.Size = new System.Drawing.Size(120, 72);
 			this.grpClientSettings.TabIndex = 5;
 			this.grpClientSettings.TabStop = false;
 			this.grpClientSettings.Text = "Client Settings";
 			// 
 			// nudSoloBots
 			// 
-			this.nudSoloBots.Location = new System.Drawing.Point(40, 16);
+			this.nudSoloBots.Location = new System.Drawing.Point(40, 40);
 			this.nudSoloBots.Maximum = new System.Decimal(new int[] {
 																		10,
 																		0,
@@ -360,7 +363,7 @@ namespace BZWTestLauncher
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(8, 16);
+			this.label6.Location = new System.Drawing.Point(8, 40);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(32, 16);
 			this.label6.TabIndex = 0;
@@ -396,6 +399,16 @@ namespace BZWTestLauncher
 			this.txtOutput.Size = new System.Drawing.Size(392, 280);
 			this.txtOutput.TabIndex = 8;
 			this.txtOutput.Text = "";
+			// 
+			// chkRunClient
+			// 
+			this.chkRunClient.Checked = true;
+			this.chkRunClient.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkRunClient.Location = new System.Drawing.Point(8, 16);
+			this.chkRunClient.Name = "chkRunClient";
+			this.chkRunClient.Size = new System.Drawing.Size(80, 16);
+			this.chkRunClient.TabIndex = 2;
+			this.chkRunClient.Text = "Run Client";
 			// 
 			// frmMain
 			// 
@@ -559,10 +572,13 @@ namespace BZWTestLauncher
 			// Give BZFS a chance to start up
 			Thread.Sleep(2000);
 
-			if (!bzflagStart())
+			if (chkRunClient.Checked)
 			{
-				bzfsStop();
-				return;
+				if (!bzflagStart())
+				{
+					bzfsStop();
+					return;
+				}
 			}
 
 			btnRun.Enabled = false;
