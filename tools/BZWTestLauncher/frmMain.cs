@@ -51,6 +51,8 @@ namespace BZWTestLauncher
 		private System.ComponentModel.Container components = null;
 
 		private Process procBZFS;
+		private BZFSPoller outPoll;
+		private BZFSPoller errPoll;
 		private System.Windows.Forms.CheckBox chkRunClient;
 		private System.Windows.Forms.RichTextBox txtOutput;
 		private Process procBZFlag;
@@ -89,6 +91,8 @@ namespace BZWTestLauncher
 				{
 					components.Dispose();
 				}
+
+				BZFSPoller.Exit = true;
 			}
 			base.Dispose( disposing );
 		}
@@ -571,11 +575,15 @@ namespace BZWTestLauncher
 				return;
 			}
 
-			// Give BZFS a chance to start up
-			Thread.Sleep(2000);
-
 			if (chkRunClient.Checked)
 			{
+				// Give BZFS a chance to start up
+				for (int i = 0; i < 20; ++i)
+				{
+					Thread.Sleep(100);
+					Application.DoEvents();
+				}
+
 				if (!bzflagStart())
 				{
 					bzfsStop();
@@ -585,8 +593,6 @@ namespace BZWTestLauncher
 
 			btnRun.Enabled = false;
 			btnStop.Enabled = true;
-
-			txtOutput.Text = "Run the map, and then press Stop to view BZFS output, if any.";
 		}
 
 		private void btnStop_Click(object sender, System.EventArgs e)
@@ -693,6 +699,8 @@ namespace BZWTestLauncher
 			procBZFS.StartInfo.CreateNoWindow = true;
 			procBZFS.StartInfo.RedirectStandardError = true;
 			procBZFS.StartInfo.RedirectStandardOutput = true;
+			procBZFS.EnableRaisingEvents = true;
+			procBZFS.Exited += new EventHandler(procBZFS_Exited);
 
 			if (!procBZFS.Start())
 			{
@@ -700,18 +708,21 @@ namespace BZWTestLauncher
 				return false;
 			}
 
-			return true;
-		}
+			txtOutput.Rtf = "{\\rtf1\\ansi }";
 
-		private string Rtfify(string instr)
-		{
-			return instr
-				.Replace(@"\", @"\\")
-				.Replace("}", "\\}")
-				.Replace("{", "\\{")
-				.Replace("\r\n", "\\par ")
-				.Replace("\r", "\\par ")
-				.Replace("\n", "\\par ");
+			BZFSPoller.OutputBox = txtOutput;
+			outPoll = new BZFSPoller(procBZFS.StandardOutput, false);
+			errPoll = new BZFSPoller(procBZFS.StandardError, true);
+
+			Thread thrdBZFSOut = new Thread(new ThreadStart(outPoll.pollBZFS));
+			Thread thrdBZFSErr = new Thread(new ThreadStart(errPoll.pollBZFS));
+			Thread thrdCollate = new Thread(new ThreadStart(BZFSPoller.collator));
+
+			thrdBZFSErr.Start();
+			thrdBZFSOut.Start();
+			thrdCollate.Start();
+
+			return true;
 		}
 
 		private bool bzfsStop()
@@ -720,15 +731,7 @@ namespace BZWTestLauncher
 			{
 				procBZFS.Kill();
 			}
-
-			if (procBZFS.StartInfo.RedirectStandardError && procBZFS.StartInfo.RedirectStandardOutput)
-				txtOutput.Rtf = @"{\rtf1\ansi "
-					+ @"=============================\par Possible errors:\par =============================\par {\b "
-					+ Rtfify(procBZFS.StandardError.ReadToEnd())
-					+ @"}\par \par =============================\par Other Output:\par =============================\par "
-					+ Rtfify(procBZFS.StandardOutput.ReadToEnd())
-					+ @"}";
-
+			BZFSPoller.Exit = true;
 			return true;
 		}
 
@@ -773,5 +776,10 @@ namespace BZWTestLauncher
 			return true;
 		}
 
+		private void procBZFS_Exited(object sender, EventArgs e)
+		{
+			btnRun.Enabled = true;
+			btnStop.Enabled = false;
+		}
 	}
 }
