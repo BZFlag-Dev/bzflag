@@ -67,7 +67,7 @@ namespace TextUtils
     std::wstring wideString(wideCharString);       
     return wideString;  
 #else
-    return string;
+    return std::wstring(string.c_str());
 #endif // _WIN32
   }
 
