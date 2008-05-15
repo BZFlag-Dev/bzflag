@@ -46,6 +46,9 @@
 /* Use modern template for std::count */
 #define HAVE_STD__COUNT 1
 
+/* go and use std::wstring */
+#define HAVE_STD__WSTRING 1
+
 /* On windows, isnan is really _isnan */
 #define HAVE__ISNAN 1
 
