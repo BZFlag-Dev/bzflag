@@ -56,6 +56,21 @@ namespace TextUtils
   }
 
 
+  std::wstring convert_to_wide(const std::string& string)
+  {
+#ifdef _WIN32    // Get the required size for the new array and allocate the memory for it  
+    int neededSize = MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, 0, 0);  
+    wchar_t* wideCharString = new wchar_t[neededSize];     
+
+    MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, wideCharString, neededSize);  
+
+    std::wstring wideString(wideCharString);       
+    return wideString;  
+#else
+    return string;
+#endif // _WIN32
+  }
+
   std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
   {
     std::string result;

@@ -73,7 +73,7 @@ BZWReader::BZWReader(const std::string &filename) : cURLManager(),
     performWait();
     input = new std::istringstream(httpData);
   } else {
-    input = new std::ifstream(filename.c_str(), std::ios::in);
+    input = new std::ifstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::in);
   }
 
   // .BZW is the official worldfile extension, warn for others
