@@ -13,7 +13,6 @@ namespace BZWTestLauncher
 		{
 			sr = _sr;
 			err = _err;
-			exit = false;
 		}
 
 		private System.IO.StreamReader sr;
@@ -67,6 +66,7 @@ namespace BZWTestLauncher
 		// collator runs in its own thread
 		public static void collator()
 		{
+			exit = false;
 			while (!exit)
 			{
 				lock (outQueue)
