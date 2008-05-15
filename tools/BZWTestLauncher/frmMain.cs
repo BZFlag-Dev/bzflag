@@ -514,7 +514,7 @@ namespace BZWTestLauncher
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.Title = "BZFS.exe Binary";
-			dialog.Filter = "bzfs.exe|bzfs.exe|All files (*.*)|*.*";
+			dialog.Filter = "bzfs executable|bzfs.exe;bzfs|All Files|*";
 			dialog.FilterIndex = 1;
 			if (txtBZFSBinary.Text.Length == 0)
 				dialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
@@ -531,7 +531,7 @@ namespace BZWTestLauncher
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.Title = "BZFlag.exe Binary";
-			dialog.Filter = "bzflag.exe|bzflag.exe|All files (*.*)|*.*";
+			dialog.Filter = "bzflag executable|bzflag.exe;bzflag|All Files|*";
 			dialog.FilterIndex = 1;
 			if (txtBZFlagBinary.Text.Length == 0)
 				dialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
