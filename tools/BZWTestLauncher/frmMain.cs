@@ -45,7 +45,6 @@ namespace BZWTestLauncher
 		private System.Windows.Forms.NumericUpDown nudSoloBots;
 		private System.Windows.Forms.Button btnRun;
 		private System.Windows.Forms.Button btnStop;
-		private System.Windows.Forms.TextBox txtOutput;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -53,6 +52,7 @@ namespace BZWTestLauncher
 
 		private Process procBZFS;
 		private System.Windows.Forms.CheckBox chkRunClient;
+		private System.Windows.Forms.RichTextBox txtOutput;
 		private Process procBZFlag;
 
 		public frmMain()
@@ -122,12 +122,12 @@ namespace BZWTestLauncher
 			this.chkRicochet = new System.Windows.Forms.CheckBox();
 			this.chkTanksSpawnOnBuildings = new System.Windows.Forms.CheckBox();
 			this.grpClientSettings = new System.Windows.Forms.GroupBox();
+			this.chkRunClient = new System.Windows.Forms.CheckBox();
 			this.nudSoloBots = new System.Windows.Forms.NumericUpDown();
 			this.label6 = new System.Windows.Forms.Label();
 			this.btnRun = new System.Windows.Forms.Button();
 			this.btnStop = new System.Windows.Forms.Button();
-			this.txtOutput = new System.Windows.Forms.TextBox();
-			this.chkRunClient = new System.Windows.Forms.CheckBox();
+			this.txtOutput = new System.Windows.Forms.RichTextBox();
 			this.grpGameMode.SuspendLayout();
 			this.grpMiscSettings.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nudDebugLevel)).BeginInit();
@@ -349,6 +349,16 @@ namespace BZWTestLauncher
 			this.grpClientSettings.TabStop = false;
 			this.grpClientSettings.Text = "Client Settings";
 			// 
+			// chkRunClient
+			// 
+			this.chkRunClient.Checked = true;
+			this.chkRunClient.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkRunClient.Location = new System.Drawing.Point(8, 16);
+			this.chkRunClient.Name = "chkRunClient";
+			this.chkRunClient.Size = new System.Drawing.Size(80, 16);
+			this.chkRunClient.TabIndex = 2;
+			this.chkRunClient.Text = "Run Client";
+			// 
 			// nudSoloBots
 			// 
 			this.nudSoloBots.Location = new System.Drawing.Point(40, 40);
@@ -392,23 +402,15 @@ namespace BZWTestLauncher
 			// 
 			// txtOutput
 			// 
+			this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.txtOutput.Location = new System.Drawing.Point(352, 8);
-			this.txtOutput.Multiline = true;
 			this.txtOutput.Name = "txtOutput";
 			this.txtOutput.ReadOnly = true;
 			this.txtOutput.Size = new System.Drawing.Size(392, 280);
 			this.txtOutput.TabIndex = 8;
-			this.txtOutput.Text = "";
-			// 
-			// chkRunClient
-			// 
-			this.chkRunClient.Checked = true;
-			this.chkRunClient.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkRunClient.Location = new System.Drawing.Point(8, 16);
-			this.chkRunClient.Name = "chkRunClient";
-			this.chkRunClient.Size = new System.Drawing.Size(80, 16);
-			this.chkRunClient.TabIndex = 2;
-			this.chkRunClient.Text = "Run Client";
+			this.txtOutput.Text = "richTextBox1";
 			// 
 			// frmMain
 			// 
@@ -701,6 +703,17 @@ namespace BZWTestLauncher
 			return true;
 		}
 
+		private string Rtfify(string instr)
+		{
+			return instr
+				.Replace(@"\", @"\\")
+				.Replace("}", "\\}")
+				.Replace("{", "\\{")
+				.Replace("\r\n", "\\par ")
+				.Replace("\r", "\\par ")
+				.Replace("\n", "\\par ");
+		}
+
 		private bool bzfsStop()
 		{
 			if (procBZFS.StartInfo.FileName.Length != 0 && !procBZFS.HasExited)
@@ -709,7 +722,12 @@ namespace BZWTestLauncher
 			}
 
 			if (procBZFS.StartInfo.RedirectStandardError && procBZFS.StartInfo.RedirectStandardOutput)
-				txtOutput.Text = "=============================\r\nPossible errors:\r\n=============================\r\n"+procBZFS.StandardError.ReadToEnd()+"\r\n\r\n=============================\r\nOther Output:\r\n=============================\r\n"+procBZFS.StandardOutput.ReadToEnd();
+				txtOutput.Rtf = @"{\rtf1\ansi "
+					+ @"=============================\par Possible errors:\par =============================\par {\b "
+					+ Rtfify(procBZFS.StandardError.ReadToEnd())
+					+ @"}\par \par =============================\par Other Output:\par =============================\par "
+					+ Rtfify(procBZFS.StandardOutput.ReadToEnd())
+					+ @"}";
 
 			return true;
 		}
