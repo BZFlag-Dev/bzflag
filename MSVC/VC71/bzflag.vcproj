@@ -1678,9 +1678,6 @@ copy debug\*.pdb ..\..\*.pdb
 				<File
 					RelativePath="..\..\src\bzflag\ServerMenu.cxx">
 				</File>
-				<File
-					RelativePath="..\..\src\bzflag\ServerStartMenu.cxx">
-				</File>
 			</Filter>
 			<Filter
 				Name="bzdb"
@@ -1930,9 +1927,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerMenu.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerStartMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ShockWaveStrategy.h">
