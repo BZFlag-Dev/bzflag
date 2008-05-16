@@ -409,6 +409,7 @@ namespace BZWTestLauncher
 			this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.txtOutput.CausesValidation = false;
 			this.txtOutput.Location = new System.Drawing.Point(352, 8);
 			this.txtOutput.Name = "txtOutput";
 			this.txtOutput.ReadOnly = true;
@@ -709,6 +710,7 @@ namespace BZWTestLauncher
 			}
 
 			txtOutput.Rtf = "{\\rtf1\\ansi }";
+			txtOutput.Select(txtOutput.Text.Length, 0);
 
 			BZFSPoller.OutputBox = txtOutput;
 			outPoll = new BZFSPoller(procBZFS.StandardOutput, false);

@@ -48,7 +48,7 @@ namespace BZWTestLauncher
 				if (!err)
 					output = Rtfify(output) + "\\par ";
 				else
-					output = "{\\b " + Rtfify(output) + "}\\par ";
+					output = "\\b " + Rtfify(output) + "\\b0\\par ";
 
 				queue(output);
 			}
@@ -100,8 +100,8 @@ namespace BZWTestLauncher
 		{
 			RichTextBox rte = sender as RichTextBox;
 			if (rte == null) return;
-			rte.Rtf = rte.Rtf.Insert(rte.Rtf.LastIndexOf('}') - 1, what);
 			rte.Focus();
+			rte.SelectedRtf = "{\\rtf\\ansi " + what + " }";
 			rte.Select(rte.Text.Length, 0);
 			rte.ScrollToCaret();
 		}
