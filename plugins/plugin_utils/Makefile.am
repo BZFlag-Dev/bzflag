@@ -12,7 +12,7 @@ libplugin_utils_la_SOURCES = \
 
 libplugin_utils_la_LDFLAGS = -avoid-version
 
-DIST_SUBDIRS = VC71
+DIST_SUBDIRS = VC8
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
