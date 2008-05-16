@@ -31,15 +31,15 @@ typedef void (*TemplateCallback) ( std::string &data, const std::string &key );
 // for if test called to determine true or false
 typedef bool (*TemplateTestCallback) ( std::string &key );
 
-void addTemplateCall ( const char *key, TemplateCallback *callback );
+void addTemplateCall ( const char *key, TemplateCallback callback );
 void clearTemplateCall ( const char *key );
 void flushTemplateCalls ( void );
 
-void addTemplateLoop ( const char *loop, TemplateTestCallback *callback );
+void addTemplateLoop ( const char *loop, TemplateTestCallback callback );
 void clearTemplateLoop ( const char *loop );
 void flushTemplateLoops ( void );
 
-void addTemplateIF ( const char *name, TemplateTestCallback *callback );
+void addTemplateIF ( const char *name, TemplateTestCallback callback );
 void clearTemplateIF ( const char *name );
 void flushTemplateIFs ( void );
 
