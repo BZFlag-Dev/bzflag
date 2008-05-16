@@ -39,7 +39,6 @@ void addTemplateIF ( const char *loop, TemplateTestCallback *callback )
   ifCallbacks[tolower(loop)] = callback;
 }
 
-
 void clearTemplateCall ( const char *key )
 {
   std::map<std::string,TemplateCallback*>::iterator itr = keyCallbacks.find(tolower(key));
@@ -97,7 +96,6 @@ std::string::const_iterator readKey ( std::string &key, std::string::const_itera
   }
   return itr;
 }
-
 
 void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str )
 {
@@ -330,6 +328,12 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
   inItr = itr;
 }
 
+void processComment ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
+{
+  std::string key;
+  inItr = readKey(key,inItr,str);
+}
+
 void processTemplate ( std::string &code, const std::string &templateText )
 {
   // start dumping the code
@@ -365,6 +369,9 @@ void processTemplate ( std::string &code, const std::string &templateText )
 
 	  case '?':
 	    processIF(code,templateItr,templateText);
+	    break;
+	  case '-':
+	    processComment(code,templateItr,templateText);
 	    break;
 	}
       }
