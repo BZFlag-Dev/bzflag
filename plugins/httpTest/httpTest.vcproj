@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/httpTest.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc71/release/"
+				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
 				ModuleDefinitionFile="httpTest.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

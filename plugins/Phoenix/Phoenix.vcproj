@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/Phoenix.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc71/debug/"
+				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc8/debug/"
 				ModuleDefinitionFile="Phoenix.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/Phoenix.pdb"

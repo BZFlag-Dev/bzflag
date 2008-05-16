@@ -6,6 +6,9 @@
 #include "plugin_HTTP.h"
 #include "reportTemplates.h"
 
+
+std::string templatesDir;
+
 class WebReport : public BZFSHTTPServer
 {
 public:
@@ -13,14 +16,19 @@ public:
 
   virtual bool acceptURL ( const char *url ){return true;}
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
+
+  std::string getURL ( void ) { return std::string(getBaseServerURL());}
 };
 
 WebReport webReport("report");
 
 BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
+  if (commandLine)
+    templatesDir = commandLine;
+
   bz_debugMessage(4,"webReport plugin loaded");
   webReport.startupHTTP();
 
@@ -34,53 +42,120 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
+// template stuff
+// globals
+bool evenLine = false;
+double pageStartTime = 0;
+bool valid = false;
+bz_APIStringList *reports;
+int report;
+
+void StaticTemplates ( std::string &data, const std::string &key )
+{
+  if (key == "evenodd")
+    data = evenLine ? "even" : "odd";
+  if (key == "servername")
+    data = bz_getPublicAddr().c_str();
+  else if (key =="pagetime")
+    data = format("%f",bz_getCurrentTime()-pageStartTime);
+  else if (key =="pluginname")
+    data = "WebReport";
+  else if (key =="serverurl")
+    data = webReport.getURL();
+  else if (key =="reporturl")
+    data = webReport.getURL() + "?action=report";
+  else if (key =="passwordfield")
+    data = "pass";
+  else if (key =="report")
+  {
+    if (reports && report > 0 && report < (int)reports->size())
+      data = reports->get(report).c_str();
+    else
+      data = "";
+  }
+}
+
+bool ReportsLoop ( std::string &key )
+{
+  if (!reports && !reports->size())
+    return false;
+
+  report++;
+  if ( report >= (int)reports->size())
+    return false;
+
+  evenLine = !evenLine;
+
+  return true;
+}
+
+bool ValidIF ( std::string &key )
+{
+  return valid;
+}
+
+std::string loadTemplate ( const char* file )
+{
+  std::string path = templatesDir + file;
+  FILE *fp = fopen(path.c_str(),"rb");
+  if (!fp)
+    return std::string("");
+  fseek(fp,0,SEEK_END);
+  size_t pos = ftell(fp);
+  fseek(fp,0,SEEK_SET);
+  char *temp = (char*)malloc(pos+1);
+  fread(temp,pos,1,fp);
+  temp[pos] = 0;
+
+  std::string val(temp);
+  free(temp);
+  return val;
+}
+
 void WebReport::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
-  bool evenLine = false;
+  evenLine = false;
+  valid = false;
+  pageStartTime = bz_getCurrentTime();
+  reports = NULL;
+
+  addTemplateCall ( "evenodd", &StaticTemplates );
+  addTemplateCall ( "pluginname", &StaticTemplates );
+  addTemplateCall ( "servername", &StaticTemplates );
+  addTemplateCall ( "pagetime", &StaticTemplates );
+  addTemplateCall ( "ServerURL", &StaticTemplates );
+  addTemplateCall ( "ReportURL", &StaticTemplates );
+  addTemplateCall ( "PasswordField", &StaticTemplates );
+  addTemplateCall ( "Report", &StaticTemplates );
+
+  addTemplateLoop ( "Reports", &ReportsLoop );
+  addTemplateIF ( "Valid", ValidIF );
+
+  setTemplateDir(templatesDir);
 
   std::string page;
-  page = getFileHeader();
+ // page = getFileHeader();
 
   std::string action = getParam(paramaters,"action");
   if (!action.size())
-  {
-    // print the form
-    page += "password<br>";
-    page += "<form name=\"input\" action=\"";
-    page += getBaseServerURL();
-    page += "?action=report\" method=\"put\">";
-    page += "<input type =\"text\" name=\"pass\"><br><input type=\"submit\" value = \"submit\"></form>";
-  }
+    processTemplate(page,loadTemplate("login.tmpl"));
   else
   {
+    valid = false;
+
     if (tolower(action) == "report")
     {
       if (bz_validAdminPassword(getParam(paramaters,"pass").c_str()))
-      {
-	bz_APIStringList *reports = bz_getReports();
-	if (reports)
-	{
-	  for (size_t i = 0; i < reports->size(); i++ )
-	  {
-	    std::string report = reports->get((unsigned int)i).c_str();
-	    page += report;
-	    page += "<br>";
-	  }
-	  bz_deleteStringList(reports);
-	}
-      }
-      else
-      {
-	page += "invalid";
-      }
+	valid = true;
+  
+      reports = bz_getReports();
+      report = -1;
     }
+    processTemplate(page,loadTemplate("report.tmpl"));
+
+    if (reports)
+      bz_deleteStringList(reports);
   }
-
-  // TODO, do the team scores, flag stats, do the last chat lines, etc..
-
-  // finish the document
-  page += getFileFooter();
-
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
   setURLData ( page.c_str(), requestID );

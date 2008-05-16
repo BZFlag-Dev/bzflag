@@ -235,7 +235,7 @@ std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLPara
 {
   std::string URL = FullURL;
 
-  char *paramStart = strchr(URL.c_str(),'?');
+  char *paramStart = (char*)strchr(URL.c_str(),'?');
   if (  paramStart != NULL )
   {
     std::string paramBlock = paramStart+1;
