@@ -28,6 +28,10 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
   if (commandLine)
     templatesDir = commandLine;
+  else
+    templatesDir = "./";
+
+  bz_setclipFieldString("report_index_description","View reports on-line");
 
   bz_debugMessage(4,"webReport plugin loaded");
   webReport.startupHTTP();
@@ -55,7 +59,11 @@ void StaticTemplates ( std::string &data, const std::string &key )
   if (key == "evenodd")
     data = evenLine ? "even" : "odd";
   if (key == "servername")
+  {
     data = bz_getPublicAddr().c_str();
+    if (!data.size())
+      data = "Local Host";
+  }
   else if (key =="pagetime")
     data = format("%f",bz_getCurrentTime()-pageStartTime);
   else if (key =="pluginname")
@@ -63,7 +71,7 @@ void StaticTemplates ( std::string &data, const std::string &key )
   else if (key =="serverurl")
     data = webReport.getURL();
   else if (key =="reporturl")
-    data = webReport.getURL() + "?action=report";
+    data = "report";
   else if (key =="passwordfield")
     data = "pass";
   else if (key =="report")
@@ -77,7 +85,7 @@ void StaticTemplates ( std::string &data, const std::string &key )
 
 bool ReportsLoop ( std::string &key )
 {
-  if (!reports && !reports->size())
+  if (!reports || !reports->size())
     return false;
 
   report++;
@@ -109,6 +117,7 @@ std::string loadTemplate ( const char* file )
 
   std::string val(temp);
   free(temp);
+  fclose(fp);
   return val;
 }
 
@@ -120,9 +129,9 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
   reports = NULL;
 
   addTemplateCall ( "evenodd", &StaticTemplates );
-  addTemplateCall ( "pluginname", &StaticTemplates );
-  addTemplateCall ( "servername", &StaticTemplates );
-  addTemplateCall ( "pagetime", &StaticTemplates );
+  addTemplateCall ( "PluginName", &StaticTemplates );
+  addTemplateCall ( "ServerName", &StaticTemplates );
+  addTemplateCall ( "PageTime", &StaticTemplates );
   addTemplateCall ( "ServerURL", &StaticTemplates );
   addTemplateCall ( "ReportURL", &StaticTemplates );
   addTemplateCall ( "PasswordField", &StaticTemplates );
