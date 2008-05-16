@@ -16,9 +16,23 @@
 
 BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
 {
+  if (plugInName)
+    name = plugInName;
   listening = false;
+}
 
-  vdir = format("%d/",this);
+BZFSHTTPServer::~BZFSHTTPServer()
+{
+  shutdownHTTP();
+  bz_clearMaxWaitTime(vdir.c_str());
+}
+
+void BZFSHTTPServer::startupHTTP ( void )
+{
+  if(listening)
+    shutdownHTTP();
+
+  vdir = format("%d/",rand());
   std::string clipField;
   std::vector<std::string> dirs;
 
@@ -26,19 +40,19 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   {
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
-    
-    if (plugInName && tolower(std::string(plugInName)) != "bzfs")
+
+    if (name.size() && tolower(name) != "bzfs")
     {
-      if (std::find(dirs.begin(),dirs.end(),std::string(plugInName)) == dirs.end())
-	vdir = plugInName;
+      if (std::find(dirs.begin(),dirs.end(),name) == dirs.end())
+	vdir = name;
     }
   }
   else
   {
-    if (plugInName && tolower(std::string(plugInName)) != "bzfs")
-      vdir = plugInName;
+    if (name.size() && tolower(name) != "bzfs")
+      vdir = name;
   }
-  
+
   clipField += "," + vdir;
 
   bz_setclipFieldString ( "BZFS_HTTPD_VDIRS", clipField.c_str() );
@@ -46,39 +60,6 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   // see if I am the indexer or not
   if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
     bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
-}
-
-BZFSHTTPServer::~BZFSHTTPServer()
-{
-  shutdownHTTP();
-
-  // clear out the 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
-  {
-    std::string myThis = format("%p",this);
-    if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
-       bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
-  }
-
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
-    std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
-    std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
-
-    clipField = "";
-    for ( int i = 0; i < (int)dirs.size(); i++ )
-    {
-      if ( dirs[i] != dirs[i] )
-	clipField += vdir + ",";
-    }
-    bz_setclipFieldString("BZFS_HTTPD_VDIRS",clipField.c_str());
-  }
-  bz_clearMaxWaitTime(vdir.c_str());
-}
-
-void BZFSHTTPServer::startupHTTP ( void )
-{
-  shutdownHTTP();
 
   bz_registerEvent (bz_eTickEvent,this);
   bz_registerEvent (bz_eNewNonPlayerConnection,this);
@@ -100,6 +81,28 @@ void BZFSHTTPServer::startupHTTP ( void )
 
 void BZFSHTTPServer::shutdownHTTP ( void )
 {
+  // clear out the 
+  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
+  {
+    std::string myThis = format("%p",this);
+    if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
+      bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
+  }
+
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
+  {
+    std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
+    std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
+
+    clipField = "";
+    for ( int i = 0; i < (int)dirs.size(); i++ )
+    {
+      if ( dirs[i] != dirs[i] )
+	clipField += vdir + ",";
+    }
+    bz_setclipFieldString("BZFS_HTTPD_VDIRS",clipField.c_str());
+  }
+
   if (!listening)
     return;
 
@@ -125,9 +128,15 @@ std::string BZFSHTTPServer::getParam ( const URLParams &params, const char* para
   return std::string("");
 }
 
-
 void BZFSHTTPServer::process ( bz_EventData *eventData )
 {
+  // check if I'm the indexer
+  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
+    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
+
+  std::string myThis = format("%p",this);
+  indexer = bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis;
+  
   if ( eventData->eventType == bz_eTickEvent)
   {
     if ( listening )
@@ -187,6 +196,55 @@ void BZFSHTTPServer::update ( void )
     bz_setMaxWaitTime(0.01f,vdir.c_str());
   else
     bz_clearMaxWaitTime(vdir.c_str());
+}
+
+void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
+{
+
+  theCurrentCommand = new HTTPCommand;
+  theCurrentCommand->request = eGet;
+  theCurrentCommand->FullURL = "/";
+  theCurrentCommand->data = NULL;
+  theCurrentCommand->size = 0;
+  theCurrentCommand->docType = eHTML;
+  theCurrentCommand->returnCode = e200OK;
+  theCurrentCommand->URL = "/";
+
+  // dump out an index of the vdirs
+  std::string indexPage = "<html><head></head><body>Index for ";
+  indexPage += bz_getPublicAddr().c_str();
+  indexPage += "<br>";
+  std::string clipField;
+  std::vector<std::string> dirs;
+
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
+  {
+    clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
+    dirs = tokenize(clipField,std::string(","),0,false);
+
+    for (size_t i = 0; i < dirs.size(); i++ )
+    {
+      indexPage += "<a href=\"/";
+      indexPage += dirs[i];
+      indexPage += "/\">";
+      indexPage += dirs[i];
+      indexPage += "</a><br>\n";
+    }
+  }
+  indexPage += "</body></html>";
+
+  setURLDataSize ( (unsigned int)indexPage.size(), requestID );
+  setURLData ( indexPage.c_str(), requestID );
+
+  if (theCurrentCommand->data)
+  {
+    if (theCurrentCommand->size)
+	user->startTransfer ( theCurrentCommand );
+    else
+	free(theCurrentCommand->data);
+  }
+
+  theCurrentCommand = NULL;
 }
 
 void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
@@ -299,6 +357,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
 	      processTheCommand(user,requestID,params);
 	    }
+	    else if (indexer)
+	      generateIndex(user,requestID);
 	  }
 	  else if (httpCommandString == "POST")
 	  {
@@ -333,6 +393,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
 	      processTheCommand(user,requestID,params);
 	    }
+	    else if (indexer)
+	      generateIndex(user,requestID);
 	  }
 	}
       }

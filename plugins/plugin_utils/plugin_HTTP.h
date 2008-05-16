@@ -136,12 +136,15 @@ private:
   std::string baseURL;
   std::string vdir;
   bool	      listening;
+  bool	      indexer;
+  std::string name;
 
   HTTPCommand *theCurrentCommand;
 
   void paramsFromString ( const std::string &string, URLParams &params );
   std::string parseURLParams ( const std::string &FullURL, URLParams &params );
   void processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params );
+  void generateIndex ( HTTPConnectedUsers *user, int requestID );
 };
 
 #endif //_PLUGIN_HTTP_H_
