@@ -222,14 +222,25 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
 
+    indexPage += "<table border=\"0\">";
     for (size_t i = 0; i < dirs.size(); i++ )
     {
-      indexPage += "<a href=\"/";
+      indexPage += "<tr><td><a href=\"/";
       indexPage += dirs[i];
       indexPage += "/\">";
       indexPage += dirs[i];
-      indexPage += "</a><br>\n";
+      indexPage += "/</a></td><td>";
+
+      std::string vdirDescripption = dirs[i] + "_index_description";
+      if (bz_clipFieldExists ( vdirDescripption.c_str() ) && bz_getclipFieldString(vdirDescripption.c_str())[0] != 0)
+	indexPage += bz_getclipFieldString(vdirDescripption.c_str());
+      else
+	indexPage += "&nbsp;";
+ 
+      indexPage += "</td></tr>";
     }
+    indexPage += "</table>";
+
   }
   indexPage += "</body></html>";
 
