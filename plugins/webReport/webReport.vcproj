@@ -131,9 +131,6 @@
 				RelativePath=".\reportTemplates.cpp">
 			</File>
 			<File
-				RelativePath=".\reportTemplates.h">
-			</File>
-			<File
 				RelativePath=".\webReport.cpp">
 			</File>
 			<File
@@ -146,6 +143,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\include\bzfsAPI.h">
+			</File>
+			<File
+				RelativePath=".\reportTemplates.h">
 			</File>
 		</Filter>
 		<Filter
