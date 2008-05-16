@@ -127,11 +127,11 @@ std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, 
   if (!keys.size())
     return inItr;
 
-  std::string::const_iterator itr = str.end();
+  std::string::const_iterator itr = inItr;
 
   while (1)
   {
-    itr = std::find(inItr,str.end(),'[');
+    itr = std::find(itr,str.end(),'[');
     if (itr == str.end())
       return itr;
 
@@ -149,7 +149,7 @@ std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, 
     {
       if ( key == keys[i])
       {
-	endKey == key;
+	endKey = key;
 	code.resize(keyStartItr - inItr);
 	std::copy(inItr,keyStartItr,code.begin());
 	return itr;
@@ -187,7 +187,7 @@ void processLoop ( std::string &code, std::string::const_iterator &inItr, const 
   std::string loopSection,emptySection;
 
   std::vector<std::string> checkKeys;
-  checkKeys.push_back(format("*end %s",commandParts[1]));
+  checkKeys.push_back(format("*end %s",commandParts[1].c_str()));
 
   std::string keyFound;
   itr = findNextTag(checkKeys,keyFound,loopSection,itr,str);
@@ -201,14 +201,8 @@ void processLoop ( std::string &code, std::string::const_iterator &inItr, const 
   // do the empty section
   // loops have to have both
   checkKeys.clear();
-  checkKeys.push_back(format("*empty %s",commandParts[1]));
+  checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
-
-  if (itr == str.end())
-  {
-    inItr = itr;
-    return;
-  }
 
   //now find out if the loop is empty or not
   std::map<std::string,TemplateTestCallback>::iterator loopItr = loopCallbacks.find(tolower(commandParts[1]));
@@ -268,34 +262,28 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
     return;
   }
 
-  // now get the code for the loop section section
+  // now get the code for the next section
   std::string trueSection,elseSection;
 
   std::vector<std::string> checkKeys;
-  checkKeys.push_back(format("*else %s",commandParts[1]));
-  checkKeys.push_back(format("*end %s",commandParts[1]));
+  checkKeys.push_back(format("?else %s",commandParts[1].c_str()));
+  checkKeys.push_back(format("?end %s",commandParts[1].c_str()));
 
   std::string keyFound;
   itr = findNextTag(checkKeys,keyFound,trueSection,itr,str);
 
-  if (itr == str.end())
-  {
-    inItr = itr;
-    return;
-  }
-
+  
   if (keyFound == checkKeys[0]) // we hit an else, so we need to check for it
   {
     // it was the else, so go and find the end too
-    
-    checkKeys.erase(checkKeys.begin());// kill the else, find the end
-    itr = findNextTag(checkKeys,keyFound,elseSection,itr,str);
-
     if (itr == str.end())
     {
       inItr = itr;
       return;
     }
+   
+    checkKeys.erase(checkKeys.begin());// kill the else, find the end
+    itr = findNextTag(checkKeys,keyFound,elseSection,itr,str);
   }
 
   //now find out if the loop is empty or not
@@ -360,18 +348,18 @@ void processTemplate ( std::string &code, const std::string &templateText )
 	    break;
 
 	  case '$':
-	    replaceVar(code,templateItr,templateText);
+	    replaceVar(code,++templateItr,templateText);
 	    break;
 
 	  case '*':
-	    processLoop(code,templateItr,templateText);
+	    processLoop(code,++templateItr,templateText);
 	    break;
 
 	  case '?':
-	    processIF(code,templateItr,templateText);
+	    processIF(code,++templateItr,templateText);
 	    break;
 	  case '-':
-	    processComment(code,templateItr,templateText);
+	    processComment(code,++templateItr,templateText);
 	    break;
 	}
       }
