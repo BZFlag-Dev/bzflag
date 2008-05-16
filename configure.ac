@@ -420,6 +420,7 @@ case $host_os in
 esac
 
 AC_LANG(C++)
+AC_CHECK_TYPES([std::wstring],,,[#include <iostream>])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
