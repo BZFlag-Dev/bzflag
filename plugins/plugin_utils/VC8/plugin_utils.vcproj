@@ -163,6 +163,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugin_HTTPTemplates.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugin_utils.cpp"
 				>
 			</File>
@@ -182,6 +186,10 @@
 			</File>
 			<File
 				RelativePath="..\plugin_HTTP.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugin_HTTPTemplates.h"
 				>
 			</File>
 			<File
