@@ -194,10 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\reportTemplates.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\webReport.cpp"
 				>
 			</File>
@@ -213,10 +209,6 @@
 			>
 			<File
 				RelativePath="..\..\include\bzfsAPI.h"
-				>
-			</File>
-			<File
-				RelativePath=".\reportTemplates.h"
 				>
 			</File>
 		</Filter>

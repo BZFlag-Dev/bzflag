@@ -1,9 +1,7 @@
 lib_LTLIBRARIES = webReport.la
 
 webReport_la_SOURCES = \
-	webReport.cpp \
-	reportTemplates.cpp \
-	reportTemplates.h
+	webReport.cpp 
 
 webReport_la_LDFLAGS = -module -avoid-version
 webReport_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils

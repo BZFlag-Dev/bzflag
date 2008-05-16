@@ -4,20 +4,33 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
-#include "reportTemplates.h"
+#include "plugin_HTTPTemplates.h"
 
+//#include "reportTemplates.h"
 
 std::string templatesDir;
 
-class WebReport : public BZFSHTTPServer
+class WebReport : public BZFSHTTPServer, TemplateCallbackClass
 {
 public:
-  WebReport( const char * plugInName ): BZFSHTTPServer(plugInName){};
+  WebReport( const char * plugInName );
+
+  void init ( std::string &tDir );
 
   virtual bool acceptURL ( const char *url ){return true;}
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
 
-  std::string getURL ( void ) { return std::string(getBaseServerURL());}
+  virtual void keyCallback ( std::string &data, const std::string &key );
+  virtual bool loopCallback ( const std::string &key );
+  virtual bool ifCallback ( const std::string &key );
+
+  bool evenLine;
+  double pageStartTime;
+  bool valid;
+  bz_APIStringList *reports;
+  int report;
+
+  Templateiser	templateSystem;
 };
 
 WebReport webReport("report");
@@ -30,6 +43,8 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
     templatesDir = commandLine;
   else
     templatesDir = "./";
+
+  webReport.init(templatesDir);
 
   bz_setclipFieldString("report_index_description","View reports on-line");
 
@@ -48,13 +63,32 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 
 // template stuff
 // globals
-bool evenLine = false;
-double pageStartTime = 0;
-bool valid = false;
-bz_APIStringList *reports;
-int report;
 
-void StaticTemplates ( std::string &data, const std::string &key )
+WebReport::WebReport( const char * plugInName ): BZFSHTTPServer(plugInName)
+{
+  evenLine = false;
+  pageStartTime = 0;
+  valid = false;
+
+};
+
+void WebReport::init ( std::string &tDir )
+{
+  templateSystem.setTemplateDir(tDir);
+  
+  templateSystem.addKey("evenodd", this);
+  templateSystem.addKey("PluginName", this);
+  templateSystem.addKey("ServerName", this);
+  templateSystem.addKey("PageTime", this);
+  templateSystem.addKey("ServerURL", this);
+  templateSystem.addKey("ReportURL", this);
+  templateSystem.addKey("PasswordField", this);
+  templateSystem.addKey("Report", this);
+  templateSystem.addLoop("Reports", this);
+  templateSystem.addIF("Valid", this);
+}
+
+void WebReport::keyCallback ( std::string &data, const std::string &key )
 {
   if (key == "evenodd")
     data = evenLine ? "even" : "odd";
@@ -69,7 +103,7 @@ void StaticTemplates ( std::string &data, const std::string &key )
   else if (key =="pluginname")
     data = "WebReport";
   else if (key =="serverurl")
-    data = webReport.getURL();
+    data = getBaseServerURL();
   else if (key =="reporturl")
     data = "report";
   else if (key =="passwordfield")
@@ -83,8 +117,11 @@ void StaticTemplates ( std::string &data, const std::string &key )
   }
 }
 
-bool ReportsLoop ( std::string &key )
+bool WebReport::loopCallback ( const std::string &key )
 {
+  if (key != "report")
+    return false;
+
   if (!reports || !reports->size())
     return false;
 
@@ -97,9 +134,11 @@ bool ReportsLoop ( std::string &key )
   return true;
 }
 
-bool ValidIF ( std::string &key )
+bool WebReport::ifCallback ( const std::string &key )
 {
-  return valid;
+  if (key == "valid")
+    return valid;
+  return false;
 }
 
 std::string loadTemplate ( const char* file )
@@ -128,26 +167,11 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
   pageStartTime = bz_getCurrentTime();
   reports = NULL;
 
-  addTemplateCall ( "evenodd", &StaticTemplates );
-  addTemplateCall ( "PluginName", &StaticTemplates );
-  addTemplateCall ( "ServerName", &StaticTemplates );
-  addTemplateCall ( "PageTime", &StaticTemplates );
-  addTemplateCall ( "ServerURL", &StaticTemplates );
-  addTemplateCall ( "ReportURL", &StaticTemplates );
-  addTemplateCall ( "PasswordField", &StaticTemplates );
-  addTemplateCall ( "Report", &StaticTemplates );
-
-  addTemplateLoop ( "Reports", &ReportsLoop );
-  addTemplateIF ( "Valid", ValidIF );
-
-  setTemplateDir(templatesDir);
-
   std::string page;
- // page = getFileHeader();
 
   std::string action = getParam(paramaters,"action");
   if (!action.size())
-    processTemplate(page,loadTemplate("login.tmpl"));
+    templateSystem.processTemplate(page,loadTemplate("login.tmpl"));
   else
   {
     valid = false;
@@ -160,7 +184,7 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
       reports = bz_getReports();
       report = -1;
     }
-    processTemplate(page,loadTemplate("report.tmpl"));
+    templateSystem.processTemplate(page,loadTemplate("report.tmpl"));
 
     if (reports)
       bz_deleteStringList(reports);
