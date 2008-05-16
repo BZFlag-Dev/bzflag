@@ -296,7 +296,7 @@ std::string getFileDir ( const char* file )
 {
   std::string f = convertPathToDelims(file);
   
-  char *p = strrchr(f.c_str(),_DirDelim);
+  char *p = (char*)strrchr(f.c_str(),_DirDelim);
   if (p)				     // it's ok to go one past, cus even if it's the end, that's the NULL char so we can set it to NULL again with out worry
     *(p+1) = 0;
 
@@ -307,7 +307,7 @@ std::string getFileExtension ( const char* file )
 {
   std::string f = convertPathToDelims(file);
 
-  char *p = strrchr(f.c_str(),'.');
+  char *p = (char*)strrchr(f.c_str(),'.');
   if (!p)				   // it's ok to go one past, cus even if it's the end, that's the NULL char so we can set it to NULL again with out worry
     return std::string();
 
@@ -320,13 +320,13 @@ std::string getFileTitle ( const char* file )
 
   std::string temp = f;
 
-  char *p = strrchr(f.c_str(),_DirDelim);
+  const char *p = strrchr(f.c_str(),_DirDelim);
   if (p)				  // it's ok to go one past, cus even if it's the end, that's the NULL char so we can set it to NULL again with out worry
     temp = p+1;
 
-  p = strrchr(temp.c_str(),'.');
-  if (p)				  // it's ok to go one past, cus even if it's the end, that's the NULL char so we can set it to NULL again with out worry
-    *(p+1) = 0;
+  char *p2 = (char*)strrchr(temp.c_str(),'.');
+  if (p2)				  // it's ok to go one past, cus even if it's the end, that's the NULL char so we can set it to NULL again with out worry
+    *(p2+1) = 0;
 
   return std::string(temp.c_str());
 }
