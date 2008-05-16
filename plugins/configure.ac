@@ -191,7 +191,7 @@ dnl **************************************
 AC_CONFIG_FILES([
 	HoldTheFlag/Makefile
 	MSVC/Makefile
-	MSVC/VC71/Makefile
+	MSVC/VC8/Makefile
 	Makefile
 	Phoenix/Makefile
 	RogueGenocide/Makefile
@@ -213,7 +213,7 @@ AC_CONFIG_FILES([
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	plugin_utils/Makefile
-	plugin_utils/VC71/Makefile
+	plugin_utils/VC8/Makefile
 	python/Makefile
 	rabidRabbit/Makefile
 	recordmatch/Makefile
