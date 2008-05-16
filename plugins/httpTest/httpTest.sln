@@ -5,7 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "httpTest", "httpTest.vcproj
 		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_utils", "..\plugin_utils\VC71\plugin_utils.vcproj", "{645768BE-97C8-4DE4-9100-111BD2808B35}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_utils", "..\plugin_utils\VC8\plugin_utils.vcproj", "{645768BE-97C8-4DE4-9100-111BD2808B35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
