@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 <html>
 <head>
-<title>Reports for [$ServerName] </title>
+<title>Reports for [$HostName] </title>
 <style type="text/css">
 th { border: 1px solid black; }
 .odd td { border: 1px solid gray;}
@@ -18,11 +18,11 @@ th { border: 1px solid black; }
 </style>
 </head>
 <body>
-<p><h2>Login for [$ServerName]</h2></p>
+<p><h2>Login for [$HostName]</h2></p>
 <h4>Please Enter the Server Password</h3>
-<form name="input" action="[$ServerURL]" method="put">
+<form name="input" action="[$BaseURL]" method="put">
 <input type="hidden" name="action" value="report">
-<input type="text" name="[$PasswordField]">
+<input type="text" name="pass">
 <input type="submit" value ="submit">
 </form>
 <hr>
