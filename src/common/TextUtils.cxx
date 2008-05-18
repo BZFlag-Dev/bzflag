@@ -68,7 +68,13 @@ namespace TextUtils
     delete[] wideCharString;
     return wideString;
 #else
-    return std::wstring(string.c_str());
+    // borrowed from a message by Paul McKenzie at
+    // http://www.codeguru.com/forum/archive/index.php/t-193852.html
+    // FIXME: This probably does not perform the desired conversion, but
+    // at least it compiles cleanly.  Probably, mbstowcs() should be used.
+    std::wstring temp(string.length(),L' ');
+    std::copy(string.begin(), string.end(), temp.begin());
+    return temp;
 #endif // _WIN32
   }
 
