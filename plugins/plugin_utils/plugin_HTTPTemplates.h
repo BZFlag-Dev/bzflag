@@ -68,6 +68,9 @@ public:
   virtual bool loopCallback ( const std::string &key );
   virtual bool ifCallback ( const std::string &key );
 
+  void startTimer ( void );
+  void setPluginName ( const char* name, const char* URL );
+
 protected:
   typedef std::map<std::string,TemplateKeyCallback> KeyMap;
   typedef std::map<std::string,TemplateTestCallback> TestMap;
@@ -97,6 +100,8 @@ private:
   void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
   void processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
 
+  double startTime;
+  std::string pluginName,baseURL;
 };
 
 #endif //_PLUGIN_HTTPTEMPLATES_H_

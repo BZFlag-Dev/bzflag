@@ -21,12 +21,18 @@
 
 Templateiser::Templateiser()
 {
+  startTimer();
   setDefaultTokens();
 }
 
 Templateiser::~Templateiser()
 {
 
+}
+
+void Templateiser::startTimer ( void )
+{
+  startTime = bz_getCurrentTime();
 }
 
 void Templateiser::addKey ( const char *key, TemplateKeyCallback callback )
@@ -248,11 +254,24 @@ void Templateiser::setTemplateDir ( const std::string &dir )
   templateDir = dir;
 }
 
+void Templateiser::setPluginName ( const char* name, const char* URL )
+{
+  if (name)
+    pluginName = name;
+
+  if (URL)
+    baseURL = URL;
+}
+
+
 void Templateiser::setDefaultTokens ( void )
 {
   addKey("Date",this);
   addKey("Time",this);
   addKey("HostName",this);
+  addKey("PageTime",this);
+  addKey("BaseURL",this);
+  addKey("PluginName",this);
   addIF("Public",this);
 }
 
@@ -275,6 +294,18 @@ void Templateiser::keyCallback ( std::string &data, const std::string &key )
     data = bz_getPublicAddr().c_str();
     if (!data.size())
       data = format("localhost:%d",bz_getPublicPort());;
+  }
+  else if (key == "pagetime")
+  {
+    data = format("%.3d",bz_getCurrentTime()-startTime);
+  }
+  else if (key == "baseurl")
+  {
+    data =baseURL
+  }
+  else if (key == "pluginname")
+  {
+    data = pluginName;
   }
 }
 
