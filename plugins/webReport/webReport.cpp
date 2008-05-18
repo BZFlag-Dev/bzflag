@@ -10,6 +10,9 @@
 
 std::string templatesDir;
 
+std::string loginDefaultTemplate,reportDefaultTemplate;
+void loadDefaultTemplates(void);
+
 class WebReport : public BZFSHTTPServer, TemplateCallbackClass
 {
 public:
@@ -43,6 +46,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   else
     templatesDir = "./";
 
+  loadDefaultTemplates();
   webReport.init(templatesDir);
 
   bz_setclipFieldString("report_index_description","View reports on-line");
@@ -67,7 +71,6 @@ WebReport::WebReport( const char * plugInName ): BZFSHTTPServer(plugInName)
 {
   evenLine = false;
   valid = false;
-
 };
 
 void WebReport::init ( std::string &tDir )
@@ -130,7 +133,10 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
 
   std::string action = getParam(paramaters,"action");
   if (!action.size())
-    templateSystem.processTemplateFile(page,"login.tmpl");
+  {
+    if (!templateSystem.processTemplateFile(page,"login.tmpl"))
+      templateSystem.processTemplate(page,loginDefaultTemplate);
+  }
   else
   {
     valid = false;
@@ -143,7 +149,8 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
       reports = bz_getReports();
       report = -1;
     }
-    templateSystem.processTemplateFile(page,"report.tmpl");
+    if (!templateSystem.processTemplateFile(page,"report.tmpl"))
+      templateSystem.processTemplate(page,reportDefaultTemplate);
 
     if (reports)
       bz_deleteStringList(reports);
@@ -152,6 +159,15 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
   setURLDataSize ( (unsigned int)page.size(), requestID );
   setURLData ( page.c_str(), requestID );
 }
+
+void loadDefaultTemplates(void)
+{
+  loginDefaultTemplate = "<html><body><h4>Please Enter the Server Password</h3><form name=\"input\" action=\"[$BaseURL]\" method=\"put\">";
+  loginDefaultTemplate += "<input type=\"hidden\" name=\"action\" value=\"report\"><input type=\"text\" name=\"pass\"><input type=\"submit\" value =\"submit\"></form></body></html>";
+
+  reportDefaultTemplate = "<html><body>[?IF Valid][*START Reports][$Report]<br>[*END Reports]There are no reports, sorry[*EMPTY Reports][?ELSE Valid]Invalid Login, sorry[?END Valid]</body></html>";
+}
+
 
 
 // Local Variables: ***
