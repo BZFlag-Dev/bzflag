@@ -25,7 +25,6 @@ public:
   virtual bool ifCallback ( const std::string &key );
 
   bool evenLine;
-  double pageStartTime;
   bool valid;
   bz_APIStringList *reports;
   int report;
@@ -67,7 +66,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 WebReport::WebReport( const char * plugInName ): BZFSHTTPServer(plugInName)
 {
   evenLine = false;
-  pageStartTime = 0;
   valid = false;
 
 };
@@ -77,37 +75,17 @@ void WebReport::init ( std::string &tDir )
   templateSystem.setTemplateDir(tDir);
   
   templateSystem.addKey("evenodd", this);
-  templateSystem.addKey("PluginName", this);
-  templateSystem.addKey("ServerName", this);
-  templateSystem.addKey("PageTime", this);
-  templateSystem.addKey("ServerURL", this);
-  templateSystem.addKey("ReportURL", this);
-  templateSystem.addKey("PasswordField", this);
   templateSystem.addKey("Report", this);
   templateSystem.addLoop("Reports", this);
   templateSystem.addIF("Valid", this);
+
+ templateSystem.setPluginName("Web Report",getBaseServerURL());
 }
 
 void WebReport::keyCallback ( std::string &data, const std::string &key )
 {
   if (key == "evenodd")
     data = evenLine ? "even" : "odd";
-  if (key == "servername")
-  {
-    data = bz_getPublicAddr().c_str();
-    if (!data.size())
-      data = "Local Host";
-  }
-  else if (key =="pagetime")
-    data = format("%f",bz_getCurrentTime()-pageStartTime);
-  else if (key =="pluginname")
-    data = "WebReport";
-  else if (key =="serverurl")
-    data = getBaseServerURL();
-  else if (key =="reporturl")
-    data = "report";
-  else if (key =="passwordfield")
-    data = "pass";
   else if (key =="report")
   {
     if (reports && report > 0 && report < (int)reports->size())
@@ -164,10 +142,10 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
 {
   evenLine = false;
   valid = false;
-  pageStartTime = bz_getCurrentTime();
   reports = NULL;
 
   std::string page;
+  templateSystem.startTimer();
 
   std::string action = getParam(paramaters,"action");
   if (!action.size())
