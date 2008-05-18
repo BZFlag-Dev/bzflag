@@ -53,7 +53,6 @@ void Bundle::load(const std::string &path)
     if (type == tMSGID) {
       if (untranslated.length() > 0) {
 	mappings.erase(untranslated);
-	ensureNormalText(translated);
 	mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
       }
       untranslated = data;
@@ -77,7 +76,6 @@ void Bundle::load(const std::string &path)
 
   if ((untranslated.length() > 0) && (translated.length() > 0)) {
     mappings.erase(untranslated);
-    ensureNormalText(translated);
     mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
   }
 }
@@ -180,77 +178,6 @@ const char utf8bytes[256] = {
       break;
     }
 #endif
-
-// TODO: sort this and bsearch it. perhaps divided by utf8 length
-const char *translationTable[][2] = {
-  {"â", "a"}, {"à", "a"}, {"á", "a"}, {"ã", "a"},
-  {"å", "aa"},
-  {"ä", "ae"}, {"æ", "ae"},
-  {"Â", "A"},
-  {"Ä", "AE"}, {"Æ", "AE"},
-  {"Å", "AA"},
-  {"ç", "c"},
-  {"é", "e"}, {"è", "e"}, {"ê", "e"}, {"ë", "e"},
-  {"î", "i"}, {"ï", "i"}, {"í", "i"},
-  {"ô", "o"}, {"ó", "o"}, {"õ", "o"},
-  {"ö", "oe"}, {"ø", "oe"},
-  {"Ö", "OE"}, {"Ø", "OE"},
-  {"û", "u"}, {"ù", "u"}, {"ú", "u"},
-  {"ü", "ue"},
-  {"Ü", "UE"},
-  {"ñ", "n"},
-  {"ß", "ss"},
-  {"¿", "?"},
-  {"¡", "!"},
-};
-
-void Bundle::ensureNormalText(std::string &msg)
-{
-  // BZFlag's font system only supports ascii
-  // convert msg to ascii
-  // If you don't like it fix it.
-
-  for (std::string::size_type i = 0; i < msg.length(); i++) {
-    unsigned char c = msg.at(i);
-    if (((c >= 'A') && (c <= 'Z'))
-	|| ((c >= 'a') && (c <= 'z'))
-	|| ((c >= '0') && (c <= '9'))
-	|| (c == '}') || (c == '{') || (c == ' ')
-	|| (c == ':') || (c == '/') || (c == '-')
-	|| (c == ',') || (c == '&') || (c == '?')
-	|| (c == '<') || (c == '>') || (c == '.')
-	|| (c == '(') || (c == ')') || (c == '%')
-	|| (c == '!') || (c == '+') || (c == '-')
-	|| (c == '$') || (c == ';') || (c == '@')
-	|| (c == '[') || (c == ']')
-	|| (c == '=') || (c == '\'')) {
-      ; // this char's ok by me
-    } else {
-      std::string replacement = "0x";
-      unsigned int trans;
-      // TODO: optimize this
-      for (trans = 0; trans < sizeof(translationTable) / sizeof (char *) / 2; trans++) {
-	if (!strncmp(translationTable[trans][0],&(msg.c_str()[i]),utf8bytes[(int)c])) {
-	  replacement = translationTable[trans][1];
-	  break;
-	}
-      }
-      if (trans == sizeof(translationTable) / sizeof (char *) / 2) {
-	// didn't find a match
-	for (int j = 0; j < utf8bytes[(int)c]; j++) {
-	//for (int j = 0; j < 1; j++) {
-	  char hexchar[30];
-	  sprintf(hexchar, "%2X", (unsigned char)msg.at(i+j));
-	  replacement += hexchar;
-	}
-      }
-      msg.replace(i,utf8bytes[(int)c],replacement);
-      i += replacement.length() - 1;
-    }
-  }
-  //std::cout << "\"" + msg + "\"\n";
-}
-
 
 std::string Bundle::formatMessage(const std::string &key, const std::vector<std::string> *parms) const
 {

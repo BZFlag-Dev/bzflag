@@ -38,7 +38,6 @@ private:
   Bundle& operator=(const Bundle &xBundle);
   void load(const std::string &path);
   TLineType parseLine(const std::string &line, std::string &data) const;
-  void ensureNormalText(std::string &msg);
   BundleStringMap mappings;
 
   friend class BundleMgr;
