@@ -14,11 +14,11 @@
 #include "BZWReader.h"
 
 // implementation-specific system headers
-#include <fstream>
 #include <sstream>
 #include <ctype.h>
 
 // implementation-specific bzflag headers
+#include "bzfstream.h"
 #include "BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
@@ -73,7 +73,7 @@ BZWReader::BZWReader(const std::string &filename) : cURLManager(),
     performWait();
     input = new std::istringstream(httpData);
   } else {
-    input = new std::ifstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::in);
+    input = createIFStream(filename);
   }
 
   // .BZW is the official worldfile extension, warn for others

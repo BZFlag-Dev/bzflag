@@ -148,6 +148,7 @@ noinst_HEADERS =			\
 	bzfSDL.h			\
 	bzfgl.h				\
 	bzfio.h				\
+	bzfstream.h			\
 	bzglob.h			\
 	bzsignal.h			\
 	common.h			\
