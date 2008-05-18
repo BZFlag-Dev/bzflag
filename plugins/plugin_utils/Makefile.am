@@ -16,5 +16,8 @@ libplugin_utils_la_LDFLAGS = -avoid-version
 
 DIST_SUBDIRS = VC8
 
+EXTRA_DIST = \
+	templates_readme.txt
+
 MAINTAINERCLEANFILES =	\
 	Makefile.in
