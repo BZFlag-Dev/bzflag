@@ -89,8 +89,8 @@ protected:
   void setDefaultTokens ( void );
 
 private:
-  std::string::const_iterator readKey ( std::string &key, std::string::const_iterator &inItr, const std::string &str );
-  std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator &inItr, const std::string &str );
+  std::string::const_iterator readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str );
+  std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str );
 
   void processComment ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
   void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str );

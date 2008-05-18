@@ -294,7 +294,7 @@ bool Templateiser::ifCallback ( const std::string &key )
 
 // processing helpers
 
-std::string::const_iterator Templateiser::readKey ( std::string &key, std::string::const_iterator &inItr, const std::string &str )
+std::string::const_iterator Templateiser::readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str )
 {
   std::string::const_iterator itr = inItr;
 
@@ -316,7 +316,7 @@ std::string::const_iterator Templateiser::readKey ( std::string &key, std::strin
   return itr;
 }
 
-std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator &inItr, const std::string &str )
+std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str )
 {
   if (!keys.size())
     return inItr;
