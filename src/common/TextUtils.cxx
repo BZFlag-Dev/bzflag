@@ -64,7 +64,8 @@ namespace TextUtils
 
     MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, wideCharString, neededSize);  
 
-    std::wstring wideString(wideCharString);       
+    std::wstring wideString(wideCharString); 
+    delete[] wideCharString;
     return wideString;  
 #else
     return std::wstring(string.c_str());
