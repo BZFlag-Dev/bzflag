@@ -382,7 +382,7 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   std::string key;
 
   // read the rest of the key
-  std::string::const_iterator &itr = readKey(key,inItr,str);
+  std::string::const_iterator itr = readKey(key,inItr,str);
 
   std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
   if (commandParts.size() < 2)
@@ -449,7 +449,7 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   std::string key;
 
   // read the rest of the key
-  std::string::const_iterator &itr = readKey(key,inItr,str);
+  std::string::const_iterator itr = readKey(key,inItr,str);
 
   std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
   if (commandParts.size() < 2)
