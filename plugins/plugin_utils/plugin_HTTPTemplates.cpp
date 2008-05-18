@@ -18,6 +18,7 @@
 #include "plugin_HTTPTemplates.h"
 #include "plugin_utils.h"
 #include "bzfsAPI.h"
+#include "plugin_files.h"
 
 Templateiser::Templateiser()
 {
@@ -205,6 +206,37 @@ bool Templateiser::callIF ( const std::string &key )
   return false;
 }
 
+bool Templateiser::processTemplateFile ( std::string &code, const char *file )
+{
+  if (!file)
+    return false;
+
+  // find the file
+  for (size_t i = 0; i < filePaths.size(); i++ )
+  {
+    std::string path = filePaths[i] + file;
+    FILE *fp = fopen(getPathForOS(path).c_str(),"rb");
+    if (fp)
+    {
+      fseek(fp,0,SEEK_END);
+      size_t pos = ftell(fp);
+      fseek(fp,0,SEEK_SET);
+      char *temp = (char*)malloc(pos+1);
+      fread(temp,pos,1,fp);
+      temp[pos] = 0;
+
+      std::string val(temp);
+      free(temp);
+      fclose(fp);
+
+      processTemplate(code,val);
+      return true;
+    }
+  }
+  return false;
+}
+
+
 void Templateiser::processTemplate ( std::string &code, const std::string &templateText )
 {
   std::string::const_iterator templateItr = templateText.begin();
@@ -243,15 +275,13 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
 	case '-':
 	  processComment(code,++templateItr,templateText);
 	  break;
+	case '!':
+	  processInclude(code,++templateItr,templateText);
+	  break;
 	}
       }
     }
   }
-}
-
-void Templateiser::setTemplateDir ( const std::string &dir )
-{
-  templateDir = dir;
 }
 
 void Templateiser::setPluginName ( const char* name, const char* URL )
@@ -263,6 +293,16 @@ void Templateiser::setPluginName ( const char* name, const char* URL )
     baseURL = URL;
 }
 
+void Templateiser::addSearchPath ( const char* path )
+{
+  if (path)
+    filePaths.push_back(std::string(path));
+}
+
+void Templateiser::flushSearchPaths ( void )
+{
+  filePaths.clear();
+}
 
 void Templateiser::setDefaultTokens ( void )
 {
@@ -301,7 +341,7 @@ void Templateiser::keyCallback ( std::string &data, const std::string &key )
   }
   else if (key == "baseurl")
   {
-    data =baseURL
+    data =baseURL;
   }
   else if (key == "pluginname")
   {
@@ -388,6 +428,16 @@ void Templateiser::processComment ( std::string &code, std::string::const_iterat
 {
   std::string key;
   inItr = readKey(key,inItr,str);
+}
+
+void Templateiser::processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
+{
+  std::string key;
+  inItr = readKey(key,inItr,str);
+
+  // check the search paths for the include file
+  if (!processTemplateFile(code,key.c_str()))
+    code += "[!" + key + "]";
 }
 
 void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str )

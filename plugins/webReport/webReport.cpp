@@ -72,7 +72,7 @@ WebReport::WebReport( const char * plugInName ): BZFSHTTPServer(plugInName)
 
 void WebReport::init ( std::string &tDir )
 {
-  templateSystem.setTemplateDir(tDir);
+  templateSystem.addSearchPath(tDir.c_str());
   
   templateSystem.addKey("evenodd", this);
   templateSystem.addKey("Report", this);
@@ -119,25 +119,6 @@ bool WebReport::ifCallback ( const std::string &key )
   return false;
 }
 
-std::string loadTemplate ( const char* file )
-{
-  std::string path = templatesDir + file;
-  FILE *fp = fopen(path.c_str(),"rb");
-  if (!fp)
-    return std::string("");
-  fseek(fp,0,SEEK_END);
-  size_t pos = ftell(fp);
-  fseek(fp,0,SEEK_SET);
-  char *temp = (char*)malloc(pos+1);
-  fread(temp,pos,1,fp);
-  temp[pos] = 0;
-
-  std::string val(temp);
-  free(temp);
-  fclose(fp);
-  return val;
-}
-
 void WebReport::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
   evenLine = false;
@@ -149,7 +130,7 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
 
   std::string action = getParam(paramaters,"action");
   if (!action.size())
-    templateSystem.processTemplate(page,loadTemplate("login.tmpl"));
+    templateSystem.processTemplateFile(page,"login.tmpl");
   else
   {
     valid = false;
@@ -162,7 +143,7 @@ void WebReport::getURLData ( const char* url, int requestID, const URLParams &pa
       reports = bz_getReports();
       report = -1;
     }
-    templateSystem.processTemplate(page,loadTemplate("report.tmpl"));
+    templateSystem.processTemplateFile(page,"report.tmpl");
 
     if (reports)
       bz_deleteStringList(reports);

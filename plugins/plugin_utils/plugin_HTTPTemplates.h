@@ -60,8 +60,7 @@ public:
   void flushIFs ( void );
 
   void processTemplate ( std::string &code, const std::string &templateText );
-  
-  void setTemplateDir ( const std::string &dir );
+  bool processTemplateFile ( std::string &code, const char *file );
 
   // for the default template tokens
   virtual void keyCallback ( std::string &data, const std::string &key );
@@ -70,6 +69,9 @@ public:
 
   void startTimer ( void );
   void setPluginName ( const char* name, const char* URL );
+
+  void addSearchPath ( const char* path );
+  void flushSearchPaths ( void );
 
 protected:
   typedef std::map<std::string,TemplateKeyCallback> KeyMap;
@@ -83,8 +85,6 @@ protected:
   ClassMap loopClassCallbacks;
   ClassMap ifClassCallbacks;
 
-  std::string templateDir; // for includes
-
   bool callKey ( std::string &data, const std::string &key );
   bool callLoop ( const std::string &key );
   bool callIF ( const std::string &key );
@@ -95,6 +95,7 @@ private:
   std::string::const_iterator readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str );
   std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str );
 
+  void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
   void processComment ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
   void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str );
   void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
@@ -102,6 +103,8 @@ private:
 
   double startTime;
   std::string pluginName,baseURL;
+
+  std::vector<std::string> filePaths;
 };
 
 #endif //_PLUGIN_HTTPTEMPLATES_H_
