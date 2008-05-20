@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <errno.h>
+#include <string.h>
 
 
 AresHandler::AresHandler() : hostname(NULL), status(None)
