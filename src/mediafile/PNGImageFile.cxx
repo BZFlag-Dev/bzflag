@@ -13,6 +13,7 @@
 #include "common.h"
 #include "PNGImageFile.h"
 #include <iostream>
+#include <string.h>
 #include "Pack.h"
 #include "bzfio.h"
 //#include "zconf.h"

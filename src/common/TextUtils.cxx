@@ -17,7 +17,7 @@
 #include "TextUtils.h"
 
 // system headers
-#include <string>
+#include <string.h>
 #include <algorithm>
 #include <sstream>
 #include <stdarg.h>

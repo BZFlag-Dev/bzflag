@@ -16,7 +16,7 @@
 #include "common.h"
 
 #include <assert.h>
-#include <string>
+#include <string.h>
 
 // Escape character to begin ANSI codes
 #define ESC_CHAR	((char) 0x1B)
