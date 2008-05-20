@@ -20,7 +20,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include <string.h>
+#include <string>
 
 // implementation headers
 #include "Singleton.h"
