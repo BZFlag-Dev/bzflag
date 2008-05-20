@@ -13,6 +13,9 @@
 /* interface header */
 #include "CustomBase.h"
 
+// system headers
+#include <string.h>
+
 /* common implementation headers */
 #include "global.h" // for CtfTeams
 #include "BaseBuilding.h"

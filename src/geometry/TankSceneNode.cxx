@@ -22,6 +22,7 @@
 
 // system headers
 #include <math.h>
+#include <string.h>
 
 // common implementation headers
 #include "StateDatabase.h"

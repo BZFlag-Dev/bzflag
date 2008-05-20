@@ -17,6 +17,7 @@
 
 // system headers
 #include <iostream>
+#include <string.h>
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
