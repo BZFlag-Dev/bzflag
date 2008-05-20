@@ -72,7 +72,7 @@ int			openBroadcast(int port, const char* service,
   }
 
   /* open socket */
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
+  fd = (int)socket(AF_INET, SOCK_DGRAM, 0);
   if (fd < 0) {
     nerror("openBroadcast: socket");
     return -1;
