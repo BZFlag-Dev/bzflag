@@ -18,6 +18,7 @@
 // System headers
 #include <list>
 #include <deque>
+#include <string>
 
 // Common headers
 #include "Singleton.h"
