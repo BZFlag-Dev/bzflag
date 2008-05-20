@@ -16,7 +16,7 @@
 #include "common.h"
 
 #include <vector>
-#include <string.h>
+#include <string>
 
 #include "TimeKeeper.h"
 #include "Address.h"
@@ -33,7 +33,7 @@ struct BanInfo
       minutes from now. */
   BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, double period = 0,
 	  bool isFromMaster = false ) {
-    memcpy( &addr, &banAddr, sizeof( in_addr ));
+    addr = banAddr;
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
