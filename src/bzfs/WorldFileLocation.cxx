@@ -19,6 +19,7 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
+#include <string.h>
 
 /* common implementation headers */
 #include "Pack.h"

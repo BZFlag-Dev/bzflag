@@ -17,6 +17,7 @@
 
 /* system implementation headers */
 #include <iostream>
+#include <string.h>
 #include <math.h>
 
 /* common implementation headers */
