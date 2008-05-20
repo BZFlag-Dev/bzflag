@@ -19,6 +19,7 @@
 /* system headers */
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <sstream>
 #include <math.h>
 

@@ -14,6 +14,9 @@
 #pragma warning(4:4786)
 #endif
 
+/* system headers */
+#include <string.h>
+
 #include "Protocol.h"
 #include "TeamBases.h"
 #include "Pack.h"
