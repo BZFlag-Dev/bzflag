@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../;../../src/;&quot;$(FREETYPE)/include&quot;"
+				AdditionalIncludeDirectories="../;../../src/;&quot;../../../freetype/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../;../../src/;&quot;$(FREETYPE)/include&quot;"
+				AdditionalIncludeDirectories="../;../../src/;&quot;../../../freetype/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
