@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/webstats.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
 				ModuleDefinitionFile="webstats.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/webstats.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/webstats.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
 				ModuleDefinitionFile="webstats.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
@@ -194,10 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\statTemplates.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\webstats.cpp"
 				>
 			</File>
@@ -213,10 +209,6 @@
 			>
 			<File
 				RelativePath="..\..\include\bzfsAPI.h"
-				>
-			</File>
-			<File
-				RelativePath=".\statTemplates.h"
 				>
 			</File>
 		</Filter>

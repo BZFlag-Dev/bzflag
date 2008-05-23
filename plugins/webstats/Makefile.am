@@ -1,9 +1,7 @@
 lib_LTLIBRARIES = webstats.la
 
 webstats_la_SOURCES = \
-	webstats.cpp \
-	statTemplates.cpp \
-	statTemplates.h
+	webstats.cpp 
 
 webstats_la_LDFLAGS = -module -avoid-version
 webstats_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
