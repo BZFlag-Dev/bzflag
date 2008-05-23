@@ -36,23 +36,19 @@
 //
 
 
-FTOutlineFont::FTOutlineFont(char const *fontFilePath)
-{
-    impl = new FTOutlineFontImpl(this, fontFilePath);
-}
+FTOutlineFont::FTOutlineFont(char const *fontFilePath) :
+    FTFont(new FTOutlineFontImpl(this, fontFilePath))
+{}
 
 
 FTOutlineFont::FTOutlineFont(const unsigned char *pBufferBytes,
-                             size_t bufferSizeInBytes)
-{
-    impl = new FTOutlineFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                             size_t bufferSizeInBytes) :
+    FTFont(new FTOutlineFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTOutlineFont::~FTOutlineFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTOutlineFont::MakeGlyph(FT_GlyphSlot ftGlyph)
@@ -74,44 +70,41 @@ FTGlyph* FTOutlineFont::MakeGlyph(FT_GlyphSlot ftGlyph)
 
 
 template <typename T>
-inline void FTOutlineFontImpl::RenderI(const T* string)
+inline FTPoint FTOutlineFontImpl::RenderI(const T* string, const int len,
+                                          FTPoint position, FTPoint spacing,
+                                          int renderMode)
 {
+    // Protect GL_TEXTURE_2D, glHint(), GL_LINE_SMOOTH and blending functions
     glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_LINE_BIT
                   | GL_COLOR_BUFFER_BIT);
 
     glDisable(GL_TEXTURE_2D);
-
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
 
-    FTFontImpl::Render(string);
+    FTPoint tmp = FTFontImpl::Render(string, len,
+                                     position, spacing, renderMode);
 
     glPopAttrib();
+
+    return tmp;
 }
 
 
-void FTOutlineFontImpl::Render(const char* string)
+FTPoint FTOutlineFontImpl::Render(const char * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
 {
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 
 
-void FTOutlineFontImpl::Render(const char* string, int renderMode)
+FTPoint FTOutlineFontImpl::Render(const wchar_t * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
 {
-    RenderI(string);
-}
-
-
-void FTOutlineFontImpl::Render(const wchar_t* string)
-{
-    RenderI(string);
-}
-
-
-void FTOutlineFontImpl::Render(const wchar_t* string, int renderMode)
-{
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 

@@ -42,22 +42,20 @@
 #include "tb.h"
 
 // YOU'LL PROBABLY WANT TO CHANGE THESE
-#ifdef __linux__
-    char const *defaultFonts[] = { "/usr/share/fonts/truetype/arial.ttf" };
+#if defined FONT_FILE
+    char const *defaultFonts[] = { FONT_FILE };
     const int NumDefaultFonts = 1;
-#endif
-#ifdef __APPLE_CC__
-    //#define FONT_FILE "/Users/henry/Development/PROJECTS/FTGL/ftglcvs/FTGL/test/arial.ttf"
+#elif defined __APPLE_CC__
     char const *defaultFonts[] = { "/System/Library/Fonts/Helvetica.dfont",
                                    "/System/Library/Fonts/Geneva.dfont" };
     const int NumDefaultFonts = 2;
-#endif
-#ifdef WIN32
+#elif defined WIN32
     char const *defaultFonts[] = { "C:\\WINNT\\Fonts\\arial.ttf" };
     const int NumDefaultFonts = 1;
-#endif
-#ifndef FONT_FILE
-#   define FONT_FILE 0
+#else
+    // Put your font files here if configure did not find any.
+    char const *defaultFonts[] = { };
+    const int NumDefaultFonts = 0;
 #endif
 
 /* Set this to 1 to build a Mac os app (ignore the command line args). */
@@ -214,13 +212,18 @@ void setUpFonts(int numFontFiles)
 
 void renderFontmetrics()
 {
+    FTBBox bbox;
     float x1, y1, z1, x2, y2, z2;
+
     // If there is a layout, use it to compute the bbox, otherwise query as
     // a string.
     if(layouts[currentLayout])
-        layouts[currentLayout]->BBox(myString, x1, y1, z1, x2, y2, z2);
+        bbox = layouts[currentLayout]->BBox(myString);
     else
-        fonts[current_font]->BBox(myString, x1, y1, z1, x2, y2, z2);
+        bbox = fonts[current_font]->BBox(myString);
+
+    x1 = bbox.Lower().Xf(); y1 = bbox.Lower().Yf(); z1 = bbox.Lower().Zf();
+    x2 = bbox.Upper().Xf(); y2 = bbox.Upper().Yf(); z2 = bbox.Upper().Zf();
 
     // Draw the bounding box
     glDisable(GL_LIGHTING);
@@ -269,7 +272,7 @@ void renderFontmetrics()
         glBegin(GL_LINES);
             glColor3f(0.0, 0.0, 1.0);
             glVertex3f(0.0, 0.0, 0.0);
-            glVertex3f(fonts[current_font]->Advance(myString), 0.0, 0.0);
+            glVertex3f(fonts[current_font]->Advance(myString).Xf(), 0.0, 0.0);
             glVertex3f(0.0, fonts[current_font]->Ascender(), 0.0);
             glVertex3f(0.0, fonts[current_font]->Descender(), 0.0);
         glEnd();

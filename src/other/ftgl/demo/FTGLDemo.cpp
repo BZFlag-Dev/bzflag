@@ -1,4 +1,4 @@
-/*
+/*						-*- coding: utf-8 -*-
  * FTGLDemo - simple demo for FTGL, the OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
@@ -43,18 +43,13 @@
 
 #include "tb.h"
 
-// YOU'LL PROBABLY WANT TO CHANGE THESE
-#ifdef __linux__
-#   define FONT_FILE "/usr/share/fonts/truetype/arial.ttf"
-#endif
-#ifdef __APPLE_CC__
-#   define FONT_FILE "/Users/henry/Development/PROJECTS/FTGL/test/font_pack/arial.ttf"
-#endif
-#ifdef WIN32
-#   define FONT_FILE "C:\\WINNT\\Fonts\\arial.ttf"
-#endif
-#ifndef FONT_FILE
-#   define FONT_FILE 0
+#if !defined FONT_FILE
+#   ifdef WIN32
+#       define FONT_FILE "C:\\WINNT\\Fonts\\arial.ttf"
+#   else
+        // Put your font file here if configure did not find it.
+#       define FONT_FILE 0
+#   endif
 #endif
 
 #define EDITING 1
@@ -66,6 +61,7 @@
 #define FTGL_POLYGON 3
 #define FTGL_EXTRUDE 4
 #define FTGL_TEXTURE 5
+#define FTGL_BUFFER 6
 
 char const* fontfile = FONT_FILE;
 int current_font = FTGL_EXTRUDE;
@@ -87,7 +83,7 @@ const float OY = 170;
 //wchar_t myString[16] = { 0x6FB3, 0x9580};
 char myString[4096];
 
-static FTFont* fonts[6];
+static FTFont* fonts[7];
 static FTPixmapFont* infoFont;
 
 static float textures[][48] =
@@ -150,8 +146,9 @@ void setUpFonts(const char* file)
     fonts[FTGL_POLYGON] = new FTPolygonFont(file);
     fonts[FTGL_EXTRUDE] = new FTExtrudeFont(file);
     fonts[FTGL_TEXTURE] = new FTTextureFont(file);
+    fonts[FTGL_BUFFER] = new FTBufferFont(file);
 
-    for(int x = 0; x < 6; ++x)
+    for(int x = 0; x < 7; ++x)
     {
         if(fonts[x]->Error())
         {
@@ -180,24 +177,39 @@ void setUpFonts(const char* file)
     }
 
     infoFont->FaceSize(18);
-
-    strcpy(myString, "OpenGL is a powerful software interface for graphics "
+#if 1
+	strcpy(myString, "OpenGL is a powerful software interface for graphics "
            "hardware that allows graphics programmers to produce high-quality "
            "color images of 3D objects.\nabc def ghij klm nop qrs tuv wxyz "
            "ABC DEF GHIJ KLM NOP QRS TUV WXYZ 01 23 45 67 89");
+#elif 0
+	strcpy(myString, "OpenGL (Open Graphics Library — открытая графическая "
+		"библиотека) — спецификация, определяющая независимый от языка "
+		"программирования кросс-платформенный программный интерфейс для написания "
+		"приложений, использующих двумерную и трехмерную компьютерную графику.");
+#else
+	strcpy(myString, "OpenGL™ 是行业领域中最为广泛接纳的 2D/3D 图形 API, "
+		"其自诞生至今已催生了各种计算机平台及设备上的数千优秀应用程序。OpenGL™ 是独立于视窗操作系统或其它操作系统的"
+		"，亦是网络透明的。在包含CAD、内容创作、能源、娱乐、游戏开发、制造业、制药业及虚拟现实等行业领域中， OpenGL™ "
+		"帮助程序员实现在 PC、工作站、超级计算机等硬件设备上的高性能、极具冲击力的高视觉表现力图形处理软件的开发。");
+#endif
 }
 
 
 void renderFontmetrics()
 {
+    FTBBox bbox;
     float x1, y1, z1, x2, y2, z2;
 
     // If there is a layout, use it to compute the bbox, otherwise query as
     // a string.
     if(layouts[currentLayout])
-        layouts[currentLayout]->BBox(myString, x1, y1, z1, x2, y2, z2);
+        bbox = layouts[currentLayout]->BBox(myString);
     else
-        fonts[current_font]->BBox(myString, x1, y1, z1, x2, y2, z2);
+        bbox = fonts[current_font]->BBox(myString);
+
+    x1 = bbox.Lower().Xf(); y1 = bbox.Lower().Yf(); z1 = bbox.Lower().Zf();
+    x2 = bbox.Upper().Xf(); y2 = bbox.Upper().Yf(); z2 = bbox.Upper().Zf();
 
     // Draw the bounding box
     glDisable(GL_LIGHTING);
@@ -245,7 +257,7 @@ void renderFontmetrics()
         glBegin(GL_LINES);
             glColor3f(0.0, 0.0, 1.0);
             glVertex3f(0.0, 0.0, 0.0);
-            glVertex3f(fonts[current_font]->Advance(myString), 0.0, 0.0);
+            glVertex3f(fonts[current_font]->Advance(myString).Xf(), 0.0, 0.0);
             glVertex3f(0.0, fonts[current_font]->Ascender(), 0.0);
             glVertex3f(0.0, fonts[current_font]->Descender(), 0.0);
         glEnd();
@@ -335,6 +347,9 @@ void renderFontInfo()
         case FTGL_TEXTURE:
             infoFont->Render("Texture Font");
             break;
+        case FTGL_BUFFER:
+            infoFont->Render("Buffer Font");
+            break;
     }
 
     glRasterPos2f(20.0f , 20.0f + infoFont->LineHeight());
@@ -386,6 +401,7 @@ void do_display (void)
             glBindTexture(GL_TEXTURE_2D, textureID[0]);
             break;
         case FTGL_TEXTURE:
+        case FTGL_BUFFER:
             glEnable(GL_TEXTURE_2D);
             glDisable(GL_DEPTH_TEST);
             setUpLighting();
@@ -400,17 +416,24 @@ void do_display (void)
 
     glPushMatrix();
         glColor3f(1.0, 1.0, 1.0);
+        int renderMode = FTGL::RENDER_FRONT | FTGL::RENDER_BACK;
         if(layouts[currentLayout])
-            layouts[currentLayout]->Render(myString, FTGL::RENDER_FRONT | FTGL::RENDER_BACK);
+            layouts[currentLayout]->Render(myString, -1,
+                                           FTPoint(), renderMode);
         else
-            fonts[current_font]->Render(myString, FTGL::RENDER_FRONT | FTGL::RENDER_BACK);
+            fonts[current_font]->Render(myString, -1,
+                                        FTPoint(), FTPoint(), renderMode);
+
         if(current_font == FTGL_EXTRUDE)
         {
             glBindTexture(GL_TEXTURE_2D, textureID[1]);
+            renderMode = FTGL::RENDER_SIDE;
             if(layouts[currentLayout])
-                layouts[currentLayout]->Render(myString, FTGL::RENDER_SIDE);
+                layouts[currentLayout]->Render(myString, -1,
+                                               FTPoint(), renderMode);
             else
-                fonts[current_font]->Render(myString, FTGL::RENDER_SIDE);
+                fonts[current_font]->Render(myString, -1,
+                                            FTPoint(), FTPoint(), renderMode);
         }
     glPopMatrix();
 
@@ -439,6 +462,7 @@ void display(void)
         case FTGL_POLYGON:
         case FTGL_EXTRUDE:
         case FTGL_TEXTURE:
+        case FTGL_BUFFER:
             tbMatrix();
             break;
     }
@@ -571,10 +595,10 @@ void parseSpecialKey(int key, int x, int y)
     switch (key)
     {
     case GLUT_KEY_UP:
-        current_font = (current_font + 1) % 6;
+        current_font = (current_font + 1) % 7;
         break;
     case GLUT_KEY_DOWN:
-        current_font = (current_font + 5) % 6;
+        current_font = (current_font + 6) % 7;
         break;
     case GLUT_KEY_PAGE_UP:
         currentLayout = (currentLayout + 1) % NumLayouts;
@@ -649,6 +673,7 @@ void SetCamera(void)
         case FTGL_POLYGON:
         case FTGL_EXTRUDE:
         case FTGL_TEXTURE:
+        case FTGL_BUFFER:
             glMatrixMode (GL_PROJECTION);
             glLoadIdentity ();
             gluPerspective(90, (float)w_win / (float)h_win, 1, 1000);

@@ -39,10 +39,6 @@
 /**
  * FTPolygonGlyph is a specialisation of FTGlyph for creating tessellated
  * polygon glyphs.
- *
- * @see FTGlyphContainer
- * @see FTVectoriser
- *
  */
 class FTGL_EXPORT FTPolygonGlyph : public FTGlyph
 {
@@ -64,6 +60,15 @@ class FTGL_EXPORT FTPolygonGlyph : public FTGlyph
          * Destructor
          */
         virtual ~FTPolygonGlyph();
+
+        /**
+         * Render this glyph at the current pen position.
+         *
+         * @param pen  The current pen position.
+         * @param renderMode  Render mode to display
+         * @return  The advance distance for this glyph.
+         */
+        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
 };
 
 #define FTPolyGlyph FTPolygonGlyph
@@ -84,8 +89,8 @@ FTGL_BEGIN_C_DECLS
  *                       <code>false</code> turns OFF display lists.
  * @return  An FTGLglyph* object.
  */
-FTGL_EXPORT FTGLglyph *ftglCreatePolyGlyph(FT_GlyphSlot glyph, float outset,
-                               int useDisplayList);
+FTGL_EXPORT FTGLglyph *ftglCreatePolygonGlyph(FT_GlyphSlot glyph, float outset,
+                                              int useDisplayList);
 
 FTGL_END_C_DECLS
 

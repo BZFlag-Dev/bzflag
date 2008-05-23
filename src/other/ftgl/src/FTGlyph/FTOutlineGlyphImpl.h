@@ -40,7 +40,7 @@ class FTOutlineGlyphImpl : public FTGlyphImpl
 
         virtual ~FTOutlineGlyphImpl();
 
-        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
+        virtual const FTPoint& RenderImpl(const FTPoint& pen, int renderMode);
 
     private:
         /**

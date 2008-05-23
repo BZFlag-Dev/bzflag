@@ -1,22 +1,34 @@
 
+documentationdir = $(datadir)/doc/ftgl
+documentation_DATA = projects_using_ftgl.txt
+
 if HAVE_DOXYGEN
-htmldocdir = $(datadir)/doc/ftgl/html
+htmldocdir = $(documentationdir)/html
 htmldoc_DATA = html/doxygen.css
 if HAVE_LATEX
-pdfdocdir = $(datadir)/doc/ftgl
+pdfdocdir = $(documentationdir)
 pdfdoc_DATA = latex/ftgl.pdf
 endif
 endif
 
-IMAGES = \
-    images/ftgl.png \
+PNGS = \
+    images/logo.png \
     images/metrics.png \
+    images/rasterfont.png \
+    images/vectorfont.png \
+    images/texturefont.png \
     $(NULL)
 
+stamp-eps: $(PNGS)
+if HAVE_LATEX
+	for i in $^; do convert $$i $$i.eps; done
+endif
+	touch $@
+
 html/doxygen.css: stamp-doxygen
-stamp-doxygen: doxygen.cfg
+stamp-doxygen: doxygen.cfg stamp-eps
 	$(DOXYGEN) $^
-	cp $(IMAGES) html/
+	sed -i 's/%FTGL/FTGL/' html/*html
 	touch $@
 
 latex/ftgl.pdf: stamp-latex
@@ -24,14 +36,15 @@ stamp-latex: stamp-doxygen
 	rm -f latex/ftgl.tex latex/ftgl.pdf
 	mv latex/refman.tex latex/ftgl.tex
 	sed 's/setlength{/renewcommand{/' latex/ftgl.tex > latex/refman.tex
-	cd latex && $(MAKE) $(AM_CFLAGS) refman.pdf #|| (cat refman.log; exit 1)
+	cd latex && $(MAKE) $(AM_CFLAGS) refman.pdf || (cat refman.log; exit 1)
 	mv latex/refman.pdf latex/ftgl.pdf
 	touch stamp-latex
 
 clean: clean-local
 clean-local:
 	$(RM) -rf html latex
-	$(RM) stamp-doxygen stamp-latex
+	$(RM) -f images/*.eps
+	$(RM) -f stamp-doxygen stamp-latex stamp-eps
 
 if HAVE_DOXYGEN
 install-data-local: html/doxygen.css
@@ -42,11 +55,15 @@ install-data-local: html/doxygen.css
 endif
 
 EXTRA_DIST = \
-    doxygen.cfg.in \
-    ftgl.dox \
-    FTGL_1_3.gif \
-    $(IMAGES) \
-    images/metrics.svg \
-    $(NULL)
+	$(PNGS) \
+	$(documentation_DATA) \
+	FTGL_1_3.gif \
+	doxygen.cfg.in \
+	ftgl.dox \
+	tutorial.dox \
+	projects_using_ftgl.txt \
+	faq.dox \
+	images/metrics.svg \
+	$(NULL)
 
 NULL =

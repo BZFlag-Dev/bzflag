@@ -23,7 +23,7 @@ static int height;
 #   define DEFAULT_FONT "/usr/share/fonts/truetype/arial.ttf"
 #endif
 #ifdef __APPLE_CC__
-#   define DEFAULT_FONT "/Users/henry/Development/PROJECTS/FTGL/test/font_pack/arial.ttf"
+#   define DEFAULT_FONT "/usr/X11R6/lib/X11/fonts/TTF/Vera.ttf"
 #endif
 #ifdef WIN32
 #   define DEFAULT_FONT "C:\\WINNT\\Fonts\\arial.ttf"

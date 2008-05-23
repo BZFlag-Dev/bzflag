@@ -51,35 +51,13 @@ class FTOutlineFontImpl : public FTFontImpl
          */
         virtual void Outset(float o) { outset = o; }
 
-        /**
-         * Renders a string of characters
-         *
-         * @param string    'C' style string to be output.
-         */
-        virtual void Render(const char* string);
+        virtual FTPoint Render(const char *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
 
-        /**
-         * Render a string of characters
-         *
-         * @param string    'C' style string to be output.
-         * @param renderMode    Render mode to display
-         */
-        virtual void Render(const char* string, int renderMode);
-
-        /**
-         * Renders a string of characters
-         *
-         * @param string    wchar_t string to be output.
-         */
-        virtual void Render(const wchar_t* string);
-
-        /**
-         * Render a string of characters
-         *
-         * @param string    wchar_t string to be output.
-         * @param renderMode    Render mode to display
-         */
-        virtual void Render(const wchar_t *string, int renderMode);
+        virtual FTPoint Render(const wchar_t *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
 
     private:
         /**
@@ -89,7 +67,8 @@ class FTOutlineFontImpl : public FTFontImpl
 
         /* Internal generic Render() implementation */
         template <typename T>
-        inline void RenderI(const T* string);
+        inline FTPoint RenderI(const T *s, const int len,
+                               FTPoint position, FTPoint spacing, int mode);
 };
 
 #endif // __FTOutlineFontImpl__

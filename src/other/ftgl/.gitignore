@@ -4,6 +4,7 @@
 Makefile.in
 Makefile
 aclocal.m4
+autom4te.cache
 config.h
 config.h.in
 config.log
@@ -15,11 +16,14 @@ stamp-h1
 *.o
 *.lo
 *.la
+demo/c-demo
+demo/simple
 demo/FTGLDemo
 demo/FTGLMFontDemo
 test/CTest
 test/CXXTest
 docs/stamp-*
 docs/doxygen.cfg
+docs/images/*.eps
 docs/html
 docs/latex

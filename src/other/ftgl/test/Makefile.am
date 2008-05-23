@@ -6,6 +6,7 @@ endif
 endif
 
 CXXTest_SOURCES = \
+    $(DEACTIVATED) \
     CXXTest.cpp \
     Fontdefs.h \
     FTBBox-Test.cpp \
@@ -17,6 +18,10 @@ CXXTest_SOURCES = \
     FTExtrudeFont-Test.cpp \
     FTExtrudeGlyph-Test.cpp \
     FTFace-Test.cpp \
+    FTFont-Test.cpp \
+    FTGlyph-Test.cpp \
+    FTGlyphContainer-Test.cpp \
+    FTlayout-Test.cpp \
     FTLibrary-Test.cpp \
     FTList-Test.cpp \
     FTMesh-Test.cpp \
@@ -58,11 +63,5 @@ CTest_CFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 CTest_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
 CTest_LDADD = ../src/libftgl.la
 
-DEACTIVATED = \
-    FTFont-Test.cpp \
-    FTGlyphContainer-Test.cpp \
-    FTGlyph-Test.cpp \
-    FTlayout-Test.cpp \
-    $(NULL)
-
 NULL =
+

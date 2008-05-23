@@ -52,25 +52,25 @@ namespace FTGL
 {
     typedef enum
     {
-        RENDER_FRONT = 0x01,
-        RENDER_BACK = 0x02,
-        RENDER_SIDE = 0x04,
-        RENDER_ALL = 0xffff
+        RENDER_FRONT = 0x0001,
+        RENDER_BACK  = 0x0002,
+        RENDER_SIDE  = 0x0004,
+        RENDER_ALL   = 0xffff
     } RenderMode;
 
     typedef enum
     {
-        ALIGN_LEFT,
-        ALIGN_CENTER,
-        ALIGN_RIGHT,
-        ALIGN_JUSTIFY
+        ALIGN_LEFT    = 0,
+        ALIGN_CENTER  = 1,
+        ALIGN_RIGHT   = 2,
+        ALIGN_JUSTIFY = 3
     } TextAlignment;
 }
 #else
-#   define FTGL_RENDER_FRONT  0x0001
-#   define FTGL_RENDER_BACK   0x0002
-#   define FTGL_RENDER_SIDE   0x0004
-#   define FTGL_RENDER_ALL    0xffff
+#   define FTGL_RENDER_FRONT 0x0001
+#   define FTGL_RENDER_BACK  0x0002
+#   define FTGL_RENDER_SIDE  0x0004
+#   define FTGL_RENDER_ALL   0xffff
 
 #   define FTGL_ALIGN_LEFT    0
 #   define FTGL_ALIGN_CENTER  1
@@ -109,9 +109,11 @@ namespace FTGL
 
 #include <FTGL/FTPoint.h>
 #include <FTGL/FTBBox.h>
+#include <FTGL/FTBuffer.h>
 
 #include <FTGL/FTGlyph.h>
 #include <FTGL/FTBitmapGlyph.h>
+#include <FTGL/FTBufferGlyph.h>
 #include <FTGL/FTExtrdGlyph.h>
 #include <FTGL/FTOutlineGlyph.h>
 #include <FTGL/FTPixmapGlyph.h>
@@ -120,6 +122,7 @@ namespace FTGL
 
 #include <FTGL/FTFont.h>
 #include <FTGL/FTGLBitmapFont.h>
+#include <FTGL/FTBufferFont.h>
 #include <FTGL/FTGLExtrdFont.h>
 #include <FTGL/FTGLOutlineFont.h>
 #include <FTGL/FTGLPixmapFont.h>

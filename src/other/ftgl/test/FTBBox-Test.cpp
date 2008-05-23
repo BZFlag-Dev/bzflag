@@ -90,7 +90,7 @@ class FTBBoxTest : public CppUnit::TestCase
             FTPoint firstMove(3.5f, 1.0f, -2.5f);
             FTPoint secondMove(-3.5f, -1.0f, 2.5f);
 
-            boundingBox.Move(firstMove);
+            boundingBox += firstMove;
 
             CPPUNIT_ASSERT(boundingBox.Lower().X() ==  3.5f);
             CPPUNIT_ASSERT(boundingBox.Lower().Y() ==  1.0f);
@@ -99,7 +99,7 @@ class FTBBoxTest : public CppUnit::TestCase
             CPPUNIT_ASSERT(boundingBox.Upper().Y() ==  1.0f);
             CPPUNIT_ASSERT(boundingBox.Upper().Z() == -2.5f);
 
-            boundingBox.Move(secondMove);
+            boundingBox += secondMove;
 
             CPPUNIT_ASSERT(boundingBox.Lower().X() == 0.0f);
             CPPUNIT_ASSERT(boundingBox.Lower().Y() == 0.0f);
@@ -116,7 +116,7 @@ class FTBBoxTest : public CppUnit::TestCase
             FTBBox boundingBox1;
             FTBBox boundingBox2(face->glyph);
 
-            boundingBox1 += boundingBox2;
+            boundingBox1 |= boundingBox2;
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(2, boundingBox2.Lower().X(), 0.01);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(-15, boundingBox2.Lower().Y(), 0.01);
@@ -127,8 +127,8 @@ class FTBBoxTest : public CppUnit::TestCase
 
             float advance  = 40;
 
-            boundingBox2.Move(FTPoint(advance, 0, 0));
-            boundingBox1 += boundingBox2;
+            boundingBox2 += FTPoint(advance, 0, 0);
+            boundingBox1 |= boundingBox2;
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(42, boundingBox2.Lower().X(), 0.01);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(-15, boundingBox2.Lower().Y(), 0.01);

@@ -36,23 +36,19 @@
 //
 
 
-FTPolygonFont::FTPolygonFont(char const *fontFilePath)
-{
-    impl = new FTPolygonFontImpl(this, fontFilePath);
-}
+FTPolygonFont::FTPolygonFont(char const *fontFilePath) :
+    FTFont(new FTPolygonFontImpl(this, fontFilePath))
+{}
 
 
 FTPolygonFont::FTPolygonFont(const unsigned char *pBufferBytes,
-                             size_t bufferSizeInBytes)
-{
-    impl = new FTPolygonFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                             size_t bufferSizeInBytes) :
+    FTFont(new FTPolygonFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTPolygonFont::~FTPolygonFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTPolygonFont::MakeGlyph(FT_GlyphSlot ftGlyph)

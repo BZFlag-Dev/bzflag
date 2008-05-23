@@ -43,6 +43,7 @@ AC_PATH_XTRA
 
 FTGL_CHECK_GL
 FTGL_CHECK_GLUT
+FTGL_CHECK_FONT
 
 AC_PATH_PROG(CPPUNIT, cppunit, no)
 AM_CONDITIONAL(HAVE_CPPUNIT, test "x$CPPUNIT" != "xno")
@@ -67,8 +68,10 @@ AM_CONDITIONAL(HAVE_DOXYGEN, test "x$DOXYGEN" != "xno")
 AC_PATH_PROG(LATEX, pdflatex, no)
 AC_PATH_PROG(KPSEWHICH, kpsewhich, no)
 AC_PATH_PROG(DVIPS, dvips, no)
+AC_PATH_PROG(CONVERT, convert, no)
 AC_PATH_PROG(EPSTOPDF, epstopdf, no)
-if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no" -o "${EPSTOPDF}" = "no"; then
+if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no" -o "${EPSTOPDF}" = "no" \
+     -o "${CONVERT}" = "no"; then
   LATEX="no"
 fi
 if test "${LATEX}" != "no"; then

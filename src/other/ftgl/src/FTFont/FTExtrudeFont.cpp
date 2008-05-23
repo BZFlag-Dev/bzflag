@@ -36,23 +36,19 @@
 //
 
 
-FTExtrudeFont::FTExtrudeFont(char const *fontFilePath)
-{
-    impl = new FTExtrudeFontImpl(this, fontFilePath);
-}
+FTExtrudeFont::FTExtrudeFont(char const *fontFilePath) :
+    FTFont(new FTExtrudeFontImpl(this, fontFilePath))
+{}
 
 
 FTExtrudeFont::FTExtrudeFont(const unsigned char *pBufferBytes,
-                             size_t bufferSizeInBytes)
-{
-    impl = new FTExtrudeFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                             size_t bufferSizeInBytes) :
+    FTFont(new FTExtrudeFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTExtrudeFont::~FTExtrudeFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTExtrudeFont::MakeGlyph(FT_GlyphSlot ftGlyph)

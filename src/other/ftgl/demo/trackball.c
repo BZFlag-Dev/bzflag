@@ -62,7 +62,7 @@
  * simple example, though, so that is left as an Exercise for the
  * Programmer.
  */
-#define TRACKBALLSIZE  (0.4)
+#define TRACKBALLSIZE  (0.4f)
 
 /*
  * Local function prototypes (not defined in trackball.h)
@@ -130,7 +130,7 @@ vscale(float *v, float div)
 static void
 vnormal(float *v)
 {
-    vscale(v,1.0/vlength(v));
+    vscale(v,1.0f/vlength(v));
 }
 
 static float
@@ -190,14 +190,14 @@ trackball(float q[4], float p1x, float p1y, float p2x, float p2y)
      *  Figure out how much to rotate around that axis.
      */
     vsub(p1,p2,d);
-    t = vlength(d) / (2.0*TRACKBALLSIZE);
+    t = vlength(d) / (2.0f*TRACKBALLSIZE);
 
     /*
      * Avoid problems with out-of-control values...
      */
-    if (t > 1.0) t = 1.0;
-    if (t < -1.0) t = -1.0;
-    phi = 2.0 * asin(t);
+    if (t > 1.0f) t = 1.0f;
+    if (t < -1.0f) t = -1.0f;
+    phi = 2.0f * asin(t);
 
     axis_to_quat(a,phi,q);
 }
@@ -210,8 +210,8 @@ axis_to_quat(float a[3], float phi, float q[4])
 {
     vnormal(a);
     vcopy(a,q);
-    vscale(q,sin(phi/2.0));
-    q[3] = cos(phi/2.0);
+    vscale(q,sin(phi/2.0f));
+    q[3] = cos(phi/2.0f);
 }
 
 /*
@@ -224,10 +224,10 @@ tb_project_to_sphere(float r, float x, float y)
     float d, t, z;
 
     d = sqrt(x*x + y*y);
-    if (d < r * 0.70710678118654752440) {    /* Inside sphere */
+    if (d < r * 0.70710678118654752440f) {    /* Inside sphere */
         z = sqrt(r*r - d*d);
     } else {           /* On hyperbola */
-        t = r / 1.41421356237309504880;
+        t = r / 1.41421356237309504880f;
         z = t*t / d;
     }
     return z;
@@ -304,24 +304,24 @@ normalize_quat(float q[4])
 void
 build_rotmatrix(float m[4][4], float q[4])
 {
-    m[0][0] = 1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2]);
-    m[0][1] = 2.0 * (q[0] * q[1] - q[2] * q[3]);
-    m[0][2] = 2.0 * (q[2] * q[0] + q[1] * q[3]);
-    m[0][3] = 0.0;
+    m[0][0] = 1.0f - 2.0f * (q[1] * q[1] + q[2] * q[2]);
+    m[0][1] = 2.0f * (q[0] * q[1] - q[2] * q[3]);
+    m[0][2] = 2.0f * (q[2] * q[0] + q[1] * q[3]);
+    m[0][3] = 0.0f;
 
-    m[1][0] = 2.0 * (q[0] * q[1] + q[2] * q[3]);
-    m[1][1]= 1.0 - 2.0 * (q[2] * q[2] + q[0] * q[0]);
-    m[1][2] = 2.0 * (q[1] * q[2] - q[0] * q[3]);
-    m[1][3] = 0.0;
+    m[1][0] = 2.0f * (q[0] * q[1] + q[2] * q[3]);
+    m[1][1]= 1.0f - 2.0f * (q[2] * q[2] + q[0] * q[0]);
+    m[1][2] = 2.0f * (q[1] * q[2] - q[0] * q[3]);
+    m[1][3] = 0.0f;
 
-    m[2][0] = 2.0 * (q[2] * q[0] - q[1] * q[3]);
-    m[2][1] = 2.0 * (q[1] * q[2] + q[0] * q[3]);
-    m[2][2] = 1.0 - 2.0 * (q[1] * q[1] + q[0] * q[0]);
-    m[2][3] = 0.0;
+    m[2][0] = 2.0f * (q[2] * q[0] - q[1] * q[3]);
+    m[2][1] = 2.0f * (q[1] * q[2] + q[0] * q[3]);
+    m[2][2] = 1.0f - 2.0f * (q[1] * q[1] + q[0] * q[0]);
+    m[2][3] = 0.0f;
 
-    m[3][0] = 0.0;
-    m[3][1] = 0.0;
-    m[3][2] = 0.0;
-    m[3][3] = 1.0;
+    m[3][0] = 0.0f;
+    m[3][1] = 0.0f;
+    m[3][2] = 0.0f;
+    m[3][3] = 1.0f;
 }
 

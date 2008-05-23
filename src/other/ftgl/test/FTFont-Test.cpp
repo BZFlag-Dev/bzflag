@@ -15,7 +15,7 @@ class TestGlyph : public FTGlyph
         :   FTGlyph(glyph)
         {}
 
-        const FTPoint& Render(const FTPoint& pen, int renderMode){ return advance; }
+        const FTPoint& Render(const FTPoint& pen, int renderMode){ return Advance(); }
 };
 
 
@@ -30,18 +30,9 @@ class TestFont : public FTFont
         :   FTFont(pBufferBytes, bufferSizeInBytes)
         {}
 
-        FTGlyph* MakeGlyph(unsigned int g)
+        FTGlyph* MakeGlyph(FT_GlyphSlot ftGlyph)
         {
-            FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_NO_HINTING);
-
-            if(ftGlyph)
-            {
-                TestGlyph* tempGlyph = new TestGlyph(ftGlyph);
-                return tempGlyph;
-            }
-
-            err = face.Error();
-            return NULL;
+            return new TestGlyph(ftGlyph);
         }
 };
 
@@ -53,18 +44,9 @@ class BadGlyphTestFont : public FTFont
         :   FTFont(fontFilePath)
         {}
 
-        FTGlyph* MakeGlyph(unsigned int g)
+        FTGlyph* MakeGlyph(FT_GlyphSlot ftGlyph)
         {
-            FT_GlyphSlot ftGlyph = face.Glyph(g, FT_LOAD_NO_HINTING);
-
-            if(ftGlyph)
-            {
-                TestGlyph* tempGlyph = new TestGlyph(ftGlyph);
-                return tempGlyph;
-            }
-
-            err = face.Error();
-            return NULL;
+            return new TestGlyph(ftGlyph);
         }
 
     private:
@@ -145,7 +127,7 @@ class FTFontTest : public CppUnit::TestCase
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testFont->Descender(), 0.01);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testFont->LineHeight(), 0.01);
 
-            float advance = testFont->Advance(GOOD_UNICODE_TEST_STRING);
+            float advance = testFont->Advance(GOOD_UNICODE_TEST_STRING).Xf();
             CPPUNIT_ASSERT_EQUAL(advance, 0.f);
 
             CPPUNIT_ASSERT(testFont->FaceSize(FONT_POINT_SIZE));
@@ -193,59 +175,59 @@ class FTFontTest : public CppUnit::TestCase
             CPPUNIT_ASSERT(testFont->FaceSize(FONT_POINT_SIZE));
             CPPUNIT_ASSERT_EQUAL(testFont->Error(), 0);
 
-            float llx, lly, llz, urx, ury, urz;
+            FTBBox bbox;
 
-            testFont->BBox(GOOD_ASCII_TEST_STRING, llx, lly, llz, urx, ury, urz);
+            bbox = testFont->BBox(GOOD_ASCII_TEST_STRING);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.21, llx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(-15.12, lly, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, llz, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(307.43, urx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(51.54, ury, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, urz, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.21, bbox.Lower().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(-15.12, bbox.Lower().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, bbox.Lower().Z(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(307.43, bbox.Upper().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(51.54, bbox.Upper().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, bbox.Upper().Z(), 0.01);
 
-            testFont->BBox(BAD_ASCII_TEST_STRING, llx, lly, llz, urx, ury, urz);
+            testFont->BBox(BAD_ASCII_TEST_STRING);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, lly, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llz, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, ury, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urz, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Z(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Z(), 0.01);
 
-            testFont->BBox(GOOD_UNICODE_TEST_STRING, llx, lly, llz, urx, ury, urz);
+            testFont->BBox(GOOD_UNICODE_TEST_STRING);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(2.15, llx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(-6.12, lly, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, llz, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(134.28, urx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(61.12, ury, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, urz, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(2.15, bbox.Lower().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(-6.12, bbox.Lower().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, bbox.Lower().Z(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(134.28, bbox.Upper().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(61.12, bbox.Upper().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.00, bbox.Upper().Z(), 0.01);
 
-            testFont->BBox(BAD_UNICODE_TEST_STRING, llx, lly, llz, urx, ury, urz);
+            testFont->BBox(BAD_UNICODE_TEST_STRING);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, lly, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llz, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, ury, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urz, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Z(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Z(), 0.01);
 
-            testFont->BBox((char*)0, llx, lly, llz, urx, ury, urz);
+            testFont->BBox((char*)0);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, lly, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, llz, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urx, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, ury, 0.01);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, urz, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Lower().Z(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().X(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Y(), 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, bbox.Upper().Z(), 0.01);
         }
 
         void testCheckGlyphFailure()
         {
             BadGlyphTestFont* font = new BadGlyphTestFont(GOOD_FONT_FILE);
 
-            float advance = font->Advance(GOOD_ASCII_TEST_STRING);
+            float advance = font->Advance(GOOD_ASCII_TEST_STRING).Xf();
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, advance, 0.01);
         }
 
@@ -254,16 +236,16 @@ class FTFontTest : public CppUnit::TestCase
             CPPUNIT_ASSERT(testFont->FaceSize(FONT_POINT_SIZE));
             CPPUNIT_ASSERT_EQUAL(testFont->Error(), 0);
 
-            float advance = testFont->Advance(GOOD_ASCII_TEST_STRING);
+            float advance = testFont->Advance(GOOD_ASCII_TEST_STRING).Xf();
             CPPUNIT_ASSERT_DOUBLES_EQUAL(312.10, advance, 0.01);
 
-            advance = testFont->Advance(BAD_ASCII_TEST_STRING);
+            advance = testFont->Advance(BAD_ASCII_TEST_STRING).Xf();
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, advance, 0.01);
 
-            advance = testFont->Advance(GOOD_UNICODE_TEST_STRING);
+            advance = testFont->Advance(GOOD_UNICODE_TEST_STRING).Xf();
             CPPUNIT_ASSERT_DOUBLES_EQUAL(144, advance, 0.01);
 
-            advance = testFont->Advance(BAD_UNICODE_TEST_STRING);
+            advance = testFont->Advance(BAD_UNICODE_TEST_STRING).Xf();
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, advance, 0.01);
         }
 

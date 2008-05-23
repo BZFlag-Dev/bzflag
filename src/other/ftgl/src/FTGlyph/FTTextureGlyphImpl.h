@@ -39,7 +39,7 @@ class FTTextureGlyphImpl : public FTGlyphImpl
 
         virtual ~FTTextureGlyphImpl();
 
-        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
+        virtual const FTPoint& RenderImpl(const FTPoint& pen, int renderMode);
 
     private:
         /**
@@ -62,7 +62,7 @@ class FTTextureGlyphImpl : public FTGlyphImpl
         /**
          * Vector from the pen position to the topleft corner of the pixmap
          */
-        FTPoint pos;
+        FTPoint corner;
 
         /**
          * The texture co-ords of this glyph within the texture.

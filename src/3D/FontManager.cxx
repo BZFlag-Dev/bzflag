@@ -756,7 +756,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
     return 0.0f;
   }
 
-  return theFont->Advance(stripped);
+  return theFont->Advance(stripped).Xf();
 }
 
 float FontManager::getStringHeight(int font, float size)

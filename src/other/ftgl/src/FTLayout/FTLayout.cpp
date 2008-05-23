@@ -38,54 +38,19 @@
 
 FTLayout::FTLayout()
 {
-    /* impl is set by the child class */
-    impl = NULL;
+    impl = new FTLayoutImpl();
+}
+
+
+FTLayout::FTLayout(FTLayoutImpl *pImpl)
+{
+    impl = pImpl;
 }
 
 
 FTLayout::~FTLayout()
 {
-    /* Only the top class should be allowed to destroy impl, because
-     * we do not know how many levels of inheritance there are. */
     delete impl;
-}
-
-
-void FTLayout::BBox(const char* string, float& llx, float& lly,
-                    float& llz, float& urx, float& ury, float& urz)
-{
-    impl->BBox(string, llx, lly, llz, urx, ury, urz);
-}
-
-
-void FTLayout::BBox(const wchar_t* string, float& llx, float& lly,
-                    float& llz, float& urx, float& ury, float& urz)
-{
-    impl->BBox(string, llx, lly, llz, urx, ury, urz);
-}
-
-
-void FTLayout::Render(const char *string)
-{
-    impl->Render(string);
-}
-
-
-void FTLayout::Render(const char *string, int renderMode)
-{
-    impl->Render(string, renderMode);
-}
-
-
-void FTLayout::Render(const wchar_t *string)
-{
-    impl->Render(string);
-}
-
-
-void FTLayout::Render(const wchar_t *string, int renderMode)
-{
-    impl->Render(string, renderMode);
 }
 
 
@@ -110,30 +75,5 @@ FTLayoutImpl::FTLayoutImpl() :
 FTLayoutImpl::~FTLayoutImpl()
 {
     ;
-}
-
-
-void FTLayoutImpl::DoRender(FTFont *font, const unsigned int chr,
-                            const unsigned int nextChr, int renderMode)
-{
-    font->impl->DoRender(chr, nextChr, pen, renderMode);
-}
-
-
-void FTLayoutImpl::CheckGlyph(FTFont *font, const unsigned int Chr)
-{
-    font->impl->CheckGlyph(Chr);
-}
-
-
-FTGlyphContainer * FTLayoutImpl::GetGlyphs(FTFont *font)
-{
-    return font->impl->glyphList;
-}
-
-
-FTSize & FTLayoutImpl::GetCharSize(FTFont *font)
-{
-    return font->impl->charSize;
 }
 

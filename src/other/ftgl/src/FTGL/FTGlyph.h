@@ -42,54 +42,79 @@ class FTGlyphImpl;
  *
  * It provides the interface between Freetype glyphs and their openGL
  * renderable counterparts. This is an abstract class and derived classes
- * must implement the <code>render</code> function.
+ * must implement the <code>Render</code> function.
  *
- * @see FTGlyphContainer
  * @see FTBBox
  * @see FTPoint
- *
  */
 class FTGL_EXPORT FTGlyph
 {
-    friend class FTGlyphContainer;
-
     protected:
-        FTGlyph();
+        /**
+         * Create a glyph.
+         *
+         * @param glyph  The Freetype glyph to be processed
+         */
+        FTGlyph(FT_GlyphSlot glyph);
+
+    private:
+        /**
+         * Internal FTGL FTGlyph constructor. For private use only.
+         *
+         * @param pImpl  Internal implementation object. Will be destroyed
+         *               upon FTGlyph deletion.
+         */
+        FTGlyph(FTGlyphImpl *pImpl);
+
+        /* Allow our internal subclasses to access the private constructor */
+        friend class FTBitmapGlyph;
+        friend class FTBufferGlyph;
+        friend class FTExtrudeGlyph;
+        friend class FTOutlineGlyph;
+        friend class FTPixmapGlyph;
+        friend class FTPolygonGlyph;
+        friend class FTTextureGlyph;
 
     public:
+        /**
+          * Destructor
+          */
         virtual ~FTGlyph();
 
         /**
          * Renders this glyph at the current pen position.
          *
-         * @param pen   The current pen position.
-         * @param renderMode Render mode to display
-         * @return      The advance distance for this glyph.
+         * @param pen  The current pen position.
+         * @param renderMode  Render mode to display
+         * @return  The advance distance for this glyph.
          */
-        const FTPoint& Render(const FTPoint& pen, int renderMode);
+        virtual const FTPoint& Render(const FTPoint& pen, int renderMode) = 0;
 
         /**
          * Return the advance width for this glyph.
          *
          * @return  advance width.
          */
-        const FTPoint& Advance() const;
+        virtual const FTPoint& Advance() const;
 
         /**
          * Return the bounding box for this glyph.
          *
          * @return  bounding box.
          */
-        const FTBBox& BBox() const;
+        virtual const FTBBox& BBox() const;
 
         /**
          * Queries for errors.
          *
          * @return  The current error code.
          */
-        FT_Error Error() const;
+        virtual FT_Error Error() const;
 
-    protected:
+    private:
+        /**
+         * Internal FTGL FTGlyph implementation object. For private use only.
+         */
         FTGlyphImpl *impl;
 };
 
@@ -106,6 +131,21 @@ FTGL_BEGIN_C_DECLS
  */
 struct _FTGLGlyph;
 typedef struct _FTGLglyph FTGLglyph;
+
+/**
+ * Create a custom FTGL glyph object.
+ * FIXME: maybe get rid of "base" and have advanceCallback etc. functions
+ *
+ * @param base  The base FTGLglyph* to subclass.
+ * @param data  A pointer to private data that will be passed to callbacks.
+ * @param renderCallback  A rendering callback function.
+ * @param destroyCallback  A callback function to be called upon destruction.
+ * @return  An FTGLglyph* object.
+ */
+FTGL_EXPORT FTGLglyph *ftglCreateCustomGlyph(FTGLglyph *base, void *data,
+    void (*renderCallback) (FTGLglyph *, void *, FTGL_DOUBLE, FTGL_DOUBLE,
+                             int, FTGL_DOUBLE *, FTGL_DOUBLE *),
+    void (*destroyCallback) (FTGLglyph *, void *));
 
 /**
  * Destroy an FTGL glyph object.

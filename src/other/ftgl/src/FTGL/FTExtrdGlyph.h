@@ -39,10 +39,6 @@
 /**
  * FTExtrudeGlyph is a specialisation of FTGlyph for creating tessellated
  * extruded polygon glyphs.
- *
- * @see FTGlyphContainer
- * @see FTVectoriser
- *
  */
 class FTGL_EXPORT FTExtrudeGlyph : public FTGlyph
 {
@@ -67,6 +63,15 @@ class FTGL_EXPORT FTExtrudeGlyph : public FTGlyph
          * Destructor
          */
         virtual ~FTExtrudeGlyph();
+
+        /**
+         * Render this glyph at the current pen position.
+         *
+         * @param pen  The current pen position.
+         * @param renderMode  Render mode to display
+         * @return  The advance distance for this glyph.
+         */
+        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
 };
 
 #define FTExtrdGlyph FTExtrudeGlyph

@@ -162,19 +162,82 @@ void FTVectoriser::ProcessContours()
 
     contourList = new FTContour*[ftContourCount];
 
-    for(short contourIndex = 0; contourIndex < ftContourCount; ++contourIndex)
+    for(int i = 0; i < ftContourCount; ++i)
     {
         FT_Vector* pointList = &outline.points[startIndex];
         char* tagList = &outline.tags[startIndex];
 
-        endIndex = outline.contours[contourIndex];
+        endIndex = outline.contours[i];
         contourLength =  (endIndex - startIndex) + 1;
 
         FTContour* contour = new FTContour(pointList, tagList, contourLength);
 
-        contourList[contourIndex] = contour;
+        contourList[i] = contour;
 
         startIndex = endIndex + 1;
+    }
+
+    // Compute each contour's parity. FIXME: see if FT_Outline_Get_Orientation
+    // can do it for us.
+    for(int i = 0; i < ftContourCount; i++)
+    {
+        FTContour *c1 = contourList[i];
+
+        // 1. Find the leftmost point.
+        FTPoint leftmost(65536.0, 0.0);
+
+        for(size_t n = 0; n < c1->PointCount(); n++)
+        {
+            FTPoint p = c1->Point(n);
+            if(p.X() < leftmost.X())
+            {
+                leftmost = p;
+            }
+        }
+
+        // 2. Count how many other contours we cross when going further to
+        // the left.
+        int parity = 0;
+
+        for(int j = 0; j < ftContourCount; j++)
+        {
+            if(j == i)
+            {
+                continue;
+            }
+
+            FTContour *c2 = contourList[j];
+
+            for(size_t n = 0; n < c2->PointCount(); n++)
+            {
+                FTPoint p1 = c2->Point(n);
+                FTPoint p2 = c2->Point((n + 1) % c2->PointCount());
+
+                /* FIXME: combinations of >= > <= and < do not seem stable */
+                if((p1.Y() < leftmost.Y() && p2.Y() < leftmost.Y())
+                    || (p1.Y() >= leftmost.Y() && p2.Y() >= leftmost.Y())
+                    || (p1.X() > leftmost.X() && p2.X() > leftmost.X()))
+                {
+                    continue;
+                }
+                else if(p1.X() < leftmost.X() && p2.X() < leftmost.X())
+                {
+                    parity++;
+                }
+                else
+                {
+                    FTPoint a = p1 - leftmost;
+                    FTPoint b = p2 - leftmost;
+                    if(b.X() * a.Y() > b.Y() * a.X())
+                    {
+                        parity++;
+                    }
+                }
+            }
+        }
+
+        // 3. Make sure the glyph has the proper parity.
+        c1->SetParity(parity);
     }
 }
 

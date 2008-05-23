@@ -16,7 +16,7 @@ class TestGlyph : public FTGlyph
         :   FTGlyph(glyph)
         {}
 
-        const FTPoint& Render(const FTPoint& pen, int renderMode) { return advance; };
+        const FTPoint& Render(const FTPoint& pen, int renderMode) { return Advance(); };
 };
 
 
@@ -44,7 +44,7 @@ class FTGlyphTest : public CppUnit::TestCase
             CPPUNIT_ASSERT_EQUAL(testPoint.Y(), testGlyph.Advance().Y());
             CPPUNIT_ASSERT_EQUAL(testPoint.Z(), testGlyph.Advance().Z());
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testGlyph.BBox().upperY, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testGlyph.BBox().Upper().Y(), 0.01);
 
             CPPUNIT_ASSERT_EQUAL(testGlyph.Error(), 0);
         }
@@ -62,7 +62,7 @@ class FTGlyphTest : public CppUnit::TestCase
             CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint.Y(), nextPoint.Y(), 0.0001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint.Z(), nextPoint.Z(), 0.0001);
 
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(51.39, testGlyph.BBox().upperY, 0.01);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(51.39, testGlyph.BBox().Upper().Y(), 0.01);
 
             CPPUNIT_ASSERT(testGlyph.Error() == 0);
 

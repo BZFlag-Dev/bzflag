@@ -38,15 +38,19 @@
 //
 
 
-FTPixmapGlyph::FTPixmapGlyph(FT_GlyphSlot glyph)
-{
-    impl = new FTPixmapGlyphImpl(glyph);
-}
+FTPixmapGlyph::FTPixmapGlyph(FT_GlyphSlot glyph) :
+    FTGlyph(new FTPixmapGlyphImpl(glyph))
+{}
 
 
 FTPixmapGlyph::~FTPixmapGlyph()
+{}
+
+
+const FTPoint& FTPixmapGlyph::Render(const FTPoint& pen, int renderMode)
 {
-    ;
+    FTPixmapGlyphImpl *myimpl = dynamic_cast<FTPixmapGlyphImpl *>(impl);
+    return myimpl->RenderImpl(pen, renderMode);
 }
 
 
@@ -110,7 +114,8 @@ FTPixmapGlyphImpl::~FTPixmapGlyphImpl()
 }
 
 
-const FTPoint& FTPixmapGlyphImpl::Render(const FTPoint& pen, int renderMode)
+const FTPoint& FTPixmapGlyphImpl::RenderImpl(const FTPoint& pen,
+                                             int renderMode)
 {
     if(data)
     {

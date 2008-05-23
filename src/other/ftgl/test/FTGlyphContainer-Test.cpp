@@ -5,8 +5,10 @@
 
 
 #include "Fontdefs.h"
+
+#include "FTGL/ftgl.h"
+
 #include "FTFace.h"
-#include "FTGlyph.h"
 #include "FTGlyphContainer.h"
 
 
@@ -14,12 +16,15 @@ class TestGlyph : public FTGlyph
 {
     public:
         TestGlyph()
-        :   FTGlyph(0)
+        :   FTGlyph((FT_GlyphSlot)0)
         {
             advance = FTPoint(50.0f, 0.0f, 0.0f);
         }
 
         virtual const FTPoint& Render(const FTPoint& pen, int renderMode){ return advance; }
+
+    private:
+        FTPoint advance;
 };
 
 
@@ -81,7 +86,7 @@ class FTGlyphContainerTest : public CppUnit::TestCase
             TestGlyph* glyph = new TestGlyph();
 
             glyphContainer->Add(glyph, CHARACTER_CODE_A);
-            float advance = glyphContainer->Advance(CHARACTER_CODE_A, 0);
+            float advance = glyphContainer->Advance(CHARACTER_CODE_A, 0).Xf();
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(50, advance, 0.01);
         }

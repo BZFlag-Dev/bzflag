@@ -17,6 +17,8 @@ Contributors:
    Sam Hocevar <sam@zoy.org> (build system, new maintainer)
    Éric Beets <ericbeets@free.fr> (C bindings)
    Christopher Sean Morrison <learner@brlcad.org> (bug fixes, new maintainer)
+   Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net> (Windows fixes)
+   Daniel Remenak <dtremenak@users.sourceforge.net> (Windows fixes)
 
 Bug fixes:
 

@@ -36,23 +36,19 @@
 //
 
 
-FTPixmapFont::FTPixmapFont(char const *fontFilePath)
-{
-    impl = new FTPixmapFontImpl(this, fontFilePath);
-}
+FTPixmapFont::FTPixmapFont(char const *fontFilePath) :
+    FTFont(new FTPixmapFontImpl(this, fontFilePath))
+{}
 
 
 FTPixmapFont::FTPixmapFont(const unsigned char *pBufferBytes,
-                           size_t bufferSizeInBytes)
-{
-    impl = new FTPixmapFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                           size_t bufferSizeInBytes) :
+    FTFont(new FTPixmapFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTPixmapFont::~FTPixmapFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTPixmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
@@ -67,9 +63,15 @@ FTGlyph* FTPixmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
 
 
 template <typename T>
-inline void FTPixmapFontImpl::RenderI(const T* string)
+inline FTPoint FTPixmapFontImpl::RenderI(const T* string, const int len,
+                                         FTPoint position, FTPoint spacing,
+                                         int renderMode)
 {
+    // Protect GL_TEXTURE_2D and GL_BLEND, glPixelTransferf(), and blending
+    // functions.
     glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_COLOR_BUFFER_BIT);
+
+    // Protect glPixelStorei() calls (made by FTPixmapGlyphImpl::RenderImpl).
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
     glEnable(GL_BLEND);
@@ -85,33 +87,28 @@ inline void FTPixmapFontImpl::RenderI(const T* string)
     glPixelTransferf(GL_BLUE_SCALE, ftglColour[2]);
     glPixelTransferf(GL_ALPHA_SCALE, ftglColour[3]);
 
-    FTFontImpl::Render(string);
+    FTPoint tmp = FTFontImpl::Render(string, len,
+                                     position, spacing, renderMode);
 
     glPopClientAttrib();
     glPopAttrib();
+
+    return tmp;
 }
 
 
-void FTPixmapFontImpl::Render(const char* string)
+FTPoint FTPixmapFontImpl::Render(const char * string, const int len,
+                                 FTPoint position, FTPoint spacing,
+                                 int renderMode)
 {
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 
 
-void FTPixmapFontImpl::Render(const char* string, int renderMode)
+FTPoint FTPixmapFontImpl::Render(const wchar_t * string, const int len,
+                                 FTPoint position, FTPoint spacing,
+                                 int renderMode)
 {
-    RenderI(string);
-}
-
-
-void FTPixmapFontImpl::Render(const wchar_t* string)
-{
-    RenderI(string);
-}
-
-
-void FTPixmapFontImpl::Render(const wchar_t* string, int renderMode)
-{
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 

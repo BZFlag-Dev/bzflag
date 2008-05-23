@@ -42,14 +42,19 @@ class FTBitmapFontImpl : public FTFontImpl
                          size_t bufferSizeInBytes) :
             FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes) {};
 
-        virtual void Render(const char* string);
+        virtual FTPoint Render(const char *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
 
-        virtual void Render(const wchar_t* string);
+        virtual FTPoint Render(const wchar_t *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
 
     private:
         /* Internal generic Render() implementation */
         template <typename T>
-        inline void RenderI(const T* string);
+        inline FTPoint RenderI(const T *s, const int len,
+                               FTPoint position, FTPoint spacing, int mode);
 };
 
 #endif  //  __FTBitmapFontImpl__

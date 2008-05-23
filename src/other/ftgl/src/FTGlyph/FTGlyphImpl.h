@@ -37,8 +37,6 @@ class FTGlyphImpl
 
         virtual ~FTGlyphImpl();
 
-        virtual const FTPoint& Render(const FTPoint& pen, int renderMode) = 0;
-
         const FTPoint& Advance() const;
 
         const FTBBox& BBox() const;

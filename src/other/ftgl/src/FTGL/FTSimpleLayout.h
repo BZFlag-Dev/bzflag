@@ -58,7 +58,61 @@ class FTGL_EXPORT FTSimpleLayout : public FTLayout
         /**
          * Destructor
          */
-        ~FTSimpleLayout() {}
+        ~FTSimpleLayout();
+
+        /**
+         * Get the bounding box for a formatted string.
+         *
+         * @param string  A char string.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @return  The corresponding bounding box.
+         */
+        virtual FTBBox BBox(const char* string, const int len = -1,
+                            FTPoint position = FTPoint());
+
+        /**
+         * Get the bounding box for a formatted string.
+         *
+         * @param string  A wchar_t string.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @return  The corresponding bounding box.
+         */
+        virtual FTBBox BBox(const wchar_t* string, const int len = -1,
+                            FTPoint position = FTPoint());
+
+        /**
+         * Render a string of characters.
+         *
+         * @param string    'C' style string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param renderMode  Render mode to display (optional)
+         */
+        virtual void Render(const char *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            int renderMode = FTGL::RENDER_ALL);
+
+        /**
+         * Render a string of characters.
+         *
+         * @param string    wchar_t string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param renderMode  Render mode to display (optional)
+         */
+        virtual void Render(const wchar_t *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            int renderMode = FTGL::RENDER_ALL);
 
         /**
          * Set the font to use for rendering the text.
@@ -111,26 +165,6 @@ class FTGL_EXPORT FTSimpleLayout : public FTLayout
          * @return The line spacing.
          */
         float GetLineSpacing() const;
-
-        /**
-         * Render a string of characters and distribute extra space amongst
-         * the whitespace regions of the string.
-         *
-         * @param string      'C' style string to output.
-         * @param ExtraSpace  The amount of extra space to add to each run of
-         *                    whitespace.
-         */
-        void RenderSpace(const char *string, const float ExtraSpace = 0.0);
-
-        /**
-         * Render a string of characters and distribute extra space amongst
-         * the whitespace regions of the string.
-         *
-         * @param string      wchar_t string to output.
-         * @param ExtraSpace  The amount of extra space to add to each run of
-         *                    whitespace.
-         */
-        void RenderSpace(const wchar_t *string, const float ExtraSpace = 0.0);
 };
 
 #endif //__cplusplus
@@ -138,8 +172,6 @@ class FTGL_EXPORT FTSimpleLayout : public FTLayout
 FTGL_BEGIN_C_DECLS
 
 FTGL_EXPORT FTGLlayout *ftglCreateSimpleLayout(void);
-
-FTGL_EXPORT void ftglRenderLayoutSpace(FTGLlayout *, const char *, float);
 
 FTGL_EXPORT void ftglSetLayoutFont(FTGLlayout *, FTGLfont*);
 FTGL_EXPORT FTGLfont *ftglGetLayoutFont(FTGLlayout *);

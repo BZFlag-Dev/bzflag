@@ -39,15 +39,19 @@
 
 
 FTPolygonGlyph::FTPolygonGlyph(FT_GlyphSlot glyph, float outset,
-                               bool useDisplayList)
-{
-    impl = new FTPolygonGlyphImpl(glyph, outset, useDisplayList);
-}
+                               bool useDisplayList) :
+    FTGlyph(new FTPolygonGlyphImpl(glyph, outset, useDisplayList))
+{}
 
 
 FTPolygonGlyph::~FTPolygonGlyph()
+{}
+
+
+const FTPoint& FTPolygonGlyph::Render(const FTPoint& pen, int renderMode)
 {
-    ;
+    FTPolygonGlyphImpl *myimpl = dynamic_cast<FTPolygonGlyphImpl *>(impl);
+    return myimpl->RenderImpl(pen, renderMode);
 }
 
 
@@ -109,9 +113,10 @@ FTPolygonGlyphImpl::~FTPolygonGlyphImpl()
 }
 
 
-const FTPoint& FTPolygonGlyphImpl::Render(const FTPoint& pen, int renderMode)
+const FTPoint& FTPolygonGlyphImpl::RenderImpl(const FTPoint& pen,
+                                              int renderMode)
 {
-    glTranslatef(pen.Xf(), pen.Yf(), 0.0f);
+    glTranslatef(pen.Xf(), pen.Yf(), pen.Zf());
     if(glList)
     {
         glCallList(glList);
@@ -120,7 +125,7 @@ const FTPoint& FTPolygonGlyphImpl::Render(const FTPoint& pen, int renderMode)
     {
         DoRender();
     }
-    glTranslatef(-pen.Xf(), -pen.Yf(), 0.0f);
+    glTranslatef(-pen.Xf(), -pen.Yf(), -pen.Zf());
 
     return advance;
 }

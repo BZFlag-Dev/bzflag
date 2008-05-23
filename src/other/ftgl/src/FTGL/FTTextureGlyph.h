@@ -39,9 +39,6 @@
 /**
  * FTTextureGlyph is a specialisation of FTGlyph for creating texture
  * glyphs.
- *
- * @see FTGlyphContainer
- *
  */
 class FTGL_EXPORT FTTextureGlyph : public FTGlyph
 {
@@ -66,6 +63,15 @@ class FTGL_EXPORT FTTextureGlyph : public FTGlyph
          * Destructor
          */
         virtual ~FTTextureGlyph();
+
+        /**
+         * Render this glyph at the current pen position.
+         *
+         * @param pen  The current pen position.
+         * @param renderMode  Render mode to display
+         * @return  The advance distance for this glyph.
+         */
+        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
 };
 
 #endif //__cplusplus

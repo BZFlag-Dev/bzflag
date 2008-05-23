@@ -36,23 +36,19 @@
 //
 
 
-FTBitmapFont::FTBitmapFont(char const *fontFilePath)
-{
-    impl = new FTBitmapFontImpl(this, fontFilePath);
-}
+FTBitmapFont::FTBitmapFont(char const *fontFilePath) :
+    FTFont(new FTBitmapFontImpl(this, fontFilePath))
+{}
 
 
 FTBitmapFont::FTBitmapFont(unsigned char const *pBufferBytes,
-                           size_t bufferSizeInBytes)
-{
-    impl = new FTBitmapFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                           size_t bufferSizeInBytes) :
+    FTFont(new FTBitmapFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTBitmapFont::~FTBitmapFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTBitmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
@@ -67,31 +63,43 @@ FTGlyph* FTBitmapFont::MakeGlyph(FT_GlyphSlot ftGlyph)
 
 
 template <typename T>
-inline void FTBitmapFontImpl::RenderI(const T *string)
+inline FTPoint FTBitmapFontImpl::RenderI(const T* string, const int len,
+                                         FTPoint position, FTPoint spacing,
+                                         int renderMode)
 {
+    // Protect GL_BLEND
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
+
+    // Protect glPixelStorei() calls (also in FTBitmapGlyphImpl::RenderImpl)
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-    glPushAttrib(GL_ENABLE_BIT);
 
     glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glDisable(GL_BLEND);
 
-    FTFontImpl::Render(string);
+    FTPoint tmp = FTFontImpl::Render(string, len,
+                                     position, spacing, renderMode);
 
-    glPopAttrib();
     glPopClientAttrib();
+    glPopAttrib();
+
+    return tmp;
 }
 
 
-void FTBitmapFontImpl::Render(const char* string)
+FTPoint FTBitmapFontImpl::Render(const char * string, const int len,
+                                 FTPoint position, FTPoint spacing,
+                                 int renderMode)
 {
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 
 
-void FTBitmapFontImpl::Render(const wchar_t* string)
+FTPoint FTBitmapFontImpl::Render(const wchar_t * string, const int len,
+                                 FTPoint position, FTPoint spacing,
+                                 int renderMode)
 {
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 

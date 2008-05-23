@@ -107,8 +107,8 @@ class FTGlyphContainer
         * @param nextCharacterCode the next glyph in a string
         * @return                  advance width
         */
-        float Advance(const unsigned int characterCode,
-                      const unsigned int nextCharacterCode);
+        FTPoint Advance(const unsigned int characterCode,
+                        const unsigned int nextCharacterCode);
 
         /**
          * Renders a character

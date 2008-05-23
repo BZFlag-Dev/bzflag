@@ -92,7 +92,9 @@ FTGL_BEGIN_C_DECLS
 
 typedef enum
 {
+    GLYPH_CUSTOM,
     GLYPH_BITMAP,
+    GLYPH_BUFFER,
     GLYPH_PIXMAP,
     GLYPH_OUTLINE,
     GLYPH_POLYGON,
@@ -108,7 +110,9 @@ struct _FTGLglyph
 
 typedef enum
 {
+    FONT_CUSTOM,
     FONT_BITMAP,
+    FONT_BUFFER,
     FONT_PIXMAP,
     FONT_OUTLINE,
     FONT_POLYGON,

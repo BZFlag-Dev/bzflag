@@ -32,12 +32,9 @@
 
 class FTGlyphContainer;
 class FTGlyph;
-class FTLayout;
 
 class FTFontImpl
 {
-        /* Allow FTLayout classes to access DoRender and CheckGlyph */
-        friend class FTLayoutImpl;
         friend class FTFont;
 
     protected:
@@ -55,7 +52,7 @@ class FTFontImpl
 
         virtual bool CharMap(FT_Encoding encoding);
 
-        virtual unsigned int CharMapCount();
+        virtual unsigned int CharMapCount() const;
 
         virtual FT_Encoding* CharMapList();
 
@@ -66,14 +63,6 @@ class FTFontImpl
         virtual float Descender() const;
 
         virtual float LineHeight() const;
-
-        virtual void Render(const char* string);
-
-        virtual void Render(const char* string, int renderMode);
-
-        virtual void Render(const wchar_t* string);
-
-        virtual void Render(const wchar_t *string, int renderMode);
 
         virtual bool FaceSize(const unsigned int size,
                               const unsigned int res);
@@ -86,17 +75,21 @@ class FTFontImpl
 
         virtual void Outset(float front, float back);
 
-        void BBox(const char *string, const int start, const int end,
-                  float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
+        virtual FTBBox BBox(const char *s, const int len, FTPoint, FTPoint);
 
-        void BBox(const wchar_t *string, const int start, const int end,
-                  float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
+        virtual FTBBox BBox(const wchar_t *s, const int len, FTPoint, FTPoint);
 
-        float Advance(const wchar_t* string);
+        virtual FTPoint Advance(const char *s, const int len,
+                                FTPoint, FTPoint);
 
-        float Advance(const char* string);
+        virtual FTPoint Advance(const wchar_t *s, const int len,
+                                FTPoint, FTPoint);
+
+        virtual FTPoint Render(const char *s, const int len,
+                               FTPoint, FTPoint, int);
+
+        virtual FTPoint Render(const wchar_t *s, const int len,
+                               FTPoint, FTPoint, int);
 
         /**
          * Current face object
@@ -122,25 +115,9 @@ class FTFontImpl
 
     private:
         /**
-         * A link back to the object of which we are the implementation.
+         * A link back to the interface of which we are the implementation.
          */
-        FTFont *base;
-
-        /**
-         * Render a character.
-         * This function does an implicit conversion on its arguments.
-         *
-         * @param chr       current character
-         * @param nextChr   next character
-         * @param origin       The position of the origin of the character.
-         *                  After rendering the point referenced by origin
-         *                  will be incremented by the kerning advance of
-         *                  char and nextChr.
-         * @param renderMode    Render mode to display
-         */
-        void DoRender(const unsigned int chr,
-                      const unsigned int nextChr, FTPoint &origin,
-                      int renderMode);
+        FTFont *intf;
 
         /**
          * Check that the glyph at <code>chr</code> exist. If not load it.
@@ -162,17 +139,18 @@ class FTFontImpl
 
         /* Internal generic BBox() implementation */
         template <typename T>
-        inline void BBoxI(const T *string, const int start, const int end,
-                          float& llx, float& lly, float& llz,
-                          float& urx, float& ury, float& urz);
+        inline FTBBox BBoxI(const T *s, const int len,
+                            FTPoint position, FTPoint spacing);
 
-        /* Internal generic BBox() implementation */
+        /* Internal generic Advance() implementation */
         template <typename T>
-        inline float AdvanceI(const T* string);
+        inline FTPoint AdvanceI(const T *s, const int len,
+                                FTPoint position, FTPoint spacing);
 
         /* Internal generic Render() implementation */
         template <typename T>
-        inline void RenderI(const T* string, int renderMode);
+        inline FTPoint RenderI(const T *s, const int len,
+                               FTPoint position, FTPoint spacing, int mode);
 };
 
 #endif  //  __FTFontImpl__

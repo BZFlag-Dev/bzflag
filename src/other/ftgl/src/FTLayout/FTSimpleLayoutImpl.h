@@ -40,120 +40,49 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
 
         virtual ~FTSimpleLayoutImpl() {};
 
-        /**
-         * Get the bounding box for a string.
-         *
-         * @param string    a char string
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
-         */
-        virtual void BBox(const char* string, float& llx, float& lly,
-                          float& llz, float& urx, float& ury, float& urz);
+        virtual FTBBox BBox(const char* string, const int len,
+                            FTPoint position);
 
-        /**
-         * Get the bounding box for a string.
-         *
-         * @param string    a wchar_t string
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
-         */
-        virtual void BBox(const wchar_t* string, float& llx, float& lly,
-                          float& llz, float& urx, float& ury, float& urz);
+        virtual FTBBox BBox(const wchar_t* string, const int len,
+                            FTPoint position);
 
-        /**
-         * Render a string of characters
-         *
-         * @param string    'C' style string to be output.
-         */
-        virtual void Render(const char* string);
+        virtual void Render(const char *string, const int len,
+                            FTPoint position, int renderMode);
 
-        /**
-         * Render a string of characters
-         *
-         * @param string    'C' style string to be output.
-         * @param renderMode    Render mode to display
-         */
-        virtual void Render(const char* string, int renderMode);
-
-        /**
-         * Render a string of characters
-         *
-         * @param string    wchar_t string to be output.
-         */
-        virtual void Render(const wchar_t* string);
-
-        /**
-         * Render a string of characters
-         *
-         * @param string    wchar_t string to be output.
-         * @param renderMode    Render mode to display
-         */
-        virtual void Render(const wchar_t* string, int renderMode);
+        virtual void Render(const wchar_t *string, const int len,
+                            FTPoint position, int renderMode);
 
         /**
          * Render a string of characters and distribute extra space amongst
          * the whitespace regions of the string.
          *
-         * @param string      'C' style string to output.
-         * @param ExtraSpace  The amount of extra space to add to each run of
-         *                    whitespace.
+         * @param string   A buffer of wchar_t characters to output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
+         * @param renderMode Render mode to display
+         * @param extraSpace The amount of extra space to distribute amongst
+         *                   the characters.
          */
-        void RenderSpace(const char *string, const float ExtraSpace = 0.0);
+        virtual void RenderSpace(const char *string, const int len,
+                                 FTPoint position, int renderMode,
+                                 const float extraSpace);
 
         /**
          * Render a string of characters and distribute extra space amongst
          * the whitespace regions of the string.
          *
-         * @param string      wchar_t string to output.
-         * @param ExtraSpace  The amount of extra space to add to each run of
-         *                    whitespace.
-         */
-        void RenderSpace(const wchar_t *string, const float ExtraSpace = 0.0);
-
-   protected:
-        /**
-         * Render a string of characters and distribute extra space amongst
-         * the whitespace regions of the string.  Note that this method
-         * does not reset the pen position before rendering.  This method
-         * provides the implementation for other RenderSpace methods and
-         * thus should be overloaded when attempting to overload any
-         * RenderSpace methods.
-         *
          * @param string   A buffer of wchar_t characters to output.
-         * @param start    The index of the first character in string to output.
-         * @param end      The index of the last character in string to output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
          * @param renderMode Render mode to display
-         * @param ExtraSpace The amount of extra space to distribute amongst
+         * @param extraSpace The amount of extra space to distribute amongst
          *                   the characters.
          */
-        virtual void RenderSpace(const char *string, const int start,
-                                 const int end, int renderMode, const float ExtraSpace = 0.0);
-
-        /**
-         * Render a string of characters and distribute extra space amongst
-         * the whitespace regions of the string.  Note that this method
-         * does not reset the pen position before rendering.  This method
-         * provides the implementation for other RenderSpace methods and
-         * thus should be overloaded when attempting to overload any
-         * RenderSpace methods.
-         *
-         * @param string   A buffer of wchar_t characters to output.
-         * @param start    The index of the first character in string to output.
-         * @param end      The index of the last character in string to output.
-         * @param renderMode Render mode to display
-         * @param ExtraSpace The amount of extra space to distribute amongst
-         *                   the characters.
-         */
-        virtual void RenderSpace(const wchar_t *string, const int start,
-                                 const int end, int renderMode, const float ExtraSpace = 0.0);
+        virtual void RenderSpace(const wchar_t *string, const int len,
+                                 FTPoint position, int renderMode,
+                                 const float extraSpace);
 
     private:
         /**
@@ -163,14 +92,19 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
          * of this method is exposed by the BBoxWrapped and
          * RenderWrapped methods.
          *
-         * @param buf         wchar_t style string to output.
+         * @param buf  A char string to output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
          * @param renderMode  Render mode to display
          * @param bounds      A pointer to a bounds object.  If non null
          *                    the bounds of the text when laid out
          *                    will be stored in bounds.  If null the
          *                    text will be rendered.
          */
-        virtual void WrapText(const char *buf, int renderMode, FTBBox *bounds = NULL);
+        virtual void WrapText(const char *buf, const int len,
+                              FTPoint position, int renderMode,
+                              FTBBox *bounds);
 
         /**
          * Either render a string of characters and wrap lines
@@ -179,24 +113,29 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
          * of this method is exposed by the BBoxWrapped and
          * RenderWrapped methods.
          *
-         * @param buf         wchar_t style string to output.
+         * @param buf  A wchar_t style string to output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
          * @param renderMode  Render mode to display
          * @param bounds      A pointer to a bounds object.  If non null
          *                    the bounds of the text when laid out
          *                    will be stored in bounds.  If null the
          *                    text will be rendered.
          */
-        virtual void WrapText(const wchar_t *buf, int renderMode, FTBBox *bounds = NULL);
+        virtual void WrapText(const wchar_t *buf, const int len,
+                              FTPoint position, int renderMode,
+                              FTBBox *bounds);
 
         /**
          * A helper method used by WrapText to either output the text or
          * compute it's bounds.
          *
          * @param buf      A pointer to an array of character data.
-         * @param start    The index of the first character to process.
-         * @param end      The index of the last character to process.  If
-         *                 < 0 then characters will be parsed until a '\0'
-         *                 is encountered.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
+         * @param renderMode  Render mode to display
          * @param RemainingWidth The amount of extra space left on the line.
          * @param bounds     A pointer to a bounds object.  If non null the
          *                   bounds will be initialized or expanded by the
@@ -204,20 +143,20 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
          *                   rendered.  If the bounds are invalid (lower > upper)
          *                   they will be initialized.  Otherwise they
          *                   will be expanded.
-         * @param renderMode  Render mode to display
          */
-        void OutputWrapped(const char *buf, const int start, const int end,
-                           const float RemainingWidth, FTBBox *bounds, int renderMode);
+        void OutputWrapped(const char *buf, const int len,
+                           FTPoint position, int renderMode,
+                           const float RemainingWidth, FTBBox *bounds);
 
         /**
          * A helper method used by WrapText to either output the text or
          * compute it's bounds.
          *
          * @param buf      A pointer to an array of character data.
-         * @param start    The index of the first character to process.
-         * @param end      The index of the last character to process.  If
-         *                 < 0 then characters will be parsed until a '\0'
-         *                 is encountered.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered.
+         * @param position TODO
+         * @param renderMode  Render mode to display
          * @param RemainingWidth The amount of extra space left on the line.
          * @param bounds     A pointer to a bounds object.  If non null the
          *                   bounds will be initialized or expanded by the
@@ -225,10 +164,10 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
          *                   rendered.  If the bounds are invalid (lower > upper)
          *                   they will be initialized.  Otherwise they
          *                   will be expanded.
-         * @param renderMode  Render mode to display
          */
-        void OutputWrapped(const wchar_t *buf, const int start, const int end,
-                           const float RemainingWidth, FTBBox *bounds, int renderMode);
+        void OutputWrapped(const wchar_t *buf, const int len,
+                           FTPoint position, int renderMode,
+                           const float RemainingWidth, FTBBox *bounds);
 
         /**
          * The font to use for rendering the text.  The font is
@@ -256,26 +195,29 @@ class FTSimpleLayoutImpl : public FTLayoutImpl
 
         /* Internal generic BBox() implementation */
         template <typename T>
-        inline void BBoxI(const T* string, float& llx, float& lly, float& llz,
-                          float& urx, float& ury, float& urz);
+        inline FTBBox BBoxI(const T* string, const int len, FTPoint position);
 
         /* Internal generic Render() implementation */
         template <typename T>
-        inline void RenderI(const T* string, int renderMode);
+        inline void RenderI(const T* string, const int len,
+                            FTPoint position, int renderMode);
 
         /* Internal generic RenderSpace() implementation */
         template <typename T>
-        inline void RenderSpaceI(const T* string, const int start,
-                                 const int end, int renderMode, const float ExtraSpace = 0.0);
+        inline void RenderSpaceI(const T* string, const int len,
+                                 FTPoint position, int renderMode,
+                                 const float extraSpace);
 
         /* Internal generic WrapText() implementation */
         template <typename T>
-        void WrapTextI(const T* buf, int renderMode, FTBBox *bounds = NULL);
+        void WrapTextI(const T* buf, const int len, FTPoint position,
+                       int renderMode, FTBBox *bounds);
 
         /* Internal generic OutputWrapped() implementation */
         template <typename T>
-        void OutputWrappedI(const T* buf, const int start, const int end,
-                            const float RemainingWidth, FTBBox *bounds, int renderMode);
+        void OutputWrappedI(const T* buf, const int len, FTPoint position,
+                            int renderMode, const float RemainingWidth,
+                            FTBBox *bounds);
 };
 
 #endif  //  __FTSimpleLayoutImpl__

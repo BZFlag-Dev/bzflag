@@ -28,6 +28,9 @@
 
 #include "FTInternals.h"
 
+static const FTPoint static_ftpoint;
+static const FTBBox static_ftbbox;
+
 FTGL_BEGIN_C_DECLS
 
 #define C_TOR(cname, cargs, cxxname, cxxarg, cxxtype) \
@@ -49,6 +52,10 @@ FTGL_BEGIN_C_DECLS
 C_TOR(ftglCreateBitmapFont, (const char *fontname),
       FTBitmapFont, (fontname), FONT_BITMAP);
 
+// FTBufferFont::FTBufferFont();
+C_TOR(ftglCreateBufferFont, (const char *fontname),
+      FTBufferFont, (fontname), FONT_BUFFER);
+
 // FTExtrudeFont::FTExtrudeFont();
 C_TOR(ftglCreateExtrudeFont, (const char *fontname),
       FTExtrudeFont, (fontname), FONT_EXTRUDE);
@@ -69,6 +76,40 @@ C_TOR(ftglCreatePolygonFont, (const char *fontname),
 C_TOR(ftglCreateTextureFont, (const char *fontname),
       FTTextureFont, (fontname), FONT_TEXTURE);
 
+// FTCustomFont::FTCustomFont();
+class FTCustomFont : public FTFont
+{
+public:
+    FTCustomFont(char const *fontFilePath, void *p,
+                 FTGLglyph * (*makeglyph) (FT_GlyphSlot, void *))
+     : FTFont(fontFilePath),
+       data(p),
+       makeglyphCallback(makeglyph)
+    {}
+
+    ~FTCustomFont()
+    {}
+
+    FTGlyph* MakeGlyph(FT_GlyphSlot slot)
+    {
+        FTGLglyph *g = makeglyphCallback(slot, data);
+        FTGlyph *glyph = g->ptr;
+        // XXX: we no longer need g, and no one will free it for us. Not
+        // very elegant, and we need to make sure no one else will try to
+        // use it.
+        free(g);
+        return glyph;
+    }
+
+private:
+    void *data;
+    FTGLglyph *(*makeglyphCallback) (FT_GlyphSlot, void *);
+};
+
+C_TOR(ftglCreateCustomFont, (char const *fontFilePath, void *data,
+                   FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *)),
+      FTCustomFont, (fontFilePath, data, makeglyphCallback), FONT_CUSTOM);
+
 #define C_FUN(cret, cname, cargs, cxxerr, cxxname, cxxarg) \
     cret cname cargs \
     { \
@@ -77,23 +118,7 @@ C_TOR(ftglCreateTextureFont, (const char *fontname),
             fprintf(stderr, "FTGL warning: NULL pointer in %s\n", #cname); \
             cxxerr; \
         } \
-        switch(f->type) \
-        { \
-            case FTGL::FONT_BITMAP: \
-                return dynamic_cast<FTBitmapFont*>(f->ptr)->cxxname cxxarg; \
-            case FTGL::FONT_EXTRUDE: \
-                return dynamic_cast<FTExtrudeFont*>(f->ptr)->cxxname cxxarg; \
-            case FTGL::FONT_OUTLINE: \
-                return dynamic_cast<FTOutlineFont*>(f->ptr)->cxxname cxxarg; \
-            case FTGL::FONT_PIXMAP: \
-                return dynamic_cast<FTPixmapFont*>(f->ptr)->cxxname cxxarg; \
-            case FTGL::FONT_POLYGON: \
-                return dynamic_cast<FTPolygonFont*>(f->ptr)->cxxname cxxarg; \
-            case FTGL::FONT_TEXTURE: \
-                return dynamic_cast<FTTextureFont*>(f->ptr)->cxxname cxxarg; \
-        } \
-        fprintf(stderr, "FTGL warning: %s not implemented for %d\n", #cname, f->type); \
-        cxxerr; \
+        return f->ptr->cxxname cxxarg; \
     }
 
 // FTFont::~FTFont();
@@ -104,27 +129,7 @@ void ftglDestroyFont(FTGLfont *f)
         fprintf(stderr, "FTGL warning: NULL pointer in %s\n", __FUNCTION__);
         return;
     }
-    switch(f->type)
-    {
-        case FTGL::FONT_BITMAP:
-            delete dynamic_cast<FTBitmapFont*>(f->ptr); break;
-        case FTGL::FONT_EXTRUDE:
-            delete dynamic_cast<FTExtrudeFont*>(f->ptr); break;
-        case FTGL::FONT_OUTLINE:
-            delete dynamic_cast<FTOutlineFont*>(f->ptr); break;
-        case FTGL::FONT_PIXMAP:
-            delete dynamic_cast<FTPixmapFont*>(f->ptr); break;
-        case FTGL::FONT_POLYGON:
-            delete dynamic_cast<FTPolygonFont*>(f->ptr); break;
-        case FTGL::FONT_TEXTURE:
-            delete dynamic_cast<FTTextureFont*>(f->ptr); break;
-        default:
-            fprintf(stderr, "FTGL warning: %s not implemented for %d\n",
-                            __FUNCTION__, f->type);
-            break;
-    }
-
-    f->ptr = NULL;
+    delete f->ptr;
     free(f);
 }
 
@@ -181,17 +186,41 @@ C_FUN(float, ftglGetFontLineHeight, (FTGLfont *f), return 0.f, LineHeight, ());
 
 // void FTFont::BBox(const char* string, float& llx, float& lly, float& llz,
 //                   float& urx, float& ury, float& urz);
-C_FUN(void, ftglGetFontBBox, (FTGLfont *f, const char* s, int start, int end,
-                              float c[6]),
-      return, BBox, (s, start, end, c[0], c[1], c[2], c[3], c[4], c[5]));
+extern "C++" {
+C_FUN(static FTBBox, _ftglGetFontBBox, (FTGLfont *f, char const *s, int len),
+      return static_ftbbox, BBox, (s, len));
+}
+
+void ftglGetFontBBox(FTGLfont *f, const char* s, int len, float c[6])
+{
+    FTBBox ret = _ftglGetFontBBox(f, s, len);
+    FTPoint lower = ret.Lower(), upper = ret.Upper();
+    c[0] = lower.Xf(); c[1] = lower.Yf(); c[2] = lower.Zf();
+    c[3] = upper.Xf(); c[4] = upper.Yf(); c[5] = upper.Zf();
+}
 
 // float FTFont::Advance(const char* string);
-C_FUN(float, ftglGetFontAdvance, (FTGLfont *f, const char* s),
-      return 0.f, Advance, (s));
+extern "C++" {
+C_FUN(static FTPoint, _ftglGetFontAdvance, (FTGLfont *f, char const *s),
+      return static_ftpoint, Advance, (s));
+}
+
+float ftglGetFontAdvance(FTGLfont *f, const char* s)
+{
+    return _ftglGetFontAdvance(f, s).Xf();
+}
 
 // virtual void Render(const char* string, int renderMode);
-C_FUN(void, ftglRenderFont, (FTGLfont *f, const char *s, int r),
-      return, Render, (s, r));
+extern "C++" {
+C_FUN(static FTPoint, _ftglRenderFont, (FTGLfont *f, char const *s, int len,
+                                        FTPoint pos, FTPoint spacing, int mode),
+      return static_ftpoint, Render, (s, len, pos, spacing, mode));
+}
+
+void ftglRenderFont(FTGLfont *f, const char *s, int mode)
+{
+    _ftglRenderFont(f, s, -1, FTPoint(), FTPoint(), mode);
+}
 
 // FT_Error FTFont::Error() const;
 C_FUN(FT_Error, ftglGetFontError, (FTGLfont *f), return -1, Error, ());

@@ -39,15 +39,19 @@
 
 
 FTOutlineGlyph::FTOutlineGlyph(FT_GlyphSlot glyph, float outset,
-                               bool useDisplayList)
-{
-    impl = new FTOutlineGlyphImpl(glyph, outset, useDisplayList);
-}
+                               bool useDisplayList) :
+    FTGlyph(new FTOutlineGlyphImpl(glyph, outset, useDisplayList))
+{}
 
 
 FTOutlineGlyph::~FTOutlineGlyph()
+{}
+
+
+const FTPoint& FTOutlineGlyph::Render(const FTPoint& pen, int renderMode)
 {
-    ;
+    FTOutlineGlyphImpl *myimpl = dynamic_cast<FTOutlineGlyphImpl *>(impl);
+    return myimpl->RenderImpl(pen, renderMode);
 }
 
 
@@ -106,9 +110,10 @@ FTOutlineGlyphImpl::~FTOutlineGlyphImpl()
 }
 
 
-const FTPoint& FTOutlineGlyphImpl::Render(const FTPoint& pen, int renderMode)
+const FTPoint& FTOutlineGlyphImpl::RenderImpl(const FTPoint& pen,
+                                              int renderMode)
 {
-    glTranslatef(pen.Xf(), pen.Yf(), 0.0f);
+    glTranslatef(pen.Xf(), pen.Yf(), pen.Zf());
     if(glList)
     {
         glCallList(glList);
@@ -117,7 +122,7 @@ const FTPoint& FTOutlineGlyphImpl::Render(const FTPoint& pen, int renderMode)
     {
         DoRender();
     }
-    glTranslatef(-pen.Xf(), -pen.Yf(), 0.0f);
+    glTranslatef(-pen.Xf(), -pen.Yf(), -pen.Zf());
 
     return advance;
 }

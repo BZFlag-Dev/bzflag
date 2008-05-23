@@ -38,8 +38,6 @@
 
 /**
  * FTBitmapGlyph is a specialisation of FTGlyph for creating bitmaps.
- *
- * @see FTGlyphContainer
  */
 class FTGL_EXPORT FTBitmapGlyph : public FTGlyph
 {
@@ -55,6 +53,15 @@ class FTGL_EXPORT FTBitmapGlyph : public FTGlyph
          * Destructor
          */
         virtual ~FTBitmapGlyph();
+
+        /**
+         * Render this glyph at the current pen position.
+         *
+         * @param pen  The current pen position.
+         * @param renderMode  Render mode to display
+         * @return  The advance distance for this glyph.
+         */
+        virtual const FTPoint& Render(const FTPoint& pen, int renderMode);
 };
 
 #endif //__cplusplus

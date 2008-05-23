@@ -47,32 +47,96 @@ class FTLayoutImpl;
  * <code>BBox</code> methods to determine the bounding box of output text.
  *
  * @see     FTFont
+ * @see     FTBBox
  */
 class FTGL_EXPORT FTLayout
 {
     protected:
         FTLayout();
 
+    private:
+        /**
+         * Internal FTGL FTLayout constructor. For private use only.
+         *
+         * @param pImpl  Internal implementation object. Will be destroyed
+         *               upon FTLayout deletion.
+         */
+        FTLayout(FTLayoutImpl *pImpl);
+
+        /* Allow our internal subclasses to access the private constructor */
+        friend class FTSimpleLayout;
+
     public:
+        /**
+         * Destructor
+         */
         virtual ~FTLayout();
 
-        void BBox(const char* string, float& llx, float& lly,
-                  float& llz, float& urx, float& ury, float& urz);
+        /**
+         * Get the bounding box for a formatted string.
+         *
+         * @param string  A char string.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @return  The corresponding bounding box.
+         */
+        virtual FTBBox BBox(const char* string, const int len = -1,
+                            FTPoint position = FTPoint()) = 0;
 
-        void BBox(const wchar_t* string, float& llx, float& lly,
-                  float& llz, float& urx, float& ury, float& urz);
+        /**
+         * Get the bounding box for a formatted string.
+         *
+         * @param string  A wchar_t string.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @return  The corresponding bounding box.
+         */
+        virtual FTBBox BBox(const wchar_t* string, const int len = -1,
+                            FTPoint position = FTPoint()) = 0;
 
-        void Render(const char *string);
+        /**
+         * Render a string of characters.
+         *
+         * @param string    'C' style string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param renderMode  Render mode to display (optional)
+         */
+        virtual void Render(const char *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            int renderMode = FTGL::RENDER_ALL) = 0;
 
-        void Render(const char *string, int renderMode);
+        /**
+         * Render a string of characters.
+         *
+         * @param string    wchar_t string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param renderMode  Render mode to display (optional)
+         */
+        virtual void Render(const wchar_t *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            int renderMode = FTGL::RENDER_ALL) = 0;
 
-        void Render(const wchar_t *string);
+        /**
+         * Queries the Layout for errors.
+         *
+         * @return  The current error code.
+         */
+        virtual FT_Error Error() const;
 
-        void Render(const wchar_t *string, int renderMode);
-
-        FT_Error Error() const;
-
-    protected:
+    private:
+        /**
+         * Internal FTGL FTLayout implementation object. For private use only.
+         */
         FTLayoutImpl *impl;
 };
 

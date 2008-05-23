@@ -33,4 +33,11 @@ all-local:
 	fi
 	@$(ECHO)
 
+# Upload documentation
+DOC = docs/html docs/latex/ftgl.pdf
+HOST = ftgl.sf.net
+DIR = /home/groups/f/ft/ftgl/htdocs/
+upload-doc:
+	tar cz $(DOC) | ssh $(HOST) "cd $(DIR) && rm -Rf $(DOC) && tar xvz"
+
 NULL =

@@ -109,7 +109,7 @@ class FTGL_EXPORT FTPoint
          * @param point
          * @return this plus point.
          */
-        inline FTPoint operator + (const FTPoint& point)
+        inline FTPoint operator + (const FTPoint& point) const
         {
             FTPoint temp;
             temp.values[0] = values[0] + point.values[0];
@@ -140,7 +140,7 @@ class FTGL_EXPORT FTPoint
          * @param point
          * @return this minus point.
          */
-        inline FTPoint operator - (const FTPoint& point)
+        inline FTPoint operator - (const FTPoint& point) const
         {
             FTPoint temp;
             temp.values[0] = values[0] - point.values[0];
@@ -151,7 +151,7 @@ class FTGL_EXPORT FTPoint
         }
 
         /**
-         * Operator *
+         * Operator *  Scalar multiplication
          *
          * @param multiplier
          * @return <code>this</code> multiplied by <code>multiplier</code>.
@@ -168,7 +168,7 @@ class FTGL_EXPORT FTPoint
 
 
         /**
-         * Operator *
+         * Operator *  Scalar multiplication
          *
          * @param point
          * @param multiplier
@@ -177,6 +177,21 @@ class FTGL_EXPORT FTPoint
         inline friend FTPoint operator * (double multiplier, FTPoint& point)
         {
             return point * multiplier;
+        }
+
+
+        /**
+         * Operator *  Scalar product
+         *
+         * @param a  First vector.
+         * @param b  Second vector.
+         * @return  <code>a.b</code> scalar product.
+         */
+        inline friend double operator * (FTPoint &a, FTPoint& b)
+        {
+            return a.values[0] * b.values[0]
+                 + a.values[1] * b.values[1]
+                 + a.values[2] * b.values[2];
         }
 
 

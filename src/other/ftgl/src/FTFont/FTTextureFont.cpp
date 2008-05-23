@@ -41,23 +41,19 @@
 //
 
 
-FTTextureFont::FTTextureFont(char const *fontFilePath)
-{
-    impl = new FTTextureFontImpl(this, fontFilePath);
-}
+FTTextureFont::FTTextureFont(char const *fontFilePath) :
+    FTFont(new FTTextureFontImpl(this, fontFilePath))
+{}
 
 
 FTTextureFont::FTTextureFont(const unsigned char *pBufferBytes,
-                             size_t bufferSizeInBytes)
-{
-    impl = new FTTextureFontImpl(this, pBufferBytes, bufferSizeInBytes);
-}
+                             size_t bufferSizeInBytes) :
+    FTFont(new FTTextureFontImpl(this, pBufferBytes, bufferSizeInBytes))
+{}
 
 
 FTTextureFont::~FTTextureFont()
-{
-    ;
-}
+{}
 
 
 FTGlyph* FTTextureFont::MakeGlyph(FT_GlyphSlot ftGlyph)
@@ -68,7 +64,7 @@ FTGlyph* FTTextureFont::MakeGlyph(FT_GlyphSlot ftGlyph)
         return NULL;
     }
 
-    return myimpl->MakeGlyph(ftGlyph);
+    return myimpl->MakeGlyphImpl(ftGlyph);
 }
 
 
@@ -133,7 +129,7 @@ FTTextureFontImpl::~FTTextureFontImpl()
 }
 
 
-FTGlyph* FTTextureFontImpl::MakeGlyph(FT_GlyphSlot ftGlyph)
+FTGlyph* FTTextureFontImpl::MakeGlyphImpl(FT_GlyphSlot ftGlyph)
 {
     glyphHeight = static_cast<int>(charSize.Height() + 0.5);
     glyphWidth = static_cast<int>(charSize.Width() + 0.5);
@@ -228,37 +224,41 @@ bool FTTextureFontImpl::FaceSize(const unsigned int size, const unsigned int res
 
 
 template <typename T>
-inline void FTTextureFontImpl::RenderI(const T* string)
+inline FTPoint FTTextureFontImpl::RenderI(const T* string, const int len,
+                                          FTPoint position, FTPoint spacing,
+                                          int renderMode)
 {
+    // Protect GL_TEXTURE_2D, GL_BLEND and blending functions
+    glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
 
+    glEnable(GL_TEXTURE_2D);
+
     FTTextureGlyphImpl::ResetActiveTexture();
 
-    FTFontImpl::Render(string);
+    FTPoint tmp = FTFontImpl::Render(string, len,
+                                     position, spacing, renderMode);
+
+    glPopAttrib();
+
+    return tmp;
 }
 
 
-void FTTextureFontImpl::Render(const char* string)
+FTPoint FTTextureFontImpl::Render(const char * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
 {
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 
 
-void FTTextureFontImpl::Render(const char* string, int renderMode)
+FTPoint FTTextureFontImpl::Render(const wchar_t * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
 {
-    RenderI(string);
-}
-
-
-void FTTextureFontImpl::Render(const wchar_t* string)
-{
-    RenderI(string);
-}
-
-
-void FTTextureFontImpl::Render(const wchar_t* string, int renderMode)
-{
-    RenderI(string);
+    return RenderI(string, len, position, spacing, renderMode);
 }
 

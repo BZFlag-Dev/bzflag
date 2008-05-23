@@ -26,8 +26,10 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <wctype.h>
 
 #include "FTInternals.h"
+#include "FTUnicode.h"
 
 #include "FTGlyphContainer.h"
 #include "FTSimpleLayoutImpl.h"
@@ -38,9 +40,40 @@
 //
 
 
-FTSimpleLayout::FTSimpleLayout()
+FTSimpleLayout::FTSimpleLayout() :
+    FTLayout(new FTSimpleLayoutImpl())
+{}
+
+
+FTSimpleLayout::~FTSimpleLayout()
+{}
+
+
+FTBBox FTSimpleLayout::BBox(const char *string, const int len, FTPoint pos)
 {
-    impl = new FTSimpleLayoutImpl();
+    return dynamic_cast<FTSimpleLayoutImpl*>(impl)->BBox(string, len, pos);
+}
+
+
+FTBBox FTSimpleLayout::BBox(const wchar_t *string, const int len, FTPoint pos)
+{
+    return dynamic_cast<FTSimpleLayoutImpl*>(impl)->BBox(string, len, pos);
+}
+
+
+void FTSimpleLayout::Render(const char *string, const int len, FTPoint pos,
+                            int renderMode)
+{
+    return dynamic_cast<FTSimpleLayoutImpl*>(impl)->Render(string, len, pos,
+                                                           renderMode);
+}
+
+
+void FTSimpleLayout::Render(const wchar_t* string, const int len, FTPoint pos,
+                            int renderMode)
+{
+    return dynamic_cast<FTSimpleLayoutImpl*>(impl)->Render(string, len, pos,
+                                                           renderMode);
 }
 
 
@@ -92,18 +125,6 @@ float FTSimpleLayout::GetLineSpacing() const
 }
 
 
-void FTSimpleLayout::RenderSpace(const char *string, const float ExtraSpace)
-{
-    dynamic_cast<FTSimpleLayoutImpl*>(impl)->RenderSpace(string, ExtraSpace);
-}
-
-
-void FTSimpleLayout::RenderSpace(const wchar_t *string, const float ExtraSpace)
-{
-    dynamic_cast<FTSimpleLayoutImpl*>(impl)->RenderSpace(string, ExtraSpace);
-}
-
-
 //
 //  FTSimpleLayoutImpl
 //
@@ -119,93 +140,68 @@ FTSimpleLayoutImpl::FTSimpleLayoutImpl()
 
 
 template <typename T>
-inline void FTSimpleLayoutImpl::BBoxI(const T* string,
-                                      float& llx, float& lly, float& llz,
-                                      float& urx, float& ury, float& urz)
+inline FTBBox FTSimpleLayoutImpl::BBoxI(const T* string, const int len,
+                                        FTPoint position)
 {
-    FTBBox bounds;
+    FTBBox tmp;
 
-    WrapText(string, 0, &bounds);
-    llx = bounds.Lower().Xf(); lly = bounds.Lower().Yf(); llz = bounds.Lower().Zf();
-    urx = bounds.Upper().Xf(); ury = bounds.Upper().Yf(); urz = bounds.Upper().Zf();
+    WrapText(string, len, position, 0, &tmp);
+
+    return tmp;
 }
 
 
-void FTSimpleLayoutImpl::BBox(const char *string, float& llx, float& lly,
-                              float& llz, float& urx, float& ury, float& urz)
+FTBBox FTSimpleLayoutImpl::BBox(const char *string, const int len,
+                                FTPoint position)
 {
-    BBoxI(string, llx, lly, llz, urx, ury, urz);
+    return BBoxI(string, len, position);
 }
 
 
-void FTSimpleLayoutImpl::BBox(const wchar_t *string, float& llx, float& lly,
-                              float& llz, float& urx, float& ury, float& urz)
+FTBBox FTSimpleLayoutImpl::BBox(const wchar_t *string, const int len,
+                                FTPoint position)
 {
-    BBoxI(string, llx, lly, llz, urx, ury, urz);
+    return BBoxI(string, len, position);
 }
 
 
 template <typename T>
-inline void FTSimpleLayoutImpl::RenderI(const T *string, int renderMode)
+inline void FTSimpleLayoutImpl::RenderI(const T *string, const int len,
+                                        FTPoint position, int renderMode)
 {
     pen = FTPoint(0.0f, 0.0f);
-    WrapText(string, renderMode, NULL);
+    WrapText(string, len, position, renderMode, NULL);
 }
 
 
-void FTSimpleLayoutImpl::Render(const char *string)
+void FTSimpleLayoutImpl::Render(const char *string, const int len,
+                                FTPoint position, int renderMode)
 {
-    RenderI(string, FTGL::RENDER_FRONT | FTGL::RENDER_BACK | FTGL::RENDER_SIDE);
+    RenderI(string, len, position, renderMode);
 }
 
 
-void FTSimpleLayoutImpl::Render(const wchar_t* string)
+void FTSimpleLayoutImpl::Render(const wchar_t* string, const int len,
+                                FTPoint position, int renderMode)
 {
-    RenderI(string, FTGL::RENDER_FRONT | FTGL::RENDER_BACK | FTGL::RENDER_SIDE);
-}
-
-
-void FTSimpleLayoutImpl::Render(const char *string, int renderMode)
-{
-    RenderI(string, renderMode);
-}
-
-
-void FTSimpleLayoutImpl::Render(const wchar_t* string, int renderMode)
-{
-    RenderI(string, renderMode);
-}
-
-
-void FTSimpleLayoutImpl::RenderSpace(const char *string,
-                                     const float ExtraSpace)
-{
-    pen.X(0);
-    pen.Y(0);
-    RenderSpace(string, 0, -1, 0, ExtraSpace);
-}
-
-
-void FTSimpleLayoutImpl::RenderSpace(const wchar_t *string,
-                                     const float ExtraSpace)
-{
-    pen.X(0);
-    pen.Y(0);
-    RenderSpace(string, 0, -1, 0, ExtraSpace);
+    RenderI(string, len, position, renderMode);
 }
 
 
 template <typename T>
-inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, int renderMode,
+inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, const int len,
+                                          FTPoint position, int renderMode,
                                           FTBBox *bounds)
 {
-    int breakIdx = 0;          // index of the last break character
-    int lineStart = 0;         // character index of the line start
+    FTUnicodeStringItr<T> breakItr(buf);          // points to the last break character
+    FTUnicodeStringItr<T> lineStart(buf);         // points to the line start
     float nextStart = 0.0;     // total width of the current line
     float breakWidth = 0.0;    // width of the line up to the last word break
     float currentWidth = 0.0;  // width of all characters on the current line
     float prevWidth;           // width of all characters but the current glyph
     float wordLength = 0.0;    // length of the block since the last break char
+    int charCount = 0;         // number of characters so far on the line
+    int breakCharCount = 0;    // number of characters before the breakItr
     float glyphWidth, advance;
     FTBBox glyphBounds;
 
@@ -219,72 +215,76 @@ inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, int renderMode,
     }
 
     // Scan the input for all characters that need output
-    for(int i = 0; buf[i]; i++)
+    FTUnicodeStringItr<T> prevItr(buf);
+    for (FTUnicodeStringItr<T> itr(buf); *itr; prevItr = itr++, charCount++)
     {
         // Find the width of the current glyph
-        CheckGlyph(currentFont, buf[i]);
-        glyphBounds = GetGlyphs(currentFont)->BBox(buf[i]);
+        glyphBounds = currentFont->BBox(itr.getBufferFromHere(), 1);
         glyphWidth = glyphBounds.Upper().Xf() - glyphBounds.Lower().Xf();
 
-        advance = GetGlyphs(currentFont)->Advance(buf[i], buf[i + 1]);
+        advance = currentFont->Advance(itr.getBufferFromHere(), 1).Xf();
         prevWidth = currentWidth;
         // Compute the width of all glyphs up to the end of buf[i]
         currentWidth = nextStart + glyphWidth;
         // Compute the position of the next glyph
         nextStart += advance;
 
-        // See if buf[i] is a space, a break or a regular character
-        if((currentWidth > lineLength) || (buf[i] == '\n'))
+        // See if the current character is a space, a break or a regular character
+        if((currentWidth > lineLength) || (*itr == '\n'))
         {
             // A non whitespace character has exceeded the line length.  Or a
             // newline character has forced a line break.  Output the last
             // line and start a new line after the break character.
             // If we have not yet found a break, break on the last character
-            if(!breakIdx || (buf[i] == '\n'))
+            if(breakItr == lineStart || (*itr == '\n'))
             {
                 // Break on the previous character
-                breakIdx = i - 1;
+                breakItr = prevItr;
+                breakCharCount = charCount - 1;
                 breakWidth = prevWidth;
                 // None of the previous words will be carried to the next line
                 wordLength = 0;
                 // If the current character is a newline discard its advance
-                if(buf[i] == '\n') advance = 0;
+                if(*itr == '\n') advance = 0;
             }
 
             float remainingWidth = lineLength - breakWidth;
 
             // Render the current substring
+            FTUnicodeStringItr<T> breakChar = breakItr;
+            // move past the break character and don't count it on the next line either
+            ++breakChar; --charCount;
             // If the break character is a newline do not render it
-            if(buf[breakIdx + 1] == '\n')
+            if(*breakChar == '\n')
             {
-                breakIdx++;
-                OutputWrapped(buf, lineStart, breakIdx - 1,
-                              remainingWidth, bounds, renderMode);
-            }
-            else
-            {
-                OutputWrapped(buf, lineStart, breakIdx, remainingWidth, bounds, renderMode);
+                ++breakChar; --charCount;
             }
 
+            OutputWrapped(lineStart.getBufferFromHere(), breakCharCount,
+                          //breakItr.getBufferFromHere() - lineStart.getBufferFromHere(),
+                          position, renderMode, remainingWidth, bounds);
+
             // Store the start of the next line
-            lineStart = breakIdx + 1;
+            lineStart = breakChar;
             // TODO: Is Height() the right value here?
-            pen -= FTPoint(0, GetCharSize(currentFont).Height() * lineSpacing);
+            pen -= FTPoint(0, currentFont->LineHeight() * lineSpacing);
             // The current width is the width since the last break
             nextStart = wordLength + advance;
             wordLength += advance;
             currentWidth = wordLength + advance;
             // Reset the safe break for the next line
-            breakIdx = 0;
+            breakItr = lineStart;
+            charCount -= breakCharCount;
         }
-        else if(isspace(buf[i]))
+        else if(iswspace(*itr))
         {
             // This is the last word break position
             wordLength = 0;
-            breakIdx = i;
+            breakItr = itr;
+            breakCharCount = charCount;
 
             // Check to see if this is the first whitespace character in a run
-            if(!i || !isspace(buf[i - 1]))
+            if(buf == itr.getBufferFromHere() || !iswspace(*prevItr))
             {
                 // Record the width of the start of the block
                 breakWidth = currentWidth;
@@ -302,35 +302,39 @@ inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, int renderMode,
     if(alignment == FTGL::ALIGN_JUSTIFY)
     {
         alignment = FTGL::ALIGN_LEFT;
-        OutputWrapped(buf, lineStart, -1, remainingWidth, bounds, renderMode);
+        OutputWrapped(lineStart.getBufferFromHere(), -1, position, renderMode,
+                      remainingWidth, bounds);
         alignment = FTGL::ALIGN_JUSTIFY;
     }
     else
     {
-        OutputWrapped(buf, lineStart, -1, remainingWidth, bounds, renderMode);
+        OutputWrapped(lineStart.getBufferFromHere(), -1, position, renderMode,
+                      remainingWidth, bounds);
     }
 }
 
 
-void FTSimpleLayoutImpl::WrapText(const char *buf, int renderMode,
+void FTSimpleLayoutImpl::WrapText(const char *buf, const int len,
+                                  FTPoint position, int renderMode,
                                   FTBBox *bounds)
 {
-    WrapTextI(buf, renderMode, bounds);
+    WrapTextI(buf, len, position, renderMode, bounds);
 }
 
 
-void FTSimpleLayoutImpl::WrapText(const wchar_t* buf, int renderMode,
+void FTSimpleLayoutImpl::WrapText(const wchar_t* buf, const int len,
+                                  FTPoint position, int renderMode,
                                   FTBBox *bounds)
 {
-    WrapTextI(buf, renderMode, bounds);
+    WrapTextI(buf, len, position, renderMode, bounds);
 }
 
 
 template <typename T>
-inline void FTSimpleLayoutImpl::OutputWrappedI(const T *buf, const int start,
-                                               const int end,
+inline void FTSimpleLayoutImpl::OutputWrappedI(const T *buf, const int len,
+                                               FTPoint position, int renderMode,
                                                const float remaining,
-                                               FTBBox *bounds, int renderMode)
+                                               FTBBox *bounds)
 {
     float distributeWidth = 0.0;
     // Align the text according as specified by Alignment
@@ -355,104 +359,101 @@ inline void FTSimpleLayoutImpl::OutputWrappedI(const T *buf, const int start,
     // the line.
     if(bounds)
     {
-        float llx, lly, llz, urx, ury, urz;
-        currentFont->BBox(buf, start, end, llx, lly, llz, urx, ury, urz);
+        FTBBox temp = currentFont->BBox(buf, len);
 
         // Add the extra space to the upper x dimension
-        urx += distributeWidth;
-        // TODO: It's a little silly to convert from a FTBBox to floats and
-        // back again, but I don't want to implement yet another method for
-        // finding the bounding box as a BBox.
-        FTBBox temp(llx, lly, llz, urx, ury, urz);
-        temp.Move(FTPoint(pen.X(), pen.Y(), 0.0f));
+        temp = FTBBox(temp.Lower() + pen,
+                      temp.Upper() + pen + FTPoint(distributeWidth, 0));
 
         // See if this is the first area to be added to the bounds
-        if(!bounds->IsValid())
+        if(bounds->IsValid())
         {
-            *bounds = temp;
+            *bounds |= temp;
         }
         else
         {
-            *bounds += temp;
+            *bounds = temp;
         }
     }
     else
     {
-        RenderSpace(buf, start, end, renderMode, distributeWidth);
+        RenderSpace(buf, len, position, renderMode, distributeWidth);
     }
 }
 
 
-void FTSimpleLayoutImpl::OutputWrapped(const char *buf, const int start,
-                                       const int end, const float remaining,
-                                       FTBBox *bounds, int renderMode)
+void FTSimpleLayoutImpl::OutputWrapped(const char *buf, const int len,
+                                       FTPoint position, int renderMode,
+                                       const float remaining, FTBBox *bounds)
 {
-    OutputWrappedI(buf, start, end, remaining, bounds, renderMode);
+    OutputWrappedI(buf, len, position, renderMode, remaining, bounds);
 }
 
 
-void FTSimpleLayoutImpl::OutputWrapped(const wchar_t *buf, const int start,
-                                       const int end, const float remaining,
-                                       FTBBox *bounds, int renderMode)
+void FTSimpleLayoutImpl::OutputWrapped(const wchar_t *buf, const int len,
+                                       FTPoint position, int renderMode,
+                                       const float remaining, FTBBox *bounds)
 {
-    OutputWrappedI(buf, start, end, remaining, bounds, renderMode);
+    OutputWrappedI(buf, len, position, renderMode, remaining, bounds);
 }
 
 
 template <typename T>
-inline void FTSimpleLayoutImpl::RenderSpaceI(const T *string, const int start,
-                                             const int end, int renderMode,
-                                             const float ExtraSpace)
+inline void FTSimpleLayoutImpl::RenderSpaceI(const T *string, const int len,
+                                             FTPoint position, int renderMode,
+                                             const float extraSpace)
 {
     float space = 0.0;
 
     // If there is space to distribute, count the number of spaces
-    if(ExtraSpace > 0.0)
+    if(extraSpace > 0.0)
     {
         int numSpaces = 0;
 
         // Count the number of space blocks in the input
-        for(int i = start; ((end < 0) && string[i])
-                              || ((end >= 0) && (i <= end)); i++)
+        FTUnicodeStringItr<T> prevItr(string), itr(string);
+        for(int i = 0; ((len < 0) && *itr) || ((len >= 0) && (i <= len));
+            ++i, prevItr = itr++)
         {
             // If this is the end of a space block, increment the counter
-            if((i > start) && !isspace(string[i]) && isspace(string[i - 1]))
+            if((i > 0) && !iswspace(*itr) && iswspace(*prevItr))
             {
                 numSpaces++;
             }
         }
 
-        space = ExtraSpace/numSpaces;
+        space = extraSpace/numSpaces;
     }
 
     // Output all characters of the string
-    for(int i = start; ((end < 0) && string[i])
-                          || ((end >= 0) && (i <= end)); i++)
+    FTUnicodeStringItr<T> prevItr(string), itr(string);
+    for(int i = 0; ((len < 0) && *itr) || ((len >= 0) && (i <= len));
+        ++i, prevItr = itr++)
     {
         // If this is the end of a space block, distribute the extra space
         // inside it
-        if((i > start) && !isspace(string[i]) && isspace(string[i - 1]))
+        if((i > 0) && !iswspace(*itr) && iswspace(*prevItr))
         {
             pen += FTPoint(space, 0);
         }
 
-        DoRender(currentFont, string[i], string[i + 1], renderMode);
+        pen = currentFont->Render(itr.getBufferFromHere(), 1, pen, FTPoint(), renderMode);
     }
 }
 
 
-void FTSimpleLayoutImpl::RenderSpace(const char *string, const int start,
-                                     const int end, int renderMode,
-                                     const float ExtraSpace)
+void FTSimpleLayoutImpl::RenderSpace(const char *string, const int len,
+                                     FTPoint position, int renderMode,
+                                     const float extraSpace)
 {
-    RenderSpaceI(string, start, end, renderMode, ExtraSpace);
+    RenderSpaceI(string, len, position, renderMode, extraSpace);
 }
 
 
-void FTSimpleLayoutImpl::RenderSpace(const wchar_t *string, const int start,
-                                     const int end, int renderMode,
-                                     const float ExtraSpace)
+void FTSimpleLayoutImpl::RenderSpace(const wchar_t *string, const int len,
+                                     FTPoint position, int renderMode,
+                                     const float extraSpace)
 {
-    RenderSpaceI(string, start, end, renderMode, ExtraSpace);
+    RenderSpaceI(string, len, position, renderMode, extraSpace);
 }
 

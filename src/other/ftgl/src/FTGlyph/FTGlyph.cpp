@@ -36,24 +36,21 @@
 //
 
 
-FTGlyph::FTGlyph()
+FTGlyph::FTGlyph(FT_GlyphSlot glyph)
 {
-    /* impl is set by the child class */
-    impl = NULL;
+    impl = new FTGlyphImpl(glyph);
+}
+
+
+FTGlyph::FTGlyph(FTGlyphImpl *pImpl)
+{
+    impl = pImpl;
 }
 
 
 FTGlyph::~FTGlyph()
 {
-    /* Only the top class should be allowed to destroy impl, because
-     * we do not know how many levels of inheritance there are. */
     delete impl;
-}
-
-
-const FTPoint& FTGlyph::Render(const FTPoint& pen, int renderMode)
-{
-    return impl->Render(pen, renderMode);
 }
 
 

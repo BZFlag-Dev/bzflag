@@ -59,6 +59,14 @@ class FTGL_EXPORT FTBBox
         {}
 
         /**
+         * Constructor.
+         */
+        FTBBox(FTPoint l, FTPoint u)
+        :   lower(l),
+            upper(u)
+        {}
+
+        /**
          * Constructor. Extracts a bounding box from a freetype glyph. Uses
          * the control box for the glyph. <code>FT_Glyph_Get_CBox()</code>
          *
@@ -111,16 +119,23 @@ class FTGL_EXPORT FTBBox
         /**
          * Move the Bounding Box by a vector.
          *
-         * @param distance The distance to move the bbox in 3D space.
+         * @param vector  The vector to move the bbox in 3D space.
          */
-        FTBBox& Move(FTPoint distance)
+        FTBBox& operator += (const FTPoint vector)
         {
-            lower += distance;
-            upper += distance;
+            lower += vector;
+            upper += vector;
+
             return *this;
         }
 
-        FTBBox& operator += (const FTBBox& bbox)
+        /**
+         * Combine two bounding boxes. The result is the smallest bounding
+         * box containing the two original boxes.
+         *
+         * @param bbox  The bounding box to merge with the second one.
+         */
+        FTBBox& operator |= (const FTBBox& bbox)
         {
             if(bbox.lower.X() < lower.X()) lower.X(bbox.lower.X());
             if(bbox.lower.Y() < lower.Y()) lower.Y(bbox.lower.Y());
@@ -134,7 +149,10 @@ class FTGL_EXPORT FTBBox
 
         void SetDepth(float depth)
         {
-            upper.Z(lower.Z() + depth);
+            if(depth > 0)
+                upper.Z(lower.Z() + depth);
+            else
+                lower.Z(upper.Z() + depth);
         }
 
 

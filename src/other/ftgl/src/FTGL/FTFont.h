@@ -55,12 +55,41 @@ class FTFontImpl;
  */
 class FTGL_EXPORT FTFont
 {
-        /* Allow FTLayout classes to access this->impl. */
-        friend class FTLayoutImpl;
-        friend class FTFontImpl;
-
     protected:
-        FTFont();
+        /**
+         * Open and read a font file. Sets Error flag.
+         *
+         * @param fontFilePath  font file path.
+         */
+        FTFont(char const *fontFilePath);
+
+        /**
+         * Open and read a font from a buffer in memory. Sets Error flag.
+         * The buffer is owned by the client and is NOT copied by FTGL. The
+         * pointer must be valid while using FTGL.
+         *
+         * @param pBufferBytes  the in-memory buffer
+         * @param bufferSizeInBytes  the length of the buffer in bytes
+         */
+        FTFont(const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
+
+    private:
+        /* Allow our internal subclasses to access the private constructor */
+        friend class FTBitmapFont;
+        friend class FTBufferFont;
+        friend class FTExtrudeFont;
+        friend class FTOutlineFont;
+        friend class FTPixmapFont;
+        friend class FTPolygonFont;
+        friend class FTTextureFont;
+
+        /**
+         * Internal FTGL FTFont constructor. For private use only.
+         *
+         * @param pImpl  Internal implementation object. Will be destroyed
+         *               upon FTFont deletion.
+         */
+        FTFont(FTFontImpl *pImpl);
 
     public:
         virtual ~FTFont();
@@ -74,7 +103,7 @@ class FTGL_EXPORT FTFont
          * @return          <code>true</code> if file has been attached
          *                  successfully.
          */
-        bool Attach(const char* fontFilePath);
+        virtual bool Attach(const char* fontFilePath);
 
         /**
          * Attach auxilliary data to font e.g font metrics, from memory.
@@ -86,8 +115,8 @@ class FTGL_EXPORT FTFont
          * @return          <code>true</code> if file has been attached
          *                  successfully.
          */
-        bool Attach(const unsigned char *pBufferBytes,
-                    size_t bufferSizeInBytes);
+        virtual bool Attach(const unsigned char *pBufferBytes,
+                            size_t bufferSizeInBytes);
 
         /**
          * Set the character map for the face.
@@ -96,21 +125,21 @@ class FTGL_EXPORT FTFont
          * @return              <code>true</code> if charmap was valid and
          *                      set correctly.
          */
-        bool CharMap(FT_Encoding encoding);
+        virtual bool CharMap(FT_Encoding encoding);
 
         /**
          * Get the number of character maps in this face.
          *
          * @return character map count.
          */
-        unsigned int CharMapCount();
+        virtual unsigned int CharMapCount() const;
 
         /**
          * Get a list of character maps in this face.
          *
          * @return pointer to the first encoding.
          */
-        FT_Encoding* CharMapList();
+        virtual FT_Encoding* CharMapList();
 
         /**
          * Set the char size for the current face.
@@ -119,14 +148,15 @@ class FTGL_EXPORT FTFont
          * @param res       the resolution of the target device.
          * @return          <code>true</code> if size was set correctly
          */
-        bool FaceSize(const unsigned int size, const unsigned int res = 72);
+        virtual bool FaceSize(const unsigned int size,
+                              const unsigned int res = 72);
 
         /**
          * Get the current face size in points (1/72 inch).
          *
          * @return face size
          */
-        unsigned int FaceSize() const;
+        virtual unsigned int FaceSize() const;
 
         /**
          * Set the extrusion distance for the font. Only implemented by
@@ -134,7 +164,7 @@ class FTGL_EXPORT FTFont
          *
          * @param depth  The extrusion distance.
          */
-        void Depth(float depth);
+        virtual void Depth(float depth);
 
         /**
          * Set the outset distance for the font. Only implemented by
@@ -142,7 +172,7 @@ class FTGL_EXPORT FTFont
          *
          * @param outset  The outset distance.
          */
-        void Outset(float outset);
+        virtual void Outset(float outset);
 
         /**
          * Set the front and back outset distances for the font. Only
@@ -151,7 +181,7 @@ class FTGL_EXPORT FTFont
          * @param front  The front outset distance.
          * @param back   The back outset distance.
          */
-        void Outset(float front, float back);
+        virtual void Outset(float front, float back);
 
         /**
          * Enable or disable the use of Display Lists inside FTGL
@@ -159,151 +189,178 @@ class FTGL_EXPORT FTFont
          * @param  useList <code>true</code> turns ON display lists.
          *                 <code>false</code> turns OFF display lists.
          */
-        void UseDisplayList(bool useList);
+        virtual void UseDisplayList(bool useList);
 
         /**
          * Get the global ascender height for the face.
          *
          * @return  Ascender height
          */
-        float Ascender() const;
+        virtual float Ascender() const;
 
         /**
          * Gets the global descender height for the face.
          *
          * @return  Descender height
          */
-        float Descender() const;
+        virtual float Descender() const;
 
         /**
          * Gets the line spacing for the font.
          *
          * @return  Line height
          */
-        float LineHeight() const;
+        virtual float LineHeight() const;
 
         /**
          * Get the bounding box for a string.
          *
-         * @param string    a char buffer
-         * @param start     The index of the first character of string
-         *                  to check.
-         * @param end       The index of the last character of string to
-         *                  check.  If < 0 then characters will be parsed
-         *                  until a '@\0' is encountered.
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
+         * @param string  A char buffer.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been checked (optional).
+         * @return  The corresponding bounding box.
          */
-        void BBox(const char *string, const int start, const int end,
-                  float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
+        virtual FTBBox BBox(const char *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            FTPoint spacing = FTPoint());
 
         /**
-         * Get the bounding box for a string.
+         * Get the bounding box for a string (deprecated).
          *
-         * @param string    a wchar_t buffer
-         * @param start     The index of the first character of string
-         *                  to check.
-         * @param end       The index of the last character of string
-         *                  to check.    If < 0 then characters will
-         *                  be parsed until a '@\0' is encountered.
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
-         */
-        void BBox(const wchar_t *string, const int start, const int end,
-                  float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
-
-        /**
-         * Get the bounding box for a string.
-         *
-         * @param string    a char string
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
+         * @param string  A char buffer.
+         * @param llx  Lower left near x coordinate.
+         * @param lly  Lower left near y coordinate.
+         * @param llz  Lower left near z coordinate.
+         * @param urx  Upper right far x coordinate.
+         * @param ury  Upper right far y coordinate.
+         * @param urz  Upper right far z coordinate.
          */
         void BBox(const char* string, float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
+                  float& urx, float& ury, float& urz)
+        {
+            FTBBox b = BBox(string);
+            llx = b.Lower().Xf(); lly = b.Lower().Yf(); llz = b.Lower().Zf();
+            urx = b.Upper().Xf(); ury = b.Upper().Yf(); urz = b.Upper().Zf();
+        }
 
         /**
          * Get the bounding box for a string.
          *
-         * @param string    a wchar_t string
-         * @param llx       lower left near x coord
-         * @param lly       lower left near y coord
-         * @param llz       lower left near z coord
-         * @param urx       upper right far x coord
-         * @param ury       upper right far y coord
-         * @param urz       upper right far z coord
+         * @param string  A wchar_t buffer.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been checked (optional).
+         * @return  The corresponding bounding box.
+         */
+        virtual FTBBox BBox(const wchar_t *string, const int len = -1,
+                            FTPoint position = FTPoint(),
+                            FTPoint spacing = FTPoint());
+
+        /**
+         * Get the bounding box for a string (deprecated).
+         *
+         * @param string  A wchar_t buffer.
+         * @param llx  Lower left near x coordinate.
+         * @param lly  Lower left near y coordinate.
+         * @param llz  Lower left near z coordinate.
+         * @param urx  Upper right far x coordinate.
+         * @param ury  Upper right far y coordinate.
+         * @param urz  Upper right far z coordinate.
          */
         void BBox(const wchar_t* string, float& llx, float& lly, float& llz,
-                  float& urx, float& ury, float& urz);
+                  float& urx, float& ury, float& urz)
+        {
+            FTBBox b = BBox(string);
+            llx = b.Lower().Xf(); lly = b.Lower().Yf(); llz = b.Lower().Zf();
+            urx = b.Upper().Xf(); ury = b.Upper().Yf(); urz = b.Upper().Zf();
+        }
 
         /**
-         * Get the advance width for a string.
+         * Get the advance for a string.
          *
-         * @param string    a wchar_t string
-         * @return      advance width
+         * @param string  'C' style string to be checked.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been checked (optional).
+         * @return  The new pen position after the last character.
          */
-        float Advance(const wchar_t* string);
+        virtual FTPoint Advance(const char* string, const int len = -1,
+                                FTPoint position = FTPoint(),
+                                FTPoint spacing = FTPoint());
 
         /**
-         * Get the advance width for a string.
+         * Get the advance for a string.
          *
-         * @param string    a char string
-         * @return      advance width
+         * @param string  A wchar_t string
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be checked until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been checked (optional).
+         * @return  The new pen position after the last character.
          */
-        float Advance(const char* string);
+        virtual FTPoint Advance(const wchar_t* string, const int len = -1,
+                                FTPoint position = FTPoint(),
+                                FTPoint spacing = FTPoint());
 
         /**
-         * Render a string of characters
+         * Render a string of characters.
          *
-         * @param string    'C' style string to be output.
+         * @param string  'C' style string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been displayed (optional).
+         * @param renderMode  Render mode to use for display (optional).
+         * @return  The new pen position after the last character was output.
          */
-        void Render(const char* string);
-
-        /**
-         * Render a string of characters
-         *
-         * @param string    'C' style string to be output.
-         * @param renderMode    Render mode to display
-         */
-        void Render(const char* string, int renderMode);
+        virtual FTPoint Render(const char* string, const int len = -1,
+                               FTPoint position = FTPoint(),
+                               FTPoint spacing = FTPoint(),
+                               int renderMode = FTGL::RENDER_ALL);
 
         /**
          * Render a string of characters
          *
          * @param string    wchar_t string to be output.
+         * @param len  The length of the string. If < 0 then all characters
+         *             will be displayed until a null character is encountered
+         *             (optional).
+         * @param position  The pen position of the first character (optional).
+         * @param spacing  A displacement vector to add after each character
+         *                 has been displayed (optional).
+         * @param renderMode  Render mode to use for display (optional).
+         * @return  The new pen position after the last character was output.
          */
-        void Render(const wchar_t* string);
-
-        /**
-         * Render a string of characters
-         *
-         * @param string    wchar_t string to be output.
-         * @param renderMode    Render mode to display
-         */
-        void Render(const wchar_t *string, int renderMode);
+        virtual FTPoint Render(const wchar_t *string, const int len = -1,
+                               FTPoint position = FTPoint(),
+                               FTPoint spacing = FTPoint(),
+                               int renderMode = FTGL::RENDER_ALL);
 
         /**
          * Queries the Font for errors.
          *
          * @return  The current error code.
          */
-        FT_Error Error() const;
+        virtual FT_Error Error() const;
 
     protected:
+        /* Allow impl to access MakeGlyph */
+        friend class FTFontImpl;
+
         /**
          * Construct a glyph of the correct type.
          *
@@ -315,6 +372,10 @@ class FTGL_EXPORT FTFont
          */
         virtual FTGlyph* MakeGlyph(FT_GlyphSlot slot) = 0;
 
+    private:
+        /**
+         * Internal FTGL FTFont implementation object. For private use only.
+         */
         FTFontImpl *impl;
 };
 
@@ -331,6 +392,18 @@ FTGL_BEGIN_C_DECLS
  */
 struct _FTGLFont;
 typedef struct _FTGLfont FTGLfont;
+
+/**
+ * Create a custom FTGL font object.
+ *
+ * @param fontFilePath  The font file name.
+ * @param data  A pointer to private data that will be passed to callbacks.
+ * @param makeglyphCallback  A glyph-making callback function.
+ * @return  An FTGLfont* object.
+ */
+FTGL_EXPORT FTGLfont *ftglCreateCustomFont(char const *fontFilePath,
+                                           void *data,
+                   FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *));
 
 /**
  * Destroy an FTGL font object.
@@ -466,14 +539,13 @@ FTGL_EXPORT float ftglGetFontLineHeight(FTGLfont* font);
  *
  * @param font  An FTGLfont* object.
  * @param string  A char buffer
- * @param start  The index of the first character of string to check.
- * @param end  The index of the last character of string to check.  If < 0
-               then characters will be parsed until a '@\0' is encountered.
+ * @param len  The length of the string. If < 0 then all characters will be
+ *             checked until a null character is encountered (optional).
  * @param bounds  An array of 6 float values where the bounding box's lower
  *                left near and upper right far 3D coordinates will be stored.
  */
 FTGL_EXPORT void ftglGetFontBBox(FTGLfont* font, const char *string,
-                                 int start, int end, float bounds[6]);
+                                 int len, float bounds[6]);
 
 /**
  * Get the advance width for a string.
