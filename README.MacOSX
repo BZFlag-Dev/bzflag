@@ -63,6 +63,9 @@ located in your /Applications/Utilities folder) and run the following:
 
 ./autogen.sh && ./configure && make
 
+(Note: If running OS 10.5, you will need to provide the
+--enable-freetype-build argument to configure)
+
 Alternatively, you may compile using the provided XCode project, which
 should result in a BZFlag application in the generated "build" folder
 if there were no compilation errors.
