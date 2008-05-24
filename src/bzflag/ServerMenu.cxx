@@ -32,7 +32,7 @@ const int ServerMenu::NumItems = 10;
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 0) switch (key.button) {
+  if (key.chr == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
 	if (!menu->getFind())
@@ -71,49 +71,51 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   }
 
-  else if (key.ascii == '\t') {
+  else if (key.chr == '\t') {
     if (HUDui::getFocus()) {
       menu->setSelected(menu->getSelected() + 1);
     }
     return true;
   }
 
-  else if (key.ascii == '/') {
+  else if (key.chr == '/') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFind(true);
       return true;
     }
   }
 
-  else if (key.ascii == 'f') {
+  // TODO: not localizable
+  else if (key.chr == 'f') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->toggleFavView();
       return true;
     }
   }
 
-  else if (key.ascii == '+') {
+  else if (key.chr == '+') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(true);
       return true;
     }
   }
 
-  else if (key.ascii == '-') {
+  else if (key.chr == '-') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(false);
       return true;
     }
   }
   
-  else if (key.ascii == 'p') {
+  // TODO: not localizable
+  else if (key.chr == 'p') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->pingServer(menu->getSelected());
       return true;
     }
   }
 
-  else if (key.ascii == 27) {
+  else if (key.chr == 27) {
     if (HUDui::getFocus()) {
       // escape drops out of find mode
       // note that this is handled by MenuDefaultKey if we're not in find mode
@@ -136,7 +138,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     case BzfKeyEvent::PageDown:
       return true;
   }
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
     case 13:	// return
       return true;

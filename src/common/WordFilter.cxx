@@ -23,6 +23,7 @@
 #  include "TimeKeeper.h"
 #endif
 
+// TODO: wordfilter is no good for multibyte strings
 
 /* private */
 

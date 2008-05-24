@@ -31,7 +31,7 @@ const int FormatMenu::NumColumns = 3;
 
 bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 0) switch (key.button) {
+  if (key.chr == 0) switch (key.button) {
     case BzfKeyEvent::PageUp:
       if (HUDui::getFocus()) {
 	menu->setPage(menu->page - 1);
@@ -44,7 +44,8 @@ bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
       }
       return true;
 
-  } else if (key.ascii == 'T' || key.ascii == 't') {
+  // TODO: not localizable
+  } else if (key.chr == 'T' || key.chr == 't') {
     menu->setFormat(true);
     return true;
   }
@@ -58,7 +59,7 @@ bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     case BzfKeyEvent::PageDown:
       return true;
   }
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
     case 13:	// return
     case 'T':

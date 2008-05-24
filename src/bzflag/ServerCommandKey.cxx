@@ -329,7 +329,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       return true;
   }
 
-  switch (key.ascii) {
+  switch (key.chr) {
     case 3:	// ^C
     case 27:	// escape
       // case 127:   // delete

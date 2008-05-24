@@ -35,7 +35,8 @@ extern std::string alternateConfig;
 
 bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 'Y' || key.ascii == 'y') {
+  // TODO: not localizable
+  if (key.chr == 'Y' || key.chr == 'y') {
     CommandsStandard::quit();
     return true;
   }
@@ -44,7 +45,7 @@ bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
 bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  if (key.ascii == 'Y' || key.ascii == 'y')
+  if (key.chr == 'Y' || key.chr == 'y')
     return true;
   return MenuDefaultKey::keyRelease(key);
 }

@@ -35,7 +35,7 @@ MenuDefaultKey* MenuDefaultKey::getInstance()
 
 bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
       playLocalSound(SFX_DROP_FLAG);
       HUDDialogStack::get()->pop();
@@ -57,7 +57,7 @@ bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
 bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
     case 13:	// return
       return true;

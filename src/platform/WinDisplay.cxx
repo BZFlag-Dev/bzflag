@@ -11,6 +11,9 @@
  */
 #define _WIN32_WINDOWS 0x0500
 
+// in this file at least, we want wide-character functionality
+#define UNICODE
+
 #include "WinDisplay.h"
 #include "WinWindow.h"
 #include "resource.h"
@@ -67,7 +70,7 @@ WinDisplay::Rep::Rep(const char*) : refCount(1),
   wc.hCursor		= LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground	= (HBRUSH)GetStockObject(NULL_BRUSH);
   wc.lpszMenuName	= NULL;
-  wc.lpszClassName	= "BZFLAG";
+  wc.lpszClassName	= L"BZFLAG";
   wc.hIconSm		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BZICON));
 
   if (RegisterClassEx(&wc) == 0)
@@ -203,7 +206,7 @@ WinDisplay::~WinDisplay()
 
 void WinDisplay::error ( const char* title, const char* message )
 {
-  MessageBox(hwnd,message,title,MB_OK | MB_ICONERROR | MB_TASKMODAL);
+  MessageBoxA(hwnd,message,title,MB_OK | MB_ICONERROR | MB_TASKMODAL);
 }
 
 bool			WinDisplay::isFullScreenOnly() const
@@ -273,7 +276,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		event.type = BzfEvent::KeyDown;
-		event.keyDown.ascii = 0;
+		event.keyDown.chr = 0;
 		event.keyDown.shift = 0;
 		switch (msg.message) {
 	case WM_LBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::LeftMouse; break;
@@ -287,7 +290,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 		event.type = BzfEvent::KeyUp;
-		event.keyUp.ascii = 0;
+		event.keyUp.chr = 0;
 		event.keyUp.shift = 0;
 		switch (msg.message) {
 	case WM_LBUTTONUP:	event.keyUp.button = BzfKeyEvent::LeftMouse; break;
@@ -300,7 +303,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MOUSEWHEEL:{
 
 		event.type = BzfEvent::KeyDown;
-		event.keyDown.ascii = 0;
+		event.keyDown.chr = 0;
 		event.keyDown.shift = 0;
 
 		if (LOWORD(msg.wParam) == MK_SHIFT)
@@ -379,7 +382,7 @@ bool			WinDisplay::getKey(const MSG& msg,
     if (PeekMessage(&cmsg, NULL, 0, 0, PM_NOREMOVE) &&
 	(cmsg.message == WM_CHAR || cmsg.message == WM_SYSCHAR)) {
       GetMessage(&cmsg, NULL, 0, 0);
-      ((WinDisplay*)this)->charCode = (char)(TCHAR)cmsg.wParam;
+      ((WinDisplay*)this)->charCode = cmsg.wParam;
     }
     else {
       ((WinDisplay*)this)->charCode = 0;
@@ -387,14 +390,14 @@ bool			WinDisplay::getKey(const MSG& msg,
   }
 
   if (charCode != 0)
-    key.ascii = charCode;
+    key.chr = charCode;
   else if ((GetKeyState(VK_SHIFT) < 0) == (GetKeyState(VK_CAPITAL) < 0))
-    key.ascii = asciiMap[(int)msg.wParam];
+    key.chr = asciiMap[(int)msg.wParam];
   else
-    key.ascii = asciiShiftMap[(int)msg.wParam];
+    key.chr = asciiShiftMap[(int)msg.wParam];
   key.button = buttonMap[(int)msg.wParam];
-  if (key.button == BzfKeyEvent::Delete) key.ascii = 0;
-  return (key.ascii != 0 || key.button != 0);
+  if (key.button == BzfKeyEvent::Delete) key.chr = 0;
+  return (key.chr != 0 || key.button != 0);
 }
 
 bool			WinDisplay::isNastyKey(const MSG& msg) const

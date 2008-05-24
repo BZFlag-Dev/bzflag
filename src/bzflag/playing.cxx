@@ -582,7 +582,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   keyboardMovement = None;
   shiftKeyStatus   = key.shift;
   const std::string cmd = KEYMGR.get(key, pressed);
-  if (key.ascii == 27) {
+  if (key.chr == 27) {
     if (pressed) {
       mainMenu->createControls();
       HUDDialogStack::get()->push(mainMenu);
@@ -665,7 +665,8 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 
   {
     // built-in unchangeable keys.  only perform if not masked.
-    switch (key.ascii) {
+    // TODO: not localizable
+    switch (key.chr) {
       case 'T':
       case 't':
 	// toggle frames-per-second display
@@ -741,7 +742,7 @@ static void doKeyNotPlaying(const BzfKeyEvent&, bool, bool)
 static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 {
 #if defined(FREEZING)
-  if (key.ascii == '`' && pressed && !haveBinding && key.shift) {
+  if (key.chr == '`' && pressed && !haveBinding && key.shift) {
     // toggle motion freeze
     motionFreeze = !motionFreeze;
     if (motionFreeze) {
@@ -751,7 +752,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
   }
 #endif
 
-  if (key.ascii == 0 &&
+  if (key.chr == 0 &&
     key.button >= BzfKeyEvent::F1 &&
     key.button <= BzfKeyEvent::F10 &&
     (key.shift & (BzfKeyEvent::ControlKey +
@@ -1439,7 +1440,7 @@ int curlProgressFunc(void* /*clientp*/,
 	return 1; // terminate the curl call
       case BzfEvent::KeyDown:
 	display->getEvent(event); // flush the event
-	if (event.keyDown.ascii == 27) {
+	if (event.keyDown.chr == 27) {
 	  return 1; // terminate the curl call
 	}
 	break;
@@ -6467,7 +6468,7 @@ void handleJoyStick ( void )
       if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	BzfKeyEvent ev;
 	ev.button = button_map[j];
-	ev.ascii = 0;
+	ev.chr = 0;
 	ev.shift = 0;
 	doKey(ev, (new_buttons & (1<<j)) != 0);
       }
@@ -6498,7 +6499,7 @@ void handleJoyStick ( void )
 	if (((old_direction[j] ^ hat_direction) & mask) != 0) {
 	  BzfKeyEvent ev;
 	  ev.button = hatswitch_map[j * 4 + k];
-	  ev.ascii = 0;
+	  ev.chr = 0;
 	  ev.shift = 0;
 	  doKey(ev, (hat_direction & mask) != 0);
 	}

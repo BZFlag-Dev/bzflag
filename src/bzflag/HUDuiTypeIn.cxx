@@ -18,6 +18,7 @@
 
 // common implementation headers
 #include "FontManager.h"
+#include "bzUnicode.h"
 
 //
 // HUDuiTypeIn
@@ -80,7 +81,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return true;
 
   if (!allowEdit) return false; //or return true ??
-  char c = key.ascii;
+  unsigned int c = key.chr;
   if (c == 0) switch (key.button) {
     case BzfKeyEvent::Left:
       if (cursorPos > 0)
@@ -117,20 +118,22 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return false;
   }
 
-  if (!isprint(c) && c != backspace)
+  if (!iswprint(c) && c != backspace)
     return false;
 
   if (c == backspace) {
     if (cursorPos == 0) goto noRoom;
 
     cursorPos--;
+    // TODO: this ain't gonna work for multibyte
     string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
   } else {
-    if (isspace(c)) c = whitespace;
-    if ((int)string.length() == maxLength) goto noRoom;
+    if (iswspace(c)) c = whitespace;
+    if ((int)string.length() >= maxLength) goto noRoom;
 
-    string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
+    UTF8Char ch(c);
+    string = string.substr(0, cursorPos) + ch.str() + string.substr( cursorPos, string.length() - cursorPos);
     cursorPos++;
     onSetFont();
   }
@@ -143,7 +146,7 @@ noRoom:
 
 bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
-  if (key.ascii == '\t' || !isprint(key.ascii))	// ignore non-printing and tab
+  if (key.chr == '\t' || !iswprint(key.chr))	// ignore non-printing and tab
     return false;
 
   // slurp up releases

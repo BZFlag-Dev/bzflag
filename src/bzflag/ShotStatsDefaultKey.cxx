@@ -35,7 +35,7 @@ ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
 bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   // special keys to get out
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
       HUDDialogStack::get()->pop();
       return true;

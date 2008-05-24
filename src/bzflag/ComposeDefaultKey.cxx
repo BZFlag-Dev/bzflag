@@ -33,8 +33,8 @@ unsigned int	messageHistoryIndex = 0;
 
 static bool isWordCompletion(const BzfKeyEvent& key)
 {
-  if ((key.ascii == 6) || // ^F
-      (key.ascii == 9) || // <TAB>
+  if ((key.chr == 6) || // ^F
+      (key.chr== 9) || // <TAB>
       ((key.shift == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
   } else {
@@ -68,7 +68,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
-  switch (key.ascii) {
+  switch (key.chr) {
     case 3:	// ^C
     case 27: {	// escape
       sendIt = false;			// finished composing -- don't send
@@ -164,9 +164,9 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
     }
   }
 
-  if ((key.ascii == 4) || // ^D
-      (key.ascii == 6) || // ^F
-      (key.ascii == 13) || // return
+  if ((key.chr == 4) || // ^D
+      (key.chr == 6) || // ^F
+      (key.chr == 13) || // return
       isWordCompletion(key)) {
     return true;
   }

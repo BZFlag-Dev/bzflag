@@ -16,6 +16,9 @@
 // system headers
 #include <ctype.h>
 
+// local implementation headers
+#include "bzUnicode.h"
+
 
 LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
 
@@ -39,9 +42,12 @@ bool LocalCommand::execute(const char *commandLine)
 {
   if (!mapOfCommands)
     return false;
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++);
-  std::string commandToken(commandLine, i);
+
+  UTF8StringItr ustr(commandLine);
+  while ((*ustr) && !iswspace(*ustr))
+    ++ustr;
+
+  std::string commandToken(commandLine, ustr.getBufferFromHere());
 
   std::map<std::string, LocalCommand *>::iterator it
     = (*mapOfCommands).find(commandToken);

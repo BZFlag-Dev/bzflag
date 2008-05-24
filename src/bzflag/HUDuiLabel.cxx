@@ -71,7 +71,7 @@ bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
   if (HUDuiControl::doKeyPress(key))
     return true;
 
-  switch (key.ascii) {
+  switch (key.chr) {
     case 13:
     case 27:
     case 0:

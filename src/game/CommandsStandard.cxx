@@ -233,7 +233,7 @@ static std::string		cmdBind(const std::string&,
   }
 
   // ignore attempts to modify Esc.  we reserve that for the menu
-  if (key.ascii != 27)
+  if (key.chr != 27)
     KEYMGR.bind(key, down, cmd);
 
   return std::string();
@@ -257,8 +257,7 @@ static std::string		cmdUnbind(const std::string&,
   else
     return std::string("bind error: illegal state \"") + args[1] + "\"";
 
-  if (key_event.ascii != 27)
-    KEYMGR.unbind(key_event, down);
+  KEYMGR.unbind(key_event, down);
 
   return std::string();
 }
