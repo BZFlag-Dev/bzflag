@@ -323,7 +323,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
+		translated = (bool)(TranslateMessage(&msg) != 0);
 		if (!translated) ((WinDisplay*)this)->charCode = 0;
 		if (isNastyKey(msg)) return false;
 		DispatchMessage(&msg);
@@ -333,13 +333,13 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 
 	case WM_KEYUP:
 	case WM_SYSKEYUP: {
-		((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
+		translated = (bool)(TranslateMessage(&msg) != 0);
 		if (isNastyKey(msg)) return false;
 		DispatchMessage(&msg);
 		event.type = BzfEvent::KeyUp;
 		if (!getKey(msg, event.keyUp)) return false;
 		break;
-					  }
+	}
 
 	default:
 		TranslateMessage(&msg);
@@ -369,6 +369,10 @@ void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
   alt   = (GetKeyState(VK_MENU) < 0);
 }
 
+#define UNICODE_IS_HIGH_SURROGATE(ch) ((ch) >= 0xD800 && (ch) <= 0xDBFF)
+#define UNICODE_IS_LOW_SURROGATE(ch) ((ch) >= 0xDC00 && (ch) <= 0xDFFF)
+#define UNICODE_SURROGATE_TO_UTF32(ch, cl) (((ch) - 0xD800) * 0x400 + ((cl) - 0xDC00) + 0x10000)
+
 bool			WinDisplay::getKey(const MSG& msg,
 					BzfKeyEvent& key) const
 {
@@ -382,10 +386,13 @@ bool			WinDisplay::getKey(const MSG& msg,
     if (PeekMessage(&cmsg, NULL, 0, 0, PM_NOREMOVE) &&
 	(cmsg.message == WM_CHAR || cmsg.message == WM_SYSCHAR)) {
       GetMessage(&cmsg, NULL, 0, 0);
-      ((WinDisplay*)this)->charCode = cmsg.wParam;
+      // charCode is in UTF-16, so convert it to a codepoint
+      charCode = cmsg.wParam;
+      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) && UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF))
+	charCode = UNICODE_SURROGATE_TO_UTF32(charCode >> 16, charCode & 0xFFFF);
     }
     else {
-      ((WinDisplay*)this)->charCode = 0;
+      charCode = 0;
     }
   }
 
