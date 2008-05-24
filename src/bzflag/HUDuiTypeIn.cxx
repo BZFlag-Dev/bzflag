@@ -170,7 +170,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     while (*cusi) ++cusi;
     if (cusi.getCount() >= maxLength) goto noRoom;
 
-    UTF8Char ch(c);
+    bzUTF8Char ch(c);
     int pos = (int)(cursorPos.getBufferFromHere() - string.c_str());
     // copy to the current cursor location
     std::string temp = string.substr(0, pos);
