@@ -145,6 +145,12 @@ Platform (Windows)
   directory further down this list in that the sky teleport is on regular box,
   not mesh, and it localized the bug to windows builds currently. But could
   obviously be related.  @ r16889 -spldart-
+
+* Client f12 'quick quit' is not working. Win XP Pro SP3, VC8, r17245 -spldart-
+
+* Client stalls at 'got token ######' and continues to hear and see other clients,
+  linux based, playing but not joining itself. Win XP Pro SP3, VC8, r17245
+  -spldart-
    
 Platform (SDL)
 --------------
