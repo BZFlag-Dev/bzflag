@@ -101,6 +101,8 @@ public:
       return ret;
     }
 
+    virtual ~UTF8StringItr() {};     
+
 private:
     /**
      * The buffer position of the first element in the current character.
