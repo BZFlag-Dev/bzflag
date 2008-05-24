@@ -26,7 +26,33 @@
 /* common interface headers */
 #include "BzfEvent.h"
 #include "HUDuiControl.h"
+#include "bzUnicode.h"
 
+// wrapper just for HUDuiTypeIn
+class CountUTF8StringItr : public UTF8StringItr
+{
+public:
+  CountUTF8StringItr(const char* string) :
+    counter(0), UTF8StringItr(string) {}
+
+  inline CountUTF8StringItr& operator++()
+  {
+    counter++;
+    UTF8StringItr::operator++();
+    return (*this);
+  }
+
+  inline void operator=(const char* value)
+  {
+    counter = 0;
+    UTF8StringItr::operator=(value);
+  }
+
+  inline int getCount() const { return counter; }
+
+private:
+  int counter;
+};
 
 class HUDuiTypeIn : public HUDuiControl {
   public:
@@ -49,7 +75,7 @@ class HUDuiTypeIn : public HUDuiControl {
   private:
     int			maxLength;
     std::string		string;
-    int			cursorPos;
+    CountUTF8StringItr	cursorPos;
     bool		allowEdit;
     bool		obfuscate;
 };

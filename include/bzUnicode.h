@@ -28,7 +28,7 @@ public:
      */
     UTF8StringItr(const char* string) : curPos(string), nextPos(string)
     {
-        (*this)++;
+        ++(*this);
     };
 
     /**
@@ -36,7 +36,7 @@ public:
      * the state appropriately.
      * Note - not protected against overruns.
      */
-    UTF8StringItr& operator++();
+    virtual UTF8StringItr& operator++();
 
     /**
      * Post-increment operator.  Reads the next character and sets
@@ -59,6 +59,16 @@ public:
         if (curPos == right.getBufferFromHere())
             return true;
         return false;
+    }
+
+    /**
+     * Assignment operator for const char*s.  Reset the iterator to
+     * the location pointed to.
+     */
+    inline void operator=(const char* value) 
+    {
+      curPos = nextPos = value;
+      ++(*this);
     }
 
     /**
