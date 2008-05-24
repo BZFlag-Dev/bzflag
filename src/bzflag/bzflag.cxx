@@ -783,12 +783,9 @@ int initWinsoc ( void )
 
 int initClient ( int argc, char** argv )
 {
-
-#ifdef _WIN32
   // set the character handling locale
-  // this makes BZFlag able to use directory names with locale characters
   setlocale(LC_CTYPE,"");
-#endif
+
   // init libs
   if (initWinsoc() != 0)
     return 1;
