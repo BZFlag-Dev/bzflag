@@ -333,6 +333,7 @@ AC_CHECK_HEADERS( \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
+	FTGL/FTGL.h \
 	SDL/SDL.h \
 	bstring.h \
 	dlfcn.h \
@@ -1107,7 +1108,7 @@ if test "x$enable_client" != "xno"; then
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
 if test "x$enable_freetype_build" != "xyes" ; then
-    AC_CHECK_FT2
+    AC_CHECK_FT2([9.0.3])
     LIBFREETYPE="$FT2_LIBS"
 fi
 AC_MSG_CHECKING(whether to build the included freetype library)
@@ -1128,6 +1129,9 @@ AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
 AC_SUBST(LIBFREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, false)
 fi # have_gl
+if test "x$BUILD_FREETYPE" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
+fi
 
 
 LIBFTGL=""
@@ -1153,6 +1157,9 @@ AC_MSG_NOTICE([FTGL is disabled because no clients are being built])
 AC_SUBST(LIBFTGL)
 AM_CONDITIONAL(BUILD_FTGL, false)
 fi # have_gl
+if test "x$BUILD_FTGL" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
+fi
 
 
 # make sure ECHO and ECHO_N got defined and substituted

@@ -8,6 +8,8 @@ AC_CONFIG_AUX_DIR(.auto)
 AM_INIT_AUTOMAKE([1.6 no-define dist-zip dist-bzip2])
 AM_CONFIG_HEADER(config.h)
 
+AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Use included version of freetype2])
+
 FTGL_PROG_CXX
 
 LT_MAJOR="2"
@@ -36,8 +38,14 @@ AC_HEADER_STDC
 
 AC_PATH_X
 
-AC_CHECK_FT2([9.0.3],[],
-             [AC_MSG_ERROR([FreeType2 is required to compile this library])])
+if test "x$enable_freetype_build" != "xyes" ; then
+  AC_CHECK_FT2([9.0.3],[],
+	       [AC_MSG_ERROR([FreeType2 is required to compile this library])])
+else
+  AC_MSG_NOTICE([Using the included FreeType2])
+  FT2_CFLAGS="-I\${abs_top_srcdir}/../freetype/include"
+  FT2_LIBS="\${abs_top_srcdir}/../freetype/libfreetype.la -lz"
+fi
 
 AC_PATH_XTRA
 

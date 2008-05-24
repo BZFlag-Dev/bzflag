@@ -36,15 +36,16 @@
 // local implementation headers
 #ifdef BUILD_FTGL
 #  include "FTGL/ftgl.h"
-#else
-#  include "FTGLTextureFont.h"
-#  include "FTGLBitmapFont.h"
-#endif
-
-#ifdef BUILD_FTGL
 typedef FTTextureFont FONT;
 typedef FTBitmapFont CRAP_FONT;
 #else
+#  ifdef HAVE_FTGL_FTGL_H
+#    include "FTGL/FTGLTextureFont.h"
+#    include "FTGL/FTGLBitmapFont.h"
+#  else
+#    include "FTGLTextureFont.h"
+#    include "FTGLBitmapFont.h"
+#  endif
 typedef FTGLTextureFont FONT;
 typedef FTGLBitmapFont CRAP_FONT;
 #endif
@@ -756,7 +757,11 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
     return 0.0f;
   }
 
+#ifdef BUILD_FTGL
   return theFont->Advance(stripped).Xf();
+#else
+  return theFont->Advance(stripped);
+#endif
 }
 
 float FontManager::getStringHeight(int font, float size)
