@@ -139,7 +139,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 
   if (c == backspace) {
     int pos = cursorPos.getCount();
-    if (pos == 1) { 
+    if (pos == 1) {
       goto noRoom;
     } else {
       // copy up to cursor position - 1
