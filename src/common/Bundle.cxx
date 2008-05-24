@@ -141,43 +141,6 @@ std::string Bundle::getLocalString(const std::string &key) const
   }
 }
 
-const char utf8bytes[256] = {
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-  3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3, 4,4,4,4,4,4,4,4,5,5,5,5,6,6,6,6
-};
-
-#if 0
-    // TODO: find the utf-8 values for these
-    switch (c) {
-      case '':
-      case '':
-	msg[i] = 'a';
-      break;
-      case '':
-      case '':
-	msg[i] = 'A';
-      break;
-      case '':
-	msg[i] = 'i';
-      break;
-      case '':
-	msg[i] = 'o';
-      break;
-      case '':
-	msg[i] = 'O';
-      break;
-      case '':
-	msg[i] = 'Y';
-      break;
-    }
-#endif
-
 std::string Bundle::formatMessage(const std::string &key, const std::vector<std::string> *parms) const
 {
   std::string messageIn = getLocalString(key);
