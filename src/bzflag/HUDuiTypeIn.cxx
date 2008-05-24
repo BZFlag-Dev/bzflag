@@ -80,8 +80,8 @@ void			HUDuiTypeIn::setEditing(bool _allowEdit)
 
 bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
-  static const char backspace = '\b';	// ^H
-  static const char whitespace = ' ';
+  static unsigned int backspace = '\b';	// ^H
+  static unsigned int whitespace = ' ';
 
   if (HUDuiControl::doKeyPress(key))
     return true;
