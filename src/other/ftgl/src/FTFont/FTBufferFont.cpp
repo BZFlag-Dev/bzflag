@@ -202,7 +202,21 @@ inline wchar_t *StringCopy(wchar_t const *s, int len)
         return s2;
     }
 
+    /* wcsdup is non standard */
+    // TODO: We should test for wcsdup directly
+    #ifndef _GNU_SOURCE
+    if (s == NULL)
+	return NULL;
+
+    size_t sizeWideCharLen = wcslen(s) + 1;
+    wchar_t *newString = (wchar_t*)malloc(sizeof(wchar_t) * sizeWideCharLen);
+    if (newString)
+	wcsncpy(newString, s, sizeWideCharLen + 1);
+
+    return newString;
+    #else
     return wcsdup(s);
+    #endif
 }
 
 
