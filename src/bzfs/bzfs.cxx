@@ -334,10 +334,8 @@ static void onGlobalChanged(const std::string& name, void*)
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUShort(1);
-  msg->packUByte(name.length());
-  msg->packString(name.c_str(), name.length());
-  msg->packUByte(value.length());
-  msg->packString(value.c_str(), value.length());
+  msg->packStdString(name);
+  msg->packStdString(value);
   msg->broadcast(MsgSetVar);
 }
 
