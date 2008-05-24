@@ -151,6 +151,7 @@ noinst_HEADERS =			\
 	bzfstream.h			\
 	bzglob.h			\
 	bzsignal.h			\
+	bzUnicode.h			\
 	common.h			\
 	cURLManager.h			\
 	global.h			\

@@ -43,6 +43,7 @@ libCommon_la_SOURCES  =			\
 	bzfio.cxx			\
 	bzglob.cxx			\
 	bzsignal.cxx			\
+	bzUnicode.cxx			\
 	cURLManager.cxx			\
 	global.cxx			\
 	bz_md5.cxx			\
