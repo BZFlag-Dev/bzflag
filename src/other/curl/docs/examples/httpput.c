@@ -5,12 +5,13 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: httpput.c,v 1.8 2006-06-30 10:26:26 bagder Exp $
+ * $Id: httpput.c,v 1.10 2007-07-16 21:22:12 danf Exp $
  */
 
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include <curl/curl.h>
 
@@ -24,7 +25,7 @@
  * http://www.apacheweek.com/features/put
  */
 
-size_t read_callback(void *ptr, size_t size, size_t nmemb, void *stream)
+static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   size_t retcode;
 
@@ -75,10 +76,10 @@ int main(int argc, char **argv)
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
 
     /* enable uploading */
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, TRUE) ;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1) ;
 
     /* HTTP PUT please */
-    curl_easy_setopt(curl, CURLOPT_PUT, TRUE);
+    curl_easy_setopt(curl, CURLOPT_PUT, 1);
 
     /* specify target URL, and note that this URL should include a file
        name, not only a directory */

@@ -129,6 +129,10 @@
 #  define	tanf		(float)tan
 #endif
 
+#ifndef HAVE_STD__WSTRING
+#define wstring string
+#endif
+
 /* random number stuff */
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)

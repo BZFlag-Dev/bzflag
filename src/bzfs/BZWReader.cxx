@@ -14,11 +14,11 @@
 #include "BZWReader.h"
 
 // implementation-specific system headers
-#include <fstream>
 #include <sstream>
 #include <ctype.h>
 
 // implementation-specific bzflag headers
+#include "bzfstream.h"
 #include "BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
@@ -57,7 +57,8 @@
 
 BZWReader::BZWReader(const std::string &filename) : cURLManager(),
 					     location(filename),
-					     input(NULL)
+					     input(NULL), 
+					     fromBlob(false)
 {
   static const std::string httpProtocol("http://");
   static const std::string ftpProtocol("ftp://");
@@ -72,7 +73,7 @@ BZWReader::BZWReader(const std::string &filename) : cURLManager(),
     performWait();
     input = new std::istringstream(httpData);
   } else {
-    input = new std::ifstream(filename.c_str(), std::ios::in);
+    input = createIFStream(filename);
   }
 
   // .BZW is the official worldfile extension, warn for others
@@ -90,8 +91,10 @@ BZWReader::BZWReader(const std::string &filename) : cURLManager(),
 
 BZWReader::BZWReader(std::istream &in) : cURLManager(),
 					     location("blob"),
-					     input(&in)
+					     input(&in),
+					     fromBlob(true)
 {
+  errorHandler = new BZWError(location);
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
   }
@@ -102,7 +105,7 @@ BZWReader::~BZWReader()
 {
   // clean up
   delete errorHandler;
-  delete input;
+  if (!fromBlob) delete input;
 }
 
 
@@ -213,8 +216,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 
   bool gotWorld = false;
 
-  while (!input->eof() && !input->fail() && input->good())
-  {
+  while (!input->eof() && !input->fail() && input->good()) {
     // watch out for starting a new object when one is already in progress
     if (newObject) {
       if (object) {

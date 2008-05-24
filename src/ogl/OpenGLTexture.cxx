@@ -14,6 +14,7 @@
 
 // system headers
 #include <string>
+#include <string.h>
 
 // common headers
 #include "bzfio.h"

@@ -179,7 +179,7 @@ bool sendTeamUpdateMessage( int newPlayer )
 
 void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 {
-  if (!allowTeams())
+  if (clOptions->gameType == OpenFFA)
     return;
 
   // If teamIndex1 is -1, send all teams
@@ -464,7 +464,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packVector(pos);
+    msg->packFloatVector(pos);
     msg->packStdString(std::string(type->flagName));
     msg->send(playerData->netHandler,MsgNearFlag);
   }
@@ -765,7 +765,7 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(playerID);
-  msg->packVector(pos);
+  msg->packFloatVector(pos);
   msg->packFloat(rot);
   msg->broadcast(MsgAlive);
 
@@ -926,12 +926,12 @@ void sendMsgShotUpdate ( int player, FiringInfo *shot )
   msg->broadcast(MsgShotUpdate);
 }
 
-void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time )
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
 {
   /* Pack a message with the given time */
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(tag);
-  msg->packFloat(time);
+  msg->packDouble(time);
   msg->send(handler,MsgWhatTimeIsIt);
 }
 
@@ -940,7 +940,7 @@ void sendMsgTimeUpdate( int timeLimit )
   // start client's clock
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packInt(timeLimit);
+  msg->packInt(timeLimit); 
   msg->broadcast(MsgTimeUpdate);
 }
 
@@ -1005,23 +1005,13 @@ void sendSetTeam ( int playerIndex, int _team )
 
 void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 {
-  uint16_t len = 1;
-
-  uint16_t code = MsgEchoResponse;
-
   char echobuffer[5] = {0};
   void *ebuf = echobuffer;
-  setGeneralMessageInfo(&ebuf, code, len);
+  ebuf = nboPackUShort(ebuf, 1);
+  ebuf = nboPackUShort(ebuf, MsgEchoResponse);
   ebuf = nboPackUByte(ebuf, tag);
   sendto(NetHandler::getUdpSocket(), echobuffer, 5, 0, (struct sockaddr*)uaddr,
     sizeof(*uaddr));   //Low level - bad - if this could be encapsulated...
-}
-
-// utils to build new packets
-void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
-{
-  *buffer = nboPackUShort(*buffer, len);
-  *buffer = nboPackUShort(*buffer, code);
 }
 
 //messages sent TO the server
@@ -1031,20 +1021,16 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
   *buffer = nboUnpackUShort(*buffer, code);
 }
 
-PackVars::PackVars(void *buffer, NetHandler *_handler) : bufStart(buffer)
+PackVars::PackVars(NetHandler* _handler) : handler(_handler)
 {
-  buf = nboPackUShort(bufStart, 0);//placeholder
-  handler = _handler;
-  len = sizeof(uint16_t);
-  count = 0;
+  // start the first message
+  startMessage();
 }
 
 PackVars::~PackVars()
 {
-  if (len > sizeof(uint16_t)) {
-    nboPackUShort(bufStart, count);
-    directMessage(handler, MsgSetVar, len, bufStart);
-  }
+  // end the last message
+  endMessage();
 }
 
 // callback forwarder
@@ -1053,23 +1039,35 @@ void PackVars::packIt(const std::string &key, void *pv)
   reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
 }
 
+void PackVars::startMessage()
+{
+  // reset count
+  count = 0;
+  // placeholder
+  msg = MSGMGR.newMessage();
+  msg->packUShort(0);
+}
+
+void PackVars::endMessage()
+{
+  // repack the placeholder short at the beginning of 
+  // the buffer with the total count
+  nboPackUShort(msg->buffer(), count);
+  // send the message
+  msg->send(handler, MsgSetVar);
+}
+
 void PackVars::sendPackVars(const std::string &key)
 {
   std::string value = BZDB.get(key);
-  int pairLen = key.length() + 1 + value.length() + 1;
-  if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
-    nboPackUShort(bufStart, count);
-    count = 0;
-    directMessage(handler, MsgSetVar, len, bufStart);
-    buf = nboPackUShort(bufStart, 0); //placeholder
-    len = sizeof(uint16_t);
+  size_t pairLen = key.length() + value.length() + 2 * sizeof(uint32_t);
+  if ((pairLen + msg->size()) > MaxPacketLen) {
+    endMessage();
+    startMessage();
   }
 
-  buf = nboPackUByte(buf, key.length());
-  buf = nboPackString(buf, key.c_str(), key.length());
-  buf = nboPackUByte(buf, value.length());
-  buf = nboPackString(buf, value.c_str(), value.length());
-  len += pairLen;
+  msg->packStdString(key);
+  msg->packStdString(value);
   count++;
 }
 
@@ -1118,27 +1116,26 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState )
 {
   playerState.status = 0;
-  switch(apiState.status)
-  {
-  case eAlive:
-    playerState.status |= PlayerState::Alive;
-    break;
-  case eDead:
-    playerState.status |= PlayerState::DeadStatus;
-    break;
-  case ePaused:
-    playerState.status |= PlayerState::Paused;
-    break;
-  case eExploding:
-    playerState.status |= PlayerState::Exploding;
-    break;
-  case eTeleporting:
-    playerState.status |= PlayerState::Teleporting;
-    break;
-
-  case eInBuilding:
-    playerState.status |= PlayerState::InBuilding;
-    break;
+  switch(apiState.status) {
+    case eAlive:
+      playerState.status |= PlayerState::Alive;
+      break;
+    case eDead:
+      playerState.status |= PlayerState::DeadStatus;
+      break;
+    case ePaused:
+      playerState.status |= PlayerState::Paused;
+      break;
+    case eExploding:
+      playerState.status |= PlayerState::Exploding;
+      break;
+    case eTeleporting:
+      playerState.status |= PlayerState::Teleporting;
+      break;
+      
+    case eInBuilding:
+      playerState.status |= PlayerState::InBuilding;
+      break;
   }
 
   if (apiState.inPhantomZone)
@@ -1150,8 +1147,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
   if (apiState.crossingWall)
     playerState.status |=  PlayerState::CrossingWall;
 
-  if (apiState.phydrv != -1)
-  {
+  if (apiState.phydrv != -1) {
     playerState.status |=  PlayerState::OnDriver;
     playerState.phydrv = apiState.phydrv;
   }

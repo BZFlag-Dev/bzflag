@@ -15,6 +15,7 @@
 
 /* system headers */
 #include <fstream>
+#include <string.h>
 
 // invoke persistent rebuilding for build versioning
 #include "version.h"

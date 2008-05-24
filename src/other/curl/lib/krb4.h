@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: krb4.h,v 1.11 2006-11-11 21:34:43 bagder Exp $
+ * $Id: krb4.h,v 1.12 2007-07-01 22:01:19 bagder Exp $
  ***************************************************************************/
 
 struct Curl_sec_client_mech {
@@ -40,7 +40,12 @@ struct Curl_sec_client_mech {
 #define AUTH_CONTINUE   1
 #define AUTH_ERROR      2
 
+#ifdef HAVE_KRB4
 extern struct Curl_sec_client_mech Curl_krb4_client_mech;
+#endif
+#ifdef HAVE_GSSAPI
+extern struct Curl_sec_client_mech Curl_krb5_client_mech;
+#endif
 
 CURLcode Curl_krb_kauth(struct connectdata *conn);
 int Curl_sec_fflush_fd(struct connectdata *conn, int fd);

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_digest.h,v 1.8 2006-09-07 21:49:22 bagder Exp $
+ * $Id: http_digest.h,v 1.9 2007-08-27 06:31:28 danf Exp $
  ***************************************************************************/
 
 typedef enum {
@@ -40,13 +40,13 @@ enum {
 
 /* this is for digest header input */
 CURLdigest Curl_input_digest(struct connectdata *conn,
-                             bool proxy, char *header);
+                             bool proxy, const char *header);
 
 /* this is for creating digest header output */
 CURLcode Curl_output_digest(struct connectdata *conn,
                             bool proxy,
-                            unsigned char *request,
-                            unsigned char *uripath);
+                            const unsigned char *request,
+                            const unsigned char *uripath);
 void Curl_digest_cleanup_one(struct digestdata *dig);
 
 #if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_CRYPTO_AUTH)

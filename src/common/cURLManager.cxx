@@ -11,8 +11,10 @@
  */
 
 // class interface header
-
 #include "cURLManager.h"
+
+// system headers
+#include <string.h>
 
 // common implementation headers
 #include "bzfio.h"

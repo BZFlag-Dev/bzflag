@@ -18,6 +18,14 @@
  * without express or implied warranty.
  */
 
+/*
+ * Define WIN32 when build target is Win32 API
+ */
+
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
+#define WIN32
+#endif
+
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -80,12 +88,22 @@
 
 #endif
 
+#define ARES_ID_KEY_LEN 31
+
 #include "ares_ipv6.h"
+#include "ares_llist.h"
+
+struct query;
 
 struct send_request {
   /* Remaining data to send */
   const unsigned char *data;
   size_t len;
+
+  /* The query for which we're sending this data */
+  struct query* owner_query;
+  /* The buffer we're using, if we have our own copy of the packet */
+  unsigned char *data_storage;
 
   /* Next request in queue */
   struct send_request *next;
@@ -108,12 +126,41 @@ struct server_state {
   /* TCP output queue */
   struct send_request *qhead;
   struct send_request *qtail;
+
+  /* Which incarnation of this connection is this? We don't want to
+   * retransmit requests into the very same socket, but if the server
+   * closes on us and we re-open the connection, then we do want to
+   * re-send. */
+  int tcp_connection_generation;
+
+  /* Circular, doubly-linked list of outstanding queries to this server */
+  struct list_node queries_to_server;
+
+  /* Link back to owning channel */
+  ares_channel channel;
+
+  /* Is this server broken? We mark connections as broken when a
+   * request that is queued for sending times out.
+   */
+  int is_broken;
 };
 
+/* State to represent a DNS query */
 struct query {
   /* Query ID from qbuf, for faster lookup, and current timeout */
   unsigned short qid;
   time_t timeout;
+
+  /*
+   * Links for the doubly-linked lists in which we insert a query.
+   * These circular, doubly-linked lists that are hash-bucketed based
+   * the attributes we care about, help making most important
+   * operations O(1).
+   */
+  struct list_node queries_by_qid;    /* hopefully in same cache line as qid */
+  struct list_node queries_by_timeout;
+  struct list_node queries_to_server;
+  struct list_node all_queries;
 
   /* Query buf with length at beginning, for TCP transmission */
   unsigned char *tcpbuf;
@@ -128,12 +175,16 @@ struct query {
   /* Query status */
   int try;
   int server;
-  int *skip_server;
+  struct query_server_info *server_info;   /* per-server state */
   int using_tcp;
   int error_status;
+  int timeouts; /* number of timeouts we saw for this request */
+};
 
-  /* Next query in chain */
-  struct query *next;
+/* Per-server state for a query */
+struct query_server_info {
+  int skip_server;  /* should we skip server, due to errors, etc? */
+  int tcp_connection_generation;  /* into which TCP connection did we send? */
 };
 
 /* An IP address pattern; matches an IP address X if X & mask == addr */
@@ -156,6 +207,13 @@ struct apattern {
   unsigned short type;
 };
 
+typedef struct rc4_key
+{
+  unsigned char state[256];
+  unsigned char x;
+  unsigned char y;
+} rc4_key;
+
 struct ares_channeldata {
   /* Configuration data */
   int flags;
@@ -164,6 +222,8 @@ struct ares_channeldata {
   int ndots;
   int udp_port;
   int tcp_port;
+  int socket_send_buffer_size;
+  int socket_receive_buffer_size;
   char **domains;
   int ndomains;
   struct apattern *sortlist;
@@ -176,18 +236,39 @@ struct ares_channeldata {
 
   /* ID to use for next query */
   unsigned short next_id;
+  /* key to use when generating new ids */
+  rc4_key id_key;
 
-  /* Active queries */
-  struct query *queries;
+  /* Generation number to use for the next TCP socket open/close */
+  int tcp_connection_generation;
+
+  /* The time at which we last called process_timeouts() */
+  time_t last_timeout_processed;
+
+  /* Circular, doubly-linked list of queries, bucketed various ways.... */
+  /* All active queries in a single list: */
+  struct list_node all_queries;
+  /* Queries bucketed by qid, for quickly dispatching DNS responses: */
+#define ARES_QID_TABLE_SIZE 2048
+  struct list_node queries_by_qid[ARES_QID_TABLE_SIZE];
+  /* Queries bucketed by timeout, for quickly handling timeouts: */
+#define ARES_TIMEOUT_TABLE_SIZE 1024
+  struct list_node queries_by_timeout[ARES_TIMEOUT_TABLE_SIZE];
 
   ares_sock_state_cb sock_state_cb;
   void *sock_state_cb_data;
 };
 
+void ares__rc4(rc4_key* key,unsigned char *buffer_ptr, int buffer_len);
 void ares__send_query(ares_channel channel, struct query *query, time_t now);
 void ares__close_sockets(ares_channel channel, struct server_state *server);
 int ares__get_hostent(FILE *fp, int family, struct hostent **host);
 int ares__read_line(FILE *fp, char **buf, int *bufsize);
+void ares__free_query(struct query *query);
+short ares__generate_new_id(rc4_key* key);
+
+#define ARES_SWAP_BYTE(a,b) \
+  { unsigned char swapByte = *(a);  *(a) = *(b);  *(b) = swapByte; }
 
 #define SOCK_STATE_CALLBACK(c, s, r, w)                                 \
   do {                                                                  \
@@ -204,4 +285,3 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize);
 #endif
 
 #endif /* __ARES_PRIVATE_H */
-

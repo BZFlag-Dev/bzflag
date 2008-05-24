@@ -29,14 +29,14 @@ public:
   double GetServerSeconds( void );
 
   void update ( ServerLink *link );
-  void timeMessage ( unsigned char tag, float time );
+  void timeMessage ( unsigned char tag, double time );
 
 protected:
   std::map<int,double>	outstandingPings;
   unsigned char lastPingTag;
 
-  double		  lastPingTime;
-  double		  pingInterval;
+  double  lastPingTime;
+  double  pingInterval;
 
   double serverTimeOffset;
 };

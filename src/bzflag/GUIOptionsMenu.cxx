@@ -199,8 +199,7 @@ GUIOptionsMenu::GUIOptionsMenu()
       options->push_back(locales[i]);
     }
     locales.erase(locales.begin(), locales.end());
-  }
-  else {
+  } else {
     // Something failed when trying to compile a list
     // of all the locales.
     options->push_back(std::string("Default"));

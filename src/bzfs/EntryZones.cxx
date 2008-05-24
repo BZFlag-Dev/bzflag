@@ -230,14 +230,11 @@ void EntryZones::makeSplitLists (int zone,
 	FlagType *type;
 	if ((type = CustomZone::getFlagTypeFromQualifier(qual)) != Flags::Null) {
 	  flags.push_back(type);
-	}
-	else if ((team = CustomZone::getPlayerTeamFromQualifier(qual)) >= 0) {
+	} else if ((team = CustomZone::getPlayerTeamFromQualifier(qual)) >= 0) {
 	  teams.push_back((TeamColor)team);
-	}
-	else if ((team = CustomZone::getFlagSafetyFromQualifier(qual)) >= 0) {
+	} else if ((team = CustomZone::getFlagSafetyFromQualifier(qual)) >= 0) {
 	  safety.push_back((TeamColor)team);
-	}
-	else {
+	} else {
 	  printf ("EntryZones::makeSplitLists() ERROR on (%s)\n", mit->first.c_str());
 	}
       }

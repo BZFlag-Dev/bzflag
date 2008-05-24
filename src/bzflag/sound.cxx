@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <string.h>
 
 // common headers
 #include "BzfMedia.h"

@@ -57,9 +57,16 @@ void			setCustomConfigDir(const char *str)
 std::string		getConfigDirName( const char* versionName )
 {
   std::string customConfigDir = configDir(0, NULL);
-
-  if (customConfigDir.size() > 0)
-    return customConfigDir;
+  if (customConfigDir.size() > 0) {
+    if (versionName)
+#if defined(_WIN32)
+      return customConfigDir+versionName+"\\";
+#else
+      return customConfigDir+versionName+"/";
+#endif
+    else
+      return customConfigDir;
+  }
 
 #if defined(_WIN32)
   std::string name("C:");

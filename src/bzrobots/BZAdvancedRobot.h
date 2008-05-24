@@ -23,6 +23,7 @@
 #include "RCEvents.h"
 #include "Tank.h"
 #include "Shot.h"
+#include "Obstacle.h"
 
 
 /**

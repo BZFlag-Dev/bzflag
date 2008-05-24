@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.h,v 1.3 2007-01-05 23:11:16 bagder Exp $
+ * $Id: gtls.h,v 1.5 2007-09-27 02:45:58 danf Exp $
  ***************************************************************************/
 int Curl_gtls_init(void);
 int Curl_gtls_cleanup(void);
@@ -29,7 +29,9 @@ CURLcode Curl_gtls_connect(struct connectdata *conn, int sockindex);
 /* tell GnuTLS to close down all open information regarding connections (and
    thus session ID caching etc) */
 void Curl_gtls_close_all(struct SessionHandle *data);
-void Curl_gtls_close(struct connectdata *conn); /* close a SSL connection */
+
+ /* close a SSL connection */
+void Curl_gtls_close(struct connectdata *conn, int sockindex);
 
 /* return number of sent (non-SSL) bytes */
 ssize_t Curl_gtls_send(struct connectdata *conn, int sockindex,

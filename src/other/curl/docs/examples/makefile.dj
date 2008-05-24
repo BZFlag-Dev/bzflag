@@ -1,4 +1,4 @@
-#  $Id: makefile.dj,v 1.7 2007-03-17 17:58:45 giva Exp $
+#  $Id: makefile.dj,v 1.8 2007-09-13 20:36:52 danf Exp $
 #
 #  Adapted for djgpp / Watt-32 / DOS by
 #  Gisle Vanem <giva@bgnett.no>
@@ -23,7 +23,7 @@ CSOURCES = fopen.c ftpget.c ftpgetresp.c ftpupload.c getinmemory.c  \
            multi-post.c multi-single.c persistant.c post-callback.c \
            postit2.c sepheaders.c simple.c simplepost.c simplessl.c \
            multi-debugcallback.c fileupload.c getinfo.c anyauthput.c \
-           10-at-a-time.c # ftpuploadresume.c ftp3rdparty.c cookie_interface.c
+           10-at-a-time.c # ftpuploadresume.c cookie_interface.c
 
 PROGRAMS = $(CSOURCES:.c=.exe)
 

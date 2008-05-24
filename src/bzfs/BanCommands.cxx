@@ -405,8 +405,7 @@ bool KillCommand::operator() (const char	 *message,
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 
     // operators can override antiperms
-    if (!playerData->accessInfo.isOperator()) 
-    {
+    if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
       if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) 
 	allow.allow = false;
@@ -416,8 +415,7 @@ bool KillCommand::operator() (const char	 *message,
     worldEventManager.callEvents(bz_eAllowKillCommandEvent,&allow);
 
     // plug-ins can ovride ANYONE even the gods
-    if (p && !allow.allow)
-    {
+    if (p && !allow.allow) {
       snprintf(killmessage, MessageLen, "%s is protected from being killed.",
 	p->player.getCallSign());
       sendMessage(ServerPlayer, t, killmessage);
@@ -789,10 +787,9 @@ bool HostbanCommand::operator() (const char* message,
   hostBanEvent.reason = reason.c_str();
   hostBanEvent.duration = durationInt;
 
-  worldEventManager.callEvents(bz_eHostBanEvent,&hostBanEvent);
+  worldEventManager.callEvents(bz_eHostBanModifyEvent,&hostBanEvent);
 
-  // a plugin might have changed bannerID
-  if (t != hostBanEvent.bannerID) {
+  if ( t != hostBanEvent.bannerID ) { 
     playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
     if (!playerData)
       return true;
@@ -808,6 +805,9 @@ bool HostbanCommand::operator() (const char* message,
   clOptions->acl.save();
 
   GameKeeper::Player::setAllNeedHostbanChecked(true);
+
+  hostBanEvent.eventType = bz_eHostBanNotifyEvent;
+  worldEventManager.callEvents(bz_eHostBanNotifyEvent,&hostBanEvent);
 
   sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the HOSTNAME banlist");
 
@@ -880,6 +880,16 @@ bool IdBanCommand::operator() (const char* message,
     idpat = bzId; // success
   }
 
+  // check if victim has antiban perms, if so cancel idban
+
+  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {  
+    char buffer[MessageLen];
+	snprintf(buffer, MessageLen, "%s is protected from being banned (skipped).",
+	victimPlayer->player.getCallSign());
+	sendMessage(ServerPlayer, t, buffer);
+	return true;
+  }
+
   // setup the ban duration
   int durationInt = clOptions->banTime;
   int specifiedDuration;
@@ -890,6 +900,7 @@ bool IdBanCommand::operator() (const char* message,
 		"1w2d1m");
     return true;
   }
+
   if (specifiedDuration >= 0) {
     if ((durationInt > 0) &&
 	((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
@@ -907,22 +918,28 @@ bool IdBanCommand::operator() (const char* message,
     addNamePrefix(reason, victimPlayer->player.getCallSign());
   }
 
+  // call any plugin events registered for /idban
+  bz_IdBanEventData_V1 idBanEvent;
+  idBanEvent.bannerID = t;
+  idBanEvent.banneeID = victim;
+  idBanEvent.bzId = idpat.c_str();
+  idBanEvent.reason = reason.c_str();
+  idBanEvent.duration = durationInt;
+
+  worldEventManager.callEvents(bz_eIdBanEvent,&idBanEvent);
+
   // remove the victim if we have one
   if (victimPlayer) {
-    if (!doBanKick(victimPlayer, playerData, reason.c_str())) {
+    if (!doBanKick(victimPlayer, playerData, idBanEvent.reason.c_str())) {
       return true; // could not ban, bail
     }
   }
 
-  //
-  // FIXME: add to the plugin system
-  //
-
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
 
-  clOptions->acl.idBan(idpat, playerData->player.getCallSign(),
-		       durationInt, reason.c_str());
+  clOptions->acl.idBan(idBanEvent.bzId.c_str(), playerData->player.getCallSign(),
+		       idBanEvent.duration, idBanEvent.reason.c_str());
   clOptions->acl.save();
 
   sendMessage(ServerPlayer, AdminPlayers, "Pattern added to the BZID banlist");

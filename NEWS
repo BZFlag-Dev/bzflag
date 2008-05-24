@@ -2,9 +2,11 @@
 			     BZFlag Release Notes                           
 			     ====================
 
-
 BZFlag 2.99.x
 ------------
+* Russian translation - Alexander Law
+* Added new BZFS API event bz_eIdBanEvent - Steven Mertens
+* Fix -configdir on client - Scott Wichser, Steven Mertens
 * Server operators no longer automatically override antiban - Daniel Remenak
 * New tank explosion pattern - Luke Rewega
 * Exposed pauseOnMinimize local variable for iconify pausing - Sean Morrison
@@ -12,7 +14,6 @@ BZFlag 2.99.x
 * Screenshot compression is done in a new thread - Daniel Remenak, randomparticle
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 * Allow plugins to register custom flag types - Daniel Remenak
-* Fix bug where users get locked into autopilot mode - Joshua Bodine
 * improved French localization - Christophe Henry
 * clean up various keypress warnings, add slow motion warning - Sean Morrison
 * changed default slow motion key binding from 'a' to 'v' - Sean Morrison
@@ -22,10 +23,6 @@ BZFlag 2.99.x
 * fixed bug where players sometimes received duplicate messages - Joshua Bodine
 * New font system - Sean Morrison, Jeff Myers
 * Fixed framerate jitter-inducing bug on SMP systems - Sean Morrison
-* First map no longer ignored in Start Server menu - Ravu al Hemio
-* Check for talk permission for part/quit messages  - uso
-* Implemented Confine Mouse for Windows platforms - Daniel Remenak
-* Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
 * Add -filterAnnounce server option - Bernt Hansen
 * framerate independent keyboard turn dampening - Sean Morrison, randomparticle
 * Added new bzfs -botsPerIP option to limit bot connections - Sean Morrison
@@ -37,7 +34,6 @@ BZFlag 2.99.x
 * increased joystick button support to 32 buttons - Markus
 * Added a new optional height check - Thomas Stauer
 * Added optional delay before the countdown gets resumed - Thomas Stauer
-* Add -tkannounce server option - Bernt Hansen
 * Fixed map line ending parse bug for flag zones - Jeff Myers
 * Add client statistics output option - Daniel Remenak
 * Add full support for Xfire on Windows - Daniel Remenak
@@ -90,8 +86,7 @@ BZFlag 2.99.x
 BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 ---------------------------------------------
 
-* Added a work around for buggy DRI open source ATI drivers and the 
-  narrow flag - Jeff Myers
+* Fixed narrow flag rendering bug related to DRI and ATI drivers - Jeff Myers
 * Add /modcount command - Joshua Bodine, Anonymous
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
 * Fix bug where poll results would not be announced - Joshua Bodine
@@ -1062,5 +1057,17 @@ preliminary open source release.
 
 
 ---
-See the SVN log for more detailed information on BZFlag changes.
-NEWS items should be formatted to column 80, one per line, no tabs.
+See the Subversion revision control log for more detailed historic information
+on BZFlag changes.
+
+NEWS items should be formatted to column 80, use no tabs, and include credits to
+all significant contributors.  Multiple contributors may be listed on the
+following line but the summary description itself should never exceed column 80
+or one line.
+
+// Local Variables:
+// mode: Text
+// tab-width: 8
+// fill-column: 80
+// End:
+// ex: shiftwidth=2 tabstop=8

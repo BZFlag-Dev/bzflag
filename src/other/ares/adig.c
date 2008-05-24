@@ -1,6 +1,6 @@
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
- * $Id: adig.c,v 1.24 2007-04-16 15:35:34 yangtse Exp $
+ * $Id: adig.c,v 1.25 2007-09-28 14:46:51 sesse Exp $
  *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
@@ -127,7 +127,8 @@ static const char *rcodes[] = {
   "(unknown)", "(unknown)", "(unknown)", "(unknown)", "NOCHANGE"
 };
 
-static void callback(void *arg, int status, unsigned char *abuf, int alen);
+static void callback(void *arg, int status, int timeouts,
+                     unsigned char *abuf, int alen);
 static const unsigned char *display_question(const unsigned char *aptr,
                                              const unsigned char *abuf,
                                              int alen);
@@ -294,7 +295,8 @@ int main(int argc, char **argv)
   return 0;
 }
 
-static void callback(void *arg, int status, unsigned char *abuf, int alen)
+static void callback(void *arg, int status, int timeouts,
+                     unsigned char *abuf, int alen)
 {
   char *name = (char *) arg;
   int id, qr, opcode, aa, tc, rd, ra, rcode;

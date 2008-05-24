@@ -26,25 +26,37 @@
 #include "ares.h"
 #include "ares_private.h"
 
+/* WARNING: Beware that this is linear in the number of outstanding
+ * requests! You are probably far better off just calling ares_process()
+ * once per second, rather than calling ares_timeout() to figure out
+ * when to next call ares_process().
+ */
 struct timeval *ares_timeout(ares_channel channel, struct timeval *maxtv,
                              struct timeval *tvbuf)
 {
   struct query *query;
+  struct list_node* list_head;
+  struct list_node* list_node;
   time_t now;
-  int offset, min_offset;
+  time_t offset, min_offset; /* these use time_t since some 32 bit systems
+                                still use 64 bit time_t! (like VS2005) */
 
   /* No queries, no timeout (and no fetch of the current time). */
-  if (!channel->queries)
+  if (ares__is_list_empty(&(channel->all_queries)))
     return maxtv;
 
   /* Find the minimum timeout for the current set of queries. */
   time(&now);
   min_offset = -1;
-  for (query = channel->queries; query; query = query->next)
+
+  list_head = &(channel->all_queries);
+  for (list_node = list_head->next; list_node != list_head;
+       list_node = list_node->next)
     {
+      query = list_node->data;
       if (query->timeout == 0)
         continue;
-      offset = (int)(query->timeout - now);
+      offset = query->timeout - now;
       if (offset < 0)
         offset = 0;
       if (min_offset == -1 || offset < min_offset)
@@ -57,7 +69,7 @@ struct timeval *ares_timeout(ares_channel channel, struct timeval *maxtv,
    */
   if (min_offset != -1 && (!maxtv || min_offset <= maxtv->tv_sec))
     {
-      tvbuf->tv_sec = min_offset;
+      tvbuf->tv_sec = (long)min_offset;
       tvbuf->tv_usec = 0;
       return tvbuf;
     }

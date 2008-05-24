@@ -25,6 +25,7 @@
 #include <iostream>
 #include <math.h>
 #include <string>
+#include <string.h>
 
 // local implementation headers
 #include "ErrorHandler.h"

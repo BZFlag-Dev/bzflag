@@ -123,35 +123,6 @@ public:
 
 MasterBanURLHandler masterBanHandler;
 
-// utility functions
-void setBZMatFromAPIMat(BzMaterial &bzmat, bz_MaterialInfo *material)
-{
-  if(!material)
-    return ;
-
-  bzmat.setName(std::string(material->name.c_str()));
-  bzmat.setAmbient(material->ambient);
-  bzmat.setDiffuse(material->diffuse);
-  bzmat.setSpecular(material->specular);
-  bzmat.setEmission(material->emisive);
-  bzmat.setShininess(material->shine);
-
-  bzmat.setNoCulling(!material->culling);
-  bzmat.setNoSorting(!material->sorting);
-  bzmat.setAlphaThreshold(material->alphaThresh);
-
-  for(unsigned int i=0; i < material->textures.size(); i++)
-  {
-    bz_ApiString name=material->textures[i].texture;
-
-    bzmat.addTexture(std::string(name.c_str()));
-    bzmat.setCombineMode(material->textures[i].combineMode);
-    bzmat.setUseTextureAlpha(material->textures[i].useAlpha);
-    bzmat.setUseColorOnTexture(material->textures[i].useColorOnTexture);
-    bzmat.setUseSphereMap(material->textures[i].useSphereMap);
-  }
-}
-
 //-------------------------------------------------------------------------
 
 bz_eTeamType convertTeam(TeamColor _team)
@@ -219,15 +190,10 @@ TeamColor convertTeam(bz_eTeamType _team)
 void broadcastPlayerScoreUpdate(int playerID)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player)
-    return ;
+  if (!player)
+    return;
 
-  NetMsg   msg = MSGMGR.newMessage();
-
-  msg->packUByte(1);
-  msg->packUByte(playerID);
-  player->score.pack(msg);
-  msg->broadcast(MsgScore);
+  sendPlayerScoreUpdate(player);
 }
 
 //******************************Versioning********************************************
@@ -824,91 +790,7 @@ void bz_releaseWorldObjectList(bz_APIWorldObjectList *objectList)
     delete (objectList);
 }
 
-//******************************bzApiTextreList********************************************
 
-class bz_APITextureList::dataBlob
-{
-public:
-  std::vector < bz_MaterialTexture > list;
-};
-
-bz_APITextureList::bz_APITextureList()
-{
-  data=new dataBlob;
-}
-
-//-------------------------------------------------------------------------
-
-bz_APITextureList::bz_APITextureList(const bz_APITextureList &r)
-{
-  data=new dataBlob;
-  data->list=r.data->list;
-}
-
-//-------------------------------------------------------------------------
-
-bz_APITextureList::~bz_APITextureList()
-{
-  delete (data);
-}
-
-//-------------------------------------------------------------------------
-
-void bz_APITextureList::push_back(bz_MaterialTexture &value)
-{
-  data->list.push_back(value);
-}
-
-//-------------------------------------------------------------------------
-
-bz_MaterialTexture bz_APITextureList::get(unsigned int i)
-{
-  return data->list[i];
-}
-
-//-------------------------------------------------------------------------
-
-const bz_MaterialTexture &bz_APITextureList::operator[](unsigned int i)const
-{
-  return data->list[i];
-}
-
-//-------------------------------------------------------------------------
-
-bz_APITextureList &bz_APITextureList::operator=(const bz_APITextureList &r)
-{
-  data->list=r.data->list;
-  return  *this;
-}
-
-//-------------------------------------------------------------------------
-
-unsigned int bz_APITextureList::size(void)
-{
-  return data->list.size();
-}
-
-//-------------------------------------------------------------------------
-
-void bz_APITextureList::clear(void)
-{
-  data->list.clear();
-}
-
-//-------------------------------------------------------------------------
-
-bz_MaterialInfo *bz_anewMaterial(void)
-{
-  return new bz_MaterialInfo;
-}
-
-//-------------------------------------------------------------------------
-
-void bz_deleteMaterial(bz_MaterialInfo *material)
-{
-  if(material)
-    delete (material);
-}
 
 // events
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler *eventHandler)
@@ -1057,240 +939,6 @@ public:
  }
 };
 
-class APISocketListener : public NewNetworkConnectionCallback , NetworkDataPendingCallback
-{
-public:
-  bz_NetworkSocketListener  *callback;
-  NetListener		    *listener;
-  short			    port;
-
-  virtual ~APISocketListener();
-  virtual bool accept ( NetHandler *handler, int connectionID );
-  virtual bool pending ( NetHandler *handler, int connectionID, bool tcp );
-  virtual bool disconnected ( NetHandler *handler, int connectionID );
-
-  void sendData ( int connectionID, unsigned int size, const char* data );
-  void update( void );
-  std::map<int,NetHandler*> connections;
-
-  std::map<int, std::vector<APIPendingPacket> > pendingPackets;
-};
-
-std::map<unsigned short,APISocketListener*> APISockets;
-std::map<int,APISocketListener*> APIConnections;
-
-class NetListenerPacketBufferTicker : public bz_EventHandler
-{
-public:
-  virtual void process ( bz_EventData * /* eventData */ )
-  {
-    std::map<unsigned short,APISocketListener*>::iterator itr = APISockets.begin();
-    while (itr != APISockets.end())
-    {
-      itr->second->update();
-      itr++;
-    }
-  }
-};
-
-NetListenerPacketBufferTicker netTicker;
-
- APISocketListener::~APISocketListener()
-{
-  if (listener)
-    delete(listener);
-
-  pendingPackets.clear();
-}
-bool APISocketListener::accept ( NetHandler *handler, int connectionID )
-{
-  if (!listener || callback)
-    return false;
-
-  if (!callback->accept(connectionID,handler->getHostname()))
-    return false;
-
-  connections[connectionID] = handler;
-  APIConnections[connectionID] = this;
-
-  return true;
-}
-
-bool APISocketListener::pending ( NetHandler *handler, int connectionID, bool tcp )
-{
-  if (!tcp || !listener || !callback)
-    return false;
-
-  RxStatus e = handler->receive(256);
-
-  unsigned int readSize = handler->getTcpReadSize();
-  void *buf = handler->getTcpBuffer();
-
-  if ( e !=ReadAll && e != ReadPart ) 
-  {
-    // there was an error but we aren't a player yet
-    if (e == ReadError)
-      nerror("error on read");
-    listener->close(connectionID);
-  } 
-  else 
-  {
-    // ok read in all the data we may have waiting
-    void *data = malloc(readSize);
-    memcpy(data,buf,readSize);
-    unsigned int totalSize = readSize;
-
-    while (e == ReadAll)
-    {
-      handler->flushData();
-
-      e = handler->receive(256);
-      readSize = handler->getTcpReadSize();
-      buf = handler->getTcpBuffer();
-
-      unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
-      memcpy(temp,data,totalSize);
-      memcpy(temp+totalSize,buf,readSize);
-      free(data);
-      data = temp;
-      totalSize += readSize;
-    }
-
-    // we have a copy of all the data, so we can flush now
-    handler->flushData();
-    
-    // let our callback know that we got data
-    callback->pending(connectionID,data,totalSize);
-    free(data);
-  }
-  return true;
-}
-
-bool APISocketListener::disconnected ( NetHandler * /* handler */, int connectionID )
-{
-  pendingPackets.erase(pendingPackets.find(connectionID));
-  connections.erase(connections.find(connectionID));
-  APIConnections.erase(APIConnections.find(connectionID));
-
-  return true;
-}
-
-void APISocketListener::sendData ( int connectionID, unsigned int size, const char* data )
-{
-  if (pendingPackets.find(connectionID) == pendingPackets.end())
-  {
-    std::vector<APIPendingPacket> temp;
-    pendingPackets[connectionID] = temp;
-  }
-  pendingPackets[connectionID].push_back(APIPendingPacket(size,data));
-}
-
-void APISocketListener::update( void )
-{
-  // send out what we got
-  if (!listener)
-    return;
-  listener->update(0.0001f);
-
-  std::map<int, std::vector<APIPendingPacket> >::iterator itr = pendingPackets.begin();
-  while ( itr != pendingPackets.end() )
-  {
-    NetHandler *handler = connections[itr->first];
-    if ( handler && itr->second.size())
-    {
-      handler->send(itr->second[0].data,itr->second[0].size);
-      itr->second.erase(itr->second.begin());
-    }
-  }
-}
-
-BZF_API bool bz_registerNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler )
-{
-  if ( !handler || APISockets.find(port) != APISockets.end() )
-    return false;
-
-  APISocketListener *listener = new APISocketListener;
-
-  listener->callback = handler;
-  listener->port = port;
-  listener->listener = new NetListener;
-
-  if (!listener->listener)
-  {
-    delete(listener);
-    return false;
-  }
-  bool worked = listener->listener->listen(serverAddress,port);
- 
-  if (!worked)
-  {
-    delete(listener);
-    return false;
-  }
-  if (!APISockets.size())
-    bz_registerEvent(bz_eTickEvent,&netTicker);
-
-  APISockets[port] = listener;
-  return true;
-}
-
-BZF_API bool bz_removeNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler )
-{
-  if ( !handler || APISockets.find(port) == APISockets.end() )
-    return false;
-
-  APISocketListener *listener = APISockets[port];
-  if (listener->callback != handler)
-    return false;
-
-  delete(listener);
-  
-  APISockets.erase(APISockets.find(port));
-
-  if (!APISockets.size())
-    bz_removeEvent(bz_eTickEvent,&netTicker);
-
-  return true;
-}
-
-BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, unsigned int size )
-{
-  if (APIConnections.find(connectionID) == APIConnections.end())
-    return false;
-
-  APISocketListener *listener = APIConnections[connectionID];
-
-  listener->sendData(connectionID,size,(const char*)data);
-
-  return true;
-}
-
-BZF_API bool bz_disconnectNetworkSocket ( int connectionID )
-{
-  if (APIConnections.find(connectionID) == APIConnections.end())
-    return false;
-
-  APISocketListener *listener = APIConnections[connectionID];
-
-  listener->disconnected(listener->connections[connectionID],connectionID);
-  listener->listener->close(connectionID);
-
-  return true;
-}
-
-BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID )
-{
-  if (APIConnections.find(connectionID) == APIConnections.end())
-    return 0;
-
-  APISocketListener *listener = APIConnections[connectionID];
-
-  if (listener->pendingPackets.find(connectionID) == listener->pendingPackets.end())
-    return 0;
-
-  return (unsigned int)listener->pendingPackets[connectionID].size();
-}
-
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
@@ -1349,6 +997,16 @@ BZF_API bool bz_getAdmin ( int playerID )
   if(!player)
     return false;
   return player->accessInfo.isAdmin();
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_validAdminPassword ( const char* passwd )
+{
+  if (!passwd || !clOptions->password.size())
+    return false;
+
+  return clOptions->password == passwd;
 }
 
 //-------------------------------------------------------------------------
@@ -2321,6 +1979,52 @@ BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const c
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_IDBanUser(int playerIndex, const char *bzID , int duration, const char *reason)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if(!player || !reason || !bzID || std::string(bzID).size() <= 0)
+    return false;
+
+  // reload the banlist in case anyone else has added
+  clOptions->acl.load();
+  clOptions->acl.idBan(bzID, player->player.getCallSign(), duration, reason);
+  clOptions->acl.save();
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IPUnbanUser ( const char* ip )
+{
+  if(!ip)
+    return false;
+
+  if(clOptions->acl.unban(ip))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IDUnbanUser ( const char* bzID )
+{
+  if(!bzID)
+    return false;
+
+  if(clOptions->acl.idUnban(bzID))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bz_APIStringList *bz_getReports(void)
 {
   bz_APIStringList *list=new bz_APIStringList;
@@ -2492,7 +2196,7 @@ BZF_API bool bz_getStandardSpawn(int playerID, float pos[3], float *rot)
     return false;
 
   // get the spawn position
-  SpawnPosition *spawnPosition=new SpawnPosition(playerID, (!clOptions->respawnOnBuildings) || (player->player.isBot()), clOptions->gameType==eClassicCTF);
+  SpawnPosition *spawnPosition=new SpawnPosition(playerID, (!clOptions->respawnOnBuildings) || (player->player.isBot()), clOptions->gameType==ClassicCTF);
 
   pos[0]=spawnPosition->getX();
   pos[1]=spawnPosition->getY();
@@ -2728,104 +2432,6 @@ BZF_API bool bz_getFlagPosition(int flag, float *pos)
   else
     memcpy(pos, pFlag->flag.position, sizeof(float) *3);
 
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldBox(float *pos, float rot, float *scale, bz_WorldObjectOptions options)
-{
-  if(!world || world->isFinished() || !pos || !scale)
-    return false;
-
-  world->addBox(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru);
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldPyramid(float *pos, float rot, float *scale, bool fliped, bz_WorldObjectOptions options)
-{
-  if(!world || world->isFinished() || !pos || !scale)
-    return false;
-
-  world->addPyramid(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], options.driveThru, options.shootThru, fliped);
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldBase(float *pos, float rot, float *scale, int teamIndex, bz_WorldObjectOptions options)
-{
-  if(!world || world->isFinished() || !pos || !scale)
-    return false;
-
-  world->addBase(pos, rot, scale, teamIndex, options.driveThru, options.shootThru);
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldTeleporter(float *pos, float rot, float *scale, float border, bz_WorldObjectOptions options)
-{
-  if(!world || world->isFinished() || !pos || !scale)
-    return false;
-
-  world->addTeleporter(pos[0], pos[1], pos[2], rot, scale[0], scale[1], scale[2], border, false, options.driveThru, options.shootThru);
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldLink(int from, int to)
-{
-  if(!world || world->isFinished())
-    return false;
-
-  world->addLink(from, to);
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldWaterLevel(float level, bz_MaterialInfo *material)
-{
-  if(!world || world->isFinished())
-    return false;
-
-  if(!material)
-  {
-    world->addWaterLevel(level, NULL);
-    return true;
-  }
-
-  BzMaterial bzmat;
-  setBZMatFromAPIMat(bzmat, material);
-  world->addWaterLevel(level, MATERIALMGR.addMaterial(&bzmat));
-  return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_addWorldWeapon(const char *_flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays)
-{
-  if(!world || world->isFinished() || !_flagType)
-    return false;
-
-  std::string flagType=_flagType;
-
-  FlagTypeMap &flagMap=FlagType::getFlagMap();
-  if(flagMap.find(std::string(flagType))==flagMap.end())
-    return false;
-
-  FlagType *flag=flagMap.find(std::string(flagType))->second;
-
-  std::vector < float > realDelays;
-
-  for(unsigned int i=0; i < delays.size(); i++)
-    realDelays.push_back(delays.get(i));
-
-  world->addWeapon(flag, pos, rot, tilt, RogueTeam, initDelay, realDelays, synct);
   return true;
 }
 
@@ -4104,14 +3710,14 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint(float pos[3])
 
 BZF_API bz_eGameType bz_getGameType(void)
 {
-  if(clOptions->gameType==eClassicCTF)
-    return eClassicCTFGame;
-  else if(clOptions->gameType==eRabbitChase)
+  if(clOptions->gameType==ClassicCTF)
+    return ClassicCTFGame;
+  else if(clOptions->gameType==RabbitChase)
     return eRabbitGame;
-  else if(clOptions->gameType==eOpenFFA)
-    return eOpenFFAGame;
+  else if(clOptions->gameType==OpenFFA)
+    return OpenFFAGame;
 
-  return eTeamFFAGame;
+  return TeamFFAGame;
 }
 
 // server side bot API
@@ -4568,9 +4174,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
   /* notify existing players (if any) about the new flag type.
      this behavior is a bit questionable, but seems to be the Right Thing(tm) to do.
      new clients will get the notification during flag negotiation, which is better. */
-
-  NetMsg   msg = MSGMGR.newMessage();
-
+  NetMsg msg = MSGMGR.newMessage();
   tmp->packCustom(msg);
   msg->broadcast(MsgFlagType);
 

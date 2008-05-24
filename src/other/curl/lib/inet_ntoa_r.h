@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_ntoa_r.h,v 1.3 2005-05-26 20:56:25 bagder Exp $
+ * $Id: inet_ntoa_r.h,v 1.3 2005/05/26 20:56:25 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___ 
 #                             \___|\___/|_| \_\_____|
 #
-# $Id: Makefile.example,v 1.3 2002-08-14 23:01:14 bagder Exp $
+# $Id: Makefile.example,v 1.4 2007-08-11 20:57:54 bagder Exp $
 #
 
 # What to call the final executable
@@ -29,9 +29,8 @@ LDFLAGS = -L/home/dast/lib -L/usr/local/ssl/lib
 # We need -lcurl for the curl stuff
 # We need -lsocket and -lnsl when on Solaris
 # We need -lssl and -lcrypto when using libcurl with SSL support
-# We need -ldl for dlopen() if that is in libdl
 # We need -lpthread for the pthread example
-LIBS = -lcurl -lsocket -lnsl -lssl -lcrypto -dl
+LIBS = -lcurl -lsocket -lnsl -lssl -lcrypto
 
 # Link the target with all objects and libraries
 $(TARGET) : $(OBJS)

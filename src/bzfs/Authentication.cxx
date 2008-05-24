@@ -14,6 +14,7 @@
 #include "Authentication.h"
 
 /* system implementation headers */
+#include <string.h>
 #include <assert.h>
 #include <sys/types.h>
 #ifdef HAVE_UNISTD_H

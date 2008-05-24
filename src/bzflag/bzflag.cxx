@@ -73,7 +73,6 @@
 /* local headers */
 #include "ActionBinding.h"
 #include "ExportInformation.h"
-#include "ServerStartMenu.h"
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"
@@ -169,7 +168,6 @@ static void		usage()
   printFatalError("usage: %s"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
-	" [-config <configfile>]"
 	" [-configdir <config dir name>]"
 	" [-d | -debug]"
 	" [-date mm/dd/yyyy]"
@@ -214,15 +212,12 @@ static void		parse(int argc, char** argv)
 // = 9;
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
-		strcmp(argv[i], "-anonymous") == 0) {
+	strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strcmp(argv[i], "-config") == 0) {
+    } else if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-	} else if (strcmp(argv[i], "-configdir") == 0) {
-		checkArgc(i, argc, argv[i]);
-		// the setting has already been done in parseConfigName()
-	} else if ((strcmp(argv[i], "-d") == 0) ||
+    } else if ((strcmp(argv[i], "-d") == 0) ||
 	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
@@ -230,8 +225,8 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
 	BZDB.unset("directory");
-	  else
-		BZDB.set("directory", argv[i]);
+      else
+	BZDB.set("directory", argv[i]);
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
@@ -462,18 +457,11 @@ static void		parse(int argc, char** argv)
 
 static void		parseConfigName(int argc, char** argv)
 {
-	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-configdir") == 0) {
-			checkArgc(i, argc, argv[i]);
-			setCustomConfigDir(argv[i]);
-			alternateConfig += argv[i];
-		}
-	}
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-config") == 0) {
+    if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
-      alternateConfig = getConfigDirName();
-      alternateConfig += argv[i];
+      setCustomConfigDir(argv[i]);
+      alternateConfig = getCurrentConfigFileName();
     }
   }
 }
@@ -521,8 +509,6 @@ void			dumpResources()
       display->getResolution(display->getResolution())) {
     BZDB.set("resolution", display->getResolution(display->getResolution())->name);
   }
-  BZDB.set("startcode", ServerStartMenu::getSettings());
-
   BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
 
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
@@ -797,12 +783,9 @@ int initWinsoc ( void )
 
 int initClient ( int argc, char** argv )
 {
-
-#ifdef _WIN32
   // set the character handling locale
-  // this makes BZFlag able to use directory names with locale characters
   setlocale(LC_CTYPE,"");
-#endif
+
   // init libs
   if (initWinsoc() != 0)
     return 1;
@@ -1213,9 +1196,6 @@ int initDisplay ( void )
 	}
     }
 
-    if (BZDB.isSet("startcode"))
-      ServerStartMenu::setSettings(BZDB.get("startcode").c_str());
-
     if (BZDB.isSet("panelopacity"))
       RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));
 
@@ -1420,7 +1400,23 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;
+    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // as one argument
+    if (*scan == 34) {
+      // Move past the starting double quote
+      scan++;
+      // Keep going until we reach the end, or we hit another double quote
+      // FIXME: Support escaping the double quotes
+      while (*scan != 0 && *scan != 34)
+	scan++;
+      // Move past the ending double quote
+      scan++;
+    }
+    // Not a double quote, so just make sure we aren't hitting any spaces.
+    else
+      while (!isspace(*scan) && *scan != 0) scan++;
+    
+    // Skip past any spaces
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
@@ -1435,9 +1431,29 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   scan = cmdLine;
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
-    argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    if (*scan) *scan++ = 0;
+    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // as one argument
+    if (*scan == 34) {
+      // Move past the starting double quote
+      // Set the double quote to null just in case
+      *scan++ = 0;
+  
+      argv[argc++] = scan;
+      // Keep going until we reach the end, or we hit another double quote
+      // FIXME: Support escaping the double quotes
+      while (*scan != 0 && *scan != 34)
+	scan++;
+      // Move past the ending double quote
+      // Set it to null so we end this paramater
+      if (*scan) *scan++ = 0;
+    }
+    // Not a double quote, so just make sure we aren't hitting any spaces.
+    else {
+      argv[argc++] = scan;
+      while (!isspace(*scan) && *scan != 0) scan++;
+      if (*scan) *scan++ = 0;
+    }
+    // Skip past spaces
     while (isspace(*scan) && *scan != 0) scan++;
   }
 

@@ -323,7 +323,7 @@ void *TetraBuilding::pack(void* buf) const
 
   // pack the vertices
   for (v = 0; v < 4; v++) {
-    buf = nboPackVector(buf, vertices[v]);
+    buf = nboPackFloatVector(buf, vertices[v]);
   }
 
   // pack the normals
@@ -333,7 +333,7 @@ void *TetraBuilding::pack(void* buf) const
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       for (int i = 0; i < 3; i++) {
-	buf = nboPackVector(buf, normals[v][i]);
+	buf = nboPackFloatVector(buf, normals[v][i]);
       }
     }
   }
@@ -376,7 +376,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the vertices
   for (v = 0; v < 4; v++) {
-    buf = nboUnpackVector(buf, vertices[v]);
+    buf = nboUnpackFloatVector(buf, vertices[v]);
   }
 
   // unpack the normals
@@ -386,7 +386,7 @@ void *TetraBuilding::unpack(void* buf)
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       for (int i = 0; i < 3; i++) {
-	buf = nboUnpackVector(buf, normals[v][i]);
+	buf = nboUnpackFloatVector(buf, normals[v][i]);
       }
     }
   }

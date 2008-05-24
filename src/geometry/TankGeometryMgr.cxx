@@ -194,7 +194,8 @@ void TankGeometryMgr::buildLists()
   } else if (quality > _EXPERIMENTAL_QUALITY) {
     quality = _EXPERIMENTAL_QUALITY;
   }
-  /*  int wheelDivs = divisionLevels[quality][0]; */
+
+  int wheelDivs = divisionLevels[quality][0]; 
   int treadDivs = divisionLevels[quality][1];
 
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
@@ -222,25 +223,25 @@ void TankGeometryMgr::buildLists()
 	  // setup the scale factor
 	  currentScaleFactor = scaleFactors[size];
 
-	  if ((part <= RightCasing)) { // || (!animated)) {
+	  if ((part <= Turret)  || (!animated)) {
 	    // the basic parts
 	    count = partFunctions[lod][part]();
 	  } else if (lod == HighTankLOD){
 	    // the animated parts
-/*	    if (part == LeftCasing) {
+	    if (part == LeftCasing) {
 	      count = buildHighLCasingAnim();
 	    }
 	    else if (part == RightCasing) {
 	      count = buildHighRCasingAnim();
 	    }
-	    else */
+	    else 
 	    if (part == LeftTread) {
 	      count = buildHighLTread(treadDivs);
 	    }
 	    else if (part == RightTread) {
 	      count = buildHighRTread(treadDivs);
 	    }
-	  /*  else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
+	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
 	      int wheel = part - LeftWheel0;
 	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
 				      wheelDivs);
@@ -249,7 +250,7 @@ void TankGeometryMgr::buildLists()
 	      int wheel = part - RightWheel0;
 	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
 				      wheelDivs);
-	    } */
+	    }
 	  }
 
 	  // end of the list

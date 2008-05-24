@@ -11,10 +11,10 @@ MSVCFILES = vc/adig/adig.dep vc/adig/adig.dsp vc/vc.dsw vc/ahost/ahost.dep \
 # adig and ahost are just sample programs and thus not mentioned with the
 # regular sources and headers
 EXTRA_DIST = CHANGES README.cares Makefile.inc adig.c ahost.c $(man_MANS) \
- $(MSVCFILES) AUTHORS config-win32.h
+ $(MSVCFILES) AUTHORS config-win32.h RELEASE-NOTES libcares.pc.in
 
 
-VER=-version-info 1:0:0
+VER=-version-info 2:0:0
 # This flag accepts an argument of the form current[:revision[:age]]. So,
 # passing -version-info 3:12:1 sets current to 3, revision to 12, and age to
 # 1.
@@ -69,6 +69,3 @@ dist-hook:
 	  strip=`echo $$file | sed -e s/^$(srcdir)// -e s/\.dist//`; \
 	  cp $$file $(distdir)$$strip; \
 	done)
-
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
- config.h.in~ config.sub configure depcomp install-sh missing

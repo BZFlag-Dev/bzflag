@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.h,v 1.32 2007-02-01 11:27:42 yangtse Exp $
+ * $Id: url.h,v 1.37 2008-01-16 12:24:00 bagder Exp $
  ***************************************************************************/
 
 #include <stdarg.h> /* to make sure we have ap_list */
@@ -32,6 +32,8 @@
 CURLcode Curl_open(struct SessionHandle **curl);
 CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
                      va_list arg);
+CURLcode Curl_dupset(struct SessionHandle * dst, struct SessionHandle * src);
+void Curl_freeset(struct SessionHandle * data);
 CURLcode Curl_close(struct SessionHandle *data); /* opposite of curl_open() */
 CURLcode Curl_connect(struct SessionHandle *, struct connectdata **,
                       bool *async, bool *protocol_connect);
@@ -62,12 +64,11 @@ int Curl_doing_getsock(struct connectdata *conn,
                        curl_socket_t *socks,
                        int numsocks);
 
-void Curl_addHandleToPipeline(struct SessionHandle *handle,
-                              struct curl_llist *pipe);
+bool Curl_isPipeliningEnabled(const struct SessionHandle *handle);
+CURLcode Curl_addHandleToPipeline(struct SessionHandle *handle,
+                                  struct curl_llist *pipeline);
 int Curl_removeHandleFromPipeline(struct SessionHandle *handle,
-                                  struct curl_llist *pipe);
-bool Curl_isHandleAtHead(struct SessionHandle *handle,
-                         struct curl_llist *pipe);
+                                  struct curl_llist *pipeline);
 
 void Curl_close_connections(struct SessionHandle *data);
 
@@ -81,5 +82,10 @@ CURLcode Curl_doing_fdset(struct connectdata *conn,
                           fd_set *write_fd_set,
                           int *max_fdp);
 #endif
+
+/* Called on connect, and if there's already a protocol-specific struct
+   allocated for a different connection, this frees it that it can be setup
+   properly later on. */
+void Curl_reset_reqproto(struct connectdata *conn);
 
 #endif

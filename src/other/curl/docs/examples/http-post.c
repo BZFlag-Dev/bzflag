@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: http-post.c,v 1.2 2004-11-22 14:41:36 bagder Exp $
+ * $Id: http-post.c,v 1.2 2004/11/22 14:41:36 bagder Exp $
  */
 
 #include <stdio.h>

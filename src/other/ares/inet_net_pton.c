@@ -214,7 +214,7 @@ getbits(const char *src, int *bitsp)
       if (n++ != 0 && val == 0)       /* no leading zeros */
         return (0);
       val *= 10;
-      val += (int)(pch - digits);
+      val += (pch - digits);
       if (val > 128)                  /* range */
         return (0);
       continue;
@@ -246,7 +246,7 @@ getv4(const char *src, unsigned char *dst, int *bitsp)
       if (n++ != 0 && val == 0)       /* no leading zeros */
         return (0);
       val *= 10;
-      val += (int)(pch - digits);
+      val += (pch - digits);
       if (val > 255)                  /* range */
         return (0);
       continue;

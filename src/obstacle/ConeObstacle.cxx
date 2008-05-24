@@ -401,8 +401,8 @@ bool ConeObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 void *ConeObstacle::pack(void *buf) const
 {
   buf = transform.pack(buf);
-  buf = nboPackVector(buf, pos);
-  buf = nboPackVector(buf, size);
+  buf = nboPackFloatVector(buf, pos);
+  buf = nboPackFloatVector(buf, size);
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, sweepAngle);
   buf = nboPackInt(buf, divisions);
@@ -433,8 +433,8 @@ void *ConeObstacle::unpack(void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);
-  buf = nboUnpackVector(buf, pos);
-  buf = nboUnpackVector(buf, size);
+  buf = nboUnpackFloatVector(buf, pos);
+  buf = nboUnpackFloatVector(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
   buf = nboUnpackInt(buf, inTmp);

@@ -64,7 +64,6 @@
 
 /* local headers */
 #include "ActionBinding.h"
-#include "ServerStartMenu.h"
 #include "callbacks.h"
 #include "playing.h"
 #include "sound.h"

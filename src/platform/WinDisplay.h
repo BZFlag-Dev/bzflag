@@ -20,10 +20,12 @@
 #include "BzfDisplay.h"
 #include "bzfgl.h"
 
+#include "ErrorHandler.h"
+
 class BzfKeyEvent;
 class Resolution;
 
-class WinDisplay : public BzfDisplay {
+class WinDisplay : public BzfDisplay , FatalErrorCallback {
   public:
 			WinDisplay(const char* displayName,
 				const char* videoFormat);
@@ -86,9 +88,12 @@ class WinDisplay : public BzfDisplay {
     int			fullHeight;
     Resolution*		resolutions;
 
+    // fatal error handler
+    virtual void error ( const char* title, const char* message );
+
     // for key to character translations
-    bool		translated;
-    int			charCode;
+    mutable bool	translated;
+    mutable int		charCode;
 
     // keyboard mapping
     static const int	asciiMap[];

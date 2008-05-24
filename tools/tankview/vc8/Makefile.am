@@ -1,5 +1,5 @@
 EXTRA_DIST = \
 	tankview.sln \
-	tankView.vcproj
+	tankview.vcproj
 
 MAINTAINERCLEANFILES = Makefile.in

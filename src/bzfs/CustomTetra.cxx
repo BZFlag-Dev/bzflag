@@ -70,48 +70,40 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     if (vertexCount >= 4) {
       std::cout << "Extra tetrahedron vertex" << std::endl;
       // keep on chugging
-    }
-    else {
+    } else {
       float* vertex = vertices[vertexCount];
       input >> vertex[0] >> vertex[1] >> vertex[2];
       vertexCount++;
     }
-  }
-  else if (strcasecmp(cmd, "normals") == 0) {
+  } else if (strcasecmp(cmd, "normals") == 0) {
     if (vertexCount < 1) {
       std::cout << "Normals defined before any vertex" << std::endl;
       // keep on chugging
-    }
-    else if (vertexCount > 4) {
+    } else if (vertexCount > 4) {
       std::cout << "Extra tetrahedron normals" << std::endl;
       // keep on chugging
-    }
-    else {
+    } else {
       useNormals[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
 	float* normal = normals[vertexCount - 1][v];
 	input >> normal[0] >> normal[1] >> normal[2];
       }
     }
-  }
-  else if (strcasecmp(cmd, "texcoords") == 0) {
+  } else if (strcasecmp(cmd, "texcoords") == 0) {
     if (vertexCount < 1) {
       std::cout << "Texcoords defined before any vertex" << std::endl;
       // keep on chugging
-    }
-    else if (vertexCount > 4) {
+    } else if (vertexCount > 4) {
       std::cout << "Extra tetrahedron texcoords" << std::endl;
       // keep on chugging
-    }
-    else {
+    } else {
       useTexcoords[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
 	float* texcoord = texcoords[vertexCount - 1][v];
 	input >> texcoord[0] >> texcoord[1];
       }
     }
-  }
-  else {
+  } else {
     return WorldFileObstacle::read(cmd, input);
   }
 

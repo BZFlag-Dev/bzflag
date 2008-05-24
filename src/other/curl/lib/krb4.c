@@ -7,7 +7,7 @@
  *
  * Copyright (c) 1995, 1996, 1997, 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
- * Copyright (c) 2004 - 2007 Daniel Stenberg
+ * Copyright (c) 2004 - 2008 Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: krb4.c,v 1.45 2007-01-03 23:04:43 bagder Exp $
+ * $Id: krb4.c,v 1.47 2008-01-15 23:19:02 bagder Exp $
  */
 
 #include "setup.h"
@@ -97,7 +97,7 @@ strlcpy (char *dst, const char *src, size_t dst_sz)
        ++p, ++src, ++n)
     *p = *src;
   *p = '\0';
-  if (*src == '\0')
+  if(*src == '\0')
     return n;
   else
     return n + strlen (src);
@@ -228,17 +228,17 @@ krb4_auth(void *app_data, struct connectdata *conn)
   }
 
 #ifdef HAVE_KRB_GET_OUR_IP_FOR_REALM
-  if (krb_get_config_bool("nat_in_use")) {
+  if(krb_get_config_bool("nat_in_use")) {
     struct sockaddr_in *localaddr  = (struct sockaddr_in *)LOCAL_ADDR;
     struct in_addr natAddr;
 
-    if (krb_get_our_ip_for_realm(krb_realmofhost(host),
+    if(krb_get_our_ip_for_realm(krb_realmofhost(host),
                                  &natAddr) != KSUCCESS
         && krb_get_our_ip_for_realm(NULL, &natAddr) != KSUCCESS)
       infof(data, "Can't get address for realm %s\n",
                  krb_realmofhost(host));
     else {
-      if (natAddr.s_addr != localaddr->sin_addr.s_addr) {
+      if(natAddr.s_addr != localaddr->sin_addr.s_addr) {
 #ifdef HAVE_INET_NTOA_R
         char ntoa_buf[64];
         char *ip = (char *)inet_ntoa_r(natAddr, ntoa_buf, sizeof(ntoa_buf));
@@ -362,7 +362,7 @@ CURLcode Curl_krb_kauth(struct connectdata *conn)
     tmp=0;
   }
   if(!tmp || !ptr) {
-    Curl_failf(conn->data, "Failed to decode base64 in reply.\n");
+    Curl_failf(conn->data, "Failed to decode base64 in reply");
     Curl_set_command_prot(conn, save);
     return CURLE_FTP_WEIRD_SERVER_REPLY;
   }
@@ -387,7 +387,7 @@ CURLcode Curl_krb_kauth(struct connectdata *conn)
   des_pcbc_encrypt((void *)tkt.dat, (void *)tktcopy.dat,
                    tkt.length,
                    schedule, &key, DES_DECRYPT);
-  if (strcmp ((char*)tktcopy.dat + 8,
+  if(strcmp ((char*)tktcopy.dat + 8,
               KRB_TICKET_GRANTING_TICKET) != 0) {
     afs_string_to_key(passwd,
                       krb_realmofhost(conn->host.name),

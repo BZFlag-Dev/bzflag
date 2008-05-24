@@ -57,7 +57,7 @@ bool SharedObjectLoader::load(std::string filename)
   switch (sizeof(createSymbol)) {
     case (sizeof(int32_t)):
       createAddr32 = (int32_t)((int64_t)createSymbol);
-      createFunction = (createHandle)createAddr32;
+      createFunction = reinterpret_cast<createHandle>(createAddr32);
       break;
     case (sizeof(int64_t)):
       createAddr64 = (int64_t)createSymbol;
@@ -80,7 +80,7 @@ bool SharedObjectLoader::load(std::string filename)
   switch (sizeof(createSymbol)) {
     case (sizeof(int32_t)):
       destroyAddr32 = (int32_t)((int64_t)destroySymbol);
-      destroyFunction = (destroyHandle)destroyAddr32;
+      destroyFunction = reinterpret_cast<destroyHandle>(destroyAddr32);
       break;
     case (sizeof(int64_t)):
       destroyAddr64 = (int64_t)destroySymbol;

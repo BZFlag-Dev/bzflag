@@ -24,21 +24,22 @@ class WorldInfo;
 class GroupDefinition;
 
 
-class WorldFileObject {
-  public:
-    WorldFileObject();
-    virtual ~WorldFileObject() { }
-
-    virtual bool read(const char *cmd, std::istream&);
-
-    virtual bool usesManager() { return false; }
-    virtual bool usesGroupDef() { return true; }
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual void writeToManager() const;
-    virtual void writeToGroupDef(GroupDefinition*) const;
-
-  protected:
-    std::string name;
+class WorldFileObject
+{
+public:
+  WorldFileObject();
+  virtual ~WorldFileObject() { }
+  
+  virtual bool read(const char *cmd, std::istream&);
+  
+  virtual bool usesManager() { return false; }
+  virtual bool usesGroupDef() { return true; }
+  virtual void writeToWorld(WorldInfo*) const;
+  virtual void writeToManager() const;
+  virtual void writeToGroupDef(GroupDefinition*) const;
+  
+protected:
+  std::string name;
 };
 
 

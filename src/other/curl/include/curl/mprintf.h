@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: mprintf.h,v 1.14 2006-10-30 16:26:24 giva Exp $
+ * $Id: mprintf.h,v 1.15 2007-08-07 12:44:38 patrickm Exp $
  ***************************************************************************/
 
 #include <stdarg.h>
@@ -44,6 +44,16 @@ CURL_EXTERN char *curl_maprintf(const char *format, ...);
 CURL_EXTERN char *curl_mvaprintf(const char *format, va_list args);
 
 #ifdef _MPRINTF_REPLACE
+# undef printf
+# undef fprintf
+# undef sprintf
+# undef vsprintf
+# undef snprintf
+# undef vprintf
+# undef vfprintf
+# undef vsnprintf
+# undef aprintf
+# undef vaprintf
 # define printf curl_mprintf
 # define fprintf curl_mfprintf
 #ifdef CURLDEBUG

@@ -272,9 +272,9 @@ float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (currentTime <= segments[i].start) break;
 */
 
-    // if shot segment and tank bboxes don't overlap then no hit
+    // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
     const ShotPathSegment& s = segments[i];
-    if (!isOverlapping(s.bbox, tankBBox)) continue;
+    if (!isOverlapping(s.bbox, tankBBox) || s.reason == ShotPathSegment::Boundary) continue;
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).

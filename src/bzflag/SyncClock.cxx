@@ -44,7 +44,7 @@ void ServerSyncedClock::update ( ServerLink *link )
 	}
 }
 
-void ServerSyncedClock::timeMessage ( unsigned char tag, float time )
+void ServerSyncedClock::timeMessage ( unsigned char tag, double time )
 {
 	double sentTime = -1;
 	double current = TimeKeeper::getCurrent().getSeconds();

@@ -45,13 +45,16 @@ namespace BZWTestLauncher
 		private System.Windows.Forms.NumericUpDown nudSoloBots;
 		private System.Windows.Forms.Button btnRun;
 		private System.Windows.Forms.Button btnStop;
-		private System.Windows.Forms.TextBox txtOutput;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		private Process procBZFS;
+		private BZFSPoller outPoll;
+		private BZFSPoller errPoll;
+		private System.Windows.Forms.CheckBox chkRunClient;
+		private System.Windows.Forms.RichTextBox txtOutput;
 		private Process procBZFlag;
 
 		public frmMain()
@@ -88,6 +91,8 @@ namespace BZWTestLauncher
 				{
 					components.Dispose();
 				}
+
+				BZFSPoller.Exit = true;
 			}
 			base.Dispose( disposing );
 		}
@@ -121,11 +126,12 @@ namespace BZWTestLauncher
 			this.chkRicochet = new System.Windows.Forms.CheckBox();
 			this.chkTanksSpawnOnBuildings = new System.Windows.Forms.CheckBox();
 			this.grpClientSettings = new System.Windows.Forms.GroupBox();
+			this.chkRunClient = new System.Windows.Forms.CheckBox();
 			this.nudSoloBots = new System.Windows.Forms.NumericUpDown();
 			this.label6 = new System.Windows.Forms.Label();
 			this.btnRun = new System.Windows.Forms.Button();
 			this.btnStop = new System.Windows.Forms.Button();
-			this.txtOutput = new System.Windows.Forms.TextBox();
+			this.txtOutput = new System.Windows.Forms.RichTextBox();
 			this.grpGameMode.SuspendLayout();
 			this.grpMiscSettings.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nudDebugLevel)).BeginInit();
@@ -337,18 +343,29 @@ namespace BZWTestLauncher
 			// 
 			// grpClientSettings
 			// 
+			this.grpClientSettings.Controls.Add(this.chkRunClient);
 			this.grpClientSettings.Controls.Add(this.nudSoloBots);
 			this.grpClientSettings.Controls.Add(this.label6);
 			this.grpClientSettings.Location = new System.Drawing.Point(8, 200);
 			this.grpClientSettings.Name = "grpClientSettings";
-			this.grpClientSettings.Size = new System.Drawing.Size(120, 48);
+			this.grpClientSettings.Size = new System.Drawing.Size(120, 72);
 			this.grpClientSettings.TabIndex = 5;
 			this.grpClientSettings.TabStop = false;
 			this.grpClientSettings.Text = "Client Settings";
 			// 
+			// chkRunClient
+			// 
+			this.chkRunClient.Checked = true;
+			this.chkRunClient.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkRunClient.Location = new System.Drawing.Point(8, 16);
+			this.chkRunClient.Name = "chkRunClient";
+			this.chkRunClient.Size = new System.Drawing.Size(80, 16);
+			this.chkRunClient.TabIndex = 2;
+			this.chkRunClient.Text = "Run Client";
+			// 
 			// nudSoloBots
 			// 
-			this.nudSoloBots.Location = new System.Drawing.Point(40, 16);
+			this.nudSoloBots.Location = new System.Drawing.Point(40, 40);
 			this.nudSoloBots.Maximum = new System.Decimal(new int[] {
 																		10,
 																		0,
@@ -360,7 +377,7 @@ namespace BZWTestLauncher
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(8, 16);
+			this.label6.Location = new System.Drawing.Point(8, 40);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(32, 16);
 			this.label6.TabIndex = 0;
@@ -389,13 +406,16 @@ namespace BZWTestLauncher
 			// 
 			// txtOutput
 			// 
+			this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.txtOutput.CausesValidation = false;
 			this.txtOutput.Location = new System.Drawing.Point(352, 8);
-			this.txtOutput.Multiline = true;
 			this.txtOutput.Name = "txtOutput";
 			this.txtOutput.ReadOnly = true;
 			this.txtOutput.Size = new System.Drawing.Size(392, 280);
 			this.txtOutput.TabIndex = 8;
-			this.txtOutput.Text = "";
+			this.txtOutput.Text = "richTextBox1";
 			// 
 			// frmMain
 			// 
@@ -501,7 +521,7 @@ namespace BZWTestLauncher
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.Title = "BZFS.exe Binary";
-			dialog.Filter = "bzfs.exe|bzfs.exe|All files (*.*)|*.*";
+			dialog.Filter = "bzfs executable|bzfs.exe;bzfs|All Files|*";
 			dialog.FilterIndex = 1;
 			if (txtBZFSBinary.Text.Length == 0)
 				dialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
@@ -518,7 +538,7 @@ namespace BZWTestLauncher
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.Title = "BZFlag.exe Binary";
-			dialog.Filter = "bzflag.exe|bzflag.exe|All files (*.*)|*.*";
+			dialog.Filter = "bzflag executable|bzflag.exe;bzflag|All Files|*";
 			dialog.FilterIndex = 1;
 			if (txtBZFlagBinary.Text.Length == 0)
 				dialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
@@ -556,19 +576,24 @@ namespace BZWTestLauncher
 				return;
 			}
 
-			// Give BZFS a chance to start up
-			Thread.Sleep(2000);
-
-			if (!bzflagStart())
+			if (chkRunClient.Checked)
 			{
-				bzfsStop();
-				return;
+				// Give BZFS a chance to start up
+				for (int i = 0; i < 20; ++i)
+				{
+					Thread.Sleep(100);
+					Application.DoEvents();
+				}
+
+				if (!bzflagStart())
+				{
+					bzfsStop();
+					return;
+				}
 			}
 
 			btnRun.Enabled = false;
 			btnStop.Enabled = true;
-
-			txtOutput.Text = "Run the map, and then press Stop to view BZFS output, if any.";
 		}
 
 		private void btnStop_Click(object sender, System.EventArgs e)
@@ -675,12 +700,29 @@ namespace BZWTestLauncher
 			procBZFS.StartInfo.CreateNoWindow = true;
 			procBZFS.StartInfo.RedirectStandardError = true;
 			procBZFS.StartInfo.RedirectStandardOutput = true;
+			procBZFS.EnableRaisingEvents = true;
+			procBZFS.Exited += new EventHandler(procBZFS_Exited);
 
 			if (!procBZFS.Start())
 			{
 				MessageBox.Show("Failed to start BZFS.", "Failed to start BZFS");
 				return false;
 			}
+
+			txtOutput.Rtf = "{\\rtf1\\ansi }";
+			txtOutput.Select(txtOutput.Text.Length, 0);
+
+			BZFSPoller.OutputBox = txtOutput;
+			outPoll = new BZFSPoller(procBZFS.StandardOutput, false);
+			errPoll = new BZFSPoller(procBZFS.StandardError, true);
+
+			Thread thrdBZFSOut = new Thread(new ThreadStart(outPoll.pollBZFS));
+			Thread thrdBZFSErr = new Thread(new ThreadStart(errPoll.pollBZFS));
+			Thread thrdCollate = new Thread(new ThreadStart(BZFSPoller.collator));
+
+			thrdBZFSErr.Start();
+			thrdBZFSOut.Start();
+			thrdCollate.Start();
 
 			return true;
 		}
@@ -691,10 +733,7 @@ namespace BZWTestLauncher
 			{
 				procBZFS.Kill();
 			}
-
-			if (procBZFS.StartInfo.RedirectStandardError && procBZFS.StartInfo.RedirectStandardOutput)
-				txtOutput.Text = "=============================\r\nPossible errors:\r\n=============================\r\n"+procBZFS.StandardError.ReadToEnd()+"\r\n\r\n=============================\r\nOther Output:\r\n=============================\r\n"+procBZFS.StandardOutput.ReadToEnd();
-
+			BZFSPoller.Exit = true;
 			return true;
 		}
 
@@ -739,5 +778,10 @@ namespace BZWTestLauncher
 			return true;
 		}
 
+		private void procBZFS_Exited(object sender, EventArgs e)
+		{
+			btnRun.Enabled = true;
+			btnStop.Enabled = false;
+		}
 	}
 }

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: ftpget.c,v 1.4 2004-08-23 14:22:52 bagder Exp $
+ * $Id: ftpget.c,v 1.7 2008-02-27 09:06:15 bagder Exp $
  */
 
 #include <stdio.h>
@@ -22,11 +22,11 @@
  */
 
 struct FtpFile {
-  char *filename;
+  const char *filename;
   FILE *stream;
 };
 
-int my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
+static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
 {
   struct FtpFile *out=(struct FtpFile *)stream;
   if(out && !out->stream) {
@@ -65,7 +65,7 @@ int main(void)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
 
     /* Switch on full protocol/debug output */
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, TRUE);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
     res = curl_easy_perform(curl);
 

@@ -361,40 +361,27 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 
 InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 {
-  if (obstacle == NULL) 
-  {
+  if (obstacle == NULL) {
     return NOT_IN_BUILDING;
-  }
-  else if (obstacle->getType() == BoxBuilding::getClassName())
-  {
-    if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0)
-    {
+  } else if (obstacle->getType() == BoxBuilding::getClassName()) {
+    if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0) {
       return IN_BOX_DRIVETHROUGH;
-    }
-    else 
-    {
+    } else {
       return IN_BOX_NOTDRIVETHROUGH;
     }
-  }
-  else if (obstacle->getType() == PyramidBuilding::getClassName()) {
+  } else if (obstacle->getType() == PyramidBuilding::getClassName()) {
     return IN_PYRAMID;
-  }
-  else if (obstacle->getType() == TetraBuilding::getClassName()) {
+  } else if (obstacle->getType() == TetraBuilding::getClassName()) {
     return IN_TETRA;
-  }
-  else if (obstacle->getType() == MeshObstacle::getClassName()) {
+  } else if (obstacle->getType() == MeshObstacle::getClassName()) {
     return IN_MESH;
-  }
-  else if (obstacle->getType() == MeshFace::getClassName()) {
+  } else if (obstacle->getType() == MeshFace::getClassName()) {
     return IN_MESHFACE;
-  }
-  else if (obstacle->getType() == BaseBuilding::getClassName()) {
+  } else if (obstacle->getType() == BaseBuilding::getClassName()) {
     return IN_BASE;
-  }
-  else if (obstacle->getType() == Teleporter::getClassName()) {
+  } else if (obstacle->getType() == Teleporter::getClassName()) {
     return IN_TELEPORTER;
-  }
-  else {
+  } else {
     // FIXME - choke here?
     printf ("*** Unknown obstacle type in WorldInfo::classifyHit()\n");
     return IN_BASE;

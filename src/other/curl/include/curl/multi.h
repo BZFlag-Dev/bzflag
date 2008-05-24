@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: multi.h,v 1.43 2007-04-16 16:34:08 bagder Exp $
+ * $Id: multi.h,v 1.44 2007-05-30 20:04:44 bagder Exp $
  ***************************************************************************/
 /*
   This is an "external" header file. Don't give away any internals here!
@@ -308,6 +308,9 @@ typedef enum {
 
   /* This is the argument passed to the timer callback */
   CINIT(TIMERDATA, OBJECTPOINT, 5),
+
+  /* maximum number of entries in the connection cache */
+  CINIT(MAXCONNECTS, LONG, 6),
 
   CURLMOPT_LASTENTRY /* the last unused */
 } CURLMoption;

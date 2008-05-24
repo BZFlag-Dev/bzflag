@@ -18,10 +18,7 @@
 
 /* common implementation headers */
 #include "network.h"
-
-extern "C" {
-#include "ares.h"
-}
+#include "bzares.h"
 
 class AresHandler {
  public:
@@ -45,7 +42,7 @@ class AresHandler {
   void		process(fd_set *read_set, fd_set *write_set);
   ResolutionStatus getStatus() {return status;};
  private:
-  static void	staticCallback(void *arg, int statusCallback,
+  static void	staticCallback(void *arg, int statusCallback, int timeouts,
 			     struct hostent *hostent);
   void		callback(int status, struct hostent *hostent);
   // peer's network hostname (malloc/free'd)

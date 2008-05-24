@@ -143,13 +143,15 @@ noinst_HEADERS =			\
 	WordFilter.h			\
 	WorldEventManager.h		\
 	ZSceneDatabase.h		\
-	ares.h				\
 	bz_Locale.h			\
+	bzares.h			\
 	bzfSDL.h			\
 	bzfgl.h				\
 	bzfio.h				\
+	bzfstream.h			\
 	bzglob.h			\
 	bzsignal.h			\
+	bzUnicode.h			\
 	common.h			\
 	cURLManager.h			\
 	global.h			\
@@ -168,6 +170,7 @@ CLEANFILES = datestamp
 
 MAINTAINERCLEANFILES =	\
 	config.h.in	\
+	config.h.in~	\
 	stamp-h.in	\
 	Makefile.in
 

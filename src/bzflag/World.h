@@ -199,13 +199,13 @@ class World {
 
 inline	bool	World::allowTeams() const
 {
-	return gameType != eOpenFFA;
+	return gameType != OpenFFA;
 }
 
 
 inline bool		World::allowTeamFlags() const
 {
-  return gameType == eClassicCTF;
+  return gameType == ClassicCTF;
 }
 
 inline bool		World::allowTeamKills() const
@@ -245,7 +245,7 @@ inline bool		World::allowShakeWins() const
 
 inline bool		World::allowRabbit() const
 {
-  return gameType == eRabbitChase;
+  return gameType == RabbitChase;
 }
 
 inline bool		World::allowHandicap() const

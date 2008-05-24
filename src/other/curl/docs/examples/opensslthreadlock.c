@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: opensslthreadlock.c,v 1.1 2005-05-09 21:12:03 bagder Exp $
+ * $Id: opensslthreadlock.c,v 1.2 2007-07-12 21:11:10 danf Exp $
  *
  * Example source code to show one way to set the necessary OpenSSL locking
  * callbacks if you want to do multi-threaded transfers with HTTPS/FTPS with
@@ -16,6 +16,11 @@
  * Author: Jeremy Brown
  */
 
+
+#include <stdio.h>
+#include <pthread.h>
+#include <openssl/err.h>
+
 #define MUTEX_TYPE       pthread_mutex_t
 #define MUTEX_SETUP(x)   pthread_mutex_init(&(x), NULL)
 #define MUTEX_CLEANUP(x) pthread_mutex_destroy(&(x))
@@ -25,7 +30,7 @@
 
 
 void handle_error(const char *file, int lineno, const char *msg){
-     fprintf(stderr, ** %s:%i %s\n, file, lineno, msg);
+     fprintf(stderr, "** %s:%d %s\n", file, lineno, msg);
      ERR_print_errors_fp(stderr);
      /* exit(-1); */
  }

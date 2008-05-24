@@ -164,7 +164,7 @@ class BzfKeyEvent {
 			AltKey = 4
     };
 
-    char		ascii;
+    int			chr;
     int			button;
     int			shift;
 };
@@ -199,7 +199,7 @@ class BzfEvent {
 	type(Unset),
 	window((BzfWindow*)NULL)
     {
-	mouseMove.x=mouseMove.y=resize.width=resize.height=keyUp.ascii=keyUp.button=keyUp.shift=0;
+	mouseMove.x=mouseMove.y=resize.width=resize.height=keyUp.chr=keyUp.button=keyUp.shift=0;
     }
 };
 

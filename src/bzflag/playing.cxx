@@ -578,7 +578,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   keyboardMovement = None;
   shiftKeyStatus   = key.shift;
   const std::string cmd = KEYMGR.get(key, pressed);
-  if (key.ascii == 27) {
+  if (key.chr == 27) {
     if (pressed) {
       mainMenu->createControls();
       HUDDialogStack::get()->push(mainMenu);
@@ -661,7 +661,8 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 
   {
     // built-in unchangeable keys.  only perform if not masked.
-    switch (key.ascii) {
+    // TODO: not localizable
+    switch (key.chr) {
       case 'T':
       case 't':
 	// toggle frames-per-second display
@@ -737,7 +738,7 @@ static void doKeyNotPlaying(const BzfKeyEvent&, bool, bool)
 static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 {
 #if defined(FREEZING)
-  if (key.ascii == '`' && pressed && !haveBinding && key.shift) {
+  if (key.chr == '`' && pressed && !haveBinding && key.shift) {
     // toggle motion freeze
     motionFreeze = !motionFreeze;
     if (motionFreeze) {
@@ -747,7 +748,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
   }
 #endif
 
-  if (key.ascii == 0 &&
+  if (key.chr == 0 &&
     key.button >= BzfKeyEvent::F1 &&
     key.button <= BzfKeyEvent::F10 &&
     (key.shift & (BzfKeyEvent::ControlKey +
@@ -1435,7 +1436,7 @@ int curlProgressFunc(void* /*clientp*/,
 	return 1; // terminate the curl call
       case BzfEvent::KeyDown:
 	display->getEvent(event); // flush the event
-	if (event.keyDown.ascii == 27) {
+	if (event.keyDown.chr == 27) {
 	  return 1; // terminate the curl call
 	}
 	break;
@@ -1554,7 +1555,7 @@ static void loadCachedWorld()
 
   const bool doDownloads =	BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
-  Downloads::startDownloads(doDownloads, updateDownloads, false);
+  Downloads::instance().startDownloads(doDownloads, updateDownloads, false);
   downloadingInitialTexture  = true;
 }
 
@@ -1705,7 +1706,7 @@ static void handleResourceFetch (void* msg)
 
     std::string hostname;
     parseHostname (item.URL, hostname);
-    if (authorizedServer (hostname)) {
+    if (Downloads::instance().authorizedServer (hostname)) {
       if (!resourceDownloader) {
 	resourceDownloader = new ResourceGetter;
       }
@@ -1933,15 +1934,21 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
     checkScores = true;
 }
 
-static void handleFlagUpdate(void *msg)
+static void handleFlagUpdate(void *msg, size_t len)
 {
-  uint16_t count;
+  uint16_t count = 0;
   uint16_t flagIndex;
-  msg = nboUnpackUShort(msg, count);
-  for (int i = 0; i < count; i++) {
-    msg = nboUnpackUShort(msg, flagIndex);
-    msg = world->getFlag(int(flagIndex)).unpack(msg);
-    world->initFlag(int(flagIndex));
+  if ( len >= 2)
+   msg = nboUnpackUShort(msg, count);
+
+  size_t perFlagSize = 2 + 55;
+
+  if ( len >= (2 + (perFlagSize*count)) ) {
+    for (int i = 0; i < count; i++) {
+      msg = nboUnpackUShort(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      world->initFlag(int(flagIndex));
+    }
   }
 }
 
@@ -1965,7 +1972,7 @@ static void handleAliveMessage(void *msg)
   float pos[3], forward;
 
   msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackVector(msg, pos);
+  msg = nboUnpackFloatVector(msg, pos);
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
@@ -2005,7 +2012,7 @@ static void handleAliveMessage(void *msg)
 	}
       }
     }
-    tank->setStatus(PlayerState::Alive);
+    tank->setStatus(tank->getStatus() | PlayerState::Alive);
     tank->move(pos, forward);
     tank->setVelocity(zero);
     tank->setAngularVelocity(0.0f);
@@ -2065,8 +2072,7 @@ static void handleAllow(void *msg)
     localtank->setDesiredAngVel(0.0);
     // drop any team flag we may have, as would happen if we paused
     const FlagType* flagd = localtank->getFlag();
-    if (flagd->flagTeam != NoTeam)
-    {
+    if (flagd->flagTeam != NoTeam) {
       serverLink->sendDropFlag(localtank->getPosition());
       localtank->setShotType(StandardShot);
     }
@@ -2539,7 +2545,7 @@ static void handleNearFlag(void *msg)
 {
   float pos[3];
   std::string flagName;
-  msg = nboUnpackVector(msg, pos);
+  msg = nboUnpackFloatVector(msg, pos);
   msg = nboUnpackStdString(msg, flagName);
 
   std::string fullMessage = "Closest Flag: " + flagName;
@@ -2552,11 +2558,11 @@ static void handleNearFlag(void *msg)
 
 static void handleWhatTimeIsIt(void *msg)
 {
-  float time = -1;
+  double time = -1;
   unsigned char tag = 0;
 
   msg = nboUnpackUByte(msg, tag);
-  msg = nboUnpackFloat(msg, time);
+  msg = nboUnpackDouble(msg, time);
   syncedClock.timeMessage(tag, time);
 }
 
@@ -2628,35 +2634,28 @@ static void handleShotBegin(bool human, void *msg)
   {
     RemotePlayer* shooter = player[shooterid];
 
-    if (shooterid != ServerPlayer)
-    {
-      if (shooter && player[shooterid]->getId() == shooterid)
-      {
+    if (shooterid != ServerPlayer) {
+      if (shooter && player[shooterid]->getId() == shooterid) {
 	//shooter->shoot();
 
-	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
-	{
+	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
 	  float shotPos[3];
 	  shooter->getMuzzle(shotPos);
 
 	  if (showShotEffects(shooterid))
 	    EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
 	}
-      }
-      else
-      {
+      } else {
 	return;
       }
     }
 
-    if (human)
-    {
+    if (human) {
       const float* pos = firingInfo.shot.pos;
       const bool importance = false;
       const bool localSound = isViewTank(shooter);
 
-      switch (firingInfo.shotType)
-      {
+      switch (firingInfo.shotType) {
       default:
 	playSound(SFX_FIRE, pos, importance, localSound);
 	break;
@@ -3081,15 +3080,15 @@ static void handleAdminInfo(void* msg)
       message += "an observer";
     } else {
       switch (tank->getPlayerType()) {
-case TankPlayer:
-  message += "a tank";
-  break;
-case ComputerPlayer:
-  message += "a robot tank";
-  break;
-default:
-  message += "an unknown type";
-  break;
+	case TankPlayer:
+	  message += "a tank";
+	  break;
+	case ComputerPlayer:
+	  message += "a robot tank";
+	  break;
+	default:
+	  message += "an unknown type";
+	  break;
       }
     }
     message += " from " + ip.getDotNotation();
@@ -3168,8 +3167,7 @@ static void handleNewPlayer(void* msg)
 
 static void handleTangUpdate ( uint16_t len, void* msg )
 {
-  if ( len >= 5)
-  {
+  if (len >= 5) {
     unsigned int objectID = 0;
     msg = nboUnpackUInt(msg,objectID);
     unsigned char tang = 0;
@@ -3186,8 +3184,7 @@ static void handleTangReset ( void )
 
 static void handleAllowSpawn ( uint16_t len, void* msg )
 {
-  if ( len >= 1)
-  {
+  if ( len >= 1) {
     unsigned char allow = 0;
     msg = nboUnpackUByte(msg,allow);
 
@@ -3202,14 +3199,13 @@ static void handleLimboMessage ( void* msg )
 
 static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg )
 {
-  switch (msg->getCode())
-  {
-  default:
-    return false;
+  switch (msg->getCode()) {
+    default:
+      return false;
 
-  case MsgSetShot:
-    handleSetShotType(msg);
-    break;
+    case MsgSetShot:
+      handleSetShotType(msg);
+      break;
   }
   return true;
 }
@@ -3220,133 +3216,133 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
   bool checkScores = false;
 
   switch (code) {
-case MsgWhatTimeIsIt:
-  handleWhatTimeIsIt(msg);
-  break;
+    case MsgWhatTimeIsIt:
+      handleWhatTimeIsIt(msg);
+      break;
 
-case MsgNearFlag:
-  handleNearFlag(msg);
-  break;
+    case MsgNearFlag:
+      handleNearFlag(msg);
+      break;
 
-case MsgSetTeam:
-  handleSetTeam(msg,len);
-  break;
+    case MsgSetTeam:
+      handleSetTeam(msg,len);
+      break;
 
-case MsgFetchResources:
-  handleResourceFetch(msg);
-  break;
+    case MsgFetchResources:
+      handleResourceFetch(msg);
+      break;
 
-case MsgCustomSound:
-  handleCustomSound(msg);
-  break;
+    case MsgCustomSound:
+      handleCustomSound(msg);
+      break;
 
-case MsgUDPLinkEstablished:
-  serverLink->enableOutboundUDP();      // server got our initial UDP packet
-  break;
+    case MsgUDPLinkEstablished:
+      serverLink->enableOutboundUDP();      // server got our initial UDP packet
+      break;
 
-case MsgUDPLinkRequest:
-  serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
-  break;
+    case MsgUDPLinkRequest:
+      serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
+      break;
 
-case MsgSuperKill:
-  handleSuperKill(msg);
-  break;
+    case MsgSuperKill:
+      handleSuperKill(msg);
+      break;
 
-case MsgAccept:
-  break;
+    case MsgAccept:
+      break;
 
-case MsgReject:
-  handleRejectMessage(msg);
-  break;
+    case MsgReject:
+      handleRejectMessage(msg);
+      break;
 
-case MsgNegotiateFlags:
-  handleFlagNegotiation(msg, len);
-  break;
+    case MsgNegotiateFlags:
+      handleFlagNegotiation(msg, len);
+      break;
 
-case MsgFlagType: 
-  {
-    FlagType* typ = NULL;
-    FlagType::unpackCustom(msg, typ);
-    logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
-    break;
-  }
+    case MsgFlagType: 
+      {
+	FlagType* typ = NULL;
+	FlagType::unpackCustom(msg, typ);
+	logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
+	break;
+      }
 
-case MsgGameSettings:
-  handleGameSettings(msg);
-  break;
+    case MsgGameSettings:
+      handleGameSettings(msg);
+      break;
 
-case MsgCacheURL:
-  handleCacheURL(msg, len);
-  break;
+    case MsgCacheURL:
+      handleCacheURL(msg, len);
+      break;
 
-case MsgWantWHash:
-  handleWantHash(msg, len);
-  break;
+    case MsgWantWHash:
+      handleWantHash(msg, len);
+      break;
 
-case MsgGetWorld:
-  handleGetWorld(msg, len);
-  break;
+    case MsgGetWorld:
+      handleGetWorld(msg, len);
+      break;
 
-case MsgGameTime:
-  GameTime::unpack(msg);
-  GameTime::update();
-  break;
+    case MsgGameTime:
+      GameTime::unpack(msg);
+      GameTime::update();
+      break;
 
-case MsgTimeUpdate:
-  handleTimeUpdate(msg);
-  break;
+    case MsgTimeUpdate:
+      handleTimeUpdate(msg);
+      break;
 
-case MsgScoreOver:
-  handleScoreOver(msg);
-  break;
+    case MsgScoreOver:
+      handleScoreOver(msg);
+      break;
 
-case MsgAddPlayer:
-  handleAddPlayer(msg, checkScores);
-  break;
+    case MsgAddPlayer:
+      handleAddPlayer(msg, checkScores);
+      break;
 
-case MsgRemovePlayer:
-  handleRemovePlayer(msg, checkScores);
-  break;
+    case MsgRemovePlayer:
+      handleRemovePlayer(msg, checkScores);
+      break;
 
-case MsgFlagUpdate:
-  handleFlagUpdate(msg);
-  break;
+    case MsgFlagUpdate:
+      handleFlagUpdate(msg,len);
+      break;
 
-case MsgTeamUpdate:
-  handleTeamUpdate(msg, checkScores);
-  break;
+    case MsgTeamUpdate:
+      handleTeamUpdate(msg, checkScores);
+      break;
 
-case MsgAlive:
-  handleAliveMessage(msg);
-  break;;
+    case MsgAlive:
+      handleAliveMessage(msg);
+      break;;
 
-case MsgAutoPilot:
-  handleAutoPilot(msg);
-  break;;
+    case MsgAutoPilot:
+      handleAutoPilot(msg);
+      break;;
 
-case MsgAllow:
-  handleAllow(msg);
-  break;
+    case MsgAllow:
+      handleAllow(msg);
+      break;
 
-case MsgKilled:
-  handleKilledMessage(msg, human, checkScores);
-  break;;
+    case MsgKilled:
+      handleKilledMessage(msg, human, checkScores);
+      break;;
 
-case MsgGrabFlag:
-  handleGrabFlag(msg);
-  break;
+    case MsgGrabFlag:
+      handleGrabFlag(msg);
+      break;
 
-case MsgDropFlag:
-  handleDropFlag(msg);
-  break;
+    case MsgDropFlag:
+      handleDropFlag(msg);
+      break;
 
-case MsgCaptureFlag:
-  handleCaptureFlag(msg, checkScores);
-  break;
+    case MsgCaptureFlag:
+      handleCaptureFlag(msg, checkScores);
+      break;
 
-case MsgNewRabbit:
-  handleNewRabbit(msg);
-  break;
+    case MsgNewRabbit:
+      handleNewRabbit(msg);
+      break;
 
 case MsgShotID:
   handleMsgShotID(msg);
@@ -3356,49 +3352,49 @@ case MsgShotBegin:
   handleShotBegin(human, msg);
   break;
 
-case MsgShotEnd:
-  handleShotEnd(msg);
-  break;
+    case MsgShotEnd:
+      handleShotEnd(msg);
+      break;
 
-case MsgHandicap:
-  handleHandicap(msg);
-  break;
+    case MsgHandicap:
+      handleHandicap(msg);
+      break;
 
-case MsgScore:
-  handleScore(msg);
-  break;
+    case MsgScore:
+      handleScore(msg);
+      break;
 
-case MsgSetVar:
-  handleMsgSetVars(msg);
-  break;
+    case MsgSetVar:
+      handleMsgSetVars(msg);
+      break;
 
-case MsgTeleport:
-  handleTeleport(msg);
-  break;
+    case MsgTeleport:
+      handleTeleport(msg);
+      break;
 
-case MsgTransferFlag:
-  handleTransferFlag(msg);
-  break;
+    case MsgTransferFlag:
+      handleTransferFlag(msg);
+      break;
 
-case MsgMessage:
-  handleMessage(msg);
-  break;
+    case MsgMessage:
+      handleMessage(msg);
+      break;
 
-case MsgReplayReset:
-  handleReplayReset(msg, checkScores);
-  break;
+    case MsgReplayReset:
+      handleReplayReset(msg, checkScores);
+      break;
 
-case MsgAdminInfo:
-  handleAdminInfo(msg);
-  break;
+    case MsgAdminInfo:
+      handleAdminInfo(msg);
+      break;
 
-case MsgPlayerInfo:
-  handlePlayerInfo(msg);
-  break;
+    case MsgPlayerInfo:
+      handlePlayerInfo(msg);
+      break;
 
-case MsgNewPlayer:
-  handleNewPlayer(msg);
-  break;
+    case MsgNewPlayer:
+      handleNewPlayer(msg);
+      break;
 
   // inter-player relayed message
 case MsgPlayerUpdate:
@@ -3407,21 +3403,21 @@ case MsgLagPing:
   handlePlayerMessage(code, 0, msg);
   break;
 
-case MsgTangibilityUpdate:
-  handleTangUpdate(len,msg);
-  break;
+    case MsgTangibilityUpdate:
+      handleTangUpdate(len,msg);
+      break;
 
-case MsgTangibilityReset:
-  handleTangReset();
-  break;
+    case MsgTangibilityReset:
+      handleTangReset();
+      break;
 
-case MsgAllowSpawn:
-  handleAllowSpawn(len,msg);
-  break;
+    case MsgAllowSpawn:
+      handleAllowSpawn(len,msg);
+      break;
 
-case MsgLimboMessage:
-  handleLimboMessage(msg);
-  break;
+    case MsgLimboMessage:
+      handleLimboMessage(msg);
+      break;
   }
 
   if (checkScores) updateHighScores();
@@ -3456,8 +3452,7 @@ static void handleMovementUpdate ( uint16_t code, uint16_t, void* msg )
   if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
     addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
 
-  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0)
-  {
+  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
     // message yet -- set explosion now, play sound later (when we
     // get killed message).  status is already !Alive so make player
@@ -3494,9 +3489,9 @@ public:
 
     e = serverLink->read(message, 0);
 
-    if (e == -2)
-    {
+    if (e == -2) {
       printError("Server communication error");
+      serverError = true;
       return 0;
     }
 
@@ -3518,8 +3513,7 @@ static void		doMessages()
 
   BufferedNetworkMessageManager::MessageList::iterator itr = messageList.begin();
 
-  while (itr != messageList.end())
-  {
+  while (itr != messageList.end()) {
     if (!handleServerMessage(true,*itr))
       handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
 
@@ -3691,20 +3685,13 @@ static void		addExplosions(SceneDatabase* scene)
 static void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
-  uint8_t nameLen, valueLen;
-
-  char name[MaxPacketLen];
-  char value[MaxPacketLen];
+  std::string name;
+  std::string value;
 
   msg = nboUnpackUShort(msg, numVars);
   for (int i = 0; i < numVars; i++) {
-    msg = nboUnpackUByte(msg, nameLen);
-    msg = nboUnpackString(msg, name, nameLen);
-    name[nameLen] = '\0';
-
-    msg = nboUnpackUByte(msg, valueLen);
-    msg = nboUnpackString(msg, value, valueLen);
-    value[valueLen] = '\0';
+    msg = nboUnpackStdString(msg, name);
+    msg = nboUnpackStdString(msg, value);
 
     BZDB.set(name, value);
     BZDB.setPersistent(name, false);
@@ -3807,32 +3794,26 @@ static void		checkEnvironment()
 
   FlagType* flagd = myTank->getFlag();
 
-  if (flagd->flagTeam != NoTeam)
-  {
+  if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) && (flagd->flagTeam == team && base != team) || (flagd->flagTeam != team && base == team))
       serverLink->sendCaptureFlag(base);
-  }
-  else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding))
-  {
+  } else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
-    if (TimeKeeper::getTick()-lastGrabSent > 0.2)
-    {
+    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
       // grab any and all flags i'm driving over
       const float* tpos = myTank->getPosition();
       const float radius = myTank->getRadius();
       const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
-      for (int i = 0; i < numFlags; i++)
-      {
+      for (int i = 0; i < numFlags; i++) {
 	if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;
 
 	const float* fpos = world->getFlag(i).position;
-	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2))
-	{
+	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendPlayerUpdate(myTank);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
@@ -3846,8 +3827,7 @@ static void		checkEnvironment()
 
   myTank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-  {
+  for (i = 0; i < curMaxPlayers; i++) {
     if (player[i])
       myTank->checkHit(player[i], hit, minTime);
   }
@@ -3858,8 +3838,7 @@ static void		checkEnvironment()
   // Check if I've been tagged (freeze tag).  Note that we alternate the
   // direction that we go through the list to avoid a pathological case.
   static int upwards = 1;
-  for (i = 0; i < curMaxPlayers; i ++)
-  {
+  for (i = 0; i < curMaxPlayers; i ++) {
     int tankid;
     if (upwards)
       tankid = i;
@@ -3876,16 +3855,15 @@ static void		checkEnvironment()
   // used later
   //	float waterLevel = World::getWorld()->getWaterLevel();
 
-  if (hit)
-  {
+  if (hit) {
       // i got shot!  tell the server and it can tell me waht to do
       serverLink->sendHit(myTank->getId(), hit->getShotId());
       playLocalSound(SFX_HIT);
   }
   else if (myTank->getDeathPhysicsDriver() >= 0)   // if not dead yet, see if i'm sitting on death
     serverLink->sendHitDriver(myTank->getId(),myTank->getDeathPhysicsDriver());
-  else  // if not dead yet, see if i got squished
-  {
+  else {
+    // if not dead yet, see if i got squished
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++)
@@ -3993,8 +3971,7 @@ void setLookAtMarker(void)
     const float a = fabsf( y / d );
 
 
-    if (inLookRange(a, d, bestDistance, player[i]))
-    {
+    if (inLookRange(a, d, bestDistance, player[i])) {
       // check and see if we can cast a ray from our point to the object
       float vec[3];
       vec[0] = pos[0]-x0;
@@ -4007,19 +3984,15 @@ void setLookAtMarker(void)
       const ObsList* olist = COLLISIONMGR.rayTest (&ray, d);
 
       bool blocked = false;
-      if ( olist && olist->count > 0)
-      {
-	for (int o = 0; o < olist->count; o++)
-	{
+      if ( olist && olist->count > 0) {
+	for (int o = 0; o < olist->count; o++) {
 	  const Obstacle* obs = olist->list[o];
 
-	  if (obs->getType() != Teleporter::getClassName())
-	  {
+	  if (obs->getType() != Teleporter::getClassName()) {
 	    // if it's not a teleporter (they are too thin to hide things )
 	    // then see if it's closer to us then the other tank
 	    const float timet = obs->intersect(ray);
-	    if ( timet > 1.0f )
-	    {
+	    if ( timet > 1.0f ) {
 	      blocked = true;
 	      o = olist->count;
 	    }
@@ -4028,8 +4001,7 @@ void setLookAtMarker(void)
       }
 
       // if there is nothing between us then go and add it to the list
-      if ( !blocked )
-      {
+      if ( !blocked ) {
 	// is it better?
 	bestTarget = player[i];
 	bestDistance = d;
@@ -4869,7 +4841,7 @@ void		leaveGame()
     BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
   // flush downloaded textures (before the BzMaterials are nuked)
-  Downloads::removeTextures();
+  Downloads::instance().removeTextures();
 
   // delete world
   World::setWorld(NULL);
@@ -4974,61 +4946,60 @@ static void joinInternetGame(const struct in_addr *inAddress)
     return;
   }
 
-  // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-case ServerLink::BadVersion: {
-  static char versionError[] = "Incompatible server version XXXXXXXX";
-  strncpy(versionError + strlen(versionError) - 8,
-    serverLink->getVersion(), 8);
-  HUDDialogStack::get()->setFailedMessage(versionError);
-  break;
-			     }
+      case ServerLink::BadVersion: {
+	static char versionError[] = "Incompatible server version XXXXXXXX";
+	strncpy(versionError + strlen(versionError) - 8,
+	  serverLink->getVersion(), 8);
+	HUDDialogStack::get()->setFailedMessage(versionError);
+	break;
+      }
 
-			     // you got banned
-case ServerLink::Refused:{
-  const std::string& rejmsg = serverLink->getRejectionMessage();
+      case ServerLink::Refused: {
+        // you got banned
+	const std::string& rejmsg = serverLink->getRejectionMessage();
 
-  // add to the HUD
-  std::string msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server";
-  HUDDialogStack::get()->setFailedMessage(msg.c_str());
+	// add to the HUD
+	std::string msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server";
+	HUDDialogStack::get()->setFailedMessage(msg.c_str());
 
-  // add to the console
-  msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server:";
-  addMessage(NULL, msg);
-  msg = ColorStrings[YellowColor];
-  msg += rejmsg;
-  addMessage(NULL, msg);
+	// add to the console
+	msg = ColorStrings[RedColor];
+	msg += "You have been banned from this server:";
+	addMessage(NULL, msg);
+	msg = ColorStrings[YellowColor];
+	msg += rejmsg;
+	addMessage(NULL, msg);
 
-  break;
-			 }
+	break;
+      }
 
-case ServerLink::Rejected:
-  // the server is probably full or the game is over.  if not then
-  // the server is having network problems.
-  HUDDialogStack::get()->setFailedMessage
-    ("Game is full or over.  Try again later.");
-  break;
+      case ServerLink::Rejected:
+	// the server is probably full or the game is over.  if not then
+	// the server is having network problems.
+	HUDDialogStack::get()->setFailedMessage
+	  ("Game is full or over.  Try again later.");
+	break;
 
-case ServerLink::SocketError:
-  HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
-  break;
+      case ServerLink::SocketError:
+	HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
+	break;
 
-case ServerLink::CrippledVersion:
-  // can't connect to (otherwise compatible) non-crippled server
-  HUDDialogStack::get()->setFailedMessage
-    ("Cannot connect to full version server.");
-  break;
+      case ServerLink::CrippledVersion:
+	// can't connect to (otherwise compatible) non-crippled server
+	HUDDialogStack::get()->setFailedMessage
+	  ("Cannot connect to full version server.");
+	break;
 
-default:
-  HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format
-    ("Internal error connecting to server (error code %d).",
-    serverLink->getState()).c_str());
-  break;
+      default:
+	HUDDialogStack::get()->setFailedMessage
+	  (TextUtils::format
+	  ("Internal error connecting to server (error code %d).",
+	  serverLink->getState()).c_str());
+	break;
     }
     return;
   }
@@ -5409,8 +5380,7 @@ void drawFrame(const float dt)
     targetPoint[1] = eyePoint[1] + myTankDir[1];
     targetPoint[2] = eyePoint[2] + myTankDir[2];
 
-    if ( myTank && thirdPersonVars.b3rdPerson )
-    {
+    if ( myTank && thirdPersonVars.b3rdPerson ) {
       targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
       targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
       targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
@@ -6115,8 +6085,7 @@ static void		updatePauseCountdown(float dt)
       } else {
 	// okay, now we pause.  first drop any team flag we may have.
 	const FlagType* flagd = myTank->getFlag();
-	if (flagd->flagTeam != NoTeam)
-	{
+	if (flagd->flagTeam != NoTeam) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	  myTank->setShotType(StandardShot);
 	}
@@ -6187,13 +6156,11 @@ static void		updateDestructCountdown(float dt)
 void getAFastToken ( void )
 {
   // get token if we need to (have a password but no token)
-  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0'))
-  {
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) {
     ServerList* serverList = new ServerList;
     serverList->startServerPings(&startupInfo);
     // wait no more than 10 seconds for a token
-    for (int j = 0; j < 40; j++)
-    {
+    for (int j = 0; j < 40; j++) {
       serverList->checkEchos(getStartupInfo());
       cURLManager::perform();
       if (startupInfo.token[0] != '\0')
@@ -6247,13 +6214,10 @@ bool dnsLookupDone ( struct in_addr &inAddress )
   ares.process(&readers, &writers);
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
-  if (status == AresHandler::Failed)
-  {
+  if (status == AresHandler::Failed) {
     HUDDialogStack::get()->setFailedMessage("Server not found");
     waitingDNS = false;
-  }
-  else if (status == AresHandler::HbNSucceeded)
-  {
+  } else if (status == AresHandler::HbNSucceeded) {
     waitingDNS = false;
     return true;
   }
@@ -6303,15 +6267,12 @@ void handleJoyStick ( void )
   static unsigned long old_buttons = 0;
   const int button_count = countof(button_map);
   unsigned long new_buttons = mainWindow->getJoyButtonSet();
-  if (old_buttons != new_buttons)
-  {
-    for (int j = 0; j < button_count; j++)
-    {
-      if ((old_buttons & (1<<j)) != (new_buttons & (1<<j)))
-      {
+  if (old_buttons != new_buttons) {
+    for (int j = 0; j < button_count; j++) {
+      if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	BzfKeyEvent ev;
 	ev.button = button_map[j];
-	ev.ascii = 0;
+	ev.chr = 0;
 	ev.shift = 0;
 	doKey(ev, (new_buttons & (1<<j)) != 0);
       }
@@ -6334,19 +6295,15 @@ void handleJoyStick ( void )
   // How many are there really
   int hatswitch_count = std::min(mainWindow->getJoyDeviceNumHats(), (unsigned int)countof(old_direction));
 
-  for (int j = 0; j < hatswitch_count; j++)
-  {
+  for (int j = 0; j < hatswitch_count; j++) {
     unsigned int hat_direction = mainWindow->getJoyHatswitch(j);
-    if (hat_direction != old_direction[j])
-    {
+    if (hat_direction != old_direction[j]) {
       int mask = 1;
-      for (int k = j; k < 4; ++k, mask <<= 1)
-      {
-	if (((old_direction[j] ^ hat_direction) & mask) != 0)
-	{
+      for (int k = j; k < 4; ++k, mask <<= 1) {
+	if (((old_direction[j] ^ hat_direction) & mask) != 0) {
 	  BzfKeyEvent ev;
 	  ev.button = hatswitch_map[j * 4 + k];
-	  ev.ascii = 0;
+	  ev.chr = 0;
 	  ev.shift = 0;
 	  doKey(ev, (hat_direction & mask) != 0);
 	}
@@ -6360,20 +6317,16 @@ void updateTimeOfDay ( const float dt )
 {
   // update time of day -- update sun and sky every few seconds
   float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
-  if (syncTime < 0.0f)
-  {
+  if (syncTime < 0.0f) {
     if (!BZDB.isSet("fixedTime"))
       epochOffset += (double)dt;
 
     epochOffset += (double)(50.0f * dt * clockAdjust);
-  }
-  else
-  {
+  } else {
     epochOffset = (double)syncTime;
     lastEpochOffset += (double)dt;
   }
-  if (fabs(epochOffset - lastEpochOffset) >= 4.0)
-  {
+  if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
     updateDaylight(epochOffset);
     lastEpochOffset = epochOffset;
   }
@@ -6383,8 +6336,7 @@ void checkForServerBail ( void )
 {
   // if server died then leave the game (note that this may cause
   // further server errors but that's okay).
-  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup))
-  {
+  if (serverError || (serverLink && serverLink->getState() == ServerLink::Hungup)) {
     // if we haven't reported the death yet then do so now
     if (serverDied || (serverLink && serverLink->getState() == ServerLink::Hungup))
       printError("Server has unexpectedly disconnected");
@@ -6395,11 +6347,9 @@ void checkForServerBail ( void )
 void updateVideoFormatTimer ( const float dt )
 {
   // update test video format timer
-  if (testVideoFormatTimer > 0.0f)
-  {
+  if (testVideoFormatTimer > 0.0f) {
     testVideoFormatTimer -= dt;
-    if (testVideoFormatTimer <= 0.0f)
-    {
+    if (testVideoFormatTimer <= 0.0f) {
       testVideoFormatTimer = 0.0f;
       setVideoFormat(testVideoPrevFormat);
     }
@@ -6424,10 +6374,8 @@ void moveRoamingCamera ( const float dt )
 void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
-    if (player[i])
-    {
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i]) {
       const bool wasNotResponding = player[i]->isNotResponding();
       player[i]->doDeadReckoning();
       const bool isNotResponding = player[i]->isNotResponding();
@@ -6440,10 +6388,8 @@ void doTankMotions ( const float /*dt*/ )
   }
 
   // do motion
-  if (myTank)
-  {
-    if (myTank->isAlive() && !myTank->isPaused())
-    {
+  if (myTank) {
+    if (myTank->isAlive() && !myTank->isPaused()) {
       doMotion();
       if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
 	setHuntTarget(); //spot hunt target
@@ -6457,9 +6403,7 @@ void doTankMotions ( const float /*dt*/ )
       if (myTank->getTarget())
 	hud->AddLockOnMarker(myTank->getTarget()->getPosition(),myTank->getTarget()->getCallSign(),!isKillable(myTank->getTarget()));
 
-    }
-    else
-    {
+    } else {
       int mx, my;
       mainWindow->getMousePosition(mx, my);
     }
@@ -6520,8 +6464,7 @@ void updateTanks ( const float dt )
   if (myTank)
     myTank->updateTank(dt, true);
 
-  for (int i = 0; i < curMaxPlayers; i++)
-  {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i])
       player[i]->updateTank(dt, false);
   }
@@ -6546,14 +6489,12 @@ void doUpdates ( const float dt )
   float dtLimit = MAX_DT_LIMIT;
   float realDT = dt;
 
-  if ( doneDT > dtLimit )
-  {
+  if ( doneDT > dtLimit ) {
     realDT = dtLimit;
     doneDT -= dtLimit;
   }
 
-  while ( doneDT > 0 )
-  {
+  while ( doneDT > 0 ) {
     updateTimes(realDT);
     updatePostions(realDT);
     checkEnvironment(realDT);
@@ -6589,13 +6530,12 @@ void doNetworkStuff ( void )
 bool checkForCompleteDownloads ( void )
 {
   // check if we are waiting for initial texture downloading
-  if (!Downloads::requestFinalized())
+  if (!Downloads::instance().requestFinalized())
     return false;
 
   // downloading is terminated. go!
-  Downloads::finalizeDownloads();
-  if (downloadingInitialTexture)
-  {
+  Downloads::instance().finalizeDownloads();
+  if (downloadingInitialTexture) {
     downloadingInitialTexture = false;
     return true;
   }
@@ -6605,14 +6545,15 @@ bool checkForCompleteDownloads ( void )
   return false;
 }
 
-void doEnergySaver ( void )
+void doFPSLimit ( void )
 {
-  // limit the fps to save battery life by minimizing cpu usage
-  if (!BZDB.isTrue("saveEnergy"))
-    return;
-
+  // always cap out at 200 fps unless a limit is set.
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
-  float fpsLimit = BZDB.eval("fpsLimit");
+  float fpsLimit = 200;
+
+  if (BZDB.isTrue("saveEnergy"))  // limit the fps to save battery life by minimizing cpu usage
+    fpsLimit = BZDB.eval("fpsLimit");
+
   static bool notify = false;
 
 #ifndef DEBUG
@@ -6665,8 +6606,7 @@ static void		playingLoop()
   worldDownLoader = new WorldDownLoader;
 
   // main loop
-  while (!CommandsStandard::isQuit())
-  {
+  while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
 
     canSpawn = true;
@@ -6732,7 +6672,7 @@ static void		playingLoop()
     if (checkForCompleteDownloads())
       joinInternetGame2(); // we did the inital downloads, so we should join
 
-    doEnergySaver();
+    doFPSLimit();
 
 
     if (serverLink)
@@ -7031,18 +6971,18 @@ void			startPlaying()
   {
     int n = 3;	// assume triple buffering
     switch (RENDERER.getViewType()) {
-case SceneRenderer::Stacked:
-case SceneRenderer::Stereo:
-#ifndef USE_GL_STEREO
-  // control panel drawn twice per frame
-  n *= 2;
-#endif
-  break;
+      case SceneRenderer::Stacked:
+      case SceneRenderer::Stereo:
+      #ifndef USE_GL_STEREO
+	// control panel drawn twice per frame
+	n *= 2;
+      #endif
+	break;
 
-case SceneRenderer::ThreeChannel:
-default:
-  // only one copy of control panel visible
-  break;
+      case SceneRenderer::ThreeChannel:
+      default:
+	// only one copy of control panel visible
+	break;
     }
     controlPanel->setNumberOfFrameBuffers(n);
   }

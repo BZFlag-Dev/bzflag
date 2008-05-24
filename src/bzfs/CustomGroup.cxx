@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <string.h>
 
 /* common headers */
 #include "global.h" // for CtfTeams

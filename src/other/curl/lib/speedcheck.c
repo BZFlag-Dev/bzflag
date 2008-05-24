@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: speedcheck.c,v 1.22 2006-10-17 09:05:44 bagder Exp $
+ * $Id: speedcheck.c,v 1.23 2007-08-30 20:34:57 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -57,7 +57,7 @@ CURLcode Curl_speedcheck(struct SessionHandle *data,
             "Less than %d bytes/sec transfered the last %d seconds",
             data->set.low_speed_limit,
             data->set.low_speed_time);
-      return CURLE_OPERATION_TIMEOUTED;
+      return CURLE_OPERATION_TIMEDOUT;
     }
     Curl_expire(data, howlong);
   }

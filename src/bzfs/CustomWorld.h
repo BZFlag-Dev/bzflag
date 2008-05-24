@@ -23,16 +23,17 @@
 #include "WorldInfo.h"
 
 
-class CustomWorld : public WorldFileObject {
-  public:
-    CustomWorld();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
-
-  protected:
-    double _size;
-    double _fHeight;
+class CustomWorld : public WorldFileObject
+{
+public:
+  CustomWorld();
+  virtual bool read(const char *cmd, std::istream&);
+  virtual void writeToWorld(WorldInfo*) const;
+  virtual bool usesGroupDef() { return false; }
+  
+protected:
+  double _size;
+  double _fHeight;
 };
 
 

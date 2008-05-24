@@ -85,15 +85,6 @@ UNIX
 
         LDFLAGS=-R/usr/local/ssl/lib ./configure --with-ssl
 
-   Another option to the previous trick, is to set LD_LIBRARY_PATH or edit the
-   /etc/ld.so.conf file.
-
-   If your SSL library was compiled with rsaref (this was common in the past
-   when used in the United States), you may also need to set:
-
-     LIBS=-lRSAglue -lrsaref
-     (as suggested by Doug Kaufman)
-
    MORE OPTIONS
 
      To force configure to use the standard cc compiler if both cc and gcc are
@@ -143,6 +134,12 @@ UNIX
      To build with NSS support instead of OpenSSL for SSL/TLS, note that
      you need to use both --without-ssl and --with-nss.
 
+     To get GSSAPI support, build with --with-gssapi and have the MIT or
+     Heimdal Kerberos 5 packages installed.
+
+     To get support for SCP and SFTP, build with --with-libssh2 and have
+     libssh2 0.16 or later installed.
+     
 
 Win32
 =====
@@ -173,9 +170,17 @@ Win32
    MingW32
    -------
 
-   Run the 'mingw32.bat' file to get the proper environment variables set,
-   then run 'make mingw32' in the root dir. Use 'make mingw32-ssl' to build
-   curl SSL enabled.
+   Make sure that MinGW32's bin dir is in the search path, for example:
+
+     set PATH=c:\mingw32\bin;%PATH%
+
+   then run 'mingw32-make mingw32' in the root dir. There are other
+   make targets available to build libcurl with more features, use:
+   'mingw32-make mingw32-zlib' to build with Zlib support;
+   'mingw32-make mingw32-ssl-zlib' to build with SSL and Zlib enabled;
+   'mingw32-make mingw32-ssh2-ssl-zlib' to build with SSH2, SSL, Zlib;
+   'mingw32-make mingw32-ssh2-ssl-sspi-zlib' to build with SSH2, SSL, Zlib
+   and SSPI support.
 
    If you have any problems linking libraries or finding header files, be sure
    to verify that the provided "Makefile.m32" files use the proper paths, and
@@ -183,19 +188,38 @@ Win32
    environment variables, for example:
 
      set ZLIB_PATH=c:\zlib-1.2.3
-     set OPENSSL_PATH=c:\openssl-0.9.8d
-     set LIBSSH2_PATH=c:\libssh2-0.15
+     set OPENSSL_PATH=c:\openssl-0.9.8g
+     set LIBSSH2_PATH=c:\libssh2-0.17
 
    ATTENTION: if you want to build with libssh2 support you have to use latest
-   sources fetched from CVS - the current 0.14 release will NOT work!
-   Use 'make mingw32-ssh2-ssl' to build curl with SSH2 and SSL enabled.
+   version 0.17 - previous versions will NOT work with 7.17.0 and later!
+   Use 'mingw32-make mingw32-ssh2-ssl-zlib' to build with SSH2 and SSL enabled.
+
+   It is now also possible to build with other LDAP SDKs than MS LDAP;
+   currently it is possible to build with native Win32 OpenLDAP, or with the
+   Novell CLDAP SDK. If you want to use these you need to set these vars:
+
+     set LDAP_SDK=c:\openldap
+     set USE_LDAP_OPENLDAP=1
+
+   or for using the Novell SDK:
+
+     set USE_LDAP_NOVELL=1
+
+   If you want to enable LDAPS support then set LDAPS=1.
+
+   - optional MingW32-built OpenlDAP SDK available from:
+     http://www.gknw.net/mirror/openldap/
+   - optional recent Novell CLDAP SDK available from:
+     http://developer.novell.com/ndk/cldap.htm
+
 
    Cygwin
    ------
 
    Almost identical to the unix installation. Run the configure script in the
    curl root with 'sh configure'. Make sure you have the sh executable in
-   /bin/ or you'll see the configure fail towards the end.
+   /bin/ or you'll see the configure fail toward the end.
 
    Run 'make'
 
@@ -233,7 +257,7 @@ Win32
    Before running nmake define the OPENSSL_PATH environment variable with
    the root/base directory of OpenSSL, for example:
 
-     set OPENSSL_PATH=c:\openssl-0.9.8d
+     set OPENSSL_PATH=c:\openssl-0.9.8g
 
    Then run 'nmake vc-ssl' or 'nmake vc-ssl-dll' in curl's root
    directory.  'nmake vc-ssl' will create a libcurl static and dynamic
@@ -307,6 +331,7 @@ Win32
    CURL_DISABLE_TELNET   disables TELNET
    CURL_DISABLE_DICT     disables DICT
    CURL_DISABLE_FILE     disables FILE
+   CURL_DISABLE_TFTP     disables TFTP
 
    If you want to set any of these defines you have the following
    possibilities:
@@ -399,7 +424,7 @@ VMS
 
    Facility - basically the program ID. A code assigned to the program
    the name can be fetched from external or internal message libraries
-   Errorcode - the errodes assigned by the application
+   Error code - the err codes assigned by the application
    Sev. - severity: Even = error, off = non error
       0 = Warning
       1 = Success
@@ -409,7 +434,7 @@ VMS
       <5-7> reserved.
 
    This all presents itself with:
-   %<FACILITY>-<SeV>-<Errorname>, <Error message>
+   %<FACILITY>-<Sev>-<Errorname>, <Error message>
 
    See also the src/curlmsg.msg file, it has the source for the messages In
    src/main.c a section is devoted to message status values, the globalvalues
@@ -484,18 +509,33 @@ NetWare
      http://www.gknw.net/development/prgtools/
    - recent Novell LibC SDK available from:
      http://developer.novell.com/ndk/libc.htm
-   - optional zlib sources (at the moment only dynamic linking with zlib.imp);
+   - or recent Novell CLib SDK available from:
+     http://developer.novell.com/ndk/clib.htm
+   - optional recent Novell CLDAP SDK available from:
+     http://developer.novell.com/ndk/cldap.htm
+   - optional zlib sources (static or dynamic linking with zlib.imp);
      sources with NetWare Makefile can be obtained from:
      http://www.gknw.net/mirror/zlib/
-   - optional OpenSSL sources (version 0.9.8 or later which builds with BSD);
+   - optional OpenSSL sources (version 0.9.8 or later build with BSD sockets);
+     you can find precompiled packages at:
+     http://www.gknw.net/development/ossl/netware/
+     for CLIB-based builds OpenSSL needs to be patched to build with BSD
+     sockets (currently only a winsock-based CLIB build is supported):
+     http://www.gknw.net/development/ossl/netware/patches/v_0.9.8g/openssl-0.9.8g.diff
+   - optional SSH2 sources (version 0.17 or later);
 
    Set a search path to your compiler, linker and tools; on Linux make
-   sure that the var OSTYPE contains the string 'linux'; and then type
-   'make netware' from the top source directory; other tagets available
+   sure that the var OSTYPE contains the string 'linux'; set the var
+   NDKBASE to point to the base of your Novell NDK; and then type
+   'make netware' from the top source directory; other targets available
    are 'netware-ssl', 'netware-ssl-zlib', 'netware-zlib' and 'netware-ares';
    if you need other combinations you can control the build with the
-   environment variables WITH_SSL, WITH_ZLIB, WITH_ARES and ENABLE_IPV6.
-   I found on some Linux systems (RH9) that OS detection didnt work although
+   environment variables WITH_SSL, WITH_ZLIB, WITH_ARES, WITH_SSH2, and
+   ENABLE_IPV6; you can set LINK_STATIC=1 to link curl.nlm statically.
+   By default LDAP support is enabled, however currently you will need a patch
+   in order to use the CLDAP NDK with BSD sockets (Novell Bug 300237):
+   http://www.gknw.net/test/curl/cldap_ndk/ldap_ndk.diff
+   I found on some Linux systems (RH9) that OS detection didn't work although
    a 'set | grep OSTYPE' shows the var present and set; I simply overwrote it
    with 'OSTYPE=linux-rh9-gnu' and the detection in the Makefile worked...
    Any help in testing appreciated!
@@ -577,20 +617,42 @@ eCos
 
 Minix
 =====
-   curl can be compiled on Minix 3 using gcc (ACK has a few problems due
-   to mismatched headers and libraries as of ver. 3.1.2).  The gcc and bash
-   packages must be installed first.  The default heap size allocated to
-   bash is inadequate for running configure and will result in out of memory
-   errors.  Increase it with the command:
+   curl can be compiled on Minix 3 using gcc or ACK (starting with
+   ver. 3.1.3).  The default heap size allocated to several required
+   programs is inadequate for configuring and compiling curl and will
+   result in strange errors unless fixed (which only needs to be done
+   once).
+   
+   ACK
+   ---
+   Increase heap sizes with the commands:
+
+     chmem =1024000 /usr/lib/em_cemcom.ansi
+     chmem =512000 /usr/lib/i386/as
+
+   If you have bash installed:
 
      chmem =2048000 /usr/local/bin/bash
 
-   Make sure gcc and bash are in the PATH then configure curl with a
-   command like this:
+   Configure and compile with:
 
-     ./configure GREP=/usr/bin/grep AR=/usr/gnu/bin/gar --disable-ldap
+     ./configure CC=cc LD=cc GREP=grep CPPFLAGS=-D_POSIX_SOURCE=1
+     make
 
-   Then simply run 'make'.
+   GCC
+   ---
+   If you have bash installed:
+
+     chmem =2048000 /usr/local/bin/bash
+
+   Make sure gcc is in your PATH with the command:
+   
+     export PATH=/usr/gnu/bin:$PATH
+   
+   then configure and compile curl with:
+
+     ./configure CC=gcc GREP=grep AR=/usr/gnu/bin/gar
+     make
 
 
 CROSS COMPILE
@@ -652,6 +714,9 @@ REDUCING SIZE
 
       ./configure CFLAGS='-Os' ...
 
+   Note that newer compilers often produce smaller code than older versions
+   due to better optimization.
+
    Be sure to specify as many --disable- and --without- flags on the configure
    command-line as you can to disable all the libcurl features that you
    know your application is not going to need.  Besides specifying the
@@ -678,9 +743,9 @@ REDUCING SIZE
    sections of the shared library using the -R option to objcopy (e.g. the
    .comment section).
 
-   Using these techniques it is possible to create an HTTP-only shared
-   libcurl library for i386 Linux platforms that is less than 90 KB in
-   size (as of version 7.15.4).
+   Using these techniques it is possible to create an HTTP-only shared libcurl
+   library for i386 Linux platforms that is only 96 KiB in size (as of libcurl
+   version 7.17.1, using gcc 4.2.2).
 
    You may find that statically linking libcurl to your application will
    result in a lower total size.
@@ -705,6 +770,7 @@ PORTS
         - HP3000 MPE/iX
         - MIPS IRIX 6.2, 6.5
         - MIPS Linux
+        - OS/400
         - Pocket PC/Win CE 3.0
         - Power AIX 3.2.5, 4.2, 4.3.1, 4.3.2, 5.1, 5.2
         - PowerPC Darwin 1.0
@@ -719,6 +785,7 @@ PORTS
         - StrongARM (and other ARM) RISC OS 3.1, 4.02
         - StrongARM/ARM7/ARM9 Linux 2.4, 2.6
         - StrongARM NetBSD 1.4.1
+        - TPF
         - Ultrix 4.3a
         - UNICOS 9.0
         - i386 BeOS
@@ -728,7 +795,7 @@ PORTS
         - i386 FreeBSD
         - i386 HURD
         - i386 Linux 1.3, 2.0, 2.2, 2.3, 2.4, 2.6
-        - i386 MINIX 3.1.2
+        - i386 MINIX 3.1
         - i386 NetBSD
         - i386 Novell NetWare
         - i386 OS/2
@@ -741,10 +808,12 @@ PORTS
         - ia64 Linux 2.3.99
         - m68k AmigaOS 3
         - m68k Linux
+        - m68k uClinux
         - m68k OpenBSD
         - m88k dg-dgux5.4R3.00
         - s390 Linux
         - XScale/PXA250 Linux 2.4
+        - Nios II uClinux
 
 Useful URLs
 ===========

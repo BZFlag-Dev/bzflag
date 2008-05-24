@@ -46,6 +46,8 @@ struct Team {
 				const float* tank,
 				const float* radar);
 
+    static bool areFoes(TeamColor team1, TeamColor team2, GameType style); //const
+
   public:
     unsigned short	size;			// num players on team
     unsigned short	won;			// wins by team members

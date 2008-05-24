@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: homedir.c,v 1.9 2005-12-18 15:36:14 yangtse Exp $
+ * $Id: homedir.c,v 1.10 2007-11-01 21:49:59 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -106,6 +106,8 @@ char *homedir(void)
 #endif
      if (home && home[0])
        home = strdup(home);
+     else
+       home = NULL;
    }
  }
 #endif /* PWD-stuff */

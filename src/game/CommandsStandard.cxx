@@ -27,6 +27,16 @@
 
 static bool			quitFlag = false;
 
+bool isValidKey ( const std::string & key )
+{
+  if (!key.size())
+    return false;
+#ifdef _WIN32
+  if (key == "alt+f4")
+    return false;
+#endif
+  return true;
+}
 //
 // command handlers
 //
@@ -201,6 +211,9 @@ static std::string		cmdBind(const std::string&,
     return "usage: bind <button-name> {up|down} <command> <args>...";
   }
 
+  if (!isValidKey(TextUtils::tolower(args[0])))
+    return std::string("bind error: OS can not bind \"") + args[0] + "\"";
+
   BzfKeyEvent key;
   if (!KEYMGR.stringToKeyEvent(args[0], key))
     return std::string("bind error: unknown button name \"") + args[0] + "\"";
@@ -220,7 +233,7 @@ static std::string		cmdBind(const std::string&,
   }
 
   // ignore attempts to modify Esc.  we reserve that for the menu
-  if (key.ascii != 27)
+  if (key.chr != 27)
     KEYMGR.bind(key, down, cmd);
 
   return std::string();
@@ -244,8 +257,7 @@ static std::string		cmdUnbind(const std::string&,
   else
     return std::string("bind error: illegal state \"") + args[1] + "\"";
 
-  if (key_event.ascii != 27)
-    KEYMGR.unbind(key_event, down);
+  KEYMGR.unbind(key_event, down);
 
   return std::string();
 }

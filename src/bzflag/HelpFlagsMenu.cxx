@@ -17,6 +17,7 @@
 /* system headers */
 #include <vector>
 #include <string>
+#include <string.h>
 
 /* local implementation headers */
 #include "Flag.h"

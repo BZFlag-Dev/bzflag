@@ -1,38 +1,59 @@
-Curl and libcurl 7.16.3
+Curl and libcurl 7.18.1
 
- Public curl release number:               99
- Releases counted from the very beginning: 126
- Available command line options:           118
- Available curl_easy_setopt() options:     141
- Number of public functions in libcurl:    54
- Amount of public web site mirrors:        39
- Number of known libcurl bindings:         35
- Number of contributors:                   554
+ Public curl releases:         104
+ Command line options:         126
+ curl_easy_setopt() options:   150
+ Public functions in libcurl:  56
+ Public web site mirrors:      39
+ Known libcurl bindings:       36
+ Contributors:                 621
 
 This release includes the following changes:
  
- o added curl_multi_socket_action()
- o deprecated curl_multi_socket()
- o uses less memory in non-pipelined use cases
+ o added support for HttpOnly cookies
+ o 'make ca-bundle' downloads and generates an updated ca bundle file
+ o we no longer distribute or install a ca cert bundle
+ o SSLv2 is now disabled by default for SSL operations
+ o the test509-style setting URL in callback is officially no longer supported
+ o support a full chain of certificates in a given PKCS12 certificate
+ o resumed transfers work with SFTP
+ o added type checking macros for curl_easy_setopt() and curl_easy_getinfo(),
+   watch out for new warnings in code using libcurl (needs gcc-4.3 and
+   currently only works in C mode)
+ o curl_easy_setopt(), curl_easy_getinfo(), curl_share_setopt() and
+   curl_multi_setopt() uses are now checked to use exactly three arguments
+ o --with-ca-path=DIR configure option allows to set an openSSL CApath instead
+   of a default ca bundle.
 
 This release includes the following bugfixes:
 
- o if2up too long interface name memory leak
- o test case 534 started to fail 2007-04-13 due to the existance of a
-   new host on the net with the same silly domain the test was using
-   for a host which was supposed not to exist.
- o test suite SSL certificate works better with newer stunnel
- o internal progress meter update frequency back to once per second
- o avoid some unnecessary calls to function gettimeofday
- o a double-free in the SSL-layer
- o GnuTLS free of NULL credentials
- o NSS-fix for closing down SSL
- o bad warning from configure when gnutls was selected
- o compilation on VMS 64-bit mode
- o SCP/SFTP downloads could hang on the last bytes of a transfer
- o curl_easy_duphandle() crash
- o curl -V / curl_verion*() works even when GnuTLS is used on a system without
-   a good random source
+ o improved pipelining
+ o improved strdup replacement
+ o GnuTLS-built libcurl failed when doing global cleanup and reinit
+ o error message problem when unable to resolve a host on Windows
+ o Accept: header replacing
+ o not verifying server certs with GnuTLS still failed if gnutls had
+   problems with the cert
+ o when using the multi interface and a handle is removed while still having
+   a transfer going on, the connection is now closed by force
+ o bad re-use of SSL connections in non-complete state
+ o test case 405 failures with GnuTLS builds
+ o crash when connection cache size is 1 and Curl_do() failed
+ o GnuTLS-built libcurl can now be forced to prefer SSLv3
+ o crash when doing Negotiate again on a re-used connection
+ o select/poll regression
+ o better MIT kerberos configure check
+ o curl_easy_reset() + SFTP re-used connection download crash
+ o SFTP non-existing file + SFTP existing file error
+ o sharing DNS cache between easy handles running in multiple threads could
+   lead to crash
+ o SFTP upload with CURLOPT_FTP_CREATE_MISSING_DIRS on re-used connection
+ o SFTP infinite loop when given an invalid quote command
+ o curl-config erroneously reported LDAPS support with missing LDAP libraries
+ o SCP infinite loop when downloading a zero byte file
+ o setting the CURLOPT_SSL_CTX_FUNCTION with libcurl built without OpenSSL
+   now makes curl_easy_setopt() properly return failure
+ o configure --with-libssh2 (with no given path)
 
 This release includes the following known bugs:
 
@@ -40,22 +61,19 @@ This release includes the following known bugs:
 
 Other curl-related news:
 
- o PycURL 7.16.2.1 was released: http://pycurl.sf.net/
- o TclCurl 7.16.2 was released:
-   http://personal1.iddeo.es/andresgarci/tclcurl/english/
+ o 
 
 New curl mirrors:
 
- o http://curl.spegulo.be is a new mirror in Belgium
- o http://curl.piotrkosoft.net is a new mirror in Poland
- o http://curl.smudge-it.net is a new mirror in St Louis, MO, USA
- o http://curl.askapache.com is a new mirror in Indiana, USA
+ o http://curl.cuendet.com/ is a new mirror in Atlanta, USA
 
 This release would not have looked like this without help, code, reports and
 advice from friends like these:
 
- Song Ma, Dan Fandrich, Yang Tse, Jay Austin, Robert Iakobashvil,
- James Housley, Daniel Black, Steve Little, Sonia Subramanian, Peter O'Gorman,
- Frank Hempel
+ Michal Marek, Dmitry Kurochkin, Niklas Angebrand, Günter Knauf, Yang Tse,
+ Dan Fandrich, Mike Hommey, Pooyan McSporran, Jerome Muffat-Meridol,
+ Kaspar Brand, Gautam Kachroo, Zmey Petroff, Georg Lippitsch, Sam Listopad,
+ Anatoli Tubman, Mike Protts, Michael Calmer, Brian Ulm, Dmitry Popov,
+ Jes Badwal, Dan Petitt, Stephen Collyer
 
         Thanks! (and sorry if I forgot to mention someone)

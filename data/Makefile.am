@@ -1,6 +1,5 @@
 SUBDIRS = \
 	fonts \
-	models \
 	l10n \
 	skins
 

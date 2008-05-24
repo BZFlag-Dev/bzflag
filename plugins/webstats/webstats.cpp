@@ -4,26 +4,45 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
-#include "statTemplates.h"
+#include "plugin_HTTPTemplates.h"
 
-class WebStats : public BZFSHTTPServer
+
+class WebStats : public BZFSHTTPServer, TemplateCallbackClass
 {
 public:
   WebStats( const char * plugInName ): BZFSHTTPServer(plugInName){};
 
+  void init ( const char *commandLine );
+
   virtual bool acceptURL ( const char *url ){return true;}
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
+
+  Templateiser	templateSystem;
+
+  virtual void keyCallback ( std::string &data, const std::string &key );
+  virtual bool loopCallback ( const std::string &key );
+  virtual bool ifCallback ( const std::string &key );
+
+  void initReport ( void );
+  void finishReport ( void );
+
+  // globals for report
+  int player;
+  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
+  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator teamSortItr;
+  size_t playerInTeam;
 };
 
 WebStats webStats("webstats");
 
 BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 {
   bz_debugMessage(4,"webstats plugin loaded");
+  
+  webStats.init(commandLine);
   webStats.startupHTTP();
-
   return 0;
 }
 
@@ -34,16 +53,177 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
+void WebStats::init ( const char *commandLine )
 {
-  bool evenLine = false;
+  templateSystem.addSearchPath("./");
+  templateSystem.addSearchPath(commandLine);
 
-  std::string page;
-  page = getFileHeader();
+  templateSystem.setPluginName("WebStats",getBaseServerURL());
+
+  templateSystem.addKey("PlayerCount",this);
+  templateSystem.addLoop("Players",this);
+  templateSystem.addIF("NewTeam",this);
+  templateSystem.addKey("TeamName",this);
+  templateSystem.addKey("Callsign",this);
+  templateSystem.addKey("Wins",this);
+  templateSystem.addKey("Losses",this);
+  templateSystem.addKey("TeamKills",this);
+  templateSystem.addKey("Status",this);
+}
+
+const char* teamFromType ( bz_eTeamType team )
+{
+  switch (team)
+  {
+  default:
+    break;
+
+  case eRedTeam:
+    return "Red";
+
+  case eGreenTeam:
+    return "Green";
+
+  case eBlueTeam:
+    return "Blue";
+
+  case ePurpleTeam:
+    return "Purple";
+
+  case eRogueTeam:
+    return "Rogue";
+
+  case eObservers:
+    return "Observer";
+
+  case eRabbitTeam:
+    return "Rabbit";
+
+  case eHunterTeam:
+    return "Hunter";
+  }
+
+  return "Unknown";
+}
+
+void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
+{
+  if ( rec->team != eObservers )
+  {
+    if ( rec->admin )
+      data += "Admin";
+
+    if ( rec->spawned )
+    {
+      if (rec->admin)
+	data += "/";
+      data += "Spawned";
+    }
+
+    if ( rec->verified )
+    {
+      if (rec->admin || rec->spawned ) 
+	data += "/";
+
+      data += "Verified";
+    }
+  }
+
+  if (!data.size())
+    data = "&nbsp;";
+}
+
+void WebStats::keyCallback ( std::string &data, const std::string &key )
+{
+  bz_BasePlayerRecord *rec = NULL;
+  if ( teamSortItr != teamSort.end())
+    rec = teamSortItr->second[playerInTeam];
+
+  if (key == "playercount")
+    data = format("%d",bz_getPlayerCount());
+  else if (key == "teamname")
+  {
+    if (rec)
+      data = teamFromType(teamSortItr->first);
+    else
+      data = "";
+  }
+  else if (key == "callsign")
+  {
+    if (rec)
+      data = rec->callsign.c_str();
+    else
+      data = "";
+  }
+  else if (key == "wins")
+  {
+    if (rec)
+      data = format("%d",rec->wins);
+    else
+      data = "";
+  }
+  else if (key == "losses")
+  {
+    if (rec)
+      data = format("%d",rec->losses);
+    else
+      data = "";
+  }
+  else if (key == "teamkills")
+  {
+    if (rec)
+      data = format("%d",rec->teamKills);
+    else
+      data = "";
+  }
+  else if (key == "status")
+  {
+    if (rec)
+      getStatus(rec,data);
+    else
+      data = "$nbsp;";
+  }
+}
+
+bool WebStats::loopCallback ( const std::string &key )
+{
+  if (key == "players")
+  {
+    if (!teamSort.size())
+      return false;
+
+    if ( teamSortItr == teamSort.end())
+    {
+      teamSortItr = teamSort.begin();
+      playerInTeam;
+    }
+    else
+    {
+      playerInTeam++;
+      if ( playerInTeam > teamSortItr->second.size())
+      {
+	teamSortItr++;
+	playerInTeam = 0;
+      }
+    }
+    return teamSortItr != teamSort.end();
+  }
+  return false;
+}
+
+bool WebStats::ifCallback ( const std::string &key )
+{
+  if (key == "newteam")
+    return teamSortItr != teamSort.end() && playerInTeam == 0;
+
+  return false;
+}
+
+void WebStats::initReport ( void )
+{
+  templateSystem.startTimer();
 
   bz_APIIntList *players = bz_getPlayerIndexList();
-
-  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
 
   for ( int i = 0; i < (int)players->size(); i++ )
   {
@@ -60,41 +240,32 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
       teamSort[rec->team].push_back(rec);
     } 
   }
+  teamSortItr = teamSort.end();
+  playerInTeam = 0;
+}
 
-  // generate the list of players
-  std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator itr = teamSort.begin();
-
-  page += getPlayersHeader();
-
-  if ( !players->size() )
-    page += getPlayersNoPlayers();
-
-  while (itr != teamSort.end())
+void WebStats::finishReport ( void )
+{
+  teamSortItr = teamSort.begin();
+  while (teamSortItr != teamSort.end())
   {
-    for ( int i = 0; i < (int)itr->second.size(); i++)
-    {
-      bz_BasePlayerRecord *rec = itr->second[i];
-      int player = rec->playerID;
-      if (rec)
-      {
-	if (rec->callsign.size() == 0) continue;
-	page += getPlayersLineItem ( rec, evenLine );
-	evenLine = !evenLine;
+    for ( size_t i = 0; i < teamSortItr->second.size(); i++)
+      bz_freePlayerRecord(teamSortItr->second[i]);
 
-	bz_freePlayerRecord (rec);
-      }
-    }
-    itr++;
+    teamSortItr++;
   }
-  bz_deleteIntList(players);
+  teamSort.clear();
+}
 
-  page += getPlayersFooter();
-  // end player list
 
-  // TODO, do the team scores, flag stats, do the last chat lines, etc..
+void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
+{
+  bool evenLine = false;
 
-  // finish the document
-  page += getFileFooter();
+  std::string page;
+  initReport();
+  templateSystem.processTemplateFile(page,"report.tmpl");
+  finishReport();
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );

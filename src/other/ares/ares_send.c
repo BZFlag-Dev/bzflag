@@ -44,7 +44,7 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
   /* Verify that the query is at least long enough to hold the header. */
   if (qlen < HFIXEDSZ || qlen >= (1 << 16))
     {
-      callback(arg, ARES_EBADQUERY, NULL, 0);
+      callback(arg, ARES_EBADQUERY, 0, NULL, 0);
       return;
     }
 
@@ -52,22 +52,23 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
   query = malloc(sizeof(struct query));
   if (!query)
     {
-      callback(arg, ARES_ENOMEM, NULL, 0);
+      callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
   query->tcpbuf = malloc(qlen + 2);
   if (!query->tcpbuf)
     {
       free(query);
-      callback(arg, ARES_ENOMEM, NULL, 0);
+      callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
-  query->skip_server = malloc(channel->nservers * sizeof(int));
-  if (!query->skip_server)
+  query->server_info = malloc(channel->nservers *
+                              sizeof(query->server_info[0]));
+  if (!query->server_info)
     {
       free(query->tcpbuf);
       free(query);
-      callback(arg, ARES_ENOMEM, NULL, 0);
+      callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
 
@@ -93,13 +94,28 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
   query->try = 0;
   query->server = 0;
   for (i = 0; i < channel->nservers; i++)
-    query->skip_server[i] = 0;
+    {
+      query->server_info[i].skip_server = 0;
+      query->server_info[i].tcp_connection_generation = 0;
+    }
   query->using_tcp = (channel->flags & ARES_FLAG_USEVC) || qlen > PACKETSZ;
   query->error_status = ARES_ECONNREFUSED;
+  query->timeouts = 0;
 
-  /* Chain the query into this channel's query list. */
-  query->next = channel->queries;
-  channel->queries = query;
+  /* Initialize our list nodes. */
+  ares__init_list_node(&(query->queries_by_qid),     query);
+  ares__init_list_node(&(query->queries_by_timeout), query);
+  ares__init_list_node(&(query->queries_to_server),  query);
+  ares__init_list_node(&(query->all_queries),        query);
+       
+  /* Chain the query into the list of all queries. */
+  ares__insert_in_list(&(query->all_queries), &(channel->all_queries));
+  /* Keep track of queries bucketed by qid, so we can process DNS
+   * responses quickly.
+   */
+  ares__insert_in_list(
+      &(query->queries_by_qid),
+      &(channel->queries_by_qid[query->qid % ARES_QID_TABLE_SIZE]));
 
   /* Perform the first query action. */
   time(&now);

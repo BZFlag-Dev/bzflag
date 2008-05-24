@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <time.h>
 #include <string>
+#include <string.h>
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -352,10 +353,12 @@ void TimeKeeper::setProcessorAffinity(int processor)
   DWORD dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
   if (dwMask < dwProcs) {
-    logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).");
+    logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).\n");
     return;
   }
   SetThreadAffinityMask(hThread, dwMask);
+#else
+  logDebugMessage(1, "Unable to set processor affinity to %d - function not implemented on this platform.\n", processor);
 #endif
 }
 

@@ -1,6 +1,6 @@
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
- * $Id: ahost.c,v 1.19 2007-04-16 15:35:34 yangtse Exp $
+ * $Id: ahost.c,v 1.21 2007-11-15 19:44:01 yangtse Exp $
  *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
@@ -40,14 +40,7 @@
 #include "inet_net_pton.h"
 #include "ares_getopt.h"
 
-#ifndef HAVE_STRUCT_IN6_ADDR
-struct in6_addr
-{
-  unsigned char s6_addr[16];
-};
-#endif
-
-static void callback(void *arg, int status, struct hostent *host);
+static void callback(void *arg, int status, int timeouts, struct hostent *host);
 static void usage(void);
 
 int main(int argc, char **argv)
@@ -142,7 +135,7 @@ int main(int argc, char **argv)
   return 0;
 }
 
-static void callback(void *arg, int status, struct hostent *host)
+static void callback(void *arg, int status, int timeouts, struct hostent *host)
 {
   char **p;
 

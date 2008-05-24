@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib ares.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib ares.lib wldap32.lib"
 				OutputFile="..\..\MSVC\VC71\$(ConfigurationName)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="..\..\MSVC\VC71\debug\"
 				ModuleDefinitionFile="..\..\src\other\curl\lib\libcurl.def"/>
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib ares.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib ares.lib wldap32.lib"
 				OutputFile="..\..\MSVC\VC71\$(ConfigurationName)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="..\..\MSVC\VC71\release\"
 				ModuleDefinitionFile="..\..\src\other\curl\lib\libcurl.def"/>

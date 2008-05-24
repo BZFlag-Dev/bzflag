@@ -18,9 +18,6 @@
 /* Define if you have the <crypto.h> header file.  */
 /* #define HAVE_CRYPTO_H 1 */
 
-/* Define if you have the <dlfcn.h> header file.  */
-/* #define HAVE_DLFCN_H 1 */
-
 /* Define if you have the <err.h> header file.  */
 /* #define HAVE_ERR_H 1 */
 
@@ -282,16 +279,15 @@
 /* Define as the return type of signal handlers (int or void).  */
 #define RETSIGTYPE void
 
-#if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__)
+#ifndef _SSIZE_T_DEFINED
+#if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__) || \
+    defined(__MINGW32__)
 #elif defined(_WIN64)
 #define ssize_t __int64
 #else
 #define ssize_t int
 #endif
-
-/* Define to 'int' if socklen_t is not an available 'typedefed' type */
-#ifndef HAVE_WS2TCPIP_H
-#define socklen_t int
+#define _SSIZE_T_DEFINED
 #endif
 
 /* ---------------------------------------------------------------- */
@@ -346,23 +342,63 @@
 #define HAVE_VARIADIC_MACROS_C99 1
 #endif
 
+/* Define if the compiler supports LONGLONG. */
+#if defined(__MINGW32__) || defined(__WATCOMC__)
+#define HAVE_LONGLONG 1
+#endif
+
+/* Define to avoid VS2005 complaining about portable C functions */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif
+
+/* VS2005 and later dafault size for time_t is 64-bit, unless */
+/* _USE_32BIT_TIME_T has been defined to get a 32-bit time_t. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#  ifndef _USE_32BIT_TIME_T
+#    define SIZEOF_TIME_T 8
+#  else
+#    define SIZEOF_TIME_T 4
+#  endif
+#endif
+
+/* VS2008 does not support Windows build targets prior to WinXP, */
+/* so, if no build target has been defined we will target WinXP. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x0501
+#  endif
+#  ifndef WINVER
+#    define WINVER 0x0501
+#  endif
+#  if (_WIN32_WINNT < 0x0501) || (WINVER < 0x0501)
+#    error VS2008 does not support Windows build targets prior to WinXP
+#  endif
+#endif
+
 /* ---------------------------------------------------------------- */
-/*                        LDAP LIBRARY FILES                        */
+/*                           LDAP SUPPORT                           */
 /* ---------------------------------------------------------------- */
 
-/* lber dynamic library file */
-/* #define DL_LBER_FILE */
-
-/* ldap dynamic library file */
-#define DL_LDAP_FILE "wldap32.dll"
+#if defined(CURL_HAS_NOVELL_LDAPSDK) || defined(CURL_HAS_MOZILLA_LDAPSDK)
+#undef CURL_LDAP_HYBRID
+#undef CURL_LDAP_WIN
+#define HAVE_LDAP_SSL_H 1
+#define HAVE_LDAP_URL_PARSE 1
+#elif defined(CURL_HAS_OPENLDAP_LDAPSDK)
+#undef CURL_LDAP_HYBRID
+#undef CURL_LDAP_WIN
+#define HAVE_LDAP_URL_PARSE 1
+#else
+#undef CURL_LDAP_HYBRID
+#undef HAVE_LDAP_URL_PARSE
+#define CURL_LDAP_WIN 1
+#endif
 
 /* ---------------------------------------------------------------- */
 /*                       ADDITIONAL DEFINITIONS                     */
 /* ---------------------------------------------------------------- */
-
-/* Defines set for VS2005 to _not_ deprecate a few functions we use. */
-#define _CRT_SECURE_NO_DEPRECATE 1
-#define _CRT_NONSTDC_NO_DEPRECATE 1
 
 /* Define cpu-machine-OS */
 #undef OS

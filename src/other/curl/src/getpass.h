@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getpass.h,v 1.3 2004-12-25 22:08:03 bagder Exp $
+ * $Id: getpass.h,v 1.3 2004/12/25 22:08:03 bagder Exp $
  ***************************************************************************/
 #ifndef HAVE_GETPASS_R
 /* If there's a system-provided function named like this, we trust it is

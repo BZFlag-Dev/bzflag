@@ -18,6 +18,7 @@ else
 plugin_files =
 endif
 
+
 bzfs_LDFLAGS = -export-dynamic -static
 bzfs_SOURCES = \
 	${plugin_files}	\
@@ -27,6 +28,8 @@ bzfs_SOURCES = \
 	Authentication.h \
 	AutoAllowTimer.cxx \
 	AutoAllowTimer.h \
+	BackgroundTask.cxx \
+	BackgroundTask.h \
 	BanCommands.cxx \
 	bzfsAPI.cxx \
 	bzfsChatVerify.h \

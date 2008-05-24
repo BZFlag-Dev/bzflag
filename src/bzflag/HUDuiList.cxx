@@ -84,7 +84,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
   if (HUDuiControl::doKeyPress(key))
     return true;
 
-  if (key.ascii == 0)
+  if (key.chr == 0)
     switch (key.button) {
       case BzfKeyEvent::Left:
 	if (index != -1) {
@@ -118,7 +118,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 	return false;
     }
 
-  switch (key.ascii) {
+  switch (key.chr) {
     case 13:
     case 27:
       return false;

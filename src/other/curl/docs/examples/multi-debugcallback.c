@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multi-debugcallback.c,v 1.2 2006-10-13 14:01:19 bagder Exp $
+ * $Id: multi-debugcallback.c,v 1.3 2008-02-27 09:06:15 bagder Exp $
  *
  * This is a very simple example using the multi interface and the debug
  * callback.
@@ -74,7 +74,7 @@ void dump(const char *text,
 
 static
 int my_trace(CURL *handle, curl_infotype type,
-             unsigned char *data, size_t size,
+             char *data, size_t size,
              void *userp)
 {
   const char *text;

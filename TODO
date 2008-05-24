@@ -55,12 +55,6 @@ Should be considered for the release of 3.0:
 
 * Change the title image to not have the flag with the version in it. Add
   ether the flag, or some version number to the image at run time using GL
-
-* Remove all uses of GetDirectMessage buffer. Replace with a new class that
-  allocates it's own buffer, and has it's own pack and unpack methods.
-  Store these message classes in a list and send them out when needed,
-  so that we don't have people walking over each others buffers. This will
-  also be nice to eventualy throw the networking send/receive into a thread.
   
 * Don't call "got blowed up" on the local client when it gets shot, send 
   a new "I got hit" message asking the server what to do. Then have the 
@@ -145,10 +139,6 @@ Would be nice to have but are not critical for 3.0
   is joined when the Server List Cache is enabled.
 
 * Teach Roger not to drive into deadly physics drivers.
-
-* need to verify that the anti permissions (e.g. antiban) really do
-  prevent the action properly (e.g. you cannot get banned if you have
-  antiban -- even from master ban list).
 
 * integrate motd.php into mysql on db
 

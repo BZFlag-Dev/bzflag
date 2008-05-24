@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #ifndef _BZFS_MESSAGES_H_
 #define _BZFS_MESSAGES_H_
@@ -52,7 +52,7 @@ void sendMsgShotEnd ( int id, unsigned short reason );
 void sendMsgTeleport ( int player, unsigned short from, unsigned short to );
 void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgShotUpdate ( int player, FiringInfo *shot );
-void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, float time );
+void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time );
 void sendMsgTimeUpdate ( int timeLimit );
 
 void broadcastDeathMessage ( int victim, int killer,  BlowedUpReason reason, int id, const FlagType*flagType );
@@ -71,9 +71,6 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag);
 int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);
 
-// net message utils
-void setGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
-
 // receving network messages
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 
@@ -81,24 +78,24 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
 
-/** class to send a bunch of BZDB variables via MsgSetVar.
-* dtor does the actual send
-*/
+/** class to pack a bunch of variables into one or more BufferedNetworkMessage.
+ *  they are then automatically sent as they complete, or in the destructor.
+ */
 class PackVars
 {
 public:
-	PackVars(void *buffer, NetHandler *_handler);
-	~PackVars();
-	// callback forwarder
-	static void packIt(const std::string &key, void *pv);
-	void sendPackVars(const std::string &key);
+  PackVars(NetHandler* _handler);
+  ~PackVars();
+  // callback forwarder
+  static void packIt(const std::string &key, void *pv);
 
 private:
-	void * const bufStart;
-	void *buf;
-	NetHandler *handler;
-	unsigned int len;
-	unsigned int count;
+  void sendPackVars(const std::string &key);
+  void startMessage();
+  void endMessage();
+  NetHandler* handler;
+  NetMsg msg;
+  unsigned int count;
 };
 
 // utilities

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multithread.c,v 1.2 2004-11-16 08:49:51 bagder Exp $
+ * $Id: multithread.c,v 1.3 2007-07-12 21:11:10 danf Exp $
  */
 
 /* A multi-threaded example that uses pthreads extensively to fetch
@@ -24,7 +24,7 @@
   http://www.openssl.org/docs/crypto/threads.html#DESCRIPTION
 
 */
-char *urls[]= {
+const char *urls[]= {
   "http://curl.haxx.se/",
   "ftp://cool.haxx.se/",
   "http://www.contactor.se/",
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     error = pthread_create(&tid[i],
                            NULL, /* default attributes please */
                            pull_one_url,
-                           urls[i]);
+                           (void *)urls[i]);
     if(0 != error)
       fprintf(stderr, "Couldn't run thread number %d, errno %d\n", i, error);
     else

@@ -19,6 +19,12 @@
 /* Building regex */
 #define BUILD_REGEX 1
 
+/* Building ares */
+#define BUILD_ARES 1
+
+/* Building FTGL */
+#define BUILD_FTGL 1
+
 /* GLEW library is available */
 //#define HAVE_GLEW 1
 
@@ -39,6 +45,9 @@
 
 /* Use modern template for std::count */
 #define HAVE_STD__COUNT 1
+
+/* go and use std::wstring */
+#define HAVE_STD__WSTRING 1
 
 /* On windows, isnan is really _isnan */
 #define HAVE__ISNAN 1

@@ -52,6 +52,52 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 
+#include "BackgroundTask.h"
+
+// generic text buffer callback
+
+class BufferedChatParams
+{
+public:
+  std::vector<std::string> items;
+  int playerID,from;
+  GameKeeper::Player* player;
+  size_t i;
+
+  BufferedChatParams(GameKeeper::Player* p = NULL)
+  {
+    i = 0;
+    from = ServerPlayer;
+    player = p;
+    if(p)
+      playerID = p->getIndex();
+    else
+      playerID = ServerPlayer;
+  }
+};
+
+bool bufferChat ( void * param )
+{
+  BufferedChatParams *p = (BufferedChatParams*)param;
+
+  // verify that the player is still active, AND still who we think they are
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
+  if (!player || player != p->player ) {
+    delete(p);
+    return false;
+  }
+
+  if (p->i < p->items.size() )
+    sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
+  else {
+    delete(p);
+    return false;
+  }
+
+  p->i++;
+  return true;
+}
+
 
 tmCustomSlashCommandMap	customCommands;
 
@@ -521,7 +567,7 @@ PacketLossDropCommand::PacketLossDropCommand()	 : ServerCommand("/packetlossdrop
 LagStatsCommand::LagStatsCommand()	 : ServerCommand("/lagstats",
 							 "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatsCommand::IdleStatsCommand()       : ServerCommand("/idlestats",
-							 "- display the idle time in seconds for each player") {}
+							   "- display the idle time in seconds for each player") {}
 GameStatsCommand::GameStatsCommand()     : ServerCommand("/gamestats",
 							 "- display game statistics for each player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
@@ -553,7 +599,7 @@ RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
 							 "- reload the user, group, and password files") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
-							 "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
+							 "<ban|kick|kill|set|flagreset|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
 							 "<yes|no> - place a vote in favor or in opposition to the poll") {}
 VetoCommand::VetoCommand()		 : ServerCommand("/veto",
@@ -599,12 +645,11 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   }
   // add in the custom commands
   tmCustomSlashCommandMap::iterator itr = customCommands.begin();
-  while(itr != customCommands.end())
-    {
-      const std::string &cmd = itr->first;
-      commands.push_back(&cmd);
-      itr++;
-    }
+  while(itr != customCommands.end()) {
+    const std::string &cmd = itr->first;
+    commands.push_back(&cmd);
+    itr++;
+  }
 
   const int cmdCount = (int)commands.size();
 
@@ -670,36 +715,30 @@ bool CmdHelp::operator() (const char *message,
   int t = playerData->getIndex();
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); it++)
-    {
-      std::string master = it->first;
-      master.resize(i);
-      if (master == commandToken)
-	{
-	  matching++;
-	  none = false;
-	}
+  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+    std::string master = it->first;
+    master.resize(i);
+    if (master == commandToken) {
+      matching++;
+      none = false;
     }
+  }
   if (none)
     sendMessage(ServerPlayer, t, ("No command starting with " + commandToken).c_str());
-  else
-    {
-      for (it = commandMap.begin(); it != commandMap.end(); it++)
-	{
-	  std::string master = it->first;
-	  master.resize(i);
-	  if (master == commandToken)
-	    {
-	      if (matching > 1 || listOnly)
-		sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
-	      else
-		{
-		  std::string commandLine = it->first + (message + i + 1);
-		  return (*(it->second))(commandLine.c_str(), playerData);
-		}
-	    }
+  else {
+    for (it = commandMap.begin(); it != commandMap.end(); it++) {
+      std::string master = it->first;
+      master.resize(i);
+      if (master == commandToken) {
+	if (matching > 1 || listOnly)
+	  sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
+	else {
+	  std::string commandLine = it->first + (message + i + 1);
+	  return (*(it->second))(commandLine.c_str(), playerData);
 	}
+      }
     }
+  }
   return true;
 }
 
@@ -722,7 +761,7 @@ bool ServerQueryCommand::operator() (const char *,
 {
   int t = playerData->getIndex();
   logDebugMessage(2,"Server query requested by %s [%d]\n",
-	 playerData->player.getCallSign(), t);
+		  playerData->player.getCallSign(), t);
 
   sendMessage(ServerPlayer, t,
 	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
@@ -926,8 +965,8 @@ bool PasswordCommand::operator() (const char *message,
   int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
     logDebugMessage(1,"\"%s\" (%s) has attempted too many /password tries\n",
-	   playerData->player.getCallSign(),
-	   playerData->netHandler->getTargetIP());
+		    playerData->player.getCallSign(),
+		    playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
     if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
@@ -1043,15 +1082,14 @@ bool SuperkillCommand::operator() (const char *,
   }
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
-  if (!gameOver)
-    {
-      gameOver = true;
-      // fire off a game end event
-      bz_GameStartEndEventData_V1	gameData;
-      gameData.eventType = bz_eGameEndEvent;
-      gameData.duration = clOptions->timeLimit;
-      worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
-    }
+  if (!gameOver) {
+    gameOver = true;
+    // fire off a game end event
+    bz_GameStartEndEventData_V1	gameData;
+    gameData.eventType = bz_eGameEndEvent;
+    gameData.duration = clOptions->timeLimit;
+    worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+  }
   if (clOptions->timeManualStart)
     countdownActive = false;
   return true;
@@ -1073,8 +1111,7 @@ bool GameOverCommand::operator() (const char *,
   msg->broadcast(MsgScoreOver);
 
   gameOver = true;
-  if (clOptions->timeManualStart)
-  {
+  if (clOptions->timeManualStart) {
     countdownActive = false;
     countdownPauseStart = TimeKeeper::getNullTime();
     clOptions->countdownPaused = false;
@@ -1113,85 +1150,65 @@ bool CountdownCommand::operator() (const char * message,
   }
 
   // if the timelimit is not set .. don't countdown
-  if (clOptions->timeLimit > 1.0f)
-    {
-      std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
+  if (clOptions->timeLimit > 1.0f) {
+    std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
 
-      if (parts.size() > 1)
-	{
-	  // we have an argument
-	  if (parts[1] == "pause")
-	    {
-	      // pause the countdown
-	      if (!countdownActive)
-		{
-		  sendMessage(ServerPlayer, t, "There is no active game to pause");
-		  return true;
-		}
-	      else if (clOptions->countdownPaused)
-		{
-		  sendMessage(ServerPlayer, t, "The game is already paused");
-		  return true;
-		}
-
-	      pauseCountdown(playerData->player.getCallSign());
-	      return true;
-	    }
-	  else if (parts[1] == "resume")
-	    {
-	      // resume countdown if it was paused before
-	      if (!clOptions->countdownPaused)
-		{
-		  sendMessage(ServerPlayer, t, "The game is not paused");
-		  return true;
-		}
-	      resumeCountdown(playerData->player.getCallSign());
-	      return true;
-	    }
-	  else
-	    {
-	      // so it's the countdown delay? else tell the player how to use /countdown
-	      std::istringstream timespec(message+10);
-	      if (!(timespec >> countdownDelay))
-		{
-		  sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
-		  return true;
-		}
-	    }
-	}
-      else
-	{
-	  countdownDelay = 10;
-	}
-
-      // cancel here if a game is already running
-      if (countdownActive)
-	{
-	  sendMessage(ServerPlayer, t, "A game is already in progress");
-	  countdownDelay = -1;
+    if (parts.size() > 1) {
+      // we have an argument
+      if (parts[1] == "pause") {
+	// pause the countdown
+	if (!countdownActive) {
+	  sendMessage(ServerPlayer, t, "There is no active game to pause");
+	  return true;
+	} else if (clOptions->countdownPaused) {
+	  sendMessage(ServerPlayer, t, "The game is already paused");
 	  return true;
 	}
 
-      // limit/sanity check
-      const int max_delay = 120;
-      if (countdownDelay > max_delay)
-	{
-	  sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", max_delay, countdownDelay).c_str());
-	  countdownDelay = max_delay;
+	pauseCountdown(playerData->player.getCallSign());
+	return true;
+      } else if (parts[1] == "resume") {
+        // resume countdown if it was paused before
+        if (!clOptions->countdownPaused) {
+	  sendMessage(ServerPlayer, t, "The game is not paused");
+	  return true;
 	}
-      else if (countdownDelay < 0)
-	{
-	  sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
-	  countdownDelay = 0;
+        resumeCountdown(playerData->player.getCallSign());
+        return true;
+      } else {
+	// so it's the countdown delay? else tell the player how to use /countdown
+	std::istringstream timespec(message+10);
+	if (!(timespec >> countdownDelay)) {
+	  sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
+	  return true;
 	}
+      }
+    } else {
+      countdownDelay = 10;
+    }
 
-      startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
+    // cancel here if a game is already running
+    if (countdownActive) {
+      sendMessage(ServerPlayer, t, "A game is already in progress");
+      countdownDelay = -1;
+      return true;
     }
-  else
-    {
-      sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
-      sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
+
+    // limit/sanity check
+    const int max_delay = 120;
+    if (countdownDelay > max_delay) {
+      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", max_delay, countdownDelay).c_str());
+      countdownDelay = max_delay;
+    } else if (countdownDelay < 0) {
+      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
+      countdownDelay = 0;
     }
+
+    startCountdown( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
+  } else {
+    sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
+    sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
+  }
 
   resetTeamScores();
 
@@ -1222,7 +1239,6 @@ static bool checkFlagMod(GameKeeper::Player* playerData)
   return true;
 }
 
-
 static bool checkFlagMaster(GameKeeper::Player* playerData)
 {
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMaster)) {
@@ -1232,7 +1248,6 @@ static bool checkFlagMaster(GameKeeper::Player* playerData)
   }
   return true;
 }
-
 
 bool FlagCommand::operator() (const char *message,
 			      GameKeeper::Player *playerData)
@@ -1257,15 +1272,15 @@ bool FlagCommand::operator() (const char *message,
 	sendFlagUpdateMessage(flag);
       }
     }
-  }
-  else if (strncasecmp(msg, "show", 4) == 0) {
+  } else if (strncasecmp(msg, "show", 4) == 0) {
+    BufferedChatParams *params = new BufferedChatParams(playerData);
     for (int i = 0; i < numFlags; i++) {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
-      sendMessage(ServerPlayer, t, showMessage);
+      params->items.push_back(showMessage);
     }
-  }
-  else if (strncasecmp(msg, "reset", 5) == 0) {
+    BGTM.addTask(&bufferChat,params);
+  } else if (strncasecmp(msg, "reset", 5) == 0) {
     msg += 5;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
@@ -1278,11 +1293,9 @@ bool FlagCommand::operator() (const char *message,
 
     if (strncasecmp(msg, "all", 3) == 0) {
       bz_resetFlags(false);
-    }
-    else if (strncasecmp(msg, "unused", 6) == 0) {
+    } else if (strncasecmp(msg, "unused", 6) == 0) {
       bz_resetFlags(true);
-    }
-    else if (strncasecmp(msg, "team", 4) == 0) {
+    } else if (strncasecmp(msg, "team", 4) == 0) {
       // team flags
       for (int i = 0; i < numFlags; i++) {
 	FlagInfo* fi = FlagInfo::get(i);
@@ -1294,8 +1307,7 @@ bool FlagCommand::operator() (const char *message,
 	  resetFlag(*fi);
 	}
       }
-    }
-    else if (msg[0] == '#') {
+    } else if (msg[0] == '#') {
       if (!checkFlagMaster(playerData)) {
 	return true;
       }
@@ -1308,8 +1320,7 @@ bool FlagCommand::operator() (const char *message,
 	}
 	resetFlag(*fi);
       }
-    }
-    else if (ft != Flags::Null) {
+    } else if (ft != Flags::Null) {
       if (!checkFlagMaster(playerData)) {
 	return true;
       }
@@ -1324,13 +1335,11 @@ bool FlagCommand::operator() (const char *message,
 	  resetFlag(*fi);
 	}
       }
-    }
-    else {
+    } else {
       flagCommandHelp(t);
       return true;
     }
-  }
-  else if (strncasecmp(msg, "take", 4) == 0) {
+  } else if (strncasecmp(msg, "take", 4) == 0) {
     if (!checkFlagMaster(playerData)) {
       return true;
     }
@@ -1373,8 +1382,7 @@ bool FlagCommand::operator() (const char *message,
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
     }
-  }
-  else if (strncasecmp(msg, "give", 4) == 0) {
+  } else if (strncasecmp(msg, "give", 4) == 0) {
     if (!checkFlagMaster(playerData)) {
       return true;
     }
@@ -1401,8 +1409,7 @@ bool FlagCommand::operator() (const char *message,
 	if ((fi != NULL) && ((fi->player >= 0) && !force)) {
 	  fi = NULL;
 	}
-      }
-      else {
+      } else {
 	FlagType* ft = Flag::getDescFromAbbreviation(argv[1].c_str());
 	if (ft != Flags::Null) {
 	  // find unused and forced candidates
@@ -1432,14 +1439,12 @@ bool FlagCommand::operator() (const char *message,
 	    sendMessage(ServerPlayer, t, "flag type not found");
 	    return true;
 	  }
-	}
-	else {
+	} else {
 	  sendMessage(ServerPlayer, t, "bad flag type");
 	  return true;
 	}
       }
-    }
-    else {
+    } else {
       char buffer[MessageLen];
       snprintf(buffer, MessageLen,
 	       "/flag give: could not find player (%s)", argv[0].c_str());
@@ -1472,11 +1477,9 @@ bool FlagCommand::operator() (const char *message,
       }
 
       // deal with the flag's current player (for forced gives)
-      if (fi->player >= 0) 
-      {
+      if (fi->player >= 0) {
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
-	if (fPlayer)
-	{
+	if (fPlayer) {
 	  NetMsg newMsg = MSGMGR.newMessage();
 	  newMsg->packUByte(fi->player);
 	  fi->pack(newMsg);
@@ -1497,8 +1500,7 @@ bool FlagCommand::operator() (const char *message,
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
     }
-  }
-  else {
+  } else {
     flagCommandHelp(t);
   }
 
@@ -1692,7 +1694,7 @@ bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 }
 
 bool LagStatsCommand::operator() (const char *,
-				 GameKeeper::Player *playerData)
+				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagStats)) {
@@ -1722,7 +1724,7 @@ bool LagStatsCommand::operator() (const char *,
 
 
 bool IdleStatsCommand::operator() (const char *,
-				  GameKeeper::Player *playerData)
+				   GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::idleStats)) {
@@ -1867,7 +1869,7 @@ bool PlayerListCommand::operator() (const char *,
     if (playerData->player.isPlaying()) {
       playerData->netHandler->getPlayerList(hostInfo);
       snprintf(reply, MessageLen, "[%d]%-16s: %s",
-	      t, playerData->player.getCallSign(), hostInfo);
+	       t, playerData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
     }
     return true;
@@ -1884,7 +1886,7 @@ bool PlayerListCommand::operator() (const char *,
 	strcpy(hostInfo, "server-side player");
       }
       snprintf(reply, MessageLen, "[%d]%-16s: %s",
-	      i, otherData->player.getCallSign(), hostInfo);
+	       i, otherData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
     }
   }
@@ -1903,49 +1905,48 @@ bool ReportCommand::operator() (const char *message,
   // If no playerData - dont perfom real player checks, since it is probably the API
   if ( playerData ) {
     t = playerData->getIndex();
-
+    
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-        sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
-        return true;
+      sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
+      return true;
     }
-
+    
     if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-        sendMessage(ServerPlayer, t, "The report command is disabled on this server");
-        return true;
+      sendMessage(ServerPlayer, t, "The report command is disabled on this server");
+      return true;
     }
-
+    
     if (strlen(message + 1) < 8) {
-        sendMessage(ServerPlayer, t, "Nothing reported");
-        return true;
+      sendMessage(ServerPlayer, t, "Nothing reported");
+      return true;
     }
 
     msg = (message + 8);
     callsign = playerData->player.getCallSign();
+  } else { 
+    t = ServerPlayer;
+    msg = message;
+    callsign = "SERVER";
   }
-  else { 
-	      t = ServerPlayer;
-	      msg = message;
-		  callsign = "SERVER";
-  }
-
+  
   time_t now = time(NULL);
   char* timeStr = ctime(&now);
   std::string reportStr;
   reportStr = reportStr + timeStr + "Reported by " + callsign + ": " + msg;
 
   if (clOptions->reportFile.size() > 0) {
-      std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
-      ofs << reportStr << std::endl << std::endl;
+    std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
+    ofs << reportStr << std::endl << std::endl;
   }
 
   if (clOptions->reportPipe.size() > 0) {
-      FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-      if (pipeWrite != NULL) {
-	      fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
-      } else {
-	            logDebugMessage(1,"Couldn't write report to the pipe\n");
-        }
-      pclose(pipeWrite);
+    FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
+    if (pipeWrite != NULL) {
+      fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
+    } else {
+      logDebugMessage(1,"Couldn't write report to the pipe\n");
+    }
+    pclose(pipeWrite);
   }
 
   std::string temp = std::string("**\"") + callsign + "\" reports: " + msg;
@@ -1955,19 +1956,19 @@ bool ReportCommand::operator() (const char *message,
   std::string temp2;
 
   while (cur != wordsize) {
-      temp2.clear();
-      while (cur != wordsize &&
-          (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
-	      temp2 += words[cur] + " ";
-	      ++cur;
-      }
-      sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
+    temp2.clear();
+    while (cur != wordsize &&
+	   (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
+      temp2 += words[cur] + " ";
+      ++cur;
+    }
+    sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
   }
 
   logDebugMessage(1,"Player %s [%d] has filed a report (time: %s).\n", callsign.c_str(), t, timeStr);
 
   if ( playerData )
-       sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
+    sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
 
   // Notify plugins of the report filed
   bz_ReportFiledEventData_V1 reportData;
@@ -1985,7 +1986,7 @@ static bool sendHelpTopic (int sendSlot, const char *helpTopic)
   const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
 
   for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-    if (chunks[i] == helpTopic){
+    if (chunks[i] == helpTopic) {
       const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk(helpTopic);
       if (lines != NULL) {
 	for (int j = 0; j < (int)lines->size(); j++) {
@@ -2017,7 +2018,7 @@ bool SendHelpCommand::operator() (const char *message, GameKeeper::Player *playe
   }
 
   int sendTo = GameKeeper::Player::getPlayerIDByName(argv[1]);
-  if ( sendTo < 0){
+  if ( sendTo < 0) {
     char errormessage[MessageLen];
     snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, sendFrom, errormessage);
@@ -2055,7 +2056,7 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
       sendMessage(ServerPlayer, t, chunks[i].c_str());
     }
   } else {
-    if ( !  sendHelpTopic (t, message + 6) ){
+    if (!sendHelpTopic(t, message + 6)) {
       snprintf(reply, MessageLen, "Help command %s not found", message + 6);
       sendMessage(ServerPlayer, t, reply);
     }
@@ -2072,13 +2073,10 @@ bool GhostCommand::operator() (const char *message,
   if (p1)
     p2 = strchr(p1 + 1, '\"');
   
-  if (!p2)
-  {
+  if (!p2) {
     sendMessage(ServerPlayer, t, "not enough parameters, usage"
 		" /ghost \"CALLSIGN\" PASSWORD");
-  }
-  else 
-  {
+  } else {
     std::string ghostie(p1 + 1, p2 - p1 - 1);
     std::string ghostPass = p2 + 2;
 
@@ -2087,27 +2085,23 @@ bool GhostCommand::operator() (const char *message,
     int user = GameKeeper::Player::getPlayerIDByName(ghostie);
     if (user == -1)
       sendMessage(ServerPlayer, t, "There is no user logged in by that name");
-    else 
-    {
+    else {
       GameKeeper::Player *ghostiePlayer = GameKeeper::Player::getPlayerByIndex(user);
 
       if ( ghostiePlayer && !ghostiePlayer->accessInfo.regAtJoin )
 	sendMessage(ServerPlayer, t, "That callsign was not registered when it joined.");
-      else
-      {
+      else {
 	if (!userExists(ghostie))
 	  sendMessage(ServerPlayer, t, "That callsign is not registered");
-	else
-	{
+	else {
 	  if (!verifyUserPassword(ghostie, ghostPass)) 
 	    sendMessage(ServerPlayer, t, "Invalid Password");
-	  else
-	  {
+	  else {
 	    sendMessage(ServerPlayer, t, "Ghosting User");
 	    char temp[MessageLen];
 	    snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
-		    " You have been ghosted by %s",
-		    playerData->player.getCallSign());
+		     " You have been ghosted by %s",
+		     playerData->player.getCallSign());
 	    sendMessage(ServerPlayer, user, temp);
 	    removePlayer(user, "Ghost");
 	  }
@@ -2151,8 +2145,7 @@ bool ShowGroupCommand::operator() (const char* msg,
     // get the active player if possible
     int pIndex = GameKeeper::Player::getPlayerIDByName(queryName);
     query = GameKeeper::Player::getPlayerByIndex(pIndex);
-  }
-  else {
+  } else {
     if (!playerData->accessInfo.isVerified()) {
       sendMessage(ServerPlayer, t, "You are not identified");
       return true;
@@ -2228,8 +2221,7 @@ bool ShowPermsCommand::operator() (const char* msg,
       sendMessage(ServerPlayer, t, warning.c_str());
       return true;
     }
-  }
-  else if (!playerData->accessInfo.isVerified()) {
+  } else if (!playerData->accessInfo.isVerified()) {
     sendMessage(ServerPlayer, t, "You are not identified");
     return true;
   }
@@ -2636,10 +2628,12 @@ bool PollCommand::operator() (const char *message,
   // get available voter count
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
-    // any registered/known users on the server (including observers)
-    // are eligible to vote
+    // any registered/known users on the server (including observers).
+    // are eligible to vote as long as they have the poll permission.
+    // if you can start a poll you can vote in a poll.  this section
+    // must be kept in sync with the suffrage granting that follows.
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->accessInfo.exists()) {
+    if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
       available++;
     }
   }
@@ -2867,10 +2861,12 @@ bool PollCommand::operator() (const char *message,
 
     // keep track of who is allowed to vote
     for (int j = 0; j < curMaxPlayers; j++) {
-      // any registered/known users on the server (including
-      // observers) are eligible to vote
+      // any registered/known users on the server (including observers).
+      // are eligible to vote as long as they have the poll permission.
+      // if you can start a poll you can vote in a poll.  this section
+      // must be kept in sync with the "available" count that preceeds.
       GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(j);
-      if (otherData && otherData->accessInfo.exists()) {
+      if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
 	votingArbiter->grantSuffrage(otherData->player.getCallSign());
       }
     }
@@ -2915,7 +2911,6 @@ bool PollCommand::operator() (const char *message,
   return true;
 }
 
-
 bool ViewReportCommand::operator() (const char* message,
 				    GameKeeper::Player* playerData)
 {
@@ -2947,6 +2942,8 @@ bool ViewReportCommand::operator() (const char* message,
     }
   }
 
+  BufferedChatParams *params = new BufferedChatParams(playerData);
+
   // assumes that empty lines separate the reports
   std::string line;
   std::vector<std::string> buffers;
@@ -2957,7 +2954,7 @@ bool ViewReportCommand::operator() (const char* message,
       // blank line
       if (matched) {
 	for (int i = 0; i < (int)buffers.size(); i++) {
-	  sendMessage(ServerPlayer, t, buffers[i].c_str());
+	  params->items.push_back(buffers[i]);
 	}
       }
       buffers.clear();
@@ -2972,9 +2969,11 @@ bool ViewReportCommand::operator() (const char* message,
   // in case the file doesn't end with a blank line
   if (matched) {
     for (int i = 0; i < (int)buffers.size(); i++) {
-      sendMessage(ServerPlayer, t, buffers[i].c_str());
+      params->items.push_back(buffers[i]);
     }
   }
+
+  BGTM.addTask(&bufferChat,params);
 
   return true;
 }
@@ -2985,7 +2984,7 @@ bool ClientQueryCommand::operator() (const char *message,
 {
   int t = playerData->getIndex();
   logDebugMessage(2,"Clientquery requested by %s [%d]\n",
-	 playerData->player.getCallSign(), t);
+		  playerData->player.getCallSign(), t);
   if (message[12] != '\0') {
     std::string name = message + 13; // assumes there is a space
     while (isspace(name[0]))
@@ -3050,11 +3049,9 @@ bool RecordCommand::operator() (const char *message,
 
   if (strncasecmp (buf, "start", 5) == 0) {
     Record::start(t);
-  }
-  else if (strncasecmp (buf, "stop", 4) == 0) {
+  } else if (strncasecmp (buf, "stop", 4) == 0) {
     Record::stop(t);
-  }
-  else if (strncasecmp (buf, "size", 4) == 0) {
+  } else if (strncasecmp (buf, "size", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -3064,8 +3061,7 @@ bool RecordCommand::operator() (const char *message,
     }
     int size = atoi (buf);
     Record::setSize (t, size);
-  }
-  else if (strncasecmp (buf, "rate", 4) == 0) {
+  } else if (strncasecmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
@@ -3075,17 +3071,14 @@ bool RecordCommand::operator() (const char *message,
     }
     int seconds = atoi (buf);
     Record::setRate (t, seconds);
-  }
-  else if (strncasecmp (buf, "stats", 5) == 0) {
+  } else if (strncasecmp (buf, "stats", 5) == 0) {
     Record::sendStats(t);
-  }
-  else if (strncasecmp (buf, "list", 4) == 0) {
+  } else if (strncasecmp (buf, "list", 4) == 0) {
     const char* options = buf + 4;
     if (!Replay::sendFileList (t, options)) {
       Record::sendHelp (t);
     }
-  }
-  else if (strncasecmp (buf, "save", 4) == 0) {
+  } else if (strncasecmp (buf, "save", 4) == 0) {
     buf = buf + 4;
     char filename[MessageLen];
 
@@ -3104,23 +3097,19 @@ bool RecordCommand::operator() (const char *message,
 
     if (*buf == '\0') {
       Record::saveBuffer (t, filename, 0);
-    }
-    else {
+    } else {
       Record::saveBuffer (t, filename, atoi(buf));
     }
-  }
-  else if (strncasecmp (buf, "file", 4) == 0) {
+  } else if (strncasecmp (buf, "file", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
       Record::sendHelp (t);
-    }
-    else {
+    } else {
       Record::saveFile (t, buf);
     }
-  }
-  else {
+  } else {
     Record::sendHelp (t);
   }
 
@@ -3162,40 +3151,32 @@ bool ReplayCommand::operator() (const char *message,
     if (!Replay::sendFileList (t, options)) {
       Record::sendHelp (t);
     }
-  }
-  else if (strncasecmp (buf, "load", 4) == 0) {
+  } else if (strncasecmp (buf, "load", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
       Replay::sendHelp (t);
-    }
-    else {
+    } else {
       Replay::loadFile (t, buf);
     }
-  }
-  else if (strncasecmp (buf, "play", 4) == 0) {
+  } else if (strncasecmp (buf, "play", 4) == 0) {
     Replay::play (t);
-  }
-  else if (strncasecmp (buf, "loop", 4) == 0) {
+  } else if (strncasecmp (buf, "loop", 4) == 0) {
     Replay::loop (t);
-  }
-  else if (strncasecmp (buf, "skip", 4) == 0) {
+  } else if (strncasecmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {
       Replay::skip (t, 0);
-    }
-    else {
+    } else {
       int skip = atoi (buf);
       Replay::skip (t, skip);
     }
-  }
-  else if (strncasecmp (buf, "pause", 5) == 0) {
+  } else if (strncasecmp (buf, "pause", 5) == 0) {
     Replay::pause (t);
-  }
-  else {
+  } else {
     Replay::sendHelp (t);
   }
 
@@ -3305,73 +3286,71 @@ bool DateTimeCommand::operator() (const char *,
 // parse server comands
 void parseServerCommand(const char *message, int t)
 {
-	if (!message)
-	{
-		std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
-		return;
-	}
+  if (!message) {
+    std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
+    return;
+  }
 
-	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-	if (!playerData)
-		return;
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
+  if (!playerData)
+    return;
 
-	// Notify plugins of slash command execution request
-	bz_SlashCommandEventData_V1 commandData;
-	commandData.from = t;
-	commandData.message = message;
+  // Notify plugins of slash command execution request
+  bz_SlashCommandEventData_V1 commandData;
+  commandData.from = t;
+  commandData.message = message;
 
-	worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
+  worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
-	// lets see if if ther is a cusom handler for the event
-	std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
+  // lets see if if ther is a cusom handler for the event
+  std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
 
-	if (params.size() == 0)
-		return;
+  if (params.size() == 0)
+    return;
 
-	std::string temp = "/" +  params[0];
-	tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(temp));
+  std::string temp = "/" +  params[0];
+  tmCustomSlashCommandMap::iterator itr = customCommands.find(TextUtils::tolower(temp));
 
-	bz_ApiString	command = params[0];
-	bz_ApiString APIMessage;
-	bz_APIStringList	APIParams;
+  bz_ApiString	command = params[0];
+  bz_ApiString APIMessage;
+  bz_APIStringList	APIParams;
 
-	for (unsigned int i = 1; i < params.size(); i++)
-		APIParams.push_back(params[i]);
+  for (unsigned int i = 1; i < params.size(); i++)
+    APIParams.push_back(params[i]);
 
-	if (strlen(message+1) > params[0].size())
-		APIMessage = (message+params[0].size()+2);
+  if (strlen(message+1) > params[0].size())
+    APIMessage = (message+params[0].size()+2);
 
-	// see if we have a registerd custom command and call it
-	if (itr != customCommands.end())
-	{
-		bool handled = false;
-		// if it handles it, then we are good
-		if (itr->second->handle(t, command, APIMessage, &APIParams))
-			handled = true;
+  // see if we have a registerd custom command and call it
+  if (itr != customCommands.end()) {
+    bool handled = false;
+    // if it handles it, then we are good
+    if (itr->second->handle(t, command, APIMessage, &APIParams))
+      handled = true;
 
-		if (handled)
-			return;
-	}
+    if (handled)
+      return;
+  }
 
-	// if it hasn't been handled try the standard commands.
-	if (ServerCommand::execute(message, playerData))
-		return;
+  // if it hasn't been handled try the standard commands.
+  if (ServerCommand::execute(message, playerData))
+    return;
 
-	if (cmdHelp(message, playerData))
-		return;
+  if (cmdHelp(message, playerData))
+    return;
 
-	// lets see if anyone wants to handle the unhandled event
-	bz_UnknownSlashCommandEventData_V1 commandData1;
-	commandData1.from = t;
-	commandData1.message = message;
+  // lets see if anyone wants to handle the unhandled event
+  bz_UnknownSlashCommandEventData_V1 commandData1;
+  commandData1.from = t;
+  commandData1.message = message;
 
-	worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
-	if (commandData1.handled) // did anyone do it?
-		return;
+  worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
+  if (commandData1.handled) // did anyone do it?
+    return;
 
-	char reply[MessageLen];
-	snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
-	sendMessage(ServerPlayer, t, reply);
+  char reply[MessageLen];
+  snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
+  sendMessage(ServerPlayer, t, reply);
 }
 
 void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)

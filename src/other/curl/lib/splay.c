@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1997 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1997 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: splay.c,v 1.5 2007-04-25 03:00:10 yangtse Exp $
+ * $Id: splay.c,v 1.8 2007-11-05 09:45:09 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -42,37 +42,37 @@ struct Curl_tree *Curl_splay(int i, struct Curl_tree *t)
   struct Curl_tree N, *l, *r, *y;
   int comp;
 
-  if (t == NULL)
+  if(t == NULL)
     return t;
   N.smaller = N.larger = NULL;
   l = r = &N;
 
   for (;;) {
     comp = compare(i, t->key);
-    if (comp < 0) {
-      if (t->smaller == NULL)
+    if(comp < 0) {
+      if(t->smaller == NULL)
         break;
-      if (compare(i, t->smaller->key) < 0) {
+      if(compare(i, t->smaller->key) < 0) {
         y = t->smaller;                           /* rotate smaller */
         t->smaller = y->larger;
         y->larger = t;
         t = y;
-        if (t->smaller == NULL)
+        if(t->smaller == NULL)
           break;
       }
       r->smaller = t;                               /* link smaller */
       r = t;
       t = t->smaller;
     }
-    else if (comp > 0) {
-      if (t->larger == NULL)
+    else if(comp > 0) {
+      if(t->larger == NULL)
         break;
-      if (compare(i, t->larger->key) > 0) {
+      if(compare(i, t->larger->key) > 0) {
         y = t->larger;                          /* rotate larger */
         t->larger = y->smaller;
         y->smaller = t;
         t = y;
-        if (t->larger == NULL)
+        if(t->larger == NULL)
           break;
       }
       l->larger = t;                              /* link larger */
@@ -97,12 +97,12 @@ struct Curl_tree *Curl_splayinsert(int i,
                                    struct Curl_tree *t,
                                    struct Curl_tree *node)
 {
-  if (node == NULL)
+  if(node == NULL)
     return t;
 
-  if (t != NULL) {
+  if(t != NULL) {
     t = Curl_splay(i,t);
-    if (compare(i, t->key)==0) {
+    if(compare(i, t->key)==0) {
       /* There already exists a node in the tree with the very same key. Build
          a linked list of nodes. We make the new 'node' struct the new master
          node and make the previous node the first one in the 'same' list. */
@@ -123,10 +123,10 @@ struct Curl_tree *Curl_splayinsert(int i,
     }
   }
 
-  if (t == NULL) {
+  if(t == NULL) {
     node->smaller = node->larger = NULL;
   }
-  else if (compare(i, t->key) < 0) {
+  else if(compare(i, t->key) < 0) {
     node->smaller = t->smaller;
     node->larger = t;
     t->smaller = NULL;
@@ -156,11 +156,11 @@ struct Curl_tree *Curl_splayremove(int i, struct Curl_tree *t,
 
   *removed = NULL; /* default to no removed */
 
-  if (t==NULL)
+  if(t==NULL)
     return NULL;
 
   t = Curl_splay(i,t);
-  if (compare(i, t->key) == 0) {               /* found it */
+  if(compare(i, t->key) == 0) {               /* found it */
 
     /* FIRST! Check if there is a list with identical sizes */
     if((x = t->same)) {
@@ -176,7 +176,7 @@ struct Curl_tree *Curl_splayremove(int i, struct Curl_tree *t,
       return x; /* new root */
     }
 
-    if (t->smaller == NULL) {
+    if(t->smaller == NULL) {
       x = t->larger;
     }
     else {
@@ -199,7 +199,7 @@ struct Curl_tree *Curl_splaygetbest(int i, struct Curl_tree *t,
 {
   struct Curl_tree *x;
 
-  if (!t) {
+  if(!t) {
     *removed = NULL; /* none removed since there was no root */
     return NULL;
   }
@@ -216,7 +216,7 @@ struct Curl_tree *Curl_splaygetbest(int i, struct Curl_tree *t,
     }
   }
 
-  if (compare(i, t->key) >= 0) {               /* found it */
+  if(compare(i, t->key) >= 0) {               /* found it */
     /* FIRST! Check if there is a list with identical sizes */
     x = t->same;
     if(x) {
@@ -232,7 +232,7 @@ struct Curl_tree *Curl_splaygetbest(int i, struct Curl_tree *t,
       return x; /* new root */
     }
 
-    if (t->smaller == NULL) {
+    if(t->smaller == NULL) {
       x = t->larger;
     }
     else {
@@ -260,34 +260,34 @@ struct Curl_tree *Curl_splaygetbest(int i, struct Curl_tree *t,
    'newroot' will be made to point to NULL.
 */
 int Curl_splayremovebyaddr(struct Curl_tree *t,
-                           struct Curl_tree *remove,
+                           struct Curl_tree *removenode,
                            struct Curl_tree **newroot)
 {
   struct Curl_tree *x;
 
-  if (!t || !remove)
+  if(!t || !removenode)
     return 1;
 
-  if(KEY_NOTUSED == remove->key) {
+  if(KEY_NOTUSED == removenode->key) {
     /* Key set to NOTUSED means it is a subnode within a 'same' linked list
        and thus we can unlink it easily. The 'smaller' link of a subnode
        links to the parent node. */
-    if (remove->smaller == NULL)
+    if(removenode->smaller == NULL)
       return 3;
 
-    remove->smaller->same = remove->same;
-    if(remove->same)
-      remove->same->smaller = remove->smaller;
+    removenode->smaller->same = removenode->same;
+    if(removenode->same)
+      removenode->same->smaller = removenode->smaller;
 
     /* Ensures that double-remove gets caught. */
-    remove->smaller = NULL;
+    removenode->smaller = NULL;
 
     /* voila, we're done! */
     *newroot = t; /* return the same root */
     return 0;
   }
 
-  t = Curl_splay(remove->key, t);
+  t = Curl_splay(removenode->key, t);
 
   /* First make sure that we got the same root node as the one we want
      to remove, as otherwise we might be trying to remove a node that
@@ -296,7 +296,7 @@ int Curl_splayremovebyaddr(struct Curl_tree *t,
      We cannot just compare the keys here as a double remove in quick
      succession of a node with key != KEY_NOTUSED && same != NULL
      could return the same key but a different node. */
-  if(t != remove)
+  if(t != removenode)
     return 2;
 
   /* Check if there is a list with identical sizes, as then we're trying to
@@ -312,10 +312,10 @@ int Curl_splayremovebyaddr(struct Curl_tree *t,
   }
   else {
     /* Remove the root node */
-    if (t->smaller == NULL)
+    if(t->smaller == NULL)
       x = t->larger;
     else {
-      x = Curl_splay(remove->key, t->smaller);
+      x = Curl_splay(removenode->key, t->smaller);
       x->larger = t->larger;
     }
   }
@@ -332,7 +332,7 @@ void Curl_splayprint(struct Curl_tree * t, int d, char output)
   struct Curl_tree *node;
   int i;
   int count;
-  if (t == NULL)
+  if(t == NULL)
     return;
 
   Curl_splayprint(t->larger, d+1, output);
@@ -373,7 +373,7 @@ int main(int argc, argv_item_t argv[])
   int adds=0;
   int rc;
 
-  long sizes[]={
+  static const long sizes[]={
     50, 60, 50, 100, 60, 200, 120, 300, 400, 200, 256, 122, 60, 120, 200, 300,
     220, 80, 90, 50, 100, 60, 200, 120, 300, 400, 200, 256, 122, 60, 120, 200,
     300, 220, 80, 90, 50, 100, 60, 200, 120, 300, 400, 200, 256, 122, 60, 120,

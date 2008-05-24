@@ -18,6 +18,7 @@
 // System headers
 #include <list>
 #include <deque>
+#include <string>
 
 // Common headers
 #include "Singleton.h"
@@ -29,10 +30,7 @@ class BufferedNetworkMessageManager;
 class BufferedNetworkMessage
 {
 public:
-    BufferedNetworkMessage();
-    BufferedNetworkMessage( const BufferedNetworkMessage &msg );
-
-    virtual ~BufferedNetworkMessage();
+    ~BufferedNetworkMessage();
 
     // sending
     void send ( NetHandler *to, uint16_t messageCode );
@@ -44,7 +42,8 @@ public:
     void packUShort( uint16_t val );
     void packUInt( uint32_t val );
     void packFloat( float val );
-    void packVector( const float* val );
+    void packDouble( double val );
+    void packFloatVector( const float* val );
     void packString( const char* val, int len );
     void packStdString( const std::string& str );
 
@@ -54,7 +53,8 @@ public:
     uint16_t unpackUShort( void );
     uint32_t unpackUInt( void );
     float unpackFloat( void );
-    float* unpackVector( float* val );
+    double unpackDouble( void );
+    float* unpackFloatVector( float* val );
     const std::string& unpackStdString( std::string& str ); 
 
     void clear ( void );
@@ -69,6 +69,12 @@ public:
 
 protected:
   friend class BufferedNetworkMessageManager;
+
+  // BufferedNetworkMessages should never be created directly.
+  // Use MSGMGR->newMessage instead.
+  BufferedNetworkMessage();
+  BufferedNetworkMessage( const BufferedNetworkMessage &msg );
+
   bool process ( void );
 
   char* getWriteBuffer ( void );
@@ -82,7 +88,7 @@ protected:
   size_t readPoint;
 
   uint16_t    code;
-  NetHandler  *recipent;  // NULL if broadcast;
+  NetHandler  *recipient;  // NULL if broadcast;
   bool	      toAdmins;
 };
 
@@ -101,6 +107,7 @@ class BufferedNetworkMessageManager : public Singleton<BufferedNetworkMessageMan
 {
 public:
   BufferedNetworkMessage  *newMessage ( BufferedNetworkMessage *msgToCopy = NULL );
+  template <class T> T* newMessage ( T* msgToCopy = NULL );
 
   typedef std::list<BufferedNetworkMessage*> MessageList;
 
@@ -112,6 +119,7 @@ public:
   void clearDeadIncomingMessages ( void );
 
   void purgeMessages ( NetHandler *handler );
+  void flushMessages ( NetHandler *handler );
 
   void setTransferCallback ( NetworkMessageTransferCallback *cb ){ transferCallback = cb;}
   NetworkMessageTransferCallback* getTransferCallback ( void ){return transferCallback;}
@@ -132,9 +140,26 @@ private:
   ~BufferedNetworkMessageManager();
 };  
 
+template <class T>
+inline T* BufferedNetworkMessageManager::newMessage ( T* msgToCopy )
+{
+  T* msg = NULL;
+  if (msgToCopy)
+    msg = new T(*msgToCopy);
+  else
+    msg = new T;
+  pendingOutgoingMessages.push_back(msg);
+  return msg;
+}
+
+inline BufferedNetworkMessage* BufferedNetworkMessageManager::newMessage ( BufferedNetworkMessage* msgToCopy )
+{
+  return newMessage<BufferedNetworkMessage>(msgToCopy);
+}
+
 #define MSGMGR (BufferedNetworkMessageManager::instance())
 
-#define NetMsg BufferedNetworkMessage*
+typedef BufferedNetworkMessage* NetMsg;
 
 #endif //_BUFFERED_NETWORK_MESSAGE_H_
 

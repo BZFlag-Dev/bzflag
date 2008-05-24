@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: reconf,v 1.4 2001-05-30 07:59:47 bagder Exp $
+# $Id: reconf,v 1.4 2001/05/30 07:59:47 bagder Exp $
 #
 # re autoconf/automake shell script
 #

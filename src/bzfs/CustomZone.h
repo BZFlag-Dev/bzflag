@@ -30,7 +30,8 @@ typedef std::vector<std::string> QualifierList;
 typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
 
 
-class CustomZone : public WorldFileLocation {
+class CustomZone : public WorldFileLocation
+{
   public:
     CustomZone();
 

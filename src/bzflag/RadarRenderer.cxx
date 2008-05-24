@@ -384,10 +384,10 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   glScissor(ox + x - 1, oy + y - 1, w + 2, h + 2);
 
-  const float left = float(ox + x) - 0.5f;
-  const float right = float(ox + x + w) + 0.5f;
-  const float top = float(oy + y) - 0.5f;
-  const float bottom = float(oy + y + h) + 0.5f;
+  const float left = float(ox + x) - 1;
+  const float right = float(ox + x + w) + 1;
+  const float top = float(oy + y) - 1;
+  const float bottom = float(oy + y + h) + 1;
 
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
@@ -398,21 +398,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glEnable(GL_BLEND);
 
   glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
-
-  glBegin(GL_LINE_LOOP); {
-    glVertex2f(left, top);
-    glVertex2f(right, top);
-    glVertex2f(right, bottom);
-    glVertex2f(left, bottom);
-  } glEnd();
-
-  glBegin(GL_POINTS); {
-    glVertex2f(left, top);
-    glVertex2f(right, top);
-    glVertex2f(right, bottom);
-    glVertex2f(left, bottom);
-  } glEnd();
-
+  glOutlineBoxHV(10,left,top,right,bottom);
   if (BZDBCache::blend)
     glDisable(GL_BLEND);
 

@@ -34,6 +34,17 @@ ErrorCallback		setErrorCallback(ErrorCallback);
 void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
 void			printFatalError(const char* fmt, ...) BZ_ATTR_12;
 
+class FatalErrorCallback
+{
+public:
+  virtual ~FatalErrorCallback(){};
+  virtual void error ( const char* title, const char* message ) = 0;
+};
+
+void addFatalErrorCallback ( FatalErrorCallback* callback );
+void removeFatalErrorCallback ( FatalErrorCallback* callback );
+
+
 #endif // BZF_ERROR_HANDLER_H
 
 // Local Variables: ***

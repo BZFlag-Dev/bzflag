@@ -18,13 +18,14 @@
 
 // common implementation headers
 #include "FontManager.h"
+#include "bzUnicode.h"
 
 //
 // HUDuiTypeIn
 //
 
 HUDuiTypeIn::HUDuiTypeIn()
-: HUDuiControl(), maxLength(0), cursorPos(0)
+: HUDuiControl(), maxLength(0), cursorPos(string.c_str())
 {
   allowEdit = true; // allow editing by default
   obfuscate = false;
@@ -53,15 +54,21 @@ void			HUDuiTypeIn::setMaxLength(int _maxLength)
 {
   maxLength = _maxLength;
   string = string.substr(0, maxLength);
-  if (cursorPos > maxLength)
-    cursorPos = maxLength;
+  if (cursorPos.getCount() > maxLength)
+  {
+    cursorPos = string.c_str();
+    while (*cursorPos)
+      ++cursorPos;
+  }
   onSetFont();
 }
 
 void			HUDuiTypeIn::setString(const std::string& _string)
 {
   string = _string;
-  cursorPos = (int)string.length();
+  cursorPos = string.c_str();
+  while (*cursorPos)
+    ++cursorPos;
   onSetFont();
 }
 
@@ -80,24 +87,34 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return true;
 
   if (!allowEdit) return false; //or return true ??
-  char c = key.ascii;
+  unsigned int c = key.chr;
   if (c == 0) switch (key.button) {
-    case BzfKeyEvent::Left:
-      if (cursorPos > 0)
-	cursorPos--;
+    case BzfKeyEvent::Left: {
+      int pos = cursorPos.getCount();
+      // uhh...there's not really any way to reverse over a multibyte string
+      // do this the hard way: reset to the beginning and advance to the current
+      // position, minus a character.
+      if (pos > 0) {
+	--pos;
+	cursorPos = string.c_str();
+	while (cursorPos.getCount() < pos && (*cursorPos))
+	  ++cursorPos;
+      }
       return true;
+    }
 
     case BzfKeyEvent::Right:
-      if (cursorPos < (int)string.length())
-	cursorPos++;
+      if (*cursorPos)
+	++cursorPos;
       return true;
 
     case BzfKeyEvent::Home:
-      cursorPos = 0;
+      cursorPos = string.c_str();
       return true;
 
     case BzfKeyEvent::End:
-      cursorPos = (int)string.length();
+      while (*cursorPos)
+        ++cursorPos;
       return true;
 
     case BzfKeyEvent::Backspace:
@@ -105,8 +122,8 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       break;
 
     case BzfKeyEvent::Delete:
-      if (cursorPos < (int)string.length()) {
-	cursorPos++;
+      if (*cursorPos) {
+	++cursorPos;
 	c = backspace;
       } else {
 	return true;
@@ -117,21 +134,59 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       return false;
   }
 
-  if (!isprint(c) && c != backspace)
+  if (!iswprint(c) && c != backspace)
     return false;
 
   if (c == backspace) {
-    if (cursorPos == 0) goto noRoom;
+    int pos = cursorPos.getCount();
+    if (pos == 1) { 
+      goto noRoom;
+    } else {
+      // copy up to cursor position - 1
+      cursorPos = string.c_str();
+      --pos;
+      while (cursorPos.getCount() < pos)
+        ++cursorPos;
+      std::string temp = string.substr(0, cursorPos.getBufferFromHere() - string.c_str());
+      // skip the deleted character
+      ++cursorPos;
+      // copy the remainder
+      pos = (int)(cursorPos.getBufferFromHere() - string.c_str());
+      temp += string.substr(pos, string.length() - pos);
+      string = temp;
+      // new buffer, restart cursor
+      pos = cursorPos.getCount();
+      cursorPos = string.c_str();
+      while (cursorPos.getCount() < (pos - 1))
+	++cursorPos;
+    }
 
-    cursorPos--;
-    string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
   } else {
-    if (isspace(c)) c = whitespace;
-    if ((int)string.length() == maxLength) goto noRoom;
+    if (iswspace(c))
+      c = whitespace;
 
-    string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
-    cursorPos++;
+    CountUTF8StringItr cusi(string.c_str());
+    while (*cusi) ++cusi;
+    if (cusi.getCount() >= maxLength) goto noRoom;
+
+    bzUTF8Char ch(c);
+    int pos = (int)(cursorPos.getBufferFromHere() - string.c_str());
+    // copy to the current cursor location
+    std::string temp = string.substr(0, pos);
+    // insert the new character
+    temp += ch.str();
+    // copy the rest of the string
+    temp += string.substr(pos, string.length());
+    string = temp;
+    // new buffer, restart cursor
+    pos = cursorPos.getCount();
+    cursorPos = string.c_str();
+    while (cursorPos.getCount() < pos)
+      ++cursorPos;
+
+    // bump the cursor
+    ++cursorPos;
     onSetFont();
   }
   return true;
@@ -143,7 +198,7 @@ noRoom:
 
 bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
-  if (key.ascii == '\t' || !isprint(key.ascii))	// ignore non-printing and tab
+  if (key.chr == '\t' || !iswprint(key.chr))	// ignore non-printing and tab
     return false;
 
   // slurp up releases
@@ -167,7 +222,8 @@ void			HUDuiTypeIn::doRender()
   fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr.c_str());
 
   // find the position of where to draw the input cursor
-  float start = fm.getStringWidth(getFontFace(), getFontSize(), renderStr.substr(0, cursorPos).c_str());
+  float start = fm.getStringWidth(getFontFace(), getFontSize(), 
+    renderStr.substr(0, cursorPos.getBufferFromHere() - string.c_str()).c_str());
 
   if (hasFocus() && allowEdit) {
     fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");

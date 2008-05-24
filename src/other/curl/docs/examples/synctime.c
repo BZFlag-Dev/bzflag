@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: synctime.c,v 1.3 2006-11-19 21:55:34 bagder Exp $
+ * $Id: synctime.c,v 1.4 2007-07-12 21:11:10 danf Exp $
  *
  * This example code only builds as-is on Windows.
  *
@@ -87,7 +87,7 @@ typedef struct
   char timeserver[MAX_STRING1];
 } conf_t;
 
-char DefaultTimeServer[4][MAX_STRING1] =
+const char DefaultTimeServer[4][MAX_STRING1] =
 {
   "http://nist.time.gov/timezone.cgi?UTC/s/0",
   "http://www.google.com/",
@@ -95,9 +95,9 @@ char DefaultTimeServer[4][MAX_STRING1] =
   "http://www.worldtime.com/cgi-bin/wt.cgi"
 };
 
-char *DayStr[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-char *MthStr[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const char *DayStr[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+const char *MthStr[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 int  ShowAllHeader;
 int  AutoSyncTime;

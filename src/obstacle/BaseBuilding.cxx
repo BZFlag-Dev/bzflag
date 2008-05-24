@@ -232,9 +232,9 @@ void* BaseBuilding::pack(void* buf) const
 {
   buf = nboPackUShort(buf, (uint16_t) team);
 
-  buf = nboPackVector(buf, pos);
+  buf = nboPackFloatVector(buf, pos);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackVector(buf, size);
+  buf = nboPackFloatVector(buf, size);
 
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
@@ -251,9 +251,9 @@ void* BaseBuilding::unpack(void* buf)
   buf = nboUnpackUShort(buf, shortTeam);
   team = (int)shortTeam;
 
-  buf = nboUnpackVector(buf, pos);
+  buf = nboUnpackFloatVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackVector(buf, size);
+  buf = nboUnpackFloatVector(buf, size);
 
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);

@@ -178,7 +178,7 @@ float DefaultSpawnPolicy::enemyProximityCheck(float &enemyAngle) const
     if (!playerData)
       continue;
     if (playerData->player.isAlive()
-	&& areFoes(playerData->player.getTeam(), team)) {
+	&& Team::areFoes(playerData->player.getTeam(), team, clOptions->gameType)) {
       float *enemyPos = playerData->currentPos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
 	float x = enemyPos[0] - testPos[0];

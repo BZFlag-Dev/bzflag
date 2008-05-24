@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_ntop.h,v 1.4 2005-11-25 22:20:02 bagder Exp $
+ * $Id: inet_ntop.h,v 1.4 2005/11/25 22:20:02 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

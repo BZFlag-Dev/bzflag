@@ -3,13 +3,36 @@ join in and help us correct one or more of these! Also be sure to check the
 changelog of the current development status, as one or more of these problems
 may have been fixed since this was written!
 
+52. Gautam Kachroo's issue that identifies a problem with the multi interface
+  where a connection can be re-used without actually being properly
+  SSL-negoatiated:
+  http://curl.haxx.se/mail/lib-2008-01/0277.html
+
+49. If using --retry and the transfer timeouts (possibly due to using -m or
+  -y/-Y) the next attempt doesn't resume the transfer properly from what was
+  downloaded in the previous attempt but will truncate and restart at the
+  original position where it was at before the previous failed attempt. See
+  http://curl.haxx.se/mail/lib-2008-01/0080.html
+
+48. If a CONNECT response-headers are larger than BUFSIZE (16KB) when the
+  connection is meant to be kept alive (like for NTLM proxy auth), the
+  function will return prematurely and will confuse the rest of the HTTP
+  protocol code. This should be very rare.
+
+45. libcurl built to support ipv6 uses getaddrinfo() to resolve host names.
+  getaddrinfo() sorts the response list which effectively kills how libcurl
+  deals with round-robin DNS entries. All details:
+    http://curl.haxx.se/mail/lib-2007-07/0168.html
+  initial suggested function to use for randomizing the response:
+    http://curl.haxx.se/mail/lib-2007-07/0178.html
+
+43. There seems to be a problem when connecting to the Microsoft telnet server.
+  http://curl.haxx.se/bug/view.cgi?id=1720605
+
 41. When doing an operation over FTP that requires the ACCT command (but not
   when logging in), the operation will fail since libcurl doesn't detect this
   and thus fails to issue the correct command:
   http://curl.haxx.se/bug/view.cgi?id=1693337
-
-40. Mac OS X test failures (Daniel Johnson)
-  http://curl.haxx.se/mail/lib-2007-03/0095.html
 
 39. Steffen Rumler's Race Condition in Curl_proxyCONNECT:
   http://curl.haxx.se/mail/lib-2007-01/0045.html
@@ -31,29 +54,15 @@ may have been fixed since this was written!
   Also see #12. According to bug #1556528, even the SOCKS5 connect code does
   not do it right: http://curl.haxx.se/bug/view.cgi?id=1556528,
 
-33. Doing multi-pass HTTP authentication on a non-default port does not work.
-  This happens because the multi-pass code abuses the redirect following code
-  for doing multiple requests, and when we following redirects to an absolute
-  URL we must use the newly specified port and not the one specified in the
-  original URL. A proper fix to this would need to separate the negotiation
-  "redirect" from an actual redirect.
-
-32. (At least on Windows) If libcurl is built with c-ares and there's no DNS
-  server configured in the system, the ares_init() call fails and thus
-  curl_easy_init() fails as well. This causes weird effects for people who use
-  numerical IP addresses only.
-
 31. "curl-config --libs" will include details set in LDFLAGS when configure is
-  run that might be needed only for building libcurl. Similarly, it might
-  include options that perhaps aren't suitable both for static and dynamic
-  linking. Further, curl-config --cflags suffers from the same effects with
-  CFLAGS/CPPFLAGS.
+  run that might be needed only for building libcurl. Further, curl-config
+  --cflags suffers from the same effects with CFLAGS/CPPFLAGS.
 
 30. You need to use -g to the command line tool in order to use RFC2732-style
   IPv6 numerical addresses in URLs.
 
 29. IPv6 URLs with zone ID is not supported.
-  http://www.ietf.org/internet-drafts/draft-fenner-literal-zone-02.txt
+  http://www.ietf.org/internet-drafts/draft-fenner-literal-zone-02.txt (expired)
   specifies the use of a plus sign instead of a percent when specifying zone
   IDs in URLs to get around the problem of percent signs being
   special. According to the reporter, Firefox deals with the URL _with_ a
@@ -68,7 +77,6 @@ may have been fixed since this was written!
 23. SOCKS-related problems:
   A) libcurl doesn't support SOCKS for IPv6.
   B) libcurl doesn't support FTPS over a SOCKS proxy.
-  C) We don't have any test cases for SOCKS proxy.
   E) libcurl doesn't support active FTP over a SOCKS proxy
 
   We probably have even more bugs and lack of features when a SOCKS proxy is

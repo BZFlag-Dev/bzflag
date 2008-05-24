@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_digest.c,v 1.29 2007-02-26 22:03:01 bagder Exp $
+ * $Id: http_digest.c,v 1.34 2008-01-10 09:17:07 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -56,8 +56,8 @@ Proxy-Authenticate: Digest realm="testrealm", nonce="1053604598"
 
 CURLdigest Curl_input_digest(struct connectdata *conn,
                              bool proxy,
-                             char *header) /* rest of the *-authenticate:
-                                              header */
+                             const char *header) /* rest of the *-authenticate:
+                                                    header */
 {
   bool more = TRUE;
   char *token = NULL;
@@ -90,19 +90,19 @@ CURLdigest Curl_input_digest(struct connectdata *conn,
     Curl_digest_cleanup_one(d);
 
     while(more) {
-      char value[32];
-      char content[128];
+      char value[256];
+      char content[1024];
       size_t totlen=0;
 
       while(*header && ISSPACE(*header))
         header++;
 
       /* how big can these strings be? */
-      if((2 == sscanf(header, "%31[^=]=\"%127[^\"]\"",
+      if((2 == sscanf(header, "%255[^=]=\"%1023[^\"]\"",
                       value, content)) ||
          /* try the same scan but without quotes around the content but don't
             include the possibly trailing comma, newline or carriage return */
-         (2 ==  sscanf(header, "%31[^=]=%127[^\r\n,]",
+         (2 ==  sscanf(header, "%255[^=]=%1023[^\r\n,]",
                        value, content)) ) {
         if(strequal(value, "nonce")) {
           d->nonce = strdup(content);
@@ -133,23 +133,23 @@ CURLdigest Curl_input_digest(struct connectdata *conn,
           if(!tmp)
             return CURLDIGEST_NOMEM;
           token = strtok_r(tmp, ",", &tok_buf);
-          while (token != NULL) {
-            if (strequal(token, "auth")) {
+          while(token != NULL) {
+            if(strequal(token, "auth")) {
               foundAuth = TRUE;
             }
-            else if (strequal(token, "auth-int")) {
+            else if(strequal(token, "auth-int")) {
               foundAuthInt = TRUE;
             }
             token = strtok_r(NULL, ",", &tok_buf);
           }
           free(tmp);
           /*select only auth o auth-int. Otherwise, ignore*/
-          if (foundAuth) {
+          if(foundAuth) {
             d->qop = strdup("auth");
             if(!d->qop)
               return CURLDIGEST_NOMEM;
           }
-          else if (foundAuthInt) {
+          else if(foundAuthInt) {
             d->qop = strdup("auth-int");
             if(!d->qop)
               return CURLDIGEST_NOMEM;
@@ -180,6 +180,9 @@ CURLdigest Curl_input_digest(struct connectdata *conn,
         break; /* we're done here */
 
       header += totlen;
+      /* pass all additional spaces here */
+      while(*header && ISSPACE(*header))
+        header++;
       if(',' == *header)
         /* allow the list to be comma-separated */
         header++;
@@ -212,8 +215,8 @@ static void md5_to_ascii(unsigned char *source, /* 16 bytes */
 
 CURLcode Curl_output_digest(struct connectdata *conn,
                             bool proxy,
-                            unsigned char *request,
-                            unsigned char *uripath)
+                            const unsigned char *request,
+                            const unsigned char *uripath)
 {
   /* We have a Digest setup for this, use it!  Now, to get all the details for
      this sorted out, I must urge you dear friend to read up on the RFC2617
@@ -243,7 +246,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
 */
 #define CURL_OUTPUT_DIGEST_CONV(a, b) \
   rc = Curl_convert_to_network(a, (char *)b, strlen((const char*)b)); \
-  if (rc != CURLE_OK) { \
+  if(rc != CURLE_OK) { \
     free(b); \
     return rc; \
   }
@@ -264,6 +267,11 @@ CURLcode Curl_output_digest(struct connectdata *conn,
     userp = conn->user;
     passwdp = conn->passwd;
     authp = &data->state.authhost;
+  }
+
+  if(*allocuserpwd) {
+    Curl_safefree(*allocuserpwd);
+    *allocuserpwd = NULL;
   }
 
   /* not set means empty */
@@ -348,7 +356,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
     return CURLE_OUT_OF_MEMORY;
   }
 
-  if (d->qop && strequal(d->qop, "auth-int")) {
+  if(d->qop && strequal(d->qop, "auth-int")) {
     /* We don't support auth-int at the moment. I can't see a easy way to get
        entity-body here */
     /* TODO: Append H(entity-body)*/
@@ -358,7 +366,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
   free(md5this); /* free this again */
   md5_to_ascii(md5buf, ha2);
 
-  if (d->qop) {
+  if(d->qop) {
     md5this = (unsigned char *)aprintf("%s:%s:%08x:%s:%s:%s",
                                        ha1,
                                        d->nonce,
@@ -388,9 +396,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
     nonce="1053604145", uri="/64", response="c55f7f30d83d774a3d2dcacf725abaca"
   */
 
-  Curl_safefree(*allocuserpwd);
-
-  if (d->qop) {
+  if(d->qop) {
     *allocuserpwd =
       aprintf( "%sAuthorization: Digest "
                "username=\"%s\", "

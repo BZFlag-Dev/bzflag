@@ -32,7 +32,7 @@ const int ServerMenu::NumItems = 10;
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 0) switch (key.button) {
+  if (key.chr == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
 	if (!menu->getFind())
@@ -71,49 +71,51 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   }
 
-  else if (key.ascii == '\t') {
+  else if (key.chr == '\t') {
     if (HUDui::getFocus()) {
       menu->setSelected(menu->getSelected() + 1);
     }
     return true;
   }
 
-  else if (key.ascii == '/') {
+  else if (key.chr == '/') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFind(true);
       return true;
     }
   }
 
-  else if (key.ascii == 'f') {
+  // TODO: not localizable
+  else if (key.chr == 'f') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->toggleFavView();
       return true;
     }
   }
 
-  else if (key.ascii == '+') {
+  else if (key.chr == '+') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(true);
       return true;
     }
   }
 
-  else if (key.ascii == '-') {
+  else if (key.chr == '-') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(false);
       return true;
     }
   }
   
-  else if (key.ascii == 'p') {
+  // TODO: not localizable
+  else if (key.chr == 'p') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->pingServer(menu->getSelected());
       return true;
     }
   }
 
-  else if (key.ascii == 27) {
+  else if (key.chr == 27) {
     if (HUDui::getFocus()) {
       // escape drops out of find mode
       // note that this is handled by MenuDefaultKey if we're not in find mode
@@ -136,7 +138,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     case BzfKeyEvent::PageDown:
       return true;
   }
-  switch (key.ascii) {
+  switch (key.chr) {
     case 27:	// escape
     case 13:	// return
       return true;
@@ -320,9 +322,9 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  if ((server.ping.observerMax == 16) &&
 	      (server.ping.maxPlayers == 200)) {
 	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-	  } else if (gameType == eClassicCTF) {
+	  } else if (gameType == ClassicCTF) {
 	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
-	  } else if (gameType == eRabbitChase) {
+	  } else if (gameType == RabbitChase) {
 	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
 	  } else {
 	    fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
@@ -393,7 +395,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
 	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
 	  const float gf = gameOptions & JumpingGameStyle ? 1.0f : 0.0f;
-	  const float bf = (gameType == eClassicCTF) ? 1.0f : 0.0f;
+	  const float bf = (gameType == ClassicCTF) ? 1.0f : 0.0f;
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
@@ -529,11 +531,11 @@ void ServerMenu::pick()
   else
     (listHUD[8])->setString("{1} Shots", &args );
 
-  if (ping.gameType == eClassicCTF)
+  if (ping.gameType == ClassicCTF)
     (listHUD[9])->setString("Classic Capture-the-Flag");
-  else if (ping.gameType == eRabbitChase)
+  else if (ping.gameType == RabbitChase)
     (listHUD[9])->setString("Rabbit Chase");
-  else if (ping.gameType == eOpenFFA)
+  else if (ping.gameType == OpenFFA)
 	  (listHUD[9])->setString("Open (Teamless) Free-For-All");
   else
     (listHUD[9])->setString("Team Free-For-All");

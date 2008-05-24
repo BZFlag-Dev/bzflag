@@ -1,7 +1,7 @@
 #ifndef __ARES_CONFIG_WIN32_H
 #define __ARES_CONFIG_WIN32_H
 
-/* $Id: config-win32.h,v 1.15 2007-02-06 19:09:57 giva Exp $ */
+/* $Id: config-win32.h,v 1.18 2007-11-15 19:44:01 yangtse Exp $ */
 
 /* Copyright (C) 2004 - 2006 by Daniel Stenberg et al
  *
@@ -146,11 +146,6 @@
 #define ssize_t int
 #endif
 
-/* Define to 'int' if socklen_t is not an available 'typedefed' type */
-#ifndef HAVE_WS2TCPIP_H
-#define socklen_t int
-#endif
-
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
 /* ---------------------------------------------------------------- */
@@ -165,23 +160,43 @@
 #define HAVE_STRUCT_TIMEVAL 1
 
 /* ---------------------------------------------------------------- */
+/*                        COMPILER SPECIFIC                         */
+/* ---------------------------------------------------------------- */
+
+/* Define to avoid VS2005 complaining about portable C functions */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif
+
+/* ---------------------------------------------------------------- */
 /*                         IPV6 COMPATIBILITY                       */
 /* ---------------------------------------------------------------- */
 
 /* Define this if you have address family AF_INET6 */
+#ifdef HAVE_WINSOCK2_H
 #define HAVE_AF_INET6 1
+#endif
 
 /* Define this if you have protocol family PF_INET6 */
+#ifdef HAVE_WINSOCK2_H
 #define HAVE_PF_INET6 1
+#endif
 
 /* Define this if you have struct in6_addr */
+#ifdef HAVE_WS2TCPIP_H
 #define HAVE_STRUCT_IN6_ADDR 1
+#endif
 
 /* Define this if you have struct sockaddr_in6 */
+#ifdef HAVE_WS2TCPIP_H
 #define HAVE_STRUCT_SOCKADDR_IN6 1
+#endif
 
 /* Define this if you have sockaddr_in6 with scopeid */
+#ifdef HAVE_WS2TCPIP_H
 #define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
+#endif
 
 
 #endif  /* __ARES_CONFIG_WIN32_H */

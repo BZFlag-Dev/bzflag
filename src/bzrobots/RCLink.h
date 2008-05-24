@@ -18,6 +18,7 @@
 /* system interface headers */
 #include <ostream>
 #include <sstream>
+#include <string.h>
 
 /* common interface headers */
 #include "global.h"

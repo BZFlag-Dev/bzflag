@@ -57,6 +57,9 @@ private:
   BZWReader();
 
   std::string httpData;
+
+  // states if we read from a blob
+  bool fromBlob;
 };
 
 #endif

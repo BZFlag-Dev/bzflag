@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: parsedate.c,v 1.23 2006-12-05 14:57:43 bagder Exp $
+ * $Id: parsedate.c,v 1.27 2008-01-06 10:50:57 bagder Exp $
  ***************************************************************************/
 /*
   A brief summary of the date string formats this parser groks:
@@ -84,7 +84,7 @@
 
 #include <curl/curl.h>
 
-static time_t Curl_parsedate(const char *date);
+static time_t parsedate(const char *date);
 
 const char * const Curl_wkday[] =
 {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
@@ -154,7 +154,7 @@ static const struct tzinfo tz[]= {
    0 monday - 6 sunday
 */
 
-static int checkday(char *check, size_t len)
+static int checkday(const char *check, size_t len)
 {
   int i;
   const char * const *what;
@@ -173,7 +173,7 @@ static int checkday(char *check, size_t len)
   return found?i:-1;
 }
 
-static int checkmonth(char *check)
+static int checkmonth(const char *check)
 {
   int i;
   const char * const *what;
@@ -193,7 +193,7 @@ static int checkmonth(char *check)
 /* return the time zone offset between GMT and the input one, in number
    of seconds or -1 if the timezone wasn't found/legal */
 
-static int checktz(char *check)
+static int checktz(const char *check)
 {
   unsigned int i;
   const struct tzinfo *what;
@@ -223,7 +223,7 @@ enum assume {
   DATE_TIME
 };
 
-static time_t Curl_parsedate(const char *date)
+static time_t parsedate(const char *date)
 {
   time_t t = 0;
   int wdaynum=-1;  /* day of the week number, 0-6 (mon-sun) */
@@ -289,11 +289,17 @@ static time_t Curl_parsedate(const char *date)
 
         if((tzoff == -1) &&
            ((end - date) == 4) &&
-           (val < 1300) &&
+           (val <= 1400) &&
            (indate< date) &&
            ((date[-1] == '+' || date[-1] == '-'))) {
-          /* four digits and a value less than 1300 and it is preceeded with
-             a plus or minus. This is a time zone indication. */
+          /* four digits and a value less than or equal to 1400 (to take into
+             account all sorts of funny time zone diffs) and it is preceeded
+             with a plus or minus. This is a time zone indication.  1400 is
+             picked since +1300 is frequently used and +1400 is mentioned as
+             an edge number in the document "ISO C 200X Proposal: Timezone
+             Functions" at http://david.tribble.com/text/c0xtimezone.html If
+             anyone has a more authoritative source for the exact maximum time
+             zone offsets, please speak up! */
           found = TRUE;
           tzoff = (val/100 * 60 + val%100)*60;
 
@@ -325,7 +331,7 @@ static time_t Curl_parsedate(const char *date)
           yearnum = val;
           found = TRUE;
           if(yearnum < 1900) {
-            if (yearnum > 70)
+            if(yearnum > 70)
               yearnum += 1900;
             else
               yearnum += 2000;
@@ -421,5 +427,5 @@ static time_t Curl_parsedate(const char *date)
 time_t curl_getdate(const char *p, const time_t *now)
 {
   (void)now;
-  return Curl_parsedate(p);
+  return parsedate(p);
 }

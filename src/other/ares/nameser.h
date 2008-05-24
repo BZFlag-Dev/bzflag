@@ -7,9 +7,6 @@
    port build */
 
 #ifndef NETWARE
-#ifndef __CYGWIN__
-#include <windows.h>
-#endif
 #include <process.h> /* for the _getpid() proto */
 #endif  /* !NETWARE */
 #include <sys/types.h>
@@ -32,7 +29,9 @@ struct iovec
 int ares_writev (SOCKET s, const struct iovec *vector, size_t count);
 #define writev(s,vect,count)  ares_writev(s,vect,count)
 
+#ifndef HAVE_GETTIMEOFDAY
 struct timezone { int dummy; };
+#endif
 
 int ares_gettimeofday(struct timeval *tv, struct timezone *tz);
 #define gettimeofday(tv,tz) ares_gettimeofday(tv,tz)
@@ -147,6 +146,11 @@ typedef enum __ns_opcode {
 
 #define T_CNAME                ns_t_cname
 
+#define NS_MAXDNAME   256     /* maximum domain name */
+#define MAXDNAME      NS_MAXDNAME
+
+#define NS_MAXCDNAME  255     /* maximum compressed domain name */
+#define MAXCDNAME     NS_MAXCDNAME
 
 #define NS_PACKETSZ   512     /* maximum packet size */
 #define PACKETSZ       NS_PACKETSZ

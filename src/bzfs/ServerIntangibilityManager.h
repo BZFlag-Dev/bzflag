@@ -27,13 +27,13 @@
 class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager>
 {
 public:
-  void setWorldObjectTangibility ( unsigned int objectGUID, unsigned char tangible );
+  void setWorldObjectTangibility(unsigned int objectGUID, unsigned char tangible);
   
-  void sendNewPlayerWorldTangibility ( int playerID );
+  void sendNewPlayerWorldTangibility(int playerID);
   
-  void resetTangibility ( void );
+  void resetTangibility(void);
 
-  unsigned char getWorldObjectTangibility ( unsigned int objectGUID );
+  unsigned char getWorldObjectTangibility(unsigned int objectGUID);
 
 protected:
   friend class Singleton<ServerIntangibilityManager>;

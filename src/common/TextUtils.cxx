@@ -17,6 +17,7 @@
 #include "TextUtils.h"
 
 // system headers
+#include <string.h>
 #include <string>
 #include <algorithm>
 #include <sstream>
@@ -55,6 +56,28 @@ namespace TextUtils
     return result;
   }
 
+
+  std::wstring convert_to_wide(const std::string& string)
+  {
+#ifdef _WIN32    // Get the required size for the new array and allocate the memory for it
+    int neededSize = MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, 0, 0);
+    wchar_t* wideCharString = new wchar_t[neededSize];
+
+    MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, wideCharString, neededSize);
+
+    std::wstring wideString(wideCharString);
+    delete[] wideCharString;
+    return wideString;
+#else
+    // borrowed from a message by Paul McKenzie at
+    // http://www.codeguru.com/forum/archive/index.php/t-193852.html
+    // FIXME: This probably does not perform the desired conversion, but
+    // at least it compiles cleanly.  Probably, mbstowcs() should be used.
+    std::wstring temp(string.length(),L' ');
+    std::copy(string.begin(), string.end(), temp.begin());
+    return temp;
+#endif // _WIN32
+  }
 
   std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
   {

@@ -164,7 +164,7 @@ void * WorldWeapons::pack(void *buf) const
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
     buf = w->type->pack (buf);
-    buf = nboPackVector(buf, w->origin);
+    buf = nboPackFloatVector(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
     buf = nboPackFloat(buf, w->initDelay);
     buf = nboPackUShort(buf, w->delay.size());
@@ -227,8 +227,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   if (!eventData )
     return;
 
-  switch(eventData->eventType)
-  {
+  switch(eventData->eventType) {
     case bz_eCaptureEvent:
       {
 	bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
@@ -236,7 +235,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 	if ( capEvent->teamCapped != team )
 	  return;
       }
-    break;
+      break;
 
     case bz_ePlayerDieEvent:
     case bz_ePlayerSpawnEvent:

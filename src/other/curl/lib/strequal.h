@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strequal.h,v 1.17 2005-04-22 20:48:07 bagder Exp $
+ * $Id: strequal.h,v 1.17 2005/04/22 20:48:07 bagder Exp $
  ***************************************************************************/
 
 #include <curl/curl.h>

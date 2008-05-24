@@ -35,14 +35,14 @@
 // Datatype Definitions
 //
 class HoldingList {
-  public:
-    HoldingList();
-    ~HoldingList();
-    void copy(const ObsList* list);
-  public:
-    int size;
-    int count;
-    Obstacle** list;
+public:
+  HoldingList();
+  ~HoldingList();
+  void copy(const ObsList* list);
+public:
+  int size;
+  int count;
+  Obstacle** list;
 };
 
 static HoldingList rayList; // ray intersection list

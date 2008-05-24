@@ -176,7 +176,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
   case SDL_MOUSEBUTTONDOWN:
     _event.type	  = BzfEvent::KeyDown;
-    _event.keyDown.ascii = 0;
+    _event.keyDown.chr = 0;
     _event.keyDown.shift = 0;
     if (shift)
       _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
@@ -223,7 +223,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
   case SDL_MOUSEBUTTONUP:
     _event.type = BzfEvent::KeyUp;
-    _event.keyUp.ascii = 0;
+    _event.keyUp.chr = 0;
     _event.keyUp.shift = 0;
     if (shift)
       _event.keyUp.shift |= BzfKeyEvent::ShiftKey;
@@ -327,7 +327,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   SDLKey sym     = sdlEvent.key.keysym.sym;
   SDLMod mod     = sdlEvent.key.keysym.mod;
 
-  key.ascii = 0;
+  key.chr = 0;
   switch (sym) {
   case SDLK_PAUSE:
     key.button = BzfKeyEvent::Pause;
@@ -490,16 +490,14 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 
   if (key.button == BzfKeyEvent::NoButton)
     if (unicode) {
-      if ((unicode & 0xFF80))
-	return false;
-      key.ascii = unicode & 0x7F;
+      key.chr = unicode;
     } else {
       if ((sym >= SDLK_FIRST) && (sym <= SDLK_DELETE))
-	key.ascii = sym;
+	key.chr = sym;
       else if ((sym >= SDLK_KP0) && (sym <= SDLK_KP9))
-	key.ascii = sym - 208; // translate to normal number
+	key.chr = sym - 208; // translate to normal number
       else if (sym == SDLK_KP_ENTER)
-	key.ascii = 13; // enter
+	key.chr = 13; // enter
       else
 	return false;
     }

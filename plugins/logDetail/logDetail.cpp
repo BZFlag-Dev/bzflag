@@ -146,7 +146,7 @@ void LogDetail::process(bz_EventData *eventData)
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
 			   displayTeam(serverMsgData->team ).c_str(),
-			   chatData->message.c_str());
+			   serverMsgData->message.c_str());
 	}
       } else {
 	bz_debugMessagef(0, "MSG-DIRECT 6:SERVER %s %s",
@@ -303,7 +303,8 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
   // callsign - player callsign
   //
   // eg.
-  // PLAYERS (2) [@]7:Thumper [ ]3:xxx()
+  // PLAYERS (2) [@]7:Thumper() [ ]3:xxx()
+  // Extra data goes in between the parenthesis (currently empty)
   //
   msg.str("");
   msg << "PLAYERS (" << numPlayers << ") ";
@@ -321,6 +322,7 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
 	msg << "[" << playerStatus << "]";
 	msg << player->callsign.size() << ':';
 	msg << player->callsign.c_str();
+	msg << "() ";
       }
       bz_freePlayerRecord(player);
     }

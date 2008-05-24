@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: acinclude.m4,v 1.123 2007-04-10 18:53:21 yangtse Exp $
+# $Id: acinclude.m4,v 1.138 2008-03-20 08:09:24 mmarek Exp $
 ###########################################################################
 
 
@@ -168,6 +168,515 @@ AC_DEFUN([CURL_CHECK_HEADER_WS2TCPIP], [
         [Define to 1 if you have the ws2tcpip.h header file.])
       ;;
   esac
+])
+
+
+dnl CURL_CHECK_HEADER_WINLDAP
+dnl -------------------------------------------------
+dnl Check for compilable and valid winldap.h header
+
+AC_DEFUN([CURL_CHECK_HEADER_WINLDAP], [
+  AC_REQUIRE([CURL_CHECK_HEADER_WINDOWS])dnl
+  AC_CACHE_CHECK([for winldap.h], [ac_cv_header_winldap_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
+#include <winldap.h>
+      ],[
+#ifdef __CYGWIN__
+        HAVE_WINLDAP_H shall not be defined.
+#else
+        LDAP *ldp = ldap_init("dummy", LDAP_PORT);
+        ULONG res = ldap_unbind(ldp);
+#endif
+      ])
+    ],[
+      ac_cv_header_winldap_h="yes"
+    ],[
+      ac_cv_header_winldap_h="no"
+    ])
+  ])
+  case "$ac_cv_header_winldap_h" in
+    yes)
+      AC_DEFINE_UNQUOTED(HAVE_WINLDAP_H, 1,
+        [Define to 1 if you have the winldap.h header file.])
+      ;;
+  esac
+])
+
+
+dnl CURL_CHECK_HEADER_WINBER
+dnl -------------------------------------------------
+dnl Check for compilable and valid winber.h header
+
+AC_DEFUN([CURL_CHECK_HEADER_WINBER], [
+  AC_REQUIRE([CURL_CHECK_HEADER_WINLDAP])dnl
+  AC_CACHE_CHECK([for winber.h], [ac_cv_header_winber_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
+#include <winldap.h>
+#include <winber.h>
+      ],[
+#ifdef __CYGWIN__
+        HAVE_WINBER_H shall not be defined.
+#else
+        BERVAL *bvp = NULL;
+        BerElement *bep = ber_init(bvp);
+        ber_free(bep, 1);
+#endif
+      ])
+    ],[
+      ac_cv_header_winber_h="yes"
+    ],[
+      ac_cv_header_winber_h="no"
+    ])
+  ])
+  case "$ac_cv_header_winber_h" in
+    yes)
+      AC_DEFINE_UNQUOTED(HAVE_WINBER_H, 1,
+        [Define to 1 if you have the winber.h header file.])
+      ;;
+  esac
+])
+
+
+dnl CURL_CHECK_HEADER_LBER
+dnl -------------------------------------------------
+dnl Check for compilable and valid lber.h header,
+dnl and check if it is needed even with ldap.h
+
+AC_DEFUN([CURL_CHECK_HEADER_LBER], [
+  AC_REQUIRE([CURL_CHECK_HEADER_WINDOWS])dnl
+  AC_CACHE_CHECK([for lber.h], [ac_cv_header_lber_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef NULL
+#define NULL (void *)0
+#endif
+#include <lber.h>
+      ],[
+        BerValue *bvp = NULL;
+        BerElement *bep = ber_init(bvp);
+        ber_free(bep, 1);
+      ])
+    ],[
+      ac_cv_header_lber_h="yes"
+    ],[
+      ac_cv_header_lber_h="no"
+    ])
+  ])
+  if test "$ac_cv_header_lber_h" = "yes"; then
+    AC_DEFINE_UNQUOTED(HAVE_LBER_H, 1,
+      [Define to 1 if you have the lber.h header file.])
+    #
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef NULL
+#define NULL (void *)0
+#endif
+#ifndef LDAP_DEPRECATED
+#define LDAP_DEPRECATED 1
+#endif
+#include <ldap.h>
+      ],[
+        BerValue *bvp = NULL;
+        BerElement *bep = ber_init(bvp);
+        ber_free(bep, 1);
+      ])
+    ],[
+      curl_cv_need_header_lber_h="no"
+    ],[
+      curl_cv_need_header_lber_h="yes"
+    ])
+    #
+    case "$curl_cv_need_header_lber_h" in
+      yes)
+        AC_DEFINE_UNQUOTED(NEED_LBER_H, 1,
+          [Define to 1 if you need the lber.h header file even with ldap.h])
+        ;;
+    esac
+  fi
+])
+
+
+dnl CURL_CHECK_HEADER_LDAP
+dnl -------------------------------------------------
+dnl Check for compilable and valid ldap.h header
+
+AC_DEFUN([CURL_CHECK_HEADER_LDAP], [
+  AC_REQUIRE([CURL_CHECK_HEADER_LBER])dnl
+  AC_CACHE_CHECK([for ldap.h], [ac_cv_header_ldap_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef LDAP_DEPRECATED
+#define LDAP_DEPRECATED 1
+#endif
+#ifdef NEED_LBER_H
+#include <lber.h>
+#endif
+#include <ldap.h>
+      ],[
+        LDAP *ldp = ldap_init("dummy", LDAP_PORT);
+        int res = ldap_unbind(ldp);
+      ])
+    ],[
+      ac_cv_header_ldap_h="yes"
+    ],[
+      ac_cv_header_ldap_h="no"
+    ])
+  ])
+  case "$ac_cv_header_ldap_h" in
+    yes)
+      AC_DEFINE_UNQUOTED(HAVE_LDAP_H, 1,
+        [Define to 1 if you have the ldap.h header file.])
+      ;;
+  esac
+])
+
+
+dnl CURL_CHECK_HEADER_LDAP_SSL
+dnl -------------------------------------------------
+dnl Check for compilable and valid ldap_ssl.h header
+
+AC_DEFUN([CURL_CHECK_HEADER_LDAP_SSL], [
+  AC_REQUIRE([CURL_CHECK_HEADER_LDAP])dnl
+  AC_CACHE_CHECK([for ldap_ssl.h], [ac_cv_header_ldap_ssl_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef LDAP_DEPRECATED
+#define LDAP_DEPRECATED 1
+#endif
+#ifdef NEED_LBER_H
+#include <lber.h>
+#endif
+#ifdef HAVE_LDAP_H
+#include <ldap.h>
+#endif
+#include <ldap_ssl.h>
+      ],[
+        LDAP *ldp = ldapssl_init("dummy", LDAPS_PORT, 1);
+      ])
+    ],[
+      ac_cv_header_ldap_ssl_h="yes"
+    ],[
+      ac_cv_header_ldap_ssl_h="no"
+    ])
+  ])
+  case "$ac_cv_header_ldap_ssl_h" in
+    yes)
+      AC_DEFINE_UNQUOTED(HAVE_LDAP_SSL_H, 1,
+        [Define to 1 if you have the ldap_ssl.h header file.])
+      ;;
+  esac
+])
+
+
+dnl CURL_CHECK_HEADER_LDAPSSL
+dnl -------------------------------------------------
+dnl Check for compilable and valid ldapssl.h header
+
+AC_DEFUN([CURL_CHECK_HEADER_LDAPSSL], [
+  AC_REQUIRE([CURL_CHECK_HEADER_LDAP])dnl
+  AC_CACHE_CHECK([for ldapssl.h], [ac_cv_header_ldapssl_h], [
+    AC_COMPILE_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef NULL
+#define NULL (void *)0
+#endif
+#ifndef LDAP_DEPRECATED
+#define LDAP_DEPRECATED 1
+#endif
+#ifdef NEED_LBER_H
+#include <lber.h>
+#endif
+#ifdef HAVE_LDAP_H
+#include <ldap.h>
+#endif
+#include <ldapssl.h>
+      ],[
+        char *cert_label = NULL;
+        LDAP *ldp = ldap_ssl_init("dummy", LDAPS_PORT, cert_label);
+      ])
+    ],[
+      ac_cv_header_ldapssl_h="yes"
+    ],[
+      ac_cv_header_ldapssl_h="no"
+    ])
+  ])
+  case "$ac_cv_header_ldapssl_h" in
+    yes)
+      AC_DEFINE_UNQUOTED(HAVE_LDAPSSL_H, 1,
+        [Define to 1 if you have the ldapssl.h header file.])
+      ;;
+  esac
+])
+
+
+dnl CURL_CHECK_LIBS_WINLDAP
+dnl -------------------------------------------------
+dnl Check for libraries needed for WINLDAP support,
+dnl and prepended to LIBS any needed libraries.
+dnl This macro can take an optional parameter with a
+dnl white space separated list of libraries to check
+dnl before the WINLDAP default ones.
+
+AC_DEFUN([CURL_CHECK_LIBS_WINLDAP], [
+  AC_REQUIRE([CURL_CHECK_HEADER_WINBER])dnl
+  #
+  AC_MSG_CHECKING([for WINLDAP libraries])
+  #
+  u_libs=""
+  #
+  ifelse($1,,,[
+    for x_lib in $1; do
+      case "$x_lib" in
+        -l*)
+          l_lib="$x_lib"
+          ;;
+        *)
+          l_lib="-l$x_lib"
+          ;;
+      esac
+      if test -z "$u_libs"; then
+        u_libs="$l_lib"
+      else
+        u_libs="$u_libs $l_lib"
+      fi
+    done
+  ])
+  #
+  curl_cv_save_LIBS="$LIBS"
+  curl_cv_ldap_LIBS="unknown"
+  #
+  for x_nlibs in '' "$u_libs" \
+    '-lwldap32' ; do
+    if test -z "$x_nlibs"; then
+      LIBS="$curl_cv_save_LIBS"
+    else
+      LIBS="$x_nlibs $curl_cv_save_LIBS"
+    fi
+    AC_LINK_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#ifdef HAVE_WINLDAP_H
+#include <winldap.h>
+#endif
+#ifdef HAVE_WINBER_H
+#include <winber.h>
+#endif
+#endif
+      ],[
+        BERVAL *bvp = NULL;
+        BerElement *bep = ber_init(bvp);
+        LDAP *ldp = ldap_init("dummy", LDAP_PORT);
+        ULONG res = ldap_unbind(ldp);
+        ber_free(bep, 1);
+      ])
+    ],[
+       curl_cv_ldap_LIBS="$x_nlibs"
+       break
+    ])
+  done
+  #
+  LIBS="$curl_cv_save_LIBS"
+  #
+  case X-"$curl_cv_ldap_LIBS" in
+    X-unknown)
+      AC_MSG_RESULT([cannot find WINLDAP libraries])
+      ;;
+    X-)
+      AC_MSG_RESULT([no additional lib required])
+      ;;
+    *)
+      if test -z "$curl_cv_save_LIBS"; then
+        LIBS="$curl_cv_ldap_LIBS"
+      else
+        LIBS="$curl_cv_ldap_LIBS $curl_cv_save_LIBS"
+      fi
+      AC_MSG_RESULT([$curl_cv_ldap_LIBS])
+      ;;
+  esac
+  #
+])
+
+
+dnl CURL_CHECK_LIBS_LDAP
+dnl -------------------------------------------------
+dnl Check for libraries needed for LDAP support,
+dnl and prepended to LIBS any needed libraries.
+dnl This macro can take an optional parameter with a
+dnl white space separated list of libraries to check
+dnl before the default ones.
+
+AC_DEFUN([CURL_CHECK_LIBS_LDAP], [
+  AC_REQUIRE([CURL_CHECK_HEADER_LDAP])dnl
+  #
+  AC_MSG_CHECKING([for LDAP libraries])
+  #
+  u_libs=""
+  #
+  ifelse($1,,,[
+    for x_lib in $1; do
+      case "$x_lib" in
+        -l*)
+          l_lib="$x_lib"
+          ;;
+        *)
+          l_lib="-l$x_lib"
+          ;;
+      esac
+      if test -z "$u_libs"; then
+        u_libs="$l_lib"
+      else
+        u_libs="$u_libs $l_lib"
+      fi
+    done
+  ])
+  #
+  curl_cv_save_LIBS="$LIBS"
+  curl_cv_ldap_LIBS="unknown"
+  #
+  for x_nlibs in '' "$u_libs" \
+    '-lldap' \
+    '-llber -lldap' \
+    '-lldap -llber' \
+    '-lldapssl -lldapx -lldapsdk' \
+    '-lldapsdk -lldapx -lldapssl' ; do
+    if test -z "$x_nlibs"; then
+      LIBS="$curl_cv_save_LIBS"
+    else
+      LIBS="$x_nlibs $curl_cv_save_LIBS"
+    fi
+    AC_LINK_IFELSE([
+      AC_LANG_PROGRAM([
+#undef inline
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#endif
+#ifndef NULL
+#define NULL (void *)0
+#endif
+#ifndef LDAP_DEPRECATED
+#define LDAP_DEPRECATED 1
+#endif
+#ifdef NEED_LBER_H
+#include <lber.h>
+#endif
+#ifdef HAVE_LDAP_H
+#include <ldap.h>
+#endif
+      ],[
+        BerValue *bvp = NULL;
+        BerElement *bep = ber_init(bvp);
+        LDAP *ldp = ldap_init("dummy", LDAP_PORT);
+        int res = ldap_unbind(ldp);
+        ber_free(bep, 1);
+      ])
+    ],[
+       curl_cv_ldap_LIBS="$x_nlibs"
+       break
+    ])
+  done
+  #
+  LIBS="$curl_cv_save_LIBS"
+  #
+  case X-"$curl_cv_ldap_LIBS" in
+    X-unknown)
+      AC_MSG_RESULT([cannot find LDAP libraries])
+      ;;
+    X-)
+      AC_MSG_RESULT([no additional lib required])
+      ;;
+    *)
+      if test -z "$curl_cv_save_LIBS"; then
+        LIBS="$curl_cv_ldap_LIBS"
+      else
+        LIBS="$curl_cv_ldap_LIBS $curl_cv_save_LIBS"
+      fi
+      AC_MSG_RESULT([$curl_cv_ldap_LIBS])
+      ;;
+  esac
+  #
 ])
 
 
@@ -1107,7 +1616,7 @@ AC_DEFUN([CURL_CHECK_NONBLOCKING_SOCKET],
 #  define PLATFORM_SUNOS4
 # endif
 #endif
-#if (defined(_AIX) || defined(__xlC__)) && !defined(_AIX4)
+#if (defined(_AIX) || defined(__xlC__)) && !defined(_AIX41)
 # define PLATFORM_AIX_V3
 #endif
 
@@ -1316,6 +1825,9 @@ AC_TRY_RUN([
 #include <string.h>
 #include <sys/types.h>
 #include <netdb.h>
+#ifndef NULL
+#define NULL (void *)0
+#endif
 
 int
 main () {
@@ -1762,7 +2274,7 @@ AC_DEFUN([CURL_CC_DEBUG_OPTS],
            dnl only if the compiler is newer than 2.95 since we got lots of
            dnl "`_POSIX_C_SOURCE' is not defined" in system headers with
            dnl gcc 2.95.4 on FreeBSD 4.9!
-           WARN="$WARN -Wundef -Wno-long-long -Wsign-compare"
+           WARN="$WARN -Wundef -Wno-long-long -Wsign-compare -Wshadow -Wno-multichar"
          fi
 
          if test "$gccnum" -ge "296"; then
@@ -1829,81 +2341,6 @@ AC_DEFUN([CURL_CC_DEBUG_OPTS],
     CFLAGS=$NEWFLAGS
 
 ]) dnl end of AC_DEFUN()
-
-
-dnl Determine the name of the library to pass to dlopen() based on the name
-dnl that would normally be given to AC_CHECK_LIB.  The preprocessor symbol
-dnl given is set to the quoted library file name. 
-dnl The standard dynamic library file name is first generated, based on the
-dnl current system type, then a search is performed for that file on the
-dnl standard dynamic library path.  If it is a symbolic link, the destination
-dnl of the link is used as the file name, after stripping off any minor
-dnl version numbers. If a library file can't be found, a guess is made.
-dnl This macro assumes AC_PROG_LIBTOOL has been called and requires perl
-dnl to be available in the PATH, or $PERL to be set to its location.
-dnl
-dnl CURL_DLLIB_NAME(VARIABLE, library_name)
-dnl e.g. CURL_DLLIB_NAME(LDAP_NAME, ldap) on a Linux system might result
-dnl in LDAP_NAME holding the string "libldap.so.2".
-
-AC_DEFUN([CURL_DLLIB_NAME],
-[
-AC_MSG_CHECKING([name of dynamic library $2])
-dnl The shared library extension variable name changes from version to
-dnl version of libtool.  Try a few names then just set one statically.
-test -z "$shared_ext" && eval shared_ext=\"$shrext_cmds\"
-test -z "$shared_ext" && shared_ext="$std_shrext"
-test -z "$shared_ext" && shared_ext="$shrext"
-test -z "$shared_ext" && shared_ext=".so"
-
-dnl Create the library link name of the correct form for this platform
-LIBNAME_LINK_SPEC=`echo "$library_names_spec" | $SED 's/^.* //'`
-DLGUESSLIB=`name=$2 eval echo "$libname_spec"`
-DLGUESSFILE=`libname="$DLGUESSLIB" release="" major="" versuffix="" eval echo "$LIBNAME_LINK_SPEC"`
-dnl Last resort in case libtool knows nothing about shared libs on this platform
-test -z "$DLGUESSFILE" && DLGUESSFILE="$DLGUESSLIB$shared_ext"
-
-dnl Synthesize a likely dynamic library name in case we can't find an actual one
-SO_NAME_SPEC="$soname_spec"
-dnl soname_spec undefined when identical to the 1st entry in library_names_spec
-test -z "$SO_NAME_SPEC" && SO_NAME_SPEC=`echo "$library_names_spec" | $SED 's/ .*$//'`
-DLGUESSSOFILE=`libname="$DLGUESSLIB" release="" major="" versuffix="" eval echo "$SO_NAME_SPEC"`
-dnl Last resort in case libtool knows nothing about shared libs on this platform
-test -z "$DLGUESSSOFILE" && DLGUESSSOFILE="$DLGUESSFILE"
-
-if test "$cross_compiling" = yes; then
-  dnl Can't look at filesystem when cross-compiling
-  AC_DEFINE_UNQUOTED($1, "$DLGUESSSOFILE", [$2 dynamic library file])
-  AC_MSG_RESULT([$DLGUESSSOFILE (guess while cross-compiling)])
-else
-
-  DLFOUNDFILE=""
-  if test "$sys_lib_dlsearch_path_spec" ; then
-    dnl Search for the link library name and see what it points to.
-    for direc in $sys_lib_dlsearch_path_spec ; do
-      DLTRYFILE="$direc/$DLGUESSFILE"
-      dnl Find where the symbolic link for this name points
-      changequote(<<, >>)dnl
-      <<
-      DLFOUNDFILE=`${PERL:-perl} -e 'use File::Basename; (basename(readlink($ARGV[0])) =~ /^(.*[^\d]\.\d+)[\d\.]*$/ && print ${1}) || exit 1;' "$DLTRYFILE" 2>&5`
-      >>
-      changequote([, ])dnl
-      if test "$?" -eq "0"; then
-        dnl Found the file link
-        break
-      fi
-    done
-  fi
-
-  if test -z "$DLFOUNDFILE" ; then
-    dnl Couldn't find a link library, so guess at a name.
-    DLFOUNDFILE="$DLGUESSSOFILE"
-  fi
-
-  AC_DEFINE_UNQUOTED($1, "$DLFOUNDFILE", [$2 dynamic library file])
-  AC_MSG_RESULT($DLFOUNDFILE)
-fi
-])
 
 # This is only a temporary fix. This macro is here to replace the broken one
 # delivered by the automake project (including the 1.9.6 release). As soon as
@@ -2052,5 +2489,108 @@ AC_DEFUN([CURL_CHECK_NATIVE_WINDOWS], [
         [Define to 1 if you are building a native Windows target.])
       ;;
   esac
+])
+
+
+dnl CURL_CHECK_CA_BUNDLE
+dnl -------------------------------------------------
+dnl Check if a default ca-bundle should be used
+dnl
+dnl regarding the paths this will scan:
+dnl /etc/ssl/certs/ca-certificates.crt Debian systems
+dnl /etc/pki/tls/certs/ca-bundle.crt Redhat and Mandriva
+dnl /usr/share/ssl/certs/ca-bundle.crt old(er) Redhat
+dnl /etc/ssl/certs/ (ca path) SUSE
+
+AC_DEFUN([CURL_CHECK_CA_BUNDLE], [
+
+  AC_MSG_CHECKING([default CA cert bundle/path])
+
+  AC_ARG_WITH(ca-bundle,
+AC_HELP_STRING([--with-ca-bundle=FILE], [File name to use as CA bundle])
+AC_HELP_STRING([--without-ca-bundle], [Don't use a default CA bundle]),
+  [
+    want_ca="$withval"
+    if test "x$want_ca" = "xyes"; then
+      AC_MSG_ERROR([--with-ca-bundle=FILE requires a path to the CA bundle])
+    fi
+  ],
+  [ want_ca="unset" ])
+  AC_ARG_WITH(ca-path,
+AC_HELP_STRING([--with-ca-path=DIRECTORY], [Directory to use as CA path])
+AC_HELP_STRING([--without-ca-path], [Don't use a default CA path]),
+  [
+    want_capath="$withval"
+    if test "x$want_capath" = "xyes"; then
+      AC_MSG_ERROR([--with-ca-path=DIRECTORY requires a path to the CA path directory])
+    fi
+  ],
+  [ want_capath="unset"])
+
+  if test "x$want_ca" != "xno" -a "x$want_ca" != "xunset" -a \
+          "x$want_capath" != "xno" -a "x$want_capath" != "xunset"; then
+    dnl both given
+    AC_MSG_ERROR([Can't specify both --with-ca-bundle and --with-ca-path.])
+  elif test "x$want_ca" != "xno" -a "x$want_ca" != "xunset"; then
+    dnl --with-ca-bundle given
+    ca="$want_ca"
+    capath="no"
+  elif test "x$want_capath" != "xno" -a "x$want_capath" != "xunset"; then
+    dnl --with-ca-path given
+    if test "x$OPENSSL_ENABLED" != "x1"; then
+      AC_MSG_ERROR([--with-ca-path only works with openSSL])
+    fi
+    capath="$want_capath"
+    ca="no"
+  else
+    dnl neither of --with-ca-* given
+    dnl first try autodetecting a CA bundle , then a CA path
+    dnl both autodetections can be skipped by --without-ca-*
+    ca="no"
+    capath="no"
+    if test "x$want_ca" = "xunset"; then
+      dnl the path we previously would have installed the curl ca bundle
+      dnl to, and thus we now check for an already existing cert in that place
+      dnl in case we find no other
+      if test "x$prefix" != xNONE; then
+        cac="${prefix}/share/curl/curl-ca-bundle.crt"
+      else
+        cac="$ac_default_prefix/share/curl/curl-ca-bundle.crt"
+      fi
+
+      for a in /etc/ssl/certs/ca-certificates.crt \
+               /etc/pki/tls/certs/ca-bundle.crt \
+               /usr/share/ssl/certs/ca-bundle.crt \
+               "$cac"; do
+        if test -f "$a"; then
+          ca="$a"
+          break
+        fi
+      done
+    fi
+    if test "x$want_capath" = "xunset" -a "x$ca" = "xno" -a \
+            "x$OPENSSL_ENABLED" = "x1"; then
+      for a in /etc/ssl/certs/; do
+        if test -d "$a" && ls "$a"/[[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]].0 >/dev/null 2>/dev/null; then
+          capath="$a"
+          break
+        fi
+      done
+    fi
+  fi
+        
+    
+
+  if test "x$ca" != "xno"; then
+    CURL_CA_BUNDLE='"'$ca'"'
+    AC_SUBST(CURL_CA_BUNDLE)
+    AC_MSG_RESULT([$ca])
+  elif test "x$capath" != "xno"; then
+    CURL_CA_PATH="\"$capath\""
+    AC_SUBST(CURL_CA_PATH)
+    AC_MSG_RESULT([$capath (capath)])
+  else
+    AC_MSG_RESULT([no])
+  fi
 ])
 

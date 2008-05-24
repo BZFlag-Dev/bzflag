@@ -116,7 +116,9 @@ typedef enum
   bz_eAllowSpawn,
   bz_eListServerUpdateEvent,
   bz_eBanEvent,
-  bz_eHostBanEvent,
+  bz_eHostBanNotifyEvent,
+  bz_eHostBanModifyEvent,
+  bz_eIdBanEvent,
   bz_eKickEvent,
   bz_eKillEvent,
   bz_ePlayerPausedEvent,
@@ -238,10 +240,10 @@ typedef enum
 
 typedef enum
 {
-  eTeamFFAGame = 0,
-  eClassicCTFGame,
+  TeamFFAGame = 0,
+  ClassicCTFGame,
   eRabbitGame,
-  eOpenFFAGame
+  OpenFFAGame
 }bz_eGameType;
 
 typedef enum
@@ -833,7 +835,7 @@ class BZF_API bz_HostBanEventData_V1 : public bz_EventData
 public:
   bz_HostBanEventData_V1() : bz_EventData()
   {
-    eventType = bz_eHostBanEvent;
+    eventType = bz_eHostBanModifyEvent;
     bannerID = -1;
     duration = -1;
   }
@@ -844,6 +846,26 @@ public:
   int duration;
   bz_ApiString hostPattern;
   bz_ApiString reason;
+};
+
+class BZF_API bz_IdBanEventData_V1 : public bz_EventData
+{
+public:
+    bz_IdBanEventData_V1() : bz_EventData()
+    {
+      eventType = bz_eIdBanEvent;
+      bannerID = -1;
+      banneeID = -1;
+      duration = -1;
+    }
+    virtual ~bz_IdBanEventData_V1(){};
+    virtual void update (){bz_EventData::update();}
+
+    int bannerID;
+    int banneeID;
+    int duration;
+    bz_ApiString bzId;
+    bz_ApiString reason;
 };
 
 class BZF_API bz_KickEventData_V1 : public bz_EventData
@@ -1349,23 +1371,6 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned
 BZF_API bool bz_disconnectNonPlayerConnection ( int connectionID );
 BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connectionID );
 
-// generic socket listener interface
-
-class bz_NetworkSocketListener
-{
-public:
-  virtual ~bz_NetworkSocketListener(){};
-  virtual bool accept ( int connectionID, const char *ip ) = 0;
-  virtual void pending ( int connectionID, void *data, unsigned int size ) = 0;
-  virtual void disconnect ( int connectionID ){ if (connectionID) return; };
-};
-
-BZF_API bool bz_registerNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler );
-BZF_API bool bz_removeNetworkSocketListener ( unsigned short port, bz_NetworkSocketListener* handler );
-BZF_API bool bz_sendNetworkSocketData ( int connectionID,  const void *data, unsigned int size );
-BZF_API bool bz_disconnectNetworkSocket ( int connectionID );
-BZF_API unsigned int bz_getNetworkSocketOutboundPacketCount ( int connectionID );
-
 // player info
 
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
@@ -1379,6 +1384,8 @@ BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 
 BZF_API bool bz_getAdmin ( int playerID );
+
+BZF_API bool bz_validAdminPassword ( const char* passwd );
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
@@ -1544,7 +1551,9 @@ BZF_API int bz_getDebugLevel ( void );
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int duration, const char* reason );
+BZF_API bool bz_IDBanUser( int playerIndex, const char *bzID , int duration, const char *reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
+BZF_API bool bz_IDUnbanUser ( const char* bzID );
 
 // report
 BZF_API bz_APIStringList* bz_getReports( void );
@@ -1603,72 +1612,6 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos );
 BZF_API bool bz_moveFlag ( int flag, float pos[3], bool reset = true );
 
 // world
-typedef struct
-{
-  bool	driveThru;
-  bool	shootThru;
-}bz_WorldObjectOptions;
-
-typedef struct
-{
-  bz_ApiString		texture;
-  bool		useAlpha;
-  bool		useColorOnTexture;
-  bool		useSphereMap;
-  int			combineMode;
-}bz_MaterialTexture;
-
-class BZF_API bz_APITextureList
-{
-public:
-  bz_APITextureList();
-  bz_APITextureList(const bz_APITextureList	&r);
-
-  ~bz_APITextureList();
-
-  void push_back ( bz_MaterialTexture &value );
-  bz_MaterialTexture get ( unsigned int i );
-
-  const bz_MaterialTexture& operator[] (unsigned int i) const;
-  bz_APITextureList& operator = ( const bz_APITextureList& r );
-
-  unsigned int size ( void );
-  void clear ( void );
-
-protected:
-  class dataBlob;
-
-  dataBlob *data;
-};
-
-typedef struct bz_MaterialInfo
-{
-  bz_ApiString name;
-  bz_APITextureList textures;
-
-  float		ambient[4];
-  float		diffuse[4];
-  float		specular[4];
-  float		emisive[4];
-  float		shine;
-
-  float		alphaThresh;
-  bool		culling;
-  bool		sorting;
-}bz_MaterialInfo;
-
-// have bz make you a new material
-bz_MaterialInfo* bz_anewMaterial ( void );
-// tell bz you are done with a material
-void bz_deleteMaterial ( bz_MaterialInfo *material );
-
-BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool fliped, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, bz_eTeamType team, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
-BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
-BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays );
-
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 BZF_API void bz_setClientWorldDownloadURL( const char* URL );
 BZF_API const bz_ApiString bz_getClientWorldDownloadURL( void );

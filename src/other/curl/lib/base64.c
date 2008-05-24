@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: base64.c,v 1.43 2007-04-25 03:00:10 yangtse Exp $
+ * $Id: base64.c,v 1.45 2007-11-05 09:45:09 bagder Exp $
  ***************************************************************************/
 
 /* Base64 encoding/decoding
@@ -101,7 +101,7 @@ size_t Curl_base64_decode(const char *src, unsigned char **outptr)
   numQuantums = (length + equalsTerm) / 4;
 
   /* Don't allocate a buffer if the decoded length is 0 */
-  if (numQuantums <= 0)
+  if(numQuantums <= 0)
     return 0;
 
   rawlen = (numQuantums * 3) - equalsTerm;
@@ -137,7 +137,7 @@ size_t Curl_base64_decode(const char *src, unsigned char **outptr)
  *
  * Returns the length of the newly created base64 string. The third argument
  * is a pointer to an allocated area holding the base64 data. If something
- * went wrong, -1 is returned.
+ * went wrong, 0 is returned.
  *
  */
 size_t Curl_base64_encode(struct SessionHandle *data,
@@ -265,7 +265,7 @@ int main(int argc, argv_item_t argv[], char **envp)
   handle = curl_easy_init();
   if(handle == NULL) {
     fprintf(stderr, "Error: curl_easy_init failed\n");
-    return 0;
+    return 1;
   }
 #endif
   data = (unsigned char *)suck(&dataLen);
@@ -305,7 +305,7 @@ int main(int argc, argv_item_t argv[], char **envp)
   struct SessionHandle *handle = curl_easy_init();
   if(handle == NULL) {
     fprintf(stderr, "Error: curl_easy_init failed\n");
-    return 0;
+    return 1;
   }
 #endif
 

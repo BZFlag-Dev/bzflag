@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.57 2007-04-02 03:38:18 yangtse Exp $
+ * $Id: getinfo.c,v 1.59 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -58,7 +58,7 @@ CURLcode Curl_initinfo(struct SessionHandle *data)
   info->httpversion=0;
   info->filetime=-1; /* -1 is an illegal time and thus means unknown */
 
-  if (info->contenttype)
+  if(info->contenttype)
     free(info->contenttype);
   info->contenttype = NULL;
 
@@ -176,7 +176,7 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     *param_charp = data->info.contenttype;
     break;
   case CURLINFO_PRIVATE:
-    *param_charp = data->set.private_data;
+    *param_charp = (char *) data->set.private_data;
     break;
   case CURLINFO_HTTPAUTH_AVAIL:
     *param_longp = data->info.httpauthavail;
@@ -214,7 +214,7 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
       /* determine if ssl */
       if(c->ssl[FIRSTSOCKET].use) {
         /* use the SSL context */
-        if (!Curl_ssl_check_cxn(c))
+        if(!Curl_ssl_check_cxn(c))
           *param_longp = -1;   /* FIN received */
       }
 /* Minix 3.1 doesn't support any flags on recv; just assume socket is OK */

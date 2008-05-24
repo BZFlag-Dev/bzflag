@@ -1,12 +1,12 @@
 #
-# $Id: Makefile.am,v 1.36 2005-10-28 21:34:51 bagder Exp $
+# $Id: Makefile.am,v 1.36 2005/10/28 21:34:51 bagder Exp $
 #
 
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
 man_MANS = curl.1 curl-config.1
-GENHTMLPAGES = # curl.html curl-config.html
-PDFPAGES = # curl.pdf curl-config.pdf
+GENHTMLPAGES = curl.html curl-config.html
+PDFPAGES = curl.pdf curl-config.pdf
 
 HTMLPAGES = $(GENHTMLPAGES) index.html
 
@@ -19,8 +19,6 @@ EXTRA_DIST = MANUAL BUGS CONTRIBUTE FAQ FEATURES INTERNALS SSLCERTS	 \
  KNOWN_BUGS BINDINGS $(man_MANS) $(HTMLPAGES) HISTORY INSTALL		 \
  $(PDFPAGES) LICENSE-MIXING README.netware DISTRO-DILEMMA INSTALL.devcpp
 
-MAINTAINERCLEANFILES = Makefile.in
-
 MAN2HTML= roffit < $< >$@
 
 SUFFIXES = .1 .html .pdf
@@ -32,7 +30,7 @@ pdf: $(PDFPAGES)
 	cd libcurl; make pdf
 
 .1.html:
-#	$(MAN2HTML)
+	$(MAN2HTML)
 
 .1.pdf:
 	@(foo=`echo $@ | sed -e 's/\.[0-9]$$//g'`; \

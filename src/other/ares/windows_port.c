@@ -51,7 +51,7 @@ ares_strncasecmp(const char *a, const char *b, int n)
 int
 ares_strcasecmp(const char *a, const char *b)
 {
-    return (int)strncasecmp(a, b, (int)strlen(a)+1);
+    return strncasecmp(a, b, strlen(a)+1);
 }
 #endif
 

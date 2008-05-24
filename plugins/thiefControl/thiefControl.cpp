@@ -54,14 +54,14 @@ void ThiefControl::process(bz_EventData * eventData)
 
   switch (bz_getGameType()) {
 
-  case eTeamFFAGame:
+  case TeamFFAGame:
     if (playerTo->team == playerFrom->team && playerTo->team != eRogueTeam) {
       data->action = data->DropThief;
       bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
     }
     break;
 
-  case eClassicCTFGame:
+  case ClassicCTFGame:
     {
       // Allow teammates to steal team flags
       // This will allow someone to steal a team flag in order
@@ -82,7 +82,7 @@ void ThiefControl::process(bz_EventData * eventData)
     }
     break;
 
-  case eOpenFFAGame:
+  case OpenFFAGame:
     break;
 
   case eRabbitGame:

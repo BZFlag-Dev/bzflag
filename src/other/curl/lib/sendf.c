@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.128 2007-04-24 10:18:06 bagder Exp $
+ * $Id: sendf.c,v 1.141 2008-02-20 09:56:26 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -47,7 +47,7 @@
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
 
-#ifdef HAVE_KRB4
+#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
 #include "krb4.h"
 #else
 #define Curl_sec_send(a,b,c,d) -1
@@ -67,23 +67,23 @@ static struct curl_slist *slist_get_last(struct curl_slist *list)
   struct curl_slist     *item;
 
   /* if caller passed us a NULL, return now */
-  if (!list)
+  if(!list)
     return NULL;
 
   /* loop through to find the last item */
   item = list;
-  while (item->next) {
+  while(item->next) {
     item = item->next;
   }
   return item;
 }
 
 /*
- * curl_slist_append() appends a string to the linked list. It always retunrs
- * the address of the first record, so that you can sure this function as an
+ * curl_slist_append() appends a string to the linked list. It always returns
+ * the address of the first record, so that you can use this function as an
  * initialization function as well as an append function. If you find this
  * bothersome, then simply create a separate _init function and call it
- * appropriately from within the proram.
+ * appropriately from within the program.
  */
 struct curl_slist *curl_slist_append(struct curl_slist *list,
                                      const char *data)
@@ -92,11 +92,11 @@ struct curl_slist *curl_slist_append(struct curl_slist *list,
   struct curl_slist     *new_item;
 
   new_item = (struct curl_slist *) malloc(sizeof(struct curl_slist));
-  if (new_item) {
-    char *dup = strdup(data);
-    if(dup) {
+  if(new_item) {
+    char *dupdata = strdup(data);
+    if(dupdata) {
       new_item->next = NULL;
-      new_item->data = dup;
+      new_item->data = dupdata;
     }
     else {
       free(new_item);
@@ -106,7 +106,7 @@ struct curl_slist *curl_slist_append(struct curl_slist *list,
   else
     return NULL;
 
-  if (list) {
+  if(list) {
     last = slist_get_last(list);
     last->next = new_item;
     return list;
@@ -122,19 +122,19 @@ void curl_slist_free_all(struct curl_slist *list)
   struct curl_slist     *next;
   struct curl_slist     *item;
 
-  if (!list)
+  if(!list)
     return;
 
   item = list;
   do {
     next = item->next;
 
-    if (item->data) {
+    if(item->data) {
       free(item->data);
     }
     free(item);
     item = next;
-  } while (next);
+  } while(next);
 }
 
 #ifdef CURL_DO_LINEEND_CONV
@@ -150,17 +150,17 @@ static size_t convert_lineends(struct SessionHandle *data,
   char *inPtr, *outPtr;
 
   /* sanity check */
-  if ((startPtr == NULL) || (size < 1)) {
+  if((startPtr == NULL) || (size < 1)) {
     return(size);
   }
 
-  if (data->state.prev_block_had_trailing_cr == TRUE) {
+  if(data->state.prev_block_had_trailing_cr == TRUE) {
     /* The previous block of incoming data
        had a trailing CR, which was turned into a LF. */
-    if (*startPtr == '\n') {
+    if(*startPtr == '\n') {
       /* This block of incoming data starts with the
          previous block's LF so get rid of it */
-      memcpy(startPtr, startPtr+1, size-1);
+      memmove(startPtr, startPtr+1, size-1);
       size--;
       /* and it wasn't a bare CR but a CRLF conversion instead */
       data->state.crlf_conversions++;
@@ -170,11 +170,11 @@ static size_t convert_lineends(struct SessionHandle *data,
 
   /* find 1st CR, if any */
   inPtr = outPtr = memchr(startPtr, '\r', size);
-  if (inPtr) {
+  if(inPtr) {
     /* at least one CR, now look for CRLF */
-    while (inPtr < (startPtr+size-1)) {
+    while(inPtr < (startPtr+size-1)) {
       /* note that it's size-1, so we'll never look past the last byte */
-      if (memcmp(inPtr, "\r\n", 2) == 0) {
+      if(memcmp(inPtr, "\r\n", 2) == 0) {
         /* CRLF found, bump past the CR and copy the NL */
         inPtr++;
         *outPtr = *inPtr;
@@ -182,7 +182,7 @@ static size_t convert_lineends(struct SessionHandle *data,
         data->state.crlf_conversions++;
       }
       else {
-        if (*inPtr == '\r') {
+        if(*inPtr == '\r') {
           /* lone CR, move LF instead */
           *outPtr = '\n';
         }
@@ -195,9 +195,9 @@ static size_t convert_lineends(struct SessionHandle *data,
       inPtr++;
     } /* end of while loop */
 
-    if (inPtr < startPtr+size) {
+    if(inPtr < startPtr+size) {
       /* handle last byte */
-      if (*inPtr == '\r') {
+      if(*inPtr == '\r') {
         /* deal with a CR at the end of the buffer */
         *outPtr = '\n'; /* copy a NL instead */
         /* note that a CRLF might be split across two blocks */
@@ -210,7 +210,7 @@ static size_t convert_lineends(struct SessionHandle *data,
       outPtr++;
       inPtr++;
     }
-    if (outPtr < startPtr+size) {
+    if(outPtr < startPtr+size) {
       /* tidy up by null terminating the now shorter data */
       *outPtr = '\0';
     }
@@ -285,7 +285,7 @@ CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *conn,
   write_len = strlen(s);
   sptr = s;
 
-  while (1) {
+  while(1) {
     /* Write the buffer to the socket */
     res = Curl_write(conn, sockfd, sptr, write_len, &bytes_written);
 
@@ -310,10 +310,10 @@ CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *conn,
   return res;
 }
 
-static ssize_t Curl_plain_send(struct connectdata *conn,
-                               int num,
-                               void *mem,
-                               size_t len)
+static ssize_t send_plain(struct connectdata *conn,
+                          int num,
+                          void *mem,
+                          size_t len)
 {
   curl_socket_t sockfd = conn->sock[num];
   ssize_t bytes_written = swrite(sockfd, mem, len);
@@ -355,26 +355,56 @@ CURLcode Curl_write(struct connectdata *conn,
   CURLcode retcode;
   int num = (sockfd == conn->sock[SECONDARYSOCKET]);
 
-  if (conn->ssl[num].use)
+  if(conn->ssl[num].state == ssl_connection_complete)
     /* only TRUE if SSL enabled */
     bytes_written = Curl_ssl_send(conn, num, mem, len);
 #ifdef USE_LIBSSH2
-  else if (conn->protocol & PROT_SCP)
+  else if(conn->protocol & PROT_SCP)
     bytes_written = Curl_scp_send(conn, num, mem, len);
-  else if (conn->protocol & PROT_SFTP)
+  else if(conn->protocol & PROT_SFTP)
     bytes_written = Curl_sftp_send(conn, num, mem, len);
 #endif /* !USE_LIBSSH2 */
   else if(conn->sec_complete)
-    /* only TRUE if krb4 enabled */
+    /* only TRUE if krb enabled */
     bytes_written = Curl_sec_send(conn, num, mem, len);
   else
-    bytes_written = Curl_plain_send(conn, num, mem, len);
+    bytes_written = send_plain(conn, num, mem, len);
 
   *written = bytes_written;
   retcode = (-1 != bytes_written)?CURLE_OK:CURLE_SEND_ERROR;
 
   return retcode;
 }
+
+static CURLcode pausewrite(struct SessionHandle *data,
+                           int type, /* what type of data */
+                           char *ptr,
+                           size_t len)
+{
+  /* signalled to pause sending on this connection, but since we have data
+     we want to send we need to dup it to save a copy for when the sending
+     is again enabled */
+  struct SingleRequest *k = &data->req;
+  char *dupl = malloc(len);
+  if(!dupl)
+    return CURLE_OUT_OF_MEMORY;
+
+  memcpy(dupl, ptr, len);
+
+  /* store this information in the state struct for later use */
+  data->state.tempwrite = dupl;
+  data->state.tempwritesize = len;
+  data->state.tempwritetype = type;
+
+  /* mark the connection as RECV paused */
+  k->keepon |= KEEP_READ_PAUSE;
+
+  DEBUGF(infof(data, "Pausing with %d bytes in buffer for type %02x\n",
+               (int)len, type));
+
+  return CURLE_OK;
+}
+
 
 /* client_write() sends data to the write callback(s)
 
@@ -389,9 +419,33 @@ CURLcode Curl_client_write(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   size_t wrote;
 
-  if (data->state.cancelled) {
-      /* We just suck everything into a black hole */
-      return CURLE_OK;
+  /* If reading is actually paused, we're forced to append this chunk of data
+     to the already held data, but only if it is the same type as otherwise it
+     can't work and it'll return error instead. */
+  if(data->req.keepon & KEEP_READ_PAUSE) {
+    size_t newlen;
+    char *newptr;
+    if(type != data->state.tempwritetype)
+      /* major internal confusion */
+      return CURLE_RECV_ERROR;
+
+    /* figure out the new size of the data to save */
+    newlen = len + data->state.tempwritesize;
+    /* allocate the new memory area */
+    newptr = malloc(newlen);
+    if(!newptr)
+      return CURLE_OUT_OF_MEMORY;
+    /* copy the previously held data to the new area */
+    memcpy(newptr, data->state.tempwrite, data->state.tempwritesize);
+    /* copy the new data to the end of the new area */
+    memcpy(newptr + data->state.tempwritesize, ptr, len);
+    /* free the old data */
+    free(data->state.tempwrite);
+    /* update the pointer and the size */
+    data->state.tempwrite = newptr;
+    data->state.tempwritesize = newlen;
+
+    return CURLE_OK;
   }
 
   if(0 == len)
@@ -415,15 +469,18 @@ CURLcode Curl_client_write(struct connectdata *conn,
     }
     /* If the previous block of data ended with CR and this block of data is
        just a NL, then the length might be zero */
-    if (len) {
-      wrote = data->set.fwrite(ptr, 1, len, data->set.out);
+    if(len) {
+      wrote = data->set.fwrite_func(ptr, 1, len, data->set.out);
     }
     else {
       wrote = len;
     }
 
+    if(CURL_WRITEFUNC_PAUSE == wrote)
+      return pausewrite(data, type, ptr, len);
+
     if(wrote != len) {
-      failf (data, "Failed writing body");
+      failf(data, "Failed writing body (%d != %d)", (int)wrote, (int)len);
       return CURLE_WRITE_ERROR;
     }
   }
@@ -435,12 +492,18 @@ CURLcode Curl_client_write(struct connectdata *conn,
      * header callback function (added after version 7.7.1).
      */
     curl_write_callback writeit=
-      data->set.fwrite_header?data->set.fwrite_header:data->set.fwrite;
+      data->set.fwrite_header?data->set.fwrite_header:data->set.fwrite_func;
 
     /* Note: The header is in the host encoding
        regardless of the ftp transfer mode (ASCII/Image) */
 
     wrote = writeit(ptr, 1, len, data->set.writeheader);
+    if(CURL_WRITEFUNC_PAUSE == wrote)
+      /* here we pass in the HEADER bit only since if this was body as well
+         then it was passed already and clearly that didn't trigger the pause,
+         so this is saved for later with the HEADER bit only */
+      return pausewrite(data, CLIENTWRITE_HEADER, ptr, len);
+
     if(wrote != len) {
       failf (data, "Failed writing header");
       return CURLE_WRITE_ERROR;
@@ -485,7 +548,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
     size_t bytestocopy = MIN(conn->buf_len - conn->read_pos, sizerequested);
 
     /* Copy from our master buffer first if we have some unread data there*/
-    if (bytestocopy > 0) {
+    if(bytestocopy > 0) {
       memcpy(buf, conn->master_buffer + conn->read_pos, bytestocopy);
       conn->read_pos += bytestocopy;
       conn->bits.stream_was_rewound = FALSE;
@@ -504,7 +567,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
     buffertofill = buf;
   }
 
-  if(conn->ssl[num].use) {
+  if(conn->ssl[num].state == ssl_connection_complete) {
     nread = Curl_ssl_recv(conn, num, buffertofill, bytesfromsocket);
 
     if(nread == -1) {
@@ -512,10 +575,10 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
   }
 #ifdef USE_LIBSSH2
-  else if (conn->protocol & (PROT_SCP|PROT_SFTP)) {
+  else if(conn->protocol & (PROT_SCP|PROT_SFTP)) {
     if(conn->protocol & PROT_SCP)
       nread = Curl_scp_recv(conn, num, buffertofill, bytesfromsocket);
-    else if (conn->protocol & PROT_SFTP)
+    else if(conn->protocol & PROT_SFTP)
       nread = Curl_sftp_recv(conn, num, buffertofill, bytesfromsocket);
 #ifdef LIBSSH2CHANNEL_EAGAIN
     if((nread == LIBSSH2CHANNEL_EAGAIN) || (nread == 0))
@@ -545,7 +608,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
   }
 
-  if (nread >= 0) {
+  if(nread >= 0) {
     if(pipelining) {
       memcpy(buf, conn->master_buffer, nread);
       conn->buf_len = nread;
@@ -573,7 +636,7 @@ static int showit(struct SessionHandle *data, curl_infotype type,
   case CURLINFO_HEADER_OUT:
     /* assume output headers are ASCII */
     /* copy the data into my buffer so the original is unchanged */
-    if (size > BUFSIZE) {
+    if(size > BUFSIZE) {
       size = BUFSIZE; /* truncate if necessary */
       buf[BUFSIZE] = '\0';
     }

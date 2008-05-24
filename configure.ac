@@ -44,9 +44,9 @@ dnl
 
 dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
-AC_PREREQ(2.52)
+AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.0, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.4, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -333,6 +333,7 @@ AC_CHECK_HEADERS( \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
+	FTGL/FTGL.h \
 	SDL/SDL.h \
 	bstring.h \
 	dlfcn.h \
@@ -370,6 +371,15 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 		#include <sys/socket.h>]],
  [[socklen_t len = 42; return 0;]])],
  [ac_cv_type_socklen_t=yes],[ac_cv_type_socklen_t=no])
+AC_MSG_RESULT([$ac_cv_type_socklen_t])
+if test $ac_cv_type_socklen_t != yes; then
+    AC_MSG_CHECKING([elsewhere for socklen_t type])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <winsock2.h>
+		#include <ws2tcpip.h>]],
+     [[socklen_t len = 42; return 0;]])],
+     [ac_cv_type_socklen_t=yes],[ac_cv_type_socklen_t=no])
+    AC_MSG_RESULT([$ac_cv_type_socklen_t])
+fi
 if test $ac_cv_type_socklen_t != yes; then
     AC_MSG_CHECKING([for socklen_t equivalent])
     AC_CACHE_VAL([cv_socklen_t_equiv],
@@ -401,7 +411,6 @@ if test $ac_cv_type_socklen_t != yes; then
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
-AC_MSG_RESULT([$ac_cv_type_socklen_t])
 
 #CONFIG is only used for irix packaging
 case $host_os in
@@ -412,6 +421,7 @@ case $host_os in
 esac
 
 AC_LANG(C++)
+AC_CHECK_TYPES([std::wstring],,,[#include <iostream>])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
@@ -520,7 +530,7 @@ if test "x$enable_threads" != "xno" ; then
 	CONF_CXXFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
 	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
     else
-	LIBS=tmpLIBS
+	LIBS=$tmpLIBS
     fi
     AC_MSG_RESULT([$pthread_check])
 fi
@@ -994,11 +1004,29 @@ AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
 
-# assume ares works if we found it.
+# see if our ares callbacks match (they won't on ares <1.5)
+ares_works=no
+if test "x$enable_ares_build" != "xyes" ; then
+    AC_MSG_CHECKING(for ares DNS lookup functionality)
+    PRELDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $LIBCARES"
+    AC_TRY_LINK([#include <ares.h>
+  void callback(void * /*arg*/, int /*callbackStatus*/,
+                int /*timeouts*/, struct hostent * /*hostent*/) {}
+    ], [
+  ares_channel aresChannel;
+  in_addr requestedAddress;
+  
+  ares_gethostbyaddr(aresChannel, &requestedAddress,
+		     sizeof(in_addr), AF_INET, callback, NULL);
+    ], [ares_works=yes], [ares_works=no])
+    LDFLAGS="$PRELDFLAGS"
+    AC_MSG_RESULT($ares_works)
+fi # enable_ares_build
 dnl figure out whether we need to build the included ares library
 AC_MSG_CHECKING(whether to build the included ares lookup library)
 BUILD_ARES="no (using system)"
-if test "x$LIBCARES" = "x" ; then
+if test "x$ares_works" = "xno" ; then
     AC_DEFINE(BUILD_ARES, 1, [Build the included ares lookup library])
     BUILD_ARES="yes"
     LIBCARES='${top_builddir}/src/other/ares/libcares.la'
@@ -1080,7 +1108,7 @@ if test "x$enable_client" != "xno"; then
 dnl figure out whether we need to build the included freetype2 library
 BUILD_FREETYPE="no (using system)"
 if test "x$enable_freetype_build" != "xyes" ; then
-    AC_CHECK_FT2
+    AC_CHECK_FT2([9.0.3])
     LIBFREETYPE="$FT2_LIBS"
 fi
 AC_MSG_CHECKING(whether to build the included freetype library)
@@ -1101,6 +1129,9 @@ AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
 AC_SUBST(LIBFREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, false)
 fi # have_gl
+if test "x$BUILD_FREETYPE" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
+fi
 
 
 LIBFTGL=""
@@ -1114,7 +1145,7 @@ AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then
     AC_DEFINE(BUILD_FTGL, 1, [Build the included ftgl library])
     BUILD_FTGL="yes"
-    LIBFTGL='${top_builddir}/src/other/ftgl/libftgl.la'
+    LIBFTGL='${top_builddir}/src/other/ftgl/src/libftgl.la'
 fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
@@ -1126,6 +1157,9 @@ AC_MSG_NOTICE([FTGL is disabled because no clients are being built])
 AC_SUBST(LIBFTGL)
 AM_CONDITIONAL(BUILD_FTGL, false)
 fi # have_gl
+if test "x$BUILD_FTGL" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
+fi
 
 
 # make sure ECHO and ECHO_N got defined and substituted
@@ -1153,6 +1187,9 @@ bz_configure_args="$ac_configure_args"
 if test x$enable_plugins != xno ; then
     AC_CONFIG_SUBDIRS(plugins)
 fi
+if test "x$BUILD_FTGL" = "xyes" ; then
+    AC_CONFIG_SUBDIRS(src/other/ftgl)
+fi
 if test "x$BUILD_ARES" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ares)
     if test "x$BUILD_CURL" = "xyes" ; then
@@ -1172,9 +1209,6 @@ AC_CONFIG_FILES([
 	bzflag.spec
 	data/Makefile
 	data/fonts/Makefile
-	data/models/Makefile
-	data/models/tank/Makefile
-	data/models/tank/std/Makefile
 	data/l10n/Makefile
 	data/skins/Makefile
 	data/skins/red/Makefile
@@ -1228,7 +1262,6 @@ AC_CONFIG_FILES([
 	src/ogl/Makefile
 	src/other/Makefile
 	src/other/freetype/Makefile
-	src/other/ftgl/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: https.c,v 1.2 2004-11-24 16:11:35 bagder Exp $
+ * $Id: https.c,v 1.3 2007-07-12 21:11:10 danf Exp $
  */
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ int main(void)
      * default bundle, then the CURLOPT_CAPATH option might come handy for
      * you.
      */
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 
 #ifdef SKIP_HOSTNAME_VERFICATION

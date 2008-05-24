@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 #if defined(_MSC_VER)
 #  pragma warning(disable: 4786)
 #endif
@@ -94,11 +94,11 @@ static const unsigned long endPacket = 0;
 ServerLink*		ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
-state(SocketError),	// assume failure
-fd(-1),			// assume failure
-udpLength(0),
-oldNeedForSpeed(false),
-previousFill(0)
+  state(SocketError),	// assume failure
+  fd(-1),			// assume failure
+  udpLength(0),
+  oldNeedForSpeed(false),
+  previousFill(0)
 {
   int i;
 
@@ -157,11 +157,9 @@ previousFill(0)
   // we swaped to blockin because we changed from having
   // the server send the first data, to having the client send it.
   int error = 0;
-  if (connectReturn != 0)
-  {
+  if (connectReturn != 0) {
     error = getErrno();
-    if (error != EINPROGRESS)
-    {
+    if (error != EINPROGRESS) {
       // if it was a real error, log and bail
       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
 
@@ -188,16 +186,15 @@ previousFill(0)
   // if there are any connection errors, check them and we are done
   int       connectError;
   socklen_t errorLen = sizeof(int);
-  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
-    < 0) {
-      close(query);
-      return;
-    }
-    if (connectError != 0) {
-      logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
-      close(query);
-      return;
-    }
+  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen) < 0) {
+    close(query);
+    return;
+  }
+  if (connectError != 0) {
+    logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
+    close(query);
+    return;
+  }
 #else // Connection timeout for Windows
 
   // winsock connection
@@ -221,8 +218,7 @@ previousFill(0)
 #endif // !defined(_WIN32)
 
   // if the connection failed for any reason, we can not continue
-  if (!okay)
-  {
+  if (!okay) {
     close(query);
     return;
   }
@@ -256,14 +252,12 @@ previousFill(0)
   // loop calling select untill we read some data back.
   // its only 8 bytes so it better come back in one packet.
   int loopCount = 0;
-  while(!gotNetData)
-  {
+  while(!gotNetData) {
     loopCount++;
     nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
 
     // there has to be at least one socket active, or we are screwed
-    if (nfound <= 0)
-    {
+    if (nfound <= 0) {
       logDebugMessage(1,"CONNECT:select in connect failed, nfound = %d\n",nfound);
       close(query);
       return;
@@ -273,17 +267,13 @@ previousFill(0)
     i = recv(query, (char*)version, 8, 0);
 
     // if we got some, then we are done
-    if ( i > 0)
-    {
+    if ( i > 0) {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
       logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
       gotNetData = true;
-    }
-    else
-    {
+    } else {
       // if we have waited too long, then bail
-      if ( (TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout)
-      {
+      if ( (TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
 	logDebugMessage(1,"CONNECT:connect time out failed\n");
 	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 	close(query);
@@ -298,8 +288,7 @@ previousFill(0)
 
   // if we got back less then the expected connect responce (BZFSXXXX)
   // then something went bad, and we are done.
-  if (i < 8)
-  {
+  if (i < 8) {
     close(query);
     return;
   }
@@ -448,7 +437,7 @@ void ServerLink::flush()
     if ((random()%TESTQUALTIY) != 0)
 #endif
       sendto(urecvfd, (const char *)txbuf, previousFill, 0,
-      &usendaddr, sizeof(usendaddr));
+	     &usendaddr, sizeof(usendaddr));
     // we don't care about errors yet
   } else {
     int r = ::send(fd, (const char *)txbuf, previousFill, 0);
@@ -457,7 +446,7 @@ void ServerLink::flush()
     if (r == SOCKET_ERROR) {
       const int e = WSAGetLastError();
       if (e == WSAENETRESET || e == WSAECONNABORTED ||
-	e == WSAECONNRESET || e == WSAETIMEDOUT)
+	  e == WSAECONNRESET || e == WSAETIMEDOUT)
 	state = Hungup;
       r = 0;
     }
@@ -496,7 +485,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
     needForSpeed=true;
 
   if ((needForSpeed != oldNeedForSpeed)
-    || (previousFill + len + 4 > MaxPacketLen))
+      || (previousFill + len + 4 > MaxPacketLen))
     flush();
   oldNeedForSpeed = needForSpeed;
 
@@ -508,13 +497,13 @@ void			ServerLink::send(uint16_t code, uint16_t len,
   previousFill += len + 4;
 }
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(HAVE_SOCKLEN_T)
 /* This is a really really fugly hack to get around winsock sillyness
-* The newer versions of winsock have a socken_t typedef, and there
-* doesn't seem to be any way to tell the versions apart. However,
-* VC++ helps us out here by treating typedef as #define
-* If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
-* avoid #define'ing it in common.h */
+ * The newer versions of winsock have a socken_t typedef, and there
+ * doesn't seem to be any way to tell the versions apart. However,
+ * VC++ helps us out here by treating typedef as #define
+ * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T in config.h
+ * to skip this hack */
 
 #ifndef socklen_t
 #define socklen_t int
@@ -534,7 +523,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
     if (!udpLength) {
       AddrLen recvlen = sizeof(urecvaddr);
       n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr,
-	(socklen_t*) &recvlen);
+		   (socklen_t*) &recvlen);
       if (n > 0) {
 	udpLength    = n;
 	udpBufferPtr = ubuf;
@@ -576,7 +565,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
   FD_ZERO(&read_set);
   FD_SET((unsigned int)fd, &read_set);
   int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
-    (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+		      (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
   if (nfound == 0) return 0;
   if (nfound < 0) return -1;
 
@@ -660,7 +649,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
   }
   if (tlen < int(len)) return -1;
 
-success:
+ success:
   // FIXME -- packet recording
   if (packetStream) {
     long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
@@ -791,8 +780,8 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
 
   //printError("Code is %02x",code);
-//  if (len > MaxPacketLen)
- //   return -1;
+  //  if (len > MaxPacketLen)
+  //   return -1;
 
   if (len > 0) {
     // no more max packet len, our buffer is dynamic
@@ -805,8 +794,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
     }
     msg->addPackedData(tmpBuffer,rlen);
     free(tmpBuffer);
-  } 
-  else
+  } else
     rlen = 0;
 
 
@@ -849,7 +837,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
   if (tlen < int(len))
     return -1;
 
-success:
+ success:
   // FIXME -- packet recording
   if (packetStream) {
     long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
@@ -911,12 +899,10 @@ bool ServerLink::readEnter (std::string& reason,
 
     if (code == MsgAccept) {
       return true;
-    }
-    else if (code == MsgSuperKill) {
+    } else if (code == MsgSuperKill) {
       reason = "Server forced disconnection.";
       return false;
-    }
-    else if (code == MsgReject) {
+    } else if (code == MsgReject) {
       void *buf;
       char buffer[MessageLen];
       buf = nboUnpackUShort (msg, rejcode); // filler for now
@@ -957,7 +943,7 @@ void			ServerLink::sendDropFlag(const float* position)
   char msg[13];
   void* buf = msg;
   buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackVector(buf, position);
+  buf = nboPackFloatVector(buf, position);
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
@@ -1118,6 +1104,7 @@ void ServerLink::sendExit()
   msg[0] = getId();
 
   send(MsgExit, sizeof(msg), msg);
+  flush();
 }
 
 void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
@@ -1128,7 +1115,7 @@ void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
   void* buf = msg;
   buf = nboPackUByte(buf, uint8_t(playerId));
   buf = nboPackUByte(buf, uint8_t(otherId));
-  buf = nboPackVector(buf, pos);
+  buf = nboPackFloatVector(buf, pos);
 
   send(MsgCollide, sizeof(msg), msg);
 }

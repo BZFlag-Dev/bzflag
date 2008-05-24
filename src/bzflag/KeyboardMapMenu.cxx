@@ -37,7 +37,7 @@ KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
 bool KeyboardMapMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   // escape key has usual effect
-  if (key.ascii == 27)
+  if (key.chr == 27)
     return MenuDefaultKey::keyPress(key);
 
   // keys have normal effect if not editing
@@ -45,8 +45,8 @@ bool KeyboardMapMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     return MenuDefaultKey::keyPress(key);
 
   // ignore keys we don't know
-  if (key.ascii != 0 && isspace(key.ascii)) {
-    if (key.ascii != ' ' && key.ascii != '\t' && key.ascii != '\r')
+  if (key.chr != 0 && iswspace(key.chr)) {
+    if (key.chr != ' ' && key.chr != '\t' && key.chr != '\r')
       return true;
   }
 

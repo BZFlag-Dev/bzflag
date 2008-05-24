@@ -378,6 +378,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 					verts, norms, txcds, FaceCount,
 					false, false, false, false);
 
+  mesh->setDriveThrough(driveThrough);
+  mesh->setShootThrough(shootThrough);
+
   // get the material refs
   const BzMaterial* mats[FaceCount];
   for (i = 0; i < FaceCount; i++) {

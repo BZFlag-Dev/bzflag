@@ -36,6 +36,7 @@ SUBDIRS = \
 	unrealCTF \
 	weaponArena \
 	webstats \
+	webReport \
 	wwzones
 
 DIST_SUBDIRS = \
@@ -61,4 +62,5 @@ MAINTAINERCLEANFILES =	\
 	configure \
 	depcomp \
 	install-sh \
+	ltmain.sh \
 	missing

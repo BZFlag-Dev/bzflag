@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libfreetype.la
+lib_LTLIBRARIES = libfreetype.la
 
 AM_CPPFLAGS = \
 	-I${top_srcdir}/src/other/freetype/include \
@@ -50,6 +50,8 @@ libfreetype_la_SOURCES = \
 	src/cid/type1cid.c \
 	src/type42/type42.c \
 	src/winfonts/winfnt.c
+
+libfreetype_la_LIBADD = ${LIBZ}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

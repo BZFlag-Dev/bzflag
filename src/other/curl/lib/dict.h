@@ -21,10 +21,9 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.h,v 1.12 2005-02-09 13:06:40 bagder Exp $
+ * $Id: dict.h,v 1.13 2007-10-12 13:36:38 patrickm Exp $
  ***************************************************************************/
 #ifndef CURL_DISABLE_DICT
-CURLcode Curl_dict(struct connectdata *conn, bool *done);
-CURLcode Curl_dict_done(struct connectdata *conn);
+extern const struct Curl_handler Curl_handler_dict;
 #endif
 #endif

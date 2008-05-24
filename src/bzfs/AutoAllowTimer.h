@@ -23,14 +23,15 @@
 
 #define _MAX_WORLD_SHOTS 30
 
+
 class AutoAllowTimerTickHandler : public bz_EventHandler
 {
 public:
-	AutoAllowTimerTickHandler();
-	virtual ~AutoAllowTimerTickHandler();
+  AutoAllowTimerTickHandler();
+  virtual ~AutoAllowTimerTickHandler();
 
-	virtual void process(bz_EventData *eventData);
-	virtual bool autoDelete(void);
+  virtual void process(bz_EventData *eventData);
+  virtual bool autoDelete(void);
 
 };
 

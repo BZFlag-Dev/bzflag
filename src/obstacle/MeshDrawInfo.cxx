@@ -1251,12 +1251,12 @@ void* MeshDrawInfo::pack(void* buf) const
   // raw vertices
   buf = nboPackInt (buf, rawVertCount);
   for (i = 0; i < rawVertCount; i++) {
-    buf = nboPackVector(buf, rawVerts[i]);
+    buf = nboPackFloatVector(buf, rawVerts[i]);
   }
   // raw normals
   buf = nboPackInt (buf, rawNormCount);
   for (i = 0; i < rawNormCount; i++) {
-    buf = nboPackVector(buf, rawNorms[i]);
+    buf = nboPackFloatVector(buf, rawNorms[i]);
   }
   // raw texcoords
   buf = nboPackInt (buf, rawTxcdCount);
@@ -1278,10 +1278,10 @@ void* MeshDrawInfo::pack(void* buf) const
   }
 
   // sphere and extents
-  buf = nboPackVector(buf, sphere);
+  buf = nboPackFloatVector(buf, sphere);
   buf = nboPackFloat(buf, sphere[3]);
-  buf = nboPackVector(buf, extents.mins);
-  buf = nboPackVector(buf, extents.maxs);
+  buf = nboPackFloatVector(buf, extents.mins);
+  buf = nboPackFloatVector(buf, extents.maxs);
 
   return buf;
 }
@@ -1329,14 +1329,14 @@ void* MeshDrawInfo::unpack(void* buf)
   rawVertCount = s32;
   rawVerts = new fvec3[rawVertCount];
   for (i = 0; i < rawVertCount; i++) {
-    buf = nboUnpackVector(buf, rawVerts[i]);
+    buf = nboUnpackFloatVector(buf, rawVerts[i]);
   }
   // raw normals
   buf = nboUnpackInt (buf, s32);
   rawNormCount = s32;
   rawNorms = new fvec3[rawNormCount];
   for (i = 0; i < rawNormCount; i++) {
-    buf = nboUnpackVector(buf, rawNorms[i]);
+    buf = nboUnpackFloatVector(buf, rawNorms[i]);
   }
   // raw texcoords
   buf = nboUnpackInt (buf, s32);
@@ -1364,10 +1364,10 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // sphere and extents
-  buf = nboUnpackVector(buf, sphere);
+  buf = nboUnpackFloatVector(buf, sphere);
   buf = nboUnpackFloat(buf, sphere[3]);
-  buf = nboUnpackVector(buf, extents.mins);
-  buf = nboUnpackVector(buf, extents.maxs);
+  buf = nboUnpackFloatVector(buf, extents.mins);
+  buf = nboUnpackFloatVector(buf, extents.maxs);
 
   return buf;
 }
@@ -1626,7 +1626,7 @@ void* DrawSet::pack(void* buf) const
   buf = nboPackInt(buf, matindex);
 
   // sphere
-  buf = nboPackVector(buf, sphere);
+  buf = nboPackFloatVector(buf, sphere);
   buf = nboPackFloat(buf, sphere[3]);
 
   // state bits
@@ -1653,7 +1653,7 @@ void* DrawSet::unpack(void* buf)
   material = MATERIALMGR.getMaterial(s32);
 
   // sphere
-  buf = nboUnpackVector(buf, sphere);
+  buf = nboUnpackFloatVector(buf, sphere);
   buf = nboUnpackFloat(buf, sphere[3]);
 
   // state bits

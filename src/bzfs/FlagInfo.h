@@ -53,16 +53,16 @@ public:
   static float getNextDrop(TimeKeeper &tm);
   static void  setNoFlagInAir();
 
-    // flag info
-    Flag flag;
-    // player index who has flag
-    int player;
-    // how many grabs before removed
-    int grabs;
-    // true if flag must be in game
-    bool required;
-    // number of shots on this flag
-    int numShots;
+  // flag info
+  Flag flag;
+  // player index who has flag
+  int player;
+  // how many grabs before removed
+  int grabs;
+  // true if flag must be in game
+  bool required;
+  // number of shots on this flag
+  int numShots;
 
 private:
   int flagIndex;

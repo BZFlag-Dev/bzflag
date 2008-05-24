@@ -346,6 +346,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 					false, false, false, false);
 
   mesh->setName(name.c_str());
+
+  mesh->setDriveThrough(driveThrough);
+  mesh->setShootThrough(shootThrough);
   // get the material refs
   const BzMaterial* mats[FaceCount];
   for (i = 0; i < FaceCount; i++) {

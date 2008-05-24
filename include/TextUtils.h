@@ -37,6 +37,9 @@ namespace TextUtils {
   std::string vformat(const char* fmt, va_list args);
   std::string format(const char* fmt, ...) BZ_ATTR_12;
 
+  // converts a string to it's unicode version
+  std::wstring convert_to_wide(const std::string& string);
+
   /** returns a string converted to lowercase
    */
   inline std::string tolower(const std::string& s)

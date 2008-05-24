@@ -14,21 +14,37 @@
 #define DOWNLOADS_H
 
 #include "common.h"
+#include "Singleton.h"
+#include "BzMaterial.h"
+#include "AccessList.h"
 
 /* system interface headers */
 #include <string>
 
-
-namespace Downloads {
-  void startDownloads(bool doDownloads,
-		      bool updateDownloads,
-		      bool referencing);
+class Downloads :   public Singleton<Downloads>
+{
+public:
+  void startDownloads(bool doDownloads, bool updateDownloads, bool referencing);
   void finalizeDownloads();
   void removeTextures(); // free the downloaded GL textures
   bool requestFinalized();
-}
+  bool authorizedServer(const std::string& hostname);
 
-bool authorizedServer(const std::string& hostname);
+protected:
+  friend class Singleton<Downloads>;
+
+private:
+  Downloads();
+  ~Downloads();
+
+  void printAuthNotice();
+  bool checkAuthorizations(BzMaterialManager::TextureSet& set);
+
+  AccessList * downloadAccessList;
+  bool textureDownloading;
+};
+
+
 bool parseHostname(const std::string& url, std::string& hostname);
 
 

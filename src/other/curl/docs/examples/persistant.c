@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: persistant.c,v 1.3 2004-11-24 16:11:35 bagder Exp $
+ * $Id: persistant.c,v 1.3 2004/11/24 16:11:35 bagder Exp $
  */
 
 #include <stdio.h>

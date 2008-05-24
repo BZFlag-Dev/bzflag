@@ -1,4 +1,4 @@
-.\" $Id: curl_multi_info_read.3,v 1.8 2006-12-31 13:53:19 bagder Exp $
+.\" $Id: curl_multi_info_read.3,v 1.9 2007-05-26 20:47:33 bagder Exp $
 .\"
 .TH curl_multi_info_read 3 "18 Dec 2004" "libcurl 7.10.3" "libcurl Manual"
 .SH NAME
@@ -25,8 +25,8 @@ queue so calling this function again will not return the same message
 again. It will instead return new messages at each new invoke until the queue
 is emptied.
 
-The data the returned pointer points to will not survive calling
-\fIcurl_multi_cleanup(3)\fP, \fIcurl_multi_remove_handle(3)\fP or
+\fBWARNING:\fP The data the returned pointer points to will not survive
+calling \fIcurl_multi_cleanup(3)\fP, \fIcurl_multi_remove_handle(3)\fP or
 \fIcurl_easy_cleanup(3)\fP.
 
 The 'CURLMsg' struct is very simple and only contain very basic information.

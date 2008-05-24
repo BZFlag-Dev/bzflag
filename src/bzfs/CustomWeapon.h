@@ -29,29 +29,30 @@
 #include "WorldEventManager.h"
 
 
-class CustomWeapon : public WorldFileLocation {
-  public:
-    CustomWeapon();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+class CustomWeapon : public WorldFileLocation
+{
+public:
+  CustomWeapon();
+  virtual bool read(const char *cmd, std::istream&);
+  virtual void writeToWorld(WorldInfo*) const;
+  virtual bool usesGroupDef() { return false; }
 
-    static const float minWeaponDelay;
+  static const float minWeaponDelay;
 
-  protected:
+protected:
 
-    FlagType *type;
+  FlagType *type;
 
-    float initdelay;
-    std::vector<float> delay;
+  float initdelay;
+  std::vector<float> delay;
 
-    float tilt;
-    TeamColor teamColor;
+  float tilt;
+  TeamColor teamColor;
 
-    int eventTeam;
-    bz_eEventType triggerType;
+  int eventTeam;
+  bz_eEventType triggerType;
 
-    static TimeKeeper sync;
+  static TimeKeeper sync;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */
