@@ -96,7 +96,7 @@ public:
     inline static std::wstring wideStringFromUTF8(const std::string& nstr)
     {
       std::wstring ret;
-      for (UTF8StringItr itr(nstr.c_str()); (*itr != NULL); ++itr)
+      for (UTF8StringItr itr(nstr.c_str()); (*itr != 0); ++itr)
 	ret += (wchar_t)(*itr);
       return ret;
     }
