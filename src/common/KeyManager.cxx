@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h> // strstr, etc
+#include <wctype.h>
 #include <string>   // std::string
 #include <vector>
 

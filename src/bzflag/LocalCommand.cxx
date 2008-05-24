@@ -15,6 +15,7 @@
 
 // system headers
 #include <ctype.h>
+#include <wctype.h>
 
 // local implementation headers
 #include "bzUnicode.h"

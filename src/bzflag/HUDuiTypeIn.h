@@ -21,6 +21,7 @@
 #include "common.h"
 
 /* system interface headers */
+#include <wctype.h>
 #include <string>
 
 /* common interface headers */
