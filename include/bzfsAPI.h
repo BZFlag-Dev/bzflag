@@ -1874,8 +1874,8 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 BZF_API bz_eGameType bz_getGameType( void );
 
 // utility
-const char* bz_MD5 ( const char * str );
-const char* bz_MD5 ( const void * data, size_t size );
+BZF_API const char* bz_MD5 ( const char * str );
+BZF_API const char* bz_MD5 ( const void * data, size_t size );
 
 // server side player API
 
