@@ -18,18 +18,24 @@ UTF8StringItr& UTF8StringItr::operator ++()
 {
   curPos = nextPos;
 
+  // get rid of signedness before doing bit magic
+  const unsigned char* np = reinterpret_cast<const unsigned char*>(nextPos);
+
   unsigned int ch = 0;
-  unsigned int extraBytesToRead = utf8bytes[(unsigned char)(*nextPos)];
+  unsigned int extraBytesToRead = utf8bytes[*np];
   // falls through
   switch (extraBytesToRead)
   {
-    case 6: ch += *nextPos++; ch <<= 6; /* remember, illegal UTF-8 */
-    case 5: ch += *nextPos++; ch <<= 6; /* remember, illegal UTF-8 */
-    case 4: ch += *nextPos++; ch <<= 6;
-    case 3: ch += *nextPos++; ch <<= 6;
-    case 2: ch += *nextPos++; ch <<= 6;
-    case 1: ch += *nextPos++;
+    case 6: ch += *np++; ch <<= 6; /* remember, illegal UTF-8 */
+    case 5: ch += *np++; ch <<= 6; /* remember, illegal UTF-8 */
+    case 4: ch += *np++; ch <<= 6;
+    case 3: ch += *np++; ch <<= 6;
+    case 2: ch += *np++; ch <<= 6;
+    case 1: ch += *np++;
   }
+
+  // put the pointer back
+  nextPos = reinterpret_cast<const char*>(np);
   ch -= offsetsFromUTF8[extraBytesToRead-1];
   curChar = ch;
 
