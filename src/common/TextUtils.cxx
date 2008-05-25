@@ -276,8 +276,8 @@ namespace TextUtils
   {
     char hex[5];
     std::string destination;
-    for (int i=0;  i < (int) text.size(); i++) {
-      char c = text[i];
+    for (size_t i=0;  i < text.size(); ++i) {
+      unsigned char c = text[i];
       if (isAlphanumeric(c)) {
 	destination+=c;
       } else if (isWhitespace(c)) {
