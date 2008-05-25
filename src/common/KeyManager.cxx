@@ -163,7 +163,7 @@ KeyManager::KeyManager()
   // TODO: limited to ASCII
   for (i = 0x21; i < 0x7f; ++i) {
     key.chr = i;
-    std::string str = UTF8Char(i).str();
+    std::string str = bzUTF8Char(i).str();
     stringToEvent.insert(std::make_pair(str, key));
   }
 }
@@ -281,7 +281,7 @@ std::string		KeyManager::keyEventToString(
     default:
       if (!iswspace(key.chr))
       {
-        UTF8Char chr(key.chr);
+        bzUTF8Char chr(key.chr);
 	return name + chr.str();
       }
       return name + "???";

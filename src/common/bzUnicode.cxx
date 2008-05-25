@@ -56,9 +56,9 @@ const unsigned long UTF8StringItr::offsetsFromUTF8[6] = { 0x00000000UL, 0x000030
   0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 
 
-// UTF8Char
+// bzUTF8Char
 
-UTF8Char::UTF8Char(unsigned int ch)
+bzUTF8Char::bzUTF8Char(unsigned int ch)
 {
   int bytesOut = 0;
   if (ch < 0x80) {
@@ -83,9 +83,9 @@ UTF8Char::UTF8Char(unsigned int ch)
   }
 }
 
-const unsigned char UTF8Char::firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
-const unsigned int UTF8Char::byteMask = 0xBF;
-const unsigned int UTF8Char::byteMark = 0x80; 
+const unsigned char bzUTF8Char::firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+const unsigned int bzUTF8Char::byteMask = 0xBF;
+const unsigned int bzUTF8Char::byteMark = 0x80; 
 
 // Local Variables: ***
 // mode: C++ ***

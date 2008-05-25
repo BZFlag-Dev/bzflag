@@ -131,13 +131,13 @@ private:
 
 /// converts a single wide character to a c-style string containing a UTF8 
 /// representation of the same character.
-class UTF8Char {
+class bzUTF8Char {
 public:
-  UTF8Char(unsigned int ch);
+  bzUTF8Char(unsigned int ch);
 
   inline std::string str() const { return buf; }
 
-  ~UTF8Char() { delete[] buf; };
+  ~bzUTF8Char() { delete[] buf; };
 
 private:
   char* buf;
