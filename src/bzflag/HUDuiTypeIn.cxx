@@ -215,7 +215,9 @@ void			HUDuiTypeIn::doRender()
   FontManager &fm = FontManager::instance();
   std::string renderStr;
   if (obfuscate) {
-    renderStr.append(string.size(), '*');
+    CountUTF8StringItr cusi(string.c_str());
+    while (*cusi) ++cusi;
+    renderStr.append(cusi.getCount(), '*');
   } else {
     renderStr = string;
   }
