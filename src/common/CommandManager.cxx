@@ -191,7 +191,7 @@ const char*			CommandManager::readQuoted(const char* string,
 
 const char*			CommandManager::skipWhitespace(const char* string)
 {
-  while (*string != '\0' && isspace(*string))
+  while (*string != '\0' && iswspace(*string))
     ++string;
   return string;
 }
