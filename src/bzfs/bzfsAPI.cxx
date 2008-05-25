@@ -48,6 +48,8 @@
 
 #include "ServerIntangibilityManager.h"
 
+#include "bz_md5.h"
+
 TimeKeeper synct=TimeKeeper::getCurrent();
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
@@ -3752,6 +3754,21 @@ BZF_API bz_eGameType bz_getGameType(void)
     return OpenFFAGame;
 
   return TeamFFAGame;
+}
+
+// utility
+const char* bz_MD5 ( const char * str )
+{
+  if (!str)
+    return NULL;
+  return bz_MD5(str,strlen(str));
+}
+
+const char* bz_MD5 ( const void * data, size_t size )
+{
+  MD5 md5;
+  md5.update((const unsigned char*)data,size);
+  return md5.hexdigest().c_str();
 }
 
 // server side bot API
