@@ -49,6 +49,7 @@
 #include "Filter.h"
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
+#include "bzfsProto.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
 #include "bzfsPlayerStateVerify.h"
@@ -73,6 +74,7 @@
 #  define BUFSIZE 2048
 #endif
 
+// FIXME: all these globals and statics need a class scope
 
 // pass through the SELECT loop
 bool dontWait = true;
@@ -92,10 +94,12 @@ float speedTolerance = 1.125f;
 // Command Line Options
 CmdLineOptions *clOptions = NULL;
 
+
 // server address to listen on
 Address serverAddress;
 // well known service socket
-static int wksSocket = -1;
+static NetListener listener;
+
 bool handlePings = true;
 PingPacket pingReply;
 // team info
@@ -163,11 +167,395 @@ static TimeKeeper lastWorldParmChange = TimeKeeper::getNullTime();
 bool worldWasSentToAPlayer   = false;
 
 unsigned int maxNonPlayerDataChunk = 2048;
-std::map<int,NetConnectedPeer> netConnectedPeers;
+typedef std::map<int,NetConnectedPeer> NetConnectedPeers;
+NetConnectedPeers netConnectedPeers;
 
-// FIXME forward declarations probably unnecessary
-int bz_pwrite(NetHandler *handler, const void *b, int l);
-void pwriteBroadcast(const void *b, int l, int mask);
+/**
+ * This class cleans up the application (bzfs) specific logic
+ * associated with a NetHandler that is being closed.
+ *
+ * Each handler needs to have a closing callback specifically
+ * associated with it. As currently written, this cannot be shared
+ * globally, so an instance is required for each handler
+ *
+ */
+class BZFSNetCloseCallback : public NetHandlerCloseCallback
+{
+public:
+  /// Constructor needs to register the callback with this specific
+  /// NetHandler
+  BZFSNetCloseCallback(NetHandler* handler)
+  {
+    handler->addCloseCallback(this);
+  }
+
+  void callback(NetHandler* handler, char const* reason)
+  {
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(handler->getExtraInfo()) );
+    if (peer != 0) {
+      MSGMGR.purgeMessages(handler);
+
+      // Not sure if this is really needed. When all access to the
+      // NetConnectedPeer structure is through the
+      // NetHandler::getExtraInfo() interface, this can go away
+      peer->socket = -1;
+      peer->handler = 0;
+      peer->deleteMe = true;
+
+      // Clean up any players using this connection (they have no
+      // choice... they are gone)
+      GameKeeper::Player* playerData;
+      // If multiple players are using this same connection, nuke them all
+      while ( (playerData = GameKeeper::Player::getFirstPlayer(handler)) ) {
+	removePlayer( playerData->getIndex(), reason, false );
+      }
+    }
+
+    // Clean up any non-player users of this connection
+    for ( unsigned int i = 0; i < peer->notifyList.size(); i++ )
+      peer->notifyList[i]->disconnect(handler->getFD());
+
+    NetConnectedPeers::iterator peerItr = netConnectedPeers.find(handler->getFD());
+    if (peerItr != netConnectedPeers.end())
+      netConnectedPeers.erase(peerItr);
+
+    // Detach this extra info from this handler
+    // (at some point, we may also need to free the NetConnectedPeer)
+    handler->setExtraInfo(0);
+  }
+
+  void dispose()
+  {
+    // Don't try this at home kids. We are trained professionals.
+    delete this;
+  }
+};
+
+class BZFSNewConnectionCallback : public NewNetworkConnectionCallback
+{
+public:
+  BZFSNewConnectionCallback() {
+    listener.addNewConnectionCallback(this);
+  }
+  ~BZFSNewConnectionCallback() {
+    listener.removeNewConnectionCallback(this);
+  }
+
+  bool accept( NetHandler* handler, int /*connectionID*/ ) {
+    // client (not a player yet) is requesting service.
+    // accept incoming connection on our well known port
+    // they aren't a player yet till they send us the connection string
+    NetConnectedPeer	peer;
+    peer.handler = handler;
+    peer.player = -1;
+    peer.socket = handler->getFD();
+    peer.deleteMe = false;
+    peer.sent = false;
+    peer.startTime = TimeKeeper::getCurrent().getSeconds();
+    peer.closeCB = new BZFSNetCloseCallback(handler);
+    netConnectedPeers[handler->getFD()] = peer;
+
+    handler->setExtraInfo( &netConnectedPeers[peer.socket] );
+    return true;
+  }
+};
+
+BZFSNewConnectionCallback bzfsNewConnectionCallback;
+
+static void respondToPing(Address addr);
+static void sendUDPupdate(NetHandler *handler);
+static void handleCommand(void *rawbuf, bool udp, NetHandler *handler);
+
+class BZFSUDPReadCallback : public NetworkUDPReadCallback
+{
+public:
+  BZFSUDPReadCallback() {
+    listener.addUDPReadCallback( this );
+  }
+  ~BZFSUDPReadCallback() {
+    listener.removeUDPReadCallback( this );
+  }
+
+  void callback() {
+    TimeKeeper receiveTime = TimeKeeper::getCurrent();
+    while (true) {
+      struct sockaddr_in uaddr;
+      unsigned char ubuf[MaxPacketLen];
+
+      NetHandler* netHandler;
+
+      // interface to the UDP Receive routines
+      int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
+      if (id == -1)
+	break;
+
+      uint16_t len, code;
+      void *buf = (char *)ubuf;
+      getGeneralMessageInfo(&buf,code,len);
+
+      if (code == MsgPingCodeRequest) {
+	if (len != 2)
+	  continue;
+	// if I'm ignoring pings
+	// then ignore the ping.
+	if (handlePings) {
+	  respondToPing(Address(uaddr));
+	  pingReply.write(NetHandler::getUdpSocket(), &uaddr);
+	}
+	continue;
+      } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
+	unsigned char tag = 0;               // This could be factored into it's own function
+	buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
+            
+	sendEchoResponse(&uaddr, tag);
+            
+	continue;
+      }
+          
+
+      if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
+	// It is a UDP Link Request ... try to match it
+	uint8_t index;
+	buf = nboUnpackUByte(buf, index);
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(index);
+
+	if (playerData) {
+	  netHandler = playerData->netHandler;
+	  if (netHandler->isMyUdpAddrPort(uaddr, false)) {
+	    netHandler->setUDPin(&uaddr);
+
+	    // send client the message that we are ready for him
+	    sendUDPupdate(netHandler);
+
+	    logDebugMessage(2,"Inbound UDP up %s:%d\n",
+			    inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+	  } else {
+	    logDebugMessage(2,"Inbound UDP rejected %s:%d different IP than original\n",
+			    inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+	  }
+	  continue;
+	}
+      }
+      // handle the command for UDP
+      handleCommand(ubuf, true, netHandler);
+
+      // don't spend more than 250ms receiving udp
+      if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
+	logDebugMessage(2,"Too much UDP traffic, will hope to catch up later\n");
+	break;
+      }
+    }
+  }
+};
+
+BZFSUDPReadCallback bzfsUDPReadCallback;
+
+/**
+ * Null framer (basically, just accept <u>all</u> data
+ */
+static
+NetHandler::Status nullFramer(char* src, size_t  src_len, 
+			      char* dst, size_t& dst_len)
+{
+  NetHandler::Status result(NetHandler::NoMsg);
+
+  if (src_len == 0) {
+    // No data, no message
+    dst_len = 0;
+    result = NetHandler::NoMsg;
+  } else if (src_len < dst_len) {
+    dst_len = src_len;
+    memcpy(dst, src, dst_len);
+    result = NetHandler::GoodMsg;
+  } else {
+    memcpy(dst, src, dst_len);
+    result = NetHandler::EMsgTooLarge;
+  }
+  return result;
+}
+
+static void handleTcp(NetHandler &netPlayer, int i, char* buf);
+
+class BZFSNetDataPendingCallback : public NetworkDataPendingCallback
+{
+public:
+  BZFSNetDataPendingCallback() {
+    listener.addDataPendingCallback( this );
+  }
+  ~BZFSNetDataPendingCallback() {
+    listener.removeDataPendingCallback( this );
+  }
+
+  bool pendingRead(NetHandler* handler) {
+    bool result(false);
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(handler->getExtraInfo()) );
+    if ( ! (peer == 0 || peer->deleteMe) ) {
+
+      char buf[1024];
+      size_t size( sizeof(buf) );
+      bool isUDP;
+
+      // --------------------------------------------------
+      // If this is a player, just pass off to player handling stuff
+      // --------------------------------------------------
+      if (peer->player != -1) {
+	peer->sent = true;
+	// it's a player now, so treat them with the respect they deserve
+	GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(peer->player);
+	if (playerData) {
+	  NetHandler::Status status = handler->getMsg(&bzfsProto::framing, buf, size, isUDP);
+	  if (status == NetHandler::GoodMsg) {
+	    // The player callback just calls handleTcp...
+	    // 	  playerData->handleTcpPacket();
+	    handleTcp(*handler, peer->player, buf);
+	    result = true;
+	  } else if (status == NetHandler::EMsgTooLarge) {
+	    logDebugMessage(1,"Player [%d] sent huge packet length, possible attack\n", peer->player);
+	    handler->closing("large packet recvd");
+	  }
+	}
+      } else {
+	// --------------------------------------------------
+	// Not a player (yet?)
+	// --------------------------------------------------
+
+	// there is some data for us
+	if ( !peer->notifyList.size() ) {
+
+	  // No listeners, check for client connection
+	  // Use the bzfsProto::connectMsg framer to detect the header
+
+	  // This is a little tricky, because if a "good" message is
+	  // received but it doesn't match the magic string, we still
+	  // want to have the data available for non-player
+	  // connections
+	  NetHandler::Status status = handler->getMsg(bzfsProto::connectMsg, buf, size, isUDP);
+	  
+	  if (status == NetHandler::GoodMsg) {
+	    peer->sent = true;
+	    if (strncmp(buf, BZ_CONNECT_HEADER, size) == 0) {
+	      result = true;
+
+	      // TODO -- abstract this to a message object
+	      // send server version and playerid
+	      char buffer[9];
+	      memcpy(buffer, getServerVersion(), 8);
+
+	      // send 0xff if list is full
+	      buffer[8] = (char)0xff;
+
+	      PlayerId playerIndex = getNewPlayer(handler);
+	      peer->player = playerIndex;
+
+	      if (playerIndex < 0xff) {
+		logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex, inet_ntoa(handler->getIPAddress()), handler->getFD());
+
+		buffer[8] = (uint8_t)playerIndex;
+		handler->bufferedSend(buffer, sizeof(buffer));
+	      } else {
+		// full? reject by closing socket
+		logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n", inet_ntoa(handler->getIPAddress()), handler->getFD());
+
+		// send back 0xff before closing
+		handler->bufferedSend(buffer, sizeof(buffer));
+		handler->closing("No slots available");
+	      }
+	    } else {
+	      // Not a player -- handled at higher scope because we need to re-frame the buffer
+	    }
+	  }
+
+	  if ( ! result ) {
+	    // There is data available, but it's NOT a connection string.
+	    // See if anyone else wants it
+	    size_t oldsize( size );
+	    size = sizeof(buf) - oldsize;
+	    status = handler->getMsg(nullFramer, buf+oldsize, size, isUDP);
+	    size += oldsize;
+	    std::cout << "Non player connection has " << size
+		      << " bytes [" << buf << "]\n";
+
+	    // An assumption here is that no client requires more than
+	    // sizeof(buf) [1024] bytes to establish their connection
+
+	    // call an event to let people know we got a new connect
+	    bz_NewNonPlayerConnectionEventData_V1 eventData;
+
+	    eventData.data = buf;
+	    eventData.size = size;
+	    eventData.connectionID = handler->getFD();
+
+	    worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
+
+	    if ( !peer->notifyList.size() && !peer->pendingSendChunks.size() ) {
+	      handler->closing("Non player connection with no handler");
+	    } else {
+	      result = true;
+	    }
+	  }
+	} else {
+	  // we have a listener, so lets get all our data, and send it
+	  // to him so he can do what he wants to do with us.
+	  NetHandler::Status status = handler->getMsg(nullFramer, buf, size, isUDP);
+	  std::cout << "Connected non-player gets " << size << " bytes ["
+		    << buf << "]\n";
+
+	  if (status == NetHandler::GoodMsg) {
+	    // the dude has sent SOME data
+	    peer->sent = true;
+
+	    // An assumption here is that no client requires more than
+	    // sizeof(buf) [1024] bytes to establish their connection
+
+	    // it has dudes lets lets call them.
+	    for (unsigned int i = 0; i < peer->notifyList.size(); i++) {
+	      if (peer->notifyList[i])
+		peer->notifyList[i]->pending(peer->socket,buf,size);
+	    }
+
+	    result = true;
+	  }
+	}
+      }
+    }
+    return result;
+  }
+
+  bool pendingWrite(NetHandler* handler) {
+    bool result(true);
+
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(handler->getExtraInfo()) );
+    if ( ! (peer == 0 || peer->deleteMe) ) {
+
+      if (handler->pflush() == -1) {
+	result = false;
+	handler->closing("ECONNRESET/EPIPE");
+      }
+      // check for any async data to send out
+      sendBufferedNetDataForPeer(*peer);
+    }
+    return result;
+  }
+
+  bool idle(NetHandler* handler) {
+    bool result(false);
+
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(handler->getExtraInfo()) );
+    if ( ! (peer == 0 || peer->deleteMe) ) {
+      // there is no data, so delete us or move along and it's not a player
+      if ( peer->player == -1 && !peer->notifyList.size() && !peer->pendingSendChunks.size() ) {
+	if (peer->sent) // he has sent some data, but now is dead, let em go.
+	  handler->closing( "Idle connection has not sent data" );
+      }
+      result = true;
+    }
+    return result;
+  }
+
+
+};
+
+BZFSNetDataPendingCallback bzfsNetDataPendingCallback;
 
 class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
 {
@@ -179,12 +567,39 @@ public:
 
   virtual size_t send ( NetHandler *handler, void *data, size_t size )
   {
-    return (size_t)bz_pwrite(handler,data,int(size));
+    size_t result(-1);
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(handler->getExtraInfo()) );
+    if ( ! (peer == 0 || peer->deleteMe) ) {
+      int wrstat = handler->pwrite(data, size);
+      if (wrstat == -1) {
+	handler->closing("ECONNRESET/EPIPE");
+      } else if (wrstat == -2) {
+	handler->closing("send queue too big");
+      }
+      result = wrstat < 0 ? -1 : wrstat;
+    }
+    return result;
   }
 
   virtual size_t broadcast ( void *data, size_t size, int mask, int code )
   {
-    pwriteBroadcast(data, int(size), mask);
+    int result;
+    std::list<NetHandler*>::const_iterator it;
+    // send message to everyone
+    for (it = NetHandler::netConnections.begin();
+	 it != NetHandler::netConnections.end(); ++it) {
+      NetHandler* handler = *it;
+      NetConnectedPeer* peer( static_cast<NetConnectedPeer*>((*it)->getExtraInfo()) );
+      if ( ! (peer == 0 || peer->deleteMe) &&
+	   (handler->getClientKind() & mask) ) {
+	result = handler->pwrite(data, size);
+	if (result == -1) {
+	  handler->closing("ECONNRESET/EPIPE");
+	} else if (result == -2) {
+	  handler->closing("send queue too big");
+	}
+      }
+    }
 
     //record the packet
     if (Record::enabled())
@@ -262,53 +677,6 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying();
 }
 
-void dropHandler(NetHandler *handler, const char *reason)
-{
-  MSGMGR.purgeMessages(handler);
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->netHandler != handler)
-      continue;
-    removePlayer(i, reason, false);
-  }
-  netConnectedPeers[handler->getFD()].deleteMe = true;
-}
-
-int bz_pwrite(NetHandler *handler, const void *b, int l)
-{
-  int result = handler->pwrite(b, l);
-  if (result == -1) {
-    dropHandler(handler, "ECONNRESET/EPIPE");
-  } else if (result == -2) {
-    dropHandler(handler, "send queue too big");
-  }
-  if (result < 0)
-    result = -1;
-  return result;
-}
-
-void pwriteBroadcast(const void *b, int l, int mask)
-{
-  int result;
-  std::list<NetHandler*>::const_iterator it;
-  // send message to everyone
-  for (it = NetHandler::netConnections.begin();
-       it != NetHandler::netConnections.end();) {
-    NetHandler *handler = *it;
-    it++;
-    if (handler->getClientKind() & mask) {
-      result = handler->pwrite(b, l);
-      if (result == -1) {
-	dropHandler(handler, "ECONNRESET/EPIPE");
-      } else if (result == -2) {
-	dropHandler(handler, "send queue too big");
-      }
-    }
-  }
-}
-
 NetHandler* getPlayerNetHandler( int playerIndex )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -359,7 +727,7 @@ int lookupPlayer(const PlayerId& id)
 {
   if (id == ServerPlayer)
     return id;
-
+  
   if (!realPlayer(id))
     return InvalidPlayer;
 
@@ -648,21 +1016,7 @@ void publicize()
 
 static bool serverStart()
 {
-#if defined(_WIN32)
-  const BOOL optOn = TRUE;
-  BOOL opt = optOn;
-#else
-  const int optOn = 1;
-  int opt = optOn;
-#endif
-
   packWorldSettings();
-
-  // init addr:port structure
-  struct sockaddr_in addr;
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr = serverAddress;
 
   // look up service name and use that port if no port given on
   // command line.  if no service then use default port.
@@ -672,62 +1026,24 @@ static bool serverStart()
       clOptions->wksPort = ntohs(service->s_port);
     }
   }
-  pingReply.serverId.port = addr.sin_port = htons(clOptions->wksPort);
 
-  // open well known service port
-  wksSocket = socket(AF_INET, SOCK_STREAM, 0);
-  if (wksSocket == -1) {
-    nerror("couldn't make connect socket");
-    return false;
-  }
-#ifdef SO_REUSEADDR
-  /* set reuse address */
-  opt = optOn;
-  if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
-    nerror("serverStart: setsockopt SO_REUSEADDR");
-    close(wksSocket);
-    return false;
-  }
-#endif
-  if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    if (!clOptions->useFallbackPort) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
+  bool result = listener.listen( serverAddress, clOptions->wksPort, clOptions->useFallbackPort);
 
-    // if we get here then try binding to any old port the system gives us
-    addr.sin_port = htons(0);
-    if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
-
-    // fixup ping reply
-    AddrLen addrLen = sizeof(addr);
-    if (getsockname(wksSocket, (struct sockaddr*)&addr, &addrLen) >= 0)
-      pingReply.serverId.port = addr.sin_port;
-
-    // fixup publicized name will want it here later
+  if (result) {
+    sockaddr_in addr( listener.address() );
+    pingReply.serverId.port = addr.sin_port;
+    // in case we allowed a random port, fix the publicized port
     clOptions->wksPort = ntohs(addr.sin_port);
-  }
 
-  if (listen(wksSocket, 5) == -1) {
-    nerror("couldn't make connect socket queue");
-    close(wksSocket);
-    return false;
-  }
+    if (!NetHandler::initHandlers(addr)) {
+      listener.shutdown();
+      return false;
+    }
 
-  addr.sin_port = htons(clOptions->wksPort);
-  if (!NetHandler::initHandlers(addr)) {
-    close(wksSocket);
-    return false;
+    listServerLinksCount = 0;
+    publicize();
   }
-
-  listServerLinksCount = 0;
-  publicize();
-  return true;
+  return result;
 }
 
 
@@ -739,8 +1055,7 @@ static void serverStop()
   bzSignal(SIGTERM, SIG_IGN);
 
   // reject attempts to talk to server
-  shutdown(wksSocket, 2);
-  close(wksSocket);
+  listener.shutdown();
 
   // tell players to quit
   NetMsg msg = MSGMGR.newMessage();
@@ -980,7 +1295,7 @@ static void dumpScore()
 }
 
 
-static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
+static void handleCommand(void *rawbuf, bool udp, NetHandler *handler)
 {
   if (!rawbuf) {
     std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
@@ -992,7 +1307,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 
   // pull off the BZFS code and size that packs all BZFS fomat comunication
   uint16_t len, code;
-  void *buf = (char *)rawbuf;
+  void* buf = rawbuf;
   getGeneralMessageInfo(&buf,code,len);
 
   // make sure it's not an attack
@@ -1023,47 +1338,29 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
 }
 
 
-static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
+static void handleTcp(NetHandler &netPlayer, int i, char* rawbuf)
 {
-  if (e != ReadAll) {
-    if (e == ReadReset) {
-      dropHandler(&netPlayer, "ECONNRESET/EPIPE");
-    } else if (e == ReadError) {
-      // dump other errors and remove the player
-      nerror("error on read");
-      dropHandler(&netPlayer, "Read error");
-    } else if (e == ReadDiscon) {
-      // disconnected
-      dropHandler(&netPlayer, "Disconnected");
-    } else if (e == ReadHuge) {
-      logDebugMessage(1,"Player [%d] sent huge packet length, possible attack\n", i);
-      dropHandler(&netPlayer, "large packet recvd");
-    }
-    return;
-  }
-
+  void* buf( rawbuf );
   uint16_t len, code;
-  void *buf = netPlayer.getTcpBuffer();
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  getGeneralMessageInfo(&buf, code, len);
 
   // trying to get the real player from the message: bots share tcp
   // connection with the player
   PlayerId t = i;
   switch (code) {
-    case MsgShotBegin: {
-      nboUnpackUByte(buf, t);
-      break;
-    }
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      float timestamp;
-      buf = nboUnpackUByte(buf, t);
-      buf = nboUnpackFloat(buf, timestamp);
-      break;
-    }
-    default:
-      break;
+  case MsgShotBegin: {
+    nboUnpackUByte(buf, t);
+    break;
+  }
+  case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall: {
+    float timestamp;
+    buf = nboUnpackUByte(buf, t);
+    buf = nboUnpackFloat(buf, timestamp);
+    break;
+  }
+  default:
+    break;
   }
   // Make sure is a bot
   GameKeeper::Player *playerData;
@@ -1097,7 +1394,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   }
 
   // handle the command
-  handleCommand(netPlayer.getTcpBuffer(), false, &netPlayer);
+  handleCommand(rawbuf, false, &netPlayer);
 }
 
 
@@ -1105,7 +1402,7 @@ PlayerId getNewPlayer(NetHandler *netHandler)
 {
   PlayerId playerIndex = getNewPlayerID();
 
-  new GameKeeper::Player(playerIndex, netHandler, handleTcp);
+  new GameKeeper::Player(playerIndex, netHandler);
 
   checkGameOn();
 
@@ -1149,39 +1446,6 @@ void checkGameOn ( void )
   }
 }
 
-
-static void acceptClient()
-{
-  // client (not a player yet) is requesting service.
-  // accept incoming connection on our well known port
-  struct sockaddr_in clientAddr;
-  AddrLen addr_len = sizeof(clientAddr);
-  int fd = accept(wksSocket, (struct sockaddr*)&clientAddr, &addr_len);
-  if (fd == -1) {
-    nerror("accepting on wks");
-    return;
-  }
-  // don't buffer info, send it immediately
-  setNoDelay(fd);
-  BzfNetwork::setNonBlocking(fd);
-
-  int keepalive = 1, n;
-  n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (SSOType)&keepalive, sizeof(int));
-
-  if (n < 0)
-    nerror("couldn't set keepalive");
-
-  // they aren't a player yet till they send us the connection string
-  NetConnectedPeer	peer;
-  peer.handler = new NetHandler(clientAddr, fd);
-  peer.player = -1;
-  peer.socket = fd;
-  peer.deleteMe = false;
-  peer.sent = false;
-  peer.startTime = TimeKeeper::getCurrent().getSeconds();
-
-  netConnectedPeers[fd] = peer;
-}
 
 static void respondToPing(Address addr)
 {
@@ -1383,21 +1647,21 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   if (playerIndex == ServerPlayer) {
     bz_ServerMsgEventData_V1 serverMsgData;
     switch (dstPlayer) {
-      case AdminPlayers:
+    case AdminPlayers:
+      serverMsgData.to = BZ_NULLUSER;
+      serverMsgData.team = eAdministrators;
+      break;
+    case AllPlayers:
+      serverMsgData.to = BZ_ALLUSERS;
+      break;
+    default:
+      if (dstPlayer <= LastRealPlayer) {
+	serverMsgData.to = dstPlayer;
+      } else {
 	serverMsgData.to = BZ_NULLUSER;
-	serverMsgData.team = eAdministrators;
-	break;
-      case AllPlayers:
-	serverMsgData.to = BZ_ALLUSERS;
-	break;
-      default:
-	if (dstPlayer <= LastRealPlayer) {
-	  serverMsgData.to = dstPlayer;
-	} else {
-	  serverMsgData.to = BZ_NULLUSER;
-	  // FIXME this teamcolor <-> player id conversion is in several files now
-	  serverMsgData.team = convertTeam(TeamColor(250 - dstPlayer));
-	}
+	// FIXME this teamcolor <-> player id conversion is in several files now
+	serverMsgData.team = convertTeam(TeamColor(250 - dstPlayer));
+      }
     }
     serverMsgData.message = message;
     worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
@@ -1420,7 +1684,8 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 
 // FIXME this is a workaround for a bug, still needed?
 // Team Size is wrong at some time
-static void fixTeamCount() {
+static void fixTeamCount()
+{
   int playerIndex, teamNum;
   for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
     team[teamNum].team.size = 0;
@@ -1570,55 +1835,55 @@ static std::string evaluateString(const std::string &raw)
     } else {
       char next = raw[i+1];
       switch (next) {
-	case '\\' : {
-	  eval += '\\';
-	  i++;
-	  break;
-	}
-	case 'n' : {
-	  eval += "\\n";
-	  i++;
-	  break;
-	}
-	case '{' : {
-	  unsigned int start = (i + 2);
-	  std::string::size_type end = raw.find_first_of('}', start);
-	  if (end == std::string::npos) {
-	    i = rawLen; // unterminated, ignore the rest of the string
+      case '\\' : {
+	eval += '\\';
+	i++;
+	break;
+      }
+      case 'n' : {
+	eval += "\\n";
+	i++;
+	break;
+      }
+      case '{' : {
+	unsigned int start = (i + 2);
+	std::string::size_type end = raw.find_first_of('}', start);
+	if (end == std::string::npos) {
+	  i = rawLen; // unterminated, ignore the rest of the string
+	} else {
+	  const std::string var = raw.substr(start, end - start);
+	  i += (end - start) + 2;
+	  if (BZDB.isSet(var)) {
+	    eval += BZDB.get(var);
 	  } else {
-	    const std::string var = raw.substr(start, end - start);
-	    i += (end - start) + 2;
-	    if (BZDB.isSet(var)) {
-	      eval += BZDB.get(var);
-	    } else {
-	      eval += "*BADBZDB*";
-	    }
+	    eval += "*BADBZDB*";
 	  }
-	  break;
 	}
-	case '(' : {
-	  unsigned int start = (i + 2);
-	  std::string::size_type end = raw.find_first_of(')', start);
-	  if (end == std::string::npos) {
-	    i = rawLen; // unterminated, ignore the rest of the string
-	  } else {
-	    const std::string var = raw.substr(start, end - start);
-	    i += (end - start) + 2;
-	    if (var == "uptime") {
-	      char buffer[16];
-	      const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
-	      snprintf(buffer, 16, "%i", (int)uptime);
-	      eval += buffer;
-	    }
-	    else {
-	      eval += "*BADVAR*";
-	    }
+	break;
+      }
+      case '(' : {
+	unsigned int start = (i + 2);
+	std::string::size_type end = raw.find_first_of(')', start);
+	if (end == std::string::npos) {
+	  i = rawLen; // unterminated, ignore the rest of the string
+	} else {
+	  const std::string var = raw.substr(start, end - start);
+	  i += (end - start) + 2;
+	  if (var == "uptime") {
+	    char buffer[16];
+	    const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+	    snprintf(buffer, 16, "%i", (int)uptime);
+	    eval += buffer;
 	  }
-	  break;
+	  else {
+	    eval += "*BADVAR*";
+	  }
 	}
-	default: {
-	  break;
-	}
+	break;
+      }
+      default: {
+	break;
+      }
       }
     }
   }
@@ -1646,7 +1911,8 @@ bool validPlayerCallsign ( int playerIndex )
 // try to get over a bug where extraneous flag are attached to a tank
 // not really found why, but this should fix
 // Should be called when we sure that tank does not hold any
-static void dropAssignedFlag(int playerIndex) {
+static void dropAssignedFlag(int playerIndex)
+{
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
     FlagInfo &flag = *FlagInfo::get(flagIndex);
     if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
@@ -1687,15 +1953,15 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	  // if the player was not reged at join they have done nothing wrong
 	  rejectPlayer(playerIndex, RejectBadCallsign, "Ghostie was not registered on join");
 	  return;
-	} else {
-	  sendMessage(ServerPlayer, i ,
-		      "Another client has demonstrated ownership of your "
-		      "callsign with the correct password.  You have been "
-		      "ghosted.");
-	  removePlayer(i, "Ghost", true);
 	}
-	break;
+      } else {
+	sendMessage(ServerPlayer, i ,
+		    "Another client has demonstrated ownership of your "
+		    "callsign with the correct password.  You have been "
+		    "ghosted.");
+	removePlayer(i, "Ghost", true);
       }
+      break;
     }
   }
   if (!validPlayerCallsign(playerIndex))
@@ -2257,15 +2523,19 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       buf	= nboPackUShort(buf, 1);
       buf	= nboPackUShort(buf, MsgSuperKill);
       buf	= nboPackUByte(buf, uint8_t(playerIndex));
-      playerData->netHandler->pwrite(tempBuf, 5);
+      if (playerData->netHandler)
+	playerData->netHandler->pwrite(tempBuf, 5);
+      else
+	std::cout << "dropping a player with no nethandler\n";
     }
   }
 
   // flush the connection
-  if (playerData->netHandler)
-    netConnectedPeers[playerData->netHandler->getFD()].deleteMe = true;
-  playerData->netHandler->flushAllUDP();
-
+  if (playerData->netHandler) {
+    NetHandler* handler( playerData->netHandler );
+    playerData->netHandler = 0;
+    handler->closing(reason);
+  }
 
   // if there is an active poll, cancel any vote this player may have made
   if ((votingArbiter != NULL) && (votingArbiter->knowsPoll())) {
@@ -2412,7 +2682,7 @@ void playerAlive(int playerIndex)
     for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *pbData = GameKeeper::Player::getPlayerByIndex(i);
       if (pbData == NULL)
-        continue;
+	continue;
 
       if ((pbData->netHandler->getIPAddress().s_addr == playerIP.s_addr) && pbData->player.isBot()) {
 	botsFound++;
@@ -2549,6 +2819,7 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(killer);
   }
 }
+
 void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
 {
   if (!(clOptions->gameOptions & HandicapGameStyle))
@@ -2830,10 +3101,9 @@ void searchFlag(GameKeeper::Player &playerData)
     if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG)) {
       if (flag.flag.type->flagTeam != playerData.player.getTeam())
 	sendGrabFlagMessage(playerIndex,flag);
-    }
-    else
+    } else {
       sendGrabFlagMessage(playerIndex,flag);
-      
+    }
   }
 }
 
@@ -4427,7 +4697,7 @@ static void cleanPendingPlayers ( void )
 
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
-  if ( !peer.pendingSendChunks.size() )
+  if ( peer.pendingSendChunks.size() == 0 || peer.deleteMe )
     return;
 
   peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
@@ -4471,7 +4741,6 @@ static void runMainLoop ( void )
    **/
 
   int readySetGo = -1; // match countdown timer
-  int nfound; 
   while (!done) {
     doTickEvent();
     updatePlayerPositions();
@@ -4479,20 +4748,6 @@ static void runMainLoop ( void )
 
     // see if the octree needs to be reloaded
     world->checkCollisionManager();
-
-    // highest fd used
-    int maxFileDescriptor = 0;
-
-    // prepare select set
-    fd_set read_set, write_set;
-    FD_ZERO(&read_set);
-    FD_ZERO(&write_set);
-    NetHandler::setFd(&read_set, &write_set, maxFileDescriptor);
-
-    // always listen for connections
-    FD_SET((unsigned int)wksSocket, &read_set);
-    if (wksSocket > maxFileDescriptor)
-      maxFileDescriptor = wksSocket;
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -4507,18 +4762,8 @@ static void runMainLoop ( void )
     /**************
      *  SELECT()  *
      **************/
-
-    // wait for an incoming communication, a flag to hit the ground,
-    // a game countdown to end, a world weapon needed to be fired,
-    // or a replay packet waiting to be sent.
     GameKeeper::Player::freeTCPMutex();
-    struct timeval timeout;
-    timeout.tv_sec = long(floorf(waitTime));
-    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
-    //if (nfound)
-    //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-
+    listener.update( waitTime );
     // send replay packets
     // (this check and response should follow immediately after the select() call)
     GameKeeper::Player::passTCPMutex();
@@ -4545,336 +4790,68 @@ static void runMainLoop ( void )
     doSuperFlags(tm);
     doListServerUpdate(tm);
 
-    // check messages
-    if (nfound > 0) {
-      //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-      // first check initial contacts
-      if (FD_ISSET(wksSocket, &read_set))
-	acceptClient();
+    // Respond to our network
+    listener.process();
 
-      // check if we have any UDP packets pending
-      if (NetHandler::isUdpFdSet(&read_set)) {
-	TimeKeeper receiveTime = TimeKeeper::getCurrent();
-	while (true) {
-	  struct sockaddr_in uaddr;
-	  unsigned char ubuf[MaxPacketLen];
+    // get a list of connections to purge
+    // then purge them
+    std::vector<int> toKill;
 
-	  NetHandler* netHandler;
+    NetConnectedPeers::iterator peerItr = netConnectedPeers.begin();
+    while (peerItr != netConnectedPeers.end()) {
+      if (peerItr->second.deleteMe)
+	toKill.push_back(peerItr->first);
 
-	  // interface to the UDP Receive routines
-	  int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
-	  if (id == -1)
-	    break;
-
-	  uint16_t len, code;
-	  void *buf = (char *)ubuf;
-	  getGeneralMessageInfo(&buf,code,len);
-
-	  if (code == MsgPingCodeRequest) {
-	    if (len != 2)
-	      continue;
-	    // if I'm ignoring pings
-	    // then ignore the ping.
-	    if (handlePings) {
-	      respondToPing(Address(uaddr));
-	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
-	    }
-	    continue;
-	  } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
-            unsigned char tag = 0;               // This could be factored into it's own function
-            buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
-            
-            sendEchoResponse(&uaddr, tag);
-            
-            continue;
-          }
-          
-
-	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
-	    // It is a UDP Link Request ... try to match it
-	    uint8_t index;
-	    buf = nboUnpackUByte(buf, index);
-	    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(index);
-
-	    if (playerData) {
-	      netHandler = playerData->netHandler;
-	      if (netHandler->isMyUdpAddrPort(uaddr, false)) {
-		netHandler->setUDPin(&uaddr);
-
-		// send client the message that we are ready for him
-		sendUDPupdate(netHandler);
-
-		logDebugMessage(2,"Inbound UDP up %s:%d\n",
-				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-	      } else {
-		logDebugMessage(2,"Inbound UDP rejected %s:%d different IP than original\n",
-				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-	      }
-	      continue;
-	    }
-	  }
-	  // handle the command for UDP
-	  handleCommand(ubuf, true, netHandler);
-
-	  // don't spend more than 250ms receiving udp
-	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	    logDebugMessage(2,"Too much UDP traffic, will hope to catch up later\n");
-	    break;
-	  }
-	}
-      }
-
-      // process eventual resolver requests
-
-      NetHandler::checkDNS(&read_set, &write_set);
-
-      // now check our connected peer list, and see if we have any data pending.
-
-      std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
-
-      // get a list of connections to purge
-      // then purge them
-      std::vector<int> toKill;
-
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe)
-	  toKill.push_back(peerItr->first);
-
-	peerItr++;
-      }
-
-      for (unsigned int i = 0; i < toKill.size(); i++) {
-	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end()) {
-	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
-	  if (peer.handler)
-	    delete(peer.handler);
-
-	  peer.handler = NULL;
-	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
-	}
-      }
-
-      GameKeeper::Player *playerData = NULL;
-      peerItr = netConnectedPeers.begin();
-
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe) {
-	  // skip it it's dead to us, well close and purge it later
-	  peerItr++;
-	  continue;
-	}
-
-	NetHandler *netHandler = peerItr->second.handler;
-	if (peerItr->second.player != -1) {
-	  peerItr->second.sent = true;
-	  // it's a player now, so treat them with the respect they deserve
-	  playerData = GameKeeper::Player::getPlayerByIndex(peerItr->second.player);
-
-	  if (playerData && peerItr->second.handler) {
-	    // send whatever we have ... if any
-	    if (netHandler->pflush(&write_set) == -1)
-	      removePlayer(peerItr->second.player, "ECONNRESET/EPIPE", false);
-	    else
-	      playerData->handleTcpPacket(&read_set);
-	  }
-	  // check for any async data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-	} else {
-	  // it's not a player yet ( but may be )
-	  // check for any data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-
-	  if (netHandler->pflush(&write_set) == -1)
-	    peerItr->second.deleteMe = true; // kill it later
-	  else {
-	    if (netHandler->isFdSet(&read_set)) {
-	      // there is some data for us
-	      if ( !peerItr->second.notifyList.size() ) {
-		// we have no listeners yet, so we are probably new.
-		// just read in the first N bits
-		RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
-
-		if ( e !=ReadAll && e != ReadPart ) {
-		  // there was an error but we aren't a player yet
-		  if (e == ReadError)
-		    nerror("error on read");
-		  else {
-		    if (e == ReadHuge)
-		      logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		    peerItr->second.deleteMe = true;
-		  }
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-		  int fd = peerItr->first;
-
-		  if (e == ReadAll && strncmp((char*)buf,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER)) == 0 ) {
-		    // it's a player, it sent us the magic string, get it setup
-		    netHandler->flushData();
-
-		    // send server version and playerid
-		    char buffer[9];
-		    memcpy(buffer, getServerVersion(), 8);
-
-		    // send 0xff if list is full
-		    buffer[8] = (char)0xff;
-
-		    PlayerId playerIndex = getNewPlayer(netHandler);
-		    peerItr->second.player = playerIndex;
-
-		    if (playerIndex < 0xff) {
-		      logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      buffer[8] = (uint8_t)playerIndex;
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		    } else {
-		      // full? reject by closing socket
-		      logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n", inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      // send back 0xff before closing
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		      peerItr->second.deleteMe = true; // kill/close later
-		    }
-		  } else {
-		    // it's NOT a player but it sent us data, see if anyone wants to deal with it
-
-		    // ok read in all the data we may have waiting
-		    void *data = malloc(readSize);
-		    memcpy(data,buf,readSize);
-		    unsigned int totalSize = readSize;
-
-		    while (e == ReadAll) {
-		      netHandler->flushData();
-
-		      e = netHandler->receive(256);
-		      readSize = netHandler->getTcpReadSize();
-		      buf = netHandler->getTcpBuffer();
-
-		      unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
-		      memcpy(temp,data,totalSize);
-		      memcpy(temp+totalSize,buf,readSize);
-		      free(data);
-		      data = temp;
-		      totalSize += readSize;
-		    }
-
-		    // we have a copy of all the data, so we can flush now
-		    netHandler->flushData();
-
-		    // call an event to let people know we got a new connect
-		    bz_NewNonPlayerConnectionEventData_V1 eventData;
-
-		    eventData.data = data;
-		    eventData.size = totalSize;
-		    eventData.connectionID = peerItr->first;
-
-		    worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
-		    free(data);
-
-		    if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-		      peerItr->second.deleteMe = true;// nobody wanted it and it's got nothing to send so mark it for purge
-		  }
-		}
-	      } else {
-		// we have a listener, so lets get all our data, and send it to him so he can do what he wants to do with us.
-		RxStatus e = netHandler->receive(256);
-
-		if (e !=ReadAll && e != ReadPart) {
-		  // we could not read, it must have disconnected
-		  // there ewas an error
-		  for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
-		    peerItr->second.notifyList[i]->disconnect(peerItr->first);
-
-		  peerItr->second.deleteMe = true;
-
-		  if (e == ReadError)
-		    nerror("error on read");
-
-		  if (e == ReadHuge)
-		    logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-
-		  void *data = malloc(readSize);
-		  memcpy(data,buf,readSize);
-		  unsigned int totalSize = readSize;
-
-		  while ( e == ReadAll ) {
-		    netHandler->flushData();
-
-		    e = netHandler->receive(256);
-		    readSize = netHandler->getTcpReadSize();
-		    buf = netHandler->getTcpBuffer();
-
-		    unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
-		    memcpy(temp,data,totalSize);
-		    memcpy(temp+totalSize,buf,readSize);
-		    free(data);
-		    data = temp;
-		    totalSize += readSize;
-		  }
-
-		  netHandler->flushData();
-
-		  // it has dudes lets lets call them.
-		  for (unsigned int i = 0; i < peerItr->second.notifyList.size(); i++) {
-		    if (peerItr->second.notifyList[i])
-		      peerItr->second.notifyList[i]->pending(peerItr->first,data,totalSize);
-		  }
-
-		  free(data);
-		}
-	      }
-	    } else {
-	      // there is no data, so delete us or move along and it's not a player for gods sake
-	      if ( peerItr->second.player == -1 && !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() ) {
-		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
-		  peerItr->second.deleteMe = true;
-	      }
-	    }
-	  }
-	}
-
-	peerItr++;
-      }
-    } else if (nfound < 0) {
-      if (getErrno() != EINTR) {
-	// test code - do not uncomment, will cause big stuttering
-	// TimeKeeper::sleep(1.0f);
-      }
-    } else {
-      if (NetHandler::anyUDPPending())
-	NetHandler::flushAllUDP();
+      peerItr++;
     }
 
-    // go thru all the connected users, see if they need any automatic handlaking
-    std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
+    for (unsigned int i = 0; i < toKill.size(); i++) {
+      peerItr = netConnectedPeers.find(toKill[i]);
+      if (peerItr != netConnectedPeers.end()) {
 
+	GameKeeper::Player* activePlayer = GameKeeper::Player::getFirstPlayer(peerItr->second.handler);
+	if (activePlayer) {
+	  std::cout << "Hey! You want to delete NetHandler "
+		    << (void*)peerItr->second.handler << " for socket "
+		    << peerItr->first << " but it is used by player "
+		    << activePlayer->getIndex() << "\n";
+	} else {
+	  if (peerItr->second.handler) {
+	    peerItr->second.handler->closing("FIXME..(bzfs) I shouldn't be here");
+	  }
+	}
+      }
+    }
+
+    // This was originally only if there was nothing to read (from
+    // select()). What is the harm of doing it on every loop?
+    if (NetHandler::anyUDPPending())
+      NetHandler::flushAllUDP();
+
+    // go thru all the connected users, see if they need any automatic handlaking
+    peerItr = netConnectedPeers.begin();
     while ( peerItr != netConnectedPeers.end() ) {
-      if (!peerItr->second.sent) {
-	// check for any waiting conenctions if they are timed, then see if anyone wants them
-	// little guy hasn't sent us a thing
-	if (now - peerItr->second.startTime > tcpTimeout) {
+      NetConnectedPeer& peer( peerItr->second );
+      if (!peer.sent) {
+	// check for any waiting connections if they are timed, then
+	// see if anyone wants them; little guy hasn't sent us a thing
+	if (now - peer.startTime > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
 	  eventData.connectionID = peerItr->first;
 
 	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
-	  peerItr->second.sent = true;
+	  peer.sent = true;
 
 	  // no love for our little connection, let him go.
-	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-	    peerItr->second.deleteMe = true;
+	  if (!peer.notifyList.size() && !peer.pendingSendChunks.size() )
+	    peer.handler->closing("Unconnected/unwanted peer");
 	}
       }
+      else
+	{
+	}
       peerItr++;
     }
     // Fire world weapons

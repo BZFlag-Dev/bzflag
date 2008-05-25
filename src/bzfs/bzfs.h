@@ -28,6 +28,7 @@
 #include "Address.h"
 #include "Flag.h"
 #include "Ping.h"
+#include "NetHandler.h"
 
 // bzfs specific headers
 #include "TeamBases.h"
@@ -200,6 +201,7 @@ typedef struct {
   int socket;
   int player;
   NetHandler *handler;
+  NetHandlerCloseCallback* closeCB;
   std::vector<bz_NonPlayerConnectionHandler*> notifyList;
 
   std::vector<NonPlayerDataChunk> pendingSendChunks;

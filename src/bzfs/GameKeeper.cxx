@@ -26,17 +26,6 @@
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
 
-#if defined(USE_THREADS)
-pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;
-
-static void *tcpRx(void* arg) {
-  GameKeeper::Player *playerData = (GameKeeper::Player *)arg;
-  playerData->handleTcpPacketT();
-  return NULL;
-}
-#endif
-
-
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 {
   buf = nboPackUByte(buf, playerIndex);
@@ -50,9 +39,9 @@ void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t proper
   msg->packUByte(properties);
 }
 
-GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
+GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler):
 player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+playerIndex(_playerIndex), closed(false),
 needThisHostbanChecked(false), idFlag(-1)
 {
   playerHandler = NULL;
@@ -84,7 +73,7 @@ needThisHostbanChecked(false), idFlag(-1)
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
 player(_playerIndex), netHandler(NULL), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(NULL),
+playerIndex(_playerIndex), closed(false),
 needThisHostbanChecked(false), idFlag(-1)
 {
   canSpawn = true;
@@ -390,32 +379,6 @@ int GameKeeper::Player::getFreeIndex(int min, int max)
   }
   return max;
 }
-
-#if defined(USE_THREADS)
-void GameKeeper::Player::handleTcpPacketT()
-{
-  while (!closed) {
-    const RxStatus e = netHandler->tcpReceive();
-    if (e == ReadPart)
-      continue;
-    passTCPMutex();
-    clientCallback(*netHandler, playerIndex, e);
-    freeTCPMutex();
-  }
-  refCount = 0;
-}
-#else
-void GameKeeper::Player::handleTcpPacket(fd_set *set)
-{
-  if (netHandler->isFdSet(set)) {
-    const RxStatus e = netHandler->tcpReceive();
-    if (e == ReadPart)
-      return;
-    clientCallback(*netHandler, playerIndex, e);
-  }
-}
-
-#endif
 
 void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
 {

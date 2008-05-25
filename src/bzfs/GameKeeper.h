@@ -71,8 +71,6 @@ public:
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
-typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
-
 /** This class is meant to be the container of all the global entity that lives
     into the game and methods to act globally on those.
     Up to now it contain players. Flag class is only there as a TODO
@@ -81,7 +79,7 @@ class GameKeeper {
 public:
   class Player {
   public:
-    Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback);
+    Player(int _playerIndex, NetHandler *_netHandler);
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
@@ -112,10 +110,8 @@ public:
     void	   signingOn(bool ctf);
     void	   close();
     static bool    clean();
-    void	   handleTcpPacket(fd_set *set);
-#if defined(USE_THREADS)
-    void	   handleTcpPacketT();
-#endif
+
+// TODO: probably should remove this mutex
     static void    passTCPMutex();
     static void    freeTCPMutex();
 
@@ -217,7 +213,6 @@ public:
     static Player    *playerList[PlayerSlot];
     int		      playerIndex;
     bool	      closed;
-    tcpCallback       clientCallback;
     std::string	      bzIdentifier;
 #if defined(USE_THREADS)
     pthread_t		   thread;
@@ -257,13 +252,6 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
 void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties );
-
-#if defined(USE_THREADS)
-inline void GameKeeper::Player::handleTcpPacket(fd_set *)
-{
-return;
-}
-#endif
 
 inline void GameKeeper::Player::passTCPMutex()
 {

@@ -27,6 +27,10 @@
 # endif
 # include <winsock2.h>
 # include <ws2tcpip.h>
+#else
+# include <sys/socket.h>
+  typedef int SOCKET;
+# define INVALID_SOCKET -1
 #endif
 
 /* system headers */
