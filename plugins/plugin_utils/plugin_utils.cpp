@@ -15,6 +15,41 @@
 #include <sstream>
 #include "plugin_utils.h"
 
+const char* bzu_GetTeamName( bz_eTeamType team )
+{
+  switch (team)
+  {
+  default:
+    break;
+
+  case eRedTeam:
+    return "Red";
+
+  case eGreenTeam:
+    return "Green";
+
+  case eBlueTeam:
+    return "Blue";
+
+  case ePurpleTeam:
+    return "Purple";
+
+  case eRogueTeam:
+    return "Rogue";
+
+  case eObservers:
+    return "Observer";
+
+  case eRabbitTeam:
+    return "Rabbit";
+
+  case eHunterTeam:
+    return "Hunter";
+  }
+
+  return "Unknown";
+}
+
 std::string tolower(const std::string& s)
 {
   std::string trans = s;

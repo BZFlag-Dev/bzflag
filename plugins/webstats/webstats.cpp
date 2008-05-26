@@ -71,40 +71,6 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("Status",this);
 }
 
-const char* teamFromType ( bz_eTeamType team )
-{
-  switch (team)
-  {
-  default:
-    break;
-
-  case eRedTeam:
-    return "Red";
-
-  case eGreenTeam:
-    return "Green";
-
-  case eBlueTeam:
-    return "Blue";
-
-  case ePurpleTeam:
-    return "Purple";
-
-  case eRogueTeam:
-    return "Rogue";
-
-  case eObservers:
-    return "Observer";
-
-  case eRabbitTeam:
-    return "Rabbit";
-
-  case eHunterTeam:
-    return "Hunter";
-  }
-
-  return "Unknown";
-}
 
 void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
 {
@@ -144,7 +110,7 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
   else if (key == "teamname")
   {
     if (rec)
-      data = teamFromType(teamSortItr->first);
+      data = bzu_GetTeamName(teamSortItr->first);
     else
       data = "";
   }
