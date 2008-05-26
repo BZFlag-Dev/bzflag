@@ -1235,6 +1235,16 @@ BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
   return convertTeam(player->player.getTeam());
 }
 
+BZF_API const char* bz_getPlayerCallsign( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return NULL;
+
+  return player->player.getCallSign();
+}
+
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);

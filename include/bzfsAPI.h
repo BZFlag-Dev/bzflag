@@ -1350,7 +1350,7 @@ BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn );
 BZF_API bool bz_setPlayerLimboMessage( int playerID, const char* text );
 
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID );
-
+BZF_API const char* bz_getPlayerCallsign( int playerID );
 
 class BZF_API bz_BasePlayerRecord
 {
