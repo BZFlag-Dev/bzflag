@@ -1185,7 +1185,7 @@ static void		updateFlag(FlagType* flag)
 
 void			notifyBzfKeyMapChanged()
 {
-  std::string restartLabel = "Right Mouse";
+  std::string restartLabel = BundleMgr::getCurrentBundle()->getLocalString("Right Mouse");
   std::vector<std::string> keys = KEYMGR.getKeysFromCommand("restart", false);
 
   if (keys.size() == 0) {
@@ -1203,13 +1203,13 @@ void			notifyBzfKeyMapChanged()
       restartLabel += tolower(keys[0][0]);
       restartLabel += '\"';
     } else {
-      restartLabel = keys[0];
+      restartLabel = BundleMgr::getCurrentBundle()->getLocalString(keys[0]);
     }
   }
 
   // only show the first 2 keys found to keep things simple
   if (keys.size() > 1) {
-    restartLabel.append(" or ");
+    restartLabel.append(BundleMgr::getCurrentBundle()->getLocalString(" or "));
     // display single letter keys as quoted lowercase letter
     if (keys[1].size() == 1) {
       restartLabel += '\"';
