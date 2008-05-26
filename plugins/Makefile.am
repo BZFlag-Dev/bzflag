@@ -10,6 +10,7 @@ SUBDIRS = \
 	airspawn \
 	bzfscron \
 	chathistory \
+	cjatlog \
 	customflagsample \
 	fastmap \
 	flagStay \
