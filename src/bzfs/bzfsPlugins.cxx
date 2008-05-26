@@ -408,26 +408,6 @@ public:
 
 DynamicPluginCommands	command;
 
-
-// auto load plugin dir
-
-std::string getAutoLoadDir ( void )
-{
-  if (BZDB.isSet("PlugInAutoLoadDir"))
-    return BZDB.get("PlugInAutoLoadDir");
-#if (defined(_WIN32) || defined(WIN32))
-  char exePath[MAX_PATH];
-  GetModuleFileName(NULL,exePath,MAX_PATH);
-  char* last = strrchr(exePath,'\\');
-  if (last)
-    *last = '\0';
-  strcat(exePath,"\\plugins");
-  return std::string(exePath);
-#else
-  return std::string("");
-#endif
-}
-
 void initPlugins ( void )
 {
   customPluginMap.clear();
@@ -435,20 +415,6 @@ void initPlugins ( void )
   registerCustomSlashCommand("loadplugin",&command);
   registerCustomSlashCommand("unloadplugin",&command);
   registerCustomSlashCommand("listplugins",&command);
-
-#ifdef _WIN32
-#ifdef _DEBUG 
-  OSDir	dir;
-  std::string path = getAutoLoadDir();
-  if (getAutoLoadDir().size()) {
-    dir.setOSDir(getAutoLoadDir());
-
-    OSFile file;
-    while(dir.getNextFile(file,"*.dll",false) )
-      loadPlugin(file.getOSName(),std::string(""));
-  }
-#endif //_DEBUG
-#endif
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
