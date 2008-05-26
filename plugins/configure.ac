@@ -199,6 +199,7 @@ AC_CONFIG_FILES([
 	airspawn/Makefile
 	bzfscron/Makefile
 	chathistory/Makefile
+	chatlog/Makefile
 	customflagsample/Makefile
 	fastmap/Makefile
 	flagStay/Makefile
