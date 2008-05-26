@@ -1275,7 +1275,6 @@ AC_CONFIG_FILES([
 	tools/tankview/Makefile
 	tools/tankview/vc8/Makefile
 	MSVC/Makefile
-	MSVC/VC71/Makefile
 	MSVC/VC8/Makefile
 ])
 AC_OUTPUT
