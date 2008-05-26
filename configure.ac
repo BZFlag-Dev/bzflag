@@ -1042,7 +1042,7 @@ if test "x$enable_regex_build" != "xyes" ; then
     AC_MSG_CHECKING(for regular expression functionality)
     PRELDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS $LIBREGEX"
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([
 #ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
@@ -1053,7 +1053,9 @@ int main() {
     regexec(&re, "", 0, 0, 0);
     return 0;
 }
-    ], [regex_works=yes])
+    ], [regex_works=yes],
+    [regex_works=no],
+    [regex_works=no] )
     LDFLAGS="$PRELDFLAGS"
     AC_MSG_RESULT($regex_works)
 fi  # enable_regex_build
