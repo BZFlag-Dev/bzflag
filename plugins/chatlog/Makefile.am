@@ -1,9 +1,9 @@
-lib_LTLIBRARIES = SAMPLE_PLUGIN.la
+lib_LTLIBRARIES = CHATLOG.la
 
-SAMPLE_PLUGIN_la_SOURCES = chatlog.cpp
-SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version
-SAMPLE_PLUGIN_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
-SAMPLE_PLUGIN_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
+CHATLOG_la_SOURCES = chatlog.cpp
+CHATLOG_la_LDFLAGS = -module -avoid-version
+CHATLOG_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
+CHATLOG_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
 	README.txt \
