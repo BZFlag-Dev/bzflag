@@ -24,10 +24,14 @@
 #include "HUDuiLabel.h"
 #include "LocalPlayer.h"
 #include "Roster.h"
+#include "LocalFontFace.h"
 
 
 ShotStats::ShotStats() : HUDDialog()
 {
+  // create font
+  fontFace = LocalFontFace::create("sansSerifFont");
+
   // add title
   createLabel("Shot Statistics");
 
@@ -89,7 +93,7 @@ ShotStats::~ShotStats()
 void ShotStats::createLabel(const std::string &str, bool navigable)
 {
   HUDuiLabel* control = new HUDuiLabel;
-  control->setFontFace(getFontFace());
+  control->setFontFace(fontFace);
   control->setString(str);
   addControl(control, navigable);
 }
@@ -128,12 +132,6 @@ void ShotStats::addStats(Player *_player)
   ++rows;
 }
 
-const int		ShotStats::getFontFace()
-{
-  // create font
-  return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
-}
-
 HUDuiDefaultKey*	ShotStats::getDefaultKey()
 {
   return ShotStatsDefaultKey::getInstance();
@@ -157,19 +155,18 @@ void			ShotStats::resize(int _width, int _height)
   // total width / (number of columns + 3 columns extra for player name + 2 columns margin)
   const float columnWidth = _width / (columns + 5.0f);
   const float fontSize = (float) columnWidth / 6;
-  const float rowHeight = fm.getStringHeight(getFontFace(), fontSize) * 1.2f;
+  const float rowHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize) * 1.2f;
 
   // center title
-  const int fontFace = getFontFace();
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
 
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   const float titleY = (float)_height - titleHeight;
   float x = 0.5f * ((float)_width - titleWidth);
   float y = titleY;
@@ -179,8 +176,8 @@ void			ShotStats::resize(int _width, int _height)
   HUDuiLabel* key = (HUDuiLabel*)listHUD[1];
   key->setFontSize(fontSize);
   const float keyCenter = ((columns / 2) + 4) * columnWidth;
-  const float keyWidth = fm.getStringWidth(fontFace, fontSize, key->getString().c_str());
-  const float keyY = titleY - 2 * fm.getStringHeight(fontFace, fontSize);
+  const float keyWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, key->getString().c_str());
+  const float keyY = titleY - 2 * fm.getStringHeight(fontFace->getFMFace(), fontSize);
   y = keyY;
   x = keyCenter - 0.5f * keyWidth;
   key->setPosition(x, y);

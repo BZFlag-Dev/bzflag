@@ -27,6 +27,7 @@
 #include "HUDui.h"
 #include "ConfigFileManager.h"
 #include "clientConfig.h"
+#include "LocalFontFace.h"
 
 /* from bzflag.cxx */
 extern void dumpResources();
@@ -80,6 +81,7 @@ QuitMenu::QuitMenu()
 
   // frame
   HUDuiFrame* frame = new HUDuiFrame;
+  frame->setFontFace(MainMenu::getFontFace());
   frame->setLabel("Really Quit?");
   frame->setLineWidth(2.0f);
   frame->setStyle(HUDuiFrame::RoundedRectStyle);
@@ -96,17 +98,17 @@ void QuitMenu::resize(int _width, int _height)
   FontSizer fs = FontSizer(_width, _height);
 
   FontManager &fm = FontManager::instance();
-  const int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font
   fs.setMin(0, 10);
-  float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+  float fontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   fs.setMin(0,20);
-  float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  float smallFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // heights
-  const float fontHeight = fm.getStringHeight(fontFace, fontSize);
+  const float fontHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -129,13 +131,13 @@ void QuitMenu::resize(int _width, int _height)
   // save settings
   HUDuiList* list = (HUDuiList*)listHUD[2];
   list->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStringWidth(fontFace, smallFontSize, std::string(list->getLabel() + "99").c_str());
+  const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, std::string(list->getLabel() + "99").c_str());
   y = (float)_height - 6.25f * fontHeight;
   list->setPosition(x + stringWidth, y);
 
   // frame
   HUDuiFrame* frame = (HUDuiFrame*)listHUD[3];
-  const float gapSize = fm.getStringHeight(fontFace, fontSize);
+  const float gapSize = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   frame->setFontFace(fontFace);
   frame->setFontSize(smallFontSize);
   frame->setPosition(x - gapSize, (float)_height - 3.0f * fontHeight);

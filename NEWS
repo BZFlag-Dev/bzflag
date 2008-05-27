@@ -4,6 +4,7 @@
 
 BZFlag 2.99.x
 ------------
+* Allow per-locale default and user-specified fonts - Daniel Remenak
 * Handle Unicode input and keybindings - Daniel Remenak
 * Correctly render Unicode (UTF8) localizations - Daniel Remenak, Alexander Law
 * Russian translation - Alexander Law

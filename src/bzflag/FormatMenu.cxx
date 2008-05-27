@@ -24,6 +24,7 @@
 #include "playing.h"
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "LocalFontFace.h"
 
 const int FormatMenu::NumReadouts = 4;
 const int FormatMenu::NumItems = 30;
@@ -223,11 +224,11 @@ void FormatMenu::resize(int _width, int _height)
   FontSizer fs = FontSizer(_width, _height);
 
   FontManager &fm = FontManager::instance();
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   // reposition title
   float x, y;
@@ -235,8 +236,8 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
-    const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
+    const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -244,30 +245,30 @@ void FormatMenu::resize(int _width, int _height)
 
   // reposition test and current format messages
   fs.setMin(24*NumColumns, std::max(NumItems / NumColumns, 10));
-  float fontSize = fs.getFontSize(fontFace, "menuFontSize");
+  float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString().c_str());
+    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
     x = 0.5f * ((float)_width - stringWidth);
-    y -= 1.5f * fm.getStringHeight(fontFace, fontSize);
+    y -= 1.5f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(x, y);
   }
   {
     HUDuiLabel* label = currentLabel;
     label->setFontSize(fontSize);
-    y -= 1.0f * fm.getStringHeight(fontFace, fontSize);
+    y -= 1.0f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(0.5f * (float)_width, y);
   }
 
   // position page readout
-  fontSize = fs.getFontSize(fontFace, "menuFontSize");
+  fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
   {
     HUDuiLabel* label = pageLabel;
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace, fontSize, label->getString().c_str());
+    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
     x = 0.5f * ((float)_width - stringWidth);
-    y -= 2.0f * fm.getStringHeight(fontFace, fontSize);
+    y -= 2.0f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(x, y);
   }
 
@@ -284,7 +285,7 @@ void FormatMenu::resize(int _width, int _height)
 
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     label->setFontSize(fontSize);
-    y -= 1.0f * fm.getStringHeight(fontFace, fontSize);
+    y -= 1.0f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(x, y);
   }
 }

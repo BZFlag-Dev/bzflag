@@ -28,6 +28,8 @@
 /* common headers */
 #include "bzfgl.h"
 
+class LocalFontFace;
+
 class HUDuiElement {
   friend class HUDui;
   public:
@@ -40,14 +42,14 @@ class HUDuiElement {
     float		getHeight() const;
     float		getLabelWidth() const;
     std::string		getLabel() const;
-    int			getFontFace() const;
+    const LocalFontFace*	getFontFace() const;
     float		getFontSize() const;
 
     void		setPosition(float x, float y);
     void		setSize(float width, float height);
     void		setLabelWidth(float width);
     void		setLabel(const std::string& label);
-    void		setFontFace(int face);
+    void		setFontFace(const LocalFontFace* face);
     void		setFontSize(float size);
 
     virtual void	render();
@@ -66,7 +68,7 @@ class HUDuiElement {
     float		fontHeight;
 
   private:
-    int			elementFontFace;
+    const LocalFontFace*	elementFontFace;
     float		elementFontSize;
     float		elementX, elementY;
     float		elementWidth, elementHeight;

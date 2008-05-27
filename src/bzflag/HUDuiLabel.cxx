@@ -17,6 +17,7 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "FontManager.h"
+#include "LocalFontFace.h"
 
 //
 // HUDuiLabel
@@ -114,7 +115,7 @@ void			HUDuiLabel::doRender()
   }
   fm.setDarkness(darkness);
   fm.drawString(getX(), getY(), 0,
-		getFontFace(), getFontSize(),
+		getFontFace()->getFMFace(), getFontSize(),
 		getString().c_str(), color);
   fm.setDarkness(1.0f);
 }

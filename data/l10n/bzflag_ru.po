@@ -32,6 +32,19 @@ msgstr "Русский"
 msgid "translator"
 msgstr "Александр Лахин"
 
+###########
+## FONTS ##
+###########
+
+msgid "_consoleFont"
+msgstr "DejaVuSansMonoBold"
+
+msgid "_serifFont"
+msgstr "DejaVuSerifBold"
+
+msgid "_sansSerifFont"
+msgstr "DejaVuSansCondensedBold"
+
 #############
 ## GENERAL ##
 #############

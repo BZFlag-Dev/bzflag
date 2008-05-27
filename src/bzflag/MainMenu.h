@@ -22,6 +22,7 @@
 class JoinMenu;
 class OptionsMenu;
 class QuitMenu;
+class LocalFontFace;
 
 /** MainMenu is the main menu
  */
@@ -35,7 +36,7 @@ public:
   void resize(int width, int height);
   void createControls();
 
-  static const int getFontFace();
+  static const LocalFontFace* getFontFace();
 
 private:
 
@@ -46,6 +47,8 @@ private:
   HUDuiControl*	help;
   HUDuiControl*	leave;
   HUDuiControl*	quit;
+
+  static LocalFontFace* fontFace;
 
   JoinMenu*	joinMenu;
   OptionsMenu*	optionsMenu;
