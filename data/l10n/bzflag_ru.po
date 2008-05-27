@@ -1,4 +1,5 @@
-﻿# This is a russian l10n file, copy it to a real language po file and modify that one
+﻿# -*- coding: utf-8 -*-
+# This is a russian l10n file, copy it to a real language po file and modify that one
 
 # Locales are specifed in three parts separated by underscores
 # en_US_l33t, for example
