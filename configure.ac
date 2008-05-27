@@ -1272,7 +1272,6 @@ AC_CONFIG_FILES([
 	src/scene/Makefile
 	tools/Makefile
 	tools/modeltool/Makefile
-	tools/modeltool/vc71/Makefile
 	tools/modeltool/vc8/Makefile
 	tools/tankview/Makefile
 	tools/tankview/vc8/Makefile
