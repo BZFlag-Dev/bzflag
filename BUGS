@@ -88,6 +88,10 @@ Rendering
 * At low screen resolutions, small text becomes very blurry.  Example:
   http://static.bzexcess.com/bzfi1005.png
 
+* When using the Vera Mono Bold font at size 24 the following 5 characters are
+  invisible on the screen: $j{|}  A suitable replacement for
+  data/fonts/VeraMonoBold.ttf should solve this.
+
 * Zbuffer flickering with Narrow and Covered animated treads
 
 * some ATI cards get font rendering to have variable alpha values on each
