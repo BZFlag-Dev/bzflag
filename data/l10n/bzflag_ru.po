@@ -1,4 +1,4 @@
-﻿# This is a generic l10n file, copy it to a real language po file and modify that one
+﻿# This is a russian l10n file, copy it to a real language po file and modify that one
 
 # Locales are specifed in three parts separated by underscores
 # en_US_l33t, for example
@@ -1170,15 +1170,12 @@ msgstr "Супер-флаги"
 msgid "Antidote Flags"
 msgstr "Флаги противоядия"
 
-msgid "Trying..."
-msgstr "Попытка подключения..."
-
-msgid "Searching..."
-msgstr "Выполняется поиск..."
+#msgid "Trying..."
+#msgstr "Попытка..."
 
 #HUDRenderer
 msgid "Press %s to start"
-msgstr "Старт: %s"
+msgstr "Нажмите %s"
 
 msgid "Press Pause to resume"
 msgstr "Нажмите Pause для продолжения"
@@ -1202,7 +1199,7 @@ msgid "Reloaded in %.1f"
 msgstr "Перезарядка - %.1f"
 
 msgid "Sealed"
-msgstr "Застрял"
+msgstr "Закупорен"
 
 msgid "Zoned"
 msgstr "Призрак"
@@ -1343,6 +1340,51 @@ msgid "Player"
 msgstr "Игрок"
 
 
+##################
+## INPUT EVENTS ##
+##################
+
+msgid "Left Mouse"
+msgstr "Левая кнопка мыши"
+
+msgid "Right Mouse"
+msgstr "Правая кнопка мыши"
+
+msgid "Middle Mouse"
+msgstr "Средняя кнопка мыши"
+
+msgid "Space"
+msgstr "Пробел"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Enter"
+msgstr "Enter"
+
+msgid "Return"
+msgstr "Return"
+
+msgid "Up Arrow"
+msgstr "Стрелка вверх"
+
+msgid "Down Arrow"
+msgstr "Стрелка вниз"
+
+msgid "Left Arrow"
+msgstr "Стрелка влево"
+
+msgid "Right Arrow"
+msgstr "Стрелка вправо"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Tab"
+msgstr "Tab"
+
+
+
 #################
 ## SUPER FLAGS ##
 #################
@@ -1435,31 +1477,31 @@ msgid "Shoots through buildings.  Can kill Phantom Zone."
 msgstr "Простреливает сквозь здания. Может разрушить призраков."
 
 msgid "Invisible Bullet"
-msgstr "Скрытый снаряд"
+msgstr "Невидимый снаряд"
 
 msgid "Invisible Bullet (+IB)"
-msgstr "Скрытый снаряд (+IB)"
+msgstr "Невидимый снаряд (+IB)"
 
 msgid "Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Ваши выстрелы не показываются на других радарах. Тем не менее их видно в окне."
 
 msgid "Cloaked Shot"
-msgstr "Невидимый выстрел"
+msgstr "Скрытый выстрел"
 
 msgid "Cloaked Shot (+CS)"
-msgstr "Невидимый выстрел"
+msgstr "Скрытый выстрел"
 
 msgid "Shots are invisible out-the-window. Still visible on radar. Glow is still visible out-the-window. Watch out for ricochet!"
 msgstr "Выстрелы не видны в окне, но видны на радаре. Взрыв виден в окне. Опасайтесь рикошета!"
 
 msgid "Stealth"
-msgstr "Скрытность"
+msgstr "Невидимость"
 
 msgid "STealth (+ST)"
-msgstr "Скрытность (+ST)"
+msgstr "Невидимость (+ST)"
 
 msgid "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-msgstr "Танк невидим на радарах, хотя выстрелы видны. Проскользните под носом у врагов!"
+msgstr "Танк не видим на радарах, хотя выстрелы видимы. Проскользните под носом у врагов!"
 
 msgid "Tiny"
 msgstr "Уменьшение"
@@ -1543,10 +1585,10 @@ msgid "Identifies type of nearest flag."
 msgstr "Определяет тип ближайшего флага."
 
 msgid "Cloaking"
-msgstr "Невидимость"
+msgstr "Маскирование"
 
 msgid "CLoaking (+CL)"
-msgstr "Невидимость (+CL)"
+msgstr "Маскирование (+CL)"
 
 msgid "Makes your tank invisible out-the-window.  Still visible on radar."
 msgstr "Танк становится невидим в окне. Однако он видим на радаре."
@@ -1576,7 +1618,7 @@ msgid "SEer (+SE)"
 msgstr "Ясновидец (+SE)"
 
 msgid "See stealthed, cloaked and masquerading tanks as normal.  See invisible bullets and cloaked shots."
-msgstr "Вы видите невидимые, скрытые и мимикрирующие танки как обычно. Также видны невидимые и скрытые выстрелы."
+msgstr "Вы видите невидимые, замаскированные и мимикрирующие танки как обычно. Также видны невидимые и скрытые выстрелы."
 
 msgid "Thief"
 msgstr "Жулик"
@@ -1796,13 +1838,13 @@ msgid "Closest Flag: Super Bullet"
 msgstr "Ближайший флаг: Суперснаряд"
 
 msgid "Closest Flag: Stealth"
-msgstr "Ближайший флаг: Скрытность"
-
-msgid "Closest Flag: Cloaking"
 msgstr "Ближайший флаг: Невидимость"
 
+msgid "Closest Flag: Cloaking"
+msgstr "Ближайший флаг: Маскирование"
+
 msgid "Closest Flag: Invisible Bullet"
-msgstr "Ближайший флаг: Скрытый снаряд"
+msgstr "Ближайший флаг: Невидимый снаряд"
 
 msgid "Closest Flag: Tiny"
 msgstr "Ближайший флаг: Уменьшение"
@@ -2295,11 +2337,3 @@ msgstr "Сервер не найден"
 ####################
 ####################
 
-msgid "Self Destructing in"
-msgstr "Саморазрушение в "
-
-msgid "Self Destruct cancelled"
-msgstr "Самоуничтожение отменено"
-
-msgid "Tank Self Destructed"
-msgstr "Танк самоуничтожен"
