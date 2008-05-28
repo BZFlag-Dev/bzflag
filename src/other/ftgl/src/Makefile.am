@@ -28,7 +28,10 @@ libftgl_la_SOURCES = \
     $(ftlayout_sources) \
     $(ftgl_headers) \
     $(NULL)
-libftgl_la_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout $(FT2_CPPFLAGS)
+
+# per-target CPPFLAGS wasn't added until automake 1.7
+AM_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout $(FT2_CPPFLAGS)
+
 libftgl_la_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 libftgl_la_LDFLAGS = \
         -no-undefined -version-number $(LT_VERSION)
