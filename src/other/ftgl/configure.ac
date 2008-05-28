@@ -43,8 +43,10 @@ if test "x$enable_freetype_build" != "xyes" ; then
 	       [AC_MSG_ERROR([FreeType2 is required to compile this library])])
 else
   AC_MSG_NOTICE([Using the included FreeType2])
-  FT2_CFLAGS="-I\${abs_top_srcdir}/../freetype/include"
+  FT2_CPPFLAGS="-I\${abs_top_srcdir}/../freetype/include"
   FT2_LIBS="\${abs_top_srcdir}/../freetype/libfreetype.la -lz"
+  AC_SUBST(FT2_CPPFLAGS)
+  AC_SUBST(FT2_LIBS)
 fi
 
 AC_PATH_XTRA
