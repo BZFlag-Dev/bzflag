@@ -1,5 +1,18 @@
-# from Rokas Masiulis <roma1390@uosis.mif.vu.lt>
+﻿# from Rokas Masiulis <roma1390@uosis.mif.vu.lt>
 # FIXME needs to be converted to ascii from utf8
+
+###########
+## FONTS ##
+###########
+
+msgid "_consoleFont"
+msgstr "DejaVuSansMonoBold"
+
+msgid "_serifFont"
+msgstr "DejaVuSerifBold"
+
+msgid "_sansSerifFont"
+msgstr "DejaVuSansCondensedBold"
 
 msgid "Join Game"
 msgstr "Sustabdyti žaidimą"
