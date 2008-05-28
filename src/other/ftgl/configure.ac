@@ -42,9 +42,10 @@ if test "x$enable_freetype_build" != "xyes" ; then
   AC_CHECK_FT2([9.0.3],[],
 	       [AC_MSG_ERROR([FreeType2 is required to compile this library])])
 else
+  # BZFlag-specific, need to be a proper subconfigure
   AC_MSG_NOTICE([Using the included FreeType2])
-  FT2_CPPFLAGS="-I\${abs_top_srcdir}/../freetype/include"
-  FT2_LIBS="\${abs_top_srcdir}/../freetype/libfreetype.la -lz"
+  FT2_CPPFLAGS='-I${top_srcdir}/../freetype/include'
+  FT2_LIBS='${top_builddir}/../freetype/libfreetype.la -lz'
   AC_SUBST(FT2_CPPFLAGS)
   AC_SUBST(FT2_LIBS)
 fi
