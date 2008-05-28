@@ -1,5 +1,4 @@
 ﻿# from Rokas Masiulis <roma1390@uosis.mif.vu.lt>
-# FIXME needs to be converted to ascii from utf8
 
 ###########
 ## FONTS ##
