@@ -239,7 +239,6 @@ void			HUDRenderer::setMajorFontSize(int width, int height)
 
 void			HUDRenderer::setMinorFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   minorFontSize = fs.getFontSize(minorFontFace->getFMFace(), "scoreFontSize");
 }
@@ -261,7 +260,6 @@ void			HUDRenderer::setHeadingFontSize(int width, int height)
 
 void			HUDRenderer::setComposeFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
   composeTypeIn->setFontFace(composeFontFace);
   FontSizer fs = FontSizer(width, height);
   composeTypeIn->setFontSize(fs.getFontSize(composeFontFace->getFMFace(), "consoleFontSize"));
@@ -269,7 +267,6 @@ void			HUDRenderer::setComposeFontSize(int width, int height)
 
 void			HUDRenderer::setLabelsFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFontSize");
 }

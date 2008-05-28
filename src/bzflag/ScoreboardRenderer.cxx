@@ -154,8 +154,6 @@ void		ScoreboardRenderer::setMinorFontSize()
 
 void			ScoreboardRenderer::setLabelsFontSize(float width, float height)
 {
-  FontManager &fm = FontManager::instance();
-
   FontSizer fs = FontSizer(width, height);
   labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "tinyFontSize");
 }
