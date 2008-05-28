@@ -41,14 +41,18 @@ LocalFontFace* LocalFontFace::create(const std::string &genericFaceName)
   }
 
   // no match? create a new one
-  return new LocalFontFace(genericFaceName);
+  LocalFontFace* face = new LocalFontFace(genericFaceName);
+  localFontFaces.push_back(face);
+  return face;
 }
 
 void LocalFontFace::release(LocalFontFace *face)
 {
   face->refs--;
-  if (face->refs == 0)
+  if (face->refs == 0) {
+    localFontFaces.remove(face);
     delete face;
+  }
 }
 
 LocalFontFace::LocalFontFace(const std::string &genericFaceName)
