@@ -109,8 +109,6 @@ Rendering
 
 * line stipple doesn't (can't) match polygon stipple messes up shadow of flag
   stem
-   
-* untextured pause mode, textures only show up while paused when opening menus
 
 * if the display cannot initialize properly, it will start bzflag with a black
   screen.  need to prevent this by either detecting if there is an available
