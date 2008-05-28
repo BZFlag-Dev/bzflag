@@ -271,7 +271,7 @@ void			HUDRenderer::setLabelsFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
-  labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFont");
+  labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFontSize");
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
