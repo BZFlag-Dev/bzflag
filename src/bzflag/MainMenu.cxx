@@ -146,7 +146,6 @@ void			MainMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   FontManager &fm = FontManager::instance();
-  const LocalFontFace* fontFace = getFontFace();
 
   // main menu title, use a big font
   fs.setMin(0, 5);
