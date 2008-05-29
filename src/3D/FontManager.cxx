@@ -217,6 +217,12 @@ namespace {
     fflush(stdout);
 #endif
 
+    if (!font || font->Error() != 0) {
+      // TODO: what can we do to try to resolve this?
+      logDebugMessage(1, "Font creation failed: face:%d size:%d error:%d\n", face, size, (font ? font->Error() : ~0));
+      return NULL;
+    }
+
     font->FaceSize(size);
     bool doDisplayLists = true;
     if (BZDB.isTrue("NoDisplayListsForFonts"))
