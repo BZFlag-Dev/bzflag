@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldap", "ldap\ldap.vcproj", 
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp-net", "tcp-net\tcp-net.vcproj", "{7CF3DD81-C000-4252-8083-4F85F989B546}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -21,6 +25,10 @@ Global
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Debug.Build.0 = Debug|Win32
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release.ActiveCfg = Release|Win32
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release.Build.0 = Release|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug.ActiveCfg = Debug|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug.Build.0 = Debug|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release.ActiveCfg = Release|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
