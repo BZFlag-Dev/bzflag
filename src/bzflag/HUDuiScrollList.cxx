@@ -23,7 +23,7 @@
 // HUDuiScrollList
 //
 
-HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0)
+HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numItems(0)
 {
   // do nothing
 }
@@ -46,12 +46,6 @@ void HUDuiScrollList::clear()
 
 void HUDuiScrollList::setSelected(int _index)
 {
-	// Determine how many list items should be visible
-	FontManager &fm = FontManager::instance();
-	float height = getHeight();
-	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-	int numItems = height/itemHeight;
-
 	if (_index < 0)
 		_index = 0;
 	else if (_index >= (int)list.size())
@@ -125,24 +119,30 @@ bool HUDuiScrollList::doKeyRelease(const BzfKeyEvent&)
   return false;
 }
 
-/* Not working at the moment, not sure why
 void HUDuiScrollList::setSize(float width, float height)
 {
-	HUDuiElement::setSize(width, height);
+	HUDuiControl::setSize(width, height);
 
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	float listHeight = getHeight();
 	numItems = listHeight/itemHeight;
 }
-*/
+
+void HUDuiScrollList::setFontSize(float size)
+{
+	HUDuiControl::setFontSize(size);
+
+	FontManager &fm = FontManager::instance();
+	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
+	float listHeight = getHeight();
+	numItems = listHeight/itemHeight;
+}
 
 void HUDuiScrollList::doRender()
 {
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-	float height = getHeight();
-	int numItems = height/itemHeight;
 	
 	for (int i = (getSelected() - visiblePosition); i<((numItems - visiblePosition) + getSelected()); i++)
 	{

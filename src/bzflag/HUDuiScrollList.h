@@ -41,7 +41,8 @@ class HUDuiScrollList : public HUDuiControl {
 		void clear();
 		
 		// Not working
-		//void setSize(float width, float height); 
+		void setSize(float width, float height);
+		void setFontSize(float size);
 
 	protected:
 		bool doKeyPress(const BzfKeyEvent&);
@@ -51,7 +52,7 @@ class HUDuiScrollList : public HUDuiControl {
 	private:
 		int	index;
 		int visiblePosition;
-		//int numItems;
+		int numItems;
 		std::vector<HUDuiLabel*> list;
 };
 
