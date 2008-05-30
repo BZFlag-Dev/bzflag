@@ -1814,11 +1814,10 @@ void			HUDRenderer::renderShots(const Player* target)
 
   // find any live shots, see how long they have left to live
   // these are the shots that need to be "reloaded"
-  size_t i = 0;
-  for (size_t s= 0; s < shotSlots.size(); ++s)
+  for (size_t i= 0; i < shotSlots.size(); ++i)
   {
-    const ShotSlot& shot = shotSlots[s];
-    factors[i] = 1.0f;\
+    const ShotSlot& shot = shotSlots[i];
+    factors[i] = 1.0f;
     const double currentTime = shot.getCurrentTime();
     const double startTime = shot.getStartTime();
     const float reloadTime = shot.getReloadTime();
