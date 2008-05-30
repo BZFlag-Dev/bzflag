@@ -2,6 +2,7 @@
 #include <conio.h>
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
+#include <openssl/rsa.h>
 
 bool test_ret(int ret)
 {
@@ -162,7 +163,8 @@ void test_unbind()
     printf("LOG: unbind successful\n");
 }
 
-int main(int argc, char* argv[])
+
+void test_ldap()
 {
     test_bind();
     test_add();
@@ -170,6 +172,18 @@ int main(int argc, char* argv[])
     test_search();
     test_delete();
     test_unbind();
+}
+
+void test_rsa()
+{
+    RSA *key = RSA_new();
+    RSA_free(key);
+}
+
+int main(int argc, char* argv[])
+{
+    test_ldap();
+    test_rsa();
     getch();
 
 	return 0;
