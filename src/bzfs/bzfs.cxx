@@ -4415,16 +4415,6 @@ static void doListServerUpdate ( TimeKeeper &tm )
   }
 }
 
-static void cleanPendingPlayers ( void )
-{
-  // Clean pending players
-
-  if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
-    worldWasSentToAPlayer = false;
-    (clOptions->worldFile == "") && !Replay::enabled() && defineWorld();
-  }
-}
-
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
   if ( !peer.pendingSendChunks.size() )
@@ -4882,7 +4872,12 @@ static void runMainLoop ( void )
 
     MSGMGR.update();
 
-    cleanPendingPlayers();
+    // clean any pending players and rebuild the world if necessary
+    if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
+      worldWasSentToAPlayer = false;
+      if ((clOptions->worldFile == "") && !Replay::enabled())
+	defineWorld();
+    }
 
     dontWait = dontWait || updateCurl();
   }
