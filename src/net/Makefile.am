@@ -17,6 +17,7 @@ libNet_la_LDFLAGS = -static
 libNet_la_SOURCES =			\
 	Address.cxx			\
 	AresHandler.cxx			\
+	NetHandler.cxx			\
 	Pack.cxx			\
 	Ping.cxx			\
 	htond.cxx			\
