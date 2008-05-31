@@ -18,6 +18,7 @@
 #include "Bundle.h"
 #include "FontManager.h"
 #include "LocalFontFace.h"
+#include "HUDui.h"
 
 //
 // HUDuiScrollList
@@ -47,24 +48,20 @@ void HUDuiScrollList::clear()
 
 void HUDuiScrollList::setSelected(int _index)
 {
+	// Ensure the index is not negative, or past the end of our list
 	if (_index < 0)
 		_index = 0;
 	else if (_index >= (int)labelList.size())
 		_index = (int)labelList.size() - 1;
 	
 	// The new index falls within the portion of the list already on screen
-	if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition))))
-	{
+	if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
 		visiblePosition = visiblePosition + (_index - index);
-	}
 	// Moving one down outside of list range
-	else if (_index == (index + (numVisibleItems - visiblePosition)))
-	{
+	} else if (_index == (index + (numVisibleItems - visiblePosition))) {
 		visiblePosition = numVisibleItems - 1;
-	}
 	// The new index isn't already on screen
-	else
-	{
+	} else {
 		// Jump to that part of the list and set the new index as first
 		visiblePosition = 0;
 	}
@@ -72,8 +69,10 @@ void HUDuiScrollList::setSelected(int _index)
 	index = _index;
 }
 
+// Adds a new item to our scrollable list
 void HUDuiScrollList::addItem(HUDuiLabel* item)
 {
+	// We need to update both the stringList nad the labelList
 	stringList.push_back(item->getString());
 	labelList.push_back(item);
 	update();
@@ -132,18 +131,21 @@ bool HUDuiScrollList::doKeyRelease(const BzfKeyEvent&)
   return false;
 }
 
+// Update our scrollable list when the size is changed
 void HUDuiScrollList::setSize(float width, float height)
 {
 	HUDuiControl::setSize(width, height);
 	resizeLabels();
 }
 
+// Update our scrollable list whe the font size is changed
 void HUDuiScrollList::setFontSize(float size)
 {
 	HUDuiControl::setFontSize(size);
 	resizeLabels();
 }
 
+// Change our label sizes to match any changes to our scrollable list
 void HUDuiScrollList::resizeLabels()
 {
 	// Determine how many items are visible
@@ -160,20 +162,17 @@ void HUDuiScrollList::resizeLabels()
 	std::string tempString;
 	HUDuiLabel* item;
 	
-	for (int i = 0; i < stringList.size(); i++)
-	{
+	// Iterate through our list of strings
+	for (int i = 0; i < stringList.size(); i++)	{
 		tempString = stringList.at(i);
 		item = labelList.at(i);
 		
-		if (tempString.length() > numVisibleChars)
-		{
+		// Shorten the label to fit within the scrollable list
+		if (tempString.length() > numVisibleChars) {
 			tempString = tempString.substr(0, numVisibleChars);
-			item->setString(tempString);
 		}
-		else
-		{
-			item->setString(tempString);
-		}
+		
+		item->setString(tempString);
 	}
 }
 
@@ -182,10 +181,8 @@ void HUDuiScrollList::doRender()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	
-	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++)
-	{
-		if (i < labelList.size())
-		{
+	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
+		if (i < labelList.size()) {
 			HUDuiLabel* item = labelList.at(i);
 			item->setFontSize(getFontSize());
 			item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
