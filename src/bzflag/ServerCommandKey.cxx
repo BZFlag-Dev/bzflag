@@ -251,9 +251,6 @@ void			ServerCommandKey::updatePrompt()
       composePrompt = "Shut Down Server";
       allowEdit = false;
       break;
-    case Setpass:
-      composePrompt = "Set your password [enter pass]:";
-      break;
     case Grouplist:
       composePrompt = "List Groups";
       allowEdit = false;
@@ -436,7 +433,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     case CountDown: sendMsg = "/countdown " + message; break;
     case SuperKill: sendMsg = "/superkill"; break;
     case Shutdown: sendMsg = "/shutdownserver"; break;
-    case Setpass: sendMsg = "/setpass " + message; break;
     case Grouplist: sendMsg = "/grouplist"; break;
     case Groupperms: sendMsg = "/groupperms"; break;
     case Vote: sendMsg = "/vote " + message; break;

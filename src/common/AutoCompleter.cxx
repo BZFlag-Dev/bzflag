@@ -228,7 +228,6 @@ void DefaultCompleter::setDefaults()
   registerWord("/serverquery");
   registerWord("/set");
   registerWord("/setgroup ");
-  registerWord("/setpass ");
   registerWord("/showgroup ");
   registerWord("/showperms ");
   registerWord("/shutdownserver");

@@ -57,7 +57,6 @@ public:
     CountDown,
     SuperKill,
     Shutdown,
-    Setpass,
     Grouplist,
     Groupperms,
     Vote,
