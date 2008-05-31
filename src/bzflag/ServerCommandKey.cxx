@@ -316,6 +316,10 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  // Check to see if we got disconnected while waiting for input
+  if (myTank == 0) return false;
+
   if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->setJump();
@@ -463,6 +467,10 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  // Check to see if we got disconnected while waiting for input
+  if (myTank == 0) return false;
+
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
     if (key.button == BzfKeyEvent::Up || key.button == BzfKeyEvent::Down
