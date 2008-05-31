@@ -23,7 +23,7 @@
 // HUDuiScrollList
 //
 
-HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numItems(0)
+HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(0)
 {
   // do nothing
 }
@@ -40,7 +40,8 @@ int HUDuiScrollList::getSelected() const
 
 void HUDuiScrollList::clear()
 {
-	list.clear();
+	stringList.clear();
+	labelList.clear();
 	setSelected(0);
 }
 
@@ -48,18 +49,18 @@ void HUDuiScrollList::setSelected(int _index)
 {
 	if (_index < 0)
 		_index = 0;
-	else if (_index >= (int)list.size())
-		_index = (int)list.size() - 1;
+	else if (_index >= (int)labelList.size())
+		_index = (int)labelList.size() - 1;
 	
 	// The new index falls within the portion of the list already on screen
-	if ((_index >= index - visiblePosition)&&(_index < (index + (numItems - visiblePosition))))
+	if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition))))
 	{
 		visiblePosition = visiblePosition + (_index - index);
 	}
 	// Moving one down outside of list range
-	else if (_index == (index + (numItems - visiblePosition)))
+	else if (_index == (index + (numVisibleItems - visiblePosition)))
 	{
-		visiblePosition = numItems - 1;
+		visiblePosition = numVisibleItems - 1;
 	}
 	// The new index isn't already on screen
 	else
@@ -73,9 +74,21 @@ void HUDuiScrollList::setSelected(int _index)
 
 void HUDuiScrollList::addItem(HUDuiLabel* item)
 {
-	list.push_back(item);
+	stringList.push_back(item->getString());
+	labelList.push_back(item);
 	update();
 }
+
+// BROKEN
+void HUDuiScrollList::addItem(std::string item)
+{
+	HUDuiLabel* newLabel = new HUDuiLabel;
+	newLabel->setFontFace(getFontFace());
+	newLabel->setString(item);
+	
+	addItem(newLabel);
+}
+// BROKEN
 
 void HUDuiScrollList::update()
 {
@@ -122,21 +135,46 @@ bool HUDuiScrollList::doKeyRelease(const BzfKeyEvent&)
 void HUDuiScrollList::setSize(float width, float height)
 {
 	HUDuiControl::setSize(width, height);
-
-	FontManager &fm = FontManager::instance();
-	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-	float listHeight = getHeight();
-	numItems = listHeight/itemHeight;
+	resizeLabels();
 }
 
 void HUDuiScrollList::setFontSize(float size)
 {
 	HUDuiControl::setFontSize(size);
+	resizeLabels();
+}
 
+void HUDuiScrollList::resizeLabels()
+{
+	// Determine how many items are visible
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	float listHeight = getHeight();
-	numItems = listHeight/itemHeight;
+	numVisibleItems = listHeight/itemHeight;
+
+	// Determine how far right we can display
+	float width = getWidth();
+	float itemWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "D");
+	numVisibleChars = width/itemWidth;
+	
+	std::string tempString;
+	HUDuiLabel* item;
+	
+	for (int i = 0; i < stringList.size(); i++)
+	{
+		tempString = stringList.at(i);
+		item = labelList.at(i);
+		
+		if (tempString.length() > numVisibleChars)
+		{
+			tempString = tempString.substr(0, numVisibleChars);
+			item->setString(tempString);
+		}
+		else
+		{
+			item->setString(tempString);
+		}
+	}
 }
 
 void HUDuiScrollList::doRender()
@@ -144,11 +182,11 @@ void HUDuiScrollList::doRender()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	
-	for (int i = (getSelected() - visiblePosition); i<((numItems - visiblePosition) + getSelected()); i++)
+	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++)
 	{
-		if (i < list.size())
+		if (i < labelList.size())
 		{
-			HUDuiLabel* item = list.at(i);
+			HUDuiLabel* item = labelList.at(i);
 			item->setFontSize(getFontSize());
 			item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
 			item->setDarker(i != getSelected());

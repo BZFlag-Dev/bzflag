@@ -35,25 +35,30 @@ class HUDuiScrollList : public HUDuiControl {
 
 		int getSelected() const;
 		void setSelected(int _index);
+		
 		void addItem(HUDuiLabel* item);
+		void addItem(std::string item); //BROKEN
 		
 		void update();
 		void clear();
 		
-		// Not working
 		void setSize(float width, float height);
 		void setFontSize(float size);
 
 	protected:
 		bool doKeyPress(const BzfKeyEvent&);
 		bool doKeyRelease(const BzfKeyEvent&);
+		void resizeLabels();
 		void doRender();
 
 	private:
 		int	index;
 		int visiblePosition;
-		int numItems;
-		std::vector<HUDuiLabel*> list;
+		int numVisibleItems;
+		int numVisibleChars;
+		
+		std::vector<HUDuiLabel*> labelList;
+		std::vector<std::string> stringList;
 };
 
 #endif // __HUDUISCROLLLIST_H__
