@@ -3,6 +3,7 @@
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
 #include <openssl/rsa.h>
+#include <gcrypt.h>
 
 bool test_ret(int ret)
 {
@@ -178,6 +179,16 @@ void test_rsa()
 {
     RSA *key = RSA_new();
     RSA_free(key);
+}
+
+void test_gcry()
+{
+    gcry_ac_key_t *key;
+    gcry_ac_handle_t h;
+    gcry_ac_key_type_t k;
+    gcry_ac_data_t d;
+
+    gcry_ac_key_init(key, h, k, d);
 }
 
 int main(int argc, char* argv[])
