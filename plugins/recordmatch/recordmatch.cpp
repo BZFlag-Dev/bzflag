@@ -71,7 +71,7 @@ void GameStartEndHandler::process( bz_EventData *eventData )
     break;
 
   default:
-    ;
+    break;
   }
 }
 

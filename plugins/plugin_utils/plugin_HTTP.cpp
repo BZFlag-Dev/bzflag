@@ -489,7 +489,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType d
     break;
 
   default:
-    ;
+    break;
   }
   return type;
 }
@@ -515,7 +515,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
     break;
 
   default:
-    ;
+    break;
   }
 
   return code;
