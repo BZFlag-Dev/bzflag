@@ -89,7 +89,6 @@ public:
     say,
     sendHelp,
     setAll,
-    setPassword,
     setPerms,
     setVar,
     shortBan,
@@ -123,9 +122,6 @@ public:
   bool	gotAccessFailure();
   void	setLoginFail();
   bool	passwordAttemptsMax();
-  bool	isPasswordMatching(const char* pwd);
-  bool	hasRealPassword();
-  void	setPasswd(const std::string& pwd);
 
   /** have successfully provided server password */
   void  setOperator();
@@ -156,7 +152,7 @@ public:
   bool	isAllowedToEnter();
   bool	isVerified() const;
   uint8_t     getPlayerProperties();
-  void	storeInfo(const char* pwd);
+  void	storeInfo();
   bool	exists();
   static PlayerAccessInfo &getUserInfo(const std::string &nick);
   static bool readGroupsFile(const std::string &filename);
@@ -186,11 +182,9 @@ private:
 };
 
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
-typedef std::map<std::string, std::string> PasswordMap;
 
 extern PlayerAccessMap	groupAccess;
 extern PlayerAccessMap	userDatabase;
-extern PasswordMap	passwordDatabase;
 
 extern std::string		groupsFile;
 extern std::string		userDatabaseFile;
@@ -201,8 +195,6 @@ inline void makeupper(std::string& str)
 }
 
 bool userExists(const std::string &nick);
-bool checkPasswordExistence(const std::string &nick);
-bool verifyUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
 void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);

@@ -197,7 +197,6 @@ typedef enum
 #define bz_perm_say  "say"
 #define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
-#define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
 #define bz_perm_setVar  "setVar"
 #define bz_perm_showOthers  "showOthers"
