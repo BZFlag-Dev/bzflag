@@ -153,7 +153,7 @@ void tickEvent (float time)
 }
 
 
-void dispNagMsg (int who, char *label, MsgEnt *m){
+void dispNagMsg (int who, const char *label, MsgEnt *m){
   char msg[140];
 
   if (m->repeat)
@@ -269,7 +269,7 @@ void sendHelp (int who)
   bz_sendTextMessage(BZ_SERVER, who, "NAG commands: off, on, config, reload, list");
 }
 
-bool checkPerms (int playerID, char *nagCmd, const char *permName)
+bool checkPerms (int playerID, const char *nagCmd, const char *permName)
 {
   if (permName==NULL || *permName=='\0')
     permName = "NAG";
@@ -436,7 +436,7 @@ BZF_PLUGIN_CALL int bz_Unload (void)
  * Read Configuration file...
 */
 
-bool configError (char *msg, int linenum, int playerID, FILE *fp){
+bool configError (const char *msg, int linenum, int playerID, FILE *fp){
   char send[256];
   fclose (fp);
   sprintf (send, "+++ nagware config file error (%s) at line #%d", msg, linenum);
