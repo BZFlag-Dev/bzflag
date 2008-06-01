@@ -160,15 +160,13 @@ bool Templateiser::callKey ( std::string &data, const std::string &key )
   data.clear();
 
   ClassMap::iterator itr = keyClassCallbacks.find(lowerKey);
-  if (itr != keyClassCallbacks.end())
-  {
+  if (itr != keyClassCallbacks.end()) {
     itr->second->keyCallback(data,key);
     return true;
   }
 
   KeyMap::iterator itr2 = keyFuncCallbacks.find(lowerKey);
-  if (itr2 != keyFuncCallbacks.end())
-  {
+  if (itr2 != keyFuncCallbacks.end()) {
     (itr2->second)(data,key);
     return true;
   }
@@ -212,12 +210,10 @@ bool Templateiser::processTemplateFile ( std::string &code, const char *file )
     return false;
 
   // find the file
-  for (size_t i = 0; i < filePaths.size(); i++ )
-  {
+  for (size_t i = 0; i < filePaths.size(); i++ ) {
     std::string path = filePaths[i] + file;
     FILE *fp = fopen(getPathForOS(path).c_str(),"rb");
-    if (fp)
-    {
+    if (fp) {
       fseek(fp,0,SEEK_END);
       size_t pos = ftell(fp);
       fseek(fp,0,SEEK_SET);
@@ -241,23 +237,17 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
 {
   std::string::const_iterator templateItr = templateText.begin();
 
-  while ( templateItr != templateText.end() )
-  {
-    if ( *templateItr != '[' )
-    {
+  while ( templateItr != templateText.end() ) {
+    if ( *templateItr != '[' ) {
       code += *templateItr;
       templateItr++;
-    }
-    else
-    {
+    } else {
       templateItr++;
 
-      if (templateItr == templateText.end())
+      if (templateItr == templateText.end()) {
 	code += '[';
-      else
-      {
-	switch(*templateItr)
-	{
+      } else {
+	switch(*templateItr) {
 	default: // it's not a code, so just let the next loop hit it and output it
 	  break;
 
@@ -317,34 +307,23 @@ void Templateiser::setDefaultTokens ( void )
 
 void Templateiser::keyCallback ( std::string &data, const std::string &key )
 {
-  if (key == "date")
-  {
+  if (key == "date") {
     bz_localTime time;
     bz_getLocaltime(&time);
     data = format("%d/%d/%d",time.month,time.day,time.year);
-  }
-  else if (key == "time")
-  {
+  } else if (key == "time") {
     bz_localTime time;
     bz_getLocaltime(&time);
     data = format("%d:%d:%d",time.hour,time.minute,time.second);
-  }
-  else if (key == "hostname")
-  {
+  } else if (key == "hostname") {
     data = bz_getPublicAddr().c_str();
     if (!data.size())
       data = format("localhost:%d",bz_getPublicPort());;
-  }
-  else if (key == "pagetime")
-  {
+  } else if (key == "pagetime") {
     data = format("%.3f",bz_getCurrentTime()-startTime);
-  }
-  else if (key == "baseurl")
-  {
+  } else if (key == "baseurl") {
     data =baseURL;
-  }
-  else if (key == "pluginname")
-  {
+  } else if (key == "pluginname") {
     data = pluginName;
   }
 }
@@ -357,9 +336,8 @@ bool Templateiser::loopCallback ( const std::string & /* key */ )
 bool Templateiser::ifCallback ( const std::string &key )
 {
   if (key == "public")
-  {
     return bz_getPublic();
-  }
+
   return false;
 }
 
@@ -369,15 +347,11 @@ std::string::const_iterator Templateiser::readKey ( std::string &key, std::strin
 {
   std::string::const_iterator itr = inItr;
 
-  while ( itr != str.end() )
-  {
-    if (*itr != ']')
-    {
+  while ( itr != str.end() ) {
+    if (*itr != ']') {
       key += *itr;
       itr++;
-    }
-    else
-    {
+    } else {
       // go past the code
       itr++;
       key = tolower(key);
@@ -394,8 +368,7 @@ std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::s
 
   std::string::const_iterator itr = inItr;
 
-  while (1)
-  {
+  while (1) {
     itr = std::find(itr,str.end(),'[');
     if (itr == str.end())
       return itr;
@@ -410,10 +383,8 @@ std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::s
     std::string key;
     itr = readKey(key,itr,str);
 
-    for ( size_t i = 0; i < keys.size(); i++ )
-    {
-      if ( key == keys[i])
-      {
+    for ( size_t i = 0; i < keys.size(); i++ ) {
+      if ( key == keys[i]) {
 	endKey = key;
 	code.resize(keyStartItr - inItr);
 	std::copy(inItr,keyStartItr,code.begin());
@@ -447,8 +418,7 @@ void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &
 
   itr = readKey(key,itr,str);
 
-  if (itr != str.end())
-  {
+  if (itr != str.end()) {
     std::string lowerKey = tolower(key);
     std::string val;
     if (callKey(val,lowerKey))
@@ -466,8 +436,7 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   std::string::const_iterator itr = readKey(key,inItr,str);
 
   std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
-  if (commandParts.size() < 2)
-  {
+  if (commandParts.size() < 2) {
     inItr = itr;
     return;
   }
@@ -476,8 +445,7 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   commandParts[0] = tolower(commandParts[0]);
   commandParts[1] = tolower(commandParts[1]);
 
-  if ( commandParts[0] != "start" )
-  {
+  if ( commandParts[0] != "start" ) {
     inItr = itr;
     return;
   }
@@ -491,8 +459,7 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   std::string keyFound;
   itr = findNextTag(checkKeys,keyFound,loopSection,itr,str);
 
-  if (itr == str.end())
-  {
+  if (itr == str.end()) {
     inItr = itr;
     return;
   }
@@ -503,21 +470,17 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
 
-  if (callLoop(commandParts[1]))
-  {
+  if (callLoop(commandParts[1])) {
     std::string newCode;
     processTemplate(newCode,loopSection);
     code += newCode;
 
-    while(callLoop(commandParts[1]))
-    {
+    while(callLoop(commandParts[1])) {
 	newCode = "";
 	processTemplate(newCode,loopSection);
 	code += newCode;
     }
-  }
-  else
-  {
+  } else {
     std::string newCode;
     processTemplate(newCode,emptySection);
     code += newCode;
@@ -533,8 +496,7 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   std::string::const_iterator itr = readKey(key,inItr,str);
 
   std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
-  if (commandParts.size() < 2)
-  {
+  if (commandParts.size() < 2) {
     inItr = itr;
     return;
   }
@@ -543,8 +505,7 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   commandParts[0] = tolower(commandParts[0]);
   commandParts[1] = tolower(commandParts[1]);
 
-  if ( commandParts[0] != "if" )
-  {
+  if ( commandParts[0] != "if" ) {
     inItr = itr;
     return;
   }
@@ -559,11 +520,9 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   std::string keyFound;
   itr = findNextTag(checkKeys,keyFound,trueSection,itr,str);
 
-  if (keyFound == checkKeys[0]) // we hit an else, so we need to check for it
-  {
+  if (keyFound == checkKeys[0]) { // we hit an else, so we need to check for it
     // it was the else, so go and find the end too
-    if (itr == str.end())
-    {
+    if (itr == str.end()) {
       inItr = itr;
       return;
     }
@@ -573,14 +532,11 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   }
 
   // test the if, stuff that dosn't exist is false
-  if (callIF(commandParts[1]))
-  {
+  if (callIF(commandParts[1])) {
     std::string newCode;
     processTemplate(newCode,trueSection);
     code += newCode;
-  }
-  else
-  {
+  } else {
     std::string newCode;
     processTemplate(newCode,elseSection);
     code += newCode;
