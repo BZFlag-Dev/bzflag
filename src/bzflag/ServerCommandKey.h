@@ -38,7 +38,6 @@ public:
     Showgroup,
     Setgroup,
     Removegroup,
-    Ghost,
     Unban,
     Banlist,
     Playerlist,

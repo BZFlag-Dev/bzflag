@@ -175,15 +175,6 @@ void			ServerCommandKey::updatePrompt()
 	composePrompt = "Remove player from group :";
       }
       break;
-    case Ghost:
-      if (recipient) {
-	composePrompt = "Ghost player [enter your pass] -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Ghost :";
-      }
-      break;
     case Unban:
       composePrompt = "Unban :";
       break;
@@ -409,12 +400,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       append_if(sendMsg, message);
       break;
 
-    case Ghost:
-      sendMsg = "/ghost ";
-      if (troll) sendMsg += quote(name);
-      append_if(sendMsg, message);
-      break;
-
     case Unban: sendMsg = "/unban " + message; break;
     case Banlist: sendMsg = "/banlist";  break;
     case Playerlist: sendMsg = "/playerlist";  break;
@@ -502,7 +487,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 	  mode = static_cast<Mode>(newMode);
 	  // if no recipient skip Ban1,2,3 -- applies to admin mode
 	  if (!recipient && (mode >= Ban1 && mode <= Ban3))
-	    mode = Unban;	// skips Showgroup, Setgroup, Removegroup, Ghost ????
+	    mode = Unban;	// skips Showgroup, Setgroup, Removegroup ????
 	}
       } else if (key.button == BzfKeyEvent::Up) {
 	if (!myTank->isAdmin()) {
