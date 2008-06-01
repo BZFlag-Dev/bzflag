@@ -532,6 +532,9 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType d
   case eHTML:
     type = "text/html";
     break;
+
+  default:
+    ;
   }
   return type;
 }
@@ -556,6 +559,9 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
   case e500ServerError:
     code = "500";
     break;
+
+  default:
+    ;
   }
 
   return code;
