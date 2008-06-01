@@ -1000,7 +1000,7 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier set to %i percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
     } else
-      bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier must be between 1 and 99 percent.",
+      bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier (%i) must be between 1 and 99 percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
 
     autoTime();

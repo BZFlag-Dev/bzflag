@@ -723,7 +723,7 @@ bool KOTHCommands::handle(int playerID, bz_ApiString _command, bz_ApiString _mes
       koth.timeMult = (inputvalue / 100);
       bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier set to %i percent.", (int) (koth.timeMult * 100 + 0.5));
     } else
-      bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier must be between 1 and 99 percent.",
+      bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier (%i) must be between 1 and 99 percent.",
 			  (int) (koth.timeMult * 100 + 0.5));
 
     autoTime();
