@@ -326,8 +326,8 @@ bool KeepAwayMapHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * da
       }
 
       else if (key == "KEEPAWAYFLAGS" && nubs->size() > 1) {
-	for (unsigned int i = 1; i < nubs->size(); i++) {
-	  std::string flag = nubs->get(i).c_str();
+	for (unsigned int j = 1; j < nubs->size(); j++) {
+	  std::string flag = nubs->get(j).c_str();
 	  if (convertFlag(flag) != "")	// must be valid flag type, reject nub otherwise
 	    keepaway.flagsList.push_back(flag);
 	}
