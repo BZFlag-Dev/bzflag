@@ -33,9 +33,9 @@ class TemplateCallbackClass
 {
 public:
   virtual ~TemplateCallbackClass(){};
-  virtual void keyCallback ( std::string &data, const std::string &key ){};
-  virtual bool loopCallback ( const std::string &key ){return false;}
-  virtual bool ifCallback ( const std::string &key ){return false;}
+  virtual void keyCallback ( std::string & /* data */, const std::string & /* key */ ){};
+  virtual bool loopCallback ( const std::string &/* key */ ){return false;}
+  virtual bool ifCallback ( const std::string &/* key */ ){return false;}
 };
 
 class Templateiser : public TemplateCallbackClass

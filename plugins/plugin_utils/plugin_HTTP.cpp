@@ -258,7 +258,7 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
   theCurrentCommand = NULL;
 }
 
-void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
+void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int /* requestID */, const URLParams &params )
 {
   if (acceptURL(theCurrentCommand->URL.c_str()))
   {
@@ -431,7 +431,7 @@ void BZFSHTTPServer::disconnect ( int connectionID )
   users.erase(users.find(connectionID));
 }
 
-void BZFSHTTPServer::setURLDataSize ( unsigned int size, int requestID )
+void BZFSHTTPServer::setURLDataSize ( unsigned int size, int /* requestID */)
 {
   if (theCurrentCommand->data)
     free(theCurrentCommand->data);
@@ -440,7 +440,7 @@ void BZFSHTTPServer::setURLDataSize ( unsigned int size, int requestID )
   theCurrentCommand->size = size;
 }
 
-void BZFSHTTPServer::setURLData ( const char * data, int requestID )
+void BZFSHTTPServer::setURLData ( const char * data, int /* requestID */ )
 {
   if (theCurrentCommand->data)
   {
@@ -455,17 +455,17 @@ void BZFSHTTPServer::setURLData ( const char * data, int requestID )
   }
 }
 
-void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int requestID )
+void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int /* requestID */)
 {
   theCurrentCommand->docType = docType;
 }
 
-void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int requestID )
+void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int /* requestID */ )
 {
   theCurrentCommand->returnCode = code;
 }
 
-void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestID )
+void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int /* requestID */)
 {
   if (!location)
     theCurrentCommand->redirectLocation = "";

@@ -349,7 +349,7 @@ void Templateiser::keyCallback ( std::string &data, const std::string &key )
   }
 }
 
-bool Templateiser::loopCallback ( const std::string &key )
+bool Templateiser::loopCallback ( const std::string & /* key */ )
 {
   return false;
 }
@@ -424,7 +424,7 @@ std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::s
   return itr;
 }
 
-void Templateiser::processComment ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
+void Templateiser::processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str )
 {
   std::string key;
   inItr = readKey(key,inItr,str);
