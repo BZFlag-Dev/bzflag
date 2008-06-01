@@ -152,7 +152,7 @@ class MyURLHandler: public bz_BaseURLHandler
 {
 public:
 	std::string page;
-	virtual void done ( const char* URL, void * data, unsigned int size, bool complete )
+  virtual void done ( const char* /* URL */, void * data, unsigned int size, bool complete )
 	{
 		char *str = (char*)malloc(size+1);
 		memcpy(str,data,size);
@@ -197,14 +197,14 @@ public:
 class mySlashCommand : public bz_CustomSlashCommandHandler
 {
 public:
-	virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
-	{
-		bz_sendTextMessage(BZ_SERVER,playerID,"torBlock List");
-		for ( unsigned int i = 0; i < exitNodes.size(); i++ )
-			bz_sendTextMessage(BZ_SERVER,playerID,exitNodes[i].c_str());
+  virtual bool handle ( int playerID, bz_ApiString /* command */, bz_ApiString /* message */, bz_APIStringList * /* params */ )
+  {
+    bz_sendTextMessage(BZ_SERVER,playerID,"torBlock List");
+    for ( unsigned int i = 0; i < exitNodes.size(); i++ )
+      bz_sendTextMessage(BZ_SERVER,playerID,exitNodes[i].c_str());
 
-		return true;
-	}
+    return true;
+  }
 };
 
 mySlashCommand mySlash;

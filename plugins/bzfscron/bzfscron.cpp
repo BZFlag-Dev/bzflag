@@ -201,7 +201,7 @@ void CronPlayer::added(int player)
   }
 }
 
-void CronPlayer::playerRejected(bz_eRejectCodes code, const char *reason)
+void CronPlayer::playerRejected(bz_eRejectCodes /* code */, const char *reason)
 {
   std::string temp = TextUtils::format("Player rejected (reason: %s)", reason);
   bz_debugMessage(1, temp.c_str());
