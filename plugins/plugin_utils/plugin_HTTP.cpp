@@ -363,10 +363,10 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->docType = eText;
 	      theCurrentCommand->returnCode = e200OK;
 
-	      URLParams params;
-	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, params );
+	      URLParams urlparams;
+	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, urlparams );
 
-	      processTheCommand(user,requestID,params);
+	      processTheCommand(user,requestID,urlparams);
 	    }
 	    else if (indexer)
 	      generateIndex(user,requestID);
@@ -379,9 +379,9 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	    // make sure it's in our vdir
 	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
 	    {
-	      int i = (int)commands.size();
+	      int j = (int)commands.size();
 
-	      for ( int c = 1; c  < i; c++ )
+	      for ( int c = 1; c  < j; c++ )
 	      {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
@@ -399,10 +399,10 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->returnCode = e200OK;
 
 	      theCurrentCommand->URL = url_decode( theCurrentCommand->FullURL);
-	      URLParams params;
-	      paramsFromString ( paramData, params );
+	      URLParams urlparams;
+	      paramsFromString ( paramData, urlparams );
 
-	      processTheCommand(user,requestID,params);
+	      processTheCommand(user,requestID,urlparams);
 	    }
 	    else if (indexer)
 	      generateIndex(user,requestID);
@@ -611,7 +611,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
     if ( pos + chunkToSend > currentCommand->size)
       chunkToSend = currentCommand->size-pos;
 
-    bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
+    bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
 
     pos += chunkToSend;
     if (pos >= currentCommand->size) // if we are done, close this sucker
