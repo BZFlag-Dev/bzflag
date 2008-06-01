@@ -183,18 +183,28 @@ void test_rsa()
 
 void test_gcry()
 {
-    gcry_ac_key_t *key;
-    gcry_ac_handle_t h;
-    gcry_ac_key_type_t k;
-    gcry_ac_data_t d;
+    gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
 
-    gcry_ac_key_init(key, h, k, d);
+    gcry_ac_key_pair_t key_pair;
+    gcry_ac_key_spec_rsa_t rsa_spec;
+    gcry_ac_handle_t handle;
+    gcry_error_t err;
+
+    rsa_spec.e = gcry_mpi_new (0);
+    gcry_mpi_set_ui (rsa_spec.e, 1);
+
+    err = gcry_ac_open  (&handle, GCRY_AC_RSA, 0);
+    if(err) return;
+
+    err = gcry_ac_key_pair_generate(handle, 1024, (void*) &rsa_spec, &key_pair, NULL);
+    if(err) return;
 }
 
 int main(int argc, char* argv[])
 {
+    test_gcry();
     test_ldap();
-    test_rsa();
+    //test_rsa();
     getch();
 
 	return 0;

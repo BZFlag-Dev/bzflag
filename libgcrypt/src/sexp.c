@@ -1483,7 +1483,7 @@ gcry_sexp_build_array (gcry_sexp_t *retsexp, size_t *erroff,
      following flag, however we have to pass it but can't initialize
      it as there is no portable way to do so.  volatile is needed to
      suppress the compiler warning */
-  volatile va_list dummy_arg_ptr;
+  va_list dummy_arg_ptr = NULL;
   
   gcry_error_t rc;
 
@@ -1501,7 +1501,7 @@ gcry_sexp_sscan (gcry_sexp_t *retsexp, size_t *erroff,
      following flag, however we have to pass it but can't initialize
      it as there is no portable way to do so.  volatile is needed to
      suppress the compiler warning */
-  volatile va_list dummy_arg_ptr;
+  va_list dummy_arg_ptr = NULL;
 
   return sexp_sscan (retsexp, erroff, buffer, length, 0,
 		     dummy_arg_ptr, NULL);
