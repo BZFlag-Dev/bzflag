@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = chatlog.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 chatlog_la_SOURCES = chatlog.cpp
 chatlog_la_LDFLAGS = -module -avoid-version
 chatlog_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils

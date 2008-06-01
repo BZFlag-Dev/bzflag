@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = nagware.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 nagware_la_SOURCES = nagware.cpp
 nagware_la_LDFLAGS = -module -avoid-version
 

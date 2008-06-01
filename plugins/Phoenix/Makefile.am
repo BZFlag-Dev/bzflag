@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = Phoenix.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 Phoenix_la_SOURCES = Phoenix.cpp
 Phoenix_la_LDFLAGS = -module -avoid-version
 Phoenix_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
