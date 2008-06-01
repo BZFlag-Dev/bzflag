@@ -61,7 +61,12 @@ void HUDuiScrollList::setSelected(int _index)
 	
 	// The new index falls within the portion of the list already on screen
 	if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
-		visiblePosition = visiblePosition + (_index - index);
+		if (pagedList) {
+			int page = (_index + 1)/numVisibleItems;
+			visiblePosition = _index - ((page - 1)*numVisibleItems);
+		} else {
+			visiblePosition = visiblePosition + (_index - index);
+		}
 	// Moving one down outside of list range
 	} else if (_index == (index + (numVisibleItems - visiblePosition))) {
 		if (pagedList) {
@@ -119,7 +124,8 @@ void HUDuiScrollList::update()
 void HUDuiScrollList::setPaged(bool paged)
 {
 	pagedList = paged;
-	update();
+	pageLabel = new HUDuiLabel;
+	setSelected(0);
 }
 // BROKEN
 
@@ -158,6 +164,11 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 					setSelected((currentPage)*numVisibleItems);
 					doCallback();
 				}
+				break;
+				
+			// Testing purposes only
+			case BzfKeyEvent::Home:
+				setPaged(true);
 				break;
 
 			default:
