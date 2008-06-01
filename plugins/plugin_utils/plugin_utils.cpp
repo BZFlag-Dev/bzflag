@@ -17,10 +17,7 @@
 
 const char* bzu_GetTeamName( bz_eTeamType team )
 {
-  switch (team)
-  {
-  default:
-    break;
+  switch (team){
 
   case eRedTeam:
     return "Red";
@@ -45,6 +42,9 @@ const char* bzu_GetTeamName( bz_eTeamType team )
 
   case eHunterTeam:
     return "Hunter";
+
+  default:
+    break;
   }
 
   return "Unknown";
@@ -156,8 +156,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
       currentChar = (pos < in.size()) ? in[pos] : -1;
     } // end of getting a Token
 
-    if (currentToken.str().size() > 0)// if the token is something add to list
-    { 
+    if (currentToken.str().size() > 0) { // if the token is something add to list
       tokens.push_back(currentToken.str());
       currentToken.str("");
       numTokens ++;
@@ -171,8 +170,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
   } // end of getting all tokens -- either EOL or max tokens reached
 
-  if (enoughTokens && pos != std::string::npos)
-  {
+  if (enoughTokens && pos != std::string::npos) {
     std::string lastToken = in.substr(pos);
     if (lastToken.size() > 0)
       tokens.push_back(lastToken);
@@ -193,8 +191,7 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
     return in; // can't find anything to replace
   if (replaceMe.empty()) return in; // can't replace nothing with something -- can do reverse
 
-  while (endPos != std::string::npos) 
-  {
+  while (endPos != std::string::npos) {
     // push the  part up to
     tempStream << in.substr(beginPos,endPos-beginPos);
     tempStream << withMe;
@@ -209,15 +206,13 @@ std::string url_encode(const std::string &text)
 {
   char hex[5];
   std::string destination;
-  for (int i=0;  i < (int) text.size(); i++) 
-  {
+  for (int i=0;  i < (int) text.size(); i++) {
     char c = text[i];
-    if (isAlphanumeric(c))
+    if (isAlphanumeric(c)) {
       destination+=c;
-    else if (isWhitespace(c))
+    } else if (isWhitespace(c)) {
       destination+='+';
-    else 
-    {
+    } else {
       destination+='%';
       sprintf(hex, "%-2.2X", c);
       destination.append(hex);
@@ -231,12 +226,10 @@ std::string url_decode(const std::string &text)
   std::string destination;
 
   std::string::const_iterator itr = text.begin();
-  while ( itr != text.end() )
-  {
-    if (*itr != '%')
+  while ( itr != text.end() ) {
+    if (*itr != '%') {
       destination += *itr++;
-    else
-    {
+    } else {
       char hex[5] = "0x00";
 
       itr++;;
