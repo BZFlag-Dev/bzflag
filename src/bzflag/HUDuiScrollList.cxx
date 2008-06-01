@@ -24,7 +24,12 @@
 // HUDuiScrollList
 //
 
-HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(0)
+HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(false), pageLabel(NULL)
+{
+  // do nothing
+}
+
+HUDuiScrollList::HUDuiScrollList(bool paged) : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(paged), pageLabel(new HUDuiLabel)
 {
   // do nothing
 }
@@ -59,11 +64,27 @@ void HUDuiScrollList::setSelected(int _index)
 		visiblePosition = visiblePosition + (_index - index);
 	// Moving one down outside of list range
 	} else if (_index == (index + (numVisibleItems - visiblePosition))) {
-		visiblePosition = numVisibleItems - 1;
-	// The new index isn't already on screen
+		if (pagedList) {
+			visiblePosition = 0;
+		} else {
+			visiblePosition = numVisibleItems - 1;
+		}
+	// Moving one up outside of list range
+	} else if (_index == ((index - visiblePosition - 1))) {
+		if (pagedList) {
+			visiblePosition = numVisibleItems - 1;
+		} else {
+			visiblePosition = 0;
+		}
+	// Jumping to a different part of the list
 	} else {
-		// Jump to that part of the list and set the new index as first
-		visiblePosition = 0;
+		if (pagedList) {
+			int page = (_index + 1)/numVisibleItems;
+			visiblePosition = _index - ((page - 1)*numVisibleItems);
+		} else {
+			// Jump to that part of the list and set the new index as first
+			visiblePosition = 0;
+		}
 	}
 	
 	index = _index;
@@ -72,7 +93,7 @@ void HUDuiScrollList::setSelected(int _index)
 // Adds a new item to our scrollable list
 void HUDuiScrollList::addItem(HUDuiLabel* item)
 {
-	// We need to update both the stringList nad the labelList
+	// We need to update both the stringList and the labelList
 	stringList.push_back(item->getString());
 	labelList.push_back(item);
 	update();
@@ -94,8 +115,19 @@ void HUDuiScrollList::update()
 	setSelected(index);
 }
 
+// BROKEN
+void HUDuiScrollList::setPaged(bool paged)
+{
+	pagedList = paged;
+	update();
+}
+// BROKEN
+
 bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 {
+	// Figure out what page the user is on
+	int currentPage = (index/numVisibleItems) + 1;
+
 	if (key.chr == 0)
 		switch (key.button) {
 			case BzfKeyEvent::Up:
@@ -108,6 +140,22 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 			case BzfKeyEvent::Down:
 				if (index != -1) {
 					setSelected(index + 1);
+					doCallback();
+				}
+				break;
+				
+			case BzfKeyEvent::PageUp:
+				if ((pagedList)&&(index != -1)) {
+					//  Jump back to the previous page
+					setSelected((currentPage - 2)*numVisibleItems);
+					doCallback();
+				}
+				break;
+				
+			case BzfKeyEvent::PageDown:
+				if ((pagedList)&&(index != -1)) {
+					//  Skip to the next page
+					setSelected((currentPage)*numVisibleItems);
 					doCallback();
 				}
 				break;
@@ -153,6 +201,11 @@ void HUDuiScrollList::resizeLabels()
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	float listHeight = getHeight();
 	numVisibleItems = listHeight/itemHeight;
+	
+	// If it's a paged list make it one item shorter so we can fit the page label
+	if (pagedList) {
+		numVisibleItems = numVisibleItems - 1;
+	}
 
 	// Determine how far right we can display
 	float width = getWidth();
@@ -181,6 +234,7 @@ void HUDuiScrollList::doRender()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	
+	// Draw the list items
 	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
 		if (i < labelList.size()) {
 			HUDuiLabel* item = labelList.at(i);
@@ -189,6 +243,29 @@ void HUDuiScrollList::doRender()
 			item->setDarker(i != getSelected());
 			item->render();
 		}
+	}
+	
+	// Draw the page label
+	if (pagedList) {
+		int numPages = (stringList.size()/numVisibleItems) + 1;
+		int currentPage = (getSelected()/numVisibleItems) + 1;
+		
+		std::vector<std::string> args;
+		char msg[50];
+		
+		sprintf(msg, "%ld", currentPage);
+		args.push_back(msg);
+		sprintf(msg, "%ld", numPages);
+		args.push_back(msg);
+		
+		pageLabel->setString("Page: {1}/{2}", &args);
+		
+		float labelWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), pageLabel->getString().c_str());
+		
+		pageLabel->setFontFace(getFontFace());
+		pageLabel->setFontSize(getFontSize());
+		pageLabel->setPosition((getX() +(getWidth() - labelWidth)), (getY() - itemHeight*(numVisibleItems + 1)));
+		pageLabel->render();
 	}
 }
 

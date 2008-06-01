@@ -32,18 +32,21 @@ class HUDuiScrollList : public HUDuiControl {
 	public:
 			HUDuiScrollList();
 			~HUDuiScrollList();
+			HUDuiScrollList(bool paged);
 
 		int getSelected() const;
 		void setSelected(int _index);
 		
 		void addItem(HUDuiLabel* item);
-		void addItem(std::string item); //BROKEN
+		void addItem(std::string item); // BROKEN
 		
 		void update();
 		void clear();
 		
 		void setSize(float width, float height);
 		void setFontSize(float size);
+
+		void setPaged(bool paged); // BROKEN
 
 	protected:
 		bool doKeyPress(const BzfKeyEvent&);
@@ -56,6 +59,9 @@ class HUDuiScrollList : public HUDuiControl {
 		int visiblePosition;
 		int numVisibleItems;
 		int numVisibleChars;
+		bool pagedList;
+		
+		HUDuiLabel* pageLabel;
 		
 		std::vector<HUDuiLabel*> labelList;
 		std::vector<std::string> stringList;
