@@ -59,33 +59,21 @@ void HUDuiScrollList::setSelected(int _index)
 	else if (_index >= (int)labelList.size())
 		_index = (int)labelList.size() - 1;
 	
-	// The new index falls within the portion of the list already on screen
-	if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
-		if (pagedList) {
-			int page = (_index + 1)/numVisibleItems;
-			visiblePosition = _index - ((page - 1)*numVisibleItems);
-		} else {
-			visiblePosition = visiblePosition + (_index - index);
-		}
-	// Moving one down outside of list range
-	} else if (_index == (index + (numVisibleItems - visiblePosition))) {
-		if (pagedList) {
-			visiblePosition = 0;
-		} else {
-			visiblePosition = numVisibleItems - 1;
-		}
-	// Moving one up outside of list range
-	} else if (_index == ((index - visiblePosition - 1))) {
-		if (pagedList) {
-			visiblePosition = numVisibleItems - 1;
-		} else {
-			visiblePosition = 0;
-		}
-	// Jumping to a different part of the list
+	if (pagedList) {
+		// Figure out what page the new index is on
+		int newPage = (_index/numVisibleItems) + 1;
+		visiblePosition = _index - ((newPage - 1)*numVisibleItems);
 	} else {
-		if (pagedList) {
-			int page = (_index + 1)/numVisibleItems;
-			visiblePosition = _index - ((page - 1)*numVisibleItems);
+		// The new index falls within the portion of the list already on screen
+		if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
+			visiblePosition = visiblePosition + (_index - index);
+		// Moving one down outside of list range
+		} else if (_index == (index + (numVisibleItems - visiblePosition))) {
+			visiblePosition = numVisibleItems - 1;
+		// Moving one up outside of list range
+		} else if (_index == ((index - visiblePosition - 1))) {
+			visiblePosition = 0;
+		// Jumping to a different part of the list
 		} else {
 			// Jump to that part of the list and set the new index as first
 			visiblePosition = 0;
@@ -104,7 +92,6 @@ void HUDuiScrollList::addItem(HUDuiLabel* item)
 	update();
 }
 
-// BROKEN
 void HUDuiScrollList::addItem(std::string item)
 {
 	HUDuiLabel* newLabel = new HUDuiLabel;
@@ -113,21 +100,24 @@ void HUDuiScrollList::addItem(std::string item)
 	
 	addItem(newLabel);
 }
-// BROKEN
 
 void HUDuiScrollList::update()
 {
 	setSelected(index);
 }
 
-// BROKEN
 void HUDuiScrollList::setPaged(bool paged)
 {
 	pagedList = paged;
-	pageLabel = new HUDuiLabel;
-	setSelected(0);
+	if (pagedList) {
+		pageLabel = new HUDuiLabel;
+		resizeLabels();
+	} else {
+		pageLabel = NULL;
+	}
+	resizeLabels();
+	update();
 }
-// BROKEN
 
 bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 {
@@ -168,7 +158,7 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 				
 			// Testing purposes only
 			case BzfKeyEvent::Home:
-				setPaged(true);
+				setPaged(!pagedList);
 				break;
 
 			default:
@@ -258,7 +248,7 @@ void HUDuiScrollList::doRender()
 	
 	// Draw the page label
 	if (pagedList) {
-		int numPages = (stringList.size()/numVisibleItems) + 1;
+		int numPages = ((stringList.size() - 1)/numVisibleItems) + 1;
 		int currentPage = (getSelected()/numVisibleItems) + 1;
 		
 		std::vector<std::string> args;
