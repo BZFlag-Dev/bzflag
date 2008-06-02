@@ -2,7 +2,6 @@
 #include <conio.h>
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
-#include <openssl/rsa.h>
 #include <gcrypt.h>
 
 bool test_ret(int ret)
@@ -175,12 +174,6 @@ void test_ldap()
     test_unbind();
 }
 
-void test_rsa()
-{
-    RSA *key = RSA_new();
-    RSA_free(key);
-}
-
 void test_gcry()
 {
     gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
@@ -204,7 +197,6 @@ int main(int argc, char* argv[])
 {
     test_gcry();
     test_ldap();
-    //test_rsa();
     getch();
 
 	return 0;
