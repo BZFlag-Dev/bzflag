@@ -176,16 +176,6 @@ static float FarPlane = FarPlaneDefault;
 static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
-static const char*	blowedUpMessage[] = {
-  NULL,
-  "Got shot by ",
-  "Got flattened by ",
-  "Team flag was captured by ",
-  "Teammate hit with Genocide by ",
-  "Tank Self Destructed",
-  "Tank Rusted"
-};
-
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
 #endif
