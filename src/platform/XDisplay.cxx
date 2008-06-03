@@ -180,7 +180,7 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
 
     case ButtonPress:
       event.type = BzfEvent::KeyDown;
-      event.keyDown.ascii = 0;
+      event.keyDown.chr = 0;
       event.keyDown.shift = 0;
       switch (xevent.xbutton.button) {
 	case Button1: event.keyDown.button = BzfKeyEvent::LeftMouse; break;
@@ -192,7 +192,7 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
 
     case ButtonRelease:
       event.type = BzfEvent::KeyUp;
-      event.keyUp.ascii = 0;
+      event.keyUp.chr = 0;
       event.keyUp.shift = 0;
       switch (xevent.xbutton.button) {
 	case Button1: event.keyUp.button = BzfKeyEvent::LeftMouse; break;
@@ -234,17 +234,18 @@ bool			XDisplay::getKey(const XEvent& xevent,
 {
   char buf[3];
   KeySym keysym;
+  /* TODO: allow wide character input */
   if (XLookupString((XKeyEvent*)&xevent.xkey, buf, 1, &keysym, NULL) == 1) {
-    key.ascii = buf[0];
+    key.chr = buf[0];
     key.button = BzfKeyEvent::NoButton;
 
     if (keysym == XK_Delete) {
-      key.ascii = 0;
+      key.chr = 0;
       key.button = BzfKeyEvent::Delete;
     }
   }
   else {
-    key.ascii = 0;
+    key.chr = 0;
     switch (keysym) {
       case XK_Pause:	key.button = BzfKeyEvent::Pause; break;
       case XK_Home:	key.button = BzfKeyEvent::Home; break;
