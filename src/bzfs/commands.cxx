@@ -1859,7 +1859,6 @@ bool PlayerListCommand::operator() (const char *,
       playerData->netHandler->getPlayerList(hostInfo, sizeof(hostInfo));
       snprintf(reply, MessageLen, "[%d]%-16s: %s",
 	       t, playerData->player.getCallSign(), hostInfo);
-      std::cout << reply << "\n";
       sendMessage(ServerPlayer, t, reply);
     }
     return true;
