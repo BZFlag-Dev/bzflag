@@ -1867,7 +1867,7 @@ bool PlayerListCommand::operator() (const char *,
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     if (playerData->player.isPlaying()) {
-      playerData->netHandler->getPlayerList(hostInfo);
+      playerData->netHandler->getPlayerList(hostInfo, sizeof(hostInfo));
       snprintf(reply, MessageLen, "[%d]%-16s: %s",
 	       t, playerData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
@@ -1881,7 +1881,7 @@ bool PlayerListCommand::operator() (const char *,
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
       if (otherData->netHandler) {
-	otherData->netHandler->getPlayerList(hostInfo);
+	otherData->netHandler->getPlayerList(hostInfo, sizeof(hostInfo));
       } else if (otherData->playerHandler) {
 	strcpy(hostInfo, "server-side player");
       }

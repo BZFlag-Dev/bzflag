@@ -492,9 +492,9 @@ std::string NetHandler::reasonToKick()
   return reason;
 }
 
-void NetHandler::getPlayerList(char list[]) 
+void NetHandler::getPlayerList(char* list, size_t listSize) 
 {
-  snprintf(list, sizeof(list), "%s%s%s%s%s%s",
+  snprintf(list, listSize, "%s%s%s%s%s%s",
 	  peer.getDotNotation().c_str(),
 	  getHostname() ? " (" : "",
 	  getHostname() ? getHostname() : "",

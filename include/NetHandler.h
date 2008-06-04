@@ -124,8 +124,10 @@ public:
 
   // UDP......
   static bool isUdpFdSet(fd_set *read_set);
+private:
   /// return the opened socket, usable from all other network internal client
   static SOCKET  getUdpSocket();
+public:
   /**
    * udpReceive will try to get the next udp message received
    *
@@ -251,7 +253,7 @@ public:
   int		pwrite(const void *b, int l);
   int		pflush();
   std::string	reasonToKick();
-  void		getPlayerList(char list[]);
+  void		getPlayerList(char* list, size_t listSize);
   const char*	getTargetIP();
   int		sizeOfIP();
   void*		packAdminInfo(void *buf);
