@@ -494,19 +494,25 @@ class ShotBeginHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 3)
+    if (!player || len < 7)
       return false;
 
     FiringInfo firingInfo;
 
     uint16_t		id;
     void		*bufTmp;
+    float		shotTime;
 
     bufTmp = nboUnpackUShort(buf, id);
+    bufTmp = nboUnpackFloat(buf, shotTime);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
+    firingInfo.timeSent = shotTime;
+
+    // TODO compute the lifetime for the shot based on current game data
+    firingInfo.lifetime = 5.0f;
 
     firingInfo.shotType = player->efectiveShotType;
 
@@ -628,6 +634,8 @@ public:
 
     if (driver->getIsDeath())
       playerKilled(player->getIndex(),PhysicsDriverDeath,driverID);
+
+    return true;
   }
 };
 
