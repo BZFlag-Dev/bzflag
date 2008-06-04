@@ -460,24 +460,47 @@ void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
   rot = currentRot;
 }
 
-void GameKeeper::Player::doPlayerDR ( float time )
+GameKeeper::Player::StateDRRecord::StateDRRecord(Player*p)
 {
-  float delta = time - stateTimeStamp;
+  memcpy(pos,p->lastState.pos,sizeof(float)*3);
+  memcpy(vel,p->lastState.velocity,sizeof(float)*3);
+  rot = p->lastState.azimuth;
+  angVel = p->lastState.angVel;
+}
 
-  currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
-  currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
-  currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
-  if ( currentPos[2] < 0 )
-    currentPos[2] = 0;	// burrow depth maybe?
+void GameKeeper::Player::doDRLogic ( float delta,  StateDRRecord &drData )
+{
+  drData.pos[0] = drData.pos[0] + (drData.vel[0] * delta);
+  drData.pos[1] = drData.pos[1] + (drData.vel[1] * delta);
+  drData.pos[2] = drData.pos[2] + (drData.vel[2] * delta);
+  if ( drData.pos[2] < 0 )
+    drData.pos[2] = 0;	// burrow depth maybe?
 
-  currentRot = lastState.azimuth + (lastState.angVel * delta);
+  drData.rot = drData.rot + (drData.angVel * delta);
 
   // clamp us to +- 180, makes math easy
-  while (currentRot > 180.0)
-    currentRot -= 180.0;
+  while (drData.rot > 180.0)
+    drData.rot -= 180.0;
 
   while (currentRot < -180.0)
-    currentRot += 180.0;
+    drData.rot += 180.0;
+}
+
+void GameKeeper::Player::doPlayerDR ( float time )
+{
+  // get the delta
+  float delta = time - stateTimeStamp;
+
+  // make a copy of the last state and run the DR on it.
+  StateDRRecord drData(this);
+  doDRLogic(delta,drData);
+
+  // copy the new pos into the current state
+  currentPos[0] = drData.pos[0];
+  currentPos[1] = drData.pos[1];
+  currentPos[2] = drData.pos[2];
+
+  currentRot = drData.rot;
 }
 
 PlayerState GameKeeper::Player::getCurrentStateAsState ( void )

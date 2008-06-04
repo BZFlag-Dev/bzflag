@@ -177,6 +177,21 @@ public:
 
     bool	      canSpawn;
 
+   class StateDRRecord
+    {
+    public:
+      StateDRRecord(Player*p);
+
+      float	      pos[3];
+      float	      vel[3];
+      float	      rot;
+      float	      angVel;
+    };
+
+   // does the meat of the DR but does not update a state
+    void doDRLogic ( float delta,  StateDRRecord &drData );
+
+    // calls doDRLogic and updates to the state
     void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
     float	      currentPos[3];
     float	      curentVel[3];

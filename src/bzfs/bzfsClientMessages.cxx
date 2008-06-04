@@ -509,10 +509,9 @@ public:
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
-    firingInfo.timeSent = shotTime;
 
     // TODO compute the lifetime for the shot based on current game data
-    firingInfo.lifetime = 5.0f;
+    firingInfo.lifetime = 5.0f; // *** CONST REPLACE THIS with a function
 
     firingInfo.shotType = player->efectiveShotType;
 
@@ -532,6 +531,38 @@ public:
       logDebugMessage(2,"Player %s [%d] can not shoot yet\n", shooter.getCallSign(), firingInfo.shot.player);
       return true;
     }
+
+    // find out how long after the last update the shot has been ( should be near 0 )
+    // if the shot came before the last update, that is wierd, and we just use the last update postion
+    double updateTime = shotTime - player->stateTimeStamp;
+    if (updateTime < 0)
+    {
+      shotTime = player->stateTimeStamp;
+      updateTime = 0;
+    }
+
+    // interpolate the shot's position based on the last tank update
+    GameKeeper::Player::StateDRRecord drInfo(player);
+    player->doDRLogic((float)updateTime,drInfo);
+
+    // build up a current state for the shot using our DRed postions
+    firingInfo.timeSent = shotTime;
+    firingInfo.shot.dt = (float)TimeKeeper::getCurrent().getSeconds()-shotTime;
+    memcpy(firingInfo.shot.pos,drInfo.pos,sizeof(float)*3);
+    memcpy(firingInfo.shot.vel,drInfo.vel,sizeof(float)*3);
+
+    // compute the new velocity
+    float velMag = sqrt(firingInfo.shot.vel[0]*firingInfo.shot.vel[0]+firingInfo.shot.vel[1]*firingInfo.shot.vel[1]+firingInfo.shot.vel[2]*firingInfo.shot.vel[2]);
+    float shotSpeed = 10.0f; // *** CONST REPLACE THIS with a function that gets the speed based on bzdb
+    float newSpeed = shotSpeed + velMag;
+
+    // unitize and scale to shot speed
+    firingInfo.shot.vel[0] = firingInfo.shot.vel[0]/velMag;
+    firingInfo.shot.vel[0] *= newSpeed;
+    firingInfo.shot.vel[1] = firingInfo.shot.vel[1]/velMag;
+    firingInfo.shot.vel[1] *= newSpeed;
+    firingInfo.shot.vel[2] = firingInfo.shot.vel[2]/velMag;
+    firingInfo.shot.vel[2] *= newSpeed;
 
     int guid = ShotManager::instance().newShot(&firingInfo);
 
