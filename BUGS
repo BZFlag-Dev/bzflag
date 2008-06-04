@@ -58,8 +58,6 @@ Regressions
 * bullets no longer bounce off the walls in replays even when ricochets have
   been enabled
   
-* /playerlist only reports the first octet of the player IP
-
 Documentation
 -------------
 
