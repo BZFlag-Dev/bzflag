@@ -50,6 +50,11 @@ Crashes
 Regressions
 -----------
 
+* On a VC8 build (at least under Debug_Distribution), if you start a client as
+  windowed, and minimize it with F4 (even after making it full screen with
+  F1), you cannot restore the window into view. Keys still seem to get sent,
+  as I can click the taskbar icon and then hit F12 to exit.
+
 * jumping is broken; heigth and direction of jumping affected.
 
 * GM does not seem to lock on reliably (try against a remote client, bots work
