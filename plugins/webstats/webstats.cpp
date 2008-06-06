@@ -26,14 +26,20 @@ public:
   void initReport ( void );
   void finishReport ( void );
 
+  void doStatReport ( std::string &page );
+  void doPlayerReport ( std::string &page, int playerID );
+
   // globals for report
   int player;
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator teamSortItr;
   size_t playerInTeam;
 
+  bz_BasePlayerRecord *playeRecord;
+
   // default template
-  std::string defaultTemplate;
+  std::string defaultMainTemplate;
+  std::string defaultPlayerTemplate;
 };
 
 WebStats webStats("webstats");
@@ -73,9 +79,13 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("Losses",this);
   templateSystem.addKey("TeamKills",this);
   templateSystem.addKey("Status",this);
+  templateSystem.addKey("PlayerID",this);
 
-  defaultTemplate = "<html><head></head><body><h2>Players</h2>";
-  defaultTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
+  defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
+  defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
+  
+  defaultPlayerTemplate = "<html><head></head><body><h2>[$Callsign]</h2><b>[$TeamName]</b> [$Wins]/[$Losses]([$TeamKills]) [$Status]</body></html>";
+
 }
 
 void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
@@ -108,15 +118,17 @@ void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
 void WebStats::keyCallback ( std::string &data, const std::string &key )
 {
   bz_BasePlayerRecord *rec = NULL;
-  if ( teamSortItr != teamSort.end())
+  if ( !playeRecord && teamSortItr != teamSort.end())
     rec = teamSortItr->second[playerInTeam];
+  else
+    rec = playeRecord;
 
   if (key == "playercount")
     data = format("%d",bz_getPlayerCount());
   else if (key == "teamname")
   {
     if (rec)
-      data = bzu_GetTeamName(teamSortItr->first);
+      data = bzu_GetTeamName(rec->team);
     else
       data = "";
   }
@@ -155,13 +167,20 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     else
       data = "$nbsp;";
   }
+  else if (key == "playerid")
+  {
+    if (rec)
+      data = format("%d",rec->playerID);
+    else
+      data = "-1";
+  }
 }
 
 bool WebStats::loopCallback ( const std::string &key )
 {
   if (key == "players")
   {
-    if (!teamSort.size())
+    if (playeRecord || !teamSort.size())
       return false;
 
     if ( teamSortItr == teamSort.end())
@@ -188,7 +207,7 @@ bool WebStats::ifCallback ( const std::string &key )
   if (key == "newteam")
     return teamSortItr != teamSort.end() && playerInTeam == 0;
   else if (key == "players")
-    return teamSort.size() > 0;
+    return playeRecord != NULL ? playeRecord!= NULL : teamSort.size() > 0;
 
   return false;
 }
@@ -231,16 +250,44 @@ void WebStats::finishReport ( void )
   teamSort.clear();
 }
 
+void WebStats::doStatReport ( std::string &page )
+{
+  playeRecord = NULL;
+  initReport();
+  if (!templateSystem.processTemplateFile(page,"stats.tmpl"))
+    templateSystem.processTemplate(page,defaultMainTemplate);
+  finishReport();
+}
+
+void WebStats::doPlayerReport ( std::string &page, int playerID )
+{ 
+  templateSystem.startTimer();
+  playeRecord = bz_getPlayerByIndex(playerID);
+  if (!playeRecord)
+    page += "Invalid Player";
+  else
+  {
+    if (!templateSystem.processTemplateFile(page,"player.tmpl"))
+      templateSystem.processTemplate(page,defaultPlayerTemplate);
+    bz_freePlayerRecord(playeRecord);
+    playeRecord = NULL;
+  }
+} 
+
 
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
   bool evenLine = false;
+  playeRecord = NULL;
 
   std::string page;
-  initReport();
-  if (!templateSystem.processTemplateFile(page,"stats.tmpl"))
-    templateSystem.processTemplate(page,defaultTemplate);
-  finishReport();
+
+  std::string action = getParam(paramaters,"action");
+  std::string playerID = getParam(paramaters,"playerid");
+  if ( action == "player" && playerID.size())
+    doPlayerReport(page,atoi(playerID.c_str()));
+  else
+   doStatReport(page);
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
