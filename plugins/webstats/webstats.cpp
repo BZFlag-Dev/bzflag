@@ -156,6 +156,11 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("ObserversTeamCount",this);
   templateSystem.addIF("ObserversTeam",this);
 
+  templateSystem.addKey("GameType",this);
+  templateSystem.addIF("TeamFFA",this);
+  templateSystem.addIF("OpenFFA",this);
+  templateSystem.addIF("CTF",this);
+  templateSystem.addIF("RabbitChase",this);
 
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
@@ -202,6 +207,31 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
 
   if (key == "playercount")
     data = format("%d",bz_getPlayerCount());
+  else if (key == "gametype")
+  {
+    switch(bz_getGameType())
+    {
+      case TeamFFAGame:
+	data = "Team FFA";
+	break;
+
+      case ClassicCTFGame:
+	data = "Team Capture the Flag";
+	break;
+
+      case eRabbitGame:
+	data = "Rabbit Hunt";
+	break;
+
+      case OpenFFAGame:
+	data = "Open FFA";
+	break;
+
+      default:
+	data = "other";
+	break;
+    }
+  }
   else if (key == "teamname")
   {
     if (rec)
@@ -439,6 +469,14 @@ bool WebStats::ifCallback ( const std::string &key )
     return bz_getTeamCount(eHunterTeam) > 0;
   else if (key == "rabbitteam")
     return bz_getTeamCount(eRabbitTeam) > 0;
+  else if (key == "teamffa")
+    return bz_getGameType() == TeamFFAGame;
+  else if (key == "openffa")
+    return bz_getGameType() == OpenFFAGame;
+  else if (key == "ctf")
+    return bz_getGameType() == ClassicCTFGame;
+  else if (key == "rabbitchase")
+    return bz_getGameType() == eRabbitGame;
   else if (rec)
   {
     if (key == "spawned")

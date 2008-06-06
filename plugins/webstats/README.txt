@@ -70,6 +70,9 @@ Keys
 		GreenTeamLosses
 		BlueTeamLosses
 		PurpleTeamLosses
+		
+	Global Server Info
+		GameType
 
 IFs 
 	Player Loop
@@ -97,6 +100,12 @@ IFs
 		RogueTeam
 		HunterTeam
 		RabbitTeam
+	
+	Global Server Info
+	  TeamFFA
+	  OpenFFA
+	  CTF
+	  RabbitChase
 
 Loops
 	Player Loop
