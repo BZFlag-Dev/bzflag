@@ -256,12 +256,16 @@ bool ShotManager::Shot::update ( double dt )
 float ShotManager::getShotLifetime ( ShotType type )
 {
   // effective shot lifetime is equal to _reloadTime
-  return BZDB.eval (StateDatabase::BZDB_RELOADTIME);
+  if (type == GMShot)
+    return BZDB.eval (StateDatabase::BZDB_GMADLIFE) * 
+      BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  else
+    return BZDB.eval (StateDatabase::BZDB_RELOADTIME);
 }
 
-float ShotManager::getShotVelocity ( /*Player *player*/ )
+float ShotManager::getShotVelocity ()
 {
-  ;
+  return BZDB.eval (StateDatabase::BZDB_SHOTSPEED);
 }
 
 // Local Variables: ***

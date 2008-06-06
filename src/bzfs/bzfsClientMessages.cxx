@@ -550,7 +550,7 @@ public:
 
     // compute the new velocity
     float velMag = sqrt(firingInfo.shot.vel[0]*firingInfo.shot.vel[0]+firingInfo.shot.vel[1]*firingInfo.shot.vel[1]+firingInfo.shot.vel[2]*firingInfo.shot.vel[2]);
-    float shotSpeed = 10.0f; // *** CONST REPLACE THIS with a function that gets the speed based on bzdb
+    float shotSpeed = ShotManager::getShotVelocity();
     float newSpeed = shotSpeed + velMag;
 
     // unitize and scale to shot speed
