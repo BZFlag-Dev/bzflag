@@ -66,6 +66,7 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("PlayerCount",this);
   templateSystem.addLoop("Players",this);
   templateSystem.addIF("NewTeam",this);
+  templateSystem.addIF("Players",this);
   templateSystem.addKey("TeamName",this);
   templateSystem.addKey("Callsign",this);
   templateSystem.addKey("Wins",this);
@@ -186,6 +187,8 @@ bool WebStats::ifCallback ( const std::string &key )
 {
   if (key == "newteam")
     return teamSortItr != teamSort.end() && playerInTeam == 0;
+  else if (key == "players")
+    return teamSort.size() > 0;
 
   return false;
 }

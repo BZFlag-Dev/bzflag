@@ -24,8 +24,11 @@ th { border: 1px solid black; }
 [-- players section --]
 <hr>
 <h2>Players</h2>
-<table>
-	<tr> <th>Callsign</th> <th>Wins</th> <th>Losses</th> <th>TKs</th> <th>Status</th> </tr>
+<table border="1">
+	[?IF Players]
+		<tr> <th>Callsign</th> <th>Wins</th> <th>Losses</th> <th>TKs</th> <th>Status</th> </tr>
+	[?END Players]
+	
 	[*START Players]
 		[?IF NewTeam]
 			<tr class="[$TeamName]">
