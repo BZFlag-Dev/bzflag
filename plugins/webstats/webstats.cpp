@@ -106,6 +106,11 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addLoop("FlagHistory",this);
   templateSystem.addKey("FlagHistoryFlag",this);
 
+  // lag info
+  templateSystem.addKey("Lag",this);
+  templateSystem.addKey("Jitter",this);
+  templateSystem.addKey("PacketLoss",this);
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
   
@@ -197,6 +202,21 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
   {
     if (rec)
       data = rec->bzID.c_str();
+  }
+  else if (key == "lag")
+  {
+    if (rec)
+      data = format("%d",rec->lag);
+  }
+  else if (key == "jitter")
+  {
+    if (rec)
+      data = format("%d",rec->jitter);
+  }
+  else if (key == "packetloss")
+  {
+    if (rec)
+      data = format("%f",rec->packetloss);
   }
   else if (key == "groupcount")
   {
@@ -375,7 +395,6 @@ void WebStats::doPlayerReport ( std::string &page, int playerID )
     playeRecord = NULL;
   }
 } 
-
 
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {

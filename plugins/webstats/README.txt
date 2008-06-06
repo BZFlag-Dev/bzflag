@@ -30,6 +30,9 @@ Keys
 	 PlayerID
 	 PlayerFlag
 	 BZID
+	 Lag
+	 Jitter
+	 PacketLoss
 	 
 	 Group Info
 		GroupCount
