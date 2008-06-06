@@ -111,6 +111,8 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("Jitter",this);
   templateSystem.addKey("PacketLoss",this);
 
+  templateSystem.addKey("IPAddress",this);
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
   
@@ -202,6 +204,11 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
   {
     if (rec)
       data = rec->bzID.c_str();
+  }
+  else if (key == "ipaddress")
+  {
+    if (rec)
+      data = rec->ipAddress.c_str();
   }
   else if (key == "lag")
   {

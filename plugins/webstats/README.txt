@@ -33,6 +33,7 @@ Keys
 	 Lag
 	 Jitter
 	 PacketLoss
+	 IPAddress
 	 
 	 Group Info
 		GroupCount
