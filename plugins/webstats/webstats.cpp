@@ -80,6 +80,16 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("TeamKills",this);
   templateSystem.addKey("Status",this);
   templateSystem.addKey("PlayerID",this);
+  templateSystem.addKey("PlayerFlag",this);
+
+  templateSystem.addIF("Spawned",this);
+  templateSystem.addIF("Verified",this);
+  templateSystem.addIF("Global",this);
+  templateSystem.addIF("Admin",this);
+  templateSystem.addIF("Op",this);
+  templateSystem.addIF("CanSpawn",this);
+
+  templateSystem.addKey("BZID",this);
 
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
@@ -123,49 +133,39 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
   else
     rec = playeRecord;
 
+  data = "";
+
   if (key == "playercount")
     data = format("%d",bz_getPlayerCount());
   else if (key == "teamname")
   {
     if (rec)
       data = bzu_GetTeamName(rec->team);
-    else
-      data = "";
   }
   else if (key == "callsign")
   {
     if (rec)
       data = rec->callsign.c_str();
-    else
-      data = "";
   }
   else if (key == "wins")
   {
     if (rec)
       data = format("%d",rec->wins);
-    else
-      data = "";
   }
   else if (key == "losses")
   {
     if (rec)
       data = format("%d",rec->losses);
-    else
-      data = "";
   }
   else if (key == "teamkills")
   {
     if (rec)
       data = format("%d",rec->teamKills);
-    else
-      data = "";
   }
   else if (key == "status")
   {
     if (rec)
       getStatus(rec,data);
-    else
-      data = "$nbsp;";
   }
   else if (key == "playerid")
   {
@@ -173,6 +173,16 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
       data = format("%d",rec->playerID);
     else
       data = "-1";
+  }
+  else if (key == "playerflag")
+  {
+    if (rec)
+      data = rec->currentFlag.c_str();
+  }
+  else if (key == "bzid")
+  {
+    if (rec)
+      data = rec->bzID.c_str();
   }
 }
 
@@ -204,10 +214,31 @@ bool WebStats::loopCallback ( const std::string &key )
 
 bool WebStats::ifCallback ( const std::string &key )
 {
+  bz_BasePlayerRecord *rec = NULL;
+  if ( !playeRecord && teamSortItr != teamSort.end())
+    rec = teamSortItr->second[playerInTeam];
+  else
+    rec = playeRecord;
+
   if (key == "newteam")
     return teamSortItr != teamSort.end() && playerInTeam == 0;
   else if (key == "players")
     return playeRecord != NULL ? playeRecord!= NULL : teamSort.size() > 0;
+  else if (rec)
+  {
+    if (key == "spawned")
+      return playeRecord->spawned;
+    else if (key == "verified")
+      return playeRecord->verified;
+    else if (key == "global")
+      return playeRecord->globalUser;
+    else if (key == "admin")
+      return playeRecord->admin;
+    else if (key == "op")
+      return playeRecord->op;
+    else if (key == "canspawn")
+      return playeRecord->canSpawn;
+  }
 
   return false;
 }

@@ -2,9 +2,47 @@
     DYNAMIC LINK LIBRARY : webstats Project Overview
 ========================================================================
 
-This is the webstats. It makes a webstats_DESCRIPTION
+This is the webstats plugin. It generates web pages based on live stat info.
 
-Replace every occurance of the term webstats in every file in here
-with the name of your project.  Also open .sln and .vcproj files in a
-text editor and do a search and replace.  Then write a short readme with
-usage instructions or other details in this file.
+Template features.
+2 templates are used.
+
+stats.tmpl
+	This template is the default page for the template loop and will provide the Player loop, and all the player data items for each player
+	
+player.tmpl
+	This template is called if the action paramater is set to player, and the PlayerID paramater is a valid player id.
+	It provides all the player data templates for the one player refrenced in PlayerID
+
+Template Tokens
+
+Keys
+	Player Loop
+	 PlayerCount
+		
+	Player Data (per player)
+	 TeamName
+	 Callsign
+	 Wins
+	 Losses
+	 TeamKills
+	 Status
+	 PlayerID
+	 PlayerFlag
+	 BZID
+	 
+IFs 
+	Player Loop
+		NewTeam
+		Players
+	Player Data (per player)
+	  Spawned
+	  Verified
+	  Global
+	  Admin
+	  Op
+	  CanSpawn
+
+Loops
+	Player Loop
+	Players
