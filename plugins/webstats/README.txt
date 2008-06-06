@@ -34,7 +34,10 @@ Keys
 	 Group Info
 		GroupCount
 		GroupName
-	 
+		
+	 Flag History
+		FlagHistoryCount
+		FlagHistoryFlag
 IFs 
 	Player Loop
 		NewTeam
@@ -49,9 +52,13 @@ IFs
 	  
 	 Group Info
 		Groups
+	Flag History
+		FlagHistory
 
 Loops
 	Player Loop
 	Players
 		Group Info
 			Groups
+		Flag History
+			FlagHistory

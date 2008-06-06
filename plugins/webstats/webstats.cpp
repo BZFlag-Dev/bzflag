@@ -42,6 +42,7 @@ public:
   std::string defaultPlayerTemplate;
 
   unsigned int groupLoop;
+  unsigned int flagHistoryLoop;
 };
 
 WebStats webStats("webstats");
@@ -98,6 +99,12 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addIF("Groups",this);
   templateSystem.addLoop("Groups",this);
   templateSystem.addKey("GroupName",this);
+
+  // flagHistory
+  templateSystem.addKey("FlagHistoryCount",this);
+  templateSystem.addIF("FlagHistory",this);
+  templateSystem.addLoop("FlagHistory",this);
+  templateSystem.addKey("FlagHistoryFlag",this);
 
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
@@ -201,6 +208,16 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     if (rec && groupLoop < rec->groups.size())
       data = rec->groups[groupLoop].c_str();
   }
+  else if (key == "flaghistorycount")
+  {
+    if (rec)
+      data = format("%d",rec->flagHistory.size());
+  }
+  else if (key == "flaghistoryflag")
+  {
+    if (rec && flagHistoryLoop < rec->flagHistory.size())
+      data = rec->flagHistory[flagHistoryLoop].c_str();
+  }
 }
 
 bool WebStats::loopCallback ( const std::string &key )
@@ -245,7 +262,21 @@ bool WebStats::loopCallback ( const std::string &key )
       return false;
     }
     return true;
- }
+  }
+  else if ( key == "flaghistory" && rec)
+  {
+    if (!flagHistoryLoop)
+      flagHistoryLoop++;
+    else
+      flagHistoryLoop = 0;
+
+    if (flagHistoryLoop >= rec->flagHistory.size())
+    {
+      flagHistoryLoop = 0;
+      return false;
+    }
+    return true;
+  }
   return false;
 }
 
@@ -277,8 +308,9 @@ bool WebStats::ifCallback ( const std::string &key )
       return rec->canSpawn;
     else if (key == "groups")
       return rec->groups.size() > 0;
+    else if (key == "flaghistory")
+      return rec->flagHistory.size() > 0;
   }
-
   return false;
 }
 
@@ -349,6 +381,7 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
 {
   bool evenLine = false;
   groupLoop = 0;
+  flagHistoryLoop = 0;
   playeRecord = NULL;
 
   std::string page;
