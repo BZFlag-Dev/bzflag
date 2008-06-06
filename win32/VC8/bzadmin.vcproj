@@ -138,7 +138,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE; _HAVE_CURSES_H;BUILDING_BZADMIN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -164,7 +164,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="pdcurses.lib ws2_32.lib winmm.lib libcurl.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib libcurl.lib"
 				OutputFile=".\..\..\src\bzadmin/bzadmin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
