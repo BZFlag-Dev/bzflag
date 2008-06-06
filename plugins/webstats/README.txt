@@ -89,6 +89,27 @@ Keys
 		
 	Global Server Info
 		GameType
+		Uptime
+		TotalPlayers
+		Joins
+		Spawns
+		Deaths
+		UniqueReged
+		UniqueUnReged
+		DataInB
+		DataOutB
+		DataInKB
+		DataOutKB
+		DataInMB
+		DataOutMB
+		DataInGB
+		DataOutGB
+		TotalTransferB
+		TotalTransferKB
+		TotalTransferMB
+		TotalTransferGB
+		DataInAvgKBS
+		DataOutAvgKBS
 
 IFs 
 	Flag Loop

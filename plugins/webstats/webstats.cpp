@@ -46,6 +46,27 @@ public:
 
   unsigned int groupLoop;
   unsigned int flagHistoryLoop;
+
+
+  // plugin computed stats
+  class ComputedStats : public bz_EventHandler
+  {
+  public:
+    virtual void process ( bz_EventData *eventData );
+    double serverStartTime;
+    
+    std::map<int,int> registeredPlayerMap;
+    std::map<std::string,int> nonRegedPlayerMap;
+
+    int joins;
+    int spawns;
+    int deaths;
+
+    size_t dataIn,dataOut;
+  };
+
+  ComputedStats stats;
+ 
 };
 
 WebStats webStats("webstats");
@@ -56,6 +77,13 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
   bz_debugMessage(4, "webstats plugin loaded");
 
+  bz_registerEvent(bz_ePlayerJoinEvent,&webStats.stats);
+  bz_registerEvent(bz_ePlayerSpawnEvent,&webStats.stats);
+  bz_registerEvent(bz_ePlayerDieEvent,&webStats.stats);
+
+  bz_registerEvent(bz_eNetDataSendEvent,&webStats.stats);
+  bz_registerEvent(bz_eNetDataReceveEvent,&webStats.stats);
+
   webStats.init(commandLine);
   webStats.startupHTTP();
   return 0;
@@ -63,13 +91,74 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 
 BZF_PLUGIN_CALL int bz_Unload(void)
 {
+  bz_removeEvent(bz_ePlayerJoinEvent,&webStats.stats);
+  bz_removeEvent(bz_ePlayerSpawnEvent,&webStats.stats);
+  bz_removeEvent(bz_ePlayerDieEvent,&webStats.stats);
+
+  bz_removeEvent(bz_eNetDataSendEvent,&webStats.stats);
+  bz_removeEvent(bz_eNetDataReceveEvent,&webStats.stats);
+
   webStats.shutdownHTTP();
   bz_debugMessage(4, "webstats plugin unloaded");
   return 0;
 }
 
+void WebStats::ComputedStats::process ( bz_EventData *eventData )
+{
+  switch(eventData->eventType)
+  {
+    default:
+      break;
+
+    case bz_ePlayerJoinEvent:
+      {
+	joins++;
+	bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
+	if (data->record->verified)
+	{
+	  int bzID = atoi(data->record->bzID.c_str());
+	  if (registeredPlayerMap.find(bzID) == registeredPlayerMap.end())
+	    registeredPlayerMap[bzID] = 1;
+	  else
+	    registeredPlayerMap[bzID]++;
+	}
+	else
+	{
+	  std::string name = tolower(data->record->callsign.c_str());
+
+	  if (nonRegedPlayerMap.find(name) == nonRegedPlayerMap.end())
+	    nonRegedPlayerMap[name] = 1;
+	  else
+	    nonRegedPlayerMap[name]++;
+	}
+      }
+      break;
+
+    case bz_ePlayerSpawnEvent:
+      spawns++;
+      break;
+
+    case bz_ePlayerDieEvent:
+      deaths++;
+      break;
+
+    case bz_eNetDataSendEvent:
+      dataOut++;
+      break;
+
+    case bz_eNetDataReceveEvent:
+      dataIn++;
+      break;
+  }
+}
+
 void WebStats::init(const char *commandLine)
 {
+  stats.serverStartTime = bz_getCurrentTime();
+
+  stats.joins = stats.spawns = stats.deaths = 0;
+  stats.dataIn = stats.dataOut = 0;
+
   templateSystem.addSearchPath("./");
   templateSystem.addSearchPath(commandLine);
 
@@ -175,6 +264,29 @@ void WebStats::init(const char *commandLine)
   templateSystem.addKey("FlagY", this);
   templateSystem.addKey("FlagZ", this);
 
+  // server info
+  templateSystem.addKey("Uptime",this);
+  templateSystem.addKey("TotalPlayers",this);
+  templateSystem.addKey("Joins",this);
+  templateSystem.addKey("Spawns",this);
+  templateSystem.addKey("Deaths",this);
+  templateSystem.addKey("UniqueReged",this);
+  templateSystem.addKey("UniqueUnReged",this);
+  templateSystem.addKey("DataInB",this);
+  templateSystem.addKey("DataOutB",this);
+  templateSystem.addKey("DataInKB",this);
+  templateSystem.addKey("DataOutKB",this);
+  templateSystem.addKey("DataInMB",this);
+  templateSystem.addKey("DataOutMB",this);
+  templateSystem.addKey("DataInGB",this);
+  templateSystem.addKey("DataOutGB",this);
+  templateSystem.addKey("TotalTransferB",this);
+  templateSystem.addKey("TotalTransferKB",this);
+  templateSystem.addKey("TotalTransferMB",this);
+  templateSystem.addKey("TotalTransferGB",this);
+  templateSystem.addKey("DataInAvgKBS",this);
+  templateSystem.addKey("DataOutAvgKBS",this);
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
 
@@ -220,6 +332,8 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
 
   data = "";
 
+  double uptime = bz_getCurrentTime()-stats.serverStartTime;
+
   if (key == "playercount") {
     data = format("%d", bz_getPlayerCount());
   } else if (key == "gametype") {
@@ -244,7 +358,60 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       data = "other";
       break;
     }
-  } else if (key == "teamname") {
+  }
+  else if (key == "updatime")
+  {
+    int days = uptime/86400.0;
+    uptime -= days*86400.0;
+    int hours = uptime/3600.0;
+    uptime -= hours*3600.0;
+    int seconds = uptime;
+    data = format("%d days %d hours %d seconds",days,hours,seconds);
+  }
+  else if ( key == "totalplayers" )
+  {
+    size_t count = stats.registeredPlayerMap.size() + stats.nonRegedPlayerMap.size();
+    data = format("%d",count);
+  }
+  else if ( key == "joins")
+    data = format("%d",stats.joins);
+  else if ( key == "spawns")
+    data = format("%d",stats.spawns);
+  else if ( key == "deaths")
+    data = format("%d",stats.deaths);
+  else if ( key == "uniquereged")
+    data = format("%d",stats.registeredPlayerMap.size());
+  else if ( key == "uniqueunreged")
+    data = format("%d",stats.nonRegedPlayerMap.size());
+  else if ( key == "datainb")
+    data = format("%d",stats.dataIn);
+  else if ( key == "dataoutb")
+    data = format("%d",stats.dataOut);
+  else if ( key == "datainkb")
+    data = format("%f",stats.dataIn/1024.0);
+  else if ( key == "dataoutkb")
+    data = format("%f",stats.dataOut/1024.0);
+  else if ( key == "datainmb")
+    data = format("%f",stats.dataIn/1024.0/1024.0);
+  else if ( key == "dataoutmb")
+    data = format("%f",stats.dataOut/1024.0/1024.0);
+  else if ( key == "dataingb")
+    data = format("%f",stats.dataIn/1024.0/1024.0/1024.0);
+  else if ( key == "dataoutgb")
+    data = format("%f",stats.dataOut/1024.0/1024.0/1024.0);
+  else if ( key == "totaltransferb")
+    data = format("%f",(stats.dataOut+stats.dataIn));
+  else if ( key == "totaltransferkb")
+    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0);
+  else if ( key == "totaltransfermb")
+    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0/1024.0);
+  else if ( key == "totaltransfergb")
+    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0/1024.0/1024.0);
+  else if ( key == "datainavgkb")
+    data = format("%f",(stats.dataIn/uptime)/1024.0);
+  else if ( key == "dataoputavgkb")
+    data = format("%f",(stats.dataOut/uptime)/1024.0);
+  else if (key == "teamname") {
     if (rec)
       data = bzu_GetTeamName(rec->team);
   } else if (key == "callsign") {
