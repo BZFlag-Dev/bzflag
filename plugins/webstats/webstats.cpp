@@ -40,6 +40,8 @@ public:
   // default template
   std::string defaultMainTemplate;
   std::string defaultPlayerTemplate;
+
+  unsigned int groupLoop;
 };
 
 WebStats webStats("webstats");
@@ -91,11 +93,16 @@ void WebStats::init ( const char *commandLine )
 
   templateSystem.addKey("BZID",this);
 
+  // groups
+  templateSystem.addKey("GroupCount",this);
+  templateSystem.addIF("Groups",this);
+  templateSystem.addLoop("Groups",this);
+  templateSystem.addKey("GroupName",this);
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
   
   defaultPlayerTemplate = "<html><head></head><body><h2>[$Callsign]</h2><b>[$TeamName]</b> [$Wins]/[$Losses]([$TeamKills]) [$Status]</body></html>";
-
 }
 
 void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
@@ -184,10 +191,26 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     if (rec)
       data = rec->bzID.c_str();
   }
+  else if (key == "groupcount")
+  {
+    if (rec)
+      data = format("%d",rec->groups.size());
+  }
+  else if (key == "groupname")
+  {
+    if (rec && groupLoop < rec->groups.size())
+      data = rec->groups[groupLoop].c_str();
+  }
 }
 
 bool WebStats::loopCallback ( const std::string &key )
 {
+  bz_BasePlayerRecord *rec = NULL;
+  if ( !playeRecord && teamSortItr != teamSort.end())
+    rec = teamSortItr->second[playerInTeam];
+  else
+    rec = playeRecord;
+
   if (key == "players")
   {
     if (playeRecord || !teamSort.size())
@@ -209,6 +232,20 @@ bool WebStats::loopCallback ( const std::string &key )
     }
     return teamSortItr != teamSort.end();
   }
+  else if ( key == "groups" && rec)
+  {
+    if (!groupLoop)
+      groupLoop++;
+    else
+      groupLoop = 0;
+
+    if (groupLoop >= rec->groups.size())
+    {
+      groupLoop = 0;
+      return false;
+    }
+    return true;
+ }
   return false;
 }
 
@@ -227,17 +264,19 @@ bool WebStats::ifCallback ( const std::string &key )
   else if (rec)
   {
     if (key == "spawned")
-      return playeRecord->spawned;
+      return rec->spawned;
     else if (key == "verified")
-      return playeRecord->verified;
+      return rec->verified;
     else if (key == "global")
-      return playeRecord->globalUser;
+      return rec->globalUser;
     else if (key == "admin")
-      return playeRecord->admin;
+      return rec->admin;
     else if (key == "op")
-      return playeRecord->op;
+      return rec->op;
     else if (key == "canspawn")
-      return playeRecord->canSpawn;
+      return rec->canSpawn;
+    else if (key == "groups")
+      return rec->groups.size() > 0;
   }
 
   return false;
@@ -309,6 +348,7 @@ void WebStats::doPlayerReport ( std::string &page, int playerID )
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
 {
   bool evenLine = false;
+  groupLoop = 0;
   playeRecord = NULL;
 
   std::string page;

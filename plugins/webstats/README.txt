@@ -31,6 +31,10 @@ Keys
 	 PlayerFlag
 	 BZID
 	 
+	 Group Info
+		GroupCount
+		GroupName
+	 
 IFs 
 	Player Loop
 		NewTeam
@@ -42,7 +46,12 @@ IFs
 	  Admin
 	  Op
 	  CanSpawn
+	  
+	 Group Info
+		Groups
 
 Loops
 	Player Loop
 	Players
+		Group Info
+			Groups
