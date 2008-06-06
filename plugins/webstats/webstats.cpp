@@ -25,7 +25,7 @@ public:
   void initReport ( void );
   void finishReport ( void );
 
-  void doStatReport ( std::string &page );
+  void doStatReport ( std::string &page, std::string &action );
   void doPlayerReport ( std::string &page, int playerID );
   void doFlagReport ( std::string &page, int flagID );
 
@@ -585,12 +585,18 @@ void WebStats::finishReport ( void )
   teamSort.clear();
 }
 
-void WebStats::doStatReport ( std::string &page )
+void WebStats::doStatReport ( std::string &page, std::string &action )
 {
   playeRecord = NULL;
   initReport();
-  if (!templateSystem.processTemplateFile(page,"stats.tmpl"))
-    templateSystem.processTemplate(page,defaultMainTemplate);
+
+  if(action.size())
+    action += ".tmpl";
+  if (!action.size() || !templateSystem.processTemplateFile(page,action.c_str()))
+  {
+    if (!templateSystem.processTemplateFile(page,"stats.tmpl"))
+      templateSystem.processTemplate(page,defaultMainTemplate);
+  }
   finishReport();
 }
 
@@ -641,17 +647,7 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
   if ( action == "flag" && flagID.size())
     doFlagReport(page,atoi(flagID.c_str()));
   else
-  {
-    // try to load a template based on the action, if not do the report
-    if (!action.size())
-     doStatReport(page);
-    else
-    {
-      action += ".tmpl";
-      if (!templateSystem.processTemplateFile(page,action.c_str()))
-	doStatReport(page);
-    }
-   }
+    doStatReport(page,action);
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
