@@ -24,6 +24,15 @@ CUSTOM tmpl files
 Template Tokens
 
 Keys
+	Flag Info ( per player and in flag loop)
+		FlagCount
+		FlagName
+		FlagPlayer
+		FlagPlayerID
+		FlagX
+		FlagY
+		FlagZ
+		
 	Player Loop
 	 PlayerCount
 		
@@ -82,6 +91,9 @@ Keys
 		GameType
 
 IFs 
+	Flag Loop
+		Flags
+		
 	Player Loop
 		NewTeam
 		Players
@@ -116,8 +128,11 @@ IFs
 
 Loops
 	Player Loop
-	Players
-		Group Info
-			Groups
-		Flag History
-			FlagHistory
+		Players
+			Group Info
+				Groups
+			Flag History
+				FlagHistory
+				
+	Flag Loop
+		Flags
