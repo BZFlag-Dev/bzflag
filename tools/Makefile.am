@@ -7,7 +7,7 @@ SUBDIRS = \
 modeltool:
 	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
 
-EXTRA_DIST = BZWTestLauncher
+EXTRA_DIST = BZFSLauncher
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
