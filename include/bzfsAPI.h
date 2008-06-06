@@ -1374,6 +1374,8 @@ public:
     losses = 0;
     version = 1;
     bzID = "";
+
+    currentFlagID = -1;
   };
 
   ~bz_BasePlayerRecord(){};
@@ -1396,6 +1398,7 @@ public:
 
   bz_ApiString ipAddress;
 
+  int currentFlagID;
   bz_ApiString currentFlag;
   bz_APIStringList flagHistory;
 

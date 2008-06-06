@@ -957,8 +957,8 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
 
   playerStateToAPIState(playerRecord->currentState, player->getCurrentStateAsState());
 
-  int flagid=player->player.getFlag();
-  FlagInfo *flagInfo=FlagInfo::get(flagid);
+  playerRecord->currentFlagID=player->player.getFlag();
+  FlagInfo *flagInfo=FlagInfo::get(playerRecord->currentFlagID);
 
   std::string label;
   if(flagInfo && flagInfo->flag.type)
