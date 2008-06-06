@@ -482,7 +482,7 @@ void GameKeeper::Player::doDRLogic ( float delta,  StateDRRecord &drData )
   while (drData.rot > 180.0)
     drData.rot -= 180.0;
 
-  while (currentRot < -180.0)
+  while (drData.rot < -180.0)
     drData.rot += 180.0;
 }
 
