@@ -31,6 +31,9 @@ public:
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >  teamSort;
   std::map<bz_eTeamType,std::vector<bz_BasePlayerRecord*> >::iterator teamSortItr;
   size_t playerInTeam;
+
+  // default template
+  std::string defaultTemplate;
 };
 
 WebStats webStats("webstats");
@@ -69,8 +72,10 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addKey("Losses",this);
   templateSystem.addKey("TeamKills",this);
   templateSystem.addKey("Status",this);
-}
 
+  defaultTemplate = "<html><head></head><body><h2>Players</h2>";
+  defaultTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
+}
 
 void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
 {
@@ -231,7 +236,7 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
   std::string page;
   initReport();
   if (!templateSystem.processTemplateFile(page,"stats.tmpl"))
-    page += "no template";
+    templateSystem.processTemplate(page,defaultTemplate);
   finishReport();
 
   setURLDocType(eHTML,requestID);
