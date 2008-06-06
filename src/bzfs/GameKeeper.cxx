@@ -81,7 +81,7 @@ needThisHostbanChecked(false), idFlag(-1)
   currentRot = 0;
   currentAngVel =0;
 
-  efectiveShotType = StandardShot;
+  effectiveShotType = StandardShot;
   isParting = false;
 }
 

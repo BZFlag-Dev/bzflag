@@ -509,11 +509,8 @@ public:
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
-
-    // TODO compute the lifetime for the shot based on current game data
-    firingInfo.lifetime = 5.0f; // *** CONST REPLACE THIS with a function
-
-    firingInfo.shotType = player->efectiveShotType;
+    firingInfo.lifetime = ShotManager::getShotLifetime(player->effectiveShotType);
+    firingInfo.shotType = player->effectiveShotType;
 
     const PlayerInfo &shooter = player->player;
     if (!shooter.isAlive() || shooter.isObserver())
