@@ -230,7 +230,8 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
 
   std::string page;
   initReport();
-  templateSystem.processTemplateFile(page,"report.tmpl");
+  if (!templateSystem.processTemplateFile(page,"report.tmpl"))
+    page += "no template";
   finishReport();
 
   setURLDocType(eHTML,requestID);
