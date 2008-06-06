@@ -84,18 +84,18 @@ bool bufferChat ( void * param )
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
   if (!player || player != p->player ) {
     delete(p);
-    return false;
+    return true;
   }
 
   if (p->i < p->items.size() )
     sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
   else {
     delete(p);
-    return false;
+    return true;
   }
 
   p->i++;
-  return true;
+  return false;
 }
 
 
