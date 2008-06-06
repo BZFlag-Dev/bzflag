@@ -143,11 +143,17 @@ void WebStats::ComputedStats::process ( bz_EventData *eventData )
       break;
 
     case bz_eNetDataSendEvent:
-      dataOut++;
+      {
+	bz_NetTransferEventData_V1 *data = (bz_NetTransferEventData_V1*)eventData;
+	dataOut += data->iSize;
+      }
       break;
 
     case bz_eNetDataReceveEvent:
-      dataIn++;
+      {
+	bz_NetTransferEventData_V1 *data = (bz_NetTransferEventData_V1*)eventData;
+	dataIn += data->iSize;
+      }
       break;
   }
 }
@@ -321,10 +327,10 @@ void getStatus(bz_BasePlayerRecord* rec, std::string &data)
 void WebStats::keyCallback(std::string &data, const std::string &key)
 {
   bz_BasePlayerRecord *rec = NULL;
-  if (!playeRecord && teamSortItr != teamSort.end())
-    rec = teamSortItr->second[playerInTeam];
-  else
+  if (playeRecord)
     rec = playeRecord;
+  else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size())
+    rec = teamSortItr->second[playerInTeam];
 
   int flagID = flagReportID;
   if (rec)
@@ -359,14 +365,16 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       break;
     }
   }
-  else if (key == "updatime")
+  else if (key == "uptime")
   {
     int days = uptime/86400.0;
     uptime -= days*86400.0;
     int hours = uptime/3600.0;
     uptime -= hours*3600.0;
+    int min = uptime/60.0;
+    uptime -= min*60.0;
     int seconds = uptime;
-    data = format("%d days %d hours %d seconds",days,hours,seconds);
+    data = format("%d days %d hours %d minutes %d seconds",days,hours,min,seconds);
   }
   else if ( key == "totalplayers" )
   {
@@ -536,27 +544,33 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
 bool WebStats::loopCallback(const std::string &key)
 {
   bz_BasePlayerRecord *rec = NULL;
-  if (!playeRecord && teamSortItr != teamSort.end())
-    rec = teamSortItr->second[playerInTeam];
-  else
+  if (playeRecord)
     rec = playeRecord;
+  else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size())
+    rec = teamSortItr->second[playerInTeam];
 
-  if (key == "players") {
+  if (key == "players")
+  {
     if (playeRecord || !teamSort.size())
       return false;
 
-    if ( teamSortItr == teamSort.end()) {
+    if ( teamSortItr == teamSort.end())
+    {
       teamSortItr = teamSort.begin();
-      playerInTeam;
-    } else {
+      playerInTeam = 0;
+    }
+    else
+    {
       playerInTeam++;
-      if ( playerInTeam > teamSortItr->second.size()) {
+      if ( playerInTeam >= teamSortItr->second.size())
+      {
 	teamSortItr++;
 	playerInTeam = 0;
       }
     }
     return teamSortItr != teamSort.end();
-  } else if ( key == "groups" && rec) {
+  }
+  else if ( key == "groups" && rec) {
     if (!groupLoop)
       groupLoop++;
     else
@@ -596,10 +610,10 @@ bool WebStats::loopCallback(const std::string &key)
 bool WebStats::ifCallback(const std::string &key)
 {
   bz_BasePlayerRecord *rec = NULL;
-  if (!playeRecord && teamSortItr != teamSort.end())
-    rec = teamSortItr->second[playerInTeam];
-  else
+  if (playeRecord)
     rec = playeRecord;
+  else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size())
+    rec = teamSortItr->second[playerInTeam];
 
   if (key == "newteam") {
     return teamSortItr != teamSort.end() && playerInTeam == 0;
