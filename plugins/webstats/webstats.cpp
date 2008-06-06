@@ -113,6 +113,50 @@ void WebStats::init ( const char *commandLine )
 
   templateSystem.addKey("IPAddress",this);
 
+  // player team info
+  templateSystem.addKey("TeamCount",this);
+  templateSystem.addKey("TeamScore",this);
+  templateSystem.addKey("TeamWins",this);
+  templateSystem.addKey("TeamLosses",this);
+
+  // global info
+  templateSystem.addKey("RedTeamCount",this);
+  templateSystem.addIF("RedTeam",this);
+  templateSystem.addKey("RedTeamScore",this);
+  templateSystem.addKey("RedTeamWins",this);
+  templateSystem.addKey("RedTeamLosses",this);
+
+  templateSystem.addKey("BlueTeamCount",this);
+  templateSystem.addIF("BlueTeam",this);
+  templateSystem.addKey("BlueTeamScore",this);
+  templateSystem.addKey("BlueTeamWins",this);
+  templateSystem.addKey("BlueTeamLosses",this);
+
+  templateSystem.addKey("GreenTeamCount",this);
+  templateSystem.addIF("GreenTeam",this);
+  templateSystem.addKey("GreenTeamScore",this);
+  templateSystem.addKey("GreenTeamWins",this);
+  templateSystem.addKey("GreenTeamLosses",this);
+
+  templateSystem.addKey("PurpleTeamCount",this);
+  templateSystem.addIF("PurpleTeam",this);
+  templateSystem.addKey("PurpleTeamScore",this);
+  templateSystem.addKey("PurpleTeamWins",this);
+  templateSystem.addKey("PurpleTeamLosses",this);
+
+  templateSystem.addKey("RabbitTeamCount",this);
+  templateSystem.addIF("RabbitTeam",this);
+
+  templateSystem.addKey("RogueTeamCount",this);
+  templateSystem.addIF("RogueTeam",this);
+
+  templateSystem.addKey("HunterTeamCount",this);
+  templateSystem.addIF("HunterTeam",this);
+
+  templateSystem.addKey("ObserversTeamCount",this);
+  templateSystem.addIF("ObserversTeam",this);
+
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
   
@@ -245,6 +289,66 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     if (rec && flagHistoryLoop < rec->flagHistory.size())
       data = rec->flagHistory[flagHistoryLoop].c_str();
   }
+  else if (key == "teamcount")
+  {
+    if (rec)
+      data = format("%d",bz_getTeamCount(rec->team));
+  }
+  else if (key == "teamscore")
+  {
+    if (rec)
+      data = format("%d",bz_getTeamScore(rec->team));
+  }
+  else if (key == "teamwins")
+  {
+    if (rec)
+      data = format("%d",bz_getTeamWins(rec->team));
+  }
+  else if (key == "teamlosses")
+  {
+    if (rec)
+      data = format("%d",bz_getTeamLosses(rec->team));
+  }
+  else if (key == "redteamcount")
+    data = format("%d",bz_getTeamCount(eRedTeam));
+  else if (key == "blueteamcount")
+    data = format("%d",bz_getTeamCount(eBlueTeam));
+  else if (key == "greenteamcount")
+    data = format("%d",bz_getTeamCount(eGreenTeam));
+  else if (key == "rpurpleteamcount")
+    data = format("%d",bz_getTeamCount(ePurpleTeam));
+  else if (key == "rogueteamcount")
+    data = format("%d",bz_getTeamCount(eRogueTeam));
+  else if (key == "observerteamcount")
+    data = format("%d",bz_getTeamCount(eObservers));
+  else if (key == "hunterteamcount")
+    data = format("%d",bz_getTeamCount(eHunterTeam));
+  else if (key == "rabbitteamcount")
+    data = format("%d",bz_getTeamCount(eRabbitTeam));
+  else if (key == "redteamscore")
+    data = format("%d",bz_getTeamScore(eRedTeam));
+  else if (key == "redteamwins")
+    data = format("%d",bz_getTeamWins(eRedTeam));
+  else if (key == "redteamlosses")
+    data = format("%d",bz_getTeamLosses(eRedTeam));
+  else if (key == "blueteamscore")
+    data = format("%d",bz_getTeamScore(eBlueTeam));
+  else if (key == "blueteamwins")
+    data = format("%d",bz_getTeamWins(eBlueTeam));
+  else if (key == "blueteamlosses")
+    data = format("%d",bz_getTeamLosses(eBlueTeam));
+  else if (key == "greenteamscore")
+    data = format("%d",bz_getTeamScore(eGreenTeam));
+  else if (key == "greenteamwins")
+    data = format("%d",bz_getTeamWins(eGreenTeam));
+  else if (key == "greenteamlosses")
+    data = format("%d",bz_getTeamLosses(eGreenTeam));
+  else if (key == "purpleteamscore")
+    data = format("%d",bz_getTeamScore(ePurpleTeam));
+  else if (key == "purpleteamwins")
+    data = format("%d",bz_getTeamWins(ePurpleTeam));
+  else if (key == "purpleteamlosses")
+    data = format("%d",bz_getTeamLosses(ePurpleTeam));
 }
 
 bool WebStats::loopCallback ( const std::string &key )
@@ -319,6 +423,22 @@ bool WebStats::ifCallback ( const std::string &key )
     return teamSortItr != teamSort.end() && playerInTeam == 0;
   else if (key == "players")
     return playeRecord != NULL ? playeRecord!= NULL : teamSort.size() > 0;
+  else if (key == "redteam")
+    return bz_getTeamCount(eRedTeam) > 0;
+  else if (key == "greenteam")
+    return bz_getTeamCount(eGreenTeam) > 0;
+  else if (key == "blueteam")
+    return bz_getTeamCount(eBlueTeam) > 0;
+  else if (key == "purpleteam")
+    return bz_getTeamCount(ePurpleTeam) > 0;
+  else if (key == "observerteam")
+    return bz_getTeamCount(eObservers) > 0;
+  else if (key == "rogueteam")
+    return bz_getTeamCount(eRogueTeam) > 0;
+  else if (key == "hunterteam")
+    return bz_getTeamCount(eHunterTeam) > 0;
+  else if (key == "rabbitteam")
+    return bz_getTeamCount(eRabbitTeam) > 0;
   else if (rec)
   {
     if (key == "spawned")

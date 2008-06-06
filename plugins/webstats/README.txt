@@ -8,7 +8,7 @@ Template features.
 2 templates are used.
 
 stats.tmpl
-	This template is the default page for the template loop and will provide the Player loop, and all the player data items for each player
+	This template is the default page for the template loop and will provide the Player loop (team sorted), and all the player data items for each player
 	
 player.tmpl
 	This template is called if the action paramater is set to player, and the PlayerID paramater is a valid player id.
@@ -42,6 +42,35 @@ Keys
 	 Flag History
 		FlagHistoryCount
 		FlagHistoryFlag
+		
+		Team Info
+		  TeamCount
+		  TeamScore
+		  TeamWins
+		  TeamLosses
+
+	Global Team Info
+		RedTeamCount
+		GreenTeamCount
+		BlueTeamCount
+		PurpleTeamCount
+		ObserverTeamCount
+		RogueTeamCount
+		HunterTeamCount
+		RabbitTeamCount
+		RedTeamScore
+		GreenTeamScore
+		BlueTeamScore
+		PurpleTeamScore
+		RedTeamWins
+		GreenTeamWins
+		BlueTeamWins
+		PurpleTeamWins
+		RedTeamLosses
+		GreenTeamLosses
+		BlueTeamLosses
+		PurpleTeamLosses
+
 IFs 
 	Player Loop
 		NewTeam
@@ -58,6 +87,16 @@ IFs
 		Groups
 	Flag History
 		FlagHistory
+		
+	Global Team Info
+		RedTeam
+		GreenTeam
+		BlueTeam
+		PurpleTeam
+		ObserverTeam
+		RogueTeam
+		HunterTeam
+		RabbitTeam
 
 Loops
 	Player Loop
