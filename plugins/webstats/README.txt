@@ -13,6 +13,13 @@ stats.tmpl
 player.tmpl
 	This template is called if the action paramater is set to player, and the PlayerID paramater is a valid player id.
 	It provides all the player data templates for the one player refrenced in PlayerID
+	
+flag.tmpl
+	This template is called if the action paramater is set to flag, and the FlagID paramater is a valid flag id.
+	It provides all the flag data templates for the one flag refrenced in FlagID
+	
+CUSTOM tmpl files
+	If the action paramater is any other word, a tmpl file of that name will be loaded and run. If that fails then stats.tmpl will be used
 
 Template Tokens
 

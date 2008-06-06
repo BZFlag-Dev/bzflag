@@ -6,7 +6,6 @@
 #include "plugin_HTTP.h"
 #include "plugin_HTTPTemplates.h"
 
-
 class WebStats : public BZFSHTTPServer, TemplateCallbackClass
 {
 public:
@@ -28,6 +27,7 @@ public:
 
   void doStatReport ( std::string &page );
   void doPlayerReport ( std::string &page, int playerID );
+  void doFlagReport ( std::string &page, int flagID );
 
   // globals for report
   int player;
@@ -36,10 +36,12 @@ public:
   size_t playerInTeam;
 
   bz_BasePlayerRecord *playeRecord;
+  int flagReportID;
 
   // default template
   std::string defaultMainTemplate;
   std::string defaultPlayerTemplate;
+  std::string defaultFlagTemplate;
 
   unsigned int groupLoop;
   unsigned int flagHistoryLoop;
@@ -162,10 +164,21 @@ void WebStats::init ( const char *commandLine )
   templateSystem.addIF("CTF",this);
   templateSystem.addIF("RabbitChase",this);
 
+  templateSystem.addKey("FlagCount",this);
+  templateSystem.addIF("Flags",this);
+  templateSystem.addLoop("Flags",this);
+  templateSystem.addKey("FlagName",this);
+  templateSystem.addKey("FlagPlayer",this);
+  templateSystem.addKey("FlagPlayerID",this);
+  templateSystem.addKey("FlagX",this);
+  templateSystem.addKey("FlagY",this);
+  templateSystem.addKey("FlagZ",this);
+
   defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
   defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
   
   defaultPlayerTemplate = "<html><head></head><body><h2>[$Callsign]</h2><b>[$TeamName]</b> [$Wins]/[$Losses]([$TeamKills]) [$Status]</body></html>";
+  defaultFlagTemplate = "<html><head></head><body><h2>[$FlagType]</h2><b>Player [$FlagPlayer]</b> [$FlagX],[$FlagY],[$FlagZ]</body></html>";
 }
 
 void getStatus ( bz_BasePlayerRecord* rec, std::string &data )
@@ -202,6 +215,10 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     rec = teamSortItr->second[playerInTeam];
   else
     rec = playeRecord;
+
+  int flagID  = flagReportID;
+  if (rec)
+    flagID = rec->currentFlagID;
 
   data = "";
 
@@ -379,6 +396,23 @@ void WebStats::keyCallback ( std::string &data, const std::string &key )
     data = format("%d",bz_getTeamWins(ePurpleTeam));
   else if (key == "purpleteamlosses")
     data = format("%d",bz_getTeamLosses(ePurpleTeam));
+  else if (key == "flagcount")
+    data = format("%d",bz_getNumFlags()); 
+  else if (flagID >= 0)
+  {
+    if ( key == "flagname")
+      data = bz_getFlagName(flagID).c_str();
+    else if ( key == "flagplayer")
+      data = bz_getPlayerCallsign(bz_flagPlayer(flagID));
+    else if (key == "flagplayerid")
+      data = format("%d",bz_flagPlayer(flagID)); 
+    else if (key == "flagx" || key =="flagy" || key == "flagz")
+    {
+      float pos[3] = {0,0,0};
+      if(bz_getFlagPosition ( flagID, pos ))
+	data = format("%.3f",pos[key[4] - 'x']);	  
+    }
+  }
 }
 
 bool WebStats::loopCallback ( const std::string &key )
@@ -438,6 +472,20 @@ bool WebStats::loopCallback ( const std::string &key )
     }
     return true;
   }
+  else if ( key == "flaghistory" && rec)
+  {
+    if (flagReportID != -1)
+      flagReportID++;
+    else
+      flagReportID = 0;
+
+    if (flagReportID >= (int)bz_getNumFlags())
+    {
+      flagReportID = -1;
+      return false;
+    }
+    return true;
+  }
   return false;
 }
 
@@ -477,6 +525,8 @@ bool WebStats::ifCallback ( const std::string &key )
     return bz_getGameType() == ClassicCTFGame;
   else if (key == "rabbitchase")
     return bz_getGameType() == eRabbitGame;
+  else if (key == "flags")
+    return bz_getNumFlags() > 0;
   else if (rec)
   {
     if (key == "spawned")
@@ -501,8 +551,6 @@ bool WebStats::ifCallback ( const std::string &key )
 
 void WebStats::initReport ( void )
 {
-  templateSystem.startTimer();
-
   bz_APIIntList *players = bz_getPlayerIndexList();
 
   for ( int i = 0; i < (int)players->size(); i++ )
@@ -548,7 +596,6 @@ void WebStats::doStatReport ( std::string &page )
 
 void WebStats::doPlayerReport ( std::string &page, int playerID )
 { 
-  templateSystem.startTimer();
   playeRecord = bz_getPlayerByIndex(playerID);
   if (!playeRecord)
     page += "Invalid Player";
@@ -557,8 +604,21 @@ void WebStats::doPlayerReport ( std::string &page, int playerID )
     if (!templateSystem.processTemplateFile(page,"player.tmpl"))
       templateSystem.processTemplate(page,defaultPlayerTemplate);
     bz_freePlayerRecord(playeRecord);
-    playeRecord = NULL;
   }
+  playeRecord = NULL;
+} 
+
+void WebStats::doFlagReport ( std::string &page, int flagID )
+{ 
+  flagReportID = flagID;
+  if (flagReportID < 0 || flagReportID > (int)bz_getNumFlags() )
+    page += "Invalid Flag";
+  else
+  {
+    if (!templateSystem.processTemplateFile(page,"flag.tmpl"))
+      templateSystem.processTemplate(page,defaultFlagTemplate);
+  } 
+  flagReportID = -1;
 } 
 
 void WebStats::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
@@ -567,15 +627,31 @@ void WebStats::getURLData ( const char* url, int requestID, const URLParams &par
   groupLoop = 0;
   flagHistoryLoop = 0;
   playeRecord = NULL;
+  flagReportID = -1;
 
   std::string page;
+  templateSystem.startTimer();
 
   std::string action = getParam(paramaters,"action");
   std::string playerID = getParam(paramaters,"playerid");
+  std::string flagID = getParam(paramaters,"flagid");
+
   if ( action == "player" && playerID.size())
     doPlayerReport(page,atoi(playerID.c_str()));
+  if ( action == "flag" && flagID.size())
+    doFlagReport(page,atoi(flagID.c_str()));
   else
-   doStatReport(page);
+  {
+    // try to load a template based on the action, if not do the report
+    if (!action.size())
+     doStatReport(page);
+    else
+    {
+      action += ".tmpl";
+      if (!templateSystem.processTemplateFile(page,action.c_str()))
+	doStatReport(page);
+    }
+   }
 
   setURLDocType(eHTML,requestID);
   setURLDataSize ( (unsigned int)page.size(), requestID );
