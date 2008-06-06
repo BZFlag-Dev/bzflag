@@ -11,10 +11,20 @@
  */
 
 #include "common.h"
-
 #include "BZWorld.h"
 
+SampleClass::SampleClass()
+{
+}
 
+SampleClass::~SampleClass()
+{
+}
+
+void SampleClass::thingy ( void )
+{
+  // do stuff
+}
 
 
 // Local Variables: ***

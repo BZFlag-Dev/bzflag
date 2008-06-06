@@ -14,7 +14,24 @@
 #define __BZWORLD_H__
 
 #include "common.h"
+#ifdef _WIN32
+  #ifdef BZWORLD_EXPORTS
+  #define BZWORLD_API __declspec(dllexport)
+  #else
+  #define BZWORLD_API __declspec(dllimport)
+  #endif
+#else
+  #define BZWORLD_API
+#endif
 
+class BZWORLD_API SampleClass
+{
+public:
+  SampleClass();
+  ~SampleClass();
+
+  void thingy ( void );
+};
 
 
 #endif // __BZWORLD_H__
