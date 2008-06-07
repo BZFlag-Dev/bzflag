@@ -59,6 +59,9 @@ public:
 
   void clear ( void );
 
+  static float getShotVelocity ( void );
+  static float getShotLifetime ( ShotType type );
+
   class Shot
   {
   public:

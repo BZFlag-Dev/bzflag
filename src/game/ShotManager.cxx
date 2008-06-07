@@ -263,7 +263,7 @@ float ShotManager::getShotLifetime ( ShotType type )
     return BZDB.eval (StateDatabase::BZDB_RELOADTIME);
 }
 
-float ShotManager::getShotVelocity ()
+float ShotManager::getShotVelocity ( void )
 {
   return BZDB.eval (StateDatabase::BZDB_SHOTSPEED);
 }
