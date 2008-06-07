@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "vectorMath.h"
+#include "VectorMath.h"
 #include <memory.h>
 
 #define LIN_TOL				0.0000005f		
