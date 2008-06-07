@@ -115,6 +115,10 @@ public:
   void cross ( const Vector3 &lhs, const Vector3 &rhs );
   void cross ( const float lhs[], const float rhs[] );
 
+  void set ( const float* v);
+  void setSub ( const float* v1, const float *v2 );
+  void setAdd ( const float* v1, const float *v2 );
+
   float normalise ( void );
   float magnitude ( void );
   float magnitudeSquared ( void );

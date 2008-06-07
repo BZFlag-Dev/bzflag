@@ -11,7 +11,6 @@
  */
 
 #include <math.h>
-#include "vectors.h"
 #include "MeshSceneNodeGenerator.h"
 #include "MeshObstacle.h"
 #include "MeshFace.h"

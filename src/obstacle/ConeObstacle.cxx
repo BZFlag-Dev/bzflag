@@ -15,7 +15,6 @@
 #include <assert.h>
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
 
 #include "ConeObstacle.h"
 #include "MeshUtils.h"

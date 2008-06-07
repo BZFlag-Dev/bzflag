@@ -17,7 +17,6 @@
 
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
 
 #include "TetraBuilding.h"
 #include "MeshUtils.h"

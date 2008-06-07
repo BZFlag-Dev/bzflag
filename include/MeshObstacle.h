@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "vectors.h"
 #include "Ray.h"
 #include "Obstacle.h"
 #include "MeshFace.h"

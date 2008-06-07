@@ -343,6 +343,25 @@ Vector3::operator const float* ( void ) const
   return vec;
 }
 
+void Vector3::set ( const float* v)
+{
+	memcpy(vec,v,sizeof(float)*3);
+}
+
+void Vector3::setSub ( const float* v1, const float *v2 )
+{
+	vec[0] = v1[0]-v2[0];
+	vec[1] = v1[1]-v2[1];
+	vec[2] = v1[2]-v2[2];
+}
+
+void Vector3::setAdd ( const float* v1, const float *v2 )
+{
+	vec[0] = v1[0]+v2[0];
+	vec[1] = v1[1]+v2[1];
+	vec[2] = v1[2]+v2[2];
+}
+
 float Vector3::dot ( const Vector3 &rhs )
 {
   return ::dot(vec,rhs.vec);

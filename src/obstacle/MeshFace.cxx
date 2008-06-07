@@ -21,6 +21,7 @@
 #include "global.h"
 #include "Pack.h"
 #include "vectors.h"
+#include "VectorMath.h"
 #include "MeshObstacle.h"
 #include "PhysicsDriver.h"
 #include "Intersect.h"
@@ -79,7 +80,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 void MeshFace::finalize()
 {
   float maxCrossSqr = 0.0f;
-  float bestCross[3] = { 0.0f, 0.0f, 0.0f };
+  Vector3 bestCross;
   int bestSet[3] = { -1, -1, -1 };
 
   // find the best vertices for making the plane
@@ -87,28 +88,30 @@ void MeshFace::finalize()
   for (i = 0; i < (vertexCount - 2); i++) {
     for (j = i; j < (vertexCount - 1); j++) {
       for (k = j; k < (vertexCount - 0); k++) {
-	float edge1[3], edge2[3], cross[3];
-	vec3sub(edge1, vertices[k], vertices[j]);
-	vec3sub(edge2, vertices[i], vertices[j]);
-	vec3cross(cross, edge1, edge2);
-	const float lenSqr = vec3dot(cross, cross);
+	Vector3 edge1, edge2, cross;
+	edge1.setSub(vertices[k],vertices[j]);
+	edge2.setSub(vertices[i],vertices[j]);
+	cross.cross(edge1,edge2);
+	const float lenSqr = cross.dot(cross);
 	if (lenSqr > maxCrossSqr) {
 	  maxCrossSqr = lenSqr;
 	  bestSet[0] = i;
 	  bestSet[1] = j;
 	  bestSet[2] = k;
-	  memcpy (bestCross, cross, sizeof(float[3]));
+	  bestCross = cross;
 	}
       }
     }
   }
 
-  if (maxCrossSqr < +1.0e-20f) {
-
+  if (maxCrossSqr < +1.0e-20f) 
+  {
     logDebugMessage(1,"invalid mesh face (%f)", maxCrossSqr);
-    if ((debugLevel >= 3) && (mesh != NULL)) {
+    if ((debugLevel >= 3) && (mesh != NULL))
+    {
       logDebugMessage(0,":");
-      for (i = 0; i < vertexCount; i++) {
+      for (i = 0; i < vertexCount; i++) 
+      {
 	logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
@@ -122,9 +125,9 @@ void MeshFace::finalize()
   // make the plane
   float scale = 1.0f / sqrtf (maxCrossSqr);
   const float* vert = vertices[bestSet[1]];
-  plane[0] = bestCross[0] * scale;
-  plane[1] = bestCross[1] * scale;
-  plane[2] = bestCross[2] * scale;
+  plane[0] = bestCross.x() * scale;
+  plane[1] = bestCross.y()  * scale;
+  plane[2] = bestCross.z()  * scale;
   plane[3] = -vec3dot(plane, vert);
 
   // see if the whole face is convex
