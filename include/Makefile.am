@@ -162,9 +162,10 @@ noinst_HEADERS =			\
 	bzregex.h			\
 	resource.h			\
 	vectors.h			\
+	VectorMath.h		\
 	version.h			\
 	WorldContentInfo.h		\
-	win32.h
+	win32.h	
 
 CLEANFILES = datestamp
 

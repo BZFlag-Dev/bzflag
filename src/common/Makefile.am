@@ -47,7 +47,8 @@ libCommon_la_SOURCES  =			\
 	cURLManager.cxx			\
 	global.cxx			\
 	bz_md5.cxx			\
-	messages.cxx
+	messages.cxx		\
+	VectorMath.cxx		
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
