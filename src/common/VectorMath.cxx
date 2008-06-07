@@ -1580,3 +1580,4 @@ bool Matrix34::samePlane ( const Matrix34& matrix, bool *reversed )  const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+
