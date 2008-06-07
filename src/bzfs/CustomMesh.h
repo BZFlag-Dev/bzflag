@@ -23,7 +23,6 @@
 /* common interface headers */
 #include "BzMaterial.h"
 #include "MeshObstacle.h"
-#include "vectors.h"
 
 /* local interface headers */
 #include "WorldInfo.h"

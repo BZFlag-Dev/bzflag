@@ -205,6 +205,11 @@ Vector3::Vector3 ( float _vec[3] )
   memcpy(vec,_vec,sizeof(float)*3);
 }
 
+Vector3::Vector3 ( const float *_vec )
+{
+  memcpy(vec,_vec,sizeof(float)*3);
+}
+
 Vector3::Vector3 ( const Vector3 &_vec )
 {
   memcpy(vec,_vec.vec,sizeof(float)*3);

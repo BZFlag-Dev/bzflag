@@ -79,6 +79,7 @@ class Vector3
 public:
   Vector3 ( float x = 0, float y = 0, float z = 0 );
   Vector3 ( float vec[3] );
+  Vector3 ( const float *vec );
   Vector3 ( const Vector3 &_vec );
   Vector3 ( const Vector2 &_vec );
 

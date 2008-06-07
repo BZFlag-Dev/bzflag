@@ -21,13 +21,13 @@
 #include <math.h>
 
 // common implementation headers
-#include "vectors.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "VectorMath.h"
 
 
 // FIXME - flag geometry would benefit from VBOs
@@ -370,19 +370,19 @@ void FlagPhase::update(float dt)
 
   // generate the lighting normals
   if (realFlag && BZDBCache::lighting) {
-    fvec3  upEdges[maxFlagQuads + 1];
-    fvec3 topEdges[maxFlagQuads + 1];
-    fvec3 botEdges[maxFlagQuads + 1];
+    Vector3  upEdges[maxFlagQuads + 1];
+    Vector3 topEdges[maxFlagQuads + 1];
+    Vector3 botEdges[maxFlagQuads + 1];
     for (i = 0; i < quads; i++) {
       const int ue = lookup[i * 2];
       const int us = lookup[i * 2 + 1];
-      vec3sub(upEdges[i], verts[ue], verts[us]);
+      upEdges[i] = Vector3(verts[ue]) - Vector3(verts[us]);
       const int ts = lookup[i * 2];
       const int te = lookup[i * 2 + 2];
-      vec3sub(topEdges[i], verts[te], verts[ts]);
+      topEdges[i] = Vector3(verts[te]) - Vector3(verts[ts]);
       const int bs = lookup[i * 2 + 1];
       const int be = lookup[i * 2 + 2 + 1];
-      vec3sub(botEdges[i], verts[be], verts[bs]);
+      botEdges[i] = Vector3(verts[be]) - Vector3(verts[bs]);
     }
     norms[0][0] = norms[1][0] = 0.0f;
     norms[0][1] = norms[1][1] = -1.0f;
@@ -393,30 +393,30 @@ void FlagPhase::update(float dt)
     norms[lastTop][1] = norms[lastBot][1] = -1.0f;
     norms[lastTop][2] = norms[lastBot][2] = 0.0f;
     for (i = 1; i < quads; i++) {
-      fvec3 n0, n1, na;
-      vec3cross(n0, topEdges[i-1], upEdges[i]);
-      vec3cross(n1, topEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float tlen = sqrtf(vec3dot(na, na));
+      Vector3 n0, n1, na;
+      n0.cross(topEdges[i-1], upEdges[i]);
+      n1.cross(topEdges[i], upEdges[i]);
+      na = n0 + n1;
+      const float tlen = sqrtf(na.dot(na));
       const int it = lookup[i*2];
       if (tlen > 0.0f) {
-	norms[it][0] = na[0] / tlen;
-	norms[it][1] = na[1] / tlen;
-	norms[it][2] = na[2] / tlen;
+	norms[it][0] = na.x() / tlen;
+	norms[it][1] = na.y() / tlen;
+	norms[it][2] = na.z() / tlen;
       } else {
 	norms[it][0] = 0.0f;
 	norms[it][1] = -1.0f;
 	norms[it][2] = 0.0f;
       }
-      vec3cross(n0, botEdges[i-1], upEdges[i]);
-      vec3cross(n1, botEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float blen = sqrtf(vec3dot(na, na));
+      n0.cross(botEdges[i-1], upEdges[i]);
+      n1.cross(botEdges[i], upEdges[i]);
+      na = n0 + n1;
+      const float blen = sqrtf(na.dot(na));
       const int ib = lookup[i*2+1];
       if (blen > 0.0f) {
-	norms[ib][0] = na[0] / blen;
-	norms[ib][1] = na[1] / blen;
-	norms[ib][2] = na[2] / blen;
+	norms[ib][0] = na.x() / blen;
+	norms[ib][1] = na.y() / blen;
+	norms[ib][2] = na.z() / blen;
       } else {
 	norms[ib][0] = 0.0f;
 	norms[ib][1] = -1.0f;
@@ -683,13 +683,13 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
 inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
-  const float* s = getSphere();
-  const float* e = renderer.getViewFrustum().getEye();
-  const float* d = renderer.getSunDirection();
-  fvec3 gap, cross;
-  vec3sub(gap, s, e);
-  vec3cross(cross, gap, d);
-  const float dist = sqrtf(vec3dot(cross, cross));
+  Vector3 s(getSphere());
+  Vector3 e(renderer.getViewFrustum().getEye());
+  Vector3 d(renderer.getSunDirection());
+  Vector3 gap, cross;
+  gap = s - e;
+  cross.cross(gap, d);
+  const float dist = sqrtf(cross.dot(cross));
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
