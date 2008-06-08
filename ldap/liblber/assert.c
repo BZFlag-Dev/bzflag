@@ -13,7 +13,7 @@
  * <http://www.OpenLDAP.org/license.html>.
  */
 
-#include "portable.h"
+#include <portable.h>
 
 #ifdef LDAP_NEED_ASSERT
 

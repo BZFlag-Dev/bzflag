@@ -28,7 +28,7 @@
  * (as part of U-MICH LDAP).
  */
 
-#include "portable.h"
+#include <portable.h>
 
 #include <stdio.h>
 

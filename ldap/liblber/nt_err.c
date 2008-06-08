@@ -13,7 +13,7 @@
  * <http://www.OpenLDAP.org/license.html>.
  */
 
-#include "portable.h"
+#include <portable.h>
 
 #ifdef HAVE_WINSOCK2
 #include <winsock2.h>
