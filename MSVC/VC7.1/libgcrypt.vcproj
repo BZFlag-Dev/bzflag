@@ -98,288 +98,288 @@
 			Name="src"
 			Filter="">
 			<File
-				RelativePath=".\src\ath.c">
+				RelativePath="../../libcrypt/src/ath.c">
 			</File>
 			<File
-				RelativePath=".\src\ath.h">
+				RelativePath="../../libcrypt/src/ath.h">
 			</File>
 			<File
-				RelativePath=".\src\cipher.h">
+				RelativePath="../../libcrypt/src/cipher.h">
 			</File>
 			<File
-				RelativePath=".\src\config.h">
+				RelativePath="../../libcrypt/src/config.h">
 			</File>
 			<File
-				RelativePath=".\src\dumpsexp.c">
+				RelativePath="../../libcrypt/src/dumpsexp.c">
 			</File>
 			<File
-				RelativePath=".\src\g10lib.h">
+				RelativePath="../../libcrypt/src/g10lib.h">
 			</File>
 			<File
-				RelativePath=".\src\gcrypt-module.h">
+				RelativePath="../../libcrypt/src/gcrypt-module.h">
 			</File>
 			<File
-				RelativePath=".\src\gcrypt.h">
+				RelativePath="../../libcrypt/src/gcrypt.h">
 			</File>
 			<File
-				RelativePath=".\src\global.c">
+				RelativePath="../../libcrypt/src/global.c">
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.h">
+				RelativePath="../../libcrypt/src/gpg-error.h">
 			</File>
 			<File
-				RelativePath=".\src\hwfeatures.c">
+				RelativePath="../../libcrypt/src/hwfeatures.c">
 			</File>
 			<File
-				RelativePath=".\src\misc.c">
+				RelativePath="../../libcrypt/src/misc.c">
 			</File>
 			<File
-				RelativePath=".\src\missing-string.c">
+				RelativePath="../../libcrypt/src/missing-string.c">
 			</File>
 			<File
-				RelativePath=".\src\module.c">
+				RelativePath="../../libcrypt/src/module.c">
 			</File>
 			<File
-				RelativePath=".\src\mpi.h">
+				RelativePath="../../libcrypt/src/mpi.h">
 			</File>
 			<File
-				RelativePath=".\src\secmem.c">
+				RelativePath="../../libcrypt/src/secmem.c">
 			</File>
 			<File
-				RelativePath=".\src\secmem.h">
+				RelativePath="../../libcrypt/src/secmem.h">
 			</File>
 			<File
-				RelativePath=".\src\sexp.c">
+				RelativePath="../../libcrypt/src/sexp.c">
 			</File>
 			<File
-				RelativePath=".\src\stdmem.c">
+				RelativePath="../../libcrypt/src/stdmem.c">
 			</File>
 			<File
-				RelativePath=".\src\stdmem.h">
+				RelativePath="../../libcrypt/src/stdmem.h">
 			</File>
 			<File
-				RelativePath=".\src\types.h">
+				RelativePath="../../libcrypt/src/types.h">
 			</File>
 			<File
-				RelativePath=".\src\visibility.c">
+				RelativePath="../../libcrypt/src/visibility.c">
 			</File>
 			<File
-				RelativePath=".\src\visibility.h">
+				RelativePath="../../libcrypt/src/visibility.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="cipher"
 			Filter="">
 			<File
-				RelativePath=".\cipher\ac.c">
+				RelativePath="../../libcrypt/cipher/ac.c">
 			</File>
 			<File
-				RelativePath=".\cipher\arcfour.c">
+				RelativePath="../../libcrypt/cipher/arcfour.c">
 			</File>
 			<File
-				RelativePath=".\cipher\bithelp.h">
+				RelativePath="../../libcrypt/cipher/bithelp.h">
 			</File>
 			<File
-				RelativePath=".\cipher\blowfish.c">
+				RelativePath="../../libcrypt/cipher/blowfish.c">
 			</File>
 			<File
-				RelativePath=".\cipher\camellia-glue.c">
+				RelativePath="../../libcrypt/cipher/camellia-glue.c">
 			</File>
 			<File
-				RelativePath=".\cipher\camellia.c">
+				RelativePath="../../libcrypt/cipher/camellia.c">
 			</File>
 			<File
-				RelativePath=".\cipher\camellia.h">
+				RelativePath="../../libcrypt/cipher/camellia.h">
 			</File>
 			<File
-				RelativePath=".\cipher\cast5.c">
+				RelativePath="../../libcrypt/cipher/cast5.c">
 			</File>
 			<File
-				RelativePath=".\cipher\cipher.c">
+				RelativePath="../../libcrypt/cipher/cipher.c">
 			</File>
 			<File
-				RelativePath=".\cipher\crc.c">
+				RelativePath="../../libcrypt/cipher/crc.c">
 			</File>
 			<File
-				RelativePath=".\cipher\des.c">
+				RelativePath="../../libcrypt/cipher/des.c">
 			</File>
 			<File
-				RelativePath=".\cipher\dsa.c">
+				RelativePath="../../libcrypt/cipher/dsa.c">
 			</File>
 			<File
-				RelativePath=".\cipher\ecc.c">
+				RelativePath="../../libcrypt/cipher/ecc.c">
 			</File>
 			<File
-				RelativePath=".\cipher\elgamal.c">
+				RelativePath="../../libcrypt/cipher/elgamal.c">
 			</File>
 			<File
-				RelativePath=".\cipher\md.c">
+				RelativePath="../../libcrypt/cipher/md.c">
 			</File>
 			<File
-				RelativePath=".\cipher\md4.c">
+				RelativePath="../../libcrypt/cipher/md4.c">
 			</File>
 			<File
-				RelativePath=".\cipher\md5.c">
+				RelativePath="../../libcrypt/cipher/md5.c">
 			</File>
 			<File
-				RelativePath=".\cipher\primegen.c">
+				RelativePath="../../libcrypt/cipher/primegen.c">
 			</File>
 			<File
-				RelativePath=".\cipher\pubkey.c">
+				RelativePath="../../libcrypt/cipher/pubkey.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rand-internal.h">
+				RelativePath="../../libcrypt/cipher/rand-internal.h">
 			</File>
 			<File
-				RelativePath=".\cipher\random.c">
+				RelativePath="../../libcrypt/cipher/random.c">
 			</File>
 			<File
-				RelativePath=".\cipher\random.h">
+				RelativePath="../../libcrypt/cipher/random.h">
 			</File>
 			<File
-				RelativePath=".\cipher\rfc2268.c">
+				RelativePath="../../libcrypt/cipher/rfc2268.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rijndael.c">
+				RelativePath="../../libcrypt/cipher/rijndael.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rmd.h">
+				RelativePath="../../libcrypt/cipher/rmd.h">
 			</File>
 			<File
-				RelativePath=".\cipher\rmd160.c">
+				RelativePath="../../libcrypt/cipher/rmd160.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rndhw.c">
+				RelativePath="../../libcrypt/cipher/rndhw.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rndw32.c">
+				RelativePath="../../libcrypt/cipher/rndw32.c">
 			</File>
 			<File
-				RelativePath=".\cipher\rsa.c">
+				RelativePath="../../libcrypt/cipher/rsa.c">
 			</File>
 			<File
-				RelativePath=".\cipher\seed.c">
+				RelativePath="../../libcrypt/cipher/seed.c">
 			</File>
 			<File
-				RelativePath=".\cipher\serpent.c">
+				RelativePath="../../libcrypt/cipher/serpent.c">
 			</File>
 			<File
-				RelativePath=".\cipher\sha1.c">
+				RelativePath="../../libcrypt/cipher/sha1.c">
 			</File>
 			<File
-				RelativePath=".\cipher\sha256.c">
+				RelativePath="../../libcrypt/cipher/sha256.c">
 			</File>
 			<File
-				RelativePath=".\cipher\sha512.c">
+				RelativePath="../../libcrypt/cipher/sha512.c">
 			</File>
 			<File
-				RelativePath=".\cipher\tiger.c">
+				RelativePath="../../libcrypt/cipher/tiger.c">
 			</File>
 			<File
-				RelativePath=".\cipher\twofish.c">
+				RelativePath="../../libcrypt/cipher/twofish.c">
 			</File>
 			<File
-				RelativePath=".\cipher\whirlpool.c">
+				RelativePath="../../libcrypt/cipher/whirlpool.c">
 			</File>
 		</Filter>
 		<Filter
 			Name="mpi"
 			Filter="">
 			<File
-				RelativePath=".\mpi\asm-syntax.h">
+				RelativePath="../../libcrypt/mpi/asm-syntax.h">
 			</File>
 			<File
-				RelativePath=".\mpi\ec.c">
+				RelativePath="../../libcrypt/mpi/ec.c">
 			</File>
 			<File
-				RelativePath=".\mpi\longlong.h">
+				RelativePath="../../libcrypt/mpi/longlong.h">
 			</File>
 			<File
-				RelativePath=".\mpi\mod-source-info.h">
+				RelativePath="../../libcrypt/mpi/mod-source-info.h">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-add.c">
+				RelativePath="../../libcrypt/mpi/mpi-add.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-asm-defs.h">
+				RelativePath="../../libcrypt/mpi/mpi-asm-defs.h">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-bit.c">
+				RelativePath="../../libcrypt/mpi/mpi-bit.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-cmp.c">
+				RelativePath="../../libcrypt/mpi/mpi-cmp.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-div.c">
+				RelativePath="../../libcrypt/mpi/mpi-div.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-gcd.c">
+				RelativePath="../../libcrypt/mpi/mpi-gcd.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inline.c">
+				RelativePath="../../libcrypt/mpi/mpi-inline.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inline.h">
+				RelativePath="../../libcrypt/mpi/mpi-inline.h">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-internal.h">
+				RelativePath="../../libcrypt/mpi/mpi-internal.h">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inv.c">
+				RelativePath="../../libcrypt/mpi/mpi-inv.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mod.c">
+				RelativePath="../../libcrypt/mpi/mpi-mod.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mpow.c">
+				RelativePath="../../libcrypt/mpi/mpi-mpow.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mul.c">
+				RelativePath="../../libcrypt/mpi/mpi-mul.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-pow.c">
+				RelativePath="../../libcrypt/mpi/mpi-pow.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-scan.c">
+				RelativePath="../../libcrypt/mpi/mpi-scan.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpicoder.c">
+				RelativePath="../../libcrypt/mpi/mpicoder.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-add1.c">
+				RelativePath="../../libcrypt/mpi/mpih-add1.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-div.c">
+				RelativePath="../../libcrypt/mpi/mpih-div.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-lshift.c">
+				RelativePath="../../libcrypt/mpi/mpih-lshift.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul.c">
+				RelativePath="../../libcrypt/mpi/mpih-mul.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul1.c">
+				RelativePath="../../libcrypt/mpi/mpih-mul1.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul2.c">
+				RelativePath="../../libcrypt/mpi/mpih-mul2.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul3.c">
+				RelativePath="../../libcrypt/mpi/mpih-mul3.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-rshift.c">
+				RelativePath="../../libcrypt/mpi/mpih-rshift.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-sub1.c">
+				RelativePath="../../libcrypt/mpi/mpih-sub1.c">
 			</File>
 			<File
-				RelativePath=".\mpi\mpiutil.c">
+				RelativePath="../../libcrypt/mpi/mpiutil.c">
 			</File>
 			<File
-				RelativePath=".\mpi\sysdep.h">
+				RelativePath="../../libcrypt/mpi/sysdep.h">
 			</File>
 			<File
-				RelativePath=".\mpi\udiv-w-sdiv.c">
+				RelativePath="../../libcrypt/mpi/udiv-w-sdiv.c">
 			</File>
 		</Filter>
 	</Files>

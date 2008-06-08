@@ -98,70 +98,70 @@
 			Name="src"
 			Filter="">
 			<File
-				RelativePath=".\src\code-from-errno.c">
+				RelativePath="../../libgpg-error/code-from-errno.c">
 			</File>
 			<File
-				RelativePath=".\src\code-from-errno.h">
+				RelativePath="../../libgpg-error/code-from-errno.h">
 			</File>
 			<File
-				RelativePath=".\src\code-to-errno.c">
+				RelativePath="../../libgpg-error/code-to-errno.c">
 			</File>
 			<File
-				RelativePath=".\src\code-to-errno.h">
+				RelativePath="../../libgpg-error/code-to-errno.h">
 			</File>
 			<File
-				RelativePath=".\src\config.h">
+				RelativePath="../../libgpg-error/config.h">
 			</File>
 			<File
-				RelativePath=".\src\err-codes-sym.h">
+				RelativePath="../../libgpg-error/err-codes-sym.h">
 			</File>
 			<File
-				RelativePath=".\src\err-codes.h">
+				RelativePath="../../libgpg-error/err-codes.h">
 			</File>
 			<File
-				RelativePath=".\src\err-sources-sym.h">
+				RelativePath="../../libgpg-error/err-sources-sym.h">
 			</File>
 			<File
-				RelativePath=".\src\err-sources.h">
+				RelativePath="../../libgpg-error/err-sources.h">
 			</File>
 			<File
-				RelativePath=".\src\errnos-sym.h">
+				RelativePath="../../libgpg-error/errnos-sym.h">
 			</File>
 			<File
-				RelativePath=".\src\gettext.h">
+				RelativePath="../../libgpg-error/gettext.h">
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.c">
+				RelativePath="../../libgpg-error/gpg-error.c">
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.h">
+				RelativePath="../../libgpg-error/gpg-error.h">
 			</File>
 			<File
-				RelativePath=".\src\init.c">
+				RelativePath="../../libgpg-error/init.c">
 			</File>
 			<File
-				RelativePath=".\src\mkerrcodes.c">
+				RelativePath="../../libgpg-error/mkerrcodes.c">
 			</File>
 			<File
-				RelativePath=".\src\mkerrcodes.h">
+				RelativePath="../../libgpg-error/mkerrcodes.h">
 			</File>
 			<File
-				RelativePath=".\src\strerror-sym.c">
+				RelativePath="../../libgpg-error/strerror-sym.c">
 			</File>
 			<File
-				RelativePath=".\src\strerror.c">
+				RelativePath="../../libgpg-error/strerror.c">
 			</File>
 			<File
-				RelativePath=".\src\strsource-sym.c">
+				RelativePath="../../libgpg-error/strsource-sym.c">
 			</File>
 			<File
-				RelativePath=".\src\strsource.c">
+				RelativePath="../../libgpg-error/strsource.c">
 			</File>
 			<File
-				RelativePath=".\src\w32-gettext.c">
+				RelativePath="../../libgpg-error/w32-gettext.c">
 			</File>
 			<File
-				RelativePath=".\src\w32-gettext.h">
+				RelativePath="../../libgpg-error/w32-gettext.h">
 			</File>
 		</Filter>
 	</Files>
