@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -35,6 +35,7 @@
 				AdditionalDependencies="../../ldap/Debug/ldap.lib ws2_32.lib ../../libgcrypt/Debug/libgcrypt.lib ../../libgpg-error/Debug/libgpg-error.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="Libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/test.pdb"
 				SubSystem="1"
@@ -68,8 +69,9 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../ldap/include;../../libgpg-error/src;../../libgcrypt/src;../libgcrypt"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -78,8 +80,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="../../ldap/Release/ldap.lib ws2_32.lib ../../libgcrypt/Release/libgcrypt.lib ../../libgpg-error/Release/libgpg-error.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="1"
+				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
