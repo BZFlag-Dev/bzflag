@@ -17,13 +17,13 @@ bugs formally reported on the bug tracker.
 Bots
 ----
 
-* Segfault - bzflag -solo 2 gets rejected - too many bots from a single IP. The
-  message doesn't display on the client and the client crashes. Possibly related
-  to client-side bots getting disconnected.
-  
-* client side bots make the client get disconnected (read error) below.
-  
-* client side bots don't even show as tanks.
+* Bots only spawn at ground level. Complex maps that have tunnels may not like
+  this (bots may spawn out of bounds)
+
+* Client is disconnected with no message when the -botsPerIP parameter is
+  exceeded
+
+* Server crashes when player with bots leaves
 
 Crashes
 -------
