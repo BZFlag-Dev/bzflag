@@ -124,7 +124,7 @@ public:
 
   // UDP......
   static bool isUdpFdSet(fd_set *read_set);
-private:
+// private:
   /// return the opened socket, usable from all other network internal client
   static SOCKET  getUdpSocket();
 public:
