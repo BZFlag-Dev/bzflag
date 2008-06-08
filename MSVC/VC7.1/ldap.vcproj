@@ -334,172 +334,172 @@
 			Name="include"
 			Filter="">
 			<File
-				RelativePath=".\include\avl.h">
+				RelativePath="../../ldap/include/avl.h">
 			</File>
 			<File
-				RelativePath=".\include\getopt-compat.h">
+				RelativePath="../../ldap/include/getopt-compat.h">
 			</File>
 			<File
-				RelativePath=".\include\lber.h">
+				RelativePath="../../ldap/include/lber.h">
 			</File>
 			<File
-				RelativePath=".\include\lber_pvt.h">
+				RelativePath="../../ldap/include/lber_pvt.h">
 			</File>
 			<File
-				RelativePath=".\include\lber_types.h">
+				RelativePath="../../ldap/include/lber_types.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap.h">
+				RelativePath="../../ldap/include/ldap.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_cdefs.h">
+				RelativePath="../../ldap/include/ldap_cdefs.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_config.h">
+				RelativePath="../../ldap/include/ldap_config.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_defaults.h">
+				RelativePath="../../ldap/include/ldap_defaults.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_features.h">
+				RelativePath="../../ldap/include/ldap_features.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_int_thread.h">
+				RelativePath="../../ldap/include/ldap_int_thread.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_log.h">
+				RelativePath="../../ldap/include/ldap_log.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt.h">
+				RelativePath="../../ldap/include/ldap_pvt.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt_thread.h">
+				RelativePath="../../ldap/include/ldap_pvt_thread.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt_uc.h">
+				RelativePath="../../ldap/include/ldap_pvt_uc.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_queue.h">
+				RelativePath="../../ldap/include/ldap_queue.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_rq.h">
+				RelativePath="../../ldap/include/ldap_rq.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_schema.h">
+				RelativePath="../../ldap/include/ldap_schema.h">
 			</File>
 			<File
-				RelativePath=".\include\ldap_utf8.h">
+				RelativePath="../../ldap/include/ldap_utf8.h">
 			</File>
 			<File
-				RelativePath=".\include\ldif.h">
+				RelativePath="../../ldap/include/ldif.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil.h">
+				RelativePath="../../ldap/include/lutil.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil_hash.h">
+				RelativePath="../../ldap/include/lutil_hash.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil_ldap.h">
+				RelativePath="../../ldap/include/lutil_ldap.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil_lockf.h">
+				RelativePath="../../ldap/include/lutil_lockf.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil_md5.h">
+				RelativePath="../../ldap/include/lutil_md5.h">
 			</File>
 			<File
-				RelativePath=".\include\lutil_sha1.h">
+				RelativePath="../../ldap/include/lutil_sha1.h">
 			</File>
 			<File
-				RelativePath=".\include\portable.h">
+				RelativePath="../../ldap/include/portable.h">
 			</File>
 			<File
-				RelativePath=".\include\rewrite.h">
+				RelativePath="../../ldap/include/rewrite.h">
 			</File>
 			<File
-				RelativePath=".\include\slapi-plugin.h">
+				RelativePath="../../ldap/include/slapi-plugin.h">
 			</File>
 			<File
-				RelativePath=".\include\sysexits-compat.h">
+				RelativePath="../../ldap/include/sysexits-compat.h">
 			</File>
 			<Filter
 				Name="ac"
 				Filter="">
 				<File
-					RelativePath=".\include\ac\alloca.h">
+					RelativePath="../../ldap/include/ac\alloca.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\assert.h">
+					RelativePath="../../ldap/include/ac\assert.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\bytes.h">
+					RelativePath="../../ldap/include/ac\bytes.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\crypt.h">
+					RelativePath="../../ldap/include/ac\crypt.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\ctype.h">
+					RelativePath="../../ldap/include/ac\ctype.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\dirent.h">
+					RelativePath="../../ldap/include/ac\dirent.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\errno.h">
+					RelativePath="../../ldap/include/ac\errno.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\fdset.h">
+					RelativePath="../../ldap/include/ac\fdset.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\krb.h">
+					RelativePath="../../ldap/include/ac\krb.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\krb5.h">
+					RelativePath="../../ldap/include/ac\krb5.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\localize.h">
+					RelativePath="../../ldap/include/ac\localize.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\param.h">
+					RelativePath="../../ldap/include/ac\param.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\regex.h">
+					RelativePath="../../ldap/include/ac\regex.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\setproctitle.h">
+					RelativePath="../../ldap/include/ac\setproctitle.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\signal.h">
+					RelativePath="../../ldap/include/ac\signal.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\socket.h">
+					RelativePath="../../ldap/include/ac\socket.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\stdarg.h">
+					RelativePath="../../ldap/include/ac\stdarg.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\stdlib.h">
+					RelativePath="../../ldap/include/ac\stdlib.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\string.h">
+					RelativePath="../../ldap/include/ac\string.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\sysexits.h">
+					RelativePath="../../ldap/include/ac\sysexits.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\syslog.h">
+					RelativePath="../../ldap/include/ac\syslog.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\termios.h">
+					RelativePath="../../ldap/include/ac\termios.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\time.h">
+					RelativePath="../../ldap/include/ac\time.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\unistd.h">
+					RelativePath="../../ldap/include/ac\unistd.h">
 				</File>
 				<File
-					RelativePath=".\include\ac\wait.h">
+					RelativePath="../../ldap/include/ac\wait.h">
 				</File>
 			</Filter>
 		</Filter>
