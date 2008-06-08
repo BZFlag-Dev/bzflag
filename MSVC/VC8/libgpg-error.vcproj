@@ -1,94 +1,145 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8.00"
 	Name="libgpg-error"
 	ProjectGUID="{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./src"
+				AdditionalIncludeDirectories="../../libgpg-error/src/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libgpg-error.lib"/>
+				OutputFile="$(OutDir)/libgpg-error.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../libgpg-error/src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libgpg-error.lib"/>
+				OutputFile="$(OutDir)/libgpg-error.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -96,72 +147,98 @@
 	<Files>
 		<Filter
 			Name="src"
-			Filter="">
+			>
 			<File
-				RelativePath=".\src\code-from-errno.c">
+				RelativePath="..\..\libgpg-error\src\code-from-errno.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\code-from-errno.h">
+				RelativePath="..\..\libgpg-error\src\code-from-errno.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\code-to-errno.c">
+				RelativePath="..\..\libgpg-error\src\code-to-errno.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\code-to-errno.h">
+				RelativePath="..\..\libgpg-error\src\gpg-error.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\config.h">
+				RelativePath="..\..\libgpg-error\src\init.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\err-codes-sym.h">
+				RelativePath="..\..\libgpg-error\src\mkerrcodes.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\err-codes.h">
+				RelativePath="..\..\libgpg-error\src\strerror-sym.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\err-sources-sym.h">
+				RelativePath="..\..\libgpg-error\src\strerror.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\err-sources.h">
+				RelativePath="..\..\libgpg-error\src\strsource-sym.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\errnos-sym.h">
+				RelativePath="..\..\libgpg-error\src\strsource.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gettext.h">
+				RelativePath="..\..\libgpg-error\src\w32-gettext.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="include"
+			>
+			<File
+				RelativePath="..\..\libgpg-error\src\code-to-errno.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.c">
+				RelativePath="..\..\libgpg-error\src\config.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.h">
+				RelativePath="..\..\libgpg-error\src\err-codes-sym.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\init.c">
+				RelativePath="..\..\libgpg-error\src\err-codes.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\mkerrcodes.c">
+				RelativePath="..\..\libgpg-error\src\err-sources-sym.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\mkerrcodes.h">
+				RelativePath="..\..\libgpg-error\src\err-sources.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\strerror-sym.c">
+				RelativePath="..\..\libgpg-error\src\errnos-sym.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\strerror.c">
+				RelativePath="..\..\libgpg-error\src\gettext.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\strsource-sym.c">
+				RelativePath="..\..\libgpg-error\src\gpg-error.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\strsource.c">
+				RelativePath="..\..\libgpg-error\src\mkerrcodes.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\w32-gettext.c">
-			</File>
-			<File
-				RelativePath=".\src\w32-gettext.h">
+				RelativePath="..\..\libgpg-error\src\w32-gettext.h"
+				>
 			</File>
 		</Filter>
 	</Files>

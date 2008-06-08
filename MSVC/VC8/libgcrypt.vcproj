@@ -1,94 +1,145 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8.00"
 	Name="libgcrypt"
 	ProjectGUID="{E848E27A-90AF-4B66-978A-5445581BCFBA}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./src/"
+				AdditionalIncludeDirectories="../../libgcrypt/;../../libgcrypt/src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libgcrypt.lib"/>
+				OutputFile="$(OutDir)/libgcrypt.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../libgcrypt/;../../libgcrypt/src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libgcrypt.lib"/>
+				OutputFile="$(OutDir)/libgcrypt.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -96,290 +147,414 @@
 	<Files>
 		<Filter
 			Name="src"
-			Filter="">
+			>
 			<File
-				RelativePath=".\src\ath.c">
+				RelativePath="..\..\libgcrypt\src\ath.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\ath.h">
+				RelativePath="..\..\libgcrypt\src\dumpsexp.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\cipher.h">
+				RelativePath="..\..\libgcrypt\src\gcryptrnd.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\config.h">
+				RelativePath="..\..\libgcrypt\src\getrandom.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\dumpsexp.c">
+				RelativePath="..\..\libgcrypt\src\global.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\g10lib.h">
+				RelativePath="..\..\libgcrypt\src\hwfeatures.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gcrypt-module.h">
+				RelativePath="..\..\libgcrypt\src\misc.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gcrypt.h">
+				RelativePath="..\..\libgcrypt\src\missing-string.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\global.c">
+				RelativePath="..\..\libgcrypt\src\module.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\gpg-error.h">
+				RelativePath="..\..\libgcrypt\src\secmem.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\hwfeatures.c">
+				RelativePath="..\..\libgcrypt\src\secmem.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\misc.c">
+				RelativePath="..\..\libgcrypt\src\sexp.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\missing-string.c">
+				RelativePath="..\..\libgcrypt\src\stdmem.c"
+				>
 			</File>
 			<File
-				RelativePath=".\src\module.c">
-			</File>
-			<File
-				RelativePath=".\src\mpi.h">
-			</File>
-			<File
-				RelativePath=".\src\secmem.c">
-			</File>
-			<File
-				RelativePath=".\src\secmem.h">
-			</File>
-			<File
-				RelativePath=".\src\sexp.c">
-			</File>
-			<File
-				RelativePath=".\src\stdmem.c">
-			</File>
-			<File
-				RelativePath=".\src\stdmem.h">
-			</File>
-			<File
-				RelativePath=".\src\types.h">
-			</File>
-			<File
-				RelativePath=".\src\visibility.c">
-			</File>
-			<File
-				RelativePath=".\src\visibility.h">
+				RelativePath="..\..\libgcrypt\src\visibility.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="cipher"
-			Filter="">
+			>
 			<File
-				RelativePath=".\cipher\ac.c">
+				RelativePath="..\..\libgcrypt\cipher\ac.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\arcfour.c">
+				RelativePath="..\..\libgcrypt\cipher\arcfour.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\bithelp.h">
+				RelativePath="..\..\libgcrypt\cipher\blowfish.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\blowfish.c">
+				RelativePath="..\..\libgcrypt\cipher\camellia-glue.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\camellia-glue.c">
+				RelativePath="..\..\libgcrypt\cipher\camellia.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\camellia.c">
+				RelativePath="..\..\libgcrypt\cipher\cast5.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\camellia.h">
+				RelativePath="..\..\libgcrypt\cipher\cipher.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\cast5.c">
+				RelativePath="..\..\libgcrypt\cipher\crc.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\cipher.c">
+				RelativePath="..\..\libgcrypt\cipher\des.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\crc.c">
+				RelativePath="..\..\libgcrypt\cipher\dsa.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\des.c">
+				RelativePath="..\..\libgcrypt\cipher\ecc.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\dsa.c">
+				RelativePath="..\..\libgcrypt\cipher\elgamal.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\ecc.c">
+				RelativePath="..\..\libgcrypt\cipher\md.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\elgamal.c">
+				RelativePath="..\..\libgcrypt\cipher\md4.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\md.c">
+				RelativePath="..\..\libgcrypt\cipher\md5.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\md4.c">
+				RelativePath="..\..\libgcrypt\cipher\primegen.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\md5.c">
+				RelativePath="..\..\libgcrypt\cipher\pubkey.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\primegen.c">
+				RelativePath="..\..\libgcrypt\cipher\random-daemon.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\pubkey.c">
+				RelativePath="..\..\libgcrypt\cipher\random.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rand-internal.h">
+				RelativePath="..\..\libgcrypt\cipher\rfc2268.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\random.c">
+				RelativePath="..\..\libgcrypt\cipher\rijndael.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\random.h">
+				RelativePath="..\..\libgcrypt\cipher\rmd160.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rfc2268.c">
+				RelativePath="..\..\libgcrypt\cipher\rndegd.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rijndael.c">
+				RelativePath="..\..\libgcrypt\cipher\rndhw.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rmd.h">
+				RelativePath="..\..\libgcrypt\cipher\rndlinux.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rmd160.c">
+				RelativePath="..\..\libgcrypt\cipher\rndunix.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rndhw.c">
+				RelativePath="..\..\libgcrypt\cipher\rndw32.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rndw32.c">
+				RelativePath="..\..\libgcrypt\cipher\rsa.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\rsa.c">
+				RelativePath="..\..\libgcrypt\cipher\seed.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\seed.c">
+				RelativePath="..\..\libgcrypt\cipher\serpent.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\serpent.c">
+				RelativePath="..\..\libgcrypt\cipher\sha1.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\sha1.c">
+				RelativePath="..\..\libgcrypt\cipher\sha256.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\sha256.c">
+				RelativePath="..\..\libgcrypt\cipher\sha512.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\sha512.c">
+				RelativePath="..\..\libgcrypt\cipher\tiger.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\tiger.c">
+				RelativePath="..\..\libgcrypt\cipher\twofish.c"
+				>
 			</File>
 			<File
-				RelativePath=".\cipher\twofish.c">
+				RelativePath="..\..\libgcrypt\cipher\whirlpool.c"
+				>
 			</File>
-			<File
-				RelativePath=".\cipher\whirlpool.c">
-			</File>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath="..\..\libgcrypt\cipher\bithelp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\cipher\camellia.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\cipher\rand-internal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\cipher\random.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\cipher\rmd.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="mpi"
-			Filter="">
+			>
 			<File
-				RelativePath=".\mpi\asm-syntax.h">
+				RelativePath="..\..\libgcrypt\mpi\ec.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\ec.c">
+				RelativePath="..\..\libgcrypt\mpi\mod-source-info.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\longlong.h">
+				RelativePath="..\..\libgcrypt\mpi\mpi-add.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mod-source-info.h">
+				RelativePath="..\..\libgcrypt\mpi\mpi-bit.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-add.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-cmp.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-asm-defs.h">
+				RelativePath="..\..\libgcrypt\mpi\mpi-div.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-bit.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-gcd.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-cmp.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-inline.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-div.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-inv.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-gcd.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-mod.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inline.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-mpow.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inline.h">
+				RelativePath="..\..\libgcrypt\mpi\mpi-mul.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-internal.h">
+				RelativePath="..\..\libgcrypt\mpi\mpi-pow.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-inv.c">
+				RelativePath="..\..\libgcrypt\mpi\mpi-scan.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mod.c">
+				RelativePath="..\..\libgcrypt\mpi\mpicoder.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mpow.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-add1.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-mul.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-div.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-pow.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-lshift.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpi-scan.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-mul.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpicoder.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-mul1.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-add1.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-mul2.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-div.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-mul3.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-lshift.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-rshift.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul.c">
+				RelativePath="..\..\libgcrypt\mpi\mpih-sub1.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul1.c">
+				RelativePath="..\..\libgcrypt\mpi\mpiutil.c"
+				>
+			</File>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\asm-syntax.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\longlong.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\mpi-asm-defs.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\mpi-inline.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\mpi-internal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\libgcrypt\mpi\sysdep.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="include"
+			>
+			<File
+				RelativePath="..\..\libgcrypt\src\ath.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul2.c">
+				RelativePath="..\..\libgcrypt\src\cipher.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-mul3.c">
+				RelativePath="..\..\libgcrypt\src\config.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-rshift.c">
+				RelativePath="..\..\libgcrypt\src\g10lib.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpih-sub1.c">
+				RelativePath="..\..\libgcrypt\src\gcrypt-module.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\mpiutil.c">
+				RelativePath="..\..\libgcrypt\src\gcrypt.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\sysdep.h">
+				RelativePath="..\..\libgcrypt\gpg-error.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mpi\udiv-w-sdiv.c">
+				RelativePath="..\..\libgcrypt\src\mpi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\stdmem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\visibility.h"
+				>
 			</File>
 		</Filter>
 	</Files>

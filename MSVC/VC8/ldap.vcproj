@@ -1,94 +1,145 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8.00"
 	Name="ldap"
 	ProjectGUID="{CF1DCE05-3141-480F-B964-E06E04625A84}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\include"
+				AdditionalIncludeDirectories="../../ldap/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/ldap.lib"/>
+				OutputFile="$(OutDir)/ldap.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../ldap/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/ldap.lib"/>
+				OutputFile="$(OutDir)/ldap.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -96,410 +147,573 @@
 	<Files>
 		<Filter
 			Name="libldap"
-			Filter="">
+			>
 			<File
-				RelativePath=".\libldap\abandon.c">
+				RelativePath="..\..\ldap\libldap\abandon.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\add.c">
+				RelativePath="..\..\ldap\libldap\add.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\addentry.c">
+				RelativePath="..\..\ldap\libldap\addentry.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\bind.c">
+				RelativePath="..\..\ldap\libldap\apitest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\cancel.c">
+				RelativePath="..\..\ldap\libldap\bind.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\charray.c">
+				RelativePath="..\..\ldap\libldap\cancel.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\compare.c">
+				RelativePath="..\..\ldap\libldap\charray.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\controls.c">
+				RelativePath="..\..\ldap\libldap\compare.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\cyrus.c">
+				RelativePath="..\..\ldap\libldap\controls.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\delete.c">
+				RelativePath="..\..\ldap\libldap\cyrus.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\dnssrv.c">
+				RelativePath="..\..\ldap\libldap\delete.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\error.c">
+				RelativePath="..\..\ldap\libldap\dnssrv.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\extended.c">
+				RelativePath="..\..\ldap\libldap\dntest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\filter.c">
+				RelativePath="..\..\ldap\libldap\error.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\free.c">
+				RelativePath="..\..\ldap\libldap\extended.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\getattr.c">
+				RelativePath="..\..\ldap\libldap\filter.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\getdn.c">
+				RelativePath="..\..\ldap\libldap\free.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\getentry.c">
+				RelativePath="..\..\ldap\libldap\ftest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\getvalues.c">
+				RelativePath="..\..\ldap\libldap\getattr.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\groupings.c">
+				RelativePath="..\..\ldap\libldap\getdn.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\init.c">
+				RelativePath="..\..\ldap\libldap\getentry.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\kbind.c">
+				RelativePath="..\..\ldap\libldap\getvalues.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\ldap-int.h">
+				RelativePath="..\..\ldap\libldap\groupings.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\messages.c">
+				RelativePath="..\..\ldap\libldap\init.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\modify.c">
+				RelativePath="..\..\ldap\libldap\kbind.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\modrdn.c">
+				RelativePath="..\..\ldap\libldap\ldap-int.h"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\open.c">
+				RelativePath="..\..\ldap\libldap\messages.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\options.c">
+				RelativePath="..\..\ldap\libldap\modify.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\os-ip.c">
+				RelativePath="..\..\ldap\libldap\modrdn.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\os-local.c">
+				RelativePath="..\..\ldap\libldap\open.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\passwd.c">
+				RelativePath="..\..\ldap\libldap\options.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\libldap\ppolicy.c">
+				RelativePath="..\..\ldap\libldap\os-ip.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\print.c">
+				RelativePath="..\..\ldap\libldap\os-local.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\references.c">
+				RelativePath="..\..\ldap\libldap\passwd.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\request.c">
+				RelativePath="..\..\ldap\libldap\ppolicy.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\result.c">
+				RelativePath="..\..\ldap\libldap\print.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\sasl.c">
+				RelativePath="..\..\ldap\libldap\references.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\sbind.c">
+				RelativePath="..\..\ldap\libldap\request.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\schema.c">
+				RelativePath="..\..\ldap\libldap\result.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\search.c">
+				RelativePath="..\..\ldap\libldap\sasl.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\sort.c">
+				RelativePath="..\..\ldap\libldap\sbind.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\sortctrl.c">
+				RelativePath="..\..\ldap\libldap\schema.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\string.c">
+				RelativePath="..\..\ldap\libldap\search.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\t61.c">
+				RelativePath="..\..\ldap\libldap\sort.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\tls.c">
+				RelativePath="..\..\ldap\libldap\sortctrl.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\turn.c">
+				RelativePath="..\..\ldap\libldap\string.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\txn.c">
+				RelativePath="..\..\ldap\libldap\t61.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\unbind.c">
+				RelativePath="..\..\ldap\libldap\test.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\url.c">
+				RelativePath="..\..\ldap\libldap\tls.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\utf-8-conv.c">
+				RelativePath="..\..\ldap\libldap\turn.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\utf-8.c">
+				RelativePath="..\..\ldap\libldap\txn.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\util-int.c">
+				RelativePath="..\..\ldap\libldap\unbind.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\version.c">
+				RelativePath="..\..\ldap\libldap\url.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\vlvctrl.c">
+				RelativePath="..\..\ldap\libldap\utf-8-conv.c"
+				>
 			</File>
 			<File
-				RelativePath=".\libldap\whoami.c">
+				RelativePath="..\..\ldap\libldap\utf-8.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\libldap\util-int.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\libldap\version.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\ldap\libldap\vlvctrl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\libldap\whoami.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="liblber"
-			Filter="">
+			>
 			<File
-				RelativePath=".\liblber\assert.c">
+				RelativePath="..\..\ldap\liblber\assert.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\bprint.c">
+				RelativePath="..\..\ldap\liblber\bprint.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\debug.c">
+				RelativePath="..\..\ldap\liblber\debug.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\decode.c">
+				RelativePath="..\..\ldap\liblber\decode.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\encode.c">
+				RelativePath="..\..\ldap\liblber\dtest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\io.c">
+				RelativePath="..\..\ldap\liblber\encode.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\lber-int.h">
+				RelativePath="..\..\ldap\liblber\etest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\memory.c">
+				RelativePath="..\..\ldap\liblber\idtest.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\nt_err.c">
+				RelativePath="..\..\ldap\liblber\io.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\options.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
+				RelativePath="..\..\ldap\liblber\lber-int.h"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\sockbuf.c">
+				RelativePath="..\..\ldap\liblber\memory.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\stdio.c">
+				RelativePath="..\..\ldap\liblber\nt_err.c"
+				>
 			</File>
 			<File
-				RelativePath=".\liblber\version.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
+				RelativePath="..\..\ldap\liblber\options.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\liblber\sockbuf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\liblber\stdio.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ldap\liblber\version.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="include"
-			Filter="">
+			>
 			<File
-				RelativePath=".\include\avl.h">
+				RelativePath="..\..\ldap\include\avl.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\getopt-compat.h">
+				RelativePath="..\..\ldap\include\getopt-compat.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lber.h">
+				RelativePath="..\..\ldap\include\lber.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lber_pvt.h">
+				RelativePath="..\..\ldap\include\lber_pvt.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lber_types.h">
+				RelativePath="..\..\ldap\include\lber_types.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap.h">
+				RelativePath="..\..\ldap\include\ldap.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_cdefs.h">
+				RelativePath="..\..\ldap\include\ldap_cdefs.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_config.h">
+				RelativePath="..\..\ldap\include\ldap_config.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_defaults.h">
+				RelativePath="..\..\ldap\include\ldap_defaults.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_features.h">
+				RelativePath="..\..\ldap\include\ldap_features.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_int_thread.h">
+				RelativePath="..\..\ldap\include\ldap_int_thread.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_log.h">
+				RelativePath="..\..\ldap\include\ldap_log.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt.h">
+				RelativePath="..\..\ldap\include\ldap_pvt.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt_thread.h">
+				RelativePath="..\..\ldap\include\ldap_pvt_thread.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_pvt_uc.h">
+				RelativePath="..\..\ldap\include\ldap_pvt_uc.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_queue.h">
+				RelativePath="..\..\ldap\include\ldap_queue.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_rq.h">
+				RelativePath="..\..\ldap\include\ldap_rq.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_schema.h">
+				RelativePath="..\..\ldap\include\ldap_schema.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldap_utf8.h">
+				RelativePath="..\..\ldap\include\ldap_utf8.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\ldif.h">
+				RelativePath="..\..\ldap\include\ldif.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil.h">
+				RelativePath="..\..\ldap\include\lutil.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil_hash.h">
+				RelativePath="..\..\ldap\include\lutil_hash.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil_ldap.h">
+				RelativePath="..\..\ldap\include\lutil_ldap.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil_lockf.h">
+				RelativePath="..\..\ldap\include\lutil_lockf.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil_md5.h">
+				RelativePath="..\..\ldap\include\lutil_md5.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\lutil_sha1.h">
+				RelativePath="..\..\ldap\include\lutil_sha1.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\portable.h">
+				RelativePath="..\..\ldap\include\portable.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\rewrite.h">
+				RelativePath="..\..\ldap\include\rewrite.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\slapi-plugin.h">
+				RelativePath="..\..\ldap\include\slapi-plugin.h"
+				>
 			</File>
 			<File
-				RelativePath=".\include\sysexits-compat.h">
+				RelativePath="..\..\ldap\include\sysexits-compat.h"
+				>
 			</File>
 			<Filter
 				Name="ac"
-				Filter="">
+				>
 				<File
-					RelativePath=".\include\ac\alloca.h">
+					RelativePath="..\..\ldap\include\ac\alloca.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\assert.h">
+					RelativePath="..\..\ldap\include\ac\assert.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\bytes.h">
+					RelativePath="..\..\ldap\include\ac\bytes.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\crypt.h">
+					RelativePath="..\..\ldap\include\ac\crypt.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\ctype.h">
+					RelativePath="..\..\ldap\include\ac\ctype.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\dirent.h">
+					RelativePath="..\..\ldap\include\ac\dirent.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\errno.h">
+					RelativePath="..\..\ldap\include\ac\errno.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\fdset.h">
+					RelativePath="..\..\ldap\include\ac\fdset.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\krb.h">
+					RelativePath="..\..\ldap\include\ac\krb.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\krb5.h">
+					RelativePath="..\..\ldap\include\ac\krb5.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\localize.h">
+					RelativePath="..\..\ldap\include\ac\localize.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\param.h">
+					RelativePath="..\..\ldap\include\ac\param.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\regex.h">
+					RelativePath="..\..\ldap\include\ac\regex.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\setproctitle.h">
+					RelativePath="..\..\ldap\include\ac\setproctitle.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\signal.h">
+					RelativePath="..\..\ldap\include\ac\signal.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\socket.h">
+					RelativePath="..\..\ldap\include\ac\socket.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\stdarg.h">
+					RelativePath="..\..\ldap\include\ac\stdarg.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\stdlib.h">
+					RelativePath="..\..\ldap\include\ac\stdlib.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\string.h">
+					RelativePath="..\..\ldap\include\ac\string.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\sysexits.h">
+					RelativePath="..\..\ldap\include\ac\sysexits.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\syslog.h">
+					RelativePath="..\..\ldap\include\ac\syslog.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\termios.h">
+					RelativePath="..\..\ldap\include\ac\termios.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\time.h">
+					RelativePath="..\..\ldap\include\ac\time.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\unistd.h">
+					RelativePath="..\..\ldap\include\ac\unistd.h"
+					>
 				</File>
 				<File
-					RelativePath=".\include\ac\wait.h">
+					RelativePath="..\..\ldap\include\ac\wait.h"
+					>
 				</File>
 			</Filter>
 		</Filter>
