@@ -1083,9 +1083,14 @@ void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
   send(MsgWhatTimeIsIt, 1, msg);
 }
 
-void ServerLink::sendNewPlayer()
+void ServerLink::sendNewPlayer( int botID )
 {
-  send(MsgNewPlayer, 0, NULL);
+  char msg[2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(botID));
+
+  send(MsgNewPlayer, sizeof(msg), msg);
 }
 
 void ServerLink::sendExit()
