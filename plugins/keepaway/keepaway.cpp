@@ -297,13 +297,13 @@ bool KeepAwayMapHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * da
     if (nubs->size() > 0) {
       std::string key = bz_toupper(nubs->get(0).c_str());
 
-      if (key == "TEAMPLAY" && nubs->size() > 0)
+      if (key == "TEAMPLAY" && nubs->size() > 0) {
 	keepaway.teamPlay = true;
 
-      else if (key == "AUTOTIME" && nubs->size() > 0)
+      } else if (key == "AUTOTIME" && nubs->size() > 0) {
 	keepaway.autoTimeOn = true;
 
-      else if (key == "AUTOTIME" && nubs->size() > 2) {
+      } else if (key == "AUTOTIME" && nubs->size() > 2) {
 	double temp1 = (double) atof(nubs->get(1).c_str());
 	double temp2 = (double) atof(nubs->get(2).c_str());
 	if (temp1 >= 1 && temp1 <= 99)	// if parameter out of range, keeps default
@@ -311,30 +311,25 @@ bool KeepAwayMapHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo * da
 	if (temp2 >= 1 && temp2 <= 99)	// if parameter out of range, keeps default
 	  keepaway.timeMultMin = temp2 / 100;
 	keepaway.autoTimeOn = true;
-      }
-
-      else if (key == "NOSOUND" && nubs->size() > 0)
+      } else if (key == "NOSOUND" && nubs->size() > 0) {
 	keepaway.soundEnabled = false;
 
-      else if (key == "NOFLAGRESET" && nubs->size() > 0)
+      } else if (key == "NOFLAGRESET" && nubs->size() > 0) {
 	keepaway.flagResetEnabled = false;
 
-      else if (key == "HOLDTIME" && nubs->size() > 1) {
+      } else if (key == "HOLDTIME" && nubs->size() > 1) {
 	double temp = (double) atof(nubs->get(1).c_str());
 	if (temp >= 1 && temp <= 7200)	// if parameter out of range, keeps default
 	  keepaway.TTH = temp;
-      }
-
-      else if (key == "KEEPAWAYFLAGS" && nubs->size() > 1) {
-	for (unsigned int i = 1; i < nubs->size(); i++) {
-	  std::string flag = nubs->get(i).c_str();
+      } else if (key == "KEEPAWAYFLAGS" && nubs->size() > 1) {
+	for (unsigned int j = 1; j < nubs->size(); j++) {
+	  std::string flag = nubs->get(j).c_str();
 	  if (convertFlag(flag) != "")	// must be valid flag type, reject nub otherwise
 	    keepaway.flagsList.push_back(flag);
 	}
-      }
-
-      else if (key == "FORCEDFLAGS" && nubs->size() > 0)
+      } else if (key == "FORCEDFLAGS" && nubs->size() > 0) {
 	keepaway.forcedFlags = true;
+      }
     }
     bz_deleteStringList(nubs);
   }
@@ -508,8 +503,9 @@ void killPlayers(int safeid, std::string keepawaycallsign)
 	bz_killPlayer(player->playerID, true, keepaway.id);
 	if (keepaway.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
-      } else if (keepaway.soundEnabled)
+      } else if (keepaway.soundEnabled) {
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+      }
     }
 
     bz_freePlayerRecord(player);
@@ -567,8 +563,7 @@ std::string getFlag()
 
   // get next flag; if not free take it from player (if forced flags)
 
-  for (unsigned int h = 0; h < keepaway.flagsList.size(); h++)	// check all specified flags
-  {
+  for (unsigned int h = 0; h < keepaway.flagsList.size(); h++) { // check all specified flags
     keepaway.flagToKeepIndex++;	// get next one in line
 
     if (keepaway.flagToKeepIndex > ((int) keepaway.flagsList.size() - 1))	// go back to start if at end
@@ -586,8 +581,7 @@ std::string getFlag()
       if (player) {
 	const char *playerFlag = bz_getPlayerFlag(player->playerID);
 	if (playerFlag) {
-	  if (playerFlag == flagCandidate && keepaway.forcedFlags)	// take it, if forced flags
-	  {
+	  if (playerFlag == flagCandidate && keepaway.forcedFlags) {	// take it, if forced flags
 	    bz_removePlayerFlag(player->playerID);
 	    bz_sendTextMessage(BZ_SERVER, player->playerID, "Sorry, server needs your flag for Keep Away :/");
 	  }
@@ -725,20 +719,19 @@ void KeepAwayPlayerJoined::process(bz_EventData * eventData)
 
   bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1 *) eventData;
 
-  if (keepaway.flagToKeep == "Initiate")	//first time server starts, first player initiates it.
-  {
+  if (keepaway.flagToKeep == "Initiate") {	//first time server starts, first player initiates it.
     keepaway.flagToKeep = getFlag();
     keepaway.lastReminder = bz_getCurrentTime();
   }
 
   autoTime();
 
-  if (oneTeam(eNoTeam))		// don't send message if not enough teams
-  {
+  if (oneTeam(eNoTeam)) {		// don't send message if not enough teams
     keepaway.notEnoughTeams = true;
     return;
-  } else
+  } else {
     keepaway.notEnoughTeams = false;
+  }
 
   if (keepaway.id == -1 && keepaway.enabled && keepaway.flagToKeep != "") {
     bz_sendTextMessagef(BZ_SERVER, joinData->playerID, "Keep Away flag is %s: find it and keep it for %i seconds!",
@@ -817,21 +810,18 @@ inline void checkKeepAwayHolder()
     if (player) {
       const char *flagHeld = bz_getPlayerFlag(player->playerID);
       if (flagHeld) {
-	if (flagHeld == keepaway.flagToKeep && keepaway.id == -1)	// gotta a new one; initiate
-	{
+	if (flagHeld == keepaway.flagToKeep && keepaway.id == -1) {	// gotta a new one; initiate
 	  initiatekeepaway(player->team, player->callsign, player->playerID);
 	  bz_freePlayerRecord(player);
 	  bz_deleteIntList(playerList);
 	  return;
 	}
-	if (flagHeld == keepaway.flagToKeep && keepaway.id == player->playerID)	// someone still has it; leave
-	{
+	if (flagHeld == keepaway.flagToKeep && keepaway.id == player->playerID)	{ // someone still has it; leave
 	  bz_freePlayerRecord(player);
 	  bz_deleteIntList(playerList);
 	  return;
 	}
-	if (flagHeld == keepaway.flagToKeep && keepaway.id != player->playerID)	// must have stolen it
-	{
+	if (flagHeld == keepaway.flagToKeep && keepaway.id != player->playerID)	{ // must have stolen it
 	  initiatekeepaway(player->team, player->callsign, player->playerID);
 	  bz_freePlayerRecord(player);
 	  bz_deleteIntList(playerList);
@@ -862,8 +852,7 @@ void KeepAwayEventHandler::process(bz_EventData * eventData)
 
   checkKeepAwayHolder();	// check for someone holding flag
 
-  if (!keepaway.toldFlagFree && keepaway.id == -1)	// Flag is free - inform players
-  {
+  if (!keepaway.toldFlagFree && keepaway.id == -1) {	// Flag is free - inform players
     bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Keep Away flag: %s is free; find it and keep it!",
 			convertFlag(keepaway.flagToKeep).c_str());
     keepaway.toldFlagFree = true;
@@ -883,8 +872,7 @@ void KeepAwayEventHandler::process(bz_EventData * eventData)
 
   double timeStanding = bz_getCurrentTime() - keepaway.startTime;
 
-  if (timeStanding >= keepaway.adjustedTime)	// time's up - kill 'em
-  {
+  if (timeStanding >= keepaway.adjustedTime) {	// time's up - kill 'em
     if (keepaway.teamPlay && keepaway.team != eRogueTeam) {
       killTeams(keepaway.team, keepaway.callsign);
       bz_sendTextMessage(BZ_SERVER, keepaway.team, "Your team did it!  Go find the next Keep Away flag and keep it!");
@@ -1000,7 +988,7 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier set to %i percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
     } else
-      bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier must be between 1 and 99 percent.",
+      bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier (%i) must be between 1 and 99 percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
 
     autoTime();

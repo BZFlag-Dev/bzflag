@@ -69,6 +69,9 @@ void GameStartEndHandler::process( bz_EventData *eventData )
       started = false;
     }
     break;
+
+  default:
+    break;
   }
 }
 

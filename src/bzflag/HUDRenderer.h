@@ -34,6 +34,7 @@
 #include "LocalPlayer.h"
 #include "OpenGLUtils.h"
 
+class LocalFontFace;
 
 const int		MaxAlerts = 3;
 
@@ -169,7 +170,7 @@ private:
   GLDisplayList	friendlyMarkerList;
 private:
   const BzfDisplay*	display;
-  ScoreboardRenderer* scoreboard;
+  ScoreboardRenderer*	scoreboard;
   MainWindow&		window;
   bool			firstRender;
   int			noMotionSize;
@@ -179,22 +180,22 @@ private:
   GLfloat		messageColor[3];
   GLfloat		warningColor[3];
 
-  int		bigFontFace;
-  float		bigFontSize;
-  int		alertFontFace;
-  float		alertFontSize;
-  int		majorFontFace;
-  float		majorFontSize;
-  int		minorFontFace;
-  float		minorFontSize;
-  int		headingFontFace;
-  float		headingFontSize;
-  int		composeFontFace;
-  float		composeFontSize;
-  int		labelsFontFace;
-  float		labelsFontSize;
-  float   majorFontHeight;
-  float   alertFontHeight;
+  LocalFontFace*	bigFontFace;
+  float			bigFontSize;
+  LocalFontFace*	alertFontFace;
+  float			alertFontSize;
+  LocalFontFace*	majorFontFace;
+  float			majorFontSize;
+  LocalFontFace*	minorFontFace;
+  float			minorFontSize;
+  LocalFontFace*	headingFontFace;
+  float			headingFontSize;
+  LocalFontFace*	composeFontFace;
+  float			composeFontSize;
+  LocalFontFace*	labelsFontFace;
+  float			labelsFontSize;
+  float			majorFontHeight;
+  float			alertFontHeight;
 
   bool		playing;
   bool		roaming;

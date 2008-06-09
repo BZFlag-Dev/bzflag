@@ -23,12 +23,13 @@
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
 #include "playing.h"
+#include "LocalFontFace.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
   std::string currentJoystickDevice = BZDB.get("joystickname");
   // cache font face ID
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // add controls
   HUDuiLabel* label = new HUDuiLabel;
@@ -290,21 +291,21 @@ void			InputMenu::resize(int _width, int _height)
   int i;
 
   FontManager &fm = FontManager::instance();
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   fs.setMin(0, 20);
-  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
+  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -312,7 +313,7 @@ void			InputMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * ((float)_width + 0.5f * titleWidth);
   y -= 1.0f * titleHeight;
-  const float h = fm.getStringHeight(fontFace, fontSize);
+  const float h = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   const int count = (int)listHUD.size();
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);

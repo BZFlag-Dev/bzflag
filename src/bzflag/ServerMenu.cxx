@@ -26,6 +26,7 @@
 #include "playing.h"
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "LocalFontFace.h"
 
 const int ServerMenu::NumReadouts = 23;
 const int ServerMenu::NumItems = 10;
@@ -726,22 +727,22 @@ void			ServerMenu::resize(int _width, int _height)
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  const int menuFontFace = MainMenu::getFontFace();
+  const LocalFontFace* menuFontFace = MainMenu::getFontFace();
   FontManager &fm = FontManager::instance();
 
   // reposition title
   float x, y;
   {
     HUDuiLabel* title = readouts[0];
-    const int fontFace = title->getFontFace();
+    const LocalFontFace* fontFace = title->getFontFace();
 
     // use a big font for title, smaller font for the rest
     fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-    const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+    const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
     
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
-    const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
+    const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -751,8 +752,8 @@ void			ServerMenu::resize(int _width, int _height)
   int i;
   const float y0 = y;
   fs.setMin(10, 10);
-  float fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
-  float fontHeight = fm.getStringHeight(menuFontFace, fontSize);
+  float fontSize = fs.getFontSize(menuFontFace->getFMFace(), "alertFontSize");
+  float fontHeight = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)_width;
@@ -769,10 +770,10 @@ void			ServerMenu::resize(int _width, int _height)
 
   // reposition search status readout
   {
-    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
-    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
+    fontSize = fs.getFontSize(menuFontFace->getFMFace(), "menuFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
     status->setFontSize(fontSize);
-    const float statusWidth = fm.getStringWidth(status->getFontFace(), fontSize, status->getString().c_str());
+    const float statusWidth = fm.getStringWidth(status->getFontFace()->getFMFace(), fontSize, status->getString().c_str());
     x = 0.5f * ((float)_width - statusWidth);
     y -= 1.2f * fontHt;
     status->setPosition(x, y);
@@ -780,30 +781,30 @@ void			ServerMenu::resize(int _width, int _height)
 
   // reposition find server input
   {
-    fontSize = fs.getFontSize(menuFontFace, "menuFontSize");
-    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
+    fontSize = fs.getFontSize(menuFontFace->getFMFace(), "menuFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
     search->setFontSize(fontSize);
     float searchWidth = 0.0f; // center input widget
     if (!findMode && search->getString() == "") // or center help text if input widget is empty
-      searchWidth = fm.getStringWidth(search->getFontFace(), fontSize, (search->getLabel() + "9999").c_str());
+      searchWidth = fm.getStringWidth(search->getFontFace()->getFMFace(), fontSize, (search->getLabel() + "9999").c_str());
     x = 0.5f * ((float)_width + searchWidth);
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
 
   // reposition key help
   {
-    fontSize = fs.getFontSize(menuFontFace, "infoFontSize");
-    float fontHt = fm.getStringHeight(menuFontFace, fontSize);
+    fontSize = fs.getFontSize(menuFontFace->getFMFace(), "infoFontSize");
+    float fontHt = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
     help->setFontSize(fontSize);
-    const float searchWidth = fm.getStringWidth(help->getFontFace(), fontSize, help->getString().c_str());
+    const float searchWidth = fm.getStringWidth(help->getFontFace()->getFMFace(), fontSize, help->getString().c_str());
     x = 0.5f * ((float)_width - searchWidth);
     help->setPosition(x, (fontHt / 2) /* near bottom of screen */); //FIXME still broken
   }
 
   // position page readout and server item list
   fs.setMin(40,10);
-  fontSize = fs.getFontSize(menuFontFace, "alertFontSize");
-  fontHeight = fm.getStringHeight(menuFontFace, fontSize);
+  fontSize = fs.getFontSize(menuFontFace->getFMFace(), "alertFontSize");
+  fontHeight = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
   
@@ -817,7 +818,7 @@ void			ServerMenu::resize(int _width, int _height)
     label->setFontSize(fontSize);
     y -= 1.0f * fontHeight;
     if (useIcons) {
-      const float offset = fm.getStringWidth(status->getFontFace(), fontSize, "*  J F R L   ");
+      const float offset = fm.getStringWidth(status->getFontFace()->getFMFace(), fontSize, "*  J F R L   ");
       label->setPosition(x - offset, y);
     } else {
       label->setPosition(x, y);

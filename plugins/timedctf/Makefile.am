@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = timedctf.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 timedctf_la_SOURCES = timedctf.cpp
 timedctf_la_LDFLAGS = -module -avoid-version
 

@@ -12,7 +12,7 @@ using System.Security.Permissions;
 
 using Microsoft.Win32;
 
-namespace BZWTestLauncher
+namespace BZFSLauncher
 {
 	/// <summary>
 	/// Summary description for frmMain.
@@ -437,7 +437,7 @@ namespace BZWTestLauncher
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.btnStop);
 			this.Name = "frmMain";
-			this.Text = "BZW Test Launcher";
+			this.Text = "BZFS Launcher";
 			this.grpGameMode.ResumeLayout(false);
 			this.grpMiscSettings.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.nudDebugLevel)).EndInit();

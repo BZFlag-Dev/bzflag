@@ -15,8 +15,7 @@ public:
     if (!player)
       return true;
 
-    if ( !player->admin )
-    {
+    if ( !player->admin ) {
       bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to run /killall");
       bz_freePlayerRecord(player);
       return true;

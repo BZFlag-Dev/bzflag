@@ -216,7 +216,7 @@ static std::string		cmdBind(const std::string&,
 
   BzfKeyEvent key;
   if (!KEYMGR.stringToKeyEvent(args[0], key))
-    return std::string("bind error: unknown button name \"") + args[0] + "\"";
+    return std::string("bind error: unknown and uncreatable button name \"") + args[0] + "\"";
 
   bool down;
   if (args[1] == "up")

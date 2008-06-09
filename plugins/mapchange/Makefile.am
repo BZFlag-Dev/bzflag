@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = mapchange.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 mapchange_la_SOURCES = mapchange.cpp
 mapchange_la_LDFLAGS = -module -avoid-version
 mapchange_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils

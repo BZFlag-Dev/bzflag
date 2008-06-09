@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = rabidRabbit.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 rabidRabbit_la_SOURCES = rabidRabbit.cpp
 rabidRabbit_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 rabidRabbit_la_LDFLAGS = -module -avoid-version

@@ -24,11 +24,12 @@
 #include "ServerListCache.h"
 #include "HUDuiList.h"
 #include "playing.h"
+#include "LocalFontFace.h"
 
 CacheMenu::CacheMenu()
 {
   // cache font face ID
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // add controls
 
@@ -169,7 +170,7 @@ void CacheMenu::setFailedMessage(const char* msg)
   failedMessage->setString(msg);
 
   FontManager &fm = FontManager::instance();
-  const float _width = fm.getStringWidth(MainMenu::getFontFace(),
+  const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
 	failedMessage->getFontSize(), failedMessage->getString().c_str());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
@@ -183,23 +184,23 @@ void CacheMenu::resize(int _width, int _height)
   center = 0.5f * (float)_width;
 
   FontManager &fm = FontManager::instance();
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   fs.setMin(0,20);
-  const float fontSize = fs.getFontSize(fontFace, "menuFontSize");
+  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
+    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
   const float titleHeight =
-    fm.getStringHeight(fontFace, titleFontSize);
+    fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -207,7 +208,7 @@ void CacheMenu::resize(int _width, int _height)
   // reposition options
   x = 0.5f * (float)_width;
   y -= 1.0f * titleHeight;
-  const float h = fm.getStringHeight(fontFace, fontSize);
+  const float h = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   const int count = (const int)listHUD.size();
   int i;
   for (i = 1; i < count; i++) {

@@ -366,8 +366,9 @@ void killTeams(bz_eTeamType safeteam, std::string kothcallsign)
 	bz_killPlayer(player->playerID, true, BZ_SERVER);
 	if (koth.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
-      } else if (koth.soundEnabled)
+      } else if (koth.soundEnabled) {
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+      }
     }
 
     bz_freePlayerRecord(player);
@@ -394,8 +395,9 @@ void killPlayers(int safeid, std::string kothcallsign)
 	bz_killPlayer(player->playerID, true, koth.id);
 	if (koth.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
-      } else if (koth.soundEnabled)
+      } else if (koth.soundEnabled) {
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+      }
     }
 
     bz_freePlayerRecord(player);
@@ -653,8 +655,7 @@ inline void KOTHEventHandler::process(bz_EventData * eventData)
     }
 
     bz_freePlayerRecord(player);
-  } else			// player is off Hill
-  {
+  } else {			// player is off Hill
     if (playerID == koth.playerJustWon)
       koth.playerJustWon = -1;
 
@@ -722,9 +723,10 @@ bool KOTHCommands::handle(int playerID, bz_ApiString _command, bz_ApiString _mes
     if (inputvalue > 0) {
       koth.timeMult = (inputvalue / 100);
       bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier set to %i percent.", (int) (koth.timeMult * 100 + 0.5));
-    } else
-      bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier must be between 1 and 99 percent.",
+    } else {
+      bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier (%i) must be between 1 and 99 percent.",
 			  (int) (koth.timeMult * 100 + 0.5));
+    }
 
     autoTime();
 
@@ -738,8 +740,9 @@ bool KOTHCommands::handle(int playerID, bz_ApiString _command, bz_ApiString _mes
       koth.timeMultMin = (inputvalue / 100);
       bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier minimum set to %i percent.",
 			  (int) (koth.timeMultMin * 100 + 0.5));
-    } else
+    } else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Auto time multiplier minimum must be between 1 and 99 percent.");
+    }
 
     autoTime();
 
@@ -783,8 +786,9 @@ bool KOTHCommands::handle(int playerID, bz_ApiString _command, bz_ApiString _mes
       autoTime();
       int AdjTime = (int) (inputvalue + 0.5);
       bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "King of the Hill hold time has been set to %i seconds.", AdjTime);
-    } else
+    } else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "King of the Hill hold time invalid: must be between 1 and 7200 seconds.");
+    }
 
     autoTime();
 

@@ -19,7 +19,7 @@
 
 CronCommand cronCommand;
 
-bool CronCommand::handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) {
+bool CronCommand::handle(int playerID, bz_ApiString /* command */, bz_ApiString /* message */, bz_APIStringList *params) {
   if (!bz_hasPerm(playerID, "BZFSCRON")) {
     bz_sendTextMessage(BZ_SERVER, playerID, "bzfscron: you do not have permission to run the /cron command.");
     return true;

@@ -48,6 +48,8 @@
 
 #include "ServerIntangibilityManager.h"
 
+#include "bz_md5.h"
+
 TimeKeeper synct=TimeKeeper::getCurrent();
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
@@ -955,8 +957,8 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
 
   playerStateToAPIState(playerRecord->currentState, player->getCurrentStateAsState());
 
-  int flagid=player->player.getFlag();
-  FlagInfo *flagInfo=FlagInfo::get(flagid);
+  playerRecord->currentFlagID=player->player.getFlag();
+  FlagInfo *flagInfo=FlagInfo::get(playerRecord->currentFlagID);
 
   std::string label;
   if(flagInfo && flagInfo->flag.type)
@@ -1231,6 +1233,16 @@ BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
     return eNoTeam;
 
   return convertTeam(player->player.getTeam());
+}
+
+BZF_API const char* bz_getPlayerCallsign( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return NULL;
+
+  return player->player.getCallSign();
 }
 
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
@@ -3660,7 +3672,6 @@ BZF_API void bz_reloadUsers()
 {
   logDebugMessage(3, "Reloading users and passwords\n");
   userDatabase.clear();
-  passwordDatabase.clear();
 
   if(userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
@@ -3718,6 +3729,21 @@ BZF_API bz_eGameType bz_getGameType(void)
     return OpenFFAGame;
 
   return TeamFFAGame;
+}
+
+// utility
+BZF_API const char* bz_MD5 ( const char * str )
+{
+  if (!str)
+    return NULL;
+  return bz_MD5(str,strlen(str));
+}
+
+BZF_API const char* bz_MD5 ( const void * data, size_t size )
+{
+  MD5 md5;
+  md5.update((const unsigned char*)data,size);
+  return md5.hexdigest().c_str();
 }
 
 // server side bot API

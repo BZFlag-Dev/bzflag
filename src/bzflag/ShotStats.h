@@ -20,6 +20,7 @@
 #include "HUDuiDefaultKey.h"
 
 class Player;
+class LocalFontFace;
 
 /** ShotStats displays a set of statistics on player's shots and accuracies
  */
@@ -33,14 +34,14 @@ public:
   void execute(void);
   void addStats(Player* player);
 
-  static const int getFontFace();
-
 private:
 
   void createLabel(const std::string &str, bool navigable = false);
 
   int rows;
   int columns;
+
+  LocalFontFace* fontFace;
 
 };
 

@@ -235,9 +235,9 @@ namespace TextUtils
       if (c == escaper) {
 	if (i < len - 1)
 	  destination += text[++i];
-	else
+	// else
 	  // Should print an error
-	  ;
+	  // ;
       } else {
 	destination += c;
       }

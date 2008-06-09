@@ -11,7 +11,11 @@ AC_DEFUN([FTGL_CHECK_FONT],
 AC_MSG_CHECKING(for a TrueType font on the system)
 
 dnl  First try: fontconfig
-FONT_FILE="`fc-match -sv serif 2>/dev/null| sed -ne 's/.*\<file:@<:@^"@:>@*"\(@<:@^"@:>@*\)".*/\1/p;tx;d;:x q'`"
+FONT_FILE="`fc-match -sv serif 2>/dev/null| sed -ne 's/.*\file:@<:@^"@:>@*"\(@<:@^"@:>@*\)".*/\1/p
+tx
+d
+:x
+q'`"
 
 dnl  Second try: look into known paths
 if test "$FONT_FILE" = ""; then

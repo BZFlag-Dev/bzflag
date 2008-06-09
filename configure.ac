@@ -20,7 +20,7 @@ dnl Herein lies the venerable GNU build system configure template for
 dnl BZFlag.  As best is reasonably possible, proper ordering and
 dnl separation of tests and settings should be maintained per the
 dnl recommended standard layout.  The tests should be added to the
-dnl rather clearly labeled sections below so that they are as dnl
+dnl rather clearly labeled sections below so that they are as
 dnl follows:
 dnl
 dnl     0) information on the package
@@ -1042,7 +1042,7 @@ if test "x$enable_regex_build" != "xyes" ; then
     AC_MSG_CHECKING(for regular expression functionality)
     PRELDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS $LIBREGEX"
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([
 #ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
@@ -1053,7 +1053,9 @@ int main() {
     regexec(&re, "", 0, 0, 0);
     return 0;
 }
-    ], [regex_works=yes])
+    ], [regex_works=yes],
+    [regex_works=no],
+    [regex_works=no] )
     LDFLAGS="$PRELDFLAGS"
     AC_MSG_RESULT($regex_works)
 fi  # enable_regex_build

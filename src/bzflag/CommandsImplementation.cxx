@@ -244,7 +244,7 @@ bool BindCommand::operator() (const char *commandLine)
   BzfKeyEvent ev;
   if (!KEYMGR.stringToKeyEvent(tokens[0], ev)) {
     printBindHelp();
-    addMessage(NULL, "could not find the key");
+    addMessage(NULL, "could not find the key or create a printable binding");
     return true;
   }
 

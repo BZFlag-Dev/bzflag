@@ -95,7 +95,8 @@ private:
 
   EventToCommandMap	pressEventToCommand;
   EventToCommandMap	releaseEventToCommand;
-  StringToEventMap	stringToEvent;
+  // StringToEventMap will grow as unknown printable keys are bound
+  mutable StringToEventMap	stringToEvent;
   CallbackList<ChangeCallback>	callbacks;
   static const char*	buttonNames[];
   static const char*	asciiNames[][2];

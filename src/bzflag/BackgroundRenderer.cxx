@@ -892,26 +892,26 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 	drawGroundReceivers(renderer);
       }
     }
+  }
 
-    if (renderer.useQuality() > _MEDIUM_QUALITY) {
-      // light the mountains (so that they get dark when the sun goes down).
-      // don't do zbuffer test since they occlude all drawn before them and
-      // are occluded by all drawn after.
-      if (mountainsVisible && BZDBCache::drawMountains) {
-	drawMountains();
-      }
+  if (renderer.useQuality() > _MEDIUM_QUALITY) {
+    // light the mountains (so that they get dark when the sun goes down).
+    // don't do zbuffer test since they occlude all drawn before them and
+    // are occluded by all drawn after.
+    if (mountainsVisible && BZDBCache::drawMountains) {
+      drawMountains();
+    }
 
-      // draw clouds
-      if (cloudsVisible && BZDBCache::drawClouds) {
-	cloudsGState.setState();
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
-	DisplayListSystem::Instance().callList(cloudsList);
-	glLoadIdentity();	// maybe works around bug in some systems
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-      }
+    // draw clouds
+    if (cloudsVisible && BZDBCache::drawClouds) {
+      cloudsGState.setState();
+      glMatrixMode(GL_TEXTURE);
+      glPushMatrix();
+      glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
+      DisplayListSystem::Instance().callList(cloudsList);
+      glLoadIdentity();	// maybe works around bug in some systems
+      glPopMatrix();
+      glMatrixMode(GL_MODELVIEW);
     }
   }
 }

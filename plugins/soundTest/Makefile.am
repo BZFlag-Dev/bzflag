@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = soundTest.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 soundTest_la_SOURCES = soundTest.cpp
 soundTest_la_LDFLAGS = -module -avoid-version
 

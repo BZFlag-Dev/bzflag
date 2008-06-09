@@ -160,12 +160,6 @@ KeyManager::KeyManager()
     key.chr = asciiNames[i][1][0];
     stringToEvent.insert(std::make_pair(std::string(asciiNames[i][0]), key));
   }
-  // TODO: limited to ASCII
-  for (i = 0x21; i < 0x7f; ++i) {
-    key.chr = i;
-    std::string str = bzUTF8Char(i).str();
-    stringToEvent.insert(std::make_pair(str, key));
-  }
 }
 
 KeyManager::~KeyManager()
@@ -291,6 +285,9 @@ std::string		KeyManager::keyEventToString(
 bool			KeyManager::stringToKeyEvent(
 				const std::string& name, BzfKeyEvent& key) const
 {
+  // no empties
+  if (name.length() == 0) return false;
+
   // find last + in name
   const char* shiftDelimiter = strrchr(name.c_str(), '+');
 
@@ -306,8 +303,22 @@ bool			KeyManager::stringToKeyEvent(
 
   // find key name
   StringToEventMap::const_iterator index = stringToEvent.find(keyPart);
-  if (index == stringToEvent.end())
-    return false;
+  // can't find it?  try creating it.
+  if (index == stringToEvent.end()) {
+    UTF8StringItr itr(keyPart.c_str());
+    unsigned int chr = (*itr);
+    if (chr > 0x21 && iswprint(chr)) {
+      if (*(++itr)) // more than one unicode code point...no can do
+	return false;
+      key.chr = chr;
+      key.shift = 0;
+      stringToEvent.insert(std::make_pair(keyPart, key));
+    }
+    // try finding it again
+    index = stringToEvent.find(keyPart);
+    // if you can't find it now, it's no good
+    if (index == stringToEvent.end()) return false;
+  }
 
   // get key event sans shift state
   key = index->second;

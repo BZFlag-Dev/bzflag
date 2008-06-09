@@ -72,6 +72,9 @@ public:
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
+    void setBot ( int id, PlayerId hostID );
+    void addBot ( int id, PlayerId botPlayer );
+
     int		   getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
@@ -176,6 +179,9 @@ public:
     ShotType	      effectiveShotType;
 
     bool	      canSpawn;
+    int		      botHost;
+    int		      botID;
+    std::vector<int>  childBots;
 
    class StateDRRecord
     {

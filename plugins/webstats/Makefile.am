@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = webstats.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 webstats_la_SOURCES = \
 	webstats.cpp 
 

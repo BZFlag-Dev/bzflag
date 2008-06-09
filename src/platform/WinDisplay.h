@@ -96,8 +96,6 @@ class WinDisplay : public BzfDisplay , FatalErrorCallback {
     mutable int		charCode;
 
     // keyboard mapping
-    static const int	asciiMap[];
-    static const int	asciiShiftMap[];
     static const int	buttonMap[];
 };
 

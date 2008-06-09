@@ -33,6 +33,7 @@
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
 #include "CommandsStandard.h"
+#include "LocalFontFace.h"
 
 /* as platforms get added to the automatic upgrade system, update this */
 #if defined(WIN32)
@@ -56,7 +57,7 @@ cURLManager(), byteTransferred(0)
 
   // add controls
   HUDuiLabel* label;
-  int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   status = label = new HUDuiLabel;
   label->setFontFace(fontFace);
@@ -193,19 +194,19 @@ void NewVersionMenu::resize(int _width, int _height)
   FontSizer fs = FontSizer(_width, _height);
 
   FontManager &fm = FontManager::instance();
-  const int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+  float fontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   fs.setMin(0, 20);
-  float smallFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  float smallFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
   float x, y;
 
   // heights
-  const float fontHeight = fm.getStringHeight(fontFace, fontSize);
-  const float smallFontHeight = fm.getStringHeight(fontFace, smallFontSize);
+  const float fontHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
+  const float smallFontHeight = fm.getStringHeight(fontFace->getFMFace(), smallFontSize);
 
   // get stuff
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -214,7 +215,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // status
   HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
   label->setFontSize(smallFontSize);
-  float labelWidth = fm.getStringWidth(fontFace, smallFontSize, "Downloading update: 8888/8888 KB");
+  float labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, "Downloading update: 8888/8888 KB");
   x = 0.5f * ((float)_width - labelWidth);
   y = 2.0f * fontHeight;
   label->setPosition(x, y);
@@ -222,7 +223,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // announcement
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(fontSize);
-  labelWidth = fm.getStringWidth(fontFace, fontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y = (float)_height - fontHeight - 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -230,7 +231,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // release-notice
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 3.0f * smallFontHeight;
   label->setPosition(x, y);
@@ -238,7 +239,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // release-date
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -246,7 +247,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // user request
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 4.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -255,7 +256,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // download details
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -264,7 +265,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // first user option
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.0f * fontHeight;
   label->setPosition(x, y);
@@ -273,7 +274,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // second user option
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace, smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
 #endif

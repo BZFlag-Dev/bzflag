@@ -1,5 +1,8 @@
 noinst_LTLIBRARIES = libplugin_utils.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 libplugin_utils_la_SOURCES = \
 	plugin_utils.cpp \
 	plugin_utils.h \

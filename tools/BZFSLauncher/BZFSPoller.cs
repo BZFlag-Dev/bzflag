@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Threading;
 
-namespace BZWTestLauncher
+namespace BZFSLauncher
 {
 	/// <summary>
 	/// Summary description for BZFSPoller.
