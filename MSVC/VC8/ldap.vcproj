@@ -158,10 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\ldap\libldap\apitest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\ldap\libldap\bind.c"
 				>
 			</File>
@@ -427,10 +423,6 @@
 			</File>
 			<File
 				RelativePath="..\..\ldap\liblber\encode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\idtest.c"
 				>
 			</File>
 			<File

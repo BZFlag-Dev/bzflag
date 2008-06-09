@@ -154,10 +154,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libgcrypt\src\dumpsexp.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libgcrypt\src\global.c"
 				>
 			</File>
