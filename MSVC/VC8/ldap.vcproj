@@ -426,15 +426,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\ldap\liblber\dtest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\ldap\liblber\encode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\etest.c"
 				>
 			</File>
 			<File
