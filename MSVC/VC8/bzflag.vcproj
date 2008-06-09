@@ -865,6 +865,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiScrollList.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDuiTypeIn.cxx"
 					>
 				</File>
@@ -1292,6 +1296,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiScrollList.h"
 				>
 			</File>
 			<File
