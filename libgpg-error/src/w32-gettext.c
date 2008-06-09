@@ -1170,7 +1170,7 @@ _nl_locale_name (int category, const char *categoryname)
 }
 
 /* localname.c from gettext END.  */
-
+
 /* Support functions.  */
 
 typedef unsigned int u32;
@@ -1213,7 +1213,7 @@ hash_string( const char *str_param )
     return hval;
 }
 
-
+
 /* Generic message catalog and gettext stuff.  */
 
 /* The magic number of the GNU message catalog format.	*/
@@ -1273,7 +1273,7 @@ struct loaded_domain
   u32 *hash_tab;
 };
 
-
+
 /* Free the domain data.  */
 static void
 free_domain (struct loaded_domain *domain)
@@ -1516,14 +1516,14 @@ get_string (struct loaded_domain *domain, u32 idx)
   return (const char*) p;
 }
 
-
+
 
 /* The domain we use.  We only support one domain at this point.  This
    is why this implementation can not be shared.  Bindtextdomain and
    dgettext will simply cheat and always use this one domain.  */
 static struct loaded_domain *the_domain;
 
-
+
 /* Specify that the DOMAINNAME message catalog will be found
    in DIRNAME rather than in the system locale data base.  */
 char *

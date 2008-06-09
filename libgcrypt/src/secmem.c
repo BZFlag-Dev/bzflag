@@ -119,12 +119,12 @@ stats_update (size_t add, size_t sub)
 {
   if (add)
     {
-      cur_alloced += add;
+      cur_alloced += (unsigned int)add;
       cur_blocks++;
     }
   if (sub)
     {
-      cur_alloced -= sub;
+      cur_alloced -= (unsigned int)sub;
       cur_blocks--;
     }
 }
@@ -207,7 +207,7 @@ mb_get_new (memblock_t *block, size_t size)
 	    mb_split->size = mb->size - size - BLOCK_HEAD_SIZE;
 	    mb_split->flags = 0;
 
-	    mb->size = size;
+	    mb->size = (unsigned int)size;
 
 	    mb_merge (mb_split);
 
@@ -402,7 +402,7 @@ init_pool (size_t n)
 
   /* Initialize first memory block.  */
   mb = (memblock_t *) pool;
-  mb->size = pool_size;
+  mb->size = (unsigned int)pool_size;
   mb->flags = 0;
 }
 

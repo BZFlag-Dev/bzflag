@@ -55,7 +55,7 @@
 #define ath_recvmsg _ATH_PREFIX(ath_recvmsg)
 #endif
 
-
+
 enum ath_thread_option
   {
     ATH_THREAD_OPTION_DEFAULT = 0,

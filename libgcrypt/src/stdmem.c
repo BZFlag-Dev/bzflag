@@ -55,7 +55,7 @@
 #include "stdmem.h"
 #include "secmem.h"
 
-
+
 
 #define MAGIC_NOR_BYTE 0x55
 #define MAGIC_SEC_BYTE 0xcc

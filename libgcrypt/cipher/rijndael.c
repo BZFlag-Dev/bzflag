@@ -31,7 +31,7 @@
  * This code is placed in the public domain.
  *------------------------------------------
  */
-
+
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1730,7 +1730,7 @@ static const u32 rcon[30] = {
     0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91
 };
 
-
+
 
 
 /* Perform the key setup.
@@ -1925,7 +1925,7 @@ prepare_decryption( RIJNDAEL_context *ctx )
 }	
 
 
-
+
 /* Encrypt one block.  A and B may be the same. */
 static void
 do_encrypt (const RIJNDAEL_context *ctx, byte *bx, const byte *ax)
@@ -2100,7 +2100,7 @@ rijndael_encrypt (void *context, byte *b, const byte *a)
 }
 
 
-
+
 /* Decrypt one block.  a and b may be the same. */
 static void
 do_decrypt (RIJNDAEL_context *ctx, byte *bx, const byte *ax)
@@ -2231,7 +2231,7 @@ rijndael_decrypt (void *context, byte *b, const byte *a)
 }
 
 
-
+
 /* Test a single encryption and decryption with each key size. */
 static const char*
 selftest (void)
@@ -2311,7 +2311,7 @@ selftest (void)
   return NULL;
 }
 
-
+
 
 static const char *rijndael_names[] =
   {

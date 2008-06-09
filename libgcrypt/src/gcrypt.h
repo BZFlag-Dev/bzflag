@@ -318,7 +318,7 @@ static struct gcry_thread_cbs gcry_threads_pthread =			      \
   gcry_pthread_mutex_lock, gcry_pthread_mutex_unlock,                         \
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 
-
+
 /* The data object used to hold a multi precision integer.  */
 struct gcry_mpi;
 typedef struct gcry_mpi *gcry_mpi_t;
@@ -328,7 +328,7 @@ typedef struct gcry_mpi *GCRY_MPI _GCRY_GCC_ATTR_DEPRECATED;
 typedef struct gcry_mpi *GcryMPI _GCRY_GCC_ATTR_DEPRECATED;
 #endif
 
-
+
 
 /* Check that the library fulfills the version requirement.  */
 const char *gcry_check_version (const char *req_version);
@@ -395,7 +395,7 @@ enum gcry_ctl_cmds
 /* Perform various operations defined by CMD. */
 gcry_error_t gcry_control (enum gcry_ctl_cmds CMD, ...);
 
-
+
 /* S-expression management. */ 
 
 /* The object to represent an S-expression as used with the public key
@@ -524,7 +524,7 @@ char *gcry_sexp_nth_string (gcry_sexp_t list, int number);
 gcry_mpi_t gcry_sexp_nth_mpi (gcry_sexp_t list, int number, int mpifmt);
 
 
-
+
 /*******************************************
  *                                         *
  *  multi precision integer functions      *
@@ -760,7 +760,7 @@ int gcry_mpi_get_flag (gcry_mpi_t a, enum gcry_mpi_flag flag);
 #endif /* GCRYPT_NO_MPI_MACROS */
 
 
-
+
 /************************************
  *                                  *
  *   symmetric cipher functions     *
@@ -929,7 +929,7 @@ size_t gcry_cipher_get_algo_blklen (int algo);
    *LIST_LENGTH, *LIST_LENGTH is updated to the correct number.  */
 gcry_error_t gcry_cipher_list (int *list, int *list_length);
 
-
+
 /************************************
  *                                  *
  *    asymmetric cipher functions   *
@@ -1019,7 +1019,7 @@ unsigned char *gcry_pk_get_keygrip (gcry_sexp_t key, unsigned char *array);
    *LIST_LENGTH, *LIST_LENGTH is updated to the correct number.  */
 gcry_error_t gcry_pk_list (int *list, int *list_length);
 
-
+
 
 /************************************
  *                                  *
@@ -1210,7 +1210,7 @@ void gcry_md_debug (gcry_md_hd_t hd, const char *suffix);
    number.  */
 gcry_error_t gcry_md_list (int *list, int *list_length);
 
-
+
 
 /* Alternative interface for asymetric cryptography.  */
 
@@ -1583,7 +1583,7 @@ gcry_error_t gcry_ac_name_to_id (const char *name,
      /* */                      _GCRY_GCC_ATTR_DEPRECATED;
 #endif
 
-
+
 /************************************
  *                                  *
  *   random generating functions    *
@@ -1696,7 +1696,7 @@ void gcry_prime_release_factors (gcry_mpi_t *factors);
 gcry_error_t gcry_prime_check (gcry_mpi_t x, unsigned int flags);
 
 
-
+
 /************************************
  *                                  *
  *     miscellaneous stuff          *

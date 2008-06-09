@@ -248,7 +248,7 @@ static int debug_me;  /* Debug flag.  */
 
 
 
-
+
 /* Try and connect to the system RNG if there's one present. */
 static void 
 init_system_rng (void)

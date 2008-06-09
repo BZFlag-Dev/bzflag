@@ -55,7 +55,7 @@ static const char *selftest(void);
 typedef struct {
    u32 s[4][256], w[8], k[32];
 } TWOFISH_context;
-
+
 /* These two tables are the q0 and q1 permutations, exactly as described in
  * the Twofish paper. */
 
@@ -108,7 +108,7 @@ static const byte q1[256] = {
    0xD7, 0x61, 0x1E, 0xB4, 0x50, 0x04, 0xF6, 0xC2, 0x16, 0x25, 0x86, 0x56,
    0x55, 0x09, 0xBE, 0x91
 };
-
+
 /* These MDS tables are actually tables of MDS composed with q0 and q1,
  * because it is only ever used that way and we can save some time by
  * precomputing.  Of course the main saving comes from precomputing the
@@ -299,7 +299,7 @@ static const u32 mds[4][256] = {
     0xE2510FE2, 0x00000000, 0x9A196F9A, 0xE01A9DE0, 0x8F94368F, 0xE6C742E6,
     0xECC94AEC, 0xFDD25EFD, 0xAB7FC1AB, 0xD8A8E0D8}
 };
-
+
 /* The exp_to_poly and poly_to_exp tables are used to perform efficient
  * operations in GF(2^8) represented as GF(2)[x]/w(x) where
  * w(x)=x^8+x^6+x^3+x^2+1.  We care about doing that because it's part of the
@@ -401,7 +401,7 @@ static const byte exp_to_poly[492] = {
    0x82, 0x49, 0x92, 0x69, 0xD2, 0xE9, 0x9F, 0x73, 0xE6, 0x81, 0x4F, 0x9E,
    0x71, 0xE2, 0x89, 0x5F, 0xBE, 0x31, 0x62, 0xC4, 0xC5, 0xC7, 0xC3, 0xCB
 };
-
+
 
 /* The table constants are indices of
  * S-box entries, preprocessed through q0 and q1. */
@@ -557,7 +557,7 @@ static byte calc_sb_tbl[512] = {
    y = (y << 8) + (y >> 24); \
    x += y; y += x; ctx->a[j] = x; \
    ctx->a[(j) + 1] = (y << 9) + (y >> 23)
-
+
 
 
 /* Perform the key setup.  Note that this works only with 128- and 256-bit
@@ -713,7 +713,7 @@ twofish_setkey (void *context, const byte *key, unsigned int keylen)
 }
 
 
-
+
 /* Macros to compute the g() function in the encryption and decryption
  * rounds.  G1 is the straight g() function; G2 includes the 8-bit
  * rotation for the high 32-bit word. */
@@ -771,7 +771,7 @@ twofish_setkey (void *context, const byte *key, unsigned int keylen)
    x ^= ctx->w[m]; \
    out[4 * (n)] = x; out[4 * (n) + 1] = x >> 8; \
    out[4 * (n) + 2] = x >> 16; out[4 * (n) + 3] = x >> 24
-
+
 /* Encrypt one block.  in and out may be the same. */
 
 static void
@@ -814,7 +814,7 @@ twofish_encrypt (void *context, byte *out, const byte *in)
   _gcry_burn_stack (24+3*sizeof (void*));
 }
 
-
+
 /* Decrypt one block.  in and out may be the same. */
 
 static void
@@ -858,7 +858,7 @@ twofish_decrypt (void *context, byte *out, const byte *in)
   _gcry_burn_stack (24+3*sizeof (void*));
 }
 
-
+
 /* Test a single encryption and decryption with each key size. */
 
 static const char*
@@ -917,7 +917,7 @@ selftest (void)
 
   return NULL;
 }
-
+
 /* More complete test program.	This does 1000 encryptions and decryptions
  * with each of 250 128-bit keys and 2000 encryptions and decryptions with
  * each of 125 256-bit keys, using a feedback scheme similar to a Feistel
@@ -1025,7 +1025,7 @@ main()
 
 #endif /* TEST */
 
-
+
 
 gcry_cipher_spec_t _gcry_cipher_spec_twofish =
   {

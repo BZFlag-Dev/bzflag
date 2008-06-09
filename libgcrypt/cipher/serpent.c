@@ -859,7 +859,7 @@ serpent_decrypt (void *ctx, byte *buffer_out, const byte *buffer_in)
   _gcry_burn_stack (2 * sizeof (serpent_block_t));
 }
 
-
+
 
 /* Serpent test.  */
 
@@ -947,7 +947,7 @@ serpent_test (void)
   return NULL;
 }
 
-
+
 
 /* "SERPENT" is an alias for "SERPENT128".  */
 static const char *cipher_spec_serpent128_aliases[] =

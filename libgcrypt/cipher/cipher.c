@@ -151,7 +151,7 @@ struct gcry_cipher_handle
   cipher_context_alignment_t context;
 };
 
-
+
 /* These dummy functions are used in case a cipher implementation
    refuses to provide it's own functions.  */
 
@@ -208,7 +208,7 @@ dummy_decrypt_stream (void *c,
   BUG();
 }
 
-
+
 /* Internal function.  Register all the ciphers included in
    CIPHER_TABLE.  Note, that this function gets only used by the macro
    REGISTER_DEFAULT_CIPHERS which protects it using a mutex. */

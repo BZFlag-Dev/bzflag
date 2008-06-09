@@ -1507,7 +1507,7 @@ gcry_sexp_sscan (gcry_sexp_t *retsexp, size_t *erroff,
 		     dummy_arg_ptr, NULL);
 }
 
-
+
 /* Figure out a suitable encoding for BUFFER of LENGTH.
    Returns: 0 = Binary
             1 = String possible

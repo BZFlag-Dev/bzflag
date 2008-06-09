@@ -62,7 +62,7 @@ extern "C" {
    gpg_err_source_t to make that source the default for gpg_error().
    Otherwise GPG_ERR_SOURCE_UNKNOWN is used as default.  */
 
-
+
 /* The error source type gpg_err_source_t.
 
    Where as the Poo out of a welle small
@@ -97,7 +97,7 @@ typedef enum
     GPG_ERR_SOURCE_DIM = 256
   } gpg_err_source_t;
 
-
+
 /* The error code type gpg_err_code_t.  */
 
 /* Only use free slots, never change or reorder the existing
@@ -487,7 +487,7 @@ typedef enum
     GPG_ERR_CODE_DIM = 65536
   } gpg_err_code_t;
 
-
+
 /* The error value type gpg_error_t.  */
 
 /* We would really like to use bit-fields in a struct, but using
@@ -506,7 +506,7 @@ typedef unsigned int gpg_error_t;
 #define GPG_ERR_SOURCE_MASK	(GPG_ERR_SOURCE_DIM - 1)
 #define GPG_ERR_SOURCE_SHIFT	24
 
-
+
 /* GCC feature test.  */
 #undef _GPG_ERR_HAVE_CONSTRUCTOR
 #if __GNUC__
@@ -536,7 +536,7 @@ gpg_error_t gpg_err_init (void) _GPG_ERR_CONSTRUCTOR;
 #define GPG_ERR_INITIALIZED	1
 #endif
 
-
+
 /* Constructor and accessor functions.  */
 
 /* Construct an error value from an error code and source.  Within a
@@ -598,7 +598,7 @@ int gpg_strerror_r (gpg_error_t err, char *buf, size_t buflen);
    source in the error value ERR.  */
 const char *gpg_strsource (gpg_error_t err);
 
-
+
 /* Mapping of system errors (errno).  */
 
 /* Retrieve the error code for the system error ERR.  This returns

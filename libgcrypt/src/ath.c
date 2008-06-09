@@ -36,7 +36,7 @@
 #include "ath.h"
 
 
-
+
 /* The interface table.  */
 static struct ath_ops ops;
 
@@ -50,7 +50,7 @@ static int ops_set;
 #define MUTEX_DESTROYED	((ath_mutex_t) 2)
 
 
-
+
 /* The lock we take while checking for lazy lock initialization.  */
 static ath_mutex_t check_init_lock = ATH_MUTEX_INITIALIZER;
 

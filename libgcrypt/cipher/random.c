@@ -251,7 +251,7 @@ static int gather_faked (void (*add)(const void*, size_t, enum random_origins),
                          enum random_origins, size_t length, int level );
 
 
-
+
 /* ---  Functions  --- */
 
 

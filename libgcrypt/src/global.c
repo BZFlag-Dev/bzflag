@@ -35,7 +35,7 @@
 #include "secmem.h" /* our own secmem allocator */
 #include "ath.h"
 
-
+
 
 /****************
  * flag bits: 0 : general cipher debug
@@ -57,7 +57,7 @@ static gcry_handler_no_mem_t outofcore_handler;
 static void *outofcore_handler_value;
 static int no_secure_memory;
 
-
+
 
 /* This is our handmade constructor.  It gets called by any function
    likely to be called at startup.  The suggested way for an
@@ -103,7 +103,7 @@ global_init (void)
   BUG ();
 }
 
-
+
 
 /* Version number parsing.  */
 
@@ -246,7 +246,7 @@ print_config ( int (*fnc)(FILE *fp, const char *format, ...), FILE *fp)
 }
 
 
-
+
 
 /* Command dispatcher function, acting as general control
    function.  */
@@ -819,7 +819,7 @@ _gcry_get_debug_flag( unsigned int mask )
 }
 
 
-
+
 /* It is often useful to get some feedback of long running operations.
    This function may be used to register a handler for this. 
    The callback function CB is used as:

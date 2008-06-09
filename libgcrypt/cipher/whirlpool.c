@@ -48,7 +48,7 @@
 /* Number of rounds.  */
 #define R 10
 
-
+
 
 /* Types.  */
 typedef u64 whirlpool_block_t[BLOCK_SIZE / 8];
@@ -60,7 +60,7 @@ typedef struct {
   unsigned char length[32];
 } whirlpool_context_t;
 
-
+
 
 /* Macros. */
 
@@ -103,7 +103,7 @@ typedef struct {
   for (i = 0; i < 8; i++) \
     block_dst[i] ^= block_src[i];
 
-
+
 
 /* Round constants.  */
 static const u64 rc[R] =
@@ -120,7 +120,7 @@ static const u64 rc[R] =
     U64_C (0xca2dbf07ad5a8333),
   };
   
-
+
 
 /* Main lookup boxes.  */
 static const u64 C0[256] =
@@ -1179,7 +1179,7 @@ static const u64 C7[256] =
     U64_C (0xf8c7f8933fed6bf8), U64_C (0x86228644a411c286),
   };
 
-
+
 
 static void
 whirlpool_init (void *ctx)

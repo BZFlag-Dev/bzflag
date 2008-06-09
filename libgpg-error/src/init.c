@@ -31,7 +31,7 @@
 
 #include "gettext.h"
 
-
+
 /* Locale directory support.  */
 
 #if HAVE_W32_SYSTEM
@@ -43,7 +43,7 @@ static void drop_locale_dir (char *locale_dir);
 #define drop_locale_dir(dir)
 #endif
 
-
+
 /* Initialize the library.  This function should be run early.  */
 gpg_error_t
 gpg_err_init (void)
@@ -65,7 +65,7 @@ gpg_err_init (void)
 }
 
 
-
+
 #ifdef HAVE_W32_SYSTEM
 
 #include <windows.h>

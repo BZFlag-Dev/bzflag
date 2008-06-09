@@ -377,7 +377,7 @@ _gcry_mpi_ec_get_affine (gcry_mpi_t x, gcry_mpi_t y, mpi_point_t *point,
 
 
 
-
+
 /*  RESULT = 2 * POINT  */
 void
 _gcry_mpi_ec_dup_point (mpi_point_t *result, mpi_point_t *point, mpi_ec_t ctx)

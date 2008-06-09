@@ -30,7 +30,7 @@
 #include "cipher.h"
 #include "mpi.h"
 
-
+
 
 /* At the moment the ac interface is a wrapper around the pk
    interface, but this might change somewhen in the future, depending
@@ -114,7 +114,7 @@ struct gcry_ac_key_pair
   gcry_ac_key_t secret;
 };
 
-
+
 
 /* 
  * Functions for working with data sets.
@@ -844,7 +844,7 @@ _gcry_ac_data_clear (gcry_ac_data_t data)
   data->data_n = 0;
 }
 
-
+
 
 /*
  * Implementation of `ac io' objects.
@@ -1104,7 +1104,7 @@ _gcry_ac_io_process (gcry_ac_io_t *ac_io,
   return err;
 }
 
-
+
 
 /* 
  * Functions for converting data between the native ac and the
@@ -1342,7 +1342,7 @@ ac_data_construct (const char *identifier, int include_flags,
   return err;
 }
 
-
+
 
 /*
  * Handle management.
@@ -1413,7 +1413,7 @@ _gcry_ac_close (gcry_ac_handle_t handle)
 }
 
 
-
+
 /* 
  * Key management.
  */
@@ -1793,7 +1793,7 @@ _gcry_ac_key_get_grip (gcry_ac_handle_t handle,
 }
 
 
-
+
 
 /* 
  * Functions performing cryptographic operations.
@@ -2082,7 +2082,7 @@ _gcry_ac_data_verify (gcry_ac_handle_t handle,
 
 
 
-
+
 /*
  * Implementation of encoding methods (em).
  */
@@ -2618,7 +2618,7 @@ _gcry_ac_os_to_mpi (gcry_mpi_t mpi, unsigned char *os, size_t os_n)
 }
 
 
-
+
 /* 
  * Implementation of Encryption Schemes (ES) and Signature Schemes
  * with Appendix (SSA).

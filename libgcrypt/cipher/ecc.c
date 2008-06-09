@@ -291,7 +291,7 @@ static void *progress_cb_data;
 #define point_free(a)  _gcry_mpi_ec_point_free ((a))
 
 
-
+
 /* Local prototypes. */
 static gcry_mpi_t gen_k (gcry_mpi_t p, int security_level);
 static void test_keys (ECC_secret_key * sk, unsigned int nbits);
@@ -306,7 +306,7 @@ static gcry_mpi_t gen_y_2 (gcry_mpi_t x, elliptic_curve_t * base);
 
 
 
-
+
 void
 _gcry_register_pk_ecc_progress (void (*cb) (void *, const char *,
                                             int, int, int),
@@ -324,7 +324,7 @@ _gcry_register_pk_ecc_progress (void (*cb) (void *, const char *,
 /* } */
 
 
-
+
 
 /* Set the value from S into D.  */
 static void
@@ -385,7 +385,7 @@ scanval (const char *string)
 
 
 
-
+
 
 /****************
  * Solve the right side of the equation that defines a curve.

@@ -21,7 +21,7 @@
  * This implementation was provided for libgcrypt in public domain
  * by Hye-Shik Chang <perky@FreeBSD.org>, July 2006.
  */
-
+
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -254,7 +254,7 @@ static const u32 KC[NUMKC] = {
     0x3779b99e, 0x6ef3733c, 0xdde6e678, 0xbbcdccf1,
     0x779b99e3, 0xef3733c6, 0xde6e678d, 0xbcdccf1b,
 };
-
+
 
 
 /* Perform the key setup.
@@ -322,7 +322,7 @@ seed_setkey (void *context, const byte *key, const unsigned keylen)
 }
 
 
-
+
 #define OP(X1, X2, X3, X4, rbase)				\
     t0.w = X3 ^ ctx->keyschedule[rbase];			\
     t1.w = X4 ^ ctx->keyschedule[rbase+1];			\
@@ -381,7 +381,7 @@ seed_encrypt (void *context, byte *outbuf, const byte *inbuf)
 }
 
 
-
+
 /* Decrypt one block.  inbuf and outbuf may be the same. */
 static void
 do_decrypt (SEED_context *ctx, byte *outbuf, const byte *inbuf)
@@ -426,7 +426,7 @@ seed_decrypt (void *context, byte *outbuf, const byte *inbuf)
   _gcry_burn_stack (4*6);
 }
 
-
+
 /* Test a single encryption and decryption with each key size. */
 static const char*
 selftest (void)
@@ -460,7 +460,7 @@ selftest (void)
   return NULL;
 }
 
-
+
 
 static gcry_cipher_oid_spec_t seed_oids[] =
   {

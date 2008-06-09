@@ -49,7 +49,24 @@
 
 #include <gpg-error.h>
 
-
+#ifdef _WIN32
+	#ifndef strcasecmp
+		#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+			#define strcasecmp _stricmp
+		#else
+			#define strcasecmp stricmp
+		#endif
+	 #endif
+
+	#ifndef strncasecmp
+		#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+			#define strncasecmp _strnicmp
+		#else
+			#define strncasecmp strnicmp
+		#endif
+	#endif
+#endif // _WIN32
+
 #if HAVE_W32_SYSTEM
 /* The implementation follows below.  */
 static char *get_locale_dir (void);
@@ -82,7 +99,7 @@ i18n_init (void)
 #endif
 }
 
-
+
 #ifdef HAVE_W32_SYSTEM
 
 #include <windows.h>
@@ -242,11 +259,11 @@ drop_locale_dir (char *locale_dir)
 
 #endif	/* HAVE_W32_SYSTEM */
 
-
+
 const char *gpg_strerror_sym (gpg_error_t err);
 const char *gpg_strsource_sym (gpg_error_t err);
 
-
+
 static int
 get_err_from_number (char *str, gpg_error_t *err)
 {
@@ -449,7 +466,7 @@ get_err_from_str (char *str, gpg_error_t *err)
 }
 
 
-
+
 int
 main (int argc, char *argv[])
 {

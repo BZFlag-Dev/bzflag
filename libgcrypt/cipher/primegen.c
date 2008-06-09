@@ -130,7 +130,7 @@ static ushort small_prime_numbers[] = {
 static int no_of_small_prime_numbers = DIM (small_prime_numbers) - 1;
 
 
-
+
 /* An object and a list to build up a global pool of primes.  See
    save_pool_prime and get_pool_prime. */
 struct primepool_s 
@@ -218,7 +218,7 @@ get_pool_prime (unsigned int nbits, gcry_random_level_t randomlevel)
 
 
 
-
+
 void
 _gcry_register_primegen_progress ( void (*cb)(void *,const char*,int,int,int),
                                    void *cb_data )
