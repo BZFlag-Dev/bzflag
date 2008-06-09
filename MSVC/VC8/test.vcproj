@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="test"
 	ProjectGUID="{C335B30B-17DE-41E8-839C-3FBEECB17FA0}"
+	RootNamespace="test"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -61,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../ldap/Debug/ldap.lib ws2_32.lib ../libgcrypt/Debug/libgcrypt.lib ../libgpg-error/Debug/libgpg-error.lib"
+				AdditionalDependencies="ws2_32.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -138,6 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ws2_32.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

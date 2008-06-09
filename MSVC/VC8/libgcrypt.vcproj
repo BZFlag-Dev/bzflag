@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="libgcrypt"
 	ProjectGUID="{E848E27A-90AF-4B66-978A-5445581BCFBA}"
+	RootNamespace="libgcrypt"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -157,14 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libgcrypt\src\gcryptrnd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\getrandom.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libgcrypt\src\global.c"
 				>
 			</File>
@@ -277,10 +270,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libgcrypt\cipher\random-daemon.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libgcrypt\cipher\random.c"
 				>
 			</File>
@@ -297,19 +286,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libgcrypt\cipher\rndegd.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libgcrypt\cipher\rndhw.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\cipher\rndlinux.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\cipher\rndunix.c"
 				>
 			</File>
 			<File

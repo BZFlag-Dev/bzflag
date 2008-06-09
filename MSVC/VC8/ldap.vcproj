@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="ldap"
 	ProjectGUID="{CF1DCE05-3141-480F-B964-E06E04625A84}"
+	RootNamespace="ldap"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -157,10 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\ldap\libldap\addentry.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\ldap\libldap\apitest.c"
 				>
 			</File>
@@ -197,10 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\ldap\libldap\dntest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\ldap\libldap\error.c"
 				>
 			</File>
@@ -214,10 +207,6 @@
 			</File>
 			<File
 				RelativePath="..\..\ldap\libldap\free.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\libldap\ftest.c"
 				>
 			</File>
 			<File
@@ -352,10 +341,6 @@
 			</File>
 			<File
 				RelativePath="..\..\ldap\libldap\t61.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\libldap\test.c"
 				>
 			</File>
 			<File
