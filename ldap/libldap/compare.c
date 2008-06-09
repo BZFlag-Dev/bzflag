@@ -132,7 +132,7 @@ ldap_compare(
 	assert( value != NULL );
 
 	bvalue.bv_val = (char *) value;
-	bvalue.bv_len = (value == NULL) ? 0 : strlen( value );
+	bvalue.bv_len = (value == NULL) ? 0 : (ber_len_t)strlen( value );
 
 	return ldap_compare_ext( ld, dn, attr, &bvalue, NULL, NULL, &msgid ) == LDAP_SUCCESS
 		? msgid : -1;
@@ -174,7 +174,7 @@ ldap_compare_s(
 	assert( value != NULL );
 
 	bvalue.bv_val = (char *) value;
-	bvalue.bv_len = (value == NULL) ? 0 : strlen( value );
+	bvalue.bv_len = (value == NULL) ? 0 : (ber_len_t)strlen( value );
 
 	return ldap_compare_ext_s( ld, dn, attr, &bvalue, NULL, NULL );
 }

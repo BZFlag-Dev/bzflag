@@ -233,8 +233,8 @@ ldap_str2charray( const char *str_in, const char *brkstr )
 char * ldap_charray2str( char **a, const char *sep )
 {
 	char *s, **v, *p;
-	int len;
-	int slen;
+	size_t len;
+	size_t slen;
 
 	if( sep == NULL ) sep = " ";
 
@@ -252,7 +252,7 @@ char * ldap_charray2str( char **a, const char *sep )
 	/* trim extra sep len */
 	len -= slen;
 
-	s = LDAP_MALLOC ( len + 1 );
+	s = LDAP_MALLOC ( (ber_len_t)len + 1 );
 
 	if ( s == NULL ) {
 		return NULL;	

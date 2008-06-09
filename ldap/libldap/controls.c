@@ -156,7 +156,7 @@ int ldap_pvt_get_controls(
 	}
 	*ctrls = NULL;
 
-	len = ber_pvt_ber_remaining( ber );
+	len = (ber_len_t)ber_pvt_ber_remaining( ber );
 
 	if( len == 0) {
 		/* no controls */

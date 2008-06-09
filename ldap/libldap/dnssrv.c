@@ -147,7 +147,7 @@ int ldap_domain2dn(
 	{
 		size_t len = strlen(s);
 
-		dntmp = (char *) LDAP_REALLOC(dn, loc + sizeof(",dc=") + len );
+		dntmp = (char *) LDAP_REALLOC(dn, (ber_len_t)(loc + sizeof(",dc=") + len) );
 		if (dntmp == NULL) {
 		    if (dn != NULL)
 			LDAP_FREE(dn);

@@ -229,7 +229,7 @@ static void openldap_ldap_init_w_conf(
 				* (char**) p = LDAP_STRDUP(opt);
 				break;
 			case ATTR_OPTION:
-				ldap_set_option( NULL, attrs[i].offset, opt );
+				ldap_set_option( NULL, (int)attrs[i].offset, opt );
 				break;
 			case ATTR_SASL:
 #ifdef HAVE_CYRUS_SASL
@@ -270,7 +270,7 @@ static void openldap_ldap_init_w_userconf(const char *file)
 	if (home != NULL) {
 		Debug(LDAP_DEBUG_TRACE, "ldap_init: HOME env is %s\n",
 		      home, 0, 0);
-		path = LDAP_MALLOC(strlen(home) + strlen(file) + sizeof( LDAP_DIRSEP "."));
+		path = LDAP_MALLOC(strlen(home) + (ber_len_t)strlen(file) + (ber_len_t)sizeof( LDAP_DIRSEP "."));
 	} else {
 		Debug(LDAP_DEBUG_TRACE, "ldap_init: HOME env is NULL\n",
 		      0, 0, 0);
@@ -301,7 +301,7 @@ static void openldap_ldap_init_w_env(
 		const char *prefix)
 {
 	char buf[MAX_LDAP_ATTR_LEN+MAX_LDAP_ENV_PREFIX_LEN];
-	int len;
+	size_t len;
 	int i;
 	void *p;
 	char *value;
@@ -365,7 +365,7 @@ static void openldap_ldap_init_w_env(
 			}
 			break;
 		case ATTR_OPTION:
-			ldap_set_option( NULL, attrs[i].offset, value );
+			ldap_set_option( NULL, (int)attrs[i].offset, value );
 			break;
 		case ATTR_SASL:
 #ifdef HAVE_CYRUS_SASL

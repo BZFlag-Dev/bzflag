@@ -1326,7 +1326,7 @@ load_domain (const char *filename)
   read_ptr = (char *) data;
   do
     {
-      long int nb = fread (read_ptr, 1, to_read, fp);
+      size_t nb = fread (read_ptr, 1, to_read, fp);
       if (nb < to_read)
 	{
 	  fclose (fp);
@@ -1565,7 +1565,7 @@ bindtextdomain (const char *domainname, const char *dirname)
   /* Now build the filename string.  The complete filename is this:
      DIRNAME + \ + CATVAL + \LC_MESSAGES\ + DOMAINNAME + .mo  */
   {
-    int len = strlen (dirname) + 1 + strlen (catval) + 13
+    size_t len = strlen (dirname) + 1 + strlen (catval) + 13
       + strlen (domainname) + 3 + 1;
     char *p;
 
@@ -1573,7 +1573,7 @@ bindtextdomain (const char *domainname, const char *dirname)
     if (!fname)
       {
 	free (catval);
-	return;
+	return NULL;
       }
 
     p = fname;
@@ -1618,7 +1618,7 @@ gettext (const char *msgid)
   if (domain->hash_size > 2 && domain->hash_tab)
     {
       /* Use the hashing table.  */
-      u32 len = strlen (msgid);
+      u32 len = (u32)strlen (msgid);
       u32 hash_val = hash_string (msgid);
       u32 idx = hash_val % domain->hash_size;
       u32 incr = 1 + (hash_val % (domain->hash_size - 2));
@@ -1676,7 +1676,7 @@ gettext (const char *msgid)
       else if (cmp_val > 0)
 	bottom = act + 1;
       else
-	return get_string (domain, act);
+	return get_string (domain, (u32)act);
     }
   
  not_found:
