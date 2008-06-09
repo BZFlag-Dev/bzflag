@@ -2802,6 +2802,14 @@ static void handleMessage(void *msg)
     return;
   }
 
+  // ensure that we aren't receiving a partial multibyte character
+  UTF8StringItr itr = (char*)msg;
+  UTF8StringItr prev = itr;
+  while ((*itr) != NULL && (itr.getBufferFromHere() - (char*)msg) < MessageLen)
+    prev = itr++;
+  if ((itr.getBufferFromHere() - (char*)msg) >= MessageLen)
+    *(const_cast<char*>(prev.getBufferFromHere())) = '\0';
+
   // if filtering is turned on, filter away the goo
   if (wordFilter != NULL) {
     wordFilter->filter((char *)msg);
