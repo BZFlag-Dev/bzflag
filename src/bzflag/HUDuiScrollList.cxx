@@ -10,8 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// bzflag common header
+#include "common.h"
+
 // interface headers
 #include "HUDuiScrollList.h"
+
+// system headers
+#include <math.h>
 
 // common implementation headers
 #include "BundleMgr.h"
@@ -201,7 +207,7 @@ void HUDuiScrollList::resizeLabels()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	float listHeight = getHeight();
-	numVisibleItems = listHeight/itemHeight;
+	numVisibleItems = (int)floorf(listHeight/itemHeight);
 	
 	// If it's a paged list make it one item shorter so we can fit the page label
 	if (pagedList) {
@@ -211,7 +217,7 @@ void HUDuiScrollList::resizeLabels()
 	// Determine how far right we can display
 	float width = getWidth();
 	float itemWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "D");
-	numVisibleChars = width/itemWidth;
+	numVisibleChars = (int)floorf(width/itemWidth);
 	
 	std::string tempString;
 	HUDuiLabel* item;
