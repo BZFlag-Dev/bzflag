@@ -25,6 +25,7 @@
 #include "FontManager.h"
 #include "LocalFontFace.h"
 #include "HUDui.h"
+#include "bzUnicode.h"
 
 //
 // HUDuiScrollList
@@ -214,25 +215,30 @@ void HUDuiScrollList::resizeLabels()
 		numVisibleItems = numVisibleItems - 1;
 	}
 
-	// Determine how far right we can display
+	// Trim strings to fit our available space
 	float width = getWidth();
-	float itemWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "D");
-	numVisibleChars = (int)floorf(width/itemWidth);
-	
 	std::string tempString;
 	HUDuiLabel* item;
-	
-	// Iterate through our list of strings
-	for (size_t i = 0; i < stringList.size(); i++)	{
-		tempString = stringList.at(i);
+
+	for (size_t i = 0; i < stringList.size(); ++i) {
 		item = labelList.at(i);
-		
-		// Shorten the label to fit within the scrollable list
-		if ((int)tempString.length() > numVisibleChars) {
-			tempString = tempString.substr(0, numVisibleChars);
+		std::string tempStr = stringList.at(i);
+
+		// skip if it already fits
+		if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.c_str()) > width)
+			continue;
+
+		// expensive
+		UTF8StringItr lastPos = stringList.at(i).c_str();
+		for (UTF8StringItr str = lastPos; str.getBufferFromHere() != NULL; ++str) {
+			// is it too big yet?
+			if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), 
+							tempStr.substr(str.getBufferFromHere() - tempStr.c_str()).c_str()) > width) {
+				break;
+			}
+			lastPos = str;
 		}
-		
-		item->setString(tempString);
+		item->setString(tempStr.substr(0, lastPos.getBufferFromHere() - tempStr.c_str()));
 	}
 }
 
