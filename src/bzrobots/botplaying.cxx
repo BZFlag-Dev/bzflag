@@ -2654,7 +2654,7 @@ static void enteringServer(void *buf)
 #if defined(ROBOT)
   int i;
   for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer();
+    serverLink->sendNewPlayer(robots[i]->getId());
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
