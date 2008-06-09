@@ -223,12 +223,12 @@ void HUDuiScrollList::resizeLabels()
 	HUDuiLabel* item;
 	
 	// Iterate through our list of strings
-	for (int i = 0; i < stringList.size(); i++)	{
+	for (size_t i = 0; i < stringList.size(); i++)	{
 		tempString = stringList.at(i);
 		item = labelList.at(i);
 		
 		// Shorten the label to fit within the scrollable list
-		if (tempString.length() > numVisibleChars) {
+		if ((int)tempString.length() > numVisibleChars) {
 			tempString = tempString.substr(0, numVisibleChars);
 		}
 		
@@ -243,7 +243,7 @@ void HUDuiScrollList::doRender()
 	
 	// Draw the list items
 	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
-		if (i < labelList.size()) {
+		if (i < (int)labelList.size()) {
 			HUDuiLabel* item = labelList.at(i);
 			item->setFontSize(getFontSize());
 			item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
@@ -254,7 +254,7 @@ void HUDuiScrollList::doRender()
 	
 	// Draw the page label
 	if (pagedList) {
-		int numPages = ((stringList.size() - 1)/numVisibleItems) + 1;
+		int numPages = (((int)stringList.size() - 1)/numVisibleItems) + 1;
 		int currentPage = (getSelected()/numVisibleItems) + 1;
 		
 		std::vector<std::string> args;
