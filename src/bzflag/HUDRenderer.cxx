@@ -1840,7 +1840,7 @@ void			HUDRenderer::renderShots(const Player* target)
   for (size_t i = 0; i < shotSlots.size(); ++i)
   {
     const int myWidth = int(indicatorWidth * factors[i]);
-    const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
+    const int myTop = indicatorTop + (int)i * (indicatorHeight + indicatorSpace);
     if (factors[i] < 1.0f)
     {
       hudColor4f(0.0f, 1.0f, 0.0f, 0.5f); // green
