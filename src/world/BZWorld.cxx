@@ -10,22 +10,33 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
 #include "BZWorld.h"
 
-SampleClass::SampleClass()
+// Read a world in from a file
+World::World(const std::string &filename) : cURLManager(),
+			      location(filename),
+			      input(NULL),
+			      fromBlob(false)
 {
+  
 }
 
-SampleClass::~SampleClass()
+// Read a world in from a blob (cURL)
+World::World(std::istream &in) : cURLManager(),
+			      location("blob"),
+			      input(&in),
+			      fromBlob(true)
 {
+  //TODO: add some error handling here
+  if(input->peek() == EOF) {
+    //throw a fatal error "Could not find bzflag world file"
+  }
 }
 
-void SampleClass::thingy ( void )
+World::~World()
 {
-  // do stuff
-}
 
+}
 
 // Local Variables: ***
 // Mode: C++ ***
