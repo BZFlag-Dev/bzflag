@@ -26,6 +26,7 @@
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "playing.h"
+#include "LocalFontFace.h"
 
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
@@ -184,7 +185,8 @@ void KeyboardMapMenu::setKey(const BzfKeyEvent& event)
   for (it = mappable.begin(); it != mappable.end(); it++)
     if (it->second.index == editing)
       break;
-  if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR.keyEventToString(event) == it->second.key2))
+  if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty())
+      || (KEYMGR.keyEventToString(event) == it->second.key2))
     return;
   ActionBinding::instance().associate(KEYMGR.keyEventToString(event),
 				      it->first);
@@ -229,24 +231,24 @@ void KeyboardMapMenu::resize(int _width, int _height)
   FontSizer fs = FontSizer(_width, _height);
 
   FontManager &fm = FontManager::instance();
-  const int fontFace = MainMenu::getFontFace();
+  const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  const float titleFontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   fs.setMin(0, 20);
-  const float bigFontSize = fs.getFontSize(fontFace, "menuFontSize");
+  const float bigFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   fs.setMin(0, 40);
-  const float fontSize = fs.getFontSize(fontFace, "infoFontSize");
+  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "infoFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace, titleFontSize, title->getString().c_str());
-  const float titleHeight = fm.getStringHeight(fontFace, titleFontSize);
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
   title->setPosition(x, y);
@@ -254,9 +256,9 @@ void KeyboardMapMenu::resize(int _width, int _height)
   // reposition help
   HUDuiLabel* help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
-  const float helpWidth = fm.getStringWidth(fontFace, bigFontSize, help->getString().c_str());
+  const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), bigFontSize, help->getString().c_str());
   x = 0.5f * ((float)_width - helpWidth);
-  y -= 1.1f * fm.getStringHeight(fontFace, bigFontSize);
+  y -= 1.1f * fm.getStringHeight(fontFace->getFMFace(), bigFontSize);
   help->setPosition(x, y);
 
   // reposition options in two columns
@@ -264,7 +266,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   const float topY = y - (0.6f * titleHeight);
   y = topY;
   listHUD[2]->setFontSize(fontSize);
-  const float h = fm.getStringHeight(fontFace, fontSize);
+  const float h = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   const int count = (int)listHUD.size() - 2;
   const int mid = (count / 2);
 

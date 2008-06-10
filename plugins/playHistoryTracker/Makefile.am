@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = playHistoryTracker.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 playHistoryTracker_la_SOURCES = playHistoryTracker.cpp
 playHistoryTracker_la_LDFLAGS = -module -avoid-version
 

@@ -22,6 +22,9 @@
 #include "FontManager.h"
 #include "BZDBCache.h"
 
+// local headers
+#include "LocalFontFace.h"
+
 //
 // HUDuiFrame
 //
@@ -68,7 +71,7 @@ void			HUDuiFrame::doRender()
 {
   const float height = getHeight();
   const float width = getWidth();
-  const int fontFace = getFontFace();
+  const int fontFace = getFontFace()->getFMFace();
   const float fontSize = getFontSize();
   const float x = getX();
   const float y = getY();

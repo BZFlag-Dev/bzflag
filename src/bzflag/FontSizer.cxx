@@ -16,6 +16,7 @@
 /* common implementation headers */
 #include "FontManager.h"
 #include "StateDatabase.h"
+#include "LocalFontFace.h"
 
 
 FontSizer::FontSizer(int width, int height)
@@ -69,11 +70,16 @@ FontSizer::setMin(int charWide, int charTall)
   _charTall = charTall;
 }
 
+float
+FontSizer::getFontSize(LocalFontFace* face, const std::string& sizeVar)
+{
+  return getFontSize(face->getFMFace(), sizeVar);
+}
 
 float
-FontSizer::getFontSize(int faceID, std::string name)
+FontSizer::getFontSize(int faceID, const std::string& sizeVar)
 {
-  float size = BZDB.eval(name);
+  float size = BZDB.eval(sizeVar);
   if (size < 0.0f || isnan(size)) {
     size = _medium;
   }

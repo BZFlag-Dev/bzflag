@@ -18,6 +18,9 @@
 #include "Bundle.h"
 #include "FontManager.h"
 
+// local implementation headers
+#include "LocalFontFace.h"
+
 //
 // HUDuiList
 //
@@ -139,7 +142,8 @@ void			HUDuiList::doRender()
   if (index != -1 && getFontFace() >= 0) {
     glColor3fv(hasFocus() ? textColor : dimTextColor);
     FontManager &fm = FontManager::instance();
-    fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), bdl->getLocalString(list[index]).c_str());
+    fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(),
+      getFontSize(), bdl->getLocalString(list[index]).c_str());
   }
 }
 

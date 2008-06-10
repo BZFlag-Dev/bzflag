@@ -254,24 +254,6 @@ public:
   }
 };
 
-class NewPlayerHandler : public ClientNetworkMessageHandler
-{
-public:
-  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
-  {
-    PlayerId id = getNewPlayer(handler);
-    if (id == 0xff)
-      return false;
-
-    NetMsg   msg = MSGMGR.newMessage();
-
-    msg->packUByte(id);
-    msg->send(handler, MsgNewPlayer);
-
-    return true;
-  }
-};
-
 // messages that have players
 
 class PlayerFirstHandler : public PlayerNetworkMessageHandler
@@ -290,6 +272,31 @@ public:
       return buf;
     }
     return buf;
+  }
+};
+
+class NewPlayerHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
+  {
+    unsigned char botID;
+
+    if ( len < 1)
+      return false;
+
+    buf = nboUnpackUByte(buf, botID);
+
+    PlayerId id = getNewBot(player->getIndex(),botID);
+    if (id == 0xff)
+      return false;
+
+    NetMsg   msg = MSGMGR.newMessage();
+
+    msg->packUByte(id);
+    msg->send(player->netHandler, MsgNewPlayer);
+
+    return true;
   }
 };
 
@@ -961,8 +968,8 @@ void registerDefaultHandlers ( void )
   clientNetworkHandlers[MsgQueryGame] = new QueryGameHandler;
   clientNetworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
   clientNetworkHandlers[MsgUDPLinkEstablished] = new UDPLinkEstablishedHandler;
-  clientNetworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
-
+  
+  playerNetworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
   playerNetworkHandlers[MsgCapBits] = new CapBitsHandler;
   playerNetworkHandlers[MsgEnter] = new EnterHandler;
   playerNetworkHandlers[MsgExit] = new ExitHandler;

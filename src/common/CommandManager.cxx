@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <ctype.h>
+#include <wctype.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string>
@@ -153,7 +154,7 @@ const char*			CommandManager::readUnquoted(const char* string,
 {
   // read up to next whitespace.  escapes are not interpreted.
   const char* start = string;
-  while (*string != '\0' && !isspace(*string) && *string != ';')
+  while (*string != '\0' && !iswspace(*string) && *string != ';')
     ++string;
   *value = std::string(start, string - start);
   return string;
@@ -190,7 +191,7 @@ const char*			CommandManager::readQuoted(const char* string,
 
 const char*			CommandManager::skipWhitespace(const char* string)
 {
-  while (*string != '\0' && isspace(*string))
+  while (*string != '\0' && iswspace(*string))
     ++string;
   return string;
 }

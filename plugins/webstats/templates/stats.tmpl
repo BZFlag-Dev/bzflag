@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">;
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 <html>
 <head>
 <title>Webstats for [$ServerName] </title>
@@ -18,14 +18,17 @@ th { border: 1px solid black; }
 </style>
 </head>
 <body>
-<p>Webstats for [$ServerName]</p>
+<p>Webstats for [$HostName]</p>
 [--  end header --]
 
 [-- players section --]
 <hr>
 <h2>Players</h2>
-<table>
-	<tr> <th>Callsign</th> <th>Wins</th> <th>Losses</th> <th>TKs</th> <th>Status</th> </tr>
+<table border="1">
+	[?IF Players]
+		<tr> <th>Callsign</th> <th>Wins</th> <th>Losses</th> <th>TKs</th> <th>Status</th> </tr>
+	[?END Players]
+	
 	[*START Players]
 		[?IF NewTeam]
 			<tr class="[$TeamName]">
@@ -33,7 +36,7 @@ th { border: 1px solid black; }
 			</tr>
 		[?END NewTeam]
 		<tr class="[$Even_Odd] [$TeamName]">
-			<td>[$Callsign]</td>
+			<td><a href="[$BaseURL]?action=player&player=[$PlayerID]">[$Callsign]</a></td>
 			<td>[$Wins]</td>
 			<td>[$Losses]</td>
 			<td>[$TeamKills]</td>
@@ -45,6 +48,12 @@ th { border: 1px solid black; }
 		</tr>
 	[*EMPTY Players]
 </table>
+
+<h2>Server Info</h2>
+Uptime [$Uptime]<br>
+DataIn [$DataInMB]MB<br>
+DataOut [$DataOutMB]MB<br>
+Players [$TotalPlayers]<br>
 
 [-- footer --]
 <hr>

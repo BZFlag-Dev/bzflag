@@ -19,6 +19,7 @@
 // common implementation headers
 #include "FontManager.h"
 #include "bzUnicode.h"
+#include "LocalFontFace.h"
 
 //
 // HUDuiTypeIn
@@ -80,8 +81,8 @@ void			HUDuiTypeIn::setEditing(bool _allowEdit)
 
 bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
-  static const char backspace = '\b';	// ^H
-  static const char whitespace = ' ';
+  static unsigned int backspace = '\b';	// ^H
+  static unsigned int whitespace = ' ';
 
   if (HUDuiControl::doKeyPress(key))
     return true;
@@ -139,7 +140,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 
   if (c == backspace) {
     int pos = cursorPos.getCount();
-    if (pos == 1) { 
+    if (pos == 1) {
       goto noRoom;
     } else {
       // copy up to cursor position - 1
@@ -215,18 +216,20 @@ void			HUDuiTypeIn::doRender()
   FontManager &fm = FontManager::instance();
   std::string renderStr;
   if (obfuscate) {
-    renderStr.append(string.size(), '*');
+    CountUTF8StringItr cusi(string.c_str());
+    while (*cusi) ++cusi;
+    renderStr.append(cusi.getCount(), '*');
   } else {
     renderStr = string;
   }
-  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr.c_str());
+  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(), renderStr.c_str());
 
   // find the position of where to draw the input cursor
-  float start = fm.getStringWidth(getFontFace(), getFontSize(), 
+  float start = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), 
     renderStr.substr(0, cursorPos.getBufferFromHere() - string.c_str()).c_str());
 
   if (hasFocus() && allowEdit) {
-    fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");
+    fm.drawString(getX() + start, getY(), 0, getFontFace()->getFMFace(), getFontSize(), "_");
   }
 }
 

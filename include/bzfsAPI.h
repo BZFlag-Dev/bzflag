@@ -197,7 +197,6 @@ typedef enum
 #define bz_perm_say  "say"
 #define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
-#define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
 #define bz_perm_setVar  "setVar"
 #define bz_perm_showOthers  "showOthers"
@@ -1350,7 +1349,7 @@ BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn );
 BZF_API bool bz_setPlayerLimboMessage( int playerID, const char* text );
 
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID );
-
+BZF_API const char* bz_getPlayerCallsign( int playerID );
 
 class BZF_API bz_BasePlayerRecord
 {
@@ -1375,6 +1374,8 @@ public:
     losses = 0;
     version = 1;
     bzID = "";
+
+    currentFlagID = -1;
   };
 
   ~bz_BasePlayerRecord(){};
@@ -1397,6 +1398,7 @@ public:
 
   bz_ApiString ipAddress;
 
+  int currentFlagID;
   bz_ApiString currentFlag;
   bz_APIStringList flagHistory;
 
@@ -1872,6 +1874,10 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );
 
 // game info
 BZF_API bz_eGameType bz_getGameType( void );
+
+// utility
+BZF_API const char* bz_MD5 ( const char * str );
+BZF_API const char* bz_MD5 ( const void * data, size_t size );
 
 // server side player API
 

@@ -43,6 +43,7 @@
 #include "TimeKeeper.h"
 
 #include "SyncClock.h"
+#include "bzUnicode.h"
 
 #ifndef BUILDING_BZADMIN
 // bzflag local implementation headers
@@ -1083,9 +1084,14 @@ void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
   send(MsgWhatTimeIsIt, 1, msg);
 }
 
-void ServerLink::sendNewPlayer()
+void ServerLink::sendNewPlayer( int botID )
 {
-  send(MsgNewPlayer, 0, NULL);
+  char msg[2];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUByte(buf, uint8_t(botID));
+
+  send(MsgNewPlayer, sizeof(msg), msg);
 }
 
 void ServerLink::sendExit()
@@ -1122,6 +1128,14 @@ void			ServerLink::sendAutoPilot(bool autopilot)
 
 void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
 {
+  // ensure that we aren't sending a partial multibyte character
+  UTF8StringItr itr = message;
+  UTF8StringItr prev = itr;
+  while ((*itr) != NULL && (itr.getBufferFromHere() - message) < MessageLen)
+    prev = itr++;
+  if ((itr.getBufferFromHere() - message) >= MessageLen)
+    *(const_cast<char*>(prev.getBufferFromHere())) = '\0';
+
   char msg[MaxPacketLen];
   void* buf = msg;
 

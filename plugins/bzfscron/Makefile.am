@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = bzfscron.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 bzfscron_la_SOURCES = \
 	bzfscron.cpp \
 	bzfscron.h \

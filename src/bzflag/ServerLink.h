@@ -94,7 +94,7 @@ public:
   void		sendTransferFlag(const PlayerId&, const PlayerId&);
   void		sendNewRabbit();
   void		sendPaused(bool paused);
-  void		sendNewPlayer();
+  void		sendNewPlayer( int botID );
   void		sendCollide(const PlayerId playerId,
 			    const PlayerId otherId, const float *pos);
 

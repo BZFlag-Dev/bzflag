@@ -92,12 +92,10 @@ class WinDisplay : public BzfDisplay , FatalErrorCallback {
     virtual void error ( const char* title, const char* message );
 
     // for key to character translations
-    bool		translated;
-    int			charCode;
+    mutable bool	translated;
+    mutable int		charCode;
 
     // keyboard mapping
-    static const int	asciiMap[];
-    static const int	asciiShiftMap[];
     static const int	buttonMap[];
 };
 

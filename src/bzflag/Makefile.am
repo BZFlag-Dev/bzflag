@@ -35,8 +35,8 @@ bzflag_SOURCES =			\
 	ControlPanel.h			\
 	CrackedGlass.cxx		\
 	CrackedGlass.h			\
-	ClientIntangibilityManager.h \
-	ClientIntangibilityManager.cxx \
+	ClientIntangibilityManager.h	\
+	ClientIntangibilityManager.cxx	\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\
@@ -103,6 +103,8 @@ bzflag_SOURCES =			\
 	KeyboardMapMenu.h		\
 	LocalCommand.cxx		\
 	LocalCommand.h			\
+	LocalFontFace.cxx		\
+	LocalFontFace.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
 	MainMenu.cxx			\

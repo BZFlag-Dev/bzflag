@@ -34,6 +34,8 @@
 #include "SceneRenderer.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
+#include "LocalFontFace.h"
+#include "bzUnicode.h"
 
 //
 // ControlPanelMessage
@@ -75,7 +77,9 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStringWidth(fontFace, fontSize, std::string(msg, n+1).c_str()) < maxLength)) {
+	     (fm.getStringWidth(fontFace, fontSize, 
+		std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)).c_str())
+	      < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -100,7 +104,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	    }
 	  }
 	} else {
-	  n++;
+	  n = static_cast<int>((++UTF8StringItr(msg+n)).getBufferFromHere()-msg);
 	}
 	if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
@@ -144,7 +148,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				changedMessage(0),
 				radarRenderer(NULL),
 				renderer(&_renderer),
-				fontFace(0),
+				fontFace(NULL),
 				dimming(1.0f),
 				du(0),
 				dv(0),
@@ -196,6 +200,10 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+
+  // release font face
+  if (fontFace)
+    LocalFontFace::release(fontFace);
 
   if (echoToConsole && echoAnsi) {
     std::cout << ColorStrings[FinalResetColor] << std::flush;
@@ -356,12 +364,12 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	// draw the tabs on the right side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
+		      0.0f, fontFace->getFMFace(), (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
+		      0.0f, fontFace->getFMFace(), (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
     }
@@ -455,14 +463,14 @@ void			ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg.c_str());
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg.c_str());
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, newMsg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg.c_str());
 	}
       }
 
@@ -621,7 +629,8 @@ void			ControlPanel::resize()
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
   FontManager &fm = FontManager::instance();
-  fontFace = fm.getFaceID(BZDB.get("consoleFont"));
+  if (!fontFace)
+    fontFace = LocalFontFace::create("consoleFont");
 
   FontSizer fs = FontSizer(w, h);
   fontSize = fs.getFontSize(fontFace, "consoleFontSize");
@@ -630,15 +639,15 @@ void			ControlPanel::resize()
   if (tabs) {
     tabTextWidth.clear();
     totalTabWidth = 0;
-    const float charWidth = fm.getStringWidth(fontFace, fontSize, "-");
+    const float charWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, "-");
     for (unsigned int tab = 0; tab < tabs->size(); tab++) {
       // add space for about 2-chars on each side for padding
-      tabTextWidth.push_back(fm.getStringWidth(fontFace, fontSize, (*tabs)[tab]) + (4.0f * charWidth));
+      tabTextWidth.push_back(fm.getStringWidth(fontFace->getFMFace(), fontSize, (*tabs)[tab]) + (4.0f * charWidth));
       totalTabWidth += long(tabTextWidth[tab]);
     }
   }
 
-  lineHeight = fm.getStringHeight(fontFace, fontSize);
+  lineHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
   maxLines = int(messageAreaPixels[3] / lineHeight);
 
@@ -647,7 +656,7 @@ void			ControlPanel::resize()
   // rewrap all the lines
   for (int i = 0; i < MessageModeCount; i++) {
     for (int j = 0; j < (int)messages[i].size(); j++) {
-      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
+      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
     }
   }
 
@@ -740,7 +749,7 @@ void			ControlPanel::addMessage(const std::string& line,
 						 const int realmode)
 {
   ControlPanelMessage item(line);
-  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
+  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
 
   int _maxScrollPages = BZDB.evalInt("scrollPages");
   if (_maxScrollPages <= 0) {

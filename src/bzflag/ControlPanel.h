@@ -33,6 +33,7 @@
 
 class RadarRenderer;
 class SceneRenderer;
+class LocalFontFace;
 
 struct ControlPanelMessage {
 			ControlPanelMessage(const std::string&);
@@ -99,7 +100,7 @@ class ControlPanel {
     RadarRenderer*	radarRenderer;
     SceneRenderer*	renderer;
 
-    int			fontFace;
+    LocalFontFace*	fontFace;
     float		fontSize;
 
     float		dimming;

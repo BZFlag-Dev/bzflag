@@ -15,7 +15,7 @@ public:
 
 SWDeathHandler	swDeathHandler;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+BZF_PLUGIN_CALL int bz_Load ( const char* /* commandLine */ )
 {
   bz_debugMessage(4,"shockwaveDeath plugin loaded");
 

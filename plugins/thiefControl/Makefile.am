@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = thiefControl.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 thiefControl_la_SOURCES = thiefControl.cpp
 thiefControl_la_LDFLAGS = -module -avoid-version
 

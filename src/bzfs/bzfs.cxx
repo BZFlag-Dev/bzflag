@@ -1409,6 +1409,25 @@ PlayerId getNewPlayer(NetHandler *netHandler)
   return playerIndex;
 }
 
+PlayerId getNewBot(PlayerId hostPlayer, int botID)
+{
+  PlayerId playerIndex = getNewPlayerID();
+
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(hostPlayer);
+  if (!player || !player->netHandler)
+    return 0xFF;
+
+  GameKeeper::Player *newPlayer = new GameKeeper::Player(playerIndex, player->netHandler);
+
+  // set bot data
+  newPlayer->setBot(botID,hostPlayer);
+  player->addBot(botID,playerIndex);
+
+  checkGameOn();
+
+  return playerIndex;
+}
+
 PlayerId getNewPlayerID(void)
 {
   PlayerId playerIndex;
@@ -2494,9 +2513,23 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (!playerData)
     return;
 
+  bool  isBot, isBotHost, netHandlerIsSafe;
+  isBot = playerData->botHost != -1;
+  isBotHost = playerData->childBots.size() != 0;
+  netHandlerIsSafe = !isBot;
+
+  // if it's a bot host, kill all it's bots first so they are clean when we kill this guy's net handler
+  if (isBotHost)
+  {
+    // if it's a bot host, we need to  kill all the other bots too
+    for ( size_t b = 0; b < playerData->childBots.size(); b++)
+      removePlayer(playerData->childBots[b],reason, notify);
+  }
+
   // flush all pending messages for the player immediatley
 
-  MSGMGR.flushMessages(playerData->netHandler);
+  if (netHandlerIsSafe)
+    MSGMGR.flushMessages(playerData->netHandler);
 
   playerData->isParting = true;
 
@@ -2511,7 +2544,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
     worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
-  if (notify) {
+  if (netHandlerIsSafe && notify) {
     // send a super kill to be polite
     // send message to one player
     if (playerData->playerHandler) {
@@ -2531,10 +2564,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 
   // flush the connection
-  if (playerData->netHandler) {
+  if (netHandlerIsSafe && playerData->netHandler) {
     NetHandler* handler( playerData->netHandler );
     playerData->netHandler = 0;
     handler->closing(reason);
+  } else {
+    playerData->netHandler = 0;
   }
 
   // if there is an active poll, cancel any vote this player may have made
@@ -4685,16 +4720,6 @@ static void doListServerUpdate ( TimeKeeper &tm )
   }
 }
 
-static void cleanPendingPlayers ( void )
-{
-  // Clean pending players
-
-  if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
-    worldWasSentToAPlayer = false;
-    (clOptions->worldFile == "") && !Replay::enabled() && defineWorld();
-  }
-}
-
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
   if ( peer.pendingSendChunks.size() == 0 || peer.deleteMe )
@@ -4859,7 +4884,12 @@ static void runMainLoop ( void )
 
     MSGMGR.update();
 
-    cleanPendingPlayers();
+    // clean any pending players and rebuild the world if necessary
+    if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
+      worldWasSentToAPlayer = false;
+      if ((clOptions->worldFile == "") && !Replay::enabled())
+	defineWorld();
+    }
 
     dontWait = dontWait || updateCurl();
   }

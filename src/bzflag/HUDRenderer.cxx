@@ -30,6 +30,7 @@
 #include "playing.h"
 #include "TextUtils.h"
 #include "CrackedGlass.h"
+#include "LocalFontFace.h"
 
 
 //
@@ -104,8 +105,18 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   globalClock.setClock(-1.0f, 0.8f, 0.4f);
   scoreClock.setClock(-1.0f, 0.5f, 0.2f);
 
+  // initialize fonts
+  bigFontFace = LocalFontFace::create("sansSerifFont");
+  alertFontFace = LocalFontFace::create("sansSerifFont");
+  majorFontFace = LocalFontFace::create("serifFont");
+  minorFontFace = LocalFontFace::create("consoleFont");
+  headingFontFace = LocalFontFace::create("sansSerifFont");
+  composeFontFace = LocalFontFace::create("consoleFont");
+  labelsFontFace = LocalFontFace::create("consoleFont");
+
   // create compose dialog
   composeTypeIn = new HUDuiTypeIn();
+  composeTypeIn->setFontFace(composeFontFace);
   composeTypeIn->setLabel("Send:");
   composeTypeIn->setMaxLength(MessageLen - 1);
   composeTypeIn->showFocus(false);
@@ -115,7 +126,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
   friendlyMarkerList = DisplayListSystem::Instance().newList(this);
 
-  // initialize fonts
   resize(true);
 }
 
@@ -126,6 +136,15 @@ HUDRenderer::~HUDRenderer()
 
   // release ui controls
   delete composeTypeIn;
+
+  // release fonts
+  LocalFontFace::release(bigFontFace);
+  LocalFontFace::release(alertFontFace);
+  LocalFontFace::release(majorFontFace);
+  LocalFontFace::release(minorFontFace);
+  LocalFontFace::release(headingFontFace);
+  LocalFontFace::release(composeFontFace);
+  LocalFontFace::release(labelsFontFace);
 }
 
 
@@ -188,85 +207,68 @@ int			HUDRenderer::getMaxMotionSize() const
 void			HUDRenderer::setBigFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
-  bigFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-
   FontSizer fs = FontSizer(width, height);
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
-  bigFontSize = fs.getFontSize(bigFontFace, "headerFontSize");
+  bigFontSize = fs.getFontSize(bigFontFace->getFMFace(), "headerFontSize");
 
-  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel.c_str());
-  resumeLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, resumeLabel.c_str());
-  gameOverLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, gameOverLabel.c_str());
-  autoPilotWidth = fm.getStringWidth(bigFontFace, bigFontSize, autoPilotLabel.c_str());
+  restartLabelWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, restartLabel.c_str());
+  resumeLabelWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, resumeLabel.c_str());
+  gameOverLabelWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, gameOverLabel.c_str());
+  autoPilotWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, autoPilotLabel.c_str());
 }
 
 void			HUDRenderer::setAlertFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
-  alertFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-
   FontSizer fs = FontSizer(width, height);
-  alertFontSize = fs.getFontSize(alertFontFace, "alertFontSize");
-  alertFontHeight = fm.getStringHeight(alertFontFace, alertFontSize);
+  alertFontSize = fs.getFontSize(alertFontFace->getFMFace(), "alertFontSize");
+  alertFontHeight = fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
 
   for (int i = 0; i < MaxAlerts; i++)
     if (alertClock[i].isOn())
-      alertLabelWidth[i] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[i].c_str());
+      alertLabelWidth[i] = fm.getStringWidth(alertFontFace->getFMFace(), alertFontSize, alertLabel[i].c_str());
 }
 
 void			HUDRenderer::setMajorFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
-  majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
-
   FontSizer fs = FontSizer(width, height);
-  majorFontSize = fs.getFontSize(majorFontFace, "hudFontSize");
-  majorFontHeight = fm.getStringHeight(majorFontFace, majorFontSize);
+  majorFontSize = fs.getFontSize(majorFontFace->getFMFace(), "hudFontSize");
+  majorFontHeight = fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize);
 }
 
 void			HUDRenderer::setMinorFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
-  minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
-
   FontSizer fs = FontSizer(width, height);
-  minorFontSize = fs.getFontSize(minorFontFace, "scoreFontSize");
+  minorFontSize = fs.getFontSize(minorFontFace->getFMFace(), "scoreFontSize");
 }
 
 void			HUDRenderer::setHeadingFontSize(int width, int height)
 {
   FontManager &fm = FontManager::instance();
-  headingFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
-
   FontSizer fs = FontSizer(width, height);
-  headingFontSize = fs.getFontSize(headingFontFace, "hudFontSize");
+  headingFontSize = fs.getFontSize(headingFontFace->getFMFace(), "hudFontSize");
 
   // compute heading labels and (half) widths
   int i;
   for (i = 0; i < 36; i++)
-    headingLabelWidth[i] = 0.5f * fm.getStringWidth(headingFontFace, headingFontSize, headingLabel[i].c_str());
+    headingLabelWidth[i] = 0.5f * fm.getStringWidth(headingFontFace->getFMFace(), headingFontSize, headingLabel[i].c_str());
 
   // compute maximum width over all altitude labels
-  altitudeLabelMaxWidth = fm.getStringWidth(headingFontFace, headingFontSize, "9999");
+  altitudeLabelMaxWidth = fm.getStringWidth(headingFontFace->getFMFace(), headingFontSize, "9999");
 }
 
 void			HUDRenderer::setComposeFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
-  composeFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   composeTypeIn->setFontFace(composeFontFace);
-
   FontSizer fs = FontSizer(width, height);
-  composeTypeIn->setFontSize(fs.getFontSize(composeFontFace, "consoleFontSize"));
+  composeTypeIn->setFontSize(fs.getFontSize(composeFontFace->getFMFace(), "consoleFontSize"));
 }
 
 void			HUDRenderer::setLabelsFontSize(int width, int height)
 {
-  FontManager &fm = FontManager::instance();
-  labelsFontFace = fm.getFaceID(BZDB.get("consoleFont"));
-
   FontSizer fs = FontSizer(width, height);
-  labelsFontSize = fs.getFontSize(labelsFontFace, "consoleFont");
+  labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFontSize");
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
@@ -349,7 +351,7 @@ void			HUDRenderer::setAlert(int index, const char* string,
   } else {
     FontManager &fm = FontManager::instance();
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
-    alertLabelWidth[index] = fm.getStringWidth(alertFontFace, alertFontSize, alertLabel[index].c_str());
+    alertLabelWidth[index] = fm.getStringWidth(alertFontFace->getFMFace(), alertFontSize, alertLabel[index].c_str());
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
   }
@@ -398,14 +400,14 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     composeTypeIn->setString("");
     HUDui::setFocus(composeTypeIn);
 
-    int cFontFace = composeTypeIn->getFontFace();
+    const LocalFontFace* cFontFace = composeTypeIn->getFontFace();
     float cFontSize = composeTypeIn->getFontSize();
     if (cFontFace >= 0) {
       FontManager &fm = FontManager::instance();
-      float fontHeight = fm.getStringHeight(cFontFace, cFontSize);
+      float fontHeight = fm.getStringHeight(cFontFace->getFMFace(), cFontSize);
       const float x =
-	fm.getStringWidth(cFontFace, cFontSize, composeTypeIn->getLabel().c_str()) + 
-	fm.getStringWidth(cFontFace, cFontSize, "__");
+	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, composeTypeIn->getLabel().c_str()) + 
+	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, "__");
       const float y = fontHeight * 0.5f;
       composeTypeIn->setLabelWidth(x);
       composeTypeIn->setPosition(x + 8, y); // pad prompt on the left just a smidgen
@@ -479,7 +481,7 @@ void			HUDRenderer::setRestartKeyLabel(const std::string& label)
   snprintf(buffer, 250, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
   FontManager &fm = FontManager::instance();
-  restartLabelWidth = fm.getStringWidth(bigFontFace, bigFontSize, restartLabel.c_str());
+  restartLabelWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, restartLabel.c_str());
 }
 
 void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
@@ -496,7 +498,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   if (!help) return std::string();
 
   FontManager &fm = FontManager::instance();
-  static const float spaceWidth = fm.getStringWidth(minorFontFace, minorFontSize, " ");
+  static const float spaceWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, " ");
 
   // find sections of string not more than maxWidth pixels wide
   // and put them into a std::string separated by \0's.
@@ -518,7 +520,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
 	continue;
       }
 
-      wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word.c_str());
+      wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word.c_str());
       msg += c;
       if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
 	currentLineWidth += wordWidth;
@@ -536,7 +538,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
   }
 
   if (word.size() > 0) {
-    wordWidth = fm.getStringWidth(minorFontFace, minorFontSize, word.c_str());
+    wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word.c_str());
     if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
       msg += '\0';
     }
@@ -710,9 +712,10 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
   if (name.size()) {
     hudColor3Afv( color, alpha );
     float textOffset = 5.0f;
-    float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
+    float width = FontManager::instance().getStringWidth(headingFontFace->getFMFace(), headingFontSize, name.c_str());
     glEnable(GL_TEXTURE_2D);
-    FontManager::instance().drawString(-width*0.5f,textOffset+triangleSize,0,headingFontFace, headingFontSize, name.c_str());
+    FontManager::instance().drawString(-width * 0.5f , textOffset + triangleSize,
+	  0, headingFontFace->getFMFace(), headingFontSize, name.c_str());
     glDisable(GL_TEXTURE_2D);
   }
 
@@ -806,9 +809,10 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
   if (name.size()) {
     hudColor3Afv( color, alpha );
     float textOffset = 5.0f;
-    float width = FontManager::instance().getStringWidth(headingFontFace, headingFontSize, name.c_str());
+    float width = FontManager::instance().getStringWidth(headingFontFace->getFMFace(), headingFontSize, name.c_str());
     glEnable(GL_TEXTURE_2D);
-    FontManager::instance().drawString(-width*0.5f,textOffset+lockonSize,0,headingFontFace, headingFontSize, name.c_str());
+    FontManager::instance().drawString(-width * 0.5f, textOffset + lockonSize,
+	  0, headingFontFace->getFMFace(), headingFontSize, name.c_str());
     glDisable(GL_TEXTURE_2D);
   }
 
@@ -929,8 +933,8 @@ void			HUDRenderer::renderAlerts(void)
   FontManager &fm = FontManager::instance();
 
   float y = (float)window.getViewHeight() +
-    -fm.getStringHeight(majorFontFace, majorFontSize) +
-    -fm.getStringHeight(alertFontFace, alertFontSize);
+    -fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize) +
+    -fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
 
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
@@ -942,8 +946,8 @@ void			HUDRenderer::renderAlerts(void)
 			     + strlen(ColorStrings[ResetColor]), ColorStrings[DimColor]);
       }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
-		    alertFontFace, alertFontSize, newAlertLabel.c_str());
-      y -= fm.getStringHeight(alertFontFace, alertFontSize);
+		    alertFontFace->getFMFace(), alertFontSize, newAlertLabel.c_str());
+      y -= fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
     }
   }
 }
@@ -959,7 +963,7 @@ void			HUDRenderer::renderStatus(void)
   FontManager &fm = FontManager::instance();
 
   char buffer[80];
-  const float h = fm.getStringHeight(majorFontFace, majorFontSize);
+  const float h = fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize);
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
   TeamColor teamIndex = myTank->getTeam();
@@ -969,18 +973,18 @@ void			HUDRenderer::renderStatus(void)
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
     snprintf(buffer, 80, "%s: %d", myTank->getCallSign(), myTank->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
   }
 
   // print flag if player has one in upper right
   if (flag != Flags::Null) {
     snprintf(buffer, 80, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
-    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace, majorFontSize, buffer);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
     if (flag->endurance == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
   } else {
     time_t timeNow;
     struct tm userTime;
@@ -1002,9 +1006,9 @@ void			HUDRenderer::renderStatus(void)
       sprintf(buffer, "%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
     else
       sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
-    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace, majorFontSize, buffer);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
     hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
   }
 
   // print current position of tank
@@ -1012,8 +1016,8 @@ void			HUDRenderer::renderStatus(void)
     y -= float(1.5*h);
     sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
 	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
-    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace, majorFontSize, buffer);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
     y += float(1.5*h);
   }
 
@@ -1031,36 +1035,36 @@ void			HUDRenderer::renderStatus(void)
       float rotSpeed = fabs(target->getAngularVelocity());
       float apparentLinSpeed = sqrt(apparentVel[0]*apparentVel[0]+apparentVel[1]*apparentVel[1]);
   
-      float smallZHeight = fm.getStringHeight(minorFontFace, minorFontSize)*1.125f;
+      float smallZHeight = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize)*1.125f;
       float drawY = y-smallZHeight;
       // draw header
-      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace, minorFontSize, "Target Info");
-      fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
+      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "Target Info");
+      fm.drawString(x, drawY, 0, minorFontFace->getFMFace(), minorFontSize, "Target Info");
   
       sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
         sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,apparentLinSpeed);
   
-      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
   
       sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
         sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
   
-      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
   
       sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
   
       float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
       float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
   
       sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
   
       scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
     } else {
@@ -1129,9 +1133,9 @@ void			HUDRenderer::renderStatus(void)
     strncat(buffer, ROAM.getRoamingLabel().c_str(), 79);
   }
 
-  x = 0.5f * ((float)window.getWidth() - fm.getStringWidth(majorFontFace, majorFontSize, buffer));
+  x = 0.5f * ((float)window.getWidth() - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer));
   hudColor3fv(statusColor);
-  fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+  fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
 }
 
 int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
@@ -1192,28 +1196,28 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 		 pl->getPosition()[2]/*+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
 	FontManager &fm = FontManager::instance();
-	fm.drawString(float(x) - fm.getStringWidth(labelsFontFace, labelsFontSize, name) / 2.0f,
-		      float(y) + offset - fm.getStringHeight(labelsFontFace, labelsFontSize),
-		      0, labelsFontFace, labelsFontSize, name);
+	fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, name) / 2.0f,
+		      float(y) + offset - fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize),
+		      0, labelsFontFace->getFMFace(), labelsFontSize, name);
 	FlagType* flag = pl->getFlag();
 	if (flag != Flags::Null) {
 	  std::string flagStr = "(";
 	  flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
 	  flagStr += ")";
 	  const char *fname = flagStr.c_str();
-	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace, labelsFontSize, fname) / 2.0f,
+	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, fname) / 2.0f,
 			float(y) + offset -
-			(2.0f * fm.getStringHeight(labelsFontFace, labelsFontSize)),
-			0, labelsFontFace, labelsFontSize, fname);
+			(2.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
+			0, labelsFontFace->getFMFace(), labelsFontSize, fname);
 	}
 	if (roaming && BZDB.isTrue("showVelocities")) {
 	  float vel[3] = {0};
 	  memcpy(vel,pl->getVelocity(),sizeof(float)*3);
 	  std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
-	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace, labelsFontSize, speedStr.c_str()) / 2.0f,
+	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, speedStr.c_str()) / 2.0f,
 			float(y) + offset -
-			(3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize)),
-			0, labelsFontFace, labelsFontSize, speedStr.c_str());
+			(3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
+			0, labelsFontFace->getFMFace(), labelsFontSize, speedStr.c_str());
 	}
       }
     }
@@ -1255,8 +1259,8 @@ void			HUDRenderer::renderTimes(void)
     }
 
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
-		  labelsFontFace, labelsFontSize, buf);
+		  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+		  labelsFontFace->getFMFace(), labelsFontSize, buf);
 
     if ((int)(TimeKeeper::getTick() - last) > 1) {
       logDebugMessage(1, "%s\n", buf);
@@ -1269,8 +1273,8 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "rtris: %i", radarTriangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
-		  labelsFontFace, labelsFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+		  labelsFontFace->getFMFace(), labelsFontSize, buf);
     triCountYOffset += 1.5f;
   }
   if (triangleCount > 0) {
@@ -1278,16 +1282,17 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "tris: %i", triangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(labelsFontFace, labelsFontSize), 0,
-		  labelsFontFace, labelsFontSize, buf);
+		  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+		  labelsFontFace->getFMFace(), labelsFontSize, buf);
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
-    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(labelsFontFace, labelsFontSize, buf),
+    fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, buf),
 		  (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(labelsFontFace, labelsFontSize), 0, labelsFontFace, labelsFontSize, buf);
+		  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+		  labelsFontFace->getFMFace(), labelsFontSize, buf);
   }
 }
 
@@ -1370,7 +1375,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basex - floorf(basex));
     }
     for (i = minMark; i <= maxMark; i++) {
-      fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
+      fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace->getFMFace(),
 		    labelsFontSize, headingLabel[(i + 36) % 36].c_str());
       x += 2.0f * headingMarkSpacing;
     }
@@ -1379,7 +1384,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       basex -= floorf(basex);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
       for (i = minMark; i <= maxMark; i++) {
-	fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace,
+	fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace->getFMFace(),
 		      labelsFontSize, headingLabel[(i + 36) % 36].c_str());
 	x += 2.0f * headingMarkSpacing;
       }
@@ -1477,7 +1482,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glPopMatrix();
 
     /* render the vertical altimeter labels here */
-    const float fontHeight = fm.getStringHeight(headingFontFace, labelsFontSize);
+    const float fontHeight = fm.getStringHeight(headingFontFace->getFMFace(), labelsFontSize);
     bool smoothLabel = smooth;
     x = (float)(10 + centerx + maxMotionSize);
     y = (float)centery - basey + floorf(fontHeight / 2);
@@ -1488,7 +1493,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     char buf[10];
     for (i = minMark; i <= maxMark; i++) {
       sprintf(buf, "%d", i * 5);
-      fm.drawString(x, y, 0, headingFontFace, labelsFontSize, buf);
+      fm.drawString(x, y, 0, headingFontFace->getFMFace(), labelsFontSize, buf);
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
@@ -1498,7 +1503,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
 	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace, labelsFontSize, buf);
+	fm.drawString(x, y, 0, headingFontFace->getFMFace(), labelsFontSize, buf);
 	y += altitudeMarkSpacing;
       }
     }
@@ -1629,9 +1634,9 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     y = flagHelpY;
     const char* flagHelpBase = flagHelpText.c_str();
     for (i = 0; i < flagHelpLines; i++) {
-      y -= fm.getStringHeight(minorFontFace, minorFontSize);
-      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace, minorFontSize, flagHelpBase)/2.0),
-		    y, 0, minorFontFace, minorFontSize, flagHelpBase);
+      y -= fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
+      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpBase)/2.0),
+		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpBase);
       while (*flagHelpBase) flagHelpBase++;
       flagHelpBase++;
     }
@@ -1640,10 +1645,10 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   if (myTank && globalClock.isOn()) {
 
     float yy = 0.5f * (float)height
-      + fm.getStringHeight(bigFontFace, bigFontSize);
+      + fm.getStringHeight(bigFontFace->getFMFace(), bigFontSize);
     if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
-      fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace,
+      fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace->getFMFace(),
 		    bigFontSize, autoPilotLabel.c_str());
     }
 
@@ -1686,31 +1691,32 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   // tell player what to do to start/resume playing
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && globalClock.isOn()) {
-    float y = 0.5f * (float)viewHeight + fm.getStringHeight(bigFontFace, bigFontSize);
+    float y = 0.5f * (float)viewHeight + fm.getStringHeight(bigFontFace->getFMFace(), bigFontSize);
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel.c_str());
+		    bigFontFace->getFMFace(), bigFontSize, gameOverLabel.c_str());
     } else if (!myTank->isAlive() && !myTank->isExploding()) {
       if (canSpawn) {
 	hudColor3fv(messageColor);
 	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		      bigFontFace, bigFontSize, restartLabel.c_str());
+		      bigFontFace->getFMFace(), bigFontSize, restartLabel.c_str());
       } else {
 	if (customLimboMessage.size()) {
 	  hudColor3fv(messageColor);
-	  fm.drawString(0.5f * ((float)width - fm.getStringWidth(bigFontFace,bigFontSize,customLimboMessage.c_str())), y, 0,
-			bigFontFace, bigFontSize, customLimboMessage.c_str());
+	  fm.drawString(0.5f * ((float)width - 
+			fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, customLimboMessage.c_str())), y, 0,
+			bigFontFace->getFMFace(), bigFontSize, customLimboMessage.c_str());
 	}	
       }
     } else if (myTank->isPaused()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, resumeLabel.c_str());
+		    bigFontFace->getFMFace(), bigFontSize, resumeLabel.c_str());
     } else if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
-		    bigFontFace, bigFontSize, autoPilotLabel.c_str());
+		    bigFontFace->getFMFace(), bigFontSize, autoPilotLabel.c_str());
     }
   }
 
@@ -1760,11 +1766,11 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
   // display game over
   if (myTank && globalClock.isOn()) {
-    float y = 0.5f * (float)height + fm.getStringHeight(bigFontFace, bigFontSize);
+    float y = 0.5f * (float)height + fm.getStringHeight(bigFontFace->getFMFace(), bigFontSize);
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace, bigFontSize, gameOverLabel.c_str());
+		    bigFontFace->getFMFace(), bigFontSize, gameOverLabel.c_str());
     }
   }
 

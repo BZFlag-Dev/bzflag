@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = HoldTheFlag.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 HoldTheFlag_la_SOURCES = HoldTheFlag.cpp
 HoldTheFlag_la_LDFLAGS = -module -avoid-version
 

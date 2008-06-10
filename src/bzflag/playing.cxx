@@ -1185,7 +1185,7 @@ static void		updateFlag(FlagType* flag)
 
 void			notifyBzfKeyMapChanged()
 {
-  std::string restartLabel = "Right Mouse";
+  std::string restartLabel = BundleMgr::getCurrentBundle()->getLocalString("Right Mouse");
   std::vector<std::string> keys = KEYMGR.getKeysFromCommand("restart", false);
 
   if (keys.size() == 0) {
@@ -1203,13 +1203,13 @@ void			notifyBzfKeyMapChanged()
       restartLabel += tolower(keys[0][0]);
       restartLabel += '\"';
     } else {
-      restartLabel = keys[0];
+      restartLabel = BundleMgr::getCurrentBundle()->getLocalString(keys[0]);
     }
   }
 
   // only show the first 2 keys found to keep things simple
   if (keys.size() > 1) {
-    restartLabel.append(" or ");
+    restartLabel.append(BundleMgr::getCurrentBundle()->getLocalString(" or "));
     // display single letter keys as quoted lowercase letter
     if (keys[1].size() == 1) {
       restartLabel += '\"';
@@ -2802,39 +2802,13 @@ static void handleMessage(void *msg)
     return;
   }
 
-  if (fromServer) {
-    /* if the server tells us that we need to identify, and we have
-    * already stored a password key for this server -- send it on
-    * over back to auto-identify.
-    */
-    static const char passwdRequest[] = "Identify with /identify";
-    if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-      const std::string passwdKeys[] = {
-	TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
-	TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-	TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
-	TextUtils::format("%s", startupInfo.serverName),
-	TextUtils::format("%s", startupInfo.callsign),
-	"@" // catch-all for all callsign/server/ports
-      };
-
-      for (size_t j = 0; j < countof(passwdKeys); j++) {
-	if (BZDB.isSet(passwdKeys[j])) {
-	  char messageBuffer[MessageLen];
-	  memset(messageBuffer, 0, MessageLen);
-	  std::string passwdResponse = "/identify "
-	    + BZDB.get(passwdKeys[j]);
-	  addMessage(0, ("Autoidentifying with password stored for "
-	    + passwdKeys[j]).c_str(), 2, false);
-	  strncpy(messageBuffer,
-	    passwdResponse.c_str(),
-	    MessageLen);
-	  serverLink->sendMessage(ServerPlayer, messageBuffer);
-	  break;
-	}
-      }
-    }
-  }
+  // ensure that we aren't receiving a partial multibyte character
+  UTF8StringItr itr = (char*)msg;
+  UTF8StringItr prev = itr;
+  while ((*itr) != NULL && (itr.getBufferFromHere() - (char*)msg) < MessageLen)
+    prev = itr++;
+  if ((itr.getBufferFromHere() - (char*)msg) >= MessageLen)
+    *(const_cast<char*>(prev.getBufferFromHere())) = '\0';
 
   // if filtering is turned on, filter away the goo
   if (wordFilter != NULL) {
@@ -4698,7 +4672,7 @@ static void enteringServer(void *buf)
 #if defined(ROBOT)
   int i;
   for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer();
+    serverLink->sendNewPlayer(i);
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to

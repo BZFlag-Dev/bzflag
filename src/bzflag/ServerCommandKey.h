@@ -27,11 +27,7 @@ public:
   void		init();
   void		adminInit();
   void		nonAdminInit();
-private:
-  std::string		makePattern(const InAddr& address);
-  void		updatePrompt();
 
-private:
   enum Mode {
     Kick,
     Kill,
@@ -42,7 +38,6 @@ private:
     Showgroup,
     Setgroup,
     Removegroup,
-    Ghost,
     Unban,
     Banlist,
     Playerlist,
@@ -61,9 +56,6 @@ private:
     CountDown,
     SuperKill,
     Shutdown,
-    Register,
-    Identify,
-    Setpass,
     Grouplist,
     Groupperms,
     Vote,
@@ -72,13 +64,13 @@ private:
     Password  // leave this as the last item
   };
 
+private:
+  std::string		makePattern(const InAddr& address);
+  void		updatePrompt();
+
+private:
   Mode mode;
-  int startIndex;
   const int numModes;
-  const int numNonAdminModes;
-  static const Mode nonAdminModes[8];
-
-
 };
 
 #endif

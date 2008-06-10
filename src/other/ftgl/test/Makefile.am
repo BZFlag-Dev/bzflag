@@ -41,11 +41,15 @@ CXXTest_SOURCES = \
     HPGCalc_afm.cpp \
     HPGCalc_pfb.cpp \
     $(NULL)
-CXXTest_CPPFLAGS = \
+
+AM_CPPFLAGS = \
+    $(FT2_CPPFLAGS) \
     -I$(top_srcdir)/src \
-    -I$(top_srcdir)/src/FTGlyph \
     -I$(top_srcdir)/src/FTFont \
-    -I$(top_srcdir)/src/FTLayout
+    -I$(top_srcdir)/src/FTGlyph \
+    -I$(top_srcdir)/src/FTLayout \
+    $(NULL)
+
 CXXTest_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 CXXTest_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS) -lcppunit
 CXXTest_LDADD = ../src/libftgl.la

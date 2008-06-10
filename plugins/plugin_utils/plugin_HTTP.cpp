@@ -36,19 +36,15 @@ void BZFSHTTPServer::startupHTTP ( void )
   std::string clipField;
   std::vector<std::string> dirs;
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0) {
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
 
-    if (name.size() && tolower(name) != "bzfs")
-    {
+    if (name.size() && tolower(name) != "bzfs") {
       if (std::find(dirs.begin(),dirs.end(),name) == dirs.end())
 	vdir = name;
     }
-  }
-  else
-  {
+  } else {
     if (name.size() && tolower(name) != "bzfs")
       vdir = name;
   }
@@ -82,21 +78,18 @@ void BZFSHTTPServer::startupHTTP ( void )
 void BZFSHTTPServer::shutdownHTTP ( void )
 {
   // clear out the 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
-  {
+  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" )) {
     std::string myThis = format("%p",this);
     if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
       bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
   }
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0) {
     std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
 
     clipField = "";
-    for ( int i = 0; i < (int)dirs.size(); i++ )
-    {
+    for ( int i = 0; i < (int)dirs.size(); i++ ) {
       if ( dirs[i] != dirs[i] )
 	clipField += vdir + ",";
     }
@@ -111,8 +104,7 @@ void BZFSHTTPServer::shutdownHTTP ( void )
 
   // kill the users;
   std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
-  while ( itr != users.end() )
-  {
+  while ( itr != users.end() ) {
     bz_removeNonPlayerConnectionHandler (itr->first, this );
     delete(itr->second);
     itr++;
@@ -137,15 +129,11 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
   std::string myThis = format("%p",this);
   indexer = bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis;
   
-  if ( eventData->eventType == bz_eTickEvent)
-  {
+  if ( eventData->eventType == bz_eTickEvent) {
     if ( listening )
       update();
-  }
-  else if ( eventData->eventType == bz_eNewNonPlayerConnection )
-  {
-    if ( listening )
-    {
+  } else if ( eventData->eventType == bz_eNewNonPlayerConnection ) {
+    if ( listening ) {
       bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
       char *temp = (char*)malloc(connData->size+1);
       memcpy(temp,connData->data,connData->size);
@@ -153,8 +141,7 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
       bz_debugMessagef(4,"Plugin HTTP Base: Non ProtoConnection connection from %d with %s",connData->connectionID,temp);
       free(temp);
 
-      if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, this ) )
-      {
+      if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, this ) ) {
 
 	HTTPConnectedUsers *user = new HTTPConnectedUsers(connData->connectionID);
 
@@ -173,20 +160,17 @@ void BZFSHTTPServer::update ( void )
   std::vector<int>  killList;
 
   std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
-  while ( itr != users.end() )
-  {
+  while ( itr != users.end() ) {
     double deadTime = now - itr->second->aliveTime;
-    if ( itr->second->transferring() || deadTime < timeout )
-    {
+    if ( itr->second->transferring() || deadTime < timeout ) {
       itr->second->update();
-    }
-    else
+    } else {
       killList.push_back(itr->first);
+    }
     itr++;
   }
 
-  for ( int i = 0; i < (int)killList.size(); i++ )
-  {
+  for ( int i = 0; i < (int)killList.size(); i++ ) {
     bz_removeNonPlayerConnectionHandler (i, this );
     delete(users[i]);
     users.erase(users.find(i));
@@ -217,14 +201,12 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
   std::string clipField;
   std::vector<std::string> dirs;
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
+  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0) {
     clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
     dirs = tokenize(clipField,std::string(","),0,false);
 
     indexPage += "<table border=\"0\">";
-    for (size_t i = 0; i < dirs.size(); i++ )
-    {
+    for (size_t i = 0; i < dirs.size(); i++ ) {
       indexPage += "<tr><td><a href=\"/";
       indexPage += dirs[i];
       indexPage += "/\">";
@@ -247,35 +229,32 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
   setURLDataSize ( (unsigned int)indexPage.size(), requestID );
   setURLData ( indexPage.c_str(), requestID );
 
-  if (theCurrentCommand->data)
-  {
+  if (theCurrentCommand->data) {
     if (theCurrentCommand->size)
-	user->startTransfer ( theCurrentCommand );
+      user->startTransfer ( theCurrentCommand );
     else
-	free(theCurrentCommand->data);
+      free(theCurrentCommand->data);
   }
 
   theCurrentCommand = NULL;
 }
 
-void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
+void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int /* requestID */, const URLParams &params )
 {
-  if (acceptURL(theCurrentCommand->URL.c_str()))
-  {
+  if (acceptURL(theCurrentCommand->URL.c_str())) {
     int requestID = user->connection * 100 + (int)user->pendingCommands.size();
 
     getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
 
-    if (theCurrentCommand->data)
-    {
+    if (theCurrentCommand->data) {
       if (theCurrentCommand->size)
 	user->startTransfer ( theCurrentCommand );
       else
 	free(theCurrentCommand->data);
     }
-  }
-  else
+  } else {
     delete(theCurrentCommand);
+  }
 
   theCurrentCommand = NULL;
 }
@@ -284,14 +263,11 @@ void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams
 {
   std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
 
-  for (int i =0; i < (int)rawParams.size(); i++ )
-  {
+  for (int i =0; i < (int)rawParams.size(); i++ ) {
     std::string paramItem = rawParams[i];
-    if (paramItem.size())
-    {
+    if (paramItem.size()) {
       std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
-      if (paramChunks.size() > 1 )
-      {
+      if (paramChunks.size() > 1 ) {
 	std::string key = url_decode(replace_all(paramChunks[0],"+"," "));
 	std::string value =  url_decode(replace_all(paramChunks[1],"+"," "));
 	params[tolower(key)] = value;
@@ -305,8 +281,7 @@ std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLPara
   std::string URL = FullURL;
 
   char *paramStart = (char*)strchr(URL.c_str(),'?');
-  if (  paramStart != NULL )
-  {
+  if (  paramStart != NULL ) {
     std::string paramBlock = paramStart+1;
     // CHEAP but it works, and dosn't walk over memory
     *paramStart = 0;
@@ -335,26 +310,20 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
   int requestID = connectionID*100 + (int)user->pendingCommands.size();
 
-  if (strstr(user->commandData.c_str(),"\r\n") != NULL )
-  {
+  if (strstr(user->commandData.c_str(),"\r\n") != NULL ) {
     // we have enough to parse the HTTP command
     std::vector<std::string>  commands = tokenize(user->commandData,std::string("\r\n"),0,false);
-    for ( int i = 0; i < (int)commands.size(); i++)
-    {
-      if (strstr(user->commandData.c_str(),"\r\n") != NULL )
-      {
+    for ( int i = 0; i < (int)commands.size(); i++) {
+      if (strstr(user->commandData.c_str(),"\r\n") != NULL ) {
 	user->commandData.erase(user->commandData.begin(),user->commandData.begin()+commands[i].size()+2);
 	std::vector<std::string> params = tokenize(commands[i],std::string(" "),0,false);
-	if (params.size() > 1)
-	{
+	if (params.size() > 1) {
 	  std::string httpCommandString = params[0];
 
-	  if (httpCommandString == "GET")
-	  {
+	  if (httpCommandString == "GET") {
 	    std::string url = params[1];
 	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
-	    {
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0) {
 	      theCurrentCommand = new HTTPCommand;
 	      theCurrentCommand->request = eGet;
 	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
@@ -363,31 +332,25 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->docType = eText;
 	      theCurrentCommand->returnCode = e200OK;
 
-	      URLParams params;
-	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, params );
+	      URLParams urlparams;
+	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, urlparams );
 
-	      processTheCommand(user,requestID,params);
-	    }
-	    else if (indexer)
+	      processTheCommand(user,requestID,urlparams);
+	    } else if (indexer) {
 	      generateIndex(user,requestID);
-	  }
-	  else if (httpCommandString == "POST")
-	  {
+	    }
+	  } else if (httpCommandString == "POST") {
 	    std::string url = params[1];
 	    std::string paramData;
 
 	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
-	    {
-	      int i = (int)commands.size();
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0) {
+	      int j = (int)commands.size();
 
-	      for ( int c = 1; c  < i; c++ )
-	      {
+	      for ( int c = 1; c  < j; c++ ) {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
-		{
 		  paramData += line;
-		}
 	      }
 
 	      theCurrentCommand = new HTTPCommand;
@@ -399,26 +362,22 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->returnCode = e200OK;
 
 	      theCurrentCommand->URL = url_decode( theCurrentCommand->FullURL);
-	      URLParams params;
-	      paramsFromString ( paramData, params );
+	      URLParams urlparams;
+	      paramsFromString ( paramData, urlparams );
 
-	      processTheCommand(user,requestID,params);
-	    }
-	    else if (indexer)
+	      processTheCommand(user,requestID,urlparams);
+	    } else if (indexer) {
 	      generateIndex(user,requestID);
+	    }
 	  }
 	}
       }
     }
-  }
-  else if ( user->commandData.size() > 4 )
-  {
-    if ( !user->transferring() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
-    {
-      if ( strncmp(user->commandData.c_str(),"GET",3) != 0) // it is not a get
-      {
+  } else if ( user->commandData.size() > 4 ) {
+    if ( !user->transferring() && !user->pendingCommands.size() ) { // it's not sending anything, and it has not goten any commands.
+      if ( strncmp(user->commandData.c_str(),"GET",3) != 0) { // it is not a get
 	//if ( strncmp(user->commandData.c_str(),"POST",4) != 0) // it is not a post
-	  user->aliveTime = 99999999999.0;  // then it's somethign we don't support, don't handle it
+	user->aliveTime = 99999999999.0;  // then it's somethign we don't support, don't handle it
       }
     }
   }
@@ -431,7 +390,7 @@ void BZFSHTTPServer::disconnect ( int connectionID )
   users.erase(users.find(connectionID));
 }
 
-void BZFSHTTPServer::setURLDataSize ( unsigned int size, int requestID )
+void BZFSHTTPServer::setURLDataSize ( unsigned int size, int /* requestID */)
 {
   if (theCurrentCommand->data)
     free(theCurrentCommand->data);
@@ -440,37 +399,35 @@ void BZFSHTTPServer::setURLDataSize ( unsigned int size, int requestID )
   theCurrentCommand->size = size;
 }
 
-void BZFSHTTPServer::setURLData ( const char * data, int requestID )
+void BZFSHTTPServer::setURLData ( const char * data, int /* requestID */ )
 {
-  if (theCurrentCommand->data)
-  {
+  if (theCurrentCommand->data) {
     free(theCurrentCommand->data);
     theCurrentCommand->data = NULL;
   }
 
-  if (theCurrentCommand->size)
-  {
+  if (theCurrentCommand->size) {
     theCurrentCommand->data = (char*)malloc(theCurrentCommand->size);
     memcpy(theCurrentCommand->data,data,theCurrentCommand->size);
   }
 }
 
-void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int requestID )
+void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int /* requestID */)
 {
   theCurrentCommand->docType = docType;
 }
 
-void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int requestID )
+void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int /* requestID */ )
 {
   theCurrentCommand->returnCode = code;
 }
 
-void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestID )
+void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int /* requestID */)
 {
   if (!location)
     theCurrentCommand->redirectLocation = "";
   else
-   theCurrentCommand->redirectLocation = location;
+    theCurrentCommand->redirectLocation = location;
 }
 
 
@@ -492,8 +449,7 @@ BZFSHTTPServer::HTTPConnectedUsers::~HTTPConnectedUsers()
 
 void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
 {
-  for (int i = 0; i < (int)pendingCommands.size(); i++)
-  {
+  for (int i = 0; i < (int)pendingCommands.size(); i++) {
     free(pendingCommands[i]->data);
     delete(pendingCommands[i]);
   }
@@ -519,8 +475,7 @@ void BZFSHTTPServer::HTTPConnectedUsers::startTransfer ( HTTPCommand *command )
 std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType docType )
 {
   std::string type = "text/plain";
-  switch(docType)
-  {
+  switch(docType) {
   case eOctetStream:
     type = "application/octet-stream";
     break;
@@ -532,6 +487,9 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType d
   case eHTML:
     type = "text/html";
     break;
+
+  default:
+    break;
   }
   return type;
 }
@@ -539,8 +497,7 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType d
 std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode returnCode )
 {
   std::string code = "200";
-  switch(returnCode)
-  {
+  switch(returnCode) {
   case e404NotFound:
     code = "404";
     break;
@@ -556,6 +513,9 @@ std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode r
   case e500ServerError:
     code = "500";
     break;
+
+  default:
+    break;
   }
 
   return code;
@@ -567,30 +527,26 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
     return;
 
   HTTPCommand *currentCommand = pendingCommands[0];
-  if ( pos == 0 )
-  {
+  if ( pos == 0 ) {
     // start a new one
     std::string httpHeaders;
     httpHeaders += "HTTP/1.1 200 OK\n";
     httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
     httpHeaders += "Connection: close\n";
     httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
-    if (currentCommand->returnCode != e301Redirect)
+    if (currentCommand->returnCode != e301Redirect) {
       httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
-    else
-    {
-      if ( currentCommand->redirectLocation.size() )
-      {
+    } else {
+      if ( currentCommand->redirectLocation.size() ) {
 	httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
 	httpHeaders += "Location: " + currentCommand->redirectLocation + "\n";
-      }
-      else  // yeah WTF, you want a redirect but don't have a URL, dude 
+      } else {  // yeah WTF, you want a redirect but don't have a URL, dude
 	httpHeaders += "Status-Code: "  + getReturnCode(e500ServerError) + "\n";
+      }
     }
     httpHeaders += "\n";
 
-    if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) )
-    {
+    if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) ) {
       killMe();
       return;
     }
@@ -598,18 +554,16 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
   
   // keep it going
   // wait till the current data is sent
-  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0)
-  {
+  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0) {
     int chunkToSend = 1000;
 
     if ( pos + chunkToSend > currentCommand->size)
       chunkToSend = currentCommand->size-pos;
 
-    bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
+    bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
 
     pos += chunkToSend;
-    if (pos >= currentCommand->size) // if we are done, close this sucker
-    {
+    if (pos >= currentCommand->size) { // if we are done, close this sucker
       pos = 0;
       free(currentCommand->data);
       delete(currentCommand);

@@ -24,6 +24,7 @@
 /* local interface headers */
 #include "Player.h"
 
+class LocalFontFace;
 
 /**
  * ScoreboardRenderer:
@@ -103,9 +104,9 @@ private:
   bool	roaming;
 
   GLfloat	messageColor[3];
-  int		minorFontFace;
+  LocalFontFace*  minorFontFace;
   float		minorFontSize;
-  int		labelsFontFace;
+  LocalFontFace*  labelsFontFace;
   float		labelsFontSize;
 
   bool		dim;

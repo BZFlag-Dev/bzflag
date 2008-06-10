@@ -31,6 +31,7 @@
 /* system interface headers */
 #include <string>
 
+class LocalFontFace;
 
 /**
  * FontSizer provides automatic font sizing routines so that font
@@ -62,12 +63,20 @@ class FontSizer {
   }
 
   /**
-   * returns a font point size based on a BZDB font name.  if the
-   * value is greater than 1, then it is normalized to the context
+   * returns a font point size based on a BZDB var containing the size.
+   * if the value is greater than 1, then it is normalized to the context
    * size and treated as a point size.  Otherwise, it's treated as a
    * zeroToOne value.
    */
-  float getFontSize(int faceID, std::string fontName);
+  float getFontSize(LocalFontFace* face, const std::string& fontName);
+
+  /**
+   * returns a font point size based on a BZDB var containing the size.
+   * if the value is greater than 1, then it is normalized to the context
+   * size and treated as a point size.  Otherwise, it's treated as a
+   * zeroToOne value.
+   */
+  float getFontSize(int faceID, const std::string& fontName);
 
   /**
    * returns a font point size based on a 0->1 scale for a requested

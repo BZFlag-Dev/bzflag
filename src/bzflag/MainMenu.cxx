@@ -28,9 +28,14 @@
 #include "HUDuiImage.h"
 #include "HUDuiLabel.h"
 #include "playing.h"
+#include "LocalFontFace.h"
+
+LocalFontFace* MainMenu::fontFace = NULL;
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
+  if (!fontFace)
+    fontFace = LocalFontFace::create("sansSerifFont");
 }
 
 void	  MainMenu::createControls()
@@ -95,12 +100,15 @@ MainMenu::~MainMenu()
   delete optionsMenu;
   delete quitMenu;
   HelpMenu::done();
+  /* release font
+   * note that it is NOT valid to call getFontFace if there is not an active 
+   * instance of MainMenu, even though it's static. */
+  LocalFontFace::release(fontFace);
 }
 
-const int		MainMenu::getFontFace()
+const LocalFontFace*	MainMenu::getFontFace()
 {
-  // create font
-  return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
+  return fontFace;
 }
 
 HUDuiDefaultKey*	MainMenu::getDefaultKey()
@@ -138,19 +146,18 @@ void			MainMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
   FontManager &fm = FontManager::instance();
-  int fontFace = getFontFace();
 
   // main menu title, use a big font
   fs.setMin(0, 5);
-  const float titleSize = fs.getFontSize(fontFace, "titleFontSize");
+  const float titleSize = fs.getFontSize(fontFace->getFMFace(), "titleFontSize");
 
   // main menu instructions
   fs.setMin(20, 20);
-  const float tinyFontSize = fs.getFontSize(fontFace, "hudFontSize");
+  const float tinyFontSize = fs.getFontSize(fontFace->getFMFace(), "hudFontSize");
 
   // main menu items
   fs.setMin(10, 10);
-  const float fontSize = fs.getFontSize(fontFace, "headerFontSize");
+  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   // reposition title
   HUDuiImage* title = (HUDuiImage*)listHUD[0];
@@ -167,14 +174,14 @@ void			MainMenu::resize(int _width, int _height)
 
   // reposition instructions
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStringWidth(fontFace, tinyFontSize, hint->getString().c_str());
-  y -= 1.25f * fm.getStringHeight(fontFace, tinyFontSize);
+  const float hintWidth = fm.getStringWidth(fontFace->getFMFace(), tinyFontSize, hint->getString().c_str());
+  y -= 1.25f * fm.getStringHeight(fontFace->getFMFace(), tinyFontSize);
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-  y -= 1.5f * fm.getStringHeight(fontFace, fontSize);
+  y -= 1.5f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
-    = fm.getStringWidth(fontFace, fontSize,
+    = fm.getStringWidth(fontFace->getFMFace(), fontSize,
 		      ((HUDuiLabel*)listHUD[3])->getString().c_str());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
@@ -182,7 +189,7 @@ void			MainMenu::resize(int _width, int _height)
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fm.getStringHeight(fontFace, fontSize);
+    y -= 1.2f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
   }
 }
 

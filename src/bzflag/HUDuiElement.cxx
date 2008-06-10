@@ -17,6 +17,7 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "FontManager.h"
+#include "LocalFontFace.h"
 
 
 //
@@ -30,7 +31,7 @@ const GLfloat		HUDuiElement::textColor[3] = { 1.0f, 1.0f, 1.0f };
 
 HUDuiElement::HUDuiElement()
 {
-  elementFontFace = -1;
+  elementFontFace = NULL;
   elementFontSize = 10;
   elementX = 0.0f;
   elementY = 0.0f;
@@ -57,7 +58,7 @@ std::string		HUDuiElement::getLabel() const
   return BundleMgr::getCurrentBundle()->getLocalString(label);
 }
 
-int			HUDuiElement::getFontFace() const
+const LocalFontFace*	HUDuiElement::getFontFace() const
 {
   return elementFontFace;
 }
@@ -88,14 +89,14 @@ void			HUDuiElement::setLabel(const std::string& _label)
 {
 
   label = _label;
-  if (elementFontFace >= 0) {
+  if (elementFontFace != NULL) {
     FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStringWidth(elementFontFace,
+    trueLabelWidth = fm.getStringWidth(elementFontFace->getFMFace(),
 				     elementFontSize, std::string(getLabel() + "99").c_str());
   }
 }
 
-void			HUDuiElement::setFontFace(int _fontFace)
+void			HUDuiElement::setFontFace(const LocalFontFace* _fontFace)
 {
   elementFontFace = _fontFace;
   onSetFont();
@@ -109,10 +110,10 @@ void			HUDuiElement::setFontSize(float size)
 
 void			HUDuiElement::onSetFont()
 {
-  if (elementFontFace >= 0) {
+  if (elementFontFace != NULL) {
     FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStringHeight(elementFontFace, elementFontSize);
-    trueLabelWidth = fm.getStringWidth(elementFontFace, elementFontSize, std::string(getLabel() + "99").c_str());
+    fontHeight = fm.getStringHeight(elementFontFace->getFMFace(), elementFontSize);
+    trueLabelWidth = fm.getStringWidth(elementFontFace->getFMFace(), elementFontSize, std::string(getLabel() + "99").c_str());
   } else {
     fontHeight = 10.0f;
     trueLabelWidth = 0.0f;
@@ -126,8 +127,8 @@ void			HUDuiElement::renderLabel()
     FontManager &fm = FontManager::instance();
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
-    fm.drawString(elementX - dx, elementY, 0,
-		  elementFontFace, elementFontSize, theLabel.c_str());
+    fm.drawString(elementX - dx, elementY, 0, elementFontFace->getFMFace(),
+		  elementFontSize, theLabel.c_str());
   }
 }
 

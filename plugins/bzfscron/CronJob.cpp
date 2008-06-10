@@ -82,7 +82,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   std::string list = in;
 
   // First things first.  Find out if there's a periodicity and trim it off.
-  int pos = (int)in.find("/");
+  unsigned int pos = in.find("/");
   int period = 1;
   if (pos != std::string::npos) {
     period = atoi(in.substr(pos + 1).c_str());

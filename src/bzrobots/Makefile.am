@@ -138,6 +138,8 @@ genericfiles =				\
 	../bzflag/HUDuiTypeIn.h			\
 	../bzflag/LocalCommand.cxx		\
 	../bzflag/LocalCommand.h		\
+	../bzflag/LocalFontFace.cxx		\
+	../bzflag/LocalFontFace.h		\
 	../bzflag/LocalPlayer.cxx		\
 	../bzflag/LocalPlayer.h			\
 	../bzflag/MainWindow.cxx		\

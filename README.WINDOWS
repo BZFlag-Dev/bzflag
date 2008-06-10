@@ -6,12 +6,12 @@ BZFlag uses Microsoft Visual C++ for its prebuilt binary
 releases (Visual C++ 7.1 aka ".NET 2003" was used versions 
 pre 3.0, and Visual C++ 8.0 aka ".Net 2005" is used for 
 3.0 and later). Project files are also provided for Visual C++ 
-versions ranging from 7.1 to 9.0. The VC 8.0 project files are
+versions ranging from 8.0 to 9.0. The VC 8.0 project files are
 usable by the free "visual C++ .net 2005 express edition"
 that is very popular.
 
-Visual Studio 6.0 support has been discontinued, and no
-projects are provide for that version.
+Visual Studio 6.0 and 7.1 support has been discontinued, and no
+projects are provided for these versions.
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;

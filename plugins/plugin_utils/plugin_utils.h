@@ -18,6 +18,9 @@
 #include <vector>
 #include "bzfsAPI.h"
 
+//common utilities
+const char* bzu_GetTeamName ( bz_eTeamType team );
+
 // text functions
 std::string tolower(const std::string& s);
 std::string tolower(const char* s);

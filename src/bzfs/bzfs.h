@@ -72,6 +72,7 @@ extern TeamColor  whoseBase(float x, float y, float z);
 extern void checkGameOn ( void );
 extern PlayerId getNewPlayerID ( void );
 PlayerId getNewPlayer(NetHandler *netHandler);
+PlayerId getNewBot(PlayerId hostPlayer, int botID);
 extern bool validPlayerCallsign ( int playerIndex );
 extern void addPlayer(int playerIndex, GameKeeper::Player *playerData);
 bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState );
