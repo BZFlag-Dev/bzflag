@@ -95,7 +95,7 @@ ServerLink*		ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
   state(SocketError),	// assume failure
-  fd(-1),			// assume failure
+  fd(INVALID_SOCKET),	// assume failure
   udpLength(0),
   oldNeedForSpeed(false),
   previousFill(0)
@@ -114,7 +114,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // queue is empty
 
-  urecvfd = -1;
+  urecvfd = INVALID_SOCKET;
 
   ulinkup = false;
 
@@ -123,7 +123,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // open connection to server.  first connect to given port.
   // don't wait too long.
-  int query = (int)socket(AF_INET, SOCK_STREAM, 0);
+  SOCKET query = socket(AF_INET, SOCK_STREAM, 0);
   if (query < 0) return;
 
   struct sockaddr_in addr;
@@ -170,7 +170,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   // call a select to make sure the socket is good and ready.
   FD_ZERO(&write_set);
-  FD_SET((unsigned int)query, &write_set);
+  FD_SET(query, &write_set);
   timeout.tv_sec = long(5);
   timeout.tv_usec = 0;
   nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
