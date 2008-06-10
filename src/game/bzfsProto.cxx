@@ -14,8 +14,6 @@
 
 #include "version.h"
 
-#include "../bzfs/bzfsMessages.h"
-
 /**
  * This class encapsulates the BZFS protocol.
  *
@@ -36,7 +34,7 @@ NetHandler::Status bzfsProto::framing(char* src, size_t  src_len,
     uint16_t code;
 
     void* buf(src);
-    getGeneralMessageInfo(&buf, code, msg_len);
+    getGeneralMessageInfo(buf, code, msg_len);
   
     // Test if too large of a message was received. The old
     // implementation tested against a constant, but that constant was
@@ -55,6 +53,18 @@ NetHandler::Status bzfsProto::framing(char* src, size_t  src_len,
   return result;
 }
 
+
+/**
+ * Extract the message code and message length that are present in
+ * all bzfs messages
+ */
+void* bzfsProto::getGeneralMessageInfo(void* buf, uint16_t& code, uint16_t& len)
+{
+  buf = nboUnpackUShort(buf, len);
+  buf = nboUnpackUShort(buf, code);
+
+  return buf;
+}
 
 /**
  * bzfs framing function. Examines the message header to determine

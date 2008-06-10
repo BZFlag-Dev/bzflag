@@ -40,6 +40,12 @@ public:
 				    char* dst, size_t& dst_len);
 
   /**
+   * Extract the message code and message length that are present in
+   * all bzfs messages
+   */
+  static void* getGeneralMessageInfo(void* buf, uint16_t& code, uint16_t& len);
+
+  /**
    * The protocol requires clients to send the connect header before
    * being recognized. It's the only(?) message that does not conform
    * to the (len, code, ....) structure.
