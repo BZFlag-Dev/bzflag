@@ -13,19 +13,12 @@
 #ifndef __BZWORLD_H__
 #define __BZWORLD_H__
 
-#include <iostream>
-#include <string>
-
 /* bzflag common headers */
 #include "common.h"
 
-#include "cURLManager.h"
-
-//TODO: Don't inherit cURLManager, if possible
-class World : private cURLManager {
+class BZWorld {
 public:
-  World(const std::string &filename);
-  World(std::istream &in)
+  World();
   ~World();
 
 private:
