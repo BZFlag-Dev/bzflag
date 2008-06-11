@@ -1131,7 +1131,7 @@ void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
   // ensure that we aren't sending a partial multibyte character
   UTF8StringItr itr = message;
   UTF8StringItr prev = itr;
-  while ((*itr) != NULL && (itr.getBufferFromHere() - message) < MessageLen)
+  while (*itr && (itr.getBufferFromHere() - message) < MessageLen)
     prev = itr++;
   if ((itr.getBufferFromHere() - message) >= MessageLen)
     *(const_cast<char*>(prev.getBufferFromHere())) = '\0';

@@ -2805,7 +2805,7 @@ static void handleMessage(void *msg)
   // ensure that we aren't receiving a partial multibyte character
   UTF8StringItr itr = (char*)msg;
   UTF8StringItr prev = itr;
-  while ((*itr) != NULL && (itr.getBufferFromHere() - (char*)msg) < MessageLen)
+  while (*itr && (itr.getBufferFromHere() - (char*)msg) < MessageLen)
     prev = itr++;
   if ((itr.getBufferFromHere() - (char*)msg) >= MessageLen)
     *(const_cast<char*>(prev.getBufferFromHere())) = '\0';
