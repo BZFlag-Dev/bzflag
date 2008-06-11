@@ -674,7 +674,7 @@ Vector2 angleToVector( float angle )
   return Vector2(sinf(toRad(angle)),cosf(toRad(angle)));
 }
 
-float	vectorToAngle ( Vector2 &vec )
+float	vectorToAngle ( Vector2 vec )
 {
   return toDeg(atan2(vec.y(),vec.x()));
 }

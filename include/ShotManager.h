@@ -35,6 +35,7 @@
 #include "Singleton.h"
 #include "ShotUpdate.h"
 #include "Flag.h"
+#include "StateDatabase.h"
 
 class ShotEventCallbacks
 {
@@ -59,8 +60,8 @@ public:
 
   void clear ( void );
 
-  static float getShotVelocity ( void );
   static float getShotLifetime ( ShotType type );
+  static float getShotVelocity ();
 
   class Shot
   {
