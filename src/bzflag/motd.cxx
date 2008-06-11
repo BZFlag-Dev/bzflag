@@ -84,7 +84,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
   regex_t re;
 
   std::vector<std::string> msgs;
-  for (i = 0; i < messages.size(); ++i)
+  for (i = 0; i < messages.size(); ++i) {
     if (regcomp(&re, messages[i].version.c_str(), REG_EXTENDED | REG_ICASE) == 0) {
       if (regexec(&re, getAppVersion(), 0, NULL, 0) == 0) {
 	if (messages[i].title.substr(0, 9) == "UPGRADE: ") {
@@ -98,8 +98,9 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 	}
       }
     }
+    regfree(&re);
+  }
 
-  regfree(&re);
   controlPanel->addMessage(ColorStrings[UnderlineColor]
 			   + std::string(ColorStrings[WhiteColor])
 			   + "Message of the day: ");
