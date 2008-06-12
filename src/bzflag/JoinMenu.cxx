@@ -28,8 +28,6 @@
 #include "playing.h"
 #include "LocalFontFace.h"
 
-JoinMenu* JoinMenu::activeMenu = NULL;
-
 
 JoinMenu::JoinMenu() : serverMenu(NULL)
 {
@@ -131,8 +129,6 @@ HUDuiDefaultKey* JoinMenu::getDefaultKey()
 
 void JoinMenu::show()
 {
-  activeMenu = this;
-
   StartupInfo* info = getStartupInfo();
 
   // set fields
@@ -153,7 +149,6 @@ void JoinMenu::show()
 void JoinMenu::dismiss()
 {
   loadInfo();
-  activeMenu = NULL;
 }
 
 void JoinMenu::loadInfo()
