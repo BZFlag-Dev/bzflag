@@ -501,7 +501,7 @@ class ShotBeginHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 7)
+    if (!player || len < 3)
       return false;
 
     FiringInfo firingInfo;
@@ -642,7 +642,7 @@ public:
 class ShotEndHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
+  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int len )
   {
     if (!player || len < 3)
       return false;
