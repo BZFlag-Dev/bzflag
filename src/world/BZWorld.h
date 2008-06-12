@@ -13,13 +13,32 @@
 #ifndef __BZWORLD_H__
 #define __BZWORLD_H__
 
+/**
+ * \file BZWorld.h
+ * \brief libBZW header file
+ * 
+ * libBZW attempts to abstract world management
+ */
+
+#include <iostream>
+
 /* bzflag common headers */
 #include "common.h"
 
+/**
+ * \class BZWorld
+ * \brief BZFlag World class
+ *
+ *  Details to come...
+ */
+
 class BZWorld {
 public:
-  World();
-  ~World();
+  BZWorld();
+  ~BZWorld();
+
+  void read(std::istream &input); // These names are a little flat, readFromStream?
+  void write(std::ostream &output); // same goes here
 
 private:
 

@@ -12,16 +12,26 @@
 
 #include "BZWorld.h"
 
-// Read a world in from a file
 BZWorld::BZWorld()
 {
-  //nothing here yet
+
 }
 
 BZWorld::~BZWorld()
 {
 
 }
+
+void BZWorld::read(std::istream &input)
+{
+
+}
+
+void BZWorld::write(std::ostream &output)
+{
+
+}
+
 
 // Local Variables: ***
 // Mode: C++ ***
