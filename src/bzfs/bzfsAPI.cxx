@@ -2977,6 +2977,7 @@ BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
   return (int)pList.size();
 #else
   return -1;
+  list = list; // quell unused var warning
 #endif
 }
 
@@ -2991,6 +2992,8 @@ BZF_API bool bz_loadPlugin( const char* path, const char *params )
   return loadPlugin(std::string(path),config);
 #else
   return false;
+  path = path; // quell unused var warning
+  params = params; // quell unused var warning
 #endif
 }
 
@@ -3003,6 +3006,7 @@ BZF_API bool bz_unloadPlugin( const char* path )
   return unloadPlugin(std::string(path));
 #else
   return false;
+  path = path; // quell unused var warning
 #endif
 }
 
