@@ -100,7 +100,7 @@ static ShotPath *findWorstBullet(float &minDistance)
 
     if ( t != ServerPlayer || t != myTank->getId() )
     {
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+      if (player[t] && player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
     }
 
