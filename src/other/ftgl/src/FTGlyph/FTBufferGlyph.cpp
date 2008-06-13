@@ -94,23 +94,23 @@ const FTPoint& FTBufferGlyphImpl::RenderImpl(const FTPoint& pen, int renderMode)
     {
         FTPoint pos(buffer->Pos() + pen + corner);
         int dx = (int)(pos.Xf() + 0.5f);
-        int dy = buffer->height - (int)(pos.Yf() + 0.5f);
-        unsigned char * dest = buffer->pixels + dx + dy * buffer->pitch;
+        int dy = buffer->Height() - (int)(pos.Yf() + 0.5f);
+        unsigned char * dest = buffer->Pixels() + dx + dy * buffer->Width();
 
         for(int y = 0; y < bitmap.rows; y++)
         {
             // FIXME: change the loop bounds instead of doing this test
-            if(y + dy < 0 || y + dy >= buffer->height) continue;
+            if(y + dy < 0 || y + dy >= buffer->Height()) continue;
 
             for(int x = 0; x < bitmap.width; x++)
             {
-                if(x + dx < 0 || x + dx >= buffer->width) continue;
+                if(x + dx < 0 || x + dx >= buffer->Width()) continue;
 
                 unsigned char p = pixels[y * bitmap.pitch + x];
 
                 if(p)
                 {
-                    dest[y * buffer->pitch + x] = p;
+                    dest[y * buffer->Width() + x] = p;
                 }
             }
         }

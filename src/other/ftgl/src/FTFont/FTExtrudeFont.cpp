@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -68,4 +69,21 @@ FTGlyph* FTExtrudeFont::MakeGlyph(FT_GlyphSlot ftGlyph)
 //  FTExtrudeFontImpl
 //
 
+
+FTExtrudeFontImpl::FTExtrudeFontImpl(FTFont *ftFont, const char* fontFilePath)
+: FTFontImpl(ftFont, fontFilePath),
+  depth(0.0f), front(0.0f), back(0.0f)
+{
+    load_flags = FT_LOAD_NO_HINTING;
+}
+
+
+FTExtrudeFontImpl::FTExtrudeFontImpl(FTFont *ftFont,
+                                     const unsigned char *pBufferBytes,
+                                     size_t bufferSizeInBytes)
+: FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
+  depth(0.0f), front(0.0f), back(0.0f)
+{
+    load_flags = FT_LOAD_NO_HINTING;
+}
 

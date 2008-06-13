@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,6 +51,8 @@ class FTFontImpl
         virtual bool Attach(const unsigned char *pBufferBytes,
                             size_t bufferSizeInBytes);
 
+        virtual void GlyphLoadFlags(FT_Int flags);
+
         virtual bool CharMap(FT_Encoding encoding);
 
         virtual unsigned int CharMapCount() const;
@@ -79,11 +82,9 @@ class FTFontImpl
 
         virtual FTBBox BBox(const wchar_t *s, const int len, FTPoint, FTPoint);
 
-        virtual FTPoint Advance(const char *s, const int len,
-                                FTPoint, FTPoint);
+        virtual float Advance(const char *s, const int len, FTPoint);
 
-        virtual FTPoint Advance(const wchar_t *s, const int len,
-                                FTPoint, FTPoint);
+        virtual float Advance(const wchar_t *s, const int len, FTPoint);
 
         virtual FTPoint Render(const char *s, const int len,
                                FTPoint, FTPoint, int);
@@ -107,6 +108,11 @@ class FTFontImpl
          * <code>false</code> turns OFF display lists.
          */
         bool useDisplayLists;
+
+        /**
+         * The default glyph loading flags.
+         */
+        FT_Int load_flags;
 
         /**
          * Current error code. Zero means no error.
@@ -144,8 +150,7 @@ class FTFontImpl
 
         /* Internal generic Advance() implementation */
         template <typename T>
-        inline FTPoint AdvanceI(const T *s, const int len,
-                                FTPoint position, FTPoint spacing);
+        inline float AdvanceI(const T *s, const int len, FTPoint spacing);
 
         /* Internal generic Render() implementation */
         template <typename T>

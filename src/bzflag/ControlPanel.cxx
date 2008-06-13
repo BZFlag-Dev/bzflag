@@ -35,6 +35,7 @@
 #include "RadarRenderer.h"
 #include "bzflag.h"
 #include "LocalFontFace.h"
+#include "bzUnicode.h"
 
 //
 // ControlPanelMessage
@@ -76,7 +77,9 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStringWidth(fontFace, fontSize, std::string(msg, n+1).c_str()) < maxLength)) {
+	     (fm.getStringWidth(fontFace, fontSize, 
+		std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)).c_str())
+	      < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
@@ -101,7 +104,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	    }
 	  }
 	} else {
-	  n++;
+	  n = static_cast<int>((++UTF8StringItr(msg+n)).getBufferFromHere()-msg);
 	}
 	if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;

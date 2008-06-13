@@ -2,6 +2,8 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
+ * Copyright (c) 2008 Daniel Remenak <dtremenak@users.sourceforge.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -222,7 +224,7 @@ inline void FTSimpleLayoutImpl::WrapTextI(const T *buf, const int len,
         glyphBounds = currentFont->BBox(itr.getBufferFromHere(), 1);
         glyphWidth = glyphBounds.Upper().Xf() - glyphBounds.Lower().Xf();
 
-        advance = currentFont->Advance(itr.getBufferFromHere(), 1).Xf();
+        advance = currentFont->Advance(itr.getBufferFromHere(), 1);
         prevWidth = currentWidth;
         // Compute the width of all glyphs up to the end of buf[i]
         currentWidth = nextStart + glyphWidth;

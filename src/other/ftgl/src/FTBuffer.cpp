@@ -27,12 +27,43 @@
 
 #include "FTGL/ftgl.h"
 
+
 FTBuffer::FTBuffer()
- : pixels(0)
+ : width(0),
+   height(0),
+   pixels(0),
+   pos(FTPoint())
 {
 }
 
+
 FTBuffer::~FTBuffer()
 {
+    if(pixels)
+    {
+        delete[] pixels;
+    }
+}
+
+
+void FTBuffer::Size(int w, int h)
+{
+    if(w == width && h == height)
+    {
+        return;
+    }
+
+    if(w * h != width * height)
+    {
+        if(pixels)
+        {
+            delete[] pixels;
+        }
+        pixels = new unsigned char[w * h];
+    }
+
+    memset(pixels, 0, w * h);
+    width = w;
+    height = h;
 }
 

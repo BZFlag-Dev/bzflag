@@ -346,7 +346,8 @@ typedef unsigned char	uint8_t;
 #endif /* BZF_COMMON_H */
 
 
-/* Local Variables: ***
+/*
+ * Local Variables: ***
  * mode: C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***

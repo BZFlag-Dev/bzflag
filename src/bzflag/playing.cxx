@@ -2836,39 +2836,13 @@ static void handleMessage(void *msg)
     return;
   }
 
-  if (fromServer) {
-    /* if the server tells us that we need to identify, and we have
-    * already stored a password key for this server -- send it on
-    * over back to auto-identify.
-    */
-    static const char passwdRequest[] = "Identify with /identify";
-    if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-      const std::string passwdKeys[] = {
-	TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
-	TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-	TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
-	TextUtils::format("%s", startupInfo.serverName),
-	TextUtils::format("%s", startupInfo.callsign),
-	"@" // catch-all for all callsign/server/ports
-      };
-
-      for (size_t j = 0; j < countof(passwdKeys); j++) {
-	if (BZDB.isSet(passwdKeys[j])) {
-	  char messageBuffer[MessageLen];
-	  memset(messageBuffer, 0, MessageLen);
-	  std::string passwdResponse = "/identify "
-	    + BZDB.get(passwdKeys[j]);
-	  addMessage(0, ("Autoidentifying with password stored for "
-	    + passwdKeys[j]).c_str(), 2, false);
-	  strncpy(messageBuffer,
-	    passwdResponse.c_str(),
-	    MessageLen);
-	  serverLink->sendMessage(ServerPlayer, messageBuffer);
-	  break;
-	}
-      }
-    }
-  }
+  // ensure that we aren't receiving a partial multibyte character
+  UTF8StringItr itr = (char*)msg;
+  UTF8StringItr prev = itr;
+  while (*itr && (itr.getBufferFromHere() - (char*)msg) < MessageLen)
+    prev = itr++;
+  if ((itr.getBufferFromHere() - (char*)msg) >= MessageLen)
+    *(const_cast<char*>(prev.getBufferFromHere())) = '\0';
 
   // if filtering is turned on, filter away the goo
   if (wordFilter != NULL) {

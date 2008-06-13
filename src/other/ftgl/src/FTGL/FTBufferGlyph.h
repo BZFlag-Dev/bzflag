@@ -44,6 +44,7 @@ class FTGL_EXPORT FTBufferGlyph : public FTGlyph
          * Constructor
          *
          * @param glyph The Freetype glyph to be processed
+         * @param buffer  An FTBuffer object in which to render the glyph.
          */
         FTBufferGlyph(FT_GlyphSlot glyph, FTBuffer *buffer);
 
@@ -63,19 +64,6 @@ class FTGL_EXPORT FTBufferGlyph : public FTGlyph
 };
 
 #endif //__cplusplus
-
-FTGL_BEGIN_C_DECLS
-
-/**
- * Create a specialisation of FTGLglyph for memory buffer rendering.
- * TODO: fix this prototype
- *
- * @param glyph The Freetype glyph to be processed
- * @return  An FTGLglyph* object.
- */
-FTGL_EXPORT FTGLglyph *ftglCreateBufferGlyph(FT_GlyphSlot glyph);
-
-FTGL_END_C_DECLS
 
 #endif  //  __FTBufferGlyph__
 

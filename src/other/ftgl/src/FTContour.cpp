@@ -2,8 +2,8 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- *               2008 Sam Hocevar <sam@zoy.org>
- *               2008 Éric Beets <ericbeets@free.fr>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
+ * Copyright (c) 2008 Éric Beets <ericbeets@free.fr>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -96,8 +96,18 @@ void FTContour::evaluateCubicCurve(FTPoint A, FTPoint B, FTPoint C, FTPoint D)
 
 // This function is a bit tricky. Given a path ABC, it returns the
 // coordinates of the outset point facing B on the left at a distance
-// of 64.0. Ask Sam for details, even ASCII art cannot possibly explain
-// this properly.
+// of 64.0.
+//                                         M
+//                            - - - - - - X
+//                             ^         / '
+//                             | 64.0   /   '
+//  X---->-----X     ==>    X--v-------X     '
+// A          B \          A          B \   .>'
+//               \                       \<'  64.0
+//                \                       \                  .
+//                 \                       \                 .
+//                C X                     C X
+//
 FTPoint FTContour::ComputeOutsetPoint(FTPoint A, FTPoint B, FTPoint C)
 {
     /* Build the rotation matrix from 'ba' vector */
@@ -220,10 +230,7 @@ void FTContour::buildFrontOutset(float outset)
 {
     for(size_t i = 0; i < PointCount(); ++i)
     {
-        FTPoint point = FTPoint(Point(i).X() + Outset(i).X() * outset,
-                                Point(i).Y() + Outset(i).Y() * outset,
-                                0);
-        AddFrontPoint(point);
+        AddFrontPoint(Point(i) + Outset(i) * outset);
     }
 }
 
@@ -232,10 +239,7 @@ void FTContour::buildBackOutset(float outset)
 {
     for(size_t i = 0; i < PointCount(); ++i)
     {
-        FTPoint point = FTPoint(Point(i).X() + Outset(i).X() * outset,
-                                Point(i).Y() + Outset(i).Y() * outset,
-                                0);
-        AddBackPoint(point);
+        AddBackPoint(Point(i) + Outset(i) * outset);
     }
 }
 

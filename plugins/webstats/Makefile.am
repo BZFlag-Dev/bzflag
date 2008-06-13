@@ -4,7 +4,7 @@ AM_CPPFLAGS = @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 webstats_la_SOURCES = \
-	webstats.cpp 
+	webstats.cpp
 
 webstats_la_LDFLAGS = -module -avoid-version
 webstats_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils

@@ -170,7 +170,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype235_D.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype234_D.lib"
 				OutputFile="../Build/ftgl_D.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

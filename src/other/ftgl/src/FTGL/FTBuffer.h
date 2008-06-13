@@ -55,20 +55,69 @@ class FTGL_EXPORT FTBuffer
          */
         ~FTBuffer();
 
+        /**
+         * Get the pen's position in the buffer.
+         *
+         * @return  The pen's position as an FTPoint object.
+         */
         inline FTPoint Pos() const
         {
             return pos;
         }
 
+        /**
+         * Set the pen's position in the buffer.
+         *
+         * @param arg  An FTPoint object with the desired pen's position.
+         */
         inline void Pos(FTPoint arg)
         {
             pos = arg;
         }
 
-        int width, height, pitch;
-        unsigned char *pixels;
+        /**
+         * Set the buffer's size.
+         *
+         * @param w  The buffer's desired width, in pixels.
+         * @param h  The buffer's desired height, in pixels.
+         */
+        void Size(int w, int h);
+
+        /**
+         * Get the buffer's width.
+         *
+         * @return  The buffer's width, in pixels.
+         */
+        inline int Width() const { return width; }
+
+        /**
+         * Get the buffer's height.
+         *
+         * @return  The buffer's height, in pixels.
+         */
+        inline int Height() const { return height; }
+
+        /**
+         * Get the buffer's direct pixel buffer.
+         *
+         * @return  A read-write pointer to the buffer's pixels.
+         */
+        inline unsigned char *Pixels() const { return pixels; }
 
     private:
+        /**
+         * Buffer's width and height.
+         */
+        int width, height;
+
+        /**
+         * Buffer's pixel buffer.
+         */
+        unsigned char *pixels;
+
+        /**
+         * Buffer's internal pen position.
+         */
         FTPoint pos;
 };
 

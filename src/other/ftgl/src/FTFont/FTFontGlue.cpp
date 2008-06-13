@@ -2,7 +2,8 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- *               2008 Éric Beets <ericbeets@free.fr>
+ * Copyright (c) 2008 Éric Beets <ericbeets@free.fr>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -142,6 +143,10 @@ C_FUN(int, ftglAttachFile, (FTGLfont *f, const char* path),
 C_FUN(int, ftglAttachData, (FTGLfont *f, const unsigned char *p, size_t s),
       return 0, Attach, (p, s));
 
+// void FTFont::GlyphLoadFlags(FT_Int flags);
+C_FUN(void, ftglSetFontGlyphLoadFlags, (FTGLfont *f, FT_Int flags),
+      return, GlyphLoadFlags, (flags));
+
 // bool FTFont::CharMap(FT_Encoding encoding);
 C_FUN(int, ftglSetFontCharMap, (FTGLfont *f, FT_Encoding enc),
       return 0, CharMap, (enc));
@@ -200,15 +205,8 @@ void ftglGetFontBBox(FTGLfont *f, const char* s, int len, float c[6])
 }
 
 // float FTFont::Advance(const char* string);
-extern "C++" {
-C_FUN(static FTPoint, _ftglGetFontAdvance, (FTGLfont *f, char const *s),
-      return static_ftpoint, Advance, (s));
-}
-
-float ftglGetFontAdvance(FTGLfont *f, const char* s)
-{
-    return _ftglGetFontAdvance(f, s).Xf();
-}
+C_FUN(float, ftglGetFontAdvance, (FTGLfont *f, char const *s),
+      return 0.0, Advance, (s));
 
 // virtual void Render(const char* string, int renderMode);
 extern "C++" {

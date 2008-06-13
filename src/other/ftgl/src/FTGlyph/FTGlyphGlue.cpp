@@ -2,7 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- *               2008 Sam Hocevar <sam@zoy.org>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -55,8 +55,7 @@ C_TOR(ftglCreateBitmapGlyph, (FT_GlyphSlot glyph),
       FTBitmapGlyph, (glyph), GLYPH_BITMAP);
 
 // FTBufferGlyph::FTBufferGlyph();
-C_TOR(ftglCreateBufferGlyph, (FT_GlyphSlot glyph),
-      FTBufferGlyph, (glyph, NULL), GLYPH_BUFFER);
+// FIXME: not implemented
 
 // FTExtrudeGlyph::FTExtrudeGlyph();
 C_TOR(ftglCreateExtrudeGlyph, (FT_GlyphSlot glyph, float depth,
@@ -104,7 +103,7 @@ public:
         destroyCallback(baseGlyph, data);
     }
 
-    const FTPoint& Advance() const { return baseGlyph->ptr->Advance(); }
+    float Advance() const { return baseGlyph->ptr->Advance(); }
 
     const FTPoint& Render(const FTPoint& pen, int renderMode)
     {
@@ -175,19 +174,8 @@ void ftglRenderGlyph(FTGLglyph *g, FTGL_DOUBLE penx, FTGL_DOUBLE peny,
     *advancey = ret.Y();
 }
 
-// const FTPoint& FTGlyph::Advance() const;
-extern "C++" {
-C_FUN(static const FTPoint&, _ftglGetGlyphAdvance, (FTGLglyph *g),
-      return static_ftpoint, Advance, ());
-}
-
-void ftglGetGlyphAdvance(FTGLglyph *g, FTGL_DOUBLE *advancex,
-                         FTGL_DOUBLE *advancey)
-{
-    FTPoint ret = _ftglGetGlyphAdvance(g);
-    *advancex = ret.X();
-    *advancey = ret.Y();
-}
+// float FTGlyph::Advance() const;
+C_FUN(float, ftglGetGlyphAdvance, (FTGLglyph *g), return 0.0, Advance, ());
 
 // const FTBBox& FTGlyph::BBox() const;
 extern "C++" {
