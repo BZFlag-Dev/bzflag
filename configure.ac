@@ -1270,6 +1270,7 @@ AC_CONFIG_FILES([
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
+	src/world/Makefile
 	tools/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/vc8/Makefile
