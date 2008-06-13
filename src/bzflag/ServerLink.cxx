@@ -1005,9 +1005,6 @@ void			ServerLink::sendEndShot(const PlayerId& source,
 void ServerLink::sendHit(const PlayerId &source, int id, bool shot)
 {
   char msg[6];
-  unsigned char s = 0;
-  if (shot)
-    s = 1;
   void* buf = msg;
   buf = nboPackUByte(buf, source);
   buf = nboPackUByte(buf, shot);
