@@ -506,11 +506,11 @@ public:
 
     FiringInfo firingInfo;
 
-    uint16_t		id;
+    int16_t		id;
     void		*bufTmp;
     float		shotTime;
 
-    bufTmp = nboUnpackUShort(buf, id);
+    bufTmp = nboUnpackShort(buf, id);
     bufTmp = nboUnpackFloat(buf, shotTime);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state

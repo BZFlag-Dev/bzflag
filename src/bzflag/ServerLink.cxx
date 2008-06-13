@@ -985,7 +985,7 @@ void			ServerLink::sendBeginShot(const FiringInfo& info)
   void* buf = msg;
 
   buf = nboPackUByte(buf, info.shot.player);
-  buf = nboPackUShort(buf, info.shot.id);
+  buf = nboPackShort(buf, info.shot.id);
   buf = nboPackFloat(buf, info.timeSent);
 
   send(MsgShotBegin, sizeof(msg), msg);
