@@ -507,11 +507,10 @@ public:
     FiringInfo firingInfo;
 
     int16_t		id;
-    void		*bufTmp;
     float		shotTime;
 
-    bufTmp = nboUnpackShort(buf, id);
-    bufTmp = nboUnpackFloat(bufTmp, shotTime);
+    buf = nboUnpackShort(buf, id);
+    buf = nboUnpackFloat(buf, shotTime);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
