@@ -549,7 +549,8 @@ void SceneRenderer::addLight(OpenGLLight& light)
 {
   // add a light, and grow the maximum list size if required
   lightsCount++;
-  if (lightsCount > lightsSize) {
+  if (lightsCount > lightsSize)
+  {
     OpenGLLight** newList = new OpenGLLight*[lightsSize * 2];
     memcpy (newList, lights, lightsSize * sizeof(OpenGLLight*));
     delete[] lights;
