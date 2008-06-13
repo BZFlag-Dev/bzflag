@@ -40,9 +40,9 @@ namespace BZW
   class World
   {
     public:
-      BZWorld();
-      BZWorld(std::iostream &input);
-      ~BZWorld();
+      World();
+      World(std::istream &input);
+      ~World();
 
       void write(std::ostream &output); //TODO: Better method name
 

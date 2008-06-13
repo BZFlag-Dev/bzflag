@@ -15,7 +15,7 @@
 namespace BZW
 {
 
-  World::World
+  World::World()
   {
 
   }
