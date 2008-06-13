@@ -20,10 +20,6 @@
  * libBZW attempts to abstract world management
  */
 
-#include <iostream>
-
-/* bzflag common headers */
-#include "common.h"
 
 /**
  * \class BZWorld
@@ -32,22 +28,18 @@
  *  Details to come...
  */
 
-namespace BZW {
+// The following are only here to define them in the documentation
 
-  class World
-  {
-    public:
-      BZWorld();
-      BZWorld(std::iostream &input);
-      ~BZWorld();
-
-      void write(std::ostream &output); // same goes here
-
-    private:
-
-  };
+/// This is the top level namespace of libBZWorld
+namespace BZW
+{
 
 }
+
+// Headers in order of level-ness (low to high)
+
+#include "WorldObject.h"
+#include "World.h"
 
 #endif // __BZWORLD_H__
 

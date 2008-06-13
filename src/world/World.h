@@ -25,6 +25,8 @@
 /* bzflag common headers */
 #include "common.h"
 
+#include "WorldObject.h"
+
 /**
  * \class BZWorld
  * \brief BZFlag World class
@@ -32,7 +34,8 @@
  *  Details to come...
  */
 
-namespace BZW {
+namespace BZW
+{
 
   class World
   {
@@ -41,7 +44,7 @@ namespace BZW {
       BZWorld(std::iostream &input);
       ~BZWorld();
 
-      void write(std::ostream &output); // same goes here
+      void write(std::ostream &output); //TODO: Better method name
 
     private:
 
