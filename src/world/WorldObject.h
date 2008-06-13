@@ -9,29 +9,49 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __WORLDOBJECT_H__
-#define __WORLDOBJECT_H__
 
-#include <iostream>
+#ifndef __BZWORLDOBJECT_H__
+#define __BZWORLDOBJECT_H__
 
-class WorldObject {
-public:
-  WorldObject() { };
-  virtual ~WorldObject() { };
+/**
+ * \file BZWorldObject.h
+ * \brief WorldObject class header file
+ * 
+ * libBZW attempts to abstract world management
+ */
 
-  virtual std::string myToken() const = 0;
-  virtual std::string serialize() const = 0;
-//  virtual bool deserialize(TokenStream?) = 0;
-  static std::istream& operator>>(std::istream& o, WorldObject&);
-  static std::ostream& operator<<(std::ostream& o, const WorldObject&) const;
+/* bzflag common headers */
+#include "common.h"
+
+/**
+ * \class BZWorldObject
+ * \brief BZFlag World Object class
+ *
+ *  Details to come...
+ */
+
+namespace BZW
+{
+
+  class WorldObject
+  {
+    public:
+      WorldObject();
+      ~WorldObject();
+
+    private:
+
+  };
+
 }
 
-#endif //__WORLDOBJECT_H__
+#endif // __BZWORLDOBJECT_H__
 
 // Local Variables: ***
-// mode: C++ ***
+// Mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -10,28 +10,46 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "BZWorld.h"
+#ifndef __BZWORLD_H__
+#define __BZWORLD_H__
 
-BZWorld::BZWorld()
-{
+/**
+ * \file BZWorld.h
+ * \brief libBZW header file
+ * 
+ * libBZW attempts to abstract world management
+ */
+
+#include <iostream>
+
+/* bzflag common headers */
+#include "common.h"
+
+/**
+ * \class BZWorld
+ * \brief BZFlag World class
+ *
+ *  Details to come...
+ */
+
+namespace BZW {
+
+  class World
+  {
+    public:
+      BZWorld();
+      BZWorld(std::iostream &input);
+      ~BZWorld();
+
+      void write(std::ostream &output); // same goes here
+
+    private:
+
+  };
 
 }
 
-BZWorld::~BZWorld()
-{
-
-}
-
-void BZWorld::read(std::istream &input)
-{
-
-}
-
-void BZWorld::write(std::ostream &output)
-{
-
-}
-
+#endif // __BZWORLD_H__
 
 // Local Variables: ***
 // Mode: C++ ***
