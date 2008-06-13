@@ -28,7 +28,8 @@ core_dirs = \
 	common \
 	net \
 	obstacle \
-	game
+	game \
+	world
 
 # needed only by clients, generally requires OpenGL
 gui_dirs = \
@@ -37,7 +38,8 @@ gui_dirs = \
 	3D \
 	geometry \
 	scene \
-	platform
+	platform \
+	world
 
 if CLIENT_INCLUDED
 CLIENT_DIRS = $(gui_dirs)
@@ -61,8 +63,7 @@ SUBDIRS = \
 	${BZROBOTS_DIR} \
 	${BZADMIN_DIR}
 
-EXTRA_DIST = \
-	world
+#EXTRA_DIST = 
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
