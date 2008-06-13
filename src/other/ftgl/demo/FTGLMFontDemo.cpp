@@ -272,7 +272,7 @@ void renderFontmetrics()
         glBegin(GL_LINES);
             glColor3f(0.0, 0.0, 1.0);
             glVertex3f(0.0, 0.0, 0.0);
-            glVertex3f(fonts[current_font]->Advance(myString).Xf(), 0.0, 0.0);
+            glVertex3f(fonts[current_font]->Advance(myString), 0.0, 0.0);
             glVertex3f(0.0, fonts[current_font]->Ascender(), 0.0);
             glVertex3f(0.0, fonts[current_font]->Descender(), 0.0);
         glEnd();

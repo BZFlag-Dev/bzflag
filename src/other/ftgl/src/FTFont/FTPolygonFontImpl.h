@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,13 +36,10 @@ class FTPolygonFontImpl : public FTFontImpl
     friend class FTPolygonFont;
 
     protected:
-        FTPolygonFontImpl(FTFont *ftFont, const char* fontFilePath) :
-            FTFontImpl(ftFont, fontFilePath), outset(0.0f) {};
+        FTPolygonFontImpl(FTFont *ftFont, const char* fontFilePath);
 
         FTPolygonFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
-                          size_t bufferSizeInBytes) :
-            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
-            outset(0.0f) {};
+                          size_t bufferSizeInBytes);
 
         /**
          * Set the outset distance for the font. Only implemented by

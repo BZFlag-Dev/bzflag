@@ -2,7 +2,8 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- *               2008 Éric Beets <ericbeets@free.fr>
+ * Copyright (c) 2008 Éric Beets <ericbeets@free.fr>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -113,15 +114,6 @@ class FTContour
          * @return the number of points in this contour
          */
         size_t PointCount() const { return pointList.size(); }
-
-        /**
-         * How many points define this outset contour
-         *
-         * @return the number of points in this contour
-         */
-        size_t OutsetPointCount() const { return outsetPointList.size(); }
-        size_t FrontPointCount() const { return frontPointList.size(); }
-        size_t BackPointCount() const { return backPointList.size(); }
 
         /**
          * Make sure the glyph has the proper parity and create the front/back

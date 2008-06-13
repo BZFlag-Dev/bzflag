@@ -2,7 +2,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(FTGL, 2.1.3, [henryj@paradise.net.nz], ftgl)
+AC_INIT(FTGL, 2.1.3~rc5, [sam@zoy.org], ftgl)
 AC_CONFIG_SRCDIR(src/FTPoint.cpp)
 AC_CONFIG_AUX_DIR(.auto)
 AM_INIT_AUTOMAKE([1.6 no-define dist-zip dist-bzip2])
@@ -34,6 +34,10 @@ AM_PROG_CC_C_O
 # Checks for header files.
 AC_HEADER_STDC
 
+# Check for system functions
+AC_CHECK_FUNCS(wcsdup)
+AC_CHECK_FUNCS(strndup)
+
 # Checks for libraries.
 
 AC_PATH_X
@@ -58,9 +62,6 @@ FTGL_CHECK_FONT
 
 AC_PATH_PROG(CPPUNIT, cppunit, no)
 AM_CONDITIONAL(HAVE_CPPUNIT, test "x$CPPUNIT" != "xno")
-
-# Checks for library functions -- this isn't really used at the moment
-AC_CHECK_FUNCS([memset])
 
 dnl search the include directory (required for non-srcdir builds).
 dnl should come after the system services checks otherwise headers

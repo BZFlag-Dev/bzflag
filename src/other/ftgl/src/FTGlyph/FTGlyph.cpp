@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -54,7 +55,7 @@ FTGlyph::~FTGlyph()
 }
 
 
-const FTPoint& FTGlyph::Advance() const
+float FTGlyph::Advance() const
 {
     return impl->Advance();
 }
@@ -82,7 +83,8 @@ FTGlyphImpl::FTGlyphImpl(FT_GlyphSlot glyph, bool useList) : err(0)
     if(glyph)
     {
         bBox = FTBBox(glyph);
-        advance = FTPoint(glyph->advance.x / 64.0f, glyph->advance.y / 64.0f, 0.0f);
+        advance = FTPoint(glyph->advance.x / 64.0f,
+                          glyph->advance.y / 64.0f);
     }
 }
 
@@ -91,9 +93,9 @@ FTGlyphImpl::~FTGlyphImpl()
 {}
 
 
-const FTPoint& FTGlyphImpl::Advance() const
+float FTGlyphImpl::Advance() const
 {
-    return advance;
+    return advance.Xf();
 }
 
 

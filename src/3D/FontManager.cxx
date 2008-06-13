@@ -763,11 +763,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
     return 0.0f;
   }
 
-#ifdef BUILD_FTGL
-  return theFont->Advance(stripped).Xf();
-#else
   return theFont->Advance(stripped);
-#endif
 }
 
 float FontManager::getStringHeight(int font, float size)

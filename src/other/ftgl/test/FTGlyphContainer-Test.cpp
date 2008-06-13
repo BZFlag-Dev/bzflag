@@ -86,7 +86,7 @@ class FTGlyphContainerTest : public CppUnit::TestCase
             TestGlyph* glyph = new TestGlyph();
 
             glyphContainer->Add(glyph, CHARACTER_CODE_A);
-            float advance = glyphContainer->Advance(CHARACTER_CODE_A, 0).Xf();
+            float advance = glyphContainer->Advance(CHARACTER_CODE_A, 0);
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(50, advance, 0.01);
         }

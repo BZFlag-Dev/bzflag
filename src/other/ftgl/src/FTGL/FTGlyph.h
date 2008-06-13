@@ -95,7 +95,7 @@ class FTGL_EXPORT FTGlyph
          *
          * @return  advance width.
          */
-        virtual const FTPoint& Advance() const;
+        virtual float Advance() const;
 
         /**
          * Return the bounding box for this glyph.
@@ -174,13 +174,9 @@ FTGL_EXPORT void ftglRenderGlyph(FTGLglyph *glyph, FTGL_DOUBLE penx,
  * Return the advance for a glyph.
  *
  * @param glyph  An FTGLglyph* object.
- * @param advancex  A pointer to an FTGL_DOUBLE where to write the advance's X
- *                  component.
- * @param advancey  A pointer to an FTGL_DOUBLE where to write the advance's Y
- *                  component.
+ * @return  The advance's X component.
  */
-FTGL_EXPORT void ftglGetGlyphAdvance(FTGLglyph *glyph, FTGL_DOUBLE *advancex,
-                                     FTGL_DOUBLE *advancey);
+FTGL_EXPORT float ftglGetGlyphAdvance(FTGLglyph *glyph);
 
 /**
  * Return the bounding box for a glyph.

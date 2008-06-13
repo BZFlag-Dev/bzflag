@@ -8,9 +8,10 @@ been released to date.  All versions prior to and including version
 versions have changes attributed per contributor.
 
 ----------------------------------------------------------------------
---- 2008-XX-XX  Release 2.1.3                                      ---
+--- 2008-06-12  Release 2.1.3~rc5                                  ---
 ----------------------------------------------------------------------
 
+    * Stable API. Public headers are now frozen.
     * Fixed several memory corruption and crash bugs - Sam Hocevar
     * Fixed several memory leaks - Sam Hocevar
     * Kerning and glyph performance enhancements - Sean Morrison
@@ -22,6 +23,8 @@ versions have changes attributed per contributor.
     * Fixed the paths in the XCode project - Henry Maddocks
     * Changed the behaviour of some objects so that if there is an
       error their state isn't changed - Henry Maddocks
+    * New, fast FTBufferFont texture fonts - Sam Hocevar
+    * UTF-8 support - Daniel Remenak
 
 ----------------------------------------------------------------------
 --- 2004-12-11  Release 2.1.2                                      ---

@@ -2,6 +2,8 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
+ * Copyright (c) 2008 Daniel Remenak <dtremenak@users.sourceforge.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -112,6 +114,12 @@ void FTFont::Outset(float front, float back)
 }
 
 
+void FTFont::GlyphLoadFlags(FT_Int flags)
+{
+    return impl->GlyphLoadFlags(flags);
+}
+
+
 bool FTFont::CharMap(FT_Encoding encoding)
 {
     return impl->CharMap(encoding);
@@ -168,17 +176,15 @@ FTPoint FTFont::Render(const wchar_t * string, const int len,
 }
 
 
-FTPoint FTFont::Advance(const char * string, const int len,
-                        FTPoint position, FTPoint spacing)
+float FTFont::Advance(const char * string, const int len, FTPoint spacing)
 {
-    return impl->Advance(string, len, position, spacing);
+    return impl->Advance(string, len, spacing);
 }
 
 
-FTPoint FTFont::Advance(const wchar_t * string, const int len,
-                        FTPoint position, FTPoint spacing)
+float FTFont::Advance(const wchar_t * string, const int len, FTPoint spacing)
 {
-    return impl->Advance(string, len, position, spacing);
+    return impl->Advance(string, len, spacing);
 }
 
 
@@ -210,6 +216,7 @@ FT_Error FTFont::Error() const
 FTFontImpl::FTFontImpl(FTFont *ftFont, char const *fontFilePath) :
     face(fontFilePath),
     useDisplayLists(true),
+    load_flags(FT_LOAD_DEFAULT),
     intf(ftFont),
     glyphList(0)
 {
@@ -225,6 +232,7 @@ FTFontImpl::FTFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
                        size_t bufferSizeInBytes) :
     face(pBufferBytes, bufferSizeInBytes),
     useDisplayLists(true),
+    load_flags(FT_LOAD_DEFAULT),
     intf(ftFont),
     glyphList(0)
 {
@@ -317,6 +325,12 @@ void FTFontImpl::Outset(float front, float back)
 }
 
 
+void FTFontImpl::GlyphLoadFlags(FT_Int flags)
+{
+    load_flags = flags;
+}
+
+
 bool FTFontImpl::CharMap(FT_Encoding encoding)
 {
     bool result = glyphList->CharMap(encoding);
@@ -380,7 +394,7 @@ inline FTBBox FTFontImpl::BBoxI(const T* string, const int len,
             totalBBox = glyphList->BBox(thisChar);
             totalBBox += position;
 
-            position += glyphList->Advance(thisChar, nextChar);
+            position += FTPoint(glyphList->Advance(thisChar, nextChar), 0.0);
         }
 
         /* Expand totalBox by each glyph in string */
@@ -397,7 +411,8 @@ inline FTBBox FTFontImpl::BBoxI(const T* string, const int len,
                 tempBBox += position;
                 totalBBox |= tempBBox;
 
-                position += glyphList->Advance(thisChar, nextChar);
+                position += FTPoint(glyphList->Advance(thisChar, nextChar),
+                                    0.0);
             }
         }
     }
@@ -422,9 +437,10 @@ FTBBox FTFontImpl::BBox(const wchar_t *string, const int len,
 
 
 template <typename T>
-inline FTPoint FTFontImpl::AdvanceI(const T* string, const int len,
-                                    FTPoint position, FTPoint spacing)
+inline float FTFontImpl::AdvanceI(const T* string, const int len,
+                                  FTPoint spacing)
 {
+    float advance = 0.0f;
     FTUnicodeStringItr<T> ustr(string);
 
     for(int i = 0; (len < 0 && *ustr) || (len >= 0 && i < len); i++)
@@ -434,32 +450,29 @@ inline FTPoint FTFontImpl::AdvanceI(const T* string, const int len,
 
         if(CheckGlyph(thisChar))
         {
-            position += glyphList->Advance(thisChar, nextChar);
+            advance += glyphList->Advance(thisChar, nextChar);
         }
 
         if(nextChar)
         {
-            position += spacing;
+            advance += spacing.Xf();
         }
     }
 
-    return position;
+    return advance;
 }
 
 
-FTPoint FTFontImpl::Advance(const char* string, const int len,
-                            FTPoint position, FTPoint spacing)
+float FTFontImpl::Advance(const char* string, const int len, FTPoint spacing)
 {
     /* The chars need to be unsigned because they are cast to int later */
-    return AdvanceI((const unsigned char *)string,
-                    len, position, spacing);
+    return AdvanceI((const unsigned char *)string, len, spacing);
 }
 
 
-FTPoint FTFontImpl::Advance(const wchar_t* string, const int len,
-                            FTPoint position, FTPoint spacing)
+float FTFontImpl::Advance(const wchar_t* string, const int len, FTPoint spacing)
 {
-    return AdvanceI(string, len, position, spacing);
+    return AdvanceI(string, len, spacing);
 }
 
 
@@ -468,7 +481,7 @@ inline FTPoint FTFontImpl::RenderI(const T* string, const int len,
                                    FTPoint position, FTPoint spacing,
                                    int renderMode)
 {
-     // for multibyte - we can't rely on sizeof(T) == character
+    // for multibyte - we can't rely on sizeof(T) == character
     FTUnicodeStringItr<T> ustr(string);
 
     for(int i = 0; (len < 0 && *ustr) || (len >= 0 && i < len); i++)
@@ -487,7 +500,7 @@ inline FTPoint FTFontImpl::RenderI(const T* string, const int len,
             position += spacing;
         }
     }
-    
+
     return position;
 }
 
@@ -514,17 +527,8 @@ bool FTFontImpl::CheckGlyph(const unsigned int characterCode)
         return true;
     }
 
-    /*
-     * FIXME: load options are not the same for all subclasses:
-     *  FTBitmapGlyph: FT_LOAD_DEFAULT
-     *  FTExtrudeGlyph: FT_LOAD_NO_HINTING
-     *  FTOutlineGlyph: FT_LOAD_NO_HINTING
-     *  FTPixmapGlyph: FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP
-     *  FTPolygonGlyph: FT_LOAD_NO_HINTING
-     *  FTTextureGlyph: FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP
-     */
     unsigned int glyphIndex = glyphList->FontIndex(characterCode);
-    FT_GlyphSlot ftSlot = face.Glyph(glyphIndex, FT_LOAD_NO_HINTING);
+    FT_GlyphSlot ftSlot = face.Glyph(glyphIndex, load_flags);
     if(!ftSlot)
     {
         err = face.Error();

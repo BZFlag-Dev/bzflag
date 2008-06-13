@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -67,6 +68,7 @@ FTExtrudeGlyphImpl::FTExtrudeGlyphImpl(FT_GlyphSlot glyph, float _depth,
                                        float _frontOutset, float _backOutset,
                                        bool useDisplayList)
 :   FTGlyphImpl(glyph),
+    vectoriser(0),
     glList(0)
 {
     bBox.SetDepth(-_depth);

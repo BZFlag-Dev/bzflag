@@ -156,7 +156,7 @@ class FTGL_EXPORT FTPoint
          * @param multiplier
          * @return <code>this</code> multiplied by <code>multiplier</code>.
          */
-        inline FTPoint operator * (double multiplier)
+        inline FTPoint operator * (double multiplier) const
         {
             FTPoint temp;
             temp.values[0] = values[0] * multiplier;

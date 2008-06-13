@@ -119,6 +119,15 @@ class FTGL_EXPORT FTFont
                             size_t bufferSizeInBytes);
 
         /**
+         * Set the glyph loading flags. By default, fonts use the most
+         * sensible flags when loading a font's glyph using FT_Load_Glyph().
+         * This function allows to override the default flags.
+         *
+         * @param flags  The glyph loading flags.
+         */
+        virtual void GlyphLoadFlags(FT_Int flags);
+
+        /**
          * Set the character map for the face.
          *
          * @param encoding      Freetype enumerate for char map code.
@@ -289,14 +298,12 @@ class FTGL_EXPORT FTFont
          * @param len  The length of the string. If < 0 then all characters
          *             will be checked until a null character is encountered
          *             (optional).
-         * @param position  The pen position of the first character (optional).
          * @param spacing  A displacement vector to add after each character
          *                 has been checked (optional).
-         * @return  The new pen position after the last character.
+         * @return  The string's advance width.
          */
-        virtual FTPoint Advance(const char* string, const int len = -1,
-                                FTPoint position = FTPoint(),
-                                FTPoint spacing = FTPoint());
+        virtual float Advance(const char* string, const int len = -1,
+                              FTPoint spacing = FTPoint());
 
         /**
          * Get the advance for a string.
@@ -305,14 +312,12 @@ class FTGL_EXPORT FTFont
          * @param len  The length of the string. If < 0 then all characters
          *             will be checked until a null character is encountered
          *             (optional).
-         * @param position  The pen position of the first character (optional).
          * @param spacing  A displacement vector to add after each character
          *                 has been checked (optional).
-         * @return  The new pen position after the last character.
+         * @return  The string's advance width.
          */
-        virtual FTPoint Advance(const wchar_t* string, const int len = -1,
-                                FTPoint position = FTPoint(),
-                                FTPoint spacing = FTPoint());
+        virtual float Advance(const wchar_t* string, const int len = -1,
+                              FTPoint spacing = FTPoint());
 
         /**
          * Render a string of characters.
