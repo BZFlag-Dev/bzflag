@@ -42,6 +42,7 @@
 #include "messages.h"
 #include "ShotUpdate.h"
 #include "BufferedNetworkMessage.h"
+#include "VectorMath.h"
 
 class PlayerCaps
 {
@@ -98,6 +99,8 @@ public:
     void	  packPlayerUpdate(BufferedNetworkMessage *msg);
 
     void	  setPlayerAddMessage ( PlayerAddMessage &msg );
+
+    Vector3	  getMuzzleOffset(void);
 
     void	   signingOn(bool ctf);
     void	   close();
@@ -227,6 +230,7 @@ public:
     bz_ServerSidePlayerHandler	*playerHandler;
 
   private:
+    Vector3 getScale ( void );
     static Player    *playerList[PlayerSlot];
     int		      playerIndex;
     bool	      closed;

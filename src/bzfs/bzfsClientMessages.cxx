@@ -552,6 +552,22 @@ public:
     firingInfo.timeSent = shotTime;
     firingInfo.shot.dt = (float)TimeKeeper::getCurrent().getSeconds()-shotTime;
     memcpy(firingInfo.shot.pos,drInfo.pos,sizeof(float)*3);
+
+    // offset the shot for the tank's angle and muzzle
+    // compute the rotation
+    Vector3 muzzleOffset = player->getMuzzleOffset();
+
+    Matrix34 mat;
+    mat.rotate2d(drInfo.rot,Vector3());
+    mat.transformNorm(muzzleOffset);
+
+    firingInfo.shot.pos[0] += muzzleOffset.x();
+    firingInfo.shot.pos[1] += muzzleOffset.y();
+    firingInfo.shot.pos[2] += muzzleOffset.z();
+
+    if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV))
+      drInfo.vel[2] = 0.0f;
+
     memcpy(firingInfo.shot.vel,drInfo.vel,sizeof(float)*3);
 
     // compute the new velocity

@@ -25,6 +25,8 @@
 #include "StateDatabase.h"
 #include "ShotManager.h"
 #include "bzfs.h"
+#include "StateDatabase.h"
+#include "BZDBCache.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -288,6 +290,22 @@ void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
   msg.losses = score.getLosses();
   msg.tks = score.getTKs();
   msg.callsign =  player.getCallSign();
+}
+
+Vector3 GameKeeper::Player::getScale ( void )
+{
+  // CONST TODO, scale the offset based on the current tank's flag settings
+
+  return Vector3(1,1,1);
+}
+
+
+Vector3	  GameKeeper::Player::getMuzzleOffset(void)
+{
+  Vector3 offset;
+  offset.x(BZDBCache::tankLength*0.5f+0.1f);
+  offset.z(BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+  return offset * getScale();
 }
 
 

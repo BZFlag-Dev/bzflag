@@ -313,7 +313,7 @@ private:
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
-  unsigned char			allow;		// tank allowed actions
+  unsigned char		allow;		// tank allowed actions
 
   // score of local player against this player
   short			localWins;		// local player won this many
