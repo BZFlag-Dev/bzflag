@@ -372,10 +372,10 @@ float Vector3::dot ( const float rhs[3] )
   return ::dot(vec,rhs);
 }
 
-float Vector3::dot ( const float x, float y, float z)
+float Vector3::dot ( const float _x, float _y, float _z)
 {
   float t[3];
-  t[0] = x; t[1] = y; t[2] = z;
+  t[0] = _x; t[1] = _y; t[2] = _z;
   return ::dot(vec,t);
 }
 
@@ -611,10 +611,10 @@ float Vector2::dot ( const float rhs[2] )
   return ::dot2d(vec,rhs);
 }
 
-float Vector2::dot ( const float x, float y )
+float Vector2::dot ( const float _x, float _y )
 {
   float t[2];
-  t[0] = x; t[1] = y;
+  t[0] = _x; t[1] = _y;
   return ::dot2d(vec,t);
 }
 
@@ -1237,51 +1237,51 @@ void Matrix34::translation( const Vector3 &vec )
   }
 }
 
-void Matrix34::scale( const Vector3 &scale )
+void Matrix34::scale( const Vector3 &_scale )
 {
   if (flags & rotateFlag)
   {
-    mat[0][0] *= scale.x();
-    mat[0][1] *= scale.x();
-    mat[0][2] *= scale.x();
-    mat[1][0] *= scale.y();
-    mat[1][1] *= scale.y();
-    mat[1][2] *= scale.y();
-    mat[2][0] *= scale.z();
-    mat[2][1] *= scale.z();
-    mat[2][2] *= scale.z();
+    mat[0][0] *= _scale.x();
+    mat[0][1] *= _scale.x();
+    mat[0][2] *= _scale.x();
+    mat[1][0] *= _scale.y();
+    mat[1][1] *= _scale.y();
+    mat[1][2] *= _scale.y();
+    mat[2][0] *= _scale.z();
+    mat[2][1] *= _scale.z();
+    mat[2][2] *= _scale.z();
   }
   else
   {
     if (flags & scaleFlag)
     {
-      mat[0][0] *= scale.x();
-      mat[1][1] *= scale.y();
-      mat[2][2] *= scale.z();
+      mat[0][0] *= _scale.x();
+      mat[1][1] *= _scale.y();
+      mat[2][2] *= _scale.z();
     }
     else
     {
-      mat[0][0] = scale.x();
-      mat[1][1] = scale.y();
-      mat[2][2] = scale.z();
+      mat[0][0] = _scale.x();
+      mat[1][1] = _scale.y();
+      mat[2][2] = _scale.z();
     }
   }
   if (flags & transFlag)
   {
-    mat[0][3] *= scale.x();
-    mat[1][3] *= scale.y();
-    mat[2][3] *= scale.z();
+    mat[0][3] *= _scale.x();
+    mat[1][3] *= _scale.y();
+    mat[2][3] *= _scale.z();
   }
   flags |= scaleFlag;
 }
 
-void Matrix34::scaling( const Vector3 &scale )
+void Matrix34::scaling( const Vector3 &_scale )
 {
   identity();
   flags = scaleFlag;
-  mat[0][0] = scale.x();
-  mat[1][1] = scale.y();
-  mat[2][2] = scale.z();
+  mat[0][0] = _scale.x();
+  mat[1][1] = _scale.y();
+  mat[2][2] = _scale.z();
 }
 
 void Matrix34::rotation( const Vector3 &axis , float sin, float cosin )
