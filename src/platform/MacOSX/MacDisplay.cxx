@@ -62,7 +62,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   const ::Boolean	removeEventFromQueue = true;
 
   /* initialize the event for safety */
-  bzf_event.keyDown.ascii = 0;
+  bzf_event.keyDown.chr = 0;
 
   bzf_event.type = (BzfEvent::Type)-1;
 
@@ -246,7 +246,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     kF14KeyCode	 = 0x6B,	// Scroll Lock
     kF15KeyCode	 = 0x71	// Pause
   };
-  bzf_key.ascii = 0;
+  bzf_key.chr = 0;
   bzf_key.button = BzfKeyEvent::NoButton;
   switch (char_code) {
   case kUpArrowCharCode   : bzf_key.button = BzfKeyEvent::Up;       break;
@@ -279,7 +279,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     }
     break;
     // standard key; a-z, 0-9 etc
-  default:	bzf_key.ascii  = char_code;		break;
+  default:	bzf_key.chr  = char_code;		break;
   }
 }
 
