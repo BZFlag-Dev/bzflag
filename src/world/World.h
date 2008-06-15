@@ -25,25 +25,23 @@
 /* bzflag common headers */
 #include "common.h"
 
-#include "WorldObject.h"
-
-/**
- * \class BZWorld
- * \brief BZFlag World class
- *
- *  Details to come...
- */
-
 namespace BZW
 {
 
+  /**
+   * World class
+   */
   class World
   {
     public:
+      /// Default constructor
       World();
+      /// Read/Create a world from an stream
       World(std::istream &input);
+      /// Default destructor
       ~World();
 
+      /// Write current world to a stream
       void write(std::ostream &output); //TODO: Better method name
 
     private:

@@ -13,30 +13,20 @@
 #ifndef __BZWORLDOBJECT_H__
 #define __BZWORLDOBJECT_H__
 
-/**
- * \file BZWorldObject.h
- * \brief WorldObject class header file
- * 
- * libBZW attempts to abstract world management
- */
-
 /* bzflag common headers */
 #include "common.h"
 
-/**
- * \class BZWorldObject
- * \brief BZFlag World Object class
- *
- *  Details to come...
- */
-
 namespace BZW
 {
-
+  /** 
+   * Class for all World Objects.
+   */
   class WorldObject
   {
     public:
+      /// Default Constructor
       WorldObject();
+      /// Destructor
       ~WorldObject();
 
     private:

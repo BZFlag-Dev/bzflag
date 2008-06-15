@@ -15,21 +15,25 @@
 namespace BZW
 {
 
+  /// Default constructor
   World::World()
   {
 
   }
 
+  /// Read/Create a world from a stream
   World::World(std::istream &input)
   {
 
   }
 
+  /// Destructor
   World::~World()
   {
 
   }
 
+  /// Write a world to a stream
   void World::write(std::ostream &output)
   {
 

@@ -13,21 +13,6 @@
 #ifndef __BZWORLD_H__
 #define __BZWORLD_H__
 
-/**
- * \file BZWorld.h
- * \brief libBZW header file
- * 
- * libBZW attempts to abstract world management
- */
-
-
-/**
- * \class BZWorld
- * \brief BZFlag World class
- *
- *  Details to come...
- */
-
 // The following are only here to define them in the documentation
 
 /// This is the top level namespace of libBZWorld
