@@ -491,7 +491,7 @@ void MacWindow::setMinSize(int, int) {
 #endif
 }
 
-void MacWindow::setFullscreen() {} // do nothing for now
+void MacWindow::setFullscreen(bool) {} // do nothing for now
 void MacWindow::warpMouse(int x, int y) {
   CGDisplayErr cgErr;
   CGPoint  mp;
