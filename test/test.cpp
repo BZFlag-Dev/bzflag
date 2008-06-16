@@ -174,65 +174,92 @@ void test_ldap()
     test_unbind();
 }
 
-void test_gcry()
+void nputs(const char *str, size_t len)
+{
+    for(size_t i = 0; i < len; i++)
+        putchar(str[i]);
+}
+
+gcry_error_t test_gcry_init_rsa(gcry_ac_handle_t *handle)
 {
     gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
+    gcry_error_t ret = gcry_ac_open(handle, GCRY_AC_RSA, 0);
+    return ret;
+}
 
+gcry_error_t test_gcry_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *public_key, gcry_ac_key_t *secret_key)
+{
     gcry_ac_key_pair_t key_pair;
-    gcry_ac_key_spec_rsa_t rsa_spec;
-    gcry_ac_handle_t handle;
-    gcry_error_t err;
 
+    gcry_ac_key_spec_rsa_t rsa_spec;
     rsa_spec.e = gcry_mpi_new (0);
     gcry_mpi_set_ui (rsa_spec.e, 1);
 
-    err = gcry_ac_open  (&handle, GCRY_AC_RSA, 0);
-    if(err) return;
+    gcry_error_t ret = gcry_ac_key_pair_generate(handle, 1024, (void*) &rsa_spec, &key_pair, NULL);
+    gcry_mpi_release(rsa_spec.e);
 
-    err = gcry_ac_key_pair_generate(handle, 1024, (void*) &rsa_spec, &key_pair, NULL);
-    if(err) return;
+    if(ret) return ret;
+    *public_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
+    *secret_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+    return ret;
+}
+
+gcry_error_t test_gcry_encrypt(gcry_ac_handle_t handle, gcry_ac_key_t &public_key, const char *message, size_t message_len, char **cipher, size_t *cipher_len)
+{
+    gcry_ac_io_t io_message, io_cipher;
+    gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, message_len);
+    gcry_ac_io_init(&io_cipher, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
+
+    return gcry_ac_data_encrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, public_key, &io_message, &io_cipher);
+}
+
+gcry_error_t test_gcry_decrypt(gcry_ac_handle_t handle, gcry_ac_key_t &secret_key, const char *cipher, size_t cipher_len, char **message, size_t *message_len)
+{
+    gcry_ac_io_t io_cipher, io_message;
+    gcry_ac_io_init(&io_cipher, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
+    gcry_ac_io_init(&io_message, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, message, message_len);
+
+    return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, secret_key, &io_cipher, &io_message);
+}
+
+void test_gcry()
+{
+    gcry_error_t err;
+
+    gcry_ac_handle_t handle;
+    err = test_gcry_init_rsa(&handle);
 
     gcry_ac_key_t public_key, secret_key;
-    public_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
-    secret_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+    err = test_gcry_gen_key_pair(handle, &public_key, &secret_key);
+    if(err) return;
 
     char message[] = "let's see if this gets encrypted/decrypted properly";
     char *cipher = NULL;
-    int cipher_len;
+    size_t cipher_len = 0;
 
-    gcry_ac_io_t io_message, io_cipher;
-    gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, strlen(message));
-    gcry_ac_io_init(&io_cipher, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &cipher, &cipher_len);
-
-    err = gcry_ac_data_encrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, public_key, &io_message, &io_cipher);
+    err = test_gcry_encrypt(handle, public_key, message, strlen(message), &cipher, &cipher_len);
     if(err) return;
-
-    printf("encrypted: %s\n", cipher);
+    printf("encrypted: %s\n"); nputs(cipher, cipher_len); printf("\n");
 
     char *output = NULL;
-    int output_len;
+    size_t output_len = 0;
  
-    gcry_ac_io_t io_output, io_cip;
-    gcry_ac_io_init(&io_cip, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
-    gcry_ac_io_init(&io_output, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &output, &output_len);
-
-    err = gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, secret_key, &io_cip, &io_output);
+    err = test_gcry_decrypt(handle, secret_key, cipher, cipher_len, &output, &output_len);
     if(err) return;
+    printf("decrypted: "); nputs(output, output_len); printf("\n");
 
-    output[output_len] = 0;
-
-    printf("decrypted: %s\n", output);
-
-    // TODO: these must be deallocated somehow but this way it crashes
     free(cipher);
     free(output);
+    gcry_ac_key_destroy(public_key);
+    gcry_ac_key_destroy(secret_key);
+    // no need to destroy the key_pair too after this
     gcry_ac_close(handle);
 }
 
 int main(int argc, char* argv[])
 {
     test_gcry();
-    test_ldap();
+    //test_ldap();
     getch();
 
 	return 0;
