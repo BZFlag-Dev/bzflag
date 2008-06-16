@@ -368,6 +368,7 @@ AC_CONFIG_FILES([
 	serverControl/Makefile
 	serverSideBotSample/Makefile
 	shockwaveDeath/Makefile
+	ShotTest/Makefile
 	soundTest/Makefile
 	teamflagreset/Makefile
 	thiefControl/Makefile

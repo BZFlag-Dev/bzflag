@@ -29,6 +29,7 @@ SUBDIRS = \
 	regFlag \
 	serverControl \
 	shockwaveDeath \
+	ShotTest \
 	soundTest \
 	teamflagreset \
 	thiefControl \
