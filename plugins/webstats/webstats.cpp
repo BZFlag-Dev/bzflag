@@ -367,13 +367,13 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
   }
   else if (key == "uptime")
   {
-    int days = uptime/86400.0;
+    int days = (int)(uptime/86400.0);
     uptime -= days*86400.0;
-    int hours = uptime/3600.0;
+    int hours = (int)(uptime/3600.0);
     uptime -= hours*3600.0;
-    int min = uptime/60.0;
+    int min = (int)(uptime/60.0);
     uptime -= min*60.0;
-    int seconds = uptime;
+    int seconds = (int)(uptime);
     data = format("%d days %d hours %d minutes %d seconds",days,hours,min,seconds);
   }
   else if ( key == "totalplayers" )
