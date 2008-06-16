@@ -121,7 +121,7 @@ int ShotList::updateShot( int GUID, FiringInfo * info )
   if (getShot(GUID) && getShot(GUID)->isLocal())
     local = true;
 
-  if (!removeShot(GUID))
+  if (!removeShot(GUID,false))
     return 0;
 
   addShot(GUID,info);
@@ -139,7 +139,7 @@ int ShotList::updateShotID( int oldID, int newID )
   if ( itr != shots.end() )
   {
     // the new ID is already in play, so just kill the old one
-    removeShot(oldID);
+    removeShot(oldID,false);
     return newID;
   }
 
