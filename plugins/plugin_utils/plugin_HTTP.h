@@ -52,6 +52,10 @@ public:
   virtual bool acceptURL ( const char *url ) = 0;
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true ) = 0;
 
+  // so the server can know what it's address is
+  const char * getBaseServerURL ( void );
+  const char * getVDir ( void ) {return vdir.c_str();}
+
 protected:
   // called inside getURLData to set the data for the job
   void setURLDataSize (size_t size, int requestID );
@@ -81,10 +85,6 @@ protected:
   // called internaly to update any transfers
   // but can be called externaly to force updates if need be
   void update ( void );
-
-  // so the server can know what it's address is
-  const char * getBaseServerURL ( void );
-  const char * getVDir ( void ) {return vdir.c_str();}
 
 protected:
   typedef enum
