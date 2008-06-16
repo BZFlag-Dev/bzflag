@@ -11,7 +11,7 @@ class WebAdmin : public BZFSHTTPServer, TemplateCallbackClass
 public:
   WebAdmin(const char * plugInName);
 
-  void init (std::string &tDir);
+  void init (const char *tDir);
 
   // from BSFSHTTPServer
   virtual bool acceptURL ( const char *url ) { return true; }
@@ -31,7 +31,7 @@ BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
-  webAdmin.init(std::string(commandLine ? commandLine : "./"));
+  webAdmin.init(commandLine ? commandLine : "./");
 
   bz_debugMessage(4,"webadmin plugin loaded");
   webAdmin.startupHTTP();
@@ -50,9 +50,10 @@ WebAdmin::WebAdmin(const char *plugInName)
 {
 }
 
-void WebAdmin::init(std::string &tDir)
+void WebAdmin::init(const  char* tDir)
 {
-  templateSystem.addSearchPath(tDir.c_str());
+  if (tDir)
+    templateSystem.addSearchPath(tDir);
 
   /* template symbols go here */
 
