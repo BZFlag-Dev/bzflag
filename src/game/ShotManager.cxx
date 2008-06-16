@@ -42,6 +42,7 @@ void ShotManager::clear ( void )
 int ShotManager::newShot ( FiringInfo *info )
 {
   lastShotID++;
+  info->shot.id = lastShotID;
   Shot shot(info);
 
   shots[lastShotID] = shot;
