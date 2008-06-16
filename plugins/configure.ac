@@ -377,6 +377,7 @@ AC_CONFIG_FILES([
 	weaponArena/Makefile
 	webstats/Makefile
 	webReport/Makefile
+	webadmin/Makefile
 	wwzones/Makefile
 ])
 

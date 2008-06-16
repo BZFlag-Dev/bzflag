@@ -37,6 +37,7 @@ SUBDIRS = \
 	unrealCTF \
 	weaponArena \
 	webstats \
+	webadmin \
 	webReport \
 	wwzones
 
