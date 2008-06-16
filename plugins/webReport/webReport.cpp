@@ -18,7 +18,7 @@ class WebReport : public BZFSHTTPServer, TemplateCallbackClass
 public:
   WebReport(const char * plugInName);
 
-  void init(std::string &tDir);
+  void init(const char* tDir);
 
   virtual bool acceptURL(const char *url) { return true; }
   virtual void getURLData(const char* url, int requestID, const URLParams &parameters, bool get = true);
@@ -41,13 +41,8 @@ BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
 {
-  if (commandLine)
-    templatesDir = commandLine;
-  else
-    templatesDir = "./";
-
   loadDefaultTemplates();
-  webReport.init(templatesDir);
+  webReport.init(commandLine ? commandLine : "./");
 
   bz_setclipFieldString("report_index_description", "View reports on-line");
 
@@ -74,9 +69,9 @@ WebReport::WebReport(const char *plugInName)
   valid = false;
 };
 
-void WebReport::init(std::string &tDir)
+void WebReport::init(const char *tDir)
 {
-  templateSystem.addSearchPath(tDir.c_str());
+  templateSystem.addSearchPath(tDir);
 
   templateSystem.addKey("evenodd", this);
   templateSystem.addKey("Report", this);
