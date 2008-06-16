@@ -1675,7 +1675,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       d = hypotf(outerSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
-      if ((I * maxVal) < minLuminance || i < 16) { // add a cheap ass easy out if we get into a wierd place
+      if ((I * maxVal) < minLuminance || i > 16) { // add a cheap ass easy out if we get into a wierd place
 	I = 0.0f;
 	moreRings = false; // bail after this ring
       }
