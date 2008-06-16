@@ -42,7 +42,10 @@ BZ_GET_PLUGIN_VERSION
 BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
 {
   loadDefaultTemplates();
-  webReport.init(commandLine ? commandLine : "./");
+  if (commandLine && strlen(commandLine))
+    webReport.init(commandLine);
+  else
+    webReport.init("./");
 
   bz_setclipFieldString("report_index_description", "View reports on-line");
 
