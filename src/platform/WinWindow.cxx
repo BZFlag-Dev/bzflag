@@ -350,6 +350,9 @@ void			WinWindow::freeContext()
 
 bool checkGammaRampsFile( WORD ramps[6*256] )
 {
+  if (BZDB.isSet("SkipGamma"))
+    return false;
+
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
 
   FILE *fp = fopen(gammaFile.c_str(),"rb");
@@ -364,6 +367,9 @@ bool checkGammaRampsFile( WORD ramps[6*256] )
 
 bool saveGammaRampsFile( WORD ramps[6*256] )
 {
+  if (BZDB.isSet("SkipGamma"))
+    return false;
+
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
 
   FILE *fp = fopen(gammaFile.c_str(),"wb");
@@ -378,6 +384,9 @@ bool saveGammaRampsFile( WORD ramps[6*256] )
 
 void deleteGammaRampsFile ( void )
 {
+  if (BZDB.isSet("SkipGamma"))
+    return;
+
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
   DeleteFile(gammaFile.c_str());
 }
@@ -426,13 +435,16 @@ void			WinWindow::createChild()
   if (colormap)
     ::SelectPalette(hDCChild, colormap, FALSE);
 
-  // if no colormap then adjust gamma ramps
-  if (!useColormap) {
-    if (!checkGammaRampsFile(origGammaRamps))
-      getGammaRamps(origGammaRamps);
+  if (!BZDB.isSet("SkipGamma"))
+  {
+    // if no colormap then adjust gamma ramps
+    if (!useColormap) {
+      if (!checkGammaRampsFile(origGammaRamps))
+	getGammaRamps(origGammaRamps);
 
-    saveGammaRampsFile(origGammaRamps);
-    setGamma(gammaVal);
+      saveGammaRampsFile(origGammaRamps);
+      setGamma(gammaVal);
+    }
   }
 
   // make OpenGL context
@@ -454,8 +466,12 @@ void			WinWindow::createChild()
 
 void			WinWindow::destroyChild()
 {
-  setGammaRamps(origGammaRamps);
-  deleteGammaRampsFile();
+  if (!BZDB.isSet("SkipGamma"))
+  {
+    setGammaRamps(origGammaRamps);
+    deleteGammaRampsFile();
+  }
+
   if (hRC != NULL) {
     if (wglGetCurrentContext() == hRC)
       wglMakeCurrent(NULL, NULL);
@@ -474,6 +490,10 @@ void			WinWindow::destroyChild()
 
 void			WinWindow::getGammaRamps(WORD* ramps)
 {
+  if (BZDB.isSet("SkipGamma"))
+    return;
+
+
   if (hDCChild == NULL)
     return;
 
@@ -483,6 +503,9 @@ void			WinWindow::getGammaRamps(WORD* ramps)
 
 void			WinWindow::setGammaRamps(const WORD* ramps)
 {
+  if (BZDB.isSet("SkipGamma"))
+    return;
+
   if (hDCChild == NULL)
     return;
 
