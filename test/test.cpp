@@ -191,6 +191,42 @@ void test_gcry()
 
     err = gcry_ac_key_pair_generate(handle, 1024, (void*) &rsa_spec, &key_pair, NULL);
     if(err) return;
+
+    gcry_ac_key_t public_key, secret_key;
+    public_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
+    secret_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+
+    char message[] = "let's see if this gets encrypted/decrypted properly";
+    char *cipher = NULL;
+    int cipher_len;
+
+    gcry_ac_io_t io_message, io_cipher;
+    gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, strlen(message));
+    gcry_ac_io_init(&io_cipher, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &cipher, &cipher_len);
+
+    err = gcry_ac_data_encrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, public_key, &io_message, &io_cipher);
+    if(err) return;
+
+    printf("encrypted: %s\n", cipher);
+
+    char *output = NULL;
+    int output_len;
+ 
+    gcry_ac_io_t io_output, io_cip;
+    gcry_ac_io_init(&io_cip, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
+    gcry_ac_io_init(&io_output, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &output, &output_len);
+
+    err = gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, secret_key, &io_cip, &io_output);
+    if(err) return;
+
+    output[output_len] = 0;
+
+    printf("decrypted: %s\n", output);
+
+    // TODO: these must be deallocated somehow but this way it crashes
+    free(cipher);
+    free(output);
+    gcry_ac_close(handle);
 }
 
 int main(int argc, char* argv[])

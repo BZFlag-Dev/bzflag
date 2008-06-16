@@ -132,19 +132,10 @@
 				RelativePath="..\..\libgpg-error\src\gettext.h">
 			</File>
 			<File
-				RelativePath="..\..\libgpg-error\src\gpg-error.c">
-			</File>
-			<File
 				RelativePath="..\..\libgpg-error\src\gpg-error.h">
 			</File>
 			<File
 				RelativePath="..\..\libgpg-error\src\init.c">
-			</File>
-			<File
-				RelativePath="..\..\libgpg-error\src\mkerrcodes.c">
-			</File>
-			<File
-				RelativePath="..\..\libgpg-error\src\mkerrcodes.h">
 			</File>
 			<File
 				RelativePath="..\..\libgpg-error\src\strerror-sym.c">
