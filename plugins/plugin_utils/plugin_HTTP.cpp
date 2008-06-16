@@ -390,7 +390,7 @@ void BZFSHTTPServer::disconnect ( int connectionID )
   users.erase(users.find(connectionID));
 }
 
-void BZFSHTTPServer::setURLDataSize ( unsigned int size, int /* requestID */)
+void BZFSHTTPServer::setURLDataSize ( size_t size, int /* requestID */)
 {
   if (theCurrentCommand->data)
     free(theCurrentCommand->data);
@@ -398,6 +398,7 @@ void BZFSHTTPServer::setURLDataSize ( unsigned int size, int /* requestID */)
   theCurrentCommand->data = NULL;
   theCurrentCommand->size = size;
 }
+
 
 void BZFSHTTPServer::setURLData ( const char * data, int /* requestID */ )
 {
@@ -554,13 +555,14 @@ void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
   
   // keep it going
   // wait till the current data is sent
-  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0) {
-    int chunkToSend = 1000;
+  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0)
+  {
+    size_t chunkToSend = 1000;
 
     if ( pos + chunkToSend > currentCommand->size)
       chunkToSend = currentCommand->size-pos;
 
-    bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
+    bz_sendNonPlayerData ( connection, currentCommand->data+pos, (unsigned int)chunkToSend );
 
     pos += chunkToSend;
     if (pos >= currentCommand->size) { // if we are done, close this sucker

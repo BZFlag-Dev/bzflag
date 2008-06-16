@@ -54,7 +54,7 @@ public:
 
 protected:
   // called inside getURLData to set the data for the job
-  void setURLDataSize ( unsigned int size, int requestID );
+  void setURLDataSize (size_t size, int requestID );
   void setURLData ( const char * data, int requestID );
 
   typedef enum
@@ -99,7 +99,7 @@ protected:
     std::string URL;
     std::string FullURL;
     char	*data;
-    unsigned int size;
+    size_t size;
     HTTPDocumentType  docType;
     HTTPReturnCode    returnCode;
     std::string	      redirectLocation;
@@ -123,7 +123,7 @@ protected:
     std::string commandData;
     double	aliveTime;
 
-    unsigned int pos;
+    size_t pos;
 
     int connection;
 
