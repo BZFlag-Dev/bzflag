@@ -100,9 +100,11 @@ std::vector<int> ShotList::getExpiredShotList ( void )
 int ShotList::addLocalShot ( ShotPath * shot )
 {
   lastLocalShot--;
-  if (lastLocalShot < -2000000)
+  if (lastLocalShot < -20000)
     lastLocalShot = -1;
   shot->setLocal(true);
+  shot->getFiringInfo().shot.id = lastLocalShot;
+
   shots[lastLocalShot] = shot;
   return lastLocalShot;
 }
@@ -133,7 +135,15 @@ int ShotList::updateShotID( int oldID, int newID )
   if (oldID == newID)
     return oldID;
 
-  std::map<int,ShotPath*>::iterator itr = shots.find(oldID);
+  std::map<int,ShotPath*>::iterator itr = shots.find(newID);
+  if ( itr != shots.end() )
+  {
+    // the new ID is already in play, so just kill the old one
+    removeShot(oldID);
+    return newID;
+  }
+
+  itr = shots.find(oldID);
 
   if (itr == shots.end())
     return 0;
@@ -142,16 +152,11 @@ int ShotList::updateShotID( int oldID, int newID )
   if (!shot)
     return 0;
 
-  itr = shots.find(newID);
-  if (itr != shots.end())
-    removeShot(newID);
-
   shots.erase(itr);
   shots[newID] = shot;
 
   return newID;
 }
-
 
 bool ShotList::removeShot ( int GUID, bool explode )
 {

@@ -1369,7 +1369,7 @@ bool			LocalPlayer::fireShot()
   firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
   firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
-  firingInfo.shot.id     = slot * -1;
+
   prepareShotInfo(firingInfo);
   // make shot and put it in the table
   ShotPath *shot = new LocalShotPath(firingInfo,syncedClock.GetServerSeconds());
@@ -1378,20 +1378,20 @@ bool			LocalPlayer::fireShot()
   addShot(shot);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
-  firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
+  shot->getFiringInfo().timeSent = (float)syncedClock.GetServerSeconds();
 
   // always send a player-update message. To synchronize movement and
   // shot start. They should generally travel on the same frame, when
   // flushing the output queues.
   server->sendPlayerUpdate(this);
-  server->sendBeginShot(firingInfo);
+  server->sendBeginShot(shot->getFiringInfo());
 
   if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
-    EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
+    EFFECTS.addShotEffect(getColor(), shot->getFiringInfo().shot.pos, getAngle(), getVelocity());
 
   if (gettingSound)
   {
-    switch(firingInfo.shotType)
+    switch(shot->getFiringInfo().shotType)
     {
     case ShockWaveShot:
       playLocalSound(SFX_SHOCK);

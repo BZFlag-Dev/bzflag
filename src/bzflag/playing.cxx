@@ -3308,13 +3308,13 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void* m
       handleNewRabbit(msg);
       break;
 
-case MsgShotID:
-  handleMsgShotID(msg);
-  break;
+    case MsgShotID:
+      handleMsgShotID(msg);
+      break;
 
-case MsgShotBegin:
-  handleShotBegin(human, msg);
-  break;
+    case MsgShotBegin:
+      handleShotBegin(human, msg);
+      break;
 
     case MsgShotEnd:
       handleShotEnd(msg);
