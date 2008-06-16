@@ -282,7 +282,12 @@ case $host_os in
 esac
 
 AC_PATH_XTRA
-LDFLAGS="$LDFLAGS $X_LIBS"
+case $host_os in
+  macos|darwin*)
+    ;;
+  *)
+    LDFLAGS="$LDFLAGS $X_LIBS"
+esac
 
 case $host_os in
   solaris*)
