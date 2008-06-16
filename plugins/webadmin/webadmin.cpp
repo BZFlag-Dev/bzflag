@@ -31,7 +31,10 @@ BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
-  webAdmin.init(commandLine ? commandLine : "./");
+  if (commandLine && strlen(commandLine))
+    webAdmin.init(commandLine);
+  else
+     webAdmin.init("./");
 
   bz_debugMessage(4,"webadmin plugin loaded");
   webAdmin.startupHTTP();
