@@ -9,16 +9,16 @@
 class WebAdmin : public BZFSHTTPServer, TemplateCallbackClass
 {
 public:
-  WebStats(const char * plugInName);
-  
+  WebAdmin(const char * plugInName);
+
   void init (std::string &tDir);
-  
+
   // from BSFSHTTPServer
   virtual bool acceptURL ( const char *url ) { return true; }
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
-  
+
   Templateiser templateSystem;
-  
+
   // from TemplateCallbackClass
   virtual void keyCallback ( std::string &data, const std::string &key );
   virtual bool loopCallback ( const std::string &key );
@@ -31,8 +31,8 @@ BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
-  webAdmin.init(commandLine ? commandLine : "./");
-  
+  webAdmin.init(std::string(commandLine ? commandLine : "./"));
+
   bz_debugMessage(4,"webadmin plugin loaded");
   webAdmin.startupHTTP();
   return 0;
@@ -46,33 +46,52 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 }
 
 WebAdmin::WebAdmin(const char *plugInName)
-  : BZFSHTTPServer(plugInName)
+: BZFSHTTPServer(plugInName)
 {
 }
 
 void WebAdmin::init(std::string &tDir)
 {
   templateSystem.addSearchPath(tDir.c_str());
-  
+
   /* template symbols go here */
-  
+
   templateSystem.setPluginName("Web Report", getBaseServerURL());
 }
 
 // event hook for [$Something] in templates
-void keyCallback (std::string &data, const std::string &key)
+void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
-  
+
 }
 
 // condition check for [*START] in templates
-bool loopCallback (const std::string &key)
+bool WebAdmin::loopCallback (const std::string &key)
 {
-  
+  return false;
 }
 
 // condition check for [?IF] in templates
-bool ifCallback (const std::string &key)
+bool WebAdmin::ifCallback (const std::string &key)
 {
-  
+  return false; 
 }
+
+void WebAdmin::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
+{
+  std::string page;
+
+  page = "default";
+
+  setURLDocType(eText,requestID);
+  setURLDataSize(page.size(),requestID);
+  setURLData(page.c_str(),requestID);
+}
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
