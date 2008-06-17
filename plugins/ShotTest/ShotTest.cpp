@@ -26,6 +26,8 @@ public:
 
     float origin[3] = {0,0,2};
     bz_fireWorldWep(NULL,origin);
+
+    bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,"Firing Sample Shot");
   }
 
   virtual void process ( bz_EventData *eventData )
@@ -45,6 +47,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"ShotTest plug-in loaded");
 
+  bz_setMaxWaitTime((float)sh.increment*0.1f,"ShotText");
   bz_registerEvent(bz_eTickEvent,&sh);
   return 0;
 }
@@ -54,7 +57,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_debugMessage(4,"ShotTest plug-in unloaded");
 
   bz_removeEvent(bz_eTickEvent,&sh);
-
+  bz_clearMaxWaitTime("ShotText");
   return 0;
 }
 
