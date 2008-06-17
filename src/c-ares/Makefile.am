@@ -39,7 +39,6 @@ libcares_la_SOURCES =		\
 	windows_port.c
 
 EXTRA_DIST = \
-	ares.h			\
 	CHANGES			\
 	FILES			\
 	NEWS			\
