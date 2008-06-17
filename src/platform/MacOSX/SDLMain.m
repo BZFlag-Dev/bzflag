@@ -5,17 +5,10 @@
     Feel free to customize this file to suit your needs
 */
 
-#include "SDL/SDL.h"
 #include "SDLMain.h"
+
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
-
-/* For some reaon, Apple removed setAppleMenu from the headers in 10.4,
- but the method still is there and works. To avoid warnings, we declare
- it ourselves here. */
-@interface NSApplication(SDL_Missing_Methods)
-- (void)setAppleMenu:(NSMenu *)menu;
-@end
 
 /* Use this flag to determine whether we use SDLMain.nib or not */
 #define		SDL_USE_NIB_FILE	0
@@ -89,7 +82,7 @@ static NSString *getApplicationName(void)
         char parentdir[MAXPATHLEN];
 		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 		CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
-		if (CFURLGetFileSystemRepresentation(url2, true, (UInt8 *)parentdir, MAXPATHLEN)) {
+		if (CFURLGetFileSystemRepresentation(url2, true, parentdir, MAXPATHLEN)) {
 	        assert ( chdir (parentdir) == 0 );   /* chdir to the binary app's parent */
 		}
 		CFRelease(url);
@@ -197,7 +190,7 @@ static void setupWindowMenu(void)
 }
 
 /* Replacement for NSApplicationMain */
-static void CustomApplicationMain (int argc, char **argv)
+static void CustomApplicationMain (argc, argv)
 {
     NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
     SDLMain				*sdlMain;
@@ -252,35 +245,34 @@ static void CustomApplicationMain (int argc, char **argv)
  */
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-    const char *temparg;
-    size_t arglen;
-    char *arg;
-    char **newargv;
-
     if (!gFinderLaunch)  /* MacOS is passing command line args. */
         return FALSE;
 
     if (gCalledAppMainline)  /* app has started, ignore this document. */
         return FALSE;
 
-    temparg = [filename UTF8String];
-    arglen = SDL_strlen(temparg) + 1;
-    arg = (char *) SDL_malloc(arglen);
+    unsigned buflen = [filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding] + 1;
+    char *arg = (char *) malloc(buflen);
     if (arg == NULL)
         return FALSE;
 
-    newargv = (char **) realloc(gArgv, sizeof (char *) * (gArgc + 2));
+    char **newargv = (char **) realloc(gArgv, sizeof (char *) * (gArgc + 2));
     if (newargv == NULL)
     {
-        SDL_free(arg);
+        free(arg);
         return FALSE;
     }
     gArgv = newargv;
 
-    SDL_strlcpy(arg, temparg, arglen);
-    gArgv[gArgc++] = arg;
-    gArgv[gArgc] = NULL;
-    return TRUE;
+    BOOL rc = [filename getCString:arg maxLength:buflen encoding:NSUTF8StringEncoding];
+    if (!rc)
+        free(arg);
+    else
+    {
+        gArgv[gArgc++] = arg;
+        gArgv[gArgc] = NULL;
+    }
+    return rc;
 }
 
 
@@ -359,7 +351,7 @@ int main (int argc, char **argv)
     /* Copy the arguments into a global variable */
     /* This is passed if we are launched by double-clicking */
     if ( argc >= 2 && strncmp (argv[1], "-psn", 4) == 0 ) {
-        gArgv = (char **) SDL_malloc(sizeof (char *) * 2);
+        gArgv = (char **) malloc(sizeof (char *) * 2);
         gArgv[0] = argv[0];
         gArgv[1] = NULL;
         gArgc = 1;
@@ -367,7 +359,7 @@ int main (int argc, char **argv)
     } else {
         int i;
         gArgc = argc;
-        gArgv = (char **) SDL_malloc(sizeof (char *) * (argc+1));
+        gArgv = (char **) malloc(sizeof (char *) * (argc+1));
         for (i = 0; i <= argc; i++)
             gArgv[i] = argv[i];
         gFinderLaunch = NO;
@@ -381,4 +373,3 @@ int main (int argc, char **argv)
 #endif
     return 0;
 }
-
