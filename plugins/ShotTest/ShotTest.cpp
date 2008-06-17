@@ -25,7 +25,7 @@ public:
       return;
 
     float origin[3] = {0,0,2};
-    bz_fireWorldWep(NULL,origin);
+    bz_fireWorldWep("",origin);
 
     bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,"Firing Sample Shot");
   }
