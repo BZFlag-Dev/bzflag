@@ -59,6 +59,8 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   ShotManager::instance().newShot(&firingInfo);
 
   NetMsg msg = MSGMGR.newMessage();
+  msg->packUByte(player);
+  msg->packInt(firingInfo.shot.id);
   firingInfo.pack(msg);
 
   if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
