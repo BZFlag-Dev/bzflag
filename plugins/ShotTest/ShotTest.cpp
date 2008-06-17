@@ -6,6 +6,8 @@
 
 BZ_GET_PLUGIN_VERSION
 
+#define deg2rad  0.017453292519943295769236907684886f
+
 class ShotHandler : public bz_EventHandler
 {
 public:
@@ -26,8 +28,11 @@ public:
 
     float origin[3] = {0,0,2};
     bz_fireWorldWep("",origin);
+    bz_fireWorldWep("",origin,0,90*deg2rad);
+    bz_fireWorldWep("",origin,0,180*deg2rad);
+    bz_fireWorldWep("",origin,0,270*deg2rad);
 
-    bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,"Firing Sample Shot");
+    bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,"Firing Sample Shots");
   }
 
   virtual void process ( bz_EventData *eventData )
@@ -43,13 +48,30 @@ public:
 
 ShotHandler sh;
 
+class Spawner : public bz_EventHandler
+{
+public:
+  virtual void process ( bz_EventData *eventData )
+  {
+    bz_GetPlayerSpawnPosEventData_V1* d = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
+    d->pos[0] = 0;
+    d->pos[1] = 0;
+    d->pos[2] = 15;
+
+    d->rot = 0;
+ }
+};
+
+Spawner sp;
+
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"ShotTest plug-in loaded");
 
   bz_setMaxWaitTime((float)sh.increment*0.1f,"ShotText");
   bz_registerEvent(bz_eTickEvent,&sh);
-  return 0;
+  bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&sp);
+ return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
@@ -57,7 +79,8 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_debugMessage(4,"ShotTest plug-in unloaded");
 
   bz_removeEvent(bz_eTickEvent,&sh);
-  bz_clearMaxWaitTime("ShotText");
+  bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&sp);
+ bz_clearMaxWaitTime("ShotText");
   return 0;
 }
 

@@ -1,0 +1,25 @@
+box
+position 200 0 0
+size 10 50 5
+end
+
+box
+position -200 0 0
+size 10 50 5
+end
+
+box
+position 0 200 0
+size 50 10 5
+end
+
+box
+position 0 -200 0
+size 50 10 5
+end
+
+box
+position 0 0 4
+
+size 2 2 1
+end
