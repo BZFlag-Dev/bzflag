@@ -399,10 +399,13 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
-	e.g. cvs tag v1_10_2
+	e.g. svn copy bzflag \
+	     https://bzflag.svn.sf.net/svnroot/bzflag/tags/v1_10_2/
 
-- Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somewhere else
-  in the filesystem to obtain a tagged version of the sources.
+- Perform a 
+  "svn export v://bzflag.svn.sf.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
+  from somewhere else in the filesystem to obtain a tagged version of the
+  sources.
 
 - Perform a "make dist" of that export to generate a source release
   tarball.
