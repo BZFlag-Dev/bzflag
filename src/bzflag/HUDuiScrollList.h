@@ -22,9 +22,11 @@
 #include "HUDuiControl.h"
 
 #include "HUDuiLabel.h"
+#include "HUDuiScrollListItem.h"
 
 #include <string>
 #include <vector>
+#include <list>
 
 #include "BzfEvent.h"
 
@@ -63,8 +65,10 @@ class HUDuiScrollList : public HUDuiControl {
 		
 		HUDuiLabel* pageLabel;
 		
-		std::vector<HUDuiLabel*> labelList;
-		std::vector<std::string> stringList;
+		//std::vector<HUDuiLabel*> labelList;
+		//std::vector<std::string> stringList;
+		
+		std::list<HUDuiScrollListItem*> items;
 };
 
 #endif // __HUDUISCROLLLIST_H__

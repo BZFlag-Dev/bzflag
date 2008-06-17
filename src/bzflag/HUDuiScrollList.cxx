@@ -10,14 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// bzflag common header
-#include "common.h"
-
 // interface headers
 #include "HUDuiScrollList.h"
-
-// system headers
-#include <math.h>
 
 // common implementation headers
 #include "BundleMgr.h"
@@ -25,7 +19,8 @@
 #include "FontManager.h"
 #include "LocalFontFace.h"
 #include "HUDui.h"
-#include "bzUnicode.h"
+
+#include <iostream>
 
 //
 // HUDuiScrollList
@@ -53,8 +48,7 @@ int HUDuiScrollList::getSelected() const
 
 void HUDuiScrollList::clear()
 {
-	stringList.clear();
-	labelList.clear();
+	items.clear();
 	setSelected(0);
 }
 
@@ -63,8 +57,8 @@ void HUDuiScrollList::setSelected(int _index)
 	// Ensure the index is not negative, or past the end of our list
 	if (_index < 0)
 		_index = 0;
-	else if (_index >= (int)labelList.size())
-		_index = (int)labelList.size() - 1;
+	else if (_index >= (int)items.size())
+		_index = (int)items.size() - 1;
 	
 	if (pagedList) {
 		// Figure out what page the new index is on
@@ -94,18 +88,21 @@ void HUDuiScrollList::setSelected(int _index)
 void HUDuiScrollList::addItem(HUDuiLabel* item)
 {
 	// We need to update both the stringList and the labelList
-	stringList.push_back(item->getString());
-	labelList.push_back(item);
+	//items.push_back(new HUDuiScrollListItem(item));
 	update();
 }
 
 void HUDuiScrollList::addItem(std::string item)
 {
-	HUDuiLabel* newLabel = new HUDuiLabel;
-	newLabel->setFontFace(getFontFace());
-	newLabel->setString(item);
+	//HUDuiLabel* newLabel = new HUDuiLabel;
+	//newLabel->setFontFace(getFontFace());
+	//newLabel->setString(item);
 	
-	addItem(newLabel);
+	//addItem(newLabel);
+	//items.push_back(new HUDuiScrollListItem(item));
+	HUDuiScrollListItem* newItem = new HUDuiScrollListItem(item);
+	items.push_back(newItem); // SEEMS TO BE THE PROBLEM CODE RIGHT HERE
+	update();
 }
 
 void HUDuiScrollList::update()
@@ -118,7 +115,6 @@ void HUDuiScrollList::setPaged(bool paged)
 	pagedList = paged;
 	if (pagedList) {
 		pageLabel = new HUDuiLabel;
-		resizeLabels();
 	} else {
 		pageLabel = NULL;
 	}
@@ -208,19 +204,43 @@ void HUDuiScrollList::resizeLabels()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	float listHeight = getHeight();
-	numVisibleItems = (int)floorf(listHeight/itemHeight);
+	numVisibleItems = listHeight/itemHeight;
 	
 	// If it's a paged list make it one item shorter so we can fit the page label
 	if (pagedList) {
 		numVisibleItems = numVisibleItems - 1;
 	}
-
+	
+	//HUDuiScrollListItem item;
+	
+	std::list<HUDuiScrollListItem*>::iterator it;
+	
+	// Iterate through our list of strings
+	for (it=items.begin(); it != items.end(); it++)	{
+		//tempString = stringList.at(i);
+		HUDuiScrollListItem* item = *it;
+		item->shorten(getWidth());
+		
+		// Shorten the label to fit within the scrollable list
+		//if (tempString.length() > numVisibleChars) {
+		//	tempString = tempString.substr(0, numVisibleChars);
+		//}
+		
+		//item->setString(tempString);
+	}
+	
+	/*
 	// Trim strings to fit our available space
 	float width = getWidth();
+
+
+
 	std::string tempString;
 	HUDuiLabel* item;
 
 	for (size_t i = 0; i < stringList.size(); ++i) {
+
+
 		item = labelList.at(i);
 		std::string tempStr = stringList.at(i);
 
@@ -240,6 +260,7 @@ void HUDuiScrollList::resizeLabels()
 		}
 		item->setString(tempStr.substr(0, lastPos.getBufferFromHere() - tempStr.c_str()));
 	}
+	*/
 }
 
 void HUDuiScrollList::doRender()
@@ -247,20 +268,23 @@ void HUDuiScrollList::doRender()
 	FontManager &fm = FontManager::instance();
 	float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 	
+	std::list<HUDuiScrollListItem*>::iterator it;
+	
 	// Draw the list items
 	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
-		if (i < (int)labelList.size()) {
-			HUDuiLabel* item = labelList.at(i);
+		if (i < items.size()) {
+			std::advance(it, i);
+			HUDuiScrollListItem* item = *it;
 			item->setFontSize(getFontSize());
 			item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
-			item->setDarker(i != getSelected());
+			//item->setDarker(i != getSelected());
 			item->render();
 		}
 	}
 	
 	// Draw the page label
 	if (pagedList) {
-		int numPages = (((int)stringList.size() - 1)/numVisibleItems) + 1;
+		int numPages = ((items.size() - 1)/numVisibleItems) + 1;
 		int currentPage = (getSelected()/numVisibleItems) + 1;
 		
 		std::vector<std::string> args;
