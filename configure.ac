@@ -333,7 +333,6 @@ AC_CHECK_HEADERS( \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
-	FTGL/FTGL.h \
 	SDL/SDL.h \
 	bstring.h \
 	dlfcn.h \
@@ -1141,7 +1140,14 @@ if test "x$enable_client" != "xno" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
 if test "x$enable_ftgl_build" != "xyes" ; then
-   AC_CHECK_LIB(ftgl, main, LIBFTGL="-lftgl")
+dnl test for required feature first present in FTGL 2.1.3
+    AC_TRY_COMPILE(
+	[#include <FTGL/ftgl.h>],
+	[FTFont* xyz = new FTTextureFont("xyz.ttf");
+	 double d = xyz->Advance("xyz");
+	 xyz->Render("xyz");],
+	LIBFTGL=-lftgl
+	)
 fi
 AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then
