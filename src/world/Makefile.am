@@ -10,7 +10,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 libBZW_la_LDFLAGS = -static
 libBZW_la_SOURCES =	\
 	World.cxx		\
-	WorldObject.cxx		\
+	WorldObject.cxx
 
 EXTRA_DIST = README
 
