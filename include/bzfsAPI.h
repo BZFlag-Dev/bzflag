@@ -17,7 +17,9 @@
 
 /* system interface headers */
 #include <string>
+#include <cstring>
 #include <vector>
+#include <cstdlib>
 
 /* DO NOT INCLUDE ANY OTHER HEADERS IN THIS FILE */
 /* PLUGINS NEED TO BE BUILT WITHOUT THE BZ SOURCE TREE */
