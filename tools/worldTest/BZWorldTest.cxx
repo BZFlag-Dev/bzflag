@@ -10,10 +10,26 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+#include <cstring>
+#include <iostream>
+
 #include "BZWorld.h"
+
+BZW::World * world;
 
 int main(int argc, char ** argv)
 {
+  if(argc > 1)
+  {
+    std::cout << "Usage: BZWorldTest\n\nExamples:\n  BZWorldTest\n  cat testfile | BZWorldTest\n  BZWorldTest < testfile" << std::endl;
+    return 1;
+  }
+
+  world = new World();
+
+
+  delete world;
+
   return 0;
 }
 
