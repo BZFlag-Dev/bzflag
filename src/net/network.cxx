@@ -226,7 +226,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
 
   int delimiterpos = 0;
-  for(; (delimiterpos < (int)url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++);
+  for(; (delimiterpos < (int)url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++) {};
   if(url[delimiterpos] != ':')
     return false;
 
@@ -243,7 +243,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
     if (mungedurl[0] == '/' && mungedurl[1] == '/') {
       mungedurl = mungedurl.substr(2);
       int pos = 0;
-      for(; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++);
+      for(; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++) {};
 
       if(mungedurl[pos] == ' ')
 	return false;

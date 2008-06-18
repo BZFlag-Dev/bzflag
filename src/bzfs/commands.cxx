@@ -685,7 +685,7 @@ bool CmdHelp::operator() (const char *message,
 {
 
   int i;
-  for (i = 0; message[i] && !isspace(message[i]); i++);
+  for (i = 0; message[i] && !isspace(message[i]); i++) {};
   if (!i)
     return false;
   i--;
