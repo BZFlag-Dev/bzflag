@@ -257,13 +257,14 @@ void selectNextRecipient(bool forward, bool robotIn)
   while (true) {
     if (forward) {
       i++;
-      if (i == curMaxPlayers)
+      if (i == curMaxPlayers) {
 	// if no old rec id we have just ended our search
 	if (recipient == NULL)
 	  break;
 	else
 	  // wrap around
 	  i = 0;
+      }
     } else {
       if (i == 0)
 	// wrap around
