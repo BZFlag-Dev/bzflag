@@ -383,8 +383,8 @@ bool GameKeeper::Player::clean()
   // Trying to detect if this action cleaned the array of player
   bool empty    = true;
   bool ICleaned = false;
-  for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]))
+  for (int i = 0; i < PlayerSlot; i++) {
+    if ((playerData = playerList[i])) {
       if (playerData->closed
 #if defined(USE_THREADS)
 	&& !playerData->refCount
@@ -397,6 +397,9 @@ bool GameKeeper::Player::clean()
 	empty = false;
       }
       return empty && ICleaned;
+    }
+  }
+  return false;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)
