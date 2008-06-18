@@ -1,4 +1,4 @@
-bin_PROGRAMS = BZWorldTest
+bin_PROGRAMS = worldTest
 
 all-am: $(top_builddir)/src/world/libBZW.la
 
@@ -12,7 +12,7 @@ AM_CPPFLAGS = @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 worldTest_SOURCES =	\
-	BZWorldTest.cxx
+	worldTest.cxx
 
 worldTest_CPPFLAGS = -I$(top_srcdir)/include
 worldTest_LDADD = $(top_builddir)/src/world/libBZW.la
