@@ -1324,6 +1324,9 @@ BZF_API bool bz_sendNonPlayerData ( int connectionID, const void *data, unsigned
 BZF_API bool bz_disconnectNonPlayerConnection ( int connectionID );
 BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connectionID );
 
+BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID );
+BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID );
+
 // player info
 
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );

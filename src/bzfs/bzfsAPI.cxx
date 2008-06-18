@@ -884,6 +884,26 @@ BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connecti
   return  netConnectedPeers[connectionID].pendingSendChunks.size();
 }
 
+BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
+{
+  if( netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
+    return 0;
+
+  unsigned int address = (unsigned int)netConnectedPeers[connectionID].handler->getIPAddress().s_addr;
+
+  unsigned char *a = (unsigned char*)&address;
+  return TextUtils::format("%d.%d.%d.%d",a[0],a[1],a[2],a[3]).c_str();
+}
+
+BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID )
+{
+  if( netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
+    return 0;
+
+  return netConnectedPeers[connectionID].handler->getHostname();
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
