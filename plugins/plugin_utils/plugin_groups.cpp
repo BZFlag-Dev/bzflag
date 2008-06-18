@@ -56,7 +56,7 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
   return groupsWithPerms;
 }
 
-std::vector<std::string> findGroupsWithPerm( const const char* perm )
+std::vector<std::string> findGroupsWithPerm( const char* perm )
 {
   std::string name;
   if(perm)
