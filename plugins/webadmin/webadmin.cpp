@@ -53,7 +53,7 @@ WebAdmin::WebAdmin(const char *plugInName)
 {
 }
 
-void WebAdmin::init(const  char* tDir)
+void WebAdmin::init(const char* tDir)
 {
   if (tDir)
     templateSystem.addSearchPath(tDir);
@@ -81,13 +81,13 @@ bool WebAdmin::ifCallback (const std::string &key)
   return false; 
 }
 
-void WebAdmin::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
+void WebAdmin::getURLData (const char* url, int requestID, const URLParams &paramaters, bool get)
 {
   std::string page;
+  
+  templateSystem.processTemplateFile(page, "main.tmpl");
 
-  page = "default";
-
-  setURLDocType(eText,requestID);
+  setURLDocType(eHTML,requestID);
   setURLDataSize(page.size(),requestID);
   setURLData(page.c_str(),requestID);
 }
