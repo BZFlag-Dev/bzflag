@@ -19,6 +19,9 @@ BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
   if (plugInName)
     name = plugInName;
   listening = false;
+ 
+  theCurrentCommand = NULL;
+  theUser = NULL;
 }
 
 BZFSHTTPServer::~BZFSHTTPServer()
@@ -185,7 +188,10 @@ void BZFSHTTPServer::update ( void )
       disItr->second.user->deferredCount--;
 
       HTTPCommand *tempCommand = theCurrentCommand;
-      theCurrentCommand = defferedItr->second.command;
+      HTTPConnectedUsers *tempUser = theUser;
+
+      theCurrentCommand = disItr->second.command;
+      theUser = disItr->second.user;
 
       getURLData ( theCurrentCommand->URL.c_str(), theCurrentCommand->requestID, disItr->second.params, theCurrentCommand->request == eGet );
       
@@ -198,6 +204,7 @@ void BZFSHTTPServer::update ( void )
       }
   
       theCurrentCommand = tempCommand;
+      theUser = tempUser;
       deferredCommands.erase(disItr);
     }
     else
@@ -281,6 +288,7 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
 
 void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int /* requestID */, const URLParams &params )
 {
+  theUser = user;
   if (acceptURL(theCurrentCommand->URL.c_str()))
   {
     theCurrentCommand->requestID = user->connection * 100 + (int)user->pendingCommands.size();
@@ -316,6 +324,7 @@ void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int /* reques
     delete(theCurrentCommand);
 
   theCurrentCommand = NULL;
+  theUser = NULL;
 }
 
 void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams &params )
@@ -369,20 +378,26 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
   int requestID = connectionID*100 + (int)user->pendingCommands.size();
 
-  if (strstr(user->commandData.c_str(),"\r\n") != NULL ) {
+  if (strstr(user->commandData.c_str(),"\r\n") != NULL )
+  {
     // we have enough to parse the HTTP command
     std::vector<std::string>  commands = tokenize(user->commandData,std::string("\r\n"),0,false);
-    for ( int i = 0; i < (int)commands.size(); i++) {
-      if (strstr(user->commandData.c_str(),"\r\n") != NULL ) {
+    for ( int i = 0; i < (int)commands.size(); i++)
+    {
+      if (strstr(user->commandData.c_str(),"\r\n") != NULL )
+      {
 	user->commandData.erase(user->commandData.begin(),user->commandData.begin()+commands[i].size()+2);
 	std::vector<std::string> params = tokenize(commands[i],std::string(" "),0,false);
-	if (params.size() > 1) {
+	if (params.size() > 1)
+	{
 	  std::string httpCommandString = params[0];
 
-	  if (httpCommandString == "GET") {
+	  if (httpCommandString == "GET")
+	  {
 	    std::string url = params[1];
 	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0) {
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
+	    {
 	      theCurrentCommand = new HTTPCommand;
 	      theCurrentCommand->request = eGet;
 	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
@@ -397,18 +412,22 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, urlparams );
 
 	      processTheCommand(user,requestID,urlparams);
-	    } else if (indexer) {
+	    } 
+	    else if (indexer)
 	      generateIndex(user,requestID);
-	    }
-	  } else if (httpCommandString == "POST") {
+	  }
+	  else if (httpCommandString == "POST")
+	  {
 	    std::string url = params[1];
 	    std::string paramData;
 
 	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0) {
+	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0) 
+	    {
 	      int j = (int)commands.size();
 
-	      for ( int c = 1; c  < j; c++ ) {
+	      for ( int c = 1; c  < j; c++ )
+	      {
 		std::string line = commands[c];
 		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
 		  paramData += line;
@@ -479,24 +498,18 @@ void BZFSHTTPServer::setURLData ( const char * data, int /* requestID */ )
 
 void BZFSHTTPServer::deferRequest ( int requestID )
 {
-   if (theCurrentCommand->request == requestID)
+   if (theCurrentCommand && theCurrentCommand->requestID == requestID)
      theCurrentCommand->deferred = true;
-   else
-   {
-     if (deferredCommands.find(requestID) != deferredCommands.end())
-       deferredCommands[requestID].command->deferred = true;
-   }
+   else if (deferredCommands.find(requestID) != deferredCommands.end())
+     deferredCommands[requestID].command->deferred = true;
 }
 
 void BZFSHTTPServer::resumeRequest ( int requestID )
 {
-  if (theCurrentCommand->request == requestID)
+  if (theCurrentCommand && theCurrentCommand->requestID == requestID)
     theCurrentCommand->deferred = false;
-  else
-  {
-    if (deferredCommands.find(requestID) != deferredCommands.end())
-      deferredCommands[requestID].command->deferred = false;
-  }
+  else if (deferredCommands.find(requestID) != deferredCommands.end())
+    deferredCommands[requestID].command->deferred = false;
 }
 
 void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int /* requestID */)
@@ -517,6 +530,31 @@ void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int /* reque
     theCurrentCommand->redirectLocation = location;
 }
 
+const char * BZFSHTTPServer::getIP ( int requestID )
+{
+  if (theCurrentCommand->request == requestID)
+    return bz_getNonPlayerConnectionIP(theUser->connection);
+  else
+  {
+    if (deferredCommands.find(requestID) != deferredCommands.end())
+      bz_getNonPlayerConnectionIP(deferredCommands[requestID].user->connection);
+  }
+
+  return std::string().c_str();
+}
+
+const char * BZFSHTTPServer::getHost( int requestID )
+{
+  if (theCurrentCommand->request == requestID)
+    return bz_getNonPlayerConnectionHost(theUser->connection);
+  else
+  {
+    if (deferredCommands.find(requestID) != deferredCommands.end())
+      bz_getNonPlayerConnectionHost(deferredCommands[requestID].user->connection);
+  }
+
+  return std::string().c_str();
+}
 
 const char * BZFSHTTPServer::getBaseServerURL ( void )
 {

@@ -56,13 +56,17 @@ public:
   const char * getBaseServerURL ( void );
   const char * getVDir ( void ) {return vdir.c_str();}
 
+  const char * getIP ( int requestID );
+  const char * getHost( int requestID );
+
+  void deferRequest ( int requestID );
+  void resumeRequest ( int requestID );
+
 protected:
   // called inside getURLData to set the data for the job
   void setURLDataSize (size_t size, int requestID );
   void setURLData ( const char * data, int requestID );
 
-  void deferRequest ( int requestID );
-  void resumeRequest ( int requestID );
 
   typedef enum
   {
@@ -171,6 +175,7 @@ private:
   std::string name;
 
   HTTPCommand *theCurrentCommand;
+  HTTPConnectedUsers *theUser;
 
   void paramsFromString ( const std::string &string, URLParams &params );
   std::string parseURLParams ( const std::string &FullURL, URLParams &params );
