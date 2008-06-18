@@ -76,7 +76,7 @@ public:
   float		getReloadTime() const;
 
   const float*	getApparentVelocity() const;
-  const float	getLastUpdateTime() const;
+  float	getLastUpdateTime() const;
 
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const
@@ -413,7 +413,7 @@ inline float         Player::getUserAngVel() const
   return state.userAngVel;
 }
 
-inline const float	Player::getLastUpdateTime() const
+inline float	Player::getLastUpdateTime() const
 {
   return state.lastUpdateTime;
 }

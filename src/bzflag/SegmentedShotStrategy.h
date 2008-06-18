@@ -53,7 +53,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     const std::vector<ShotPathSegment>&	getSegments() const;
 
     void		setCurrentTime(const double);
-    const double	getLastTime() const;
+    double		getLastTime() const;
 
     bool		isOverlapping(const float (*bbox1)[3],
 				const float (*bbox2)[3]) const;

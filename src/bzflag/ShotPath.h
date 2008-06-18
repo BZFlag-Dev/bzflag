@@ -53,8 +53,8 @@ class ShotPath {
     FlagType*		getFlag() const;
     float		getLifetime() const;
     float		getReloadTime() const;
-    const double	getStartTime() const;
-    const double	getCurrentTime() const;
+    double		getStartTime() const;
+    double		getCurrentTime() const;
     const float*	getPosition() const;
     const float*	getVelocity() const;
 
@@ -166,12 +166,12 @@ inline float		ShotPath::getReloadTime() const
   return reloadTime;
 }
 
-inline const double ShotPath::getStartTime() const
+inline double ShotPath::getStartTime() const
 {
   return startTime;
 }
 
-inline const double ShotPath::getCurrentTime() const
+inline double ShotPath::getCurrentTime() const
 {
   return currentTime;
 }
