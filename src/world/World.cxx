@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "World.h"
+#include "BZWorld.h"
 
 namespace BZW
 {
