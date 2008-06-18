@@ -1,6 +1,9 @@
 all-local:
 	@date > datestamp
 
+SUBDIRS =	\
+	BZW
+
 noinst_HEADERS =			\
 	AccessList.h			\
 	Address.h			\
@@ -28,6 +31,7 @@ noinst_HEADERS =			\
 	BzfVisual.h			\
 	BzfWindow.h			\
 	bzfsAPI.h			\
+	BZWorld.h			\
 	CacheManager.h			\
 	CallbackList.h			\
 	CollisionManager.h		\
