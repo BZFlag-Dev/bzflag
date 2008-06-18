@@ -110,10 +110,6 @@ inline bool isPrintable(const char c)
   return true;
 }
 
-
-// Configuration file parsing functions
-#include "plugin_config.h"
-
 #endif //_PLUGIN_UTILS_H_
 
 

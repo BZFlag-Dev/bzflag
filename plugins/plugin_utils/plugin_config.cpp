@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include "bzfsAPI.h"
+#include "plugin_config.h"
 #include "plugin_utils.h"
 
 /*
