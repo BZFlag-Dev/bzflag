@@ -1276,6 +1276,7 @@ AC_CONFIG_FILES([
 	tools/modeltool/vc8/Makefile
 	tools/tankview/Makefile
 	tools/tankview/vc8/Makefile
+	tools/worldTest/Makefile
 	MSVC/Makefile
 	MSVC/VC8/Makefile
 ])
