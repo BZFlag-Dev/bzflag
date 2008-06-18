@@ -89,7 +89,7 @@ const int MinY = 192;
 const int NoMotionSize =	10;		// no motion zone size
 const int MaxMotionSize = 37;		// motion zone size
 
-typedef enum GameType
+enum GameType
 {
   TeamFFA,	  // normal teamed FFA
   ClassicCTF,	  // your normal CTF
