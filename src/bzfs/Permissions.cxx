@@ -528,7 +528,6 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
     } else {
       if (word == "ALL") {
 	info.explicitAllows.set();
-	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
 	info.hasALLPerm = true;
       } else {
 	//logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
