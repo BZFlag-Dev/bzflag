@@ -66,9 +66,10 @@ EXTRA_DIST = \
 	INSTALL \
 	PORTING
 
+DISTCLEANFILES = config.cache.*
+
 MAINTAINERCLEANFILES = \
 	aclocal.m4 \
-	config.cache.* \
 	configure \
 	bzflag.info \
 	bzflag.spec \
@@ -107,8 +108,8 @@ dist-hook:
 	if test "x$$missing" = "x1" ; then \
 		exit 1 ; \
 	fi
-	find $(distdir) -type f \( -name '.cvsignore' \) -exec rm -f {} \;
-	find $(distdir) -type d \( -name 'CVS' -or -name '.svn' \) -prune -exec rm -rf {} \;
+	find $(distdir) -type f \( -name .cvsignore -o -name Makefile \) -exec rm -f {} \;
+	find $(distdir) -type d \( -name CVS -o -name .svn -o -name .deps -o -name autom4te.cache \) -prune -exec rm -rf {} \;
 
 
 # Print out an informative summary.
