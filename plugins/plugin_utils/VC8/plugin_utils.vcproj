@@ -159,6 +159,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugin_groups.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugin_HTTP.cpp"
 				>
 			</File>
@@ -182,6 +186,10 @@
 			</File>
 			<File
 				RelativePath="..\plugin_files.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugin_groups.h"
 				>
 			</File>
 			<File

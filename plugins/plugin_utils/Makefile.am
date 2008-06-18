@@ -13,7 +13,9 @@ libplugin_utils_la_SOURCES = \
 	plugin_HTTPTemplates.cpp \
 	plugin_HTTPTemplates.h \
 	plugin_files.cpp \
-	plugin_files.h
+	plugin_files.h	\
+	plugin_groups.cpp \
+	plugin_groups.h
 
 libplugin_utils_la_LDFLAGS = -avoid-version
 
