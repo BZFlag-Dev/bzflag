@@ -159,9 +159,9 @@ public:
   static bool readPermsFile(const std::string &filename);
   static bool writePermsFile(const std::string &filename);
   static void updateDatabases();
-  std::bitset<lastPerm>		explicitAllows;
-  std::bitset<lastPerm>		explicitDenys;
-  std::bitset<lastState>	groupState;
+  std::bitset<lastPerm+1>		explicitAllows;
+  std::bitset<lastPerm+1>		explicitDenys;
+  std::bitset<lastState+1>	groupState;
   std::vector<std::string>	groups;
   std::vector<std::string>	customPerms;
   bool				hasALLPerm;
