@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  world = new World();
+  world = new BZW::World();
 
 
   delete world;

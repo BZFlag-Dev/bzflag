@@ -13,56 +13,18 @@
 #ifndef __BZWORLD_H__
 #define __BZWORLD_H__
 
-
-#include <iostream.h>
-
-
-/* bzflag common headers */
-#include "common.h"
-
+// The following are only here to define them in the documentation
 
 /// This is the top level namespace of libBZWorld
 namespace BZW
 {
- 
-  /**
-   * World class.
-   */
-  class World
-  {
-    public:
-      /// Default constructor
-      World();
-      /// Read/Create a world from an stream
-      World(std::istream &input);
-      /// Default destructor
-      ~World();
-
-      /// Write current world to a stream
-      void write(std::ostream &output); //TODO: Better method name
-
-    private:
-
-  };
-  
-  /** 
-   * World Object class.
-   */
-  class WorldObject
-  {
-    public:
-      /// Default Constructor
-      WorldObject();
-      /// Destructor
-      ~WorldObject();
-
-    private:
-
-  };
-
-
 
 }
+
+// Headers in order of level-ness (low to high)
+
+#include "BZW/WorldObject.h"
+#include "BZW/World.h"
 
 #endif // __BZWORLD_H__
 

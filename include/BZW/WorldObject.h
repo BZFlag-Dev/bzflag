@@ -10,23 +10,33 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "BZW/WorldObject.h"
+#ifndef __BZW_WORLDOBJECT_H__
+#define __BZW_WORLDOBJECT_H__
+
+/* bzflag common headers */
+#include "common.h"
 
 namespace BZW
 {
-  /// Default constructor.
-  WorldObject::WorldObject()
+  /** 
+   * Class for all World Objects.
+   */
+  class WorldObject
   {
+    public:
+      /// Default Constructor
+      WorldObject();
+      /// Destructor
+      ~WorldObject();
 
-  }
+    private:
 
-  /// Destructor
-  WorldObject::~WorldObject()
-  {
-
-  }
+  };
 
 }
+
+#endif // __BZW_WORLDOBJECT_H__
+
 // Local Variables: ***
 // Mode: C++ ***
 // tab-width: 8 ***
@@ -34,3 +44,4 @@ namespace BZW
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

@@ -10,23 +10,48 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "BZW/WorldObject.h"
+#ifndef __BZW_WORLD_H__
+#define __BZW_WORLD_H__
+
+/**
+ * \file BZWorld.h
+ * \brief libBZW header file
+ * 
+ * libBZW attempts to abstract world management
+ */
+
+#include <iostream>
+
+/* bzflag common headers */
+#include "common.h"
 
 namespace BZW
 {
-  /// Default constructor.
-  WorldObject::WorldObject()
+
+  /**
+   * World class
+   */
+  class World
   {
+    public:
+      /// Default constructor
+      World();
+      /// Read/Create a world from an stream
+      World(std::istream &input);
+      /// Default destructor
+      ~World();
 
-  }
+      /// Write current world to a stream
+      void write(std::ostream &output); //TODO: Better method name
 
-  /// Destructor
-  WorldObject::~WorldObject()
-  {
+    private:
 
-  }
+  };
 
 }
+
+#endif // __BZW_WORLD_H__
+
 // Local Variables: ***
 // Mode: C++ ***
 // tab-width: 8 ***
