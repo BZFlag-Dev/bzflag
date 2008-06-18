@@ -261,7 +261,7 @@ bool BufferedNetworkMessage::process ( void )
 
   NetworkMessageTransferCallback *transferCallback = MSGMGR.getTransferCallback();
 
-  if (!transferCallback || !recipient && code == 0)
+  if (!transferCallback || (!recipient && code == 0))
     return false;
 
   nboPackUShort(data, uint16_t(packedSize));

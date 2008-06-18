@@ -408,11 +408,11 @@ static void warnAboutSlowMotion()
 
 inline bool isViewTank(Player* tank)
 {
-  return ((tank != NULL) &&
-    (tank == LocalPlayer::getMyTank()) ||
-    (ROAM.isRoaming()
-    && (ROAM.getMode() == Roaming::roamViewFP)
-    && (ROAM.getTargetTank() == tank)));
+  return (tank &&
+	  ((tank == LocalPlayer::getMyTank()) ||
+	   ((ROAM.isRoaming()) &&
+	    (ROAM.getMode() == Roaming::roamViewFP) &&
+	    (ROAM.getTargetTank() == tank))));
 }
 
 
@@ -1176,7 +1176,7 @@ static void		updateFlag(FlagType* flag)
     hud->setFlagHelp(flag, FlagHelpDuration);
 
   World *_world = World::getWorld();
-  if (!radar && !myTank || !_world) return;
+  if ((!radar && !myTank) || !_world) return;
 
   radar->setJammed(flag == Flags::Jamming);
   hud->setAltitudeTape(myTank->canJump());
@@ -3906,7 +3906,7 @@ static void		checkEnvironment()
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
     TeamColor team = myTank->getTeam();
-    if ((base != NoTeam) && (flagd->flagTeam == team && base != team) || (flagd->flagTeam != team && base == team))
+    if (((base != NoTeam) && (flagd->flagTeam == team && base != team)) || (flagd->flagTeam != team && base == team))
       serverLink->sendCaptureFlag(base);
   } else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
@@ -4454,12 +4454,12 @@ static void		setRobotTarget(RobotPlayer* robot)
 	  continue;
 
 	if (World::getWorld()->allowTeamFlags() &&
-	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
-	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
-	    bestTarget = player[j];
-	    break;
+	    ((robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+	     (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
+	     (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
+	     (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam))) {
+	  bestTarget = player[j];
+	  break;
 	}
 
 	const float priority = robot->getTargetPriority(player[j]);
@@ -5770,8 +5770,8 @@ void drawFrame(const float dt)
       }
     }
     RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
-      (myTank && !ROAM.isRoaming() && !devDriving) &&
-      !myTank->isAlive() && !myTank->isExploding());
+		    ((myTank && !ROAM.isRoaming() && !devDriving) &&
+		     !myTank->isAlive() && !myTank->isExploding()));
 
     // turn on panel dimming when showing the menu (both radar and chat)
     if (HUDDialogStack::get()->isActive()) {
@@ -6956,9 +6956,10 @@ static void		timeConfigurations()
   }
 
   // leave blending on if blending clearly faster than stippling
-  if (timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ &&
-    timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ) {
-      BZDB.set("blend", "0");
+  if (timeBlendNoZ > timeNoBlendNoZ ||
+      (timeBlendNoZ > timeNoBlendZ && timeBlendZ > timeNoBlendNoZ) ||
+      timeBlendZ > timeNoBlendZ) {
+    BZDB.set("blend", "0");
   }
 
   // try texturing.  if it's too slow then fall back to

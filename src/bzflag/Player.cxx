@@ -884,9 +884,9 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	world->hitBuilding(state.pos, a,
 			   dimensions[0], dimensions[1],
 			   dimensions[2]);
-      if (obstacle && obstacle->isCrossing(state.pos, a,
+      if ((obstacle && obstacle->isCrossing(state.pos, a,
 					   dimensions[0], dimensions[1],
-					   dimensions[2], plane) ||
+					   dimensions[2], plane)) ||
 	  world->crossingTeleporter(state.pos, a,
 				    dimensions[0], dimensions[1],
 				    dimensions[2], plane)) {
