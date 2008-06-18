@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="shockwaveDeath"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{672AE592-BD65-4D53-A932-1B3E61B0EDB2}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/shockwaveDeath.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="shockwaveDeath.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/shockwaveDeath.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/shockwaveDeath.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="shockwaveDeath.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

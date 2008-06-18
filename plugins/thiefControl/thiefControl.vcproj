@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="thiefControl"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{F15AD0BA-F83D-4D65-982E-E0D8EE1F932C}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

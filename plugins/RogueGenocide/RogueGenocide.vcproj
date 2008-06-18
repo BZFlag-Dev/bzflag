@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="RogueGenocide"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{777C5C64-54CE-492D-8795-CB53EEC2C6BF}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/RogueGenocide.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="RogueGenocide.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/RogueGenocide.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/RogueGenocide.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="RogueGenocide.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

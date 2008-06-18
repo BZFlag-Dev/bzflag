@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="playHistoryTracker"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{5D54473C-A182-43A5-80A2-BBCF35E4A8A7}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/playHistoryTracker.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="playHistoryTracker.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/playHistoryTracker.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/playHistoryTracker.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="playHistoryTracker.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

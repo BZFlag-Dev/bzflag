@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="chatlog"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{04D81EED-BCAA-4075-B058-D554C7F8ECF8}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

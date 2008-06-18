@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="webstats"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{1048DC03-DCEC-4967-98C0-97077D522379}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

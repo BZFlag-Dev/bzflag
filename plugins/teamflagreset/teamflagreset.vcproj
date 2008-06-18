@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="teamflagreset"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{F8C70966-A71E-48FB-934E-819D5B651622}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/teamflagreset.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="teamflagreset.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/teamflagreset.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/teamflagreset.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="teamflagreset.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

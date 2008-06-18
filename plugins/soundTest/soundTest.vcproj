@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="soundTest"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{FB80FF5B-8FDD-42E1-82FC-F2A2BAFBECF3}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/soundTest.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="soundTest.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/soundTest.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/soundTest.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/"
+				AdditionalLibraryDirectories="../../"
 				ModuleDefinitionFile="soundTest.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

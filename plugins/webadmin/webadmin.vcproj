@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="webadmin"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{0BD63F70-CAE9-475A-A03B-6EC77559C706}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="serverControl"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{D2560F9D-5A04-4CED-9D5D-227F9D22F0A0}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/serverControl.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
 				ModuleDefinitionFile="serverControl.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/serverControl.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/serverControl.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
 				ModuleDefinitionFile="serverControl.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

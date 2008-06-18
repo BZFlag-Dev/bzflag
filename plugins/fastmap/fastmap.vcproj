@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="fastmap"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{F081A46D-3992-492A-BF68-05C18957A326}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
