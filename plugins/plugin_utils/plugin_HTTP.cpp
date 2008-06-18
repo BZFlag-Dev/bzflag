@@ -129,10 +129,13 @@ void BZFSHTTPServer::process ( bz_EventData *eventData )
   std::string myThis = format("%p",this);
   indexer = bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis;
   
-  if ( eventData->eventType == bz_eTickEvent) {
+  if ( eventData->eventType == bz_eTickEvent) 
+  {
     if ( listening )
       update();
-  } else if ( eventData->eventType == bz_eNewNonPlayerConnection ) {
+  } 
+  else if ( eventData->eventType == bz_eNewNonPlayerConnection )
+  {
     if ( listening ) {
       bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
       char *temp = (char*)malloc(connData->size+1);
@@ -160,17 +163,49 @@ void BZFSHTTPServer::update ( void )
   std::vector<int>  killList;
 
   std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
-  while ( itr != users.end() ) {
+  while ( itr != users.end() )
+  {
     double deadTime = now - itr->second->aliveTime;
-    if ( itr->second->transferring() || deadTime < timeout ) {
+ 
+    if ( itr->second->transferring() || deadTime < timeout ) 
       itr->second->update();
-    } else {
+    else if (itr->second->deferredCount <= 0) // only kill it if it has nothing pending
       killList.push_back(itr->first);
-    }
     itr++;
   }
 
-  for ( int i = 0; i < (int)killList.size(); i++ ) {
+  std::map<int,DeferredCommand>::iterator defferedItr = deferredCommands.begin();
+  while ( defferedItr != deferredCommands.end() )
+  {
+    if (!defferedItr->second.command->deferred)
+    {
+      std::map<int,DeferredCommand>::iterator disItr = defferedItr;
+      defferedItr++;
+
+      disItr->second.user->deferredCount--;
+
+      HTTPCommand *tempCommand = theCurrentCommand;
+      theCurrentCommand = defferedItr->second.command;
+
+      getURLData ( theCurrentCommand->URL.c_str(), theCurrentCommand->requestID, disItr->second.params, theCurrentCommand->request == eGet );
+      
+      if (theCurrentCommand->data && theCurrentCommand->size)
+	disItr->second.user->startTransfer(theCurrentCommand);
+      else
+      {
+	  free(theCurrentCommand->data);
+	  delete(theCurrentCommand);
+      }
+  
+      theCurrentCommand = tempCommand;
+      deferredCommands.erase(disItr);
+    }
+    else
+      defferedItr++;
+  }
+
+  for ( int i = 0; i < (int)killList.size(); i++ ) 
+  {
     bz_removeNonPlayerConnectionHandler (i, this );
     delete(users[i]);
     users.erase(users.find(i));
@@ -184,7 +219,6 @@ void BZFSHTTPServer::update ( void )
 
 void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
 {
-
   theCurrentCommand = new HTTPCommand;
   theCurrentCommand->request = eGet;
   theCurrentCommand->FullURL = "/";
@@ -229,32 +263,57 @@ void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
   setURLDataSize ( (unsigned int)indexPage.size(), requestID );
   setURLData ( indexPage.c_str(), requestID );
 
-  if (theCurrentCommand->data) {
+  if (theCurrentCommand->data) 
+  {
     if (theCurrentCommand->size)
       user->startTransfer ( theCurrentCommand );
     else
+    {
+      delete(theCurrentCommand);
       free(theCurrentCommand->data);
+    }
   }
+  else
+    delete(theCurrentCommand);
 
   theCurrentCommand = NULL;
 }
 
 void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int /* requestID */, const URLParams &params )
 {
-  if (acceptURL(theCurrentCommand->URL.c_str())) {
-    int requestID = user->connection * 100 + (int)user->pendingCommands.size();
+  if (acceptURL(theCurrentCommand->URL.c_str()))
+  {
+    theCurrentCommand->requestID = user->connection * 100 + (int)user->pendingCommands.size();
 
-    getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
+    getURLData ( theCurrentCommand->URL.c_str(), theCurrentCommand->requestID, params, theCurrentCommand->request == eGet );
 
-    if (theCurrentCommand->data) {
-      if (theCurrentCommand->size)
-	user->startTransfer ( theCurrentCommand );
-      else
-	free(theCurrentCommand->data);
+    if (theCurrentCommand->deferred)
+    {
+      if (deferredCommands.find(theCurrentCommand->requestID) != deferredCommands.end())
+	delete(deferredCommands[theCurrentCommand->requestID].command);	  // this should not happen
+
+      // save it for later
+      user->deferredCount++;
+      deferredCommands[theCurrentCommand->requestID] = DeferredCommand(theCurrentCommand,user,params);
     }
-  } else {
-    delete(theCurrentCommand);
+    else
+    {
+      if (theCurrentCommand->data)
+      {
+	if (theCurrentCommand->size)
+	  user->startTransfer ( theCurrentCommand );
+	else
+	{
+	  free(theCurrentCommand->data);
+	   delete(theCurrentCommand);
+	}
+      }
+      else
+	 delete(theCurrentCommand);
+    }
   }
+  else
+    delete(theCurrentCommand);
 
   theCurrentCommand = NULL;
 }
@@ -330,6 +389,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->data = NULL;
 	      theCurrentCommand->size = 0;
 	      theCurrentCommand->docType = eText;
+	      theCurrentCommand->deferred = false;
+	      theCurrentCommand->requestID = -1;
 	      theCurrentCommand->returnCode = e200OK;
 
 	      URLParams urlparams;
@@ -359,6 +420,8 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      theCurrentCommand->data = NULL;
 	      theCurrentCommand->size = 0;
 	      theCurrentCommand->docType = eText;
+	      theCurrentCommand->deferred = false;
+	      theCurrentCommand->requestID = -1;
 	      theCurrentCommand->returnCode = e200OK;
 
 	      theCurrentCommand->URL = url_decode( theCurrentCommand->FullURL);
@@ -399,17 +462,40 @@ void BZFSHTTPServer::setURLDataSize ( size_t size, int /* requestID */)
   theCurrentCommand->size = size;
 }
 
-
 void BZFSHTTPServer::setURLData ( const char * data, int /* requestID */ )
 {
-  if (theCurrentCommand->data) {
+  if (theCurrentCommand->data)
+  {
     free(theCurrentCommand->data);
     theCurrentCommand->data = NULL;
   }
 
-  if (theCurrentCommand->size) {
+  if (theCurrentCommand->size)
+  {
     theCurrentCommand->data = (char*)malloc(theCurrentCommand->size);
     memcpy(theCurrentCommand->data,data,theCurrentCommand->size);
+  }
+}
+
+void BZFSHTTPServer::deferRequest ( int requestID )
+{
+   if (theCurrentCommand->request == requestID)
+     theCurrentCommand->deferred = true;
+   else
+   {
+     if (deferredCommands.find(requestID) != deferredCommands.end())
+       deferredCommands[requestID].command->deferred = true;
+   }
+}
+
+void BZFSHTTPServer::resumeRequest ( int requestID )
+{
+  if (theCurrentCommand->request == requestID)
+    theCurrentCommand->deferred = false;
+  else
+  {
+    if (deferredCommands.find(requestID) != deferredCommands.end())
+      deferredCommands[requestID].command->deferred = false;
   }
 }
 
@@ -441,6 +527,7 @@ BZFSHTTPServer::HTTPConnectedUsers::HTTPConnectedUsers(int connectionID )
 {
   connection = connectionID;
   pos = 0;
+  deferredCount = 0;
 }
 
 BZFSHTTPServer::HTTPConnectedUsers::~HTTPConnectedUsers()

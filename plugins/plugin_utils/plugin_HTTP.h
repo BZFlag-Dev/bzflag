@@ -61,6 +61,9 @@ protected:
   void setURLDataSize (size_t size, int requestID );
   void setURLData ( const char * data, int requestID );
 
+  void deferRequest ( int requestID );
+  void resumeRequest ( int requestID );
+
   typedef enum
   {
     eText,
@@ -103,6 +106,8 @@ protected:
     HTTPDocumentType  docType;
     HTTPReturnCode    returnCode;
     std::string	      redirectLocation;
+    bool	      deferred;
+    int		      requestID;
   }HTTPCommand;
 
   class HTTPConnectedUsers
@@ -127,11 +132,37 @@ protected:
 
     int connection;
 
+    int deferredCount;
+
     void killMe ( void );
   };
 
 private:
   std::map<int,HTTPConnectedUsers*> users;
+
+  class DeferredCommand
+  {
+  public:
+    HTTPCommand	*command;
+    HTTPConnectedUsers *user;
+    URLParams params;
+
+    DeferredCommand(HTTPCommand *c = NULL, HTTPConnectedUsers *u = NULL, const URLParams &p = URLParams() )
+    {
+      command = c;
+      user = u;
+      params = p;
+    }
+
+    DeferredCommand(const DeferredCommand& d)
+    {
+      command = d.command;
+      user = d.user;
+      params = d.params;
+    }
+  };
+
+  std::map<int,DeferredCommand> deferredCommands;
 
   std::string baseURL;
   std::string vdir;
