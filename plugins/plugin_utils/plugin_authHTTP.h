@@ -41,7 +41,7 @@ public:
   void init( const char* searchDir, const char *displayName, const char* description );
   void stop( void );
 
-  virtual bool accept ( const std::string& /*URL*/, const std::string &/*ip ){return true;}
+  virtual bool accept ( const std::string& /*URL*/, const std::string &/*ip*/ ){return true;}
   virtual bool getPage ( const char* /*url*/, int /*user*/, const URLParams* &/*parameters*/, bool /*get*/ = true) = 0;
 
   void setLoginMessage ( const char* page );
