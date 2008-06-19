@@ -48,10 +48,6 @@ public:
   virtual void pending ( int connectionID, void *d, unsigned int s );
   virtual void disconnect ( int connectionID );
 
-  // virtual functions to implement
-  virtual bool acceptURL ( const char *url ) = 0;
-  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true ) = 0;
-
   // so the server can know what it's address is
   const char * getBaseServerURL ( void );
   const char * getVDir ( void ) {return vdir.c_str();}
@@ -67,6 +63,9 @@ protected:
   void setURLDataSize (size_t size, int requestID );
   void setURLData ( const char * data, int requestID );
 
+  // virtual functions to implement
+  virtual bool acceptURL ( const char *url ) = 0;
+  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true ) = 0;
 
   typedef enum
   {

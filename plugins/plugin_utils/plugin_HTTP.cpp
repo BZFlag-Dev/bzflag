@@ -448,9 +448,9 @@ void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	      paramsFromString ( paramData, urlparams );
 
 	      processTheCommand(user,requestID,urlparams);
-	    } else if (indexer) {
-	      generateIndex(user,requestID);
 	    }
+	    else if (indexer)
+	      generateIndex(user,requestID);
 	  }
 	}
       }
