@@ -77,7 +77,7 @@ bool WindowsAddFileStack ( const char *szPathName, const char* fileMask, bool bR
 	    {
 	      if (strrchr(FilePath.c_str(),'.'))
 	      {
-		if ( stricmp(strrchr(FilePath.c_str(),'.')+1, extenstionSearch.c_str() ) == 0 )
+		if ( compare_nocase(std::string(strrchr(FilePath.c_str(),'.')+1), extenstionSearch ) == 0 )
 		  list.push_back(FilePath);
 	      }
 	    }
