@@ -320,6 +320,7 @@ void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bo
   memcpy(t,inData,size);
   t[size] = 0;
   data += t;
+  free(t);
 
   if (complete)
   {
