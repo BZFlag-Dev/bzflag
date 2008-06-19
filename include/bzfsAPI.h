@@ -1782,15 +1782,15 @@ class bz_GenericCallback
 {
 public:
   virtual ~bz_GenericCallback(){};
-  virtual void call ( void *param ) = 0;
+  virtual bool call ( void *param ) = 0;
 };
 
-typedef void (*bz_GenericCallbackFunc) ( void *param );
+typedef bool (*bz_GenericCallbackFunc) ( void *param );
 
 BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callback );
-BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc *callback );
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc callback );
 BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallback *callback );
-BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc *callback );
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc callback );
 
 BZF_API bool bz_callCallback ( const char* name, void *param );
 

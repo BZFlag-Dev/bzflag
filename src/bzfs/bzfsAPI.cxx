@@ -3098,7 +3098,7 @@ BZF_API bool bz_removeCustomPluginHandler(const char *extension, bz_APIPluginHan
 
 // generic callback system
 std::map<std::string, bz_GenericCallback*> callbackClasses;
-std::map<std::string, bz_GenericCallbackFunc*> callbackFunctions;
+std::map<std::string, bz_GenericCallbackFunc> callbackFunctions;
 
 BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callback )
 {
@@ -3115,7 +3115,7 @@ BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callbac
   return true;
 }
 
-BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc *callback )
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc callback )
 {
   if (!name || ! callback)
     return false;
@@ -3145,7 +3145,7 @@ BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallback *callback 
   return true;
 }
 
-BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc *callback )
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc callback )
 {
   if (!name || ! callback)
     return false;
@@ -3169,17 +3169,11 @@ BZF_API bool bz_callCallback ( const char* name, void *param )
 
   std::map<std::string, bz_GenericCallback*>::iterator classItr = callbackClasses.find(callbackName);
   if (classItr != callbackClasses.end())
-  {
-    classItr->second->call(param);
-    return true;
-  }
+    return classItr->second->call(param);
 
-  std::map<std::string, bz_GenericCallbackFunc*>::iterator funcItr = callbackFunctions.find(callbackName);
+  std::map<std::string, bz_GenericCallbackFunc>::iterator funcItr = callbackFunctions.find(callbackName);
   if (funcItr != callbackFunctions.end())
-  {
-    (*funcItr->second)(param);
-    return true;
-  }
+    return (*funcItr->second)(param);
   return false;
 }
 
