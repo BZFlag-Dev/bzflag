@@ -28,16 +28,18 @@
 HUDuiScrollListItem::HUDuiScrollListItem() : HUDuiControl(), stringValue(""), label(new HUDuiLabel)
 {
 	label->setString("");
+	label->setFontFace(getFontFace());
 }
 
 HUDuiScrollListItem::HUDuiScrollListItem(std::string data) : HUDuiControl(), stringValue(data), label(new HUDuiLabel)
 {
 	label->setString(data);
+	label->setFontFace(getFontFace());
 }
 
 HUDuiScrollListItem::HUDuiScrollListItem(HUDuiLabel* data) : HUDuiControl(), stringValue(data->getString()), label(data)
 {
-  // do nothing
+  label->setFontFace(getFontFace());
 }
 
 HUDuiScrollListItem::~HUDuiScrollListItem()
@@ -64,10 +66,12 @@ void HUDuiScrollListItem::shorten(float width)
 	FontManager &fm = FontManager::instance();
 	std::string tempStr = stringValue;
 
+	int error = getFontFace()->getFMFace(); // CAUSING CRASHES, NOT SURE WHY
 	// skip if it already fits
-	if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.c_str()) <= width)
-		return;
+	//if (fm.getStringWidth(getFontFace()->getFMFace(), 12, "liar") <= width)
+	//	return;
 
+	/*
 	// expensive
 	UTF8StringItr lastPos = stringValue.c_str();
 	for (UTF8StringItr str = lastPos; str.getBufferFromHere() != NULL; ++str) {
@@ -79,6 +83,7 @@ void HUDuiScrollListItem::shorten(float width)
 		lastPos = str;
 	}
 	label->setString(tempStr.substr(0, lastPos.getBufferFromHere() - tempStr.c_str()));
+	*/
 }
 
 void HUDuiScrollListItem::doRender()
