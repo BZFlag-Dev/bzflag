@@ -3096,6 +3096,93 @@ BZF_API bool bz_removeCustomPluginHandler(const char *extension, bz_APIPluginHan
 #endif
 }
 
+// generic callback system
+std::map<std::string, bz_GenericCallback*> callbackClasses;
+std::map<std::string, bz_GenericCallbackFunc*> callbackFunctions;
+
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator itr = callbackClasses.find(callbackName);
+  if (itr != callbackClasses.end())
+    return false;
+
+  callbackClasses[callbackName] = callback;
+  return true;
+}
+
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallbackFunc*>::iterator itr = callbackFunctions.find(callbackName);
+  if (itr != callbackFunctions.end())
+    return false;
+
+  callbackFunctions[callbackName] = callback;
+  return true;
+}
+
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallback *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator itr = callbackClasses.find(callbackName);
+  if (itr == callbackClasses.end())
+    return false;
+
+  callbackClasses.erase(itr);
+  return true;
+}
+
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallbackFunc*>::iterator itr = callbackFunctions.find(callbackName);
+  if (itr == callbackFunctions.end())
+    return false;
+
+  callbackFunctions.erase(itr);
+  return true;
+}
+
+BZF_API bool bz_callCallback ( const char* name, void *param )
+{
+  if (!name)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator classItr = callbackClasses.find(callbackName);
+  if (classItr != callbackClasses.end())
+  {
+    classItr->second->call(param);
+    return true;
+  }
+
+  std::map<std::string, bz_GenericCallbackFunc*>::iterator funcItr = callbackFunctions.find(callbackName);
+  if (funcItr != callbackFunctions.end())
+  {
+    (*funcItr->second)(param);
+    return true;
+  }
+  return false;
+}
+
 // team info
 BZF_API int bz_getTeamCount(bz_eTeamType _team)
 {

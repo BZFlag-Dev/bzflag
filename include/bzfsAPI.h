@@ -1778,6 +1778,22 @@ public:
 BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
+class bz_GenericCallback
+{
+public:
+  virtual ~bz_GenericCallback(){};
+  virtual void call ( void *param ) = 0;
+};
+
+typedef void (*bz_GenericCallbackFunc) ( void *param );
+
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callback );
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc *callback );
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallback *callback );
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc *callback );
+
+BZF_API bool bz_callCallback ( const char* name, void *param );
+
 // team info
 BZF_API int bz_getTeamCount (bz_eTeamType team );
 BZF_API int bz_getTeamScore (bz_eTeamType team );
