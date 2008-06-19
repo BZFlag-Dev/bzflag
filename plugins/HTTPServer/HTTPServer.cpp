@@ -8,6 +8,8 @@
 
 std::map<std::string,BZFSHTTPVDir*> virtualDirs;
 
+bool registered = false;
+
 BZ_GET_PLUGIN_VERSION
 
 bool RegisterVDir ( void* param)
@@ -102,27 +104,39 @@ HTTPServer *server = NULL;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
-  bz_registerCallBack("RegisterHTTPDVDir",&RegisterVDir);
-  bz_registerCallBack("RemoveHTTPDVDir",&RemoveVDir);
+  registered = bz_callbackExists("RegisterHTTPDVDir");
 
-  bz_registerEvent (bz_eTickEvent,server);
-  bz_registerEvent (bz_eNewNonPlayerConnection,server);
+  if (!registered)
+  {
+    bz_registerCallBack("RegisterHTTPDVDir",&RegisterVDir);
+    bz_registerCallBack("RemoveHTTPDVDir",&RemoveVDir);
 
-  if(server)
-    delete(server);
-  server = new HTTPServer;
+    bz_registerEvent (bz_eTickEvent,server);
+    bz_registerEvent (bz_eNewNonPlayerConnection,server);
 
-  bz_debugMessage(4,"HTTPServer plug-in loaded");
+    if(server)
+      delete(server);
+    server = new HTTPServer;
+
+    registered = true;
+    bz_debugMessage(4,"HTTPServer plug-in loaded");
+  }
+  else
+    bz_debugMessage(1,"HTTPServer *WARNING* plug-in loaded more then once, this instance will not be used");
+
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  bz_removeCallBack("RegisterHTTPDVDir",&RegisterVDir);
-  bz_removeCallBack("RemoveHTTPDVDir",&RemoveVDir);
+  if (registered)
+  {
+    bz_removeCallBack("RegisterHTTPDVDir",&RegisterVDir);
+    bz_removeCallBack("RemoveHTTPDVDir",&RemoveVDir);
 
-  bz_removeEvent (bz_eTickEvent,server);
-  bz_removeEvent (bz_eNewNonPlayerConnection,server);
+    bz_removeEvent (bz_eTickEvent,server);
+    bz_removeEvent (bz_eNewNonPlayerConnection,server); 
+  }
 
   if(server)
     delete(server);
