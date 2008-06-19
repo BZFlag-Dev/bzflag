@@ -22,23 +22,18 @@
 #include "HUDuiControl.h"
 
 #include "HUDuiLabel.h"
-
 #include <string>
-
-#include "BzfEvent.h"
 
 class HUDuiScrollListItem : public HUDuiControl {
 	public:
+			HUDuiScrollListItem();
 			HUDuiScrollListItem(std::string data);
 			HUDuiScrollListItem(HUDuiLabel* data);
 			~HUDuiScrollListItem();
 			
-		std::string getValue();
-		
-		//void setSize(float width, float height);
 		void setFontSize(float size);
-		
 		void shorten(float width);
+		std::string getValue();
 
 	protected:
 		void doRender();
