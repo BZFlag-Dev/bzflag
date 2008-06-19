@@ -293,7 +293,7 @@ void WebReport::flushTasks ( void )
 
     for (size_t s = 0; s < tasks.size(); s++ )
     {
-      if ( tasks[s] = task)
+      if ( tasks[s] == task)
       {
 	tasks.erase(tasks.begin()+s);
 	s = tasks.size();
