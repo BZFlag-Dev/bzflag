@@ -135,7 +135,7 @@ void BZFSAUTHHTTPServer::setLoginMessage ( const std::string& page )
   loginMessage = page;
 }
 
-void BZFSAUTHHTTPServer::getURLData(const char* url, int requestID, const URLParams &parameters, bool get)
+void BZFSAUTHHTTPServer::getURLData(const char* /*url*/, int requestID, const URLParams &/*parameters*/, bool /*get*/)
 {
   flushTasks();
 

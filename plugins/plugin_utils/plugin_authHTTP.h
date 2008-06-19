@@ -53,7 +53,7 @@ public:
   std::vector<TokenTask*> tasks;
 
 protected:
-  virtual bool acceptURL ( const char *url ){return true;}
+  virtual bool acceptURL ( const char * /*url*/ ){return true;}
   virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
 
   void flushTasks ( void );
