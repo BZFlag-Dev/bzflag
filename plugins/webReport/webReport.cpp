@@ -38,9 +38,6 @@ public:
 
   void init(const char* tDir);
 
-  virtual bool acceptURL(const char *url) { return true; }
-  virtual void getURLData(const char* url, int requestID, const URLParams &parameters, bool get = true);
-
   void loadDefaultTemplates(void);
 
   virtual void keyCallback(std::string &data, const std::string &key);
@@ -61,6 +58,10 @@ public:
   void flushTasks ( void );
 
   Templateiser templateSystem;
+
+protected:
+  virtual bool acceptURL(const char *url) { return true; }
+  virtual void getURLData(const char* url, int requestID, const URLParams &parameters, bool get = true);
 };
 
 WebReport webReport("report");
@@ -352,7 +353,7 @@ void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bo
 	    {
 	      for(size_t g = 0; g < groups.size(); g++ )
 	      {
-		if (stricmp(groups[g].c_str(),validGroups[vg].c_str()) == 0)
+		if (compare_nocase(groups[g],validGroups[vg]) == 0)
 		  oneGroupIsIn = true;
 	      }
 	    }
