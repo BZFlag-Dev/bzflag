@@ -1794,6 +1794,9 @@ BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc callba
 
 BZF_API bool bz_callCallback ( const char* name, void *param );
 
+BZF_API bool bz_callbackExists ( const char* name );
+
+
 // team info
 BZF_API int bz_getTeamCount (bz_eTeamType team );
 BZF_API int bz_getTeamScore (bz_eTeamType team );

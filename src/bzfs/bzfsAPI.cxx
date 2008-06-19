@@ -3177,6 +3177,23 @@ BZF_API bool bz_callCallback ( const char* name, void *param )
   return false;
 }
 
+BZF_API bool bz_callbackExists ( const char* name )
+{
+  if (!name)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator classItr = callbackClasses.find(callbackName);
+  if (classItr != callbackClasses.end())
+    return true;
+
+  std::map<std::string, bz_GenericCallbackFunc>::iterator funcItr = callbackFunctions.find(callbackName);
+  if (funcItr != callbackFunctions.end())
+    return true;
+  return false;
+}
+
 // team info
 BZF_API int bz_getTeamCount(bz_eTeamType _team)
 {
