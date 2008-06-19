@@ -15,6 +15,7 @@ SUBDIRS = \
 	fastmap \
 	flagStay \
 	hiddenAdmin \
+	HTTPServer \
 	httpTest \
 	keepaway \
 	killall \

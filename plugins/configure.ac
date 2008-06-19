@@ -351,6 +351,7 @@ AC_CONFIG_FILES([
 	flagStay/Makefile
 	hiddenAdmin/Makefile
 	httpTest/Makefile
+	HTTPServer/Makefile
 	keepaway/Makefile
 	killall/Makefile
 	koth/Makefile
