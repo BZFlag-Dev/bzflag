@@ -104,7 +104,7 @@ BZFSAUTHHTTPServer::~BZFSAUTHHTTPServer()
   }
 }
 
-void BZFSAUTHHTTPServer::init( const char* searchDir, const char *displayName, const char* description )
+void BZFSAUTHHTTPServer::init( const char* searchDir, const char *displayName, const char* /*description*/ )
 {
   if (searchDir)
     templateSystem.addSearchPath(searchDir);
@@ -120,7 +120,6 @@ void BZFSAUTHHTTPServer::stop( void )
 {
   shutdownHTTP();
 }
-
 
 void BZFSAUTHHTTPServer::setLoginMessage ( const char* page )
 {
@@ -156,7 +155,7 @@ void BZFSAUTHHTTPServer::flushTasks ( void )
 
     for (size_t s = 0; s < tasks.size(); s++ )
     {
-      if ( tasks[s] = task)
+      if ( tasks[s]== task)
       {
 	tasks.erase(tasks.begin()+s);
 	s = tasks.size();
