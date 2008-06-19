@@ -3122,7 +3122,7 @@ BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc call
 
   std::string callbackName = name;
 
-  std::map<std::string, bz_GenericCallbackFunc*>::iterator itr = callbackFunctions.find(callbackName);
+  std::map<std::string, bz_GenericCallbackFunc>::iterator itr = callbackFunctions.find(callbackName);
   if (itr != callbackFunctions.end())
     return false;
 
@@ -3152,7 +3152,7 @@ BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc callba
 
   std::string callbackName = name;
 
-  std::map<std::string, bz_GenericCallbackFunc*>::iterator itr = callbackFunctions.find(callbackName);
+  std::map<std::string, bz_GenericCallbackFunc>::iterator itr = callbackFunctions.find(callbackName);
   if (itr == callbackFunctions.end())
     return false;
 
