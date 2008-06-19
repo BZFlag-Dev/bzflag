@@ -4,13 +4,13 @@
 #include "plugin_authHTTP.h"
 
 
-TokenTask::TokenTask(BZFSAUTHHTTPServer *s)
+AuthTokenTask::AuthTokenTask(BZFSAUTHHTTPServer *s)
 {
   server = s;
   requestID = -1;
 }
 
-void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
+void AuthTokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
 {
   char *t = (char*)malloc(size+1);
   memcpy(t,inData,size);
@@ -68,7 +68,7 @@ void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bo
   }
 }
 
-void TokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
+void AuthTokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
 {
   if (!server)
     return; // fucked
@@ -77,7 +77,7 @@ void TokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
   server->tasksToFlush.push_back(this);
 }
 
-void TokenTask::error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+void AuthTokenTask::error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
 {
   if (!server)
     return; // fucked
@@ -152,7 +152,7 @@ void BZFSAUTHHTTPServer::flushTasks ( void )
 {
   for (size_t i = 0; i < tasksToFlush.size(); i++)
   {
-    TokenTask *task = tasksToFlush[i];
+    AuthTokenTask *task = tasksToFlush[i];
 
     for (size_t s = 0; s < tasks.size(); s++ )
     {

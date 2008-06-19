@@ -15,10 +15,10 @@ class BZFSAUTHHTTPServer;
 
 // used to do the async token verification
 
-class TokenTask : public bz_BaseURLHandler
+class AuthTokenTask : public bz_BaseURLHandler
 {
 public:
-  TokenTask(BZFSAUTHHTTPServer *s);
+  AuthTokenTask(BZFSAUTHHTTPServer *s);
 
   virtual void done ( const char* /*URL*/, void * data, unsigned int size, bool complete );
   virtual void timeout ( const char* /*URL*/, int /*errorCode*/ );
@@ -49,8 +49,8 @@ public:
 
   std::map<int,bool> pendingAuths;
 
-  std::vector<TokenTask*> tasksToFlush;
-  std::vector<TokenTask*> tasks;
+  std::vector<AuthTokenTask*> tasksToFlush;
+  std::vector<AuthTokenTask*> tasks;
 
 protected:
   virtual bool acceptURL ( const char * /*url*/ ){return true;}
