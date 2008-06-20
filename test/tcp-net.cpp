@@ -15,6 +15,22 @@
 
 #ifdef TEST_NET
 
+int sleep_var;
+
+void sleep_thread(void *)
+{
+    sleep_var = 0;
+    while(1)
+    {
+        if(sleep_var != 0)
+        {
+            _sleep(sleep_var);
+            sleep_var = 0;
+        }
+        _sleep(1);
+    }
+}
+
 class MyServerListener : public TCPServerDataPendingListener
 {
     public:
@@ -41,7 +57,11 @@ class MyServerListener : public TCPServerDataPendingListener
                 if(len >= 2048) break;
                 strncpy(buf, (char*)data, len);
                 buf[len] = 0;
-                printf("%s\n", buf);
+                printf("CLI: %s\n", buf);
+                int cli, dat;
+                sscanf(buf, "%d sends %d", &cli, &dat);
+                sprintf(buf, "thank you %d for %d", cli, dat);
+                peer->sendData(1, buf);
             }
             peer->flushPackets();
         }
@@ -55,8 +75,26 @@ class MyServerListener : public TCPServerDataPendingListener
 
         bool end;
     private:
-        std::set<TCPServerConnection *> connSet;
-        
+        std::set<TCPServerConnection*> connSet;
+};
+
+class MyClientListener : public TCPClientDataPendingListener
+{
+    public:
+        void pending ( TCPClientConnection *connection, int count )
+        {
+            char buf[2048];
+            tvPacketList& packets = connection->getPackets();
+            for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
+            {
+                unsigned int len;
+                unsigned char * data = (*itr).get(len);
+                if(len >= 2048) break;
+                strncpy(buf, (char*)data, len);
+                buf[len] = 0;
+                printf("SRV: %s\n", buf);
+            }
+        }
 };
 
 void test_listen(void *)
@@ -83,6 +121,8 @@ void test_connect(void *number)
     const int NR_CLIENTS = 10;
     int i;
     TCPClientConnection* client[NR_CLIENTS];
+    MyClientListener listener[NR_CLIENTS];
+
     for(i = 0; i < NR_CLIENTS; i++)
     {
         client[i] = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
@@ -91,16 +131,20 @@ void test_connect(void *number)
             printf("cannot connect!");
             return;
         }
+        client[i]->addListener(&listener[i]);
     }
 
     srand((int)clock());
     
     for(i = 0; i < 30; i++)
     {
-        _sleep(rand()%100);
+        sleep_var = rand()%300;
+        while(sleep_var != 0)
+            TCPConnection::instance().update();
+
         int cli = rand() % 10;
         char msg[1024];
-        sprintf(msg, "%d sends data", cli);
+        sprintf(msg, "%d sends %d", cli, rand() % 1000);
         client[cli]->sendData(0, msg);
     }
 
@@ -114,6 +158,7 @@ void test_connect(void *number)
 
 void test_net()
 {
+    _beginthread(sleep_thread, 0, NULL);
     // initialize the net library
     TCPConnection::instance();
 

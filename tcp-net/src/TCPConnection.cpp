@@ -374,7 +374,7 @@ teTCPError TCPServerConnectedPeer::sendData ( int opcode, void *data, int len )
   char header[4];
   *(short int*)header = (short int)opcode;
   *(short int*)(header + 2) = (short int)len;
-  int lenSent = net_TCP_Send(socket,header,len);
+  int lenSent = net_TCP_Send(socket,header,4);
   if (lenSent < 4)
     return setError(eTCPConnectionFailed);
 
