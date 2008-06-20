@@ -39,17 +39,18 @@ class MyServerListener : public TCPServerDataPendingListener
                 unsigned int len;
                 unsigned char * data = (*itr).get(len);
                 if(len >= 2048) break;
-                strcpy(buf, (char*)data);
+                strncpy(buf, (char*)data, len);
                 buf[len] = 0;
                 printf("%s\n", buf);
             }
+            peer->flushPackets();
         }
 
         void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
         {
             printf("disconnected!\n");
             connSet.erase(connection);
-            end = 1;
+            //end = 1;
         }
 
         bool end;
@@ -77,22 +78,38 @@ void test_listen(void *)
     }
 }
 
-void test_connect(void *)
+void test_connect(void *number)
 {
-    TCPClientConnection* client = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
-    if(!client)
+    const int NR_CLIENTS = 10;
+    int i;
+    TCPClientConnection* client[NR_CLIENTS];
+    for(i = 0; i < NR_CLIENTS; i++)
     {
-        printf("cannot connect!");
-        return;
+        client[i] = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
+        if(!client[i])
+        {
+            printf("cannot connect!");
+            return;
+        }
     }
+
+    srand((int)clock());
     
-    _sleep(500);
-    client->sendData(0, "just another text");
-    _sleep(500);
+    for(i = 0; i < 30; i++)
+    {
+        _sleep(rand()%100);
+        int cli = rand() % 10;
+        char msg[1024];
+        sprintf(msg, "%d sends data", cli);
+        client[cli]->sendData(0, msg);
+    }
 
-    client->disconnect();
 
-    TCPConnection::instance().deleteClientConnection(client);
+    for(i = 0; i < NR_CLIENTS; i++)
+    {
+        client[i]->disconnect();
+        TCPConnection::instance().deleteClientConnection(client[i]);
+    }
 }
 
 void test_net()
