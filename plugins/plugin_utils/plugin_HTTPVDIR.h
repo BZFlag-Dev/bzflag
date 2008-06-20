@@ -29,6 +29,40 @@
 #include <map>
 #include "bzfsAPI.h"
 
+typedef enum 
+{
+  eUnknown = 0,
+  eHead,
+  eGet,
+  ePost,
+  ePut,
+  eDelete,
+  eTrace,
+  eOptions,
+  eConnect,
+  eOther
+}HTTPRequestType;
+
+class HTTPRequest
+{
+public:
+  HTTPRequest() : requestID(-1), request(eUnknown){};
+
+  int		  sessionID;
+  int		  requestID;
+  HTTPRequestType request;
+
+  std::string vdir;
+  std::string resource;
+  std::map<std::string, std::string> paramaters;
+
+  std::map<std::string, std::string> headers;
+  std::map<std::string, std::string> cookies;
+
+  std::string body;
+  std::string baseURL;
+};
+
 class HTTPReply
 {
 public:
@@ -53,12 +87,12 @@ public:
 
   DocumentType docType;
   ReturnCode  returnCode;
-  std::vector<std::string> header;
+  std::map<std::string, std::string> headers;
+  std::map<std::string, std::string> cookies;
+
   std::string body;
   
   std::string redirectLoc;
-
-  std::string baseURL;
 };
 
 class BZFSHTTPVDir 
@@ -81,8 +115,7 @@ public:
   virtual bool useAuth ( void ){return false;}
   virtual bool supportPut ( void ){return false;}
 
-  virtual bool generatePage ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID ) = 0;
-  virtual bool put ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID, void* data, size_t size );
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID ) = 0;
 
   virtual bool resumeTask ( int /*userID*/, int /*requestID*/ ) {return true;}
 };
