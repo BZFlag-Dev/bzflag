@@ -84,7 +84,7 @@ public:
   virtual bool generatePage ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID ) = 0;
   virtual bool put ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID, void* data, size_t size );
 
-  virtual bool resumeTask ( int userID, int requestID ) {return true;}
+  virtual bool resumeTask ( int /*userID*/, int /*requestID*/ ) {return true;}
 };
 
 #endif //_PLUGIN_HTTP_H_
