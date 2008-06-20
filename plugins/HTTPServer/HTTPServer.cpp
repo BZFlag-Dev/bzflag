@@ -5,6 +5,7 @@
 #include "plugin_utils.h"
 #include "plugin_HTTPVDIR.h"
 #include <algorithm>
+#include <sstream>
 
 std::map<std::string,BZFSHTTPVDir*> virtualDirs;
 
@@ -12,7 +13,7 @@ bool registered = false;
 
 BZ_GET_PLUGIN_VERSION
 
-bool RegisterVDir ( void* param)
+bool RegisterVDir ( void* param )
 {
   BZFSHTTPVDir *handler = (BZFSHTTPVDir*)param;
   if (!handler)
@@ -29,7 +30,7 @@ bool RegisterVDir ( void* param)
   return true;
 }
 
-bool RemoveVDir ( void* param)
+bool RemoveVDir ( void* param )
 {
   BZFSHTTPVDir *handler = (BZFSHTTPVDir*)param;
   if (!handler)
@@ -63,16 +64,22 @@ typedef enum
 class HTTPConnection
 {
 public:
+  HTTPConnection() : connectionID(-1), requestComplete(false), headerComplete(false){};
+
   int connectionID;
 
   std::string currentData;
 
   std::string vdir;
   std::string resource;
+  std::vector<std::string> header;
+  std::string body;
+  std::string host;
 
   HTTPRequestType request;
+  bool		  headerComplete;
+  bool		  requestComplete;
 
-  std::vector<std::string> headerLines;
   std::map<std::string,std::string> paramaters;
 };
 
@@ -108,15 +115,15 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 
   if (!registered)
   {
+    if(server)
+      delete(server);
+    server = new HTTPServer;
+
     bz_registerCallBack("RegisterHTTPDVDir",&RegisterVDir);
     bz_registerCallBack("RemoveHTTPDVDir",&RemoveVDir);
 
     bz_registerEvent (bz_eTickEvent,server);
     bz_registerEvent (bz_eNewNonPlayerConnection,server);
-
-    if(server)
-      delete(server);
-    server = new HTTPServer;
 
     registered = true;
     bz_debugMessage(4,"HTTPServer plug-in loaded");
@@ -220,53 +227,82 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
   connection.currentData += t;
   free(t);
 
+  std::stringstream stream(connection.currentData);
+
   // see what our status is
   if (!connection.request)
   {
-    std::string &data = connection.currentData;
-    const char *p = strstr(data.c_str(),"\r\n");
+    std::string request, resource, httpVersion;
+    stream >> request >> resource >> httpVersion;
 
-    if (p != NULL )
+    if (request.size() && resource.size() && httpVersion.size())
     {
-      size_t offset = p-data.c_str();
-      // ok lets get a new string that is just the data
-      std::string command;
-      std::copy(data.begin(),data.begin()+offset,command.begin());
+      if (compare_nocase(request,"get") == 0)
+	connection.request = eGet;
+      else if (compare_nocase(request,"head") == 0)
+	connection.request = eHead;
+      else if (compare_nocase(request,"post") == 0)
+	connection.request = ePost;
+      else if (compare_nocase(request,"put") == 0)
+	connection.request = ePut;
+      else if (compare_nocase(request,"delete") == 0)
+	connection.request = eDelete;
+      else if (compare_nocase(request,"trace") == 0)
+	connection.request = eTrace;
+      else if (compare_nocase(request,"options") == 0)
+	connection.request = eOptions;
+      else if (compare_nocase(request,"connect") == 0)
+	connection.request = eConnect;
+      else 
+	connection.request = eOther;
 
-      // increment past the command to the start of the \r\n so the rest can
-      // parse it, since they need to find the \r\n\r\n and it could be right after this command if it's a simple command
-      data.erase(data.begin(),data.begin()+offset);
+      if (httpVersion != "HTTP/1.1" && httpVersion != "HTTP/1.0")
+	bz_debugMessagef(1,"HTTPServer HTTP version of %s requested",httpVersion.c_str());
 
-      std::vector<std::string> params = tokenize(command,std::string(" "),0,false);
-
-      if (params.size() > 2)
+      if (resource.size() > 1)
       {
-	std::string request = tolower(params[0]);
-	if (request == "get")
-	  connection.request = eGet;
-	else if (request == "head")
-	  connection.request = eHead;
-	else if (request == "post")
-	  connection.request = ePost;
-	else if (request == "put")
-	  connection.request = ePut;
-	else if (request == "delete")
-	  connection.request = eDelete;
-	else if (request == "trace")
-	  connection.request = eTrace;
-	else if (request == "options")
-	  connection.request = eOptions;
-	else if (request == "connect")
-	  connection.request = eConnect;
-	else 
-	  connection.request = eOther;
+	size_t p = resource.find_first_of('/');
+	if (p != std::string::npos)
+	{
+	  if (p == 0)
+	    p = resource.find_first_of('/',p+1);
+
+	  if (p == std::string::npos ) // there is only one / so the stuff after the slash in the vdir and the resource is NULL
+	  {
+	    connection.vdir.resize(resource.size()-1);
+	    std::copy(resource.begin()+1,resource.end(),connection.vdir.begin());
+	  }
+	  else
+	  {
+	    connection.vdir.resize(p-1);
+	    std::copy(resource.begin()+1,resource.begin()+p,connection.vdir.begin());
+
+	    connection.resource.resize(resource.size()-p-1);
+	    std::copy(resource.begin()+p+1,resource.end(),connection.resource.begin());
+	  }
+	}
       }
     }
   }
-  
+
   if (connection.request)
   {
-    // umm yeah do stuff to see if we have all the data for our request
+    if (!connection.requestComplete && (connection.request == ePost ||connection.request == ePut) ) // if the request is a post, tell the client to send us the rest of the body
+      sendContinue(connectionID);
+
+    if (!connection.headerComplete)
+    {
+      bool done = false;
+
+      while (!done)
+      {
+	std::string key;
+	stream >> key;
+      }
+     // stream.getline()
+
+    }
+    // parse out as many of the header lines as we have until we reach the end
   }
 }
 
