@@ -11,6 +11,7 @@
 */
 
 #include "plugin_HTTPVDIR.h"
+#include "plugin_utils.h"
 BZFSHTTPVDir::BZFSHTTPVDir()
 {
   bz_loadPlugin("HTTPServer",NULL);
@@ -24,6 +25,23 @@ void BZFSHTTPVDir::registerVDir ( void )
 BZFSHTTPVDir::~BZFSHTTPVDir()
 {
   bz_callCallback("RemoveHTTPDVDir",this);
+}
+std::string BZFSHTTPVDir::getBaseURL ( void )
+{
+  std::string URL = "http://";
+  std::string host = "localhost";
+  if (bz_getPublicAddr().size())
+    host = bz_getPublicAddr().c_str();
+
+  // make sure it has the port
+  if ( strrchr(host.c_str(),':') == NULL )
+    host += format(":%d",bz_getPublicPort());
+
+  URL += host +"/";
+  URL += getVDir();
+  URL += "/";
+
+  return URL;
 }
 
 

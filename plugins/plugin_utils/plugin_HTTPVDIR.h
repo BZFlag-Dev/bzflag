@@ -117,6 +117,9 @@ public:
   virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID ) = 0;
 
   virtual bool resumeTask ( int /*userID*/, int /*requestID*/ ) {return true;}
+
+protected:
+  std::string getBaseURL ( void );
 };
 
 #endif //_PLUGIN_HTTP_H_
