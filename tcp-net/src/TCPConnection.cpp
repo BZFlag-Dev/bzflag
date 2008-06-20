@@ -171,53 +171,32 @@ tvPacketList& TCPClientConnection::getPackets ( void )
 
 void TCPClientConnection::readData ( void )
 {
-  bool done = false;
-  int dataRead = 0;
+  unsigned char buffer[2048];
+  int offset = 0;
+  int read;
 
-  unsigned char  *chunk = (unsigned char*)malloc(readChunkSize);
-  unsigned char  *data = NULL;
-  int    totalSize = 0;
+  read = net_TCP_Recv(socket,buffer,4);
+  if (read < 4)
+    return;
 
-  while (!done)
-  {
-    dataRead =  net_TCP_Recv(socket, chunk, readChunkSize);
-    if (dataRead > 0)
-    {
-      if (data)
-        data = (unsigned char*)realloc(data,totalSize+dataRead);
-      else
-        data = (unsigned char*)malloc(dataRead);
+  int opcode = (int)(*(short int*)buffer);
+  int len = (int)(*(short int*)(buffer+2));
 
-      if (data)
-      {
-        memcpy(&data[totalSize],chunk,dataRead);
-        totalSize += dataRead;
+  if(len >= 2048)
+      return;
 
-        if (dataRead < readChunkSize)
-          done = true;
-      }
-      else  // there was an error
-        done = true;
+  read = net_TCP_Recv(socket,buffer,len);
+  if(read < len)
+    return;
 
-    }
-    else // there was an error
-      done = true;
-  }
-
-  if (chunk)
-    free(chunk);
-
-  if (data)
-  {
-    packetList.push_back(TCPPacket(data,totalSize));
-    free(data);
-  }
+  TCPPacket packet(buffer,len);
+  packetList.push_back(packet);
 
   // notify any listeners
   callDataPendingListeners((int)packetList.size());
 }
 
-teTCPError TCPClientConnection::sendData ( void *data, int len )
+teTCPError TCPClientConnection::sendData ( int opcode, void *data, int len )
 {
   if (!socket)
     return setError(eTCPSocketNFG);
@@ -225,7 +204,15 @@ teTCPError TCPClientConnection::sendData ( void *data, int len )
   if (!data || len < 1)
     return setError(eTCPDataNFG);
 
-  int lenSent = net_TCP_Send(socket,data,len);
+  // send the header first
+  char header[4];
+  *(short int*)header = (short int)opcode;
+  *(short int*)(header + 2) = (short int)len;
+  int lenSent = net_TCP_Send(socket,header,4);
+  if (lenSent < 4)
+    return setError(eTCPConnectionFailed);
+
+  lenSent = net_TCP_Send(socket,data,len);
 
   if (lenSent < len)
     return setError(eTCPConnectionFailed);
@@ -233,14 +220,14 @@ teTCPError TCPClientConnection::sendData ( void *data, int len )
   return setError(eTCPNoError);
 }
 
-teTCPError TCPClientConnection::sendData ( const char *data, int len )
+teTCPError TCPClientConnection::sendData ( int opcode, const char *data, int len )
 {
-  return sendData((void*)data,len);
+  return sendData(opcode, (void*)data,len);
 }
 
-teTCPError TCPClientConnection::sendData ( std::string data )
+teTCPError TCPClientConnection::sendData ( int opcode, std::string data )
 {
-  return sendData(data.c_str(),(int)data.size());
+  return sendData(opcode, data.c_str(),(int)data.size());
 }
 
 // data pending listeners
@@ -375,7 +362,7 @@ void TCPServerConnectedPeer::connect ( void* _socket )
   address = *net_TCP_GetPeerAddress(socket);
 }
 
-teTCPError TCPServerConnectedPeer::sendData ( void *data, int len )
+teTCPError TCPServerConnectedPeer::sendData ( int opcode, void *data, int len )
 {
   if (!socket)
     return setError(eTCPSocketNFG);
@@ -383,7 +370,15 @@ teTCPError TCPServerConnectedPeer::sendData ( void *data, int len )
   if (!data || len < 1)
     return setError(eTCPDataNFG);
 
-  int lenSent = net_TCP_Send(socket,data,len);
+  // send the header first
+  char header[4];
+  *(short int*)header = (short int)opcode;
+  *(short int*)(header + 2) = (short int)len;
+  int lenSent = net_TCP_Send(socket,header,len);
+  if (lenSent < 4)
+    return setError(eTCPConnectionFailed);
+
+  lenSent = net_TCP_Send(socket,data,len);
 
   if (lenSent < len)
     return setError(eTCPConnectionFailed);
@@ -391,14 +386,14 @@ teTCPError TCPServerConnectedPeer::sendData ( void *data, int len )
   return setError(eTCPNoError);
 }
 
-teTCPError TCPServerConnectedPeer::sendData ( const char *data, int len )
+teTCPError TCPServerConnectedPeer::sendData ( int opcode, const char *data, int len )
 {
-  return sendData((void*)data,len);
+  return sendData(opcode, (void*)data,len);
 }
 
-teTCPError TCPServerConnectedPeer::sendData ( std::string data )
+teTCPError TCPServerConnectedPeer::sendData ( int opcode, std::string data )
 {
-  return sendData(data.c_str(),(int)data.size());
+  return sendData(opcode, data.c_str(),(int)data.size());
 }
 
 bool TCPServerConnectedPeer::readData ( void )
@@ -406,38 +401,26 @@ bool TCPServerConnectedPeer::readData ( void )
   if (!socket)
     return false;
 
-  unsigned char buffer[513];
-  unsigned char *realData = NULL;
-  unsigned int realDataSize = 0;
+  unsigned char buffer[2048];
+  int offset = 0;
+  int read;
 
-  memset(buffer,0,513);
-  int read = net_TCP_Recv(socket,buffer,512);
-
-  if (read < 0)
+  read = net_TCP_Recv(socket,buffer,4);
+  if (read < 4)
     return false;
 
-  while ( read > 0 )
-  {
-    unsigned char *temp = realData;
-    realData = (unsigned char*)malloc(realDataSize+read);
-    if (temp)
-      memcpy(realData,temp,realDataSize);
+  int opcode = (int)(*(short int*)buffer);
+  int len = (int)(*(short int*)(buffer+2));
 
-    memcpy(&realData[realDataSize],buffer,read);
-    realDataSize += read;
-    if ( temp )
-      free (temp);
+  if(len >= 2048)
+      return false;
 
-    read = net_TCP_Recv(socket,buffer,512);
-  }
+  read = net_TCP_Recv(socket,buffer,len);
+  if(read < len)
+    return false;
 
-  if ( realData )
-  {
-    TCPPacket  packet(realData,realDataSize);
-    packetList.push_back(packet);
-
-    free(realData);
-  }
+  TCPPacket packet(buffer,len);
+  packetList.push_back(packet);
 
   return true;
 }

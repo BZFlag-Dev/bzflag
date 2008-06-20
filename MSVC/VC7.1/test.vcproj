@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough=""
 				WarningLevel="3"
@@ -33,10 +33,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../../ldap/Debug/ldap.lib ws2_32.lib ../../libgcrypt/Debug/libgcrypt.lib ../../libgpg-error/Debug/libgpg-error.lib"
+				AdditionalDependencies="../../ldap/Debug/ldap.lib ws2_32.lib ../../libgcrypt/Debug/libgcrypt.lib ../../libgpg-error/Debug/libgpg-error.lib ../../tcp-net/Debug/tcp-net.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="Libcmtd"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/test.pdb"
 				SubSystem="1"
@@ -135,7 +135,7 @@
 				RelativePath="..\..\test\ldap.cpp">
 			</File>
 			<File
-				RelativePath="..\..\test\net.cpp">
+				RelativePath="..\..\test\tcp-net.cpp">
 			</File>
 			<File
 				RelativePath="..\..\test\test.cpp">

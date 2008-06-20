@@ -104,9 +104,9 @@ public:
   void readData ( void );
 
   // data send
-  teTCPError sendData ( void *data, int len );
-  teTCPError sendData ( const char *data, int len );
-  teTCPError sendData ( std::string data );
+  teTCPError sendData ( int opcode, void *data, int len );
+  teTCPError sendData ( int opcode, const char *data, int len );
+  teTCPError sendData ( int opcode, std::string data );
 
   // utils
   void setReadChunkSize ( unsigned int size );
@@ -166,9 +166,9 @@ public:
   bool readData ( void );
 
   // data send
-  teTCPError sendData ( void *data, int len );
-  teTCPError sendData ( const char *data, int len );
-  teTCPError sendData ( std::string data );
+  teTCPError sendData ( int opcode, void *data, int len );
+  teTCPError sendData ( int opcode, const char *data, int len );
+  teTCPError sendData ( int opcode, std::string data );
 
   // client info
   unsigned int getUID ( void ){ return UID; }
