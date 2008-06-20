@@ -8,7 +8,10 @@ bool test_ret(int ret)
 {
     if(ret != LDAP_SUCCESS)
     {
-        fprintf(stderr, "ERROR: %s\n", ldap_err2string(ret));
+        //why on earth does this work fine in single threaded build
+        //but crashes in a multithreaded one ?
+        //fprintf(stderr, "ERROR: %s\n", ldap_err2string(ret));
+        printf("ERROR: %s\n", ldap_err2string(ret));
         return false;
     }
     else
@@ -139,7 +142,7 @@ void test_search()
     }
     
     ldap_msgfree(res);
-    
+
 }
 
 void test_modify()
@@ -180,14 +183,18 @@ void nputs(const char *str, size_t len)
         putchar(str[i]);
 }
 
-gcry_error_t test_gcry_init_rsa(gcry_ac_handle_t *handle)
+gcry_error_t test_rsa_init(gcry_ac_handle_t *handle)
 {
+    gcry_check_version(NULL);
     gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
+    // with secmem enabled it crashes with the output
+    // "operation is not possible without initialized secure memory"
+    // .. but i haven't found any way to initialize it yet
     gcry_error_t ret = gcry_ac_open(handle, GCRY_AC_RSA, 0);
     return ret;
 }
 
-gcry_error_t test_gcry_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *public_key, gcry_ac_key_t *secret_key)
+gcry_error_t test_rsa_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *public_key, gcry_ac_key_t *secret_key)
 {
     gcry_ac_key_pair_t key_pair;
 
@@ -201,10 +208,11 @@ gcry_error_t test_gcry_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *publ
     if(ret) return ret;
     *public_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
     *secret_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+    // if i destroy key_pair, the the data will become broken in the extracted keys
     return ret;
 }
 
-gcry_error_t test_gcry_encrypt(gcry_ac_handle_t handle, gcry_ac_key_t &public_key, const char *message, size_t message_len, char **cipher, size_t *cipher_len)
+gcry_error_t test_rsa_encrypt(gcry_ac_handle_t handle, gcry_ac_key_t &public_key, const char *message, size_t message_len, char **cipher, size_t *cipher_len)
 {
     gcry_ac_io_t io_message, io_cipher;
     gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, message_len);
@@ -213,7 +221,7 @@ gcry_error_t test_gcry_encrypt(gcry_ac_handle_t handle, gcry_ac_key_t &public_ke
     return gcry_ac_data_encrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, public_key, &io_message, &io_cipher);
 }
 
-gcry_error_t test_gcry_decrypt(gcry_ac_handle_t handle, gcry_ac_key_t &secret_key, const char *cipher, size_t cipher_len, char **message, size_t *message_len)
+gcry_error_t test_rsa_decrypt(gcry_ac_handle_t handle, gcry_ac_key_t &secret_key, const char *cipher, size_t cipher_len, char **message, size_t *message_len)
 {
     gcry_ac_io_t io_cipher, io_message;
     gcry_ac_io_init(&io_cipher, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
@@ -227,39 +235,43 @@ void test_gcry()
     gcry_error_t err;
 
     gcry_ac_handle_t handle;
-    err = test_gcry_init_rsa(&handle);
+    err = test_rsa_init(&handle);
 
     gcry_ac_key_t public_key, secret_key;
-    err = test_gcry_gen_key_pair(handle, &public_key, &secret_key);
+    err = test_rsa_gen_key_pair(handle, &public_key, &secret_key);
     if(err) return;
 
     char message[] = "let's see if this gets encrypted/decrypted properly";
     char *cipher = NULL;
     size_t cipher_len = 0;
 
-    err = test_gcry_encrypt(handle, public_key, message, strlen(message), &cipher, &cipher_len);
+    err = test_rsa_encrypt(handle, public_key, message, strlen(message), &cipher, &cipher_len);
     if(err) return;
-    printf("encrypted: %s\n"); nputs(cipher, cipher_len); printf("\n");
+    printf("encrypted: "); nputs(cipher, cipher_len); printf("\n");
 
     char *output = NULL;
     size_t output_len = 0;
  
-    err = test_gcry_decrypt(handle, secret_key, cipher, cipher_len, &output, &output_len);
+    err = test_rsa_decrypt(handle, secret_key, cipher, cipher_len, &output, &output_len);
     if(err) return;
     printf("decrypted: "); nputs(output, output_len); printf("\n");
 
-    free(cipher);
-    free(output);
+    gcry_free(cipher);
+    gcry_free(output);
+
     gcry_ac_key_destroy(public_key);
     gcry_ac_key_destroy(secret_key);
-    // no need to destroy the key_pair too after this
+    // this still leaves leaking memory allocated in the original key_pair
+    // but calling destroy the original key_pair after the last two lines crashes
+    // and instead of them it doesn't crash but still leaks
+    // so far it seems to be a bug in the library
     gcry_ac_close(handle);
 }
 
 int main(int argc, char* argv[])
 {
     test_gcry();
-    //test_ldap();
+    test_ldap();
     getch();
 
 	return 0;
