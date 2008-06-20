@@ -29,6 +29,38 @@
 #include <map>
 #include "bzfsAPI.h"
 
+class HTTPReply
+{
+public:
+  HTTPReply(): docType(eText), returnCode(e404NotFound){};
+
+  typedef enum
+  {
+    eText,
+    eOctetStream,
+    eBinary,
+    eHTML
+  }DocumentType;
+
+  typedef enum
+  {
+    e200OK,
+    e301Redirect,
+    e404NotFound,
+    e403Forbiden,
+    e500ServerError
+  }ReturnCode;
+
+  DocumentType docType;
+  ReturnCode  returnCode;
+  std::vector<std::string> header;
+  std::string body;
+  
+  std::string redirectLoc;
+
+  std::string baseURL;
+};
+
 class BZFSHTTPVDir 
 {
 public:
@@ -44,10 +76,15 @@ public:
 
   void registerVDir ( void );
 
-  virtual const char * getVDir ( void ){return NULL;}
+  virtual const char * getVDir ( void ) = 0;
+  virtual const char * getDescription ( void ){return "";}
   virtual bool useAuth ( void ){return false;}
+  virtual bool supportPut ( void ){return false;}
 
-  virtual PageStatus generatePage ( const char* /*vdir*/, const char* /*resource*/, int /*userID*/, int /*requestID*/ ){return e404;}
+  virtual bool generatePage ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID ) = 0;
+  virtual bool put ( HTTPReply &reply, const char* vdir, const char* resource, int userID, int requestID, void* data, size_t size );
+
+  virtual bool resumeTask ( int userID, int requestID ) {return true;}
 };
 
 #endif //_PLUGIN_HTTP_H_

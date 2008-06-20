@@ -27,6 +27,11 @@ BZFSHTTPVDir::~BZFSHTTPVDir()
   bz_callCallback("RemoveHTTPDVDir",this);
 }
 
+bool BZFSHTTPVDir::put ( HTTPReply &/*reply*/, const char* /*vdir*/, const char* /*resource*/, int /*userID*/, int /*requestID*/, void* /*data*/, size_t /*size*/ )
+{
+  return true;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

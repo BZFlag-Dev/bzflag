@@ -15,9 +15,12 @@ public:
   virtual ~HTTPTest(){};
 
   virtual const char * getVDir ( void ){return "test";}
-  virtual PageStatus generatePage ( const char* /*vdir*/, const char* /*resource*/, int /*userID*/, int /*requestID*/ )
+  virtual bool generatePage ( HTTPReply &reply, const char* /*vdir*/, const char* /*resource*/, int /*userID*/, int /*requestID*/ )
   {
-    return e200;
+    reply.returnCode = HTTPReply::e200OK;
+    reply.docType = HTTPReply::eText;
+    reply.body = "test";
+    return true;
   }
 };
 
