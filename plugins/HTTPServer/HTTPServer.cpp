@@ -105,12 +105,12 @@ public:
   class HTTPTask
   {
   public:
-    HTTPTask(HTTPReply& r);
+    HTTPTask(HTTPReply& r, bool noBody);
     HTTPTask(const HTTPTask& t);
 
     virtual ~HTTPTask (void){};
 
-    void generateBody (HTTPReply& r);
+    void generateBody (HTTPReply& r, bool noBody);
 
     bool update ( int connectionID );
 
@@ -121,7 +121,7 @@ public:
   class PendingHTTPTask : public HTTPTask
   {
   public:
-    PendingHTTPTask(HTTPReply& r, HTTPRequest &rq): HTTPTask(r), request(rq), reply(r){};
+    PendingHTTPTask(HTTPReply& r, HTTPRequest &rq, bool noBody): HTTPTask(r,noBody), request(rq), reply(r){};
     HTTPRequest request;
     HTTPReply reply;
   };
@@ -158,7 +158,7 @@ private:
   void send501Error ( int connectionID );
   void sendOptions ( int connectionID, bool p );
 
-  void generateIndex(int connectionID);
+  void generateIndex(int connectionID, const HTTPRequest &request);
   void generatePage(BZFSHTTPVDir* vdir, int connectionID, HTTPRequest &request);
 };
 
@@ -460,7 +460,7 @@ void HTTPServer::update ( void )
   }
 }
 
-void HTTPServer::generateIndex(int connectionID)
+void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
@@ -488,7 +488,7 @@ void HTTPServer::generateIndex(int connectionID)
 
   reply.body += "</body></html>";
 
-  connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply));
+  connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply,request.request == eHead));
   connection.update();
 }
 
@@ -512,10 +512,10 @@ void HTTPServer::generatePage(BZFSHTTPVDir* vdir, int connectionID, HTTPRequest 
   if (vdir->handleRequest(request,reply,connectionID))
   {
     reply.cookies["SessionID"] = format("%d",request.sessionID);
-    connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply));
+    connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply,request.request == eHead));
   }
   else
-    connection.pendingTasks.push_back(HTTPConnection::PendingHTTPTask(reply,request));
+    connection.pendingTasks.push_back(HTTPConnection::PendingHTTPTask(reply,request,request.request == eHead));
 
   connection.update();
 }
@@ -545,7 +545,7 @@ void HTTPServer::processRequest (  HTTPRequest &request, int connectionID )
     case eGet:
     case ePost:
       if(!vdir)
-	generateIndex(connectionID);
+	generateIndex(connectionID,request);
       else
 	generatePage(vdir,connectionID,request);
       break;
@@ -701,7 +701,7 @@ void HTTPConnection::update ( void )
 	if (vdir->handleRequest(pendingTask.request,pendingTask.reply,connectionID)) // if it is done and fire if off
 	{
 	  pendingTask.reply.cookies["SessionID"] = format("%d",pendingTask.request.sessionID);
-	  pendingTask.generateBody(pendingTask.reply);
+	  pendingTask.generateBody(pendingTask.reply,pendingTask.request.request == eHead);
 	  processingTasks.push_back(HTTPTask(pendingTask));
 
 	  std::vector<PendingHTTPTask>::iterator t = pendingItr;
@@ -737,12 +737,12 @@ const char* getMimeType ( HTTPReply::DocumentType docType )
   return "text/plain";
 }
 
-HTTPConnection::HTTPTask::HTTPTask(HTTPReply& r):pos(0)
+HTTPConnection::HTTPTask::HTTPTask(HTTPReply& r, bool noBody):pos(0)
 {
-  generateBody(r);
+  generateBody(r,noBody);
 }
 
-void HTTPConnection::HTTPTask::generateBody (HTTPReply& r)
+void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 {
   // start a new one
   page += "HTTP/1.1";
@@ -808,7 +808,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r)
 
   page += "\n";
 
-  if (r.body.size())
+  if (!noBody && r.body.size())
     page += r.body;
 }
 
