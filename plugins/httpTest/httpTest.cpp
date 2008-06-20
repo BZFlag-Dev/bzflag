@@ -15,17 +15,29 @@ public:
   virtual ~HTTPTest(){};
 
   virtual const char * getVDir ( void ){return "test";}
+  virtual bool supportPut ( void ){return true;}
+
   virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
   {
     reply.returnCode = HTTPReply::e200OK;
     reply.docType = HTTPReply::eHTML;
-    reply.body = format("<html><head></head><body>Your userID is %d<br>\n",userID);
+    if (request.request == ePut)
+    {
+      // read in what we got
+      // send them back what we got
+      reply.docType = HTTPReply::eOctetStream;
+      reply.body = request.body;
+    }
+    else
+    {
+      reply.body = format("<html><head></head><body>Your userID is %d<br>\n",userID);
 
-    reply.body += format("Your sessionID is %d<br>\n",request.sessionID);
-    reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a>";
-    reply.body += "<a href=\"" + request.baseURL + "link2\">Link2</a>";
- 
-    reply.body += "</body></html>";
+      reply.body += format("Your sessionID is %d<br>\n",request.sessionID);
+      reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a>";
+      reply.body += "<a href=\"" + request.baseURL + "link2\">Link2</a>";
+
+      reply.body += "</body></html>";
+    }
     return true;
   }
 };
