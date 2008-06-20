@@ -25,7 +25,7 @@ const char* bzu_GetTeamName ( bz_eTeamType team );
 std::string tolower(const std::string& s);
 std::string tolower(const char* s);
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
 std::string url_encode(const std::string &text);
 std::string url_decode(const std::string &text);

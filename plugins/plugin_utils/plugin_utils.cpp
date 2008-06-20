@@ -79,7 +79,7 @@ std::string format(const char* fmt, ...)
   return result;
 }
 
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes)
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset)
 {
   std::vector<std::string> tokens;
   int numTokens = 0;
@@ -87,7 +87,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
   std::ostringstream currentToken;
 
-  std::string::size_type pos = in.find_first_not_of(delims);
+  std::string::size_type pos = in.find_first_not_of(delims,offset);
   int currentChar  = (pos == std::string::npos) ? -1 : in[pos];
   bool enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
 
