@@ -47,7 +47,7 @@ public:
   virtual const char * getVDir ( void ){return NULL;}
   virtual bool useAuth ( void ){return false;}
 
-  virtual PageStatus generatePage ( const char* vdir, const char* resource, int userID, int requestID ){return e404;}
+  virtual PageStatus generatePage ( const char* /*vdir*/, const char* /*resource*/, int /*userID*/, int /*requestID*/ ){return e404;}
 };
 
 #endif //_PLUGIN_HTTP_H_
