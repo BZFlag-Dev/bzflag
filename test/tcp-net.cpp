@@ -11,7 +11,6 @@
 */
 
 #include "common.h"
-#include <set>
 
 #ifdef TEST_NET
 
@@ -41,8 +40,8 @@ class MyServerListener : public TCPServerDataPendingListener
 
         bool connect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer )
         {
-            printf("client connected\n");
-            connSet.insert(connection);
+            printf("CLI: %d connected\n", (int)connSet.size());
+            connSet[peer] = (int)connSet.size();
             return true;
         }
 
@@ -68,14 +67,22 @@ class MyServerListener : public TCPServerDataPendingListener
 
         void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
         {
-            printf("disconnected!\n");
-            connSet.erase(connection);
+            ConnSetType::iterator itr = connSet.find(peer);
+            if(itr == connSet.end())
+            {
+                printf("CLI: unregistered client is disconnecting .. wtf ?");
+                return;
+            }
+            
+            printf("CLI: %d disconnected\n", itr->second);
+            connSet.erase(itr);
             //end = 1;
         }
 
         bool end;
     private:
-        std::set<TCPServerConnection*> connSet;
+        typedef std::map<TCPServerConnectedPeer*, int> ConnSetType;
+        ConnSetType connSet;
 };
 
 class MyClientListener : public TCPClientDataPendingListener
@@ -138,7 +145,11 @@ void test_connect(void *number)
     
     for(i = 0; i < 30; i++)
     {
-        sleep_var = rand()%300;
+        // TODO: some messeges from the server are not being received.
+        // This might be because the reply arrives too soon for the update to catch it.
+        // A solution would be to move the client listen update to another thread
+        // but I don't know if that would be thread safe.
+        sleep_var = 50 + rand()%250;
         while(sleep_var != 0)
             TCPConnection::instance().update();
 
@@ -158,7 +169,9 @@ void test_connect(void *number)
 
 void test_net()
 {
+    // thread for async sleep
     _beginthread(sleep_thread, 0, NULL);
+
     // initialize the net library
     TCPConnection::instance();
 
