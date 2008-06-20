@@ -112,7 +112,6 @@ public:
 
   virtual const char * getVDir ( void ) = 0;
   virtual const char * getDescription ( void ){return "";}
-  virtual bool useAuth ( void ){return false;}
   virtual bool supportPut ( void ){return false;}
 
   virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID ) = 0;
