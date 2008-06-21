@@ -16,10 +16,7 @@ bool test_ret(int ret)
 {
     if(ret != LDAP_SUCCESS)
     {
-        //why on earth does this work fine in single threaded build
-        //but crashes in a multithreaded one ?
-        //fprintf(stderr, "ERROR: %s\n", ldap_err2string(ret));
-        printf("ERROR: %s\n", ldap_err2string(ret));
+        fprintf(stderr, "ERROR: %s\n", ldap_err2string(ret));
         return false;
     }
     else

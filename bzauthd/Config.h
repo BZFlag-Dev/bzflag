@@ -13,6 +13,32 @@
 #ifndef __BZAUTHD_CONFIG_H__
 #define __BZAUTHD_CONFIG_H__
 
+#include "Platform.h"
+#include <vector>
+#include <string>
+#include "Singleton.h"
+
+enum ConfTypes
+{
+  CONFIG_LOCALPORT,
+  CONFIG_TYPE_MAX
+};
+
+class Config : public Singleton<Config>
+{
+public:
+  Config();
+  ~Config();
+  void setStringValue(uint16 key, const uint8 *value);
+  const uint8 * getStringValue(uint16 key);
+  uint32 getIntValue(uint16 key);
+  void setIntValue(uint16 key, uint32 value);
+protected:
+  std::vector<void *> values;
+};
+
+#define sConfig Config::instance()
+
 #endif // __BZAUTHD_CONFIG_H__
 
 // Local Variables: ***

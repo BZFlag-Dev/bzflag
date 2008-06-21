@@ -13,6 +13,14 @@
 #ifndef __BZAUTHD_COMMON_H__
 #define __BZAUTHD_COMMON_H__
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <hash_map>
+#include <vector>
+#include <string>
+#include "Singleton.h"
+#include "Config.h"
+
 #endif // __BZAUTHD_COMMON_H__
 
 // Local Variables: ***

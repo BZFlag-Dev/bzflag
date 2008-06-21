@@ -16,7 +16,7 @@
 
 int main()
 {
-  printf("TODO: everything else\n");
+  fprintf(stderr, "TODO: everything else\n");
   getch();
   return 0;
 }

@@ -13,13 +13,20 @@
 #ifndef __BZAUTHD_LOG_H__
 #define __BZAUTHD_LOG_H__
 
-class Log
+#include <stdio.h>
+
+class Log : public Singleton<Log>
 {
 public:
-  void outDetail(const char *format, ...);
+  Log();
+  void outLog(const char *format, ...);
   void outDebug(const char *format, ...);
   void outError(const char *format, ...);
+private:
+  FILE * logFile;
 };
+
+#define sLog Log::instance()
 
 #endif // __BZAUTHD_LOG_H__
 

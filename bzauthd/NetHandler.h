@@ -13,6 +13,24 @@
 #ifndef __BZAUTHD_NETHANDLER_H__
 #define __BZAUTHD_NETHANDLER_H__
 
+#include "Singleton.h"
+
+class TCPServerConnection;
+class TCPServerListener;
+
+class NetHandler : public Singleton<NetHandler>
+{
+public:
+  void update();
+private:
+  NetHandler();
+  ~NetHandler();
+  TCPServerConnection *localServer;
+  TCPServerListener *tcpListener;
+};
+
+#define sNetHandler NetHandler::instance()
+
 #endif // __BZAUTHD_NETHANDLER_H__
 
 // Local Variables: ***

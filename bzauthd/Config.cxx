@@ -11,6 +11,48 @@
 */
 
 #include "common.h"
+#include "Config.h"
+
+INSTANTIATE_SINGLETON(Config);
+
+Config::Config()
+{
+}
+
+Config::~Config()
+{
+  for(uint8 i = 0; i < values.size(); i++)
+    if(values[i] != NULL) free(values[i]);
+}
+
+void Config::setStringValue(uint16 key, const uint8 *value)
+{
+  if(key >= values.size())
+    values.resize(2*key);
+  values[key] = (void*)strdup((const char*)value);
+}
+
+const uint8 * Config::getStringValue(uint16 key)
+{
+  if(key >= values.size())
+    return NULL;
+  return (const uint8*) values[key];
+}
+
+uint32 Config::getIntValue(uint16 key)
+{
+  if(key >= values.size())
+    return NULL;
+  return *(uint32*) values[key];
+}
+
+void Config::setIntValue(uint16 key, uint32 value)
+{
+  if(key >= values.size())
+    values.resize(key+1);
+  values[key] = (void*)malloc(4);
+  *(uint32*)values[key] = value;
+}
 
 // Local Variables: ***
 // mode: C++ ***

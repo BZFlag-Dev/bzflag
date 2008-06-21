@@ -13,19 +13,36 @@
 #include "common.h"
 #include "log.h"
 
-void Log::outDetail(const char *format, ...)
+Log::Log()
 {
+  logFile = stdout;
+}
 
+void Log::outLog(const char *format, ...)
+{
+  fprintf(logFile, "LOG: ");
+  va_list args;
+  va_start (args, format);
+  vfprintf (logFile, format, args);
+  va_end (args);
 }
 
 void Log::outDebug(const char *format, ...)
 {
-
+  fprintf(logFile, "DEB: ");
+  va_list args;
+  va_start (args, format);
+  vfprintf (logFile, format, args);
+  va_end (args);
 }
 
 void Log::outError(const char *format, ...)
 {
-
+  fprintf(logFile, "ERR: ");
+  va_list args;
+  va_start (args, format);
+  vfprintf (logFile, format, args);
+  va_end (args);
 }
 
 // Local Variables: ***

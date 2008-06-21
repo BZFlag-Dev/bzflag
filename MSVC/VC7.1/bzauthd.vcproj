@@ -124,6 +124,12 @@
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\Common.cxx">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\Config.cxx">
@@ -170,7 +176,13 @@
 				RelativePath="..\..\bzauthd\NetHandler.h">
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\Platform.h">
+			</File>
+			<File
 				RelativePath="..\..\bzauthd\RSA.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Singleton.h">
 			</File>
 		</Filter>
 		<Filter
