@@ -5,7 +5,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 traversal_dirs = \
 	data \
-	doc \
 	include \
 	man \
 	package \
