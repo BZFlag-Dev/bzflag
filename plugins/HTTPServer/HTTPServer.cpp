@@ -155,6 +155,7 @@ protected:
 private:
   void send100Continue ( int connectionID );
   void send403Error ( int connectionID );
+  void send404Error ( int connectionID );
   void send501Error ( int connectionID );
   void sendOptions ( int connectionID, bool p );
 
@@ -577,6 +578,14 @@ void HTTPServer::send403Error ( int connectionID )
   bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
+void HTTPServer::send404Error ( int connectionID )
+{
+  std::string httpHeaders;
+  httpHeaders += "HTTP/1.1 404 Not Found\n\n";
+
+  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+}
+
 void HTTPServer::send501Error ( int connectionID )
 {
   std::string httpHeaders;
@@ -773,7 +782,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     break;
 
   case HTTPReply::e403Forbiden:
-    page += " 500 Forbidden\n";
+    page += " 403 Forbidden\n";
     break;
   }
 
