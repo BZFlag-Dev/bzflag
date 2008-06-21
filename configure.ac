@@ -815,16 +815,6 @@ AC_CONFIG_FILES(bzflag.info
 	data/fonts/Makefile
 	data/l10n/Makefile
 	debian/Makefile
-	doc/Makefile
-	doc/faq/Makefile
-	doc/guide/Commands/Makefile
-	doc/guide/Flags/Makefile
-	doc/guide/Geometry/Makefile
-	doc/guide/Installation/Makefile
-	doc/guide/Makefile
-	doc/guide/Tactics/Makefile
-	doc/howto/Makefile
-	doc/man/Makefile
 	include/Makefile
 	m4/Makefile
 	man/Makefile
