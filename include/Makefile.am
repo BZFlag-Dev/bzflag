@@ -161,6 +161,7 @@ noinst_HEADERS =			\
 
 MAINTAINERCLEANFILES =	\
 	config.h.in	\
+	config.h.in~	\
 	stamp-h.in	\
 	Makefile.in
 
