@@ -14,7 +14,12 @@ class Fastmap : public BZFSHTTPVDir, public bz_EventHandler
 {
 public:
   Fastmap(): BZFSHTTPVDir(),mapData(NULL),mapDataSize(0){registerVDir();}
-  virtual ~Fastmap(){};
+  virtual ~Fastmap()
+  {
+    if (mapData)
+      free(mapData);
+    mapData = NULL;
+  };
 
   virtual const char * getVDir ( void ){return "fastmap";}
 
