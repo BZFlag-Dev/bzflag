@@ -50,6 +50,7 @@ EXTRA_DIST = \
 	vc/ahost/ahost.dep	\
 	vc/ahost/ahost.dsp	\
 	vc/ahost/ahost.mak	\
+	vc/ahost/ahost.plg	\
 	vc/areslib/areslib.dep	\
 	vc/areslib/areslib.dsp	\
 	vc/areslib/areslib.mak	\

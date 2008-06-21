@@ -5,6 +5,7 @@ HoldTheFlag_la_CPPFLAGS = -I$(top_srcdir)/include
 HoldTheFlag_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
+	CHANGELOG.txt	\
 	README.txt \
 	HoldTheFlag.def \
 	HoldTheFlag.sln \

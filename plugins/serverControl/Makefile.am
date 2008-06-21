@@ -6,6 +6,7 @@ serverControl_la_LDFLAGS = -module -avoid-version
 serverControl_la_LIBADD = $(top_srcdir)/plugins/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
+	plugins.cfg		\
 	README.txt \
 	serverControl.def \
 	serverControl.sln \

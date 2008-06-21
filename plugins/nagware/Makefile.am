@@ -5,6 +5,8 @@ nagware_la_CPPFLAGS = -I$(top_srcdir)/include
 nagware_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = \
+	CHANGELOG.txt	\
+	NAGSAMPLE.cfg	\
 	README.txt \
 	nagware.def \
 	nagware.sln \

@@ -20,12 +20,14 @@ TextTool_SOURCES = \
 EXTRA_DIST = \
 	bzflag.ttb \
 	README.txt \
+	resource.h	\
 	TextTool.clw \
 	TextTool.dsp \
 	TextTool.dsw \
 	TextTool.rc \
 	TextTool.sln \
-	TextTool.vcproj
+	TextTool.vcproj	\
+	TextToolView.h
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

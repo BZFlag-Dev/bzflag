@@ -5,6 +5,7 @@ EXTRA_DIST =				\
 	bzfquery.php			\
 	bzfquery.pl			\
 	bzfquery_example.php		\
+	bzfs				\
 	bzfs.conf			\
 	bzfs_conf.html			\
 	bzfsd				\
@@ -29,6 +30,7 @@ EXTRA_DIST =				\
 	serverstats.sh			\
 	simpleSwearList.txt		\
 	snap.sh				\
+	stats				\
 	tar				\
 	Template.cxx			\
 	Template.h			\
