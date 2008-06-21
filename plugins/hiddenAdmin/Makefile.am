@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = hiddenAdmin.la
+pkglib_LTLIBRARIES = hiddenAdmin.la
 
 hiddenAdmin_la_SOURCES = hiddenAdmin.cpp
 hiddenAdmin_la_CPPFLAGS = -I$(top_srcdir)/include

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = playHistoryTracker.la
+pkglib_LTLIBRARIES = playHistoryTracker.la
 
 playHistoryTracker_la_SOURCES = playHistoryTracker.cpp
 playHistoryTracker_la_CPPFLAGS = -I$(top_srcdir)/include

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = regFlag.la
+pkglib_LTLIBRARIES = regFlag.la
 
 regFlag_la_SOURCES = regFlag.cpp
 regFlag_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

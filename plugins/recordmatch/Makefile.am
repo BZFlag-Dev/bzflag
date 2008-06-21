@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = recordmatch.la
+pkglib_LTLIBRARIES = recordmatch.la
 
 recordmatch_la_SOURCES = recordmatch.cpp
 recordmatch_la_CPPFLAGS = -I$(top_srcdir)/include

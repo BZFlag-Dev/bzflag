@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = logDetail.la
+pkglib_LTLIBRARIES = logDetail.la
 
 logDetail_la_SOURCES = logDetail.cpp
 logDetail_la_CPPFLAGS = -I$(top_srcdir)/include

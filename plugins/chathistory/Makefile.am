@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = chathistory.la
+pkglib_LTLIBRARIES = chathistory.la
 
 chathistory_la_SOURCES = chathistory.cpp
 chathistory_la_CPPFLAGS = -I$(top_srcdir)/include

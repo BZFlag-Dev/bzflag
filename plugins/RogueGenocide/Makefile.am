@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = RogueGenocide.la
+pkglib_LTLIBRARIES = RogueGenocide.la
 
 RogueGenocide_la_SOURCES = RogueGenocide.cpp
 RogueGenocide_la_CPPFLAGS = -I$(top_srcdir)/include

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = wwzones.la
+pkglib_LTLIBRARIES = wwzones.la
 
 wwzones_la_SOURCES = wwzones.cpp
 wwzones_la_CPPFLAGS = -I$(top_srcdir)/include

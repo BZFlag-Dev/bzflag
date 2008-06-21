@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = nagware.la
+pkglib_LTLIBRARIES = nagware.la
 
 nagware_la_SOURCES = nagware.cpp
 nagware_la_CPPFLAGS = -I$(top_srcdir)/include

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = rabidRabbit.la
+pkglib_LTLIBRARIES = rabidRabbit.la
 
 rabidRabbit_la_SOURCES = rabidRabbit.cpp
 rabidRabbit_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

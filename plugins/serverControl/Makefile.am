@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = serverControl.la
+pkglib_LTLIBRARIES = serverControl.la
 
 serverControl_la_SOURCES = serverControl.cpp
 serverControl_la_CXXFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

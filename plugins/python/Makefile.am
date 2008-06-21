@@ -1,5 +1,5 @@
-# change EXTRA to lib to enable this plugin
-# lib_LTLIBRARIES = PyBZFlag.la
+# change EXTRA to pkglib to enable this plugin
+# pkglib_LTLIBRARIES = PyBZFlag.la
 EXTRA_LTLIBRARIES = PyBZFlag.la
 
 PyBZFlag_la_LDFLAGS = -module -avoid-version

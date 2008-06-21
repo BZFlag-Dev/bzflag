@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = torBlock.la
+pkglib_LTLIBRARIES = torBlock.la
 
 torBlock_la_SOURCES = torBlock.cpp
 torBlock_la_CPPFLAGS = -I$(top_srcdir)/include
