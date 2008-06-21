@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../libgpg-error/Debug"
-			IntermediateDirectory="../../libgpg-error/Debug"
+			OutputDirectory="./libgpg-error_debug"
+			IntermediateDirectory="./libgpg-error_debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -54,8 +54,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../libgpg-error/Release"
-			IntermediateDirectory="../../libgpg-error/Release"
+			OutputDirectory="./libgpg-error_release"
+			IntermediateDirectory="./libgpg-error_release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool

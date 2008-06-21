@@ -23,7 +23,8 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="common.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
@@ -31,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../../ldap/Debug/ldap.lib ws2_32.lib ../../libgcrypt/Debug/libgcrypt.lib ../../libgpg-error/Debug/libgpg-error.lib ../../tcp-net/Debug/tcp-net.lib"
+				AdditionalDependencies="ws2_32.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -68,8 +69,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="4"
-				UsePrecompiledHeader="0"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="common.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -77,6 +79,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ws2_32.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-erro_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -114,13 +117,61 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\bzauthd\bzauthd.cpp">
+				RelativePath="..\..\bzauthd\bzauthd.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\ClientHandler.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Common.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Config.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\EventHandler.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\LdapHandler.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Log.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\NetHandler.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\RSA.cxx">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Serverhandler.cxx">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\bzauthd\Common.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Config.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\EventHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\LdapHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Log.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\NetHandler.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\RSA.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../tcp-net/Debug"
-			IntermediateDirectory="../../tcp-net/Debug"
+			OutputDirectory="./tcp-net_debug"
+			IntermediateDirectory="./tcp-net_debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -56,8 +56,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../tcp-error/Release"
-			IntermediateDirectory="../../tcp-error/Release"
+			OutputDirectory="./tcp-net_release"
+			IntermediateDirectory="./tcp-net_release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool

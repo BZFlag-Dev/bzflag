@@ -141,7 +141,7 @@ void test_connect(void *number)
         client[i]->addListener(&listener[i]);
     }
 
-    srand((int)clock());
+    srand((int)time(NULL));
     
     for(i = 0; i < 30; i++)
     {

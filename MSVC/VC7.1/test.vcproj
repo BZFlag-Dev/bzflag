@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="./test_debug"
+			IntermediateDirectory="./test_debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../../ldap/Debug/ldap.lib ws2_32.lib ../../libgcrypt/Debug/libgcrypt.lib ../../libgpg-error/Debug/libgpg-error.lib ../../tcp-net/Debug/tcp-net.lib"
+				AdditionalDependencies="ws2_32.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
@@ -64,15 +64,15 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="./test_release"
+			IntermediateDirectory="./test_release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../ldap/include;../../libgpg-error/src;../../libgcrypt/src;../libgcrypt"
+				AdditionalIncludeDirectories="../../ldap/include;&quot;../../libgpg-error/src&quot;;../../libgcrypt/src;&quot;../../tcp-net/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -81,10 +81,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../../ldap/Release/ldap.lib ws2_32.lib ../../libgcrypt/Release/libgcrypt.lib ../../libgpg-error/Release/libgpg-error.lib"
+				AdditionalDependencies="ws2_32.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-error_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="libcmt"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"

@@ -10,15 +10,8 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <stdio.h>
-#include <conio.h>
-
-int main()
-{
-  printf("TODO: everything else\n");
-  getch();
-  return 0;
-}
+#include "common.h"
+// this file is used for generating the precompiled header
 
 // Local Variables: ***
 // mode: C++ ***

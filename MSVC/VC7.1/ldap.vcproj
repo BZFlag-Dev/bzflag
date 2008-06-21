@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../ldap/Debug"
-			IntermediateDirectory="../../ldap/Debug"
+			OutputDirectory="./ldap_debug"
+			IntermediateDirectory="./ldap_debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -54,8 +54,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../ldap/Release"
-			IntermediateDirectory="../../ldap/Release"
+			OutputDirectory="./ldap_release"
+			IntermediateDirectory="./ldap_release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool

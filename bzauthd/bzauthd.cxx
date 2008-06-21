@@ -10,30 +10,16 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef __BZAUTHD_TEST_COMMON_H__
-#define __BZAUTHD_TEST_COMMON_H__
-
-// the net test will use windows threads, disable it when doing builds for other platforms
-#define TEST_NET
-
+#include "common.h"
 #include <stdio.h>
 #include <conio.h>
-#define LDAP_DEPRECATED 1
-#include <ldap.h>
-#include <gcrypt.h>
-#include <TCPConnection.h>
-#include <set>
 
-#ifdef TEST_NET
-#include <windows.h>
-#include <process.h>
-#endif
-
-void test_ldap();
-void test_gcrypt();
-void test_net();
-
-#endif // __BZAUTHD_TEST_COMMON_H__
+int main()
+{
+  printf("TODO: everything else\n");
+  getch();
+  return 0;
+}
 
 // Local Variables: ***
 // mode: C++ ***

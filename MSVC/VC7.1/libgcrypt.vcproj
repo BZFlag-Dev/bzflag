@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../libgcrypt/Debug"
-			IntermediateDirectory="../../libgcrypt/Debug"
+			OutputDirectory="./libgcrypt_debug"
+			IntermediateDirectory="./libgcrypt_debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -54,8 +54,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../libgcrypt/Release"
-			IntermediateDirectory="../../libgcrypt/Release"
+			OutputDirectory="./libgcrypt_release"
+			IntermediateDirectory="./libgcrypt_release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
