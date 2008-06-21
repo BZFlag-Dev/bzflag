@@ -63,8 +63,9 @@ public:
 
       bz_getWorldCacheData((unsigned char*)mapData);
 
-      bz_debugMessagef(2, "FastMap: Running local HTTP server for maps using URL %s", getBaseURL().c_str());
-      bz_setClientWorldDownloadURL(getBaseURL().c_str());
+      std::string URL = getBaseURL();
+      bz_debugMessagef(2, "FastMap: Running local HTTP server for maps using URL %s", URL.c_str());
+      bz_setClientWorldDownloadURL(URL.c_str());
     }
   }
   char *mapData;
