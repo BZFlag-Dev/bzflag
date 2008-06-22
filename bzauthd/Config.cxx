@@ -17,6 +17,10 @@ INSTANTIATE_SINGLETON(Config);
 
 Config::Config()
 {
+  typeRegister.resize(CONFIG_MAX);
+  values.resize(CONFIG_MAX);
+
+  registerKey("localport", CONFIG_LOCALPORT, CONFIG_TYPE_INTEGER);
 }
 
 Config::~Config()
@@ -27,8 +31,9 @@ Config::~Config()
 
 void Config::setStringValue(uint16 key, const uint8 *value)
 {
-  if(key >= values.size())
-    values.resize(2*key);
+  assert(key < values.size());
+  assert(typeRegister[key] == CONFIG_TYPE_STRING);
+
   values[key] = (void*)strdup((const char*)value);
 }
 
@@ -36,6 +41,9 @@ const uint8 * Config::getStringValue(uint16 key)
 {
   if(key >= values.size())
     return NULL;
+
+  assert(typeRegister[key] == CONFIG_TYPE_STRING);
+
   return (const uint8*) values[key];
 }
 
@@ -43,15 +51,42 @@ uint32 Config::getIntValue(uint16 key)
 {
   if(key >= values.size())
     return NULL;
+
+  assert(typeRegister[key] == CONFIG_TYPE_INTEGER);
+
   return *(uint32*) values[key];
 }
 
 void Config::setIntValue(uint16 key, uint32 value)
 {
-  if(key >= values.size())
-    values.resize(key+1);
+  assert(key < values.size());
+  assert(typeRegister[key] == CONFIG_TYPE_INTEGER);
+
   values[key] = (void*)malloc(4);
   *(uint32*)values[key] = value;
+}
+
+void Config::registerKey(std::string stringKey, uint16 intKey, uint8 keyType)
+{
+  keyRegister[stringKey] = intKey;
+  typeRegister[intKey] = keyType;
+}
+
+uint16 Config::lookupKey(std::string stringKey)
+{
+  KeyRegisterType::iterator itr = keyRegister.find(stringKey);
+  if(itr != keyRegister.end())
+    return itr->second;
+  else
+    return CONFIG_MAX;
+}
+
+uint8 Config::lookupType(uint16 key)
+{
+  if(key < typeRegister.size())
+    return typeRegister[key];
+  else
+    return CONFIG_TYPE_MAX;
 }
 
 // Local Variables: ***

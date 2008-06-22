@@ -13,6 +13,8 @@
 #include "common.h"
 #include "NetHandler.h"
 #include "../tcp-net/include/TCPConnection.h"
+#include "Config.h"
+#include "Log.h"
 
 INSTANTIATE_SINGLETON(NetHandler);
 
@@ -50,8 +52,23 @@ NetHandler::NetHandler()
 {
   localServer = new TCPServerConnection;
   tcpListener = new TCPServerListener;
+  // init the net library
+  TCPConnection::instance();
+}
+
+bool NetHandler::init()
+{
+  uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
+
   localServer->addListener(tcpListener);
-  localServer->listen(sConfig.getIntValue(CONFIG_LOCALPORT), 32000);
+  teTCPError err = localServer->listen(listenPort, 32000);
+  if(err != eTCPNoError)
+  {
+    sLog.outError("NetHandler: Cannot listen on port %d, error code %d", listenPort, err);
+    return false;
+  }
+
+  return true;
 }
 
 void NetHandler::update()

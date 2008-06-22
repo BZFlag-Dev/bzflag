@@ -21,10 +21,11 @@ class TCPServerListener;
 class NetHandler : public Singleton<NetHandler>
 {
 public:
-  void update();
-private:
   NetHandler();
   ~NetHandler();
+  bool init();
+  void update();
+private:
   TCPServerConnection *localServer;
   TCPServerListener *tcpListener;
 };

@@ -10,13 +10,22 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "common.h"
-#include <stdio.h>
-#include <conio.h>
+#include "Common.h"
+#include "Config.h"
+#include "Log.h"
+#include "NetHandler.h"
 
 int main()
 {
-  fprintf(stderr, "TODO: everything else\n");
+  sLog.outLog("BZAuthd starting..");
+
+  // TODO: parse this from a file/command line
+  sConfig.setIntValue(CONFIG_LOCALPORT, 1234);
+
+  if(!sNetHandler.init())
+    return 1;
+
+  sLog.outLog("TODO: everything else");
   getch();
   return 0;
 }

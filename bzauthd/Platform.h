@@ -23,6 +23,8 @@ typedef unsigned int uint32;
 typedef __int64 int64;
 typedef unsigned __int64 uint64;
 
+#pragma warning(disable:4996)
+
 #endif // __BZAUTHD_PLATFORM_H__
 
 

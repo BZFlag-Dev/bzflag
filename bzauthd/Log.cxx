@@ -10,8 +10,10 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "common.h"
-#include "log.h"
+#include "Common.h"
+#include "Log.h"
+
+INSTANTIATE_SINGLETON(Log);
 
 Log::Log()
 {
@@ -25,6 +27,7 @@ void Log::outLog(const char *format, ...)
   va_start (args, format);
   vfprintf (logFile, format, args);
   va_end (args);
+  fprintf(logFile, "\n");
 }
 
 void Log::outDebug(const char *format, ...)
@@ -34,6 +37,7 @@ void Log::outDebug(const char *format, ...)
   va_start (args, format);
   vfprintf (logFile, format, args);
   va_end (args);
+  fprintf(logFile, "\n");
 }
 
 void Log::outError(const char *format, ...)
@@ -43,6 +47,7 @@ void Log::outError(const char *format, ...)
   va_start (args, format);
   vfprintf (logFile, format, args);
   va_end (args);
+  fprintf(logFile, "\n");
 }
 
 // Local Variables: ***

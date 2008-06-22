@@ -14,12 +14,17 @@
 #define __BZAUTHD_COMMON_H__
 
 #include <stdio.h>
+#include <conio.h>
 #include <stdarg.h>
 #include <hash_map>
 #include <vector>
 #include <string>
+#include <assert.h>
+
+// TODO: this should be in some platform specific file
+#define HAVE_ATEXIT
+
 #include "Singleton.h"
-#include "Config.h"
 
 #endif // __BZAUTHD_COMMON_H__
 
