@@ -40,15 +40,18 @@ enum ConfValueTypes
 class Config : public Singleton<Config>
 {
 public:
+  /* Config manager function */
   Config();
   ~Config();
+  void initialize();
   /* Functions for setting and retrieving config values */
   void setStringValue(uint16 key, const uint8 *value);
   const uint8 * getStringValue(uint16 key);
   uint32 getIntValue(uint16 key);
   void setIntValue(uint16 key, uint32 value);
   /* Mapping functions for string keys and key types */
-  void registerKey(std::string stringKey, uint16 intKey, uint8 keyType);
+  void registerKey(std::string stringKey, uint16 intKey, uint32 defaultValue);
+  void registerKey(std::string stringKey, uint16 intKey, const uint8 * defaultValue);
   uint16 lookupKey(std::string stringKey);
   uint8 lookupType(uint16 key);
 protected:

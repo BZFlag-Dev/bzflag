@@ -19,10 +19,9 @@ int main()
 {
   sLog.outLog("BZAuthd starting..");
 
-  // TODO: parse this from a file/command line
-  sConfig.setIntValue(CONFIG_LOCALPORT, 1234);
+  sConfig.initialize();
 
-  if(!sNetHandler.init())
+  if(!sNetHandler.initialize())
     return 1;
 
   sLog.outLog("TODO: everything else");

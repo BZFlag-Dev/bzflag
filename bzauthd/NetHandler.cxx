@@ -56,7 +56,7 @@ NetHandler::NetHandler()
   TCPConnection::instance();
 }
 
-bool NetHandler::init()
+bool NetHandler::initialize()
 {
   uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
 

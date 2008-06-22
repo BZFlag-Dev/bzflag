@@ -19,8 +19,11 @@ Config::Config()
 {
   typeRegister.resize(CONFIG_MAX);
   values.resize(CONFIG_MAX);
+}
 
-  registerKey("localport", CONFIG_LOCALPORT, CONFIG_TYPE_INTEGER);
+void Config::initialize()
+{
+  registerKey("localport", CONFIG_LOCALPORT, 1234);
 }
 
 Config::~Config()
@@ -39,9 +42,7 @@ void Config::setStringValue(uint16 key, const uint8 *value)
 
 const uint8 * Config::getStringValue(uint16 key)
 {
-  if(key >= values.size())
-    return NULL;
-
+  assert(key < values.size());
   assert(typeRegister[key] == CONFIG_TYPE_STRING);
 
   return (const uint8*) values[key];
@@ -49,9 +50,7 @@ const uint8 * Config::getStringValue(uint16 key)
 
 uint32 Config::getIntValue(uint16 key)
 {
-  if(key >= values.size())
-    return NULL;
-
+  assert(key < values.size());
   assert(typeRegister[key] == CONFIG_TYPE_INTEGER);
 
   return *(uint32*) values[key];
@@ -66,10 +65,18 @@ void Config::setIntValue(uint16 key, uint32 value)
   *(uint32*)values[key] = value;
 }
 
-void Config::registerKey(std::string stringKey, uint16 intKey, uint8 keyType)
+void Config::registerKey(std::string stringKey, uint16 intKey, uint32 defaultValue)
 {
   keyRegister[stringKey] = intKey;
-  typeRegister[intKey] = keyType;
+  typeRegister[intKey] = CONFIG_TYPE_INTEGER;
+  setIntValue(intKey, defaultValue);
+} 
+
+void Config::registerKey(std::string stringKey, uint16 intKey, const uint8 * defaultValue)
+{
+  keyRegister[stringKey] = intKey;
+  typeRegister[intKey] = CONFIG_TYPE_STRING;
+  setStringValue(intKey, defaultValue);
 }
 
 uint16 Config::lookupKey(std::string stringKey)

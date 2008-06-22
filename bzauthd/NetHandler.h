@@ -23,7 +23,7 @@ class NetHandler : public Singleton<NetHandler>
 public:
   NetHandler();
   ~NetHandler();
-  bool init();
+  bool initialize();
   void update();
 private:
   TCPServerConnection *localServer;
