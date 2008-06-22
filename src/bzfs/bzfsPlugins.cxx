@@ -118,7 +118,7 @@ void unload1Plugin ( int iPluginID );
 
 int getPluginVersion ( HINSTANCE hLib )
 {
-  int (*lpProc)(void);
+  int (*lpProc)(void) = NULL;
   lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
   if (lpProc)
     return lpProc();
@@ -172,7 +172,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 
 void unload1Plugin ( int iPluginID )
 {
-  int (*lpProc)(void);
+  int (*lpProc)(void) = NULL;
 
   trPluginRecord &plugin = vPluginList[iPluginID];
   if (!plugin.handle)
@@ -196,7 +196,7 @@ std::vector<void*>	vLibHandles;
 
 int getPluginVersion ( void* hLib )
 {
-  int (*lpProc)(void);
+  int (*lpProc)(void) = NULL;
 
   lpProc = force_cast<int (*)(void)>(dlsym(hLib,"bz_GetVersion"));
   if (lpProc)
@@ -206,7 +206,7 @@ int getPluginVersion ( void* hLib )
 
 PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 {
-  int (*lpProc)(const char*);
+  int (*lpProc)(const char*) = NULL;
 
   std::string realPluginName = findPlugin(plugin);
 
@@ -254,7 +254,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
 
 void unload1Plugin ( int iPluginID )
 {
-  int (*lpProc)(void);
+  int (*lpProc)(void) = NULL;
   trPluginRecord &plugin = vPluginList[iPluginID];
 
   if(!plugin.handle)
