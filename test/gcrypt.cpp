@@ -34,7 +34,7 @@ gcry_error_t test_rsa_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *publi
     gcry_ac_key_pair_t key_pair;
 
     gcry_ac_key_spec_rsa_t rsa_spec;
-    rsa_spec.e = gcry_mpi_new (0);
+    rsa_spec.e = NULL; //gcry_mpi_new (0);
     //the following method is recommended by the doc but it doesn't work as it should
     //- the value is stored in binary and it's "converted to an integer" using strtoul
     //- value 1 doesn't mean "default to the secure exponent"
@@ -46,8 +46,22 @@ gcry_error_t test_rsa_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *publi
     gcry_mpi_release(rsa_spec.e);
 
     if(ret) return ret;
-    *public_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
-    *secret_key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+
+    gcry_ac_key_t key;
+    gcry_ac_data_t data;
+
+    key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
+    data = gcry_ac_key_data_get(key);
+    ret = gcry_ac_key_init(public_key, handle, GCRY_AC_KEY_PUBLIC, data);
+
+    key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
+    data = gcry_ac_key_data_get(key);
+    ret = gcry_ac_key_init(secret_key, handle, GCRY_AC_KEY_SECRET, data);
+
+    // the key_init functions copy data, allowing the data in the keypair to be freed
+    gcry_ac_key_pair_destroy(key_pair);
+    // this should work but it just causes even more memory leaks :(
+
     // if i destroy key_pair, the the data will become broken in the extracted keys
     return ret;
 }
@@ -108,15 +122,26 @@ gcry_ac_key_t test_rsa_make_key(gcry_ac_handle_t handle, gcry_ac_key_type_t type
     gcry_ac_data_t data;
     if(gcry_ac_data_new(&data)) return NULL;
 
-    gcry_mpi_t mpi_n = gcry_mpi_new(0);
+    // ac_data_destroy tries to destroy the names too, and data_set just stores a pointer
+    // so we can't pass it staticly
+    char *name_n = (char*)gcry_malloc(2);
+    strcpy(name_n, "n");
+    char *name_e = (char*)gcry_malloc(2);
+    strcpy(name_e, "e");
+
+    // note: when passing an mpi to scan, initialize to NULL (to prevent a memory leak)
+    // and when passing to set_ui, use mpi_new (to prevent a crash) .. don't ask
+    gcry_mpi_t mpi_n = NULL;
     if(gcry_mpi_scan(&mpi_n, GCRYMPI_FMT_STD, n, n_len, NULL)) return NULL;
-    if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, "n", mpi_n)) return NULL;
+    if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_n, mpi_n)) return NULL;
 
     gcry_mpi_t mpi_e = gcry_mpi_new(0);
     if(!gcry_mpi_set_ui(mpi_e, 65537)) return NULL;
-    if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, "e", mpi_e)) return NULL;
+    if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_e, mpi_e)) return NULL;
 
     if(gcry_ac_key_init(&key, handle, type, data)) return NULL;
+
+    gcry_ac_data_destroy(data);
     return key;
 }
 
@@ -137,6 +162,8 @@ void test_gcrypt()
 
     gcry_ac_key_t public_key_1 = test_rsa_make_key(handle, GCRY_AC_KEY_PUBLIC, key_n, n_len, 65537);
     if(!public_key_1) return;
+
+    free(key_n);
 
     char message[] = "let's see if this gets encrypted/decrypted properly";
     char *cipher = NULL;
