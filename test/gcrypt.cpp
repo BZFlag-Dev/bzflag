@@ -60,9 +60,6 @@ gcry_error_t test_rsa_gen_key_pair(gcry_ac_handle_t handle, gcry_ac_key_t *publi
 
     // the key_init functions copy data, allowing the data in the keypair to be freed
     gcry_ac_key_pair_destroy(key_pair);
-    // this should work but it just causes even more memory leaks :(
-
-    // if i destroy key_pair, the the data will become broken in the extracted keys
     return ret;
 }
 
@@ -84,7 +81,7 @@ gcry_error_t test_rsa_decrypt(gcry_ac_handle_t handle, gcry_ac_key_t &secret_key
     return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, secret_key, &io_cipher, &io_message);
 }
 
-char * test_rsa_get_key_n(gcry_ac_key_t &key, size_t *key_len)
+char * test_rsa_get_key_n(gcry_ac_key_t &key, size_t *n_len)
 {
     gcry_ac_data_t data = gcry_ac_key_data_get(key);
     gcry_mpi_t mpi;
@@ -92,13 +89,13 @@ char * test_rsa_get_key_n(gcry_ac_key_t &key, size_t *key_len)
     unsigned char buf[1024];
     size_t len;
     if(gcry_mpi_print(GCRYMPI_FMT_STD, buf, 1024, &len, mpi)) return NULL;
-    // the first byte is left 0 always (don't ask..)
+    // the first byte is left 0 in this case (don't ask..)
     // this makes the returned length one more than it should be (129)
     // reconstructing the mpi doesn't work without this byte
     // TODO: maybe we can save a byte by trimming it here and adding it back there
     char *ret = (char*)malloc(len);
     memcpy(ret, buf, len);
-    if(key_len) *key_len = len;
+    if(n_len) *n_len = len;
     return ret;
 }
 
@@ -186,10 +183,6 @@ void test_gcrypt()
     gcry_ac_key_destroy(public_key_1);
     gcry_ac_key_destroy(public_key);
     gcry_ac_key_destroy(secret_key);
-    // this still leaves leaking memory allocated in the original key_pair
-    // but calling destroy the original key_pair after the last two lines crashes
-    // and instead of them it doesn't crash but still leaks
-    // so far it seems to be a bug in the library
     gcry_ac_close(handle);
 }
 

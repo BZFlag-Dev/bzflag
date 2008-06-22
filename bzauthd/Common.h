@@ -25,6 +25,7 @@
 #define HAVE_ATEXIT
 
 #include "Singleton.h"
+#include "Platform.h"
 
 #endif // __BZAUTHD_COMMON_H__
 
