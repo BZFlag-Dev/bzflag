@@ -18,6 +18,7 @@ public:
   virtual void getURLData ( const char* url, int requestID, const URLParams &params, bool get = true );
 
   Templateiser templateSystem;
+  std::string temp_token, temp_username;
 
   // from TemplateCallbackClass
   virtual void keyCallback ( std::string &data, const std::string &key );
