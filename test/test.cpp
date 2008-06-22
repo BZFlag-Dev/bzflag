@@ -14,9 +14,9 @@
 
 int main(int argc, char* argv[])
 {
-    //test_gcrypt();
+    test_gcrypt();
     //test_ldap();
-    test_net();
+    //test_net();
     getch();
 
 	return 0;

@@ -40,7 +40,7 @@ enum ConfValueTypes
 class Config : public Singleton<Config>
 {
 public:
-  /* Config manager function */
+  /* Config manager functions */
   Config();
   ~Config();
   void initialize();

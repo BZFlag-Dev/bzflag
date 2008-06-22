@@ -24,8 +24,12 @@ int main()
   if(!sNetHandler.initialize())
     return 1;
 
-  sLog.outLog("TODO: everything else");
-  getch();
+  /* main loop */
+  while(1)
+  {
+    sNetHandler.update();
+  }
+
   return 0;
 }
 

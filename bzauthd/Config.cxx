@@ -15,15 +15,15 @@
 
 INSTANTIATE_SINGLETON(Config);
 
+void Config::initialize()
+{
+  registerKey("localport", CONFIG_LOCALPORT, 1234);
+}
+
 Config::Config()
 {
   typeRegister.resize(CONFIG_MAX);
   values.resize(CONFIG_MAX);
-}
-
-void Config::initialize()
-{
-  registerKey("localport", CONFIG_LOCALPORT, 1234);
 }
 
 Config::~Config()
@@ -34,32 +34,28 @@ Config::~Config()
 
 void Config::setStringValue(uint16 key, const uint8 *value)
 {
-  assert(key < values.size());
-  assert(typeRegister[key] == CONFIG_TYPE_STRING);
+  assert(lookupType(key) == CONFIG_TYPE_STRING);
 
   values[key] = (void*)strdup((const char*)value);
 }
 
 const uint8 * Config::getStringValue(uint16 key)
 {
-  assert(key < values.size());
-  assert(typeRegister[key] == CONFIG_TYPE_STRING);
+  assert(lookupType(key) == CONFIG_TYPE_STRING);
 
   return (const uint8*) values[key];
 }
 
 uint32 Config::getIntValue(uint16 key)
 {
-  assert(key < values.size());
-  assert(typeRegister[key] == CONFIG_TYPE_INTEGER);
+  assert(lookupType(key) == CONFIG_TYPE_INTEGER);
 
   return *(uint32*) values[key];
 }
 
 void Config::setIntValue(uint16 key, uint32 value)
 {
-  assert(key < values.size());
-  assert(typeRegister[key] == CONFIG_TYPE_INTEGER);
+  assert(lookupType(key) == CONFIG_TYPE_INTEGER);
 
   values[key] = (void*)malloc(4);
   *(uint32*)values[key] = value;

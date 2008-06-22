@@ -13,6 +13,28 @@
 #ifndef __BZAUTHD_RSA_H__
 #define __BZAUTHD_RSA_H__
 
+class RSAKey
+{
+
+};
+
+class RSAPublicKey : public RSAKey
+{
+
+};
+
+class RSASecretKey : public RSAKey
+{
+
+};
+
+class RSAManager : public Singleton<RSAManager>
+{
+
+
+
+};
+
 #endif // __BZAUTHD_RSA_H__
 
 // Local Variables: ***
