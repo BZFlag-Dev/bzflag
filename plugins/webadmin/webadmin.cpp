@@ -15,7 +15,7 @@ public:
 
   // from BSFSHTTPServer
   virtual bool acceptURL ( const char *url ) { return true; }
-  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
+  virtual void getURLData ( const char* url, int requestID, const URLParams &params, bool get = true );
 
   Templateiser templateSystem;
 
@@ -66,7 +66,10 @@ void WebAdmin::init(const char* tDir)
 // event hook for [$Something] in templates
 void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
-
+  if (key == "token")
+    data = temp_token;
+  else if (key == "username");
+    data = temp_username;
 }
 
 // condition check for [*START] in templates
@@ -81,11 +84,27 @@ bool WebAdmin::ifCallback (const std::string &key)
   return false; 
 }
 
-void WebAdmin::getURLData (const char* url, int requestID, const URLParams &paramaters, bool get)
+void WebAdmin::getURLData (const char* url, int requestID, const URLParams &params, bool get)
 {
-  std::string page;
+  std::string page, token, username;
+  token = getParam(params, "token");
+  username = getParam(params, "username");
   
-  templateSystem.processTemplateFile(page, "main.tmpl");
+  if (token.empty() or username.empty()) {
+    std::string loginURL;
+    loginURL  = "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
+    loginURL += url_encode(std::string(getBaseServerURL()) + getVDir() + url);
+    loginURL += "%3Ftoken%3D%25TOKEN%25%26username%3D%25USERNAME%25";
+    
+    setURLReturnCode(e301Redirect, requestID);
+    setURLRedirectLocation(loginURL.c_str(), requestID);
+  } 
+  else {
+    temp_token = token;
+    temp_username = username;
+    
+    templateSystem.processTemplateFile(page, "main.tmpl");
+  }
 
   setURLDocType(eHTML,requestID);
   setURLDataSize(page.size(),requestID);
