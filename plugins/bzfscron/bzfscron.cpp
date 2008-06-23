@@ -23,7 +23,7 @@
 #include "croncommand.h"
 #include "CronJob.h"
 #include "bzfsAPI.h"
-#include "TextUtils.h"
+#include "plugin_utils.h"
 
 #define BCVERSION "bzfscron 1.0.0"
 
@@ -128,7 +128,7 @@ bool CronManager::reload(void) {
 
 void CronManager::list(int playerID) const {
   for (std::vector<CronJob>::const_iterator itr = jobs.begin(); itr != jobs.end(); ++itr) {
-    bz_sendTextMessage(BZ_SERVER, playerID, TextUtils::replace_all(itr->displayJob(), "\t", " ").c_str());
+    bz_sendTextMessage(BZ_SERVER, playerID, replace_all(itr->displayJob(), "\t", " ").c_str());
   }
 }
 
@@ -165,7 +165,7 @@ void CronManager::process(bz_EventData *eventData) {
     std::vector<CronJob>::iterator itr;
     for (itr = jobs.begin(); itr != jobs.end(); ++itr)
       if (itr->matches(t.minute, t.hour, t.day, t.month, dow(t.month, t.day, t.year))) {
-	bz_debugMessage(4, TextUtils::format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
+	bz_debugMessage(4, format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
 	player->sendCommand(itr->getCommand());
       }
 
@@ -203,7 +203,7 @@ void CronPlayer::added(int player)
 
 void CronPlayer::playerRejected(bz_eRejectCodes /* code */, const char *reason)
 {
-  std::string temp = TextUtils::format("Player rejected (reason: %s)", reason);
+  std::string temp = format("Player rejected (reason: %s)", reason);
   bz_debugMessage(1, temp.c_str());
 }
 

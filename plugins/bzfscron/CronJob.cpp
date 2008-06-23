@@ -15,7 +15,7 @@
 #include <iostream>
 
 #include "CronJob.h"
-#include "TextUtils.h"
+#include "plugin_utils.h"
 #include "bzfsAPI.h"
 #include "bzfio.h"
 
@@ -24,7 +24,7 @@
 static std::string vector_dump(std::vector<int> &iv) {
   std::string tmp = "<";
   for (std::vector<int>::iterator itr = iv.begin(); itr != iv.end(); ++itr)
-    tmp += TextUtils::format(" %d", *itr);
+    tmp += format(" %d", *itr);
   tmp += " >";
   return tmp;
 }
@@ -43,7 +43,7 @@ CronJob::~CronJob() {
 
 void CronJob::setJob(std::string job) {
   if (job.size() == 0) return;
-  if (TextUtils::no_whitespace(job).size() == 0) return;
+  if (no_whitespace(job).size() == 0) return;
 
   // parse the string we're given into five vectors of n ints and a command
   // note: this is rather expensive
@@ -51,7 +51,7 @@ void CronJob::setJob(std::string job) {
 
   // first bust it up into tokens based on whitespace.
   // the first five are the timing values and the 'sixth through nth' is the command.
-  std::vector<std::string> toks = TextUtils::tokenize(job, " \t", 6);
+  std::vector<std::string> toks = tokenize(job, " \t", 6,false);
 
   // hokey dokey.  now we have six strings and we need five arrays of ints and one string out of them.
   minutes = parseTimeList(toks[0], 0, 59);
@@ -65,6 +65,7 @@ void CronJob::setJob(std::string job) {
   if (isInVector(weekdays, 0) && !isInVector(weekdays, 7)) weekdays.push_back(7);
   else if (isInVector(weekdays, 7) && !isInVector(weekdays, 0)) weekdays.push_back(0);
 
+  int debugLevel = bz_getDebugLevel();
   // dump the list if we're debuggering
   if (debugLevel >= 4) {
     std::cout << "bzfscron: read job: " << inputJob << std::endl;
@@ -82,7 +83,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   std::string list = in;
 
   // First things first.  Find out if there's a periodicity and trim it off.
-  unsigned int pos = in.find("/");
+  size_t pos = in.find("/");
   int period = 1;
   if (pos != std::string::npos) {
     period = atoi(in.substr(pos + 1).c_str());
@@ -90,7 +91,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   }
 
   // Now tokenize on ","
-  std::vector<std::string> stage1 = TextUtils::tokenize(list, ",");
+  std::vector<std::string> stage1 = tokenize(list, ",",0,false);
   // No tokens?  That's cool too.
   if (stage1.size() == 0) stage1.push_back(list);
 

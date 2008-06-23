@@ -14,6 +14,8 @@ bzfscron_la_SOURCES = \
 	TextUtils.h
 
 bzfscron_la_LDFLAGS = -module -avoid-version
+bzfscron_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
+bzfscron_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
 	README.txt \
