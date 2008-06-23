@@ -93,6 +93,10 @@ public:
 
   static void localTime( int &day);
 
+  /** returns the UTC time */
+  static void UTCTime(int *year = NULL, int *month = NULL, int* day = NULL, int* dayOfWeek = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
+
+
   /** converts a time difference into an array of integers
       representing days, hours, minutes, seconds */
   static void			convertTime(double raw, long int convertedTimes[]);

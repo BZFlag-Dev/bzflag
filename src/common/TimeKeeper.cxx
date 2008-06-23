@@ -256,6 +256,31 @@ void TimeKeeper::localTimeDOW(int *year, int *month, int* day, int* dayOfWeek, i
     *dayOfWeek = now->tm_wday;
 }
 
+void TimeKeeper::UTCTime(int *year, int *month, int* day, int* dayOfWeek, int* hour, int* min, int* sec, bool* dst) // const
+{
+  time_t tnow = time(0);
+  struct tm *now = gmtime(&tnow);
+  now->tm_year += 1900;
+  ++now->tm_mon;
+
+  if ( year )
+    *year = now->tm_year;
+  if ( month )
+    *month = now->tm_mon;
+  if ( day )
+    *day = now->tm_mday;
+  if ( hour )
+    *hour = now->tm_hour;
+  if ( min )
+    *min = now->tm_min;
+  if ( sec )
+    *sec = now->tm_sec;
+  if ( dst )
+    *dst = now->tm_isdst != 0;
+  if(dayOfWeek)
+    *dayOfWeek = now->tm_wday;
+}
+
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
 void TimeKeeper::convertTime(double raw, long int convertedTimes[]) // const

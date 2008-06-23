@@ -1480,9 +1480,10 @@ typedef struct
   int second;
   int dayofweek;
   bool daylightSavings;
-}bz_localTime;
+}bz_Time;
 
-BZF_API void bz_getLocaltime ( bz_localTime	*ts );
+BZF_API void bz_getLocaltime ( bz_Time *ts );
+BZF_API void bz_getUTCtime ( bz_Time *ts );
 
 // BZDB API
 BZF_API double bz_getBZDBDouble ( const char* variable );
