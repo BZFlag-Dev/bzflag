@@ -259,7 +259,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
     path.erase(path.begin()+s+1,path.end());
     for (size_t v = 0; v < validDirs.size(); v++)
     {
-      if (path == valdDirs[v])
+      if (path == validDirs[v])
 	exists = true;
     }
 
