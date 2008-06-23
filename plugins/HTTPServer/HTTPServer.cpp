@@ -352,29 +352,33 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
     if (!connection.requestComplete && (connection.request == ePost ||connection.request == ePut) ) // if the request is a post, tell the client to send us the rest of the body
       send100Continue(connectionID);
 
-    size_t headerEnd = connection.currentData.find_first_of("\r\n\r\n");
+    size_t headerEnd = find_first_substr(connection.currentData,"\r\n\r\n");
+
+    std::string temp = connection.currentData.c_str()+headerEnd;
   
     if (!connection.headerComplete && headerEnd != std::string::npos)
     {
       bool done = false;  // ok we have the header and we don't haven't processed it yet
 
       // read past the command
-      size_t p = connection.currentData.find_first_of("\r\n");
+      size_t p = find_first_substr(connection.currentData,"\r\n");
       p+= 2;
 
       while ( p < headerEnd )
       {
-	size_t p2 = connection.currentData.find_first_of("\r\n",p);
+	size_t p2 = find_first_substr(connection.currentData,"\r\n",p);
 
 	std::string line;
 	line.resize(p2-p);
 	std::copy(connection.currentData.begin()+p,connection.currentData.begin()+p2,line.begin());
-	p = p2+1;
+	p = p2+2;
 
-	std::vector<std::string> headerLine = tokenize(line,std::string(":"),1,false);
+	trimLeadingWhitespace(line);
+	std::vector<std::string> headerLine = tokenize(line,":",2,false);
 	if ( headerLine.size() > 1)
 	{
 	  std::string &key = headerLine[0];
+	  trimLeadingWhitespace(headerLine[1]);
 	  if (compare_nocase(key,"Host") == 0)
 	    connection.host = line.c_str()+key.size()+2;
 	  else if (compare_nocase(key,"Content-Length") == 0)
@@ -635,9 +639,10 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
 
   while (itr != req.headers.end())
   {
-    if (compare_nocase(itr->first,"cookie") == 0)
+    const std::string &key = itr->first;
+    if (compare_nocase(key,"cookie") == 0)
     {
-      std::vector<std::string> cookie = tokenize(itr->second,"=",1,false);
+      std::vector<std::string> cookie = tokenize(itr->second,"=",2,false);
 
       if (cookie.size() > 1)
       {
@@ -812,7 +817,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   itr = r.cookies.begin();
   while (itr != r.cookies.end())
   {
-    page += "Set-Cookie: " +itr->first + "=" + itr->second = "\n";
+    page += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
     itr++;
   }
 
