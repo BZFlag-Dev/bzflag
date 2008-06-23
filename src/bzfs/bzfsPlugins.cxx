@@ -36,7 +36,7 @@ std::string extension = ".so";
 #  ifdef INSTALL_LIB_DIR
 std::string globalPluginDir = INSTALL_LIB_DIR;
 #  else
-std::string globalPluginDir = ".";
+std::string globalPluginDir = ".\";
 #  endif
 #endif
 
@@ -102,14 +102,6 @@ std::string findPlugin ( std::string pluginName )
 
   // check the global plugins dir
   name = globalPluginDir + pluginName + extension;
-  fp = fopen(name.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
-    return name;
-  }
-
-  // last and least, check the working dir
-  name = "./" + pluginName + extension;
   fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
