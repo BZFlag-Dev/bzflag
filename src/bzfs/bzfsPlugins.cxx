@@ -35,7 +35,7 @@ std::string extension = ".so";
 #  ifdef INSTALL_LIB_DIR
 std::string globalPluginDir = INSTALL_LIB_DIR;
 #  else
-std::string globalPluginDir = ".\";
+std::string globalPluginDir = "./";
 #  endif
 #endif
 
