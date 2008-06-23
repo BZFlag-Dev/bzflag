@@ -226,8 +226,6 @@ void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min,
     *sec = now->tm_sec;
   if ( dst )
     *dst = now->tm_isdst != 0;
-
-  now->tm_wday
 }
 
 
