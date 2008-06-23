@@ -31,6 +31,9 @@ std::string url_encode(const std::string &text);
 std::string url_decode(const std::string &text);
 size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
 
+void trimLeadingWhitespace ( std::string &text );
+std::string trimLeadingWhitespace ( const std::string &text );
+
 inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
   std::string::const_iterator p1 = s1.begin();

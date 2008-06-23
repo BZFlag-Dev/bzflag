@@ -281,6 +281,27 @@ size_t find_first_substr(const std::string &findin, const std::string findwhat, 
   return std::string::npos;
 }
 
+void trimLeadingWhitespace ( std::string &text )
+{
+  for(size_t s = 0; s < text.size(); s++)
+  {
+    if (!isWhitespace(text[s]))
+    {
+      if (s)
+	text.erase(text.begin()+s-1);
+      return;
+    }
+  }
+}
+
+std::string trimLeadingWhitespace ( const std::string &text )
+{
+  std::string s = text;
+  trimLeadingWhitespace(s);
+  return s;
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***
