@@ -48,8 +48,14 @@ public:
       reply.body = format("<html><head></head><body>Your userID is %d<br>\n",userID);
 
       reply.body += format("Your sessionID is %d<br>\n",request.sessionID);
-      reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a>";
+      reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a><br>";
       reply.body += "<a href=\"" + request.baseURL + "link2\">Link2</a>";
+   
+      if (request.authType.size() && !request.authCredentials.size())
+      {
+	reply.body +="<br>You authenticated, using " + request.authType + "Type<br>";
+	reply.body +="<br>Your credentials are " + request.authCredentials + "<br>";
+      }
 
       reply.body += "</body></html>";
     }
