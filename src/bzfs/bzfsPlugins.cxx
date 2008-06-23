@@ -108,6 +108,14 @@ std::string findPlugin ( std::string pluginName )
     return name;
   }
 
+  // last and least, check the working dir
+  name = "./" + pluginName + extension;
+  fp = fopen(name.c_str(),"rb");
+  if (fp) {
+    fclose(fp);
+    return name;
+  }
+
   return std::string("");
 }
 
