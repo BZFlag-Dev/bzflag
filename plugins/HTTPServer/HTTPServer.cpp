@@ -831,6 +831,10 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     page += "\n";
   }
 
+  // write the cache info
+  if(r.forceNoCache)
+    page += "Cache-Control: no-cache\n";
+
   // dump the basic stat block
   page += "Server: " + serverVersion + "\n";
  

@@ -70,7 +70,7 @@ public:
 class HTTPReply
 {
 public:
-  HTTPReply(): docType(eText), returnCode(e404NotFound), cachable(false){};
+  HTTPReply(): docType(eText), returnCode(e404NotFound), forceNoCache(true){};
 
   typedef enum
   {
@@ -101,9 +101,12 @@ public:
   std::string authType;
   std::string authRealm;
 
-  // cache info
-  bool	      cachable;
+  bool forceNoCache;
+
+  // content info
   std::string lastUpdateTime;
+  std::string md5;
+
   
   std::string redirectLoc;
 };
