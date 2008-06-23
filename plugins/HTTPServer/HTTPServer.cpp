@@ -835,6 +835,9 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   if(r.forceNoCache)
     page += "Cache-Control: no-cache\n";
 
+  if (r.md5.size())
+    page += "Content-MD5: " + r.md5 + "\n";
+
   // dump the basic stat block
   page += "Server: " + serverVersion + "\n";
  
