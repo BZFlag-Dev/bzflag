@@ -36,6 +36,9 @@ std::string trimLeadingWhitespace ( const std::string &text );
 
 std::string no_whitespace(const std::string &s);
 
+std::string printTime ( bz_Time *ts, const char* timezone = "UTC" );
+void appendTime ( std::string & text, bz_Time *ts, const char* timezone = "UTC" );
+
 inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
   std::string::const_iterator p1 = s1.begin();

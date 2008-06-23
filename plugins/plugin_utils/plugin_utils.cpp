@@ -50,6 +50,91 @@ const char* bzu_GetTeamName( bz_eTeamType team )
   return "Unknown";
 }
 
+std::string printTime ( bz_Time *ts, const char* timezone )
+{
+  std::string time;
+  appendTime(time,ts,timezone);
+  return time;
+}
+
+//Date: Mon, 23 Jun 2008 17:50:22 GMT
+
+void appendTime ( std::string & text, bz_Time *ts, const char* timezone )
+{
+  switch(ts->dayofweek)
+  {
+    case 1:
+      text += "Mon";
+      break;
+    case 2:
+      text += "Tue";
+      break;
+    case 3:
+      text += "Wed";
+      break;
+    case 4:
+      text += "Thu";
+      break;
+    case 5:
+      text += "Fri";
+      break;
+    case 6:
+      text += "Sat";
+      break;
+    case 0:
+      text += "Sun";
+      break;
+  }
+
+  text += format(", %d ",ts->day);
+  
+  switch(ts->month)
+  {
+  case 0:
+    text += "Jan";
+    break;
+  case 1:
+    text += "Feb";
+    break;
+  case 2:
+    text += "Mar";
+    break;
+  case 3:
+    text += "Apr";
+    break;
+  case 4:
+    text += "May";
+    break;
+  case 5:
+    text += "Jun";
+    break;
+  case 6:
+    text += "Jul";
+    break;
+  case 7:
+    text += "Aug";
+    break;
+  case 8:
+    text += "Sep";
+    break;
+  case 9:
+    text += "Oct";
+    break;
+  case 10:
+    text += "Nov";
+    break;
+  case 11:
+    text += "Dec";
+    break;
+ }
+
+  text += format(" %d %d:%d:%d ",ts->year,ts->hour,ts->minute,ts->second);
+  if (timezone)
+    text += timezone;
+  else
+    text += "GMT";
+}
+
 std::string no_whitespace(const std::string &s)
 {
   const int sourcesize = (int)s.size();
