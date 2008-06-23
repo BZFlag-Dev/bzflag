@@ -50,16 +50,16 @@ const char* bzu_GetTeamName( bz_eTeamType team )
   return "Unknown";
 }
 
-std::string printTime ( bz_Time *ts, const char* timezone )
+std::string printTime ( bz_Time *ts, const char* _timezone )
 {
   std::string time;
-  appendTime(time,ts,timezone);
+  appendTime(time,ts,_timezone);
   return time;
 }
 
 //Date: Mon, 23 Jun 2008 17:50:22 GMT
 
-void appendTime ( std::string & text, bz_Time *ts, const char* timezone )
+void appendTime ( std::string & text, bz_Time *ts, const char* _timezone )
 {
   switch(ts->dayofweek)
   {
@@ -129,8 +129,8 @@ void appendTime ( std::string & text, bz_Time *ts, const char* timezone )
  }
 
   text += format(" %d %d:%d:%d ",ts->year,ts->hour,ts->minute,ts->second);
-  if (timezone)
-    text += timezone;
+  if (_timezone)
+    text += _timezone;
   else
     text += "GMT";
 }
