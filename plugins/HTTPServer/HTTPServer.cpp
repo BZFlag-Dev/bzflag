@@ -473,6 +473,11 @@ void HTTPServer::update ( void )
     itr->second.update();
     itr++;
   }
+
+  if ( liveConnections.size())
+    bz_setMaxWaitTime(0.01f,"HTTPServer");
+  else
+    bz_clearMaxWaitTime("HTTPServer");
 }
 
 void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
