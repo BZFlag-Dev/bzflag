@@ -170,6 +170,7 @@ HTTPServer *server = NULL;
 
 // some statics for speed
 std::string serverVersion;
+std::string serverHostname;
 
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
@@ -223,15 +224,15 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 HTTPServer::HTTPServer()
 {
   baseURL = "http://";
-  std::string host = "localhost";
+  serverHostname = "localhost";
   if (bz_getPublicAddr().size())
-    host = bz_getPublicAddr().c_str();
+    serverHostname = bz_getPublicAddr().c_str();
 
   // make sure it has the port
-  if ( strrchr(host.c_str(),':') == NULL )
-    host += format(":%d",bz_getPublicPort());
+  if ( strrchr(serverHostname.c_str(),':') == NULL )
+    serverHostname += format(":%d",bz_getPublicPort());
 
-  baseURL += host +"/";
+  baseURL += serverHostname +"/";
 }
 
 HTTPServer::~HTTPServer()
@@ -662,6 +663,17 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
 	  sessionID = atoi(cookie[1].c_str());
       }
     }
+    else if (compare_nocase(key,"authorization") == 0)
+    {
+      std::vector<std::string> auth = tokenize(itr->second," ",2,false);
+
+      if (auth.size() > 1)
+      {
+	req.authType = auth[0];
+	req.authCredentials = auth[1];
+      }
+    }
+
     itr++;
   }
 
@@ -791,6 +803,11 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     page += " 500 Server Error\n";
     break;
 
+  case HTTPReply::e401Unauthorized:
+    page += " 401 Unauthorized\n";
+    page += "WWW-Authenticate: " + r.authType + " realm=\"" + r.authRealm + "\"\n";
+    break;
+
   case HTTPReply::e404NotFound:
     page += " 404 Not Found\n";
     break;
@@ -817,7 +834,6 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   // dump the basic stat block
   page += "Server: " + serverVersion + "\n";
  
-
   bz_Time ts;
   bz_getUTCtime (&ts);
   page += "Date: ";

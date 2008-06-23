@@ -61,12 +61,16 @@ public:
 
   std::string body;
   std::string baseURL;
+
+  // basic auth
+  std::string authType;
+  std::string authCredentials;
 };
 
 class HTTPReply
 {
 public:
-  HTTPReply(): docType(eText), returnCode(e404NotFound){};
+  HTTPReply(): docType(eText), returnCode(e404NotFound), cachable(false){};
 
   typedef enum
   {
@@ -80,8 +84,9 @@ public:
   {
     e200OK,
     e301Redirect,
-    e404NotFound,
+    e401Unauthorized,
     e403Forbiden,
+    e404NotFound,
     e500ServerError
   }ReturnCode;
 
@@ -91,6 +96,14 @@ public:
   std::map<std::string, std::string> cookies;
 
   std::string body;
+
+  // authentication method
+  std::string authType;
+  std::string authRealm;
+
+  // cache info
+  bool	      cachable;
+  std::string lastUpdateTime;
   
   std::string redirectLoc;
 };

@@ -8,6 +8,8 @@
 
 BZ_GET_PLUGIN_VERSION
 
+#define DO_BASIC_AUTH false
+
 class HTTPTest : public BZFSHTTPVDir
 {
 public:
@@ -19,6 +21,19 @@ public:
 
   virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
   {
+    if (DO_BASIC_AUTH)
+    {
+      if (!request.authType.size() || !request.authCredentials.size())
+      {
+	reply.returnCode = HTTPReply::e401Unauthorized;
+	reply.authType = "Basic";
+	reply.authRealm = "BZFS_Test_Access";
+	reply.docType = HTTPReply::eHTML;
+	reply.body = "Authentication Required";
+	return true;
+      }
+    }
+
     reply.returnCode = HTTPReply::e200OK;
     reply.docType = HTTPReply::eHTML;
     if (request.request == ePut)
