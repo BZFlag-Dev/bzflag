@@ -84,7 +84,7 @@ public:
 
   /** returns the local time */
   static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
-
+  static void localTimeDOW(int *year = NULL, int *month = NULL, int* day = NULL, int* dayOfWeek = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
   /** returns a string of the local time */
   static const char		*timestamp(void);
 

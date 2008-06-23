@@ -1755,7 +1755,7 @@ BZF_API void bz_getLocaltime(bz_localTime *ts)
   if(!ts)
     return ;
 
-  TimeKeeper::localTime(&ts->year, &ts->month, &ts->day, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+  TimeKeeper::localTimeDOW(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
 }
 
 // info

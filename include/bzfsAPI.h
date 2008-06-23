@@ -1478,6 +1478,7 @@ typedef struct
   int hour;
   int minute;
   int second;
+  int dayofweek;
   bool daylightSavings;
 }bz_localTime;
 
