@@ -254,11 +254,11 @@ std::string url_decode(const std::string &text)
   return destination;
 }
 
-size_t find_first_substr(const std::string &findin, const std::string findwhat)
+size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset)
 {
   if (findwhat.size())
   {
-    for ( size_t f = 0; f < findin.size(); f++ )
+    for ( size_t f = offset; f < findin.size(); f++ )
     {
       if (findin[f] == findwhat[0])
       {
