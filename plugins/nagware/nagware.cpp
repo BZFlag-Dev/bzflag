@@ -118,9 +118,9 @@ void updatePlayerNextEvent (int playerID, double now){
 
 void sendNagMessage (int who, std::string *msg ){
   std::string fullMsg = *msg + Config.msgSuffix;
-  unsigned int idx=0, x;
+  size_t idx=0, x;
 
-  while ((x = (unsigned int)fullMsg.find("\\n", idx)) != std::string::npos){
+  while ((x = fullMsg.find("\\n", idx)) != std::string::npos){
     bz_sendTextMessage(BZ_SERVER, who, fullMsg.substr(idx, x-idx).c_str());
     idx = x+2;
   }
