@@ -254,6 +254,34 @@ std::string url_decode(const std::string &text)
   return destination;
 }
 
+size_t find_first_substr(const std::string &findin, const std::string findwhat)
+{
+  if (findwhat.size())
+  {
+    for ( size_t f = 0; f < findin.size(); f++ )
+    {
+      if (findin[f] == findwhat[0])
+      {
+	size_t start = f;
+	for ( size_t w = 1; w < findwhat.size(); w++ )
+	{
+	  if ( f+w > findin.size())
+	    return std::string::npos;
+	  if (findin[f+w] != findwhat[w])
+	  {
+	    f+=w;
+	    w = findwhat.size();
+	  }
+	}
+	if (start == f)
+	  return f;
+      }
+    }
+  }
+  return std::string::npos;
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
