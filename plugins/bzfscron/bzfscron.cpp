@@ -151,7 +151,7 @@ void CronManager::process(bz_EventData *eventData) {
     bz_debugMessage(4, "bzfscron: tick!");
 
     // ensure that the minute has changed
-    bz_localTime t;
+    bz_Time t;
     bz_getLocaltime(&t);
     if (t.minute == lastMinute)
       return;
