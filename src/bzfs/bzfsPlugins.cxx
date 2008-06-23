@@ -75,19 +75,22 @@ bool pluginExists ( std::string plugin )
   return false;
 }
 
+
 std::string findPlugin ( std::string pluginName )
 {
   logDebugMessage(4,"FindPlugin find returned: %s \n",pluginName.c_str());
 
-  logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
-
-  // see if we can just open the bloody thing
-  FILE	*fp = fopen(pluginName.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
-    return pluginName;
+  FILE	*fp = NULL;
+  if ( pluginName.find_last_of('.') != std::string::npos)
+  {
+    logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
+    // see if we can just open the bloody thing
+    fp = fopen(pluginName.c_str(),"rb");
+    if (fp) {
+      fclose(fp);
+      return pluginName;
+    }
   }
-
 
   // now try it with the standard extension
   std::string name = pluginName + extension;
@@ -101,7 +104,7 @@ std::string findPlugin ( std::string pluginName )
   // check the local users plugins dir
   name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
   logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
- fp = fopen(name.c_str(),"rb");
+  fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
     return name;
@@ -110,7 +113,7 @@ std::string findPlugin ( std::string pluginName )
   // check the global plugins dir
   name = globalPluginDir + pluginName + extension;
   logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
- fp = fopen(name.c_str(),"rb");
+  fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
     return name;
@@ -121,7 +124,7 @@ std::string findPlugin ( std::string pluginName )
   {
     name = validDirs[v] + pluginName;
     logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
-   fp = fopen(name.c_str(),"rb");
+    fp = fopen(name.c_str(),"rb");
     if (fp) {
       fclose(fp);
       return name;
@@ -129,7 +132,7 @@ std::string findPlugin ( std::string pluginName )
 
     name = validDirs[v] + pluginName + extension;
     logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
-   fp = fopen(name.c_str(),"rb");
+    fp = fopen(name.c_str(),"rb");
     if (fp) {
       fclose(fp);
       return name;
