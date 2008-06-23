@@ -39,7 +39,7 @@ HUDuiScrollListItem::HUDuiScrollListItem(std::string data) : HUDuiControl(), str
 
 HUDuiScrollListItem::HUDuiScrollListItem(HUDuiLabel* data) : HUDuiControl(), stringValue(data->getString()), label(data)
 {
-  label->setFontFace(getFontFace());
+	label->setFontFace(getFontFace());
 }
 
 HUDuiScrollListItem::~HUDuiScrollListItem()
@@ -53,6 +53,18 @@ void HUDuiScrollListItem::setFontSize(float size)
 	label->setFontSize(size);
 }
 
+void HUDuiScrollListItem::setFontFace(const LocalFontFace* fontFace)
+{
+	HUDuiControl::setFontFace(fontFace);
+	label->setFontFace(fontFace);
+}
+
+void HUDuiScrollListItem::setPosition(float x, float y)
+{
+	HUDuiControl::setPosition(x, y);
+	label->setPosition(x, y);
+}
+
 std::string HUDuiScrollListItem::getValue()
 {
 	return stringValue;
@@ -60,18 +72,17 @@ std::string HUDuiScrollListItem::getValue()
 
 
 // Shorten the item's label to fit
+// NOT WORKING PROPERLY AT THE MOMENT
 void HUDuiScrollListItem::shorten(float width)
 {
 	// Trim string to fit our available space
 	FontManager &fm = FontManager::instance();
 	std::string tempStr = stringValue;
 
-	int error = getFontFace()->getFMFace(); // CAUSING CRASHES, NOT SURE WHY
 	// skip if it already fits
-	//if (fm.getStringWidth(getFontFace()->getFMFace(), 12, "liar") <= width)
-	//	return;
+	if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.c_str()) <= width)
+		return;
 
-	/*
 	// expensive
 	UTF8StringItr lastPos = stringValue.c_str();
 	for (UTF8StringItr str = lastPos; str.getBufferFromHere() != NULL; ++str) {
@@ -83,7 +94,6 @@ void HUDuiScrollListItem::shorten(float width)
 		lastPos = str;
 	}
 	label->setString(tempStr.substr(0, lastPos.getBufferFromHere() - tempStr.c_str()));
-	*/
 }
 
 void HUDuiScrollListItem::doRender()

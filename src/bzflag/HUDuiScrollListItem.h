@@ -32,6 +32,9 @@ class HUDuiScrollListItem : public HUDuiControl {
 			~HUDuiScrollListItem();
 			
 		void setFontSize(float size);
+		void setFontFace(const LocalFontFace* fontFace);
+		void setPosition(float x, float y);
+
 		void shorten(float width);
 		std::string getValue();
 
