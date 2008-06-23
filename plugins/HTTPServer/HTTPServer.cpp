@@ -805,7 +805,19 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
   case HTTPReply::e401Unauthorized:
     page += " 401 Unauthorized\n";
-    page += "WWW-Authenticate: " + r.authType + " realm=\"" + r.authRealm + "\"\n";
+    page += "WWW-Authenticate: ";
+
+    if (r.authType.size())
+      page += r.authType;
+    else 
+      page += "Basic";
+
+    page += " realm=\"";
+    if (r.authRealm.size())
+      page += r.authRealm;
+    else
+      page += serverHostname;
+    page += "\"\n";
     break;
 
   case HTTPReply::e404NotFound:
