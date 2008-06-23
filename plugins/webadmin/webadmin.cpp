@@ -69,7 +69,7 @@ void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
   if (key == "token")
     data = temp_token;
-  else if (key == "username");
+  else if (key == "username")
     data = temp_username;
 }
 
@@ -91,7 +91,7 @@ void WebAdmin::getURLData (const char* url, int requestID, const URLParams &para
   token = getParam(params, "token");
   username = getParam(params, "username");
   
-  if (token.empty() or username.empty()) {
+  if (token.size() || username.size()) {
     std::string loginURL;
     loginURL  = "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
     loginURL += url_encode(std::string(getBaseServerURL()) + getVDir() + url);
