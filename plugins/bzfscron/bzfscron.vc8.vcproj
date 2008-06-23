@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="bzfscron"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}"
 	RootNamespace="bzfscron"
 	Keyword="Win32Proj"
 	>
