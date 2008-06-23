@@ -27,7 +27,6 @@
 #include "DirectoryNames.h"
 #include "OSFile.h"
 
-
 #ifdef _WIN32
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
@@ -42,6 +41,8 @@ std::string globalPluginDir = ".\";
 
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
+
+std::vector<std::string> validDirs;
 
 typedef struct
 {
@@ -73,7 +74,6 @@ bool pluginExists ( std::string plugin )
   }
   return false;
 }
-
 
 std::string findPlugin ( std::string pluginName )
 {
@@ -108,6 +108,24 @@ std::string findPlugin ( std::string pluginName )
     return name;
   }
 
+  // try the valid dirs
+  for (size_t v = 0; v < validDirs.size(); v++)
+  {
+    name = validDirs[v] + pluginName;
+    fp = fopen(name.c_str(),"rb");
+    if (fp) {
+      fclose(fp);
+      return name;
+    }
+
+    name = validDirs[v] + pluginName + extension;
+    fp = fopen(name.c_str(),"rb");
+    if (fp) {
+      fclose(fp);
+      return name;
+    }
+  }
+
   return std::string("");
 }
 
@@ -133,6 +151,23 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   if (pluginExists(realPluginName)) {
     logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
     return eLoadFailedDupe;
+  }
+
+  // get the path, add it to the valid dirs if it's unique
+  std::string path = realPluginName;
+  size_t s = path.find_last_of("\\");
+  if (s != std::string::npos )
+  {
+    bool exists = false;
+    path.erase(path.begin()+s+1,path.end());
+    for (size_t v = 0; v < validDirs.size(); v++)
+    {
+      if (path == validDirs[v])
+	exists = true;
+    }
+
+    if (!exists)
+      validDirs.push_back(path);
   }
 
   HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
@@ -213,6 +248,23 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   if (pluginExists(realPluginName)) {
     logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
     return eLoadFailedDupe;
+  }
+
+  // get the path, add it to the valid dirs if it's unique
+  std::string path = realPluginName;
+  size_t s = path.find_last_of("/");
+  if (s != std::string::npos )
+  {
+    bool exists = false;
+    path.erase(path.begin()+s+1,path.end());
+    for (size_t v = 0; v < validDirs.size(); v++)
+    {
+      if (path == valdDirs[v])
+	exists = true;
+    }
+
+    if (!exists)
+      validDirs.push_back(path);
   }
 
   void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
