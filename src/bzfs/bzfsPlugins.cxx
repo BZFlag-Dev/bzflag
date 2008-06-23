@@ -77,6 +77,10 @@ bool pluginExists ( std::string plugin )
 
 std::string findPlugin ( std::string pluginName )
 {
+  logDebugMessage(4,"FindPlugin find returned: %s \n",pluginName.c_str());
+
+  logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
+
   // see if we can just open the bloody thing
   FILE	*fp = fopen(pluginName.c_str(),"rb");
   if (fp) {
@@ -84,8 +88,10 @@ std::string findPlugin ( std::string pluginName )
     return pluginName;
   }
 
+
   // now try it with the standard extension
   std::string name = pluginName + extension;
+  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
   fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
@@ -94,7 +100,8 @@ std::string findPlugin ( std::string pluginName )
 
   // check the local users plugins dir
   name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
-  fp = fopen(name.c_str(),"rb");
+  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+ fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
     return name;
@@ -102,7 +109,8 @@ std::string findPlugin ( std::string pluginName )
 
   // check the global plugins dir
   name = globalPluginDir + pluginName + extension;
-  fp = fopen(name.c_str(),"rb");
+  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+ fp = fopen(name.c_str(),"rb");
   if (fp) {
     fclose(fp);
     return name;
@@ -112,14 +120,16 @@ std::string findPlugin ( std::string pluginName )
   for (size_t v = 0; v < validDirs.size(); v++)
   {
     name = validDirs[v] + pluginName;
-    fp = fopen(name.c_str(),"rb");
+    logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
+   fp = fopen(name.c_str(),"rb");
     if (fp) {
       fclose(fp);
       return name;
     }
 
     name = validDirs[v] + pluginName + extension;
-    fp = fopen(name.c_str(),"rb");
+    logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
+   fp = fopen(name.c_str(),"rb");
     if (fp) {
       fclose(fp);
       return name;
@@ -148,6 +158,8 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   int (*lpProc)(const char*);
 
   std::string realPluginName = findPlugin(plugin);
+  logDebugMessage(3,"LoadPlugin find returned: %s \n",realPluginName.c_str());
+
   if (pluginExists(realPluginName)) {
     logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
     return eLoadFailedDupe;
@@ -167,7 +179,10 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
     }
 
     if (!exists)
+    {
+      logDebugMessage(4,"LoadPlugin storing valid dir: %s \n",path.c_str());
       validDirs.push_back(path);
+    }
   }
 
   HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
@@ -244,6 +259,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   int (*lpProc)(const char*) = NULL;
 
   std::string realPluginName = findPlugin(plugin);
+  logDebugMessage(3,"LoadPlugin find returned: %s \n",realPluginName.c_str());
 
   if (pluginExists(realPluginName)) {
     logDebugMessage(1,"LoadPlugin failed: %s is already loaded\n",realPluginName.c_str());
@@ -264,7 +280,10 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
     }
 
     if (!exists)
+    {
+      logDebugMessage(4,"LoadPlugin storing valid dir: %s \n",path.c_str());
       validDirs.push_back(path);
+    }
   }
 
   void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);

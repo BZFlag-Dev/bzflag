@@ -3009,6 +3009,9 @@ BZF_API bool bz_loadPlugin( const char* path, const char *params )
   std::string config;
   if (params)
     config = params;
+
+  logDebugMessage(2,"bz_loadPlugin: %s \n",path);
+
   return loadPlugin(std::string(path),config);
 #else
   return false;
