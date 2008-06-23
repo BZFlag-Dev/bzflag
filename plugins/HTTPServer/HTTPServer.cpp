@@ -6,6 +6,7 @@
 #include "plugin_HTTPVDIR.h"
 #include <algorithm>
 #include <sstream>
+#include <time.h>
 
 #define FORCE_CLOSE false
 
@@ -814,11 +815,14 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   }
 
   // dump the basic stat block
-  page += "Server: " + serverVersion;
+  page += "Server: " + serverVersion + "\n";
  
-  //bz_localTime ts;
- // bz_getLocaltime (&ts);
-  //page += format("Date)
+
+  bz_Time ts;
+  bz_getUTCtime (&ts);
+  page += "Date: ";
+  appendTime(page,&ts,"UTC");
+  page += "\n";
 
   // dump the headers
   std::map<std::string,std::string>::iterator itr = r.headers.begin();
