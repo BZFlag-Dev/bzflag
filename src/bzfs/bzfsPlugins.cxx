@@ -81,19 +81,35 @@ std::string findPlugin ( std::string pluginName )
   logDebugMessage(4,"FindPlugin find returned: %s \n",pluginName.c_str());
 
   FILE	*fp = NULL;
-  if ( pluginName.find_last_of('.') != std::string::npos)
+  std::string name;
+
+  bool hasPath = pluginName.find_first_of("/\\") != std::string::npos;
+
+  if (hasPath)
   {
-    logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
-    // see if we can just open the bloody thing
-    fp = fopen(pluginName.c_str(),"rb");
+    if ( pluginName.find_last_of('.') != std::string::npos)
+    {
+      logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
+      // see if we can just open the bloody thing
+      fp = fopen(pluginName.c_str(),"rb");
+      if (fp) {
+	fclose(fp);
+	return pluginName;
+      }
+    }
+
+    // now try it with the standard extension
+    name = pluginName + extension;
+    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+    fp = fopen(name.c_str(),"rb");
     if (fp) {
       fclose(fp);
-      return pluginName;
+      return name;
     }
   }
 
-  // now try it with the standard extension
-  std::string name = pluginName + extension;
+  // check the local users plugins dir
+  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName;
   logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
   fp = fopen(name.c_str(),"rb");
   if (fp) {
@@ -103,6 +119,15 @@ std::string findPlugin ( std::string pluginName )
 
   // check the local users plugins dir
   name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
+  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+  fp = fopen(name.c_str(),"rb");
+  if (fp) {
+    fclose(fp);
+    return name;
+  }
+
+  // check the global plugins dir
+  name = globalPluginDir + pluginName;
   logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
   fp = fopen(name.c_str(),"rb");
   if (fp) {
