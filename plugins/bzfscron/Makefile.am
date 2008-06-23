@@ -9,9 +9,7 @@ bzfscron_la_SOURCES = \
 	croncommand.cpp \
 	croncommand.h \
 	CronJob.cpp \
-	CronJob.h \
-	TextUtils.cxx \
-	TextUtils.h
+	CronJob.h 
 
 bzfscron_la_LDFLAGS = -module -avoid-version
 bzfscron_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
