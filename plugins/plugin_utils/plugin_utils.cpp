@@ -50,6 +50,25 @@ const char* bzu_GetTeamName( bz_eTeamType team )
   return "Unknown";
 }
 
+std::string no_whitespace(const std::string &s)
+{
+  const int sourcesize = (int)s.size();
+
+  int count = 0, i = 0, j = 0;
+  for (i = 0; i < sourcesize; i++)
+    if (!isWhitespace(s[i]))
+      count++;
+
+  // create result string of correct size
+  std::string result(count, ' ');
+
+  for (i = 0, j = 0; i < sourcesize; i++)
+    if (!isWhitespace(s[i]))
+      result[j++] = s[i];
+
+  return result;
+}
+
 std::string tolower(const std::string& s)
 {
   std::string trans = s;

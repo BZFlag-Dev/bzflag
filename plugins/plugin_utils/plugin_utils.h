@@ -34,6 +34,8 @@ size_t find_first_substr(const std::string &findin, const std::string findwhat, 
 void trimLeadingWhitespace ( std::string &text );
 std::string trimLeadingWhitespace ( const std::string &text );
 
+std::string no_whitespace(const std::string &s);
+
 inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
   std::string::const_iterator p1 = s1.begin();
