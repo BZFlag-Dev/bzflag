@@ -30,8 +30,9 @@ public:
 
     if (mapData && mapDataSize)
     {
+      reply.md5 = md5;
       reply.body.resize(mapDataSize);
-
+     
       std::stringstream stream(reply.body);
       stream.write(mapData,(std::streamsize)mapDataSize);
     }
@@ -68,6 +69,8 @@ public:
 
       bz_getWorldCacheData((unsigned char*)mapData);
 
+      md5 = bz_MD5(mapData,mapDataSize);
+
       std::string URL = getBaseURL();
       bz_debugMessagef(2, "FastMap: Running local HTTP server for maps using URL %s", URL.c_str());
       bz_setClientWorldDownloadURL(URL.c_str());
@@ -75,6 +78,7 @@ public:
   }
   char *mapData;
   size_t mapDataSize;
+  std::string md5;
 };
 
 Fastmap *server = NULL;
