@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <sstream>
 
+#define FORCE_CLOSE false
+
 typedef std::map<std::string,BZFSHTTPVDir*> VirtualDirs;
 
 VirtualDirs virtualDirs;
@@ -165,6 +167,9 @@ private:
 
 HTTPServer *server = NULL;
 
+// some statics for speed
+std::string serverVersion;
+
 BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 {
   registered = bz_callbackExists("RegisterHTTPDVDir");
@@ -183,11 +188,14 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
     bz_registerEvent (bz_eTickEvent,server);
     bz_registerEvent (bz_eNewNonPlayerConnection,server);
 
+    serverVersion = bz_getServerVersion();
+
     registered = true;
     bz_debugMessage(4,"HTTPServer plug-in loaded");
   }
   else
     bz_debugMessage(1,"HTTPServer *WARNING* plug-in loaded more then once, this instance will not be used");
+
 
   return 0;
 }
@@ -793,8 +801,8 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
   if (r.returnCode == HTTPReply::e200OK)
     page += "Connection: close\n";
-  else
-    page += "Connection: close\n";
+  else if (FORCE_CLOSE)
+   page += "Connection: close\n";
 
   if (r.body.size())
   {
@@ -804,6 +812,13 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     page += getMimeType(r.docType);
     page += "\n";
   }
+
+  // dump the basic stat block
+  page += "Server: " + serverVersion;
+ 
+  //bz_localTime ts;
+ // bz_getLocaltime (&ts);
+  //page += format("Date)
 
   // dump the headers
   std::map<std::string,std::string>::iterator itr = r.headers.begin();
