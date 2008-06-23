@@ -39,7 +39,6 @@ public:
     else
       reply.returnCode = HTTPReply::e404NotFound;
 
-   
     return true;
   }
 
