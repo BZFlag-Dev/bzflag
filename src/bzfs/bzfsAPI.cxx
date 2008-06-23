@@ -28,27 +28,21 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 #include "VotingArbiter.h"
-
 #include "commands.h"
 #include "SpawnPosition.h"
 #include "WorldInfo.h"
-
 #include "BzMaterial.h"
 #include "cURLManager.h"
-
 #include "CustomWorld.h"
-
 #include "Permissions.h"
 #include "CommandManager.h"
-
 #include "bzfsPlugins.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 #include "BufferedNetworkMessage.h"
-
 #include "ServerIntangibilityManager.h"
-
 #include "bz_md5.h"
+#include "version.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -3900,6 +3894,11 @@ BZF_API const char* bz_MD5 ( const void * data, size_t size )
   MD5 md5;
   md5.update((const unsigned char*)data,size);
   return md5.hexdigest().c_str();
+}
+
+BZF_API const char* bz_getServerVersion ( void )
+{
+  return getAppVersion();
 }
 
 // server side bot API

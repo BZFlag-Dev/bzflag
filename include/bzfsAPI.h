@@ -1903,6 +1903,8 @@ BZF_API bz_eGameType bz_getGameType( void );
 BZF_API const char* bz_MD5 ( const char * str );
 BZF_API const char* bz_MD5 ( const void * data, size_t size );
 
+BZF_API const char* bz_getServerVersion ( void );
+
 // server side player API
 
 typedef struct
