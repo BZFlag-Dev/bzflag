@@ -84,10 +84,11 @@ std::string findPlugin ( std::string pluginName )
   std::string name;
 
   bool hasPath = pluginName.find_first_of("/\\") != std::string::npos;
+  bool hasExtension = pluginName.find_last_of('.') != std::string::npos;
 
   if (hasPath)
   {
-    if ( pluginName.find_last_of('.') != std::string::npos)
+    if ( hasExtension)
     {
       logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
       // see if we can just open the bloody thing
@@ -108,13 +109,16 @@ std::string findPlugin ( std::string pluginName )
     }
   }
 
+  if(hasExtension)
+  {
   // check the local users plugins dir
-  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName;
-  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-  fp = fopen(name.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
-    return name;
+    name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName;
+    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+    fp = fopen(name.c_str(),"rb");
+    if (fp) {
+      fclose(fp);
+      return name;
+    }
   }
 
   // check the local users plugins dir
@@ -126,13 +130,16 @@ std::string findPlugin ( std::string pluginName )
     return name;
   }
 
-  // check the global plugins dir
-  name = globalPluginDir + pluginName;
-  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-  fp = fopen(name.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
-    return name;
+  if(hasExtension)
+  {
+    // check the global plugins dir
+    name = globalPluginDir + pluginName;
+    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
+    fp = fopen(name.c_str(),"rb");
+    if (fp) {
+      fclose(fp);
+      return name;
+    }
   }
 
   // check the global plugins dir
@@ -147,12 +154,15 @@ std::string findPlugin ( std::string pluginName )
   // try the valid dirs
   for (size_t v = 0; v < validDirs.size(); v++)
   {
-    name = validDirs[v] + pluginName;
-    logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
-    fp = fopen(name.c_str(),"rb");
-    if (fp) {
-      fclose(fp);
-      return name;
+    if(hasExtension)
+    {
+      name = validDirs[v] + pluginName;
+      logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
+      fp = fopen(name.c_str(),"rb");
+      if (fp) {
+	fclose(fp);
+	return name;
+      }
     }
 
     name = validDirs[v] + pluginName + extension;
