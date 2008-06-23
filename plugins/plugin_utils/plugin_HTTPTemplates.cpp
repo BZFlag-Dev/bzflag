@@ -308,11 +308,11 @@ void Templateiser::setDefaultTokens ( void )
 void Templateiser::keyCallback ( std::string &data, const std::string &key )
 {
   if (key == "date") {
-    bz_localTime time;
+    bz_Time time;
     bz_getLocaltime(&time);
     data = format("%d/%d/%d",time.month,time.day,time.year);
   } else if (key == "time") {
-    bz_localTime time;
+    bz_Time time;
     bz_getLocaltime(&time);
     data = format("%d:%d:%d",time.hour,time.minute,time.second);
   } else if (key == "hostname") {

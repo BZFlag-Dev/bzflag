@@ -47,7 +47,7 @@ void ChatLogger::process( bz_EventData *eventData )
 
   bz_ChatEventData_V1* data = (bz_ChatEventData_V1*)eventData;
 
-  bz_localTime now;
+  bz_Time now;
   bz_getLocaltime(&now);
 
   const char* from = bz_getPlayerCallsign(data->from);
