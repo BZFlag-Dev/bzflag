@@ -162,7 +162,7 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 				
 			// Testing purposes only
 			case BzfKeyEvent::Home:
-				setPaged(!pagedList);
+				sortAlphabetically();
 				break;
 
 			default:
@@ -196,6 +196,21 @@ void HUDuiScrollList::setFontSize(float size)
 {
 	HUDuiControl::setFontSize(size);
 	resizeItems();
+}
+
+// Internal alphabetical compare function
+bool HUDuiScrollList::compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second)
+{
+	if (first->getValue().compare(second->getValue()) < 0)
+		return true;
+	else
+		return false;
+}
+
+// Sort our scrollable list alphabetically
+void HUDuiScrollList::sortAlphabetically()
+{
+	items.sort(compare_alphabetically);
 }
 
 // Change our label sizes to match any changes to our scrollable list
@@ -235,6 +250,7 @@ void HUDuiScrollList::doRender()
 	
 	std::list<HUDuiScrollListItem*>::iterator it;
 	it = items.begin();
+	std::advance(it, (getSelected() - visiblePosition));
 	
 	// Draw the list items
 	for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
@@ -244,7 +260,7 @@ void HUDuiScrollList::doRender()
 			item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
 			  //item->setDarker(i != getSelected());
 			item->render();
-			std::advance(it, i);
+			std::advance(it, 1);
 		}
 	}
 	

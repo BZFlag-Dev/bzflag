@@ -41,6 +41,8 @@ class HUDuiScrollList : public HUDuiControl {
 		
 		void addItem(HUDuiLabel* item);
 		void addItem(std::string item);
+
+		void sortAlphabetically();
 		
 		void update();
 		void clear();
@@ -54,13 +56,13 @@ class HUDuiScrollList : public HUDuiControl {
 		bool doKeyPress(const BzfKeyEvent&);
 		bool doKeyRelease(const BzfKeyEvent&);
 		void resizeItems();
+		static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
 		void doRender();
 
 	private:
 		int	index;
 		int visiblePosition;
 		int numVisibleItems;
-		int numVisibleChars;
 		bool pagedList;
 		
 		HUDuiLabel* pageLabel;
