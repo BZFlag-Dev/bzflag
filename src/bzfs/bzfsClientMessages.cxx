@@ -694,6 +694,9 @@ class HitHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
+    // disable deaths for now until we get dead reckoning working
+    return false;
+
     if (!player || len < 5)
       return false;
 
