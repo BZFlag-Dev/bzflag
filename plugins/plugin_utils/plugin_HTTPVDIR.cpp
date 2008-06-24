@@ -44,6 +44,33 @@ std::string BZFSHTTPVDir::getBaseURL ( void )
   return URL;
 }
 
+bool HTTPRequest::getParam ( const char* param, std::string &val ) const
+{
+  val = "";
+  if (!param)
+    return false;
+
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(std::string(param)));
+  if ( itr != paramaters.end() )
+  {
+    val = itr->second;
+    return true;
+  } 
+  return false;
+}
+
+bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
+{
+  val = "";
+
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param));
+  if ( itr != paramaters.end() )
+  {
+    val = itr->second;
+    return true;
+  } 
+  return false;
+}
 
 // Local Variables: ***
 // mode: C++ ***

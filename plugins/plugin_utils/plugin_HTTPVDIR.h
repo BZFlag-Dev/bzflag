@@ -65,6 +65,10 @@ public:
   // basic auth
   std::string authType;
   std::string authCredentials;
+
+  bool getParam ( const char* param, std::string &val ) const; 
+  bool getParam ( const std::string &param, std::string &val ) const;
+
 };
 
 class HTTPReply
