@@ -15,7 +15,7 @@ public:
 
   virtual const char * getVDir ( void ){return "WebStats";}
   virtual const char * getDescription ( void ){return "Server Statistics";}
-  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID );
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply );
 
   Templateiser	templateSystem;
 
@@ -738,7 +738,7 @@ void WebStats::doFlagReport(std::string &page, int flagID)
 }
 
 //void WebStats::getURLData(const char* url, int requestID, const URLParams &paramaters, bool get)
-bool WebStats::handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
+bool WebStats::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
 {
   bool evenLine = false;
   groupLoop = 0;

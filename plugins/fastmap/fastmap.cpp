@@ -23,7 +23,7 @@ public:
 
   virtual const char * getVDir ( void ){return "fastmap";}
 
-  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply )
   {
     reply.returnCode = HTTPReply::e200OK;
     reply.docType = HTTPReply::eOctetStream;

@@ -134,9 +134,9 @@ public:
   virtual const char * getDescription ( void ){return "";}
   virtual bool supportPut ( void ){return false;}
 
-  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID ) = 0;
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply ) = 0;
 
-  virtual bool resumeTask ( int /*userID*/, int /*requestID*/ ) {return true;}
+  virtual bool resumeTask (  int /*requestID*/ ) {return true;}
 
 protected:
   std::string getBaseURL ( void );

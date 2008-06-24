@@ -451,7 +451,8 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
       connection.flush();
     }
 
-    if (connection.currentData.size())
+    // if there are lines to read
+    if (connection.currentData.size() && find_first_substr(connection.currentData,"\r\n") != std::string::npos)
       pending(connectionID,NULL,0);
   }
 }
@@ -529,7 +530,7 @@ void HTTPServer::generatePage(BZFSHTTPVDir* vdir, int connectionID, HTTPRequest 
   request.requestID = lastRequestID++;
   request.sessionID = connection.sessionID;
 
-  if (vdir->handleRequest(request,reply,connectionID))
+  if (vdir->handleRequest(request,reply))
   {
     reply.cookies["SessionID"] = format("%d",request.sessionID);
     connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply,request.request == eHead));
@@ -737,9 +738,9 @@ void HTTPConnection::update ( void )
     }
     else
     {
-      if (vdir->resumeTask(connectionID,pendingTask.request.requestID))
+      if (vdir->resumeTask(pendingTask.request.requestID))
       {
-	if (vdir->handleRequest(pendingTask.request,pendingTask.reply,connectionID)) // if it is done and fire if off
+	if (vdir->handleRequest(pendingTask.request,pendingTask.reply)) // if it is done and fire if off
 	{
 	  pendingTask.reply.cookies["SessionID"] = format("%d",pendingTask.request.sessionID);
 	  pendingTask.generateBody(pendingTask.reply,pendingTask.request.request == eHead);

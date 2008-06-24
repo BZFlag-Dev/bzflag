@@ -19,7 +19,7 @@ public:
   virtual const char * getVDir ( void ){return "test";}
   virtual bool supportPut ( void ){return true;}
 
-  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply )
   {
     if (DO_BASIC_AUTH)
     {
