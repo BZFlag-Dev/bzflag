@@ -19,14 +19,14 @@
 #include "bzfsAPI.h"
 
 // return a list of groups that have ALL the perms in the list passed in
-std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &perms );
+std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &perms, bool skipLocal = true );
 
 // return a list of groups that have the perm passed in
-std::vector<std::string> findGroupsWithPerm( const std::string &perm );
-std::vector<std::string> findGroupsWithPerm( const char* perm );
+std::vector<std::string> findGroupsWithPerm( const std::string &perm, bool skipLocal = true );
+std::vector<std::string> findGroupsWithPerm( const char* perm, bool skipLocal = true );
 
 // return a list of groups that have kick and ban
-std::vector<std::string> findGroupsWithAdmin( void );
+std::vector<std::string> findGroupsWithAdmin( bool skipLocal = true );
 
 #endif //_PLUGIN_GROUPS_H_
 

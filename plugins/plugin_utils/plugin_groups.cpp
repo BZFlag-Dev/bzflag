@@ -11,18 +11,22 @@
 */
 
 #include "plugin_groups.h"
+#include "plugin_utils.h"
 
-bool permInGroup ( const std::string &perm, bz_APIStringList* groupPerms )
+bool permInGroup ( const std::string &perm, bz_APIStringList* groupPerms, bool skipLocal )
 {
   for (unsigned int i = 0; i < groupPerms->size(); i++)
   {
+    if (skipLocal && strcasecmp(groupPerms->get(i).c_str(),"LOCAL.ADMIN") == 0)
+      continue;
+
     if (strcasecmp(perm.c_str(),groupPerms->get(i).c_str()) == 0)
       return true;
   }
   return false;
 }
 
-std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &perms )
+std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &perms, bool skipLocal )
 {
   std::vector<std::string> groupsWithPerms;
 
@@ -34,6 +38,9 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
     {
       std::string groupName = groupList->get(i).c_str();
 
+      if (skipLocal && compare_nocase(groupName,"LOCAL.ADMIN") == 0)
+	continue;
+
       bz_APIStringList *groupPerms = bz_getGroupPerms(groupName.c_str());
       if (groupPerms)
       {
@@ -41,7 +48,7 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
 	bool hasOneWithNoPerm = false;
 	for (size_t p =0; p < perms.size(); p++)
 	{
-	  if (!permInGroup(perms[p],groupPerms))
+	  if (!permInGroup(perms[p],groupPerms,skipLocal))
 	    hasOneWithNoPerm = true;
 	}
 	bz_deleteStringList(groupPerms);
@@ -56,15 +63,15 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
   return groupsWithPerms;
 }
 
-std::vector<std::string> findGroupsWithPerm( const char* perm )
+std::vector<std::string> findGroupsWithPerm( const char* perm, bool skipLocal )
 {
   std::string name;
   if(perm)
     name = perm;
-  return findGroupsWithPerm(name);
+  return findGroupsWithPerm(name,skipLocal);
 }
 
-std::vector<std::string> findGroupsWithPerm( const std::string &perm )
+std::vector<std::string> findGroupsWithPerm( const std::string &perm, bool skipLocal )
 {
   std::vector<std::string> groupsWithPerms;
 
@@ -79,7 +86,7 @@ std::vector<std::string> findGroupsWithPerm( const std::string &perm )
       bz_APIStringList *groupPerms = bz_getGroupPerms(groupName.c_str());
       if (groupPerms)
       {
-	if (permInGroup(perm,groupPerms))
+	if (permInGroup(perm,groupPerms,skipLocal))
 	  groupsWithPerms.push_back(groupName);
 
 	bz_deleteStringList(groupPerms);
@@ -90,13 +97,13 @@ std::vector<std::string> findGroupsWithPerm( const std::string &perm )
   return groupsWithPerms;
 }
 
-std::vector<std::string> findGroupsWithAdmin( void )
+std::vector<std::string> findGroupsWithAdmin( bool skipLocal )
 {
   std::vector<std::string> perms;
-  perms.push_back(std::string(bz_perm_kick));
-  perms.push_back(std::string(bz_perm_ban));
+  perms.push_back(bz_perm_kick);
+  perms.push_back(bz_perm_ban);
 
-  return findGroupsWithPerms(perms);
+  return findGroupsWithPerms(perms,skipLocal);
 }
 
 
