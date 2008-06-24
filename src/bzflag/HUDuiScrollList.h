@@ -53,7 +53,7 @@ class HUDuiScrollList : public HUDuiControl {
 	protected:
 		bool doKeyPress(const BzfKeyEvent&);
 		bool doKeyRelease(const BzfKeyEvent&);
-		void resizeLabels();
+		void resizeItems();
 		void doRender();
 
 	private:
@@ -64,9 +64,6 @@ class HUDuiScrollList : public HUDuiControl {
 		bool pagedList;
 		
 		HUDuiLabel* pageLabel;
-		
-		//std::vector<HUDuiLabel*> labelList;
-		//std::vector<std::string> stringList;
 		
 		std::list<HUDuiScrollListItem*> items;
 };
