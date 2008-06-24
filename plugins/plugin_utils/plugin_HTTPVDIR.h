@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 #include "bzfsAPI.h"
+#include "plugin_HTTPTemplates.h"
 
 typedef enum 
 {
@@ -143,6 +144,60 @@ public:
 
 protected:
   std::string getBaseURL ( void );
+};
+
+class BZFSHTTPVDirAuth : public BZFSHTTPVDir
+{
+public:
+  BZFSHTTPVDirAuth();
+  virtual ~BZFSHTTPVDirAuth(){};
+
+  virtual const char * getVDir ( void ){return NULL;}
+
+  // do not overide these, they are used buy the auth system
+  // use the 2 variants below
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply );
+  virtual bool resumeTask (  int requestID );
+
+  // authed versions of the main callbacks
+  virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply ) = 0;
+  virtual bool resumeAuthedTask ( int requestID ){return true;}
+
+protected:
+  Templateiser	templateSystem;
+
+  double	sessionTimeout;
+  std::string	authPage;
+
+  // a map for each authentication level
+  // the value is a list of groups that get that level
+  // the highest level for a user will be returned
+  // users who have all the groups in the andGroups will be
+  // granted the level
+  // users who have any of the groups in the orGroups will be
+  // granted the level
+  typedef struct 
+  {
+    std::vector<std::string> andGroups;
+    std::vector<std::string> orGroups;
+  }AuthGroups;
+
+  std::map<int,AuthGroups > authLevels;
+
+  std::vector<int> defferedAuthedRequests;
+
+  int getLevelFromGroups (const std::vector<std::string> &groups );
+private:
+  void flushTasks ( void );
+  bool verifyToken ( const HTTPRequest &request, HTTPReply &reply );
+
+  typedef struct  
+  {
+    double time;
+    int level;
+  }AuthInfo;
+
+  std::map<int,AuthInfo> authedSessions;
 };
 
 #endif //_PLUGIN_HTTP_H_
