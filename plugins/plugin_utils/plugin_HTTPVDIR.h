@@ -152,6 +152,9 @@ public:
   BZFSHTTPVDirAuth();
   virtual ~BZFSHTTPVDirAuth(){};
 
+  // called to init the auth system, call in the derived class constructor
+  void setupAuth ( void );
+
   virtual const char * getVDir ( void ){return NULL;}
 
   // do not overide these, they are used buy the auth system
@@ -166,25 +169,30 @@ public:
 protected:
   Templateiser	templateSystem;
 
+  class TSURLCallback : public TemplateCallbackClass
+  {
+  public: 
+    virtual void keyCallback(std::string &data, const std::string &key);
+
+    std::string URL;
+  };
+
+  TSURLCallback tsCallback;
+
   double	sessionTimeout;
   std::string	authPage;
 
   // a map for each authentication level
   // the value is a list of groups that get that level
   // the highest level for a user will be returned
-  // users who have all the groups in the andGroups will be
+  // users who are a member of any of the groups
   // granted the level
-  // users who have any of the groups in the orGroups will be
-  // granted the level
-  typedef struct 
-  {
-    std::vector<std::string> andGroups;
-    std::vector<std::string> orGroups;
-  }AuthGroups;
 
-  std::map<int,AuthGroups > authLevels;
+  std::map<int, std::vector<std::string> > authLevels;
 
   std::vector<int> defferedAuthedRequests;
+
+  void addPermToLevel ( int level, const std::string &perm );
 
   int getLevelFromGroups (const std::vector<std::string> &groups );
 private:

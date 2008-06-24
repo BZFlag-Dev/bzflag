@@ -12,6 +12,7 @@
 
 #include "plugin_HTTPVDIR.h"
 #include "plugin_utils.h"
+#include "plugin_groups.h"
 #include <algorithm>
 
 BZFSHTTPVDir::BZFSHTTPVDir()
@@ -118,7 +119,12 @@ void PendingTokenTask::done ( const char* /*URL*/, void * inData, unsigned int s
       if (line.size())
       {
 	if (strstr(line.c_str(),"TOKGOOD") != NULL)
+	{
 	  groups = tokenize(line,std::string(":"),0,false);
+
+	  if(groups.size() > 1)	// yank the first 2 since that is the sign and the name
+	    groups.erase(groups.begin(),groups.begin()+1);
+	}
       }
     }
     pendingTokenTasks[requestID] = this;
@@ -139,8 +145,11 @@ void PendingTokenTask::error ( const char* /*URL*/, int /*errorCode*/, const cha
 
 BZFSHTTPVDirAuth::BZFSHTTPVDirAuth():BZFSHTTPVDir(),sessionTimeout(300)
 {
-  authPage = "<html><body><h4><a href=\"";
-  authPage += "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
+}
+
+void BZFSHTTPVDirAuth::setupAuth ( void )
+{
+  authPage = "<html><body><h4><a href=\"[$WebAuthURL]\">Please Login</a></h4></body></html>";
 
   std::string returnURL;
   if (getBaseURL().size())
@@ -149,20 +158,73 @@ BZFSHTTPVDirAuth::BZFSHTTPVDirAuth():BZFSHTTPVDir(),sessionTimeout(300)
     returnURL += getBaseURL();
   returnURL += "?action=login&token=%TOKEN%&user=%USERNAME%";
 
-  authPage += url_encode(returnURL);
-  authPage += "\">Please Login</a></h4></body></html>";
+  tsCallback.URL = "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
+  tsCallback.URL += url_encode(returnURL);
+
+  templateSystem.addKey("WebAuthURL",&tsCallback);
+}
+
+void BZFSHTTPVDirAuth::TSURLCallback::keyCallback(std::string &data, const std::string &key)
+{
+  if(compare_nocase(key,"WebAuthURL") == 0)
+    data += URL;
 }
 
 bool BZFSHTTPVDirAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
 {
   // build up the groups list
-
   std::string token,user;
   request.getParam("token",token);
   request.getParam("user",user);
 
-  reply.body += "enough of this for now, I'm tired";
-  return true;
+  std::vector<std::string> groups;
+
+  std::map<int, std::vector<std::string> >::iterator itr = authLevels.begin();
+
+  while (itr != authLevels.end())
+  {
+    for (size_t i = 0; i < itr->second.size();i++)
+    {
+      std::string &perm = itr->second[i];
+
+      std::vector<std::string> groupsWithPerm;
+
+      if (compare_nocase(perm,"ADMIN")==0)
+	groupsWithPerm = findGroupsWithAdmin();
+      else
+	groupsWithPerm = findGroupsWithPerm(perm);
+
+      groups.insert(groups.end(),groupsWithPerm.begin(),groupsWithPerm.end());
+    }
+    itr++;
+  }
+
+  PendingTokenTask *task = new PendingTokenTask;
+
+  if (!user.size() || !token.size())
+  {
+    reply.body += "Invalid response";
+    reply.docType = HTTPReply::eText;
+    return true;
+  }
+  task->requestID = request.requestID;
+  task->URL = "http://my.bzflag.org/db/";
+  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
+  task->URL += request.ip;
+  task->URL += "%3D" + token;
+
+  task->URL += "&groups=";
+  for (size_t g = 0; g < groups.size(); g++)
+  {
+    task->URL += groups[g];
+    if ( g+1 < groups.size())
+      task->URL += "%0D%0A";
+  }
+
+  // give the task to bzfs and let it do it, when it's done it'll be processed
+  bz_addURLJob(task->URL.c_str(),task);
+
+  return false;
 }
 
 bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
@@ -185,7 +247,7 @@ bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &re
 
     return complete;
   }
-  else	// they are not fully authorised yet
+  else	// they are not fully authorized yet
   {
     std::map<int,PendingTokenTask*>::iterator pendingItr = pendingTokenTasks.find(request.requestID);
     if (pendingItr != pendingTokenTasks.end())	// they have a token, check it
@@ -205,13 +267,25 @@ bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &re
       request.getParam("action",action);
       request.getParam("user",user);
       request.getParam("token",token);
-      if (compare_nocase(action,"login") == 0 && user.size() && token.size()) // it's a responce from weblogin
+      if (compare_nocase(action,"login") == 0 && user.size() && token.size()) // it's a response from weblogin
 	return verifyToken(request,reply);
       else
       {
 	// it's someone we know NOTHING about, send them the login
 	templateSystem.startTimer();
-	templateSystem.processTemplate(reply.body,authPage);
+	size_t s = authPage.find_last_of('.');
+	if (s != std::string::npos)
+	{
+	  if (compare_nocase(authPage.c_str()+s,".tmpl") == 0)
+	  {
+	    if(!templateSystem.processTemplateFile(reply.body,authPage.c_str()))
+	      templateSystem.processTemplate(reply.body,authPage);
+	  }
+	  else
+	    templateSystem.processTemplate(reply.body,authPage);
+	}
+	else
+	  templateSystem.processTemplate(reply.body,authPage);
       }
     }
   }
@@ -248,32 +322,44 @@ bool stringInList ( const std::string &str, const std::vector<std::string> strin
   return false;
 }
 
+void BZFSHTTPVDirAuth::addPermToLevel ( int level, const std::string &perm )
+{
+  if (level < 0)
+    return;
+
+   if(authLevels.find(level)== authLevels.end())
+   {
+     std::vector<std::string> t;
+     authLevels[level] = t;
+   }
+   authLevels[level].push_back(perm);
+}
+
+
 int BZFSHTTPVDirAuth::getLevelFromGroups (const std::vector<std::string> &groups )
 {
-  std::map<int,AuthGroups >::reverse_iterator itr = authLevels.rbegin();
+  std::map<int,std::vector<std::string> >::reverse_iterator itr = authLevels.rbegin();
 
   while (itr != authLevels.rend())
   {
-    // check the OR groups
-
-    for (std::vector<std::string>::const_iterator group = groups.begin(); group != groups.end(); group++)
+    for (size_t s = 0; s < itr->second.size(); s++ )
     {
-      if (stringInList(*group,itr->second.orGroups))
-	return itr->first;
+      std::string &perm = itr->second[s];
+
+      std::vector<std::string> groupsWithPerm;
+
+      if (compare_nocase(perm,"ADMIN")==0)
+	groupsWithPerm = findGroupsWithAdmin();
+      else
+	groupsWithPerm = findGroupsWithPerm(perm);
+
+      // check the input groups, and see if any of the them are in the groups with this perm
+      for (std::vector<std::string>::const_iterator group = groups.begin(); group != groups.end(); group++)
+      {  
+	if (stringInList(*group,groupsWithPerm))
+	  return itr->first;
+      }
     }
-
-    // check the AND groups
-
-    bool inEmAll = true;
-    for (std::vector<std::string>::const_iterator andGroup = itr->second.andGroups.begin(); andGroup != itr->second.andGroups.end(); andGroup++)
-    {
-      if (!stringInList(*andGroup,groups))
-	inEmAll = false;
-    }
-
-    if (inEmAll)
-      return itr->first;
-
     itr++;
   }
   return -1;
