@@ -260,6 +260,16 @@ bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &re
 
       delete(pendingItr->second);
       pendingTokenTasks.erase(pendingItr);
+
+      // put this back to the default
+      reply.docType = HTTPReply::eText;
+
+      bool complete = handleAuthedRequest(info.level,request,reply);
+
+      if (!complete)
+	defferedAuthedRequests.push_back(request.requestID);
+
+      return complete;
     }
     else
     {
