@@ -62,6 +62,10 @@ public:
   std::string body;
   std::string baseURL;
 
+  //connetion info
+  std::string ip;
+  std::string hostmask;
+
   // basic auth
   std::string authType;
   std::string authCredentials;
@@ -110,7 +114,6 @@ public:
   // content info
   std::string lastUpdateTime;
   std::string md5;
-
   
   std::string redirectLoc;
 };

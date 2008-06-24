@@ -650,6 +650,9 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
   req.headers = header;
   req.cookies.clear();
 
+  req.ip = bz_getNonPlayerConnectionIP(connectionID);
+  req.hostmask = bz_getNonPlayerConnectionHost(connectionID);
+
   // parse the headers here for cookies
   std::map<std::string,std::string>::iterator itr = req.headers.begin();
 
@@ -718,7 +721,7 @@ void HTTPConnection::update ( void )
 
   // check the pending to see if they should be restarted
   std::vector<PendingHTTPTask>::iterator pendingItr = pendingTasks.begin();
-  while (pendingItr != pendingTasks.end())
+  while (pendingTasks.size() && pendingItr != pendingTasks.end())
   {
     PendingHTTPTask &pendingTask = *pendingItr;
 
@@ -787,7 +790,7 @@ HTTPConnection::HTTPTask::HTTPTask(HTTPReply& r, bool noBody):pos(0)
 void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 {
   // start a new one
-  page += "HTTP/1.1";
+  page = "HTTP/1.1";
 
   switch(r.returnCode)
   {
