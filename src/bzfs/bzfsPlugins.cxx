@@ -75,104 +75,63 @@ bool pluginExists ( std::string plugin )
   return false;
 }
 
+bool tryFileLoad(std::string filename)
+{
+  logDebugMessage(4,"tryFileLoad checking: %s \n",filename.c_str());
+  FILE	*fp = fopen(filename.c_str(),"rb");
+  if (fp) {
+    fclose(fp);
+    return true;
+  }
+  return false;
+}
 
 std::string findPlugin ( std::string pluginName )
 {
   logDebugMessage(4,"FindPlugin find returned: %s \n",pluginName.c_str());
 
-  FILE	*fp = NULL;
   std::string name;
 
   bool hasPath = pluginName.find_first_of("/\\") != std::string::npos;
   bool hasExtension = pluginName.find_last_of('.') != std::string::npos;
 
-  if (hasPath)
-  {
-    if ( hasExtension)
-    {
-      logDebugMessage(4,"FindPlugin checking: %s \n",pluginName.c_str());
-      // see if we can just open the bloody thing
-      fp = fopen(pluginName.c_str(),"rb");
-      if (fp) {
-	fclose(fp);
-	return pluginName;
-      }
-    }
-
-    // now try it with the standard extension
+  name = pluginName;
+  if (!hasExtension)
     name = pluginName + extension;
-    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-    fp = fopen(name.c_str(),"rb");
-    if (fp) {
-      fclose(fp);
-      return name;
-    }
-  }
 
-  if(hasExtension)
-  {
-  // check the local users plugins dir
-    name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName;
-    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-    fp = fopen(name.c_str(),"rb");
-    if (fp) {
-      fclose(fp);
-      return name;
-    }
-  }
-
-  // check the local users plugins dir
-  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
-  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-  fp = fopen(name.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
+  // see if we can just open the bloody thing
+  if (tryFileLoad(name))
     return name;
+
+  if(!hasPath) {
+    // check the local users plugins dir
+    name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + name;
+    if (tryFileLoad(name))
+      return name;
   }
 
-  if(hasExtension)
-  {
-    // check the global plugins dir
-    name = globalPluginDir + pluginName;
-    logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-    fp = fopen(name.c_str(),"rb");
-    if (fp) {
-      fclose(fp);
-      return name;
-    }
-  }
+  name = globalPluginDir + pluginName;
+  if(!hasExtension)
+    name = name + extension;
 
   // check the global plugins dir
-  name = globalPluginDir + pluginName + extension;
-  logDebugMessage(4,"FindPlugin checking: %s \n",name.c_str());
-  fp = fopen(name.c_str(),"rb");
-  if (fp) {
-    fclose(fp);
+  if (tryFileLoad(name))
     return name;
-  }
 
   // try the valid dirs
-  for (size_t v = 0; v < validDirs.size(); v++)
-  {
-    if(hasExtension)
-    {
-      name = validDirs[v] + pluginName;
-      logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
-      fp = fopen(name.c_str(),"rb");
-      if (fp) {
-	fclose(fp);
-	return name;
-      }
-    }
+  for (size_t v = 0; v < validDirs.size(); v++) {
+    name = validDirs[v] + pluginName;
+    if(!hasExtension)
+      name = name + extension;
 
-    name = validDirs[v] + pluginName + extension;
-    logDebugMessage(4,"FindPlugin checking valid dir: %s \n",name.c_str());
-    fp = fopen(name.c_str(),"rb");
-    if (fp) {
-      fclose(fp);
+    if (tryFileLoad(name))
       return name;
-    }
   }
+
+  // see if we can just open the bloody thing
+  name = pluginName;
+  if (tryFileLoad(name))
+    return name;
 
   return std::string("");
 }
