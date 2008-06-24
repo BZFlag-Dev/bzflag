@@ -76,7 +76,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "bad " << cmd << " specification" << std::endl;
     }
   } else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
-	   (strcasecmp(cmd, "color") == 0)) {
+	     (strcasecmp(cmd, "color") == 0)) {
     float diffuse[4];
     error = !parseColorStream(input, diffuse);
     if (!error) {
