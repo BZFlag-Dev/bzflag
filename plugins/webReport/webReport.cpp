@@ -3,7 +3,7 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTP.h"
+#include "plugin_HTTPVDIR.h"
 #include "plugin_HTTPTemplates.h"
 #include "plugin_groups.h"
 
@@ -30,10 +30,10 @@ public:
   std::string data;
 };
 
-class WebReport : public BZFSHTTPServer, TemplateCallbackClass
+class WebReport : public BZFSHTTPVDir, public TemplateCallbackClass
 {
 public:
-  WebReport(const char * plugInName);
+  WebReport();
   ~WebReport();
 
   void init(const char* tDir);
@@ -59,33 +59,45 @@ public:
 
   Templateiser templateSystem;
 
-protected:
-  virtual bool acceptURL(const char *url) { return true; }
-  virtual void getURLData(const char* url, int requestID, const URLParams &parameters, bool get = true);
+  virtual const char * getVDir ( void ){return "WebReport";}
+  virtual const char * getDescription ( void ){return "View Reports On-line(Requires Login)";}
+
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply );
+  virtual bool resumeTask (  int requestID );
+
+  bool verifyToken ( const HTTPRequest &request, HTTPReply &reply );
+
+  std::map<int,double>	authedSessionIDs;
 };
 
-WebReport webReport("report");
+WebReport *webReport = NULL;
 
 BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
 {
+  if(webReport)
+    delete(webReport);
+  webReport = new WebReport;
+
   if (commandLine && strlen(commandLine))
-    webReport.init(commandLine);
+    webReport->init(commandLine);
   else
-    webReport.init("./");
+    webReport->init("./");
 
   bz_setclipFieldString("report_index_description", "View reports on-line");
 
   bz_debugMessage(4, "webReport plugin loaded");
-  webReport.startupHTTP();
 
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  webReport.shutdownHTTP();
+  if(webReport)
+    delete(webReport);
+  webReport = NULL;
+
   bz_debugMessage(4, "webReport plugin unloaded");
   return 0;
 }
@@ -93,9 +105,10 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 // template stuff
 // globals
 
-WebReport::WebReport(const char *plugInName)
-  : BZFSHTTPServer(plugInName)
+WebReport::WebReport()
+  : BZFSHTTPVDir()
 {
+  registerVDir();
   evenLine = false;
   valid = false;
 }
@@ -122,7 +135,7 @@ void WebReport::init(const char *tDir)
   templateSystem.addLoop("Reports", this);
   templateSystem.addIF("Valid", this);
 
-  templateSystem.setPluginName("Web Report", getBaseServerURL());
+  templateSystem.setPluginName("Web Report", getBaseURL().c_str());
 }
 
 void WebReport::keyCallback(std::string &data, const std::string &key)
@@ -161,110 +174,136 @@ bool WebReport::ifCallback(const std::string &key)
   return false;
 }
 
-void WebReport::getURLData(const char* url, int requestID, const URLParams &parameters, bool get)
+bool WebReport::resumeTask (  int requestID )
+{
+  return pendingAuths.find(requestID) != pendingAuths.end();
+}
+
+bool WebReport::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
+{
+  std::vector<std::string> reportGroups = findGroupsWithPerm(bz_perm_viewReports);
+  if (!reportGroups.size())
+    reportGroups = findGroupsWithAdmin();
+
+  bool validGroups = false;
+
+  if (reportGroups.size())
+  {
+    if ( reportGroups.size() == 1 && compare_nocase(reportGroups[0],"local.admin") == 0)
+      validGroups = false;
+    else
+      validGroups = true;
+  }
+
+  if (validGroups)
+  {
+    TokenTask *task = new TokenTask(this);
+
+    std::string user,token;
+    request.getParam("user",user);
+    request.getParam("token",token);
+
+    if (!user.size() || !token.size())
+    {
+      reply.body += "Invalid response";
+      reply.docType = HTTPReply::eText;
+      return true;
+    }
+
+    task->groups = reportGroups;
+    task->requestID = request.requestID;
+    task->URL = "http://my.bzflag.org/db/";
+    task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
+    task->URL += request.ip;
+    task->URL += "%3D" + token;
+
+    task->URL += "&groups=";
+    for (size_t g = 0; g < reportGroups.size(); g++)
+    {
+      task->URL += reportGroups[g];
+      if ( g+1 < reportGroups.size())
+	task->URL += "%0D%0A";
+    }
+
+    // give the task to bzfs and let it do it, when it's done it'll be processed
+    bz_addURLJob(task->URL.c_str(),task);
+    tasks.push_back(task);
+  }
+  else
+  {
+    reply.body += "Reports are inaccessible";
+    reply.docType = HTTPReply::eText;
+    return true;
+  }
+  return false;
+}
+
+bool WebReport::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
 {
   flushTasks();
   evenLine = false;
   valid = false;
   reports = NULL;
 
-  std::string page;
-  templateSystem.startTimer();
+  std::string &page = reply.body;
+  int sessionID = request.sessionID;
 
-  // check to see if this is a pending report
-  if (pendingAuths.find(requestID) != pendingAuths.end())
+  std::string action;
+  request.getParam("action",action);
+
+  reply.docType = HTTPReply::eHTML;
+
+  // check the sessionID to see of it's authed;
+  std::map<int,double>::iterator authItr = authedSessionIDs.find(sessionID);
+
+  if (authItr != authedSessionIDs.end())
   {
-    valid = pendingAuths[requestID];
-    if ( valid)
-    {
-      reports = bz_getReports();
-      report = -1;
-    }
+    // update the timeout
+    authItr->second = bz_getCurrentTime();
+    valid = true;
+
+    reports = bz_getReports();
+    report = -1;
 
     if (!templateSystem.processTemplateFile(page, "report.tmpl"))
       templateSystem.processTemplate(page, reportDefaultTemplate);
 
     if (reports)
       bz_deleteStringList(reports);
-
-    pendingAuths.erase(pendingAuths.find(requestID));
   }
   else
   {
-    std::string action = getParam(parameters, "action");
-   
-    if (tolower(action) == "report")
+    // check and see it's one of our pending auth tasks come back to us
+    std::map<int,bool>::iterator pendingItr = pendingAuths.find(request.requestID);
+    if (pendingItr != pendingAuths.end())
     {
-      valid = false;
-      std::string token = getParam(parameters,"token");
-      if (token.size())
-      {
-	  // start a token job
-	std::string user = getParam(parameters,"user");
-	if (user.size())
-	{
-	  // ok now we have to fire off a token job and defer this task
+      valid = pendingItr->second;
 
-	  std::vector<std::string> reportGroups = findGroupsWithPerm(bz_perm_viewReports);
-	  if (!reportGroups.size())
-	    reportGroups = findGroupsWithAdmin();
+      if (valid)
+	authedSessionIDs[request.sessionID] = bz_getCurrentTime();
 
-	  if (reportGroups.size())
-	  {
-	    TokenTask *task = new TokenTask(this);
+      reports = bz_getReports();
+      report = -1;
 
-	    task->groups = reportGroups;
-	    task->requestID = requestID;
-	    task->URL = "http://my.bzflag.org/db/";
-	    task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
-	    task->URL += getIP(requestID);
-	    task->URL += "%3D" + token;
-	    
-	    task->URL += "&groups=";
-	    for (size_t g = 0; g < reportGroups.size(); g++)
-	    {
-	      task->URL += reportGroups[g];
-	      if ( g+1 < reportGroups.size())
-		task->URL += "%0D%0A";
-	    }
+      if (!templateSystem.processTemplateFile(page, "report.tmpl"))
+	templateSystem.processTemplate(page, reportDefaultTemplate);
 
-	    // give the task to bzfs and let it do it, when it's done it'll be processed
-	    bz_addURLJob(task->URL.c_str(),task);
-	    tasks.push_back(task);
-
-	    deferRequest(requestID);
-	  }
-	  else
-	     page = "reports are inaccessible";
-	}
-	else
-	  page = "Invalid response, set the username";
-      }
-      else
-      {
-	if (bz_validAdminPassword(getParam(parameters, "pass").c_str()))
-	  valid = true;
-
-	reports = bz_getReports();
-	report = -1;
-
-	if (!templateSystem.processTemplateFile(page, "report.tmpl"))
-	  templateSystem.processTemplate(page, reportDefaultTemplate);
-
-	if (reports)
-	  bz_deleteStringList(reports);
-      }
+      if (reports)
+	bz_deleteStringList(reports);
     }
     else
     {
-      if (!templateSystem.processTemplateFile(page, "login.tmpl"))
+      // check and see if it's the return from webauth, if so fire off the web job
+      if (compare_nocase(action,"login") == 0)
+	return verifyToken(request,reply);
+      else // it's a new connection, give it a login
+      {
+	if (!templateSystem.processTemplateFile(page, "login.tmpl"))
 	  templateSystem.processTemplate(page, loginDefaultTemplate);
+      }
     }
   }
- 
-  setURLDocType(eHTML, requestID);
-  setURLDataSize((unsigned int)page.size(), requestID);
-  setURLData(page.c_str(), requestID);
+  return true;
 }
 
 void WebReport::loadDefaultTemplates(void)
@@ -273,11 +312,11 @@ void WebReport::loadDefaultTemplates(void)
   loginDefaultTemplate += "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
 
   std::string returnURL;
-  if (!getBaseServerURL() || !strlen(getBaseServerURL()))
-    returnURL += "http://localhost:5154/report/";
+  if (getBaseURL().size())
+    returnURL += "http://localhost:5154/WebReport/";
   else
-   returnURL += getBaseServerURL();
-  returnURL += "?action=report&token=%TOKEN%&user=%USERNAME%";
+   returnURL += getBaseURL();
+  returnURL += "?action=login&token=%TOKEN%&user=%USERNAME%";
 
   loginDefaultTemplate += url_encode(returnURL);
   loginDefaultTemplate += "\">Please Login</a></h4></body></html>";
@@ -303,15 +342,31 @@ void WebReport::flushTasks ( void )
   }
 
   tasksToFlush.clear();
+
+  // check for long dead sessions
+
+  double now = bz_getCurrentTime();
+  double timeout = 300; // 5 min
+
+  std::map<int,double>::iterator authItr = authedSessionIDs.begin();
+  
+  while (authItr != authedSessionIDs.end())
+  {
+    if (authItr->second+timeout < now)
+    {
+      std::map<int,double>::iterator itr = authItr;
+      authItr++;
+      authedSessionIDs.erase(itr);
+    }
+    else
+      authItr++;
+  }
 }
 
 TokenTask::TokenTask(WebReport *r)
 {
   report = r;
   requestID = -1;
- // std::string token;
-  //std::string user;
- // std::string ip;
 }
 
 void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
@@ -366,7 +421,6 @@ void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bo
     if (tokenOk)
       valid = oneGroupIsIn;
 
-    report->resumeRequest(requestID);
     report->pendingAuths[requestID] = valid;
     report->tasksToFlush.push_back(this);
   }
