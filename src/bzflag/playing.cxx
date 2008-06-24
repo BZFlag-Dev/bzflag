@@ -4969,28 +4969,31 @@ static void setupFarPlane()
 
   float farDist = FarPlane;
 
-  if (mapFog &&
-      (BZDB.get("_cullDist") == "fog") && !BZDB.isTrue("_fogNoSky")) {
-    const float fogMargin = 1.01f;
-    const std::string& fogMode = BZDB.get("_fogMode");
-    if (fogMode == "linear") {
-      farDist = fogMargin * BZDB.eval("_fogEnd");
-    } else {
-      const float density = BZDB.eval("_fogDensity");
-      if (density > 0.0f) {
-	const float fogFactor = 0.01f;
-	if (fogMode == "exp2") {
-	  farDist = fogMargin * sqrtf(-logf(fogFactor)) / density;
-	} else { // default to 'exp'
-	  farDist = fogMargin * -logf(fogFactor) / density;
-	}
+  if (BZDB.get("_cullDist") == "fog") {
+    if (mapFog && !BZDB.isTrue("_fogNoSky")) {
+      const float fogMargin = 1.01f;
+      const std::string& fogMode = BZDB.get("_fogMode");
+      if (fogMode == "linear") {
+	farDist = fogMargin * BZDB.eval("_fogEnd");
       } else {
-	// default far plane
+	const float density = BZDB.eval("_fogDensity");
+	if (density > 0.0f) {
+	  const float fogFactor = 0.01f;
+	  if (fogMode == "exp2") {
+	    farDist = fogMargin * sqrtf(-logf(fogFactor)) / density;
+	  } else { // default to 'exp'
+	    farDist = fogMargin * -logf(fogFactor) / density;
+	  }
+	} else {
+	  // default far plane
+	}
       }
+    } else {
+      // default far plane
     }
   } else {
     const float dist = BZDB.eval("_cullDist");
-    if (!isnan(dist) && (dist > 0.0f)) {
+    if (dist > 0.0f) {
       farDist = dist;
     } else {
       // default far plane
