@@ -103,6 +103,16 @@ std::string findPlugin ( std::string pluginName )
   if (tryFileLoad(name))
     return name;
 
+  // try the valid dirs
+  for (size_t v = 0; v < validDirs.size(); v++) {
+    name = validDirs[v] + pluginName;
+    if(!hasExtension)
+      name = name + extension;
+
+    if (tryFileLoad(name))
+      return name;
+  }
+
   if(!hasPath) {
     // check the local users plugins dir
     name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + name;
@@ -117,16 +127,6 @@ std::string findPlugin ( std::string pluginName )
   // check the global plugins dir
   if (tryFileLoad(name))
     return name;
-
-  // try the valid dirs
-  for (size_t v = 0; v < validDirs.size(); v++) {
-    name = validDirs[v] + pluginName;
-    if(!hasExtension)
-      name = name + extension;
-
-    if (tryFileLoad(name))
-      return name;
-  }
 
   // see if we can just open the bloody thing
   name = pluginName;
