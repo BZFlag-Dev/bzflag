@@ -503,7 +503,7 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   {
     std::string vdirName = dirItr->second->getVDir();
     std::string vDirDescription = dirItr->second->getDescription();
-    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp" +vDirDescription +"</br>"; 
+    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"</br>"; 
     dirItr++;
   }
 
