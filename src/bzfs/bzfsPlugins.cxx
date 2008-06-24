@@ -44,8 +44,7 @@ tmCustomPluginMap customPluginMap;
 
 std::vector<std::string> validDirs;
 
-typedef struct
-{
+typedef struct {
   std::string foundPath;
   std::string plugin;
 
@@ -54,17 +53,16 @@ typedef struct
 #else
   void*		handle;
 #endif
-}trPluginRecord;
+} trPluginRecord;
 
 std::vector<trPluginRecord>	vPluginList;
 
-typedef enum
-  {
-    eLoadFailedDupe = -1,
-    eLoadFailedError = 0,
-    eLoadFailedRuntime,
-    eLoadComplete
-  }PluginLoadReturn;
+typedef enum {
+  eLoadFailedDupe = -1,
+  eLoadFailedError = 0,
+  eLoadFailedRuntime,
+  eLoadComplete
+} PluginLoadReturn;
 
 bool pluginExists ( std::string plugin )
 {
@@ -165,18 +163,15 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   // get the path, add it to the valid dirs if it's unique
   std::string path = realPluginName;
   size_t s = path.find_last_of("\\");
-  if (s != std::string::npos )
-  {
+  if (s != std::string::npos) {
     bool exists = false;
     path.erase(path.begin()+s+1,path.end());
-    for (size_t v = 0; v < validDirs.size(); v++)
-    {
+    for (size_t v = 0; v < validDirs.size(); v++) {
       if (path == validDirs[v])
 	exists = true;
     }
 
-    if (!exists)
-    {
+    if (!exists) {
       logDebugMessage(4,"LoadPlugin storing valid dir: %s \n",path.c_str());
       validDirs.push_back(path);
     }
@@ -241,8 +236,7 @@ void unload1Plugin ( int iPluginID )
 #  include <dlfcn.h>
 std::vector<void*>	vLibHandles;
 
-int getPluginVersion ( void* hLib )
-{
+int getPluginVersion ( void* hLib ) {
   int (*lpProc)(void) = NULL;
 
   lpProc = force_cast<int (*)(void)>(dlsym(hLib,"bz_GetVersion"));
@@ -251,8 +245,7 @@ int getPluginVersion ( void* hLib )
   return 0;
 }
 
-PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
-{
+PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
   int (*lpProc)(const char*) = NULL;
 
   std::string realPluginName = findPlugin(plugin);
@@ -266,18 +259,15 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   // get the path, add it to the valid dirs if it's unique
   std::string path = realPluginName;
   size_t s = path.find_last_of("/");
-  if (s != std::string::npos )
-  {
+  if (s != std::string::npos ) {
     bool exists = false;
     path.erase(path.begin()+s+1,path.end());
-    for (size_t v = 0; v < validDirs.size(); v++)
-    {
+    for (size_t v = 0; v < validDirs.size(); v++) {
       if (path == validDirs[v])
 	exists = true;
     }
 
-    if (!exists)
-    {
+    if (!exists) {
       logDebugMessage(4,"LoadPlugin storing valid dir: %s \n",path.c_str());
       validDirs.push_back(path);
     }
@@ -423,9 +413,9 @@ public:
       } else {
 	std::vector<std::string>	plugins = getPluginList();
 
-	if (!plugins.size())
+	if (!plugins.size()) {
 	  bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
-	else {
+	} else {
 	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
 	  for ( unsigned int i = 0; i < plugins.size(); i++)
