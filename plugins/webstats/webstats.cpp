@@ -1,21 +1,21 @@
-// webstats.cpp : Defines the entry point for the DLL application.
+// webcpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTP.h"
+#include "plugin_HTTPVDIR.h"
 #include "plugin_HTTPTemplates.h"
 
-class WebStats : public BZFSHTTPServer, TemplateCallbackClass
+class WebStats : public BZFSHTTPVDir, public TemplateCallbackClass, public bz_EventHandler
 {
 public:
-  WebStats(const char *plugInName): BZFSHTTPServer(plugInName) {};
+  WebStats(): BZFSHTTPVDir() {registerVDir();}
 
   void init(const char *commandLine);
 
-  virtual bool acceptURL(const char *url) { return true; }
-  virtual void getURLData(const char* url, int requestID,
-			  const URLParams &paramaters, bool get = true);
+  virtual const char * getVDir ( void ){return "WebStats";}
+  virtual const char * getDescription ( void ){return "Server Statistics";}
+  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID );
 
   Templateiser	templateSystem;
 
@@ -49,27 +49,20 @@ public:
 
 
   // plugin computed stats
-  class ComputedStats : public bz_EventHandler
-  {
-  public:
-    virtual void process ( bz_EventData *eventData );
-    double serverStartTime;
-    
-    std::map<int,int> registeredPlayerMap;
-    std::map<std::string,int> nonRegedPlayerMap;
+  virtual void process ( bz_EventData *eventData );
+  double serverStartTime;
 
-    int joins;
-    int spawns;
-    int deaths;
+  std::map<int,int> registeredPlayerMap;
+  std::map<std::string,int> nonRegedPlayerMap;
 
-    size_t dataIn,dataOut;
-  };
+  int joins;
+  int spawns;
+  int deaths;
 
-  ComputedStats stats;
- 
-};
+  size_t dataIn,dataOut;
+ };
 
-WebStats webStats("webstats");
+WebStats *webStats = NULL;
 
 BZ_GET_PLUGIN_VERSION
 
@@ -77,33 +70,40 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
   bz_debugMessage(4, "webstats plugin loaded");
 
-  bz_registerEvent(bz_ePlayerJoinEvent,&webStats.stats);
-  bz_registerEvent(bz_ePlayerSpawnEvent,&webStats.stats);
-  bz_registerEvent(bz_ePlayerDieEvent,&webStats.stats);
+  if(webStats)
+    delete webStats;
+  webStats = new WebStats;
 
-  bz_registerEvent(bz_eNetDataSendEvent,&webStats.stats);
-  bz_registerEvent(bz_eNetDataReceveEvent,&webStats.stats);
+  webStats->init(commandLine);
 
-  webStats.init(commandLine);
-  webStats.startupHTTP();
+  bz_registerEvent(bz_ePlayerJoinEvent,webStats);
+  bz_registerEvent(bz_ePlayerSpawnEvent,webStats);
+  bz_registerEvent(bz_ePlayerDieEvent,webStats);
+
+  bz_registerEvent(bz_eNetDataSendEvent,webStats);
+  bz_registerEvent(bz_eNetDataReceveEvent,webStats);
+
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload(void)
 {
-  bz_removeEvent(bz_ePlayerJoinEvent,&webStats.stats);
-  bz_removeEvent(bz_ePlayerSpawnEvent,&webStats.stats);
-  bz_removeEvent(bz_ePlayerDieEvent,&webStats.stats);
+  bz_removeEvent(bz_ePlayerJoinEvent,webStats);
+  bz_removeEvent(bz_ePlayerSpawnEvent,webStats);
+  bz_removeEvent(bz_ePlayerDieEvent,webStats);
 
-  bz_removeEvent(bz_eNetDataSendEvent,&webStats.stats);
-  bz_removeEvent(bz_eNetDataReceveEvent,&webStats.stats);
+  bz_removeEvent(bz_eNetDataSendEvent,webStats);
+  bz_removeEvent(bz_eNetDataReceveEvent,webStats);
 
-  webStats.shutdownHTTP();
+  if(webStats)
+    delete webStats;
+  webStats = NULL;
+
   bz_debugMessage(4, "webstats plugin unloaded");
   return 0;
 }
 
-void WebStats::ComputedStats::process ( bz_EventData *eventData )
+void WebStats::process ( bz_EventData *eventData )
 {
   switch(eventData->eventType)
   {
@@ -160,15 +160,15 @@ void WebStats::ComputedStats::process ( bz_EventData *eventData )
 
 void WebStats::init(const char *commandLine)
 {
-  stats.serverStartTime = bz_getCurrentTime();
+  serverStartTime = bz_getCurrentTime();
 
-  stats.joins = stats.spawns = stats.deaths = 0;
-  stats.dataIn = stats.dataOut = 0;
+  joins = spawns = deaths = 0;
+  dataIn = dataOut = 0;
 
   templateSystem.addSearchPath("./");
   templateSystem.addSearchPath(commandLine);
 
-  templateSystem.setPluginName("WebStats", getBaseServerURL());
+  templateSystem.setPluginName("WebStats",getBaseURL().c_str());
 
   templateSystem.addKey("PlayerCount", this);
   templateSystem.addLoop("Players", this);
@@ -338,7 +338,7 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
 
   data = "";
 
-  double uptime = bz_getCurrentTime()-stats.serverStartTime;
+  double uptime = bz_getCurrentTime()-serverStartTime;
 
   if (key == "playercount") {
     data = format("%d", bz_getPlayerCount());
@@ -378,47 +378,47 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
   }
   else if ( key == "totalplayers" )
   {
-    size_t count = stats.registeredPlayerMap.size() + stats.nonRegedPlayerMap.size();
+    size_t count = registeredPlayerMap.size() + nonRegedPlayerMap.size();
     data = format("%d",count);
   }
   else if ( key == "joins")
-    data = format("%d",stats.joins);
+    data = format("%d",joins);
   else if ( key == "spawns")
-    data = format("%d",stats.spawns);
+    data = format("%d",spawns);
   else if ( key == "deaths")
-    data = format("%d",stats.deaths);
+    data = format("%d",deaths);
   else if ( key == "uniquereged")
-    data = format("%d",stats.registeredPlayerMap.size());
+    data = format("%d",registeredPlayerMap.size());
   else if ( key == "uniqueunreged")
-    data = format("%d",stats.nonRegedPlayerMap.size());
+    data = format("%d",nonRegedPlayerMap.size());
   else if ( key == "datainb")
-    data = format("%d",stats.dataIn);
+    data = format("%d",dataIn);
   else if ( key == "dataoutb")
-    data = format("%d",stats.dataOut);
+    data = format("%d",dataOut);
   else if ( key == "datainkb")
-    data = format("%f",stats.dataIn/1024.0);
+    data = format("%f",dataIn/1024.0);
   else if ( key == "dataoutkb")
-    data = format("%f",stats.dataOut/1024.0);
+    data = format("%f",dataOut/1024.0);
   else if ( key == "datainmb")
-    data = format("%f",stats.dataIn/1024.0/1024.0);
+    data = format("%f",dataIn/1024.0/1024.0);
   else if ( key == "dataoutmb")
-    data = format("%f",stats.dataOut/1024.0/1024.0);
+    data = format("%f",dataOut/1024.0/1024.0);
   else if ( key == "dataingb")
-    data = format("%f",stats.dataIn/1024.0/1024.0/1024.0);
+    data = format("%f",dataIn/1024.0/1024.0/1024.0);
   else if ( key == "dataoutgb")
-    data = format("%f",stats.dataOut/1024.0/1024.0/1024.0);
+    data = format("%f",dataOut/1024.0/1024.0/1024.0);
   else if ( key == "totaltransferb")
-    data = format("%f",(stats.dataOut+stats.dataIn));
+    data = format("%f",(dataOut+dataIn));
   else if ( key == "totaltransferkb")
-    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0);
+    data = format("%f",(dataOut+dataIn)/1024.0);
   else if ( key == "totaltransfermb")
-    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0/1024.0);
+    data = format("%f",(dataOut+dataIn)/1024.0/1024.0);
   else if ( key == "totaltransfergb")
-    data = format("%f",(stats.dataOut+stats.dataIn)/1024.0/1024.0/1024.0);
+    data = format("%f",(dataOut+dataIn)/1024.0/1024.0/1024.0);
   else if ( key == "datainavgkb")
-    data = format("%f",(stats.dataIn/uptime)/1024.0);
+    data = format("%f",(dataIn/uptime)/1024.0);
   else if ( key == "dataoputavgkb")
-    data = format("%f",(stats.dataOut/uptime)/1024.0);
+    data = format("%f",(dataOut/uptime)/1024.0);
   else if (key == "teamname") {
     if (rec)
       data = bzu_GetTeamName(rec->team);
@@ -706,7 +706,7 @@ void WebStats::doStatReport(std::string &page, std::string &action)
   if(action.size())
     action += ".tmpl";
   if (!action.size() || !templateSystem.processTemplateFile(page, action.c_str())) {
-    if (!templateSystem.processTemplateFile(page, "stats.tmpl"))
+    if (!templateSystem.processTemplateFile(page, "tmpl"))
       templateSystem.processTemplate(page, defaultMainTemplate);
   }
   finishReport();
@@ -737,7 +737,8 @@ void WebStats::doFlagReport(std::string &page, int flagID)
   flagReportID = -1;
 }
 
-void WebStats::getURLData(const char* url, int requestID, const URLParams &paramaters, bool get)
+//void WebStats::getURLData(const char* url, int requestID, const URLParams &paramaters, bool get)
+bool WebStats::handleRequest ( const HTTPRequest &request, HTTPReply &reply, int userID )
 {
   bool evenLine = false;
   groupLoop = 0;
@@ -745,12 +746,13 @@ void WebStats::getURLData(const char* url, int requestID, const URLParams &param
   playeRecord = NULL;
   flagReportID = -1;
 
-  std::string page;
+  std::string &page = reply.body;
   templateSystem.startTimer();
 
-  std::string action = getParam(paramaters, "action");
-  std::string playerID = getParam(paramaters, "playerid");
-  std::string flagID = getParam(paramaters, "flagid");
+  std::string action, playerID, flagID;
+  request.getParam("action",action);
+  request.getParam("playerid",playerID);
+  request.getParam("flagid",flagID);
 
   if ( action == "player" && playerID.size())
     doPlayerReport(page, atoi(playerID.c_str()));
@@ -759,9 +761,9 @@ void WebStats::getURLData(const char* url, int requestID, const URLParams &param
   else
     doStatReport(page, action);
 
-  setURLDocType(eHTML, requestID);
-  setURLDataSize ( (unsigned int)page.size(), requestID );
-  setURLData ( page.c_str(), requestID );
+  reply.docType = HTTPReply::eHTML;
+
+  return true;
 }
 
 // Local Variables: ***
