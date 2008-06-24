@@ -558,7 +558,7 @@ public:
     Vector3 muzzleOffset = player->getMuzzleOffset();
 
     Matrix34 mat;
-    mat.rotate2d(drInfo.rot,Vector3());
+    mat.rotate2d(toDeg(drInfo.rot),Vector3());
     mat.transformNorm(muzzleOffset);
 
     firingInfo.shot.pos[0] += muzzleOffset.x();
