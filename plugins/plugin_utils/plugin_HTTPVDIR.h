@@ -161,7 +161,7 @@ public:
 
   // authed versions of the main callbacks
   virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply ) = 0;
-  virtual bool resumeAuthedTask ( int requestID ){return true;}
+  virtual bool resumeAuthedTask ( int /*requestID*/ ){return true;}
 
 protected:
   Templateiser	templateSystem;
