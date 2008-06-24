@@ -568,20 +568,21 @@ public:
     if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV))
       drInfo.vel[2] = 0.0f;
 
-    memcpy(firingInfo.shot.vel,drInfo.vel,sizeof(float)*3);
+    memset(firingInfo.shot.vel,0,sizeof(float)*3);
 
     // compute the new velocity
-    float velMag = sqrt(firingInfo.shot.vel[0]*firingInfo.shot.vel[0]+firingInfo.shot.vel[1]*firingInfo.shot.vel[1]+firingInfo.shot.vel[2]*firingInfo.shot.vel[2]);
+    Vector3 facingVector = Vector3(cos(drInfo.rot), sin(drInfo.rot), 0.0f);
+    float velMag = sqrt(drInfo.vel[0]*drInfo.vel[0]+drInfo.vel[1]*drInfo.vel[1]+drInfo.vel[2]*drInfo.vel[2]);
     float shotSpeed = ShotManager::getShotVelocity();
     float newSpeed = shotSpeed + velMag;
 
-    // unitize and scale to shot speed
-    firingInfo.shot.vel[0] = firingInfo.shot.vel[0]/velMag;
-    firingInfo.shot.vel[0] *= newSpeed;
-    firingInfo.shot.vel[1] = firingInfo.shot.vel[1]/velMag;
-    firingInfo.shot.vel[1] *= newSpeed;
-    firingInfo.shot.vel[2] = firingInfo.shot.vel[2]/velMag;
-    firingInfo.shot.vel[2] *= newSpeed;
+    // scale to shot speed
+    facingVector *= newSpeed;
+
+    firingInfo.shot.vel[0] = facingVector.x();
+    firingInfo.shot.vel[1] = facingVector.y();
+    firingInfo.shot.vel[2] = facingVector.z();
+
 
     int guid = ShotManager::instance().newShot(&firingInfo);
 
