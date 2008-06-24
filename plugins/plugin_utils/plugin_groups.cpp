@@ -13,13 +13,10 @@
 #include "plugin_groups.h"
 #include "plugin_utils.h"
 
-bool permInGroup ( const std::string &perm, bz_APIStringList* groupPerms, bool skipLocal )
+bool permInGroup ( const std::string &perm, bz_APIStringList* groupPerms )
 {
   for (unsigned int i = 0; i < groupPerms->size(); i++)
   {
-    if (skipLocal && strcasecmp(groupPerms->get(i).c_str(),"LOCAL.ADMIN") == 0)
-      continue;
-
     if (strcasecmp(perm.c_str(),groupPerms->get(i).c_str()) == 0)
       return true;
   }
@@ -48,7 +45,7 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
 	bool hasOneWithNoPerm = false;
 	for (size_t p =0; p < perms.size(); p++)
 	{
-	  if (!permInGroup(perms[p],groupPerms,skipLocal))
+	  if (!permInGroup(perms[p],groupPerms))
 	    hasOneWithNoPerm = true;
 	}
 	bz_deleteStringList(groupPerms);
@@ -83,10 +80,13 @@ std::vector<std::string> findGroupsWithPerm( const std::string &perm, bool skipL
     {
       std::string groupName = groupList->get(i).c_str();
 
+      if (skipLocal && compare_nocase(groupName,"LOCAL.ADMIN") == 0)
+	continue;
+
       bz_APIStringList *groupPerms = bz_getGroupPerms(groupName.c_str());
       if (groupPerms)
       {
-	if (permInGroup(perm,groupPerms,skipLocal))
+	if (permInGroup(perm,groupPerms))
 	  groupsWithPerms.push_back(groupName);
 
 	bz_deleteStringList(groupPerms);
