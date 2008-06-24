@@ -45,7 +45,7 @@ public:
     }
     else
     {
-      reply.body = format("<html><head></head><body>Your userID is %d<br>\n",userID);
+      reply.body = format("<html><head></head><body>\n");
 
       reply.body += format("Your sessionID is %d<br>\n",request.sessionID);
       reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a><br>";
