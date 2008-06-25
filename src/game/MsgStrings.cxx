@@ -89,7 +89,6 @@ static MsgStringList handleMsgFlagType(PacketInfo *pi);
 static MsgStringList handleMsgFlagUpdate(PacketInfo *pi);
 static MsgStringList handleMsgFetchResources(PacketInfo *pi);
 static MsgStringList handleMsgGrabFlag(PacketInfo *pi);
-static MsgStringList handleMsgGMUpdate(PacketInfo *pi);
 static MsgStringList handleMsgGetWorld(PacketInfo *pi);
 static MsgStringList handleMsgGameSettings(PacketInfo *pi);
 static MsgStringList handleMsgGameTime(PacketInfo *pi);
@@ -726,26 +725,6 @@ static MsgStringList handleMsgGrabFlag (PacketInfo *pi)
   d = flag.unpack (d);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "flag: %s", strFlag (flagid).c_str());
-
-  return list;
-}
-
-
-static MsgStringList handleMsgGMUpdate (PacketInfo *pi)
-{
-  MsgStringList list = listMsgBasics (pi);
-
-  void *d = (void*)pi->data;
-  u8 target;
-  ShotUpdate shot;
-  d = shot.unpack (d);
-  d = nboUnpackUByte (d, target);
-  listPush (list, 1, "player:   %s", strPlayer(shot.player).c_str());
-  listPush (list, 1, "target:   %s", strPlayer(target).c_str());
-  listPush (list, 2, "id:       %i", shot.id);
-  listPush (list, 2, "team:     %s", strTeam(shot.team).c_str());
-  listPush (list, 2, "pos:      %s", strVector((float*)shot.pos).c_str());
-  listPush (list, 2, "vel:      %s", strVector((float*)shot.vel).c_str());
 
   return list;
 }
