@@ -26,12 +26,11 @@ namespace BZW
     class Parser
     {
       public:
-	Parser();
-	~Parser();
+        Parser();
+        ~Parser();
 
-	Parameter * addParameter(string name);
-	void Parse();
-
+        Parameter * addParameter(string name);
+        void Parse();
 
       private:
 
@@ -41,36 +40,36 @@ namespace BZW
     {
       friend Parameter * Parser::addParameter(string name);
       public:
-	enum ValueType
-	{
-	  String,
-	  Real
-	};
-	void addValue(ValueType type, bool required);
+        enum ValueType
+        {
+          String,
+          Real
+        };
+        void addValue(ValueType type, bool required);
 
       protected:
-	Parameter(string name);
-	~Parameter();
+        Parameter(string name);
+        ~Parameter();
 
       private:
-	
-	union ValueValue
-	{
-	  string string_value;
-	  int int_value;
-	  float real_value;
-	  bool bool_value;
-	}
 
-	struct Value
-	{
-	  ValueType type;
-	  bool required;
-	  bool set;
-	  ValueValue value;
-	}
+        union ValueValue
+        {
+          string string_value;
+          int int_value;
+          float real_value;
+          bool bool_value;
+        };
 
-	string name;
+        struct Value
+        {
+          ValueType type;
+          bool required;
+          bool set;
+          ValueValue value; // I'm really sorry for this line :(
+        };
+
+      string name;
     }
 
   }
