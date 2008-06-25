@@ -6,8 +6,9 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
 
-BZFlag 2.0.11
+BZFlag 2.0.12
 ----------------------------------------------------
+* Fix build with -ffast-math avoiding use of isnan for fog - Alfredo Tupone
 * Fix for memory leaks - 
 * libGLEW requirement controlled by --with-glew - Alfredo Tupone
 * Actually build with SDL_Image, if required - Alfredo Tupone
