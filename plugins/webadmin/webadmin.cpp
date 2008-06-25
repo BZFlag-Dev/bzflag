@@ -3,69 +3,56 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTP.h"
+#include "plugin_HTTPVDIR.h"
 #include "plugin_HTTPTemplates.h"
 
-class WebAdmin : public BZFSHTTPServer, TemplateCallbackClass
+class WebAdmin : public BZFSHTTPVDirAuth, TemplateCallbackClass
 {
 public:
-  WebAdmin(const char * plugInName);
+	WebAdmin():BZFSHTTPVDirAuth(){registerVDir();}
+
+	virtual const char * getVDir ( void ){return "WebAdmin";}
+	virtual const char * getDescription ( void ){return "Server Administration(Login Required)";}
 
   void init (const char *tDir);
 
-  // from BSFSHTTPServer
-  virtual bool acceptURL (const char *url) { return true; }
-  virtual void getURLData (const char* url, int requestID, const URLParams &params, bool get=true);
-
-  Templateiser templateSystem;
-  std::string temp_token, temp_username;
-
+	virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply );
+ 
   // from TemplateCallbackClass
   virtual void keyCallback (std::string &data, const std::string &key);
   virtual bool loopCallback (const std::string &key);
   virtual bool ifCallback (const std::string &key);
   
 private:
-  /* TODO: employ bz_addServerSidePlayer when it is functional */
-  class Player : public bz_ServerSidePlayerHandler
-  {
-  public:
-    Player () { playerID = -42; }
-    virtual void added (int player);
-    virtual void playerRejected(bz_eRejectCodes code, const char *reason);
-    using bz_ServerSidePlayerHandler::sendChatMessage; // you have been exposed!
-  };
-  
-  Player *player;
 };
 
-WebAdmin webAdmin("webadmin");
+WebAdmin *webAdmin = NULL;
 
 BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
+	if(webAdmin)
+		delete(webAdmin);
+	webAdmin = new WebAdmin;
+
   if (commandLine && strlen(commandLine))
-    webAdmin.init(commandLine);
+    webAdmin->init(commandLine);
   else
-    webAdmin.init("./");
+    webAdmin->init("./");
 
   bz_debugMessage(4,"webadmin plugin loaded");
-  webAdmin.startupHTTP();
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload(void)
 {
-  webAdmin.shutdownHTTP();
+	if(webAdmin)
+		delete(webAdmin);
+	webAdmin = NULL;
+
   bz_debugMessage(4,"webadmin plugin unloaded");
   return 0;
-}
-
-WebAdmin::WebAdmin(const char *plugInName)
-: BZFSHTTPServer(plugInName)
-{
-  player = new Player();
 }
 
 void WebAdmin::init(const char* tDir)
@@ -73,18 +60,17 @@ void WebAdmin::init(const char* tDir)
   if (tDir)
     templateSystem.addSearchPath(tDir);
 
+	// level one has admin perms
+	addPermToLevel(1,"ADMIN");
+
   /* template symbols go here */
 
-  templateSystem.setPluginName("Web Report", getBaseServerURL());
+  templateSystem.setPluginName("WebReport", getBaseURL().c_str());
 }
 
 // event hook for [$Something] in templates
 void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
-  if (key == "token")
-    data = temp_token;
-  else if (key == "username")
-    data = temp_username;
 }
 
 // condition check for [*START] in templates
@@ -99,51 +85,22 @@ bool WebAdmin::ifCallback (const std::string &key)
   return false; 
 }
 
-void WebAdmin::getURLData (const char* url, int requestID, const URLParams &params, bool get)
+bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
-  std::string page, token, username;
-  token = getParam(params, "token");
-  username = getParam(params, "username");
-  
-  if (token.size() || username.size()) {
-    std::string loginURL;
-    loginURL  = "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
-    loginURL += url_encode(std::string(getBaseServerURL()) + getVDir() + url);
-    loginURL += "%3Ftoken%3D%25TOKEN%25%26username%3D%25USERNAME%25";
-    
-    setURLReturnCode(e301Redirect, requestID);
-    setURLRedirectLocation(loginURL.c_str(), requestID);
-  } 
-  else {
-    temp_token = token;
-    temp_username = username;
-    
-    templateSystem.processTemplateFile(page, "main.tmpl");
-  }
+  std::string &page = reply.body;
 
-  setURLDocType(eHTML,requestID);
-  setURLDataSize(page.size(),requestID);
-  setURLData(page.c_str(),requestID);
+	if (level == 1)
+		page = format("authenticated sessionID %d",request.sessionID);
+	else if ( level == VERIFIED)	// valid login but does not have admin groups
+		page = format("Not authenticated(Verified) sessionID %d",request.sessionID);
+	else
+		page = format("Not authenticated sessionID %d",request.sessionID);
+
+	reply.docType = HTTPReply::eHTML;
+
+	return true;
 }
 
-void WebAdmin::Player::added(int player)
-{
-  if (player == playerID) {
-    setPlayerData("webadmin", "" /*token*/, "webadmin", eObservers);
-    
-    if (!bz_setPlayerOperator(playerID))
-      bz_debugMessage(1, "webadmin: unable to make myself an administrator");
-    
-    bz_grantPerm(playerID, bz_perm_hideAdmin);
-  }
-}
-
-void WebAdmin::Player::playerRejected(bz_eRejectCodes, const char *reason)
-{
-  std::string temp = "Player webadmin rejected (reason: ";
-  temp = temp + reason + ")";
-  bz_debugMessage(1, temp.c_str());
-}
 
 // Local Variables: ***
 // mode: C++ ***
