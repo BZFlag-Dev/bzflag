@@ -5476,7 +5476,7 @@ static void setupFarPlane()
     }
   } else {
     const float dist = BZDB.eval("_cullDist");
-    if (dist > 0.0f)) {
+    if (dist > 0.0f) {
       farDist = dist;
     } else {
       // default far plane
