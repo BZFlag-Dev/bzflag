@@ -695,11 +695,12 @@ class HitHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    // disable deaths for now until we get dead reckoning working
-    return false;
-
     if (!player || len < 5)
       return false;
+
+    // disable deaths for now until we get dead reckoning working
+    sendMessage(player->getIndex(), player->getIndex(), "LOL you died!");
+    return false;
 
     if (player->player.isObserver() || !player->player.isAlive())
       return true; // you can't be hit stupid
