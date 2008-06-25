@@ -14,16 +14,29 @@ public:
   void init (const char *tDir);
 
   // from BSFSHTTPServer
-  virtual bool acceptURL ( const char *url ) { return true; }
-  virtual void getURLData ( const char* url, int requestID, const URLParams &params, bool get = true );
+  virtual bool acceptURL (const char *url) { return true; }
+  virtual void getURLData (const char* url, int requestID, const URLParams &params, bool get=true);
 
   Templateiser templateSystem;
   std::string temp_token, temp_username;
 
   // from TemplateCallbackClass
-  virtual void keyCallback ( std::string &data, const std::string &key );
-  virtual bool loopCallback ( const std::string &key );
-  virtual bool ifCallback ( const std::string &key );
+  virtual void keyCallback (std::string &data, const std::string &key);
+  virtual bool loopCallback (const std::string &key);
+  virtual bool ifCallback (const std::string &key);
+  
+private:
+  /* TODO: employ bz_addServerSidePlayer when it is functional */
+  class Player : public bz_ServerSidePlayerHandler
+  {
+  public:
+    Player () { playerID = -42; }
+    virtual void added (int player);
+    virtual void playerRejected(bz_eRejectCodes code, const char *reason);
+    using bz_ServerSidePlayerHandler::sendChatMessage; // you have been exposed!
+  };
+  
+  Player *player;
 };
 
 WebAdmin webAdmin("webadmin");
@@ -35,7 +48,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
   if (commandLine && strlen(commandLine))
     webAdmin.init(commandLine);
   else
-     webAdmin.init("./");
+    webAdmin.init("./");
 
   bz_debugMessage(4,"webadmin plugin loaded");
   webAdmin.startupHTTP();
@@ -52,6 +65,7 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 WebAdmin::WebAdmin(const char *plugInName)
 : BZFSHTTPServer(plugInName)
 {
+  player = new Player();
 }
 
 void WebAdmin::init(const char* tDir)
@@ -112,10 +126,29 @@ void WebAdmin::getURLData (const char* url, int requestID, const URLParams &para
   setURLData(page.c_str(),requestID);
 }
 
+void WebAdmin::Player::added(int player)
+{
+  if (player == playerID) {
+    setPlayerData("webadmin", "" /*token*/, "webadmin", eObservers);
+    
+    if (!bz_setPlayerOperator(playerID))
+      bz_debugMessage(1, "webadmin: unable to make myself an administrator");
+    
+    bz_grantPerm(playerID, bz_perm_hideAdmin);
+  }
+}
+
+void WebAdmin::Player::playerRejected(bz_eRejectCodes, const char *reason)
+{
+  std::string temp = "Player webadmin rejected (reason: ";
+  temp = temp + reason + ")";
+  bz_debugMessage(1, temp.c_str());
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=2 expandtab
