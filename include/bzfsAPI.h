@@ -46,7 +46,7 @@
 
 #define BZ_API_VERSION 1
 
-#define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion(void) { return BZ_API_VERSION }
+#define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion(void) { return BZ_API_VERSION; }
 
 /** This is so we can use gcc's "format string vs arguments"-check
  * for various printf-like functions, and still maintain compatability.
