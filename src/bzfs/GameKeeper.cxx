@@ -189,7 +189,7 @@ void GameKeeper::Player::dumpScore()
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
   float topRatio    = -100000.0f;
-  int   rabbitIndex = NoPlayer;
+  int   _rabbitIndex = NoPlayer;
 
   Player *playerData;
   int     i;
@@ -216,10 +216,10 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 	}
 	if (select) {
 	  topRatio = ratio;
-	  rabbitIndex = i;
+	  _rabbitIndex = i;
 	}
     }
-    return rabbitIndex;
+    return _rabbitIndex;
 }
 
 void GameKeeper::Player::updateNextGameTime()

@@ -917,7 +917,7 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 }
 
 
-void sendMsgShotUpdate ( int player, FiringInfo *shot )
+void sendMsgShotUpdate ( int /*player*/, FiringInfo *shot )
 {
   NetMsg msg = MSGMGR.newMessage();
 

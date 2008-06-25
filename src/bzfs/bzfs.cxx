@@ -2701,7 +2701,7 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
 }
 
 // player has been forced to die
-bool smitePlayer(int victimIndex, BlowedUpReason reason, bool respawnOnBase )
+bool smitePlayer(int victimIndex, BlowedUpReason /*reason*/, bool respawnOnBase )
 {
   GameKeeper::Player *victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
@@ -5087,12 +5087,12 @@ void BZFSShotCallbacks::shotEnded ( int id )
   sendMsgShotEnd(id,1);
 }
 
-void BZFSShotCallbacks::shotStarted ( int id )
+void BZFSShotCallbacks::shotStarted ( int /*id*/ )
 {
 
 }
 
-void BZFSShotCallbacks::shotUpdated ( int id )
+void BZFSShotCallbacks::shotUpdated ( int /*id*/ )
 {
 
 }
