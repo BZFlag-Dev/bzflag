@@ -14,11 +14,13 @@
 
 echo "The following might need to be added to Makefile.am"
 pwd=`pwd`
-dirs=`find . -type f -name Entries | sed -e 's|/CVS/Entries||'`
+#CVS dirs=`find * -type f -name Entries | sed -e 's|/CVS/Entries||'`
+dirs=`find * -type f -name entries | sed -e 's|/\.svn/entries||'`
 for dir in $dirs ; do
   if [ -f $dir/Makefile.am ] ; then
     cd $dir
-    files=`grep '^/' CVS/Entries | sed -e 's|/\([^/]*\)/.*|\1|' | sort`
+    files=`grep -B 1 ^file$ .svn/entries | grep -v ^file$ | grep -v -- -- | sort`
+    # CVS files=`grep '^/' CVS/Entries | sed -e 's|/\([^/]*\)/.*|\1|' | sort`
     for file in $files ; do
       case $file in
 	Makefile.am|.cvsignore)

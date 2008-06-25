@@ -1,5 +1,0 @@
-EXTRA_DIST =	\
-	1.t
-
-MAINTAINERCLEANFILES = \
-	Makefile.in

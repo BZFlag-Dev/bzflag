@@ -819,8 +819,6 @@ AC_CONFIG_FILES(bzflag.info
 	m4/Makefile
 	man/Makefile
 	misc/Makefile
-	misc/stats/Makefile
-	misc/stats/t/Makefile
 	package/Makefile
 	package/irix/Makefile
 	package/linux/Makefile

@@ -1,5 +1,3 @@
-SUBDIRS = stats
-
 EXTRA_DIST =				\
 	3ds2bzw.c			\
 	bzbz.pl				\
@@ -32,6 +30,12 @@ EXTRA_DIST =				\
 	serverstats.sh			\
 	simpleSwearList.txt		\
 	snap.sh				\
+	stats/Changes			\
+	stats/Info.pm			\
+	stats/Makefile.PL		\
+	stats/MANIFEST			\
+	stats/README			\
+	stats/t/1.t			\
 	tar				\
 	Template.cxx			\
 	Template.h			\
