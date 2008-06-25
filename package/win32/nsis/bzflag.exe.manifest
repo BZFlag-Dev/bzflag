@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
-<assembly 
-   xmlns="urn:schemas-microsoft-com:asm.v1" 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly
+   xmlns="urn:schemas-microsoft-com:asm.v1"
    manifestVersion="1.0">
-<assemblyIdentity 
-    processorArchitecture="x86" 
+<assemblyIdentity
+    processorArchitecture="x86"
     version="2.0.10.0"
     type="win32"
     name="bzflag.exe"/>
@@ -12,7 +12,7 @@
     <dependentAssembly>
     <assemblyIdentity
          type="win32"
-		 publicKeyToken="6595b64144ccf1df"
+         publicKeyToken="6595b64144ccf1df"
          name="Microsoft.Windows.Common-Controls"
          version="6.0.0.0"
          language="*"
