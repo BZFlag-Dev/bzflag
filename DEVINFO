@@ -402,7 +402,7 @@ cannot proceed.  A checklist of items to be completed follows:
 	e.g. svn copy bzflag \
 	     https://bzflag.svn.sf.net/svnroot/bzflag/tags/v1_10_2/
 
-- Perform a 
+- Perform a
   "svn export v://bzflag.svn.sf.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
   from somewhere else in the filesystem to obtain a tagged version of the
   sources.

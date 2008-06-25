@@ -1,6 +1,6 @@
 <?php
 
-// This function will check a username and token returned by the bzflag 
+// This function will check a username and token returned by the bzflag
 // weblogin page at http://my.bzflag.org/weblogin?action=weblogin. You can use
 // this URL to ask a user for his bzflag global login. Your page needs to pass
 // in an URL paramater to the weblogin that contains your URL to be called with
@@ -22,7 +22,7 @@
 function validate_token($token, $callsign, $groups=array()){
 	//Some config options
 	$list_server='http://my.bzflag.org/db/';
-	
+
 	//The program
 	//$key => $group
 	$group_list='&groups=';
@@ -31,12 +31,12 @@ function validate_token($token, $callsign, $groups=array()){
 	}
 	//Trim the last 6 characters, wich are "%0D%0A", off of the last group
 	$group_list=substr($group_list, 0, strlen($group_list)-6);
-	
+
 	$reply=file_get_contents(''.$list_server.'?action=CHECKTOKENS&checktokens='.$callsign.'%3D'.$token.''.$group_list.'');
-	
+
 	//If we got a TOKBAD, return false, because the token can't be right
 	if(strpos($reply, 'TOKBAD: ')) return false;
-	
+
 	//Here's where it gets tricky: making sure the user is in all groups specified
 	$group_list='';
 	foreach($groups as $group){

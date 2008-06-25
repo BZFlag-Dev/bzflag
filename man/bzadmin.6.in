@@ -1,14 +1,14 @@
 .\" bzflag
 .\" Copyright (c) 1993 - 2008 Tim Riker
-.\" 
+.\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
 .\" named COPYING that should have accompanied this file.
-.\" 
+.\"
 .\" THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-.\" 
+.\"
 .TH "bzadmin" "6" "@BZFLAG_DATE@" "bzadmin-@BZFLAG_VERSION@" "BZFlag"
 .SH "NAME"
 bzadmin \- a text based client for BZFlag
@@ -25,20 +25,20 @@ is a textbased client for the game BZFlag. It can't be used for
 playing, but it can be used to see when players join and leave the
 game, to see the chat messages, and to send messages and commands
 to the server, as well as see several other vital game messages.
-.PP 
+.PP
 When you start bzadmin without any command line options other than
 callsign and hostname a simple curses\-based user interface will be
 started (unless you built bzadmin without curses support). This
 interface is divided into three rectangles; the output window
 (which covers almost all of the terminal), the target window, and
 the input window.
-.PP 
+.PP
 The output window is where messages from the server will be shown.
-.PP 
+.PP
 The target window shows the name of the player that
 will receive your next message, or 'all' if it will be a public message.
 You can change target by using the left and right arrow keys.
-.PP 
+.PP
 The input window is where you type your messages. It also supports tab
 completion of commands and callsigns. You can clear the input window
 with the key combination \fBCtrl\-U\fR, and you can generate a \fB/kick\fR
@@ -46,7 +46,7 @@ command for the current target with the F5 key (if the current target
 is a player). You can also generate a ban command for the current target with
 the F6 key, but this only works if you are an admin and the server has sent
 you that players IP address (as a response to a \fB/playerlist\fR command).
-.PP 
+.PP
 The curses user interface also has a simple menu system where you can edit
 the server variables (if you are an admin) and see a player list. If you are
 an admin you can also see the IP addresses in the player list, if you have
@@ -62,54 +62,54 @@ go away.
 .TP 15
 .B \-help
 Show a simple help text.
-.TP 
+.TP
 \fB\-hide \fR\fImsgtype\fR[\fI,msgtype\fR]...
 Tell bzadmin not to show these message types. The available message types are
 chat, join, kill, leave, pause, ping, rabbit, spawn, time, and over. By default
 chat, join, kill, leave, pause, and rabbit are shown. You can also change this
 while bzadmin is running with the commands \fB/show <msgtype>\fR and
 \fB/hide <msgtype>\fR, and from the curses menu.
-.TP 
+.TP
 \fB\-show \fR\fImsgtype\fR[\fI,msgtype\fR]...
 Tell bzadmin to show these message types. See \fB\-hide\fR for a list of
 available message types. If a message type is listed both in \fB\-show\fR
 and \fB\-hide\fR it will not be shown.
-.TP 
+.TP
 \fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}
 Select the user interface that you want. The curses interface is the default,
 and it is described above.
-.br 
+.br
 The stdin interface reads user commands from the standard in stream
 and sends them to the server. All server output is ignored.
-.br 
+.br
 The stdout interface prints all server output to the standard out stream.
 All user input is ignored.
-.br 
+.br
 The stdboth interface is a combination of stdin and stdout \- it prints
 server output to the standard out stream, and reads user commands from
 the standard in stream.
-.TP 
+.TP
 \fIcallsign\fR[\fI:password\fR]\fI@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
 hostname where the BZFlag server is. The port number is optional,
 and the default value is 5154.
-.TP 
+.TP
 \fIcommand\fR
 You can specify messages and commands to send to the server on the
 command line. BZAdmin will continue running after sending the
-specified commands. 
+specified commands.
 .RE
 .SS Examples
 .RS
 .TP 15
 \fBbzadmin admin@localhost:5154\fR
-.br 
+.br
 Join the game on localhost, port 5154, using the callsign 'admin'.
-.TP 
+.TP
 \fBbzadmin admin@localhost '/passwd secretpass' '/ban 192.168.0.2'
-.br 
+.br
 Connect to the server at localhost and ban the IP 192.168.0.2.
-.TP 
+.TP
 \fBbzadmin \-ui stdout spy@bzserver.xy | grep magicword\fR
 Connect to bzserver.xy and print all server messages that contain 'magicword'.
 .RE

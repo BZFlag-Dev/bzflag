@@ -3,7 +3,7 @@ Goal of game: find & hold the Keep Away flag for the
 indicated amount of time and server will kill all
 other teams/players.
 ----------------------------------------------------
-Watch server messages for game updates - who holds 
+Watch server messages for game updates - who holds
 the flag, how much time is left, etc.
 ----------------------------------------------------
 You may send a message to player holding the flag

@@ -1,14 +1,14 @@
 .\" bzflag
 .\" Copyright (c) 1993 - 2008 Tim Riker
-.\" 
+.\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
 .\" named COPYING that should have accompanied this file.
-.\" 
+.\"
 .\" THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-.\" 
+.\"
 .TH "bzflag" "6" "@BZFLAG_DATE@" "bzflag-@BZFLAG_VERSION@" "BZFlag"
 .SH "NAME"
 BZFlag \- a tank battle game
@@ -48,7 +48,7 @@ team scores a win, while being destroyed or destroying a
 teammate scores a loss.  Rogues have no teammates (not even
 other rogues), so they cannot shoot teammates and they do
 not have a team score.
-.PP 
+.PP
 There are three main styles of play:  capture\-the\-flag,
 free\-for\-all, and rabbit\-hunt.  In capture\-the\-flag, each team (except rogues)
 has a team base and each team with at least one player has a team
@@ -63,14 +63,14 @@ with the next highest score becomes the rabbit. The object is to
 remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
 .SS Joining a Game
-.PP 
+.PP
 To get quickly started, select the "Join Game" menu in the BZFlag
 client using the arrow keys on your keyboard.  Choose the "Select a
 Server" link and pick one of the servers near the top of the menu.
 This should take you back to the "Join Game" menu where you should
 then provide a callsign.  Select the "Connect".  Within a few seconds
 you should be on that server ready to play.
-.PP 
+.PP
 BZFlag includes a global registration system that allows players to
 register a callsign that defines them uniquely on the BZFlag network.
 Some servers require registration for all users, some require it to
@@ -80,12 +80,12 @@ http://my.B ZFlag.org/bb/ for details regarding callsign registration
 and to check on available names.  Once registered, you will be able to
 provide your password in the "Join Game" menu and have it used for
 authentication.  You are encouraged to register your callsign.
-.PP 
+.PP
 There are generally public BZFlag servers running around the clock all
 around the world, available over the Internet.  Similarly, private
 servers can be set up for running local network games.  See the bzfs
 manual page (bzfs.6) for details on starting a new server, public or
-private.  
+private.
 .SS Options
 .TP 15
 .B \-3dfx
@@ -94,7 +94,7 @@ Voodoo 2 based card.  This sets the MESA_GLX_FX environment
 variable to use fullscreen pass\-through mode.  Use \fB\-geometry\fR
 to use a resolution other than 640x480 on the pass\-through card.
 You should not use this option with \fB\-window\fR.
-.TP 
+.TP
 .B \-no3dfx
 For Mesa users with a pass\-through 3Dfx card, such as Voodoo or
 Voodoo 2 based cards.  This unsets the MESA_GLX_FX environment
@@ -103,46 +103,46 @@ option if MESA_GLX_FX is normally set in your environment and
 you don't want bzflag to use the pass\-through card.  This option
 is only a convenience;  you can achieve the same effect by
 unsetting MESA_GLX_FX in your environment.
-.TP 
+.TP
 \fB\-anonymous\fR
 Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
-.TP 
+.TP
 \fB\-d or \-debug\fR
 Adds some diagnostic output. Can be specified multiple times to increase
 verbosity.
-.TP 
+.TP
 \fB\-dir or \-directory\fI directory\fR
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
 in the default installation location \fI@INSTALL_DATA_DIR@\fR.
-.TP 
+.TP
 .B \-config
 Specify the configuration file to load. The name is relative to the
 default configuration directory. This is usually only used by developers.
-.TP 
+.TP
 .B \-configdir
 Specify the configuration directory to use. This will be the default config
 directory used by this instance of the game. This is realy only needed
 if you can not use the default directory.
-.TP 
+.TP
 .B \-echo
-Copies all message window output to the shell on *nux and OSX, to 
+Copies all message window output to the shell on *nux and OSX, to
 stdout.txt on windows
-.TP 
+.TP
 .B \-echoAnsi
 Copies all message window output like -echo preserving the ANSI
 color coding on *nix, same as -echo on windows.
-.TP 
+.TP
 \fB\-geometry\fI width\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB\-\fR}x{\fB+\fR|\fB\-\fR}y]
 This specifies the size and, optionally, the position of the window. It
 can be used with or without the \fB\-window\fR option. It may be necessary
 to use this on some systems when bzflag cannot correctly determine the
 display size.
-.TP 
+.TP
 \fB\-latitude\fI latitude\fR
 Uses \fIlatitude\fR when computing celestial object positions.
-.TP 
+.TP
 \fB\-list\fI url\fR
 Look for list servers using \fIurl\fR.  A built\-in url is
 used by default (the same url is the default for \fBbzfs\fR).
@@ -150,36 +150,36 @@ If \fIurl\fR is \fIdefault\fR then the url is reset to the built\-in
 url (the url is remembered across invocations of \fBbzflag\fR).
 list servers keep a list of \fBbzfs\fR servers accessible
 from the internet and are queried when using the Find Server menu.
-.TP 
+.TP
 \fB\-locale\fI locale\fR
 Set the locale used to display messages, menus, hud alerts, etc.
-.TP 
+.TP
 \fB\-longitude \fIlongitude\fR
 Uses \fIlongitude\fR when computing celestial object positions.
-.TP 
+.TP
 .B \-multisample
 Uses a multisample buffer for rendering.  If multisampling isn't
 available then the application will terminate.
-.TP 
+.TP
 .B \-mute
 Disables sound.
-.TP 
+.TP
 .B \-nolist
 Disables list server querying.  See \fB\-list\fR.
-.TP 
+.TP
 \fB\-solo\fI number\-of\-robots\fR
 When you join a game, you'll also cause \fInumber\-of\-robots\fR robots
 to join too.  This is an experimental option and the robots are
 extremely stupid players.  Robots are added to teams at random.
-.TP 
+.TP
 \fB\-team\fI team\-name\fR
 Chooses the player's team.  If there are no team positions available
 and the team\-name is set to be automatic, the player will try to
 join as an observer.
-.TP 
+.TP
 .B \-version
 Prints the version number of the executable.
-.TP 
+.TP
 \fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}
 Chooses one of the possible display options.  \fINormal\fR will render a single
 view to the entire screen.  \fIStereo\fR will try to allocate a stereo
@@ -193,16 +193,16 @@ right eye view on the upper half of the display and the left eye on the lower
 half. \fIanaglyph\fR supports red\-cyan stereo viewing glasses. Note that
 setting an unsupported view option will often lead to BZFlag not running
 successfully. To correct this, run with \-view normal.
-.TP 
+.TP
 .B \-window
 Runs the application in a window instead of full screen.
-.TP 
+.TP
 \fB\-zbuffer\fR {\fIon\fR | \fIoff\fR}
 When \fIoff\fR is chosen the game will not attempt to allocate a
 depth (z) buffer and will use a different rendering technique for
 hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
-.TP 
+.TP
 [\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]
 Specifies the callsign you want, and the host running the \fBbzfs\fR
 server. Multiple independent games can be run on a single network, or
@@ -219,27 +219,27 @@ Tanks are controlled by moving the mouse within the large yellow box
 in the main view.  When the mouse is inside the small yellow box,
 the tank is motionless.  The large box is the limit of the tank's
 speed.
-.PP 
+.PP
 Shots are fired by pressing the
 .I R "left mouse button".
 The type of shot fired depends on what flag the tank has.  Normal
 shots last about 3.5 seconds.  Reloading also takes 3.5 seconds for
 normal shots.
-.PP 
+.PP
 Pressing the
 .I R "middle mouse button"
 drops a flag.  Nothing will happen if the tank has no flag or is
 not allowed to drop the flag for some reason (e.g. it's a bad flag).
 Flags are picked up by driving over them.  A dropped flag gets
 tossed straight up;  it falls to the ground in about 3 seconds.
-.PP 
+.PP
 Pressing the
 .I R "right mouse button"
 identifies the closest player centered in the view.  If your tank
 has the guided missile super\-flag, this will also lock the missile
 on target.  However, the target must be carefully centered for the
 missile to lock.
-.PP 
+.PP
 When the server allows jumping or if the tank has the jumping flag,
 the
 .I R Tab
@@ -247,7 +247,7 @@ key jumps.  Tanks can jump onto buildings, however there is no
 way to shoot downward (or upward) with a regular shot.  The guided
 missile and the shock wave are two ways of destroying a tank
 on or from a building.
-.PP 
+.PP
 The current radar range can be changed by pressing the
 .I R 1,
 .I R 2,
@@ -261,7 +261,7 @@ key toggles the flag help display, which describes the flag
 in the tank's possession.  Displaying help does
 .B not
 pause the game.
-.PP 
+.PP
 The
 .I R Pause
 key pauses and resumes play.  When paused, the tank cannot be
@@ -274,7 +274,7 @@ the pause takes effect.  This delay is long enough to make pausing
 effectively useless for cheating.  Pressing
 .I R Pause
 before the pause takes effect cancels the pause request.
-.PP 
+.PP
 The
 .I R Delete
 key initiates a self destruct sequence. You will see a countdown that
@@ -282,12 +282,12 @@ can be stopped by pressing
 .I R Delete
 once more. Otherwise, you tank will self destruct. This can be useful if
 your tank gets stuck and there is no other tank around to shoot you.
-.PP 
+.PP
 The list of players and scores is displayed when your tank is
 paused or dead.  Pressing the
 .I R s
 key toggles the score display when alive and not paused.
-.PP 
+.PP
 The
 .I R b
 key toggles binoculars, which gives a close up view of distant objects.
@@ -305,7 +305,7 @@ keys, which advance and reverse the time by 5 minutes, respectively.
 The time of day in the game is initialized to the system's clock.
 In addition, the latitude and longitude are used to calculate the
 positions of celestial objects.
-.PP 
+.PP
 The
 .I R Esc
 key shows the game menu.  Use the
@@ -317,7 +317,7 @@ The menus allow you to start a new server, join a game, leave a game
 and enter another, change the rendering options, change the display
 resolution, change the sound volume, remap the meanings of keys, browse
 online help, and quit the game.
-.PP 
+.PP
 The display resolution is not always available for changing.  If it
 is, use the
 .I R t
@@ -326,12 +326,12 @@ seconds and then the previous resolution restored.  Press the
 .I R Enter
 key to permanently select a new resolution. When you quit the game,
 the resolution is restored to what it was before the game started.
-.PP 
+.PP
 Options are recorded between game sessions in the .bzf/<version>/config.cfg
 file (or config.cfg.${HOST} if the \fIHOST\fR environment variable is defined)
 in the user's home directory.  This file has a simple name/value pair format.
 This file is completely rewritten by the game after each session.
-.PP 
+.PP
 You can send typed messages to other players by pressing the
 .I R m
 or
@@ -368,7 +368,7 @@ losses.  A win is scored for each enemy tank destroyed.  A loss is
 scored for each teammate destroyed and for each time the player is
 destroyed.  The score sheet displays each player's score and the number
 of wins and losses.
-.PP 
+.PP
 A team's score is calculated differently depending on the game style.
 In the capture\-the\-flag style, the team score is the number of enemy
 flags captured minus the number of times the team's flag was captured.
@@ -377,7 +377,7 @@ loss.  In the free\-for\-all style, the team score is sum of the wins of
 all the players on the team minus the sum of the losses of all the
 players on the team. In the rabbit\-hunt style, scoring is similar to
 free\-for\-all.
-.PP 
+.PP
 The score sheet also lists the number times you have destroyed or been
 destroyed by each other player under the \fIKills\fR heading.  This
 lets you compare your one\-on\-one performance against other players.
@@ -390,7 +390,7 @@ game.  In the capture\-the\-flag style the connections are always
 the same.  In the free\-for\-all style the connections are random and
 reversible (going back through where you come out puts you back where
 you started).
-.PP 
+.PP
 Each side of a teleporter teleports independently of the other
 side.  However, it's possible for each side to go to the other.
 This is a thru\-teleporter and it's almost as if it weren't there.
@@ -408,7 +408,7 @@ dot is a rough indication of the tank's altitude: higher tanks have
 larger dots.  Flags are small crosses.  Team flags have the team color
 while super\-flags are white.  Shots are small white dots (except laser
 beams which are line segments and shock waves which are circles).
-.PP 
+.PP
 The tank always appears in the center of the radar and the radar
 display rotates with the tank so that forward is always up.  There's
 a small tick mark indicating forward.  The left and right extremes
@@ -420,11 +420,11 @@ two boxes in the center of the view.  As explained above, these
 delimit the ranges for the mouse.  These boxes are yellow when you
 have no flag.  Otherwise they take the color of the flag you're
 holding (white for superflags).
-.PP 
+.PP
 Above the larger box is a heading tape showing your current heading.
 North is 0, east is 90, etc.  If jumping is allowed, an altitude tape
 appears to the right of the larger box.
-.PP 
+.PP
 Small colored diamonds or arrows may appear on the heading tape.  An
 arrow pointing left means that a particular flag is to your left, an
 arrow pointing right means that the flag is to your right, and a
@@ -433,7 +433,7 @@ heading tape.  In capture\-the\-flag mode a marker in your team's color
 is always present, showing you the direction to your team's flag.  A
 yellow marker shows the way to the antidote flag (when you have a bad
 flag and antidote flags are enabled).
-.PP 
+.PP
 At the top of the HUD are several text readouts.  At the very top
 on the left is your callsign and score, in your team's color.  At the
 very top on the right is the name of the flag you're holding (or nothing
@@ -455,12 +455,12 @@ moved to a safety position.  Bad Places are:  on top of a building
 or on an enemy team base.  The flag can be dropped on a team base
 only by a player from a third team;  for example, when a blue
 player drops the red flag on the green base.
-.PP 
+.PP
 A team flag is captured when a tank takes an enemy flag onto its
 base or when a tank takes its flag onto an enemy base (even if
 there's no one playing on that team).  You must be on the ground
 to capture a flag.
-.PP 
+.PP
 The server can be configured to supply a fixed or random set of
 super\-flags.  These flags are white and come in many flavors.
 However, you cannot tell what a super\-flag is until it's picked
@@ -472,165 +472,165 @@ the bad flag.  The server may also allow a timeout and/or a number of wins
 to shake the flag.  Scoring the required number of wins, surviving the
 required amount of time or being destroyed will automatically drop the flag.
 Bad flags disappear after the first possession.
-.PP 
+.PP
 Here is a brief description of each good superflag with the flag's code
 in parentheses:
 .TP 15
 .B High Speed (V)
 Boosts top speed by 50%.
-.TP 
+.TP
 .B Quick Turn (QT)
 Boosts turn rate by 50%.
-.TP 
+.TP
 .B Agility (A)
 Improves a tank's dodging capabilities.
-.TP 
+.TP
 .B Oscillation Overthruster (OO)
 Let's the tank go through buildings.  You cannot back up in or into
 a building, nor can you shoot while inside.
-.TP 
+.TP
 .B Rapid Fire (F)
 Increases shot speed and decreases range and reload delay.
-.TP 
+.TP
 .B Machine Gun (MG)
 Increases shot speed and dramatically decreases range and reload delay.
-.TP 
+.TP
 .B Guided Missile (GM)
 Shots guide themselves when locked on.  The missile can be retargeted at
 any time during its flight (with the right mouse button).  This allows
 the player some control over the missile's steering.
-.TP 
+.TP
 .B Laser (L)
 Shoots a laser, with effectively infinite speed and range.  Just point
 and shoot.  The binoculars are handy for lining up distant targets.
 The downside (you knew it was coming) is that the reload time is doubled.
-.TP 
+.TP
 .B Ricochet (R)
 Shots reflect off walls.  It is exceptionally easy to kill yourself with
 this flag.
-.TP 
+.TP
 .B Super Bullet (SB)
 Shots can go through buildings (possibly destroying a tank with the
 oscillation overthruster flag) and can also destroy (phantom) zoned
 tanks.
-.TP 
+.TP
 .B Stealth (ST)
 Tank becomes invisible on radar but is still visible out\-the\-window.
-.TP 
+.TP
 .B Cloaking (CL)
 Tank becomes invisible out\-the\-window but is still visible on radar.
-.TP 
+.TP
 .B Invisible Bullet (IB)
 Shots are invisible on radar (except your own).  They are visible
 out\-the\-window.  Sort of stealth for shots.
-.TP 
+.TP
 .B Tiny (T)
 Tank becomes much smaller and harder to hit.
-.TP 
+.TP
 .B Narrow (N)
 Tank becomes paper thin.  It's very hard (but not impossible) to hit
 a narrow tank from the front or back.  However, the tank is as
 long as usual so hitting it from the side has normal difficulty.
-.TP 
+.TP
 .B Shield (SH)
 Getting shot while in possession of this flag simply drops the flag
 (instead of destroying the tank).  Since the flag may not disappear
 you may want to wait around for it to fall to the ground so you can
 grab it again, but, be warned, the shield flag flies for an extra
 long time (longer than the normal reload time).
-.TP 
+.TP
 .B Steamroller (SR)
 Tank can destroy other tanks by driving over them (but you must get
 quite close).
-.TP 
+.TP
 .B Shock Wave (SW)
 Tank doesn't fire shells.  Instead it sends out a shock wave in all
 directions.  Any tank caught in the wave is destroyed (including
 tanks on or in buildings).
-.TP 
+.TP
 .B Phantom Zone (PZ)
 Driving through a teleporter phantom zones the tank.  A zoned tank
 cannot shoot, but can drive through buildings and cannot be destroyed
 except by a Super Bullet or a Shock Wave (or if the team's flag
 is captured).
-.TP 
+.TP
 .B Genocide (G)
 Destroying any tank on a team destroys every player on that team.
-.TP 
+.TP
 .B Jumping (JP)
 Allows the tank to jump.  You cannot steer while in the air.
-.TP 
+.TP
 .B Identify (ID)
 Displays the identity of the closest flag in the vicinity.
-.TP 
+.TP
 .B Masquerade (MQ)
 You tank looks like a teammate when viewed out of the window.
 Bullets, radar and targeting reveal your true identity.
-.TP 
+.TP
 .B Burrow {BU}
 You tank burrows into the ground up to your muzzle, making you
 impervious to normal shots, as they sail above you. However
 your tank controls are sluggish, and anyone, no matter what flag
 they have, can crush you like.
-.TP 
+.TP
 .B Seer (SE)
 See Stealthed, Cloaked and Masqueraded tanks as normal, as well as Invisible Bullets.
-.TP 
+.TP
 .B Thief (TH)
 Tank is small and fast, when you shoot an opponent, he is not killed,
 but instead, you steal his flag.
-.TP 
+.TP
 .B Useless (US)
 It's useless!
-.TP 
+.TP
 .B Wings (WG)
 Tank can drive around in the air, and may be able to jump multiple times.
 This can be useful when jumping
 or falling.
-.PP 
+.PP
 A brief description of each bad superflag with the flag's code
 in parentheses:
 .TP 15
 .B Colorblindness (CB)
 Prevents tank from seeing any team information about other tanks.
 You have to be careful to avoid shooting teammates.
-.TP 
+.TP
 .B Obesity (O)
 The tank becomes very large and easy to hit.  It's so big that it
 can't fit through teleporters.
-.TP 
+.TP
 .B Left Turn Only (<\-)
 Prevents the tank from turning right.
-.TP 
+.TP
 .B Right Turn Only (\->)
 Prevents the tank from turning left.
-.TP 
+.TP
 .B Forward Only (FO)
 Prevents the tank from going backwards.
-.TP 
+.TP
 .B Reverse Only (RO)
 Prevents the tank from going forward.
-.TP 
+.TP
 .B Momentum (M)
 Gives the tank a lot of inertia.
-.TP 
+.TP
 .B Blindness (B)
 Blanks the out\-the\-window view.  The radar still works.  It is
 effectively impossible to detect any tank with Stealth;  shooting
 a Stealth with Blindness is the stuff legends are made of.
-.TP 
+.TP
 .B Jamming (JM)
 Disables the radar but you can still see.
-.TP 
+.TP
 .B Wide Angle (WA)
 Gives the tank a fish eye lens that's rather disorienting.
-.TP 
+.TP
 .B No Jumping (NJ)
 Tank is not allowed to jump.
-.TP 
+.TP
 .B Trigger Happy (TR)
 Tank can't stop shooting.  Watch out for that richochet.
-.TP 
+.TP
 .B Reverse Controls (RC)
 Tank driving controls are reversed from their usual behavior.
 .SS Observing
@@ -640,7 +640,7 @@ in it, you can use the observer mode. To join a server as an observer, select
 as your tank's team. The maximum number of observers can be
 restricted by the server admin, so you might still not be able to join a
 full server.
-.PP 
+.PP
 When in observer mode, you can freely roam the world. Using the
 arrow keys you can rotate the camera in every direction. Holding shift and
 using the arrow keys moves the camera left, right, forward or back. Pressing
@@ -655,7 +655,7 @@ keys change the camera's focal lengths, giving a zoom effect. The
 key will reset the zoom. Pressing
 .I R l
 lets you toggle the display of tank labels.
-.PP 
+.PP
 Repeatedly pressing
 .I R F8
 cycles through different roaming modes: \fIfree\fR, \fItracking\fR,

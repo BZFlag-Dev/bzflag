@@ -6,7 +6,7 @@ other teams/players.
 Look for yellow rings in center of map - this entire
 volume is the "Hill".
 ----------------------------------------------------
-Watch server messages for game updates- who holds 
+Watch server messages for game updates- who holds
 the hill, how much time is left, etc.
 ----------------------------------------------------
 You may send a message to player holding the hill

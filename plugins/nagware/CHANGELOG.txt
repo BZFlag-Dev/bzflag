@@ -7,4 +7,4 @@
 
 *) 1.00.01  (2006-01-20):
   Only kick one player at a time.
-  
+

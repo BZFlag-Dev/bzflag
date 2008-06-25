@@ -233,7 +233,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <linux/input.h>]],
 if test x$ac_ff_effect_directional = xyes ; then
     AC_DEFINE(HAVE_FF_EFFECT_DIRECTIONAL, 1, [we appear to have working support for directional force feedback effects])
 fi
-AC_MSG_RESULT([$ac_ff_effect_directional]) 
+AC_MSG_RESULT([$ac_ff_effect_directional])
 
 case $host_os in
      linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*) linux=true;;
@@ -621,7 +621,7 @@ case $host_os in
 		    FLAGS="$FLAGS=$host_cpu"
 		fi
 		;;
-	     ppc) 
+	     ppc)
 		FLAGS="$FLAGS -mcpu=$host_cpu"
 		;;
 	esac

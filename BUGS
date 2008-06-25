@@ -28,7 +28,7 @@ recent bugs
 - spin inversion bug, fix in MeshTransform.cxx (around line 300)
   during the next protocol breakage
 
-- do all Riva128 systems require "noMeshClusers"? Is there a 
+- do all Riva128 systems require "noMeshClusers"? Is there a
   workaround to make vertex array work on those cards?
 
 - Mac OS X client sometimes (50/50) seems to now start to a black
