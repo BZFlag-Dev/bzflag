@@ -19,14 +19,43 @@ namespace BZW
 {
   namespace Parser
   {
-    /// Parses World from BZW file format.
-    bool readWorldFile(std::istream &input, World *world)
+    /* Parser methods */
+    Parser::Parser()
     {
+
     }
 
-    /// Reverse-Parses World into BZW file format.
-    bool writeWorldFile(std::ostream &output, World *world)
+    Parser::~Parser()
     {
+
+    }
+
+    Parameter * Parser::addParameter(string name)
+    {
+      Parameter * param = new Parameter(name);
+      //TODO: store the parameter in Parser instance
+      return param;
+    }
+
+    void Parser::Parse()
+    {
+
+    }
+
+    /* Parameter methods */
+    Parameter::Parameter(string name)
+    {
+
+    }
+
+    Parameter::~Parameter()
+    {
+
+    }
+
+    void Parameter::addValue(Parameter::ValueType type, bool required);
+    {
+
     }
   }
 }

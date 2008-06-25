@@ -13,6 +13,7 @@
 #ifndef __BZW_PARSER_H__
 #define __BZW_PARSER_H__
 
+#include <string>
 #include <iostream>
 
 /* bzflag common headers */
@@ -22,10 +23,56 @@ namespace BZW
 {
   namespace Parser
   {
-    /// Parses World from BZW file format.
-    bool readWorldFile(std::istream &input, World *world);
-    /// Reverse-Parses World into BZW file format.
-    bool writeWorldFile(std::ostream &output, World *world);
+    class Parser
+    {
+      public:
+	Parser();
+	~Parser();
+
+	Parameter * addParameter(string name);
+	void Parse();
+
+
+      private:
+
+    }
+
+    class Parameter
+    {
+      friend Parameter * Parser::addParameter(string name);
+      public:
+	enum ValueType
+	{
+	  String,
+	  Real
+	};
+	void addValue(ValueType type, bool required);
+
+      protected:
+	Parameter(string name);
+	~Parameter();
+
+      private:
+	
+	union ValueValue
+	{
+	  string string_value;
+	  int int_value;
+	  float real_value;
+	  bool bool_value;
+	}
+
+	struct Value
+	{
+	  ValueType type;
+	  bool required;
+	  bool set;
+	  ValueValue value;
+	}
+
+	string name;
+    }
+
   }
 }
 
