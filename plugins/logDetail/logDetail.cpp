@@ -32,7 +32,7 @@ private:
   std::string displayCallsign(bz_ApiString callsign);
   std::string displayCallsign(int playerID);
   std::string displayBZid(int playerID);
-  std::string displayTeam(bz_eTeamType team);
+  const char *displayTeam(bz_eTeamType team);
   virtual void listPlayers(action act, bz_PlayerJoinPartEventData_V1 *data);
 };
 
@@ -120,7 +120,7 @@ void LogDetail::process(bz_EventData *eventData)
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM %s %s %s",
 			   displayCallsign(chatData->from).c_str(),
-			   displayTeam(chatData->team).c_str(),
+			   displayTeam(chatData->team),
 			   chatData->message.c_str());
 	}
       } else {
@@ -145,7 +145,7 @@ void LogDetail::process(bz_EventData *eventData)
 			   serverMsgData->message.c_str());
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
-			   displayTeam(serverMsgData->team ).c_str(),
+			   displayTeam(serverMsgData->team ),
 			   serverMsgData->message.c_str());
 	}
       } else {
@@ -161,7 +161,7 @@ void LogDetail::process(bz_EventData *eventData)
 			   displayCallsign(joinPartData->record->callsign).c_str(),
 			   joinPartData->playerID,
 			   displayBZid(joinPartData->playerID).c_str(),
-			   displayTeam(joinPartData->record->team).c_str(),
+			   displayTeam(joinPartData->record->team),
 			   displayPlayerPrivs(joinPartData->playerID).c_str());
 	  listPlayers(join, joinPartData);
 	}
@@ -244,28 +244,28 @@ std::string LogDetail::displayCallsign(int playerID)
 }
 
 
-std::string LogDetail::displayTeam(bz_eTeamType team)
+const char * LogDetail::displayTeam(bz_eTeamType team)
 {
   // Display the player team
   switch (team) {
     case eRogueTeam:
-      return std::string("ROGUE");
+      return ("ROGUE");
     case eRedTeam:
-      return std::string("RED");
+      return ("RED");
     case eGreenTeam:
-      return std::string("GREEN");
+      return ("GREEN");
     case eBlueTeam:
-      return std::string("BLUE");
+      return ("BLUE");
     case ePurpleTeam:
-      return std::string("PURPLE");
+      return ("PURPLE");
     case eRabbitTeam:
-      return std::string("RABBIT");
+      return ("RABBIT");
     case eHunterTeam:
-      return std::string("HUNTER");
+      return ("HUNTER");
     case eObservers:
-      return std::string("OBSERVER");
+      return ("OBSERVER");
     default :
-      return std::string("NOTEAM");
+      return ("NOTEAM");
   }
 }
 
