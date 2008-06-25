@@ -49,10 +49,10 @@ int Leader;
 class HTFscore : public bz_EventHandler, public bz_CustomSlashCommandHandler
 {
 public:
-  virtual void process ( bz_EventData *eventData );
-  virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
-  bz_eTeamType colorNameToDef (const char *color);
-  const char *colorDefToName (bz_eTeamType team);
+  virtual void process(bz_EventData *eventData);
+  virtual bool handle(int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
+  bz_eTeamType colorNameToDef(const char *color);
+  const char *colorDefToName(bz_eTeamType team);
 
 protected:
 
@@ -62,69 +62,69 @@ private:
 HTFscore htfScore;
 
 
-bz_eTeamType HTFscore::colorNameToDef (const char *color)
+bz_eTeamType HTFscore::colorNameToDef(const char *color)
 {
   if (!color && (strlen(color)<3))
-	return eNoTeam;
+    return eNoTeam;
 
   char temp[4] = {0};
   strncpy(temp,color,3);
 
-  if (!strcasecmp (color, "gre"))
+  if (!strcasecmp(color, "gre"))
     return eGreenTeam;
-  if (!strcasecmp (color, "red"))
+  if (!strcasecmp(color, "red"))
     return eRedTeam;
-  if (!strcasecmp (color, "pur"))
+  if (!strcasecmp(color, "pur"))
     return ePurpleTeam;
-  if (!strcasecmp (color, "blu"))
+  if (!strcasecmp(color, "blu"))
     return eBlueTeam;
-  if (!strcasecmp (color, "rog"))
+  if (!strcasecmp(color, "rog"))
     return eRogueTeam;
-  if (!strcasecmp (color, "obs"))
+  if (!strcasecmp(color, "obs"))
     return eObservers;
   return eNoTeam;
 }
 
-const char *HTFscore::colorDefToName (bz_eTeamType team)
+const char *HTFscore::colorDefToName(bz_eTeamType team)
 {
   switch (team){
-    case eGreenTeam:
-      return ("Green");
-    case eBlueTeam:
-      return ("Blue");
-    case eRedTeam:
-      return ("Red");
-    case ePurpleTeam:
-      return ("Purple");
-    case eObservers:
-      return ("Observer");
-    case eRogueTeam:
-      return ("Rogue");
-    case eRabbitTeam:
-      return ("Rabbit");
-    case eHunterTeam:
-      return ("Hunters");
-    case eAdministrators:
-      return ("Administrators");
-    default:
-      return ("No Team");
+  case eGreenTeam:
+    return ("Green");
+  case eBlueTeam:
+    return ("Blue");
+  case eRedTeam:
+    return ("Red");
+  case ePurpleTeam:
+    return ("Purple");
+  case eObservers:
+    return ("Observer");
+  case eRogueTeam:
+    return ("Rogue");
+  case eRabbitTeam:
+    return ("Rabbit");
+  case eHunterTeam:
+    return ("Hunters");
+  case eAdministrators:
+    return ("Administrators");
+  default:
+    return ("No Team");
   }
 }
 
 
-bool listAdd (int playerID, const char *callsign)
+bool listAdd(int playerID, const char *callsign)
 {
   if (playerID>MAX_PLAYERID || playerID<0)
     return false;
   Players[playerID].score = 0;
   Players[playerID].isValid = true;
   Players[playerID].capNum = -1;
-  strncpy (Players[playerID].callsign, callsign, 20);
+  strncpy(Players[playerID].callsign, callsign, 20);
   ++NumPlayers;
   return true;
 }
 
-bool listDel (int playerID){
+bool listDel(int playerID){
   if (playerID>MAX_PLAYERID || playerID<0 || !Players[playerID].isValid)
     return false;
   Players[playerID].isValid = false;
@@ -133,7 +133,7 @@ bool listDel (int playerID){
 }
 
 
-int sort_compare (const void *_p1, const void *_p2){
+int sort_compare(const void *_p1, const void *_p2){
   int p1 = *(int *)_p1;
   int p2 = *(int *)_p2;
 
@@ -144,7 +144,7 @@ int sort_compare (const void *_p1, const void *_p2){
 }
 
 
-void dispScores (int who)
+void dispScores(int who)
 {
   int sortList[MAX_PLAYERID+1];	 // do HtfPlayer *   !!
   int playerLastCapped = -1;
@@ -167,7 +167,7 @@ void dispScores (int who)
       sortList[x++] = i;
     }
   }
-  qsort (sortList, NumPlayers, sizeof(int), sort_compare);
+  qsort(sortList, NumPlayers, sizeof(int), sort_compare);
   if (x != NumPlayers)
     bz_debugMessage(1, "++++++++++++++++++++++++ HTF INTERNAL ERROR: player count mismatch!");
   for (int i=0; i<NumPlayers; i++){
@@ -179,7 +179,7 @@ void dispScores (int who)
 }
 
 
-void resetScores (void)
+void resetScores(void)
 {
   for (int i=0; i<MAX_PLAYERID; i++){
     Players[i].score = 0;
@@ -189,34 +189,34 @@ void resetScores (void)
 }
 
 
-void htfCapture (int who)
+void htfCapture(int who)
 {
   if (!htfEnabled)
     return;
 
 #if DO_FLAG_RESET
-  bz_resetFlags ( false );
+  bz_resetFlags(false);
 #endif
 
-  bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
+  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
   ++Players[who].score;
   Players[who].capNum = nextCapNum++;
   dispScores(BZ_ALLUSERS);
 }
 
-void htfStartGame (void)
+void htfStartGame(void)
 {
   if (!htfEnabled)
     return;
 
-// TODO: clear leftDuringMatch
+  // TODO: clear leftDuringMatch
   resetScores();
   matchActive = true;
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has begun, good luck!");
 }
 
 
-void htfEndGame (void)
+void htfEndGame(void)
 {
   if (htfEnabled && matchActive){
     dispScores(BZ_ALLUSERS);
@@ -227,12 +227,12 @@ void htfEndGame (void)
 
   matchActive = false;
 
-// TODO: clear leftDuringMatch
+  // TODO: clear leftDuringMatch
 
 }
 
 
-void sendHelp (int who)
+void sendHelp(int who)
 {
   bz_sendTextMessage(BZ_SERVER, who, "HTF commands: reset, off, on, stats");
 }
@@ -240,7 +240,7 @@ void sendHelp (int who)
 
 /************************** (SUB)COMMAND Implementations ... **************************/
 
-void htfStats (int who)
+void htfStats(int who)
 {
   bz_sendTextMessagef(BZ_SERVER, who, "HTF plugin version %s", HOLDTHEFLAG_VER);
   bz_sendTextMessagef(BZ_SERVER, who,  "  Team: %s", htfScore.colorDefToName(htfTeam));
@@ -248,13 +248,13 @@ void htfStats (int who)
 }
 
 
-void htfReset (int who)
+void htfReset(int who)
 {
   resetScores();
-  bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "*** HTF scores reset by %s", Players[who].callsign);
+  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "*** HTF scores reset by %s", Players[who].callsign);
 }
 
-void htfEnable (bool onoff, int who)
+void htfEnable(bool onoff, int who)
 {
   char msg[255];
   if (onoff == htfEnabled){
@@ -262,139 +262,154 @@ void htfEnable (bool onoff, int who)
     return;
   }
   htfEnabled = onoff;
-  sprintf (msg, "*** HTF mode %s by %s", onoff?"ENabled":"DISabled", Players[who].callsign);
+  sprintf(msg, "*** HTF mode %s by %s", onoff?"ENabled":"DISabled", Players[who].callsign);
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, msg);
 }
 
 
 // handle events
-void HTFscore::process ( bz_EventData *eventData )
+void HTFscore::process(bz_EventData *eventData)
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
     char msg[255];
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
-    if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
-      sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
-      bz_kickUser (joinData->record->playerID, msg, true);
+    bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)",
+		     joinData->playerID, joinData->record->team,
+		     joinData->record->callsign.c_str());
+    fflush(stdout);
+    if (htfTeam!=eNoTeam &&
+	joinData->record->team!=htfTeam &&
+	joinData->record->team != eObservers) {
+      sprintf(msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
+      bz_kickUser(joinData->record->playerID, msg, true);
       return;
     }
     if (joinData->record->team == htfTeam)
-      listAdd (joinData->playerID, joinData->record->callsign.c_str());
+      listAdd(joinData->playerID, joinData->record->callsign.c_str());
 
-  // player PART
+    // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
+    bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)",
+		     joinData->playerID, joinData->record->team,
+		     joinData->record->callsign.c_str());
+    fflush(stdout);
 
     if (joinData->record->team == htfTeam)
       listDel (joinData->playerID);
 
-  // flag CAPTURE
+    // flag CAPTURE
   } else if (eventData->eventType == bz_eCaptureEvent) {
     bz_CTFCaptureEventData_V1 *capData = (bz_CTFCaptureEventData_V1*)eventData;
-    htfCapture (capData->playerCapping);
+    htfCapture(capData->playerCapping);
 
-  // game START
+    // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
-    htfStartGame ();
+    bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)",
+		     msgData->eventTime, msgData->duration);
+    fflush(stdout);
+    htfStartGame();
 
-  // game END
+    // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
     bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
-    htfEndGame ();
+    bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)",
+		     msgData->eventTime, msgData->duration);
+    fflush(stdout);
+    htfEndGame();
   }
 }
 
 
-bool checkPerms (int playerID, const char *htfCmd, const char *permName)
+bool checkPerms(int playerID, const char *htfCmd, const char *permName)
 {
-  if (bz_hasPerm (playerID, permName))
+  if (bz_hasPerm(playerID, permName))
     return true;
-  bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "you need \"%s\" permission to do /htf %s", permName, htfCmd);
+  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "you need \"%s\" permission to do /htf %s",
+		      permName, htfCmd);
   return false;
 }
 
 
 // handle /htf command
-bool HTFscore::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
+bool HTFscore::handle(int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams)
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "htf"))   // is it for me ?
     return false;
   if (cmdParams->get(0).c_str()[0] == '\0'){
-    dispScores (playerID);
+    dispScores(playerID);
     return true;
   }
 
-  strncpy (subCmd, cmdParams->get(0).c_str(), 5);
+  strncpy(subCmd, cmdParams->get(0).c_str(), 5);
   subCmd[4] = '\0';
-  if (strcasecmp (subCmd, "rese") == 0){
-    if (checkPerms (playerID, "reset", "COUNTDOWN"))
-      htfReset (playerID);
-  } else if (strcasecmp (subCmd, "off") == 0){
-    if (checkPerms (playerID, "off", "HTFONOFF"))
-      htfEnable (false, playerID);
-  } else if (strcasecmp (subCmd, "on") == 0){
-    if (checkPerms (playerID, "off", "HTFONOFF"))
-      htfEnable (true, playerID);
-  } else if (strcasecmp (subCmd, "stat") == 0)
-    htfStats (playerID);
-  else
-    sendHelp (playerID);
+  if (strcasecmp(subCmd, "rese") == 0){
+    if (checkPerms(playerID, "reset", "COUNTDOWN"))
+      htfReset(playerID);
+  } else if (strcasecmp(subCmd, "off") == 0){
+    if (checkPerms(playerID, "off", "HTFONOFF"))
+      htfEnable(false, playerID);
+  } else if (strcasecmp(subCmd, "on") == 0){
+    if (checkPerms(playerID, "off", "HTFONOFF"))
+      htfEnable(true, playerID);
+  } else if (strcasecmp(subCmd, "stat") == 0) {
+    htfStats(playerID);
+  } else {
+    sendHelp(playerID);
+  }
   return true;
 }
 
 
-bool commandLineHelp (void){
+bool commandLineHelp(void){
   const char *help[] = {
     "Command line args:  PLUGINNAME,[TEAM=color]",
     NULL
   };
-  bz_debugMessage (0, "+++ HoldTheFlag plugin command-line error");
+  bz_debugMessage(0, "+++ HoldTheFlag plugin command-line error");
   for (int x=0; help[x]!=NULL; x++)
-    bz_debugMessage (0, help[x]);
+    bz_debugMessage(0, help[x]);
   return true;
 }
 
 
-bool parseCommandLine (const char *cmdLine)
+bool parseCommandLine(const char *cmdLine)
 {
-  if (cmdLine==NULL || *cmdLine=='\0' || strlen(cmdLine) < 5 )
+  if (cmdLine==NULL || *cmdLine=='\0' || strlen(cmdLine) < 5)
     return false;
   htfTeam = eGreenTeam;
-  if (strncasecmp (cmdLine, "TEAM=", 5) == 0){
+  if (strncasecmp(cmdLine, "TEAM=", 5) == 0){
     if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)
-      return commandLineHelp ();
-  } else
-    return commandLineHelp ();
+      return commandLineHelp();
+  } else {
+    return commandLineHelp();
+  }
   return false;
 }
 
 
-BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
+BZF_PLUGIN_CALL int bz_Load(const char* cmdLine)
 {
   bz_BasePlayerRecord *playerRecord;
 
-  if (parseCommandLine (cmdLine))
+  if (parseCommandLine(cmdLine))
     return -1;
 
   // get current list of player indices ...
   bz_APIIntList *playerList = bz_newIntList();
-  bz_getPlayerIndexList (playerList);
+  bz_getPlayerIndexList(playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
-    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
+    if ((playerRecord = bz_getPlayerByIndex(playerList->get(i))) != NULL){
       listAdd (playerList->get(i), playerRecord->callsign.c_str());
-      bz_freePlayerRecord (playerRecord);
+      bz_freePlayerRecord(playerRecord);
     }
   }
-  bz_deleteIntList (playerList);
+  bz_deleteIntList(playerList);
 
-  bz_registerCustomSlashCommand ("htf", &htfScore);
+  bz_registerCustomSlashCommand("htf", &htfScore);
   bz_registerEvent(bz_ePlayerJoinEvent, &htfScore);
   bz_registerEvent(bz_ePlayerPartEvent, &htfScore);
   bz_registerEvent(bz_eCaptureEvent, &htfScore);
@@ -404,14 +419,14 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload (void)
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
-  bz_removeCustomSlashCommand ("htf");
-  bz_removeEvent (bz_ePlayerJoinEvent, &htfScore);
-  bz_removeEvent (bz_ePlayerPartEvent, &htfScore);
-  bz_removeEvent (bz_eCaptureEvent, &htfScore);
-  bz_removeEvent (bz_eGameStartEvent, &htfScore);
-  bz_removeEvent (bz_eGameEndEvent, &htfScore);
+  bz_removeCustomSlashCommand("htf");
+  bz_removeEvent(bz_ePlayerJoinEvent, &htfScore);
+  bz_removeEvent(bz_ePlayerPartEvent, &htfScore);
+  bz_removeEvent(bz_eCaptureEvent, &htfScore);
+  bz_removeEvent(bz_eGameStartEvent, &htfScore);
+  bz_removeEvent(bz_eGameEndEvent, &htfScore);
   bz_debugMessage(1, "HoldTheFlag plugin unloaded");
   return 0;
 }
