@@ -46,7 +46,7 @@ RadarRenderer::~RadarRenderer()
 void RadarRenderer::clearRadarObjects ( void )
 {
   RadarObjectMap::iterator itr = radarObjectLists.begin();
-  
+
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
   while (itr != radarObjectLists.end()) {
@@ -1096,21 +1096,21 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
     return;
 
   switch ( itr->second.first) {
-    case eBoxPyr:
-      buildBoxPyr(itr->second.second);
-      break;
-        
-    case eMesh:
-    case eMeshDeathFaces:
-      buildMeshGeo((MeshObstacle*)itr->second.second,itr->second.first == eMeshDeathFaces);
-      break;
+  case eBoxPyr:
+    buildBoxPyr(itr->second.second);
+    break;
 
-    case eBoxPyrOutline:
-      buildOutline(itr->second.second);
-      break;
+  case eMesh:
+  case eMeshDeathFaces:
+    buildMeshGeo((MeshObstacle*)itr->second.second,itr->second.first == eMeshDeathFaces);
+    break;
 
-    default:
-      break;
+  case eBoxPyrOutline:
+    buildOutline(itr->second.second);
+    break;
+
+  default:
+    break;
   }
 }
 
@@ -1154,10 +1154,10 @@ void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
     // draw death faces with a soupcon of red
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
     bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
-      
+
     if (isDeath != deathFaces)
       continue;
-      
+
     // draw the face as a triangle fan
     int vertexCount = face->getVertexCount();
     glBegin(GL_TRIANGLE_FAN);
@@ -1207,12 +1207,12 @@ void RadarRenderer::renderBoxPyrMesh()
 	continue;
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(BoxBuilding*)boxes[i]);
     }
-    
+
     // add pyramid buildings
     const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
     for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(PyramidBuilding*)pyramids[i]);
-    
+
     // add meshes
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     for (unsigned int i = 0; i < (unsigned int)meshes.size(); i++) {
@@ -1223,7 +1223,7 @@ void RadarRenderer::renderBoxPyrMesh()
       radarObjectLists[ds.newList(this)] = RadarObject(eMesh,(MeshObstacle*)meshes[i]);
       radarObjectLists[ds.newList(this)] = RadarObject(eMeshDeathFaces,(MeshObstacle*)meshes[i]);
     }
-    
+
     // add the outlines for boxes and pyramids
     for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
       if (((BoxBuilding*)boxes[i])->isInvisible())
@@ -1233,7 +1233,7 @@ void RadarRenderer::renderBoxPyrMesh()
     for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(PyramidBuilding*)pyramids[i]);
   }
-  
+
   // if we have lists to render, call them,
   if (radarObjectLists.size()) {
     RadarObjectMap::iterator itr = radarObjectLists.begin();
@@ -1272,8 +1272,9 @@ void RadarRenderer::renderBoxPyrMesh()
 	  if (smooth) {
 	    glDisable(GL_POLYGON_SMOOTH);
 	    glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
-	  } else if (enhanced)
+	  } else if (enhanced) {
 	    glDisable(GL_BLEND);
+	  }
 	}
 	else {
 	  // draw mesh obstacles
@@ -1294,7 +1295,7 @@ void RadarRenderer::renderBoxPyrMesh()
       // draw all lists, except outlines when we arn't smoothing
       if ( thisType != eBoxPyrOutline || ( thisType == eBoxPyrOutline && smooth ) )
 	ds.callList(list);
-      
+
       itr++;
     }
   }
