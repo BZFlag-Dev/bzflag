@@ -1,3 +1,5 @@
+SUBDIRS = stats
+
 EXTRA_DIST =				\
 	3ds2bzw.c			\
 	bzbz.pl				\
@@ -30,7 +32,6 @@ EXTRA_DIST =				\
 	serverstats.sh			\
 	simpleSwearList.txt		\
 	snap.sh				\
-	stats				\
 	tar				\
 	Template.cxx			\
 	Template.h			\
@@ -44,7 +45,7 @@ bzflag.desktop: bzflag.desktop.in
 desktopdir = $(datadir)/applications
 desktop_DATA = bzflag.desktop
 
-MAINTAINERCLEANFILES =	\
+MAINTAINERCLEANFILES = \
 	Makefile.in \
 	aclocal.m4 \
 	compile \

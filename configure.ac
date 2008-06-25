@@ -536,7 +536,7 @@ AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 # Check for the SDL_image library
 AC_ARG_ENABLE([sdl_image],
 	      [AC_HELP_STRING([--enable-sdl-image],
-	      		[use SDL_Image library if available (default is no)])],
+			[use SDL_Image library if available (default is no)])],
 	      [use_sdl_image=$enableval],
 	      [use_sdl_image=no])
 if test $use_sdl_image = "yes"; then
@@ -819,6 +819,8 @@ AC_CONFIG_FILES(bzflag.info
 	m4/Makefile
 	man/Makefile
 	misc/Makefile
+	misc/stats/Makefile
+	misc/stats/t/Makefile
 	package/Makefile
 	package/irix/Makefile
 	package/linux/Makefile
@@ -826,7 +828,7 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/Makefile
 	package/win32/nsis/Makefile
 	plugins/Makefile
-    	plugins/plugin_utils/Makefile
+	plugins/plugin_utils/Makefile
 	plugins/plugin_utils/VC71/Makefile
 	plugins/HoldTheFlag/Makefile
 	plugins/RogueGenocide/Makefile
@@ -852,8 +854,8 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/timedctf/Makefile
 	plugins/torBlock/Makefile
 	plugins/vocaliser/Makefile
-    	plugins/Phoenix/Makefile
-        plugins/wwzones/Makefile
+	plugins/Phoenix/Makefile
+	plugins/wwzones/Makefile
 	plugins/vc71/Makefile
 	src/3D/Makefile
 	src/Makefile
