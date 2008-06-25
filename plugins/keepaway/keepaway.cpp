@@ -27,9 +27,7 @@ KeepAwayEventHandler keepawayeventhandler;
 class KeepAwayCommands:public bz_CustomSlashCommandHandler
 {
 public:
-  virtual ~ KeepAwayCommands()
-  {
-  };
+  virtual ~ KeepAwayCommands() {};
   virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList * param);
 };
 
@@ -350,9 +348,8 @@ std::string truncate(std::string cllsn, int maxStringLength)
 {
   std::string fixed = "";
 
-  for (int i = 0; i < maxStringLength; i++) {
+  for (int i = 0; i < maxStringLength; i++)
     fixed.push_back(cllsn[i]);
-  }
 
   fixed.append("~");
 
@@ -415,8 +412,8 @@ inline bool oneTeam(bz_eTeamType leavingPlayerTeam)
 void autoTime()
 {
   int numPlayers =
-      bz_getTeamCount(eRedTeam) + bz_getTeamCount(eGreenTeam) + bz_getTeamCount(eBlueTeam) + bz_getTeamCount(ePurpleTeam) +
-      bz_getTeamCount(eRogueTeam);
+    bz_getTeamCount(eRedTeam) + bz_getTeamCount(eGreenTeam) + bz_getTeamCount(eBlueTeam) + bz_getTeamCount(ePurpleTeam) +
+    bz_getTeamCount(eRogueTeam);
 
   if (!keepaway.autoTimeOn || numPlayers < 3) {
     keepaway.adjustedTime = keepaway.TTH;
@@ -472,15 +469,17 @@ void killTeams(bz_eTeamType safeteam, std::string keepawaycallsign)
 	bz_killPlayer(player->playerID, true, BZ_SERVER);
 	if (keepaway.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
-      } else if (keepaway.soundEnabled)
+      } else if (keepaway.soundEnabled) {
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+      }
     }
 
     bz_freePlayerRecord(player);
   }
   bz_deleteIntList(playerList);
 
-  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s (%s) Kept the Flag Away!", getTeamColor(safeteam), keepawaycallsign.c_str());
+  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s (%s) Kept the Flag Away!",
+		      getTeamColor(safeteam), keepawaycallsign.c_str());
 
   if (keepaway.flagResetEnabled)
     bz_resetFlags(true);
@@ -987,9 +986,10 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
       keepaway.timeMult = (inputvalue / 100);
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier set to %i percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
-    } else
+    } else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier (%i) must be between 1 and 99 percent.",
 			  (int) (keepaway.timeMult * 100 + 0.5));
+    }
 
     autoTime();
 
@@ -1003,8 +1003,9 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
       keepaway.timeMultMin = (inputvalue / 100);
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier minimum set to %i percent.",
 			  (int) (keepaway.timeMultMin * 100 + 0.5));
-    } else
+    } else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away auto time multiplier minimum must be between 1 and 99 percent.");
+    }
 
     autoTime();
 
@@ -1062,8 +1063,9 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
       autoTime();
       int AdjTime = (int) (inputvalue + 0.5);
       bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Keep Away hold time has been set to %i seconds.", AdjTime);
-    } else
+    } else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Keep Away hold time invalid: must be between 1 and 7200 seconds.");
+    }
 
     autoTime();
 
