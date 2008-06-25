@@ -6128,17 +6128,17 @@ static void		playingLoop()
     bool sendUpdate = myTank && myTank->isDeadReckoningWrong();
     if (myTank && myTank->getTeam() == ObserverTeam) {
       if (BZDB.isTrue("sendObserverHeartbeat")) {
-        if (BZDB.isSet("observerHeartbeat"))
-                heartbeatTime = BZDB.eval("observerHeartbeat");
-        if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getTick().getSeconds()) {
-          lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
-          sendUpdate = true;
-        }
-        else
-          sendUpdate = false;
+	if (BZDB.isSet("observerHeartbeat"))
+		heartbeatTime = BZDB.eval("observerHeartbeat");
+	if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getTick().getSeconds()) {
+	  lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
+	  sendUpdate = true;
+	}
+	else
+	  sendUpdate = false;
       }
       else
-        sendUpdate = false;
+	sendUpdate = false;
     }
     // send my data
     if ( sendUpdate) {

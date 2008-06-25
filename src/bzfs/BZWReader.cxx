@@ -429,7 +429,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
     return NULL;
   }
 
-  if (!BZDB.isTrue("noWalls")) 
+  if (!BZDB.isTrue("noWalls"))
     makeWalls();
 
   // generate group instances

@@ -38,7 +38,7 @@ static void safeSetString(const std::string& name, const std::string&value);
 //
 
 BZDBbool::BZDBbool(const std::string& _name, bool defVal, bool save)
-                   : BZDBLocal(_name, save), data(defVal)
+		   : BZDBLocal(_name, save), data(defVal)
 {
   BZDBLocalManager::manager.addEntry(this);
   logDebugMessage(3,"Added BZDBbool(%s) callback\n", name.c_str());
@@ -80,23 +80,23 @@ void BZDBbool::addCallbacks()
   return;
 }
 
-    
+
 void BZDBbool::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
 }
 
-    
+
 /******************************************************************************/
 //
 // BZDBint
 //
 
 BZDBint::BZDBint(const std::string& _name, int defVal,
-                 int _min, int _max, bool _neverZero, bool save)
-                 : BZDBLocal(_name, save), data(defVal),
-                   min(_min), max(_max), neverZero(_neverZero)
+		 int _min, int _max, bool _neverZero, bool save)
+		 : BZDBLocal(_name, save), data(defVal),
+		   min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
   logDebugMessage(3,"Added BZDBint(%s) callback\n", name.c_str());
@@ -159,24 +159,24 @@ void BZDBint::addCallbacks()
   return;
 }
 
-    
+
 void BZDBint::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
 }
 
-    
+
 /******************************************************************************/
 //
 // BZDBfloat
 //
 
 BZDBfloat::BZDBfloat(const std::string& _name, float defVal,
-                     float _min, float _max,
-                     bool _neverZero, bool save)
-                     : BZDBLocal(_name, save), data(defVal),
-                       min(_min), max(_max), neverZero(_neverZero)
+		     float _min, float _max,
+		     bool _neverZero, bool save)
+		     : BZDBLocal(_name, save), data(defVal),
+		       min(_min), max(_max), neverZero(_neverZero)
 {
   BZDBLocalManager::manager.addEntry(this);
   logDebugMessage(3,"Added BZDBfloat(%s) callback\n", name.c_str());
@@ -239,23 +239,23 @@ void BZDBfloat::addCallbacks()
   return;
 }
 
-    
+
 void BZDBfloat::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
 }
 
-    
+
 /******************************************************************************/
 //
 // BZDBcolor
 //
 
 BZDBcolor::BZDBcolor(const std::string& _name,
-                     float r, float g, float b, float a,
-                     bool _neverAlpha, bool save)
-                     : BZDBLocal(_name, save), neverAlpha(_neverAlpha)
+		     float r, float g, float b, float a,
+		     bool _neverAlpha, bool save)
+		     : BZDBLocal(_name, save), neverAlpha(_neverAlpha)
 {
   data[0] = r;
   data[1] = g;
@@ -277,7 +277,7 @@ void BZDBcolor::callback()
 {
   const std::string& expr = BZDB.get(name);
   float color[4];
-  
+
   if (!parseColorString(expr, color)) {
     logDebugMessage(3,"BZDBcolor(%s) bad string: %s\n", name.c_str(), expr.c_str());
     return;
@@ -295,7 +295,7 @@ void BZDBcolor::callback()
   memcpy(data, color, sizeof(float[4]));
 
   logDebugMessage(4,"BZDBcolor(%s) = %f, %f, %f, %f\n", name.c_str(),
-         data[0], data[1], data[2], data[3]);
+	 data[0], data[1], data[2], data[3]);
 
   return;
 }
@@ -324,23 +324,23 @@ void BZDBcolor::addCallbacks()
   return;
 }
 
-    
+
 void BZDBcolor::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
 }
 
-    
+
 /******************************************************************************/
 //
 // BZDBstring
 //
 
 BZDBstring::BZDBstring(const std::string& _name, const std::string& defVal,
-                       bool _neverEmpty, bool save)
-                       : BZDBLocal(_name, save),
-                         data(defVal), neverEmpty(_neverEmpty)
+		       bool _neverEmpty, bool save)
+		       : BZDBLocal(_name, save),
+			 data(defVal), neverEmpty(_neverEmpty)
 {
   BZDBLocalManager::manager.addEntry(this);
   logDebugMessage(3,"Added BZDBstring(%s) callback\n", name.c_str());
@@ -357,7 +357,7 @@ BZDBstring::~BZDBstring()
 void BZDBstring::callback()
 {
   const std::string& tmp = BZDB.get(name);
-  
+
   if (neverEmpty && (tmp.size() <= 0)) {
     logDebugMessage(3,"BZDBstring(%s) empty string: %s\n", name.c_str(), tmp.c_str());
     safeSetString(name, tmp);
@@ -393,14 +393,14 @@ void BZDBstring::addCallbacks()
   return;
 }
 
-    
+
 void BZDBstring::removeCallbacks()
 {
   BZDB.removeCallback(name, staticCallback, this);
   return;
 }
 
-    
+
 /******************************************************************************/
 
 BZDBLocalManager BZDBLocalManager::manager;

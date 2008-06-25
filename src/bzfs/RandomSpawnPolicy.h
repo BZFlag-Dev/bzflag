@@ -22,7 +22,7 @@
 /** a RandomSpawnPolicy is a SpawnPolicy that just generates a purely
  *  random (yet hopefully still valid) position and drops you there.
  */
-class RandomSpawnPolicy : public SpawnPolicy 
+class RandomSpawnPolicy : public SpawnPolicy
 {
 
 public:

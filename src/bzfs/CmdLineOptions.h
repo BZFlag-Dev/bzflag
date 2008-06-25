@@ -142,7 +142,7 @@ struct CmdLineOptions
   float			idlekickthresh;
   float			timeLimit;
   float			timeElapsed;
-  float                 addedTime;
+  float		 addedTime;
   float			linearAcceleration;
   float			angularAcceleration;
 

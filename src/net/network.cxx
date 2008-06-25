@@ -246,7 +246,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
       mungedurl = mungedurl.substr(2);
       int pos = 0;
       for(; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++)
-        ;
+	;
 
       if(mungedurl[pos] == ' ')
 	return false;

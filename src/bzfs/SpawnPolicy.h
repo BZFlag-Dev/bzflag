@@ -34,11 +34,11 @@ public:
 
   virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
-  
+
 protected:
   virtual bool isImminentlyDangerous() const;
 
-private:  
+private:
   float enemyProximityCheck(float &enemyAngle) const;
   float distanceFrom(const float *farPos) const;
   bool  isFacing(const float *enemyPos, const float enemyAzimuth, const float deviation) const;
@@ -46,7 +46,7 @@ private:
   /* temp, internal use */
   TeamColor   team;
   float       testPos[3];
-  
+
   float safeSWRadius;
   float safeSRRadius;
   float safeDistance;

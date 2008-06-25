@@ -50,7 +50,7 @@ class MeshTransform {
     void addReference(int transform);
 
     bool isEmpty() const { return (transforms.size() <= 0); }
-    
+
     bool isValid();
     void finalize();
 

@@ -523,22 +523,22 @@ void ServerStartMenu::execute()
     if (pid != -1) {
       int i;
       for (i = 0; i < 12; i++) {
-        if (kill(pid, SIGTERM) == 0) {
-          TimeKeeper::sleep(0.25); // be gracious for max 3 seconds
-        } else {
-          if (errno == ESRCH) {
-            break; // the pid doesn't exist
-          }
-        }
+	if (kill(pid, SIGTERM) == 0) {
+	  TimeKeeper::sleep(0.25); // be gracious for max 3 seconds
+	} else {
+	  if (errno == ESRCH) {
+	    break; // the pid doesn't exist
+	  }
+	}
       }
       if (i == 12) {
-        kill(pid, SIGKILL); // be brutal
+	kill(pid, SIGKILL); // be brutal
       }
     }
 
     // fork
     pid = fork();
-    
+
     if (pid == -1) {
       setStatus("Failed... cannot fork.");
     }
@@ -563,13 +563,13 @@ void ServerStartMenu::execute()
       if (waitpid(pid, &pStatus, WNOHANG) != 0) {
 	pid = -1;
 	char failBuf[64];
-        if (WIFEXITED(pStatus)) {
-          snprintf(failBuf, 64, "Failed (exit = %i).", WEXITSTATUS(pStatus));
-        } else if (WIFSIGNALED(pStatus)) {
-          snprintf(failBuf, 64, "Failed (signal = %i).", WTERMSIG(pStatus));
-        } else {
-          strcpy(failBuf, "Failed.");
-        }
+	if (WIFEXITED(pStatus)) {
+	  snprintf(failBuf, 64, "Failed (exit = %i).", WEXITSTATUS(pStatus));
+	} else if (WIFSIGNALED(pStatus)) {
+	  snprintf(failBuf, 64, "Failed (signal = %i).", WTERMSIG(pStatus));
+	} else {
+	  strcpy(failBuf, "Failed.");
+	}
 	setStatus(failBuf);
       } else {
 	setStatus("Server started.");

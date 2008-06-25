@@ -597,7 +597,7 @@ void resumeCountdown ( const char *resumedBy )
 
 	clOptions->countdownPaused = false;
 	countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
-	
+
 	if (countdownResumeDelay <= 0) {
 	    // resume instantly
 	    countdownResumeDelay = -1; // reset back to "unset"
@@ -672,8 +672,8 @@ PingPacket getTeamCounts()
     // Servers with -timemanual (match servers) or plugins whch handle gameover
     // usually want people to join even when last game has just ended.
     // (FIXME: the countdown/gameover handling really needs a new concept,
-    //         originally it was not possible to even join a server when gameover
-    //         was reached, but this was changed for manual countdown (match) servers)
+    //	 originally it was not possible to even join a server when gameover
+    //	 was reached, but this was changed for manual countdown (match) servers)
   } else {
     // update player counts in ping reply.
 
@@ -708,9 +708,9 @@ PingPacket getTeamCounts()
 	    pingReply.purpleCount++;
 	    break;
 
-          case ObserverTeam:
+	  case ObserverTeam:
 	    pingReply.observerCount++;
-            break;
+	    break;
 
 	  default:
 	    break;
@@ -933,7 +933,7 @@ bool defineWorld ( void )
 
   if (!worldData.generated && worldData.worldFile.size())
 	  clOptions->worldFile = worldData.worldFile.c_str();
-	 
+
 	clOptions->gameStyle &= ~TeamFlagGameStyle;
 	clOptions->gameStyle &= ~RabbitChaseGameStyle;
 	clOptions->gameStyle &= ~PlainGameStyle;
@@ -974,7 +974,7 @@ bool defineWorld ( void )
       else
 		world = defineRandomWorld();
     }
-	else 
+	else
 	{
 	makeWalls();
 
@@ -1237,7 +1237,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "%s, you are not presently authorized to perform /me actions",
-             playerData->player.getCallSign());
+	     playerData->player.getCallSign());
       sendMessage(ServerPlayer, srcPlayer, reply);
       return;
     }
@@ -1661,7 +1661,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	continue;
 
       // check and see if the other player was reged
-      if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0) 
+      if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0)
       {
 	sendMessage(ServerPlayer, i ,
 		    "Another client has demonstrated ownership of your "
@@ -2690,8 +2690,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     killerData->score.tK();
     char message[MessageLen];
     if (clOptions->tkAnnounce) {
-      snprintf(message, MessageLen, "Team kill: %s killed %s", 
-              killerData->player.getCallSign(), victimData->player.getCallSign());
+      snprintf(message, MessageLen, "Team kill: %s killed %s",
+	      killerData->player.getCallSign(), victimData->player.getCallSign());
       sendMessage(ServerPlayer, AdminPlayers, message);
     }
     if (killerData->score.isTK()) {
@@ -3874,10 +3874,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
       if ((BZDB.isTrue(StateDatabase::BZDB_ENDSHOTDETECTION) && endShotLimit > 0) &&
-         (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
+	 (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
 	char testmessage[MessageLen];
-	snprintf(testmessage, MessageLen, "Kicking Player %s EndShot credit: %d \n", 
-                playerData->player.getCallSign(), playerData->player.endShotCredit );
+	snprintf(testmessage, MessageLen, "Kicking Player %s EndShot credit: %d \n",
+		playerData->player.getCallSign(), playerData->player.endShotCredit );
 	logDebugMessage(1,"endShot Detection: %s\n", testmessage);
 	sendMessage(ServerPlayer, AdminPlayers, testmessage);
 	sendMessage(ServerPlayer, t, "Autokick: wrong end shots detected.");
@@ -4029,7 +4029,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       {
 	logDebugMessage(1,"No Thief check %s [%d] Player trying to transfer to target without thief\n",
 	  playerData->player.getCallSign(), t);
-	// There is a lot of reason why the player could not have thief, 
+	// There is a lot of reason why the player could not have thief,
 	// network delay is one of this.
 	// Don't kick then, just discard the message
 	return;
@@ -4045,24 +4045,24 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       worldEventManager.callEvents(bz_eFlagTransferredEvent,&ftEventData);
 
       if (ftEventData.action != ftEventData.CancelSteal) {
-        int oFlagIndex = toData->player.getFlag();
-        if (oFlagIndex >= 0)
-          zapFlag (*FlagInfo::get(oFlagIndex));
+	int oFlagIndex = toData->player.getFlag();
+	if (oFlagIndex >= 0)
+	  zapFlag (*FlagInfo::get(oFlagIndex));
       }
 
       if (ftEventData.action == ftEventData.ContinueSteal) {
-        void *obufStart = getDirectMessageBuffer();
-        void *obuf = nboPackUByte(obufStart, from);
-        obuf = nboPackUByte(obuf, to);
-        FlagInfo &flag = *FlagInfo::get(flagIndex);
-        flag.flag.owner = to;
-        flag.player = to;
-        toData->player.resetFlag();
-        toData->player.setFlag(flagIndex);
-        fromData->player.resetFlag();
-        obuf = flag.pack(obuf);
-        broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
-                         obufStart);
+	void *obufStart = getDirectMessageBuffer();
+	void *obuf = nboPackUByte(obufStart, from);
+	obuf = nboPackUByte(obuf, to);
+	FlagInfo &flag = *FlagInfo::get(flagIndex);
+	flag.flag.owner = to;
+	flag.player = to;
+	toData->player.resetFlag();
+	toData->player.setFlag(flagIndex);
+	fromData->player.resetFlag();
+	obuf = flag.pack(obuf);
+	broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
+			 obufStart);
       }
       break;
     }
@@ -4119,7 +4119,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       if (jittwarn) {
 	char message[MessageLen];
-	snprintf(message, MessageLen, 
+	snprintf(message, MessageLen,
 		"*** Server Warning: your jitter is too high (%d ms) ***",
 		playerData->lagInfo.getJitter());
 	sendMessage(ServerPlayer, t, message);
@@ -4128,7 +4128,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
       if (plosswarn) {
 	char message[MessageLen];
-	snprintf(message, MessageLen, 
+	snprintf(message, MessageLen,
 		"*** Server Warning: your packetloss is too high (%d%%) ***",
 		playerData->lagInfo.getLoss());
 	sendMessage(ServerPlayer, t, message);
@@ -4217,7 +4217,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  }
 	}
 
-        bool InBounds = true;
+	bool InBounds = true;
 	// exploding or dead players can do unpredictable things
 	if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus) {
 	  // make sure the player is still in the map
@@ -4296,7 +4296,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    // If player is moving vertically, or not alive the speed checks
 	    // seem to be problematic. If this happens, just log it for now,
 	    // but don't actually kick
-            // don't kick if the player is paused, because problems if have V
+	    // don't kick if the player is paused, because problems if have V
 		float smallTol = 0.001f;
 	    if ((fabs(playerData->lastState.pos[2]-state.pos[2]) > smallTol)
 	    ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])> smallTol)
@@ -4317,14 +4317,14 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 		maxPlanarSpeedSqr *= realtol;
 		maxPlanarSpeed *= realtol;
 
-		if (curPlanarSpeedSqr > maxPlanarSpeedSqr) 
+		if (curPlanarSpeedSqr > maxPlanarSpeedSqr)
 		{
 		  if (logOnly)
 		  {
 		    logDebugMessage(1,"Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		    playerData->player.getCallSign(), t,
 		    sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		  } 
+		  }
 		  else
 		  {
 		    logDebugMessage(1,  "Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
@@ -4551,13 +4551,13 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   // kick idle players
   if (clOptions->idlekickthresh > 0) {
     if ((!playerData.accessInfo.hasPerm(PlayerAccessInfo::antikick)) &&
-        (playerData.player.isTooMuchIdling(clOptions->idlekickthresh))) {
+	(playerData.player.isTooMuchIdling(clOptions->idlekickthresh))) {
       char message[MessageLen]
 	= "You were kicked because you were idle too long";
       sendMessage(ServerPlayer, p,  message);
       removePlayer(p, "idling");
       logDebugMessage(1,"Kicked player %s [%d] for idling (thresh = %f)\n",
-             playerData.player.getCallSign(), p, clOptions->idlekickthresh);
+	     playerData.player.getCallSign(), p, clOptions->idlekickthresh);
       return;
     }
   }
@@ -4674,7 +4674,7 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
 	for (int i = 0; i < curMaxPlayers; i++)
 	{
 		GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getIPAddress())) 
+		if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getIPAddress()))
 		{
 			// operators can override antiperms
 			if (!isOperator)
@@ -4694,7 +4694,7 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
 
 			snprintf(kickmessage, MessageLen, "You were banned from this server by %s", banner.c_str());
 			sendMessage(ServerPlayer, i, kickmessage);
-			if (reason.length() > 0) 
+			if (reason.length() > 0)
 			{
 				snprintf(kickmessage, MessageLen, "Reason given: %s", reason.c_str());
 				sendMessage(ServerPlayer, i, kickmessage);
@@ -4898,7 +4898,7 @@ int main(int argc, char **argv)
   // loading lag announcement thresholds
   LagInfo::setAdminLagAnnounceThreshold(clOptions->adminlagannounce);
   LagInfo::setLagAnnounceThreshold(clOptions->lagannounce);
-  
+
   // loading lag thresholds
   LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
 
@@ -5361,7 +5361,7 @@ int main(int argc, char **argv)
       }
 
       if (countdownActive && !clOptions->countdownPaused
-          && (countdownResumeDelay < 0) && countdownPauseStart) {
+	  && (countdownResumeDelay < 0) && countdownPauseStart) {
 	// resumed
 	gameStartTime += (tm - countdownPauseStart);
 	countdownPauseStart = TimeKeeper::getNullTime ();

@@ -186,13 +186,13 @@ void			WinWindow::setFullscreen(bool on)
       int w, h, x, y, count;
       char xs, ys;
       count = sscanf(BZDB.get("geometry").c_str(),
-    		 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+		 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
       if (w < 256) w = 256;
       if (h < 192) h = 192;
       if (count == 6) {
-        if (xs == '-') x = display->getWidth() - x - w;
-        if (ys == '-') y = display->getHeight() - y - h;
-        setPosition(x, y);
+	if (xs == '-') x = display->getWidth() - x - w;
+	if (ys == '-') y = display->getHeight() - y - h;
+	setPosition(x, y);
       }
       setSize(w, h);
     } else {
@@ -250,7 +250,7 @@ void			WinWindow::grabMouse()
   DWORD style = GetWindowLong(hwnd, GWL_STYLE);
   // don't compensate for window trimmings if they're turned off
   if (!((style & (WS_BORDER | WS_CAPTION | WS_DLGFRAME))
-        == (WS_BORDER | WS_CAPTION | WS_DLGFRAME)))
+	== (WS_BORDER | WS_CAPTION | WS_DLGFRAME)))
     xborder = yborder = titlebar = 0;
 
   RECT rect;

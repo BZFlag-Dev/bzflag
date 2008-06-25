@@ -4,7 +4,7 @@
 #include "bzfsAPI.h"
 #include <map>
 
-typedef struct 
+typedef struct
 {
    float x,y,z,a;
 }trDeathPos;
@@ -60,7 +60,7 @@ class PhoenixEvents : public bz_EventHandler
 	}
 	break;
       default:
-        break;
+	break;
     }
   }
 };

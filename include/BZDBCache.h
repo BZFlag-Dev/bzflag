@@ -21,27 +21,27 @@ class BZDBCache
   public:
     static void init();
 
-    // prohibit external write access    
+    // prohibit external write access
     template <class T>
     class ReadOnly {
       friend class BZDBCache;
       public:
-        inline operator T() const { return data; }
+	inline operator T() const { return data; }
       private:
-        ReadOnly() {}
-        ReadOnly& operator=(const T& value) { data = value; return *this; }
+	ReadOnly() {}
+	ReadOnly& operator=(const T& value) { data = value; return *this; }
       private:
-        ReadOnly(const ReadOnly&);
-        ReadOnly& operator=(const ReadOnly&);
+	ReadOnly(const ReadOnly&);
+	ReadOnly& operator=(const ReadOnly&);
       private:
-        T data;
+	T data;
     };
 
     // our basics types
     typedef ReadOnly<int>   Int;
     typedef ReadOnly<bool>  Bool;
     typedef ReadOnly<float> Float;
-      
+
     static Bool  displayMainFlags;
     static Bool  blend;
     static Bool  texture;
@@ -89,8 +89,8 @@ class BZDBCache
 
   public:
     /** public method to update cached variable
-        has to be called at best opportunity
-        (e.g. at beginnig of main loop)
+	has to be called at best opportunity
+	(e.g. at beginnig of main loop)
     */
     static void update();
 

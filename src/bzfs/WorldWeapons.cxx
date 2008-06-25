@@ -94,7 +94,7 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
 
   if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
-                     bufStart);
+		     bufStart);
   }
 
     // Target the gm.
@@ -302,11 +302,11 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 
 
 int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
-                PlayerId player, float *pos, float tilt, float direction,
-                int shotID, float dt)
+		PlayerId player, float *pos, float tilt, float direction,
+		int shotID, float dt)
 {
   return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-                         direction, shotID, dt);
+			 direction, shotID, dt);
 }
 
 // Local Variables: ***

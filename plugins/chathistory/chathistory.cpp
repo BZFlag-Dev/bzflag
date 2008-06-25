@@ -132,7 +132,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 }
 
 BZF_PLUGIN_CALL int bz_GetVersion ( void )
-{ 
+{
 	return BZ_API_VERSION;
 }
 

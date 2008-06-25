@@ -269,7 +269,7 @@ bool BindCommand::operator() (const char *commandLine)
     addMessage(NULL, "bad <press> type");
     return true;
   }
-  
+
   if (both) {
     KEYMGR.unbind(ev, true);
     KEYMGR.bind(ev, true, tokens[2]);
@@ -279,7 +279,7 @@ bool BindCommand::operator() (const char *commandLine)
     KEYMGR.unbind(ev, press);
     KEYMGR.bind(ev, press, tokens[2]);
   }
-  
+
   return true;
 }
 

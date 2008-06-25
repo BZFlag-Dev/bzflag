@@ -146,8 +146,8 @@ void dispScores (int who)
   for (int i=0; i<MAX_PLAYERID; i++){
     if (Players[i].isValid) {
       if (Players[i].capNum > lastCapnum){
-        playerLastCapped = i;
-        lastCapnum = Players[i].capNum;
+	playerLastCapped = i;
+	lastCapnum = Players[i].capNum;
       }
       sortList[x++] = i;
     }
@@ -178,11 +178,11 @@ void htfCapture (int who)
 {
   if (!htfEnabled)
     return;
-    
+
 #if DO_FLAG_RESET
   bz_resetFlags ( false );
-#endif    
-    
+#endif
+
   bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "HTF FLAG CAPTURED by %s", Players[who].callsign);
   ++Players[who].score;
   Players[who].capNum = nextCapNum++;

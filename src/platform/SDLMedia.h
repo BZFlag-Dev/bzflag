@@ -59,7 +59,7 @@ class SDLMedia : public BzfMedia {
     bool		audioReady;
     int			audioOutputRate;
 
-    bool                outputBufferEmpty;
+    bool		outputBufferEmpty;
 
     Uint32		stopwatchTime;
 
@@ -67,7 +67,7 @@ class SDLMedia : public BzfMedia {
     int		 cmdFill;	// from 0 to cmdFill
 
     bool		(*userCallback)(void);
-    SDL_AudioCVT        convert;
+    SDL_AudioCVT	convert;
 };
 
 #endif // BZF_SDLMEDIA_H

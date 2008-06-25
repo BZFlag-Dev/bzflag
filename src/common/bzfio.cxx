@@ -89,7 +89,7 @@ void logDebugMessage(int level, const char* fmt, ...)
 		std::cout << buffer;
 		#endif
 	}
-	
+
 	if (logingCallback)
 		logingCallback->log(level,buffer);
 }

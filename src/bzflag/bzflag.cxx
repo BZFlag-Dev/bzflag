@@ -674,8 +674,8 @@ int			main(int argc, char** argv)
 
     // write the registry key in question
     HKEY key = NULL;
-    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
-        0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL, 
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
+	0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
 	&key, NULL) == ERROR_SUCCESS) {
       RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
 		   (DWORD)strlen(temppath));
@@ -698,10 +698,10 @@ int			main(int argc, char** argv)
     BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
     BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
-  
+
   BZDBCache::init();
   BZDBLOCAL.init();
-  
+
   Flags::init();
 
   if (getenv("BZFLAGID")) {
@@ -811,7 +811,7 @@ int			main(int argc, char** argv)
     // however, if the "__window" setting is enabled, let it through
     if (BZDB.isSet("__window"))
       if (BZDB.isTrue("__window"))
-        BZDB.set("_window", "1");
+	BZDB.set("_window", "1");
   }
 
   // use UDP? yes
@@ -1346,10 +1346,10 @@ int			main(int argc, char** argv)
 
 #if defined(_WIN32)
   {
-    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it 
+    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it
      * exists */
     HKEY key = NULL;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag", 
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
 	0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
       RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
     }

@@ -761,7 +761,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(HandicapGameStyle);
     } else if (strcmp(argv[i], "-jitterdrop") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.maxjitterwarn = atoi(argv[i]);        
+      options.maxjitterwarn = atoi(argv[i]);
     } else if (strcmp(argv[i], "-jitterwarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.jitterwarnthresh = atoi(argv[i])/1000.0f;
@@ -1174,13 +1174,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
       std::cerr << "using world size of \"" << BZDBCache::worldSize << "\"" << std::endl;
-    }  
+    }
     else if (strcmp(argv[i], "-ws") == 0) {
       checkArgc(1, i, argc, argv[i]);
       int sides = atoi(argv[i]);
       if (sides > 2)
 	options.wallSides = sides;
-    } 
+    }
     else {
       std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
       usage(argv[0]);

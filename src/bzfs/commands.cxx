@@ -1171,7 +1171,7 @@ bool CountdownCommand::operator() (const char	 * message,
   }
 
   // if the timelimit is not set .. don't countdown
-  if (clOptions->timeLimit > 1.0f) 
+  if (clOptions->timeLimit > 1.0f)
   {
     std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
 
@@ -1245,7 +1245,7 @@ bool CountdownCommand::operator() (const char	 * message,
 
 	startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
   }
-  else 
+  else
   {
     sendMessage(ServerPlayer, AllPlayers, "Team scores reset.");
     sendMessage(ServerPlayer, t, "The server is not configured for timed matches.");
@@ -1504,47 +1504,47 @@ bool FlagCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, buffer);
       return true;
     }
-    
+
     if (gkPlayer && fi) {
       // do not give flags to dead players
       if (!gkPlayer->player.isAlive()) {
-        char buffer[MessageLen];
-        snprintf(buffer, MessageLen,
-                 "/flag give: player (%s) is not alive",
-                 gkPlayer->player.getCallSign());
-        sendMessage(ServerPlayer, t, buffer);
-        return true;
+	char buffer[MessageLen];
+	snprintf(buffer, MessageLen,
+		 "/flag give: player (%s) is not alive",
+		 gkPlayer->player.getCallSign());
+	sendMessage(ServerPlayer, t, buffer);
+	return true;
       }
 
       // deal with the player's current flag
       const int flagId = gkPlayer->player.getFlag();
       if (flagId >= 0) {
-        FlagInfo& currentFlag = *FlagInfo::get(flagId);
-        if (currentFlag.flag.type->flagTeam != NoTeam) {
-          // drop team flags
-          dropFlag(currentFlag, gkPlayer->lastState.pos);
-        } else {
-          // reset non-team flags
-          resetFlag(currentFlag);
-        }
+	FlagInfo& currentFlag = *FlagInfo::get(flagId);
+	if (currentFlag.flag.type->flagTeam != NoTeam) {
+	  // drop team flags
+	  dropFlag(currentFlag, gkPlayer->lastState.pos);
+	} else {
+	  // reset non-team flags
+	  resetFlag(currentFlag);
+	}
       }
-      
+
       // deal with the flag's current player (for forced gives)
       if (fi->player >= 0) {
-        GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
-        if (fPlayer) {
-          void *bufStart = getDirectMessageBuffer();
-          void *buf = nboPackUByte(bufStart, fi->player);
-          buf = fi->pack(buf);
-          broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
-        }
-        fPlayer->player.setFlag(-1);
+	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
+	if (fPlayer) {
+	  void *bufStart = getDirectMessageBuffer();
+	  void *buf = nboPackUByte(bufStart, fi->player);
+	  buf = fi->pack(buf);
+	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+	}
+	fPlayer->player.setFlag(-1);
       }
-      
+
       // setup bzfs' state
       fi->grab(gkPlayer->getIndex());
       gkPlayer->player.setFlag(fi->getIndex());
-      
+
       // send MsgGrabFlag
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, gkPlayer->getIndex());
@@ -1600,7 +1600,7 @@ bool LagWarnCommand::operator() (const char	 *message,
 
 
 bool LagDropCommand::operator() (const char      *message,
-                                 GameKeeper::Player *playerData)
+				 GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
@@ -1638,7 +1638,7 @@ bool JitterWarnCommand::operator() (const char	 *message,
 		"You do not have permission to run the jitterwarn command");
     return true;
   }
-  
+
   char reply[MessageLen] = {0};
 
   if (message[11] == ' ' && isdigit(message[12])) {
@@ -1833,11 +1833,11 @@ bool IdleTimeCommand::operator() (const char* message,
       sendMessage(ServerPlayer, t, reply.c_str());
     }
   }
-   
-  if (setting) { 
+
+  if (setting) {
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
       sendMessage(ServerPlayer, t,
-                  "You do not have permission to set the idletime");
+		  "You do not have permission to set the idletime");
       return true;
     } else {
       clOptions->idlekickthresh = value;
@@ -1848,7 +1848,7 @@ bool IdleTimeCommand::operator() (const char* message,
   } else {
     char buf[256];
     snprintf(buf, 256, "idletime is currently set to: %.1f seconds\n",
-             clOptions->idlekickthresh);
+	     clOptions->idlekickthresh);
     sendMessage(ServerPlayer, t, buf);
   }
   return true;
@@ -2162,7 +2162,7 @@ bool GhostCommand::operator() (const char	 *message,
   if (p1)
     p2 = strchr(p1 + 1, '\"');
 
-  if (!p2) 
+  if (!p2)
   {
     sendMessage(ServerPlayer, t, "not enough parameters, usage"
 		" /ghost \"CALLSIGN\" PASSWORD");
@@ -2175,13 +2175,13 @@ bool GhostCommand::operator() (const char	 *message,
     makeupper(ghostie);
 
     int user = GameKeeper::Player::getPlayerIDByName(ghostie);
-    if (user == -1) 
+    if (user == -1)
       sendMessage(ServerPlayer, t, "There is no user logged in by that name");
     else
     {
-      if (!userExists(ghostie)) 
+      if (!userExists(ghostie))
 	sendMessage(ServerPlayer, t, "That callsign is not registered");
-      else 
+      else
       {
 	if (!verifyUserPassword(ghostie, ghostPass))
 	  sendMessage(ServerPlayer, t, "Invalid Password");
@@ -2195,7 +2195,7 @@ bool GhostCommand::operator() (const char	 *message,
 	  sendMessage(ServerPlayer, user, temp);
 	  removePlayer(user, "Ghost");
 	}
-      } 
+      }
     }
   }
   return true;
@@ -3527,9 +3527,9 @@ bool ModCountCommand::operator() (const char*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-    
+
   std::string messageText = &message[9];
- 
+
   // skip any leading whitespace
   while ((messageStart < messageText.size()) &&
 	 (isspace(messageText[messageStart]))) {
@@ -3546,10 +3546,10 @@ bool ModCountCommand::operator() (const char*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-  
+
   messageText.erase(0, --messageStart);
   clOptions->addedTime += (float)atof((messageText.c_str())); //remember to add the time
- 
+
   if (countdownDelay > 0) { //we are currently counting down to start
     char reply[MessageLen] = {0};
     snprintf(reply, MessageLen, "%s, the countdown will be adjusted by %f when the match starts",
@@ -3557,7 +3557,7 @@ bool ModCountCommand::operator() (const char*message,
     sendMessage(ServerPlayer, t, reply);
     return true;
   }
-  
+
   return true;
 }
 

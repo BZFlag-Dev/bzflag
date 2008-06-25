@@ -75,7 +75,7 @@ public:
   float		getAngle() const;
   const float*	getForward() const;
   const float*	getVelocity() const;
-  
+
   float		getAngularVelocity() const;
   int		getPhysicsDriver() const;
   int		getDeathPhysicsDriver() const;
@@ -306,7 +306,7 @@ private:
 
   // dead reckoning stuff
   TimeKeeper inputTime;		// time of input
-  float inputTimestamp;         // input timestamp of sender
+  float inputTimestamp;	 // input timestamp of sender
   int	inputStatus;		// tank status
   float	inputPos[3];		// tank position
   float	inputVel[3];		// tank velocity
@@ -502,7 +502,7 @@ inline bool		Player::isPaused() const
 }
 
 inline bool Player::getPausedMessageState ( void ) const
-{ 
+{
 	return pauseMessageState;
 }
 

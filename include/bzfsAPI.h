@@ -854,9 +854,9 @@ public:
 
   float	pos[3];
   float	velocity[3];
-  float	azimuth;	
+  float	azimuth;
   float	angVel;
-  int	phydrv;		
+  int	phydrv;
   int	playerID;
 
   double time;
@@ -933,7 +933,7 @@ public:
   enum Action {
     ContinueSteal = 0,
     CancelSteal = 1,
-    DropThief = 2 
+    DropThief = 2
   };
 
   bz_FlagTransferredEventData()

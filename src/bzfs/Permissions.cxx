@@ -554,14 +554,14 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	if (perm != PlayerAccessInfo::lastPerm) {
 	  info.explicitDenys.set(perm);
 	} else {
-          if (word == "ALL") {
-            info.explicitDenys.set();
-            info.explicitDenys[PlayerAccessInfo::lastPerm] = false;
+	  if (word == "ALL") {
+	    info.explicitDenys.set();
+	    info.explicitDenys[PlayerAccessInfo::lastPerm] = false;
 	    info.hasALLPerm = false;
-          } else {
-            logDebugMessage(1,"groupdb: Cannot forbid unknown permission %s\n", word.c_str());
-          }
-        }
+	  } else {
+	    logDebugMessage(1,"groupdb: Cannot forbid unknown permission %s\n", word.c_str());
+	  }
+	}
 
 	continue;
       }

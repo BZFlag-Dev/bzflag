@@ -522,8 +522,8 @@ void      ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 
 
 void			ScoreboardRenderer::drawPlayerScore(const Player* player,
-			    float x1, float x2, float x3, float xs, float y, 
-                            int emailLen, bool huntCursor)
+			    float x1, float x2, float x3, float xs, float y,
+			    int emailLen, bool huntCursor)
 {
   // score
   char score[40], kills[40];
@@ -713,7 +713,7 @@ void			ScoreboardRenderer::drawPlayerScore(const Player* player,
 		  huntStr.c_str());
   }
 
- 
+
 }
 
 

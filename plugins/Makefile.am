@@ -25,7 +25,7 @@ SUBDIRS = \
 	timedctf \
 	torBlock \
 	vocaliser \
-	wwzones 
+	wwzones
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)	\

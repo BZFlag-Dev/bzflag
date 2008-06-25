@@ -293,7 +293,7 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData *data )
       bz_freePlayerRecord( player );
     }
   }
-  
+
   //
   // Display number of players, callsign, and email string in the following format:
   //

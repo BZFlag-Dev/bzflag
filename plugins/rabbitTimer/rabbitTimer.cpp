@@ -91,7 +91,7 @@ void rabbitTimer::process(bz_EventData *eventData)
 			}
 		}
 	}
-	else if (eventData->eventType == bz_ePlayerDieEvent) 
+	else if (eventData->eventType == bz_ePlayerDieEvent)
 	{
 		bz_PlayerJoinPartEventData* partdata = (bz_PlayerJoinPartEventData*)eventData;
 
@@ -103,7 +103,7 @@ void rabbitTimer::process(bz_EventData *eventData)
 		}
 	}
 }
-	
+
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
@@ -113,7 +113,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 	rabbittimer.rabbitDeathTime = 3600.0; //something large
 
 	std::string param = commandLine;
-	
+
 	if (param.size() > 0 && param.at(0) == '+')
 	{
 		rabbittimer.rollOver = true;

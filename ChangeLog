@@ -1,26 +1,26 @@
 			     BZFlag Release Notes
 			     ====================
 
-*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
-*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** 
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
 BZFlag 2.0.12
 ----------------------------------------------------
 * Fix build with -ffast-math avoiding use of isnan for fog - Alfredo Tupone
-* Fix for memory leaks - 
+* Fix for memory leaks -
 * libGLEW requirement controlled by --with-glew - Alfredo Tupone
 * Actually build with SDL_Image, if required - Alfredo Tupone
 * Remove extra dir separator from cache entries - Jeff Myers
 * Configurable "defaultFOV" (60 deg) for widescreen users - Jeff Myers
 * Adjust shown coordinate for observers - Jeff Myers
 * Use the foghack only if the config says - Jeff Myers
-* Queue spawns after flag captures - 
+* Queue spawns after flag captures -
 * Fix kill callback when is coming from server - Jeff Myers
 * Fix intermix of chat messages and api callback - Jeff Myers
 * Various permission fixes - Jeff Myers
-* Plugins path fixed - 
+* Plugins path fixed -
 * Kerberos and thread removed (never used) - Alfredo Tupone
 * Event log fixed - Jeff Myers
 * Workaroung to a driver bug - Jeff Myers
@@ -36,7 +36,7 @@ BZFlag 2.0.12
 BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 ---------------------------------------------
 
-* Added a work around for buggy DRI open source ATI drivers and the 
+* Added a work around for buggy DRI open source ATI drivers and the
   narrow flag - Jeff Myers
 * Add /modcount command - Joshua Bodine, Anonymous
 * Fix bug where users get locked into autopilot mode - Joshua Bodine
@@ -116,7 +116,7 @@ BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 * game variables no longer accept invalid values. - Jeff Myers
 * Special Effects use tank (was team) color - Karsten Behrmann, Jeff Myers
 * /reset uses the values from the config and the map as default - Jeff Myers
-* Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell 
+* Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell
 * Have windows dump std::error out to a file - Jeff Myers
 * Various API enhancmentes - Jeff Myers and others ( from patches )
 * Not applauding when capturing his own flag - Alfredo Tupone

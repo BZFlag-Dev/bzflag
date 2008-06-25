@@ -767,10 +767,10 @@ void			HUDRenderer::renderStatus(void)
     if (target) {
       float vel[3] = {0};
       memcpy(vel,target->getVelocity(),sizeof(float)*3);
-  
+
       float apparentVel[3] = {0};
       memcpy(apparentVel,target->getApparentVelocity(),sizeof(float)*3);
-  
+
       float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
       float vertSpeed = vel[2];
       float rotSpeed = fabs(target->getAngularVelocity());
@@ -781,14 +781,14 @@ void			HUDRenderer::renderStatus(void)
       static TimeKeeper maxApparentLinTime = TimeKeeper::getStartTime();
 
       if (maxApparentLinSpeed > apparentLinSpeed &&
-          TimeKeeper::getTick() - maxApparentLinTime < 0.5f) {
-        apparentLinSpeed = maxApparentLinSpeed;
+	  TimeKeeper::getTick() - maxApparentLinTime < 0.5f) {
+	apparentLinSpeed = maxApparentLinSpeed;
       }
       else {
-        maxApparentLinSpeed = apparentLinSpeed;
-        maxApparentLinTime = TimeKeeper::getTick();
+	maxApparentLinSpeed = apparentLinSpeed;
+	maxApparentLinTime = TimeKeeper::getTick();
       }
-  
+
       float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
       float drawY = y - smallZHeight;
       // draw header
@@ -802,44 +802,44 @@ void			HUDRenderer::renderStatus(void)
 
       std::string label = "Linear Speed:";
       if ( linSpeed > target->getMaxSpeed() )
-        label += "!";
-  
+	label += "!";
+
       sprintf(buffer,"%s%5.2f",label.c_str(),linSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
-        sprintf(buffer,"%s%5.2f(%5.2f)",label.c_str(),linSpeed,apparentLinSpeed);
-  
+	sprintf(buffer,"%s%5.2f(%5.2f)",label.c_str(),linSpeed,apparentLinSpeed);
+
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
       fm.drawString(x,drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
-  
+
       sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
-        sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
-  
+	sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
+
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
       fm.drawString(x, drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
-  
+
       label = "Angular Speed:";
       if (rotSpeed > BZDB.eval(StateDatabase::BZDB_TANKANGVEL))
-        label += "!";
+	label += "!";
       sprintf(buffer,"%s%5.2f",label.c_str(),rotSpeed);
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
       fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
-  
+
       float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
       float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
-  
+
       sprintf(buffer,"Last Shot Info  Time:%6.4f  Deviation:%6.3f", shotTime, shotDeviation);
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
       fm.drawString(x,drawY-smallZHeight*5.0f, 0, minorFontFace, minorFontSize, buffer);
-  
+
       float offset = 6.0f;
       if (BZDB.evalInt("showVelocities") > 2) {
-        offset += 1.0f;
-        sprintf(buffer,"ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits,(float)target->reportedHits/(float)target->computedHits);
-        x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-        fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer);
+	offset += 1.0f;
+	sprintf(buffer,"ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits,(float)target->reportedHits/(float)target->computedHits);
+	x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
+	fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer);
       }
-  
+
       offset += 1.5f;
       scoreboard->setTeamScoreY(drawY - smallZHeight*offset);
     }
@@ -978,7 +978,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 			0, labelsFontFace, labelsFontSize, fname);
 	}
 
-		if (roaming && BZDB.isTrue("showVelocities")) 
+		if (roaming && BZDB.isTrue("showVelocities"))
 		{
 			float vel[3] = {0};
 			memcpy(vel,pl->getVelocity(),sizeof(float)*3);
