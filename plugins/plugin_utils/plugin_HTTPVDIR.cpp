@@ -254,9 +254,18 @@ bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &re
     {
       AuthInfo info;
       info.time = bz_getCurrentTime();
-      info.level = getLevelFromGroups(pendingItr->second->groups);
-      if (info.level >= 0)
-	authedSessions[request.sessionID] = info;
+
+      if (!pendingItr->second->groups.size())
+	info.level = -1;
+      else
+      {
+	if (pendingItr->second->groups.size() == 1)
+	  info.level = 0; // just authed, no levels
+	else
+	  info.level = getLevelFromGroups(pendingItr->second->groups);
+	if (info.level >= 0)
+	  authedSessions[request.sessionID] = info;
+      }
 
       delete(pendingItr->second);
       pendingTokenTasks.erase(pendingItr);
@@ -334,7 +343,7 @@ bool stringInList ( const std::string &str, const std::vector<std::string> strin
 
 void BZFSHTTPVDirAuth::addPermToLevel ( int level, const std::string &perm )
 {
-  if (level < 0)
+  if (level <= 0)
     return;
 
    if(authLevels.find(level)== authLevels.end())
@@ -364,15 +373,15 @@ int BZFSHTTPVDirAuth::getLevelFromGroups (const std::vector<std::string> &groups
 	groupsWithPerm = findGroupsWithPerm(perm);
 
       // check the input groups, and see if any of the them are in the groups with this perm
-      for (std::vector<std::string>::const_iterator group = groups.begin(); group != groups.end(); group++)
+      for (size_t i = 1; i < groups.size(); i++ )
       {  
-	if (stringInList(*group,groupsWithPerm))
+	if (stringInList(groups[i],groupsWithPerm))
 	  return itr->first;
       }
     }
     itr++;
   }
-  return -1;
+  return 0;
 }
 
 void BZFSHTTPVDirAuth::flushTasks ( void )

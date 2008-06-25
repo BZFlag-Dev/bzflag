@@ -146,6 +146,9 @@ protected:
   std::string getBaseURL ( void );
 };
 
+#define UNAUTHENTICATED -1
+#define VERIFIED	0
+
 class BZFSHTTPVDirAuth : public BZFSHTTPVDir
 {
 public:
