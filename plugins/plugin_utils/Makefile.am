@@ -8,12 +8,8 @@ libplugin_utils_la_SOURCES = \
 	plugin_utils.h \
 	plugin_config.cpp \
 	plugin_config.h \
-	plugin_HTTP.cpp \
-	plugin_HTTP.h \
 	plugin_HTTPVDIR.cpp \
 	plugin_HTTPVDIR.h \
-	plugin_authHTTP.cpp \
-	plugin_authHTTP.h \
 	plugin_HTTPTemplates.cpp \
 	plugin_HTTPTemplates.h \
 	plugin_files.cpp \
