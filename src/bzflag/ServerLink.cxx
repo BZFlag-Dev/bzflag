@@ -469,17 +469,17 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 
   if ((urecvfd>=0) && ulinkup ) {
     switch (code) {
-      case MsgShotBegin:
-      case MsgShotEnd:
-      case MsgHit:
-      case MsgPlayerUpdate:
-      case MsgPlayerUpdateSmall:
-      case MsgGMUpdate:
-      case MsgUDPLinkRequest:
-      case MsgUDPLinkEstablished:
-      case MsgWhatTimeIsIt:
-	needForSpeed=true;
-	break;
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgHit:
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+    case MsgGMUpdate:
+    case MsgUDPLinkRequest:
+    case MsgUDPLinkEstablished:
+    case MsgWhatTimeIsIt:
+      needForSpeed=true;
+      break;
     }
   }
   // MsgUDPLinkRequest always goes udp
@@ -724,10 +724,10 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
   FD_SET((unsigned int)fd, &read_set);
   int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
-  
+
   if (nfound == 0)
     return 0;
- 
+
   if (nfound < 0)
     return -1;
 
@@ -742,7 +742,7 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
   int rlen = 0;
   rlen = recv(fd, (char*)headerBuffer, 4, 0);
- 
+
   if (!rlen)
     return -2;// Socket shutdown Server side
 
@@ -796,8 +796,9 @@ int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
     }
     msg->addPackedData(tmpBuffer,rlen);
     free(tmpBuffer);
-  } else
+  } else {
     rlen = 0;
+  }
 
 
 #if defined(NETWORK_STATS)
