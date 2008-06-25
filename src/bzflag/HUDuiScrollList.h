@@ -31,43 +31,43 @@
 #include "BzfEvent.h"
 
 class HUDuiScrollList : public HUDuiControl {
-	public:
-			HUDuiScrollList();
-			~HUDuiScrollList();
-			HUDuiScrollList(bool paged);
+  public:
+      HUDuiScrollList();
+      ~HUDuiScrollList();
+      HUDuiScrollList(bool paged);
 
-		int getSelected() const;
-		void setSelected(int _index);
-		
-		void addItem(HUDuiLabel* item);
-		void addItem(std::string item);
+    int getSelected() const;
+    void setSelected(int _index);
 
-		void sortAlphabetically();
-		
-		void update();
-		void clear();
-		
-		void setSize(float width, float height);
-		void setFontSize(float size);
+    void addItem(HUDuiLabel* item);
+    void addItem(std::string item);
 
-		void setPaged(bool paged);
+    void sortAlphabetically();
 
-	protected:
-		bool doKeyPress(const BzfKeyEvent&);
-		bool doKeyRelease(const BzfKeyEvent&);
-		void resizeItems();
-		static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
-		void doRender();
+    void update();
+    void clear();
 
-	private:
-		int	index;
-		int visiblePosition;
-		int numVisibleItems;
-		bool pagedList;
-		
-		HUDuiLabel* pageLabel;
-		
-		std::list<HUDuiScrollListItem*> items;
+    void setSize(float width, float height);
+    void setFontSize(float size);
+
+    void setPaged(bool paged);
+
+  protected:
+    bool doKeyPress(const BzfKeyEvent&);
+    bool doKeyRelease(const BzfKeyEvent&);
+    void resizeItems();
+    static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
+    void doRender();
+
+  private:
+    int	index;
+    int visiblePosition;
+    int numVisibleItems;
+    bool pagedList;
+
+    HUDuiLabel* pageLabel;
+
+    std::list<HUDuiScrollListItem*> items;
 };
 
 #endif // __HUDUISCROLLLIST_H__

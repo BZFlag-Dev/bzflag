@@ -25,25 +25,25 @@
 #include <string>
 
 class HUDuiScrollListItem : public HUDuiControl {
-	public:
-			HUDuiScrollListItem();
-			HUDuiScrollListItem(std::string data);
-			HUDuiScrollListItem(HUDuiLabel* data);
-			~HUDuiScrollListItem();
+  public:
+      HUDuiScrollListItem();
+      HUDuiScrollListItem(std::string data);
+      HUDuiScrollListItem(HUDuiLabel* data);
+      ~HUDuiScrollListItem();
 			
-		void setFontSize(float size);
-		void setFontFace(const LocalFontFace* fontFace);
-		void setPosition(float x, float y);
+    void setFontSize(float size);
+    void setFontFace(const LocalFontFace* fontFace);
+    void setPosition(float x, float y);
 
-		void shorten(float width);
-		std::string getValue();
+    void shorten(float width);
+    std::string getValue();
 
-	protected:
-		void doRender();
+  protected:
+    void doRender();
 
-	private:		
-		std::string stringValue;
-		HUDuiLabel* label;
+  private:		
+    std::string stringValue;
+    HUDuiLabel* label;
 };
 
 #endif // __HUDuiScrollListItem_H__
