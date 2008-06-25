@@ -11,25 +11,6 @@
 
 std::string templatesDir;
 
-// class WebReport;
-// 
-// class TokenTask : public bz_BaseURLHandler
-// {
-// public:
-//   TokenTask(WebReport *r);
-// 
-//   virtual void done ( const char* /*URL*/, void * data, unsigned int size, bool complete );
-//   virtual void timeout ( const char* /*URL*/, int /*errorCode*/ );
-//   virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ );
-// 
-//   WebReport *report;
-//   int requestID;
-//   std::string URL;
-//   std::vector<std::string> groups;
-// 
-//   std::string data;
-// }; 
-
 class WebReport : public BZFSHTTPVDirAuth, public TemplateCallbackClass
 {
 public:
@@ -52,24 +33,10 @@ public:
   bz_APIStringList *reports;
   int report;
 
- // std::vector<TokenTask*> tasksToFlush;
-  //std::vector<TokenTask*> tasks;
-
- // void flushTasks ( void );
-
- // Templateiser templateSystem;
-
   virtual const char * getVDir ( void ){return "WebReport";}
   virtual const char * getDescription ( void ){return "View Reports On-line(Requires Login)";}
 
   virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply );
-
-//  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply );
- // virtual bool resumeTask (  int requestID );
-
- // bool verifyToken ( const HTTPRequest &request, HTTPReply &reply );
-
-//  std::map<int,double>	authedSessionIDs;
 };
 
 WebReport *webReport = NULL;
@@ -202,187 +169,6 @@ void WebReport::loadDefaultTemplates(void)
 {
   reportDefaultTemplate = "<html><body>[?IF Valid][*START Reports][$Report]<br>[*END Reports]There are no reports, sorry[*EMPTY Reports][?ELSE Valid]Invalid Login, sorry[?END Valid]</body></html>";
 }
-
-// void WebReport::flushTasks ( void )
-// {
-//   for (size_t i = 0; i < tasksToFlush.size(); i++)
-//   {
-//     TokenTask *task = tasksToFlush[i];
-// 
-//     for (size_t s = 0; s < tasks.size(); s++ )
-//     {
-//       if ( tasks[s] == task)
-//       {
-// 	tasks.erase(tasks.begin()+s);
-// 	s = tasks.size();
-//       }
-//     }
-//     delete(task);
-//   }
-// 
-//   tasksToFlush.clear();
-// 
-//   // check for long dead sessions
-// 
-//   double now = bz_getCurrentTime();
-//   double timeout = 300; // 5 min
-// 
-//   std::map<int,double>::iterator authItr = authedSessionIDs.begin();
-//   
-//   while (authItr != authedSessionIDs.end())
-//   {
-//     if (authItr->second+timeout < now)
-//     {
-//       std::map<int,double>::iterator itr = authItr;
-//       authItr++;
-//       authedSessionIDs.erase(itr);
-//     }
-//     else
-//       authItr++;
-//   }
-// }
-// 
-// TokenTask::TokenTask(WebReport *r)
-// {
-//   report = r;
-//   requestID = -1;
-// }
-// 
-// void TokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
-// {
-//   char *t = (char*)malloc(size+1);
-//   memcpy(t,inData,size);
-//   t[size] = 0;
-//   data += t;
-//   free(t);
-// 
-//   if (complete)
-//   {
-//     // parse out the info
-// 
-//     bool valid = false;
-// 
-//     data = replace_all(data,std::string("\r\n"),"\n");
-//     data = replace_all(data,std::string("\r"),"\n");
-// 
-//     std::vector<std::string> lines = tokenize(data,std::string("\n"),0,false);
-// 
-//     bool tokenOk = false;
-//     bool oneGroupIsIn = false;
-// 
-//     for (size_t i = 0; i < lines.size(); i++)
-//     {
-//       std::string &line = lines[i];
-// 
-//       if (line.size())
-//       {
-// 	if (strstr(line.c_str(),"TOKGOOD") != NULL)
-// 	{
-// 	  tokenOk = true;
-// 
-// 	  // the first 2 will be TOKGOOD, and the callsign
-// 	  std::vector<std::string> validGroups = tokenize(line,std::string(":"),0,false);
-// 	  if (validGroups.size() > 2)
-// 	  {
-// 	    for (size_t vg = 2; vg < validGroups.size(); vg++)
-// 	    {
-// 	      for(size_t g = 0; g < groups.size(); g++ )
-// 	      {
-// 		if (compare_nocase(groups[g],validGroups[vg]) == 0)
-// 		  oneGroupIsIn = true;
-// 	      }
-// 	    }
-// 	  }
-// 	}
-//       }
-//     }
-// 
-//     if (tokenOk)
-//       valid = oneGroupIsIn;
-// 
-//     report->pendingAuths[requestID] = valid;
-//     report->tasksToFlush.push_back(this);
-//   }
-// }
-// 
-// void TokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
-// {
-//   if (!report)
-//     return; // fucked
-// 
-//   report->pendingAuths[requestID] = false;
-//   report->tasksToFlush.push_back(this);
-// }
-// 
-// void TokenTask::error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
-// {
-//   if (!report)
-//     return; // fucked
-// 
-//   report->pendingAuths[requestID] = false;
-//   report->tasksToFlush.push_back(this);
-// }
-
-// bool WebReport::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
-// {
-//   std::vector<std::string> reportGroups = findGroupsWithPerm(bz_perm_viewReports);
-//   if (!reportGroups.size())
-//     reportGroups = findGroupsWithAdmin();
-// 
-//   bool validGroups = false;
-// 
-//   if (reportGroups.size())
-//   {
-//     if ( reportGroups.size() == 1 && compare_nocase(reportGroups[0],"local.admin") == 0)
-//       validGroups = false;
-//     else
-//       validGroups = true;
-//   }
-// 
-//   if (validGroups)
-//   {
-//     TokenTask *task = new TokenTask(this);
-// 
-//     std::string user,token;
-//     request.getParam("user",user);
-//     request.getParam("token",token);
-// 
-//     if (!user.size() || !token.size())
-//     {
-//       reply.body += "Invalid response";
-//       reply.docType = HTTPReply::eText;
-//       return true;
-//     }
-// 
-//     task->groups = reportGroups;
-//     task->requestID = request.requestID;
-//     task->URL = "http://my.bzflag.org/db/";
-//     task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
-//     task->URL += request.ip;
-//     task->URL += "%3D" + token;
-// 
-//     task->URL += "&groups=";
-//     for (size_t g = 0; g < reportGroups.size(); g++)
-//     {
-//       task->URL += reportGroups[g];
-//       if ( g+1 < reportGroups.size())
-// 	task->URL += "%0D%0A";
-//     }
-// 
-//     // give the task to bzfs and let it do it, when it's done it'll be processed
-//     bz_addURLJob(task->URL.c_str(),task);
-//     tasks.push_back(task);
-//   }
-//   else
-//   {
-//     reply.body += "Reports are inaccessible";
-//     reply.docType = HTTPReply::eText;
-//     return true;
-//   }
-//   return false;
-// }
-
-
 
 // Local Variables: ***
 // mode: C++ ***
