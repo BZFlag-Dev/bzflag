@@ -33,15 +33,18 @@ class HUDuiScrollListItem : public HUDuiControl {
 			
     void setFontSize(float size);
     void setFontFace(const LocalFontFace* fontFace);
+	
+    void setSize(float width, float height);
     void setPosition(float x, float y);
 
-    void shorten(float width);
     std::string getValue();
 
   protected:
     void doRender();
 
-  private:		
+  private:
+    void shorten(float width);
+	
     std::string stringValue;
     HUDuiLabel* label;
 };

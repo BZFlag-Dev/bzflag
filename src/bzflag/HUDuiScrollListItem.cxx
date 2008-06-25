@@ -61,11 +61,18 @@ void HUDuiScrollListItem::setFontFace(const LocalFontFace* fontFace)
   label->setFontFace(fontFace);
 }
 
+// Set the size for the scrollable list item
+void HUDuiScrollListItem::setSize(float width, float height)
+{
+  HUDuiControl::setSize(width, height);
+  shorten(width); // Shorten the label accordingly
+}
+
 // Set the scrollable list item's position on the screen
 void HUDuiScrollListItem::setPosition(float x, float y)
 {
   HUDuiControl::setPosition(x, y);
-  label->setPosition(x, y);
+  label->setPosition(x, y);    
 }
 
 // Returns the string value of the scrollable list item
@@ -73,7 +80,6 @@ std::string HUDuiScrollListItem::getValue()
 {
   return stringValue;
 }
-
 
 // Shorten the item's label to fit
 void HUDuiScrollListItem::shorten(float width)

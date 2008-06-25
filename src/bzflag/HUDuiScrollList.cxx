@@ -234,12 +234,12 @@ void HUDuiScrollList::resizeItems()
   if (items.size() > 0) {
     for (it = items.begin(); it != items.end(); ++it)
     {
-      HUDuiScrollListItem* test = *it;
-      if (test != NULL)
+      HUDuiScrollListItem* item = *it;
+      if (item != NULL)
       {
-	test->setFontFace(getFontFace());
-	test->setFontSize(getFontSize());
-	test->shorten(getWidth());
+        item->setFontFace(getFontFace());
+        item->setFontSize(getFontSize());
+        item->setSize(getWidth(), itemHeight);
       }
     }
   }
