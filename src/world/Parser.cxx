@@ -19,44 +19,63 @@ namespace BZW
 {
   namespace Parser
   {
+    /* Key methods */
+    void Key::addParameter(ParameterType type, bool optional = false)
+    {
+
+    }
+
+    Key::Key(std::string name, bool optional)
+    {
+
+    }
+
+    Key::~Key()
+    {
+
+    }
+
+    /* Object methods */
+    /// Constructor
+    Object::ObjectType(std::string name)
+    {
+
+    }
+
+    /// Destructor
+    Object::~ObjectType()
+    {
+
+    }
+
     /* Parser methods */
+    /// Constructor
     Parser::Parser()
     {
 
     }
 
+    /// Destructor
     Parser::~Parser()
     {
 
     }
 
-    Parameter * Parser::addParameter(string name)
-    {
-      Parameter * param = new Parameter(name);
-      //TODO: store the parameter in Parser instance
-      return param;
-    }
-
-    void Parser::Parse()
+    /// Adds an Object definition to the Parser
+    ObjectType * Parser::addObjectType(std::string name)
     {
 
     }
 
-    /* Parameter methods */
-    Parameter::Parameter(string name)
+    /**
+    * Using previously provided definitions, parses istream using
+    * definitions. Use
+    */
+    bool Parser::Parse(std::istream &in)
     {
 
     }
 
-    Parameter::~Parameter()
-    {
-
-    }
-
-    void Parameter::addValue(Parameter::ValueType type, bool required);
-    {
-
-    }
   }
 }
 // Local Variables: ***

@@ -23,54 +23,90 @@ namespace BZW
 {
   namespace Parser
   {
-    class Parser
+    /**
+     * BZW file Parsing Key class. Used for interaction between BZW::World,
+     * Object and the Parser class to define what sorts of objects need to,
+     * and can be, read from a BZW file.
+     */
+    class Key
     {
+      friend Key * Parser::addKey(std::string name);
       public:
-        Parser();
-        ~Parser();
-
-        Parameter * addParameter(string name);
-        void Parse();
-
-      private:
-
-    }
-
-    class Parameter
-    {
-      friend Parameter * Parser::addParameter(string name);
-      public:
-        enum ValueType
+        enum ParameterType
         {
           String,
-          Real
+          Integer,
+          Real,
+          Boolean
         };
-        void addValue(ValueType type, bool required);
+        void addParameter(ParameterType type, bool optional = false);
 
       protected:
-        Parameter(string name);
-        ~Parameter();
+        Key(std::string name, bool optional);
+        ~Key();
 
       private:
 
-        union ValueValue
+        union ParameterValue
         {
-          string string_value;
+          std::string string_value;
           int int_value;
           float real_value;
           bool bool_value;
         };
 
-        struct Value
+        struct Parameter
         {
           ValueType type;
-          bool required;
+          bool optional;
           bool set;
-          ValueValue value; // I'm really sorry for this line :(
+          ParameterValue value;
         };
 
-      string name;
+        std::string name;
+        bool optional;
     }
+
+    /**
+     * BZW file ObjectType class. Used primarily by BZW::World and Parser.
+     */
+    class ObjectType
+    {
+      friend ObjectType * Parser::addObjectType(std::string name);
+      public:
+
+      protected:
+        /// Constructor
+        ObjectType(std::string name);
+        /// Destructor
+        ~ObjectType();
+
+      private:
+        std::string name;
+    }
+
+    /**
+     * BZW file Parsing class. Used primarily by BZW::World.
+     */
+    class Parser
+    {
+      public:
+        /// Constructor
+        Parser();
+        /// Destructor
+        ~Parser();
+
+        /// Adds an Object definition to the Parser
+        ObjectType * addObjectType(std::string name);
+        /**
+         * Using previously provided definitions, parses istream using
+         * definitions. Use
+         */
+        bool Parse(std::istream &in);
+
+      private:
+    }
+
 
   }
 }

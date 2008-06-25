@@ -13,13 +13,6 @@
 #ifndef __BZW_WORLD_H__
 #define __BZW_WORLD_H__
 
-/**
- * \file BZWorld.h
- * \brief libBZW header file
- * 
- * libBZW attempts to abstract world management
- */
-
 #include <iostream>
 
 /* bzflag common headers */
