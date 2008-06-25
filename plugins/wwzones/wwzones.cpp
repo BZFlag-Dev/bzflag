@@ -293,8 +293,9 @@ void WWZEventHandler::process(bz_EventData * eventData)
 
 	    zoneList[i].zoneWeaponSentMessage = true;
 	  }
-	} else
+	} else {
 	  notHere(i, player->playerID);
+	}
       }
       bz_freePlayerRecord(player);
     }
