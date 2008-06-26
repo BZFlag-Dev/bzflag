@@ -1,7 +1,6 @@
-namespace base64
-{
-  const char _to_table[64] =
-  { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+namespace base64 {
+  const char _to_table[64] =  {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
     'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -11,13 +10,9 @@ namespace base64
     '4', '5', '6', '7', '8', '9', '+', '/'
   };
   const char* to_table = _to_table;
+  const char* to_table_end = _to_table + sizeof(_to_table);
 
-
-  const char* to_table_end = 
-    _to_table + sizeof(_to_table);
-
-  const char _from_table[128] =
-  {
+  const char _from_table[128] = {
     -1, -1, -1, -1, -1, -1, -1, -1, // 0
     -1, -1, -1, -1, -1, -1, -1, -1, // 8
     -1, -1, -1, -1, -1, -1, -1, -1, // 16
@@ -38,6 +33,10 @@ namespace base64
   const char* from_table = _from_table;
 }
 
-
- 
-
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
