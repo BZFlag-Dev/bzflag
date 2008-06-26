@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include "bzfsAPI.h"
+#include "plugin_utils.h"
 
 BZ_GET_PLUGIN_VERSION
 
@@ -28,11 +29,11 @@ public:
   virtual ~LogDetail();
   virtual void process(bz_EventData *eventData);
 private:
-  std::string displayPlayerPrivs(int playerID);
-  std::string displayCallsign(bz_ApiString callsign);
-  std::string displayCallsign(int playerID);
-  std::string displayBZid(int playerID);
-  const char *displayTeam(bz_eTeamType team);
+  std::string displayPlayerPrivs(const int playerID);
+  std::string displayCallsign(const bz_ApiString &callsign);
+  std::string displayCallsign(const int playerID);
+  std::string displayBZid(const int playerID);
+  std::string displayTeam(const bz_eTeamType team);
   virtual void listPlayers(action act, bz_PlayerJoinPartEventData_V1 *data);
 };
 
@@ -120,7 +121,7 @@ void LogDetail::process(bz_EventData *eventData)
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM %s %s %s",
 			   displayCallsign(chatData->from).c_str(),
-			   displayTeam(chatData->team),
+			   displayTeam(chatData->team).c_str(),
 			   chatData->message.c_str());
 	}
       } else {
@@ -145,7 +146,7 @@ void LogDetail::process(bz_EventData *eventData)
 			   serverMsgData->message.c_str());
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
-			   displayTeam(serverMsgData->team ),
+			   displayTeam(serverMsgData->team).c_str(),
 			   serverMsgData->message.c_str());
 	}
       } else {
@@ -161,7 +162,7 @@ void LogDetail::process(bz_EventData *eventData)
 			   displayCallsign(joinPartData->record->callsign).c_str(),
 			   joinPartData->playerID,
 			   displayBZid(joinPartData->playerID).c_str(),
-			   displayTeam(joinPartData->record->team),
+			   displayTeam(joinPartData->record->team).c_str(),
 			   displayPlayerPrivs(joinPartData->playerID).c_str());
 	  listPlayers(join, joinPartData);
 	}
@@ -187,7 +188,7 @@ void LogDetail::process(bz_EventData *eventData)
   }
 }
 
-std::string LogDetail::displayBZid(int playerID)
+std::string LogDetail::displayBZid(const int playerID)
 {
   std::ostringstream bzid;
 
@@ -201,7 +202,7 @@ std::string LogDetail::displayBZid(int playerID)
   return bzid.str();
 }
 
-std::string LogDetail::displayPlayerPrivs(int playerID)
+std::string LogDetail::displayPlayerPrivs(const int playerID)
 {
   std::ostringstream playerPrivs;
 
@@ -220,7 +221,7 @@ std::string LogDetail::displayPlayerPrivs(int playerID)
   return playerPrivs.str();
 }
 
-std::string LogDetail::displayCallsign(bz_ApiString callsign)
+std::string LogDetail::displayCallsign(const bz_ApiString &callsign)
 {
   std::ostringstream result;
 
@@ -229,7 +230,7 @@ std::string LogDetail::displayCallsign(bz_ApiString callsign)
   return result.str();
 }
 
-std::string LogDetail::displayCallsign(int playerID)
+std::string LogDetail::displayCallsign(const int playerID)
 {
   std::ostringstream callsign;
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
@@ -244,29 +245,9 @@ std::string LogDetail::displayCallsign(int playerID)
 }
 
 
-const char * LogDetail::displayTeam(bz_eTeamType team)
+std::string LogDetail::displayTeam(const bz_eTeamType team)
 {
-  // Display the player team
-  switch (team) {
-    case eRogueTeam:
-      return ("ROGUE");
-    case eRedTeam:
-      return ("RED");
-    case eGreenTeam:
-      return ("GREEN");
-    case eBlueTeam:
-      return ("BLUE");
-    case ePurpleTeam:
-      return ("PURPLE");
-    case eRabbitTeam:
-      return ("RABBIT");
-    case eHunterTeam:
-      return ("HUNTER");
-    case eObservers:
-      return ("OBSERVER");
-    default :
-      return ("NOTEAM");
-  }
+  return toupper(bzu_GetTeamName(team));
 }
 
 void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
