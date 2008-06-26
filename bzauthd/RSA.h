@@ -44,7 +44,7 @@ class RSAPublicKey : public RSAKey
 {
 public:
   RSAPublicKey();
-  bool encrypt(uint8 *message, size_t message_len, uint8 *cipher, size_t &cipher_len);
+  bool encrypt(uint8 *message, size_t message_len, uint8 *&cipher, size_t &cipher_len);
   RSAKeyType getType() { return RSA_KEY_PUBLIC; }
 };
 
@@ -52,7 +52,7 @@ class RSASecretKey : public RSAKey
 {
 public:
   RSASecretKey();
-  bool decrypt(uint8 *cipher, size_t cipher_len, uint8 *message, size_t &message_len);
+  bool decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, size_t &message_len);
   RSAKeyType getType() { return RSA_KEY_SECRET; }
 };
 

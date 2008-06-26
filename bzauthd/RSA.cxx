@@ -98,11 +98,12 @@ RSAPublicKey::RSAPublicKey()
 {
 }
 
-bool RSAPublicKey::encrypt(uint8 *message, size_t message_len, uint8 *cipher, size_t &cipher_len)
+bool RSAPublicKey::encrypt(uint8 *message, size_t message_len, uint8 *&cipher, size_t &cipher_len)
 {
+  assert(key);
   gcry_ac_io_t io_message, io_cipher;
   gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, message_len);
-  gcry_ac_io_init(&io_cipher, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
+  gcry_ac_io_init(&io_cipher, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &cipher, &cipher_len);
 
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
@@ -113,11 +114,12 @@ RSASecretKey::RSASecretKey()
 {
 }
 
-bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *message, size_t &message_len)
+bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, size_t &message_len)
 {
+  assert(key);
   gcry_ac_io_t io_cipher, io_message;
   gcry_ac_io_init(&io_cipher, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);
-  gcry_ac_io_init(&io_message, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, message, message_len);
+  gcry_ac_io_init(&io_message, GCRY_AC_IO_WRITABLE, GCRY_AC_IO_STRING, &message, &message_len);
 
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
@@ -126,6 +128,7 @@ bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *message, siz
 
 void RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
 {
+  assert(key);
   n = _getValueN(&n_len);
   e = _getValueE();
 }

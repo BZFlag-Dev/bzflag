@@ -135,6 +135,9 @@
 				RelativePath="..\..\test\ldap.cpp">
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\RSA.cxx">
+			</File>
+			<File
 				RelativePath="..\..\test\tcp-net.cpp">
 			</File>
 			<File
@@ -154,6 +157,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\test\common.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\RSA.h">
 			</File>
 		</Filter>
 	</Files>
