@@ -43,7 +43,8 @@ using namespace std;
  * Debug level 4 (-dddd) provides information about the parsing process
  */
 
-class PluginConfig {
+class PluginConfig
+{
 public:
   PluginConfig(string filename);
   ~PluginConfig() {};
