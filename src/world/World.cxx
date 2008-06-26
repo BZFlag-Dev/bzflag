@@ -24,13 +24,28 @@ namespace BZW
   /// Read/Create a world from a stream
   World::World(std::istream &input)
   {
-
+    read(in);
   }
 
   /// Destructor
   World::~World()
   {
 
+  }
+
+  /// Read a world from stream
+  void World::read(std::istream &input)
+  {
+    /*
+    Parser parser;
+    Parser::Object box(true);
+    Parser::Parameter position(REAL, 3);
+    box.manage(position);
+    parser.manageObject(box);
+    parser.parse(in);
+    std::multimap<string, Parser::Object> objects = parser.getObjects();
+    //Iterate through objects, do stuff
+    */
   }
 
   /// Write a world to a stream

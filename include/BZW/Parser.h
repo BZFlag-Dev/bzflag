@@ -72,8 +72,6 @@ namespace BZW
       /// Destructor
       ~Field();
 
-      virtual void manage(Field &field);
-
     private:
       bool repeatable;
   };
@@ -86,9 +84,10 @@ namespace BZW
   {
     public:
       /// Constructor
-      Parameter(bool repeatable);
+      Parameter(bool repeatable); //TODO: see World.cxx for implementation
       /// Destructor
       ~Parameter();
+
 
     private:
       //TODO
@@ -104,6 +103,8 @@ namespace BZW
       Object(bool repeatable);
       /// Destructor
       ~Object();
+
+      void manage(Field &field);
 
     private:
       /** This is the text that comes after the identifier. Used
