@@ -646,7 +646,7 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
 {
   req.request = request;
   req.vdir = vdir;
-  req.resource = resource;
+  req.resource = url_decode(resource);
   req.headers = header;
   req.cookies.clear();
 
