@@ -87,8 +87,10 @@ WebReport::~WebReport()
 void WebReport::init(const char *tDir)
 {
   // find any groups that have viewreport or admin, let them fly
-  addPermToLevel(1,bz_perm_viewReports);
-  addPermToLevel(1,"ADMIN");
+  if (findGroupsWithPerm(bz_perm_viewReports).size())
+    addPermToLevel(1,bz_perm_viewReports);
+  else
+    addPermToLevel(1,"ADMIN");
 
   loadDefaultTemplates();
 
