@@ -165,11 +165,51 @@ std::string tolower(const std::string& s)
 
 std::string tolower(const char* s)
 {
-  std::string trans = s;
+  std::string trans;
+  if(!s)
+    return trans;
+  trans = s;
 
   for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
     *i = ::tolower(*i);
   return trans;
+}
+
+std::string toupper(const std::string& s)
+{
+  std::string trans = s;
+
+  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+    *i = ::toupper(*i);
+  return trans;
+}
+
+std::string toupper(const char* s)
+{
+  std::string trans;
+  if(!s)
+    return trans;
+  trans = s;
+
+  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+    *i = ::toupper(*i);
+  return trans;
+}
+
+size_t makelower(std::string& s)
+{
+  for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
+    *i = ::tolower(*i);
+
+  return s.size();
+}
+
+size_t makeupper(std::string& s)
+{
+  for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
+    *i = ::toupper(*i);
+
+  return s.size();
 }
 
 std::string format(const char* fmt, ...)
