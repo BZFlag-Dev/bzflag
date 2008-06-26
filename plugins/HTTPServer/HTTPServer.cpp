@@ -848,7 +848,10 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     page += format("Content-Length: %d\n", r.body.size());
 
     page += "Content-Type: ";
-    page += getMimeType(r.docType);
+    if (r.docType == HTTPReply::eOther && r.otherMimeType.size())
+      page += r.otherMimeType;
+    else
+      page += getMimeType(r.docType);
     page += "\n";
   }
 

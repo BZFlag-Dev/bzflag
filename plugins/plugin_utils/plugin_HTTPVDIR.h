@@ -10,25 +10,102 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-// a base class for plugins that want to do HTTP VDIRS
-
-/*
- *	
- Notes on indexing and error handling
- 1) make default pages for the error codes, send that page if the child dosn't set data.
- 2) have accept and pending send in a param saying what callback is the LAST one.
-    a) If your the last one, check the URL, if the dir isn't in the vdir list, 404.
-    b) If your the last one, check the URL, if it's the root, then index the vdirs  
- 3)Add an eOther MimeType enum, and a string to store it. Override the setmime type to take a string and set other.
- */
-#ifndef _PLUGIN_HTTPVDIR_H_
-#define _PLUGIN_HTTPVDIR_H_
+// a base class for plugins that want to do HTTP
+#ifndef _PLUGIN_HTTP_H_
+#define _PLUGIN_HTTP_H_
 
 #include <string>
 #include <vector>
 #include <map>
 #include "bzfsAPI.h"
-#include "plugin_HTTPTemplates.h"
+
+// called to get the code for a template variable
+typedef void (*TemplateKeyCallback) ( std::string &data, const std::string &key );
+
+// called for logic statements, loops and if tests
+// called repeatedly for each loop to know if it should be done.
+// return true to do an instance of the loop
+// return false to stop and continue the template
+// for if test called to determine true or false
+typedef bool (*TemplateTestCallback) ( const std::string &key );
+
+class TemplateCallbackClass
+{
+public:
+  virtual ~TemplateCallbackClass(){};
+  virtual void keyCallback ( std::string & /* data */, const std::string & /* key */ ){};
+  virtual bool loopCallback ( const std::string &/* key */ ){return false;}
+  virtual bool ifCallback ( const std::string &/* key */ ){return false;}
+};
+
+class Templateiser : public TemplateCallbackClass
+{
+public:
+  Templateiser();
+  virtual ~Templateiser();
+
+  void addKey ( const char *key, TemplateKeyCallback callback );
+  void addKey ( const char *key, TemplateCallbackClass *callback );
+  void clearKey ( const char *key );
+  void flushKeys ( void );
+
+  void addLoop ( const char *loop, TemplateTestCallback callback );
+  void addLoop ( const char *loop, TemplateCallbackClass *callback );
+  void clearLoop ( const char *loop );
+  void flushLoops ( void );
+
+  void addIF ( const char *name, TemplateTestCallback callback );
+  void addIF ( const char *name, TemplateCallbackClass *callback );
+  void clearIF ( const char *name );
+  void flushIFs ( void );
+
+  void processTemplate ( std::string &code, const std::string &templateText );
+  bool processTemplateFile ( std::string &code, const char *file );
+
+  // for the default template tokens
+  virtual void keyCallback ( std::string &data, const std::string &key );
+  virtual bool loopCallback ( const std::string &key );
+  virtual bool ifCallback ( const std::string &key );
+
+  void startTimer ( void );
+  void setPluginName ( const char* name, const char* URL );
+
+  void addSearchPath ( const char* path );
+  void flushSearchPaths ( void );
+
+protected:
+  typedef std::map<std::string,TemplateKeyCallback> KeyMap;
+  typedef std::map<std::string,TemplateTestCallback> TestMap;
+  typedef std::map<std::string,TemplateCallbackClass*> ClassMap;
+
+  KeyMap keyFuncCallbacks;
+  TestMap loopFuncCallbacks;
+  TestMap ifFuncCallbacks;
+  ClassMap keyClassCallbacks;
+  ClassMap loopClassCallbacks;
+  ClassMap ifClassCallbacks;
+
+  bool callKey ( std::string &data, const std::string &key );
+  bool callLoop ( const std::string &key );
+  bool callIF ( const std::string &key );
+
+  void setDefaultTokens ( void );
+
+private:
+  std::string::const_iterator readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str );
+  std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str );
+
+  void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
+  void processComment ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
+  void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str );
+  void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
+  void processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str );
+
+  double startTime;
+  std::string pluginName,baseURL;
+
+  std::vector<std::string> filePaths;
+};
 
 typedef enum 
 {
@@ -86,7 +163,8 @@ public:
     eText,
     eOctetStream,
     eBinary,
-    eHTML
+    eHTML,
+    eOther
   }DocumentType;
 
   typedef enum
@@ -101,6 +179,7 @@ public:
 
   DocumentType docType;
   ReturnCode  returnCode;
+  std::string otherMimeType;
   std::map<std::string, std::string> headers;
   std::map<std::string, std::string> cookies;
 

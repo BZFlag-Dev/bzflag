@@ -4,7 +4,6 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTPVDIR.h"
-#include "plugin_HTTPTemplates.h"
 
 class WebStats : public BZFSHTTPVDir, public TemplateCallbackClass, public bz_EventHandler
 {

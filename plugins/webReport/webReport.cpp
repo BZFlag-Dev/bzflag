@@ -4,7 +4,6 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTPVDIR.h"
-#include "plugin_HTTPTemplates.h"
 #include "plugin_groups.h"
 
 //#include "reportTemplates.h"
