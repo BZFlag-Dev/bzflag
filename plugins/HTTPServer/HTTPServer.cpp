@@ -645,7 +645,7 @@ void parseParams ( std::map<std::string, std::string> &params, const std::string
 void HTTPConnection::fillRequest ( HTTPRequest &req )
 {
   req.request = request;
-  req.vdir = vdir;
+  req.vdir = url_decode(vdir);
   req.resource = url_decode(resource);
   req.headers = header;
   req.cookies.clear();
