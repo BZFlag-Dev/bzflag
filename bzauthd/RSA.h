@@ -27,12 +27,16 @@ enum RSAKeyType
 class RSAKey
 {
 public:
+  friend class RSAManager;
   RSAKey();
   virtual ~RSAKey();
   void setValues(uint8 *n, size_t n_len, uint32 e);
   void getValues(uint8 *&n, size_t &n_len, uint32 &e);
   virtual RSAKeyType getType() = 0;
-private:
+protected:
+  uint8 *_getValueN(size_t *n_len);
+  int _getValueE();
+  void _setKey(gcry_ac_key_t k);
   gcry_ac_key_t key;
 };
 
@@ -40,7 +44,7 @@ class RSAPublicKey : public RSAKey
 {
 public:
   RSAPublicKey();
-  void encrypt(uint8 *message, size_t message_len, uint8 *cipher, size_t &cipher_len);
+  bool encrypt(uint8 *message, size_t message_len, uint8 *cipher, size_t &cipher_len);
   RSAKeyType getType() { return RSA_KEY_PUBLIC; }
 };
 
@@ -48,23 +52,31 @@ class RSASecretKey : public RSAKey
 {
 public:
   RSASecretKey();
-  void decrypt(uint8 *cipher, size_t cipher_len, uint8 *message, size_t &message_len);
+  bool decrypt(uint8 *cipher, size_t cipher_len, uint8 *message, size_t &message_len);
   RSAKeyType getType() { return RSA_KEY_SECRET; }
 };
 
 class RSAManager : public Singleton<RSAManager>
 {
 public:
-  void initialize();
-  void generateKeyPair();
+  friend class RSAKey;
+  friend class RSASecretKey;
+  friend class RSAPublicKey;
+  RSAManager();
+  ~RSAManager();
+  bool initialize();
+  bool generateKeyPair();
   RSAPublicKey &getPublicKey() { return publicKey; }
   RSASecretKey &getSecretKey() { return secretKey; }
 
 private:
+  gcry_ac_handle_t _getHandle() { return rsaHandle; }
   RSAPublicKey publicKey;
   RSASecretKey secretKey;
   gcry_ac_handle_t rsaHandle;
 };
+
+#define sRSAManager RSAManager::instance()
 
 #endif // __BZAUTHD_RSA_H__
 

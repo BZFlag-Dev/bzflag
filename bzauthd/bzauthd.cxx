@@ -14,6 +14,7 @@
 #include "Config.h"
 #include "Log.h"
 #include "NetHandler.h"
+#include "RSA.h"
 
 int main()
 {
@@ -22,6 +23,12 @@ int main()
   sConfig.initialize();
 
   if(!sNetHandler.initialize())
+    return 1;
+
+  if(!sRSAManager.initialize())
+    return 1;
+
+  if(!sRSAManager.generateKeyPair())
     return 1;
 
   /* main loop */
