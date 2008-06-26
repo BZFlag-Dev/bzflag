@@ -184,14 +184,10 @@ std::string tolower(const std::string& s)
 
 std::string tolower(const char* s)
 {
-  std::string trans;
   if(!s)
-    return trans;
-  trans = s;
+    return std::string("");
 
-  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
-    *i = ::tolower(*i);
-  return trans;
+  return ::tolower(std::string(s));
 }
 
 std::string toupper(const std::string& s)
@@ -205,14 +201,10 @@ std::string toupper(const std::string& s)
 
 std::string toupper(const char* s)
 {
-  std::string trans;
   if(!s)
-    return trans;
-  trans = s;
+    return std::string("");
 
-  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
-    *i = ::toupper(*i);
-  return trans;
+  return ::toupper(std::string(s));
 }
 
 size_t makelower(std::string& s)
