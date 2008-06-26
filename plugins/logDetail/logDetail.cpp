@@ -247,7 +247,7 @@ std::string LogDetail::displayCallsign(const int playerID)
 
 std::string LogDetail::displayTeam(const bz_eTeamType team)
 {
-  return toupper(bzu_GetTeamName(team));
+  return toupper(bzu_GetTeamName(team),std::string());
 }
 
 void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)

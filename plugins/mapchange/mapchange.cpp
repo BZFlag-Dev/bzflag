@@ -63,15 +63,15 @@ MapChangeEventHandler handler;
 
 EndCond condFromString ( const std::string &str )
 {
-  if ( str == "timed")
+  if ( compare_nocase(str,"timed")==0)
     return eTimedGame;
-  else if ( str == "maxkill")
+  else if ( compare_nocase(str,"maxkill")==0)
     return eMaxKillScore;
-  else if ( str == "maxcap")
+  else if ( compare_nocase(str,"maxcap")==0)
     return eMaxCapScore;
-  else if ( str == "empty")
+  else if ( compare_nocase(str,"empty")==0)
     return eNoPlayers;
-  else if ( str == "manual")
+  else if ( compare_nocase(str,"manual")==0)
     return eManual;
 
   return eTimedGame;
@@ -95,11 +95,11 @@ const char* condToString ( EndCond cond )
 
 CycleMode cycleFromString ( const std::string &str )
 {
-  if ( str == "loop")
+  if ( compare_nocase(str,"loop")==0)
     return eLoopInf;
-  else if ( str == "random")
+  else if ( compare_nocase(str,"random")==0)
     return eRandomInf;
-  else if ( str == "onerand")
+  else if ( compare_nocase(str,"onerand")==0)
     return eRandomOnce;
 
   return eNoLoop;
@@ -139,10 +139,10 @@ bool loadGamesFromFile ( const char* config )
 
     if (params.size())
     {
-      if (tolower(params[0]) == "mode")
+      if (compare_nocase(params[0],"mode") == 0)
       {
 	if ( params.size() > 1 )
-		endCond = condFromString(tolower(params[1]));
+	  endCond = condFromString(params[1]);
 	if ( params.size() > 2 )
 	{
 	  if (endCond == eTimedGame )
@@ -158,7 +158,7 @@ bool loadGamesFromFile ( const char* config )
 	}
 
 	if ( params.size() > 3)
-	  cycleMode = cycleFromString(tolower(params[3]));
+	  cycleMode = cycleFromString(params[3]);
       }
       else
       {
@@ -427,7 +427,8 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
 
  bool MapChangeCommandHandler::handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
  {
-   std::string cmd = tolower(command.c_str());
+   std::string cmd;
+   tolower(command.c_str(),cmd);
 
    std::string param;
    if ( params && params->size() )
@@ -566,7 +567,8 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
  const char* MapChangeCommandHandler::help ( bz_ApiString command )
  {
    std::string text = "No help available";
-   std::string cmd = tolower(command.c_str());
+   std::string cmd;
+   tolower(command.c_str(),cmd);
 
    if (cmd == "mapnext")
      text = "Usage /mapNext; Changes to the next map in the rotation";

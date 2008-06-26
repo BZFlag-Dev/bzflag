@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="HTTPServer"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{E3862BCA-0268-48FB-A747-DEC23835AB75}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -190,6 +190,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\HTTPServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HTTPServer.def"
+				>
+			</File>
+			<File
 				RelativePath=".\Makefile"
 				>
 				<FileConfiguration
@@ -208,14 +216,6 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\HTTPServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\HTTPServer.def"
-				>
 			</File>
 		</Filter>
 		<Filter

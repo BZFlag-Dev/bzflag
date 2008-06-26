@@ -123,7 +123,8 @@ void WebStats::process ( bz_EventData *eventData )
 	}
 	else
 	{
-	  std::string name = tolower(data->record->callsign.c_str());
+	  std::string name;
+	  tolower(data->record->callsign.c_str(),name);
 
 	  if (nonRegedPlayerMap.find(name) == nonRegedPlayerMap.end())
 	    nonRegedPlayerMap[name] = 1;

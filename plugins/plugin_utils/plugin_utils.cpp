@@ -173,54 +173,58 @@ std::string no_whitespace(const std::string &s)
   return result;
 }
 
-std::string tolower(const std::string& s)
+const std::string& tolower(const std::string& s, std::string& dest)
 {
-  std::string trans = s;
+  for (std::string::const_iterator i=s.begin(), end=s.end(); i!=end; ++i)
+    dest += ::tolower(*i);
 
-  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
-    *i = ::tolower(*i);
-  return trans;
+  return dest;
 }
 
-std::string tolower(const char* s)
+const std::string& toupper(const std::string& s, std::string& dest)
 {
-  if(!s)
-    return std::string("");
+  for (std::string::const_iterator i=s.begin(), end=s.end(); i!=end; ++i)
+    dest += ::toupper(*i);
 
-  return ::tolower(std::string(s));
+  return dest;
 }
 
-std::string toupper(const std::string& s)
+const std::string& tolower(const char* s, std::string& dest)
 {
-  std::string trans = s;
+  if (!s)
+    return dest;
 
-  for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
-    *i = ::toupper(*i);
-  return trans;
+  for (size_t i =0,end = strlen(s); i < end; i++)
+    dest += ::tolower(s[i]);
+
+  return dest;
 }
 
-std::string toupper(const char* s)
+const std::string& toupper(const char* s, std::string& dest)
 {
-  if(!s)
-    return std::string("");
+  if (!s)
+    return dest;
 
-  return ::toupper(std::string(s));
+  for (size_t i =0,end = strlen(s); i < end; i++)
+    dest += ::toupper(s[i]);
+
+  return dest;
 }
 
-size_t makelower(std::string& s)
+const std::string& makelower(std::string& s)
 {
   for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
     *i = ::tolower(*i);
 
-  return s.size();
+  return s;
 }
 
-size_t makeupper(std::string& s)
+const std::string& makeupper(std::string& s)
 {
   for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
     *i = ::toupper(*i);
 
-  return s.size();
+  return s;
 }
 
 std::string format(const char* fmt, ...)

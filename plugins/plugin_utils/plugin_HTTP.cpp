@@ -58,7 +58,7 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
   if (!param)
     return false;
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(std::string(param)));
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param,std::string()));
   if ( itr != paramaters.end() )
   {
     val = itr->second;
@@ -71,7 +71,7 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
 {
   val = "";
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param));
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param,std::string()));
   if ( itr != paramaters.end() )
   {
     val = itr->second;
@@ -428,8 +428,8 @@ void Templateiser::addKey ( const char *key, TemplateKeyCallback callback )
   if (!key || !callback)
     return;
 
-  keyFuncCallbacks[tolower(key)] = callback;
-  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key));
+  keyFuncCallbacks[tolower(key,std::string())] = callback;
+  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key,std::string()));
   if (itr != keyClassCallbacks.end())
     keyClassCallbacks.erase(itr);
 }
@@ -439,19 +439,19 @@ void Templateiser::addKey ( const char *key, TemplateCallbackClass *callback )
   if (!key || !callback)
     return;
 
-  keyClassCallbacks[tolower(key)] = callback;
-  KeyMap::iterator itr = keyFuncCallbacks.find(tolower(key));
+  keyClassCallbacks[tolower(key,std::string())] = callback;
+  KeyMap::iterator itr = keyFuncCallbacks.find(tolower(key,std::string()));
   if (itr != keyFuncCallbacks.end())
     keyFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearKey ( const char *key )
 {
-  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key));
+  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key,std::string()));
   if (itr != keyClassCallbacks.end())
     keyClassCallbacks.erase(itr);
 
-  KeyMap::iterator itr2 = keyFuncCallbacks.find(tolower(key));
+  KeyMap::iterator itr2 = keyFuncCallbacks.find(tolower(key,std::string()));
   if (itr2 != keyFuncCallbacks.end())
     keyFuncCallbacks.erase(itr2);
 }
@@ -467,8 +467,8 @@ void Templateiser::addLoop ( const char *loop, TemplateTestCallback callback )
   if (!loop || !callback)
     return;
 
-  loopFuncCallbacks[tolower(loop)] = callback;
-  ClassMap::iterator itr = loopClassCallbacks.find(tolower(loop));
+  loopFuncCallbacks[tolower(loop,std::string())] = callback;
+  ClassMap::iterator itr = loopClassCallbacks.find(tolower(loop,std::string()));
   if (itr != loopClassCallbacks.end())
     loopClassCallbacks.erase(itr);
 }
@@ -478,19 +478,19 @@ void Templateiser::addLoop ( const char *loop, TemplateCallbackClass *callback )
   if (!loop || !callback)
     return;
 
-  loopClassCallbacks[tolower(loop)] = callback;
-  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop));
+  loopClassCallbacks[tolower(loop,std::string())] = callback;
+  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop,std::string()));
   if (itr != loopFuncCallbacks.end())
     loopFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearLoop ( const char *loop )
 {
-  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop));
+  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop,std::string()));
   if (itr != loopFuncCallbacks.end())
     loopFuncCallbacks.erase(itr);
 
-  ClassMap::iterator itr2 = loopClassCallbacks.find(tolower(loop));
+  ClassMap::iterator itr2 = loopClassCallbacks.find(tolower(loop,std::string()));
   if (itr2 != loopClassCallbacks.end())
     loopClassCallbacks.erase(itr2);
 }
@@ -506,8 +506,8 @@ void Templateiser::addIF ( const char *name, TemplateTestCallback callback )
   if (!name || !callback)
     return;
 
-  ifFuncCallbacks[tolower(name)] = callback;
-  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name));
+  ifFuncCallbacks[tolower(name,std::string())] = callback;
+  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name,std::string()));
   if (itr != ifClassCallbacks.end())
     ifClassCallbacks.erase(itr);
 }
@@ -517,19 +517,19 @@ void Templateiser::addIF ( const char *name, TemplateCallbackClass *callback )
   if (!name || !callback)
     return;
 
-  ifClassCallbacks[tolower(name)] = callback;
-  TestMap::iterator itr = ifFuncCallbacks.find(tolower(name));
+  ifClassCallbacks[tolower(name,std::string())] = callback;
+  TestMap::iterator itr = ifFuncCallbacks.find(tolower(name,std::string()));
   if (itr != ifFuncCallbacks.end())
     ifFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearIF ( const char *name )
 {
-  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name));
+  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name,std::string()));
   if (itr != ifClassCallbacks.end())
     ifClassCallbacks.erase(itr);
 
-  TestMap::iterator itr2 = ifFuncCallbacks.find(tolower(name));
+  TestMap::iterator itr2 = ifFuncCallbacks.find(tolower(name,std::string()));
   if (itr2 != ifFuncCallbacks.end())
     ifFuncCallbacks.erase(itr2);
 }
@@ -542,7 +542,8 @@ void Templateiser::flushIFs ( void )
 
 bool Templateiser::callKey ( std::string &data, const std::string &key )
 {
-  std::string lowerKey = tolower(key);
+  std::string lowerKey;
+  tolower(key,lowerKey);
 
   data.clear();
 
@@ -563,7 +564,8 @@ bool Templateiser::callKey ( std::string &data, const std::string &key )
 
 bool Templateiser::callLoop ( const std::string &key )
 {
-  std::string lowerKey = tolower(key);
+  std::string lowerKey;
+  tolower(key,lowerKey);
 
   ClassMap::iterator itr = loopClassCallbacks.find(lowerKey);
   if (itr != loopClassCallbacks.end())
@@ -578,7 +580,8 @@ bool Templateiser::callLoop ( const std::string &key )
 
 bool Templateiser::callIF ( const std::string &key )
 {
-  std::string lowerKey = tolower(key);
+  std::string lowerKey;
+  tolower(key,lowerKey);
 
   ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
   if (itr != ifClassCallbacks.end())
@@ -741,7 +744,7 @@ std::string::const_iterator Templateiser::readKey ( std::string &key, std::strin
     } else {
       // go past the code
       itr++;
-      key = tolower(key);
+      makelower(key);
       return itr;
     }
   }
@@ -806,8 +809,11 @@ void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &
   itr = readKey(key,itr,str);
 
   if (itr != str.end()) {
-    std::string lowerKey = tolower(key);
+    std::string lowerKey;
     std::string val;
+
+    tolower(key,lowerKey);
+
     if (callKey(val,lowerKey))
       code += val;
     else
@@ -829,8 +835,8 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   }
 
   // check the params
-  commandParts[0] = tolower(commandParts[0]);
-  commandParts[1] = tolower(commandParts[1]);
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
 
   if ( commandParts[0] != "start" ) {
     inItr = itr;
@@ -889,8 +895,8 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   }
 
   // check the params
-  commandParts[0] = tolower(commandParts[0]);
-  commandParts[1] = tolower(commandParts[1]);
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
 
   if ( commandParts[0] != "if" ) {
     inItr = itr;

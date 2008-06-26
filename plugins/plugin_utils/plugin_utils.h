@@ -22,14 +22,13 @@
 const char* bzu_GetTeamName ( bz_eTeamType team );
 
 // text functions
-std::string tolower(const std::string& s);
-std::string tolower(const char* s);
+const std::string& tolower(const std::string& s, std::string& dest);
+const std::string& toupper(const std::string& s, std::string& dest);
+const std::string& tolower(const char* s, std::string& dest);
+const std::string& toupper(const char* s, std::string& dest);
 
-std::string toupper(const std::string& s);
-std::string toupper(const char* s);
-
-size_t makelower(std::string& s);
-size_t makeupper(std::string& s);
+const std::string& makelower(std::string& s);
+const std::string& makeupper(std::string& s);
 
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
