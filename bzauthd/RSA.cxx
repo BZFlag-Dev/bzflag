@@ -63,12 +63,12 @@ int RSAKey::_getValueE()
   return *(int*)buf;
 }
 
-void RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
+bool RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
 {
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
   gcry_ac_data_t data;
-  if(gcry_ac_data_new(&data)) return;
+  if(gcry_ac_data_new(&data)) return false;
 
   // ac_data_destroy tries to destroy the names too, and data_set just stores a pointer
   // so we can't pass it staticly
@@ -80,18 +80,19 @@ void RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
   // note: when passing an mpi to scan, initialize to NULL (to prevent a memory leak)
   // and when passing to set_ui, use mpi_new (to prevent a crash) .. don't ask
   gcry_mpi_t mpi_n = NULL;
-  if(gcry_mpi_scan(&mpi_n, GCRYMPI_FMT_STD, n, n_len, NULL)) return;
-  if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_n, mpi_n)) return;
+  if(gcry_mpi_scan(&mpi_n, GCRYMPI_FMT_STD, n, n_len, NULL)) return false;
+  if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_n, mpi_n)) return false;
 
   gcry_mpi_t mpi_e = gcry_mpi_new(0);
-  if(!gcry_mpi_set_ui(mpi_e, 65537)) return;
-  if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_e, mpi_e)) return;
+  if(!gcry_mpi_set_ui(mpi_e, 65537)) return false;
+  if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_e, mpi_e)) return false;
 
   gcry_ac_key_type type = getType() == RSA_KEY_PUBLIC ? GCRY_AC_KEY_PUBLIC : GCRY_AC_KEY_SECRET;
 
-  if(gcry_ac_key_init(&key, handle, type, data)) return;
+  if(gcry_ac_key_init(&key, handle, type, data)) return false;
 
   gcry_ac_data_destroy(data);
+  return true;
 }
 
 RSAPublicKey::RSAPublicKey()
@@ -126,11 +127,12 @@ bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, si
   return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, key, &io_cipher, &io_message) == 0;
 }
 
-void RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
+bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
 {
   assert(key);
   n = _getValueN(&n_len);
   e = _getValueE();
+  return n != 0 && e != 0;
 }
 
 RSAManager::RSAManager()

@@ -24,16 +24,16 @@ void test_gcrypt()
     if(!sRSAManager.initialize()) return;
     if(!sRSAManager.generateKeyPair()) return;
 
-    // decompose the key into values that can be set in packets
+    // decompose the key into values that can be sent in packets
     size_t n_len;
     uint8 *key_n;
     uint32 e;
-    sRSAManager.getPublicKey().getValues(key_n, n_len, e);
+    if(!sRSAManager.getPublicKey().getValues(key_n, n_len, e)) return;
     if(e != 65537) return;
 
     // create the key from its components
     RSAPublicKey publicKey;
-    publicKey.setValues(key_n, n_len, e);
+    if(!publicKey.setValues(key_n, n_len, e)) return;
 
     free(key_n);
 
@@ -42,14 +42,14 @@ void test_gcrypt()
     char *cipher = NULL;
     size_t cipher_len = 0;
 
-    publicKey.encrypt((uint8*)message, strlen(message), (uint8*&)cipher, cipher_len);
+    if(!publicKey.encrypt((uint8*)message, strlen(message), (uint8*&)cipher, cipher_len)) return;
     printf("encrypted: "); nputs((char*)cipher, cipher_len); printf("\n");
 
     // decrypt the cipher
     char *output = NULL;
     size_t output_len = 0;
 
-    sRSAManager.getSecretKey().decrypt((uint8*)cipher, cipher_len, (uint8*&)output, output_len);
+    if(!sRSAManager.getSecretKey().decrypt((uint8*)cipher, cipher_len, (uint8*&)output, output_len)) return;
     printf("decrypted: "); nputs(output, output_len); printf("\n");
 
     gcry_free(cipher);
