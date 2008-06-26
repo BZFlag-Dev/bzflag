@@ -91,7 +91,13 @@ std::string findPlugin ( std::string pluginName )
   std::string name;
 
   bool hasPath = pluginName.find_first_of("/\\") != std::string::npos;
-  bool hasExtension = pluginName.find_last_of('.') != std::string::npos;
+  bool hasExtension = false;
+  if (hasPath) {
+    size_t filenamePosition = pluginName.find_last_of("/\\");
+    hasExtension = pluginName.find_first_of('.', filenamePosition+1) != std::string::npos;
+  }
+  else
+    hasExtension = pluginName.find_last_of('.') != std::string::npos;
 
   name = pluginName;
   if (!hasExtension)
