@@ -3,12 +3,12 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 
-class WebStats : public BZFSHTTPVDir, public TemplateCallbackClass, public bz_EventHandler
+class WebStats : public BZFSHTTP, public TemplateCallbackClass, public bz_EventHandler
 {
 public:
-  WebStats(): BZFSHTTPVDir() {registerVDir();}
+  WebStats(): BZFSHTTP() {registerVDir();}
 
   void init(const char *commandLine);
 

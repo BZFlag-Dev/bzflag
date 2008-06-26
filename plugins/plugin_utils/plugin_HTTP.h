@@ -198,11 +198,11 @@ public:
   std::string redirectLoc;
 };
 
-class BZFSHTTPVDir 
+class BZFSHTTP 
 {
 public:
-  BZFSHTTPVDir();
-  virtual ~BZFSHTTPVDir();
+  BZFSHTTP();
+  virtual ~BZFSHTTP();
 
   typedef enum
   {
@@ -228,11 +228,11 @@ protected:
 #define UNAUTHENTICATED -1
 #define VERIFIED	0
 
-class BZFSHTTPVDirAuth : public BZFSHTTPVDir
+class BZFSHTTPAuth : public BZFSHTTP
 {
 public:
-  BZFSHTTPVDirAuth();
-  virtual ~BZFSHTTPVDirAuth(){};
+  BZFSHTTPAuth();
+  virtual ~BZFSHTTPAuth(){};
 
   // called to init the auth system, call in the derived class constructor
   void setupAuth ( void );

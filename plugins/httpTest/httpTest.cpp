@@ -4,16 +4,16 @@
 #include <map>
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 
 BZ_GET_PLUGIN_VERSION
 
 #define DO_BASIC_AUTH false
 
-class HTTPTest : public BZFSHTTPVDir
+class HTTPTest : public BZFSHTTP
 {
 public:
-  HTTPTest(): BZFSHTTPVDir(){registerVDir();}
+  HTTPTest(): BZFSHTTP(){registerVDir();}
   virtual ~HTTPTest(){};
 
   virtual const char * getVDir ( void ){return "test";}

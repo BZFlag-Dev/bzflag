@@ -3,12 +3,12 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 
-class WebAdmin : public BZFSHTTPVDirAuth, TemplateCallbackClass
+class WebAdmin : public BZFSHTTAuth, TemplateCallbackClass
 {
 public:
-	WebAdmin():BZFSHTTPVDirAuth(){registerVDir();}
+	WebAdmin():BZFSHTTAuth(){registerVDir();}
 
 	virtual const char * getVDir ( void ){return "WebAdmin";}
 	virtual const char * getDescription ( void ){return "Server Administration(Login Required)";}

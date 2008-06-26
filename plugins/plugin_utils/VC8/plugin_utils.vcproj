@@ -163,7 +163,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_HTTPVDIR.cpp"
+				RelativePath="..\plugin_HTTP.cpp"
 				>
 			</File>
 			<File
@@ -189,7 +189,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_HTTPVDIR.h"
+				RelativePath="..\plugin_HTTP.h"
 				>
 			</File>
 			<File

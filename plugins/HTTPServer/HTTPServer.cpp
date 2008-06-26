@@ -3,14 +3,14 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 #include <algorithm>
 #include <sstream>
 #include <time.h>
 
 #define FORCE_CLOSE false
 
-typedef std::map<std::string,BZFSHTTPVDir*> VirtualDirs;
+typedef std::map<std::string,BZFSHTTP*> VirtualDirs;
 
 VirtualDirs virtualDirs;
 
@@ -21,7 +21,7 @@ BZ_GET_PLUGIN_VERSION
 
 bool RegisterVDir ( void* param )
 {
-  BZFSHTTPVDir *handler = (BZFSHTTPVDir*)param;
+  BZFSHTTP *handler = (BZFSHTTP*)param;
   if (!handler)
     return false;
 
@@ -38,7 +38,7 @@ bool RegisterVDir ( void* param )
 
 bool RemoveVDir ( void* param )
 {
-  BZFSHTTPVDir *handler = (BZFSHTTPVDir*)param;
+  BZFSHTTP *handler = (BZFSHTTP*)param;
   if (!handler)
     return false;
 
@@ -163,7 +163,7 @@ private:
   void sendOptions ( int connectionID, bool p );
 
   void generateIndex(int connectionID, const HTTPRequest &request);
-  void generatePage(BZFSHTTPVDir* vdir, int connectionID, HTTPRequest &request);
+  void generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
 };
 
 HTTPServer *server = NULL;
@@ -513,7 +513,7 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   connection.update();
 }
 
-void HTTPServer::generatePage(BZFSHTTPVDir* vdir, int connectionID, HTTPRequest &request)
+void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
@@ -547,7 +547,7 @@ void HTTPServer::processRequest (  HTTPRequest &request, int connectionID )
 
   // find the vdir handler
 
-  BZFSHTTPVDir *vdir = NULL;
+  BZFSHTTP *vdir = NULL;
 
   VirtualDirs::iterator itr = virtualDirs.find(request.vdir);
 
@@ -725,7 +725,7 @@ void HTTPConnection::update ( void )
   {
     PendingHTTPTask &pendingTask = *pendingItr;
 
-    BZFSHTTPVDir *vdir = NULL;
+    BZFSHTTP *vdir = NULL;
 
     VirtualDirs::iterator itr = virtualDirs.find(pendingTask.request.vdir);
 

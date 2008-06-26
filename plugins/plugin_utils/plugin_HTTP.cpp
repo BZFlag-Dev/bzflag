@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 #include "plugin_utils.h"
 #include "plugin_groups.h"
 #include "plugin_files.h"
@@ -20,21 +20,21 @@
 #include <sstream>
 #include <algorithm>
 
-BZFSHTTPVDir::BZFSHTTPVDir()
+BZFSHTTP::BZFSHTTP()
 {
   bz_loadPlugin("HTTPServer",NULL);
 }
 
-void BZFSHTTPVDir::registerVDir ( void )
+void BZFSHTTP::registerVDir ( void )
 {
   bz_callCallback("RegisterHTTPDVDir",this);
 }
 
-BZFSHTTPVDir::~BZFSHTTPVDir()
+BZFSHTTP::~BZFSHTTP()
 {
   bz_callCallback("RemoveHTTPDVDir",this);
 }
-std::string BZFSHTTPVDir::getBaseURL ( void )
+std::string BZFSHTTP::getBaseURL ( void )
 {
   std::string URL = "http://";
   std::string host = "localhost";
@@ -148,11 +148,11 @@ void PendingTokenTask::error ( const char* /*URL*/, int /*errorCode*/, const cha
   pendingTokenTasks[requestID] = this;
 }
 
-BZFSHTTPVDirAuth::BZFSHTTPVDirAuth():BZFSHTTPVDir(),sessionTimeout(300)
+BZFSHTTPAuth::BZFSHTTPAuth():BZFSHTTP(),sessionTimeout(300)
 {
 }
 
-void BZFSHTTPVDirAuth::setupAuth ( void )
+void BZFSHTTPAuth::setupAuth ( void )
 {
   authPage = "<html><body><h4><a href=\"[$WebAuthURL]\">Please Login</a></h4></body></html>";
 
@@ -169,13 +169,13 @@ void BZFSHTTPVDirAuth::setupAuth ( void )
   templateSystem.addKey("WebAuthURL",&tsCallback);
 }
 
-void BZFSHTTPVDirAuth::TSURLCallback::keyCallback(std::string &data, const std::string &key)
+void BZFSHTTPAuth::TSURLCallback::keyCallback(std::string &data, const std::string &key)
 {
   if(compare_nocase(key,"WebAuthURL") == 0)
     data += URL;
 }
 
-bool BZFSHTTPVDirAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
+bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
 {
   // build up the groups list
   std::string token,user;
@@ -232,7 +232,7 @@ bool BZFSHTTPVDirAuth::verifyToken ( const HTTPRequest &request, HTTPReply &repl
   return false;
 }
 
-bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
+bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
 {
   flushTasks();
   int sessionID = request.sessionID;
@@ -317,7 +317,7 @@ bool BZFSHTTPVDirAuth::handleRequest ( const HTTPRequest &request, HTTPReply &re
   return true;
 }
 
-bool BZFSHTTPVDirAuth::resumeTask (  int requestID )
+bool BZFSHTTPAuth::resumeTask (  int requestID )
 {
   // it's token job that is done, go for it
   if(pendingTokenTasks.find(requestID) != pendingTokenTasks.end())
@@ -346,7 +346,7 @@ bool stringInList ( const std::string &str, const std::vector<std::string> strin
   return false;
 }
 
-void BZFSHTTPVDirAuth::addPermToLevel ( int level, const std::string &perm )
+void BZFSHTTPAuth::addPermToLevel ( int level, const std::string &perm )
 {
   if (level <= 0)
     return;
@@ -360,7 +360,7 @@ void BZFSHTTPVDirAuth::addPermToLevel ( int level, const std::string &perm )
 }
 
 
-int BZFSHTTPVDirAuth::getLevelFromGroups (const std::vector<std::string> &groups )
+int BZFSHTTPAuth::getLevelFromGroups (const std::vector<std::string> &groups )
 {
   std::map<int,std::vector<std::string> >::reverse_iterator itr = authLevels.rbegin();
 
@@ -389,7 +389,7 @@ int BZFSHTTPVDirAuth::getLevelFromGroups (const std::vector<std::string> &groups
   return 0;
 }
 
-void BZFSHTTPVDirAuth::flushTasks ( void )
+void BZFSHTTPAuth::flushTasks ( void )
 {
   std::map<int,AuthInfo>::iterator authItr = authedSessions.begin();
 

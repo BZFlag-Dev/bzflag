@@ -3,14 +3,14 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 #include "plugin_groups.h"
 
 //#include "reportTemplates.h"
 
 std::string templatesDir;
 
-class WebReport : public BZFSHTTPVDirAuth, public TemplateCallbackClass
+class WebReport : public BZFSHTTPAuth, public TemplateCallbackClass
 {
 public:
   WebReport();
@@ -72,7 +72,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 // globals
 
 WebReport::WebReport()
-  : BZFSHTTPVDirAuth()
+  : BZFSHTTPAuth()
 {
   registerVDir();
   setupAuth();

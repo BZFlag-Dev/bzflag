@@ -4,16 +4,16 @@
 #include <map>
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-#include "plugin_HTTPVDIR.h"
+#include "plugin_HTTP.h"
 #include <string>
 #include <sstream>
 
 BZ_GET_PLUGIN_VERSION
 
-class Fastmap : public BZFSHTTPVDir, public bz_EventHandler
+class Fastmap : public BZFSHTTP, public bz_EventHandler
 {
 public:
-  Fastmap(): BZFSHTTPVDir(),mapData(NULL),mapDataSize(0){registerVDir();}
+  Fastmap(): BZFSHTTP(),mapData(NULL),mapDataSize(0){registerVDir();}
   virtual ~Fastmap()
   {
     if (mapData)
