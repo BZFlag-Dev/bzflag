@@ -51,10 +51,16 @@ public:
       reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a><br>";
       reply.body += "<a href=\"" + request.baseURL + "link2\">Link2</a>";
    
-      if (request.authType.size() && !request.authCredentials.size())
+      if (request.authType.size() && request.authCredentials.size())
       {
-	reply.body +="<br>You authenticated, using " + request.authType + "Type<br>";
-	reply.body +="<br>Your credentials are " + request.authCredentials + "<br>";
+	reply.body +="<br>You authenticated, using the type: " + request.authType + "<br>";
+	reply.body +="<br>Your credentials are: " + request.authCredentials + "<br>";
+
+	if (request.username.size() && request.password.size())
+	{
+	  reply.body +="<br>Your username is: " + request.username + "<br>";
+	  reply.body +="<br>Your password is: " + request.password + "<br>";
+	}
       }
 
       reply.body += "</body></html>";

@@ -680,6 +680,17 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
       {
 	req.authType = auth[0];
 	req.authCredentials = auth[1];
+
+	if (compare_nocase(auth[0],"basic") == 0 && auth[1].size())
+	{
+	  std::string b64 = base64_decode(auth[1]);
+	  std::vector<std::string> uandp = tokenize(b64,":",2,false);
+	  if (uandp.size() == 2)
+	  {
+	    req.username = uandp[0];
+	    req.password = uandp[1];
+	  }
+	}
       }
     }
 

@@ -144,9 +144,12 @@ public:
   std::string ip;
   std::string hostmask;
 
-  // basic auth
+  // HTTP auth
   std::string authType;
   std::string authCredentials;
+
+  std::string username;
+  std::string password;
 
   bool getParam ( const char* param, std::string &val ) const; 
   bool getParam ( const std::string &param, std::string &val ) const;
