@@ -386,9 +386,9 @@ cannot proceed.  A checklist of items to be completed follows:
   latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating configure.ac README, buildDate.cxx,
-  and ChangeLog.  Version numbers in all other platform-specific
-  README.* files should also be verified.
+  This minimally includes updating README, ChangeLog, configure.ac,
+  buildDate.cxx, and the title.png image.  Version numbers in all
+  other platform-specific README.* files should also be verified.
 
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
   version numbers
