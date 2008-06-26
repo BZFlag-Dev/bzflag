@@ -5,10 +5,10 @@
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
 
-class WebAdmin : public BZFSHTTAuth, TemplateCallbackClass
+class WebAdmin : public BZFSHTTPAuth, TemplateCallbackClass
 {
 public:
-	WebAdmin():BZFSHTTAuth(){registerVDir();}
+	WebAdmin():BZFSHTTPAuth(){registerVDir();}
 
 	virtual const char * getVDir ( void ){return "WebAdmin";}
 	virtual const char * getDescription ( void ){return "Server Administration(Login Required)";}
