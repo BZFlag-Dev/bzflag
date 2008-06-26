@@ -29,15 +29,20 @@ namespace BZW
     public:
       /// Default constructor
       World();
-      /// Read/Create a world from an stream
+      /// Read/Create a world from an stream. Not to be used, really, with the
+      //other read method.
       World(std::istream &input);
       /// Default destructor
       ~World();
 
+      /// Read/Create a world from a stream
+      void read(std::istream &input);
       /// Write current world to a stream
       void write(std::ostream &output); //TODO: Better method name
 
-    private:
+      ///TODO Register a callback with the parser
+
+    privated:
 
   };
 

@@ -21,94 +21,99 @@
 
 namespace BZW
 {
-  namespace Parser
+  /**
+   * BZW file Parsing class. Used primarily by BZW::World.
+   */
+  class Parser
   {
-    /**
-     * BZW file Parsing Key class. Used for interaction between BZW::World,
-     * Object and the Parser class to define what sorts of objects need to,
-     * and can be, read from a BZW file.
-     */
-    class Key
-    {
-      friend Key * Parser::addKey(std::string name);
-      public:
-        enum ParameterType
-        {
-          String,
-          Integer,
-          Real,
-          Boolean
-        };
-        void addParameter(ParameterType type, bool optional = false);
+    public:
+      class Parser::Field;
+      class Parser::Object;
+      class Parser::Parameter;
 
-      protected:
-        Key(std::string name, bool optional);
-        ~Key();
+      /// Constructor
+      Parser();
+      /// Destructor
+      ~Parser();
 
-      private:
+      /**
+       * Using previously provided definitions, parses istream using
+       * definitions. Use
+       */
+      bool Parse(std::istream &in);
 
-        union ParameterValue
-        {
-          std::string string_value;
-          int int_value;
-          float real_value;
-          bool bool_value;
-        };
+      /**
+       * Handle a new object type to parse. Adds a new block-like object
+       * structure.
+       */
+      void manageObject(string name, Object &object);
 
-        struct Parameter
-        {
-          ValueType type;
-          bool optional;
-          bool set;
-          ParameterValue value;
-        };
+      /**
+       * Retrieve the multimap of objects read via parsing.
+       * FIXME: This probably shouldn't be sending back a copy of the
+       * multimap, and sending a reference seems like a bad idea also.
+       */
+      std::multimap<string, Object> getObjects();
 
-        std::string name;
-        bool optional;
-    }
-
-    /**
-     * BZW file ObjectType class. Used primarily by BZW::World and Parser.
-     */
-    class ObjectType
-    {
-      friend ObjectType * Parser::addObjectType(std::string name);
-      public:
-
-      protected:
-        /// Constructor
-        ObjectType(std::string name);
-        /// Destructor
-        ~ObjectType();
-
-      private:
-        std::string name;
-    }
-
-    /**
-     * BZW file Parsing class. Used primarily by BZW::World.
-     */
-    class Parser
-    {
-      public:
-        /// Constructor
-        Parser();
-        /// Destructor
-        ~Parser();
-
-        /// Adds an Object definition to the Parser
-        ObjectType * addObjectType(std::string name);
-        /**
-         * Using previously provided definitions, parses istream using
-         * definitions. Use
-         */
-        bool Parse(std::istream &in);
-
-      private:
-    }
+    private:
+      std::map<string, Object> managedObjects;
+      std::multimap<string, Object> readObjects;
+  };
 
 
-  }
+  /**
+   * BZW file parsing interface for Objects, Parameters.
+   */
+  class Parser::Field
+  {
+    public:
+      /// Constructor
+      Field(bool repeatable);
+      /// Destructor
+      ~Field();
+
+      virtual void manage(Field &field);
+
+    private:
+      bool repeatable;
+  };
+
+  /**
+   * BZW file parsing class for handling Parameters. Used primarily within
+   * BZW::World and Parser.
+   */
+  class Parser::Parameter : public Parser::Field
+  {
+    public:
+      /// Constructor
+      Parameter(bool repeatable);
+      /// Destructor
+      ~Parameter();
+
+    private:
+      //TODO
+  };
+
+  /**
+   * BZW file Parsing Object. Used primarily by BZW::World and within Parser.
+   */
+  class Parser::Object : public Parser::Field
+  {
+    public:
+      /// Constructor
+      Object(bool repeatable);
+      /// Destructor
+      ~Object();
+
+    private:
+      /** This is the text that comes after the identifier. Used
+       * primarily by define/group/matrefs I believe...
+       */
+      string name;
+      std::map<string, Field> managedFields;
+      std::multimap<string, Field> readFields;
+  };
+
 }
 
 #endif // __BZW_PARSER_H__

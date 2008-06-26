@@ -18,12 +18,7 @@
 /// This is the top level namespace of libBZWorld
 namespace BZW
 {
-  /// This is the Parser namespace. If a user desires control over specific
-  //parsing functions, this namespace keeps things organized for them.
-  namespace Parser
-  {
 
-  }
 }
 
 // Headers in order of level-ness (low to high)

@@ -1,5 +1,5 @@
 #
-# Build libWorld/libBZWorld/libBZW
+# Build libBZW
 #
 
 noinst_LTLIBRARIES = libBZW.la
@@ -10,7 +10,8 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 libBZW_la_LDFLAGS = -static
 libBZW_la_SOURCES =	\
 	World.cxx		\
-	WorldObject.cxx
+	WorldObject.cxx		\
+	Parser.cxx
 
 EXTRA_DIST = README
 

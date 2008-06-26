@@ -17,66 +17,62 @@
 
 namespace BZW
 {
-  namespace Parser
+  Parser::Parser()
   {
-    /* Key methods */
-    void Key::addParameter(ParameterType type, bool optional = false)
-    {
-
-    }
-
-    Key::Key(std::string name, bool optional)
-    {
-
-    }
-
-    Key::~Key()
-    {
-
-    }
-
-    /* Object methods */
-    /// Constructor
-    Object::ObjectType(std::string name)
-    {
-
-    }
-
-    /// Destructor
-    Object::~ObjectType()
-    {
-
-    }
-
-    /* Parser methods */
-    /// Constructor
-    Parser::Parser()
-    {
-
-    }
-
-    /// Destructor
-    Parser::~Parser()
-    {
-
-    }
-
-    /// Adds an Object definition to the Parser
-    ObjectType * Parser::addObjectType(std::string name)
-    {
-
-    }
-
-    /**
-    * Using previously provided definitions, parses istream using
-    * definitions. Use
-    */
-    bool Parser::Parse(std::istream &in)
-    {
-
-    }
-
+    //TODO
   }
+
+  Parser::~Parser()
+  {
+    //TODO
+  }
+
+  bool Parser::Parse(std::istream &in)
+  {
+    if(!in->peek())
+    {
+      return false;
+    }
+    //TODO
+    return true;
+  }
+
+  void Parser::manageObject(string name, Parser::Object &object);
+  {
+    //TODO
+  }
+
+  Parser::Field::Field(bool repeatable)
+  {
+    //TODO
+  }
+
+  Parser::Field::~Field()
+  {
+    //TODO
+  }
+
+  Parser::Parameter::Parameter(bool repeatable)
+  {
+    //TODO
+  }
+
+  Parser::Parameter::~Parameter()
+  {
+    //TODO
+  }
+
+  Parser::Object::Object(bool repeatable)
+  {
+    //TODO
+  }
+
+  Parser::Object::~Object()
+  {
+    //TODO
+  }
+
+
 }
 // Local Variables: ***
 // Mode: C++ ***
