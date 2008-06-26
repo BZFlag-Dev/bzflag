@@ -58,7 +58,10 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
   if (!param)
     return false;
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param,std::string()));
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(p);
   if ( itr != paramaters.end() )
   {
     val = itr->second;
@@ -71,7 +74,10 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
 {
   val = "";
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(tolower(param,std::string()));
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::string>::const_iterator itr = paramaters.find(p);
   if ( itr != paramaters.end() )
   {
     val = itr->second;
@@ -428,8 +434,11 @@ void Templateiser::addKey ( const char *key, TemplateKeyCallback callback )
   if (!key || !callback)
     return;
 
-  keyFuncCallbacks[tolower(key,std::string())] = callback;
-  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key,std::string()));
+  std::string k;
+  tolower(key,k);
+
+  keyFuncCallbacks[k] = callback;
+  ClassMap::iterator itr = keyClassCallbacks.find(k);
   if (itr != keyClassCallbacks.end())
     keyClassCallbacks.erase(itr);
 }
@@ -439,19 +448,25 @@ void Templateiser::addKey ( const char *key, TemplateCallbackClass *callback )
   if (!key || !callback)
     return;
 
-  keyClassCallbacks[tolower(key,std::string())] = callback;
-  KeyMap::iterator itr = keyFuncCallbacks.find(tolower(key,std::string()));
+  std::string k;
+  tolower(key,k);
+
+  keyClassCallbacks[k] = callback;
+  KeyMap::iterator itr = keyFuncCallbacks.find(k);
   if (itr != keyFuncCallbacks.end())
     keyFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearKey ( const char *key )
 {
-  ClassMap::iterator itr = keyClassCallbacks.find(tolower(key,std::string()));
+  std::string k;
+  tolower(key,k);
+
+  ClassMap::iterator itr = keyClassCallbacks.find(k);
   if (itr != keyClassCallbacks.end())
     keyClassCallbacks.erase(itr);
 
-  KeyMap::iterator itr2 = keyFuncCallbacks.find(tolower(key,std::string()));
+  KeyMap::iterator itr2 = keyFuncCallbacks.find(k);
   if (itr2 != keyFuncCallbacks.end())
     keyFuncCallbacks.erase(itr2);
 }
@@ -467,8 +482,11 @@ void Templateiser::addLoop ( const char *loop, TemplateTestCallback callback )
   if (!loop || !callback)
     return;
 
-  loopFuncCallbacks[tolower(loop,std::string())] = callback;
-  ClassMap::iterator itr = loopClassCallbacks.find(tolower(loop,std::string()));
+  std::string l;
+  tolower(loop,l);
+
+  loopFuncCallbacks[l] = callback;
+  ClassMap::iterator itr = loopClassCallbacks.find(l);
   if (itr != loopClassCallbacks.end())
     loopClassCallbacks.erase(itr);
 }
@@ -478,19 +496,28 @@ void Templateiser::addLoop ( const char *loop, TemplateCallbackClass *callback )
   if (!loop || !callback)
     return;
 
-  loopClassCallbacks[tolower(loop,std::string())] = callback;
-  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop,std::string()));
+  std::string l;
+  tolower(loop,l);
+
+  loopClassCallbacks[l] = callback;
+  TestMap::iterator itr = loopFuncCallbacks.find(l);
   if (itr != loopFuncCallbacks.end())
     loopFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearLoop ( const char *loop )
 {
-  TestMap::iterator itr = loopFuncCallbacks.find(tolower(loop,std::string()));
+  if (!loop)
+    return;
+
+  std::string l;
+  tolower(loop,l);
+
+  TestMap::iterator itr = loopFuncCallbacks.find(l);
   if (itr != loopFuncCallbacks.end())
     loopFuncCallbacks.erase(itr);
 
-  ClassMap::iterator itr2 = loopClassCallbacks.find(tolower(loop,std::string()));
+  ClassMap::iterator itr2 = loopClassCallbacks.find(l);
   if (itr2 != loopClassCallbacks.end())
     loopClassCallbacks.erase(itr2);
 }
@@ -506,8 +533,11 @@ void Templateiser::addIF ( const char *name, TemplateTestCallback callback )
   if (!name || !callback)
     return;
 
-  ifFuncCallbacks[tolower(name,std::string())] = callback;
-  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name,std::string()));
+  std::string n;
+  tolower(name,n);
+
+  ifFuncCallbacks[n] = callback;
+  ClassMap::iterator itr = ifClassCallbacks.find(n);
   if (itr != ifClassCallbacks.end())
     ifClassCallbacks.erase(itr);
 }
@@ -517,19 +547,28 @@ void Templateiser::addIF ( const char *name, TemplateCallbackClass *callback )
   if (!name || !callback)
     return;
 
-  ifClassCallbacks[tolower(name,std::string())] = callback;
-  TestMap::iterator itr = ifFuncCallbacks.find(tolower(name,std::string()));
+  std::string n;
+  tolower(name,n);
+
+  ifClassCallbacks[n] = callback;
+  TestMap::iterator itr = ifFuncCallbacks.find(n);
   if (itr != ifFuncCallbacks.end())
     ifFuncCallbacks.erase(itr);
 }
 
 void Templateiser::clearIF ( const char *name )
 {
-  ClassMap::iterator itr = ifClassCallbacks.find(tolower(name,std::string()));
+  if(!name)
+    return;
+
+  std::string n;
+  tolower(name,n);
+
+  ClassMap::iterator itr = ifClassCallbacks.find(n);
   if (itr != ifClassCallbacks.end())
     ifClassCallbacks.erase(itr);
 
-  TestMap::iterator itr2 = ifFuncCallbacks.find(tolower(name,std::string()));
+  TestMap::iterator itr2 = ifFuncCallbacks.find(n);
   if (itr2 != ifFuncCallbacks.end())
     ifFuncCallbacks.erase(itr2);
 }

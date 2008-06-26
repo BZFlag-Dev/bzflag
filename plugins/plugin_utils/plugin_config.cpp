@@ -37,7 +37,11 @@ PluginConfig::PluginConfig(const std::string &filename)
 
 std::string PluginConfig::item(const std::string &section, const std::string &key)
 {
-  return sections[tolower(section,std::string())][tolower(key,std::string())];
+  std::string s = section,k = key;
+  makelower(s);
+  makelower(k);
+  
+  return sections[s][k];
 }
 
 void PluginConfig::parse(void)
@@ -125,8 +129,11 @@ void PluginConfig::parse(void)
     else
       value = line.substr(start, end - start + 1);
 
+    makelower(key);
+    makelower(section);
+
     /* Save the section, key and value in the std::map for later retrieval */
-    sections[tolower(section,std::string())][tolower(key,std::string())] = value;
+    sections[section][key] = value;
     bz_debugMessagef(4, "PluginConfig: Found key [%s].%s = %s", section.c_str(), key.c_str(), value.c_str());
   }
 
