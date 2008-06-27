@@ -40,24 +40,24 @@ namespace BZW
        * Using previously provided definitions, parses istream using
        * definitions. Use
        */
-      bool Parse(std::istream &in);
+      bool parse(std::istream& in);
 
       /**
        * Handle a new object type to parse. Adds a new block-like object
        * structure.
        */
-      void manageObject(string name, Object &object);
+      void manageObject(string name, Object& object);
 
       /**
        * Retrieve the multimap of objects read via parsing.
        * FIXME: This probably shouldn't be sending back a copy of the
        * multimap, and sending a reference seems like a bad idea also.
        */
-      std::multimap<string, Object> getObjects();
+      std::multimap<string, Object*> getObjects();
 
     private:
-      std::map<string, Object> managedObjects;
-      std::multimap<string, Object> readObjects;
+      std::map<string, Object*> managedObjects;
+      std::multimap<string, Object*> readObjects;
   };
 
 
@@ -68,11 +68,12 @@ namespace BZW
   {
     public:
       /// Constructor
-      Field(bool repeatable);
+      Field(){ }
       /// Destructor
-      ~Field();
+      virtual ~Field(){ }
 
-    private:
+      bool isRepeatable(){ return repeatable; }
+    protected:
       bool repeatable;
   };
 
@@ -83,14 +84,37 @@ namespace BZW
   class Parser::Parameter : public Parser::Field
   {
     public:
+      enum ValueType
+      {
+        NOTHING, ///No values expected. The mere presence of this parameter is required.
+        REAL, ///Real numbers, floats.
+        STRING, ///A single word.
+        ENDLESS_STRING ///All text until end of line.
+      };
+
+      union ValueValue //TODO: this is a terrible name.
+      {
+        float real_value; ///Real numbers, floats.
+        string string_value; ///String values.
+      };
+
+      //TODO: should I worry about number of values? are N required? etc.
       /// Constructor
-      Parameter(bool repeatable); //TODO: see World.cxx for implementation
+      Parameter(enum ValueType type, int number_of_values, bool repeatable);
       /// Destructor
       ~Parameter();
 
+      void parse(std::istream& in);
+
+      vector<union ValueValue>* getValues();
 
     private:
-      //TODO
+      enum ValueType type;
+      int number_of_values;
+      /* TODO: Since we know the number of values, must this be a vector? Consider an
+       * array.
+       */
+      vector<union ValueValue> values;
   };
 
   /**
@@ -104,14 +128,15 @@ namespace BZW
       /// Destructor
       ~Object();
 
-      void manage(Field &field);
+      void manage(string name, Field& field);
+      std::multimap<string, Field>* getFields();
 
     private:
       /** This is the text that comes after the identifier. Used
        * primarily by define/group/matrefs I believe...
        */
       string name;
-      std::map<string, Field> managedFields;
+      std::map<string, Field*> managedFields;
       std::multimap<string, Field> readFields;
   };
 

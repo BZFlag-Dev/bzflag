@@ -19,15 +19,15 @@ namespace BZW
 {
   Parser::Parser()
   {
-    //TODO
+    //TODO: Anything?
   }
 
   Parser::~Parser()
   {
-    //TODO
+    //TODO: deconstruct contents of map, multimap, and themselves
   }
 
-  bool Parser::Parse(std::istream &in)
+  bool Parser::parse(std::istream& in)
   {
     if(!in->peek())
     {
@@ -37,24 +37,25 @@ namespace BZW
     return true;
   }
 
-  void Parser::manageObject(string name, Parser::Object &object);
+  void Parser::manageObject(string name, Parser::Object& object);
   {
-    //TODO
+    if(managedObjects[name])
+    {
+      //TODO:Complain about duplicate object entry, keep newest entry
+    }
+    managedObjects[name] = object;
   }
 
-  Parser::Field::Field(bool repeatable)
+  Parser::Parameter::Parameter(enum Parser::Parameter::ValueType type, int number_of_values bool repeatable)
   {
-    //TODO
-  }
-
-  Parser::Field::~Field()
-  {
-    //TODO
-  }
-
-  Parser::Parameter::Parameter(bool repeatable)
-  {
-    //TODO
+    this.type = type;
+    if(number_of_values <= 0)
+    {
+      //TODO:Complain about impossible number of values, but don't worry about
+      //it.
+    }
+    this.number_of_values = number_of_values;
+    this.repeatable = repeatable;
   }
 
   Parser::Parameter::~Parameter()
@@ -62,14 +63,38 @@ namespace BZW
     //TODO
   }
 
-  Parser::Object::Object(bool repeatable)
+  void Parser::Parameter::parse(std::istream& in)
   {
     //TODO
+  }
+
+  vector<union Parser::Parameter::ValueValue>* Parser::Parameter::getValues()
+  {
+    return &values;
+  }
+
+  Parser::Object::Object(bool repeatable)
+  {
+    this.repeatable = repeatable;
   }
 
   Parser::Object::~Object()
   {
     //TODO
+  }
+
+  void Parser::Object::manage(string name, Parser::Field &field)
+  {
+    if(map[name])
+    {
+      //TODO: Complain about duplicate object entry, keep newest entry
+    }
+    map[name] = field;
+  }
+
+  std::multimap<string, Field>* Parser::Object::getFields()
+  {
+    return &readFields;
   }
 
 
