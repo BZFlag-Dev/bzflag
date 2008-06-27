@@ -626,7 +626,7 @@ void HTTPServer::sendOptions ( int connectionID, bool p )
   bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void parseParams ( std::map<std::string, std::string> &params, const std::string &text, size_t offset )
+void parseParams ( std::map<std::string, std::vector<std::string> > &params, const std::string &text, size_t offset )
 {
   std::vector<std::string> items = tokenize(text,"&",0,false,offset);
 
@@ -634,11 +634,27 @@ void parseParams ( std::map<std::string, std::string> &params, const std::string
   {
     std::string &item = items[i];
 
+    std::string key,val;
+
    std::vector<std::string> t = tokenize(item,"=",0,false);
    if (t.size() > 1)
-      params[ t[0] ] = t[1];
+   {
+     key = t[0];
+     val = t[1];
+   }
    else
-     params[item] = "";
+   {
+     key = item;
+     val = "";
+   } 
+   
+   if (params.find(key) == params.end())
+   {
+     std::vector<std::string> tv;
+     params[key] = tv;
+   }
+   params[key].push_back(val);
+
   }
 }
 

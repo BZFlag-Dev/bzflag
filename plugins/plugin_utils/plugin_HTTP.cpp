@@ -61,10 +61,11 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(p);
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
   if ( itr != paramaters.end() )
   {
-    val = itr->second;
+    if (itr->second.size())
+      val = itr->second[itr->second.size()-1];
     return true;
   } 
   return false;
@@ -77,7 +78,26 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::string>::const_iterator itr = paramaters.find(p);
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
+  if ( itr != paramaters.end() )
+  {
+    if (itr->second.size())
+      val = itr->second[itr->second.size()-1];
+    return true;
+  } 
+  return false;
+}
+
+bool HTTPRequest::getParam ( const char* param, std::vector<std::string> &val ) const
+{
+  val.clear();
+  if (!param)
+    return false;
+
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
   if ( itr != paramaters.end() )
   {
     val = itr->second;
@@ -85,6 +105,23 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
   } 
   return false;
 }
+
+bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> &val ) const
+{
+  val.clear();
+
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
+  if ( itr != paramaters.end() )
+  {
+    val = itr->second;
+    return true;
+  } 
+  return false;
+}
+
 
 class PendingTokenTask : public bz_BaseURLHandler
 {

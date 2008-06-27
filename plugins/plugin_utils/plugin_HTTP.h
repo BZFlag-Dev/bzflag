@@ -132,7 +132,8 @@ public:
 
   std::string vdir;
   std::string resource;
-  std::map<std::string, std::string> paramaters;
+  std::map<std::string, std::vector<std::string> > paramaters;
+
 
   std::map<std::string, std::string> headers;
   std::map<std::string, std::string> cookies;
@@ -153,6 +154,9 @@ public:
 
   bool getParam ( const char* param, std::string &val ) const; 
   bool getParam ( const std::string &param, std::string &val ) const;
+
+  bool getParam ( const char* param, std::vector<std::string> &val ) const; 
+  bool getParam ( const std::string &param, std::vector<std::string> &val ) const;
 
 };
 
