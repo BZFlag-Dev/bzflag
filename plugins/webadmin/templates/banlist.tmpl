@@ -1,0 +1,26 @@
+[!header.tmpl]
+  <h2>editing banlist</h2>
+  
+  <form action="" method="post">
+    <ul class="banlist" id="ipbanlist">
+[*START IPBanList]
+      <li><input type="checkbox" name="delete" value="[$BannedUser]"/>
+        [$BannedUser]</li>
+[*END IPBanList]
+    </ul>
+    <input type="text" name="add" />
+    <input type="submit" value="add/del" />
+  </form>
+  
+  <form action="" method="post">
+    <ul class="banlist" id="idbanlist">
+[*START IDBanList]
+      <li><input type="checkbox" name="delete" value="[$BannedUser]"/>
+        [$BannedUser]</li>
+[*END IDBanList]
+    </ul>
+    <input type="text" name="add" />
+    <input type="submit" value="add/del" />
+  </form>
+</body>
+</html>

@@ -10,8 +10,8 @@ class WebAdmin : public BZFSHTTPAuth, TemplateCallbackClass
 public:
 	WebAdmin():BZFSHTTPAuth(){registerVDir();}
 
-	virtual const char * getVDir ( void ){return "WebAdmin";}
-	virtual const char * getDescription ( void ){return "Server Administration(Login Required)";}
+	virtual const char * getVDir ( void ){return "webadmin";}
+	virtual const char * getDescription ( void ){return "Server Administration (Login Required)";}
 
   void init (const char *tDir);
 
@@ -62,7 +62,8 @@ void WebAdmin::init(const char* tDir)
 	// level one has admin perms
 	addPermToLevel(1,"ADMIN");
 
-  /* template symbols go here */
+  templateSystem.addIF("Error",this);
+  templateSystem.addKey("Error",this);
 
   templateSystem.setPluginName("WebReport", getBaseURL().c_str());
 }
@@ -96,6 +97,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 		page = format("Not authenticated sessionID %d",request.sessionID);
 
 	reply.docType = HTTPReply::eHTML;
+	//templateSystem.processTemplate(reply.body, )
 
 	return true;
 }
