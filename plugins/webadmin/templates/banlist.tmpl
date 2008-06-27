@@ -4,22 +4,22 @@
   <form action="" method="post">
     <ul class="banlist" id="ipbanlist">
 [*START IPBanList]
-      <li><input type="checkbox" name="delete" value="[$BannedUser]"/>
-        [$BannedUser]</li>
+      <li><input type="checkbox" id="ipban_[$BannedUser]"
+                 name="delip" value="[$BannedUser]"/>
+        <label for="ban_[$BannedUser]">[$BannedUser]</label></li>
 [*END IPBanList]
+      <li><input type="text" name="addip" /></li>
     </ul>
-    <input type="text" name="add" />
-    <input type="submit" value="add/del" />
-  </form>
-  
-  <form action="" method="post">
+    
     <ul class="banlist" id="idbanlist">
 [*START IDBanList]
-      <li><input type="checkbox" name="delete" value="[$BannedUser]"/>
-        [$BannedUser]</li>
+      <li><input type="checkbox" id="idban_[$BannedUser]"
+                 name="delid" value="[$BannedUser]"/>
+        <label for="idban_[$BannedUser]">[$BannedUser]</label></li>
 [*END IDBanList]
+      <li><input type="text" name="addid" /></li>
     </ul>
-    <input type="text" name="add" />
+    
     <input type="submit" value="add/del" />
   </form>
 </body>

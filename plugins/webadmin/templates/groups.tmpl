@@ -1,0 +1,39 @@
+[!header.tmpl]
+[- This is a very minimal permissions interface and may be
+   extended later to include other features of groupdb files.]
+[?IF Editing]
+  <h2>editing group: [$GroupName]</h2>
+  
+  <form action="" method="post">
+    <ul class="perms">
+[*START Permissions]
+      <li><input type="checkbox" id="perm_[$Permission]"
+                 name="perm" value="[$Permission]" />
+        <label for="perm_[$Permission]">[$Permission]</label></li>
+[*END Permissions]
+    </ul>
+    <input type="submit" value="save" />
+  </form>
+[?ELSE Editing]
+  <h2>group list</h2>
+  
+  <form action="" method="get">
+    <ul class="groups">
+[*START Groups]
+      <li><input type="checkbox" id="group_[$GroupName]"
+                 name="delgroup" value="[$GroupName]"/>
+        <label for="group_[$GroupName]">[$GroupName]</label>
+        <a class="edit" href="?name=[$GroupName]">edit</a></li>
+[*END Groups]
+    </ul>
+    
+  </form>
+  
+  <form action="" method="get">
+    <input type="text" name="name" />
+    <input type="submit" value="new" />
+  </form>
+[?END Editing]
+</body>
+</html>
+  
