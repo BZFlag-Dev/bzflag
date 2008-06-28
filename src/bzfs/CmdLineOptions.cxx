@@ -80,6 +80,7 @@ const char *usageString =
   "[-groupdb <group file>] "
   "[-h] "
   "[-handicap] "
+  "[-helpdir <dir>]"
   "[-helpmsg <file> <name>] "
   "[-i interface] "
   "[-j] "
@@ -181,6 +182,7 @@ const char *extraUsageString =
   "\t-groupdb: file to read for group permissions\n"
   "\t-h: use random building heights\n"
   "\t-handicap: give advantage based on relative playing ability\n"
+  "\t-helpdir: add a helpmsg for every file in <dir>\n"
   "\t-helpmsg: show the lines in <file> on command /help <name>\n"
   "\t-i: listen on <interface>\n"
   "\t-j: allow jumping\n"
@@ -696,6 +698,20 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.randomHeights = true;
     } else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
+    } else if (strcmp(argv[i], "-helpdir") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      OSDir d(argv[i]);
+      OSFile f;
+      options.helpDirs.push_back(d);
+      if(d.getNextFile(f, "*.txt", false)) {
+        do {
+          std::string path = f.getFullOSPath(), name = f.getFileName();
+          if (!options.textChunker.parseFile(path.c_str(), name.c_str(), 50, MessageLen))
+            std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
+        } while(d.getNextFile(f, "*.txt", false));
+      } else {
+        std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
+      }
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       checkArgc(2, i, argc, argv[i]);
       if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {

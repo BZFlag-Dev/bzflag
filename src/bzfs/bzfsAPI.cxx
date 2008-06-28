@@ -20,6 +20,8 @@
 #  include <iostream>
 #endif
 
+#include <dirent.h>
+
 #include "bzfs.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
@@ -3844,6 +3846,14 @@ BZF_API void bz_reloadHelp()
   // reload the text chunks
   logDebugMessage(3, "Reloading helpfiles\n");
   clOptions->textChunker.reload();
+  
+  // check for new files in helpdirs
+  std::list<OSDir>::iterator i, end = clOptions->helpDirs.end();
+  OSFile f;
+  
+  for (i = clOptions->helpDirs.begin(); i != end; i++)
+    while (i->getNextFile(f, "*.txt", false))
+      clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen);
 }
 
 //-------------------------------------------------------------------------
