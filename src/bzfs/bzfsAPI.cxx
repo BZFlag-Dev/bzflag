@@ -3852,7 +3852,7 @@ BZF_API void bz_reloadHelp()
   for (i = clOptions->helpDirs.begin(); i != end; i++)
     while (i->getNextFile(f, "*.txt", false))
       if(clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen))
-	logDebugMessage(3, "Loaded help message: %s", f.getFileName());
+	logDebugMessage(3, "Loaded help message: %s", f.getFileName().c_str());
 }
 
 //-------------------------------------------------------------------------
