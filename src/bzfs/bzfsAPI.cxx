@@ -43,7 +43,6 @@
 #include "ServerIntangibilityManager.h"
 #include "bz_md5.h"
 #include "version.h"
-#include "OSFile.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -3852,7 +3851,8 @@ BZF_API void bz_reloadHelp()
   
   for (i = clOptions->helpDirs.begin(); i != end; i++)
     while (i->getNextFile(f, "*.txt", false))
-      clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen);
+      if(clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen))
+	logDebugMessage(3, "Loaded help message: %s", f.getFileName());
 }
 
 //-------------------------------------------------------------------------

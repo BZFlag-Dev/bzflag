@@ -703,21 +703,21 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       OSDir d(argv[i]);
       OSFile f;
       options.helpDirs.push_back(d);
-      if(d.getNextFile(f, "*.txt", false)) {
-        do {
-          std::string path = f.getFullOSPath(), name = f.getFileName();
-          if (!options.textChunker.parseFile(path, name, 50, MessageLen))
-            std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
-        } while(d.getNextFile(f, "*.txt", false));
-      } else {
-        std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
+      for(bool first = true; d.getNextFile(f, "*.txt", false), first = false) {
+	std::string path = f.getFullOSPath(), name = f.getFileName();
+	if (!options.textChunker.parseFile(path, name, 50, MessageLen))
+	  std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
+	else
+	  logDebugMessage(3, "Loaded help message: %s", name);
       }
+      if (first)
+	std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       checkArgc(2, i, argc, argv[i]);
       if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
-      }
+      } else logDebugMessage(3, "Loaded help message: %s");
       i++;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
