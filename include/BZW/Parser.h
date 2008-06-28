@@ -14,6 +14,8 @@
 #define __BZW_PARSER_H__
 
 #include <string>
+#include <map>
+#include <vector>
 #include <iostream>
 
 /* bzflag common headers */
@@ -27,9 +29,9 @@ namespace BZW
   class Parser
   {
     public:
-      class Parser::Field;
-      class Parser::Object;
-      class Parser::Parameter;
+      class Field;
+      class Object;
+      class Parameter;
 
       /// Constructor
       Parser();
@@ -46,18 +48,18 @@ namespace BZW
        * Handle a new object type to parse. Adds a new block-like object
        * structure.
        */
-      void manageObject(string name, Object& object);
+      void manageObject(std::string name, Object& object);
 
       /**
        * Retrieve the multimap of objects read via parsing.
        * FIXME: This probably shouldn't be sending back a copy of the
        * multimap, and sending a reference seems like a bad idea also.
        */
-      std::multimap<string, Object*> getObjects();
+      std::multimap<std::string, Object*> getObjects();
 
     private:
-      std::map<string, Object*> managedObjects;
-      std::multimap<string, Object*> readObjects;
+      std::map<std::string, Object*> managedObjects;
+      std::multimap<std::string, Object*> readObjects;
   };
 
 
@@ -95,7 +97,7 @@ namespace BZW
       union ValueValue //TODO: this is a terrible name.
       {
         float real_value; ///Real numbers, floats.
-        string string_value; ///String values.
+        std::string string_value; ///String values.
       };
 
       //TODO: should I worry about number of values? are N required? etc.
@@ -106,7 +108,7 @@ namespace BZW
 
       void parse(std::istream& in);
 
-      vector<union ValueValue>* getValues();
+      std::vector<union ValueValue>* getValues();
 
     private:
       enum ValueType type;
@@ -114,7 +116,7 @@ namespace BZW
       /* TODO: Since we know the number of values, must this be a vector? Consider an
        * array.
        */
-      vector<union ValueValue> values;
+      std::vector<union ValueValue> values;
   };
 
   /**
@@ -128,16 +130,16 @@ namespace BZW
       /// Destructor
       ~Object();
 
-      void manage(string name, Field& field);
-      std::multimap<string, Field>* getFields();
+      void manage(std::string name, Field& field);
+      std::multimap<std::string, Field>* getFields();
 
     private:
       /** This is the text that comes after the identifier. Used
        * primarily by define/group/matrefs I believe...
        */
-      string name;
-      std::map<string, Field*> managedFields;
-      std::multimap<string, Field> readFields;
+      std::string name;
+      std::map<std::string, Field*> managedFields;
+      std::multimap<std::string, Field> readFields;
   };
 
 }

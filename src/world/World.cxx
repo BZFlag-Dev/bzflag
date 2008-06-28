@@ -11,6 +11,7 @@
  */
 
 #include "BZW/World.h"
+#include "BZW/Parser.h"
 
 namespace BZW
 {
@@ -24,7 +25,7 @@ namespace BZW
   /// Read/Create a world from a stream
   World::World(std::istream& input)
   {
-    read(in);
+    read(input);
   }
 
   /// Destructor
@@ -56,7 +57,7 @@ namespace BZW
     Parser::Object box(true);
 
     //another way to do it
-    Parser::Parameter position(REAL, 3);
+    Parser::Parameter position(Parser::Parameter::REAL, 3, false);
     //this is the rotation and size property in one line.
     box.manage("rotation", Parser::Parameter(Parser::Parameter::REAL, 1, false));
     box.manage("size", Parser::Parameter(Parser::Parameter::REAL, 3, false));

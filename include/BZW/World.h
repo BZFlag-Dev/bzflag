@@ -42,7 +42,7 @@ namespace BZW
 
       ///TODO Register a callback with the parser
 
-    privated:
+    private:
 
   };
 
