@@ -706,7 +706,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if(d.getNextFile(f, "*.txt", false)) {
         do {
           std::string path = f.getFullOSPath(), name = f.getFileName();
-          if (!options.textChunker.parseFile(path.c_str(), name.c_str(), 50, MessageLen))
+          if (!options.textChunker.parseFile(path, name, 50, MessageLen))
             std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
         } while(d.getNextFile(f, "*.txt", false));
       } else {
