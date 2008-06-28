@@ -42,6 +42,7 @@ bzfs \- BZFlag game server
 [\fB\-h\fR]
 [\fB\-handicap\fR]
 [\fB\-help\fR]
+[\fB\-helpdir \fIdir\fR]
 [\fB\-helpmsg \fIfile\fR \fIname\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
@@ -247,6 +248,10 @@ relation to other players.
 .B \-help
 Shows a help page and lists all the valid flag id's.
 .TP 
+\fB\-helpdir \fIdir\fR
+Creates a help message accessible by /help \fIname\fR for every
+\fIname\fR.txt in \fIdir\fR. See \-helpmsg.
+.TP 
 \fB\-helpmsg \fIfile\fR \fIname\fR
 Create a help message accessible by /help name, which prints the contents
 of file. Restricted to 10 lines per help message.
@@ -272,10 +277,10 @@ Kicks players after \fIwarn\-count\fR lag warnings.
 Send warnings to players that lag more than \fImilliseconds\fR.
 .TP 
 \fB\-loadplugin \fIplugin\fR
-loads the dynamic plugin \fIplugin\fR, it is not nessisary to have the OS
+loads the dynamic plugin \fIplugin\fR, it is not necessary to have the OS
 specific plugin extension (DLL, SO) in the name, the sever will add it
-automaticly. Some plugins take a paramater after the plugin name
-it will be specified after a , after the name, i.e. -loadpluing myplugin,myoptions.
+automatically. Some plugins take a parameter after the plugin name
+it will be specified after a , after the name, i.e. -loadplugin myplugin,myoptions.
 .TP 
 \fB\-masterBanURL \fIURL\fR
 Specify alternate URLs for the master ban file to be pulled from.
