@@ -20,8 +20,6 @@
 #  include <iostream>
 #endif
 
-#include <dirent.h>
-
 #include "bzfs.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
@@ -45,6 +43,7 @@
 #include "ServerIntangibilityManager.h"
 #include "bz_md5.h"
 #include "version.h"
+#include "OSFile.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
