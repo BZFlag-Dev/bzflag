@@ -703,12 +703,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       OSDir d(argv[i]);
       OSFile f;
       options.helpDirs.push_back(d);
-      for(bool first = true; d.getNextFile(f, "*.txt", false), first = false) {
+      bool first;
+      for(first = true; d.getNextFile(f, "*.txt", false); first = false) {
 	std::string path = f.getFullOSPath(), name = f.getFileName();
 	if (!options.textChunker.parseFile(path, name, 50, MessageLen))
 	  std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
 	else
-	  logDebugMessage(3, "Loaded help message: %s", name);
+	  logDebugMessage(3, "Loaded help message: %s", name.c_str());
       }
       if (first)
 	std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
