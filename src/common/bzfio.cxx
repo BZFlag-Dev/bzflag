@@ -97,3 +97,27 @@ void logDebugMessage(int level, const char* fmt, ...)
 	if (loggingCallback)
 		loggingCallback->log(level,buffer);
 }
+
+void logDebugMessage(int level, const std::string &text)
+{
+	if (!text.size())
+		return;
+
+	if (debugLevel >= level || level == 0)
+	{
+		char tsbuf[26];
+#if defined(_MSC_VER)
+		if (doTimestamp)
+			W32_DEBUG_TRACE(timestamp (tsbuf, false));
+		W32_DEBUG_TRACE(text.c_str());
+#else
+		if (doTimestamp)
+			std::cout << timestamp (tsbuf, doMicros);
+		std::cout << text;
+		fflush(stdout);
+#endif
+	}
+
+	if (loggingCallback)
+		loggingCallback->log(level,text.c_str());
+}
