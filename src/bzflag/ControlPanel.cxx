@@ -77,8 +77,8 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     } else {
       n = 0;
       while ((n < lineLen) &&
-	     (fm.getStringWidth(fontFace, fontSize, 
-		std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)).c_str())
+	     (fm.getStringWidth(fontFace, fontSize,
+				std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)).c_str())
 	      < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
@@ -92,8 +92,9 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	  if ((n < lineLen) && (msg[n] == '[')) {
 	    cumulativeANSICodes += msg[n];
 	    n++;
-	    while ((n < lineLen) && ((msg[n] == ';') ||
-		  ((msg[n] >= '0') && (msg[n] <= '9')))) {
+	    while ((n < lineLen) &&
+		   ((msg[n] == ';') ||
+		    ((msg[n] >= '0') && (msg[n] <= '9')))) {
 	      cumulativeANSICodes += msg[n];
 	      n++;
 	    }
@@ -136,23 +137,23 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 //
 // ControlPanel
 //
-int			ControlPanel::messagesOffset = 0;
+int ControlPanel::messagesOffset = 0;
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
-				tabsOnRight(true),
-				tabs(NULL),
-				totalTabWidth(0),
-				window(_mainWindow),
-				resized(false),
-				numBuffers(2),
-				changedMessage(0),
-				radarRenderer(NULL),
-				renderer(&_renderer),
-				fontFace(NULL),
-				dimming(1.0f),
-				du(0),
-				dv(0),
-				messageMode(MessageAll)
+  tabsOnRight(true),
+  tabs(NULL),
+  totalTabWidth(0),
+  window(_mainWindow),
+  resized(false),
+  numBuffers(2),
+  changedMessage(0),
+  radarRenderer(NULL),
+  renderer(&_renderer),
+  fontFace(NULL),
+  dimming(1.0f),
+  du(0),
+  dv(0),
+  messageMode(MessageAll)
 {
   setControlColor();
 
@@ -222,7 +223,7 @@ void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
   return;
 }
 
-void			ControlPanel::setControlColor(const GLfloat *color)
+void ControlPanel::setControlColor(const GLfloat *color)
 {
   if (color)
     memcpy(teamColor, color, 3 * sizeof(float));
@@ -230,7 +231,7 @@ void			ControlPanel::setControlColor(const GLfloat *color)
     memset(teamColor, 0, 3 * sizeof(float));
 }
 
-void			ControlPanel::render(SceneRenderer& _renderer)
+void ControlPanel::render(SceneRenderer& _renderer)
 {
   if (!BZDB.isTrue("displayConsole")) {
     // always draw the console if its fully opaque
@@ -275,9 +276,9 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     : int(lineHeight + 4);
 
   glScissor(x + messageAreaPixels[0] - 1,
-      y + messageAreaPixels[1],
-      messageAreaPixels[2] + 1,
-      messageAreaPixels[3] + ay);
+	    y + messageAreaPixels[1],
+	    messageAreaPixels[2] + 1,
+	    messageAreaPixels[3] + ay);
   OpenGLGState::resetState();
 
   if (_renderer.getPanelOpacity() > 0.0f) {
@@ -326,8 +327,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   }
 
   // show scroll indicator if not at end
-  if (messagesOffset > 0 && messageMode >= 0)
-  {
+  if (messagesOffset > 0 && messageMode >= 0) {
     int lines = int(messages[messageMode].size());
     if (lines > 0) {
 
@@ -497,15 +497,15 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   long ypos;
 
   float outlineOpacity = RENDERER.getPanelOpacity();
-  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
-  if ( outlineOpacity < 1.0f )
-	outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor; // bzdb cache this maybe?
+  if (outlineOpacity < 1.0f)
+    outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 
   if (BZDBCache::blend)
-	 glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
 
   // nice border
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity );
+  glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity);
   glBegin(GL_LINE_LOOP); {
     // bottom left
     xpos = x + messageAreaPixels[0] - 1;
@@ -548,9 +548,9 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
     // over from panel on right
     //    if (tabsOnRight) {
-      xpos = x + messageAreaPixels[0] - 1;
-      glVertex2f((float) xpos, (float) ypos);
-      //    }
+    xpos = x + messageAreaPixels[0] - 1;
+    glVertex2f((float) xpos, (float) ypos);
+    //    }
 
   } glEnd();
 
@@ -584,16 +584,16 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   } glEnd();
 
   if (BZDBCache::blend)
-	  glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
 
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
+  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f);
 
   glPopMatrix();
 
   fm.setOpacity(1.0f);
 }
 
-void			ControlPanel::resize()
+void ControlPanel::resize()
 {
   float radarSpace, radarSize;
   // get important metrics
@@ -614,10 +614,10 @@ void			ControlPanel::resize()
   radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
   radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
 
-  messageAreaPixels[0] = (int)radarSize + 1;		    // X coord
-  messageAreaPixels[1] = radarAreaPixels[1];		    // Y coord
+  messageAreaPixels[0] = (int)radarSize + 1; // X coord
+  messageAreaPixels[1] = radarAreaPixels[1]; // Y coord
   messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
-  messageAreaPixels[3] = radarAreaPixels[3];		    // Height
+  messageAreaPixels[3] = radarAreaPixels[3]; // Height
   if (!BZDB.isTrue("displayRadar") || (BZDBCache::radarLimit <= 0.0f)) {
     messageAreaPixels[0] = (int)radarSpace + 1;
     messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;
@@ -665,12 +665,12 @@ void			ControlPanel::resize()
   invalidate();
 }
 
-void			ControlPanel::resizeCallback(void* self)
+void ControlPanel::resizeCallback(void* self)
 {
   ((ControlPanel*)self)->resize();
 }
 
-void			ControlPanel::setNumberOfFrameBuffers(int n)
+void ControlPanel::setNumberOfFrameBuffers(int n)
 {
   numBuffers = n;
 }
@@ -684,12 +684,12 @@ void ControlPanel::invalidate()
   }
 }
 
-void			ControlPanel::exposeCallback(void* self)
+void ControlPanel::exposeCallback(void* self)
 {
   ((ControlPanel*)self)->invalidate();
 }
 
-void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
+void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 {
   if (paged) {
     if (abs(offset) <= 1) {
@@ -703,38 +703,38 @@ void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
 
   switch (whence) {
-    case 0:
-      if (offset < (int)messages[messageMode].size())
-	messagesOffset = offset;
+  case 0:
+    if (offset < (int)messages[messageMode].size())
+      messagesOffset = offset;
+    else
+      messagesOffset = (int)messages[messageMode].size() - 1;
+    break;
+  case 1:
+    if (offset > 0) {
+      if (messagesOffset + offset < (int)messages[messageMode].size())
+	messagesOffset += offset;
       else
 	messagesOffset = (int)messages[messageMode].size() - 1;
-      break;
-    case 1:
-      if (offset > 0) {
-	if (messagesOffset + offset < (int)messages[messageMode].size())
-	  messagesOffset += offset;
-	else
-	  messagesOffset = (int)messages[messageMode].size() - 1;
-      } else if (offset < 0) {
-	if (messagesOffset + offset >= 0)
-	  messagesOffset += offset;
-	else
-	  messagesOffset = 0;
-      }
-      break;
-    case 2:
-      if (offset < 0) {
-	if ((int)messages[messageMode].size() >= offset)
-	  messagesOffset += offset;
-	else
-	  messagesOffset = 0;
-      }
-      break;
+    } else if (offset < 0) {
+      if (messagesOffset + offset >= 0)
+	messagesOffset += offset;
+      else
+	messagesOffset = 0;
+    }
+    break;
+  case 2:
+    if (offset < 0) {
+      if ((int)messages[messageMode].size() >= offset)
+	messagesOffset += offset;
+      else
+	messagesOffset = 0;
+    }
+    break;
   }
   invalidate();
 }
 
-void			ControlPanel::setMessagesMode(int _messageMode)
+void ControlPanel::setMessagesMode(int _messageMode)
 {
   messageMode = _messageMode;
   if (messageMode == MessageAll)
@@ -745,8 +745,8 @@ void			ControlPanel::setMessagesMode(int _messageMode)
   invalidate();
 }
 
-void			ControlPanel::addMessage(const std::string& line,
-						 const int realmode)
+void ControlPanel::addMessage(const std::string& line,
+			      const int realmode)
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
