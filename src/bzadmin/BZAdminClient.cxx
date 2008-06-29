@@ -35,35 +35,35 @@
 StartupInfo startupInfo;
 
 BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
-  : myTeam(ObserverTeam), sLink(Address(startupInfo.serverName), startupInfo.serverPort), valid(false), ui(bzInterface) {
-
+  : myTeam(ObserverTeam), sLink(Address(startupInfo.serverName), startupInfo.serverPort), valid(false), ui(bzInterface)
+{
   if (sLink.getState() != ServerLink::Okay) {
     switch (sLink.getState()) {
-      case ServerLink::BadVersion: {
-	static char versionError[] = "Incompatible server version XXXXXXXX";
-	strncpy(versionError + strlen(versionError) - 8,
-	    sLink.getVersion(), 8);
-	std::cout << versionError;
-	break;
-      }
-      case ServerLink::Refused: {
-	std::string banMessage = "Server Refused connection due to ban: ";
-	banMessage += sLink.getRejectionMessage();
-	std::cout << banMessage;
-	break;
-      }
-      case ServerLink::Rejected:
-	std::cout << "Game is full or over.  Try again later.";
-	break;
-      case ServerLink::SocketError:
-	std::cout << "Error connecting to server.";
-	break;
-      case ServerLink::CrippledVersion:
-	std::cout << "Cannot connect to full version server.";
-	break;
-      default:
-	std::cout << "Internal error connecting to server.";
-	break;
+    case ServerLink::BadVersion: {
+      static char versionError[] = "Incompatible server version XXXXXXXX";
+      strncpy(versionError + strlen(versionError) - 8,
+	      sLink.getVersion(), 8);
+      std::cout << versionError;
+      break;
+    }
+    case ServerLink::Refused: {
+      std::string banMessage = "Server Refused connection due to ban: ";
+      banMessage += sLink.getRejectionMessage();
+      std::cout << banMessage;
+      break;
+    }
+    case ServerLink::Rejected:
+      std::cout << "Game is full or over.  Try again later.";
+      break;
+    case ServerLink::SocketError:
+      std::cout << "Error connecting to server.";
+      break;
+    case ServerLink::CrippledVersion:
+      std::cout << "Cannot connect to full version server.";
+      break;
+    default:
+      std::cout << "Internal error connecting to server.";
+      break;
     }
     std::cout << std::endl;
     return;
@@ -150,146 +150,146 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     std::string victimName, killerName;
     Address a;
     if ((messageMask.find(code) != messageMask.end()) &&
-       (code == MsgSetVar || code == MsgRemovePlayer ||
-	code == MsgAddPlayer || code == MsgAdminInfo ||
-	code == MsgPlayerInfo || (*(messageMask.find(code))).second))
-    switch (code) {
+	(code == MsgSetVar || code == MsgRemovePlayer ||
+	 code == MsgAddPlayer || code == MsgAdminInfo ||
+	 code == MsgPlayerInfo || (*(messageMask.find(code))).second))
+      switch (code) {
 
-    case MsgNewRabbit:
+      case MsgNewRabbit:
 	vbuf = nboUnpackUByte(vbuf, p);
 	if (p != NoPlayer)
 	  lastMessage.first = std::string("*** '") + players[p].name +
 	    "' is now the rabbit.";
-      break;
+	break;
 
-    case MsgPause:
+      case MsgPause:
 	uint8_t paused;
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = nboUnpackUByte(vbuf, paused);
 	lastMessage.first = std::string("*** '") + players[p].name + "': " +
 	  (paused ? "paused" : "resumed") + ".";
-      break;
+	break;
 
-    case MsgAlive:
+      case MsgAlive:
 	vbuf = nboUnpackUByte(vbuf, p);
 	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' has respawned.";
-      break;
+	break;
 
-    case MsgLagPing:
+      case MsgLagPing:
 	lastMessage.first = "*** Received lag ping from server.";
-      break;
+	break;
 
-    case MsgSetVar: {
-      // code stolen from playing.cxx
-      uint16_t numVars;
-      std::string name;
-      std::string value;
+      case MsgSetVar: {
+	// code stolen from playing.cxx
+	uint16_t numVars;
+	std::string name;
+	std::string value;
 
-      vbuf = nboUnpackUShort(vbuf, numVars);
-      for (i = 0; i < numVars; i++) {
-	vbuf = nboUnpackStdString(vbuf, name);
-	vbuf = nboUnpackStdString(vbuf, value);
+	vbuf = nboUnpackUShort(vbuf, numVars);
+	for (i = 0; i < numVars; i++) {
+	  vbuf = nboUnpackStdString(vbuf, name);
+	  vbuf = nboUnpackStdString(vbuf, value);
 
-	BZDB.set(name, value);
-	BZDB.setPersistent(name, false);
-	BZDB.setPermission(name, StateDatabase::Locked);
+	  BZDB.set(name, value);
+	  BZDB.setPersistent(name, false);
+	  BZDB.setPermission(name, StateDatabase::Locked);
+	}
+
+	if (messageMask[MsgSetVar]) {
+	  lastMessage.first = std::string("*** Received BZDB update, ") +
+	    TextUtils::format("%d", numVars) + " variable" +
+	    (numVars == 1 ? "" : "s") + " updated.";
+	}
+	break;
       }
 
-      if (messageMask[MsgSetVar]) {
-	lastMessage.first = std::string("*** Received BZDB update, ") +
-	  TextUtils::format("%d", numVars) + " variable" +
-	  (numVars == 1 ? "" : "s") + " updated.";
-      }
-      break;
-    }
-
-    case MsgAddPlayer:
-      uint16_t team, type, wins, losses, tks;
-      char callsign[CallSignLen];
-      vbuf = nboUnpackUByte(vbuf, p);
-      vbuf = nboUnpackUShort(vbuf, type);
-      vbuf = nboUnpackUShort(vbuf, team);
-      vbuf = nboUnpackUShort(vbuf, wins);
-      vbuf = nboUnpackUShort(vbuf, losses);
-      vbuf = nboUnpackUShort(vbuf, tks);
-      vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
-      players[p].name = callsign;
-      players[p].team = TeamColor(team);
-      players[p].wins = wins;
-      players[p].losses = losses;
-      players[p].tks = tks;
-      players[p].isRegistered = false;
-      players[p].isVerified = false;
-      players[p].isAdmin = false;
-      if (ui != NULL)
-	ui->addedPlayer(p);
-      // If you are an admin, then MsgAdminInfo will output the message
-      if (messageMask[MsgAddPlayer] && !players[getMyId()].isAdmin) {
-	Team temp;
-	std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
-		temp.getName(players[p].team) + ".";
-	lastMessage.first = joinMsg;
-      }
-      break;
-
-    case MsgRemovePlayer:
-      vbuf = nboUnpackUByte(vbuf, p);
-      if (ui != NULL)
-	ui->removingPlayer(p);
-      if (messageMask[MsgRemovePlayer]) {
-	lastMessage.first = std::string("*** '") + players[p].name +
-	  "' left the game.";
-      }
-      players.erase(p);
-      break;
-
-    case MsgPlayerInfo:
-      uint8_t numPlayers;
-      vbuf = nboUnpackUByte(vbuf, numPlayers);
-      for (i = 0; i < numPlayers; ++i) {
+      case MsgAddPlayer:
+	uint16_t team, type, wins, losses, tks;
+	char callsign[CallSignLen];
 	vbuf = nboUnpackUByte(vbuf, p);
-	uint8_t info;
-	// parse player info bitfield
-	vbuf = nboUnpackUByte(vbuf, info);
-	players[p].isAdmin = ((info & IsAdmin) != 0);
-	players[p].isRegistered = ((info & IsRegistered) != 0);
-	players[p].isVerified = ((info & IsVerified) != 0);
-      }
-      break;
+	vbuf = nboUnpackUShort(vbuf, type);
+	vbuf = nboUnpackUShort(vbuf, team);
+	vbuf = nboUnpackUShort(vbuf, wins);
+	vbuf = nboUnpackUShort(vbuf, losses);
+	vbuf = nboUnpackUShort(vbuf, tks);
+	vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
+	players[p].name = callsign;
+	players[p].team = TeamColor(team);
+	players[p].wins = wins;
+	players[p].losses = losses;
+	players[p].tks = tks;
+	players[p].isRegistered = false;
+	players[p].isVerified = false;
+	players[p].isAdmin = false;
+	if (ui != NULL)
+	  ui->addedPlayer(p);
+	// If you are an admin, then MsgAdminInfo will output the message
+	if (messageMask[MsgAddPlayer] && !players[getMyId()].isAdmin) {
+	  Team temp;
+	  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+	    temp.getName(players[p].team) + ".";
+	  lastMessage.first = joinMsg;
+	}
+	break;
 
-    case MsgAdminInfo:
-      uint8_t numIPs;
-      uint8_t tmp;
-      vbuf = nboUnpackUByte(vbuf, numIPs);
-      if(numIPs > 1){
-	for (i = 0; i < numIPs; ++i) {
+      case MsgRemovePlayer:
+	vbuf = nboUnpackUByte(vbuf, p);
+	if (ui != NULL)
+	  ui->removingPlayer(p);
+	if (messageMask[MsgRemovePlayer]) {
+	  lastMessage.first = std::string("*** '") + players[p].name +
+	    "' left the game.";
+	}
+	players.erase(p);
+	break;
+
+      case MsgPlayerInfo:
+	uint8_t numPlayers;
+	vbuf = nboUnpackUByte(vbuf, numPlayers);
+	for (i = 0; i < numPlayers; ++i) {
+	  vbuf = nboUnpackUByte(vbuf, p);
+	  uint8_t info;
+	  // parse player info bitfield
+	  vbuf = nboUnpackUByte(vbuf, info);
+	  players[p].isAdmin = ((info & IsAdmin) != 0);
+	  players[p].isRegistered = ((info & IsRegistered) != 0);
+	  players[p].isVerified = ((info & IsVerified) != 0);
+	}
+	break;
+
+      case MsgAdminInfo:
+	uint8_t numIPs;
+	uint8_t tmp;
+	vbuf = nboUnpackUByte(vbuf, numIPs);
+	if(numIPs > 1) {
+	  for (i = 0; i < numIPs; ++i) {
+	    vbuf = nboUnpackUByte(vbuf, tmp);
+	    vbuf = nboUnpackUByte(vbuf, p);
+	    vbuf = a.unpack(vbuf);
+	    players[p].ip = a.getDotNotation();
+	    if ((ui != NULL) && messageMask[MsgAdminInfo]) {
+	      ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
+				players[p].ip, Default);
+	    }
+	  }
+	}
+	//Alternative to the MsgAddPlayer message
+	else if(numIPs == 1) {
 	  vbuf = nboUnpackUByte(vbuf, tmp);
 	  vbuf = nboUnpackUByte(vbuf, p);
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
-	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
-	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
-	      players[p].ip, Default);
+	  Team temp;
+	  if (messageMask[MsgAdminInfo]) {
+	    std::string joinMsg = std::string("*** \'") + players[p].name + "\' joined the game as " +
+	      temp.getName(players[p].team) + " from " + players[p].ip + ".";
+	    lastMessage.first = joinMsg;
 	  }
 	}
-      }
-      //Alternative to the MsgAddPlayer message
-      else if(numIPs == 1){
-	vbuf = nboUnpackUByte(vbuf, tmp);
-	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = a.unpack(vbuf);
-	players[p].ip = a.getDotNotation();
-	Team temp;
-	if (messageMask[MsgAdminInfo]){
-	  std::string joinMsg = std::string("*** \'") + players[p].name + "\' joined the game as " +
-	    temp.getName(players[p].team) + " from " + players[p].ip + ".";
-	  lastMessage.first = joinMsg;
-	}
-      }
-      break;
+	break;
 
-    case MsgScoreOver:
+      case MsgScoreOver:
 	PlayerId id;
 	uint16_t _team;
 	vbuf = nboUnpackUByte(vbuf, id);
@@ -301,9 +301,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  victimName = temp.getName((TeamColor)_team);
 	}
 	lastMessage.first = std::string("*** \'") + victimName + "\' won the game.";
-      break;
+	break;
 
-    case MsgTimeUpdate:
+      case MsgTimeUpdate:
 	uint32_t timeLeft;
 	vbuf = nboUnpackUInt(vbuf, timeLeft);
 	if (timeLeft == 0)
@@ -311,11 +311,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	else if (timeLeft == ~0u)
 	  lastMessage.first = "*** Paused.";
 	else
-	    lastMessage.first = std::string("*** ") +
-	      TextUtils::format("%u", timeLeft) + " seconds remaining.";
-      break;
+	  lastMessage.first = std::string("*** ") +
+	    TextUtils::format("%u", timeLeft) + " seconds remaining.";
+	break;
 
-    case MsgKilled:
+      case MsgKilled:
 	PlayerId victim, killer;
 	FlagType* flagType;
 	int16_t shotId, reason;
@@ -344,53 +344,53 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  lastMessage.first = lastMessage.first + "destroyed by '" +
 	    killerName + "'.";
 	}
-      break;
+	break;
 
-    case MsgSuperKill:
-      return Superkilled;
+      case MsgSuperKill:
+	return Superkilled;
 
-    case MsgScore:
-      uint8_t numScores;
-      vbuf = nboUnpackUByte(vbuf, numScores);
-      for (i = 0; i < numScores; i++) {
-	uint16_t winners, loosers, teamkillers;
-	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = nboUnpackUShort(vbuf, winners);
-	vbuf = nboUnpackUShort(vbuf, loosers);
-	vbuf = nboUnpackUShort(vbuf, teamkillers);
-	if ((iter = players.find(p)) != players.end()) {
-	  iter->second.wins   = winners;
-	  iter->second.losses = loosers;
-	  iter->second.tks    = teamkillers;
+      case MsgScore:
+	uint8_t numScores;
+	vbuf = nboUnpackUByte(vbuf, numScores);
+	for (i = 0; i < numScores; i++) {
+	  uint16_t winners, loosers, teamkillers;
+	  vbuf = nboUnpackUByte(vbuf, p);
+	  vbuf = nboUnpackUShort(vbuf, winners);
+	  vbuf = nboUnpackUShort(vbuf, loosers);
+	  vbuf = nboUnpackUShort(vbuf, teamkillers);
+	  if ((iter = players.find(p)) != players.end()) {
+	    iter->second.wins   = winners;
+	    iter->second.losses = loosers;
+	    iter->second.tks    = teamkillers;
+	  }
 	}
-      }
-      if (messageMask[MsgScore]) {
-	lastMessage.first =
-	  std::string("*** Received score update, score for ")+
-	  TextUtils::format("%d", numScores) + " player" +
-	  (numScores == 1 ? "s" : "") + " updated.";
-      }
-      break;
+	if (messageMask[MsgScore]) {
+	  lastMessage.first =
+	    std::string("*** Received score update, score for ")+
+	    TextUtils::format("%d", numScores) + " player" +
+	    (numScores == 1 ? "s" : "") + " updated.";
+	}
+	break;
 
-    case MsgMessage:
+      case MsgMessage:
 
-      // unpack the message header
-      PlayerId src;
-      PlayerId dst;
-      PlayerId me = sLink.getId();
-      vbuf = nboUnpackUByte(vbuf, src);
-      vbuf = nboUnpackUByte(vbuf, dst);
+	// unpack the message header
+	PlayerId src;
+	PlayerId dst;
+	PlayerId me = sLink.getId();
+	vbuf = nboUnpackUByte(vbuf, src);
+	vbuf = nboUnpackUByte(vbuf, dst);
 
-      // format the message depending on src and dst
-      TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
-			   TeamColor(250 - dst) : NoTeam);
+	// format the message depending on src and dst
+	TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
+			     TeamColor(250 - dst) : NoTeam);
 	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
 	PlayerIdMap::const_iterator iterator = players.find(src);
 	lastMessage.second = (iterator == players.end() ?
 			      colorMap[NoTeam] :
 			      colorMap[iterator->second.team]);
-      break;
-    }
+	break;
+      }
     if (ui != NULL)
       ui->handleNewPacket(code);
     return GotMessage;
@@ -433,11 +433,10 @@ void BZAdminClient::outputServerList() const {
       break;
     }
     if (ui) {
-      if (!serverList.serverFound()) {
+      if (!serverList.serverFound())
 	ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
-      } else {
+      else
 	ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", (int)serverList.size()), Yellow);
-      }
     }
     serverList.checkEchos(&startupInfo);
     cURLManager::perform();
@@ -536,8 +535,8 @@ void BZAdminClient::sendMessage(const std::string& msg,
 
 
 std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
-				    PlayerId dst, TeamColor dstTeam,
-				    PlayerId me) {
+					 PlayerId dst, TeamColor dstTeam,
+					 PlayerId me) {
   std::string formatted = "    ";
 
   // get sender and receiver
