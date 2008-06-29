@@ -22,21 +22,21 @@
 
 #define _INVALID_TANGIBILITY 255
 
-class ClientIntangibilityManager :   public Singleton<ClientIntangibilityManager>
+class ClientIntangibilityManager : public Singleton<ClientIntangibilityManager>
 {
 public:
-  void setWorldObjectTangibility ( unsigned int objectGUID, unsigned char tangible );
-    
-  void resetTangibility ( void );
+  void setWorldObjectTangibility(unsigned int objectGUID, unsigned char tangible);
 
-  unsigned char getWorldObjectTangibility ( const Obstacle *obs );
+  void resetTangibility(void);
+
+  unsigned char getWorldObjectTangibility(const Obstacle *obs);
 
 protected:
   friend class Singleton<ClientIntangibilityManager>;
 
 private:
-  ClientIntangibilityManager(){};
-  ~ClientIntangibilityManager(){};
+  ClientIntangibilityManager() {};
+  ~ClientIntangibilityManager() {};
 
   std::map<unsigned int, unsigned char> tangibilityMap;
 };
