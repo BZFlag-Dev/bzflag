@@ -804,12 +804,16 @@ void FontManager::underlineCallback(const std::string &, void *)
 
 void FontManager::initContext(void*)
 {
+#if debugging
   std::cout << "initContext called\n" << fontFaces.size() << " faces loaded" << std::endl;
+#endif
 }
  
 void FontManager::freeContext(void* data)
 {
+#if debugging
   std::cout << "freeContext called\n" << "clearing " << fontFaces.size() << " fonts" << std::endl;
+#endif
   FontManager* fm( static_cast<FontManager*>(data) );
   fm->clear();
 }
