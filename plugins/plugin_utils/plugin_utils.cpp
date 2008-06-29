@@ -404,7 +404,7 @@ std::string url_decode(const std::string &text)
 
       hex[3] = *itr;
 
-      int val = 0;
+      unsigned int val = 0;
       sscanf(hex,"%x",&val);
       if (val != 0)
 	destination += (char)val;
