@@ -35,7 +35,6 @@ src/platform	- general platform dependent code
 
 "other stuff"
 -------------
-doc/		- documentation in docbook format
 include/	- public headers
 misc/		- kitchen sink of anything
 web/		- website stuff
