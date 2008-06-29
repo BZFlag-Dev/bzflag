@@ -50,117 +50,117 @@
 // SceneDatabaseBuilder
 //
 
-static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
+static const GLfloat black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.4f, 0.4f, 0.4f, 1.0f },
-				{ 0.5f, 0.5f, 0.5f, 1.0f },
-				{ 0.6f, 0.6f, 0.6f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-				{ 0.5f, 0.5f, 0.5f, 1.0f }
-			};
+const GLfloat SceneDatabaseBuilder::wallColors[4][4] = {
+  { 0.5f, 0.5f, 0.5f, 1.0f },
+  { 0.4f, 0.4f, 0.4f, 1.0f },
+  { 0.5f, 0.5f, 0.5f, 1.0f },
+  { 0.6f, 0.6f, 0.6f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::wallModulateColors[4][4] = {
+  { 0.5f, 0.5f, 0.5f, 1.0f },
+  { 0.4f, 0.4f, 0.4f, 1.0f },
+  { 0.5f, 0.5f, 0.5f, 1.0f },
+  { 0.6f, 0.6f, 0.6f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::wallLightedColors[1][4] = {
+  { 0.5f, 0.5f, 0.5f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
+  { 0.5f, 0.5f, 0.5f, 1.0f }
+};
 
-const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.63f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.375f, 0.375f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.275f, 0.2f, 0.2f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.63f, 0.63f, 0.63f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.69f, 0.69f, 0.69f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.375f, 0.375f, 0.375f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.75f, 0.25f, 0.25f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.75f, 0.75f, 0.75f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f }
-			};
+const GLfloat SceneDatabaseBuilder::boxColors[6][4] = {
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.63f, 0.25f, 0.25f, 1.0f },
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.75f, 0.375f, 0.375f, 1.0f },
+  { 0.875f, 0.5f, 0.5f, 1.0f },
+  { 0.275f, 0.2f, 0.2f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::boxModulateColors[6][4] = {
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.63f, 0.63f, 0.63f, 1.0f },
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.69f, 0.69f, 0.69f, 1.0f },
+  { 0.875f, 0.875f, 0.875f, 1.0f },
+  { 0.375f, 0.375f, 0.375f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::boxLightedColors[6][4] = {
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.75f, 0.25f, 0.25f, 1.0f },
+  { 0.875f, 0.5f, 0.5f, 1.0f },
+  { 0.875f, 0.5f, 0.5f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.75f, 0.75f, 0.75f, 1.0f },
+  { 0.875f, 0.875f, 0.875f, 1.0f },
+  { 0.875f, 0.875f, 0.875f, 1.0f }
+};
 
-const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
+const GLfloat SceneDatabaseBuilder::pyramidColors[5][4] = {
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.13f, 0.13f, 0.51f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.375f, 0.375f, 0.75f, 1.0f },
+  { 0.175f, 0.175f, 0.35f, 1.0f }
+};
 
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.13f, 0.13f, 0.51f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f },
-				{ 0.175f, 0.175f, 0.35f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.25f, 0.25f, 0.63f, 1.0f }
-			};
+const GLfloat SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.13f, 0.13f, 0.51f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.375f, 0.375f, 0.75f, 1.0f },
+  { 0.175f, 0.175f, 0.35f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f }
+};
+const GLfloat SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f },
+  { 0.25f, 0.25f, 0.63f, 1.0f }
+};
 
-const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.9f, 0.8f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.9f, 0.9f, 0.9f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 1.0f, 0.875f, 0.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
-const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				{ 0.0f, 0.0f, 0.0f, 0.5f }
-			};
+const GLfloat SceneDatabaseBuilder::teleporterColors[3][4] = {
+  { 1.0f, 0.875f, 0.0f, 1.0f },
+  { 0.9f, 0.8f, 0.0f, 1.0f },
+  { 0.0f, 0.0f, 0.0f, 0.5f }
+};
+const GLfloat SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
+  { 1.0f, 1.0f, 1.0f, 1.0f },
+  { 0.9f, 0.9f, 0.9f, 1.0f },
+  { 0.0f, 0.0f, 0.0f, 0.5f }
+};
+const GLfloat SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
+  { 1.0f, 0.875f, 0.0f, 1.0f },
+  { 1.0f, 0.875f, 0.0f, 1.0f },
+  { 0.0f, 0.0f, 0.0f, 0.5f }
+};
+const GLfloat SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
+  { 1.0f, 1.0f, 1.0f, 1.0f },
+  { 1.0f, 1.0f, 1.0f, 1.0f },
+  { 0.0f, 0.0f, 0.0f, 0.5f }
+};
 
 
 SceneDatabaseBuilder::SceneDatabaseBuilder() :
-				wallMaterial(black, black, 0.0f),
-				boxMaterial(black, black, 0.0f),
-				pyramidMaterial(black, black, 0.0f),
-				teleporterMaterial(black, black, 0.0f)
+  wallMaterial(black, black, 0.0f),
+  boxMaterial(black, black, 0.0f),
+  pyramidMaterial(black, black, 0.0f),
+  teleporterMaterial(black, black, 0.0f)
 {
   // FIXME -- should get texture heights from resources
 
@@ -321,7 +321,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
     useColorTexture = wallTexture >= 0;
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
-				o.getHeight() / wallTexHeight, wallLOD))) {
+				      o.getHeight() / wallTexHeight, wallLOD))) {
     node->setColor(wallColors[part]);
     node->setModulateColor(wallModulateColors[part]);
     node->setLightedColor(wallLightedColors[0]);
@@ -387,24 +387,22 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   if (RENDERER.useQuality() >= _HIGH_QUALITY)
     textureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
-  while ((node = ((part < 4) ? nodeGen->getNextNode(
-				-textureFactor*boxTexWidth,
-				-textureFactor*boxTexWidth, boxLOD) :
-    // I'm using boxTexHeight for roof since textures are same
-    // size and this number is available
-				nodeGen->getNextNode(
-				-boxTexHeight,
-				-boxTexHeight, boxLOD)))) {
+  while ((node = ((part < 4) ?
+		  nodeGen->getNextNode(-textureFactor*boxTexWidth,
+				       -textureFactor*boxTexWidth, boxLOD) :
+		  // I'm using boxTexHeight for roof since textures are same
+		  // size and this number is available
+		  nodeGen->getNextNode(-boxTexHeight,
+				       -boxTexHeight, boxLOD)))) {
     node->setColor(boxColors[part]);
     node->setModulateColor(boxModulateColors[part]);
     node->setLightedColor(boxLightedColors[part]);
     node->setLightedModulateColor(boxLightedModulateColors[part]);
     node->setMaterial(boxMaterial);
-    if (part < 4){
+    if (part < 4) {
       node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
-    }
-    else{
+    } else {
       node->setTexture(boxTopTexture);
       node->setUseColorTexture(useColorTexture[1]);
     }
@@ -460,8 +458,8 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				-textureFactor * boxTexHeight,
-				pyramidLOD))) {
+				      -textureFactor * boxTexHeight,
+				      pyramidLOD))) {
     node->setColor(pyramidColors[part]);
     node->setModulateColor(pyramidModulateColors[part]);
     node->setLightedColor(pyramidLightedColors[part]);
@@ -541,9 +539,9 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
   // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
   while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
-				      nodeGen->getNextNode(o.getBreadth(),
-							   o.getHeight(),
-							   boxLOD)))) {
+		   nodeGen->getNextNode(o.getBreadth(),
+					o.getHeight(),
+					boxLOD)))) {
     if ((part % 5) != 0) {
       node->setColor(boxColors[part - 2]);
       node->setModulateColor(boxModulateColors[part - 2]);
@@ -552,8 +550,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
       node->setMaterial(boxMaterial);
       node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
-    }
-    else{
+    } else {
       if (useColorTexture[1]) {  // only set the texture if we have one and are using it
 	node->setTexture(baseTopTexture);
 	node->setUseColorTexture(useColorTexture[1]);
@@ -594,7 +591,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
-  int	     teleporterTexture = -1;
+  int teleporterTexture = -1;
 
   bool  useColorTexture = false;
 
@@ -614,7 +611,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   int numParts = o.isHorizontal() ? 18 : 14;
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
-							teleporterLOD))) {
+				      teleporterLOD))) {
     if (o.isHorizontal ()) {
       if (part >= 0 && part <= 15) {
 	node->setColor (teleporterColors[0]);
@@ -625,8 +622,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 	node->setTexture (teleporterTexture);
 	node->setUseColorTexture (useColorTexture);
       }
-    }
-    else {
+    } else {
       if (part >= 0 && part <= 1) {
 	node->setColor (teleporterColors[0]);
 	node->setModulateColor (teleporterModulateColors[0]);
@@ -635,8 +631,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 	node->setMaterial (teleporterMaterial);
 	node->setTexture (teleporterTexture);
 	node->setUseColorTexture (useColorTexture);
-      }
-      else if (part >= 2 && part <= 11) {
+      } else if (part >= 2 && part <= 11) {
 	node->setColor (teleporterColors[1]);
 	node->setModulateColor (teleporterModulateColors[1]);
 	node->setLightedColor (teleporterLightedColors[1]);
