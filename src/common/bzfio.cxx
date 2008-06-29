@@ -40,7 +40,7 @@ LoggingCallback	*loggingCallback = NULL;
 static bool doTimestamp = false;
 static bool doMicros = false;
 
-void setDebugTimestamp (bool enable, bool micros)
+void setDebugTimestamp(bool enable, bool micros)
 {
 #ifdef _WIN32
   micros = false;
@@ -49,75 +49,74 @@ void setDebugTimestamp (bool enable, bool micros)
   doMicros = micros;
 }
 
-static char *timestamp (char *buf, bool micros)
+static char *timestamp(char *buf, bool micros)
 {
   struct tm *tm;
   if (micros) {
 #if !defined(_WIN32)
     struct timeval tv;
-    gettimeofday (&tv, NULL);
+    gettimeofday(&tv, NULL);
     tm = localtime((const time_t *)&tv.tv_sec);
-    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ", tm->tm_year+1900,
-	     tm->tm_mon+1,
-	     tm->tm_mday, tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec );
+    sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ",
+	    tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+	    tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec);
 #endif
   } else {
     time_t tt;
-    time (&tt);
-    tm = localtime (&tt);
-    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
-	     tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+    time(&tt);
+    tm = localtime(&tt);
+    sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d: ",
+	    tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+	    tm->tm_hour, tm->tm_min, tm->tm_sec);
   }
   return buf;
 }
 
 void logDebugMessage(int level, const char* fmt, ...)
 {
-	char buffer[8192];
-	char tsbuf[26];
-	va_list args;
-	va_start(args, fmt);
-	vsnprintf(buffer, 8192, fmt, args);
-	va_end(args);
+  char buffer[8192];
+  char tsbuf[26];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 8192, fmt, args);
+  va_end(args);
 
-	if (debugLevel >= level || level == 0)
-	{
+  if (debugLevel >= level || level == 0) {
 #if defined(_MSC_VER)
-		if (doTimestamp)
-			W32_DEBUG_TRACE(timestamp (tsbuf, false));
-		W32_DEBUG_TRACE(buffer);
+    if (doTimestamp)
+      W32_DEBUG_TRACE(timestamp (tsbuf, false));
+    W32_DEBUG_TRACE(buffer);
 #else
-		if (doTimestamp)
-			std::cout << timestamp (tsbuf, doMicros);
-		std::cout << buffer;
-		fflush(stdout);
+    if (doTimestamp)
+      std::cout << timestamp (tsbuf, doMicros);
+    std::cout << buffer;
+    fflush(stdout);
 #endif
-	}
+  }
 
-	if (loggingCallback)
-		loggingCallback->log(level,buffer);
+  if (loggingCallback)
+    loggingCallback->log(level,buffer);
 }
 
 void logDebugMessage(int level, const std::string &text)
 {
-	if (!text.size())
-		return;
+  if (!text.size())
+    return;
 
-	if (debugLevel >= level || level == 0)
-	{
-		char tsbuf[26];
+  if (debugLevel >= level || level == 0) {
+    char tsbuf[26];
 #if defined(_MSC_VER)
-		if (doTimestamp)
-			W32_DEBUG_TRACE(timestamp (tsbuf, false));
-		W32_DEBUG_TRACE(text.c_str());
+    if (doTimestamp)
+      W32_DEBUG_TRACE(timestamp(tsbuf, false));
+    W32_DEBUG_TRACE(text.c_str());
 #else
-		if (doTimestamp)
-			std::cout << timestamp (tsbuf, doMicros);
-		std::cout << text;
-		fflush(stdout);
+    if (doTimestamp)
+      std::cout << timestamp(tsbuf, doMicros);
+    std::cout << text;
+    fflush(stdout);
 #endif
-	}
+  }
 
-	if (loggingCallback)
-		loggingCallback->log(level,text.c_str());
+  if (loggingCallback)
+    loggingCallback->log(level,text.c_str());
 }
