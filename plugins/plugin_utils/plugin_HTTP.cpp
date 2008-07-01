@@ -450,6 +450,8 @@ void BZFSHTTPAuth::flushTasks ( void )
       authedSessions.erase(authItr);
       authItr = t;
     }
+    else
+      authItr++;
   }
 }
 
