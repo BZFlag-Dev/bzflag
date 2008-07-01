@@ -1,8 +1,14 @@
 [!header.tmpl]
   <h2>main</h2>
-  <ul>
-    <li><a href="[$BaseURL]/banlist">banlist</a></li>
-    <li><a href="[$BaseURL]/helpmsg">helpmsg</a></li>
-  </ul>
+  <form action="" method="post">
+    <ul>
+[*START Players]
+      <li><input type="checkbox" id="player_[$Callsign]"
+                 name="kick" value="[$Callsign]" />
+        <label for="player_[$Callsign]">[$Callsign]</label></li>
+[*END Players]
+    </ul>
+    <input type="submit" value="kick" />
+  </form>
 </body>
 </html>
