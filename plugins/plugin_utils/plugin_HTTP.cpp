@@ -278,6 +278,9 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
 
 bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
 {
+  if (!authPage.size())
+    setupAuth();
+
   flushTasks();
   int sessionID = request.sessionID;
   reply.docType = HTTPReply::eHTML;
