@@ -66,6 +66,8 @@ void WebAdmin::init(const char* tDir)
   templateSystem.addKey("Error",this);
 
   templateSystem.setPluginName("WebReport", getBaseURL().c_str());
+
+	setupAuth();
 }
 
 // event hook for [$Something] in templates
