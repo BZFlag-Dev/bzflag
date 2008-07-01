@@ -132,7 +132,7 @@ public:
 
   std::string vdir;
   std::string resource;
-  std::map<std::string, std::vector<std::string> > paramaters;
+  std::map<std::string, std::vector<std::string> > parameters;
 
 
   std::map<std::string, std::string> headers;

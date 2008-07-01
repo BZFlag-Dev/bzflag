@@ -62,8 +62,8 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
-  if ( itr != paramaters.end() )
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
   {
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
@@ -79,8 +79,8 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
-  if ( itr != paramaters.end() )
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
   {
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
@@ -98,8 +98,8 @@ bool HTTPRequest::getParam ( const char* param, std::vector<std::string> &val ) 
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
-  if ( itr != paramaters.end() )
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
   {
     val = itr->second;
     return true;
@@ -114,8 +114,8 @@ bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> 
   std::string p;
   tolower(param,p);
 
-  std::map<std::string, std::vector<std::string> >::const_iterator itr = paramaters.find(p);
-  if ( itr != paramaters.end() )
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
   {
     val = itr->second;
     return true;

@@ -715,14 +715,14 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
 
   if (req.request != ePost )
   {
-    // parse out the paramaters from the resource
+    // parse out the parameters from the resource
     size_t q = req.resource.find_first_of('?');
     if (q != std::string::npos)
-      parseParams(req.paramaters,req.resource,q+1);
+      parseParams(req.parameters,req.resource,q+1);
   }
   
   if (req.request == ePost && contentSize > 0)
-    parseParams(req.paramaters,body,0);
+    parseParams(req.parameters,body,0);
   else if (req.request == ePut &&contentSize > 0)
     req.body = body;
 }
