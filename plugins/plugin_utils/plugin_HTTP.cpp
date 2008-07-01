@@ -201,7 +201,7 @@ void BZFSHTTPAuth::setupAuth ( void )
   authPage = "<html><body><h4><a href=\"[$WebAuthURL]\">Please Login</a></h4></body></html>";
 
   std::string returnURL;
-  if (getBaseURL().size())
+  if (!getBaseURL().size())
     returnURL += format("http://localhost:%d/%s/",bz_getPublicPort(),getVDir());
   else
     returnURL += getBaseURL();
