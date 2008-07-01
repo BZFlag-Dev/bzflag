@@ -27,7 +27,8 @@ BZFSHTTP::BZFSHTTP()
 
 void BZFSHTTP::registerVDir ( void )
 {
-  bz_callCallback("RegisterHTTPDVDir",this);
+  if (!bz_callCallback("RegisterHTTPDVDir",this))
+    bz_debugMessage(0,format("HTTP Plugin %s failed to load due to callback failure, make sure the HTTPServer plugin is in the same path",getVDir()).c_str());
 }
 
 BZFSHTTP::~BZFSHTTP()
