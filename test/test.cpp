@@ -12,8 +12,29 @@
 
 #include "common.h"
 
+class A
+{
+public:
+  virtual void foo() { printf("foo\n"); }
+  virtual void bar() { printf("bar\n"); }
+};
+
+class B : public A
+{
+public:
+  void foo() { printf("foo B\n"); }
+  void bar() { printf("bar B\n"); }
+};
+
+void (A::*Method)();
+
 int main(int argc, char* argv[])
 {
+    Method = A::bar;
+    A a; B b;
+    (a.*Method)();
+    (b.*Method)();
+    printf("%d", sizeof(Method));
     test_gcrypt();
     //test_ldap();
     //test_net();

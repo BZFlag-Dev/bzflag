@@ -18,6 +18,24 @@
 
 INSTANTIATE_SINGLETON(NetHandler);
 
+OpcodeEntry opcodeTable[NUM_OPCODES] = {
+  {"MSG_HANDSHAKE", NullHandler},
+  {"CMSG_AUTH_REQUEST", NullHandler},
+  {"DMSG_AUTH_FAIL", NullHandler},
+  {"DMSG_AUTH_CHALLENGE", NullHandler},
+  {"CMSG_AUTH_RESPONSE", NullHandler},
+  {"DMSG_AUTH_SUCCESS", NullHandler},
+  {"CMSG_REGISTER_GET_FORM", NullHandler},
+  {"DMSG_REGISTER_FAIL", NullHandler},
+  {"DMSG_REGISTER_SEND_FORM", NullHandler},
+  {"CMSG_REGISTER_REQUEST", NullHandler},
+  {"DMSG_REGISTER_CHALLENGE", NullHandler},
+  {"CMSG_REGISTER_RESPONSE", NullHandler},
+  {"DMSG_REGISTER_SUCCESS", NullHandler},
+  {"SMSG_TOKEN_VALIDATE", NullHandler},
+  {"DMSG_TOKEN_VALIDATE", NullHandler}
+};
+
 class TCPServerListener : public TCPServerDataPendingListener
 {
 public:

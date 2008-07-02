@@ -14,9 +14,131 @@
 #define __BZAUTHD_NETHANDLER_H__
 
 #include "Singleton.h"
+#include <string.h>
+#include <string>
 
 class TCPServerConnection;
 class TCPServerListener;
+
+enum Opcodes
+{
+  MSG_HANDSHAKE             = 0,
+  CMSG_AUTH_REQUEST         = 1,
+  DMSG_AUTH_FAIL            = 2,
+  DMSG_AUTH_CHALLENGE       = 3,
+  CMSG_AUTH_RESPONSE        = 4,
+  DMSG_AUTH_SUCCESS         = 5,
+  CMSG_REGISTER_GET_FORM    = 6,
+  DMSG_REGISTER_FAIL        = 7,
+  DMSG_REGISTER_SEND_FORM   = 8,
+  CMSG_REGISTER_REQUEST     = 9,
+  DMSG_REGISTER_CHALLENGE   = 10,
+  CMSG_REGISTER_RESPONSE    = 11,
+  DMSG_REGISTER_SUCCESS     = 12,
+  SMSG_TOKEN_VALIDATE       = 13,
+  DMSG_TOKEN_VALIDATE       = 14,
+  NUM_OPCODES
+};
+
+class Packet
+{
+public:
+  Packet(uint8 *data, size_t size) { init(data, size); }
+  Packet(size_t size = 1024) { init(size); }
+  Packet(Packet & packet) { init(packet.getData(), packet.getSize()); }
+
+  template < class T >
+  Packet& operator >> (T &x)
+  {
+    if(m_rpoz + sizeof(T) <= m_size)
+    {
+      x = *(T *)(m_data + m_rpoz);
+      m_rpoz += sizeof(T);
+    }
+    else
+      m_rpoz = m_size + 1;
+
+    return (*this);
+  }
+
+  template < class T >
+  Packet &operator << (const T &x)
+  {
+    append((const uint8*)&x, sizeof(T));
+    return (*this);
+  }
+
+  Packet &operator << (const uint8 * &x)
+  {
+    // get string length and protect against overflow
+    size_t len = 0;
+    // TODO: replace with a constant
+    while(len < 4096) if(!x[len++]) break;
+    
+    append(x, len);
+    return (*this);
+  }
+
+  template <>
+  Packet &operator << (const std::string &x)
+  {
+    append((const uint8*)x.c_str(), x.size());
+    return (*this);
+  }
+
+  void append(const uint8 *x, size_t size)
+  {
+    if(m_wpoz + size >= m_size)
+    {
+      m_data = (uint8*)realloc((void*)m_data, 2*m_size);
+      m_size *= 2;
+    }
+
+    memcpy(m_data + m_wpoz, x, size);
+    m_wpoz += size;
+  }
+
+  operator bool() const { return m_rpoz <= m_size; }
+
+  uint8 *getData() const { return m_data; }
+  size_t getSize() const { return m_size; }
+
+protected:
+  void init(size_t size)
+  {
+    m_data = (uint8*)malloc(size);
+    m_size = size;
+    m_rpoz = 0;
+    m_wpoz = 0;
+  }
+
+  void init(uint8 *data, size_t size)
+  {
+    init(size);
+    memcpy(m_data, data, size);
+    m_wpoz = size;
+  }
+
+  uint8 *m_data;
+  size_t m_size;
+  size_t m_rpoz;
+  size_t m_wpoz;
+};
+
+typedef bool (*PacketHandler)(Packet &packet);
+
+bool NullHandler(Packet &packet)
+{
+  return true;
+}
+
+struct OpcodeEntry
+{
+  const char * name;
+  PacketHandler handler;
+};
+
+extern OpcodeEntry opcodeTable[NUM_OPCODES];
 
 class NetHandler : public Singleton<NetHandler>
 {
