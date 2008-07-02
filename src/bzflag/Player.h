@@ -104,12 +104,12 @@ public:
 
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
 			   bool inCockpit, bool seerView,
-			   bool showTreads, bool showIDL);
+			   bool showTreads, bool showIDL, bool thirdPerson = false);
 
   bool		getIpAddress(Address&);
   void		setIpAddress(const Address& addr);
 
-  virtual void	addShots(SceneDatabase*, bool colorblind) const;
+  virtual void	addShots(SceneDatabase*, bool colorblind, bool seer = false, bool thridPerson = false) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
   void		fireJumpJets();
