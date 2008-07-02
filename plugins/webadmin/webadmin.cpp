@@ -11,7 +11,7 @@
 class WebAdmin : public BZFSHTTPAuth, TemplateCallbackClass
 {
 public:
-  WebAdmin::WebAdmin();
+  WebAdmin();
   virtual const char * getVDir ( void ){return "webadmin";}
   virtual const char * getDescription ( void ){return "Server Administration (Login Required)";}
 
@@ -29,7 +29,7 @@ private:
   loop_pos *loopItr;
   std::map<std::string,std::string> templateVars;
 
-	std::vector<std::string> pages
+  std::vector<std::string> pages;
 };
 
 WebAdmin *webAdmin = NULL;
