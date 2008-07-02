@@ -6,12 +6,12 @@
 #include "plugin_HTTP.h"
 #include <fstream>
 #include <cstring>
+#include <algorithm>
 
 class WebAdmin : public BZFSHTTPAuth, TemplateCallbackClass
 {
 public:
-  WebAdmin::WebAdmin():BZFSHTTPAuth(),it(NULL) {registerVDir();}
-
+  WebAdmin::WebAdmin();
   virtual const char * getVDir ( void ){return "webadmin";}
   virtual const char * getDescription ( void ){return "Server Administration (Login Required)";}
 
@@ -26,23 +26,15 @@ public:
 
 private:
   typedef std::vector<std::string>::const_iterator loop_pos;
-  loop_pos *it;
-  std::map<std::string,std::string> tmplvars;
+  loop_pos *loopItr;
+  std::map<std::string,std::string> templateVars;
+
+	std::vector<std::string> pages
 };
 
 WebAdmin *webAdmin = NULL;
 
-//typedef void (WebAdmin::*controller)(const HTTPRequest &);
-//std::map<std::string,controller> controllers;
-const std::vector<std::string> pages = tokenize(
-    "main "
-    "banlist "
-    "helpmsg "
-    "group "
-  , std::string(" "), 0, false);
-
 BZ_GET_PLUGIN_VERSION
-
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
@@ -64,6 +56,16 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   bz_debugMessage(4,"webadmin plugin unloaded");
   return 0;
 }
+
+WebAdmin::WebAdmin():BZFSHTTPAuth(),loopItr(NULL)
+{
+	pages.push_back("main");
+	pages.push_back("banlist");
+	pages.push_back("helpmsg");
+	pages.push_back("group");
+	registerVDir();
+}
+
 
 void WebAdmin::init(const char* cmdln)
 {
@@ -93,35 +95,36 @@ void WebAdmin::init(const char* cmdln)
 // event hook for [$Something] in templates
 void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
-  const std::map<std::string,std::string>::iterator &pair = tmplvars.find(key);
-  if (pair != tmplvars.end()) data = pair->second;
+  const std::map<std::string,std::string>::iterator &pair = templateVars.find(key);
+  if (pair != templateVars.end())
+		data = pair->second;
 }
 
 // condition check for [*START] in templates
 bool WebAdmin::loopCallback (const std::string &key)
 {
   if (key == "players") {
-    if (!it) it = new loop_pos(bzu_standardPerms.begin());
-    else if (*it != bzu_standardPerms.end()) {
-      tmplvars["callsign"] = **it++;
+    if (!loopItr) loopItr = new loop_pos(bzu_standardPerms.begin());
+    else if (*loopItr != bzu_standardPerms.end()) {
+      templateVars["callsign"] = **loopItr++;
       return true;
     }
   } else if (key == "navigation") {
-    if (!it) it = new loop_pos(pages.begin());
-    else if (*it != pages.end()) {
-      tmplvars["pagename"] = **it++;
+    if (!loopItr) loopItr = new loop_pos(pages.begin());
+    else if (*loopItr != pages.end()) {
+      templateVars["pagename"] = **loopItr++;
       return true;
     }
   } else return false;
-  delete(it);
-  return it = NULL;
+  delete(loopItr);
+  return loopItr == NULL;
 }
 
 // condition check for [?IF] in templates
 bool WebAdmin::ifCallback (const std::string &key)
 {
   if (key == "iscurrentpage")
-    return tmplvars["pagename"] == tmplvars["currentpage"];
+    return templateVars["pagename"] == templateVars["currentpage"];
   return false;
 }
 
@@ -138,7 +141,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     if (pagename[last] == '/') pagename.erase(last);
     if (pagename == "") pagename = "main";
     // std::map<std::string,controller>::iterator pair = controllers.find(pagename);
-    page_iter = find(pages.begin(), pages.end(), pagename);
+		page_iter = std::find(pages.begin(), pages.end(), pagename);
     // if (pair != controllers.end()) {
     if (page_iter != pages.end()) {
       // if (pair->second) (this->*(pair->second))(request);
@@ -160,7 +163,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 
   reply.docType = HTTPReply::eHTML;
 
-  tmplvars.clear();
+  templateVars.clear();
   return true;
 }
 
