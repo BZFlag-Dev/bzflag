@@ -503,7 +503,7 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   {
     std::string vdirName = dirItr->second->getVDir();
     std::string vDirDescription = dirItr->second->getDescription();
-    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"</br>"; 
+    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>"; 
     dirItr++;
   }
 
@@ -865,7 +865,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     break;
   }
 
-  if (r.returnCode == HTTPReply::e200OK)
+  if (r.returnCode != HTTPReply::e200OK)
     page += "Connection: close\n";
   else if (FORCE_CLOSE)
    page += "Connection: close\n";
@@ -907,11 +907,14 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     itr++;
   }
 
-  itr = r.cookies.begin();
-  while (itr != r.cookies.end())
+  if (r.returnCode == HTTPReply::e200OK)
   {
-    page += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
-    itr++;
+    itr = r.cookies.begin();
+    while (itr != r.cookies.end())
+    {
+      page += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
+      itr++;
+    }
   }
 
   page += "\n";
