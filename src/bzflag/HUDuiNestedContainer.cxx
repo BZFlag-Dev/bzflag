@@ -34,6 +34,8 @@ void HUDuiNestedContainer::addControl(HUDuiControl *control)
 {
   nestedNavList.push_back(control);
   control->setNavQueue(&nestedNavList);
+  control->isNested(true);
+  control->setParent(this);
 }
 
 //void HUDuiNestedContainer::initNavigation()

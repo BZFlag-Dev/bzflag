@@ -47,6 +47,12 @@ class HUDuiControl : public HUDuiElement {
     void		setCallback(HUDuiCallback, void*);
     HUDuiCallback	getCallback() const;
     void*		getUserData() const;
+	
+    bool isNested() { return nested; }
+	void isNested(bool isNested);
+	
+	HUDuiControl* getParent() { return parent; }
+	void setParent(HUDuiControl* parentControl);
 
     bool		hasFocus() const;
     void		showFocus(bool);
@@ -66,6 +72,9 @@ class HUDuiControl : public HUDuiElement {
     void		doCallback();
 
   private:
+    bool nested;
+    HUDuiControl* parent;
+	
     bool		showingFocus;
     HUDNavigationQueue*	navList;
     HUDuiCallback	cb;
