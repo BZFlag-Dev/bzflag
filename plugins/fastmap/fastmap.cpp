@@ -37,7 +37,10 @@ public:
       stream.write(mapData,(std::streamsize)mapDataSize);
     }
     else
+    {
+      reply.body = "404 Fastmap not Valid";
       reply.returnCode = HTTPReply::e404NotFound;
+    }
 
     return true;
   }
