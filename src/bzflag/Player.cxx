@@ -1017,7 +1017,7 @@ void Player::spawnEffect()
 }
 
 
-void Player::addShots(SceneDatabase* scene, bool colorblind, bool seer, bool thridPerson ) const
+void Player::addShots(SceneDatabase* scene, bool colorblind ) const
 {
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {

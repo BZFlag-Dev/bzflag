@@ -5645,7 +5645,7 @@ void drawFrame(const float dt)
       {
 	if (player[i]) {
 	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  player[i]->addShots(scene, colorblind,myTank->getFlag() == Flags::Seer, thirdPersonVars.b3rdPerson);
+	  player[i]->addShots(scene, colorblind);
 
 	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind) {
