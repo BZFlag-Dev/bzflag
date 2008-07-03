@@ -25,9 +25,10 @@ public:
   virtual bool ifCallback (const std::string &key);
 
 private:
-  typedef std::vector<std::string>::const_iterator loop_pos;
-  loop_pos *loopItr;
+  size_t loopPos;
   std::map<std::string,std::string> templateVars;
+  
+  bz_APIIntList players;
 
   std::vector<std::string> pages;
 };
@@ -57,7 +58,7 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   return 0;
 }
 
-WebAdmin::WebAdmin():BZFSHTTPAuth(),loopItr(NULL)
+WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
 {
 	pages.push_back("main");
 	pages.push_back("banlist");
@@ -104,20 +105,25 @@ void WebAdmin::keyCallback (std::string &data, const std::string &key)
 bool WebAdmin::loopCallback (const std::string &key)
 {
   if (key == "players") {
-    if (!loopItr) loopItr = new loop_pos(bzu_standardPerms.begin());
-    else if (*loopItr != bzu_standardPerms.end()) {
-      templateVars["callsign"] = **loopItr++;
+    if (!loopPos) bz_getPlayerIndexList(&players);
+    else if (loopPos < players.size()) {
+      templateVars["callsign"] = bz_getPlayerCallSign(players[loopPos++]);
       return true;
+    } else {
+      players.clear();
+      return loopPos = 0;
     }
   } else if (key == "navigation") {
-    if (!loopItr) loopItr = new loop_pos(pages.begin());
-    else if (*loopItr != pages.end()) {
-      templateVars["pagename"] = **loopItr++;
+    if (loopPos < pages.size()) {
+      templateVars["pagename"] = pages[loopPos++];
       return true;
-    }
+    } else return loopPos = 0;
+  } else if (key == "permissions") {
+    if (loopPos < bzu_standardPerms.size()) {
+      templateVars["permission"] = bzu_standardPerms[loopPos++];
+      return true;
+    } else return loopPos = 0;
   } else return false;
-  delete(loopItr);
-  return loopItr == NULL;
 }
 
 // condition check for [?IF] in templates
@@ -130,7 +136,7 @@ bool WebAdmin::ifCallback (const std::string &key)
 
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
-  loop_pos page_iter;
+  std::vector<std::string>::iterator page_iter;
   size_t last;
   std::string pagename = request.resource;
 
