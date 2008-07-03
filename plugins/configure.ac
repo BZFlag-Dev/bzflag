@@ -247,8 +247,8 @@ case $host_os in
 esac
 
 if test x$enable_debug = xyes ; then
-    CFLAGS="$CFLAGS -O0"
-    CXXFLAGS="$CXXFLAGS -O0"
+    CFLAGS="$CFLAGS -g -O0"
+    CXXFLAGS="$CXXFLAGS -g -O0"
     case $host_os in
 	linux*|cygwin|mingw32*)
 	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
