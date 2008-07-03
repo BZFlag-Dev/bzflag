@@ -55,11 +55,11 @@ namespace BZW
        * FIXME: This probably shouldn't be sending back a copy of the
        * multimap, and sending a reference seems like a bad idea also.
        */
-      std::multimap<std::string, Object*> getObjects();
+      std::multimap<std::string, Object> getObjects();
 
     private:
-      std::map<std::string, Object*> managedObjects;
-      std::multimap<std::string, Object*> readObjects;
+      std::map<std::string, Object> managedObjects;
+      std::multimap<std::string, Object> readObjects;
   };
 
 
@@ -70,9 +70,9 @@ namespace BZW
   {
     public:
       /// Constructor
-      Field(){ }
+      Field(){ };
       /// Destructor
-      virtual ~Field(){ }
+      virtual ~Field(){ };
 
       bool isRepeatable(){ return repeatable; }
     protected:
@@ -97,7 +97,7 @@ namespace BZW
       union ValueValue //TODO: this is a terrible name.
       {
         float real_value; ///Real numbers, floats.
-        std::string string_value; ///String values.
+        std::string* string_value; ///String values.
       };
 
       //TODO: should I worry about number of values? are N required? etc.
@@ -125,6 +125,7 @@ namespace BZW
   class Parser::Object : public Parser::Field
   {
     public:
+      //FIXME need copy constructor
       /// Constructor
       Object(bool repeatable);
       /// Destructor
@@ -138,7 +139,7 @@ namespace BZW
        * primarily by define/group/matrefs I believe...
        */
       std::string name;
-      std::map<std::string, Field*> managedFields;
+      std::map<std::string, Field> managedFields;
       std::multimap<std::string, Field> readFields;
   };
 

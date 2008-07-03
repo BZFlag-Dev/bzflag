@@ -58,9 +58,7 @@ namespace BZW
 
     //another way to do it
     Parser::Parameter position(Parser::Parameter::REAL, 3, false);
-    //this is the rotation and size property in one line.
-    box.manage("rotation", Parser::Parameter(Parser::Parameter::REAL, 1, false));
-    box.manage("size", Parser::Parameter(Parser::Parameter::REAL, 3, false));
+    //imagine some code here
     //add some already created parameters
     box.manage("name", name);
 
@@ -69,8 +67,8 @@ namespace BZW
     parser.manageObject("box", box);
 
     //actually parse
-    parser.parse(in);
-    std::multimap<string, Parser::Object> objects = parser.getObjects();
+    parser.parse(input);
+    std::multimap<std::string, Parser::Object> objects = parser.getObjects();
     //Iterate through objects, do stuff here
     //parser.getObjects(); and what have you
 

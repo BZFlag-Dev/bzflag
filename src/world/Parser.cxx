@@ -29,7 +29,7 @@ namespace BZW
 
   bool Parser::parse(std::istream& in)
   {
-    if(!in->peek())
+    if(!in.peek())
     {
       return false;
     }
@@ -37,25 +37,27 @@ namespace BZW
     return true;
   }
 
-  void Parser::manageObject(string name, Parser::Object& object);
+  void Parser::manageObject(std::string name, Parser::Object& object)
   {
-    if(managedObjects[name])
+    if(managedObjects.count(name))
     {
       //TODO:Complain about duplicate object entry, keep newest entry
     }
+    //FIXME: See Parser.h
     managedObjects[name] = object;
   }
 
-  Parser::Parameter::Parameter(enum Parser::Parameter::ValueType type, int number_of_values bool repeatable)
+  //XXX/FIXME: variable names shadow member names. Is this acceptable?
+  Parser::Parameter::Parameter(enum Parser::Parameter::ValueType type, int number_of_values, bool repeatable)
   {
-    this.type = type;
+    this->type = type;
     if(number_of_values <= 0)
     {
       //TODO:Complain about impossible number of values, but don't worry about
       //it.
     }
-    this.number_of_values = number_of_values;
-    this.repeatable = repeatable;
+    this->number_of_values = number_of_values;
+    this->repeatable = repeatable;
   }
 
   Parser::Parameter::~Parameter()
@@ -68,14 +70,14 @@ namespace BZW
     //TODO
   }
 
-  vector<union Parser::Parameter::ValueValue>* Parser::Parameter::getValues()
+  std::vector<union Parser::Parameter::ValueValue>* Parser::Parameter::getValues()
   {
     return &values;
   }
 
   Parser::Object::Object(bool repeatable)
   {
-    this.repeatable = repeatable;
+    this->repeatable = repeatable;
   }
 
   Parser::Object::~Object()
@@ -83,16 +85,16 @@ namespace BZW
     //TODO
   }
 
-  void Parser::Object::manage(string name, Parser::Field &field)
+  void Parser::Object::manage(std::string name, Parser::Field& field)
   {
-    if(map[name])
+    if(managedFields.count(name))
     {
       //TODO: Complain about duplicate object entry, keep newest entry
     }
-    map[name] = field;
+    managedFields[name] = field;
   }
 
-  std::multimap<string, Field>* Parser::Object::getFields()
+  std::multimap<std::string, Parser::Field>* Parser::Object::getFields()
   {
     return &readFields;
   }
