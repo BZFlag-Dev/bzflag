@@ -3687,7 +3687,7 @@ BZF_API bool bz_startRecBuf(void)
   if(Record::enabled())
     return false;
 
-  return Record::start(ServerPlayer);
+  return Record::start(AllPlayers);
 }
 
 //-------------------------------------------------------------------------

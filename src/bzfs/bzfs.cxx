@@ -3869,7 +3869,7 @@ static bool initServer(int argc, char **argv)
   setupPermisions();
 
   if (clOptions->startRecording)
-    Record::start(ServerPlayer);
+    Record::start(AllPlayers);
 
   // trap some signals
   if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
