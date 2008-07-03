@@ -51,8 +51,9 @@ class MyServerListener : public TCPServerDataPendingListener
             tvPacketList& packets = peer->getPackets();
             for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
             {
+                unsigned int opcode = (*itr).first;
                 unsigned int len;
-                unsigned char * data = (*itr).get(len);
+                unsigned char * data = (*itr).second.get(len);
                 if(len >= 2048) break;
                 strncpy(buf, (char*)data, len);
                 buf[len] = 0;
@@ -94,8 +95,9 @@ class MyClientListener : public TCPClientDataPendingListener
             tvPacketList& packets = connection->getPackets();
             for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
             {
+                unsigned int opcode = (*itr).first;
                 unsigned int len;
-                unsigned char * data = (*itr).get(len);
+                unsigned char * data = (*itr).second.get(len);
                 if(len >= 2048) break;
                 strncpy(buf, (char*)data, len);
                 buf[len] = 0;

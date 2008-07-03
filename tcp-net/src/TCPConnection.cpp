@@ -190,7 +190,7 @@ void TCPClientConnection::readData ( void )
     return;
 
   TCPPacket packet(buffer,len);
-  packetList.push_back(packet);
+  packetList.push_back(tvPacketPair(opcode, packet));
 
   // notify any listeners
   callDataPendingListeners((int)packetList.size());
@@ -420,7 +420,7 @@ bool TCPServerConnectedPeer::readData ( void )
     return false;
 
   TCPPacket packet(buffer,len);
-  packetList.push_back(packet);
+  packetList.push_back(tvPacketPair(opcode, packet));
 
   return true;
 }

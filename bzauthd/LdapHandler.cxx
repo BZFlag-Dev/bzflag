@@ -11,6 +11,11 @@
 */
 
 #include "common.h"
+#include "LdapHandler.h"
+
+INSTANTIATE_SINGLETON(LdapHandler);
+
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -13,6 +13,20 @@
 #ifndef __BZAUTHD_LDAPHANDLER_H__
 #define __BZAUTHD_LDAPHANDLER_H__
 
+#include "Singleton.h"
+
+class LdapHandler : public Singleton<LdapHandler>
+{
+public:
+  LdapHandler();
+  ~LdapHandler();
+  bool initialize();
+private:
+
+};
+
+#define sLdapHandler LdapHandler::instance()
+
 #endif // __BZAUTHD_LDAPHANDLER_H__
 
 // Local Variables: ***

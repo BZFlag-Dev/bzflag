@@ -19,22 +19,32 @@
 INSTANTIATE_SINGLETON(NetHandler);
 
 OpcodeEntry opcodeTable[NUM_OPCODES] = {
-  {"MSG_HANDSHAKE", NullHandler},
-  {"CMSG_AUTH_REQUEST", NullHandler},
-  {"DMSG_AUTH_FAIL", NullHandler},
-  {"DMSG_AUTH_CHALLENGE", NullHandler},
-  {"CMSG_AUTH_RESPONSE", NullHandler},
-  {"DMSG_AUTH_SUCCESS", NullHandler},
-  {"CMSG_REGISTER_GET_FORM", NullHandler},
-  {"DMSG_REGISTER_FAIL", NullHandler},
-  {"DMSG_REGISTER_SEND_FORM", NullHandler},
-  {"CMSG_REGISTER_REQUEST", NullHandler},
-  {"DMSG_REGISTER_CHALLENGE", NullHandler},
-  {"CMSG_REGISTER_RESPONSE", NullHandler},
-  {"DMSG_REGISTER_SUCCESS", NullHandler},
-  {"SMSG_TOKEN_VALIDATE", NullHandler},
-  {"DMSG_TOKEN_VALIDATE", NullHandler}
+  {"MSG_HANDSHAKE", SESSION_INIT},
+  {"CMSG_AUTH_REQUEST", SESSION_INIT},
+  {"DMSG_AUTH_FAIL", SESSION_AUTH},
+  {"DMSG_AUTH_CHALLENGE", SESSION_AUTH},
+  {"CMSG_AUTH_RESPONSE", SESSION_AUTH},
+  {"DMSG_AUTH_SUCCESS", SESSION_AUTH},
+  {"CMSG_REGISTER_GET_FORM", SESSION_INIT},
+  {"DMSG_REGISTER_FAIL", SESSION_REG},
+  {"DMSG_REGISTER_SEND_FORM", SESSION_REG},
+  {"CMSG_REGISTER_REQUEST", SESSION_INIT},
+  {"DMSG_REGISTER_CHALLENGE", SESSION_REG},
+  {"CMSG_REGISTER_RESPONSE", SESSION_REG},
+  {"DMSG_REGISTER_SUCCESS", SESSION_REG},
+  {"SMSG_TOKEN_VALIDATE", SESSION_INIT},
+  {"DMSG_TOKEN_VALIDATE", SESSION_TOKEN}
 };
+
+bool HandleNull(Packet &packet)
+{
+  return true;
+}
+
+bool HandleHandshake(Packet &packet)
+{
+  return true;
+}
 
 class TCPServerListener : public TCPServerDataPendingListener
 {
@@ -53,8 +63,17 @@ public:
     tvPacketList& packets = peer->getPackets();
     for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
     {
-      unsigned int len;
-      unsigned char * data = (*itr).get(len);
+      uint16 opcode = (uint16)(*itr).first;
+      size_t len;
+      uint8* data = (uint8*)(*itr).second.get((unsigned int&)len);
+      if(opcode >= NUM_OPCODES)
+        sLog.outError("Unknown opcode %d", opcode);
+      else
+      {
+        sLog.outLog("received %s", opcodeTable[opcode].name);
+        Packet packet(data, len);
+//        (*opcodeTable[opcode].handler)(packet);
+      }
     }
     peer->flushPackets();
   }

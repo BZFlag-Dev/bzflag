@@ -40,12 +40,30 @@ enum Opcodes
   NUM_OPCODES
 };
 
+enum SessionTypes
+{
+  SESSION_INIT = 0,
+  SESSION_AUTH = 1,
+  SESSION_REG = 2,
+  SESSION_TOKEN = 3
+};
+
+enum PeerType
+{
+  PEER_ANY = 0,
+  PEER_CLIENT = 1,
+  PEER_SERVER = 2,
+  PEER_DAEMON = 3
+};
+
 class Packet
 {
 public:
   Packet(uint8 *data, size_t size) { init(data, size); }
   Packet(size_t size = 1024) { init(size); }
-  Packet(Packet & packet) { init(packet.getData(), packet.getSize()); }
+  Packet(Packet & packet) { init(packet.m_data, packet.m_size); }
+
+  ~Packet() { free(m_data); }
 
   template < class T >
   Packet& operator >> (T &x)
@@ -98,10 +116,20 @@ public:
     m_wpoz += size;
   }
 
-  operator bool() const { return m_rpoz <= m_size; }
+  bool read(uint8 *x, size_t size)
+  {
+    if(m_rpoz + size > m_size)
+    {
+      m_rpoz = m_size + 1;
+      return false;
+    }
 
-  uint8 *getData() const { return m_data; }
-  size_t getSize() const { return m_size; }
+    memcpy(x, m_data + m_rpoz, size);
+    m_rpoz += size;
+    return true;
+  }
+
+  operator bool() const { return m_rpoz <= m_size; }
 
 protected:
   void init(size_t size)
@@ -125,17 +153,41 @@ protected:
   size_t m_wpoz;
 };
 
-typedef bool (*PacketHandler)(Packet &packet);
-
-bool NullHandler(Packet &packet)
+class PacketHandler
 {
-  return true;
-}
+public:
+  typedef bool (PacketHandler::*PHFunc)(Packet &packet);
+  bool handle(Packet &packet);
+  bool handleNull(Packet &packet);
+};
+
+class InitPH : public PacketHandler
+{
+public:
+  typedef bool (InitPH::*PHFunc)(Packet &packet); 
+  bool handleHandshake(Packet &packet);
+  bool handleAuthRequest(Packet &packet);
+  bool handleRegisterGetForm(Packet &packet);
+  bool handleRegisterRequest(Packet &packet);
+};
+
+class AuthPH : public PacketHandler
+{
+public:
+  typedef bool (AuthPH::*PHFunc)(Packet &packet);
+  bool handleAuthResponse(Packet &packet);
+};
+
+class RegisterPH : public PacketHandler
+{
+public:
+  typedef bool (RegisterPH::*PHFunc)(Packet &packet);
+};
 
 struct OpcodeEntry
 {
   const char * name;
-  PacketHandler handler;
+  uint8 session;
 };
 
 extern OpcodeEntry opcodeTable[NUM_OPCODES];

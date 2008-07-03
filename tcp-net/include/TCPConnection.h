@@ -64,7 +64,8 @@ protected:
   unsigned int  size;
 };
 
-typedef std::vector<TCPPacket>  tvPacketList;
+typedef std::pair<unsigned int, TCPPacket> tvPacketPair;
+typedef std::vector<tvPacketPair> tvPacketList;
 
 class TCPClientConnection;
 
