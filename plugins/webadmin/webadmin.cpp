@@ -107,7 +107,7 @@ bool WebAdmin::loopCallback (const std::string &key)
   if (key == "players") {
     if (!loopPos) bz_getPlayerIndexList(&players);
     else if (loopPos < players.size()) {
-      templateVars["callsign"] = bz_getPlayerCallSign(players[loopPos++]);
+      templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
       return true;
     } else {
       players.clear();
