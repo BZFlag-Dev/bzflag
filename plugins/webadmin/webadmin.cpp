@@ -28,9 +28,13 @@ private:
   size_t loopPos;
   std::map<std::string,std::string> templateVars;
   
+  typedef void (WebAdmin::*page_callback)(const HTTPRequest &);
+  std::map<std::string,page_callback> controllers;
+  std::vector<std::string> pagenames;
+  
+  void mainPageCallback (const HTTPRequest &request);
+  
   bz_APIIntList players;
-
-  std::vector<std::string> pages;
 };
 
 WebAdmin *webAdmin = NULL;
@@ -59,12 +63,18 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 }
 
 WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
-{
-	pages.push_back("main");
-	pages.push_back("banlist");
-	pages.push_back("helpmsg");
-	pages.push_back("group");
+{  
 	registerVDir();
+	
+	// add new pages here
+	controllers["main"] = &WebAdmin::mainPageCallback;
+	controllers["banlist"] = NULL;
+	controllers["helpmsg"] = NULL;
+	controllers["group"] = NULL;
+	
+  std::map<std::string,page_callback>::iterator pair;
+  for(pair = controllers.begin(); pair != controllers.end(); pair++)
+    pagenames.push_back(pair->first);
 }
 
 
@@ -107,6 +117,7 @@ bool WebAdmin::loopCallback (const std::string &key)
   if (key == "players") {
     if (!loopPos) bz_getPlayerIndexList(&players);
     else if (loopPos < players.size()) {
+      templateVars["playerid"] = players[loopPos];
       templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
       return true;
     } else {
@@ -114,8 +125,8 @@ bool WebAdmin::loopCallback (const std::string &key)
       return loopPos = 0;
     }
   } else if (key == "navigation") {
-    if (loopPos < pages.size()) {
-      templateVars["pagename"] = pages[loopPos++];
+    if (loopPos < pagenames.size()) {
+      templateVars["pagename"] = pagenames[loopPos++];
       return true;
     } else return loopPos = 0;
   } else if (key == "permissions") {
@@ -136,7 +147,7 @@ bool WebAdmin::ifCallback (const std::string &key)
 
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
-  std::vector<std::string>::iterator page_iter;
+  std::map<std::string,page_callback>::iterator pair;
   size_t last;
   std::string pagename = request.resource;
 
@@ -145,17 +156,15 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case VERIFIED:
     last = pagename.size()-1;
     if (pagename[last] == '/') pagename.erase(last);
-    if (pagename == "") pagename = "main";
-    // std::map<std::string,controller>::iterator pair = controllers.find(pagename);
-		page_iter = std::find(pages.begin(), pages.end(), pagename);
-    // if (pair != controllers.end()) {
-    if (page_iter != pages.end()) {
-      // if (pair->second) (this->*(pair->second))(request);
+    if (pagename.empty()) pagename = "main";
+    pair = controllers.find(pagename);
+    if (pair != controllers.end()) {
+      (this->*pair->second)(request);
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
         reply.returnCode = HTTPReply::e500ServerError;
-        if (!templateSystem.processTemplateFile(reply.body, "505.tmpl"))
-          reply.body = format("Missing template: %s.tmpl", pagename.c_str());
-      }
+          if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
+            reply.body = format("Missing template: %s.tmpl", pagename.c_str());
+        }
     } else {
       reply.returnCode = HTTPReply::e404NotFound;
       if (!templateSystem.processTemplateFile(reply.body, "404.tmpl"))
@@ -173,6 +182,18 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   return true;
 }
 
+void WebAdmin::mainPageCallback(const HTTPRequest &request)
+{
+  if (request.request != ePost) return;
+  std::vector<std::string> players;
+  if (!request.getParam("kick", players)) return;
+  std::string reason;
+  bool notify = request.getParam("notify", reason);
+  request.getParam("reason", reason);
+  std::vector<std::string>::iterator i;
+  for (i = players.begin(); i != players.end(); i++)
+    bz_kickUser(atoi(i->c_str()), reason.c_str(), notify); // will atoi cause problems?
+}
 
 // Local Variables: ***
 // mode: C++ ***

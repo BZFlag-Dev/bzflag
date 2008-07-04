@@ -3,11 +3,13 @@
   <form action="" method="post">
     <ul>
 [*START Players]
-      <li><input type="checkbox" id="player_[$Callsign]"
-                 name="kick" value="[$Callsign]" />
-        <label for="player_[$Callsign]">[$Callsign]</label></li>
+      <li><input type="checkbox" id="player_[$PlayerID]"
+                 name="kick" value="[$PlayerID]" />
+        <label for="player_[$PlayerID]">[$Callsign]</label></li>
 [*END Players]
     </ul>
+    <input type="checkbox" name="notify" id="notify_kickee" value="yes" />
+    <input type="text" name="reason" id="kick_reason" />
     <input type="submit" value="kick" />
   </form>
 </body>
