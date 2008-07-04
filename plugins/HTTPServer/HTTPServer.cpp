@@ -53,7 +53,7 @@ bool RemoveVDir(void* param)
   return true;
 }
 
-int gennerateSessionID(void)
+int generateSessionID(void)
 {
   short s[2];
   s[0] = rand();
@@ -263,7 +263,7 @@ void HTTPServer::process(bz_EventData *eventData)
       HTTPConnection connection;
       connection.connectionID = connData->connectionID;
       connection.request = eUnknown;
-      connection.sessionID = gennerateSessionID();  // new ID in case they don't have one
+      connection.sessionID = generateSessionID();  // new ID in case they don't have one
 
       HTTPConnectionMap::iterator itr = liveConnections.find(connection.connectionID);
 
