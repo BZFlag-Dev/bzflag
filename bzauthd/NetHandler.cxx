@@ -19,21 +19,21 @@
 INSTANTIATE_SINGLETON(NetHandler);
 
 OpcodeEntry opcodeTable[NUM_OPCODES] = {
-  {"MSG_HANDSHAKE", SESSION_INIT},
-  {"CMSG_AUTH_REQUEST", SESSION_INIT},
-  {"DMSG_AUTH_FAIL", SESSION_AUTH},
-  {"DMSG_AUTH_CHALLENGE", SESSION_AUTH},
-  {"CMSG_AUTH_RESPONSE", SESSION_AUTH},
-  {"DMSG_AUTH_SUCCESS", SESSION_AUTH},
-  {"CMSG_REGISTER_GET_FORM", SESSION_INIT},
-  {"DMSG_REGISTER_FAIL", SESSION_REG},
-  {"DMSG_REGISTER_SEND_FORM", SESSION_REG},
-  {"CMSG_REGISTER_REQUEST", SESSION_INIT},
-  {"DMSG_REGISTER_CHALLENGE", SESSION_REG},
-  {"CMSG_REGISTER_RESPONSE", SESSION_REG},
-  {"DMSG_REGISTER_SUCCESS", SESSION_REG},
-  {"SMSG_TOKEN_VALIDATE", SESSION_INIT},
-  {"DMSG_TOKEN_VALIDATE", SESSION_TOKEN}
+  {"MSG_HANDSHAKE",             &PacketHandler::handleHandshake         },
+  {"CMSG_AUTH_REQUEST",         &PacketHandler::handleAuthRequest       },
+  {"DMSG_AUTH_FAIL",            &PacketHandler::handleInvalid           },
+  {"DMSG_AUTH_CHALLENGE",       &PacketHandler::handleInvalid           },
+  {"CMSG_AUTH_RESPONSE",        &PacketHandler::handleAuthResponse      },
+  {"DMSG_AUTH_SUCCESS",         &PacketHandler::handleInvalid           },
+  {"CMSG_REGISTER_GET_FORM",    &PacketHandler::handleRegisterGetForm   },
+  {"DMSG_REGISTER_FAIL",        &PacketHandler::handleInvalid           },
+  {"DMSG_REGISTER_SEND_FORM",   &PacketHandler::handleInvalid           },
+  {"CMSG_REGISTER_REQUEST",     &PacketHandler::handleRegisterRequest   },
+  {"DMSG_REGISTER_CHALLENGE",   &PacketHandler::handleInvalid           },
+  {"CMSG_REGISTER_RESPONSE",    &PacketHandler::handleNull              },
+  {"DMSG_REGISTER_SUCCESS",     &PacketHandler::handleInvalid           },
+  {"SMSG_TOKEN_VALIDATE",       &PacketHandler::handleNull              },
+  {"DMSG_TOKEN_VALIDATE",       &PacketHandler::handleInvalid           }
 };
 
 bool HandleNull(Packet &packet)
@@ -55,6 +55,7 @@ public:
 
   bool connect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer )
   {
+    handlerMap[peer] = new PacketHandler;
     return true;
   }
 
@@ -72,7 +73,11 @@ public:
       {
         sLog.outLog("received %s", opcodeTable[opcode].name);
         Packet packet(data, len);
-//        (*opcodeTable[opcode].handler)(packet);
+        PacketHandler *handler = handlerMap[peer];
+        if(handler)
+          (handler->*opcodeTable[opcode].handler)(packet);
+        else
+          sLog.outError("peer not found\n");
       }
     }
     peer->flushPackets();
@@ -80,9 +85,20 @@ public:
 
   void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
   {
-
+    HandlerMapType::iterator itr = handlerMap.find(peer);
+    if(itr != handlerMap.end())
+    {
+      delete itr->second;
+      handlerMap.erase(itr);
+    }
+    else
+      sLog.outError("peer not found\n");
   }
+
 private:
+  // TODO: rewrite all of this so that the packet handlers are stored in the peer class
+  typedef std::map<TCPServerConnectedPeer*, PacketHandler*> HandlerMapType;
+  HandlerMapType handlerMap;
 };
 
 NetHandler::NetHandler()

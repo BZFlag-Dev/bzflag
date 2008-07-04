@@ -45,7 +45,8 @@ enum SessionTypes
   SESSION_INIT = 0,
   SESSION_AUTH = 1,
   SESSION_REG = 2,
-  SESSION_TOKEN = 3
+  SESSION_TOKEN = 3,
+  NUM_SESSION_TYPES
 };
 
 enum PeerType
@@ -153,41 +154,66 @@ protected:
   size_t m_wpoz;
 };
 
+class Peer
+{
+public:
+};
+
+class Server : public Peer
+{
+public:
+};
+
+class Client : public Peer
+{
+public:
+};
+
+class Daemon : public Peer
+{
+public:
+};
+
+
+class Session
+{
+public:
+};
+
+class AuthSession : public Session
+{
+public:
+};
+
+class RegisterSession : public Session
+{
+public:
+};
+
 class PacketHandler
 {
 public:
-  typedef bool (PacketHandler::*PHFunc)(Packet &packet);
-  bool handle(Packet &packet);
-  bool handleNull(Packet &packet);
-};
+  PacketHandler() : m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
 
-class InitPH : public PacketHandler
-{
-public:
-  typedef bool (InitPH::*PHFunc)(Packet &packet); 
+  bool handleNull(Packet &packet);
+  bool handleInvalid(Packet &packet);
   bool handleHandshake(Packet &packet);
   bool handleAuthRequest(Packet &packet);
   bool handleRegisterGetForm(Packet &packet);
   bool handleRegisterRequest(Packet &packet);
-};
-
-class AuthPH : public PacketHandler
-{
-public:
-  typedef bool (AuthPH::*PHFunc)(Packet &packet);
   bool handleAuthResponse(Packet &packet);
+private:
+  Peer *m_peer;
+  AuthSession *m_authSession;
+  RegisterSession *m_regSession;
 };
 
-class RegisterPH : public PacketHandler
-{
-public:
-  typedef bool (RegisterPH::*PHFunc)(Packet &packet);
-};
+typedef bool (PacketHandler::*PHFunc)(Packet &packet);
 
 struct OpcodeEntry
 {
   const char * name;
-  uint8 session;
+  PHFunc handler;
 };
 
 extern OpcodeEntry opcodeTable[NUM_OPCODES];
