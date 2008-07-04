@@ -19,7 +19,7 @@ int lastRequestID = 1;
 
 BZ_GET_PLUGIN_VERSION
 
-bool RegisterVDir ( void* param )
+bool RegisterVDir(void* param)
 {
   BZFSHTTP *handler = (BZFSHTTP*)param;
   if (!handler)
@@ -31,12 +31,12 @@ bool RegisterVDir ( void* param )
 
   if (virtualDirs.find(name) != virtualDirs.end())
     return false;
-  
+
   virtualDirs[name] = handler;
   return true;
 }
 
-bool RemoveVDir ( void* param )
+bool RemoveVDir(void* param)
 {
   BZFSHTTP *handler = (BZFSHTTP*)param;
   if (!handler)
@@ -53,7 +53,7 @@ bool RemoveVDir ( void* param )
   return true;
 }
 
-int gennerateSessionID ( void )
+int gennerateSessionID(void)
 {
   short s[2];
   s[0] = rand();
@@ -65,11 +65,15 @@ int gennerateSessionID ( void )
 class HTTPConnection
 {
 public:
-  HTTPConnection() : connectionID(-1), requestComplete(false) 
-		     ,headerComplete(false), contentSize(0) 
-		     ,bodyEnd(0), request(eUnknown),sessionID(0){};
+  HTTPConnection() : connectionID(-1),
+		     requestComplete(false),
+		     headerComplete(false),
+		     contentSize(0),
+		     bodyEnd(0),
+		     request(eUnknown),
+		     sessionID(0) {};
 
-  void flush ( void )
+  void flush(void)
   {
     body = "";
     contentSize = 0;
@@ -83,7 +87,7 @@ public:
     header.clear();
   }
 
-  void update ( void );
+  void update(void);
 
   int connectionID;
 
@@ -103,7 +107,7 @@ public:
   std::string	    host;
   std::map<std::string, std::string> header;
 
-  void fillRequest ( HTTPRequest &req );
+  void fillRequest(HTTPRequest &req);
 
   class HTTPTask
   {
@@ -115,7 +119,7 @@ public:
 
     void generateBody (HTTPReply& r, bool noBody);
 
-    bool update ( int connectionID );
+    bool update(int connectionID);
 
     std::string page;
     size_t pos;
@@ -142,25 +146,25 @@ public:
   virtual ~HTTPServer();
 
   // BZFS callback methods
-  virtual void process ( bz_EventData *eventData );
-  virtual void pending ( int connectionID, void *d, unsigned int s );
-  virtual void disconnect ( int connectionID );
+  virtual void process(bz_EventData *eventData);
+  virtual void pending(int connectionID, void *d, unsigned int s);
+  virtual void disconnect(int connectionID);
 
 protected:
-  void update ( void );
+  void update(void);
 
-  void processRequest ( HTTPRequest &request, int connectionID );
+  void processRequest(HTTPRequest &request, int connectionID);
 
   HTTPConnectionMap liveConnections;
 
   std::string baseURL;
 
 private:
-  void send100Continue ( int connectionID );
-  void send403Error ( int connectionID );
-  void send404Error ( int connectionID );
-  void send501Error ( int connectionID );
-  void sendOptions ( int connectionID, bool p );
+  void send100Continue(int connectionID);
+  void send403Error(int connectionID);
+  void send404Error(int connectionID);
+  void send501Error(int connectionID);
+  void sendOptions(int connectionID, bool p);
 
   void generateIndex(int connectionID, const HTTPRequest &request);
   void generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
@@ -172,12 +176,11 @@ HTTPServer *server = NULL;
 std::string serverVersion;
 std::string serverHostname;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
 {
   registered = bz_callbackExists("RegisterHTTPDVDir");
 
-  if (!registered)
-  {
+  if (!registered) {
     if(server)
       delete(server);
     server = new HTTPServer;
@@ -194,23 +197,21 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
 
     registered = true;
     bz_debugMessage(4,"HTTPServer plug-in loaded");
-  }
-  else
+  } else {
     bz_debugMessage(1,"HTTPServer *WARNING* plug-in loaded more then once, this instance will not be used");
-
+  }
 
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
-  if (registered)
-  {
+  if (registered) {
     bz_removeCallBack("RegisterHTTPDVDir",&RegisterVDir);
     bz_removeCallBack("RemoveHTTPDVDir",&RemoveVDir);
 
     bz_removeEvent (bz_eTickEvent,server);
-    bz_removeEvent (bz_eNewNonPlayerConnection,server); 
+    bz_removeEvent (bz_eNewNonPlayerConnection,server);
   }
 
   if(server)
@@ -229,7 +230,7 @@ HTTPServer::HTTPServer()
     serverHostname = bz_getPublicAddr().c_str();
 
   // make sure it has the port
-  if ( strrchr(serverHostname.c_str(),':') == NULL )
+  if (strrchr(serverHostname.c_str(),':') == NULL)
     serverHostname += format(":%d",bz_getPublicPort());
 
   baseURL += serverHostname +"/";
@@ -240,17 +241,15 @@ HTTPServer::~HTTPServer()
 
 }
 
-void HTTPServer::process ( bz_EventData *eventData )
+void HTTPServer::process(bz_EventData *eventData)
 {
-  if ( eventData->eventType == bz_eTickEvent) 
-      update();
-  else
-  {
+  if (eventData->eventType == bz_eTickEvent) {
+    update();
+  } else {
     bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
     // log out the data if our level is high enough
-    if (bz_getDebugLevel() >= 4)
-    {
+    if (bz_getDebugLevel() >= 4) {
       char *temp = (char*)malloc(connData->size+1);
       memcpy(temp,connData->data,connData->size);
       temp[connData->size] = 0;
@@ -259,8 +258,7 @@ void HTTPServer::process ( bz_EventData *eventData )
     }
 
     // we go an accept everyone so that we can see if they are going to give us an HTTP command
-    if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, this ) )
-    {
+    if(bz_registerNonPlayerConnectionHandler(connData->connectionID, this)) {
       // record the connection
       HTTPConnection connection;
       connection.connectionID = connData->connectionID;
@@ -273,14 +271,14 @@ void HTTPServer::process ( bz_EventData *eventData )
 	liveConnections.erase(itr);	// something weird is happening here
 
       liveConnections[connection.connectionID] = connection;
-      
+
       // go and process any data they have and see what the deal is
-      pending ( connData->connectionID, (char*)connData->data, connData->size );
+      pending(connData->connectionID, (char*)connData->data, connData->size);
     }
   }
 }
 
-void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
+void HTTPServer::pending(int connectionID, void *d, unsigned int s)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
@@ -290,8 +288,7 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
   HTTPConnection &connection = itr->second;
 
   // grab the current data
-  if(d && s)
-  {
+  if(d && s) {
     char *t = (char*)malloc(s+1);
     memcpy(t,d,s);
     t[s] = 0;
@@ -300,15 +297,13 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
   }
 
   // see what our status is
-  if (!connection.request)
-  {
+  if (!connection.request) {
     std::stringstream stream(connection.currentData);
 
     std::string request, resource, httpVersion;
     stream >> request >> resource >> httpVersion;
 
-    if (request.size() && resource.size() && httpVersion.size())
-    {
+    if (request.size() && resource.size() && httpVersion.size()) {
       if (compare_nocase(request,"get") == 0)
 	connection.request = eGet;
       else if (compare_nocase(request,"head") == 0)
@@ -325,27 +320,23 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
 	connection.request = eOptions;
       else if (compare_nocase(request,"connect") == 0)
 	connection.request = eConnect;
-      else 
+      else
 	connection.request = eOther;
 
       if (httpVersion != "HTTP/1.1" && httpVersion != "HTTP/1.0")
 	bz_debugMessagef(1,"HTTPServer HTTP version of %s requested",httpVersion.c_str());
 
-      if (resource.size() > 1)
-      {
+      if (resource.size() > 1) {
 	size_t p = resource.find_first_of('/');
-	if (p != std::string::npos)
-	{
+	if (p != std::string::npos) {
 	  if (p == 0)
 	    p = resource.find_first_of('/',p+1);
 
-	  if (p == std::string::npos ) // there is only one / so the stuff after the slash in the vdir and the resource is NULL
-	  {
+	  if (p == std::string::npos) {
+	    // there is only one / so the stuff after the slash in the vdir and the resource is NULL
 	    connection.vdir.resize(resource.size()-1);
 	    std::copy(resource.begin()+1,resource.end(),connection.vdir.begin());
-	  }
-	  else
-	  {
+	  } else {
 	    connection.vdir.resize(p-1);
 	    std::copy(resource.begin()+1,resource.begin()+p,connection.vdir.begin());
 
@@ -357,25 +348,24 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
     }
   }
 
-  if (connection.request) // we know the type, so we can get the rest of the data or bail out
-  {
-    if (!connection.requestComplete && (connection.request == ePost ||connection.request == ePut) ) // if the request is a post, tell the client to send us the rest of the body
+  if (connection.request) {
+    // we know the type, so we can get the rest of the data or bail out
+    if (!connection.requestComplete &&
+	(connection.request == ePost || connection.request == ePut)) // if the request is a post, tell the client to send us the rest of the body
       send100Continue(connectionID);
 
     size_t headerEnd = find_first_substr(connection.currentData,"\r\n\r\n");
 
     std::string temp = connection.currentData.c_str()+headerEnd;
-  
-    if (!connection.headerComplete && headerEnd != std::string::npos)
-    {
+
+    if (!connection.headerComplete && headerEnd != std::string::npos) {
       bool done = false;  // ok we have the header and we don't haven't processed it yet
 
       // read past the command
       size_t p = find_first_substr(connection.currentData,"\r\n");
       p+= 2;
 
-      while ( p < headerEnd )
-      {
+      while (p < headerEnd) {
 	size_t p2 = find_first_substr(connection.currentData,"\r\n",p);
 
 	std::string line;
@@ -385,8 +375,7 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
 
 	trimLeadingWhitespace(line);
 	std::vector<std::string> headerLine = tokenize(line,":",2,false);
-	if ( headerLine.size() > 1)
-	{
+	if (headerLine.size() > 1) {
 	  std::string &key = headerLine[0];
 	  trimLeadingWhitespace(headerLine[1]);
 	  if (compare_nocase(key,"Host") == 0)
@@ -400,19 +389,15 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
       connection.headerComplete = true;
     }
 
-    if (connection.headerComplete && !connection.requestComplete)
-    {
+    if (connection.headerComplete && !connection.requestComplete) {
       connection.bodyEnd = headerEnd+4;
 
-      if (connection.request != ePost && connection.request != ePut)
+      if (connection.request != ePost && connection.request != ePut) {
 	connection.requestComplete = true; // there is nothing after the header we care about
-      else
-      {
-	if (connection.contentSize)
-	{
+      } else {
+	if (connection.contentSize) {
 	  headerEnd += 4;
-	  if (connection.currentData.size()-headerEnd >= connection.contentSize)
-	  {
+	  if (connection.currentData.size()-headerEnd >= connection.contentSize) {
 	    // read in that body!
 	    connection.body.resize(connection.currentData.size()-headerEnd);
 	    std::copy(connection.currentData.begin()+headerEnd,connection.currentData.end(),connection.body.end());
@@ -427,19 +412,15 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
     }
   }
 
-  if (connection.requestComplete)
-  {
+  if (connection.requestComplete) {
     // special, if it's a trace, just fire it back to them
-    if (connection.request == eTrace)
-    {
-      bz_sendNonPlayerData ( connectionID, connection.currentData.c_str(),(unsigned int)connection.bodyEnd);
+    if (connection.request == eTrace) {
+      bz_sendNonPlayerData(connectionID, connection.currentData.c_str(),(unsigned int)connection.bodyEnd);
 
       std::string nubby = connection.currentData.c_str()+connection.bodyEnd;
       connection.currentData = nubby;
       connection.flush();
-    }
-    else
-    {
+    } else {
       // parse it all UP and build up a complete request
       std::string nubby = connection.currentData.c_str()+connection.bodyEnd;
       connection.currentData = nubby;
@@ -457,7 +438,7 @@ void HTTPServer::pending ( int connectionID, void *d, unsigned int s )
   }
 }
 
-void HTTPServer::disconnect ( int connectionID )
+void HTTPServer::disconnect(int connectionID)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
@@ -465,17 +446,16 @@ void HTTPServer::disconnect ( int connectionID )
     liveConnections.erase(itr);
 }
 
-void HTTPServer::update ( void )
+void HTTPServer::update(void)
 {
   HTTPConnectionMap::iterator itr = liveConnections.begin();
 
-  while (itr != liveConnections.end())
-  {
+  while (itr != liveConnections.end()) {
     itr->second.update();
     itr++;
   }
 
-  if ( liveConnections.size())
+  if (liveConnections.size())
     bz_setMaxWaitTime(0.01f,"HTTPServer");
   else
     bz_clearMaxWaitTime("HTTPServer");
@@ -499,11 +479,10 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
 
   VirtualDirs::iterator dirItr = virtualDirs.begin();
 
-  while (dirItr != virtualDirs.end())
-  {
+  while (dirItr != virtualDirs.end()) {
     std::string vdirName = dirItr->second->getVDir();
     std::string vDirDescription = dirItr->second->getDescription();
-    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>"; 
+    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>";
     dirItr++;
   }
 
@@ -530,18 +509,17 @@ void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &req
   request.requestID = lastRequestID++;
   request.sessionID = connection.sessionID;
 
-  if (vdir->handleRequest(request,reply))
-  {
+  if (vdir->handleRequest(request,reply)) {
     reply.cookies["SessionID"] = format("%d",request.sessionID);
     connection.processingTasks.push_back(HTTPConnection::HTTPTask(reply,request.request == eHead));
-  }
-  else
+  } else {
     connection.pendingTasks.push_back(HTTPConnection::PendingHTTPTask(reply,request,request.request == eHead));
+  }
 
   connection.update();
 }
 
-void HTTPServer::processRequest (  HTTPRequest &request, int connectionID )
+void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
 {
   // check the request to see if it'll have any thing we care to process
 
@@ -554,67 +532,65 @@ void HTTPServer::processRequest (  HTTPRequest &request, int connectionID )
   if (itr != virtualDirs.end())
     vdir = itr->second;
 
-  switch(request.request)
-  {
-    case ePut:
-      if (!vdir || !vdir->supportPut())
-      {
-	send403Error(connectionID);
-	break;
-      }
-    case eHead:
-    case eGet:
-    case ePost:
-      if(!vdir)
-	generateIndex(connectionID,request);
-      else
-	generatePage(vdir,connectionID,request);
+  switch(request.request) {
+  case ePut:
+    if (!vdir || !vdir->supportPut())	{
+      send403Error(connectionID);
       break;
+    }
+  case eHead:
+  case eGet:
+  case ePost:
+    if(!vdir)
+      generateIndex(connectionID,request);
+    else
+      generatePage(vdir,connectionID,request);
+    break;
 
-    case eOptions:
-      sendOptions(connectionID, vdir ? vdir->supportPut() : false );
-      break;
+  case eOptions:
+    sendOptions(connectionID, vdir ? vdir->supportPut() : false);
+    break;
 
-    case eDelete:
-    case eConnect:
-      send501Error(connectionID);
-      break;
+  case eDelete:
+  case eConnect:
+    send501Error(connectionID);
+    break;
   }
 }
 
-void HTTPServer::send100Continue ( int connectionID )
+void HTTPServer::send100Continue(int connectionID)
 {
   std::string httpHeaders;
   httpHeaders += "HTTP/1.1 100 Continue\n\n";
 
-  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+  bz_sendNonPlayerData(connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void HTTPServer::send403Error ( int connectionID )
+void HTTPServer::send403Error(int connectionID)
 {
   std::string httpHeaders;
   httpHeaders += "HTTP/1.1 403 Forbidden\n\n";
 
-  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+  bz_sendNonPlayerData(connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void HTTPServer::send404Error ( int connectionID )
+void HTTPServer::send404Error(int connectionID)
 {
   std::string httpHeaders;
   httpHeaders += "HTTP/1.1 404 Not Found\n\n";
 
-  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+  bz_sendNonPlayerData(connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void HTTPServer::send501Error ( int connectionID )
+void HTTPServer::send501Error(int connectionID)
 {
   std::string httpHeaders;
   httpHeaders += "HTTP/1.1 501 Not Implemented\n\n";
 
-  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+  bz_sendNonPlayerData(connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void HTTPServer::sendOptions ( int connectionID, bool p )
+void HTTPServer::sendOptions(int connectionID, bool p)
 {
   std::string httpHeaders;
   httpHeaders += "HTTP/1.1 200 Ok\n";
@@ -623,42 +599,38 @@ void HTTPServer::sendOptions ( int connectionID, bool p )
     httpHeaders += ", PUT";
   httpHeaders += "\n\n";
 
-  bz_sendNonPlayerData ( connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
+  bz_sendNonPlayerData(connectionID, httpHeaders.c_str(), (unsigned int)httpHeaders.size());
 }
 
-void parseParams ( std::map<std::string, std::vector<std::string> > &params, const std::string &text, size_t offset )
+void parseParams(std::map<std::string, std::vector<std::string> > &params, const std::string &text, size_t offset)
 {
   std::vector<std::string> items = tokenize(text,"&",0,false,offset);
 
   for (size_t i = 0; i < items.size(); i++)
-  {
-    std::string &item = items[i];
+    {
+      std::string &item = items[i];
 
-    std::string key,val;
+      std::string key,val;
 
-   std::vector<std::string> t = tokenize(item,"=",0,false);
-   if (t.size() > 1)
-   {
-     key = t[0];
-     val = t[1];
-   }
-   else
-   {
-     key = item;
-     val = "";
-   } 
-   
-   if (params.find(key) == params.end())
-   {
-     std::vector<std::string> tv;
-     params[key] = tv;
-   }
-   params[key].push_back(val);
+      std::vector<std::string> t = tokenize(item,"=",0,false);
+      if (t.size() > 1) {
+	key = t[0];
+	val = t[1];
+      } else {
+	key = item;
+	val = "";
+      }
 
-  }
+      if (params.find(key) == params.end()) {
+	std::vector<std::string> tv;
+	params[key] = tv;
+      }
+      params[key].push_back(val);
+
+    }
 }
 
-void HTTPConnection::fillRequest ( HTTPRequest &req )
+void HTTPConnection::fillRequest(HTTPRequest &req)
 {
   req.request = request;
   req.vdir = url_decode(vdir);
@@ -672,37 +644,29 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
   // parse the headers here for cookies
   std::map<std::string,std::string>::iterator itr = req.headers.begin();
 
-  while (itr != req.headers.end())
-  {
+  while (itr != req.headers.end()) {
     const std::string &key = itr->first;
-    if (compare_nocase(key,"cookie") == 0)
-    {
+    if (compare_nocase(key,"cookie") == 0) {
       std::vector<std::string> cookie = tokenize(itr->second,"=",2,false);
 
-      if (cookie.size() > 1)
-      {
+      if (cookie.size() > 1) {
 	req.cookies[cookie[0]] = cookie[1];
 
 	// check for the magic sessionID cookie
 	if (compare_nocase(cookie[0],"sessionid") == 0)
 	  sessionID = atoi(cookie[1].c_str());
       }
-    }
-    else if (compare_nocase(key,"authorization") == 0)
-    {
+    } else if (compare_nocase(key,"authorization") == 0) {
       std::vector<std::string> auth = tokenize(itr->second," ",2,false);
 
-      if (auth.size() > 1)
-      {
+      if (auth.size() > 1) {
 	req.authType = auth[0];
 	req.authCredentials = auth[1];
 
-	if (compare_nocase(auth[0],"basic") == 0 && auth[1].size())
-	{
+	if (compare_nocase(auth[0],"basic") == 0 && auth[1].size()) {
 	  std::string b64 = base64_decode(auth[1]);
 	  std::vector<std::string> uandp = tokenize(b64,":",2,false);
-	  if (uandp.size() == 2)
-	  {
+	  if (uandp.size() == 2) {
 	    req.username = uandp[0];
 	    req.password = uandp[1];
 	  }
@@ -713,34 +677,31 @@ void HTTPConnection::fillRequest ( HTTPRequest &req )
     itr++;
   }
 
-  if (req.request != ePost )
-  {
+  if (req.request != ePost) {
     // parse out the parameters from the resource
     size_t q = req.resource.find_first_of('?');
     if (q != std::string::npos)
       parseParams(req.parameters,req.resource,q+1);
   }
-  
+
   if (req.request == ePost && contentSize > 0)
     parseParams(req.parameters,body,0);
   else if (req.request == ePut &&contentSize > 0)
     req.body = body;
 }
 
-void HTTPConnection::update ( void )
+void HTTPConnection::update(void)
 {
   // hit the processings
   std::vector<size_t> killList;
 
-  for (size_t i = 0; i < processingTasks.size(); i++ )
-  {
+  for (size_t i = 0; i < processingTasks.size(); i++) {
     if (processingTasks[i].update(connectionID))
       killList.push_back(i);
   }
 
   std::vector<size_t>::reverse_iterator itr = killList.rbegin();
-  while (itr != killList.rend())
-  {
+  while (itr != killList.rend()) {
     size_t offset = *itr;
     processingTasks.erase(processingTasks.begin()+offset);
     itr++;
@@ -748,8 +709,7 @@ void HTTPConnection::update ( void )
 
   // check the pending to see if they should be restarted
   std::vector<PendingHTTPTask>::iterator pendingItr = pendingTasks.begin();
-  while (pendingTasks.size() && pendingItr != pendingTasks.end())
-  {
+  while (pendingTasks.size() && pendingItr != pendingTasks.end()) {
     PendingHTTPTask &pendingTask = *pendingItr;
 
     BZFSHTTP *vdir = NULL;
@@ -759,19 +719,15 @@ void HTTPConnection::update ( void )
     if (itr != virtualDirs.end())
       vdir = itr->second;
 
-    if (!vdir)
-    {
+    if (!vdir) {
       std::vector<PendingHTTPTask>::iterator t = pendingItr;
       t++;
       pendingTasks.erase(pendingItr);
       pendingItr = t;
-    }
-    else
-    {
-      if (vdir->resumeTask(pendingTask.request.requestID))
-      {
-	if (vdir->handleRequest(pendingTask.request,pendingTask.reply)) // if it is done and fire if off
-	{
+    } else {
+      if (vdir->resumeTask(pendingTask.request.requestID)) {
+	if (vdir->handleRequest(pendingTask.request,pendingTask.reply)) {
+	  // if it is done and fire if off
 	  pendingTask.reply.cookies["SessionID"] = format("%d",pendingTask.request.sessionID);
 	  pendingTask.generateBody(pendingTask.reply,pendingTask.request.request == eHead);
 	  processingTasks.push_back(HTTPTask(pendingTask));
@@ -780,31 +736,30 @@ void HTTPConnection::update ( void )
 	  t++;
 	  pendingTasks.erase(pendingItr);
 	  pendingItr = t;
-	}
-	else
+	} else {
 	  pendingItr++;
-      }
-      else
+	}
+      } else {
 	pendingItr++;
+      }
     }
   }
 }
 
-const char* getMimeType ( HTTPReply::DocumentType docType )
+const char* getMimeType(HTTPReply::DocumentType docType)
 {
-  switch(docType) 
-  {
-    case HTTPReply::eOctetStream:
-      return "application/octet-stream";
+  switch(docType) {
+  case HTTPReply::eOctetStream:
+    return "application/octet-stream";
 
-    case HTTPReply::eBinary:
-      return "application/binary";
+  case HTTPReply::eBinary:
+    return "application/binary";
 
-    case HTTPReply::eHTML:
-      return "text/html";
+  case HTTPReply::eHTML:
+    return "text/html";
 
-    default:
-      break;
+  default:
+    break;
   }
   return "text/plain";
 }
@@ -819,20 +774,18 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   // start a new one
   page = "HTTP/1.1";
 
-  switch(r.returnCode)
-  {
+  switch(r.returnCode) {
   case HTTPReply::e200OK:
     page += " 200 OK\n";
     break;
 
   case HTTPReply::e301Redirect:
-    if (r.redirectLoc.size())
-    {
+    if (r.redirectLoc.size()) {
       page += " 301 Moved Permanently\n";
       page += "Location: " + r.redirectLoc + "\n";
-    }
-    else
+    } else {
       page += " 500 Server Error\n";
+    }
     break;
 
   case HTTPReply::e500ServerError:
@@ -845,7 +798,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
     if (r.authType.size())
       page += r.authType;
-    else 
+    else
       page += "Basic";
 
     page += " realm=\"";
@@ -868,10 +821,9 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   if (r.returnCode != HTTPReply::e200OK)
     page += "Connection: close\n";
   else if (FORCE_CLOSE)
-   page += "Connection: close\n";
+    page += "Connection: close\n";
 
-  if (r.body.size())
-  {
+  if (r.body.size()) {
     page += format("Content-Length: %d\n", r.body.size());
 
     page += "Content-Type: ";
@@ -891,7 +843,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
   // dump the basic stat block
   page += "Server: " + serverVersion + "\n";
- 
+
   bz_Time ts;
   bz_getUTCtime (&ts);
   page += "Date: ";
@@ -901,17 +853,14 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   // dump the headers
   std::map<std::string,std::string>::iterator itr = r.headers.begin();
 
-  while (itr != r.headers.end())
-  {
+  while (itr != r.headers.end()) {
     page += itr->first + ": " + itr->second = "\n";
     itr++;
   }
 
-  if (r.returnCode == HTTPReply::e200OK)
-  {
+  if (r.returnCode == HTTPReply::e200OK) {
     itr = r.cookies.begin();
-    while (itr != r.cookies.end())
-    {
+    while (itr != r.cookies.end()) {
       page += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
       itr++;
     }
@@ -929,13 +878,13 @@ HTTPConnection::HTTPTask::HTTPTask(const HTTPTask& t)
   pos = t.pos;
 }
 
-bool HTTPConnection::HTTPTask::update ( int connectionID )
+bool HTTPConnection::HTTPTask::update(int connectionID)
 {
   // find out how much to write
   if (pos >= page.size())
     return true;
 
-  // only send out another message if the buffer is nearing being empty, so we don't flood it out and 
+  // only send out another message if the buffer is nearing being empty, so we don't flood it out and
   // waste a lot of extra memory.
   int pendingMessages =  bz_getNonPlayerConnectionOutboundPacketCount(connectionID);
   if (pendingMessages > 1)
@@ -944,10 +893,10 @@ bool HTTPConnection::HTTPTask::update ( int connectionID )
   size_t write = page.size();
   size_t left = write-pos;
 
-  if ( left > 1000)
+  if (left > 1000)
     write = pos + 1000;
 
-  if ( !bz_sendNonPlayerData (connectionID, page.c_str()+pos, (unsigned int)write))
+  if (!bz_sendNonPlayerData (connectionID, page.c_str()+pos, (unsigned int)write))
     return true;
 
   pos += write;
