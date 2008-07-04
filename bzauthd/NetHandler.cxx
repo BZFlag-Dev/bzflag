@@ -36,15 +36,90 @@ OpcodeEntry opcodeTable[NUM_OPCODES] = {
   {"DMSG_TOKEN_VALIDATE",       &PacketHandler::handleInvalid           }
 };
 
-bool HandleNull(Packet &packet)
+bool PacketHandler::handleInvalid(Packet &packet)
 {
+  sLog.outError("received an invalid opcode %s (%d)", packet.getOpcodeName(), packet.getOpcode());
   return true;
 }
 
-bool HandleHandshake(Packet &packet)
+bool PacketHandler::handleNull(Packet &packet)
 {
+  sLog.outDebug("received an unhandled opcode %s (%d)", packet.getOpcodeName(), packet.getOpcode());
   return true;
 }
+
+bool PacketHandler::handleHandshake(Packet &packet)
+{
+  uint8 peerType;
+  uint16 protoVersion;
+  if(packet >> peerType >> protoVersion) return false;
+
+  switch (peerType) {
+    case PEER_CLIENT: {
+      sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
+      uint32 cliVersion;
+      uint8 commType;
+      if(packet >> cliVersion >> commType) return false;
+      sLog.outLog("handshake successful for client (%d), requesting comm type %d", cliVersion, commType);
+      switch (commType) {
+        case 0: // auth
+          if(m_authSession)
+            sLog.outError("handshake: auth session already in progress");
+          else
+            m_authSession = new AuthSession;
+          break;
+        case 1: // register get form
+          break;
+        case 2: // register
+          if(m_regSession)
+            sLog.outError("handshake: register session already in progress");
+          else
+            m_regSession = new RegisterSession;
+          break;
+        default:
+          sLog.outError("handshake: invalid commType received : %d", commType);
+          return false;
+      }
+    } break;
+    case PEER_SERVER: {
+      sLog.outLog("received %s: server using protocol %d", packet.getOpcodeName(), protoVersion);
+    } break;
+    case PEER_DAEMON: {
+      sLog.outLog("received %s: daemon using protocol %d", packet.getOpcodeName(), protoVersion);
+    } break;
+    default: {
+      sLog.outError("received %s: unknown peer type %d", packet.getOpcodeName());
+      return false;
+    }
+  }
+  return true;
+}
+
+bool PacketHandler::handleAuthRequest(Packet &packet)
+{
+  
+  return true;
+}
+
+bool PacketHandler::handleAuthResponse(Packet &packet)
+{
+  
+  return true;
+}
+
+
+bool PacketHandler::handleRegisterGetForm(Packet &packet)
+{
+  
+  return true;
+}
+
+bool PacketHandler::handleRegisterRequest(Packet &packet)
+{
+  
+  return true;
+}
+
 
 class TCPServerListener : public TCPServerDataPendingListener
 {
@@ -71,11 +146,13 @@ public:
         sLog.outError("Unknown opcode %d", opcode);
       else
       {
-        sLog.outLog("received %s", opcodeTable[opcode].name);
-        Packet packet(data, len);
+        Packet packet(opcode, data, len);
         PacketHandler *handler = handlerMap[peer];
         if(handler)
-          (handler->*opcodeTable[opcode].handler)(packet);
+        {
+          if(!(handler->*opcodeTable[opcode].handler)(packet))
+            sLog.outError("received %s: invalid packet format (length: %d)", packet.getOpcodeName(), len);
+        }
         else
           sLog.outError("peer not found\n");
       }

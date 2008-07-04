@@ -54,15 +54,83 @@ enum PeerType
   PEER_ANY = 0,
   PEER_CLIENT = 1,
   PEER_SERVER = 2,
-  PEER_DAEMON = 3
+  PEER_DAEMON = 3,
+  NUM_PEER_TYPES
 };
+
+class Peer
+{
+public:
+};
+
+class Server : public Peer
+{
+public:
+};
+
+class Client : public Peer
+{
+public:
+};
+
+class Daemon : public Peer
+{
+public:
+};
+
+
+class Session
+{
+public:
+};
+
+class AuthSession : public Session
+{
+public:
+};
+
+class RegisterSession : public Session
+{
+public:
+};
+
+class Packet;
+
+class PacketHandler
+{
+public:
+  PacketHandler() : m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
+  ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
+
+  bool handleNull(Packet &packet);
+  bool handleInvalid(Packet &packet);
+  bool handleHandshake(Packet &packet);
+  bool handleAuthRequest(Packet &packet);
+  bool handleRegisterGetForm(Packet &packet);
+  bool handleRegisterRequest(Packet &packet);
+  bool handleAuthResponse(Packet &packet);
+private:
+  Peer *m_peer;
+  AuthSession *m_authSession;
+  RegisterSession *m_regSession;
+};
+
+typedef bool (PacketHandler::*PHFunc)(Packet &packet);
+
+struct OpcodeEntry
+{
+  const char * name;
+  PHFunc handler;
+};
+
+extern OpcodeEntry opcodeTable[NUM_OPCODES];
 
 class Packet
 {
 public:
-  Packet(uint8 *data, size_t size) { init(data, size); }
-  Packet(size_t size = 1024) { init(size); }
-  Packet(Packet & packet) { init(packet.m_data, packet.m_size); }
+  Packet(uint16 opcode, uint8 *data, size_t size) { init(data, size, opcode); }
+  Packet(uint16 opcode, size_t size = 1024) { init(size, opcode); }
+  Packet(Packet & packet) { init(packet.m_data, packet.m_size, packet.m_opcode); }
 
   ~Packet() { free(m_data); }
 
@@ -132,91 +200,32 @@ public:
 
   operator bool() const { return m_rpoz <= m_size; }
 
+  uint16 getOpcode() const { return m_opcode; }
+  const char *getOpcodeName() const { return opcodeTable[getOpcode()].name; }
+
 protected:
-  void init(size_t size)
+  void init(size_t size, uint16 opcode)
   {
     m_data = (uint8*)malloc(size);
     m_size = size;
     m_rpoz = 0;
     m_wpoz = 0;
+    m_opcode = opcode;
   }
 
-  void init(uint8 *data, size_t size)
+  void init(uint8 *data, size_t size, uint16 opcode)
   {
-    init(size);
+    init(size, opcode);
     memcpy(m_data, data, size);
     m_wpoz = size;
   }
 
+  uint16 m_opcode;
   uint8 *m_data;
   size_t m_size;
   size_t m_rpoz;
   size_t m_wpoz;
 };
-
-class Peer
-{
-public:
-};
-
-class Server : public Peer
-{
-public:
-};
-
-class Client : public Peer
-{
-public:
-};
-
-class Daemon : public Peer
-{
-public:
-};
-
-
-class Session
-{
-public:
-};
-
-class AuthSession : public Session
-{
-public:
-};
-
-class RegisterSession : public Session
-{
-public:
-};
-
-class PacketHandler
-{
-public:
-  PacketHandler() : m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
-
-  bool handleNull(Packet &packet);
-  bool handleInvalid(Packet &packet);
-  bool handleHandshake(Packet &packet);
-  bool handleAuthRequest(Packet &packet);
-  bool handleRegisterGetForm(Packet &packet);
-  bool handleRegisterRequest(Packet &packet);
-  bool handleAuthResponse(Packet &packet);
-private:
-  Peer *m_peer;
-  AuthSession *m_authSession;
-  RegisterSession *m_regSession;
-};
-
-typedef bool (PacketHandler::*PHFunc)(Packet &packet);
-
-struct OpcodeEntry
-{
-  const char * name;
-  PHFunc handler;
-};
-
-extern OpcodeEntry opcodeTable[NUM_OPCODES];
 
 class NetHandler : public Singleton<NetHandler>
 {
