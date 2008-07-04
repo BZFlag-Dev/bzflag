@@ -2,18 +2,18 @@
 //
 
 #include <map>
+#include <string>
+#include <sstream>
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
-#include <string>
-#include <sstream>
 
 BZ_GET_PLUGIN_VERSION
 
 class Fastmap : public BZFSHTTP, public bz_EventHandler
 {
 public:
-  Fastmap(): BZFSHTTP(),mapData(NULL),mapDataSize(0){registerVDir();}
+  Fastmap(): BZFSHTTP(), mapData(NULL), mapDataSize(0) { registerVDir(); }
   virtual ~Fastmap()
   {
     if (mapData)
@@ -21,23 +21,20 @@ public:
     mapData = NULL;
   };
 
-  virtual const char * getVDir ( void ){return "fastmap";}
+  virtual const char * getVDir(void) { return "fastmap"; }
 
-  virtual bool handleRequest ( const HTTPRequest &request, HTTPReply &reply )
+  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply)
   {
     reply.returnCode = HTTPReply::e200OK;
     reply.docType = HTTPReply::eOctetStream;
 
-    if (mapData && mapDataSize)
-    {
+    if (mapData && mapDataSize) {
       reply.md5 = md5;
       reply.body.resize(mapDataSize);
-     
+
       std::stringstream stream(reply.body);
       stream.write(mapData,(std::streamsize)mapDataSize);
-    }
-    else
-    {
+    } else {
       reply.body = "404 Fastmap not Valid";
       reply.returnCode = HTTPReply::e404NotFound;
     }
@@ -47,8 +44,7 @@ public:
 
   virtual void process(bz_EventData * eventData)
   {
-    if (eventData->eventType == bz_eWorldFinalized)
-    {
+    if (eventData->eventType == bz_eWorldFinalized) {
       if (mapData)
 	free(mapData);
 
@@ -63,8 +59,7 @@ public:
 	return;
 
       mapData = (char *) malloc(mapDataSize);
-      if (!mapData)
-      {
+      if (!mapData) {
 	mapDataSize = 0;
 	return;
       }
@@ -85,7 +80,7 @@ public:
 
 Fastmap *server = NULL;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
 {
   bz_debugMessage(4,"Fastmap plugin loaded");
   if(server)
@@ -98,7 +93,7 @@ BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
   bz_removeEvent(bz_eWorldFinalized, server);
 
