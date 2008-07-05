@@ -30,8 +30,8 @@ public:
   friend class RSAManager;
   RSAKey();
   virtual ~RSAKey();
-  bool setValues(uint8 *n, size_t n_len, uint32 e);
-  bool getValues(uint8 *&n, size_t &n_len, uint32 &e);
+  bool setValues(uint8 *n, size_t n_len, uint16 e);
+  bool getValues(uint8 *&n, size_t &n_len, uint16 &e);
   virtual RSAKeyType getType() = 0;
 protected:
   uint8 *_getValueN(size_t *n_len);
@@ -68,6 +68,7 @@ public:
   bool generateKeyPair();
   RSAPublicKey &getPublicKey() { return publicKey; }
   RSASecretKey &getSecretKey() { return secretKey; }
+  void rsaFree(void *memory);
 
 private:
   gcry_ac_handle_t _getHandle() { return rsaHandle; }

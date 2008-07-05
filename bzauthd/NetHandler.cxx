@@ -15,6 +15,8 @@
 #include "../tcp-net/include/TCPConnection.h"
 #include "Config.h"
 #include "Log.h"
+#include "RSA.h"
+#include <sstream>
 
 INSTANTIATE_SINGLETON(NetHandler);
 
@@ -60,24 +62,13 @@ bool PacketHandler::handleHandshake(Packet &packet)
       uint32 cliVersion;
       uint8 commType;
       if(packet >> cliVersion >> commType) return false;
-      sLog.outLog("handshake successful for client (%d), requesting comm type %d", cliVersion, commType);
+      sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
       switch (commType) {
-        case 0: // auth
-          if(m_authSession)
-            sLog.outError("handshake: auth session already in progress");
-          else
-            m_authSession = new AuthSession;
-          break;
-        case 1: // register get form
-          break;
-        case 2: // register
-          if(m_regSession)
-            sLog.outError("handshake: register session already in progress");
-          else
-            m_regSession = new RegisterSession;
-          break;
+        case 0: return handleAuthRequest(packet);
+        case 1: return handleRegisterGetForm(packet);
+        case 2: return handleRegisterRequest(packet);
         default:
-          sLog.outError("handshake: invalid commType received : %d", commType);
+          sLog.outError("Handshake: invalid commType received : %d", commType);
           return false;
       }
     } break;
@@ -92,18 +83,54 @@ bool PacketHandler::handleHandshake(Packet &packet)
       return false;
     }
   }
-  return true;
+  return true;    // this point is never actually reached
 }
 
 bool PacketHandler::handleAuthRequest(Packet &packet)
 {
-  
+  if(m_authSession)
+  {
+    sLog.outError("AuthRequest: auth session already in progress");
+    return true;
+  }
+  else
+    m_authSession = new AuthSession;
+
+  uint8 *key_n;
+  uint16 e;
+  size_t n_len;
+  sRSAManager.getPublicKey().getValues(key_n, n_len, e);
+
+  Packet challenge(DMSG_AUTH_CHALLENGE, 4+n_len);
+  challenge << (uint16)n_len;
+  challenge.append(key_n, n_len);
+  challenge << (uint16)e;
+
+  free(key_n);
   return true;
 }
 
 bool PacketHandler::handleAuthResponse(Packet &packet)
 {
-  
+  if(!m_authSession)
+  {
+    sLog.outError("AuthResponse: no auth session started");
+    return true;
+  }
+
+  uint16 cipher_len;
+  packet >> cipher_len;
+  uint8 *cipher = new uint8[cipher_len+1];
+  packet.read(cipher, cipher_len);
+
+  uint8 *message;
+  size_t message_len;
+  sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
+
+
+
+  sRSAManager.rsaFree(message);
+  delete[] cipher;
   return true;
 }
 
@@ -116,7 +143,10 @@ bool PacketHandler::handleRegisterGetForm(Packet &packet)
 
 bool PacketHandler::handleRegisterRequest(Packet &packet)
 {
-  
+  if(m_regSession)
+    sLog.outError("RegisterRequest: register session already in progress");
+  else
+    m_regSession = new RegisterSession;
   return true;
 }
 

@@ -63,7 +63,7 @@ int RSAKey::_getValueE()
   return *(int*)buf;
 }
 
-bool RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
+bool RSAKey::setValues(uint8 *n, size_t n_len, uint16 e)
 {
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
@@ -127,7 +127,7 @@ bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, si
   return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, key, &io_cipher, &io_message) == 0;
 }
 
-bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
+bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint16 &e)
 {
   assert(key);
   n = _getValueN(&n_len);
@@ -191,6 +191,11 @@ bool RSAManager::generateKeyPair()
   publicKey._setKey(public_key);
   secretKey._setKey(secret_key);
   return ret == 0;
+}
+
+void RSAManager::rsaFree(void *memory)
+{
+  gcry_free(memory);
 }
 
 // Local Variables: ***
