@@ -19,7 +19,7 @@
 #define	__HUDUISCROLLLIST_H__
 
 // ancestor class
-#include "HUDuiControl.h"
+#include "HUDuiNestedContainer.h"
 
 #include "HUDuiLabel.h"
 #include "HUDuiScrollListItem.h"
@@ -30,7 +30,7 @@
 
 #include "BzfEvent.h"
 
-class HUDuiScrollList : public HUDuiControl {
+class HUDuiScrollList : public HUDuiNestedContainer {
   public:
       HUDuiScrollList();
       ~HUDuiScrollList();

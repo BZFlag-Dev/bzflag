@@ -29,12 +29,12 @@
 // HUDuiScrollList
 //
 
-HUDuiScrollList::HUDuiScrollList() : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(false), pageLabel(NULL)
+HUDuiScrollList::HUDuiScrollList() : HUDuiNestedContainer(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(false), pageLabel(NULL)
 {
-  // do nothing
+  showFocus(false);
 }
 
-HUDuiScrollList::HUDuiScrollList(bool paged) : HUDuiControl(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(paged), pageLabel(new HUDuiLabel)
+HUDuiScrollList::HUDuiScrollList(bool paged) : HUDuiNestedContainer(), index(-1), visiblePosition(0), numVisibleItems(1), pagedList(paged), pageLabel(new HUDuiLabel)
 {
   // do nothing
 }
@@ -85,6 +85,11 @@ void HUDuiScrollList::setSelected(int _index)
   }
 
   index = _index;
+
+  std::list<HUDuiScrollListItem*>::iterator it;
+  it = items.begin();
+  std::advance(it, index);
+  getNav().set(*it);
 }
 
 // Add a new item to our scrollable list
@@ -94,6 +99,7 @@ void HUDuiScrollList::addItem(HUDuiLabel* item)
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   items.push_back(newItem);
+  addControl(newItem);
   update();
 }
 
@@ -104,6 +110,7 @@ void HUDuiScrollList::addItem(std::string item)
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   items.push_back(newItem);
+  addControl(newItem);
   update();
 }
 
@@ -261,6 +268,10 @@ void HUDuiScrollList::doRender()
       item->setFontSize(getFontSize());
       item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
       //item->setDarker(i != getSelected());
+      if (i == getSelected())
+      {
+	item->showFocus(true);
+      }
       item->render();
       std::advance(it, 1);
     }
