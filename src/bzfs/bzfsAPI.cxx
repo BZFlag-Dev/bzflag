@@ -1259,6 +1259,16 @@ BZF_API const char* bz_getPlayerCallsign( int playerID )
   return player->player.getCallSign();
 }
 
+BZF_API const char* bz_getPlayerIPAddress( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return NULL;
+
+  return player->netHandler->getTargetIP();
+}
+
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
