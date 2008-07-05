@@ -33,6 +33,7 @@ private:
   std::vector<std::string> pagenames;
   
   void mainPageCallback (const HTTPRequest &request);
+  void WebAdmin::banlistPageCallback (const HTTPRequest &request);
   
   bz_APIIntList players;
 };
@@ -68,7 +69,7 @@ WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
 	
 	// add new pages here
 	controllers["main"] = &WebAdmin::mainPageCallback;
-	controllers["banlist"] = NULL;
+	controllers["banlist"] = &WebAdmin::banlistPageCallback;
 	controllers["helpmsg"] = NULL;
 	controllers["group"] = NULL;
 	
@@ -182,17 +183,50 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   return true;
 }
 
-void WebAdmin::mainPageCallback(const HTTPRequest &request)
+void WebAdmin::mainPageCallback (const HTTPRequest &request)
 {
   if (request.request != ePost) return;
   std::vector<std::string> players;
-  if (!request.getParam("kick", players)) return;
-  std::string reason;
-  bool notify = request.getParam("notify", reason);
+  if (!request.getParam("players", players)) return;
+  std::string dummy, reason;
+  bool notify = request.getParam("notify", dummy);
   request.getParam("reason", reason);
   std::vector<std::string>::iterator i;
-  for (i = players.begin(); i != players.end(); i++)
-    bz_kickUser(atoi(i->c_str()), reason.c_str(), notify); // will atoi cause problems?
+  if (request.getParam("kick", dummy))
+    for (i = players.begin(); i != players.end(); i++)
+      bz_kickUser(atoi(i->c_str()), reason.c_str(), notify);
+  else if (request.getParam("ipban", players)) {
+    request.getParam("duration", dummy);
+    int duration = atoi(dummy.c_str());
+    for (i = players.begin(); i != players.end(); i++) {
+      int playerID = atoi(i->c_str());
+      bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+      bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, reason.c_str());
+    }
+  }
+  else if (request.getParam("idban", players)) {
+    request.getParam("duration", dummy);
+    int duration = atoi(dummy.c_str());
+    for (i = players.begin(); i != players.end(); i++) {
+      int playerID = atoi(i->c_str());
+      bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+      bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, reason.c_str());
+    }
+  }
+}
+
+void WebAdmin::banlistPageCallback (const HTTPRequest &request)
+{
+  if (request.request != ePost) return;
+  std::vector<std::string> banRemovals;
+  std::vector<std::string>::iterator i;
+  if (request.getParam("delip", banRemovals))
+    for(i = banRemovals.begin(); i != banRemovals.end(); i++)
+      bz_IPUnbanUser(i->c_str());
+  if (request.getParam("delid", banRemovals))
+    for(i = banRemovals.begin(); i != banRemovals.end(); i++)
+      bz_IDUnbanUser(i->c_str());
+  
 }
 
 // Local Variables: ***
