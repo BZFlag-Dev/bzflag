@@ -519,8 +519,8 @@ public:
     firingInfo.shotType = player->effectiveShotType;
 
     const PlayerInfo &shooter = player->player;
-    if (!shooter.isAlive() || shooter.isObserver())
-      return true;
+    //    if (!shooter.isAlive() || shooter.isObserver())
+    //      return true;
 
     FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
 
@@ -558,7 +558,8 @@ public:
     Vector3 muzzleOffset = player->getMuzzleOffset();
 
     Matrix34 mat;
-    mat.rotate2d(toDeg(drInfo.rot),Vector3());
+    float facingAngle = toDeg(atan2(firingInfo.shot.vel[1], firingInfo.shot.vel[0]));
+    mat.rotate2d(toDeg(facingAngle),Vector3());
     mat.transformNorm(muzzleOffset);
 
     firingInfo.shot.pos[0] += muzzleOffset.x();
