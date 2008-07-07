@@ -43,7 +43,8 @@ private:
   // functions for internal use
   void readToken(char *buffer, int n);
   bool readWorldStream(std::vector<WorldFileObject*>& wlist,
-		       class GroupDefinition* groupDef);
+		       class GroupDefinition* groupDef,
+		       bool& gotWorld);
   void finalization(char *data, unsigned int length, bool good);
 
   // stream to open
