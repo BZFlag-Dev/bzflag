@@ -131,8 +131,8 @@ bool WebAdmin::loopCallback (const std::string &key)
       return true;
     } else return loopPos = 0;
   } else if (key == "permissions") {
-    if (loopPos < bzu_standardPerms.size()) {
-      templateVars["permission"] = bzu_standardPerms[loopPos++];
+    if (loopPos < bzu_standardPerms().size()) {
+      templateVars["permission"] = bzu_standardPerms()[loopPos++];
       return true;
     } else return loopPos = 0;
   } else return false;

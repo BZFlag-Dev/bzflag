@@ -59,7 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1492F48D07962F620008E0BD /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1492F48D07962F620008E0BD /* BZFlag.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1492F4E6079631460008E0BD /* bzadmin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = bzadmin; path = src/bzadmin/bzadmin; sourceTree = "<group>"; };
 		1492F4F2079631710008E0BD /* bzflag */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = bzflag; path = src/bzflag/bzflag; sourceTree = "<group>"; };
 		1492F4F80796318B0008E0BD /* bzfs */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = bzfs; path = src/bzfs/bzfs; sourceTree = "<group>"; };
@@ -168,7 +168,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# step 1: run ./autogen.sh\nif [ ! -f ./configure ] ; then\n\t./autogen.sh 2>&1\n\tret=$?\n\tif [ $ret -ne 0 ] ; then\n\t\techo \"ERROR: autogen.sh failed -- aborting\"\n\t\texit $ret\n\tfi\nfi\n\n# step 2: run ./configure\n./configure\nret=$?\nif [ $ret -ne 0 ] ; then\n\techo \"ERROR: configure failed -- aborting\"\n\texit $ret\nfi\n\n# step 3: run make\nmake -j2\nret=$?\nif [ $ret -ne 0 ] ; then\n\techo \"ERROR: make failed -- aborting\"\n\texit $ret\nfi\n";
+			shellScript = "# step 1: run ./autogen.sh\nif [ ! -f ./configure ] ; then\n\t./autogen.sh 2>&1\n\tret=$?\n\tif [ $ret -ne 0 ] ; then\n\t\techo \"ERROR: autogen.sh failed -- aborting\"\n\t\texit $ret\n\tfi\nfi\n\n# step 2: run ./configure\n./configure --enable-freetype-build\nret=$?\nif [ $ret -ne 0 ] ; then\n\techo \"ERROR: configure failed -- aborting\"\n\texit $ret\nfi\n\n# step 3: run make\nmake -j2\nret=$?\nif [ $ret -ne 0 ] ; then\n\techo \"ERROR: make failed -- aborting\"\n\texit $ret\nfi\n";
 		};
 		1492F546079634740008E0BD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
