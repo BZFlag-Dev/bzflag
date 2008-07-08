@@ -2,6 +2,7 @@ all-local:
 	@date > datestamp
 
 SUBDIRS =	\
+	boost	\
 	BZW
 
 noinst_HEADERS =			\

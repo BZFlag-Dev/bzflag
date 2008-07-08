@@ -1,3 +1,9 @@
+if BUILD_BOOST
+BOOST_DIR = boost
+else
+BOOST_DIR =
+endif
+
 if BUILD_ZLIB
 ZLIB_DIR = zlib
 else
@@ -40,7 +46,8 @@ SUBDIRS = \
 	${CURL_DIR} \
 	${FREETYPE_DIR} \
 	${FTGL_DIR} \
-	${REGEX_DIR}
+	${REGEX_DIR} \
+	${BOOST_DIR}
 
 DIST_SUBDIRS = \
 	ftgl \
@@ -50,6 +57,7 @@ DIST_SUBDIRS = \
 # include the files for subconfigured packages as needed left out of the dist
 EXTRA_DIST = \
 	ares \
+	boost \
 	curl \
 	freetype
 
