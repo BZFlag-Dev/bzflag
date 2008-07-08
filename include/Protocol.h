@@ -317,6 +317,72 @@ server to player messages:
   MsgPause		<== id/true or false
   MsgAllow		<== id, movement (bool), shooting (bool)
 */
+/**
+ * Base class of all protocol messages.
+ */
+class BZProtocolMsg
+{
+public:
+  /// Destructor
+  ///
+  /// Although this class doesn't allocate the memory, free it here so
+  /// no one else has to think about it.
+  virtual ~BZProtocolMsg();
+
+  /// Return the total size of the packet
+  size_t size() const;
+
+  /// TBD if these need public exposure
+  int code() const { return msgCode; }
+  int len() const { return msgLen; }
+
+  /// construct a network protocol object
+  void* pack();
+
+protected:
+  /// Construct for an explicit code (before sending)
+  BZProtocolMsg(uint16_t code_, uint16_t len_);
+  /// Construct from a memory buffer (after receiving)
+  ///
+  /// @param buf_ a reference to the buffer pointer. Note that it is
+  /// advanced past the arguments extracted here
+  BZProtocolMsg(void*& buf_);
+
+  virtual void* doPack(void* buf_);
+
+  uint16_t msgCode;
+  uint16_t msgLen;
+
+  void* buf;
+};
+
+class EchoRequest : public BZProtocolMsg
+{
+public:
+  EchoRequest(unsigned char tag_);
+  EchoRequest(void* buf_);
+  unsigned char tag();
+
+protected:
+  void* doPack(void* buf_);
+
+private:
+  unsigned char msgTag;
+};
+
+class EchoResponse : public BZProtocolMsg
+{
+public:
+  EchoResponse(unsigned char tag_);
+  EchoResponse(void* buf_);
+
+protected:
+  void* doPack(void* buf_);
+
+private:
+  unsigned char msgTag;
+};
+
 
 #endif // BZF_PROTOCOL_H
 

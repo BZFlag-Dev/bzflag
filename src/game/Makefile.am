@@ -25,6 +25,7 @@ libGame_la_SOURCES =			\
 	MeshTransform.cxx		\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
+	Protocol.cxx			\
 	Ray.cxx				\
 	ServerItem.cxx			\
 	ServerList.cxx			\

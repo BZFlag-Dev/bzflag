@@ -122,6 +122,9 @@ public:
    */
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
 
+// TODO: These public accessors to the UDP socket need to go
+// away. However, until the Ping class gets modified to work with
+// (rather than against) the NetHandler, it has to stay.
   // UDP......
   static bool isUdpFdSet(fd_set *read_set);
 // private:
@@ -141,7 +144,7 @@ public:
    * @param netHandler is the NetHandler associated with this address
    */
   static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			 NetHandler **netHandler);
+			 NetHandler*& netHandler);
 
   /// Request if there is any buffered udp messages waiting to be sent
   static bool	anyUDPPending() {return pendingUDP;};

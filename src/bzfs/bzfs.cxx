@@ -285,7 +285,7 @@ public:
       NetHandler* netHandler;
 
       // interface to the UDP Receive routines
-      int id = NetHandler::udpReceive((char *) ubuf, &uaddr, &netHandler);
+      int id = NetHandler::udpReceive((char *) ubuf, &uaddr, netHandler);
       if (id == -1)
 	break;
 
@@ -304,11 +304,11 @@ public:
 	}
 	continue;
       } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
-	unsigned char tag = 0;               // This could be factored into it's own function
-	buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
-            
-	sendEchoResponse(&uaddr, tag);
-            
+	EchoRequest request(ubuf);
+	
+	EchoResponse reply( request.tag() );
+        
+	netHandler->pwrite(reply.pack(), reply.size());
 	continue;
       }
           

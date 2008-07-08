@@ -61,8 +61,6 @@ void sendMsgTangibilityReset ( void );
 void sendMsgCanSpawn ( int player, bool canSpawn );
 void sendMsgLimboMessage ( int player, const std::string  &text );
 
-void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag);
-
 // messages sent to just network users ( like client query )
 int sendTeamUpdateDirect(NetHandler *handler);
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData);

@@ -85,8 +85,8 @@ bool NetHandler::initHandlers(struct sockaddr_in addr)
   int n;
   // we open a udp socket on the same port if alsoUDP
   if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-      nerror("couldn't make udp connect socket");
-      return false;
+    nerror("couldn't make udp connect socket");
+    return false;
   }
 
   // increase send/rcv buffer size
@@ -94,20 +94,23 @@ bool NetHandler::initHandlers(struct sockaddr_in addr)
 		 sizeof(int));
   if (n < 0) {
     nerror("couldn't increase udp send buffer size");
-    close(udpSocket);
+    ::close(udpSocket);
+    udpSocket = INVALID_SOCKET;
     return false;
   }
   n = setsockopt(udpSocket, SOL_SOCKET, SO_RCVBUF, (SSOType) &udpBufSize,
 		 sizeof(int));
   if (n < 0) {
-      nerror("couldn't increase udp receive buffer size");
-      close(udpSocket);
-      return false;
+    nerror("couldn't increase udp receive buffer size");
+    ::close(udpSocket);
+    udpSocket = INVALID_SOCKET;
+    return false;
   }
   if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind udp listen port");
-      close(udpSocket);
-      return false;
+    nerror("couldn't bind udp listen port");
+    ::close(udpSocket);
+    udpSocket = INVALID_SOCKET;
+    return false;
   }
   // don't buffer info, send it immediately
   BzfNetwork::setNonBlocking(udpSocket);
@@ -158,13 +161,13 @@ SOCKET NetHandler::getUdpSocket()
 }
 
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			   NetHandler **netHandler) 
+			   NetHandler*& netHandler) 
 {
   AddrLen recvlen = sizeof(*uaddr);
   uint16_t len;
   uint16_t code;
 
-  *netHandler = NULL;
+  netHandler = NULL;
 
   if (udpLen == udpRead) {
     udpRead = 0;
@@ -212,11 +215,11 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   NetConnections::const_iterator it;
   for (it = netConnections.begin(); it != netConnections.end(); it++)
     if ((*it)->isMyUdpAddrPort(*uaddr, true)) {
-      *netHandler = *it;
+      netHandler = *it;
       break;
     }
 
-  if (!*netHandler) {
+  if (!netHandler) {
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       return 0;
     }
@@ -234,13 +237,13 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     return -1;
   }
 #ifdef NETWORK_STATS
-  (*netHandler)->countMessage(code, len, 0);
+  netHandler->countMessage(code, len, 0);
 #endif
 
-  callNetworkDataLog(false,true,(unsigned char*)buf,len,(*netHandler));
+  callNetworkDataLog(false,true,(unsigned char*)buf,len,netHandler);
  
   if (code == MsgUDPLinkEstablished) {
-    (*netHandler)->udpout = true;
+    netHandler->udpout = true;
   }
   return 0;
 }

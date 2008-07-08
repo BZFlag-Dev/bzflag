@@ -996,17 +996,6 @@ void sendSetTeam ( int playerIndex, int _team )
   msg->broadcast(MsgSetTeam);
 }
 
-void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
-{
-  char echobuffer[5] = {0};
-  void *ebuf = echobuffer;
-  ebuf = nboPackUShort(ebuf, 1);
-  ebuf = nboPackUShort(ebuf, MsgEchoResponse);
-  ebuf = nboPackUByte(ebuf, tag);
-  sendto(NetHandler::getUdpSocket(), echobuffer, 5, 0, (struct sockaddr*)uaddr,
-    sizeof(*uaddr));   //Low level - bad - if this could be encapsulated...
-}
-
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {
