@@ -25,6 +25,7 @@
 // ------------------------TCP classes--------------------
 class TCPConnection;
 
+#ifndef __BZAUTHD_NETHANDLER_H__
 typedef enum
 {
   eTCPNoError = 0,
@@ -39,6 +40,7 @@ typedef enum
   eTCPDataNFG,
   eTCPUnknownError
 }teTCPError;
+#endif
 
 /**
  * Packet data class

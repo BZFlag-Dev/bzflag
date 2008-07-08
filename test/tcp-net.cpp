@@ -14,6 +14,9 @@
 
 #ifdef TEST_NET
 
+//#include "../bzauthd/NetHandler.h"
+#include <TCPConnection.h>
+
 int sleep_var;
 
 void sleep_thread(void *)
@@ -29,62 +32,6 @@ void sleep_thread(void *)
         _sleep(1);
     }
 }
-
-class MyServerListener : public TCPServerDataPendingListener
-{
-    public:
-        MyServerListener()
-        {
-            end = 0;
-        }
-
-        bool connect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer )
-        {
-            printf("CLI: %d connected\n", (int)connSet.size());
-            connSet[peer] = (int)connSet.size();
-            return true;
-        }
-
-        void pending ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, unsigned int count )
-        {
-            char buf[2048];
-            tvPacketList& packets = peer->getPackets();
-            for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
-            {
-                unsigned int opcode = (*itr).first;
-                unsigned int len;
-                unsigned char * data = (*itr).second.get(len);
-                if(len >= 2048) break;
-                strncpy(buf, (char*)data, len);
-                buf[len] = 0;
-                printf("CLI: %s\n", buf);
-                int cli, dat;
-                sscanf(buf, "%d sends %d", &cli, &dat);
-                sprintf(buf, "thank you %d for %d", cli, dat);
-                peer->sendData(1, buf);
-            }
-            peer->flushPackets();
-        }
-
-        void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
-        {
-            ConnSetType::iterator itr = connSet.find(peer);
-            if(itr == connSet.end())
-            {
-                printf("CLI: unregistered client is disconnecting .. wtf ?");
-                return;
-            }
-            
-            printf("CLI: %d disconnected\n", itr->second);
-            connSet.erase(itr);
-            //end = 1;
-        }
-
-        bool end;
-    private:
-        typedef std::map<TCPServerConnectedPeer*, int> ConnSetType;
-        ConnSetType connSet;
-};
 
 class MyClientListener : public TCPClientDataPendingListener
 {
@@ -108,21 +55,7 @@ class MyClientListener : public TCPClientDataPendingListener
 
 void test_listen(void *)
 {
-    // don't use an instance of TCPConnection in this thread to avoid thread safety issues
-    TCPServerConnection server;
-    if(server.listen(1234, 10) != eTCPNoError)
-    {
-        printf("can't listen\n");
-        return;
-    }
-    MyServerListener listener;
-    server.addListener(&listener);
-    while(1)
-    {
-        server.update();
-        if(listener.end)
-            break;
-    }
+  
 }
 
 void test_connect(void *number)

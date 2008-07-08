@@ -13,6 +13,7 @@
 #include "common.h"
 #include "RSA.h"
 #include <gcrypt.h>
+#include "Log.h"
 
 INSTANTIATE_SINGLETON(RSAManager);
 
@@ -153,6 +154,9 @@ bool RSAManager::initialize()
   // "operation is not possible without initialized secure memory"
   // .. but i haven't found any way to initialize it yet
   gcry_error_t ret = gcry_ac_open(&rsaHandle, GCRY_AC_RSA, 0);
+  if(ret == 0) sLog.outLog("RSAManager: initialized");
+  else sLog.outError("RSAManager: failed to open rsa handle, error code %d", ret);
+
   return ret == 0;
 }
 
@@ -172,7 +176,11 @@ bool RSAManager::generateKeyPair()
   gcry_error_t ret = gcry_ac_key_pair_generate(rsaHandle, 1024, (void*) &rsa_spec, &key_pair, NULL);
   gcry_mpi_release(rsa_spec.e);
 
-  if(ret) return false;
+  if(ret)
+  {
+    sLog.outError("RSAManager: Failed to generate key pair, error %d", ret);
+    return false;
+  }
 
   gcry_ac_key_t key, public_key, secret_key;
   gcry_ac_data_t data;
@@ -180,17 +188,28 @@ bool RSAManager::generateKeyPair()
   key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_PUBLIC);
   data = gcry_ac_key_data_get(key);
   ret = gcry_ac_key_init(&public_key, rsaHandle, GCRY_AC_KEY_PUBLIC, data);
+  if(ret)
+  {
+    sLog.outError("RSAManager: Failed to initialize public key, error %d", ret);
+    return false;
+  }
 
   key = gcry_ac_key_pair_extract(key_pair, GCRY_AC_KEY_SECRET);
   data = gcry_ac_key_data_get(key);
   ret = gcry_ac_key_init(&secret_key, rsaHandle, GCRY_AC_KEY_SECRET, data);
+  if(ret)
+  {
+    sLog.outError("RSAManager: Failed to initialize secret key, error %d", ret);
+    return false;
+  }
 
   // the key_init functions copy data, allowing the data in the keypair to be freed
   gcry_ac_key_pair_destroy(key_pair);
 
   publicKey._setKey(public_key);
   secretKey._setKey(secret_key);
-  return ret == 0;
+  sLog.outLog("RSAManager: new key pair generated");
+  return true;
 }
 
 void RSAManager::rsaFree(void *memory)

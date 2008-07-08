@@ -76,9 +76,14 @@ teTCPError ListenSocket::listen(uint16 port, uint32 connections)
   return eTCPNoError;
 }
 
+void ListenSocket::onReadData(ConnectSocket *socket, Packet *packet)
+{
+
+}
+
 bool ListenSocket::update()
 {
-  if (net_CheckSockets(socketSet, ~0) < 1)
+  if (net_CheckSockets(socketSet, 1) < 1)
     return true;
 
   // check for new connections
@@ -248,7 +253,11 @@ NetHandler::NetHandler()
 bool NetHandler::initialize()
 {
   // init the net library
-  if(!net_Init()) return false;
+  if(net_Init() != 0)
+  {
+    sLog.outError("NetHandler: Cannot initialize the net library");
+    return false;
+  }
 
   uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
 
@@ -259,6 +268,7 @@ bool NetHandler::initialize()
     return false;
   }
 
+  sLog.outLog("NetHandler: initialized");
   return true;
 }
 

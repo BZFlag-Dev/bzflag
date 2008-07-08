@@ -27,7 +27,7 @@ void test_gcrypt()
     // decompose the key into values that can be sent in packets
     size_t n_len;
     uint8 *key_n;
-    uint32 e;
+    uint16 e;
     if(!sRSAManager.getPublicKey().getValues(key_n, n_len, e)) return;
     if(e != 65537) return;
 

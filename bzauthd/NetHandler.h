@@ -13,6 +13,7 @@
 #ifndef __BZAUTHD_NETHANDLER_H__
 #define __BZAUTHD_NETHANDLER_H__
 
+#include "Platform.h"
 #include "Singleton.h"
 #include <string.h>
 #include <string>
@@ -293,14 +294,16 @@ private:
 class ListenSocket : public Socket
 {
 public:
+  ListenSocket() : socketSet(NULL) {}
   teTCPError listen(uint16 port, uint32 connections);
   bool update();
   void disconnect();
   
   bool onConnect(TCPsocket &socket);
+  void onReadData(ConnectSocket *socket, Packet *packet);
 
   uint32 getMaxConnections () const { return maxUsers; }
-private: 
+private:
   net_SocketSet socketSet;
   uint32 maxUsers;
   typedef std::map<ConnectSocket *, PacketHandler *> SocketMapType;

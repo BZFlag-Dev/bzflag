@@ -21,7 +21,6 @@
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
 #include <gcrypt.h>
-#include <TCPConnection.h>
 #include <set>
 
 #ifdef TEST_NET

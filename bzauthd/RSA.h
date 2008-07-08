@@ -14,6 +14,7 @@
 #define __BZAUTHD_RSA_H__
 
 #include "Platform.h"
+#include "Singleton.h"
 
 typedef struct gcry_ac_key *gcry_ac_key_t;
 typedef struct gcry_ac_handle *gcry_ac_handle_t;
