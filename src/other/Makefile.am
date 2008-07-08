@@ -1,9 +1,3 @@
-if BUILD_BOOST
-BOOST_DIR = boost
-else
-BOOST_DIR =
-endif
-
 if BUILD_ZLIB
 ZLIB_DIR = zlib
 else
