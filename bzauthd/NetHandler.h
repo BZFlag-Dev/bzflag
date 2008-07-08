@@ -71,9 +71,7 @@ class Packet;
 class Peer
 {
 public:
-  void sendPacket(Packet &packet);
 private:
-  //TCPServerConnectedPeer *peer;
 };
 
 class Server : public Peer
@@ -107,13 +105,16 @@ class RegisterSession : public Session
 public:
 };
 
+class ConnectSocket;
+
 class PacketHandler
 {
 public:
-  PacketHandler() : m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
+  PacketHandler(ConnectSocket *socket) 
+    : m_socket(socket), m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
   ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
 
-  static PacketHandler* handleHandshake(Packet &packet);
+  static PacketHandler* handleHandshake(Packet &packet, ConnectSocket *socket);
 
   bool handleNull(Packet &packet);
   bool handleInvalid(Packet &packet);
@@ -126,6 +127,7 @@ private:
   Peer *m_peer;
   AuthSession *m_authSession;
   RegisterSession *m_regSession;
+  ConnectSocket *m_socket;
 };
 
 typedef bool (PacketHandler::*PHFunc)(Packet &packet);
@@ -215,6 +217,7 @@ public:
 
   size_t getLength() const { return m_wpoz; }
   uint16 getOpcode() const { return m_opcode; }
+  const uint8 * getData() const { return (const uint8 *)m_data; }
   const char *getOpcodeName() const { return opcodeTable[getOpcode()].name; }
 
 protected:
@@ -274,6 +277,7 @@ class ConnectSocket : public Socket
 public:
   ConnectSocket(const TCPsocket &s, bool isConn);
   Packet * readData();
+  teTCPError sendData(Packet &packet);
   void initRead();
   void disconnect();
 

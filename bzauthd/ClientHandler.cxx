@@ -15,13 +15,13 @@
 #include "Log.h"
 #include "RSA.h"
 
-PacketHandler* PacketHandler::handleHandshake(Packet &packet)
+PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
 {
   uint8 peerType;
   uint16 protoVersion;
   if(packet >> peerType >> protoVersion) return NULL;
 
-  PacketHandler *handler = new PacketHandler;
+  PacketHandler *handler = new PacketHandler(socket);
   bool success = true;
 
   switch (peerType) {
@@ -80,6 +80,7 @@ bool PacketHandler::handleAuthRequest(Packet &packet)
   challenge << (uint16)n_len;
   challenge.append(key_n, n_len);
   challenge << (uint16)e;
+  m_socket->sendData(challenge);
 
   free(key_n);
   return true;
@@ -125,6 +126,7 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   } else {
     Packet fail(DMSG_AUTH_FAIL, 4);
     fail << (uint32)AUTH_INVALID_MESSAGE;
+    m_socket->sendData(fail);
   }
 
   sRSAManager.rsaFree(message);

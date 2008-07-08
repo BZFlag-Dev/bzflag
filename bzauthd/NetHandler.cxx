@@ -110,7 +110,7 @@ bool ListenSocket::update()
           itr->first->disconnect();
         }
         else
-          if(!(itr->second = PacketHandler::handleHandshake(*packet)))
+          if(!(itr->second = PacketHandler::handleHandshake(*packet, itr->first)))
             itr->first->disconnect();
       }
       else
@@ -167,7 +167,7 @@ void ConnectSocket::disconnect()
 
 Packet * ConnectSocket::readData()
 {
-  if(!net_SocketReady(socket))
+  if(!isConnected() || !net_SocketReady(socket))
     return NULL;
 
   int read;
@@ -210,6 +210,34 @@ Packet * ConnectSocket::readData()
   }
 
   return NULL;
+}
+
+teTCPError ConnectSocket::sendData(Packet &packet)
+{
+  if (!isConnected())
+    return eTCPSocketNFG;
+
+  void *data = (void*)packet.getData();
+  uint16 opcode = packet.getOpcode();
+  uint16 len = (uint16)packet.getLength();
+
+  if (!data || len < 1)
+    return eTCPDataNFG;
+
+  // send the header first
+  char header[4];
+  *(uint16*)header = opcode;
+  *(uint16*)(header + 2) = len;
+  int lenSent = net_TCP_Send(socket, header, 4);
+  if (lenSent < 4)
+    return eTCPConnectionFailed;
+
+  lenSent = net_TCP_Send(socket, data, len);
+
+  if (lenSent < len)
+    return eTCPConnectionFailed;
+
+  return eTCPNoError;
 }
 
 NetHandler::NetHandler()
