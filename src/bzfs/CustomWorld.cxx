@@ -58,9 +58,9 @@ void CustomWorld::writeToWorld(WorldInfo* world) const
   if (createWalls) {
     float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
     float worldSize = BZDBCache::worldSize * 0.5f;
-    world->addWall(0.0f, worldSize, 0.0f, 1.5f*M_PI, worldSize, wallHeight);
-    world->addWall(worldSize, 0.0f, 0.0f, M_PI, worldSize, wallHeight);
-    world->addWall(0.0f, -worldSize, 0.0f, 0.5f*M_PI, worldSize, wallHeight);
+    world->addWall(0.0f, worldSize, 0.0f, 1.5f*(float)M_PI, worldSize, wallHeight);
+    world->addWall(worldSize, 0.0f, 0.0f, (float)M_PI, worldSize, wallHeight);
+    world->addWall(0.0f, -worldSize, 0.0f, 0.5f*(float)M_PI, worldSize, wallHeight);
     world->addWall(-worldSize, 0.0f, 0.0f, 0.0f, worldSize, wallHeight);
   }
 }
