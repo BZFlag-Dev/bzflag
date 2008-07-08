@@ -33,7 +33,7 @@ private:
   std::vector<std::string> pagenames;
   
   void mainPageCallback (const HTTPRequest &request);
-  void WebAdmin::banlistPageCallback (const HTTPRequest &request);
+  void banlistPageCallback (const HTTPRequest &request);
   
   bz_APIIntList players;
 };
