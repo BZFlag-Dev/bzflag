@@ -16,9 +16,12 @@
 #include "Singleton.h"
 #include <string.h>
 #include <string>
+#include <map>
 
-class TCPServerConnection;
-class TCPServerListener;
+#define O_NONBLOCK
+#include "../tcp-net/include/net.h"
+
+#define MAX_PACKET_SIZE 4096
 
 enum Opcodes
 {
@@ -58,9 +61,19 @@ enum PeerType
   NUM_PEER_TYPES
 };
 
+enum AuthErrors
+{
+  AUTH_INVALID_MESSAGE = 0
+};
+
+class Packet;
+
 class Peer
 {
 public:
+  void sendPacket(Packet &packet);
+private:
+  //TCPServerConnectedPeer *peer;
 };
 
 class Server : public Peer
@@ -94,8 +107,6 @@ class RegisterSession : public Session
 public:
 };
 
-class Packet;
-
 class PacketHandler
 {
 public:
@@ -108,6 +119,7 @@ public:
   bool handleAuthRequest(Packet &packet);
   bool handleRegisterGetForm(Packet &packet);
   bool handleRegisterRequest(Packet &packet);
+  bool handleRegisterResponse(Packet &packet);
   bool handleAuthResponse(Packet &packet);
 private:
   Peer *m_peer;
@@ -227,6 +239,57 @@ protected:
   size_t m_wpoz;
 };
 
+typedef enum
+{
+  eTCPNoError = 0,
+  eTCPNotInit,
+  eTCPTimeout,
+  eTCPBadAddress,
+  eTCPBadPort,
+  eTCPConnectionFailed,
+  eTCPSocketNFG,
+  eTCPInitFailed,
+  eTCPSelectFailed,
+  eTCPDataNFG,
+  eTCPUnknownError
+}teTCPError;
+
+class Socket
+{
+public:
+  Socket(const TCPsocket &s) : socket(s) {}
+  Socket() {}
+  uint16 getPort() const { return serverIP.port; }
+protected:
+  IPaddress serverIP;
+  TCPsocket socket;
+};
+
+class ConnectSocket : public Socket
+{
+public:
+  ConnectSocket(const TCPsocket &s) : Socket(s) {}
+  Packet * readData();
+private:
+  uint8 buffer[MAX_PACKET_SIZE];
+  uint16 remaining;
+};
+
+class ListenSocket : public Socket
+{
+public:
+  teTCPError listen(uint16 port, uint32 connections);
+  bool update();
+  bool onConnect(TCPsocket &socket);
+
+  uint32 getMaxConnections () const { return maxUsers; }
+private:
+  net_SocketSet socketSet;
+  uint32 maxUsers;
+  typedef std::map<ConnectSocket *, PacketHandler *> SocketMapType;
+  SocketMapType socketMap;
+};
+
 class NetHandler : public Singleton<NetHandler>
 {
 public:
@@ -235,8 +298,7 @@ public:
   bool initialize();
   void update();
 private:
-  TCPServerConnection *localServer;
-  TCPServerListener *tcpListener;
+  ListenSocket *localServer;
 };
 
 #define sNetHandler NetHandler::instance()

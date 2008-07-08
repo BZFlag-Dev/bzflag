@@ -12,11 +12,9 @@
 
 #include "common.h"
 #include "NetHandler.h"
-#include "../tcp-net/include/TCPConnection.h"
+//#include "../tcp-net/include/TCPConnection.h"
 #include "Config.h"
 #include "Log.h"
-#include "RSA.h"
-#include <sstream>
 
 INSTANTIATE_SINGLETON(NetHandler);
 
@@ -50,108 +48,76 @@ bool PacketHandler::handleNull(Packet &packet)
   return true;
 }
 
-bool PacketHandler::handleHandshake(Packet &packet)
+teTCPError ListenSocket::listen(uint16 port, uint32 connections)
 {
-  uint8 peerType;
-  uint16 protoVersion;
-  if(packet >> peerType >> protoVersion) return false;
+  //disconnect();
 
-  switch (peerType) {
-    case PEER_CLIENT: {
-      sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
-      uint32 cliVersion;
-      uint8 commType;
-      if(packet >> cliVersion >> commType) return false;
-      sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
-      switch (commType) {
-        case 0: return handleAuthRequest(packet);
-        case 1: return handleRegisterGetForm(packet);
-        case 2: return handleRegisterRequest(packet);
-        default:
-          sLog.outError("Handshake: invalid commType received : %d", commType);
-          return false;
+  if ( port == 0)
+    return eTCPBadPort;
+
+  maxUsers = connections;
+
+  serverIP.host = INADDR_ANY;
+  serverIP.port = port;
+
+  socket = net_TCP_Open(&serverIP);
+  if ( socket == NULL )
+    return eTCPConnectionFailed;
+
+  socketSet = net_AllocSocketSet(getMaxConnections()+1);
+  if (!socketSet)
+    return eTCPSocketNFG;
+
+  IPaddress serverIP;
+  net_ResolveHost(&serverIP, NULL, getPort());
+  socket = net_TCP_Open(&serverIP);
+  net_TCP_AddSocket(socketSet,socket);
+
+  return eTCPNoError;
+}
+
+bool ListenSocket::update()
+{
+  if (net_CheckSockets(socketSet, ~0) < 1)
+    return true;
+
+  // check for new connections
+  if ( net_SocketReady(socket) )
+  {
+    TCPsocket newsock;
+    while ((newsock = net_TCP_Accept(socket)) != NULL)
+    {
+      if(onConnect(newsock))
+      {
+        net_TCP_AddSocket(socketSet, newsock);
+        socketMap[new ConnectSocket(newsock)] = NULL;
       }
-    } break;
-    case PEER_SERVER: {
-      sLog.outLog("received %s: server using protocol %d", packet.getOpcodeName(), protoVersion);
-    } break;
-    case PEER_DAEMON: {
-      sLog.outLog("received %s: daemon using protocol %d", packet.getOpcodeName(), protoVersion);
-    } break;
-    default: {
-      sLog.outError("received %s: unknown peer type %d", packet.getOpcodeName());
-      return false;
+      else
+        net_TCP_Close(newsock);
     }
   }
-  return true;    // this point is never actually reached
-}
 
-bool PacketHandler::handleAuthRequest(Packet &packet)
-{
-  if(m_authSession)
+  for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end(); ++itr)
   {
-    sLog.outError("AuthRequest: auth session already in progress");
-    return true;
+    Packet *packet;
+    while((packet = itr->first->readData()) != NULL)
+    {
+
+    }
   }
-  else
-    m_authSession = new AuthSession;
 
-  uint8 *key_n;
-  uint16 e;
-  size_t n_len;
-  sRSAManager.getPublicKey().getValues(key_n, n_len, e);
-
-  Packet challenge(DMSG_AUTH_CHALLENGE, 4+n_len);
-  challenge << (uint16)n_len;
-  challenge.append(key_n, n_len);
-  challenge << (uint16)e;
-
-  free(key_n);
   return true;
 }
 
-bool PacketHandler::handleAuthResponse(Packet &packet)
+Packet * ConnectSocket::readData()
 {
-  if(!m_authSession)
-  {
-    sLog.outError("AuthResponse: no auth session started");
-    return true;
-  }
+  if(!net_SocketReady(socket))
+    return NULL;
 
-  uint16 cipher_len;
-  packet >> cipher_len;
-  uint8 *cipher = new uint8[cipher_len+1];
-  packet.read(cipher, cipher_len);
-
-  uint8 *message;
-  size_t message_len;
-  sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
-
-
-
-  sRSAManager.rsaFree(message);
-  delete[] cipher;
-  return true;
-}
-
-
-bool PacketHandler::handleRegisterGetForm(Packet &packet)
-{
   
-  return true;
 }
 
-bool PacketHandler::handleRegisterRequest(Packet &packet)
-{
-  if(m_regSession)
-    sLog.outError("RegisterRequest: register session already in progress");
-  else
-    m_regSession = new RegisterSession;
-  return true;
-}
-
-
-class TCPServerListener : public TCPServerDataPendingListener
+/*class TCPServerListener : public TCPServerDataPendingListener
 {
 public:
   TCPServerListener()
@@ -206,21 +172,20 @@ private:
   // TODO: rewrite all of this so that the packet handlers are stored in the peer class
   typedef std::map<TCPServerConnectedPeer*, PacketHandler*> HandlerMapType;
   HandlerMapType handlerMap;
-};
+};*/
 
 NetHandler::NetHandler()
 {
-  localServer = new TCPServerConnection;
-  tcpListener = new TCPServerListener;
-  // init the net library
-  TCPConnection::instance();
+  localServer = new ListenSocket;
 }
 
 bool NetHandler::initialize()
 {
+  // init the net library
+  if(!net_Init()) return false;
+
   uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
 
-  localServer->addListener(tcpListener);
   teTCPError err = localServer->listen(listenPort, 32000);
   if(err != eTCPNoError)
   {
@@ -238,7 +203,6 @@ void NetHandler::update()
 
 NetHandler::~NetHandler()
 {
-  localServer->disconnect();
   delete localServer;
 }
 

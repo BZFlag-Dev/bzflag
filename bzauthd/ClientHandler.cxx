@@ -11,6 +11,157 @@
 */
 
 #include "common.h"
+#include "NetHandler.h"
+#include "Log.h"
+#include "RSA.h"
+
+bool PacketHandler::handleHandshake(Packet &packet)
+{
+  uint8 peerType;
+  uint16 protoVersion;
+  if(packet >> peerType >> protoVersion) return false;
+
+  switch (peerType) {
+    case PEER_CLIENT: {
+      sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
+      uint32 cliVersion;
+      uint8 commType;
+      if(packet >> cliVersion >> commType) return false;
+      sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
+      switch (commType) {
+        case 0: return handleAuthRequest(packet);
+        case 1: return handleRegisterGetForm(packet);
+        case 2: return handleRegisterRequest(packet);
+        default:
+          sLog.outError("Handshake: invalid commType received : %d", commType);
+          return false;
+      }
+    } break;
+    case PEER_SERVER: {
+      sLog.outLog("received %s: server using protocol %d", packet.getOpcodeName(), protoVersion);
+    } break;
+    case PEER_DAEMON: {
+      sLog.outLog("received %s: daemon using protocol %d", packet.getOpcodeName(), protoVersion);
+    } break;
+    default: {
+      sLog.outError("received %s: unknown peer type %d", packet.getOpcodeName());
+      return false;
+    }
+  }
+  return true;    // this point is never actually reached
+}
+
+bool PacketHandler::handleAuthRequest(Packet &packet)
+{
+  if(m_authSession)
+  {
+    sLog.outError("AuthRequest: auth session already in progress");
+    return true;
+  }
+  else
+    m_authSession = new AuthSession;
+
+  uint8 *key_n;
+  uint16 e;
+  size_t n_len;
+  sRSAManager.getPublicKey().getValues(key_n, n_len, e);
+
+  Packet challenge(DMSG_AUTH_CHALLENGE, 4+n_len);
+  challenge << (uint16)n_len;
+  challenge.append(key_n, n_len);
+  challenge << (uint16)e;
+
+  free(key_n);
+  return true;
+}
+
+bool PacketHandler::handleAuthResponse(Packet &packet)
+{
+  if(!m_authSession)
+  {
+    sLog.outError("AuthResponse: no auth session started");
+    return true;
+  }
+
+  uint16 cipher_len;
+  packet >> cipher_len;
+  uint8 *cipher = new uint8[cipher_len+1];
+  packet.read(cipher, cipher_len);
+
+  uint8 *message;
+  size_t message_len;
+  sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
+
+  // get callsign and password, make sure the string is valid
+  bool valid = true;
+
+  // it has to contain exactly one space
+  int32 space_poz = -1;
+  for(size_t i = 0; i < message_len && valid; i++)
+  {
+    if(message[i] == ' ')
+    {
+      if(space_poz == -1) space_poz = (int32)i;
+      else valid = false;
+    }
+  }
+
+  // TODO: make sure all characters are in range etc .. more thorough checking needed
+
+  if(valid)
+  {
+    std::string callsign((const char*)message, space_poz);
+    std::string password((const char*)(message + space_poz + 1), message_len - space_poz - 1);
+  } else {
+    Packet fail(DMSG_AUTH_FAIL, 4);
+    fail << (uint32)AUTH_INVALID_MESSAGE;
+  }
+
+  sRSAManager.rsaFree(message);
+  delete[] cipher;
+  return true;
+}
+
+
+bool PacketHandler::handleRegisterGetForm(Packet &packet)
+{
+  if(!m_authSession)
+  {
+    sLog.outError("AuthResponse: no auth session started");
+    return true;
+  }
+
+  return true;
+}
+
+bool PacketHandler::handleRegisterRequest(Packet &packet)
+{
+  if(m_regSession)
+    sLog.outError("RegisterRequest: register session already in progress");
+  else
+    m_regSession = new RegisterSession;
+  return true;
+}
+
+bool PacketHandler::handleRegisterResponse(Packet &packet)
+{
+  if(!m_regSession)
+  {
+    sLog.outError("RegisterResponse: no reg session started");
+    return true;
+  }
+
+  uint16 cipher_len;
+  packet >> cipher_len;
+  uint8 *cipher = new uint8[cipher_len+1];
+  packet.read(cipher, cipher_len);
+
+  uint8 *message;
+  size_t message_len;
+  sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
+  return true;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***
