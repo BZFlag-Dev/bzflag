@@ -113,9 +113,10 @@ public:
   PacketHandler() : m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
   ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
 
+  static PacketHandler* handleHandshake(Packet &packet);
+
   bool handleNull(Packet &packet);
   bool handleInvalid(Packet &packet);
-  bool handleHandshake(Packet &packet);
   bool handleAuthRequest(Packet &packet);
   bool handleRegisterGetForm(Packet &packet);
   bool handleRegisterRequest(Packet &packet);
@@ -212,6 +213,7 @@ public:
 
   operator bool() const { return m_rpoz <= m_size; }
 
+  size_t getLength() const { return m_wpoz; }
   uint16 getOpcode() const { return m_opcode; }
   const char *getOpcodeName() const { return opcodeTable[getOpcode()].name; }
 
@@ -260,6 +262,8 @@ public:
   Socket(const TCPsocket &s) : socket(s) {}
   Socket() {}
   uint16 getPort() const { return serverIP.port; }
+  virtual void disconnect() = 0;
+  TCPsocket &getSocket() { return socket; }
 protected:
   IPaddress serverIP;
   TCPsocket socket;
@@ -268,11 +272,18 @@ protected:
 class ConnectSocket : public Socket
 {
 public:
-  ConnectSocket(const TCPsocket &s) : Socket(s) {}
+  ConnectSocket(const TCPsocket &s, bool isConn);
   Packet * readData();
+  void initRead();
+  void disconnect();
+
+  bool isConnected() { return connected; }
 private:
   uint8 buffer[MAX_PACKET_SIZE];
-  uint16 remaining;
+  uint16 poz;
+  uint16 remainingHeader;
+  uint16 remainingData;
+  bool connected;
 };
 
 class ListenSocket : public Socket
@@ -280,10 +291,12 @@ class ListenSocket : public Socket
 public:
   teTCPError listen(uint16 port, uint32 connections);
   bool update();
+  void disconnect();
+  
   bool onConnect(TCPsocket &socket);
 
   uint32 getMaxConnections () const { return maxUsers; }
-private:
+private: 
   net_SocketSet socketSet;
   uint32 maxUsers;
   typedef std::map<ConnectSocket *, PacketHandler *> SocketMapType;

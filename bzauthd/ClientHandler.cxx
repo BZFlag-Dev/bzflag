@@ -15,26 +15,29 @@
 #include "Log.h"
 #include "RSA.h"
 
-bool PacketHandler::handleHandshake(Packet &packet)
+PacketHandler* PacketHandler::handleHandshake(Packet &packet)
 {
   uint8 peerType;
   uint16 protoVersion;
-  if(packet >> peerType >> protoVersion) return false;
+  if(packet >> peerType >> protoVersion) return NULL;
+
+  PacketHandler *handler = new PacketHandler;
+  bool success = true;
 
   switch (peerType) {
     case PEER_CLIENT: {
       sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
       uint32 cliVersion;
       uint8 commType;
-      if(packet >> cliVersion >> commType) return false;
+      if(packet >> cliVersion >> commType) { success = false; break; }
       sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
       switch (commType) {
-        case 0: return handleAuthRequest(packet);
-        case 1: return handleRegisterGetForm(packet);
-        case 2: return handleRegisterRequest(packet);
+        case 0: success = handler->handleAuthRequest(packet); break;
+        case 1: success = handler->handleRegisterGetForm(packet); break;
+        case 2: success = handler->handleRegisterRequest(packet); break;
         default:
           sLog.outError("Handshake: invalid commType received : %d", commType);
-          return false;
+          success = false;
       }
     } break;
     case PEER_SERVER: {
@@ -45,10 +48,17 @@ bool PacketHandler::handleHandshake(Packet &packet)
     } break;
     default: {
       sLog.outError("received %s: unknown peer type %d", packet.getOpcodeName());
-      return false;
+      success = false;
     }
   }
-  return true;    // this point is never actually reached
+
+  if(!success)
+  {
+    delete handler;
+    return NULL;
+  }
+  else
+    return handler;
 }
 
 bool PacketHandler::handleAuthRequest(Packet &packet)

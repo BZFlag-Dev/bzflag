@@ -19,7 +19,7 @@
 INSTANTIATE_SINGLETON(NetHandler);
 
 OpcodeEntry opcodeTable[NUM_OPCODES] = {
-  {"MSG_HANDSHAKE",             &PacketHandler::handleHandshake         },
+  {"MSG_HANDSHAKE",             &PacketHandler::handleInvalid           },
   {"CMSG_AUTH_REQUEST",         &PacketHandler::handleAuthRequest       },
   {"DMSG_AUTH_FAIL",            &PacketHandler::handleInvalid           },
   {"DMSG_AUTH_CHALLENGE",       &PacketHandler::handleInvalid           },
@@ -90,23 +90,79 @@ bool ListenSocket::update()
       if(onConnect(newsock))
       {
         net_TCP_AddSocket(socketSet, newsock);
-        socketMap[new ConnectSocket(newsock)] = NULL;
+        socketMap[new ConnectSocket(newsock, true)] = NULL;
       }
       else
         net_TCP_Close(newsock);
     }
   }
 
-  for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end(); ++itr)
+  for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end();)
   {
     Packet *packet;
     while((packet = itr->first->readData()) != NULL)
     {
-
+      if(!itr->second)
+      {
+        if(packet->getOpcode() != MSG_HANDSHAKE)
+        {
+          sLog.outError("invalid opcode %d received, handshake must be first", packet->getOpcode());
+          itr->first->disconnect();
+        }
+        else
+          if(!(itr->second = PacketHandler::handleHandshake(*packet)))
+            itr->first->disconnect();
+      }
+      else
+      {
+        if(!(itr->second->*opcodeTable[packet->getOpcode()].handler)(*packet))
+        {
+          sLog.outError("received %s: invalid packet format (length: %d)", packet->getOpcodeName(), (uint16)packet->getLength());
+          itr->first->disconnect();
+        }
+      }
     }
+
+    if(!itr->first->isConnected())
+    {
+      net_TCP_DelSocket(socketSet, itr->first->getSocket());
+      net_TCP_Close(itr->first->getSocket());
+      delete itr->first;
+      if(itr->second) delete itr->second;
+      socketMap.erase(itr++);
+    }
+    else
+      ++itr;
   }
 
   return true;
+}
+
+bool ListenSocket::onConnect(TCPsocket &)
+{
+  return true;
+}
+
+void ListenSocket::disconnect()
+{
+  // TODO
+}
+
+ConnectSocket::ConnectSocket(const TCPsocket &s, bool isConn)
+  : Socket(s), connected(isConn)
+{
+  initRead();
+}
+
+void ConnectSocket::initRead()
+{
+  remainingHeader = 4;
+  remainingData = 0;
+}
+
+void ConnectSocket::disconnect()
+{
+  connected = false;
 }
 
 Packet * ConnectSocket::readData()
@@ -114,65 +170,47 @@ Packet * ConnectSocket::readData()
   if(!net_SocketReady(socket))
     return NULL;
 
-  
-}
+  int read;
 
-/*class TCPServerListener : public TCPServerDataPendingListener
-{
-public:
-  TCPServerListener()
+  if(remainingHeader)
   {
-  }
-
-  bool connect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer )
-  {
-    handlerMap[peer] = new PacketHandler;
-    return true;
-  }
-
-  void pending ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, unsigned int count )
-  {
-    tvPacketList& packets = peer->getPackets();
-    for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
+    read = net_TCP_Recv(socket, buffer + poz, remainingHeader);
+    if(read <= 0)
     {
-      uint16 opcode = (uint16)(*itr).first;
-      size_t len;
-      uint8* data = (uint8*)(*itr).second.get((unsigned int&)len);
-      if(opcode >= NUM_OPCODES)
-        sLog.outError("Unknown opcode %d", opcode);
-      else
-      {
-        Packet packet(opcode, data, len);
-        PacketHandler *handler = handlerMap[peer];
-        if(handler)
-        {
-          if(!(handler->*opcodeTable[opcode].handler)(packet))
-            sLog.outError("received %s: invalid packet format (length: %d)", packet.getOpcodeName(), len);
-        }
-        else
-          sLog.outError("peer not found\n");
-      }
+      disconnect();
+      return NULL;
     }
-    peer->flushPackets();
-  }
 
-  void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
-  {
-    HandlerMapType::iterator itr = handlerMap.find(peer);
-    if(itr != handlerMap.end())
-    {
-      delete itr->second;
-      handlerMap.erase(itr);
-    }
+    remainingHeader -= read;
+    poz += read;
+
+    if(!remainingHeader)
+      remainingData = *(uint16*)(buffer+2);
     else
-      sLog.outError("peer not found\n");
+      return NULL;
   }
 
-private:
-  // TODO: rewrite all of this so that the packet handlers are stored in the peer class
-  typedef std::map<TCPServerConnectedPeer*, PacketHandler*> HandlerMapType;
-  HandlerMapType handlerMap;
-};*/
+  read = net_TCP_Recv(socket, buffer + poz, remainingData);
+  if(read <= 0)
+  {
+    disconnect();
+    return NULL;
+  }
+
+  remainingData -= read;
+  poz += read;
+
+  if(!remainingData)
+  {
+    uint16 opcode = *(uint16*)buffer;
+    uint16 len = *(uint16*)(buffer+2);
+    Packet * ret = new Packet(opcode, buffer + 4, (size_t)len);
+    initRead();
+    return ret;
+  }
+
+  return NULL;
+}
 
 NetHandler::NetHandler()
 {
