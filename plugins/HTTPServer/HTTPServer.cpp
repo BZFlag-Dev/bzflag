@@ -681,7 +681,10 @@ void HTTPConnection::fillRequest(HTTPRequest &req)
     // parse out the parameters from the resource
     size_t q = req.resource.find_first_of('?');
     if (q != std::string::npos)
+    {
       parseParams(req.parameters,req.resource,q+1);
+      req.resource.erase(req.resource.begin()+q,req.resource.end());
+    }
   }
 
   if (req.request == ePost && contentSize > 0)
