@@ -482,7 +482,7 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   while (dirItr != virtualDirs.end()) {
     std::string vdirName = dirItr->second->getVDir();
     std::string vDirDescription = dirItr->second->getDescription();
-    reply.body += "<a href=\"" + baseURL + vdirName + "\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>";
+    reply.body += "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>";
     dirItr++;
   }
 
