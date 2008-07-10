@@ -1418,7 +1418,7 @@ static bool isCached(char *hexDigest)
 }
 
 
-int curlProgressFunc(void */*clientp*/,
+int curlProgressFunc(void * /*clientp*/,
 		     double dltotal, double dlnow,
 		     double /*ultotal*/, double /*ulnow*/)
 {
