@@ -3931,15 +3931,27 @@ BZF_API const char* bz_getServerVersion ( void )
 
 // server side bot API
 
-// higer level logic API
-void bz_ServerSidePlayerHandler::spawned(void){
-
+// higher level logic API
+void bz_ServerSidePlayerHandler::spawned(void)
+{
 }
 
 bool bz_ServerSidePlayerHandler::think(void)
 {
+  updatePhysics();
   return false;
 }
+
+void bz_ServerSidePlayerHandler::died ( int /*killer*/ )
+{
+  alive = false;
+}
+
+void bz_ServerSidePlayerHandler::smote ( SmiteReason /*reason*/ )
+{
+  alive = false;
+}
+
 
 // lower level message API
 void bz_ServerSidePlayerHandler::playerRemoved(int){}
@@ -3953,9 +3965,18 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
     // it was me, I'm not in limbo
     alive=true;
 
+    // update the current state
+    lastUpdate.time = bz_getCurrentTime();
     // get where I am;
-    memcpy(pos, _pos, sizeof(float) *3);
-    rot=_rot;
+    memcpy(lastUpdate.pos, _pos, sizeof(float) *3);
+    lastUpdate.rotVel = 0;
+    lastUpdate.vec[0] = 0;
+    lastUpdate.vec[1] = 0;
+    lastUpdate.vec[2] = 0;
+    lastUpdate.rot = _rot;
+
+    input[0] = input[1] = 0;
+    updatePhysics();
 
     // tell the high level API that we done spawned;
     spawned();
@@ -4043,29 +4064,28 @@ void bz_ServerSidePlayerHandler::joinGame(void)
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::updateState(bz_PlayerUpdateState *state)
+void bz_ServerSidePlayerHandler::getCurrentState(bz_PlayerUpdateState *state)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!state || !player)
     return ;
 
-  // turn it into a real state and send it to the peeps
-  PlayerState playerState;
-  APIStateToplayerState(playerState,  *state);
-  playerState.order=player->lastState.order+1;
-  float now=(float)TimeKeeper::getCurrent().getSeconds();
-  updatePlayerState(player, playerState, now, false);
+  // grab the current state
+  playerStateToAPIState(*state,player->getCurrentStateAsState());
 }
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::dropFlag(float _pos[3])
+void bz_ServerSidePlayerHandler::dropFlag(void)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player)
     return ;
 
-  dropPlayerFlag(*player, _pos);
+  float p[3],r;
+  player->getPlayerCurrentPosRot(p,r);
+
+  dropPlayerFlag(*player, p);
 }
 
 //-------------------------------------------------------------------------
@@ -4116,22 +4136,15 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
   sendPlayerMessage(player, dstPlayer, text);
 }
 
+
+
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
+void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player)
-    return ;
-
-  ::captureFlag(playerID, convertTeam(_team));
 }
 
 //-------------------------------------------------------------------------
-
-void bz_ServerSidePlayerHandler::computeVelsFromInput(void){
-
-}
 
 void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
 {
@@ -4150,7 +4163,7 @@ void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
   if(input[1] < -1.0f)
     input[1]=-1.0f;
 
-  computeVelsFromInput();
+  computeStateFromInput();
 }
 
 //-------------------------------------------------------------------------
@@ -4172,7 +4185,9 @@ bool bz_ServerSidePlayerHandler::jump(void)
 void bz_ServerSidePlayerHandler::updatePhysics(void)
 {
   if(!alive)
-    return ;
+    return;
+
+  // see where we are
 }
 
 //-------------------------------------------------------------------------
@@ -4202,6 +4217,61 @@ bz_eShotType bz_ServerSidePlayerHandler::getShotType(void)
 {
   return (bz_eShotType)GameKeeper::Player::getPlayerByIndex(playerID)->efectiveShotType;
 }
+
+void bz_ServerSidePlayerHandler::getPosition ( float *p )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player || !p)
+    return;
+
+  float r;
+  player->getPlayerCurrentPosRot(p,r);
+}
+
+void bz_ServerSidePlayerHandler::getVelocity ( float *v )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player ||!v)
+    return;
+
+  memcpy(v,player->getCurrentStateAsState().velocity,sizeof(float)*3);
+}
+
+float bz_ServerSidePlayerHandler::getFacing ( void )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player)
+    return 0.0;
+
+  float p[3],r;
+  player->getPlayerCurrentPosRot(p,r);
+
+  return r;
+}
+
+float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
+{
+  // check the flag and stuff, but do the bzdb speed for now
+  return BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+}
+
+float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
+{
+  // check the flag and stuff, but do the bzdb speed for now
+  return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+}
+
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
+{
+  // plot where we think we are now based on the current date
+  double dt = state.time - time;
+
+ // float newPos = 
+  return 0;
+}
+
+
+
 
 //-------------------------------------------------------------------------
 

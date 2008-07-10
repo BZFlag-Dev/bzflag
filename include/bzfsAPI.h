@@ -2011,21 +2011,36 @@ class BZF_API bz_ServerSidePlayerHandler
 
   int playerID;
 
-  // higher level functions
-  virtual void spawned(void);
+  // higher level functions for things that happen to the bot
+
+  typedef enum
+  {
+    eWorldDeath,
+    eServerDeath,
+    eOtherDeath
+  }SmiteReason;
+
+  virtual void spawned(void); // the bot has spawned
+  virtual void died ( int killer ); // the bot has died from gameplay
+  virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner 
+  
+  // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
 
  protected:
+   // called before join
   void setPlayerData(const char *callsign,
 		     const char *token, const char *clientVersion,
 		     bz_eTeamType team);
+
   void joinGame(void);
-  void updateState(bz_PlayerUpdateState *state);
-  void dropFlag(float pos[3]);
+  void respawn(void);
+  void getCurrentState(bz_PlayerUpdateState *state);
+  
   void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS);
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
-  void captureFlag(bz_eTeamType team);
 
+  void dropFlag( void );
   void setMovementInput(float forward, float turn);
   bool fireShot(void);
   bool jump(void);
@@ -2038,32 +2053,52 @@ class BZF_API bz_ServerSidePlayerHandler
   bool canMove(void);
   bz_eShotType getShotType(void);
 
- protected:
-  typedef struct {
-    bool enabled;
-    bz_eShotType shotType;
-    float x,y,z;
-    float vx,vy,vz;
-    float fireTime;
+  void getPosition ( float *p );
+  void getVelocity ( float *v );
+  float getFacing ( void );
 
-    float cx,cy,cz;
-  } Shot;
+  float getMaxLinSpeed ( void );
+  float getMaxRotSpeed ( void );
 
-#define _BOT_MAX_SHOTS 100
-  Shot shots[_BOT_MAX_SHOTS];
-
+ private:
   float input[2];
 
-  float pos[3];
-  float vec[3];
-  float rot;
-  float rotVel;
+  class BZF_API UpdateInfo
+  {
+  public:
+    float pos[3];
+    float vec[3];
+    float rot;
+    float rotVel;
+    double time;
+
+    UpdateInfo()
+    {
+      for (int i = 0; i < 3; i++)
+	pos[i] = vec[0] =0;
+      time = rot = rotVel = 0;
+    }
+
+    UpdateInfo& operator = ( const UpdateInfo& u )
+    {
+      memcpy(pos,u.pos,sizeof(float)*3);
+      memcpy(vec,u.vec,sizeof(float)*3);
+      rot = u.rot;
+      rotVel = u.rotVel;
+      time = u.time;
+
+      return *this;
+    }
+    float getDelta( const UpdateInfo & state);
+  };
+
+  UpdateInfo lastUpdate;
+  UpdateInfo currentState;
 
   bool alive;
 
-  bz_PlayerUpdateState currentState;
  private:
-  void computeVelsFromInput(void);
+  void computeStateFromInput(void);
 };
 
 // *** NOTE *** support for server side players in incomplete.
