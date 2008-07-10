@@ -1976,8 +1976,10 @@ class BZF_API bz_ServerSidePlayerHandler
  public:
   virtual ~bz_ServerSidePlayerHandler() {};
 
-  // you must call setEntryData when this is called.
-  virtual void added(int player) = 0;
+  // you must call setPlayerData when this is called.
+  virtual void added(int player) = 0; // it is required that the bot provide this method
+
+  // lower level events for various things that happen in the game
   virtual void removed(void) {};
   virtual void playerRemoved(int player);
   virtual void playerRejected(bz_eRejectCodes code, const char *reason);
@@ -2009,10 +2011,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void playerAutopilot(int player, bool autopilot);
   virtual void allowSpawn(bool canSpawn);
 
-  int playerID;
-
-  // higher level functions for things that happen to the bot
-
+  // higher level functions for events that happen to the bot
   typedef enum
   {
     eWorldDeath,
@@ -2023,12 +2022,15 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void spawned(void); // the bot has spawned
   virtual void died ( int killer ); // the bot has died from gameplay
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner 
-  
+  virtual void jumped ( void ){}; // the bot has left the ground
+  virtual void landed ( void ){}; // the bot has landed
+  virtual void collide ( int /*objectID*/, float* /*pos*/ ){}; // the bot run into an object
+
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
 
  protected:
-   // called before join
+  // actions to make
   void setPlayerData(const char *callsign,
 		     const char *token, const char *clientVersion,
 		     bz_eTeamType team);
@@ -2045,9 +2047,7 @@ class BZF_API bz_ServerSidePlayerHandler
   bool fireShot(void);
   bool jump(void);
 
-  void updatePhysics(void);
-
-  // info
+  // state info
   bool canJump(void);
   bool canShoot(void);
   bool canMove(void);
@@ -2060,8 +2060,16 @@ class BZF_API bz_ServerSidePlayerHandler
   float getMaxLinSpeed ( void );
   float getMaxRotSpeed ( void );
 
+  // state actions
+  void updatePhysics(void);
+  void setAutoSpawn ( bool s = true ){autoSpawn = s;}
+
+  int playerID;
+
  private:
   float input[2];
+
+  bool autoSpawn;
 
   class BZF_API UpdateInfo
   {
@@ -2097,7 +2105,6 @@ class BZF_API bz_ServerSidePlayerHandler
 
   bool alive;
 
- private:
   void computeStateFromInput(void);
 };
 
