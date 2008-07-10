@@ -159,7 +159,7 @@ void CronManager::process(bz_EventData *eventData) {
     bz_debugMessage(4, "bzfscron: minute change");
 
     // make sure we have a valid player
-    if (!player || player->playerID < 0) return;
+    if (!player || !player->valid()) return;
 
     // iterate through all the jobs.  if they match the current minute, run them.
     std::vector<CronJob>::iterator itr;

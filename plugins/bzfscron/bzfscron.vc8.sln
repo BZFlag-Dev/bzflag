@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfscron", "bzfscron.vc8.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfscron", "bzfscron.vc8.vcproj", "{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}"
 	ProjectSection(ProjectDependencies) = postProject
 		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
 	EndProjectSection
@@ -13,10 +13,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug|Win32.Build.0 = Debug|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release|Win32.ActiveCfg = Release|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release|Win32.Build.0 = Release|Win32
+		{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}.Debug|Win32.Build.0 = Debug|Win32
+		{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}.Release|Win32.ActiveCfg = Release|Win32
+		{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}.Release|Win32.Build.0 = Release|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Debug|Win32.ActiveCfg = Debug|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Debug|Win32.Build.0 = Debug|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Release|Win32.ActiveCfg = Release|Win32
