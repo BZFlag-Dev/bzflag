@@ -14,7 +14,7 @@
 
 #ifdef TEST_NET
 
-//#include "../bzauthd/NetHandler.h"
+#include "../bzauthd/NetHandler.h"
 #include <TCPConnection.h>
 
 int sleep_var;
@@ -58,9 +58,14 @@ void test_listen(void *)
   
 }
 
+void sendPacket(Packet &packet, TCPClientConnection *client)
+{
+  client->sendData(packet.getOpcode(), (void*)packet.getData(), (int)packet.getLength());
+}
+
 void test_connect(void *number)
 {
-    const int NR_CLIENTS = 10;
+    /*const int NR_CLIENTS = 10;
     int i;
     TCPClientConnection* client[NR_CLIENTS];
     MyClientListener listener[NR_CLIENTS];
@@ -76,30 +81,43 @@ void test_connect(void *number)
         client[i]->addListener(&listener[i]);
     }
 
-    srand((int)time(NULL));
+    //srand((int)time(NULL));
     
     for(i = 0; i < 30; i++)
     {
-        // TODO: some messeges from the server are not being received.
-        // This might be because the reply arrives too soon for the update to catch it.
-        // A solution would be to move the client listen update to another thread
-        // but I don't know if that would be thread safe.
-        sleep_var = 50 + rand()%250;
-        while(sleep_var != 0)
-            TCPConnection::instance().update();
+        //sleep_var = 50 + rand()%250;
+
 
         int cli = rand() % 10;
         char msg[1024];
         sprintf(msg, "%d sends %d", cli, rand() % 1000);
         client[cli]->sendData(0, msg);
+        while(sleep_var != 0)
+            TCPConnection::instance().update();
     }
+
+    _sleep(2000);
 
 
     for(i = 0; i < NR_CLIENTS; i++)
     {
         client[i]->disconnect();
         TCPConnection::instance().deleteClientConnection(client[i]);
+    }*/
+
+    TCPClientConnection* client = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
+    
+    {
+      uint8 peerType = PEER_CLIENT;
+      uint16 protoVersion = 1;
+      uint32 cliVersion = 2;
+      uint8 commType = 0;
+      Packet msg(MSG_HANDSHAKE);
+      msg << peerType << protoVersion << cliVersion << commType;
+      sendPacket(msg, client);
     }
+
+    client->disconnect();
 }
 
 void test_net()

@@ -135,6 +135,9 @@
 				RelativePath="..\..\test\ldap.cpp">
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\Log.cxx">
+			</File>
+			<File
 				RelativePath="..\..\bzauthd\RSA.cxx">
 			</File>
 			<File

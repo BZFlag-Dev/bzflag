@@ -416,8 +416,8 @@ TCPsocket net_TCP_Accept(TCPsocket server)
   }
 #ifdef WIN32
   {
-    /* passing a zero value, socket mode set to block on */
-    unsigned long mode = 0;
+    /* passing a zero value, socket mode set to nonblocking */
+    unsigned long mode = 1;
     ioctlsocket (sock->channel, FIONBIO, &mode);
   }
 #endif /* WIN32 */

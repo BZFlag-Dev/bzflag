@@ -76,9 +76,27 @@ teTCPError ListenSocket::listen(uint16 port, uint32 connections)
   return eTCPNoError;
 }
 
-void ListenSocket::onReadData(ConnectSocket *socket, Packet *packet)
+void ListenSocket::onReadData(ConnectSocket *socket, PacketHandlerBase *&handler, Packet *packet)
 {
-
+  if(!handler)
+  {
+    if(packet->getOpcode() != MSG_HANDSHAKE)
+    {
+      sLog.outError("invalid opcode %d received, handshake must be first", packet->getOpcode());
+      socket->disconnect();
+    }
+    else
+      if(!(handler = PacketHandler::handleHandshake(*packet, socket)))
+        socket->disconnect();
+  }
+  else
+  {
+    if(!(((PacketHandler*)handler)->*opcodeTable[packet->getOpcode()].handler)(*packet))
+    {
+      sLog.outError("received %s: invalid packet format (length: %d)", packet->getOpcodeName(), (uint16)packet->getLength());
+      socket->disconnect();
+    }
+  }
 }
 
 bool ListenSocket::update()
@@ -106,30 +124,11 @@ bool ListenSocket::update()
   {
     Packet *packet;
     while((packet = itr->first->readData()) != NULL)
-    {
-      if(!itr->second)
-      {
-        if(packet->getOpcode() != MSG_HANDSHAKE)
-        {
-          sLog.outError("invalid opcode %d received, handshake must be first", packet->getOpcode());
-          itr->first->disconnect();
-        }
-        else
-          if(!(itr->second = PacketHandler::handleHandshake(*packet, itr->first)))
-            itr->first->disconnect();
-      }
-      else
-      {
-        if(!(itr->second->*opcodeTable[packet->getOpcode()].handler)(*packet))
-        {
-          sLog.outError("received %s: invalid packet format (length: %d)", packet->getOpcodeName(), (uint16)packet->getLength());
-          itr->first->disconnect();
-        }
-      }
-    }
+      onReadData(itr->first, itr->second, packet);
 
     if(!itr->first->isConnected())
     {
+      onDisconnect(itr->first);
       net_TCP_DelSocket(socketSet, itr->first->getSocket());
       net_TCP_Close(itr->first->getSocket());
       delete itr->first;
@@ -153,6 +152,11 @@ void ListenSocket::disconnect()
   // TODO
 }
 
+void ListenSocket::onDisconnect(ConnectSocket *)
+{
+  return;
+}
+
 ConnectSocket::ConnectSocket(const TCPsocket &s, bool isConn)
   : Socket(s), connected(isConn)
 {
@@ -163,6 +167,7 @@ void ConnectSocket::initRead()
 {
   remainingHeader = 4;
   remainingData = 0;
+  poz = 0;
 }
 
 void ConnectSocket::disconnect()
@@ -191,7 +196,9 @@ Packet * ConnectSocket::readData()
 
     if(!remainingHeader)
       remainingData = *(uint16*)(buffer+2);
-    else
+    //else       - return even if there might be more data, will be read later
+    // otherwise if no more data was sent, the next recv will return -1 and that
+    // will be incorrectly interpreted as a closed socket
       return NULL;
   }
 

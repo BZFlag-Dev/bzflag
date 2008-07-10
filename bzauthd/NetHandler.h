@@ -19,7 +19,6 @@
 #include <string>
 #include <map>
 
-#define O_NONBLOCK
 #include "../tcp-net/include/net.h"
 
 #define MAX_PACKET_SIZE 4096
@@ -108,11 +107,20 @@ public:
 
 class ConnectSocket;
 
-class PacketHandler
+class PacketHandlerBase
+{
+public:
+  PacketHandlerBase(ConnectSocket *socket) : m_socket(socket) {}
+  virtual ~PacketHandlerBase() {}
+protected:
+  ConnectSocket *m_socket;
+};
+
+class PacketHandler : public PacketHandlerBase
 {
 public:
   PacketHandler(ConnectSocket *socket) 
-    : m_socket(socket), m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
+    : PacketHandlerBase(socket), m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
   ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
 
   static PacketHandler* handleHandshake(Packet &packet, ConnectSocket *socket);
@@ -128,7 +136,6 @@ private:
   Peer *m_peer;
   AuthSession *m_authSession;
   RegisterSession *m_regSession;
-  ConnectSocket *m_socket;
 };
 
 typedef bool (PacketHandler::*PHFunc)(Packet &packet);
@@ -265,6 +272,7 @@ class Socket
 public:
   Socket(const TCPsocket &s) : socket(s) {}
   Socket() {}
+  virtual ~Socket() {}
   uint16 getPort() const { return serverIP.port; }
   virtual void disconnect() = 0;
   TCPsocket &getSocket() { return socket; }
@@ -300,13 +308,14 @@ public:
   void disconnect();
   
   bool onConnect(TCPsocket &socket);
-  void onReadData(ConnectSocket *socket, Packet *packet);
+  void onReadData(ConnectSocket *socket, PacketHandlerBase *&handler, Packet *packet);
+  void onDisconnect(ConnectSocket *socket);
 
   uint32 getMaxConnections () const { return maxUsers; }
 private:
   net_SocketSet socketSet;
   uint32 maxUsers;
-  typedef std::map<ConnectSocket *, PacketHandler *> SocketMapType;
+  typedef std::map<ConnectSocket *, PacketHandlerBase *> SocketMapType;
   SocketMapType socketMap;
 };
 

@@ -19,7 +19,7 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
 {
   uint8 peerType;
   uint16 protoVersion;
-  if(packet >> peerType >> protoVersion) return NULL;
+  if(!(packet >> peerType >> protoVersion)) return NULL;
 
   PacketHandler *handler = new PacketHandler(socket);
   bool success = true;
@@ -29,7 +29,7 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
       sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
       uint32 cliVersion;
       uint8 commType;
-      if(packet >> cliVersion >> commType) { success = false; break; }
+      if(!(packet >> cliVersion >> commType)) { success = false; break; }
       sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
       switch (commType) {
         case 0: success = handler->handleAuthRequest(packet); break;
@@ -95,9 +95,9 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   }
 
   uint16 cipher_len;
-  packet >> cipher_len;
+  if(!(packet >> cipher_len)) return false;
   uint8 *cipher = new uint8[cipher_len+1];
-  packet.read(cipher, cipher_len);
+  if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }
 
   uint8 *message;
   size_t message_len;
@@ -164,9 +164,9 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   }
 
   uint16 cipher_len;
-  packet >> cipher_len;
+  if(!(packet >> cipher_len)) return false;
   uint8 *cipher = new uint8[cipher_len+1];
-  packet.read(cipher, cipher_len);
+  if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }
 
   uint8 *message;
   size_t message_len;
