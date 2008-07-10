@@ -4261,10 +4261,10 @@ float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
   return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
 }
 
-float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & /*state*/)
 {
   // plot where we think we are now based on the current date
-  double dt = state.time - time;
+  // double dt = state.time - time;
 
  // float newPos = 
   return 0;
