@@ -59,7 +59,6 @@ void HUDDialogStack::push(HUDDialog* dialog)
   }
   stack.push_back(dialog);
   HUDui::setDefaultKey(dialog->getDefaultKey());
-  HUDui::setFocus(dialog->getFocus());
   dialog->resize(getMainWindow()->getWidth(), getMainWindow()->getHeight());
   dialog->show();
 }
