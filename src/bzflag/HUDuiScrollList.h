@@ -32,12 +32,11 @@
 class HUDuiScrollList : public HUDuiNestedContainer {
   public:
       HUDuiScrollList();
-      ~HUDuiScrollList();
       HUDuiScrollList(bool paged);
+      ~HUDuiScrollList();
 
     int getSelected() const;
     void setSelected(int _index);
-    void setSelectedControl(HUDuiControl* control);
 
     void addItem(HUDuiControl* item);
 

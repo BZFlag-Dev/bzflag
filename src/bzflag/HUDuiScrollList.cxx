@@ -48,20 +48,12 @@ HUDuiScrollList::~HUDuiScrollList()
 int HUDuiScrollList::getSelected() const
 {
   return index;
-  //return (int) getNav().getIndex();
 }
 
 void HUDuiScrollList::clear()
 {
   items.clear();
   setSelected(0);
-}
-
-void HUDuiScrollList::setSelectedControl(HUDuiControl* control)
-{
-  getNav().set(control);
-  setSelected(getNav().getIndex());
-  return;
 }
 
 void HUDuiScrollList::setSelected(int _index)
@@ -94,13 +86,6 @@ void HUDuiScrollList::setSelected(int _index)
   }
 
   index = _index;
-
-  //std::list<HUDuiScrollListItem*>::iterator it;
-  //it = items.begin();
-  //std::advance(it, index);
-  //getNav().set(*it);
-  //getNav().set(index);
-  //getNav().next();
 }
 
 // Add a new item to our scrollable list
@@ -118,11 +103,14 @@ void HUDuiScrollList::update()
 
 size_t HUDuiScrollList::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
 {
-  // Do nothing at the moment
+  // Don't scroll up any further once you've hit the top of the list
+  if ((oldFocus == 0)&&(changeMethod == hnPrev)) proposedFocus = oldFocus;
   
-  //((HUDuiScrollList*)data)->setSelected(proposedFocus);
-  //return ((HUDuiScrollList*)data)->getSelected();
-  return proposedFocus;
+  // Don't scroll past the bottom of the list
+  if ((oldFocus == ((HUDuiScrollList*)data)->getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
+
+  ((HUDuiScrollList*)data)->setSelected((int) proposedFocus);
+  return (size_t) ((HUDuiScrollList*)data)->getSelected();
 }
 
 // Set the scrollable list to be paged/non-paged
@@ -145,39 +133,24 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 
   if (key.chr == 0)
     switch (key.button) {
-      case BzfKeyEvent::Up:
-	if (index != -1) {
-	  //setSelected(index - 1);
-	  //doCallback();
-	}
-	break;
-
-      case BzfKeyEvent::Down:
-	if (index != -1) {
-	  //setSelected(index + 1);
-	  //doCallback();
-	}
-	break;
 				
       case BzfKeyEvent::PageUp:
 	if ((pagedList)&&(index != -1)) {
 	  //  Jump back to the previous page
-	  setSelected((currentPage - 2)*numVisibleItems);
-	  doCallback();
+	  getNav().set((size_t) (currentPage - 2)*numVisibleItems);
 	}
 	break;
 
       case BzfKeyEvent::PageDown:
 	if ((pagedList)&&(index != -1)) {
 	  //  Skip to the next page
-	  setSelected((currentPage)*numVisibleItems);
-	  doCallback();
+	  getNav().set((size_t) (currentPage)*numVisibleItems);
 	}
 	break;
 				
       // Testing purposes only
       case BzfKeyEvent::Home:
-	//sortAlphabetically();
+	setPaged(!pagedList);
 	break;
 
       default:
@@ -258,7 +231,6 @@ void HUDuiScrollList::doRender()
       HUDuiControl* item = *it;
       item->setFontSize(getFontSize());
       item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
-      //item->setDarker(i != getSelected());
       if (i == getSelected())
       {
 	item->showFocus(true);

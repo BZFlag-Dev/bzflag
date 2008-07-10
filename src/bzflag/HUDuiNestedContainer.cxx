@@ -52,13 +52,6 @@ size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUD
   return ~0;
 }
 
-//void HUDuiNestedContainer::initNavigation()
-//{
-//  for (HUDNavigationQueue::iterator itr = navList.begin(); itr != navList.end(); ++itr)
-//    (*itr)->setNavQueue(&navList);
-//  navList.set((size_t)0);
-//}
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

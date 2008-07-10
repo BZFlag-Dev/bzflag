@@ -45,8 +45,6 @@ class HUDuiNestedContainer : public HUDuiControl {
 	
     static size_t gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data);
 
-    void initNavigation();
-
   private:
     HUDNavigationQueue nestedNavList;
 

@@ -48,6 +48,8 @@ class HUDDialog {
     virtual void		setFailedMessage(const char *) {;};
     
     HUDuiControl*		getFocus() const { return navList.get(); }
+	
+    void reFocus() { navList.set(navList.getIndex()); }
 
   protected:
     void			addControl(HUDuiElement* element);
@@ -76,7 +78,6 @@ class HUDDialog {
      */
     std::vector<HUDuiElement*>	renderList;
     HUDNavigationQueue		navList;
-    HUDuiControl*		focus;
 };
 
 
