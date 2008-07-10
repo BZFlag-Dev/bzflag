@@ -4136,12 +4136,14 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
   sendPlayerMessage(player, dstPlayer, text);
 }
 
-
-
 //-------------------------------------------------------------------------
 
 void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
+  // compute the dt
+  double now = bz_getCurrentTime();
+  double delta = now - currentState.time;
+ // currentState.
 }
 
 //-------------------------------------------------------------------------
@@ -4261,16 +4263,17 @@ float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
   return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
 }
 
-float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & /*state*/)
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
 {
   // plot where we think we are now based on the current date
   // double dt = state.time - time;
 
- // float newPos = 
-  return 0;
+  float newPos[3];
+  newPos[0] = state.pos[0] + (float)(state.vec[0] *dt);
+  newPos[1] = state.pos[1] + (float)(state.vec[1] *dt);
+  newPos[2] = state.pos[2] + (float)(state.vec[2] *dt);
+ return 0;
 }
-
-
 
 
 //-------------------------------------------------------------------------
