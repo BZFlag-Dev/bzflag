@@ -271,7 +271,7 @@ class Socket
 {
 public:
   Socket(const TCPsocket &s) : socket(s) {}
-  Socket() {}
+  Socket() : socket(NULL) {}
   virtual ~Socket() {}
   uint16 getPort() const { return serverIP.port; }
   virtual void disconnect() = 0;
@@ -303,6 +303,7 @@ class ListenSocket : public Socket
 {
 public:
   ListenSocket() : socketSet(NULL) {}
+  ~ListenSocket() { disconnect(); }
   teTCPError listen(uint16 port, uint32 connections);
   bool update();
   void disconnect();

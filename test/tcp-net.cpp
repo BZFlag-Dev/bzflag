@@ -128,9 +128,10 @@ void test_net()
     // initialize the net library
     TCPConnection::instance();
 
-    _beginthread(test_listen, 0, NULL);
-    _sleep(500);
-    _beginthread(test_connect, 0, NULL);
+    //_beginthread(test_listen, 0, NULL);
+    //_sleep(500);
+    //_beginthread(test_connect, 0, NULL);
+    test_connect(NULL);
 }
 #endif
 

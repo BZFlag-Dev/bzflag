@@ -124,7 +124,10 @@ bool ListenSocket::update()
   {
     Packet *packet;
     while((packet = itr->first->readData()) != NULL)
+    {
       onReadData(itr->first, itr->second, packet);
+      delete packet;
+    }
 
     if(!itr->first->isConnected())
     {
@@ -149,7 +152,8 @@ bool ListenSocket::onConnect(TCPsocket &)
 
 void ListenSocket::disconnect()
 {
-  // TODO
+  if(socket) net_TCP_Close(socket);   // but it still seems to leave a mem leak :(
+  if(socketSet) net_FreeSocketSet(socketSet);
 }
 
 void ListenSocket::onDisconnect(ConnectSocket *)

@@ -32,7 +32,7 @@ int main()
     return 1;
 
   /* main loop */
-  while(1)
+  while(!kbhit())
   {
     sNetHandler.update();
   }
