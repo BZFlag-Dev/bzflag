@@ -2029,6 +2029,7 @@ class BZF_API bz_ServerSidePlayerHandler
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
 
+  void setPlayerID ( int id ){playerID = id;}
  protected:
   // actions to make
   void setPlayerData(const char *callsign,

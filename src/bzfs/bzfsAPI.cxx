@@ -4277,7 +4277,7 @@ float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state
 
 BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
 {
-  handler->playerID=-1;
+  handler->setPlayerID(-1);
 
   PlayerId playerIndex=getNewPlayerID();
   if(playerIndex >= 0xFF)
@@ -4288,7 +4288,7 @@ BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
   checkGameOn();
   player->_LSAState=GameKeeper::Player::notRequired;
 
-  handler->playerID=playerIndex;
+  handler->setPlayerID(playerIndex);
 
   handler->added(playerIndex);
   return playerIndex;
