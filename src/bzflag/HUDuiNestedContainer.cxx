@@ -38,6 +38,20 @@ void HUDuiNestedContainer::addControl(HUDuiControl *control)
   control->setParent(this);
 }
 
+void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
+{
+  HUDuiControl::setNavQueue(_navList);
+  _navList->setCallback(gotFocus, this);
+}
+
+size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
+{
+  // This should probably grab the selected item in the container and set that to focus
+  // Right now this is just a place-holder to get the focus set correctly when it first starts
+  ((HUDuiNestedContainer*)data)->getNav().set((size_t)0);
+  return ~0;
+}
+
 //void HUDuiNestedContainer::initNavigation()
 //{
 //  for (HUDNavigationQueue::iterator itr = navList.begin(); itr != navList.end(); ++itr)

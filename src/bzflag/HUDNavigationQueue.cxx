@@ -39,6 +39,12 @@ void HUDNavigationQueue::next()
   if (cb)
     focus = cb(oldfocus, focus, hnNext, userData);
 
+  if (focus == ~0)
+  {
+    focus = oldfocus;
+    return;
+  }
+
   HUDui::setFocus(at(focus));
 }
 
@@ -53,6 +59,12 @@ void HUDNavigationQueue::prev()
   if (cb)
     focus = cb(oldfocus, focus, hnPrev, userData);
 
+  if (focus == ~0)
+  {
+    focus = oldfocus;
+    return;
+  }
+  
   HUDui::setFocus(at(focus));
 }
 
@@ -60,11 +72,16 @@ bool HUDNavigationQueue::set(size_t index)
 {
   if (index >= size()) return false;
 
-  if (cb)
-    focus = cb(focus, index, hnExplicitIndex, userData);
-  else
-    focus = index;
+  size_t tempFocus;
 
+  if (cb)
+    tempFocus = cb(focus, index, hnExplicitIndex, userData);
+  else
+    tempFocus = index;
+
+  if (tempFocus == ~0) return true;
+  
+  focus = tempFocus;
   HUDui::setFocus(at(focus));
   return true;
 }
@@ -73,13 +90,18 @@ bool HUDNavigationQueue::set(HUDuiControl* control)
 {
   if (!control || !size()) return false;
 
+  size_t tempFocus;
+
   for (size_t i = 0; i < size(); ++i)
     if (at(i) == control) {
       if (cb)
-	focus = cb(focus, i, hnExplicitPointer, userData);
+	tempFocus = cb(focus, i, hnExplicitPointer, userData);
       else
-	focus = i;
+	tempFocus = i;
 
+      if (tempFocus == ~0) return true;
+
+      focus = tempFocus;
       HUDui::setFocus(at(focus));
       return true;
     }

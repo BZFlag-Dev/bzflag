@@ -22,7 +22,6 @@
 #include "HUDuiNestedContainer.h"
 
 #include "HUDuiLabel.h"
-#include "HUDuiScrollListItem.h"
 
 #include <string>
 #include <vector>
@@ -38,11 +37,9 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     int getSelected() const;
     void setSelected(int _index);
+    void setSelectedControl(HUDuiControl* control);
 
-    void addItem(HUDuiLabel* item);
-    void addItem(std::string item);
-
-    void sortAlphabetically();
+    void addItem(HUDuiControl* item);
 
     void update();
     void clear();
@@ -52,11 +49,14 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     void setPaged(bool paged);
 
+    static size_t callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data);
+
   protected:
     bool doKeyPress(const BzfKeyEvent&);
     bool doKeyRelease(const BzfKeyEvent&);
+
     void resizeItems();
-    static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
+
     void doRender();
 
   private:
@@ -67,7 +67,7 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     HUDuiLabel* pageLabel;
 
-    std::list<HUDuiScrollListItem*> items;
+    std::list<HUDuiControl*> items;
 };
 
 #endif // __HUDUISCROLLLIST_H__

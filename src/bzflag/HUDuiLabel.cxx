@@ -78,7 +78,8 @@ bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
     case 0:
       return false;
   }
-  return true;
+  return false;
+  //return true;
 }
 
 bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)

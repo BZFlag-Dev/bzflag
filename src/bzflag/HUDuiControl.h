@@ -57,7 +57,7 @@ class HUDuiControl : public HUDuiElement {
     bool		hasFocus() const;
     void		showFocus(bool);
 
-    void		setNavQueue(HUDNavigationQueue*);
+    virtual void		setNavQueue(HUDNavigationQueue*);
 
     void		render();
 
@@ -76,7 +76,7 @@ class HUDuiControl : public HUDuiElement {
     HUDuiControl* parent;
 	
     bool		showingFocus;
-    HUDNavigationQueue*	navList;
+	HUDNavigationQueue*	navList;
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;

@@ -19,6 +19,8 @@
 // local implementation headers
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "HUDuiNestedContainer.h"
+
 
 
 //
