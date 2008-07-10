@@ -1136,7 +1136,7 @@ if test "x$BUILD_FREETYPE" = "xyes" ; then
 fi
 
 dnl add boost::spirit to cppflags FIXME: put this in a proper location
-CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/src/other/spirit"
+CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/src/other/boost"
 
 LIBFTGL=""
 if test "x$enable_client" != "xno" ; then
