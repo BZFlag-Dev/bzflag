@@ -2225,12 +2225,7 @@ AC_HELP_STRING([--disable-ares],[Disable c-ares for name lookups]),
             AC_CONFIG_SUBDIRS(ares)
             aresinc=`cd $srcdir/../ares && pwd`
             CPPFLAGS="$CPPFLAGS -I$aresinc"
-
-            dnl the pwd= below cannot 'cd' into the ares dir to get the full
-            dnl path to it, since it may not exist yet if we build outside of
-            dnl the source tree
-            pwd=`pwd`
-            LDFLAGS="$LDFLAGS -L$pwd/ares"
+            LDFLAGS="$LDFLAGS -L$aresinc"
          fi
        else
          CPPFLAGS="$CPPFLAGS -I$enableval/include"

@@ -1102,6 +1102,9 @@ fi
 dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
 AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
+if test "x$BUILD_CURL" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
+fi
 
 
 LIBFREETYPE=""
