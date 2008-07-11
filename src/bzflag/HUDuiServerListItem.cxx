@@ -33,16 +33,20 @@ const float HUDuiServerListItem::PING_PERCENTAGE = 0.125;
 
 HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 {
-  domainName = new HUDuiScrollListItem("");
+  domainName = new HUDuiLabel;
+  domainName->setString("Test");
   domainName->setFontFace(getFontFace());
 
-  serverName = new HUDuiScrollListItem("");
+  serverName = new HUDuiLabel;
+  serverName->setString("THE SHIT SERVEr");
   serverName->setFontFace(getFontFace());
 
-  playerCount = new HUDuiScrollListItem("");
+  playerCount = new HUDuiLabel;
+  playerCount->setString("1000");
   playerCount->setFontFace(getFontFace());
 
-  serverPing = new HUDuiScrollListItem("");
+  serverPing = new HUDuiLabel;
+  serverPing->setString("200");
   serverPing->setFontFace(getFontFace());
 }
 
@@ -56,19 +60,24 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
   args.push_back(msg);
   sprintf(msg, "%ld", item.ping.maxPlayers);
   args.push_back(msg);
-  
-  domainName = new HUDuiScrollListItem("Domain");
+
+  domainName = new HUDuiLabel;
+  domainName->setString("Domain");
   domainName->setFontFace(getFontFace());
 
-  serverName = new HUDuiScrollListItem("Server");
+  serverName = new HUDuiLabel;
+  serverName->setString("Server");
   serverName->setFontFace(getFontFace());
 
-  playerCount = new HUDuiScrollListItem("99");
+  playerCount = new HUDuiLabel;
+  playerCount->setString("99");
   playerCount->setFontFace(getFontFace());
+
+  serverPing = new HUDuiLabel;
+  serverPing->setString("200");
+  serverPing->setFontFace(getFontFace());
   
   //serverPing = new HUDuiScrollListItem(item.ping.pingTime);
-  serverPing = new HUDuiScrollListItem("200");
-  serverPing->setFontFace(getFontFace());
 }
 
 HUDuiServerListItem::~HUDuiServerListItem()
@@ -99,57 +108,52 @@ void HUDuiServerListItem::setFontFace(const LocalFontFace* fontFace)
 }
 
 // Set the scrollable list item's position on the screen
-// NEEDS WORK
 void HUDuiServerListItem::setPosition(float x, float y)
 {
   HUDuiControl::setPosition(x, y);
 
-  domainName->setPosition(x, y);
-  serverName->setPosition((x + (DOMAIN_PERCENTAGE * getWidth())), y);
-  playerCount->setPosition((x + (SERVER_PERCENTAGE * getWidth())), y);
-  serverPing->setPosition((x+ (PLAYER_PERCENTAGE * getWidth())), y);
+  float _x = x;
+  domainName->setPosition(_x, y);
+  _x = _x + domainName->getWidth();
+  serverName->setPosition(_x, y);
+  _x = _x + serverName->getWidth();
+  playerCount->setPosition(_x, y);
+  _x = _x + playerCount->getWidth();
+  serverPing->setPosition(_x, y);
 }
 
 void HUDuiServerListItem::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
-  shorten(getWidth());
+  
+  domainName->setSize((DOMAIN_PERCENTAGE * width), height);
+  serverName->setSize((SERVER_PERCENTAGE * width), height);
+  playerCount->setSize((PLAYER_PERCENTAGE * width), height);
+  serverPing->setSize((PING_PERCENTAGE * width), height);
 }
 
 // Returns the domain name of the server list item
 std::string HUDuiServerListItem::getDomainName()
 {
-  return domainName->getValue();
+  return domainName->getString();
 }
 
 // Returns the server name of the server list item
 std::string HUDuiServerListItem::getServerName()
 {
-  return serverName->getValue();
+  return serverName->getString();
 }
 
 // Returns the player count of the server list item
 std::string HUDuiServerListItem::getPlayerCount()
 {
-  return playerCount->getValue();
+  return playerCount->getString();
 }
 
 // Returns the server ping of the server list item
 std::string HUDuiServerListItem::getServerPing()
 {
-  return serverPing->getValue();
-}
-
-// Shorten the item's label to fit
-// MUST BE RE-DONE
-void HUDuiServerListItem::shorten(float width)
-{
-  float listWidth = getWidth();
-  
-  domainName->shorten(listWidth * DOMAIN_PERCENTAGE);
-  serverName->shorten(listWidth * SERVER_PERCENTAGE);
-  playerCount->shorten(listWidth * PLAYER_PERCENTAGE);
-  serverPing->shorten(listWidth * PING_PERCENTAGE);
+  return serverPing->getString();
 }
 
 // Render the scrollable list item

@@ -50,8 +50,28 @@ void HUDuiServerList::addItem(ServerItem item)
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
-  items.push_back(newItem);
+  HUDuiScrollList::addItem(newItem);
   update();
+}
+
+//
+// Add a new item to our scrollable list
+void HUDuiServerList::addItem(HUDuiServerListItem* item)
+{
+  //HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
+  item->setFontFace(getFontFace());
+  item->setFontSize(getFontSize());
+  HUDuiScrollList::addItem(item);
+  update();
+}
+//
+//
+
+// Over-ride the generic HUDuiControl version of addItem
+void HUDuiServerList::addItem(HUDuiControl* item)
+{
+  // Do nothing
+  return;
 }
 
 // Internal alphabetical compare function
@@ -70,6 +90,7 @@ void HUDuiServerList::addItem(ServerItem item)
 //}
 
 // Change our scrollable list items' sizes to match any changes to our scrollable list
+/*
 void HUDuiServerList::resizeItems()
 {
   // Determine how many items are visible
@@ -98,6 +119,7 @@ void HUDuiServerList::resizeItems()
     }
   }
 }
+*/
 
 // Local Variables: ***
 // mode: C++ ***

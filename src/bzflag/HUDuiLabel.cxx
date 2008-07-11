@@ -67,6 +67,30 @@ void			HUDuiLabel::onSetFont()
   HUDuiControl::onSetFont();
 }
 
+void HUDuiLabel::setSize(float width, float height)
+{
+  HUDuiControl::setSize(width, height);
+  
+  // Trim string to fit our available space
+  FontManager &fm = FontManager::instance();
+  std::string tempStr = getString();
+
+  // Skip if it already fits
+  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.c_str()) <= width)
+    return;
+
+  // Iterate through each character. Expensive.
+  for (int i=0; i<(int)tempStr.size(); i++)
+  {
+    // Is it too big yet?
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), 
+						tempStr.substr(0, i).c_str()) > width) {
+          displayString = tempStr.substr(0, i - 1);
+          break;
+    }
+  }
+}
+
 bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
   if (HUDuiControl::doKeyPress(key))
@@ -117,7 +141,7 @@ void			HUDuiLabel::doRender()
   fm.setDarkness(darkness);
   fm.drawString(getX(), getY(), 0,
 		getFontFace()->getFMFace(), getFontSize(),
-		getString().c_str(), color);
+		displayString.c_str(), color);
   fm.setDarkness(1.0f);
 }
 

@@ -133,28 +133,28 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 
   if (key.chr == 0)
     switch (key.button) {
-				
+
       case BzfKeyEvent::PageUp:
-	if ((pagedList)&&(index != -1)) {
-	  //  Jump back to the previous page
-	  getNav().set((size_t) (currentPage - 2)*numVisibleItems);
-	}
-	break;
+        if ((pagedList)&&(index != -1)) {
+          // Jump back to the previous page
+          getNav().set((size_t) (currentPage - 2)*numVisibleItems);
+        }
+        break;
 
       case BzfKeyEvent::PageDown:
-	if ((pagedList)&&(index != -1)) {
-	  //  Skip to the next page
-	  getNav().set((size_t) (currentPage)*numVisibleItems);
-	}
-	break;
-				
+        if ((pagedList)&&(index != -1)) {
+          // Skip to the next page
+          getNav().set((size_t) (currentPage)*numVisibleItems);
+        }
+        break;
+
       // Testing purposes only
       case BzfKeyEvent::Home:
-	setPaged(!pagedList);
-	break;
+        setPaged(!pagedList);
+        break;
 
       default:
-	return false;
+        return false;
   }
 
   switch (key.chr) {
@@ -231,10 +231,6 @@ void HUDuiScrollList::doRender()
       HUDuiControl* item = *it;
       item->setFontSize(getFontSize());
       item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
-      if (i == getSelected())
-      {
-	item->showFocus(true);
-      }
       item->render();
       std::advance(it, 1);
     }

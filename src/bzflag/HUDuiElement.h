@@ -45,12 +45,12 @@ class HUDuiElement {
     const LocalFontFace*	getFontFace() const;
     float		getFontSize() const;
 
-    void		setPosition(float x, float y);
-    void		setSize(float width, float height);
+    virtual void		setPosition(float x, float y);
+    virtual void		setSize(float width, float height);
     void		setLabelWidth(float width);
     void		setLabel(const std::string& label);
-    void		setFontFace(const LocalFontFace* face);
-    void		setFontSize(float size);
+    virtual void		setFontFace(const LocalFontFace* face);
+    virtual void		setFontSize(float size);
 
     virtual void	render();
 

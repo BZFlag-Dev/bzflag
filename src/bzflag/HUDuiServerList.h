@@ -21,7 +21,7 @@
 // ancestor class
 #include "HUDuiScrollList.h"
 
-#include "HUDuiLabel.h"
+//#include "HUDuiLabel.h"
 #include "HUDuiServerListItem.h"
 #include "ServerItem.h"
 
@@ -34,22 +34,24 @@
 class HUDuiServerList : public HUDuiScrollList {
   public:
       HUDuiServerList();
-      ~HUDuiServerList();
       HUDuiServerList(bool paged);
+      ~HUDuiServerList();
 
     void addItem(ServerItem item);
+    void addItem(HUDuiControl* item);
+    void addItem(HUDuiServerListItem* item);
 
     void sortAlphabetically();
 
   protected:
     void resizeItems();
-    static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
+    //static bool compare_alphabetically(HUDuiScrollListItem* first, HUDuiScrollListItem* second);
 
   private:
-    int numVisibleItems;
-    bool pagedList;
+    //int numVisibleItems;
+    //bool pagedList;
 
-    std::list<HUDuiServerListItem*> items;
+    //std::list<HUDuiServerListItem*> items;
 };
 
 #endif // __HUDuiServerList_H__

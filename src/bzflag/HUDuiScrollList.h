@@ -38,7 +38,7 @@ class HUDuiScrollList : public HUDuiNestedContainer {
     int getSelected() const;
     void setSelected(int _index);
 
-    void addItem(HUDuiControl* item);
+    virtual void addItem(HUDuiControl* item);
 
     void update();
     void clear();

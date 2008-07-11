@@ -22,7 +22,6 @@
 #include "HUDuiControl.h"
 
 #include "HUDuiLabel.h"
-#include "HUDuiScrollListItem.h"
 #include "ServerItem.h"
 #include <string>
 
@@ -37,8 +36,6 @@ class HUDuiServerListItem : public HUDuiControl {
 	
     void setSize(float width, float height);
     void setPosition(float x, float y);
-
-    void shorten(float width);
 	
     std::string getDomainName();
     std::string getServerName();
@@ -49,10 +46,10 @@ class HUDuiServerListItem : public HUDuiControl {
     void doRender();
 
   private:
-    HUDuiScrollListItem* domainName;
-    HUDuiScrollListItem* serverName;
-    HUDuiScrollListItem* playerCount;
-    HUDuiScrollListItem* serverPing;
+    HUDuiLabel* domainName;
+    HUDuiLabel* serverName;
+    HUDuiLabel* playerCount;
+    HUDuiLabel* serverPing;
 	
     static const float DOMAIN_PERCENTAGE;
     static const float SERVER_PERCENTAGE;
