@@ -25,7 +25,7 @@ public:
   virtual bool ifCallback (const std::string &key);
 
 private:
-  size_t loopPos;
+  unsigned int loopPos;
   std::map<std::string,std::string> templateVars;
   
   typedef void (WebAdmin::*page_callback)(const HTTPRequest &);
@@ -36,6 +36,9 @@ private:
   void banlistPageCallback (const HTTPRequest &request);
   
   bz_APIIntList players;
+  bz_APIStringList *stringList;
+  
+  bool editing;
 };
 
 WebAdmin *webAdmin = NULL;
@@ -88,16 +91,22 @@ void WebAdmin::init(const char* cmdln)
   
   templateSystem.addIF("IsCurrentPage",this);
   templateSystem.addIF("Error",this);
+  templateSystem.addIF("Editing",this);
 
   templateSystem.addKey("Error",this);
   templateSystem.addKey("Callsign",this);
   templateSystem.addKey("BannedUser",this);
   templateSystem.addKey("PageName",this);
+  templateSystem.addKey("HelpMsgName",this);
+  templateSystem.addKey("HelpMsgBody",this);
+  templateSystem.addKey("GroupName",this);
   
   templateSystem.addLoop("Navigation",this);
   templateSystem.addLoop("Players",this);
   templateSystem.addLoop("IPBanList",this);
   templateSystem.addLoop("IDBanList",this);
+  templateSystem.addLoop("HelpMsgs",this);
+  templateSystem.addLoop("Groups",this);
 
   templateSystem.setPluginName("webadmin", getBaseURL().c_str());
 
@@ -135,6 +144,24 @@ bool WebAdmin::loopCallback (const std::string &key)
       templateVars["permission"] = bzu_standardPerms()[loopPos++];
       return true;
     } else return loopPos = 0;
+  } else if (key == "helpmsgs") {
+    if (!loopPos) stringList = bz_getHelpTopics();
+    if (loopPos < stringList.size()) {
+      templateVare["helpmsgname"] = stringList[loopPos++].c_str();
+      return true;
+    } else {
+      delete(stringList);
+      return loopPos = 0;
+    }
+  } else if (key == "groups") {
+    if (!loopPos) stringList = bz_getGroupList();
+    if (loopPos < stringList.size()) {
+      templateVare["groupname"] = stringList[loopPos++].c_str();
+      return true;
+    } else {
+      delete(stringList);
+      return loopPos = 0;
+    }
   } else return false;
 }
 
@@ -143,6 +170,8 @@ bool WebAdmin::ifCallback (const std::string &key)
 {
   if (key == "iscurrentpage")
     return templateVars["pagename"] == templateVars["currentpage"];
+  if (key == "editing")
+    return editing;
   return false;
 }
 
@@ -174,7 +203,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     break;
   //reply.body = format("Not authenticated(Verified) sessionID %d",request.sessionID);
   default:
-    reply.body = format("Not authenticated sessionID %d",request.sessionID);
+    reply.body = format("Not authenticated sessionID %d, access level %d",request.sessionID,level);
   }
 
   reply.docType = HTTPReply::eHTML;
