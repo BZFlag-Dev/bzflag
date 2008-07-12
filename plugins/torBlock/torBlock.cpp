@@ -13,6 +13,8 @@
 #include <vector>
 #include "plugin_utils.h"
 
+#define _CSVPARSE false
+
 BZ_GET_PLUGIN_VERSION
 
 std::string torMasterList("http://moria.seul.org:9032/tor/status/authority");
@@ -34,6 +36,43 @@ class MyURLHandler: public bz_BaseURLHandler
 {
 public:
   std::string page;
+
+  void csvParse ( void )
+  {
+    exitNodes = tokenize(page,",",0,false);
+  }
+
+  void parse ( void )
+  {
+    std::vector<std::string> tokes = tokenize(page,std::string("\n"),0,false);
+
+    bool gotKey = false;
+    for (unsigned int i = 0; i < tokes.size(); i++ )
+    {
+      if (!gotKey)
+      {
+	if ( tokes[i] == "-----END RSA PUBLIC KEY-----")
+	{
+	  gotKey = true;
+	  exitNodes.clear(); // only clear when we have a list
+	}
+      }
+      else
+      {
+	if ( tokes[i].size() )
+	{
+	  std::vector<std::string> chunks = tokenize(tokes[i],std::string(" "),0,false);
+
+	  if ( chunks.size() > 1 )
+	  {
+	    if ( chunks[0] == "r" && chunks.size() > 7 )
+	      exitNodes.push_back(chunks[6]);
+	  }
+	}
+      }
+    }
+  }
+
   virtual void done ( const char* /* URL */, void * data, unsigned int size, bool complete )
   {
     char *str = (char*)malloc(size+1);
@@ -45,33 +84,10 @@ public:
     if (!complete)
       return;
 
-    std::vector<std::string> tokes = tokenize(page,std::string("\n"),0,false);
-
-    bool gotKey = false;
-    for (unsigned int i = 0; i < tokes.size(); i++ )
-      {
-	if (!gotKey)
-	  {
-	    if ( tokes[i] == "-----END RSA PUBLIC KEY-----")
-	      {
-		gotKey = true;
-		exitNodes.clear(); // only clear when we have a list
-	      }
-	  }
-	else
-	  {
-	    if ( tokes[i].size() )
-	      {
-		std::vector<std::string> chunks = tokenize(tokes[i],std::string(" "),0,false);
-
-		if ( chunks.size() > 1 )
-		  {
-		    if ( chunks[0] == "r" && chunks.size() > 7 )
-		      exitNodes.push_back(chunks[6]);
-		  }
-	      }
-	  }
-      }
+   if (_CSVPARSE)
+     csvParse();
+   else
+     parse();
   }
 };
 
@@ -95,20 +111,20 @@ MyURLHandler myURL;
 void updateTorList ( void )
 {
   if ( bz_getCurrentTime() - lastUpdateTime >= updateInterval)
-    {
-      lastUpdateTime = bz_getCurrentTime();
-      myURL.page.clear();
-      bz_addURLJob(torMasterList.c_str(),&myURL);
-    }
+  {
+    lastUpdateTime = bz_getCurrentTime();
+    myURL.page.clear();
+    bz_addURLJob(torMasterList.c_str(),&myURL);
+  }
 }
 
 bool isTorAddress ( const char* addy )
 {
   for ( unsigned int i = 0; i < exitNodes.size(); i++ )
-    {
-      if (exitNodes[i] == addy)
-	return true;
-    }
+  {
+    if (exitNodes[i] == addy)
+      return true;
+  }
   return false;
 }
 
@@ -137,27 +153,27 @@ void Handler::process ( bz_EventData *eventData )
     return;
 
   switch (eventData->eventType)
+  {
+  case bz_eAllowPlayer:
     {
-    case bz_eAllowPlayer:
+      bz_AllowPlayerEventData_V1 *data = (bz_AllowPlayerEventData_V1*)eventData;
+
+      if (isTorAddress(data->ipAddress.c_str()))
       {
-	bz_AllowPlayerEventData_V1 *data = (bz_AllowPlayerEventData_V1*)eventData;
-
-	if (isTorAddress(data->ipAddress.c_str()))
-	  {
-	    data->allow = false;
-	    data->reason = "Proxy Network Ban";
-	    bz_debugMessage(0, "Proxy Network Ban: Rejected");
-	  }
+	data->allow = false;
+	data->reason = "Proxy Network Ban";
+	bz_debugMessage(0, "Proxy Network Ban: Rejected");
       }
-      break;
-
-    case bz_eTickEvent:
-      updateTorList();
-      break;
-
-    default:
-      break;
     }
+    break;
+
+  case bz_eTickEvent:
+    updateTorList();
+    break;
+
+  default:
+    break;
+  }
 }
 
 
