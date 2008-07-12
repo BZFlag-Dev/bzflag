@@ -146,8 +146,8 @@ bool WebAdmin::loopCallback (const std::string &key)
     } else return loopPos = 0;
   } else if (key == "helpmsgs") {
     if (!loopPos) stringList = bz_getHelpTopics();
-    if (loopPos < stringList.size()) {
-      templateVare["helpmsgname"] = stringList[loopPos++].c_str();
+    if (loopPos < stringList->size()) {
+      templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
       return true;
     } else {
       delete(stringList);
@@ -155,8 +155,8 @@ bool WebAdmin::loopCallback (const std::string &key)
     }
   } else if (key == "groups") {
     if (!loopPos) stringList = bz_getGroupList();
-    if (loopPos < stringList.size()) {
-      templateVare["groupname"] = stringList[loopPos++].c_str();
+    if (loopPos < stringList->size()) {
+      templateVars["groupname"] = (*stringList)[loopPos++].c_str();
       return true;
     } else {
       delete(stringList);
