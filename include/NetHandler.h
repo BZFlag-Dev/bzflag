@@ -139,11 +139,11 @@ public:
    *  
    * @param  buffer is the received message
    *
-   * @param  uaddr is the identifier of the remote address
+   * @param  uaddr_ is the identifier of the remote address
    *
    * @param netHandler is the NetHandler associated with this address
    */
-  static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
+  static int  udpReceive(char *buffer, struct sockaddr_in *uaddr_,
 			 NetHandler*& netHandler);
 
   /// Request if there is any buffered udp messages waiting to be sent
@@ -280,9 +280,9 @@ public:
   /// @param reason a text reason why this connection is being closed
   void		closing(char const* reason);
 
-  void	  setUDPin(struct sockaddr_in *uaddr);
+  void	  setUDPin(struct sockaddr_in *uaddr_);
 
-  bool isMyUdpAddrPort(struct sockaddr_in uaddr, bool checkPort);
+  bool isMyUdpAddrPort(struct sockaddr_in uaddr_, bool checkPort);
 
   int  send(const void *buffer, size_t length);
 

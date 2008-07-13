@@ -160,10 +160,10 @@ SOCKET NetHandler::getUdpSocket()
   return udpSocket;
 }
 
-int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
+int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr_,
 			   NetHandler*& netHandler) 
 {
-  AddrLen recvlen = sizeof(*uaddr);
+  AddrLen recvlen = sizeof(*uaddr_);
   uint16_t len;
   uint16_t code;
 
@@ -203,7 +203,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   memcpy(buffer, udpmsg + udpRead, len + 4);
   udpRead += len + 4;
   // copy the source identification
-  memcpy(uaddr, &lastUDPRxaddr, recvlen);
+  memcpy(uaddr_, &lastUDPRxaddr, recvlen);
 
   if (len == 2 && code == MsgPingCodeRequest)
     // Ping code request
@@ -214,7 +214,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 
   NetConnections::const_iterator it;
   for (it = netConnections.begin(); it != netConnections.end(); it++)
-    if ((*it)->isMyUdpAddrPort(*uaddr, true)) {
+    if ((*it)->isMyUdpAddrPort(*uaddr_, true)) {
       netHandler = *it;
       break;
     }
@@ -225,7 +225,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     }
     // no match, discard packet
     logDebugMessage(2,"uread() discard packet! %s:%d choices p(l) h:p",
-	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+	   inet_ntoa(uaddr_->sin_addr), ntohs(uaddr_->sin_port));
     for (it = netConnections.begin(); it != netConnections.end(); it++)
       if (!(*it)->closed) {
 	logDebugMessage(3,"(%d-%d) %s:%d", (*it)->udpin,
