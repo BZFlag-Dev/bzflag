@@ -103,6 +103,12 @@ void HUDuiControl::setParent(HUDuiControl* parentControl)
   parent = parentControl;
 }
 
+bool HUDuiControl::isAtNavQueueIndex(int index)
+{
+  if (!navList) return false;
+  return navList->at(index) == this;
+}
+
 void			HUDuiControl::doCallback()
 {
   if (cb) (*cb)(this, userData);

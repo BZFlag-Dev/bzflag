@@ -44,12 +44,19 @@ void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
   _navList->setCallback(gotFocus, this);
 }
 
+// NEEDS WORK. PLACE HOLDER AT THE MOMENT
 size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
 {
-  // This should probably grab the selected item in the container and set that to focus
-  // Right now this is just a place-holder to get the focus set correctly when it first starts
-  ((HUDuiNestedContainer*)data)->getNav().set((size_t)0);
-  return ~0;
+  if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex(proposedFocus))
+  {
+    HUDNavigationQueue nestedNav = ((HUDuiNestedContainer*)data)->getNav();
+    nestedNav.set(nestedNav.get());
+    return HUDNavigationQueue::SkipSetFocus;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 // Local Variables: ***

@@ -179,7 +179,7 @@ void HUDuiScrollList::setSize(float width, float height)
   resizeItems();
 }
 
-// Update our scrollable list whe the font size is changed
+// Update our scrollable list when the font size is changed
 void HUDuiScrollList::setFontSize(float size)
 {
   HUDuiControl::setFontSize(size);

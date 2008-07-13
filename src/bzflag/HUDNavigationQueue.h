@@ -52,6 +52,8 @@ public:
   void setCallback(HUDNavigationCallback, void*);
   HUDNavigationCallback getCallback() const;
 
+  static const size_t SkipSetFocus = ~0;
+
 private:
   size_t focus;
 

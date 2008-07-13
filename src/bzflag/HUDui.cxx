@@ -49,13 +49,12 @@ bool			HUDui::keyPress(const BzfKeyEvent& key)
   HUDuiControl* currentControl = focus;
   while (!handlerFound)
   {
-	if (!currentControl->isNested()) return false;
+    if (!currentControl->isNested()) return false;
     currentControl = currentControl->getParent();
-	handlerFound = currentControl->doKeyPress(key);
+    handlerFound = currentControl->doKeyPress(key);
   }
   
   return handlerFound;
-  return false;
 }
 
 bool			HUDui::keyRelease(const BzfKeyEvent& key)
@@ -67,13 +66,12 @@ bool			HUDui::keyRelease(const BzfKeyEvent& key)
   HUDuiControl* currentControl = focus;
   while (!handlerFound)
   {
-	if (!currentControl->isNested()) return false;
+    if (!currentControl->isNested()) return false;
     currentControl = currentControl->getParent();
-	handlerFound = currentControl->doKeyRelease(key);
+    handlerFound = currentControl->doKeyRelease(key);
   }
   
   return handlerFound;
-  return false;
 }
 
 

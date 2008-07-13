@@ -49,10 +49,10 @@ class HUDuiControl : public HUDuiElement {
     void*		getUserData() const;
 	
     bool isNested() { return nested; }
-	void isNested(bool isNested);
+    void isNested(bool isNested);
 	
-	HUDuiControl* getParent() { return parent; }
-	void setParent(HUDuiControl* parentControl);
+    HUDuiControl* getParent() { return parent; }
+    void setParent(HUDuiControl* parentControl);
 
     bool		hasFocus() const;
     void		showFocus(bool);
@@ -60,6 +60,8 @@ class HUDuiControl : public HUDuiElement {
     virtual void		setNavQueue(HUDNavigationQueue*);
 
     void		render();
+
+    bool isAtNavQueueIndex(int index);
 
     static int  getArrow() { return arrow; }
 
@@ -76,7 +78,7 @@ class HUDuiControl : public HUDuiElement {
     HUDuiControl* parent;
 	
     bool		showingFocus;
-	HUDNavigationQueue*	navList;
+    HUDNavigationQueue*	navList;
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;

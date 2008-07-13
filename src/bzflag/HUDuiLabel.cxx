@@ -85,7 +85,7 @@ void HUDuiLabel::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
   
-  if ((width == -1)||(height == -1))
+  if ((width < 0)||(height < 0))
     return;
 
   // Trim string to fit our available space

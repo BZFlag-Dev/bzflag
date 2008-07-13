@@ -39,7 +39,7 @@ void HUDNavigationQueue::next()
   if (cb)
     focus = cb(oldfocus, focus, hnNext, userData);
 
-  if (focus == ~0)
+  if (focus == SkipSetFocus)
   {
     focus = oldfocus;
     return;
@@ -59,7 +59,7 @@ void HUDNavigationQueue::prev()
   if (cb)
     focus = cb(oldfocus, focus, hnPrev, userData);
 
-  if (focus == ~0)
+  if (focus == SkipSetFocus)
   {
     focus = oldfocus;
     return;
@@ -79,7 +79,7 @@ bool HUDNavigationQueue::set(size_t index)
   else
     tempFocus = index;
 
-  if (tempFocus == ~0) return true;
+  if (tempFocus == SkipSetFocus) return true;
   
   focus = tempFocus;
   HUDui::setFocus(at(focus));
@@ -99,7 +99,7 @@ bool HUDNavigationQueue::set(HUDuiControl* control)
       else
 	tempFocus = i;
 
-      if (tempFocus == ~0) return true;
+      if (tempFocus == SkipSetFocus) return true;
 
       focus = tempFocus;
       HUDui::setFocus(at(focus));

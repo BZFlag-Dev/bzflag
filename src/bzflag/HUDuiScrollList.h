@@ -58,6 +58,8 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     void doRender();
 
+    std::list<HUDuiControl*> items;
+
   private:
     int	index;
     int visiblePosition;
@@ -65,8 +67,6 @@ class HUDuiScrollList : public HUDuiNestedContainer {
     bool pagedList;
 
     HUDuiLabel* pageLabel;
-
-    std::list<HUDuiControl*> items;
 };
 
 #endif // __HUDUISCROLLLIST_H__

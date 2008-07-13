@@ -74,52 +74,73 @@ void HUDuiServerList::addItem(HUDuiControl* item)
   return;
 }
 
-// Internal alphabetical compare function
-//bool HUDuiServerList::compare_alphabetically(HUDuiServerListItem* first, HUDuiServerListItem* second)
-//{
-//  if (first->getValue().compare(second->getValue()) < 0)
-//    return true;
-//  else
-//    return false;
-//}
-
-// Sort our scrollable list alphabetically
-//void HUDuiServerList::sortAlphabetically()
-//{
-//  items.sort(compare_alphabetically);
-//}
-
-// Change our scrollable list items' sizes to match any changes to our scrollable list
-/*
-void HUDuiServerList::resizeItems()
+// Internal domain name compare function
+bool HUDuiServerList::compare_by_domain(HUDuiControl* first, HUDuiControl* second)
 {
-  // Determine how many items are visible
-  FontManager &fm = FontManager::instance();
-  float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-  float listHeight = getHeight();
-  numVisibleItems = (int)floorf(listHeight/itemHeight);
-
-  // If it's a paged list make it one item shorter so we can fit the page label
-  if (pagedList) {
-    numVisibleItems = numVisibleItems - 1;
-  }
-
-  std::list<HUDuiServerListItem*>::iterator it;
-
-  if (items.size() > 0) {
-    for (it = items.begin(); it != items.end(); ++it)
-    {
-      HUDuiServerListItem* test = *it;
-      if (test != NULL)
-      {
-	test->setFontFace(getFontFace());
-	test->setFontSize(getFontSize());
-	test->shorten(getWidth());
-      }
-    }
-  }
+  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+  if (_first->getDomainName().compare(_second->getDomainName()) < 0)
+    return true;
+  else
+    return false;
 }
-*/
+
+// Internal server name compare function
+bool HUDuiServerList::compare_by_name(HUDuiControl* first, HUDuiControl* second)
+{
+  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+  if (_first->getServerName().compare(_second->getServerName()) < 0)
+    return true;
+  else
+    return false;
+}
+
+// Internal player count compare function
+bool HUDuiServerList::compare_by_players(HUDuiControl* first, HUDuiControl* second)
+{
+  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+  if (_first->getPlayerCount().compare(_second->getPlayerCount()) < 0)
+    return true;
+  else
+    return false;
+}
+
+// Internal ping compare function
+bool HUDuiServerList::compare_by_ping(HUDuiControl* first, HUDuiControl* second)
+{
+  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+  if (_first->getServerPing().compare(_second->getServerPing()) < 0)
+    return true;
+  else
+    return false;
+}
+
+// Sort our server list by domain names
+void HUDuiServerList::sortByDomain()
+{
+  items.sort(compare_by_domain);
+}
+
+// Sort our server list by server names
+void HUDuiServerList::sortByServerName()
+{
+  items.sort(compare_by_name);
+}
+
+// Sort our server list by player counts
+void HUDuiServerList::sortByPlayerCount()
+{
+  items.sort(compare_by_players);
+}
+
+// Sort our server list by ping
+void HUDuiServerList::sortByPing()
+{
+  items.sort(compare_by_ping);
+}
 
 // Local Variables: ***
 // mode: C++ ***
