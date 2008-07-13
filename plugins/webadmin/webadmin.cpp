@@ -34,11 +34,12 @@ private:
   
   void mainPageCallback (const HTTPRequest &request);
   void banlistPageCallback (const HTTPRequest &request);
+  void groupPageCallback (const HTTPRequest &request);
   
   bz_APIIntList players;
   bz_APIStringList *stringList;
   
-  bool editing;
+  bool editing, checked;
 };
 
 WebAdmin *webAdmin = NULL;
@@ -74,7 +75,7 @@ WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
 	controllers["main"] = &WebAdmin::mainPageCallback;
 	controllers["banlist"] = &WebAdmin::banlistPageCallback;
 	controllers["helpmsg"] = NULL;
-	controllers["group"] = NULL;
+	controllers["group"] = &WebAdmin::groupPageCallback;
 	
   std::map<std::string,page_callback>::iterator pair;
   for(pair = controllers.begin(); pair != controllers.end(); pair++)
@@ -92,6 +93,7 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addIF("IsCurrentPage",this);
   templateSystem.addIF("Error",this);
   templateSystem.addIF("Editing",this);
+  templateSystem.addIF("Checked",this);
 
   templateSystem.addKey("Error",this);
   templateSystem.addKey("Callsign",this);
@@ -141,7 +143,9 @@ bool WebAdmin::loopCallback (const std::string &key)
     } else return loopPos = 0;
   } else if (key == "permissions") {
     if (loopPos < bzu_standardPerms().size()) {
-      templateVars["permission"] = bzu_standardPerms()[loopPos++];
+      const std::string &perm = bzu_standardPerms()[loopPos++];
+      if (stringList) checked = stringList->contains(perm);
+      templateVars["permission"] = perm;
       return true;
     } else return loopPos = 0;
   } else if (key == "helpmsgs") {
@@ -172,6 +176,8 @@ bool WebAdmin::ifCallback (const std::string &key)
     return templateVars["pagename"] == templateVars["currentpage"];
   if (key == "editing")
     return editing;
+  if (key == "checked")
+    return checked;
   return false;
 }
 
@@ -254,7 +260,11 @@ void WebAdmin::banlistPageCallback (const HTTPRequest &request)
       bz_IPUnbanUser(i->c_str());
   if (request.getParam("delid", banRemovals))
     for(i = banRemovals.begin(); i != banRemovals.end(); i++)
-      bz_IDUnbanUser(i->c_str());
+      bz_IDUnbanUser(i->c_str()); 
+}
+
+void WebAdmin::groupPageCallback (const HTTPRequest &request)
+{
   
 }
 

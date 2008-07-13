@@ -21,12 +21,12 @@
     <ul class="groups">
 [*START Groups]
       <li><input type="checkbox" id="group_[$GroupName]"
-                 name="delgroup" value="[$GroupName]"/>
+                 name="delgroup" value="[$GroupName]" checked="[$Checked]"/>
         <label for="group_[$GroupName]">[$GroupName]</label>
         <a class="edit" href="?name=[$GroupName]">edit</a></li>
 [*END Groups]
     </ul>
-    
+    <input type="submit" value="delete" />
   </form>
   
   <form action="" method="get">
