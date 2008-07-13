@@ -630,9 +630,10 @@ bz_APIStringList::~bz_APIStringList()
 
 //-------------------------------------------------------------------------
 
-void bz_APIStringList::push_back(const bz_ApiString &value)
+void bz_APIStringList::push_back(const char* value)
 {
-  data->list.push_back(value);
+  if(value)
+    data->list.push_back(bz_ApiString(value));
 }
 
 //-------------------------------------------------------------------------

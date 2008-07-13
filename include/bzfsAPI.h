@@ -374,7 +374,7 @@ class BZF_API bz_APIStringList
 
   ~bz_APIStringList();
 
-  void push_back(const bz_ApiString &value);
+  void push_back(const char* value);
   void push_back(const std::string &value);
   bz_ApiString get(unsigned int i);
   bool contains(const char* value);
