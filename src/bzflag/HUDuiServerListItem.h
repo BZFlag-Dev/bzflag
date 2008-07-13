@@ -21,7 +21,6 @@
 // ancestor class
 #include "HUDuiControl.h"
 
-#include "HUDuiLabel.h"
 #include "ServerItem.h"
 #include <string>
 
@@ -30,9 +29,6 @@ class HUDuiServerListItem : public HUDuiControl {
       HUDuiServerListItem();
       HUDuiServerListItem(ServerItem item);
       ~HUDuiServerListItem();
-
-    void setFontSize(float size);
-    void setFontFace(const LocalFontFace* fontFace);
 	
     void setSize(float width, float height);
     void setPosition(float x, float y);
@@ -44,12 +40,24 @@ class HUDuiServerListItem : public HUDuiControl {
 
   protected:
     void doRender();
+    void resize();
+    std::string shorten(std::string string, float width);
 
   private:
-    HUDuiLabel* domainName;
-    HUDuiLabel* serverName;
-    HUDuiLabel* playerCount;
-    HUDuiLabel* serverPing;
+    std::string domainName;
+    std::string serverName;
+    std::string playerCount;
+    std::string serverPing;
+
+    std::string displayDomain;
+    std::string displayServer;
+    std::string displayPlayer;
+    std::string displayPing;
+
+    float domainX;
+    float serverX;
+    float playerX;
+    float pingX;
 	
     static const float DOMAIN_PERCENTAGE;
     static const float SERVER_PERCENTAGE;

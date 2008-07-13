@@ -33,21 +33,14 @@ const float HUDuiServerListItem::PING_PERCENTAGE = 0.125;
 
 HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 {
-  domainName = new HUDuiLabel;
-  domainName->setString("Test");
-  domainName->setFontFace(getFontFace());
-
-  serverName = new HUDuiLabel;
-  serverName->setString("THE SHIT SERVEr");
-  serverName->setFontFace(getFontFace());
-
-  playerCount = new HUDuiLabel;
-  playerCount->setString("1000");
-  playerCount->setFontFace(getFontFace());
-
-  serverPing = new HUDuiLabel;
-  serverPing->setString("200");
-  serverPing->setFontFace(getFontFace());
+  domainName = "Test";
+  displayDomain = domainName;
+  serverName = "THE SHIT SERVEr";
+  displayServer = serverName;
+  playerCount = "1000";
+  displayPlayer = playerCount;
+  serverPing = "200";
+  displayPing = serverPing;
 }
 
 // FILLED IN WITH ALL DUD INFORMATION AT THE MOMENT
@@ -61,50 +54,19 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
   sprintf(msg, "%ld", item.ping.maxPlayers);
   args.push_back(msg);
 
-  domainName = new HUDuiLabel;
-  domainName->setString("Domain");
-  domainName->setFontFace(getFontFace());
-
-  serverName = new HUDuiLabel;
-  serverName->setString("Server");
-  serverName->setFontFace(getFontFace());
-
-  playerCount = new HUDuiLabel;
-  playerCount->setString("99");
-  playerCount->setFontFace(getFontFace());
-
-  serverPing = new HUDuiLabel;
-  serverPing->setString("200");
-  serverPing->setFontFace(getFontFace());
-  
-  //serverPing = new HUDuiScrollListItem(item.ping.pingTime);
+  domainName = "Domain";
+  displayDomain = domainName;
+  serverName = "Server";
+  displayServer = serverName;
+  playerCount = "99";
+  displayPlayer = playerCount;
+  serverPing = "200";
+  displayPing = serverPing;
 }
 
 HUDuiServerListItem::~HUDuiServerListItem()
 {
   // do nothing
-}
-
-// Set the font size for the scrollable list item
-void HUDuiServerListItem::setFontSize(float size)
-{
-  HUDuiControl::setFontSize(size);
-
-  domainName->setFontSize(size);
-  serverName->setFontSize(size);
-  playerCount->setFontSize(size);
-  serverPing->setFontSize(size);
-}
-
-// Set the font face for the scrollable list item
-void HUDuiServerListItem::setFontFace(const LocalFontFace* fontFace)
-{
-  HUDuiControl::setFontFace(fontFace);
-
-  domainName->setFontFace(fontFace);
-  serverName->setFontFace(fontFace);
-  playerCount->setFontFace(fontFace);
-  serverPing->setFontFace(fontFace);
 }
 
 // Set the scrollable list item's position on the screen
@@ -113,56 +75,109 @@ void HUDuiServerListItem::setPosition(float x, float y)
   HUDuiControl::setPosition(x, y);
 
   float _x = x;
-  domainName->setPosition(_x, y);
-  _x = _x + domainName->getWidth();
-  serverName->setPosition(_x, y);
-  _x = _x + serverName->getWidth();
-  playerCount->setPosition(_x, y);
-  _x = _x + playerCount->getWidth();
-  serverPing->setPosition(_x, y);
+  domainX = _x;
+  _x = _x + (DOMAIN_PERCENTAGE*getWidth());
+  serverX = _x;
+  _x = _x + (SERVER_PERCENTAGE*getWidth());
+  playerX = _x;
+  _x = _x + (PLAYER_PERCENTAGE*getWidth());
+  pingX = _x;
 }
 
 void HUDuiServerListItem::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
-  
-  domainName->setSize((DOMAIN_PERCENTAGE * width), height);
-  serverName->setSize((SERVER_PERCENTAGE * width), height);
-  playerCount->setSize((PLAYER_PERCENTAGE * width), height);
-  serverPing->setSize((PING_PERCENTAGE * width), height);
+
+  resize();
+  setPosition(getX(), getY());
+}
+
+void HUDuiServerListItem::resize()
+{
+  if (getFontFace() == NULL)
+    return;
+
+  displayDomain = shorten(domainName, (DOMAIN_PERCENTAGE*getWidth()));
+  displayServer = shorten(serverName, (SERVER_PERCENTAGE*getWidth()));
+  displayPlayer = shorten(playerCount, (PLAYER_PERCENTAGE*getWidth()));
+  displayPing = shorten(serverPing, (PING_PERCENTAGE*getWidth()));
+}
+
+std::string HUDuiServerListItem::shorten(std::string string, float width)
+{
+  // Trim string to fit our available space
+  FontManager &fm = FontManager::instance();
+
+  // Skip if it already fits
+  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.c_str()) <= width)
+    return string;
+
+  // Iterate through each character. Expensive.
+  for (int i=0; i<=(int)string.size(); i++)
+  {
+    float temp = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str());
+    // Is it too big yet?
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str()) > width)
+    {
+      return string.substr(0, i - 1);
+    }
+  }
+
+  return "";
 }
 
 // Returns the domain name of the server list item
 std::string HUDuiServerListItem::getDomainName()
 {
-  return domainName->getString();
+  return domainName;
 }
 
 // Returns the server name of the server list item
 std::string HUDuiServerListItem::getServerName()
 {
-  return serverName->getString();
+  return serverName;
 }
 
 // Returns the player count of the server list item
 std::string HUDuiServerListItem::getPlayerCount()
 {
-  return playerCount->getString();
+  return playerCount;
 }
 
 // Returns the server ping of the server list item
 std::string HUDuiServerListItem::getServerPing()
 {
-  return serverPing->getString();
+  return serverPing;
 }
 
 // Render the scrollable list item
 void HUDuiServerListItem::doRender()
 {
-  domainName->render();
-  serverName->render();
-  playerCount->render();
-  serverPing->render();
+  if (getFontFace() < 0) {
+    return;
+  }
+
+  FontManager &fm = FontManager::instance();
+  float darkness;
+  if (hasFocus()) {
+    darkness = 1.0f;
+  } else {
+    darkness = 0.7f;
+  }
+  fm.setDarkness(darkness);
+  fm.drawString(domainX, getY(), 0,
+		getFontFace()->getFMFace(), getFontSize(),
+		displayDomain.c_str());
+  fm.drawString(serverX, getY(), 0,
+		getFontFace()->getFMFace(), getFontSize(),
+		displayServer.c_str());
+  fm.drawString(playerX, getY(), 0,
+		getFontFace()->getFMFace(), getFontSize(),
+		displayPlayer.c_str());
+  fm.drawString(pingX, getY(), 0,
+		getFontFace()->getFMFace(), getFontSize(),
+		displayPing.c_str());
+  fm.setDarkness(1.0f);
 }
 
 // Local Variables: ***
