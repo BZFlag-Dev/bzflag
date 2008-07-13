@@ -50,15 +50,29 @@ std::string		HUDuiLabel::getString() const
   return theString;
 }
 
+std::string		HUDuiLabel::getDisplayString() const
+{
+  std::string theString;
+  Bundle *bdl = BundleMgr::getCurrentBundle();
+  if (params)
+    theString = bdl->formatMessage(displayString, params);
+  else
+    theString = bdl->getLocalString(displayString);
+
+  return theString;
+}
+
 void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
 {
   string = _string;
+  displayString = _string;
   if (_params) {
     if (params != NULL)
       delete params;
 
     params = new std::vector<std::string>(*_params);
   }
+  setSize(getWidth(), getHeight());
   onSetFont();
 }
 
@@ -71,27 +85,48 @@ void HUDuiLabel::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
   
+  if ((width == -1)||(height == -1))
+    return;
+
   // Trim string to fit our available space
   FontManager &fm = FontManager::instance();
   std::string tempStr = getString();
+
+  if (getFontFace() == NULL)
+    return;
 
   // Skip if it already fits
   if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.c_str()) <= width)
     return;
 
   // Iterate through each character. Expensive.
-  for (int i=0; i<(int)tempStr.size(); i++)
+  for (int i=0; i<=(int)tempStr.size(); i++)
   {
+    float temp = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.substr(0, i).c_str());
     // Is it too big yet?
-    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), 
-						tempStr.substr(0, i).c_str()) > width) {
-          displayString = tempStr.substr(0, i - 1);
-          break;
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tempStr.substr(0, i).c_str()) > width)
+    {
+      displayString = tempStr.substr(0, i - 1);
+      break;
     }
   }
 }
 
-bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
+void HUDuiLabel::setFontSize(float size)
+{
+  HUDuiControl::setFontSize(size);
+  
+  setSize(getWidth(), getHeight());
+}
+
+void HUDuiLabel::setFontFace(const LocalFontFace* fontFace)
+{
+  HUDuiControl::setFontFace(fontFace);
+  
+  setSize(getWidth(), getHeight());
+}
+
+bool HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
   if (HUDuiControl::doKeyPress(key))
     return true;
@@ -141,7 +176,7 @@ void			HUDuiLabel::doRender()
   fm.setDarkness(darkness);
   fm.drawString(getX(), getY(), 0,
 		getFontFace()->getFMFace(), getFontSize(),
-		displayString.c_str(), color);
+		getDisplayString().c_str(), color);
   fm.setDarkness(1.0f);
 }
 

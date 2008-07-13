@@ -37,16 +37,21 @@ class HUDuiLabel : public HUDuiControl {
     void		setColor(GLfloat r, GLfloat g, GLfloat b);
 	
 	void		setSize(float width, float height);
+	void		setFontSize(float size);
+    void		setFontFace(const LocalFontFace* fontFace);
 
   protected:
+    std::string	getDisplayString() const;
+  
     void		onSetFont();
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
   private:
-    std::string		string;
-	std::string displayString;
+    std::string string;
+    std::string displayString;
+
     std::vector<std::string> *params;
     bool		darker;
     GLfloat		color[3];

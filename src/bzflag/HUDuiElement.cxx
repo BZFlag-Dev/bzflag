@@ -35,8 +35,8 @@ HUDuiElement::HUDuiElement()
   elementFontSize = 10;
   elementX = 0.0f;
   elementY = 0.0f;
-  elementWidth = 1.0f;
-  elementHeight = 1.0f;
+  elementWidth = -1.0f;
+  elementHeight = -1.0f;
   fontHeight = 10.0f;
   desiredLabelWidth = 0.0f;
   trueLabelWidth = 0.0f;
