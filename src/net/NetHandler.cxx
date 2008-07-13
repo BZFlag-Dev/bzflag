@@ -304,7 +304,6 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
   , udpOutputLen(0)
   , udpin(false)
   , udpout(false)
-  , toBeKicked(false)
 #ifdef NETWORK_STATS
     // note that 'time' isn't intrinsically network stats? but that's
     // what the legacy code did
@@ -332,6 +331,50 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
 #endif
   netConnections.push_back(this);
   ares.queryHostname((struct sockaddr *) &clientAddr);
+}
+
+NetHandler::NetHandler(const struct sockaddr_in &serverAddr)
+  : uaddr(serverAddr)
+  , fd(INVALID_SOCKET)
+  , clientType(clientNone)
+  , peer(serverAddr)
+  , udpLen2(0)
+  , tcplen(0)
+  , closed(false)
+  , outmsgOffset(0)
+  , outmsgSize(0)
+  , outmsgCapacity(0)
+  , outmsg(NULL)
+  , udpOutputLen(0)
+  , udpin(false)
+  , udpout(false)
+#ifdef NETWORK_STATS
+    // note that 'time' isn't intrinsically network stats? but that's
+    // what the legacy code did
+  , time(now)
+  , messageExchanged(false)
+#endif
+  , extraInfo(0)
+{
+#ifdef NETWORK_STATS
+  // initialize the inbound/outbound counters to zero
+  msgBytes[0] = 0;
+  perSecondTime[0] = time;
+  perSecondCurrentMsg[0] = 0;
+  perSecondMaxMsg[0] = 0;
+  perSecondCurrentBytes[0] = 0;
+  perSecondMaxBytes[0] = 0;
+
+  msgBytes[1] = 0;
+  perSecondTime[1] = time;
+  perSecondCurrentMsg[1] = 0;
+  perSecondMaxMsg[1] = 0;
+  perSecondCurrentBytes[1] = 0;
+  perSecondMaxBytes[1] = 0;
+
+#endif
+  netConnections.push_back(this);
+  ares.queryHostname((struct sockaddr *) &serverAddr);
 }
 
 NetHandler::~NetHandler() {
@@ -485,16 +528,6 @@ int NetHandler::pflush() {
   return bufferedSend(NULL, 0);
 }
 
-std::string NetHandler::reasonToKick() 
-{
-  std::string reason;
-  if (toBeKicked) {
-    reason = toBeKickedReason;
-  }
-  toBeKicked = false;
-  return reason;
-}
-
 void NetHandler::getPlayerList(char* list, size_t listSize) 
 {
   snprintf(list, listSize, "%s%s%s%s%s%s",
@@ -626,20 +659,32 @@ int NetHandler::send(const void *buffer, size_t length)
     return n;
 
   // get error code
-  const int err = getErrno();
+  const int err( getErrno() );
 
-  // if socket is closed then give up
-  if (err == ECONNRESET || err == EPIPE) {
+  switch (err) {
+    // These codes are "normal" and acceptable
+  case EAGAIN:			// no data on a non-blocking socket
+  case EINTR:			// interrupt before read
+    break;
+    // These codes represent a catastrophic connection error
+  case ECONNRESET:		// connection closed when reading
+  case EPIPE:
+    // Broken connection. This guy is history
+    closing("ECONNRESET/EPIPE");
     return -1;
+    break;
+    //Pretty much any other error is fatal as well. Keep this
+    //separated, in case more granularity of reporting is desired at
+    //a later date.
+  case EBADF:			// bad file descriptor
+  case ENOTCONN:		// unconnected socket (SNH)
+  case ENOTSOCK:		// not a socket
+  case ETIMEDOUT:		// operation timed out
+  default:
+    nerror("error on write");
+    closing("Write error");
   }
 
-  // just try again later if it's one of these errors
-  if (err != EAGAIN && err != EINTR) {
-    // dump other errors and remove the player
-    toBeKicked = true;
-    nerror("error on write");
-    toBeKickedReason = "Write error";
-  }
   return 0;
 }
 

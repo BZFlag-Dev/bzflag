@@ -125,7 +125,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   // open connection to server.  first connect to given port.
   // don't wait too long.
   SOCKET query = socket(AF_INET, SOCK_STREAM, 0);
-  if (query < 0) return;
+  if (query == INVALID_SOCKET) return;
 
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;

@@ -171,10 +171,17 @@ public:
 
 
   /** Constructor
+   * This constructor is for servers that are listening for connections
    * @param _clientAddr address of the client
    * @param _fd bound TCP socket
    **/
   NetHandler(const struct sockaddr_in &_clientAddr, SOCKET _fd);
+
+  /** Constructor
+   * This constructor is for clients that will connect to a server
+   * @param serverAddr address of the server to connect to
+   **/
+  NetHandler(const struct sockaddr_in& serverAddr);
 
   /** Destructor
    *  free all internal resources, and close the tcp connection
@@ -255,7 +262,6 @@ public:
 
   int		pwrite(const void *b, int l);
   int		pflush();
-  std::string	reasonToKick();
   void		getPlayerList(char* list, size_t listSize);
   const char*	getTargetIP();
   int		sizeOfIP();
@@ -352,10 +358,6 @@ private:
   /// UDP connection
   bool udpin; // udp inbound up, player is sending us udp
   bool udpout; // udp outbound up, we can send udp
-
-  // FIXME... this is protocol and doesn't belong here?
-  bool toBeKicked;
-  std::string toBeKickedReason;
 
   // FIXME... this is protocol and doesn't belong here?
   // time accepted

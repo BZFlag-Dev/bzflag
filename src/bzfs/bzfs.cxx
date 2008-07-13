@@ -3658,13 +3658,6 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	}
       }
     }
-
-    // kick any clients that need to be
-    std::string reasonToKick = playerData.netHandler->reasonToKick();
-    if (reasonToKick != "") {
-      removePlayer(p, reasonToKick.c_str(), false);
-      return;
-    }
   }
 }
 
