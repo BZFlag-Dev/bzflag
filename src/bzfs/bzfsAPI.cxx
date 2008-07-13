@@ -644,11 +644,11 @@ void bz_APIStringList::push_back(const std::string &value)
 }
 
 //-------------------------------------------------------------------------
-
-bz_ApiString bz_APIStringList::get(unsigned int i)
+static bz_ApiString empty_getString;
+const bz_ApiString& bz_APIStringList::get(unsigned int i)
 {
   if(i >= data->list.size())
-    return bz_ApiString("");
+    return empty_getString;
 
   return data->list[i];
 }
