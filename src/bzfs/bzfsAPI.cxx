@@ -654,9 +654,12 @@ bz_ApiString bz_APIStringList::get(unsigned int i)
 
 //-------------------------------------------------------------------------
 
-bool bz_APIStringList::contains(const bz_ApiString &value)
+bool bz_APIStringList::contains(const char* value)
 {
-  return std::find(data->list.begin(), data->list.end(), value) != data->list.end();
+  if (!value)
+    return false;
+
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
 }
 
 //-------------------------------------------------------------------------
