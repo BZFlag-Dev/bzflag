@@ -93,6 +93,7 @@ void HUDuiScrollList::addItem(HUDuiControl* item)
 {
   items.push_back(item);
   addControl(item);
+  resizeItems(); // May not be very efficient way of doing it
   update();
 }
 

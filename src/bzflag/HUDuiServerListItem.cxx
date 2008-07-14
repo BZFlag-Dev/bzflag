@@ -31,6 +31,7 @@ const float HUDuiServerListItem::SERVER_PERCENTAGE = 0.375;
 const float HUDuiServerListItem::PLAYER_PERCENTAGE = 0.125;
 const float HUDuiServerListItem::PING_PERCENTAGE = 0.125;
 
+// DUD INFORMATION FOR TESTING
 HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 {
   domainName = "Test";
@@ -43,24 +44,40 @@ HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
   displayPing = serverPing;
 }
 
-// FILLED IN WITH ALL DUD INFORMATION AT THE MOMENT
 HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
 {
-  std::vector<std::string> args;
-  char msg[50];
+  char temp[50];
 
-  sprintf(msg, "%ld", item.getPlayerCount());
-  args.push_back(msg);
-  sprintf(msg, "%ld", item.ping.maxPlayers);
-  args.push_back(msg);
+  sprintf(temp, "%ld", item.ping.pingTime);
+  std::string ping = temp;
 
-  domainName = "Domain";
+  std::string players = "";
+
+  sprintf(temp, "%ld", item.getPlayerCount());
+  players.append(temp);
+  players.append("/");
+
+  sprintf(temp, "%ld", item.ping.maxPlayers);
+  players.append(temp);
+
+  std::string addr = stripAnsiCodes(item.description.c_str());
+  std::string desc;
+  std::string::size_type pos = addr.find_first_of(';');
+  if (pos != std::string::npos) {
+    desc = addr.substr(pos > 0 ? pos+1 : pos);
+    addr.resize(pos);
+  }
+
+  domainName = addr;
   displayDomain = domainName;
-  serverName = "Server";
+
+  serverName = desc;
   displayServer = serverName;
-  playerCount = "99";
+
+  playerCount = players;
   displayPlayer = playerCount;
-  serverPing = "200";
+
+  serverPing = ping;
   displayPing = serverPing;
 }
 
