@@ -35,23 +35,15 @@ class HUDuiLabel : public HUDuiControl {
     void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
     void		setDarker(bool d); // render darker than usual when not in focus
     void		setColor(GLfloat r, GLfloat g, GLfloat b);
-	
-	void		setSize(float width, float height);
-	void		setFontSize(float size);
-    void		setFontFace(const LocalFontFace* fontFace);
 
   protected:
-    std::string	getDisplayString() const;
-  
     void		onSetFont();
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
   private:
-    std::string string;
-    std::string displayString;
-
+    std::string		string;
     std::vector<std::string> *params;
     bool		darker;
     GLfloat		color[3];
