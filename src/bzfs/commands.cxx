@@ -84,18 +84,18 @@ bool bufferChat ( void * param )
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(p->playerID);
   if (!player || player != p->player ) {
     delete(p);
-    return false;
+    return true;
   }
 
   if (p->i < p->items.size() )
     sendMessage(ServerPlayer, p->playerID, p->items[p->i].c_str());
   else {
     delete(p);
-    return false;
+    return true;
   }
 
   p->i++;
-  return true;
+  return false;
 }
 
 
@@ -302,14 +302,6 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class GhostCommand : public ServerCommand {
-public:
-  GhostCommand();
-
-  virtual bool operator() (const char *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class GroupListCommand : public ServerCommand {
 public:
   GroupListCommand();
@@ -501,7 +493,6 @@ static PlayerListCommand  playerListCommand;
 ReportCommand      reportCommand;	// used by the API
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
-static GhostCommand       ghostCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
 static ShowPermsCommand   showPermsCommand;
@@ -582,8 +573,6 @@ HelpCommand::HelpCommand()		 : ServerCommand("/help",
 							 "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
 							 "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
-GhostCommand::GhostCommand()	     : ServerCommand("/ghost",
-						     "<callsign> <password> - kick off an impersonating player or ghost") {}
 GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
 							 "- list the available user groups") {}
 ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
@@ -696,7 +685,7 @@ bool CmdHelp::operator() (const char *message,
 {
 
   int i;
-  for (i = 0; message[i] && !isspace(message[i]); i++);
+  for (i = 0; message[i] && !isspace(message[i]); i++) {};
   if (!i)
     return false;
   i--;
@@ -1867,7 +1856,7 @@ bool PlayerListCommand::operator() (const char *,
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
     if (playerData->player.isPlaying()) {
-      playerData->netHandler->getPlayerList(hostInfo);
+      playerData->netHandler->getPlayerList(hostInfo, sizeof(hostInfo));
       snprintf(reply, MessageLen, "[%d]%-16s: %s",
 	       t, playerData->player.getCallSign(), hostInfo);
       sendMessage(ServerPlayer, t, reply);
@@ -1881,7 +1870,7 @@ bool PlayerListCommand::operator() (const char *,
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
       if (otherData->netHandler) {
-	otherData->netHandler->getPlayerList(hostInfo);
+	otherData->netHandler->getPlayerList(hostInfo, sizeof(hostInfo));
       } else if (otherData->playerHandler) {
 	strcpy(hostInfo, "server-side player");
       }
@@ -2064,53 +2053,6 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
   return true;
 }
 
-bool GhostCommand::operator() (const char *message,
-			       GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-  if (p1)
-    p2 = strchr(p1 + 1, '\"');
-  
-  if (!p2) {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage"
-		" /ghost \"CALLSIGN\" PASSWORD");
-  } else {
-    std::string ghostie(p1 + 1, p2 - p1 - 1);
-    std::string ghostPass = p2 + 2;
-
-    makeupper(ghostie);
-
-    int user = GameKeeper::Player::getPlayerIDByName(ghostie);
-    if (user == -1)
-      sendMessage(ServerPlayer, t, "There is no user logged in by that name");
-    else {
-      GameKeeper::Player *ghostiePlayer = GameKeeper::Player::getPlayerByIndex(user);
-
-      if ( ghostiePlayer && !ghostiePlayer->accessInfo.regAtJoin )
-	sendMessage(ServerPlayer, t, "That callsign was not registered when it joined.");
-      else {
-	if (!userExists(ghostie))
-	  sendMessage(ServerPlayer, t, "That callsign is not registered");
-	else {
-	  if (!verifyUserPassword(ghostie, ghostPass)) 
-	    sendMessage(ServerPlayer, t, "Invalid Password");
-	  else {
-	    sendMessage(ServerPlayer, t, "Ghosting User");
-	    char temp[MessageLen];
-	    snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
-		     " You have been ghosted by %s",
-		     playerData->player.getCallSign());
-	    sendMessage(ServerPlayer, user, temp);
-	    removePlayer(user, "Ghost");
-	  }
-	} 
-      }
-    }
-  }
-  return true;
-}
 
 bool GroupListCommand::operator() (const char *,
 				   GameKeeper::Player *playerData)
@@ -2123,7 +2065,6 @@ bool GroupListCommand::operator() (const char *,
   }
   return true;
 }
-
 
 bool ShowGroupCommand::operator() (const char* msg,
 				   GameKeeper::Player* playerData)
@@ -2401,7 +2342,6 @@ bool ReloadCommand::operator() (const char *,
 
   groupAccess.clear();
   userDatabase.clear();
-  passwordDatabase.clear();
   initGroups();
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);

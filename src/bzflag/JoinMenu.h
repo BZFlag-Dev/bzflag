@@ -69,7 +69,6 @@ class JoinMenu : public HUDDialog {
     HUDuiLabel*		connectLabel;
     HUDuiLabel*		failedMessage;
     ServerMenu*		serverMenu;
-    static JoinMenu*	activeMenu;
 };
 
 

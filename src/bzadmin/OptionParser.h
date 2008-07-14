@@ -20,6 +20,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <vector>
 
 /* common interface headers */

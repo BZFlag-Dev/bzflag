@@ -195,7 +195,8 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
 }
 
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
-				GroupDefinition* groupDef)
+				GroupDefinition* groupDef,
+				bool& gotWorld)
 {
   // make sure input is valid
   if (input->peek() == EOF) {
@@ -213,8 +214,6 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 
   std::string customObject;
   std::vector<std::string>	customLines;
-
-  bool gotWorld = false;
 
   while (!input->eof() && !input->fail() && input->good()) {
     // watch out for starting a new object when one is already in progress
@@ -330,7 +329,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 		location.c_str(), line, incName.c_str());
 	BZWReader incFile(incName);
 	std::vector<WorldFileObject*> incWlist;
-	if (incFile.readWorldStream(incWlist, groupDef)) {
+	if (incFile.readWorldStream(incWlist, groupDef, gotWorld)) {
 	  // add the included objects
 	  for (unsigned int i = 0; i < incWlist.size(); i++) {
 	    wlist.push_back(incWlist[i]);
@@ -432,27 +431,21 @@ WorldInfo* BZWReader::defineWorldFromFile()
   }
 
   // read file
+  bool gotWorld = false;
   std::vector<WorldFileObject*> list;
   GroupDefinition* worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
-  if (!readWorldStream(list, worldDef)) {
+  if (!readWorldStream(list, worldDef, gotWorld)) {
     emptyWorldFileObjectList(list);
     errorHandler->fatalError(std::string("world file failed to load."), 0);
     delete myWorld;
     return NULL;
   }
 
-  if (!BZDB.isTrue("noWalls")) {
-    // make walls
-    float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-    float worldSize = BZDBCache::worldSize;
-    myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
-		     0.5f * worldSize, wallHeight);
-    myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
-		     wallHeight);
-    myWorld->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI),
-		     0.5f * worldSize, wallHeight);
-    myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
-		     wallHeight);
+  if (!gotWorld) {
+    // add fake empty "world" section so walls will be created
+    WorldFileObject* object = new CustomWorld();
+    list.push_back(object);
+    gotWorld = true;
   }
 
   // generate group instances

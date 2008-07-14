@@ -55,20 +55,23 @@ namespace {
       dest += source;
     }
   }
+// 
+  const ServerCommandKey::Mode nonAdminModes [] = {ServerCommandKey::LagStats,
+						   ServerCommandKey::IdleStats,
+						   ServerCommandKey::FlagHistory,
+						   ServerCommandKey::Report,
+						   ServerCommandKey::Password,
+						   ServerCommandKey::ClientQuery};
+
+  const int numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) );
 }
 
-
-const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};
-
-/* FIXME - note the important numModes and numNonAdminModes values
- * inited here when new commands are added, the indices need to be
- * adjusted here.
+/* FIXME - note the important numModes value inited here when new
+ * commands are added, the indices need to be adjusted here.
  */
 ServerCommandKey::ServerCommandKey()
   : mode(nonAdminModes[0])
-  , startIndex(-1)
-  , numModes(35)	//brittle... no good portable way to deal with this
-  , numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) )
+  , numModes(Password + 1 - Kick) // brittle... no good portable way to deal with this
 {
 }
 
@@ -172,15 +175,6 @@ void			ServerCommandKey::updatePrompt()
 	composePrompt = "Remove player from group :";
       }
       break;
-    case Ghost:
-      if (recipient) {
-	composePrompt = "Ghost player [enter your pass] -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Ghost :";
-      }
-      break;
     case Unban:
       composePrompt = "Unban :";
       break;
@@ -248,12 +242,6 @@ void			ServerCommandKey::updatePrompt()
       composePrompt = "Shut Down Server";
       allowEdit = false;
       break;
-    case Register:
-    case Identify:
-      break; // these were missing prior to the refactor
-    case Setpass:
-      composePrompt = "Set your password [enter pass]:";
-      break;
     case Grouplist:
       composePrompt = "List Groups";
       allowEdit = false;
@@ -316,6 +304,10 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  // Check to see if we got disconnected while waiting for input
+  if (myTank == 0) return false;
+
   if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->setJump();
@@ -408,12 +400,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       append_if(sendMsg, message);
       break;
 
-    case Ghost:
-      sendMsg = "/ghost ";
-      if (troll) sendMsg += quote(name);
-      append_if(sendMsg, message);
-      break;
-
     case Unban: sendMsg = "/unban " + message; break;
     case Banlist: sendMsg = "/banlist";  break;
     case Playerlist: sendMsg = "/playerlist";  break;
@@ -432,11 +418,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     case CountDown: sendMsg = "/countdown " + message; break;
     case SuperKill: sendMsg = "/superkill"; break;
     case Shutdown: sendMsg = "/shutdownserver"; break;
-    case Register:
-      // This was missing (but is due to be removed shortly)
-      break;
-    case Identify: sendMsg = "/identify "+ message; break;
-    case Setpass: sendMsg = "/setpass " + message; break;
     case Grouplist: sendMsg = "/grouplist"; break;
     case Groupperms: sendMsg = "/groupperms"; break;
     case Vote: sendMsg = "/vote " + message; break;
@@ -467,6 +448,10 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  // Check to see if we got disconnected while waiting for input
+  if (myTank == 0) return false;
+
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
     if (key.button == BzfKeyEvent::Up || key.button == BzfKeyEvent::Down
@@ -485,45 +470,44 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
       }
 
       if (key.button == BzfKeyEvent::Down) {
-	int newMode = mode;
 	if (!myTank->isAdmin()) {
-	  bool foundIt = false;
-	  for (int i = 0; i < numNonAdminModes; i++) {
+	  int newMode(nonAdminModes[0]);
+	  for (int i = 0; i < maxModes; i++) {
 	    if (mode == nonAdminModes[i]) {
-	      newMode = i;
-	      foundIt = true;
+	      if (i == maxModes-1) newMode = nonAdminModes[0];
+	      else newMode = nonAdminModes[i+1];
+	      break;
 	    }
 	  }
-	  if (!foundIt) newMode = 0;
+	  mode = static_cast<Mode>(newMode);
+	} else {
+	  int newMode = int(mode) + 1;
+	  if (newMode == maxModes) newMode = 0;
+
+	  mode = static_cast<Mode>(newMode);
+	  // if no recipient skip Ban1,2,3 -- applies to admin mode
+	  if (!recipient && (mode >= Ban1 && mode <= Ban3))
+	    mode = Unban;	// skips Showgroup, Setgroup, Removegroup ????
 	}
-
-	newMode++;
-	if (newMode >= maxModes) newMode = 0;
-	mode = (myTank->isAdmin() ? ((Mode)newMode) : nonAdminModes[newMode]);
-	// if no recipient skip Ban1,2,3 -- applies to admin mode
-	if (!recipient && (mode >= Ban1 && mode <= Ban3))
-	  mode = Unban;
-
       } else if (key.button == BzfKeyEvent::Up) {
-	int newMode = (int) mode;
-
-	bool foundIt = false;
 	if (!myTank->isAdmin()) {
-	  for (int i = 0; i < numNonAdminModes; i++) {
+	  int newMode(nonAdminModes[0]);
+	  for (int i = 0; i < maxModes; i++) {
 	    if (mode == nonAdminModes[i]) {
-	      newMode = i;
-	      foundIt = true;
+	      if (i == 0) newMode = nonAdminModes[maxModes-1];
+	      else newMode = nonAdminModes[i-1];
 	    }
 	  }
-	  if (!foundIt) newMode = 0;
-	}
+	  mode = static_cast<Mode>(newMode);
+	} else {
+	  int newMode = int(mode) - 1;
+	  if (newMode < 0) newMode = maxModes -1;
 
-	newMode--;
-	if (newMode < 0) newMode = maxModes -1;
-	mode = (myTank->isAdmin() ? ((Mode) newMode) : nonAdminModes[newMode]);
-	// if no recipient skip Ban1,2,3 -- applies to admin mode
-	if (!recipient && (mode >= Ban1 && mode <= Ban3))
-	  mode = BanIp;
+	  mode = static_cast<Mode>(newMode);
+	  // if no recipient skip Ban1,2,3 -- applies to admin mode
+	  if (!recipient && (mode >= Ban1 && mode <= Ban3))
+	    mode = BanIp;
+	}
       }
 
       //update composing prompt

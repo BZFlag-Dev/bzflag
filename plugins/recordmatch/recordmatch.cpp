@@ -44,7 +44,7 @@ void GameStartEndHandler::process( bz_EventData *eventData )
     {
       started = bz_startRecBuf();
 
-      bz_localTime time;
+      bz_Time time;
 
       bz_getLocaltime(&time);
 
@@ -68,6 +68,9 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 
       started = false;
     }
+    break;
+
+  default:
     break;
   }
 }

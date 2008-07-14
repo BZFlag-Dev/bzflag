@@ -15,6 +15,7 @@ SUBDIRS = \
 	fastmap \
 	flagStay \
 	hiddenAdmin \
+	HTTPServer \
 	httpTest \
 	keepaway \
 	killall \
@@ -37,6 +38,7 @@ SUBDIRS = \
 	unrealCTF \
 	weaponArena \
 	webstats \
+	webadmin \
 	webReport \
 	wwzones
 

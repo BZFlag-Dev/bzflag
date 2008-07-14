@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = httpTest.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 httpTest_la_SOURCES = httpTest.cpp
 httpTest_la_LDFLAGS = -module -avoid-version
 httpTest_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils

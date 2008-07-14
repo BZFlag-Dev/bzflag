@@ -88,6 +88,7 @@ ShotStats::ShotStats() : HUDDialog()
 
 ShotStats::~ShotStats()
 {
+  LocalFontFace::release(fontFace);
 }
 
 void ShotStats::createLabel(const std::string &str, bool navigable)

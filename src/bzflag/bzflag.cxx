@@ -89,16 +89,16 @@
 #include "clientConfig.h"
 
 
-const char*		argv0;
-static bool		anonymous = false;
-static std::string	anonymousName("anonymous");
-std::string		alternateConfig;
-static bool		noAudio = false;
-struct tm		userTime;
-bool			echoToConsole = false;
-bool			echoAnsi = false;
+const char* argv0;
+static bool anonymous = false;
+static std::string anonymousName("anonymous");
+std::string alternateConfig;
+static bool noAudio = false;
+struct tm userTime;
+bool echoToConsole = false;
+bool echoAnsi = false;
 
-BzfDisplay*	display = NULL;
+BzfDisplay* display = NULL;
 
 
 #ifdef ROBOT
@@ -115,12 +115,12 @@ int numRobotTanks = 0;
 int bail ( int returnCode )
 {
 #ifdef _WIN32
-	WSACleanup();
+  WSACleanup();
 #endif
-	return returnCode;
+  return returnCode;
 }
 
-static void		setTeamColor(TeamColor team, const std::string& str)
+static void setTeamColor(TeamColor team, const std::string &str)
 {
   float color[4];
   parseColorString(str, color);
@@ -128,7 +128,7 @@ static void		setTeamColor(TeamColor team, const std::string& str)
   Team::setColors(team, color, Team::getRadarColor(team));
 }
 
-static void		setRadarColor(TeamColor team, const std::string& str)
+static void setRadarColor(TeamColor team, const std::string &str)
 {
   float color[4];
   parseColorString(str, color);
@@ -136,7 +136,7 @@ static void		setRadarColor(TeamColor team, const std::string& str)
   Team::setColors(team, Team::getTankColor(team), color);
 }
 
-static void		setVisual(BzfVisual* visual)
+static void setVisual(BzfVisual *visual)
 {
   // sine qua non
   visual->setLevel(0);
@@ -147,7 +147,7 @@ static void		setVisual(BzfVisual* visual)
   // GL's PFD will return a lower depth
   // if the max is unsuported.
   int depthLevel = 32;
-  if (BZDB.isSet("forceDepthBits")) 
+  if (BZDB.isSet("forceDepthBits"))
     depthLevel = BZDB.evalInt("forceDepthBits");
   visual->setDepth(depthLevel);
 
@@ -163,34 +163,34 @@ static void		setVisual(BzfVisual* visual)
 #endif
 }
 
-static void		usage()
+static void usage()
 {
   printFatalError("usage: %s"
-	" [-anonymous]"
-	" [-badwords <filterfile>]"
-	" [-configdir <config dir name>]"
-	" [-d | -debug]"
-	" [-date mm/dd/yyyy]"
-	" [{-dir | -directory} <data-directory>]"
-	" [-e | -echo]"
-	" [-ea | -echoAnsi]"
-	" [-h | -help | --help]"
-	" [-latitude <latitude>] [-longitude <longitude>]"
-	" [-list <list-server-url>] [-nolist]"
-	" [-locale <locale>]"
-	" [-m | -mute]"
-	" [-motd <motd-url>] [-nomotd]"
-	" [-multisample]"
+		  " [-anonymous]"
+		  " [-badwords <filterfile>]"
+		  " [-configdir <config dir name>]"
+		  " [-d | -debug]"
+		  " [-date mm/dd/yyyy]"
+		  " [{-dir | -directory} <data-directory>]"
+		  " [-e | -echo]"
+		  " [-ea | -echoAnsi]"
+		  " [-h | -help | --help]"
+		  " [-latitude <latitude>] [-longitude <longitude>]"
+		  " [-list <list-server-url>] [-nolist]"
+		  " [-locale <locale>]"
+		  " [-m | -mute]"
+		  " [-motd <motd-url>] [-nomotd]"
+		  " [-multisample]"
 #ifdef ROBOT
-	" [-solo <num-robots>]"
+		  " [-solo <num-robots>]"
 #endif
-	" [-team {red|green|blue|purple|rogue|observer}]"
-	" [-time hh:mm:ss] [-notime]"
-	" [-v | -version | --version]"
-	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
-	" [-window [<geometry-spec>]]"
-	" [-zoom <zoom-factor>]"
-	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
+		  " [-team {red|green|blue|purple|rogue|observer}]"
+		  " [-time hh:mm:ss] [-notime]"
+		  " [-v | -version | --version]"
+		  " [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
+		  " [-window [<geometry-spec>]]"
+		  " [-zoom <zoom-factor>]"
+		  " [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
     delete display;
     display=NULL;
@@ -198,7 +198,7 @@ static void		usage()
   exit(1);
 }
 
-static void checkArgc(int& i, int argc, const char* option, const char *type = "Missing")
+static void checkArgc(int &i, int argc, const char *option, const char *type = "Missing")
 {
   if ((i+1) == argc) {
     printFatalError("%s argument for %s\n", type, option);
@@ -207,9 +207,9 @@ static void checkArgc(int& i, int argc, const char* option, const char *type = "
   i++; // just skip the option argument string
 }
 
-static void		parse(int argc, char** argv)
+static void parse(int argc, char **argv)
 {
-// = 9;
+  // = 9;
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
 	strcmp(argv[i], "-anonymous") == 0) {
@@ -233,8 +233,8 @@ static void		parse(int argc, char** argv)
       echoToConsole = true;
       echoAnsi = true;
     } else if (strcmp(argv[i], "-h") == 0 ||
-	     strcmp(argv[i], "-help") == 0 ||
-	     strcmp(argv[i], "--help") == 0) {
+	       strcmp(argv[i], "-help") == 0 ||
+	       strcmp(argv[i], "--help") == 0) {
       usage();
     } else if (strcmp(argv[i], "-latitude") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -265,11 +265,11 @@ static void		parse(int argc, char** argv)
       BZDB.set("locale", argv[i]);
     } else if (strcmp(argv[i], "-motd") == 0) {
       checkArgc(i, argc, argv[i]);
-      if (strcmp(argv[i], "default") == 0) {
+      if (strcmp(argv[i], "default") == 0)
 	BZDB.set("motdServer", BZDB.getDefault("motdServer"));
-      } else {
+      else
 	BZDB.set("motdServer", argv[i]);
-      }
+
       BZDB.unset("disableMOTD");
     } else if (strcmp(argv[i], "-nomotd") == 0) {
       BZDB.set("disableMOTD", "1");
@@ -277,7 +277,7 @@ static void		parse(int argc, char** argv)
       startupInfo.listServerURL = "";
       BZDB.set("list", "");
     } else if (strcmp(argv[i], "-m") == 0 ||
-		strcmp(argv[i], "-mute") == 0) {
+	       strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
     } else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
@@ -313,12 +313,12 @@ static void		parse(int argc, char** argv)
 	usage();
       }
     } else if (strcmp(argv[i], "-v") == 0 ||
-	     strcmp(argv[i], "-version") == 0 ||
-	     strcmp(argv[i], "--version") == 0) {
+	       strcmp(argv[i], "-version") == 0 ||
+	       strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
-		getAppVersion(),
-		getProtocolVersion(),
-		bzfcopyright);
+		      getAppVersion(),
+		      getProtocolVersion(),
+		      bzfcopyright);
       bail(0);
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
@@ -330,8 +330,8 @@ static void		parse(int argc, char** argv)
 	if (strcmp(argv[i], "default") != 0) {
 	  if (TextUtils::isNumeric(argv[i][0])) {
 	    count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
-	    if ((count != 6 && count != 2) || 
-		(xs != '-' && xs != '+') || 
+	    if ((count != 6 && count != 2) ||
+		(xs != '-' && xs != '+') ||
 		(ys != '-' && ys != '+')) {
 	      printFatalError("Invalid argument for %s.\nCorrect format is <width>x<height>[+|-]<x>[+|-]<y>.",argv[i-1]);
 	      usage();
@@ -350,9 +350,9 @@ static void		parse(int argc, char** argv)
       int month, day, year;
       // FIXME: should use iso yyyy.mm.dd format
       if (sscanf(argv[i], "%d/%d/%d", &month, &day, &year) != 3 ||
-		day < 1 || day > 31 ||		// FIXME -- upper limit loose
-		month < 1 || month > 12 ||
-		(year < 0 || (year > 100 && (year < 1970 || year > 2100)))) {
+	  day < 1 || day > 31 ||		// FIXME -- upper limit loose
+	  month < 1 || month > 12 ||
+	  (year < 0 || (year > 100 && (year < 1970 || year > 2100)))) {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
@@ -405,9 +405,9 @@ static void		parse(int argc, char** argv)
       if (i == argc-1) {
 
 	// find the beginning of the server name, parse the callsign
-	char* serverName;
+	char *serverName;
 	if ((serverName = strchr(argv[i], '@')) != NULL) {
-    char* password;
+	  char *password;
 	  *serverName = '\0';
 	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
 	    printFatalError("Callsign truncated.");
@@ -415,20 +415,20 @@ static void		parse(int argc, char** argv)
 		  sizeof(startupInfo.callsign) - 1);
 	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
 	  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-      *(strchr(startupInfo.callsign, ':')) = '\0';
+	    *(strchr(startupInfo.callsign, ':')) = '\0';
 	    *password = '\0', ++password;
 	    if (strlen(argv[i]) >= sizeof(startupInfo.password))
 	      printFatalError("Password truncated.");
 	    strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
 	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-    }
+	  }
 	  ++serverName;
 	} else {
 	  serverName = argv[i];
 	}
 
 	// find the beginning of the port number, parse it
-	char* portNumber;
+	char *portNumber;
 	if ((portNumber = strchr(serverName, ':')) != NULL) {
 	  *portNumber = '\0';
 	  ++portNumber;
@@ -455,7 +455,7 @@ static void		parse(int argc, char** argv)
   }
 }
 
-static void		parseConfigName(int argc, char** argv)
+static void parseConfigName(int argc, char **argv)
 {
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-configdir") == 0) {
@@ -472,7 +472,7 @@ static void		parseConfigName(int argc, char** argv)
 // (so user won't have to wait through performance testing again).
 //
 
-void			dumpResources()
+void dumpResources()
 {
   // collect new configuration
 
@@ -495,20 +495,17 @@ void			dumpResources()
     BZDB.unset("port");
   }
   BZDB.set("list", startupInfo.listServerURL);
-  if (isSoundOpen()) {
+  if (isSoundOpen())
     BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
-  }
 
-  if (RENDERER.getWindow().getWindow()->hasGammaControl()) {
-    BZDB.set("gamma",
-	     TextUtils::format("%f", RENDERER.getWindow().getWindow()->getGamma()));
-  }
+  if (RENDERER.getWindow().getWindow()->hasGammaControl())
+    BZDB.set("gamma", TextUtils::format("%f", RENDERER.getWindow().getWindow()->getGamma()));
 
   BZDB.set("quality", configQualityValues[RENDERER.useQuality()]);
   if (!BZDB.isSet("_window") && display->getResolution() != -1 &&
-      display->getResolution(display->getResolution())) {
+      display->getResolution(display->getResolution()))
     BZDB.set("resolution", display->getResolution(display->getResolution())->name);
-  }
+
   BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
 
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
@@ -540,7 +537,7 @@ void			dumpResources()
   (ServerListCache::get())->saveCache();
 }
 
-static bool		needsFullscreen()
+static bool needsFullscreen()
 {
   // fullscreen if not in a window
   if (!BZDB.isSet("_window")) return true;
@@ -562,7 +559,7 @@ static void createCacheSignature ()
 {
   // This file is to be used by archiving and mirroring tools avoid
   // this directory (and any of its sub-directories). Please see:
-  //	 < http://www.brynosaurus.com/cachedir/ >
+  // < http://www.brynosaurus.com/cachedir/ >
 
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
   const char cacheComment[] =
@@ -571,7 +568,7 @@ static void createCacheSignature ()
     "#     http://www.brynosaurus.com/cachedir/\n";
   std::string cacheTagName =  getCacheDirName();
   cacheTagName += "CACHEDIR.TAG";
-  std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
+  std::ostream *cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
   if (cacheTag != NULL) {
     cacheTag->write(cacheSignature, (std::streamsize)strlen(cacheSignature));
     cacheTag->write(cacheComment, (std::streamsize)strlen(cacheComment));
@@ -583,130 +580,125 @@ static void createCacheSignature ()
 
 bool checkTimeBomb ( void )
 {
-	// check time bomb
-	if (timeBombBoom())
-	{
-		printFatalError("This release expired on %s. \n"
-			"Please upgrade to the latest release. \n"
-			"Exiting.", timeBombString());
-		bail(0);
-		return true;
-	}
-	return false;
+  // check time bomb
+  if (timeBombBoom()) {
+    printFatalError("This release expired on %s. \n"
+		    "Please upgrade to the latest release. \n"
+		    "Exiting.", timeBombString());
+    bail(0);
+    return true;
+  }
+  return false;
 }
 
 void setupBZDB ( void )
 {
-	// set default DB entries
-	for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi)
-	{
-		assert(globalDBItems[gi].name != NULL);
-		if (globalDBItems[gi].value != NULL)
-		{
-			BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
-			BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
-		}
-		BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
-		BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-	}
+  // set default DB entries
+  for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
+    assert(globalDBItems[gi].name != NULL);
+    if (globalDBItems[gi].value != NULL) {
+      BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+    }
+    BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
+  }
 
-	BZDBCache::init();
+  BZDBCache::init();
 }
 
 void setupConfigs ( void )
 {
-	// read resources
-	if (alternateConfig != "") {
-		if (CFGMGR.read(alternateConfig)) {
-			startupInfo.hasConfiguration = true;
-		}
-	}
+  // read resources
+  if (alternateConfig != "") {
+    if (CFGMGR.read(alternateConfig))
+      startupInfo.hasConfiguration = true;
+  }
 
-	if (!startupInfo.hasConfiguration) {
-		findConfigFile();
-		if (CFGMGR.read(getCurrentConfigFileName())) {
-			startupInfo.hasConfiguration = true;
-			updateConfigFile();
-		}
-	}
+  if (!startupInfo.hasConfiguration) {
+    findConfigFile();
+    if (CFGMGR.read(getCurrentConfigFileName())) {
+      startupInfo.hasConfiguration = true;
+      updateConfigFile();
+    }
+  }
 
-	if (startupInfo.hasConfiguration)
-		ActionBinding::instance().getFromBindings();
-	else
-		ActionBinding::instance().resetBindings();    // bind default keys
+  if (startupInfo.hasConfiguration)
+    ActionBinding::instance().getFromBindings();
+  else
+    ActionBinding::instance().resetBindings();    // bind default keys
 
-	ServerListCache::get()->loadCache();
+  ServerListCache::get()->loadCache();
 
-	// restore some configuration (command line overrides these)
-	if (startupInfo.hasConfiguration) {
-		if (BZDB.isSet("callsign")) {
-			strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
-				sizeof(startupInfo.callsign) - 1);
-			startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-		}
-		if (BZDB.isSet("password")) {
-			strncpy(startupInfo.password, BZDB.get("password").c_str(),
-				sizeof(startupInfo.password) - 1);
-			startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-		}
+  // restore some configuration (command line overrides these)
+  if (startupInfo.hasConfiguration) {
+    if (BZDB.isSet("callsign")) {
+      strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
+	      sizeof(startupInfo.callsign) - 1);
+      startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+    }
+    if (BZDB.isSet("password")) {
+      strncpy(startupInfo.password, BZDB.get("password").c_str(),
+	      sizeof(startupInfo.password) - 1);
+      startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+    }
 
-		if (BZDB.isSet("team")) {
-			std::string value = BZDB.get("team");
-			startupInfo.team = Team::getTeam(value);
-		}
-		if (BZDB.isSet("server")) {
-			strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
-				sizeof(startupInfo.serverName) - 1);
-			startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
-		}
-		if (BZDB.isSet("port")) {
-			startupInfo.serverPort = atoi(BZDB.get("port").c_str());
-		}
+    if (BZDB.isSet("team")) {
+      std::string value = BZDB.get("team");
+      startupInfo.team = Team::getTeam(value);
+    }
+    if (BZDB.isSet("server")) {
+      strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
+	      sizeof(startupInfo.serverName) - 1);
+      startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
+    }
+    if (BZDB.isSet("port"))
+      startupInfo.serverPort = atoi(BZDB.get("port").c_str());
 
-		// check for reassigned team colors
-		if (BZDB.isSet("roguecolor"))
-			setTeamColor(RogueTeam, BZDB.get("roguecolor"));
-		if (BZDB.isSet("redcolor"))
-			setTeamColor(RedTeam, BZDB.get("redcolor"));
-		if (BZDB.isSet("greencolor"))
-			setTeamColor(GreenTeam, BZDB.get("greencolor"));
-		if (BZDB.isSet("bluecolor"))
-			setTeamColor(BlueTeam, BZDB.get("bluecolor"));
-		if (BZDB.isSet("purplecolor"))
-			setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
+    // check for reassigned team colors
+    if (BZDB.isSet("roguecolor"))
+      setTeamColor(RogueTeam, BZDB.get("roguecolor"));
+    if (BZDB.isSet("redcolor"))
+      setTeamColor(RedTeam, BZDB.get("redcolor"));
+    if (BZDB.isSet("greencolor"))
+      setTeamColor(GreenTeam, BZDB.get("greencolor"));
+    if (BZDB.isSet("bluecolor"))
+      setTeamColor(BlueTeam, BZDB.get("bluecolor"));
+    if (BZDB.isSet("purplecolor"))
+      setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
 
-		// check for reassigned radar colors
-		if (BZDB.isSet("rogueradar"))
-			setRadarColor(RogueTeam, BZDB.get("rogueradar"));
-		if (BZDB.isSet("redradar"))
-			setRadarColor(RedTeam, BZDB.get("redradar"));
-		if (BZDB.isSet("greenradar"))
-			setRadarColor(GreenTeam, BZDB.get("greenradar"));
-		if (BZDB.isSet("blueradar"))
-			setRadarColor(BlueTeam, BZDB.get("blueradar"));
-		if (BZDB.isSet("purpleradar"))
-			setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
+    // check for reassigned radar colors
+    if (BZDB.isSet("rogueradar"))
+      setRadarColor(RogueTeam, BZDB.get("rogueradar"));
+    if (BZDB.isSet("redradar"))
+      setRadarColor(RedTeam, BZDB.get("redradar"));
+    if (BZDB.isSet("greenradar"))
+      setRadarColor(GreenTeam, BZDB.get("greenradar"));
+    if (BZDB.isSet("blueradar"))
+      setRadarColor(BlueTeam, BZDB.get("blueradar"));
+    if (BZDB.isSet("purpleradar"))
+      setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
 
-		// ignore window name in config file (it's used internally)
-		BZDB.unset("_window");
-		BZDB.unset("_multisample");
+    // ignore window name in config file (it's used internally)
+    BZDB.unset("_window");
+    BZDB.unset("_multisample");
 
-		// however, if the "__window" setting is enabled, let it through
-		if (BZDB.isSet("__window"))
-			if (BZDB.isTrue("__window"))
-				BZDB.set("_window", "1");
-	}
+    // however, if the "__window" setting is enabled, let it through
+    if (BZDB.isSet("__window"))
+      if (BZDB.isTrue("__window"))
+	BZDB.set("_window", "1");
+  }
 }
 
-void setupXFire ( void )
+void setupXFire(void)
 {
 #if defined(_WIN32)
   if (!headless) {
     /* write HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath with the
-    * current path.  this lets Xfire know that this bzflag.exe running from
-    * here really is bzflag, not some imposter.
-    * since it may be useful to someone else, it's not protected by USE_XFIRE
-    */
+     * current path.  this lets Xfire know that this bzflag.exe running from
+     * here really is bzflag, not some imposter.
+     * since it may be useful to someone else, it's not protected by USE_XFIRE
+     */
 
     // get our path
     char temppath[MAX_PATH], temppath2[MAX_PATH];
@@ -719,10 +711,10 @@ void setupXFire ( void )
     // write the registry key in question
     HKEY key = NULL;
     if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-      0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
-      &key, NULL) == ERROR_SUCCESS) {
-	RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
-	  (DWORD)strlen(temppath));
+		       0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
+		       &key, NULL) == ERROR_SUCCESS) {
+      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
+		    (DWORD)strlen(temppath));
     }
   }
 #endif
@@ -733,12 +725,12 @@ void checkStartupEnvirons()
   if (getenv("BZFLAGID")) {
     BZDB.set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-      sizeof(startupInfo.callsign) - 1);
+	    sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   } else if (getenv("BZID")) {
     BZDB.set("callsign", getenv("BZID"));
     strncpy(startupInfo.callsign, getenv("BZID"),
-      sizeof(startupInfo.callsign) - 1);
+	    sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   }
 }
@@ -748,8 +740,8 @@ void clearWindowsStdOut()
 #ifdef _WIN32
   // this is cheap but it will work on windows
   // clear out the stdout file
-  if (echoToConsole){
-    FILE	*fp = fopen ("stdout.txt","w");
+  if (echoToConsole) {
+    FILE *fp = fopen ("stdout.txt","w");
     if (fp) {
       fprintf(fp,"stdout started\r\n" );
       fclose(fp);
@@ -769,19 +761,19 @@ int initWinsoc ( void )
     return 1;
   }
   if (LOBYTE(wsaData.wVersion) != major ||
-    HIBYTE(wsaData.wVersion) != minor) {
-      printFatalError("Version mismatch in winsock;"
-	"  got %d.%d, expected %d.%d.  Terminating.\n",
-	(int)LOBYTE(wsaData.wVersion),
-	(int)HIBYTE(wsaData.wVersion),
-	major, minor);
-      return bail(1);
+      HIBYTE(wsaData.wVersion) != minor) {
+    printFatalError("Version mismatch in winsock;"
+		    "  got %d.%d, expected %d.%d.  Terminating.\n",
+		    (int)LOBYTE(wsaData.wVersion),
+		    (int)HIBYTE(wsaData.wVersion),
+		    major, minor);
+    return bail(1);
   }
 #endif
   return 0;
 }
 
-int initClient ( int argc, char** argv )
+int initClient ( int argc, char **argv )
 {
   // set the character handling locale
   setlocale(LC_CTYPE,"");
@@ -803,8 +795,8 @@ int initClient ( int argc, char** argv )
   bzfsrand((unsigned int)time(0));
 
   /* try to set the processor affinity to prevent TimeKeeper from
-  * reporting negative times
-  */
+   * reporting negative times
+   */
   TimeKeeper::setProcessorAffinity();
 
   setupBZDB();
@@ -854,11 +846,11 @@ int initClient ( int argc, char** argv )
     char dbTime[256];
     strncpy(dbTime, BZDB.get("fixedTime").c_str(), sizeof(dbTime) - 1);
     if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
-      hours < 0 || hours > 23 ||
-      minutes < 0 || minutes > 59 ||
-      seconds < 0 || seconds > 59) {
-	printFatalError("Invalid argument for fixedTime = %s", dbTime);
-    }
+	hours < 0 || hours > 23 ||
+	minutes < 0 || minutes > 59 ||
+	seconds < 0 || seconds > 59)
+      printFatalError("Invalid argument for fixedTime = %s", dbTime);
+
     userTime.tm_sec = seconds;
     userTime.tm_min = minutes;
     userTime.tm_hour = hours;
@@ -871,14 +863,14 @@ int initClient ( int argc, char** argv )
     name += "badwords.txt";
 
     // create a new filter object if one does not exist already
-    if (wordFilter == NULL) {
+    if (wordFilter == NULL)
       wordFilter = new WordFilter();
-    }
+
     // XXX should stat the file first and load with interactive feedback
     unsigned int count = wordFilter->loadFromFile(name, false);
-    if (count > 0) {
+    if (count > 0)
       std::cout << "Loaded " << count << " words from \"" << name << "\"" << std::endl;
-    }
+
   }
 
   // load the bad word filter, regardless of a default, if it was set
@@ -886,9 +878,9 @@ int initClient ( int argc, char** argv )
     std::string filterFilename = BZDB.get("filterFilename");
     std::cout << "Filter file name specified is \"" << filterFilename << "\"" << std::endl;
     if (filterFilename.length() != 0) {
-      if (wordFilter == NULL) {
+      if (wordFilter == NULL)
 	wordFilter = new WordFilter();
-      }
+
       std::cout << "Loading " << filterFilename << std::endl;
       unsigned int count = wordFilter->loadFromFile(filterFilename, true);
       std::cout << "Loaded " << count << " words" << std::endl;
@@ -924,7 +916,7 @@ void initAudio ( void )
 #elif (defined(_WIN32) || defined(WIN32))
     char exePath[MAX_PATH];
     GetModuleFileName(NULL,exePath,MAX_PATH);
-    char* last = strrchr(exePath,'\\');
+    char *last = strrchr(exePath,'\\');
     if (last)
       *last = '\0';
     strcat(exePath,"\\data");
@@ -932,21 +924,20 @@ void initAudio ( void )
 #else
     // Only check existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
-    if (localedir == NULL) {
+    if (localedir == NULL)
       PlatformFactory::getMedia()->setMediaDirectory(BZFLAG_DATA);
-    } else {
+    else
       closedir(localedir);
-    }
 #endif
   }
 }
 
 // globals
-BzfVisual* visual = NULL;
-BzfWindow* window = NULL;
-BzfJoystick* joystick = NULL;
-MainWindow* pmainWindow = NULL;
-PlatformFactory* platformFactory = NULL;
+BzfVisual *visual = NULL;
+BzfWindow *window = NULL;
+BzfJoystick *joystick = NULL;
+MainWindow *pmainWindow = NULL;
+PlatformFactory *platformFactory = NULL;
 BundleMgr *bm = NULL;
 
 int initDisplay ( void )
@@ -1076,43 +1067,43 @@ int initDisplay ( void )
 
   // sanity check - make sure OpenGL is actually available or
   // there's no sense in continuing.
-  const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
+  const char * const glRenderer = (const char*)glGetString(GL_RENDERER);
   if (!glRenderer) {
     // bad code, no donut for you
 
     GLenum error = GL_NO_ERROR;
     while ((error = glGetError()) != GL_NO_ERROR) {
       switch (error) {
-	case GL_INVALID_ENUM:
-	  std::cerr << "ERROR: GL_INVALID_ENUM" << std::endl;
-	  break;
-	case GL_INVALID_VALUE:
-	  std::cerr << "ERROR: GL_INVALID_VALUE" << std::endl;
-	  break;
-	case GL_INVALID_OPERATION:
-	  std::cerr << "ERROR: GL_INVALID_OPERATION" << std::endl;
-	  break;
-	case GL_STACK_OVERFLOW:
-	  std::cerr << "ERROR: GL_STACK_OVERFLOW" << std::endl;
-	  break;
-	case GL_STACK_UNDERFLOW:
-	  std::cerr << "ERROR: GL_STACK_UNDERFLOW" << std::endl;
-	  break;
-	case GL_OUT_OF_MEMORY:
-	  std::cerr << "ERROR: GL_OUT_OF_MEMORY" << std::endl;
-	  break;
+      case GL_INVALID_ENUM:
+	std::cerr << "ERROR: GL_INVALID_ENUM" << std::endl;
+	break;
+      case GL_INVALID_VALUE:
+	std::cerr << "ERROR: GL_INVALID_VALUE" << std::endl;
+	break;
+      case GL_INVALID_OPERATION:
+	std::cerr << "ERROR: GL_INVALID_OPERATION" << std::endl;
+	break;
+      case GL_STACK_OVERFLOW:
+	std::cerr << "ERROR: GL_STACK_OVERFLOW" << std::endl;
+	break;
+      case GL_STACK_UNDERFLOW:
+	std::cerr << "ERROR: GL_STACK_UNDERFLOW" << std::endl;
+	break;
+      case GL_OUT_OF_MEMORY:
+	std::cerr << "ERROR: GL_OUT_OF_MEMORY" << std::endl;
+	break;
 #ifdef GL_VERSION_1_2
-	case GL_TABLE_TOO_LARGE:
-	  std::cerr << "ERROR: GL_TABLE_TOO_LARGE" << std::endl;
-	  break;
+      case GL_TABLE_TOO_LARGE:
+	std::cerr << "ERROR: GL_TABLE_TOO_LARGE" << std::endl;
+	break;
 #endif
-	case GL_NO_ERROR:
-	  // should not reach
-	  std::cerr << "ERROR: GL_NO_ERROR" << std::endl;
-	  break;
-	default:
-	  // should not reach
-	  std::cerr << "ERROR: UNKNOWN CODE: " << error << std::endl;
+      case GL_NO_ERROR:
+	// should not reach
+	std::cerr << "ERROR: GL_NO_ERROR" << std::endl;
+	break;
+      default:
+	// should not reach
+	std::cerr << "ERROR: UNKNOWN CODE: " << error << std::endl;
       }
     }
 
@@ -1157,7 +1148,7 @@ int initDisplay ( void )
   if (BZDB.isSet("gamma")) {
     if (pmainWindow->getWindow()->hasGammaControl())
       pmainWindow->getWindow()->setGamma
-      ((float)atof(BZDB.get("gamma").c_str()));
+	((float)atof(BZDB.get("gamma").c_str()));
   }
 
   // set the scene renderer's window
@@ -1165,9 +1156,9 @@ int initDisplay ( void )
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
-    if (BZDB.isSet("zbuffersplit")) {
+    if (BZDB.isSet("zbuffersplit"))
       RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
-    }
+
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
       const int qualityLevels = (int)configQualityValues.size();
@@ -1179,12 +1170,12 @@ int initDisplay ( void )
       }
     }
 
-    TextureManager& tm = TextureManager::instance();
+    TextureManager &tm = TextureManager::instance();
     tm.setMaxFilter(BZDB.get("texture"));
     BZDB.set("texture", tm.getMaxFilterName());
 
     BZDB.set("texturereplace", (!BZDBCache::lighting &&
-      RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+				RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
     BZDB.setPersistent("texturereplace", false);
     if (BZDB.isSet("view")) {
       RENDERER.setViewType(SceneRenderer::Normal);
@@ -1260,7 +1251,7 @@ int postWindowInit ( void )
     startupInfo.listServerURL = BZDB.get("list");
 
   // setup silence list
-  std::vector<std::string>& list = getSilenceList();
+  std::vector<std::string> &list = getSilenceList();
 
   // search for entries silencedPerson0 silencedPerson1 etc..
   // to the database. Stores silenceList
@@ -1311,12 +1302,11 @@ void cleanupClient ( void )
 
 #if defined(_WIN32)
   {
-    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it
-    * exists */
+    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it exists */
     HKEY key = NULL;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-      0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
-	RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
+		     0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
+      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
     }
   }
 #endif
@@ -1333,11 +1323,10 @@ void saveSettings ( void )
   // save resources
   if (BZDB.isTrue("saveSettings")) {
     dumpResources();
-    if (alternateConfig == "") {
+    if (alternateConfig == "")
       CFGMGR.write(getCurrentConfigFileName());
-    } else {
+    else
       CFGMGR.write(alternateConfig);
-    }
   }
 }
 
@@ -1348,9 +1337,9 @@ void saveSettings ( void )
 //
 
 #if defined(_WIN32) && !defined(HAVE_SDL)
-int			myMain(int argc, char** argv)
+int myMain(int argc, char **argv)
 #else /* defined(_WIN32) */
-int			main(int argc, char** argv)
+  int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
 {
   argv0 = argv[0];
@@ -1363,7 +1352,7 @@ int			main(int argc, char** argv)
 
   if (postWindowInit()!= 0)
     return -1;
-  
+
   // start playing
   startPlaying();
 
@@ -1385,18 +1374,18 @@ int			main(int argc, char** argv)
 //	windows entry point.  forward to main()
 //
 
-int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
+int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
   // argument now look like like normal spaces.  not much we can do
   // about that.
   // FIXME -- argc and argv can be accessible;  use them instead of this.
-  char* cmdLine = strdup(_cmdLine);
+  char *cmdLine = strdup(_cmdLine);
 
   // count number of arguments
   int argc = 1;
-  char* scan = cmdLine;
+  char *scan = cmdLine;
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argc++;
@@ -1415,7 +1404,7 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
     // Not a double quote, so just make sure we aren't hitting any spaces.
     else
       while (!isspace(*scan) && *scan != 0) scan++;
-    
+
     // Skip past any spaces
     while (isspace(*scan) && *scan != 0) scan++;
   }
@@ -1425,7 +1414,7 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   GetModuleFileName(instance,appName,MAX_PATH);
 
   // make argument list and assign arguments
-  char** argv = new char*[argc];
+  char **argv = new char *[argc];
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
@@ -1437,7 +1426,7 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
       // Move past the starting double quote
       // Set the double quote to null just in case
       *scan++ = 0;
-  
+
       argv[argc++] = scan;
       // Keep going until we reach the end, or we hit another double quote
       // FIXME: Support escaping the double quotes

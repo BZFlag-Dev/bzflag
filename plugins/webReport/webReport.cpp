@@ -4,93 +4,111 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
-#include "plugin_HTTPTemplates.h"
+#include "plugin_groups.h"
 
 //#include "reportTemplates.h"
 
 std::string templatesDir;
 
-std::string loginDefaultTemplate,reportDefaultTemplate;
-void loadDefaultTemplates(void);
-
-class WebReport : public BZFSHTTPServer, TemplateCallbackClass
+class WebReport : public BZFSHTTPAuth, public TemplateCallbackClass
 {
 public:
-  WebReport( const char * plugInName );
+  WebReport();
+  ~WebReport();
 
-  void init ( std::string &tDir );
+  void init(const char* tDir);
 
-  virtual bool acceptURL ( const char *url ){return true;}
-  virtual void getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get = true );
+  void loadDefaultTemplates(void);
 
-  virtual void keyCallback ( std::string &data, const std::string &key );
-  virtual bool loopCallback ( const std::string &key );
-  virtual bool ifCallback ( const std::string &key );
+  virtual void keyCallback(std::string &data, const std::string &key);
+  virtual bool loopCallback(const std::string &key);
+  virtual bool ifCallback(const std::string &key);
 
+  std::map<int,bool> pendingAuths;
+
+  std::string loginDefaultTemplate,reportDefaultTemplate;
   bool evenLine;
   bool valid;
   bz_APIStringList *reports;
   int report;
 
-  Templateiser	templateSystem;
+  virtual const char * getVDir ( void ){return "WebReport";}
+  virtual const char * getDescription ( void ){return "View Reports On-line(Requires Login)";}
+
+  virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply );
 };
 
-WebReport webReport("report");
+WebReport *webReport = NULL;
 
 BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
 {
-  if (commandLine)
-    templatesDir = commandLine;
+  if(webReport)
+    delete(webReport);
+  webReport = new WebReport;
+
+  if (commandLine && strlen(commandLine))
+    webReport->init(commandLine);
   else
-    templatesDir = "./";
+    webReport->init("./");
 
-  loadDefaultTemplates();
-  webReport.init(templatesDir);
-
-  bz_setclipFieldString("report_index_description","View reports on-line");
-
-  bz_debugMessage(4,"webReport plugin loaded");
-  webReport.startupHTTP();
+  bz_debugMessage(4, "webReport plugin loaded");
 
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  webReport.shutdownHTTP();
-  bz_debugMessage(4,"webReport plugin unloaded");
+  if(webReport)
+    delete(webReport);
+  webReport = NULL;
+
+  bz_debugMessage(4, "webReport plugin unloaded");
   return 0;
 }
 
 // template stuff
 // globals
 
-WebReport::WebReport( const char * plugInName ): BZFSHTTPServer(plugInName)
+WebReport::WebReport()
+  : BZFSHTTPAuth()
 {
+  registerVDir();
+  setupAuth();
   evenLine = false;
   valid = false;
-};
+}
 
-void WebReport::init ( std::string &tDir )
+WebReport::~WebReport()
 {
-  templateSystem.addSearchPath(tDir.c_str());
-  
+}
+
+void WebReport::init(const char *tDir)
+{
+  // find any groups that have viewreport or admin, let them fly
+  if (findGroupsWithPerm(bz_perm_viewReports).size())
+    addPermToLevel(1,bz_perm_viewReports);
+  else
+    addPermToLevel(1,"ADMIN");
+
+  loadDefaultTemplates();
+
+  templateSystem.addSearchPath(tDir);
+
   templateSystem.addKey("evenodd", this);
   templateSystem.addKey("Report", this);
   templateSystem.addLoop("Reports", this);
   templateSystem.addIF("Valid", this);
 
- templateSystem.setPluginName("Web Report",getBaseServerURL());
+  templateSystem.setPluginName("Web Report", getBaseURL().c_str());
 }
 
-void WebReport::keyCallback ( std::string &data, const std::string &key )
+void WebReport::keyCallback(std::string &data, const std::string &key)
 {
-  if (key == "evenodd")
+  if (key == "evenodd") {
     data = evenLine ? "even" : "odd";
-  else if (key =="report")
-  {
+  } else if (key =="report") {
     if (reports && report > 0 && report < (int)reports->size())
       data = reports->get(report).c_str();
     else
@@ -98,7 +116,7 @@ void WebReport::keyCallback ( std::string &data, const std::string &key )
   }
 }
 
-bool WebReport::loopCallback ( const std::string &key )
+bool WebReport::loopCallback(const std::string &key)
 {
   if (key != "report")
     return false;
@@ -107,7 +125,7 @@ bool WebReport::loopCallback ( const std::string &key )
     return false;
 
   report++;
-  if ( report >= (int)reports->size())
+  if (report >= (int)reports->size())
     return false;
 
   evenLine = !evenLine;
@@ -115,60 +133,43 @@ bool WebReport::loopCallback ( const std::string &key )
   return true;
 }
 
-bool WebReport::ifCallback ( const std::string &key )
+bool WebReport::ifCallback(const std::string &key)
 {
   if (key == "valid")
     return valid;
   return false;
 }
 
-void WebReport::getURLData ( const char* url, int requestID, const URLParams &paramaters, bool get )
+bool WebReport::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
   evenLine = false;
-  valid = false;
+  valid = level == 1;
   reports = NULL;
 
-  std::string page;
-  templateSystem.startTimer();
+  std::string &page = reply.body;
+  int sessionID = request.sessionID;
 
-  std::string action = getParam(paramaters,"action");
-  if (!action.size())
-  {
-    if (!templateSystem.processTemplateFile(page,"login.tmpl"))
-      templateSystem.processTemplate(page,loginDefaultTemplate);
-  }
-  else
-  {
-    valid = false;
+  std::string action;
+  request.getParam("action",action);
 
-    if (tolower(action) == "report")
-    {
-      if (bz_validAdminPassword(getParam(paramaters,"pass").c_str()))
-	valid = true;
-  
-      reports = bz_getReports();
-      report = -1;
-    }
-    if (!templateSystem.processTemplateFile(page,"report.tmpl"))
-      templateSystem.processTemplate(page,reportDefaultTemplate);
+  reply.docType = HTTPReply::eHTML;
 
-    if (reports)
-      bz_deleteStringList(reports);
-  }
-  setURLDocType(eHTML,requestID);
-  setURLDataSize ( (unsigned int)page.size(), requestID );
-  setURLData ( page.c_str(), requestID );
+  reports = bz_getReports();
+  report = -1;
+
+  if (!templateSystem.processTemplateFile(page, "report.tmpl"))
+    templateSystem.processTemplate(page, reportDefaultTemplate);
+
+  if (reports)
+    bz_deleteStringList(reports);
+
+  return true;
 }
 
-void loadDefaultTemplates(void)
+void WebReport::loadDefaultTemplates(void)
 {
-  loginDefaultTemplate = "<html><body><h4>Please Enter the Server Password</h3><form name=\"input\" action=\"[$BaseURL]\" method=\"put\">";
-  loginDefaultTemplate += "<input type=\"hidden\" name=\"action\" value=\"report\"><input type=\"text\" name=\"pass\"><input type=\"submit\" value =\"submit\"></form></body></html>";
-
   reportDefaultTemplate = "<html><body>[?IF Valid][*START Reports][$Report]<br>[*END Reports]There are no reports, sorry[*EMPTY Reports][?ELSE Valid]Invalid Login, sorry[?END Valid]</body></html>";
 }
-
-
 
 // Local Variables: ***
 // mode: C++ ***

@@ -84,7 +84,7 @@ public:
 
   /** returns the local time */
   static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
-
+  static void localTimeDOW(int *year = NULL, int *month = NULL, int* day = NULL, int* dayOfWeek = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
   /** returns a string of the local time */
   static const char		*timestamp(void);
 
@@ -92,6 +92,10 @@ public:
   static std::string    shortTimeStamp(void);
 
   static void localTime( int &day);
+
+  /** returns the UTC time */
+  static void UTCTime(int *year = NULL, int *month = NULL, int* day = NULL, int* dayOfWeek = NULL, int* hour = NULL, int* min = NULL, int* sec = NULL, bool* dst = NULL);
+
 
   /** converts a time difference into an array of integers
       representing days, hours, minutes, seconds */

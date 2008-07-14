@@ -64,6 +64,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   wins(0),
   losses(0),
   tks(0),
+  allow(0),
   localWins(0),
   localLosses(0),
   localTks(0),
@@ -811,7 +812,7 @@ void Player::addRemoteSound(int sound)
 
 void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			bool inCockpit, bool seerView,
-			bool showTreads, bool showIDL)
+			bool showTreads, bool showIDL, bool thirdPerson)
 {
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
@@ -848,7 +849,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
 
   // is this tank fully cloaked?
-  const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
+  bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
+
+  // in third person we draw like the radar does. cloak is visible, and ST is not
+  if (thirdPerson)
+    cloaked = (flagType == Flags::Stealth);
 
   if (cloaked && !seerView) 
     return; // don't draw anything
@@ -883,9 +888,9 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	world->hitBuilding(state.pos, a,
 			   dimensions[0], dimensions[1],
 			   dimensions[2]);
-      if (obstacle && obstacle->isCrossing(state.pos, a,
+      if ((obstacle && obstacle->isCrossing(state.pos, a,
 					   dimensions[0], dimensions[1],
-					   dimensions[2], plane) ||
+					   dimensions[2], plane)) ||
 	  world->crossingTeleporter(state.pos, a,
 				    dimensions[0], dimensions[1],
 				    dimensions[2], plane)) {
@@ -1012,7 +1017,7 @@ void Player::spawnEffect()
 }
 
 
-void Player::addShots(SceneDatabase* scene, bool colorblind) const
+void Player::addShots(SceneDatabase* scene, bool colorblind ) const
 {
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {

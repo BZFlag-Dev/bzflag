@@ -701,8 +701,8 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
   return false;
 }
 
-void NetHandler::getPlayerList(char list[]) {
-  snprintf(list, sizeof(list), "%s%s%s%s%s%s",
+void NetHandler::getPlayerList(char* list, size_t listSize) {
+  snprintf(list, listSize, "%s%s%s%s%s%s",
 	  peer.getDotNotation().c_str(),
 	  getHostname() ? " (" : "",
 	  getHostname() ? getHostname() : "",

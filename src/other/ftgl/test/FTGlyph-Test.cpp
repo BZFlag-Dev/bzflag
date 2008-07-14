@@ -13,10 +13,14 @@ class TestGlyph : public FTGlyph
 {
     public:
         TestGlyph(FT_GlyphSlot glyph)
-        :   FTGlyph(glyph)
+        :   FTGlyph(glyph),
+            advance(FTPoint(Advance(), 0.0))
         {}
 
-        const FTPoint& Render(const FTPoint& pen, int renderMode) { return Advance(); };
+        const FTPoint& Render(const FTPoint& pen, int renderMode) { return advance; };
+
+    private:
+        FTPoint advance;
 };
 
 
@@ -37,12 +41,7 @@ class FTGlyphTest : public CppUnit::TestCase
         {
             TestGlyph testGlyph(0);
 
-            FTPoint testPoint;
-
-            CPPUNIT_ASSERT(testPoint == testGlyph.Advance());
-            CPPUNIT_ASSERT_EQUAL(testPoint.X(), testGlyph.Advance().X());
-            CPPUNIT_ASSERT_EQUAL(testPoint.Y(), testGlyph.Advance().Y());
-            CPPUNIT_ASSERT_EQUAL(testPoint.Z(), testGlyph.Advance().Z());
+            CPPUNIT_ASSERT(0.0 == testGlyph.Advance());
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testGlyph.BBox().Upper().Y(), 0.01);
 
@@ -55,12 +54,9 @@ class FTGlyphTest : public CppUnit::TestCase
             setUpFreetype(CHARACTER_CODE_A);
             TestGlyph testGlyph(face->glyph);
 
-            FTPoint testPoint(47.0, 0.0, 0.0);
-            FTPoint nextPoint = testGlyph.Advance();
-            CPPUNIT_ASSERT(testPoint == nextPoint);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint.X(), nextPoint.X(), 0.0001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint.Y(), nextPoint.Y(), 0.0001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint.Z(), nextPoint.Z(), 0.0001);
+            float testPoint = 47.0;
+            float nextPoint = testGlyph.Advance();
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(testPoint, nextPoint, 0.0001);
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(51.39, testGlyph.BBox().Upper().Y(), 0.01);
 

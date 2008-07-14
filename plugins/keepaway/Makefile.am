@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = keepaway.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 keepaway_la_SOURCES = keepaway.cpp
 keepaway_la_LDFLAGS = -module -avoid-version
 

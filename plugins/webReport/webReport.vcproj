@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="webReport"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{5C46119A-FC94-4DFB-9F75-154DC96FFAB1}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

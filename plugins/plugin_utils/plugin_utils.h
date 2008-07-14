@@ -22,13 +22,32 @@
 const char* bzu_GetTeamName ( bz_eTeamType team );
 
 // text functions
-std::string tolower(const std::string& s);
-std::string tolower(const char* s);
+const std::string& tolower(const std::string& s, std::string& dest);
+const std::string& toupper(const std::string& s, std::string& dest);
+const std::string& tolower(const char* s, std::string& dest);
+const std::string& toupper(const char* s, std::string& dest);
+
+const std::string& makelower(std::string& s);
+const std::string& makeupper(std::string& s);
+
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
 std::string url_encode(const std::string &text);
 std::string url_decode(const std::string &text);
+
+std::string base64_encode(const std::string &text);
+std::string base64_decode(const std::string &text);
+
+size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
+
+void trimLeadingWhitespace ( std::string &text );
+std::string trimLeadingWhitespace ( const std::string &text );
+
+std::string no_whitespace(const std::string &s);
+
+std::string printTime ( bz_Time *ts, const char* timezone = "UTC" );
+void appendTime ( std::string & text, bz_Time *ts, const char* timezone = "UTC" );
 
 inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
 {
@@ -110,9 +129,7 @@ inline bool isPrintable(const char c)
   return true;
 }
 
-
-// Configuration file parsing functions
-#include "plugin_config.h"
+const std::vector<std::string> bzu_standardPerms (void);
 
 #endif //_PLUGIN_UTILS_H_
 

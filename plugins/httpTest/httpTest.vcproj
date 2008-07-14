@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="httpTest"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{D7363DDD-01C3-4DE8-AC9C-2A225C58D503}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/httpTest.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc71/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
 				ModuleDefinitionFile="httpTest.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/httpTest.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/httpTest.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
 				ModuleDefinitionFile="httpTest.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

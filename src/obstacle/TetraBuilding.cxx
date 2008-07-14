@@ -457,37 +457,37 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
   // write the vertex information
   for (i = 0; i < 4; i++) {
     const float* vertex = vertices[i];
-    out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " "
+    out << indent << "  vertex " << vertex[0] << " " << vertex[1] << " "
 				 << vertex[2] << std::endl;
     if (useNormals[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* normal = normals[i][j];
-	out << indent << "\tnormal " << normal[0] << " " << normal[1] << " "
+	out << indent << "  normal " << normal[0] << " " << normal[1] << " "
 				     << normal[2] << std::endl;
       }
     }
     if (useTexcoords[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* texcoord = texcoords[i][j];
-	out << indent << "\tnormal " << texcoord[0] << " "
+	out << indent << "  normal " << texcoord[0] << " "
 				     << texcoord[1] << " "
 				     << texcoord[2] << std::endl;
       }
     }
-    out << "\tmatref ";
+    out << "  matref ";
     MATERIALMGR.printReference(out, materials[i]);
     out << std::endl;
   }
 
   // write the regular stuff
   if (isPassable()) {
-    out << indent << "\tpassable" << std::endl;
+    out << indent << "  passable" << std::endl;
   } else {
     if (isDriveThrough()) {
-      out << indent << "\tdrivethrough" << std::endl;
+      out << indent << "  drivethrough" << std::endl;
     }
     if (isShootThrough()) {
-      out << indent << "\tshootthrough" << std::endl;
+      out << indent << "  shootthrough" << std::endl;
     }
   }
   out << indent << "end" << std::endl;

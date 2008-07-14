@@ -33,7 +33,8 @@ const int ServerMenu::NumItems = 10;
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.chr == 0) switch (key.button) {
+  if (key.chr == 0) {
+    switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
 	if (!menu->getFind())
@@ -70,53 +71,39 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
       }
       return true;
 
-  }
-
-  else if (key.chr == '\t') {
-    if (HUDui::getFocus()) {
-      menu->setSelected(menu->getSelected() + 1);
     }
+  } else if (key.chr == '\t') {
+    if (HUDui::getFocus())
+      menu->setSelected(menu->getSelected() + 1);
     return true;
-  }
-
-  else if (key.chr == '/') {
+  } else if (key.chr == '/') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFind(true);
       return true;
     }
-  }
-
-  // TODO: not localizable
-  else if (key.chr == 'f') {
+  } else if (key.chr == 'f') {
+    // TODO: not localizable
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->toggleFavView();
       return true;
     }
-  }
-
-  else if (key.chr == '+') {
+  } else if (key.chr == '+') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(true);
       return true;
     }
-  }
-
-  else if (key.chr == '-') {
+  } else if (key.chr == '-') {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFav(false);
       return true;
     }
-  }
-  
-  // TODO: not localizable
-  else if (key.chr == 'p') {
+  } else if (key.chr == 'p') {
+    // TODO: not localizable
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->pingServer(menu->getSelected());
       return true;
     }
-  }
-
-  else if (key.chr == 27) {
+  } else if (key.chr == 27) {
     if (HUDui::getFocus()) {
       // escape drops out of find mode
       // note that this is handled by MenuDefaultKey if we're not in find mode
@@ -133,23 +120,26 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   switch (key.button) {
-    case BzfKeyEvent::Up:
-    case BzfKeyEvent::Down:
-    case BzfKeyEvent::PageUp:
-    case BzfKeyEvent::PageDown:
-      return true;
+  case BzfKeyEvent::Up:
+  case BzfKeyEvent::Down:
+  case BzfKeyEvent::PageUp:
+  case BzfKeyEvent::PageDown:
+    return true;
   }
+
   switch (key.chr) {
-    case 27:	// escape
-    case 13:	// return
-      return true;
+  case 27: // escape
+  case 13: // return
+    return true;
   }
+
   return false;
 }
 
 ServerMenu::ServerMenu() : defaultKey(this),
 			   selectedIndex(-1),
 			   serversFound(0),
+			   realServersFound(0),
 			   findMode(false),
 			   filter("*"),
 			   favView(false),
@@ -203,13 +193,15 @@ ServerMenu::ServerMenu() : defaultKey(this),
   initNavigation();
   if (serverList.size() == 0)
     getNav().set(status);
-  
+
   setSelected(0);
 }
 
 ServerMenu::~ServerMenu()
 {
-  for (std::map<int, ServerPing*>::iterator i = activePings.begin(); i != activePings.end(); activePings.erase(i++))
+  for (std::map<int, ServerPing*>::iterator i = activePings.begin();
+       i != activePings.end();
+       activePings.erase(i++))
     delete i->second;
 }
 
@@ -236,7 +228,7 @@ void ServerMenu::setFind(bool mode)
     } else {
       // no specified wildcards implies *<entered-text>*
       if (search->getString().find("*") == std::string::npos
-	&& search->getString().find("?") == std::string::npos)
+	  && search->getString().find("?") == std::string::npos)
 	search->setString("*" + search->getString() + "*");
       // filter is set in lower case
       filter = TextUtils::tolower(search->getString());
@@ -266,9 +258,8 @@ void ServerMenu::toggleFavView()
 
 void ServerMenu::setFav(bool fav)
 {
-  if (serverList.size() == 0 || selectedIndex < 0) {
+  if (serverList.size() == 0 || selectedIndex < 0)
     return;
-  }
 
   const ServerItem& item = serverList.getServers()[selectedIndex];
   std::string addrname = item.getAddrName();
@@ -277,8 +268,8 @@ void ServerMenu::setFav(bool fav)
   if (i!= cache->end()) {
     i->second.favorite = fav;
   } else {
-    // FIXME  should not ever come here, but what to do?
-  }
+  } // FIXME  should not ever come here, but what to do?
+
   realServerList.markFav(addrname, fav);
   serverList.markFav(addrname, fav);
 
@@ -321,68 +312,62 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	if (BZDB.isTrue("listIcons")) {
 	  // game mode
 	  if ((server.ping.observerMax == 16) &&
-	      (server.ping.maxPlayers == 200)) {
+	      (server.ping.maxPlayers == 200))
 	    fullLabel += ANSI_STR_FG_CYAN "*  "; // replay
-	  } else if (gameType == ClassicCTF) {
+	  else if (gameType == ClassicCTF)
 	    fullLabel += ANSI_STR_FG_RED "*  "; // ctf
-	  } else if (gameType == RabbitChase) {
+	  else if (gameType == RabbitChase)
 	    fullLabel += ANSI_STR_FG_WHITE "*  "; // white rabbit
-	  } else {
+	  else
 	    fullLabel += ANSI_STR_FG_YELLOW "*  "; // free-for-all
-	  }
+
 	  // jumping?
-	  if (gameOptions & JumpingGameStyle) {
+	  if (gameOptions & JumpingGameStyle)
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
-	  } else {
+	  else
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
-	  }
+
 	  // superflags ?
-	  if (gameOptions & SuperFlagGameStyle) {
+	  if (gameOptions & SuperFlagGameStyle)
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
-	  } else {
+	  else
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
-	  }
+
 	  // ricochet?
-	  if (gameOptions & RicochetGameStyle) {
+	  if (gameOptions & RicochetGameStyle)
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R ";
-	  } else {
+	  else
 	    fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R ";
-	  }
-          
-          if (server.ping.pingTime <= 0) {
-            fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
-	  } else if (server.ping.pingTime < BZDB.eval("pingLow")) {
+
+	  if (server.ping.pingTime <= 0)
+	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
+	  else if (server.ping.pingTime < BZDB.eval("pingLow"))
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "L";
-	  } else if (server.ping.pingTime < BZDB.eval("pingMed")) {
+	  else if (server.ping.pingTime < BZDB.eval("pingMed"))
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_YELLOW "L";
-	  } else if (server.ping.pingTime < BZDB.eval("pingHigh")) {
+	  else if (server.ping.pingTime < BZDB.eval("pingHigh"))
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_ORANGE "L";
-	  } else if (server.ping.pingTime >= BZDB.eval("pingHigh") && server.ping.pingTime < INT_MAX) {
+	  else if (server.ping.pingTime >= BZDB.eval("pingHigh") && server.ping.pingTime < INT_MAX)
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_RED "L";
-	  } else if (server.ping.pingTime >= BZDB.eval("pingHigh")) {
+	  else if (server.ping.pingTime >= BZDB.eval("pingHigh"))
 	    fullLabel += ANSI_STR_PULSATING ANSI_STR_REVERSE ANSI_STR_FG_RED "L";
-	  } else {
+	  else
 	    // shouldn't reach here
 	    fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
-	  }
-          
-          fullLabel += ANSI_STR_RESET "   ";
+
+	  fullLabel += ANSI_STR_RESET "   ";
 
 	  // colorize server descriptions by shot counts
 	  const int maxShots = server.ping.maxShots;
 	  if (maxShots <= 0) {
 	    label->setColor(0.4f, 0.0f, 0.6f); // purple
-	  }
-	  else if (maxShots == 1) {
+	  } else if (maxShots == 1) {
 	    label->setColor(0.25f, 0.25f, 1.0f); // blue
-	  }
-	  else if (maxShots == 2) {
+	  } else if (maxShots == 2) {
 	    label->setColor(0.25f, 1.0f, 0.25f); // green
-	  }
-	  else if (maxShots == 3) {
+	  } else if (maxShots == 3) {
 	    label->setColor(1.0f, 1.0f, 0.25f); // yellow
-	  }
-	  else {
+	  } else {
 	    // graded orange/red
 	    const float shotScale =
 	      std::min(1.0f, log10f((float)(maxShots - 3)));
@@ -391,8 +376,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	    const float bf = 0.25f * gf;
 	    label->setColor(rf, gf, bf);
 	  }
-	}
-	else {
+	} else {
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
 	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
 	  const float gf = gameOptions & JumpingGameStyle ? 1.0f : 0.0f;
@@ -407,17 +391,18 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  desc = addr.substr(pos > 0 ? pos+1 : pos);
 	  addr.resize(pos);
 	}
+
 	if (server.favorite)
 	  fullLabel += ANSI_STR_FG_ORANGE;
 	else
 	  fullLabel += ANSI_STR_FG_WHITE;
+
 	fullLabel += addr;
 	fullLabel += ANSI_STR_RESET " ";
 	fullLabel += desc;
 	label->setString(fullLabel);
 	label->setDarker(server.cached);
-      }
-      else {
+      } else {
 	label->setString("");
       }
     }
@@ -461,17 +446,17 @@ void ServerMenu::pick()
   std::vector<HUDuiLabel*>& listHUD = readouts;
 
   const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
-      ping.blueMax, ping.purpleMax, ping.observerMax };
+			     ping.blueMax, ping.purpleMax, ping.observerMax };
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {
-    for (int i = 1; i <=7; i ++){
+    for (int i = 1; i <=7; i ++) {
       sprintf(buf, "?/%d", maxes[i-1]);
       (listHUD[i])->setLabel(buf);
     }
   } else {  // not an old item, set players #s to info we have
     sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
-	ping.blueCount + ping.purpleCount, ping.maxPlayers);
+	    ping.blueCount + ping.purpleCount, ping.maxPlayers);
     (listHUD[1])->setLabel(buf);
 
     if (ping.rogueMax == 0)
@@ -537,7 +522,7 @@ void ServerMenu::pick()
   else if (ping.gameType == RabbitChase)
     (listHUD[9])->setString("Rabbit Chase");
   else if (ping.gameType == OpenFFA)
-	  (listHUD[9])->setString("Open (Teamless) Free-For-All");
+    (listHUD[9])->setString("Open (Teamless) Free-For-All");
   else
     (listHUD[9])->setString("Team Free-For-All");
 
@@ -557,13 +542,13 @@ void ServerMenu::pick()
     dropArgs.push_back(buf);
     if (ping.shakeWins == 1)
       (listHUD[12])->setString("{1} sec To Drop Bad Flag",
-					    &dropArgs);
+			       &dropArgs);
     else
       (listHUD[12])->setString("{1} secs To Drop Bad Flag",
-					    &dropArgs);
-  }
-  else
+			       &dropArgs);
+  } else {
     (listHUD[12])->setString("");
+  }
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
     std::vector<std::string> dropArgs;
@@ -572,13 +557,13 @@ void ServerMenu::pick()
     dropArgs.push_back(ping.shakeWins == 1 ? "" : "s");
     if (ping.shakeWins == 1)
       (listHUD[13])->setString("{1} Win Drops Bad Flag",
-					    &dropArgs);
+			       &dropArgs);
     else
       (listHUD[13])->setString("{1} Wins Drops Bad Flag",
-					    &dropArgs);
-  }
-  else
+			       &dropArgs);
+  } else {
     (listHUD[13])->setString("");
+  }
 
   if (ping.gameOptions & JumpingGameStyle)
     (listHUD[14])->setString("Jumping");
@@ -614,10 +599,9 @@ void ServerMenu::pick()
     sprintf(buf, "%d", ping.maxTeamScore);
     scoreArgs.push_back(buf);
     (listHUD[18])->setString("Max team score: {1}", &scoreArgs);
-  }
-  else
+  } else {
     (listHUD[18])->setString("");
-
+  }
 
   if (ping.maxPlayerScore != 0) {
     std::vector<std::string> scoreArgs;
@@ -637,17 +621,16 @@ void ServerMenu::pick()
     ((HUDuiLabel*)listHUD[20])->setString("");
   }
 
-  if (item.cached){
+  if (item.cached) {
     (listHUD[21])->setString("Cached");
     (listHUD[22])->setString(item.getAgeString());
-  }
-  else {
+  } else {
     (listHUD[21])->setString("");
     (listHUD[22])->setString("");
   }
 }
 
-void			ServerMenu::show()
+void ServerMenu::show()
 {
   // clear server readouts
   std::vector<HUDuiLabel*>& listHUD = readouts;
@@ -689,10 +672,9 @@ void			ServerMenu::show()
   // listen for echos
   addPlayingCallback(&playingCB, this);
   realServerList.startServerPings(getStartupInfo());
-
 }
 
-void			ServerMenu::execute()
+void ServerMenu::execute()
 {
   HUDuiControl* _focus = getNav().get();
   if (_focus == search) {
@@ -707,13 +689,13 @@ void			ServerMenu::execute()
   StartupInfo* info = getStartupInfo();
   strncpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str(), ServerNameLen-1);
   info->serverPort = ntohs((unsigned short)
-				serverList.getServers()[selectedIndex].ping.serverId.port);
+			   serverList.getServers()[selectedIndex].ping.serverId.port);
 
   // all done
   HUDDialogStack::get()->pop();
 }
 
-void			ServerMenu::dismiss()
+void ServerMenu::dismiss()
 {
   // no more callbacks
   removePlayingCallback(&playingCB, this);
@@ -721,7 +703,7 @@ void			ServerMenu::dismiss()
   // FIXME myTank.token = serverList.token;
 }
 
-void			ServerMenu::resize(int _width, int _height)
+void ServerMenu::resize(int _width, int _height)
 {
   // remember size
   HUDDialog::resize(_width, _height);
@@ -739,7 +721,7 @@ void			ServerMenu::resize(int _width, int _height)
     // use a big font for title, smaller font for the rest
     fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
     const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
-    
+
     title->setFontSize(titleFontSize);
     const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
     const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
@@ -807,12 +789,12 @@ void			ServerMenu::resize(int _width, int _height)
   fontHeight = fm.getStringHeight(menuFontFace->getFMFace(), fontSize);
   x = 0.125f * (float)_width;
   const bool useIcons = BZDB.isTrue("listIcons");
-  
+
   HUDuiLabel* pagelabel = readouts[NumReadouts - 1];
   pagelabel->setFontSize(fontSize);
   y -= 1.0f * fontHeight;
   pagelabel->setPosition(x, y);
-    
+
   for (i = 0; i < NumItems; ++i) {
     HUDuiLabel* label = items[i];
     label->setFontSize(fontSize);
@@ -826,7 +808,7 @@ void			ServerMenu::resize(int _width, int _height)
   }
 }
 
-void			ServerMenu::updateStatus() {
+void ServerMenu::updateStatus() {
   // nothing here to see
   if (!realServerList.serverFound()) {
     status->setString("Searching...");
@@ -842,10 +824,8 @@ void			ServerMenu::updateStatus() {
       // filter is already lower case.  do case insensitive matching.
       if ((glob_match(filter, TextUtils::tolower(item.description)) ||
 	   glob_match(filter, TextUtils::tolower(item.name))) &&
-	  (!favView || item.favorite)
-	 ) {
+	  (!favView || item.favorite))
 	serverList.addToList(item);
-      }
     }
     newfilter = false;
 
@@ -885,7 +865,7 @@ void			ServerMenu::updateStatus() {
   if (findMode) {
     search->setLabel("Find Servers:");
     getNav().set(search);
-  } 
+  }
 
   serversFound = (unsigned int)serverList.size();
   realServersFound = (unsigned int)realServerList.size();
@@ -897,13 +877,13 @@ void			ServerMenu::updateStatus() {
 void ServerMenu::pingServer(int server)
 {
   ServerPing *newping = new ServerPing(
-             serverList.getServers()[server].ping.serverId.serverHost,
-             ntohs(serverList.getServers()[server].ping.serverId.port));
+				       serverList.getServers()[server].ping.serverId.serverHost,
+				       ntohs(serverList.getServers()[server].ping.serverId.port));
   newping->start();
   activePings.insert(std::make_pair(server, newping));
 }
 
-void			ServerMenu::playingCB(void* _self)
+void ServerMenu::playingCB(void* _self)
 {
   ((ServerMenu*)_self)->serverList.sort(); // keep it sorted
   for (std::map<int, ServerPing*>::iterator i = ((ServerMenu*)_self)->activePings.begin(); i != ((ServerMenu*)_self)->activePings.end();) {
@@ -919,7 +899,7 @@ void			ServerMenu::playingCB(void* _self)
     }
     ++i;
   }
-    
+
   ((ServerMenu*)_self)->realServerList.checkEchos(getStartupInfo());
 
   ((ServerMenu*)_self)->updateStatus();

@@ -263,7 +263,7 @@ static void advance_tcp_send_queue(ares_channel channel, int whichserver,
       sendreq = server->qhead;
       if ((size_t)num_bytes >= sendreq->len)
        {
-         num_bytes -= sendreq->len;
+         num_bytes -= (ssize_t)sendreq->len;
          server->qhead = sendreq->next;
          if (server->qhead == NULL)
            {

@@ -209,7 +209,7 @@ void			SegmentedShotStrategy::setCurrentTime(const
   currentTime = _currentTime;
 }
 
-const double	SegmentedShotStrategy::getLastTime() const
+double	SegmentedShotStrategy::getLastTime() const
 {
   return lastTime;
 }

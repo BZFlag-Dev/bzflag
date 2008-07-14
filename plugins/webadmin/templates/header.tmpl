@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <title>[$PluginName] for [$HostName] &mdash; [$CurrentPage]</title>
+</head>
+<body>
+  <h1><a href="[$BaseURL]">[$UserName]@[$HostName]/[$PluginName]</a></h1>
+  <div id="nav">
+[*START Navigation]
+[?IF IsCurrentPage]
+    <a id="nav_current">[$PageName]</a>
+[?ELSE IsCurrentPage]
+    <a href="[$BaseURL]/[$PageName]">[$PageName]</a>
+[?END IsCurrentPage]
+[*END Navigation]
+
+[?IF Error]
+  <p class="error">[$Error]</p>
+[?END Error]
+
+[-This header is intended to be included in other templates.]

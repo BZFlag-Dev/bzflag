@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,12 +36,10 @@ class FTPixmapFontImpl : public FTFontImpl
     friend class FTPixmapFont;
 
     protected:
-        FTPixmapFontImpl(FTFont *ftFont, const char* fontFilePath) :
-            FTFontImpl(ftFont, fontFilePath) {};
+        FTPixmapFontImpl(FTFont *ftFont, const char* fontFilePath);
 
         FTPixmapFontImpl(FTFont *ftFont, const unsigned char *pBufferBytes,
-                         size_t bufferSizeInBytes) :
-            FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes) {};
+                         size_t bufferSizeInBytes);
 
         virtual FTPoint Render(const char *s, const int len,
                                FTPoint position, FTPoint spacing,

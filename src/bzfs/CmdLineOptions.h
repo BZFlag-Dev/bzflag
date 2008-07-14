@@ -26,6 +26,7 @@
 #include "Flag.h"
 #include "WordFilter.h"
 #include "TextChunkManager.h"
+#include "OSFile.h"
 
 /* bzfs-specific headers */
 #include "AccessControlList.h"
@@ -174,6 +175,8 @@ struct CmdLineOptions
 
   AccessControlList	acl;
   TextChunkManager	textChunker;
+  
+  std::list<OSDir> helpDirs;
 
   /* inappropriate language filter */
   std::string		filterFilename;

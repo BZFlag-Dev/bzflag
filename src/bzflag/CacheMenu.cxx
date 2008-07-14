@@ -156,7 +156,7 @@ void CacheMenu::execute()
     BZDB.set("maxCacheMB", oldSize);
     controlPanel->addMessage("Download Cache Cleared");
   } else if (_focus == clearServerListCache) {
-    if ((ServerListCache::get())->clearCache()){
+    if ((ServerListCache::get())->clearCache()) {
       controlPanel->addMessage("Server List Cache Cleared");
     } else {
       // already cleared -- do nothing
@@ -171,7 +171,7 @@ void CacheMenu::setFailedMessage(const char* msg)
 
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
-	failedMessage->getFontSize(), failedMessage->getString().c_str());
+					 failedMessage->getFontSize(), failedMessage->getString().c_str());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
@@ -226,18 +226,18 @@ void CacheMenu::resize(int _width, int _height)
 
   // server cache age
   int index = 0;
-  switch ((ServerListCache::get())->getMaxCacheAge()){
-    case 0: index = 0; break;
-    case 5: index = 1; break;
-    case 15: index = 2; break;
-    case 30: index = 3; break;
-    case 60: index = 4; break;
-    case 60*5: index = 5; break;
-    case 60*15: index = 6; break;
-    case 60*24: index = 7; break;
-    case 60*24*15: index = 8; break;
-    case 60*24*30: index = 9; break;
-    default: index = 4;
+  switch ((ServerListCache::get())->getMaxCacheAge()) {
+  case 0: index = 0; break;
+  case 5: index = 1; break;
+  case 15: index = 2; break;
+  case 30: index = 3; break;
+  case 60: index = 4; break;
+  case 60*5: index = 5; break;
+  case 60*15: index = 6; break;
+  case 60*24: index = 7; break;
+  case 60*24*15: index = 8; break;
+  case 60*24*30: index = 9; break;
+  default: index = 4;
   }
   ((HUDuiList*)listHUD[i++])->setIndex(index);
   i++; // clear cache label
@@ -258,32 +258,32 @@ void CacheMenu::callback(HUDuiControl* w, void* data)
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
-    case 'd': {
-      BZDB.set("doDownloads", list->getIndex() ? "1" : "0");
-      break;
+  case 'd': {
+    BZDB.set("doDownloads", list->getIndex() ? "1" : "0");
+    break;
+  }
+  case 'u': {
+    BZDB.set("updateDownloads", list->getIndex() ? "1" : "0");
+    break;
+  }
+  case 's': { // server cache
+    time_t minutes = 0;
+    int index = list->getIndex();
+    switch (index) {
+    case 0: minutes = 0; break;
+    case 1: minutes = 5; break;
+    case 2: minutes = 15; break;
+    case 3: minutes = 30; break;
+    case 4: minutes = 60; break;
+    case 5: minutes = 60*5; break;
+    case 6: minutes = 60*15; break;
+    case 7: minutes = 60*24; break;
+    case 8: minutes = 60*24*15; break;
+    case 9: minutes = 60*24*30; break;
     }
-    case 'u': {
-      BZDB.set("updateDownloads", list->getIndex() ? "1" : "0");
-      break;
-    }
-    case 's': { // server cache
-      time_t minutes = 0;
-      int index = list->getIndex();
-      switch (index){
-	case 0: minutes = 0; break;
-	case 1: minutes = 5; break;
-	case 2: minutes = 15; break;
-	case 3: minutes = 30; break;
-	case 4: minutes = 60; break;
-	case 5: minutes = 60*5; break;
-	case 6: minutes = 60*15; break;
-	case 7: minutes = 60*24; break;
-	case 8: minutes = 60*24*15; break;
-	case 9: minutes = 60*24*30; break;
-      }
-      (ServerListCache::get())->setMaxCacheAge(minutes);
-      break;
-    }
+    (ServerListCache::get())->setMaxCacheAge(minutes);
+    break;
+  }
   }
 
   return;

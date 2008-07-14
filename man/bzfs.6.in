@@ -42,6 +42,7 @@ bzfs \- BZFlag game server
 [\fB\-h\fR]
 [\fB\-handicap\fR]
 [\fB\-help\fR]
+[\fB\-helpdir \fIdir\fR]
 [\fB\-helpmsg \fIfile\fR \fIname\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
@@ -247,6 +248,10 @@ relation to other players.
 .B \-help
 Shows a help page and lists all the valid flag id's.
 .TP 
+\fB\-helpdir \fIdir\fR
+Creates a help message accessible by /help \fIname\fR for every
+\fIname\fR.txt in \fIdir\fR. See \-helpmsg.
+.TP 
 \fB\-helpmsg \fIfile\fR \fIname\fR
 Create a help message accessible by /help name, which prints the contents
 of file. Restricted to 10 lines per help message.
@@ -272,10 +277,10 @@ Kicks players after \fIwarn\-count\fR lag warnings.
 Send warnings to players that lag more than \fImilliseconds\fR.
 .TP 
 \fB\-loadplugin \fIplugin\fR
-loads the dynamic plugin \fIplugin\fR, it is not nessisary to have the OS
+loads the dynamic plugin \fIplugin\fR, it is not necessary to have the OS
 specific plugin extension (DLL, SO) in the name, the sever will add it
-automaticly. Some plugins take a paramater after the plugin name
-it will be specified after a , after the name, i.e. -loadpluing myplugin,myoptions.
+automatically. Some plugins take a parameter after the plugin name
+it will be specified after a , after the name, i.e. -loadplugin myplugin,myoptions.
 .TP 
 \fB\-masterBanURL \fIURL\fR
 Specify alternate URLs for the master ban file to be pulled from.
@@ -475,7 +480,7 @@ Number of warnings a player/spammer gets, who  violates \-spamtime.
 Specify a particular spawn policy.  The 'default' policy is a
 relatively safe spawn location hopefully out of imminent danger and
 away from the outer edges/corners of the game map.  Changing the spawn
-policy can make players spawn in ways considerly different from this
+policy can make players spawn in ways considerably different from this
 default behavior.
 .TP 
 \fB\-speedtol \fIfactor\fR
@@ -531,7 +536,7 @@ Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1\-100]. A start up grace period is given to players.
 .TP 
 .B \-trackplayhistory
-Has the server track players with good runs of kills and anounces them.
+Has the server track players with good runs of kills and announces them.
 Also anounces those players that stop the runs of good players.
 .TP 
 \fB\-ts \fR[\fImicros\fR]
@@ -688,7 +693,7 @@ Lists player and game statistics. Example:
 .B /me \fIaction\fR
 
 This command displays an "action" that is conveyed to another player.  It allows
-for a little more expressivity in the game.  For example: "/me is hunting wabbits"
+for a little more expressiveness in the game.  For example: "/me is hunting wabbits"
 turns into a message like "TimRiker is hunting wabbits" that gets displayed
 differently to other players.
 
@@ -1126,7 +1131,7 @@ with one line per group, using the following format:
 GROUP_NAME: [*Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
 
 
-*Group: inhert permissions from existing group "Group"
+*Group: inherit permissions from existing group "Group"
 .br
 
 +perm: add perm to this group
@@ -1135,7 +1140,7 @@ GROUP_NAME: [*Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
 -perm: remove perm from this group
 .br
 
-!perm: forbid perm for this group. makes perm inaccessable whether it's granted 
+!perm: forbid perm for this group. makes perm inaccessible whether it's granted 
 from another group or not
 
 If no operator is given with a permission it is handled like +perm. A group
@@ -1157,7 +1162,7 @@ could look like this:
 USERADMIN: *COPS +BAN +UNBAN
 
 Probably you want to define customized permissions for the default
-group "VERIFIED" instead of those automatically asigned by the server:
+group "VERIFIED" instead of those automatically assigned by the server:
 
 VERIFIED: -ALL +perm1 +perm2 ...
 
@@ -1276,7 +1281,7 @@ Lists the permissions for each group
 .B /masterban {flush|reload}
 Forces the server to flush any bans from the master server. If reload is specified
 instead of flush, also reloads bans from the the internet. Local bans are unaffected.
-This command requires the UNBAN permision.
+This command requires the UNBAN permission.
 
 .TP 
 .B /reload

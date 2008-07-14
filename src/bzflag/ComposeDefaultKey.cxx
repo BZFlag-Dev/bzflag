@@ -24,12 +24,10 @@
 #include "playing.h"
 #include "HUDui.h"
 
-
 #define MAX_MESSAGE_HISTORY (20)
 
-MessageQueue	messageHistory;
-unsigned int	messageHistoryIndex = 0;
-
+MessageQueue messageHistory;
+unsigned int messageHistoryIndex = 0;
 
 static bool isWordCompletion(const BzfKeyEvent& key)
 {
@@ -43,7 +41,7 @@ static bool isWordCompletion(const BzfKeyEvent& key)
 }
 
 
-bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
+bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -69,19 +67,19 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.chr) {
-    case 3:	// ^C
-    case 27: {	// escape
-      sendIt = false;			// finished composing -- don't send
-      break;
-    }
-    case 4:	// ^D
-    case 13: {	// return
-      sendIt = true;
-      break;
-    }
-    default: {
-      return false;
-    }
+  case 3: // ^C
+  case 27: { // escape
+    sendIt = false; // finished composing -- don't send
+    break;
+  }
+  case 4: // ^D
+  case 13: { // return
+    sendIt = true;
+    break;
+  }
+  default: {
+    return false;
+  }
   }
 
   if (sendIt) {
@@ -123,7 +121,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
@@ -131,18 +129,17 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
 	messageHistoryIndex++;
-      }
-      else
+      } else {
 	hud->setComposeString(std::string());
+      }
       return true;
-    }
-    else if (key.button == BzfKeyEvent::Down) {
-      if (messageHistoryIndex > 0){
+    } else if (key.button == BzfKeyEvent::Down) {
+      if (messageHistoryIndex > 0) {
 	messageHistoryIndex--;
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
-      }
-      else
+      } else {
 	hud->setComposeString(std::string());
+      }
       return true;
     }
     else if (myTank && ((key.shift == BzfKeyEvent::ShiftKey

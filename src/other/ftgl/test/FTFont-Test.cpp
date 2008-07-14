@@ -12,10 +12,14 @@ class TestGlyph : public FTGlyph
 {
     public:
         TestGlyph(FT_GlyphSlot glyph)
-        :   FTGlyph(glyph)
+        :   FTGlyph(glyph),
+            advance(FTPoint(Advance(), 0.0))
         {}
 
-        const FTPoint& Render(const FTPoint& pen, int renderMode){ return Advance(); }
+        const FTPoint& Render(const FTPoint& pen, int renderMode){ return advance; }
+
+    private:
+        FTPoint advance;
 };
 
 
@@ -127,7 +131,7 @@ class FTFontTest : public CppUnit::TestCase
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testFont->Descender(), 0.01);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, testFont->LineHeight(), 0.01);
 
-            float advance = testFont->Advance(GOOD_UNICODE_TEST_STRING).Xf();
+            float advance = testFont->Advance(GOOD_UNICODE_TEST_STRING);
             CPPUNIT_ASSERT_EQUAL(advance, 0.f);
 
             CPPUNIT_ASSERT(testFont->FaceSize(FONT_POINT_SIZE));
@@ -227,7 +231,7 @@ class FTFontTest : public CppUnit::TestCase
         {
             BadGlyphTestFont* font = new BadGlyphTestFont(GOOD_FONT_FILE);
 
-            float advance = font->Advance(GOOD_ASCII_TEST_STRING).Xf();
+            float advance = font->Advance(GOOD_ASCII_TEST_STRING);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, advance, 0.01);
         }
 
@@ -236,16 +240,16 @@ class FTFontTest : public CppUnit::TestCase
             CPPUNIT_ASSERT(testFont->FaceSize(FONT_POINT_SIZE));
             CPPUNIT_ASSERT_EQUAL(testFont->Error(), 0);
 
-            float advance = testFont->Advance(GOOD_ASCII_TEST_STRING).Xf();
+            float advance = testFont->Advance(GOOD_ASCII_TEST_STRING);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(312.10, advance, 0.01);
 
-            advance = testFont->Advance(BAD_ASCII_TEST_STRING).Xf();
+            advance = testFont->Advance(BAD_ASCII_TEST_STRING);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, advance, 0.01);
 
-            advance = testFont->Advance(GOOD_UNICODE_TEST_STRING).Xf();
+            advance = testFont->Advance(GOOD_UNICODE_TEST_STRING);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(144, advance, 0.01);
 
-            advance = testFont->Advance(BAD_UNICODE_TEST_STRING).Xf();
+            advance = testFont->Advance(BAD_UNICODE_TEST_STRING);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0, advance, 0.01);
         }
 

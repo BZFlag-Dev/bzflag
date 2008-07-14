@@ -92,9 +92,9 @@ int main(int argc, char** argv) {
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
   op.registerVariable("list", startupInfo.listServerURL, "[-list <list-server-url>]", "specify a list server to use");
   op.registerVector("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
-		      "tell bzadmin to show these message types");
+		    "tell bzadmin to show these message types");
   op.registerVector("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
-		      "tell bzadmin not to show these message types");
+		    "tell bzadmin not to show these message types");
   if (!op.parse(argc, argv))
     return 1;
 

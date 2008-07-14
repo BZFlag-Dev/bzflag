@@ -1,0 +1,31 @@
+[!header.tmpl]
+[?IF Editing]
+  <h2>editing helpmsg: [$HelpMsgName]</h2>
+  
+  <form action="" method="post">
+    <input type="hidden" name="name" value="[$HelpMsgName]">
+    <textarea name="helptext">[$HelpMsgBody]</textarea>
+    <input type="submit" value="save" />
+  </form>
+[?ELSE Editing]
+  <h2>helpmsg list</h2>
+  
+  <form action="" method="post">
+    <ul class="helpmsgs">
+[*START HelpMsgs]
+      <li><input type="checkbox" name="delmsg"
+                 id="help_[$HelpMsgName]" value="[$HelpMsgName]" />
+        <label for="help_[$HelpMsgName]">[$HelpMsgName]</label>
+        <a class="edit" href="?name=[$HelpMsgName]">edit</a></li>
+[*END HelpMsgs]
+    </ul>
+    <input type="submit" value="delete" />
+  </form>
+  
+  <form action="" method="get">
+    <input type="text" name="name" />
+    <input type="submit" value="new" />
+  </form>
+[?END Editing]
+</body>
+</html>

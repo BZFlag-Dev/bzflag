@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="mapchange"
-	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectGUID="{7919C40A-B1E5-4DBC-BD0D-11F6119ABFA2}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -64,7 +64,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/mapchange.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../src/bzfs/debug/;../plugin_utils/vc8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
 				ModuleDefinitionFile="mapchange.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/mapchange.pdb"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/mapchange.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
 				ModuleDefinitionFile="mapchange.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

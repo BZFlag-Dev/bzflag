@@ -13,8 +13,12 @@
 #ifndef __BZFIO_H__
 #define __BZFIO_H__
 
+#include <string>
+
 void setDebugTimestamp (bool enable, bool doMicros);
 void logDebugMessage(int level, const char* fmt, ...);
+void logDebugMessage(int level, const std::string &text);
+
 
 /** global debug level used by libraries and applications, provided in bzfio.cxx */
 extern int debugLevel;

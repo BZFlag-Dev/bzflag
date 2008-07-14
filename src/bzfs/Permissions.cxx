@@ -30,7 +30,6 @@
 
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
-PasswordMap	passwordDatabase;
 
 uint8_t GetPlayerProperties(bool registered, bool verified, bool admin) {
   uint8_t result = 0;
@@ -42,8 +41,6 @@ uint8_t GetPlayerProperties(bool registered, bool verified, bool admin) {
     result |= IsAdmin;
   return result;
 }
-
-void setUserPassword(const std::string &nick, const std::string &pass);
 
 PlayerAccessInfo::PlayerAccessInfo()
   : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
@@ -124,14 +121,6 @@ std::string PlayerAccessInfo::getName() {
   return regName;
 }
 
-bool PlayerAccessInfo::hasRealPassword() {
-  return checkPasswordExistence(regName.c_str());
-}
-
-bool PlayerAccessInfo::isPasswordMatching(const char* pwd) {
-  return verifyUserPassword(regName.c_str(), pwd);
-}
-
 bool PlayerAccessInfo::isRegistered() const {
   return userExists(regName);
 }
@@ -148,27 +137,12 @@ bool PlayerAccessInfo::isVerified() const{
   return verified;
 }
 
-void PlayerAccessInfo::storeInfo(const char* pwd) {
+void PlayerAccessInfo::storeInfo() {
   PlayerAccessInfo _info;
   _info.addGroup("VERIFIED");
-
-  if (pwd == NULL) {
-    // automatically give global users permission to use local accounts
-    // since they either already have it, or there's no existing local account.
-    _info.addGroup("LOCAL.GLOBAL");
-    setUserPassword(regName.c_str(), "");
-    logDebugMessage(1,"Global Temp Register %s\n", regName.c_str());
-  } else {
-    std::string pass = pwd;
-    setUserPassword(regName.c_str(), pass.c_str());
-    logDebugMessage(1,"Register %s %s\n", regName.c_str(), pwd);
-  }
+  _info.addGroup("LOCAL.GLOBAL");
+  logDebugMessage(1,"Global Temp Register %s\n", regName.c_str());
   userDatabase[regName] = _info;
-  updateDatabases();
-}
-
-void PlayerAccessInfo::setPasswd(const std::string&  pwd) {
-  setUserPassword(regName.c_str(), pwd.c_str());
   updateDatabases();
 }
 
@@ -312,43 +286,6 @@ PlayerAccessInfo &PlayerAccessInfo::getUserInfo(const std::string &nick)
   return itr->second;
 }
 
-bool checkPasswordExistence(const std::string &nick)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  PasswordMap::iterator itr = passwordDatabase.find(str1);
-  if (itr == passwordDatabase.end())
-    return false;
-  if (itr->second == "*" || itr->second == "")
-    return false;
-  return true;
-}
-
-bool verifyUserPassword(const std::string &nick, const std::string &pass)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  PasswordMap::iterator itr = passwordDatabase.find(str1);
-  if (itr == passwordDatabase.end())
-    return false;
-  return itr->second == MD5(pass).hexdigest();
-}
-
-void setUserPassword(const std::string &nick, const std::string &pass)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  if (pass.size() == 0) {
-    passwordDatabase[str1] = "*";
-  } else if (pass == "*") {
-    // never encode *, this would change the person's password from NULL to *.
-    passwordDatabase[str1] = "*";
-  } else {
-    // assume it's already a hash when length is 32 (FIXME?)
-    passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
-  }
-}
-
 bool groupHasPermission(std::string group, PlayerAccessInfo::AccessPerm perm)
 {
   PlayerAccessMap::iterator itr = groupAccess.find(TextUtils::toupper(group));
@@ -413,7 +350,6 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::say: return "say";
     case PlayerAccessInfo::sendHelp : return "sendHelp";
     case PlayerAccessInfo::setAll: return "setAll";
-    case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
     case PlayerAccessInfo::showOthers: return "showOthers";
@@ -481,7 +417,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SENDHELP") return PlayerAccessInfo::sendHelp;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
-  if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
@@ -593,7 +528,6 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
     } else {
       if (word == "ALL") {
 	info.explicitAllows.set();
-	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
 	info.hasALLPerm = true;
       } else {
 	//logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());

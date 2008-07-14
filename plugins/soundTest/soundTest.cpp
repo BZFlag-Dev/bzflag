@@ -28,7 +28,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   return 0;
 }
 
-bool SoundCommand::handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params )
+bool SoundCommand::handle ( int playerID, bz_ApiString /* command */, bz_ApiString message, bz_APIStringList * /* params */ )
 {
 	if (!bz_hasPerm(playerID,bz_perm_setAll))
 	{

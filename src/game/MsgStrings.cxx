@@ -138,6 +138,10 @@ static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
 static MsgStringList handleMsgServerControl(PacketInfo *pi);
 static MsgStringList handleMsgLagPing(PacketInfo *pi);
 
+static MsgStringList handleMsgPingCodeReply(PacketInfo *pi);
+static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi);
+static MsgStringList handleMsgEchoRequest(PacketInfo *pi);
+static MsgStringList handleMsgEchoResponse(PacketInfo *pi);
 
 typedef struct {
   uint16_t code;
@@ -215,7 +219,12 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgUDPLinkRequest),
   PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
   PACKET_LIST_ENTRY (MsgServerControl),
-  PACKET_LIST_ENTRY (MsgLagPing)
+  PACKET_LIST_ENTRY (MsgLagPing),
+
+  PACKET_LIST_ENTRY (MsgPingCodeReply),
+  PACKET_LIST_ENTRY (MsgPingCodeRequest),
+  PACKET_LIST_ENTRY (MsgEchoRequest),
+  PACKET_LIST_ENTRY (MsgEchoResponse)
 };
 static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
 
@@ -1327,6 +1336,35 @@ static MsgStringList handleMsgLagPing (PacketInfo *pi)
   MsgStringList list = listMsgBasics (pi);
   return list;
 }
+
+static MsgStringList handleMsgPingCodeReply(PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+static MsgStringList handleMsgEchoRequest(PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+static MsgStringList handleMsgEchoResponse(PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
 
 
 /******************************************************************************/

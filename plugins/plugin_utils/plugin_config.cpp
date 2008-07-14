@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include "bzfsAPI.h"
+#include "plugin_config.h"
 #include "plugin_utils.h"
 
 /*
@@ -25,7 +26,7 @@
  * Default section if none is specified is [global]
  */
 
-PluginConfig::PluginConfig(string filename)
+PluginConfig::PluginConfig(const std::string &filename)
 {
   configFilename = filename;
   whitespace = " \t\r";
@@ -34,18 +35,22 @@ PluginConfig::PluginConfig(string filename)
   parse();
 }
 
-string PluginConfig::item(string section, string key)
+std::string PluginConfig::item(const std::string &section, const std::string &key)
 {
-  return sections[tolower(section)][tolower(key)];
+  std::string s = section,k = key;
+  makelower(s);
+  makelower(k);
+  
+  return sections[s][k];
 }
 
 void PluginConfig::parse(void)
 {
-  string line;
-  string section;
-  string key;
-  string value;
-  ifstream iniFile;
+  std::string line;
+  std::string section;
+  std::string key;
+  std::string value;
+  std::ifstream iniFile;
   size_t start, end;
   size_t equalPos;
 
@@ -54,7 +59,7 @@ void PluginConfig::parse(void)
    * configuration file specified in 'filename'
    *
    */
-  iniFile.open(configFilename.c_str(), ios::in);
+  iniFile.open(configFilename.c_str(), std::ios::in);
 
   if (!iniFile.is_open()) {
     bz_debugMessagef(1, "PluginConfig: Can't open configuration file: %s", configFilename.c_str());
@@ -106,8 +111,8 @@ void PluginConfig::parse(void)
     equalPos = line.find("=", start);
 
     /* If there is no '=' sign then ignore the line - treated as a comment */
-    if (equalPos == string::npos) {
-      if (line.find_first_not_of(whitespace) != string::npos)
+    if (equalPos == std::string::npos) {
+      if (line.find_first_not_of(whitespace) != std::string::npos)
 	bz_debugMessagef(1, "PluginConfig: Malformed line ignored: %s", line.c_str());
       continue;
     }
@@ -119,13 +124,16 @@ void PluginConfig::parse(void)
     /* Extract the value */
     start = line.find_first_not_of(whitespace, equalPos + 1);
     end = line.find_last_not_of(whitespace);
-    if (start == string::npos || end == string::npos)
+    if (start == std::string::npos || end == std::string::npos)
       value = "";
     else
       value = line.substr(start, end - start + 1);
 
-    /* Save the section, key and value in the map for later retrieval */
-    sections[tolower(section)][tolower(key)] = value;
+    makelower(key);
+    makelower(section);
+
+    /* Save the section, key and value in the std::map for later retrieval */
+    sections[section][key] = value;
     bz_debugMessagef(4, "PluginConfig: Found key [%s].%s = %s", section.c_str(), key.c_str(), value.c_str());
   }
 

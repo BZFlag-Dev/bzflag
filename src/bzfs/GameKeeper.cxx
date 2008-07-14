@@ -73,6 +73,9 @@ needThisHostbanChecked(false), idFlag(-1)
   _LSAState = start;
   bzIdentifier = "";
 
+  botHost = -1;
+  botID = -1;
+
   currentPos[0] = currentPos[1] = currentPos[2] = 0;
   curentVel[0] = curentVel[1] = curentVel[2] = 0;
   currentRot = 0;
@@ -105,6 +108,9 @@ needThisHostbanChecked(false), idFlag(-1)
   _LSAState = start;
   bzIdentifier = "";
 
+  botHost = -1;
+  botID = -1;
+
   currentPos[0] = currentPos[1] = currentPos[2] = 0;
   curentVel[0] = curentVel[1] = curentVel[2] = 0;
   currentRot = 0;
@@ -121,6 +127,19 @@ GameKeeper::Player::~Player()
 #endif
 
   playerList[playerIndex] = NULL;
+}
+
+void GameKeeper::Player::setBot ( int id, PlayerId hostID )
+{
+  botID = id;
+  if (!childBots.size())
+    botHost = hostID;
+}
+
+void GameKeeper::Player::addBot ( int id, PlayerId botPlayer )
+{
+  if (botHost == -1 && id > 0)
+   childBots.push_back(botPlayer);
 }
 
 int GameKeeper::Player::count()
@@ -364,8 +383,8 @@ bool GameKeeper::Player::clean()
   // Trying to detect if this action cleaned the array of player
   bool empty    = true;
   bool ICleaned = false;
-  for (int i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]))
+  for (int i = 0; i < PlayerSlot; i++) {
+    if ((playerData = playerList[i])) {
       if (playerData->closed
 #if defined(USE_THREADS)
 	&& !playerData->refCount
@@ -378,6 +397,9 @@ bool GameKeeper::Player::clean()
 	empty = false;
       }
       return empty && ICleaned;
+    }
+  }
+  return false;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)

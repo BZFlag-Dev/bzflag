@@ -24,6 +24,7 @@
 
 CustomWorld::CustomWorld()
 {
+  createWalls = true;
   // initialize with database defaults
   _size = BZDBCache::worldSize;
   _fHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
@@ -41,7 +42,7 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
     input >> _fHeight;
     BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, TextUtils::format("%f", _fHeight));
   } else if (strcasecmp(cmd, "noWalls") == 0) {
-    BZDB.setBool("noWalls", true);
+    createWalls = false;
   } else if (strcasecmp(cmd, "freeCtfSpawns") == 0) {
     BZDB.setBool("freeCtfSpawns", true);
   } else {
@@ -52,8 +53,16 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWorld::writeToWorld(WorldInfo*) const
+void CustomWorld::writeToWorld(WorldInfo* world) const
 {
+  if (createWalls) {
+    float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+    float worldSize = BZDBCache::worldSize * 0.5f;
+    world->addWall(0.0f, worldSize, 0.0f, 1.5f*(float)M_PI, worldSize, wallHeight);
+    world->addWall(worldSize, 0.0f, 0.0f, (float)M_PI, worldSize, wallHeight);
+    world->addWall(0.0f, -worldSize, 0.0f, 0.5f*(float)M_PI, worldSize, wallHeight);
+    world->addWall(-worldSize, 0.0f, 0.0f, 0.0f, worldSize, wallHeight);
+  }
 }
 
 std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;

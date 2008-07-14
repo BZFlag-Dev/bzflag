@@ -28,27 +28,21 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 #include "VotingArbiter.h"
-
 #include "commands.h"
 #include "SpawnPosition.h"
 #include "WorldInfo.h"
-
 #include "BzMaterial.h"
 #include "cURLManager.h"
-
 #include "CustomWorld.h"
-
 #include "Permissions.h"
 #include "CommandManager.h"
-
 #include "bzfsPlugins.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 #include "BufferedNetworkMessage.h"
-
 #include "ServerIntangibilityManager.h"
-
 #include "bz_md5.h"
+#include "version.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -636,9 +630,10 @@ bz_APIStringList::~bz_APIStringList()
 
 //-------------------------------------------------------------------------
 
-void bz_APIStringList::push_back(const bz_ApiString &value)
+void bz_APIStringList::push_back(const char* value)
 {
-  data->list.push_back(value);
+  if(value)
+    data->list.push_back(bz_ApiString(value));
 }
 
 //-------------------------------------------------------------------------
@@ -649,13 +644,30 @@ void bz_APIStringList::push_back(const std::string &value)
 }
 
 //-------------------------------------------------------------------------
-
-bz_ApiString bz_APIStringList::get(unsigned int i)
+static bz_ApiString empty_getString;
+const bz_ApiString& bz_APIStringList::get(unsigned int i)
 {
   if(i >= data->list.size())
-    return bz_ApiString("");
+    return empty_getString;
 
   return data->list[i];
+}
+
+//-------------------------------------------------------------------------
+
+bool bz_APIStringList::contains(const char* value)
+{
+  if (!value)
+    return false;
+
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
+}
+
+//-------------------------------------------------------------------------
+
+bool bz_APIStringList::contains(const std::string &value)
+{
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
 }
 
 //-------------------------------------------------------------------------
@@ -884,6 +896,26 @@ BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount ( int connecti
   return  netConnectedPeers[connectionID].pendingSendChunks.size();
 }
 
+BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
+{
+  if( netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
+    return 0;
+
+  unsigned int address = (unsigned int)netConnectedPeers[connectionID].handler->getIPAddress().s_addr;
+
+  unsigned char *a = (unsigned char*)&address;
+  return TextUtils::format("%d.%d.%d.%d",a[0],a[1],a[2],a[3]).c_str();
+}
+
+BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID )
+{
+  if( netConnectedPeers.find(connectionID)==netConnectedPeers.end() || netConnectedPeers[connectionID].player!=-1 || !netConnectedPeers[connectionID].handler)
+    return 0;
+
+  return netConnectedPeers[connectionID].handler->getHostname();
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
@@ -957,8 +989,8 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
 
   playerStateToAPIState(playerRecord->currentState, player->getCurrentStateAsState());
 
-  int flagid=player->player.getFlag();
-  FlagInfo *flagInfo=FlagInfo::get(flagid);
+  playerRecord->currentFlagID=player->player.getFlag();
+  FlagInfo *flagInfo=FlagInfo::get(playerRecord->currentFlagID);
 
   std::string label;
   if(flagInfo && flagInfo->flag.type)
@@ -1243,6 +1275,16 @@ BZF_API const char* bz_getPlayerCallsign( int playerID )
     return NULL;
 
   return player->player.getCallSign();
+}
+
+BZF_API const char* bz_getPlayerIPAddress( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return NULL;
+
+  return player->netHandler->getTargetIP();
 }
 
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
@@ -1736,13 +1778,19 @@ BZF_API void bz_clearMaxWaitTime ( const char *name )
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_getLocaltime(bz_localTime *ts)
+BZF_API void bz_getLocaltime(bz_Time *ts)
 {
   if(!ts)
     return ;
 
-  TimeKeeper::localTime(&ts->year, &ts->month, &ts->day, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+  TimeKeeper::localTimeDOW(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
 }
+
+BZF_API void bz_getUTCtime ( bz_Time *ts )
+{
+  TimeKeeper::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+}
+
 
 // info
 BZF_API double bz_getBZDBDouble(const char *variable)
@@ -2977,6 +3025,7 @@ BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
   return (int)pList.size();
 #else
   return -1;
+  list = list; // quell unused var warning
 #endif
 }
 
@@ -2988,9 +3037,14 @@ BZF_API bool bz_loadPlugin( const char* path, const char *params )
   std::string config;
   if (params)
     config = params;
+
+  logDebugMessage(2,"bz_loadPlugin: %s \n",path);
+
   return loadPlugin(std::string(path),config);
 #else
   return false;
+  path = path; // quell unused var warning
+  params = params; // quell unused var warning
 #endif
 }
 
@@ -3003,6 +3057,7 @@ BZF_API bool bz_unloadPlugin( const char* path )
   return unloadPlugin(std::string(path));
 #else
   return false;
+  path = path; // quell unused var warning
 #endif
 }
 
@@ -3070,6 +3125,104 @@ BZF_API bool bz_removeCustomPluginHandler(const char *extension, bz_APIPluginHan
   std::cerr<<"This BZFlag server does not support plugins."<<std::endl;
   return false;
 #endif
+}
+
+// generic callback system
+std::map<std::string, bz_GenericCallback*> callbackClasses;
+std::map<std::string, bz_GenericCallbackFunc> callbackFunctions;
+
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallback *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator itr = callbackClasses.find(callbackName);
+  if (itr != callbackClasses.end())
+    return false;
+
+  callbackClasses[callbackName] = callback;
+  return true;
+}
+
+BZF_API bool bz_registerCallBack ( const char* name, bz_GenericCallbackFunc callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallbackFunc>::iterator itr = callbackFunctions.find(callbackName);
+  if (itr != callbackFunctions.end())
+    return false;
+
+  callbackFunctions[callbackName] = callback;
+  return true;
+}
+
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallback *callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator itr = callbackClasses.find(callbackName);
+  if (itr == callbackClasses.end())
+    return false;
+
+  callbackClasses.erase(itr);
+  return true;
+}
+
+BZF_API bool bz_removeCallBack ( const char* name, bz_GenericCallbackFunc callback )
+{
+  if (!name || ! callback)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallbackFunc>::iterator itr = callbackFunctions.find(callbackName);
+  if (itr == callbackFunctions.end())
+    return false;
+
+  callbackFunctions.erase(itr);
+  return true;
+}
+
+BZF_API bool bz_callCallback ( const char* name, void *param )
+{
+  if (!name)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator classItr = callbackClasses.find(callbackName);
+  if (classItr != callbackClasses.end())
+    return classItr->second->call(param);
+
+  std::map<std::string, bz_GenericCallbackFunc>::iterator funcItr = callbackFunctions.find(callbackName);
+  if (funcItr != callbackFunctions.end())
+    return (*funcItr->second)(param);
+  return false;
+}
+
+BZF_API bool bz_callbackExists ( const char* name )
+{
+  if (!name)
+    return false;
+
+  std::string callbackName = name;
+
+  std::map<std::string, bz_GenericCallback*>::iterator classItr = callbackClasses.find(callbackName);
+  if (classItr != callbackClasses.end())
+    return true;
+
+  std::map<std::string, bz_GenericCallbackFunc>::iterator funcItr = callbackFunctions.find(callbackName);
+  if (funcItr != callbackFunctions.end())
+    return true;
+  return false;
 }
 
 // team info
@@ -3562,7 +3715,7 @@ BZF_API bool bz_startRecBuf(void)
   if(Record::enabled())
     return false;
 
-  return Record::start(ServerPlayer);
+  return Record::start(AllPlayers);
 }
 
 //-------------------------------------------------------------------------
@@ -3706,7 +3859,6 @@ BZF_API void bz_reloadUsers()
 {
   logDebugMessage(3, "Reloading users and passwords\n");
   userDatabase.clear();
-  passwordDatabase.clear();
 
   if(userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
@@ -3720,6 +3872,15 @@ BZF_API void bz_reloadHelp()
   // reload the text chunks
   logDebugMessage(3, "Reloading helpfiles\n");
   clOptions->textChunker.reload();
+  
+  // check for new files in helpdirs
+  std::list<OSDir>::iterator i, end = clOptions->helpDirs.end();
+  OSFile f;
+  
+  for (i = clOptions->helpDirs.begin(); i != end; i++)
+    while (i->getNextFile(f, "*.txt", false))
+      if(clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen))
+	logDebugMessage(3, "Loaded help message: %s", f.getFileName().c_str());
 }
 
 //-------------------------------------------------------------------------
@@ -3781,17 +3942,34 @@ BZF_API const char* bz_MD5 ( const void * data, size_t size )
   return md5.hexdigest().c_str();
 }
 
+BZF_API const char* bz_getServerVersion ( void )
+{
+  return getAppVersion();
+}
+
 // server side bot API
 
-// higer level logic API
-void bz_ServerSidePlayerHandler::spawned(void){
-
+// higher level logic API
+void bz_ServerSidePlayerHandler::spawned(void)
+{
 }
 
 bool bz_ServerSidePlayerHandler::think(void)
 {
+  updatePhysics();
   return false;
 }
+
+void bz_ServerSidePlayerHandler::died ( int /*killer*/ )
+{
+  alive = false;
+}
+
+void bz_ServerSidePlayerHandler::smote ( SmiteReason /*reason*/ )
+{
+  alive = false;
+}
+
 
 // lower level message API
 void bz_ServerSidePlayerHandler::playerRemoved(int){}
@@ -3805,9 +3983,18 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
     // it was me, I'm not in limbo
     alive=true;
 
+    // update the current state
+    lastUpdate.time = bz_getCurrentTime();
     // get where I am;
-    memcpy(pos, _pos, sizeof(float) *3);
-    rot=_rot;
+    memcpy(lastUpdate.pos, _pos, sizeof(float) *3);
+    lastUpdate.rotVel = 0;
+    lastUpdate.vec[0] = 0;
+    lastUpdate.vec[1] = 0;
+    lastUpdate.vec[2] = 0;
+    lastUpdate.rot = _rot;
+
+    input[0] = input[1] = 0;
+    updatePhysics();
 
     // tell the high level API that we done spawned;
     spawned();
@@ -3895,29 +4082,28 @@ void bz_ServerSidePlayerHandler::joinGame(void)
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::updateState(bz_PlayerUpdateState *state)
+void bz_ServerSidePlayerHandler::getCurrentState(bz_PlayerUpdateState *state)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!state || !player)
     return ;
 
-  // turn it into a real state and send it to the peeps
-  PlayerState playerState;
-  APIStateToplayerState(playerState,  *state);
-  playerState.order=player->lastState.order+1;
-  float now=(float)TimeKeeper::getCurrent().getSeconds();
-  updatePlayerState(player, playerState, now, false);
+  // grab the current state
+  playerStateToAPIState(*state,player->getCurrentStateAsState());
 }
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::dropFlag(float _pos[3])
+void bz_ServerSidePlayerHandler::dropFlag(void)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player)
     return ;
 
-  dropPlayerFlag(*player, _pos);
+  float p[3],r;
+  player->getPlayerCurrentPosRot(p,r);
+
+  dropPlayerFlag(*player, p);
 }
 
 //-------------------------------------------------------------------------
@@ -3970,20 +4156,15 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::captureFlag(bz_eTeamType _team)
+void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player)
-    return ;
-
-  ::captureFlag(playerID, convertTeam(_team));
+  // compute the dt
+  // double now = bz_getCurrentTime();
+  // double delta = now - currentState.time;
+ // currentState.
 }
 
 //-------------------------------------------------------------------------
-
-void bz_ServerSidePlayerHandler::computeVelsFromInput(void){
-
-}
 
 void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
 {
@@ -4002,7 +4183,7 @@ void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
   if(input[1] < -1.0f)
     input[1]=-1.0f;
 
-  computeVelsFromInput();
+  computeStateFromInput();
 }
 
 //-------------------------------------------------------------------------
@@ -4024,7 +4205,9 @@ bool bz_ServerSidePlayerHandler::jump(void)
 void bz_ServerSidePlayerHandler::updatePhysics(void)
 {
   if(!alive)
-    return ;
+    return;
+
+  // see where we are
 }
 
 //-------------------------------------------------------------------------
@@ -4055,11 +4238,67 @@ bz_eShotType bz_ServerSidePlayerHandler::getShotType(void)
   return (bz_eShotType)GameKeeper::Player::getPlayerByIndex(playerID)->efectiveShotType;
 }
 
+void bz_ServerSidePlayerHandler::getPosition ( float *p )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player || !p)
+    return;
+
+  float r;
+  player->getPlayerCurrentPosRot(p,r);
+}
+
+void bz_ServerSidePlayerHandler::getVelocity ( float *v )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player ||!v)
+    return;
+
+  memcpy(v,player->getCurrentStateAsState().velocity,sizeof(float)*3);
+}
+
+float bz_ServerSidePlayerHandler::getFacing ( void )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player)
+    return 0.0;
+
+  float p[3],r;
+  player->getPlayerCurrentPosRot(p,r);
+
+  return r;
+}
+
+float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
+{
+  // check the flag and stuff, but do the bzdb speed for now
+  return BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+}
+
+float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
+{
+  // check the flag and stuff, but do the bzdb speed for now
+  return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+}
+
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & /*state*/)
+{
+  // plot where we think we are now based on the current date
+  // double dt = state.time - time;
+
+  // float newPos[3];
+  // newPos[0] = state.pos[0] + (float)(state.vec[0] *dt);
+  // newPos[1] = state.pos[1] + (float)(state.vec[1] *dt);
+  // newPos[2] = state.pos[2] + (float)(state.vec[2] *dt);
+ return 0;
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
 {
-  handler->playerID=-1;
+  handler->setPlayerID(-1);
 
   PlayerId playerIndex=getNewPlayerID();
   if(playerIndex >= 0xFF)
@@ -4070,7 +4309,7 @@ BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
   checkGameOn();
   player->_LSAState=GameKeeper::Player::notRequired;
 
-  handler->playerID=playerIndex;
+  handler->setPlayerID(playerIndex);
 
   handler->added(playerIndex);
   return playerIndex;

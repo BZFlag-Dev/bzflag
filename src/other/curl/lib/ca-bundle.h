@@ -1,2 +1,3 @@
 /* This file is generated automatically */
-#define CURL_CA_BUNDLE "/usr/local/share/curl/curl-ca-bundle.crt"
+#define CURL_CA_BUNDLE "/etc/ssl/certs/ca-certificates.crt"
+#undef CURL_CA_PATH /* unknown default path */

@@ -7,7 +7,7 @@ endif
 bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > bzfquery.6
 
-DISTCLEANFILES = bzfquery.6
+CLEANFILES = bzfquery.6
 
 EXTRA_DIST = makeHTML.bat
 

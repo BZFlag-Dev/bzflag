@@ -20,7 +20,7 @@ dnl Herein lies the venerable GNU build system configure template for
 dnl BZFlag.  As best is reasonably possible, proper ordering and
 dnl separation of tests and settings should be maintained per the
 dnl recommended standard layout.  The tests should be added to the
-dnl rather clearly labeled sections below so that they are as dnl
+dnl rather clearly labeled sections below so that they are as
 dnl follows:
 dnl
 dnl     0) information on the package
@@ -46,7 +46,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.4, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.5, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -333,7 +333,6 @@ AC_CHECK_HEADERS( \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
-	FTGL/FTGL.h \
 	SDL/SDL.h \
 	bstring.h \
 	dlfcn.h \
@@ -1103,6 +1102,9 @@ fi
 dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
 AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
+if test "x$BUILD_CURL" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
+fi
 
 
 LIBFREETYPE=""
@@ -1141,7 +1143,14 @@ if test "x$enable_client" != "xno" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
 if test "x$enable_ftgl_build" != "xyes" ; then
-   AC_CHECK_LIB(ftgl, main, LIBFTGL="-lftgl")
+dnl test for required feature first present in FTGL 2.1.3
+    AC_TRY_COMPILE(
+	[#include <FTGL/ftgl.h>],
+	[FTFont* xyz = new FTTextureFont("xyz.ttf");
+	 double d = xyz->Advance("xyz");
+	 xyz->Render("xyz");],
+	LIBFTGL=-lftgl
+	)
 fi
 AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then

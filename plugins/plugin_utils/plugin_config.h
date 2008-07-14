@@ -15,8 +15,6 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
 /*
  * PluginConfig - INI style configuration file parser class
  *
@@ -43,17 +41,18 @@ using namespace std;
  * Debug level 4 (-dddd) provides information about the parsing process
  */
 
-class PluginConfig {
+class PluginConfig
+{
 public:
-  PluginConfig(string filename);
+  PluginConfig(const std::string &filename);
   ~PluginConfig() {};
-  string item(string section, string key);
+  std::string item(const std::string &section, const std::string &key);
   unsigned int errors;
 private:
-  string whitespace;
+  std::string whitespace;
   void parse(void);
-  map<string, map<string, string> > sections;
-  string configFilename;
+  std::map<std::string, std::map<std::string, std::string> > sections;
+  std::string configFilename;
 };
 
 // Local Variables: ***

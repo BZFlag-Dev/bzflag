@@ -74,6 +74,8 @@ FTBufferFontImpl::FTBufferFontImpl(FTFont *ftFont, const char* fontFilePath) :
     FTFontImpl(ftFont, fontFilePath),
     buffer(new FTBuffer())
 {
+    load_flags = FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP;
+
     glGenTextures(BUFFER_CACHE_SIZE, idCache);
 
     for(int i = 0; i < BUFFER_CACHE_SIZE; i++)
@@ -96,6 +98,8 @@ FTBufferFontImpl::FTBufferFontImpl(FTFont *ftFont,
     FTFontImpl(ftFont, pBufferBytes, bufferSizeInBytes),
     buffer(new FTBuffer())
 {
+    load_flags = FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP;
+
     glGenTextures(BUFFER_CACHE_SIZE, idCache);
 
     for(int i = 0; i < BUFFER_CACHE_SIZE; i++)
@@ -180,34 +184,36 @@ inline int StringCompare(void const *a, wchar_t const *b, int len)
 
 inline char *StringCopy(char const *s, int len)
 {
-	if (!s) return NULL;
-
-	if (len < 0)
-	{
-		len = (int)strlen(s);
-	}
-
-	char *s2 = (char *)malloc((len + 1) * sizeof(char));
-	if (!s2) return NULL;
-
-    memcpy(s2, s, len * sizeof(char));
-    s2[len] = 0;
-    return s2;
+    if(len < 0)
+    {
+        return strdup(s);
+    }
+    else
+    {
+#ifdef HAVE_STRNDUP
+        return strndup(s, len);
+#else
+        char *s2 = (char*)malloc(len + 1);
+        memcpy(s2, s, len);
+        s2[len] = 0;
+        return s2;
+#endif
+    }
 }
 
 
 inline wchar_t *StringCopy(wchar_t const *s, int len)
 {
-	if (!s) return NULL;
+    if(len < 0)
+    {
+#if defined HAVE_WCSDUP
+        return wcsdup(s);
+#else
+        len = (int)wcslen(s);
+#endif
+    }
 
-	if (len < 0)
-	{
-		len = (int)wcslen(s);
-	}
-
-	wchar_t *s2 = (wchar_t *)malloc((len + 1) * sizeof(wchar_t));
-	if (!s2) return NULL;
-
+    wchar_t *s2 = (wchar_t *)malloc((len + 1) * sizeof(wchar_t));
     memcpy(s2, s, len * sizeof(wchar_t));
     s2[len] = 0;
     return s2;
@@ -260,6 +266,7 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
         {
             free(stringCache[cacheIndex]);
         }
+        // FIXME: only the first N bytes are copied; we want the first N chars.
         stringCache[cacheIndex] = StringCopy(string, len);
         bboxCache[cacheIndex] = BBox(string, len, FTPoint(), spacing);
     }
@@ -280,11 +287,7 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
     // texture buffer, then upload it to the OpenGL layer.
     if(!inCache)
     {
-        buffer->pixels = new unsigned char[texWidth * texHeight];
-        memset(buffer->pixels, 0, texWidth * texHeight);
-        buffer->width = texWidth;
-        buffer->height = texHeight;
-        buffer->pitch = texWidth;
+        buffer->Size(texWidth, texHeight);
         buffer->Pos(FTPoint(padding, padding) - bbox.Lower());
 
         advanceCache[cacheIndex] =
@@ -298,9 +301,9 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
 
         /* TODO: use glTexSubImage2D later? */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, texWidth, texHeight, 0,
-                     GL_ALPHA, GL_UNSIGNED_BYTE, (GLvoid *)buffer->pixels);
+                     GL_ALPHA, GL_UNSIGNED_BYTE, (GLvoid *)buffer->Pixels());
 
-        delete[] buffer->pixels;
+        buffer->Size(0, 0);
     }
 
     FTPoint low = position + bbox.Lower();

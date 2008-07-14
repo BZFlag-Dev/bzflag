@@ -24,6 +24,8 @@ public:
   void added(int player);
   void playerRejected(bz_eRejectCodes code, const char *reason);
   void sendCommand(std::string message); // expose inherited protected member sendChatMessage
+
+  bool valid (void){return playerID >= 0;}
 };
 
 class CronManager : public bz_EventHandler

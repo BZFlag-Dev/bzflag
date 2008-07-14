@@ -36,21 +36,21 @@ template <typename T>
 class FTUnicodeStringItr
 {
 public:
-	/**
-	 * Constructor.  Also reads the first character and stores it.
-	 *
-	 * @param string  The buffer to iterate.  No copy is made.
-	 */
+    /**
+     * Constructor.  Also reads the first character and stores it.
+     *
+     * @param string  The buffer to iterate.  No copy is made.
+     */
     FTUnicodeStringItr(const T* string) : curPos(string), nextPos(string)
     {
         (*this)++;
     };
 
-	/**
-	 * Pre-increment operator.  Reads the next unicode character and sets 
-	 * the state appropriately.
+    /**
+     * Pre-increment operator.  Reads the next unicode character and sets
+     * the state appropriately.
      * Note - not protected against overruns.
-	 */
+     */
     FTUnicodeStringItr& operator++()
     {
         curPos = nextPos;
@@ -70,11 +70,11 @@ public:
         return *this;
     }
 
-	/**
-	 * Post-increment operator.  Reads the next character and sets
-	 * the state appropriately.
-	 * Note - not protected against overruns.
-	 */
+    /**
+     * Post-increment operator.  Reads the next character and sets
+     * the state appropriately.
+     * Note - not protected against overruns.
+     */
     FTUnicodeStringItr operator++(int)
     {
         FTUnicodeStringItr temp = *this;
@@ -82,10 +82,10 @@ public:
         return temp;
     }
 
-	/**
-	 * Equality operator.  Two FTUnicodeStringItrs are considered equal
-	 * if they have the same current buffer and buffer position.
-	 */
+    /**
+     * Equality operator.  Two FTUnicodeStringItrs are considered equal
+     * if they have the same current buffer and buffer position.
+     */
     bool operator==(const FTUnicodeStringItr& right) const
     {
         if (curPos == right.getBufferFromHere())
@@ -93,54 +93,54 @@ public:
         return false;
     }
 
-	/**
-	 * Dereference operator.
-	 *
-	 * @return  The unicode codepoint of the character currently pointed
-	 * to by the FTUnicodeStringItr.
-	 */
+    /**
+     * Dereference operator.
+     *
+     * @return  The unicode codepoint of the character currently pointed
+     * to by the FTUnicodeStringItr.
+     */
     unsigned int operator*() const
     {
         return curChar;
     }
 
-	/**
-	 * Buffer-fetching getter.  You can use this to retreive the buffer starting
-	 * at the currently-iterated character for functions which require a unicode 
-	 * string as input.
-	 */
+    /**
+     * Buffer-fetching getter.  You can use this to retreive the buffer
+     * starting at the currently-iterated character for functions which
+     * require a Unicode string as input.
+     */
     const T* getBufferFromHere() const { return curPos; }
 
 private:
-	/**
-	 * Helper function for reading a single UTF8 character from the string.
-	 * Updates internal state appropriately.
-	 */
+    /**
+     * Helper function for reading a single UTF8 character from the string.
+     * Updates internal state appropriately.
+     */
     void readUTF8();
 
-	/**
-	 * Helper function for reading a single UTF16 character from the string.
-	 * Updates internal state appropriately.
-	 */
+    /**
+     * Helper function for reading a single UTF16 character from the string.
+     * Updates internal state appropriately.
+     */
     void readUTF16();
 
-	/**
-	 * The buffer position of the first element in the current character.
-	 */
+    /**
+     * The buffer position of the first element in the current character.
+     */
     const T* curPos;
 
-	/**
-	 * The character stored at the current buffer position (prefetched on
-	 * increment, so there's no penalty for dereferencing more than once).
-	 */
+    /**
+     * The character stored at the current buffer position (prefetched on
+     * increment, so there's no penalty for dereferencing more than once).
+     */
     unsigned int curChar;
 
-	/**
-	 * The buffer position of the first element in the next character.
-	 */
+    /**
+     * The buffer position of the first element in the next character.
+     */
     const T* nextPos;
 
-	// unicode magic numbers
+    // unicode magic numbers
     static const char utf8bytes[256];
     static const unsigned long offsetsFromUTF8[6];
     static const unsigned long highSurrogateStart;
@@ -172,7 +172,7 @@ template <typename T>
 const unsigned long FTUnicodeStringItr<T>::offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL,
   0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 
-// get a UTF8 character; leave the tracking pointer at the start of the 
+// get a UTF8 character; leave the tracking pointer at the start of the
 // next character
 // not protected against invalid UTF8
 template <typename T>

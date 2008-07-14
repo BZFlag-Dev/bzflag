@@ -51,223 +51,225 @@
 
 
 const char *usageString =
-"[-admsg <text>] "
-"[-advertise <group,group...>]"
-"[-autoTeam] "
-"[-b] "
-"[-badwords <filename>] "
-"[-ban ip{,ip}*] "
-"[-banfile <filename>] "
-"[-botsPerIP <num>] "
-"[-c] "
-"[-cache <url prefix>] "
-"[-cacheout <filename>] "
-"[-conf <filename>] "
-"[-cr] "
-"[-d] "
-"[-density <num>] "
-"[-disableBots] "
-"[+f {good|<id>}] "
-"[-f {bad|<id>}] "
-"[-fb] "
-"[-filterAnnounce] "
-"[-filterCallsigns] "
-"[-filterChat] "
-"[-filterSimple] "
-"[-freezeTag] "
-"[-g] "
-"[-gndtex <texture name>] "
-"[-groupdb <group file>] "
-"[-h] "
-"[-handicap] "
-"[-helpmsg <file> <name>] "
-"[-i interface] "
-"[-j] "
-"[-jitterdrop <num>] "
-"[-jitterwarn <time/ms>] "
-"[-lagdrop <num>] "
-"[-lagwarn <time/ms>] "
-"[-loadplugin <pluginname,commandline>] "
-"[-masterBanURL <URL>]"
-"[-maxidle <time/s>] "
-"[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
-"[-mps <score>] "
-"[-ms <shots>] "
-"[-mts <score>] "
-"[-noMasterBanlist]"
-"[-noradar]"
-"[-offa] "
-"[-p <port>] "
-"[-packetlossdrop <num>] "
-"[-packetlosswarn <%>] "
-"[-passwd <password>] "
-"[-pidfile <filename>] "
-"[-poll <variable>=<value>] "
-"[-printscore] "
-"[-processor <processor-id>] "
-"[-public <server-description>] "
-"[-publicaddr <server-hostname>[:<server-port>]] "
-"[-publiclist <list-server-url>] "
-"[-q] "
-"[+r] "
-"[-rabbit [score|killer|random]] "
-"[-recbuf <Mbytes>] "
-"[-recbufonly] "
-"[-recdir <dirname>] "
-"[-replay] "
-"[-reportfile <filename>] "
-"[-reportpipe <filename>] "
-"[-requireudp] "
-"[+s <flag-count>] "
-"[-s <flag-count>] "
-"[-sa] "
-"[-sb] "
-"[-set <name> <value>] "
-"[-setforced <name> <value>] "
-"[-sl <id> <num>] "
-"[-spamtime <time>] "
-"[-spamwarn <warnAmt>] "
-"[-spawnPolicy <policy>] "
-"[-speedtol <tolerance>] "
-"[-srvmsg <text>] "
-"[-st <time>] "
-"[-sw <num>] "
-"[-synctime] "
-"[-synclocation] "
-"[-t] "
-"[-tftimeout <seconds>] "
-"[-time {<seconds>|endTime}] "
-"[-timemanual] "
-"[-tk] "
-"[-tkannounce] "
-"[-tkkr <percent>] "
-"[-ts [micros]] "
-"[-userdb <user permissions file>] "
-"[-vars <filename>] "
-"[-version] "
-"[-world <filename>] "
-"[-worldsize <world size>] ";
+  "[-admsg <text>] "
+  "[-advertise <group,group...>]"
+  "[-autoTeam] "
+  "[-b] "
+  "[-badwords <filename>] "
+  "[-ban ip{,ip}*] "
+  "[-banfile <filename>] "
+  "[-botsPerIP <num>] "
+  "[-c] "
+  "[-cache <url prefix>] "
+  "[-cacheout <filename>] "
+  "[-conf <filename>] "
+  "[-cr] "
+  "[-d] "
+  "[-density <num>] "
+  "[-disableBots] "
+  "[+f {good|<id>}] "
+  "[-f {bad|<id>}] "
+  "[-fb] "
+  "[-filterAnnounce] "
+  "[-filterCallsigns] "
+  "[-filterChat] "
+  "[-filterSimple] "
+  "[-freezeTag] "
+  "[-g] "
+  "[-gndtex <texture name>] "
+  "[-groupdb <group file>] "
+  "[-h] "
+  "[-handicap] "
+  "[-helpdir <dir>]"
+  "[-helpmsg <file> <name>] "
+  "[-i interface] "
+  "[-j] "
+  "[-jitterdrop <num>] "
+  "[-jitterwarn <time/ms>] "
+  "[-lagdrop <num>] "
+  "[-lagwarn <time/ms>] "
+  "[-loadplugin <pluginname,commandline>] "
+  "[-masterBanURL <URL>]"
+  "[-maxidle <time/s>] "
+  "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
+  "[-mps <score>] "
+  "[-ms <shots>] "
+  "[-mts <score>] "
+  "[-noMasterBanlist]"
+  "[-noradar]"
+  "[-offa] "
+  "[-p <port>] "
+  "[-packetlossdrop <num>] "
+  "[-packetlosswarn <%>] "
+  "[-passwd <password>] "
+  "[-pidfile <filename>] "
+  "[-poll <variable>=<value>] "
+  "[-printscore] "
+  "[-processor <processor-id>] "
+  "[-public <server-description>] "
+  "[-publicaddr <server-hostname>[:<server-port>]] "
+  "[-publiclist <list-server-url>] "
+  "[-q] "
+  "[+r] "
+  "[-rabbit [score|killer|random]] "
+  "[-recbuf <Mbytes>] "
+  "[-recbufonly] "
+  "[-recdir <dirname>] "
+  "[-replay] "
+  "[-reportfile <filename>] "
+  "[-reportpipe <filename>] "
+  "[-requireudp] "
+  "[+s <flag-count>] "
+  "[-s <flag-count>] "
+  "[-sa] "
+  "[-sb] "
+  "[-set <name> <value>] "
+  "[-setforced <name> <value>] "
+  "[-sl <id> <num>] "
+  "[-spamtime <time>] "
+  "[-spamwarn <warnAmt>] "
+  "[-spawnPolicy <policy>] "
+  "[-speedtol <tolerance>] "
+  "[-srvmsg <text>] "
+  "[-st <time>] "
+  "[-sw <num>] "
+  "[-synctime] "
+  "[-synclocation] "
+  "[-t] "
+  "[-tftimeout <seconds>] "
+  "[-time {<seconds>|endTime}] "
+  "[-timemanual] "
+  "[-tk] "
+  "[-tkannounce] "
+  "[-tkkr <percent>] "
+  "[-ts [micros]] "
+  "[-userdb <user permissions file>] "
+  "[-vars <filename>] "
+  "[-version] "
+  "[-world <filename>] "
+  "[-worldsize <world size>] ";
 
 const char *extraUsageString =
-"\n"
-"BZFS Option Descriptions\n"
-"\n"
-"\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
-"\t-advertise: specify which groups to advertise to (list server)\n"
-"\t-autoTeam: automatically assign players to teams when they join\n"
-"\t-b: randomly oriented buildings\n"
-"\t-badwords: bad-word file\n"
-"\t-ban ip{,ip}*: ban players based on ip address\n"
-"\t-banfile: specify a file to load and store the banlist in\n"
-"\t-botsPerIP: specify how many client-side bots are allowed per IP address\n"
-"\t-c: classic capture-the-flag style game,\n"
-"\t-cache: url to get binary formatted world\n"
-"\t-cacheout: generate a binary cache file\n"
-"\t-conf: configuration file\n"
-"\t-cr: capture-the-flag style game with random world\n"
-"\t-d: increase debugging level\n"
-"\t-density: specify building density for random worlds (default=5)\n"
-"\t-disableBots: disallow clients from using autopilot or robots\n"
-"\t+f: always have flag <id> available\n"
-"\t-f: never randomly generate flag <id>\n"
-"\t-fb: allow flags on box buildings\n"
-"\t-filterAnnounce: announces raw messages on the admin channel for filtered chat\n"
-"\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
-"\t-filterChat: filter chat messages\n"
-"\t-filterSimple: perform simple exact matches with the bad word list\n"
-"\t-freezeTag: collisions freeze the player who is farther from home base\n"
-"\t-g: serve one game and then exit\n"
-"\t-gndtex: specify ground texture\n"
-"\t-groupdb: file to read for group permissions\n"
-"\t-h: use random building heights\n"
-"\t-handicap: give advantage based on relative playing ability\n"
-"\t-helpmsg: show the lines in <file> on command /help <name>\n"
-"\t-i: listen on <interface>\n"
-"\t-j: allow jumping\n"
-"\t-lagdrop: drop player after this many lag warnings\n"
-"\t-lagwarn: lag warning threshhold time [ms]\n"
-"\t-jitterdrop: drop player after this many jitter warnings\n"
-"\t-jitterwarn: jitter warning threshhold time [ms]\n"
-"\t-loadplugin: load the specified plugin with the specified commandline\n"
-"\t\tstring\n"
-"\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
-"\t-maxidle: idle kick threshhold [s]\n"
-"\t-mp: maximum players total or per team\n"
-"\t-mps: set player score limit on each game\n"
-"\t-ms: maximum simultaneous shots per player\n"
-"\t-mts: set team score limit on each game\n"
-"\t-noMasterBanlist: has public servers ignore the master ban list\n"
-"\t-noradar: disallow the use of radar\n"
-"\t-offa: teamless free-for-all game stye\n"
-"\t-p: use alternative port (default=5154)\n"
-"\t-packetlossdrop: drop player after this many packetloss warnings\n"
-"\t-packetlosswarn: packetloss warning threshold [%]\n"
-"\t-passwd: specify a <password> for operator commands\n"
-"\t-pidfile: write the process id into <filename> on startup\n"
-"\t-poll: configure several aspects of the in-game polling system\n"
-"\t-printscore: write score to stdout whenever it changes\n"
-"\t-processor: set cpu affinity to a particular processor\n"
-"\t-public <server-description>\n"
-"\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
-"\t-publiclist <list-server-url>\n"
-"\t-q: don't listen for or respond to pings\n"
-"\t+r: all shots ricochet\n"
-"\t-rabbit [score|killer|random]: rabbit chase style\n"
-"\t-recbuf <Mbytes>: start with a recording buffer of specified megabytes\n"
-"\t-recbufonly: disable recording directly to files\n"
-"\t-recdir <dirname>: specify the directory for recorded file\n"
-"\t-replay: setup the server to replay a previously saved game\n"
-"\t-reportfile <filename>: the file to store reports in\n"
-"\t-reportpipe <filename>: the program to pipe reports through\n"
-"\t-requireudp: require clients to use udp\n"
-"\t+s: always have <num> super flags (default=16)\n"
-"\t-s: allow up to <num> super flags (default=16)\n"
-"\t-sa: insert antidote superflags\n"
-"\t-sb: allow tanks to respawn on buildings\n"
-"\t-set <name> <value>: set a BZDB variable's value\n"
-"\t-setforced <name> <value>: set a BZDB variable's value (whether it\n"
-"\t\texists or not)\n"
-"\t-sl: limit flag <id> to <num> shots\n"
-"\t-spamtime <time>: make <time> be the required time in seconds between\n"
-"\t\tmessages sent that are alike\n"
-"\t-spamwarn <warnAmt>: warn a spammer that sends messages before\n"
-"\t\tspamtime times out <warnAmt> many times\n"
-"\t-spawnPolicy specifies <policy> to use for spawning players\n"
-"\t-speedtol: multiplier of normal speed for auto kick (default=1.25)\n"
-"\t\tshould not be less than 1.0\n"
-"\t-srvmsg: specify a <msg> to print upon client login\n"
-"\t-st: shake bad flags in <time> seconds\n"
-"\t-sw: shake bad flags after <num> wins\n"
-"\t-synctime: synchronize time of day on all clients\n"
-"\t-synclocation: synchronize latitude and longitude on all clients\n"
-"\t-t: allow teleporters\n"
-"\t-tftimeout: set timeout for team flag zapping (default=30)\n"
-"\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
-"\t-timemanual: countdown for timed games is started with /countdown\n"
-"\t-tk: player does not die when killing a teammate\n"
-"\t-tkannounce: announces team kills to the admin channel\n"
-"\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
-"\t-ts [micros]: timestamp all console output, [micros] to include\n"
-"\t\tmicroseconds\n"
-"\t-userdb: file to read for user access permissions\n"
-"\t-vars: file to read for worlds configuration variables\n"
-"\t-version: print version and exit\n"
-"\t-world: world file to load\n"
-"\t-worldsize: numeric value for the size of the world (default=400)\n"
-"\n"
-"Poll Variables:  (see -poll)\n"
-"\n"
-"\tbanTime: number of minutes player should be banned (default=300)\n"
-"\tvetoTime: max seconds authorized user has to abort poll (default=20)\n"
-"\tvotePercentage: percentage of players required to affirm a poll\n"
-"\t\t(default=50.1%)\n"
-"\tvoteRepeatTime: minimum seconds required before a player may request\n"
-"\t\tanother vote (default=300)\n"
-"\tvotesRequired: minimum number of additional votes required to make a\n"
-"\t\tvote valid (default=2)\n"
-"\tvoteTime: maximum amount of time player has to vote, in seconds\n"
-"\t\t(default=60)\n"
-"\n";
+  "\n"
+  "BZFS Option Descriptions\n"
+  "\n"
+  "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
+  "\t-advertise: specify which groups to advertise to (list server)\n"
+  "\t-autoTeam: automatically assign players to teams when they join\n"
+  "\t-b: randomly oriented buildings\n"
+  "\t-badwords: bad-word file\n"
+  "\t-ban ip{,ip}*: ban players based on ip address\n"
+  "\t-banfile: specify a file to load and store the banlist in\n"
+  "\t-botsPerIP: specify how many client-side bots are allowed per IP address\n"
+  "\t-c: classic capture-the-flag style game,\n"
+  "\t-cache: url to get binary formatted world\n"
+  "\t-cacheout: generate a binary cache file\n"
+  "\t-conf: configuration file\n"
+  "\t-cr: capture-the-flag style game with random world\n"
+  "\t-d: increase debugging level\n"
+  "\t-density: specify building density for random worlds (default=5)\n"
+  "\t-disableBots: disallow clients from using autopilot or robots\n"
+  "\t+f: always have flag <id> available\n"
+  "\t-f: never randomly generate flag <id>\n"
+  "\t-fb: allow flags on box buildings\n"
+  "\t-filterAnnounce: announces raw messages on the admin channel for filtered chat\n"
+  "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
+  "\t-filterChat: filter chat messages\n"
+  "\t-filterSimple: perform simple exact matches with the bad word list\n"
+  "\t-freezeTag: collisions freeze the player who is farther from home base\n"
+  "\t-g: serve one game and then exit\n"
+  "\t-gndtex: specify ground texture\n"
+  "\t-groupdb: file to read for group permissions\n"
+  "\t-h: use random building heights\n"
+  "\t-handicap: give advantage based on relative playing ability\n"
+  "\t-helpdir: add a helpmsg for every file in <dir>\n"
+  "\t-helpmsg: show the lines in <file> on command /help <name>\n"
+  "\t-i: listen on <interface>\n"
+  "\t-j: allow jumping\n"
+  "\t-lagdrop: drop player after this many lag warnings\n"
+  "\t-lagwarn: lag warning threshhold time [ms]\n"
+  "\t-jitterdrop: drop player after this many jitter warnings\n"
+  "\t-jitterwarn: jitter warning threshhold time [ms]\n"
+  "\t-loadplugin: load the specified plugin with the specified commandline\n"
+  "\t\tstring\n"
+  "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
+  "\t-maxidle: idle kick threshhold [s]\n"
+  "\t-mp: maximum players total or per team\n"
+  "\t-mps: set player score limit on each game\n"
+  "\t-ms: maximum simultaneous shots per player\n"
+  "\t-mts: set team score limit on each game\n"
+  "\t-noMasterBanlist: has public servers ignore the master ban list\n"
+  "\t-noradar: disallow the use of radar\n"
+  "\t-offa: teamless free-for-all game stye\n"
+  "\t-p: use alternative port (default=5154)\n"
+  "\t-packetlossdrop: drop player after this many packetloss warnings\n"
+  "\t-packetlosswarn: packetloss warning threshold [%]\n"
+  "\t-passwd: specify a <password> for operator commands\n"
+  "\t-pidfile: write the process id into <filename> on startup\n"
+  "\t-poll: configure several aspects of the in-game polling system\n"
+  "\t-printscore: write score to stdout whenever it changes\n"
+  "\t-processor: set cpu affinity to a particular processor\n"
+  "\t-public <server-description>\n"
+  "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
+  "\t-publiclist <list-server-url>\n"
+  "\t-q: don't listen for or respond to pings\n"
+  "\t+r: all shots ricochet\n"
+  "\t-rabbit [score|killer|random]: rabbit chase style\n"
+  "\t-recbuf <Mbytes>: start with a recording buffer of specified megabytes\n"
+  "\t-recbufonly: disable recording directly to files\n"
+  "\t-recdir <dirname>: specify the directory for recorded file\n"
+  "\t-replay: setup the server to replay a previously saved game\n"
+  "\t-reportfile <filename>: the file to store reports in\n"
+  "\t-reportpipe <filename>: the program to pipe reports through\n"
+  "\t-requireudp: require clients to use udp\n"
+  "\t+s: always have <num> super flags (default=16)\n"
+  "\t-s: allow up to <num> super flags (default=16)\n"
+  "\t-sa: insert antidote superflags\n"
+  "\t-sb: allow tanks to respawn on buildings\n"
+  "\t-set <name> <value>: set a BZDB variable's value\n"
+  "\t-setforced <name> <value>: set a BZDB variable's value (whether it\n"
+  "\t\texists or not)\n"
+  "\t-sl: limit flag <id> to <num> shots\n"
+  "\t-spamtime <time>: make <time> be the required time in seconds between\n"
+  "\t\tmessages sent that are alike\n"
+  "\t-spamwarn <warnAmt>: warn a spammer that sends messages before\n"
+  "\t\tspamtime times out <warnAmt> many times\n"
+  "\t-spawnPolicy specifies <policy> to use for spawning players\n"
+  "\t-speedtol: multiplier of normal speed for auto kick (default=1.25)\n"
+  "\t\tshould not be less than 1.0\n"
+  "\t-srvmsg: specify a <msg> to print upon client login\n"
+  "\t-st: shake bad flags in <time> seconds\n"
+  "\t-sw: shake bad flags after <num> wins\n"
+  "\t-synctime: synchronize time of day on all clients\n"
+  "\t-synclocation: synchronize latitude and longitude on all clients\n"
+  "\t-t: allow teleporters\n"
+  "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
+  "\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
+  "\t-timemanual: countdown for timed games is started with /countdown\n"
+  "\t-tk: player does not die when killing a teammate\n"
+  "\t-tkannounce: announces team kills to the admin channel\n"
+  "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
+  "\t-ts [micros]: timestamp all console output, [micros] to include\n"
+  "\t\tmicroseconds\n"
+  "\t-userdb: file to read for user access permissions\n"
+  "\t-vars: file to read for worlds configuration variables\n"
+  "\t-version: print version and exit\n"
+  "\t-world: world file to load\n"
+  "\t-worldsize: numeric value for the size of the world (default=400)\n"
+  "\n"
+  "Poll Variables:  (see -poll)\n"
+  "\n"
+  "\tbanTime: number of minutes player should be banned (default=300)\n"
+  "\tvetoTime: max seconds authorized user has to abort poll (default=20)\n"
+  "\tvotePercentage: percentage of players required to affirm a poll\n"
+  "\t\t(default=50.1%)\n"
+  "\tvoteRepeatTime: minimum seconds required before a player may request\n"
+  "\t\tanother vote (default=300)\n"
+  "\tvotesRequired: minimum number of additional votes required to make a\n"
+  "\t\tvote valid (default=2)\n"
+  "\tvoteTime: maximum amount of time player has to vote, in seconds\n"
+  "\t\t(default=60)\n"
+  "\n";
 
 
 // temp variables for carrying flag options from parse to finalize
@@ -342,9 +344,8 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // okay, it's the comma separated list.  count commas
     int commaCount = 1;
     while (*++scan) {
-      if (*scan == ',') {
+      if (*scan == ',')
 	commaCount++;
-      }
     }
     if (commaCount != 5) {
       std::cout << "improper player count list" << std::endl;
@@ -459,9 +460,9 @@ static char **parseConfFile( const char *file, int &ac)
       confStrm.seekg(0, std::ifstream::beg);
       confStrm.clear();
       confStrm.getline(buffer,1024,delim);
-      if(!confStrm.good()){
-        errorHandler.fatalError(std::string("could not find bzflag configuration file on open"), 0);
-        exit(1);
+      if(!confStrm.good()) {
+	errorHandler.fatalError(std::string("could not find bzflag configuration file on open"), 0);
+	exit(1);
       }
     }
 
@@ -483,7 +484,7 @@ static char **parseConfFile( const char *file, int &ac)
 	tokens.push_back(line.substr(startPos,endPos-startPos));
 	startPos = line.find_first_not_of("\t \r\n", endPos+1);
       }
-   }
+    }
   } else {
     errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
     exit(1);
@@ -634,8 +635,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.randomCTF = true;
       // capture the flag style
       if (options.gameType == RabbitChase)  {
-		std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-		std::cerr << "Capture the flag assumed" << std::endl;
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
       options.gameType = ClassicCTF;
     } else if (strcmp(argv[i], "-density") ==0) {
@@ -697,12 +698,27 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.randomHeights = true;
     } else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
+    } else if (strcmp(argv[i], "-helpdir") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      OSDir d(argv[i]);
+      OSFile f;
+      options.helpDirs.push_back(d);
+      bool first;
+      for(first = true; d.getNextFile(f, "*.txt", false); first = false) {
+	std::string path = f.getFullOSPath(), name = f.getFileName();
+	if (!options.textChunker.parseFile(path, name, 50, MessageLen))
+	  std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
+	else
+	  logDebugMessage(3, "Loaded help message: %s", name.c_str());
+      }
+      if (first)
+	std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       checkArgc(2, i, argc, argv[i]);
-      if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
+      if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
-      }
+      } else logDebugMessage(3, "Loaded help message: %s");
       i++;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
@@ -739,7 +755,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
-	} else if (strcmp(argv[i], "-mp") == 0) {
+    } else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       checkArgc(1, i, argc, argv[i]);
       // FIXME: lame var hacking
@@ -778,11 +794,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "disabling team score limit" << std::endl;
 	options.maxTeamScore = 0;
       }
-    } else if (strcmp(argv[i],"-noMasterBanlist") == 0){
+    } else if (strcmp(argv[i],"-noMasterBanlist") == 0) {
       options.suppressMasterBanList = true;
-    } else if (strcmp(argv[i],"-noradar") == 0){
+    } else if (strcmp(argv[i],"-noradar") == 0) {
       BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
-    } else if (strcmp(argv[i],"-masterBanURL") == 0){
+    } else if (strcmp(argv[i],"-masterBanURL") == 0) {
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls.
        */
@@ -793,9 +809,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.masterBanListURL.push_back(argv[i]);
     } else if (strcmp(argv[i], "-noTeamKills") == 0) {
-		// allow jumping
-		options.gameOptions |= int(NoTeamKills);
-    }else if (strcmp(argv[i], "-p") == 0) {
+      // allow jumping
+      options.gameOptions |= int(NoTeamKills);
+    } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
@@ -818,7 +834,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       memset(argv[i], ' ', options.password.size());
     } else if (strcmp(argv[i], "-pidfile") == 0) {
       unsigned int pid = 0;
-	  checkArgc(1, i, argc, argv[i]);
+      checkArgc(1, i, argc, argv[i]);
       FILE *fp = fopen(argv[i], "wt");
 #ifndef HAVE_PROCESS_H
       pid = getpid();
@@ -895,15 +911,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "+r") == 0) {
       // all shots ricochet style
       options.gameOptions |= int(RicochetGameStyle);
-    } else if (strcmp(argv[i], "-rabbit") == 0)
-	{
+    } else if (strcmp(argv[i], "-rabbit") == 0)	{
       // rabbit chase style
-      if (options.gameType == ClassicCTF)
-	  {
-		std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
-		std::cerr << "Rabbit Chase assumed" << std::endl;;
+      if (options.gameType == ClassicCTF) {
+	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
+	std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
-	  options.gameType = RabbitChase;
+      options.gameType = RabbitChase;
 
       // default selection style
       options.rabbitSelection = ScoreRabbitSelection;
@@ -992,15 +1006,15 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       i++; // move past the flag descriptor for now (we'll store it in a bit)
       int x = 1;
-      if (isdigit(argv[i][0])){
-        x = atoi(argv[i]);
-        if (x < 1){
-          std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
-          x = 1;
-        }
+      if (isdigit(argv[i][0])) {
+	x = atoi(argv[i]);
+	if (x < 1) {
+	  std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
+	  x = 1;
+	}
       } else {
-        std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
+	usage(argv[0]);
       }
       storedFlagLimits[argv[i-1]] = x;
     } else if (strcmp(argv[i], "-spamtime") == 0) {
@@ -1135,7 +1149,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.teamKillerKickRatio = 0;
 	std::cerr << "disabling team killer kick ratio";
       }
-	} else if (strcmp(argv[i], "-ts") == 0) {
+    } else if (strcmp(argv[i], "-ts") == 0) {
       // timestamp output
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
@@ -1197,7 +1211,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
 
 static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
-				 const std::set<FlagType*>& forbidden)
+				const std::set<FlagType*>& forbidden)
 {
   if (forbidden.find(flagType) != forbidden.end()) {
     return 0;
@@ -1267,16 +1281,16 @@ void finalizeParsing(int /*argc*/, char **argv,
     if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-        options.flagDisallowed[*it] = true;
+	options.flagDisallowed[*it] = true;
     } else if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-        options.flagDisallowed[*it] = true;
+	options.flagDisallowed[*it] = true;
     } else {
       FlagType* fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
-        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+	usage(argv[0]);
       }
       options.flagDisallowed[fDesc] = true;
     }
@@ -1290,29 +1304,29 @@ void finalizeParsing(int /*argc*/, char **argv,
     if (rptBgn > 0) {
       rptCnt = atoi(vsitr->substr(rptBgn+1, vsitr->length() - rptBgn).c_str());
       if (rptCnt <= 0)
-        rptCnt = 1;
+	rptCnt = 1;
       (*vsitr) = vsitr->substr(0, rptBgn);
     }
     if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-        options.flagCount[*it] += rptCnt;
+	options.flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-        options.flagCount[*it] += rptCnt;
+	options.flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "team") == 0) {
       for (int t = RedTeam; t <= PurpleTeam; t++)
-        options.numTeamFlags[t] += rptCnt;
+	options.numTeamFlags[t] += rptCnt;
     } else {
       FlagType *fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
-        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+	usage(argv[0]);
       } else if (fDesc->flagTeam != NoTeam) {
-        options.numTeamFlags[fDesc->flagTeam] += rptCnt;
+	options.numTeamFlags[fDesc->flagTeam] += rptCnt;
       } else {
-        options.flagCount[fDesc] += rptCnt;
+	options.flagCount[fDesc] += rptCnt;
       }
     }
   }
@@ -1336,12 +1350,12 @@ void finalizeParsing(int /*argc*/, char **argv,
   } else {
     forbidden.insert(Flags::NoJumping);
   }
-  if (options.gameOptions & RicochetGameStyle) {
+  if (options.gameOptions & RicochetGameStyle)
     forbidden.insert(Flags::Ricochet);
-  }
-  if (!options.useTeleporters && (options.worldFile == "")) {
+
+  if (!options.useTeleporters && (options.worldFile == ""))
     forbidden.insert(Flags::PhantomZone);
-  }
+
   if (!hasTeam) {
     forbidden.insert(Flags::Genocide);
     forbidden.insert(Flags::Colorblindness);
@@ -1353,18 +1367,17 @@ void finalizeParsing(int /*argc*/, char **argv,
     forbidden.insert(Flags::BlueTeam);
     forbidden.insert(Flags::PurpleTeam);
   }
-  if (options.maxTeam[RedTeam] <= 0) {
+  if (options.maxTeam[RedTeam] <= 0)
     forbidden.insert(Flags::RedTeam);
-  }
-  if (options.maxTeam[GreenTeam] <= 0) {
+
+  if (options.maxTeam[GreenTeam] <= 0)
     forbidden.insert(Flags::GreenTeam);
-  }
-  if (options.maxTeam[BlueTeam] <= 0) {
+
+  if (options.maxTeam[BlueTeam] <= 0)
     forbidden.insert(Flags::BlueTeam);
-  }
-  if (options.maxTeam[PurpleTeam] <= 0) {
+
+  if (options.maxTeam[PurpleTeam] <= 0)
     forbidden.insert(Flags::PurpleTeam);
-  }
 
   // void the forbidden flags
   std::set<FlagType*>::const_iterator sit;
@@ -1459,34 +1472,29 @@ void finalizeParsing(int /*argc*/, char **argv,
   if (options.gameType == ClassicCTF) {
     if (options.maxTeam[RedTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
+      for (int n = 0; n < options.numTeamFlags[RedTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
-      }
     }
     if (options.maxTeam[GreenTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::GreenTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
+      for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
-      }
     }
     if (options.maxTeam[BlueTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::BlueTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++) {
+      for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::BlueTeam);
-      }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::PurpleTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++) {
+      for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::PurpleTeam);
-      }
     }
   }
 
   // super flags?
-  if (f < numFlags) {
+  if (f < numFlags)
     options.gameOptions |= int(SuperFlagGameStyle);
-  }
 
   // shot limits
   std::map<std::string, int>::iterator msiitr;
@@ -1508,9 +1516,8 @@ void finalizeParsing(int /*argc*/, char **argv,
     FlagType *fDesc = it2->second;
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
-      for (int j = 0; j < options.flagCount[fDesc]; j++) {
+      for (int j = 0; j < options.flagCount[fDesc]; j++)
 	FlagInfo::get(f++)->setRequiredFlag(fDesc);
-      }
     }
   }
   // add zone flags
@@ -1531,15 +1538,13 @@ void finalizeParsing(int /*argc*/, char **argv,
     }
   }
   // add extra flags
-  for (; f < numFlags; f++) {
+  for (; f < numFlags; f++)
     FlagInfo::get(f)->required = allFlagsOut;
-  }
 
   // sum the sources of team flags
   if (options.gameType & ClassicCTF) {
-    for (int col = RedTeam; col <= PurpleTeam; col++) {
+    for (int col = RedTeam; col <= PurpleTeam; col++)
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
-    }
   }
 
   // processor affinity
@@ -1567,7 +1572,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     logDebugMessage(1,"  all shots ricochet\n");
   if (options.gameOptions & int(ShakableGameStyle))
     logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
-	   0.1f * float(options.shakeTimeout), options.shakeWins);
+		    0.1f * float(options.shakeTimeout), options.shakeWins);
   if (options.gameOptions & int(HandicapGameStyle))
     logDebugMessage(1,"  handicap mode on\n");
   if (options.gameOptions & int(AntidoteGameStyle))
@@ -1578,7 +1583,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
 
 // simple syntax check of comma-seperated list of group names (returns true if error)
-bool checkCommaList (const char *list, int maxlen){
+bool checkCommaList (const char *list, int maxlen) {
   int x = strlen (list);
   unsigned char c;
   if (x > maxlen)

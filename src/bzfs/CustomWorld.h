@@ -32,6 +32,7 @@ public:
   virtual bool usesGroupDef() { return false; }
   
 protected:
+  bool createWalls;
   double _size;
   double _fHeight;
 };

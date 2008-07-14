@@ -24,6 +24,7 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -32,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype235_D.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype234_D.lib"
 				OutputFile="../Build/ftgl_D.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(FREETYPE)/objs"
@@ -73,6 +74,7 @@
 				AdditionalIncludeDirectories="&quot;$(FREETYPE)/include&quot;;../;../../src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FTGL_LIBRARY"
 				RuntimeLibrary="2"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -81,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype235.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype234.lib"
 				OutputFile="../Build/ftgl.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(FREETYPE)/objs"
@@ -126,6 +128,15 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FTGlyph\FTBitmapGlyph.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\FTBuffer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\FTFont\FTBufferFont.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGlyph\FTBufferGlyph.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\FTCharmap.cpp">
@@ -218,6 +229,21 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FTGlyph\FTBitmapGlyphImpl.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGL\FTBuffer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGL\FTBufferFont.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTFont\FTBufferFontImpl.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGL\FTBufferGlyph.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGlyph\FTBufferGlyphImpl.h">
 			</File>
 			<File
 				RelativePath="..\..\src\FTCharmap.h">
@@ -338,6 +364,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FTGlyph\FTTextureGlyphImpl.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTUnicode.h">
 			</File>
 			<File
 				RelativePath="..\..\src\FTVector.h">

@@ -12,60 +12,33 @@
 
 #include "plugin_HTTP.h"
 #include "plugin_utils.h"
+#include "plugin_groups.h"
+#include "plugin_files.h"
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <sstream>
 #include <algorithm>
 
-BZFSHTTPServer::BZFSHTTPServer( const char * plugInName )
+BZFSHTTP::BZFSHTTP()
 {
-  if (plugInName)
-    name = plugInName;
-  listening = false;
+  bz_loadPlugin("HTTPServer",NULL);
 }
 
-BZFSHTTPServer::~BZFSHTTPServer()
+void BZFSHTTP::registerVDir ( void )
 {
-  shutdownHTTP();
-  bz_clearMaxWaitTime(vdir.c_str());
+  if (!bz_callCallback("RegisterHTTPDVDir",this))
+    bz_debugMessage(0,format("HTTP Plugin %s failed to load due to callback failure, make sure the HTTPServer plugin is in the same path",getVDir()).c_str());
 }
 
-void BZFSHTTPServer::startupHTTP ( void )
+BZFSHTTP::~BZFSHTTP()
 {
-  if(listening)
-    shutdownHTTP();
-
-  vdir = format("%d/",rand());
-  std::string clipField;
-  std::vector<std::string> dirs;
-
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
-    clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
-    dirs = tokenize(clipField,std::string(","),0,false);
-
-    if (name.size() && tolower(name) != "bzfs")
-    {
-      if (std::find(dirs.begin(),dirs.end(),name) == dirs.end())
-	vdir = name;
-    }
-  }
-  else
-  {
-    if (name.size() && tolower(name) != "bzfs")
-      vdir = name;
-  }
-
-  clipField += "," + vdir;
-
-  bz_setclipFieldString ( "BZFS_HTTPD_VDIRS", clipField.c_str() );
-
-  // see if I am the indexer or not
-  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
-    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
-
-  bz_registerEvent (bz_eTickEvent,this);
-  bz_registerEvent (bz_eNewNonPlayerConnection,this);
-
-  baseURL = "http://";
-  std::string host = "localhost:5154";
+  bz_callCallback("RemoveHTTPDVDir",this);
+}
+std::string BZFSHTTP::getBaseURL ( void )
+{
+  std::string URL = "http://";
+  std::string host = "localhost";
   if (bz_getPublicAddr().size())
     host = bz_getPublicAddr().c_str();
 
@@ -73,550 +46,979 @@ void BZFSHTTPServer::startupHTTP ( void )
   if ( strrchr(host.c_str(),':') == NULL )
     host += format(":%d",bz_getPublicPort());
 
-  baseURL += host;
-  baseURL += "/" + vdir + "/";
+  URL += host +"/";
+  URL += getVDir();
+  URL += "/";
 
-  listening = true;
+  return URL;
 }
 
-void BZFSHTTPServer::shutdownHTTP ( void )
+bool HTTPRequest::getParam ( const char* param, std::string &val ) const
 {
-  // clear out the 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ))
-  {
-    std::string myThis = format("%p",this);
-    if (bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis)
-      bz_setclipFieldString("BZFS_HTTPD_INDEXER","");
-  }
+  val = "";
+  if (!param)
+    return false;
 
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
-    std::string clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
-    std::vector<std::string> dirs = tokenize(clipField,std::string(","),0,false);
+  std::string p;
+  tolower(param,p);
 
-    clipField = "";
-    for ( int i = 0; i < (int)dirs.size(); i++ )
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
+  {
+    if (itr->second.size())
+      val = itr->second[itr->second.size()-1];
+    return true;
+  } 
+  return false;
+}
+
+bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
+{
+  val = "";
+
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
+  {
+    if (itr->second.size())
+      val = itr->second[itr->second.size()-1];
+    return true;
+  } 
+  return false;
+}
+
+bool HTTPRequest::getParam ( const char* param, std::vector<std::string> &val ) const
+{
+  val.clear();
+  if (!param)
+    return false;
+
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
+  {
+    val = itr->second;
+    return true;
+  } 
+  return false;
+}
+
+bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> &val ) const
+{
+  val.clear();
+
+  std::string p;
+  tolower(param,p);
+
+  std::map<std::string, std::vector<std::string> >::const_iterator itr = parameters.find(p);
+  if ( itr != parameters.end() )
+  {
+    val = itr->second;
+    return true;
+  } 
+  return false;
+}
+
+
+class PendingTokenTask : public bz_BaseURLHandler
+{
+public:
+  PendingTokenTask():requestID(-1){};
+
+  virtual void done ( const char* /*URL*/, void * data, unsigned int size, bool complete );
+  virtual void timeout ( const char* /*URL*/, int /*errorCode*/ );
+  virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ );
+
+  int requestID;
+  std::string URL;
+  std::vector<std::string> groups;
+
+  std::string data;
+};
+
+std::map<int,PendingTokenTask*> pendingTokenTasks;
+
+void PendingTokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
+{
+  char *t = (char*)malloc(size+1);
+  memcpy(t,inData,size);
+  t[size] = 0;
+  data += t;
+  free(t);
+
+  if (complete)
+  {
+    // parse out the info
+
+    data = replace_all(data,std::string("\r\n"),"\n");
+    data = replace_all(data,std::string("\r"),"\n");
+
+    std::vector<std::string> lines = tokenize(data,std::string("\n"),0,false);
+
+    groups.clear();
+
+    for (size_t i = 0; i < lines.size(); i++)
     {
-      if ( dirs[i] != dirs[i] )
-	clipField += vdir + ",";
-    }
-    bz_setclipFieldString("BZFS_HTTPD_VDIRS",clipField.c_str());
-  }
+      std::string &line = lines[i];
 
-  if (!listening)
-    return;
-
-  bz_removeEvent (bz_eTickEvent,this);
-  bz_removeEvent (bz_eNewNonPlayerConnection,this);
-
-  // kill the users;
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
-  while ( itr != users.end() )
-  {
-    bz_removeNonPlayerConnectionHandler (itr->first, this );
-    delete(itr->second);
-    itr++;
-  }
-  users.clear();
-}
-
-std::string BZFSHTTPServer::getParam ( const URLParams &params, const char* param )
-{
-  if ( params.find(tolower(std::string(param))) != params.end() )
-    return params.find(tolower(std::string(param)))->second;
-
-  return std::string("");
-}
-
-void BZFSHTTPServer::process ( bz_EventData *eventData )
-{
-  // check if I'm the indexer
-  if (!bz_clipFieldExists ( "BZFS_HTTPD_INDEXER" ) || bz_getclipFieldString("BZFS_HTTPD_INDEXER")[0] == 0)
-    bz_setclipFieldString("BZFS_HTTPD_INDEXER",format("%p",this).c_str());
-
-  std::string myThis = format("%p",this);
-  indexer = bz_getclipFieldString("BZFS_HTTPD_INDEXER") == myThis;
-  
-  if ( eventData->eventType == bz_eTickEvent)
-  {
-    if ( listening )
-      update();
-  }
-  else if ( eventData->eventType == bz_eNewNonPlayerConnection )
-  {
-    if ( listening )
-    {
-      bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
-      char *temp = (char*)malloc(connData->size+1);
-      memcpy(temp,connData->data,connData->size);
-      temp[connData->size] = 0;
-      bz_debugMessagef(4,"Plugin HTTP Base: Non ProtoConnection connection from %d with %s",connData->connectionID,temp);
-      free(temp);
-
-      if(bz_registerNonPlayerConnectionHandler ( connData->connectionID, this ) )
+      if (line.size())
       {
-
-	HTTPConnectedUsers *user = new HTTPConnectedUsers(connData->connectionID);
-
-	users[connData->connectionID] = user;
-	pending ( connData->connectionID, (char*)connData->data, connData->size );
-      }
-    }
-  }
-}
-
-void BZFSHTTPServer::update ( void )
-{
-  double now = bz_getCurrentTime();
-  double timeout = 20;
-
-  std::vector<int>  killList;
-
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.begin();
-  while ( itr != users.end() )
-  {
-    double deadTime = now - itr->second->aliveTime;
-    if ( itr->second->transferring() || deadTime < timeout )
-    {
-      itr->second->update();
-    }
-    else
-      killList.push_back(itr->first);
-    itr++;
-  }
-
-  for ( int i = 0; i < (int)killList.size(); i++ )
-  {
-    bz_removeNonPlayerConnectionHandler (i, this );
-    delete(users[i]);
-    users.erase(users.find(i));
-  }
-
-  if ( users.size())
-    bz_setMaxWaitTime(0.01f,vdir.c_str());
-  else
-    bz_clearMaxWaitTime(vdir.c_str());
-}
-
-void BZFSHTTPServer::generateIndex ( HTTPConnectedUsers *user, int requestID )
-{
-
-  theCurrentCommand = new HTTPCommand;
-  theCurrentCommand->request = eGet;
-  theCurrentCommand->FullURL = "/";
-  theCurrentCommand->data = NULL;
-  theCurrentCommand->size = 0;
-  theCurrentCommand->docType = eHTML;
-  theCurrentCommand->returnCode = e200OK;
-  theCurrentCommand->URL = "/";
-
-  // dump out an index of the vdirs
-  std::string indexPage = "<html><head></head><body>Index for ";
-  indexPage += bz_getPublicAddr().c_str();
-  indexPage += "<br>";
-  std::string clipField;
-  std::vector<std::string> dirs;
-
-  if (bz_clipFieldExists ( "BZFS_HTTPD_VDIRS" ) && bz_getclipFieldString("BZFS_HTTPD_VDIRS")[0] != 0)
-  {
-    clipField = bz_getclipFieldString("BZFS_HTTPD_VDIRS");
-    dirs = tokenize(clipField,std::string(","),0,false);
-
-    indexPage += "<table border=\"0\">";
-    for (size_t i = 0; i < dirs.size(); i++ )
-    {
-      indexPage += "<tr><td><a href=\"/";
-      indexPage += dirs[i];
-      indexPage += "/\">";
-      indexPage += dirs[i];
-      indexPage += "/</a></td><td>";
-
-      std::string vdirDescripption = dirs[i] + "_index_description";
-      if (bz_clipFieldExists ( vdirDescripption.c_str() ) && bz_getclipFieldString(vdirDescripption.c_str())[0] != 0)
-	indexPage += bz_getclipFieldString(vdirDescripption.c_str());
-      else
-	indexPage += "&nbsp;";
- 
-      indexPage += "</td></tr>";
-    }
-    indexPage += "</table>";
-
-  }
-  indexPage += "</body></html>";
-
-  setURLDataSize ( (unsigned int)indexPage.size(), requestID );
-  setURLData ( indexPage.c_str(), requestID );
-
-  if (theCurrentCommand->data)
-  {
-    if (theCurrentCommand->size)
-	user->startTransfer ( theCurrentCommand );
-    else
-	free(theCurrentCommand->data);
-  }
-
-  theCurrentCommand = NULL;
-}
-
-void BZFSHTTPServer::processTheCommand ( HTTPConnectedUsers *user, int requestID, const URLParams &params )
-{
-  if (acceptURL(theCurrentCommand->URL.c_str()))
-  {
-    int requestID = user->connection * 100 + (int)user->pendingCommands.size();
-
-    getURLData ( theCurrentCommand->URL.c_str(), requestID, params, theCurrentCommand->request == eGet );
-
-    if (theCurrentCommand->data)
-    {
-      if (theCurrentCommand->size)
-	user->startTransfer ( theCurrentCommand );
-      else
-	free(theCurrentCommand->data);
-    }
-  }
-  else
-    delete(theCurrentCommand);
-
-  theCurrentCommand = NULL;
-}
-
-void BZFSHTTPServer::paramsFromString ( const std::string &paramBlock, URLParams &params )
-{
-  std::vector<std::string> rawParams = tokenize(paramBlock,"&",0,false);
-
-  for (int i =0; i < (int)rawParams.size(); i++ )
-  {
-    std::string paramItem = rawParams[i];
-    if (paramItem.size())
-    {
-      std::vector<std::string> paramChunks = tokenize(paramItem,"=",2,false);
-      if (paramChunks.size() > 1 )
-      {
-	std::string key = url_decode(replace_all(paramChunks[0],"+"," "));
-	std::string value =  url_decode(replace_all(paramChunks[1],"+"," "));
-	params[tolower(key)] = value;
-      }
-    }
-  }
-}
-
-std::string BZFSHTTPServer::parseURLParams ( const std::string &FullURL, URLParams &params )
-{
-  std::string URL = FullURL;
-
-  char *paramStart = (char*)strchr(URL.c_str(),'?');
-  if (  paramStart != NULL )
-  {
-    std::string paramBlock = paramStart+1;
-    // CHEAP but it works, and dosn't walk over memory
-    *paramStart = 0;
-    std::string temp = URL.c_str();
-    URL = temp.c_str();
-
-    paramsFromString(paramBlock,params);
-  }
-
- return url_decode(URL);
-}
-
-void BZFSHTTPServer::pending ( int connectionID, void *d, unsigned int s )
-{
-  std::map<int,HTTPConnectedUsers*>::iterator itr = users.find(connectionID);
-  if (itr == users.end())
-    return;
-
-  HTTPConnectedUsers* user = itr->second;
-
-  char *temp = (char*)malloc(s+1);
-  memcpy(temp,d,s);
-  temp[s] = 0;
-  user->commandData += temp;
-  free(temp);
-
-  int requestID = connectionID*100 + (int)user->pendingCommands.size();
-
-  if (strstr(user->commandData.c_str(),"\r\n") != NULL )
-  {
-    // we have enough to parse the HTTP command
-    std::vector<std::string>  commands = tokenize(user->commandData,std::string("\r\n"),0,false);
-    for ( int i = 0; i < (int)commands.size(); i++)
-    {
-      if (strstr(user->commandData.c_str(),"\r\n") != NULL )
-      {
-	user->commandData.erase(user->commandData.begin(),user->commandData.begin()+commands[i].size()+2);
-	std::vector<std::string> params = tokenize(commands[i],std::string(" "),0,false);
-	if (params.size() > 1)
+	if (strstr(line.c_str(),"TOKGOOD") != NULL)
 	{
-	  std::string httpCommandString = params[0];
+	  groups = tokenize(line,std::string(":"),0,false);
 
-	  if (httpCommandString == "GET")
+	  if(groups.size() > 1)	// yank the first 2 since that is the sign and the name
+	    groups.erase(groups.begin(),groups.begin()+1);
+	}
+      }
+    }
+    pendingTokenTasks[requestID] = this;
+  }
+}
+
+void PendingTokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
+{
+  groups.clear();
+  pendingTokenTasks[requestID] = this;
+}
+
+void PendingTokenTask::error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+{
+  groups.clear();
+  pendingTokenTasks[requestID] = this;
+}
+
+BZFSHTTPAuth::BZFSHTTPAuth():BZFSHTTP(),sessionTimeout(300)
+{
+}
+
+void BZFSHTTPAuth::setupAuth ( void )
+{
+  authPage = "<html><body><h4><a href=\"[$WebAuthURL]\">Please Login</a></h4></body></html>";
+
+  std::string returnURL;
+  if (!getBaseURL().size())
+    returnURL += format("http://localhost:%d/%s/",bz_getPublicPort(),getVDir());
+  else
+    returnURL += getBaseURL();
+  returnURL += "?action=login&token=%TOKEN%&user=%USERNAME%";
+
+  tsCallback.URL = "http://my.bzflag.org/weblogin.php?action=weblogin&url=";
+  tsCallback.URL += url_encode(returnURL);
+
+  templateSystem.addKey("WebAuthURL",&tsCallback);
+}
+
+void BZFSHTTPAuth::TSURLCallback::keyCallback(std::string &data, const std::string &key)
+{
+  if(compare_nocase(key,"WebAuthURL") == 0)
+    data += URL;
+}
+
+bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
+{
+  // build up the groups list
+  std::string token,user;
+  request.getParam("token",token);
+  request.getParam("user",user);
+
+  std::vector<std::string> groups;
+
+  std::map<int, std::vector<std::string> >::iterator itr = authLevels.begin();
+
+  while (itr != authLevels.end())
+  {
+    for (size_t i = 0; i < itr->second.size();i++)
+    {
+      std::string &perm = itr->second[i];
+
+      std::vector<std::string> groupsWithPerm;
+
+      if (compare_nocase(perm,"ADMIN")==0)
+	groupsWithPerm = findGroupsWithAdmin();
+      else
+	groupsWithPerm = findGroupsWithPerm(perm);
+
+      groups.insert(groups.end(),groupsWithPerm.begin(),groupsWithPerm.end());
+    }
+    itr++;
+  }
+
+  PendingTokenTask *task = new PendingTokenTask;
+
+  if (!user.size() || !token.size())
+  {
+    reply.body += "Invalid response";
+    reply.docType = HTTPReply::eText;
+    return true;
+  }
+  task->requestID = request.requestID;
+  task->URL = "http://my.bzflag.org/db/";
+  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
+  task->URL += request.ip;
+  task->URL += "%3D" + token;
+
+  task->URL += "&groups=";
+  for (size_t g = 0; g < groups.size(); g++)
+  {
+    task->URL += groups[g];
+    if ( g+1 < groups.size())
+      task->URL += "%0D%0A";
+  }
+
+  // give the task to bzfs and let it do it, when it's done it'll be processed
+  bz_addURLJob(task->URL.c_str(),task);
+
+  return false;
+}
+
+bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!authPage.size())
+    setupAuth();
+
+  flushTasks();
+  int sessionID = request.sessionID;
+  reply.docType = HTTPReply::eHTML;
+
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+  {
+    // put this back to the default
+    reply.docType = HTTPReply::eText;
+
+    authItr->second.time = bz_getCurrentTime();
+    bool complete = handleAuthedRequest(authItr->second.level,request,reply);
+
+    if (!complete)
+      defferedAuthedRequests.push_back(request.requestID);
+
+    return complete;
+  }
+  else	// they are not fully authorized yet
+  {
+    std::map<int,PendingTokenTask*>::iterator pendingItr = pendingTokenTasks.find(request.requestID);
+    if (pendingItr != pendingTokenTasks.end())	// they have a token, check it
+    {
+      AuthInfo info;
+      info.time = bz_getCurrentTime();
+
+      if (!pendingItr->second->groups.size())
+	info.level = -1;
+      else
+      {
+	if (pendingItr->second->groups.size() == 1)
+	  info.level = 0; // just authed, no levels
+	else
+	  info.level = getLevelFromGroups(pendingItr->second->groups);
+	if (info.level >= 0)
+	  authedSessions[request.sessionID] = info;
+      }
+
+      delete(pendingItr->second);
+      pendingTokenTasks.erase(pendingItr);
+
+      // put this back to the default
+      reply.docType = HTTPReply::eText;
+
+      bool complete = handleAuthedRequest(info.level,request,reply);
+
+      if (!complete)
+	defferedAuthedRequests.push_back(request.requestID);
+
+      return complete;
+    }
+    else
+    {
+      std::string action,user,token;
+      request.getParam("action",action);
+      request.getParam("user",user);
+      request.getParam("token",token);
+      if (compare_nocase(action,"login") == 0 && user.size() && token.size()) // it's a response from weblogin
+	return verifyToken(request,reply);
+      else
+      {
+	// it's someone we know NOTHING about, send them the login
+	templateSystem.startTimer();
+	size_t s = authPage.find_last_of('.');
+	if (s != std::string::npos)
+	{
+	  if (compare_nocase(authPage.c_str()+s,".tmpl") == 0)
 	  {
-	    std::string url = params[1];
-	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
-	    {
-	      theCurrentCommand = new HTTPCommand;
-	      theCurrentCommand->request = eGet;
-	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
-	      theCurrentCommand->data = NULL;
-	      theCurrentCommand->size = 0;
-	      theCurrentCommand->docType = eText;
-	      theCurrentCommand->returnCode = e200OK;
-
-	      URLParams params;
-	      theCurrentCommand->URL = parseURLParams ( theCurrentCommand->FullURL, params );
-
-	      processTheCommand(user,requestID,params);
-	    }
-	    else if (indexer)
-	      generateIndex(user,requestID);
+	    if(!templateSystem.processTemplateFile(reply.body,authPage.c_str()))
+	      templateSystem.processTemplate(reply.body,authPage);
 	  }
-	  else if (httpCommandString == "POST")
-	  {
-	    std::string url = params[1];
-	    std::string paramData;
+	  else
+	    templateSystem.processTemplate(reply.body,authPage);
+	}
+	else
+	  templateSystem.processTemplate(reply.body,authPage);
+      }
+    }
+  }
 
-	    // make sure it's in our vdir
-	    if ( strncmp(tolower(url).c_str()+1,tolower(vdir).c_str(),vdir.size()) == 0)
-	    {
-	      int i = (int)commands.size();
+  return true;
+}
 
-	      for ( int c = 1; c  < i; c++ )
-	      {
-		std::string line = commands[c];
-		if ( line.size() && strchr(line.c_str(),':') == NULL) // it's the post params
-		{
-		  paramData += line;
-		}
-	      }
+bool BZFSHTTPAuth::resumeTask (  int requestID )
+{
+  // it's token job that is done, go for it
+  if(pendingTokenTasks.find(requestID) != pendingTokenTasks.end())
+    return true;
 
-	      theCurrentCommand = new HTTPCommand;
-	      theCurrentCommand->request = ePost;
-	      theCurrentCommand->FullURL = params[1].c_str()+1+vdir.size();
-	      theCurrentCommand->data = NULL;
-	      theCurrentCommand->size = 0;
-	      theCurrentCommand->docType = eText;
-	      theCurrentCommand->returnCode = e200OK;
+  // our child differed
+  std::vector<int>::iterator itr = std::find(defferedAuthedRequests.begin(),defferedAuthedRequests.end(),requestID);
+  if (itr != defferedAuthedRequests.end())
+  {
+    if(resumeAuthedTask(requestID)) // they are done, move on
+    {
+      defferedAuthedRequests.erase(itr);
+      return true;
+    }
+  }
+  return false;
+}
 
-	      theCurrentCommand->URL = url_decode( theCurrentCommand->FullURL);
-	      URLParams params;
-	      paramsFromString ( paramData, params );
+bool stringInList ( const std::string &str, const std::vector<std::string> stringList )
+{
+  for (std::vector<std::string>::const_iterator itr = stringList.begin(); itr != stringList.end(); itr++)
+  {
+    if (compare_nocase(str,*itr) == 0)
+      return true;
+  }
+  return false;
+}
 
-	      processTheCommand(user,requestID,params);
-	    }
-	    else if (indexer)
-	      generateIndex(user,requestID);
-	  }
+void BZFSHTTPAuth::addPermToLevel ( int level, const std::string &perm )
+{
+  if (level <= 0)
+    return;
+
+   if(authLevels.find(level)== authLevels.end())
+   {
+     std::vector<std::string> t;
+     authLevels[level] = t;
+   }
+   authLevels[level].push_back(perm);
+}
+
+
+int BZFSHTTPAuth::getLevelFromGroups (const std::vector<std::string> &groups )
+{
+  std::map<int,std::vector<std::string> >::reverse_iterator itr = authLevels.rbegin();
+
+  while (itr != authLevels.rend())
+  {
+    for (size_t s = 0; s < itr->second.size(); s++ )
+    {
+      std::string &perm = itr->second[s];
+
+      std::vector<std::string> groupsWithPerm;
+
+      if (compare_nocase(perm,"ADMIN")==0)
+	groupsWithPerm = findGroupsWithAdmin();
+      else
+	groupsWithPerm = findGroupsWithPerm(perm);
+
+      // check the input groups, and see if any of the them are in the groups with this perm
+      for (size_t i = 1; i < groups.size(); i++ )
+      {  
+	if (stringInList(groups[i],groupsWithPerm))
+	  return itr->first;
+      }
+    }
+    itr++;
+  }
+  return 0;
+}
+
+void BZFSHTTPAuth::flushTasks ( void )
+{
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.begin();
+
+  double now = bz_getCurrentTime();
+  while (authedSessions.size() && authItr != authedSessions.end())
+  {
+    if (sessionTimeout + authItr->second.time < now)
+    {
+      std::map<int,AuthInfo>::iterator t = authItr;
+      t++;
+      authedSessions.erase(authItr);
+      authItr = t;
+    }
+    else
+      authItr++;
+  }
+}
+
+
+Templateiser::Templateiser()
+{
+  startTimer();
+  setDefaultTokens();
+}
+
+Templateiser::~Templateiser()
+{
+
+}
+
+void Templateiser::startTimer ( void )
+{
+  startTime = bz_getCurrentTime();
+}
+
+void Templateiser::addKey ( const char *key, TemplateKeyCallback callback )
+{
+  if (!key || !callback)
+    return;
+
+  std::string k;
+  tolower(key,k);
+
+  keyFuncCallbacks[k] = callback;
+  ClassMap::iterator itr = keyClassCallbacks.find(k);
+  if (itr != keyClassCallbacks.end())
+    keyClassCallbacks.erase(itr);
+}
+
+void Templateiser::addKey ( const char *key, TemplateCallbackClass *callback )
+{
+  if (!key || !callback)
+    return;
+
+  std::string k;
+  tolower(key,k);
+
+  keyClassCallbacks[k] = callback;
+  KeyMap::iterator itr = keyFuncCallbacks.find(k);
+  if (itr != keyFuncCallbacks.end())
+    keyFuncCallbacks.erase(itr);
+}
+
+void Templateiser::clearKey ( const char *key )
+{
+  std::string k;
+  tolower(key,k);
+
+  ClassMap::iterator itr = keyClassCallbacks.find(k);
+  if (itr != keyClassCallbacks.end())
+    keyClassCallbacks.erase(itr);
+
+  KeyMap::iterator itr2 = keyFuncCallbacks.find(k);
+  if (itr2 != keyFuncCallbacks.end())
+    keyFuncCallbacks.erase(itr2);
+}
+
+void Templateiser::flushKeys ( void )
+{
+  keyClassCallbacks.clear();
+  keyFuncCallbacks.clear();
+}
+
+void Templateiser::addLoop ( const char *loop, TemplateTestCallback callback )
+{
+  if (!loop || !callback)
+    return;
+
+  std::string l;
+  tolower(loop,l);
+
+  loopFuncCallbacks[l] = callback;
+  ClassMap::iterator itr = loopClassCallbacks.find(l);
+  if (itr != loopClassCallbacks.end())
+    loopClassCallbacks.erase(itr);
+}
+
+void Templateiser::addLoop ( const char *loop, TemplateCallbackClass *callback )
+{
+  if (!loop || !callback)
+    return;
+
+  std::string l;
+  tolower(loop,l);
+
+  loopClassCallbacks[l] = callback;
+  TestMap::iterator itr = loopFuncCallbacks.find(l);
+  if (itr != loopFuncCallbacks.end())
+    loopFuncCallbacks.erase(itr);
+}
+
+void Templateiser::clearLoop ( const char *loop )
+{
+  if (!loop)
+    return;
+
+  std::string l;
+  tolower(loop,l);
+
+  TestMap::iterator itr = loopFuncCallbacks.find(l);
+  if (itr != loopFuncCallbacks.end())
+    loopFuncCallbacks.erase(itr);
+
+  ClassMap::iterator itr2 = loopClassCallbacks.find(l);
+  if (itr2 != loopClassCallbacks.end())
+    loopClassCallbacks.erase(itr2);
+}
+
+void Templateiser::flushLoops ( void )
+{
+  loopClassCallbacks.clear();
+  loopFuncCallbacks.clear();
+}
+
+void Templateiser::addIF ( const char *name, TemplateTestCallback callback )
+{
+  if (!name || !callback)
+    return;
+
+  std::string n;
+  tolower(name,n);
+
+  ifFuncCallbacks[n] = callback;
+  ClassMap::iterator itr = ifClassCallbacks.find(n);
+  if (itr != ifClassCallbacks.end())
+    ifClassCallbacks.erase(itr);
+}
+
+void Templateiser::addIF ( const char *name, TemplateCallbackClass *callback )
+{
+  if (!name || !callback)
+    return;
+
+  std::string n;
+  tolower(name,n);
+
+  ifClassCallbacks[n] = callback;
+  TestMap::iterator itr = ifFuncCallbacks.find(n);
+  if (itr != ifFuncCallbacks.end())
+    ifFuncCallbacks.erase(itr);
+}
+
+void Templateiser::clearIF ( const char *name )
+{
+  if(!name)
+    return;
+
+  std::string n;
+  tolower(name,n);
+
+  ClassMap::iterator itr = ifClassCallbacks.find(n);
+  if (itr != ifClassCallbacks.end())
+    ifClassCallbacks.erase(itr);
+
+  TestMap::iterator itr2 = ifFuncCallbacks.find(n);
+  if (itr2 != ifFuncCallbacks.end())
+    ifFuncCallbacks.erase(itr2);
+}
+
+void Templateiser::flushIFs ( void )
+{
+  ifClassCallbacks.clear();
+  ifFuncCallbacks.clear();
+}
+
+bool Templateiser::callKey ( std::string &data, const std::string &key )
+{
+  std::string lowerKey;
+  tolower(key,lowerKey);
+
+  data.clear();
+
+  ClassMap::iterator itr = keyClassCallbacks.find(lowerKey);
+  if (itr != keyClassCallbacks.end()) {
+    itr->second->keyCallback(data,key);
+    return true;
+  }
+
+  KeyMap::iterator itr2 = keyFuncCallbacks.find(lowerKey);
+  if (itr2 != keyFuncCallbacks.end()) {
+    (itr2->second)(data,key);
+    return true;
+  }
+
+  return false;
+}
+
+bool Templateiser::callLoop ( const std::string &key )
+{
+  std::string lowerKey;
+  tolower(key,lowerKey);
+
+  ClassMap::iterator itr = loopClassCallbacks.find(lowerKey);
+  if (itr != loopClassCallbacks.end())
+    return itr->second->loopCallback(key);
+
+  TestMap::iterator itr2 = loopFuncCallbacks.find(lowerKey);
+  if (itr2 != loopFuncCallbacks.end())
+    return (itr2->second)(key);
+
+  return false;
+}
+
+bool Templateiser::callIF ( const std::string &key )
+{
+  std::string lowerKey;
+  tolower(key,lowerKey);
+
+  ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
+  if (itr != ifClassCallbacks.end())
+    return itr->second->ifCallback(key);
+
+  TestMap::iterator itr2 = ifFuncCallbacks.find(lowerKey);
+  if (itr2 != ifFuncCallbacks.end())
+    return (itr2->second)(key);
+
+  return false;
+}
+
+bool Templateiser::processTemplateFile ( std::string &code, const char *file )
+{
+  if (!file)
+    return false;
+
+  // find the file
+  for (size_t i = 0; i < filePaths.size(); i++ ) {
+    std::string path = filePaths[i] + file;
+    FILE *fp = fopen(getPathForOS(path).c_str(),"rb");
+    if (fp) {
+      fseek(fp,0,SEEK_END);
+      size_t pos = ftell(fp);
+      fseek(fp,0,SEEK_SET);
+      char *temp = (char*)malloc(pos+1);
+      fread(temp,pos,1,fp);
+      temp[pos] = 0;
+
+      std::string val(temp);
+      free(temp);
+      fclose(fp);
+
+      processTemplate(code,val);
+      return true;
+    }
+  }
+  return false;
+}
+
+
+void Templateiser::processTemplate ( std::string &code, const std::string &templateText )
+{
+  std::string::const_iterator templateItr = templateText.begin();
+
+  while ( templateItr != templateText.end() ) {
+    if ( *templateItr != '[' ) {
+      code += *templateItr;
+      templateItr++;
+    } else {
+      templateItr++;
+
+      if (templateItr == templateText.end()) {
+	code += '[';
+      } else {
+	switch(*templateItr) {
+	default: // it's not a code, so just let the next loop hit it and output it
+	  break;
+
+	case '$':
+	  replaceVar(code,++templateItr,templateText);
+	  break;
+
+	case '*':
+	  processLoop(code,++templateItr,templateText);
+	  break;
+
+	case '?':
+	  processIF(code,++templateItr,templateText);
+	  break;
+	case '-':
+	  processComment(code,++templateItr,templateText);
+	  break;
+	case '!':
+	  processInclude(code,++templateItr,templateText);
+	  break;
 	}
       }
     }
   }
-  else if ( user->commandData.size() > 4 )
-  {
-    if ( !user->transferring() && !user->pendingCommands.size() ) // it's not sending anything, and it has not goten any commands.
-    {
-      if ( strncmp(user->commandData.c_str(),"GET",3) != 0) // it is not a get
-      {
-	//if ( strncmp(user->commandData.c_str(),"POST",4) != 0) // it is not a post
-	  user->aliveTime = 99999999999.0;  // then it's somethign we don't support, don't handle it
+}
+
+void Templateiser::setPluginName ( const char* name, const char* URL )
+{
+  if (name)
+    pluginName = name;
+
+  if (URL)
+    baseURL = URL;
+}
+
+void Templateiser::addSearchPath ( const char* path )
+{
+  if (path)
+    filePaths.push_back(std::string(path));
+}
+
+void Templateiser::flushSearchPaths ( void )
+{
+  filePaths.clear();
+}
+
+void Templateiser::setDefaultTokens ( void )
+{
+  addKey("Date",this);
+  addKey("Time",this);
+  addKey("HostName",this);
+  addKey("PageTime",this);
+  addKey("BaseURL",this);
+  addKey("PluginName",this);
+  addIF("Public",this);
+}
+
+void Templateiser::keyCallback ( std::string &data, const std::string &key )
+{
+  if (key == "date") {
+    bz_Time time;
+    bz_getLocaltime(&time);
+    data = format("%d/%d/%d",time.month,time.day,time.year);
+  } else if (key == "time") {
+    bz_Time time;
+    bz_getLocaltime(&time);
+    data = format("%d:%d:%d",time.hour,time.minute,time.second);
+  } else if (key == "hostname") {
+    data = bz_getPublicAddr().c_str();
+    if (!data.size())
+      data = format("localhost:%d",bz_getPublicPort());;
+  } else if (key == "pagetime") {
+    data = format("%.3f",bz_getCurrentTime()-startTime);
+  } else if (key == "baseurl") {
+    data =baseURL;
+  } else if (key == "pluginname") {
+    data = pluginName;
+  }
+}
+
+bool Templateiser::loopCallback ( const std::string & /* key */ )
+{
+  return false;
+}
+
+bool Templateiser::ifCallback ( const std::string &key )
+{
+  if (key == "public")
+    return bz_getPublic();
+
+  return false;
+}
+
+// processing helpers
+
+std::string::const_iterator Templateiser::readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str )
+{
+  std::string::const_iterator itr = inItr;
+
+  while ( itr != str.end() ) {
+    if (*itr != ']') {
+      key += *itr;
+      itr++;
+    } else {
+      // go past the code
+      itr++;
+      makelower(key);
+      return itr;
+    }
+  }
+  return itr;
+}
+
+std::string::const_iterator Templateiser::findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str )
+{
+  if (!keys.size())
+    return inItr;
+
+  std::string::const_iterator itr = inItr;
+
+  while (1) {
+    itr = std::find(itr,str.end(),'[');
+    if (itr == str.end())
+      return itr;
+
+    // save off the itr in case this is the one, so we can copy to this point
+    std::string::const_iterator keyStartItr = itr;
+
+    itr++;
+    if (itr == str.end())
+      return itr;
+
+    std::string key;
+    itr = readKey(key,itr,str);
+
+    for ( size_t i = 0; i < keys.size(); i++ ) {
+      if ( key == keys[i]) {
+	endKey = key;
+	code.resize(keyStartItr - inItr);
+	std::copy(inItr,keyStartItr,code.begin());
+	return itr;
       }
     }
   }
+  return itr;
 }
 
-void BZFSHTTPServer::disconnect ( int connectionID )
+void Templateiser::processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str )
 {
-  bz_removeNonPlayerConnectionHandler (connectionID, this );
-  delete(users[connectionID]);
-  users.erase(users.find(connectionID));
+  std::string key;
+  inItr = readKey(key,inItr,str);
 }
 
-void BZFSHTTPServer::setURLDataSize ( unsigned int size, int requestID )
+void Templateiser::processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
 {
-  if (theCurrentCommand->data)
-    free(theCurrentCommand->data);
+  std::string key;
+  inItr = readKey(key,inItr,str);
 
-  theCurrentCommand->data = NULL;
-  theCurrentCommand->size = size;
+  // check the search paths for the include file
+  if (!processTemplateFile(code,key.c_str()))
+    code += "[!" + key + "]";
 }
 
-void BZFSHTTPServer::setURLData ( const char * data, int requestID )
+void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str )
 {
-  if (theCurrentCommand->data)
-  {
-    free(theCurrentCommand->data);
-    theCurrentCommand->data = NULL;
-  }
+  // find the end of the ]]
+  std::string key;
 
-  if (theCurrentCommand->size)
-  {
-    theCurrentCommand->data = (char*)malloc(theCurrentCommand->size);
-    memcpy(theCurrentCommand->data,data,theCurrentCommand->size);
-  }
-}
+  itr = readKey(key,itr,str);
 
-void BZFSHTTPServer::setURLDocType ( HTTPDocumentType docType, int requestID )
-{
-  theCurrentCommand->docType = docType;
-}
+  if (itr != str.end()) {
+    std::string lowerKey;
+    std::string val;
 
-void BZFSHTTPServer::setURLReturnCode ( HTTPReturnCode code, int requestID )
-{
-  theCurrentCommand->returnCode = code;
-}
+    tolower(key,lowerKey);
 
-void BZFSHTTPServer::setURLRedirectLocation ( const char* location, int requestID )
-{
-  if (!location)
-    theCurrentCommand->redirectLocation = "";
-  else
-   theCurrentCommand->redirectLocation = location;
-}
-
-
-const char * BZFSHTTPServer::getBaseServerURL ( void )
-{
-  return baseURL.c_str();
-}
-
-BZFSHTTPServer::HTTPConnectedUsers::HTTPConnectedUsers(int connectionID )
-{
-  connection = connectionID;
-  pos = 0;
-}
-
-BZFSHTTPServer::HTTPConnectedUsers::~HTTPConnectedUsers()
-{
-  killMe();
-}
-
-void BZFSHTTPServer::HTTPConnectedUsers::killMe ( void )
-{
-  for (int i = 0; i < (int)pendingCommands.size(); i++)
-  {
-    free(pendingCommands[i]->data);
-    delete(pendingCommands[i]);
-  }
-  pendingCommands.clear();
-  aliveTime -= 10000.0;
-}
-
-bool BZFSHTTPServer::HTTPConnectedUsers::transferring ( void )
-{
-  if (!pendingCommands.size())
-    return false;
-
-  HTTPCommand *command = *pendingCommands.begin();
-  return pos < command->size;
-}
-
-void BZFSHTTPServer::HTTPConnectedUsers::startTransfer ( HTTPCommand *command )
-{
-  aliveTime = bz_getCurrentTime();
-  pendingCommands.push_back(command);
-  update();
-}
-std::string BZFSHTTPServer::HTTPConnectedUsers::getMimeType ( HTTPDocumentType docType )
-{
-  std::string type = "text/plain";
-  switch(docType)
-  {
-  case eOctetStream:
-    type = "application/octet-stream";
-    break;
-
-  case eBinary:
-    type = "application/binary";
-    break;
-
-  case eHTML:
-    type = "text/html";
-    break;
-  }
-  return type;
-}
-
-std::string BZFSHTTPServer::HTTPConnectedUsers::getReturnCode ( HTTPReturnCode returnCode )
-{
-  std::string code = "200";
-  switch(returnCode)
-  {
-  case e404NotFound:
-    code = "404";
-    break;
-
-  case e403Forbiden:
-    code = "403";
-    break;
-
-  case e301Redirect:
-    code = "301";
-    break;
-
-  case e500ServerError:
-    code = "500";
-    break;
-  }
-
-  return code;
-}
-
-void BZFSHTTPServer::HTTPConnectedUsers::update ( void )
-{
-  if (!pendingCommands.size())
-    return;
-
-  HTTPCommand *currentCommand = pendingCommands[0];
-  if ( pos == 0 )
-  {
-    // start a new one
-    std::string httpHeaders;
-    httpHeaders += "HTTP/1.1 200 OK\n";
-    httpHeaders += format("Content-Length: %d\n", (int)currentCommand->size);
-    httpHeaders += "Connection: close\n";
-    httpHeaders += "Content-Type: " + getMimeType(currentCommand->docType) + "\n";
-    if (currentCommand->returnCode != e301Redirect)
-      httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
+    if (callKey(val,lowerKey))
+      code += val;
     else
-    {
-      if ( currentCommand->redirectLocation.size() )
-      {
-	httpHeaders += "Status-Code: " + getReturnCode(currentCommand->returnCode) + "\n";
-	httpHeaders += "Location: " + currentCommand->redirectLocation + "\n";
-      }
-      else  // yeah WTF, you want a redirect but don't have a URL, dude 
-	httpHeaders += "Status-Code: "  + getReturnCode(e500ServerError) + "\n";
-    }
-    httpHeaders += "\n";
+      code += "[$"+key+"]";
+  }
+}
 
-    if ( !bz_sendNonPlayerData ( connection, httpHeaders.c_str(), (unsigned int)httpHeaders.size()) )
-    {
-      killMe();
+void Templateiser::processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
+{
+  std::string key;
+
+  // read the rest of the key
+  std::string::const_iterator itr = readKey(key,inItr,str);
+
+  std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
+  if (commandParts.size() < 2) {
+    inItr = itr;
+    return;
+  }
+
+  // check the params
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
+
+  if ( commandParts[0] != "start" ) {
+    inItr = itr;
+    return;
+  }
+
+  // now get the code for the loop section section
+  std::string loopSection,emptySection;
+
+  std::vector<std::string> checkKeys;
+  checkKeys.push_back(format("*end %s",commandParts[1].c_str()));
+
+  std::string keyFound;
+  itr = findNextTag(checkKeys,keyFound,loopSection,itr,str);
+
+  if (itr == str.end()) {
+    inItr = itr;
+    return;
+  }
+
+  // do the empty section
+  // loops have to have both
+  checkKeys.clear();
+  checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
+  itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
+
+  if (callLoop(commandParts[1])) {
+    std::string newCode;
+    processTemplate(newCode,loopSection);
+    code += newCode;
+
+    while(callLoop(commandParts[1])) {
+      newCode = "";
+      processTemplate(newCode,loopSection);
+      code += newCode;
+    }
+  } else {
+    std::string newCode;
+    processTemplate(newCode,emptySection);
+    code += newCode;
+  }
+  inItr = itr;
+}
+
+void Templateiser::processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
+{
+  std::string key;
+
+  // read the rest of the key
+  std::string::const_iterator itr = readKey(key,inItr,str);
+
+  std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
+  if (commandParts.size() < 2) {
+    inItr = itr;
+    return;
+  }
+
+  // check the params
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
+
+  if ( commandParts[0] != "if" ) {
+    inItr = itr;
+    return;
+  }
+
+  // now get the code for the next section
+  std::string trueSection,elseSection;
+
+  std::vector<std::string> checkKeys;
+  checkKeys.push_back(format("?else %s",commandParts[1].c_str()));
+  checkKeys.push_back(format("?end %s",commandParts[1].c_str()));
+
+  std::string keyFound;
+  itr = findNextTag(checkKeys,keyFound,trueSection,itr,str);
+
+  if (keyFound == checkKeys[0]) { // we hit an else, so we need to check for it
+    // it was the else, so go and find the end too
+    if (itr == str.end()) {
+      inItr = itr;
       return;
     }
+
+    checkKeys.erase(checkKeys.begin());// kill the else, find the end
+    itr = findNextTag(checkKeys,keyFound,elseSection,itr,str);
   }
-  
-  // keep it going
-  // wait till the current data is sent
-  if (bz_getNonPlayerConnectionOutboundPacketCount(connection) == 0)
-  {
-    int chunkToSend = 1000;
 
-    if ( pos + chunkToSend > currentCommand->size)
-      chunkToSend = currentCommand->size-pos;
-
-    bool worked = bz_sendNonPlayerData ( connection, currentCommand->data+pos, chunkToSend );
-
-    pos += chunkToSend;
-    if (pos >= currentCommand->size) // if we are done, close this sucker
-    {
-      pos = 0;
-      free(currentCommand->data);
-      delete(currentCommand);
-      pendingCommands.erase(pendingCommands.begin());
-    }
+  // test the if, stuff that dosn't exist is false
+  if (callIF(commandParts[1])) {
+    std::string newCode;
+    processTemplate(newCode,trueSection);
+    code += newCode;
+  } else {
+    std::string newCode;
+    processTemplate(newCode,elseSection);
+    code += newCode;
   }
+  inItr = itr;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

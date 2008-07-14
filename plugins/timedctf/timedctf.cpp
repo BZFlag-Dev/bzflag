@@ -172,7 +172,8 @@ bool TeamsBalanced()
 {
   // if not enough team players - no need to check any further:
 
-  if (bz_getTeamCount(eRedTeam) + bz_getTeamCount(eGreenTeam) + bz_getTeamCount(eBlueTeam) + bz_getTeamCount(ePurpleTeam) <= 1)
+  if (bz_getTeamCount(eRedTeam) + bz_getTeamCount(eGreenTeam) +
+      bz_getTeamCount(eBlueTeam) + bz_getTeamCount(ePurpleTeam) <= 1)
     return false;
 
   // check for fair ctf - only need 2 teams close (TeamRatioTolerance or better)
@@ -220,8 +221,9 @@ bool TeamsBalanced()
   if (PS > BS && PS != 0)
     RatioBP = (BS / PS);
 
-  if (RatioRG >= TeamRatioTolerance || RatioRB >= TeamRatioTolerance || RatioRP >= TeamRatioTolerance
-      || RatioGB >= TeamRatioTolerance || RatioGP >= TeamRatioTolerance || RatioBP >= TeamRatioTolerance) {
+  if (RatioRG >= TeamRatioTolerance || RatioRB >= TeamRatioTolerance ||
+      RatioRP >= TeamRatioTolerance || RatioGB >= TeamRatioTolerance ||
+      RatioGP >= TeamRatioTolerance || RatioBP >= TeamRatioTolerance) {
 
     return true;
   } else {
@@ -245,8 +247,9 @@ void KillTeam(bz_eTeamType TeamToKill)
 	bz_killPlayer(player->playerID, true, BZ_SERVER);
 	if (tctf.soundEnabled)
 	  bz_sendPlayCustomLocalSound(player->playerID, "flag_lost");
-      } else if (tctf.soundEnabled)
+      } else if (tctf.soundEnabled) {
 	bz_sendPlayCustomLocalSound(player->playerID, "flag_won");
+      }
       bz_freePlayerRecord(player);
     }
 
@@ -266,15 +269,21 @@ int TeamCheck(bz_eTeamType Team, const char *Color, double LastWarn, double Last
 
     if (bz_getCurrentTime() - LastWarn > 60) {
       tctf.adjTime = (int) (tctf.timeRemaining / 60);
-      bz_sendTextMessagef(BZ_SERVER, Team, "%s Team: less than %i minute(s) left to capture a flag!", Color, tctf.adjTime + 1);
+      bz_sendTextMessagef(BZ_SERVER, Team,
+			  "%s Team: less than %i minute(s) left to capture a flag!",
+			  Color, tctf.adjTime + 1);
       return 1;			// 1 = reset team's LastWarn
     }
     if (bz_getCurrentTime() - LastWarn > 30 && tctf.timeRemaining < 30) {
-      bz_sendTextMessagef(BZ_SERVER, Team, "%s Team: less than 30 seconds left to capture a flag!", Color);
+      bz_sendTextMessagef(BZ_SERVER, Team,
+			  "%s Team: less than 30 seconds left to capture a flag!", Color);
       return 1;			// 1 = reset team's LastWarn
     }
-    if (bz_getCurrentTime() - LastWarn > 10 && tctf.timeRemaining < 20 && tctf.timeRemaining > 10) {
-      bz_sendTextMessagef(BZ_SERVER, Team, "%s Team: less than 20 seconds left to capture a flag!", Color);
+    if (bz_getCurrentTime() - LastWarn > 10 && tctf.timeRemaining < 20 &&
+	tctf.timeRemaining > 10) {
+      bz_sendTextMessagef(BZ_SERVER, Team,
+			  "%s Team: less than 20 seconds left to capture a flag!",
+			  Color);
       return 1;			// 1 = reset team's LastWarn
     }
     if (bz_getCurrentTime() - LastWarn > 10 && tctf.timeRemaining < 10 && tctf.timeRemaining > 1) {
@@ -347,14 +356,16 @@ void TCTFPlayerJoined::process(bz_EventData * eventData)
   // this should never be true if fair ctf is disabled (see definition of tctf.fairCTF):
 
   if (!tctf.fairCTF) {
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Capture The Flag disabled - teams are not evenly balanced.");
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Capture The Flag disabled - teams are not evenly balanced.");
     return;
   }
   // if timed CTF turned off, but teams now even, let everyone know it's ok to cap.
   // if fair CTF is disabled, no need to notify:
 
   if (tctf.fairCTF && !tctf.enabled && tctf.fairCTFEnabled) {
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Capture The Flag enabled - teams are evenly balanced.");
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Capture The Flag enabled - teams are evenly balanced.");
     return;
   }
   // if timed CTF turned off, get outta here:
@@ -368,7 +379,8 @@ void TCTFPlayerJoined::process(bz_EventData * eventData)
     tctf.timeElapsed = bz_getCurrentTime() - tctf.redLastTime;
     tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
     tctf.adjTime = (int) (tctf.timeRemaining / 60);
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!",
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Timed CTF now in progress - capture a flag in less than %i minute(s)!",
 			tctf.adjTime + 1);
     return;
   }
@@ -377,7 +389,8 @@ void TCTFPlayerJoined::process(bz_EventData * eventData)
     tctf.timeElapsed = bz_getCurrentTime() - tctf.greenLastTime;
     tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
     tctf.adjTime = (int) (tctf.timeRemaining / 60);
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!",
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Timed CTF now in progress - capture a flag in less than %i minute(s)!",
 			tctf.adjTime + 1);
     return;
   }
@@ -386,7 +399,8 @@ void TCTFPlayerJoined::process(bz_EventData * eventData)
     tctf.timeElapsed = bz_getCurrentTime() - tctf.blueLastTime;
     tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
     tctf.adjTime = (int) (tctf.timeRemaining / 60);
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!",
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Timed CTF now in progress - capture a flag in less than %i minute(s)!",
 			tctf.adjTime + 1);
     return;
   }
@@ -395,7 +409,8 @@ void TCTFPlayerJoined::process(bz_EventData * eventData)
     tctf.timeElapsed = bz_getCurrentTime() - tctf.purpleLastTime;
     tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
     tctf.adjTime = (int) (tctf.timeRemaining / 60);
-    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID, "Timed CTF now in progress - capture a flag in less than %i minute(s)!",
+    bz_sendTextMessagef(BZ_SERVER, JoinData->playerID,
+			"Timed CTF now in progress - capture a flag in less than %i minute(s)!",
 			tctf.adjTime + 1);
     return;
   }
@@ -419,28 +434,32 @@ void TCTFFlagCapped::process(bz_EventData * eventData)
 
   if (CapData->teamCapping == eRedTeam) {
     tctf.adjTime = (int) (tctf.timeLimit / 60 + 0.5);
-    bz_sendTextMessagef(BZ_SERVER, eRedTeam, "CTF timer is reset to %i minutes for the red team.", tctf.adjTime);
+    bz_sendTextMessagef(BZ_SERVER, eRedTeam,
+			"CTF timer is reset to %i minutes for the red team.", tctf.adjTime);
     tctf.redLastTime = bz_getCurrentTime();
     tctf.redLastWarn = bz_getCurrentTime();
     return;
   }
   if (CapData->teamCapping == eGreenTeam) {
     tctf.adjTime = (int) (tctf.timeLimit / 60 + 0.5);
-    bz_sendTextMessagef(BZ_SERVER, eGreenTeam, "CTF timer is reset to %i minutes for the green team.", tctf.adjTime);
+    bz_sendTextMessagef(BZ_SERVER, eGreenTeam,
+			"CTF timer is reset to %i minutes for the green team.", tctf.adjTime);
     tctf.greenLastTime = bz_getCurrentTime();
     tctf.greenLastWarn = bz_getCurrentTime();
     return;
   }
   if (CapData->teamCapping == eBlueTeam) {
     tctf.adjTime = (int) (tctf.timeLimit / 60 + 0.5);
-    bz_sendTextMessagef(BZ_SERVER, eBlueTeam, "CTF timer is reset to %i minutes for the blue team.", tctf.adjTime);
+    bz_sendTextMessagef(BZ_SERVER, eBlueTeam,
+			"CTF timer is reset to %i minutes for the blue team.", tctf.adjTime);
     tctf.blueLastTime = bz_getCurrentTime();
     tctf.blueLastWarn = bz_getCurrentTime();
     return;
   }
   if (CapData->teamCapping == ePurpleTeam) {
     tctf.adjTime = (int) (tctf.timeLimit / 60 + 0.5);
-    bz_sendTextMessagef(BZ_SERVER, ePurpleTeam, "CTF timer is reset to %i minutes for the purple team.", tctf.adjTime);
+    bz_sendTextMessagef(BZ_SERVER, ePurpleTeam,
+			"CTF timer is reset to %i minutes for the purple team.", tctf.adjTime);
     tctf.purpleLastTime = bz_getCurrentTime();
     tctf.purpleLastWarn = bz_getCurrentTime();
     return;
@@ -465,14 +484,16 @@ void TCTFTickEvents::process(bz_EventData * eventData)
 
   if (tctf.fairCTF && !tctf.notifiedCTFOK && !tctf.enabled && tctf.fairCTFEnabled) {
 
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Capture The Flag enabled - teams are evenly balanced.");
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+			"Capture The Flag enabled - teams are evenly balanced.");
     tctf.notifiedCTFOK = true;
     return;
   }
 
   if (!tctf.fairCTF && tctf.notifiedCTFOK && !tctf.enabled && tctf.fairCTFEnabled) {
 
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Capture The Flag disabled - teams are not evenly balanced.");
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+			"Capture The Flag disabled - teams are not evenly balanced.");
     tctf.notifiedCTFOK = false;
     return;
   }
@@ -490,7 +511,8 @@ void TCTFTickEvents::process(bz_EventData * eventData)
 
   if (!tctf.fairCTF && tctf.timerRunning && tctf.fairCTFEnabled) {
 
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Capture The Flag disabled - teams are not evenly balanced.");
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+			"Capture The Flag disabled - teams are not evenly balanced.");
     tctf.timerRunning = false;
     ResetTeamData();
     return;
@@ -502,7 +524,8 @@ void TCTFTickEvents::process(bz_EventData * eventData)
     if (OnlyOneTeamPlaying()) {
 
       if (tctf.timerRunning)
-	bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Timed CTF disabled - not enough teams.");
+	bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+			    "Timed CTF disabled - not enough teams.");
 
       tctf.timerRunning = false;
       ResetTeamData();
@@ -514,7 +537,8 @@ void TCTFTickEvents::process(bz_EventData * eventData)
   if (tctf.fairCTF && !tctf.timerRunning && !OnlyOneTeamPlaying()) {
 
     tctf.adjTime = (int) (tctf.timeLimit / 60 + 0.5);
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Timed CTF now in progress - capture a flag in less than %i minute(s)!",
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+			"Timed CTF now in progress - capture a flag in less than %i minute(s)!",
 			tctf.adjTime);
     tctf.timerRunning = true;
     ResetTeamData();
@@ -574,7 +598,8 @@ void TCTFPlayerUpdates::process(bz_EventData * eventData)
       if (strcmp(FlagHeld, "R*") == 0 || strcmp(FlagHeld, "G*") == 0 || strcmp(FlagHeld, "B*") == 0
 	  || strcmp(FlagHeld, "P*") == 0) {
 	bz_removePlayerFlag(playerID);
-	bz_sendTextMessagef(BZ_SERVER, playerID, "Capture The Flag disabled - teams are not evenly balanced.");
+	bz_sendTextMessagef(BZ_SERVER, playerID,
+			    "Capture The Flag disabled - teams are not evenly balanced.");
       }
     }
   }
@@ -591,7 +616,8 @@ bool TCTFCommands::handle(int playerID, bz_ApiString _command, bz_ApiString _mes
 
   if (fromPlayer) {
     if (!fromPlayer->admin) {
-      bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the ctfcaptime commands.");
+      bz_sendTextMessage(BZ_SERVER, playerID,
+			 "You must be admin to use the ctfcaptime commands.");
       bz_freePlayerRecord(fromPlayer);
       return true;
     }

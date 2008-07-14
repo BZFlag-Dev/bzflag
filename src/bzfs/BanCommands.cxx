@@ -762,7 +762,7 @@ bool HostbanCommand::operator() (const char* message,
 		  "1w2d1m");
       return true;
     }
-    if (specifiedDuration >= 0)
+    if (specifiedDuration >= 0) {
       if ((durationInt > 0) &&
 	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
 	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
@@ -771,6 +771,7 @@ bool HostbanCommand::operator() (const char* message,
       } else {
 	durationInt = specifiedDuration;
       }
+    }
   }
 
   // set the ban reason

@@ -107,7 +107,17 @@ dnl ***********************
 dnl *** Check arguments ***
 dnl ***********************
 
-# no arguments required yet
+# debugging and profiling
+AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
+AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+# profiling requires debugging
+if test x$enable_profiling = xyes; then
+    enable_debug=yes
+fi
+if test x$enable_debug = xyes; then
+    AC_DEFINE(DEBUG, 1, [Debugging])
+    AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
+fi
 
 
 dnl **************************
@@ -167,6 +177,142 @@ int main(){exit(0);}
 	]
 )
 
+# FIXME: these checks below are not compiler characteristics other
+# than the FLAGS they set.
+case $host_os in
+     linux*)
+	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
+	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
+	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
+	FLAGS="-Wall -W -Wundef -Wshadow"
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
+	case $host_vendor in
+	     pc)
+	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
+		 FLAGS=-mtune
+	       else
+		 FLAGS=-march
+	       fi
+	       # silly hack, should be a proper configure compiler option test
+	       if test x$host_cpu = xx86_64; then
+		 FLAGS="$FLAGS=k8"
+	       else
+		 FLAGS="$FLAGS=$host_cpu"
+	       fi
+	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+	     ppc)
+	       FLAGS="-mcpu=$host_cpu"
+	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
+	esac;;
+     cygwin)
+	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
+	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
+	FLAGS="-Wall -W -mcpu=$host_cpu"
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+     mingw32*)
+	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
+	FLAGS="-Wall -W"
+	if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
+	  FLAGS="$FLAGS -mtune=$host_cpu"
+	else
+	  FLAGS="$FLAGS -march=$host_cpu"
+	fi
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+     solaris*)
+	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
+	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
+     macos|darwin*)
+	FLAGS="-pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import"
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
+     irix)
+	FLAGS="-Wall";
+	if test x$host_cpu = xmips64; then
+	   FLAGS="FLAGS -march=mips3";
+	else
+	   FLAGS="FLAGS -march=mips2";
+	fi
+	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
+     beos*)
+	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
+	;;
+esac
+
+if test x$enable_debug = xyes ; then
+    CFLAGS="$CFLAGS -g -O0"
+    CXXFLAGS="$CXXFLAGS -g -O0"
+    case $host_os in
+	linux*|cygwin|mingw32*)
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	    fi
+	    ;;
+	macos|darwin*)
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+		fi
+	    ;;
+        beos)
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror"
+	    ;;
+    esac
+    AC_DEFINE(DEBUG, 1, [Debugging enabled])
+else
+    case $host_os in
+	linux*|cygwin|mingw32*)
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fno-exceptions"
+	    ;;
+	solaris*)
+	    CONF_CFLAGS="$CONF_CFLAGS -O"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O"
+	    ;;
+	macos|darwin*)
+	    CONF_CFLAGS="$CONF_CFLAGS -O3"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O3"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
+	    if test x$enable_profiling = xyes ; then
+		CONF_CFLAGS="$CONF_CFLAGS -pg"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	    fi
+	    ;;
+	irix)
+	    if test x$host_cpu = xmips64 ; then
+		FLAGS="-O3 -ffast-math -fomit-frame-pointer"
+		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
+		CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
+	    else
+		CONF_CFLAGS="$CONF_CFLAGS -O2"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -O2"
+	    fi
+	    ;;
+	beos)
+	    CONF_CFLAGS="$CONF_CFLAGS -O2"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
+	    ;;
+    esac
+    AC_DEFINE(NDEBUG, 1, [Debugging disabled])
+fi
+
+AC_SUBST(CONF_CPPFLAGS)
+AC_SUBST(CONF_CFLAGS)
+AC_SUBST(CONF_CXXFLAGS)
 
 dnl ***************************
 dnl *** Check for functions ***
@@ -205,6 +351,7 @@ AC_CONFIG_FILES([
 	flagStay/Makefile
 	hiddenAdmin/Makefile
 	httpTest/Makefile
+	HTTPServer/Makefile
 	keepaway/Makefile
 	killall/Makefile
 	koth/Makefile
@@ -231,6 +378,7 @@ AC_CONFIG_FILES([
 	weaponArena/Makefile
 	webstats/Makefile
 	webReport/Makefile
+	webadmin/Makefile
 	wwzones/Makefile
 ])
 

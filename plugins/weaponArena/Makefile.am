@@ -1,5 +1,8 @@
 lib_LTLIBRARIES = weaponArena.la
 
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
+
 weaponArena_la_SOURCES = weaponArena.cpp
 weaponArena_la_LDFLAGS = -module -avoid-version
 

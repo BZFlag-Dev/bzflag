@@ -34,21 +34,9 @@
 #include "OSFile.h"
 
 // local implementation headers
-#ifdef BUILD_FTGL
-#  include "FTGL/ftgl.h"
+#include "FTGL/ftgl.h"
 typedef FTTextureFont FONT;
 typedef FTBitmapFont CRAP_FONT;
-#else
-#  ifdef HAVE_FTGL_FTGL_H
-#    include "FTGL/FTGLTextureFont.h"
-#    include "FTGL/FTGLBitmapFont.h"
-#  else
-#    include "FTGLTextureFont.h"
-#    include "FTGLBitmapFont.h"
-#  endif
-typedef FTGLTextureFont FONT;
-typedef FTGLBitmapFont CRAP_FONT;
-#endif
 
 /* FIXME: this debugging crap and all associated printfs disappear
  * when fontmanager is verified to be working.  there is still a
@@ -763,11 +751,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
     return 0.0f;
   }
 
-#ifdef BUILD_FTGL
-  return theFont->Advance(stripped).Xf();
-#else
   return theFont->Advance(stripped);
-#endif
 }
 
 float FontManager::getStringHeight(int font, float size)
@@ -820,12 +804,16 @@ void FontManager::underlineCallback(const std::string &, void *)
 
 void FontManager::initContext(void*)
 {
+#if debugging
   std::cout << "initContext called\n" << fontFaces.size() << " faces loaded" << std::endl;
+#endif
 }
  
 void FontManager::freeContext(void* data)
 {
+#if debugging
   std::cout << "freeContext called\n" << "clearing " << fontFaces.size() << " fonts" << std::endl;
+#endif
   FontManager* fm( static_cast<FontManager*>(data) );
   fm->clear();
 }

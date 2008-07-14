@@ -1,0 +1,26 @@
+[!header.tmpl]
+  <h2>main</h2>
+  <form action="" method="post">
+    <ul>
+[*START Players]
+      <li><input type="checkbox" id="player_[$PlayerID]"
+                 name="player" value="[$PlayerID]" />
+        <label for="player_[$PlayerID]">[$Callsign]</label></li>
+[*END Players]
+    </ul>
+    <p>
+      <label for="kick_reason">reason</label>
+      <input type="text" name="reason" id="kickban_reason" />
+      <br/>
+      <input type="checkbox" name="notify" id="notify_kickee" value="yes" />
+      <label for="notify_kickee">notify</label>
+      <input type="submit" value="kick" name="kick" />
+      <br/>
+      <input type="text" maxlength="4" id="ban_duration" name="duration" />
+      <label for="ban_duration">min</label>
+      <input type="submit" value="idban" name="idban" />
+      <input type="submit" value="ipban" name="ipban" />
+    </p>
+  </form>
+</body>
+</html>

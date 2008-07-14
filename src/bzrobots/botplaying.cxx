@@ -459,9 +459,8 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   // sanity check
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
-    std::cerr <<
-      "WARNING: invalid player identification when adding player with id "
-	   << i << std::endl;
+    std::cerr << "WARNING: invalid player identification when adding player with id "
+	      << i << std::endl;
     return NULL;
   }
 
@@ -506,15 +505,15 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
       message += "an observer";
     } else {
       switch (PlayerType (type)) {
-	case TankPlayer:
-	  message += "a tank";
-	  break;
-	case ComputerPlayer:
-	  message += "a robot tank";
-	  break;
-	default:
-	  message += "an unknown type";
-	  break;
+      case TankPlayer:
+	message += "a tank";
+	break;
+      case ComputerPlayer:
+	message += "a robot tank";
+	break;
+      default:
+	message += "an unknown type";
+	break;
       }
     }
     if (!player[i]) {
@@ -922,8 +921,9 @@ static void handleTimeUpdate ( void* msg, uint16_t /*len*/ )
       if (robots[i])
 	robots[i]->explodeTank();
 #endif
-  } else if (timeLeft < 0)
+  } else if (timeLeft < 0) {
     hud->setAlert(0, "Game Paused", 10.0f, true);
+  }
 }
 
 static void handleScoreOver ( void *msg, uint16_t /*len*/ )
@@ -944,10 +944,12 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
       msg2 += " (";
       msg2 += Team::getName(_player->getTeam());
       msg2 += ")";
-    } else
+    } else {
       msg2 = "[unknown player]";
-  } else
+    }
+  } else {
     msg2 = Team::getName(TeamColor(team));		// a team won
+  }
 
   msg2 += " won the game";
 
@@ -1240,8 +1242,7 @@ static void handleCaptureFlag ( void *msg, uint16_t /*len*/, bool &checkScores )
 
 static void handleTangUpdate ( uint16_t len, void* msg )
 {
-  if ( len >= 5)
-  {
+  if ( len >= 5) {
     unsigned int objectID = 0;
     msg = nboUnpackUInt(msg,objectID);
     unsigned char tang = 0;
@@ -1258,8 +1259,7 @@ static void handleTangReset ( void )
 
 static void handleAllowSpawn ( uint16_t len, void* msg )
 {
-  if ( len >= 1)
-  {
+  if ( len >= 1) {
     unsigned char allow = 0;
     msg = nboUnpackUByte(msg,allow);
 
@@ -1340,417 +1340,412 @@ static void		handleServerMessage(bool human, uint16_t code,
   std::vector<std::string> args;
   bool checkScores = false;
 
-  switch (code)
-    {
-      case MsgNearFlag:
-	//handleNearFlag(msg,len);
-	break;
-
-      case MsgSetTeam:
-	handleSetTeam(msg,len);
-	break;
-
-      case MsgFetchResources:
-	//handleResourceFetch(msg);
-	break;
-
-      case MsgCustomSound:
-	//handleCustomSound(msg);
-	break;
-
-      case MsgUDPLinkEstablished:
-	serverLink->enableOutboundUDP();      // server got our initial UDP packet
-	break;
-
-      case MsgUDPLinkRequest:
-	serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
-	break;
-
-      case MsgSuperKill:
-	handleSuperKill(msg);
-	break;
-
-      case MsgAccept:
-	break;
-
-      case MsgReject:
-	handleRejectMessage(msg);
-	break;
+  switch (code) {
+  case MsgNearFlag:
+    //handleNearFlag(msg,len);
+    break;
+
+  case MsgSetTeam:
+    handleSetTeam(msg,len);
+    break;
+
+  case MsgFetchResources:
+    //handleResourceFetch(msg);
+    break;
+
+  case MsgCustomSound:
+    //handleCustomSound(msg);
+    break;
+
+  case MsgUDPLinkEstablished:
+    serverLink->enableOutboundUDP();      // server got our initial UDP packet
+    break;
+
+  case MsgUDPLinkRequest:
+    serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
+    break;
+
+  case MsgSuperKill:
+    handleSuperKill(msg);
+    break;
+
+  case MsgAccept:
+    break;
+
+  case MsgReject:
+    handleRejectMessage(msg);
+    break;
 
-      case MsgNegotiateFlags:
-	handleFlagNegotiation(msg,len);
-	break;
+  case MsgNegotiateFlags:
+    handleFlagNegotiation(msg,len);
+    break;
 
-      case MsgGameSettings:
-	handleGameSettings(msg);
-	break;
+  case MsgGameSettings:
+    handleGameSettings(msg);
+    break;
 
-      case MsgCacheURL:
-	handleCacheURL(msg,len);
-	break;
+  case MsgCacheURL:
+    handleCacheURL(msg,len);
+    break;
 
-      case MsgWantWHash:
-	handleWantHash(msg,len);
-	break;
+  case MsgWantWHash:
+    handleWantHash(msg,len);
+    break;
 
-      case MsgGetWorld:
-	handleGetWorld(msg,len);
-	break;
+  case MsgGetWorld:
+    handleGetWorld(msg,len);
+    break;
 
-      case MsgGameTime:
-	GameTime::unpack(msg);
-	GameTime::update();
-	break;
-
-      case MsgTimeUpdate:
-	handleTimeUpdate(msg,len);
-	break;
-
-      case MsgScoreOver:
-	handleScoreOver(msg,len);
-	break;
-
-      case MsgAddPlayer:
-	handleAddPlayer(msg,len,checkScores);
-	break;
-
-      case MsgRemovePlayer:
-	handleRemovePlayer(msg,len,checkScores);
-	break;
-
-      case MsgFlagUpdate:
-	handleFlagUpdate(msg,len);
-	break;
-
-      case MsgTeamUpdate:
-	handleTeamUpdate(msg,len,checkScores);
-	break;
-
-      case MsgAlive:
-	handleAliveMessage(msg,len);
-	break;;
-
-      case MsgAutoPilot:
-	handleAutoPilot(msg,len);
-	break;;
-
-      case MsgAllow:
-	handleAllow(msg,len);
-	break;
-
-      case MsgKilled:
-	handleKilledMessage(msg,len,human,checkScores);
-	break;;
-
-      case MsgGrabFlag:
-	handleGrabFlag(msg,len);
-	break;
-
-      case MsgTangibilityUpdate:
-	handleTangUpdate(len,msg);
-	break;
-
-      case MsgTangibilityReset:
-	handleTangReset();
-	break;
-
-      case MsgAllowSpawn:
-	handleAllowSpawn(len,msg);
-	break;
-
-      case MsgDropFlag:
-	handleDropFlag(msg,len);
-	break;
-
-      case MsgCaptureFlag:
-	handleCaptureFlag(msg,len,checkScores);
-	break;
-
-      case MsgNewRabbit:
-	handleNewRabbit(msg,len);
-	break;
-
-      case MsgShotBegin: {
-	FiringInfo firingInfo;
-
-	PlayerId		shooterid;
-	uint16_t		id;
-
-	msg = nboUnpackUByte(msg, shooterid);
-	msg = nboUnpackUShort(msg, id);
-
-	firingInfo.shot.player = shooterid;
-	firingInfo.shot.id     = id;
-
-	if (shooterid >= playerSize)
-	  break;
-
-	RemotePlayer* shooter = player[shooterid];
-
-	if (shooterid != ServerPlayer) {
-	  if (shooter && player[shooterid]->getId() == shooterid) {
-	    shooter->addShot(firingInfo);
-	  }
-	}
-	break;
-      }
-
-      case MsgShotEnd: {
-	PlayerId id;
-	int16_t shotId;
-	uint16_t reason;
-	msg = nboUnpackUByte(msg, id);
-	msg = nboUnpackShort(msg, shotId);
-	msg = nboUnpackUShort(msg, reason);
-	BaseLocalPlayer* localPlayer = getLocalPlayer(id);
-
-	if (localPlayer)
-	  localPlayer->endShot(int(shotId), false, reason == 0);
-	else {
-	  Player *pl = lookupPlayer(id);
-	  if (pl)
-	    pl->endShot(int(shotId), false, reason == 0);
-	}
-	break;
-      }
-
-      case MsgHandicap: {
-	PlayerId id;
-	uint8_t numHandicaps;
-	int16_t handicap;
-	msg = nboUnpackUByte(msg, numHandicaps);
-	for (uint8_t s = 0; s < numHandicaps; s++) {
-	  msg = nboUnpackUByte(msg, id);
-	  msg = nboUnpackShort(msg, handicap);
-	  Player *sPlayer = NULL;
-	  int i = lookupPlayerIndex(id);
-	  if (i >= 0)
-	    sPlayer = getPlayerByIndex(i);
-	  else
-	    logDebugMessage(1, "Received handicap update for unknown player!\n");
-	  if (sPlayer) {
-	    // a relative score of -50 points will provide maximum handicap
-	    float normalizedHandicap = float(handicap)
-	      / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
-
-	    /* limit how much of a handicap is afforded, and only provide
-	     * handicap advantages instead of disadvantages.
-	     */
-	    if (normalizedHandicap > 1.0f)
-	      // advantage
-	      normalizedHandicap  = 1.0f;
-	    else if (normalizedHandicap < 0.0f)
-	      // disadvantage
-	      normalizedHandicap  = 0.0f;
-
-	    sPlayer->setHandicap(normalizedHandicap);
-	  }
-	}
-      }
-      case MsgScore: {
-	uint8_t numScores;
-	PlayerId id;
-	uint16_t wins, losses, tks;
-	msg = nboUnpackUByte(msg, numScores);
-
-	for (uint8_t s = 0; s < numScores; s++) {
-	  msg = nboUnpackUByte(msg, id);
-	  msg = nboUnpackUShort(msg, wins);
-	  msg = nboUnpackUShort(msg, losses);
-	  msg = nboUnpackUShort(msg, tks);
-
-	  Player *sPlayer = NULL;
-	  int i = lookupPlayerIndex(id);
-	  if (i >= 0)
-	    sPlayer = getPlayerByIndex(i);
-	  else
-	    logDebugMessage(1, "Recieved score update for unknown player!\n");
-	  if (sPlayer)
-	    sPlayer->changeScore(wins, losses, tks);
-	}
-	break;
-      }
-
-      case MsgSetVar: {
-	msg = handleMsgSetVars(msg);
-	break;
-      }
-
-      case MsgTeleport: {
-	PlayerId id;
-	uint16_t from, to;
-	msg = nboUnpackUByte(msg, id);
-	msg = nboUnpackUShort(msg, from);
-	msg = nboUnpackUShort(msg, to);
-	Player* tank = lookupPlayer(id);
-	if (tank) {
-	  tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-	}
-	break;
-      }
-
-      case MsgTransferFlag:
-	{
-	  PlayerId fromId, toId;
-	  unsigned short flagIndex;
-	  msg = nboUnpackUByte(msg, fromId);
-	  msg = nboUnpackUByte(msg, toId);
-	  msg = nboUnpackUShort(msg, flagIndex);
-	  msg = world->getFlag(int(flagIndex)).unpack(msg);
-	  Player* fromTank = lookupPlayer(fromId);
-	  Player* toTank = lookupPlayer(toId);
-	  handleFlagTransferred( fromTank, toTank, flagIndex);
-	  break;
-	}
-
-
-      case MsgMessage:
-	break;
-
-      case MsgReplayReset: {
-	int i;
-	unsigned char lastPlayer;
-	msg = nboUnpackUByte(msg, lastPlayer);
-
-	// remove players up to 'lastPlayer'
-	// any PlayerId above lastPlayer is a replay observers
-	for (i=0 ; i<lastPlayer ; i++) {
-	  if (removePlayer (i)) {
-	    checkScores = true;
-	  }
-	}
-
-	// remove all of the flags
-	for (i=0 ; i<numFlags; i++) {
-	  Flag& flag = world->getFlag(i);
-	  flag.owner = (PlayerId) -1;
-	  flag.status = FlagNoExist;
-	  world->initFlag (i);
-	}
-	break;
-      }
-
-      case MsgAdminInfo: {
-	uint8_t numIPs;
-	msg = nboUnpackUByte(msg, numIPs);
-
-	/* if we're getting this, we have playerlist perm */
-	observerTank->setPlayerList(true);
-
-	// replacement for the normal MsgAddPlayer message
-	if (numIPs == 1) {
-	  uint8_t ipsize;
-	  uint8_t index;
-	  Address ip;
-	  void* tmpMsg = msg; // leave 'msg' pointing at the first entry
-
-	  tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
-	  tmpMsg = nboUnpackUByte(tmpMsg, index);
-	  tmpMsg = ip.unpack(tmpMsg);
-	  int playerIndex = lookupPlayerIndex(index);
-	  Player* tank = getPlayerByIndex(playerIndex);
-	  if (!tank) {
-	    break;
-	  }
-
-	  std::string name(tank->getCallSign());
-	  std::string message("joining as ");
-	  if (tank->getTeam() == ObserverTeam) {
-	    message += "an observer";
-	  } else {
-	    switch (tank->getPlayerType()) {
-	      case TankPlayer:
-		message += "a tank";
-		break;
-	      case ComputerPlayer:
-		message += "a robot tank";
-		break;
-	      default:
-		message += "an unknown type";
-		break;
-	    }
-	  }
-	  message += " from " + ip.getDotNotation();
-	  tank->setIpAddress(ip);
-	  addMessage(tank, message);
-	}
-
-	// print fancy version to be easily found
-	if ((numIPs != 1) || (BZDB.evalInt("showips") > 0)) {
-	  uint8_t playerId;
-	  uint8_t addrlen;
-	  Address addr;
-
-	  for (int i = 0; i < numIPs; i++) {
-	    msg = nboUnpackUByte(msg, addrlen);
-	    msg = nboUnpackUByte(msg, playerId);
-	    msg = addr.unpack(msg);
-
-	    int playerIndex = lookupPlayerIndex(playerId);
-	    Player *_player = getPlayerByIndex(playerIndex);
-	    if (!_player) continue;
-	    printIpInfo(_player, addr, "(join)");
-	    _player->setIpAddress(addr); // save for the signoff message
-	  } // end for loop
-	}
-	break;
-      }
-
-      case MsgPlayerInfo: {
-	uint8_t numPlayers;
-	int i;
-	msg = nboUnpackUByte(msg, numPlayers);
-	for (i = 0; i < numPlayers; ++i) {
-	  PlayerId id;
-	  msg = nboUnpackUByte(msg, id);
-	  Player *p = lookupPlayer(id);
-	  uint8_t info;
-	  // parse player info bitfield
-	  msg = nboUnpackUByte(msg, info);
-	  if (!p)
-	    continue;
-	  p->setAdmin((info & IsAdmin) != 0);
-	  p->setRegistered((info & IsRegistered) != 0);
-	  p->setVerified((info & IsVerified) != 0);
-	}
-	break;
-      }
-
-      case MsgNewPlayer:
-	uint8_t id;
-	msg = nboUnpackUByte(msg, id);
-#ifdef ROBOT
-	int i;
-	for (i = 0; i < MAX_ROBOTS; i++)
-	  if (!robots[i])
-	    break;
-	if (i >= MAX_ROBOTS) {
-	  logDebugMessage(1, "Too much bots requested\n");
-	  break;
-	}
-	char callsign[CallSignLen];
-	snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
-        robots[i] = new RCRobotPlayer(id, callsign, serverLink);
-        BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
-	robots[i]->setTeam(startupInfo.team);
-	serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-			      robots[i]->getCallSign(), "");
-	if (!numRobots) {
-	  makeObstacleList();
-	  RobotPlayer::setObstacleList(&obstacleList);
-	}
-	numRobots++;
-#endif
-	break;
-
-	// inter-player relayed message
-      case MsgPlayerUpdate:
-      case MsgPlayerUpdateSmall:
-      case MsgGMUpdate:
-      case MsgLagPing:
-	handlePlayerMessage(code, 0, msg);
-	break;
+  case MsgGameTime:
+    GameTime::unpack(msg);
+    GameTime::update();
+    break;
+
+  case MsgTimeUpdate:
+    handleTimeUpdate(msg,len);
+    break;
+
+  case MsgScoreOver:
+    handleScoreOver(msg,len);
+    break;
+
+  case MsgAddPlayer:
+    handleAddPlayer(msg,len,checkScores);
+    break;
+
+  case MsgRemovePlayer:
+    handleRemovePlayer(msg,len,checkScores);
+    break;
+
+  case MsgFlagUpdate:
+    handleFlagUpdate(msg,len);
+    break;
+
+  case MsgTeamUpdate:
+    handleTeamUpdate(msg,len,checkScores);
+    break;
+
+  case MsgAlive:
+    handleAliveMessage(msg,len);
+    break;
+
+  case MsgAutoPilot:
+    handleAutoPilot(msg,len);
+    break;
+
+  case MsgAllow:
+    handleAllow(msg,len);
+    break;
+
+  case MsgKilled:
+    handleKilledMessage(msg,len,human,checkScores);
+    break;
+
+  case MsgGrabFlag:
+    handleGrabFlag(msg,len);
+    break;
+
+  case MsgTangibilityUpdate:
+    handleTangUpdate(len,msg);
+    break;
+
+  case MsgTangibilityReset:
+    handleTangReset();
+    break;
+
+  case MsgAllowSpawn:
+    handleAllowSpawn(len,msg);
+    break;
+
+  case MsgDropFlag:
+    handleDropFlag(msg,len);
+    break;
+
+  case MsgCaptureFlag:
+    handleCaptureFlag(msg,len,checkScores);
+    break;
+
+  case MsgNewRabbit:
+    handleNewRabbit(msg,len);
+    break;
+
+  case MsgShotBegin: {
+    FiringInfo firingInfo;
+
+    PlayerId		shooterid;
+    uint16_t		id;
+
+    msg = nboUnpackUByte(msg, shooterid);
+    msg = nboUnpackUShort(msg, id);
+
+    firingInfo.shot.player = shooterid;
+    firingInfo.shot.id     = id;
+
+    if (shooterid >= playerSize)
+      break;
+
+    RemotePlayer* shooter = player[shooterid];
+
+    if (shooterid != ServerPlayer) {
+      if (shooter && player[shooterid]->getId() == shooterid)
+	shooter->addShot(firingInfo);
     }
+    break;
+  }
+
+  case MsgShotEnd: {
+    PlayerId id;
+    int16_t shotId;
+    uint16_t reason;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackShort(msg, shotId);
+    msg = nboUnpackUShort(msg, reason);
+    BaseLocalPlayer* localPlayer = getLocalPlayer(id);
+
+    if (localPlayer) {
+      localPlayer->endShot(int(shotId), false, reason == 0);
+    } else {
+      Player *pl = lookupPlayer(id);
+      if (pl)
+	pl->endShot(int(shotId), false, reason == 0);
+    }
+    break;
+  }
+
+  case MsgHandicap: {
+    PlayerId id;
+    uint8_t numHandicaps;
+    int16_t handicap;
+    msg = nboUnpackUByte(msg, numHandicaps);
+    for (uint8_t s = 0; s < numHandicaps; s++) {
+      msg = nboUnpackUByte(msg, id);
+      msg = nboUnpackShort(msg, handicap);
+      Player *sPlayer = NULL;
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	sPlayer = getPlayerByIndex(i);
+      else
+	logDebugMessage(1, "Received handicap update for unknown player!\n");
+      if (sPlayer) {
+	// a relative score of -50 points will provide maximum handicap
+	float normalizedHandicap = float(handicap)
+	  / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+
+	/* limit how much of a handicap is afforded, and only provide
+	 * handicap advantages instead of disadvantages.
+	 */
+	if (normalizedHandicap > 1.0f)
+	  // advantage
+	  normalizedHandicap  = 1.0f;
+	else if (normalizedHandicap < 0.0f)
+	  // disadvantage
+	  normalizedHandicap  = 0.0f;
+
+	sPlayer->setHandicap(normalizedHandicap);
+      }
+    }
+  }
+  case MsgScore: {
+    uint8_t numScores;
+    PlayerId id;
+    uint16_t wins, losses, tks;
+    msg = nboUnpackUByte(msg, numScores);
+
+    for (uint8_t s = 0; s < numScores; s++) {
+      msg = nboUnpackUByte(msg, id);
+      msg = nboUnpackUShort(msg, wins);
+      msg = nboUnpackUShort(msg, losses);
+      msg = nboUnpackUShort(msg, tks);
+
+      Player *sPlayer = NULL;
+      int i = lookupPlayerIndex(id);
+      if (i >= 0)
+	sPlayer = getPlayerByIndex(i);
+      else
+	logDebugMessage(1, "Recieved score update for unknown player!\n");
+      if (sPlayer)
+	sPlayer->changeScore(wins, losses, tks);
+    }
+    break;
+  }
+
+  case MsgSetVar: {
+    msg = handleMsgSetVars(msg);
+    break;
+  }
+
+  case MsgTeleport: {
+    PlayerId id;
+    uint16_t from, to;
+    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, from);
+    msg = nboUnpackUShort(msg, to);
+    Player* tank = lookupPlayer(id);
+    if (tank) {
+      tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
+    }
+    break;
+  }
+
+  case MsgTransferFlag: {
+    PlayerId fromId, toId;
+    unsigned short flagIndex;
+    msg = nboUnpackUByte(msg, fromId);
+    msg = nboUnpackUByte(msg, toId);
+    msg = nboUnpackUShort(msg, flagIndex);
+    msg = world->getFlag(int(flagIndex)).unpack(msg);
+    Player* fromTank = lookupPlayer(fromId);
+    Player* toTank = lookupPlayer(toId);
+    handleFlagTransferred( fromTank, toTank, flagIndex);
+    break;
+  }
+
+  case MsgMessage:
+    break;
+
+  case MsgReplayReset: {
+    int i;
+    unsigned char lastPlayer;
+    msg = nboUnpackUByte(msg, lastPlayer);
+
+    // remove players up to 'lastPlayer'
+    // any PlayerId above lastPlayer is a replay observers
+    for (i=0 ; i<lastPlayer ; i++) {
+      if (removePlayer (i)) {
+	checkScores = true;
+      }
+    }
+
+    // remove all of the flags
+    for (i=0 ; i<numFlags; i++) {
+      Flag& flag = world->getFlag(i);
+      flag.owner = (PlayerId) -1;
+      flag.status = FlagNoExist;
+      world->initFlag (i);
+    }
+    break;
+  }
+
+  case MsgAdminInfo: {
+    uint8_t numIPs;
+    msg = nboUnpackUByte(msg, numIPs);
+
+    /* if we're getting this, we have playerlist perm */
+    observerTank->setPlayerList(true);
+
+    // replacement for the normal MsgAddPlayer message
+    if (numIPs == 1) {
+      uint8_t ipsize;
+      uint8_t index;
+      Address ip;
+      void* tmpMsg = msg; // leave 'msg' pointing at the first entry
+
+      tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
+      tmpMsg = nboUnpackUByte(tmpMsg, index);
+      tmpMsg = ip.unpack(tmpMsg);
+      int playerIndex = lookupPlayerIndex(index);
+      Player* tank = getPlayerByIndex(playerIndex);
+      if (!tank)
+	break;
+
+      std::string name(tank->getCallSign());
+      std::string message("joining as ");
+      if (tank->getTeam() == ObserverTeam) {
+	message += "an observer";
+      } else {
+	switch (tank->getPlayerType()) {
+	case TankPlayer:
+	  message += "a tank";
+	  break;
+	case ComputerPlayer:
+	  message += "a robot tank";
+	  break;
+	default:
+	  message += "an unknown type";
+	  break;
+	}
+      }
+      message += " from " + ip.getDotNotation();
+      tank->setIpAddress(ip);
+      addMessage(tank, message);
+    }
+
+    // print fancy version to be easily found
+    if ((numIPs != 1) || (BZDB.evalInt("showips") > 0)) {
+      uint8_t playerId;
+      uint8_t addrlen;
+      Address addr;
+
+      for (int i = 0; i < numIPs; i++) {
+	msg = nboUnpackUByte(msg, addrlen);
+	msg = nboUnpackUByte(msg, playerId);
+	msg = addr.unpack(msg);
+
+	int playerIndex = lookupPlayerIndex(playerId);
+	Player *_player = getPlayerByIndex(playerIndex);
+	if (!_player) continue;
+	printIpInfo(_player, addr, "(join)");
+	_player->setIpAddress(addr); // save for the signoff message
+      } // end for loop
+    }
+    break;
+  }
+
+  case MsgPlayerInfo: {
+    uint8_t numPlayers;
+    int i;
+    msg = nboUnpackUByte(msg, numPlayers);
+    for (i = 0; i < numPlayers; ++i) {
+      PlayerId id;
+      msg = nboUnpackUByte(msg, id);
+      Player *p = lookupPlayer(id);
+      uint8_t info;
+      // parse player info bitfield
+      msg = nboUnpackUByte(msg, info);
+      if (!p)
+	continue;
+      p->setAdmin((info & IsAdmin) != 0);
+      p->setRegistered((info & IsRegistered) != 0);
+      p->setVerified((info & IsVerified) != 0);
+    }
+    break;
+  }
+
+  case MsgNewPlayer:
+    uint8_t id;
+    msg = nboUnpackUByte(msg, id);
+#ifdef ROBOT
+    int i;
+    for (i = 0; i < MAX_ROBOTS; i++)
+      if (!robots[i])
+	break;
+    if (i >= MAX_ROBOTS) {
+      logDebugMessage(1, "Too many bots requested\n");
+      break;
+    }
+    char callsign[CallSignLen];
+    snprintf(callsign, CallSignLen, "%s%2.2d", startupInfo.callsign, i);
+    robots[i] = new RCRobotPlayer(id, callsign, serverLink);
+    BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
+    robots[i]->setTeam(startupInfo.team);
+    serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+			  robots[i]->getCallSign(), "");
+    if (!numRobots) {
+      makeObstacleList();
+      RobotPlayer::setObstacleList(&obstacleList);
+    }
+    numRobots++;
+#endif
+    break;
+
+    // inter-player relayed message
+  case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall:
+  case MsgGMUpdate:
+  case MsgLagPing:
+    handlePlayerMessage(code, 0, msg);
+    break;
+  }
 
   if (checkScores) updateHighScores();
 }
@@ -1759,58 +1754,57 @@ static void		handleServerMessage(bool human, uint16_t code,
 // player message handling
 //
 
-static void		handlePlayerMessage(uint16_t code, uint16_t,
-					    void* msg)
+static void handlePlayerMessage(uint16_t code, uint16_t, void* msg)
 {
   switch (code) {
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      float timestamp; // could be used to enhance deadreckoning, but isn't for now
-      PlayerId id;
-      int32_t order;
-      void *buf = msg;
-      buf = nboUnpackUByte(buf, id);
-      buf = nboUnpackFloat(buf, timestamp);
-      Player* tank = lookupPlayer(id);
-      if (!tank || tank == observerTank) break;
-      nboUnpackInt(buf, order); // peek! don't update the msg pointer
-      if (order <= tank->getOrder()) break;
-      short oldStatus = tank->getStatus();
-      tank->unpack(msg, code);
-      short newStatus = tank->getStatus();
-      if ((oldStatus & short(PlayerState::Paused)) !=
-	  (newStatus & short(PlayerState::Paused)))
-	addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
-		   "Paused" : "Resumed");
-      if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
-	  (newStatus & short(PlayerState::Exploding)) != 0) {
-	// player has started exploding and we haven't gotten killed
-	// message yet -- set explosion now, play sound later (when we
-	// get killed message).  status is already !Alive so make player
-	// alive again, then call setExplode to kill him.
-	tank->setStatus(newStatus | short(PlayerState::Alive));
-	tank->setExplode(TimeKeeper::getTick());
-	// ROBOT -- play explosion now
-      }
-      break;
+  case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall: {
+    float timestamp; // could be used to enhance deadreckoning, but isn't for now
+    PlayerId id;
+    int32_t order;
+    void *buf = msg;
+    buf = nboUnpackUByte(buf, id);
+    buf = nboUnpackFloat(buf, timestamp);
+    Player* tank = lookupPlayer(id);
+    if (!tank || tank == observerTank) break;
+    nboUnpackInt(buf, order); // peek! don't update the msg pointer
+    if (order <= tank->getOrder()) break;
+    short oldStatus = tank->getStatus();
+    tank->unpack(msg, code);
+    short newStatus = tank->getStatus();
+    if ((oldStatus & short(PlayerState::Paused)) !=
+	(newStatus & short(PlayerState::Paused)))
+      addMessage(tank, (tank->getStatus() & PlayerState::Paused) ?
+		 "Paused" : "Resumed");
+    if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
+	(newStatus & short(PlayerState::Exploding)) != 0) {
+      // player has started exploding and we haven't gotten killed
+      // message yet -- set explosion now, play sound later (when we
+      // get killed message).  status is already !Alive so make player
+      // alive again, then call setExplode to kill him.
+      tank->setStatus(newStatus | short(PlayerState::Alive));
+      tank->setExplode(TimeKeeper::getTick());
+      // ROBOT -- play explosion now
     }
+    break;
+  }
 
-    case MsgGMUpdate: {
-      ShotUpdate shot;
-      msg = shot.unpack(msg);
-      Player* tank = lookupPlayer(shot.player);
-      if (!tank || tank == observerTank) break;
-      RemotePlayer* remoteTank = (RemotePlayer*)tank;
-      RemoteShotPath* shotPath =
-	(RemoteShotPath*)remoteTank->getShot(shot.id);
-      if (shotPath) shotPath->update(shot, code, msg);
-      break;
-    }
+  case MsgGMUpdate: {
+    ShotUpdate shot;
+    msg = shot.unpack(msg);
+    Player* tank = lookupPlayer(shot.player);
+    if (!tank || tank == observerTank) break;
+    RemotePlayer* remoteTank = (RemotePlayer*)tank;
+    RemoteShotPath* shotPath =
+      (RemoteShotPath*)remoteTank->getShot(shot.id);
+    if (shotPath) shotPath->update(shot, code, msg);
+    break;
+  }
 
-      // just echo lag ping message
-    case MsgLagPing:
-      serverLink->sendLagPing((char *)msg);
-      break;
+    // just echo lag ping message
+  case MsgLagPing:
+    serverLink->sendLagPing((char *)msg);
+    break;
   }
 }
 
@@ -1818,7 +1812,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 // message handling
 //
 
-static void		doMessages()
+static void doMessages()
 {
   char msg[MaxPacketLen];
   uint16_t code, len;
@@ -1877,7 +1871,7 @@ void handleFlagDropped(Player* tank)
   tank->setFlag(Flags::Null);
 }
 
-static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
+static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex)
 {
   Flag f = world->getFlag(flagIndex);
 
@@ -1891,10 +1885,8 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
   addMessage(toTank, message);
 }
 
-static bool		gotBlowedUp(BaseLocalPlayer* tank,
-				    BlowedUpReason reason,
-				    PlayerId killer,
-				    const ShotPath* hit, int phydrv)
+static bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId killer,
+			const ShotPath* hit, int phydrv)
 {
   if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
@@ -1949,9 +1941,8 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
   const int maxShots = tank->getMaxShots();
   for (int i = 0; i < maxShots; i++) {
     const ShotPath* sp = tank->getShot(i);
-    if ((sp != NULL) && (sp->getFlag() == ft)) {
+    if ((sp != NULL) && (sp->getFlag() == ft))
       return true;
-    }
   }
   return false;
 }
@@ -1961,7 +1952,7 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
 // some robot stuff
 //
 
-static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
+static void addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
@@ -2018,7 +2009,7 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
   }
 }
 
-static void		makeObstacleList()
+static void makeObstacleList()
 {
   const float tankRadius = BZDBCache::tankRadius;
   int i;
@@ -2072,24 +2063,25 @@ static void		makeObstacleList()
   }
 }
 
-static void		setRobotTarget(RobotPlayer* robot)
+static void setRobotTarget(RobotPlayer* robot)
 {
   Player* bestTarget = NULL;
   float bestPriority = 0.0f;
   for (int j = 0; j < curMaxPlayers; j++)
-    if (player[j] && player[j]->getId() != robot->getId() &&
+    if (player[j] &&
+	player[j]->getId() != robot->getId() &&
 	player[j]->isAlive() &&
-	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
-	 || player[j]->getTeam() != robot->getTeam())) {
+	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit()) ||
+	 player[j]->getTeam() != robot->getTeam())) {
 
       if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
-	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
+	  ((robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+	   (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
+	   (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
+	   (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam))) {
 	bestTarget = player[j];
 	break;
       }
@@ -2103,7 +2095,7 @@ static void		setRobotTarget(RobotPlayer* robot)
   robot->setTarget(bestTarget);
 }
 
-static void		updateRobots(float dt)
+static void updateRobots(float dt)
 {
   static float newTargetTimeout = 1.0f;
   static float clock = 0.0f;
@@ -2143,7 +2135,7 @@ static void		updateRobots(float dt)
     if (robots[i]) {
       robots[i]->update();
       if (robots[i]->hasHitWall())
-        rcLink->pushEvent(new HitWallEvent(0.0f)); // TODO: Fix 0.0f to be actual bearing (or heading?)
+	rcLink->pushEvent(new HitWallEvent(0.0f)); // TODO: Fix 0.0f to be actual bearing (or heading?)
     }
 }
 
@@ -2171,18 +2163,16 @@ static void		checkEnvironment(RobotPlayer* tank)
   static int upwards = 1;
   for (i = 0; i < curMaxPlayers; i ++) {
     int tankid;
-    if (upwards) {
+    if (upwards)
       tankid = i;
-    } else {
+    else
       tankid = curMaxPlayers - 1 - i;
-    }
 
     Player *othertank = lookupPlayer(tankid);
 
     if (othertank && othertank->getTeam() != ObserverTeam &&
-	tankid != tank->getId()) {
+	tankid != tank->getId())
       tank->checkCollision(othertank);
-    }
   }
   // swap direction for next time:
   upwards = upwards ? 0 : 1;
@@ -2201,32 +2191,28 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-      if (tank->getFlag() != Flags::Null) {
+      if (tank->getFlag() != Flags::Null)
 	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
-      }
+
       stopShot = true;
-    }
-    else {
+    } else {
       stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {
       Player* hitter = lookupPlayer(hit->getPlayer());
-      if (hitter) hitter->endShot(hit->getShotId());
+      if (hitter)
+	hitter->endShot(hit->getShotId());
     }
-  }
-  // if not dead yet, see if i'm sitting on death
-  else if (tank->getDeathPhysicsDriver() >= 0) {
+  } else if (tank->getDeathPhysicsDriver() >= 0) {
+    // if not dead yet, see if i'm sitting on death
     gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,
 		tank->getDeathPhysicsDriver());
-  }
-  // if not dead yet, see if the robot dropped below the death level
-  else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+  } else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+    // if not dead yet, see if the robot dropped below the death level
     gotBlowedUp(tank, WaterDeath, ServerPlayer);
-  }
-
-  // if not dead yet, see if i got run over by the steamroller
-  else {
+  } else {
+    // if not dead yet, see if i got run over by the steamroller
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
@@ -2618,7 +2604,7 @@ static void		sendConstList()
 }
 */
 
-static void		doBotRequests()
+static void doBotRequests()
 {
   RCRequest* req;
 
@@ -2634,7 +2620,7 @@ static void		doBotRequests()
   }
 }
 
-static void		sendRobotUpdates()
+static void sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
     if (robots[i] && robots[i]->isDeadReckoningWrong()) {
@@ -2642,7 +2628,7 @@ static void		sendRobotUpdates()
     }
 }
 
-static void		addRobots()
+static void addRobots()
 {
   int  j;
   for (j = 0; j < MAX_ROBOTS; j++)
@@ -2654,7 +2640,7 @@ static void enteringServer(void *buf)
 #if defined(ROBOT)
   int i;
   for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer();
+    serverLink->sendNewPlayer(robots[i]->getId());
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
@@ -2885,7 +2871,7 @@ static void resetServerVar(const std::string& name, void*)
   }
 }
 
-void		leaveGame()
+void leaveGame()
 {
   entered = false;
   joiningGame = false;
@@ -2979,49 +2965,49 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-      case ServerLink::BadVersion: {
-	static char versionError[] = "Incompatible server version XXXXXXXX";
-	strncpy(versionError + strlen(versionError) - 8,
-		serverLink->getVersion(), 8);
-	printError(versionError);
-	break;
-      }
+    case ServerLink::BadVersion: {
+      static char versionError[] = "Incompatible server version XXXXXXXX";
+      strncpy(versionError + strlen(versionError) - 8,
+	      serverLink->getVersion(), 8);
+      printError(versionError);
+      break;
+    }
 
-	// you got banned
-      case ServerLink::Refused:{
-	const std::string& rejmsg = serverLink->getRejectionMessage();
+      // you got banned
+    case ServerLink::Refused:{
+      const std::string& rejmsg = serverLink->getRejectionMessage();
 
-	// add to the console
-	std::string msg = ColorStrings[RedColor];
-	msg += "You have been banned from this server:";
-	addMessage(NULL, msg);
-	msg = ColorStrings[YellowColor];
-	msg += rejmsg;
-	addMessage(NULL, msg);
+      // add to the console
+      std::string msg = ColorStrings[RedColor];
+      msg += "You have been banned from this server:";
+      addMessage(NULL, msg);
+      msg = ColorStrings[YellowColor];
+      msg += rejmsg;
+      addMessage(NULL, msg);
 
-	break;
-      }
+      break;
+    }
 
-      case ServerLink::Rejected:
-	// the server is probably full or the game is over.  if not then
-	// the server is having network problems.
-	printError("Game is full or over.  Try again later.");
-	break;
+    case ServerLink::Rejected:
+      // the server is probably full or the game is over.  if not then
+      // the server is having network problems.
+      printError("Game is full or over.  Try again later.");
+      break;
 
-      case ServerLink::SocketError:
-	printError("Error connecting to server.");
-	break;
+    case ServerLink::SocketError:
+      printError("Error connecting to server.");
+      break;
 
-      case ServerLink::CrippledVersion:
-	// can't connect to (otherwise compatible) non-crippled server
-	printError("Cannot connect to full version server.");
-	break;
+    case ServerLink::CrippledVersion:
+      // can't connect to (otherwise compatible) non-crippled server
+      printError("Cannot connect to full version server.");
+      break;
 
-      default:
-	printError(TextUtils::format
-		   ("Internal error connecting to server (error code %d).",
-		    serverLink->getState()).c_str());
-	break;
+    default:
+      printError(TextUtils::format
+		 ("Internal error connecting to server (error code %d).",
+		  serverLink->getState()).c_str());
+      break;
     }
     return;
   }
@@ -3332,9 +3318,8 @@ static void		defaultErrorCallback(const char* msg)
 void			botStartPlaying()
 {
   // register some commands
-  for (unsigned int c = 0; c < countof(commandList); ++c) {
+  for (unsigned int c = 0; c < countof(commandList); ++c)
     CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
-  }
 
   // normal error callback
   setErrorCallback(defaultErrorCallback);
@@ -3398,9 +3383,9 @@ void			botStartPlaying()
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
     std::string aString = silencePlayers[j];
     aString += " Silenced";
-    if (silencePlayers[j] == "*") {
+    if (silencePlayers[j] == "*")
       aString = "Silenced All Msgs";
-    }
+
     printError(aString);
   }
 
