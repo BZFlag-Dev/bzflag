@@ -97,9 +97,24 @@ void HUDuiScrollList::addItem(HUDuiControl* item)
   update();
 }
 
+void HUDuiScrollList::refreshNavQueue()
+{
+  getNav().clear();
+
+  std::list<HUDuiControl*>::iterator it;
+
+  for (it = items.begin(); it != items.end(); ++it)
+  {
+    HUDuiControl* item = *it;
+    addControl(item);
+  }
+}
+
 void HUDuiScrollList::update()
 {
   setSelected(index);
+  if (hasFocus())
+    getNav().set(getNav().get());
 }
 
 size_t HUDuiScrollList::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)

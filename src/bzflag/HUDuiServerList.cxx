@@ -122,24 +122,40 @@ bool HUDuiServerList::compare_by_ping(HUDuiControl* first, HUDuiControl* second)
 void HUDuiServerList::sortByDomain()
 {
   items.sort(compare_by_domain);
+
+  getNav().clear();
+
+  std::list<HUDuiControl*>::iterator it;
+
+  for (it = items.begin(); it != items.end(); ++it)
+  {
+    HUDuiControl* item = *it;
+    addControl(item);
+  }
 }
 
 // Sort our server list by server names
 void HUDuiServerList::sortByServerName()
 {
   items.sort(compare_by_name);
+  refreshNavQueue();
+  setSelected(getNav().getIndex());
 }
 
 // Sort our server list by player counts
 void HUDuiServerList::sortByPlayerCount()
 {
   items.sort(compare_by_players);
+  refreshNavQueue();
+  setSelected(getNav().getIndex());
 }
 
 // Sort our server list by ping
 void HUDuiServerList::sortByPing()
 {
   items.sort(compare_by_ping);
+  refreshNavQueue();
+  setSelected(getNav().getIndex());
 }
 
 // Local Variables: ***
