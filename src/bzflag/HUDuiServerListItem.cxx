@@ -91,13 +91,15 @@ void HUDuiServerListItem::setPosition(float x, float y)
 {
   HUDuiControl::setPosition(x, y);
 
+  float width = getWidth() - (spacerWidth * 3);
+
   float _x = x;
   domainX = _x;
-  _x = _x + (DOMAIN_PERCENTAGE*getWidth());
+  _x = _x + (DOMAIN_PERCENTAGE*width) + spacerWidth;
   serverX = _x;
-  _x = _x + (SERVER_PERCENTAGE*getWidth());
+  _x = _x + (SERVER_PERCENTAGE*width) + spacerWidth;
   playerX = _x;
-  _x = _x + (PLAYER_PERCENTAGE*getWidth());
+  _x = _x + (PLAYER_PERCENTAGE*width) + spacerWidth;
   pingX = _x;
 }
 
@@ -114,10 +116,15 @@ void HUDuiServerListItem::resize()
   if (getFontFace() == NULL)
     return;
 
-  displayDomain = shorten(domainName, (DOMAIN_PERCENTAGE*getWidth()));
-  displayServer = shorten(serverName, (SERVER_PERCENTAGE*getWidth()));
-  displayPlayer = shorten(playerCount, (PLAYER_PERCENTAGE*getWidth()));
-  displayPing = shorten(serverPing, (PING_PERCENTAGE*getWidth()));
+  FontManager &fm = FontManager::instance();
+  spacerWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "X");
+
+  float width = getWidth() - (spacerWidth * 3);
+
+  displayDomain = shorten(domainName, (DOMAIN_PERCENTAGE*width));
+  displayServer = shorten(serverName, (SERVER_PERCENTAGE*width));
+  displayPlayer = shorten(playerCount, (PLAYER_PERCENTAGE*width));
+  displayPing = shorten(serverPing, (PING_PERCENTAGE*width));
 }
 
 std::string HUDuiServerListItem::shorten(std::string string, float width)

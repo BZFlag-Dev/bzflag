@@ -58,6 +58,8 @@ class HUDuiServerListItem : public HUDuiControl {
     float serverX;
     float playerX;
     float pingX;
+
+    float spacerWidth;
 	
     static const float DOMAIN_PERCENTAGE;
     static const float SERVER_PERCENTAGE;
