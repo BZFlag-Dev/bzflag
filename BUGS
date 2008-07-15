@@ -13,6 +13,10 @@ This may include short term issues that are in active development as well as
 long term and on-going issues.  These notes are completely independent of any
 bugs formally reported on the bug tracker.
 
+Shot brach
+----
+* Shots are't created correctly, and are on the worng vector.
+
 
 Bots
 ----
