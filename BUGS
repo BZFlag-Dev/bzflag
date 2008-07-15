@@ -17,6 +17,11 @@ Shot branch
 ----
 * Shots aren't created correctly, and are on the wrong vector.
 
+* something is skewed up with the clock, such that the time returned by 
+  (float)TimeKeeper::getCurrent().getSeconds() isn't correct and that causes the 
+  expiration time for shots to be way off in the future, so the slots fill up and 
+  you can't shoot
+
 
 Bots
 ----
