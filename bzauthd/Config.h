@@ -27,6 +27,10 @@
 enum ConfTypes
 {
   CONFIG_LOCALPORT,
+  CONFIG_LDAP_MASTER_ADDR,
+  CONFIG_LDAP_SUFFIX,
+  CONFIG_LDAP_ROOTDN,
+  CONFIG_LDAP_ROOTPW,
   CONFIG_MAX
 };
 
@@ -51,7 +55,7 @@ public:
   void setIntValue(uint16 key, uint32 value);
   /* Mapping functions for string keys and key types */
   void registerKey(std::string stringKey, uint16 intKey, uint32 defaultValue);
-  void registerKey(std::string stringKey, uint16 intKey, const uint8 * defaultValue);
+  void registerKey(std::string stringKey, uint16 intKey, const char * defaultValue);
   uint16 lookupKey(std::string stringKey);
   uint8 lookupType(uint16 key);
 protected:

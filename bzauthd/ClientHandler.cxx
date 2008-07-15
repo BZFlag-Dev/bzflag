@@ -14,6 +14,7 @@
 #include "NetHandler.h"
 #include "Log.h"
 #include "RSA.h"
+#include "UserStorage.h"
 
 PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
 {
@@ -196,7 +197,11 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
     uint8 *digest = new uint8[digest_len];
     sRSAManager.md5hash(message, space_poz, digest);
     
-    
+    UserInfo info;
+    info.name = std::string((const char*)digest, digest_len);
+    info.password = std::string((const char*)(message + space_poz + 1), message_len - space_poz - 1);
+
+    sUserStore.registerUser(info);
     
     delete[] digest;
   } else {

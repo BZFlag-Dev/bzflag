@@ -18,6 +18,10 @@ INSTANTIATE_SINGLETON(Config);
 void Config::initialize()
 {
   registerKey("localport", CONFIG_LOCALPORT, 1234);
+  registerKey("ldap_master_addr", CONFIG_LDAP_MASTER_ADDR, "ldap://127.0.0.1");
+  registerKey("ldap_suffix", CONFIG_LDAP_SUFFIX, "dc=my-domain,dc=com");
+  registerKey("ldap_rootdn", CONFIG_LDAP_ROOTDN, "cn=Manager,dc=my-domain,dc=com");
+  registerKey("ldap_password", CONFIG_LDAP_ROOTPW, "secret");
 }
 
 Config::Config()
@@ -68,11 +72,11 @@ void Config::registerKey(std::string stringKey, uint16 intKey, uint32 defaultVal
   setIntValue(intKey, defaultValue);
 } 
 
-void Config::registerKey(std::string stringKey, uint16 intKey, const uint8 * defaultValue)
+void Config::registerKey(std::string stringKey, uint16 intKey, const char * defaultValue)
 {
   keyRegister[stringKey] = intKey;
   typeRegister[intKey] = CONFIG_TYPE_STRING;
-  setStringValue(intKey, defaultValue);
+  setStringValue(intKey, (const uint8*)defaultValue);
 }
 
 uint16 Config::lookupKey(std::string stringKey)

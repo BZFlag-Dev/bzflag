@@ -10,39 +10,35 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "Common.h"
-#include "Config.h"
-#include "Log.h"
-#include "NetHandler.h"
-#include "RSA.h"
-#include "UserStorage.h"
+#ifndef __BZAUTHD_USERSTORAGE_H__
+#define __BZAUTHD_USERSTORAGE_H__
 
-int main()
+#include <string>
+
+typedef struct ldap LDAP;
+
+struct UserInfo
 {
-  sLog.outLog("BZAuthd starting..");
+  std::string name;
+  std::string password;
+};
 
-  sConfig.initialize();
+class UserStore : public Singleton<UserStore>
+{
+public:
+  UserStore();
+  bool initialize();
+  bool bind(const uint8 *master_addr, const uint8 *root_dn, const uint8 *root_pw);
+  void unbind();
+  void registerUser(UserInfo &info);
+  void update();
+private:
+  LDAP *ld;
+};
 
-  if(!sNetHandler.initialize())
-    return 1;
+#define sUserStore UserStore::instance()
 
-  if(!sRSAManager.initialize())
-    return 1;
-
-  if(!sRSAManager.generateKeyPair())
-    return 1;
-
-  if(!sUserStore.initialize())
-    return 1;
-
-  /* main loop */
-  while(!kbhit())
-  {
-    sNetHandler.update();
-  }
-
-  return 0;
-}
+#endif // __BZAUTHD_USERSTORAGE_H__
 
 // Local Variables: ***
 // mode: C++ ***
