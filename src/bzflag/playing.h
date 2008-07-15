@@ -99,7 +99,7 @@ bool shouldGrabMouse();
 void setRoamingLabel();
 void drawFrame(const float dt);
 void injectMessages(uint16_t code, uint16_t len, void *msg);
-inline bool isViewTank(Player* tank);
+bool isViewTank(Player* tank);
 void updateFlag(FlagType* flag);
 
 extern void joinGame();

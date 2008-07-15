@@ -392,7 +392,7 @@ static void warnAboutSlowMotion()
 }
 
 
-inline bool isViewTank(Player* tank)
+bool isViewTank(Player* tank)
 {
   return ((tank != NULL) &&
     (tank == LocalPlayer::getMyTank()) ||
