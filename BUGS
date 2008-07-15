@@ -22,6 +22,11 @@ Shot branch
   expiration time for shots to be way off in the future, so the slots fill up and 
   you can't shoot
 
+* death does not work. it seems that the client sends MsgHit to the server and the 
+  server doesn't know what to do with it and/or the client doesn't know what to do 
+  when the server responds
+
+
 
 Bots
 ----
