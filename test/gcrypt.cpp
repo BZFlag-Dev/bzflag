@@ -19,8 +19,27 @@ void nputs(const char *str, size_t len)
         putchar(str[i]);
 }
 
+void md5test()
+{
+    int digest_len = (int)sRSAManager.md5len();
+
+    uint8 *digest = new uint8[digest_len];
+    memset(digest, 0, digest_len);
+    uint8 buffer[] = "just another password";
+    size_t buffer_len = (int)strlen((const char*)buffer);
+
+    sRSAManager.md5hash(buffer, buffer_len, digest);
+
+    for(int i = 0; i < digest_len; i++)
+        printf("%X%X", digest[i]/16, digest[i]%16);
+    printf("\n");
+    delete[] digest;
+}
+
 void test_gcrypt()
 {
+    md5test();
+
     if(!sRSAManager.initialize()) return;
     if(!sRSAManager.generateKeyPair()) return;
 

@@ -35,6 +35,7 @@ AttrValPair t[] = {
     {"cn", {"Babs Jensen", NULL} },
     {"objectClass", {"person", NULL} },
     {"sn", {"Jensen", NULL} },
+    {"userPassword", {"asdflaskjasldjkfsdf", NULL} },
     {"description", {"the world's most famous mythical manager", NULL} },
 };
 
@@ -47,8 +48,8 @@ void test_bind()
     int version = LDAP_VERSION3;
 
     TEST( ldap_initialize(&ld, "ldap://127.0.0.1") );
-	TEST( ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version) );
-    TEST( ldap_bind_s(ld, "cn=Manager,dc=my-domain,dc=com", "secret", LDAP_AUTH_SIMPLE) );
+	  TEST( ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version) );
+    TEST( ldap_simple_bind_s(ld, "cn=Manager,dc=my-domain,dc=com", "secret") );
     printf("LOG: bind successful\n");
 }
 
@@ -66,8 +67,34 @@ void test_add()
     }
     attrs[NUM_ATTRS] = NULL;
 
-    TEST( ldap_add_s(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs) );
-    printf("LOG: add successful\n");
+    int msgid;
+    TEST( ldap_add_ext(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs, NULL, NULL, &msgid) );
+
+    LDAPMessage *res, *msg;
+    ldap_result(ld, msgid, 1, NULL, &res);
+    for (msg = ldap_first_message(ld, res); msg; msg = ldap_next_message(ld, msg))
+    {
+        switch(ldap_msgtype(msg))
+        {
+            case LDAP_RES_ADD:
+                int errcode;
+                char *errmsg;
+                if(!test_ret( ldap_parse_result(ld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
+                    break;
+                if(test_ret(errcode))
+                    printf("LOG: add successful\n");
+                if(errmsg)
+                {
+                    if(errmsg[0]) printf("ERROR: %s\n", errmsg);
+                    ldap_memfree(errmsg);
+                } 
+              break;
+            default:
+              printf("unexpected message type %d\n", ldap_msgtype(msg));
+        }
+    }
+
+    //printf("LOG: add successful\n");
 }
 
 void test_delete()
@@ -88,7 +115,7 @@ void test_search()
             case LDAP_RES_SEARCH_ENTRY:
             {
                 // print the dn
-                printf("LOG: found match\n");
+                printf("LOG: found match\n"); 
                 char *dn = ldap_get_dn(ld, msg);
                 printf("dn: %s\n", dn);
                 ldap_memfree(dn);

@@ -123,6 +123,7 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   {
     std::string callsign((const char*)message, space_poz);
     std::string password((const char*)(message + space_poz + 1), message_len - space_poz - 1);
+
   } else {
     Packet fail(DMSG_AUTH_FAIL, 4);
     fail << (uint32)AUTH_INVALID_MESSAGE;
@@ -171,6 +172,41 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   uint8 *message;
   size_t message_len;
   sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
+
+  // get callsign and password, make sure the string is valid
+  bool valid = true;
+
+  // it has to contain exactly one space
+  int32 space_poz = -1;
+  for(size_t i = 0; i < message_len && valid; i++)
+  {
+    if(message[i] == ' ')
+    {
+      if(space_poz == -1) space_poz = (int32)i;
+      else valid = false;
+    }
+  }
+
+  // TODO: make sure all characters are in range etc .. more thorough checking needed
+
+  if(valid)
+  {
+    // hash the password
+    size_t digest_len = sRSAManager.md5len();
+    uint8 *digest = new uint8[digest_len];
+    sRSAManager.md5hash(message, space_poz, digest);
+    
+    
+    
+    delete[] digest;
+  } else {
+    Packet fail(DMSG_REGISTER_FAIL, 4);
+    fail << (uint32)REG_INVALID_MESSAGE;
+    m_socket->sendData(fail);
+  }
+
+  sRSAManager.rsaFree(message);
+  delete[] cipher;
   return true;
 }
 

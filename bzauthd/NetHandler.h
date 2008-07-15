@@ -66,6 +66,11 @@ enum AuthErrors
   AUTH_INVALID_MESSAGE = 0
 };
 
+enum RegErrors
+{
+  REG_INVALID_MESSAGE = 0
+};
+
 class Packet;
 
 class Peer

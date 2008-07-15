@@ -71,6 +71,9 @@ public:
   RSASecretKey &getSecretKey() { return secretKey; }
   void rsaFree(void *memory);
 
+  /* helper functions */
+  size_t md5len();
+  void md5hash(uint8 *message, size_t message_len, uint8 *digest);
 private:
   gcry_ac_handle_t _getHandle() { return rsaHandle; }
   RSAPublicKey publicKey;

@@ -19,6 +19,7 @@ class LdapHandler : public Singleton<LdapHandler>
 {
 public:
   LdapHandler();
+
   ~LdapHandler();
   bool initialize();
 private:
