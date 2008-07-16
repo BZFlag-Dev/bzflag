@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "../bzauthd/RSA.h"
+#include "../bzauthd/base64.h"
 
 void nputs(const char *str, size_t len)
 {
@@ -23,22 +24,28 @@ void md5test()
 {
     int digest_len = (int)sRSAManager.md5len();
 
-    uint8 *digest = new uint8[digest_len];
-    memset(digest, 0, digest_len);
-    uint8 buffer[] = "just another password";
+    uint8 *digest = new uint8[digest_len+1];
+    memset(digest, 0, digest_len+1);
+    uint8 buffer[] = "secret";
     size_t buffer_len = (int)strlen((const char*)buffer);
 
     sRSAManager.md5hash(buffer, buffer_len, digest);
 
-    for(int i = 0; i < digest_len; i++)
-        printf("%X%X", digest[i]/16, digest[i]%16);
-    printf("\n");
+    uint8 output[40];
+
+    //for(int i = 0; i < digest_len; i++)
+    //    printf("%X%X", digest[i]/16, digest[i]%16);
+    base64::encode(digest, digest+digest_len, output);
+    output[digest_len/2*3] = 0;
+
+    printf("md5 base64 for %s is %s\n", buffer, output);
+
     delete[] digest;
 }
 
 void test_gcrypt()
 {
-    md5test();
+    md5test(); return;
 
     if(!sRSAManager.initialize()) return;
     if(!sRSAManager.generateKeyPair()) return;

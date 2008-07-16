@@ -32,7 +32,7 @@ struct AttrValPair
 };
 
 AttrValPair t[] = {
-    {"cn", {"Babs Jensen", NULL} },
+    {"cn", {"Barbara Jensen", NULL} },
     {"objectClass", {"person", NULL} },
     {"sn", {"Jensen", NULL} },
     {"userPassword", {"asdflaskjasldjkfsdf", NULL} },
@@ -68,7 +68,7 @@ void test_add()
     attrs[NUM_ATTRS] = NULL;
 
     int msgid;
-    TEST( ldap_add_ext(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs, NULL, NULL, &msgid) );
+     TEST( ldap_add_ext(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs, NULL, NULL, &msgid) );
 
     LDAPMessage *res, *msg;
     ldap_result(ld, msgid, 1, NULL, &res);
@@ -106,7 +106,7 @@ void test_delete()
 void test_search()
 {
     LDAPMessage *res, *msg;
-    TEST( ldap_search_s(ld, "dc=my-domain,dc=com", LDAP_SCOPE_SUBTREE, "(objectClass=person)", NULL, 0, &res) );
+    TEST( ldap_search_s(ld, "dc=my-domain,dc=com", LDAP_SCOPE_SUBTREE, "(objectClass=*)", NULL, 0, &res) );
 
     for (msg = ldap_first_message(ld, res); msg; msg = ldap_next_message(ld, msg))
     {

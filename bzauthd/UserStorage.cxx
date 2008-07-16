@@ -62,9 +62,22 @@ bool UserStore::initialize()
   return bind(sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
-void registerUser(UserInfo &info)
+void UserStore::registerUser(UserInfo &info)
 {
+  /*LDAPMod *attrs[NUM_ATTRS+1];
+  LDAPMod attr[NUM_ATTRS];
 
+  for(int i = 0; i < NUM_ATTRS; i++)
+  {
+      attr[i].mod_op = LDAP_MOD_ADD; 
+      attr[i].mod_type = t[i].attr;
+      attr[i].mod_values = t[i].vals;
+      attrs[i] = &attr[i];
+  }
+  attrs[NUM_ATTRS] = NULL;
+
+  int msgid;
+  TEST( ldap_add_ext(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs, NULL, NULL, &msgid) );*/
 }
 
 // Local Variables: ***
