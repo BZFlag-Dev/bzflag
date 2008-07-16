@@ -199,18 +199,20 @@ class NonPlayerDataChunk
 
 // peer list
 typedef struct {
-  int socket;
-  int player;
-  NetHandler *handler;
-  NetHandlerCloseCallback* closeCB;
   std::vector<bz_NonPlayerConnectionHandler*> notifyList;
-
   std::vector<NonPlayerDataChunk> pendingSendChunks;
 
-  double    startTime;
-  int	    clientType;
-  bool	    sent;
-  bool	    deleteMe;
+  NetHandler* handler;
+  NetHandlerCloseCallback* closeCB;
+
+  double startTime;
+
+  int socket;
+  int player;
+  int clientType;
+
+  bool sent;
+  bool deleteMe;
 } NetConnectedPeer;
 
 extern std::map<int,NetConnectedPeer> netConnectedPeers;

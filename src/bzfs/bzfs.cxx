@@ -247,12 +247,13 @@ public:
     // they aren't a player yet till they send us the connection string
     NetConnectedPeer	peer;
     peer.handler = handler;
-    peer.player = -1;
-    peer.socket = handler->getFD();
-    peer.deleteMe = false;
-    peer.sent = false;
-    peer.startTime = TimeKeeper::getCurrent().getSeconds();
     peer.closeCB = new BZFSNetCloseCallback(handler);
+    peer.startTime = TimeKeeper::getCurrent().getSeconds();
+    peer.socket = handler->getFD();
+    peer.player = -1;
+    peer.clientType = NetworkMessageTransferCallback::clientNone;
+    peer.sent = false;
+    peer.deleteMe = false;
     netConnectedPeers[handler->getFD()] = peer;
 
     handler->setExtraInfo( &netConnectedPeers[peer.socket] );
