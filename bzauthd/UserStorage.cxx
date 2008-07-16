@@ -16,6 +16,8 @@
 #include <ldap.h>
 #include "Config.h"
 #include "Log.h"
+#include <gcrypt.h>
+#include "base64.h"
 
 INSTANTIATE_SINGLETON(UserStore)
 
@@ -62,22 +64,45 @@ bool UserStore::initialize()
   return bind(sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
+size_t UserStore::hashLen()
+{
+  return (size_t)gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3;
+}
+
+void UserStore::hash(uint8 *message, size_t message_len, uint8 *digest)
+{
+  int md5len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
+  uint8 *tmpbuf = new uint8[md5len];
+  gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
+  base64::encode(tmpbuf, tmpbuf + md5len, digest);
+  delete[] tmpbuf;
+}
+
+struct LDAPMod1
+{
+  LDAPMod1(int op, const char *type, const char *value)
+  {
+    mod.mod_op = op;
+    mod.mod_type = (char*)type;
+    mod.mod_values = values;
+    values[0] = (char*)value;
+    values[1] = NULL;
+  }
+
+  LDAPMod mod;
+  char *values[2];
+};
+
 void UserStore::registerUser(UserInfo &info)
 {
-  /*LDAPMod *attrs[NUM_ATTRS+1];
-  LDAPMod attr[NUM_ATTRS];
+  std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
-  for(int i = 0; i < NUM_ATTRS; i++)
-  {
-      attr[i].mod_op = LDAP_MOD_ADD; 
-      attr[i].mod_type = t[i].attr;
-      attr[i].mod_values = t[i].vals;
-      attrs[i] = &attr[i];
-  }
-  attrs[NUM_ATTRS] = NULL;
+  LDAPMod1 attr_cn(LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod1 attr_sn(LDAP_MOD_ADD, "sn", info.name.c_str());
+  LDAPMod1 attr_pwd(LDAP_MOD_ADD, "userPassword", info.password.c_str());
+  LDAPMod *attrs[3] = { &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod };
 
-  int msgid;
-  TEST( ldap_add_ext(ld, "cn=Barbara Jensen,dc=my-domain,dc=com", attrs, NULL, NULL, &msgid) );*/
+  LDAP_VCHECK( ldap_add_ext_s(ld, dn.c_str(), attrs, NULL, NULL) );
 }
 
 // Local Variables: ***

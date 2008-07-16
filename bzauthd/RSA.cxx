@@ -217,16 +217,6 @@ void RSAManager::rsaFree(void *memory)
   gcry_free(memory);
 }
 
-size_t RSAManager::md5len()
-{
-  return (size_t)gcry_md_get_algo_dlen(GCRY_MD_MD5);
-}
-
-void RSAManager::md5hash(uint8 *message, size_t message_len, uint8 *digest)
-{
-  gcry_md_hash_buffer(GCRY_MD_MD5, digest, message, message_len);
-}
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

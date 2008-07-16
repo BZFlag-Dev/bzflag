@@ -193,13 +193,13 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   if(valid)
   {
     // hash the password
-    size_t digest_len = sRSAManager.md5len();
+    size_t digest_len = sUserStore.hashLen();
     uint8 *digest = new uint8[digest_len];
-    sRSAManager.md5hash(message, space_poz, digest);
+    sUserStore.hash(message, space_poz, digest);
     
     UserInfo info;
-    info.name = std::string((const char*)digest, digest_len);
-    info.password = std::string((const char*)(message + space_poz + 1), message_len - space_poz - 1);
+    info.name = std::string ((const char*)message, space_poz);
+    info.password = std::string((const char*)digest, digest_len);
 
     sUserStore.registerUser(info);
     

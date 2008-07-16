@@ -20,25 +20,32 @@ void nputs(const char *str, size_t len)
         putchar(str[i]);
 }
 
+size_t hashLen()
+{
+  return gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3;
+}
+
+void hash(uint8 *message, size_t message_len, uint8 *digest)
+{
+  int md5len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
+  uint8 *tmpbuf = new uint8[md5len];
+  gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
+  base64::encode(tmpbuf, tmpbuf + md5len, digest);
+  delete[] tmpbuf;
+}
+
 void md5test()
 {
-    int digest_len = (int)sRSAManager.md5len();
+    int digest_len = (int)hashLen();
 
     uint8 *digest = new uint8[digest_len+1];
     memset(digest, 0, digest_len+1);
     uint8 buffer[] = "secret";
     size_t buffer_len = (int)strlen((const char*)buffer);
 
-    sRSAManager.md5hash(buffer, buffer_len, digest);
+    hash(buffer, buffer_len, digest);
 
-    uint8 output[40];
-
-    //for(int i = 0; i < digest_len; i++)
-    //    printf("%X%X", digest[i]/16, digest[i]%16);
-    base64::encode(digest, digest+digest_len, output);
-    output[digest_len/2*3] = 0;
-
-    printf("md5 base64 for %s is %s\n", buffer, output);
+    printf("md5 base64 for %s is %s\n", buffer, digest);
 
     delete[] digest;
 }

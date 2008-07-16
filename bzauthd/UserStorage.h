@@ -32,6 +32,9 @@ public:
   void unbind();
   void registerUser(UserInfo &info);
   void update();
+
+  size_t hashLen();
+  void hash(uint8 *message, size_t message_len, uint8 *digest);
 private:
   LDAP *ld;
 };

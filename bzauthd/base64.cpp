@@ -1,3 +1,5 @@
+#include "Common.h"
+
 namespace base64 {
   const char _to_table[64] =  {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
