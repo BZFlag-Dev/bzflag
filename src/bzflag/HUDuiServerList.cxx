@@ -122,16 +122,8 @@ bool HUDuiServerList::compare_by_ping(HUDuiControl* first, HUDuiControl* second)
 void HUDuiServerList::sortByDomain()
 {
   items.sort(compare_by_domain);
-
-  getNav().clear();
-
-  std::list<HUDuiControl*>::iterator it;
-
-  for (it = items.begin(); it != items.end(); ++it)
-  {
-    HUDuiControl* item = *it;
-    addControl(item);
-  }
+  refreshNavQueue();
+  setSelected(getNav().getIndex());
 }
 
 // Sort our server list by server names

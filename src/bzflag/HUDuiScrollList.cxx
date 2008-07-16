@@ -99,6 +99,7 @@ void HUDuiScrollList::addItem(HUDuiControl* item)
 
 void HUDuiScrollList::refreshNavQueue()
 {
+  HUDuiControl* currentFocus = getNav().get();
   getNav().clear();
 
   std::list<HUDuiControl*>::iterator it;
@@ -108,6 +109,7 @@ void HUDuiScrollList::refreshNavQueue()
     HUDuiControl* item = *it;
     addControl(item);
   }
+  getNav().set(currentFocus);
 }
 
 void HUDuiScrollList::update()

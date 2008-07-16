@@ -51,14 +51,8 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
   sprintf(temp, "%ld", item.ping.pingTime);
   std::string ping = temp;
 
-  std::string players = "";
-
-  sprintf(temp, "%ld", item.getPlayerCount());
-  players.append(temp);
-  players.append("/");
-
-  sprintf(temp, "%ld", item.ping.maxPlayers);
-  players.append(temp);
+  sprintf(temp, "%d/%d", item.getPlayerCount(), item.ping.maxPlayers);
+  std::string players = temp;
 
   std::string addr = stripAnsiCodes(item.description.c_str());
   std::string desc;
