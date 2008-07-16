@@ -322,12 +322,6 @@ void GameKeeper::Player::signingOn(bool ctf)
   player.resetPlayer(ctf);
   player.signingOn();
   lagInfo.reset();
-  if (!netHandler)
-    return;
-  if (player.isChat())
-    netHandler->setClientKind(NetHandler::clientBZAdmin);
-  else
-    netHandler->setClientKind(NetHandler::clientBZFlag);
 }
 
 

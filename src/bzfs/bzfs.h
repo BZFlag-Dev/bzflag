@@ -208,6 +208,7 @@ typedef struct {
   std::vector<NonPlayerDataChunk> pendingSendChunks;
 
   double    startTime;
+  int	    clientType;
   bool	    sent;
   bool	    deleteMe;
 } NetConnectedPeer;

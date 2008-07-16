@@ -160,10 +160,6 @@ public:
 
   static NetHandler* whoIsAtIP(const std::string& IP);
 
-  static const int     clientNone    = 0;
-  static const int     clientBZAdmin = 1;
-  static const int     clientBZFlag  = 2;
-
   static void setCurrentTime(TimeKeeper tm);
 
   typedef std::list<NetHandler*> NetConnections;
@@ -270,9 +266,6 @@ public:
   const char*	getHostname();
   bool		reverseDNSDone();
 
-  void		setClientKind(int kind);
-  int		getClientKind();
-
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.
@@ -325,8 +318,6 @@ private:
   struct sockaddr_in	uaddr;
   /// socket file descriptor
   SOCKET		fd;
-
-  int clientType;
 
   /// peer's network address
   Address peer;

@@ -591,7 +591,7 @@ public:
       NetHandler* handler = *it;
       NetConnectedPeer* peer( static_cast<NetConnectedPeer*>((*it)->getExtraInfo()) );
       if ( ! (peer == 0 || peer->deleteMe) &&
-	   (handler->getClientKind() & mask) ) {
+	   (peer->clientType & mask) ) {
 	result = handler->pwrite(data, size);
 	if (result == -1) {
 	  handler->closing("ECONNRESET/EPIPE");
@@ -2142,6 +2142,18 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // player is signing on (has already connected via addClient).
   playerData->signingOn(clOptions->gameType == ClassicCTF);
+  // FIXME: The boundary between GameKeeper and bzfs is fuzzy at
+  // best. This logic was originally in GameKeeper, but it forced
+  // NetHandler to hold client state. Now it's here, but it exposes
+  // the poor coupling between bzfs and GameKeeper.
+  NetHandler* netHandler( playerData->netHandler );
+  if (netHandler != 0) {
+    NetConnectedPeer* peer( static_cast<NetConnectedPeer*>(netHandler->getExtraInfo()) );
+    if (peer != 0) {
+      peer->clientType = playerData->player.isChat() ? NetworkMessageTransferCallback::clientBZAdmin 
+	: NetworkMessageTransferCallback::clientBZFlag;
+    }
+  }
 
   // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());

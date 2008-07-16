@@ -273,9 +273,9 @@ bool BufferedNetworkMessage::process ( void )
   }
    
   // send message to everyone
-  int mask = NetHandler::clientBZFlag;
+  int mask = NetworkMessageTransferCallback::clientBZFlag;
   if (toAdmins)
-    mask |= NetHandler::clientBZAdmin;
+    mask |= NetworkMessageTransferCallback::clientBZAdmin;
   transferCallback->broadcast(data, packedSize+4, mask, code);
 
   return true;

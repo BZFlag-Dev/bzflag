@@ -292,7 +292,6 @@ void NetHandler::setCurrentTime(TimeKeeper tm)
 NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
   : uaddr(clientAddr)
   , fd(_fd)
-  , clientType(clientNone)
   , peer(clientAddr)
   , udpLen2(0)
   , tcplen(0)
@@ -336,7 +335,6 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
 NetHandler::NetHandler(const struct sockaddr_in &serverAddr)
   : uaddr(serverAddr)
   , fd(INVALID_SOCKET)
-  , clientType(clientNone)
   , peer(serverAddr)
   , udpLen2(0)
   , tcplen(0)
@@ -577,17 +575,6 @@ bool NetHandler::reverseDNSDone()
   AresHandler::ResolutionStatus status = ares.getStatus();
   return (status == AresHandler::Failed)
     || (status == AresHandler::HbASucceeded);
-}
-
-void NetHandler::setClientKind(int kind)
-{
-  if (clientType == clientNone)
-    clientType = kind;
-}
-
-int NetHandler::getClientKind()
-{
-  return clientType;
 }
 
 void NetHandler::closing(char const* reason)
