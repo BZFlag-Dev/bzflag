@@ -207,7 +207,6 @@ typedef struct {
 
   double startTime;
 
-  int socket;
   int player;
   int clientType;
 

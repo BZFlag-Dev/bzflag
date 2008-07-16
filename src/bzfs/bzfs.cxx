@@ -195,10 +195,6 @@ public:
     if (peer != 0) {
       MSGMGR.purgeMessages(handler);
 
-      // Not sure if this is really needed. When all access to the
-      // NetConnectedPeer structure is through the
-      // NetHandler::getExtraInfo() interface, this can go away
-      peer->socket = -1;
       peer->handler = 0;
       peer->deleteMe = true;
 
@@ -241,7 +237,7 @@ public:
     listener.removeNewConnectionCallback(this);
   }
 
-  bool accept( NetHandler* handler, int /*connectionID*/ ) {
+  bool accept( NetHandler* handler, int connectionID ) {
     // client (not a player yet) is requesting service.
     // accept incoming connection on our well known port
     // they aren't a player yet till they send us the connection string
@@ -249,14 +245,13 @@ public:
     peer.handler = handler;
     peer.closeCB = new BZFSNetCloseCallback(handler);
     peer.startTime = TimeKeeper::getCurrent().getSeconds();
-    peer.socket = handler->getFD();
     peer.player = -1;
     peer.clientType = NetworkMessageTransferCallback::clientNone;
     peer.sent = false;
     peer.deleteMe = false;
-    netConnectedPeers[handler->getFD()] = peer;
+    netConnectedPeers[connectionID] = peer;
 
-    handler->setExtraInfo( &netConnectedPeers[peer.socket] );
+    handler->setExtraInfo( &netConnectedPeers[connectionID] );
     return true;
   }
 };
@@ -511,7 +506,7 @@ public:
 	    // it has dudes lets lets call them.
 	    for (unsigned int i = 0; i < peer->notifyList.size(); i++) {
 	      if (peer->notifyList[i])
-		peer->notifyList[i]->pending(peer->socket,buf,size);
+		peer->notifyList[i]->pending(handler->getFD(),buf,size);
 	    }
 
 	    result = true;
