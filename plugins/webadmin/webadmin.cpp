@@ -38,6 +38,7 @@ private:
   
   bz_APIIntList players;
   bz_APIStringList *stringList;
+  int listSize;
   
   bool editing, checked;
 };
@@ -127,8 +128,11 @@ void WebAdmin::keyCallback (std::string &data, const std::string &key)
 bool WebAdmin::loopCallback (const std::string &key)
 {
   if (key == "players") {
-    if (!loopPos) bz_getPlayerIndexList(&players);
-    else if (loopPos < players.size()) {
+    if (!loopPos) {
+      bz_getPlayerIndexList(&players);
+      listSize = players.size();
+    }
+    else if (loopPos < listSize) {
       templateVars["playerid"] = players[loopPos];
       templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
       return true;
@@ -137,20 +141,25 @@ bool WebAdmin::loopCallback (const std::string &key)
       return loopPos = 0;
     }
   } else if (key == "navigation") {
+    if (!loopPos) listSize = pagenames.size();
     if (loopPos < pagenames.size()) {
       templateVars["pagename"] = pagenames[loopPos++];
       return true;
     } else return loopPos = 0;
   } else if (key == "permissions") {
-    if (loopPos < bzu_standardPerms().size()) {
+    if (!loopPos) listSize = bzu_standardPerms().size();
+    if (loopPos < listSize) {
       const std::string &perm = bzu_standardPerms()[loopPos++];
       if (stringList) checked = stringList->contains(perm);
       templateVars["permission"] = perm;
       return true;
     } else return loopPos = 0;
   } else if (key == "helpmsgs") {
-    if (!loopPos) stringList = bz_getHelpTopics();
-    if (loopPos < stringList->size()) {
+    if (!loopPos) {
+      stringList = bz_getHelpTopics();
+      listSize = stringList->size();
+    }
+    if (loopPos < listSize) {
       templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
       return true;
     } else {
@@ -158,10 +167,23 @@ bool WebAdmin::loopCallback (const std::string &key)
       return loopPos = 0;
     }
   } else if (key == "groups") {
-    if (!loopPos) stringList = bz_getGroupList();
-    if (loopPos < stringList->size()) {
+    if (!loopPos) {
+      stringList = bz_getGroupList();
+      listSize = stringList->size();
+    }
+    if (loopPos < listSize) {
       templateVars["groupname"] = (*stringList)[loopPos++].c_str();
       return true;
+    } else {
+      delete(stringList);
+      return loopPos = 0;
+    }
+  } else if (key == "servervars") {
+    if (!loopPos) listSize = bz_getBZDBVarList(stringList);
+    if (loopPos < listSize) {
+      const char *varname = (*stringList)[loopPos++].c_str();
+      templateVars["servervarname"] = varname;
+      templateVars["servervarvalue"] = bz_getBZDBString(varname).c_str();
     } else {
       delete(stringList);
       return loopPos = 0;
@@ -200,7 +222,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
         reply.returnCode = HTTPReply::e500ServerError;
           if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
             reply.body = format("Missing template: %s.tmpl", pagename.c_str());
-        }
+      }
     } else {
       reply.returnCode = HTTPReply::e404NotFound;
       if (!templateSystem.processTemplateFile(reply.body, "404.tmpl"))
@@ -220,34 +242,44 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 
 void WebAdmin::mainPageCallback (const HTTPRequest &request)
 {
+  std::string s1, s2;
   if (request.request != ePost) return;
   std::vector<std::string> v;
+  // kick/ban players
   if (request.getParam("players", v)) {
-    std::string dummy, reason;
-    bool notify = request.getParam("notify", dummy);
-    request.getParam("reason", reason);
+    bool notify = request.getParam("notify", s1);
+    request.getParam("reason", s2);
     std::vector<std::string>::iterator i;
-    if (request.getParam("kick", dummy))
+    if (request.getParam("kick", s1))
       for (i = v.begin(); i != v.end(); i++)
-        bz_kickUser(atoi(i->c_str()), reason.c_str(), notify);
+        bz_kickUser(atoi(i->c_str()), s2.c_str(), notify);
     else if (request.getParam("ipban", v)) {
-      request.getParam("duration", dummy);
-      int duration = atoi(dummy.c_str());
+      request.getParam("duration", s1);
+      int duration = atoi(s1.c_str());
       for (i = v.begin(); i != v.end(); i++) {
         int playerID = atoi(i->c_str());
         bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-        bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, reason.c_str());
+        bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, s2.c_str());
       }
     }
     else if (request.getParam("idban", v)) {
-      request.getParam("duration", dummy);
-      int duration = atoi(dummy.c_str());
+      request.getParam("duration", s1);
+      int duration = atoi(s1.c_str());
       for (i = v.begin(); i != v.end(); i++) {
         int playerID = atoi(i->c_str());
         bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-        bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, reason.c_str());
+        bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, s2.c_str());
       }
     }
+  }
+  // update server vars
+  stringList = new bz_APIStringList;
+  listSize = bz_getBZDBVarList(stringList);
+  for (loopPos = 0; loopPos < listSize; loopPos++) {
+    s1 = "var";
+    s1 += (*stringList)[loopPos].c_str();
+    if (request.getParam(s1, s2))
+      bz_setBZDBString(s1.c_str(), s2.c_str());
   }
 }
 
