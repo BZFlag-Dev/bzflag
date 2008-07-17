@@ -279,7 +279,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
     s1 = "var";
     s1 += (*stringList)[loopPos].c_str();
     if (request.getParam(s1, s2))
-      bz_setBZDBString(s1.c_str(), s2.c_str());
+      bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
   }
 }
 
