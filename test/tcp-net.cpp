@@ -75,6 +75,42 @@ class MyClientListener : public TCPClientDataPendingListener
               sRSAManager.rsaFree(cipher);
               delete[] key_n;
             } break;
+            case DMSG_AUTH_CHALLENGE: {
+              uint8 *key_n;
+              uint32 e;
+              uint16 n_len;
+              assert(packet >> n_len);
+              key_n = new uint8[n_len];
+              packet.read(key_n, (size_t)n_len);
+              assert(packet >> e);
+
+              sRSAManager.initialize();
+              sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
+              
+              char message[] = "newuser passwo4rd";
+              uint8 *cipher = NULL;
+              size_t cipher_len;
+
+              sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+
+              {
+                Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
+                response << (uint16)cipher_len;
+                response.append(cipher, cipher_len);
+                sendPacket(response, connection);
+              }
+
+              sRSAManager.rsaFree(cipher);
+              delete[] key_n;
+            } break;
+            case DMSG_AUTH_SUCCESS:
+              uint32 token;
+              packet >> token;
+              printf("Auth successful, token %d\n", token); break;
+            case DMSG_AUTH_FAIL:
+              uint32 reason;
+              packet >> reason;
+              printf("Auth failed, reason %d\n", reason); break; 
             case DMSG_REGISTER_SUCCESS:
               printf("Registration successful\n"); break;
             case DMSG_REGISTER_FAIL:
@@ -108,7 +144,7 @@ void test_listen(void *)
   
 }
 
-void test_connect(void *number)
+void test_random()
 {
     /*const int NR_CLIENTS = 10;
     int i;
@@ -149,7 +185,10 @@ void test_connect(void *number)
         client[i]->disconnect();
         TCPConnection::instance().deleteClientConnection(client[i]);
     }*/
+}
 
+void test_comm(uint8 commType)
+{
     MyClientListener listener;
     TCPClientConnection* client;
     do
@@ -167,7 +206,6 @@ void test_connect(void *number)
       uint8 peerType = PEER_CLIENT;
       uint16 protoVersion = 1;
       uint32 cliVersion = 2;
-      uint8 commType = 2;
       Packet msg(MSG_HANDSHAKE);
       msg << peerType << protoVersion << cliVersion << commType;
       sendPacket(msg, client);
@@ -184,7 +222,7 @@ void test_connect(void *number)
 void test_net()
 {
     // thread for async sleep
-    _beginthread(sleep_thread, 0, NULL);
+    //_beginthread(sleep_thread, 0, NULL);
 
     // initialize the net library
     TCPConnection::instance();
@@ -192,7 +230,8 @@ void test_net()
     //_beginthread(test_listen, 0, NULL);
     //_sleep(500);
     //_beginthread(test_connect, 0, NULL);
-    test_connect(NULL);
+    //test_comm(2) // reg
+    test_comm(0); // auth
 }
 #endif
 

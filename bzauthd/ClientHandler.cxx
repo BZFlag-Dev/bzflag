@@ -100,20 +100,20 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   uint8 *cipher = new uint8[cipher_len+1];
   if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }
 
-  uint8 *message;
+  uint8 *message = NULL;
   size_t message_len;
   sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
 
   // get callsign and password, make sure the string is valid
-  bool valid = true;
+  bool valid = false;
 
   // it has to contain exactly one space
   int32 space_poz = -1;
-  for(size_t i = 0; i < message_len && valid; i++)
+  for(size_t i = 0; i < message_len; i++)
   {
     if(message[i] == ' ')
     {
-      if(space_poz == -1) space_poz = (int32)i;
+      if(space_poz == -1) { space_poz = (int32)i; valid = true; }
       else valid = false;
     }
   }
@@ -122,8 +122,22 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
 
   if(valid)
   {
-    std::string callsign((const char*)message, space_poz);
-    std::string password((const char*)(message + space_poz + 1), message_len - space_poz - 1);
+    // the password doesn't need hashing for auth
+    UserInfo info;
+    info.name = std::string ((const char*)message, space_poz);
+    info.password = std::string((const char*)message + space_poz + 1, message_len - space_poz - 1);
+
+    if(sUserStore.authUser(info))
+    {
+      uint32 token = 0; // TODO
+      Packet success(DMSG_AUTH_SUCCESS, 4);
+      success << token;
+      m_socket->sendData(success);
+    } else {
+      Packet fail(DMSG_AUTH_FAIL, 4);
+      fail << (uint32)AUTH_INCORRECT_CREDENTIALS;
+      m_socket->sendData(fail);
+    }
 
   } else {
     Packet fail(DMSG_AUTH_FAIL, 4);
@@ -201,15 +215,15 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   }
 
   // get callsign and password, make sure the string is valid
-  bool valid = true;
+  bool valid = false;
 
   // it has to contain exactly one space
   int32 space_poz = -1;
-  for(size_t i = 0; i < message_len && valid; i++)
+  for(size_t i = 0; i < message_len; i++)
   {
     if(message[i] == ' ')
     {
-      if(space_poz == -1) space_poz = (int32)i;
+      if(space_poz == -1) { space_poz = (int32)i; valid = true; }
       else valid = false;
     }
   }

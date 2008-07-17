@@ -21,13 +21,13 @@
 
 INSTANTIATE_SINGLETON(UserStore)
 
-UserStore::UserStore() : ld(NULL)
+UserStore::UserStore() : rootld(NULL)
 {
 }
 
 UserStore::~UserStore()
 {
-  unbind();
+  unbind(rootld);
 }
 
 bool ldap_check(int ret)
@@ -43,7 +43,7 @@ bool ldap_check(int ret)
 #define LDAP_FCHECK(x) if(!ldap_check(x)) return false
 #define LDAP_VCHECK(x) if(!ldap_check(x)) return
 
-void UserStore::unbind()
+void UserStore::unbind(LDAP *& ld)
 {
   if(ld)
   {
@@ -52,21 +52,21 @@ void UserStore::unbind()
   }
 }
 
-bool UserStore::bind(const uint8 *master_addr, const uint8 *root_dn, const uint8 *root_pw)
+bool UserStore::bind(LDAP *& ld, const uint8 *addr, const uint8 *dn, const uint8 *pw)
 {
-  unbind();
-  sLog.outLog("UserStore: binding to %s, with root dn %s", master_addr, root_dn);
+  unbind(ld);
+  sLog.outLog("UserStore: binding to %s, with root dn %s", addr, dn);
 
   int version = LDAP_VERSION3;
-  LDAP_FCHECK( ldap_initialize(&ld, (char*)master_addr) );
+  LDAP_FCHECK( ldap_initialize(&ld, (char*)addr) );
 	LDAP_FCHECK( ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version) );
-  LDAP_FCHECK( ldap_simple_bind_s(ld, (char*)root_dn, (char*)root_pw) );
+  LDAP_FCHECK( ldap_simple_bind_s(ld, (char*)dn, (char*)pw) );
   return true;
 }
 
 bool UserStore::initialize()
 {
-  return bind(sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
+  return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
 size_t UserStore::hashLen()
@@ -109,7 +109,15 @@ void UserStore::registerUser(UserInfo &info)
   LDAPMod1 attr_pwd(LDAP_MOD_ADD, "userPassword", info.password.c_str());
   LDAPMod *attrs[5] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, NULL };
 
-  LDAP_VCHECK( ldap_add_ext_s(ld, dn.c_str(), attrs, NULL, NULL) );
+  LDAP_VCHECK( ldap_add_ext_s(rootld, dn.c_str(), attrs, NULL, NULL) );
+}
+
+bool UserStore::authUser(UserInfo &info)
+{
+  std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+
+  LDAP *ld = NULL;
+  return bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8*)dn.c_str(), (const uint8*)info.password.c_str()); 
 }
 
 // Local Variables: ***

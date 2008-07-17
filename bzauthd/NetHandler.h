@@ -63,7 +63,8 @@ enum PeerType
 
 enum AuthErrors
 {
-  AUTH_INVALID_MESSAGE = 0
+  AUTH_INVALID_MESSAGE = 0,
+  AUTH_INCORRECT_CREDENTIALS = 1
 };
 
 enum RegErrors

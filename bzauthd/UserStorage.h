@@ -29,15 +29,17 @@ public:
   UserStore();
   ~UserStore();
   bool initialize();
-  bool bind(const uint8 *master_addr, const uint8 *root_dn, const uint8 *root_pw);
-  void unbind();
+  
   void registerUser(UserInfo &info);
+  bool authUser(UserInfo &info);
   void update();
 
   size_t hashLen();
   void hash(uint8 *message, size_t message_len, uint8 *digest);
 private:
-  LDAP *ld;
+  bool bind(LDAP *&ld, const uint8 *addr, const uint8 *dn, const uint8 *pw);
+  void unbind(LDAP *&ld);
+  LDAP *rootld;
 };
 
 #define sUserStore UserStore::instance()
