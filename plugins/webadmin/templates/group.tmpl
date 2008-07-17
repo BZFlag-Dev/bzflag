@@ -4,7 +4,7 @@
 [?IF Editing]
   <h2>editing group: [$GroupName]</h2>
   
-  <form action="" method="post">
+  <form id="group_edit" action="" method="post">
     <ul class="perms">
 [*START Permissions]
       <li><input type="checkbox" id="perm_[$Permission]"
@@ -17,8 +17,8 @@
 [?ELSE Editing]
   <h2>group list</h2>
   
-  <form action="" method="get">
-    <ul class="groups">
+  <form id="group_delete" action="" method="get">
+    <ul>
 [*START Groups]
       <li><input type="checkbox" id="group_[$GroupName]"
                  name="delgroup" value="[$GroupName]" checked="[$Checked]"/>
@@ -29,7 +29,7 @@
     <input type="submit" value="delete" />
   </form>
   
-  <form action="" method="get">
+  <form id="group_new" action="" method="get">
     <input type="text" name="name" />
     <input type="submit" value="new" />
   </form>

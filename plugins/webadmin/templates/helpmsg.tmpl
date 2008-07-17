@@ -2,7 +2,7 @@
 [?IF Editing]
   <h2>editing helpmsg: [$HelpMsgName]</h2>
   
-  <form action="" method="post">
+  <form id="helpmsg_edit" action="" method="post">
     <input type="hidden" name="name" value="[$HelpMsgName]">
     <textarea name="helptext">[$HelpMsgBody]</textarea>
     <input type="submit" value="save" />
@@ -10,8 +10,8 @@
 [?ELSE Editing]
   <h2>helpmsg list</h2>
   
-  <form action="" method="post">
-    <ul class="helpmsgs">
+  <form id="helpmsg_delete" action="" method="post">
+    <ul>
 [*START HelpMsgs]
       <li><input type="checkbox" name="delmsg"
                  id="help_[$HelpMsgName]" value="[$HelpMsgName]" />
@@ -22,7 +22,7 @@
     <input type="submit" value="delete" />
   </form>
   
-  <form action="" method="get">
+  <form id="helpmsg_new" action="" method="get">
     <input type="text" name="name" />
     <input type="submit" value="new" />
   </form>

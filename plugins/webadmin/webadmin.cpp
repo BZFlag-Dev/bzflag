@@ -221,31 +221,32 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 void WebAdmin::mainPageCallback (const HTTPRequest &request)
 {
   if (request.request != ePost) return;
-  std::vector<std::string> players;
-  if (!request.getParam("players", players)) return;
-  std::string dummy, reason;
-  bool notify = request.getParam("notify", dummy);
-  request.getParam("reason", reason);
-  std::vector<std::string>::iterator i;
-  if (request.getParam("kick", dummy))
-    for (i = players.begin(); i != players.end(); i++)
-      bz_kickUser(atoi(i->c_str()), reason.c_str(), notify);
-  else if (request.getParam("ipban", players)) {
-    request.getParam("duration", dummy);
-    int duration = atoi(dummy.c_str());
-    for (i = players.begin(); i != players.end(); i++) {
-      int playerID = atoi(i->c_str());
-      bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-      bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, reason.c_str());
+  std::vector<std::string> v;
+  if (request.getParam("players", v)) {
+    std::string dummy, reason;
+    bool notify = request.getParam("notify", dummy);
+    request.getParam("reason", reason);
+    std::vector<std::string>::iterator i;
+    if (request.getParam("kick", dummy))
+      for (i = v.begin(); i != v.end(); i++)
+        bz_kickUser(atoi(i->c_str()), reason.c_str(), notify);
+    else if (request.getParam("ipban", v)) {
+      request.getParam("duration", dummy);
+      int duration = atoi(dummy.c_str());
+      for (i = v.begin(); i != v.end(); i++) {
+        int playerID = atoi(i->c_str());
+        bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+        bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, reason.c_str());
+      }
     }
-  }
-  else if (request.getParam("idban", players)) {
-    request.getParam("duration", dummy);
-    int duration = atoi(dummy.c_str());
-    for (i = players.begin(); i != players.end(); i++) {
-      int playerID = atoi(i->c_str());
-      bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-      bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, reason.c_str());
+    else if (request.getParam("idban", v)) {
+      request.getParam("duration", dummy);
+      int duration = atoi(dummy.c_str());
+      for (i = v.begin(); i != v.end(); i++) {
+        int playerID = atoi(i->c_str());
+        bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+        bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, reason.c_str());
+      }
     }
   }
 }
