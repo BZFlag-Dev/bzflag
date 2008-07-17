@@ -64,7 +64,7 @@ int RSAKey::_getValueE()
   return *(int*)buf;
 }
 
-bool RSAKey::setValues(uint8 *n, size_t n_len, uint16 e)
+bool RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
 {
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
@@ -85,7 +85,7 @@ bool RSAKey::setValues(uint8 *n, size_t n_len, uint16 e)
   if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_n, mpi_n)) return false;
 
   gcry_mpi_t mpi_e = gcry_mpi_new(0);
-  if(!gcry_mpi_set_ui(mpi_e, 65537)) return false;
+  if(!gcry_mpi_set_ui(mpi_e, e)) return false;
   if(gcry_ac_data_set(data, GCRY_AC_FLAG_DEALLOC, name_e, mpi_e)) return false;
 
   gcry_ac_key_type type = getType() == RSA_KEY_PUBLIC ? GCRY_AC_KEY_PUBLIC : GCRY_AC_KEY_SECRET;
@@ -128,7 +128,7 @@ bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, si
   return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, key, &io_cipher, &io_message) == 0;
 }
 
-bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint16 &e)
+bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
 {
   assert(key);
   n = _getValueN(&n_len);

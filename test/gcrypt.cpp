@@ -13,6 +13,7 @@
 #include "common.h"
 #include "../bzauthd/RSA.h"
 #include "../bzauthd/base64.h"
+#include "assert.h"
 
 void nputs(const char *str, size_t len)
 {
@@ -40,7 +41,7 @@ void md5test()
 
     uint8 *digest = new uint8[digest_len+1];
     memset(digest, 0, digest_len+1);
-    uint8 buffer[] = "secret";
+    uint8 buffer[] = "password";
     size_t buffer_len = (int)strlen((const char*)buffer);
 
     hash(buffer, buffer_len, digest);
@@ -52,7 +53,7 @@ void md5test()
 
 void test_gcrypt()
 {
-    md5test(); return;
+    //md5test(); return;
 
     if(!sRSAManager.initialize()) return;
     if(!sRSAManager.generateKeyPair()) return;
@@ -60,9 +61,9 @@ void test_gcrypt()
     // decompose the key into values that can be sent in packets
     size_t n_len;
     uint8 *key_n;
-    uint16 e;
+    uint32 e;
     if(!sRSAManager.getPublicKey().getValues(key_n, n_len, e)) return;
-    if(e != 65537) return;
+    assert(e == 65537);
 
     // create the key from its components
     RSAPublicKey publicKey;

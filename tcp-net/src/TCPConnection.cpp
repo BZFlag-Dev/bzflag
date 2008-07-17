@@ -185,9 +185,12 @@ void TCPClientConnection::readData ( void )
   if(len >= 2048)
       return;
 
-  read = net_TCP_Recv(socket,buffer,len);
-  if(read < len)
-    return;
+  if(len)
+  {
+    read = net_TCP_Recv(socket,buffer,len);
+    if(read < len)
+      return;
+  }
 
   TCPPacket packet(buffer,len);
   packetList.push_back(tvPacketPair(opcode, packet));
@@ -415,9 +418,12 @@ bool TCPServerConnectedPeer::readData ( void )
   if(len >= 2048)
       return false;
 
-  read = net_TCP_Recv(socket,buffer,len);
-  if(read < len)
-    return false;
+  if(len)
+  {
+    read = net_TCP_Recv(socket,buffer,len);
+    if(read < len)
+      return false;
+  }
 
   TCPPacket packet(buffer,len);
   packetList.push_back(tvPacketPair(opcode, packet));

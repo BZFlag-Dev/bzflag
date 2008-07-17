@@ -73,14 +73,14 @@ bool PacketHandler::handleAuthRequest(Packet &packet)
     m_authSession = new AuthSession;
 
   uint8 *key_n;
-  uint16 e;
+  uint32 e;
   size_t n_len;
   sRSAManager.getPublicKey().getValues(key_n, n_len, e);
 
   Packet challenge(DMSG_AUTH_CHALLENGE, 4+n_len);
   challenge << (uint16)n_len;
   challenge.append(key_n, n_len);
-  challenge << (uint16)e;
+  challenge << (uint32)e;
   m_socket->sendData(challenge);
 
   free(key_n);
@@ -151,9 +151,25 @@ bool PacketHandler::handleRegisterGetForm(Packet &packet)
 bool PacketHandler::handleRegisterRequest(Packet &packet)
 {
   if(m_regSession)
+  {
     sLog.outError("RegisterRequest: register session already in progress");
+    return true;
+  }
   else
     m_regSession = new RegisterSession;
+
+  uint8 *key_n;
+  uint32 e;
+  size_t n_len;
+  sRSAManager.getPublicKey().getValues(key_n, n_len, e);
+
+  Packet challenge(DMSG_REGISTER_CHALLENGE, 4+n_len);
+  challenge << (uint16)n_len;
+  challenge.append(key_n, n_len);
+  challenge << (uint32)e;
+  m_socket->sendData(challenge);
+
+  free(key_n);
   return true;
 }
 
@@ -170,9 +186,19 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   uint8 *cipher = new uint8[cipher_len+1];
   if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }
 
-  uint8 *message;
+  uint8 *message = NULL;
   size_t message_len;
   sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
+
+  if(!message)
+  {
+    sLog.outLog("RegisterResponse: failed to decrypt cipher");
+    Packet fail(DMSG_REGISTER_FAIL, 4);
+    fail << (uint32)REG_INVALID_MESSAGE;
+    m_socket->sendData(fail);
+    delete[] cipher;
+    return true;
+  }
 
   // get callsign and password, make sure the string is valid
   bool valid = true;
@@ -195,13 +221,16 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
     // hash the password
     size_t digest_len = sUserStore.hashLen();
     uint8 *digest = new uint8[digest_len];
-    sUserStore.hash(message, space_poz, digest);
+    sUserStore.hash(message + space_poz + 1, message_len - space_poz - 1, digest);
     
     UserInfo info;
     info.name = std::string ((const char*)message, space_poz);
     info.password = std::string((const char*)digest, digest_len);
 
     sUserStore.registerUser(info);
+
+    Packet success(DMSG_REGISTER_SUCCESS, 0);
+    m_socket->sendData(success);
     
     delete[] digest;
   } else {

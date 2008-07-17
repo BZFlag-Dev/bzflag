@@ -25,6 +25,11 @@ UserStore::UserStore() : ld(NULL)
 {
 }
 
+UserStore::~UserStore()
+{
+  unbind();
+}
+
 bool ldap_check(int ret)
 {
   if(ret != LDAP_SUCCESS)
@@ -66,7 +71,7 @@ bool UserStore::initialize()
 
 size_t UserStore::hashLen()
 {
-  return (size_t)gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3;
+  return (size_t)gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3 + 5;
 }
 
 void UserStore::hash(uint8 *message, size_t message_len, uint8 *digest)
@@ -74,7 +79,8 @@ void UserStore::hash(uint8 *message, size_t message_len, uint8 *digest)
   int md5len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
   uint8 *tmpbuf = new uint8[md5len];
   gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
-  base64::encode(tmpbuf, tmpbuf + md5len, digest);
+  strcpy((char*)digest, "{md5}");
+  base64::encode(tmpbuf, tmpbuf + md5len, digest+5);
   delete[] tmpbuf;
 }
 
@@ -97,10 +103,11 @@ void UserStore::registerUser(UserInfo &info)
 {
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
+  LDAPMod1 attr_oc(LDAP_MOD_ADD, "objectClass", "person");
   LDAPMod1 attr_cn(LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod1 attr_sn(LDAP_MOD_ADD, "sn", info.name.c_str());
   LDAPMod1 attr_pwd(LDAP_MOD_ADD, "userPassword", info.password.c_str());
-  LDAPMod *attrs[3] = { &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod };
+  LDAPMod *attrs[5] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, NULL };
 
   LDAP_VCHECK( ldap_add_ext_s(ld, dn.c_str(), attrs, NULL, NULL) );
 }

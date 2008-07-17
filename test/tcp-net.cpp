@@ -11,11 +11,13 @@
 */
 
 #include "common.h"
+#include "assert.h"
 
 #ifdef TEST_NET
 
 #include "../bzauthd/NetHandler.h"
 #include <TCPConnection.h>
+#include "../bzauthd/RSA.h"
 
 int sleep_var;
 
@@ -33,9 +35,55 @@ void sleep_thread(void *)
     }
 }
 
+void sendPacket(Packet &packet, TCPClientConnection *client)
+{
+  client->sendData(packet.getOpcode(), (void*)packet.getData(), (int)packet.getLength());
+}
+
 class MyClientListener : public TCPClientDataPendingListener
 {
     public:
+        void handlePackets(Packet &packet, TCPClientConnection *connection)
+        {
+          switch(packet.getOpcode())
+          {
+            case DMSG_REGISTER_CHALLENGE: {
+              uint8 *key_n;
+              uint32 e;
+              uint16 n_len;
+              assert(packet >> n_len);
+              key_n = new uint8[n_len];
+              packet.read(key_n, (size_t)n_len);
+              assert(packet >> e);
+
+              sRSAManager.initialize();
+              sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
+              
+              char message[] = "newuser password";
+              uint8 *cipher = NULL;
+              size_t cipher_len;
+
+              sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+
+              {
+                Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
+                response << (uint16)cipher_len;
+                response.append(cipher, cipher_len);
+                sendPacket(response, connection);
+              }
+
+              sRSAManager.rsaFree(cipher);
+              delete[] key_n;
+            } break;
+            case DMSG_REGISTER_SUCCESS:
+              printf("Registration successful\n"); break;
+            case DMSG_REGISTER_FAIL:
+              printf("Registration failed\n"); break;
+            default:
+              printf("Unexpected opcode %d\n", packet.getOpcode());
+          }
+        }
+
         void pending ( TCPClientConnection *connection, int count )
         {
             char buf[2048];
@@ -46,21 +94,18 @@ class MyClientListener : public TCPClientDataPendingListener
                 unsigned int len;
                 unsigned char * data = (*itr).second.get(len);
                 if(len >= 2048) break;
-                strncpy(buf, (char*)data, len);
+                memcpy(buf, (char*)data, len);
                 buf[len] = 0;
-                printf("SRV: %s\n", buf);
+                Packet packet(opcode, (uint8*)buf, (size_t)len);
+                handlePackets(packet, connection);
             }
+            packets.clear();
         }
 };
 
 void test_listen(void *)
 {
   
-}
-
-void sendPacket(Packet &packet, TCPClientConnection *client)
-{
-  client->sendData(packet.getOpcode(), (void*)packet.getData(), (int)packet.getLength());
 }
 
 void test_connect(void *number)
@@ -105,16 +150,32 @@ void test_connect(void *number)
         TCPConnection::instance().deleteClientConnection(client[i]);
     }*/
 
-    TCPClientConnection* client = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
+    MyClientListener listener;
+    TCPClientConnection* client;
+    do
+    {
+      if(kbhit()) return;
+      printf("Trying to connect\n");
+      client = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
+    }
+    while(!client->connected());
+    printf("Connected\n");
+
+    client->addListener(&listener);
     
     {
       uint8 peerType = PEER_CLIENT;
       uint16 protoVersion = 1;
       uint32 cliVersion = 2;
-      uint8 commType = 0;
+      uint8 commType = 2;
       Packet msg(MSG_HANDSHAKE);
       msg << peerType << protoVersion << cliVersion << commType;
       sendPacket(msg, client);
+    }
+
+    while(!kbhit())
+    {
+      TCPConnection::instance().update();
     }
 
     client->disconnect();

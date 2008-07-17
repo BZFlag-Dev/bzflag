@@ -31,8 +31,8 @@ public:
   friend class RSAManager;
   RSAKey();
   virtual ~RSAKey();
-  bool setValues(uint8 *n, size_t n_len, uint16 e);
-  bool getValues(uint8 *&n, size_t &n_len, uint16 &e);
+  bool setValues(uint8 *n, size_t n_len, uint32 e);
+  bool getValues(uint8 *&n, size_t &n_len, uint32 &e);
   virtual RSAKeyType getType() = 0;
 protected:
   uint8 *_getValueN(size_t *n_len);

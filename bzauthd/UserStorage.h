@@ -27,6 +27,7 @@ class UserStore : public Singleton<UserStore>
 {
 public:
   UserStore();
+  ~UserStore();
   bool initialize();
   bool bind(const uint8 *master_addr, const uint8 *root_dn, const uint8 *root_pw);
   void unbind();

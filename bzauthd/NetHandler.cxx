@@ -30,7 +30,7 @@ OpcodeEntry opcodeTable[NUM_OPCODES] = {
   {"DMSG_REGISTER_SEND_FORM",   &PacketHandler::handleInvalid           },
   {"CMSG_REGISTER_REQUEST",     &PacketHandler::handleRegisterRequest   },
   {"DMSG_REGISTER_CHALLENGE",   &PacketHandler::handleInvalid           },
-  {"CMSG_REGISTER_RESPONSE",    &PacketHandler::handleNull              },
+  {"CMSG_REGISTER_RESPONSE",    &PacketHandler::handleRegisterResponse  },
   {"DMSG_REGISTER_SUCCESS",     &PacketHandler::handleInvalid           },
   {"SMSG_TOKEN_VALIDATE",       &PacketHandler::handleNull              },
   {"DMSG_TOKEN_VALIDATE",       &PacketHandler::handleInvalid           }
@@ -237,9 +237,6 @@ teTCPError ConnectSocket::sendData(Packet &packet)
   uint16 opcode = packet.getOpcode();
   uint16 len = (uint16)packet.getLength();
 
-  if (!data || len < 1)
-    return eTCPDataNFG;
-
   // send the header first
   char header[4];
   *(uint16*)header = opcode;
@@ -248,10 +245,13 @@ teTCPError ConnectSocket::sendData(Packet &packet)
   if (lenSent < 4)
     return eTCPConnectionFailed;
 
-  lenSent = net_TCP_Send(socket, data, len);
+  if(data && len >= 1)
+  {
+    lenSent = net_TCP_Send(socket, data, len);
 
-  if (lenSent < len)
-    return eTCPConnectionFailed;
+    if (lenSent < len)
+      return eTCPConnectionFailed;
+  }
 
   return eTCPNoError;
 }
