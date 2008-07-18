@@ -219,6 +219,9 @@ Gameplay
   might be related to a rapidly repeating world weapon as well (like once a
   second, use _weapons BZDB var to test...)
 
+* Set wings jump count to x. Use x + 1 or more keystrokes for wings jumps...
+  Tank will then take one jump upon landing. @ r18096 -spldart-
+
 3rd party libs
 --------------
 
