@@ -125,6 +125,12 @@ Rendering
 * When setting resolution to 1400x1050 the font listing the various resolutions
   overlaps one another. @ r18096 -spldart-
 
+* Not sure if this is 'game play' or 'rendering' but 'wide angle' flag causes
+  one's own flag to come into partial view in reverse. @ r18096 -spldart-
+  ... also not sure if this was intended game behaviour.
+
+
+
 Platform (multiple)
 -------------------
 
