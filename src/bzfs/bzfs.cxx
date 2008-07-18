@@ -4547,18 +4547,6 @@ static void doVoteArbiter(TimeKeeper &tm)
 		  break;
 		}
 	      }
-	      // show the delinquent no mercy; make sure he is kicked even if he changed
-	      // his callsign by finding a corresponding IP and matching it to the saved one
-	      if (!foundPlayer) {
-		NetHandler *player = NetHandler::whoIsAtIP(realIP);
-		for (v = 0; v < curMaxPlayers; v++) {
-		  GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(v);
-		  if (otherData && (otherData->netHandler == player)) {
-		    foundPlayer = true;
-		    break;
-		  }
-		}
-	      }
 	      if (foundPlayer) {
 		// notify the player
 		snprintf(message, MessageLen, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");

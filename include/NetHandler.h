@@ -158,8 +158,6 @@ public:
   /// Supporting DNS Asynchronous resolver
   static void checkDNS(fd_set *read_set, fd_set *write_set);
 
-  static NetHandler* whoIsAtIP(const std::string& IP);
-
   static void setCurrentTime(TimeKeeper tm);
 
   typedef std::list<NetHandler*> NetConnections;

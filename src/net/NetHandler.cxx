@@ -265,22 +265,6 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set)
     (*it)->ares.process(read_set, write_set);
 }
 
-NetHandler* NetHandler::whoIsAtIP(const std::string& IP) 
-{
-  NetHandler* handler = NULL;
-  NetConnections::const_iterator it;
-
-  for (it = netConnections.begin(); it != netConnections.end(); it++)
-    // FIXME: this is broken for IPv6
-    // there can be multiple ascii formats for the same address
-    if ((*it)->closed
-	&& !strcmp((*it)->peer.getDotNotation().c_str(), IP.c_str())) {
-      handler = *it;
-      break;
-    }
-  return handler;
-}
-
 void NetHandler::setCurrentTime(TimeKeeper tm)
 {
   now = tm;
