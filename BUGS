@@ -122,6 +122,9 @@ Rendering
   
 * Flaghelp falls into the radar area when radar is 'bigger'
 
+* When setting resolution to 1400x1050 the font listing the various resolutions
+  overlaps one another. @ r18096 -spldart-
+
 Platform (multiple)
 -------------------
 
