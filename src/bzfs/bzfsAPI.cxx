@@ -1528,13 +1528,15 @@ BZF_API bz_APIStringList *bz_getGroupList(void)
 
 BZF_API bz_APIStringList *bz_getGroupPerms(const char *group)
 {
-  bz_APIStringList *permList=new bz_APIStringList;
+  bz_APIStringList *permList = NULL;
 
   std::string groupName=group;
   groupName=TextUtils::toupper(groupName);
   PlayerAccessMap::iterator itr=groupAccess.find(groupName);
   if(itr==groupAccess.end())
     return permList;
+
+  permList = new bz_APIStringList;
 
   for(int i=0; i < PlayerAccessInfo::lastPerm; i++)
   {
