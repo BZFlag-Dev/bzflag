@@ -136,16 +136,13 @@ bool WebAdmin::loopCallback (const std::string &key)
       templateVars["playerid"] = players[loopPos];
       templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
       return true;
-    } else {
-      players.clear();
-      return loopPos = 0;
-    }
+    } else players.clear();
   } else if (key == "navigation") {
     if (!loopPos) listSize = pagenames.size();
     if (loopPos < pagenames.size()) {
       templateVars["pagename"] = pagenames[loopPos++];
       return true;
-    } else return loopPos = 0;
+    }
   } else if (key == "permissions") {
     if (!loopPos) listSize = bzu_standardPerms().size();
     if (loopPos < listSize) {
@@ -153,7 +150,7 @@ bool WebAdmin::loopCallback (const std::string &key)
       if (stringList) checked = stringList->contains(perm);
       templateVars["permission"] = perm;
       return true;
-    } else return loopPos = 0;
+    } else delete(stringList);
   } else if (key == "helpmsgs") {
     if (!loopPos) {
       stringList = bz_getHelpTopics();
@@ -162,10 +159,7 @@ bool WebAdmin::loopCallback (const std::string &key)
     if (loopPos < listSize) {
       templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
       return true;
-    } else {
-      delete(stringList);
-      return loopPos = 0;
-    }
+    } else delete(stringList);
   } else if (key == "groups") {
     if (!loopPos) {
       stringList = bz_getGroupList();
@@ -174,21 +168,16 @@ bool WebAdmin::loopCallback (const std::string &key)
     if (loopPos < listSize) {
       templateVars["groupname"] = (*stringList)[loopPos++].c_str();
       return true;
-    } else {
-      delete(stringList);
-      return loopPos = 0;
-    }
+    } else delete(stringList);
   } else if (key == "servervars") {
     if (!loopPos) listSize = bz_getBZDBVarList(stringList);
     if (loopPos < listSize) {
       const char *varname = (*stringList)[loopPos++].c_str();
       templateVars["servervarname"] = varname;
       templateVars["servervarvalue"] = bz_getBZDBString(varname).c_str();
-    } else {
-      delete(stringList);
-      return loopPos = 0;
-    }
+    } else delete(stringList);
   } else return false;
+  return loopPos = 0;
 }
 
 // condition check for [?IF] in templates
@@ -200,6 +189,8 @@ bool WebAdmin::ifCallback (const std::string &key)
     return editing;
   if (key == "checked")
     return checked;
+  if (key == "error")
+    return templateVars.find("error") != templateVars.end();
   return false;
 }
 
@@ -297,8 +288,27 @@ void WebAdmin::banlistPageCallback (const HTTPRequest &request)
 }
 
 void WebAdmin::groupPageCallback (const HTTPRequest &request)
-{
-  
+{  
+  std::string name;
+  request.getParam("name", name);
+  stringList = bz_getGroupPerms(name.c_str());
+  if (!stringList) { // TODO: make a new group instead
+    templateVars["error"] = std::string("No such group: ") + name;
+    return;
+  }
+  if (request.request == eGet) {
+    templateVars["groupname"] = name;
+    editing = true;
+  } else if (request.request == ePost) {
+    delete(stringList);
+    listSize = bzu_standardPerms().size();
+    std::string dummy;
+    for (loopPos = 0; loopPos < listSize; loopPos++) {
+      if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy));
+        bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str());
+      // TODO: else remove permission
+    }
+  }
 }
 
 // Local Variables: ***
