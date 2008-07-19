@@ -162,8 +162,6 @@ Platform (Windows)
   not mesh, and it localized the bug to windows builds currently. But could
   obviously be related.  @ r16889 -spldart-
 
-* Client f12 'quick quit' is not working. Win XP Pro SP3, VC8, r17245 -spldart-
-
 * Client stalls at 'got token ######' and continues to hear and see other clients,
   linux based, playing but not joining itself. Win XP Pro SP3, VC8, r17245
   -spldart-
