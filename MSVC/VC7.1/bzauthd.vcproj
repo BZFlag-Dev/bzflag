@@ -155,6 +155,9 @@
 				RelativePath="..\..\bzauthd\Serverhandler.cxx">
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\TokenMgr.cxx">
+			</File>
+			<File
 				RelativePath="..\..\bzauthd\UserStorage.cxx">
 			</File>
 		</Filter>
@@ -188,6 +191,9 @@
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\Singleton.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\TokenMgr.h">
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\UserStorage.h">

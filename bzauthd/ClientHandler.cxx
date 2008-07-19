@@ -15,6 +15,7 @@
 #include "Log.h"
 #include "RSA.h"
 #include "UserStorage.h"
+#include "TokenMgr.h"
 
 PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
 {
@@ -104,17 +105,43 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   size_t message_len;
   sRSAManager.getSecretKey().decrypt(cipher, (size_t)cipher_len, message, message_len);
 
+  if(!message)
+  {
+    sLog.outLog("AuthResponse: failed to decrypt cipher");
+    Packet fail(DMSG_AUTH_FAIL, 4);
+    fail << (uint32)AUTH_INVALID_MESSAGE;
+    m_socket->sendData(fail);
+    delete[] cipher;
+    return true;
+  }
+
   // get callsign and password, make sure the string is valid
   bool valid = false;
+  int32 callsign_len = -1;
+  int32 password_len = -1;
 
-  // it has to contain exactly one space
-  int32 space_poz = -1;
-  for(size_t i = 0; i < message_len; i++)
+  if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + 1 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + 1)
   {
-    if(message[i] == ' ')
+    // it has to contain exactly one space
+    for(size_t i = 0; i < message_len; i++)
     {
-      if(space_poz == -1) { space_poz = (int32)i; valid = true; }
-      else valid = false;
+      // TODO: better checking for characters
+      if(!isprint(message[i])) break;
+      if(message[i] == ' ')
+      {
+        if(callsign_len != -1) break;
+        callsign_len = (int32)i;
+      }
+    }
+
+    if(i == message_len && callsign_len != -1)
+    {
+      if(callsign_len >= MIN_CALLSIGN_LEN && callsign_len <= MAX_CALLSIGN_LEN)
+      {
+        password_len = (int32)message_len - callsign_len - 1;
+        if(password_len >= MIN_PASSWORD_LEN && password_len <= MAX_PASSWORD_LEN)
+          valid = true;
+      }
     }
   }
 
@@ -124,12 +151,12 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   {
     // the password doesn't need hashing for auth
     UserInfo info;
-    info.name = std::string ((const char*)message, space_poz);
-    info.password = std::string((const char*)message + space_poz + 1, message_len - space_poz - 1);
+    info.name = std::string ((const char*)message, callsign_len);
+    info.password = std::string((const char*)message + callsign_len + 1, password_len);
 
     if(sUserStore.authUser(info))
     {
-      uint32 token = 0; // TODO
+      uint32 token = sTokenMgr.newToken(info.name);
       Packet success(DMSG_AUTH_SUCCESS, 4);
       success << token;
       m_socket->sendData(success);
@@ -217,28 +244,43 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
   // get callsign and password, make sure the string is valid
   bool valid = false;
 
-  // it has to contain exactly one space
-  int32 space_poz = -1;
-  for(size_t i = 0; i < message_len; i++)
+  int32 callsign_len = -1;
+  int32 password_len = -1;
+
+  if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + 1 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + 1)
   {
-    if(message[i] == ' ')
+    // it has to contain exactly one space
+    for(size_t i = 0; i < message_len; i++)
     {
-      if(space_poz == -1) { space_poz = (int32)i; valid = true; }
-      else valid = false;
+      // TODO: better checking for characters
+      if(!isprint(message[i])) break;
+      if(message[i] == ' ')
+      {
+        if(callsign_len != -1) break;
+        callsign_len = (int32)i;
+      }
+    }
+
+    if(i == message_len && callsign_len != -1)
+    {
+      if(callsign_len >= MIN_CALLSIGN_LEN && callsign_len <= MAX_CALLSIGN_LEN)
+      {
+        password_len = (int32)message_len - callsign_len - 1;
+        if(password_len >= MIN_PASSWORD_LEN && password_len <= MAX_PASSWORD_LEN)
+          valid = true;
+      }
     }
   }
-
-  // TODO: make sure all characters are in range etc .. more thorough checking needed
 
   if(valid)
   {
     // hash the password
     size_t digest_len = sUserStore.hashLen();
     uint8 *digest = new uint8[digest_len];
-    sUserStore.hash(message + space_poz + 1, message_len - space_poz - 1, digest);
+    sUserStore.hash(message + callsign_len + 1, password_len, digest);
     
     UserInfo info;
-    info.name = std::string ((const char*)message, space_poz);
+    info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)digest, digest_len);
 
     sUserStore.registerUser(info);

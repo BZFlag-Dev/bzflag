@@ -87,7 +87,7 @@ class MyClientListener : public TCPClientDataPendingListener
               sRSAManager.initialize();
               sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
               
-              char message[] = "newuser passwo4rd";
+              char message[] = "newuser ";
               uint8 *cipher = NULL;
               size_t cipher_len;
 
