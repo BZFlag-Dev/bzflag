@@ -639,7 +639,8 @@ void HTTPConnection::fillRequest(HTTPRequest &req)
   req.cookies.clear();
 
   req.ip = bz_getNonPlayerConnectionIP(connectionID);
-  req.hostmask = bz_getNonPlayerConnectionHost(connectionID);
+  const char *hostmask = bz_getNonPlayerConnectionHost(connectionID);
+  req.hostmask = hostmask ? hostmask : "";
 
   // parse the headers here for cookies
   std::map<std::string,std::string>::iterator itr = req.headers.begin();
