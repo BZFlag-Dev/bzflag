@@ -61,6 +61,10 @@ Crashes
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
   fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
+* Win32 debug. Pick up GM fine. Firing GM produces error -
+  http://98.197.19.50:8080/gm_shotbranch.jpg - Ignore will return you to game
+  with dropped GM flag @ r18107 -spldart-
+
 Regressions
 -----------
 
