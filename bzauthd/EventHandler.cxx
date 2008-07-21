@@ -11,6 +11,22 @@
 */
 
 #include "common.h"
+#include "EventHandler.h"
+
+INSTANTIATE_SINGLETON(EventHandler);
+
+EventHandler::EventHandler()
+{
+}
+
+EventHandler::~EventHandler()
+{
+}
+
+void EventHandler::addOffset(CBFunc func, void * data, uint64 offset_ms)
+{
+  
+}
 
 // Local Variables: ***
 // mode: C++ ***

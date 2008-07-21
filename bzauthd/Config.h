@@ -59,7 +59,7 @@ public:
   uint16 lookupKey(std::string stringKey);
   uint8 lookupType(uint16 key);
 protected:
-  typedef std::hash_map<std::string, uint16 /*key*/> KeyRegisterType;
+  typedef HM_NAMESPACE::hash_map<std::string, uint16 /*key*/> KeyRegisterType;
   typedef std::vector<uint8 /*type*/> TypeRegisterType;
   typedef std::vector<void *> ValuesType;
 

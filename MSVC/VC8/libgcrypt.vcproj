@@ -4,7 +4,6 @@
 	Version="8.00"
 	Name="libgcrypt"
 	ProjectGUID="{E848E27A-90AF-4B66-978A-5445581BCFBA}"
-	RootNamespace="libgcrypt"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="./libgcrypt_debug"
+			IntermediateDirectory="./libgcrypt_debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -41,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../libgcrypt/;../../libgcrypt/src"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+				AdditionalIncludeDirectories="../../libgcrypt;../../libgcrypt/src/"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -82,8 +81,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="./libgcrypt_release"
+			IntermediateDirectory="./libgcrypt_release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -105,8 +104,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../libgcrypt/;../../libgcrypt/src"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+				AdditionalIncludeDirectories="../../libgcrypt;../../libgcrypt/src/"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -154,6 +153,34 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libgcrypt\src\ath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\cipher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\dumpsexp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\g10lib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\gcrypt-module.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\gcrypt.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\src\global.c"
 				>
 			</File>
@@ -174,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libgcrypt\src\mpi.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\src\secmem.c"
 				>
 			</File>
@@ -190,7 +221,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libgcrypt\src\stdmem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\types.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\src\visibility.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\src\visibility.h"
 				>
 			</File>
 		</Filter>
@@ -206,6 +249,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libgcrypt\cipher\bithelp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\cipher\blowfish.c"
 				>
 			</File>
@@ -215,6 +262,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libgcrypt\cipher\camellia.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\cipher\camellia.h"
 				>
 			</File>
 			<File
@@ -266,7 +317,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libgcrypt\cipher\rand-internal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\cipher\random.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\cipher\random.h"
 				>
 			</File>
 			<File
@@ -275,6 +334,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libgcrypt\cipher\rijndael.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\cipher\rmd.h"
 				>
 			</File>
 			<File
@@ -325,36 +388,20 @@
 				RelativePath="..\..\libgcrypt\cipher\whirlpool.c"
 				>
 			</File>
-			<Filter
-				Name="include"
-				>
-				<File
-					RelativePath="..\..\libgcrypt\cipher\bithelp.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\cipher\camellia.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\cipher\rand-internal.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\cipher\random.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\cipher\rmd.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="mpi"
 			>
 			<File
+				RelativePath="..\..\libgcrypt\mpi\asm-syntax.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libgcrypt\mpi\ec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\mpi\longlong.h"
 				>
 			</File>
 			<File
@@ -363,6 +410,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libgcrypt\mpi\mpi-add.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\mpi\mpi-asm-defs.h"
 				>
 			</File>
 			<File
@@ -383,6 +434,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libgcrypt\mpi\mpi-inline.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\mpi\mpi-inline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libgcrypt\mpi\mpi-internal.h"
 				>
 			</File>
 			<File
@@ -453,80 +512,12 @@
 				RelativePath="..\..\libgcrypt\mpi\mpiutil.c"
 				>
 			</File>
-			<Filter
-				Name="include"
-				>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\asm-syntax.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\longlong.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\mpi-asm-defs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\mpi-inline.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\mpi-internal.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\libgcrypt\mpi\sysdep.h"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="include"
-			>
 			<File
-				RelativePath="..\..\libgcrypt\src\ath.h"
+				RelativePath="..\..\libgcrypt\mpi\sysdep.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libgcrypt\src\cipher.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\g10lib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\gcrypt-module.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\gcrypt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\gpg-error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\mpi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\stdmem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\types.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libgcrypt\src\visibility.h"
+				RelativePath="..\..\libgcrypt\mpi\udiv-w-sdiv.c"
 				>
 			</File>
 		</Filter>

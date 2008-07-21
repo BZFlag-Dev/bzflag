@@ -25,6 +25,14 @@ typedef unsigned __int64 uint64;
 
 #pragma warning(disable:4996)
 
+#if defined(_MSC_VER) && _MSC_VER >= 1300
+#define HM_NAMESPACE stdext
+#elif defined( __GNUC__ ) && __GNUC__ >= 3
+#define HM_NAMESPACE __gnu_cxx
+#else
+#define HM_NAMESPACE std
+#endif
+
 #endif // __BZAUTHD_PLATFORM_H__
 
 

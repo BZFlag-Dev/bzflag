@@ -122,8 +122,9 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
 
   if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + 1 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + 1)
   {
+	size_t i;
     // it has to contain exactly one space
-    for(size_t i = 0; i < message_len; i++)
+    for(i = 0; i < message_len; i++)
     {
       // TODO: better checking for characters
       if(!isprint(message[i])) break;
@@ -249,8 +250,9 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
 
   if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + 1 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + 1)
   {
+	size_t i;
     // it has to contain exactly one space
-    for(size_t i = 0; i < message_len; i++)
+    for(i = 0; i < message_len; i++)
     {
       // TODO: better checking for characters
       if(!isprint(message[i])) break;

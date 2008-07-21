@@ -30,10 +30,15 @@ void TokenMgr::update()
 
 }
 
-uint32 TokenMgr::newToken(std::string name)
+void TokenMgr::addToken(std::string name, uint32 token)
 {
   tokenMap[nextToken] = name;
   // TODO: schedule expiry
+}
+
+uint32 TokenMgr::newToken(std::string name)
+{
+  addToken(name, nextToken);
   return nextToken++;
 }
 

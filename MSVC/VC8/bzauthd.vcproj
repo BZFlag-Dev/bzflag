@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="test"
-	ProjectGUID="{C335B30B-17DE-41E8-839C-3FBEECB17FA0}"
+	Name="bzauthd"
+	ProjectGUID="{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./test_debug"
-			IntermediateDirectory="./test_debug"
+			OutputDirectory="./bzauthd_debug"
+			IntermediateDirectory="./bzauthd_debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -40,13 +40,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../ldap/include;&quot;../../libgpg-error/src&quot;;../../libgcrypt/src;&quot;../../tcp-net/include&quot;"
+				AdditionalIncludeDirectories="../../libgcrypt/src;&quot;../../libgpg-error/src&quot;;../../ldap/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough=""
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="common.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -63,11 +63,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
-				OutputFile="$(OutDir)/test.exe"
-				LinkIncremental="2"
-				IgnoreDefaultLibraryNames=""
+				OutputFile="$(OutDir)/bzauthd.exe"
+				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/test.pdb"
+				ProgramDatabaseFile="$(OutDir)/bzauthd.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 				FixedBaseAddress="1"
@@ -99,8 +98,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./test_release"
-			IntermediateDirectory="./test_release"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -122,10 +121,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../ldap/include;&quot;../../libgpg-error/src&quot;;../../libgcrypt/src;&quot;../../tcp-net/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="common.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -141,10 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-error_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib"
-				OutputFile="$(OutDir)/test.exe"
+				AdditionalDependencies="ws2_32.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-erro_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib"
+				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -190,7 +188,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\test\common.cpp"
+				RelativePath="..\..\bzauthd\bzauthd.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\ClientHandler.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Common.cxx"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -202,11 +208,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\test\gcrypt.cpp"
+				RelativePath="..\..\bzauthd\Config.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\test\ldap.cpp"
+				RelativePath="..\..\bzauthd\EventHandler.cxx"
 				>
 			</File>
 			<File
@@ -214,25 +220,24 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\NetHandler.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bzauthd\RSA.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\test\tcp-net.cpp"
+				RelativePath="..\..\bzauthd\Serverhandler.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\test\test.cpp"
+				RelativePath="..\..\bzauthd\TokenMgr.cxx"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="2"
-						PrecompiledHeaderThrough="common.h"
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\UserStorage.cxx"
+				>
 			</File>
 		</Filter>
 		<Filter
@@ -245,13 +250,51 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\test\common.h"
+				RelativePath="..\..\bzauthd\Common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\EventHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Log.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\NetHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\Platform.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\RSA.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\bzauthd\Singleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\TokenMgr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\UserStorage.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 		</Filter>
 	</Files>
 	<Globals>

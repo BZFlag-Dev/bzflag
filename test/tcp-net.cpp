@@ -87,7 +87,7 @@ class MyClientListener : public TCPClientDataPendingListener
               sRSAManager.initialize();
               sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
               
-              char message[] = "newuser ";
+              char message[] = "newuser password";
               uint8 *cipher = NULL;
               size_t cipher_len;
 
@@ -227,9 +227,6 @@ void test_net()
     // initialize the net library
     TCPConnection::instance();
 
-    //_beginthread(test_listen, 0, NULL);
-    //_sleep(500);
-    //_beginthread(test_connect, 0, NULL);
     //test_comm(2) // reg
     test_comm(0); // auth
 }

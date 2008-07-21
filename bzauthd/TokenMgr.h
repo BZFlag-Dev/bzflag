@@ -23,10 +23,11 @@ public:
   ~TokenMgr();
   void update();
   uint32 newToken(std::string name);
+  void addToken(std::string name, uint32 token);
   bool checkToken(std::string name, uint32 token);
 private:
   uint32 nextToken;
-  typedef std::hash_map<uint32, std::string> TokenMapType;
+  typedef HM_NAMESPACE::hash_map<uint32, std::string> TokenMapType;
   TokenMapType tokenMap;
 };
 

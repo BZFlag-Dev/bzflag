@@ -13,6 +13,17 @@
 #ifndef __BZAUTHD_EVENTHANDLER_H__
 #define __BZAUTHD_EVENTHANDLER_H__
 
+class EventHandler : public Singleton<EventHandler>
+{
+public:
+  typedef void (*CBFunc)(void *);
+  EventHandler();
+  ~EventHandler();
+  void update();
+  void addOffset(CBFunc func, void * data, uint64 offset_ms);
+private:
+};
+
 #endif // __BZAUTHD_EVENTHANDLER_H__
 
 // Local Variables: ***

@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../bzauthd/Debug"
-			IntermediateDirectory="../../bzauthd/Debug"
+			OutputDirectory="./bzauthd_debug"
+			IntermediateDirectory="./bzauthd_debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

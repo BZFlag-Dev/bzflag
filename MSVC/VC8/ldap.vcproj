@@ -4,7 +4,6 @@
 	Version="8.00"
 	Name="ldap"
 	ProjectGUID="{CF1DCE05-3141-480F-B964-E06E04625A84}"
-	RootNamespace="ldap"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="./ldap_debug"
+			IntermediateDirectory="./ldap_debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -41,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../ldap/include/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\..\ldap\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -82,8 +81,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="./ldap_release"
+			IntermediateDirectory="./ldap_release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -105,8 +104,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../ldap/include/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\..\ldap\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -256,24 +255,6 @@
 			<File
 				RelativePath="..\..\ldap\libldap\options.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\ldap\libldap\os-ip.c"
@@ -374,24 +355,6 @@
 			<File
 				RelativePath="..\..\ldap\libldap\version.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\ldap\libldap\vlvctrl.c"
@@ -401,62 +364,94 @@
 				RelativePath="..\..\ldap\libldap\whoami.c"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="liblber"
-			>
-			<File
-				RelativePath="..\..\ldap\liblber\assert.c"
+			<Filter
+				Name="liblber"
 				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\bprint.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\debug.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\decode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\encode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\io.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\lber-int.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\nt_err.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\options.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\sockbuf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\stdio.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ldap\liblber\version.c"
-				>
-			</File>
+				<File
+					RelativePath="..\..\ldap\liblber\assert.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\bprint.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\debug.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\decode.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\encode.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\io.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\lber-int.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\memory.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\nt_err.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\options.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\sockbuf.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\stdio.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ldap\liblber\version.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="include"
