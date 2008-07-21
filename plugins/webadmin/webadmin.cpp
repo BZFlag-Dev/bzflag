@@ -197,15 +197,18 @@ bool WebAdmin::ifCallback (const std::string &key)
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
   std::map<std::string,page_callback>::iterator pair;
-  size_t last;
+  size_t size;
   std::string pagename = request.resource;
 
   switch(level) {
   case 1:
   case VERIFIED:
-    last = pagename.size()-1;
-    if (pagename[last] == '/') pagename.erase(last);
     if (pagename.empty()) pagename = "main";
+    else {
+      size = pagename.size();
+      if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
+    }
+    
     pair = controllers.find(pagename);
     if (pair != controllers.end()) {
       (this->*pair->second)(request);
