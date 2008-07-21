@@ -5,7 +5,7 @@
   <form id="helpmsg_edit" action="" method="post">
     <input type="hidden" name="name" value="[$HelpMsgName]">
     <textarea name="helptext">[$HelpMsgBody]</textarea>
-    <input type="submit" value="save" />
+    <input type="submit" value="save">
   </form>
 [?ELSE Editing]
   <h2>helpmsg list</h2>
@@ -14,17 +14,17 @@
     <ul>
 [*START HelpMsgs]
       <li><input type="checkbox" name="delmsg"
-                 id="help_[$HelpMsgName]" value="[$HelpMsgName]" />
+                 id="help_[$HelpMsgName]" value="[$HelpMsgName]">
         <label for="help_[$HelpMsgName]">[$HelpMsgName]</label>
         <a class="edit" href="?name=[$HelpMsgName]">edit</a></li>
 [*END HelpMsgs]
     </ul>
-    <input type="submit" value="delete" />
+    <input type="submit" value="delete">
   </form>
   
   <form id="helpmsg_new" action="" method="get">
-    <input type="text" name="name" />
-    <input type="submit" value="new" />
+    <input type="text" name="name">
+    <input type="submit" value="new">
   </form>
 [?END Editing]
 </body>
