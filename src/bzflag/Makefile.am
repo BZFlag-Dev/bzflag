@@ -148,8 +148,6 @@ bzflag_SOURCES =			\
 	SceneRenderer.cxx		\
 	ScoreboardRenderer.cxx		\
 	ScoreboardRenderer.h		\
-	SegmentedShotStrategy.cxx	\
-	SegmentedShotStrategy.h		\
 	ServerCommandKey.cxx		\
 	ServerCommandKey.h		\
 	ServerLink.cxx			\
@@ -158,20 +156,12 @@ bzflag_SOURCES =			\
 	ServerMenu.h			\
 	ShockWaveStrategy.cxx		\
 	ShockWaveStrategy.h		\
-	ShotList.cxx			\
-	ShotList.h			\
-	ShotPath.cxx			\
-	ShotPath.h			\
-	ShotPathSegment.cxx		\
-	ShotPathSegment.h		\
 	ShotStatistics.cxx		\
 	ShotStatistics.h		\
 	ShotStats.cxx			\
 	ShotStats.h			\
 	ShotStatsDefaultKey.cxx		\
 	ShotStatsDefaultKey.h		\
-	ShotStrategy.cxx		\
-	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\
 	SilenceDefaultKey.h		\
 	StandardTankAvatar.cxx		\
