@@ -185,7 +185,7 @@ void SimpleBotHandler::process ( bz_EventData *eventData )
 				myState.pos[1] = pos[1];
 				myState.pos[2] = pos[2];
 				myState.rotation = rot;
-				updateState ( &myState );
+				//updateState ( &myState );
 				bz_deleteIntList(list);
 
 				lastUpdateTime = thisTime;

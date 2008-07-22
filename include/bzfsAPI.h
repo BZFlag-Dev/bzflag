@@ -2046,7 +2046,7 @@ class BZF_API bz_ServerSidePlayerHandler
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
 
   void dropFlag( void );
-  void setMovementInput(float forward, float turn);
+  void setMovement(float forward, float turn);
   bool fireShot(void);
   bool jump(void);
 

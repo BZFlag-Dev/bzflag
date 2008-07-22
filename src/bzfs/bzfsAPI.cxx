@@ -630,44 +630,20 @@ bz_APIStringList::~bz_APIStringList()
 
 //-------------------------------------------------------------------------
 
-void bz_APIStringList::push_back(const char* value)
-{
-  if(value)
-    data->list.push_back(bz_ApiString(value));
-}
-
-//-------------------------------------------------------------------------
-
 void bz_APIStringList::push_back(const std::string &value)
 {
   data->list.push_back(bz_ApiString(value));
 }
 
 //-------------------------------------------------------------------------
-static bz_ApiString empty_getString;
+bz_ApiString emptyString;
+
 const bz_ApiString& bz_APIStringList::get(unsigned int i)
 {
   if(i >= data->list.size())
-    return empty_getString;
+    return emptyString;
 
   return data->list[i];
-}
-
-//-------------------------------------------------------------------------
-
-bool bz_APIStringList::contains(const char* value)
-{
-  if (!value)
-    return false;
-
-  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
-}
-
-//-------------------------------------------------------------------------
-
-bool bz_APIStringList::contains(const std::string &value)
-{
-  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
 }
 
 //-------------------------------------------------------------------------
@@ -710,6 +686,25 @@ void bz_APIStringList::clear(void)
 {
   data->list.clear();
 }
+
+//-------------------------------------------------------------------------
+bool bz_APIStringList::contains(const char* value)
+{
+  if (!value)
+    return false;
+
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
+}
+
+//-------------------------------------------------------------------------
+
+bool bz_APIStringList::contains(const std::string &value)
+{
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
+}
+
+//-------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------
 
@@ -1528,15 +1523,13 @@ BZF_API bz_APIStringList *bz_getGroupList(void)
 
 BZF_API bz_APIStringList *bz_getGroupPerms(const char *group)
 {
-  bz_APIStringList *permList = NULL;
+  bz_APIStringList *permList=new bz_APIStringList;
 
   std::string groupName=group;
   groupName=TextUtils::toupper(groupName);
   PlayerAccessMap::iterator itr=groupAccess.find(groupName);
   if(itr==groupAccess.end())
     return permList;
-
-  permList = new bz_APIStringList;
 
   for(int i=0; i < PlayerAccessInfo::lastPerm; i++)
   {
@@ -4161,14 +4154,16 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
   // compute the dt
-  // double now = bz_getCurrentTime();
-  // double delta = now - currentState.time;
+  double now = bz_getCurrentTime();
+  double delta = now - currentState.time;
+
+  // are we fli
  // currentState.
 }
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
+void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
 {
   if(input[0]==turn && input[1]==forward)
     return ;
@@ -4283,16 +4278,24 @@ float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
   return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
 }
 
-float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & /*state*/)
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
 {
   // plot where we think we are now based on the current date
-  // double dt = state.time - time;
+  double dt = state.time - time;
 
-  // float newPos[3];
-  // newPos[0] = state.pos[0] + (float)(state.vec[0] *dt);
-  // newPos[1] = state.pos[1] + (float)(state.vec[1] *dt);
-  // newPos[2] = state.pos[2] + (float)(state.vec[2] *dt);
- return 0;
+  float newPos[3];
+  newPos[0] = pos[0] + (float)(vec[0] *dt);
+  newPos[1] = pos[1] + (float)(vec[1] *dt);
+  newPos[2] = pos[2] + (float)(vec[2] *dt);
+
+  // that's where we thing we'll be based on movement
+
+  float dx = newPos[0] - state.pos[0];
+  float dy = newPos[1] - state.pos[1];
+  float dz = newPos[1] - state.pos[2];
+
+  // return the distance between where our projection is, and where state is
+  return sqrt(dx*dx+dy*dy+dz*dz);
 }
 
 
