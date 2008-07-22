@@ -894,11 +894,11 @@ bool HTTPConnection::HTTPTask::update(int connectionID)
   if (pendingMessages > 1)
     return false;
 
-  size_t write = page.size();
-  size_t left = write-pos;
+  size_t write = 1000;
+  size_t left = page.size()-pos;
 
-  if (left > 1000)
-    write = pos + 1000;
+  if (left <= 1000)
+    write = left;
 
   if (!bz_sendNonPlayerData (connectionID, page.c_str()+pos, (unsigned int)write))
     return true;
