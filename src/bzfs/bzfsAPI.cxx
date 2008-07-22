@@ -43,6 +43,7 @@
 #include "ServerIntangibilityManager.h"
 #include "bz_md5.h"
 #include "version.h"
+#include "BZDBCache.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -4153,9 +4154,10 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
-  // compute the dt
-  double now = bz_getCurrentTime();
-  double delta = now - currentState.time;
+  // compute the new velocities based on the input
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player)
+    return;
 
   // figure out if we are turning
 
@@ -4163,13 +4165,14 @@ void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 
   // do some check to clamp it to the rotary acceleration
 
-  currentState.rot += (newAngVel*delta);
+  currentState.rot = newAngVel;
 
-  // see if we are driving or jumping
-
-
-  // are we fli
- // currentState.
+  if (!(player->lastState.status & PlayerState::Falling))
+  {
+    currentState.vec[0] = cosf(currentState.rot*deg2Rad) * getMaxLinSpeed()* input[1];
+    currentState.vec[1] = sinf(currentState.rot*deg2Rad) * getMaxLinSpeed()* input[1];
+    currentState.vec[2] = 0;
+  }
 }
 
 //-------------------------------------------------------------------------
@@ -4214,6 +4217,41 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 {
   if(!alive)
     return;
+
+  UpdateInfo newState(currentState);
+
+  double now = bz_getCurrentTime();
+  float delta = (float)(now - currentState.time);
+
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  bool falling = player->lastState.status & PlayerState::Falling ? true : false;
+
+  bool update = false;
+
+  if (falling)
+    newState.vec[2] += BZDBCache::gravity * delta;
+
+  newState.pos[0] += newState.vec[0] * delta;
+  newState.pos[1] += newState.vec[1] * delta;
+  newState.pos[2] += newState.vec[2] * delta;
+
+  // this is where we are now. so see if it hit anyting
+
+  if(bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight,BZDBCache::tankRadius,NULL) != eNoCol)
+  {
+    // see if it' just below us
+    if(falling && bz_cylinderInMapObject(newState.pos,0.1f,1.0f,NULL) != eNoCol)
+    {
+      // we landed
+      update = true;
+      newState.vec[2] = 0;
+      // compute the landing position;
+      newState.pos[2] = currentState.pos[2];
+      player->lastState.status &= !PlayerState::Falling;
+      landed();
+    }
+  }
 
   // see where we are
 }
