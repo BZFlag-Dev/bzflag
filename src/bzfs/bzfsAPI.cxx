@@ -4154,8 +4154,8 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
   // compute the dt
-  double now = bz_getCurrentTime();
-  double delta = now - currentState.time;
+ // double now = bz_getCurrentTime();
+  //double delta = now - currentState.time;
 
   // are we fli
  // currentState.
