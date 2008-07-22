@@ -4280,13 +4280,14 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 {
   float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(player && player->player.haveFlag())
   {
     if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Velocity)
       return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
     else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Thief)
       return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[s] < 0.0f)
+    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[3] < 0.0f)
       return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
   }
 
@@ -4302,7 +4303,7 @@ float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
   {
     if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn)
       return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[s] < 0.0f)
+    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[3] < 0.0f)
       return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
   }
 
