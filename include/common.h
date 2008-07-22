@@ -63,6 +63,10 @@
  */
 #define ZERO_TOLERANCE 0.00005f
 
+// because math is fun and this is used EVERYWHERE
+#define deg2Rad 0.017453292519943295769236907684886f
+
+
 /* Might we be BSDish? sys/param.h has BSD defined if so */
 #ifdef HAVE_SYS_PARAM_H
 #  include <sys/param.h>
