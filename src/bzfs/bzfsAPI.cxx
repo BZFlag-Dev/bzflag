@@ -4154,8 +4154,19 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 void bz_ServerSidePlayerHandler::computeStateFromInput(void)
 {
   // compute the dt
- // double now = bz_getCurrentTime();
-  //double delta = now - currentState.time;
+  double now = bz_getCurrentTime();
+  double delta = now - currentState.time;
+
+  // figure out if we are turning
+
+  float newAngVel = getMaxRotSpeed() * input[0];
+
+  // do some check to clamp it to the rotary acceleration
+
+  currentState.rot += (newAngVel*delta);
+
+  // see if we are driving or jumping
+
 
   // are we fli
  // currentState.
@@ -4268,14 +4279,34 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
 
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 {
-  // check the flag and stuff, but do the bzdb speed for now
-  return BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  if(player && player->player.haveFlag())
+  {
+    if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Velocity)
+      return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Thief)
+      return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[s] < 0.0f)
+      return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  }
+
+  return speed;
 }
 
 float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
 {
-  // check the flag and stuff, but do the bzdb speed for now
-  return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+  float angvel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(player && player->player.haveFlag())
+  {
+    if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn)
+      return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
+    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[s] < 0.0f)
+      return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+  }
+
+  return angvel;
 }
 
 float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
