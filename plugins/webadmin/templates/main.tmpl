@@ -7,6 +7,9 @@
                  name="player" value="[$PlayerID]">
         <label for="player_[$PlayerID]">[$Callsign]</label></li>
 [*END Players]
+      <li>No Players</li>
+[*EMPTY Players]
+
     </ul>
     <input type="submit" value="unban" name="unban">
     <p>
@@ -31,6 +34,8 @@
                  name="var[$ServerVarName]" value="[$ServerVarValue]">
         <label for="var[$ServerVarName]">[$ServerVarName]</label></li>
 [*END ServerVars]
+      <li>No server vars</li>
+[*EMPTY ServerVars]
     </ul>
     <input type="submit" value="update">
   </form>
