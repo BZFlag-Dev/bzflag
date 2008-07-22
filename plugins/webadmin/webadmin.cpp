@@ -132,7 +132,7 @@ bool WebAdmin::loopCallback (const std::string &key)
       bz_getPlayerIndexList(&players);
       listSize = players.size();
     }
-    else if (loopPos < listSize) {
+    if (loopPos < listSize) {
       templateVars["playerid"] = players[loopPos];
       templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
       return true;
