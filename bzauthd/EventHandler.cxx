@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "EventHandler.h"
+#include "TimeKeeper.h"
 
 INSTANTIATE_SINGLETON(EventHandler);
 
@@ -23,9 +24,39 @@ EventHandler::~EventHandler()
 {
 }
 
-void EventHandler::addOffset(CBFunc func, void * data, uint64 offset_ms)
+void EventHandler::update()
 {
-  
+  double now = TimeKeeper::getTick().getSeconds();
+   
+  while(!timeMap.empty() && timeMap.begin()->first <= now)
+  {
+    Event *e = timeMap.begin()->second;
+    e->call();
+    delete e; // this removes from the map too
+  }
+}
+
+void EventHandler::addDelta(CBFunc func, void * data, double delta)
+{
+  double now = TimeKeeper::getTick().getSeconds();
+  TimeMapType::iterator itr = timeMap.lower_bound(now + delta);
+  itr = timeMap.insert(itr, TimeMapType::value_type(now + delta, NULL));
+  itr->second = new Event(func, data, itr);
+}
+
+EventHandler::Event::Event(CBFunc f, void *d, TimeMapType::iterator &i)
+  : func(f), data(d), itr(i), refCounter(1)
+{
+}
+
+EventHandler::Event::~Event()
+{
+  if(itr != sEventHandler.timeMap.end()) sEventHandler.timeMap.erase(itr);
+}
+
+void EventHandler::Event::call()
+{
+  (*func)(data);
 }
 
 // Local Variables: ***

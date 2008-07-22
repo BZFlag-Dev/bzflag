@@ -16,6 +16,8 @@
 #include "NetHandler.h"
 #include "RSA.h"
 #include "UserStorage.h"
+#include "TimeKeeper.h"
+#include "EventHandler.h"
 
 int main()
 {
@@ -38,7 +40,9 @@ int main()
   /* main loop */
   while(!kbhit())
   {
+    TimeKeeper::setTick();
     sNetHandler.update();
+    sEventHandler.update();
   }
 
   return 0;
