@@ -103,9 +103,12 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addKey("HelpMsgName",this);
   templateSystem.addKey("HelpMsgBody",this);
   templateSystem.addKey("GroupName",this);
+	templateSystem.addKey("ServerVarName",this);
+	templateSystem.addKey("ServerVarValue",this);
   
   templateSystem.addLoop("Navigation",this);
   templateSystem.addLoop("Players",this);
+	templateSystem.addLoop("ServerVars",this);
   templateSystem.addLoop("IPBanList",this);
   templateSystem.addLoop("IDBanList",this);
   templateSystem.addLoop("HelpMsgs",this);
@@ -170,12 +173,16 @@ bool WebAdmin::loopCallback (const std::string &key)
       return true;
     } else delete(stringList);
   } else if (key == "servervars") {
-    if (!loopPos) listSize = bz_getBZDBVarList(stringList);
+		if (!loopPos) {
+			stringList = bz_newStringList();
+			listSize = bz_getBZDBVarList(stringList);
+		}
     if (loopPos < listSize) {
       const char *varname = (*stringList)[loopPos++].c_str();
       templateVars["servervarname"] = varname;
       templateVars["servervarvalue"] = bz_getBZDBString(varname).c_str();
-    } else delete(stringList);
+			return true;
+    } else bz_deleteStringList(stringList);
   } else return false;
   return loopPos = 0;
 }
