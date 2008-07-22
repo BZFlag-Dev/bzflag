@@ -12,6 +12,7 @@ webstats_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
 	README.txt \
+	templates \
 	webstats.def \
 	webstats.sln \
 	webstats.vcproj

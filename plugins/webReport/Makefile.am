@@ -12,6 +12,7 @@ webReport_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
 	README.txt \
+	templates \
 	webReport.def \
 	webReport.sln \
 	webReport.vcproj
