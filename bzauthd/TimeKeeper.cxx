@@ -103,9 +103,9 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
       if (deltaTgt > 0) {
 	LONGLONG oldqpcfreq = qpcFrequency;
 	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
-	if (qpcFrequency != oldqpcfreq)
-	  sLog.outLog("Recalibrated QPC frequency.  Old: %f ; New: %f\n",
-			  (double)oldqpcfreq, (double)qpcFrequency);
+	//if (qpcFrequency != oldqpcfreq)
+	  //sLog.outLog("Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+			//  (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
 
@@ -137,7 +137,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
       qpcFrequency	= freq.QuadPart;
-      sLog.outLog("Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
+      //sLog.outLog("Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
     } else {

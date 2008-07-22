@@ -25,6 +25,8 @@ public:
   uint32 newToken(std::string name);
   void addToken(std::string name, uint32 token);
   bool checkToken(std::string name, uint32 token);
+  void removeToken(uint32 token);
+  static void expireCallback(void *data);
 private:
   uint32 nextToken;
   typedef HM_NAMESPACE::hash_map<uint32, std::string> TokenMapType;

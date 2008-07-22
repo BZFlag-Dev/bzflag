@@ -32,7 +32,8 @@ void EventHandler::update()
   {
     Event *e = timeMap.begin()->second;
     e->call();
-    delete e; // this removes from the map too
+    e->delink();
+    if(!e->refCounter) delete e;
   }
 }
 
@@ -49,9 +50,19 @@ EventHandler::Event::Event(CBFunc f, void *d, TimeMapType::iterator &i)
 {
 }
 
+void EventHandler::Event::delink()
+{
+  if(itr != sEventHandler.timeMap.end())
+  {
+    sEventHandler.timeMap.erase(itr);
+    itr = sEventHandler.timeMap.end();
+    refCounter--;
+  }
+}
+
 EventHandler::Event::~Event()
 {
-  if(itr != sEventHandler.timeMap.end()) sEventHandler.timeMap.erase(itr);
+  delink();
 }
 
 void EventHandler::Event::call()

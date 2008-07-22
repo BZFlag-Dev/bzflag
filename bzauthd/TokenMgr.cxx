@@ -12,6 +12,11 @@
 
 #include "common.h"
 #include "TokenMgr.h"
+#include "EventHandler.h"
+#include "Log.h"
+
+//#define TOKEN_EXPIRE_DELAY 5.0 * 60
+#define TOKEN_EXPIRE_DELAY 10
 
 INSTANTIATE_SINGLETON(TokenMgr);
 
@@ -32,8 +37,9 @@ void TokenMgr::update()
 
 void TokenMgr::addToken(std::string name, uint32 token)
 {
+  sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
   tokenMap[nextToken] = name;
-  // TODO: schedule expiry
+  sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32(token), TOKEN_EXPIRE_DELAY);
 }
 
 uint32 TokenMgr::newToken(std::string name)
@@ -46,6 +52,18 @@ bool TokenMgr::checkToken(std::string name, uint32 token)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
   return itr != tokenMap.end() && itr->second == name;
+}
+
+void TokenMgr::removeToken(uint32 token)
+{
+  sLog.outLog("TokenMgr: removing token %d", token);
+  tokenMap.erase(token);
+}
+
+void TokenMgr::expireCallback(void *data)
+{
+  sTokenMgr.removeToken(*(uint32*)data);
+  delete (uint32*)data;
 }
 
 // Local Variables: ***

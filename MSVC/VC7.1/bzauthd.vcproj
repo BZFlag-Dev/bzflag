@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -155,6 +155,9 @@
 				RelativePath="..\..\bzauthd\Serverhandler.cxx">
 			</File>
 			<File
+				RelativePath="..\..\bzauthd\TimeKeeper.cxx">
+			</File>
+			<File
 				RelativePath="..\..\bzauthd\TokenMgr.cxx">
 			</File>
 			<File
@@ -191,6 +194,9 @@
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\Singleton.h">
+			</File>
+			<File
+				RelativePath="..\..\bzauthd\TimeKeeper.h">
 			</File>
 			<File
 				RelativePath="..\..\bzauthd\TokenMgr.h">

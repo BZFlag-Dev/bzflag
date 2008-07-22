@@ -33,6 +33,7 @@ private:
     ~Event();
     Event(CBFunc f, void *d, TimeMapType::iterator &i);
     void call();
+    void delink();
   
     uint16 refCounter;
     CBFunc func;
@@ -48,14 +49,14 @@ class EventPtr
 public:
   friend class EventHandler;
   EventPtr() { ev = NULL; }
-  EventPtr(const EventPtr &ptr) { addRef(ptr.ev); }
-  ~EventPtr() { delRef(); }
+  EventPtr(const EventPtr &ptr) { incRef(ptr.ev); }
+  ~EventPtr() { decRef(); }
   void cancel() { if(!ev) return; delete ev; ev = NULL; }
   operator bool() { return ev != NULL; }
 private:
   EventHandler::Event *ev;
-  void addRef(EventHandler::Event *e) { delRef(); ev = e; ev->refCounter++; }
-  void delRef() { if(!ev) return; ev->refCounter--; if(!ev->refCounter) delete ev; }
+  void incRef(EventHandler::Event *e) { decRef(); ev = e; ev->refCounter++; }
+  void decRef() { if(!ev) return; ev->refCounter--; if(!ev->refCounter) { delete ev; ev = NULL; } }
 };
 
 #define sEventHandler EventHandler::instance()
