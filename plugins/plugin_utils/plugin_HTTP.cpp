@@ -684,22 +684,20 @@ bool Templateiser::processTemplateFile ( std::string &code, const char *file )
   // find the file
   for (size_t i = 0; i < filePaths.size(); i++ ) {
     std::string path = filePaths[i] + file;
-    FILE *fp = fopen(getPathForOS(path).c_str(),"rb");
-    if (fp) {
-      fseek(fp,0,SEEK_END);
-      size_t pos = ftell(fp);
-      fseek(fp,0,SEEK_SET);
-      char *temp = (char*)malloc(pos+1);
-      fread(temp,pos,1,fp);
-      temp[pos] = 0;
+    FILE *fp = fopen(getPathForOS(path).c_str(),"rt");
+    std::string val;
+   if (fp)
+   {
+     char c;
+     while(fscanf(fp,"%c",&c) == 1)
+     {
+       val += c;
+     }
+     fclose(fp);
 
-      std::string val(temp);
-      free(temp);
-      fclose(fp);
-
-      processTemplate(code,val);
-      return true;
-    }
+     processTemplate(code,val);
+     return true;
+   }
   }
   return false;
 }
