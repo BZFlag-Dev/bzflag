@@ -570,6 +570,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\MotionUtils.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\MsgStrings.cxx"
 				>
 			</File>
@@ -665,6 +669,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\messages.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\MotionUtils.h"
 				>
 			</File>
 			<File

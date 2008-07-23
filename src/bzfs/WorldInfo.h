@@ -115,7 +115,6 @@ public:
     const float* pos, float angle,
     float tankWidth, float tankBreadth,
     float tankHeight, bool directional) const;
-
 private:
 
   bool finished;

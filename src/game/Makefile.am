@@ -22,6 +22,7 @@ libGame_la_SOURCES =			\
 	LinkManager.cxx			\
 	MsgStrings.cxx			\
 	MeshTransform.cxx		\
+	MotionUtils.cxx		\
 	NetHandler.cxx			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
