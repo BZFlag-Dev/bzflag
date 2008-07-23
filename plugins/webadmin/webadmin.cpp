@@ -205,13 +205,15 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 {
   std::map<std::string,page_callback>::iterator pair;
   size_t size;
-  std::string pagename = request.resource;
-
+  std::string action, pagename = request.resource;
+  
+  reply.returnCode = HTTPReply::e200OK;
+  
   switch(level) {
   case 1:
   case VERIFIED:
     if (pagename.empty()) pagename = "main";
-    else {
+    } else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
