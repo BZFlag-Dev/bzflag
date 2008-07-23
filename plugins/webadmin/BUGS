@@ -4,9 +4,6 @@ webadmin bugs
 Note: These issues affect the functionality of the webadmin plugin,
 but may be the result of errors in other parts of the server.
 
-* Session cookies are never sent to the client.
-  This should be fixed ASAP, since it prevents functionality testing.
-
 * [$CurrentPage] and [$UserName] are not properly substituted.
 
-* main page stops output at the beginning of the <ul> for players.
+* Segfault when navigating to helpmsg page.
