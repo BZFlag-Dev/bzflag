@@ -13,6 +13,8 @@
 /* interface header */
 
 #include "MotionUtils.h"
+#include "Flag.h"
+#include "StateDatabase.h"
 
 float computeAngleVelocity(float old, float desired, float dt )
 {
@@ -63,6 +65,40 @@ float computeAngleVelocity(float old, float desired, float dt )
   }
   return newAngVel;
 }
+
+float computeMaxAngleVelocity ( FlagType *flag, float z )
+{
+  float angvel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+
+  if(flag)
+  {
+    if(flag == Flags::QuickTurn)
+      return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
+    else if(flag == Flags::QuickTurn && z < 0.0f)
+      return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+  }
+
+  return angvel;
+}
+
+
+float computeMaxLinVelocity (  FlagType *flag, float z )
+{
+  float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+
+  if(flag)
+  {
+    if(flag == Flags::Velocity)
+      return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    else if(flag == Flags::Thief)
+      return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    else if(flag == Flags::QuickTurn && z < 0.0f)
+      return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  }
+
+  return speed;
+}
+
 
 
 // Local Variables: ***

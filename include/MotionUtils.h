@@ -14,7 +14,11 @@
 #define __MOTION_UTILS_H_
 
 #include "common.h"
+#include "Flag.h"
+
 float computeAngleVelocity(float old, float desired, float dt );
+float computeMaxAngleVelocity ( FlagType *flag, float z );
+float computeMaxLinVelocity (  FlagType *flag, float z );
 
 #endif  /*__MOTION_UTILS_H_ */
 
