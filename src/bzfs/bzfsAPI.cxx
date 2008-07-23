@@ -44,6 +44,7 @@
 #include "bz_md5.h"
 #include "version.h"
 #include "BZDBCache.h"
+#include "MotionUtils.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -4158,31 +4159,6 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::computeStateFromInput(void)
-{
-  // compute the new velocities based on the input
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player)
-    return;
-
-  // figure out if we are turning
-
-  float newAngVel = getMaxRotSpeed() * input[0];
-
-  // do some check to clamp it to the rotary acceleration
-
-  currentState.rot = newAngVel;
-
-  if (!(player->lastState.status & PlayerState::Falling))
-  {
-    currentState.vec[0] = cosf(currentState.rot*deg2Rad) * getMaxLinSpeed()* input[1];
-    currentState.vec[1] = sinf(currentState.rot*deg2Rad) * getMaxLinSpeed()* input[1];
-    currentState.vec[2] = 0;
-  }
-}
-
-//-------------------------------------------------------------------------
-
 void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
 {
   if(input[0]==turn && input[1]==forward)
@@ -4199,8 +4175,6 @@ void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
     input[0]=-1.0f;
   if(input[1] < -1.0f)
     input[1]=-1.0f;
-
-  computeStateFromInput();
 }
 
 //-------------------------------------------------------------------------
@@ -4219,79 +4193,122 @@ bool bz_ServerSidePlayerHandler::jump(void)
 
 //-------------------------------------------------------------------------
 
+const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional )
+{
+  // check and see if this path goes thru a building.
+  const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional);
+  if (!hit) // if it does not, it's clear
+    return NULL;
+  else
+  {
+    // we assume that the start point of the path is always clear, so if we get here, then the endpoint passed thru a building.
+
+    // compute the distance that the center point moves.
+   float len = 0;
+   float vec[3];
+    for (int i =0; i < 3; i++)
+      vec[i] = oldPos.pos[i] - newPos.pos[i];
+    len = sqrtf(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+
+    // if the distance is less then our tolerance, and the END point is IN an object, assume that the start point since we know that is clear
+    // return this as the collision value
+    float collideTol = 0.001f;
+    if ( len <= collideTol)
+    {
+      newPos = oldPos;
+      return hit;
+    }
+
+    // compute a midpoint to test, so we can do a binary search to find what "side" of the midpoint is clear
+    bz_ServerSidePlayerHandler::UpdateInfo midpoint;
+
+    for (int i =0; i < 3; i++)
+      midpoint.pos[i] = oldPos.pos[i] + vec[i]*0.5f;
+
+    midpoint.rot = oldPos.rot + ((oldPos.rot-newPos.rot)*0.5f);
+
+    // test from the start point to the midpoint
+    hit = world->hitBuilding(oldPos.pos, oldPos.rot, midpoint.pos, midpoint.rot, width, breadth, breadth, directional);
+
+    // if we have a hit, then the midpoint is "in" a building, so the valid section is the oldPos -> midpoint section.
+    // so set the endpoint to the midpoint and retest.
+    // if we don't have a hit. then the midpoint is outside of the building, and we want to test from the midpoint to the newpos and get closer
+    if (hit)
+    {
+      newPos = midpoint;
+      midpoint = oldPos;
+    }
+
+    // recurse to get closer to the actual collision point
+    return hitBuilding(midpoint,newPos,width,breadth,height,directional);
+  }
+
+  return NULL;
+}
+
+bool closeFloat ( float f1, float f2 )
+{
+  return fabs(f1)-fabs(f2) < 0.0001f;
+}
+
 void bz_ServerSidePlayerHandler::updatePhysics(void)
 {
   if(!alive)
     return;
 
-  UpdateInfo newState(currentState);
+  UpdateInfo newState(currentState); // where we think we are
 
   double now = bz_getCurrentTime();
   float delta = (float)(now - currentState.time);
 
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
+  int flag = player->player.getFlag();
+
+  bool hasOO = false;
+  
+  if (player->player.haveFlag())
+  {
+    if (FlagInfo::get(flag)->flag.type == Flags::OscillationOverthruster)
+      hasOO = true;
+  }
+
   bool update = false;
 
-  if (falling())
+  if (falling())  // we are falling... so the input dosn't matter at all, just move us
+  {
     newState.vec[2] += BZDBCache::gravity * delta;
 
-  newState.pos[0] += newState.vec[0] * delta;
-  newState.pos[1] += newState.vec[1] * delta;
-  newState.pos[2] += newState.vec[2] * delta;
+    newState.pos[0] += newState.vec[0] * delta;
+    newState.pos[1] += newState.vec[1] * delta;
+    newState.pos[2] += newState.vec[2] * delta;
 
-  // this is where we are now. so see if it hit anything
+    // see if we hit anything
+    const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
 
-  if (falling())
+    if (target)
+    {
+      // find out if we landed, or if we just hit something
+    }
+  }
+
+  // we are driving, so apply the input 
+  if (!falling())
   {
-    // we are falling, see if we hit anything below us
-    bz_APIBaseWorldObject *target = NULL;
+    // see what the input wants us to do
+    float desiredSpeed = input[1] * getMaxLinSpeed();
+    float desiredTurn = input[1] * getMaxRotSpeed();
 
-    float checkpos[3];
-    memcpy(checkpos,newState.pos,sizeof(float)*3);
-    checkpos[2] -= 0.1f;
+    // clamp to the rotation speed for the frame.
+    newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
 
-    // this is cheap, we check a small thin cylinder, slightly bellow our tank to see if there is something JUST below us that we would rest on
-    if( (bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight*0.5f,BZDBCache::tankRadius * 0.25f,&target) != eNoCol) && target && (target->type == eSolidObject) )
-    {
-      update = true;
+    // compute our new rotation;
+    newState.rot += newState.rotVel * delta;
 
-      bz_APISolidWorldObject_V1 *solid = (bz_APISolidWorldObject_V1*)target;
+    // clamp the linear speed to the speed for the frame
+    float currentSpeed = getMagnitude(newState.vec);
 
-      // we hit the thing below us, so set our pos to the height of that
-      currentState.vec[2] = newState.vec[2] = 0;
-      currentState.pos[2] = newState.pos[2] = solid->minAABBox[2];
-
-      // stop ourselves from falling
-      player->lastState.status &= ~PlayerState::Falling;
-
-      // call the callback so that AI knows we landed
-      landed();
-    }
-
-    // now check a thin cylinder around the tank in the middle but at the full radius, like a coin. to see if there is anything we have hit.
-    memcpy(checkpos,newState.pos,sizeof(float)*3);
-    checkpos[2] += BZDBCache::tankHeight*0.5f-0.1f;
-
-    if( (bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight*0.25f,BZDBCache::tankRadius,&target) != eNoCol) && target && (target->type == eSolidObject) )
-    {
-      // we hit something by driving and will simply slide down it
-      currentState.vec[0] = newState.vec[0] = 0;
-      currentState.vec[1] = newState.vec[1] = 0;
-
-      // figure out where we hit the thing
-    }
-
-  }
-  else
-  { 
-    // we are driving, see if we hit anything AROUND us
-
-
-    // check and see if anything is below us, if not, we fall
-
-  }
-  // see where we are
+ }
 }
 
 //-------------------------------------------------------------------------
@@ -4364,35 +4381,25 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
 
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 {
-  float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(player && player->player.haveFlag())
-  {
-    if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Velocity)
-      return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::Thief)
-      return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[3] < 0.0f)
-      return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-  }
 
-  return speed;
+  FlagType *flag = NULL;
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(player && player->player.haveFlag())
+    flag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+  return computeMaxLinVelocity(flag,currentState.pos[2]);
 }
 
 float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
 {
-  float angvel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
-
+  FlagType *flag = NULL;
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(player && player->player.haveFlag())
-  {
-    if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn)
-      return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-    else if(FlagInfo::get(player->player.getFlag())->flag.type == Flags::QuickTurn && currentState.pos[3] < 0.0f)
-      return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
-  }
 
-  return angvel;
+  if(player && player->player.haveFlag())
+    flag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+  return computeMaxAngleVelocity(flag,currentState.pos[2]);
 }
 
 float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
