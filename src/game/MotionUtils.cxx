@@ -82,7 +82,7 @@ float computeMaxAngleVelocity ( FlagType *flag, float z )
 }
 
 
-float computeMaxLinVelocity (  FlagType *flag, float z )
+float computeMaxLinVelocity ( FlagType *flag, float z )
 {
   float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
 
@@ -97,6 +97,105 @@ float computeMaxLinVelocity (  FlagType *flag, float z )
   }
 
   return speed;
+}
+
+void computeMomentum(float dt, FlagType *flag, float& speed, float& angVel, const float lastSpeed, const float lastAngVel )
+{
+  // get maximum linear and angular accelerations
+  float linearAcc = (flag == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) : BZDB.eval(StateDatabase::BZDB_INERTIALINEAR);
+  float angularAcc = (flag == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
+
+  // limit linear acceleration
+  if (linearAcc > 0.0f)
+  {
+    const float acc = (speed - lastSpeed) / dt;
+
+    if (acc > 20.0f * linearAcc)
+      speed = lastSpeed + dt * 20.0f*linearAcc;
+    else if (acc < -20.0f * linearAcc)
+      speed = lastSpeed - dt * 20.0f*linearAcc;
+  }
+
+  // limit angular acceleration
+  if (angularAcc > 0.0f)
+  {
+    const float angAcc = (angVel - lastAngVel) / dt;
+    if (angAcc > angularAcc)
+      angVel = lastAngVel + dt * angularAcc;
+    else if (angAcc < -angularAcc)
+      angVel = lastAngVel - dt * angularAcc;
+  }
+}
+
+void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *newVelocity)
+{
+  const float friction = (flag== Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) : BZDB.eval(StateDatabase::BZDB_FRICTION);
+
+  if (friction > 0.0f)
+  {
+    // limit vector acceleration
+
+    float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
+    float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
+    float accLimit = 20.0f * friction;
+
+    if (acc2 > accLimit*accLimit)
+    {
+      float ratio = accLimit / sqrtf(acc2);
+      newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
+      newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
+    }
+  }
+}
+
+
+
+float getMagnitude ( float v[3] )
+{
+  return sqrtf(getMagnitudeSquare(v));
+}
+
+float getMagnitude ( float p1[3], float p2[3] )
+{
+  return sqrtf(getMagnitudeSquare(p1,p2));
+}
+
+float getMagnitude2d ( float v[2] )
+{
+  return sqrtf(getMagnitude2dSquare(v));
+}
+
+float getMagnitude2d ( float p1[2], float p2[2] )
+{
+  return sqrtf(getMagnitude2dSquare(p1,p2));
+}
+
+float getMagnitudeSquare ( float v[3] )
+{
+  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+}
+
+float getMagnitudeSquare ( float p1[3], float p2[3] )
+{
+  float v[3];
+  for(int i =0; i < 3; i++)
+    v[i] = p1[i]-p2[i];
+
+  return getMagnitudeSquare(v);
+}
+
+float getMagnitude2dSquare ( float v[2] )
+{
+  return v[0]*v[0] + v[1]*v[1];
+}
+
+float getMagnitude2dSquare ( float p1[2], float p2[2] )
+{
+  float v[2];
+  for(int i =0; i < 2; i++)
+    v[i] = p1[i]-p2[i];
+
+  return getMagnitude2dSquare(v);
 }
 
 

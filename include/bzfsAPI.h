@@ -2076,6 +2076,7 @@ class BZF_API bz_ServerSidePlayerHandler
 
   bool autoSpawn;
 
+public:
   class BZF_API UpdateInfo
   {
   public:
@@ -2105,12 +2106,11 @@ class BZF_API bz_ServerSidePlayerHandler
     float getDelta( const UpdateInfo & state);
   };
 
+private:
   UpdateInfo lastUpdate;
   UpdateInfo currentState;
 
   bool alive;
-
-  void computeStateFromInput(void);
 };
 
 // *** NOTE *** support for server side players in incomplete.

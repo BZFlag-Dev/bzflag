@@ -1465,56 +1465,14 @@ void			LocalPlayer::explodeTank()
   target = NULL;		// lose lock when dead
 }
 
-void			LocalPlayer::doMomentum(float dt,
-						float& speed, float& angVel)
+void LocalPlayer::doMomentum(float dt,float& speed, float& angVel)
 {
-  // get maximum linear and angular accelerations
-  float linearAcc = (getFlag() == Flags::Momentum)
-    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC)
-    : BZDB.eval(StateDatabase::BZDB_INERTIALINEAR);
-  float angularAcc = (getFlag() == Flags::Momentum)
-    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC)
-    : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
-
-  // limit linear acceleration
-  if (linearAcc > 0.0f)
-  {
-    const float acc = (speed - lastSpeed) / dt;
-
-    if (acc > 20.0f * linearAcc)
-		speed = lastSpeed + dt * 20.0f*linearAcc;
-    else if (acc < -20.0f * linearAcc)
-		speed = lastSpeed - dt * 20.0f*linearAcc;
-  }
-
-  // limit angular acceleration
-  if (angularAcc > 0.0f) {
-    const float oldAngVel = getAngularVelocity();
-    const float angAcc = (angVel - oldAngVel) / dt;
-    if (angAcc > angularAcc) angVel = oldAngVel + dt * angularAcc;
-    else if (angAcc < -angularAcc) angVel = oldAngVel - dt * angularAcc;
-  }
+  computeMomentum(dt, getFlag(), speed,angVel,lastSpeed,getAngularVelocity());
 }
 
-void			LocalPlayer::doFriction(float dt,
-						  const float *oldVelocity, float *newVelocity)
+void LocalPlayer::doFriction(float dt, const float *oldVelocity, float *newVelocity)
 {
-  const float friction = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
-    BZDB.eval(StateDatabase::BZDB_FRICTION);
-
-  if (friction > 0.0f) {
-    // limit vector acceleration
-
-    float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
-    float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
-    float accLimit = 20.0f * friction;
-
-    if (acc2 > accLimit*accLimit) {
-      float ratio = accLimit / sqrtf(acc2);
-      newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
-      newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
-    }
-  }
+  computeFriction(dt,getFlag(),oldVelocity,newVelocity);
 }
 
 void			LocalPlayer::doForces(float /*dt*/,

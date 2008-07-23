@@ -19,6 +19,19 @@
 float computeAngleVelocity(float old, float desired, float dt );
 float computeMaxAngleVelocity ( FlagType *flag, float z );
 float computeMaxLinVelocity (  FlagType *flag, float z );
+void computeMomentum(float dt, FlagType *flag, float& speed, float& angVel, const float lastSpeed, const float lastAngVel );
+void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *newVelocity);
+
+float getMagnitude ( float v[3] );
+float getMagnitude ( float p1[3], float p2[3] );
+float getMagnitude2d ( float v[2] );
+float getMagnitude2d ( float p1[2], float p2[2] );
+
+float getMagnitudeSquare ( float v[3] );
+float getMagnitudeSquare ( float p1[3], float p2[3] );
+float getMagnitude2dSquare ( float v[2] );
+float getMagnitude2dSquare ( float p1[2], float p2[2] );
+
 
 #endif  /*__MOTION_UTILS_H_ */
 
