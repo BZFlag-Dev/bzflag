@@ -21,6 +21,8 @@
 /* common headers */
 #include "Singleton.h"
 
+#include "Obstacle.h"
+
 
 #define _INVALID_TANGIBILITY 255
 
@@ -33,6 +35,7 @@ public:
   
   void resetTangibility(void);
 
+  unsigned char getWorldObjectTangibility( const Obstacle *obs );
   unsigned char getWorldObjectTangibility(unsigned int objectGUID);
 
 protected:

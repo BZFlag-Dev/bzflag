@@ -48,6 +48,19 @@ unsigned char ServerIntangibilityManager::getWorldObjectTangibility(unsigned int
   return obs->isDriveThrough();
 }
 
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility( const Obstacle *obs )
+{
+  if (!obs)
+    return _INVALID_TANGIBILITY;
+
+  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(obs->getGUID());
+  if (itr != tangibilityMap.end())
+    return itr->second;
+
+  return obs->isDriveThrough();
+}
+
+
 void ServerIntangibilityManager::resetTangibility(void)
 {
   tangibilityMap.clear();
