@@ -1664,6 +1664,7 @@ class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
   virtual ~bz_APISolidWorldObject_V1();
 
   bz_eSolidWorldObjectType  solidType;
+  int			    subID;
 
   float center[3];
   float maxAABBox[3];
@@ -1672,7 +1673,7 @@ class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
   float maxBBox[3];
   float minBBox[3];
 
-  bool collide(float pos[3], float rad);
+  virtual bool collide(float pos[3], float rad, float* hit);
 
   bz_SolidObjectPassableAtributes   shootThru;
   bz_SolidObjectPassableAtributes   driveThru;
@@ -2026,7 +2027,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner 
   virtual void jumped ( void ){}; // the bot has left the ground
   virtual void landed ( void ){}; // the bot has landed
-  virtual void collide ( int /*objectID*/, float* /*pos*/ ){}; // the bot run into an object
+  virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){}; // the bot ran into an object
 
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
@@ -2054,6 +2055,7 @@ class BZF_API bz_ServerSidePlayerHandler
   bool canJump(void);
   bool canShoot(void);
   bool canMove(void);
+  bool falling (void);
   bz_eShotType getShotType(void);
 
   void getPosition ( float *p );

@@ -2792,6 +2792,12 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
   memset(minBBox, 0, sizeof(float) *3);
 }
 
+bool bz_APISolidWorldObject_V1::collide(float pos[3], float rad, float* hit)
+{
+  return false;
+}
+
+
 //-------------------------------------------------------------------------
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
@@ -2934,6 +2940,7 @@ bz_eAPIColType getAPIMapObject(InBuildingType colType, const Obstacle *obs, bz_A
 	bz_APISolidWorldObject_V1 *solid=new bz_APISolidWorldObject_V1;
 	solid->id = buildObjectIDFromObstacle(*obs);
 	setSolidObjectFromObstacle(*solid,*obs);
+	solid->subID = obs->getListID();
 	*object=solid;
       }
       return base ? eInBase : eInSolid;
@@ -2953,7 +2960,6 @@ bz_eAPIColType bz_cylinderInMapObject(float pos[3], float height, float radius, 
 
   const Obstacle *obs=NULL;
   return getAPIMapObject(world->cylinderInBuilding(&obs, pos, radius, height), obs, object);
-  ;
 }
 
 //-------------------------------------------------------------------------
@@ -4225,34 +4231,66 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
-  bool falling = player->lastState.status & PlayerState::Falling ? true : false;
-
   bool update = false;
 
-  if (falling)
+  if (falling())
     newState.vec[2] += BZDBCache::gravity * delta;
 
   newState.pos[0] += newState.vec[0] * delta;
   newState.pos[1] += newState.vec[1] * delta;
   newState.pos[2] += newState.vec[2] * delta;
 
-  // this is where we are now. so see if it hit anyting
+  // this is where we are now. so see if it hit anything
 
-  if(bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight,BZDBCache::tankRadius,NULL) != eNoCol)
+  if (falling())
   {
-    // see if it' just below us
-    if(falling && bz_cylinderInMapObject(newState.pos,0.1f,1.0f,NULL) != eNoCol)
+    // we are falling, see if we hit anything below us
+    bz_APIBaseWorldObject *target = NULL;
+
+    float checkpos[3];
+    memcpy(checkpos,newState.pos,sizeof(float)*3);
+    checkpos[2] -= 0.1f;
+
+    // this is cheap, we check a small thin cylinder, slightly bellow our tank to see if there is something JUST below us that we would rest on
+    if( (bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight*0.5f,BZDBCache::tankRadius * 0.25f,&target) != eNoCol) && target && (target->type == eSolidObject) )
     {
-      // we landed
       update = true;
-      newState.vec[2] = 0;
-      // compute the landing position;
-      newState.pos[2] = currentState.pos[2];
-      player->lastState.status &= !PlayerState::Falling;
+
+      bz_APISolidWorldObject_V1 *solid = (bz_APISolidWorldObject_V1*)target;
+
+      // we hit the thing below us, so set our pos to the height of that
+      currentState.vec[2] = newState.vec[2] = 0;
+      currentState.pos[2] = newState.pos[2] = solid->minAABBox[2];
+
+      // stop ourselves from falling
+      player->lastState.status &= ~PlayerState::Falling;
+
+      // call the callback so that AI knows we landed
       landed();
     }
-  }
 
+    // now check a thin cylinder around the tank in the middle but at the full radius, like a coin. to see if there is anything we have hit.
+    memcpy(checkpos,newState.pos,sizeof(float)*3);
+    checkpos[2] += BZDBCache::tankHeight*0.5f-0.1f;
+
+    if( (bz_cylinderInMapObject(newState.pos,BZDBCache::tankHeight*0.25f,BZDBCache::tankRadius,&target) != eNoCol) && target && (target->type == eSolidObject) )
+    {
+      // we hit something by driving and will simply slide down it
+      currentState.vec[0] = newState.vec[0] = 0;
+      currentState.vec[1] = newState.vec[1] = 0;
+
+      // figure out where we hit the thing
+    }
+
+  }
+  else
+  { 
+    // we are driving, see if we hit anything AROUND us
+
+
+    // check and see if anything is below us, if not, we fall
+
+  }
   // see where we are
 }
 
@@ -4260,7 +4298,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 
 bool bz_ServerSidePlayerHandler::canJump(void)
 {
-  return false;
+  return canMove();
 }
 
 //-------------------------------------------------------------------------
@@ -4274,7 +4312,16 @@ bool bz_ServerSidePlayerHandler::canShoot(void)
 
 bool bz_ServerSidePlayerHandler::canMove(void)
 {
-  return alive; // !jumping;
+  return alive && !falling();
+}
+
+bool bz_ServerSidePlayerHandler::falling (void)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player)
+    return false;
+
+  return player->lastState.status & PlayerState::Falling ? true : false;
 }
 
 //-------------------------------------------------------------------------
