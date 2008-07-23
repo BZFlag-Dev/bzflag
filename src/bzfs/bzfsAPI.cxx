@@ -2792,7 +2792,7 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
   memset(minBBox, 0, sizeof(float) *3);
 }
 
-bool bz_APISolidWorldObject_V1::collide(float pos[3], float rad, float* hit)
+bool bz_APISolidWorldObject_V1::collide(float /*pos*/[3], float /*rad*/, float* /*hit*/)
 {
   return false;
 }
