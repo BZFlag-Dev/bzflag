@@ -101,6 +101,12 @@ void HUDNavigationQueue::addCallback(HUDNavigationCallback _cb, void* _data)
 
 void HUDNavigationQueue::removeCallback(HUDNavigationCallback _cb, void* data)
 {
+  for (HUDuiNavCallbackList::iterator itr = callbackList.begin();
+       itr != callbackList.end(); ++itr) {
+    if (itr->first == _cb && itr->second == data) {
+      callbackList.remove(*itr);
+    }
+  }
 }
 
 // Local Variables: ***
