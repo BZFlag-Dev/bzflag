@@ -109,11 +109,16 @@ public:
   void finishWorld();
   int packDatabase();
 
-	bool isFinished() { return finished;}
+  bool isFinished() { return finished;}
+
+  const Obstacle* hitBuilding(const float* oldPos, float oldAngle,
+    const float* pos, float angle,
+    float tankWidth, float tankBreadth,
+    float tankHeight, bool directional) const;
 
 private:
 
-	bool finished;
+  bool finished;
 
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();

@@ -192,6 +192,10 @@ inline const Extents& CollisionManager::getWorldExtents() const
   return worldExtents;
 }
 
+int compareObstacles (const void* a, const void* b);
+int compareHitNormal (const void* a, const void* b);
+inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB);
+
 
 #endif /* __COLLISION_GRID__ */
 
