@@ -105,6 +105,7 @@ void HUDNavigationQueue::removeCallback(HUDNavigationCallback _cb, void* data)
        itr != callbackList.end(); ++itr) {
     if (itr->first == _cb && itr->second == data) {
       callbackList.remove(*itr);
+      return;
     }
   }
 }
