@@ -23,8 +23,7 @@
 // HUDNavigationQueue
 //
 
-HUDNavigationQueue::HUDNavigationQueue() :
-    focus(0), cb(NULL)
+HUDNavigationQueue::HUDNavigationQueue() : focus(0)
 {
 }
 
@@ -32,79 +31,36 @@ void HUDNavigationQueue::next()
 {
   if (!size()) return;
 
-  size_t oldfocus = focus;
-  if (++focus > (size() - 1))
-    focus = 0;
+  size_t newfocus = focus;
+  if (++newfocus > (size() - 1))
+    newfocus = 0;
 
-  if (cb)
-    focus = cb(oldfocus, focus, hnNext, userData);
-
-  if (focus == SkipSetFocus)
-  {
-    focus = oldfocus;
-    return;
-  }
-
-  HUDui::setFocus(at(focus));
+  internal_set(newfocus, hnNext);
 }
 
 void HUDNavigationQueue::prev()
 {
   if (!size()) return;
 
-  size_t oldfocus = focus;
-  if (--focus > (size() - 1)) // unsigned, so wraps around
-    focus = (size() - 1);
+  size_t newfocus = focus;
+  if (--newfocus > (size() - 1)) // unsigned, so wraps around
+    newfocus = (size() - 1);
 
-  if (cb)
-    focus = cb(oldfocus, focus, hnPrev, userData);
-
-  if (focus == SkipSetFocus)
-  {
-    focus = oldfocus;
-    return;
-  }
-  
-  HUDui::setFocus(at(focus));
+  internal_set(newfocus, hnPrev);
 }
 
 bool HUDNavigationQueue::set(size_t index)
 {
-  if (index >= size()) return false;
-
-  size_t tempFocus;
-
-  if (cb)
-    tempFocus = cb(focus, index, hnExplicitIndex, userData);
-  else
-    tempFocus = index;
-
-  if (tempFocus == SkipSetFocus) return true;
-  
-  focus = tempFocus;
-  HUDui::setFocus(at(focus));
-  return true;
+  return internal_set(index, hnExplicitIndex);
 }
 
 bool HUDNavigationQueue::set(HUDuiControl* control)
 {
   if (!control || !size()) return false;
 
-  size_t tempFocus;
-
   for (size_t i = 0; i < size(); ++i)
-    if (at(i) == control) {
-      if (cb)
-	tempFocus = cb(focus, i, hnExplicitPointer, userData);
-      else
-	tempFocus = i;
-
-      if (tempFocus == SkipSetFocus) return true;
-
-      focus = tempFocus;
-      HUDui::setFocus(at(focus));
-      return true;
-    }
+    if (at(i) == control)
+      return internal_set(i, hnExplicitPointer);
 
   return false;
 }
@@ -121,15 +77,30 @@ size_t HUDNavigationQueue::getIndex() const
   return focus;
 }
 
-void HUDNavigationQueue::setCallback(HUDNavigationCallback _cb, void* _data)
+bool HUDNavigationQueue::internal_set(size_t index, HUDNavChangeMethod changeMethod)
 {
-  cb = _cb;
-  userData = _data;
+  if (index >= size()) return false;
+
+  for (HUDuiNavCallbackList::iterator itr = callbackList.begin();
+       itr != callbackList.end(); ++itr) {
+    index = itr->first(focus, index, changeMethod, itr->second);
+    if (index == SkipSetFocus) break;
+  }
+
+  if (index != SkipSetFocus) {
+    focus = index;
+    HUDui::setFocus(at(focus));
+  }
+  return true;
 }
 
-HUDNavigationCallback HUDNavigationQueue::getCallback() const
+void HUDNavigationQueue::addCallback(HUDNavigationCallback _cb, void* _data)
 {
-  return cb;
+  callbackList.push_back(std::make_pair<HUDNavigationCallback, void*>(_cb, _data));
+}
+
+void HUDNavigationQueue::removeCallback(HUDNavigationCallback _cb, void* data)
+{
 }
 
 // Local Variables: ***

@@ -32,7 +32,7 @@
 HUDuiScrollList::HUDuiScrollList() : HUDuiNestedContainer(), index(0), visiblePosition(0), numVisibleItems(1), pagedList(false), pageLabel(NULL)
 {
   showFocus(false);
-  getNav().setCallback(callback, this);
+  getNav().addCallback(callback, this);
 }
 
 HUDuiScrollList::HUDuiScrollList(bool paged) : HUDuiNestedContainer(), index(0), visiblePosition(0), numVisibleItems(1), pagedList(paged), pageLabel(new HUDuiLabel)
@@ -42,7 +42,7 @@ HUDuiScrollList::HUDuiScrollList(bool paged) : HUDuiNestedContainer(), index(0),
 
 HUDuiScrollList::~HUDuiScrollList()
 {
-  // do nothing
+  getNav().removeCallback(callback, this);
 }
 
 int HUDuiScrollList::getSelected() const

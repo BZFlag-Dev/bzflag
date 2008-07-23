@@ -27,7 +27,8 @@ HUDuiNestedContainer::HUDuiNestedContainer() : HUDuiControl()
 
 HUDuiNestedContainer::~HUDuiNestedContainer()
 {
-  // Do nothing
+  // clean up
+  navList->removeCallback(gotFocus, this);
 }
 
 void HUDuiNestedContainer::addControl(HUDuiControl *control)
@@ -40,8 +41,15 @@ void HUDuiNestedContainer::addControl(HUDuiControl *control)
 
 void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
 {
+  // if we're changing nav lists, pull the old callback
+  if (navList)
+    navList->removeCallback(gotFocus, this);
+
+  // then set the list
   HUDuiControl::setNavQueue(_navList);
-  _navList->setCallback(gotFocus, this);
+
+  // then install a new callback
+  _navList->addCallback(gotFocus, this);
 }
 
 // NEEDS WORK. PLACE HOLDER AT THE MOMENT
@@ -55,7 +63,7 @@ size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUD
   }
   else
   {
-    return false;
+    return proposedFocus;
   }
 }
 

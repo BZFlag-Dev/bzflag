@@ -66,6 +66,8 @@ class HUDuiControl : public HUDuiElement {
     static int  getArrow() { return arrow; }
 
   protected:
+    HUDNavigationQueue*	navList;
+
     virtual bool	doKeyPress(const BzfKeyEvent&);
     virtual bool	doKeyRelease(const BzfKeyEvent&);
 
@@ -78,7 +80,6 @@ class HUDuiControl : public HUDuiElement {
     HUDuiControl* parent;
 	
     bool		showingFocus;
-    HUDNavigationQueue*	navList;
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;
