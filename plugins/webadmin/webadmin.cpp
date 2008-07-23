@@ -213,7 +213,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case 1:
   case VERIFIED:
     if (pagename.empty()) pagename = "main";
-    } else {
+    else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
