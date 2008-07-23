@@ -430,10 +430,6 @@ public:
 
   // Terminate this listener
   void shutdown();
-private:
-  bool close ( NetHandler *handler );
-  bool close ( int connectionID );
-public:
 
   int update ( float waitTime );
 

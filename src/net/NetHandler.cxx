@@ -1012,16 +1012,6 @@ void NetListener::shutdown()
   }
 }
 
-bool NetListener::close ( NetHandler* /*handler*/ )
-{
-  return false;
-}
-
-bool NetListener::close ( int /*connectionID*/ )
-{
-  return false;
-}
-
 int NetListener::update ( float waitTime )
 {
   // If there isn't a listen socket, there can't be any connections,
