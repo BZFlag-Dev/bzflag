@@ -24,12 +24,14 @@
 // HUDuiServerList
 //
 
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), dataList(NULL)
+ServerList* HUDuiServerList::dataList = NULL;
+
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), emptyServerFilter(false), antidoteFlagFilter(false)
 {
   // do nothing
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), dataList(NULL)
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), emptyServerFilter(false), antidoteFlagFilter(false)
 {
   // do nothing
 }
@@ -64,8 +66,12 @@ void HUDuiServerList::setServerList(ServerList* list)
 
 ServerItem* HUDuiServerList::getSelectedServer()
 {
+  if (items.size() <= 0)
+    return NULL;
+
   std::list<HUDuiControl*>::iterator it;
   it = items.begin();
+  int bilbo = getSelected();
   std::advance(it, getSelected());
 
   HUDuiServerListItem* selected = (HUDuiServerListItem*) *it;
@@ -116,6 +122,50 @@ bool HUDuiServerList::compare_by_ping(HUDuiControl* first, HUDuiControl* second)
     return false;
 }
 
+bool HUDuiServerList::is_empty(const HUDuiControl* value)
+{
+  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
+  ServerItem* server = dataList->lookupServer(item->getServerKey());
+
+  if (server->getPlayerCount() == 0)
+    return true;
+  else
+    return false;
+}
+
+bool HUDuiServerList::is_full(const HUDuiControl* value)
+{
+  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
+  ServerItem* server = dataList->lookupServer(item->getServerKey());
+
+  if (server->getPlayerCount() == server->ping.maxPlayers)
+    return true;
+  else
+    return false;
+}
+
+bool HUDuiServerList::has_jumping(const HUDuiControl* value)
+{
+  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
+  ServerItem* server = dataList->lookupServer(item->getServerKey());
+
+  if (server->ping.gameOptions & JumpingGameStyle)
+    return true;
+  else
+    return false;
+}
+
+bool HUDuiServerList::has_antidote_flags(const HUDuiControl* value)
+{
+  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
+  ServerItem* server = dataList->lookupServer(item->getServerKey());
+
+  if (server->ping.gameOptions & AntidoteGameStyle)
+    return true;
+  else
+    return false;
+}
+
 // Sort our server list by domain names
 void HUDuiServerList::sortByDomain()
 {
@@ -146,6 +196,58 @@ void HUDuiServerList::sortByPing()
   items.sort(compare_by_ping);
   refreshNavQueue();
   setSelected((int) getNav().getIndex());
+}
+
+// Filter out empty servers
+void HUDuiServerList::toggleEmptyServerFilter()
+{
+  emptyServerFilter = !emptyServerFilter;
+
+  if (emptyServerFilter)
+  {
+    items.remove_if(is_empty);
+  }
+  refreshNavQueue();
+  getNav().set((size_t) 0);
+}
+
+// Filter out full servers
+void HUDuiServerList::toggleFullServerFilter()
+{
+  fullServerFilter = !fullServerFilter;
+
+  if (fullServerFilter)
+  {
+    items.remove_if(is_full);
+  }
+  refreshNavQueue();
+  getNav().set((size_t) 0);
+}
+
+// Filter out servers without jump
+void HUDuiServerList::toggleJumpingFilter()
+{
+  jumpingFilter = !jumpingFilter;
+
+  if (jumpingFilter)
+  {
+    items.remove_if(has_jumping);
+  }
+  refreshNavQueue();
+  getNav().set((size_t) 0);
+}
+
+// Filter out full servers
+void HUDuiServerList::toggleAntidoteFlagFilter()
+{
+  antidoteFlagFilter = !antidoteFlagFilter;
+
+  if (antidoteFlagFilter)
+  {
+    items.remove_if(has_antidote_flags);
+  }
+  refreshNavQueue();
+  getNav().set((size_t) 0);
 }
 
 // Local Variables: ***

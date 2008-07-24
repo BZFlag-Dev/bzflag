@@ -45,14 +45,29 @@ class HUDuiServerList : public HUDuiScrollList {
     void sortByPlayerCount();
     void sortByPing();
 
+    void toggleEmptyServerFilter();
+    void toggleFullServerFilter();
+    void toggleJumpingFilter();
+    void toggleAntidoteFlagFilter();
+
   protected:
     static bool compare_by_domain(HUDuiControl* first, HUDuiControl* second);
     static bool compare_by_name(HUDuiControl* first, HUDuiControl* second);
     static bool compare_by_players(HUDuiControl* first, HUDuiControl* second);
     static bool compare_by_ping(HUDuiControl* first, HUDuiControl* second);
 
+    static bool is_empty(const HUDuiControl* value);
+    static bool is_full(const HUDuiControl* value);
+    static bool has_jumping(const HUDuiControl* value);
+    static bool has_antidote_flags(const HUDuiControl* value);
+
   private:
-    ServerList* dataList;
+    static ServerList* dataList;
+
+    bool emptyServerFilter;
+    bool fullServerFilter;
+    bool jumpingFilter;
+    bool antidoteFlagFilter;
 };
 
 #endif // __HUDuiServerList_H__
