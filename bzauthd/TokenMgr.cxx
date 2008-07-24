@@ -14,9 +14,7 @@
 #include "TokenMgr.h"
 #include "EventHandler.h"
 #include "Log.h"
-
-//#define TOKEN_EXPIRE_DELAY 5.0 * 60
-#define TOKEN_EXPIRE_DELAY 10
+#include "Config.h"
 
 INSTANTIATE_SINGLETON(TokenMgr);
 
@@ -30,16 +28,11 @@ TokenMgr::~TokenMgr()
 
 }
 
-void TokenMgr::update()
-{
-
-}
-
 void TokenMgr::addToken(std::string name, uint32 token)
 {
   sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
   tokenMap[nextToken] = name;
-  sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32(token), TOKEN_EXPIRE_DELAY);
+  sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32(token), sConfig.getIntValue(CONFIG_TOKEN_EXPIRE_DELAY) / 1000.0);
 }
 
 uint32 TokenMgr::newToken(std::string name)

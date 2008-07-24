@@ -32,7 +32,7 @@ OpcodeEntry opcodeTable[NUM_OPCODES] = {
   {"DMSG_REGISTER_CHALLENGE",   &PacketHandler::handleInvalid           },
   {"CMSG_REGISTER_RESPONSE",    &PacketHandler::handleRegisterResponse  },
   {"DMSG_REGISTER_SUCCESS",     &PacketHandler::handleInvalid           },
-  {"SMSG_TOKEN_VALIDATE",       &PacketHandler::handleNull              },
+  {"SMSG_TOKEN_VALIDATE",       &PacketHandler::handleTokenValidate     },
   {"DMSG_TOKEN_VALIDATE",       &PacketHandler::handleInvalid           }
 };
 

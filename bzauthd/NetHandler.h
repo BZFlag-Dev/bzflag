@@ -111,6 +111,11 @@ class RegisterSession : public Session
 public:
 };
 
+class ServerSession : public Session
+{
+public:
+};
+
 class ConnectSocket;
 
 class PacketHandlerBase
@@ -138,6 +143,7 @@ public:
   bool handleRegisterRequest(Packet &packet);
   bool handleRegisterResponse(Packet &packet);
   bool handleAuthResponse(Packet &packet);
+  bool handleTokenValidate(Packet &packet);
 private:
   Peer *m_peer;
   AuthSession *m_authSession;
@@ -226,6 +232,23 @@ public:
     m_rpoz += size;
     return true;
   }
+
+  bool read_string(uint8 *x, size_t buf_size)
+  {
+    for(size_t i = m_rpoz; i < min(m_rpoz + buf_size, m_size); i++)
+    {
+      x[i] = m_data[i];
+      if(m_data[i] == '\0')
+      {
+        m_rpoz = i + 1;
+        return true;
+      }
+    }
+
+    m_rpoz = m_size + 1;
+    return false;
+  }
+
 
   operator bool() const { return m_rpoz <= m_size; }
 

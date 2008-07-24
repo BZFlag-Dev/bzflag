@@ -11,6 +11,29 @@
 */
 
 #include "common.h"
+#include "NetHandler.h"
+#include "TokenMgr.h"
+#include "UserStorage.h"
+
+bool PacketHandler::handleTokenValidate(Packet &packet)
+{
+  char n;
+  if(!(packet >> n)) return false;
+
+  Packet response(DMSG_TOKEN_VALIDATE, n*4);
+  for(int i = 0; i < n; i++)
+  {
+    uint8 callsign[MAX_CALLSIGN_LEN+1];
+    uint32 token;
+    if(!(packet >> token)) return false;
+    if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
+
+    response << (uint32)sTokenMgr.checkToken((char *)callsign, token);
+  }
+  m_socket->sendData(response);
+
+  return true;
+}
 
 // Local Variables: ***
 // mode: C++ ***

@@ -10,6 +10,10 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+/** The TokenMgr stores session tokens 
+  */
+
+
 #ifndef __BZAUTHD_TOKENMGR_H__
 #define __BZAUTHD_TOKENMGR_H__
 
@@ -21,7 +25,6 @@ class TokenMgr : public Singleton<TokenMgr>
 public:
   TokenMgr();
   ~TokenMgr();
-  void update();
   uint32 newToken(std::string name);
   void addToken(std::string name, uint32 token);
   bool checkToken(std::string name, uint32 token);

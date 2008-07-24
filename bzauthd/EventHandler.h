@@ -10,6 +10,11 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+/** The EventHandler class is used for scheduling events at a later time
+  * Described either as delta from the current time, a fixed time in future
+  * or as a recurring event with a period.
+  */
+
 #ifndef __BZAUTHD_EVENTHANDLER_H__
 #define __BZAUTHD_EVENTHANDLER_H__
 
@@ -43,6 +48,12 @@ private:
 
   TimeMapType timeMap;
 };
+
+/** The EventPtr class should be used when many different objects need to be have
+  * a reference to the event. In this case, notifying each object of the event's
+  * deletion becomes costly. Reference counting is used to keep the object in memory
+  * until all links to it have been cut.
+  */
 
 class EventPtr
 {

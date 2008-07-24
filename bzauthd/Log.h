@@ -10,6 +10,10 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+/** The Log class implements basic logging for the server
+  * with three logging types, outLog, outDebug and outError.
+  */
+
 #ifndef __BZAUTHD_LOG_H__
 #define __BZAUTHD_LOG_H__
 
