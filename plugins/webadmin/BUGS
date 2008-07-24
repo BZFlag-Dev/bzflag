@@ -6,4 +6,4 @@ but may be the result of errors in other parts of the server.
 
 * [$CurrentPage] and [$UserName] are not properly substituted.
 
-* Segfault when navigating to helpmsg or group page.
+* Segfault sometimes when submitting form data.

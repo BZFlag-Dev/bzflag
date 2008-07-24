@@ -242,6 +242,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   reply.docType = HTTPReply::eHTML;
 
   templateVars.clear();
+  editing = false;
   return true;
 }
 
