@@ -28,9 +28,9 @@ private:
   unsigned int loopPos;
   std::map<std::string,std::string> templateVars;
   
-  typedef void (WebAdmin::*page_callback)(const HTTPRequest &);
-  std::map<std::string,page_callback> controllers;
   std::vector<std::string> pagenames;
+  
+  void pageCallback (const std::string &pagename, const HTTPRequest &request);
   
   void mainPageCallback (const HTTPRequest &request);
   void banlistPageCallback (const HTTPRequest &request);
@@ -73,16 +73,19 @@ WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
 	registerVDir();
 	
 	// add new pages here
-	controllers["main"] = &WebAdmin::mainPageCallback;
-	controllers["banlist"] = &WebAdmin::banlistPageCallback;
-	controllers["helpmsg"] = NULL;
-	controllers["group"] = &WebAdmin::groupPageCallback;
-	
-  std::map<std::string,page_callback>::iterator pair;
-  for(pair = controllers.begin(); pair != controllers.end(); pair++)
-    pagenames.push_back(pair->first);
+  pagenames.push_back("main");
+  pagenames.push_back("banlist");
+  pagenames.push_back("helpmsg");
+  pagenames.push_back("group");
 }
 
+void WebAdmin::pageCallback(const std::string &pagename, const HTTPRequest &request)
+{
+       if (pagename == "main")        mainPageCallback(request);
+  else if (pagename == "banlist")  banlistPageCallback(request);
+  else if (pagename == "helpmsg");
+  else if (pagename == "group")      groupPageCallback(request);
+}
 
 void WebAdmin::init(const char* cmdln)
 {
@@ -205,7 +208,6 @@ bool WebAdmin::ifCallback (const std::string &key)
 
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
-  std::map<std::string,page_callback>::iterator pair;
   size_t size;
   std::string action, pagename = request.resource;
   
@@ -219,14 +221,12 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
-    
-    pair = controllers.find(pagename);
-    if (pair != controllers.end()) {
-      if (pair->second) (this->*pair->second)(request);
+    if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
+      pageCallback(pagename, request);
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
         reply.returnCode = HTTPReply::e500ServerError;
-          if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
-            reply.body = format("Missing template: %s.tmpl", pagename.c_str());
+        if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
+          reply.body = format("Missing template: %s.tmpl", pagename.c_str());
       }
     } else {
       reply.returnCode = HTTPReply::e404NotFound;
