@@ -26,12 +26,23 @@
 
 ServerList* HUDuiServerList::dataList = NULL;
 
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), emptyServerFilter(false), antidoteFlagFilter(false)
+const int HUDuiServerList::EmptyServer = 0;
+const int HUDuiServerList::FullServer = 1;
+const int HUDuiServerList::Jumping = 2;
+const int HUDuiServerList::AntidoteFlag = 3;
+
+const int HUDuiServerList::DomainName = 0;
+const int HUDuiServerList::ServerName = 1;
+const int HUDuiServerList::PlayerCount = 2;
+const int HUDuiServerList::Ping = 3;
+
+
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), emptyServerFilter(false), fullServerFilter(false), jumpingFilter(false), antidoteFlagFilter(false)
 {
   // do nothing
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), emptyServerFilter(false), antidoteFlagFilter(false)
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), emptyServerFilter(false), fullServerFilter(false), jumpingFilter(false), antidoteFlagFilter(false)
 {
   // do nothing
 }
@@ -45,9 +56,12 @@ HUDuiServerList::~HUDuiServerList()
 void HUDuiServerList::addItem(ServerItem item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
+  originalItems.push_back(newItem);
+  items.push_back(newItem);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
-  HUDuiScrollList::addItem(newItem);
+  addControl(newItem);
+  resizeItems(); // May not be very efficient way of doing it
   update();
 }
 
@@ -66,16 +80,80 @@ void HUDuiServerList::setServerList(ServerList* list)
 
 ServerItem* HUDuiServerList::getSelectedServer()
 {
-  if (items.size() <= 0)
+  if ((items.size() <= 0)||(dataList == NULL))
     return NULL;
 
   std::list<HUDuiControl*>::iterator it;
   it = items.begin();
-  int bilbo = getSelected();
   std::advance(it, getSelected());
 
   HUDuiServerListItem* selected = (HUDuiServerListItem*) *it;
   return dataList->lookupServer(selected->getServerKey());
+}
+
+void HUDuiServerList::applyFilters()
+{
+  items = originalItems;
+
+  if (emptyServerFilter)
+    items.remove_if(is_empty);
+
+  if (fullServerFilter)
+    items.remove_if(is_full);
+
+  if (jumpingFilter)
+    items.remove_if(has_jumping);
+
+  if (antidoteFlagFilter)
+    items.remove_if(has_antidote_flags);
+
+  refreshNavQueue();
+  getNav().set((size_t) 0);
+}
+
+void HUDuiServerList::toggleFilter(int filter)
+{
+  switch (filter) {
+    case HUDuiServerList::EmptyServer:
+      emptyServerFilter = !emptyServerFilter;
+      break;
+
+    case HUDuiServerList::FullServer:
+      fullServerFilter = !fullServerFilter;
+      break;
+
+    case HUDuiServerList::Jumping:
+      jumpingFilter = !jumpingFilter;
+      break;
+
+    case HUDuiServerList::AntidoteFlag:
+      antidoteFlagFilter = !antidoteFlagFilter;
+      break;
+  }
+  applyFilters();
+}
+
+void HUDuiServerList::sortBy(int sortType)
+{
+  switch (sortType) {
+    case HUDuiServerList::DomainName:
+      items.sort(compare_by_domain);
+      break;
+
+    case HUDuiServerList::ServerName:
+      items.sort(compare_by_name);
+      break;
+
+    case HUDuiServerList::PlayerCount:
+      items.sort(compare_by_players);
+      break;
+
+    case HUDuiServerList::Ping:
+      items.sort(compare_by_ping);
+      break;
+  }
+  refreshNavQueue();
+  setSelected((int) getNav().getIndex());
 }
 
 // Internal domain name compare function
@@ -164,90 +242,6 @@ bool HUDuiServerList::has_antidote_flags(const HUDuiControl* value)
     return true;
   else
     return false;
-}
-
-// Sort our server list by domain names
-void HUDuiServerList::sortByDomain()
-{
-  items.sort(compare_by_domain);
-  refreshNavQueue();
-  setSelected((int) getNav().getIndex());
-}
-
-// Sort our server list by server names
-void HUDuiServerList::sortByServerName()
-{
-  items.sort(compare_by_name);
-  refreshNavQueue();
-  setSelected((int) getNav().getIndex());
-}
-
-// Sort our server list by player counts
-void HUDuiServerList::sortByPlayerCount()
-{
-  items.sort(compare_by_players);
-  refreshNavQueue();
-  setSelected((int) getNav().getIndex());
-}
-
-// Sort our server list by ping
-void HUDuiServerList::sortByPing()
-{
-  items.sort(compare_by_ping);
-  refreshNavQueue();
-  setSelected((int) getNav().getIndex());
-}
-
-// Filter out empty servers
-void HUDuiServerList::toggleEmptyServerFilter()
-{
-  emptyServerFilter = !emptyServerFilter;
-
-  if (emptyServerFilter)
-  {
-    items.remove_if(is_empty);
-  }
-  refreshNavQueue();
-  getNav().set((size_t) 0);
-}
-
-// Filter out full servers
-void HUDuiServerList::toggleFullServerFilter()
-{
-  fullServerFilter = !fullServerFilter;
-
-  if (fullServerFilter)
-  {
-    items.remove_if(is_full);
-  }
-  refreshNavQueue();
-  getNav().set((size_t) 0);
-}
-
-// Filter out servers without jump
-void HUDuiServerList::toggleJumpingFilter()
-{
-  jumpingFilter = !jumpingFilter;
-
-  if (jumpingFilter)
-  {
-    items.remove_if(has_jumping);
-  }
-  refreshNavQueue();
-  getNav().set((size_t) 0);
-}
-
-// Filter out full servers
-void HUDuiServerList::toggleAntidoteFlagFilter()
-{
-  antidoteFlagFilter = !antidoteFlagFilter;
-
-  if (antidoteFlagFilter)
-  {
-    items.remove_if(has_antidote_flags);
-  }
-  refreshNavQueue();
-  getNav().set((size_t) 0);
 }
 
 // Local Variables: ***

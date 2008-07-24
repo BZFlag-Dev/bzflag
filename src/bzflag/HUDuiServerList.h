@@ -40,15 +40,20 @@ class HUDuiServerList : public HUDuiScrollList {
 
     ServerItem* getSelectedServer();
 
-    void sortByDomain();
-    void sortByServerName();
-    void sortByPlayerCount();
-    void sortByPing();
+    void sortBy(int sortType);
 
-    void toggleEmptyServerFilter();
-    void toggleFullServerFilter();
-    void toggleJumpingFilter();
-    void toggleAntidoteFlagFilter();
+    const static int EmptyServer;
+    const static int FullServer;
+    const static int Jumping;
+    const static int AntidoteFlag;
+
+    const static int DomainName;
+    const static int ServerName;
+    const static int PlayerCount;
+    const static int Ping;
+
+    void applyFilters();
+    void toggleFilter(int filter);
 
   protected:
     static bool compare_by_domain(HUDuiControl* first, HUDuiControl* second);
@@ -63,6 +68,7 @@ class HUDuiServerList : public HUDuiScrollList {
 
   private:
     static ServerList* dataList;
+    std::list<HUDuiControl*> originalItems;
 
     bool emptyServerFilter;
     bool fullServerFilter;
