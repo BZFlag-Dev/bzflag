@@ -22,7 +22,7 @@
 // HUDuiServerInfo
 //
 
-HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl()
+HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl(), server(NULL)
 {
   // Do nothing
 }
@@ -34,7 +34,7 @@ HUDuiServerInfo::~HUDuiServerInfo()
 
 void HUDuiServerInfo::setServerItem(ServerItem* item)
 {
-  serverPointer = item;
+  server = item;
 }
 
 void HUDuiServerInfo::doRender()
@@ -43,7 +43,13 @@ void HUDuiServerInfo::doRender()
     return;
   }
 
-  // Do nothing at the moment
+  if (server == NULL) {
+    return;
+  }
+
+  // Just blank filler information at the moment, for testing.
+  FontManager &fm = FontManager::instance();
+  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(), server->description.c_str());
 }
 
 

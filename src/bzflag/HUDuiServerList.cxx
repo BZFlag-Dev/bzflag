@@ -13,9 +13,6 @@
 // interface headers
 #include "HUDuiServerList.h"
 
-// system headers
-#include <math.h>
-
 // common implementation headers
 #include "BundleMgr.h"
 #include "Bundle.h"
@@ -23,18 +20,16 @@
 #include "LocalFontFace.h"
 #include "HUDui.h"
 
-#include <iostream>
-
 //
 // HUDuiServerList
 //
 
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList()
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), dataList(NULL)
 {
   // do nothing
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged)
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), dataList(NULL)
 {
   // do nothing
 }
@@ -54,24 +49,27 @@ void HUDuiServerList::addItem(ServerItem item)
   update();
 }
 
-//
-// Add a new item to our scrollable list
-void HUDuiServerList::addItem(HUDuiServerListItem* item)
-{
-  //HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
-  item->setFontFace(getFontFace());
-  item->setFontSize(getFontSize());
-  HUDuiScrollList::addItem(item);
-  update();
-}
-//
-//
-
 // Over-ride the generic HUDuiControl version of addItem
 void HUDuiServerList::addItem(HUDuiControl* item)
 {
   // Do nothing
   return;
+}
+
+void HUDuiServerList::setServerList(ServerList* list)
+{
+  dataList = list;
+}
+
+
+ServerItem* HUDuiServerList::getSelectedServer()
+{
+  std::list<HUDuiControl*>::iterator it;
+  it = items.begin();
+  std::advance(it, getSelected());
+
+  HUDuiServerListItem* selected = (HUDuiServerListItem*) *it;
+  return dataList->lookupServer(selected->getServerKey());
 }
 
 // Internal domain name compare function
@@ -123,7 +121,7 @@ void HUDuiServerList::sortByDomain()
 {
   items.sort(compare_by_domain);
   refreshNavQueue();
-  setSelected(getNav().getIndex());
+  setSelected((int) getNav().getIndex());
 }
 
 // Sort our server list by server names
@@ -131,7 +129,7 @@ void HUDuiServerList::sortByServerName()
 {
   items.sort(compare_by_name);
   refreshNavQueue();
-  setSelected(getNav().getIndex());
+  setSelected((int) getNav().getIndex());
 }
 
 // Sort our server list by player counts
@@ -139,7 +137,7 @@ void HUDuiServerList::sortByPlayerCount()
 {
   items.sort(compare_by_players);
   refreshNavQueue();
-  setSelected(getNav().getIndex());
+  setSelected((int) getNav().getIndex());
 }
 
 // Sort our server list by ping
@@ -147,7 +145,7 @@ void HUDuiServerList::sortByPing()
 {
   items.sort(compare_by_ping);
   refreshNavQueue();
-  setSelected(getNav().getIndex());
+  setSelected((int) getNav().getIndex());
 }
 
 // Local Variables: ***

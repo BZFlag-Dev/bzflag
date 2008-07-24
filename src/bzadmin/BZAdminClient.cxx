@@ -446,8 +446,8 @@ void BZAdminClient::outputServerList() const {
   serverList.checkEchos(&startupInfo);
 
   if (ui) {
-    std::vector<ServerItem> servers = serverList.getServers();
-    for (std::vector<ServerItem>::const_iterator server = servers.begin();
+    std::map<std::string, ServerItem> servers = serverList.getServers();
+    for (std::map<std::string, ServerItem>::const_iterator server = servers.begin();
 	 server != servers.end();
 	 server++) {
       ui->outputMessage(std::string("  ") + server->description, Yellow);

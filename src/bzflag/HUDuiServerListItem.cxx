@@ -46,6 +46,7 @@ HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 
 HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
 {
+  serverKey = item.description;
   char temp[50];
 
   sprintf(temp, "%ld", item.ping.pingTime);
@@ -78,6 +79,11 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
 HUDuiServerListItem::~HUDuiServerListItem()
 {
   // do nothing
+}
+
+std::string HUDuiServerListItem::getServerKey()
+{
+  return serverKey;
 }
 
 // Set the scrollable list item's position on the screen

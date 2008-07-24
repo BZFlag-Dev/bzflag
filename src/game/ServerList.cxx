@@ -196,7 +196,7 @@ void ServerList::readServerList()
 void ServerList::sort()
 {
   // make sure the list is sorted before we go inserting in order!
-  std::sort(servers.begin(), servers.end());
+  //std::sort(servers.begin(), servers.end());
 }
 
 
@@ -208,13 +208,15 @@ void ServerList::addToList(ServerItem info, bool doCache)
   int i;
 
   // search and delete entry for this item if it exists
-  for (i = 0; i < (int)servers.size(); i++) {
-    ServerItem& server = servers[i];
+  std::map<std::string, ServerItem>::iterator serverIterator;
+
+  for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
+    const ServerItem& server = (*serverIterator).second;
     if ((server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr) && 
 	(server.ping.serverId.port == info.ping.serverId.port)) {
       // retain age so it can stay sorted same agewise
       info.setAge(server.getAgeMinutes(), server.getAgeSeconds());
-      servers.erase(servers.begin() + i); // erase this item
+      servers.erase(serverIterator); // erase this item
       break;
     }
   }
@@ -225,15 +227,17 @@ void ServerList::addToList(ServerItem info, bool doCache)
   // find point to insert new player at
   int insertPoint = -1; // point to insert server into
 
+  i = 0;
   // insert new item before the first serveritem with is deemed to be less
   // in value than the item to be inserted -- cached items are less than
   // non-cached, items that have more players are more, etc..
-  for (i = 0; i < (int)servers.size(); i++) {
-    ServerItem& server = servers[i];
+  for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
+    const ServerItem& server = (*serverIterator).second;
     if (info < server){
       insertPoint = i;
       break;
     }
+    i++;
   }
 
   // mark server in current list if it is a favorite server
@@ -241,10 +245,15 @@ void ServerList::addToList(ServerItem info, bool doCache)
   if (serverCache->isFavorite(serverAddress))
     info.favorite = true;
 
+  const ServerItem& constInfo = info;
   if (insertPoint == -1){ // no spot to insert it into -- goes on back
-    servers.push_back(info);
+    //servers.push_back(info);
+    servers.insert(std::pair<std::string, ServerItem>(info.description, constInfo));
   } else {  // found a spot to insert it into
-    servers.insert(servers.begin() + insertPoint, info);
+    //servers.insert(servers.begin() + insertPoint, info);
+    std::map<std::string, ServerItem>::iterator location = servers.begin();
+    std::advance(location, insertPoint);
+    servers.insert(location, std::pair<std::string, ServerItem>(info.description, constInfo));
   }
 
   // check if we need to show cached values
@@ -267,12 +276,21 @@ void ServerList::addToList(ServerItem info, bool doCache)
 // mark server identified by host:port string as favorite
 void		    ServerList::markFav(const std::string &serverAddress, bool fav)
 {
-  for (int i = 0; i < (int)servers.size(); i++) {
-    if (serverAddress == servers[i].getAddrName()) {
-      servers[i].favorite = fav;
+  std::map<std::string, ServerItem>::iterator serverIterator;
+
+  //for (int i = 0; i < (int)servers.size(); i++) {
+  for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
+    ServerItem& server = (*serverIterator).second;
+    if (serverAddress == server.getAddrName()) {
+      server.favorite = fav;
       break;
     }
   }
+}
+
+ServerItem* ServerList::lookupServer(std::string key)
+{
+  return &(servers[key]);
 }
 
 void			ServerList::checkEchos(StartupInfo *info)
@@ -386,11 +404,11 @@ void ServerList::finalization(char *, unsigned int, bool good)
   }
 }
 
-const std::vector<ServerItem>& ServerList::getServers() {
+const std::map<std::string, ServerItem>& ServerList::getServers() {
   return servers;
 }
 
-std::vector<ServerItem>::size_type ServerList::size() {
+std::map<std::string, ServerItem>::size_type ServerList::size() {
   return servers.size();
 }
 

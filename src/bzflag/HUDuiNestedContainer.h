@@ -34,12 +34,11 @@ class HUDuiNestedContainer : public HUDuiControl {
 			~HUDuiNestedContainer();
 
     HUDuiControl* getFocus() const { return nestedNavList.get(); }
+    const HUDNavigationQueue& getNav() const { return nestedNavList; }
+    HUDNavigationQueue& getNav() { return nestedNavList; }
 
   protected:
     void addControl(HUDuiControl* control);
-
-    const HUDNavigationQueue& getNav() const { return nestedNavList; }
-    HUDNavigationQueue& getNav() { return nestedNavList; }
 
     void setNavQueue(HUDNavigationQueue*);
 	

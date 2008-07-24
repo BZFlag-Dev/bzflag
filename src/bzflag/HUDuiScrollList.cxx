@@ -13,17 +13,12 @@
 // interface headers
 #include "HUDuiScrollList.h"
 
-// system headers
-#include <math.h>
-
 // common implementation headers
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "FontManager.h"
 #include "LocalFontFace.h"
 #include "HUDui.h"
-
-#include <iostream>
 
 //
 // HUDuiScrollList

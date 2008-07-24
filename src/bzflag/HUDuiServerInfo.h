@@ -12,7 +12,7 @@
 
 /*
  * HUDuiServerInfo:
- *	User interface class for the heads-up display's label (text display) control
+ *	Fill this in.
  */
 
 #ifndef	__HUDUISERVERINFO_H__
@@ -22,7 +22,6 @@
 #include "HUDuiControl.h"
 
 #include "ServerItem.h"
-
 #include <string>
 
 #include "BzfEvent.h"
@@ -38,7 +37,7 @@ class HUDuiServerInfo : public HUDuiControl {
     void doRender();
 
   private:
-    ServerItem* serverPointer;
+    ServerItem* server;
 };
 
 #endif // __HUDUISERVERINFO_H__

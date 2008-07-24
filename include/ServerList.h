@@ -40,8 +40,9 @@ public:
   void startServerPings(StartupInfo *_info);
   bool searchActive() const;
   bool serverFound() const;
-  const std::vector<ServerItem>& getServers();
-  std::vector<ServerItem>::size_type size();
+  const std::map<std::string, ServerItem>& getServers();
+  std::map<std::string, ServerItem>::size_type size();
+  ServerItem* lookupServer(std::string key);
   int updateFromCache();
   void collectData(char *ptr, int len);
   void finalization(char *data, unsigned int length, bool good);
@@ -61,7 +62,7 @@ private:
 private:
   bool addedCacheToList;
   int phase;
-  std::vector<ServerItem> servers;
+  std::map<std::string, ServerItem> servers;
   ServerListCache* serverCache;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;

@@ -38,12 +38,16 @@ class HUDuiServerListItem : public HUDuiControl {
     std::string getPlayerCount();
     std::string getServerPing();
 
+    std::string getServerKey();
+
   protected:
     void doRender();
     void resize();
     std::string shorten(std::string string, float width);
 
   private:
+    std::string serverKey;
+
     std::string domainName;
     std::string serverName;
     std::string playerCount;

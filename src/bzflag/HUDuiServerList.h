@@ -23,10 +23,7 @@
 
 #include "HUDuiServerListItem.h"
 #include "ServerItem.h"
-
-#include <string>
-#include <vector>
-#include <list>
+#include "ServerList.h"
 
 #include "BzfEvent.h"
 
@@ -38,7 +35,10 @@ class HUDuiServerList : public HUDuiScrollList {
 
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
-    void addItem(HUDuiServerListItem* item); // Temporary
+	
+    void setServerList(ServerList* list);
+
+    ServerItem* getSelectedServer();
 
     void sortByDomain();
     void sortByServerName();
@@ -50,6 +50,9 @@ class HUDuiServerList : public HUDuiScrollList {
     static bool compare_by_name(HUDuiControl* first, HUDuiControl* second);
     static bool compare_by_players(HUDuiControl* first, HUDuiControl* second);
     static bool compare_by_ping(HUDuiControl* first, HUDuiControl* second);
+
+  private:
+    ServerList* dataList;
 };
 
 #endif // __HUDuiServerList_H__
