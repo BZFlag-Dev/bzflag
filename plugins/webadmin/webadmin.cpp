@@ -104,12 +104,12 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addKey("HelpMsgBody",this);
   templateSystem.addKey("GroupName",this);
   templateSystem.addKey("Permission",this);
-	templateSystem.addKey("ServerVarName",this);
-	templateSystem.addKey("ServerVarValue",this);
+  templateSystem.addKey("ServerVarName",this);
+  templateSystem.addKey("ServerVarValue",this);
   
   templateSystem.addLoop("Navigation",this);
   templateSystem.addLoop("Players",this);
-	templateSystem.addLoop("ServerVars",this);
+  templateSystem.addLoop("ServerVars",this);
   templateSystem.addLoop("IPBanList",this);
   templateSystem.addLoop("IDBanList",this);
   templateSystem.addLoop("HelpMsgs",this);

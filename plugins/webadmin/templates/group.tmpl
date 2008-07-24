@@ -11,6 +11,8 @@
                  name="perm" value="[$Permission]">
         <label for="perm_[$Permission]">[$Permission]</label></li>
 [*END Permissions]
+      <li>No permissions!?</li>
+[*EMPTY Permissions]
     </ul>
     <input type="hidden" name="name" value="[$GroupName]">
     <input type="submit" value="save">
@@ -26,6 +28,8 @@
         <label for="group_[$GroupName]">[$GroupName]</label>
         <a class="edit" href="?name=[$GroupName]">edit</a></li>
 [*END Groups]
+      <li>No groups!</li>
+[*EMPTY Groups]
     </ul>
     <input type="submit" value="delete">
   </form>
