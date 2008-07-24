@@ -47,6 +47,8 @@ public:
   void collectData(char *ptr, int len);
   void finalization(char *data, unsigned int length, bool good);
 
+  ServerItem* getServerAt(int index);
+
 public:
   void addToList(ServerItem, bool doCache=false);
   void markFav(const std::string &, bool);

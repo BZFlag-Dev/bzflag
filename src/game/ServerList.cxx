@@ -293,6 +293,16 @@ ServerItem* ServerList::lookupServer(std::string key)
   return &(servers[key]);
 }
 
+ServerItem* ServerList::getServerAt(int index)
+{
+  std::map<std::string, ServerItem>::iterator serverIterator;
+  
+  serverIterator = servers.begin();
+  std::advance(serverIterator, index);
+
+  return &((*serverIterator).second);
+}
+
 void			ServerList::checkEchos(StartupInfo *info)
 {
   startupInfo = info;
