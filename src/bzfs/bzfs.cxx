@@ -258,7 +258,7 @@ public:
 
 BZFSNewConnectionCallback bzfsNewConnectionCallback;
 
-static void respondToPing(Address addr);
+static void respondToPing(Address const& addr);
 static void sendUDPupdate(NetHandler *handler);
 static void handleCommand(void *rawbuf, bool udp, NetHandler *handler);
 
@@ -1462,7 +1462,7 @@ void checkGameOn ( void )
 }
 
 
-static void respondToPing(Address addr)
+static void respondToPing(Address const& addr)
 {
   // reply with current game info
   pingReply.sourceAddr = addr;
