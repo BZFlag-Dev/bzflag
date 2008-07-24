@@ -53,11 +53,13 @@ void HUDuiScrollList::clear()
 
 void HUDuiScrollList::setSelected(int _index)
 {
-  // Ensure the index is not negative, or past the end of our list
-  if (_index <= 0)
-    _index = 0;
-  else if (_index >= (int)items.size())
+  // Ensure the index is not past the end of our list
+  if (_index >= (int)items.size())
     _index = (int)items.size() - 1;
+
+  // Make sure the index isn't negative either
+  if (_index < 0)
+    _index = 0;
 
   if (pagedList) {
     // Figure out what page the new index is on
@@ -65,7 +67,7 @@ void HUDuiScrollList::setSelected(int _index)
     visiblePosition = _index - ((newPage - 1)*numVisibleItems);
   } else {
     // The new index falls within the portion of the list already on screen
-    if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
+    if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) { 
       visiblePosition = visiblePosition + (_index - index);
     // Moving one down outside of list range
     } else if (_index == (index + (numVisibleItems - visiblePosition))) {
