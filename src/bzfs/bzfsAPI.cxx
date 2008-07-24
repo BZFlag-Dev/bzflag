@@ -4318,7 +4318,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       hasOO = true;
   }
 
-  bool update = false;
+  bool doUpdate = false;
 
   // if we can't move, don't try to move
   if (!canMove())
@@ -4341,7 +4341,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
     if (target)
     {
       // something was hit, so no mater what we have to update, cus our DR WILL be off
-      update = true;
+      doUpdate = true;
       // find out if we landed, or if we just hit something
 
       // see if the thing we hit was below us.
@@ -4417,7 +4417,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
     const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
     if (target)
     {
-      update = true;
+      doUpdate = true;
       newState.vec[0] = newState.vec[1] = newState.vec[2] = 0;
       currentState = newState;
 
@@ -4429,7 +4429,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
     // now check for jumping
     if (wantToJump && canJump())
     {
-      update = true;
+      doUpdate = true;
       newState.vec[2] += computeJumpVelocity(flag);
       currentState = newState;
       player->lastState.status &= PlayerState::Falling;
@@ -4449,7 +4449,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
 	{
 	  // down we go
-	  update = true;
+	  doUpdate = true;
 	  newState.vec[2] = -BZDBCache::gravity;
 	  currentState = newState;
 	  player->lastState.status &= PlayerState::Falling;
@@ -4465,14 +4465,14 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
   // if they jumped, they jumped.
   wantToJump = false;
 
-  if (!update) // if we aren't forcing an update due to a collision then check to see if we are far enough away
+  if (!doUpdate) // if we aren't forcing an update due to a collision then check to see if we are far enough away
   {
     if (lastUpdate.getDelta(newState) > 0.5f)
-      update = true;
+      doUpdate = true;
   }
 
 
-  if (update)
+  if (doUpdate)
   {
     // send out the current state as an update
 
