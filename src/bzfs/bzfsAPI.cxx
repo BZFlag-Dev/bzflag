@@ -3966,6 +3966,11 @@ BZF_API const char* bz_getServerVersion ( void )
 
 // server side bot API
 
+bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : wantToJump(false), flaps(0) , playerID(-1), autoSpawn(true), alive(false)
+{
+  input[0] = input[1] = 0;
+}
+
 // higher level logic API
 void bz_ServerSidePlayerHandler::spawned(void)
 {
@@ -4013,6 +4018,7 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
     input[0] = input[1] = 0;
     updatePhysics();
 
+    flaps = 0;
     // tell the high level API that we done spawned;
     spawned();
   }
@@ -4046,9 +4052,26 @@ void bz_ServerSidePlayerHandler::flagTransfer(int, int, int, bz_eShotType){}
 
 void bz_ServerSidePlayerHandler::nearestFlag(const char *, float[3]){}
 
-void bz_ServerSidePlayerHandler::grabFlag(int, int, const char *, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::grabFlag(int player, int /*flagID*/, const char* flagType, bz_eShotType shotType)
+{
+  if (player == playerID)
+  {
+    if (alive)	// it's for us so notify the AI that events happened
+    {
+      shotChange(shotType);
+      flagPickup(flagType);
+    }
+  }
+}
 
-void bz_ServerSidePlayerHandler::setShotType(int, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::setShotType(int player, bz_eShotType shotType )
+{
+  if (player == playerID)
+  {
+    if (alive)	// it's for us so notify the AI that events happened
+      shotChange(shotType);
+  }
+}
 
 void bz_ServerSidePlayerHandler::shotFired(int, unsigned short, bz_eShotType ){}
 
@@ -4059,7 +4082,6 @@ void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned
 void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
 
 void bz_ServerSidePlayerHandler::allowSpawn( bool ){}
-
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
