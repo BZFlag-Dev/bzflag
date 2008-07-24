@@ -1983,6 +1983,10 @@ class BZF_API bz_ServerSidePlayerHandler
    bz_ServerSidePlayerHandler();
   virtual ~bz_ServerSidePlayerHandler() {};
 
+  int getPlayerID ( void ){return playerID;}
+
+  void update ( void );
+
   // you must call setPlayerData when this is called.
   virtual void added(int player) = 0; // it is required that the bot provide this method
 

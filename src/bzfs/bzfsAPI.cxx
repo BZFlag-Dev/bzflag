@@ -3966,7 +3966,7 @@ BZF_API const char* bz_getServerVersion ( void )
 
 // server side bot API
 
-bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : wantToJump(false), flaps(0) , playerID(-1), autoSpawn(true), alive(false)
+bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0), alive(false)
 {
   input[0] = input[1] = 0;
 }
@@ -3990,6 +3990,12 @@ void bz_ServerSidePlayerHandler::died ( int /*killer*/ )
 void bz_ServerSidePlayerHandler::smote ( SmiteReason /*reason*/ )
 {
   alive = false;
+}
+
+void bz_ServerSidePlayerHandler::update ( void )
+{
+  think();
+  updatePhysics();
 }
 
 
