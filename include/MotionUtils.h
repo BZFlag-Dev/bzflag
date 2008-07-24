@@ -21,6 +21,10 @@ float computeMaxAngleVelocity ( FlagType *flag, float z );
 float computeMaxLinVelocity (  FlagType *flag, float z );
 void computeMomentum(float dt, FlagType *flag, float& speed, float& angVel, const float lastSpeed, const float lastAngVel );
 void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *newVelocity);
+float computeJumpVelocity ( FlagType *flag );
+float computeGroundLimit ( FlagType *flag );
+
+void vecFromAngle2d ( float ang, float vec[3], float mag = 1.0f );
 
 float getMagnitude ( float v[3] );
 float getMagnitude ( float p1[3], float p2[3] );

@@ -194,6 +194,21 @@ void broadcastPlayerScoreUpdate(int playerID)
   sendPlayerScoreUpdate(player);
 }
 
+//-------------------------------------------------------------------------
+unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle );
+void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle );
+
+bz_APISolidWorldObject_V1 *APISolidFromObsacle( const Obstacle *obs )
+{
+  bz_APISolidWorldObject_V1 * solid = new bz_APISolidWorldObject_V1;
+  solid->id = buildObjectIDFromObstacle(*obs);
+  setSolidObjectFromObstacle(*solid,*obs);
+  solid->subID = obs->getListID();
+  return solid;
+}
+
+
+
 //******************************Versioning********************************************
 BZF_API int bz_APIVersion(void)
 {
@@ -2937,13 +2952,7 @@ bz_eAPIColType getAPIMapObject(InBuildingType colType, const Obstacle *obs, bz_A
     case IN_PYRAMID:
     case IN_TETRA:
       if(object)
-      {
-	bz_APISolidWorldObject_V1 *solid=new bz_APISolidWorldObject_V1;
-	solid->id = buildObjectIDFromObstacle(*obs);
-	setSolidObjectFromObstacle(*solid,*obs);
-	solid->subID = obs->getListID();
-	*object=solid;
-      }
+	*object = APISolidFromObsacle(obs);
       return base ? eInBase : eInSolid;
 
     case IN_TELEPORTER:
@@ -3930,6 +3939,11 @@ BZF_API bz_eGameType bz_getGameType(void)
   return TeamFFAGame;
 }
 
+BZF_API bool bz_allowJumping(void)
+{
+  return clOptions->gameOptions & JumpingGameStyle ? true : false;
+}
+
 // utility
 BZF_API const char* bz_MD5 ( const char * str )
 {
@@ -4188,7 +4202,9 @@ bool bz_ServerSidePlayerHandler::fireShot(void)
 
 bool bz_ServerSidePlayerHandler::jump(void)
 {
-  return false;
+  if(canMove() && canJump())
+   wantToJump = true;
+  return wantToJump;
 }
 
 //-------------------------------------------------------------------------
@@ -4263,17 +4279,25 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
-  int flag = player->player.getFlag();
-
+  int flagID = player->player.getFlag();
+  FlagType *flag = NULL;
   bool hasOO = false;
   
   if (player->player.haveFlag())
   {
-    if (FlagInfo::get(flag)->flag.type == Flags::OscillationOverthruster)
+    flag = FlagInfo::get(flagID)->flag.type;
+    if (flag == Flags::OscillationOverthruster)
       hasOO = true;
   }
 
   bool update = false;
+
+  // if we can't move, don't try to move
+  if (!canMove())
+  {
+    input[0] = input[1] = 0;
+    wantToJump = false;
+  }
 
   if (falling())  // we are falling... so the input dosn't matter at all, just move us
   {
@@ -4288,34 +4312,158 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 
     if (target)
     {
+      // something was hit, so no mater what we have to update, cus our DR WILL be off
+      update = true;
       // find out if we landed, or if we just hit something
+
+      // see if the thing we hit was below us.
+      newState.pos[2] += 0.1f;
+
+      // if we move the postion up a tad and test again, if we laned on something we should not be in contact with it.
+      if(!target->inMovingBox(currentState.pos,currentState.rot,newState.pos,newState.rot,BZDBCache::tankWidth*0.5f,BZDBCache::tankLength*0.5f,BZDBCache::tankHeight))
+      {
+	newState.pos[2] -= 0.1f;
+
+	// we landed, so our speed in z is 0
+	currentState = newState;
+	currentState.vec[2] = 0;
+
+	// get our facing and apply it to our vector so we keep the components that are along our facing.
+	float facing[3];
+	vecFromAngle2d(newState.rot,facing);
+	
+	currentState.vec[0] *= facing[0];
+	currentState.vec[1] *= facing[1];
+
+	// set the state to have landed
+	player->lastState.status &= ~PlayerState::Falling;
+
+	// tell the AI that we landed
+	landed();
+      }
+      else
+      {
+	// we hit something normal, just slide down it
+	newState.pos[2] -= 0.1f;
+
+	currentState = newState;
+	currentState.vec[0] = currentState.vec[1] = 0;
+
+	bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
+	collide(solid,currentState.pos);
+	delete(solid);
+      }
+
+      newState = currentState;
     }
   }
 
   // we are driving, so apply the input 
-  if (!falling())
+  if (!falling() && canMove())
   {
     // see what the input wants us to do
-    float desiredSpeed = input[1] * getMaxLinSpeed();
     float desiredTurn = input[1] * getMaxRotSpeed();
 
     // clamp to the rotation speed for the frame.
     newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
 
+    float currentSpeed = input[1] * getMaxLinSpeed();
+
+    // compute the momentum
+    computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
+
     // compute our new rotation;
     newState.rot += newState.rotVel * delta;
 
-    // clamp the linear speed to the speed for the frame
-    float currentSpeed = getMagnitude(newState.vec);
+    // compute our new velocity
+    vecFromAngle2d(newState.rot,newState.vec,currentSpeed);
 
- }
+    // clamp the speed to acceleration and the world
+    computeFriction(delta,flag,currentState.vec,newState.vec);
+
+    // compute our new position
+    for (int i =0; i < 3; i++)
+      newState.pos[i] += newState.vec[i] * delta;
+
+    // clamp the pos to what we hit
+    const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
+    if (target)
+    {
+      update = true;
+      newState.vec[0] = newState.vec[1] = newState.vec[2] = 0;
+      currentState = newState;
+
+      bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
+      collide(solid,currentState.pos);
+      delete(solid);
+    }
+
+    // now check for jumping
+    if (wantToJump && canJump())
+    {
+      update = true;
+      newState.vec[2] += computeJumpVelocity(flag);
+      currentState = newState;
+      player->lastState.status &= PlayerState::Falling;
+      jumped();
+    }
+    else  // see if we fall off something
+    {
+      if (newState.pos[2] <= computeGroundLimit(flag))
+	newState.pos[2] = computeGroundLimit(flag);
+      else
+      {
+	// do a collision test to see if what is below the tank is empty
+	float temp[3];
+	memcpy(temp,newState.pos,sizeof(float)*3);
+	temp[2] -= 0.1f;
+
+	if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
+	{
+	  // down we go
+	  update = true;
+	  newState.vec[2] = -BZDBCache::gravity;
+	  currentState = newState;
+	  player->lastState.status &= PlayerState::Falling;
+	  jumped();
+	}
+      }
+    }
+  }
+
+  // the new state is where we will be
+  currentState = newState;
+
+  // if they jumped, they jumped.
+  wantToJump = false;
+
+  if (!update) // if we aren't forcing an update due to a collision then check to see if we are far enough away
+  {
+    if (lastUpdate.getDelta(newState) > 0.5f)
+      update = true;
+  }
+
+
+  if (update)
+  {
+    // send out the current state as an update
+
+    player->lastState.order++;
+    player->lastState.angVel = currentState.rotVel;
+    player->lastState.azimuth = currentState.rot;
+    memcpy(player->lastState.velocity,currentState.vec,sizeof(float)*3);
+    memcpy(player->lastState.pos,currentState.pos,sizeof(float)*3);
+    updatePlayerState(player, player->lastState, (float)now, false);
+
+    lastUpdate = currentState;
+  }
 }
 
 //-------------------------------------------------------------------------
 
 bool bz_ServerSidePlayerHandler::canJump(void)
 {
-  return canMove();
+  return canMove() && bz_allowJumping();
 }
 
 //-------------------------------------------------------------------------
@@ -4404,7 +4552,7 @@ float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
 
 float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
 {
-  // plot where we think we are now based on the current date
+  // plot where we think we are now based on the current time
   double dt = state.time - time;
 
   float newPos[3];

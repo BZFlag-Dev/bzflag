@@ -148,7 +148,30 @@ void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *
   }
 }
 
+float computeJumpVelocity ( FlagType *flag )
+{
+  if (flag == Flags::Wings)
+    return BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
 
+  return BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+}
+
+float computeGroundLimit( FlagType *flag )
+{
+  float groundLimit = 0.0f;
+  if (flag == Flags::Burrow)
+    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+
+  return groundLimit;
+}
+
+
+void vecFromAngle2d ( float ang, float vec[3], float mag )
+{
+  vec[0] = cosf(ang*deg2Rad) * mag;
+  vec[1] = sinf(ang*deg2Rad) * mag;
+  vec[2] = 0;
+}
 
 float getMagnitude ( float v[3] )
 {

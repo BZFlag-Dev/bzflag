@@ -251,9 +251,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 		       (getFlag() == Flags::OscillationOverthruster) ||
 		       isPhantomZoned());
 
-  float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow)
-    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+  float groundLimit = computeGroundLimit(getFlag());
 
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {

@@ -1894,6 +1894,9 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint(float pos[3]);
 // game info
 BZF_API bz_eGameType bz_getGameType(void);
 
+BZF_API bool bz_allowJumping(void);
+
+
 // utility
 BZF_API const char* bz_MD5(const char * str);
 BZF_API const char* bz_MD5(const void * data, size_t size);
@@ -2073,6 +2076,7 @@ class BZF_API bz_ServerSidePlayerHandler
 
  private:
   float input[2];
+  bool	wantToJump;
 
   bool autoSpawn;
 
