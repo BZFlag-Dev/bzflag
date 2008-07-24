@@ -222,7 +222,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     
     pair = controllers.find(pagename);
     if (pair != controllers.end()) {
-      (this->*pair->second)(request);
+      if (pair->second) (this->*pair->second)(request);
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
         reply.returnCode = HTTPReply::e500ServerError;
           if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
