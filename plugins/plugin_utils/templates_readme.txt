@@ -4,7 +4,7 @@ The Templateiser class in plugin_HTTPTemplates allows HTTPD based plug-ins to
 use templates to generate HTML content for pages.
 
 *syntax*
-Template code uses special tags that are always sournded by square backets
+Template code uses special tags that are always surrounded by square brackets
 "[ ]". The first character after the "[" tells the template engine what
 type of tag it is. Acceptable Tag codes are;
 
@@ -19,7 +19,7 @@ Tags that to not follow this format will be output as normal text.
 *variables*
 Tags that start with [$ are variables. These tags will be replaced with 
 plug-in generated code. The text after the $ is the name of the variable
-and is case insenstive.
+and is case insensitive.
 
 Some standard variables are provided by the template system;
 
@@ -31,7 +31,7 @@ Some standard variables are provided by the template system;
 [$PluginName] returns the name of the current plug-in.
 
 *loops*
-Tags that start with [* are loops. Each loop consists of 3 tags eac with its
+Tags that start with [* are loops. Each loop consists of 3 tags each with its
 own code;
 [*Start NAME] starts the loop
 [*End NAME] flags the end of the code for each loop item
@@ -41,7 +41,7 @@ Each loop must have these 3 sections in this order. If the loop has items then
 The code between Start and End will be called for each item in the loop. If the
 loop is empty, then the code between End and Empty will be called once.
 
-Loops can be nested but must still follow this format and have a uniqne name.
+Loops can be nested but must still follow this format and have a unique name.
 There are no default loops.
 
 *logic test (if)*
@@ -62,11 +62,11 @@ Some standard IF tests are provided by the template system;
 [$IF Public] returns true if the server is public.
 
 *Include*
-Tags that start wtih [! are include tags. The file name after the ! should be
+Tags that start with [! are include tags. The file name after the ! should be
 a valid file on the system, in one of the include paths. This file will be
 processed and it's code will be inserted at the place where it's called.
-On Operating Systems with case senstive file systems, the file name is
-case senstive.
+On Operating Systems with case sensitive file systems, the file name is
+case sensitive.
 
 *Comment*
 Tags that start with [- are comments and are ignored. Comments can not be
