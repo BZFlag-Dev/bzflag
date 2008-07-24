@@ -103,6 +103,7 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addKey("HelpMsgName",this);
   templateSystem.addKey("HelpMsgBody",this);
   templateSystem.addKey("GroupName",this);
+  templateSystem.addKey("Permission",this);
 	templateSystem.addKey("ServerVarName",this);
 	templateSystem.addKey("ServerVarValue",this);
   
@@ -113,6 +114,7 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addLoop("IDBanList",this);
   templateSystem.addLoop("HelpMsgs",this);
   templateSystem.addLoop("Groups",this);
+  templateSystem.addLoop("Permissions", this);
 
   templateSystem.setPluginName("webadmin", getBaseURL().c_str());
 
