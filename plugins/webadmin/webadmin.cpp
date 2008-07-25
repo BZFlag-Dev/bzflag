@@ -211,7 +211,7 @@ bool WebAdmin::ifCallback (const std::string &key)
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
   size_t size;
-  std::string action, pagename = request.resource;
+  std::string pagename = request.resource;
   
   reply.returnCode = HTTPReply::e200OK;
   reply.docType = HTTPReply::eHTML;
@@ -220,12 +220,11 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case 1:
   case VERIFIED:
     templateVars["username"] = getSessionUser(request.sessionID);
-    if (pagename.empty()) pagename = "main";
-    else if (pagename == "logout") {
-      reply.cookies["SessionID"] = "null";
-      reply.returnCode = HTTPReply::e301Redirect;
-      reply.redirectLoc = std::string("/") + getVDir();
-      return true;
+    if (pagename.empty()) {
+      pagename = "main";
+      std::string dummy;
+      if (request.getParam("logout",dummy))
+        reply.cookies["SessionID"] = "null";
     } else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);

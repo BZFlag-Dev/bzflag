@@ -346,6 +346,10 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
       request.getParam("token",token);
       if (compare_nocase(action,"login") == 0 && user.size() && token.size()) // it's a response from weblogin
 	return verifyToken(request,reply);
+	    else if (compare_nocase(action,"logout") == 0) {
+	authedSessions.erase(authItr);
+	return true;
+      }
       else
       {
 	// it's someone we know NOTHING about, send them the login
