@@ -104,6 +104,7 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addKey("Callsign",this);
   templateSystem.addKey("BannedUser",this);
   templateSystem.addKey("PageName",this);
+  templateSystem.addKey("CurrentPage",this);
   templateSystem.addKey("HelpMsgName",this);
   templateSystem.addKey("HelpMsgBody",this);
   templateSystem.addKey("GroupName",this);
@@ -218,7 +219,12 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case 1:
   case VERIFIED:
     if (pagename.empty()) pagename = "main";
-    else {
+    else if (pagename == "logout") {
+      reply.cookies["SessionID"] = "null";
+      reply.returnCode = HTTPReply::e301Redirect;
+      reply.redirectLoc = std::string("/") + getVDir();
+      return true;
+    } else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
