@@ -4,6 +4,6 @@ webadmin bugs
 Note: These issues affect the functionality of the webadmin plugin,
 but may be the result of errors in other parts of the server.
 
-* [$CurrentPage] and [$UserName] are not properly substituted.
+* std::length_error sometimes thrown when submitting form data.
 
-* Segfault sometimes when submitting form data.
+* [$CurrentPage] is not properly replaced in the header.

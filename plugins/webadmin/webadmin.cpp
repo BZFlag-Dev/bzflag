@@ -100,6 +100,7 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addIF("Checked",this);
 
   templateSystem.addKey("Error",this);
+  templateSystem.addKey("UserName",this);
   templateSystem.addKey("Callsign",this);
   templateSystem.addKey("BannedUser",this);
   templateSystem.addKey("PageName",this);
@@ -222,6 +223,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
     if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
+      templateVars["username"] = getSessionUser(request.sessionID);
+      templateVars["currentpage"] = pagename;
       pageCallback(pagename, request);
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
         reply.returnCode = HTTPReply::e500ServerError;
