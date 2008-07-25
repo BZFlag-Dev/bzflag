@@ -4125,6 +4125,9 @@ void bz_ServerSidePlayerHandler::joinGame(void)
   if(player->player.isAlive() || player->player.isPlaying())
     return ;
 
+  // set our state to signing on so we can join
+  player->player.signingOn();
+
   playerAlive(playerID);
   player->lastState.order=0;
 }
