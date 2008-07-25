@@ -305,15 +305,15 @@ void WebAdmin::banlistPageCallback (const HTTPRequest &request)
 void WebAdmin::groupPageCallback (const HTTPRequest &request)
 {  
   std::string name;
-  request.getParam("name", name);
-  stringList = bz_getGroupPerms(name.c_str());
-  if (!stringList) { // TODO: make a new group instead
-    templateVars["error"] = std::string("No such group: ") + name;
+  if (request.getParam("name", name) && request.request == eGet) {
+    stringList = bz_getGroupPerms(name.c_str());
+    if (!stringList) { // TODO: make a new group instead
+      templateVars["error"] = std::string("No such group: ") + name;
+    } else {
+      templateVars["groupname"] = name;
+      editing = true;
+    }
     return;
-  }
-  if (request.request == eGet) {
-    templateVars["groupname"] = name;
-    editing = true;
   } else if (request.request == ePost) {
     delete(stringList);
     listSize = bzu_standardPerms().size();
