@@ -2043,7 +2043,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual bool think(void); // return true to kill and delete the bot;
 
   void setPlayerID ( int id ){playerID = id;}
- protected:
+
   // actions to make
   void setPlayerData(const char *callsign,
 		     const char *token, const char *clientVersion,
