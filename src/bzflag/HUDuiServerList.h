@@ -33,6 +33,25 @@ class HUDuiServerList : public HUDuiScrollList {
       HUDuiServerList(bool paged);
       ~HUDuiServerList();
 
+    typedef enum {
+      EmptyServer = 0,
+      FullServer,
+      Jumping,
+      AntidoteFlag
+    } FilterConstants;
+
+    typedef enum {
+      DomainName = 0,
+      ServerName,
+      PlayerCount,
+      Ping
+    } SortConstants;
+
+    enum What {
+      dog = 0,
+      cat
+    };
+
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
 	
@@ -40,40 +59,29 @@ class HUDuiServerList : public HUDuiScrollList {
 
     ServerItem* getSelectedServer();
 
-    void sortBy(int sortType);
-
-    const static int EmptyServer;
-    const static int FullServer;
-    const static int Jumping;
-    const static int AntidoteFlag;
-
-    const static int DomainName;
-    const static int ServerName;
-    const static int PlayerCount;
-    const static int Ping;
+    void sortBy(SortConstants sortType);
+    void searchServers(std::string pattern);
 
     void applyFilters();
-    void toggleFilter(int filter);
+    void toggleFilter(FilterConstants filter);
+
 
   protected:
-    static bool compare_by_domain(HUDuiControl* first, HUDuiControl* second);
-    static bool compare_by_name(HUDuiControl* first, HUDuiControl* second);
-    static bool compare_by_players(HUDuiControl* first, HUDuiControl* second);
-    static bool compare_by_ping(HUDuiControl* first, HUDuiControl* second);
+    struct filter;
+    struct search;
+    template<int sortType> struct compare;
 
-    static bool is_empty(const HUDuiControl* value);
-    static bool is_full(const HUDuiControl* value);
-    static bool has_jumping(const HUDuiControl* value);
-    static bool has_antidote_flags(const HUDuiControl* value);
-
-  private:
     static ServerList* dataList;
-    std::list<HUDuiControl*> originalItems;
 
     bool emptyServerFilter;
     bool fullServerFilter;
     bool jumpingFilter;
     bool antidoteFlagFilter;
+
+  private:
+    std::list<HUDuiControl*> originalItems;
+
+    SortConstants sortMode;
 };
 
 #endif // __HUDuiServerList_H__

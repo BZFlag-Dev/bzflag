@@ -14,11 +14,12 @@
 #include "HUDuiServerList.h"
 
 // common implementation headers
+#include "TextUtils.h"
+#include "bzglob.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "FontManager.h"
 #include "LocalFontFace.h"
-#include "HUDui.h"
 
 //
 // HUDuiServerList
@@ -26,16 +27,74 @@
 
 ServerList* HUDuiServerList::dataList = NULL;
 
-const int HUDuiServerList::EmptyServer = 0;
-const int HUDuiServerList::FullServer = 1;
-const int HUDuiServerList::Jumping = 2;
-const int HUDuiServerList::AntidoteFlag = 3;
+struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::string, bool>
+{
+public:
+  result_type operator()(first_argument_type control, second_argument_type pattern) const
+    {
+      HUDuiServerListItem* item = (HUDuiServerListItem*) control;
 
-const int HUDuiServerList::DomainName = 0;
-const int HUDuiServerList::ServerName = 1;
-const int HUDuiServerList::PlayerCount = 2;
-const int HUDuiServerList::Ping = 3;
+      return !(glob_match(TextUtils::tolower(pattern), TextUtils::tolower(item->getServerName())));
+    }
+};
 
+template<int sortType> struct HUDuiServerList::compare: public std::binary_function<HUDuiControl*, HUDuiControl*, bool>
+{
+public:
+  bool operator()(HUDuiControl* first, HUDuiControl* second) const
+    {
+      HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+      HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+
+      switch (sortType) {
+	case DomainName:
+	  return (_first->getDomainName().compare(_second->getDomainName()) < 0);
+	  break;
+
+	case ServerName:
+	  return (_first->getServerName().compare(_second->getServerName()) < 0);
+	  break;
+
+	case PlayerCount:
+	  return (_first->getPlayerCount().compare(_second->getPlayerCount()) < 0);
+	  break;
+
+	case Ping:
+	  return (_first->getServerPing().compare(_second->getServerPing()) < 0);
+	  break;
+      }
+      return false;
+    }
+};
+
+struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, FilterConstants, bool>
+{
+public:
+  result_type operator()(first_argument_type control, second_argument_type filter) const
+    {
+      HUDuiServerListItem* item = (HUDuiServerListItem*) control;
+      ServerItem* server = dataList->lookupServer(item->getServerKey());
+
+      switch (filter) {
+	case EmptyServer:
+	  return (server->getPlayerCount() == 0);
+	  break;
+
+	case FullServer:
+	  return (server->getPlayerCount() == server->ping.maxPlayers);
+	  break;
+
+	case Jumping:
+	  return (server->ping.gameOptions & JumpingGameStyle);
+	  break;
+
+	case AntidoteFlag:
+	  return (server->ping.gameOptions & AntidoteGameStyle);
+	  break;
+      }
+      return false;
+    }
+};
 
 HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), emptyServerFilter(false), fullServerFilter(false), jumpingFilter(false), antidoteFlagFilter(false)
 {
@@ -77,7 +136,6 @@ void HUDuiServerList::setServerList(ServerList* list)
   dataList = list;
 }
 
-
 ServerItem* HUDuiServerList::getSelectedServer()
 {
   if ((items.size() <= 0)||(dataList == NULL))
@@ -91,157 +149,80 @@ ServerItem* HUDuiServerList::getSelectedServer()
   return dataList->lookupServer(selected->getServerKey());
 }
 
+void HUDuiServerList::searchServers(std::string pattern)
+{
+  applyFilters();
+  items.remove_if(std::bind2nd(search(), pattern));
+  refreshNavQueue();
+  getNav().set((size_t) 0);
+}
+
 void HUDuiServerList::applyFilters()
 {
   items = originalItems;
 
   if (emptyServerFilter)
-    items.remove_if(is_empty);
+    items.remove_if(std::bind2nd(filter(), HUDuiServerList::EmptyServer));
 
   if (fullServerFilter)
-    items.remove_if(is_full);
+    items.remove_if(std::bind2nd(filter(), HUDuiServerList::FullServer));
 
   if (jumpingFilter)
-    items.remove_if(has_jumping);
+    items.remove_if(std::bind2nd(filter(), HUDuiServerList::Jumping));
 
   if (antidoteFlagFilter)
-    items.remove_if(has_antidote_flags);
+    items.remove_if(std::bind2nd(filter(), HUDuiServerList::AntidoteFlag));
 
   refreshNavQueue();
   getNav().set((size_t) 0);
 }
 
-void HUDuiServerList::toggleFilter(int filter)
+void HUDuiServerList::toggleFilter(FilterConstants filter)
 {
   switch (filter) {
-    case HUDuiServerList::EmptyServer:
+    case EmptyServer:
       emptyServerFilter = !emptyServerFilter;
       break;
 
-    case HUDuiServerList::FullServer:
+    case FullServer:
       fullServerFilter = !fullServerFilter;
       break;
 
-    case HUDuiServerList::Jumping:
+    case Jumping:
       jumpingFilter = !jumpingFilter;
       break;
 
-    case HUDuiServerList::AntidoteFlag:
+    case AntidoteFlag:
       antidoteFlagFilter = !antidoteFlagFilter;
       break;
   }
   applyFilters();
 }
 
-void HUDuiServerList::sortBy(int sortType)
+void HUDuiServerList::sortBy(SortConstants sortType)
 {
+  sortMode = sortType;
+
   switch (sortType) {
-    case HUDuiServerList::DomainName:
-      items.sort(compare_by_domain);
+    case DomainName:
+      items.sort(compare<DomainName>());
       break;
 
-    case HUDuiServerList::ServerName:
-      items.sort(compare_by_name);
+    case ServerName:
+      items.sort(compare<ServerName>());
       break;
 
-    case HUDuiServerList::PlayerCount:
-      items.sort(compare_by_players);
+    case PlayerCount:
+      items.sort(compare<PlayerCount>());
       break;
 
-    case HUDuiServerList::Ping:
-      items.sort(compare_by_ping);
+    case Ping:
+      items.sort(compare<Ping>());
       break;
   }
+
   refreshNavQueue();
   setSelected((int) getNav().getIndex());
-}
-
-// Internal domain name compare function
-bool HUDuiServerList::compare_by_domain(HUDuiControl* first, HUDuiControl* second)
-{
-  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
-  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
-  if (_first->getDomainName().compare(_second->getDomainName()) < 0)
-    return true;
-  else
-    return false;
-}
-
-// Internal server name compare function
-bool HUDuiServerList::compare_by_name(HUDuiControl* first, HUDuiControl* second)
-{
-  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
-  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
-  if (_first->getServerName().compare(_second->getServerName()) < 0)
-    return true;
-  else
-    return false;
-}
-
-// Internal player count compare function
-bool HUDuiServerList::compare_by_players(HUDuiControl* first, HUDuiControl* second)
-{
-  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
-  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
-  if (_first->getPlayerCount().compare(_second->getPlayerCount()) < 0)
-    return true;
-  else
-    return false;
-}
-
-// Internal ping compare function
-bool HUDuiServerList::compare_by_ping(HUDuiControl* first, HUDuiControl* second)
-{
-  HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
-  HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
-  if (_first->getServerPing().compare(_second->getServerPing()) < 0)
-    return true;
-  else
-    return false;
-}
-
-bool HUDuiServerList::is_empty(const HUDuiControl* value)
-{
-  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
-  ServerItem* server = dataList->lookupServer(item->getServerKey());
-
-  if (server->getPlayerCount() == 0)
-    return true;
-  else
-    return false;
-}
-
-bool HUDuiServerList::is_full(const HUDuiControl* value)
-{
-  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
-  ServerItem* server = dataList->lookupServer(item->getServerKey());
-
-  if (server->getPlayerCount() == server->ping.maxPlayers)
-    return true;
-  else
-    return false;
-}
-
-bool HUDuiServerList::has_jumping(const HUDuiControl* value)
-{
-  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
-  ServerItem* server = dataList->lookupServer(item->getServerKey());
-
-  if (server->ping.gameOptions & JumpingGameStyle)
-    return true;
-  else
-    return false;
-}
-
-bool HUDuiServerList::has_antidote_flags(const HUDuiControl* value)
-{
-  HUDuiServerListItem* item = (HUDuiServerListItem*) value;
-  ServerItem* server = dataList->lookupServer(item->getServerKey());
-
-  if (server->ping.gameOptions & AntidoteGameStyle)
-    return true;
-  else
-    return false;
 }
 
 // Local Variables: ***
