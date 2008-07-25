@@ -622,6 +622,9 @@ void publicize()
      if (listServerLinksCount)
      listServerLink.closeLink(); */
 
+  if (!bz_getPublic())
+    return;
+
   listServerLinksCount = 0;
 
   if (listServerLink)
@@ -1977,7 +1980,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   fixTeamCount();
 
   // tell the list server the new number of players
-  listServerLink->queueMessage(ListServerLink::ADD);
+  if(listServerLink)
+    listServerLink->queueMessage(ListServerLink::ADD);
 
   dumpScore();
 
@@ -2372,7 +2376,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     fixTeamCount();
 
     // tell the list server the new number of players
-    listServerLink->queueMessage(ListServerLink::ADD);
+    if(listServerLink)
+      listServerLink->queueMessage(ListServerLink::ADD);
   }
 
   if (clOptions->gameType == RabbitChase)
@@ -3834,6 +3839,9 @@ static bool initServer(int argc, char **argv)
   bzfsrand((unsigned int)time(0));
 
   initStartupPrams(argc,argv);
+
+  setupPermisions();
+
   setupPlugins();
 
   if (!prepareWorld())
@@ -3889,8 +3897,6 @@ static bool initServer(int argc, char **argv)
 
   nextSuperFlagInsertion = TimeKeeper::getCurrent();
   flagExp = -logf(0.5f) / FlagHalfLife;
-
-  setupPermisions();
 
   if (clOptions->startRecording)
     Record::start(AllPlayers);
