@@ -312,9 +312,15 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
       else
       {
 	if (pendingItr->second->groups.size() == 1)
+	{
+	  info.username = pendingItr->second->groups[0];
 	  info.level = 0; // just authed, no levels
+	}
 	else
+	{
+	  info.username = pendingItr->second->groups[0];
 	  info.level = getLevelFromGroups(pendingItr->second->groups);
+	}
 	if (info.level >= 0)
 	  authedSessions[request.sessionID] = info;
       }
@@ -362,6 +368,16 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
   }
 
   return true;
+}
+
+const char* BZFSHTTPAuth::getSessionUser ( int sessionID )
+{
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+    return authItr->second.username.c_str();
+
+  return NULL;
 }
 
 bool BZFSHTTPAuth::resumeTask (  int requestID )
