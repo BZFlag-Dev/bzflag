@@ -287,6 +287,7 @@ protected:
   int getLevelFromGroups(const std::vector<std::string> &groups);
 
   const char* getSessionUser ( int sessionID );
+  bool invalidateSesstion ( int sessionID );
 
 private:
   void flushTasks(void);

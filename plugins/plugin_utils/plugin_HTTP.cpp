@@ -346,10 +346,6 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
       request.getParam("token",token);
       if (compare_nocase(action,"login") == 0 && user.size() && token.size()) // it's a response from weblogin
 	return verifyToken(request,reply);
-	    else if (compare_nocase(action,"logout") == 0) {
-	authedSessions.erase(authItr);
-	return true;
-      }
       else
       {
 	// it's someone we know NOTHING about, send them the login
@@ -382,6 +378,11 @@ const char* BZFSHTTPAuth::getSessionUser ( int sessionID )
     return authItr->second.username.c_str();
 
   return NULL;
+}
+
+bool BZFSHTTPAuth::invalidateSession ( int sessionID )
+{
+  return authedSessions.erase(sessionID);
 }
 
 bool BZFSHTTPAuth::resumeTask (  int requestID )
