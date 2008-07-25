@@ -214,10 +214,12 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   std::string action, pagename = request.resource;
   
   reply.returnCode = HTTPReply::e200OK;
+  reply.docType = HTTPReply::eHTML;
   
   switch(level) {
   case 1:
   case VERIFIED:
+    templateVars["username"] = getSessionUser(request.sessionID);
     if (pagename.empty()) pagename = "main";
     else if (pagename == "logout") {
       reply.cookies["SessionID"] = "null";
@@ -229,7 +231,6 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
     if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
-      templateVars["username"] = getSessionUser(request.sessionID);
       templateVars["currentpage"] = pagename;
       pageCallback(pagename, request);
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
@@ -247,9 +248,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   default:
     reply.body = format("Not authenticated sessionID %d, access level %d",request.sessionID,level);
   }
-
-  reply.docType = HTTPReply::eHTML;
-
+  
   templateVars.clear();
   editing = false;
   return true;
