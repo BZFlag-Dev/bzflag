@@ -25,8 +25,6 @@
 #include "ServerItem.h"
 #include "ServerList.h"
 
-#include "BzfEvent.h"
-
 class HUDuiServerList : public HUDuiScrollList {
   public:
       HUDuiServerList();
@@ -34,23 +32,20 @@ class HUDuiServerList : public HUDuiScrollList {
       ~HUDuiServerList();
 
     typedef enum {
-      EmptyServer = 0,
-      FullServer,
-      Jumping,
-      AntidoteFlag
+      EmptyServer  = 0x0002,
+      FullServer   = 0x0004,
+      Jumping      = 0x0008,
+      AntidoteFlag = 0x0010,
+      EndOfFilterConstants
     } FilterConstants;
 
     typedef enum {
-      DomainName = 0,
+      NoSort = 0,
+      DomainName,
       ServerName,
       PlayerCount,
       Ping
     } SortConstants;
-
-    enum What {
-      dog = 0,
-      cat
-    };
 
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
@@ -65,7 +60,6 @@ class HUDuiServerList : public HUDuiScrollList {
     void applyFilters();
     void toggleFilter(FilterConstants filter);
 
-
   protected:
     struct filter;
     struct search;
@@ -73,15 +67,11 @@ class HUDuiServerList : public HUDuiScrollList {
 
     static ServerList* dataList;
 
-    bool emptyServerFilter;
-    bool fullServerFilter;
-    bool jumpingFilter;
-    bool antidoteFlagFilter;
-
   private:
     std::list<HUDuiControl*> originalItems;
 
     SortConstants sortMode;
+    uint16_t filterOptions;
 };
 
 #endif // __HUDuiServerList_H__

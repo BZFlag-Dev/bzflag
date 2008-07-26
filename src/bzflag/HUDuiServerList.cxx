@@ -16,16 +16,27 @@
 // common implementation headers
 #include "TextUtils.h"
 #include "bzglob.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
-#include "FontManager.h"
-#include "LocalFontFace.h"
 
 //
 // HUDuiServerList
 //
 
 ServerList* HUDuiServerList::dataList = NULL;
+
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort)
+{
+  // do nothing
+}
+
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), sortMode(NoSort)
+{
+  // do nothing
+}
+
+HUDuiServerList::~HUDuiServerList()
+{
+  // do nothing
+}
 
 struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::string, bool>
 {
@@ -67,7 +78,7 @@ public:
     }
 };
 
-struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, FilterConstants, bool>
+struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint16_t, bool>
 {
 public:
   result_type operator()(first_argument_type control, second_argument_type filter) const
@@ -75,41 +86,36 @@ public:
       HUDuiServerListItem* item = (HUDuiServerListItem*) control;
       ServerItem* server = dataList->lookupServer(item->getServerKey());
 
-      switch (filter) {
-	case EmptyServer:
-	  return (server->getPlayerCount() == 0);
-	  break;
+      bool returnValue = false;
 
-	case FullServer:
-	  return (server->getPlayerCount() == server->ping.maxPlayers);
-	  break;
+      for (int i = 0; i < EndOfFilterConstants; ++i)
+      {
+	if (filter & i)
+	{
+	  switch (i) {
+	    case EmptyServer:
+	      returnValue = (server->getPlayerCount() == 0);
+	      break;
 
-	case Jumping:
-	  return (server->ping.gameOptions & JumpingGameStyle);
-	  break;
+	    case FullServer:
+	      returnValue = (server->getPlayerCount() == server->ping.maxPlayers);
+	      break;
 
-	case AntidoteFlag:
-	  return (server->ping.gameOptions & AntidoteGameStyle);
-	  break;
+	    case Jumping:
+	      returnValue = (server->ping.gameOptions & JumpingGameStyle);
+	      break;
+
+	    case AntidoteFlag:
+	      returnValue = (server->ping.gameOptions & AntidoteGameStyle);
+	      break;
+	  }
+	}
+	if (returnValue == true)
+	  return true;
       }
       return false;
     }
 };
-
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), emptyServerFilter(false), fullServerFilter(false), jumpingFilter(false), antidoteFlagFilter(false)
-{
-  // do nothing
-}
-
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), emptyServerFilter(false), fullServerFilter(false), jumpingFilter(false), antidoteFlagFilter(false)
-{
-  // do nothing
-}
-
-HUDuiServerList::~HUDuiServerList()
-{
-  // do nothing
-}
 
 // Add a new item to our scrollable list
 void HUDuiServerList::addItem(ServerItem item)
@@ -127,8 +133,7 @@ void HUDuiServerList::addItem(ServerItem item)
 // Over-ride the generic HUDuiControl version of addItem
 void HUDuiServerList::addItem(HUDuiControl* item)
 {
-  // Do nothing
-  return;
+  return; // Do nothing
 }
 
 void HUDuiServerList::setServerList(ServerList* list)
@@ -154,6 +159,7 @@ void HUDuiServerList::searchServers(std::string pattern)
   applyFilters();
   items.remove_if(std::bind2nd(search(), pattern));
   refreshNavQueue();
+  setSelected(0);
   getNav().set((size_t) 0);
 }
 
@@ -161,41 +167,16 @@ void HUDuiServerList::applyFilters()
 {
   items = originalItems;
 
-  if (emptyServerFilter)
-    items.remove_if(std::bind2nd(filter(), HUDuiServerList::EmptyServer));
-
-  if (fullServerFilter)
-    items.remove_if(std::bind2nd(filter(), HUDuiServerList::FullServer));
-
-  if (jumpingFilter)
-    items.remove_if(std::bind2nd(filter(), HUDuiServerList::Jumping));
-
-  if (antidoteFlagFilter)
-    items.remove_if(std::bind2nd(filter(), HUDuiServerList::AntidoteFlag));
+  items.remove_if(std::bind2nd(filter(), filterOptions));
 
   refreshNavQueue();
+  setSelected(0);
   getNav().set((size_t) 0);
 }
 
 void HUDuiServerList::toggleFilter(FilterConstants filter)
 {
-  switch (filter) {
-    case EmptyServer:
-      emptyServerFilter = !emptyServerFilter;
-      break;
-
-    case FullServer:
-      fullServerFilter = !fullServerFilter;
-      break;
-
-    case Jumping:
-      jumpingFilter = !jumpingFilter;
-      break;
-
-    case AntidoteFlag:
-      antidoteFlagFilter = !antidoteFlagFilter;
-      break;
-  }
+  filterOptions ^= filter;
   applyFilters();
 }
 
