@@ -12,7 +12,8 @@
 
 /*
  * HUDuiServerInfo:
- *	Fill this in.
+ *	User interface class for displaying detailed information from
+ *	a ServerItem.
  */
 
 #ifndef	__HUDUISERVERINFO_H__
@@ -23,8 +24,6 @@
 
 #include "ServerItem.h"
 #include <string>
-
-#include "BzfEvent.h"
 
 class HUDuiServerInfo : public HUDuiControl {
   public:

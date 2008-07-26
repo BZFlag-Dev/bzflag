@@ -12,7 +12,9 @@
 
 /*
  * HUDuiScrollList:
- *	FILL THIS IN
+ *	User interface class for controls in a vertical scrollable list.
+ *	Child controls can grab key presses and releases in order to
+ *	maintain their functionality.
  */
 
 #ifndef	__HUDUISCROLLLIST_H__
@@ -24,7 +26,6 @@
 #include "HUDuiLabel.h"
 
 #include <string>
-#include <vector>
 #include <list>
 
 #include "BzfEvent.h"

@@ -12,7 +12,7 @@
 
 /*
  * HUDuiServerList:
- *	FILL THIS IN
+ *	User interface class for displaying the servers in a ServerList.
  */
 
 #ifndef	__HUDUISERVERLIST_H__

@@ -12,7 +12,8 @@
 
 /*
  * HUDuiNestedContainer:
- *	User interface class for the heads-up display's label (text display) control
+ *	User interface base class for nested containers. Nested containers
+ *	allow child controls to be added to a control.
  */
 
 #ifndef	__HUDUINESTEDCONTAINER_H__
@@ -21,17 +22,12 @@
 // ancestor class
 #include "HUDuiControl.h"
 
-#include <string>
-#include <vector>
-
 #include "HUDNavigationQueue.h"
-
-#include "BzfEvent.h"
 
 class HUDuiNestedContainer : public HUDuiControl {
   public:
-			HUDuiNestedContainer();
-			~HUDuiNestedContainer();
+      HUDuiNestedContainer();
+      ~HUDuiNestedContainer();
 
     HUDuiControl* getFocus() const { return nestedNavList.get(); }
     const HUDNavigationQueue& getNav() const { return nestedNavList; }

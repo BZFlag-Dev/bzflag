@@ -12,7 +12,8 @@
 
 /*
  * HUDuiServerListItem:
- *	FILL THIS IN
+ *	User interface class for server list items. Acts as a UI wrapper
+ *	for a ServerItem.
  */
 
 #ifndef	__HUDUISERVERLISTITEM_H__

@@ -18,7 +18,6 @@
 #include "Bundle.h"
 #include "FontManager.h"
 #include "LocalFontFace.h"
-#include "HUDui.h"
 
 //
 // HUDuiScrollList

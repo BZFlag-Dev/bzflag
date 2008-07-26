@@ -52,10 +52,9 @@ void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
   _navList->addCallback(gotFocus, this);
 }
 
-// NEEDS WORK. PLACE HOLDER AT THE MOMENT
 size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
 {
-  if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex(proposedFocus))
+  if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex((int) proposedFocus))
   {
     HUDNavigationQueue nestedNav = ((HUDuiNestedContainer*)data)->getNav();
     nestedNav.set(nestedNav.get());

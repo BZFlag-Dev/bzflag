@@ -18,7 +18,6 @@
 #include "Bundle.h"
 #include "FontManager.h"
 #include "LocalFontFace.h"
-#include "HUDui.h"
 #include "bzUnicode.h"
 
 //
@@ -31,17 +30,9 @@ const float HUDuiServerListItem::SERVER_PERCENTAGE = 0.375;
 const float HUDuiServerListItem::PLAYER_PERCENTAGE = 0.125;
 const float HUDuiServerListItem::PING_PERCENTAGE = 0.125;
 
-// DUD INFORMATION FOR TESTING
 HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 {
-  domainName = "Test";
-  displayDomain = domainName;
-  serverName = "THE SHIT SERVEr";
-  displayServer = serverName;
-  playerCount = "1000";
-  displayPlayer = playerCount;
-  serverPing = "200";
-  displayPing = serverPing;
+  // Do nothing
 }
 
 HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
