@@ -68,6 +68,8 @@ public:
   ~WorldInfo();
 
   void setSize ( float x, float y );
+  void getSize ( float &x, float &y ){x = size[0]; y = size[1];}
+
   void setGravity ( float g );
 
   void addWall(float x, float y, float z, float r, float w, float h);
@@ -114,7 +116,7 @@ public:
   const Obstacle* hitBuilding(const float* oldPos, float oldAngle,
     const float* pos, float angle,
     float tankWidth, float tankBreadth,
-    float tankHeight, bool directional) const;
+    float tankHeight, bool directional, bool checkwalls = true) const;
 private:
 
   bool finished;

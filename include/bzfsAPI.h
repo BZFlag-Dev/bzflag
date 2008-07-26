@@ -2036,6 +2036,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void jumped ( void ){}; // the bot has left the ground
   virtual void landed ( void ){}; // the bot has landed
   virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){}; // the bot ran into an object
+  virtual void outOfBounds (  float /*pos*/[3]){}; // the bot ran into the outer walls
   virtual void flagPickup ( const char* /*flag*/ ){}; // bot got a flag
   virtual void shotChange ( bz_eShotType /*shotType*/ ){}; // bot got shot change
 

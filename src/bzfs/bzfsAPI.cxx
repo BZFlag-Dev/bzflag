@@ -942,6 +942,9 @@ BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
   for(unsigned int i=0; i < netConnectedPeers[connectionID].notifyList.size(); i++)
     netConnectedPeers[connectionID].notifyList[i]->disconnect(connectionID);
 
+  netConnectedPeers[connectionID].handler->flushData();
+  delete(netConnectedPeers[connectionID].handler);
+  netConnectedPeers[connectionID].handler = NULL;
   netConnectedPeers[connectionID].notifyList.clear();
   netConnectedPeers[connectionID].pendingSendChunks.clear();
   netConnectedPeers[connectionID].deleteMe = true;
@@ -4254,10 +4257,10 @@ bool bz_ServerSidePlayerHandler::jump(void)
 
 //-------------------------------------------------------------------------
 
-const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional )
+const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional, bool checkWalls = true )
 {
   // check and see if this path goes thru a building.
-  const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional);
+  const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional,checkWalls);
   if (!hit) // if it does not, it's clear
     return NULL;
   else
@@ -4294,7 +4297,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
     midpoint.rot = oldPos.rot + ((oldPos.rot-newPos.rot)*0.5f);
 
     // test from the start point to the midpoint
-    hit = world->hitBuilding(oldPos.pos, oldPos.rot, midpoint.pos, midpoint.rot, width, breadth, breadth, directional);
+    hit = world->hitBuilding(oldPos.pos, oldPos.rot, midpoint.pos, midpoint.rot, width, breadth, breadth, directional,checkWalls);
 
     // if we have a hit, then the midpoint is "in" a building, so the valid section is the oldPos -> midpoint section.
     // so set the endpoint to the midpoint and retest.
@@ -4306,7 +4309,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
     }
 
     // recurse to get closer to the actual collision point
-    return hitBuilding(midpoint,newPos,width,breadth,height,directional);
+    return hitBuilding(midpoint,newPos,width,breadth,height,directional,checkWalls);
   }
 
   return NULL;
@@ -4315,6 +4318,40 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
 bool closeFloat ( float f1, float f2 )
 {
   return fabs(f1)-fabs(f2) < 0.0001f;
+}
+
+bool checkBounds ( float pos[3], float rad )
+{
+  float x,y;
+  world->getSize(x,y);
+
+  if ( pos[0] + rad > x)
+    return false;
+  if ( pos[0] - rad < -x)
+    return false;
+
+  if ( pos[1] + rad > y)
+    return false;
+  if ( pos[1] - rad < -y)
+    return false;
+
+  return true;
+}
+
+void clampBounds ( float pos[3], float rad )
+{
+  float x,y;
+  world->getSize(x,y);
+
+  if ( pos[0] + rad > x)
+    pos[0] = x-rad;
+  if ( pos[0] - rad < -x)
+    pos[0] = -x+rad;
+
+  if ( pos[1] + rad > y)
+    pos[1] = y-rad;
+  if ( pos[1] - rad < -y)
+    pos[1] = -y+rad;
 }
 
 void bz_ServerSidePlayerHandler::updatePhysics(void)
@@ -4365,8 +4402,15 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       newState.pos[1] += newState.vec[1] * delta;
       newState.pos[2] += newState.vec[2] * delta;
 
+      // clamp us to in bounds
+      if (!checkBounds(newState.pos,BZDBCache::tankRadius))
+      {
+	clampBounds(newState.pos,BZDBCache::tankRadius);
+	outOfBounds(newState.pos);
+      }
+
       // see if we hit anything
-      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO,false);
 
       if (target)
       {
@@ -4447,8 +4491,15 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       for (int j =0; j < 3; j++)
 	newState.pos[j] += newState.vec[j] * delta;
 
+      // clamp us to in bounds
+      if (!checkBounds(newState.pos,BZDBCache::tankRadius))
+      {
+	clampBounds(newState.pos,BZDBCache::tankRadius);
+	outOfBounds(newState.pos);
+      }
+
       // clamp the pos to what we hit
-      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO,false);
       if (target)
       {
 	doUpdate = true;
