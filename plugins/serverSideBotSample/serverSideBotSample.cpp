@@ -34,7 +34,7 @@ public:
     bot.getPosition(vec);
 
     for (int i = 0; i < 3; i++)
-      vec[i] -= target[i];
+      vec[i] = target[i] - vec[i];
 
     // see if we are there
     if ( vec[0]*vec[0]+vec[1]*vec[1] < 1 )
@@ -130,6 +130,9 @@ void SimpleBotHandler::added ( int playerIndex )
   name += bz_format("%d",playerID);
   setPlayerData(name.c_str(),NULL,"bot sample",eAutomaticTeam);
   joinGame();
+
+  float vals[3]={0};
+  waypoints.push_back(Waypoint(*this,vals));
 }
 
 void SimpleBotHandler::removed ( void )
@@ -182,6 +185,8 @@ bool SimpleBotHandler::think(void)
 
 void SimpleBotHandler::playerSpawned(int player, float pos[3], float rot)
 {
+  bz_ServerSidePlayerHandler::playerSpawned(player,pos,rot);
+
   bz_debugMessage(3,"SimpleBotHandler::process bz_ePlayerSpawnEvent");
 
   if (player == playerID)
