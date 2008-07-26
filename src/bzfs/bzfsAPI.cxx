@@ -3973,6 +3973,14 @@ BZF_API const char* bz_getServerVersion ( void )
 bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0), alive(false)
 {
   input[0] = input[1] = 0;
+  lastUpdate.rotVel = 0;
+  lastUpdate.vec[0] = 0;
+  lastUpdate.vec[1] = 0;
+  lastUpdate.vec[2] = 0;
+  lastUpdate.rot = 0;
+  lastUpdate.pos[0] = lastUpdate.pos[1] = lastUpdate.pos[2] = 0;
+  currentState = lastUpdate;
+
 }
 
 // higher level logic API
@@ -4024,6 +4032,8 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
     lastUpdate.vec[1] = 0;
     lastUpdate.vec[2] = 0;
     lastUpdate.rot = _rot;
+
+    currentState = lastUpdate;
 
     input[0] = input[1] = 0;
     updatePhysics();
@@ -4258,17 +4268,22 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
    float len = 0;
    float vec[3];
     for (int i =0; i < 3; i++)
-      vec[i] = oldPos.pos[i] - newPos.pos[i];
+      vec[i] = newPos.pos[i] - oldPos.pos[i];
     len = sqrtf(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
 
     // if the distance is less then our tolerance, and the END point is IN an object, assume that the start point since we know that is clear
     // return this as the collision value
-    float collideTol = 0.001f;
+    float collideTol = 0.1f;
     if ( len <= collideTol)
     {
       newPos = oldPos;
       return hit;
     }
+
+    //if (len < 10) //something is wrong
+  //  {
+  //    return hit;
+  //  }
 
     // compute a midpoint to test, so we can do a binary search to find what "side" of the midpoint is clear
     bz_ServerSidePlayerHandler::UpdateInfo midpoint;
@@ -4310,188 +4325,201 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
   UpdateInfo newState(currentState); // where we think we are
 
   double now = bz_getCurrentTime();
-  float delta = (float)(now - currentState.time);
+  float fullDT = (float)(now - currentState.time);
 
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  float maxDelta = 0.25f;
+  int count = 1;
+  if ( fullDT > maxDelta)	// break up the dt into small chunks
+    count = (int)(fullDT/maxDelta);
 
-  int flagID = player->player.getFlag();
-  FlagType *flag = NULL;
-  bool hasOO = false;
-  
-  if (player->player.haveFlag())
+  for (int i = 0; i < count; i++ )
   {
-    flag = FlagInfo::get(flagID)->flag.type;
-    if (flag == Flags::OscillationOverthruster)
-      hasOO = true;
-  }
+    float delta = fullDT/count;
+    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
-  bool doUpdate = false;
-
-  // if we can't move, don't try to move
-  if (!canMove())
-  {
-    input[0] = input[1] = 0;
-    wantToJump = false;
-  }
-
-  if (falling())  // we are falling... so the input dosn't matter at all, just move us
-  {
-    newState.vec[2] += BZDBCache::gravity * delta;
-
-    newState.pos[0] += newState.vec[0] * delta;
-    newState.pos[1] += newState.vec[1] * delta;
-    newState.pos[2] += newState.vec[2] * delta;
-
-    // see if we hit anything
-    const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
-
-    if (target)
+    int flagID = player->player.getFlag();
+    FlagType *flag = NULL;
+    bool hasOO = false;
+    
+    if (player->player.haveFlag())
     {
-      // something was hit, so no mater what we have to update, cus our DR WILL be off
-      doUpdate = true;
-      // find out if we landed, or if we just hit something
+      flag = FlagInfo::get(flagID)->flag.type;
+      if (flag == Flags::OscillationOverthruster)
+	hasOO = true;
+    }
 
-      // see if the thing we hit was below us.
-      newState.pos[2] += 0.1f;
+    bool doUpdate = false;
 
-      // if we move the postion up a tad and test again, if we laned on something we should not be in contact with it.
-      if(!target->inMovingBox(currentState.pos,currentState.rot,newState.pos,newState.rot,BZDBCache::tankWidth*0.5f,BZDBCache::tankLength*0.5f,BZDBCache::tankHeight))
+    // if we can't move, don't try to move
+    if (!canMove())
+    {
+      input[0] = input[1] = 0;
+      wantToJump = false;
+    }
+
+    if (falling())  // we are falling... so the input dosn't matter at all, just move us
+    {
+      newState.vec[2] += BZDBCache::gravity * delta;
+
+      newState.pos[0] += newState.vec[0] * delta;
+      newState.pos[1] += newState.vec[1] * delta;
+      newState.pos[2] += newState.vec[2] * delta;
+
+      // see if we hit anything
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
+
+      if (target)
       {
-	newState.pos[2] -= 0.1f;
+	// something was hit, so no mater what we have to update, cus our DR WILL be off
+	doUpdate = true;
+	// find out if we landed, or if we just hit something
 
-	// we landed, so our speed in z is 0
-	currentState = newState;
-	currentState.vec[2] = 0;
+	// see if the thing we hit was below us.
+	newState.pos[2] += 0.1f;
 
-	// get our facing and apply it to our vector so we keep the components that are along our facing.
-	float facing[3];
-	vecFromAngle2d(newState.rot,facing);
-	
-	currentState.vec[0] *= facing[0];
-	currentState.vec[1] *= facing[1];
+	// if we move the postion up a tad and test again, if we laned on something we should not be in contact with it.
+	if(!target->inMovingBox(currentState.pos,currentState.rot,newState.pos,newState.rot,BZDBCache::tankWidth*0.5f,BZDBCache::tankLength*0.5f,BZDBCache::tankHeight))
+	{
+	  newState.pos[2] -= 0.1f;
 
-	// set the state to have landed
-	player->lastState.status &= ~PlayerState::Falling;
+	  // we landed, so our speed in z is 0
+	  currentState = newState;
+	  currentState.vec[2] = 0;
 
-	// tell the AI that we landed
-	landed();
+	  // get our facing and apply it to our vector so we keep the components that are along our facing.
+	  float facing[3];
+	  vecFromAngle2d(newState.rot,facing);
+  	
+	  currentState.vec[0] *= facing[0];
+	  currentState.vec[1] *= facing[1];
+
+	  // set the state to have landed
+	  player->lastState.status &= ~PlayerState::Falling;
+
+	  // tell the AI that we landed
+	  landed();
+	}
+	else
+	{
+	  // we hit something normal, just slide down it
+	  newState.pos[2] -= 0.1f;
+
+	  currentState = newState;
+	  currentState.vec[0] = currentState.vec[1] = 0;
+
+	  bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
+	  collide(solid,currentState.pos);
+	  delete(solid);
+	}
+
+	newState = currentState;
       }
-      else
-      {
-	// we hit something normal, just slide down it
-	newState.pos[2] -= 0.1f;
+    }
 
+    // we are driving, so apply the input 
+    if (!falling() && canMove())
+    {
+      // see what the input wants us to do
+      float desiredTurn = input[1] * getMaxRotSpeed();
+
+      // clamp to the rotation speed for the frame.
+      newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
+
+      float currentSpeed = input[1] * getMaxLinSpeed();
+
+      // compute the momentum
+      float lastSpeed = getMagnitude(newState.vec);
+      if (lastSpeed < 0.001)
+	lastSpeed = 0;
+      
+      computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
+
+      // compute our new rotation;
+      newState.rot += newState.rotVel * delta;
+
+      // compute our new velocity
+      vecFromAngle2d(newState.rot,newState.vec,currentSpeed);
+
+      // clamp the speed to acceleration and the world
+      computeFriction(delta,flag,currentState.vec,newState.vec);
+
+      // compute our new position
+      for (int i =0; i < 3; i++)
+	newState.pos[i] += newState.vec[i] * delta;
+
+      // clamp the pos to what we hit
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
+      if (target)
+      {
+	doUpdate = true;
+	newState.vec[0] = newState.vec[1] = newState.vec[2] = 0;
 	currentState = newState;
-	currentState.vec[0] = currentState.vec[1] = 0;
 
 	bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
 	collide(solid,currentState.pos);
 	delete(solid);
       }
 
-      newState = currentState;
-    }
-  }
-
-  // we are driving, so apply the input 
-  if (!falling() && canMove())
-  {
-    // see what the input wants us to do
-    float desiredTurn = input[1] * getMaxRotSpeed();
-
-    // clamp to the rotation speed for the frame.
-    newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
-
-    float currentSpeed = input[1] * getMaxLinSpeed();
-
-    // compute the momentum
-    computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
-
-    // compute our new rotation;
-    newState.rot += newState.rotVel * delta;
-
-    // compute our new velocity
-    vecFromAngle2d(newState.rot,newState.vec,currentSpeed);
-
-    // clamp the speed to acceleration and the world
-    computeFriction(delta,flag,currentState.vec,newState.vec);
-
-    // compute our new position
-    for (int i =0; i < 3; i++)
-      newState.pos[i] += newState.vec[i] * delta;
-
-    // clamp the pos to what we hit
-    const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
-    if (target)
-    {
-      doUpdate = true;
-      newState.vec[0] = newState.vec[1] = newState.vec[2] = 0;
-      currentState = newState;
-
-      bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
-      collide(solid,currentState.pos);
-      delete(solid);
-    }
-
-    // now check for jumping
-    if (wantToJump && canJump())
-    {
-      doUpdate = true;
-      newState.vec[2] += computeJumpVelocity(flag);
-      currentState = newState;
-      player->lastState.status &= PlayerState::Falling;
-      jumped();
-    }
-    else  // see if we fall off something
-    {
-      if (newState.pos[2] <= computeGroundLimit(flag))
-	newState.pos[2] = computeGroundLimit(flag);
-      else
+      // now check for jumping
+      if (wantToJump && canJump())
       {
-	// do a collision test to see if what is below the tank is empty
-	float temp[3];
-	memcpy(temp,newState.pos,sizeof(float)*3);
-	temp[2] -= 0.1f;
-
-	if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
+	doUpdate = true;
+	newState.vec[2] += computeJumpVelocity(flag);
+	currentState = newState;
+	player->lastState.status &= PlayerState::Falling;
+	jumped();
+      }
+      else  // see if we fall off something
+      {
+	if (newState.pos[2] <= computeGroundLimit(flag))
+	  newState.pos[2] = computeGroundLimit(flag);
+	else
 	{
-	  // down we go
-	  doUpdate = true;
-	  newState.vec[2] = -BZDBCache::gravity;
-	  currentState = newState;
-	  player->lastState.status &= PlayerState::Falling;
-	  jumped();
+	  // do a collision test to see if what is below the tank is empty
+	  float temp[3];
+	  memcpy(temp,newState.pos,sizeof(float)*3);
+	  temp[2] -= 0.1f;
+
+	  if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
+	  {
+	    // down we go
+	    doUpdate = true;
+	    newState.vec[2] = -BZDBCache::gravity;
+	    currentState = newState;
+	    player->lastState.status &= PlayerState::Falling;
+	    jumped();
+	  }
 	}
       }
     }
-  }
 
-  // the new state is where we will be
-  currentState = newState;
+    // the new state is where we will be
+    currentState = newState;
 
-  // if they jumped, they jumped.
-  wantToJump = false;
+    // if they jumped, they jumped.
+    wantToJump = false;
 
-  if (!doUpdate) // if we aren't forcing an update due to a collision then check to see if we are far enough away
-  {
-    if (lastUpdate.getDelta(newState) > 0.5f)
-      doUpdate = true;
-  }
+    if (!doUpdate) // if we aren't forcing an update due to a collision then check to see if we are far enough away
+    {
+      if (lastUpdate.getDelta(newState) > 0.5f)
+	doUpdate = true;
+    }
 
 
-  if (doUpdate)
-  {
-    // send out the current state as an update
+    if (doUpdate)
+    {
+      // send out the current state as an update
 
-    player->lastState.order++;
-    player->lastState.angVel = currentState.rotVel;
-    player->lastState.azimuth = currentState.rot;
-    memcpy(player->lastState.velocity,currentState.vec,sizeof(float)*3);
-    memcpy(player->lastState.pos,currentState.pos,sizeof(float)*3);
-    updatePlayerState(player, player->lastState, (float)now, false);
+      player->lastState.order++;
+      player->lastState.angVel = currentState.rotVel;
+      player->lastState.azimuth = currentState.rot;
+      memcpy(player->lastState.velocity,currentState.vec,sizeof(float)*3);
+      memcpy(player->lastState.pos,currentState.pos,sizeof(float)*3);
+      updatePlayerState(player, player->lastState, (float)now, false);
 
-    lastUpdate = currentState;
-  }
+      lastUpdate = currentState;
+    }
+   }
 }
 
 //-------------------------------------------------------------------------
