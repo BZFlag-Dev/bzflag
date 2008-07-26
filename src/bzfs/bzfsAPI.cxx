@@ -4444,8 +4444,8 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       computeFriction(delta,flag,currentState.vec,newState.vec);
 
       // compute our new position
-      for (int i =0; i < 3; i++)
-	newState.pos[i] += newState.vec[i] * delta;
+      for (int j =0; j < 3; j++)
+	newState.pos[j] += newState.vec[j] * delta;
 
       // clamp the pos to what we hit
       const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO);
