@@ -219,16 +219,18 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   switch(level) {
   case 1:
   case VERIFIED:
-    templateVars["username"] = getSessionUser(request.sessionID);
     if (pagename.empty()) {
       pagename = "main";
       std::string dummy;
       if (request.getParam("logout",dummy))
-        reply.cookies["SessionID"] = "null";
+        invalidateSession(request.sessionID);
     } else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
+    
+    templateVars["username"] = getSessionUser(request.sessionID);
+    
     if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
       templateVars["currentpage"] = pagename;
       pageCallback(pagename, request);
