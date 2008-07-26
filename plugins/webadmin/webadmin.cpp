@@ -223,11 +223,16 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     if (pagename.empty()) {
       pagename = "main";
       std::string dummy;
-      if (request.getParam("logout",dummy))
-        invalidateSession(request.sessionID);
     } else {
       size = pagename.size();
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
+    }
+    
+    if (pagename == "logout") {
+      invalidateSession(request.sessionID);
+      reply.returnCode = HTTPReply::e301Redirect;
+      reply.redirectLoc = std::string("/") + getVDir();
+      return true;
     }
     
     if (username = getSessionUser(request.sessionID))
