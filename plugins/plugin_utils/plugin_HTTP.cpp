@@ -382,7 +382,13 @@ const char* BZFSHTTPAuth::getSessionUser ( int sessionID )
 
 bool BZFSHTTPAuth::invalidateSession ( int sessionID )
 {
-  return authedSessions.erase(sessionID);
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr == authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+    return false;
+
+  authedSessions.erase(sessionID);
+  return true;
 }
 
 bool BZFSHTTPAuth::resumeTask (  int requestID )
@@ -711,9 +717,7 @@ bool Templateiser::processTemplateFile ( std::string &code, const char *file )
    {
      char c;
      while(fscanf(fp,"%c",&c) == 1)
-     {
        val += c;
-     }
      fclose(fp);
 
      processTemplate(code,val);
@@ -930,7 +934,8 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   std::string::const_iterator itr = readKey(key,inItr,str);
 
   std::vector<std::string> commandParts = tokenize(key,std::string(" "),0,0);
-  if (commandParts.size() < 2) {
+  if (commandParts.size() < 2)
+  {
     inItr = itr;
     return;
   }
@@ -939,7 +944,8 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   makelower(commandParts[0]);
   makelower(commandParts[1]);
 
-  if ( commandParts[0] != "start" ) {
+  if ( commandParts[0] != "start" )
+  {
     inItr = itr;
     return;
   }
@@ -953,7 +959,8 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   std::string keyFound;
   itr = findNextTag(checkKeys,keyFound,loopSection,itr,str);
 
-  if (itr == str.end()) {
+  if (itr == str.end())
+  {
     inItr = itr;
     return;
   }
@@ -964,17 +971,21 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
 
-  if (callLoop(commandParts[1])) {
+  if (callLoop(commandParts[1]))
+  {
     std::string newCode;
     processTemplate(newCode,loopSection);
     code += newCode;
 
-    while(callLoop(commandParts[1])) {
+    while(callLoop(commandParts[1]))
+    {
       newCode = "";
       processTemplate(newCode,loopSection);
       code += newCode;
     }
-  } else {
+  }
+  else
+  {
     std::string newCode;
     processTemplate(newCode,emptySection);
     code += newCode;

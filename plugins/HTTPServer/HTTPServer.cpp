@@ -87,7 +87,7 @@ public:
     header.clear();
   }
 
-  void update(void);
+  bool update(void);
 
   int connectionID;
 
@@ -123,6 +123,8 @@ public:
 
     std::string page;
     size_t pos;
+
+    bool forceClose;
   };
 
   class PendingHTTPTask : public HTTPTask
@@ -153,7 +155,7 @@ public:
 protected:
   void update(void);
 
-  void processRequest(HTTPRequest &request, int connectionID);
+  bool processRequest(HTTPRequest &request, int connectionID);
 
   HTTPConnectionMap liveConnections;
 
@@ -167,7 +169,7 @@ private:
   void sendOptions(int connectionID, bool p);
 
   void generateIndex(int connectionID, const HTTPRequest &request);
-  void generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
+  bool generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
 };
 
 HTTPServer *server = NULL;
@@ -428,7 +430,8 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
       HTTPRequest request;
       connection.fillRequest(request);
       // rip off what we need for the request, and then flush
-      processRequest(request,connectionID);
+      if(processRequest(request,connectionID)) // the request closed, then just kill it
+	return;
       connection.flush();
     }
 
@@ -450,9 +453,17 @@ void HTTPServer::update(void)
 {
   HTTPConnectionMap::iterator itr = liveConnections.begin();
 
-  while (itr != liveConnections.end()) {
-    itr->second.update();
-    itr++;
+  while (itr != liveConnections.end())
+  {
+    if(itr->second.update())
+    {
+      HTTPConnectionMap::iterator i = itr;
+      itr++;
+      bz_removeNonPlayerConnectionHandler(i->first, this);
+      bz_disconnectNonPlayerConnection(i->first);
+    }
+    else
+      itr++;
   }
 
   if (liveConnections.size())
@@ -492,12 +503,12 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   connection.update();
 }
 
-void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request)
+bool HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
   if (itr == liveConnections.end())
-    return;
+    return false;
 
   HTTPConnection &connection = itr->second;
 
@@ -516,10 +527,19 @@ void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &req
     connection.pendingTasks.push_back(HTTPConnection::PendingHTTPTask(reply,request,request.request == eHead));
   }
 
-  connection.update();
+  if(connection.update())
+  {
+    connection.flush();
+    bz_removeNonPlayerConnectionHandler(connectionID, this);
+    bz_disconnectNonPlayerConnection(connectionID);
+    liveConnections.erase(itr);
+    return true;
+  }
+
+  return false;
 }
 
-void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
+bool HTTPServer::processRequest(HTTPRequest &request, int connectionID)
 {
   // check the request to see if it'll have any thing we care to process
 
@@ -544,7 +564,7 @@ void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
     if(!vdir)
       generateIndex(connectionID,request);
     else
-      generatePage(vdir,connectionID,request);
+      return generatePage(vdir,connectionID,request);
     break;
 
   case eOptions:
@@ -556,6 +576,8 @@ void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
     send501Error(connectionID);
     break;
   }
+
+  return false;
 }
 
 void HTTPServer::send100Continue(int connectionID)
@@ -694,14 +716,20 @@ void HTTPConnection::fillRequest(HTTPRequest &req)
     req.body = body;
 }
 
-void HTTPConnection::update(void)
+bool HTTPConnection::update(void)
 {
   // hit the processings
   std::vector<size_t> killList;
 
+  bool closeConnect = false;
+
   for (size_t i = 0; i < processingTasks.size(); i++) {
     if (processingTasks[i].update(connectionID))
+    {
+      if (processingTasks[i].forceClose)
+	closeConnect = true;
       killList.push_back(i);
+    }
   }
 
   std::vector<size_t>::reverse_iterator itr = killList.rbegin();
@@ -748,6 +776,8 @@ void HTTPConnection::update(void)
       }
     }
   }
+
+  return closeConnect;
 }
 
 const char* getMimeType(HTTPReply::DocumentType docType)
@@ -778,9 +808,12 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   // start a new one
   page = "HTTP/1.1";
 
+  forceClose = true;
+
   switch(r.returnCode) {
   case HTTPReply::e200OK:
     page += " 200 OK\n";
+    forceClose = false;
     break;
 
   case HTTPReply::e301Redirect:
@@ -790,6 +823,18 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     } else {
       page += " 500 Server Error\n";
     }
+    page += "Host: " + serverHostname + "\n";
+
+    break;
+
+  case HTTPReply::e302Found:
+    if (r.redirectLoc.size()) {
+      page += " 302 Found\n";
+      page += "Location: " + r.redirectLoc + "\n";
+    } else {
+      page += " 500 Server Error\n";
+    }
+    page += "Host: " + serverHostname + "\n";
     break;
 
   case HTTPReply::e500ServerError:
@@ -811,20 +856,24 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     else
       page += serverHostname;
     page += "\"\n";
+    forceClose = false;
     break;
 
   case HTTPReply::e404NotFound:
     page += " 404 Not Found\n";
-    break;
+    forceClose = false;
+   break;
 
   case HTTPReply::e403Forbiden:
     page += " 403 Forbidden\n";
-    break;
+    forceClose = false;
+   break;
   }
 
-  if (r.returnCode != HTTPReply::e200OK)
-    page += "Connection: close\n";
-  else if (FORCE_CLOSE)
+  if(FORCE_CLOSE)
+    forceClose = true;
+
+  if (forceClose)
     page += "Connection: close\n";
 
   if (r.body.size()) {

@@ -180,6 +180,7 @@ public:
   typedef enum {
     e200OK,
     e301Redirect,
+    e302Found,
     e401Unauthorized,
     e403Forbiden,
     e404NotFound,
