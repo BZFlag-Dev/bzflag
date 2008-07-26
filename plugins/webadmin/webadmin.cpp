@@ -212,6 +212,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 {
   size_t size;
   std::string pagename = request.resource;
+  const char *username;
   
   reply.returnCode = HTTPReply::e200OK;
   reply.docType = HTTPReply::eHTML;
@@ -229,8 +230,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
     }
     
-    const char *username = getSessionUser(request.sessionID);
-    if (username) templateVars["username"] = username;
+    if (username = getSessionUser(request.sessionID))
+      templateVars["username"] = username;
     
     if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
       templateVars["currentpage"] = pagename;
