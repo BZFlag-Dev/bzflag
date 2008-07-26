@@ -7,3 +7,6 @@ but may be the result of errors in other parts of the server.
 * std::length_error sometimes thrown when submitting form data.
 
 * [$CurrentPage] is not properly replaced in the header.
+
+* logging out from webadmin is supposed to redirect to main page,
+  but instead produces no reply.
