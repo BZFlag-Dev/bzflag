@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp-net", "tcp-net.vcproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openldap", "openldap.vcproj", "{CF1DCE05-3141-480F-B964-E06E04625A84}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzAuthCommon", "bzAuthCommon.vcproj", "{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -42,6 +44,10 @@ Global
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Debug|Win32.Build.0 = Debug|Win32
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release|Win32.ActiveCfg = Release|Win32
 		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release|Win32.Build.0 = Release|Win32
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}.Debug|Win32.Build.0 = Debug|Win32
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}.Release|Win32.ActiveCfg = Release|Win32
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
