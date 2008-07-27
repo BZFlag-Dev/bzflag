@@ -45,13 +45,13 @@ BZFlag Project Site:  http://sf.net/projects/bzflag
 
 The main BZFlag website provides access to most all of the resources
 available for the game.  The binary and source distributions of BZFlag
-are, however, provided on the Sourceforge project site.  Compiled
+are, however, provided on the SourceForge project site.  Compiled
 versions are distributed as installable packages, disk images, and
 more, with details varying depending on the platform.  Source code
 distributions are provided and archived in various formats as well.
 See the project site for the download links.
 
-BZFlag is also available directly from SVN.  To obtain BZflag from
+BZFlag is also available directly from SVN.  To obtain BZFlag from
 SVN, a bit more familiarity with software development is expected.
 Sometimes active BZFlag development is on SVN HEAD, sometimes it is on
 a branch, sometimes it's in multiple places.  Inquire on the #bzflag
@@ -70,7 +70,7 @@ and running quickly if everything external to BZFlag is properly
 installed:
 
     ./autogen.sh
-    ./configure --enable-optimized
+    ./configure
     make
     ./src/bzflag/bzflag
 
@@ -110,11 +110,10 @@ was successful, you can configure BZFlag:
   % ./configure --help
 
 There are a variety of options possible when configuring BZFlag.  Most
-notably, you'll probably want to use the --enable-optimized option for
-performance and the --enable-shared option if you are building server
-plugins.
+notably, you'll probably want to use the --enable-shared option if you
+are building server plugins.
 
-  % ./configure --enable-optimized --enable-shared
+  % ./configure --enable-shared
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -129,7 +128,7 @@ dependencies that should be installed before running configure:
   OpenGL 1.0+
   libSDL 1.2+
 
-If you're on an operating sytem that uses a packaging system
+If you're on an operating system that uses a packaging system
 (e.g. apt, portage, ports, etc), be sure to install the development
 kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
 headers are made available.  You may also want to manually install
@@ -138,10 +137,13 @@ have them pre-installed:
 
   c-ares
   libCURL
-  Freetype2
+  FreeType2
   FTGL
   libregex (usually provided as part of libc)
   zlib
+
+The README.Linux file includes a detailed list of of the packages
+needed to compile and run BZFlag on some popular Linux distributions.
 
 The final summary at the end of running configure will report whether
 the client will be built or not.  Once configure has been run, you may
@@ -253,7 +255,7 @@ latter is for coding and development discussion only.  There are also
 lists dedicated to SVN activity, league discussions, and server
 administration.
 
-To join a mailing list, go to the Sourceforge mailing list page on the
+To join a mailing list, go to the SourceForge mailing list page on the
 project site: http://sourceforge.net/mail/?group_id=3248 and follow
 the links for joining the respective mailing lists that interest you.
 
@@ -270,7 +272,7 @@ registration in order to play.  See the board FAQ and Getting Started
 pages for new users.
 
 In addition to the main bulletin boards, there are forums on the
-Sourceforge project site available here:
+SourceForge project site available here:
 
 http://sourceforge.net/forum/?group_id=3248
 
