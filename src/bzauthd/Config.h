@@ -18,11 +18,11 @@
 #ifndef __BZAUTHD_CONFIG_H__
 #define __BZAUTHD_CONFIG_H__
 
-#include "Platform.h"
+#include "../bzAuthCommon/Platform.h"
 #include <vector>
 #include <string>
 #include <hash_map>
-#include "Singleton.h"
+#include "../bzAuthCommon/Singleton.h"
 
 enum ConfTypes
 {

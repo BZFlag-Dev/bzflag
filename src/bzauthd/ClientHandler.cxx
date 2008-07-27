@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "common.h"
+#include <common.h>
 #include "NetHandler.h"
 #include "Log.h"
 #include "RSA.h"
@@ -28,7 +28,7 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
 
   switch (peerType) {
     case PEER_CLIENT: {
-      sLog.outLog("received %s: client using protocol %d", packet.getOpcodeName(), protoVersion);
+      sLog.outLog("received %s: client using protocol %d", getOpcodeName(packet), protoVersion);
       uint32 cliVersion;
       uint8 commType;
       if(!(packet >> cliVersion >> commType)) { success = false; break; }
@@ -43,13 +43,13 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
       }
     } break;
     case PEER_SERVER: {
-      sLog.outLog("received %s: server using protocol %d", packet.getOpcodeName(), protoVersion);
+      sLog.outLog("received %s: server using protocol %d", getOpcodeName(packet), protoVersion);
     } break;
     case PEER_DAEMON: {
-      sLog.outLog("received %s: daemon using protocol %d", packet.getOpcodeName(), protoVersion);
+      sLog.outLog("received %s: daemon using protocol %d", getOpcodeName(packet), protoVersion);
     } break;
     default: {
-      sLog.outError("received %s: unknown peer type %d", packet.getOpcodeName());
+      sLog.outError("received %s: unknown peer type %d", getOpcodeName(packet));
       success = false;
     }
   }

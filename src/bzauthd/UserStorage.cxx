@@ -10,12 +10,12 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "Common.h"
+#include <Common.h>
 #include "UserStorage.h"
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
 #include "Config.h"
-#include "Log.h"
+#include <Log.h>
 #include <gcrypt.h>
 #include "base64.h"
 

@@ -106,7 +106,8 @@
 				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;BZAUTHCOMMON_EXPORTS"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="common.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -149,7 +150,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\bzauthd\RSA.cxx"
+				RelativePath="..\..\src\bzAuthCommon\base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Common.cxx"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Log.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\RSA.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Socket.cxx"
 				>
 			</File>
 		</Filter>
@@ -159,7 +184,31 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\bzauthd\RSA.h"
+				RelativePath="..\..\src\bzAuthCommon\base64.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Log.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\RSA.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Singleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Socket.h"
 				>
 			</File>
 		</Filter>
