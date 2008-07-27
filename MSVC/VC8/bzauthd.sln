@@ -1,0 +1,49 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzauthd", "bzauthd.vcproj", "{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF1DCE05-3141-480F-B964-E06E04625A84} = {CF1DCE05-3141-480F-B964-E06E04625A84}
+		{E848E27A-90AF-4B66-978A-5445581BCFBA} = {E848E27A-90AF-4B66-978A-5445581BCFBA}
+		{7CF3DD81-C000-4252-8083-4F85F989B546} = {7CF3DD81-C000-4252-8083-4F85F989B546}
+		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D} = {7E6ADA8B-6297-491C-B36D-2758D0E16A4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldap", "ldap.vcproj", "{CF1DCE05-3141-480F-B964-E06E04625A84}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgcrypt", "libgcrypt.vcproj", "{E848E27A-90AF-4B66-978A-5445581BCFBA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgpg-error", "libgpg-error.vcproj", "{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp-net", "tcp-net.vcproj", "{7CF3DD81-C000-4252-8083-4F85F989B546}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}.Debug|Win32.Build.0 = Debug|Win32
+		{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}.Release|Win32.ActiveCfg = Release|Win32
+		{2FDA0351-ECB3-4D50-BD35-F3125A21F3C1}.Release|Win32.Build.0 = Release|Win32
+		{CF1DCE05-3141-480F-B964-E06E04625A84}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF1DCE05-3141-480F-B964-E06E04625A84}.Debug|Win32.Build.0 = Debug|Win32
+		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release|Win32.ActiveCfg = Release|Win32
+		{CF1DCE05-3141-480F-B964-E06E04625A84}.Release|Win32.Build.0 = Release|Win32
+		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Debug|Win32.Build.0 = Debug|Win32
+		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Release|Win32.ActiveCfg = Release|Win32
+		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Release|Win32.Build.0 = Release|Win32
+		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}.Debug|Win32.Build.0 = Debug|Win32
+		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}.Release|Win32.ActiveCfg = Release|Win32
+		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}.Release|Win32.Build.0 = Release|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug|Win32.Build.0 = Debug|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release|Win32.ActiveCfg = Release|Win32
+		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
