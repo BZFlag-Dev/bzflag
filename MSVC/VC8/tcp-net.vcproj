@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\tcp-net\include"
+				AdditionalIncludeDirectories="..\..\src\tcp-net\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -153,11 +153,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tcp-net\src\net.cpp"
+				RelativePath="..\..\src\tcp-net\src\net.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tcp-net\src\TCPConnection.cpp"
+				RelativePath="..\..\src\tcp-net\src\TCPConnection.cpp"
 				>
 			</File>
 		</Filter>
@@ -167,15 +167,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tcp-net\include\net.h"
+				RelativePath="..\..\src\tcp-net\include\net.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tcp-net\include\Singleton.h"
+				RelativePath="..\..\src\tcp-net\include\Singleton.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tcp-net\include\TCPConnection.h"
+				RelativePath="..\..\src\tcp-net\include\TCPConnection.h"
 				>
 			</File>
 		</Filter>
