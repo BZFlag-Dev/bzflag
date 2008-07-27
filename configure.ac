@@ -93,14 +93,8 @@ AC_SUBST(BZFLAG_VERSION)
 AC_SUBST(BZFLAG_DATE)
 AC_SUBST(CONF_TIME)
 
-# Let the C++ code know about OS and user
+# Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
-if test $HASWHOAMI = yes; then
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-else
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
-fi
 
 # automatically enable and load our configure cache file if available
 BZ_CONFIG_CACHE([config.cache.${host_os}.${ac_hostname}])
