@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib ./bzAuthCommon_debug/bzAuthCommon.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -121,6 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -140,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-erro_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-error_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib ./bzAuthCommon_release/bzAuthCommon.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
@@ -268,6 +269,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
 						ObjectFile="$(IntDir)\$(InputName)1.obj"
 						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 					/>
@@ -360,10 +362,6 @@
 						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\bzauthd\RSA.cxx"
-				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\Serverhandler.cxx"
@@ -485,10 +483,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\Platform.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzauthd\RSA.h"
 				>
 			</File>
 			<File

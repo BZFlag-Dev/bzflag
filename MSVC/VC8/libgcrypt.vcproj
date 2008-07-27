@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../libgcrypt;../../libgcrypt/src/"
+				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
