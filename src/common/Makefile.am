@@ -37,6 +37,7 @@ libCommon_la_SOURCES  =			\
 	TextUtils.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
+	VectorMath.cxx			\
 	VotingBooth.cxx			\
 	WordFilter.cxx			\
 	bz_Locale.cxx			\

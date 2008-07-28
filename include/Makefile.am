@@ -74,6 +74,7 @@ noinst_HEADERS =			\
 	MeshSceneNodeGenerator.h	\
 	MeshTransform.h			\
 	Model.h				\
+	MotionUtils.h			\
 	MsgStrings.h			\
 	NetHandler.h			\
 	Obstacle.h			\
@@ -134,6 +135,7 @@ noinst_HEADERS =			\
 	TimeKeeper.h			\
 	TracerSceneNode.h		\
 	TriWallSceneNode.h		\
+	VectorMath.h			\
 	ViewFrustum.h			\
 	VotingArbiter.h			\
 	VotingBooth.h			\
