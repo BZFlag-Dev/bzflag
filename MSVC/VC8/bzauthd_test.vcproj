@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/openldap/include;&quot;../../src/libgpg-error/src&quot;;../../src/libgcrypt/src;&quot;../../src/tcp-net/include&quot;"
+				AdditionalIncludeDirectories="../../src/openldap/include;&quot;../../src/libgpg-error/src&quot;;../../src/libgcrypt/src;&quot;../../src/tcp-net/include&quot;;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../src/openldap/include;&quot;../../src/libgpg-error/src&quot;;../../src/libgcrypt/src;&quot;../../src/tcp-net/include&quot;"
+				AdditionalIncludeDirectories="../../src/openldap/include;&quot;../../src/libgpg-error/src&quot;;../../src/libgcrypt/src;&quot;../../src/tcp-net/include&quot;;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -195,10 +195,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd_test\ldap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzauthd\Log.cxx"
 				>
 			</File>
 			<File

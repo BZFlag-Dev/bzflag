@@ -11,8 +11,8 @@
 */
 
 #include "common.h"
-#include "../bzauthd/RSA.h"
-#include "../bzauthd/base64.h"
+#include <RSA.h>
+#include <base64.h>
 #include "assert.h"
 
 void nputs(const char *str, size_t len)

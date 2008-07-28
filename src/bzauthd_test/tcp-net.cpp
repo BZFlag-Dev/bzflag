@@ -17,7 +17,7 @@
 
 #include "../bzauthd/NetHandler.h"
 #include <TCPConnection.h>
-#include "../bzauthd/RSA.h"
+#include <RSA.h>
 
 int sleep_var;
 

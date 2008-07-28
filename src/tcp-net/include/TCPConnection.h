@@ -25,7 +25,7 @@
 // ------------------------TCP classes--------------------
 class TCPConnection;
 
-#ifndef __BZAUTHD_NETHANDLER_H__
+#ifndef __BZAUTHD_SOCKET_H__
 typedef enum
 {
   eTCPNoError = 0,

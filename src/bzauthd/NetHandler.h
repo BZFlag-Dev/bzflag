@@ -139,8 +139,6 @@ struct OpcodeEntry
   PHFunc handler;
 };
 
-extern OpcodeEntry opcodeTable[NUM_OPCODES];
-
 const char *getOpcodeName(Packet &packet);
 
 class NetListenSocket : public ListenSocket
