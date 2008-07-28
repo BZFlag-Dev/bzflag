@@ -184,7 +184,7 @@ public:
     PlayerState       lastState;
     float	      stateTimeStamp;
 
-    ShotType	      efectiveShotType;
+    ShotType	      effectiveShotType;
 
     bool	      canSpawn;
     int		      botHost;

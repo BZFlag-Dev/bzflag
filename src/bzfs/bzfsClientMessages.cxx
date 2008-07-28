@@ -527,7 +527,13 @@ public:
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
 
-    firingInfo.shotType = player->efectiveShotType;
+    float playerPos[3], playerRot;
+    player->getPlayerCurrentPosRot(playerPos, playerRot);
+    firingInfo.shot.pos[0] = playerPos[0];
+    firingInfo.shot.pos[1] = playerPos[1];
+    firingInfo.shot.pos[2] = playerPos[2];
+
+    firingInfo.shotType = player->effectiveShotType;
 
     const PlayerInfo &shooter = player->player;
     if (!shooter.isAlive() || shooter.isObserver())
