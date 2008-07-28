@@ -3768,7 +3768,7 @@ static void setupPingReply(void)
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 }
 
-static void setupPermisions(void)
+static void setupPermissions(void)
 {
   // load up the access permissions & stuff
   initGroups();
@@ -3840,7 +3840,7 @@ static bool initServer(int argc, char **argv)
 
   initStartupPrams(argc,argv);
 
-  setupPermisions();
+  setupPermissions();
 
   setupPlugins();
 
