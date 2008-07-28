@@ -19,7 +19,7 @@
 // Don't try compile this if we don't have an up-to-date, working DX
 #if defined(USE_DINPUT)
 
-#pragma comment(lib, "dinput.lib")
+#pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
 /* system headers */
@@ -39,7 +39,7 @@ std::map<std::string, LPDIRECTINPUTEFFECT> DXJoystick::effectDatabase;
 DXJoystick::DXJoystick() : device(NULL)
 {
   HINSTANCE hinst = GetModuleHandle(NULL);
-  HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION, IID_IDirectInput7,
+  HRESULT success = DirectInput8Create(hinst, DIRECTINPUT_VERSION, IID_IDirectInput8,
 					(void**)&directInput, NULL);
 
   if (success != DI_OK) {
@@ -85,9 +85,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
       break;
     }
   }
-  HRESULT success = directInput->CreateDeviceEx(thisDevice,
-						IID_IDirectInputDevice7,
-						(void**)&device, NULL);
+  HRESULT success = directInput->CreateDevice(thisDevice,&device, NULL);
 
   if (success != DI_OK) {
     DXError("Could not initialize device", success);
@@ -707,7 +705,7 @@ void DXJoystick::enumerateDevices()
 
   devices.clear();
 
-  HRESULT success = directInput->EnumDevices(DIDEVTYPE_JOYSTICK,
+  HRESULT success = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL ,
 					     &deviceEnumCallback, NULL,
 					     DIEDFL_ATTACHEDONLY);
 
