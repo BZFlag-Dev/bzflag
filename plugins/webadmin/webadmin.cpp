@@ -321,23 +321,23 @@ void WebAdmin::banlistPageCallback (const HTTPRequest &request)
 void WebAdmin::groupPageCallback (const HTTPRequest &request)
 {  
   std::string name;
-  if (request.getParam("name", name) && request.request == eGet) {
+  if (request.getParam("name", name)) {
     stringList = bz_getGroupPerms(name.c_str());
-    if (!stringList) { // TODO: make a new group instead
+    if (!stringList) {
       templateVars["error"] = std::string("No such group: ") + name;
-    } else {
+    } else if (request.request == eGet) {
       templateVars["groupname"] = name;
       editing = true;
-    }
-    return;
-  } else if (request.request == ePost) {
-    delete(stringList);
-    listSize = bzu_standardPerms().size();
-    std::string dummy;
-    for (loopPos = 0; loopPos < listSize; loopPos++) {
-      if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy));
-        bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str());
-      // TODO: else remove permission
+      return;
+    } else if (request.request == ePost) {
+      delete(stringList);
+      listSize = bzu_standardPerms().size();
+      std::string dummy;
+      for (loopPos = 0; loopPos < listSize; loopPos++) {
+        if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy));
+          bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str());
+        // TODO: else remove permission
+      }
     }
   }
 }
