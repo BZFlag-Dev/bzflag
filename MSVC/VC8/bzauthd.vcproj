@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_debug/ldap.lib ./libgcrypt_debug/libgcrypt.lib ./libgpg-error_debug/libgpg-error.lib ./tcp-net_debug/tcp-net.lib ./bzAuthCommon_debug/bzAuthCommon.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib ./ldap_release/ldap.lib ./libgcrypt_release/libgcrypt.lib ./libgpg-error_release/libgpg-error.lib ./tcp-net_release/tcp-net.lib ./bzAuthCommon_release/bzAuthCommon.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib"
 				OutputFile="$(OutDir)/bzauthd.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

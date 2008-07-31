@@ -9,11 +9,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgcrypt", "libgcrypt.vcpr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgpg-error", "libgpg-error.vcproj", "{7E6ADA8B-6297-491C-B36D-2758D0E16A4D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "bzauthd_test.vcproj", "{C335B30B-17DE-41E8-839C-3FBEECB17FA0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzauthd_test", "bzauthd_test.vcproj", "{C335B30B-17DE-41E8-839C-3FBEECB17FA0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA} = {BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}
+		{CF1DCE05-3141-480F-B964-E06E04625A84} = {CF1DCE05-3141-480F-B964-E06E04625A84}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openldap", "openldap.vcproj", "{CF1DCE05-3141-480F-B964-E06E04625A84}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzAuthCommon", "bzAuthCommon.vcproj", "{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E848E27A-90AF-4B66-978A-5445581BCFBA} = {E848E27A-90AF-4B66-978A-5445581BCFBA}
+		{7CF3DD81-C000-4252-8083-4F85F989B546} = {7CF3DD81-C000-4252-8083-4F85F989B546}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

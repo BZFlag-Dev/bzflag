@@ -169,31 +169,44 @@ typedef enum
   eTCPUnknownError
 }teTCPError;
 
+class SocketHandler;
+
 class Socket
 {
 public:
-  Socket(const TCPsocket &s) : socket(s) {}
-  Socket() : socket(NULL) {}
+  friend class SocketHandler;
+  Socket(SocketHandler *h, const TCPsocket &s) : socket(s), sockHandler(h) {}
+  Socket(SocketHandler *h) : socket(NULL), sockHandler(h) {}
   virtual ~Socket() {}
   uint16 getPort() const { return serverIP.port; }
   virtual void disconnect() = 0;
   TCPsocket &getSocket() { return socket; }
+
+  virtual void onDisconnect() = 0;
 protected:
+  virtual bool update(PacketHandlerBase *& handler) = 0;
   IPaddress serverIP;
   TCPsocket socket;
+  SocketHandler *sockHandler;
 };
 
 class ConnectSocket : public Socket
 {
 public:
-  ConnectSocket(const TCPsocket &s, bool isConn);
+  ConnectSocket(SocketHandler *h, const TCPsocket &s);
+  ConnectSocket(SocketHandler *h);
+
   Packet * readData();
   teTCPError sendData(Packet &packet);
-  void initRead();
-  void disconnect();
 
+  teTCPError connect(std::string server, uint16 port);
+  void disconnect();
   bool isConnected() { return connected; }
+
+  virtual void onReadData(PacketHandlerBase *&handler, Packet *packet) = 0;
 private:
+  bool update(PacketHandlerBase *& handler);
+  void initRead();
   uint8 buffer[MAX_PACKET_SIZE];
   uint16 poz;
   uint16 remainingHeader;
@@ -204,22 +217,35 @@ private:
 class ListenSocket : public Socket
 {
 public:
-  ListenSocket() : socketSet(NULL) {}
+  ListenSocket(SocketHandler *h) : Socket(h) {}
   ~ListenSocket() { disconnect(); }
-  teTCPError listen(uint16 port, uint32 connections);
-  bool update();
+  teTCPError listen(uint16 port);
+
   void disconnect();
   
-  virtual bool onConnect(TCPsocket &socket) = 0;
-  virtual void onReadData(ConnectSocket *socket, PacketHandlerBase *&handler, Packet *packet) = 0;
-  virtual void onDisconnect(ConnectSocket *socket) = 0;
+  virtual ConnectSocket* onConnect(TCPsocket &socket) = 0;
+
+  void onDisconnect() {}
+private:
+  bool update(PacketHandlerBase *&);
+};
+
+class SocketHandler
+{
+public:
+  SocketHandler() : socketSet(NULL) {}
+  ~SocketHandler();
+  static bool global_init();
+  teTCPError initialize(uint32 connections);
+  void update();
+  void addSocket(Socket *socket);
 
   uint32 getMaxConnections () const { return maxUsers; }
 private:
   net_SocketSet socketSet;
-  uint32 maxUsers;
-  typedef std::map<ConnectSocket *, PacketHandlerBase *> SocketMapType;
+  typedef std::map<Socket *, PacketHandlerBase *> SocketMapType;
   SocketMapType socketMap;
+  uint32 maxUsers;
 };
 
 #endif

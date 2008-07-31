@@ -12,7 +12,6 @@
 
 #include <common.h>
 #include "NetHandler.h"
-//#include "../tcp-net/include/TCPConnection.h"
 #include "Config.h"
 #include "Log.h"
 
@@ -53,35 +52,35 @@ bool PacketHandler::handleNull(Packet &packet)
   return true;
 }
 
-void NetListenSocket::onReadData(ConnectSocket *socket, PacketHandlerBase *&handler, Packet *packet)
+void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet *packet)
 {
   if(!handler)
   {
     if(packet->getOpcode() != MSG_HANDSHAKE)
     {
       sLog.outError("invalid opcode %d received, handshake must be first", packet->getOpcode());
-      socket->disconnect();
+      disconnect();
     }
     else
-      if(!(handler = PacketHandler::handleHandshake(*packet, socket)))
-        socket->disconnect();
+      if(!(handler = PacketHandler::handleHandshake(*packet, this)))
+        disconnect();
   }
   else
   {
     if(!(((PacketHandler*)handler)->*opcodeTable[packet->getOpcode()].handler)(*packet))
     {
       sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(*packet), (uint16)packet->getLength());
-      socket->disconnect();
+      disconnect();
     }
   }
 }
 
-bool NetListenSocket::onConnect(TCPsocket &)
+ConnectSocket *NetListenSocket::onConnect(TCPsocket &s)
 {
-  return true;
+  return new NetConnectSocket(NULL, s);
 }
 
-void NetListenSocket::onDisconnect(ConnectSocket *)
+void NetConnectSocket::onDisconnect()
 {
   return;
 }
@@ -89,21 +88,24 @@ void NetListenSocket::onDisconnect(ConnectSocket *)
 
 NetHandler::NetHandler()
 {
-  localServer = new NetListenSocket;
+  sockHandler = new SocketHandler;
+  localServer = new NetListenSocket(sockHandler);
 }
 
 bool NetHandler::initialize()
 {
   // init the net library
-  if(net_Init() != 0)
+  if(!SocketHandler::global_init())
   {
     sLog.outError("NetHandler: Cannot initialize the net library");
     return false;
   }
 
+  sockHandler->initialize(32000);
+
   uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
 
-  teTCPError err = localServer->listen(listenPort, 32000);
+  teTCPError err = localServer->listen(listenPort);
   if(err != eTCPNoError)
   {
     sLog.outError("NetHandler: Cannot listen on port %d, error code %d", listenPort, err);
@@ -116,7 +118,7 @@ bool NetHandler::initialize()
 
 void NetHandler::update()
 {
-  localServer->update();
+  sockHandler->update();
 }
 
 NetHandler::~NetHandler()

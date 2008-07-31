@@ -13,14 +13,39 @@
 #include "common.h"
 #include "Socket.h"
 
-teTCPError ListenSocket::listen(uint16 port, uint32 connections)
+SocketHandler::~SocketHandler()
+{
+  if(socketSet) { net_FreeSocketSet(socketSet); socketSet = NULL; }
+}
+
+teTCPError SocketHandler::initialize(uint32 connections)
+{
+  maxUsers = connections;
+
+  socketSet = net_AllocSocketSet(getMaxConnections()+1);
+  if (!socketSet)
+    return eTCPSocketNFG;
+
+  return eTCPNoError;
+}
+
+void SocketHandler::addSocket(Socket *socket)
+{
+  net_TCP_AddSocket(socketSet,socket->getSocket());
+  socketMap[socket] = NULL;
+}
+
+bool SocketHandler::global_init()
+{
+  return net_Init() != 0;
+}
+
+teTCPError ListenSocket::listen(uint16 port)
 {
   //disconnect();
 
   if ( port == 0)
     return eTCPBadPort;
-
-  maxUsers = connections;
 
   serverIP.host = INADDR_ANY;
   serverIP.port = port;
@@ -29,51 +54,24 @@ teTCPError ListenSocket::listen(uint16 port, uint32 connections)
   if ( socket == NULL )
     return eTCPConnectionFailed;
 
-  socketSet = net_AllocSocketSet(getMaxConnections()+1);
-  if (!socketSet)
-    return eTCPSocketNFG;
-
   IPaddress serverIP;
   net_ResolveHost(&serverIP, NULL, getPort());
   socket = net_TCP_Open(&serverIP);
-  net_TCP_AddSocket(socketSet,socket);
+
+  sockHandler->addSocket(this);
 
   return eTCPNoError;
 }
 
-bool ListenSocket::update()
+void SocketHandler::update()
 {
   if (net_CheckSockets(socketSet, 1) < 1)
-    return true;
-
-  // check for new connections
-  if ( net_SocketReady(socket) )
-  {
-    TCPsocket newsock;
-    while ((newsock = net_TCP_Accept(socket)) != NULL)
-    {
-      if(onConnect(newsock))
-      {
-        net_TCP_AddSocket(socketSet, newsock);
-        socketMap[new ConnectSocket(newsock, true)] = NULL;
-      }
-      else
-        net_TCP_Close(newsock);
-    }
-  }
+    return;
 
   for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end();)
   {
-    Packet *packet;
-    while((packet = itr->first->readData()) != NULL)
+    if(!itr->first->update(itr->second))
     {
-      onReadData(itr->first, itr->second, packet);
-      delete packet;
-    }
-
-    if(!itr->first->isConnected())
-    {
-      onDisconnect(itr->first);
       net_TCP_DelSocket(socketSet, itr->first->getSocket());
       net_TCP_Close(itr->first->getSocket());
       delete itr->first;
@@ -83,18 +81,48 @@ bool ListenSocket::update()
     else
       ++itr;
   }
+}
 
+bool ListenSocket::update(PacketHandlerBase *&)
+{
+  // check for new connections
+  if ( net_SocketReady(socket) )
+  {
+    TCPsocket newsock;
+    while ((newsock = net_TCP_Accept(socket)) != NULL)
+      if(ConnectSocket *socket = onConnect(newsock))
+        sockHandler->addSocket(socket);
+      else
+        net_TCP_Close(newsock);
+  }
   return true;
+}
+
+bool ConnectSocket::update(PacketHandlerBase *& handler)
+{
+  Packet *packet;
+  while((packet = readData()) != NULL)
+  {
+    onReadData(handler, packet);
+    delete packet;
+  }
+
+  return isConnected();
 }
 
 void ListenSocket::disconnect()
 {
-  if(socket) net_TCP_Close(socket);   // but it still seems to leave a mem leak :(
-  if(socketSet) net_FreeSocketSet(socketSet);
+  if(socket) { net_TCP_Close(socket); socket = NULL; } // but it still seems to leave a mem leak :(
 }
 
-ConnectSocket::ConnectSocket(const TCPsocket &s, bool isConn)
-  : Socket(s), connected(isConn)
+ConnectSocket::ConnectSocket(SocketHandler *h, const TCPsocket &s)
+  : Socket(h, s), connected(true)
+{
+  initRead();
+}
+
+ConnectSocket::ConnectSocket(SocketHandler *h)
+  : Socket(h), connected(true)
 {
   initRead();
 }
@@ -109,6 +137,28 @@ void ConnectSocket::initRead()
 void ConnectSocket::disconnect()
 {
   connected = false;
+}
+
+teTCPError ConnectSocket::connect(std::string server, uint16 port)
+{
+  if ( net_ResolveHost(&serverIP, server.c_str(), port))
+    return eTCPUnknownError;
+
+  if ( serverIP.host == INADDR_NONE )
+    return eTCPBadAddress;
+
+  disconnect();
+
+  if ( serverIP.host == 0 || serverIP.port == 0 || serverIP.host == INADDR_NONE )
+    return eTCPBadAddress;
+
+  socket = net_TCP_Open(&serverIP);
+  if ( socket == NULL )
+    return eTCPConnectionFailed;
+
+  sockHandler->addSocket(this);
+
+  return eTCPNoError;
 }
 
 Packet * ConnectSocket::readData()

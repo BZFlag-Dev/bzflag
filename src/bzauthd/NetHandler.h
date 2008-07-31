@@ -141,14 +141,21 @@ struct OpcodeEntry
 
 const char *getOpcodeName(Packet &packet);
 
+class NetConnectSocket : public ConnectSocket
+{
+public:
+  NetConnectSocket(SocketHandler *h, const TCPsocket &s) : ConnectSocket(h,s) {}
+  NetConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
+  void onReadData(PacketHandlerBase *&handler, Packet *packet);
+  void onDisconnect();
+};
+
 class NetListenSocket : public ListenSocket
 {
 public:
-  bool onConnect(TCPsocket &socket);
-  void onReadData(ConnectSocket *socket, PacketHandlerBase *&handler, Packet *packet);
-  void onDisconnect(ConnectSocket *socket);
+  NetListenSocket(SocketHandler *h) : ListenSocket(h) {}
+  ConnectSocket* onConnect(TCPsocket &socket);
 };
-
 
 class NetHandler : public Singleton<NetHandler>
 {
@@ -158,6 +165,7 @@ public:
   bool initialize();
   void update();
 private:
+  SocketHandler *sockHandler;
   NetListenSocket *localServer;
 };
 
