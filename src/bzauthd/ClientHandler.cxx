@@ -27,7 +27,7 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
   bool success = true;
 
   switch (peerType) {
-    case PEER_CLIENT: {
+    case BZAUTHD_PEER_CLIENT: {
       sLog.outLog("received %s: client using protocol %d", getOpcodeName(packet), protoVersion);
       uint32 cliVersion;
       uint8 commType;
@@ -42,10 +42,10 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
           success = false;
       }
     } break;
-    case PEER_SERVER: {
+    case BZAUTHD_PEER_SERVER: {
       sLog.outLog("received %s: server using protocol %d", getOpcodeName(packet), protoVersion);
     } break;
-    case PEER_DAEMON: {
+    case BZAUTHD_PEER_DAEMON: {
       sLog.outLog("received %s: daemon using protocol %d", getOpcodeName(packet), protoVersion);
     } break;
     default: {
@@ -109,7 +109,7 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
   {
     sLog.outLog("AuthResponse: failed to decrypt cipher");
     Packet fail(DMSG_AUTH_FAIL, 4);
-    fail << (uint32)AUTH_INVALID_MESSAGE;
+    fail << (uint32)BZAUTH_INVALID_MESSAGE;
     m_socket->sendData(fail);
     delete[] cipher;
     return true;
@@ -163,13 +163,13 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
       m_socket->sendData(success);
     } else {
       Packet fail(DMSG_AUTH_FAIL, 4);
-      fail << (uint32)AUTH_INCORRECT_CREDENTIALS;
+      fail << (uint32)BZAUTH_INCORRECT_CREDENTIALS;
       m_socket->sendData(fail);
     }
 
   } else {
     Packet fail(DMSG_AUTH_FAIL, 4);
-    fail << (uint32)AUTH_INVALID_MESSAGE;
+    fail << (uint32)BZAUTH_INVALID_MESSAGE;
     m_socket->sendData(fail);
   }
 

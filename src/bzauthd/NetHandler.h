@@ -14,55 +14,7 @@
 #define __BZAUTHD_NETHANDLER_H__
 
 #include <Socket.h>
-
-enum Opcodes
-{
-  MSG_HANDSHAKE             = 0,
-  CMSG_AUTH_REQUEST         = 1,
-  DMSG_AUTH_FAIL            = 2,
-  DMSG_AUTH_CHALLENGE       = 3,
-  CMSG_AUTH_RESPONSE        = 4,
-  DMSG_AUTH_SUCCESS         = 5,
-  CMSG_REGISTER_GET_FORM    = 6,
-  DMSG_REGISTER_FAIL        = 7,
-  DMSG_REGISTER_SEND_FORM   = 8,
-  CMSG_REGISTER_REQUEST     = 9,
-  DMSG_REGISTER_CHALLENGE   = 10,
-  CMSG_REGISTER_RESPONSE    = 11,
-  DMSG_REGISTER_SUCCESS     = 12,
-  SMSG_TOKEN_VALIDATE       = 13,
-  DMSG_TOKEN_VALIDATE       = 14,
-  NUM_OPCODES
-};
-
-enum SessionTypes
-{
-  SESSION_INIT = 0,
-  SESSION_AUTH = 1,
-  SESSION_REG = 2,
-  SESSION_TOKEN = 3,
-  NUM_SESSION_TYPES
-};
-
-enum PeerType
-{
-  PEER_ANY = 0,
-  PEER_CLIENT = 1,
-  PEER_SERVER = 2,
-  PEER_DAEMON = 3,
-  NUM_PEER_TYPES
-};
-
-enum AuthErrors
-{
-  AUTH_INVALID_MESSAGE = 0,
-  AUTH_INCORRECT_CREDENTIALS = 1
-};
-
-enum RegErrors
-{
-  REG_INVALID_MESSAGE = 0
-};
+#include <Protocol.h>
 
 class Packet;
 
@@ -114,6 +66,8 @@ public:
   PacketHandler(ConnectSocket *socket) 
     : PacketHandlerBase(socket), m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
   ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
+
+  static void initHandlerTable();
 
   static PacketHandler* handleHandshake(Packet &packet, ConnectSocket *socket);
 

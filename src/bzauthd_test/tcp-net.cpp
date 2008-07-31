@@ -15,7 +15,8 @@
 
 #ifdef TEST_NET
 
-#include "../bzauthd/NetHandler.h"
+#include "../bzAuthCommon/Socket.h"
+#include "../bzAuthCommon/Protocol.h"
 #include <RSA.h>
 
 int sleep_var;
@@ -40,7 +41,7 @@ public:
   TestConnectSocket(SocketHandler *h, const TCPsocket &s) : ConnectSocket(h,s) {}
   TestConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
 
-  void onReadData(PacketHandlerBase *&handler, Packet &packet)
+  void onReadData(PacketHandlerBase *&, Packet &packet)
   {
     switch(packet.getOpcode())
     {
@@ -182,7 +183,7 @@ void test_comm(uint8 commType)
     printf("Connected\n");
 
     {
-      uint8 peerType = PEER_CLIENT;
+      uint8 peerType = BZAUTHD_PEER_CLIENT;
       uint16 protoVersion = 1;
       uint32 cliVersion = 2;
       Packet msg(MSG_HANDSHAKE);

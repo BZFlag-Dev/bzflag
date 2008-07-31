@@ -36,6 +36,11 @@
 #include "ServerListCache.h"
 #include "StartupInfo.h"
 
+/* auth headers */
+#include "../bzAuthCommon/Socket.h"
+#include "../bzAuthCommon/Protocol.h"
+
+SocketHandler authSockHandler;
 
 ServerList::ServerList() :
 	phase(-1),

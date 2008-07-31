@@ -25,7 +25,6 @@
 #include "ServerListCache.h"
 #include "cURLManager.h"
 
-
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
@@ -67,6 +66,10 @@ private:
   struct sockaddr_in pingBcastAddr;
   StartupInfo *startupInfo;
 };
+
+// authentication is done through BZAuthd
+class SocketHandler;
+extern SocketHandler authSockHandler;
 
 #endif  /* __SERVERLIST_H__ */
 

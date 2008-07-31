@@ -19,9 +19,13 @@
 #include <string>
 #include <map>
 
-#include "../tcp-net/include/net.h"
+#include "net.h"
 
 #define MAX_PACKET_SIZE 4096
+
+#ifdef min
+#undef min
+#endif
 
 class ConnectSocket;
 
@@ -109,7 +113,7 @@ public:
 
   bool read_string(uint8 *x, size_t buf_size)
   {
-    for(size_t i = m_rpoz; i < min(m_rpoz + buf_size, m_size); i++)
+    for(size_t i = m_rpoz; i < std::min(m_rpoz + buf_size, m_size); i++)
     {
       x[i] = m_data[i];
       if(m_data[i] == '\0')

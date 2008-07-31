@@ -88,6 +88,9 @@
 // client prefrences
 #include "clientConfig.h"
 
+// auth headers
+#include "../bzAuthCommon/Socket.h"
+
 
 const char* argv0;
 static bool anonymous = false;
@@ -780,6 +783,8 @@ int initClient ( int argc, char **argv )
 
   // init libs
   if (initWinsoc() != 0)
+    return 1;
+  if (!SocketHandler::global_init())
     return 1;
 
   //init_packetcompression();

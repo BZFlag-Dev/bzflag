@@ -17,27 +17,24 @@
 
 INSTANTIATE_SINGLETON(NetHandler);
 
-OpcodeEntry opcodeTable[NUM_OPCODES] = {
-  {"MSG_HANDSHAKE",             &PacketHandler::handleInvalid           },
-  {"CMSG_AUTH_REQUEST",         &PacketHandler::handleAuthRequest       },
-  {"DMSG_AUTH_FAIL",            &PacketHandler::handleInvalid           },
-  {"DMSG_AUTH_CHALLENGE",       &PacketHandler::handleInvalid           },
-  {"CMSG_AUTH_RESPONSE",        &PacketHandler::handleAuthResponse      },
-  {"DMSG_AUTH_SUCCESS",         &PacketHandler::handleInvalid           },
-  {"CMSG_REGISTER_GET_FORM",    &PacketHandler::handleRegisterGetForm   },
-  {"DMSG_REGISTER_FAIL",        &PacketHandler::handleInvalid           },
-  {"DMSG_REGISTER_SEND_FORM",   &PacketHandler::handleInvalid           },
-  {"CMSG_REGISTER_REQUEST",     &PacketHandler::handleRegisterRequest   },
-  {"DMSG_REGISTER_CHALLENGE",   &PacketHandler::handleInvalid           },
-  {"CMSG_REGISTER_RESPONSE",    &PacketHandler::handleRegisterResponse  },
-  {"DMSG_REGISTER_SUCCESS",     &PacketHandler::handleInvalid           },
-  {"SMSG_TOKEN_VALIDATE",       &PacketHandler::handleTokenValidate     },
-  {"DMSG_TOKEN_VALIDATE",       &PacketHandler::handleInvalid           }
-};
+PHFunc handlerTable[NUM_OPCODES];
+
+void PacketHandler::initHandlerTable()
+{
+  for(int i = 0; i < NUM_OPCODES; i++)
+    handlerTable[i] = &PacketHandler::handleInvalid;
+
+  handlerTable[CMSG_AUTH_REQUEST]       = &PacketHandler::handleAuthRequest;
+  handlerTable[CMSG_AUTH_RESPONSE]      = &PacketHandler::handleAuthResponse;
+  handlerTable[CMSG_REGISTER_GET_FORM]  = &PacketHandler::handleRegisterGetForm;
+  handlerTable[CMSG_REGISTER_REQUEST]   = &PacketHandler::handleRegisterRequest;
+  handlerTable[CMSG_REGISTER_RESPONSE]  = &PacketHandler::handleRegisterResponse;
+  handlerTable[SMSG_TOKEN_VALIDATE]     = &PacketHandler::handleTokenValidate;
+}
 
 const char *getOpcodeName(Packet &packet)
 {
-  return opcodeTable[packet.getOpcode()].name;
+  return bzAuthOpcodeNames[packet.getOpcode()];
 }
 
 bool PacketHandler::handleInvalid(Packet &packet)
@@ -67,7 +64,7 @@ void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet &packet)
   }
   else
   {
-    if(!(((PacketHandler*)handler)->*opcodeTable[packet.getOpcode()].handler)(packet))
+    if(!(((PacketHandler*)handler)->*handlerTable[packet.getOpcode()])(packet))
     {
       sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(packet), (uint16)packet.getLength());
       disconnect();
@@ -111,6 +108,8 @@ bool NetHandler::initialize()
     sLog.outError("NetHandler: Cannot listen on port %d, error code %d", listenPort, err);
     return false;
   }
+
+  PacketHandler::initHandlerTable();
 
   sLog.outLog("NetHandler: initialized");
   return true;

@@ -1,7 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp-net", "tcp-net.vcproj", "{7CF3DD81-C000-4252-8083-4F85F989B546}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgcrypt", "libgcrypt.vcproj", "{E848E27A-90AF-4B66-978A-5445581BCFBA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7E6ADA8B-6297-491C-B36D-2758D0E16A4D} = {7E6ADA8B-6297-491C-B36D-2758D0E16A4D}
@@ -11,8 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgpg-error", "libgpg-erro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzauthd_test", "bzauthd_test.vcproj", "{C335B30B-17DE-41E8-839C-3FBEECB17FA0}"
 	ProjectSection(ProjectDependencies) = postProject
-		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA} = {BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}
 		{CF1DCE05-3141-480F-B964-E06E04625A84} = {CF1DCE05-3141-480F-B964-E06E04625A84}
+		{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA} = {BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openldap", "openldap.vcproj", "{CF1DCE05-3141-480F-B964-E06E04625A84}"
@@ -20,7 +18,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzAuthCommon", "bzAuthCommon.vcproj", "{BB8A50D4-4BB3-4585-8566-19EF0E07CDAA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E848E27A-90AF-4B66-978A-5445581BCFBA} = {E848E27A-90AF-4B66-978A-5445581BCFBA}
-		{7CF3DD81-C000-4252-8083-4F85F989B546} = {7CF3DD81-C000-4252-8083-4F85F989B546}
 	EndProjectSection
 EndProject
 Global
@@ -29,10 +26,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7CF3DD81-C000-4252-8083-4F85F989B546}.Debug|Win32.Build.0 = Debug|Win32
-		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release|Win32.ActiveCfg = Release|Win32
-		{7CF3DD81-C000-4252-8083-4F85F989B546}.Release|Win32.Build.0 = Release|Win32
 		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Debug|Win32.Build.0 = Debug|Win32
 		{E848E27A-90AF-4B66-978A-5445581BCFBA}.Release|Win32.ActiveCfg = Release|Win32

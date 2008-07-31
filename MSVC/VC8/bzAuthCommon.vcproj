@@ -170,11 +170,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzAuthCommon\net.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Protocol.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzAuthCommon\RSA.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\Socket.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\TCPConnection.cpp"
 				>
 			</File>
 		</Filter>
@@ -196,7 +208,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzAuthCommon\net.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzAuthCommon\Platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\Protocol.h"
 				>
 			</File>
 			<File
@@ -209,6 +229,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\Socket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\TCPConnection.h"
 				>
 			</File>
 		</Filter>
