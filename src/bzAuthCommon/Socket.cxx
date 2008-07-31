@@ -37,7 +37,7 @@ void SocketHandler::addSocket(Socket *socket)
 
 bool SocketHandler::global_init()
 {
-  return net_Init() != 0;
+  return net_Init() == 0;
 }
 
 teTCPError ListenSocket::listen(uint16 port)
@@ -103,7 +103,7 @@ bool ConnectSocket::update(PacketHandlerBase *& handler)
   Packet *packet;
   while((packet = readData()) != NULL)
   {
-    onReadData(handler, packet);
+    onReadData(handler, *packet);
     delete packet;
   }
 
@@ -157,6 +157,7 @@ teTCPError ConnectSocket::connect(std::string server, uint16 port)
     return eTCPConnectionFailed;
 
   sockHandler->addSocket(this);
+  connected = true;
 
   return eTCPNoError;
 }

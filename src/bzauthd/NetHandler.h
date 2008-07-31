@@ -146,7 +146,7 @@ class NetConnectSocket : public ConnectSocket
 public:
   NetConnectSocket(SocketHandler *h, const TCPsocket &s) : ConnectSocket(h,s) {}
   NetConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
-  void onReadData(PacketHandlerBase *&handler, Packet *packet);
+  void onReadData(PacketHandlerBase *&handler, Packet &packet);
   void onDisconnect();
 };
 

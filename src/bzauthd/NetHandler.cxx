@@ -52,24 +52,24 @@ bool PacketHandler::handleNull(Packet &packet)
   return true;
 }
 
-void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet *packet)
+void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet &packet)
 {
   if(!handler)
   {
-    if(packet->getOpcode() != MSG_HANDSHAKE)
+    if(packet.getOpcode() != MSG_HANDSHAKE)
     {
-      sLog.outError("invalid opcode %d received, handshake must be first", packet->getOpcode());
+      sLog.outError("invalid opcode %d received, handshake must be first", packet.getOpcode());
       disconnect();
     }
     else
-      if(!(handler = PacketHandler::handleHandshake(*packet, this)))
+      if(!(handler = PacketHandler::handleHandshake(packet, this)))
         disconnect();
   }
   else
   {
-    if(!(((PacketHandler*)handler)->*opcodeTable[packet->getOpcode()].handler)(*packet))
+    if(!(((PacketHandler*)handler)->*opcodeTable[packet.getOpcode()].handler)(packet))
     {
-      sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(*packet), (uint16)packet->getLength());
+      sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(packet), (uint16)packet.getLength());
       disconnect();
     }
   }

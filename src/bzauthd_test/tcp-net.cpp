@@ -16,7 +16,6 @@
 #ifdef TEST_NET
 
 #include "../bzauthd/NetHandler.h"
-#include <TCPConnection.h>
 #include <RSA.h>
 
 int sleep_var;
@@ -35,108 +34,90 @@ void sleep_thread(void *)
     }
 }
 
-void sendPacket(Packet &packet, TCPClientConnection *client)
+class TestConnectSocket : public ConnectSocket
 {
-  client->sendData(packet.getOpcode(), (void*)packet.getData(), (int)packet.getLength());
-}
+public:
+  TestConnectSocket(SocketHandler *h, const TCPsocket &s) : ConnectSocket(h,s) {}
+  TestConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
 
-class MyClientListener : public TCPClientDataPendingListener
-{
-    public:
-        void handlePackets(Packet &packet, TCPClientConnection *connection)
+  void onReadData(PacketHandlerBase *&handler, Packet &packet)
+  {
+    switch(packet.getOpcode())
+    {
+      case DMSG_REGISTER_CHALLENGE: {
+        uint8 *key_n;
+        uint32 e;
+        uint16 n_len;
+        assert(packet >> n_len);
+        key_n = new uint8[n_len];
+        packet.read(key_n, (size_t)n_len);
+        assert(packet >> e);
+
+        sRSAManager.initialize();
+        sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
+        
+        char message[] = "newuser password";
+        uint8 *cipher = NULL;
+        size_t cipher_len;
+
+        sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+
         {
-          switch(packet.getOpcode())
-          {
-            case DMSG_REGISTER_CHALLENGE: {
-              uint8 *key_n;
-              uint32 e;
-              uint16 n_len;
-              assert(packet >> n_len);
-              key_n = new uint8[n_len];
-              packet.read(key_n, (size_t)n_len);
-              assert(packet >> e);
-
-              sRSAManager.initialize();
-              sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
-              
-              char message[] = "newuser password";
-              uint8 *cipher = NULL;
-              size_t cipher_len;
-
-              sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
-
-              {
-                Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
-                response << (uint16)cipher_len;
-                response.append(cipher, cipher_len);
-                sendPacket(response, connection);
-              }
-
-              sRSAManager.rsaFree(cipher);
-              delete[] key_n;
-            } break;
-            case DMSG_AUTH_CHALLENGE: {
-              uint8 *key_n;
-              uint32 e;
-              uint16 n_len;
-              assert(packet >> n_len);
-              key_n = new uint8[n_len];
-              packet.read(key_n, (size_t)n_len);
-              assert(packet >> e);
-
-              sRSAManager.initialize();
-              sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
-              
-              char message[] = "newuser password";
-              uint8 *cipher = NULL;
-              size_t cipher_len;
-
-              sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
-
-              {
-                Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
-                response << (uint16)cipher_len;
-                response.append(cipher, cipher_len);
-                sendPacket(response, connection);
-              }
-
-              sRSAManager.rsaFree(cipher);
-              delete[] key_n;
-            } break;
-            case DMSG_AUTH_SUCCESS:
-              uint32 token;
-              packet >> token;
-              printf("Auth successful, token %d\n", token); break;
-            case DMSG_AUTH_FAIL:
-              uint32 reason;
-              packet >> reason;
-              printf("Auth failed, reason %d\n", reason); break; 
-            case DMSG_REGISTER_SUCCESS:
-              printf("Registration successful\n"); break;
-            case DMSG_REGISTER_FAIL:
-              printf("Registration failed\n"); break;
-            default:
-              printf("Unexpected opcode %d\n", packet.getOpcode());
-          }
+          Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
+          response << (uint16)cipher_len;
+          response.append(cipher, cipher_len);
+          sendData(response);
         }
 
-        void pending ( TCPClientConnection *connection, int count )
+        sRSAManager.rsaFree(cipher);
+        delete[] key_n;
+      } break;
+      case DMSG_AUTH_CHALLENGE: {
+        uint8 *key_n;
+        uint32 e;
+        uint16 n_len;
+        assert(packet >> n_len);
+        key_n = new uint8[n_len];
+        packet.read(key_n, (size_t)n_len);
+        assert(packet >> e);
+
+        sRSAManager.initialize();
+        sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
+        
+        char message[] = "newuser password";
+        uint8 *cipher = NULL;
+        size_t cipher_len;
+
+        sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+
         {
-            char buf[2048];
-            tvPacketList& packets = connection->getPackets();
-            for(tvPacketList::iterator itr = packets.begin(); itr != packets.end(); ++itr)
-            {
-                unsigned int opcode = (*itr).first;
-                unsigned int len;
-                unsigned char * data = (*itr).second.get(len);
-                if(len >= 2048) break;
-                memcpy(buf, (char*)data, len);
-                buf[len] = 0;
-                Packet packet(opcode, (uint8*)buf, (size_t)len);
-                handlePackets(packet, connection);
-            }
-            packets.clear();
+          Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
+          response << (uint16)cipher_len;
+          response.append(cipher, cipher_len);
+          sendData(response);
         }
+
+        sRSAManager.rsaFree(cipher);
+        delete[] key_n;
+      } break;
+      case DMSG_AUTH_SUCCESS:
+        uint32 token;
+        packet >> token;
+        printf("Auth successful, token %d\n", token); break;
+      case DMSG_AUTH_FAIL:
+        uint32 reason;
+        packet >> reason;
+        printf("Auth failed, reason %d\n", reason); break; 
+      case DMSG_REGISTER_SUCCESS:
+        printf("Registration successful\n"); break;
+      case DMSG_REGISTER_FAIL:
+        printf("Registration failed\n"); break;
+      default:
+        printf("Unexpected opcode %d\n", packet.getOpcode());
+    }
+  }
+
+  void onDisconnect() { printf("Disconnected\n"); }
 };
 
 void test_listen(void *)
@@ -189,34 +170,34 @@ void test_random()
 
 void test_comm(uint8 commType)
 {
-    MyClientListener listener;
-    TCPClientConnection* client;
+    SocketHandler *handler = new SocketHandler;
+    handler->initialize(32000);
+    TestConnectSocket* client = new TestConnectSocket(handler);
     do
     {
       if(kbhit()) return;
       printf("Trying to connect\n");
-      client = TCPConnection::instance().newClientConnection("127.0.0.1", 1234);
     }
-    while(!client->connected());
+    while(client->connect("127.0.0.1", 1234) != 0);
     printf("Connected\n");
 
-    client->addListener(&listener);
-    
     {
       uint8 peerType = PEER_CLIENT;
       uint16 protoVersion = 1;
       uint32 cliVersion = 2;
       Packet msg(MSG_HANDSHAKE);
       msg << peerType << protoVersion << cliVersion << commType;
-      sendPacket(msg, client);
+      client->sendData(msg);
     }
 
     while(!kbhit())
     {
-      TCPConnection::instance().update();
+      handler->update();
     }
 
     client->disconnect();
+    delete client;
+    delete handler;
 }
 
 void test_net()
@@ -225,7 +206,7 @@ void test_net()
     //_beginthread(sleep_thread, 0, NULL);
 
     // initialize the net library
-    TCPConnection::instance();
+    if(!SocketHandler::global_init()) return;
 
     //test_comm(2) // reg
     test_comm(0); // auth

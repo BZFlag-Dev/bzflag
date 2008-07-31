@@ -203,7 +203,7 @@ public:
   void disconnect();
   bool isConnected() { return connected; }
 
-  virtual void onReadData(PacketHandlerBase *&handler, Packet *packet) = 0;
+  virtual void onReadData(PacketHandlerBase *&handler, Packet &packet) = 0;
 private:
   bool update(PacketHandlerBase *& handler);
   void initRead();
