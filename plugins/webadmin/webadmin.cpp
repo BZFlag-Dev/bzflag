@@ -156,7 +156,7 @@ bool WebAdmin::loopCallback (const std::string &key)
   } else if (key == "permissions") {
     if (!loopPos) listSize = bzu_standardPerms().size();
     if (loopPos < listSize) {
-      const std::string &perm = bzu_standardPerms()[loopPos++];
+      const std::string perm = bzu_standardPerms()[loopPos++];
       if (stringList) checked = stringList->contains(perm);
       templateVars["permission"] = perm;
       return true;
