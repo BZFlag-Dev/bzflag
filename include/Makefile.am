@@ -74,7 +74,7 @@ noinst_HEADERS =			\
 	MeshSceneNodeGenerator.h	\
 	MeshTransform.h			\
 	Model.h				\
-	MotionUtils.h				\
+	MotionUtils.h			\
 	MsgStrings.h			\
 	NetHandler.h			\
 	Obstacle.h			\
