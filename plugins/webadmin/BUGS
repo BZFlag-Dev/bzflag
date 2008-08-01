@@ -4,9 +4,12 @@ webadmin bugs
 Note: These issues affect the functionality of the webadmin plugin,
 but may be the result of errors in other parts of the server.
 
-* std::length_error sometimes thrown when submitting form data.
-
 * [$CurrentPage] is not properly replaced in the header.
 
 * logging out from webadmin is supposed to redirect to main page,
   but instead produces no reply.
+
+* When submitting the main page form, SIGSEGV occurs in HTTPServer
+  at either line 414 or 428.
+
+* When submitting the group page form, SIGABRT is thrown.

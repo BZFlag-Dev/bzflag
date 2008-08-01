@@ -11,7 +11,7 @@
 [*EMPTY Players]
 
     </ul>
-    <input type="submit" value="unban" name="unban">
+    <input type="submit" action="[$BaseURL]" value="unban" name="unban">
     <p>
       <label for="kick_reason">reason</label>
       <input type="text" name="reason" id="kickban_reason">
@@ -27,7 +27,7 @@
     </p>
   </form>
   
-  <form id="server_vars" action="" method="post">
+  <form id="server_vars" action="[$BaseURL]" method="post">
     <ul>
 [*START ServerVars]
       <li><input type="text" id="var[$ServerVarName]"

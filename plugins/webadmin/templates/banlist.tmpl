@@ -1,7 +1,7 @@
 [!header.tmpl]
   <h2>editing banlist</h2>
   
-  <form id="banlist_edit" action="" method="post">
+  <form id="banlist_edit" action="[$BaseURL][$CurrentPage]" method="post">
     <ul id="ipbanlist">
 [*START IPBanList]
       <li><input type="checkbox" id="ipban_[$BannedUser]"
