@@ -1,4 +1,4 @@
-// HTTPServer.cpp : Defines the entry point for the DLL application.
+/// HTTPServer.cpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
@@ -358,8 +358,6 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
 
     size_t headerEnd = find_first_substr(connection.currentData,"\r\n\r\n");
 
-    std::string temp = connection.currentData.c_str()+headerEnd;
-
     if (!connection.headerComplete && headerEnd != std::string::npos) {
       bool done = false;  // ok we have the header and we don't haven't processed it yet
 
@@ -370,9 +368,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
       while (p < headerEnd) {
 	size_t p2 = find_first_substr(connection.currentData,"\r\n",p);
 
-	std::string line;
-	line.resize(p2-p);
-	std::copy(connection.currentData.begin()+p,connection.currentData.begin()+p2,line.begin());
+	std::string line ( connection.currentData.substr(p, p2-p) );
 	p = p2+2;
 
 	trimLeadingWhitespace(line);
@@ -401,8 +397,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
 	  headerEnd += 4;
 	  if (connection.currentData.size()-headerEnd >= connection.contentSize) {
 	    // read in that body!
-	    connection.body.resize(connection.currentData.size()-headerEnd);
-	    std::copy(connection.currentData.begin()+headerEnd,connection.currentData.end(),connection.body.end());
+	    connection.body.append( connection.currentData.substr(headerEnd) );
 	    connection.requestComplete = true;
 
 	    connection.bodyEnd += connection.contentSize;
