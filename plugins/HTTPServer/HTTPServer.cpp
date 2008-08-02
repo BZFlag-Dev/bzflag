@@ -423,8 +423,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
       connection.flush();
     } else {
       // parse it all UP and build up a complete request
-      std::string nubby = connection.currentData.c_str()+connection.bodyEnd;
-      connection.currentData = nubby;
+      connection.currentData.erase(0, connection.bodyEnd);
 
       HTTPRequest request;
       connection.fillRequest(request);
