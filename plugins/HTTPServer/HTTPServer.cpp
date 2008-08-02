@@ -419,7 +419,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
     if (connection.request == eTrace) {
       bz_sendNonPlayerData(connectionID, connection.currentData.c_str(),(unsigned int)connection.bodyEnd);
 
-      connection.currentData += connection.bodyEnd;
+      connection.currentData.erase(0, connection.bodyEnd);
       connection.flush();
     } else {
       // parse it all UP and build up a complete request
