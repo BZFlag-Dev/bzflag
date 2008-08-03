@@ -3,8 +3,7 @@ all-local:
 
 noinst_HEADERS =	\
 	World.h		\
-	WorldObject.h	\
-	Parser.h
+	WorldObject.h
 
 CLEANFILES = datestamp
 

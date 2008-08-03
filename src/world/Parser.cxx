@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-#include "BZW/Parser.h"
+#include "Parser.h"
 
 namespace BZW
 {

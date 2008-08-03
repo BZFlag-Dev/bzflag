@@ -11,7 +11,7 @@
  */
 
 #include "BZW/World.h"
-#include "BZW/Parser.h"
+#include "Parser.h"
 
 namespace BZW
 {

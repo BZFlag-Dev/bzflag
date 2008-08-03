@@ -22,6 +22,9 @@
 #include <boost/spirit/core.hpp>
 #include <boost/spirit/iterator/multi_pass.hpp>
 
+/* BZW */
+#include "Grammar.h"
+
 namespace BZW
 {
   class Parser
@@ -29,31 +32,8 @@ namespace BZW
     public:
 
     private:
-      /*******************
-       * Spirit Grammars *
-       *******************/
-      struct bzw_grammar : boost::spirit::grammar<bzw_grammar>
-      {
-        bzw_grammar(Parser& _parser)
-          : parser(_parser) {}
 
-        template <typename ScannerT>
-          struct definition
-          {
-            rule<ScannerT> identifier;
-            rule<ScannerT> string_literal;
-            rule<ScannerT> line_end;
-            rule<ScannerT> block;
-            rule<ScannerT> block_end;
-            rule<ScannerT> block_list;
-
-            definition(bzw_grammar const& self)
-            {
-            }
-          };
-      };
-  }
-
+  };
 }
 
 #endif // __BZW_PARSER_H__
