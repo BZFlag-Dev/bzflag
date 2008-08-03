@@ -241,6 +241,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
       templateVars["currentpage"] = pagename;
       pageCallback(pagename, request);
+      loopPos = 0;
       if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
         reply.returnCode = HTTPReply::e500ServerError;
         if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
