@@ -4,5 +4,4 @@ webadmin bugs
 Note: These issues affect the functionality of the webadmin plugin,
 but may be the result of errors in other parts of the server.
 
-* When submitting the main page variables form or the group page
-  permissions form, the navbar is empty on the response page.
+* None of the forms actually store info.
