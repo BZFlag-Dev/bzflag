@@ -18,130 +18,41 @@
 #include <vector>
 #include <iostream>
 
-/* bzflag common headers */
-#include "common.h"
+/* boost headers */
+#include <boost/spirit/core.hpp>
+#include <boost/spirit/iterator/multi_pass.hpp>
 
 namespace BZW
 {
-  /**
-   * BZW file Parsing class. Used primarily by BZW::World.
-   */
   class Parser
   {
     public:
-      class Field;
-      class Object;
-      class Parameter;
-
-      /// Constructor
-      Parser();
-      /// Destructor
-      ~Parser();
-
-      /**
-       * Using previously provided definitions, parses istream using
-       * definitions. Use
-       */
-      bool parse(std::istream& in);
-
-      /**
-       * Handle a new object type to parse. Adds a new block-like object
-       * structure.
-       */
-      void manageObject(std::string name, Object& object);
-
-      /**
-       * Retrieve the multimap of objects read via parsing.
-       * FIXME: This probably shouldn't be sending back a copy of the
-       * multimap, and sending a reference seems like a bad idea also.
-       */
-      std::multimap<std::string, Object> getObjects();
 
     private:
-      std::map<std::string, Object> managedObjects;
-      std::multimap<std::string, Object> readObjects;
-  };
-
-
-  /**
-   * BZW file parsing interface for Objects, Parameters.
-   */
-  class Parser::Field
-  {
-    public:
-      /// Constructor
-      Field(){ };
-      /// Destructor
-      virtual ~Field(){ };
-
-      bool isRepeatable(){ return repeatable; }
-    protected:
-      bool repeatable;
-  };
-
-  /**
-   * BZW file parsing class for handling Parameters. Used primarily within
-   * BZW::World and Parser.
-   */
-  class Parser::Parameter : public Parser::Field
-  {
-    public:
-      enum ValueType
+      /*******************
+       * Spirit Grammars *
+       *******************/
+      struct bzw_grammar : boost::spirit::grammar<bzw_grammar>
       {
-        NOTHING, ///No values expected. The mere presence of this parameter is required.
-        REAL, ///Real numbers, floats.
-        STRING, ///A single word.
-        ENDLESS_STRING ///All text until end of line.
+        bzw_grammar(Parser& _parser)
+          : parser(_parser) {}
+
+        template <typename ScannerT>
+          struct definition
+          {
+            rule<ScannerT> identifier;
+            rule<ScannerT> string_literal;
+            rule<ScannerT> line_end;
+            rule<ScannerT> block;
+            rule<ScannerT> block_end;
+            rule<ScannerT> block_list;
+
+            definition(bzw_grammar const& self)
+            {
+            }
+          };
       };
-
-      union ValueValue //TODO: this is a terrible name.
-      {
-        float real_value; ///Real numbers, floats.
-        std::string* string_value; ///String values.
-      };
-
-      //TODO: should I worry about number of values? are N required? etc.
-      /// Constructor
-      Parameter(enum ValueType type, int number_of_values, bool repeatable);
-      /// Destructor
-      ~Parameter();
-
-      void parse(std::istream& in);
-
-      std::vector<union ValueValue>* getValues();
-
-    private:
-      enum ValueType type;
-      int number_of_values;
-      /* TODO: Since we know the number of values, must this be a vector? Consider an
-       * array.
-       */
-      std::vector<union ValueValue> values;
-  };
-
-  /**
-   * BZW file Parsing Object. Used primarily by BZW::World and within Parser.
-   */
-  class Parser::Object : public Parser::Field
-  {
-    public:
-      //FIXME need copy constructor
-      /// Constructor
-      Object(bool repeatable);
-      /// Destructor
-      ~Object();
-
-      void manage(std::string name, Field& field);
-      std::multimap<std::string, Field>* getFields();
-
-    private:
-      /** This is the text that comes after the identifier. Used
-       * primarily by define/group/matrefs I believe...
-       */
-      std::string name;
-      std::map<std::string, Field> managedFields;
-      std::multimap<std::string, Field> readFields;
-  };
+  }
 
 }
 

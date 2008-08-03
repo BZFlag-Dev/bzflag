@@ -14,7 +14,6 @@
 #define __BZW_WORLDOBJECT_H__
 
 /* bzflag common headers */
-#include "common.h"
 
 namespace BZW
 {
