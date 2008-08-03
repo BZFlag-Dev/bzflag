@@ -265,7 +265,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 
 void WebAdmin::mainPageCallback (const HTTPRequest &request)
 {
-  std::string s1, s2;
+  std::string s1, s2, error;
   if (request.request != ePost) return;
   std::vector<std::string> v;
   // kick/ban players
@@ -291,7 +291,12 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
       for (i = v.begin(); i != v.end(); i++) {
         int playerID = atoi(i->c_str());
         bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-        bz_IPBanUser(playerID, bz_getPlayerCallsign(playerID), duration, s2.c_str());
+        const char *callsign = bz_getPlayerCallsign(playerID);
+        if (!bz_IPBanUser(playerID, callsign, duration, s2.c_str())) {
+          if (error.empty()) error = "Couldn't ban: ";
+          error += callsign;
+          error += ", ";
+        }
       }
     }
   }
@@ -301,8 +306,12 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
   for (loopPos = 0; loopPos < listSize; loopPos++) {
     s1 = "var";
     s1 += (*stringList)[loopPos].c_str();
-    if (request.getParam(s1, s2))
-      bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
+    if (request.getParam(s1, s2)) {
+      if (!bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str())) {
+        if (!error.empty()) error += ". ";
+        error += "Couldn't set server vars.";
+      }
+    }
   }
 }
 
