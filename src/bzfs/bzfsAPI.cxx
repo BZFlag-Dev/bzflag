@@ -2607,8 +2607,7 @@ BZF_API bool bz_registerCustomMapObject(const char *object, bz_CustomMapObjectHa
   if(!object || !handler)
     return false;
 
-  registerCustomMapObject(object, handler);
-  return true;
+  return registerCustomMapObject(object, handler);
 }
 
 //-------------------------------------------------------------------------
@@ -2618,8 +2617,7 @@ BZF_API bool bz_removeCustomMapObject(const char *object)
   if(!object)
     return false;
 
-  removeCustomMapObject(object);
-  return true;
+  return removeCustomMapObject(object);
 }
 
 //-------------------------------------------------------------------------

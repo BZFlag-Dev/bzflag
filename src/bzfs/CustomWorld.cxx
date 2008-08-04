@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993 - 2008 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 /* interface header */
 #include "CustomWorld.h"
@@ -67,19 +67,30 @@ void CustomWorld::writeToWorld(WorldInfo* world) const
 
 std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
 
-void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+bool registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
-	std::string objectName = object;
+  std::string objectName = TextUtils::toupper(object);
 
-	customObjectMap[TextUtils::toupper(objectName)] = handler;
+  if (customObjectMap.find(objectName) != customObjectMap.end())
+    return false;
+
+  customObjectMap[objectName] = handler;
+
+  return true;
 }
 
-void removeCustomMapObject ( const char* object )
+bool removeCustomMapObject ( const char* object )
 {
-	std::string objectName = object;
+  std::string objectName = TextUtils::toupper(object);
 
-	if ( customObjectMap.find(TextUtils::toupper(objectName)) != customObjectMap.end() )
-		customObjectMap.erase(customObjectMap.find(TextUtils::toupper(objectName)));
+  std::map<std::string,bz_CustomMapObjectHandler*>::iterator itr =  customObjectMap.find(objectName);
+
+  if ( itr != customObjectMap.end() )
+    customObjectMap.erase(itr);
+  else
+    return false;
+
+  return true;
 }
 
 // Local variables: ***
