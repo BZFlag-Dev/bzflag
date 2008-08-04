@@ -181,12 +181,8 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
 
 bool PacketHandler::handleRegisterGetForm(Packet &packet)
 {
-  if(!m_authSession)
-  {
-    sLog.outError("AuthResponse: no auth session started");
-    return true;
-  }
-
+  // currently not implemented
+  assert(false);
   return true;
 }
 

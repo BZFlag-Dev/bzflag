@@ -26,6 +26,8 @@ teTCPError SocketHandler::initialize(uint32 connections)
   if (!socketSet)
     return eTCPSocketNFG;
 
+  is_init = true;
+
   return eTCPNoError;
 }
 

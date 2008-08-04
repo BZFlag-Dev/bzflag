@@ -25,6 +25,8 @@
 #include "ServerListCache.h"
 #include "cURLManager.h"
 
+class AuthConnectSocket;
+
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
@@ -58,13 +60,17 @@ private:
   void _shutDown();
 
 private:
+  friend class AuthConnectSocket;
+
   bool addedCacheToList;
   int phase;
+  int auth_phase;
   std::vector<ServerItem> servers;
   ServerListCache* serverCache;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
   StartupInfo *startupInfo;
+  AuthConnectSocket *authSocket;
 };
 
 // authentication is done through BZAuthd

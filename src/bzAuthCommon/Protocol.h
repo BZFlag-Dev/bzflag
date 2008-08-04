@@ -37,10 +37,9 @@ extern const char *bzAuthOpcodeNames[NUM_OPCODES];
 
 enum BzAuthCommTypes
 {
-  BZAUTH_COMM_INIT = 0,
-  BZAUTH_COMM_AUTH = 1,
+  BZAUTH_COMM_AUTH = 0,
+  BZAUTH_COMM_REGFORM = 1,
   BZAUTH_COMM_REG = 2,
-  BZAUTH_COMM_TOKEN = 3,
   BZAUTH_NUM_COMM_TYPES
 };
 

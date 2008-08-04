@@ -237,7 +237,7 @@ private:
 class SocketHandler
 {
 public:
-  SocketHandler() : socketSet(NULL) {}
+  SocketHandler() : socketSet(NULL), is_init(false) {}
   ~SocketHandler();
   static bool global_init();
   teTCPError initialize(uint32 connections);
@@ -245,11 +245,13 @@ public:
   void addSocket(Socket *socket);
 
   uint32 getMaxConnections () const { return maxUsers; }
+  bool isInitialized() const { return is_init; }
 private:
   net_SocketSet socketSet;
   typedef std::map<Socket *, PacketHandlerBase *> SocketMapType;
   SocketMapType socketMap;
   uint32 maxUsers;
+  bool is_init;
 };
 
 #endif

@@ -14,6 +14,7 @@
 #include "ServerList.h"
 
 /* system headers */
+#include <assert.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -39,11 +40,82 @@
 /* auth headers */
 #include "../bzAuthCommon/Socket.h"
 #include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/RSA.h"
 
 SocketHandler authSockHandler;
 
+class ServerList;
+
+class AuthConnectSocket : public ConnectSocket
+{
+public:
+  AuthConnectSocket(ServerList *l, SocketHandler *h) : ConnectSocket(h), serverList(l) {}
+  void onReadData(PacketHandlerBase *&, Packet &packet) {
+    switch(packet.getOpcode()) {
+      case DMSG_AUTH_CHALLENGE: {
+        uint8 *key_n;
+        uint32 e;
+        uint16 n_len;
+        assert(packet >> n_len);
+        key_n = new uint8[n_len];
+        packet.read(key_n, (size_t)n_len);
+        assert(packet >> e);
+
+        sRSAManager.initialize();
+        sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
+        
+        std::string message = serverList->startupInfo->callsign;
+        message += " ";
+        message += serverList->startupInfo->password;
+
+        uint8 *cipher = NULL;
+        size_t cipher_len;
+
+        sRSAManager.getPublicKey().encrypt((uint8*)message.c_str(), message.size(), cipher, cipher_len);
+
+        {
+          Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
+          response << (uint16)cipher_len;
+          response.append(cipher, cipher_len);
+          sendData(response);
+        }
+
+        sRSAManager.rsaFree(cipher);
+        delete[] key_n;
+      } break;
+      case DMSG_AUTH_SUCCESS:
+        uint32 token;
+        packet >> token;
+        logDebugMessage(0, "Auth successful, token %d\n", token);
+        snprintf(serverList->startupInfo->token, TokenLen, "%d", token);
+        disconnect();
+        serverList->auth_phase = -1;
+        break;
+      case DMSG_AUTH_FAIL:
+        uint32 reason;
+        packet >> reason;
+        logDebugMessage(0, "Auth failed, reason %d\n", reason);
+        snprintf(serverList->startupInfo->token, TokenLen, "badtoken");
+        disconnect();
+        serverList->auth_phase = -1;
+
+        break; 
+      default:
+        logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
+        disconnect();
+        serverList->auth_phase = -1;
+    }
+  }
+
+  void onDisconnect() {}
+private:
+  ServerList *serverList;
+};
+
 ServerList::ServerList() :
 	phase(-1),
+  auth_phase(-1),
+  authSocket(NULL),
 	serverCache(ServerListCache::get()),
 	pingBcastSocket(-1)
 {
@@ -69,6 +141,12 @@ void ServerList::startServerPings(StartupInfo *info) {
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingBcastSocket != -1)
     PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
+
+  if(auth_phase == -1) {
+    if(!authSockHandler.isInitialized()) authSockHandler.initialize(32000);
+    authSocket = new AuthConnectSocket(this, &authSockHandler);
+    auth_phase = 0;
+  }
 }
 
 void ServerList::readServerList()
@@ -95,8 +173,8 @@ void ServerList::readServerList()
     // and record "badtoken" into the token string and print an
     // error
     if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-      strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-	      TokenLen);
+      //strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
+	    //  TokenLen);
 #ifdef DEBUG
       printError("got token:");
       printError(startupInfo->token);
@@ -107,12 +185,12 @@ void ServerList::readServerList()
 			strlen(noTokenIdentifier))) {
       printError("ERROR: did not get token:");
       printError(base);
-      strcpy(startupInfo->token, "badtoken\0");
+      //strcpy(startupInfo->token, "badtoken\0");
       base = scan;
       continue;
     } else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier))) {
       printError(base);
-      strcpy(startupInfo->token, "badtoken\0");
+      //strcpy(startupInfo->token, "badtoken\0");
       base = scan;
       continue;
     } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
@@ -306,6 +384,25 @@ void			ServerList::checkEchos(StartupInfo *info)
     // do phase 1 only if we found a valid list server url
     phase = 1;
   }
+
+  if(auth_phase == 0 && authSocket->connect("127.0.0.1", 1234) == 0)
+      auth_phase = 1;
+
+  if(auth_phase == 1) {
+    // send a handshake to the auth daemon, including the request for auth
+    uint8 commType = BZAUTH_COMM_AUTH;
+    uint8 peerType = BZAUTHD_PEER_CLIENT;
+    uint16 protoVersion = 1;
+    uint32 cliVersion = 2;
+    Packet msg(MSG_HANDSHAKE);
+    msg << peerType << protoVersion << cliVersion << commType;
+    authSocket->sendData(msg);
+    auth_phase = 2;
+  }
+
+  if(auth_phase == 2)
+    // update the auth sockets
+    authSockHandler.update();
 
   // get echo messages
   while (true) {
