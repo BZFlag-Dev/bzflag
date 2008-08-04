@@ -49,6 +49,10 @@ namespace BZW
 
         definition(bzw_grammar const& self)
         {
+          line_end
+            = +eol_p
+            ;
+
           block_end
             = str_p("end")
             ;
