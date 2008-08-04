@@ -36,66 +36,85 @@ namespace BZW
 
     template <typename ScannerT>
       struct definition
-    {
-      rule<ScannerT> identifier;
-      rule<ScannerT> string_literal;
-      rule<ScannerT> line_end;
-      /*TODO add group def grammar */
-      rule<ScannerT> parameter;
-      rule<ScannerT> parameter_list;
-      rule<ScannerT> block;
-      rule<ScannerT> block_end;
-      rule<ScannerT> block_list;
-
-      definition(bzw_grammar const& self)
       {
-        block_end
-          = str_p("end")
-          ;
+        rule<ScannerT> identifier;
+        rule<ScannerT> string_literal;
+        rule<ScannerT> line_end;
+        /*TODO add group def grammar */
+        rule<ScannerT> parameter;
+        rule<ScannerT> parameter_list;
+        rule<ScannerT> block;
+        rule<ScannerT> block_end;
+        rule<ScannerT> block_list;
 
-        identifier
-          = lexeme_d
-            [
-              alpha_p >>  *(alnum_p | ch_p('_'))
-            ]
-          - block_end
-          ;
+        definition(bzw_grammar const& self)
+        {
+          block_end
+            = str_p("end")
+            ;
 
-        string_literal
-          = lexeme_d
-            [
-              graph_p >> *( *blank_p >> (graph_p - ch_p('#') ) )
-            ]
-          ;
+          identifier
+            = lexeme_d
+              [
+                alpha_p >>  *(alnum_p | ch_p('_'))
+              ]
+            - block_end
+            ;
 
-        parameter
-          = !string_literal
-          >> line_end
-          ;
+          string_literal
+            = lexeme_d
+              [
+                graph_p >> *( *blank_p >> (graph_p - ch_p('#') ) )
+              ]
+            ;
 
-        parameter_list
-          = *parameter
-          >> block_end
-          >> line_end
-          ;
+          parameter
+            = !(string_literal/*[functor]*/)
+            >> line_end
+            ;
 
-        block
-          = identifier/*[functor]*/
-          >>
-            !(
-                string_literal/*[functor]*/
-             )
-          >> line_end
-          >> parameter_list
-          ;
+          parameter_list
+            = *parameter
+            >> block_end
+            >> line_end
+            ;
 
-        block_list
-          = *( line_end | block );
-      }
+          block
+            = identifier/*[functor]*/
+            >>
+              !(
+                  string_literal/*[functor]*/
+              )
+            >> line_end
+            >> parameter_list
+            ;
 
-      rule<ScannerT> const& start() { return block_list; }
-    };
+          block_list
+            = *( line_end | block );
+        }
+
+        rule<ScannerT> const& start() { return block_list; }
+      };
     Parser& parser;
+  };
+
+  struct bzw_skip_grammar : grammar<bzw_skip_grammar>
+  {
+    template <typename ScannerT>
+      struct definition
+      {
+        rule<ScannerT> skip;
+
+        definition(bzw_skip_grammar const& /*self*/)
+        {
+          skip
+            = blank_p
+            | "#" >> *(anychar_p - eol_p)
+            ;
+        }
+
+        rule<ScannerT> const& start() const { return skip; }
+      };
   };
 }
 
