@@ -656,7 +656,7 @@ float Vector2::y ( float _y ){
 }
 
 // angle utils
-float	deg2Rad = (float)M_PI/180.0f;
+// deg2Rad is now defined in common.h
 float	rad2Deg = 180.0f/(float)M_PI;
 
 float toRad ( float angle )
