@@ -1079,6 +1079,9 @@ fi
 AC_SUBST(LIBZ)
 AC_MSG_RESULT($BUILD_ZLIB)
 AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
+if test "x$BUILD_ZLIB" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/zlib"
+fi
 
 
 dnl figure out whether we need to build the included curl library
