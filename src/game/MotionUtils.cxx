@@ -238,6 +238,7 @@ float getShotVel (ShotType type) {
   }
 }
 
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

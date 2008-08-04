@@ -1,4 +1,4 @@
-// HTTPServer.cpp : Defines the entry point for the DLL application.
+/// HTTPServer.cpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
@@ -87,7 +87,7 @@ public:
     header.clear();
   }
 
-  void update(void);
+  bool update(void);
 
   int connectionID;
 
@@ -123,6 +123,8 @@ public:
 
     std::string page;
     size_t pos;
+
+    bool forceClose;
   };
 
   class PendingHTTPTask : public HTTPTask
@@ -153,7 +155,7 @@ public:
 protected:
   void update(void);
 
-  void processRequest(HTTPRequest &request, int connectionID);
+  bool processRequest(HTTPRequest &request, int connectionID);
 
   HTTPConnectionMap liveConnections;
 
@@ -167,7 +169,7 @@ private:
   void sendOptions(int connectionID, bool p);
 
   void generateIndex(int connectionID, const HTTPRequest &request);
-  void generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
+  bool generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request);
 };
 
 HTTPServer *server = NULL;
@@ -356,8 +358,6 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
 
     size_t headerEnd = find_first_substr(connection.currentData,"\r\n\r\n");
 
-    std::string temp = connection.currentData.c_str()+headerEnd;
-
     if (!connection.headerComplete && headerEnd != std::string::npos) {
       bool done = false;  // ok we have the header and we don't haven't processed it yet
 
@@ -368,9 +368,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
       while (p < headerEnd) {
 	size_t p2 = find_first_substr(connection.currentData,"\r\n",p);
 
-	std::string line;
-	line.resize(p2-p);
-	std::copy(connection.currentData.begin()+p,connection.currentData.begin()+p2,line.begin());
+	std::string line ( connection.currentData.substr(p, p2-p) );
 	p = p2+2;
 
 	trimLeadingWhitespace(line);
@@ -399,8 +397,7 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
 	  headerEnd += 4;
 	  if (connection.currentData.size()-headerEnd >= connection.contentSize) {
 	    // read in that body!
-	    connection.body.resize(connection.currentData.size()-headerEnd);
-	    std::copy(connection.currentData.begin()+headerEnd,connection.currentData.end(),connection.body.end());
+	    connection.body.append( connection.currentData.substr(headerEnd) );
 	    connection.requestComplete = true;
 
 	    connection.bodyEnd += connection.contentSize;
@@ -417,18 +414,17 @@ void HTTPServer::pending(int connectionID, void *d, unsigned int s)
     if (connection.request == eTrace) {
       bz_sendNonPlayerData(connectionID, connection.currentData.c_str(),(unsigned int)connection.bodyEnd);
 
-      std::string nubby = connection.currentData.c_str()+connection.bodyEnd;
-      connection.currentData = nubby;
+      connection.currentData.erase(0, connection.bodyEnd);
       connection.flush();
     } else {
       // parse it all UP and build up a complete request
-      std::string nubby = connection.currentData.c_str()+connection.bodyEnd;
-      connection.currentData = nubby;
+      connection.currentData.erase(0, connection.bodyEnd);
 
       HTTPRequest request;
       connection.fillRequest(request);
       // rip off what we need for the request, and then flush
-      processRequest(request,connectionID);
+      if(processRequest(request,connectionID)) // the request closed, then just kill it
+	return;
       connection.flush();
     }
 
@@ -450,9 +446,17 @@ void HTTPServer::update(void)
 {
   HTTPConnectionMap::iterator itr = liveConnections.begin();
 
-  while (itr != liveConnections.end()) {
-    itr->second.update();
-    itr++;
+  while (itr != liveConnections.end())
+  {
+    if(itr->second.update())
+    {
+      HTTPConnectionMap::iterator i = itr;
+      itr++;
+      bz_removeNonPlayerConnectionHandler(i->first, this);
+      bz_disconnectNonPlayerConnection(i->first);
+    }
+    else
+      itr++;
   }
 
   if (liveConnections.size())
@@ -492,12 +496,12 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   connection.update();
 }
 
-void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request)
+bool HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &request)
 {
   HTTPConnectionMap::iterator itr = liveConnections.find(connectionID);
 
   if (itr == liveConnections.end())
-    return;
+    return false;
 
   HTTPConnection &connection = itr->second;
 
@@ -516,10 +520,19 @@ void HTTPServer::generatePage(BZFSHTTP* vdir, int connectionID, HTTPRequest &req
     connection.pendingTasks.push_back(HTTPConnection::PendingHTTPTask(reply,request,request.request == eHead));
   }
 
-  connection.update();
+  if(connection.update())
+  {
+    connection.flush();
+    bz_removeNonPlayerConnectionHandler(connectionID, this);
+    bz_disconnectNonPlayerConnection(connectionID);
+    liveConnections.erase(itr);
+    return true;
+  }
+
+  return false;
 }
 
-void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
+bool HTTPServer::processRequest(HTTPRequest &request, int connectionID)
 {
   // check the request to see if it'll have any thing we care to process
 
@@ -544,7 +557,7 @@ void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
     if(!vdir)
       generateIndex(connectionID,request);
     else
-      generatePage(vdir,connectionID,request);
+      return generatePage(vdir,connectionID,request);
     break;
 
   case eOptions:
@@ -556,6 +569,8 @@ void HTTPServer::processRequest(HTTPRequest &request, int connectionID)
     send501Error(connectionID);
     break;
   }
+
+  return false;
 }
 
 void HTTPServer::send100Continue(int connectionID)
@@ -639,7 +654,8 @@ void HTTPConnection::fillRequest(HTTPRequest &req)
   req.cookies.clear();
 
   req.ip = bz_getNonPlayerConnectionIP(connectionID);
-  req.hostmask = bz_getNonPlayerConnectionHost(connectionID);
+  const char *hostmask = bz_getNonPlayerConnectionHost(connectionID);
+  req.hostmask = hostmask ? hostmask : "";
 
   // parse the headers here for cookies
   std::map<std::string,std::string>::iterator itr = req.headers.begin();
@@ -693,14 +709,20 @@ void HTTPConnection::fillRequest(HTTPRequest &req)
     req.body = body;
 }
 
-void HTTPConnection::update(void)
+bool HTTPConnection::update(void)
 {
   // hit the processings
   std::vector<size_t> killList;
 
+  bool closeConnect = false;
+
   for (size_t i = 0; i < processingTasks.size(); i++) {
     if (processingTasks[i].update(connectionID))
+    {
+      if (processingTasks[i].forceClose)
+	closeConnect = true;
       killList.push_back(i);
+    }
   }
 
   std::vector<size_t>::reverse_iterator itr = killList.rbegin();
@@ -747,6 +769,8 @@ void HTTPConnection::update(void)
       }
     }
   }
+
+  return closeConnect;
 }
 
 const char* getMimeType(HTTPReply::DocumentType docType)
@@ -777,9 +801,12 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   // start a new one
   page = "HTTP/1.1";
 
+  forceClose = true;
+
   switch(r.returnCode) {
   case HTTPReply::e200OK:
     page += " 200 OK\n";
+    forceClose = false;
     break;
 
   case HTTPReply::e301Redirect:
@@ -789,6 +816,18 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     } else {
       page += " 500 Server Error\n";
     }
+    page += "Host: " + serverHostname + "\n";
+
+    break;
+
+  case HTTPReply::e302Found:
+    if (r.redirectLoc.size()) {
+      page += " 302 Found\n";
+      page += "Location: " + r.redirectLoc + "\n";
+    } else {
+      page += " 500 Server Error\n";
+    }
+    page += "Host: " + serverHostname + "\n";
     break;
 
   case HTTPReply::e500ServerError:
@@ -810,20 +849,24 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     else
       page += serverHostname;
     page += "\"\n";
+    forceClose = false;
     break;
 
   case HTTPReply::e404NotFound:
     page += " 404 Not Found\n";
-    break;
+    forceClose = false;
+   break;
 
   case HTTPReply::e403Forbiden:
     page += " 403 Forbidden\n";
-    break;
+    forceClose = false;
+   break;
   }
 
-  if (r.returnCode != HTTPReply::e200OK)
-    page += "Connection: close\n";
-  else if (FORCE_CLOSE)
+  if(FORCE_CLOSE)
+    forceClose = true;
+
+  if (forceClose)
     page += "Connection: close\n";
 
   if (r.body.size()) {
@@ -893,11 +936,11 @@ bool HTTPConnection::HTTPTask::update(int connectionID)
   if (pendingMessages > 1)
     return false;
 
-  size_t write = page.size();
-  size_t left = write-pos;
+  size_t write = 1000;
+  size_t left = page.size()-pos;
 
-  if (left > 1000)
-    write = pos + 1000;
+  if (left <= 1000)
+    write = left;
 
   if (!bz_sendNonPlayerData (connectionID, page.c_str()+pos, (unsigned int)write))
     return true;

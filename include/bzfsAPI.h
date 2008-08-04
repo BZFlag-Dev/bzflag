@@ -1664,6 +1664,7 @@ class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
   virtual ~bz_APISolidWorldObject_V1();
 
   bz_eSolidWorldObjectType  solidType;
+  int			    subID;
 
   float center[3];
   float maxAABBox[3];
@@ -1672,7 +1673,7 @@ class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
   float maxBBox[3];
   float minBBox[3];
 
-  bool collide(float pos[3], float rad);
+  virtual bool collide(float pos[3], float rad, float* hit);
 
   bz_SolidObjectPassableAtributes   shootThru;
   bz_SolidObjectPassableAtributes   driveThru;
@@ -1893,6 +1894,9 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint(float pos[3]);
 // game info
 BZF_API bz_eGameType bz_getGameType(void);
 
+BZF_API bool bz_allowJumping(void);
+
+
 // utility
 BZF_API const char* bz_MD5(const char * str);
 BZF_API const char* bz_MD5(const void * data, size_t size);
@@ -1976,7 +1980,12 @@ typedef enum {
 class BZF_API bz_ServerSidePlayerHandler
 {
  public:
+   bz_ServerSidePlayerHandler();
   virtual ~bz_ServerSidePlayerHandler() {};
+
+  int getPlayerID ( void ){return playerID;}
+
+  void update ( void );
 
   // you must call setPlayerData when this is called.
   virtual void added(int player) = 0; // it is required that the bot provide this method
@@ -2026,13 +2035,16 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner 
   virtual void jumped ( void ){}; // the bot has left the ground
   virtual void landed ( void ){}; // the bot has landed
-  virtual void collide ( int /*objectID*/, float* /*pos*/ ){}; // the bot run into an object
+  virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){}; // the bot ran into an object
+  virtual void outOfBounds (  float /*pos*/[3]){}; // the bot ran into the outer walls
+  virtual void flagPickup ( const char* /*flag*/ ){}; // bot got a flag
+  virtual void shotChange ( bz_eShotType /*shotType*/ ){}; // bot got shot change
 
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
 
   void setPlayerID ( int id ){playerID = id;}
- protected:
+
   // actions to make
   void setPlayerData(const char *callsign,
 		     const char *token, const char *clientVersion,
@@ -2046,7 +2058,7 @@ class BZF_API bz_ServerSidePlayerHandler
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
 
   void dropFlag( void );
-  void setMovementInput(float forward, float turn);
+  void setMovement(float forward, float turn);
   bool fireShot(void);
   bool jump(void);
 
@@ -2054,6 +2066,7 @@ class BZF_API bz_ServerSidePlayerHandler
   bool canJump(void);
   bool canShoot(void);
   bool canMove(void);
+  bool falling (void);
   bz_eShotType getShotType(void);
 
   void getPosition ( float *p );
@@ -2071,9 +2084,11 @@ class BZF_API bz_ServerSidePlayerHandler
 
  private:
   float input[2];
+  bool	wantToJump;
 
   bool autoSpawn;
 
+public:
   class BZF_API UpdateInfo
   {
   public:
@@ -2103,12 +2118,13 @@ class BZF_API bz_ServerSidePlayerHandler
     float getDelta( const UpdateInfo & state);
   };
 
+private:
   UpdateInfo lastUpdate;
   UpdateInfo currentState;
 
-  bool alive;
+  int flaps;
 
-  void computeStateFromInput(void);
+  bool alive;
 };
 
 // *** NOTE *** support for server side players in incomplete.

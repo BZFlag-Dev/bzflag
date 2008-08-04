@@ -16,10 +16,27 @@ modern cards. Both ATI and NVIDIA provide Linux drivers for many
 architectures on there websites. In general they provide greater
 performance then the default drivers in many distributions.
 
-More information about bzflag is available in the man pages for
+More information about BZFlag is available in the man pages for
 bzflag, bzfs, and bzadmin.  Also check:
 
   http://BZFlag.org/
+
+Different Linux distributions use different naming conventions for the
+packages that provide the dependencies needed to compile and run
+BZFlag.  Known requirements include:
+
+  Debian & Ubuntu:
+
+    libgl1-mesa-dev
+    libglu1-mesa-dev
+    libsdl1.2-dev
+    libcurl3-dev
+
+  Fedora:
+
+    A "yum install SDL-devel curl-devel ftgl-devel ncurses-devel"
+    command will follow dependencies to automatically install all of
+    the packages required to compile BZFlag.
 
 Known bugs in the Linux version:
 

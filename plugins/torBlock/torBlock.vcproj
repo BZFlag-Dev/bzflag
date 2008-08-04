@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../include;./plugin_utils/"
+				AdditionalIncludeDirectories="../../include;../plugin_utils/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;torBlock_EXPORTS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/torBlock.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../;../plugin_utils/VC8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/VC8/release/"
 				ModuleDefinitionFile="torBlock.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

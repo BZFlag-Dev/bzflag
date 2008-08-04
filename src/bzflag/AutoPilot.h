@@ -18,6 +18,8 @@
 // common headers
 #include "Flag.h"
 
+#include "ShotPath.h"
+
 void doAutoPilot(float &rotation, float &speed);
 void teachAutoPilot(FlagType *, int);
 

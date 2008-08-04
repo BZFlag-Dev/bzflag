@@ -2,29 +2,30 @@
 [?IF Editing]
   <h2>editing helpmsg: [$HelpMsgName]</h2>
   
-  <form action="" method="post">
+  <form id="helpmsg_edit" action="[$BaseURL][$CurrentPage]" method="post">
     <input type="hidden" name="name" value="[$HelpMsgName]">
     <textarea name="helptext">[$HelpMsgBody]</textarea>
-    <input type="submit" value="save" />
+    <input type="submit" value="save">
   </form>
 [?ELSE Editing]
   <h2>helpmsg list</h2>
   
-  <form action="" method="post">
-    <ul class="helpmsgs">
+  <form id="helpmsg_delete" action="[$BaseURL][$CurrentPage]" method="post">
+    <ul>
 [*START HelpMsgs]
       <li><input type="checkbox" name="delmsg"
-                 id="help_[$HelpMsgName]" value="[$HelpMsgName]" />
+                 id="help_[$HelpMsgName]" value="[$HelpMsgName]">
         <label for="help_[$HelpMsgName]">[$HelpMsgName]</label>
         <a class="edit" href="?name=[$HelpMsgName]">edit</a></li>
 [*END HelpMsgs]
+[*EMPTY HelpMsgs]
     </ul>
-    <input type="submit" value="delete" />
+    <input type="submit" value="delete">
   </form>
   
-  <form action="" method="get">
-    <input type="text" name="name" />
-    <input type="submit" value="new" />
+  <form id="helpmsg_new" action="[$BaseURL][$CurrentPage]" method="get">
+    <input type="text" name="name">
+    <input type="submit" value="new">
   </form>
 [?END Editing]
 </body>

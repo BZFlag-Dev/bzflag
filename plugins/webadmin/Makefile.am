@@ -10,6 +10,7 @@ webadmin_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
 	README.txt \
+	templates \
 	webadmin.def \
 	webadmin.sln \
 	webadmin.vcproj

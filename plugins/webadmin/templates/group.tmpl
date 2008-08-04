@@ -4,34 +4,39 @@
 [?IF Editing]
   <h2>editing group: [$GroupName]</h2>
   
-  <form action="" method="post">
+  <form id="group_edit" action="[$BaseURL][$CurrentPage]" method="post">
     <ul class="perms">
 [*START Permissions]
       <li><input type="checkbox" id="perm_[$Permission]"
-                 name="perm" value="[$Permission]" />
+                 name="perm" value="[$Permission]">
         <label for="perm_[$Permission]">[$Permission]</label></li>
 [*END Permissions]
+      <li>No permissions!?</li>
+[*EMPTY Permissions]
     </ul>
-    <input type="submit" value="save" />
+    <input type="hidden" name="name" value="[$GroupName]">
+    <input type="submit" value="save">
   </form>
 [?ELSE Editing]
   <h2>group list</h2>
   
-  <form action="" method="get">
-    <ul class="groups">
+  <form id="group_delete" action="[$BaseURL][$CurrentPage]" method="get">
+    <ul>
 [*START Groups]
       <li><input type="checkbox" id="group_[$GroupName]"
-                 name="delgroup" value="[$GroupName]" checked="[$Checked]"/>
+                 name="delgroup" value="[$GroupName]"/>
         <label for="group_[$GroupName]">[$GroupName]</label>
         <a class="edit" href="?name=[$GroupName]">edit</a></li>
 [*END Groups]
+      <li>No groups!</li>
+[*EMPTY Groups]
     </ul>
-    <input type="submit" value="delete" />
+    <input type="submit" value="delete">
   </form>
   
-  <form action="" method="get">
-    <input type="text" name="name" />
-    <input type="submit" value="new" />
+  <form id="group_new" action="[$BaseURL][$CurrentPage]" method="get">
+    <input type="text" name="name">
+    <input type="submit" value="new">
   </form>
 [?END Editing]
 </body>

@@ -622,6 +622,9 @@ void publicize()
      if (listServerLinksCount)
      listServerLink.closeLink(); */
 
+  if (!bz_getPublic())
+    return;
+
   listServerLinksCount = 0;
 
   if (listServerLink)
@@ -682,14 +685,22 @@ static bool serverStart()
   opt = optOn;
   if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
     nerror("serverStart: setsockopt SO_REUSEADDR");
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     if (!clOptions->useFallbackPort) {
       nerror("couldn't bind connect socket");
+#ifdef _WIN32
+      closesocket(wksSocket);
+#else
       close(wksSocket);
+#endif
       return false;
     }
 
@@ -697,7 +708,11 @@ static bool serverStart()
     addr.sin_port = htons(0);
     if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
       nerror("couldn't bind connect socket");
+#ifdef _WIN32
+      closesocket(wksSocket);
+#else
       close(wksSocket);
+#endif
       return false;
     }
 
@@ -712,13 +727,21 @@ static bool serverStart()
 
   if (listen(wksSocket, 5) == -1) {
     nerror("couldn't make connect socket queue");
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 
   addr.sin_port = htons(clOptions->wksPort);
   if (!NetHandler::initHandlers(addr)) {
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 
@@ -737,7 +760,11 @@ static void serverStop()
 
   // reject attempts to talk to server
   shutdown(wksSocket, 2);
+#ifdef _WIN32
+  closesocket(wksSocket);
+#else
   close(wksSocket);
+#endif
 
   // tell players to quit
   NetMsg msg = MSGMGR.newMessage();
@@ -1953,7 +1980,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   fixTeamCount();
 
   // tell the list server the new number of players
-  listServerLink->queueMessage(ListServerLink::ADD);
+  if(listServerLink)
+    listServerLink->queueMessage(ListServerLink::ADD);
 
   dumpScore();
 
@@ -2348,7 +2376,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     fixTeamCount();
 
     // tell the list server the new number of players
-    listServerLink->queueMessage(ListServerLink::ADD);
+    if(listServerLink)
+      listServerLink->queueMessage(ListServerLink::ADD);
   }
 
   if (clOptions->gameType == RabbitChase)
@@ -3739,7 +3768,7 @@ static void setupPingReply(void)
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 }
 
-static void setupPermisions(void)
+static void setupPermissions(void)
 {
   // load up the access permissions & stuff
   initGroups();
@@ -3810,6 +3839,9 @@ static bool initServer(int argc, char **argv)
   bzfsrand((unsigned int)time(0));
 
   initStartupPrams(argc,argv);
+
+  setupPermissions();
+
   setupPlugins();
 
   if (!prepareWorld())
@@ -3865,8 +3897,6 @@ static bool initServer(int argc, char **argv)
 
   nextSuperFlagInsertion = TimeKeeper::getCurrent();
   flagExp = -logf(0.5f) / FlagHalfLife;
-
-  setupPermisions();
 
   if (clOptions->startRecording)
     Record::start(AllPlayers);

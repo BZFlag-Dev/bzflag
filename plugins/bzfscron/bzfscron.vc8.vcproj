@@ -128,7 +128,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../include;../plugin_utils/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;bzfscron_EXPORTS"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"

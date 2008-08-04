@@ -24,7 +24,6 @@
 
 #define GL_INVALID_ID 0xffffffff
 
-#define deg2Rad 0.017453292519943295769236907684886f
 
 float getFloatColor ( int val );
 void setColor ( float c[3], int r, int g, int b );

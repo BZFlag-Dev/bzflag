@@ -180,6 +180,7 @@ public:
   typedef enum {
     e200OK,
     e301Redirect,
+    e302Found,
     e401Unauthorized,
     e403Forbiden,
     e404NotFound,
@@ -285,6 +286,10 @@ protected:
   void addPermToLevel(int level, const std::string &perm);
 
   int getLevelFromGroups(const std::vector<std::string> &groups);
+
+  const char* getSessionUser ( int sessionID );
+  bool invalidateSession ( int sessionID );
+
 private:
   void flushTasks(void);
   bool verifyToken(const HTTPRequest &request, HTTPReply &reply);
@@ -292,6 +297,7 @@ private:
   typedef struct {
     double time;
     int level;
+    std::string username;
   } AuthInfo;
 
   std::map<int,AuthInfo> authedSessions;

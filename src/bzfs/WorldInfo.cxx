@@ -589,14 +589,17 @@ int WorldInfo::getUncompressedSize() const
 const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
 				   const float* pos, float angle,
 				   float dx, float dy, float dz,
-				   bool directional) const
+				   bool directional, bool checkWalls) const
 {
   // check walls
-  const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  for (unsigned int w = 0; w < walls.size(); w++) {
-    const WallObstacle* wall = (const WallObstacle*) walls[w];
-    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-      return wall;
+  if(checkWalls)
+  {
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (unsigned int w = 0; w < walls.size(); w++) {
+      const WallObstacle* wall = (const WallObstacle*) walls[w];
+      if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+	return wall;
+    }
   }
 
   // get the list of potential hits from the collision manager

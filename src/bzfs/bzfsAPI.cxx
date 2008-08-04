@@ -43,6 +43,8 @@
 #include "ServerIntangibilityManager.h"
 #include "bz_md5.h"
 #include "version.h"
+#include "BZDBCache.h"
+#include "MotionUtils.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -191,6 +193,21 @@ void broadcastPlayerScoreUpdate(int playerID)
 
   sendPlayerScoreUpdate(player);
 }
+
+//-------------------------------------------------------------------------
+unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle );
+void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle );
+
+bz_APISolidWorldObject_V1 *APISolidFromObsacle( const Obstacle *obs )
+{
+  bz_APISolidWorldObject_V1 * solid = new bz_APISolidWorldObject_V1;
+  solid->id = buildObjectIDFromObstacle(*obs);
+  setSolidObjectFromObstacle(*solid,*obs);
+  solid->subID = obs->getListID();
+  return solid;
+}
+
+
 
 //******************************Versioning********************************************
 BZF_API int bz_APIVersion(void)
@@ -630,44 +647,20 @@ bz_APIStringList::~bz_APIStringList()
 
 //-------------------------------------------------------------------------
 
-void bz_APIStringList::push_back(const char* value)
-{
-  if(value)
-    data->list.push_back(bz_ApiString(value));
-}
-
-//-------------------------------------------------------------------------
-
 void bz_APIStringList::push_back(const std::string &value)
 {
   data->list.push_back(bz_ApiString(value));
 }
 
 //-------------------------------------------------------------------------
-static bz_ApiString empty_getString;
+bz_ApiString emptyString;
+
 const bz_ApiString& bz_APIStringList::get(unsigned int i)
 {
   if(i >= data->list.size())
-    return empty_getString;
+    return emptyString;
 
   return data->list[i];
-}
-
-//-------------------------------------------------------------------------
-
-bool bz_APIStringList::contains(const char* value)
-{
-  if (!value)
-    return false;
-
-  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
-}
-
-//-------------------------------------------------------------------------
-
-bool bz_APIStringList::contains(const std::string &value)
-{
-  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
 }
 
 //-------------------------------------------------------------------------
@@ -710,6 +703,25 @@ void bz_APIStringList::clear(void)
 {
   data->list.clear();
 }
+
+//-------------------------------------------------------------------------
+bool bz_APIStringList::contains(const char* value)
+{
+  if (!value)
+    return false;
+
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
+}
+
+//-------------------------------------------------------------------------
+
+bool bz_APIStringList::contains(const std::string &value)
+{
+  return std::find(data->list.begin(), data->list.end(), bz_ApiString(value)) != data->list.end();
+}
+
+//-------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------
 
@@ -930,6 +942,9 @@ BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
   for(unsigned int i=0; i < netConnectedPeers[connectionID].notifyList.size(); i++)
     netConnectedPeers[connectionID].notifyList[i]->disconnect(connectionID);
 
+  netConnectedPeers[connectionID].handler->flushData();
+  delete(netConnectedPeers[connectionID].handler);
+  netConnectedPeers[connectionID].handler = NULL;
   netConnectedPeers[connectionID].notifyList.clear();
   netConnectedPeers[connectionID].pendingSendChunks.clear();
   netConnectedPeers[connectionID].deleteMe = true;
@@ -1174,7 +1189,11 @@ bz_BasePlayerRecord *APIPlayerFromRecord ( GameKeeper::Player *player )
   playerRecord->verified=player->accessInfo.isVerified();
   playerRecord->globalUser=player->authentication.isGlobal();
 
-  playerRecord->ipAddress=player->netHandler->getTargetIP();
+  if(player->netHandler)
+    playerRecord->ipAddress=player->netHandler->getTargetIP();
+  else
+    playerRecord->ipAddress = "localhost";
+
   playerRecord->update();
   return playerRecord;
 }
@@ -2796,6 +2815,12 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1()
   memset(minBBox, 0, sizeof(float) *3);
 }
 
+bool bz_APISolidWorldObject_V1::collide(float /*pos*/[3], float /*rad*/, float* /*hit*/)
+{
+  return false;
+}
+
+
 //-------------------------------------------------------------------------
 
 bz_APISolidWorldObject_V1::~bz_APISolidWorldObject_V1()
@@ -2934,12 +2959,7 @@ bz_eAPIColType getAPIMapObject(InBuildingType colType, const Obstacle *obs, bz_A
     case IN_PYRAMID:
     case IN_TETRA:
       if(object)
-      {
-	bz_APISolidWorldObject_V1 *solid=new bz_APISolidWorldObject_V1;
-	solid->id = buildObjectIDFromObstacle(*obs);
-	setSolidObjectFromObstacle(*solid,*obs);
-	*object=solid;
-      }
+	*object = APISolidFromObsacle(obs);
       return base ? eInBase : eInSolid;
 
     case IN_TELEPORTER:
@@ -2957,7 +2977,6 @@ bz_eAPIColType bz_cylinderInMapObject(float pos[3], float height, float radius, 
 
   const Obstacle *obs=NULL;
   return getAPIMapObject(world->cylinderInBuilding(&obs, pos, radius, height), obs, object);
-  ;
 }
 
 //-------------------------------------------------------------------------
@@ -3927,6 +3946,11 @@ BZF_API bz_eGameType bz_getGameType(void)
   return TeamFFAGame;
 }
 
+BZF_API bool bz_allowJumping(void)
+{
+  return clOptions->gameOptions & JumpingGameStyle ? true : false;
+}
+
 // utility
 BZF_API const char* bz_MD5 ( const char * str )
 {
@@ -3949,6 +3973,19 @@ BZF_API const char* bz_getServerVersion ( void )
 
 // server side bot API
 
+bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0), alive(false)
+{
+  input[0] = input[1] = 0;
+  lastUpdate.rotVel = 0;
+  lastUpdate.vec[0] = 0;
+  lastUpdate.vec[1] = 0;
+  lastUpdate.vec[2] = 0;
+  lastUpdate.rot = 0;
+  lastUpdate.pos[0] = lastUpdate.pos[1] = lastUpdate.pos[2] = 0;
+  currentState = lastUpdate;
+
+}
+
 // higher level logic API
 void bz_ServerSidePlayerHandler::spawned(void)
 {
@@ -3968,6 +4005,12 @@ void bz_ServerSidePlayerHandler::died ( int /*killer*/ )
 void bz_ServerSidePlayerHandler::smote ( SmiteReason /*reason*/ )
 {
   alive = false;
+}
+
+void bz_ServerSidePlayerHandler::update ( void )
+{
+  think();
+  updatePhysics();
 }
 
 
@@ -3993,9 +4036,12 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot
     lastUpdate.vec[2] = 0;
     lastUpdate.rot = _rot;
 
+    currentState = lastUpdate;
+
     input[0] = input[1] = 0;
     updatePhysics();
 
+    flaps = 0;
     // tell the high level API that we done spawned;
     spawned();
   }
@@ -4029,9 +4075,26 @@ void bz_ServerSidePlayerHandler::flagTransfer(int, int, int, bz_eShotType){}
 
 void bz_ServerSidePlayerHandler::nearestFlag(const char *, float[3]){}
 
-void bz_ServerSidePlayerHandler::grabFlag(int, int, const char *, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::grabFlag(int player, int /*flagID*/, const char* flagType, bz_eShotType shotType)
+{
+  if (player == playerID)
+  {
+    if (alive)	// it's for us so notify the AI that events happened
+    {
+      shotChange(shotType);
+      flagPickup(flagType);
+    }
+  }
+}
 
-void bz_ServerSidePlayerHandler::setShotType(int, bz_eShotType ){}
+void bz_ServerSidePlayerHandler::setShotType(int player, bz_eShotType shotType )
+{
+  if (player == playerID)
+  {
+    if (alive)	// it's for us so notify the AI that events happened
+      shotChange(shotType);
+  }
+}
 
 void bz_ServerSidePlayerHandler::shotFired(int, unsigned short, bz_eShotType ){}
 
@@ -4042,7 +4105,6 @@ void bz_ServerSidePlayerHandler::playerTeleported( int, unsigned short, unsigned
 void bz_ServerSidePlayerHandler::playerAutopilot( int, bool ){}
 
 void bz_ServerSidePlayerHandler::allowSpawn( bool ){}
-
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
@@ -4075,6 +4137,9 @@ void bz_ServerSidePlayerHandler::joinGame(void)
 
   if(player->player.isAlive() || player->player.isPlaying())
     return ;
+
+  // set our state to signing on so we can join
+  player->player.signingOn();
 
   playerAlive(playerID);
   player->lastState.order=0;
@@ -4156,17 +4221,7 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::computeStateFromInput(void)
-{
-  // compute the dt
-  // double now = bz_getCurrentTime();
-  // double delta = now - currentState.time;
- // currentState.
-}
-
-//-------------------------------------------------------------------------
-
-void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
+void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
 {
   if(input[0]==turn && input[1]==forward)
     return ;
@@ -4182,8 +4237,6 @@ void bz_ServerSidePlayerHandler::setMovementInput(float forward, float turn)
     input[0]=-1.0f;
   if(input[1] < -1.0f)
     input[1]=-1.0f;
-
-  computeStateFromInput();
 }
 
 //-------------------------------------------------------------------------
@@ -4197,24 +4250,334 @@ bool bz_ServerSidePlayerHandler::fireShot(void)
 
 bool bz_ServerSidePlayerHandler::jump(void)
 {
-  return false;
+  if(canMove() && canJump())
+   wantToJump = true;
+  return wantToJump;
 }
 
 //-------------------------------------------------------------------------
+
+const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional, bool checkWalls = true )
+{
+  // check and see if this path goes thru a building.
+  const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional,checkWalls);
+  if (!hit) // if it does not, it's clear
+    return NULL;
+  else
+  {
+    // we assume that the start point of the path is always clear, so if we get here, then the endpoint passed thru a building.
+
+    // compute the distance that the center point moves.
+   float len = 0;
+   float vec[3];
+    for (int i =0; i < 3; i++)
+      vec[i] = newPos.pos[i] - oldPos.pos[i];
+    len = sqrtf(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+
+    // if the distance is less then our tolerance, and the END point is IN an object, assume that the start point since we know that is clear
+    // return this as the collision value
+    float collideTol = 0.1f;
+    if ( len <= collideTol)
+    {
+      newPos = oldPos;
+      return hit;
+    }
+
+    //if (len < 10) //something is wrong
+  //  {
+  //    return hit;
+  //  }
+
+    // compute a midpoint to test, so we can do a binary search to find what "side" of the midpoint is clear
+    bz_ServerSidePlayerHandler::UpdateInfo midpoint;
+
+    for (int i =0; i < 3; i++)
+      midpoint.pos[i] = oldPos.pos[i] + vec[i]*0.5f;
+
+    midpoint.rot = oldPos.rot + ((oldPos.rot-newPos.rot)*0.5f);
+
+    // test from the start point to the midpoint
+    hit = world->hitBuilding(oldPos.pos, oldPos.rot, midpoint.pos, midpoint.rot, width, breadth, breadth, directional,checkWalls);
+
+    // if we have a hit, then the midpoint is "in" a building, so the valid section is the oldPos -> midpoint section.
+    // so set the endpoint to the midpoint and retest.
+    // if we don't have a hit. then the midpoint is outside of the building, and we want to test from the midpoint to the newpos and get closer
+    if (hit)
+    {
+      newPos = midpoint;
+      midpoint = oldPos;
+    }
+
+    // recurse to get closer to the actual collision point
+    return hitBuilding(midpoint,newPos,width,breadth,height,directional,checkWalls);
+  }
+
+  return NULL;
+}
+
+bool closeFloat ( float f1, float f2 )
+{
+  return fabs(f1)-fabs(f2) < 0.0001f;
+}
+
+bool checkBounds ( float pos[3], float rad )
+{
+  float x,y;
+  world->getSize(x,y);
+
+  if ( pos[0] + rad > x)
+    return false;
+  if ( pos[0] - rad < -x)
+    return false;
+
+  if ( pos[1] + rad > y)
+    return false;
+  if ( pos[1] - rad < -y)
+    return false;
+
+  return true;
+}
+
+void clampBounds ( float pos[3], float rad )
+{
+  float x,y;
+  world->getSize(x,y);
+
+  if ( pos[0] + rad > x)
+    pos[0] = x-rad;
+  if ( pos[0] - rad < -x)
+    pos[0] = -x+rad;
+
+  if ( pos[1] + rad > y)
+    pos[1] = y-rad;
+  if ( pos[1] - rad < -y)
+    pos[1] = -y+rad;
+}
 
 void bz_ServerSidePlayerHandler::updatePhysics(void)
 {
   if(!alive)
     return;
 
-  // see where we are
+  UpdateInfo newState(currentState); // where we think we are
+
+  double now = bz_getCurrentTime();
+  float fullDT = (float)(now - currentState.time);
+
+  float maxDelta = 0.25f;
+  int count = 1;
+  if ( fullDT > maxDelta)	// break up the dt into small chunks
+    count = (int)(fullDT/maxDelta);
+
+  for (int i = 0; i < count; i++ )
+  {
+    float delta = fullDT/count;
+    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+    int flagID = player->player.getFlag();
+    FlagType *flag = NULL;
+    bool hasOO = false;
+    
+    if (player->player.haveFlag())
+    {
+      flag = FlagInfo::get(flagID)->flag.type;
+      if (flag == Flags::OscillationOverthruster)
+	hasOO = true;
+    }
+
+    bool doUpdate = false;
+
+    // if we can't move, don't try to move
+    if (!canMove())
+    {
+      input[0] = input[1] = 0;
+      wantToJump = false;
+    }
+
+    if (falling())  // we are falling... so the input dosn't matter at all, just move us
+    {
+      newState.vec[2] += BZDBCache::gravity * delta;
+
+      newState.pos[0] += newState.vec[0] * delta;
+      newState.pos[1] += newState.vec[1] * delta;
+      newState.pos[2] += newState.vec[2] * delta;
+
+      // clamp us to in bounds
+      if (!checkBounds(newState.pos,BZDBCache::tankRadius))
+      {
+	clampBounds(newState.pos,BZDBCache::tankRadius);
+	outOfBounds(newState.pos);
+      }
+
+      // see if we hit anything
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO,false);
+
+      if (target)
+      {
+	// something was hit, so no mater what we have to update, cus our DR WILL be off
+	doUpdate = true;
+	// find out if we landed, or if we just hit something
+
+	// see if the thing we hit was below us.
+	newState.pos[2] += 0.1f;
+
+	// if we move the postion up a tad and test again, if we laned on something we should not be in contact with it.
+	if(!target->inMovingBox(currentState.pos,currentState.rot,newState.pos,newState.rot,BZDBCache::tankWidth*0.5f,BZDBCache::tankLength*0.5f,BZDBCache::tankHeight))
+	{
+	  newState.pos[2] -= 0.1f;
+
+	  // we landed, so our speed in z is 0
+	  currentState = newState;
+	  currentState.vec[2] = 0;
+
+	  // get our facing and apply it to our vector so we keep the components that are along our facing.
+	  float facing[3];
+	  vecFromAngle2d(newState.rot,facing);
+  	
+	  currentState.vec[0] *= facing[0];
+	  currentState.vec[1] *= facing[1];
+
+	  // set the state to have landed
+	  player->lastState.status &= ~PlayerState::Falling;
+
+	  // tell the AI that we landed
+	  landed();
+	}
+	else
+	{
+	  // we hit something normal, just slide down it
+	  newState.pos[2] -= 0.1f;
+
+	  currentState = newState;
+	  currentState.vec[0] = currentState.vec[1] = 0;
+
+	  bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
+	  collide(solid,currentState.pos);
+	  delete(solid);
+	}
+
+	newState = currentState;
+      }
+    }
+
+    // we are driving, so apply the input 
+    if (!falling() && canMove())
+    {
+      // see what the input wants us to do
+      float desiredTurn = input[1] * getMaxRotSpeed();
+
+      // clamp to the rotation speed for the frame.
+      newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
+
+      float currentSpeed = input[1] * getMaxLinSpeed();
+
+      // compute the momentum
+      float lastSpeed = getMagnitude(newState.vec);
+      if (lastSpeed < 0.001)
+	lastSpeed = 0;
+      
+      computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
+
+      // compute our new rotation;
+      newState.rot += newState.rotVel * delta;
+
+      // compute our new velocity
+      vecFromAngle2d(newState.rot,newState.vec,currentSpeed);
+
+      // clamp the speed to acceleration and the world
+      computeFriction(delta,flag,currentState.vec,newState.vec);
+
+      // compute our new position
+      for (int j =0; j < 3; j++)
+	newState.pos[j] += newState.vec[j] * delta;
+
+      // clamp us to in bounds
+      if (!checkBounds(newState.pos,BZDBCache::tankRadius))
+      {
+	clampBounds(newState.pos,BZDBCache::tankRadius);
+	outOfBounds(newState.pos);
+      }
+
+      // clamp the pos to what we hit
+      const Obstacle *target = hitBuilding(currentState,newState,BZDBCache::tankWidth,BZDBCache::tankLength,BZDBCache::tankHeight,!hasOO,false);
+      if (target)
+      {
+	doUpdate = true;
+	newState.vec[0] = newState.vec[1] = newState.vec[2] = 0;
+	currentState = newState;
+
+	bz_APISolidWorldObject_V1 *solid = APISolidFromObsacle(target);
+	collide(solid,currentState.pos);
+	delete(solid);
+      }
+
+      // now check for jumping
+      if (wantToJump && canJump())
+      {
+	doUpdate = true;
+	newState.vec[2] += computeJumpVelocity(flag);
+	currentState = newState;
+	player->lastState.status &= PlayerState::Falling;
+	jumped();
+      }
+      else  // see if we fall off something
+      {
+	if (newState.pos[2] <= computeGroundLimit(flag))
+	  newState.pos[2] = computeGroundLimit(flag);
+	else
+	{
+	  // do a collision test to see if what is below the tank is empty
+	  float temp[3];
+	  memcpy(temp,newState.pos,sizeof(float)*3);
+	  temp[2] -= 0.1f;
+
+	  if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
+	  {
+	    // down we go
+	    doUpdate = true;
+	    newState.vec[2] = -BZDBCache::gravity;
+	    currentState = newState;
+	    player->lastState.status &= PlayerState::Falling;
+	    jumped();
+	  }
+	}
+      }
+    }
+
+    // the new state is where we will be
+    currentState = newState;
+
+    // if they jumped, they jumped.
+    wantToJump = false;
+
+    if (!doUpdate) // if we aren't forcing an update due to a collision then check to see if we are far enough away
+    {
+      if (lastUpdate.getDelta(newState) > 0.5f)
+	doUpdate = true;
+    }
+
+
+    if (doUpdate)
+    {
+      // send out the current state as an update
+
+      player->lastState.order++;
+      player->lastState.angVel = currentState.rotVel;
+      player->lastState.azimuth = currentState.rot;
+      memcpy(player->lastState.velocity,currentState.vec,sizeof(float)*3);
+      memcpy(player->lastState.pos,currentState.pos,sizeof(float)*3);
+      updatePlayerState(player, player->lastState, (float)now, false);
+
+      lastUpdate = currentState;
+    }
+   }
 }
 
 //-------------------------------------------------------------------------
 
 bool bz_ServerSidePlayerHandler::canJump(void)
 {
-  return false;
+  return canMove() && bz_allowJumping();
 }
 
 //-------------------------------------------------------------------------
@@ -4228,7 +4591,16 @@ bool bz_ServerSidePlayerHandler::canShoot(void)
 
 bool bz_ServerSidePlayerHandler::canMove(void)
 {
-  return alive; // !jumping;
+  return alive && !falling();
+}
+
+bool bz_ServerSidePlayerHandler::falling (void)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player)
+    return false;
+
+  return player->lastState.status & PlayerState::Falling ? true : false;
 }
 
 //-------------------------------------------------------------------------
@@ -4271,26 +4643,45 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
 
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 {
-  // check the flag and stuff, but do the bzdb speed for now
-  return BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+
+  FlagType *flag = NULL;
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(player && player->player.haveFlag())
+    flag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+  return computeMaxLinVelocity(flag,currentState.pos[2]);
 }
 
 float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
 {
-  // check the flag and stuff, but do the bzdb speed for now
-  return BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+  FlagType *flag = NULL;
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(player && player->player.haveFlag())
+    flag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+  return computeMaxAngleVelocity(flag,currentState.pos[2]);
 }
 
-float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & /*state*/)
+float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state)
 {
-  // plot where we think we are now based on the current date
-  // double dt = state.time - time;
+  // plot where we think we are now based on the current time
+  double dt = state.time - time;
 
-  // float newPos[3];
-  // newPos[0] = state.pos[0] + (float)(state.vec[0] *dt);
-  // newPos[1] = state.pos[1] + (float)(state.vec[1] *dt);
-  // newPos[2] = state.pos[2] + (float)(state.vec[2] *dt);
- return 0;
+  float newPos[3];
+  newPos[0] = pos[0] + (float)(vec[0] *dt);
+  newPos[1] = pos[1] + (float)(vec[1] *dt);
+  newPos[2] = pos[2] + (float)(vec[2] *dt);
+
+  // that's where we thing we'll be based on movement
+
+  float dx = newPos[0] - state.pos[0];
+  float dy = newPos[1] - state.pos[1];
+  float dz = newPos[1] - state.pos[2];
+
+  // return the distance between where our projection is, and where state is
+  return sqrt(dx*dx+dy*dy+dz*dz);
 }
 
 
