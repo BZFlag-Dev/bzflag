@@ -19,67 +19,35 @@ namespace BZW
   /// Default constructor
   World::World()
   {
-
   }
 
   /// Read/Create a world from a stream
   World::World(std::istream& input)
   {
-    read(input);
+    /* TODO: decide if this should parse immediately or store the stream
+     * untul a parse method is called, to allow for registration of custom
+     * objects, or whatever.
+     */
   }
 
   /// Destructor
   World::~World()
   {
-
   }
 
   /// Read a world from stream
   void World::read(std::istream& input)
   {
-    Parser parser;
-
-    Parser::Object world(false);
-
-    //One way to do it
-    Parser::Parameter name(Parser::Parameter::STRING, 1, false);
-    Parser::Parameter size(Parser::Parameter::REAL, 1, false);
-    Parser::Parameter flagHeight(Parser::Parameter::REAL, 1, false);
-    Parser::Parameter freeCtfSpawns(Parser::Parameter::NOTHING, 0, false);
-
-    world.manage("name", name);
-    world.manage("size", size);
-    world.manage("flagHeight", flagHeight);
-    world.manage("freeCtfSpawns", freeCtfSpawns);
-
-    parser.manageObject("world", world);
-
-    Parser::Object box(true);
-
-    //another way to do it
-    Parser::Parameter position(Parser::Parameter::REAL, 3, false);
-    //imagine some code here
-    //add some already created parameters
-    box.manage("name", name);
-
-    box.manage("position", position);
-
-    parser.manageObject("box", box);
-
-    //actually parse
-    parser.parse(input);
-    std::multimap<std::string, Parser::Object> objects = parser.getObjects();
-    //Iterate through objects, do stuff here
-    //parser.getObjects(); and what have you
-
   }
 
-  /// Write a world to a stream
   void World::write(std::ostream& output)
   {
-
   }
 
+  void registerObject(std::string tag, WorldObjectFactory factory)
+  {
+    customObjects.insert(std::make_pair(tag, factory));
+  }
 }
 // Local Variables: ***
 // Mode: C++ ***

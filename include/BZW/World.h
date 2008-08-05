@@ -14,8 +14,9 @@
 #define __BZW_WORLD_H__
 
 #include <iostream>
-
+#include <map>
 /* bzflag common headers */
+#include "WorldObject.h"
 
 namespace BZW
 {
@@ -26,6 +27,8 @@ namespace BZW
   class World
   {
     public:
+      /// WorldObject factory function pointer typedef
+      typedef WorldObject* (*WorldObjectFactory)(void);
       /// Default constructor
       World();
       /// Read/Create a world from an stream
@@ -34,10 +37,14 @@ namespace BZW
       ~World();
 
       /// Read/Create a world from a stream
+      void read(std::istream& input);
       /// Write current world to a stream
       void write(std::ostream& output);
 
+      /// Simple object registration, with callbacks
+      void registerObject(const std::string& tag, WorldObjectFactory factory);
     private:
+      std::map<std::string, WorldObjectFactory> custom_objects;
 
   };
 
