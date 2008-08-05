@@ -583,7 +583,7 @@ void parsekey(unsigned char key, int x, int y)
 void parseSpecialKey(int key, int x, int y)
 {
     FTSimpleLayout *l = NULL;
-    float s;
+    unsigned int s;
 
     // If the currentLayout is a SimpleLayout store a pointer in l
     if(layouts[currentLayout]
