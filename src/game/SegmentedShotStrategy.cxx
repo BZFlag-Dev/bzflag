@@ -22,14 +22,7 @@
 #include "BZDBCache.h"
 #include "WallObstacle.h"
 
-/* local implementation headers */
-#include "sound.h"
-#include "LocalPlayer.h"
-#include "World.h"
-#include "effectsRenderer.h"
-#include "playing.h"
-
-SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
+SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool /*useSuperTexture*/, bool /*faint*/) :
 				ShotStrategy(_path)
 {
   // initialize times
@@ -45,44 +38,12 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     team = (tmpTeam < RogueTeam) ? RogueTeam :
 	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
   } else {
-    Player* p = lookupPlayer(_path->getPlayer());
-    team = p ? p->getTeam() : RogueTeam;
-  }
-
-  // initialize scene nodes
-  if (!headless) {
-    boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
-
-    const float* c = Team::getRadarColor(team);
-    if (faint) {
-      boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
-      boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-	} else {
-      boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
-    }
-	if((_path->getShotType() == CloakedShot) && (LocalPlayer::getMyTank()->getFlag() != Flags::Seer))
-		boltSceneNode->setInvisible(true);
-
-    TextureManager &tm = TextureManager::instance();
-    std::string imageName = Team::getImagePrefix(team);
-    if (useSuperTexture)
-      imageName += BZDB.get("superPrefix");
-    imageName += BZDB.get("boltTexture");
-
-    boltSceneNode->phasingShot = useSuperTexture;
-
-    int texture = tm.getTextureID(imageName.c_str());
-    if (texture >= 0)
-      boltSceneNode->setTexture(texture);
+	  team = _path->getTeam();
   }
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
 {
-  // free scene nodes
-  if (!headless) {
-    delete boltSceneNode;
-  }
 }
 
 void			SegmentedShotStrategy::update(float dt)
@@ -99,13 +60,6 @@ void			SegmentedShotStrategy::update(float dt)
 	switch (segments[segment].reason) {
 	  case ShotPathSegment::Ricochet:
 	    {
-	      // play ricochet sound.  ricochet of local player's shots
-	      // are important, others are not.
-	      const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
-	      const bool important = (getPath().getPlayer() == myTankId);
-	      const float* pos = segments[segment].ray.getOrigin();
-	      playWorldSound(SFX_RICOCHET, pos, important);
-
 	      // this is fugly but it's what we do
 	      float dir[3];
 	      const float* newDir = segments[segment].ray.getDirection();
@@ -118,9 +72,6 @@ void			SegmentedShotStrategy::update(float dt)
 	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
-
-	      EFFECTS.addRicoEffect( pos, rots);
-	      break;
 	    }
 	  case ShotPathSegment::Boundary:
 	    break;
@@ -137,8 +88,7 @@ void			SegmentedShotStrategy::update(float dt)
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
 
-	      const float* pos = segments[segment].ray.getOrigin();
-	      EFFECTS.addShotTeleportEffect( pos, rots);
+	      //const float* pos = segments[segment].ray.getOrigin();
 	    }
 	    break;
 	}
@@ -156,8 +106,6 @@ void			SegmentedShotStrategy::update(float dt)
       const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
       float pos[3];
       segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
-      /* NOTE -- comment out to not explode when shot expires */
-      addShotExplosion(pos);
     }
   }
 
@@ -232,9 +180,10 @@ void			SegmentedShotStrategy::setCurrentSegment(int _segment)
   segment = _segment;
 }
 
-float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
-							float position[3]) const
+float			SegmentedShotStrategy::checkHit(const ShotCollider& /*tank*/,
+							float* /*position[3]*/) const
 {
+/*
   float minTime = Infinity;
   // expired shot can't hit anything
   if (getPath().isExpired()) return minTime;
@@ -266,11 +215,9 @@ float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
       continue;
 
-/*
     // skip segments that don't overlap in time with current interval
-    if (segments[i].end <= prevTime) continue;
-    if (currentTime <= segments[i].start) break;
-*/
+    //if (segments[i].end <= prevTime) continue;
+    //if (currentTime <= segments[i].start) break;
 
     // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
     const ShotPathSegment& s = segments[i];
@@ -323,9 +270,12 @@ float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     }
   }
   return minTime;
+*/
+	return 0.0f;
 }
 
-void			SegmentedShotStrategy::addShot(
+/*
+ void			SegmentedShotStrategy::addShot(
 				SceneDatabase* scene, bool colorblind)
 {
   const ShotPath& shotPath = getPath();
@@ -346,10 +296,12 @@ void			SegmentedShotStrategy::addShot(
   }
   scene->addDynamicNode(boltSceneNode);
 }
+*/
 
 void			SegmentedShotStrategy::radarRender() const
 {
-  const float *orig = getPath().getPosition();
+/*
+	const float *orig = getPath().getPosition();
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
 
@@ -397,7 +349,7 @@ void			SegmentedShotStrategy::radarRender() const
       glEnd();
     }
   }
-
+*/
 }
 
 void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
@@ -409,13 +361,13 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   double	  startTime = shotPath.getStartTime();
   float		  timeLeft	    = shotPath.getLifetime();
   float		  minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
-  World		  *world = World::getWorld();
+  //World		  *world = World::getWorld();
 
-  if (!world)
-    return; /* no world, no shots */
+  //if (!world)
+    //return; /* no world, no shots */
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop && world->allShotsRicochet())
+  if (e == Stop /*&& world->allShotsRicochet()*/)
     e = Reflect;
 
   // prepare first segment
@@ -497,6 +449,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       o[2] += t * d[2];
       reason = ShotPathSegment::Boundary;
     } else if (teleporter) {
+		/*
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
       int source = world->getTeleporter(teleporter, face);
@@ -510,6 +463,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       teleporter->getPointWRT(*outTeleporter, face, outFace,
 					    o, d, 0.0f, o, d, NULL);
       reason = ShotPathSegment::Teleport;
+		 */
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
@@ -702,6 +656,7 @@ void			ThiefStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
+/*
 void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
 {
   // thief is so fast we always show every segment
@@ -709,6 +664,7 @@ void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
   for (size_t i = 0; i < numSegments; i++)
     scene->addDynamicNode(thiefNodes[i]);
 }
+*/
 
 void			ThiefStrategy::radarRender() const
 {
@@ -825,38 +781,6 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
   makeSegments(Stop);
   setCurrentTime(getLastTime());
   endTime = f.lifetime;
-
-  // make laser scene nodes
-  const int numSegments = (const int)(getSegments().size());
-  laserNodes = new LaserSceneNode*[numSegments];
-  const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
-
-  TextureManager &tm = TextureManager::instance();
-  std::string imageName = Team::getImagePrefix(tmpTeam);
-  imageName += BZDB.get("laserTexture");
-  int texture = tm.getTextureID(imageName.c_str());
-
-  for (int i = 0; i < numSegments; i++) {
-    const ShotPathSegment& segm = getSegments()[i];
-    const float t = float(segm.end - segm.start);
-    const Ray& ray = segm.ray;
-    const float* rawdir = ray.getDirection();
-    float dir[3];
-    dir[0] = t * rawdir[0];
-    dir[1] = t * rawdir[1];
-    dir[2] = t * rawdir[2];
-    laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (texture >= 0)
-      laserNodes[i]->setTexture(texture);
-
-	const float *color = Team::getRadarColor(tmpTeam);
-	laserNodes[i]->setColor(color[0],color[1],color[2]);
-
-	if (i == 0)
-		laserNodes[i]->setFirst();
-  }
-  setCurrentSegment(numSegments - 1);
 }
 
 LaserStrategy::~LaserStrategy()
@@ -873,15 +797,14 @@ void			LaserStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
+/*
 void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 {
-  // laser is so fast we always show every segment
-  const size_t numSegments = getSegments().size();
-  for (size_t i = 0; i < numSegments; i++)
-    scene->addDynamicNode(laserNodes[i]);
 }
+*/
 
-void			LaserStrategy::radarRender() const
+/*
+ void			LaserStrategy::radarRender() const
 {
   // draw all segments
   const std::vector<ShotPathSegment>& segmts = getSegments();
@@ -897,6 +820,7 @@ void			LaserStrategy::radarRender() const
     }
   glEnd();
 }
+*/
 
 bool			LaserStrategy::isStoppedByHit() const
 {

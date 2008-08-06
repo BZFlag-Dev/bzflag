@@ -108,13 +108,17 @@ noinst_HEADERS =			\
 	SceneDatabase.h			\
 	SceneNode.h			\
 	SceneRenderer.h			\
+	SegmentedShotStrategy.h		\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\
 	ServerPing.h			\
 	ShellSceneNode.h		\
 	ShotManager.h			\
+	ShotPath.h			\
+	ShotPathSegment.h		\
 	ShotSceneNode.h			\
+	ShotStrategy.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
 	SphereObstacle.h		\

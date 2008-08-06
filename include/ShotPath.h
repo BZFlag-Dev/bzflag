@@ -48,6 +48,7 @@ public:
   bool isExpired() const;
   bool isReloaded() const;
   const PlayerId &getPlayer() const;
+  const TeamColor getTeam();
   uint16_t getShotId() const;
   ShotType getShotType() const;
   FlagType *getFlag() const;
@@ -138,6 +139,11 @@ inline bool ShotPath::isReloaded() const
 inline const PlayerId &ShotPath::getPlayer() const
 {
   return firingInfo.shot.player;
+}
+
+inline const TeamColor ShotPath::getTeam()
+{
+  return firingInfo.shot.team;
 }
 
 inline uint16_t ShotPath::getShotId() const

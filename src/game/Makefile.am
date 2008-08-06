@@ -27,11 +27,15 @@ libGame_la_SOURCES =			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
 	Ray.cxx				\
+	SegmentedShotStrategy.cxx	\
 	ServerItem.cxx			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\
 	ServerPing.cxx			\
 	ShotManager.cxx			\
+	ShotPath.cxx			\
+	ShotPathSegment.cxx		\
+	ShotStrategy.cxx		\
 	StartupInfo.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx		\

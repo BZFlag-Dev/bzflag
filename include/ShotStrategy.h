@@ -29,7 +29,6 @@
 #include "SceneDatabase.h"
 
 /* local interface headers */
-#include "BaseLocalPlayer.h"
 #include "ShotPath.h"
 
 class ShotCollider
@@ -61,7 +60,7 @@ class ShotStrategy {
     virtual bool        predictVelocity(float dt, float p[3]) const = 0;
     virtual float	checkHit(const ShotCollider&, float[3])const = 0;
     virtual bool	isStoppedByHit() const;
-    virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
+    //virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
     virtual void	expire();
     virtual void	radarRender() const = 0;
 

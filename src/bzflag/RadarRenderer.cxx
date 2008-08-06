@@ -685,7 +685,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (shot) {
 	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	shot->radarRender();
+	//shot->radarRender();
       }
     }
 
@@ -697,7 +697,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (shot) {
 	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	shot->radarRender();
+	//shot->radarRender();
       }
     }
 
@@ -799,7 +799,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	  } else {
 	    glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
 	  }
-	  shot->radarRender();
+	  //shot->radarRender();
 	}
       }
     }

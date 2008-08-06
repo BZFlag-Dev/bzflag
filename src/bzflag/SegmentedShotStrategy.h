@@ -25,7 +25,10 @@
 #include "LaserSceneNode.h"
 
 /* local interface headers */
+#include "BaseLocalPlayer.h"
 #include "ShotPathSegment.h"
+#include "BoltSceneNode.h"
+
 
 class SegmentedShotStrategy : public ShotStrategy {
   public:
@@ -63,7 +66,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     double		lastTime;
     int			segment, lastSegment;
     std::vector<ShotPathSegment>	segments;
-//    BoltSceneNode*	boltSceneNode;
+    BoltSceneNode*	boltSceneNode;
     float		bbox[2][3];
     int			firstSegment;
 };
