@@ -2,6 +2,7 @@
   <h2>editing banlist</h2>
   
   <form id="banlist_edit" action="[$BaseURL][$CurrentPage]" method="post">
+    <h3>ip-banlist</h3>
     <ul id="ipbanlist">
 [*START IPBanList]
       <li><input type="checkbox" id="ipban_[$BannedUser]"
@@ -11,6 +12,7 @@
 [*EMPTY IPBanList]
     </ul>
     
+    <h3>id-banlist</h3>
     <ul id="idbanlist">
 [*START IDBanList]
       <li><input type="checkbox" id="idban_[$BannedUser]"

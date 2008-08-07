@@ -282,7 +282,12 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
       for (i = v.begin(); i != v.end(); i++) {
         int playerID = atoi(i->c_str());
         bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-        bz_IPBanUser(playerID, bz_getPlayerIPAddress(playerID), duration, s2.c_str());
+        const char *playerIP = bz_getPlayerIPAddress(playerID);
+        if (!bz_IPBanUser(playerID, playerIP, duration, s2.c_str())) {
+          if (error.empty()) error = "Couldn't ban: ";
+          error += playerIP;
+          error += ", ";
+        }
       }
     }
     else if (request.getParam("idban", v)) {
@@ -294,8 +299,8 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
         const char *callsign = bz_getPlayerCallsign(playerID);
         if (!bz_IPBanUser(playerID, callsign, duration, s2.c_str())) {
           if (error.empty()) error = "Couldn't ban: ";
+          else error += ", ";
           error += callsign;
-          error += ", ";
         }
       }
     }
@@ -310,9 +315,11 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
       if (!bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str())) {
         if (!error.empty()) error += ". ";
         error += "Couldn't set server vars.";
+        break;
       }
     }
   }
+  if (!error.empty()) templateVars["error"] = error;
 }
 
 void WebAdmin::banlistPageCallback (const HTTPRequest &request)
@@ -330,11 +337,12 @@ void WebAdmin::banlistPageCallback (const HTTPRequest &request)
 
 void WebAdmin::groupPageCallback (const HTTPRequest &request)
 {  
-  std::string name;
+  std::string name, error;
   if (request.getParam("name", name)) {
     stringList = bz_getGroupPerms(name.c_str());
     if (!stringList) {
-      templateVars["error"] = std::string("No such group: ") + name;
+      error += "No such group: ";
+      error += name + ". ";
     } else if (request.request == eGet) {
       templateVars["groupname"] = name;
       editing = true;
@@ -344,12 +352,16 @@ void WebAdmin::groupPageCallback (const HTTPRequest &request)
       listSize = bzu_standardPerms().size();
       std::string dummy;
       for (loopPos = 0; loopPos < listSize; loopPos++) {
-        if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy));
-          bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str());
-        // TODO: else remove permission
+        if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy)) {
+          if (!bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str())) {
+            error += "Couldn't change permissions for group: ";
+            error += name + ". ";
+          }
+        } // TODO: else remove permission
       }
     }
   }
+  if (!error.empty()) templateVars["error"] = error;
 }
 
 // Local Variables: ***
