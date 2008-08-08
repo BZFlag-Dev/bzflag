@@ -7,8 +7,9 @@
   <form id="group_edit" action="[$BaseURL][$CurrentPage]" method="post">
     <ul class="perms">
 [*START Permissions]
-      <li><input type="checkbox" id="perm_[$Permission]" value="[$Permission]"
-                 [?IF Checked]checked="checked"[?END Checked] name="perm" />
+      <li><input type="checkbox"
+            id="perm_[$Permission]" name="perm" value="[$Permission]"
+            [?IF Checked]checked="checked"[?ELSE Checked][?END Checked] />
         <label for="perm_[$Permission]">[$Permission]</label></li>
 [*END Permissions]
       <li>No permissions!?</li>
