@@ -29,6 +29,7 @@
 #include "HUDuiLabel.h"
 #include "playing.h"
 #include "LocalFontFace.h"
+#include "RegMenu.h"
 
 LocalFontFace* MainMenu::fontFace = NULL;
 
@@ -61,6 +62,9 @@ void	  MainMenu::createControls()
 
   label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
   addControl(label, false);
+
+  reg = createLabel("Register");
+  addControl(reg);
 
   join = createLabel("Join Game");
   addControl(join);
@@ -135,6 +139,9 @@ void			MainMenu::execute()
   } else if (_focus == quit) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);
+  } else if (_focus == reg) {
+    if (!regMenu) regMenu = new RegMenu;
+    HUDDialogStack::get()->push(regMenu);
   }
 }
 

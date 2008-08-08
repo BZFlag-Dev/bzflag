@@ -86,7 +86,7 @@
 				IgnoreImportLibrary="false"
 				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib"
 				OutputFile="./bzflag_debug/bzflag.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./3d_debug"
 				GenerateDebugInformation="true"
@@ -94,6 +94,7 @@
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
+				FixedBaseAddress="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -1089,6 +1090,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\RegMenu.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx"
 					>
 				</File>
@@ -1388,6 +1393,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\RegionPriorityQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\RegMenu.h"
 				>
 			</File>
 			<File

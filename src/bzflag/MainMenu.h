@@ -23,6 +23,7 @@ class JoinMenu;
 class OptionsMenu;
 class QuitMenu;
 class LocalFontFace;
+class RegMenu;
 
 /** MainMenu is the main menu
  */
@@ -42,6 +43,7 @@ private:
 
   HUDuiControl* createLabel(const char* string);
 
+  HUDuiControl*	reg;
   HUDuiControl*	join;
   HUDuiControl*	options;
   HUDuiControl*	help;
@@ -53,6 +55,7 @@ private:
   JoinMenu*	joinMenu;
   OptionsMenu*	optionsMenu;
   QuitMenu*	quitMenu;
+  RegMenu* regMenu;
 };
 
 
