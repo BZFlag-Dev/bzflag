@@ -7,8 +7,8 @@
   <form id="group_edit" action="[$BaseURL][$CurrentPage]" method="post">
     <ul class="perms">
 [*START Permissions]
-      <li><input type="checkbox" id="perm_[$Permission]"
-                 name="perm" value="[$Permission]">
+      <li><input type="checkbox" id="perm_[$Permission]" value="[$Permission]"
+                 [?IF Checked]checked="checked"[?END Checked] name="perm" />
         <label for="perm_[$Permission]">[$Permission]</label></li>
 [*END Permissions]
       <li>No permissions!?</li>
@@ -24,7 +24,7 @@
     <ul>
 [*START Groups]
       <li><input type="checkbox" id="group_[$GroupName]"
-                 name="delgroup" value="[$GroupName]"/>
+                 name="delgroup" value="[$GroupName]" />
         <label for="group_[$GroupName]">[$GroupName]</label>
         <a class="edit" href="?name=[$GroupName]">edit</a></li>
 [*END Groups]
