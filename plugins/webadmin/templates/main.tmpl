@@ -4,40 +4,42 @@
     <ul>
 [*START Players]
       <li><input type="checkbox" id="player_[$PlayerID]"
-                 name="player" value="[$PlayerID]">
+                 name="player" value="[$PlayerID]" />
         <label for="player_[$PlayerID]">[$Callsign]</label></li>
 [*END Players]
       <li>No Players</li>
 [*EMPTY Players]
 
     </ul>
-    <input type="submit" action="[$BaseURL]" value="unban" name="unban">
-    <p>
+    <input type="submit" action="[$BaseURL]" value="unban" name="unban" />
+    <div>
       <label for="kick_reason">reason</label>
-      <input type="text" name="reason" id="kickban_reason">
-      <br/>
-      <input type="checkbox" name="notify" id="notify_kickee" value="yes">
+      <input type="text" name="reason" id="kickban_reason" />
+    </div>
+    <div>
+      <input type="checkbox" name="notify" id="notify_kickee" value="yes" />
       <label for="notify_kickee">notify</label>
       <input type="submit" value="kick" name="kick">
-      <br/>
-      <input type="text" maxlength="4" id="ban_duration" name="duration">
+    </div>
+    <div>
+      <input type="text" maxlength="4" id="ban_duration" name="duration" />
       <label for="ban_duration">min</label>
-      <input type="submit" value="idban" name="idban">
-      <input type="submit" value="ipban" name="ipban">
-    </p>
+      <input type="submit" value="idban" name="idban" />
+      <input type="submit" value="ipban" name="ipban" />
+    </div>
   </form>
   
   <form id="server_vars" action="[$BaseURL]" method="post">
     <ul>
 [*START ServerVars]
-      <li><input type="text" id="var[$ServerVarName]"
-                 name="var[$ServerVarName]" value="[$ServerVarValue]">
-        <label for="var[$ServerVarName]">[$ServerVarName]</label></li>
+      <li><label for="var[$ServerVarName]">[$ServerVarName]</label>
+        <input type="text" id="var[$ServerVarName]"
+               name="var[$ServerVarName]" value="[$ServerVarValue]" /></li>
 [*END ServerVars]
       <li>No server vars</li>
 [*EMPTY ServerVars]
     </ul>
-    <input type="submit" value="update">
+    <input type="submit" value="update" />
   </form>
 </body>
 </html>
