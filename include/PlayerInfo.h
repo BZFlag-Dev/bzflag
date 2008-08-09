@@ -150,6 +150,9 @@ public:
 
   bool processEnter ( uint16_t &rejectCode, char *rejectMsg );
 
+  // current state of player
+  ClientState state;
+
 private:
 
   bool	isCallSignReadable();
@@ -158,8 +161,6 @@ private:
 
   bool restartOnBase;
 
-  // current state of player
-  ClientState state;
   // Need to know if entered is already done
   bool       hasDoneEntering;
   // type of player

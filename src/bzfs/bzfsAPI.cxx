@@ -4136,11 +4136,12 @@ void bz_ServerSidePlayerHandler::joinGame(void)
   if(player->player.isAlive() || player->player.isPlaying())
     return ;
 
+  player->lastState.order=0;
+
   // set our state to signing on so we can join
   player->player.signingOn();
-
   playerAlive(playerID);
-  player->lastState.order=0;
+  player->player.setAlive();
 }
 
 //-------------------------------------------------------------------------
@@ -4257,6 +4258,8 @@ bool bz_ServerSidePlayerHandler::jump(void)
 
 const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional, bool checkWalls = true )
 {
+  return NULL;
+
   // check and see if this path goes thru a building.
   const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional,checkWalls);
   if (!hit) // if it does not, it's clear
@@ -4357,6 +4360,9 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
   if(!alive)
     return;
 
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+  player->player.state = PlayerAlive;
+
   UpdateInfo newState(currentState); // where we think we are
 
   double now = bz_getCurrentTime();
@@ -4370,7 +4376,6 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
   for (int i = 0; i < count; i++ )
   {
     float delta = fullDT/count;
-    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
 
     int flagID = player->player.getFlag();
     FlagType *flag = NULL;
@@ -4529,15 +4534,15 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	  memcpy(temp,newState.pos,sizeof(float)*3);
 	  temp[2] -= 0.1f;
 
-	  if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
-	  {
-	    // down we go
-	    doUpdate = true;
-	    newState.vec[2] = -BZDBCache::gravity;
-	    currentState = newState;
-	    player->lastState.status &= PlayerState::Falling;
-	    jumped();
-	  }
+// 	  if (bz_cylinderInMapObject(temp, 0.1f, BZDBCache::tankRadius, NULL) == eNoCol)
+// 	  {
+// 	    // down we go
+// 	    doUpdate = true;
+// 	    newState.vec[2] = -BZDBCache::gravity;
+// 	    currentState = newState;
+// 	    player->lastState.status &= PlayerState::Falling;
+// 	    jumped();
+// 	  }
 	}
       }
     }
@@ -4554,17 +4559,22 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	doUpdate = true;
     }
 
+    if (now - player->lastState.lastUpdateTime > 10.0f)
+      doUpdate = true;
+
 
     if (doUpdate)
     {
       // send out the current state as an update
 
-      player->lastState.order++;
-      player->lastState.angVel = currentState.rotVel;
-      player->lastState.azimuth = currentState.rot;
-      memcpy(player->lastState.velocity,currentState.vec,sizeof(float)*3);
-      memcpy(player->lastState.pos,currentState.pos,sizeof(float)*3);
-      updatePlayerState(player, player->lastState, (float)now, false);
+      PlayerState state = player->lastState;
+
+      state.order++;
+      state.angVel = currentState.rotVel;
+      state.azimuth = currentState.rot;
+      memcpy(state.velocity,currentState.vec,sizeof(float)*3);
+      memcpy(state.pos,currentState.pos,sizeof(float)*3);
+      updatePlayerState(player, state, (float)now, false);
 
       lastUpdate = currentState;
     }
