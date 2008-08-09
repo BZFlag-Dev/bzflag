@@ -1,45 +1,46 @@
 [!header.tmpl]
-  <h2>main</h2>
+  <h2>Main</h2>
   <form id="current_players" action="" method="post">
     <ul>
 [*START Players]
       <li><input type="checkbox" id="player_[$PlayerID]"
-                 name="player" value="[$PlayerID]" />
+                 name="player" value="[$PlayerID]">
         <label for="player_[$PlayerID]">[$Callsign]</label></li>
 [*END Players]
       <li>No Players</li>
 [*EMPTY Players]
 
     </ul>
-    <input type="submit" action="[$BaseURL]" value="unban" name="unban" />
+    <input type="submit" action="[$BaseURL]" value="unban" name="unban">
     <div>
       <label for="kick_reason">reason</label>
-      <input type="text" name="reason" id="kickban_reason" />
+      <input type="text" name="reason" id="kickban_reason">
     </div>
     <div>
-      <input type="checkbox" name="notify" id="notify_kickee" value="yes" />
+      <input type="checkbox" name="notify" id="notify_kickee" value="yes">
       <label for="notify_kickee">notify</label>
       <input type="submit" value="kick" name="kick">
     </div>
     <div>
-      <input type="text" maxlength="4" id="ban_duration" name="duration" />
+      <input type="text" maxlength="4" id="ban_duration" name="duration">
       <label for="ban_duration">min</label>
-      <input type="submit" value="idban" name="idban" />
-      <input type="submit" value="ipban" name="ipban" />
+      <input type="submit" value="idban" name="idban">
+      <input type="submit" value="ipban" name="ipban">
     </div>
   </form>
   
   <form id="server_vars" action="[$BaseURL]" method="post">
+    <h3>Server variables</h3>
     <ul>
 [*START ServerVars]
       <li><label for="var[$ServerVarName]">[$ServerVarName]</label>
         <input type="text" id="var[$ServerVarName]"
-               name="var[$ServerVarName]" value="[$ServerVarValue]" /></li>
+               name="var[$ServerVarName]" value="[$ServerVarValue]"></li>
 [*END ServerVars]
       <li>No server vars</li>
 [*EMPTY ServerVars]
     </ul>
-    <input type="submit" value="update" />
+    <input type="submit" value="update">
   </form>
 </body>
 </html>

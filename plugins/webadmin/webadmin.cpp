@@ -330,14 +330,8 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
   for (loopPos = 0; loopPos < listSize; loopPos++) {
     s1 = "var";
     s1 += (*stringList)[loopPos].c_str();
-    if (request.getParam(s1, s2)) {
-      if (!bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str())) {
-	if (!error.empty())
-	  error += ". ";
-	error += "Couldn't set server vars.";
-	break;
-      }
-    }
+    if (request.getParam(s1, s2))
+      bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
   }
   if (!error.empty())
     templateVars["error"] = error;
