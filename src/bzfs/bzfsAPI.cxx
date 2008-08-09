@@ -4827,6 +4827,22 @@ BZF_API void bz_changeTeam(int player, bz_eTeamType _team)
   sendSetTeam(playerIndex, realTeam);
 }
 
+BZF_API bool bz_zapPlayer(int player ) // forces a respawn
+{
+  if(player < 0)
+    return false;
+
+  PlayerId playerIndex=(PlayerId)player;
+  GameKeeper::Player *playerRec=GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+  if(!playerRec || !playerRec->player.isAlive())
+    return false;
+
+  spawnPlayer(player);
+  return true;
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 

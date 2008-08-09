@@ -1883,6 +1883,9 @@ BZF_API void bz_removeRabbit(int player);
 // team control
 BZF_API void bz_changeTeam(int player, bz_eTeamType team);
 
+// player control
+BZF_API bool bz_zapPlayer(int player ); // forces a respawn
+
 // player listing
 BZF_API bz_APIIntList* bz_getPlayerIndexList(void);
 BZF_API int bz_getPlayerCount(void);

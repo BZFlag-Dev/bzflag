@@ -95,6 +95,7 @@ bool saveWorldCache ( const char* fileName = NULL );
 void rescanForBans ( const char* callsign = NULL, int playerID = -1 );
 void zapFlag(FlagInfo &flag);
 void anointNewRabbit( int killerId = NoPlayer);
+void spawnPlayer ( int playerIndex );
 
 void lagKick(int playerIndex);
 void jitterKick(int playerIndex);

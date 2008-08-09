@@ -2412,6 +2412,57 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
+void spawnPlayer ( int playerIndex )
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData && !playerData->isSpawnable())
+    return;
+
+  // player is coming alive.
+  dropAssignedFlag(playerIndex);
+
+  // get the spawn position
+  SpawnPosition spawnPosition(playerIndex,
+    (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
+    clOptions->gameType == ClassicCTF);
+
+  // see if there is anyone to handle the spawn event, and if they want to change it.
+  bz_GetPlayerSpawnPosEventData_V1 spawnData;
+  spawnData.playerID = playerIndex;
+  spawnData.team     = convertTeam(playerData->player.getTeam());
+  spawnData.pos[0]   = spawnPosition.getX();
+  spawnData.pos[1]   = spawnPosition.getY();
+  spawnData.pos[2]   = spawnPosition.getZ();
+  spawnData.rot      = spawnPosition.getAzimuth();
+
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
+
+  // update last position immediately
+  playerData->setPlayerState(spawnData.pos, spawnData.rot);
+
+  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
+
+  playerData->efectiveShotType = StandardShot;
+  playerData->player.setAllow(AllowAll);
+  sendMessageAllow(playerIndex, AllowAll);
+
+  // call any events for a playerspawn
+  bz_PlayerSpawnEventData_V1 spawnEvent;
+  spawnEvent.playerID = playerIndex;
+  spawnEvent.team = convertTeam(playerData->player.getTeam());
+
+  playerStateToAPIState(spawnEvent.state,playerData->lastState);
+
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
+
+  if (clOptions->gameType == RabbitChase) {
+    playerData->player.wasNotARabbit();
+    if (rabbitIndex == NoPlayer)
+      anointNewRabbit();
+  }
+
+}
+
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2488,48 +2539,7 @@ void playerAlive(int playerIndex)
     return;
   }
 
-  // player is coming alive.
-  dropAssignedFlag(playerIndex);
-
-  // get the spawn position
-  SpawnPosition spawnPosition(playerIndex,
-			      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-			      clOptions->gameType == ClassicCTF);
-
-  // see if there is anyone to handle the spawn event, and if they want to change it.
-  bz_GetPlayerSpawnPosEventData_V1 spawnData;
-  spawnData.playerID = playerIndex;
-  spawnData.team     = convertTeam(playerData->player.getTeam());
-  spawnData.pos[0]   = spawnPosition.getX();
-  spawnData.pos[1]   = spawnPosition.getY();
-  spawnData.pos[2]   = spawnPosition.getZ();
-  spawnData.rot      = spawnPosition.getAzimuth();
-
-  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
-
-  // update last position immediately
-  playerData->setPlayerState(spawnData.pos, spawnData.rot);
-
-  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
-
-  playerData->efectiveShotType = StandardShot;
-  playerData->player.setAllow(AllowAll);
-  sendMessageAllow(playerIndex, AllowAll);
-
-  // call any events for a playerspawn
-  bz_PlayerSpawnEventData_V1 spawnEvent;
-  spawnEvent.playerID = playerIndex;
-  spawnEvent.team = convertTeam(playerData->player.getTeam());
-
-  playerStateToAPIState(spawnEvent.state,playerData->lastState);
-
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
-
-  if (clOptions->gameType == RabbitChase) {
-    playerData->player.wasNotARabbit();
-    if (rabbitIndex == NoPlayer)
-      anointNewRabbit();
-  }
+  spawnPlayer(playerIndex);
 }
 
 static void checkTeamScore(int playerIndex, int teamIndex)
