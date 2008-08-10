@@ -81,6 +81,7 @@ public:
         }
 
         sRSAManager.rsaFree(cipher);
+        serverList->auth_phase = 2;
         delete[] key_n;
       } break;
       case DMSG_AUTH_SUCCESS:
@@ -89,7 +90,7 @@ public:
         logDebugMessage(0, "Auth successful, token %d\n", token);
         snprintf(serverList->startupInfo->token, TokenLen, "%d", token);
         disconnect();
-        serverList->auth_phase = -1;
+        serverList->auth_phase = 3;
         break;
       case DMSG_AUTH_FAIL:
         uint32 reason;
@@ -97,17 +98,21 @@ public:
         logDebugMessage(0, "Auth failed, reason %d\n", reason);
         snprintf(serverList->startupInfo->token, TokenLen, "badtoken");
         disconnect();
-        serverList->auth_phase = -1;
-
+        serverList->auth_phase = 3;
         break; 
       default:
         logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
         disconnect();
-        serverList->auth_phase = -1;
     }
   }
 
-  void onDisconnect() {}
+  void onDisconnect()
+  {
+    if(serverList->auth_phase < 3)
+      logDebugMessage(0, "Auth connection terminated before process finished\n");
+    serverList->auth_phase = -1;
+    serverList->authSocket = NULL;
+  }
 private:
   ServerList *serverList;
 };
@@ -144,7 +149,7 @@ void ServerList::startServerPings(StartupInfo *info) {
 
   if(auth_phase == -1) {
     if(!authSockHandler.isInitialized()) authSockHandler.initialize(32000);
-    authSocket = new AuthConnectSocket(this, &authSockHandler);
+    if(!authSocket) authSocket = new AuthConnectSocket(this, &authSockHandler);
     auth_phase = 0;
   }
 }
@@ -386,9 +391,7 @@ void			ServerList::checkEchos(StartupInfo *info)
   }
 
   if(auth_phase == 0 && authSocket->connect("127.0.0.1", 1234) == 0)
-      auth_phase = 1;
-
-  if(auth_phase == 1) {
+  {
     // send a handshake to the auth daemon, including the request for auth
     uint8 commType = BZAUTH_COMM_AUTH;
     uint8 peerType = BZAUTHD_PEER_CLIENT;
@@ -397,10 +400,10 @@ void			ServerList::checkEchos(StartupInfo *info)
     Packet msg(MSG_HANDSHAKE);
     msg << peerType << protoVersion << cliVersion << commType;
     authSocket->sendData(msg);
-    auth_phase = 2;
+    auth_phase = 1;
   }
 
-  if(auth_phase == 2)
+  if(auth_phase >= 1)
     // update the auth sockets
     authSockHandler.update();
 
@@ -532,6 +535,7 @@ void ServerList::_shutDown() {
   // close broadcast socket
   closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;
+  if(auth_phase >= 1) authSockHandler.removeSocket(authSocket);
 }
 
 // Local Variables: ***

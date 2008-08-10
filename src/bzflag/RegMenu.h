@@ -31,6 +31,8 @@
 #include "HUDuiTypeIn.h"
 #include "HUDuiImage.h"
 
+class RegConnectSocket;
+
 class RegMenu : public HUDDialog {
   public:
 			RegMenu();
@@ -43,20 +45,30 @@ class RegMenu : public HUDDialog {
     void		dismiss();
     void		resize(int width, int height);
 
+    void    update();
+    static void playingCB(void*);
+
   private:
     void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		setFailedMessage(const char* msg);
     void		loadInfo();
 
   private:
+    friend class RegConnectSocket;
+
     float		center;
     HUDuiLabel*   reg_label;
     HUDuiTypeIn*	callsign;
     HUDuiTypeIn*	password;
     HUDuiLabel*		status;
     HUDuiLabel*		failedMessage;
+
+    RegConnectSocket *regSocket;
+    int phase;
 };
 
+class SocketHandler;
+extern SocketHandler authSockHandler;
 
 #endif /* __JOINMENU_H__ */
 

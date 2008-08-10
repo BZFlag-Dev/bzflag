@@ -37,6 +37,21 @@ void SocketHandler::addSocket(Socket *socket)
   socketMap[socket] = NULL;
 }
 
+void SocketHandler::removeSocket(Socket *socket)
+{
+  removeSocket(socketMap.find(socket));
+}
+
+void SocketHandler::removeSocket(SocketMapType::iterator &itr)
+{
+  if(itr == socketMap.end()) return;
+  net_TCP_DelSocket(socketSet, itr->first->getSocket());
+  net_TCP_Close(itr->first->getSocket());
+  delete itr->first;
+  if(itr->second) delete itr->second;
+  socketMap.erase(itr++);
+}
+
 bool SocketHandler::global_init()
 {
   return net_Init() == 0;
@@ -71,18 +86,10 @@ void SocketHandler::update()
     return;
 
   for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end();)
-  {
     if(!itr->first->update(itr->second))
-    {
-      net_TCP_DelSocket(socketSet, itr->first->getSocket());
-      net_TCP_Close(itr->first->getSocket());
-      delete itr->first;
-      if(itr->second) delete itr->second;
-      socketMap.erase(itr++);
-    }
+      removeSocket(itr);
     else
       ++itr;
-  }
 }
 
 bool ListenSocket::update(PacketHandlerBase *&)
@@ -109,7 +116,11 @@ bool ConnectSocket::update(PacketHandlerBase *& handler)
     delete packet;
   }
 
-  return isConnected();
+  if(!isConnected()) {
+    onDisconnect();
+    return false;
+  } else
+    return true;
 }
 
 void ListenSocket::disconnect()
@@ -184,7 +195,16 @@ Packet * ConnectSocket::readData()
     poz += read;
 
     if(!remainingHeader)
+    {
       remainingData = *(uint16*)(buffer+2);
+      if(remainingData == 0)
+      {
+        uint16 opcode = *(uint16*)buffer;
+        Packet * ret = new Packet(opcode, (uint8*)"", 0);
+        initRead();
+        return ret;
+      }
+    }
     //else       - return even if there might be more data, will be read later
     // otherwise if no more data was sent, the next recv will return -1 and that
     // will be incorrectly interpreted as a closed socket

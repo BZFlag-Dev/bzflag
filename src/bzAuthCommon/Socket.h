@@ -243,6 +243,7 @@ public:
   teTCPError initialize(uint32 connections);
   void update();
   void addSocket(Socket *socket);
+  void removeSocket(Socket *socket);
 
   uint32 getMaxConnections () const { return maxUsers; }
   bool isInitialized() const { return is_init; }
@@ -252,6 +253,8 @@ private:
   SocketMapType socketMap;
   uint32 maxUsers;
   bool is_init;
+
+  void removeSocket(SocketMapType::iterator &itr);
 };
 
 #endif

@@ -33,7 +33,7 @@
 
 LocalFontFace* MainMenu::fontFace = NULL;
 
-MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
+MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL), regMenu(NULL)
 {
   if (!fontFace)
     fontFace = LocalFontFace::create("sansSerifFont");
