@@ -158,8 +158,6 @@ bzflag_SOURCES =			\
 	ShockWaveStrategy.h		\
 	ShotList.cxx			\
 	ShotList.h			\
-	ShotPathSegment.cxx		\
-	ShotPathSegment.h		\
 	ShotStatistics.cxx		\
 	ShotStatistics.h		\
 	ShotStats.cxx			\

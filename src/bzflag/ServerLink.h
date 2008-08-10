@@ -24,6 +24,10 @@
 #include "Address.h"
 #include "Protocol.h"
 #include "ShotPath.h"
+//CHANGEEDIT
+//CHANGED
+#include "Player.h"
+//ENDCHANGEEDIT
 #include "Flag.h"
 #include "BufferedNetworkMessage.h"
 

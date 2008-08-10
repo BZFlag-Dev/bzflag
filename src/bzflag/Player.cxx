@@ -14,7 +14,6 @@
 #include "Player.h"
 
 // common interface headers
-#include "SceneRenderer.h"
 #include "BZDBCache.h"
 #include "CollisionManager.h"
 #include "ObstacleMgr.h"
@@ -23,6 +22,8 @@
 #include "WallObstacle.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
+#include "SceneRenderer.h"
+#include "TextureManager.h"
 
 // local implementation headers
 #include "playing.h"
@@ -1018,6 +1019,7 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
     if (shot && !shot->isExpiring() && !shot->isExpired())
+      // Add the shot
       shot->addShot(scene, colorblind);
   }
 }
@@ -1476,6 +1478,43 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
 
   shots[shotNum] = shot;
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
+
+  // determine team
+  TeamColor team = shot->getFiringInfo().shot.team;
+  if (shot->getPlayer() == ServerPlayer) {
+    team = (team < RogueTeam) ? RogueTeam :
+	   (team > HunterTeam) ? RogueTeam : team;
+  } else {
+      team = shot->getTeam();
+  }
+
+  // initialize the bolt scene node
+  if (!headless) {
+    boltSceneNodes[shotNum] = new BoltSceneNode(shot->getPosition(),shot->getVelocity());
+
+    const float* c = Team::getRadarColor(team);
+    std::string imageName = Team::getImagePrefix(team);
+    if (shot->getFiringInfo().shotType == PhantomShot) {
+      boltSceneNodes[shotNum]->setColor(c[0], c[1], c[2], 0.2f);
+      boltSceneNodes[shotNum]->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
+    } else {
+      boltSceneNodes[shotNum]->setColor(c[0], c[1], c[2], 1.0f);
+    }
+
+    if (shot->getFiringInfo().shotType == SuperShot) {
+      boltSceneNodes[shotNum]->phasingShot = true;
+      imageName += BZDB.get("superPrefix");
+    }
+
+    imageName += BZDB.get("boltTexture");
+    TextureManager &tm = TextureManager::instance();
+    int texture = tm.getTextureID(imageName.c_str());
+    if (texture >= 0)
+      boltSceneNodes[shotNum]->setTexture(texture);
+
+    if((shot->getShotType() == CloakedShot) && (LocalPlayer::getMyTank()->getFlag() != Flags::Seer))
+      boltSceneNodes[shotNum]->setInvisible(true);
+  }
 }
 
 void Player::updateShot ( FiringInfo &info, int shotID, double time )
@@ -1485,6 +1524,8 @@ void Player::updateShot ( FiringInfo &info, int shotID, double time )
     if ( shots[shotID] != NULL ) {
       delete shots[shotID];
       shots[shotID] = NULL;
+      delete boltSceneNodes[shotID];
+      boltSceneNodes[shotID] = NULL;
     }
   }
   else
