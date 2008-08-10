@@ -55,6 +55,7 @@ noinst_HEADERS =			\
 	Frustum.h			\
 	GameTime.h			\
 	GLCollect.h			\
+	GuidedMissleStrategy.h		\
 	Intersect.h			\
 	KeyManager.h			\
 	LagInfo.h			\
@@ -114,6 +115,7 @@ noinst_HEADERS =			\
 	ServerListCache.h		\
 	ServerPing.h			\
 	ShellSceneNode.h		\
+	ShockWaveStrategy.h		\
 	ShotManager.h			\
 	ShotPath.h			\
 	ShotPathSegment.h		\

@@ -29,7 +29,7 @@
 
 class SegmentedShotStrategy : public ShotStrategy {
   public:
-			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
+			SegmentedShotStrategy(ShotPath*);
 			~SegmentedShotStrategy();
 
     void		update(float dt);
@@ -63,7 +63,9 @@ class SegmentedShotStrategy : public ShotStrategy {
     double		lastTime;
     int			segment, lastSegment;
     std::vector<ShotPathSegment>	segments;
+//CLIENTEDIT
 //    BoltSceneNode*	boltSceneNode;
+//ENDCLIENTEDIT
     float		bbox[2][3];
     int			firstSegment;
 };

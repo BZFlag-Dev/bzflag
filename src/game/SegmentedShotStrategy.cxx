@@ -31,13 +31,7 @@
 //#include "playing.h"
 //ENDCLIENTEDIT
 
-//CHANGEEDIT
-//SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
-//				ShotStrategy(_path)
-//CHANGED
-SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool /*useSuperTexture*/, bool /*faint*/) :
-				ShotStrategy(_path)
-//ENDCHANGEEDIT
+SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) : ShotStrategy(_path)
 {
   // initialize times
   prevTime = getPath().getStartTime();
@@ -54,35 +48,6 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool /*useSuperTex
   } else {
       team = _path->getTeam();
   }
-//CLIENTEDIT
-//
-//  // initialize scene nodes
-//  if (!headless) {
-//    boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
-//
-//    const float* c = Team::getRadarColor(team);
-//    if (faint) {
-//      boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
-//      boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-//	} else {
-//      boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
-//    }
-//	if((_path->getShotType() == CloakedShot) && (LocalPlayer::getMyTank()->getFlag() != Flags::Seer))
-//		boltSceneNode->setInvisible(true);
-//
-//    TextureManager &tm = TextureManager::instance();
-//    std::string imageName = Team::getImagePrefix(team);
-//    if (useSuperTexture)
-//      imageName += BZDB.get("superPrefix");
-//    imageName += BZDB.get("boltTexture");
-//
-//    boltSceneNode->phasingShot = useSuperTexture;
-//
-//    int texture = tm.getTextureID(imageName.c_str());
-//    if (texture >= 0)
-//      boltSceneNode->setTexture(texture);
-//  }
-//ENDCLIENTEDIT
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -630,7 +595,7 @@ const std::vector<ShotPathSegment>&	SegmentedShotStrategy::getSegments() const
 //
 
 NormalShotStrategy::NormalShotStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+  SegmentedShotStrategy(_path)
 {
   // make segments
   makeSegments(Stop);
@@ -646,7 +611,7 @@ NormalShotStrategy::~NormalShotStrategy()
 //
 
 RapidFireStrategy::RapidFireStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+  SegmentedShotStrategy(_path)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -672,7 +637,7 @@ RapidFireStrategy::~RapidFireStrategy()
 //
 
 ThiefStrategy::ThiefStrategy(ShotPath *_path) :
-  SegmentedShotStrategy(_path, false),cumTime(0.0f)
+  SegmentedShotStrategy(_path),cumTime(0.0f)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -770,7 +735,7 @@ bool			ThiefStrategy::isStoppedByHit() const
 //
 
 MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+  SegmentedShotStrategy(_path)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -796,7 +761,7 @@ MachineGunStrategy::~MachineGunStrategy()
 //
 
 RicochetStrategy::RicochetStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+  SegmentedShotStrategy(_path)
 {
   // make segments that bounce
   makeSegments(Reflect);
@@ -812,7 +777,7 @@ RicochetStrategy::~RicochetStrategy()
 //
 
 SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, true)
+  SegmentedShotStrategy(_path)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -825,7 +790,7 @@ SuperBulletStrategy::~SuperBulletStrategy()
 
 
 PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false,true)
+  SegmentedShotStrategy(_path)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -841,7 +806,7 @@ PhantomBulletStrategy::~PhantomBulletStrategy()
 //
 
 LaserStrategy::LaserStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false), cumTime(0.0f)
+  SegmentedShotStrategy(_path), cumTime(0.0f)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
