@@ -18,9 +18,10 @@
 
 /* local implementation headers */
 #include "SegmentedShotStrategy.h"
-#include "GuidedMissleStrategy.h"
-#include "ShockWaveStrategy.h"
-
+//CLIENTEDIT
+//#include "GuidedMissleStrategy.h"
+//#include "ShockWaveStrategy.h"
+//ENDCLIENTEDIT
 //
 // ShotPath
 //
@@ -40,10 +41,12 @@ ShotPath::ShotPath(const FiringInfo& info, double now) :
     default:
       strategy = new NormalShotStrategy(this);
     break;
-
-    case GMShot:
-      strategy = new GuidedMissileStrategy(this);
-      break;
+//CLIENTEDIT
+//    case GMShot:
+//      strategy = new GuidedMissileStrategy(this);
+//      break;
+//
+//ENDCLIENTEDIT
 
     case LaserShot:
       strategy = new LaserStrategy(this);
@@ -61,10 +64,11 @@ ShotPath::ShotPath(const FiringInfo& info, double now) :
       strategy = new PhantomBulletStrategy(this);
       break;
 
-    case ShockWaveShot:
-      strategy = new ShockWaveStrategy(this);
-      break;
-
+//CLIENTEDIT
+//    case ShockWaveShot:
+//      strategy = new ShockWaveStrategy(this);
+//      break;
+//ENDCLIENTEDIT
     case RicoShot:
       strategy = new RicochetStrategy(this);
       break;
@@ -98,13 +102,17 @@ bool			ShotPath::isStoppedByHit() const
 void			ShotPath::addShot(SceneDatabase* scene,
 						bool colorblind)
 {
-  strategy->addShot(scene, colorblind);
+//CHANGEEDIT
+//  strategy->addShot(scene, colorblind);
+//ENDCHANGEEDIT
 }
 
 void			ShotPath::radarRender() const
 {
-  if (!isExpired())
-    strategy->radarRender();
+//CHANGEEDIT
+//  if (!isExpired())
+//    strategy->radarRender();
+//ENDCHANGEEDIT
 }
 
 void			ShotPath::updateShot(float dt)

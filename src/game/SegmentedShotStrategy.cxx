@@ -22,8 +22,22 @@
 #include "BZDBCache.h"
 #include "WallObstacle.h"
 
+/* local implementation headers */
+//CLIENTEDIT
+//#include "sound.h"
+//#include "LocalPlayer.h"
+//#include "World.h"
+//#include "effectsRenderer.h"
+//#include "playing.h"
+//ENDCLIENTEDIT
+
+//CHANGEEDIT
+//SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
+//				ShotStrategy(_path)
+//CHANGED
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool /*useSuperTexture*/, bool /*faint*/) :
 				ShotStrategy(_path)
+//ENDCHANGEEDIT
 {
   // initialize times
   prevTime = getPath().getStartTime();
@@ -38,12 +52,47 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool /*useSuperTex
     team = (tmpTeam < RogueTeam) ? RogueTeam :
 	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
   } else {
-	  team = _path->getTeam();
+      team = _path->getTeam();
   }
+//CLIENTEDIT
+//
+//  // initialize scene nodes
+//  if (!headless) {
+//    boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
+//
+//    const float* c = Team::getRadarColor(team);
+//    if (faint) {
+//      boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
+//      boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
+//	} else {
+//      boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
+//    }
+//	if((_path->getShotType() == CloakedShot) && (LocalPlayer::getMyTank()->getFlag() != Flags::Seer))
+//		boltSceneNode->setInvisible(true);
+//
+//    TextureManager &tm = TextureManager::instance();
+//    std::string imageName = Team::getImagePrefix(team);
+//    if (useSuperTexture)
+//      imageName += BZDB.get("superPrefix");
+//    imageName += BZDB.get("boltTexture");
+//
+//    boltSceneNode->phasingShot = useSuperTexture;
+//
+//    int texture = tm.getTextureID(imageName.c_str());
+//    if (texture >= 0)
+//      boltSceneNode->setTexture(texture);
+//  }
+//ENDCLIENTEDIT
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
 {
+//CLIENTEDIT
+//  // free scene nodes
+//  if (!headless) {
+//    delete boltSceneNode;
+//  }
+//ENDCLIENTEDIT
 }
 
 void			SegmentedShotStrategy::update(float dt)
@@ -60,6 +109,15 @@ void			SegmentedShotStrategy::update(float dt)
 	switch (segments[segment].reason) {
 	  case ShotPathSegment::Ricochet:
 	    {
+//CLIENTEDIT
+//	      // play ricochet sound.  ricochet of local player's shots
+//	      // are important, others are not.
+//	      const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
+//	      const bool important = (getPath().getPlayer() == myTankId);
+//	      const float* pos = segments[segment].ray.getOrigin();
+//	      playWorldSound(SFX_RICOCHET, pos, important);
+//
+//ENDCLIENTEDIT
 	      // this is fugly but it's what we do
 	      float dir[3];
 	      const float* newDir = segments[segment].ray.getDirection();
@@ -72,6 +130,11 @@ void			SegmentedShotStrategy::update(float dt)
 	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
+//CLIENTEDIT
+//
+//	      EFFECTS.addRicoEffect( pos, rots);
+//ENDCLIENTEDIT
+	      break;
 	    }
 	  case ShotPathSegment::Boundary:
 	    break;
@@ -87,8 +150,11 @@ void			SegmentedShotStrategy::update(float dt)
 	      const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
 	      rots[0] = atan2f(dir[1], dir[0]);
 	      rots[1] = atan2f(dir[2], horiz);
-
-	      //const float* pos = segments[segment].ray.getOrigin();
+//CLIENTEDIT
+//
+//	      const float* pos = segments[segment].ray.getOrigin();
+//	      EFFECTS.addShotTeleportEffect( pos, rots);
+//ENDCLIENTEDIT
 	    }
 	    break;
 	}
@@ -106,6 +172,10 @@ void			SegmentedShotStrategy::update(float dt)
       const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
       float pos[3];
       segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
+//CLIENTEDIT
+//      /* NOTE -- comment out to not explode when shot expires */
+//      addShotExplosion(pos);
+//ENDCLIENTEDIT
     }
   }
 
@@ -180,178 +250,179 @@ void			SegmentedShotStrategy::setCurrentSegment(int _segment)
   segment = _segment;
 }
 
-float			SegmentedShotStrategy::checkHit(const ShotCollider& /*tank*/,
-							float* /*position[3]*/) const
-{
-/*
-  float minTime = Infinity;
-  // expired shot can't hit anything
-  if (getPath().isExpired()) return minTime;
-
-  // get tank radius
-  const float radius2 = tank.radius * tank.radius;
-
-  // tank is positioned from it's bottom so shift position up by
-  // half a tank height.
-  const float tankHeight = tank.size[2];
-  float lastTankPositionRaw[3];
-  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
-  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
-  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
-  Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
-
-  // if bounding box of tank and entire shot doesn't overlap then no hit
-  const float (*tankBBox)[3] = tank.bbox;
-  if (!isOverlapping(bbox, tankBBox)) return minTime;
-
-  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
-
-  // check each segment in interval (prevTime,currentTime]
-  const float dt = float(currentTime - prevTime);
-  const int numSegments = (const int)segments.size();
-  for (int i = lastSegment; i <= segment && i < numSegments; i++)
-  {
-    // can never hit your own first laser segment
-    if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
-      continue;
-
-    // skip segments that don't overlap in time with current interval
-    //if (segments[i].end <= prevTime) continue;
-    //if (currentTime <= segments[i].start) break;
-
-    // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
-    const ShotPathSegment& s = segments[i];
-    if (!isOverlapping(s.bbox, tankBBox) || s.reason == ShotPathSegment::Boundary) continue;
-
-    // construct relative shot ray:  origin and velocity relative to
-    // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
-
-    // get hit time
-    float t;
-    if (tank.test2D)
-    {
-      // find closest approach to narrow box around tank.  width of box
-      // is shell radius so you can actually hit narrow tank head on.
-      static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
-			0.5f * tank.length, shotRadius, tankHeight);
-    }
-    else {
-      // find time when shot hits sphere around tank
-      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
-    }
-
-    // short circuit if time is greater then smallest time so far
-    if (t > minTime) continue;
-
-    // make sure time falls within segment
-    if (t < 0.0f || t > dt) continue;
-    if (t > s.end - prevTime) continue;
-
-    // check if shot hits tank -- get position at time t, see if in radius
-    float closestPos[3];
-    relativeRay.getPoint(t, closestPos);
-    if (closestPos[0] * closestPos[0] +
-	closestPos[1] * closestPos[1] +
-	closestPos[2] * closestPos[2] < radius2) {
-      // save best time so far
-      minTime = t;
-
-      // compute location of tank at time of hit
-      float tankPos[3];
-      tank.motion.getPoint(t, tankPos);
-
-      // compute position of intersection
-      position[0] = tankPos[0] + closestPos[0];
-      position[1] = tankPos[1] + closestPos[1];
-      position[2] = tankPos[2] + closestPos[2];
-      //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
-    }
-  }
-  return minTime;
-*/
-	return 0.0f;
-}
-
-/*
- void			SegmentedShotStrategy::addShot(
-				SceneDatabase* scene, bool colorblind)
-{
-  const ShotPath& shotPath = getPath();
-  boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
-  if (boltSceneNode->getColorblind() != colorblind) {
-    boltSceneNode->setColorblind(colorblind);
-    TeamColor currentTeam = colorblind ? RogueTeam : team;
-
-    const float* c = Team::getRadarColor(currentTeam);
-    boltSceneNode->setColor(c[0], c[1], c[2]);
-
-    TextureManager &tm = TextureManager::instance();
-    std::string imageName = Team::getImagePrefix(currentTeam);
-    imageName += BZDB.get("boltTexture");
-    int texture = tm.getTextureID(imageName.c_str());
-    if (texture >= 0)
-      boltSceneNode->setTexture(texture);
-  }
-  scene->addDynamicNode(boltSceneNode);
-}
-*/
-
-void			SegmentedShotStrategy::radarRender() const
-{
-/*
-	const float *orig = getPath().getPosition();
-  const int length = BZDBCache::linedRadarShots;
-  const int size   = BZDBCache::sizedRadarShots;
-
-  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
-
-  // Display leading lines
-  if (length > 0) {
-    const float* vel = getPath().getVelocity();
-    const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-    float dir[3];
-    dir[0] = vel[0] * d * shotTailLength * length;
-    dir[1] = vel[1] * d * shotTailLength * length;
-    dir[2] = vel[2] * d * shotTailLength * length;
-    glBegin(GL_LINES);
-    glVertex2fv(orig);
-    if (BZDBCache::leadingShotLine) {
-      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-    } else {
-      glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
-    }
-    glEnd();
-
-    // draw a "bright" bullet tip
-    if (size > 0) {
-      glColor3f(0.75, 0.75, 0.75);
-      glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2f(orig[0], orig[1]);
-      glEnd();
-      glPointSize(1.0f);
-    }
-  } else {
-    if (size > 0) {
-      // draw a sized bullet
-      glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
-      glPointSize(1.0f);
-
-    } else {
-      // draw the tiny little bullet
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
-    }
-  }
-*/
-}
-
+//CHANGEEDIT
+//float			SegmentedShotStrategy::checkHit(const ShotCollider& tank,
+//							float position[3]) const
+//{
+//  float minTime = Infinity;
+//  // expired shot can't hit anything
+//  if (getPath().isExpired()) return minTime;
+//
+//  // get tank radius
+//  const float radius2 = tank.radius * tank.radius;
+//
+//  // tank is positioned from it's bottom so shift position up by
+//  // half a tank height.
+//  const float tankHeight = tank.size[2];
+//  float lastTankPositionRaw[3];
+//  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
+//  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
+//  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
+//  Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
+//
+//  // if bounding box of tank and entire shot doesn't overlap then no hit
+//  const float (*tankBBox)[3] = tank.bbox;
+//  if (!isOverlapping(bbox, tankBBox)) return minTime;
+//
+//  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+//
+//  // check each segment in interval (prevTime,currentTime]
+//  const float dt = float(currentTime - prevTime);
+//  const int numSegments = (const int)segments.size();
+//  for (int i = lastSegment; i <= segment && i < numSegments; i++)
+//  {
+//    // can never hit your own first laser segment
+//    if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
+//      continue;
+//
+///*
+//    // skip segments that don't overlap in time with current interval
+//    if (segments[i].end <= prevTime) continue;
+//    if (currentTime <= segments[i].start) break;
+//*/
+//
+//    // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
+//    const ShotPathSegment& s = segments[i];
+//    if (!isOverlapping(s.bbox, tankBBox) || s.reason == ShotPathSegment::Boundary) continue;
+//
+//    // construct relative shot ray:  origin and velocity relative to
+//    // my tank as a function of time (t=0 is start of the interval).
+//    Ray relativeRay(rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
+//
+//    // get hit time
+//    float t;
+//    if (tank.test2D)
+//    {
+//      // find closest approach to narrow box around tank.  width of box
+//      // is shell radius so you can actually hit narrow tank head on.
+//      static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
+//      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
+//			0.5f * tank.length, shotRadius, tankHeight);
+//    }
+//    else {
+//      // find time when shot hits sphere around tank
+//      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
+//    }
+//
+//    // short circuit if time is greater then smallest time so far
+//    if (t > minTime) continue;
+//
+//    // make sure time falls within segment
+//    if (t < 0.0f || t > dt) continue;
+//    if (t > s.end - prevTime) continue;
+//
+//    // check if shot hits tank -- get position at time t, see if in radius
+//    float closestPos[3];
+//    relativeRay.getPoint(t, closestPos);
+//    if (closestPos[0] * closestPos[0] +
+//	closestPos[1] * closestPos[1] +
+//	closestPos[2] * closestPos[2] < radius2) {
+//      // save best time so far
+//      minTime = t;
+//
+//      // compute location of tank at time of hit
+//      float tankPos[3];
+//      tank.motion.getPoint(t, tankPos);
+//
+//      // compute position of intersection
+//      position[0] = tankPos[0] + closestPos[0];
+//      position[1] = tankPos[1] + closestPos[1];
+//      position[2] = tankPos[2] + closestPos[2];
+//      //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
+//    }
+//  }
+//  return minTime;
+//}
+//
+//
+//void			SegmentedShotStrategy::addShot(
+//				SceneDatabase* scene, bool colorblind)
+//{
+//  const ShotPath& shotPath = getPath();
+//  boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
+//  if (boltSceneNode->getColorblind() != colorblind) {
+//    boltSceneNode->setColorblind(colorblind);
+//    TeamColor currentTeam = colorblind ? RogueTeam : team;
+//
+//    const float* c = Team::getRadarColor(currentTeam);
+//    boltSceneNode->setColor(c[0], c[1], c[2]);
+//
+//    TextureManager &tm = TextureManager::instance();
+//    std::string imageName = Team::getImagePrefix(currentTeam);
+//    imageName += BZDB.get("boltTexture");
+//    int texture = tm.getTextureID(imageName.c_str());
+//    if (texture >= 0)
+//      boltSceneNode->setTexture(texture);
+//  }
+//  scene->addDynamicNode(boltSceneNode);
+//}
+//
+//ENDCHANGEEDIT
+//CLIENTEDIT
+//void			SegmentedShotStrategy::radarRender() const
+//{
+//  const float *orig = getPath().getPosition();
+//  const int length = BZDBCache::linedRadarShots;
+//  const int size   = BZDBCache::sizedRadarShots;
+//
+//  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+//
+//  // Display leading lines
+//  if (length > 0) {
+//    const float* vel = getPath().getVelocity();
+//    const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+//    float dir[3];
+//    dir[0] = vel[0] * d * shotTailLength * length;
+//    dir[1] = vel[1] * d * shotTailLength * length;
+//    dir[2] = vel[2] * d * shotTailLength * length;
+//    glBegin(GL_LINES);
+//    glVertex2fv(orig);
+//    if (BZDBCache::leadingShotLine) {
+//      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+//    } else {
+//      glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+//    }
+//    glEnd();
+//
+//    // draw a "bright" bullet tip
+//    if (size > 0) {
+//      glColor3f(0.75, 0.75, 0.75);
+//      glPointSize((float)size);
+//      glBegin(GL_POINTS);
+//      glVertex2f(orig[0], orig[1]);
+//      glEnd();
+//      glPointSize(1.0f);
+//    }
+//  } else {
+//    if (size > 0) {
+//      // draw a sized bullet
+//      glPointSize((float)size);
+//      glBegin(GL_POINTS);
+//      glVertex2fv(orig);
+//      glEnd();
+//      glPointSize(1.0f);
+//
+//    } else {
+//      // draw the tiny little bullet
+//      glBegin(GL_POINTS);
+//      glVertex2fv(orig);
+//      glEnd();
+//    }
+//  }
+//
+//}
+//
+//ENDCLIENTEDIT
 void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
   // compute segments of shot until total length of segments exceeds the
@@ -361,15 +432,20 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   double	  startTime = shotPath.getStartTime();
   float		  timeLeft	    = shotPath.getLifetime();
   float		  minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
-  //World		  *world = World::getWorld();
-
-  //if (!world)
-    //return; /* no world, no shots */
+//CHANGEEDIT
+//  World		  *world = World::getWorld();
+//  if (!world)
+//    return; /* no world, no shots */
+//ENDCHANGEEDIT
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop /*&& world->allShotsRicochet()*/)
-    e = Reflect;
-
+//CHANGEEDIT
+//  if (e == Stop && world->allShotsRicochet())
+//CHANGED
+//  if (e == Stop)
+//    e = Reflect;
+//
+//ENDCHANGEEDIT
   // prepare first segment
   float o[3], d[3];
   d[0] = v[0];
@@ -449,21 +525,21 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       o[2] += t * d[2];
       reason = ShotPathSegment::Boundary;
     } else if (teleporter) {
-		/*
       // entered teleporter -- teleport it
-      unsigned int seed = shotPath.getShotId() + i;
-      int source = world->getTeleporter(teleporter, face);
-      int target = world->getTeleportTarget(source, seed);
-
-      int outFace;
-      const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
-      o[0] += t * d[0];
-      o[1] += t * d[1];
-      o[2] += t * d[2];
-      teleporter->getPointWRT(*outTeleporter, face, outFace,
-					    o, d, 0.0f, o, d, NULL);
+//CHANGEEDIT
+//      unsigned int seed = shotPath.getShotId() + i;
+//      int source = world->getTeleporter(teleporter, face);
+//      int target = world->getTeleportTarget(source, seed);
+//
+//      int outFace;
+//      const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
+//      o[0] += t * d[0];
+//      o[1] += t * d[1];
+//      o[2] += t * d[2];
+//      teleporter->getPointWRT(*outTeleporter, face, outFace,
+//					    o, d, 0.0f, o, d, NULL);
+//ENDCHANGEEDIT
       reason = ShotPathSegment::Teleport;
-		 */
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
@@ -656,7 +732,6 @@ void			ThiefStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
-/*
 void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
 {
   // thief is so fast we always show every segment
@@ -664,25 +739,26 @@ void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
   for (size_t i = 0; i < numSegments; i++)
     scene->addDynamicNode(thiefNodes[i]);
 }
-*/
 
-void			ThiefStrategy::radarRender() const
-{
-  // draw all segments
-  const std::vector<ShotPathSegment>& segmts = getSegments();
-  const size_t numSegments = segmts.size();
-  glBegin(GL_LINES);
-    for (size_t i = 0; i < numSegments; i++) {
-      const ShotPathSegment& segm = segmts[i];
-      const float* origin = segm.ray.getOrigin();
-      const float* direction = segm.ray.getDirection();
-      const float dt = float(segm.end - segm.start);
-      glVertex2fv(origin);
-      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-    }
-  glEnd();
-}
-
+//CLIENTEDIT
+//void			ThiefStrategy::radarRender() const
+//{
+//  // draw all segments
+//  const std::vector<ShotPathSegment>& segmts = getSegments();
+//  const size_t numSegments = segmts.size();
+//  glBegin(GL_LINES);
+//    for (size_t i = 0; i < numSegments; i++) {
+//      const ShotPathSegment& segm = segmts[i];
+//      const float* origin = segm.ray.getOrigin();
+//      const float* direction = segm.ray.getDirection();
+//      const float dt = float(segm.end - segm.start);
+//      glVertex2fv(origin);
+//      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+//    }
+//  glEnd();
+//}
+//
+//ENDCLIENTEDIT
 bool			ThiefStrategy::isStoppedByHit() const
 {
   return false;
@@ -781,6 +857,40 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
   makeSegments(Stop);
   setCurrentTime(getLastTime());
   endTime = f.lifetime;
+
+//CLIENTEDIT
+//  // make laser scene nodes
+//  const int numSegments = (const int)(getSegments().size());
+//  laserNodes = new LaserSceneNode*[numSegments];
+//  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+//  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
+//
+//  TextureManager &tm = TextureManager::instance();
+//  std::string imageName = Team::getImagePrefix(tmpTeam);
+//  imageName += BZDB.get("laserTexture");
+//  int texture = tm.getTextureID(imageName.c_str());
+//
+//  for (int i = 0; i < numSegments; i++) {
+//    const ShotPathSegment& segm = getSegments()[i];
+//    const float t = float(segm.end - segm.start);
+//    const Ray& ray = segm.ray;
+//    const float* rawdir = ray.getDirection();
+//    float dir[3];
+//    dir[0] = t * rawdir[0];
+//    dir[1] = t * rawdir[1];
+//    dir[2] = t * rawdir[2];
+//    laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
+//    if (texture >= 0)
+//      laserNodes[i]->setTexture(texture);
+//
+//	const float *color = Team::getRadarColor(tmpTeam);
+//	laserNodes[i]->setColor(color[0],color[1],color[2]);
+//
+//	if (i == 0)
+//		laserNodes[i]->setFirst();
+//  }
+//  setCurrentSegment(numSegments - 1);
+//ENDCLIENTEDIT
 }
 
 LaserStrategy::~LaserStrategy()
@@ -797,31 +907,35 @@ void			LaserStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
-/*
 void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 {
+//CLIENTEDIT
+//  // laser is so fast we always show every segment
+//  const size_t numSegments = getSegments().size();
+//  for (size_t i = 0; i < numSegments; i++)
+//    scene->addDynamicNode(laserNodes[i]);
+//ENDCLIENTEDIT
 }
-*/
 
-/*
- void			LaserStrategy::radarRender() const
-{
-  // draw all segments
-  const std::vector<ShotPathSegment>& segmts = getSegments();
-  const size_t numSegments = segmts.size();
-  glBegin(GL_LINES);
-    for (size_t i = 0; i < numSegments; i++) {
-      const ShotPathSegment& segm = segmts[i];
-      const float* origin = segm.ray.getOrigin();
-      const float* direction = segm.ray.getDirection();
-      const float dt = float(segm.end - segm.start);
-      glVertex2fv(origin);
-      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-    }
-  glEnd();
-}
-*/
-
+//CLIENTEDIT
+//void			LaserStrategy::radarRender() const
+//{
+//  // draw all segments
+//  const std::vector<ShotPathSegment>& segmts = getSegments();
+//  const size_t numSegments = segmts.size();
+//  glBegin(GL_LINES);
+//    for (size_t i = 0; i < numSegments; i++) {
+//      const ShotPathSegment& segm = segmts[i];
+//      const float* origin = segm.ray.getOrigin();
+//      const float* direction = segm.ray.getDirection();
+//      const float dt = float(segm.end - segm.start);
+//      glVertex2fv(origin);
+//      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+//    }
+//  glEnd();
+//}
+//
+//ENDCLIENTEDIT
 bool			LaserStrategy::isStoppedByHit() const
 {
   return false;
