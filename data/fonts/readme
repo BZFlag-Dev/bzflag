@@ -7,14 +7,10 @@ or concerns regarding existing fonts, the addition of new fonts, or
 modifications.  All fonts have been modified or converted, and some
 significantly edited to work effectively within BZFlag.
 
-Any fonts being added must be freely redistributable to be considered
-for inclusion.  Original TTFs may be found at the following locations:
+Any fonts being added must be freely modifiable and freely
+redistributable to be considered for inclusion.
 
-Bigelow & Holmes Luxi Mono
-http://cvsweb.xfree86.org/cvsweb/xc/fonts/scaled/TTF/
+Original TTFs may be found at the following locations:
 
-Toga Sans and Toga Serif
-http://www.binara.com/toga/
-
-Bitstream Vera Mono
-http://ftp.gnome.org/pub/GNOME/sources/ttf-bitstream-vera/
+Deja Vu fonts
+http://dejavu.sourceforge.net/

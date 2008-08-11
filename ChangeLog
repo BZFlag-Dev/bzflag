@@ -6,6 +6,11 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
+BZFlag 2.0.13
+------------
+* change fonts to DejaVu - Jeff Myers, Tim Riker
+* source cleanup - Tim Riker
+
 BZFlag 2.0.12
 ----------------------------------------------------
 * Fix build with -ffast-math avoiding use of isnan for fog - Alfredo Tupone
