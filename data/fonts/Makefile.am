@@ -10,14 +10,6 @@ dist_font_DATA = \
 	LuxiMono_6.png		\
 	LuxiMono_8.fmt		\
 	LuxiMono_8.png		\
-	ProFont_12.fmt		\
-	ProFont_12.png		\
-	ProFont_16.fmt		\
-	ProFont_16.png		\
-	ProFont_6.fmt		\
-	ProFont_6.png		\
-	ProFont_8.fmt		\
-	ProFont_8.png		\
 	TogaSansBold_12.fmt	\
 	TogaSansBold_12.png	\
 	TogaSansBold_16.fmt	\
