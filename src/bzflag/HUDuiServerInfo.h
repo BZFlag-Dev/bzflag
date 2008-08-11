@@ -23,20 +23,31 @@
 #include "HUDuiControl.h"
 
 #include "ServerItem.h"
+#include "HUDuiLabel.h"
 #include <string>
 
 class HUDuiServerInfo : public HUDuiControl {
   public:
-			HUDuiServerInfo();
-			~HUDuiServerInfo();
+      HUDuiServerInfo();
+      ~HUDuiServerInfo();
 
     void setServerItem(ServerItem* item);
+
+    void setSize(float width, float height);
+    void setFontSize(float size);
+    void setFontFace(const LocalFontFace* face);
+    void setPosition(float x, float y);
 
   protected:
     void doRender();
 
+    void resize();
+    void fillReadouts();
+
   private:
     ServerItem* server;
+
+    std::vector<HUDuiLabel*> readouts;
 };
 
 #endif // __HUDUISERVERINFO_H__

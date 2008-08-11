@@ -24,18 +24,12 @@
 // HUDuiServerListItem
 //
 
-// Percentages of the server list item label dedicated to each column
-const float HUDuiServerListItem::DOMAIN_PERCENTAGE = 0.375;
-const float HUDuiServerListItem::SERVER_PERCENTAGE = 0.375;
-const float HUDuiServerListItem::PLAYER_PERCENTAGE = 0.125;
-const float HUDuiServerListItem::PING_PERCENTAGE = 0.125;
-
 HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
 {
   // Do nothing
 }
 
-HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl()
+HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f)
 {
   serverKey = item.description;
   char temp[50];
@@ -77,29 +71,33 @@ std::string HUDuiServerListItem::getServerKey()
   return serverKey;
 }
 
-// Set the scrollable list item's position on the screen
-void HUDuiServerListItem::setPosition(float x, float y)
-{
-  HUDuiControl::setPosition(x, y);
-
-  float width = getWidth() - (spacerWidth * 3);
-
-  float _x = x;
-  domainX = _x;
-  _x = _x + (DOMAIN_PERCENTAGE*width) + spacerWidth;
-  serverX = _x;
-  _x = _x + (SERVER_PERCENTAGE*width) + spacerWidth;
-  playerX = _x;
-  _x = _x + (PLAYER_PERCENTAGE*width) + spacerWidth;
-  pingX = _x;
-}
-
 void HUDuiServerListItem::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
 
   resize();
-  setPosition(getX(), getY());
+}
+
+void HUDuiServerListItem::setFontSize(float size)
+{
+  HUDuiControl::setFontSize(size);
+
+  resize();
+}
+
+void HUDuiServerListItem::setFontFace(const LocalFontFace *face)
+{
+  HUDuiControl::setFontFace(face);
+
+  resize();
+}
+
+void HUDuiServerListItem::setColumnSizes(float domain, float server, float player, float ping)
+{
+  domain_percentage = domain;
+  server_percentage = server;
+  player_percentage = player;
+  ping_percentage = ping;
 }
 
 void HUDuiServerListItem::resize()
@@ -108,14 +106,12 @@ void HUDuiServerListItem::resize()
     return;
 
   FontManager &fm = FontManager::instance();
-  spacerWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "X");
+  spacerWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "I");
 
-  float width = getWidth() - (spacerWidth * 3);
-
-  displayDomain = shorten(domainName, (DOMAIN_PERCENTAGE*width));
-  displayServer = shorten(serverName, (SERVER_PERCENTAGE*width));
-  displayPlayer = shorten(playerCount, (PLAYER_PERCENTAGE*width));
-  displayPing = shorten(serverPing, (PING_PERCENTAGE*width));
+  displayDomain = shorten(domainName, (domain_percentage*getWidth())-2*spacerWidth);
+  displayServer = shorten(serverName, (server_percentage*getWidth())-2*spacerWidth);
+  displayPlayer = shorten(playerCount, (player_percentage*getWidth())-2*spacerWidth);
+  displayPing = shorten(serverPing, (ping_percentage*getWidth())-2*spacerWidth);
 }
 
 std::string HUDuiServerListItem::shorten(std::string string, float width)
@@ -179,6 +175,12 @@ void HUDuiServerListItem::doRender()
   } else {
     darkness = 0.7f;
   }
+  
+  float domainX = getX() + spacerWidth;
+  float serverX = getX() + domain_percentage*getWidth() + spacerWidth;
+  float playerX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
+  float pingX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
+
   fm.setDarkness(darkness);
   fm.drawString(domainX, getY(), 0,
 		getFontFace()->getFMFace(), getFontSize(),

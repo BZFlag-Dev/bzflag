@@ -10,28 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __SERVERMENU_H__
-#define __SERVERMENU_H__
+#ifndef	__SERVERMENU_H__
+#define	__SERVERMENU_H__
 
-// ancestor classes
-#include "MenuDefaultKey.h"
-#include "HUDDialog.h"
-
-/* system interface headers */
-#include <string>
-#include <vector>
-#include <map>
-
-/* common interface headers */
-#include "BzfEvent.h"
-#include "ServerItem.h"
-#include "ServerList.h"
-#include "ServerPing.h"
+#include "common.h"
 
 /* local interface headers */
+#include "HUDDialog.h"
+#include "MenuDefaultKey.h"
 #include "HUDuiDefaultKey.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
+#include "HUDuiControl.h"
+
+#include "HUDuiServerList.h"
+#include "ServerList.h"
+#include "HUDuiTabbedControl.h"
+#include "HUDuiServerInfo.h"
 
 class ServerMenu;
 
@@ -54,54 +47,31 @@ public:
   ~ServerMenu();
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  int getSelected() const;
-  void setSelected(int, bool forcerefresh=false);
-  void show();
-  void execute();
-  void dismiss();
-  void resize(int width, int height);
-  static void playingCB(void*);
+
+  void		execute();
+  void		resize(int width, int height);
+
+  ServerList serverList;
+
+  static void	callback(HUDuiControl* w, void* data);
+
   void updateStatus();
 
-  bool getFind() const;
-  void setFind(bool mode);
+  static void playingCB(void*);
 
-  void toggleFavView();
-  void setFav(bool);
-  
-  void pingServer(int server);
+  void refresh();
 
-  static const int NumItems;
+  HUDuiServerList* normalList;
+  HUDuiServerList* recentList;
+  HUDuiServerList* favoritesList;
 
-private:
-  HUDuiLabel* addLabel(const char* str, const char* label, bool navigable = false);
-  void pick();
-
-  ServerItem& serversAt(int index);
-
-private:
-  ServerList realServerList;
-  ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
-  HUDuiLabel* status;
-  HUDuiLabel* help;
 
-  HUDuiLabel* pageLabel;
-  std::vector<HUDuiLabel*> readouts;
-  std::vector<HUDuiLabel*> items;
-  int selectedIndex;
-  unsigned int serversFound;
-  unsigned int realServersFound;
+  HUDuiLabel* title;
+  HUDuiTabbedControl* tabbedControl;
+  HUDuiServerInfo* serverInfo;
 
-  HUDuiTypeIn* search;
-  bool findMode;
-  std::string filter;
-  bool favView;
-  bool newfilter;
-
-  static const int NumReadouts;
-  
-  std::map<int, ServerPing*> activePings;
+  bool inverted;
 };
 
 

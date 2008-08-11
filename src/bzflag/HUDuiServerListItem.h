@@ -32,7 +32,10 @@ class HUDuiServerListItem : public HUDuiControl {
       ~HUDuiServerListItem();
 	
     void setSize(float width, float height);
-    void setPosition(float x, float y);
+    void setFontSize(float size);
+    void setFontFace(const LocalFontFace *face);
+
+    void setColumnSizes(float domain, float server, float player, float ping);
 	
     std::string getDomainName();
     std::string getServerName();
@@ -59,17 +62,12 @@ class HUDuiServerListItem : public HUDuiControl {
     std::string displayPlayer;
     std::string displayPing;
 
-    float domainX;
-    float serverX;
-    float playerX;
-    float pingX;
+    float domain_percentage;
+    float server_percentage;
+    float player_percentage;
+    float ping_percentage;
 
     float spacerWidth;
-	
-    static const float DOMAIN_PERCENTAGE;
-    static const float SERVER_PERCENTAGE;
-    static const float PLAYER_PERCENTAGE;
-    static const float PING_PERCENTAGE;
 };
 
 #endif // __HUDuiServerListItem_H__

@@ -25,6 +25,8 @@
 #include "ServerItem.h"
 #include "ServerList.h"
 
+#include "HUDuiFrame.h"
+
 class HUDuiServerList : public HUDuiScrollList {
   public:
       HUDuiServerList();
@@ -40,15 +42,22 @@ class HUDuiServerList : public HUDuiScrollList {
     } FilterConstants;
 
     typedef enum {
-      NoSort = 0,
-      DomainName,
+      DomainName = 0,
       ServerName,
       PlayerCount,
-      Ping
+      Ping,
+      NoSort
     } SortConstants;
+
+    static double DOMAIN_PERCENTAGE;
+    static double SERVER_PERCENTAGE;
+    static double PLAYER_PERCENTAGE;
+    static double PING_PERCENTAGE;
 
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
+
+    void update();
 	
     void setServerList(ServerList* list);
 
@@ -60,6 +69,10 @@ class HUDuiServerList : public HUDuiScrollList {
     void applyFilters();
     void toggleFilter(FilterConstants filter);
 
+    void setFontSize(float size);
+    void setFontFace(const LocalFontFace* face);
+    void setSize(float width, float height);
+
   protected:
     struct filter;
     struct search;
@@ -67,11 +80,31 @@ class HUDuiServerList : public HUDuiScrollList {
 
     static ServerList* dataList;
 
+    size_t callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod);
+
+    bool doKeyPress(const BzfKeyEvent& key);
+
+    void setActiveColumn(int column);
+    int getActiveColumn();
+
+    void refreshNavQueue();
+
+    void doRender();
+    void calculateLines();
+
+    bool reverseSort;
+
   private:
     std::list<HUDuiControl*> originalItems;
 
+    std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>> linesToRender;
+
     SortConstants sortMode;
     uint16_t filterOptions;
+
+    int activeColumn;
+
+    bool devInfo;
 };
 
 #endif // __HUDuiServerList_H__

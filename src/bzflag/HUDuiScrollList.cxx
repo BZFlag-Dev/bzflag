@@ -115,16 +115,21 @@ void HUDuiScrollList::update()
     getNav().set(getNav().get());
 }
 
-size_t HUDuiScrollList::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
+size_t HUDuiScrollList::callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod)
 {
   // Don't scroll up any further once you've hit the top of the list
   if ((oldFocus == 0)&&(changeMethod == hnPrev)) proposedFocus = oldFocus;
   
   // Don't scroll past the bottom of the list
-  if ((oldFocus == ((HUDuiScrollList*)data)->getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
+  if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
-  ((HUDuiScrollList*)data)->setSelected((int) proposedFocus);
-  return (size_t) ((HUDuiScrollList*)data)->getSelected();
+  setSelected((int) proposedFocus);
+  return (size_t) getSelected();
+}
+
+size_t HUDuiScrollList::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
+{
+  return ((HUDuiScrollList*)data)->callbackHandler(oldFocus, proposedFocus, changeMethod);
 }
 
 // Set the scrollable list to be paged/non-paged
@@ -177,7 +182,7 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
       return false;
   }
 
-  return true;
+  return false;
 }
 
 bool HUDuiScrollList::doKeyRelease(const BzfKeyEvent&)
@@ -244,7 +249,7 @@ void HUDuiScrollList::doRender()
     if (i < (int)items.size()) {
       HUDuiControl* item = *it;
       item->setFontSize(getFontSize());
-      item->setPosition(getX(), (getY() - itemHeight*(i-(getSelected() - visiblePosition))));
+      item->setPosition(getX(), ((getY() + getHeight()) - itemHeight*((i + 1)-(getSelected() - visiblePosition))));
       item->render();
       std::advance(it, 1);
     }

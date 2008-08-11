@@ -50,6 +50,8 @@ class HUDuiControl : public HUDuiElement {
 	
     bool isNested() { return nested; }
     void isNested(bool isNested);
+
+    virtual bool isContainer() { return false; }
 	
     HUDuiControl* getParent() { return parent; }
     void setParent(HUDuiControl* parentControl);

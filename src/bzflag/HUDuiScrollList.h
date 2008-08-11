@@ -41,6 +41,8 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     virtual void addItem(HUDuiControl* item);
 
+    size_t size() { return items.size(); }
+
     void update();
     void refreshNavQueue();
     void clear();
@@ -59,6 +61,8 @@ class HUDuiScrollList : public HUDuiNestedContainer {
     void resizeItems();
 
     void doRender();
+
+    virtual size_t callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod);
 
     std::list<HUDuiControl*> items;
 
