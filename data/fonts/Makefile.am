@@ -3,7 +3,6 @@ fonts_DATA = \
 	DejaVuSansCondensedBold.ttf \
 	DejaVuSansMonoBold.ttf \
 	DejaVuSerifBold.ttf \
-	LuxiMono.ttf \
 	TogaSansBold.ttf \
 	TogaSerifBold.ttf \
 	VeraMonoBold.ttf
