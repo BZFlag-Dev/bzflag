@@ -4,7 +4,6 @@ fonts_DATA = \
 	DejaVuSansMonoBold.ttf \
 	DejaVuSerifBold.ttf \
 	LuxiMono.ttf \
-	ProFont.ttf \
 	TogaSansBold.ttf \
 	TogaSerifBold.ttf \
 	VeraMonoBold.ttf
