@@ -20,9 +20,9 @@
 
 /* boost headers */
 #include <boost/spirit/core.hpp>
-#include <boost/spirit/iterator/multi_pass.hpp>
-
 /* BZW */
+#include "BZW/World.h"
+#include "BZW/WorldObject.h"
 #include "Grammar.h"
 
 namespace BZW
@@ -30,8 +30,11 @@ namespace BZW
   class Parser
   {
     public:
-
+      /// Constructor
+      Parser(std::istream& input);
+      //TODO register callbacks for blocks
     private:
+      WorldObject* current_object;
 
   };
 }

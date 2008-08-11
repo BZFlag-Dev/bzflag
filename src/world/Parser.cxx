@@ -13,11 +13,22 @@
 #include <string>
 #include <map>
 
+/* Spirit */
+#include <boost/spirit/iterator/multi_pass.hpp>
+
+/* BZW */
 #include "Parser.h"
 
 namespace BZW
 {
-
+  Parser::Parser(std::istream& input)
+  {
+    istreambuf_iterator<char> stream_begin(input);
+    multi_pass<istreambuf_iterator<char> > begin(make_multi_pass(stream_begin)), end;
+    bzw_grammar the_grammar(*this);
+    bzw_skip_grammar the_skipper;
+    parse(begin, end, the_grammar, the_skipper);
+  }
 }
 // Local Variables: ***
 // Mode: C++ ***
