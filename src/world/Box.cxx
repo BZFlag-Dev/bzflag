@@ -10,17 +10,43 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "BZW/WorldObject.h"
+/* BZW */
+#include "BZW/Box.h"
 
 namespace BZW
 {
-  /// Read and parse a single line in BZW format
-  virtual void WorldObject::readLine(const std::istringstream& line)
+  void Box::readLine(const std::istringstream& line)
   {
-    //FIXME should be handled by an error handler or something
-    cerr << "Warning! Unhandled line read:\n" << line.str() << endl;
+    string pname;
+    line >> pname;
+    if(pname == "position")
+    {
+        line
+            >> position[0]
+            >> position[1]
+            >> position[2]
+            ;
+    }
+    else if(pname == "size")
+    {
+        line
+            >> size[0]
+            >> size[1]
+            >> size[2]
+            ;
+    }
+    else if(pname == "rotation")
+    {
+        line >> rotation;
+    }
+    else
+    {
+        cerr << "Warning! Unrecognized parameter" << endl;
+    }
+    //FIXME check for erroneous extra strings maybe?
   }
 }
+
 // Local Variables: ***
 // Mode: C++ ***
 // tab-width: 8 ***
@@ -28,3 +54,4 @@ namespace BZW
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

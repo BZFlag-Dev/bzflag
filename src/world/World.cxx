@@ -11,6 +11,7 @@
  */
 
 #include "BZW/World.h"
+#include "WorldObjects.h"
 #include "Parser.h"
 
 namespace BZW
@@ -33,20 +34,32 @@ namespace BZW
   /// Destructor
   World::~World()
   {
+
   }
 
   /// Read a world from stream
   void World::read(std::istream& input)
   {
+    Parser p;
+    //TODO register objects with parser
   }
 
   void World::write(std::ostream& output)
   {
+
   }
 
-  void registerObject(std::string tag, WorldObjectFactory factory)
+  void World::registerObject(std::string tag, WorldObjectFactory factory)
   {
     customObjects.insert(std::make_pair(tag, factory));
+  }
+
+  // World Objects
+  Box* World::addBox()
+  {
+    Box* new_box = new Box();
+    world_objects.push_back(new_box);
+    return new_box;
   }
 }
 // Local Variables: ***

@@ -13,6 +13,7 @@ noinst_HEADERS = 	\
 
 libBZW_la_LDFLAGS = -static
 libBZW_la_SOURCES =	\
+	Box.cxx			\
 	World.cxx		\
 	WorldObject.cxx		\
 	Parser.cxx

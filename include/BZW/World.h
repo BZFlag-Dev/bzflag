@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 /* bzflag common headers */
 #include "WorldObject.h"
 
@@ -45,6 +46,7 @@ namespace BZW
       void registerObject(const std::string& tag, WorldObjectFactory factory);
     private:
       std::map<std::string, WorldObjectFactory> custom_objects;
+      std::vector<WorldObject*> world_objects;
 
   };
 

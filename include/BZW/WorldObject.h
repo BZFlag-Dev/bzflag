@@ -13,6 +13,8 @@
 #ifndef __BZW_WORLDOBJECT_H__
 #define __BZW_WORLDOBJECT_H__
 
+#include <string>
+
 /* bzflag common headers */
 
 namespace BZW
@@ -23,12 +25,8 @@ namespace BZW
   class WorldObject
   {
     public:
-      /// Default Constructor
-      WorldObject();
-      /// Destructor
-      ~WorldObject();
-
-    private:
+      /// Read and parse a parameter line in BZW format
+      virtual void readLine(const std::istringstream& line);
 
   };
 

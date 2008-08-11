@@ -2,8 +2,10 @@ all-local:
 	@date > datestamp
 
 noinst_HEADERS =	\
+	Box.h		\
 	World.h		\
-	WorldObject.h
+	WorldObject.h	\
+	WorldObjects.h
 
 CLEANFILES = datestamp
 
