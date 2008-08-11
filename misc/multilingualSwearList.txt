@@ -152,7 +152,6 @@
 # is Icelandic
 # it Italian
 # iu Inuktitut
-# iu Inuktitut
 # ja Japanese
 # jv Javanese
 # ka Georgian
@@ -252,7 +251,6 @@
 # tw Twi
 # ty Tahitian
 # ug Uighur
-# ug Uighur
 # uk Ukrainian
 # ur Urdu
 # uz Uzbek
@@ -344,6 +342,7 @@ asshead
 assho
 asshoe
 asshol
+asshole
 asshorisin
 assinahole
 assjuice
@@ -407,7 +406,6 @@ basterd
 bastid
 biach
 biatch
-biotch
 bicht
 bigass
 bigassball
@@ -658,6 +656,7 @@ fuckpirate
 fucknut
 fuckoff
 fuckshit
+fucktard
 fucku
 fuckubitch
 fuckup
@@ -1633,7 +1632,6 @@ swiniojebca             # pl - pigfucker
 wpierdal                # pl - kick their ass
 wpierdala		# pl - eat something vulgar
 wpierdalac		# pl - eat something vulgar
-wypierdala              # pl - fuck off
 wypierdala              # pl - fuck off
 wypierdalaj             # pl - fuck off
 zajebicie               # pl - "fucking awesome"

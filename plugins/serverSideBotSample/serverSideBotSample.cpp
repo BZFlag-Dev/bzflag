@@ -4,196 +4,224 @@
 #include "bzfsAPI.h"
 #include <string>
 #include <math.h>
+#include <list>
 
 BZ_GET_PLUGIN_VERSION
 
+#define deg2Rad 0.017453292519943295769236907684886f
+#define rad2Deg 57.295779513082320876798154814105f
 
-class SimpleBotHandler : public bz_ServerSidePlayerHandler , bz_EventHandler
+class Waypoint
 {
 public:
-	SimpleBotHandler();
-	virtual void added ( int playerIndex );
-	virtual void removed ( void );
-	virtual void playerRemoved ( int playerIndex );
+  Waypoint(bz_ServerSidePlayerHandler &b, float *t = NULL ) : bot(b)
+  {
+    if(t)
+      memcpy(target,t,sizeof(float)*3);
+    else
+      memset(target,0,sizeof(float)*3);
+  }
 
-	virtual void flagUpdate ( int count, bz_FlagUpdateRecord **flagList );
-	virtual void playerUpdate ( bz_PlayerInfoUpdateRecord *playerRecord );
-	virtual void teamUpdate ( int count, bz_TeamInfoRecord **teamList );
+  Waypoint(const Waypoint &v ) : bot(v.bot)
+  {
+    memcpy(target,v.target,sizeof(float)*3);
+  }
 
-	virtual void process ( bz_EventData *eventData );
+  bool process ( void )
+  {
+    // get the current vec to the target
+    float vec[3];
+    bot.getPosition(vec);
 
-	virtual void playerSpawned ( int player, float pos[3], float rot );
+    for (int i = 0; i < 3; i++)
+      vec[i] = target[i] - vec[i];
 
-protected:
+    // see if we are there
+    if ( vec[0]*vec[0]+vec[1]*vec[1] < 1 )
+      return true;
 
-	bool inGame;
-	float pos[3];
-	float rot;
-	float lastUpdateTime;
+    float angle = atan2(vec[1],vec[0])*rad2Deg;
+    float angDelta = angle - bot.getFacing();
+
+    float input[2] = {0,0};
+    if ( fabs(angDelta) > 1.0f )
+      input[0] = angDelta;
+
+    if ( fabs(angDelta) > 25.0f )
+      input[1] = 1.0f;
+
+    bot.setMovement(input[1],input[0]);
+
+    return false;
+  }
+
+  float target[3];
+private:
+  bz_ServerSidePlayerHandler &bot;
 };
 
-SimpleBotHandler	bot;
-int					botPlayerID;
-
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+class SimpleBotHandler : public bz_ServerSidePlayerHandler 
 {
+public:
+  SimpleBotHandler();
+  virtual void added ( int playerIndex );
+  virtual void removed ( void );
 
+  virtual bool think(void); 
+
+  virtual void playerSpawned ( int player, float pos[3], float rot );
+
+protected:
+  std::list<Waypoint> waypoints;
+};
+
+class EventHandler : public bz_EventHandler
+{
+public:
+  virtual void process ( bz_EventData *eventData );
+};
+
+std::vector<SimpleBotHandler*> bots;
+EventHandler events;
+int numBots = 1;
+
+BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+{
   bz_debugMessage(4,"serverSideBotSample plugin loaded");
   bz_debugMessage(0,"******* WARNING. THE SERVER SIDE BOT PLUGIN IS UNSTABLE******");
   bz_debugMessage(0,"******* IT CAN AND WILL CRASH YOUR SYSTEM ******");
   bz_debugMessage(0,"******* THE CODE IS UNDER DEVELOPMENT ******");
   bz_debugMessage(0,"******* DO NOT USE IT UNLESS YOU ARE SURE YOU KNOW WHAT YOU ARE DOING ******");
-  bz_debugMessage(2,"adding one simple bot, may the gods have mercy on your soul");
-  botPlayerID = bz_addServerSidePlayer(&bot);
+
+  if (commandLine)
+    numBots = atoi(commandLine);
+  if (numBots < 1)
+    numBots = 1;
+
+  bz_registerEvent ( bz_eTickEvent, &events );
+  bz_registerEvent ( bz_eWorldFinalized, &events );
+
   return 0;
 }
 
 BZF_PLUGIN_CALL int bz_Unload ( void )
 {
-  bz_removeServerSidePlayer ( botPlayerID, &bot );
-  bz_debugMessage(2,"removing one simple bot");
+  bz_debugMessagef(2,"removing %d simple bot",bots.size());
+  for ( size_t i = 0; i < bots.size(); i++)
+    bz_removeServerSidePlayer ( bots[i]->getPlayerID(), bots[i] );
+
+  bots.clear();
+
+  bz_removeEvent ( bz_eTickEvent, &events );
+  bz_removeEvent ( bz_eWorldFinalized, &events );
+
   bz_debugMessage(4,"serverSideBotSample plugin unloaded");
   return 0;
 }
 
 SimpleBotHandler::SimpleBotHandler()
 {
-	inGame = false;
-	pos[0] = pos[1] = pos[2] = rot = 0;
 }
 
 void SimpleBotHandler::added ( int playerIndex )
 {
-	bz_debugMessage(3,"SimpleBotHandler::added");
-	std::string name = "dante_";
-	name += bz_format("%d",playerID);
-	setPlayerData(name.c_str(),NULL,"bot sample",eAutomaticTeam);
-	bz_registerEvent ( bz_ePlayerSpawnEvent, this );
-	bz_registerEvent ( bz_eTickEvent, this );
-	joinGame();
+  bz_debugMessage(3,"SimpleBotHandler::added");
+  std::string name = "dante_";
+  name += bz_format("%d",playerID);
+  setPlayerData(name.c_str(),NULL,"bot sample",eAutomaticTeam);
+  joinGame();
 
-	lastUpdateTime = (float)bz_getCurrentTime();
-}
-
-void SimpleBotHandler::playerSpawned ( int player, float _pos[3], float _rot )
-{
-	bz_debugMessage(3,"SimpleBotHandler::playerSpawned");
-	bz_debugMessage(2,bz_format("SimpleBotHandler::playerSpawned #%d x%f y%f z%f r%f",player,_pos[0],_pos[1],_pos[2],_rot));
-
-	if (player == playerID)
-	{
-		inGame = true;
-		pos[0] = _pos[0];
-		pos[1] = _pos[1];
-		pos[2] = _pos[2];
-		rot = _rot;
-	}
-	else
-	{
-	}
+  float vals[3]={0};
+  waypoints.push_back(Waypoint(*this,vals));
 }
 
 void SimpleBotHandler::removed ( void )
 {
-	bz_removeEvent ( bz_ePlayerSpawnEvent, this );
-	bz_debugMessage(3,"SimpleBotHandler::removed");
+  bz_debugMessage(3,"SimpleBotHandler::removed");
 }
 
-void SimpleBotHandler::playerRemoved ( int playerIndex )
+bool SimpleBotHandler::think(void)
 {
-	bz_debugMessage(3,"SimpleBotHandler::playerRemoved");
-}
+  // see if we have a target, if so drive to it.
+  if (waypoints.size())
+  {
+    if(waypoints.begin()->process())
+      waypoints.erase(waypoints.begin());
+  }
 
-void SimpleBotHandler::flagUpdate ( int count, bz_FlagUpdateRecord **flagList )
-{
-	bz_debugMessage(3,"SimpleBotHandler::flagUpdate");
-}
+  if (!waypoints.size() && bz_anyPlayers())
+  {
+    // find a random player that is spawned.
+    bz_APIIntList *playerList = bz_getPlayerIndexList();
+    if (playerList)
+    {
+      if (playerList->size()) // if it's just one, it's just me
+      {
+	int dude = rand()&playerList->size();
+	dude = playerList->get(dude);
 
-void SimpleBotHandler::playerUpdate ( bz_PlayerInfoUpdateRecord *playerRecord )
-{
-	bz_debugMessage(3,"SimpleBotHandler::playerUpdate");
-}
-
-void SimpleBotHandler::teamUpdate ( int count, bz_TeamInfoRecord **teamList )
-{
-	bz_debugMessage(3,"SimpleBotHandler::teamUpdate");
-}
-
-void SimpleBotHandler::process ( bz_EventData *eventData )
-{
-	switch(eventData->eventType)
+	if(dude != getPlayerID()) // chasing myself is stupid
 	{
-		case bz_ePlayerSpawnEvent:
-			{
-				bz_debugMessage(3,"SimpleBotHandler::process bz_ePlayerSpawnEvent");
+	  bz_BasePlayerRecord * player = bz_getPlayerByIndex ( dude );
+	  if(player && player->spawned) // only chase the live ones
+	  {
+	    std::string message;
+	    message = bz_format("I see you %s!",player->callsign.c_str());
+	    bz_sendTextMessage(playerID,BZ_ALLUSERS,message.c_str());
 
-				bz_PlayerSpawnEventData_V1	*spawnEvent = (bz_PlayerSpawnEventData_V1*)eventData;
+	    // add the point as a waypoint
+	    waypoints.push_back(Waypoint(*this,player->currentState.pos));
+	  }
 
-				if (spawnEvent->playerID == playerID)
-					break;
-
-				bz_BasePlayerRecord * player = bz_getPlayerByIndex ( spawnEvent->playerID );
-				std::string message;
-				message = bz_format("well, look who droped in...%s",player->callsign.c_str());
-				bz_sendTextMessage(playerID,BZ_ALLUSERS,message.c_str());
-				bz_freePlayerRecord(player);
-			}
-			break;
-
-		case bz_eTickEvent:
-			{
-				float thisTime = (float)bz_getCurrentTime();
-
-				// here we have to do an update
-				// move to the first player We Find
-				bz_APIIntList	*list = bz_getPlayerIndexList();
-
-				bz_BasePlayerRecord	*player = NULL;
-				for ( unsigned int i = 0; i < list->size(); i++)
-				{
-					if ( list->get(i) != playerID )
-					{
-						player = bz_getPlayerByIndex(list->get(i));
-						break;
-					}
-				}
-				if (player)
-				{
-					float vectorTo[3];
-
-					vectorTo[0] = player->currentState.pos[0] - pos[0];
-					vectorTo[1] = player->currentState.pos[1] - pos[1];
-					vectorTo[2] = player->currentState.pos[2] - pos[2];
-
-					float dist = sqrt(vectorTo[0]*vectorTo[0]+vectorTo[1]*vectorTo[1]+vectorTo[2]*vectorTo[2]);
-					vectorTo[0] /= dist;
-					vectorTo[1] /= dist;
-					vectorTo[2] /= dist;
-
-					float speed = 10.0f;
-					float timeDelta =	thisTime - lastUpdateTime;
-
-					pos[0] += vectorTo[0] * speed * timeDelta;
-					pos[1] += vectorTo[1] * speed * timeDelta;
-					pos[2] += vectorTo[2] * speed * timeDelta;
-				}
-
-				bz_PlayerUpdateState	myState;
-
-				myState.status = eAlive;
-				myState.pos[0] = pos[0];
-				myState.pos[1] = pos[1];
-				myState.pos[2] = pos[2];
-				myState.rotation = rot;
-				updateState ( &myState );
-				bz_deleteIntList(list);
-
-				lastUpdateTime = thisTime;
-			}
-			break;
-		default:
-			return;
+	  bz_freePlayerRecord(player);
 	}
+     }
+
+      bz_deleteIntList(playerList);
+    }
+  }
+  return false;
+}
+
+void SimpleBotHandler::playerSpawned(int player, float pos[3], float rot)
+{
+  bz_ServerSidePlayerHandler::playerSpawned(player,pos,rot);
+
+  bz_debugMessage(3,"SimpleBotHandler::process bz_ePlayerSpawnEvent");
+
+  if (player == playerID)
+    return;
+
+  bz_BasePlayerRecord * playerInfo = bz_getPlayerByIndex ( player );
+  std::string message;
+  message = bz_format("well, look who dropped in...%s",playerInfo->callsign.c_str());
+  bz_sendTextMessage(playerID,BZ_ALLUSERS,message.c_str());
+
+  // add the point as a waypoint
+  waypoints.push_back(Waypoint(*this,pos));
+
+  bz_freePlayerRecord(playerInfo);
+}
+
+void EventHandler::process ( bz_EventData *eventData )
+{
+  if (eventData->eventType == bz_eTickEvent)
+  {
+      for ( size_t i = 0; i < bots.size(); i++)
+	bots[i]->update();
+  }
+  else
+  {
+    bz_debugMessagef(2,"adding %d simple bot(s), may the gods have mercy on your soul",numBots);
+    for (int i = 0; i < numBots;  i++ )
+    {
+      SimpleBotHandler *bot = new SimpleBotHandler;
+      bz_addServerSidePlayer(bot);
+      bots.push_back(bot);
+    }
+
+    bz_setMaxWaitTime(0.01f,"StupidSampleBot");
+  }
 }
 
 

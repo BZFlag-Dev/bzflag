@@ -32,6 +32,11 @@ ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false)
 {
 }
 
+ServerItem::~ServerItem()
+{
+  return;
+}
+
 void ServerItem::writeToFile(std::ostream& out) const
 {
   char buffer[ServerListCache::max_string+1]; // ServerListCache::max_string is inherited from ServerListCache.h

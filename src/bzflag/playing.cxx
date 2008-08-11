@@ -5663,9 +5663,8 @@ void drawFrame(const float dt)
 	    (ROAM.getTargetTank()->getId() == i);
 	  const bool showPlayer = !inCockpt || showTreads;
 
-	  if (myTank->getFlag() == Flags::Seer)
-	  // add player tank if required
-	  player[i]->addToScene(scene, effectiveTeam,
+	  if (myTank->getFlag() == Flags::Seer || showPlayer)// add player tank if required
+	    player[i]->addToScene(scene, effectiveTeam,
 	    inCockpt, seerView,
 	    showPlayer, showPlayer,thirdPersonVars.b3rdPerson);
 	}

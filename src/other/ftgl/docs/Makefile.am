@@ -28,14 +28,17 @@ endif
 html/doxygen.css: stamp-doxygen
 stamp-doxygen: doxygen.cfg stamp-eps
 	$(DOXYGEN) $^
-	sed -i 's/%FTGL/FTGL/' html/*html
+	for file in html/*html; do \
+	  $(SED) -e 's/%FTGL/FTGL/' < $$file > $$file.tmp; \
+	  mv $$file.tmp $$file; \
+	done
 	touch $@
 
 latex/ftgl.pdf: stamp-latex
 stamp-latex: stamp-doxygen
 	rm -f latex/ftgl.tex latex/ftgl.pdf
 	mv latex/refman.tex latex/ftgl.tex
-	sed 's/setlength{/renewcommand{/' latex/ftgl.tex > latex/refman.tex
+	$(SED) -e 's/setlength{/renewcommand{/' < latex/ftgl.tex > latex/refman.tex
 	cd latex && $(MAKE) $(AM_CFLAGS) refman.pdf || (cat refman.log; exit 1)
 	mv latex/refman.pdf latex/ftgl.pdf
 	touch stamp-latex

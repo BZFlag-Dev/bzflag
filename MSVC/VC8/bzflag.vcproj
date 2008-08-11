@@ -55,7 +55,7 @@
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
-				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG;BROKEN_DINPUT"
+				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
@@ -155,6 +155,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+<<<<<<< .working
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
@@ -170,6 +171,23 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
+=======
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
+				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG;"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				RuntimeTypeInfo="true"
+				PrecompiledHeaderFile="./bzflag_release/bzflag.pch"
+				AssemblerListingLocation="./bzflag_release/"
+				ObjectFile="./bzflag_release/"
+				ProgramDataBaseFileName="./bzflag_release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				CompileAs="0"
+>>>>>>> .merge-right.r18330
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -734,6 +752,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerInfo.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\HUDuiServerList.cxx"
 				>
 			</File>
@@ -759,10 +781,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\playerAvatarManager.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\PlaygroundMenu.cxx"
 				>
 			</File>
 			<File
@@ -1073,6 +1091,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\InputMenu.cxx"
 					>
 				</File>
@@ -1332,11 +1354,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\HUDuiServerList.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiServerListItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiTabbedControl.h"
 				>
 			</File>
 			<File
@@ -1405,10 +1435,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\playerAvatarManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\PlaygroundMenu.h"
 				>
 			</File>
 			<File

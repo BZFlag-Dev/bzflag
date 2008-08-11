@@ -22,6 +22,7 @@
 #include "ObstacleList.h"
 #include "WallObstacle.h"
 #include "ClientIntangibilityManager.h"
+#include "MotionUtils.h"
 
 // local implementation headers
 #include "playing.h"
@@ -30,7 +31,6 @@
 #include "sound.h"
 #include "effectsRenderer.h"
 #include "Roaming.h"
-
 #include "SyncClock.h"
 
 // for dead reckoning
@@ -446,12 +446,7 @@ void Player::updateTank(float dt, bool local)
 
 void Player::updateJumpJets(float dt)
 {
-  float jumpVel;
-  if (getFlag() == Flags::Wings) {
-    jumpVel = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-  } else {
-    jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-  }
+  float jumpVel = computeJumpVelocity(getFlag());
   const float jetTime = 0.5f * (jumpVel / -BZDBCache::gravity);
   state.jumpJetsScale -= (dt / jetTime);
   if (state.jumpJetsScale < 0.0f) {

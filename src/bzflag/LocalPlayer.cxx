@@ -32,6 +32,7 @@
 #include "playing.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
+#include "MotionUtils.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -204,66 +205,10 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 
 float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 {
-  float newAngVel;
-  float frames = 1.0f;
+  if(getPhysicsDriver() >= 0)
+    return desired;
 
-  if ((inputMethod != Keyboard) || (getPhysicsDriver() >= 0)) {
-    // mouse and joystick users
-    newAngVel = desired;
-
-  } else {
-    // keyboard users
-    if ((old * desired < 0.0f) || // reversed direction
-	(NEAR_ZERO(desired, ZERO_TOLERANCE)) || // stopped
-	(NEAR_ZERO(old - desired, ZERO_TOLERANCE))) { // close enough
-      newAngVel = desired;
-    } else {
-      /* dampened turning for aim control */
-
-      /* mildly fudgey factor controls turn rate dampening.  should
-       * converge roughly within converge and converge*converge
-       * seconds (assuming converge is < 1).
-       *
-       * it would converge within .5 but we didn't accelerate
-       * non-linearly by combining additional previous velocity, so
-       * it's generally around sqrt(converge) * converge seconds
-       * (i.e., around .35 sec for converge of .5)
-       */
-      static const float converge = 0.5f;
-
-      /* spread out dampening over this many frames */
-      frames = converge / dt;
-      if (frames < 1.0f) {
-	frames = 1.0f; // framerate too low
-      }
-
-      /* accelerate towards desired */
-      newAngVel = (old + (old / frames)) + (desired / frames);
-
-      // if reached desired, clamp it
-      if (desired > 0) {
-	if (newAngVel > desired) {
-	  newAngVel = desired;
-	}
-      } else {
-	if (newAngVel < desired) {
-	  newAngVel = desired;
-	}
-      }
-    }
-  }
-
-  // debug timing
-  if (BZDB.isTrue("debugNewAngVel")) {
-    static TimeKeeper k = TimeKeeper::getNullTime();
-    if (TimeKeeper::getCurrent() - k > 0.1f) { // tick every .1 s
-      addMessage(NULL, TextUtils::format("dt = %.4f ; old = %.4f ; desired = %.4f ; frames = %0.4f ; new = %0.4f\n", dt, old, desired, frames, newAngVel));
-      printf("dt = %.4f ; old = %.4f ; desired = %.4f ; frames = %0.4f ; new = %0.4f\n", dt, old, desired, frames, newAngVel);
-      k = TimeKeeper::getCurrent();
-    }
-  }
-
-  return newAngVel;
+  return computeAngleVelocity(old,desired,dt);
 }
 
 
@@ -306,9 +251,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 		       (getFlag() == Flags::OscillationOverthruster) ||
 		       isPhantomZoned());
 
-  float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow)
-    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+  float groundLimit = computeGroundLimit(getFlag());
 
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {
@@ -1520,56 +1463,14 @@ void			LocalPlayer::explodeTank()
   target = NULL;		// lose lock when dead
 }
 
-void			LocalPlayer::doMomentum(float dt,
-						float& speed, float& angVel)
+void LocalPlayer::doMomentum(float dt,float& speed, float& angVel)
 {
-  // get maximum linear and angular accelerations
-  float linearAcc = (getFlag() == Flags::Momentum)
-    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC)
-    : BZDB.eval(StateDatabase::BZDB_INERTIALINEAR);
-  float angularAcc = (getFlag() == Flags::Momentum)
-    ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC)
-    : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
-
-  // limit linear acceleration
-  if (linearAcc > 0.0f)
-  {
-    const float acc = (speed - lastSpeed) / dt;
-
-    if (acc > 20.0f * linearAcc)
-		speed = lastSpeed + dt * 20.0f*linearAcc;
-    else if (acc < -20.0f * linearAcc)
-		speed = lastSpeed - dt * 20.0f*linearAcc;
-  }
-
-  // limit angular acceleration
-  if (angularAcc > 0.0f) {
-    const float oldAngVel = getAngularVelocity();
-    const float angAcc = (angVel - oldAngVel) / dt;
-    if (angAcc > angularAcc) angVel = oldAngVel + dt * angularAcc;
-    else if (angAcc < -angularAcc) angVel = oldAngVel - dt * angularAcc;
-  }
+  computeMomentum(dt, getFlag(), speed,angVel,lastSpeed,getAngularVelocity());
 }
 
-void			LocalPlayer::doFriction(float dt,
-						  const float *oldVelocity, float *newVelocity)
+void LocalPlayer::doFriction(float dt, const float *oldVelocity, float *newVelocity)
 {
-  const float friction = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
-    BZDB.eval(StateDatabase::BZDB_FRICTION);
-
-  if (friction > 0.0f) {
-    // limit vector acceleration
-
-    float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
-    float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
-    float accLimit = 20.0f * friction;
-
-    if (acc2 > accLimit*accLimit) {
-      float ratio = accLimit / sqrtf(acc2);
-      newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
-      newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
-    }
-  }
+  computeFriction(dt,getFlag(),oldVelocity,newVelocity);
 }
 
 void			LocalPlayer::doForces(float /*dt*/,

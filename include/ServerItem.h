@@ -28,6 +28,7 @@ class ServerItem {
 
 public:
   ServerItem();
+  ~ServerItem();
   void		writeToFile(std::ostream& out) const; // serialize out
   bool		readFromFile(std::istream& in); // serialize in
   void		resetAge(); // set last updated to now

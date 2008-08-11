@@ -146,6 +146,7 @@ bool WebReport::handleAuthedRequest ( int level, const HTTPRequest &request, HTT
   valid = level == 1;
   reports = NULL;
 
+  reply.returnCode = HTTPReply::e200OK;
   std::string &page = reply.body;
   int sessionID = request.sessionID;
 

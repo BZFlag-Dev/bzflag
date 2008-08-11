@@ -1,0 +1,7 @@
+webadmin bugs
+=============
+
+Note: These issues affect the functionality of the webadmin plugin,
+but may be the result of errors in other parts of the server.
+
+* None of the forms actually store info.

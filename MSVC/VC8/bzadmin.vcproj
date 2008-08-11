@@ -238,7 +238,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\,..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE HAVE_CURSES_H;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"

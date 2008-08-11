@@ -622,6 +622,9 @@ void publicize()
      if (listServerLinksCount)
      listServerLink.closeLink(); */
 
+  if (!bz_getPublic())
+    return;
+
   listServerLinksCount = 0;
 
   if (listServerLink)
@@ -682,14 +685,22 @@ static bool serverStart()
   opt = optOn;
   if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
     nerror("serverStart: setsockopt SO_REUSEADDR");
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     if (!clOptions->useFallbackPort) {
       nerror("couldn't bind connect socket");
+#ifdef _WIN32
+      closesocket(wksSocket);
+#else
       close(wksSocket);
+#endif
       return false;
     }
 
@@ -697,7 +708,11 @@ static bool serverStart()
     addr.sin_port = htons(0);
     if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
       nerror("couldn't bind connect socket");
+#ifdef _WIN32
+      closesocket(wksSocket);
+#else
       close(wksSocket);
+#endif
       return false;
     }
 
@@ -712,13 +727,21 @@ static bool serverStart()
 
   if (listen(wksSocket, 5) == -1) {
     nerror("couldn't make connect socket queue");
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 
   addr.sin_port = htons(clOptions->wksPort);
   if (!NetHandler::initHandlers(addr)) {
+#ifdef _WIN32
+    closesocket(wksSocket);
+#else
     close(wksSocket);
+#endif
     return false;
   }
 
@@ -737,7 +760,11 @@ static void serverStop()
 
   // reject attempts to talk to server
   shutdown(wksSocket, 2);
+#ifdef _WIN32
+  closesocket(wksSocket);
+#else
   close(wksSocket);
+#endif
 
   // tell players to quit
   NetMsg msg = MSGMGR.newMessage();
@@ -1953,7 +1980,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   fixTeamCount();
 
   // tell the list server the new number of players
-  listServerLink->queueMessage(ListServerLink::ADD);
+  if(listServerLink)
+    listServerLink->queueMessage(ListServerLink::ADD);
 
   dumpScore();
 
@@ -2348,7 +2376,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     fixTeamCount();
 
     // tell the list server the new number of players
-    listServerLink->queueMessage(ListServerLink::ADD);
+    if(listServerLink)
+      listServerLink->queueMessage(ListServerLink::ADD);
   }
 
   if (clOptions->gameType == RabbitChase)
@@ -2381,6 +2410,57 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       }
     }
   }
+}
+
+void spawnPlayer ( int playerIndex )
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData && !playerData->isSpawnable())
+    return;
+
+  // player is coming alive.
+  dropAssignedFlag(playerIndex);
+
+  // get the spawn position
+  SpawnPosition spawnPosition(playerIndex,
+    (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
+    clOptions->gameType == ClassicCTF);
+
+  // see if there is anyone to handle the spawn event, and if they want to change it.
+  bz_GetPlayerSpawnPosEventData_V1 spawnData;
+  spawnData.playerID = playerIndex;
+  spawnData.team     = convertTeam(playerData->player.getTeam());
+  spawnData.pos[0]   = spawnPosition.getX();
+  spawnData.pos[1]   = spawnPosition.getY();
+  spawnData.pos[2]   = spawnPosition.getZ();
+  spawnData.rot      = spawnPosition.getAzimuth();
+
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
+
+  // update last position immediately
+  playerData->setPlayerState(spawnData.pos, spawnData.rot);
+
+  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
+
+  playerData->efectiveShotType = StandardShot;
+  playerData->player.setAllow(AllowAll);
+  sendMessageAllow(playerIndex, AllowAll);
+
+  // call any events for a playerspawn
+  bz_PlayerSpawnEventData_V1 spawnEvent;
+  spawnEvent.playerID = playerIndex;
+  spawnEvent.team = convertTeam(playerData->player.getTeam());
+
+  playerStateToAPIState(spawnEvent.state,playerData->lastState);
+
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
+
+  if (clOptions->gameType == RabbitChase) {
+    playerData->player.wasNotARabbit();
+    if (rabbitIndex == NoPlayer)
+      anointNewRabbit();
+  }
+
 }
 
 void playerAlive(int playerIndex)
@@ -2459,48 +2539,7 @@ void playerAlive(int playerIndex)
     return;
   }
 
-  // player is coming alive.
-  dropAssignedFlag(playerIndex);
-
-  // get the spawn position
-  SpawnPosition spawnPosition(playerIndex,
-			      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-			      clOptions->gameType == ClassicCTF);
-
-  // see if there is anyone to handle the spawn event, and if they want to change it.
-  bz_GetPlayerSpawnPosEventData_V1 spawnData;
-  spawnData.playerID = playerIndex;
-  spawnData.team     = convertTeam(playerData->player.getTeam());
-  spawnData.pos[0]   = spawnPosition.getX();
-  spawnData.pos[1]   = spawnPosition.getY();
-  spawnData.pos[2]   = spawnPosition.getZ();
-  spawnData.rot      = spawnPosition.getAzimuth();
-
-  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
-
-  // update last position immediately
-  playerData->setPlayerState(spawnData.pos, spawnData.rot);
-
-  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
-
-  playerData->efectiveShotType = StandardShot;
-  playerData->player.setAllow(AllowAll);
-  sendMessageAllow(playerIndex, AllowAll);
-
-  // call any events for a playerspawn
-  bz_PlayerSpawnEventData_V1 spawnEvent;
-  spawnEvent.playerID = playerIndex;
-  spawnEvent.team = convertTeam(playerData->player.getTeam());
-
-  playerStateToAPIState(spawnEvent.state,playerData->lastState);
-
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
-
-  if (clOptions->gameType == RabbitChase) {
-    playerData->player.wasNotARabbit();
-    if (rabbitIndex == NoPlayer)
-      anointNewRabbit();
-  }
+  spawnPlayer(playerIndex);
 }
 
 static void checkTeamScore(int playerIndex, int teamIndex)
@@ -3739,7 +3778,7 @@ static void setupPingReply(void)
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 }
 
-static void setupPermisions(void)
+static void setupPermissions(void)
 {
   // load up the access permissions & stuff
   initGroups();
@@ -3810,6 +3849,9 @@ static bool initServer(int argc, char **argv)
   bzfsrand((unsigned int)time(0));
 
   initStartupPrams(argc,argv);
+
+  setupPermissions();
+
   setupPlugins();
 
   if (!prepareWorld())
@@ -3865,8 +3907,6 @@ static bool initServer(int argc, char **argv)
 
   nextSuperFlagInsertion = TimeKeeper::getCurrent();
   flagExp = -logf(0.5f) / FlagHalfLife;
-
-  setupPermisions();
 
   if (clOptions->startRecording)
     Record::start(AllPlayers);

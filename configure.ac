@@ -93,14 +93,8 @@ AC_SUBST(BZFLAG_VERSION)
 AC_SUBST(BZFLAG_DATE)
 AC_SUBST(CONF_TIME)
 
-# Let the C++ code know about OS and user
+# Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
-if test $HASWHOAMI = yes; then
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-else
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
-fi
 
 # automatically enable and load our configure cache file if available
 BZ_CONFIG_CACHE([config.cache.${host_os}.${ac_hostname}])
@@ -1085,6 +1079,9 @@ fi
 AC_SUBST(LIBZ)
 AC_MSG_RESULT($BUILD_ZLIB)
 AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
+if test "x$BUILD_ZLIB" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/zlib"
+fi
 
 
 dnl figure out whether we need to build the included curl library

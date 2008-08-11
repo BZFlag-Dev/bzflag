@@ -45,6 +45,7 @@
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
 #include "ServerIntangibilityManager.h"
+#include "CollisionManager.h"
 
 /* local implementation headers */
 #include "FlagInfo.h"
@@ -584,6 +585,114 @@ int WorldInfo::getUncompressedSize() const
 {
   return uncompressedSize;
 }
+
+const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
+				   const float* pos, float angle,
+				   float dx, float dy, float dz,
+				   bool directional, bool checkWalls) const
+{
+  // check walls
+  if(checkWalls)
+  {
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (unsigned int w = 0; w < walls.size(); w++) {
+      const WallObstacle* wall = (const WallObstacle*) walls[w];
+      if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+	return wall;
+    }
+  }
+
+  // get the list of potential hits from the collision manager
+  const ObsList* olist = COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+
+  // sort the list by type and height
+  qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
+
+  int i;
+
+  // check non-mesh obstacles
+  for (i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    const char* type = obs->getType();
+    if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
+      break;
+
+    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+
+    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+      return obs;
+  }
+
+  if (i == olist->count) 
+    return NULL; // no more obstacles, we are done
+
+  // do some prep work for mesh faces
+  int hitCount = 0;
+  float vel[3];
+  vel[0] = pos[0] - oldPos[0];
+  vel[1] = pos[1] - oldPos[1];
+  vel[2] = pos[2] - oldPos[2];
+  bool goingDown = (vel[2] <= 0.0f);
+
+  // check mesh faces
+  for (/* do nothing */; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    const char* type = obs->getType();
+    if (type == MeshObstacle::getClassName())
+      break;
+
+    const MeshFace* face = (const MeshFace*) obs;
+
+    // first check the face
+    // if the face is drive thru, then we don't care about the tangibility of the mesh
+    bool driveThru = obs->isDriveThrough() != 0;
+    if (!driveThru)
+      driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+
+    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+      const float facePos2 = face->getPosition()[2];
+      if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
+	continue;
+      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) 
+	continue;
+      else {
+	// add the face to the hitlist
+	olist->list[hitCount] = (Obstacle*) obs;
+	hitCount++;
+	// compute its dot product and stick it in the scratchPad
+	const float* p = face->getPlane();
+	const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+	face->scratchPad = dot;
+      }
+    }
+  }
+  // sort the list by dot product (this sort will be replaced with a running tab
+  qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
+
+  // see if there as a valid meshface hit
+  if (hitCount > 0) {
+    const MeshFace* face = (const MeshFace*) olist->list[0];
+    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
+      return face;
+  }
+  if (i == olist->count)
+    return NULL; // no more obstacles, we are done
+
+  // JeffM, I have NO clue why we do this again, we just got done checking all the faces in the thing
+  // all this seems to do is screw us up by testing the same thing again with worse paramaters
+
+  // check mesh obstacles
+  for (; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+      return obs;
+  }
+
+  return NULL; // no more obstacles, we are done
+}
+
 
 
 // Local Variables: ***

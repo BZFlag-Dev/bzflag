@@ -1,8 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
   <title>[$PluginName] for [$HostName] &mdash; [$CurrentPage]</title>
+  <style type="text/css" media="screen">
+    h1, h2, h3 { text-transform: lowercase; }
+    .error { color: red; }
+    #current_players { float: right; padding-right: 2em; }
+  </style>
 </head>
 <body>
   <h1><a href="[$BaseURL]">[$UserName]@[$HostName]/[$PluginName]</a></h1>
@@ -11,9 +16,12 @@
 [?IF IsCurrentPage]
     <a id="nav_current">[$PageName]</a>
 [?ELSE IsCurrentPage]
-    <a href="[$BaseURL]/[$PageName]">[$PageName]</a>
+    <a href="[$BaseURL][$PageName]">[$PageName]</a>
 [?END IsCurrentPage]
 [*END Navigation]
+[*EMPTY Navigation]
+    <a id="logout" href="[$BaseURL]logout">log out</a>
+  </div>
 
 [?IF Error]
   <p class="error">[$Error]</p>

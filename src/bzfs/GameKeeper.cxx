@@ -453,6 +453,7 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
   // player is alive.
   player.setAlive();
 
+  lastState.status = eAlive;
 }
 
 void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
