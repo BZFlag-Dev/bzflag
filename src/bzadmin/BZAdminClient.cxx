@@ -450,7 +450,7 @@ void BZAdminClient::outputServerList() const {
     for (std::map<std::string, ServerItem>::const_iterator server = servers.begin();
 	 server != servers.end();
 	 server++) {
-      ui->outputMessage(std::string("  ") + server->description, Yellow);
+      ui->outputMessage(std::string("  ") + (*server).second.description, Yellow);
     }
     ui->outputMessage(std::string("End Server List."), Yellow);
   }
